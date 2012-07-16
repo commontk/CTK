@@ -117,6 +117,7 @@ public:
   Q_INVOKABLE QStringList seriesForStudy (const QString studyUID);
   Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
   Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
+  Q_INVOKABLE QString instanceForFile (const QString fileName);
 
   ///
   /// \brief load the header from a file and allow access to elements
@@ -166,12 +167,32 @@ public:
   /// @param key A group,element tag in zero-filled hex
   /// @param group The group portion of the tag as an integer
   /// @param element The element portion of the tag as an integer
-  /// @Returns empty string is element is missing
+  /// @Returns empty string if element is missing
   Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const QString tag);
   Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const unsigned short group, const unsigned short element);
   Q_INVOKABLE QString fileValue (const QString fileName, const QString tag);
   Q_INVOKABLE QString fileValue (const QString fileName, const unsigned short group, const unsigned short element);
-  bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
+  Q_INVOKABLE bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
+  Q_INVOKABLE QString groupElementToTag (const unsigned short& group, const unsigned short& element);
+
+  ///
+  /// \brief store values of previously requested instance elements
+  /// These are meant to be internal methods used by the instanceValue and fileValue
+  /// methods, but they can be used by calling classes to populate or access
+  /// instance tag values as needed.
+  /// @param sopInstanceUID A string with the uid for a given instance
+  ///                       (corresponding file will be found via database)
+  /// @param key A group,element tag in zero-filled hex
+  /// @Returns empty string if element for uid is missing from cache
+  ///
+  /// Lightweight check of tag cache existence (once db check per runtime)
+  Q_INVOKABLE bool tagCacheExists ();
+  /// Create a tagCache in the current database.  Delete the existing one if it exists.
+  Q_INVOKABLE bool initializeTagCache ();
+  /// Return the value of a cached tag
+  Q_INVOKABLE QString cachedTag (const QString sopInstanceUID, const QString tag);
+  /// Insert an instance tag's value into to the cache
+  Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value);
 
 
 Q_SIGNALS:
