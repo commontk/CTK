@@ -522,7 +522,8 @@ QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsi
   QString filePath = this->fileForInstance(sopInstanceUID);
   if (filePath != "" )
     {
-    return( this->fileValue(filePath, group, element) );
+    value = this->fileValue(filePath, group, element);
+    return( value );
     }
   else
     {
@@ -574,7 +575,9 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
 
   DcmTagKey tagKey(group, element);
 
-  return( dataset.GetAllElementValuesAsString(tagKey) );
+  value = dataset.GetAllElementValuesAsString(tagKey);
+  this->cacheTag(sopInstanceUID, tag, value);
+  return( value );
 }
 
 //------------------------------------------------------------------------------
