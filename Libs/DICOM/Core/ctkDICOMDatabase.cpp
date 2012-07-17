@@ -709,6 +709,7 @@ void ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMDataset& ctkDataset, int
   checkStudyExistsQuery.exec();
   if(!checkStudyExistsQuery.next())
     {
+      qDebug() << "Need to insert new study: " << studyInstanceUID;
 
       QString studyID(ctkDataset.GetElementAsString(DCM_StudyID) );
       QString studyDate(ctkDataset.GetElementAsString(DCM_StudyDate) );
@@ -741,7 +742,10 @@ void ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMDataset& ctkDataset, int
         {
           LastStudyInstanceUID = studyInstanceUID;
         }
-
+    }
+  else
+    {
+    qDebug() << "Used existing study: " << studyInstanceUID;
     }
 }
 
@@ -756,6 +760,8 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
   loggedExec(checkSeriesExistsQuery);
   if(!checkSeriesExistsQuery.next())
     {
+      qDebug() << "Need to insert new series: " << seriesInstanceUID;
+
       QString seriesDate(ctkDataset.GetElementAsString(DCM_SeriesDate) );
       QString seriesTime(ctkDataset.GetElementAsString(DCM_SeriesTime) );
       QString seriesDescription(ctkDataset.GetElementAsString(DCM_SeriesDescription) );
@@ -794,6 +800,10 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
         {
           LastSeriesInstanceUID = seriesInstanceUID;
         }
+    }
+  else
+    {
+    qDebug() << "Used existing series: " << seriesInstanceUID;
     }
 }
 
@@ -858,12 +868,6 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
       logger.error("Dataset is missing necessary information!");
       return;
     }
-
-
-
-
-
-
 
   // store the file if the database is not in memomry
   // TODO: if we are called from insert(file) we
@@ -986,6 +990,10 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
         {
           emit q->databaseChanged();
         }
+    }
+  else
+    {
+    qDebug() << "No patient name or no patient id - not inserting!";
     }
 }
 
