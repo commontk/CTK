@@ -450,10 +450,10 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
 
     connect(d->DICOMIndexer.data(), SIGNAL(indexingComplete()),
             progress, SLOT(close()));
+    connect(d->DICOMIndexer.data(), SIGNAL(indexingComplete()),
+            &d->DICOMModel, SLOT(reset()));
 
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
-
-    d->DICOMModel.reset();
   }
 }
 
