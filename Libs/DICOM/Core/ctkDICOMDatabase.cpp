@@ -1230,6 +1230,10 @@ bool ctkDICOMDatabase::initializeTagCache()
 QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString tag)
 {
   Q_D(ctkDICOMDatabase);
+  if ( !this->tagCacheExists() )
+    {
+    this->initializeTagCache();
+    }
   QSqlQuery selectValue( d->Database );
   selectValue.prepare( "SELECT Value FROM TagCache WHERE SOPInstanceUID = :sopInstanceUID AND Tag = :tag" );
   selectValue.bindValue(":sopInstanceUID",sopInstanceUID);
@@ -1247,6 +1251,10 @@ QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString 
 bool ctkDICOMDatabase::cacheTag(const QString sopInstanceUID, const QString tag, const QString value)
 {
   Q_D(ctkDICOMDatabase);
+  if ( !this->tagCacheExists() )
+    {
+    this->initializeTagCache();
+    }
   QSqlQuery insertTag( d->Database );
   insertTag.prepare( "INSERT OR REPLACE INTO TagCache VALUES(:sopInstanceUID, :tag, :value)" );
   insertTag.bindValue(":sopInstanceUID",sopInstanceUID);
