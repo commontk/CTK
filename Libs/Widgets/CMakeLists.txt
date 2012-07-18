@@ -65,6 +65,9 @@ set(KIT_SRCS
   ctkDirectoryButton.h
   ctkDirectoryListView.cpp
   ctkDirectoryListView.h
+  ctkDirectoryListWidget.cpp
+  ctkDirectoryListWidget.h
+  ctkDirectoryListWidget_p.h
   ctkDoubleRangeSlider.cpp
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.cpp
@@ -206,6 +209,8 @@ set(KIT_MOC_SRCS
   ctkDateRangeWidget.h
   ctkDirectoryButton.h
   ctkDirectoryListView.h
+  ctkDirectoryListWidget.h
+  ctkDirectoryListWidget_p.h
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
   ctkDynamicSpacer.h
@@ -278,6 +283,7 @@ set(KIT_UI_FORMS
   Resources/UI/ctkThumbnailLabel.ui
   Resources/UI/ctkThumbnailListWidget.ui
   Resources/UI/ctkWorkflowGroupBox.ui
+  Resources/UI/ctkDirectoryListWidget.ui
   )
 
 # Resources
