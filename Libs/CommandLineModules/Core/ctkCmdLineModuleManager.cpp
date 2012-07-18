@@ -92,14 +92,14 @@ ctkCmdLineModuleManager::registerModule(const QString& location)
   return ref;
 }
 
-void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference&)
+void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& ref)
 {
-  throw ctkException("not implemented yet");
+  d->Cache.remove(ref.location());
 }
 
 ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QString& location) const
 {
-  throw ctkException("not implemented yet");
+  return d->Cache[location];
 }
 
 QList<ctkCmdLineModuleReference> ctkCmdLineModuleManager::moduleReferences() const
