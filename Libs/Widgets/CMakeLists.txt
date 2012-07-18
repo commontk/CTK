@@ -63,6 +63,8 @@ set(KIT_SRCS
   ctkDateRangeWidget.h
   ctkDirectoryButton.cpp
   ctkDirectoryButton.h
+  ctkDirectoryListView.cpp
+  ctkDirectoryListView.h
   ctkDoubleRangeSlider.cpp
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.cpp
@@ -203,6 +205,7 @@ set(KIT_MOC_SRCS
   ctkCrosshairLabel.h
   ctkDateRangeWidget.h
   ctkDirectoryButton.h
+  ctkDirectoryListView.h
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
   ctkDynamicSpacer.h
