@@ -22,11 +22,11 @@
 #define __ctkCmdLineModuleDirectoryWatcher_h
 
 #include <ctkCommandLineModulesCoreExport.h>
-#include <QObject>
-#include <QHash>
-#include <QStringList>
-#include <QScopedPointer>
+
 #include "ctkCmdLineModuleReference.h"
+
+#include <QObject>
+#include <QScopedPointer>
 
 class ctkCmdLineModuleManager;
 class ctkCmdLineModuleDirectoryWatcherPrivate;
@@ -54,7 +54,7 @@ public:
    * \brief Set the watcher into debug mode, for more output.
    * \param debug if true, you get more output, otherwise, less output.
    */
-  void setDebug(const bool& debug);
+  void setDebug(bool debug);
 
   /**
    * \brief Set the directories to be watched.
@@ -65,12 +65,12 @@ public:
   /**
    * \brief Returns the list of directories currently being watched.
    */
-  QStringList directories();
+  QStringList directories() const;
 
   /**
    * \brief Returns the list of files (command line apps) currently being watched.
    */
-  QStringList files();
+  QStringList files() const;
 
 private:
 

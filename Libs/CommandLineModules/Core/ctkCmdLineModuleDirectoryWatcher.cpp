@@ -50,7 +50,7 @@ ctkCmdLineModuleDirectoryWatcher::~ctkCmdLineModuleDirectoryWatcher()
 
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDirectoryWatcher::setDebug(const bool& debug)
+void ctkCmdLineModuleDirectoryWatcher::setDebug(bool debug)
 {
   d->setDebug(debug);
 }
@@ -64,14 +64,14 @@ void ctkCmdLineModuleDirectoryWatcher::setDirectories(const QStringList& directo
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcher::directories()
+QStringList ctkCmdLineModuleDirectoryWatcher::directories() const
 {
   return d->directories();
 }
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcher::files()
+QStringList ctkCmdLineModuleDirectoryWatcher::files() const
 {
   return d->files();
 }
@@ -102,7 +102,7 @@ ctkCmdLineModuleDirectoryWatcherPrivate::~ctkCmdLineModuleDirectoryWatcherPrivat
 
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDirectoryWatcherPrivate::setDebug(const bool& debug)
+void ctkCmdLineModuleDirectoryWatcherPrivate::setDebug(bool debug)
 {
   this->Debug = debug;
   this->ModuleManager->setVerboseOutput(debug);
@@ -110,14 +110,14 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::setDebug(const bool& debug)
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcherPrivate::directories()
+QStringList ctkCmdLineModuleDirectoryWatcherPrivate::directories() const
 {
   return this->FileSystemWatcher->directories();
 }
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcherPrivate::files()
+QStringList ctkCmdLineModuleDirectoryWatcherPrivate::files() const
 {
   return this->FileSystemWatcher->files();
 }
@@ -158,7 +158,7 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::updateWatchedPaths(const QStringLi
 }
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcherPrivate::filterInvalidDirectories(const QStringList& directories)
+QStringList ctkCmdLineModuleDirectoryWatcherPrivate::filterInvalidDirectories(const QStringList& directories) const
 {
   QStringList result;
 
@@ -180,7 +180,7 @@ QStringList ctkCmdLineModuleDirectoryWatcherPrivate::filterInvalidDirectories(co
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcherPrivate::extractCurrentlyWatchedFilenamesInDirectory(const QString& path)
+QStringList ctkCmdLineModuleDirectoryWatcherPrivate::extractCurrentlyWatchedFilenamesInDirectory(const QString& path) const
 {
   QStringList result;
 
@@ -205,7 +205,7 @@ QStringList ctkCmdLineModuleDirectoryWatcherPrivate::extractCurrentlyWatchedFile
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcherPrivate::getExecutablesInDirectory(const QString& path)
+QStringList ctkCmdLineModuleDirectoryWatcherPrivate::getExecutablesInDirectory(const QString& path) const
 {
   QStringList result;
 

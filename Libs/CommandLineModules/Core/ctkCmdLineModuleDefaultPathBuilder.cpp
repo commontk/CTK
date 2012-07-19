@@ -32,10 +32,10 @@ public:
   ~ctkCmdLineModuleDefaultPathBuilderPrivate();
   QStringList build() const;
 
-  void setLoadFromHomeDir(const bool& doLoad);
-  void setLoadFromCurrentDir(const bool& doLoad);
-  void setLoadFromApplicationDir(const bool& doLoad);
-  void setLoadFromCtkModuleLoadPath(const bool& doLoad);
+  void setLoadFromHomeDir(bool doLoad);
+  void setLoadFromCurrentDir(bool doLoad);
+  void setLoadFromApplicationDir(bool doLoad);
+  void setLoadFromCtkModuleLoadPath(bool doLoad);
 
   bool LoadFromHomeDir;
   bool LoadFromCurrentDir;
@@ -64,25 +64,25 @@ ctkCmdLineModuleDefaultPathBuilderPrivate::~ctkCmdLineModuleDefaultPathBuilderPr
 }
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromHomeDir(const bool& doLoad)
+void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromHomeDir(bool doLoad)
 {
   LoadFromHomeDir = doLoad;
 }
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromCurrentDir(const bool& doLoad)
+void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromCurrentDir(bool doLoad)
 {
   LoadFromCurrentDir = doLoad;
 }
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromApplicationDir(const bool& doLoad)
+void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromApplicationDir(bool doLoad)
 {
   LoadFromApplicationDir = doLoad;
 }
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromCtkModuleLoadPath(const bool& doLoad)
+void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromCtkModuleLoadPath(bool doLoad)
 {
   LoadFromCtkModuleLoadPath = doLoad;
 }
@@ -156,25 +156,25 @@ QStringList ctkCmdLineModuleDefaultPathBuilder::build() const
 }
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilder::setLoadFromHomeDir(const bool& doLoad)
+void ctkCmdLineModuleDefaultPathBuilder::setLoadFromHomeDir(bool doLoad)
 {
   d->setLoadFromHomeDir(doLoad);
 }
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilder::setLoadFromCurrentDir(const bool& doLoad)
+void ctkCmdLineModuleDefaultPathBuilder::setLoadFromCurrentDir(bool doLoad)
 {
   d->setLoadFromCurrentDir(doLoad);
 }
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilder::setLoadFromApplicationDir(const bool& doLoad)
+void ctkCmdLineModuleDefaultPathBuilder::setLoadFromApplicationDir(bool doLoad)
 {
   d->setLoadFromApplicationDir(doLoad);
 }
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilder::setLoadFromCtkModuleLoadPath(const bool& doLoad)
+void ctkCmdLineModuleDefaultPathBuilder::setLoadFromCtkModuleLoadPath(bool doLoad)
 {
   d->setLoadFromCtkModuleLoadPath(doLoad);
 }

@@ -50,7 +50,7 @@ public:
   /**
    * \see ctkCmdLineModuleDirectoryWatcher::setDebug
    */
-  void setDebug(const bool& debug);
+  void setDebug(bool debug);
 
   /**
    * \see ctkCmdLineModuleDirectoryWatcher::setDirectories
@@ -60,12 +60,12 @@ public:
   /**
    * \see ctkCmdLineModuleDirectoryWatcher::directories
    */
-  QStringList directories();
+  QStringList directories() const;
 
   /**
    * \see ctkCmdLineModuleDirectoryWatcher::files
    */
-  QStringList files();
+  QStringList files() const;
 
 
 public Q_SLOTS:
@@ -95,21 +95,21 @@ private:
    * \param directories a list of directories, relative or absolute.
    * \return a list of directories, denoted by their absolute path.
    */
-  QStringList filterInvalidDirectories(const QStringList& directories);
+  QStringList filterInvalidDirectories(const QStringList& directories) const;
 
   /**
    * \brief Uses the MapFileNameToReference to work out a list of valid command line modules in a given directory.
    * \param directory the absolute or relative path of a directory.
    * \return a list of executables, denoted by their absolute path.
    */
-  QStringList extractCurrentlyWatchedFilenamesInDirectory(const QString& directory);
+  QStringList extractCurrentlyWatchedFilenamesInDirectory(const QString& directory) const;
 
   /**
    * \brief Returns a list of executable files (not necessarily valid command line clients) in a directory.
    * \param directory A directory
    * \return QStringList a list of absolute path names to executable files
    */
-  QStringList getExecutablesInDirectory(const QString& directory);
+  QStringList getExecutablesInDirectory(const QString& directory) const;
 
   /**
    * \brief Main method to update the current list of watched directories and files.

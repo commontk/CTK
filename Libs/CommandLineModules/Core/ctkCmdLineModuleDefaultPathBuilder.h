@@ -57,13 +57,13 @@ public:
   ctkCmdLineModuleDefaultPathBuilder();
   ~ctkCmdLineModuleDefaultPathBuilder();
 
-  virtual void setLoadFromHomeDir(const bool& doLoad);
+  virtual void setLoadFromHomeDir(bool doLoad);
 
-  virtual void setLoadFromCurrentDir(const bool& doLoad);
+  virtual void setLoadFromCurrentDir(bool doLoad);
 
-  virtual void setLoadFromApplicationDir(const bool& doLoad);
+  virtual void setLoadFromApplicationDir(bool doLoad);
 
-  virtual void setLoadFromCtkModuleLoadPath(const bool& doLoad);
+  virtual void setLoadFromCtkModuleLoadPath(bool doLoad);
 
   virtual QStringList build() const;
 
