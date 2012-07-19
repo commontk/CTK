@@ -31,7 +31,7 @@
 #include "ctkPluginConstants.h"
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkServiceException.h"
-#include "ctkServiceRegistrationPrivate.h"
+#include "ctkServiceRegistration_p.h"
 #include "ctkLDAPExpr_p.h"
 
 //----------------------------------------------------------------------------

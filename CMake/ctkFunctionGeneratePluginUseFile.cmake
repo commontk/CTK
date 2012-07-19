@@ -53,5 +53,5 @@ set(${plugin}_LIBRARY_DIRS \"${${plugin}_LIBRARY_DIRS}\")")
   set(_ctk_plugin_libraries_variable ${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES)
   set(_ctk_plugin_libraries ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES})
 
-  configure_file("${CTK_CMAKE_DIR}/../CTKPluginUseFile.cmake.in" "${filename}" @ONLY)
+  configure_file("${CTK_CMAKE_DIR}/../CMake/CTKPluginUseFile.cmake.in" "${filename}" @ONLY)
 endfunction()

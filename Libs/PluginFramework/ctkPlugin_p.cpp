@@ -19,8 +19,7 @@
 
 =============================================================================*/
 
-#include "ctkPluginPrivate_p.h"
-
+#include "ctkPlugin_p.h"
 #include "ctkPluginConstants.h"
 #include "ctkPluginDatabaseException.h"
 #include "ctkPluginArchive_p.h"
@@ -29,9 +28,9 @@
 #include "ctkPluginActivator.h"
 #include "ctkPluginContext_p.h"
 
-#include "ctkServices_p.h"
-#include "ctkServiceReferencePrivate.h"
+#include "ctkServiceReference_p.h"
 #include "ctkServiceRegistration.h"
+#include "ctkServices_p.h"
 
 // for ctk::msecsTo() - remove after switching to Qt 4.7
 #include <ctkUtils.h>

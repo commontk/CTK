@@ -58,7 +58,7 @@ public:
   /// Scan the file using Dcmtk and populate the database with all the
   /// DICOM fields accordingly.
   ///
-  Q_INVOKABLE void addFile(ctkDICOMDatabase& database, const QString& filePath,
+  Q_INVOKABLE void addFile(ctkDICOMDatabase& database, const QString filePath,
                     const QString& destinationDirectoryName = "");
 
   Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
@@ -68,6 +68,7 @@ Q_SIGNALS:
   void indexingFileNumber(int);
   void indexingFilePath(QString);
   void progress(int);
+  void indexingComplete();
 
 public Q_SLOTS:
   void cancel();

@@ -20,9 +20,8 @@
 =============================================================================*/
 
 #include "ctkPluginFrameworkContext_p.h"
-
 #include "ctkPluginFrameworkUtil_p.h"
-#include "ctkPluginFrameworkPrivate_p.h"
+#include "ctkPluginFramework_p.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginStorageSQL_p.h"
 #include "ctkPluginConstants.h"

@@ -28,8 +28,8 @@
 #include <QMutex>
 #include <QStringList>
 
+#include "ctkPlugin_p.h"
 #include "ctkServiceRegistration.h"
-#include "ctkPluginPrivate_p.h"
 
 
 /**

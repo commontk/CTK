@@ -48,13 +48,17 @@ public:
   QString findDCMQRSCPExecutable()const;
   QString findDCMQRSCPConfigFile()const;
   QString findStoreSCUExecutable()const;
+  QString findStoreSCPExecutable()const;
   void printProcessOutputs(const QString& program, QProcess* process)const;
   
   QProcess*   DCMQRSCPProcess;
+  QProcess*   STORESCPProcess;
   QString     DCMQRSCPExecutable;
   QString     DCMQRSCPConfigFile;
   int         DCMQRSCPPort;
+  int         STORESCPPort;
   QString     StoreSCUExecutable;
+  QString     StoreSCPExecutable;
 };
 
 //------------------------------------------------------------------------------
@@ -63,17 +67,42 @@ public:
 //------------------------------------------------------------------------------
 ctkDICOMTesterPrivate::ctkDICOMTesterPrivate(ctkDICOMTester& o): q_ptr(&o)
 {
+  Q_Q(ctkDICOMTester);
+
   this->DCMQRSCPProcess = 0;
   this->DCMQRSCPExecutable = this->findDCMQRSCPExecutable();
   this->DCMQRSCPConfigFile = this->findDCMQRSCPConfigFile();
   this->DCMQRSCPPort = 11112;
+  this->STORESCPPort = 11113;
   this->StoreSCUExecutable = this->findStoreSCUExecutable();
+  this->StoreSCPExecutable = this->findStoreSCPExecutable();
+
+  // Start the storescp process and keep it active as long as this
+  // class exists
+  this->STORESCPProcess = new QProcess(q);
+  // usage of storescp:
+  //  storescp 11113
+  QStringList storescpArgs;
+  storescpArgs << QString::number(this->STORESCPPort);
+  
+  this->STORESCPProcess->start(this->StoreSCPExecutable, storescpArgs);
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMTesterPrivate::~ctkDICOMTesterPrivate()
 {
-  delete this->DCMQRSCPProcess;
+  this->STORESCPProcess->terminate();
+  if (!this->STORESCPProcess->waitForFinished())
+    {
+    this->STORESCPProcess->kill();
+    }
+  this->STORESCPProcess = 0;
+
+  delete this->STORESCPProcess;
+  if (this->DCMQRSCPProcess)
+    {
+    delete this->DCMQRSCPProcess;
+    }
   this->DCMQRSCPProcess = 0;
 }
 
@@ -118,6 +147,12 @@ QString ctkDICOMTesterPrivate::findDCMQRSCPConfigFile()const
 QString ctkDICOMTesterPrivate::findStoreSCUExecutable()const
 {
   return this->findFile(QStringList("storescu*"), "CMakeExternals/Install/bin");  
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMTesterPrivate::findStoreSCPExecutable()const
+{
+  return this->findFile(QStringList("storescp*"), "CMakeExternals/Install/bin");  
 }
 
 //------------------------------------------------------------------------------
@@ -207,6 +242,20 @@ QString ctkDICOMTester::storeSCUExecutable()const
 {
   Q_D(const ctkDICOMTester);
   return d->StoreSCUExecutable;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTester::setStoreSCPExecutable(const QString& storeSCP)
+{
+  Q_D(ctkDICOMTester);
+  d->StoreSCPExecutable = storeSCP;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMTester::storeSCPExecutable()const
+{
+  Q_D(const ctkDICOMTester);
+  return d->StoreSCPExecutable;
 }
 
 //------------------------------------------------------------------------------

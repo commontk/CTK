@@ -81,6 +81,13 @@ public:
         ExactMatchFailedMessage = "A negative or positive integer is expected.";
         }
         break;
+      case QVariant::Double:
+        {
+        NumberOfParametersToProcess = 1;
+        RegularExpression = "-?[0-9]*\\.?[0-9]+";
+        ExactMatchFailedMessage = "A double is expected.";
+        }
+        break;
       default:
         ExactMatchFailedMessage = QString("Type %1 not supported.").arg(static_cast<int>(type));
       }
@@ -153,6 +160,11 @@ bool CommandLineParserArgumentDescription::addParameter(const QString& value)
     case QVariant::Int:
       {
       Value.setValue(value.toInt());
+      }
+      break;
+    case QVariant::Double:
+      {
+      Value.setValue(value.toDouble());
       }
       break;
     default:

@@ -11,6 +11,11 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
+#if QT_VERSION < 0x040700
+  Q_DECLARE_METATYPE(QVariant)
+#endif
+
+//-----------------------------------------------------------------------------
 class ctkAbstractPythonManagerTester: public QObject
 {
   Q_OBJECT
