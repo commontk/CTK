@@ -20,7 +20,23 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleReference.h"
-#include "ctkCmdLineModuleReferencePrivate.h"
+#include "ctkCmdLineModuleReference_p.h"
+#include "ctkCmdLineModuleXmlParser_p.h"
+
+#include <QBuffer>
+
+ctkCmdLineModuleDescription ctkCmdLineModuleReferencePrivate::description() const
+{
+  // Lazy creation. The title is a required XML element.
+  if (Description.title().isNull())
+  {
+    QByteArray xml(RawXmlDescription);
+    QBuffer xmlInput(&xml);
+    ctkCmdLineModuleXmlParser parser(&xmlInput, &Description);
+    parser.doParse();
+  }
+  return Description;
+}
 
 ctkCmdLineModuleReference::ctkCmdLineModuleReference()
   : d(new ctkCmdLineModuleReferencePrivate())

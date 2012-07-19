@@ -19,7 +19,7 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleDirectoryWatcher.h"
-#include "ctkCmdLineModuleDirectoryWatcherPrivate.h"
+#include "ctkCmdLineModuleDirectoryWatcher_p.h"
 #include "ctkCmdLineModuleManager.h"
 
 #include <QObject>

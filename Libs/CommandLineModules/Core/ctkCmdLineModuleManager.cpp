@@ -23,7 +23,7 @@
 
 #include "ctkCmdLineModuleXmlValidator.h"
 #include "ctkCmdLineModuleReference.h"
-#include "ctkCmdLineModuleReferencePrivate.h"
+#include "ctkCmdLineModuleReference_p.h"
 #include "ctkCmdLineModuleInstanceFactory.h"
 
 #include <ctkException.h>

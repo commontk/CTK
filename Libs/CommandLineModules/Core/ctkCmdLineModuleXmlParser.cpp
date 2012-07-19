@@ -28,9 +28,9 @@ limitations under the License.
 // CTK includes
 #include "ctkCmdLineModuleXmlParser_p.h"
 #include "ctkCmdLineModuleDescription.h"
-#include "ctkCmdLineModuleDescriptionPrivate.h"
+#include "ctkCmdLineModuleDescription_p.h"
 #include "ctkCmdLineModuleParameterGroup.h"
-#include "ctkCmdLineModuleParameterGroupPrivate.h"
+#include "ctkCmdLineModuleParameterGroup_p.h"
 #include "ctkCmdLineModuleParameterParsers_p.h"
 
 #include "ctkCmdLineModuleXmlException.h"

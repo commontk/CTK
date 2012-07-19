@@ -16,22 +16,20 @@ set(KIT_export_directive "CTK_CMDLINEMODULECORE_EXPORT")
 set(KIT_SRCS
   ctkCmdLineModuleDefaultPathBuilder.cpp
   ctkCmdLineModuleDescription.cpp
-  ctkCmdLineModuleDescriptionPrivate.h
+  ctkCmdLineModuleDescription_p.h
   ctkCmdLineModuleDirectoryWatcher.cpp
-  ctkCmdLineModuleDirectoryWatcherPrivate.h
+  ctkCmdLineModuleDirectoryWatcher_p.h
   ctkCmdLineModuleInstance.cpp
   ctkCmdLineModuleInstanceFactory.cpp
   ctkCmdLineModuleManager.cpp
   ctkCmdLineModuleParameter.cpp
-  ctkCmdLineModuleParameterPrivate.cpp
   ctkCmdLineModuleParameterGroup.cpp
-  ctkCmdLineModuleParameterGroupPrivate.h
+  ctkCmdLineModuleParameterGroup_p.h
   ctkCmdLineModuleParameterParsers_p.h
   ctkCmdLineModulePathBuilder.cpp
   ctkCmdLineModuleProcessTask.cpp
   ctkCmdLineModuleXmlProgressWatcher.cpp
   ctkCmdLineModuleReference.cpp
-  ctkCmdLineModuleReferencePrivate.cpp
   ctkCmdLineModuleRunException.cpp
   ctkCmdLineModuleXmlException.cpp
   ctkCmdLineModuleXmlMsgHandler_p.h
@@ -45,7 +43,7 @@ set(KIT_SRCS
 # Headers that should run through moc
 set(KIT_MOC_SRCS
   ctkCmdLineModuleDirectoryWatcher.h
-  ctkCmdLineModuleDirectoryWatcherPrivate.h
+  ctkCmdLineModuleDirectoryWatcher_p.h
   ctkCmdLineModuleManager.h
   ctkCmdLineModuleInstance.h
   ctkCmdLineModuleProcessTask.h

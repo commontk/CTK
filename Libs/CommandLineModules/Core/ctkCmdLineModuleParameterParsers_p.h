@@ -25,7 +25,7 @@
 #include <QXmlStreamReader>
 
 #include "ctkCmdLineModuleParameter.h"
-#include "ctkCmdLineModuleParameterPrivate.h"
+#include "ctkCmdLineModuleParameter_p.h"
 
 namespace {
 

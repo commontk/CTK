@@ -20,11 +20,37 @@ limitations under the License.
 
 #include "ctkCmdLineModuleParameter.h"
 
-#include "ctkCmdLineModuleParameterPrivate.h"
+#include "ctkCmdLineModuleParameter_p.h"
 
 #include <QStringList>
 #include <QTextStream>
 
+//----------------------------------------------------------------------------
+ctkCmdLineModuleParameterPrivate::ctkCmdLineModuleParameterPrivate()
+  : Hidden(false), Constraints(false), Index(-1), Multiple(false), Aggregate("false")
+{}
+
+//----------------------------------------------------------------------------
+QStringList ctkCmdLineModuleParameterPrivate::splitAndTrim(const QString& str, const QString& separator)
+{
+  QStringList l = str.split(separator, QString::SkipEmptyParts);
+  l.removeDuplicates();
+  // trim the strings
+  QMutableStringListIterator i(l);
+  while(i.hasNext())
+  {
+    QString& n = i.next();
+    n = n.trimmed();
+  }
+  return l;
+}
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleParameterPrivate::setFileExtensionsAsString(const QString& extensions)
+{
+  FileExtensions = splitAndTrim(extensions, ",");
+  FileExtensionsAsString = FileExtensions.join(",");
+}
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleParameter::ctkCmdLineModuleParameter()
