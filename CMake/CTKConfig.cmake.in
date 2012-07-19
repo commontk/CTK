@@ -154,6 +154,14 @@ SET(CTK_USE_FILE "@CTK_USE_FILE@")
 SET(CTK_CMAKE_DIR "@CTK_CMAKE_DIR_CONFIG@")
 SET(CTK_CMAKE_UTILITIES_DIR "@CTK_CMAKE_UTILITIES_DIR_CONFIG@")
 
+# Update CMake module path so that calling "find_package(DCMTK)" works as expected 
+# after calling "find_package(CTK)"
+# Ideally projects like DCMTK or PythonQt should provide both "Config" and "Use" files.
+set(CMAKE_MODULE_PATH
+  ${CTK_CMAKE_UTILITIES_DIR}
+  ${CMAKE_MODULE_PATH}
+  )
+
 # TODO The list of available libraries.
 
 # TODO The list of available plugins.
