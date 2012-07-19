@@ -62,8 +62,8 @@ protected:
   QScopedPointer<ctkDirectoryListWidgetPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkDirectoryListWidget);
-  Q_DISABLE_COPY(ctkDirectoryListWidget);
+  Q_DECLARE_PRIVATE(ctkDirectoryListWidget)
+  Q_DISABLE_COPY(ctkDirectoryListWidget)
 };
 
 #endif

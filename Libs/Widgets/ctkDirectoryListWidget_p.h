@@ -35,7 +35,7 @@
 class ctkDirectoryListWidgetPrivate : public QObject, public Ui_ctkDirectoryListWidget
 {
   Q_OBJECT
-  Q_DECLARE_PUBLIC(ctkDirectoryListWidget);
+  Q_DECLARE_PUBLIC(ctkDirectoryListWidget)
 protected:
   ctkDirectoryListWidget* const q_ptr;
 public:

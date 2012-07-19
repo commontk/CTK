@@ -35,7 +35,7 @@ class ctkDirectoryListViewPrivate;
 class CTK_WIDGETS_EXPORT ctkDirectoryListView : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QStringList directoryList READ directoryList WRITE setDirectoryList NOTIFY directoryListChanged);
+  Q_PROPERTY(QStringList directoryList READ directoryList WRITE setDirectoryList NOTIFY directoryListChanged)
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -87,8 +87,8 @@ protected:
   QScopedPointer<ctkDirectoryListViewPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkDirectoryListView);
-  Q_DISABLE_COPY(ctkDirectoryListView);
+  Q_DECLARE_PRIVATE(ctkDirectoryListView)
+  Q_DISABLE_COPY(ctkDirectoryListView)
 
 };
 
