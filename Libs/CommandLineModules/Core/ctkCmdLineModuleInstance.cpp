@@ -24,12 +24,13 @@
 #include "ctkCmdLineModuleParameter.h"
 #include "ctkCmdLineModuleParameterGroup.h"
 #include "ctkCmdLineModuleReference.h"
-#include "ctkCmdLineModuleProcess_p.h"
+#include "ctkCmdLineModuleProcessTask.h"
 
 #include "ctkException.h"
 
 #include <QStringList>
 #include <QDebug>
+#include <QFuture>
 
 
 struct ctkCmdLineModuleInstancePrivate
@@ -146,16 +147,15 @@ QStringList ctkCmdLineModuleInstance::commandLineArguments() const
   return cmdLineArgs;
 }
 
-struct ctkCmdLineModuleFuture {};
-
-ctkCmdLineModuleFuture ctkCmdLineModuleInstance::run() const
+QFuture<QString> ctkCmdLineModuleInstance::run() const
 {
-//  // TODO: manage memory
   QStringList args = commandLineArguments();
-  qDebug() << args;
-//  ctkCmdLineModuleProcessRunner* moduleProcess =
-//      new ctkCmdLineModuleProcessRunner(d->ModuleReference.location(), args);
-//  return moduleProcess->start();
+
+  // Instances of ctkCmdLineModuleProcessTask are auto-deleted by the
+  // thread pool.
+  ctkCmdLineModuleProcessTask* moduleProcess =
+      new ctkCmdLineModuleProcessTask(d->ModuleReference.location(), args);
+  return moduleProcess->start();
 }
 
 

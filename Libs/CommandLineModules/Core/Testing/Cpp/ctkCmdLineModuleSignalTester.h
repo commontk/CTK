@@ -19,37 +19,34 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEPROCESS_P_H
-#define CTKCMDLINEMODULEPROCESS_P_H
+#ifndef CTKCMDLINEMODULESIGNALTESTER_H
+#define CTKCMDLINEMODULESIGNALTESTER_H
 
 #include <QObject>
-#include <QProcess>
+#include <QList>
 
-class ctkCmdLineModuleFuture;
-
-class ctkCmdLineModuleProcess : public QObject
+class ctkCmdLineModuleSignalTester : public QObject
 {
   Q_OBJECT
 
 public:
 
-  ctkCmdLineModuleProcess(const QString& location, const QStringList& args);
+  bool checkSignals(const QList<QString>& expectedSignals);
+  void dumpSignals(const QList<QString>& expectedSignals);
 
-  ctkCmdLineModuleFuture start();
 
-protected Q_SLOTS:
+public Q_SLOTS:
 
-  void processStarted();
+  void moduleStarted();
+  void moduleFinished();
 
-  void processFinished(int exitCode, QProcess::ExitStatus status);
-
-  void processError(QProcess::ProcessError);
+  void filterStarted(const QString& name, const QString& comment);
+  void filterProgress(float progress);
+  void filterFinished(const QString& name);
 
 private:
 
-  QProcess process;
-  const QString location;
-  const QStringList args;
+  QList<QString> events;
 };
 
-#endif // CTKCMDLINEMODULEPROCESSRUNNER_P_H
+#endif // CTKCMDLINEMODULESIGNALTESTER_H

@@ -16,8 +16,6 @@ set(KIT_export_directive "CTK_CMDLINEMODULECORE_EXPORT")
 set(KIT_SRCS
   ctkCmdLineModuleDescription.cpp
   ctkCmdLineModuleDescriptionPrivate.h
-  ctkCmdLineModuleFuture.h
-  #ctkCmdLineModuleFuture.cpp
   ctkCmdLineModuleInstance.cpp
   ctkCmdLineModuleInstanceFactory.cpp
   ctkCmdLineModuleManager.cpp
@@ -26,10 +24,10 @@ set(KIT_SRCS
   ctkCmdLineModuleParameterGroup.cpp
   ctkCmdLineModuleParameterGroupPrivate.h
   ctkCmdLineModuleParameterParsers_p.h
-  #ctkCmdLineModuleProcess.cpp
-  ctkCmdLineModuleProcess_p.h
+  ctkCmdLineModuleProcessTask.cpp
   ctkCmdLineModuleReference.cpp
   ctkCmdLineModuleReferencePrivate.cpp
+  ctkCmdLineModuleRunException.cpp
   ctkCmdLineModuleXmlException.cpp
   ctkCmdLineModuleXmlMsgHandler_p.h
   ctkCmdLineModuleXmlMsgHandler.cpp
@@ -42,7 +40,7 @@ set(KIT_SRCS
 # Headers that should run through moc
 set(KIT_MOC_SRCS
   ctkCmdLineModuleInstance.h
-  #ctkCmdLineModuleProcess_p.h
+  ctkCmdLineModuleProcessTask.h
 )
 
 # UI files

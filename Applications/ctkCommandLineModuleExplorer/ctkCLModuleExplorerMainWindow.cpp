@@ -26,8 +26,9 @@
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleInstance.h>
 #include <ctkCmdLineModuleInstanceFactoryQtGui.h>
-//#include <ctkCmdLineModuleFuture.h>
+#include <ctkException.h>
 
+#include <QFuture>
 #include <QDebug>
 
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
@@ -66,8 +67,6 @@ void ctkCLModuleExplorerMainWindow::addModule(const QString &location)
 
 void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 {
-  qDebug() << "Creating module command line...";
-
   ctkCmdLineModuleInstance* moduleInstance = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
   if (!moduleInstance)
   {
@@ -78,14 +77,16 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
   QStringList cmdLineArgs = moduleInstance->commandLineArguments();
   qDebug() << cmdLineArgs;
 
+  QFuture<QString> future = moduleInstance->run();
+  try
+  {
+    future.waitForFinished();
+  }
+  catch (const ctkException& e)
+  {
+    qDebug() << e.printStackTrace();
+  }
 
-  //ctkCmdLineModuleProcessFuture future = moduleInstance->run();
-  //future.waitForFinished();
-  //qDebug() << future.standardOutput();
-
-//  connect(&futureWatcher, SIGNAL(finished()), this, SLOT(futureFinished()));
-//  ctkCmdLineModuleProcessFuture future = moduleManager.run(moduleRef);
-//  futureWatcher.setFuture(future);
 }
 
 void ctkCLModuleExplorerMainWindow::futureFinished()

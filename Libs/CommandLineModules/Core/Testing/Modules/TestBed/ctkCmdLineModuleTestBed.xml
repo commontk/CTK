@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Testing</category>
+  <title>Test Bed</title>
+  <description>
+Configurable behaviour for testing purposes.
+  </description>
+  <version>1.0</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Sascha Zelzer</contributor>
+
+  <parameters>
+    <label>Runtime behaviour</label>
+    <description>Configures the runtime behaviour of this module.</description>
+    <integer>
+      <name>runtimeVar</name>
+      <longflag>runtime</longflag>
+      <description>An integer without constraints</description>
+      <label>Runtime (seconds)</label>
+      <default>1</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>60</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <file multiple="true">
+      <name>fileVar</name>
+      <index>0</index>
+      <description>Output files which will be reported as the progress text via a QFutureWatcher.</description>
+      <label>Output</label>
+      <channel>output</channel>
+    </file>
+    <integer>
+      <name>exitTimeVar</name>
+      <longflag>exitTime</longflag>
+      <description>The exit time of the module (premature finish).</description>
+      <label>Exit time</label>
+      <default>0</default>
+    </integer>
+    <integer>
+      <name>exitCodeVar</name>
+      <longflag>exitCode</longflag>
+      <description>The exit code of the module.</description>
+      <label>Exit code</label>
+      <default>0</default>
+    </integer>
+    <string>
+      <name>errorTextVar</name>
+      <longflag>errorText</longflag>
+      <description>Final error message (not displayed if the exit code is 0).</description>
+      <label>Error text</label>
+    </string>
+  </parameters>
+
+</executable>
+

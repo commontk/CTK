@@ -14,6 +14,7 @@ endfunction()
 
 set(_cmdline_modules
   Blur2dImage
+  TestBed
   Tour
 )
 
