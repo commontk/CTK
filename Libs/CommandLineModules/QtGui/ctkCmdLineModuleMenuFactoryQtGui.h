@@ -22,7 +22,7 @@
 #define CTKCMDLINEMODULEMENUFACTORYQTGUI_H
 
 #include <QMenu>
-#include <QHash>
+#include <QList>
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCommandLineModulesQtGuiExport.h"
 
@@ -40,10 +40,10 @@ public:
 
   /**
    * \brief Constructs a menu, for all the items in the QHash.
-   * \param hashMap Hash map of filename to reference.
+   * \param list List of references, from which to build a menu.
    * \return QMenu* a menu.
    */
-  QMenu* create(const QHash<QString, ctkCmdLineModuleReference>& hashMap);
+  QMenu* create(const QList<ctkCmdLineModuleReference>& list);
 };
 
 #endif // CTKCMDLINEMODULEINSTANCEFACTORYQTGUI_H

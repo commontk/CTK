@@ -37,12 +37,11 @@ ctkCmdLineModuleMenuFactoryQtGui::~ctkCmdLineModuleMenuFactoryQtGui()
 }
 
 //-----------------------------------------------------------------------------
-QMenu* ctkCmdLineModuleMenuFactoryQtGui::create(const QHash<QString, ctkCmdLineModuleReference>& hashMap)
+QMenu* ctkCmdLineModuleMenuFactoryQtGui::create(const QList<ctkCmdLineModuleReference>& references)
 {
   QMenu *menu = new QMenu();
   ctkCmdLineModuleReference ref;
 
-  QList<ctkCmdLineModuleReference> references = hashMap.values();
   foreach (ref, references)
   {
     menu->addAction(ref.description().title());
