@@ -25,6 +25,7 @@ set(KIT_SRCS
   ctkCmdLineModuleParameterGroupPrivate.h
   ctkCmdLineModuleParameterParsers_p.h
   ctkCmdLineModuleProcessTask.cpp
+  ctkCmdLineModuleXmlProgressWatcher.cpp
   ctkCmdLineModuleReference.cpp
   ctkCmdLineModuleReferencePrivate.cpp
   ctkCmdLineModuleRunException.cpp
@@ -42,6 +43,10 @@ set(KIT_MOC_SRCS
   ctkCmdLineModuleInstance.h
   ctkCmdLineModuleProcessTask.h
 )
+
+qt4_wrap_cpp(_dummy ctkCmdLineModuleXmlProgressWatcher.h)
+set_source_files_properties(ctkCmdLineModuleXmlProgressWatcher.cpp
+  PROPERTIES OBJECT_DEPENDS ${_dummy})
 
 # UI files
 set(KIT_UI_FORMS

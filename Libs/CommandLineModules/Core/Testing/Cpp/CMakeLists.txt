@@ -2,6 +2,7 @@ set(KIT ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkCmdLineModuleFutureTest.cpp
+  ctkCmdLineModuleXmlProgressWatcherTest.cpp
   )
 
 set(TestsToRun ${Tests})
