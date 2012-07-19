@@ -45,6 +45,7 @@ set(KIT_SRCS
 set(KIT_MOC_SRCS
   ctkCmdLineModuleDirectoryWatcher.h
   ctkCmdLineModuleDirectoryWatcherPrivate.h
+  ctkCmdLineModuleManager.h
   ctkCmdLineModuleInstance.h
   ctkCmdLineModuleProcessTask.h
 )

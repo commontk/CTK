@@ -26,18 +26,19 @@
 
 #include <QStringList>
 #include <QString>
+#include "ctkCmdLineModuleReference.h"
 
 struct ctkCmdLineModuleInstanceFactory;
 
 class ctkCmdLineModuleInstance;
-class ctkCmdLineModuleReference;
 class ctkCmdLineModuleManagerPrivate;
 
 /**
  * \ingroup CommandLineModulesCore
  */
-class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleManager
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleManager : public QObject
 {
+  Q_OBJECT
 
 public:
 
@@ -67,6 +68,11 @@ public:
   ctkCmdLineModuleInstance* createModuleInstance(const ctkCmdLineModuleReference& moduleRef);
 
   QList<ctkCmdLineModuleInstance*> moduleInstances(const ctkCmdLineModuleReference& moduleRef) const;
+
+Q_SIGNALS:
+
+  void moduleAdded(const ctkCmdLineModuleReference);
+  void moduleRemoved(const ctkCmdLineModuleReference);
 
 private:
 
