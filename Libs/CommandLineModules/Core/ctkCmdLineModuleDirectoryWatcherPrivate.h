@@ -67,17 +67,6 @@ public:
    */
   QStringList files();
 
-  /**
-   * \see ctkCmdLineModuleDirectoryWatcher::filenameToReferenceMap
-   */
-  QHash<QString, ctkCmdLineModuleReference> filenameToReferenceMap() const;
-
-Q_SIGNALS:
-
-  /**
-   * \brief Used to signal to ctkCmdLineModuleDirectoryWatcher public class.
-   */
-  void modulesChanged();
 
 public Q_SLOTS:
 
@@ -114,6 +103,12 @@ private:
    * \return a list of executables, denoted by their absolute path.
    */
   QStringList extractCurrentlyWatchedFilenamesInDirectory(const QString& directory);
+
+  /**
+   * \brief Returns a list of executable files (not necessarily valid command line clients) in a directory.
+   * \param directory A directory
+   * \return QStringList a list of absolute path names to executable files
+   */
   QStringList getExecutablesInDirectory(const QString& directory);
 
   /**

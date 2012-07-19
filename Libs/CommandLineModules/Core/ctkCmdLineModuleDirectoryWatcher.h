@@ -72,25 +72,6 @@ public:
    */
   QStringList files();
 
-  /**
-   * \brief Retrieves a map of filenames (command line apps) and their command line module reference.
-   */
-  QHash<QString, ctkCmdLineModuleReference> filenameToReferenceMap() const;
-
-Q_SIGNALS:
-
-  /**
-   * \brief Signals that the modules have changed, so GUI's can re-build their menus.
-   */
-  void modulesChanged();
-
-private Q_SLOTS:
-
-  /**
-   * \brief Private slot, so we can connect to the ctkCmdLineModuleDirectoryWatcherPrivate::modulesChanged signal.
-   */
-  void onModulesChanged();
-
 private:
 
   QScopedPointer<ctkCmdLineModuleDirectoryWatcherPrivate> d;

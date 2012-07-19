@@ -36,7 +36,6 @@
 ctkCmdLineModuleDirectoryWatcher::ctkCmdLineModuleDirectoryWatcher(ctkCmdLineModuleManager* moduleManager)
   : d(new ctkCmdLineModuleDirectoryWatcherPrivate(moduleManager))
 {
-  connect(d.data(), SIGNAL(modulesChanged()), this, SLOT(onModulesChanged()));
 }
 
 
@@ -76,19 +75,6 @@ QStringList ctkCmdLineModuleDirectoryWatcher::files()
 
 
 //-----------------------------------------------------------------------------
-QHash<QString, ctkCmdLineModuleReference> ctkCmdLineModuleDirectoryWatcher::filenameToReferenceMap() const
-{
-  return d->filenameToReferenceMap();
-}
-
-
-//-----------------------------------------------------------------------------
-void ctkCmdLineModuleDirectoryWatcher::onModulesChanged()
-{
-  emit modulesChanged();
-}
-
-//-----------------------------------------------------------------------------
 // ctkCmdLineModuleDirectoryWatcherPrivate methods
 
 
@@ -120,13 +106,6 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::setDebug(const bool& debug)
 
 
 //-----------------------------------------------------------------------------
-QHash<QString, ctkCmdLineModuleReference> ctkCmdLineModuleDirectoryWatcherPrivate::filenameToReferenceMap() const
-{
-  return this->MapFileNameToReference;
-}
-
-
-//-----------------------------------------------------------------------------
 QStringList ctkCmdLineModuleDirectoryWatcherPrivate::directories()
 {
   return this->FileSystemWatcher->directories();
@@ -146,7 +125,6 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::setDirectories(const QStringList& 
   QStringList validDirectories = this->filterInvalidDirectories(directories);
   this->setModuleReferences(validDirectories);
   this->updateWatchedPaths(validDirectories, this->MapFileNameToReference.keys());
-  emit modulesChanged();
 }
 
 
@@ -359,7 +337,6 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::onFileChanged(const QString& path)
   if (ref)
   {
     if (this->Debug) qDebug() << "Reloaded " << path;
-    emit modulesChanged();
   }
   else
   {
@@ -381,7 +358,6 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::onDirectoryChanged(const QString &
     updateModuleReferences(path);
 
     if (this->Debug) qDebug() << "Reloaded modules in" << path;
-    emit modulesChanged();
   }
   else
   {
