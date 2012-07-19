@@ -46,6 +46,9 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
 
   ctkDICOMDatabase database;
   QDir databaseDirectory = QDir::temp();
+  databaseDirectory.remove("ctkDICOMDatabase.sql");
+  databaseDirectory.remove("ctkDICOMTagCache.sql");
+
   QFileInfo databaseFile(databaseDirectory, QString("database.test"));
   database.openDatabase(databaseFile.absoluteFilePath());
 
@@ -129,15 +132,6 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     }
 
 
-  QString knownSeriesDescription("3D Cor T1 FAST IR-prepped GRE");
-
-  QString foundSeriesDescription = database.instanceValue(instanceUID, tag);
-
-  if (foundSeriesDescription != knownSeriesDescription)
-    {
-    std::cerr << "ctkDICOMDatabase: invalid element value returned" << std::endl;
-    return EXIT_FAILURE;
-    }
 
   //
   // Test the tag cache
@@ -161,11 +155,14 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+
   if (database.cachedTag(instanceUID, tag) != QString(""))
     {
     std::cerr << "ctkDICOMDatabase: tag cache should return empty string for unknown instance tag" << std::endl;
     return EXIT_FAILURE;
     }
+
+  QString knownSeriesDescription("3D Cor T1 FAST IR-prepped GRE");
 
   if (!database.cacheTag(instanceUID, tag, knownSeriesDescription))
     {
@@ -176,6 +173,15 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
   if (database.cachedTag(instanceUID, tag) != knownSeriesDescription)
     {
     std::cerr << "ctkDICOMDatabase: could not retrieve cached tag" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+  QString foundSeriesDescription = database.instanceValue(instanceUID, tag);
+
+  if (foundSeriesDescription != knownSeriesDescription)
+    {
+    std::cerr << "ctkDICOMDatabase: invalid element value returned" << std::endl;
     return EXIT_FAILURE;
     }
 
