@@ -50,7 +50,6 @@ ctkCmdLineModuleManager::ctkCmdLineModuleManager(ctkCmdLineModuleInstanceFactory
 
 ctkCmdLineModuleManager::~ctkCmdLineModuleManager()
 {
-  delete d->InstanceFactory;
 }
 
 ctkCmdLineModuleReference
