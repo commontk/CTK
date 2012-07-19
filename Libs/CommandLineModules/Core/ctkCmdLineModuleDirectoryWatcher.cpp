@@ -21,12 +21,14 @@
 #include "ctkCmdLineModuleDirectoryWatcher.h"
 #include "ctkCmdLineModuleDirectoryWatcherPrivate.h"
 #include "ctkCmdLineModuleManager.h"
+
 #include <QObject>
 #include <QFileSystemWatcher>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QDebug>
+
 #include <iostream>
 
 //-----------------------------------------------------------------------------
@@ -36,6 +38,7 @@
 ctkCmdLineModuleDirectoryWatcher::ctkCmdLineModuleDirectoryWatcher(ctkCmdLineModuleManager* moduleManager)
   : d(new ctkCmdLineModuleDirectoryWatcherPrivate(moduleManager))
 {
+  Q_ASSERT(moduleManager);
 }
 
 
@@ -102,6 +105,7 @@ ctkCmdLineModuleDirectoryWatcherPrivate::~ctkCmdLineModuleDirectoryWatcherPrivat
 void ctkCmdLineModuleDirectoryWatcherPrivate::setDebug(const bool& debug)
 {
   this->Debug = debug;
+  this->ModuleManager->setVerboseOutput(debug);
 }
 
 
@@ -309,7 +313,7 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::updateModuleReferences(const QStri
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleReference ctkCmdLineModuleDirectoryWatcherPrivate::loadModule(const QString& pathToExecutable)
 {
-  ctkCmdLineModuleReference ref = this->ModuleManager->registerModule(pathToExecutable, !this->Debug);
+  ctkCmdLineModuleReference ref = this->ModuleManager->registerModule(pathToExecutable);
   if (ref)
   {
     this->MapFileNameToReference[pathToExecutable] = ref;

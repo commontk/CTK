@@ -59,6 +59,9 @@ public:
 
   ~ctkCmdLineModuleManager();
 
+  void setVerboseOutput(bool verbose);
+  bool verboseOutput() const;
+
   ctkCmdLineModuleReference registerModule(const QString& location);
   void unregisterModule(const ctkCmdLineModuleReference& moduleRef);
 

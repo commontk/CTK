@@ -36,9 +36,14 @@
 
 struct ctkCmdLineModuleManagerPrivate
 {
+  ctkCmdLineModuleManagerPrivate()
+    : Verbose(false)
+  {}
+
   ctkCmdLineModuleInstanceFactory* InstanceFactory;
 
   QHash<QString, ctkCmdLineModuleReference> Cache;
+  bool Verbose;
 };
 
 ctkCmdLineModuleManager::ctkCmdLineModuleManager(ctkCmdLineModuleInstanceFactory *instanceFactory,
@@ -50,6 +55,16 @@ ctkCmdLineModuleManager::ctkCmdLineModuleManager(ctkCmdLineModuleInstanceFactory
 
 ctkCmdLineModuleManager::~ctkCmdLineModuleManager()
 {
+}
+
+void ctkCmdLineModuleManager::setVerboseOutput(bool verbose)
+{
+  d->Verbose = verbose;
+}
+
+bool ctkCmdLineModuleManager::verboseOutput() const
+{
+  return d->Verbose;
 }
 
 ctkCmdLineModuleReference
@@ -64,14 +79,15 @@ ctkCmdLineModuleManager::registerModule(const QString& location)
   if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
       process.error() != QProcess::UnknownError)
   {
-    qWarning() << "The executable at" << location << "could not be started:" << process.errorString();
+    if(d->Verbose)
+    {
+      qWarning() << "The executable at" << location << "could not be started:" << process.errorString();
+    }
     return ref;
   }
 
   process.waitForReadyRead();
   QByteArray xml = process.readAllStandardOutput();
-
-  qDebug() << xml;
 
   // validate the outputted xml description
   QBuffer input(&xml);
@@ -80,13 +96,14 @@ ctkCmdLineModuleManager::registerModule(const QString& location)
   ctkCmdLineModuleXmlValidator validator(&input);
   if (!validator.validateInput())
   {
-    qCritical() << validator.errorString();
+    if(d->Verbose)
+    {
+      qWarning() << validator.errorString();
+    }
     return ref;
   }
 
   ref.d->RawXmlDescription = xml;
-//  ref.d->objectRepresentation = descriptionFactory->createObjectRepresentationFromXML(ref.d->xml);
-//  ref.d->setGUI(descriptionFactory->createGUIFromXML(ref.d->xml));
 
   d->Cache[location] = ref;
 

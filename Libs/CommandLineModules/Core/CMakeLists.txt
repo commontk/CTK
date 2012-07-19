@@ -18,6 +18,7 @@ set(KIT_SRCS
   ctkCmdLineModuleDescription.cpp
   ctkCmdLineModuleDescriptionPrivate.h
   ctkCmdLineModuleDirectoryWatcher.cpp
+  ctkCmdLineModuleDirectoryWatcherPrivate.h
   ctkCmdLineModuleInstance.cpp
   ctkCmdLineModuleInstanceFactory.cpp
   ctkCmdLineModuleManager.cpp
