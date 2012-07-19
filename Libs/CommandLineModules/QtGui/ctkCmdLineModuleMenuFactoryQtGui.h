@@ -46,4 +46,4 @@ public:
   QMenu* create(const QList<ctkCmdLineModuleReference>& list);
 };
 
-#endif // CTKCMDLINEMODULEFACTORYQTGUI_H
+#endif // CTKCMDLINEMODULEMENUFACTORYQTGUI_H
