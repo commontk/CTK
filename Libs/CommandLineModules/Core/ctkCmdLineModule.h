@@ -19,8 +19,8 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEINSTANCE_H
-#define CTKCMDLINEMODULEINSTANCE_H
+#ifndef CTKCMDLINEMODULE_H
+#define CTKCMDLINEMODULE_H
 
 #include "ctkCommandLineModulesCoreExport.h"
 
@@ -30,18 +30,18 @@ template<class K, class V> class QHash;
 template<class T> class QFuture;
 
 class ctkCmdLineModuleReference;
-class ctkCmdLineModuleInstancePrivate;
+class ctkCmdLineModulePrivate;
 
 /**
  * \ingroup CommandLineModulesCore
  */
-class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleInstance : public QObject
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModule : public QObject
 {
   Q_OBJECT
 
 public:
 
-  ~ctkCmdLineModuleInstance();
+  ~ctkCmdLineModule();
 
   virtual QObject* guiHandle() const = 0;
 
@@ -65,14 +65,14 @@ public:
 
 protected:
 
-  ctkCmdLineModuleInstance(const ctkCmdLineModuleReference& moduleRef);
+  ctkCmdLineModule(const ctkCmdLineModuleReference& moduleRef);
 
 private:
 
-  friend class ctkCmdLineModuleInstancePrivate;
+  friend class ctkCmdLineModulePrivate;
 
-  QScopedPointer<ctkCmdLineModuleInstancePrivate> d;
+  QScopedPointer<ctkCmdLineModulePrivate> d;
 
 };
 
-#endif // CTKCMDLINEMODULEINSTANCE_H
+#endif // CTKCMDLINEMODULE_H

@@ -63,7 +63,7 @@ private:
 
   ctkCmdLineModuleManager moduleManager;
 
-  QHash<int, ctkCmdLineModuleInstance*> mapTabToModuleRef;
+  QHash<int, ctkCmdLineModule*> mapTabToModuleRef;
 
   //ctkCmdLineModuleProcessFutureWatcher futureWatcher;
 };

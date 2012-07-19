@@ -19,7 +19,7 @@
   
 =============================================================================*/
 
-#include "ctkCmdLineModuleInstanceQtGui_p.h"
+#include "ctkCmdLineModuleQtGui_p.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleXslTransform.h"
 #include "ctkCmdLineModuleObjectTreeWalker_p.h"
@@ -31,13 +31,13 @@
 
 #include <QDebug>
 
-ctkCmdLineModuleInstanceQtGui::ctkCmdLineModuleInstanceQtGui(const ctkCmdLineModuleReference& moduleRef)
-  : ctkCmdLineModuleInstance(moduleRef),
+ctkCmdLineModuleQtGui::ctkCmdLineModuleQtGui(const ctkCmdLineModuleReference& moduleRef)
+  : ctkCmdLineModule(moduleRef),
     WidgetTree(NULL)
 {
 }
 
-QObject* ctkCmdLineModuleInstanceQtGui::guiHandle() const
+QObject* ctkCmdLineModuleQtGui::guiHandle() const
 {
   if (WidgetTree) return WidgetTree;
 
@@ -59,7 +59,7 @@ QObject* ctkCmdLineModuleInstanceQtGui::guiHandle() const
   return WidgetTree;
 }
 
-QVariant ctkCmdLineModuleInstanceQtGui::value(const QString &parameter) const
+QVariant ctkCmdLineModuleQtGui::value(const QString &parameter) const
 {
   if (!WidgetTree) return QVariant();
 
@@ -74,7 +74,7 @@ QVariant ctkCmdLineModuleInstanceQtGui::value(const QString &parameter) const
   return QVariant();
 }
 
-void ctkCmdLineModuleInstanceQtGui::setValue(const QString &parameter, const QVariant &value)
+void ctkCmdLineModuleQtGui::setValue(const QString &parameter, const QVariant &value)
 {
   if (!WidgetTree) return;
 
@@ -89,7 +89,7 @@ void ctkCmdLineModuleInstanceQtGui::setValue(const QString &parameter, const QVa
   }
 }
 
-QList<QString> ctkCmdLineModuleInstanceQtGui::parameterNames() const
+QList<QString> ctkCmdLineModuleQtGui::parameterNames() const
 {
   if (!ParameterNames.empty()) return ParameterNames;
 
@@ -97,7 +97,7 @@ QList<QString> ctkCmdLineModuleInstanceQtGui::parameterNames() const
   // if it has already created (otherwise fall back to the superclass
   // implementation.
   // This avoids creating a ctkCmdLineModuleDescription instance.
-  if (WidgetTree == 0) return ctkCmdLineModuleInstance::parameterNames();
+  if (WidgetTree == 0) return ctkCmdLineModule::parameterNames();
 
   ctkCmdLineModuleObjectTreeWalker walker(WidgetTree);
   while(walker.readNextParameter())

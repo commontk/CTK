@@ -19,8 +19,8 @@ set(KIT_SRCS
   ctkCmdLineModuleDescription_p.h
   ctkCmdLineModuleDirectoryWatcher.cpp
   ctkCmdLineModuleDirectoryWatcher_p.h
-  ctkCmdLineModuleInstance.cpp
-  ctkCmdLineModuleInstanceFactory.cpp
+  ctkCmdLineModule.cpp
+  ctkCmdLineModuleFactory.cpp
   ctkCmdLineModuleManager.cpp
   ctkCmdLineModuleParameter.cpp
   ctkCmdLineModuleParameterGroup.cpp
@@ -45,7 +45,7 @@ set(KIT_MOC_SRCS
   ctkCmdLineModuleDirectoryWatcher.h
   ctkCmdLineModuleDirectoryWatcher_p.h
   ctkCmdLineModuleManager.h
-  ctkCmdLineModuleInstance.h
+  ctkCmdLineModule.h
   ctkCmdLineModuleProcessTask.h
 )
 

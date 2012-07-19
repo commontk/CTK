@@ -19,8 +19,35 @@
   
 =============================================================================*/
 
-#include "ctkCmdLineModuleInstanceFactory.h"
+#ifndef CTKCMDLINEMODULEQTGUI_H
+#define CTKCMDLINEMODULEQTGUI_H
 
-ctkCmdLineModuleInstanceFactory::~ctkCmdLineModuleInstanceFactory()
+#include <ctkCmdLineModule.h>
+
+class ctkCmdLineModuleReference;
+
+class ctkCmdLineModuleQtGui : public ctkCmdLineModule
 {
-}
+
+public:
+
+  ctkCmdLineModuleQtGui(const ctkCmdLineModuleReference& moduleRef);
+
+  // ctkCmdLineModule overrides
+
+  virtual QObject* guiHandle() const;
+
+  virtual QVariant value(const QString& parameter) const;
+  virtual void setValue(const QString& parameter, const QVariant& value);
+
+  virtual QList<QString> parameterNames() const;
+
+private:
+
+  mutable QWidget* WidgetTree;
+
+  // Cache the list of parameter names
+  mutable QList<QString> ParameterNames;
+};
+
+#endif // CTKCMDLINEMODULEQTGUI_H

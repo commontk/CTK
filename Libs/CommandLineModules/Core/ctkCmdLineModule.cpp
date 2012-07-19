@@ -19,7 +19,7 @@
   
 =============================================================================*/
 
-#include "ctkCmdLineModuleInstance.h"
+#include "ctkCmdLineModule.h"
 #include "ctkCmdLineModuleDescription.h"
 #include "ctkCmdLineModuleParameter.h"
 #include "ctkCmdLineModuleParameterGroup.h"
@@ -33,9 +33,9 @@
 #include <QFuture>
 #include <QVariant>
 
-struct ctkCmdLineModuleInstancePrivate
+struct ctkCmdLineModulePrivate
 {
-  ctkCmdLineModuleInstancePrivate(ctkCmdLineModuleInstance* qq,
+  ctkCmdLineModulePrivate(ctkCmdLineModule* qq,
                                   const ctkCmdLineModuleReference& moduleRef)
     : ModuleReference(moduleRef), q(qq)
   {
@@ -53,21 +53,21 @@ struct ctkCmdLineModuleInstancePrivate
 
 private:
 
-  ctkCmdLineModuleInstance* q;
+  ctkCmdLineModule* q;
 
 };
 
 
-ctkCmdLineModuleInstance::ctkCmdLineModuleInstance(const ctkCmdLineModuleReference& moduleRef)
-  : d(new ctkCmdLineModuleInstancePrivate(this, moduleRef))
+ctkCmdLineModule::ctkCmdLineModule(const ctkCmdLineModuleReference& moduleRef)
+  : d(new ctkCmdLineModulePrivate(this, moduleRef))
 {
 }
 
-ctkCmdLineModuleInstance::~ctkCmdLineModuleInstance()
+ctkCmdLineModule::~ctkCmdLineModule()
 {
 }
 
-QList<QString> ctkCmdLineModuleInstance::parameterNames() const
+QList<QString> ctkCmdLineModule::parameterNames() const
 {
   if (!d->ParameterNames.isEmpty()) return d->ParameterNames;
 
@@ -82,17 +82,17 @@ QList<QString> ctkCmdLineModuleInstance::parameterNames() const
   return d->ParameterNames;
 }
 
-ctkCmdLineModuleReference ctkCmdLineModuleInstance::moduleReference() const
+ctkCmdLineModuleReference ctkCmdLineModule::moduleReference() const
 {
   return d->ModuleReference;
 }
 
-QString ctkCmdLineModuleInstance::location() const
+QString ctkCmdLineModule::location() const
 {
   return d->ModuleReference.location();
 }
 
-QStringList ctkCmdLineModuleInstance::commandLineArguments() const
+QStringList ctkCmdLineModule::commandLineArguments() const
 {
   QStringList cmdLineArgs;
   QHash<int, QString> indexedArgs;
@@ -147,7 +147,7 @@ QStringList ctkCmdLineModuleInstance::commandLineArguments() const
   return cmdLineArgs;
 }
 
-QFuture<QString> ctkCmdLineModuleInstance::run() const
+QFuture<QString> ctkCmdLineModule::run() const
 {
   QStringList args = commandLineArguments();
 
@@ -159,7 +159,7 @@ QFuture<QString> ctkCmdLineModuleInstance::run() const
 }
 
 
-QHash<QString, QVariant> ctkCmdLineModuleInstance::values() const
+QHash<QString, QVariant> ctkCmdLineModule::values() const
 {
   QHash<QString,QVariant> result;
   foreach(QString parameterName, parameterNames())
@@ -169,7 +169,7 @@ QHash<QString, QVariant> ctkCmdLineModuleInstance::values() const
   return result;
 }
 
-void ctkCmdLineModuleInstance::setValues(const QHash<QString, QVariant> &values)
+void ctkCmdLineModule::setValues(const QHash<QString, QVariant> &values)
 {
   QHashIterator<QString,QVariant> iter(values);
   while(iter.hasNext())

@@ -19,20 +19,8 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEINSTANCEFACTORYQTGUI_H
-#define CTKCMDLINEMODULEINSTANCEFACTORYQTGUI_H
+#include "ctkCmdLineModuleFactory.h"
 
-#include "ctkCmdLineModuleInstanceFactory.h"
-
-#include "ctkCommandLineModulesQtGuiExport.h"
-
-class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleInstanceFactoryQtGui
-    : public ctkCmdLineModuleInstanceFactory
+ctkCmdLineModuleFactory::~ctkCmdLineModuleFactory()
 {
-public:
-
-  ctkCmdLineModuleInstance* create(const ctkCmdLineModuleReference& moduleRef);
-
-};
-
-#endif // CTKCMDLINEMODULEINSTANCEFACTORYQTGUI_H
+}

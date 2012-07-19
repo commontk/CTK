@@ -24,7 +24,7 @@
 #include "ctkCmdLineModuleXmlValidator.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleReference_p.h"
-#include "ctkCmdLineModuleInstanceFactory.h"
+#include "ctkCmdLineModuleFactory.h"
 
 #include <ctkException.h>
 
@@ -40,13 +40,13 @@ struct ctkCmdLineModuleManagerPrivate
     : Verbose(false)
   {}
 
-  ctkCmdLineModuleInstanceFactory* InstanceFactory;
+  ctkCmdLineModuleFactory* InstanceFactory;
 
   QHash<QString, ctkCmdLineModuleReference> Cache;
   bool Verbose;
 };
 
-ctkCmdLineModuleManager::ctkCmdLineModuleManager(ctkCmdLineModuleInstanceFactory *instanceFactory,
+ctkCmdLineModuleManager::ctkCmdLineModuleManager(ctkCmdLineModuleFactory *instanceFactory,
                                                  ValidationMode validationMode)
   : d(new ctkCmdLineModuleManagerPrivate)
 {
@@ -127,14 +127,14 @@ QList<ctkCmdLineModuleReference> ctkCmdLineModuleManager::moduleReferences() con
   return d->Cache.values();
 }
 
-ctkCmdLineModuleInstance*
-ctkCmdLineModuleManager::createModuleInstance(const ctkCmdLineModuleReference& moduleRef)
+ctkCmdLineModule*
+ctkCmdLineModuleManager::createModule(const ctkCmdLineModuleReference& moduleRef)
 {
   return d->InstanceFactory->create(moduleRef);
 }
 
-QList<ctkCmdLineModuleInstance*>
-ctkCmdLineModuleManager::moduleInstances(const ctkCmdLineModuleReference& moduleRef) const
+QList<ctkCmdLineModule*>
+ctkCmdLineModuleManager::modules(const ctkCmdLineModuleReference& moduleRef) const
 {
   throw ctkException("not implemented yet");
 }

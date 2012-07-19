@@ -28,9 +28,9 @@
 #include <QString>
 #include "ctkCmdLineModuleReference.h"
 
-struct ctkCmdLineModuleInstanceFactory;
+struct ctkCmdLineModuleFactory;
 
-class ctkCmdLineModuleInstance;
+class ctkCmdLineModule;
 class ctkCmdLineModuleManagerPrivate;
 
 /**
@@ -54,7 +54,7 @@ public:
     WEAK_VALIDATION
   };
 
-  ctkCmdLineModuleManager(ctkCmdLineModuleInstanceFactory* descriptionFactory,
+  ctkCmdLineModuleManager(ctkCmdLineModuleFactory* descriptionFactory,
                           ValidationMode = STRICT_VALIDATION);
 
   ~ctkCmdLineModuleManager();
@@ -68,9 +68,9 @@ public:
   ctkCmdLineModuleReference moduleReference(const QString& location) const;
   QList<ctkCmdLineModuleReference> moduleReferences() const;
 
-  ctkCmdLineModuleInstance* createModuleInstance(const ctkCmdLineModuleReference& moduleRef);
+  ctkCmdLineModule* createModule(const ctkCmdLineModuleReference& moduleRef);
 
-  QList<ctkCmdLineModuleInstance*> moduleInstances(const ctkCmdLineModuleReference& moduleRef) const;
+  QList<ctkCmdLineModule*> modules(const ctkCmdLineModuleReference& moduleRef) const;
 
 Q_SIGNALS:
 

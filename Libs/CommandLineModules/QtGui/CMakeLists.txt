@@ -14,9 +14,9 @@ set(KIT_export_directive "CTK_CMDLINEMODULEQTGUI_EXPORT")
 
 # Source files
 set(KIT_SRCS
-  ctkCmdLineModuleInstanceFactoryQtGui.cpp
-  ctkCmdLineModuleInstanceQtGui_p.h
-  ctkCmdLineModuleInstanceQtGui.cpp
+  ctkCmdLineModuleFactoryQtGui.cpp
+  ctkCmdLineModuleQtGui_p.h
+  ctkCmdLineModuleQtGui.cpp
   ctkCmdLineModuleMenuFactoryQtGui.cpp
   ctkCmdLineModuleObjectTreeWalker_p.h
   ctkCmdLineModuleObjectTreeWalker.cpp

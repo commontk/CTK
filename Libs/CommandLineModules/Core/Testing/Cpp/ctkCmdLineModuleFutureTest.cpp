@@ -20,8 +20,8 @@
 =============================================================================*/
 
 #include <ctkCmdLineModuleManager.h>
-#include <ctkCmdLineModuleInstanceFactory.h>
-#include <ctkCmdLineModuleInstance.h>
+#include <ctkCmdLineModuleFactory.h>
+#include <ctkCmdLineModule.h>
 #include <ctkCmdLineModuleReference.h>
 #include <ctkCmdLineModuleDescription.h>
 #include <ctkCmdLineModuleParameter.h>
@@ -40,15 +40,15 @@
 #include <cstdlib>
 
 
-class ctkCmdLineModuleTestInstanceFactory : public ctkCmdLineModuleInstanceFactory
+class ctkCmdLineModuleTestInstanceFactory : public ctkCmdLineModuleFactory
 {
 public:
 
-  virtual ctkCmdLineModuleInstance* create(const ctkCmdLineModuleReference& moduleRef)
+  virtual ctkCmdLineModule* create(const ctkCmdLineModuleReference& moduleRef)
   {
-    struct ModuleTestInstance : public ctkCmdLineModuleInstance
+    struct ModuleTestInstance : public ctkCmdLineModule
     {
-      ModuleTestInstance(const ctkCmdLineModuleReference& moduleRef) : ctkCmdLineModuleInstance(moduleRef) {}
+      ModuleTestInstance(const ctkCmdLineModuleReference& moduleRef) : ctkCmdLineModule(moduleRef) {}
 
       virtual QObject* guiHandle() const { return NULL; }
 
@@ -82,7 +82,7 @@ int ctkCmdLineModuleFutureTest(int argc, char* argv[])
     qCritical() << "Module at" << moduleFilename << "could not be registered";
   }
 
-  ctkCmdLineModuleInstance* moduleInstance = manager.createModuleInstance(moduleRef);
+  ctkCmdLineModule* module = manager.createModule(moduleRef);
 
   QList<QString> expectedSignals;
   expectedSignals.push_back("module.started");
@@ -94,7 +94,7 @@ int ctkCmdLineModuleFutureTest(int argc, char* argv[])
   QObject::connect(&watcher, SIGNAL(started()), &signalTester, SLOT(moduleStarted()));
   QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
 
-  QFuture<QString> future = moduleInstance->run();
+  QFuture<QString> future = module->run();
   watcher.setFuture(future);
 
   future.waitForFinished();
@@ -102,7 +102,7 @@ int ctkCmdLineModuleFutureTest(int argc, char* argv[])
   // process pending events
   QCoreApplication::processEvents();
 
-  delete moduleInstance;
+  delete module;
 
   if (!signalTester.checkSignals(expectedSignals))
   {

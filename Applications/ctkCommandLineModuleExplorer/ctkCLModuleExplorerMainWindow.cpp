@@ -24,8 +24,8 @@
 
 #include <ctkCmdLineModuleXmlValidator.h>
 #include <ctkCmdLineModuleManager.h>
-#include <ctkCmdLineModuleInstance.h>
-#include <ctkCmdLineModuleInstanceFactoryQtGui.h>
+#include <ctkCmdLineModule.h>
+#include <ctkCmdLineModuleFactoryQtGui.h>
 #include <ctkException.h>
 
 #include <QFuture>
@@ -34,7 +34,7 @@
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkCLModuleExplorerMainWindow),
-  moduleManager(new ctkCmdLineModuleInstanceFactoryQtGui())
+  moduleManager(new ctkCmdLineModuleFactoryQtGui())
 {
   ui->setupUi(this);
 }
@@ -46,14 +46,14 @@ ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
 
 void ctkCLModuleExplorerMainWindow::addModuleTab(const ctkCmdLineModuleReference& moduleRef)
 {
-  ctkCmdLineModuleInstance* moduleInstance = moduleManager.createModuleInstance(moduleRef);
-  if (!moduleInstance) return;
+  ctkCmdLineModule* module = moduleManager.createModule(moduleRef);
+  if (!module) return;
 
-  QObject* guiHandle = moduleInstance->guiHandle();
+  QObject* guiHandle = module->guiHandle();
 
   QWidget* widget = qobject_cast<QWidget*>(guiHandle);
   int tabIndex = ui->mainTabWidget->addTab(widget, widget->objectName());
-  mapTabToModuleRef[tabIndex] = moduleInstance;
+  mapTabToModuleRef[tabIndex] = module;
 }
 
 void ctkCLModuleExplorerMainWindow::addModule(const QString &location)
@@ -67,17 +67,17 @@ void ctkCLModuleExplorerMainWindow::addModule(const QString &location)
 
 void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 {
-  ctkCmdLineModuleInstance* moduleInstance = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
-  if (!moduleInstance)
+  ctkCmdLineModule* module = mapTabToModuleRef[ui->mainTabWidget->currentIndex()];
+  if (!module)
   {
     qWarning() << "Invalid module instance";
     return;
   }
 
-  QStringList cmdLineArgs = moduleInstance->commandLineArguments();
+  QStringList cmdLineArgs = module->commandLineArguments();
   qDebug() << cmdLineArgs;
 
-  QFuture<QString> future = moduleInstance->run();
+  QFuture<QString> future = module->run();
   try
   {
     future.waitForFinished();
