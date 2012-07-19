@@ -283,11 +283,11 @@
   
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    INTEGER-VECTOR, DOUBLE-VECTOR, FLOAT-VECTOR, STRING-VECTOR parameter (default: QLineEdit)
+    STRING, INTEGER-VECTOR, DOUBLE-VECTOR, FLOAT-VECTOR, STRING-VECTOR parameter (default: QLineEdit)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
-  <xsl:template match="parameters/*[name()=('integer-vector', 'float-vector', 'double-vector', 'string-vector')]">
+  <xsl:template match="parameters/*[name()=('string', 'integer-vector', 'float-vector', 'double-vector', 'string-vector')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
       <widget class="QLineEdit"  name="parameter:{name}">
