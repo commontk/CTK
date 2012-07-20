@@ -443,3 +443,8 @@ void ctkDICOMQueryRetrieveWidget::onSelectionChanged(const QItemSelection &selec
   d->RetrieveButton->setEnabled(d->results->selectionModel()->hasSelection());
 }
 
+QMap<QString,QVariant> ctkDICOMQueryRetrieveWidget::getServerParameters()
+{
+    Q_D(ctkDICOMQueryRetrieveWidget);
+    return d->ServerNodeWidget->parameters();
+}
