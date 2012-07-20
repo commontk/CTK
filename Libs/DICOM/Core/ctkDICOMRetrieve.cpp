@@ -216,11 +216,6 @@ bool ctkDICOMRetrievePrivate::initializeSCU( const QString& studyInstanceUID,
                                          const RetrieveType retrieveType,
                                          DcmDataset *retrieveParameters)
 {
-  if ( !this->Database )
-    {
-    logger.error ( "No Database for retrieve transaction" );
-    return false;
-    }
 
   // If we like to query another server than before, be sure to disconnect first
   if (this->SCU.isConnected() && this->ConnectionParamsChanged)
