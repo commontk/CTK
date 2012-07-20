@@ -25,6 +25,9 @@ endif()
 
 set(PYTHONQT_FOUND 0)
 if(PYTHONQT_INCLUDE_DIR AND PYTHONQT_LIBRARY)
+  # Currently CMake'ified PythonQt only supports building against a python Release build. 
+  # This applies independently of CTK build type (Release, Debug, ...)
+  add_definitions(-DPYTHONQT_USE_RELEASE_PYTHON_FALLBACK)
   set(PYTHONQT_FOUND 1)
   set(PYTHONQT_LIBRARIES ${PYTHONQT_LIBRARY} ${PYTHONQT_LIBUTIL})
 endif()
