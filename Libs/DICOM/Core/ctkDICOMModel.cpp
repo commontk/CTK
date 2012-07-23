@@ -497,7 +497,16 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
     // invalid).
     return QString();
     }
-  return d->value(parentIndex, dataIndex.row(), field);
+
+  QVariant dataValue=d->value(parentIndex, dataIndex.row(), field);
+  if (dataValue.isNull())
+  {
+    if (columnName.compare("Name")==0)
+    {
+      return QString("No description");
+    }
+  }
+  return dataValue;
 }
 
 //------------------------------------------------------------------------------
