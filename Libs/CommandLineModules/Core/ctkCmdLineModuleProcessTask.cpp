@@ -21,28 +21,80 @@
 
 #include "ctkCmdLineModuleProcessTask.h"
 #include "ctkCmdLineModuleRunException.h"
+#include "ctkCmdLineModuleXmlProgressWatcher.h"
+#include "ctkCmdLineModuleFuture.h"
 
 #include <QDebug>
 #include <QEventLoop>
 #include <QThreadPool>
 #include <QProcess>
-#include <QFuture>
 
+ctkCmdLineModuleProcessProgressWatcher::ctkCmdLineModuleProcessProgressWatcher(QProcess& process, const QString& location,
+                                                                               ctkCmdLineModuleFutureInterface &futureInterface)
+  : process(process), location(location), futureInterface(futureInterface), processXmlWatcher(&process),
+    progressValue(0)
+{
+  futureInterface.setProgressRange(0, 1000);
+
+  connect(&processXmlWatcher, SIGNAL(filterStarted(QString,QString)), SLOT(filterStarted(QString,QString)));
+  connect(&processXmlWatcher, SIGNAL(filterProgress(float)), SLOT(filterProgress(float)));
+  connect(&processXmlWatcher, SIGNAL(filterFinished(QString)), SLOT(filterFinished(QString)));
+  connect(&processXmlWatcher, SIGNAL(filterXmlError(QString)), SLOT(filterXmlError(QString)));
+}
+
+void ctkCmdLineModuleProcessProgressWatcher::filterStarted(const QString& name, const QString& comment)
+{
+  Q_UNUSED(comment)
+  futureInterface.setProgressValueAndText(incrementProgress(), name);
+}
+
+void ctkCmdLineModuleProcessProgressWatcher::filterProgress(float progress)
+{
+  futureInterface.setProgressValue(updateProgress(progress));
+}
+
+void ctkCmdLineModuleProcessProgressWatcher::filterFinished(const QString& name)
+{
+  futureInterface.setProgressValueAndText(incrementProgress(), "Finished: " + name);
+}
+
+void ctkCmdLineModuleProcessProgressWatcher::filterXmlError(const QString &error)
+{
+  qDebug().nospace() << "[Module " << location << "]: " << error;
+}
+
+int ctkCmdLineModuleProcessProgressWatcher::updateProgress(float progress)
+{
+  progressValue = static_cast<int>(progress * 1000.0f);
+  // normalize the value to lie between 0 and 1000.
+  // 0 is reported when the process starts and 1000 is reserved for
+  // reporting completion + standard output text
+  if (progressValue < 1) progressValue = 1;
+  if (progressValue > 999) progressValue = 999;
+  return progressValue;
+}
+
+int ctkCmdLineModuleProcessProgressWatcher::incrementProgress()
+{
+  if (++progressValue > 999) progressValue = 999;
+  return progressValue;
+}
 
 ctkCmdLineModuleProcessTask::ctkCmdLineModuleProcessTask(const QString& location, const QStringList& args)
   : location(location), args(args)
 {
+  this->setCanCancel(true);
 }
 
 ctkCmdLineModuleProcessTask::~ctkCmdLineModuleProcessTask()
 {
 }
 
-QFuture<QString> ctkCmdLineModuleProcessTask::start()
+ctkCmdLineModuleFuture ctkCmdLineModuleProcessTask::start()
 {
   this->setRunnable(this);
   this->reportStarted();
-  QFuture<QString> future = this->future();
+  ctkCmdLineModuleFuture future = this->future();
   QThreadPool::globalInstance()->start(this, /*m_priority*/ 0);
   return future;
 }
@@ -56,39 +108,31 @@ void ctkCmdLineModuleProcessTask::run()
   }
 
   QProcess process;
+  process.setReadChannel(QProcess::StandardOutput);
+
   QEventLoop localLoop;
-  connect(&process, SIGNAL(finished(int)), &localLoop, SLOT(quit()));
-  connect(&process, SIGNAL(error(QProcess::ProcessError)), SLOT(error(QProcess::ProcessError)));
-  connect(&process, SIGNAL(readyReadStandardError()), SLOT(readyReadStandardError()));
-  connect(&process, SIGNAL(readyReadStandardOutput()), SLOT(readyReadStandardOutput()));
+  QObject::connect(&process, SIGNAL(finished(int)), &localLoop, SLOT(quit()));
+  QObject::connect(&process, SIGNAL(error(QProcess::ProcessError)), &localLoop, SLOT(quit()));
 
   process.start(location, args);
 
+  ctkCmdLineModuleProcessProgressWatcher progressWatcher(process, location, *this);
+  Q_UNUSED(progressWatcher)
+
   localLoop.exec();
 
-  if (process.exitCode() != 0 || process.exitStatus() == QProcess::CrashExit)
+  if (process.error() != QProcess::UnknownError)
   {
-    QString msg = "The process running \"%1\" ";
-    msg += process.exitStatus() == QProcess::CrashExit ? QString("crashed: ")
-                                                     : QString("exited with code %1: ").arg(process.exitCode());
-    msg += process.readAllStandardError();
-    this->reportException(ctkCmdLineModuleRunException(msg));
+    this->reportException(ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString()));
+  }
+  else if (process.exitCode() != 0)
+  {
+    this->reportException(ctkCmdLineModuleRunException(location, process.exitCode(), process.readAllStandardError()));
   }
 
-  this->setProgressValueAndText(100, process.readAllStandardOutput());
+  this->setProgressValueAndText(1000, process.readAllStandardError());
 
   //this->reportResult(result);
   this->reportFinished();
-}
 
-void ctkCmdLineModuleProcessTask::error(QProcess::ProcessError error)
-{
-}
-
-void ctkCmdLineModuleProcessTask::readyReadStandardError()
-{
-}
-
-void ctkCmdLineModuleProcessTask::readyReadStandardOutput()
-{
 }

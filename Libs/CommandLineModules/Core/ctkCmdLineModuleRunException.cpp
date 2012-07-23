@@ -16,23 +16,45 @@ See LICENSE.txt or http://www.mitk.org for details.
 
 #include "ctkCmdLineModuleRunException.h"
 
-ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(const QString& msg)
-  : QtConcurrent::Exception(), ctkException(msg)
+ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(
+    const QString& location, int errorCode, const QString &errorString)
+  : QtConcurrent::Exception(),
+    ctkException(QString("Running module \"%1\" failed with code %2: %3").arg(location).arg(errorCode).arg(errorString)),
+    Location(location), ErrorCode(errorCode), ErrorString(errorString)
 {
 }
 
-ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(const QString& msg, const ctkCmdLineModuleRunException& cause)
-  : QtConcurrent::Exception(), ctkException(msg, cause)
+ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(
+    const QString& location, int errorCode, const QString &errorString,
+    const ctkCmdLineModuleRunException& cause)
+  : QtConcurrent::Exception(), ctkException(location, cause),
+    Location(location), ErrorCode(errorCode), ErrorString(errorString)
 {
 }
 
 ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(const ctkCmdLineModuleRunException& o)
-  : QtConcurrent::Exception(o), ctkException(o)
+  : QtConcurrent::Exception(o), ctkException(o),
+    Location(o.Location), ErrorCode(o.ErrorCode), ErrorString(o.ErrorString)
 {
 }
 
 ctkCmdLineModuleRunException::~ctkCmdLineModuleRunException() throw()
 {
+}
+
+QString ctkCmdLineModuleRunException::location() const throw()
+{
+  return Location;
+}
+
+int ctkCmdLineModuleRunException::errorCode() const throw()
+{
+  return ErrorCode;
+}
+
+QString ctkCmdLineModuleRunException::errorString() const throw()
+{
+  return ErrorString;
 }
 
 const char* ctkCmdLineModuleRunException::name() const throw()

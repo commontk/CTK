@@ -46,6 +46,13 @@ Configurable behaviour for testing purposes.
       <label>Exit code</label>
       <default>0</default>
     </integer>
+    <boolean>
+      <name>exitCrashVar</name>
+      <longflag>exitCrash</longflag>
+      <description>Exit by crashing.</description>
+      <label>Force a crash</label>
+      <default>false</default>
+    </boolean>
     <string>
       <name>errorTextVar</name>
       <longflag>errorText</longflag>

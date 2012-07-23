@@ -29,6 +29,8 @@
 template<class K, class V> class QHash;
 template<class T> class QFuture;
 
+class ctkCmdLineModuleResult;
+typedef QFuture<ctkCmdLineModuleResult> ctkCmdLineModuleFuture;
 class ctkCmdLineModuleReference;
 class ctkCmdLineModulePrivate;
 
@@ -59,7 +61,7 @@ public:
 
   QStringList commandLineArguments() const;
 
-  QFuture<QString> run() const;
+  ctkCmdLineModuleFuture run() const;
 
   Q_SIGNAL void valueChanged(const QString& parameter, const QVariant& value);
 

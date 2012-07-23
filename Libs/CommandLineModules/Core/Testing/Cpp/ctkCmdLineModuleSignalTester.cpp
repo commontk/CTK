@@ -33,22 +33,34 @@ void ctkCmdLineModuleSignalTester::moduleFinished()
   events.push_back("module.finished");
 }
 
-void ctkCmdLineModuleSignalTester::filterStarted(const QString &name, const QString &comment)
+void ctkCmdLineModuleSignalTester::moduleProgressValueChanged(int /*progress*/)
 {
-  qDebug() << "Filter started:" << name << "(" << comment << ")";
+  events.push_back("module.progressValueChanged");
+}
+
+void ctkCmdLineModuleSignalTester::moduleProgressTextChanged(const QString &/*text*/)
+{
+  events.push_back("module.progressTextChanged");
+}
+
+void ctkCmdLineModuleSignalTester::filterStarted(const QString &/*name*/, const QString &/*comment*/)
+{
   events.push_back("filter.started");
 }
 
-void ctkCmdLineModuleSignalTester::filterProgress(float progress)
+void ctkCmdLineModuleSignalTester::filterProgress(float /*progress*/)
 {
-  qDebug() << "progress:" << progress;
   events.push_back("filter.progress");
 }
 
-void ctkCmdLineModuleSignalTester::filterFinished(const QString &name)
+void ctkCmdLineModuleSignalTester::filterFinished(const QString &/*name*/)
 {
-  qDebug() << "Filter finished:" << name;
   events.push_back("filter.finished");
+}
+
+void ctkCmdLineModuleSignalTester::filterXmlError(const QString &/*error*/)
+{
+  events.push_back("filter.xmlError");
 }
 
 bool ctkCmdLineModuleSignalTester::checkSignals(const QList<QString>& expectedSignals)

@@ -1,55 +1,47 @@
 /*=============================================================================
-  
+
   Library: CTK
-  
+
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
-    
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  
+
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULESIGNALTESTER_H
-#define CTKCMDLINEMODULESIGNALTESTER_H
+#ifndef CTKCMDLINEMODULERESULT_H
+#define CTKCMDLINEMODULERESULT_H
 
-#include <QObject>
-#include <QList>
+#include <QString>
+#include <QVariant>
 
-class ctkCmdLineModuleSignalTester : public QObject
+class ctkCmdLineModuleResult
 {
-  Q_OBJECT
-
 public:
 
-  bool checkSignals(const QList<QString>& expectedSignals);
-  void dumpSignals(const QList<QString>& expectedSignals);
+  ctkCmdLineModuleResult() {}
 
+  ctkCmdLineModuleResult(const QString& parameter, const QVariant& value)
+    : Parameter(parameter), Value(value)
+  {}
 
-public Q_SLOTS:
-
-  virtual void moduleStarted();
-  virtual void moduleFinished();
-  virtual void moduleProgressValueChanged(int progress);
-  virtual void moduleProgressTextChanged(const QString& text);
-
-  virtual void filterStarted(const QString& name, const QString& comment);
-  virtual void filterProgress(float progress);
-  virtual void filterFinished(const QString& name);
-  virtual void filterXmlError(const QString& error);
+  inline QString parameter() const { return Parameter; }
+  inline QVariant value() const { return Value; }
 
 private:
 
-  QList<QString> events;
+  QString Parameter;
+  QVariant Value;
 };
 
-#endif // CTKCMDLINEMODULESIGNALTESTER_H
+#endif // CTKCMDLINEMODULERESULT_H

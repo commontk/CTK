@@ -46,6 +46,7 @@ int main(int argc, char* argv[])
   parser.addArgument("xml", "", QVariant::Bool, "Print a XML description of this modules command line interface");
   parser.addArgument("runtime", "", QVariant::Int, "Runtime in seconds", 1);
   parser.addArgument("exitCode", "", QVariant::Int, "Exit code", 0);
+  parser.addArgument("exitCrash", "", QVariant::Bool, "Force crash", false);
   parser.addArgument("exitTime", "", QVariant::Int, "Exit time", 0);
   parser.addArgument("errorText", "", QVariant::String, "Error text (will not be printed on exit code 0)");
   QTextStream out(stdout, QIODevice::WriteOnly);
@@ -85,6 +86,7 @@ int main(int argc, char* argv[])
   float exitTime = parsedArgs["exitTime"].toFloat();
   int exitTimeMillis = static_cast<long>(exitTime/2.0 * 1000.0);
   int exitCode = parsedArgs["exitCode"].toInt();
+  bool exitCrash = parsedArgs["exitCrash"].toBool();
   QString errorText = parsedArgs["errorText"].toString();
 
   QStringList outputs = parser.unparsedArguments();
@@ -92,6 +94,11 @@ int main(int argc, char* argv[])
   if (outputs.empty())
   {
     // no outputs given, just return
+    if (exitCrash)
+    {
+      int* crash = 0;
+      *crash = 5;
+    }
     if (exitCode != 0)
     {
       err << errorText;
@@ -106,11 +113,24 @@ int main(int argc, char* argv[])
 
   struct timespec nanostep;
 
-  foreach(QString output, outputs)
+  out << "<filter-start>\n";
+  out << "<filter-name>Test Filter</filter-name>\n";
+  out << "<filter-comment>Does nothing useful</filter-comment>\n";
+  out << "</filter-start>\n";
+
+  float progressStep = 1.0f / static_cast<float>(outputs.size());
+  for(int i = 0; i < outputs.size(); ++i)
   {
+    QString output = outputs[i];
+
     if (exitTimeMillis != 0 && exitTimeMillis < time.elapsed())
     {
-      if (exitCode != 0)
+      if (exitCrash)
+      {
+        int* crash = 0;
+        *crash = 5;
+      }
+      if (exitCode != 0 && !errorText.isEmpty())
       {
         err << errorText;
       }
@@ -125,7 +145,22 @@ int main(int argc, char* argv[])
 
     // print the first output
     out << output; endl(out);
+
+    // report progress
+    out << "<filter-progress>" << (i+1)*progressStep << "</filter-progress>\n";
   }
 
-  return EXIT_SUCCESS;
+  // sleep 1 second to avoid squashing the last progress event with the finished event
+  sleep(1);
+
+  if (exitCrash)
+  {
+    int* crash = 0;
+    *crash = 5;
+  }
+  if (exitCode != 0 && !errorText.isEmpty())
+  {
+    err << errorText;
+  }
+  return exitCode;
 }

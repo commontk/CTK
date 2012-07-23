@@ -25,12 +25,12 @@
 #include "ctkCmdLineModuleParameterGroup.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleProcessTask.h"
+#include "ctkCmdLineModuleFuture.h"
 
 #include "ctkException.h"
 
 #include <QStringList>
 #include <QDebug>
-#include <QFuture>
 #include <QVariant>
 
 struct ctkCmdLineModulePrivate
@@ -119,11 +119,17 @@ QStringList ctkCmdLineModule::commandLineArguments() const
       {
         argFlag = QString("--") + d->normalizeFlag(parameter.longFlag());
       }
-
       QStringList args;
       if (parameter.multiple())
       {
         args = valuesIter.value().toString().split(',', QString::SkipEmptyParts);
+      }
+      else if (parameter.tag() == "boolean")
+      {
+        if (valuesIter.value().toBool())
+        {
+          cmdLineArgs << argFlag;
+        }
       }
       else
       {
@@ -147,7 +153,7 @@ QStringList ctkCmdLineModule::commandLineArguments() const
   return cmdLineArgs;
 }
 
-QFuture<QString> ctkCmdLineModule::run() const
+ctkCmdLineModuleFuture ctkCmdLineModule::run() const
 {
   QStringList args = commandLineArguments();
 

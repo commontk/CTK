@@ -27,36 +27,193 @@
 #include <QCoreApplication>
 #include <QBuffer>
 #include <QDataStream>
+#include <QDebug>
 
 #include <cstdlib>
 
+namespace {
+
+// Custom signal tester
+class SignalTester : public ctkCmdLineModuleSignalTester
+{
+public:
+
+  SignalTester() : accumulatedProgress(0)
+  {}
+
+  void filterStarted(const QString& name, const QString& comment)
+  {
+    ctkCmdLineModuleSignalTester::filterStarted(name, comment);
+    if (name != "My Filter")
+    {
+      error = "Filter name does not match \"My Filter\" (got \"" + name + "\")";
+      return;
+    }
+    if (comment != "Awesome filter")
+    {
+      error = "Filter comment does not match \"Awesome filter\" (got \"" + comment + "\")";
+      return;
+    }
+  }
+
+  void filterProgress(float progress)
+  {
+    ctkCmdLineModuleSignalTester::filterProgress(progress);
+    accumulatedProgress += progress;
+  }
+
+  void filterFinished(const QString& name)
+  {
+    ctkCmdLineModuleSignalTester::filterFinished(name);
+    if (name != "My Filter")
+    {
+      error = "Filter name does not match \"My Filter\" (got \"" + name + "\")";
+      return;
+    }
+  }
+
+  void filterXmlError(const QString& error)
+  {
+    ctkCmdLineModuleSignalTester::filterXmlError(error);
+    this->error = error;
+  }
+
+  QString error;
+  float accumulatedProgress;
+};
+
+bool xmlProgressWatcherTestSignalsAndValues()
+{
+  // Test data
+  QByteArray filterStart = "<filter-start>\n"
+                             "<filter-name>My Filter</filter-name>\n"
+                             "<filter-comment>Awesome filter</filter-comment>\n"
+                           "</filter-start>\n";
+  QString filterProgress = "<filter-progress>%1</filter-progress>\n";
+  QByteArray filterEnd = "<filter-end>\n"
+                           "<filter-name>My Filter</filter-name>\n"
+                           "<filter-time>23</filter-time>\n"
+                         "</filter-end>";
+
+  QBuffer buffer;
+  buffer.open(QIODevice::ReadWrite);
+  ctkCmdLineModuleXmlProgressWatcher progressWatcher(&buffer);
+
+  SignalTester signalTester;
+  signalTester.connect(&progressWatcher, SIGNAL(filterStarted(QString,QString)), &signalTester, SLOT(filterStarted(QString,QString)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterProgress(float)), &signalTester, SLOT(filterProgress(float)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterFinished(QString)), &signalTester, SLOT(filterFinished(QString)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterXmlError(QString)), &signalTester, SLOT(filterXmlError(QString)));
+
+  buffer.write(filterStart);
+  QCoreApplication::processEvents();
+  buffer.write(filterProgress.arg(0.3).toLatin1());
+  QCoreApplication::processEvents();
+  buffer.write(filterProgress.arg(0.6).toLatin1());
+  QCoreApplication::processEvents();
+  buffer.write(filterProgress.arg(0.9).toLatin1());
+  QCoreApplication::processEvents();
+  buffer.write(filterEnd);
+  QCoreApplication::processEvents();
+
+  QList<QString> expectedSignals;
+  expectedSignals << "filter.started";
+  expectedSignals << "filter.progress";
+  expectedSignals << "filter.progress";
+  expectedSignals << "filter.progress";
+  expectedSignals << "filter.finished";
+
+  if (!signalTester.error.isEmpty())
+  {
+    qDebug() << signalTester.error;
+    return false;
+  }
+
+  if (!signalTester.checkSignals(expectedSignals))
+  {
+    return false;
+  }
+
+  if (signalTester.accumulatedProgress != 1.8f)
+  {
+    qDebug() << "Progress information wrong. Expected 1.8, got" << signalTester.accumulatedProgress;
+    return false;
+  }
+
+  return true;
+}
+
+bool xmlProgressWatcherTestMalformedXml()
+{
+  // Test data
+  QByteArray filterOutput = "<filter-start>\n"
+                              "<filter-name>My Filter</filter-name>\n"
+                              "<filter-comment>Awesome filter</filter-comment>\n"
+                              "chunk<some-tag>...</some-tag>\n"
+                              "<filter-progress>0.2</filter-progress>\n"
+                            "</filter-start>\n"
+                            "<filter-progress>0.5</filter-progress>\n"
+                            "<filter-end>\n"
+
+                              "<filter-name>My Filter</filter-name>\n"
+                              "<filter-time>23</filter-time>\n"
+                            "</filter-end>";
+
+  QBuffer buffer;
+  buffer.open(QIODevice::ReadWrite);
+  ctkCmdLineModuleXmlProgressWatcher progressWatcher(&buffer);
+
+  SignalTester signalTester;
+  signalTester.connect(&progressWatcher, SIGNAL(filterStarted(QString,QString)), &signalTester, SLOT(filterStarted(QString,QString)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterProgress(float)), &signalTester, SLOT(filterProgress(float)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterFinished(QString)), &signalTester, SLOT(filterFinished(QString)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterXmlError(QString)), &signalTester, SLOT(filterXmlError(QString)));
+
+  buffer.write(filterOutput);
+  QCoreApplication::processEvents();
+
+
+  QList<QString> expectedSignals;
+  expectedSignals << "filter.xmlError";
+  expectedSignals << "filter.started";
+  expectedSignals << "filter.progress";
+  expectedSignals << "filter.finished";
+
+  if (!signalTester.error.isEmpty())
+  {
+    qDebug() << signalTester.error;
+    //return false;
+  }
+
+  if (!signalTester.checkSignals(expectedSignals))
+  {
+    return false;
+  }
+
+  if (signalTester.accumulatedProgress != 0.5f)
+  {
+    qDebug() << "Progress information wrong. Expected 1.8, got" << signalTester.accumulatedProgress;
+    return false;
+  }
+
+  return true;
+}
+
+}
 
 int ctkCmdLineModuleXmlProgressWatcherTest(int argc, char* argv[])
 {
   QCoreApplication app(argc, argv);
 
-  QByteArray input;
-  QBuffer buffer(&input);
-  buffer.open(QIODevice::ReadWrite);
+  if (!xmlProgressWatcherTestSignalsAndValues())
+  {
+    return EXIT_FAILURE;
+  }
 
-  QByteArray ba = "<filter-start><filter-name>My Filter</filter-name><filter-comment>"
-      "Awesome filter</filter-comment></filter-start>"
-      "<filter-progress>0.3</filter-progress>"
-      "<filter-progress>0.6</filter-progress>"
-      "<filter-progress>0.9</filter-progress>"
-      "<filter-end><filter-name>My Filter</filter-name><filter-time>23</filter-time></filter-end>";
-
-  ctkCmdLineModuleXmlProgressWatcher progressWatcher(&buffer);
-
-  ctkCmdLineModuleSignalTester signalTester;
-  signalTester.connect(&progressWatcher, SIGNAL(filterStarted(QString,QString)), &signalTester, SLOT(filterStarted(QString,QString)));
-  signalTester.connect(&progressWatcher, SIGNAL(filterProgress(float)), &signalTester, SLOT(filterProgress(float)));
-  signalTester.connect(&progressWatcher, SIGNAL(filterFinished(QString)), &signalTester, SLOT(filterFinished(QString)));
-
-  QDataStream xmlOut(&buffer);
-  xmlOut << ba;
-
-  QCoreApplication::processEvents();
+  if (!xmlProgressWatcherTestMalformedXml())
+  {
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }

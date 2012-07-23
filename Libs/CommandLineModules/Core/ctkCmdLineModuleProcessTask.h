@@ -22,37 +22,62 @@
 #ifndef CTKCMDLINEMODULEPROCESSTASK_H
 #define CTKCMDLINEMODULEPROCESSTASK_H
 
-#include <QFutureInterface>
+#include "ctkCmdLineModuleXmlProgressWatcher.h"
+#include "ctkCmdLineModuleFutureInterface.h"
 
 #include <QObject>
 #include <QRunnable>
 #include <QStringList>
-#include <QProcess>
+#include <QBuffer>
 
-class ctkCmdLineModuleProcessTask : public QObject, public QFutureInterface<QString>, public QRunnable
+class QProcess;
+
+class ctkCmdLineModuleProcessTask : public ctkCmdLineModuleFutureInterface, public QRunnable
 {
-  Q_OBJECT
 
 public:
 
   ctkCmdLineModuleProcessTask(const QString& location, const QStringList& args);
   ~ctkCmdLineModuleProcessTask();
 
-  QFuture<QString> start();
+  ctkCmdLineModuleFuture start();
 
   void run();
-
-protected Q_SLOTS:
-
-  void error(QProcess::ProcessError error);
-  void readyReadStandardError();
-  void readyReadStandardOutput();
 
 private:
 
   const QString location;
   const QStringList args;
-  QString result;
+
+};
+
+class ctkCmdLineModuleProcessProgressWatcher : public QObject
+{
+  Q_OBJECT
+
+public:
+
+  ctkCmdLineModuleProcessProgressWatcher(QProcess& process, const QString& location,
+                                         ctkCmdLineModuleFutureInterface& futureInterface);
+
+protected Q_SLOTS:
+
+  void filterStarted(const QString& name, const QString& comment);
+  void filterProgress(float progress);
+  void filterFinished(const QString& name);
+
+  void filterXmlError(const QString& error);
+
+private:
+
+  int updateProgress(float progress);
+  int incrementProgress();
+
+  QProcess& process;
+  QString location;
+  ctkCmdLineModuleFutureInterface& futureInterface;
+  ctkCmdLineModuleXmlProgressWatcher processXmlWatcher;
+  int progressValue;
 };
 
 #endif // CTKCMDLINEMODULEPROCESSTASK_H

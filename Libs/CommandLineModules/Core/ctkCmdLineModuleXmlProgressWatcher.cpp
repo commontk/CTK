@@ -36,15 +36,18 @@ class ctkCmdLineModuleXmlProgressWatcherPrivate
 public:
 
   ctkCmdLineModuleXmlProgressWatcherPrivate(QIODevice* input, ctkCmdLineModuleXmlProgressWatcher* qq)
-    : input(input), q(qq), error(false)
-  {}
+    : input(input), readPos(0), q(qq), error(false), currentProgress(0)
+  {
+    // wrap the content in an artifical root element
+    reader.addData("<module-root>");
+  }
 
   void _q_readyRead()
   {
-    QByteArray ba = input->readAll();
-    qDebug() << input->pos() << " [" << input->bytesAvailable() << "]:" << ba;
-    //reader.addData(ba);
-    //parseProgressXml();
+    input->seek(readPos);
+    reader.addData(input->readAll());
+    readPos = input->pos();
+    parseProgressXml();
   }
 
   void parseProgressXml()
@@ -55,92 +58,123 @@ public:
       switch(type)
       {
       case QXmlStreamReader::NoToken: break;
+      case QXmlStreamReader::Characters:
+      {
+        if (stack.empty()) break;
+
+        if (stack.size() == 2 && stack.front() == FILTER_START)
+        {
+          if (stack.back() == FILTER_NAME)
+          {
+            currentName = reader.text().toString().trimmed();
+          }
+          else if (stack.back() == FILTER_COMMENT)
+          {
+            currentComment = reader.text().toString().trimmed();
+          }
+        }
+        else if (stack.size() == 1 && stack.back() == FILTER_PROGRESS)
+        {
+          currentProgress = reader.text().toString().toFloat();
+        }
+        break;
+      }
       case QXmlStreamReader::StartElement:
       {
         QStringRef name = reader.name();
-        if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0)
+        QString parent;
+        if (!stack.empty()) parent = stack.back();
+
+        if (name.compare("module-root") != 0)
         {
-          stack.push_back(FILTER_START);
-          currentName.clear();
-          currentComment.clear();
+          stack.push_back(name.toString());
         }
-        else if (name.compare(FILTER_NAME, Qt::CaseInsensitive) == 0)
+
+        if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0 ||
+            name.compare(FILTER_PROGRESS, Qt::CaseInsensitive) == 0 ||
+            name.compare(FILTER_END, Qt::CaseInsensitive) == 0)
         {
-          if (stack.back() == FILTER_START || stack.back() == FILTER_END)
+          if (!parent.isEmpty())
           {
-            currentName = reader.name().toString().trimmed();
+            unexpectedNestedElement(name.toString());
+            break;
+          }
+
+          if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0)
+          {
+            currentName.clear();
+            currentComment.clear();
+            currentProgress = 0;
           }
         }
-        else if (name.compare(FILTER_COMMENT, Qt::CaseInsensitive) == 0)
-        {
-          if (stack.back() == FILTER_START)
-          {
-            currentComment = reader.name().toString().trimmed();
-          }
-        }
-        else if (name.compare(FILTER_PROGRESS, Qt::CaseInsensitive) == 0)
-        {
-          if (!stack.empty())
-          {
-            if (!error)
-            {
-              emit q->filterXmlError(QString("\"%1\" must be a top-level element, found at line %2.")
-                                     .arg(FILTER_PROGRESS).arg(reader.lineNumber()));
-            }
-            continue;
-          }
-          emit q->filterProgress(reader.text().toString().toFloat());
-        }
-        type = reader.readNext();
         break;
       }
       case QXmlStreamReader::EndElement:
       {
         QStringRef name = reader.name();
-        if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0)
+
+        QString curr;
+        QString parent;
+        if (!stack.empty())
         {
-          if (stack.back() != FILTER_START)
-          {
-            if (!error)
-            {
-              emit q->filterXmlError(QString("Unexpected end tag \"%1\" found at line %2.")
-                                     .arg(FILTER_END).arg(reader.lineNumber()));
-            }
-            continue;
-          }
+          curr = stack.back();
           stack.pop_back();
-          emit q->filterStarted(currentName, currentComment);
+          if (!stack.empty()) parent = stack.back();
         }
-        else if (name.compare(FILTER_END, Qt::CaseInsensitive) == 0)
+
+        if (parent.isEmpty())
         {
-          if (!stack.empty())
+          if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0)
           {
-            if (!error)
-            {
-              emit q->filterXmlError(QString("\"%1\" must be a top-level element, found at line %2.")
-                                     .arg(FILTER_PROGRESS).arg(reader.lineNumber()));
-            }
-            continue;
+            emit q->filterStarted(currentName, currentComment);
           }
-          stack.pop_back();
-          emit q->filterFinished(currentName);
+          else if (name.compare(FILTER_PROGRESS, Qt::CaseInsensitive) == 0)
+          {
+            emit q->filterProgress(currentProgress);
+          }
+          else if (name.compare(FILTER_END, Qt::CaseInsensitive) == 0)
+          {
+            emit q->filterFinished(currentName);
+          }
         }
-        type = reader.readNext();
         break;
       }
       default:
-        type = reader.readNext();
+        break;
+      }
+      type = reader.readNext();
+    }
+
+    if (type == QXmlStreamReader::Invalid && reader.error() != QXmlStreamReader::PrematureEndOfDocumentError)
+    {
+      if (!error)
+      {
+        error = true;
+        emit q->filterXmlError(QString("Error parsing XML at line %1, column %2: ")
+                               .arg(reader.lineNumber()).arg(reader.columnNumber()) + reader.errorString());
       }
     }
   }
 
+  void unexpectedNestedElement(const QString& element)
+  {
+    if (!error)
+    {
+      error = true;
+      emit q->filterXmlError(QString("\"%1\" must be a top-level element, found at line %2.")
+                             .arg(element).arg(reader.lineNumber()));
+    }
+  }
+
   QIODevice* input;
+  qint64 readPos;
   ctkCmdLineModuleXmlProgressWatcher* q;
   bool error;
   QXmlStreamReader reader;
   QList<QString> stack;
   QString currentName;
   QString currentComment;
+  float currentProgress;
 };
 
 ctkCmdLineModuleXmlProgressWatcher::ctkCmdLineModuleXmlProgressWatcher(QIODevice* input)
@@ -153,9 +187,6 @@ ctkCmdLineModuleXmlProgressWatcher::ctkCmdLineModuleXmlProgressWatcher(QIODevice
     input->open(QIODevice::ReadOnly);
   }
   connect(d->input, SIGNAL(readyRead()), SLOT(_q_readyRead()));
-
-  // start parsing
-  d->_q_readyRead();
 }
 
 ctkCmdLineModuleXmlProgressWatcher::~ctkCmdLineModuleXmlProgressWatcher()
