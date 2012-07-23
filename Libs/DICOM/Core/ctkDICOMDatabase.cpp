@@ -262,12 +262,16 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
     }
   d->resetLastInsertedValues();
 
-
   if (!isInMemory())
     {
       QFileSystemWatcher* watcher = new QFileSystemWatcher(QStringList(databaseFile),this);
       connect(watcher, SIGNAL(fileChanged(QString)),this, SIGNAL (databaseChanged()) );
     }
+
+  //Disable synchronous writing to make modifications faster
+  QSqlQuery pragmaSyncQuery(d->Database);
+  pragmaSyncQuery.exec("PRAGMA synchronous = OFF");
+  pragmaSyncQuery.finish();
 
   // set up the tag cache for use later
   QFileInfo fileInfo(d->DatabaseFileName);
@@ -1345,6 +1349,7 @@ bool ctkDICOMDatabase::removePatient(const QString& patientID)
 bool ctkDICOMDatabase::tagCacheExists()
 {
   Q_D(ctkDICOMDatabase);
+
   if (d->TagCacheVerified)
     {
     return true;
@@ -1362,6 +1367,12 @@ bool ctkDICOMDatabase::tagCacheExists()
       qDebug() << "TagCacheDatabaseFilename is: " << d->TagCacheDatabaseFilename << "\n";
       return false;
       }
+
+    //Disable synchronous writing to make modifications faster
+    QSqlQuery pragmaSyncQuery(d->TagCacheDatabase);
+    pragmaSyncQuery.exec("PRAGMA synchronous = OFF");
+    pragmaSyncQuery.finish();
+
     }
 
   // check that the table exists
