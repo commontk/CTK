@@ -96,7 +96,7 @@ ctkDICOMIndexerPrivate::~ctkDICOMIndexerPrivate()
 
 }
 
-void ctkDICOMIndexerPrivate::OnProgress(int progress)
+void ctkDICOMIndexerPrivate::OnProgress(int)
 {
   Q_Q(ctkDICOMIndexer);
 

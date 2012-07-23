@@ -132,7 +132,6 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     }
 
 
-
   //
   // Test the tag cache
   //
@@ -178,6 +177,26 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
 
 
   QString foundSeriesDescription = database.instanceValue(instanceUID, tag);
+
+  if (foundSeriesDescription != knownSeriesDescription)
+    {
+    std::cerr << "ctkDICOMDatabase: invalid element value returned" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // now update the database
+  database.updateSchema();
+
+  // and repeat the above checks
+  foundFile = database.fileForInstance(instanceUID);
+
+  if (foundFile != dicomFilePath)
+    {
+    std::cerr << "ctkDICOMDatabase: didn't get back the original file path" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  foundSeriesDescription = database.instanceValue(instanceUID, tag);
 
   if (foundSeriesDescription != knownSeriesDescription)
     {

@@ -107,8 +107,11 @@ public:
   /// close the database. It must not be used afterwards.
   Q_INVOKABLE void closeDatabase();
   ///
-  /// delete all data and reinitialize the database.
+  /// delete all data and (re-)initialize the database.
   Q_INVOKABLE bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
+
+  /// updates the database schema and reinserts all existing files
+  Q_INVOKABLE bool updateSchema(const char* schemaFile = ":/dicom/dicom-schema.sql");
 
   ///
   /// \brief database accessors
@@ -119,6 +122,7 @@ public:
   Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
   Q_INVOKABLE QString instanceForFile (const QString fileName);
 
+  Q_INVOKABLE QStringList allFiles ();
   ///
   /// \brief load the header from a file and allow access to elements
   /// @param sopInstanceUID A string with the uid for a given instance
@@ -148,7 +152,7 @@ public:
   Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail);
   void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
   Q_INVOKABLE void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
-  
+
   /// Check if file is already in database and up-to-date
   bool fileExistsAndUpToDate(const QString& filePath);
 

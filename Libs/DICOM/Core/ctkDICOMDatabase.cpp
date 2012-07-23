@@ -86,6 +86,20 @@ public:
   // filePath has to be set if this is an import of an actual file
   void insert ( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile = true, bool generateThumbnail = true);
 
+  ///
+  /// copy the complete list of files to an extra table
+  ///
+  void createBackupFileList();
+
+  ///
+  /// remove the extra table containing the backup
+  ///
+  void removeBackupFileList();
+
+
+  ///
+  /// get all Filename values from table
+  QStringList filenames(QString table);
 
   /// Name of the database file (i.e. for SQLITE the sqlite file)
   QString      DatabaseFileName;
@@ -194,6 +208,23 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
     }
   return (success);
 }
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::createBackupFileList()
+{
+  QSqlQuery query(this->Database);
+  loggedExec(query, "CREATE TABLE IF NOT EXISTS main.Filenames_backup (Filename TEXT PRIMARY KEY NOT NULL )" );
+  loggedExec(query, "INSERT INTO Filenames_backup SELECT Filename FROM Images;" );
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::removeBackupFileList()
+{
+  QSqlQuery query(this->Database);
+  loggedExec(query, "DROP TABLE main.Filenames_backup; " );
+}
+
+
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& connectionName )
@@ -333,11 +364,51 @@ bool ctkDICOMDatabasePrivate::executeScript(const QString script) {
 }
 
 //------------------------------------------------------------------------------
+QStringList ctkDICOMDatabasePrivate::filenames(QString table)
+{
+  /// get all filenames from the database
+  QSqlQuery allFilesQuery(this->Database);
+  QStringList allFileNames;
+  loggedExec(allFilesQuery,QString("SELECT Filename from %1 ;").arg(table) );
+
+  while (allFilesQuery.next())
+  {
+    allFileNames << allFilesQuery.value(0).toString();
+  }
+  return allFileNames;
+}
+
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabase::initializeDatabase(const char* sqlFileName)
 {
   Q_D(ctkDICOMDatabase);
   return d->executeScript(sqlFileName);
 }
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::updateSchema(const char* schemaFile)
+{
+  // backup filelist
+  // reinit with the new schema
+  // reinsert everything
+ 
+  Q_D(ctkDICOMDatabase);
+  d->createBackupFileList();
+ 
+  this->initializeDatabase(schemaFile);
+
+  QStringList allFiles = d->filenames("Filenames_backup");
+  foreach(QString file, allFiles)
+  {
+    // TODO: use QFuture
+    this->insert(file,false,false,true);
+  }
+  // TODO: check better that everything is ok
+  d->removeBackupFileList();
+  return true;
+
+}
+
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabase::closeDatabase()
@@ -449,6 +520,13 @@ QString ctkDICOMDatabase::instanceForFile(QString fileName)
 //
 // instance header methods
 //
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::allFiles()
+{
+  Q_D(ctkDICOMDatabase);
+  return d->filenames("Images");
+}
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabase::loadInstanceHeader (QString sopInstanceUID)
