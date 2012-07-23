@@ -70,6 +70,8 @@ Q_SIGNALS:
   void databaseDirectoryChanged(const QString&);
   /// Emited when query/retrieve operation has happened
   void queryRetrieveFinished();
+  /// Emited when the directory import operation has completed
+  void directoryImported();
 
 protected:
     QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;

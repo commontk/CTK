@@ -448,10 +448,15 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
     connect(d->DICOMIndexer.data(), SIGNAL(progress(int)),
             this, SLOT(onProgress(int)));
 
+    // close the dialog
     connect(d->DICOMIndexer.data(), SIGNAL(indexingComplete()),
             progress, SLOT(close()));
+    // reset the database to show new data
     connect(d->DICOMIndexer.data(), SIGNAL(indexingComplete()),
             &d->DICOMModel, SLOT(reset()));
+    // allow users of this widget to know that the process has finished
+    connect(d->DICOMIndexer.data(), SIGNAL(indexingComplete()),
+            this, SIGNAL(directoryImported()));
 
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
   }
