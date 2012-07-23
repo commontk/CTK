@@ -85,6 +85,8 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
   watcher = new QFutureWatcher<ctkCmdLineModuleResult>();
   QObject::connect(watcher, SIGNAL(started()), this, SLOT(moduleStarted()));
   QObject::connect(watcher, SIGNAL(finished()), this, SLOT(moduleFinished()));
+  QObject::connect(watcher, SIGNAL(progressValueChanged(int)), this, SLOT(moduleProgressValueChanged(int)));
+  QObject::connect(watcher, SIGNAL(progressTextChanged(QString)), this, SLOT(moduleProgressTextChanged(QString)));
 
   ctkCmdLineModuleFuture future = module->run();
   watcher->setFuture(future);
@@ -102,13 +104,19 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 void ctkCLModuleExplorerMainWindow::moduleStarted()
 {
   qDebug() << "*** moduleStarted";
-  //qDebug() << "stdout:" << futureWatcher.future().standardOutput();
-  //qDebug() << "stderr:" << futureWatcher.future().standardError();
 }
 
 void ctkCLModuleExplorerMainWindow::moduleFinished()
 {
   qDebug() << "*** moduleFinished";
-  //qDebug() << "stdout:" << futureWatcher.future().standardOutput();
-  //qDebug() << "stderr:" << futureWatcher.future().standardError();
+}
+
+void ctkCLModuleExplorerMainWindow::moduleProgressValueChanged(int value)
+{
+  qDebug() << "*** moduleProgressValueChanged int=" << value;
+}
+
+void ctkCLModuleExplorerMainWindow::moduleProgressTextChanged(QString value)
+{
+  qDebug() << "*** moduleProgressTextChanged QString=" << value;
 }

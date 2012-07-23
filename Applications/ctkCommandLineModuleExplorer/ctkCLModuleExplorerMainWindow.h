@@ -52,6 +52,8 @@ protected Q_SLOTS:
 
   void moduleStarted();
   void moduleFinished();
+  void moduleProgressValueChanged(int);
+  void moduleProgressTextChanged(QString);
 
 protected:
 
