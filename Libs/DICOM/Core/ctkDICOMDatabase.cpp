@@ -794,7 +794,7 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
       long temporalPosition(ctkDataset.GetElementAsInteger(DCM_TemporalPositionIdentifier) );
 
       QSqlQuery insertSeriesStatement ( Database );
-      insertSeriesStatement.prepare ( "INSERT INTO Series ( 'SeriesInstanceUID', 'StudyInstanceUID', 'SeriesNumber', 'SeriesDate', 'SeriesTime', 'SeriesDescription', 'Modality', 'BodyPartExamined', 'FrameOfReferenceUID', 'AcquisitionNumber', 'ContrastAgent', 'ScanningSequence', 'EchoNumber', 'TemporalPosition' ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
+      insertSeriesStatement.prepare ( "INSERT INTO Series ( 'SeriesInstanceUID', 'StudyInstanceUID', 'SeriesNumber', 'SeriesDate', 'SeriesTime', 'SeriesDescription', 'Modality', 'BodyPartExamined', 'FrameOfReferenceUID', 'AcquisitionNumber', 'ContrastAgent', 'ScanningSequence', 'EchoNumber', 'TemporalPosition' ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
       insertSeriesStatement.bindValue ( 0, seriesInstanceUID );
       insertSeriesStatement.bindValue ( 1, studyInstanceUID );
       insertSeriesStatement.bindValue ( 2, static_cast<int>(seriesNumber) );
