@@ -34,6 +34,7 @@ CREATE TABLE 'Series' (
   'SeriesDate' DATE NULL ,
   'SeriesTime' VARCHAR(20) NULL ,
   'SeriesDescription' VARCHAR(255) NULL ,
+  'Modality' VARCHAR(20) NULL ,
   'BodyPartExamined' VARCHAR(255) NULL ,
   'FrameOfReferenceUID' VARCHAR(64) NULL ,
   'AcquisitionNumber' INT NULL ,

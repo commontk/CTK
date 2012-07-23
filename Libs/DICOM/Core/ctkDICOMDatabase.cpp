@@ -783,6 +783,7 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
       QString seriesDate(ctkDataset.GetElementAsString(DCM_SeriesDate) );
       QString seriesTime(ctkDataset.GetElementAsString(DCM_SeriesTime) );
       QString seriesDescription(ctkDataset.GetElementAsString(DCM_SeriesDescription) );
+      QString modality(ctkDataset.GetElementAsString(DCM_Modality) );
       QString bodyPartExamined(ctkDataset.GetElementAsString(DCM_BodyPartExamined) );
       QString frameOfReferenceUID(ctkDataset.GetElementAsString(DCM_FrameOfReferenceUID) );
       QString contrastAgent(ctkDataset.GetElementAsString(DCM_ContrastBolusAgent) );
@@ -793,20 +794,21 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
       long temporalPosition(ctkDataset.GetElementAsInteger(DCM_TemporalPositionIdentifier) );
 
       QSqlQuery insertSeriesStatement ( Database );
-      insertSeriesStatement.prepare ( "INSERT INTO Series ( 'SeriesInstanceUID', 'StudyInstanceUID', 'SeriesNumber', 'SeriesDate', 'SeriesTime', 'SeriesDescription', 'BodyPartExamined', 'FrameOfReferenceUID', 'AcquisitionNumber', 'ContrastAgent', 'ScanningSequence', 'EchoNumber', 'TemporalPosition' ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
+      insertSeriesStatement.prepare ( "INSERT INTO Series ( 'SeriesInstanceUID', 'StudyInstanceUID', 'SeriesNumber', 'SeriesDate', 'SeriesTime', 'SeriesDescription', 'Modality', 'BodyPartExamined', 'FrameOfReferenceUID', 'AcquisitionNumber', 'ContrastAgent', 'ScanningSequence', 'EchoNumber', 'TemporalPosition' ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )" );
       insertSeriesStatement.bindValue ( 0, seriesInstanceUID );
       insertSeriesStatement.bindValue ( 1, studyInstanceUID );
       insertSeriesStatement.bindValue ( 2, static_cast<int>(seriesNumber) );
       insertSeriesStatement.bindValue ( 3, seriesDate );
       insertSeriesStatement.bindValue ( 4, QDate::fromString ( seriesTime, "yyyyMMdd" ) );
       insertSeriesStatement.bindValue ( 5, seriesDescription );
-      insertSeriesStatement.bindValue ( 6, bodyPartExamined );
-      insertSeriesStatement.bindValue ( 7, frameOfReferenceUID );
-      insertSeriesStatement.bindValue ( 8, static_cast<int>(acquisitionNumber) );
-      insertSeriesStatement.bindValue ( 9, contrastAgent );
-      insertSeriesStatement.bindValue ( 10, scanningSequence );
-      insertSeriesStatement.bindValue ( 11, static_cast<int>(echoNumber) );
-      insertSeriesStatement.bindValue ( 12, static_cast<int>(temporalPosition) );
+      insertSeriesStatement.bindValue ( 6, modality );
+      insertSeriesStatement.bindValue ( 7, bodyPartExamined );
+      insertSeriesStatement.bindValue ( 8, frameOfReferenceUID );
+      insertSeriesStatement.bindValue ( 9, static_cast<int>(acquisitionNumber) );
+      insertSeriesStatement.bindValue ( 10, contrastAgent );
+      insertSeriesStatement.bindValue ( 11, scanningSequence );
+      insertSeriesStatement.bindValue ( 12, static_cast<int>(echoNumber) );
+      insertSeriesStatement.bindValue ( 13, static_cast<int>(temporalPosition) );
       if ( !insertSeriesStatement.exec() )
         {
           logger.error ( "Error executing statament: "
