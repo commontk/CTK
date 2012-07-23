@@ -193,6 +193,54 @@ ctkDICOMAppWidget::~ctkDICOMAppWidget()
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMAppWidget::updateDatabaseSchemaIfNeeded()
+{
+
+  Q_D(ctkDICOMAppWidget);  
+
+  if ( d->DICOMDatabase->schemaVersion() != d->DICOMDatabase->schemaVersionLoaded() )
+    {
+    QProgressDialog* progress = new QProgressDialog("DICOM Schema Update", "Cancel", 0, 100, this,
+                           Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+    // We don't want the progress dialog to resize itself, so we bypass the label
+    // by creating our own
+    QLabel* progressLabel = new QLabel(tr("Initialization..."));
+    progress->setLabel(progressLabel);
+#ifdef Q_WS_MAC
+    // BUG: avoid deadlock of dialogs on mac
+    progress->setWindowModality(Qt::NonModal);
+#else
+    progress->setWindowModality(Qt::ApplicationModal);
+#endif
+    progress->setMinimumDuration(0);
+    progress->setValue(0);
+    progress->show();
+
+    // TODO - cancel?
+    //connect(progress, SIGNAL(canceled()), d->DICOMIndexer.data(), SLOT(cancel()));
+
+    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdateStarted(int)),
+            progress, SLOT(setMaximum(int)));
+    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdateProgress(int)),
+            progress, SLOT(setValue(int)));
+    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdateProgress(QString)),
+            progressLabel, SLOT(setText(QString)));
+    connect(d->DICOMDatabase.data(), SIGNAL(progress(int)),
+            this, SLOT(onProgress(int)));
+
+    // close the dialog
+    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdated()),
+            progress, SLOT(close()));
+    // reset the database to show new data
+    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdated()),
+            &d->DICOMModel, SLOT(reset()));
+
+    d->DICOMDatabase->updateSchema();
+    }
+
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
 {
   Q_D(ctkDICOMAppWidget);  
@@ -216,6 +264,9 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
     d->DICOMDatabase->closeDatabase();
     return;
     }
+
+  // update the database schema if needed and provide progress
+  this->updateDatabaseSchemaIfNeeded();
   
   d->DICOMModel.setDatabase(d->DICOMDatabase->database());
   d->DICOMModel.setEndLevel(ctkDICOMModel::SeriesType);

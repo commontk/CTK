@@ -44,6 +44,11 @@ public:
 
   QString databaseDirectory() const;
 
+  /// Updates schema of loaded database to match the one
+  /// coded by the current version of ctkDICOMDatabase.
+  /// Also provides a dialog box for progress
+  void updateDatabaseSchemaIfNeeded();
+
   /// Setting search widget pop-up mode
   /// Default value is false. Setting it to true will make
   /// search widget to be displayed as pop-up widget

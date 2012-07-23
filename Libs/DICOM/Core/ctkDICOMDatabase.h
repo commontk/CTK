@@ -100,8 +100,9 @@ public:
   ///        written to disk at all but instead only kept in memory (and
   ///        thus expires after destruction of this object).
   /// @param connectionName The database connection name.
+  /// @param update the schema if it is found to be out of date
   Q_INVOKABLE virtual void openDatabase(const QString databaseFile,
-                                        const QString& connectionName = "DICOM-DB" );
+                                        const QString& connectionName = "DICOM-DB");
 
   ///
   /// close the database. It must not be used afterwards.
@@ -112,6 +113,17 @@ public:
 
   /// updates the database schema and reinserts all existing files
   Q_INVOKABLE bool updateSchema(const char* schemaFile = ":/dicom/dicom-schema.sql");
+
+  /// updates the database schema only if the versions don't match
+  /// Returns true if schema was updated
+  Q_INVOKABLE bool updateSchemaIfNeeded(const char* schemaFile = ":/dicom/dicom-schema.sql");
+
+  /// returns the schema version needed by the current version of this code
+  Q_INVOKABLE QString schemaVersion() { return QString("0.5"); };
+
+  /// returns the schema version for the currently open database
+  /// in order to support schema updating
+  Q_INVOKABLE QString schemaVersionLoaded();
 
   ///
   /// \brief database accessors
@@ -201,6 +213,13 @@ public:
 
 Q_SIGNALS:
   void databaseChanged();
+  /// Indicates that the schema is about to be updated and how many files will be processed
+  void schemaUpdateStarted(int);
+  /// Indicates progress in updating schema (int is file number, string is file name)
+  void schemaUpdateProgress(int);
+  void schemaUpdateProgress(QString);
+  /// Indicates schema update finished
+  void schemaUpdated();
 
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;

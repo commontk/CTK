@@ -4,6 +4,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMCoreTest1.cpp
   ctkDICOMDatabaseTest1.cpp
   ctkDICOMDatabaseTest2.cpp
+  ctkDICOMDatabaseTest3.cpp
   ctkDICOMDatasetTest1.cpp
   ctkDICOMIndexerTest1.cpp
   ctkDICOMModelTest1.cpp
@@ -31,6 +32,9 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 # ctkDICOMDatabase
 SIMPLE_TEST(ctkDICOMDatabaseTest1)
 SIMPLE_TEST(ctkDICOMDatabaseTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
+SIMPLE_TEST(ctkDICOMDatabaseTest3
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-old-schema.sql
+  )
 SIMPLE_TEST(ctkDICOMDatasetTest1)
 SIMPLE_TEST(ctkDICOMIndexerTest1 )
 

@@ -6,15 +6,11 @@
 --       commands per QSqlQuery::exec call!
 -- ;
 
-DROP TABLE IF EXISTS 'SchemaInfo' ;
 DROP TABLE IF EXISTS 'Images' ;
 DROP TABLE IF EXISTS 'Patients' ;
 DROP TABLE IF EXISTS 'Series' ;
 DROP TABLE IF EXISTS 'Studies' ;
 DROP TABLE IF EXISTS 'Directories' ;
-
-CREATE TABLE 'SchemaInfo' ( 'Version' VARCHAR(1024) NOT NULL );
-INSERT INTO 'SchemaInfo' VALUES('0.5');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
@@ -38,7 +34,6 @@ CREATE TABLE 'Series' (
   'SeriesDate' DATE NULL ,
   'SeriesTime' VARCHAR(20) NULL ,
   'SeriesDescription' VARCHAR(255) NULL ,
-  'Modality' VARCHAR(20) NULL ,
   'BodyPartExamined' VARCHAR(255) NULL ,
   'FrameOfReferenceUID' VARCHAR(64) NULL ,
   'AcquisitionNumber' INT NULL ,

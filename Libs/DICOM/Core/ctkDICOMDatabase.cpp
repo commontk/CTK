@@ -118,6 +118,9 @@ public:
   QString LastSeriesInstanceUID;
   int LastPatientUID;
 
+  /// resets the variables to new inserts won't be fooled by leftover values
+  void resetLastInsertedValues();
+
   /// parallel inserts are not allowed (yet)
   QMutex insertMutex;
 
@@ -142,8 +145,19 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
 {
   this->thumbnailGenerator = NULL;
   this->LoggedExecVerbose = false;
-  this->LastPatientUID = -1;
   this->TagCacheVerified = false;
+  this->resetLastInsertedValues();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::resetLastInsertedValues()
+{
+  this->LastPatientID = QString("");
+  this->LastPatientsName = QString("");
+  this->LastPatientsBirthDate = QString("");
+  this->LastStudyInstanceUID = QString("");
+  this->LastSeriesInstanceUID = QString("");
+  this->LastPatientUID = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -246,6 +260,9 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
           return;
         }
     }
+  d->resetLastInsertedValues();
+
+
   if (!isInMemory())
     {
       QFileSystemWatcher* watcher = new QFileSystemWatcher(QStringList(databaseFile),this);
@@ -382,7 +399,44 @@ QStringList ctkDICOMDatabasePrivate::filenames(QString table)
 bool ctkDICOMDatabase::initializeDatabase(const char* sqlFileName)
 {
   Q_D(ctkDICOMDatabase);
+
+  d->resetLastInsertedValues();
+
+  // remove any existing schema info - this handles the case where an
+  // old schema should be loaded for testing.
+  QSqlQuery dropSchemaInfo(d->Database);
+  d->loggedExec( dropSchemaInfo, QString("DROP TABLE IF EXISTS 'SchemaInfo';") );
   return d->executeScript(sqlFileName);
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::schemaVersionLoaded()
+{
+  Q_D(ctkDICOMDatabase);
+  /// look for the version info in the database
+  QSqlQuery versionQuery(d->Database);
+  if ( !d->loggedExec( versionQuery, QString("SELECT Version from SchemaInfo;") ) )
+    {
+    return QString("");
+    }
+
+  if (versionQuery.next())
+    {
+    return versionQuery.value(0).toString();
+    }
+
+  return QString("");
+}
+
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::updateSchemaIfNeeded(const char* schemaFile)
+{
+  if ( schemaVersionLoaded() != schemaVersion() )
+    {
+    return this->updateSchema(schemaFile);
+    }
+  return false;
 }
 
 //------------------------------------------------------------------------------
@@ -395,16 +449,26 @@ bool ctkDICOMDatabase::updateSchema(const char* schemaFile)
   Q_D(ctkDICOMDatabase);
   d->createBackupFileList();
  
+  d->resetLastInsertedValues();
   this->initializeDatabase(schemaFile);
 
   QStringList allFiles = d->filenames("Filenames_backup");
+  emit schemaUpdateStarted(allFiles.length());
+  
+  int progressValue = 0;
   foreach(QString file, allFiles)
   {
+    emit schemaUpdateProgress(progressValue);
+    emit schemaUpdateProgress(file);
+
     // TODO: use QFuture
     this->insert(file,false,false,true);
+
+    progressValue++;
   }
   // TODO: check better that everything is ok
   d->removeBackupFileList();
+  emit schemaUpdated();
   return true;
 
 }
@@ -1203,7 +1267,7 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
 
   this->cleanup();
 
-  d->LastSeriesInstanceUID = "";
+  d->resetLastInsertedValues();
 
   return true;
 }
@@ -1242,7 +1306,7 @@ bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
           result = false;
         }
     }
-  d->LastStudyInstanceUID = "";
+  d->resetLastInsertedValues();
   return result;
 }
 
@@ -1269,10 +1333,7 @@ bool ctkDICOMDatabase::removePatient(const QString& patientID)
           result = false;
         }
     }
-  d->LastPatientID = "";
-  d->LastPatientsName = "";
-  d->LastPatientsBirthDate = "";
-  d->LastPatientUID = -1;
+  d->resetLastInsertedValues();
   return result;
 }
 
