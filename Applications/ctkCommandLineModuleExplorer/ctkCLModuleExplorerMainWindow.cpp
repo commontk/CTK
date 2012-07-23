@@ -25,16 +25,17 @@
 #include <ctkCmdLineModuleXmlValidator.h>
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModule.h>
+#include <ctkCmdLineModuleFuture.h>
 #include <ctkCmdLineModuleFactoryQtGui.h>
 #include <ctkException.h>
 
-#include <QFuture>
 #include <QDebug>
 
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkCLModuleExplorerMainWindow),
-  moduleManager(new ctkCmdLineModuleFactoryQtGui())
+  moduleManager(new ctkCmdLineModuleFactoryQtGui()),
+  watcher(NULL)
 {
   ui->setupUi(this);
 }
@@ -77,7 +78,17 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
   QStringList cmdLineArgs = module->commandLineArguments();
   qDebug() << cmdLineArgs;
 
-  QFuture<QString> future = module->run();
+  if (watcher != NULL)
+  {
+    delete watcher;
+  }
+  watcher = new QFutureWatcher<ctkCmdLineModuleResult>();
+  QObject::connect(watcher, SIGNAL(started()), this, SLOT(moduleStarted()));
+  QObject::connect(watcher, SIGNAL(finished()), this, SLOT(moduleFinished()));
+
+  ctkCmdLineModuleFuture future = module->run();
+  watcher->setFuture(future);
+
   try
   {
     future.waitForFinished();
@@ -86,17 +97,18 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
   {
     qDebug() << e.printStackTrace();
   }
-
 }
 
-void ctkCLModuleExplorerMainWindow::futureFinished()
+void ctkCLModuleExplorerMainWindow::moduleStarted()
 {
-  qDebug() << "*** Future finished";
+  qDebug() << "*** moduleStarted";
   //qDebug() << "stdout:" << futureWatcher.future().standardOutput();
   //qDebug() << "stderr:" << futureWatcher.future().standardError();
 }
 
-//ctkCmdLineModuleReference ctkCLModuleExplorerMainWindow::moduleReference(int tabIndex)
-//{
-//  return mapTabToModuleRef[tabIndex];
-//}
+void ctkCLModuleExplorerMainWindow::moduleFinished()
+{
+  qDebug() << "*** moduleFinished";
+  //qDebug() << "stdout:" << futureWatcher.future().standardOutput();
+  //qDebug() << "stderr:" << futureWatcher.future().standardError();
+}

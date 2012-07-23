@@ -24,10 +24,11 @@
 
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleReference.h>
-//#include <ctkCmdLineModuleFuture.h>
+#include <ctkCmdLineModuleResult.h>
 
 #include <QMainWindow>
 #include <QHash>
+#include <QFutureWatcher>
 
 class ctkCmdLineModuleReference;
 
@@ -49,23 +50,22 @@ protected Q_SLOTS:
 
   void on_actionRun_triggered();
 
-  void futureFinished();
+  void moduleStarted();
+  void moduleFinished();
 
 protected:
 
   void addModuleTab(const ctkCmdLineModuleReference& moduleRef);
-
-  //ctkCmdLineModuleReference moduleReference(int tabIndex);
   
 private:
 
   Ui::ctkCLModuleExplorerMainWindow *ui;
 
   ctkCmdLineModuleManager moduleManager;
+  QFutureWatcher<ctkCmdLineModuleResult>* watcher;
 
   QHash<int, ctkCmdLineModule*> mapTabToModuleRef;
 
-  //ctkCmdLineModuleProcessFutureWatcher futureWatcher;
 };
 
 #endif // CTKCLIPLUGINEXPLORERMAINWINDOW_H
