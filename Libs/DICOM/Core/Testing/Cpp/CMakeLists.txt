@@ -33,7 +33,7 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 SIMPLE_TEST(ctkDICOMDatabaseTest1)
 SIMPLE_TEST(ctkDICOMDatabaseTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMDatabaseTest3
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-old-schema.sql
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-unversioned-schema.sql
   )
 SIMPLE_TEST(ctkDICOMDatasetTest1)
 SIMPLE_TEST(ctkDICOMIndexerTest1 )
