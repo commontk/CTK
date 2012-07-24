@@ -597,7 +597,9 @@ int ctkCommandLineParserTest1(int, char*[])
   //  Check that QSettings worked
   if(settings.status() != QSettings::NoError)
   {
-    qCritical() << "QSettings tests setup - QSettings::status() returned " << settings.status() << ".";
+    qCritical() << "QSettings tests setup - QSettings::status() returned "
+                << static_cast<int>(settings.status()) << ".";
+    return EXIT_FAILURE;
     return EXIT_FAILURE;
   }
 
