@@ -248,7 +248,6 @@ void ctkTransferFunctionRepresentation::computeCurve()
     else //dynamic_cast<ctkBezierControlPoint*>(startCP))
       {
       QList<ctkPoint> points = this->bezierParams(startCP, nextCP);
-      QList<ctkPoint>::iterator it = points.begin();
       QList<QPointF> bezierPoints;
       foreach(const ctkPoint& p, points)
         {
@@ -331,7 +330,6 @@ void ctkTransferFunctionRepresentation::computeGradient()
     else //dynamic_cast<ctkBezierControlPoint*>(startCP))
       { // TODO handle bezier points with color
       QList<ctkPoint> points = this->bezierParams(startCP, nextCP);
-      QList<ctkPoint>::iterator it = points.begin();
       QList<QPointF> bezierPoints;
       foreach(const ctkPoint& p, points)
         {
