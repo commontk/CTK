@@ -33,8 +33,6 @@ class ctkSingletonTestHelperPrivate;
 class ctkSingletonTestHelper
 {
 public:
-  ctkSingletonTestHelper();
-  
   static ctkSingletonTestHelper* instance();
   
   // Add singleton method here ...
@@ -42,6 +40,9 @@ public:
   int northFaceCount()const;
   
 protected:
+  ctkSingletonTestHelper();
+  virtual ~ctkSingletonTestHelper();
+  
   CTK_SINGLETON_DECLARE(ctkSingletonTestHelper);
   QScopedPointer<ctkSingletonTestHelperPrivate> d_ptr;
   

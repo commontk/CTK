@@ -51,6 +51,11 @@ ctkSingletonTestHelper::ctkSingletonTestHelper() : d_ptr(new ctkSingletonTestHel
 }
 
 //-----------------------------------------------------------------------------
+ctkSingletonTestHelper::~ctkSingletonTestHelper()
+{
+}
+
+//-----------------------------------------------------------------------------
 ctkSingletonTestHelper* ctkSingletonTestHelper::instance()
 {
   return Self::Instance;

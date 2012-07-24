@@ -40,6 +40,12 @@ ctkAbstractFactoryItem<BaseClassType>::ctkAbstractFactoryItem()
 
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
+ctkAbstractFactoryItem<BaseClassType>::~ctkAbstractFactoryItem()
+{
+}
+
+//----------------------------------------------------------------------------
+template<typename BaseClassType>
 QStringList ctkAbstractFactoryItem<BaseClassType>::instantiateErrorStrings()const
 {
   return this->InstantiateErrorStrings;

@@ -57,6 +57,16 @@ void ctkVTKConnectionFactory::setInstance(ctkVTKConnectionFactory* newInstance)
 }
 
 //-----------------------------------------------------------------------------
+ctkVTKConnectionFactory::ctkVTKConnectionFactory()
+{
+}
+
+//-----------------------------------------------------------------------------
+ctkVTKConnectionFactory::~ctkVTKConnectionFactory()
+{
+}
+
+//-----------------------------------------------------------------------------
 ctkVTKConnection* ctkVTKConnectionFactory::createConnection(ctkVTKObjectEventsObserver* parent)const
 {
   return new ctkVTKConnection(parent);
