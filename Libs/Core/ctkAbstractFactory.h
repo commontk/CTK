@@ -44,6 +44,7 @@ class ctkAbstractFactoryItem
 public:
   //explicit ctkAbstractFactoryItem();
   ctkAbstractFactoryItem();
+  virtual ~ctkAbstractFactoryItem();
 
   virtual bool load() = 0;
 

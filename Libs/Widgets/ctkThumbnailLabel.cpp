@@ -45,6 +45,7 @@ public:
 
   // Constructor
   ctkThumbnailLabelPrivate(ctkThumbnailLabel* parent);
+  virtual ~ctkThumbnailLabelPrivate();
 
   virtual void setupUi(QWidget* widget);
 
@@ -72,6 +73,11 @@ ctkThumbnailLabelPrivate::ctkThumbnailLabelPrivate(ctkThumbnailLabel* parent)
   this->SelectedColor = q->palette().color(QPalette::Highlight);
   this->TextPosition = Qt::AlignTop | Qt::AlignHCenter;
   this->TransformationMode = Qt::FastTransformation;
+}
+
+//----------------------------------------------------------------------------
+ctkThumbnailLabelPrivate::~ctkThumbnailLabelPrivate()
+{
 }
 
 //----------------------------------------------------------------------------
