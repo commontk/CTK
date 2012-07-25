@@ -28,6 +28,7 @@
 #include <QUiLoader>
 #include <QWidget>
 #include <QVariant>
+#include <QCoreApplication>
 
 #include <QDebug>
 
@@ -55,6 +56,13 @@ QObject* ctkCmdLineModuleQtGui::guiHandle() const
   }
 
   QUiLoader uiLoader;
+#ifdef CMAKE_INTDIR
+  QString appPath = QCoreApplication::applicationDirPath();
+  if (appPath.endsWith(CMAKE_INTDIR))
+  {
+    uiLoader.addPluginPath(appPath + "/../designer");
+  }
+#endif
   WidgetTree = uiLoader.load(&uiForm);
   return WidgetTree;
 }
