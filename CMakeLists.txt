@@ -509,7 +509,22 @@ ctk_app_option(ctkEventBusDemo
 ctk_app_option(ctkCommandLineModuleExplorer
                "Build the Command Line Module Explorer" OFF
                CTK_BUILD_EXAMPLES)
-               
+
+# We use the CTKWidgets library together with the Qt Designer plug-in
+# in ctkCommandLineModuleExplorer, so enabling the options here.
+# (We do not need to link them into the executable, hence no entries
+# in target_libraries.cmake)
+
+if(CTK_APP_ctkCommandLineModuleExplorer)
+  foreach(_option CTK_LIB_Widgets CTK_BUILD_QTDESIGNER_PLUGINS)
+    if(NOT ${_option})
+      get_property(_docstring CACHE ${_option} PROPERTY HELPSTRING)
+      set(${_option} ON CACHE BOOL "${_docstring}" FORCE)
+      message("Enabling option [${_option}] required by [ctkCommandLineModuleExplorer]")
+    endif()
+  endforeach()
+endif()
+
 ctk_app_option(ctkPluginBrowser
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
