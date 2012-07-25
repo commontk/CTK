@@ -848,7 +848,7 @@ int ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMDataset& ctkDataset)
       insertPatientStatement.prepare ( "INSERT INTO Patients ('UID', 'PatientsName', 'PatientID', 'PatientsBirthDate', 'PatientsBirthTime', 'PatientsSex', 'PatientsAge', 'PatientsComments' ) values ( NULL, ?, ?, ?, ?, ?, ?, ? )" );
       insertPatientStatement.bindValue ( 0, patientsName );
       insertPatientStatement.bindValue ( 1, patientID );
-      insertPatientStatement.bindValue ( 2, patientsBirthDate );
+      insertPatientStatement.bindValue ( 2, QDate::fromString ( patientsBirthDate, "yyyyMMdd" ) );
       insertPatientStatement.bindValue ( 3, patientsBirthTime );
       insertPatientStatement.bindValue ( 4, patientsSex );
       // TODO: shift patient's age to study,
@@ -944,8 +944,8 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
       insertSeriesStatement.bindValue ( 0, seriesInstanceUID );
       insertSeriesStatement.bindValue ( 1, studyInstanceUID );
       insertSeriesStatement.bindValue ( 2, static_cast<int>(seriesNumber) );
-      insertSeriesStatement.bindValue ( 3, seriesDate );
-      insertSeriesStatement.bindValue ( 4, QDate::fromString ( seriesTime, "yyyyMMdd" ) );
+      insertSeriesStatement.bindValue ( 3, QDate::fromString ( seriesDate, "yyyyMMdd" ) );
+      insertSeriesStatement.bindValue ( 4, seriesTime );
       insertSeriesStatement.bindValue ( 5, seriesDescription );
       insertSeriesStatement.bindValue ( 6, modality );
       insertSeriesStatement.bindValue ( 7, bodyPartExamined );
@@ -1024,6 +1024,12 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   QString studyInstanceUID(ctkDataset.GetElementAsString(DCM_StudyInstanceUID) );
   QString seriesInstanceUID(ctkDataset.GetElementAsString(DCM_SeriesInstanceUID) );
   QString patientID(ctkDataset.GetElementAsString(DCM_PatientID) );
+  if ( patientID.isEmpty() && !studyInstanceUID.isEmpty() ) 	 
+  { // Use study instance uid as patient id if patient id is empty - can happen on anonymized datasets
+    // see: http://www.na-mic.org/Bug/view.php?id=2040
+    logger.warn("Petient ID is empty, using studyInstanceUID as patient ID");
+    patientID = studyInstanceUID;
+  }
   if ( patientsName.isEmpty() && !patientID.isEmpty() )
     { // Use patient id as name if name is empty - can happen on anonymized datasets
       // see: http://www.na-mic.org/Bug/view.php?id=1643
@@ -1031,7 +1037,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
     }
   if ( patientsName.isEmpty() || studyInstanceUID.isEmpty() || patientID.isEmpty() )
     {
-      logger.error("Dataset is missing necessary information!");
+      logger.error("Dataset is missing necessary information (patient name, study instance UID, or patient ID)!");
       return;
     }
 

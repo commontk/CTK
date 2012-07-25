@@ -112,11 +112,10 @@ void ctkDICOMDataset::InitializeFromFile(const QString& filename,
                                          const Uint32 maxReadLength,
                                          const E_FileReadMode readMode)
 {
-  Q_UNUSED(maxReadLength);
   DcmDataset *dataset;
 
   DcmFileFormat fileformat;
-  OFCondition status = fileformat.loadFile(filename.toAscii().data(), readXfer, groupLength, readMode);
+  OFCondition status = fileformat.loadFile(filename.toAscii().data(), readXfer, groupLength, maxReadLength, readMode);
   dataset = fileformat.getAndRemoveDataset();
 
   if (!status.good())
