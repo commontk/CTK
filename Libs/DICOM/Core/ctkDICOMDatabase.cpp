@@ -1027,7 +1027,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   if ( patientID.isEmpty() && !studyInstanceUID.isEmpty() ) 	 
   { // Use study instance uid as patient id if patient id is empty - can happen on anonymized datasets
     // see: http://www.na-mic.org/Bug/view.php?id=2040
-    logger.warn("Petient ID is empty, using studyInstanceUID as patient ID");
+    logger.warn("Patient ID is empty, using studyInstanceUID as patient ID");
     patientID = studyInstanceUID;
   }
   if ( patientsName.isEmpty() && !patientID.isEmpty() )
