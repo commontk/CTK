@@ -26,7 +26,7 @@
 
 #include <QFutureInterface>
 
-typedef QFuture<ctkCmdLineModuleResult> ctkCmdLineModuleFuture;
+class ctkCmdLineModuleFuture;
 
 template <>
 class QFutureInterface<ctkCmdLineModuleResult> : public QFutureInterfaceBase

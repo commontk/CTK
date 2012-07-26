@@ -27,10 +27,9 @@
 #include <QObject>
 
 template<class K, class V> class QHash;
-template<class T> class QFuture;
 
 class ctkCmdLineModuleResult;
-typedef QFuture<ctkCmdLineModuleResult> ctkCmdLineModuleFuture;
+class ctkCmdLineModuleFuture;
 class ctkCmdLineModuleReference;
 class ctkCmdLineModulePrivate;
 
