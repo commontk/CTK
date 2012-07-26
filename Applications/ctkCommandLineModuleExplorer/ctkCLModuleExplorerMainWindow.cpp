@@ -91,14 +91,14 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
   ctkCmdLineModuleFuture future = module->run();
   watcher->setFuture(future);
 
-  try
-  {
-    future.waitForFinished();
-  }
-  catch (const ctkException& e)
-  {
-    qDebug() << e.printStackTrace();
-  }
+//  try
+//  {
+//    future.waitForFinished();
+//  }
+//  catch (const ctkException& e)
+//  {
+//    qDebug() << e.printStackTrace();
+//  }
 }
 
 void ctkCLModuleExplorerMainWindow::moduleStarted()

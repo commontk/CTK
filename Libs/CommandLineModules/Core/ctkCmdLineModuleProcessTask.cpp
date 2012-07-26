@@ -81,7 +81,7 @@ int ctkCmdLineModuleProcessProgressWatcher::incrementProgress()
 }
 
 ctkCmdLineModuleProcessTask::ctkCmdLineModuleProcessTask(const QString& location, const QStringList& args)
-  : location(location), args(args)
+  : process(NULL), location(location), args(args)
 {
   this->setCanCancel(true);
 }
@@ -107,32 +107,46 @@ void ctkCmdLineModuleProcessTask::run()
     return;
   }
 
-  QProcess process;
-  process.setReadChannel(QProcess::StandardOutput);
+  process = new QProcess();
+  process->setReadChannel(QProcess::StandardOutput);
 
   QEventLoop localLoop;
-  QObject::connect(&process, SIGNAL(finished(int)), &localLoop, SLOT(quit()));
-  QObject::connect(&process, SIGNAL(error(QProcess::ProcessError)), &localLoop, SLOT(quit()));
+  QObject::connect(process, SIGNAL(finished(int)), &localLoop, SLOT(quit()));
+  QObject::connect(process, SIGNAL(error(QProcess::ProcessError)), &localLoop, SLOT(quit()));
 
-  process.start(location, args);
+  QTimer pollCancelTimer;
+  pollCancelTimer.setInterval(500);
+  this->connect(&pollCancelTimer, SIGNAL(timeout()), SLOT(pollCancelState()));
 
-  ctkCmdLineModuleProcessProgressWatcher progressWatcher(process, location, *this);
+  process->start(location, args);
+
+  ctkCmdLineModuleProcessProgressWatcher progressWatcher(*process, location, *this);
   Q_UNUSED(progressWatcher)
 
   localLoop.exec();
 
-  if (process.error() != QProcess::UnknownError)
+  if (process->error() != QProcess::UnknownError)
   {
-    this->reportException(ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString()));
+    this->reportException(ctkCmdLineModuleRunException(location, process->exitCode(), process->errorString()));
   }
-  else if (process.exitCode() != 0)
+  else if (process->exitCode() != 0)
   {
-    this->reportException(ctkCmdLineModuleRunException(location, process.exitCode(), process.readAllStandardError()));
+    this->reportException(ctkCmdLineModuleRunException(location, process->exitCode(), process->readAllStandardError()));
   }
 
-  this->setProgressValueAndText(1000, process.readAllStandardError());
+  this->setProgressValueAndText(1000, process->readAllStandardError());
 
   //this->reportResult(result);
   this->reportFinished();
 
+  delete process;
+
+}
+
+void ctkCmdLineModuleProcessTask::pollCancelState()
+{
+  if (this->isCanceled() && process->state() == QProcess::Running)
+  {
+    process->terminate();
+  }
 }

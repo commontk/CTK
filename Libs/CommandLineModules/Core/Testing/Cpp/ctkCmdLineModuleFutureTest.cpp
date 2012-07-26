@@ -86,10 +86,19 @@ bool futureTestStartFinish(ctkCmdLineModule* module)
   QObject::connect(&watcher, SIGNAL(started()), &signalTester, SLOT(moduleStarted()));
   QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
 
+  qDebug() << module->commandLineArguments();
   ctkCmdLineModuleFuture future = module->run();
   watcher.setFuture(future);
 
-  future.waitForFinished();
+  try
+  {
+    future.waitForFinished();
+  }
+  catch (const ctkCmdLineModuleRunException& e)
+  {
+    qDebug() << e;
+    return false;
+  }
 
   // process pending events
   QCoreApplication::processEvents();
@@ -128,16 +137,72 @@ bool futureTestProgress(ctkCmdLineModule* module)
   QObject::connect(&watcher, SIGNAL(progressTextChanged(QString)), &signalTester, SLOT(moduleProgressTextChanged(QString)));
   QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
 
-  module->setValue("fileVar", "output1");
+  module->setValue("numOutputsVar", 1);
   ctkCmdLineModuleFuture future = module->run();
   watcher.setFuture(future);
 
-  future.waitForFinished();
+  try
+  {
+    future.waitForFinished();
+  }
+  catch (const ctkCmdLineModuleRunException& e)
+  {
+    qDebug() << e;
+    return false;
+  }
 
   // process pending events
   QCoreApplication::processEvents();
 
   return signalTester.checkSignals(expectedSignals);
+}
+
+bool futureTestPauseAndCancel(ctkCmdLineModule* module)
+{
+  qDebug() << "Testing ctkCmdLineModuleFuture pause and cancel capabilities";
+
+  QList<QString> expectedSignals;
+  expectedSignals.push_back("module.started");
+  expectedSignals.push_back("module.finished");
+
+  ctkCmdLineModuleSignalTester signalTester;
+
+  QFutureWatcher<ctkCmdLineModuleResult> watcher;
+  QObject::connect(&watcher, SIGNAL(started()), &signalTester, SLOT(moduleStarted()));
+  QObject::connect(&watcher, SIGNAL(progressValueChanged(int)), &signalTester, SLOT(moduleProgressValueChanged(int)));
+  QObject::connect(&watcher, SIGNAL(progressTextChanged(QString)), &signalTester, SLOT(moduleProgressTextChanged(QString)));
+  QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
+
+  module->setValue("runtimeVar", 60);
+  ctkCmdLineModuleFuture future = module->run();
+  watcher.setFuture(future);
+
+
+  try
+  {
+    future.cancel();
+    future.waitForFinished();
+  }
+  catch (const ctkCmdLineModuleRunException& e)
+  {
+    qDebug() << e;
+    return false;
+  }
+
+  // process pending events
+  QCoreApplication::processEvents();
+
+  if (!signalTester.checkSignals(expectedSignals))
+  {
+    return false;
+  }
+
+  if (!(future.isCanceled() && future.isFinished()))
+  {
+    qDebug() << "Cancel state wrong";
+    return false;
+  }
+  return true;
 }
 
 bool futureTestError(ctkCmdLineModule* module)
@@ -183,27 +248,37 @@ int ctkCmdLineModuleFutureTest(int argc, char* argv[])
     qCritical() << "Module at" << moduleFilename << "could not be registered";
   }
 
-  QScopedPointer<ctkCmdLineModule> module(manager.createModule(moduleRef));
-
-  if (!futureTestStartFinish(module.data()))
   {
-    return EXIT_FAILURE;
+    QScopedPointer<ctkCmdLineModule> module(manager.createModule(moduleRef));
+    if (!futureTestStartFinish(module.data()))
+    {
+      return EXIT_FAILURE;
+    }
   }
 
-  if (!futureTestProgress(module.data()))
   {
-    return EXIT_FAILURE;
+    QScopedPointer<ctkCmdLineModule> module(manager.createModule(moduleRef));
+    if (!futureTestProgress(module.data()))
+    {
+      return EXIT_FAILURE;
+    }
   }
 
-  if (!futureTestError(module.data()))
   {
-    return EXIT_FAILURE;
+    QScopedPointer<ctkCmdLineModule> module(manager.createModule(moduleRef));
+    if (!futureTestError(module.data()))
+    {
+      return EXIT_FAILURE;
+    }
   }
 
-//  if (!futureTestPauseAndCancel(module.data()))
-//  {
-//    return EXIT_FAILURE;
-//  }
+  {
+    QScopedPointer<ctkCmdLineModule> module(manager.createModule(moduleRef));
+    if (!futureTestPauseAndCancel(module.data()))
+    {
+      return EXIT_FAILURE;
+    }
+  }
 
   //  if (!futureTestResultReady(module.data()))
   //  {

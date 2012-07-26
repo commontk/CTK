@@ -32,8 +32,9 @@
 
 class QProcess;
 
-class ctkCmdLineModuleProcessTask : public ctkCmdLineModuleFutureInterface, public QRunnable
+class ctkCmdLineModuleProcessTask : public QObject, public ctkCmdLineModuleFutureInterface, public QRunnable
 {
+  Q_OBJECT
 
 public:
 
@@ -44,8 +45,13 @@ public:
 
   void run();
 
+protected Q_SLOTS:
+
+  void pollCancelState();
+
 private:
 
+  QProcess* process;
   const QString location;
   const QStringList args;
 

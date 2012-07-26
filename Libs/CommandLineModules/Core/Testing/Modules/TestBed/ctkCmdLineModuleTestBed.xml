@@ -25,13 +25,13 @@ Configurable behaviour for testing purposes.
         <step>1</step>
       </constraints>
     </integer>
-    <file multiple="true">
-      <name>fileVar</name>
-      <index>0</index>
-      <description>Output files which will be reported as the progress text via a QFutureWatcher.</description>
-      <label>Output</label>
-      <channel>output</channel>
-    </file>
+    <integer>
+      <name>numOutputsVar</name>
+      <longflag>numOutputs</longflag>
+      <description>Number of outputs which will be reported as the progress text via a QFutureWatcher.</description>
+      <label>Output Number</label>
+      <default>0</default>
+    </integer>
     <integer>
       <name>exitTimeVar</name>
       <longflag>exitTime</longflag>

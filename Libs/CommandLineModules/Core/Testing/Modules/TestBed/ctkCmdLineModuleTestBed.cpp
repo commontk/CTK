@@ -45,6 +45,7 @@ int main(int argc, char* argv[])
   parser.addArgument("help", "h", QVariant::Bool, "Show this help text");
   parser.addArgument("xml", "", QVariant::Bool, "Print a XML description of this modules command line interface");
   parser.addArgument("runtime", "", QVariant::Int, "Runtime in seconds", 1);
+  parser.addArgument("numOutputs", "", QVariant::Int, "Number of outpusts", 0);
   parser.addArgument("exitCode", "", QVariant::Int, "Exit code", 0);
   parser.addArgument("exitCrash", "", QVariant::Bool, "Force crash", false);
   parser.addArgument("exitTime", "", QVariant::Int, "Exit time", 0);
@@ -65,10 +66,6 @@ int main(int argc, char* argv[])
   if (parsedArgs.contains("help") || parsedArgs.contains("h"))
   {
     out << parser.helpText();
-    out.setFieldWidth(parser.fieldWidth());
-    out.setFieldAlignment(QTextStream::AlignLeft);
-    out << "  <output>...";
-    out << "One or more output strings\n";
     return EXIT_SUCCESS;
   }
 
@@ -83,13 +80,18 @@ int main(int argc, char* argv[])
   // Do something
 
   float runtime = parsedArgs["runtime"].toFloat();
+  int numOutputs = parsedArgs["numOutputs"].toInt();
   float exitTime = parsedArgs["exitTime"].toFloat();
   int exitTimeMillis = static_cast<long>(exitTime/2.0 * 1000.0);
   int exitCode = parsedArgs["exitCode"].toInt();
   bool exitCrash = parsedArgs["exitCrash"].toBool();
   QString errorText = parsedArgs["errorText"].toString();
 
-  QStringList outputs = parser.unparsedArguments();
+  QStringList outputs;
+  for (int i = 0; i < numOutputs; ++i)
+  {
+    outputs << "Output " + QString::number(i+1);
+  }
 
   if (outputs.empty())
   {
