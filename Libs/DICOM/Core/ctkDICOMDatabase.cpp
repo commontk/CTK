@@ -432,6 +432,18 @@ QString ctkDICOMDatabase::schemaVersionLoaded()
   return QString("");
 }
 
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::schemaVersion()
+{
+  // When changing schema version:
+  // * make sure this matches the Version value in the
+  //   SchemaInfo table defined in Resources/dicom-schema.sql
+  // * make sure the 'Images' contains a 'Filename' column
+  //   so that the ctkDICOMDatabasePrivate::filenames method
+  //   still works.
+  //
+  return QString("0.5.1");
+};
 
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabase::updateSchemaIfNeeded(const char* schemaFile)
@@ -449,16 +461,16 @@ bool ctkDICOMDatabase::updateSchema(const char* schemaFile)
   // backup filelist
   // reinit with the new schema
   // reinsert everything
- 
+
   Q_D(ctkDICOMDatabase);
   d->createBackupFileList();
- 
+
   d->resetLastInsertedValues();
   this->initializeDatabase(schemaFile);
 
   QStringList allFiles = d->filenames("Filenames_backup");
   emit schemaUpdateStarted(allFiles.length());
-  
+
   int progressValue = 0;
   foreach(QString file, allFiles)
   {
@@ -1024,7 +1036,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   QString studyInstanceUID(ctkDataset.GetElementAsString(DCM_StudyInstanceUID) );
   QString seriesInstanceUID(ctkDataset.GetElementAsString(DCM_SeriesInstanceUID) );
   QString patientID(ctkDataset.GetElementAsString(DCM_PatientID) );
-  if ( patientID.isEmpty() && !studyInstanceUID.isEmpty() ) 	 
+  if ( patientID.isEmpty() && !studyInstanceUID.isEmpty() )
   { // Use study instance uid as patient id if patient id is empty - can happen on anonymized datasets
     // see: http://www.na-mic.org/Bug/view.php?id=2040
     logger.warn("Patient ID is empty, using studyInstanceUID as patient ID");
