@@ -41,7 +41,7 @@ public:
   }
 
   explicit ctkCmdLineModuleFuture(ctkCmdLineModuleFutureInterface* p) // internal
-    : QFuture(p)
+    : QFuture<ctkCmdLineModuleResult>(p)
   {
   }
 
