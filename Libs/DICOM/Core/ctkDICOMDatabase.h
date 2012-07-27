@@ -119,7 +119,7 @@ public:
   Q_INVOKABLE bool updateSchemaIfNeeded(const char* schemaFile = ":/dicom/dicom-schema.sql");
 
   /// returns the schema version needed by the current version of this code
-  Q_INVOKABLE QString schemaVersion() { return QString("0.5"); };
+  Q_INVOKABLE QString schemaVersion();
 
   /// returns the schema version for the currently open database
   /// in order to support schema updating
