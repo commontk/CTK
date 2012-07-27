@@ -435,6 +435,13 @@ QString ctkDICOMDatabase::schemaVersionLoaded()
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::schemaVersion()
 {
+  // When changing schema version:
+  // * make sure this matches the Version value in the
+  //   SchemaInfo table defined in Resources/dicom-schema.sql
+  // * make sure the 'Images' contains a 'Filename' column
+  //   so that the ctkDICOMDatabasePrivate::filenames method
+  //   still works.
+  //
   return QString("0.5.1");
 };
 
