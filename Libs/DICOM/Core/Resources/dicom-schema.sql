@@ -13,8 +13,10 @@ DROP TABLE IF EXISTS 'Series' ;
 DROP TABLE IF EXISTS 'Studies' ;
 DROP TABLE IF EXISTS 'Directories' ;
 
+DROP INDEX IF EXISTS 'ImagesFilenameIndex' ;
+
 CREATE TABLE 'SchemaInfo' ( 'Version' VARCHAR(1024) NOT NULL );
-INSERT INTO 'SchemaInfo' VALUES('0.5');
+INSERT INTO 'SchemaInfo' VALUES('0.5.1');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
@@ -60,6 +62,8 @@ CREATE TABLE 'Studies' (
   'PerformingPhysiciansName' VARCHAR(255) NULL ,
   'StudyDescription' VARCHAR(255) NULL ,
   PRIMARY KEY ('StudyInstanceUID') );
+
+CREATE UNIQUE INDEX IF NOT EXISTS 'ImagesFilenameIndex' ON 'Images' ('Filename');
 
 CREATE TABLE 'Directories' (
   'Dirname' VARCHAR(1024) ,
