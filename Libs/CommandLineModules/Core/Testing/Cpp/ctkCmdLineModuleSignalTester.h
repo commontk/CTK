@@ -42,6 +42,10 @@ public Q_SLOTS:
   virtual void moduleProgressValueChanged(int progress);
   virtual void moduleProgressTextChanged(const QString& text);
 
+  virtual void modulePaused();
+  virtual void moduleResumed();
+  virtual void moduleCanceled();
+
   virtual void filterStarted(const QString& name, const QString& comment);
   virtual void filterProgress(float progress);
   virtual void filterFinished(const QString& name);

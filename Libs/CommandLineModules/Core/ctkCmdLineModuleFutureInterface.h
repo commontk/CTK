@@ -41,7 +41,7 @@ public:
 
   QFutureInterface(const QFutureInterface &other)
     : QFutureInterfaceBase(other),
-      CanCancel(false), CanPause(false)
+      CanCancel(other.CanCancel), CanPause(other.CanPause)
   { }
 
   ~QFutureInterface()
@@ -58,6 +58,8 @@ public:
     if (referenceCountIsOne())
       resultStore().clear();
     QFutureInterfaceBase::operator=(other);
+    CanCancel = other.CanCancel;
+    CanPause = other.CanPause;
     return *this;
   }
 

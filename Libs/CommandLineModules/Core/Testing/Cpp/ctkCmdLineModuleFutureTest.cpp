@@ -161,26 +161,62 @@ bool futureTestPauseAndCancel(ctkCmdLineModule* module)
 {
   qDebug() << "Testing ctkCmdLineModuleFuture pause and cancel capabilities";
 
-  QList<QString> expectedSignals;
-  expectedSignals.push_back("module.started");
-  expectedSignals.push_back("module.finished");
 
   ctkCmdLineModuleSignalTester signalTester;
 
   QFutureWatcher<ctkCmdLineModuleResult> watcher;
   QObject::connect(&watcher, SIGNAL(started()), &signalTester, SLOT(moduleStarted()));
-  QObject::connect(&watcher, SIGNAL(progressValueChanged(int)), &signalTester, SLOT(moduleProgressValueChanged(int)));
-  QObject::connect(&watcher, SIGNAL(progressTextChanged(QString)), &signalTester, SLOT(moduleProgressTextChanged(QString)));
+  QObject::connect(&watcher, SIGNAL(paused()), &signalTester, SLOT(modulePaused()));
+  QObject::connect(&watcher, SIGNAL(resumed()), &signalTester, SLOT(moduleResumed()));
+  QObject::connect(&watcher, SIGNAL(canceled()), &signalTester, SLOT(moduleCanceled()));
   QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
 
   module->setValue("runtimeVar", 60);
+  qDebug() << module->commandLineArguments();
   ctkCmdLineModuleFuture future = module->run();
   watcher.setFuture(future);
 
+  QList<QString> expectedSignals;
+  expectedSignals.push_back("module.started");
+  if (future.canPause())
+  {
+    // Due to Qt bug 12152, these two signals are reversed
+    expectedSignals.push_back("module.resumed");
+    expectedSignals.push_back("module.paused");
+  }
+  if (future.canCancel())
+  {
+    expectedSignals.push_back("module.canceled");
+  }
+  expectedSignals.push_back("module.finished");
+
+  sleep(1);
+
+  QCoreApplication::processEvents();
+  future.pause();
+  sleep(1);
+  QCoreApplication::processEvents();
+
+  if (future.canPause())
+  {
+    if (!(future.isPaused() && future.isRunning()))
+    {
+      qDebug() << "Pause state wrong";
+      future.setPaused(false);
+      future.cancel();
+      QCoreApplication::processEvents();
+      future.waitForFinished();
+      return false;
+    }
+  }
+
+  future.togglePaused();
+  QCoreApplication::processEvents();
 
   try
   {
     future.cancel();
+    QCoreApplication::processEvents();
     future.waitForFinished();
   }
   catch (const ctkCmdLineModuleRunException& e)

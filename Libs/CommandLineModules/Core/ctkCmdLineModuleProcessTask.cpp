@@ -29,10 +29,14 @@
 #include <QThreadPool>
 #include <QProcess>
 
-ctkCmdLineModuleProcessProgressWatcher::ctkCmdLineModuleProcessProgressWatcher(QProcess& process, const QString& location,
-                                                                               ctkCmdLineModuleFutureInterface &futureInterface)
+#ifdef Q_OS_UNIX
+#include <signal.h>
+#endif
+
+ctkCmdLineModuleProcessWatcher::ctkCmdLineModuleProcessWatcher(QProcess& process, const QString& location,
+                                                               ctkCmdLineModuleFutureInterface &futureInterface)
   : process(process), location(location), futureInterface(futureInterface), processXmlWatcher(&process),
-    progressValue(0)
+    processPaused(false), progressValue(0)
 {
   futureInterface.setProgressRange(0, 1000);
 
@@ -40,30 +44,81 @@ ctkCmdLineModuleProcessProgressWatcher::ctkCmdLineModuleProcessProgressWatcher(Q
   connect(&processXmlWatcher, SIGNAL(filterProgress(float)), SLOT(filterProgress(float)));
   connect(&processXmlWatcher, SIGNAL(filterFinished(QString)), SLOT(filterFinished(QString)));
   connect(&processXmlWatcher, SIGNAL(filterXmlError(QString)), SLOT(filterXmlError(QString)));
+
+  connect(&futureWatcher, SIGNAL(canceled()), SLOT(cancelProcess()));
+#ifdef Q_OS_UNIX
+  connect(&futureWatcher, SIGNAL(resumed()), SLOT(resumeProcess()));
+  // Due to Qt bug 12152, we cannot listen to the "paused" signal because it is
+  // not emitted directly when the QFuture is paused. Instead, it is emitted after
+  // resuming the future, after the "resume" signal has been emitted...
+  //connect(&futureWatcher, SIGNAL(paused()), SLOT(pauseProcess()));
+  connect(&pollPauseTimer, SIGNAL(timeout()), this, SLOT(pauseProcess()));
+  pollPauseTimer.start(500);
+#endif
+  futureWatcher.setFuture(futureInterface.future());
 }
 
-void ctkCmdLineModuleProcessProgressWatcher::filterStarted(const QString& name, const QString& comment)
+void ctkCmdLineModuleProcessWatcher::filterStarted(const QString& name, const QString& comment)
 {
   Q_UNUSED(comment)
   futureInterface.setProgressValueAndText(incrementProgress(), name);
 }
 
-void ctkCmdLineModuleProcessProgressWatcher::filterProgress(float progress)
+void ctkCmdLineModuleProcessWatcher::filterProgress(float progress)
 {
   futureInterface.setProgressValue(updateProgress(progress));
 }
 
-void ctkCmdLineModuleProcessProgressWatcher::filterFinished(const QString& name)
+void ctkCmdLineModuleProcessWatcher::filterFinished(const QString& name)
 {
   futureInterface.setProgressValueAndText(incrementProgress(), "Finished: " + name);
 }
 
-void ctkCmdLineModuleProcessProgressWatcher::filterXmlError(const QString &error)
+void ctkCmdLineModuleProcessWatcher::filterXmlError(const QString &error)
 {
   qDebug().nospace() << "[Module " << location << "]: " << error;
 }
 
-int ctkCmdLineModuleProcessProgressWatcher::updateProgress(float progress)
+void ctkCmdLineModuleProcessWatcher::pauseProcess()
+{
+  if (processPaused || !futureInterface.isPaused()) return;
+
+#ifdef Q_OS_UNIX
+  if (::kill(process.pid(), SIGSTOP))
+  {
+    // error
+    futureInterface.setPaused(false);
+  }
+  else
+  {
+    processPaused = true;
+  }
+#endif
+}
+
+void ctkCmdLineModuleProcessWatcher::resumeProcess()
+{
+  if (!processPaused) return;
+
+#ifdef Q_OS_UNIX
+  if(::kill(process.pid(), SIGCONT))
+  {
+    // error
+    futureInterface.setPaused(true);
+  }
+  else
+  {
+    processPaused = false;
+  }
+#endif
+}
+
+void ctkCmdLineModuleProcessWatcher::cancelProcess()
+{
+  process.terminate();
+}
+
+int ctkCmdLineModuleProcessWatcher::updateProgress(float progress)
 {
   progressValue = static_cast<int>(progress * 1000.0f);
   // normalize the value to lie between 0 and 1000.
@@ -74,16 +129,19 @@ int ctkCmdLineModuleProcessProgressWatcher::updateProgress(float progress)
   return progressValue;
 }
 
-int ctkCmdLineModuleProcessProgressWatcher::incrementProgress()
+int ctkCmdLineModuleProcessWatcher::incrementProgress()
 {
   if (++progressValue > 999) progressValue = 999;
   return progressValue;
 }
 
 ctkCmdLineModuleProcessTask::ctkCmdLineModuleProcessTask(const QString& location, const QStringList& args)
-  : process(NULL), location(location), args(args)
+  : location(location), args(args)
 {
   this->setCanCancel(true);
+#ifdef Q_OS_UNIX
+  this->setCanPause(true);
+#endif
 }
 
 ctkCmdLineModuleProcessTask::~ctkCmdLineModuleProcessTask()
@@ -107,46 +165,32 @@ void ctkCmdLineModuleProcessTask::run()
     return;
   }
 
-  process = new QProcess();
-  process->setReadChannel(QProcess::StandardOutput);
+  QProcess process;
+  process.setReadChannel(QProcess::StandardOutput);
 
   QEventLoop localLoop;
-  QObject::connect(process, SIGNAL(finished(int)), &localLoop, SLOT(quit()));
-  QObject::connect(process, SIGNAL(error(QProcess::ProcessError)), &localLoop, SLOT(quit()));
+  QObject::connect(&process, SIGNAL(finished(int)), &localLoop, SLOT(quit()));
+  QObject::connect(&process, SIGNAL(error(QProcess::ProcessError)), &localLoop, SLOT(quit()));
 
-  QTimer pollCancelTimer;
-  pollCancelTimer.setInterval(500);
-  this->connect(&pollCancelTimer, SIGNAL(timeout()), SLOT(pollCancelState()));
+  process.start(location, args);
 
-  process->start(location, args);
-
-  ctkCmdLineModuleProcessProgressWatcher progressWatcher(*process, location, *this);
+  ctkCmdLineModuleProcessWatcher progressWatcher(process, location, *this);
   Q_UNUSED(progressWatcher)
 
   localLoop.exec();
 
-  if (process->error() != QProcess::UnknownError)
+  if (process.error() != QProcess::UnknownError)
   {
-    this->reportException(ctkCmdLineModuleRunException(location, process->exitCode(), process->errorString()));
+    this->reportException(ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString()));
   }
-  else if (process->exitCode() != 0)
+  else if (process.exitCode() != 0)
   {
-    this->reportException(ctkCmdLineModuleRunException(location, process->exitCode(), process->readAllStandardError()));
+    this->reportException(ctkCmdLineModuleRunException(location, process.exitCode(), process.readAllStandardError()));
   }
 
-  this->setProgressValueAndText(1000, process->readAllStandardError());
+  this->setProgressValueAndText(1000, process.readAllStandardError());
 
   //this->reportResult(result);
   this->reportFinished();
 
-  delete process;
-
-}
-
-void ctkCmdLineModuleProcessTask::pollCancelState()
-{
-  if (this->isCanceled() && process->state() == QProcess::Running)
-  {
-    process->terminate();
-  }
 }

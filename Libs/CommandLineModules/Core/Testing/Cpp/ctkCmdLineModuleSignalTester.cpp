@@ -43,6 +43,21 @@ void ctkCmdLineModuleSignalTester::moduleProgressTextChanged(const QString &/*te
   events.push_back("module.progressTextChanged");
 }
 
+void ctkCmdLineModuleSignalTester::modulePaused()
+{
+  events.push_back("module.paused");
+}
+
+void ctkCmdLineModuleSignalTester::moduleResumed()
+{
+  events.push_back("module.resumed");
+}
+
+void ctkCmdLineModuleSignalTester::moduleCanceled()
+{
+  events.push_back("module.canceled");
+}
+
 void ctkCmdLineModuleSignalTester::filterStarted(const QString &/*name*/, const QString &/*comment*/)
 {
   events.push_back("filter.started");

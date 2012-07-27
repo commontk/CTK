@@ -29,12 +29,13 @@
 #include <QRunnable>
 #include <QStringList>
 #include <QBuffer>
+#include <QFutureWatcher>
+#include <QTimer>
 
 class QProcess;
 
-class ctkCmdLineModuleProcessTask : public QObject, public ctkCmdLineModuleFutureInterface, public QRunnable
+class ctkCmdLineModuleProcessTask : public ctkCmdLineModuleFutureInterface, public QRunnable
 {
-  Q_OBJECT
 
 public:
 
@@ -45,26 +46,21 @@ public:
 
   void run();
 
-protected Q_SLOTS:
-
-  void pollCancelState();
-
 private:
 
-  QProcess* process;
   const QString location;
   const QStringList args;
 
 };
 
-class ctkCmdLineModuleProcessProgressWatcher : public QObject
+class ctkCmdLineModuleProcessWatcher : public QObject
 {
   Q_OBJECT
 
 public:
 
-  ctkCmdLineModuleProcessProgressWatcher(QProcess& process, const QString& location,
-                                         ctkCmdLineModuleFutureInterface& futureInterface);
+  ctkCmdLineModuleProcessWatcher(QProcess& process, const QString& location,
+                                 ctkCmdLineModuleFutureInterface& futureInterface);
 
 protected Q_SLOTS:
 
@@ -73,6 +69,10 @@ protected Q_SLOTS:
   void filterFinished(const QString& name);
 
   void filterXmlError(const QString& error);
+
+  void pauseProcess();
+  void resumeProcess();
+  void cancelProcess();
 
 private:
 
@@ -83,6 +83,9 @@ private:
   QString location;
   ctkCmdLineModuleFutureInterface& futureInterface;
   ctkCmdLineModuleXmlProgressWatcher processXmlWatcher;
+  QFutureWatcher<ctkCmdLineModuleResult> futureWatcher;
+  QTimer pollPauseTimer;
+  bool processPaused;
   int progressValue;
 };
 

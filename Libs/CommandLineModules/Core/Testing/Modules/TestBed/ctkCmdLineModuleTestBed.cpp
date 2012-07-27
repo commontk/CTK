@@ -93,32 +93,24 @@ int main(int argc, char* argv[])
     outputs << "Output " + QString::number(i+1);
   }
 
-  if (outputs.empty())
-  {
-    // no outputs given, just return
-    if (exitCrash)
-    {
-      int* crash = 0;
-      *crash = 5;
-    }
-    if (exitCode != 0)
-    {
-      err << errorText;
-    }
-    return exitCode;
-  }
-
-  float stepTime = runtime / static_cast<float>(outputs.size());
+  float stepTime = outputs.size() ? runtime / static_cast<float>(outputs.size()) : runtime;
 
   QTime time;
   time.start();
 
   struct timespec nanostep;
 
-  out << "<filter-start>\n";
-  out << "<filter-name>Test Filter</filter-name>\n";
-  out << "<filter-comment>Does nothing useful</filter-comment>\n";
-  out << "</filter-start>\n";
+  if (!outputs.empty())
+  {
+    out << "<filter-start>\n";
+    out << "<filter-name>Test Filter</filter-name>\n";
+    out << "<filter-comment>Does nothing useful</filter-comment>\n";
+    out << "</filter-start>\n";
+  }
+  else
+  {
+    outputs.push_back("dummy");
+  }
 
   float progressStep = 1.0f / static_cast<float>(outputs.size());
   for(int i = 0; i < outputs.size(); ++i)
@@ -146,10 +138,12 @@ int main(int argc, char* argv[])
     nanosleep(&nanostep, NULL);
 
     // print the first output
-    out << output; endl(out);
-
-    // report progress
-    out << "<filter-progress>" << (i+1)*progressStep << "</filter-progress>\n";
+    if (output != "dummy")
+    {
+      out << output; endl(out);
+      // report progress
+      out << "<filter-progress>" << (i+1)*progressStep << "</filter-progress>\n";
+    }
   }
 
   // sleep 1 second to avoid squashing the last progress event with the finished event
