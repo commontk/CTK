@@ -166,13 +166,12 @@
     Match elements from the XML description
   ===================================================================
   -->
-
   <!-- start matching at 'executable' element -->
   <xsl:template match="/executable">
     <xsl:variable name="moduleTitle"><xsl:value-of select="title"/></xsl:variable>
     <ui version="4.0" >
       <class><xsl:value-of select="translate(normalize-space($moduleTitle), ' ', '')"/></class>
-      <widget class="QWidget" name="executable:{normalize-space($moduleTitle)}">
+      <widget class="{$executableWidget}" name="executable:{normalize-space($moduleTitle)}">
         <layout class="QVBoxLayout">
 
           <!-- This will generate QGroupBox items with the specific widgets -->
@@ -186,22 +185,24 @@
               </property>
             </spacer>
           </item>
-
         </layout>
       </widget>
-
       <connections>
         <xsl:apply-templates mode="connections" select="parameters/*"/>
       </connections>
     </ui>
   </xsl:template>
 
-
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Parameters (default: ctkCollapsibleGroupBox)
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
   <!-- Match the 'parameters' element and create the parameter groups (QGroupBox) -->
   <xsl:template match="parameters">
     <xsl:variable name="groupLabel"><xsl:value-of select="label"/></xsl:variable>
     <item>
-      <widget class="ctkCollapsibleGroupBox" name="paramGroup:{$groupLabel}">
+      <widget class="{$parametersWidget}" name="paramGroup:{$groupLabel}">
         <xsl:apply-templates select="./label"/>
         <xsl:apply-templates select="./description"/>
         <property name="checked">
@@ -213,7 +214,7 @@
       </widget>
     </item>
   </xsl:template>
-  
+
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     BOOLEAN parameter (default: QCheckbox)
@@ -223,7 +224,7 @@
   <xsl:template match="parameters/boolean">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <widget class="QCheckBox"  name="parameter:{name}">
+      <widget class="{$booleanWidget}"  name="parameter:{name}">
         <xsl:call-template name="commonWidgetProperties"/>
         <property name="text">
          <string/>
@@ -241,7 +242,7 @@
   <xsl:template match="parameters/integer">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <widget class="QSpinBox"  name="parameter:{name}">
+      <widget class="{$integerWidget}"  name="parameter:{name}">
         <xsl:if test="not(constraints)">
           <property name="minimum">
             <number>-999999999</number>
@@ -264,7 +265,7 @@
   <xsl:template match="parameters/*[name()=('double','float')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <widget class="QDoubleSpinBox"  name="parameter:{name}">
+      <widget class="{$floatingWidget}"  name="parameter:{name}">
         <property name="decimals">
           <number>6</number>
         </property>
@@ -290,7 +291,7 @@
   <xsl:template match="parameters/*[name()=('string', 'integer-vector', 'float-vector', 'double-vector', 'string-vector')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <widget class="QLineEdit"  name="parameter:{name}">
+      <widget class="{$vectorWidget}"  name="parameter:{name}">
         <xsl:call-template name="commonWidgetProperties"/>
       </widget>
     </item>
@@ -305,7 +306,7 @@
   <xsl:template match="parameters/*[name()=('integer-enumeration', 'float-enumeration', 'double-enumeration', 'string-enumeration')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <widget class="QComboBox"  name="parameter:{name}">
+      <widget class="{$enumWidget}"  name="parameter:{name}">
         <xsl:call-template name="commonWidgetProperties"/>
         <xsl:for-each select="element">
           <item>
@@ -329,7 +330,7 @@
     <item  row="{position()-1}" column="1">
       <layout class="QHBoxLayout">
         <item>
-          <widget class="ctkPathLineEdit"  name="parameter:{name}">
+          <widget class="{$imageWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <property name="filters">
@@ -359,7 +360,7 @@
     <item  row="{position()-1}" column="1">
       <layout class="QHBoxLayout">
         <item>
-          <widget class="ctkPathLineEdit"  name="parameter:{name}">
+          <widget class="{$directoryWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <property name="filters">
               <set>ctkPathLineEdit::Dirs</set>
@@ -386,7 +387,7 @@
   <xsl:template match="parameters/*[name()=('point', 'region')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <widget class="ctkCoordinatesWidget"  name="parameter:{name}">
+      <widget class="{$pointWidget}"  name="parameter:{name}">
         <xsl:call-template name="commonWidgetProperties"/>
       </widget>
     </item>
@@ -401,7 +402,7 @@
   <xsl:template match="parameters/*" priority="-1">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <widget class="QLabel"  name="{name}">
+      <widget class="unsupportedWidget"  name="{name}">
         <property name="text">
           <string>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p style="margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" color:#ff0000;">Element '<xsl:value-of select="name()"/>' not supported yet.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
@@ -411,5 +412,7 @@
       </widget>
     </item>
   </xsl:template>
+
+  <!-- EXTRA TRANSFORMATIONS -->
 
 </xsl:stylesheet>

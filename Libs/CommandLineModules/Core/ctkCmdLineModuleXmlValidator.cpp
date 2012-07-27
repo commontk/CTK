@@ -95,10 +95,10 @@ bool ctkCmdLineModuleXmlValidator::validateInput()
 
 bool ctkCmdLineModuleXmlValidator::error() const
 {
-  return !ErrorStr.isEmpty();
+  return !this->ErrorStr.isEmpty();
 }
 
 QString ctkCmdLineModuleXmlValidator::errorString() const
 {
-  return ErrorStr;
+  return this->ErrorStr;
 }
