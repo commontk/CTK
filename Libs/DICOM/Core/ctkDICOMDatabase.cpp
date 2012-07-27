@@ -131,6 +131,8 @@ public:
   /// reading while the tag cache is writing
   QSqlDatabase TagCacheDatabase;
   QString TagCacheDatabaseFilename;
+  QStringList TagsToPrecache;
+  void precacheTags( const QString sopInstanceUID );
 
   int insertPatient(const ctkDICOMDataset& ctkDataset);
   void insertStudy(const ctkDICOMDataset& ctkDataset, int dbPatientID);
@@ -986,9 +988,36 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMDatabase::setTagsToPrecache( const QStringList tags)
+{
+  Q_D(ctkDICOMDatabase);
+  d->TagsToPrecache = tags;
+}
+
+//------------------------------------------------------------------------------
+const QStringList ctkDICOMDatabase::tagsToPrecache()
+{
+  Q_D(ctkDICOMDatabase);
+  return d->TagsToPrecache;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
+{
+  Q_Q(ctkDICOMDatabase);
+  foreach (const QString &tag, this->TagsToPrecache)
+    {
+    q->instanceValue(sopInstanceUID, tag);
+    }
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile, bool generateThumbnail)
 {
   Q_Q(ctkDICOMDatabase);
+
+  // this is the method that all other insert signatures end up calling
+  // after they have pre-parsed their arguments
 
   QMutexLocker lock(&insertMutex);
 
@@ -1150,6 +1179,9 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
               insertImageStatement.bindValue ( 2, seriesInstanceUID );
               insertImageStatement.bindValue ( 3, QDateTime::currentDateTime() );
               insertImageStatement.exec();
+
+              // insert was needed, so cache any application-requested tags
+              this->precacheTags(sopInstanceUID);
             }
         }
 

@@ -55,6 +55,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(bool isOpen READ isOpen)
   Q_PROPERTY(QString lastError READ lastError)
   Q_PROPERTY(QString databaseFilename READ databaseFilename)
+  Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
 
 public:
   explicit ctkDICOMDatabase(QObject *parent = 0);
@@ -146,6 +147,19 @@ public:
   Q_INVOKABLE QStringList headerKeys ();
   Q_INVOKABLE QString headerValue (const QString key);
 
+  ///
+  /// \brief application-defined tags of interest
+  /// This list of tags is added to the internal tag cache during import
+  /// operations.  The list should be prepared by the application as
+  /// a hint to the database that these tags are likely to be accessed
+  /// later.  Internally, the database will cache the values of these
+  /// tags so that subsequent calls to fileValue or instanceValue will
+  /// be able to use the cache rather than re-reading the file.
+  /// @param tags should be a list of ascii hex group/element tags
+  ///  like "0008,0008" as in the instanceValue and fileValue calls
+  void setTagsToPrecache(const QStringList tags);
+  const QStringList tagsToPrecache();
+
   /// Insert into the database if not already exsting.
   /// @param dataset The dataset to store into the database. Usually, this is
   ///                is a complete DICOM object, like a complete image. However
@@ -161,9 +175,14 @@ public:
   ///                  does only make sense if a full object is received.
   /// @param @generateThumbnail If true, a thumbnail is generated.
   ///
-  Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail);
-  void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
-  Q_INVOKABLE void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
+  Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset, 
+                              bool storeFile, bool generateThumbnail);
+  void insert ( DcmDataset *dataset, 
+                              bool storeFile = true, bool generateThumbnail = true);
+  Q_INVOKABLE void insert ( const QString& filePath, 
+                            bool storeFile = true, bool generateThumbnail = true, 
+                            bool createHierarchy = true, 
+                            const QString& destinationDirectoryName = QString() );
 
   /// Check if file is already in database and up-to-date
   bool fileExistsAndUpToDate(const QString& filePath);
