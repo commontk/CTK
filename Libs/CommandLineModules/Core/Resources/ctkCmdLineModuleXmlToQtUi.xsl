@@ -402,7 +402,7 @@
   <xsl:template match="parameters/*" priority="-1">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <widget class="unsupportedWidget"  name="{name}">
+      <widget class="{$unsupportedWidget}"  name="{name}">
         <property name="text">
           <string>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;p style="margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" color:#ff0000;">Element '<xsl:value-of select="name()"/>' not supported yet.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
