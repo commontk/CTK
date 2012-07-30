@@ -30,37 +30,56 @@
 
 #include <QDebug>
 
+class ctkCmdLineModuleXmlValidatorPrivate
+{
+public:
+
+  ctkCmdLineModuleXmlValidatorPrivate()
+    : Input(NULL), InputSchema(NULL)
+  {}
+
+  QIODevice* Input;
+  QIODevice* InputSchema;
+
+  QString ErrorStr;
+};
+
 ctkCmdLineModuleXmlValidator::ctkCmdLineModuleXmlValidator(QIODevice *input)
-  : Input(input), InputSchema(0)
+  : d(new ctkCmdLineModuleXmlValidatorPrivate)
+{
+  d->Input = input;
+}
+
+ctkCmdLineModuleXmlValidator::~ctkCmdLineModuleXmlValidator()
 {
 }
 
 void ctkCmdLineModuleXmlValidator::setInput(QIODevice *input)
 {
-  Input = input;
+  d->Input = input;
 }
 
 QIODevice* ctkCmdLineModuleXmlValidator::input() const
 {
-  return Input;
+  return d->Input;
 }
 
 void ctkCmdLineModuleXmlValidator::setInputSchema(QIODevice *input)
 {
-  InputSchema = input;
+  d->InputSchema = input;
 }
 
 bool ctkCmdLineModuleXmlValidator::validateInput()
 {
-  ErrorStr.clear();
+  d->ErrorStr.clear();
 
-  if (!Input)
+  if (!d->Input)
   {
-    ErrorStr = "No input set for validation.";
+    d->ErrorStr = "No input set for validation.";
     return false;
   }
 
-  QIODevice* inputSchema = InputSchema;
+  QIODevice* inputSchema = d->InputSchema;
   QScopedPointer<QIODevice> defaultInputSchema(new QFile(":/ctkCmdLineModule.xsd"));
   if (!inputSchema)
   {
@@ -76,16 +95,16 @@ bool ctkCmdLineModuleXmlValidator::validateInput()
   if (!schema.load(inputSchema))
   {
     QString msg("Invalid input schema at line %1, column %2: %3");
-    ErrorStr = msg.arg(errorHandler.line()).arg(errorHandler.column()).arg(errorHandler.statusMessage());
+    d->ErrorStr = msg.arg(errorHandler.line()).arg(errorHandler.column()).arg(errorHandler.statusMessage());
     return false;
   }
 
   QXmlSchemaValidator validator(schema);
 
-  if (!validator.validate(Input))
+  if (!validator.validate(d->Input))
   {
     QString msg("Error validating CLI XML description, at line %1, column %2: %3");
-    ErrorStr = msg.arg(errorHandler.line()).arg(errorHandler.column())
+    d->ErrorStr = msg.arg(errorHandler.line()).arg(errorHandler.column())
                 .arg(errorHandler.statusMessage());
     return false;
   }
@@ -95,10 +114,10 @@ bool ctkCmdLineModuleXmlValidator::validateInput()
 
 bool ctkCmdLineModuleXmlValidator::error() const
 {
-  return !this->ErrorStr.isEmpty();
+  return !d->ErrorStr.isEmpty();
 }
 
 QString ctkCmdLineModuleXmlValidator::errorString() const
 {
-  return this->ErrorStr;
+  return d->ErrorStr;
 }

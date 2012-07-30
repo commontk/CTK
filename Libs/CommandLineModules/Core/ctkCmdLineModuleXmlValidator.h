@@ -24,7 +24,9 @@
 
 #include <ctkCommandLineModulesCoreExport.h>
 
-#include <QString>
+#include <QScopedPointer>
+
+class ctkCmdLineModuleXmlValidatorPrivate;
 
 class QIODevice;
 
@@ -37,6 +39,7 @@ class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXmlValidator
 public:
 
   ctkCmdLineModuleXmlValidator(QIODevice* input = 0);
+  ~ctkCmdLineModuleXmlValidator();
 
   void setInput(QIODevice* input);
   QIODevice* input() const;
@@ -50,10 +53,8 @@ public:
 
 private:
 
-  QIODevice* Input;
-  QIODevice* InputSchema;
+  QScopedPointer<ctkCmdLineModuleXmlValidatorPrivate> d;
 
-  QString ErrorStr;
 };
 
 #endif // CTKCMDLINEMODULEXMLVALIDATOR_H

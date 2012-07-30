@@ -25,12 +25,9 @@
 // CTK includes
 #include "ctkCommandLineModulesCoreExport.h"
 #include "ctkCmdLineModuleXmlValidator.h"
-class ctkCmdLineModuleXmlMsgHandler;
+class ctkCmdLineModuleXslTransformPrivate;
 
 // Qt includes
-#include <QList>
-#include <QString>
-#include <QXmlQuery>
 class QIODevice;
 
 /**
@@ -116,20 +113,8 @@ public:
 
 private:
 
-  bool validateOutput();
+  QScopedPointer<ctkCmdLineModuleXslTransformPrivate> d;
 
-  bool Validate;
-  bool Format;
-
-  QIODevice* OutputSchema;
-  QIODevice* Transformation;
-  QIODevice* Output;
-
-  QXmlQuery XslTransform;
-  QList<QIODevice*> ExtraTransformations;
-  ctkCmdLineModuleXmlMsgHandler* MsgHandler;
-
-  QString ErrorStr;
 };
 
 

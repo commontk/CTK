@@ -23,6 +23,7 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QFile>
+#include <QXmlQuery>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 #include <QXmlFormatter>
@@ -31,184 +32,38 @@
 #include "ctkCmdLineModuleXslTransform.h"
 #include "ctkCmdLineModuleXmlMsgHandler_p.h"
 
-ctkCmdLineModuleXslTransform::ctkCmdLineModuleXslTransform(QIODevice *input, QIODevice *output)
-  : ctkCmdLineModuleXmlValidator(input)
-  , Validate(false)
-  , Format(false)
-  , OutputSchema(0)
-  , Transformation(0)
-  , Output(output)
-  , XslTransform(QXmlQuery::XSLT20)
-  , MsgHandler(0)
+class ctkCmdLineModuleXslTransformPrivate
 {
-  this->MsgHandler = new ctkCmdLineModuleXmlMsgHandler();
-  this->XslTransform.setMessageHandler(this->MsgHandler);
+public:
 
-  this->bindVariable("executableWidget", QVariant(QString("QWidget")));
-  this->bindVariable("parametersWidget", QVariant(QString("ctkCollapsibleGroupBox")));
-  this->bindVariable("booleanWidget", QVariant(QString("QCheckBox")));
-  this->bindVariable("integerWidget", QVariant(QString("QSpinBox")));
-  this->bindVariable("floatingWidget", QVariant(QString("QDoubleSpinBox")));
-  this->bindVariable("vectorWidget", QVariant(QString("QLineEdit")));
-  this->bindVariable("enumWidget", QVariant(QString("QComboBox")));
-  this->bindVariable("imageWidget", QVariant(QString("ctkPathLineEdit")));
-  this->bindVariable("directoryWidget", QVariant(QString("ctkPathLineEdit")));
-  this->bindVariable("pointWidget", QVariant(QString("ctkCoordinatesWidget")));
-  this->bindVariable("unsupportedWidget", QVariant(QString("QLabel")));
-}
-
-ctkCmdLineModuleXslTransform::~ctkCmdLineModuleXslTransform()
-{
-  delete this->MsgHandler;
-}
-
-void ctkCmdLineModuleXslTransform::setOutput(QIODevice* output)
-{
-  this->Output = output;
-}
-
-QIODevice* ctkCmdLineModuleXslTransform::output() const
-{
-  return this->Output;
-}
-
-void ctkCmdLineModuleXslTransform::setOutputSchema(QIODevice *output)
-{
-  this->OutputSchema = output;
-}
-
-bool ctkCmdLineModuleXslTransform::formatXmlOutput() const
-{
-  return this->Format;
-}
-
-void ctkCmdLineModuleXslTransform::setFormatXmlOutput(bool format)
-{
-  this->Format = format;
-}
-
-bool ctkCmdLineModuleXslTransform::transform()
-{
-  this->ErrorStr.clear();
-
-  if (!Output)
+  ctkCmdLineModuleXslTransformPrivate(QIODevice *output)
+    : Validate(false)
+    , Format(false)
+    , OutputSchema(0)
+    , Transformation(0)
+    , Output(output)
+    , XslTransform(QXmlQuery::XSLT20)
   {
-    this->ErrorStr = "No output device set";
-    return false;
-  }
-  QIODevice* inputDevice = this->input();
-  if (!inputDevice)
-  {
-    this->ErrorStr = "No input set for deriving an output.";
-    return false;
-  }
-  else if (!(inputDevice->openMode() & QIODevice::ReadOnly))
-  {
-    inputDevice->open(QIODevice::ReadOnly);
-  }
-  inputDevice->reset();
-
-
-  if (!this->XslTransform.setFocus(inputDevice))
-  {
-    QString msg("Error transforming XML input: %1");
-    this->ErrorStr = msg.arg(this->MsgHandler->statusMessage());
-    return false;
+    this->XslTransform.setMessageHandler(&this->MsgHandler);
   }
 
-  QIODevice* transformation = this->Transformation;
-  QScopedPointer<QIODevice> defaultTransform(new QFile(":/ctkCmdLineModuleXmlToQtUi.xsl"));
-  if (!transformation)
-  {
-    transformation = defaultTransform.data();
-    transformation->open(QIODevice::ReadOnly);
-  }
-  QString query(transformation->readAll());
-  QString extra;
-  foreach(QIODevice* extraIODevice, this->ExtraTransformations)
-    {
-    extraIODevice->open(QIODevice::ReadOnly);
-    extra += extraIODevice->readAll();
-    }
-  query.replace("<!-- EXTRA TRANSFORMATIONS -->", extra);
-#if 0
-  qDebug() << query;
-#endif
-  this->XslTransform.setQuery(query);
+  bool validateOutput();
 
-  bool closeOutput = false;
-  if (!(this->Output->openMode() & QIODevice::WriteOnly))
-  {
-    this->Output->open(QIODevice::WriteOnly);
-    closeOutput = true;
-  }
+  bool Validate;
+  bool Format;
 
-  QScopedPointer<QXmlSerializer> xmlSerializer;
-  if (Format)
-  {
-    xmlSerializer.reset(new QXmlFormatter(this->XslTransform, this->Output));
-  }
-  else
-  {
-    xmlSerializer.reset(new QXmlSerializer(this->XslTransform, this->Output));
-  }
+  QIODevice* OutputSchema;
+  QIODevice* Transformation;
+  QIODevice* Output;
 
-  if (!this->XslTransform.evaluateTo(xmlSerializer.data()))
-  {
-    QString msg("Error transforming XML input, at line %1, column %2: %3");
-    this->ErrorStr = msg.arg(this->MsgHandler->line()).arg(this->MsgHandler->column())
-      .arg(this->MsgHandler->statusMessage());
-    return false;
-  }
+  QXmlQuery XslTransform;
+  QList<QIODevice*> ExtraTransformations;
+  ctkCmdLineModuleXmlMsgHandler MsgHandler;
 
-#if 0
-  qDebug() << this->Output;
-#endif
+  QString ErrorStr;
+};
 
-  if (closeOutput)
-  {
-    this->Output->close();
-  }
-  else
-  {
-    this->Output->reset();
-  }
-
-  if (this->Validate)
-  {
-    return this->validateOutput();
-  }
-  return true;
-}
-
-void ctkCmdLineModuleXslTransform::setXslTransformation(QIODevice *transformation)
-{
-  this->Transformation = transformation;
-}
-
-void ctkCmdLineModuleXslTransform::bindVariable(const QString& name, const QVariant& value)
-{
-  this->XslTransform.bindVariable(name, value);
-}
-
-void ctkCmdLineModuleXslTransform::setXslExtraTransformation(QIODevice* transformation)
-{
-  QList<QIODevice*> transformations;
-  transformations<<transformation;
-  this->setXslExtraTransformations(transformations);
-}
-
-void ctkCmdLineModuleXslTransform::setXslExtraTransformations(const QList<QIODevice *>& transformations)
-{
-  this->ExtraTransformations = transformations;
-}
-
-void ctkCmdLineModuleXslTransform::setValidateOutput(bool validate)
-{
-  this->Validate = validate;
-}
-
-bool ctkCmdLineModuleXslTransform::validateOutput()
+bool ctkCmdLineModuleXslTransformPrivate::validateOutput()
 {
   this->ErrorStr.clear();
 
@@ -253,9 +108,176 @@ bool ctkCmdLineModuleXslTransform::validateOutput()
   return true;
 }
 
+ctkCmdLineModuleXslTransform::ctkCmdLineModuleXslTransform(QIODevice *input, QIODevice *output)
+  : ctkCmdLineModuleXmlValidator(input)
+  , d(new ctkCmdLineModuleXslTransformPrivate(output))
+{
+  this->bindVariable("executableWidget", QVariant(QString("QWidget")));
+  this->bindVariable("parametersWidget", QVariant(QString("ctkCollapsibleGroupBox")));
+  this->bindVariable("booleanWidget", QVariant(QString("QCheckBox")));
+  this->bindVariable("integerWidget", QVariant(QString("QSpinBox")));
+  this->bindVariable("floatingWidget", QVariant(QString("QDoubleSpinBox")));
+  this->bindVariable("vectorWidget", QVariant(QString("QLineEdit")));
+  this->bindVariable("enumWidget", QVariant(QString("QComboBox")));
+  this->bindVariable("imageWidget", QVariant(QString("ctkPathLineEdit")));
+  this->bindVariable("directoryWidget", QVariant(QString("ctkPathLineEdit")));
+  this->bindVariable("pointWidget", QVariant(QString("ctkCoordinatesWidget")));
+  this->bindVariable("unsupportedWidget", QVariant(QString("QLabel")));
+}
+
+ctkCmdLineModuleXslTransform::~ctkCmdLineModuleXslTransform()
+{
+}
+
+void ctkCmdLineModuleXslTransform::setOutput(QIODevice* output)
+{
+  d->Output = output;
+}
+
+QIODevice* ctkCmdLineModuleXslTransform::output() const
+{
+  return d->Output;
+}
+
+void ctkCmdLineModuleXslTransform::setOutputSchema(QIODevice *output)
+{
+  d->OutputSchema = output;
+}
+
+bool ctkCmdLineModuleXslTransform::formatXmlOutput() const
+{
+  return d->Format;
+}
+
+void ctkCmdLineModuleXslTransform::setFormatXmlOutput(bool format)
+{
+  d->Format = format;
+}
+
+bool ctkCmdLineModuleXslTransform::transform()
+{
+  d->ErrorStr.clear();
+
+  if (!d->Output)
+  {
+    d->ErrorStr = "No output device set";
+    return false;
+  }
+  QIODevice* inputDevice = this->input();
+  if (!inputDevice)
+  {
+    d->ErrorStr = "No input set for deriving an output.";
+    return false;
+  }
+  else if (!(inputDevice->openMode() & QIODevice::ReadOnly))
+  {
+    inputDevice->open(QIODevice::ReadOnly);
+  }
+  inputDevice->reset();
+
+
+  if (!d->XslTransform.setFocus(inputDevice))
+  {
+    QString msg("Error transforming XML input: %1");
+    d->ErrorStr = msg.arg(d->MsgHandler.statusMessage());
+    return false;
+  }
+
+  QIODevice* transformation = d->Transformation;
+  QScopedPointer<QIODevice> defaultTransform(new QFile(":/ctkCmdLineModuleXmlToQtUi.xsl"));
+  if (!transformation)
+  {
+    transformation = defaultTransform.data();
+    transformation->open(QIODevice::ReadOnly);
+  }
+  QString query(transformation->readAll());
+  QString extra;
+  foreach(QIODevice* extraIODevice, d->ExtraTransformations)
+    {
+    extraIODevice->open(QIODevice::ReadOnly);
+    extra += extraIODevice->readAll();
+    }
+  query.replace("<!-- EXTRA TRANSFORMATIONS -->", extra);
+#if 0
+  qDebug() << query;
+#endif
+  d->XslTransform.setQuery(query);
+
+  bool closeOutput = false;
+  if (!(d->Output->openMode() & QIODevice::WriteOnly))
+  {
+    d->Output->open(QIODevice::WriteOnly);
+    closeOutput = true;
+  }
+
+  QScopedPointer<QXmlSerializer> xmlSerializer;
+  if (d->Format)
+  {
+    xmlSerializer.reset(new QXmlFormatter(d->XslTransform, d->Output));
+  }
+  else
+  {
+    xmlSerializer.reset(new QXmlSerializer(d->XslTransform, d->Output));
+  }
+
+  if (!d->XslTransform.evaluateTo(xmlSerializer.data()))
+  {
+    QString msg("Error transforming XML input, at line %1, column %2: %3");
+    d->ErrorStr = msg.arg(d->MsgHandler.line()).arg(d->MsgHandler.column())
+        .arg(d->MsgHandler.statusMessage());
+    return false;
+  }
+
+#if 0
+  qDebug() << d->Output;
+#endif
+
+  if (closeOutput)
+  {
+    d->Output->close();
+  }
+  else
+  {
+    d->Output->reset();
+  }
+
+  if (d->Validate)
+  {
+    return d->validateOutput();
+  }
+  return true;
+}
+
+void ctkCmdLineModuleXslTransform::setXslTransformation(QIODevice *transformation)
+{
+  d->Transformation = transformation;
+}
+
+void ctkCmdLineModuleXslTransform::bindVariable(const QString& name, const QVariant& value)
+{
+  d->XslTransform.bindVariable(name, value);
+}
+
+void ctkCmdLineModuleXslTransform::setXslExtraTransformation(QIODevice* transformation)
+{
+  QList<QIODevice*> transformations;
+  transformations<<transformation;
+  this->setXslExtraTransformations(transformations);
+}
+
+void ctkCmdLineModuleXslTransform::setXslExtraTransformations(const QList<QIODevice *>& transformations)
+{
+  d->ExtraTransformations = transformations;
+}
+
+void ctkCmdLineModuleXslTransform::setValidateOutput(bool validate)
+{
+  d->Validate = validate;
+}
+
 bool ctkCmdLineModuleXslTransform::error() const
 {
-  return ctkCmdLineModuleXmlValidator::error() || !this->ErrorStr.isEmpty();
+  return ctkCmdLineModuleXmlValidator::error() || !d->ErrorStr.isEmpty();
 }
 
 QString ctkCmdLineModuleXslTransform::errorString() const
@@ -263,7 +285,7 @@ QString ctkCmdLineModuleXslTransform::errorString() const
   QString errStr = this->ctkCmdLineModuleXmlValidator::errorString();
   if (errStr.isEmpty())
   {
-    return this->ErrorStr;
+    return d->ErrorStr;
   }
   return errStr;
 }
