@@ -156,29 +156,11 @@ QString integerWidgetSpinBox =
   "                                <property name=\"toolTip\">\n"
   "                                    <string>Integer description</string>\n"
   "                                </property>\n"
-  "                                <property name=\"parameter:cppType\">\n"
-  "                                    <string>int</string>\n"
-  "                                </property>\n"
   "                                <property name=\"parameter:valueProperty\">\n"
   "                                    <string>value</string>\n"
   "                                </property>\n"
   "                                <property name=\"value\">\n"
   "                                    <number>1</number>\n"
-  "                                </property>\n"
-  "                                <property name=\"parameter:flag\">\n"
-  "                                    <string>-i</string>\n"
-  "                                </property>\n"
-  "                                <property name=\"parameter:longflag\">\n"
-  "                                    <string>--integer</string>\n"
-  "                                </property>\n"
-  "                                <property name=\"parameter:description\">\n"
-  "                                    <string>Integer description</string>\n"
-  "                                </property>\n"
-  "                                <property name=\"parameter:label\">\n"
-  "                                    <string>Integer</string>\n"
-  "                                </property>\n"
-  "                                <property name=\"parameter:default\">\n"
-  "                                    <string>1</string>\n"
   "                                </property>\n"
   "                            </widget>\n"
   ;
@@ -200,6 +182,8 @@ void ctkCmdLineModuleXslTransformTester::testTransform()
   QBuffer output;
   output.open(QBuffer::ReadWrite);
   transformer.setOutput(&output);
+
+  transformer.setFormatXmlOutput(true);
 
   QFETCH(bool, expectedSuccess);
   bool success = transformer.transform();
@@ -277,6 +261,8 @@ void ctkCmdLineModuleXslTransformTester::testBindVariable()
   output.open(QBuffer::ReadWrite);
   transformer.setOutput(&output);
 
+  transformer.setFormatXmlOutput(true);
+
   QFETCH(QString, variableName);
   QFETCH(QString, variableValue);
   transformer.bindVariable(variableName, variableValue);
@@ -332,6 +318,8 @@ void ctkCmdLineModuleXslTransformTester::testXslExtraTransformation()
   QBuffer output;
   output.open(QBuffer::ReadWrite);
   transformer.setOutput(&output);
+
+  transformer.setFormatXmlOutput(true);
 
   QFETCH(QString, extra);
   QByteArray extraTransformationArray(extra.toUtf8());
@@ -397,29 +385,11 @@ void ctkCmdLineModuleXslTransformTester::testXslExtraTransformation_data()
     "                                        <property name=\"toolTip\">\n"
     "                                            <string>Integer description</string>\n"
     "                                        </property>\n"
-    "                                        <property name=\"parameter:cppType\">\n"
-    "                                            <string>int</string>\n"
-    "                                        </property>\n"
     "                                        <property name=\"parameter:valueProperty\">\n"
     "                                            <string>value</string>\n"
     "                                        </property>\n"
     "                                        <property name=\"value\">\n"
     "                                            <number>1</number>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:flag\">\n"
-    "                                            <string>-i</string>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:longflag\">\n"
-    "                                            <string>--integer</string>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:description\">\n"
-    "                                            <string>Integer description</string>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:label\">\n"
-    "                                            <string>Integer</string>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:default\">\n"
-    "                                            <string>1</string>\n"
     "                                        </property>\n"
     "                                    </widget>\n"
     "                                </item>\n"
@@ -434,29 +404,11 @@ void ctkCmdLineModuleXslTransformTester::testXslExtraTransformation_data()
     "                                        <property name=\"toolTip\">\n"
     "                                            <string>Integer description</string>\n"
     "                                        </property>\n"
-    "                                        <property name=\"parameter:cppType\">\n"
-    "                                            <string>int</string>\n"
-    "                                        </property>\n"
     "                                        <property name=\"parameter:valueProperty\">\n"
     "                                            <string>value</string>\n"
     "                                        </property>\n"
     "                                        <property name=\"value\">\n"
     "                                            <number>1</number>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:flag\">\n"
-    "                                            <string>-i</string>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:longflag\">\n"
-    "                                            <string>--integer</string>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:description\">\n"
-    "                                            <string>Integer description</string>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:label\">\n"
-    "                                            <string>Integer</string>\n"
-    "                                        </property>\n"
-    "                                        <property name=\"parameter:default\">\n"
-    "                                            <string>1</string>\n"
     "                                        </property>\n"
     "                                    </widget>\n"
     "                                </item>\n"

@@ -51,6 +51,22 @@ public:
   void setOutputSchema(QIODevice* output);
 
   /**
+   * @brief Returns \code true if the XSL output will be formatted.
+   * @return \code true if the ouptut will be formatted, \code false otherwise.
+   */
+  bool formatXmlOutput() const;
+
+  /**
+   * @brief Formats the XSL output to be human-readable.
+   *
+   * It is assumed that the XSL output is valid XML. The output will be
+   * formatted with an indentation depth of four spaces. Note that setting
+   * \e format to \code true increases compuational overhead and memory
+   * requirements and is usually only done for testing or debugging purposes.
+   */
+  void setFormatXmlOutput(bool format);
+
+  /**
    * @brief Transforms an XML input via a XSL transformation.
    *
    * This method assumes that the input set via setInput() or supplied
@@ -70,8 +86,8 @@ public:
    *
    * @return
    */
-  inline void setXslExtraTransformation(QIODevice* transformation);
-  void setXslExtraTransformations(QList<QIODevice*> transformations);
+  void setXslExtraTransformation(QIODevice* transformation);
+  void setXslExtraTransformations(const QList<QIODevice*>& transformations);
 
   /**
    *  @brief Binds the variable name to the value so that $name can be used
@@ -103,6 +119,7 @@ private:
   bool validateOutput();
 
   bool Validate;
+  bool Format;
 
   QIODevice* OutputSchema;
   QIODevice* Transformation;
@@ -115,11 +132,5 @@ private:
   QString ErrorStr;
 };
 
-void ctkCmdLineModuleXslTransform::setXslExtraTransformation(QIODevice* transformation)
-{
-  QList<QIODevice*> transformations;
-  transformations<<transformation;
-  this->setXslExtraTransformations(transformations);
-}
 
 #endif // CTKCMDLINEMODULEXSLTRANSFORM_H

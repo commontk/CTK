@@ -25,6 +25,7 @@
 #include <QFile>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
+#include <QXmlFormatter>
 
 // CTK includes
 #include "ctkCmdLineModuleXslTransform.h"
@@ -33,6 +34,7 @@
 ctkCmdLineModuleXslTransform::ctkCmdLineModuleXslTransform(QIODevice *input, QIODevice *output)
   : ctkCmdLineModuleXmlValidator(input)
   , Validate(false)
+  , Format(false)
   , OutputSchema(0)
   , Transformation(0)
   , Output(output)
@@ -73,6 +75,16 @@ QIODevice* ctkCmdLineModuleXslTransform::output() const
 void ctkCmdLineModuleXslTransform::setOutputSchema(QIODevice *output)
 {
   this->OutputSchema = output;
+}
+
+bool ctkCmdLineModuleXslTransform::formatXmlOutput() const
+{
+  return this->Format;
+}
+
+void ctkCmdLineModuleXslTransform::setFormatXmlOutput(bool format)
+{
+  this->Format = format;
 }
 
 bool ctkCmdLineModuleXslTransform::transform()
@@ -131,7 +143,17 @@ bool ctkCmdLineModuleXslTransform::transform()
     closeOutput = true;
   }
 
-  if (!this->XslTransform.evaluateTo(this->Output))
+  QScopedPointer<QXmlSerializer> xmlSerializer;
+  if (Format)
+  {
+    xmlSerializer.reset(new QXmlFormatter(this->XslTransform, this->Output));
+  }
+  else
+  {
+    xmlSerializer.reset(new QXmlSerializer(this->XslTransform, this->Output));
+  }
+
+  if (!this->XslTransform.evaluateTo(xmlSerializer.data()))
   {
     QString msg("Error transforming XML input, at line %1, column %2: %3");
     this->ErrorStr = msg.arg(this->MsgHandler->line()).arg(this->MsgHandler->column())
@@ -169,7 +191,14 @@ void ctkCmdLineModuleXslTransform::bindVariable(const QString& name, const QVari
   this->XslTransform.bindVariable(name, value);
 }
 
-void ctkCmdLineModuleXslTransform::setXslExtraTransformations(QList<QIODevice*> transformations)
+void ctkCmdLineModuleXslTransform::setXslExtraTransformation(QIODevice* transformation)
+{
+  QList<QIODevice*> transformations;
+  transformations<<transformation;
+  this->setXslExtraTransformations(transformations);
+}
+
+void ctkCmdLineModuleXslTransform::setXslExtraTransformations(const QList<QIODevice *>& transformations)
 {
   this->ExtraTransformations = transformations;
 }
