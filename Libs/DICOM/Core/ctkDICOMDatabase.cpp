@@ -62,6 +62,10 @@
 static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
 //------------------------------------------------------------------------------
 
+// Flag for tag cache to avoid repeated serarches for
+// tags that do no exist.
+static QString TagNotInInstance("__TAG_NOT_IN_INSTANCE__");
+
 //------------------------------------------------------------------------------
 class ctkDICOMDatabasePrivate
 {
@@ -676,6 +680,10 @@ QString ctkDICOMDatabase::headerValue (QString key)
 QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
 {
   QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance)
+    {
+    return "";
+    }
   if (value != "")
     {
     return value;
@@ -690,6 +698,10 @@ QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsi
 {
   QString tag = this->groupElementToTag(group,element);
   QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance)
+    {
+    return "";
+    }
   if (value != "")
     {
     return value;
@@ -714,6 +726,10 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   this->tagToGroupElement(tag, group, element);
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance)
+    {
+    return "";
+    }
   if (value != "")
     {
     return value;
@@ -740,6 +756,10 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
   QString tag = this->groupElementToTag(group, element);
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance)
+    {
+    return "";
+    }
   if (value != "")
     {
     return value;
@@ -1502,10 +1522,15 @@ bool ctkDICOMDatabase::cacheTag(const QString sopInstanceUID, const QString tag,
       return false;
       }
     }
+  QString valueToInsert(value);
+  if (valueToInsert == "")
+    {
+    valueToInsert = TagNotInInstance;
+    }
   QSqlQuery insertTag( d->TagCacheDatabase );
   insertTag.prepare( "INSERT OR REPLACE INTO TagCache VALUES(:sopInstanceUID, :tag, :value)" );
   insertTag.bindValue(":sopInstanceUID",sopInstanceUID);
   insertTag.bindValue(":tag",tag);
-  insertTag.bindValue(":value",value);
+  insertTag.bindValue(":value",valueToInsert);
   return d->loggedExec(insertTag);
 }
