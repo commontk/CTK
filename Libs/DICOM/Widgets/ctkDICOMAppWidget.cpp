@@ -296,6 +296,22 @@ bool ctkDICOMAppWidget::searchWidgetPopUpMode(){
   return d->IsSearchWidgetPopUpMode;
 }
 
+//------------------------------------------------------------------------------
+void ctkDICOMAppWidget::setTagsToPrecache( const QStringList tags)
+{
+  Q_D(ctkDICOMAppWidget);
+  d->DICOMDatabase->setTagsToPrecache(tags);
+}
+
+//------------------------------------------------------------------------------
+const QStringList ctkDICOMAppWidget::tagsToPrecache()
+{
+  Q_D(ctkDICOMAppWidget);
+  return d->DICOMDatabase->tagsToPrecache();
+}
+
+
+
 //----------------------------------------------------------------------------
 void ctkDICOMAppWidget::setSearchWidgetPopUpMode(bool flag){
   Q_D(ctkDICOMAppWidget);

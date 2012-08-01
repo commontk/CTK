@@ -62,6 +62,10 @@
 static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
 //------------------------------------------------------------------------------
 
+// Flag for tag cache to avoid repeated serarches for
+// tags that do no exist.
+static QString TagNotInInstance("__TAG_NOT_IN_INSTANCE__");
+
 //------------------------------------------------------------------------------
 class ctkDICOMDatabasePrivate
 {
@@ -131,6 +135,8 @@ public:
   /// reading while the tag cache is writing
   QSqlDatabase TagCacheDatabase;
   QString TagCacheDatabaseFilename;
+  QStringList TagsToPrecache;
+  void precacheTags( const QString sopInstanceUID );
 
   int insertPatient(const ctkDICOMDataset& ctkDataset);
   void insertStudy(const ctkDICOMDataset& ctkDataset, int dbPatientID);
@@ -674,6 +680,10 @@ QString ctkDICOMDatabase::headerValue (QString key)
 QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
 {
   QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance)
+    {
+    return "";
+    }
   if (value != "")
     {
     return value;
@@ -688,6 +698,10 @@ QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsi
 {
   QString tag = this->groupElementToTag(group,element);
   QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance)
+    {
+    return "";
+    }
   if (value != "")
     {
     return value;
@@ -712,6 +726,10 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   this->tagToGroupElement(tag, group, element);
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance)
+    {
+    return "";
+    }
   if (value != "")
     {
     return value;
@@ -738,6 +756,10 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
   QString tag = this->groupElementToTag(group, element);
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance)
+    {
+    return "";
+    }
   if (value != "")
     {
     return value;
@@ -758,6 +780,10 @@ bool ctkDICOMDatabase::tagToGroupElement(const QString tag, unsigned short& grou
 {
   QStringList groupElement = tag.split(",");
   bool groupOK, elementOK;
+  if (groupElement.length() != 2)
+    {
+    return false;
+    }
   group = groupElement[0].toUInt(&groupOK, 16);
   element = groupElement[1].toUInt(&elementOK, 16);
 
@@ -986,9 +1012,36 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMDatabase::setTagsToPrecache( const QStringList tags)
+{
+  Q_D(ctkDICOMDatabase);
+  d->TagsToPrecache = tags;
+}
+
+//------------------------------------------------------------------------------
+const QStringList ctkDICOMDatabase::tagsToPrecache()
+{
+  Q_D(ctkDICOMDatabase);
+  return d->TagsToPrecache;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
+{
+  Q_Q(ctkDICOMDatabase);
+  foreach (const QString &tag, this->TagsToPrecache)
+    {
+    q->instanceValue(sopInstanceUID, tag);
+    }
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile, bool generateThumbnail)
 {
   Q_Q(ctkDICOMDatabase);
+
+  // this is the method that all other insert signatures end up calling
+  // after they have pre-parsed their arguments
 
   QMutexLocker lock(&insertMutex);
 
@@ -1150,6 +1203,9 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
               insertImageStatement.bindValue ( 2, seriesInstanceUID );
               insertImageStatement.bindValue ( 3, QDateTime::currentDateTime() );
               insertImageStatement.exec();
+
+              // insert was needed, so cache any application-requested tags
+              this->precacheTags(sopInstanceUID);
             }
         }
 
@@ -1470,10 +1526,15 @@ bool ctkDICOMDatabase::cacheTag(const QString sopInstanceUID, const QString tag,
       return false;
       }
     }
+  QString valueToInsert(value);
+  if (valueToInsert == "")
+    {
+    valueToInsert = TagNotInInstance;
+    }
   QSqlQuery insertTag( d->TagCacheDatabase );
   insertTag.prepare( "INSERT OR REPLACE INTO TagCache VALUES(:sopInstanceUID, :tag, :value)" );
   insertTag.bindValue(":sopInstanceUID",sopInstanceUID);
   insertTag.bindValue(":tag",tag);
-  insertTag.bindValue(":value",value);
+  insertTag.bindValue(":value",valueToInsert);
   return d->loggedExec(insertTag);
 }

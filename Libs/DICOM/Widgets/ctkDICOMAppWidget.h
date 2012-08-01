@@ -36,13 +36,22 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
   Q_OBJECT
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(bool searchWidgetPopUpMode READ searchWidgetPopUpMode WRITE setSearchWidgetPopUpMode)
+  Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
 
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMAppWidget(QWidget* parent=0);
   virtual ~ctkDICOMAppWidget();
 
+  /// Directory being used to store the dicom database
   QString databaseDirectory() const;
+
+  /// See ctkDICOMDatabase for description - these accessors
+  /// delegate to the corresponding routines of the internal
+  /// instance of the database.
+  /// @see ctkDICOMDatabase
+  void setTagsToPrecache(const QStringList tags);
+  const QStringList tagsToPrecache();
 
   /// Updates schema of loaded database to match the one
   /// coded by the current version of ctkDICOMDatabase.
