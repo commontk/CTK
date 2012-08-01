@@ -5,6 +5,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMDatabaseTest1.cpp
   ctkDICOMDatabaseTest2.cpp
   ctkDICOMDatabaseTest3.cpp
+  ctkDICOMDatabaseTest4.cpp
   ctkDICOMDatasetTest1.cpp
   ctkDICOMIndexerTest1.cpp
   ctkDICOMModelTest1.cpp
@@ -35,6 +36,7 @@ SIMPLE_TEST(ctkDICOMDatabaseTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMDatabaseTest3
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-unversioned-schema.sql
   )
+SIMPLE_TEST(ctkDICOMDatabaseTest4 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMDatasetTest1)
 SIMPLE_TEST(ctkDICOMIndexerTest1 )
 
