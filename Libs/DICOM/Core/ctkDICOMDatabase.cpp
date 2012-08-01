@@ -780,6 +780,10 @@ bool ctkDICOMDatabase::tagToGroupElement(const QString tag, unsigned short& grou
 {
   QStringList groupElement = tag.split(",");
   bool groupOK, elementOK;
+  if (groupElement.length() != 2)
+    {
+    return false;
+    }
   group = groupElement[0].toUInt(&groupOK, 16);
   element = groupElement[1].toUInt(&elementOK, 16);
 
