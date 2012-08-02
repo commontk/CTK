@@ -1029,9 +1029,18 @@ const QStringList ctkDICOMDatabase::tagsToPrecache()
 void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
 {
   Q_Q(ctkDICOMDatabase);
+
+  ctkDICOMDataset dataset;
+  QString fileName = q->fileForInstance(sopInstanceUID);
+  dataset.InitializeFromFile(fileName);
+
   foreach (const QString &tag, this->TagsToPrecache)
     {
-    q->instanceValue(sopInstanceUID, tag);
+    unsigned short group, element;
+    q->tagToGroupElement(tag, group, element);
+    DcmTagKey tagKey(group, element);
+    QString value = dataset.GetAllElementValuesAsString(tagKey);
+    q->cacheTag(sopInstanceUID, tag, value);
     }
 }
 
