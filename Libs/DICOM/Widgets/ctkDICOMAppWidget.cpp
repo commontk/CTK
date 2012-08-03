@@ -71,6 +71,7 @@ public:
   Q_DECLARE_PUBLIC(ctkDICOMAppWidget);
 
   ctkDICOMAppWidgetPrivate(ctkDICOMAppWidget* );
+  ~ctkDICOMAppWidgetPrivate();
 
   ctkFileDialog* ImportDialog;
   ctkDICOMQueryRetrieveWidget* QueryRetrieveWidget;
@@ -80,6 +81,11 @@ public:
   ctkDICOMModel DICOMModel;
   ctkDICOMFilterProxyModel DICOMProxyModel;
   QSharedPointer<ctkDICOMIndexer> DICOMIndexer;
+  QProgressDialog *IndexerProgress;
+  QProgressDialog *UpdateSchemaProgress;
+
+  void showIndexerDialog();
+  void showUpdateSchemaDialog();
 
   // used when suspending the ctkDICOMModel
   QSqlDatabase EmptyDatabase;
@@ -97,16 +103,131 @@ ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(ctkDICOMAppWidget* parent): q
   ThumbnailGenerator = QSharedPointer <ctkDICOMThumbnailGenerator> (new ctkDICOMThumbnailGenerator);
   DICOMDatabase->setThumbnailGenerator(ThumbnailGenerator.data());
   DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
+  IndexerProgress = 0;
+  UpdateSchemaProgress = 0;
+}
+
+ctkDICOMAppWidgetPrivate::~ctkDICOMAppWidgetPrivate()
+{
+  if ( IndexerProgress )
+    {
+    delete IndexerProgress;
+    }
+  if ( UpdateSchemaProgress )
+    {
+    delete UpdateSchemaProgress;
+    }
+}
+
+void ctkDICOMAppWidgetPrivate::showUpdateSchemaDialog()
+{
+  Q_Q(ctkDICOMAppWidget);
+  if (UpdateSchemaProgress == 0)
+    {
+    //
+    // Set up the Update Schema Progress Dialog
+    //
+    UpdateSchemaProgress = new QProgressDialog(
+        q->tr("DICOM Schema Update"), "Cancel", 0, 100, q,
+         Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+
+    // We don't want the progress dialog to resize itself, so we bypass the label
+    // by creating our own
+    QLabel* progressLabel = new QLabel(q->tr("Initialization..."));
+    UpdateSchemaProgress->setLabel(progressLabel);
+#ifdef Q_WS_MAC
+    // BUG: avoid deadlock of dialogs on mac
+    UpdateSchemaProgress->setWindowModality(Qt::NonModal);
+#else
+    UpdateSchemaProgress->setWindowModality(Qt::ApplicationModal);
+#endif
+    UpdateSchemaProgress->setMinimumDuration(0);
+    UpdateSchemaProgress->setValue(0);
+
+    //q->connect(UpdateSchemaProgress, SIGNAL(canceled()), 
+     //       DICOMIndexer.data(), SLOT(cancel()));
+
+    q->connect(DICOMDatabase.data(), SIGNAL(schemaUpdateStarted(int)),
+            UpdateSchemaProgress, SLOT(setMaximum(int)));
+    q->connect(DICOMDatabase.data(), SIGNAL(schemaUpdateProgress(int)),
+            UpdateSchemaProgress, SLOT(setValue(int)));
+    q->connect(DICOMDatabase.data(), SIGNAL(schemaUpdateProgress(QString)),
+            progressLabel, SLOT(setText(QString)));
+
+    // close the dialog
+    q->connect(DICOMDatabase.data(), SIGNAL(schemaUpdated()),
+            UpdateSchemaProgress, SLOT(close()));
+    // reset the database to show new data
+    q->connect(DICOMDatabase.data(), SIGNAL(schemaUpdated()),
+            &DICOMModel, SLOT(reset()));
+    // reset the database if canceled
+    q->connect(UpdateSchemaProgress, SIGNAL(canceled()), 
+            &DICOMModel, SLOT(reset()));
+    }
+  UpdateSchemaProgress->show();
+}
+
+void ctkDICOMAppWidgetPrivate::showIndexerDialog()
+{
+  Q_Q(ctkDICOMAppWidget);
+  if (IndexerProgress == 0)
+    {
+    //
+    // Set up the Indexer Progress Dialog
+    //
+    IndexerProgress = new QProgressDialog( q->tr("DICOM Import"), "Cancel", 0, 100, q,
+         Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+
+    // We don't want the progress dialog to resize itself, so we bypass the label
+    // by creating our own
+    QLabel* progressLabel = new QLabel(q->tr("Initialization..."));
+    IndexerProgress->setLabel(progressLabel);
+#ifdef Q_WS_MAC
+    // BUG: avoid deadlock of dialogs on mac
+    IndexerProgress->setWindowModality(Qt::NonModal);
+#else
+    IndexerProgress->setWindowModality(Qt::ApplicationModal);
+#endif
+    IndexerProgress->setMinimumDuration(0);
+    IndexerProgress->setValue(0);
+
+    q->connect(IndexerProgress, SIGNAL(canceled()), 
+                 DICOMIndexer.data(), SLOT(cancel()));
+
+    q->connect(DICOMIndexer.data(), SIGNAL(progress(int)),
+            IndexerProgress, SLOT(setValue(int)));
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingFilePath(QString)),
+            progressLabel, SLOT(setText(QString)));
+
+    // close the dialog
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete()),
+            IndexerProgress, SLOT(close()));
+    // reset the database to show new data
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete()),
+            &DICOMModel, SLOT(reset()));
+    // stop indexing and reset the database if canceled
+    q->connect(IndexerProgress, SIGNAL(canceled()), 
+            DICOMIndexer.data(), SLOT(cancel()));
+    q->connect(IndexerProgress, SIGNAL(canceled()), 
+            &DICOMModel, SLOT(reset()));
+
+    // allow users of this widget to know that the process has finished
+    q->connect(IndexerProgress, SIGNAL(canceled()), 
+            q, SIGNAL(directoryImported()));
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete()),
+            q, SIGNAL(directoryImported()));
+    }
+  IndexerProgress->show();
 }
 
 //----------------------------------------------------------------------------
 // ctkDICOMAppWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent), 
+ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
     d_ptr(new ctkDICOMAppWidgetPrivate(this))
 {
-  Q_D(ctkDICOMAppWidget);  
+  Q_D(ctkDICOMAppWidget);
 
   d->setupUi(this);
 
@@ -186,7 +307,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 //----------------------------------------------------------------------------
 ctkDICOMAppWidget::~ctkDICOMAppWidget()
 {
-  Q_D(ctkDICOMAppWidget);  
+  Q_D(ctkDICOMAppWidget);
 
   d->QueryRetrieveWidget->deleteLater();
   d->ImportDialog->deleteLater();
@@ -196,54 +317,16 @@ ctkDICOMAppWidget::~ctkDICOMAppWidget()
 void ctkDICOMAppWidget::updateDatabaseSchemaIfNeeded()
 {
 
-  Q_D(ctkDICOMAppWidget);  
+  Q_D(ctkDICOMAppWidget);
 
-  if ( d->DICOMDatabase->schemaVersion() != d->DICOMDatabase->schemaVersionLoaded() )
-    {
-    QProgressDialog* progress = new QProgressDialog("DICOM Schema Update", "Cancel", 0, 100, this,
-                           Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
-    // We don't want the progress dialog to resize itself, so we bypass the label
-    // by creating our own
-    QLabel* progressLabel = new QLabel(tr("Initialization..."));
-    progress->setLabel(progressLabel);
-#ifdef Q_WS_MAC
-    // BUG: avoid deadlock of dialogs on mac
-    progress->setWindowModality(Qt::NonModal);
-#else
-    progress->setWindowModality(Qt::ApplicationModal);
-#endif
-    progress->setMinimumDuration(0);
-    progress->setValue(0);
-    progress->show();
-
-    // TODO - cancel?
-    //connect(progress, SIGNAL(canceled()), d->DICOMIndexer.data(), SLOT(cancel()));
-
-    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdateStarted(int)),
-            progress, SLOT(setMaximum(int)));
-    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdateProgress(int)),
-            progress, SLOT(setValue(int)));
-    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdateProgress(QString)),
-            progressLabel, SLOT(setText(QString)));
-    connect(d->DICOMDatabase.data(), SIGNAL(progress(int)),
-            this, SLOT(onProgress(int)));
-
-    // close the dialog
-    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdated()),
-            progress, SLOT(close()));
-    // reset the database to show new data
-    connect(d->DICOMDatabase.data(), SIGNAL(schemaUpdated()),
-            &d->DICOMModel, SLOT(reset()));
-
-    d->DICOMDatabase->updateSchema();
-    }
-
+  d->showUpdateSchemaDialog();
+  d->DICOMDatabase->updateSchemaIfNeeded();
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
 {
-  Q_D(ctkDICOMAppWidget);  
+  Q_D(ctkDICOMAppWidget);
 
   QSettings settings;
   settings.setValue("DatabaseDirectory", directory);
@@ -251,7 +334,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
 
   //close the active DICOM database
   d->DICOMDatabase->closeDatabase();
-  
+
   //open DICOM database on the directory
   QString databaseFileName = directory + QString("/ctkDICOM.sql");
   try
@@ -267,7 +350,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
 
   // update the database schema if needed and provide progress
   this->updateDatabaseSchemaIfNeeded();
-  
+
   d->DICOMModel.setDatabase(d->DICOMDatabase->database());
   d->DICOMModel.setEndLevel(ctkDICOMModel::SeriesType);
   d->TreeView->resizeColumnToContents(0);
@@ -350,7 +433,7 @@ void ctkDICOMAppWidget::onAddToDatabase()
 void ctkDICOMAppWidget::openImportDialog()
 {
   Q_D(ctkDICOMAppWidget);
-  
+
   d->ImportDialog->show();
   d->ImportDialog->raise();
 }
@@ -397,7 +480,7 @@ void ctkDICOMAppWidget::onRemoveAction()
     {
       QString seriesUID = d->DICOMModel.data(index0,ctkDICOMModel::UIDRole).toString();
       d->DICOMDatabase->removeSeries(seriesUID);
-    } 
+    }
     else if ( d->DICOMModel.data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType))
     {
       QString studyUID = d->DICOMModel.data(index0,ctkDICOMModel::UIDRole).toString();
@@ -434,13 +517,6 @@ void ctkDICOMAppWidget::resetModel()
   Q_D(ctkDICOMAppWidget);
 
   d->DICOMModel.reset();
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onProgress(int progress)
-{
-  Q_UNUSED(progress);
-  QApplication::processEvents();
 }
 
 //----------------------------------------------------------------------------
@@ -491,40 +567,7 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
       {
       targetDirectory = d->DICOMDatabase->databaseDirectory();
       }
-    QProgressDialog* progress = new QProgressDialog("DICOM Import", "Cancel", 0, 100, this,
-                           Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
-    // We don't want the progress dialog to resize itself, so we bypass the label
-    // by creating our own
-    QLabel* progressLabel = new QLabel(tr("Initialization..."));
-    progress->setLabel(progressLabel);
-#ifdef Q_WS_MAC
-    // BUG: avoid deadlock of dialogs on mac
-    progress->setWindowModality(Qt::NonModal);
-#else
-    progress->setWindowModality(Qt::ApplicationModal);
-#endif
-    progress->setMinimumDuration(0);
-    progress->setValue(0);
-    progress->show();
-
-    connect(progress, SIGNAL(canceled()), d->DICOMIndexer.data(), SLOT(cancel()));
-    connect(d->DICOMIndexer.data(), SIGNAL(indexingFilePath(QString)),
-            progressLabel, SLOT(setText(QString)));
-    connect(d->DICOMIndexer.data(), SIGNAL(progress(int)),
-            progress, SLOT(setValue(int)));
-    connect(d->DICOMIndexer.data(), SIGNAL(progress(int)),
-            this, SLOT(onProgress(int)));
-
-    // close the dialog
-    connect(d->DICOMIndexer.data(), SIGNAL(indexingComplete()),
-            progress, SLOT(close()));
-    // reset the database to show new data
-    connect(d->DICOMIndexer.data(), SIGNAL(indexingComplete()),
-            &d->DICOMModel, SLOT(reset()));
-    // allow users of this widget to know that the process has finished
-    connect(d->DICOMIndexer.data(), SIGNAL(indexingComplete()),
-            this, SIGNAL(directoryImported()));
-
+    d->showIndexerDialog();
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
   }
 }
