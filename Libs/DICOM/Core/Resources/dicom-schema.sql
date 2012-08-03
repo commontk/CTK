@@ -19,7 +19,7 @@ DROP INDEX IF EXISTS 'SeriesStudyIndex' ;
 DROP INDEX IF EXISTS 'StudiesPatientIndex' ;
 
 CREATE TABLE 'SchemaInfo' ( 'Version' VARCHAR(1024) NOT NULL );
-INSERT INTO 'SchemaInfo' VALUES('0.5.1');
+INSERT INTO 'SchemaInfo' VALUES('0.5.2');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
