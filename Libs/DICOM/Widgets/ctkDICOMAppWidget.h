@@ -77,8 +77,6 @@ public Q_SLOTS:
   void resumeModel();
   void resetModel();
 
-  void onProgress(int);
-
 Q_SIGNALS:
   /// Emited when directory is changed
   void databaseDirectoryChanged(const QString&);
