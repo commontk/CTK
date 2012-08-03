@@ -458,7 +458,12 @@ bool ctkDICOMDatabase::updateSchemaIfNeeded(const char* schemaFile)
     {
     return this->updateSchema(schemaFile);
     }
-  return false;
+  else
+    {
+    emit schemaUpdateStarted(0);
+    emit schemaUpdated();
+    return false;
+    }
 }
 
 //------------------------------------------------------------------------------
