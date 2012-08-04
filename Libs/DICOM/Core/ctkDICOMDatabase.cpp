@@ -448,7 +448,7 @@ QString ctkDICOMDatabase::schemaVersion()
   //   so that the ctkDICOMDatabasePrivate::filenames method
   //   still works.
   //
-  return QString("0.5.2");
+  return QString("0.5.3");
 };
 
 //------------------------------------------------------------------------------
