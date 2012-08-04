@@ -4,6 +4,8 @@
 -- Note: the semicolon at the end is necessary for the simple parser to separate
 --       the statements since the SQlite driver does not handle multiple
 --       commands per QSqlQuery::exec call!
+-- Note: be sure to update ctkDICOMDatabase and SchemaInfo Version 
+--       whenever you make a change to this schema
 -- ;
 
 DROP TABLE IF EXISTS 'SchemaInfo' ;
@@ -19,7 +21,7 @@ DROP INDEX IF EXISTS 'SeriesStudyIndex' ;
 DROP INDEX IF EXISTS 'StudiesPatientIndex' ;
 
 CREATE TABLE 'SchemaInfo' ( 'Version' VARCHAR(1024) NOT NULL );
-INSERT INTO 'SchemaInfo' VALUES('0.5.2');
+INSERT INTO 'SchemaInfo' VALUES('0.5.3');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
@@ -67,9 +69,9 @@ CREATE TABLE 'Studies' (
   PRIMARY KEY ('StudyInstanceUID') );
 
 CREATE UNIQUE INDEX IF NOT EXISTS 'ImagesFilenameIndex' ON 'Images' ('Filename');
-CREATE UNIQUE INDEX IF NOT EXISTS 'ImagesSeriesIndex' ON 'Images' ('SeriesInstanceUID');
-CREATE UNIQUE INDEX IF NOT EXISTS 'SeriesStudyIndex' ON 'Series' ('StudyInstanceUID');
-CREATE UNIQUE INDEX IF NOT EXISTS 'StudiesPatientIndex' ON 'Studies' ('PatientsUID');
+CREATE INDEX IF NOT EXISTS 'ImagesSeriesIndex' ON 'Images' ('SeriesInstanceUID');
+CREATE INDEX IF NOT EXISTS 'SeriesStudyIndex' ON 'Series' ('StudyInstanceUID');
+CREATE INDEX IF NOT EXISTS 'StudiesPatientIndex' ON 'Studies' ('PatientsUID');
 
 CREATE TABLE 'Directories' (
   'Dirname' VARCHAR(1024) ,
