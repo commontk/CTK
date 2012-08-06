@@ -25,6 +25,7 @@
 #include <ctkCommandLineModulesCoreExport.h>
 
 #include <QSharedDataPointer>
+#include <QMetaType>
 
 class ctkCmdLineModuleDescription;
 class ctkCmdLineModuleReferencePrivate;
@@ -57,5 +58,7 @@ private:
   QSharedDataPointer<ctkCmdLineModuleReferencePrivate> d;
 
 };
+
+Q_DECLARE_METATYPE(ctkCmdLineModuleReference)
 
 #endif // CTKCMDLINEMODULEREFERENCE_H
