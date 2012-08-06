@@ -74,8 +74,8 @@ public:
 
 Q_SIGNALS:
 
-  void moduleAdded(const ctkCmdLineModuleReference);
-  void moduleRemoved(const ctkCmdLineModuleReference);
+  void moduleRegistered(const ctkCmdLineModuleReference&);
+  void moduleUnregistered(const ctkCmdLineModuleReference&);
 
 private:
 
