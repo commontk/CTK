@@ -62,6 +62,11 @@ public:
 
   ctkCmdLineModuleFuture run() const;
 
+  ctkCmdLineModuleFuture future() const;
+
+  bool isRunning() const;
+  bool isPaused() const;
+
   Q_SIGNAL void valueChanged(const QString& parameter, const QVariant& value);
 
 protected:

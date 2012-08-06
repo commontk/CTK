@@ -51,6 +51,8 @@ struct ctkCmdLineModulePrivate
 
   QList<QString> ParameterNames;
 
+  ctkCmdLineModuleFuture Future;
+
 private:
 
   ctkCmdLineModule* q;
@@ -161,9 +163,24 @@ ctkCmdLineModuleFuture ctkCmdLineModule::run() const
   // thread pool.
   ctkCmdLineModuleProcessTask* moduleProcess =
       new ctkCmdLineModuleProcessTask(d->ModuleReference.location(), args);
-  return moduleProcess->start();
+  d->Future = moduleProcess->start();
+  return d->Future;
 }
 
+ctkCmdLineModuleFuture ctkCmdLineModule::future() const
+{
+  return d->Future;
+}
+
+bool ctkCmdLineModule::isRunning() const
+{
+  return d->Future.isRunning();
+}
+
+bool ctkCmdLineModule::isPaused() const
+{
+  return d->Future.isPaused();
+}
 
 QHash<QString, QVariant> ctkCmdLineModule::values() const
 {
