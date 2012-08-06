@@ -42,7 +42,8 @@ struct ctkCmdLineModuleManagerPrivate
 
   ctkCmdLineModuleFactory* InstanceFactory;
 
-  QHash<QString, ctkCmdLineModuleReference> Cache;
+  QHash<QString, ctkCmdLineModuleReference> LocationToRef;
+
   bool Verbose;
 };
 
@@ -105,36 +106,30 @@ ctkCmdLineModuleManager::registerModule(const QString& location)
 
   ref.d->RawXmlDescription = xml;
 
-  d->Cache[location] = ref;
+  d->LocationToRef[location] = ref;
 
-  emit moduleAdded(ref);
+  emit moduleRegistered(ref);
   return ref;
 }
 
 void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& ref)
 {
-  d->Cache.remove(ref.location());
-  emit moduleRemoved(ref);
+  d->LocationToRef.remove(ref.location());
+  emit moduleUnregistered(ref);
 }
 
 ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QString& location) const
 {
-  return d->Cache[location];
+  return d->LocationToRef[location];
 }
 
 QList<ctkCmdLineModuleReference> ctkCmdLineModuleManager::moduleReferences() const
 {
-  return d->Cache.values();
+  return d->LocationToRef.values();
 }
 
 ctkCmdLineModule*
 ctkCmdLineModuleManager::createModule(const ctkCmdLineModuleReference& moduleRef)
 {
   return d->InstanceFactory->create(moduleRef);
-}
-
-QList<ctkCmdLineModule*>
-ctkCmdLineModuleManager::modules(const ctkCmdLineModuleReference& moduleRef) const
-{
-  throw ctkException("not implemented yet");
 }

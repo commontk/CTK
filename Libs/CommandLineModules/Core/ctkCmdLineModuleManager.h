@@ -70,8 +70,6 @@ public:
 
   ctkCmdLineModule* createModule(const ctkCmdLineModuleReference& moduleRef);
 
-  QList<ctkCmdLineModule*> modules(const ctkCmdLineModuleReference& moduleRef) const;
-
 Q_SIGNALS:
 
   void moduleRegistered(const ctkCmdLineModuleReference&);
