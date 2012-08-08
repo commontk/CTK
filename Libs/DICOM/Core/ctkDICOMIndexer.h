@@ -52,6 +52,25 @@ public:
                     const QString& destinationDirectoryName = "");
 
   ///
+  /// \brief Adds directory to database by using DICOMDIR and optionally copies files to
+  /// destinationDirectory.
+  /// Scan the directory using Dcmtk and populate the database with all the
+  /// DICOM images accordingly.
+  ///
+  Q_INVOKABLE void addDicomdir(ctkDICOMDatabase& database, const QString& directoryName,
+                    const QString& destinationDirectoryName = "");
+
+  ///
+  /// \brief Adds a QStringList containing the file path to database and optionally copies files to
+  /// destinationDirectory.
+  ///
+  /// Scan the directory using Dcmtk and populate the database with all the
+  /// DICOM images accordingly.
+  ///
+  Q_INVOKABLE void addListOfFiles(ctkDICOMDatabase& database, const QStringList& listOfFiles,
+                    const QString& destinationDirectoryName = "");
+
+  ///
   /// \brief Adds a file to database and optionally copies the file to
   /// destinationDirectory.
   ///
