@@ -32,12 +32,54 @@
 
 #include <QDebug>
 
+//-----------------------------------------------------------------------------
 ctkCmdLineModuleQtGui::ctkCmdLineModuleQtGui(const ctkCmdLineModuleReference& moduleRef)
   : ctkCmdLineModule(moduleRef),
+    Loader(NULL),
+    Transform(NULL),
     WidgetTree(NULL)
 {
 }
 
+
+//-----------------------------------------------------------------------------
+ctkCmdLineModuleQtGui::~ctkCmdLineModuleQtGui()
+{
+  if (Loader != NULL)
+  {
+    delete Loader;
+  }
+
+  if (Transform != NULL)
+  {
+    delete Transform;
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+QUiLoader* ctkCmdLineModuleQtGui::uiLoader() const
+{
+  if (Loader == NULL)
+  {
+    Loader = new QUiLoader();
+  }
+  return Loader;
+}
+
+
+//-----------------------------------------------------------------------------
+ctkCmdLineModuleXslTransform* ctkCmdLineModuleQtGui::xslTransform() const
+{
+  if (Transform == NULL)
+  {
+    Transform = new ctkCmdLineModuleXslTransform();
+  }
+  return Transform;
+}
+
+
+//-----------------------------------------------------------------------------
 QObject* ctkCmdLineModuleQtGui::guiHandle() const
 {
   if (WidgetTree) return WidgetTree;
@@ -47,15 +89,19 @@ QObject* ctkCmdLineModuleQtGui::guiHandle() const
 
   QBuffer uiForm;
   uiForm.open(QIODevice::ReadWrite);
-  ctkCmdLineModuleXslTransform xslTransform(&input, &uiForm);
-  if (!xslTransform.transform())
+
+  ctkCmdLineModuleXslTransform* xslTransform = this->xslTransform();
+  xslTransform->setInput(&input);
+  xslTransform->setOutput(&uiForm);
+
+  if (!xslTransform->transform())
   {
     // maybe throw an exception
-    qCritical() << xslTransform.errorString();
+    qCritical() << xslTransform->errorString();
     return 0;
   }
 
-  QUiLoader uiLoader;
+  QUiLoader* uiLoader = this->uiLoader();
 #ifdef CMAKE_INTDIR
   QString appPath = QCoreApplication::applicationDirPath();
   if (appPath.endsWith(CMAKE_INTDIR))
@@ -63,10 +109,12 @@ QObject* ctkCmdLineModuleQtGui::guiHandle() const
     uiLoader.addPluginPath(appPath + "/../designer");
   }
 #endif
-  WidgetTree = uiLoader.load(&uiForm);
+  WidgetTree = uiLoader->load(&uiForm);
   return WidgetTree;
 }
 
+
+//-----------------------------------------------------------------------------
 QVariant ctkCmdLineModuleQtGui::value(const QString &parameter) const
 {
   if (!WidgetTree) return QVariant();
@@ -82,6 +130,8 @@ QVariant ctkCmdLineModuleQtGui::value(const QString &parameter) const
   return QVariant();
 }
 
+
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleQtGui::setValue(const QString &parameter, const QVariant &value)
 {
   if (!WidgetTree) return;
@@ -97,6 +147,8 @@ void ctkCmdLineModuleQtGui::setValue(const QString &parameter, const QVariant &v
   }
 }
 
+
+//-----------------------------------------------------------------------------
 QList<QString> ctkCmdLineModuleQtGui::parameterNames() const
 {
   if (!ParameterNames.empty()) return ParameterNames;

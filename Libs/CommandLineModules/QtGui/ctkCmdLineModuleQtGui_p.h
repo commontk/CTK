@@ -23,8 +23,11 @@
 #define CTKCMDLINEMODULEQTGUI_H
 
 #include <ctkCmdLineModule.h>
+#include <QUiLoader>
+#include <QBuffer>
 
 class ctkCmdLineModuleReference;
+class ctkCmdLineModuleXslTransform;
 
 class ctkCmdLineModuleQtGui : public ctkCmdLineModule
 {
@@ -32,6 +35,7 @@ class ctkCmdLineModuleQtGui : public ctkCmdLineModule
 public:
 
   ctkCmdLineModuleQtGui(const ctkCmdLineModuleReference& moduleRef);
+  virtual ~ctkCmdLineModuleQtGui();
 
   // ctkCmdLineModule overrides
 
@@ -42,8 +46,13 @@ public:
 
   virtual QList<QString> parameterNames() const;
 
-private:
+protected:
 
+  virtual QUiLoader* uiLoader() const;
+  virtual ctkCmdLineModuleXslTransform* xslTransform() const;
+
+  mutable QUiLoader* Loader;
+  mutable ctkCmdLineModuleXslTransform* Transform;
   mutable QWidget* WidgetTree;
 
   // Cache the list of parameter names
