@@ -63,13 +63,6 @@ foreach(lib
     oflog
     ofstd)
 
-  message("** \n\n\n\n I am looking for ${lib} in the following paths")
-  message("** ${DCMTK_DIR}/${lib}/libsrc")
-  message("** ${DCMTK_DIR}/${lib}/libsrc/Release")
-  message("** ${DCMTK_DIR}/${lib}/Release")
-  message("** ${DCMTK_DIR}/lib")
-  message("** ${DCMTK_DIR}/dcmjpeg/lib${lib}/Release")
-  message("** That be it \n\n\n\n\n")
   # Find Release libraries
   find_library(DCMTK_${lib}_LIBRARY
     ${lib}
@@ -85,7 +78,7 @@ foreach(lib
     
   mark_as_advanced(DCMTK_${lib}_LIBRARY)
 
-  message("** DCMTKs ${lib} found at ${DCMTK_${lib}_LIBRARY}")
+  #message("** DCMTKs ${lib} found at ${DCMTK_${lib}_LIBRARY}")
 
   if(DCMTK_${lib}_LIBRARY)
     list(APPEND DCMTK_LIBRARIES_RELEASE optimized ${DCMTK_${lib}_LIBRARY})
@@ -104,8 +97,6 @@ foreach(lib
     NO_DEFAULT_PATH
     )
     
-  message("** DCMTKs ${lib} in debug found at ${DCMTK_${lib}_LIBRARY_DEBUG}")
-    
   mark_as_advanced(DCMTK_${lib}_LIBRARY_DEBUG)
 
   if(DCMTK_${lib}_LIBRARY_DEBUG)
@@ -116,8 +107,6 @@ endforeach()
 
 #depending on build type set debug or release
 list(APPEND DCMTK_LIBRARIES ${DCMTK_LIBRARIES_RELEASE} ${DCMTK_LIBRARIES_DEBUG} )
-
-message("** Overall there be the following libraries \n ${DCMTK_LIBRARIES}")
 
 set(DCMTK_config_TEST_HEADER osconfig.h)
 set(DCMTK_dcmdata_TEST_HEADER dctypes.h)
@@ -154,7 +143,7 @@ foreach(dir
     ${DCMTK_DIR}/include/${dir})
 
   mark_as_advanced(DCMTK_${dir}_INCLUDE_DIR)
-  message("** DCMTKs ${dir} found at ${DCMTK_${dir}_INCLUDE_DIR}")
+  #message("** DCMTKs ${dir} found at ${DCMTK_${dir}_INCLUDE_DIR}")
 
   if(DCMTK_${dir}_INCLUDE_DIR)
     list(APPEND
@@ -177,16 +166,6 @@ if(DCMTK_ofstd_INCLUDE_DIR)
   list(APPEND DCMTK_INCLUDE_DIRS ${DCMTK_dcmtk_INCLUDE_DIR})
   mark_as_advanced(DCMTK_dcmtk_INCLUDE_DIR)
 endif()
-
-#include(FindPackageHandleStandardArgs)
-#find_package_handle_standard_args(DCMTK DEFAULT_MSG
-#  DCMTK_config_INCLUDE_DIR
-#  DCMTK_ofstd_INCLUDE_DIR
-#  DCMTK_ofstd_LIBRARY
-#  DCMTK_dcmdata_INCLUDE_DIR
-#  DCMTK_dcmdata_LIBRARY
-#  DCMTK_dcmimgle_INCLUDE_DIR
-#  DCMTK_dcmimgle_LIBRARY)
 
 # Compatibility: This variable is deprecated
 set(DCMTK_INCLUDE_DIR ${DCMTK_INCLUDE_DIRS})
