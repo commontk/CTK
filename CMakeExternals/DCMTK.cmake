@@ -48,6 +48,9 @@ if(${add_project})
         CMAKE_GENERATOR ${gen}
         UPDATE_COMMAND ""
         BUILD_COMMAND ""
+        CMAKE_ARGS
+          -DDCMTK_INSTALL_BINDIR:STRING=bin/${CMAKE_CFG_INTDIR}
+          -DDCMTK_INSTALL_LIBDIR:STRING=lib/${CMAKE_CFG_INTDIR}
         CMAKE_CACHE_ARGS
           ${ep_common_cache_args}
           -DBUILD_SHARED_LIBS:BOOL=OFF
