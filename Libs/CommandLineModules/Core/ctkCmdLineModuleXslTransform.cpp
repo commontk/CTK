@@ -119,8 +119,10 @@ ctkCmdLineModuleXslTransform::ctkCmdLineModuleXslTransform(QIODevice *input, QIO
   this->bindVariable("floatingWidget", QVariant(QString("QDoubleSpinBox")));
   this->bindVariable("vectorWidget", QVariant(QString("QLineEdit")));
   this->bindVariable("enumWidget", QVariant(QString("QComboBox")));
-  this->bindVariable("imageWidget", QVariant(QString("ctkPathLineEdit")));
-  this->bindVariable("fileWidget", QVariant(QString("ctkPathLineEdit")));
+  this->bindVariable("imageInputWidget", QVariant(QString("ctkPathLineEdit")));
+  this->bindVariable("imageOutputWidget", QVariant(QString("ctkPathLineEdit")));
+  this->bindVariable("fileInputWidget", QVariant(QString("ctkPathLineEdit")));
+  this->bindVariable("fileOutputWidget", QVariant(QString("ctkPathLineEdit")));
   this->bindVariable("directoryWidget", QVariant(QString("ctkPathLineEdit")));
   this->bindVariable("pointWidget", QVariant(QString("ctkCoordinatesWidget")));
   this->bindVariable("unsupportedWidget", QVariant(QString("QLabel")));

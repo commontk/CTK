@@ -321,22 +321,35 @@
   
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMAGE, GEOMETRY parameter (default: ctkPathLineEdit)
+    IMAGE parameter (default: ctkPathLineEdit)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
-  <xsl:template match="parameters/*[name()=('image', 'geometry')]">
+  <xsl:template match="parameters/*[name()=('image')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
       <layout class="QHBoxLayout">
         <item>
-          <widget class="{$imageWidget}"  name="parameter:{name}">
-            <xsl:call-template name="commonWidgetProperties"/>
-            <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
-            </property>
-          </widget>
+          <xsl:choose>
+            <xsl:when test="channel = 'input'">
+              <widget class="{$imageInputWidget}"  name="parameter:{name}">
+                <xsl:call-template name="commonWidgetProperties"/>
+                <xsl:call-template name="createQtDesignerStringListProperty"/>
+                <property name="filters">
+                  <set>ctkPathLineEdit::Files</set>
+                </property>
+              </widget>
+            </xsl:when>
+            <xsl:otherwise>
+              <widget class="{$imageOutputWidget}"  name="parameter:{name}">
+                <xsl:call-template name="commonWidgetProperties"/>
+                <xsl:call-template name="createQtDesignerStringListProperty"/>
+                <property name="filters">
+                  <set>ctkPathLineEdit::Files</set>
+                </property>
+              </widget>
+            </xsl:otherwise>
+          </xsl:choose>
         </item>
         <item>
           <widget class="QPushButton"  name="{name}BrowseButton">
@@ -351,22 +364,35 @@
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    FILE parameter (default: ctkPathLineEdit)
+    FILE, GEOMETRY parameter (default: ctkPathLineEdit)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
-  <xsl:template match="parameters/*[name()=('file')]">
+  <xsl:template match="parameters/*[name()=('file', 'geometry')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
       <layout class="QHBoxLayout">
         <item>
-          <widget class="{$fileWidget}"  name="parameter:{name}">
-            <xsl:call-template name="commonWidgetProperties"/>
-            <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
-            </property>
-          </widget>
+          <xsl:choose>
+            <xsl:when test="channel = 'input'">
+              <widget class="{$fileInputWidget}"  name="parameter:{name}">
+                <xsl:call-template name="commonWidgetProperties"/>
+                <xsl:call-template name="createQtDesignerStringListProperty"/>
+                <property name="filters">
+                  <set>ctkPathLineEdit::Files</set>
+                </property>
+              </widget>
+            </xsl:when>
+            <xsl:otherwise>
+              <widget class="{$fileOutputWidget}"  name="parameter:{name}">
+                <xsl:call-template name="commonWidgetProperties"/>
+                <xsl:call-template name="createQtDesignerStringListProperty"/>
+                <property name="filters">
+                  <set>ctkPathLineEdit::Files</set>
+                </property>
+              </widget>
+            </xsl:otherwise>
+          </xsl:choose>
         </item>
         <item>
           <widget class="QPushButton"  name="{name}BrowseButton">
