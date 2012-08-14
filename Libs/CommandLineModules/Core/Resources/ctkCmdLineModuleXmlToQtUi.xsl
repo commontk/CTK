@@ -321,11 +321,11 @@
   
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMAGE, FILE, GEOMETRY parameter (default: ctkPathLineEdit)
+    IMAGE, GEOMETRY parameter (default: ctkPathLineEdit)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
-  <xsl:template match="parameters/*[name()=('image', 'file', 'geometry')]">
+  <xsl:template match="parameters/*[name()=('image', 'geometry')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
       <layout class="QHBoxLayout">
@@ -348,7 +348,37 @@
       </layout>
     </item>
   </xsl:template>
-  
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    FILE parameter (default: ctkPathLineEdit)
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <xsl:template match="parameters/*[name()=('file')]">
+    <xsl:call-template name="gridItemWithLabel"/>
+    <item  row="{position()-1}" column="1">
+      <layout class="QHBoxLayout">
+        <item>
+          <widget class="{$fileWidget}"  name="parameter:{name}">
+            <xsl:call-template name="commonWidgetProperties"/>
+            <xsl:call-template name="createQtDesignerStringListProperty"/>
+            <property name="filters">
+              <set>ctkPathLineEdit::Files</set>
+            </property>
+          </widget>
+        </item>
+        <item>
+          <widget class="QPushButton"  name="{name}BrowseButton">
+            <property name="text">
+              <string>Browse...</string>
+            </property>
+          </widget>
+        </item>
+      </layout>
+    </item>
+  </xsl:template>
+
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     DIRECTORY parameter (default: ctkPathLineEdit)
