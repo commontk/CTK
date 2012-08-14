@@ -48,21 +48,22 @@ endif()
 
 # Find all libraries, store debug and release separately
 foreach(lib
-    dcmdata
+    dcmpstat
+    dcmsr
+    dcmsign
+    dcmtls
+    dcmqrdb
+    dcmnet
+    dcmjpeg
     dcmimage
     dcmimgle
-    dcmjpeg
-    dcmnet
-    dcmpstat
-    dcmqrdb
-    dcmsign
-    dcmsr
-    dcmtls
+    dcmdata
+    oflog
+    ofstd
     ijg12
     ijg16
     ijg8
-    oflog
-    ofstd)
+    )
 
   # Find Release libraries
   find_library(DCMTK_${lib}_LIBRARY_RELEASE
