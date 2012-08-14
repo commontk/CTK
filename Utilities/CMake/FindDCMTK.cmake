@@ -92,28 +92,8 @@ foreach(lib
     
   mark_as_advanced(DCMTK_${lib}_LIBRARY_RELEASE)
   mark_as_advanced(DCMTK_${lib}_LIBRARY_DEBUG)
-
-endforeach()
-
-# Add libraries to variable according to build type
-# this is done as a separate loop for transparencies sake
-foreach(lib
-    dcmdata
-    dcmimage
-    dcmimgle
-    dcmjpeg
-    dcmnet
-    dcmpstat
-    dcmqrdb
-    dcmsign
-    dcmsr
-    dcmtls
-    ijg12
-    ijg16
-    ijg8
-    oflog
-    ofstd)
-
+  
+  # Add libraries to variable according to build type
   if(DCMTK_${lib}_LIBRARY_RELEASE)
     list(APPEND DCMTK_LIBRARIES optimized ${DCMTK_${lib}_LIBRARY_RELEASE})
   endif()
@@ -121,16 +101,20 @@ foreach(lib
   if(DCMTK_${lib}_LIBRARY_DEBUG)
     list(APPEND DCMTK_LIBRARIES debug ${DCMTK_${lib}_LIBRARY_DEBUG})
   endif()
-  
+
 endforeach()
 
 set(CMAKE_THREAD_LIBS_INIT)
-if( DCMTK_oflog_LIBRARY_RELEASE OR DCMTK_oflog_LIBRARY_DEBUG )
+if(DCMTK_oflog_LIBRARY_RELEASE OR DCMTK_oflog_LIBRARY_DEBUG)
   # Hack - Not having a DCMTKConfig.cmake file to read the settings from, we will attempt to
   # find the library in all cases.
   # Ideally, pthread library should be discovered only if DCMTK_WITH_THREADS is enabled.
   set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
   find_package(Threads)
+endif()
+
+if(CMAKE_THREAD_LIBS_INIT)
+  list(APPEND DCMTK_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 set(DCMTK_config_TEST_HEADER osconfig.h)
