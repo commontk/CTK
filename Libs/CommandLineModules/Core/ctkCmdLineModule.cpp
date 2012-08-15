@@ -97,12 +97,15 @@ QStringList ctkCmdLineModule::commandLineArguments() const
   QStringList cmdLineArgs;
   QHash<int, QString> indexedArgs;
 
-  QHash<QString,QVariant> currentValues = values();
   ctkCmdLineModuleDescription description = moduleReference().description();
+
+  QHash<QString,QVariant> currentValues = values();
   QHashIterator<QString,QVariant> valuesIter(currentValues);
+
   while(valuesIter.hasNext())
   {
     valuesIter.next();
+
     ctkCmdLineModuleParameter parameter = description.parameter(valuesIter.key());
     if (parameter.index() > -1)
     {
@@ -119,12 +122,8 @@ QStringList ctkCmdLineModule::commandLineArguments() const
       {
         argFlag = QString("--") + d->normalizeFlag(parameter.longFlag());
       }
-      QStringList args;
-      if (parameter.multiple())
-      {
-        args = valuesIter.value().toString().split(',', QString::SkipEmptyParts);
-      }
-      else if (parameter.tag() == "boolean")
+
+      if (parameter.tag() == "boolean")
       {
         if (valuesIter.value().toBool())
         {
@@ -133,12 +132,31 @@ QStringList ctkCmdLineModule::commandLineArguments() const
       }
       else
       {
-        args.push_back(valuesIter.value().toString());
-      }
+        QStringList args;
+        if (parameter.multiple())
+        {
+          args = valuesIter.value().toString().split(',', QString::SkipEmptyParts);
+        }
+        else
+        {
+          QString arg = valuesIter.value().toString();
+          if (arg.isEmpty())
+          {
+            arg = parameter.defaultValue();
+          }
+          if (!arg.isEmpty())
+          {
+            args.push_back(valuesIter.value().toString());
+          }
+        }
 
-      foreach(QString arg, args)
-      {
-        cmdLineArgs << argFlag << arg;
+        if (args.length() > 0) // don't write the argFlag if there was no argument, and no default.
+        {
+          foreach(QString arg, args)
+          {
+            cmdLineArgs << argFlag << arg;
+          }
+        }
       }
     }
   }
