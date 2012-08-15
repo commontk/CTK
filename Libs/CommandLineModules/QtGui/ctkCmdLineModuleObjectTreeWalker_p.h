@@ -53,6 +53,7 @@ public:
   QString name() const;
   QString label() const;
   QVariant value() const;
+  QObject* currentObject() const;
 
   void setValue(const QVariant& value);
 
