@@ -35,6 +35,7 @@
 #include <QUrl>
 #include <QHash>
 #include <QList>
+#include <QMutex>
 
 #include <QFuture>
 
@@ -44,7 +45,7 @@ struct ctkCmdLineModuleManagerPrivate
     : ValidationMode(mode)
   {}
 
-  void checkBackends(const QUrl& location)
+  void checkBackends_unlocked(const QUrl& location)
   {
     if (!this->SchemeToBackend.contains(location.scheme()))
     {
@@ -52,10 +53,11 @@ struct ctkCmdLineModuleManagerPrivate
     }
   }
 
+  QMutex Mutex;
   QHash<QString, ctkCmdLineModuleBackend*> SchemeToBackend;
   QHash<QUrl, ctkCmdLineModuleReference> LocationToRef;
 
-  ctkCmdLineModuleManager::ValidationMode ValidationMode;
+  const ctkCmdLineModuleManager::ValidationMode ValidationMode;
 };
 
 ctkCmdLineModuleManager::ctkCmdLineModuleManager(ValidationMode validationMode)
@@ -69,9 +71,11 @@ ctkCmdLineModuleManager::~ctkCmdLineModuleManager()
 
 void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 {
+  QMutexLocker lock(&d->Mutex);
+
   QList<QString> supportedSchemes = backend->schemes();
 
-  // Check if there is already a backound registerd for any of the
+  // Check if there is already a backend registerd for any of the
   // supported schemes. We only supported one backend per scheme.
   foreach (QString scheme, supportedSchemes)
   {
@@ -91,10 +95,23 @@ void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 ctkCmdLineModuleReference
 ctkCmdLineModuleManager::registerModule(const QUrl &location)
 {
-  d->checkBackends(location);
+  QByteArray xml;
+  ctkCmdLineModuleBackend* backend = NULL;
+  {
+    QMutexLocker lock(&d->Mutex);
 
-  QByteArray xml = d->SchemeToBackend[location.scheme()]->rawXmlDescription(location);
+    d->checkBackends_unlocked(location);
 
+    // If the module is already registered, just return the reference
+    if (d->LocationToRef.contains(location))
+    {
+      return d->LocationToRef[location];
+    }
+
+    backend = d->SchemeToBackend[location.scheme()];
+  }
+
+  xml = backend->rawXmlDescription(location);
   if (xml.isEmpty())
   {
     throw ctkInvalidArgumentException(QString("No XML output available from ") + location.toString());
@@ -103,7 +120,7 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
   ctkCmdLineModuleReference ref;
   ref.d->Location = location;
   ref.d->RawXmlDescription = xml;
-  ref.d->Backend = d->SchemeToBackend[location.scheme()];
+  ref.d->Backend = backend;
 
   if (d->ValidationMode != SKIP_VALIDATION)
   {
@@ -126,7 +143,16 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
     }
   }
 
-  d->LocationToRef[location] = ref;
+  {
+    QMutexLocker lock(&d->Mutex);
+    // Check that we don't have a race condition
+    if (d->LocationToRef.contains(location))
+    {
+      // Another thread registered a module with the same location
+      return d->LocationToRef[location];
+    }
+    d->LocationToRef[location] = ref;
+  }
 
   emit moduleRegistered(ref);
   return ref;
@@ -134,23 +160,33 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
 
 void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& ref)
 {
-  d->LocationToRef.remove(ref.location());
+  {
+    QMutexLocker lock(&d->Mutex);
+    if (!d->LocationToRef.contains(ref.location()))
+    {
+      return;
+    }
+    d->LocationToRef.remove(ref.location());
+  }
   emit moduleUnregistered(ref);
 }
 
 ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QUrl &location) const
 {
+  QMutexLocker lock(&d->Mutex);
   return d->LocationToRef[location];
 }
 
 QList<ctkCmdLineModuleReference> ctkCmdLineModuleManager::moduleReferences() const
 {
+  QMutexLocker lock(&d->Mutex);
   return d->LocationToRef.values();
 }
 
 ctkCmdLineModuleFuture ctkCmdLineModuleManager::run(ctkCmdLineModuleFrontend *frontend)
 {
-  d->checkBackends(frontend->location());
+  QMutexLocker lock(&d->Mutex);
+  d->checkBackends_unlocked(frontend->location());
 
   ctkCmdLineModuleFuture future = d->SchemeToBackend[frontend->location().scheme()]->run(frontend);
   frontend->setFuture(future);

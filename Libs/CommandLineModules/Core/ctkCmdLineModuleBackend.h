@@ -40,6 +40,15 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
 
   virtual QList<QString> schemes() const = 0;
 
+  /**
+   * @brief Get the XML parameter description from the given location.
+   * @param location The location URL specifying the module.
+   * @return The raw XML parameter description.
+   *
+   * This method may be concurrently called by the ctkCmdLineModuleManager and
+   * must be thread-safe.
+   *
+   */
   virtual QByteArray rawXmlDescription(const QUrl& location) = 0;
 
 protected:
