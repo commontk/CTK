@@ -19,30 +19,15 @@
   
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEREFERENCEPRIVATE_H
-#define CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#include "ctkCmdLineModuleExplorerDirectorySettings.h"
 
-#include <ctkCmdLineModuleDescription.h>
+#include <ctkDirectoryListWidget.h>
 
-#include <QSharedData>
-#include <QUrl>
+#include <QVBoxLayout>
 
-struct ctkCmdLineModuleBackend;
-
-struct ctkCmdLineModuleReferencePrivate : public QSharedData
+ctkCmdLineModuleExplorerDirectorySettings::ctkCmdLineModuleExplorerDirectorySettings()
 {
-  ctkCmdLineModuleReferencePrivate();
-
-  ctkCmdLineModuleDescription description() const;
-
-  ctkCmdLineModuleBackend* Backend;
-  QUrl Location;
-  QByteArray RawXmlDescription;
-  QString XmlValidationErrorString;
-
-private:
-
-  mutable ctkCmdLineModuleDescription Description;
-};
-
-#endif // CTKCMDLINEMODULEREFERENCEPRIVATE_H
+  this->setWindowTitle("Module Paths");
+  this->setLayout(new QVBoxLayout());
+  this->layout()->addWidget(new ctkDirectoryListWidget());
+}

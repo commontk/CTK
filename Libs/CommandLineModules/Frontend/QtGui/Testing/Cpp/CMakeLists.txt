@@ -2,17 +2,17 @@ set(KIT ${PROJECT_NAME})
 set(LIBRARY_NAME ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
-  ctkCmdLineModuleXmlProgressWatcherTest.cpp
+  ctkCmdLineModuleQtXslTransformTest.cpp
   )
 
 set(TestsToRun ${Tests})
 remove(TestsToRun ${KIT}CppTests.cpp)
 
 set(Tests_SRCS ${Tests_SRCS}
-  ctkCmdLineModuleSignalTester.cpp
+
 )
 set(Tests_MOC_SRCS ${Tests_MOC_SRCS}
-  ctkCmdLineModuleSignalTester.h
+
 )
 
 include_directories(
@@ -22,6 +22,9 @@ include_directories(
 
 set(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
+QT4_GENERATE_MOCS(
+  ctkCmdLineModuleQtXslTransformTest.cpp
+  )
 set(Tests_UI_CPP)
 if(TEST_UI_FORMS)
   QT4_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})
@@ -36,4 +39,5 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 # Add Tests
 #
 
-SIMPLE_TEST(ctkCmdLineModuleXmlProgressWatcherTest)
+SIMPLE_TEST(ctkCmdLineModuleQtXslTransformTest)
+

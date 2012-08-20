@@ -19,40 +19,35 @@
 
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEXMLPROGRESSWATCHER_H
-#define CTKCMDLINEMODULEXMLPROGRESSWATCHER_H
+#ifndef CTKCMDLINEMODULEFRONTENDQTGUI_H
+#define CTKCMDLINEMODULEFRONTENDQTGUI_H
 
-#include "ctkCommandLineModulesCoreExport.h"
+#include <ctkCmdLineModuleFrontend.h>
 
-#include <QObject>
+class QWidget;
 
-class ctkCmdLineModuleXmlProgressWatcherPrivate;
-
-class QIODevice;
-
-class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXmlProgressWatcher : public QObject
+class ctkCmdLineModuleFrontendQtGui : public ctkCmdLineModuleFrontend
 {
-  Q_OBJECT
 
 public:
 
-  ctkCmdLineModuleXmlProgressWatcher(QIODevice* input);
-  ~ctkCmdLineModuleXmlProgressWatcher();
+  ctkCmdLineModuleFrontendQtGui(const ctkCmdLineModuleReference& moduleRef);
 
-Q_SIGNALS:
+  // ctkCmdLineModuleFrontend overrides
 
-  void filterStarted(const QString& name, const QString& comment);
-  void filterProgress(float progress);
-  void filterFinished(const QString& name);
-  void filterXmlError(const QString& error);
+  virtual QObject* guiHandle() const;
+
+  virtual QVariant value(const QString& parameter) const;
+  virtual void setValue(const QString& parameter, const QVariant& value);
+
+  virtual QList<QString> parameterNames() const;
 
 private:
 
-  friend class ctkCmdLineModuleXmlProgressWatcherPrivate;
+  mutable QWidget* Widget;
 
-  Q_PRIVATE_SLOT(d, void _q_readyRead())
-
-  QScopedPointer<ctkCmdLineModuleXmlProgressWatcherPrivate> d;
+  // Cache the list of parameter names
+  mutable QList<QString> ParameterNames;
 };
 
-#endif // CTKCMDLINEMODULEXMLPROGRESSWATCHER_H
+#endif // CTKCMDLINEMODULEFRONTENDQTGUI_H

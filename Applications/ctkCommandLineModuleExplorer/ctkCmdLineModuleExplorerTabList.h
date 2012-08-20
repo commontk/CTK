@@ -1,48 +1,60 @@
 /*=============================================================================
-  
+
   Library: CTK
-  
+
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
-    
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  
+
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEREFERENCEPRIVATE_H
-#define CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#ifndef CTKCMDLINEMODULEEXPLORERTABLIST_H
+#define CTKCMDLINEMODULEEXPLORERTABLIST_H
 
-#include <ctkCmdLineModuleDescription.h>
+class ctkCmdLineModuleFrontend;
+class ctkCmdLineModuleManager;
 
-#include <QSharedData>
-#include <QUrl>
+#include <QObject>
+#include <QHash>
 
-struct ctkCmdLineModuleBackend;
+class QTabWidget;
+class QModelIndex;
 
-struct ctkCmdLineModuleReferencePrivate : public QSharedData
+class ctkCmdLineModuleExplorerTabList : public QObject
 {
-  ctkCmdLineModuleReferencePrivate();
+  Q_OBJECT
 
-  ctkCmdLineModuleDescription description() const;
+public:
 
-  ctkCmdLineModuleBackend* Backend;
-  QUrl Location;
-  QByteArray RawXmlDescription;
-  QString XmlValidationErrorString;
+  ctkCmdLineModuleExplorerTabList(QTabWidget* tabWidget);
+  ~ctkCmdLineModuleExplorerTabList();
+
+  ctkCmdLineModuleFrontend* activeTab() const;
+
+  Q_SLOT void addTab(ctkCmdLineModuleFrontend* frontend);
+
+  Q_SIGNAL void tabActivated(ctkCmdLineModuleFrontend* module);
 
 private:
 
-  mutable ctkCmdLineModuleDescription Description;
+  Q_SLOT void tabIndexChanged(int index);
+  Q_SLOT void tabCloseRequested(int index);
+
+private:
+
+  QTabWidget* TabWidget;
+  QList<ctkCmdLineModuleFrontend*> TabIndexToFrontend;
 };
 
-#endif // CTKCMDLINEMODULEREFERENCEPRIVATE_H
+#endif // CTKCMDLINEMODULEEXPLORERTABLIST_H

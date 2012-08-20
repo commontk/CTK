@@ -23,18 +23,22 @@
 #define CTKCLIPLUGINEXPLORERMAINWINDOW_H
 
 #include <ctkCmdLineModuleManager.h>
-#include <ctkCmdLineModuleReference.h>
-#include <ctkCmdLineModuleResult.h>
+#include <ctkCmdLineModuleDirectoryWatcher.h>
+#include <ctkCmdLineModuleFuture.h>
 
 #include <QMainWindow>
-#include <QHash>
+#include <QTimer>
 #include <QFutureWatcher>
 
+class ctkCmdLineModuleExplorerTabList;
 class ctkCmdLineModuleReference;
+class ctkCmdLineModuleResult;
+class ctkSettingsDialog;
 
 namespace Ui {
-class ctkCLModuleExplorerMainWindow;
+class ctkCmdLineModuleExplorerMainWindow;
 }
+
 
 class ctkCLModuleExplorerMainWindow : public QMainWindow
 {
@@ -44,29 +48,41 @@ public:
   explicit ctkCLModuleExplorerMainWindow(QWidget *parent = 0);
   ~ctkCLModuleExplorerMainWindow();
 
-  void addModule(const QString& location);
+  void addModule(const QUrl &location);
 
 protected Q_SLOTS:
 
   void on_actionRun_triggered();
+  void on_actionPause_toggled(bool toggled);
+  void on_actionCancel_triggered();
+  void on_actionOptions_triggered();
 
-  void moduleStarted();
-  void moduleFinished();
-  void moduleProgressValueChanged(int);
-  void moduleProgressTextChanged(QString);
+  void checkModulePaused();
+  void currentModuleResumed();
+  void currentModuleCanceled();
+  void currentModuleFinished();
 
-protected:
+  void moduleTabActivated(ctkCmdLineModuleFrontend* module);
 
   void addModuleTab(const ctkCmdLineModuleReference& moduleRef);
   
 private:
 
-  Ui::ctkCLModuleExplorerMainWindow *ui;
+  QScopedPointer<Ui::ctkCmdLineModuleExplorerMainWindow> ui;
+  QScopedPointer<ctkCmdLineModuleExplorerTabList> tabList;
+
+  ctkCmdLineModuleFrontendFactory* defaultModuleFrontendFactory;
+  QList<ctkCmdLineModuleFrontendFactory*> moduleFrontendFactories;
+  QList<ctkCmdLineModuleBackend*> moduleBackends;
 
   ctkCmdLineModuleManager moduleManager;
-  QFutureWatcher<ctkCmdLineModuleResult>* watcher;
 
-  QHash<int, ctkCmdLineModule*> mapTabToModuleRef;
+  QTimer pollPauseTimer;
+  QFutureWatcher<ctkCmdLineModuleResult> currentFutureWatcher;
+
+  ctkCmdLineModuleDirectoryWatcher directoryWatcher;
+
+  ctkSettingsDialog* settingsDialog;
 
 };
 

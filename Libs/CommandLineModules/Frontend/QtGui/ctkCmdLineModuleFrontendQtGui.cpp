@@ -1,30 +1,32 @@
 /*=============================================================================
-  
+
   Library: CTK
-  
+
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
-    
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  
+
 =============================================================================*/
 
-#include "ctkCmdLineModuleQtGui_p.h"
+#include "ctkCmdLineModuleFrontendQtGui.h"
+
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleXslTransform.h"
 #include "ctkCmdLineModuleObjectTreeWalker_p.h"
 
 #include <QBuffer>
+#include <QFile>
 #include <QUiLoader>
 #include <QWidget>
 #include <QVariant>
@@ -32,15 +34,15 @@
 
 #include <QDebug>
 
-ctkCmdLineModuleQtGui::ctkCmdLineModuleQtGui(const ctkCmdLineModuleReference& moduleRef)
-  : ctkCmdLineModule(moduleRef),
-    WidgetTree(NULL)
+ctkCmdLineModuleFrontendQtGui::ctkCmdLineModuleFrontendQtGui(const ctkCmdLineModuleReference& moduleRef)
+  : ctkCmdLineModuleFrontend(moduleRef),
+    Widget(NULL)
 {
 }
 
-QObject* ctkCmdLineModuleQtGui::guiHandle() const
+QObject* ctkCmdLineModuleFrontendQtGui::guiHandle() const
 {
-  if (WidgetTree) return WidgetTree;
+  if (Widget) return Widget;
 
   QBuffer input;
   input.setData(moduleReference().rawXmlDescription());
@@ -48,6 +50,8 @@ QObject* ctkCmdLineModuleQtGui::guiHandle() const
   QBuffer uiForm;
   uiForm.open(QIODevice::ReadWrite);
   ctkCmdLineModuleXslTransform xslTransform(&input, &uiForm);
+  QFile qtGuiTransformation(":/ctkCmdLineModuleXmlToQtUi.xsl");
+  xslTransform.setXslTransformation(&qtGuiTransformation);
   if (!xslTransform.transform())
   {
     // maybe throw an exception
@@ -63,15 +67,15 @@ QObject* ctkCmdLineModuleQtGui::guiHandle() const
     uiLoader.addPluginPath(appPath + "/../designer");
   }
 #endif
-  WidgetTree = uiLoader.load(&uiForm);
-  return WidgetTree;
+  this->Widget = uiLoader.load(&uiForm);
+  return this->Widget;
 }
 
-QVariant ctkCmdLineModuleQtGui::value(const QString &parameter) const
+QVariant ctkCmdLineModuleFrontendQtGui::value(const QString &parameter) const
 {
-  if (!WidgetTree) return QVariant();
+  if (!this->Widget) return QVariant();
 
-  ctkCmdLineModuleObjectTreeWalker reader(WidgetTree);
+  ctkCmdLineModuleObjectTreeWalker reader(this->Widget);
   while(reader.readNextParameter())
   {
     if(reader.name() == parameter)
@@ -82,11 +86,11 @@ QVariant ctkCmdLineModuleQtGui::value(const QString &parameter) const
   return QVariant();
 }
 
-void ctkCmdLineModuleQtGui::setValue(const QString &parameter, const QVariant &value)
+void ctkCmdLineModuleFrontendQtGui::setValue(const QString &parameter, const QVariant &value)
 {
-  if (!WidgetTree) return;
+  if (!this->Widget) return;
 
-  ctkCmdLineModuleObjectTreeWalker walker(WidgetTree);
+  ctkCmdLineModuleObjectTreeWalker walker(this->Widget);
   while(walker.readNextParameter())
   {
     if(walker.name() == parameter && walker.value() != value)
@@ -97,7 +101,7 @@ void ctkCmdLineModuleQtGui::setValue(const QString &parameter, const QVariant &v
   }
 }
 
-QList<QString> ctkCmdLineModuleQtGui::parameterNames() const
+QList<QString> ctkCmdLineModuleFrontendQtGui::parameterNames() const
 {
   if (!ParameterNames.empty()) return ParameterNames;
 
@@ -105,9 +109,9 @@ QList<QString> ctkCmdLineModuleQtGui::parameterNames() const
   // if it has already created (otherwise fall back to the superclass
   // implementation.
   // This avoids creating a ctkCmdLineModuleDescription instance.
-  if (WidgetTree == 0) return ctkCmdLineModule::parameterNames();
+  if (this->Widget == 0) return ctkCmdLineModuleFrontend::parameterNames();
 
-  ctkCmdLineModuleObjectTreeWalker walker(WidgetTree);
+  ctkCmdLineModuleObjectTreeWalker walker(this->Widget);
   while(walker.readNextParameter())
   {
     ParameterNames.push_back(walker.name());

@@ -36,7 +36,7 @@
 #include <ctkCommandLineParser.h>
 #include <ctkCmdLineModuleXmlValidator.h>
 
-#include "ctkCLModuleExplorerMainWindow.h"
+#include "ctkCmdLineModuleExplorerMainWindow.h"
 
 int main(int argc, char** argv)
 {

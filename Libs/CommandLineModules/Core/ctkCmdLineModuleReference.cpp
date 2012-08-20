@@ -25,6 +25,12 @@
 
 #include <QBuffer>
 
+
+ctkCmdLineModuleReferencePrivate::ctkCmdLineModuleReferencePrivate()
+  : Backend(NULL)
+{
+}
+
 ctkCmdLineModuleDescription ctkCmdLineModuleReferencePrivate::description() const
 {
   // Lazy creation. The title is a required XML element.
@@ -72,7 +78,17 @@ QByteArray ctkCmdLineModuleReference::rawXmlDescription() const
   return d->RawXmlDescription;
 }
 
-QString ctkCmdLineModuleReference::location() const
+QString ctkCmdLineModuleReference::xmlValidationErrorString() const
+{
+  return d->XmlValidationErrorString;
+}
+
+QUrl ctkCmdLineModuleReference::location() const
 {
   return d->Location;
+}
+
+ctkCmdLineModuleBackend *ctkCmdLineModuleReference::backend() const
+{
+  return d->Backend;
 }

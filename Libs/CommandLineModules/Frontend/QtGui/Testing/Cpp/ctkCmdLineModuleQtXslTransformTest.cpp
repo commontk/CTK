@@ -25,11 +25,12 @@
 #include <QString>
 
 // CTK includes
+#include "ctkCmdLineModuleFrontendFactoryQtGui.h"
 #include "ctkCmdLineModuleXslTransform.h"
 #include "ctkTest.h"
 
 // ----------------------------------------------------------------------------
-class ctkCmdLineModuleXslTransformTester: public QObject
+class ctkCmdLineModuleQtXslTransformTester: public QObject
 {
   Q_OBJECT
 private slots:
@@ -170,9 +171,12 @@ QString integerWidgetSpinBoxFooter =
 
 
 // ----------------------------------------------------------------------------
-void ctkCmdLineModuleXslTransformTester::testTransform()
+void ctkCmdLineModuleQtXslTransformTester::testTransform()
 {
   ctkCmdLineModuleXslTransform transformer;
+
+  QFile transformation(":/ctkCmdLineModuleXmlToQtUi.xsl");
+  transformer.setXslTransformation(&transformation);
 
   QFETCH(QString, input);
   QByteArray inputByteArray = input.toUtf8();
@@ -200,7 +204,7 @@ void ctkCmdLineModuleXslTransformTester::testTransform()
 }
 
 // ----------------------------------------------------------------------------
-void ctkCmdLineModuleXslTransformTester::testTransform_data()
+void ctkCmdLineModuleQtXslTransformTester::testTransform_data()
 {
   QTest::addColumn<QString>("input");
   QTest::addColumn<bool>("expectedSuccess");
@@ -248,9 +252,12 @@ void ctkCmdLineModuleXslTransformTester::testTransform_data()
 }
 
 // ----------------------------------------------------------------------------
-void ctkCmdLineModuleXslTransformTester::testBindVariable()
+void ctkCmdLineModuleQtXslTransformTester::testBindVariable()
 {
   ctkCmdLineModuleXslTransform transformer;
+
+  QFile transformation(":/ctkCmdLineModuleXmlToQtUi.xsl");
+  transformer.setXslTransformation(&transformation);
 
   QFETCH(QString, input);
   QByteArray inputArray(input.toUtf8());
@@ -274,7 +281,7 @@ void ctkCmdLineModuleXslTransformTester::testBindVariable()
 }
 
 // ----------------------------------------------------------------------------
-void ctkCmdLineModuleXslTransformTester::testBindVariable_data()
+void ctkCmdLineModuleQtXslTransformTester::testBindVariable_data()
 {
   QTest::addColumn<QString>("input");
   QTest::addColumn<QString>("variableName");
@@ -306,9 +313,12 @@ void ctkCmdLineModuleXslTransformTester::testBindVariable_data()
 }
 
 // ----------------------------------------------------------------------------
-void ctkCmdLineModuleXslTransformTester::testXslExtraTransformation()
+void ctkCmdLineModuleQtXslTransformTester::testXslExtraTransformation()
 {
   ctkCmdLineModuleXslTransform transformer;
+
+  QFile transformation(":/ctkCmdLineModuleXmlToQtUi.xsl");
+  transformer.setXslTransformation(&transformation);
 
   QFETCH(QString, input);
   QByteArray inputArray(input.toUtf8());
@@ -335,7 +345,7 @@ void ctkCmdLineModuleXslTransformTester::testXslExtraTransformation()
 }
 
 // ----------------------------------------------------------------------------
-void ctkCmdLineModuleXslTransformTester::testXslExtraTransformation_data()
+void ctkCmdLineModuleQtXslTransformTester::testXslExtraTransformation_data()
 {
   QString extra =
     "<xsl:template match=\"parameters/integer\" priority=\"1\">\n"
@@ -442,5 +452,17 @@ void ctkCmdLineModuleXslTransformTester::testXslExtraTransformation_data()
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN(ctkCmdLineModuleXslTransformTest)
-#include "moc_ctkCmdLineModuleXslTransformTest.cpp"
+//CTK_TEST_MAIN(ctkCmdLineModuleQtXslTransformTest)
+int ctkCmdLineModuleQtXslTransformTest(int argc, char *argv[])
+{
+  QCoreApplication app(argc, argv);
+  QTEST_DISABLE_KEYPAD_NAVIGATION
+
+  // Introduce a dummy linker dependency to CTKCommandLineModulesFrontendQtGui to
+  // get access to the ctkCmdLineModuleXmlToQtUi.xsl resource.
+  ctkCmdLineModuleFrontendFactoryQtGui guiFactory;
+
+  ctkCmdLineModuleQtXslTransformTester tc;
+  return QTest::qExec(&tc, argc, argv);
+}
+#include "moc_ctkCmdLineModuleQtXslTransformTest.cpp"

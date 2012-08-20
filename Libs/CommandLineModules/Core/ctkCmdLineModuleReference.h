@@ -27,6 +27,7 @@
 #include <QSharedDataPointer>
 #include <QMetaType>
 
+struct ctkCmdLineModuleBackend;
 class ctkCmdLineModuleDescription;
 class ctkCmdLineModuleReferencePrivate;
 
@@ -49,7 +50,11 @@ public:
 
   QByteArray rawXmlDescription() const;
 
-  QString location() const;
+  QString xmlValidationErrorString() const;
+
+  QUrl location() const;
+
+  ctkCmdLineModuleBackend* backend() const;
 
 private:
 

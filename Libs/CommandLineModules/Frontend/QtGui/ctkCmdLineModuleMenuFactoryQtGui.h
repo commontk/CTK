@@ -24,7 +24,7 @@
 #include <QMenu>
 #include <QList>
 #include "ctkCmdLineModuleReference.h"
-#include "ctkCommandLineModulesQtGuiExport.h"
+#include "ctkCommandLineModulesFrontendQtGuiExport.h"
 
 /**
  * \class ctkCmdLineModuleMenuFactoryQtGui

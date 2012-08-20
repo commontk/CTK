@@ -73,6 +73,15 @@ public:
    */
   bool transform();
 
+  /**
+   * @brief Sets the XSL transformation.
+   *
+   * Use this method to set the XSL transformation for this instance. Trying
+   * to transform the input without setting a transformation will result in
+   * runtime errors.
+   *
+   * @param The XSL transformation.
+   */
   void setXslTransformation(QIODevice* transformation);
 
   /**
@@ -81,7 +90,7 @@ public:
    * This can be used to potentially overwrite templates.
    * To avoid ambiguity, specify a priority > 1 in your overwriting templates
    *
-   * @return
+   * \param transformation Extra XSL transformation fragment.
    */
   void setXslExtraTransformation(QIODevice* transformation);
   void setXslExtraTransformations(const QList<QIODevice*>& transformations);

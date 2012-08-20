@@ -19,8 +19,15 @@
   
 =============================================================================*/
 
-#include "ctkCmdLineModuleFactory.h"
+#ifndef CTKCMDLINEMODULEEXPLORERDIRECTORYSETTINGS_H
+#define CTKCMDLINEMODULEEXPLORERDIRECTORYSETTINGS_H
 
-ctkCmdLineModuleFactory::~ctkCmdLineModuleFactory()
+#include <ctkSettingsPanel.h>
+
+class ctkCmdLineModuleExplorerDirectorySettings : public ctkSettingsPanel
 {
-}
+public:
+  ctkCmdLineModuleExplorerDirectorySettings();
+};
+
+#endif // CTKCMDLINEMODULEEXPLORERDIRECTORYSETTINGS_H

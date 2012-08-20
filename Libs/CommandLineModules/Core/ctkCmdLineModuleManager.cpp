@@ -21,90 +21,110 @@
 
 #include "ctkCmdLineModuleManager.h"
 
+#include "ctkCmdLineModuleBackend.h"
+#include "ctkCmdLineModuleFrontend.h"
+#include "ctkCmdLineModuleFuture.h"
 #include "ctkCmdLineModuleXmlValidator.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleReference_p.h"
-#include "ctkCmdLineModuleFactory.h"
 
 #include <ctkException.h>
 
 #include <QStringList>
 #include <QBuffer>
+#include <QUrl>
+#include <QHash>
+#include <QList>
 
-#include <QProcess>
 #include <QFuture>
 
 struct ctkCmdLineModuleManagerPrivate
 {
-  ctkCmdLineModuleManagerPrivate()
-    : Verbose(false)
+  ctkCmdLineModuleManagerPrivate(ctkCmdLineModuleManager::ValidationMode mode)
+    : ValidationMode(mode)
   {}
 
-  ctkCmdLineModuleFactory* InstanceFactory;
+  void checkBackends(const QUrl& location)
+  {
+    if (!this->SchemeToBackend.contains(location.scheme()))
+    {
+      throw ctkInvalidArgumentException(QString("No suitable backend registered for module at ") + location.toString());
+    }
+  }
 
-  QHash<QString, ctkCmdLineModuleReference> LocationToRef;
+  QHash<QString, ctkCmdLineModuleBackend*> SchemeToBackend;
+  QHash<QUrl, ctkCmdLineModuleReference> LocationToRef;
 
-  bool Verbose;
+  ctkCmdLineModuleManager::ValidationMode ValidationMode;
 };
 
-ctkCmdLineModuleManager::ctkCmdLineModuleManager(ctkCmdLineModuleFactory *instanceFactory,
-                                                 ValidationMode validationMode)
-  : d(new ctkCmdLineModuleManagerPrivate)
+ctkCmdLineModuleManager::ctkCmdLineModuleManager(ValidationMode validationMode)
+  : d(new ctkCmdLineModuleManagerPrivate(validationMode))
 {
-  d->InstanceFactory = instanceFactory;
 }
 
 ctkCmdLineModuleManager::~ctkCmdLineModuleManager()
 {
 }
 
-void ctkCmdLineModuleManager::setVerboseOutput(bool verbose)
+void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 {
-  d->Verbose = verbose;
-}
+  QList<QString> supportedSchemes = backend->schemes();
 
-bool ctkCmdLineModuleManager::verboseOutput() const
-{
-  return d->Verbose;
+  // Check if there is already a backound registerd for any of the
+  // supported schemes. We only supported one backend per scheme.
+  foreach (QString scheme, supportedSchemes)
+  {
+    if (d->SchemeToBackend.contains(scheme))
+    {
+      throw ctkInvalidArgumentException(QString("A backend for scheme %1 is already registered.").arg(scheme));
+    }
+  }
+
+  // All good
+  foreach (QString scheme, supportedSchemes)
+  {
+    d->SchemeToBackend[scheme] = backend;
+  }
 }
 
 ctkCmdLineModuleReference
-ctkCmdLineModuleManager::registerModule(const QString& location)
+ctkCmdLineModuleManager::registerModule(const QUrl &location)
 {
-  QProcess process;
-  process.setReadChannel(QProcess::StandardOutput);
-  process.start(location, QStringList("--xml"));
+  d->checkBackends(location);
+
+  QByteArray xml = d->SchemeToBackend[location.scheme()]->rawXmlDescription(location);
+
+  if (xml.isEmpty())
+  {
+    throw ctkInvalidArgumentException(QString("No XML output available from ") + location.toString());
+  }
 
   ctkCmdLineModuleReference ref;
   ref.d->Location = location;
-  if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
-      process.error() != QProcess::UnknownError)
-  {
-    if(d->Verbose)
-    {
-      qWarning() << "The executable at" << location << "could not be started:" << process.errorString();
-    }
-    return ref;
-  }
-
-  process.waitForReadyRead();
-  QByteArray xml = process.readAllStandardOutput();
-
-  // validate the outputted xml description
-  QBuffer input(&xml);
-  input.open(QIODevice::ReadOnly);
-
-  ctkCmdLineModuleXmlValidator validator(&input);
-  if (!validator.validateInput())
-  {
-    if(d->Verbose)
-    {
-      qWarning() << validator.errorString();
-    }
-    return ref;
-  }
-
   ref.d->RawXmlDescription = xml;
+  ref.d->Backend = d->SchemeToBackend[location.scheme()];
+
+  if (d->ValidationMode != SKIP_VALIDATION)
+  {
+    // validate the outputted xml description
+    QBuffer input(&xml);
+    input.open(QIODevice::ReadOnly);
+
+    ctkCmdLineModuleXmlValidator validator(&input);
+    if (!validator.validateInput())
+    {
+      if (d->ValidationMode == STRICT_VALIDATION)
+      {
+        throw ctkInvalidArgumentException(QString("Validating module at %1 failed: %2")
+                                          .arg(location.toString()).arg(validator.errorString()));
+      }
+      else
+      {
+        ref.d->XmlValidationErrorString = validator.errorString();
+      }
+    }
+  }
 
   d->LocationToRef[location] = ref;
 
@@ -118,7 +138,7 @@ void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& 
   emit moduleUnregistered(ref);
 }
 
-ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QString& location) const
+ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QUrl &location) const
 {
   return d->LocationToRef[location];
 }
@@ -128,8 +148,11 @@ QList<ctkCmdLineModuleReference> ctkCmdLineModuleManager::moduleReferences() con
   return d->LocationToRef.values();
 }
 
-ctkCmdLineModule*
-ctkCmdLineModuleManager::createModule(const ctkCmdLineModuleReference& moduleRef)
+ctkCmdLineModuleFuture ctkCmdLineModuleManager::run(ctkCmdLineModuleFrontend *frontend)
 {
-  return d->InstanceFactory->create(moduleRef);
+  d->checkBackends(frontend->location());
+
+  ctkCmdLineModuleFuture future = d->SchemeToBackend[frontend->location().scheme()]->run(frontend);
+  frontend->setFuture(future);
+  return future;
 }

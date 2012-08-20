@@ -19,11 +19,37 @@
 
 =============================================================================*/
 
-#include "ctkCmdLineModuleFactoryQtGui.h"
-#include "ctkCmdLineModuleQtGui_p.h"
+#ifndef CTKCMDLINEMODULEBACKEND_H
+#define CTKCMDLINEMODULEBACKEND_H
 
-ctkCmdLineModule*
-ctkCmdLineModuleFactoryQtGui::create(const ctkCmdLineModuleReference& moduleRef)
+#include "ctkCommandLineModulesCoreExport.h"
+
+class ctkCmdLineModuleFrontend;
+class ctkCmdLineModuleFuture;
+
+template<typename T> class QList;
+class QUrl;
+
+struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
 {
-  return new ctkCmdLineModuleQtGui(moduleRef);
-}
+
+  ~ctkCmdLineModuleBackend();
+
+  virtual QString name() const = 0;
+  virtual QString description() const = 0;
+
+  virtual QList<QString> schemes() const = 0;
+
+  virtual QByteArray rawXmlDescription(const QUrl& location) = 0;
+
+protected:
+
+  friend class ctkCmdLineModuleManager;
+
+  virtual ctkCmdLineModuleFuture run(ctkCmdLineModuleFrontend* frontend) = 0;
+
+  //virtual ctkCmdLineModule* createModule(const QString& scheme) = 0;
+
+};
+
+#endif // CTKCMDLINEMODULEBACKEND_H

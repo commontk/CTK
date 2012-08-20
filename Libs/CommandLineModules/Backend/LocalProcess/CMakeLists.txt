@@ -1,4 +1,4 @@
-project(CTKCommandLineModulesQtGui)
+project(CTKCommandLineModulesBackendLocalProcess)
 
 #
 # 3rd party dependencies
@@ -8,22 +8,19 @@ project(CTKCommandLineModulesQtGui)
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-set(KIT_export_directive "CTK_CMDLINEMODULEQTGUI_EXPORT")
+set(KIT_export_directive "CTK_CMDLINEMODULEBACKENDLP_EXPORT")
 
 # Additional directories to include
 
 # Source files
 set(KIT_SRCS
-  ctkCmdLineModuleFactoryQtGui.cpp
-  ctkCmdLineModuleQtGui_p.h
-  ctkCmdLineModuleQtGui.cpp
-  ctkCmdLineModuleMenuFactoryQtGui.cpp
-  ctkCmdLineModuleObjectTreeWalker_p.h
-  ctkCmdLineModuleObjectTreeWalker.cpp
+  ctkCmdLineModuleBackendLocalProcess.cpp
+  ctkCmdLineModuleProcessTask.cpp
 )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
+  ctkCmdLineModuleProcessTask.h
 )
 
 # UI files
@@ -32,11 +29,7 @@ set(KIT_UI_FORMS
 
 # Resources
 set(KIT_resources
-  
 )
-
-set(QT_USE_QTUITOOLS 1)
-include(${QT_USE_FILE})
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
@@ -66,5 +59,5 @@ endif()
 
 # Testing
 if(BUILD_TESTING)
-#  add_subdirectory(Testing)
+  #add_subdirectory(Testing)
 endif()

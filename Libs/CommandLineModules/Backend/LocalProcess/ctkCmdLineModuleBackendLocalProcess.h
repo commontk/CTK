@@ -1,53 +1,56 @@
 /*=============================================================================
-  
+
   Library: CTK
-  
+
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
-    
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  
+
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEQTGUI_H
-#define CTKCMDLINEMODULEQTGUI_H
+#ifndef CTKCMDLINEMODULEBACKENDLOCALPROCESS_H
+#define CTKCMDLINEMODULEBACKENDLOCALPROCESS_H
 
-#include <ctkCmdLineModule.h>
+#include "ctkCmdLineModuleBackend.h"
 
-class ctkCmdLineModuleReference;
+#include "ctkCommandLineModulesBackendLocalProcessExport.h"
 
-class ctkCmdLineModuleQtGui : public ctkCmdLineModule
+#include <QScopedPointer>
+
+struct ctkCmdLineModuleBackendLocalProcessPrivate;
+
+class CTK_CMDLINEMODULEBACKENDLP_EXPORT ctkCmdLineModuleBackendLocalProcess : public ctkCmdLineModuleBackend
 {
 
 public:
 
-  ctkCmdLineModuleQtGui(const ctkCmdLineModuleReference& moduleRef);
+  ctkCmdLineModuleBackendLocalProcess();
+  ~ctkCmdLineModuleBackendLocalProcess();
 
-  // ctkCmdLineModule overrides
+  virtual QString name() const;
+  virtual QString description() const;
 
-  virtual QObject* guiHandle() const;
+  virtual QList<QString> schemes() const;
 
-  virtual QVariant value(const QString& parameter) const;
-  virtual void setValue(const QString& parameter, const QVariant& value);
+  virtual QByteArray rawXmlDescription(const QUrl& location);
 
-  virtual QList<QString> parameterNames() const;
+  virtual ctkCmdLineModuleFuture run(ctkCmdLineModuleFrontend *frontend);
 
 private:
 
-  mutable QWidget* WidgetTree;
+  QScopedPointer<ctkCmdLineModuleBackendLocalProcessPrivate> d;
 
-  // Cache the list of parameter names
-  mutable QList<QString> ParameterNames;
 };
 
-#endif // CTKCMDLINEMODULEQTGUI_H
+#endif // CTKCMDLINEMODULEBACKENDLOCALPROCESS_H

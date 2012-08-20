@@ -21,12 +21,14 @@
 #include "ctkCmdLineModuleDirectoryWatcher.h"
 #include "ctkCmdLineModuleDirectoryWatcher_p.h"
 #include "ctkCmdLineModuleManager.h"
+#include "ctkException.h"
 
 #include <QObject>
 #include <QFileSystemWatcher>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QUrl>
 #include <QDebug>
 
 #include <iostream>
@@ -105,7 +107,6 @@ ctkCmdLineModuleDirectoryWatcherPrivate::~ctkCmdLineModuleDirectoryWatcherPrivat
 void ctkCmdLineModuleDirectoryWatcherPrivate::setDebug(bool debug)
 {
   this->Debug = debug;
-  this->ModuleManager->setVerboseOutput(debug);
 }
 
 
@@ -313,7 +314,23 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::updateModuleReferences(const QStri
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleReference ctkCmdLineModuleDirectoryWatcherPrivate::loadModule(const QString& pathToExecutable)
 {
-  ctkCmdLineModuleReference ref = this->ModuleManager->registerModule(pathToExecutable);
+  ctkCmdLineModuleReference ref;
+  try
+  {
+    ref = this->ModuleManager->registerModule(QUrl::fromLocalFile(pathToExecutable));
+  }
+  catch (const ctkIllegalStateException& e)
+  {
+    e.rethrow();
+  }
+  catch (const ctkException& e)
+  {
+    if (this->Debug)
+    {
+      qWarning() << e;
+    }
+  }
+
   if (ref)
   {
     this->MapFileNameToReference[pathToExecutable] = ref;
@@ -325,7 +342,7 @@ ctkCmdLineModuleReference ctkCmdLineModuleDirectoryWatcherPrivate::loadModule(co
 //-----------------------------------------------------------------------------
 void ctkCmdLineModuleDirectoryWatcherPrivate::unloadModule(const QString& pathToExecutable)
 {
-  ctkCmdLineModuleReference ref = this->ModuleManager->moduleReference(pathToExecutable);
+  ctkCmdLineModuleReference ref = this->ModuleManager->moduleReference(QUrl::fromLocalFile(pathToExecutable));
   if (ref)
   {
     this->ModuleManager->unregisterModule(ref);
