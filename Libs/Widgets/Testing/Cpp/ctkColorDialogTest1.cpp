@@ -93,9 +93,4 @@ int ctkColorDialogTest1(int argc, char * argv [] )
     }
 
   return app.exec();
-
-  ctkColorDialog::addDefaultTab(extraPanel, "Extra");
-  QColor color = ctkColorDialog::getColor(Qt::black,0 , "", 0);
-  return EXIT_SUCCESS;
-
 }
