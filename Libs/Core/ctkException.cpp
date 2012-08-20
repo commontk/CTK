@@ -105,14 +105,16 @@ const char* ctkException::className() const throw()
 // --------------------------------------------------------------------------
 const char* ctkException::what() const throw()
 {
-  static std::string txt;
-  txt = std::string(name());
-  if (!Msg.isEmpty())
+  if (WhatMsg.empty())
   {
-    txt += ": ";
-    txt += Msg.toStdString();
+    WhatMsg = std::string(name());
+    if (!Msg.isEmpty())
+    {
+      WhatMsg += ": ";
+      WhatMsg += Msg.toStdString();
+    }
   }
-  return txt.c_str();
+  return WhatMsg.c_str();
 }
 
 // --------------------------------------------------------------------------
