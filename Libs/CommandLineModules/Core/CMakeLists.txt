@@ -15,6 +15,8 @@ set(KIT_export_directive "CTK_CMDLINEMODULECORE_EXPORT")
 # Source files
 set(KIT_SRCS
   ctkCmdLineModuleBackend.cpp
+  ctkCmdLineModuleCache.cpp
+  ctkCmdLineModuleCache_p.h
   ctkCmdLineModuleDefaultPathBuilder.cpp
   ctkCmdLineModuleDescription.cpp
   ctkCmdLineModuleDescription_p.h

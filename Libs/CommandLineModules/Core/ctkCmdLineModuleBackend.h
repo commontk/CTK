@@ -40,6 +40,8 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
 
   virtual QList<QString> schemes() const = 0;
 
+  virtual qint64 timeStamp(const QUrl& location) const = 0;
+
   /**
    * @brief Get the XML parameter description from the given location.
    * @param location The location URL specifying the module.

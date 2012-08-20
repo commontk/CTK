@@ -173,6 +173,12 @@ QList<QString> ctkCmdLineModuleBackendFunctionPointer::schemes() const
   return supportedSchemes;
 }
 
+qint64 ctkCmdLineModuleBackendFunctionPointer::timeStamp(const QUrl &location) const
+{
+  Q_UNUSED(location)
+  return 0;
+}
+
 QByteArray ctkCmdLineModuleBackendFunctionPointer::rawXmlDescription(const QUrl& location)
 {
   if (!d->UrlToFpDescription.contains(location)) return QByteArray();

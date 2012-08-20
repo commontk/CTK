@@ -99,6 +99,8 @@ public:
 
   virtual QList<QString> schemes() const;
 
+  virtual qint64 timeStamp(const QUrl &location) const;
+
   virtual QByteArray rawXmlDescription(const QUrl& location);
 
   virtual ctkCmdLineModuleFuture run(ctkCmdLineModuleFrontend *frontend);

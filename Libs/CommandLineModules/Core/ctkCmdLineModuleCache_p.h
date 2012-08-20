@@ -19,40 +19,35 @@
 
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEBACKENDLOCALPROCESS_H
-#define CTKCMDLINEMODULEBACKENDLOCALPROCESS_H
-
-#include "ctkCmdLineModuleBackend.h"
-
-#include "ctkCommandLineModulesBackendLocalProcessExport.h"
+#ifndef CTKCMDLINEMODULECACHE_H
+#define CTKCMDLINEMODULECACHE_H
 
 #include <QScopedPointer>
 
-struct ctkCmdLineModuleBackendLocalProcessPrivate;
+class ctkCmdLineModuleCachePrivate;
 
-class CTK_CMDLINEMODULEBACKENDLP_EXPORT ctkCmdLineModuleBackendLocalProcess : public ctkCmdLineModuleBackend
+class QUrl;
+
+class ctkCmdLineModuleCache
 {
 
 public:
 
-  ctkCmdLineModuleBackendLocalProcess();
-  ~ctkCmdLineModuleBackendLocalProcess();
+  ctkCmdLineModuleCache(const QString& cacheDir);
+  ~ctkCmdLineModuleCache();
 
-  virtual QString name() const;
-  virtual QString description() const;
+  QString cacheDir() const;
 
-  virtual QList<QString> schemes() const;
+  QByteArray rawXmlDescription(const QUrl& moduleLocation) const;
+  qint64 timeStamp(const QUrl& moduleLocation) const;
 
-  virtual qint64 timeStamp(const QUrl &location) const;
+  void cacheXmlDescription(const QUrl& moduleLocation, qint64 timestamp, const QByteArray& xmlDescription);
 
-  virtual QByteArray rawXmlDescription(const QUrl& location);
-
-  virtual ctkCmdLineModuleFuture run(ctkCmdLineModuleFrontend *frontend);
+  void removeCacheEntry(const QUrl& moduleLocation);
 
 private:
 
-  QScopedPointer<ctkCmdLineModuleBackendLocalProcessPrivate> d;
-
+  QScopedPointer<ctkCmdLineModuleCachePrivate> d;
 };
 
-#endif // CTKCMDLINEMODULEBACKENDLOCALPROCESS_H
+#endif // CTKCMDLINEMODULECACHE_H

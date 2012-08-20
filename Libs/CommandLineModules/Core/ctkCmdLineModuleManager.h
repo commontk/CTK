@@ -56,7 +56,7 @@ public:
     WEAK_VALIDATION
   };
 
-  ctkCmdLineModuleManager(ValidationMode = STRICT_VALIDATION);
+  ctkCmdLineModuleManager(ValidationMode = STRICT_VALIDATION, const QString& cacheDir = QString());
 
   ~ctkCmdLineModuleManager();
 

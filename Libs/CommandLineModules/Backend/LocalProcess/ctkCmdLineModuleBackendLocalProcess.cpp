@@ -30,6 +30,8 @@
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleRunException.h"
 
+#include "ctkUtils.h"
+
 #include <QProcess>
 #include <QUrl>
 
@@ -124,6 +126,17 @@ QList<QString> ctkCmdLineModuleBackendLocalProcess::schemes() const
 {
   static QList<QString> supportedSchemes = QList<QString>() << "file";
   return supportedSchemes;
+}
+
+qint64 ctkCmdLineModuleBackendLocalProcess::timeStamp(const QUrl &location) const
+{
+  QFileInfo fileInfo(location.toLocalFile());
+  if (fileInfo.exists())
+  {
+    QDateTime dateTime = fileInfo.lastModified();
+    return ctk::msecsTo(QDateTime::fromTime_t(0), dateTime);
+  }
+  return 0;
 }
 
 QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &location)

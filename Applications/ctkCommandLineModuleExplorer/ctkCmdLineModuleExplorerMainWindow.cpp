@@ -36,14 +36,15 @@
 
 #include <ctkSettingsDialog.h>
 
+#include <QDesktopServices>
 #include <QDebug>
 
 
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkCmdLineModuleExplorerMainWindow),
-  tabList(NULL),
   defaultModuleFrontendFactory(NULL),
+  moduleManager(ctkCmdLineModuleManager::STRICT_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)),
   directoryWatcher(&moduleManager)
 {
   ui->setupUi(this);

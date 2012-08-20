@@ -41,6 +41,8 @@
 int main(int argc, char** argv)
 {
   QApplication myApp(argc, argv);
+  myApp.setOrganizationName("CommonTK");
+  myApp.setApplicationName("CommandLineModuleExplorer");
 
   ctkCommandLineParser cmdLineParser;
   cmdLineParser.setArgumentPrefix("--", "-");

@@ -23,6 +23,7 @@
 
 #include "ctkCmdLineModuleBackend.h"
 #include "ctkCmdLineModuleFrontend.h"
+#include "ctkCmdLineModuleCache_p.h"
 #include "ctkCmdLineModuleFuture.h"
 #include "ctkCmdLineModuleXmlValidator.h"
 #include "ctkCmdLineModuleReference.h"
@@ -30,6 +31,8 @@
 
 #include <ctkException.h>
 
+#include <QFileInfo>
+#include <QDir>
 #include <QStringList>
 #include <QBuffer>
 #include <QUrl>
@@ -41,9 +44,28 @@
 
 struct ctkCmdLineModuleManagerPrivate
 {
-  ctkCmdLineModuleManagerPrivate(ctkCmdLineModuleManager::ValidationMode mode)
+  ctkCmdLineModuleManagerPrivate(ctkCmdLineModuleManager::ValidationMode mode, const QString& cacheDir)
     : ValidationMode(mode)
-  {}
+  {
+    QFileInfo fileInfo(cacheDir);
+    if (!fileInfo.exists())
+    {
+      if (!QDir().mkpath(cacheDir))
+      {
+        qWarning() << "Command line module cache disabled. Directory" << cacheDir << "could not be created.";
+        return;
+      }
+    }
+
+    if (fileInfo.isWritable())
+    {
+      ModuleCache.reset(new ctkCmdLineModuleCache(cacheDir));
+    }
+    else
+    {
+      qWarning() << "Command line module cache disabled. Directory" << cacheDir << "is not writable.";
+    }
+  }
 
   void checkBackends_unlocked(const QUrl& location)
   {
@@ -56,12 +78,13 @@ struct ctkCmdLineModuleManagerPrivate
   QMutex Mutex;
   QHash<QString, ctkCmdLineModuleBackend*> SchemeToBackend;
   QHash<QUrl, ctkCmdLineModuleReference> LocationToRef;
+  QScopedPointer<ctkCmdLineModuleCache> ModuleCache;
 
   const ctkCmdLineModuleManager::ValidationMode ValidationMode;
 };
 
-ctkCmdLineModuleManager::ctkCmdLineModuleManager(ValidationMode validationMode)
-  : d(new ctkCmdLineModuleManagerPrivate(validationMode))
+ctkCmdLineModuleManager::ctkCmdLineModuleManager(ValidationMode validationMode, const QString& cacheDir)
+  : d(new ctkCmdLineModuleManagerPrivate(validationMode, cacheDir))
 {
 }
 
@@ -111,9 +134,43 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
     backend = d->SchemeToBackend[location.scheme()];
   }
 
-  xml = backend->rawXmlDescription(location);
+  bool fromCache = false;
+  qint64 newTimeStamp = 0;
+  if (d->ModuleCache)
+  {
+    newTimeStamp = backend->timeStamp(location);
+    if (d->ModuleCache->timeStamp(location) < newTimeStamp)
+    {
+      // newly fetch the XML description
+      try
+      {
+        xml = backend->rawXmlDescription(location);
+      }
+      catch (...)
+      {
+        // cache the failed attempt
+        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, QByteArray());
+        throw;
+      }
+    }
+    else
+    {
+      // use the cached XML description
+      xml = d->ModuleCache->rawXmlDescription(location);
+      fromCache = true;
+    }
+  }
+  else
+  {
+    xml = backend->rawXmlDescription(location);
+  }
+
   if (xml.isEmpty())
   {
+    if (!fromCache && d->ModuleCache)
+    {
+      d->ModuleCache->cacheXmlDescription(location, newTimeStamp, QByteArray());
+    }
     throw ctkInvalidArgumentException(QString("No XML output available from ") + location.toString());
   }
 
@@ -131,6 +188,12 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
     ctkCmdLineModuleXmlValidator validator(&input);
     if (!validator.validateInput())
     {
+      if (d->ModuleCache)
+      {
+        // validation failed, cache an empty description
+        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, QByteArray());
+      }
+
       if (d->ValidationMode == STRICT_VALIDATION)
       {
         throw ctkInvalidArgumentException(QString("Validating module at %1 failed: %2")
@@ -140,6 +203,22 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
       {
         ref.d->XmlValidationErrorString = validator.errorString();
       }
+    }
+    else
+    {
+      if (d->ModuleCache && newTimeStamp > 0)
+      {
+        // successfully validated the xml, cache it
+        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, xml);
+      }
+    }
+  }
+  else
+  {
+    if (!fromCache && d->ModuleCache)
+    {
+      // cache it
+      d->ModuleCache->cacheXmlDescription(location, newTimeStamp, xml);
     }
   }
 
@@ -167,6 +246,10 @@ void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& 
       return;
     }
     d->LocationToRef.remove(ref.location());
+    if (d->ModuleCache)
+    {
+      d->ModuleCache->removeCacheEntry(ref.location());
+    }
   }
   emit moduleUnregistered(ref);
 }
