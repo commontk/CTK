@@ -451,6 +451,9 @@ ctk_lib_option(Visualization/VTK/Widgets
                
 ctk_lib_option(CommandLineModules/Core
                "Build the Command Line Module core library" OFF)
+               
+ctk_lib_option(CommandLineModules/Frontend/QtWebKit
+               "Build the QtWebKit based Command Line Module front-end" OFF)
 
 ctk_lib_option(CommandLineModules/Frontend/QtGui
                "Build the QtGui based Command Line Module front-end" OFF)
@@ -458,6 +461,8 @@ ctk_lib_option(CommandLineModules/Frontend/QtGui
 ctk_lib_option(CommandLineModules/Backend/LocalProcess
                "Build the Command Line Module back-end for local processes" OFF)
                
+ctk_lib_option(CommandLineModules/Backend/FunctionPointer
+               "Build the Command Line Module back-end for function pointers" OFF)
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)

@@ -29,7 +29,9 @@
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleDescription.h>
 #include <ctkCmdLineModuleFrontendFactoryQtGui.h>
+#include <ctkCmdLineModuleFrontendFactoryQtWebKit.h>
 #include <ctkCmdLineModuleBackendLocalProcess.h>
+#include <ctkCmdLineModuleBackendFunctionPointer.h>
 #include <ctkException.h>
 
 #include <ctkSettingsDialog.h>
@@ -48,12 +50,16 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
 
   // Frontends
   moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtGui;
+  moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtWebKit;
   defaultModuleFrontendFactory = moduleFrontendFactories.front();
 
   ui->modulesTreeWidget->setModuleFrontendFactories(moduleFrontendFactories);
 
   // Backends
+  ctkCmdLineModuleBackendFunctionPointer* backendFunctionPointer = new ctkCmdLineModuleBackendFunctionPointer;
+
   moduleBackends.push_back(new ctkCmdLineModuleBackendLocalProcess);
+  moduleBackends.push_back(backendFunctionPointer);
   for(int i = 0; i < moduleBackends.size(); ++i)
   {
     moduleManager.registerBackend(moduleBackends[i]);
@@ -84,6 +90,11 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   connect(&currentFutureWatcher, SIGNAL(resumed()), SLOT(currentModuleResumed()));
   connect(&currentFutureWatcher, SIGNAL(canceled()), SLOT(currentModuleCanceled()));
   connect(&currentFutureWatcher, SIGNAL(finished()), SLOT(currentModuleFinished()));
+
+  foreach(QUrl fpModule, backendFunctionPointer->registeredFunctionPointers())
+  {
+    moduleManager.registerModule(fpModule);
+  }
 
   directoryWatcher.setDebug(true);
   directoryWatcher.setDirectories(QStringList(QCoreApplication::applicationDirPath()));

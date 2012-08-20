@@ -6,6 +6,8 @@
 
 set(target_libraries
   CTKCommandLineModulesFrontendQtGui
+  CTKCommandLineModulesFrontendQtWebKit
   CTKCommandLineModulesBackendLocalProcess
+  CTKCommandLineModulesBackendFunctionPointer
   CTKWidgets
   )
