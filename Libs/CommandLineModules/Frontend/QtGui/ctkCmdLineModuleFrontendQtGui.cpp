@@ -35,11 +35,32 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
+struct ctkCmdLineModuleFrontendQtGuiPrivate
+{
+  ctkCmdLineModuleFrontendQtGuiPrivate()
+    : Loader(NULL)
+    , Transform(NULL)
+    , Widget(NULL)
+  {}
+
+  ~ctkCmdLineModuleFrontendQtGuiPrivate()
+  {
+    delete Loader;
+    delete Transform;
+  }
+
+  mutable QUiLoader* Loader;
+  mutable ctkCmdLineModuleXslTransform* Transform;
+  mutable QWidget* Widget;
+
+  // Cache the list of parameter names
+  mutable QList<QString> ParameterNames;
+};
+
+//-----------------------------------------------------------------------------
 ctkCmdLineModuleFrontendQtGui::ctkCmdLineModuleFrontendQtGui(const ctkCmdLineModuleReference& moduleRef)
   : ctkCmdLineModuleFrontend(moduleRef),
-    Loader(NULL),
-    Transform(NULL),
-    Widget(NULL)
+    d(new ctkCmdLineModuleFrontendQtGuiPrivate)
 {
 }
 
@@ -47,37 +68,35 @@ ctkCmdLineModuleFrontendQtGui::ctkCmdLineModuleFrontendQtGui(const ctkCmdLineMod
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleFrontendQtGui::~ctkCmdLineModuleFrontendQtGui()
 {
-  delete this->Loader;
-  delete this->Transform;
 }
 
 
 //-----------------------------------------------------------------------------
 QUiLoader* ctkCmdLineModuleFrontendQtGui::uiLoader() const
 {
-  if (this->Loader == NULL)
+  if (d->Loader == NULL)
   {
-    this->Loader = new QUiLoader();
+    d->Loader = new QUiLoader();
   }
-  return this->Loader;
+  return d->Loader;
 }
 
 
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleXslTransform* ctkCmdLineModuleFrontendQtGui::xslTransform() const
 {
-  if (this->Transform == NULL)
+  if (d->Transform == NULL)
   {
-    this->Transform = new ctkCmdLineModuleXslTransform();
+    d->Transform = new ctkCmdLineModuleXslTransform();
   }
-  return this->Transform;
+  return d->Transform;
 }
 
 
 //-----------------------------------------------------------------------------
 QObject* ctkCmdLineModuleFrontendQtGui::guiHandle() const
 {
-  if (Widget) return Widget;
+  if (d->Widget) return d->Widget;
 
   QBuffer input;
   input.setData(moduleReference().rawXmlDescription());
@@ -106,17 +125,17 @@ QObject* ctkCmdLineModuleFrontendQtGui::guiHandle() const
     uiLoader.addPluginPath(appPath + "/../designer");
   }
 #endif
-  this->Widget = uiLoader->load(&uiForm);
-  return this->Widget;
+  d->Widget = uiLoader->load(&uiForm);
+  return d->Widget;
 }
 
 
 //-----------------------------------------------------------------------------
 QVariant ctkCmdLineModuleFrontendQtGui::value(const QString &parameter) const
 {
-  if (!this->Widget) return QVariant();
+  if (!d->Widget) return QVariant();
 
-  ctkCmdLineModuleObjectTreeWalker reader(this->Widget);
+  ctkCmdLineModuleObjectTreeWalker reader(d->Widget);
   while(reader.readNextParameter())
   {
     if(reader.name() == parameter)
@@ -131,9 +150,9 @@ QVariant ctkCmdLineModuleFrontendQtGui::value(const QString &parameter) const
 //-----------------------------------------------------------------------------
 void ctkCmdLineModuleFrontendQtGui::setValue(const QString &parameter, const QVariant &value)
 {
-  if (!this->Widget) return;
+  if (!d->Widget) return;
 
-  ctkCmdLineModuleObjectTreeWalker walker(this->Widget);
+  ctkCmdLineModuleObjectTreeWalker walker(d->Widget);
   while(walker.readNextParameter())
   {
     if(walker.name() == parameter && walker.value() != value)
@@ -148,18 +167,18 @@ void ctkCmdLineModuleFrontendQtGui::setValue(const QString &parameter, const QVa
 //-----------------------------------------------------------------------------
 QList<QString> ctkCmdLineModuleFrontendQtGui::parameterNames() const
 {
-  if (!ParameterNames.empty()) return ParameterNames;
+  if (!d->ParameterNames.empty()) return d->ParameterNames;
 
   // Compute the list of parameter names using the widget hierarchy
   // if it has already created (otherwise fall back to the superclass
   // implementation.
   // This avoids creating a ctkCmdLineModuleDescription instance.
-  if (this->Widget == 0) return ctkCmdLineModuleFrontend::parameterNames();
+  if (d->Widget == 0) return ctkCmdLineModuleFrontend::parameterNames();
 
-  ctkCmdLineModuleObjectTreeWalker walker(this->Widget);
+  ctkCmdLineModuleObjectTreeWalker walker(d->Widget);
   while(walker.readNextParameter())
   {
-    ParameterNames.push_back(walker.name());
+    d->ParameterNames.push_back(walker.name());
   }
-  return ParameterNames;
+  return d->ParameterNames;
 }

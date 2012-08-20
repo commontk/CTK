@@ -19,7 +19,7 @@
 
 =============================================================================*/
 
-#include "ctkCmdLineModuleFrontendQtWebKit.h"
+#include "ctkCmdLineModuleFrontendQtWebKit_p.h"
 
 #include "ctkCmdLineModuleXslTransform.h"
 #include "ctkCmdLineModuleReference.h"

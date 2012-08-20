@@ -22,8 +22,9 @@
 #ifndef CTKCMDLINEMODULEPROCESSTASK_H
 #define CTKCMDLINEMODULEPROCESSTASK_H
 
-#include "ctkCmdLineModuleXmlProgressWatcher.h"
 #include "ctkCmdLineModuleFutureInterface.h"
+
+#include "ctkCommandLineModulesBackendLocalProcessExport.h"
 
 #include <QObject>
 #include <QRunnable>
@@ -34,7 +35,10 @@
 
 class QProcess;
 
-class ctkCmdLineModuleProcessTask : public ctkCmdLineModuleFutureInterface, public QRunnable
+struct ctkCmdLineModuleProcessTaskPrivate;
+
+class CTK_CMDLINEMODULEBACKENDLP_EXPORT ctkCmdLineModuleProcessTask
+    : public ctkCmdLineModuleFutureInterface, public QRunnable
 {
 
 public:
@@ -48,45 +52,10 @@ public:
 
 private:
 
-  const QString location;
-  const QStringList args;
+  QScopedPointer<ctkCmdLineModuleProcessTaskPrivate> d;
 
 };
 
-class ctkCmdLineModuleProcessWatcher : public QObject
-{
-  Q_OBJECT
 
-public:
-
-  ctkCmdLineModuleProcessWatcher(QProcess& process, const QString& location,
-                                 ctkCmdLineModuleFutureInterface& futureInterface);
-
-protected Q_SLOTS:
-
-  void filterStarted(const QString& name, const QString& comment);
-  void filterProgress(float progress);
-  void filterFinished(const QString& name);
-
-  void filterXmlError(const QString& error);
-
-  void pauseProcess();
-  void resumeProcess();
-  void cancelProcess();
-
-private:
-
-  int updateProgress(float progress);
-  int incrementProgress();
-
-  QProcess& process;
-  QString location;
-  ctkCmdLineModuleFutureInterface& futureInterface;
-  ctkCmdLineModuleXmlProgressWatcher processXmlWatcher;
-  QFutureWatcher<ctkCmdLineModuleResult> futureWatcher;
-  QTimer pollPauseTimer;
-  bool processPaused;
-  int progressValue;
-};
 
 #endif // CTKCMDLINEMODULEPROCESSTASK_H

@@ -22,7 +22,9 @@
 #ifndef CTKCMDLINEMODULEFRONTENDQTGUI_H
 #define CTKCMDLINEMODULEFRONTENDQTGUI_H
 
-#include <ctkCmdLineModuleFrontend.h>
+#include "ctkCmdLineModuleFrontend.h"
+
+#include "ctkCommandLineModulesFrontendQtGuiExport.h"
 
 class ctkCmdLineModuleReference;
 class ctkCmdLineModuleXslTransform;
@@ -30,7 +32,9 @@ class ctkCmdLineModuleXslTransform;
 class QUiLoader;
 class QWidget;
 
-class ctkCmdLineModuleFrontendQtGui : public ctkCmdLineModuleFrontend
+struct ctkCmdLineModuleFrontendQtGuiPrivate;
+
+class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleFrontendQtGui : public ctkCmdLineModuleFrontend
 {
 
 public:
@@ -54,12 +58,8 @@ protected:
 
 private:
 
-  mutable QUiLoader* Loader;
-  mutable ctkCmdLineModuleXslTransform* Transform;
-  mutable QWidget* Widget;
+  QScopedPointer<ctkCmdLineModuleFrontendQtGuiPrivate> d;
 
-  // Cache the list of parameter names
-  mutable QList<QString> ParameterNames;
 };
 
 #endif // CTKCMDLINEMODULEFRONTENDQTGUI_H

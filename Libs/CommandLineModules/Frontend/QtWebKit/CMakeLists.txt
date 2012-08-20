@@ -16,6 +16,7 @@ set(KIT_export_directive "CTK_CMDLINEMODULEQTWEBKIT_EXPORT")
 set(KIT_SRCS
   ctkCmdLineModuleFrontendFactoryQtWebKit.cpp
   ctkCmdLineModuleFrontendQtWebKit.cpp
+  ctkCmdLineModuleFrontendQtWebKit_p.h
 )
 
 # Headers that should run through moc

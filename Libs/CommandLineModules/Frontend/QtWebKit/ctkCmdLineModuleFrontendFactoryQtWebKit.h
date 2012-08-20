@@ -25,7 +25,6 @@
 #include "ctkCommandLineModulesFrontendQtWebKitExport.h"
 
 #include "ctkCmdLineModuleFrontendFactory.h"
-#include "ctkCmdLineModuleFrontendQtWebKit.h"
 
 class CTK_CMDLINEMODULEQTWEBKIT_EXPORT ctkCmdLineModuleFrontendFactoryQtWebKit : public ctkCmdLineModuleFrontendFactory
 {
@@ -35,7 +34,7 @@ public:
   virtual QString name() const;
   virtual QString description() const;
 
-  virtual ctkCmdLineModuleFrontendQtWebKit* create(const ctkCmdLineModuleReference& moduleRef);
+  virtual ctkCmdLineModuleFrontend* create(const ctkCmdLineModuleReference& moduleRef);
 };
 
 #endif // CTKCMDLINEMODULEFRONTENDFACTORYQTWEBKIT_H

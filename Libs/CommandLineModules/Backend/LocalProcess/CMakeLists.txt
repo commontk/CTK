@@ -16,11 +16,14 @@ set(KIT_export_directive "CTK_CMDLINEMODULEBACKENDLP_EXPORT")
 set(KIT_SRCS
   ctkCmdLineModuleBackendLocalProcess.cpp
   ctkCmdLineModuleProcessTask.cpp
+  ctkCmdLineModuleProcessWatcher.cpp
+  ctkCmdLineModuleProcessWatcher_p.h
 )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
   ctkCmdLineModuleProcessTask.h
+  ctkCmdLineModuleProcessWatcher_p.h
 )
 
 # UI files

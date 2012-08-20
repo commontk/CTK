@@ -21,9 +21,10 @@
 
 #include "ctkCmdLineModuleFrontendFactoryQtWebKit.h"
 
+#include "ctkCmdLineModuleFrontendQtWebKit_p.h"
 
 //----------------------------------------------------------------------------
-ctkCmdLineModuleFrontendQtWebKit *ctkCmdLineModuleFrontendFactoryQtWebKit::create(const ctkCmdLineModuleReference &moduleRef)
+ctkCmdLineModuleFrontend* ctkCmdLineModuleFrontendFactoryQtWebKit::create(const ctkCmdLineModuleReference &moduleRef)
 {
   return new ctkCmdLineModuleFrontendQtWebKit(moduleRef);
 }
