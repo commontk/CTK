@@ -122,11 +122,6 @@ QString ctkCmdLineModuleObjectTreeWalker::longFlag() const
   return v.isValid() ? v.toString() : QString();
 }
 
-QObject* ctkCmdLineModuleObjectTreeWalker::currentObject() const
-{
-  return CurrentObject;
-}
-
 int ctkCmdLineModuleObjectTreeWalker::index() const
 {
   QVariant v = property("index");

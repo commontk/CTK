@@ -27,6 +27,11 @@
 class QObject;
 class QVariant;
 
+/**
+ * \class ctkCmdLineModuleObjectTreeWalker
+ *
+ * Note: Deliberately not exported.
+ */
 class ctkCmdLineModuleObjectTreeWalker
 {
 
@@ -53,7 +58,6 @@ public:
   QString name() const;
   QString label() const;
   QVariant value() const;
-  QObject* currentObject() const;
 
   void setValue(const QVariant& value);
 
