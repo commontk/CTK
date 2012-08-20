@@ -37,12 +37,14 @@
 namespace ctk {
 namespace CmdLineModuleBackendFunctionPointer {
 
+//----------------------------------------------------------------------------
 template<>
 CTK_CMDLINEMODULEBACKENDFP_EXPORT QString GetParameterTypeName<int>()
 {
   return "integer";
 }
 
+//----------------------------------------------------------------------------
 template<>
 CTK_CMDLINEMODULEBACKENDFP_EXPORT QString GetParameterTypeName<QList<int> >()
 {
@@ -52,6 +54,7 @@ CTK_CMDLINEMODULEBACKENDFP_EXPORT QString GetParameterTypeName<QList<int> >()
 }
 }
 
+//----------------------------------------------------------------------------
 void CalculateFibonacciNumbers(int level) //, QList<int>* result)
 {
   qDebug() << "Number: 0";
@@ -74,70 +77,84 @@ void CalculateFibonacciNumbers(int level) //, QList<int>* result)
   }
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleBackendFunctionPointer::Description::Description()
   : d(new ctkCmdLineModuleBackendFunctionPointer::DescriptionPrivate)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleBackendFunctionPointer::Description::~Description()
 {
 }
 
+//----------------------------------------------------------------------------
 QUrl ctkCmdLineModuleBackendFunctionPointer::Description::moduleLocation() const
 {
   return d->ModuleLocation;
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendFunctionPointer::Description::moduleCategory() const
 {
   return d->ModuleCategory;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleBackendFunctionPointer::Description::setModuleCategory(const QString& category)
 {
   d->ModuleCategory = category;
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendFunctionPointer::Description::moduleTitle() const
 {
   return d->ModuleTitle;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleBackendFunctionPointer::Description::setModuleTitle(const QString &title)
 {
   d->ModuleTitle = title;
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendFunctionPointer::Description::moduleDescription() const
 {
   return d->ModuleDescription;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleBackendFunctionPointer::Description::setModuleDescription(const QString &description)
 {
   d->ModuleDescription = description;
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendFunctionPointer::Description::moduleVersion() const
 {
   return d->ModuleVersion;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleBackendFunctionPointer::Description::setModuleVersion(const QString &version)
 {
   d->ModuleVersion = version;
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendFunctionPointer::Description::moduleContributor() const
 {
   return d->ModuleContributor;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleBackendFunctionPointer::Description::setModuleContributor(const QString &contributor)
 {
   d->ModuleContributor = contributor;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleBackendFunctionPointer::Description::Description(const QUrl &location,
                                                                  const ctk::CmdLineModuleBackendFunctionPointer::FunctionPointerProxy &fpProxy)
   : d(new ctkCmdLineModuleBackendFunctionPointer::DescriptionPrivate)
@@ -146,45 +163,53 @@ ctkCmdLineModuleBackendFunctionPointer::Description::Description(const QUrl &loc
   d->FpProxy = fpProxy;
 }
 
+//----------------------------------------------------------------------------
 struct ctkCmdLineModuleBackendFunctionPointerPrivate
 {
   QHash<QUrl, ctkCmdLineModuleBackendFunctionPointer::Description> UrlToFpDescription;
 };
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleBackendFunctionPointer::ctkCmdLineModuleBackendFunctionPointer()
   : d(new ctkCmdLineModuleBackendFunctionPointerPrivate)
 {
   this->registerFunctionPointer("Fibonacci Number", CalculateFibonacciNumbers, "Count");
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendFunctionPointer::name() const
 {
   return "Function Pointer (experimental)";
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendFunctionPointer::description() const
 {
   return "Calls a previously registered function pointer.";
 }
 
+//----------------------------------------------------------------------------
 QList<QString> ctkCmdLineModuleBackendFunctionPointer::schemes() const
 {
   static QList<QString> supportedSchemes = QList<QString>() << "fp";
   return supportedSchemes;
 }
 
+//----------------------------------------------------------------------------
 qint64 ctkCmdLineModuleBackendFunctionPointer::timeStamp(const QUrl &location) const
 {
   Q_UNUSED(location)
   return 0;
 }
 
+//----------------------------------------------------------------------------
 QByteArray ctkCmdLineModuleBackendFunctionPointer::rawXmlDescription(const QUrl& location)
 {
   if (!d->UrlToFpDescription.contains(location)) return QByteArray();
   return QByteArray(qPrintable(d->UrlToFpDescription[location].d->xmlDescription()));
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFuture ctkCmdLineModuleBackendFunctionPointer::run(ctkCmdLineModuleFrontend *frontend)
 {
   QUrl url = frontend->location();
@@ -198,11 +223,13 @@ ctkCmdLineModuleFuture ctkCmdLineModuleBackendFunctionPointer::run(ctkCmdLineMod
   return fpTask->start();
 }
 
+//----------------------------------------------------------------------------
 QList<QUrl> ctkCmdLineModuleBackendFunctionPointer::registeredFunctionPointers() const
 {
   return d->UrlToFpDescription.keys();
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleBackendFunctionPointer::Description*
 ctkCmdLineModuleBackendFunctionPointer::registerFunctionPointerProxy(const QString& title,
                                                                      const ctk::CmdLineModuleBackendFunctionPointer::FunctionPointerProxy& proxy,

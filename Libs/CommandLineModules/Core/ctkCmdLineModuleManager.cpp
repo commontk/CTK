@@ -42,6 +42,7 @@
 
 #include <QFuture>
 
+//----------------------------------------------------------------------------
 struct ctkCmdLineModuleManagerPrivate
 {
   ctkCmdLineModuleManagerPrivate(ctkCmdLineModuleManager::ValidationMode mode, const QString& cacheDir)
@@ -83,15 +84,18 @@ struct ctkCmdLineModuleManagerPrivate
   const ctkCmdLineModuleManager::ValidationMode ValidationMode;
 };
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleManager::ctkCmdLineModuleManager(ValidationMode validationMode, const QString& cacheDir)
   : d(new ctkCmdLineModuleManagerPrivate(validationMode, cacheDir))
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleManager::~ctkCmdLineModuleManager()
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 {
   QMutexLocker lock(&d->Mutex);
@@ -115,6 +119,7 @@ void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
   }
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReference
 ctkCmdLineModuleManager::registerModule(const QUrl &location)
 {
@@ -237,6 +242,7 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
   return ref;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& ref)
 {
   {
@@ -254,18 +260,21 @@ void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& 
   emit moduleUnregistered(ref);
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QUrl &location) const
 {
   QMutexLocker lock(&d->Mutex);
   return d->LocationToRef[location];
 }
 
+//----------------------------------------------------------------------------
 QList<ctkCmdLineModuleReference> ctkCmdLineModuleManager::moduleReferences() const
 {
   QMutexLocker lock(&d->Mutex);
   return d->LocationToRef.values();
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFuture ctkCmdLineModuleManager::run(ctkCmdLineModuleFrontend *frontend)
 {
   QMutexLocker lock(&d->Mutex);

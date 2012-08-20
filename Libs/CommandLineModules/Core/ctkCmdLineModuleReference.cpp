@@ -26,11 +26,13 @@
 #include <QBuffer>
 
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReferencePrivate::ctkCmdLineModuleReferencePrivate()
   : Backend(NULL)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleDescription ctkCmdLineModuleReferencePrivate::description() const
 {
   // Lazy creation. The title is a required XML element.
@@ -44,50 +46,60 @@ ctkCmdLineModuleDescription ctkCmdLineModuleReferencePrivate::description() cons
   return Description;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReference::ctkCmdLineModuleReference()
   : d(new ctkCmdLineModuleReferencePrivate())
 {}
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReference::~ctkCmdLineModuleReference()
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReference::ctkCmdLineModuleReference(const ctkCmdLineModuleReference &ref)
   : d(ref.d)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReference &ctkCmdLineModuleReference::operator =(const ctkCmdLineModuleReference &ref)
 {
   d = ref.d;
   return *this;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReference::operator bool()
 {
   return !d->RawXmlDescription.isEmpty();
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleDescription ctkCmdLineModuleReference::description() const
 {
   return d->description();
 }
 
+//----------------------------------------------------------------------------
 QByteArray ctkCmdLineModuleReference::rawXmlDescription() const
 {
   return d->RawXmlDescription;
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleReference::xmlValidationErrorString() const
 {
   return d->XmlValidationErrorString;
 }
 
+//----------------------------------------------------------------------------
 QUrl ctkCmdLineModuleReference::location() const
 {
   return d->Location;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleBackend *ctkCmdLineModuleReference::backend() const
 {
   return d->Backend;

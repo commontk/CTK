@@ -23,17 +23,19 @@
 
 #include "ctkCmdLineModuleFrontendQtGui.h"
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFrontendQtGui *ctkCmdLineModuleFrontendFactoryQtGui::create(const ctkCmdLineModuleReference &moduleRef)
 {
   return new ctkCmdLineModuleFrontendQtGui(moduleRef);
 }
 
-
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleFrontendFactoryQtGui::name() const
 {
   return "Qt Gui";
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleFrontendFactoryQtGui::description() const
 {
   return "A frontend using the QtGui library.";

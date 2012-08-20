@@ -25,6 +25,7 @@
 #include <QCoreApplication>
 #include <cstdlib>
 
+//----------------------------------------------------------------------------
 struct ctkCmdLineModuleDefaultPathBuilderPrivate
 {
 public:

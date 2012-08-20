@@ -29,6 +29,7 @@
 
 #include <QUrl>
 
+//----------------------------------------------------------------------------
 struct ctkCmdLineModuleFrontendPrivate
 {
   ctkCmdLineModuleFrontendPrivate(const ctkCmdLineModuleReference& moduleRef)
@@ -44,16 +45,19 @@ struct ctkCmdLineModuleFrontendPrivate
 };
 
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFrontend::ctkCmdLineModuleFrontend(const ctkCmdLineModuleReference& moduleRef)
   : d(new ctkCmdLineModuleFrontendPrivate(moduleRef))
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleFrontend::setFuture(const ctkCmdLineModuleFuture &future)
 {
   d->Future = future;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFrontend::~ctkCmdLineModuleFrontend()
 {
 }
@@ -73,31 +77,37 @@ QList<QString> ctkCmdLineModuleFrontend::parameterNames() const
   return d->ParameterNames;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReference ctkCmdLineModuleFrontend::moduleReference() const
 {
   return d->ModuleReference;
 }
 
+//----------------------------------------------------------------------------
 QUrl ctkCmdLineModuleFrontend::location() const
 {
   return d->ModuleReference.location();
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFuture ctkCmdLineModuleFrontend::future() const
 {
   return d->Future;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleFrontend::isRunning() const
 {
   return d->Future.isRunning();
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleFrontend::isPaused() const
 {
   return d->Future.isPaused();
 }
 
+//----------------------------------------------------------------------------
 QHash<QString, QVariant> ctkCmdLineModuleFrontend::values() const
 {
   QHash<QString,QVariant> result;
@@ -108,6 +118,7 @@ QHash<QString, QVariant> ctkCmdLineModuleFrontend::values() const
   return result;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleFrontend::setValues(const QHash<QString, QVariant> &values)
 {
   QHashIterator<QString,QVariant> iter(values);

@@ -32,6 +32,7 @@
 #include "ctkCmdLineModuleXslTransform.h"
 #include "ctkCmdLineModuleXmlMsgHandler_p.h"
 
+//----------------------------------------------------------------------------
 class ctkCmdLineModuleXslTransformPrivate
 {
 public:
@@ -63,6 +64,7 @@ public:
   QString ErrorStr;
 };
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleXslTransformPrivate::validateOutput()
 {
   this->ErrorStr.clear();
@@ -108,6 +110,7 @@ bool ctkCmdLineModuleXslTransformPrivate::validateOutput()
   return true;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleXslTransform::ctkCmdLineModuleXslTransform(QIODevice *input, QIODevice *output)
   : ctkCmdLineModuleXmlValidator(input)
   , d(new ctkCmdLineModuleXslTransformPrivate(output))
@@ -128,35 +131,42 @@ ctkCmdLineModuleXslTransform::ctkCmdLineModuleXslTransform(QIODevice *input, QIO
   this->bindVariable("unsupportedWidget", QVariant(QString("QLabel")));
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleXslTransform::~ctkCmdLineModuleXslTransform()
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXslTransform::setOutput(QIODevice* output)
 {
   d->Output = output;
 }
 
+//----------------------------------------------------------------------------
 QIODevice* ctkCmdLineModuleXslTransform::output() const
 {
   return d->Output;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXslTransform::setOutputSchema(QIODevice *output)
 {
   d->OutputSchema = output;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleXslTransform::formatXmlOutput() const
 {
   return d->Format;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXslTransform::setFormatXmlOutput(bool format)
 {
   d->Format = format;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleXslTransform::transform()
 {
   d->ErrorStr.clear();
@@ -251,16 +261,19 @@ bool ctkCmdLineModuleXslTransform::transform()
   return true;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXslTransform::setXslTransformation(QIODevice *transformation)
 {
   d->Transformation = transformation;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXslTransform::bindVariable(const QString& name, const QVariant& value)
 {
   d->XslTransform.bindVariable(name, value);
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXslTransform::setXslExtraTransformation(QIODevice* transformation)
 {
   QList<QIODevice*> transformations;
@@ -268,21 +281,25 @@ void ctkCmdLineModuleXslTransform::setXslExtraTransformation(QIODevice* transfor
   this->setXslExtraTransformations(transformations);
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXslTransform::setXslExtraTransformations(const QList<QIODevice *>& transformations)
 {
   d->ExtraTransformations = transformations;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXslTransform::setValidateOutput(bool validate)
 {
   d->Validate = validate;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleXslTransform::error() const
 {
   return ctkCmdLineModuleXmlValidator::error() || !d->ErrorStr.isEmpty();
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleXslTransform::errorString() const
 {
   QString errStr = this->ctkCmdLineModuleXmlValidator::errorString();

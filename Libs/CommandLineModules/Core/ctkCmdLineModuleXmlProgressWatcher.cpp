@@ -36,6 +36,7 @@ static QString FILTER_END = "filter-end";
 
 }
 
+//----------------------------------------------------------------------------
 class ctkCmdLineModuleXmlProgressWatcherPrivate
 {
 public:
@@ -182,6 +183,8 @@ public:
   float currentProgress;
 };
 
+
+//----------------------------------------------------------------------------
 ctkCmdLineModuleXmlProgressWatcher::ctkCmdLineModuleXmlProgressWatcher(QIODevice* input)
   : d(new ctkCmdLineModuleXmlProgressWatcherPrivate(input, this))
 {
@@ -194,6 +197,7 @@ ctkCmdLineModuleXmlProgressWatcher::ctkCmdLineModuleXmlProgressWatcher(QIODevice
   connect(d->input, SIGNAL(readyRead()), SLOT(_q_readyRead()));
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleXmlProgressWatcher::~ctkCmdLineModuleXmlProgressWatcher()
 {
 }

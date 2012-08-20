@@ -32,6 +32,7 @@
 
 #include <QDebug>
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFrontendQtWebKit::ctkCmdLineModuleFrontendQtWebKit(const ctkCmdLineModuleReference& moduleRef)
   : ctkCmdLineModuleFrontend(moduleRef)
   , WebView(NULL)
@@ -39,6 +40,7 @@ ctkCmdLineModuleFrontendQtWebKit::ctkCmdLineModuleFrontendQtWebKit(const ctkCmdL
 
 }
 
+//----------------------------------------------------------------------------
 QObject* ctkCmdLineModuleFrontendQtWebKit::guiHandle() const
 {
   if (WebView) return WebView;
@@ -65,6 +67,7 @@ QObject* ctkCmdLineModuleFrontendQtWebKit::guiHandle() const
   return this->WebView;
 }
 
+//----------------------------------------------------------------------------
 QVariant ctkCmdLineModuleFrontendQtWebKit::value(const QString &parameter) const
 {
   QWebElement webElement = this->WebView->page()->currentFrame()->findFirstElement("input[name=" + parameter + "]");
@@ -75,6 +78,7 @@ QVariant ctkCmdLineModuleFrontendQtWebKit::value(const QString &parameter) const
   return value;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleFrontendQtWebKit::setValue(const QString &parameter, const QVariant &value)
 {
   if (!this->WebView) return;

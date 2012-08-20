@@ -33,6 +33,7 @@
 #include <signal.h>
 #endif
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleProcessWatcher::ctkCmdLineModuleProcessWatcher(QProcess& process, const QString& location,
                                                                ctkCmdLineModuleFutureInterface &futureInterface)
   : process(process), location(location), futureInterface(futureInterface), processXmlWatcher(&process),
@@ -58,27 +59,32 @@ ctkCmdLineModuleProcessWatcher::ctkCmdLineModuleProcessWatcher(QProcess& process
   futureWatcher.setFuture(futureInterface.future());
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::filterStarted(const QString& name, const QString& comment)
 {
   Q_UNUSED(comment)
   futureInterface.setProgressValueAndText(incrementProgress(), name);
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::filterProgress(float progress)
 {
   futureInterface.setProgressValue(updateProgress(progress));
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::filterFinished(const QString& name)
 {
   futureInterface.setProgressValueAndText(incrementProgress(), "Finished: " + name);
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::filterXmlError(const QString &error)
 {
   qDebug().nospace() << "[Module " << location << "]: " << error;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::pauseProcess()
 {
   if (processPaused || !futureInterface.isPaused()) return;
@@ -96,6 +102,7 @@ void ctkCmdLineModuleProcessWatcher::pauseProcess()
 #endif
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::resumeProcess()
 {
   if (!processPaused) return;
@@ -113,6 +120,7 @@ void ctkCmdLineModuleProcessWatcher::resumeProcess()
 #endif
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::cancelProcess()
 {
   process.terminate();
@@ -129,12 +137,14 @@ int ctkCmdLineModuleProcessWatcher::updateProgress(float progress)
   return progressValue;
 }
 
+//----------------------------------------------------------------------------
 int ctkCmdLineModuleProcessWatcher::incrementProgress()
 {
   if (++progressValue > 999) progressValue = 999;
   return progressValue;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleProcessTask::ctkCmdLineModuleProcessTask(const QString& location, const QStringList& args)
   : location(location), args(args)
 {
@@ -144,10 +154,12 @@ ctkCmdLineModuleProcessTask::ctkCmdLineModuleProcessTask(const QString& location
 #endif
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleProcessTask::~ctkCmdLineModuleProcessTask()
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFuture ctkCmdLineModuleProcessTask::start()
 {
   this->setRunnable(this);
@@ -157,6 +169,7 @@ ctkCmdLineModuleFuture ctkCmdLineModuleProcessTask::start()
   return future;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessTask::run()
 {
   if (this->isCanceled())

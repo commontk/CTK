@@ -21,6 +21,7 @@
 
 #include "ctkCmdLineModuleBackend.h"
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleBackend::~ctkCmdLineModuleBackend()
 {
 }

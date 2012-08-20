@@ -21,6 +21,7 @@
 
 #include "ctkCmdLineModuleBackendFPDescriptionPrivate.h"
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendFunctionPointer::DescriptionPrivate::xmlDescription() const
 {
   QString xml;

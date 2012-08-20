@@ -26,12 +26,14 @@
 #include "ctkCmdLineModuleFuture.h"
 #include "ctkCmdLineModuleRunException.h"
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFunctionPointerTask::ctkCmdLineModuleFunctionPointerTask(const ctkCmdLineModuleBackendFunctionPointer::Description &fpDescr, const QList<QVariant> &paramValues)
   : FpDescription(fpDescr)
   , ParamValues(paramValues)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFuture ctkCmdLineModuleFunctionPointerTask::start()
 {
   this->setRunnable(this);
@@ -42,6 +44,7 @@ ctkCmdLineModuleFuture ctkCmdLineModuleFunctionPointerTask::start()
   return future;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleFunctionPointerTask::run()
 {
   if (this->isCanceled())

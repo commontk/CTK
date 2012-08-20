@@ -30,6 +30,7 @@
 
 #include <QDebug>
 
+//----------------------------------------------------------------------------
 class ctkCmdLineModuleXmlValidatorPrivate
 {
 public:
@@ -44,31 +45,38 @@ public:
   QString ErrorStr;
 };
 
+
+//----------------------------------------------------------------------------
 ctkCmdLineModuleXmlValidator::ctkCmdLineModuleXmlValidator(QIODevice *input)
   : d(new ctkCmdLineModuleXmlValidatorPrivate)
 {
   d->Input = input;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleXmlValidator::~ctkCmdLineModuleXmlValidator()
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXmlValidator::setInput(QIODevice *input)
 {
   d->Input = input;
 }
 
+//----------------------------------------------------------------------------
 QIODevice* ctkCmdLineModuleXmlValidator::input() const
 {
   return d->Input;
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXmlValidator::setInputSchema(QIODevice *input)
 {
   d->InputSchema = input;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleXmlValidator::validateInput()
 {
   d->ErrorStr.clear();
@@ -112,11 +120,13 @@ bool ctkCmdLineModuleXmlValidator::validateInput()
   return true;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleXmlValidator::error() const
 {
   return !d->ErrorStr.isEmpty();
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleXmlValidator::errorString() const
 {
   return d->ErrorStr;

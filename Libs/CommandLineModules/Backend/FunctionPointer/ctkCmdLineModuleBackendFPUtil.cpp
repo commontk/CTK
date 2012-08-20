@@ -25,25 +25,29 @@
 namespace ctk {
 namespace CmdLineModuleBackendFunctionPointer {
 
+//----------------------------------------------------------------------------
 FunctionPointerHolderBase::~FunctionPointerHolderBase()
 {
 }
 
-
+//----------------------------------------------------------------------------
 FunctionPointerProxy::FunctionPointerProxy()
   : FpHolder(NULL)
 {}
 
+//----------------------------------------------------------------------------
 FunctionPointerProxy::~FunctionPointerProxy()
 {
   delete FpHolder;
 }
 
+//----------------------------------------------------------------------------
 FunctionPointerProxy::FunctionPointerProxy(const FunctionPointerProxy& other)
   : FpHolder(other.FpHolder->clone())
 {
 }
 
+//----------------------------------------------------------------------------
 FunctionPointerProxy& FunctionPointerProxy::operator=(const FunctionPointerProxy& other)
 {
   delete this->FpHolder;
@@ -51,6 +55,7 @@ FunctionPointerProxy& FunctionPointerProxy::operator=(const FunctionPointerProxy
   return *this;
 }
 
+//----------------------------------------------------------------------------
 void FunctionPointerProxy::call(const QList<QVariant> &args)
 {
   FpHolder->call(args);

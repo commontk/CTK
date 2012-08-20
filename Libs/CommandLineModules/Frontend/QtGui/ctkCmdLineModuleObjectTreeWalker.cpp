@@ -33,22 +33,26 @@ static QString PREFIX_PARAMETER = "parameter:";
 
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleObjectTreeWalker::ctkCmdLineModuleObjectTreeWalker(QObject *root)
   : RootObject(root), CurrentObject(0), CurrentToken(NoToken),
     AtEnd(false)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleObjectTreeWalker::~ctkCmdLineModuleObjectTreeWalker()
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleObjectTreeWalker::setRootObject(QObject* root)
 {
   RootObject = root;
   clear();
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleObjectTreeWalker::clear()
 {
   CurrentToken = NoToken;
@@ -56,21 +60,25 @@ void ctkCmdLineModuleObjectTreeWalker::clear()
   ObjectStack.clear();
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::atEnd() const
 {
   return AtEnd || RootObject == 0;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::isParameterGroup() const
 {
   return CurrentToken == ParameterGroup;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::isParameter() const
 {
   return CurrentToken == Parameter;
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleObjectTreeWalker::name() const
 {
   if (CurrentObject == 0) return QString();
@@ -83,6 +91,7 @@ QString ctkCmdLineModuleObjectTreeWalker::name() const
   }
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleObjectTreeWalker::label() const
 {
   if (CurrentObject == 0) return QString();
@@ -95,12 +104,14 @@ QString ctkCmdLineModuleObjectTreeWalker::label() const
   }
 }
 
+//----------------------------------------------------------------------------
 QVariant ctkCmdLineModuleObjectTreeWalker::value() const
 {
   QString valProp = property("valueProperty").toString();
   return property(valProp);
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleObjectTreeWalker::setValue(const QVariant& value)
 {
   QVariant valProp = property("valueProperty");
@@ -110,30 +121,35 @@ void ctkCmdLineModuleObjectTreeWalker::setValue(const QVariant& value)
   }
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleObjectTreeWalker::flag() const
 {
   QVariant v = property("flag");
   return v.isValid() ? v.toString() : QString();
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleObjectTreeWalker::longFlag() const
 {
   QVariant v = property("longflag");
   return v.isValid() ? v.toString() : QString();
 }
 
+//----------------------------------------------------------------------------
 int ctkCmdLineModuleObjectTreeWalker::index() const
 {
   QVariant v = property("index");
   return v.isValid() ? v.toInt() : -1;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::isMultiple() const
 {
   QVariant v = property("multiple");
   return v.isValid() ? v.toBool() : false;
 }
 
+//----------------------------------------------------------------------------
 QVariant ctkCmdLineModuleObjectTreeWalker::property(const QString &propName) const
 {
   if (CurrentObject == 0) return QVariant();
@@ -145,6 +161,7 @@ QVariant ctkCmdLineModuleObjectTreeWalker::property(const QString &propName) con
   return res;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleObjectTreeWalker::TokenType ctkCmdLineModuleObjectTreeWalker::readNext()
 {
   if (AtEnd) return NoToken;
@@ -195,29 +212,34 @@ ctkCmdLineModuleObjectTreeWalker::TokenType ctkCmdLineModuleObjectTreeWalker::re
   return NoToken;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::readNextExecutable()
 {
   while (!(readNext() == Executable || AtEnd));
   return !AtEnd;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::readNextParameterGroup()
 {
   while (!(readNext() == ParameterGroup || AtEnd));
   return !AtEnd;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::readNextParameter()
 {
   while (!(readNext() == Parameter || AtEnd));
   return !AtEnd;
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleObjectTreeWalker::TokenType ctkCmdLineModuleObjectTreeWalker::tokenType() const
 {
   return CurrentToken;
 }
 
+//----------------------------------------------------------------------------
 QVariant ctkCmdLineModuleObjectTreeWalker::prefixedProperty(const QString& propName) const
 {
   if (CurrentObject == 0) return QString();
@@ -234,6 +256,7 @@ QVariant ctkCmdLineModuleObjectTreeWalker::prefixedProperty(const QString& propN
   return CurrentObject->property(qPrintable(prefixedName));
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleObjectTreeWalker::TokenType
 ctkCmdLineModuleObjectTreeWalker::token(QObject* obj)
 {
@@ -245,6 +268,7 @@ ctkCmdLineModuleObjectTreeWalker::token(QObject* obj)
   return ctkCmdLineModuleObjectTreeWalker::NoToken;
 }
 
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::setCurrent(QObject* obj)
 {
   ctkCmdLineModuleObjectTreeWalker::TokenType t = token(obj);

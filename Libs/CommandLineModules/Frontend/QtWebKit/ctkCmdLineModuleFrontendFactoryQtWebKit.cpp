@@ -22,17 +22,19 @@
 #include "ctkCmdLineModuleFrontendFactoryQtWebKit.h"
 
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFrontendQtWebKit *ctkCmdLineModuleFrontendFactoryQtWebKit::create(const ctkCmdLineModuleReference &moduleRef)
 {
   return new ctkCmdLineModuleFrontendQtWebKit(moduleRef);
 }
 
-
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleFrontendFactoryQtWebKit::name() const
 {
   return "Qt WebKit (experimental)";
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleFrontendFactoryQtWebKit::description() const
 {
   return "An experimental frontend using the QtWebKit library.";

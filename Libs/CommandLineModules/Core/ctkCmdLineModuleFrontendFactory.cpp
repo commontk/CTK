@@ -22,6 +22,7 @@
 #include "ctkCmdLineModuleFrontendFactory.h"
 
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFrontendFactory::~ctkCmdLineModuleFrontendFactory()
 {
 }

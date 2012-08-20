@@ -35,6 +35,7 @@
 #include <QProcess>
 #include <QUrl>
 
+//----------------------------------------------------------------------------
 struct ctkCmdLineModuleBackendLocalProcessPrivate
 {
 
@@ -119,30 +120,36 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
   }
 };
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleBackendLocalProcess::ctkCmdLineModuleBackendLocalProcess()
   : d(new ctkCmdLineModuleBackendLocalProcessPrivate){
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleBackendLocalProcess::~ctkCmdLineModuleBackendLocalProcess()
 {
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendLocalProcess::name() const
 {
   return "Local Process";
 }
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendLocalProcess::description() const
 {
   return "Runs an executable command line module using a local process.";
 }
 
+//----------------------------------------------------------------------------
 QList<QString> ctkCmdLineModuleBackendLocalProcess::schemes() const
 {
   static QList<QString> supportedSchemes = QList<QString>() << "file";
   return supportedSchemes;
 }
 
+//----------------------------------------------------------------------------
 qint64 ctkCmdLineModuleBackendLocalProcess::timeStamp(const QUrl &location) const
 {
   QFileInfo fileInfo(location.toLocalFile());
@@ -154,6 +161,7 @@ qint64 ctkCmdLineModuleBackendLocalProcess::timeStamp(const QUrl &location) cons
   return 0;
 }
 
+//----------------------------------------------------------------------------
 QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &location)
 {
   QProcess process;
@@ -170,6 +178,7 @@ QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &lo
   return process.readAllStandardOutput();
 }
 
+//----------------------------------------------------------------------------
 ctkCmdLineModuleFuture ctkCmdLineModuleBackendLocalProcess::run(ctkCmdLineModuleFrontend* frontend)
 {
   QStringList args = d->commandLineArguments(frontend->values(), frontend->moduleReference().description());

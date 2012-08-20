@@ -21,6 +21,7 @@
 
 #include "ctkCmdLineModulePathBuilder.h"
 
+//----------------------------------------------------------------------------
 ctkCmdLineModulePathBuilder::~ctkCmdLineModulePathBuilder()
 {
 }

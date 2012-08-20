@@ -23,21 +23,25 @@
 
 #include <QXmlStreamReader>
 
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleXmlMsgHandler::statusMessage() const
 {
   return Description;
 }
 
+//----------------------------------------------------------------------------
 int ctkCmdLineModuleXmlMsgHandler::line() const
 {
   return SourceLocation.line();
 }
 
+//----------------------------------------------------------------------------
 int ctkCmdLineModuleXmlMsgHandler::column() const
 {
   return SourceLocation.column();
 }
 
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleXmlMsgHandler::handleMessage(QtMsgType type, const QString& description,
                                                   const QUrl& identifier, const QSourceLocation& sourceLocation)
 {
