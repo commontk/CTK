@@ -36,11 +36,13 @@
 #include <ctkCommandLineParser.h>
 #include <ctkCmdLineModuleXmlValidator.h>
 
-#include "ctkCLModuleExplorerMainWindow.h"
+#include "ctkCmdLineModuleExplorerMainWindow.h"
 
 int main(int argc, char** argv)
 {
   QApplication myApp(argc, argv);
+  myApp.setOrganizationName("CommonTK");
+  myApp.setApplicationName("CommandLineModuleExplorer");
 
   ctkCommandLineParser cmdLineParser;
   cmdLineParser.setArgumentPrefix("--", "-");

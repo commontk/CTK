@@ -451,9 +451,18 @@ ctk_lib_option(Visualization/VTK/Widgets
                
 ctk_lib_option(CommandLineModules/Core
                "Build the Command Line Module core library" OFF)
+               
+ctk_lib_option(CommandLineModules/Frontend/QtWebKit
+               "Build the QtWebKit based Command Line Module front-end" OFF)
 
-ctk_lib_option(CommandLineModules/QtGui
-               "Build the QtGui based Command Line Module library" OFF)
+ctk_lib_option(CommandLineModules/Frontend/QtGui
+               "Build the QtGui based Command Line Module front-end" OFF)
+
+ctk_lib_option(CommandLineModules/Backend/LocalProcess
+               "Build the Command Line Module back-end for local processes" OFF)
+               
+ctk_lib_option(CommandLineModules/Backend/FunctionPointer
+               "Build the Command Line Module back-end for function pointers" OFF)
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
@@ -516,7 +525,7 @@ ctk_app_option(ctkCommandLineModuleExplorer
 # in target_libraries.cmake)
 
 if(CTK_APP_ctkCommandLineModuleExplorer)
-  foreach(_option CTK_LIB_Widgets CTK_BUILD_QTDESIGNER_PLUGINS)
+  foreach(_option CTK_BUILD_QTDESIGNER_PLUGINS)
     if(NOT ${_option})
       get_property(_docstring CACHE ${_option} PROPERTY HELPSTRING)
       set(${_option} ON CACHE BOOL "${_docstring}" FORCE)
@@ -903,6 +912,11 @@ endif()
 #
 #add_subdirectory(Testing)
 #add_subdirectory(Examples)
+
+if (BUILD_TESTING AND
+    CTK_LIB_CommandLineModules/Core AND CTK_LIB_CommandLineModules/Backend/LocalProcess)
+  add_subdirectory(Libs/CommandLineModules/Testing)
+endif()
 
 #-----------------------------------------------------------------------------
 # Style Checking configuration

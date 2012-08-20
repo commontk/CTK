@@ -25,7 +25,9 @@
 #include <ctkCommandLineModulesCoreExport.h>
 
 #include <QSharedDataPointer>
+#include <QMetaType>
 
+struct ctkCmdLineModuleBackend;
 class ctkCmdLineModuleDescription;
 class ctkCmdLineModuleReferencePrivate;
 
@@ -48,7 +50,11 @@ public:
 
   QByteArray rawXmlDescription() const;
 
-  QString location() const;
+  QString xmlValidationErrorString() const;
+
+  QUrl location() const;
+
+  ctkCmdLineModuleBackend* backend() const;
 
 private:
 
@@ -57,5 +63,7 @@ private:
   QSharedDataPointer<ctkCmdLineModuleReferencePrivate> d;
 
 };
+
+Q_DECLARE_METATYPE(ctkCmdLineModuleReference)
 
 #endif // CTKCMDLINEMODULEREFERENCE_H

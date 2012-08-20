@@ -124,17 +124,17 @@ private:
   void updateModuleReferences(const QString &directory);
 
   /**
-   * \brief Uses the ctkCmdLineModuleManager to try and add the executable to the list
+   * \brief Uses the ctkCmdLineModuleManager to try and add the executables to the list
    * of executables, and if successful it is added to this->MapFileNameToReference.
-   * \param pathToExecutable path to an executable file, denoted by its absolute path.
+   * \param executables A list of paths to executable files, denoted by an absolute path.
    */
-  ctkCmdLineModuleReference loadModule(const QString& pathToExecutable);
+  QList<ctkCmdLineModuleReference> loadModules(const QStringList& executables);
 
   /**
-   * \brief Removes the executable from both the ctkCmdLineModuleManager and this->MapFileNameToReference.
-   * \param pathToExecutable path to an executable file, denoted by its absolute path.
+   * \brief Removes the executables from both the ctkCmdLineModuleManager and this->MapFileNameToReference.
+   * \param executables path to an executable file, denoted by its absolute path.
    */
-  void unloadModule(const QString& pathToExecutable);
+  void unloadModules(const QStringList& executables);
 
   QHash<QString, ctkCmdLineModuleReference> MapFileNameToReference;
   ctkCmdLineModuleManager* ModuleManager;

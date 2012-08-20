@@ -6,23 +6,31 @@ project(ctkCommandLineModuleExplorer)
 
 set(KIT_SRCS
   ctkCommandLineModuleExplorerMain.cpp
-  ctkCLModuleExplorerMainWindow.h
-  ctkCLModuleExplorerMainWindow.cpp
+  ctkCmdLineModuleExplorerDirectorySettings.cpp
+  ctkCmdLineModuleExplorerMainWindow.h
+  ctkCmdLineModuleExplorerMainWindow.cpp
+  ctkCmdLineModuleExplorerProgressWidget.cpp
+  ctkCmdLineModuleExplorerTabList.cpp
+  ctkCmdLineModuleExplorerTreeWidget.cpp
 )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  ctkCLModuleExplorerMainWindow.h
+  ctkCmdLineModuleExplorerMainWindow.h
+  ctkCmdLineModuleExplorerProgressWidget.h
+  ctkCmdLineModuleExplorerTabList.h
+  ctkCmdLineModuleExplorerTreeWidget.h
 )
 
 # UI files
 set(KIT_UI_FORMS
-  ctkCLModuleExplorerMainWindow.ui
+  ctkCmdLineModuleExplorerMainWindow.ui
+  ctkCmdLineModuleExplorerProgressWidget.ui
 )
 
 # Resources
 set(KIT_resources
-  resources/ctkCLModuleExplorer.qrc
+  resources/ctkCmdLineModuleExplorer.qrc
 )
 
 set(QT_USE_QTUITOOLS 1)

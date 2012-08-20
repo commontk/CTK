@@ -21,120 +21,257 @@
 
 #include "ctkCmdLineModuleManager.h"
 
+#include "ctkCmdLineModuleBackend.h"
+#include "ctkCmdLineModuleFrontend.h"
+#include "ctkCmdLineModuleCache_p.h"
+#include "ctkCmdLineModuleFuture.h"
 #include "ctkCmdLineModuleXmlValidator.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleReference_p.h"
-#include "ctkCmdLineModuleFactory.h"
 
 #include <ctkException.h>
 
+#include <QFileInfo>
+#include <QDir>
 #include <QStringList>
 #include <QBuffer>
+#include <QUrl>
+#include <QHash>
+#include <QList>
+#include <QMutex>
 
-#include <QProcess>
 #include <QFuture>
 
 struct ctkCmdLineModuleManagerPrivate
 {
-  ctkCmdLineModuleManagerPrivate()
-    : Verbose(false)
-  {}
+  ctkCmdLineModuleManagerPrivate(ctkCmdLineModuleManager::ValidationMode mode, const QString& cacheDir)
+    : ValidationMode(mode)
+  {
+    QFileInfo fileInfo(cacheDir);
+    if (!fileInfo.exists())
+    {
+      if (!QDir().mkpath(cacheDir))
+      {
+        qWarning() << "Command line module cache disabled. Directory" << cacheDir << "could not be created.";
+        return;
+      }
+    }
 
-  ctkCmdLineModuleFactory* InstanceFactory;
+    if (fileInfo.isWritable())
+    {
+      ModuleCache.reset(new ctkCmdLineModuleCache(cacheDir));
+    }
+    else
+    {
+      qWarning() << "Command line module cache disabled. Directory" << cacheDir << "is not writable.";
+    }
+  }
 
-  QHash<QString, ctkCmdLineModuleReference> Cache;
-  bool Verbose;
+  void checkBackends_unlocked(const QUrl& location)
+  {
+    if (!this->SchemeToBackend.contains(location.scheme()))
+    {
+      throw ctkInvalidArgumentException(QString("No suitable backend registered for module at ") + location.toString());
+    }
+  }
+
+  QMutex Mutex;
+  QHash<QString, ctkCmdLineModuleBackend*> SchemeToBackend;
+  QHash<QUrl, ctkCmdLineModuleReference> LocationToRef;
+  QScopedPointer<ctkCmdLineModuleCache> ModuleCache;
+
+  const ctkCmdLineModuleManager::ValidationMode ValidationMode;
 };
 
-ctkCmdLineModuleManager::ctkCmdLineModuleManager(ctkCmdLineModuleFactory *instanceFactory,
-                                                 ValidationMode validationMode)
-  : d(new ctkCmdLineModuleManagerPrivate)
+ctkCmdLineModuleManager::ctkCmdLineModuleManager(ValidationMode validationMode, const QString& cacheDir)
+  : d(new ctkCmdLineModuleManagerPrivate(validationMode, cacheDir))
 {
-  d->InstanceFactory = instanceFactory;
 }
 
 ctkCmdLineModuleManager::~ctkCmdLineModuleManager()
 {
 }
 
-void ctkCmdLineModuleManager::setVerboseOutput(bool verbose)
+void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 {
-  d->Verbose = verbose;
-}
+  QMutexLocker lock(&d->Mutex);
 
-bool ctkCmdLineModuleManager::verboseOutput() const
-{
-  return d->Verbose;
+  QList<QString> supportedSchemes = backend->schemes();
+
+  // Check if there is already a backend registerd for any of the
+  // supported schemes. We only supported one backend per scheme.
+  foreach (QString scheme, supportedSchemes)
+  {
+    if (d->SchemeToBackend.contains(scheme))
+    {
+      throw ctkInvalidArgumentException(QString("A backend for scheme %1 is already registered.").arg(scheme));
+    }
+  }
+
+  // All good
+  foreach (QString scheme, supportedSchemes)
+  {
+    d->SchemeToBackend[scheme] = backend;
+  }
 }
 
 ctkCmdLineModuleReference
-ctkCmdLineModuleManager::registerModule(const QString& location)
+ctkCmdLineModuleManager::registerModule(const QUrl &location)
 {
-  QProcess process;
-  process.setReadChannel(QProcess::StandardOutput);
-  process.start(location, QStringList("--xml"));
+  QByteArray xml;
+  ctkCmdLineModuleBackend* backend = NULL;
+  {
+    QMutexLocker lock(&d->Mutex);
+
+    d->checkBackends_unlocked(location);
+
+    // If the module is already registered, just return the reference
+    if (d->LocationToRef.contains(location))
+    {
+      return d->LocationToRef[location];
+    }
+
+    backend = d->SchemeToBackend[location.scheme()];
+  }
+
+  bool fromCache = false;
+  qint64 newTimeStamp = 0;
+  if (d->ModuleCache)
+  {
+    newTimeStamp = backend->timeStamp(location);
+    if (d->ModuleCache->timeStamp(location) < newTimeStamp)
+    {
+      // newly fetch the XML description
+      try
+      {
+        xml = backend->rawXmlDescription(location);
+      }
+      catch (...)
+      {
+        // cache the failed attempt
+        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, QByteArray());
+        throw;
+      }
+    }
+    else
+    {
+      // use the cached XML description
+      xml = d->ModuleCache->rawXmlDescription(location);
+      fromCache = true;
+    }
+  }
+  else
+  {
+    xml = backend->rawXmlDescription(location);
+  }
+
+  if (xml.isEmpty())
+  {
+    if (!fromCache && d->ModuleCache)
+    {
+      d->ModuleCache->cacheXmlDescription(location, newTimeStamp, QByteArray());
+    }
+    throw ctkInvalidArgumentException(QString("No XML output available from ") + location.toString());
+  }
 
   ctkCmdLineModuleReference ref;
   ref.d->Location = location;
-  if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
-      process.error() != QProcess::UnknownError)
-  {
-    if(d->Verbose)
-    {
-      qWarning() << "The executable at" << location << "could not be started:" << process.errorString();
-    }
-    return ref;
-  }
-
-  process.waitForReadyRead();
-  QByteArray xml = process.readAllStandardOutput();
-
-  // validate the outputted xml description
-  QBuffer input(&xml);
-  input.open(QIODevice::ReadOnly);
-
-  ctkCmdLineModuleXmlValidator validator(&input);
-  if (!validator.validateInput())
-  {
-    if(d->Verbose)
-    {
-      qWarning() << validator.errorString();
-    }
-    return ref;
-  }
-
   ref.d->RawXmlDescription = xml;
+  ref.d->Backend = backend;
 
-  d->Cache[location] = ref;
+  if (d->ValidationMode != SKIP_VALIDATION)
+  {
+    // validate the outputted xml description
+    QBuffer input(&xml);
+    input.open(QIODevice::ReadOnly);
 
-  emit moduleAdded(ref);
+    ctkCmdLineModuleXmlValidator validator(&input);
+    if (!validator.validateInput())
+    {
+      if (d->ModuleCache)
+      {
+        // validation failed, cache an empty description
+        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, QByteArray());
+      }
+
+      if (d->ValidationMode == STRICT_VALIDATION)
+      {
+        throw ctkInvalidArgumentException(QString("Validating module at %1 failed: %2")
+                                          .arg(location.toString()).arg(validator.errorString()));
+      }
+      else
+      {
+        ref.d->XmlValidationErrorString = validator.errorString();
+      }
+    }
+    else
+    {
+      if (d->ModuleCache && newTimeStamp > 0)
+      {
+        // successfully validated the xml, cache it
+        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, xml);
+      }
+    }
+  }
+  else
+  {
+    if (!fromCache && d->ModuleCache)
+    {
+      // cache it
+      d->ModuleCache->cacheXmlDescription(location, newTimeStamp, xml);
+    }
+  }
+
+  {
+    QMutexLocker lock(&d->Mutex);
+    // Check that we don't have a race condition
+    if (d->LocationToRef.contains(location))
+    {
+      // Another thread registered a module with the same location
+      return d->LocationToRef[location];
+    }
+    d->LocationToRef[location] = ref;
+  }
+
+  emit moduleRegistered(ref);
   return ref;
 }
 
 void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& ref)
 {
-  d->Cache.remove(ref.location());
-  emit moduleRemoved(ref);
+  {
+    QMutexLocker lock(&d->Mutex);
+    if (!d->LocationToRef.contains(ref.location()))
+    {
+      return;
+    }
+    d->LocationToRef.remove(ref.location());
+    if (d->ModuleCache)
+    {
+      d->ModuleCache->removeCacheEntry(ref.location());
+    }
+  }
+  emit moduleUnregistered(ref);
 }
 
-ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QString& location) const
+ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QUrl &location) const
 {
-  return d->Cache[location];
+  QMutexLocker lock(&d->Mutex);
+  return d->LocationToRef[location];
 }
 
 QList<ctkCmdLineModuleReference> ctkCmdLineModuleManager::moduleReferences() const
 {
-  return d->Cache.values();
+  QMutexLocker lock(&d->Mutex);
+  return d->LocationToRef.values();
 }
 
-ctkCmdLineModule*
-ctkCmdLineModuleManager::createModule(const ctkCmdLineModuleReference& moduleRef)
+ctkCmdLineModuleFuture ctkCmdLineModuleManager::run(ctkCmdLineModuleFrontend *frontend)
 {
-  return d->InstanceFactory->create(moduleRef);
-}
+  QMutexLocker lock(&d->Mutex);
+  d->checkBackends_unlocked(frontend->location());
 
-QList<ctkCmdLineModule*>
-ctkCmdLineModuleManager::modules(const ctkCmdLineModuleReference& moduleRef) const
-{
-  throw ctkException("not implemented yet");
+  ctkCmdLineModuleFuture future = d->SchemeToBackend[frontend->location().scheme()]->run(frontend);
+  frontend->setFuture(future);
+  return future;
 }

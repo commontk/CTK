@@ -25,14 +25,20 @@
 #include <ctkCmdLineModuleDescription.h>
 
 #include <QSharedData>
-#include <QString>
+#include <QUrl>
+
+struct ctkCmdLineModuleBackend;
 
 struct ctkCmdLineModuleReferencePrivate : public QSharedData
 {
+  ctkCmdLineModuleReferencePrivate();
+
   ctkCmdLineModuleDescription description() const;
 
-  QString Location;
+  ctkCmdLineModuleBackend* Backend;
+  QUrl Location;
   QByteArray RawXmlDescription;
+  QString XmlValidationErrorString;
 
 private:
 

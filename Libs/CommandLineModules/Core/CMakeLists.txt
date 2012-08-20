@@ -14,13 +14,16 @@ set(KIT_export_directive "CTK_CMDLINEMODULECORE_EXPORT")
 
 # Source files
 set(KIT_SRCS
+  ctkCmdLineModuleBackend.cpp
+  ctkCmdLineModuleCache.cpp
+  ctkCmdLineModuleCache_p.h
   ctkCmdLineModuleDefaultPathBuilder.cpp
   ctkCmdLineModuleDescription.cpp
   ctkCmdLineModuleDescription_p.h
   ctkCmdLineModuleDirectoryWatcher.cpp
   ctkCmdLineModuleDirectoryWatcher_p.h
-  ctkCmdLineModule.cpp
-  ctkCmdLineModuleFactory.cpp
+  ctkCmdLineModuleFrontend.cpp
+  ctkCmdLineModuleFrontendFactory.cpp
   ctkCmdLineModuleFuture.h
   ctkCmdLineModuleFutureInterface.h
   ctkCmdLineModuleManager.cpp
@@ -29,7 +32,6 @@ set(KIT_SRCS
   ctkCmdLineModuleParameterGroup_p.h
   ctkCmdLineModuleParameterParsers_p.h
   ctkCmdLineModulePathBuilder.cpp
-  ctkCmdLineModuleProcessTask.cpp
   ctkCmdLineModuleResult.h
   ctkCmdLineModuleXmlProgressWatcher.cpp
   ctkCmdLineModuleReference.cpp
@@ -47,9 +49,8 @@ set(KIT_SRCS
 set(KIT_MOC_SRCS
   ctkCmdLineModuleDirectoryWatcher.h
   ctkCmdLineModuleDirectoryWatcher_p.h
+  ctkCmdLineModuleFrontend.h
   ctkCmdLineModuleManager.h
-  ctkCmdLineModule.h
-  ctkCmdLineModuleProcessTask.h
 )
 
 qt4_wrap_cpp(_dummy ctkCmdLineModuleXmlProgressWatcher.h)

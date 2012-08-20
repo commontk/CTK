@@ -1,33 +1,38 @@
-/*===================================================================
-  
-BlueBerry Platform
+/*=============================================================================
 
-Copyright (c) German Cancer Research Center, 
-Division of Medical and Biological Informatics.
-All rights reserved.
+  Library: CTK
 
-This software is distributed WITHOUT ANY WARRANTY; without 
-even the implied warranty of MERCHANTABILITY or FITNESS FOR 
-A PARTICULAR PURPOSE.
+  Copyright (c) German Cancer Research Center,
+    Division of Medical and Biological Informatics
 
-See LICENSE.txt or http://www.mitk.org for details.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
-===================================================================*/
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=============================================================================*/
 
 #include "ctkCmdLineModuleRunException.h"
 
-ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(
-    const QString& location, int errorCode, const QString &errorString)
+#include <QUrl>
+
+ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(const QUrl &location, int errorCode, const QString &errorString)
   : QtConcurrent::Exception(),
-    ctkException(QString("Running module \"%1\" failed with code %2: %3").arg(location).arg(errorCode).arg(errorString)),
+    ctkException(QString("Running module \"%1\" failed with code %2: %3").arg(location.toString()).arg(errorCode).arg(errorString)),
     Location(location), ErrorCode(errorCode), ErrorString(errorString)
 {
 }
 
-ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(
-    const QString& location, int errorCode, const QString &errorString,
+ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(const QUrl &location, int errorCode, const QString &errorString,
     const ctkCmdLineModuleRunException& cause)
-  : QtConcurrent::Exception(), ctkException(location, cause),
+  : QtConcurrent::Exception(), ctkException(location.toString(), cause),
     Location(location), ErrorCode(errorCode), ErrorString(errorString)
 {
 }
@@ -42,7 +47,7 @@ ctkCmdLineModuleRunException::~ctkCmdLineModuleRunException() throw()
 {
 }
 
-QString ctkCmdLineModuleRunException::location() const throw()
+QUrl ctkCmdLineModuleRunException::location() const throw()
 {
   return Location;
 }

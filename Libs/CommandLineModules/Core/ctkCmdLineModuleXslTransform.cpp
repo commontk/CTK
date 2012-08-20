@@ -186,20 +186,20 @@ bool ctkCmdLineModuleXslTransform::transform()
     return false;
   }
 
-  QIODevice* transformation = d->Transformation;
-  QScopedPointer<QIODevice> defaultTransform(new QFile(":/ctkCmdLineModuleXmlToQtUi.xsl"));
-  if (!transformation)
+  if (!d->Transformation)
   {
-    transformation = defaultTransform.data();
-    transformation->open(QIODevice::ReadOnly);
+    d->ErrorStr = "No XSL transformation set.";
+    return false;
   }
-  QString query(transformation->readAll());
+
+  d->Transformation->open(QIODevice::ReadOnly);
+  QString query(d->Transformation->readAll());
   QString extra;
   foreach(QIODevice* extraIODevice, d->ExtraTransformations)
-    {
+  {
     extraIODevice->open(QIODevice::ReadOnly);
     extra += extraIODevice->readAll();
-    }
+  }
   query.replace("<!-- EXTRA TRANSFORMATIONS -->", extra);
 #if 0
   qDebug() << query;
