@@ -46,9 +46,12 @@ int ctkColorDialogTest2(int argc, char * argv [] )
     QTimer::singleShot(300, &app, SLOT(quit()));
     }
 
-  // The opened dialog blocks QTimers which prevents the test
-  // from being quit.
   QColor color = ctkColorDialog::getColor(Qt::black,0 , "", QColorDialog::DontUseNativeDialog);
-  
+  if (color.isValid())
+    {
+    std::cout << "The color dialog should have been quit without a valid color."
+              << std::endl;
+    return EXIT_FAILURE;
+    }
   return app.exec();
 }
