@@ -42,6 +42,8 @@ public:
 
   ctkCmdLineModuleFrontend* activeTab() const;
 
+  QList<ctkCmdLineModuleFrontend*> tabs() const;
+
   Q_SLOT void addTab(ctkCmdLineModuleFrontend* frontend);
 
   Q_SIGNAL void tabActivated(ctkCmdLineModuleFrontend* module);

@@ -37,6 +37,9 @@
 #include <ctkSettingsDialog.h>
 
 #include <QDesktopServices>
+#include <QMessageBox>
+#include <QFutureSynchronizer>
+#include <QCloseEvent>
 #include <QDebug>
 
 
@@ -116,6 +119,50 @@ void ctkCLModuleExplorerMainWindow::addModule(const QUrl &location)
   moduleManager.registerModule(location);
 }
 
+void ctkCLModuleExplorerMainWindow::closeEvent(QCloseEvent *event)
+{
+  QList<ctkCmdLineModuleFrontend*> runningFrontends;
+  foreach (ctkCmdLineModuleFrontend* frontend, this->tabList->tabs())
+  {
+    if (frontend->isRunning())
+    {
+      runningFrontends << frontend;
+    }
+  }
+
+  if (!runningFrontends.empty())
+  {
+    QMessageBox::StandardButton button =
+        QMessageBox::warning(QApplication::topLevelWidgets().front(),
+                             QString("Closing %1 running modules").arg(runningFrontends.size()),
+                             "Some modules are still running.\n"
+                             "Closing the application will cancel all current computations.",
+                             QMessageBox::Ok | QMessageBox::Cancel);
+    if (button == QMessageBox::Ok)
+    {
+      QFutureSynchronizer<void> futureSync;
+      futureSync.setCancelOnWait(true);
+      foreach(ctkCmdLineModuleFrontend* frontend, runningFrontends)
+      {
+        if (frontend->future().canCancel())
+        {
+          futureSync.addFuture(frontend->future());
+        }
+      }
+      futureSync.waitForFinished();
+      event->accept();
+      QMainWindow::closeEvent(event);
+      return;
+    }
+    else
+    {
+      event->ignore();
+      return;
+    }
+  }
+  event->accept();
+}
+
 void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
 {
   ctkCmdLineModuleFrontend* moduleFrontend = this->tabList->activeTab();
@@ -150,6 +197,11 @@ void ctkCLModuleExplorerMainWindow::on_actionCancel_triggered()
 void ctkCLModuleExplorerMainWindow::on_actionOptions_triggered()
 {
   settingsDialog->exec();
+}
+
+void ctkCLModuleExplorerMainWindow::on_actionQuit_triggered()
+{
+  this->close();
 }
 
 void ctkCLModuleExplorerMainWindow::checkModulePaused()

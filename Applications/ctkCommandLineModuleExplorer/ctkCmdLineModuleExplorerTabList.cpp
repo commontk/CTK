@@ -55,6 +55,11 @@ ctkCmdLineModuleFrontend* ctkCmdLineModuleExplorerTabList::activeTab() const
   return this->TabIndexToFrontend[index];
 }
 
+QList<ctkCmdLineModuleFrontend *> ctkCmdLineModuleExplorerTabList::tabs() const
+{
+  return this->TabIndexToFrontend;
+}
+
 void ctkCmdLineModuleExplorerTabList::addTab(ctkCmdLineModuleFrontend* moduleFrontend)
 {
   QWidget* widget = qobject_cast<QWidget*>(moduleFrontend->guiHandle());

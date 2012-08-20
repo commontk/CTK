@@ -50,12 +50,17 @@ public:
 
   void addModule(const QUrl &location);
 
+protected:
+
+  void closeEvent(QCloseEvent* event);
+
 protected Q_SLOTS:
 
   void on_actionRun_triggered();
   void on_actionPause_toggled(bool toggled);
   void on_actionCancel_triggered();
   void on_actionOptions_triggered();
+  void on_actionQuit_triggered();
 
   void checkModulePaused();
   void currentModuleResumed();
