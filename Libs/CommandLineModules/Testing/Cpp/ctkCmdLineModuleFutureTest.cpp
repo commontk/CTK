@@ -40,6 +40,24 @@
 #include <cstdlib>
 
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#else
+#include <time.h>
+#endif
+
+void sleep_ms(int ms)
+{
+#ifdef Q_OS_WIN
+  Sleep(ms);
+#else
+  struct timespec nanostep;
+  nanostep.tv_sec = ms / 1000;
+  nanostep.tv_nsec = ((ms % 1000) * 1000.0 * 1000.0);
+  nanosleep(&nanostep, NULL);
+#endif
+}
+
 class ctkCmdLineModuleFrontendMockupFactory : public ctkCmdLineModuleFrontendFactory
 {
 public:
@@ -189,17 +207,18 @@ bool futureTestPauseAndCancel(ctkCmdLineModuleManager* manager, ctkCmdLineModule
     expectedSignals.push_back("module.resumed");
     expectedSignals.push_back("module.paused");
   }
+
   if (future.canCancel())
   {
     expectedSignals.push_back("module.canceled");
   }
   expectedSignals.push_back("module.finished");
 
-  sleep(1);
+  sleep_ms(500);
 
   QCoreApplication::processEvents();
   future.pause();
-  sleep(1);
+  sleep_ms(500);
   QCoreApplication::processEvents();
 
   if (future.canPause())
@@ -218,7 +237,7 @@ bool futureTestPauseAndCancel(ctkCmdLineModuleManager* manager, ctkCmdLineModule
   future.togglePaused();
   QCoreApplication::processEvents();
 
-  sleep(1);
+  sleep_ms(500);
 
   if (future.isPaused() && future.isRunning())
   {

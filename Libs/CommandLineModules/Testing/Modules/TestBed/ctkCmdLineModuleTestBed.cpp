@@ -28,7 +28,24 @@
 #include <QTime>
 
 #include <cstdlib>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#else
 #include <time.h>
+#endif
+
+void sleep_ms(int ms)
+{
+#ifdef Q_OS_WIN
+  Sleep(ms);
+#else
+  struct timespec nanostep;
+  nanostep.tv_sec = static_cast<time_t>(ms / 1000);
+  nanostep.tv_nsec = ((ms % 1000) * 1000.0 * 1000.0);
+  nanosleep(&nanostep, NULL);
+#endif
+}
 
 int main(int argc, char* argv[])
 {
@@ -98,8 +115,6 @@ int main(int argc, char* argv[])
   QTime time;
   time.start();
 
-  struct timespec nanostep;
-
   if (!outputs.empty())
   {
     out << "<filter-start>\n";
@@ -132,10 +147,7 @@ int main(int argc, char* argv[])
     }
 
     // simulate some work
-    nanostep.tv_sec = static_cast<time_t>(stepTime);
-    double millisecs = (stepTime - static_cast<time_t>(stepTime)) * 1000.0;
-    nanostep.tv_nsec = static_cast<long>(millisecs * 1000.0 * 1000.0);
-    nanosleep(&nanostep, NULL);
+    sleep_ms(stepTime*1000);
 
     // print the first output
     if (output != "dummy")
@@ -147,7 +159,7 @@ int main(int argc, char* argv[])
   }
 
   // sleep 1 second to avoid squashing the last progress event with the finished event
-  sleep(1);
+  sleep_ms(1000);
 
   if (exitCrash)
   {

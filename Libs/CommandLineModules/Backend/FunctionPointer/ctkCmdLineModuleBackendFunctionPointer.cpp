@@ -34,6 +34,7 @@
 #include <QHash>
 #include <QUrl>
 
+
 namespace ctk {
 namespace CmdLineModuleBackendFunctionPointer {
 
@@ -55,12 +56,29 @@ CTK_CMDLINEMODULEBACKENDFP_EXPORT QString GetParameterTypeName<QList<int> >()
 }
 
 //----------------------------------------------------------------------------
+#ifdef Q_OS_WIN
+#include <windows.h>
+void sleep_secs(int secs)
+{
+  Sleep(secs*1000);
+}
+#else
+#include <time.h>
+void sleep_secs(int secs)
+{
+  struct timespec nanostep;
+  nanostep.tv_sec = secs;
+  nanostep.tv_nsec = 0;
+  nanosleep(&nanostep, NULL);
+}
+#endif
+
 void CalculateFibonacciNumbers(int level) //, QList<int>* result)
 {
   qDebug() << "Number: 0";
   if (level > 0)
   {
-    sleep(1);
+    sleep_secs(1);
     qDebug() << "Number: 1";
     if (level == 1) return;
   }
@@ -72,7 +90,7 @@ void CalculateFibonacciNumbers(int level) //, QList<int>* result)
     int tmp = first;
     first = second;
     second = first + tmp;
-    sleep(1);
+    sleep_secs(1);
     qDebug() << "Number:" << second;
   }
 }
