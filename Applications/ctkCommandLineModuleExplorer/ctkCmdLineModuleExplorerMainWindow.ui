@@ -63,6 +63,7 @@
     <addaction name="actionRun"/>
     <addaction name="actionPause"/>
     <addaction name="actionCancel"/>
+    <addaction name="actionReset"/>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
@@ -83,6 +84,8 @@
    <addaction name="actionRun"/>
    <addaction name="actionPause"/>
    <addaction name="actionCancel"/>
+   <addaction name="separator"/>
+   <addaction name="actionReset"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="features">
@@ -223,6 +226,14 @@
   <action name="actionOptions">
    <property name="text">
     <string>&amp;Options...</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="text">
+    <string>Reset</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset to default values</string>
    </property>
   </action>
  </widget>

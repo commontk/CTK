@@ -204,6 +204,11 @@ void ctkCLModuleExplorerMainWindow::on_actionQuit_triggered()
   this->close();
 }
 
+void ctkCLModuleExplorerMainWindow::on_actionReset_triggered()
+{
+  this->tabList->activeTab()->resetValues();
+}
+
 void ctkCLModuleExplorerMainWindow::checkModulePaused()
 {
   if (this->currentFutureWatcher.future().isPaused())
@@ -266,6 +271,7 @@ void ctkCLModuleExplorerMainWindow::moduleTabActivated(ctkCmdLineModuleFrontend 
     ui->actionRun->setEnabled(false);
     ui->actionPause->setEnabled(false);
     ui->actionCancel->setEnabled(false);
+    ui->actionReset->setEnabled(false);
     currentFutureWatcher.setFuture(ctkCmdLineModuleFuture());
   }
   else
@@ -274,6 +280,7 @@ void ctkCLModuleExplorerMainWindow::moduleTabActivated(ctkCmdLineModuleFrontend 
     ui->actionPause->setEnabled(module->future().canPause() && module->isRunning());
     ui->actionPause->setChecked(module->isPaused());
     ui->actionCancel->setEnabled(module->future().canCancel() && module->isRunning());
+    ui->actionReset->setEnabled(true);
     currentFutureWatcher.setFuture(module->future());
   }
 }
