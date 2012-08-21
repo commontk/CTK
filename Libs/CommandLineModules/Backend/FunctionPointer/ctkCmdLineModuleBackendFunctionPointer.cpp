@@ -177,6 +177,11 @@ ctkCmdLineModuleBackendFunctionPointer::ctkCmdLineModuleBackendFunctionPointer()
 }
 
 //----------------------------------------------------------------------------
+ctkCmdLineModuleBackendFunctionPointer::~ctkCmdLineModuleBackendFunctionPointer()
+{
+}
+
+//----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendFunctionPointer::name() const
 {
   return "Function Pointer (experimental)";
@@ -206,6 +211,7 @@ qint64 ctkCmdLineModuleBackendFunctionPointer::timeStamp(const QUrl &location) c
 QByteArray ctkCmdLineModuleBackendFunctionPointer::rawXmlDescription(const QUrl& location)
 {
   if (!d->UrlToFpDescription.contains(location)) return QByteArray();
+  qDebug() << d->UrlToFpDescription[location].d->xmlDescription();
   return QByteArray(qPrintable(d->UrlToFpDescription[location].d->xmlDescription()));
 }
 
@@ -215,12 +221,18 @@ ctkCmdLineModuleFuture ctkCmdLineModuleBackendFunctionPointer::run(ctkCmdLineMod
   QUrl url = frontend->location();
 
   const Description& descr = d->UrlToFpDescription[url];
-  QList<QVariant> args = frontend->values().values();
+  QList<QVariant> args = this->arguments(frontend);
 
   // Instances of ctkCmdLineModuleFunctionPointerTask are auto-deleted by the
   // thread pool
   ctkCmdLineModuleFunctionPointerTask* fpTask = new ctkCmdLineModuleFunctionPointerTask(descr, args);
   return fpTask->start();
+}
+
+//----------------------------------------------------------------------------
+QList<QVariant> ctkCmdLineModuleBackendFunctionPointer::arguments(ctkCmdLineModuleFrontend *frontend) const
+{
+  return frontend->values().values();
 }
 
 //----------------------------------------------------------------------------

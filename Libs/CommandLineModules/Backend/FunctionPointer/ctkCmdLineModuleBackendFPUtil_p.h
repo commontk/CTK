@@ -22,6 +22,8 @@
 #ifndef CTKCMDLINEMODULEBACKENDFPUTIL_P_H
 #define CTKCMDLINEMODULEBACKENDFPUTIL_P_H
 
+#include "ctkCommandLineModulesBackendFunctionPointerExport.h"
+
 #include <QVariant>
 
 class ctkCmdLineModuleBackendFunctionPointer;
@@ -29,7 +31,7 @@ class ctkCmdLineModuleBackendFunctionPointer;
 namespace ctk {
 namespace CmdLineModuleBackendFunctionPointer {
 
-struct FunctionPointerHolderBase
+struct CTK_CMDLINEMODULEBACKENDFP_EXPORT FunctionPointerHolderBase
 {
   virtual ~FunctionPointerHolderBase();
 
@@ -84,7 +86,7 @@ struct FunctionPointerHolder2 : public FunctionPointerHolderBase
   FunctionPointerType Fp;
 };
 
-struct FunctionPointerProxy
+struct CTK_CMDLINEMODULEBACKENDFP_EXPORT FunctionPointerProxy
 {
   FunctionPointerProxy();
   ~FunctionPointerProxy();

@@ -26,6 +26,7 @@
 
 #include "ctkCommandLineModulesBackendFunctionPointerExport.h"
 #include "ctkCmdLineModuleBackendFPTypeTraits.h"
+#include "ctkCmdLineModuleBackendFPUtil_p.h"
 
 #include <QScopedPointer>
 #include <QSharedPointer>
@@ -43,6 +44,45 @@ struct FunctionPointerProxy;
 
 template<typename T>
 QString GetParameterTypeName();
+
+struct ImageType {};
+
+// default parameter description
+template<typename T, typename Enable = void>
+struct CreateXmlFor
+{
+  static QString parameter(int index, const QString& typeName, const QString& label = QString(), const QString& description = QString())
+  {
+    QString xmlParameter;
+    QTextStream str(&xmlParameter);
+    str << "    <" << typeName << ">\n";
+    str << "      <name>" << QString("param%1").arg(index) << "</name>\n";
+    str << "      <index>" << index << "</index>\n";
+    str << "      <description>" << (description.isEmpty() ? "Description not available." : description) << "</description>\n";
+    str << "      <label>" << (label.isEmpty() ? QString("Parameter %1").arg(index) : label) << "</label>\n";
+    str << "    </" << typeName << ">\n";
+    return xmlParameter;
+  }
+};
+
+// specialization for input image types
+template<typename T>
+struct CreateXmlFor<T, typename EnableIf<IsBaseOf<ImageType, T>::value >::Type >
+{
+  static QString parameter(int index, const QString& typeName, const QString& label = QString(), const QString& description = QString())
+  {
+    QString xmlParameter;
+    QTextStream str(&xmlParameter);
+    str << "    <" << typeName << ">\n";
+    str << "      <name>" << QString("param%1").arg(index) << "</name>\n";
+    str << "      <index>" << index << "</index>\n";
+    str << "      <description>" << (description.isEmpty() ? "Description not available." : description) << "</description>\n";
+    str << "      <label>" << (label.isEmpty() ? QString("Parameter %1").arg(index) : label) << "</label>\n";
+    str << "      <channel>input</channel>\n";
+    str << "    </" << typeName << ">\n";
+    return xmlParameter;
+  }
+};
 
 }
 }
@@ -93,6 +133,7 @@ public:
   };
 
   ctkCmdLineModuleBackendFunctionPointer();
+  ~ctkCmdLineModuleBackendFunctionPointer();
 
   virtual QString name() const;
   virtual QString description() const;
@@ -103,16 +144,19 @@ public:
 
   virtual QByteArray rawXmlDescription(const QUrl& location);
 
-  virtual ctkCmdLineModuleFuture run(ctkCmdLineModuleFrontend *frontend);
-
   QList<QUrl> registeredFunctionPointers() const;
 
   template<typename A>
   Description* registerFunctionPointer(const QString& title, void (*fp)(A),
                                        const QString& paramLabel = QString(), const QString& paramDescr = QString())
   {
+    typedef typename ctk::CmdLineModuleBackendFunctionPointer::TypeTraits<A>::RawType RawTypeA;
+
     QList<QString> params;
-    params << CreateXmlForParameter<A>(0, paramLabel, paramDescr);
+    params << ctk::CmdLineModuleBackendFunctionPointer::CreateXmlFor<RawTypeA>::
+              parameter(0,
+                        ctk::CmdLineModuleBackendFunctionPointer::GetParameterTypeName<RawTypeA>(),
+                        paramLabel, paramDescr);
     return this->registerFunctionPointerProxy(title, ctk::CmdLineModuleBackendFunctionPointer::FunctionPointerProxy(fp), params);
   }
 
@@ -121,11 +165,26 @@ public:
                                        const QString& paramLabel0 = QString(), const QString& paramDescr0 = QString(),
                                        const QString& paramLabel1 = QString(), const QString& paramDescr1 = QString())
   {
+    typedef typename ctk::CmdLineModuleBackendFunctionPointer::TypeTraits<A>::RawType RawTypeA;
+    typedef typename ctk::CmdLineModuleBackendFunctionPointer::TypeTraits<B>::RawType RawTypeB;
+
     QList<QString> params;
-    params << CreateXmlForParameter<A>(0, paramLabel0, paramDescr0);
-    params << CreateXmlForParameter<B>(1, paramLabel1, paramDescr1);
+    params << ctk::CmdLineModuleBackendFunctionPointer::CreateXmlFor<RawTypeA>::
+              parameter(0,
+                        ctk::CmdLineModuleBackendFunctionPointer::GetParameterTypeName<RawTypeA>(),
+                        paramLabel0, paramDescr0);
+    params << ctk::CmdLineModuleBackendFunctionPointer::CreateXmlFor<RawTypeB>::
+              parameter(1,
+                        ctk::CmdLineModuleBackendFunctionPointer::GetParameterTypeName<RawTypeB>(),
+                        paramLabel1, paramDescr1);
     return this->registerFunctionPointerProxy(title, ctk::CmdLineModuleBackendFunctionPointer::FunctionPointerProxy(fp), params);
   }
+
+protected:
+
+  virtual ctkCmdLineModuleFuture run(ctkCmdLineModuleFrontend* frontend);
+
+  virtual QList<QVariant> arguments(ctkCmdLineModuleFrontend* frontend) const;
 
 private:
 
@@ -133,23 +192,10 @@ private:
                                             const ctk::CmdLineModuleBackendFunctionPointer::FunctionPointerProxy& proxy,
                                             const QList<QString>& params);
 
-  template<typename T>
-  QString CreateXmlForParameter(int index, const QString& label = QString(), const QString& description = QString())
-  {
-    QString xmlParameter;
-    QTextStream str(&xmlParameter);
-    QString typeName = ctk::CmdLineModuleBackendFunctionPointer::GetParameterTypeName<typename ctk::CmdLineModuleBackendFunctionPointer::TypeTraits<T>::RawType>();
-    str << "    <" << typeName << ">\n";
-    str << "      <name>" << QString("param%1").arg(index) << "</name>\n";
-    str << "      <index>" << index << "</index>\n";
-    str << "      <description>" << (description.isEmpty() ? "Description not available." : description) << "</description>\n";
-    str << "      <label>" << (label.isEmpty() ? QString("Parameter %1").arg(index) : label) << "</label>\n";
-    str << "    </" << typeName << ">\n";
-    return xmlParameter;
-  }
 
   QScopedPointer<ctkCmdLineModuleBackendFunctionPointerPrivate> d;
 
 };
+
 
 #endif // CTKCMDLINEMODULEBACKENDFUNCTIONPOINTER_H

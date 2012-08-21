@@ -86,6 +86,37 @@ public:
                                      typename Select<isReference, typename UnConst<ReferenceType>::Result, typename UnConst<T>::Result>::Result >::Result RawType;
 };
 
+template<bool C, typename T = void>
+struct EnableIf
+{
+  typedef T Type;
+};
+
+template<typename T>
+struct EnableIf<false, T> {};
+
+template<typename, typename>
+struct IsSame
+{
+  static bool const value = false;
+};
+
+template<typename A>
+struct IsSame<A, A>
+{
+  static bool const value = true;
+};
+
+template<typename B, typename D>
+struct IsBaseOf
+{
+  static D* MakeD();
+  static char (& Test(B*))[1];
+  static char (& Test(...))[2];
+  static bool const value = sizeof Test(MakeD()) == 1 &&
+      !IsSame<B volatile const, void volatile const>::value;
+};
+
 
 }
 }
