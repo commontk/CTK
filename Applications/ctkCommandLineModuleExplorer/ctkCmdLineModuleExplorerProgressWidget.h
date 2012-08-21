@@ -22,13 +22,13 @@
 #ifndef CTKCMDLINEMODULEEXPLORERPROGRESSWIDGET_H
 #define CTKCMDLINEMODULEEXPLORERPROGRESSWIDGET_H
 
+#include "ctkCmdLineModuleResult.h"
 
 #include <QWidget>
 #include <QFutureWatcher>
 #include <QTimer>
 
 class ctkCmdLineModuleFuture;
-class ctkCmdLineModuleResult;
 
 namespace Ui {
 class ctkCmdLineModuleExplorerProgressWidget;

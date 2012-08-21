@@ -37,7 +37,7 @@ public:
 
   virtual QObject* guiHandle() const;
 
-  virtual QVariant value(const QString& parameter) const;
+  virtual QVariant value(const QString& parameter, int role = LocalResourceRole) const;
   virtual void setValue(const QString& parameter, const QVariant& value);
 
   //virtual QList<QString> parameterNames() const;

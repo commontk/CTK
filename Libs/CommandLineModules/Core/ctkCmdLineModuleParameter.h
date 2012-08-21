@@ -28,7 +28,7 @@
 class QTextStream;
 class QStringList;
 
-class ctkCmdLineModuleParameterPrivate;
+struct ctkCmdLineModuleParameterPrivate;
 
 /** 
  *  \ingroup CommandLineModulesCore
@@ -125,7 +125,7 @@ public:
 
 private:
 
-  friend class ctkCmdLineModuleParameterParser;
+  friend struct ctkCmdLineModuleParameterParser;
   friend class ctkCmdLineModuleXmlParser;
 
   ctkCmdLineModuleParameter();

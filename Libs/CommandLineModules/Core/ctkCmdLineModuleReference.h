@@ -29,7 +29,7 @@
 
 struct ctkCmdLineModuleBackend;
 class ctkCmdLineModuleDescription;
-class ctkCmdLineModuleReferencePrivate;
+struct ctkCmdLineModuleReferencePrivate;
 
 /**
  * \ingroup CommandLineModulesCore

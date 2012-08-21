@@ -33,7 +33,7 @@ struct ctkCmdLineModuleFrontendFactory;
 class ctkCmdLineModuleFrontend;
 class ctkCmdLineModuleFuture;
 
-class ctkCmdLineModuleManagerPrivate;
+struct ctkCmdLineModuleManagerPrivate;
 
 /**
  * \ingroup CommandLineModulesCore

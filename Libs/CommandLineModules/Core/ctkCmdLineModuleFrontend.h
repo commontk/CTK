@@ -32,7 +32,7 @@ class QUrl;
 class ctkCmdLineModuleFuture;
 class ctkCmdLineModuleReference;
 class ctkCmdLineModuleParameter;
-class ctkCmdLineModuleFrontendPrivate;
+struct ctkCmdLineModuleFrontendPrivate;
 
 /**
  * \ingroup CommandLineModulesCore

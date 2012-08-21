@@ -27,7 +27,7 @@
 #include <QTreeWidget>
 
 class ctkCmdLineModuleFrontend;
-class ctkCmdLineModuleFrontendFactory;
+struct ctkCmdLineModuleFrontendFactory;
 
 class ctkCmdLineModuleExplorerTreeWidget : public QTreeWidget
 {

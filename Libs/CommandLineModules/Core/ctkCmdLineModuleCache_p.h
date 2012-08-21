@@ -24,7 +24,7 @@
 
 #include <QScopedPointer>
 
-class ctkCmdLineModuleCachePrivate;
+struct ctkCmdLineModuleCachePrivate;
 
 class QUrl;
 

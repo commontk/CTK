@@ -27,7 +27,7 @@
 
 class ctkCmdLineModuleDescription;
 class ctkCmdLineModuleParameter;
-class ctkCmdLineModuleParameterParser;
+struct ctkCmdLineModuleParameterParser;
 
 class QIODevice;
 

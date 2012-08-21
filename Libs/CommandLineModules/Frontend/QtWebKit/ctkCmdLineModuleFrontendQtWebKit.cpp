@@ -68,8 +68,9 @@ QObject* ctkCmdLineModuleFrontendQtWebKit::guiHandle() const
 }
 
 //----------------------------------------------------------------------------
-QVariant ctkCmdLineModuleFrontendQtWebKit::value(const QString &parameter) const
+QVariant ctkCmdLineModuleFrontendQtWebKit::value(const QString &parameter, int role) const
 {
+  Q_UNUSED(role)
   QWebElement webElement = this->WebView->page()->currentFrame()->findFirstElement("input[name=" + parameter + "]");
   if (webElement.isNull()) return QVariant();
   // Work around bug https://bugs.webkit.org/show_bug.cgi?id=32865 for input elements

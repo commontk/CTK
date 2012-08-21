@@ -84,7 +84,7 @@ public:
 private:
 
   friend class ctkCmdLineModuleXmlParser;
-  friend class ctkCmdLineModuleReferencePrivate;
+  friend struct ctkCmdLineModuleReferencePrivate;
 
   ctkCmdLineModuleDescription();
 

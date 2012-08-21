@@ -132,7 +132,7 @@ QObject* ctkCmdLineModuleFrontendQtGui::guiHandle() const
   QString appPath = QCoreApplication::applicationDirPath();
   if (appPath.endsWith(CMAKE_INTDIR))
   {
-    uiLoader.addPluginPath(appPath + "/../designer");
+    uiLoader->addPluginPath(appPath + "/../designer");
   }
 #endif
   d->Widget = uiLoader->load(&uiForm);

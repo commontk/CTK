@@ -242,7 +242,7 @@ void ctkCmdLineModuleQtCustomizationTester::testCustomization()
 
   // run the module (function pointer) and check that is gets the tmp path
   ctkCmdLineModuleFuture future = moduleManager.run(fpFrontend);
-  sleep(1);
+  QTest::qSleep(500);
   QApplication::processEvents();
   future.waitForFinished();
 

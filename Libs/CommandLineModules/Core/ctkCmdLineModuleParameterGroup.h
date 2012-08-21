@@ -29,7 +29,7 @@
 class QTextStream;
 
 class ctkCmdLineModuleParameter;
-class ctkCmdLineModuleParameterGroupPrivate;
+struct ctkCmdLineModuleParameterGroupPrivate;
 
 /** 
  *  \ingroup CommandLineModulesCore
