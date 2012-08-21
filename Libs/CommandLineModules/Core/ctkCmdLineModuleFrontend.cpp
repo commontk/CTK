@@ -128,3 +128,41 @@ void ctkCmdLineModuleFrontend::setValues(const QHash<QString, QVariant> &values)
     setValue(iter.key(), iter.value());
   }
 }
+
+//----------------------------------------------------------------------------
+QList<ctkCmdLineModuleParameter> ctkCmdLineModuleFrontend::parameters(const QString &type, ParameterFilters filters)
+{
+  ctkCmdLineModuleDescription description = this->moduleReference().description();
+  QList<ctkCmdLineModuleParameter> parameters;
+  foreach(ctkCmdLineModuleParameterGroup group, description.parameterGroups())
+  {
+    foreach(ctkCmdLineModuleParameter param, group.parameters())
+    {
+      if (filters.testFlag(Input) &&
+          (param.channel().isEmpty() || param.channel().compare("input", Qt::CaseInsensitive)))
+      {
+        if (type.isEmpty() || param.tag().compare(type, Qt::CaseInsensitive))
+        {
+          parameters << param;
+        }
+      }
+      if (filters.testFlag(Output) && param.channel().compare("output", Qt::CaseInsensitive))
+      {
+        if (type.isEmpty() || param.tag().compare(type, Qt::CaseInsensitive))
+        {
+          parameters << param;
+        }
+      }
+    }
+  }
+  return parameters;
+}
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleFrontend::resetValues()
+{
+  foreach(ctkCmdLineModuleParameter param, this->parameters())
+  {
+    this->setValue(param.name(), param.defaultValue());
+  }
+}

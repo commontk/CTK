@@ -31,6 +31,7 @@ class QUrl;
 
 class ctkCmdLineModuleFuture;
 class ctkCmdLineModuleReference;
+class ctkCmdLineModuleParameter;
 class ctkCmdLineModuleFrontendPrivate;
 
 /**
@@ -90,6 +91,12 @@ public:
   bool isPaused() const;
 
   Q_SIGNAL void valueChanged(const QString& parameter, const QVariant& value);
+
+  // convenience methods
+
+  QList<ctkCmdLineModuleParameter> parameters(const QString& type = QString(), ParameterFilters filters = All);
+
+  void resetValues();
 
 protected:
 
