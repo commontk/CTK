@@ -105,9 +105,13 @@ QString ctkCmdLineModuleObjectTreeWalker::label() const
 }
 
 //----------------------------------------------------------------------------
-QVariant ctkCmdLineModuleObjectTreeWalker::value() const
+QVariant ctkCmdLineModuleObjectTreeWalker::value(const QString &propertyName) const
 {
-  QString valProp = property("valueProperty").toString();
+  QString valProp = propertyName;
+  if (valProp.isEmpty())
+  {
+    valProp = property("valueProperty").toString();
+  }
   return property(valProp);
 }
 

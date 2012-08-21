@@ -23,6 +23,7 @@
 #define CTKCMDLINEMODULEOBJECTTREEWALKER_H
 
 #include <QStack>
+#include <QString>
 
 class QObject;
 class QVariant;
@@ -57,7 +58,7 @@ public:
 
   QString name() const;
   QString label() const;
-  QVariant value() const;
+  QVariant value(const QString& propertyName = QString()) const;
 
   void setValue(const QVariant& value);
 

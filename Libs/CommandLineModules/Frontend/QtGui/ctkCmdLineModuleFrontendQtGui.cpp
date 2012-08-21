@@ -38,19 +38,12 @@
 struct ctkCmdLineModuleFrontendQtGuiPrivate
 {
   ctkCmdLineModuleFrontendQtGuiPrivate()
-    : Loader(NULL)
-    , Transform(NULL)
-    , Widget(NULL)
+    : Widget(NULL)
   {}
 
-  ~ctkCmdLineModuleFrontendQtGuiPrivate()
-  {
-    delete Loader;
-    delete Transform;
-  }
-
-  mutable QUiLoader* Loader;
-  mutable ctkCmdLineModuleXslTransform* Transform;
+  mutable QScopedPointer<QUiLoader> Loader;
+  mutable QScopedPointer<QIODevice> xslFile;
+  mutable QScopedPointer<ctkCmdLineModuleXslTransform> Transform;
   mutable QWidget* Widget;
 
   // Cache the list of parameter names
@@ -76,9 +69,9 @@ QUiLoader* ctkCmdLineModuleFrontendQtGui::uiLoader() const
 {
   if (d->Loader == NULL)
   {
-    d->Loader = new QUiLoader();
+    d->Loader.reset(new QUiLoader());
   }
-  return d->Loader;
+  return d->Loader.data();
 }
 
 
@@ -87,9 +80,28 @@ ctkCmdLineModuleXslTransform* ctkCmdLineModuleFrontendQtGui::xslTransform() cons
 {
   if (d->Transform == NULL)
   {
-    d->Transform = new ctkCmdLineModuleXslTransform();
+    d->Transform.reset(new ctkCmdLineModuleXslTransform());
+    d->xslFile.reset(new QFile(":/ctkCmdLineModuleXmlToQtUi.xsl"));
+    d->Transform->setXslTransformation(d->xslFile.data());
   }
-  return d->Transform;
+  return d->Transform.data();
+}
+
+
+//-----------------------------------------------------------------------------
+QVariant ctkCmdLineModuleFrontendQtGui::customValue(const QString& parameter, const QString& propertyName) const
+{
+  if (!d->Widget) return QVariant();
+
+  ctkCmdLineModuleObjectTreeWalker reader(d->Widget);
+  while(reader.readNextParameter())
+  {
+    if(reader.name() == parameter)
+    {
+      return reader.value(propertyName);
+    }
+  }
+  return QVariant();
 }
 
 
@@ -108,8 +120,6 @@ QObject* ctkCmdLineModuleFrontendQtGui::guiHandle() const
   xslTransform->setInput(&input);
   xslTransform->setOutput(&uiForm);
 
-  QFile qtGuiTransformation(":/ctkCmdLineModuleXmlToQtUi.xsl");
-  xslTransform->setXslTransformation(&qtGuiTransformation);
   if (!xslTransform->transform())
   {
     // maybe throw an exception
@@ -131,19 +141,11 @@ QObject* ctkCmdLineModuleFrontendQtGui::guiHandle() const
 
 
 //-----------------------------------------------------------------------------
-QVariant ctkCmdLineModuleFrontendQtGui::value(const QString &parameter) const
+QVariant ctkCmdLineModuleFrontendQtGui::value(const QString &parameter, int role) const
 {
-  if (!d->Widget) return QVariant();
+  Q_UNUSED(role)
 
-  ctkCmdLineModuleObjectTreeWalker reader(d->Widget);
-  while(reader.readNextParameter())
-  {
-    if(reader.name() == parameter)
-    {
-      return reader.value();
-    }
-  }
-  return QVariant();
+  return customValue(parameter);
 }
 
 

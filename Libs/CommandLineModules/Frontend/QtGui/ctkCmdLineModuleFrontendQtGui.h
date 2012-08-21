@@ -46,7 +46,7 @@ public:
 
   virtual QObject* guiHandle() const;
 
-  virtual QVariant value(const QString& parameter) const;
+  virtual QVariant value(const QString& parameter, int role = LocalResourceRole) const;
   virtual void setValue(const QString& parameter, const QVariant& value);
 
   virtual QList<QString> parameterNames() const;
@@ -55,6 +55,8 @@ protected:
 
   virtual QUiLoader* uiLoader() const;
   virtual ctkCmdLineModuleXslTransform* xslTransform() const;
+
+  QVariant customValue(const QString& parameter, const QString& propertyName = QString()) const;
 
 private:
 

@@ -53,8 +53,9 @@ public:
 
       virtual QObject* guiHandle() const { return NULL; }
 
-      virtual QVariant value(const QString& parameter) const
+      virtual QVariant value(const QString& parameter, int role) const
       {
+        Q_UNUSED(role)
         QVariant value = currentValues[parameter];
         if (!value.isValid())
           return this->moduleReference().description().parameter(parameter).defaultValue();

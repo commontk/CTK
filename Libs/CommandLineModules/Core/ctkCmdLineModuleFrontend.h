@@ -42,11 +42,37 @@ class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFrontend : public QObject
 
 public:
 
+  enum ParameterValueRole {
+
+    /* Data returned using this role must no be of any type not supported by
+       QVariant by default. For complex parameter types (like file, image,
+       geometry, etc.) the data must be convertible to a QString pointing
+       to a local resource.
+     */
+    LocalResourceRole = 0,
+
+    /* This role can be used in custom frontends to return a QVariant
+       containing for example an in-memory representation of a complex object.
+       One can then either convert the in-memory representation to a local
+       resource before running a module such that arbitrary backends relying on
+       the LocalResourceRole can process the data. Or one creates a custom
+       backend which knows how to handle QVariants returned by this role.
+     */
+    UserRole = 8
+  };
+
+  enum ParameterFilter {
+    Input = 0x01,
+    Output = 0x02,
+    All = Input | Output
+  };
+  Q_DECLARE_FLAGS(ParameterFilters, ParameterFilter)
+
   ~ctkCmdLineModuleFrontend();
 
   virtual QObject* guiHandle() const = 0;
 
-  virtual QVariant value(const QString& parameter) const = 0;
+  virtual QVariant value(const QString& parameter, int role = LocalResourceRole) const = 0;
   virtual void setValue(const QString& parameter, const QVariant& value) = 0;
 
   virtual ctkCmdLineModuleFuture future() const;
@@ -81,5 +107,7 @@ private:
   QScopedPointer<ctkCmdLineModuleFrontendPrivate> d;
 
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkCmdLineModuleFrontend::ParameterFilters)
 
 #endif // CTKCMDLINEMODULEFRONTEND_H
