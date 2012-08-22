@@ -36,6 +36,8 @@ class ctkCmdLineModuleFuture;
 struct ctkCmdLineModuleManagerPrivate;
 
 /**
+ * \class ctkCmdLineModuleManager
+ * \brief Main manager class to handle loading and unloading of modules.
  * \ingroup CommandLineModulesCore
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleManager : public QObject

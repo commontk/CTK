@@ -39,7 +39,10 @@ namespace Ui {
 class ctkCmdLineModuleExplorerMainWindow;
 }
 
-
+/**
+ * \class ctkCLModuleExplorerMainWindow
+ * \brief Example application main window.
+ */
 class ctkCLModuleExplorerMainWindow : public QMainWindow
 {
   Q_OBJECT

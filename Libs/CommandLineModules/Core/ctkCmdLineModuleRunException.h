@@ -28,6 +28,11 @@
 
 #include <QtCore>
 
+/**
+ * \class ctkCmdLineModuleRunException
+ * \brief Exception class to describe problems with running the module.
+ * \ingroup CommandLineModulesCore
+ */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleRunException
     : public QtConcurrent::Exception, public ctkException
 {

@@ -26,6 +26,11 @@
 
 class QWebView;
 
+/**
+ * \class ctkCmdLineModuleFrontendQtWebKit
+ * \brief QtWebKit specific implementation of ctkCmdLineModuleFrontend
+ * \ingroup CommandLineModulesFrontendQtWebKit
+ */
 class ctkCmdLineModuleFrontendQtWebKit : public ctkCmdLineModuleFrontend
 {
 

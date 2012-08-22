@@ -27,6 +27,11 @@
 #include <QFuture>
 
 /**
+ * \class ctkCmdLineModuleFuture
+ * \brief QFuture sub-class with in addition canCancel() and canPause().
+ * \ingroup CommandLineModulesCore
+ *
+ *
  * QFuture sub-class with two additional methods:
  *
  *   - bool canCancel()

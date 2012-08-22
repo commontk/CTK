@@ -31,15 +31,15 @@ class QStringList;
 struct ctkCmdLineModuleParameterPrivate;
 
 /** 
- *  \ingroup CommandLineModulesCore
+ * \class ctkCmdLineModuleParameter
+ * \brief Single parameter to a module, like a threshold of a filter.
+ * \ingroup CommandLineModulesCore
  *
- *  \brief Single parameter to a module, like a threshold of a filter.
  *
  * ctkCmdLineModuleParameter describes a single parameters to a
  * module. Information on the parameter type, name, flag, label,
  * description, channel, index, default, and constraints can be
  * stored.
- *
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleParameter
 {

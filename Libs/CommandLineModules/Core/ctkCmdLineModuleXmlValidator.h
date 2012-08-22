@@ -31,6 +31,8 @@ class ctkCmdLineModuleXmlValidatorPrivate;
 class QIODevice;
 
 /**
+ * \class ctkCmdLineModuleXmlValidator
+ * \brief Provides XML validation, comparing a modules XML to an .xsd file
  * \ingroup CommandLineModulesCore
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXmlValidator

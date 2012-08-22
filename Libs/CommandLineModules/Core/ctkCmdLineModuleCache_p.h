@@ -28,6 +28,12 @@ struct ctkCmdLineModuleCachePrivate;
 
 class QUrl;
 
+/**
+ * \class ctkCmdLineModuleCache
+ * \brief Private non-exported class to contain a cache of
+ * XML descriptions and time-stamps.
+ * \ingroup CommandLineModulesCore
+ */
 class ctkCmdLineModuleCache
 {
 
@@ -36,13 +42,42 @@ public:
   ctkCmdLineModuleCache(const QString& cacheDir);
   ~ctkCmdLineModuleCache();
 
+  /**
+   * @brief Returns the directory containing the cached information.
+   * @return a directory path
+   */
   QString cacheDir() const;
 
+  /**
+   * @brief Returns the cached XML associated with a module.
+   * @param moduleLocation QUrl representing the location,
+   * for example a file path for a local process.
+   * @return QByteArray the XML
+   */
   QByteArray rawXmlDescription(const QUrl& moduleLocation) const;
+
+  /**
+   * @brief Returns the time stamp associated with a module.
+   * @param moduleLocation QUrl representing the location,
+   * for example a file path for a local process.
+   * @return time since epoch
+   */
   qint64 timeStamp(const QUrl& moduleLocation) const;
 
+  /**
+   * @brief Adds a modules XML and timestamp to the cache.
+   * @param moduleLocation QUrl representing the location,
+   * for example a file path for a local process.
+   * @param timestamp the time
+   * @param xmlDescription the XML
+   */
   void cacheXmlDescription(const QUrl& moduleLocation, qint64 timestamp, const QByteArray& xmlDescription);
 
+  /**
+   * @brief Removes an entry from the cache.
+   * @param moduleLocation QUrl representing the location,
+   * for example a file path for a local process.
+   */
   void removeCacheEntry(const QUrl& moduleLocation);
 
 private:

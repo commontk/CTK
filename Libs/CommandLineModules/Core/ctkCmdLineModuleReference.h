@@ -32,6 +32,9 @@ class ctkCmdLineModuleDescription;
 struct ctkCmdLineModuleReferencePrivate;
 
 /**
+ * \class ctkCmdLineModuleReference
+ * \brief Defines a reference or handle to a module, including location,
+ * XML, description and access to the backend.
  * \ingroup CommandLineModulesCore
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleReference

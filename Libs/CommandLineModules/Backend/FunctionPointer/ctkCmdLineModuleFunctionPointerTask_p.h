@@ -28,6 +28,12 @@
 
 #include <QRunnable>
 
+/**
+ * \class ctkCmdLineModuleFunctionPointerTask
+ * \brief Provides a ctkCmdLineModuleFutureInterface implementation specifically to
+ * run a function pointer asynchronousely.
+ * \ingroup CommandLineModulesBackendFunctionPointer
+ */
 class ctkCmdLineModuleFunctionPointerTask : public ctkCmdLineModuleFutureInterface, public QRunnable
 {
 public:

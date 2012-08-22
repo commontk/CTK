@@ -6,13 +6,29 @@
 CTK provides an API for interfacing with command line modules through a
 self-describing XML description of the supported command line arguments.
 
-\defgroup CommandLineModulesCore Command Line Module Support
+\defgroup CommandLineModulesCore Command Line Module Core
 \ingroup Libs
 \ingroup CommandLineModules
 
-\defgroup CommandLineModulesQtGui Command Line Module QtGui Support
+\defgroup CommandLineModulesBackEnd Command Line Module Back-End
 \ingroup Libs
 \ingroup CommandLineModules
+
+\defgroup CommandLineModulesBackendFunctionPointer Command Line Module Function Pointer
+\ingroup CommandLineModulesBackEnd
+
+\defgroup CommandLineModulesBackendLocalProcess Command Line Module Local Process
+\ingroup CommandLineModulesBackEnd
+
+\defgroup CommandLineModulesFrontEnd Command Line Module Front-End
+\ingroup Libs
+\ingroup CommandLineModules
+
+\defgroup CommandLineModulesFrontendQtGui Command Line Module QtGui
+\ingroup CommandLineModulesFrontEnd
+
+\defgroup CommandLineModulesFrontendQtWebKit Command Line Module QtWebKit
+\ingroup CommandLineModulesFrontEnd
 
 */
 

@@ -27,6 +27,11 @@
 #include "ctkCmdLineModuleFrontendFactory.h"
 #include "ctkCmdLineModuleFrontendQtGui.h"
 
+/**
+ * \class ctkCmdLineModuleFrontendFactoryQtGui
+ * \brief Factory class to instantiate Qt widget based front-ends.
+ * \ingroup CommandLineModulesFrontendQtGui
+ */
 class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleFrontendFactoryQtGui : public ctkCmdLineModuleFrontendFactory
 {
 

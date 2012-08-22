@@ -26,6 +26,11 @@
 
 #include "ctkCmdLineModuleFrontendFactory.h"
 
+/**
+ * \class ctkCmdLineModuleFrontendFactoryQtWebKit
+ * \brief QtWebKit specific implementation of ctkCmdLineModuleFrontendFactory
+ * \ingroup CommandLineModulesFrontendQtWebKit
+ */
 class CTK_CMDLINEMODULEQTWEBKIT_EXPORT ctkCmdLineModuleFrontendFactoryQtWebKit : public ctkCmdLineModuleFrontendFactory
 {
 

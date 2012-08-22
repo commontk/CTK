@@ -31,6 +31,12 @@ struct ctkCmdLineModuleParameterParser;
 
 class QIODevice;
 
+/**
+ * \class ctkCmdLineModuleXmlParser
+ * \brief Performs XML parsing, loading data into a ctkCmdLineModuleDescription
+ * \ingroup CommandLineModulesCore
+ * \see ctkCmdLineModuleDescription
+ */
 class ctkCmdLineModuleXmlParser
 {
 

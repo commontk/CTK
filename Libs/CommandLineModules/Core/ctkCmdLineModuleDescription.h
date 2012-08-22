@@ -35,9 +35,9 @@ class ctkCmdLineModuleParameterGroup;
 class ctkCmdLineModuleParameter;
 
 /**
+ * \class ctkCmdLineModuleDescription
+ * \brief Description of the parameters of a command line module.
  * \ingroup CommandLineModulesCore
- *
- * Description of the parameters of a command line module.
  *
  * The parameters can be used for automated GUI generation or execution
  * of the module.

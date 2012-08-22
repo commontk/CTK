@@ -28,6 +28,10 @@
 
 class ctkCmdLineModuleFuture;
 
+/**
+ * \class ctkCmdLineModuleFutureInterface
+ * \ingroup CommandLineModulesCore
+ */
 template <>
 class QFutureInterface<ctkCmdLineModuleResult> : public QFutureInterfaceBase
 {

@@ -30,6 +30,12 @@
 
 struct ctkCmdLineModuleBackendLocalProcessPrivate;
 
+/**
+ * \class ctkCmdLineModuleBackendLocalProcess
+ * \brief Provides an ctkCmdLineModuleBackend implementation
+ * to run a locally installed command line application.
+ * \ingroup CommandLineModulesBackendLocalProcess
+ */
 class CTK_CMDLINEMODULEBACKENDLP_EXPORT ctkCmdLineModuleBackendLocalProcess : public ctkCmdLineModuleBackend
 {
 

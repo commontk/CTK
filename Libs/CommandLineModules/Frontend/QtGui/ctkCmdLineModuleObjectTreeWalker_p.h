@@ -30,8 +30,8 @@ class QVariant;
 
 /**
  * \class ctkCmdLineModuleObjectTreeWalker
- *
- * Note: Deliberately not exported.
+ * \brief Non-exported helper class to iterate through GUI widgets.
+ * \ingroup CommandLineModulesFrontendQtGui
  */
 class ctkCmdLineModuleObjectTreeWalker
 {

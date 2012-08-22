@@ -28,7 +28,10 @@ class ctkCmdLineModuleFrontend;
 class ctkCmdLineModuleReference;
 
 /**
+ * \class ctkCmdLineModuleFrontendFactory
+ * \brief Factory class to create new front-ends.
  * \ingroup CommandLineModulesCore
+ * \see ctkCmdLineModuleFrontend
  */
 struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFrontendFactory
 {

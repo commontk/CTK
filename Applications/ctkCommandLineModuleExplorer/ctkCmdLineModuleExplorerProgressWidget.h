@@ -34,6 +34,10 @@ namespace Ui {
 class ctkCmdLineModuleExplorerProgressWidget;
 }
 
+/**
+ * \class ctkCmdLineModuleExplorerProgressWidget
+ * \brief Example application progress update widget.
+ */
 class ctkCmdLineModuleExplorerProgressWidget : public QWidget
 {
   Q_OBJECT

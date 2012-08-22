@@ -37,6 +37,12 @@ class QProcess;
 
 struct ctkCmdLineModuleProcessTaskPrivate;
 
+/**
+ * \class ctkCmdLineModuleProcessTask
+ * \brief Implements ctkCmdLineModuleFutureInterface to enabling
+ * running a command line application asynchronously.
+ * \ingroup CommandLineModulesBackendLocalProcess
+ */
 class CTK_CMDLINEMODULEBACKENDLP_EXPORT ctkCmdLineModuleProcessTask
     : public ctkCmdLineModuleFutureInterface, public QRunnable
 {

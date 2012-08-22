@@ -29,6 +29,10 @@
 class ctkCmdLineModuleFrontend;
 struct ctkCmdLineModuleFrontendFactory;
 
+/**
+ * \class ctkCmdLineModuleExplorerTreeWidget
+ * \brief Example application tree widget.
+ */
 class ctkCmdLineModuleExplorerTreeWidget : public QTreeWidget
 {
   Q_OBJECT

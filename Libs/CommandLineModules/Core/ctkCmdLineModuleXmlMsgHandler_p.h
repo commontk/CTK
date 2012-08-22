@@ -24,6 +24,11 @@
 
 #include <QAbstractMessageHandler>
 
+/**
+ * \class QAbstractMessageHandler
+ * \brief Class to handle an XML message.
+ * \ingroup CommandLineModulesCore
+ */
 class ctkCmdLineModuleXmlMsgHandler : public QAbstractMessageHandler
 {
 

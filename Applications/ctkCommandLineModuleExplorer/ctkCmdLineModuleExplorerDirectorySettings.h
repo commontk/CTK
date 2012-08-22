@@ -24,6 +24,10 @@
 
 #include <ctkSettingsPanel.h>
 
+/**
+ * \class ctkCmdLineModuleExplorerDirectorySettings
+ * \brief Example application settings panel.
+ */
 class ctkCmdLineModuleExplorerDirectorySettings : public ctkSettingsPanel
 {
 public:

@@ -30,6 +30,7 @@
  * \class ctkCmdLineModuleMenuFactoryQtGui
  * \brief Takes a QHash of filename and ctkCmdLineModuleReference and produces a QMenu.
  * \author m.clarkson@ucl.ac.uk
+ * \ingroup CommandLineModulesFrontendQtGui
  */
 class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleMenuFactoryQtGui
 {

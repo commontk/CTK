@@ -30,6 +30,11 @@ class ctkCmdLineModuleXmlProgressWatcherPrivate;
 
 class QIODevice;
 
+/**
+ * \class ctkCmdLineModuleXmlProgressWatcher
+ * \brief Provides progress updates of a module.
+ * \ingroup CommandLineModulesCore
+ */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXmlProgressWatcher : public QObject
 {
   Q_OBJECT

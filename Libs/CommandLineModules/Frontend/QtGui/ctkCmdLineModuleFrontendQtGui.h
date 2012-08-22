@@ -34,6 +34,11 @@ class QWidget;
 
 struct ctkCmdLineModuleFrontendQtGuiPrivate;
 
+/**
+ * \class ctkCmdLineModuleFrontendQtGui
+ * \brief A Qt based implementation of the module front end.
+ * \ingroup CommandLineModulesFrontendQtGui
+ */
 class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleFrontendQtGui : public ctkCmdLineModuleFrontend
 {
 

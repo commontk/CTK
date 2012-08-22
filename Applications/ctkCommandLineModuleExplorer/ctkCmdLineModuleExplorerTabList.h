@@ -31,6 +31,10 @@ class ctkCmdLineModuleManager;
 class QTabWidget;
 class QModelIndex;
 
+/**
+ * \class ctkCmdLineModuleExplorerTabList
+ * \brief Example application tab list
+ */
 class ctkCmdLineModuleExplorerTabList : public QObject
 {
   Q_OBJECT

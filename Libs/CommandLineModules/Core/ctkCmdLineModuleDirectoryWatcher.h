@@ -33,15 +33,18 @@ class ctkCmdLineModuleDirectoryWatcherPrivate;
 
 /**
  * \class ctkCmdLineModuleDirectoryWatcher
- * \brief Provides directory scanning to load new modules into a ctkCmdLineModuleManager.
+ * \brief Provides directory scanning to automatically load new modules
+ * into a ctkCmdLineModuleManager.
  * \ingroup CommandLineModulesCore
  * \author m.clarkson@ucl.ac.uk
  *
- * This class provides directory scanning and automatic loading of command line modules.
- * The client should call setDirectories() to set the list of directories, and listen
- * to the signal modulesChanged to know when to re-build the GUI representation.
+ * This class provides directory scanning and automatic loading of command
+ * line modules. The client should call setDirectories() to set the list of
+ * directories, and listen to the signal modulesChanged to know when to
+ * re-build the GUI representation.
  */
-class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleDirectoryWatcher : public QObject
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleDirectoryWatcher
+: public QObject
 {
   Q_OBJECT
 
@@ -58,7 +61,8 @@ public:
 
   /**
    * \brief Set the directories to be watched.
-   * \param directories a StringList of directory names. If any of these are invalid, they will be filtered out and ignored.
+   * \param directories a StringList of directory names. If any of these are
+   * invalid, they will be filtered out and ignored.
    */
   void setDirectories(const QStringList& directories);
 
@@ -68,7 +72,8 @@ public:
   QStringList directories() const;
 
   /**
-   * \brief Returns the list of files (command line apps) currently being watched.
+   * \brief Returns the list of files (command line apps)
+   * currently being watched.
    */
   QStringList files() const;
 

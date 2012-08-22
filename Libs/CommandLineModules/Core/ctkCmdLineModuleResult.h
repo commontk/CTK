@@ -25,6 +25,11 @@
 #include <QString>
 #include <QVariant>
 
+/**
+ * \class ctkCmdLineModuleResult
+ * \brief Describes the output of a command line module.
+ * \ingroup CommandLineModulesCore
+ */
 class ctkCmdLineModuleResult
 {
 public:

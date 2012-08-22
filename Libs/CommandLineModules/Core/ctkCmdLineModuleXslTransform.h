@@ -31,6 +31,8 @@ class ctkCmdLineModuleXslTransformPrivate;
 class QIODevice;
 
 /**
+ * \class ctkCmdLineModuleXslTransform
+ * \brief Provides a transformation from XML to the Qt ui file format.
  * \ingroup CommandLineModulesCore
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXslTransform

@@ -91,6 +91,11 @@ Q_DECLARE_METATYPE(QList<int>*)
 
 struct ctkCmdLineModuleBackendFunctionPointerPrivate;
 
+/**
+ * \class ctkCmdLineModuleBackendFunctionPointer
+ * \brief Provides a back-end implementation to enable directly calling a function pointer.
+ * \ingroup CommandLineModulesBackendFunctionPointer
+ */
 class CTK_CMDLINEMODULEBACKENDFP_EXPORT ctkCmdLineModuleBackendFunctionPointer : public ctkCmdLineModuleBackend
 {
 
