@@ -139,16 +139,16 @@ QList<ctkCmdLineModuleParameter> ctkCmdLineModuleFrontend::parameters(const QStr
     foreach(ctkCmdLineModuleParameter param, group.parameters())
     {
       if (filters.testFlag(Input) &&
-          (param.channel().isEmpty() || param.channel().compare("input", Qt::CaseInsensitive)))
+          (param.channel().isEmpty() || param.channel().compare("input", Qt::CaseInsensitive) == 0))
       {
-        if (type.isEmpty() || param.tag().compare(type, Qt::CaseInsensitive))
+        if (type.isEmpty() || param.tag().compare(type, Qt::CaseInsensitive) == 0)
         {
           parameters << param;
         }
       }
-      if (filters.testFlag(Output) && param.channel().compare("output", Qt::CaseInsensitive))
+      if (filters.testFlag(Output) && param.channel().compare("output", Qt::CaseInsensitive) == 0)
       {
-        if (type.isEmpty() || param.tag().compare(type, Qt::CaseInsensitive))
+        if (type.isEmpty() || param.tag().compare(type, Qt::CaseInsensitive) == 0)
         {
           parameters << param;
         }
