@@ -63,11 +63,6 @@ set(KIT_SRCS
   ctkDateRangeWidget.h
   ctkDirectoryButton.cpp
   ctkDirectoryButton.h
-  ctkDirectoryListView.cpp
-  ctkDirectoryListView.h
-  ctkDirectoryListWidget.cpp
-  ctkDirectoryListWidget.h
-  ctkDirectoryListWidget_p.h
   ctkDoubleRangeSlider.cpp
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.cpp
@@ -113,6 +108,11 @@ set(KIT_SRCS
   ctkModalityWidget.h
   ctkPathLineEdit.cpp
   ctkPathLineEdit.h
+  ctkPathListButtonsWidget.cpp
+  ctkPathListButtonsWidget.h
+  ctkPathListButtonsWidget_p.h
+  ctkPathListWidget.cpp
+  ctkPathListWidget.h
   ctkPixmapIconEngine.cpp
   ctkPixmapIconEngine.h
   ctkPopupWidget.cpp
@@ -208,9 +208,6 @@ set(KIT_MOC_SRCS
   ctkCrosshairLabel.h
   ctkDateRangeWidget.h
   ctkDirectoryButton.h
-  ctkDirectoryListView.h
-  ctkDirectoryListWidget.h
-  ctkDirectoryListWidget_p.h
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
   ctkDynamicSpacer.h
@@ -234,6 +231,8 @@ set(KIT_MOC_SRCS
   ctkMessageBox.h
   ctkModalityWidget.h
   ctkPathLineEdit.h
+  ctkPathListButtonsWidget.h
+  ctkPathListButtonsWidget_p.h
   ctkPopupWidget.h
   ctkPopupWidget_p.h
   ctkQImageView.h
@@ -269,6 +268,10 @@ set(KIT_MOC_SRCS
   ctkWorkflowWidgetStep_p.h
   )
 
+QT4_GENERATE_MOCS(
+  ctkPathListWidget.h
+)
+
 # UI files
 set(KIT_UI_FORMS
   Resources/UI/ctkAddRemoveComboBox.ui
@@ -277,13 +280,13 @@ set(KIT_UI_FORMS
   Resources/UI/ctkErrorLogWidget.ui
   Resources/UI/ctkMaterialPropertyWidget.ui
   Resources/UI/ctkModalityWidget.ui
+  Resources/UI/ctkPathListButtonsWidget.ui
   Resources/UI/ctkScreenshotDialog.ui
   Resources/UI/ctkSettingsDialog.ui
   Resources/UI/ctkSliderWidget.ui
   Resources/UI/ctkThumbnailLabel.ui
   Resources/UI/ctkThumbnailListWidget.ui
   Resources/UI/ctkWorkflowGroupBox.ui
-  Resources/UI/ctkDirectoryListWidget.ui
   )
 
 # Resources
