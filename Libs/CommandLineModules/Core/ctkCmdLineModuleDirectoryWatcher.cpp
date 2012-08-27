@@ -21,6 +21,7 @@
 #include "ctkCmdLineModuleDirectoryWatcher.h"
 #include "ctkCmdLineModuleDirectoryWatcher_p.h"
 #include "ctkCmdLineModuleManager.h"
+#include "ctkCmdLineModuleConcurrentHelpers.h"
 #include "ctkException.h"
 
 #include <QObject>
@@ -33,72 +34,6 @@
 #include <QtConcurrentMap>
 
 #include <iostream>
-
-//-----------------------------------------------------------------------------
-// A function object for concurrently adding modules
-namespace {
-struct AddModule
-{
-  typedef ctkCmdLineModuleReference result_type;
-
-  AddModule(ctkCmdLineModuleManager* manager, bool debug = false)
-    : ModuleManager(manager), Debug(debug)
-  {}
-
-  ctkCmdLineModuleReference operator()(const QString& moduleLocation)
-  {
-    try
-    {
-      return this->ModuleManager->registerModule(QUrl::fromLocalFile(moduleLocation));
-    }
-    catch (const ctkException& e)
-    {
-      if (this->Debug)
-      {
-        qDebug() << e;
-      }
-      return ctkCmdLineModuleReference();
-    }
-    catch (...)
-    {
-      if (this->Debug)
-      {
-        qDebug() << "Registering module" << moduleLocation << "failed with an unknown exception.";
-      }
-      return ctkCmdLineModuleReference();
-    }
-  }
-
-  ctkCmdLineModuleManager* ModuleManager;
-  bool Debug;
-};
-}
-
-//-----------------------------------------------------------------------------
-// A function object for concurrently removing modules
-namespace {
-struct RemoveModule
-{
-  typedef bool result_type;
-
-  RemoveModule(ctkCmdLineModuleManager* manager)
-    : ModuleManager(manager)
-  {}
-
-  bool operator()(const QString& moduleLocation)
-  {
-    ctkCmdLineModuleReference ref = this->ModuleManager->moduleReference(QUrl::fromLocalFile(moduleLocation));
-    if (ref)
-    {
-      this->ModuleManager->unregisterModule(ref);
-      return true;
-    }
-    return false;
-  }
-
-  ctkCmdLineModuleManager* ModuleManager;
-};
-}
 
 
 //-----------------------------------------------------------------------------
@@ -388,7 +323,8 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::updateModuleReferences(const QStri
 //-----------------------------------------------------------------------------
 QList<ctkCmdLineModuleReference> ctkCmdLineModuleDirectoryWatcherPrivate::loadModules(const QStringList& executables)
 {
-  QList<ctkCmdLineModuleReference> refs = QtConcurrent::blockingMapped(executables, AddModule(this->ModuleManager, this->Debug));
+  QList<ctkCmdLineModuleReference> refs = QtConcurrent::blockingMapped(executables,
+                                                                       ctkCmdLineModuleConcurrentRegister(this->ModuleManager, this->Debug));
 
   for (int i = 0; i < executables.size(); ++i)
   {
@@ -404,7 +340,7 @@ QList<ctkCmdLineModuleReference> ctkCmdLineModuleDirectoryWatcherPrivate::loadMo
 //-----------------------------------------------------------------------------
 void ctkCmdLineModuleDirectoryWatcherPrivate::unloadModules(const QStringList& executables)
 {
-  QtConcurrent::blockingMapped(executables, RemoveModule(this->ModuleManager));
+  QtConcurrent::blockingMapped(executables, ctkCmdLineModuleConcurrentUnRegister(this->ModuleManager));
   foreach(QString executable, executables)
   {
     this->MapFileNameToReference.remove(executable);

@@ -17,6 +17,7 @@ set(KIT_SRCS
   ctkCmdLineModuleBackend.cpp
   ctkCmdLineModuleCache.cpp
   ctkCmdLineModuleCache_p.h
+  ctkCmdLineModuleConcurrentHelpers.cpp
   ctkCmdLineModuleDefaultPathBuilder.cpp
   ctkCmdLineModuleDescription.cpp
   ctkCmdLineModuleDescription_p.h
