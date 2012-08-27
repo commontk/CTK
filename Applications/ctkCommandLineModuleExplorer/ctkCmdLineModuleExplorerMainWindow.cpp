@@ -23,10 +23,13 @@
 #include "ui_ctkCmdLineModuleExplorerMainWindow.h"
 
 #include "ctkCmdLineModuleExplorerDirectorySettings.h"
+#include "ctkCmdLineModuleExplorerModulesSettings.h"
 #include "ctkCmdLineModuleExplorerTabList.h"
 #include "ctkCmdLineModuleExplorerProgressWidget.h"
+#include "ctkCmdLineModuleExplorerConstants.h"
 
 #include <ctkCmdLineModuleManager.h>
+#include <ctkCmdLineModuleConcurrentHelpers.h>
 #include <ctkCmdLineModuleDescription.h>
 #include <ctkCmdLineModuleFrontendFactoryQtGui.h>
 #include <ctkCmdLineModuleFrontendFactoryQtWebKit.h>
@@ -36,6 +39,7 @@
 
 #include <ctkSettingsDialog.h>
 
+#include <QtConcurrentMap>
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QFutureSynchronizer>
@@ -51,6 +55,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   directoryWatcher(&moduleManager)
 {
   ui->setupUi(this);
+
+  settings.restoreState(this->objectName(), *this);
 
   // Frontends
   moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtGui;
@@ -70,7 +76,10 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   }
 
   settingsDialog = new ctkSettingsDialog(this);
-  settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings());
+  settings.restoreState(settingsDialog->objectName(), *settingsDialog);
+  settingsDialog->setSettings(&settings);
+  settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings(&directoryWatcher));
+  settingsDialog->addPanel(new ctkCmdLineModuleExplorerModulesSettings(&moduleManager));
 
   tabList.reset(new ctkCmdLineModuleExplorerTabList(ui->mainTabWidget));
 
@@ -101,8 +110,13 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
     moduleManager.registerModule(fpModule);
   }
 
+  // Register persistent modules
+  QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
+                       ctkCmdLineModuleConcurrentRegister(&moduleManager));
+
+  // Start watching directories
   directoryWatcher.setDebug(true);
-  directoryWatcher.setDirectories(QStringList(QCoreApplication::applicationDirPath()));
+  directoryWatcher.setDirectories(settings.value(ctkCmdLineModuleExplorerConstants::KEY_SEARCH_PATHS).toStringList());
 
   moduleTabActivated(NULL);
 
@@ -113,6 +127,9 @@ ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
 {
   qDeleteAll(moduleBackends);
   qDeleteAll(moduleFrontendFactories);
+
+  settings.saveState(*this, this->objectName());
+  settings.saveState(*settingsDialog, settingsDialog->objectName());
 }
 
 void ctkCLModuleExplorerMainWindow::addModule(const QUrl &location)

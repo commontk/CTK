@@ -20,14 +20,28 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleExplorerDirectorySettings.h"
+#include "ctkCmdLineModuleExplorerConstants.h"
 
 #include <ctkPathListWidget.h>
+#include <ctkCmdLineModuleDirectoryWatcher.h>
 
 #include <QVBoxLayout>
 
-ctkCmdLineModuleExplorerDirectorySettings::ctkCmdLineModuleExplorerDirectorySettings()
+ctkCmdLineModuleExplorerDirectorySettings::ctkCmdLineModuleExplorerDirectorySettings(ctkCmdLineModuleDirectoryWatcher *directoryWatcher)
+  : DirectoryWatcher(directoryWatcher)
 {
-  this->setWindowTitle("Module Paths");
-  this->setLayout(new QVBoxLayout());
-  this->layout()->addWidget(new ctkPathListWidget());
+  this->setupUi(this);
+
+  this->PathListButtonsWidget->init(this->PathListWidget);
+
+  this->registerProperty(ctkCmdLineModuleExplorerConstants::KEY_SEARCH_PATHS,
+                         this->PathListWidget, "paths", SIGNAL(pathsChanged(QStringList,QStringList)));
+}
+
+void ctkCmdLineModuleExplorerDirectorySettings::applySettings()
+{
+  QVariant newSearchPaths = this->propertyValue(ctkCmdLineModuleExplorerConstants::KEY_SEARCH_PATHS);
+  this->DirectoryWatcher->setDirectories(newSearchPaths.toStringList());
+
+  ctkSettingsPanel::applySettings();
 }

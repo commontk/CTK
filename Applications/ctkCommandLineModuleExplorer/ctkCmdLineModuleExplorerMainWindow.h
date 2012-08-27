@@ -25,6 +25,7 @@
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleDirectoryWatcher.h>
 #include <ctkCmdLineModuleFuture.h>
+#include <ctkSettings.h>
 
 #include <QMainWindow>
 #include <QTimer>
@@ -92,6 +93,7 @@ private:
 
   ctkCmdLineModuleDirectoryWatcher directoryWatcher;
 
+  ctkSettings settings;
   ctkSettingsDialog* settingsDialog;
 
 };
