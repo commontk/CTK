@@ -70,7 +70,7 @@ ctkCmdLineModuleReference &ctkCmdLineModuleReference::operator =(const ctkCmdLin
 }
 
 //----------------------------------------------------------------------------
-ctkCmdLineModuleReference::operator bool()
+ctkCmdLineModuleReference::operator bool() const
 {
   return !d->RawXmlDescription.isEmpty();
 }

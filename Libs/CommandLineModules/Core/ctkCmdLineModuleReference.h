@@ -47,7 +47,7 @@ public:
   ctkCmdLineModuleReference(const ctkCmdLineModuleReference& ref);
   ctkCmdLineModuleReference& operator=(const ctkCmdLineModuleReference& ref);
 
-  operator bool();
+  operator bool() const;
 
   ctkCmdLineModuleDescription description() const;
 
