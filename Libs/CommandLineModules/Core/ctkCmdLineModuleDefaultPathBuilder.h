@@ -25,7 +25,7 @@
 #include <QStringList>
 #include <QScopedPointer>
 
-class ctkCmdLineModuleDefaultPathBuilderPrivate;
+struct ctkCmdLineModuleDefaultPathBuilderPrivate;
 
 /**
  * \class ctkCmdLineModuleDefaultPathBuilder

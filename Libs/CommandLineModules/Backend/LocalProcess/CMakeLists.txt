@@ -22,7 +22,6 @@ set(KIT_SRCS
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  ctkCmdLineModuleProcessTask.h
   ctkCmdLineModuleProcessWatcher_p.h
 )
 

@@ -62,7 +62,7 @@ public:
 private:
 
   friend class ctkCmdLineModuleManager;
-  friend uint qHash(const ctkCmdLineModuleReference&);
+  friend uint CTK_CMDLINEMODULECORE_EXPORT qHash(const ctkCmdLineModuleReference&);
 
   QSharedDataPointer<ctkCmdLineModuleReferencePrivate> d;
 
@@ -70,6 +70,6 @@ private:
 
 Q_DECLARE_METATYPE(ctkCmdLineModuleReference)
 
-CTK_CMDLINEMODULECORE_EXPORT uint qHash(const ctkCmdLineModuleReference& moduleRef);
+uint CTK_CMDLINEMODULECORE_EXPORT qHash(const ctkCmdLineModuleReference& moduleRef);
 
 #endif // CTKCMDLINEMODULEREFERENCE_H
