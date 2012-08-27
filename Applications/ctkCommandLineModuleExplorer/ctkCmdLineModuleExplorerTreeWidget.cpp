@@ -116,7 +116,31 @@ void ctkCmdLineModuleExplorerTreeWidget::addModuleItem(const ctkCmdLineModuleRef
     rootItem->setText(0, category);
     TreeWidgetCategories[category] = rootItem;
   }
-  new ctkCmdLineModuleTreeWidgetItem(rootItem, moduleRef);
+  TreeWidgetItems[moduleRef] = new ctkCmdLineModuleTreeWidgetItem(rootItem, moduleRef);
+}
+
+void ctkCmdLineModuleExplorerTreeWidget::removeModuleItem(const ctkCmdLineModuleReference &moduleRef)
+{
+  QString category = moduleRef.description().category();
+  if (category.isEmpty())
+  {
+    category = CATEGORY_UNKNOWN;
+  }
+
+
+  QTreeWidgetItem* treeWidgetItem = TreeWidgetItems.take(moduleRef);
+  if (treeWidgetItem == NULL) return;
+
+  this->removeItemWidget(treeWidgetItem, 0);
+  delete treeWidgetItem;
+
+  QTreeWidgetItem* rootItem = TreeWidgetCategories[category];
+  if (rootItem && rootItem->childCount() == 0)
+  {
+    this->removeItemWidget(rootItem, 0);
+    TreeWidgetCategories.remove(category);
+    delete rootItem;
+  }
 }
 
 void ctkCmdLineModuleExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)

@@ -44,6 +44,7 @@ public:
   void setModuleFrontendFactories(const QList<ctkCmdLineModuleFrontendFactory*>& frontendFactories);
 
   Q_SLOT void addModuleItem(const ctkCmdLineModuleReference& moduleRef);
+  Q_SLOT void removeModuleItem(const ctkCmdLineModuleReference& moduleRef);
 
   Q_SIGNAL void moduleDoubleClicked(ctkCmdLineModuleReference moduleRef);
   Q_SIGNAL void moduleFrontendCreated(ctkCmdLineModuleFrontend* moduleFrontend);
@@ -65,6 +66,7 @@ private:
   ctkCmdLineModuleReference ContextReference;
   QList<ctkCmdLineModuleFrontendFactory*> FrontendFactories;
   QHash<QString, QTreeWidgetItem*> TreeWidgetCategories;
+  QHash<ctkCmdLineModuleReference, QTreeWidgetItem*> TreeWidgetItems;
   QHash<QAction*, ctkCmdLineModuleFrontendFactory*> ActionsToFrontendFactoryMap;
 };
 

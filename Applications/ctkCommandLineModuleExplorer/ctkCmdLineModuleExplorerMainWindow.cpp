@@ -76,6 +76,7 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
 
   // If a module is registered via the ModuleManager, add it the tree
   connect(&moduleManager, SIGNAL(moduleRegistered(ctkCmdLineModuleReference)), ui->modulesTreeWidget, SLOT(addModuleItem(ctkCmdLineModuleReference)));
+  connect(&moduleManager, SIGNAL(moduleUnregistered(ctkCmdLineModuleReference)), ui->modulesTreeWidget, SLOT(removeModuleItem(ctkCmdLineModuleReference)));
   // Double-clicking on an item in the tree creates a new tab with the default frontend
   connect(ui->modulesTreeWidget, SIGNAL(moduleDoubleClicked(ctkCmdLineModuleReference)), this, SLOT(addModuleTab(ctkCmdLineModuleReference)));
   // React to specific frontend creations
