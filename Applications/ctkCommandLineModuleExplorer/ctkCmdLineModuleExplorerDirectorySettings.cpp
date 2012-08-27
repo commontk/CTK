@@ -21,7 +21,7 @@
 
 #include "ctkCmdLineModuleExplorerDirectorySettings.h"
 
-#include <ctkDirectoryListWidget.h>
+#include <ctkPathListWidget.h>
 
 #include <QVBoxLayout>
 
@@ -29,5 +29,5 @@ ctkCmdLineModuleExplorerDirectorySettings::ctkCmdLineModuleExplorerDirectorySett
 {
   this->setWindowTitle("Module Paths");
   this->setLayout(new QVBoxLayout());
-  this->layout()->addWidget(new ctkDirectoryListWidget());
+  this->layout()->addWidget(new ctkPathListWidget());
 }

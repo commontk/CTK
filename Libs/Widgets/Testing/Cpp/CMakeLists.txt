@@ -50,6 +50,8 @@ set(TEST_SOURCES
   ctkMessageBoxDontShowAgainTest.cpp
   ctkModalityWidgetTest1.cpp
   ctkPathLineEditTest1.cpp
+  ctkPathListWidgetTest.cpp
+  ctkPathListWidgetWithButtonsTest.cpp
   ctkPopupWidgetTest1.cpp
   ctkRangeSliderTest.cpp
   ctkRangeSliderTest1.cpp
@@ -173,6 +175,8 @@ QT4_GENERATE_MOCS(
   ctkFlatProxyModelTest.cpp
   ctkFontButtonTest.cpp
   ctkMessageBoxDontShowAgainTest.cpp
+  ctkPathListWidgetTest.cpp
+  ctkPathListWidgetWithButtonsTest.cpp
   ctkRangeSliderTest.cpp
   ctkSettingsPanelTest.cpp
   )
@@ -242,6 +246,8 @@ SIMPLE_TEST( ctkMenuComboBoxTest3 )
 SIMPLE_TEST( ctkMessageBoxDontShowAgainTest )
 SIMPLE_TEST( ctkModalityWidgetTest1 )
 SIMPLE_TEST( ctkPathLineEditTest1 )
+SIMPLE_TEST( ctkPathListWidgetTest )
+SIMPLE_TEST( ctkPathListWidgetWithButtonsTest )
 SIMPLE_TEST( ctkPopupWidgetTest1 )
 SIMPLE_TEST( ctkRangeSliderTest )
 SIMPLE_TEST( ctkRangeSliderTest1 )
