@@ -50,19 +50,21 @@ public:
 
   enum ParameterValueRole {
 
-    /* Data returned using this role must not be of any type not supported by
-       QVariant by default. For complex parameter types (like file, image,
-       geometry, etc.) the data must be convertible to a QString pointing
-       to a local resource.
+    /**
+     * Data returned using this role must not be of any type not supported by
+     * QVariant by default. For complex parameter types (like file, image,
+     * geometry, etc.) the data must be convertible to a QString pointing
+     * to a local resource.
      */
     LocalResourceRole = 0,
 
-    /* This role can be used in custom frontends to return a QVariant
-       containing for example an in-memory representation of a complex object.
-       One can then either convert the in-memory representation to a local
-       resource before running a module such that arbitrary backends relying on
-       the LocalResourceRole can process the data. Or one creates a custom
-       backend which knows how to handle QVariants returned by this role.
+    /**
+     * This role can be used in custom frontends to return a QVariant
+     * containing for example an in-memory representation of a complex object.
+     * One can then either convert the in-memory representation to a local
+     * resource before running a module such that arbitrary backends relying on
+     * the LocalResourceRole can process the data. Or one creates a custom
+     * backend which knows how to handle QVariants returned by this role.
      */
     UserRole = 8
   };
