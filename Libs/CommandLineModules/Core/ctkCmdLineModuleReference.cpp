@@ -104,3 +104,9 @@ ctkCmdLineModuleBackend *ctkCmdLineModuleReference::backend() const
 {
   return d->Backend;
 }
+
+//----------------------------------------------------------------------------
+uint qHash(const ctkCmdLineModuleReference& moduleRef)
+{
+  return qHash(moduleRef.d.data());
+}
