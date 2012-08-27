@@ -107,7 +107,7 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
   QObject::connect(this->CancelButton, SIGNAL(clicked()), q, SLOT(cancel()));
 
   this->results->setModel(&this->Model);
-  this->results->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  this->results->setSelectionMode(QAbstractItemView::NoSelection);
   this->results->setSelectionBehavior(QAbstractItemView::SelectRows);
 
   QObject::connect(this->results->selectionModel(), 
@@ -240,6 +240,7 @@ void ctkDICOMQueryRetrieveWidget::query()
     {
     d->Model.setDatabase(d->QueryResultDatabase.database());
     }
+  d->RetrieveButton->setEnabled(d->QueriesByStudyUID.keys().size() != 0);
 
   progress.setValue(progress.maximum());
   d->ProgressDialog = 0;
@@ -256,21 +257,23 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     return;
     }
 
-  // for each of the selected server nodes, send the query
   QProgressDialog progress("Retrieve from DICOM servers", "Cancel", 0, 0, this,
                            Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
   // We don't want the progress dialog to resize itself, so we bypass the label
   // by creating our own
   QLabel* progressLabel = new QLabel(tr("Initialization..."));
-    if(d->UseProgressDialog){
-  progress.setLabel(progressLabel);
-  d->ProgressDialog = &progress;
-  progress.setWindowModality(Qt::ApplicationModal);
-  progress.setMinimumDuration(0);
-  progress.setValue(0);
-  progress.setMaximum(0);
-  progress.setAutoClose(false);
-  progress.show();
+
+  // for each of the selected server nodes, send the query
+  if(d->UseProgressDialog)
+    {
+    progress.setLabel(progressLabel);
+    d->ProgressDialog = &progress;
+    progress.setWindowModality(Qt::ApplicationModal);
+    progress.setMinimumDuration(0);
+    progress.setValue(0);
+    progress.setMaximum(0);
+    progress.setAutoClose(false);
+    progress.show();
     }
 
   QMap<QString,QVariant> serverParameters = d->ServerNodeWidget->parameters();
@@ -281,17 +284,18 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
   retrieve->setMoveDestinationAETitle( serverParameters["StorageAETitle"].toString() );
 
   // do the rerieval for each selected series
+  // that is selected in the tree view
   foreach( QString studyUID, d->QueriesByStudyUID.keys() )
     {
-        if(d->UseProgressDialog){
-    if (progress.wasCanceled())
+    if(d->UseProgressDialog)
       {
-      break;
-      }
-
-    progressLabel->setText(QString(tr("Retrieving:\n%1")).arg(studyUID));
-    this->updateRetrieveProgress(0);
+      if (progress.wasCanceled())
+        {
+        break;
         }
+      progressLabel->setText(QString(tr("Retrieving:\n%1")).arg(studyUID));
+      this->updateRetrieveProgress(0);
+      }
 
     // Get information which server we want to get the study from and prepare request accordingly
     ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
@@ -305,13 +309,14 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     logger.debug("About to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
     logger.info ( "Starting to retrieve" );
 
-        if(d->UseProgressDialog){
-    connect(&progress, SIGNAL(canceled()), retrieve, SLOT(cancel()));
-    connect(retrieve, SIGNAL(progress(QString)),
-            progressLabel, SLOT(setText(QString)));
-    connect(retrieve, SIGNAL(progress(int)),
-            this, SLOT(updateRetrieveProgress(int)));
-        }
+    if(d->UseProgressDialog)
+      {
+      connect(&progress, SIGNAL(canceled()), retrieve, SLOT(cancel()));
+      connect(retrieve, SIGNAL(progress(QString)),
+              progressLabel, SLOT(setText(QString)));
+      connect(retrieve, SIGNAL(progress(int)),
+              this, SLOT(updateRetrieveProgress(int)));
+      }
     try
       {
       // perform the retrieve
@@ -327,45 +332,41 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     catch (std::exception e)
       {
       logger.error ( "Retrieve failed" );
-            if(d->UseProgressDialog){
-      if ( QMessageBox::question ( this, 
-            tr("Query Retrieve"), tr("Retrieve failed.  Keep trying?"),
-            QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+      if(d->UseProgressDialog)
         {
-        continue;
-        }
-      else
-        {
-        break;
+        if ( QMessageBox::question ( this, 
+              tr("Query Retrieve"), tr("Retrieve failed.  Keep trying?"),
+              QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+          {
+          continue;
+          }
+        else
+          {
+          break;
+          }
         }
       }
-        }
 
-        if(d->UseProgressDialog){
-    disconnect(retrieve, SIGNAL(progress(QString)),
-            progressLabel, SLOT(setText(QString)));
-    disconnect(retrieve, SIGNAL(progress(int)),
-            this, SLOT(updateRetrieveProgress(int)));
-    disconnect(&progress, SIGNAL(canceled()), retrieve, SLOT(cancel()));
-        }
-    // Store retrieve structure for later use.
-    // Comment MO: I do not think that makes much sense; you store per study one fat
-    // structure including an SCU. Also, I switched the code to re-use the retrieve
-    // SCU in order to not start/stop the association for every study. In general,
-    // it would make most sense in my opinion to have one SCU for each server you
-    // like to retrieve from. There is no good reason to have one for each study.
-    // d->RetrievalsByStudyUID[studyUID] = retrieve;
+    if(d->UseProgressDialog)
+      {
+      disconnect(retrieve, SIGNAL(progress(QString)),
+              progressLabel, SLOT(setText(QString)));
+      disconnect(retrieve, SIGNAL(progress(int)),
+              this, SLOT(updateRetrieveProgress(int)));
+      disconnect(&progress, SIGNAL(canceled()), retrieve, SLOT(cancel()));
+      }
     logger.info ( "Retrieve success" );
     }
+
   if(d->UseProgressDialog)
-  {
+    {
     QString message(tr("Retrieve Process Finished"));
     if (retrieve->wasCanceled())
       {
       message = tr("Retrieve Process Canceled");
       }
     QMessageBox::information ( this, tr("Query Retrieve"), message );
-  }
+    }
   emit studiesRetrieved(d->RetrievalsByStudyUID.keys());
 
   delete retrieve;
@@ -440,7 +441,11 @@ void ctkDICOMQueryRetrieveWidget::onSelectionChanged(const QItemSelection &selec
   Q_D(ctkDICOMQueryRetrieveWidget);
 
   logger.debug("Selection change");
-  d->RetrieveButton->setEnabled(d->results->selectionModel()->hasSelection());
+  // TODO: allow selection of individual studies to retrieve.  Requires
+  // monitoring the selection and mapping to the study list (which is not
+  // straightforward because the dataroles of patient and series don't
+  // map directly to studies).
+  //d->RetrieveButton->setEnabled(d->results->selectionModel()->hasSelection());
 }
 
 QMap<QString,QVariant> ctkDICOMQueryRetrieveWidget::getServerParameters()
