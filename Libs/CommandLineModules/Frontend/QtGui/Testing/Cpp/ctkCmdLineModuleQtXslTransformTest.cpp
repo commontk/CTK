@@ -34,6 +34,9 @@ class ctkCmdLineModuleQtXslTransformTester: public QObject
 {
   Q_OBJECT
 private slots:
+
+  void initTestCase();
+
   void testTransform();
   void testTransform_data();
 
@@ -169,6 +172,14 @@ QString integerWidgetSpinBoxFooter =
   "                        </item>\n"
   ;
 
+
+// ----------------------------------------------------------------------------
+void ctkCmdLineModuleQtXslTransformTester::initTestCase()
+{
+  // Introduce a dummy linker dependency to CTKCommandLineModulesFrontendQtGui to
+  // get access to the ctkCmdLineModuleXmlToQtUi.xsl resource.
+  ctkCmdLineModuleFrontendFactoryQtGui guiFactory;
+}
 
 // ----------------------------------------------------------------------------
 void ctkCmdLineModuleQtXslTransformTester::testTransform()
@@ -452,17 +463,5 @@ void ctkCmdLineModuleQtXslTransformTester::testXslExtraTransformation_data()
 }
 
 // ----------------------------------------------------------------------------
-//CTK_TEST_MAIN(ctkCmdLineModuleQtXslTransformTest)
-int ctkCmdLineModuleQtXslTransformTest(int argc, char *argv[])
-{
-  QCoreApplication app(argc, argv);
-  QTEST_DISABLE_KEYPAD_NAVIGATION
-
-  // Introduce a dummy linker dependency to CTKCommandLineModulesFrontendQtGui to
-  // get access to the ctkCmdLineModuleXmlToQtUi.xsl resource.
-  ctkCmdLineModuleFrontendFactoryQtGui guiFactory;
-
-  ctkCmdLineModuleQtXslTransformTester tc;
-  return QTest::qExec(&tc, argc, argv);
-}
+CTK_TEST_MAIN(ctkCmdLineModuleQtXslTransformTest)
 #include "moc_ctkCmdLineModuleQtXslTransformTest.cpp"

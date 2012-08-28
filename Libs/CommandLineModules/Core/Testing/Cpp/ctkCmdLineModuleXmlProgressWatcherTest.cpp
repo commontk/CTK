@@ -24,15 +24,17 @@
 
 #include "ctkCmdLineModuleSignalTester.h"
 
+#include "ctkTest.h"
+
 #include <QCoreApplication>
 #include <QBuffer>
 #include <QDataStream>
 #include <QDebug>
 
-#include <cstdlib>
 
 namespace {
 
+//-----------------------------------------------------------------------------
 // Custom signal tester
 class SignalTester : public ctkCmdLineModuleSignalTester
 {
@@ -82,7 +84,21 @@ public:
   float accumulatedProgress;
 };
 
-bool xmlProgressWatcherTestSignalsAndValues()
+}
+
+//-----------------------------------------------------------------------------
+class ctkCmdLineModuleXmlProgressWatcherTester : public QObject
+{
+  Q_OBJECT
+
+private Q_SLOTS:
+
+  void testSignalsAndValues();
+  void testMalformedXml();
+};
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleXmlProgressWatcherTester::testSignalsAndValues()
 {
   // Test data
   QByteArray filterStart = "<filter-start>\n"
@@ -106,14 +122,11 @@ bool xmlProgressWatcherTestSignalsAndValues()
   signalTester.connect(&progressWatcher, SIGNAL(filterXmlError(QString)), &signalTester, SLOT(filterXmlError(QString)));
 
   buffer.write(filterStart);
-  QCoreApplication::processEvents();
   buffer.write(filterProgress.arg(0.3).toLatin1());
-  QCoreApplication::processEvents();
   buffer.write(filterProgress.arg(0.6).toLatin1());
-  QCoreApplication::processEvents();
   buffer.write(filterProgress.arg(0.9).toLatin1());
-  QCoreApplication::processEvents();
   buffer.write(filterEnd);
+
   QCoreApplication::processEvents();
 
   QList<QString> expectedSignals;
@@ -126,24 +139,16 @@ bool xmlProgressWatcherTestSignalsAndValues()
   if (!signalTester.error.isEmpty())
   {
     qDebug() << signalTester.error;
-    return false;
+    QFAIL("XML parsing error");
   }
 
-  if (!signalTester.checkSignals(expectedSignals))
-  {
-    return false;
-  }
+  QVERIFY(signalTester.checkSignals(expectedSignals));
 
-  if (signalTester.accumulatedProgress != 1.8f)
-  {
-    qDebug() << "Progress information wrong. Expected 1.8, got" << signalTester.accumulatedProgress;
-    return false;
-  }
-
-  return true;
+  QCOMPARE(signalTester.accumulatedProgress, 1.8f);
 }
 
-bool xmlProgressWatcherTestMalformedXml()
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleXmlProgressWatcherTester::testMalformedXml()
 {
   // Test data
   QByteArray filterOutput = "<filter-start>\n"
@@ -170,8 +175,8 @@ bool xmlProgressWatcherTestMalformedXml()
   signalTester.connect(&progressWatcher, SIGNAL(filterXmlError(QString)), &signalTester, SLOT(filterXmlError(QString)));
 
   buffer.write(filterOutput);
-  QCoreApplication::processEvents();
 
+  QCoreApplication::processEvents();
 
   QList<QString> expectedSignals;
   expectedSignals << "filter.xmlError";
@@ -179,41 +184,15 @@ bool xmlProgressWatcherTestMalformedXml()
   expectedSignals << "filter.progress";
   expectedSignals << "filter.finished";
 
-  if (!signalTester.error.isEmpty())
-  {
-    qDebug() << signalTester.error;
-    //return false;
-  }
+  QVERIFY(!signalTester.error.isEmpty());
+  qDebug() << signalTester.error;
 
-  if (!signalTester.checkSignals(expectedSignals))
-  {
-    return false;
-  }
+  QVERIFY(signalTester.checkSignals(expectedSignals));
 
-  if (signalTester.accumulatedProgress != 0.5f)
-  {
-    qDebug() << "Progress information wrong. Expected 1.8, got" << signalTester.accumulatedProgress;
-    return false;
-  }
-
-  return true;
+  QCOMPARE(signalTester.accumulatedProgress, 0.5f);
 }
 
-}
 
-int ctkCmdLineModuleXmlProgressWatcherTest(int argc, char* argv[])
-{
-  QCoreApplication app(argc, argv);
-
-  if (!xmlProgressWatcherTestSignalsAndValues())
-  {
-    return EXIT_FAILURE;
-  }
-
-  if (!xmlProgressWatcherTestMalformedXml())
-  {
-    return EXIT_FAILURE;
-  }
-
-  return EXIT_SUCCESS;
-}
+// ----------------------------------------------------------------------------
+CTK_TEST_MAIN(ctkCmdLineModuleXmlProgressWatcherTest)
+#include "moc_ctkCmdLineModuleXmlProgressWatcherTest.cpp"

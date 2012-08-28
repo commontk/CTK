@@ -32,32 +32,15 @@
 
 #include "ctkCmdLineModuleBackendLocalProcess.h"
 
+#include "ctkTest.h"
+
 #include <QVariant>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFutureWatcher>
 
-#include <cstdlib>
 
-
-#ifdef Q_OS_WIN
-#include <windows.h>
-#else
-#include <time.h>
-#endif
-
-void sleep_ms(int ms)
-{
-#ifdef Q_OS_WIN
-  Sleep(ms);
-#else
-  struct timespec nanostep;
-  nanostep.tv_sec = ms / 1000;
-  nanostep.tv_nsec = ((ms % 1000) * 1000.0 * 1000.0);
-  nanosleep(&nanostep, NULL);
-#endif
-}
-
+//-----------------------------------------------------------------------------
 class ctkCmdLineModuleFrontendMockupFactory : public ctkCmdLineModuleFrontendFactory
 {
 public:
@@ -97,10 +80,58 @@ public:
   virtual QString description() const { return "A mock-up factory for testing."; }
 };
 
-bool futureTestStartFinish(ctkCmdLineModuleManager* manager, ctkCmdLineModuleFrontend* frontend)
+//-----------------------------------------------------------------------------
+class ctkCmdLineModuleFutureTester : public QObject
 {
-  qDebug() << "Testing ctkCmdLineModuleFuture start/finish signals.";
+  Q_OBJECT
 
+private Q_SLOTS:
+
+  void initTestCase();
+
+  void init();
+  void cleanup();
+
+  void testStartFinish();
+  void testProgress();
+  void testPauseAndCancel();
+  void testError();
+
+private:
+
+  ctkCmdLineModuleFrontendMockupFactory factory;
+  ctkCmdLineModuleBackendLocalProcess backend;
+
+  ctkCmdLineModuleManager manager;
+
+  ctkCmdLineModuleReference moduleRef;
+  ctkCmdLineModuleFrontend* frontend;
+};
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::initTestCase()
+{
+  manager.registerBackend(&backend);
+
+  QUrl moduleUrl = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + "/ctkCmdLineModuleTestBed");
+  moduleRef = manager.registerModule(moduleUrl);
+}
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::init()
+{
+  frontend = factory.create(moduleRef);
+}
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::cleanup()
+{
+  delete frontend;
+}
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::testStartFinish()
+{
   QList<QString> expectedSignals;
   expectedSignals.push_back("module.started");
   expectedSignals.push_back("module.finished");
@@ -111,29 +142,17 @@ bool futureTestStartFinish(ctkCmdLineModuleManager* manager, ctkCmdLineModuleFro
   QObject::connect(&watcher, SIGNAL(started()), &signalTester, SLOT(moduleStarted()));
   QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
 
-  ctkCmdLineModuleFuture future = manager->run(frontend);
+  ctkCmdLineModuleFuture future = manager.run(frontend);
   watcher.setFuture(future);
+  future.waitForFinished();
 
-  try
-  {
-    future.waitForFinished();
-  }
-  catch (const ctkCmdLineModuleRunException& e)
-  {
-    qDebug() << e;
-    return false;
-  }
-
-  // process pending events
   QCoreApplication::processEvents();
-
-  return signalTester.checkSignals(expectedSignals);
+  QVERIFY(signalTester.checkSignals(expectedSignals));
 }
 
-bool futureTestProgress(ctkCmdLineModuleManager* manager, ctkCmdLineModuleFrontend* frontend)
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::testProgress()
 {
-  qDebug() << "Testing ctkCmdLineModuleFuture progress signals.";
-
   QList<QString> expectedSignals;
   expectedSignals.push_back("module.started");
   // this signal is send when connecting a QFutureWatcher to
@@ -162,30 +181,20 @@ bool futureTestProgress(ctkCmdLineModuleManager* manager, ctkCmdLineModuleFronte
   QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
 
   frontend->setValue("numOutputsVar", 1);
-  ctkCmdLineModuleFuture future = manager->run(frontend);
+  ctkCmdLineModuleFuture future = manager.run(frontend);
   watcher.setFuture(future);
 
-  try
-  {
-    future.waitForFinished();
-  }
-  catch (const ctkCmdLineModuleRunException& e)
-  {
-    qDebug() << e;
-    return false;
-  }
+  future.waitForFinished();
 
   // process pending events
   QCoreApplication::processEvents();
 
-  return signalTester.checkSignals(expectedSignals);
+  QVERIFY(signalTester.checkSignals(expectedSignals));
 }
 
-bool futureTestPauseAndCancel(ctkCmdLineModuleManager* manager, ctkCmdLineModuleFrontend* frontend)
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::testPauseAndCancel()
 {
-  qDebug() << "Testing ctkCmdLineModuleFuture pause and cancel capabilities";
-
-
   ctkCmdLineModuleSignalTester signalTester;
 
   QFutureWatcher<ctkCmdLineModuleResult> watcher;
@@ -196,7 +205,7 @@ bool futureTestPauseAndCancel(ctkCmdLineModuleManager* manager, ctkCmdLineModule
   QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
 
   frontend->setValue("runtimeVar", 60);
-  ctkCmdLineModuleFuture future = manager->run(frontend);
+  ctkCmdLineModuleFuture future = manager.run(frontend);
   watcher.setFuture(future);
 
   QList<QString> expectedSignals;
@@ -214,154 +223,59 @@ bool futureTestPauseAndCancel(ctkCmdLineModuleManager* manager, ctkCmdLineModule
   }
   expectedSignals.push_back("module.finished");
 
-  sleep_ms(500);
+  QTest::qWait(100);
 
-  QCoreApplication::processEvents();
   future.pause();
-  sleep_ms(500);
-  QCoreApplication::processEvents();
+  QTest::qWait(100);
 
+  QVERIFY(future.isRunning());
   if (future.canPause())
   {
-    if (!(future.isPaused() && future.isRunning()))
-    {
-      qDebug() << "Pause state wrong";
-      future.setPaused(false);
-      future.cancel();
-      QCoreApplication::processEvents();
-      future.waitForFinished();
-      return false;
-    }
+    QVERIFY(future.isPaused());
   }
 
   future.togglePaused();
-  QCoreApplication::processEvents();
 
-  sleep_ms(500);
+  QTest::qWait(100);
 
-  if (future.isPaused() && future.isRunning())
-  {
-    qDebug() << "Pause state wrong (module is paused, but it shouldn't be)";
-    future.cancel();
-    QCoreApplication::processEvents();
-    future.waitForFinished();
-    return false;
-  }
+  QVERIFY(!future.isPaused());
+  QVERIFY(future.isRunning());
 
-  try
-  {
-    future.cancel();
-    QCoreApplication::processEvents();
-    future.waitForFinished();
-  }
-  catch (const ctkCmdLineModuleRunException& e)
-  {
-    qDebug() << e;
-    return false;
-  }
+  future.cancel();
+  future.waitForFinished();
 
   // process pending events
   QCoreApplication::processEvents();
 
-  if (!signalTester.checkSignals(expectedSignals))
-  {
-    return false;
-  }
+  QVERIFY(future.isCanceled());
+  QVERIFY(future.isFinished());
 
-  if (!(future.isCanceled() && future.isFinished()))
-  {
-    qDebug() << "Cancel state wrong";
-    return false;
-  }
-  return true;
+  QVERIFY(signalTester.checkSignals(expectedSignals));
 }
 
-bool futureTestError(ctkCmdLineModuleManager* manager, ctkCmdLineModuleFrontend* frontend)
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::testError()
 {
-  qDebug() << "Testing ctkCmdLineModuleFuture error reporting.";
-
   frontend->setValue("fileVar", "output1");
   frontend->setValue("exitCodeVar", 24);
   frontend->setValue("errorTextVar", "Some error occured\n");
 
   QFutureWatcher<ctkCmdLineModuleResult> watcher;
-  ctkCmdLineModuleFuture future = manager->run(frontend);
+  ctkCmdLineModuleFuture future = manager.run(frontend);
   watcher.setFuture(future);
 
   try
   {
     future.waitForFinished();
-    return EXIT_FAILURE;
+    QFAIL("Expected exception not thrown.");
   }
   catch (const ctkCmdLineModuleRunException& e)
   {
-    Q_ASSERT_X(e.errorCode() == 24, __FUNCTION__, "Error code mismatch");
-    Q_ASSERT_X(e.errorString() == "Some error occured\n", __FUNCTION__, "Error text mismatch");
+    QVERIFY2(e.errorCode() == 24, "Test matching error code");
+    QVERIFY2(e.errorString() == "Some error occured\n", "Error text mismatch");
   }
-
-  // process pending events
-  QCoreApplication::processEvents();
-
-  return true;
 }
 
-int ctkCmdLineModuleFutureTest(int argc, char* argv[])
-{
-  QCoreApplication app(argc, argv);
-
-  ctkCmdLineModuleFrontendMockupFactory factory;
-  ctkCmdLineModuleBackendLocalProcess backend;
-
-  ctkCmdLineModuleManager manager;
-  manager.registerBackend(&backend);
-
-  QUrl moduleUrl = QUrl::fromLocalFile(app.applicationDirPath() + "/ctkCmdLineModuleTestBed");
-  ctkCmdLineModuleReference moduleRef;
-  try
-  {
-    moduleRef = manager.registerModule(moduleUrl);
-  }
-  catch (const ctkException& e)
-  {
-    qCritical() << "Module at" << moduleUrl << "could not be registered: " << e;
-  }
-
-  {
-    QScopedPointer<ctkCmdLineModuleFrontend> frontend(factory.create(moduleRef));
-    if (!futureTestStartFinish(&manager, frontend.data()))
-    {
-      return EXIT_FAILURE;
-    }
-  }
-
-  {
-    QScopedPointer<ctkCmdLineModuleFrontend> frontend(factory.create(moduleRef));
-    if (!futureTestProgress(&manager, frontend.data()))
-    {
-      return EXIT_FAILURE;
-    }
-  }
-
-  {
-    QScopedPointer<ctkCmdLineModuleFrontend> frontend(factory.create(moduleRef));
-    if (!futureTestError(&manager, frontend.data()))
-    {
-      return EXIT_FAILURE;
-    }
-  }
-
-  {
-    QScopedPointer<ctkCmdLineModuleFrontend> frontend(factory.create(moduleRef));
-    if (!futureTestPauseAndCancel(&manager, frontend.data()))
-    {
-      return EXIT_FAILURE;
-    }
-  }
-
-  //  if (!futureTestResultReady(frontend.data()))
-  //  {
-  //    return EXIT_FAILURE;
-  //  }
-
-  return EXIT_SUCCESS;
-}
+// ----------------------------------------------------------------------------
+CTK_TEST_MAIN(ctkCmdLineModuleFutureTest)
+#include "moc_ctkCmdLineModuleFutureTest.cpp"
