@@ -67,8 +67,8 @@ int main(int argc, char* argv[])
   parser.addArgument("exitCrash", "", QVariant::Bool, "Force crash", false);
   parser.addArgument("exitTime", "", QVariant::Int, "Exit time", 0);
   parser.addArgument("errorText", "", QVariant::String, "Error text printed at the end");
-  QTextStream out(stdout, QIODevice::WriteOnly);
-  QTextStream err(stderr, QIODevice::WriteOnly);
+  QTextStream out(stdout, QIODevice::WriteOnly | QIODevice::Text);
+  QTextStream err(stderr, QIODevice::WriteOnly | QIODevice::Text);
 
   // Parse the command line arguments
   bool ok = false;
@@ -104,8 +104,7 @@ int main(int argc, char* argv[])
   bool exitCrash = parsedArgs["exitCrash"].toBool();
   QString errorText = parsedArgs["errorText"].toString();
 
-  err << "A superficial error message.\n";
-  err.flush();
+  err << "A superficial error message." << endl;
 
   // sleep 500ms to give the "errorReady" signal a chance
   sleep_ms(500);
@@ -158,7 +157,7 @@ int main(int argc, char* argv[])
     // print the first output
     if (output != "dummy")
     {
-      out << output; endl(out);
+      out << output << endl;
       // report progress
       out << "<filter-progress>" << (i+1)*progressStep << "</filter-progress>\n";
     }
