@@ -22,76 +22,71 @@
 #ifndef CTKCMDLINEMODULEFUTUREINTERFACE_H
 #define CTKCMDLINEMODULEFUTUREINTERFACE_H
 
+#include <ctkCommandLineModulesCoreExport.h>
+
 #include "ctkCmdLineModuleResult.h"
 
 #include <QFutureInterface>
 
 class ctkCmdLineModuleFuture;
+class ctkCmdLineModuleFutureInterfacePrivate;
 
 /**
- * \class ctkCmdLineModuleFutureInterface
  * \ingroup CommandLineModulesCore
+ *
+ * \brief A QFutureInterface specialization.
+ *
+ * This QFutureInterface must be used by custom backend implementations to retrieve
+ * a suitable QFuture object and to report state changes to it via this interface.
  */
 template <>
-class QFutureInterface<ctkCmdLineModuleResult> : public QFutureInterfaceBase
+class CTK_CMDLINEMODULECORE_EXPORT QFutureInterface<ctkCmdLineModuleResult> : public QFutureInterfaceBase
 {
 
 public:
 
-  QFutureInterface(State initialState = NoState)
-    : QFutureInterfaceBase(initialState),
-      CanCancel(false), CanPause(false)
-  { }
+  QFutureInterface(State initialState = NoState);
 
-  QFutureInterface(const QFutureInterface &other)
-    : QFutureInterfaceBase(other),
-      CanCancel(other.CanCancel), CanPause(other.CanPause)
-  { }
+  QFutureInterface(const QFutureInterface &other);
 
-  ~QFutureInterface()
-  {
-    if (referenceCountIsOne())
-      resultStore().clear();
-  }
+  ~QFutureInterface();
 
-  static QFutureInterface canceledResult()
-  { return QFutureInterface(State(Started | Finished | Canceled)); }
+  static QFutureInterface canceledResult();
 
-  QFutureInterface& operator=(const QFutureInterface& other)
-  {
-    if (referenceCountIsOne())
-      resultStore().clear();
-    QFutureInterfaceBase::operator=(other);
-    CanCancel = other.CanCancel;
-    CanPause = other.CanPause;
-    return *this;
-  }
+  QFutureInterface& operator=(const QFutureInterface& other);
 
   inline ctkCmdLineModuleFuture future(); // implemented in ctkCmdLineModuleFuture.h
 
-  inline bool canCancel() const { return CanCancel; }
-  inline void setCanCancel(bool canCancel) { CanCancel = canCancel; }
-  inline bool canPause() const { return CanPause; }
-  inline void setCanPause(bool canPause) { CanPause = canPause; }
+  bool canCancel() const;
+  void setCanCancel(bool canCancel);
+  bool canPause() const;
+  void setCanPause(bool canPause);
 
   inline void reportResult(const ctkCmdLineModuleResult *result, int index = -1);
   inline void reportResult(const ctkCmdLineModuleResult &result, int index = -1);
   inline void reportResults(const QVector<ctkCmdLineModuleResult> &results, int beginIndex = -1, int count = -1);
   inline void reportFinished(const ctkCmdLineModuleResult *result = 0);
 
+  void reportOutputData(const QByteArray& outputData);
+  void reportErrorData(const QByteArray& errorData);
+
   inline const ctkCmdLineModuleResult &resultReference(int index) const;
   inline const ctkCmdLineModuleResult *resultPointer(int index) const;
   inline QList<ctkCmdLineModuleResult> results();
 
+  QByteArray outputData(int position = 0, int size = -1) const;
+  QByteArray errorData(int position = 0, int size = -1) const;
+
 private:
+
+  friend class ctkCmdLineModuleFutureWatcherPrivate;
 
   QtConcurrent::ResultStore<ctkCmdLineModuleResult> &resultStore()
   { return static_cast<QtConcurrent::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
   const QtConcurrent::ResultStore<ctkCmdLineModuleResult> &resultStore() const
   { return static_cast<const QtConcurrent::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
 
-  bool CanCancel;
-  bool CanPause;
+  ctkCmdLineModuleFutureInterfacePrivate* d;
 };
 
 inline void QFutureInterface<ctkCmdLineModuleResult>::reportResult(const ctkCmdLineModuleResult *result, int index)

@@ -27,6 +27,7 @@
 #include <ctkCmdLineModuleParameter.h>
 #include <ctkCmdLineModuleRunException.h>
 #include <ctkCmdLineModuleFuture.h>
+#include <ctkCmdLineModuleFutureWatcher.h>
 
 #include "ctkCmdLineModuleSignalTester.h"
 
@@ -85,6 +86,11 @@ class ctkCmdLineModuleFutureTester : public QObject
 {
   Q_OBJECT
 
+public Q_SLOTS:
+
+  void ouputDataReady();
+  void errorDataReady();
+
 private Q_SLOTS:
 
   void initTestCase();
@@ -95,9 +101,15 @@ private Q_SLOTS:
   void testStartFinish();
   void testProgress();
   void testPauseAndCancel();
+  void testOutput();
   void testError();
 
 private:
+
+  QByteArray outputData;
+  QByteArray errorData;
+
+  ctkCmdLineModuleFutureWatcher* currentWatcher;
 
   ctkCmdLineModuleFrontendMockupFactory factory;
   ctkCmdLineModuleBackendLocalProcess backend;
@@ -107,6 +119,24 @@ private:
   ctkCmdLineModuleReference moduleRef;
   ctkCmdLineModuleFrontend* frontend;
 };
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::ouputDataReady()
+{
+  if (this->currentWatcher)
+  {
+    outputData.append(currentWatcher->readPendingOutputData());
+  }
+}
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::errorDataReady()
+{
+  if (this->currentWatcher)
+  {
+    errorData.append(currentWatcher->readPendingErrorData());
+  }
+}
 
 //-----------------------------------------------------------------------------
 void ctkCmdLineModuleFutureTester::initTestCase()
@@ -120,6 +150,7 @@ void ctkCmdLineModuleFutureTester::initTestCase()
 //-----------------------------------------------------------------------------
 void ctkCmdLineModuleFutureTester::init()
 {
+  currentWatcher = 0;
   frontend = factory.create(moduleRef);
 }
 
@@ -127,23 +158,26 @@ void ctkCmdLineModuleFutureTester::init()
 void ctkCmdLineModuleFutureTester::cleanup()
 {
   delete frontend;
+  outputData.clear();
+  errorData.clear();
 }
 
 //-----------------------------------------------------------------------------
 void ctkCmdLineModuleFutureTester::testStartFinish()
 {
   QList<QString> expectedSignals;
-  expectedSignals.push_back("module.started");
-  expectedSignals.push_back("module.finished");
+  expectedSignals << "module.started"
+                  << "module.progressRangeChanged(0,0)"
+                  << "module.progressValueChanged(0)"
+                  << "module.progressRangeChanged(0,1000)"
+                  << "module.errorReady"
+                  << "module.progressValueChanged(1000)"
+                  << "module.finished";
 
   ctkCmdLineModuleSignalTester signalTester;
 
-  QFutureWatcher<ctkCmdLineModuleResult> watcher;
-  QObject::connect(&watcher, SIGNAL(started()), &signalTester, SLOT(moduleStarted()));
-  QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
-
   ctkCmdLineModuleFuture future = manager.run(frontend);
-  watcher.setFuture(future);
+  signalTester.setFuture(future);
   future.waitForFinished();
 
   QCoreApplication::processEvents();
@@ -154,35 +188,35 @@ void ctkCmdLineModuleFutureTester::testStartFinish()
 void ctkCmdLineModuleFutureTester::testProgress()
 {
   QList<QString> expectedSignals;
-  expectedSignals.push_back("module.started");
-  // this signal is send when connecting a QFutureWatcher to
-  // an already started QFuture
-  expectedSignals.push_back("module.progressValueChanged");
+  expectedSignals << "module.started"
+                     // the following signals are send when connecting a QFutureWatcher to
+                     // an already started QFuture
+                  << "module.progressRangeChanged(0,0)"
+                  << "module.progressValueChanged(0)"
+                  << "module.progressRangeChanged(0,1000)"
 
-  // the following two signals are send when the module reports "filter start"
-  expectedSignals.push_back("module.progressValueChanged");
-  expectedSignals.push_back("module.progressTextChanged");
+                     // the test module always reports error data when starting
+                  << "module.errorReady"
 
-  // this signal is send when the module reports progress for "output1"
-  expectedSignals.push_back("module.progressValueChanged");
+                     // the following two signals are send when the module reports "filter start"
+                  << "module.progressValueChanged(1)"
+                  << "module.progressTextChanged(Test Filter)"
 
-  // the following two signal are sent at the end to report
-  // completion and the full standard output text.
-  expectedSignals.push_back("module.progressValueChanged");
-  expectedSignals.push_back("module.progressTextChanged");
-  expectedSignals.push_back("module.finished");
+                     // this signal is send when the module reports progress for "output1"
+                  << "module.progressValueChanged(999)"
+
+                     // the output data (the order is not really deterministic here...)
+                  << "module.outputReady"
+
+                     // the following signal is sent at the end to report completion
+                  << "module.progressValueChanged(1000)"
+                  << "module.finished";
 
   ctkCmdLineModuleSignalTester signalTester;
 
-  QFutureWatcher<ctkCmdLineModuleResult> watcher;
-  QObject::connect(&watcher, SIGNAL(started()), &signalTester, SLOT(moduleStarted()));
-  QObject::connect(&watcher, SIGNAL(progressValueChanged(int)), &signalTester, SLOT(moduleProgressValueChanged(int)));
-  QObject::connect(&watcher, SIGNAL(progressTextChanged(QString)), &signalTester, SLOT(moduleProgressTextChanged(QString)));
-  QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
-
   frontend->setValue("numOutputsVar", 1);
   ctkCmdLineModuleFuture future = manager.run(frontend);
-  watcher.setFuture(future);
+  signalTester.setFuture(future);
 
   future.waitForFinished();
 
@@ -197,19 +231,17 @@ void ctkCmdLineModuleFutureTester::testPauseAndCancel()
 {
   ctkCmdLineModuleSignalTester signalTester;
 
-  QFutureWatcher<ctkCmdLineModuleResult> watcher;
-  QObject::connect(&watcher, SIGNAL(started()), &signalTester, SLOT(moduleStarted()));
-  QObject::connect(&watcher, SIGNAL(paused()), &signalTester, SLOT(modulePaused()));
-  QObject::connect(&watcher, SIGNAL(resumed()), &signalTester, SLOT(moduleResumed()));
-  QObject::connect(&watcher, SIGNAL(canceled()), &signalTester, SLOT(moduleCanceled()));
-  QObject::connect(&watcher, SIGNAL(finished()), &signalTester, SLOT(moduleFinished()));
-
   frontend->setValue("runtimeVar", 60);
   ctkCmdLineModuleFuture future = manager.run(frontend);
-  watcher.setFuture(future);
+  signalTester.setFuture(future);
 
   QList<QString> expectedSignals;
-  expectedSignals.push_back("module.started");
+  expectedSignals << "module.started"
+                  << "module.progressRangeChanged(0,0)"
+                  << "module.progressValueChanged(0)"
+                  << "module.progressRangeChanged(0,1000)"
+                  << "module.errorReady";
+
   if (future.canPause())
   {
     // Due to Qt bug 12152, these two signals are reversed
@@ -254,15 +286,63 @@ void ctkCmdLineModuleFutureTester::testPauseAndCancel()
 }
 
 //-----------------------------------------------------------------------------
+void ctkCmdLineModuleFutureTester::testOutput()
+{
+  ctkCmdLineModuleSignalTester signalTester;
+
+  connect(signalTester.watcher(), SIGNAL(outputDataReady()), SLOT(ouputDataReady()));
+  connect(signalTester.watcher(), SIGNAL(errorDataReady()), SLOT(errorDataReady()));
+
+  this->currentWatcher = signalTester.watcher();
+
+  frontend->setValue("numOutputsVar", 2);
+  frontend->setValue("errorTextVar", "Final error msg.");
+  ctkCmdLineModuleFuture future = manager.run(frontend);
+  signalTester.setFuture(future);
+
+  future.waitForFinished();
+
+  // process pending events
+  QCoreApplication::processEvents();
+
+  QVERIFY(future.isFinished());
+
+  QList<QString> expectedSignals;
+  expectedSignals << "module.started"
+                  << "module.progressRangeChanged(0,0)"
+                  << "module.progressValueChanged(0)"
+                  << "module.progressRangeChanged(0,1000)"
+                  << "module.errorReady"
+                  << "module.progressValueChanged(1)"
+                  << "module.progressTextChanged(Test Filter)"
+                  << "module.progressValueChanged(500)"
+                  << "module.outputReady"
+                  << "module.progressValueChanged(999)"
+                  << "module.outputReady"
+                  << "module.errorReady"
+                  << "module.progressValueChanged(1000)"
+                  << "module.finished";
+
+  QVERIFY(signalTester.checkSignals(expectedSignals));
+
+  const char* expectedOutput = "Output 1\nOutput 2\n";
+  const char* expectedError = "A superficial error message.\nFinal error msg.";
+
+  QCOMPARE(this->outputData.data(), expectedOutput);
+  QCOMPARE(this->errorData.data(), expectedError);
+
+  QCOMPARE(future.readAllOutputData().data(), expectedOutput);
+  QCOMPARE(future.readAllErrorData().data(), expectedError);
+}
+
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleFutureTester::testError()
 {
   frontend->setValue("fileVar", "output1");
   frontend->setValue("exitCodeVar", 24);
   frontend->setValue("errorTextVar", "Some error occured\n");
 
-  QFutureWatcher<ctkCmdLineModuleResult> watcher;
   ctkCmdLineModuleFuture future = manager.run(frontend);
-  watcher.setFuture(future);
 
   try
   {
@@ -272,7 +352,7 @@ void ctkCmdLineModuleFutureTester::testError()
   catch (const ctkCmdLineModuleRunException& e)
   {
     QVERIFY2(e.errorCode() == 24, "Test matching error code");
-    QVERIFY2(e.errorString() == "Some error occured\n", "Error text mismatch");
+    QCOMPARE(future.readAllErrorData().data(), "A superficial error message.\nSome error occured\n");
   }
 }
 

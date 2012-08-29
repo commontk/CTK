@@ -59,6 +59,9 @@ protected Q_SLOTS:
   void resumeProcess();
   void cancelProcess();
 
+  void outputDataAvailable(const QByteArray& outputData);
+  void errorDataAvailable(const QByteArray& errorData);
+
 private:
 
   int updateProgress(float progress);

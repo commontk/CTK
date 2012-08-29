@@ -90,16 +90,12 @@ void ctkCmdLineModuleProcessTask::run()
 
   localLoop.exec();
 
-  if (process.error() != QProcess::UnknownError)
+  if (process.error() != QProcess::UnknownError || process.exitCode() != 0)
   {
     this->reportException(ctkCmdLineModuleRunException(d->Location, process.exitCode(), process.errorString()));
   }
-  else if (process.exitCode() != 0)
-  {
-    this->reportException(ctkCmdLineModuleRunException(d->Location, process.exitCode(), process.readAllStandardError()));
-  }
 
-  this->setProgressValueAndText(1000, process.readAllStandardError());
+  this->setProgressValue(1000);
 
   //this->reportResult(result);
   this->reportFinished();

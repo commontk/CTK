@@ -22,6 +22,7 @@
 #include "ctkCmdLineModuleXmlProgressWatcher.h"
 
 #include <QIODevice>
+#include <QProcess>
 #include <QXmlStreamReader>
 
 #include <QDebug>
@@ -42,7 +43,14 @@ class ctkCmdLineModuleXmlProgressWatcherPrivate
 public:
 
   ctkCmdLineModuleXmlProgressWatcherPrivate(QIODevice* input, ctkCmdLineModuleXmlProgressWatcher* qq)
-    : input(input), readPos(0), q(qq), error(false), currentProgress(0)
+    : input(input), process(NULL), readPos(0), q(qq), error(false), currentProgress(0)
+  {
+    // wrap the content in an artifical root element
+    reader.addData("<module-root>");
+  }
+
+  ctkCmdLineModuleXmlProgressWatcherPrivate(QProcess* input, ctkCmdLineModuleXmlProgressWatcher* qq)
+    : input(input), process(input), readPos(0), q(qq), error(false), currentProgress(0)
   {
     // wrap the content in an artifical root element
     reader.addData("<module-root>");
@@ -56,9 +64,15 @@ public:
     parseProgressXml();
   }
 
+  void _q_readyReadError()
+  {
+    emit q->errorDataAvailable(process->readAllStandardError());
+  }
+
   void parseProgressXml()
   {
     QXmlStreamReader::TokenType type = reader.readNext();
+    QByteArray outputData;
     while(type != QXmlStreamReader::Invalid)
     {
       switch(type)
@@ -66,7 +80,14 @@ public:
       case QXmlStreamReader::NoToken: break;
       case QXmlStreamReader::Characters:
       {
-        if (stack.empty()) break;
+        if (stack.empty())
+        {
+          QByteArray output(reader.text().toAscii());
+          // get rid of a possible newline after the last xml end tag
+          if (output.startsWith('\n')) output = output.remove(0,1);
+          outputData.append(output);
+          break;
+        }
 
         if (stack.size() == 2 && stack.front() == FILTER_START)
         {
@@ -160,6 +181,10 @@ public:
                                .arg(reader.lineNumber()).arg(reader.columnNumber()) + reader.errorString());
       }
     }
+    if (!outputData.isEmpty())
+    {
+      emit q->outputDataAvailable(outputData);
+    }
   }
 
   void unexpectedNestedElement(const QString& element)
@@ -173,6 +198,7 @@ public:
   }
 
   QIODevice* input;
+  QProcess* process;
   qint64 readPos;
   ctkCmdLineModuleXmlProgressWatcher* q;
   bool error;
@@ -195,6 +221,16 @@ ctkCmdLineModuleXmlProgressWatcher::ctkCmdLineModuleXmlProgressWatcher(QIODevice
     input->open(QIODevice::ReadOnly);
   }
   connect(d->input, SIGNAL(readyRead()), SLOT(_q_readyRead()));
+}
+
+//----------------------------------------------------------------------------
+ctkCmdLineModuleXmlProgressWatcher::ctkCmdLineModuleXmlProgressWatcher(QProcess* input)
+  : d(new ctkCmdLineModuleXmlProgressWatcherPrivate(input, this))
+{
+  if (d->input == NULL) return;
+
+  connect(input, SIGNAL(readyReadStandardOutput()), SLOT(_q_readyRead()));
+  connect(input, SIGNAL(readyReadStandardError()), SLOT(_q_readyReadError()));
 }
 
 //----------------------------------------------------------------------------

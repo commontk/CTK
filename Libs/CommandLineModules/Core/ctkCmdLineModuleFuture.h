@@ -22,6 +22,8 @@
 #ifndef CTKCMDLINEMODULEFUTURE_H
 #define CTKCMDLINEMODULEFUTURE_H
 
+#include "ctkCommandLineModulesCoreExport.h"
+
 #include "ctkCmdLineModuleFutureInterface.h"
 
 #include <QFuture>
@@ -37,21 +39,19 @@
  *   - bool canCancel()
  *   - bool canPause()
  */
-class ctkCmdLineModuleFuture : public QFuture<ctkCmdLineModuleResult>
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFuture : public QFuture<ctkCmdLineModuleResult>
 {
 public:
 
-  ctkCmdLineModuleFuture()
-  {
-  }
+  ctkCmdLineModuleFuture();
 
-  explicit ctkCmdLineModuleFuture(ctkCmdLineModuleFutureInterface* p) // internal
-    : QFuture<ctkCmdLineModuleResult>(p)
-  {
-  }
+  explicit ctkCmdLineModuleFuture(ctkCmdLineModuleFutureInterface* p); // internal
 
-  bool canCancel() const { return  d.canCancel(); }
-  bool canPause() const { return d.canPause(); }
+  QByteArray readAllOutputData() const;
+  QByteArray readAllErrorData() const;
+
+  bool canCancel() const;
+  bool canPause() const;
 
 };
 
