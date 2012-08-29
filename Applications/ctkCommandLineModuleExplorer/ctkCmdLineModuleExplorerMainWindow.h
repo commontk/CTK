@@ -90,6 +90,7 @@ private:
 
   QTimer pollPauseTimer;
   QFutureWatcher<ctkCmdLineModuleResult> currentFutureWatcher;
+  QHash<ctkCmdLineModuleFrontend*, QByteArray> frontendToOutputMap;
 
   ctkCmdLineModuleDirectoryWatcher directoryWatcher;
 

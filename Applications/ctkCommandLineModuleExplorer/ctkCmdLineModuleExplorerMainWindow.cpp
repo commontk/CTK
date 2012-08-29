@@ -92,6 +92,7 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   connect(ui->modulesTreeWidget, SIGNAL(moduleFrontendCreated(ctkCmdLineModuleFrontend*)), tabList.data(), SLOT(addTab(ctkCmdLineModuleFrontend*)));
   // React to tab-changes
   connect(tabList.data(), SIGNAL(tabActivated(ctkCmdLineModuleFrontend*)), SLOT(moduleTabActivated(ctkCmdLineModuleFrontend*)));
+  connect(tabList.data(), SIGNAL(tabClosed(ctkCmdLineModuleFrontend*)), ui->outputText, SLOT(frontendRemoved(ctkCmdLineModuleFrontend*)));
 
   // Listen to future events for the currently active tab
 
@@ -290,6 +291,7 @@ void ctkCLModuleExplorerMainWindow::moduleTabActivated(ctkCmdLineModuleFrontend 
     ui->actionPause->setEnabled(false);
     ui->actionCancel->setEnabled(false);
     ui->actionReset->setEnabled(false);
+    ui->outputText->setActiveFrontend(NULL);
     currentFutureWatcher.setFuture(ctkCmdLineModuleFuture());
   }
   else
@@ -299,6 +301,7 @@ void ctkCLModuleExplorerMainWindow::moduleTabActivated(ctkCmdLineModuleFrontend 
     ui->actionPause->setChecked(module->isPaused());
     ui->actionCancel->setEnabled(module->future().canCancel() && module->isRunning());
     ui->actionReset->setEnabled(true);
+    ui->outputText->setActiveFrontend(module);
     currentFutureWatcher.setFuture(module->future());
   }
 }

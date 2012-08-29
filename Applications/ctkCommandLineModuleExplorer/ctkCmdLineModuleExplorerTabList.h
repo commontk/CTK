@@ -51,6 +51,7 @@ public:
   Q_SLOT void addTab(ctkCmdLineModuleFrontend* frontend);
 
   Q_SIGNAL void tabActivated(ctkCmdLineModuleFrontend* module);
+  Q_SIGNAL void tabClosed(ctkCmdLineModuleFrontend* module);
 
 private:
 

@@ -11,6 +11,7 @@ set(KIT_SRCS
   ctkCmdLineModuleExplorerMainWindow.h
   ctkCmdLineModuleExplorerMainWindow.cpp
   ctkCmdLineModuleExplorerModulesSettings.cpp
+  ctkCmdLineModuleExplorerOutputText.cpp
   ctkCmdLineModuleExplorerProgressWidget.cpp
   ctkCmdLineModuleExplorerTabList.cpp
   ctkCmdLineModuleExplorerTreeWidget.cpp
@@ -20,6 +21,7 @@ set(KIT_SRCS
 set(KIT_MOC_SRCS
   ctkCmdLineModuleExplorerMainWindow.h
   ctkCmdLineModuleExplorerModulesSettings.h
+  ctkCmdLineModuleExplorerOutputText.h
   ctkCmdLineModuleExplorerProgressWidget.h
   ctkCmdLineModuleExplorerTabList.h
   ctkCmdLineModuleExplorerTreeWidget.h
