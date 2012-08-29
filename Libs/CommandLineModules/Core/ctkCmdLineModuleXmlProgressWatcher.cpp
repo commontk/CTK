@@ -82,7 +82,7 @@ public:
       {
         if (stack.empty())
         {
-          QByteArray output(reader.text().toAscii());
+          QByteArray output(reader.text().toString().toAscii());
           // get rid of a possible newline after the last xml end tag
           if (output.startsWith('\n')) output = output.remove(0,1);
           outputData.append(output);
