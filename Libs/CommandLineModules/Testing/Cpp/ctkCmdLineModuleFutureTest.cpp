@@ -257,23 +257,30 @@ void ctkCmdLineModuleFutureTester::testPauseAndCancel()
 
   QTest::qWait(100);
 
-  future.pause();
-  QTest::qWait(100);
-
-  QVERIFY(future.isRunning());
   if (future.canPause())
   {
+    future.pause();
+    QTest::qWait(100);
     QVERIFY(future.isPaused());
   }
 
-  future.togglePaused();
+  QVERIFY(future.isRunning());
 
-  QTest::qWait(100);
+  if (future.canPause())
+  {
+    future.togglePaused();
+    QTest::qWait(100);
+  }
 
   QVERIFY(!future.isPaused());
   QVERIFY(future.isRunning());
 
-  future.cancel();
+  if (future.canCancel())
+  {
+    // give event processing a chance before killing the process
+    QTest::qWait(200);
+    future.cancel();
+  }
   future.waitForFinished();
 
   // process pending events
