@@ -79,7 +79,7 @@ public:
 
 private:
 
-  friend class ctkCmdLineModuleFutureWatcherPrivate;
+  friend struct ctkCmdLineModuleFutureWatcherPrivate;
 
   QtConcurrent::ResultStore<ctkCmdLineModuleResult> &resultStore()
   { return static_cast<QtConcurrent::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }

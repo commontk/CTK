@@ -72,7 +72,7 @@ Q_SIGNALS:
 
 private:
 
-  friend class ctkCmdLineModuleFutureWatcherPrivate;
+  friend struct ctkCmdLineModuleFutureWatcherPrivate;
 
   QScopedPointer<ctkCmdLineModuleFutureWatcherPrivate> d;
 
