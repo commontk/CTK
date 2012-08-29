@@ -122,7 +122,7 @@ void ctkCmdLineModuleProcessWatcher::resumeProcess()
 //----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::cancelProcess()
 {
-  process.terminate();
+  process.kill();
 }
 
 //----------------------------------------------------------------------------
