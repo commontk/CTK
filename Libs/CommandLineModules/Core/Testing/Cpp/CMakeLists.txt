@@ -3,6 +3,7 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkCmdLineModuleXmlProgressWatcherTest.cpp
+  ctkCmdLineModuleDefaultPathBuilderTest.cpp
   )
 
 set(TestsToRun ${Tests})
@@ -35,5 +36,5 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 #
 # Add Tests
 #
-
 SIMPLE_TEST(ctkCmdLineModuleXmlProgressWatcherTest)
+SIMPLE_TEST(ctkCmdLineModuleDefaultPathBuilderTest ${CTK_CMAKE_RUNTIME_OUTPUT_DIRECTORY})
