@@ -94,7 +94,7 @@ struct ctkCmdLineModuleFutureWatcherPrivate : public ctkCmdLineModuleFutureCallO
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleFutureWatcher::ctkCmdLineModuleFutureWatcher(QObject* parent)
-  : QFutureWatcher(parent)
+  : QFutureWatcher<ctkCmdLineModuleResult>(parent)
   , d(new ctkCmdLineModuleFutureWatcherPrivate(this))
 {
 }
@@ -115,7 +115,7 @@ void ctkCmdLineModuleFutureWatcher::setFuture(const ctkCmdLineModuleFuture& futu
 
   d->disconnectOutputInterface(true);
   d->Future = future;
-  QFutureWatcher::setFuture(future);
+  QFutureWatcher<ctkCmdLineModuleResult>::setFuture(future);
   d->connectOutputInterface();
 }
 
@@ -152,7 +152,7 @@ bool ctkCmdLineModuleFutureWatcher::event(QEvent *event)
   }
   else if (event->type() == QEvent::FutureCallOut)
   {
-    bool result = QFutureWatcher::event(event);
+    bool result = QFutureWatcher<ctkCmdLineModuleResult>::event(event);
 
     if (futureInterface().isRunning())
     {
@@ -172,7 +172,7 @@ bool ctkCmdLineModuleFutureWatcher::event(QEvent *event)
     }
     return result;
   }
-  return QFutureWatcher::event(event);
+  return QFutureWatcher<ctkCmdLineModuleResult>::event(event);
 }
 
 //----------------------------------------------------------------------------

@@ -37,7 +37,7 @@ struct ctkCmdLineModuleFutureWatcherPrivate;
  *        ctkCmdLineModuleFuture using signals and slots.
  *
  * This class enhances the standard QFutureWatcher class by adding the two signals
- * outputDataReady() and errorDataReady(). These signals are fired whenver the watched
+ * outputDataReady() and errorDataReady(). These signals are fired whenever the watched
  * future reports new output data (usually text written to the standard output channel) or
  * new error data (usually text written to the standard error channel).
  *
