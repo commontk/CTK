@@ -40,8 +40,8 @@ class ctkCmdLineModuleParameter;
  * \ingroup CommandLineModulesCore
  *
  * The parameters can be used for automated GUI generation or execution
- * of the module, and are directly related to the XML schema used to define
- * a command line module.
+ * of the module, and are directly related to the XML description used to
+ * describe the command line module parameters.
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleDescription
 {

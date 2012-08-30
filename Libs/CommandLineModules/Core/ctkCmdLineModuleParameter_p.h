@@ -39,12 +39,8 @@ struct ctkCmdLineModuleParameterPrivate : public QSharedData
   QString Name;
   QString Description;
   QString Label;
-  //QString CPPType;
   QString Type;
-  QString Reference;
   bool Hidden;
-  QString ArgType;
-  //QString StringToType;
   QString Default;
   QString Flag;
   QString LongFlag;
@@ -55,7 +51,6 @@ struct ctkCmdLineModuleParameterPrivate : public QSharedData
   QString Channel;
   int Index;
   int Multiple;
-  QString Aggregate;
   QString FileExtensionsAsString;
   QStringList FileExtensions;
   QString CoordinateSystem;
