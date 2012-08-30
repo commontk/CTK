@@ -116,6 +116,7 @@ void ctkCmdLineModuleExplorerTabList::tabCloseRequested(int index)
   {
     this->TabIndexToFrontend.removeAt(index);
     this->TabWidget->removeTab(index);
+    emit this->tabClosed(frontend);
     delete frontend;
   }
 }

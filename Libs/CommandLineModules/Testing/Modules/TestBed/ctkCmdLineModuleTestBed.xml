@@ -56,7 +56,7 @@ Configurable behaviour for testing purposes.
     <string>
       <name>errorTextVar</name>
       <longflag>errorText</longflag>
-      <description>Final error message (not displayed if the exit code is 0).</description>
+      <description>Final error message at the end.</description>
       <label>Error text</label>
     </string>
   </parameters>

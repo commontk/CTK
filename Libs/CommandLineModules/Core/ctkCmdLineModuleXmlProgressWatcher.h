@@ -29,6 +29,7 @@
 class ctkCmdLineModuleXmlProgressWatcherPrivate;
 
 class QIODevice;
+class QProcess;
 
 /**
  * \class ctkCmdLineModuleXmlProgressWatcher
@@ -42,6 +43,7 @@ class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXmlProgressWatcher : public Q
 public:
 
   ctkCmdLineModuleXmlProgressWatcher(QIODevice* input);
+  ctkCmdLineModuleXmlProgressWatcher(QProcess* input);
   ~ctkCmdLineModuleXmlProgressWatcher();
 
 Q_SIGNALS:
@@ -51,11 +53,15 @@ Q_SIGNALS:
   void filterFinished(const QString& name);
   void filterXmlError(const QString& error);
 
+  void outputDataAvailable(const QByteArray& outputData);
+  void errorDataAvailable(const QByteArray& errorData);
+
 private:
 
   friend class ctkCmdLineModuleXmlProgressWatcherPrivate;
 
   Q_PRIVATE_SLOT(d, void _q_readyRead())
+  Q_PRIVATE_SLOT(d, void _q_readyReadError())
 
   QScopedPointer<ctkCmdLineModuleXmlProgressWatcherPrivate> d;
 };

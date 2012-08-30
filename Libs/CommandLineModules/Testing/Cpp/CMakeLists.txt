@@ -2,6 +2,7 @@ set(KIT CTKCommandLineModules)
 set(LIBRARY_NAME ${KIT})
 
 set(_test_srcs)
+set(_test_mocs)
 
 if(CTK_LIB_CommandLineModules/Frontend/QtGui)
   set(QT_USE_QTUITOOLS 1)
@@ -9,12 +10,11 @@ if(CTK_LIB_CommandLineModules/Frontend/QtGui)
 
   if(CTK_LIB_CommandLineModules/Backend/LocalProcess)
     list(APPEND _test_srcs ctkCmdLineModuleFutureTest.cpp)
+    list(APPEND _test_mocs ctkCmdLineModuleFutureTest.cpp)
   endif()
   if(CTK_LIB_CommandLineModules/Backend/FunctionPointer)
     list(APPEND _test_srcs ctkCmdLineModuleQtCustomizationTest.cpp)
-    QT4_GENERATE_MOCS(
-      ctkCmdLineModuleQtCustomizationTest.cpp
-    )
+    list(APPEND _test_mocs ctkCmdLineModuleQtCustomizationTest.cpp)
   endif()
 endif()
 
@@ -65,6 +65,11 @@ endif()
 
 set(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
+
+if(_test_mocs)
+  QT4_GENERATE_MOCS(${_test_mocs})
+endif()
+
 set(Tests_UI_CPP)
 if(TEST_UI_FORMS)
   QT4_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})

@@ -282,5 +282,6 @@ ctkCmdLineModuleFuture ctkCmdLineModuleManager::run(ctkCmdLineModuleFrontend *fr
 
   ctkCmdLineModuleFuture future = d->SchemeToBackend[frontend->location().scheme()]->run(frontend);
   frontend->setFuture(future);
+  emit frontend->started();
   return future;
 }

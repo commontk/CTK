@@ -83,23 +83,19 @@ void ctkCmdLineModuleProcessTask::run()
   QObject::connect(&process, SIGNAL(finished(int)), &localLoop, SLOT(quit()));
   QObject::connect(&process, SIGNAL(error(QProcess::ProcessError)), &localLoop, SLOT(quit()));
 
-  process.start(d->Location, d->Args);
+  process.start(d->Location, d->Args, QIODevice::ReadOnly | QIODevice::Text);
 
   ctkCmdLineModuleProcessWatcher progressWatcher(process, d->Location, *this);
   Q_UNUSED(progressWatcher)
 
   localLoop.exec();
 
-  if (process.error() != QProcess::UnknownError)
+  if (process.error() != QProcess::UnknownError || process.exitCode() != 0)
   {
     this->reportException(ctkCmdLineModuleRunException(d->Location, process.exitCode(), process.errorString()));
   }
-  else if (process.exitCode() != 0)
-  {
-    this->reportException(ctkCmdLineModuleRunException(d->Location, process.exitCode(), process.readAllStandardError()));
-  }
 
-  this->setProgressValueAndText(1000, process.readAllStandardError());
+  this->setProgressValue(1000);
 
   //this->reportResult(result);
   this->reportFinished();

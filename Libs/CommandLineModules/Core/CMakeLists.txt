@@ -25,8 +25,10 @@ set(KIT_SRCS
   ctkCmdLineModuleDirectoryWatcher_p.h
   ctkCmdLineModuleFrontend.cpp
   ctkCmdLineModuleFrontendFactory.cpp
-  ctkCmdLineModuleFuture.h
-  ctkCmdLineModuleFutureInterface.h
+  ctkCmdLineModuleFuture.cpp
+  ctkCmdLineModuleFutureInterface_p.h
+  ctkCmdLineModuleFutureInterface.cpp
+  ctkCmdLineModuleFutureWatcher.cpp
   ctkCmdLineModuleManager.cpp
   ctkCmdLineModuleParameter.cpp
   ctkCmdLineModuleParameterGroup.cpp
@@ -51,6 +53,7 @@ set(KIT_MOC_SRCS
   ctkCmdLineModuleDirectoryWatcher.h
   ctkCmdLineModuleDirectoryWatcher_p.h
   ctkCmdLineModuleFrontend.h
+  ctkCmdLineModuleFutureWatcher.h
   ctkCmdLineModuleManager.h
 )
 

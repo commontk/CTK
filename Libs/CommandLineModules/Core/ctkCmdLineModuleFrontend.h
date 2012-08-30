@@ -104,7 +104,12 @@ public:
 
   /**
    * @brief Return the ctkCmdLineModuleFuture, derived from QFuture to
-   * provide asynchronous processing.
+   * provide asynchronous processing and interaction with the running frontend.
+   *
+   * Note that the future returned by this method will be different after the
+   * frontend was started. Either use isRunning() to check wether this frontend
+   * is currently running or connect to the started() signal.
+   *
    * @see ctkCmdLineModuleFuture
    */
   virtual ctkCmdLineModuleFuture future() const;
@@ -171,6 +176,16 @@ public:
       ParameterFilters filters = All);
 
   void resetValues();
+
+Q_SIGNALS:
+
+  /**
+   * @brief This signal is emitted when the frontend is run.
+   *
+   * You can use this signal to get the ctkCmdLineModuleFuture instance
+   * from future() to interact with the running frontend.
+   */
+  void started();
 
 protected:
 

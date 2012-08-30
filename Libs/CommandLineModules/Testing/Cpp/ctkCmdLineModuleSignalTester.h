@@ -22,14 +22,23 @@
 #ifndef CTKCMDLINEMODULESIGNALTESTER_H
 #define CTKCMDLINEMODULESIGNALTESTER_H
 
+#include "ctkCmdLineModuleFutureWatcher.h"
+
 #include <QObject>
 #include <QList>
+
+class ctkCmdLineModuleFuture;
 
 class ctkCmdLineModuleSignalTester : public QObject
 {
   Q_OBJECT
 
 public:
+
+  ctkCmdLineModuleSignalTester();
+
+  void setFuture(const ctkCmdLineModuleFuture& future);
+  ctkCmdLineModuleFutureWatcher* watcher();
 
   bool checkSignals(const QList<QString>& expectedSignals);
   void dumpSignals(const QList<QString>& expectedSignals);
@@ -46,14 +55,20 @@ public Q_SLOTS:
   virtual void moduleResumed();
   virtual void moduleCanceled();
 
-  virtual void filterStarted(const QString& name, const QString& comment);
-  virtual void filterProgress(float progress);
-  virtual void filterFinished(const QString& name);
-  virtual void filterXmlError(const QString& error);
+  virtual void resultReadyAt(int resultIndex);
+  virtual void resultReadyAt(int beginIndex, int endIndex);
+
+  virtual void progressRangeChanged(int minimum, int maximum);
+  virtual void progressValueChanged(int progressValue);
+  virtual void progressTextChanged(const QString &progressText);
+
+  virtual void outputDataReady();
+  virtual void errorDataReady();
 
 private:
 
-  QList<QString> events;
+  ctkCmdLineModuleFutureWatcher Watcher;
+  QList<QString> Events;
 };
 
 #endif // CTKCMDLINEMODULESIGNALTESTER_H

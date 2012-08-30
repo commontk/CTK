@@ -42,6 +42,9 @@ ctkCmdLineModuleProcessWatcher::ctkCmdLineModuleProcessWatcher(QProcess& process
   connect(&processXmlWatcher, SIGNAL(filterFinished(QString)), SLOT(filterFinished(QString)));
   connect(&processXmlWatcher, SIGNAL(filterXmlError(QString)), SLOT(filterXmlError(QString)));
 
+  connect(&processXmlWatcher, SIGNAL(outputDataAvailable(QByteArray)), SLOT(outputDataAvailable(QByteArray)));
+  connect(&processXmlWatcher, SIGNAL(errorDataAvailable(QByteArray)), SLOT(errorDataAvailable(QByteArray)));
+
   connect(&futureWatcher, SIGNAL(canceled()), SLOT(cancelProcess()));
 #ifdef Q_OS_UNIX
   connect(&futureWatcher, SIGNAL(resumed()), SLOT(resumeProcess()));
@@ -119,9 +122,22 @@ void ctkCmdLineModuleProcessWatcher::resumeProcess()
 //----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::cancelProcess()
 {
-  process.terminate();
+  process.kill();
 }
 
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleProcessWatcher::outputDataAvailable(const QByteArray &outputData)
+{
+  futureInterface.reportOutputData(outputData);
+}
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleProcessWatcher::errorDataAvailable(const QByteArray &errorData)
+{
+  futureInterface.reportErrorData(errorData);
+}
+
+//----------------------------------------------------------------------------
 int ctkCmdLineModuleProcessWatcher::updateProgress(float progress)
 {
   progressValue = static_cast<int>(progress * 1000.0f);

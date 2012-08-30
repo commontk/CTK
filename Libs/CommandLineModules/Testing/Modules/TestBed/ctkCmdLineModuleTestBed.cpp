@@ -66,9 +66,9 @@ int main(int argc, char* argv[])
   parser.addArgument("exitCode", "", QVariant::Int, "Exit code", 0);
   parser.addArgument("exitCrash", "", QVariant::Bool, "Force crash", false);
   parser.addArgument("exitTime", "", QVariant::Int, "Exit time", 0);
-  parser.addArgument("errorText", "", QVariant::String, "Error text (will not be printed on exit code 0)");
-  QTextStream out(stdout, QIODevice::WriteOnly);
-  QTextStream err(stderr, QIODevice::WriteOnly);
+  parser.addArgument("errorText", "", QVariant::String, "Error text printed at the end");
+  QTextStream out(stdout, QIODevice::WriteOnly | QIODevice::Text);
+  QTextStream err(stderr, QIODevice::WriteOnly | QIODevice::Text);
 
   // Parse the command line arguments
   bool ok = false;
@@ -103,6 +103,11 @@ int main(int argc, char* argv[])
   int exitCode = parsedArgs["exitCode"].toInt();
   bool exitCrash = parsedArgs["exitCrash"].toBool();
   QString errorText = parsedArgs["errorText"].toString();
+
+  err << "A superficial error message." << endl;
+
+  // sleep 500ms to give the "errorReady" signal a chance
+  sleep_ms(500);
 
   QStringList outputs;
   for (int i = 0; i < numOutputs; ++i)
@@ -152,21 +157,23 @@ int main(int argc, char* argv[])
     // print the first output
     if (output != "dummy")
     {
-      out << output; endl(out);
+      out << output << endl;
       // report progress
       out << "<filter-progress>" << (i+1)*progressStep << "</filter-progress>\n";
     }
   }
 
-  // sleep 1 second to avoid squashing the last progress event with the finished event
-  sleep_ms(1000);
+  // sleep 500ms to avoid squashing the last progress event with the finished event
+  sleep_ms(500);
+
+  out.flush();
 
   if (exitCrash)
   {
     int* crash = 0;
     *crash = 5;
   }
-  if (exitCode != 0 && !errorText.isEmpty())
+  if (!errorText.isEmpty())
   {
     err << errorText;
   }
