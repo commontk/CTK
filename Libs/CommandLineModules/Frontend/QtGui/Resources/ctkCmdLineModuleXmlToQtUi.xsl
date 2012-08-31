@@ -32,6 +32,25 @@
   <xsl:param name="directoryWidget">ctkPathLineEdit</xsl:param>
   <xsl:param name="pointWidget">ctkCoordinatesWidget</xsl:param>
   <xsl:param name="unsupportedWidget">QLabel</xsl:param>
+    
+  <xsl:param name="booleanValueProperty">checked</xsl:param>
+  <xsl:param name="integerValueProperty">value</xsl:param>
+  <xsl:param name="floatValueProperty">value</xsl:param>
+  <xsl:param name="pointValueProperty">coordinates</xsl:param>
+  <xsl:param name="regionValueProperty">coordinates</xsl:param>
+  <xsl:param name="imageValueProperty">currentPath</xsl:param>
+  <xsl:param name="fileValueProperty">currentPath</xsl:param>
+  <xsl:param name="directoryValueProperty">currentPath</xsl:param>
+  <xsl:param name="geometryValueProperty">currentPath</xsl:param>
+  <xsl:param name="integervectorValueProperty">text</xsl:param>
+  <xsl:param name="doublevectorValueProperty">text</xsl:param>
+  <xsl:param name="floatvectorValueProperty">text</xsl:param>
+  <xsl:param name="stringvectorValueProperty">text</xsl:param>
+  <xsl:param name="integerenumerationValueProperty">currentEnumeration</xsl:param>
+  <xsl:param name="doubleenumerationValueProperty">currentEnumeration</xsl:param>
+  <xsl:param name="floatenumerationValueProperty">currentEnumeration</xsl:param>
+  <xsl:param name="stringenumerationValueProperty">currentEnumeration</xsl:param>
+  
   
   <!--
   ===================================================================
@@ -57,11 +76,23 @@
   <xsl:function name="ctk:mapTypeToQtValueProperty">
     <xsl:param name="cliType"/>
     <xsl:choose>
-      <xsl:when test="$cliType='boolean'">checked</xsl:when>
-      <xsl:when test="$cliType= ('point', 'region')">coordinates</xsl:when>
-      <xsl:when test="$cliType= ('image', 'file', 'directory', 'geometry')">currentPath</xsl:when>
-      <xsl:when test="$cliType= ('string', 'integer-vector', 'float-vector', 'double-vector', 'string-vector')">text</xsl:when>
-      <xsl:when test="$cliType= ('integer-enumeration', 'float-enumeration', 'double-enumeration', 'string-enumeration')">currentEnumeration</xsl:when>
+      <xsl:when test="$cliType='boolean'"><xsl:value-of select="$booleanValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='integer'"><xsl:value-of select="$integerValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='float'"><xsl:value-of select="$floatValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='point'"><xsl:value-of select="$pointValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='region'"><xsl:value-of select="$regionValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='image'"><xsl:value-of select="$imageValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='file'"><xsl:value-of select="$fileValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='directory'"><xsl:value-of select="$directoryValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='geometry'"><xsl:value-of select="$geometryValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='integer-vector'"><xsl:value-of select="$integervectorValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='double-vector'"><xsl:value-of select="$doublevectorValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='float-vector'"><xsl:value-of select="$floatvectorValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='string-vector'"><xsl:value-of select="$stringvectorValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='integer-enumeration'"><xsl:value-of select="$integerenumerationValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='double-enumeration'"><xsl:value-of select="$doubleenumerationValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='float-enumeration'"><xsl:value-of select="$floatenumerationValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='string-enumeration'"><xsl:value-of select="$stringenumerationValueProperty"/></xsl:when>
       <xsl:otherwise>value</xsl:otherwise>
     </xsl:choose>
   </xsl:function>
