@@ -58,7 +58,7 @@
         <xsd:element name="float-enumeration" type="enumerationType"/>
         <xsd:element name="double-enumeration" type="enumerationType"/>
         <xsd:element name="file" type="fileType"/>
-        <xsd:element name="directory" type="channelType"/>
+        <xsd:element name="directory" type="multipleType"/>
         <xsd:element name="image" type="imageType"/>
         <xsd:element name="geometry" type="geometryType"/>
         <!--
@@ -104,7 +104,17 @@
       <xsd:element name="description" type="xsd:string"/>
       <xsd:element name="label" type="xsd:string"/>
       <xsd:element minOccurs="0" name="default" type="xsd:string"/>
-
+      
+      <!-- the 'channel' element is optional -->
+      <xsd:element minOccurs="0" maxOccurs="1" name="channel">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="input"/>
+            <xsd:enumeration value="output"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      
     </xsd:sequence>
     
     <!-- parameter attributes -->
@@ -216,29 +226,6 @@
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
-
-  <!--
-  ===================================================================
-    CHANNEL PARAMETER 
-      Extends multipleType for parameters with input/output semantics (directory, file, image).
-  ===================================================================
-  -->
-  <xsd:complexType name="channelType">
-    <xsd:complexContent>
-      <xsd:extension base="multipleType">
-        <xsd:sequence>
-          <xsd:element maxOccurs="1" name="channel">
-            <xsd:simpleType>
-              <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="input"/>
-                <xsd:enumeration value="output"/>
-              </xsd:restriction>
-            </xsd:simpleType>
-          </xsd:element>
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
   
   <!--
   ===================================================================
@@ -249,7 +236,7 @@
   -->
   <xsd:complexType name="fileType">
     <xsd:complexContent>
-      <xsd:extension base="channelType">
+      <xsd:extension base="multipleType">
         <xsd:attribute name="fileExtensions" type="xsd:string"/>
       </xsd:extension>
     </xsd:complexContent>
@@ -282,7 +269,7 @@
   
   <!--
   ===================================================================
-                                                                *****  UTILITY TYPES  *****
+                     *****  UTILITY TYPES  *****
   ===================================================================
   -->
   

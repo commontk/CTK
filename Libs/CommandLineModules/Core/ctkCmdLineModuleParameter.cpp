@@ -27,7 +27,7 @@ limitations under the License.
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleParameterPrivate::ctkCmdLineModuleParameterPrivate()
-  : Hidden(false), Constraints(false), Index(-1), Multiple(false)
+  : Hidden(false), Constraints(false), Channel("input"), Index(-1), Multiple(false)
 {}
 
 //----------------------------------------------------------------------------

@@ -67,7 +67,7 @@ ctkCmdLineModuleXmlParser::ctkCmdLineModuleXmlParser(QIODevice* device,
   _paramParsers["float-enumeration"] = new ctkCmdLineModuleEnumerationParameterParser; // type="enumerationType"/>
   _paramParsers["double-enumeration"] = new ctkCmdLineModuleEnumerationParameterParser; // type="enumerationType"/>
   _paramParsers["file"] = new ctkCmdLineModuleFileParameterParser; // type="fileType"/>
-  _paramParsers["directory"] = new ctkCmdLineModuleChannelParameterParser; // type="channelType"/>
+  _paramParsers["directory"] = new ctkCmdLineModuleMultipleParameterParser; // type="multipleType"/>
   _paramParsers["image"] = new ctkCmdLineModuleImageParameterParser; // type="imageType"/>
   _paramParsers["geometry"] = new ctkCmdLineModuleGeometryParameterParser; // type="geometryType"/>
 }

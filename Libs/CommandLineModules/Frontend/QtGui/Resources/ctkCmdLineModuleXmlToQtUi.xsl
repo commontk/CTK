@@ -142,6 +142,12 @@
         <bool>false</bool>
       </property>
     </xsl:if>
+    <!-- disable simple return parameter -->
+    <xsl:if test="index/text()='1000' and channel/text()='output' and $disableReturnParameter='true'">
+      <property name="enabled">
+        <bool>false</bool>
+      </property>
+    </xsl:if>
     <property name="parameter:valueProperty"> <!-- property name containing current value -->
       <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name())"/></string>
     </property>
