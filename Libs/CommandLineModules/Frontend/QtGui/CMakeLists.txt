@@ -18,7 +18,6 @@ set(KIT_SRCS
   ctkCmdLineModuleFrontendQtGui.cpp
   ctkCmdLineModuleQtUiLoader.cpp
   ctkCmdLineModuleQtComboBox.cpp
-  ctkCmdLineModuleMenuFactoryQtGui.cpp
   ctkCmdLineModuleObjectTreeWalker_p.h
   ctkCmdLineModuleObjectTreeWalker.cpp
 )
