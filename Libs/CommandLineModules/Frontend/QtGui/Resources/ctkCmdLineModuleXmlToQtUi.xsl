@@ -9,7 +9,28 @@
   exclude-result-prefixes="xs xdt err fn">
 
   <xsl:output method="xml" indent="yes"/>
-
+  
+   <!--
+  ===================================================================
+    Defaults for XSL parameter bindings
+  ===================================================================
+  -->
+  
+  <xsl:param name="executableWidget">QWidget</xsl:param>
+  <xsl:param name="parametersWidget">ctkCollapsibleGroupBox</xsl:param>
+  <xsl:param name="booleanWidget">QCheckBox</xsl:param>
+  <xsl:param name="integerWidget">QSpinBox</xsl:param>
+  <xsl:param name="floatingWidget">QDoubleSpinBox</xsl:param>
+  <xsl:param name="vectorWidget">QLineEdit</xsl:param>
+  <xsl:param name="enumWidget">QComboBox</xsl:param>
+  <xsl:param name="imageInputWidget">ctkPathLineEdit</xsl:param>
+  <xsl:param name="imageOutputWidget">ctkPathLineEdit</xsl:param>
+  <xsl:param name="fileInputWidget">ctkPathLineEdit</xsl:param>
+  <xsl:param name="fileOutputWidget">ctkPathLineEdit</xsl:param>
+  <xsl:param name="directoryWidget">ctkPathLineEdit</xsl:param>
+  <xsl:param name="pointWidget">ctkCoordinatesWidget</xsl:param>
+  <xsl:param name="unsupportedWidget">QLabel</xsl:param>
+  
   <!--
   ===================================================================
     Utility XSLT 2.0 functions
