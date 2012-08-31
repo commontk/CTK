@@ -64,8 +64,9 @@ public:
         return value;
       }
 
-      virtual void setValue(const QString& parameter, const QVariant& value)
+      virtual void setValue(const QString& parameter, const QVariant& value, int role = DisplayRole)
       {
+        Q_UNUSED(role)
         currentValues[parameter] = value;
       }
 

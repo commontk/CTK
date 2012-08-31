@@ -60,7 +60,7 @@ public:
   QString label() const;
   QVariant value(const QString& propertyName = QString()) const;
 
-  void setValue(const QVariant& value);
+  void setValue(const QVariant& value, const QString& propertyName = QString());
 
   QString flag() const;
   QString longFlag() const;

@@ -105,6 +105,22 @@ QVariant ctkCmdLineModuleFrontendQtGui::customValue(const QString& parameter, co
   return QVariant();
 }
 
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFrontendQtGui::setCustomValue(const QString& parameter, const QVariant &value,
+                                                   const QString& propertyName)
+{
+  if (!d->Widget) return;
+
+  ctkCmdLineModuleObjectTreeWalker walker(d->Widget);
+  while(walker.readNextParameter())
+  {
+    if(walker.name() == parameter && walker.value(propertyName) != value)
+    {
+      walker.setValue(value, propertyName);
+      break;
+    }
+  }
+}
 
 //-----------------------------------------------------------------------------
 QObject* ctkCmdLineModuleFrontendQtGui::guiHandle() const
@@ -146,23 +162,28 @@ QVariant ctkCmdLineModuleFrontendQtGui::value(const QString &parameter, int role
 {
   Q_UNUSED(role)
 
+  // This will always return data using the default property for parameter values,
+  // which holds the data for the DisplayRole.
   return customValue(parameter);
 }
 
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleFrontendQtGui::setValue(const QString &parameter, const QVariant &value)
+void ctkCmdLineModuleFrontendQtGui::setValue(const QString &parameter, const QVariant &value, int role)
 {
-  if (!d->Widget) return;
+  if (role != DisplayRole) return;
 
-  ctkCmdLineModuleObjectTreeWalker walker(d->Widget);
-  while(walker.readNextParameter())
+  QVariant oldValue = this->customValue(parameter);
+
+  // This sets the value of the default QObject property for the DisplayRole.
+  this->setCustomValue(parameter, value);
+
+  // Before emitting the signal, get the actual value because it might be different
+  // (Widgets with constraints on the value domain might adapt the value).
+  QVariant currentValue = this->customValue(parameter);
+  if (currentValue != oldValue)
   {
-    if(walker.name() == parameter && walker.value() != value)
-    {
-      walker.setValue(value);
-      emit valueChanged(parameter, value);
-    }
+    emit valueChanged(parameter, currentValue);
   }
 }
 

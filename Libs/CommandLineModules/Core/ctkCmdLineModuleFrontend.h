@@ -45,6 +45,7 @@ struct ctkCmdLineModuleFrontendPrivate;
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFrontend : public QObject
 {
   Q_OBJECT
+  Q_ENUMS(ParamterValueRole)
 
 public:
 
@@ -55,15 +56,28 @@ public:
      * QVariant by default. For complex parameter types (like file, image,
      * geometry, etc.) the data must be convertible to a QString pointing
      * to a local resource.
+     *
+     * This role is usually used by backends for retrieving data and is mainly
+     * important for data which acts as a handle to the real data (e.g. a
+     * backend usually needs to get the absolute path to a local file for the
+     * current value of an input image parameter, instead of the image label
+     * displayed in a GUI).
      */
     LocalResourceRole = 0,
+
+    /**
+     * Describes data suitable for displaying in a GUI. For many parameter types
+     * (e.g. scalar and vector parameters) data returned by this role will be
+     * the same as returned by the LocalResourceRole role.
+     **/
+    DisplayRole = 1,
 
     /**
      * This role can be used in custom frontends to return a QVariant
      * containing for example an in-memory representation of a complex object.
      * One can then either convert the in-memory representation to a local
      * resource before running a module such that arbitrary backends relying on
-     * the LocalResourceRole can process the data. Or one creates a custom
+     * the LocalResourceRole role can process the data. Or one creates a custom
      * backend which knows how to handle QVariants returned by this role.
      */
     UserRole = 8
@@ -89,18 +103,24 @@ public:
   /**
    * @brief GUIs will need to be able to read parameters,
    * here we retrieve by role.
+   *
    * @return QVariant
    * @see ParameterValueRole
    */
   virtual QVariant value(const QString& parameter,
-      int role = LocalResourceRole) const = 0;
+                         int role = LocalResourceRole) const = 0;
 
   /**
-   * @brief Set the value of a certain parameters
+   * @brief Set the value of a certain parameter.
+   *
    * @param parameter The name of the parameter, as defined in the XML.
    * @param value The value for that parameter.
+   * @param role The role for which to set the data.
+   *
+   * @see ParameterValueRole
    */
-  virtual void setValue(const QString& parameter, const QVariant& value) = 0;
+  virtual void setValue(const QString& parameter, const QVariant& value,
+                        int role = DisplayRole) = 0;
 
   /**
    * @brief Return the ctkCmdLineModuleFuture, derived from QFuture to
@@ -159,8 +179,6 @@ public:
    */
   bool isPaused() const;
 
-  Q_SIGNAL void valueChanged(const QString& parameter, const QVariant& value);
-
   // convenience methods
 
   /**
@@ -178,6 +196,17 @@ public:
   void resetValues();
 
 Q_SIGNALS:
+
+  /**
+   * @brief This signal is emitted whenever a parameter value is changed by using
+   *        the ctkCmdLineModuleFrontent class.
+   * @param parameter The parameter name.
+   * @param value The new parameter value.
+   *
+   * Please note that this signal is not emitted if a parameter value is
+   * changed in the generated GUI.
+   */
+  void valueChanged(const QString& parameter, const QVariant& value);
 
   /**
    * @brief This signal is emitted when the frontend is run.

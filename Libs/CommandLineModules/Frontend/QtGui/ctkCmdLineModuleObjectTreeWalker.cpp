@@ -116,12 +116,17 @@ QVariant ctkCmdLineModuleObjectTreeWalker::value(const QString &propertyName) co
 }
 
 //----------------------------------------------------------------------------
-void ctkCmdLineModuleObjectTreeWalker::setValue(const QVariant& value)
+void ctkCmdLineModuleObjectTreeWalker::setValue(const QVariant& value, const QString &propertyName)
 {
-  QVariant valProp = property("valueProperty");
-  if (valProp.isValid())
+  QString valProp = propertyName;
+  if (valProp.isEmpty())
   {
-    CurrentObject->setProperty(qPrintable(valProp.toString()), value);
+    valProp = property("valueProperty").toString();
+  }
+
+  if (!valProp.isEmpty())
+  {
+    CurrentObject->setProperty(qPrintable(valProp), value);
   }
 }
 

@@ -44,6 +44,7 @@ struct MyImageData : public ctk::CmdLineModuleBackendFunctionPointer::ImageType
     : Path(path)
   {}
 
+  QString Label;
   QString Path;
 };
 
@@ -69,7 +70,8 @@ class MyImageComboBox : public QComboBox
 
 public:
 
-  Q_PROPERTY(QString currentValue READ currentValue WRITE setCurrentValue)
+  Q_PROPERTY(QString currentLabel READ currentLabel WRITE setCurrentLabel)
+  Q_PROPERTY(QString currentPath READ currentPath WRITE setCurrentPath)
   Q_PROPERTY(const MyImageData* currentImage READ currentImage)
 
   MyImageComboBox(QWidget* parent = 0)
@@ -84,12 +86,29 @@ public:
     this->addItem("Image 3");
   }
 
-  QString currentValue() const
+  QString currentLabel() const
+  {
+    return this->imageData.at(this->currentIndex()).Label;
+  }
+
+  void setCurrentLabel(const QString& label)
+  {
+    for(int i = 0; i < imageData.size(); ++i)
+    {
+      if (imageData[i].Label == label)
+      {
+        this->setCurrentIndex(i);
+        break;
+      }
+    }
+  }
+
+  QString currentPath() const
   {
     return this->imageData.at(this->currentIndex()).Path;
   }
 
-  void setCurrentValue(const QString& path)
+  void setCurrentPath(const QString& path)
   {
     this->imageData[this->currentIndex()].Path = path;
   }
@@ -143,6 +162,7 @@ public:
     if (!initialized)
     {
       transform->bindVariable("imageInputWidget", "MyImageComboBox");
+      transform->bindVariable("imageValueProperty", "currentLabel");
       static QFile extraXsl(":/MyImageComboBoxTest.xsl");
       transform->setXslExtraTransformation(&extraXsl);
       initialized = true;
@@ -150,7 +170,7 @@ public:
     return transform;
   }
 
-  QVariant value(const QString &parameter, int role) const
+  QVariant value(const QString &parameter, int role = LocalResourceRole) const
   {
     if (role == UserRole)
     {
@@ -161,7 +181,26 @@ public:
       }
       return QVariant();
     }
-    return ctkCmdLineModuleFrontendQtGui::value(parameter, role);
+    else if (role == LocalResourceRole)
+    {
+      return this->customValue(parameter, "currentPath");
+    }
+    else
+    {
+      return ctkCmdLineModuleFrontendQtGui::value(parameter, role);
+    }
+  }
+
+  void setValue(const QString &parameter, const QVariant &value, int role = DisplayRole)
+  {
+    if (role == LocalResourceRole)
+    {
+      this->setCustomValue(parameter, value, "currentPath");
+    }
+    else
+    {
+      ctkCmdLineModuleFrontendQtGui::setValue(parameter, value, role);
+    }
   }
 };
 
@@ -235,7 +274,7 @@ void ctkCmdLineModuleQtCustomizationTester::testCustomization()
 
   // now set the property for the "LocalResourceRole" (the default property) to something else
   expectedImageValue = "/tmp/path/to/image2";
-  fpFrontend->setValue("param0", expectedImageValue);
+  fpFrontend->setValue("param0", expectedImageValue, ctkCmdLineModuleFrontend::LocalResourceRole);
   QCOMPARE(fpFrontend->value("param0").toString(), expectedImageValue);
 
   QVERIFY(CustomImageDataPath.isEmpty());

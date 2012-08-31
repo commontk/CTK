@@ -51,8 +51,33 @@ public:
 
   virtual QObject* guiHandle() const;
 
+  /**
+   * @brief Retrieves the current parameter value using the default QObject property for
+   *        parameter values.
+   * @param parameter
+   * @param role
+   *
+   * This implementation ignores the <code>role</code> argument and always returns
+   * the value held by the default property, which usually correspongs to the
+   * DisplayRole.
+   *
+   * @see ctkCmdLineModuleFrontend::value()
+   */
   virtual QVariant value(const QString& parameter, int role = LocalResourceRole) const;
-  virtual void setValue(const QString& parameter, const QVariant& value);
+
+  /**
+   * @brief Sets the parameter value.
+   * @param parameter
+   * @param value
+   * @param role
+   *
+   * This implementation does nothing if the <code>role</code> parameter does not equal
+   * ctkCmdLineModuleFrontend::DisplayRole. If it does, it sets the value of the default
+   * QObject property to the provided value.
+   *
+   * @see ctkCmdLiineModuleFrontend::setValue()
+   */
+  virtual void setValue(const QString& parameter, const QVariant& value, int role = DisplayRole);
 
   virtual QList<QString> parameterNames() const;
 
@@ -62,6 +87,7 @@ protected:
   virtual ctkCmdLineModuleXslTransform* xslTransform() const;
 
   QVariant customValue(const QString& parameter, const QString& propertyName = QString()) const;
+  void setCustomValue(const QString& parameter, const QVariant& value, const QString& propertyName = QString()) ;
 
 private:
 

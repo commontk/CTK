@@ -80,9 +80,9 @@ QVariant ctkCmdLineModuleFrontendQtWebKit::value(const QString &parameter, int r
 }
 
 //----------------------------------------------------------------------------
-void ctkCmdLineModuleFrontendQtWebKit::setValue(const QString &parameter, const QVariant &value)
+void ctkCmdLineModuleFrontendQtWebKit::setValue(const QString &parameter, const QVariant &value, int role)
 {
-  if (!this->WebView) return;
+  if (!this->WebView || role != DisplayRole) return;
 
   QWebElement webElement = this->WebView->page()->currentFrame()->findFirstElement("input[name=" + parameter + "]");
   if (webElement.isNull()) return;

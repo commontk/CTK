@@ -53,14 +53,18 @@ set(KIT_SRCS
 set(KIT_MOC_SRCS
   ctkCmdLineModuleDirectoryWatcher.h
   ctkCmdLineModuleDirectoryWatcher_p.h
-  ctkCmdLineModuleFrontend.h
   ctkCmdLineModuleFutureWatcher.h
   ctkCmdLineModuleManager.h
 )
 
-qt4_wrap_cpp(_dummy ctkCmdLineModuleXmlProgressWatcher.h)
-set_source_files_properties(ctkCmdLineModuleXmlProgressWatcher.cpp
-  PROPERTIES OBJECT_DEPENDS ${_dummy})
+QT4_GENERATE_MOCS(
+  ctkCmdLineModuleFrontend.h
+  ctkCmdLineModuleXmlProgressWatcher.h
+)
+
+#list(APPEND KIT_SRCS
+#  ${CMAKE_CURRENT_BINARY_DIR}/moc_ctkCmdLineModuleXmlProgressWatcher.h
+#)
 
 # UI files
 set(KIT_UI_FORMS
