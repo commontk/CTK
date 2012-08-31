@@ -186,6 +186,7 @@ include(CMake/ctkMacroBuildPlugin.cmake)
 include(CMake/ctkMacroBuildApp.cmake)
 include(CMake/ctkMacroBuildQtPlugin.cmake)
 include(CMake/ctkMacroCompilePythonScript.cmake)
+include(CMake/ctkMacroGenerateMocs.cmake)
 include(CMake/ctkMacroWrapPythonQt.cmake)
 include(CMake/ctkMacroSetupQt.cmake)
 include(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros

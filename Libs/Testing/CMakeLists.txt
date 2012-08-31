@@ -1,8 +1,5 @@
 project(CTKTesting)
 
-# CMake Macros
-include(CMake/ctkMacroGenerateMocs.cmake)
-
 if(CTK_USE_QTTESTING)
   include(../QtTesting/CMake/ctkQtTesting.cmake)
 endif()
