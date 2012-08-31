@@ -16,6 +16,8 @@ set(KIT_export_directive "CTK_CMDLINEMODULEQTGUI_EXPORT")
 set(KIT_SRCS
   ctkCmdLineModuleFrontendFactoryQtGui.cpp
   ctkCmdLineModuleFrontendQtGui.cpp
+  ctkCmdLineModuleQtUiLoader.cpp
+  ctkCmdLineModuleQtComboBox.cpp
   ctkCmdLineModuleMenuFactoryQtGui.cpp
   ctkCmdLineModuleObjectTreeWalker_p.h
   ctkCmdLineModuleObjectTreeWalker.cpp
@@ -23,6 +25,8 @@ set(KIT_SRCS
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
+  ctkCmdLineModuleQtComboBox_p.h
+  ctkCmdLineModuleQtUiLoader.h
 )
 
 # UI files
