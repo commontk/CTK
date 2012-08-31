@@ -110,10 +110,6 @@
     <property name="singleStep">
       <xsl:element name="{ctk:mapTypeToQtDesigner(name(../..))}"><xsl:value-of select="text()"/></xsl:element>
     </property>
-    <!-- Also add the 'step' information under the original name -->
-    <property name="parameter:step">
-      <string><xsl:value-of select="text()"/></string>
-    </property>
   </xsl:template>
 
   <!-- A named template which will be called from each parameter (integer, float, image, etc.) element.
@@ -154,6 +150,7 @@
 
     <!-- add additional (optional) information as properties -->
     <xsl:apply-templates select="default"/>
+    <xsl:apply-templates select="constraints"/>
   </xsl:template>
   
   <!-- A named template for creating a QtDesigner stringlist property -->
