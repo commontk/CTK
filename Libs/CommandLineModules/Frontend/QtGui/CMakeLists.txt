@@ -17,15 +17,17 @@ set(KIT_SRCS
   ctkCmdLineModuleFrontendFactoryQtGui.cpp
   ctkCmdLineModuleFrontendQtGui.cpp
   ctkCmdLineModuleQtUiLoader.cpp
-  ctkCmdLineModuleQtComboBox.cpp
   ctkCmdLineModuleObjectTreeWalker_p.h
   ctkCmdLineModuleObjectTreeWalker.cpp
 )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  ctkCmdLineModuleQtComboBox_p.h
   ctkCmdLineModuleQtUiLoader.h
+)
+
+qt4_generate_mocs(
+  ctkCmdLineModuleQtUiLoader.cpp
 )
 
 # UI files

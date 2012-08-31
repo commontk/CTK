@@ -19,7 +19,45 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleQtUiLoader.h"
-#include "ctkCmdLineModuleQtComboBox_p.h"
+
+#include <QComboBox>
+
+
+//-----------------------------------------------------------------------------
+/**
+ * \class ctkCmdLineModuleQtComboBox
+ * \brief Private subclass of QComboBox, providing the currentEnumeration and setCurrentEnumeration methods.
+ * \author m.clarkson@ucl.ac.uk
+ * \ingroup CommandLineModulesFrontendQtGui
+ */
+class ctkCmdLineModuleQtComboBox : public QComboBox
+{
+
+  Q_OBJECT
+  Q_PROPERTY(QString currentEnumeration READ currentEnumeration WRITE setCurrentEnumeration)
+
+public:
+
+  ctkCmdLineModuleQtComboBox(QWidget* parent = 0)
+    : QComboBox(parent)
+  {}
+
+  void setCurrentEnumeration(const QString& text)
+  {
+    int i = findText(text);
+    if (i == -1)
+    {
+      return;
+    }
+    this->setCurrentIndex(i);
+  }
+
+  QString currentEnumeration() const
+  {
+    return this->currentText();
+  }
+
+};
 
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleQtUiLoader::ctkCmdLineModuleQtUiLoader(QObject *parent)
@@ -27,14 +65,6 @@ ctkCmdLineModuleQtUiLoader::ctkCmdLineModuleQtUiLoader(QObject *parent)
 {
 
 }
-
-
-//-----------------------------------------------------------------------------
-ctkCmdLineModuleQtUiLoader::~ctkCmdLineModuleQtUiLoader()
-{
-
-}
-
 
 //-----------------------------------------------------------------------------
 QWidget* ctkCmdLineModuleQtUiLoader::createWidget(const QString& className, QWidget* parent, const QString& name)
@@ -53,3 +83,5 @@ QWidget* ctkCmdLineModuleQtUiLoader::createWidget(const QString& className, QWid
 
   return widget;
 }
+
+#include "moc_ctkCmdLineModuleQtUiLoader.cpp"
