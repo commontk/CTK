@@ -24,6 +24,7 @@
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleXslTransform.h"
 #include "ctkCmdLineModuleObjectTreeWalker_p.h"
+#include "ctkCmdLineModuleQtUiLoader.h"
 
 #include <QBuffer>
 #include <QFile>
@@ -69,7 +70,7 @@ QUiLoader* ctkCmdLineModuleFrontendQtGui::uiLoader() const
 {
   if (d->Loader == NULL)
   {
-    d->Loader.reset(new QUiLoader());
+    d->Loader.reset(new ctkCmdLineModuleQtUiLoader());
   }
   return d->Loader.data();
 }
