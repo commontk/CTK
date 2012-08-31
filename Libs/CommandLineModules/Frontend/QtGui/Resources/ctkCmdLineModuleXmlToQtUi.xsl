@@ -38,7 +38,7 @@
       <xsl:when test="$cliType= ('point', 'region')">coordinates</xsl:when>
       <xsl:when test="$cliType= ('image', 'file', 'directory', 'geometry')">currentPath</xsl:when>
       <xsl:when test="$cliType= ('string', 'integer-vector', 'float-vector', 'double-vector', 'string-vector')">text</xsl:when>
-      <xsl:when test="$cliType= ('integer-enumeration', 'float-enumeration', 'double-enumeration', 'string-enumeration')">currentText</xsl:when>
+      <xsl:when test="$cliType= ('integer-enumeration', 'float-enumeration', 'double-enumeration', 'string-enumeration')">currentEnumeration</xsl:when>
       <xsl:otherwise>value</xsl:otherwise>
     </xsl:choose>
   </xsl:function>
