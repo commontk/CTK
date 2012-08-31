@@ -151,6 +151,11 @@ public:
 
         if (parent.isEmpty())
         {
+          if (!outputData.isEmpty())
+          {
+            emit q->outputDataAvailable(outputData);
+            outputData.clear();
+          }
           if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0)
           {
             emit q->filterStarted(currentName, currentComment);
@@ -180,10 +185,6 @@ public:
         emit q->filterXmlError(QString("Error parsing XML at line %1, column %2: ")
                                .arg(reader.lineNumber()).arg(reader.columnNumber()) + reader.errorString());
       }
-    }
-    if (!outputData.isEmpty())
-    {
-      emit q->outputDataAvailable(outputData);
     }
   }
 
