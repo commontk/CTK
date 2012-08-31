@@ -113,7 +113,7 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
 
   // Register persistent modules
   QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
-                       ctkCmdLineModuleConcurrentRegister(&moduleManager));
+                       ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
 
   // Start watching directories
   directoryWatcher.setDebug(true);
