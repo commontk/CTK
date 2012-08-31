@@ -31,6 +31,7 @@ set(KIT_SRCS
   ctkCmdLineModuleFutureWatcher.cpp
   ctkCmdLineModuleManager.cpp
   ctkCmdLineModuleParameter.cpp
+  ctkCmdLineModuleParameter_p.h
   ctkCmdLineModuleParameterGroup.cpp
   ctkCmdLineModuleParameterGroup_p.h
   ctkCmdLineModuleParameterParsers_p.h
