@@ -50,6 +50,7 @@ Q_SIGNALS:
 
   void filterStarted(const QString& name, const QString& comment);
   void filterProgress(float progress);
+  void filterResult(const QString& parameter, const QString& value);
   void filterFinished(const QString& name);
   void filterXmlError(const QString& error);
 

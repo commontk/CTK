@@ -168,10 +168,30 @@ void ctkCmdLineModuleFutureTester::testStartFinish()
 {
   QList<QString> expectedSignals;
   expectedSignals << "module.started"
+
+                     // the following signals are send when connecting a QFutureWatcher to
+                     // an already started QFuture
                   << "module.progressRangeChanged(0,0)"
                   << "module.progressValueChanged(0)"
+
                   << "module.progressRangeChanged(0,1000)"
+
+                     // the test module always reports error data when starting
                   << "module.errorReady"
+
+                     // the following two signals are send when the module reports "filter start"
+                  << "module.progressValueChanged(1)"
+                  << "module.progressTextChanged(Test Filter)"
+
+                     // imageOutput result
+                  << "module.resultReadyAt(0,1)"
+                  << "module.resultReadyAt(0)"
+
+                     // exitStatusOutput result
+                  << "module.resultReadyAt(1,2)"
+                  << "module.resultReadyAt(1)"
+
+                     // the following signal is sent at the end to report completion
                   << "module.progressValueChanged(1000)"
                   << "module.finished";
 
@@ -183,6 +203,11 @@ void ctkCmdLineModuleFutureTester::testStartFinish()
 
   QCoreApplication::processEvents();
   QVERIFY(signalTester.checkSignals(expectedSignals));
+
+  QList<ctkCmdLineModuleResult> results;
+  results << ctkCmdLineModuleResult("imageOutput", "/tmp/out.nrrd");
+  results << ctkCmdLineModuleResult("exitStatusOutput", "Normal exit");
+  QCOMPARE(signalTester.results(), results);
 }
 
 //-----------------------------------------------------------------------------
@@ -190,10 +215,12 @@ void ctkCmdLineModuleFutureTester::testProgress()
 {
   QList<QString> expectedSignals;
   expectedSignals << "module.started"
+
                      // the following signals are send when connecting a QFutureWatcher to
                      // an already started QFuture
                   << "module.progressRangeChanged(0,0)"
                   << "module.progressValueChanged(0)"
+
                   << "module.progressRangeChanged(0,1000)"
 
                      // the test module always reports error data when starting
@@ -203,11 +230,23 @@ void ctkCmdLineModuleFutureTester::testProgress()
                   << "module.progressValueChanged(1)"
                   << "module.progressTextChanged(Test Filter)"
 
+                     // the output data on the standard output channel
+                  << "module.outputReady"
+
                      // this signal is send when the module reports progress for "output1"
                   << "module.progressValueChanged(999)"
 
-                     // the output data (the order is not really deterministic here...)
-                  << "module.outputReady"
+                     // first resultNumberOutput result
+                  << "module.resultReadyAt(0,1)"
+                  << "module.resultReadyAt(0)"
+
+                     // imageOutput result
+                  << "module.resultReadyAt(1,2)"
+                  << "module.resultReadyAt(1)"
+
+                     // exitStatusOutput result
+                  << "module.resultReadyAt(2,3)"
+                  << "module.resultReadyAt(2)"
 
                      // the following signal is sent at the end to report completion
                   << "module.progressValueChanged(1000)"
@@ -225,6 +264,12 @@ void ctkCmdLineModuleFutureTester::testProgress()
   QCoreApplication::processEvents();
 
   QVERIFY(signalTester.checkSignals(expectedSignals));
+
+  QList<ctkCmdLineModuleResult> results;
+  results << ctkCmdLineModuleResult("resultNumberOutput", 1);
+  results << ctkCmdLineModuleResult("imageOutput", "/tmp/out.nrrd");
+  results << ctkCmdLineModuleResult("exitStatusOutput", "Normal exit");
+  QCOMPARE(signalTester.results(), results);
 }
 
 //-----------------------------------------------------------------------------
@@ -317,17 +362,53 @@ void ctkCmdLineModuleFutureTester::testOutput()
 
   QList<QString> expectedSignals;
   expectedSignals << "module.started"
+
+                     // the following signals are send when connecting a QFutureWatcher to
+                     // an already started QFuture
                   << "module.progressRangeChanged(0,0)"
                   << "module.progressValueChanged(0)"
+
                   << "module.progressRangeChanged(0,1000)"
+
+                     // the test module always reports error data when starting
                   << "module.errorReady"
+
+                     // the following two signals are send when the module reports "filter start"
                   << "module.progressValueChanged(1)"
                   << "module.progressTextChanged(Test Filter)"
+
+                     // the output data on the standard output channel "Output 1"
+                  << "module.outputReady"
+
+                     // this signal is send when the module reports progress for "output1"
                   << "module.progressValueChanged(500)"
+
+                     // first resultNumberOutput result
+                  << "module.resultReadyAt(0,1)"
+                  << "module.resultReadyAt(0)"
+
+                     // the output data on the standard output channel "Output 2"
                   << "module.outputReady"
+
+                     // this signal is send when the module reports progress for "output2"
                   << "module.progressValueChanged(999)"
-                  << "module.outputReady"
+
+                     // second resultNumberOutput result
+                  << "module.resultReadyAt(1,2)"
+                  << "module.resultReadyAt(1)"
+
+                     // imageOutput result
+                  << "module.resultReadyAt(2,3)"
+                  << "module.resultReadyAt(2)"
+
+                     // exitStatusOutput result
+                  << "module.resultReadyAt(3,4)"
+                  << "module.resultReadyAt(3)"
+
+                     // final error message
                   << "module.errorReady"
+
+                     // the following signal is sent at the end to report completion
                   << "module.progressValueChanged(1000)"
                   << "module.finished";
 
@@ -341,6 +422,13 @@ void ctkCmdLineModuleFutureTester::testOutput()
 
   QCOMPARE(future.readAllOutputData().data(), expectedOutput);
   QCOMPARE(future.readAllErrorData().data(), expectedError);
+
+  QList<ctkCmdLineModuleResult> results;
+  results << ctkCmdLineModuleResult("resultNumberOutput", 1);
+  results << ctkCmdLineModuleResult("resultNumberOutput", 2);
+  results << ctkCmdLineModuleResult("errorMsgOutput", "Final error msg.");
+  results << ctkCmdLineModuleResult("exitStatusOutput", "Normal exit");
+  QCOMPARE(signalTester.results(), results);
 }
 
 //-----------------------------------------------------------------------------

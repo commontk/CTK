@@ -67,6 +67,7 @@ int main(int argc, char* argv[])
   parser.addArgument("exitCrash", "", QVariant::Bool, "Force crash", false);
   parser.addArgument("exitTime", "", QVariant::Int, "Exit time", 0);
   parser.addArgument("errorText", "", QVariant::String, "Error text printed at the end");
+
   QTextStream out(stdout, QIODevice::WriteOnly | QIODevice::Text);
   QTextStream err(stderr, QIODevice::WriteOnly | QIODevice::Text);
 
@@ -75,7 +76,7 @@ int main(int argc, char* argv[])
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(QCoreApplication::arguments(), &ok);
   if (!ok)
   {
-    err << "Error parsing arguments: " << parser.errorString() << "\n";
+    err << "Error parsing arguments:" << parser.errorString() << endl;
     return EXIT_FAILURE;
   }
 
@@ -83,6 +84,9 @@ int main(int argc, char* argv[])
   if (parsedArgs.contains("help") || parsedArgs.contains("h"))
   {
     out << parser.helpText();
+    out.setFieldWidth(parser.fieldWidth());
+    out.setFieldAlignment(QTextStream::AlignLeft);
+    out << "  <output-path>" << "Path to the output image" << endl;
     return EXIT_SUCCESS;
   }
 
@@ -94,6 +98,12 @@ int main(int argc, char* argv[])
     return EXIT_SUCCESS;
   }
 
+  if (parser.unparsedArguments().isEmpty())
+  {
+    err << "Error parsing arguments: <output-path> argument missing" << endl;
+    return EXIT_FAILURE;
+  }
+
   // Do something
 
   float runtime = parsedArgs["runtime"].toFloat();
@@ -103,6 +113,8 @@ int main(int argc, char* argv[])
   int exitCode = parsedArgs["exitCode"].toInt();
   bool exitCrash = parsedArgs["exitCrash"].toBool();
   QString errorText = parsedArgs["errorText"].toString();
+
+  QString imageOutput = parser.unparsedArguments().at(0);
 
   err << "A superficial error message." << endl;
 
@@ -120,14 +132,12 @@ int main(int argc, char* argv[])
   QTime time;
   time.start();
 
-  if (!outputs.empty())
-  {
-    out << "<filter-start>\n";
-    out << "<filter-name>Test Filter</filter-name>\n";
-    out << "<filter-comment>Does nothing useful</filter-comment>\n";
-    out << "</filter-start>\n";
-  }
-  else
+  out << "<filter-start>\n";
+  out << "<filter-name>Test Filter</filter-name>\n";
+  out << "<filter-comment>Does nothing useful</filter-comment>\n";
+  out << "</filter-start>" << endl;
+
+  if (outputs.empty())
   {
     outputs.push_back("dummy");
   }
@@ -158,24 +168,38 @@ int main(int argc, char* argv[])
     if (output != "dummy")
     {
       out << output << endl;
+
       // report progress
-      out << "<filter-progress>" << (i+1)*progressStep << "</filter-progress>\n";
+      out << "<filter-progress>" << (i+1)*progressStep << "</filter-progress>" << endl;
+      // report the current output number as a result
+      out << "<filter-result name=\"resultNumberOutput\">" << (i+1) << "</filter-result>" << endl;
     }
   }
 
   // sleep 500ms to avoid squashing the last progress event with the finished event
   sleep_ms(500);
 
-  out.flush();
-
-  if (exitCrash)
-  {
-    int* crash = 0;
-    *crash = 5;
-  }
   if (!errorText.isEmpty())
   {
     err << errorText;
+    out << "<filter-result name=\"errorMsgOutput\">" << errorText << "</filter-result>" << endl;
   }
+  else
+  {
+    out << "<filter-result name=\"imageOutput\">" << imageOutput << "</filter-result>" << endl;
+  }
+
+  out << "<filter-result name=\"exitStatusOutput\">";
+  if (exitCrash)
+  {
+    out << "Crashed</filter-result>" << endl;
+    int* crash = 0;
+    *crash = 5;
+  }
+  else
+  {
+    out << "Normal exit</filter-result>" << endl;
+  }
+
   return exitCode;
 }

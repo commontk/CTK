@@ -43,6 +43,7 @@ public:
   bool checkSignals(const QList<QString>& expectedSignals);
   void dumpSignals(const QList<QString>& expectedSignals);
 
+  QList<ctkCmdLineModuleResult> results() const;
 
 public Q_SLOTS:
 
@@ -69,6 +70,7 @@ private:
 
   ctkCmdLineModuleFutureWatcher Watcher;
   QList<QString> Events;
+  QList<ctkCmdLineModuleResult> Results;
 };
 
 #endif // CTKCMDLINEMODULESIGNALTESTER_H

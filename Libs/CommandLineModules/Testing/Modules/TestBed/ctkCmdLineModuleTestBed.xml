@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<executable>
+<executable xsi:noNamespaceSchemaLocation="../../../Core/Resources/ctkCmdLineModule.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <category>Testing</category>
   <title>Test Bed</title>
   <description>
@@ -16,7 +16,7 @@ Configurable behaviour for testing purposes.
     <integer>
       <name>runtimeVar</name>
       <longflag>runtime</longflag>
-      <description>An integer without constraints</description>
+      <description>An integer with constraints</description>
       <label>Runtime (seconds)</label>
       <default>1</default>
       <constraints>
@@ -59,6 +59,43 @@ Configurable behaviour for testing purposes.
       <description>Final error message at the end.</description>
       <label>Error text</label>
     </string>
+  </parameters>
+  
+  <parameters>
+    <label>Output parameter</label>
+    <description>Output parameters for testing purposes.</description>
+    <integer>
+      <name>resultNumberOutput</name>
+      <index>1000</index>
+      <description>The number of results reported by this module.</description>
+      <label>Number of results</label>
+      <default>0</default>
+      <channel>output</channel>
+    </integer>
+    <string>
+      <name>errorMsgOutput</name>
+      <index>1000</index>
+      <description>Exit error message.</description>
+      <label>Error</label>
+      <channel>output</channel>
+    </string>
+    <string-enumeration>
+      <name>exitStatusOutput</name>
+      <index>1000</index>
+      <description>Exit status (crashed or normal exit)</description>
+      <label>Exit status</label>
+      <channel>output</channel>
+      <element>Normal exit</element>
+      <element>Crashed</element>
+    </string-enumeration>
+    <image>
+      <name>imageOutput</name>
+      <index>0</index>
+      <description>Image output path.</description>
+      <label>Output image</label>
+      <default>/tmp/out.nrrd</default>
+      <channel>output</channel>
+    </image>
   </parameters>
 
 </executable>

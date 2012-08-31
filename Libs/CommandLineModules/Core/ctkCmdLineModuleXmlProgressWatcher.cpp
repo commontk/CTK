@@ -33,6 +33,7 @@ static QString FILTER_START = "filter-start";
 static QString FILTER_NAME = "filter-name";
 static QString FILTER_COMMENT = "filter-comment";
 static QString FILTER_PROGRESS = "filter-progress";
+static QString FILTER_RESULT = "filter-result";
 static QString FILTER_END = "filter-end";
 
 }
@@ -104,6 +105,10 @@ public:
         {
           currentProgress = reader.text().toString().toFloat();
         }
+        else if (stack.size() == 1 && stack.back() == FILTER_RESULT)
+        {
+          currentResultValue = reader.text().toString();
+        }
         break;
       }
       case QXmlStreamReader::StartElement:
@@ -119,6 +124,7 @@ public:
 
         if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0 ||
             name.compare(FILTER_PROGRESS, Qt::CaseInsensitive) == 0 ||
+            name.compare(FILTER_RESULT, Qt::CaseInsensitive) == 0 ||
             name.compare(FILTER_END, Qt::CaseInsensitive) == 0)
         {
           if (!parent.isEmpty())
@@ -132,6 +138,11 @@ public:
             currentName.clear();
             currentComment.clear();
             currentProgress = 0;
+          }
+          else if (name.compare(FILTER_RESULT, Qt::CaseInsensitive) == 0)
+          {
+            currentResultParameter = reader.attributes().value("name").toString();
+            currentResultValue.clear();
           }
         }
         break;
@@ -163,6 +174,10 @@ public:
           else if (name.compare(FILTER_PROGRESS, Qt::CaseInsensitive) == 0)
           {
             emit q->filterProgress(currentProgress);
+          }
+          else if (name.compare(FILTER_RESULT, Qt::CaseInsensitive) == 0)
+          {
+            emit q->filterResult(currentResultParameter, currentResultValue);
           }
           else if (name.compare(FILTER_END, Qt::CaseInsensitive) == 0)
           {
@@ -208,6 +223,8 @@ public:
   QString currentName;
   QString currentComment;
   float currentProgress;
+  QString currentResultParameter;
+  QString currentResultValue;
 };
 
 
@@ -239,4 +256,4 @@ ctkCmdLineModuleXmlProgressWatcher::~ctkCmdLineModuleXmlProgressWatcher()
 {
 }
 
-#include "moc_ctkCmdLineModuleXmlProgressWatcher.cxx"
+#include "moc_ctkCmdLineModuleXmlProgressWatcher.h"

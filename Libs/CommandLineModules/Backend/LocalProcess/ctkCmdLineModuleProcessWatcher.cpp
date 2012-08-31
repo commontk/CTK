@@ -39,6 +39,7 @@ ctkCmdLineModuleProcessWatcher::ctkCmdLineModuleProcessWatcher(QProcess& process
 
   connect(&processXmlWatcher, SIGNAL(filterStarted(QString,QString)), SLOT(filterStarted(QString,QString)));
   connect(&processXmlWatcher, SIGNAL(filterProgress(float)), SLOT(filterProgress(float)));
+  connect(&processXmlWatcher, SIGNAL(filterResult(QString,QString)), SLOT(filterResult(QString,QString)));
   connect(&processXmlWatcher, SIGNAL(filterFinished(QString)), SLOT(filterFinished(QString)));
   connect(&processXmlWatcher, SIGNAL(filterXmlError(QString)), SLOT(filterXmlError(QString)));
 
@@ -69,6 +70,12 @@ void ctkCmdLineModuleProcessWatcher::filterStarted(const QString& name, const QS
 void ctkCmdLineModuleProcessWatcher::filterProgress(float progress)
 {
   futureInterface.setProgressValue(updateProgress(progress));
+}
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleProcessWatcher::filterResult(const QString &parameter, const QString &value)
+{
+  futureInterface.reportResult(ctkCmdLineModuleResult(parameter, value));
 }
 
 //----------------------------------------------------------------------------

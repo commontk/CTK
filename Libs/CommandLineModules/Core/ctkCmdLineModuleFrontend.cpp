@@ -26,35 +26,48 @@
 #include "ctkCmdLineModuleParameterGroup.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleFuture.h"
+#include "ctkException.h"
 
 #include <QUrl>
+#include <QFutureWatcher>
 
 //----------------------------------------------------------------------------
 struct ctkCmdLineModuleFrontendPrivate
 {
-  ctkCmdLineModuleFrontendPrivate(const ctkCmdLineModuleReference& moduleRef)
-    : ModuleReference(moduleRef)
+  ctkCmdLineModuleFrontendPrivate(const ctkCmdLineModuleReference& moduleRef, ctkCmdLineModuleFrontend* q)
+    : q(q)
+    , ModuleReference(moduleRef)
   {
   }
+
+  void _q_resultReadyAt(int index)
+  {
+    q->resultReady(Future.resultAt(index));
+  }
+
+  ctkCmdLineModuleFrontend* q;
 
   ctkCmdLineModuleReference ModuleReference;
 
   QList<QString> ParameterNames;
 
   ctkCmdLineModuleFuture Future;
+  QFutureWatcher<ctkCmdLineModuleResult> FutureWatcher;
 };
 
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleFrontend::ctkCmdLineModuleFrontend(const ctkCmdLineModuleReference& moduleRef)
-  : d(new ctkCmdLineModuleFrontendPrivate(moduleRef))
+  : d(new ctkCmdLineModuleFrontendPrivate(moduleRef, this))
 {
+  connect(&d->FutureWatcher, SIGNAL(resultReadyAt(int)), SLOT(_q_resultReadyAt(int)));
 }
 
 //----------------------------------------------------------------------------
 void ctkCmdLineModuleFrontend::setFuture(const ctkCmdLineModuleFuture &future)
 {
   d->Future = future;
+  d->FutureWatcher.setFuture(d->Future);
 }
 
 //----------------------------------------------------------------------------
@@ -166,3 +179,22 @@ void ctkCmdLineModuleFrontend::resetValues()
     this->setValue(param.name(), param.defaultValue());
   }
 }
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleFrontend::resultReady(const ctkCmdLineModuleResult &result)
+{
+  try
+  {
+    if (this->moduleReference().description().parameter(result.parameter()).channel() != "output")
+    {
+      qWarning() << "Module" << this->moduleReference().location() << "is reporting results for non-output parameter"
+                 << result.parameter() << ". Report ignored.";
+      return;
+    }
+    this->setValue(result.parameter(), result.value());
+  }
+  catch (const ctkInvalidArgumentException&)
+  {}
+}
+
+#include "moc_ctkCmdLineModuleFrontend.h"

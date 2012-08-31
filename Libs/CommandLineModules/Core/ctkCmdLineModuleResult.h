@@ -40,6 +40,11 @@ public:
     : Parameter(parameter), Value(value)
   {}
 
+  bool operator==(const ctkCmdLineModuleResult& other) const
+  {
+    return Parameter == other.Parameter && Value == other.Value;
+  }
+
   inline QString parameter() const { return Parameter; }
   inline QVariant value() const { return Value; }
 

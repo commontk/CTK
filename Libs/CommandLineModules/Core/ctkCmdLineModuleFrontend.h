@@ -32,6 +32,7 @@ class QUrl;
 class ctkCmdLineModuleFuture;
 class ctkCmdLineModuleReference;
 class ctkCmdLineModuleParameter;
+class ctkCmdLineModuleResult;
 struct ctkCmdLineModuleFrontendPrivate;
 
 /**
@@ -229,12 +230,27 @@ protected:
    */
   void setFuture(const ctkCmdLineModuleFuture& future);
 
+private Q_SLOTS:
+
+  /**
+   * @brief Provides results as reported by the running module.
+   * @param result
+   *
+   * This method is called when a running module reports a new
+   * result. The default implementation updates the current value
+   * of the output parameter in the GUI with the reported value.
+   */
+  virtual void resultReady(const ctkCmdLineModuleResult& result);
+
 private:
 
   Q_DISABLE_COPY(ctkCmdLineModuleFrontend)
 
+  friend class ctkCmdLineModuleFrontendPrivate;
   friend class ctkCmdLineModuleManager;
   friend class ctkCmdLineModulePrivate;
+
+  Q_PRIVATE_SLOT(d, void _q_resultReadyAt(int))
 
   QScopedPointer<ctkCmdLineModuleFrontendPrivate> d;
 

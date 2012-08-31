@@ -23,6 +23,7 @@
 
 #include <QDebug>
 
+//-----------------------------------------------------------------------------
 ctkCmdLineModuleSignalTester::ctkCmdLineModuleSignalTester()
 {
   connect(&Watcher, SIGNAL(started()), SLOT(moduleStarted()));
@@ -43,86 +44,104 @@ ctkCmdLineModuleSignalTester::ctkCmdLineModuleSignalTester()
   connect(&Watcher, SIGNAL(errorDataReady()), SLOT(errorDataReady()));
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::setFuture(const ctkCmdLineModuleFuture &future)
 {
   this->Watcher.setFuture(future);
 }
 
+//-----------------------------------------------------------------------------
 ctkCmdLineModuleFutureWatcher *ctkCmdLineModuleSignalTester::watcher()
 {
   return &this->Watcher;
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::moduleStarted()
 {
   Events.push_back("module.started");
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::moduleFinished()
 {
   Events.push_back("module.finished");
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::moduleProgressValueChanged(int progress)
 {
   Events.push_back(QString("module.progressValueChanged(%1)").arg(progress));
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::moduleProgressTextChanged(const QString& text)
 {
   Events.push_back(QString("module.progressTextChanged(\"%1\")").arg(text));
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::modulePaused()
 {
   Events.push_back("module.paused");
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::moduleResumed()
 {
   Events.push_back("module.resumed");
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::moduleCanceled()
 {
   Events.push_back("module.canceled");
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::resultReadyAt(int resultIndex)
 {
   Events.push_back(QString("module.resultReadyAt(%1)").arg(resultIndex));
+  Results.push_back(Watcher.resultAt(resultIndex));
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::resultReadyAt(int beginIndex, int endIndex)
 {
   Events.push_back(QString("module.resultReadyAt(%1,%2)").arg(beginIndex).arg(endIndex));
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::progressRangeChanged(int minimum, int maximum)
 {
   Events.push_back(QString("module.progressRangeChanged(%1,%2)").arg(minimum).arg(maximum));
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::progressValueChanged(int progressValue)
 {
   Events.push_back(QString("module.progressValueChanged(%1)").arg(progressValue));
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::progressTextChanged(const QString &progressText)
 {
   Events.push_back(QString("module.progressTextChanged(%1)").arg(progressText));
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::outputDataReady()
 {
   Events.push_back("module.outputReady");
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::errorDataReady()
 {
   Events.push_back("module.errorReady");
 }
 
+//-----------------------------------------------------------------------------
 bool ctkCmdLineModuleSignalTester::checkSignals(const QList<QString>& expectedSignals)
 {
   if (Events.size() != expectedSignals.size())
@@ -142,6 +161,7 @@ bool ctkCmdLineModuleSignalTester::checkSignals(const QList<QString>& expectedSi
   return true;
 }
 
+//-----------------------------------------------------------------------------
 void ctkCmdLineModuleSignalTester::dumpSignals(const QList<QString>& expectedSignals)
 {
   int max = Events.size() > expectedSignals.size() ? Events.size() : expectedSignals.size();
@@ -158,4 +178,10 @@ void ctkCmdLineModuleSignalTester::dumpSignals(const QList<QString>& expectedSig
       qDebug() << " " << "- NONE - " << "--" << sig;
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+QList<ctkCmdLineModuleResult> ctkCmdLineModuleSignalTester::results() const
+{
+  return Results;
 }
