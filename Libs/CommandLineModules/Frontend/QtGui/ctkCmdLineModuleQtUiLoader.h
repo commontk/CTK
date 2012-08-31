@@ -38,6 +38,7 @@ class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleQtUiLoader : public QUiLoade
 
 public:
   ctkCmdLineModuleQtUiLoader(QObject *parent=0);
+  virtual ~ctkCmdLineModuleQtUiLoader();
 
   /**
    * \brief If className is QComboBox, instantiates ctkCmdLineModuleQtGuiComboBox and

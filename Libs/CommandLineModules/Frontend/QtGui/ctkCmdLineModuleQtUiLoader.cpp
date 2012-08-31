@@ -67,6 +67,13 @@ ctkCmdLineModuleQtUiLoader::ctkCmdLineModuleQtUiLoader(QObject *parent)
 }
 
 //-----------------------------------------------------------------------------
+ctkCmdLineModuleQtUiLoader::~ctkCmdLineModuleQtUiLoader()
+{
+
+}
+
+
+//-----------------------------------------------------------------------------
 QWidget* ctkCmdLineModuleQtUiLoader::createWidget(const QString& className, QWidget* parent, const QString& name)
 {
   QWidget* widget = NULL;
