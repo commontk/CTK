@@ -16,6 +16,8 @@
   ===================================================================
   -->
   
+  <xsl:param name="disableReturnParameter">true</xsl:param>
+  
   <xsl:param name="executableWidget">QWidget</xsl:param>
   <xsl:param name="parametersWidget">ctkCollapsibleGroupBox</xsl:param>
   <xsl:param name="booleanWidget">QCheckBox</xsl:param>
