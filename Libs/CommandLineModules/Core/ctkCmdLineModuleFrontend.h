@@ -246,7 +246,7 @@ private:
 
   Q_DISABLE_COPY(ctkCmdLineModuleFrontend)
 
-  friend class ctkCmdLineModuleFrontendPrivate;
+  friend struct ctkCmdLineModuleFrontendPrivate;
   friend class ctkCmdLineModuleManager;
   friend class ctkCmdLineModulePrivate;
 
