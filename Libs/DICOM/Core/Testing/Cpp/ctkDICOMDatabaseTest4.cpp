@@ -94,10 +94,28 @@ int ctkDICOMDatabaseTest4( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  // check the insert timestamp
+  QDateTime beforeInsert = QDateTime::currentDateTime();
+  std::cerr << "Current dateTime " << beforeInsert.toString().toStdString() << std::endl;
+
   database.insert(dicomFilePath, false, false);
 
+  QDateTime insertTimeStamp = database.insertDateTimeForInstance(instanceUID);
+  std::cerr << "Instance inserted " << insertTimeStamp.toString().toStdString() << std::endl;
+
+  QString filePath = database.fileForInstance(instanceUID);
+  std::cerr << "Instance file " << filePath.toStdString() << std::endl;
+
+  int elapsed = beforeInsert.secsTo(insertTimeStamp);
+  if (elapsed > 1)
+    {
+    std::cerr << "ctkDICOMDatabase: Took more than a second to insert the file." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // check for series description in tag cache
   QString knownSeriesDescription("3D Cor T1 FAST IR-prepped GRE");
-  
+
   QString cachedTag = database.cachedTag(instanceUID, tag);
 
   if (cachedTag != knownSeriesDescription)

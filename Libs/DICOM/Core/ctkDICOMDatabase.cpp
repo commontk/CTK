@@ -608,6 +608,23 @@ QString ctkDICOMDatabase::instanceForFile(QString fileName)
   return( result );
 }
 
+//------------------------------------------------------------------------------
+QDateTime ctkDICOMDatabase::insertDateTimeForInstance(QString sopInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT InsertTimestamp FROM Images WHERE SOPInstanceUID=?");
+  query.bindValue ( 0, sopInstanceUID );
+  query.exec();
+  QDateTime result;
+  if (query.next())
+    {
+    result = QDateTime::fromString(query.value(0).toString(), Qt::ISODate);
+    }
+  return( result );
+}
+
+
 //
 // instance header methods
 //

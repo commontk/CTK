@@ -29,6 +29,7 @@
 #include "ctkDICOMDataset.h"
 #include "ctkDICOMCoreExport.h"
 
+class QDateTime;
 class ctkDICOMDatabasePrivate;
 class DcmDataset;
 class ctkDICOMAbstractThumbnailGenerator;
@@ -134,6 +135,7 @@ public:
   Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
   Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
   Q_INVOKABLE QString instanceForFile (const QString fileName);
+  Q_INVOKABLE QDateTime insertDateTimeForInstance (const QString fileName);
 
   Q_INVOKABLE QStringList allFiles ();
   ///
@@ -175,13 +177,13 @@ public:
   ///                  does only make sense if a full object is received.
   /// @param @generateThumbnail If true, a thumbnail is generated.
   ///
-  Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset, 
+  Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset,
                               bool storeFile, bool generateThumbnail);
-  void insert ( DcmDataset *dataset, 
+  void insert ( DcmDataset *dataset,
                               bool storeFile = true, bool generateThumbnail = true);
-  Q_INVOKABLE void insert ( const QString& filePath, 
-                            bool storeFile = true, bool generateThumbnail = true, 
-                            bool createHierarchy = true, 
+  Q_INVOKABLE void insert ( const QString& filePath,
+                            bool storeFile = true, bool generateThumbnail = true,
+                            bool createHierarchy = true,
                             const QString& destinationDirectoryName = QString() );
 
   /// Check if file is already in database and up-to-date
