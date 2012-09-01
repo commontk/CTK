@@ -67,6 +67,15 @@ ctkCmdLineModuleFrontend::ctkCmdLineModuleFrontend(const ctkCmdLineModuleReferen
 void ctkCmdLineModuleFrontend::setFuture(const ctkCmdLineModuleFuture &future)
 {
   d->Future = future;
+  // Reset all simple output (return) parameter values
+  foreach(const ctkCmdLineModuleParameter& param, this->parameters(QString(), Output))
+  {
+    if (param.index() == 1000)
+    {
+      this->setValue(param.name(), param.defaultValue());
+    }
+  }
+
   d->FutureWatcher.setFuture(d->Future);
 }
 
