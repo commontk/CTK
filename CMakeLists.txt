@@ -578,9 +578,6 @@ set(plugin_list
   org.commontk.log
   org.commontk.log4qt
   org.commontk.metatype
-
-  # Misc
-  #org.commontk.slicermodule
   )
 
 foreach(_plugin ${plugin_list})  
