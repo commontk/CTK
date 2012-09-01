@@ -47,8 +47,8 @@ public Q_SLOTS:
   virtual void moduleCanceled();
 
   virtual void filterStarted(const QString& name, const QString& comment);
-  virtual void filterProgress(float progress);
-  virtual void filterFinished(const QString& name);
+  virtual void filterProgress(float progress, const QString& comment);
+  virtual void filterFinished(const QString& name, const QString& comment);
   virtual void filterXmlError(const QString& error);
 
 private:

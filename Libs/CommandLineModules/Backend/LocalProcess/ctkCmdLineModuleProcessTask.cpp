@@ -95,9 +95,15 @@ void ctkCmdLineModuleProcessTask::run()
     this->reportException(ctkCmdLineModuleRunException(d->Location, process.exitCode(), process.errorString()));
   }
 
-  this->setProgressValue(1000);
-
-  //this->reportResult(result);
+  if (this->progressValue() == 1001)
+  {
+    // We got a "filter-end" progress report, potentially with a comment,
+    // so don't overwrite the comment in the progress text.
+    this->setProgressValue(1002);
+  }
+  else
+  {
+    this->setProgressValueAndText(1002, QObject::tr("Finished."));
+  }
   this->reportFinished();
-
 }

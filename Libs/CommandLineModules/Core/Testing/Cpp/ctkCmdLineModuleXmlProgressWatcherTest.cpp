@@ -58,15 +58,15 @@ public:
     }
   }
 
-  void filterProgress(float progress)
+  void filterProgress(float progress, const QString& comment)
   {
-    ctkCmdLineModuleSignalTester::filterProgress(progress);
+    ctkCmdLineModuleSignalTester::filterProgress(progress, comment);
     accumulatedProgress += progress;
   }
 
-  void filterFinished(const QString& name)
+  void filterFinished(const QString& name, const QString& comment)
   {
-    ctkCmdLineModuleSignalTester::filterFinished(name);
+    ctkCmdLineModuleSignalTester::filterFinished(name, comment);
     if (name != "My Filter")
     {
       error = "Filter name does not match \"My Filter\" (got \"" + name + "\")";
@@ -117,8 +117,8 @@ void ctkCmdLineModuleXmlProgressWatcherTester::testSignalsAndValues()
 
   SignalTester signalTester;
   signalTester.connect(&progressWatcher, SIGNAL(filterStarted(QString,QString)), &signalTester, SLOT(filterStarted(QString,QString)));
-  signalTester.connect(&progressWatcher, SIGNAL(filterProgress(float)), &signalTester, SLOT(filterProgress(float)));
-  signalTester.connect(&progressWatcher, SIGNAL(filterFinished(QString)), &signalTester, SLOT(filterFinished(QString)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterProgress(float,QString)), &signalTester, SLOT(filterProgress(float,QString)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterFinished(QString,QString)), &signalTester, SLOT(filterFinished(QString,QString)));
   signalTester.connect(&progressWatcher, SIGNAL(filterXmlError(QString)), &signalTester, SLOT(filterXmlError(QString)));
 
   buffer.write(filterStart);
@@ -170,8 +170,8 @@ void ctkCmdLineModuleXmlProgressWatcherTester::testMalformedXml()
 
   SignalTester signalTester;
   signalTester.connect(&progressWatcher, SIGNAL(filterStarted(QString,QString)), &signalTester, SLOT(filterStarted(QString,QString)));
-  signalTester.connect(&progressWatcher, SIGNAL(filterProgress(float)), &signalTester, SLOT(filterProgress(float)));
-  signalTester.connect(&progressWatcher, SIGNAL(filterFinished(QString)), &signalTester, SLOT(filterFinished(QString)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterProgress(float,QString)), &signalTester, SLOT(filterProgress(float,QString)));
+  signalTester.connect(&progressWatcher, SIGNAL(filterFinished(QString,QString)), &signalTester, SLOT(filterFinished(QString,QString)));
   signalTester.connect(&progressWatcher, SIGNAL(filterXmlError(QString)), &signalTester, SLOT(filterXmlError(QString)));
 
   buffer.write(filterOutput);

@@ -170,7 +170,8 @@ int main(int argc, char* argv[])
       out << output << endl;
 
       // report progress
-      out << "<filter-progress>" << (i+1)*progressStep << "</filter-progress>" << endl;
+      out << "<filter-progress>" << (i+1)*progressStep
+          << "<filter-comment>Calculating output " << (i+2) << "...</filter-comment></filter-progress>" << endl;
       // report the current output number as a result
       out << "<filter-result name=\"resultNumberOutput\">" << (i+1) << "</filter-result>" << endl;
     }
@@ -199,6 +200,7 @@ int main(int argc, char* argv[])
   else
   {
     out << "Normal exit</filter-result>" << endl;
+    out << "<filter-end><filter-comment>Finished successfully.</filter-comment></filter-end>" << endl;
   }
 
   return exitCode;

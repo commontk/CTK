@@ -35,12 +35,15 @@ ctkCmdLineModuleProcessWatcher::ctkCmdLineModuleProcessWatcher(QProcess& process
   : process(process), location(location), futureInterface(futureInterface), processXmlWatcher(&process),
     processPaused(false), progressValue(0)
 {
-  futureInterface.setProgressRange(0, 1000);
+  // The reported float value in the range [0.0,1.0] for the progress is scaled to [0,1000].
+  // Value 1001 is reserved for the last "filter-end" output, which is reported as a progress event.
+  // Value 1002 is reserved internally to report process termination.
+  futureInterface.setProgressRange(0, 1002);
 
   connect(&processXmlWatcher, SIGNAL(filterStarted(QString,QString)), SLOT(filterStarted(QString,QString)));
-  connect(&processXmlWatcher, SIGNAL(filterProgress(float)), SLOT(filterProgress(float)));
+  connect(&processXmlWatcher, SIGNAL(filterProgress(float,QString)), SLOT(filterProgress(float,QString)));
   connect(&processXmlWatcher, SIGNAL(filterResult(QString,QString)), SLOT(filterResult(QString,QString)));
-  connect(&processXmlWatcher, SIGNAL(filterFinished(QString)), SLOT(filterFinished(QString)));
+  connect(&processXmlWatcher, SIGNAL(filterFinished(QString,QString)), SLOT(filterFinished(QString,QString)));
   connect(&processXmlWatcher, SIGNAL(filterXmlError(QString)), SLOT(filterXmlError(QString)));
 
   connect(&processXmlWatcher, SIGNAL(outputDataAvailable(QByteArray)), SLOT(outputDataAvailable(QByteArray)));
@@ -62,14 +65,13 @@ ctkCmdLineModuleProcessWatcher::ctkCmdLineModuleProcessWatcher(QProcess& process
 //----------------------------------------------------------------------------
 void ctkCmdLineModuleProcessWatcher::filterStarted(const QString& name, const QString& comment)
 {
-  Q_UNUSED(comment)
-  futureInterface.setProgressValueAndText(incrementProgress(), name);
+  futureInterface.setProgressValueAndText(incrementProgress(), comment.isEmpty() ? tr("Starting") + name : comment);
 }
 
 //----------------------------------------------------------------------------
-void ctkCmdLineModuleProcessWatcher::filterProgress(float progress)
+void ctkCmdLineModuleProcessWatcher::filterProgress(float progress, const QString& comment)
 {
-  futureInterface.setProgressValue(updateProgress(progress));
+  futureInterface.setProgressValueAndText(updateProgress(progress), comment);
 }
 
 //----------------------------------------------------------------------------
@@ -79,9 +81,11 @@ void ctkCmdLineModuleProcessWatcher::filterResult(const QString &parameter, cons
 }
 
 //----------------------------------------------------------------------------
-void ctkCmdLineModuleProcessWatcher::filterFinished(const QString& name)
+void ctkCmdLineModuleProcessWatcher::filterFinished(const QString& name, const QString& comment)
 {
-  futureInterface.setProgressValueAndText(incrementProgress(), "Finished: " + name);
+  int progressValue = incrementProgress();
+  if (progressValue = 1000) progressValue = 1001;
+  futureInterface.setProgressValueAndText(progressValue, comment.isEmpty() ? tr("Finished ") + name : comment);
 }
 
 //----------------------------------------------------------------------------
@@ -149,16 +153,16 @@ int ctkCmdLineModuleProcessWatcher::updateProgress(float progress)
 {
   progressValue = static_cast<int>(progress * 1000.0f);
   // normalize the value to lie between 0 and 1000.
-  // 0 is reported when the process starts and 1000 is reserved for
-  // reporting completion + standard output text
+  // 0 is reported when the process starts and 1001 is reserved for
+  // reporting completion.
   if (progressValue < 1) progressValue = 1;
-  if (progressValue > 999) progressValue = 999;
+  if (progressValue > 1000) progressValue = 1000;
   return progressValue;
 }
 
 //----------------------------------------------------------------------------
 int ctkCmdLineModuleProcessWatcher::incrementProgress()
 {
-  if (++progressValue > 999) progressValue = 999;
+  if (++progressValue > 1000) progressValue = 1000;
   return progressValue;
 }

@@ -174,14 +174,14 @@ void ctkCmdLineModuleFutureTester::testStartFinish()
                   << "module.progressRangeChanged(0,0)"
                   << "module.progressValueChanged(0)"
 
-                  << "module.progressRangeChanged(0,1000)"
+                  << "module.progressRangeChanged(0,1002)"
 
                      // the test module always reports error data when starting
                   << "module.errorReady"
 
                      // the following two signals are send when the module reports "filter start"
                   << "module.progressValueChanged(1)"
-                  << "module.progressTextChanged(Test Filter)"
+                  << "module.progressTextChanged(Does nothing useful)"
 
                      // imageOutput result
                   << "module.resultReadyAt(0,1)"
@@ -191,8 +191,12 @@ void ctkCmdLineModuleFutureTester::testStartFinish()
                   << "module.resultReadyAt(1,2)"
                   << "module.resultReadyAt(1)"
 
+                     // <filter-end> progress value and text
+                  << "module.progressValueChanged(1001)"
+                  << "module.progressTextChanged(Finished successfully.)"
+
                      // the following signal is sent at the end to report completion
-                  << "module.progressValueChanged(1000)"
+                  << "module.progressValueChanged(1002)"
                   << "module.finished";
 
   ctkCmdLineModuleSignalTester signalTester;
@@ -221,20 +225,21 @@ void ctkCmdLineModuleFutureTester::testProgress()
                   << "module.progressRangeChanged(0,0)"
                   << "module.progressValueChanged(0)"
 
-                  << "module.progressRangeChanged(0,1000)"
+                  << "module.progressRangeChanged(0,1002)"
 
                      // the test module always reports error data when starting
                   << "module.errorReady"
 
                      // the following two signals are send when the module reports "filter start"
                   << "module.progressValueChanged(1)"
-                  << "module.progressTextChanged(Test Filter)"
+                  << "module.progressTextChanged(Does nothing useful)"
 
                      // the output data on the standard output channel
                   << "module.outputReady"
 
                      // this signal is send when the module reports progress for "output1"
-                  << "module.progressValueChanged(999)"
+                  << "module.progressValueChanged(1000)"
+                  << "module.progressTextChanged(Calculating output 2...)"
 
                      // first resultNumberOutput result
                   << "module.resultReadyAt(0,1)"
@@ -248,8 +253,12 @@ void ctkCmdLineModuleFutureTester::testProgress()
                   << "module.resultReadyAt(2,3)"
                   << "module.resultReadyAt(2)"
 
+                     // <filter-end> progress value and text
+                  << "module.progressValueChanged(1001)"
+                  << "module.progressTextChanged(Finished successfully.)"
+
                      // the following signal is sent at the end to report completion
-                  << "module.progressValueChanged(1000)"
+                  << "module.progressValueChanged(1002)"
                   << "module.finished";
 
   ctkCmdLineModuleSignalTester signalTester;
@@ -285,7 +294,7 @@ void ctkCmdLineModuleFutureTester::testPauseAndCancel()
   expectedSignals << "module.started"
                   << "module.progressRangeChanged(0,0)"
                   << "module.progressValueChanged(0)"
-                  << "module.progressRangeChanged(0,1000)"
+                  << "module.progressRangeChanged(0,1002)"
                   << "module.errorReady";
 
   if (future.canPause())
@@ -368,20 +377,21 @@ void ctkCmdLineModuleFutureTester::testOutput()
                   << "module.progressRangeChanged(0,0)"
                   << "module.progressValueChanged(0)"
 
-                  << "module.progressRangeChanged(0,1000)"
+                  << "module.progressRangeChanged(0,1002)"
 
                      // the test module always reports error data when starting
                   << "module.errorReady"
 
                      // the following two signals are send when the module reports "filter start"
                   << "module.progressValueChanged(1)"
-                  << "module.progressTextChanged(Test Filter)"
+                  << "module.progressTextChanged(Does nothing useful)"
 
                      // the output data on the standard output channel "Output 1"
                   << "module.outputReady"
 
                      // this signal is send when the module reports progress for "output1"
                   << "module.progressValueChanged(500)"
+                  << "module.progressTextChanged(Calculating output 2...)"
 
                      // first resultNumberOutput result
                   << "module.resultReadyAt(0,1)"
@@ -391,7 +401,8 @@ void ctkCmdLineModuleFutureTester::testOutput()
                   << "module.outputReady"
 
                      // this signal is send when the module reports progress for "output2"
-                  << "module.progressValueChanged(999)"
+                  << "module.progressValueChanged(1000)"
+                  << "module.progressTextChanged(Calculating output 3...)"
 
                      // second resultNumberOutput result
                   << "module.resultReadyAt(1,2)"
@@ -405,11 +416,15 @@ void ctkCmdLineModuleFutureTester::testOutput()
                   << "module.resultReadyAt(3,4)"
                   << "module.resultReadyAt(3)"
 
+                     // <filter-end> progress value and text
+                  << "module.progressValueChanged(1001)"
+                  << "module.progressTextChanged(Finished successfully.)"
+
                      // final error message
                   << "module.errorReady"
 
                      // the following signal is sent at the end to report completion
-                  << "module.progressValueChanged(1000)"
+                  << "module.progressValueChanged(1002)"
                   << "module.finished";
 
   QVERIFY(signalTester.checkSignals(expectedSignals));

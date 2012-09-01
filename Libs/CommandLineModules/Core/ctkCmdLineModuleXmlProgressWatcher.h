@@ -49,9 +49,9 @@ public:
 Q_SIGNALS:
 
   void filterStarted(const QString& name, const QString& comment);
-  void filterProgress(float progress);
+  void filterProgress(float progress, const QString& comment);
   void filterResult(const QString& parameter, const QString& value);
-  void filterFinished(const QString& name);
+  void filterFinished(const QString& name, const QString& comment);
   void filterXmlError(const QString& error);
 
   void outputDataAvailable(const QByteArray& outputData);

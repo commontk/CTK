@@ -63,12 +63,12 @@ void ctkCmdLineModuleSignalTester::filterStarted(const QString &/*name*/, const 
   events.push_back("filter.started");
 }
 
-void ctkCmdLineModuleSignalTester::filterProgress(float /*progress*/)
+void ctkCmdLineModuleSignalTester::filterProgress(float /*progress*/, const QString &/*comment*/)
 {
   events.push_back("filter.progress");
 }
 
-void ctkCmdLineModuleSignalTester::filterFinished(const QString &/*name*/)
+void ctkCmdLineModuleSignalTester::filterFinished(const QString &/*name*/, const QString &/*comment*/)
 {
   events.push_back("filter.finished");
 }

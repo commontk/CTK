@@ -90,7 +90,8 @@ public:
           break;
         }
 
-        if (stack.size() == 2 && stack.front() == FILTER_START)
+        if (stack.size() == 2 &&
+            (stack.front() == FILTER_START || stack.front() == FILTER_END || stack.front() == FILTER_PROGRESS))
         {
           if (stack.back() == FILTER_NAME)
           {
@@ -135,8 +136,8 @@ public:
 
           if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0)
           {
-            currentName.clear();
-            currentComment.clear();
+            currentName = QString();
+            currentComment = QString();
             currentProgress = 0;
           }
           else if (name.compare(FILTER_RESULT, Qt::CaseInsensitive) == 0)
@@ -170,10 +171,12 @@ public:
           if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0)
           {
             emit q->filterStarted(currentName, currentComment);
+            currentComment = QString();
           }
           else if (name.compare(FILTER_PROGRESS, Qt::CaseInsensitive) == 0)
           {
-            emit q->filterProgress(currentProgress);
+            emit q->filterProgress(currentProgress, currentComment);
+            currentComment = QString();
           }
           else if (name.compare(FILTER_RESULT, Qt::CaseInsensitive) == 0)
           {
@@ -181,7 +184,9 @@ public:
           }
           else if (name.compare(FILTER_END, Qt::CaseInsensitive) == 0)
           {
-            emit q->filterFinished(currentName);
+            emit q->filterFinished(currentName, currentComment);
+            currentName = QString();
+            currentComment = QString();
           }
         }
         break;
