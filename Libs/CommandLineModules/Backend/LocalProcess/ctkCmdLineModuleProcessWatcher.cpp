@@ -84,7 +84,7 @@ void ctkCmdLineModuleProcessWatcher::filterResult(const QString &parameter, cons
 void ctkCmdLineModuleProcessWatcher::filterFinished(const QString& name, const QString& comment)
 {
   int progressValue = incrementProgress();
-  if (progressValue = 1000) progressValue = 1001;
+  if (progressValue == 1000) progressValue = 1001;
   futureInterface.setProgressValueAndText(progressValue, comment.isEmpty() ? tr("Finished ") + name : comment);
 }
 
