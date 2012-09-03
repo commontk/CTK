@@ -177,13 +177,13 @@ public:
    * <p>
    * The type values are:
    * <ul>
-   * <li>{@link #STARTED}
-   * <li>{@link #ERROR}
-   * <li>{@link #WARNING}
-   * <li>{@link #INFO}
-   * <li>{@link #STOPPED}
-   * <li>{@link #STOPPED_UPDATE}
-   * <li>{@link #WAIT_TIMEDOUT}
+   * <li>{@link #FRAMEWORK_STARTED}
+   * <li>{@link #PLUGIN_ERROR}
+   * <li>{@link #PLUGIN_WARNING}
+   * <li>{@link #PLUGIN_INFO}
+   * <li>{@link #FRAMEWORK_STOPPED}
+   * <li>{@link #FRAMEWORK_STOPPED_UPDATE}
+   * <li>{@link #FRAMEWORK_WAIT_TIMEDOUT}
    * </ul>
    *
    * @return The type of state change.

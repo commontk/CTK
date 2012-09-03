@@ -73,7 +73,7 @@ public:
   /**
    * @brief Get a textual representation for a given stack frame.
    * @param frameNumber The stack frame number.
-   * @return A string describing the stack frame with number <code>frameNumber<code>
+   * @return A string describing the stack frame with number <code>frameNumber</code>
    *         or a null QString if there is no corresponding stack frame.
    */
   QString stackFrame(unsigned frameNumber) const;
