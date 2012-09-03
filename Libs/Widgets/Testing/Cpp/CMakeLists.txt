@@ -21,6 +21,7 @@ set(TEST_SOURCES
   ctkComboBoxTest1.cpp
   ctkCompleterTest1.cpp
   ctkConsoleTest1.cpp
+  ctkCoordinatesWidgetTest.cpp
   ctkCoordinatesWidgetTest1.cpp
   ctkCrosshairLabelTest1.cpp
   ctkDirectoryButtonTest1.cpp
@@ -172,6 +173,7 @@ endif()
 set(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
+  ctkCoordinatesWidgetTest.cpp
   ctkFlatProxyModelTest.cpp
   ctkFontButtonTest.cpp
   ctkMessageBoxDontShowAgainTest.cpp
@@ -214,6 +216,7 @@ SIMPLE_TEST( ctkColorPickerButtonTest1 )
 SIMPLE_TEST( ctkComboBoxTest1 )
 SIMPLE_TEST( ctkCompleterTest1 )
 SIMPLE_TEST( ctkConsoleTest1 )
+SIMPLE_TEST( ctkCoordinatesWidgetTest )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
 SIMPLE_TEST( ctkCrosshairLabelTest1 )
 SIMPLE_TEST( ctkDateRangeWidgetTest1 )
