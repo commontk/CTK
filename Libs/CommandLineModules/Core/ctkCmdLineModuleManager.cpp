@@ -245,6 +245,8 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
 //----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& ref)
 {
+  if (!ref) return;
+
   {
     QMutexLocker lock(&d->Mutex);
     if (!d->LocationToRef.contains(ref.location()))
