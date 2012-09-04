@@ -478,7 +478,7 @@ public:
    * <li>If this plugin's state was originally <code>ACTIVE</code>, the
    * updated plugin is started as described in the <code>ctkPlugin::start()</code>
    * method. If <code>ctkPlugin::start()</code> throws an exception, a Framework
-   * event of type {@link ctkPluginFrameworkEvent#ERROR} is fired containing the
+   * event of type {@link ctkPluginFrameworkEvent#PLUGIN_ERROR} is fired containing the
    * exception.
    * </ol>
    *
@@ -500,7 +500,7 @@ public:
    * <li>Original plugin is still used; no update occurred.
    * </ul>
    *
-   * @param input The <code>QUrl</code> from which to read the new
+   * @param updateLocation The <code>QUrl</code> from which to read the new
    *        plugin or <code>null</code> to indicate the Framework must create
    *        the URL from this plugin's
    *        {@link ctkPluginConstants#PLUGIN_UPDATELOCATION Plugin-UpdateLocation}

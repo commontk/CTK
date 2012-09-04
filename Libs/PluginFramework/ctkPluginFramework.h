@@ -92,18 +92,18 @@ public:
    *         following <code>ctkPluginFrameworkEvent</code> types may be returned by
    *         this method.
    *         <ul>
-   *         <li>{@link ctkPluginFrameworkEvent#STOPPED STOPPED} - This Framework has
+   *         <li>{@link ctkPluginFrameworkEvent#FRAMEWORK_STOPPED STOPPED} - This Framework has
    *         been stopped. </li>
    *
-   *         <li>{@link ctkPluginFrameworkEvent#STOPPED_UPDATE STOPPED_UPDATE} - This
+   *         <li>{@link ctkPluginFrameworkEvent#FRAMEWORK_STOPPED_UPDATE STOPPED_UPDATE} - This
    *         Framework has been updated which has shutdown and will now
    *         restart.</li>
    *
-   *         <li>{@link ctkPluginFrameworkEvent#ERROR ERROR} - The Framework
+   *         <li>{@link ctkPluginFrameworkEvent#PLUGIN_ERROR ERROR} - The Framework
    *         encountered an error while shutting down or an error has occurred
    *         which forced the framework to shutdown. </li>
    *
-   *         <li> {@link ctkPluginFrameworkEvent#WAIT_TIMEDOUT WAIT_TIMEDOUT} - This
+   *         <li> {@link ctkPluginFrameworkEvent#FRAMEWORK_WAIT_TIMEDOUT WAIT_TIMEDOUT} - This
    *         method has timed out and returned before this Framework has
    *         stopped.</li>
    *         </ul>
@@ -148,13 +148,13 @@ public:
    * of this Framework is moved to start level zero (0), as described in the
    * <i>Start Level Service Specification</i>. Any exceptions that occur
    * during plugin stopping must be wrapped in a {@link ctkPluginException} and
-   * then published as a framework event of type {@link ctkPluginFrameworkEvent#ERROR}</li>
+   * then published as a framework event of type {@link ctkPluginFrameworkEvent#PLUGIN_ERROR}</li>
    * <li>Unregister all services registered by this Framework.</li>
    * <li>Event handling is disabled.</li>
    * <li>This Framework's state is set to {@link #RESOLVED}.</li>
    * <li>All resources held by this Framework are released. This includes
    * threads, loaded libraries, open files, etc.</li>
-   * <li>Notify all threads that are waiting at {@link #waitForStop(long)
+   * <li>Notify all threads that are waiting at {@link #waitForStop(unsigned long)
    * waitForStop} that the stop operation has completed.</li>
    * </ol>
    * <p>

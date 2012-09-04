@@ -646,7 +646,7 @@ public:
   bool connectFrameworkListener(const QObject* receiver, const char* slot, Qt::ConnectionType type = Qt::QueuedConnection);
 
   /**
-   * Disconnects the specified <code>slot</slot> from the context
+   * Disconnects the specified <code>slot</code> from the context
    * plugin.
    *
    * <p>

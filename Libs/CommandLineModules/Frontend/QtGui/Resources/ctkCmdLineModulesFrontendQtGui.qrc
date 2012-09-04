@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ctkCmdLineModuleXmlToQtUi.xsl</file>
+        <file>QtDesigner.xsd</file>
+    </qresource>
+</RCC>

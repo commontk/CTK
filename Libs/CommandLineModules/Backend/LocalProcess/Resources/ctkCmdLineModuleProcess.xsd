@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xs3p="http://titanium.dstc.edu.au/xml/xs3p">
+
+  <xsd:annotation>
+    <xsd:appinfo source="http://www.commontk.org/docs/html/CommandLineModules_Page.html">
+      <xs3p:title>CTK XML schema for progress and result reporting in command line modules.</xs3p:title>
+      <xs3p:printGlossary>false</xs3p:printGlossary>
+      <xs3p:printLegend>false</xs3p:printLegend>
+    </xsd:appinfo>
+    <xsd:documentation>The XML schema for the XML fragments used when reporting progress and results in command line modules.</xsd:documentation>
+  </xsd:annotation>
+
+  <!--
+  ===================================================================
+    MODULE-ROOT
+      Root element 
+  ===================================================================
+  -->
+  
+  <xsd:element name="module-root" type="RootType"/>
+  
+  <xsd:complexType name="RootType" mixed="true">
+    <xsd:annotation>
+      <xsd:documentation>The root element. This is added automatically and must not be printed out by the module.</xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:sequence>
+      <xsd:group maxOccurs="unbounded" minOccurs="0" ref="FilterGroup"/>   
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:group name="FilterGroup">
+    <xsd:sequence>
+      <xsd:element maxOccurs="1" minOccurs="1" name="filter-start" type="FilterStartType"/>
+      <xsd:group maxOccurs="unbounded" minOccurs="0" ref="ProgressGroup"/>
+      <xsd:element maxOccurs="1" minOccurs="1" name="filter-end" type="FilterEndType"/>
+    </xsd:sequence>
+  </xsd:group>
+  
+  <xsd:group name="ProgressGroup">
+    <xsd:choice>
+      <xsd:element name="filter-progress" type="FilterProgressType"/>
+      <xsd:element name="filter-progress-text" type="FilterProgressTextType"/>
+      <xsd:element minOccurs="0" name="filter-result" type="FilterResultType"/>
+    </xsd:choice>
+  </xsd:group>
+  
+  <!--
+  ===================================================================
+    FILTER-START
+  ===================================================================
+  -->
+  <xsd:complexType name="FilterStartType">
+    <xsd:annotation>
+      <xsd:documentation>Marks the start of a set of processing instructions.</xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:sequence>
+      <xsd:element maxOccurs="1" minOccurs="1" name="filter-name" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>The name of the current "filter" (set of processing instructions).</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element maxOccurs="1" minOccurs="0" name="filter-comment" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>A short, descriptive text about the purpose of this filter.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <!--
+  ===================================================================
+    FILTER-PROGRESS
+  ===================================================================
+  -->
+  
+  <xsd:simpleType name="FilterProgressType">
+    <xsd:annotation>
+      <xsd:documentation>A float value between 0 and 1 to report the current overall progress.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:float">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!--
+  ===================================================================
+    FILTER-PROGRESS-TEXT
+  ===================================================================
+  -->
+  
+  <xsd:complexType name="FilterProgressTextType" mixed="true">
+    <xsd:annotation>
+      <xsd:documentation>Report a progress value and corresponding progress text.</xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:attribute name="progress" use="required" type="FilterProgressType"/>
+  </xsd:complexType>
+  
+  <!--
+  ===================================================================
+    FILTER-RESULT
+  ===================================================================
+  -->
+  
+  <xsd:complexType name="FilterResultType" mixed="true">
+    <xsd:annotation>
+      <xsd:documentation>Report the current result.</xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:attribute name="name" use="required" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>The output parameter name to which this result belongs to.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!--
+  ===================================================================
+    FILTER-END
+  ===================================================================
+  -->
+  
+  <xsd:complexType name="FilterEndType">
+    <xsd:annotation>
+      <xsd:documentation>Marks the end of a set of processing instructions.</xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:sequence>
+      <xsd:element maxOccurs="1" minOccurs="0" name="filter-comment" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>A short, descriptive text about the end state of this filter.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+</xsd:schema>

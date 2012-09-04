@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ctkCmdLineModuleTour.xml</file>
+    </qresource>
+</RCC>

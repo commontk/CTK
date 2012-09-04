@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ctkCmdLineModuleFrontendQtGuiTestModule1.xml</file>
+    </qresource>
+</RCC>

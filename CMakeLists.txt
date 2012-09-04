@@ -186,6 +186,7 @@ include(CMake/ctkMacroBuildPlugin.cmake)
 include(CMake/ctkMacroBuildApp.cmake)
 include(CMake/ctkMacroBuildQtPlugin.cmake)
 include(CMake/ctkMacroCompilePythonScript.cmake)
+include(CMake/ctkMacroGenerateMocs.cmake)
 include(CMake/ctkMacroWrapPythonQt.cmake)
 include(CMake/ctkMacroSetupQt.cmake)
 include(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
@@ -206,7 +207,6 @@ include(CMake/ctkFunctionCompileSnippets.cmake)
 #-----------------------------------------------------------------------------
 # Testing
 #
-
 include(CTest)
 mark_as_advanced(BUILD_TESTING)
 
@@ -450,8 +450,20 @@ ctk_lib_option(Visualization/VTK/Core
 ctk_lib_option(Visualization/VTK/Widgets
                "Build the VTK Widgets library" OFF)
                
-#ctk_lib_option(ModuleDescription
-#               "Build the Command Line Module Description library" OFF)
+ctk_lib_option(CommandLineModules/Core
+               "Build the Command Line Module core library" OFF)
+               
+ctk_lib_option(CommandLineModules/Frontend/QtWebKit
+               "Build the QtWebKit based Command Line Module front-end" OFF)
+
+ctk_lib_option(CommandLineModules/Frontend/QtGui
+               "Build the QtGui based Command Line Module front-end" OFF)
+
+ctk_lib_option(CommandLineModules/Backend/LocalProcess
+               "Build the Command Line Module back-end for local processes" OFF)
+               
+ctk_lib_option(CommandLineModules/Backend/FunctionPointer
+               "Build the Command Line Module back-end for function pointers" OFF)
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
@@ -468,8 +480,6 @@ set(CTK_ENABLED_LIBS ${_enabled_libs} CACHE INTERNAL "" FORCE)
 # CTK Applications - Use ON or OFF to indicate if the application should be built by default
 #
  
-#ctk_app_option(ctkCLIPluginExplorer "Build the CLI Plugin Explorer" OFF)
-
 ctk_app_option(ctkDICOM
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
@@ -505,7 +515,26 @@ ctk_app_option(ctkExampleHostedApp
 ctk_app_option(ctkEventBusDemo
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
-               
+
+ctk_app_option(ctkCommandLineModuleExplorer
+               "Build the Command Line Module Explorer" OFF
+               CTK_BUILD_EXAMPLES)
+
+# We use the CTKWidgets library together with the Qt Designer plug-in
+# in ctkCommandLineModuleExplorer, so enabling the options here.
+# (We do not need to link them into the executable, hence no entries
+# in target_libraries.cmake)
+
+if(CTK_APP_ctkCommandLineModuleExplorer)
+  foreach(_option CTK_BUILD_QTDESIGNER_PLUGINS)
+    if(NOT ${_option})
+      get_property(_docstring CACHE ${_option} PROPERTY HELPSTRING)
+      set(${_option} ON CACHE BOOL "${_docstring}" FORCE)
+      message("Enabling option [${_option}] required by [ctkCommandLineModuleExplorer]")
+    endif()
+  endforeach()
+endif()
+
 ctk_app_option(ctkPluginBrowser
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
@@ -549,9 +578,6 @@ set(plugin_list
   org.commontk.log
   org.commontk.log4qt
   org.commontk.metatype
-
-  # Misc
-  #org.commontk.slicermodule
   )
 
 foreach(_plugin ${plugin_list})  
@@ -603,6 +629,7 @@ ctk_plugin_option(org.commontk.eventbus
 #       OPT1:OFF
 #       OPT2:ON
 #       )
+
 
 # Create list of directories corresponding to the enabled targets
 set(target_directories)
@@ -765,6 +792,7 @@ if(CTK_SUPERBUILD)
   return()
 endif()
 
+
 #-----------------------------------------------------------------------------
 # Expand variables containing include and library directories for external projects
 # This relies on the variable EXTERNAL_TARGETS set in ctkMacroValidateBuildOptions
@@ -849,6 +877,9 @@ foreach(lib ${CTK_LIBS})
   endif()
 endforeach()
 
+# Add the CommandLineModules root directory for additional processing
+add_subdirectory(Libs/CommandLineModules)
+
 #-----------------------------------------------------------------------------
 if(CTK_USE_QTTESTING)
   add_subdirectory(Libs/QtTesting)
@@ -882,6 +913,7 @@ endif()
 #
 #add_subdirectory(Testing)
 #add_subdirectory(Examples)
+
 
 #-----------------------------------------------------------------------------
 # Style Checking configuration

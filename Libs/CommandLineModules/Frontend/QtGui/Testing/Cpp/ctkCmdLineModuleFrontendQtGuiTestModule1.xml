@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <title>Test Module</title>
+  <description>Test Module.</description>
+  <parameters>
+    <label>Test parameters</label>
+    <description>Test parameters.</description>
+    <integer>
+      <name>intParam</name>
+      <flag>i</flag>
+      <description>Integer</description>
+      <label>Integer</label>
+      <default>1</default>
+      <constraints>
+        <minimum>-5</minimum>
+        <maximum>60</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <string-enumeration>
+      <name>stringEnumParam</name>
+      <index>0</index>
+      <description>Enumeration parameter</description>
+      <label>Enumeration</label>
+      <element>yes</element>
+      <element>no</element>
+    </string-enumeration>
+    <integer>
+      <name>intOutputParam</name>
+      <index>1000</index>
+      <description>Integer</description>
+      <label>Integer</label>
+      <channel>output</channel>
+    </integer>
+  </parameters>
+</executable>

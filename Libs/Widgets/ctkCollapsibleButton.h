@@ -35,11 +35,11 @@ class QStyleOptionButton;
 /// \ingroup Widgets
 /// A collapsible button that shows/hides its children depending on its
 /// checked/collapsed property.
-/// Warning: <old behavior> As ctkCollapsibleButton forces the Visiblity of its children to
+/// Warning: &lt;old behavior&gt; As ctkCollapsibleButton forces the Visiblity of its children to
 /// true when it get expanded, any child Visibility property is lost. All the widgets
 /// will then be visible. To avoid this behavior, use an intermediate widget that
 /// contains all the children (they would become grandchildren and their Visibility property
-/// will remain relative to their parent, ctkCollapsibleButton's unique child widget.</old behavior>
+/// will remain relative to their parent, ctkCollapsibleButton's unique child widget.&lt;/old behavior&gt;
 /// Note: The user QAbstractButton::icon is not visible (it's placeholder is used to display the
 /// collapsible state
 class CTK_WIDGETS_EXPORT ctkCollapsibleButton : public QAbstractButton
@@ -100,13 +100,13 @@ public:
 
   ///
   /// Set the alignment of the text on the button,
-  /// Qt::Left|Qt::VCenter by default.
+  /// Qt::AlignLeft|Qt::AlignVCenter by default.
   void setButtonTextAlignment(Qt::Alignment textAlignment);
   Qt::Alignment buttonTextAlignment()const;
 
   ///
   /// Set the alignment of the indicator (arrow) on the button,
-  /// Qt::Left|Qt::VCenter by default.
+  /// Qt::AlignLeft|Qt::AlignVCenter by default.
   void setIndicatorAlignment(Qt::Alignment indicatorAlignment);
   Qt::Alignment indicatorAlignment()const;
 

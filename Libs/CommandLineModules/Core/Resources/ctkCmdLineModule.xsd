@@ -1,0 +1,556 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xs3p="http://titanium.dstc.edu.au/xml/xs3p">
+
+  <xsd:annotation>
+    <xsd:appinfo source="http://www.commontk.org/docs/html/CommandLineModules_Page.html">
+      <xs3p:title>CTK XML schema for command line modules.</xs3p:title>
+      <xs3p:printGlossary>false</xs3p:printGlossary>
+      <xs3p:printLegend>false</xs3p:printLegend>
+    </xsd:appinfo>
+    <xsd:documentation>The XML schema for the XML description of command line module parameters.</xsd:documentation>
+  </xsd:annotation>
+
+  <!--
+  ===================================================================
+    EXECUTABLE
+      Root element 
+  ===================================================================
+  -->
+  <xsd:element name="executable">
+    <xsd:annotation>
+      <xsd:documentation>The root element for each module XML description. It must contain
+      at least one "parameters" element.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <!-- 'title' and 'description' elements are required -->
+        
+        <xsd:element maxOccurs="1" minOccurs="0" name="category" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>Classifies the module (e.g. Filtering, Segmentation).
+            The value can be a dot separated string to create category hierarchies.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        
+        <xsd:element maxOccurs="1" name="title" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>A human-readable name for the module.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        
+        <xsd:element maxOccurs="1" name="description" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>A detailed description of the modules purpose.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        
+        <xsd:element maxOccurs="1" minOccurs="0" name="version" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>The modules version number. A suggested format is:
+            &lt;p&gt;
+            major.minor.patch.build.status
+            &lt;/p&gt;&lt;p&gt;
+            where status is one of
+            &lt;ul&gt;
+              &lt;li&gt;vc: version controlled (pre-alpha), build can be a serial revision number, if any (like svn might have).&lt;/li&gt;
+              &lt;li&gt;a: alpha&lt;/li&gt;
+              &lt;li&gt;b: beta&lt;/li&gt;
+              &lt;li&gt;rc: release candidate&lt;/li&gt;
+              &lt;li&gt;fcs: first customer ship&lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;/p&gt;
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        
+        <xsd:element maxOccurs="1" minOccurs="0" name="documentation-url" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>A URL pointing to a documentation or home page of the module.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        
+        <xsd:element maxOccurs="1" minOccurs="0" name="license" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>The type of license or a URL containing the license.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        
+        <xsd:element maxOccurs="1" minOccurs="0" name="contributor" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>The author(s) of the command line module.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        
+        <xsd:element maxOccurs="1" minOccurs="0" name="acknowledgements" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>Acknowledgements for funding agency, employer, colleague, etc.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        
+        <!-- Parameter group elements -->
+        <xsd:element maxOccurs="unbounded" name="parameters" type="parameters">
+          <xsd:annotation>
+            <xsd:documentation>Starts a group of parameters.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <!--
+  ===================================================================
+    PARAMETER GROUP
+  ===================================================================
+  -->
+  <xsd:complexType name="parameters">
+    <xsd:annotation>
+      <xsd:documentation>Starts a group of parameters.</xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:sequence>
+    
+      <!-- Required elements for a parameter group -->
+      <xsd:element name="label" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>A short string used as the label for this group.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+        
+      <xsd:element name="description" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>A description of this parameter group.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+        
+      
+      <!-- At least one parameter definition is required in the group -->
+      <xsd:choice maxOccurs="unbounded">
+      
+        <xsd:element name="boolean" type="paramType"/>
+        
+        <xsd:element name="integer" type="scalarType"/>
+        <xsd:element name="float" type="scalarType"/>
+        <xsd:element name="double" type="scalarType"/>
+        
+        <xsd:element name="string" type="multipleType"/>
+        <xsd:element name="directory" type="multipleType"/>
+
+        <xsd:element name="integer-vector" type="scalarVectorType"/>
+        <xsd:element name="float-vector" type="scalarVectorType"/>
+        <xsd:element name="double-vector" type="scalarVectorType"/>
+        
+        <xsd:element name="string-vector" type="paramType"/>
+        
+        <xsd:element name="integer-enumeration" type="enumerationType"/>
+        <xsd:element name="float-enumeration" type="enumerationType"/>
+        <xsd:element name="double-enumeration" type="enumerationType"/>
+        <xsd:element name="string-enumeration" type="enumerationType"/>
+        
+        
+        <xsd:element name="point" type="pointType"/>
+        <xsd:element name="region" type="pointType"/>
+        
+        <xsd:element name="file" type="fileType"/>
+        <xsd:element name="image" type="imageType"/>
+        <xsd:element name="geometry" type="geometryType"/>
+        
+        <!--
+        <xsd:element name="transform" type="transformType"/>
+        <xsd:element name="table" type="tableType"/>
+        <xsd:element name="measurement" type="measurementType"/>
+        -->
+        
+      </xsd:choice>
+      
+    </xsd:sequence>
+    
+    <!-- Parameter group attributes -->
+    <xsd:attribute default="false" name="advanced" type="xsd:boolean">
+      <xsd:annotation>
+        <xsd:documentation>This value is usually used in GUI generators to decide
+        if the parameters belonging to this group should be initially hidden to the user or not.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <!--
+  ===================================================================
+    PARAMETER
+      Defines common sub-elements and attributes.
+  ===================================================================
+  -->
+  <xsd:complexType name="paramType">
+    <xsd:annotation>
+      <xsd:documentation>This type specifies elements common to all parameter types.</xsd:documentation>
+    </xsd:annotation>
+        
+    <xsd:sequence>
+
+      <xsd:element name="name">
+        <xsd:annotation>
+          <xsd:documentation>The unique name (within this module) of the parameter. This is only used internally.</xsd:documentation>
+        </xsd:annotation>
+        
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[_a-zA-Z][_a-zA-Z0-9]*"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+
+      <!-- either 'flag' or 'longflag' (or both) or 'index' are required -->
+      <xsd:choice>
+        <xsd:annotation>
+          <xsd:documentation>You must either specify "flag" or "longflag" (or both) or "index".</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" name="flag" type="flagType"/>
+          <xsd:element minOccurs="0" maxOccurs="1" name="longflag" type="longFlagType"/>
+        </xsd:sequence>
+        <xsd:element name="longflag" type="longFlagType"/>
+        <xsd:element name="index" type="xsd:nonNegativeInteger">
+          <xsd:annotation>
+            <xsd:documentation>An integer starting at 0, that specifies a module argument that has no flags.
+            The index value 1000 is reserved as a marker for output parameters (see the "channel" element) to indicate that
+            this parameter is used to return results during the execution of this module and does not need to be set.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:choice>
+
+      <xsd:element name="description" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>A brief description of the parameter.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      
+      <xsd:element name="label" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>A label for parameter.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      
+      <xsd:element minOccurs="0" name="default" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>A default value for the parameter. The default must be a type that is compatible with the
+          parameter type. The vector parameters are specified as comma separated values of the atomic parameter type.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      
+      <!-- the 'channel' element is optional -->
+      <xsd:element minOccurs="0" maxOccurs="1" name="channel">
+        <xsd:annotation>
+          <xsd:documentation>Specifies whether the parameter is an input or output parameter. Output parameters can for
+          example specify file paths where to write output data (e.g. using the "image" element) or they can represent
+          "simple return parameters", indicated by providing an "index" of 1000. The current values of suche simple return
+          parameters are not passed to the module during its execution. Rather, the module itself reports these parameter
+          values during execution.
+          </xsd:documentation>
+        </xsd:annotation>
+        
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="input"/>
+            <xsd:enumeration value="output"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      
+    </xsd:sequence>
+    
+    <!-- parameter attributes -->
+    <xsd:attribute default="false" name="hidden" type="xsd:boolean"/>
+  </xsd:complexType>
+
+  <!--
+  ===================================================================
+    SCALAR VECTOR 
+      Extends paramType for vectors of integer, float, and double.
+  ===================================================================
+  -->
+  <xsd:complexType name="scalarVectorType">
+    <xsd:annotation>
+      <xsd:documentation>This type represents vectors of integers, floats, and doubles and can contain
+      constraints on the domain of valid values for the vector elements.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="paramType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="constraints" type="constraintsType"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <!--
+  ===================================================================
+    MULTIPLE PARAMETER 
+      Extends paramType for parameters which can appear multiple times on the command line.
+  ===================================================================
+  -->
+  <xsd:complexType name="multipleType">
+    <xsd:annotation>
+      <xsd:documentation>Parameters of this type are allowed to be passed multiple times with
+      different values to the module if the attribute "multiple" is set to true. Note that if such
+      a parameter has no flags, its values must be passed as the last arguments to the module.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="paramType">
+        <xsd:attribute default="false" name="multiple" type="xsd:boolean">
+          <xsd:annotation>
+            <xsd:documentation>Allows this parameter to occur multiple times.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <!--
+  ===================================================================
+    SCALAR PARAMETER 
+      Extends multipleType for scalar parameters with constraints (integer, float, double).
+  ===================================================================
+  -->
+  <xsd:complexType name="scalarType">
+    <xsd:annotation>
+      <xsd:documentation>This type represents integers, floats, and doubles and can contain
+      constraints on the domain of valid values.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="multipleType">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="constraints" type="constraintsType"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <!--
+  ===================================================================
+    ENUMERATION PARAMETER 
+      Extends paramType for scalar and string enumeration parameters (integer, float, double, string).
+  ===================================================================
+  -->
+  <xsd:complexType name="enumerationType">
+    <xsd:annotation>
+      <xsd:documentation>Restricts the valid parameter value to one and only one element out of
+      a specified descrete set of values.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="paramType">
+        <xsd:sequence>
+          <xsd:element maxOccurs="unbounded" name="element" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>Defines one possible enumeration value.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <!--
+  ===================================================================
+    POINT PARAMETER 
+      Extends multipleType for parameters with point-like values (point and region).
+  ===================================================================
+  -->
+  <xsd:complexType name="pointType">
+    <xsd:annotation>
+      <xsd:documentation>A parameter describing a point or region in 3D with a specified coordinate system.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="multipleType">
+        <xsd:attribute name="coordinateSystem">
+          <xsd:annotation>
+            <xsd:documentation>Specifies the coordinate system. If unspecified, the executing module is free to interpret the
+            coordinates in the most appropriate way. For more information about the different systems, see
+            &lt;a href="http://www.slicer.org/slicerWiki/index.php/Coordinate_systems"&gt;Coordinate Systems&lt;/a&gt;.
+            &lt;ul&gt;
+            &lt;li&gt;&lt;b&gt;ras&lt;/b&gt; (Right, Anterior, Superior) coordinate system.&lt;/li&gt;
+            &lt;li&gt;&lt;b&gt;ijk&lt;/b&gt; image coordinate system.&lt;/li&gt;
+            &lt;li&gt;&lt;b&gt;lps&lt;/b&gt; (Left, Posterior, Superior) coordinate system.&lt;/li&gt;
+            &lt;/ul&gt;
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="ras"/>
+              <xsd:enumeration value="ijk"/>
+              <xsd:enumeration value="lps"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <!--
+  ===================================================================
+    GEOMETRY PARAMETER 
+      Extends multipleType for geometry parameters (geometry).
+  ===================================================================
+  -->
+  <xsd:complexType name="geometryType">
+    <xsd:complexContent>
+      <xsd:extension base="multipleType">
+        <xsd:attribute name="fileExtensions" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>A comma separated list of allowed file extensions.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="type">
+          <xsd:annotation>
+            <xsd:documentation>Optionally specifies the allowed geometry type.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="fiberbundle"/>
+              <xsd:enumeration value="model"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <!--
+  ===================================================================
+    FILE PARAMETER 
+      Extends multipleType for parameters with file extension
+      information (file, image).
+  ===================================================================
+  -->
+  <xsd:complexType name="fileType">
+    <xsd:complexContent>
+      <xsd:extension base="multipleType">
+        <xsd:attribute name="fileExtensions" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>A comma separated list of allowed file extensions (e.g. "nrrd,mhd").</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <!--
+  ===================================================================
+    IMAGE PARAMETER 
+      Extends fileType for image parameters (image).
+  ===================================================================
+  -->
+  <xsd:complexType name="imageType">
+    <xsd:complexContent>
+      <xsd:extension base="fileType">
+        <xsd:attribute name="type">
+          <xsd:annotation>
+            <xsd:documentation>Optionally specifies the allowed image type.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="scalar"/>
+              <xsd:enumeration value="label"/>
+              <xsd:enumeration value="tensor"/>
+              <xsd:enumeration value="diffusion-weighted"/>
+              <xsd:enumeration value="vector"/>
+              <xsd:enumeration value="model"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <!--
+  ===================================================================
+                     *****  UTILITY TYPES  *****
+  ===================================================================
+  -->
+  
+  <xsd:simpleType name="flagValueType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="-?[a-zA-Z]"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="flagType">
+    <xsd:annotation>
+      <xsd:documentation>A single character flag (e.g. "s", "W", etc.). Not required if "longFlag" is specified.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="flagValueType">
+        <xsd:attribute name="alias" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>A comma separated list of aliases. Can be used to provide different flags for the same parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="deprecatedalias" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>A comma separated list of deprecated aliases. When invoking a module with one of these aliases,
+            the callee will be notified about the new preferred flag name.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="longFlagValueType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="-?-?[_a-zA-Z][_a-zA-Z0-9]*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="longFlagType">
+    <xsd:annotation>
+      <xsd:documentation>A multi-character flag (e.g. "spacing", "Watcher", etc.). Not required if "flag" is specified.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="longFlagValueType">
+        <xsd:attribute name="alias" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>A comma separated list of aliases. Can be used to provide different long flags for the same parameter.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="deprecatedalias" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>A comma separated list of deprecated aliases. When invoking a module with one of these aliases,
+            the callee will be notified about the new preferred long flag name.
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <!-- constraints for scalar parameters (integer, double, float) -->
+  <xsd:complexType name="constraintsType">
+    <xsd:annotation>
+      <xsd:documentation>Constraints on the allowed parameter value for scalar types and their vector variants.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:all>
+      <xsd:element minOccurs="0" name="minimum" type="xsd:double">
+        <xsd:annotation>
+          <xsd:documentation>The minimum allowed value for the parameter. If not specified, the minimum is the smallest
+          possible value for the parameter type.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="maximum" type="xsd:double">
+        <xsd:annotation>
+          <xsd:documentation>The maximum allowed value for the parameter. If not specified, the maximum is the largest
+          possible value for the parameter type.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="step" type="xsd:double">
+        <xsd:annotation>
+          <xsd:documentation>The increment for the parameter.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:all>
+  </xsd:complexType>
+
+</xsd:schema>

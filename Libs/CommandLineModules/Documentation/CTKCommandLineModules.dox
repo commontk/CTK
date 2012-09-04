@@ -1,0 +1,54 @@
+/**
+
+\defgroup CommandLineModules_Group Command Line Modules
+\ingroup Projects
+
+See the sub-modules for detailed API documentation of the available front and back-ends.
+
+For a high-level overview, see \ref CommandLineModules_Page.
+
+\defgroup CommandLineModulesCore_API Command Line Module Core API
+\ingroup Libs
+\ingroup CommandLineModules_Group
+
+This is a list of types provided by the CTK Command Line Module Core library. See the
+\ref CommandLineModulesCore_Page library page for general information.
+
+\defgroup CommandLineModulesBackEnd_Group Command Line Module Back-Ends
+\ingroup Libs
+\ingroup CommandLineModules_Group
+
+This module groups back-end implementations. See ctkCmdLineModuleBackend for details about back-ends.
+
+\defgroup CommandLineModulesBackendFunctionPointer_API Function Pointer API (experimental)
+\ingroup CommandLineModulesBackEnd_Group
+
+This is a list of types provided by the CTK Command Line Module Function Pointer Backend library. See the
+\ref CommandLineModulesBackendFunctionPointer_Page library page for general information.
+
+\defgroup CommandLineModulesBackendLocalProcess_API Local Process API
+\ingroup CommandLineModulesBackEnd_Group
+
+This is a list of types provided by the CTK Command Line Module Local Process Backend library. See the
+\ref CommandLineModulesBackendLocalProcess_Page library page for general information.
+
+\defgroup CommandLineModulesFrontEnd_Group Command Line Module Front-Ends
+\ingroup Libs
+\ingroup CommandLineModules_Group
+
+This module groups front-end implementations. See ctkCmdLineModuleFrontend for details about front-ends.
+
+\defgroup CommandLineModulesFrontendQtGui_API QtGui API
+\ingroup CommandLineModulesFrontEnd_Group
+
+This is a list of types provided by the CTK Command Line Module Qt Gui Frontend library. See the
+\ref CommandLineModulesFrontendQtGui_Page library page for general information.
+
+\defgroup CommandLineModulesFrontendQtWebKit_API QtWebKit API (experimental)
+\ingroup CommandLineModulesFrontEnd_Group
+
+This is a list of types provided by the CTK Command Line Module Qt WebKit Frontend library. See the
+\ref CommandLineModulesFrontendQtWebKit_Page library page for general information.
+
+*/
+
