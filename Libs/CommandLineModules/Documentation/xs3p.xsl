@@ -91,6 +91,7 @@
  xmlns:html="http://www.w3.org/1999/xhtml" 
  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
  xmlns:ppp="http://titanium.dstc.edu.au/xml/xs3p" 
+ xmlns:xs3p="http://titanium.dstc.edu.au/xml/xs3p"
  version="1.0" 
  exclude-result-prefixes="xsd ppp html">
 
@@ -114,7 +115,7 @@
    <!-- ******** Global Parameters ******** -->
 
    <!-- Title of XHTML document. -->
-   <xsl:param name="title"></xsl:param>
+   <xsl:param name="title" select="/xsd:schema/xsd:annotation/xsd:appinfo/xs3p:title"></xsl:param>
 
    <!-- If 'true', sorts the top-level schema components by type, 
         then name. Otherwise, displays the components by the order that 
@@ -140,10 +141,10 @@
    <xsl:param name="printAllSubTypes">true</xsl:param>
 
    <!-- If 'true', prints out the Glossary section. -->
-   <xsl:param name="printGlossary">true</xsl:param>
+   <xsl:param name="printGlossary" select="/xsd:schema/xsd:annotation/xsd:appinfo/xs3p:printGlossary">true</xsl:param>
 
    <!-- If 'true', prints out the Legend section. -->
-   <xsl:param name="printLegend">true</xsl:param>
+   <xsl:param name="printLegend"  select="/xsd:schema/xsd:annotation/xsd:appinfo/xs3p:printLegend">true</xsl:param>
 
    <!-- If 'true', prints prefix matching namespace of schema
         components in XML Instance Representation tables. -->
