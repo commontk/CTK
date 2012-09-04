@@ -46,15 +46,15 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #define __ctkPathLineEdit_h
 
 // Qt includes
-#include <QWidget>
 #include <QDir>
+#include <QWidget>
 class QComboBox;
 
 // CTK includes
 #include "ctkWidgetsExport.h"
 class ctkPathLineEditPrivate;
 
-/** 
+/**
  * \ingroup Widgets
  * \brief Advanced line edit to select file or directory
 */
@@ -76,6 +76,33 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   Q_PROPERTY(Options options READ options WRITE setOptions)
   Q_FLAGS(Option Options);
 #endif
+
+  /// This property controls the key used to search the settings for recorded
+  /// paths.
+  /// If multiple path line edits share the same key, their history is then
+  /// shared.
+  /// If an empty key string is given, the object name is used as key.
+  /// Setting the key automatically retrieve the history from settings
+  /// Empty by default.
+  /// \sa retrieveHistory(), addCurrentPathToHistory(), showHistoryButton
+  Q_PROPERTY(QString settingKey READ settingKey WRITE setSettingKey )
+
+  /// This property controls whether the browse ("...") button is visible or
+  /// not. Clicking on the button calls opens a dialog to select the current path.
+  /// True by default
+  /// \sa browse()
+  Q_PROPERTY(bool showBrowseButton READ showBrowseButton WRITE setShowBrowseButton);
+
+  /// This property controls whether the history button (arrow button that opens
+  /// the history menu) is visible or not.
+  /// True by default.
+  /// \sa retrieveHistory(), addCurrentPathToHistory(), settingKey
+  Q_PROPERTY(bool showHistoryButton READ showHistoryButton WRITE setShowHistoryButton);
+
+  /// This property holds the minimum number of characters that should fit into
+  /// the path line edit.
+  /// The default value is 17.
+  Q_PROPERTY(int minimumContentsLength READ minimumContentsLength WRITE setMinimumContentsLength)
 
 public:
   enum Filter { Dirs        = 0x001,
@@ -152,13 +179,32 @@ public:
   const Options& options()const;
 #endif
 
-  /** Change the current extension of the edit line.
-   *  If there is no extension yet, set it
-  */
+  /// Change the current extension of the edit line.
+  ///  If there is no extension yet, set it
   void setCurrentFileExtension(const QString& extension);
+
+  QString settingKey()const;
+  void setSettingKey(const QString& key);
+
+  bool showBrowseButton()const;
+  void setShowBrowseButton(bool visible);
+
+  bool showHistoryButton()const;
+  void setShowHistoryButton(bool visible);
+
+  int minimumContentsLength()const;
+  void setMinimumContentsLength(int lenght);
 
   /// Return the combo box internally used by the path line edit
   QComboBox* comboBox() const;
+
+  /// The width returned, in pixels, is the length of the file name (with no
+  /// path) if any. Otherwise, it's enough for 15 to 20 characters.
+  virtual QSize minimumSizeHint()const;
+
+  /// The width returned, in pixels, is the entire length of the current path
+  /// if any. Otherwise, it's enough for 15 to 20 characters.
+  virtual QSize sizeHint()const;
 
 Q_SIGNALS:
   /** the signal is emit when the state of hasValidInput changed
@@ -170,20 +216,22 @@ Q_SIGNALS:
 public Q_SLOTS:
   void setCurrentPath(const QString& path);
 
-  /** Open a QFileDialog to select a file or directory and set current text to it
-   *  You would probably connect a browse push button like this:
-   *  connect(myPushButton,SIGNAL(clicked()),myPathLineEdit,SLOT(browse()))
-  */
+  /// Open a QFileDialog to select a file or directory and set current text to it
+  /// You would probably connect a browse push button like this:
+  /// connect(myPushButton,SIGNAL(clicked()),myPathLineEdit,SLOT(browse()))
+  /// As a conveniency, such button is provided by default via the browseButton
+  /// \sa showBrowseButton
   void browse();
 
-  /** Load the history of the paths. To be restored the inputs must have been saved by
-   *  saveCurrentPathInHistory().
-  */
-
+  /// Load the history of the paths that have been saved in the application
+  /// settings with addCurrentPathToHistory().
+  /// The history is identified using \a settingKey
+  /// \sa addCurrentPathToHistory(), showHistoryButton, settingKey
   void retrieveHistory();
-  /** Save the current value (this->currentPath()) into the history. That value will be retrieved
-   *  next time the retrieveHistory()
-  */
+
+  /// Save the current value (this->currentPath()) into the history. That value
+  ///  will be retrieved next time retrieveHistory() is called.
+  /// \sa retrieveHistory(), showHistoryButton, settingKey
   void addCurrentPathToHistory();
 
 protected Q_SLOTS:
