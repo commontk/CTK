@@ -307,6 +307,10 @@ void ctkCmdLineModuleFutureTester::testPauseAndCancel()
     expectedSignals.push_back("module.paused");
   }
 
+  // the following two signals are send when the module reports "filter start"
+  expectedSignals << "module.progressValueChanged(1)"
+                  << "module.progressTextChanged(Does nothing useful)";
+
   if (future.canCancel())
   {
     expectedSignals.push_back("module.canceled");
@@ -336,7 +340,7 @@ void ctkCmdLineModuleFutureTester::testPauseAndCancel()
   if (future.canCancel())
   {
     // give event processing a chance before killing the process
-    QTest::qWait(200);
+    QTest::qWait(500);
     future.cancel();
   }
   future.waitForFinished();
