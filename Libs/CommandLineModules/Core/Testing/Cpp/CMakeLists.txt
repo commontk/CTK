@@ -2,6 +2,7 @@ set(KIT ${PROJECT_NAME})
 set(LIBRARY_NAME ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
+  ctkCmdLineModuleManagerTest.cpp
   ctkCmdLineModuleXmlProgressWatcherTest.cpp
   ctkCmdLineModuleDefaultPathBuilderTest.cpp
   )
@@ -24,6 +25,7 @@ include_directories(
 set(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
+  ctkCmdLineModuleManagerTest.cpp
   ctkCmdLineModuleXmlProgressWatcherTest.cpp
 )
 set(Tests_UI_CPP)
@@ -39,5 +41,6 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 #
 # Add Tests
 #
+SIMPLE_TEST(ctkCmdLineModuleManagerTest)
 SIMPLE_TEST(ctkCmdLineModuleXmlProgressWatcherTest)
 SIMPLE_TEST(ctkCmdLineModuleDefaultPathBuilderTest ${CTK_CMAKE_RUNTIME_OUTPUT_DIRECTORY})
