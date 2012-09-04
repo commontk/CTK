@@ -23,6 +23,7 @@
 
 #include "ctkCmdLineModuleFuture.h"
 
+#include <QVariant>
 #include <QProcess>
 
 #ifdef Q_OS_UNIX

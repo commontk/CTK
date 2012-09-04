@@ -28,6 +28,7 @@
 #include "ctkCmdLineModuleFuture.h"
 #include "ctkException.h"
 
+#include <QVariant>
 #include <QUrl>
 #include <QFutureWatcher>
 
