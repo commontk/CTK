@@ -25,7 +25,8 @@ int ctkVTKHistogramTest2( int argc, char * argv [])
   //------Test build--------------------------------
   ctkVTKHistogram rgbHistogram;
 
-  vtkSmartPointer<vtkDataArray> rgbDataArray = vtkDataArray::CreateDataArray(VTK_INT);
+  vtkSmartPointer<vtkDataArray> rgbDataArray;
+  rgbDataArray.TakeReference(vtkDataArray::CreateDataArray(VTK_INT));
   rgbDataArray->SetNumberOfComponents(3);
   rgbDataArray->InsertNextTuple3(   0,  50,     0);
   rgbDataArray->InsertNextTuple3(1000, 143, -1412);
