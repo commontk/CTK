@@ -191,6 +191,9 @@ void ctkCmdLineModuleFutureTester::testStartFinish()
                   << "module.resultReadyAt(1,2)"
                   << "module.resultReadyAt(1)"
 
+                     // final progress report from the module
+                  << "module.progressValueChanged(1000)"
+
                      // <filter-end> progress value and text
                   << "module.progressValueChanged(1001)"
                   << "module.progressTextChanged(Finished successfully.)"

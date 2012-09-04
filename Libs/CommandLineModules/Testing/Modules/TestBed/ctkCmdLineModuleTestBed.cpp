@@ -200,7 +200,11 @@ int main(int argc, char* argv[])
   else
   {
     out << "Normal exit</filter-result>" << endl;
+    sleep_ms(100);
+    out << "<filter-progress>1</filter-progress>" << endl;
+    sleep_ms(100);
     out << "<filter-end><filter-comment>Finished successfully.</filter-comment></filter-end>" << endl;
+    sleep_ms(100);
   }
 
   return exitCode;
