@@ -120,21 +120,6 @@
 
   <!--
   ===================================================================
-    Templates for generating connections between generated widgets
-  ===================================================================
-  -->
-
-  <xsl:template match="parameters/*[name()=('image','file','directory','geometry')]" mode="connections">
-    <connection>
-      <sender><xsl:value-of select="name"/>BrowseButton</sender>
-      <signal>clicked()</signal>
-      <receiver>parameter:<xsl:value-of select="name"/></receiver>
-      <slot>browse()</slot>
-    </connection>
-  </xsl:template>
-
-  <!--
-  ===================================================================
     Utility templates
   ===================================================================
   -->
@@ -391,37 +376,26 @@
   <xsl:template match="parameters/*[name()=('image')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <layout class="QHBoxLayout">
-        <item>
-          <xsl:choose>
-            <xsl:when test="channel = 'input'">
-              <widget class="{$imageInputWidget}"  name="parameter:{name}">
-                <xsl:call-template name="commonWidgetProperties"/>
-                <xsl:call-template name="createQtDesignerStringListProperty"/>
-                <property name="filters">
-                  <set>ctkPathLineEdit::Files</set>
-                </property>
-              </widget>
-            </xsl:when>
-            <xsl:otherwise>
-              <widget class="{$imageOutputWidget}"  name="parameter:{name}">
-                <xsl:call-template name="commonWidgetProperties"/>
-                <xsl:call-template name="createQtDesignerStringListProperty"/>
-                <property name="filters">
-                  <set>ctkPathLineEdit::Files</set>
-                </property>
-              </widget>
-            </xsl:otherwise>
-          </xsl:choose>
-        </item>
-        <item>
-          <widget class="QPushButton"  name="{name}BrowseButton">
-            <property name="text">
-              <string>Browse...</string>
+      <xsl:choose>
+        <xsl:when test="channel = 'input'">
+          <widget class="{$imageInputWidget}"  name="parameter:{name}">
+            <xsl:call-template name="commonWidgetProperties"/>
+            <xsl:call-template name="createQtDesignerStringListProperty"/>
+            <property name="filters">
+              <set>ctkPathLineEdit::Files</set>
             </property>
           </widget>
-        </item>
-      </layout>
+        </xsl:when>
+        <xsl:otherwise>
+          <widget class="{$imageOutputWidget}"  name="parameter:{name}">
+            <xsl:call-template name="commonWidgetProperties"/>
+            <xsl:call-template name="createQtDesignerStringListProperty"/>
+            <property name="filters">
+              <set>ctkPathLineEdit::Files</set>
+            </property>
+          </widget>
+        </xsl:otherwise>
+      </xsl:choose>
     </item>
   </xsl:template>
 
@@ -434,37 +408,26 @@
   <xsl:template match="parameters/*[name()=('file', 'geometry')]">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <layout class="QHBoxLayout">
-        <item>
-          <xsl:choose>
-            <xsl:when test="channel = 'input'">
-              <widget class="{$fileInputWidget}"  name="parameter:{name}">
-                <xsl:call-template name="commonWidgetProperties"/>
-                <xsl:call-template name="createQtDesignerStringListProperty"/>
-                <property name="filters">
-                  <set>ctkPathLineEdit::Files</set>
-                </property>
-              </widget>
-            </xsl:when>
-            <xsl:otherwise>
-              <widget class="{$fileOutputWidget}"  name="parameter:{name}">
-                <xsl:call-template name="commonWidgetProperties"/>
-                <xsl:call-template name="createQtDesignerStringListProperty"/>
-                <property name="filters">
-                  <set>ctkPathLineEdit::Files</set>
-                </property>
-              </widget>
-            </xsl:otherwise>
-          </xsl:choose>
-        </item>
-        <item>
-          <widget class="QPushButton"  name="{name}BrowseButton">
-            <property name="text">
-              <string>Browse...</string>
+      <xsl:choose>
+        <xsl:when test="channel = 'input'">
+          <widget class="{$fileInputWidget}"  name="parameter:{name}">
+            <xsl:call-template name="commonWidgetProperties"/>
+            <xsl:call-template name="createQtDesignerStringListProperty"/>
+            <property name="filters">
+              <set>ctkPathLineEdit::Files</set>
             </property>
           </widget>
-        </item>
-      </layout>
+        </xsl:when>
+        <xsl:otherwise>
+          <widget class="{$fileOutputWidget}"  name="parameter:{name}">
+            <xsl:call-template name="commonWidgetProperties"/>
+            <xsl:call-template name="createQtDesignerStringListProperty"/>
+            <property name="filters">
+              <set>ctkPathLineEdit::Files</set>
+            </property>
+          </widget>
+        </xsl:otherwise>
+      </xsl:choose>
     </item>
   </xsl:template>
 
@@ -477,23 +440,12 @@
   <xsl:template match="parameters/directory">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">
-      <layout class="QHBoxLayout">
-        <item>
-          <widget class="{$directoryWidget}"  name="parameter:{name}">
-            <xsl:call-template name="commonWidgetProperties"/>
-            <property name="filters">
-              <set>ctkPathLineEdit::Dirs</set>
-            </property>
-          </widget>
-        </item>
-        <item>
-          <widget class="QPushButton"  name="{name}BrowseButton">
-            <property name="text">
-              <string>Browse...</string>
-            </property>
-          </widget>
-        </item>
-      </layout>
+      <widget class="{$directoryWidget}"  name="parameter:{name}">
+        <xsl:call-template name="commonWidgetProperties"/>
+        <property name="filters">
+          <set>ctkPathLineEdit::Dirs</set>
+        </property>
+      </widget>
     </item>
   </xsl:template>
   
