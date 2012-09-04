@@ -36,7 +36,7 @@ set(KIT_SRCS
   ctkCmdLineModuleParameterGroup_p.h
   ctkCmdLineModuleParameterParsers_p.h
   ctkCmdLineModulePathBuilder.cpp
-  ctkCmdLineModuleResult.h
+  ctkCmdLineModuleResult.cpp
   ctkCmdLineModuleXmlProgressWatcher.cpp
   ctkCmdLineModuleReference.cpp
   ctkCmdLineModuleRunException.cpp

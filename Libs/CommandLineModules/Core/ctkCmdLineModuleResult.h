@@ -22,8 +22,11 @@
 #ifndef CTKCMDLINEMODULERESULT_H
 #define CTKCMDLINEMODULERESULT_H
 
-#include <QString>
-#include <QVariant>
+#include "ctkCommandLineModulesCoreExport.h"
+
+#include <QSharedPointer>
+
+struct ctkCmdLineModuleResultPrivate;
 
 /**
  * @ingroup CommandLineModulesCore_API
@@ -36,20 +39,19 @@
  * @see ctkCmdLineModuleFuture
  * @see ctkCmdLineModuleFutureWatcher
  */
-class ctkCmdLineModuleResult
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleResult
 {
 public:
 
-  ctkCmdLineModuleResult() {}
+  ctkCmdLineModuleResult();
+  ~ctkCmdLineModuleResult();
 
-  ctkCmdLineModuleResult(const QString& parameter, const QVariant& value)
-    : Parameter(parameter), Value(value)
-  {}
+  ctkCmdLineModuleResult(const ctkCmdLineModuleResult& other);
+  ctkCmdLineModuleResult& operator=(const ctkCmdLineModuleResult& other);
 
-  bool operator==(const ctkCmdLineModuleResult& other) const
-  {
-    return Parameter == other.Parameter && Value == other.Value;
-  }
+  ctkCmdLineModuleResult(const QString& parameter, const QVariant& value);
+
+  bool operator==(const ctkCmdLineModuleResult& other) const;
 
   /**
    * @brief Get the name of the output parameter for which this result was reported.
@@ -65,8 +67,9 @@ public:
 
 private:
 
-  QString Parameter;
-  QVariant Value;
+  QSharedPointer<ctkCmdLineModuleResultPrivate> d;
 };
+
+CTK_CMDLINEMODULECORE_EXPORT QDebug operator<<(QDebug debug, const ctkCmdLineModuleResult& result);
 
 #endif // CTKCMDLINEMODULERESULT_H
