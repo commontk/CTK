@@ -296,8 +296,8 @@ void populateIrregularBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
   ptr += component;
   for (; ptr < endPtr; ptr += componentNumber)
     {
-    if (std::numeric_limits<T>::has_quiet_NaN && 
-        std::numeric_limits<T>::quiet_NaN() == *ptr)
+    if (std::numeric_limits<T>::has_quiet_NaN &&
+        vtkMath::IsNan(*ptr))
       {
       continue;
       }
