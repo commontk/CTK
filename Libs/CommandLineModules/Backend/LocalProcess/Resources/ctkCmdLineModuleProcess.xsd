@@ -27,19 +27,25 @@
       <xsd:documentation>The root element. This is added automatically and must not be printed out by the module.</xsd:documentation>
     </xsd:annotation>
     
-    <xsd:sequence>     
+    <xsd:sequence>
       <xsd:group maxOccurs="unbounded" minOccurs="0" ref="FilterGroup"/>   
     </xsd:sequence>
   </xsd:complexType>
   
   <xsd:group name="FilterGroup">
-    <xsd:sequence>        
+    <xsd:sequence>
       <xsd:element maxOccurs="1" minOccurs="1" name="filter-start" type="FilterStartType"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="filter-progress" type="FilterProgressType"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="filter-progress-text" type="FilterProgressTextType"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="filter-result" type="FilterResultType"/>
+      <xsd:group maxOccurs="unbounded" minOccurs="0" ref="ProgressGroup"/>
       <xsd:element maxOccurs="1" minOccurs="1" name="filter-end" type="FilterEndType"/>
     </xsd:sequence>
+  </xsd:group>
+  
+  <xsd:group name="ProgressGroup">
+    <xsd:choice>
+      <xsd:element name="filter-progress" type="FilterProgressType"/>
+      <xsd:element name="filter-progress-text" type="FilterProgressTextType"/>
+      <xsd:element minOccurs="0" name="filter-result" type="FilterResultType"/>
+    </xsd:choice>
   </xsd:group>
   
   <!--

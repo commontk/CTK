@@ -185,8 +185,7 @@ public:
           }
           else if (name.compare(FILTER_PROGRESS, Qt::CaseInsensitive) == 0)
           {
-            emit q->filterProgress(currentProgress, currentComment);
-            currentComment = QString();
+            emit q->filterProgress(currentProgress, QString());
           }
           else if (name.compare(FILTER_PROGRESS_TEXT, Qt::CaseInsensitive) == 0)
           {
