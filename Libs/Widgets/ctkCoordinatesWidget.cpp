@@ -161,7 +161,7 @@ void ctkCoordinatesWidget::setNormalized(bool normalized)
   this->Normalized = normalized;
   if (this->Normalized)
     {
-    double normalizedCoordinates[this->Dimension];
+    double* normalizedCoordinates = new double[this->Dimension];
     memcpy(normalizedCoordinates, this->Coordinates, sizeof(double)*this->Dimension);
     ctkCoordinatesWidget::normalize(normalizedCoordinates, this->Dimension);
 
@@ -169,6 +169,7 @@ void ctkCoordinatesWidget::setNormalized(bool normalized)
     this->setMaximum(1.);
 
     this->setCoordinates(normalizedCoordinates);
+    delete [] normalizedCoordinates;
     }
 }
 
@@ -283,7 +284,7 @@ void ctkCoordinatesWidget::setCoordinates(double* coordinates)
 //------------------------------------------------------------------------------
 void ctkCoordinatesWidget::setCoordinates(double x, double y, double z, double w)
 {
-  double coordinates[this->Dimension];
+  double* coordinates = new double[this->Dimension];
   if (this->Dimension >= 1)
     {
     coordinates[0] = x;
@@ -305,6 +306,7 @@ void ctkCoordinatesWidget::setCoordinates(double x, double y, double z, double w
     coordinates[i] = this->Coordinates[i];
     }
   this->setCoordinates(coordinates);
+  delete [] coordinates;
 }
 
 //------------------------------------------------------------------------------
@@ -355,7 +357,7 @@ void ctkCoordinatesWidget::updateCoordinate(double coordinate)
       mult = false;
       den = sqrt((1. - coordinate*coordinate) / (this->Dimension - 1));
       }
-    double normalizedCoordinates[this->Dimension];
+    double* normalizedCoordinates = new double[this->Dimension];
     for (int i = 0; i < this->Dimension; ++i)
       {
       if (i != element)
@@ -368,6 +370,7 @@ void ctkCoordinatesWidget::updateCoordinate(double coordinate)
         }
       }
     this->setCoordinates(normalizedCoordinates);
+    delete [] normalizedCoordinates;
     }
   else
     {
@@ -394,11 +397,12 @@ void ctkCoordinatesWidget::updateCoordinates()
 //------------------------------------------------------------------------------
 void ctkCoordinatesWidget::normalize()
 {
-  double normalizedCoordinates[this->Dimension];
+  double* normalizedCoordinates = new double[this->Dimension];
   memcpy(normalizedCoordinates, this->Coordinates,
          sizeof(double) * this->Dimension);
   ctkCoordinatesWidget::normalize(normalizedCoordinates, this->Dimension);
   this->setCoordinates(normalizedCoordinates);
+  delete [] normalizedCoordinates;
 }
 
 //------------------------------------------------------------------------------
