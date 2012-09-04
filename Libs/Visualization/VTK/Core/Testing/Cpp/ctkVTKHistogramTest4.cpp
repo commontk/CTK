@@ -12,6 +12,7 @@
 // STD includes
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 
 int ctkVTKHistogramTest4( int argc, char * argv [])
 {
@@ -25,12 +26,21 @@ int ctkVTKHistogramTest4( int argc, char * argv [])
   //------Test build--------------------------------
   ctkVTKHistogram histogram;
 
-  vtkSmartPointer<vtkDataArray> dataArray = vtkDataArray::CreateDataArray(VTK_FLOAT);
+  vtkSmartPointer<vtkDataArray> dataArray;
+  dataArray.TakeReference(vtkDataArray::CreateDataArray(VTK_FLOAT));
   dataArray->InsertNextTuple1( 10.001);
   dataArray->InsertNextTuple1( -0.231);
   dataArray->InsertNextTuple1( 220.0001);
   dataArray->InsertNextTuple1(1234.0);
   dataArray->InsertNextTuple1(220.0);
+  if(std::numeric_limits<float>::has_quiet_NaN)
+    {
+    // These should be ignored.
+    const float positiveNaN = std::numeric_limits<float>::quiet_NaN();
+    dataArray->InsertNextTuple1(positiveNaN);
+    const float negativeNaN = - positiveNaN;
+    dataArray->InsertNextTuple1(negativeNaN);
+    }
   histogram.setDataArray(dataArray);
   if (histogram.dataArray() != dataArray)
     {

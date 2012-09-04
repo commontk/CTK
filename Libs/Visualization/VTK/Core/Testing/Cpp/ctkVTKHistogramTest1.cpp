@@ -65,7 +65,8 @@ int ctkVTKHistogramTest1( int argc, char * argv [])
 
   //------Test setDataArray--------------------------
   int dataType = VTK_CHAR;
-  vtkSmartPointer<vtkDataArray> newDataArray = vtkDataArray::CreateDataArray(dataType);
+  vtkSmartPointer<vtkDataArray> newDataArray;
+  newDataArray.TakeReference(vtkDataArray::CreateDataArray(dataType));
   defaultHistogram.setDataArray(newDataArray);
   if (defaultHistogram.dataArray() != newDataArray)
     {
@@ -79,7 +80,7 @@ int ctkVTKHistogramTest1( int argc, char * argv [])
   defaultHistogram.build();
 
   dataType = VTK_INT;
-  newDataArray = vtkDataArray::CreateDataArray(dataType);
+  newDataArray.TakeReference(vtkDataArray::CreateDataArray(dataType));
   newDataArray->SetNumberOfComponents(1);
   newDataArray->InsertNextTuple1(50);
   newDataArray->InsertNextTuple1(143);
@@ -98,7 +99,7 @@ int ctkVTKHistogramTest1( int argc, char * argv [])
   defaultHistogram.build();
 
   dataType = VTK_FLOAT;
-  newDataArray = vtkDataArray::CreateDataArray(dataType);
+  newDataArray.TakeReference(vtkDataArray::CreateDataArray(dataType));
   defaultHistogram.setDataArray(newDataArray);
   if (defaultHistogram.dataArray() != newDataArray)
     {
