@@ -21,6 +21,7 @@
 
 #include "ctkCmdLineModuleResult.h"
 
+#include <QVariant>
 #include <QDebug>
 
 struct ctkCmdLineModuleResultPrivate : public QSharedData
