@@ -29,7 +29,7 @@
  * \brief Derived from QUiLoader to enable us to instantiate custom widgets at runtime,
  * where this class provides ctkCmdLineModuleQtComboBox instead of QComboBox.
  * \author m.clarkson@ucl.ac.uk
- * \ingroup CommandLineModulesFrontendQtGui
+ * \ingroup CommandLineModulesFrontendQtGui_API
  */
 class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleQtUiLoader : public QUiLoader
 {

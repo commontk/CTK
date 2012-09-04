@@ -31,7 +31,7 @@
 /**
  * \class ctkCmdLineModuleRunException
  * \brief Exception class to describe problems with running the module.
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleRunException
     : public QtConcurrent::Exception, public ctkException

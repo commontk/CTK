@@ -31,9 +31,14 @@ class ctkCmdLineModuleXslTransformPrivate;
 class QIODevice;
 
 /**
- * \class ctkCmdLineModuleXslTransform
- * \brief Provides a transformation from XML to the Qt ui file format.
- * \ingroup CommandLineModulesCore
+ * @ingroup CommandLineModulesCore_API
+ *
+ * @brief Transforms a given XML input using an XML stylesheet.
+ *
+ * You must call setInput(), setOutput() and setXslTransformation() before
+ * calling transform().
+ *
+ * @see ctkCmdLineModuleXmlValidator
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXslTransform
   : public ctkCmdLineModuleXmlValidator
@@ -44,14 +49,31 @@ public:
   ctkCmdLineModuleXslTransform(QIODevice* input = 0, QIODevice* output = 0);
   virtual ~ctkCmdLineModuleXslTransform();
 
+  /**
+   * @brief Set the output device to which the transformation will be written.
+   * @param output The output device.
+   *
+   * If no output device is set, a default device will be used.
+   */
   void setOutput(QIODevice* output);
+
+  /**
+   * @brief Get the output device to which the transformation will be written.
+   * @return The output device.
+   */
   QIODevice* output() const;
 
+  /**
+   * @brief Set an XML schema for output validation.
+   * @param output The XML schema against which the transformation will be validated.
+   *
+   * Output validation will only be done if validateOutput() returns \c true.
+   */
   void setOutputSchema(QIODevice* output);
 
   /**
-   * @brief Returns \code true if the XSL output will be formatted.
-   * @return \code true if the ouptut will be formatted, \code false otherwise.
+   * @brief Returns \c true if the XSL output will be formatted.
+   * @return \c true if the ouptut will be formatted, \c false otherwise.
    */
   bool formatXmlOutput() const;
 
@@ -60,7 +82,7 @@ public:
    *
    * It is assumed that the XSL output is valid XML. The output will be
    * formatted with an indentation depth of four spaces. Note that setting
-   * \e format to \code true increases compuational overhead and memory
+   * \c format to \c true increases compuational overhead and memory
    * requirements and is usually only done for testing or debugging purposes.
    */
   void setFormatXmlOutput(bool format);
@@ -69,7 +91,8 @@ public:
    * @brief Transforms an XML input via a XSL transformation.
    *
    * This method assumes that the input set via setInput() or supplied
-   * in the constructor is a valid, non empty XML fragment.
+   * in the constructor is a valid, non empty XML fragment and that setOutput()
+   * and setXslTransformation() was called with non-null arguments.
    *
    * @return
    */
@@ -82,7 +105,7 @@ public:
    * to transform the input without setting a transformation will result in
    * runtime errors.
    *
-   * @param The XSL transformation.
+   * @param transformation The XSL transformation.
    */
   void setXslTransformation(QIODevice* transformation);
 
@@ -106,19 +129,37 @@ public:
    */
   void bindVariable(const QString& name, const QVariant& value);
 
+  /**
+   * @brief Sets the output validation mode.
+   * @param validate If \c true, the output will be validated against the XML schema
+   *        provided via setOutputSchema(). If \c validate is \c false, no output
+   *        validation takes place.
+   */
   void setValidateOutput(bool validate);
 
-  /** @brief returns true if an error occured
-   *  transform() sets the error flag if an error occured when transforming the
-   *  XML file into XSL.
-   *  \sa errorString
+  /**
+   * @brief Get the output validation mode.
+   * @return \c true if the output will be validated, \c false otherwise.
+   */
+  bool validateOutput() const;
+
+  /**
+   * @brief Returns true if an error occured.
+   *
+   * transform() sets the error flag if an error occured when transforming the
+   * XML file into XSL or validating the transformation.
+   *
+   * @sa errorString
    */
   virtual bool error() const;
 
-  /** @brief Error message if any
-   *  transform() sets the error message if an error occured when transforming
+  /**
+   * @brief Returns the error message if any.
+   *
+   * transform() sets the error message if an error occured when transforming
    * the XML file into XSL.
-   *  \sa error
+   *
+   * @sa error
    */
   virtual QString errorString() const;
 

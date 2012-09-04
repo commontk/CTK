@@ -30,16 +30,34 @@ class ctkCmdLineModuleReference;
 /**
  * \class ctkCmdLineModuleFrontendFactory
  * \brief Factory class to create new front-ends.
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
+ *
+ * Front-end implementors are advised to create and export a sub-class of
+ * this class to unify the creation process of front-ends.
+ *
  * \see ctkCmdLineModuleFrontend
  */
 struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFrontendFactory
 {
   virtual ~ctkCmdLineModuleFrontendFactory();
 
+  /**
+   * @brief Get the name of this factory.
+   * @return The factory name.
+   */
   virtual QString name() const = 0;
+
+  /**
+   * @brief Get the description for this factory.
+   * @return A factory description.
+   */
   virtual QString description() const = 0;
 
+  /**
+   * @brief Creates front-end instances.
+   * @param moduleRef The module reference for which to create a front-end.
+   * @return The created front-end or NULL if creation failed.
+   */
   virtual ctkCmdLineModuleFrontend* create(const ctkCmdLineModuleReference& moduleRef) = 0;
 };
 

@@ -877,6 +877,9 @@ foreach(lib ${CTK_LIBS})
   endif()
 endforeach()
 
+# Add the CommandLineModules root directory for additional processing
+add_subdirectory(Libs/CommandLineModules)
+
 #-----------------------------------------------------------------------------
 if(CTK_USE_QTTESTING)
   add_subdirectory(Libs/QtTesting)
@@ -911,10 +914,6 @@ endif()
 #add_subdirectory(Testing)
 #add_subdirectory(Examples)
 
-if (BUILD_TESTING AND
-    CTK_LIB_CommandLineModules/Core AND CTK_LIB_CommandLineModules/Backend/LocalProcess)
-  add_subdirectory(Libs/CommandLineModules/Testing)
-endif()
 
 #-----------------------------------------------------------------------------
 # Style Checking configuration

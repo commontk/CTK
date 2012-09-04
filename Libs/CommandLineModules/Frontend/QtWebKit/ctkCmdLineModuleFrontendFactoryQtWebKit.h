@@ -29,7 +29,10 @@
 /**
  * \class ctkCmdLineModuleFrontendFactoryQtWebKit
  * \brief QtWebKit specific implementation of ctkCmdLineModuleFrontendFactory
- * \ingroup CommandLineModulesFrontendQtWebKit
+ * \ingroup CommandLineModulesFrontendQtWebKit_API
+ *
+ * \warning This front-end is highly experimental and actually just serves as a
+ *          proof-of-concept.
  */
 class CTK_CMDLINEMODULEQTWEBKIT_EXPORT ctkCmdLineModuleFrontendFactoryQtWebKit : public ctkCmdLineModuleFrontendFactory
 {

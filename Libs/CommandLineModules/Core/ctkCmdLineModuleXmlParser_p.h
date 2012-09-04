@@ -34,7 +34,7 @@ class QIODevice;
 /**
  * \class ctkCmdLineModuleXmlParser
  * \brief Performs XML parsing, loading data into a ctkCmdLineModuleDescription
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  * \see ctkCmdLineModuleDescription
  */
 class ctkCmdLineModuleXmlParser

@@ -32,7 +32,7 @@ class ctkCmdLineModuleFuture;
 class ctkCmdLineModuleFutureInterfacePrivate;
 
 /**
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  *
  * \brief A QFutureInterface specialization.
  *

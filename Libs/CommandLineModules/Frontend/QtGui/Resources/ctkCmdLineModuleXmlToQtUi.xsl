@@ -16,6 +16,17 @@
   ===================================================================
   -->
   
+  <!--
+  ########################################################################
+  ****************************   IMPORTANT   *****************************
+  *                                                                      *
+  * Please update the documentation in ctkCmdLineModuleFrontendQtGui.h   *
+  * when making changes to (or adding/removing) XSL parameters (names    *
+  * or default values)                                                   *
+  *                                                                      *
+  ########################################################################
+  -->
+  
   <xsl:param name="disableReturnParameter">true</xsl:param>
   
   <xsl:param name="executableWidget">QWidget</xsl:param>
@@ -42,15 +53,9 @@
   <xsl:param name="fileValueProperty">currentPath</xsl:param>
   <xsl:param name="directoryValueProperty">currentPath</xsl:param>
   <xsl:param name="geometryValueProperty">currentPath</xsl:param>
-  <xsl:param name="integervectorValueProperty">text</xsl:param>
-  <xsl:param name="doublevectorValueProperty">text</xsl:param>
-  <xsl:param name="floatvectorValueProperty">text</xsl:param>
-  <xsl:param name="stringvectorValueProperty">text</xsl:param>
-  <xsl:param name="integerenumerationValueProperty">currentEnumeration</xsl:param>
-  <xsl:param name="doubleenumerationValueProperty">currentEnumeration</xsl:param>
-  <xsl:param name="floatenumerationValueProperty">currentEnumeration</xsl:param>
-  <xsl:param name="stringenumerationValueProperty">currentEnumeration</xsl:param>
-  
+  <xsl:param name="vectorValueProperty">text</xsl:param>
+  <xsl:param name="enumerationValueProperty">currentEnumeration</xsl:param>
+
   
   <!--
   ===================================================================
@@ -79,20 +84,21 @@
       <xsl:when test="$cliType='boolean'"><xsl:value-of select="$booleanValueProperty"/></xsl:when>
       <xsl:when test="$cliType='integer'"><xsl:value-of select="$integerValueProperty"/></xsl:when>
       <xsl:when test="$cliType='float'"><xsl:value-of select="$floatValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='double'"><xsl:value-of select="$floatValueProperty"/></xsl:when>
       <xsl:when test="$cliType='point'"><xsl:value-of select="$pointValueProperty"/></xsl:when>
       <xsl:when test="$cliType='region'"><xsl:value-of select="$regionValueProperty"/></xsl:when>
       <xsl:when test="$cliType='image'"><xsl:value-of select="$imageValueProperty"/></xsl:when>
       <xsl:when test="$cliType='file'"><xsl:value-of select="$fileValueProperty"/></xsl:when>
       <xsl:when test="$cliType='directory'"><xsl:value-of select="$directoryValueProperty"/></xsl:when>
       <xsl:when test="$cliType='geometry'"><xsl:value-of select="$geometryValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='integer-vector'"><xsl:value-of select="$integervectorValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='double-vector'"><xsl:value-of select="$doublevectorValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='float-vector'"><xsl:value-of select="$floatvectorValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='string-vector'"><xsl:value-of select="$stringvectorValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='integer-enumeration'"><xsl:value-of select="$integerenumerationValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='double-enumeration'"><xsl:value-of select="$doubleenumerationValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='float-enumeration'"><xsl:value-of select="$floatenumerationValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='string-enumeration'"><xsl:value-of select="$stringenumerationValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='integer-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='double-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='float-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='string-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='integer-enumeration'"><xsl:value-of select="$enumerationValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='double-enumeration'"><xsl:value-of select="$enumerationValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='float-enumeration'"><xsl:value-of select="$enumerationValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='string-enumeration'"><xsl:value-of select="$enumerationValueProperty"/></xsl:when>
       <xsl:otherwise>value</xsl:otherwise>
     </xsl:choose>
   </xsl:function>

@@ -33,6 +33,8 @@ class ctkCmdLineModuleFuture;
 struct ctkCmdLineModuleFutureWatcherPrivate;
 
 /**
+ * @ingroup CommandLineModulesCore_API
+ *
  * @brief The ctkCmdLineModuleFutureWatcher class provides enhanced monitoring of a
  *        ctkCmdLineModuleFuture using signals and slots.
  *

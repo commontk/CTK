@@ -39,7 +39,13 @@ struct ctkCmdLineModuleFrontendPrivate;
  * \class ctkCmdLineModuleFrontend
  * \brief Abstract base class for all front-end command
  * line module implementations.
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
+ *
+ * A module front-end represents a set of current parameter values for a specific
+ * module. A front-end instance is usually associated with a graphical user interface,
+ * accessible via guiHandle(). This allows users to interactively change parameter values
+ * of the module.
+ *
  * \see ctkCmdLineModuleFrontendQtGui
  * \see ctkCmdLineModuleFrontendQtWebKit
  */
@@ -85,8 +91,11 @@ public:
   };
 
   enum ParameterFilter {
+    /** Parameters with channel = "input" */
     Input = 0x01,
+    /** Parameter with channel = "output" */
     Output = 0x02,
+    /** A convenience enum value combining Input and Output. */
     All = Input | Output
   };
   Q_DECLARE_FLAGS(ParameterFilters, ParameterFilter)
@@ -94,10 +103,13 @@ public:
   ~ctkCmdLineModuleFrontend();
 
   /**
-   * @brief Returns the GUI representation, currently supporting only
-   * QObject subclasses.
-   * @return The GUI that can then be embeded in an applicaiton
-   * window for instance.
+   * @brief Returns the GUI representation.
+   * @return A GUI handle that can then be embeded in an application window for instance.
+   *
+   * The returned object is a handle to the real GUI toolkit specific object representing
+   * the user interface. For Qt based front-ends, the returned object is usually a QWidget
+   * instance pointing to the main container widget for the GUI. See the documentation
+   * of the front-end sub-class for specific information.
    */
   virtual QObject* guiHandle() const = 0;
 
@@ -169,14 +181,16 @@ public:
   virtual void setValues(const QHash<QString,QVariant>& values);
 
   /**
-   * @brief Indicates if the underlying process is currently active.
-   * @return true if running and false otherwise.
+   * @brief Indicates if the currently associated ctkCmdLineModuleFuture object
+   *        is in state "running".
+   * @return \c true if running and \c false otherwise.
    */
   bool isRunning() const;
 
   /**
-   * @brief Indicates if the underlying process is currently paused.
-   * @return true if paused and false otherwise.
+   * @brief Indicates if the currently associated ctkCmdLineModuleFuture Object
+   *        is in state "paused".
+   * @return \c true if paused and \c false otherwise.
    */
   bool isPaused() const;
 
@@ -200,7 +214,7 @@ Q_SIGNALS:
 
   /**
    * @brief This signal is emitted whenever a parameter value is changed by using
-   *        the ctkCmdLineModuleFrontent class.
+   *        the ctkCmdLineModuleFrontend class.
    * @param parameter The parameter name.
    * @param value The new parameter value.
    *
@@ -224,12 +238,6 @@ protected:
    */
   ctkCmdLineModuleFrontend(const ctkCmdLineModuleReference& moduleRef);
 
-  /**
-   * @brief Sets the ctkCmdLineModuleFuture which effectively
-   * contains the backend that is run.
-   */
-  void setFuture(const ctkCmdLineModuleFuture& future);
-
 private Q_SLOTS:
 
   /**
@@ -241,6 +249,14 @@ private Q_SLOTS:
    * of the output parameter in the GUI with the reported value.
    */
   virtual void resultReady(const ctkCmdLineModuleResult& result);
+
+private:
+
+  /**
+   * @brief Sets the ctkCmdLineModuleFuture which effectively
+   * contains the backend that is run.
+   */
+  void setFuture(const ctkCmdLineModuleFuture& future);
 
 private:
 

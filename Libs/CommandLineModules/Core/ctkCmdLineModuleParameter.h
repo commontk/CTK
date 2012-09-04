@@ -33,7 +33,7 @@ struct ctkCmdLineModuleParameterPrivate;
 /** 
  * \class ctkCmdLineModuleParameter
  * \brief Single parameter to a module, like a threshold of a filter.
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  *
  *
  * ctkCmdLineModuleParameter describes a single parameter for a

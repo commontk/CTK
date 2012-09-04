@@ -31,9 +31,10 @@ class ctkCmdLineModuleXmlValidatorPrivate;
 class QIODevice;
 
 /**
- * \class ctkCmdLineModuleXmlValidator
- * \brief Provides XML validation, comparing a modules XML to an .xsd file
- * \ingroup CommandLineModulesCore
+ * @ingroup CommandLineModulesCore_API
+ *
+ * @brief Provides validation of an XML document against an XML schema.
+ *
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXmlValidator
 {
@@ -43,14 +44,40 @@ public:
   ctkCmdLineModuleXmlValidator(QIODevice* input = 0);
   ~ctkCmdLineModuleXmlValidator();
 
+  /**
+   * @brief Set the XML input.
+   * @param input The Xml input.
+   */
   void setInput(QIODevice* input);
+
+  /**
+   * @brief Get the XML input device.
+   * @return The XML input device.
+   */
   QIODevice* input() const;
 
+  /**
+   * @brief Set the XML schema to be used during validation.
+   * @param input The XML schema.
+   */
   void setInputSchema(QIODevice* input);
 
+  /**
+   * @brief Validate the XML input against the XML schema set via setInputSchema().
+   * @return \c true if validation was successful, \c false otherwise.
+   */
   virtual bool validateInput();
 
+  /**
+   * @brief Get the error flag.
+   * @return \c true if an error occured during validation, \c false otherwise.
+   */
   virtual bool error() const;
+
+  /**
+   * @brief Get the error string.
+   * @return A description of the validation error, if any.
+   */
   virtual QString errorString() const;
 
 private:

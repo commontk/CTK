@@ -94,7 +94,10 @@ struct ctkCmdLineModuleBackendFunctionPointerPrivate;
 /**
  * \class ctkCmdLineModuleBackendFunctionPointer
  * \brief Provides a back-end implementation to enable directly calling a function pointer.
- * \ingroup CommandLineModulesBackendFunctionPointer
+ * \ingroup CommandLineModulesBackendFunctionPointer_API
+ *
+ * \warning This back-end is highly experimental and will not work for most function pointers when
+ *          trying to register them via registerFunctionPointer().
  */
 class CTK_CMDLINEMODULEBACKENDFP_EXPORT ctkCmdLineModuleBackendFunctionPointer : public ctkCmdLineModuleBackend
 {

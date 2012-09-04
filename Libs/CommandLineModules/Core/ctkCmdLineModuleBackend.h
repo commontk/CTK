@@ -31,12 +31,17 @@ template<typename T> class QList;
 class QUrl;
 
 /**
- * \class ctkCmdLineModuleBackend
- * \brief Abstract base class for all back-end command line module
+ * @ingroup CommandLineModulesCore_API
+ *
+ * @brief Abstract base class for all back-end command line module
  * implementations.
- * \ingroup CommandLineModulesCore
- * \see ctkCmdLineModuleBackendLocalProcess
- * \see ctkCmdLineModuleBackendFunctionPointer
+ *
+ * A back-end is responsible for providing the XML module description for a
+ * given URL and its "timestamp". It also knows how to actually run a module,
+ * using the current parameter values provided by a ctkCmdLineModuleFrontend instance.
+ *
+ * @see ctkCmdLineModuleBackendLocalProcess
+ * @see ctkCmdLineModuleBackendFunctionPointer
  */
 struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
 {
@@ -57,8 +62,7 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
   virtual QString description() const = 0;
 
   /**
-   * @brief Returns a list of the capabilities or the types of things
-   * that this back-end can run.
+   * @brief Returns a list of URL schemes this back-end can handle.
    * @return A list of "schemes", meaning the capabilities.
    */
   virtual QList<QString> schemes() const = 0;
@@ -76,7 +80,9 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
    * @return The raw XML parameter description.
    *
    * This method may be concurrently called by the ctkCmdLineModuleManager and
-   * must be thread-safe.
+   * must be thread-safe. Implementations must not use any caching mechanism,
+   * as caching is done by the ctkCmdLineModuleManager itself, checking the
+   * return value of timeStamp().
    *
    */
   virtual QByteArray rawXmlDescription(const QUrl& location) = 0;
@@ -87,7 +93,11 @@ protected:
 
   /**
    * @brief The main method to actually execute the back-end process.
-   * @param A pointer to a front end implementation.
+   * @param frontend A pointer to a front end implementation.
+   *
+   * Implementations must execute the actual task of running the module asynchronously
+   * and return from this method immediately. After returning from this method,
+   * accessing the <code>frontend</code> pointer is not guaranteed to be safe.
    */
   virtual ctkCmdLineModuleFuture run(ctkCmdLineModuleFrontend* frontend) = 0;
 

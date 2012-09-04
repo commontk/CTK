@@ -280,6 +280,12 @@ void ctkCmdLineModuleXslTransform::setValidateOutput(bool validate)
 }
 
 //----------------------------------------------------------------------------
+bool ctkCmdLineModuleXslTransform::validateOutput() const
+{
+  return d->Validate;
+}
+
+//----------------------------------------------------------------------------
 bool ctkCmdLineModuleXslTransform::error() const
 {
   return ctkCmdLineModuleXmlValidator::error() || !d->ErrorStr.isEmpty();

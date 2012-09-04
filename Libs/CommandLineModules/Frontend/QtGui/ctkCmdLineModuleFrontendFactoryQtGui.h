@@ -30,7 +30,12 @@
 /**
  * \class ctkCmdLineModuleFrontendFactoryQtGui
  * \brief Factory class to instantiate Qt widget based front-ends.
- * \ingroup CommandLineModulesFrontendQtGui
+ * \ingroup CommandLineModulesFrontendQtGui_API
+ *
+ * The created front-end instances assume that the CTKWidgetPlugin library (a Qt Designer plug-in)
+ * is available in the applications search path. See also ctkCmdLineModuleFrontendQtGui.
+ *
+ * @see ctkCmdLineModuleFrontendQtGui
  */
 class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleFrontendFactoryQtGui : public ctkCmdLineModuleFrontendFactory
 {

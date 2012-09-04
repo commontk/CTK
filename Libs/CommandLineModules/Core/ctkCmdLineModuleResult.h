@@ -26,9 +26,15 @@
 #include <QVariant>
 
 /**
- * \class ctkCmdLineModuleResult
- * \brief Describes the output of a command line module.
- * \ingroup CommandLineModulesCore
+ * @ingroup CommandLineModulesCore_API
+ *
+ * @brief Describes a reported result of a command line module.
+ *
+ * This class wraps a specific result reported by a running module via a
+ * ctkCmdLineModuleFuture instance.
+ *
+ * @see ctkCmdLineModuleFuture
+ * @see ctkCmdLineModuleFutureWatcher
  */
 class ctkCmdLineModuleResult
 {
@@ -45,8 +51,17 @@ public:
     return Parameter == other.Parameter && Value == other.Value;
   }
 
-  inline QString parameter() const { return Parameter; }
-  inline QVariant value() const { return Value; }
+  /**
+   * @brief Get the name of the output parameter for which this result was reported.
+   * @return The output parameter name.
+   */
+  QString parameter() const;
+
+  /**
+   * @brief Get the result value.
+   * @return The result value.
+   */
+  QVariant value() const;
 
 private:
 

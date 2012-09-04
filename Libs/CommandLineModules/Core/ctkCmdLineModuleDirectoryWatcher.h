@@ -35,7 +35,7 @@ class ctkCmdLineModuleDirectoryWatcherPrivate;
  * \class ctkCmdLineModuleDirectoryWatcher
  * \brief Provides directory scanning to automatically load new modules
  * into a ctkCmdLineModuleManager.
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  * \author m.clarkson@ucl.ac.uk
  *
  * This class provides directory scanning and automatic loading of command

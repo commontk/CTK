@@ -31,7 +31,7 @@ struct ctkCmdLineModuleDefaultPathBuilderPrivate;
  * \class ctkCmdLineModuleDefaultPathBuilder
  * \brief Builds up a list of directory paths to search for command
  * line modules.
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  * \author m.clarkson@ucl.ac.uk
  *
  * Implements the following basic strategy, depending on which boolean

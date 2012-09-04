@@ -32,7 +32,7 @@
  * \class ctkCmdLineModuleFunctionPointerTask
  * \brief Provides a ctkCmdLineModuleFutureInterface implementation specifically to
  * run a function pointer asynchronousely.
- * \ingroup CommandLineModulesBackendFunctionPointer
+ * \ingroup CommandLineModulesBackendFunctionPointer_API
  */
 class ctkCmdLineModuleFunctionPointerTask : public ctkCmdLineModuleFutureInterface, public QRunnable
 {

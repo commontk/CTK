@@ -34,7 +34,11 @@ class QProcess;
 /**
  * \class ctkCmdLineModuleXmlProgressWatcher
  * \brief Provides progress updates of a module.
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
+ *
+ * This class is usually only used by back-end implementators for modules
+ * which can report progress and results in the form of XML fragments written
+ * to a QIODevice.
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleXmlProgressWatcher : public QObject
 {

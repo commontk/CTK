@@ -29,7 +29,7 @@
 class ctkCmdLineModuleManager;
 
 /**
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  *
  * \brief A function object for concurrently adding modules.
  */
@@ -51,7 +51,7 @@ private:
 };
 
 /**
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  *
  * \brief A function object for concurrently removing modules.
  */

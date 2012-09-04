@@ -36,7 +36,7 @@ class QProcess;
 /**
  * \class ctkCmdLineModuleProcessWatcher
  * \brief Provides progress updates using QFutureWatcher
- * \ingroup CommandLineModulesBackendLocalProcess
+ * \ingroup CommandLineModulesBackendLocalProcess_API
  */
 class ctkCmdLineModuleProcessWatcher : public QObject
 {

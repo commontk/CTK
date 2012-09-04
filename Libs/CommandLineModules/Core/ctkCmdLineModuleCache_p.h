@@ -32,7 +32,7 @@ class QUrl;
  * \class ctkCmdLineModuleCache
  * \brief Private non-exported class to contain a cache of
  * XML descriptions and time-stamps.
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  */
 class ctkCmdLineModuleCache
 {

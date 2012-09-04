@@ -30,14 +30,15 @@
 
 /**
  * \class ctkCmdLineModuleFuture
- * \brief QFuture sub-class with in addition canCancel() and canPause().
- * \ingroup CommandLineModulesCore
+ * \brief QFuture sub-class for enhanced communication with running modules.
+ * \ingroup CommandLineModulesCore_API
  *
+ * Please see the QFuture documentation of Qt for details. This sub-class provides
+ * additional query methods to check if a module can be paused and/or canceled and
+ * also provides the ability to retrieve the arbitrary output and error data
+ * from the module.
  *
- * QFuture sub-class with two additional methods:
- *
- *   - bool canCancel()
- *   - bool canPause()
+ * \see ctkCmdLineModuleFutureWatcher
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFuture : public QFuture<ctkCmdLineModuleResult>
 {
@@ -45,12 +46,32 @@ public:
 
   ctkCmdLineModuleFuture();
 
+  /** \cond */
   explicit ctkCmdLineModuleFuture(ctkCmdLineModuleFutureInterface* p); // internal
+  /** \endcond */
 
+  /**
+   * @brief Read all output data reported by the running module so far.
+   * @return Returns the reported output.
+   */
   QByteArray readAllOutputData() const;
+
+  /**
+   * @brief Read all error data reported by the running module so far.
+   * @return Returns the reported error.
+   */
   QByteArray readAllErrorData() const;
 
+  /**
+   * @brief Check if this module can be canceled via cancel().
+   * @return \c true if this module can be canceled, \c false otherwise.
+   */
   bool canCancel() const;
+
+  /**
+   * @brief Check if this module can be paused via pause() and similar QFuture methods.
+   * @return \c true if this module can be paused, \c false otherwise.
+   */
   bool canPause() const;
 
 };

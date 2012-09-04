@@ -34,29 +34,60 @@ struct ctkCmdLineModuleReferencePrivate;
 /**
  * \class ctkCmdLineModuleReference
  * \brief Defines a reference or handle to a module, including location,
- * XML, description and access to the backend.
- * \ingroup CommandLineModulesCore
+ * XML, description and access to the associated backend.
+ * \ingroup CommandLineModulesCore_API
+ *
+ * Instances of this class reference registered modules and can be used
+ * to retrieve information about their parameters or to create a specific
+ * front-end.
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleReference
 {
 public:
 
+  /**
+   * @brief Creates an invalid module reference.
+   */
   ctkCmdLineModuleReference();
   ~ctkCmdLineModuleReference();
 
   ctkCmdLineModuleReference(const ctkCmdLineModuleReference& ref);
   ctkCmdLineModuleReference& operator=(const ctkCmdLineModuleReference& ref);
 
+  /**
+   * @brief Conversion operator to test the validity of this module reference.
+   */
   operator bool() const;
 
+  /**
+   * @brief Get the module description for the parameters.
+   * @return The XML description as a class representation.
+   */
   ctkCmdLineModuleDescription description() const;
 
+  /**
+   * @brief Get the raw XML description, as supplied by the back-end.
+   * @return The raw XML description.
+   */
   QByteArray rawXmlDescription() const;
 
+  /**
+   * @brief Retrieve a validation error string.
+   * @return A non-empty string describing the validation error, if validation
+   *         of the XML description was not successful.
+   */
   QString xmlValidationErrorString() const;
 
+  /**
+   * @brief Get the URL under which the module was registered.
+   * @return The module location.
+   */
   QUrl location() const;
 
+  /**
+   * @brief Get the back-end which was registered to handle this module.
+   * @return The back-end handling this module.
+   */
   ctkCmdLineModuleBackend* backend() const;
 
 private:

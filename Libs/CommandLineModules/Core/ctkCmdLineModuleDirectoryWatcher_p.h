@@ -34,7 +34,7 @@ class QFileSystemWatcher;
 /**
  * \class ctkCmdLineModuleDirectoryWatcherPrivate
  * \brief Private implementation class implementing directory scanning to load new modules into a ctkCmdLineModuleManager.
- * \ingroup CommandLineModulesCore
+ * \ingroup CommandLineModulesCore_API
  * \author m.clarkson@ucl.ac.uk
  */
 class ctkCmdLineModuleDirectoryWatcherPrivate : public QObject
