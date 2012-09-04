@@ -9,8 +9,12 @@ if(CTK_LIB_CommandLineModules/Frontend/QtGui)
   include(${QT_USE_FILE})
 
   if(CTK_LIB_CommandLineModules/Backend/LocalProcess)
-    list(APPEND _test_srcs ctkCmdLineModuleFutureTest.cpp)
-    list(APPEND _test_mocs ctkCmdLineModuleFutureTest.cpp)
+    set(_test_cpp_files
+        ctkCmdLineModuleFutureTest.cpp
+        ctkCmdLineModuleProcessXmlOutputTest.cpp
+        )
+    list(APPEND _test_srcs ${_test_cpp_files})
+    list(APPEND _test_mocs ${_test_cpp_files})
   endif()
   if(CTK_LIB_CommandLineModules/Backend/FunctionPointer)
     list(APPEND _test_srcs ctkCmdLineModuleQtCustomizationTest.cpp)

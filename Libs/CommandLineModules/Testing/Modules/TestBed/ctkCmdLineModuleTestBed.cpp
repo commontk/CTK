@@ -170,8 +170,8 @@ int main(int argc, char* argv[])
       out << output << endl;
 
       // report progress
-      out << "<filter-progress>" << (i+1)*progressStep
-          << "<filter-comment>Calculating output " << (i+2) << "...</filter-comment></filter-progress>" << endl;
+      out << QString("<filter-progress-text progress=\"%1\">").arg((i+1)*progressStep)
+          << "Calculating output " << (i+2) << "...</filter-progress-text>" << endl;
       // report the current output number as a result
       out << "<filter-result name=\"resultNumberOutput\">" << (i+1) << "</filter-result>" << endl;
     }

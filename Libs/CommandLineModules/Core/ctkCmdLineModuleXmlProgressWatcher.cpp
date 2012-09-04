@@ -33,6 +33,7 @@ static QString FILTER_START = "filter-start";
 static QString FILTER_NAME = "filter-name";
 static QString FILTER_COMMENT = "filter-comment";
 static QString FILTER_PROGRESS = "filter-progress";
+static QString FILTER_PROGRESS_TEXT = "filter-progress-text";
 static QString FILTER_RESULT = "filter-result";
 static QString FILTER_END = "filter-end";
 
@@ -91,7 +92,7 @@ public:
         }
 
         if (stack.size() == 2 &&
-            (stack.front() == FILTER_START || stack.front() == FILTER_END || stack.front() == FILTER_PROGRESS))
+            (stack.front() == FILTER_START || stack.front() == FILTER_END))
         {
           if (stack.back() == FILTER_NAME)
           {
@@ -105,6 +106,10 @@ public:
         else if (stack.size() == 1 && stack.back() == FILTER_PROGRESS)
         {
           currentProgress = reader.text().toString().toFloat();
+        }
+        else if (stack.size() == 1 && stack.back() == FILTER_PROGRESS_TEXT)
+        {
+          currentComment = reader.text().toString();
         }
         else if (stack.size() == 1 && stack.back() == FILTER_RESULT)
         {
@@ -125,6 +130,7 @@ public:
 
         if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0 ||
             name.compare(FILTER_PROGRESS, Qt::CaseInsensitive) == 0 ||
+            name.compare(FILTER_PROGRESS_TEXT, Qt::CaseInsensitive) == 0 ||
             name.compare(FILTER_RESULT, Qt::CaseInsensitive) == 0 ||
             name.compare(FILTER_END, Qt::CaseInsensitive) == 0)
         {
@@ -139,6 +145,10 @@ public:
             currentName = QString();
             currentComment = QString();
             currentProgress = 0;
+          }
+          else if (name.compare(FILTER_PROGRESS_TEXT, Qt::CaseInsensitive) == 0)
+          {
+            currentProgress = reader.attributes().value("progress").toString().toFloat();
           }
           else if (name.compare(FILTER_RESULT, Qt::CaseInsensitive) == 0)
           {
@@ -174,6 +184,11 @@ public:
             currentComment = QString();
           }
           else if (name.compare(FILTER_PROGRESS, Qt::CaseInsensitive) == 0)
+          {
+            emit q->filterProgress(currentProgress, currentComment);
+            currentComment = QString();
+          }
+          else if (name.compare(FILTER_PROGRESS_TEXT, Qt::CaseInsensitive) == 0)
           {
             emit q->filterProgress(currentProgress, currentComment);
             currentComment = QString();

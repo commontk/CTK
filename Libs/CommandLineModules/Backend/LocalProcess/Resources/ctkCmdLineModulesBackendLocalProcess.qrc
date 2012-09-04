@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ctkCmdLineModuleProcess.xsd</file>
+    </qresource>
+</RCC>
