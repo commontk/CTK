@@ -51,7 +51,7 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkCmdLineModuleExplorerMainWindow),
   defaultModuleFrontendFactory(NULL),
-  moduleManager(ctkCmdLineModuleManager::STRICT_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)),
+  moduleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)),
   directoryWatcher(&moduleManager)
 {
   ui->setupUi(this);

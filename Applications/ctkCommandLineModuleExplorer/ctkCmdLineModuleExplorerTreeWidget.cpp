@@ -29,6 +29,8 @@
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QDebug>
+#include <QUrl>
+#include <QApplication>
 
 QString ctkCmdLineModuleExplorerTreeWidget::CATEGORY_UNKNOWN = "Uncategorized";
 
@@ -67,6 +69,13 @@ private:
   {
     this->setText(0, ModuleRef.description().title() + " [" + ModuleRef.backend()->name() + "]");
     this->setData(0, Qt::UserRole, QVariant::fromValue(ModuleRef));
+    QString toolTip = ModuleRef.location().toString();
+    if (!ModuleRef.xmlValidationErrorString().isEmpty())
+    {
+      this->setIcon(0, QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning));
+      toolTip += "\n\nWarning:\n\n" + ModuleRef.xmlValidationErrorString();
+    }
+    this->setToolTip(0, toolTip);
   }
 
   ctkCmdLineModuleReference ModuleRef;
