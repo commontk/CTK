@@ -195,8 +195,8 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
     {
       if (d->ModuleCache)
       {
-        // validation failed, cache an empty description
-        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, QByteArray());
+        // validation failed, cache the description anyway
+        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, xml);
       }
 
       if (d->ValidationMode == STRICT_VALIDATION)
