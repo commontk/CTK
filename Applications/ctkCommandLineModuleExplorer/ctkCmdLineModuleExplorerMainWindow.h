@@ -74,8 +74,6 @@ protected Q_SLOTS:
   void currentModuleFinished();
 
   void moduleTabActivated(ctkCmdLineModuleFrontend* module);
-
-  void addModuleTab(const ctkCmdLineModuleReference& moduleRef);
   
 private:
 

@@ -99,19 +99,26 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="margin">
       <number>0</number>
      </property>
      <item>
+      <widget class="ctkSearchBox" name="modulesSearchBox"/>
+     </item>
+     <item>
       <widget class="ctkCmdLineModuleExplorerTreeWidget" name="modulesTreeWidget">
-       <attribute name="headerVisible">
-        <bool>false</bool>
-       </attribute>
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
-        </property>
-       </column>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="textElideMode">
+        <enum>Qt::ElideMiddle</enum>
+       </property>
+       <property name="headerHidden">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -191,7 +198,7 @@
              <x>0</x>
              <y>0</y>
              <width>250</width>
-             <height>110</height>
+             <height>213</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -342,9 +349,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCmdLineModuleExplorerTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>ctkCmdLineModuleExplorerTreeWidget.h</header>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>ctkSearchBox.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCmdLineModuleExplorerOutputText</class>
@@ -356,6 +363,11 @@
    <extends>QWidget</extends>
    <header>ctkCmdLineModuleExplorerProgressListWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCmdLineModuleExplorerTreeWidget</class>
+   <extends>QTreeView</extends>
+   <header>ctkCmdLineModuleExplorerTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

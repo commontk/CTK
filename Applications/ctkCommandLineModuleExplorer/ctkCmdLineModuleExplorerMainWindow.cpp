@@ -36,6 +36,7 @@
 #include <ctkCmdLineModuleBackendLocalProcess.h>
 #include <ctkCmdLineModuleBackendFunctionPointer.h>
 #include <ctkException.h>
+#include <ctkCmdLineModuleXmlException.h>
 
 #include <ctkSettingsDialog.h>
 
@@ -44,7 +45,6 @@
 #include <QMessageBox>
 #include <QFutureSynchronizer>
 #include <QCloseEvent>
-#include <QDebug>
 
 
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
@@ -63,7 +63,9 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtWebKit;
   defaultModuleFrontendFactory = moduleFrontendFactories.front();
 
-  ui->modulesTreeWidget->setModuleFrontendFactories(moduleFrontendFactories);
+  ui->modulesTreeWidget->setModuleFrontendFactories(moduleFrontendFactories, moduleFrontendFactories.front());
+  ui->modulesSearchBox->setClearIcon(QIcon(":/icons/clear.png"));
+  connect(ui->modulesSearchBox, SIGNAL(textChanged(QString)), ui->modulesTreeWidget, SLOT(setFilter(QString)));
 
   // Backends
   ctkCmdLineModuleBackendFunctionPointer* backendFunctionPointer = new ctkCmdLineModuleBackendFunctionPointer;
@@ -86,8 +88,6 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   // If a module is registered via the ModuleManager, add it to the tree
   connect(&moduleManager, SIGNAL(moduleRegistered(ctkCmdLineModuleReference)), ui->modulesTreeWidget, SLOT(addModuleItem(ctkCmdLineModuleReference)));
   connect(&moduleManager, SIGNAL(moduleUnregistered(ctkCmdLineModuleReference)), ui->modulesTreeWidget, SLOT(removeModuleItem(ctkCmdLineModuleReference)));
-  // Double-clicking on an item in the tree creates a new tab with the default frontend
-  connect(ui->modulesTreeWidget, SIGNAL(moduleDoubleClicked(ctkCmdLineModuleReference)), this, SLOT(addModuleTab(ctkCmdLineModuleReference)));
   // React to specific frontend creations
   connect(ui->modulesTreeWidget, SIGNAL(moduleFrontendCreated(ctkCmdLineModuleFrontend*)), tabList.data(), SLOT(addTab(ctkCmdLineModuleFrontend*)));
   // React to tab-changes
@@ -307,10 +307,4 @@ void ctkCLModuleExplorerMainWindow::moduleTabActivated(ctkCmdLineModuleFrontend 
     ui->outputText->setActiveFrontend(module);
     currentFutureWatcher.setFuture(module->future());
   }
-}
-
-void ctkCLModuleExplorerMainWindow::addModuleTab(const ctkCmdLineModuleReference &moduleRef)
-{
-  ctkCmdLineModuleFrontend* moduleFrontend = this->defaultModuleFrontendFactory->create(moduleRef);
-  this->tabList->addTab(moduleFrontend);
 }
