@@ -62,6 +62,7 @@ public:
   /**
    * @brief Get the module description for the parameters.
    * @return The XML description as a class representation.
+   * @throws ctkCmdLineModuleXmlException if the raw XML description cannot be parsed.
    */
   ctkCmdLineModuleDescription description() const;
 

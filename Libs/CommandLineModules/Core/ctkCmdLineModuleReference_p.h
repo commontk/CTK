@@ -28,10 +28,12 @@
 #include <QUrl>
 
 struct ctkCmdLineModuleBackend;
+class ctkCmdLineModuleXmlException;
 
 struct ctkCmdLineModuleReferencePrivate : public QSharedData
 {
   ctkCmdLineModuleReferencePrivate();
+  ~ctkCmdLineModuleReferencePrivate();
 
   ctkCmdLineModuleDescription description() const;
 
@@ -43,6 +45,7 @@ struct ctkCmdLineModuleReferencePrivate : public QSharedData
 private:
 
   mutable ctkCmdLineModuleDescription Description;
+  mutable ctkCmdLineModuleXmlException* XmlException;
 };
 
 #endif // CTKCMDLINEMODULEREFERENCEPRIVATE_H
