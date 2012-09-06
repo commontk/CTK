@@ -83,7 +83,7 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
 
   tabList.reset(new ctkCmdLineModuleExplorerTabList(ui->mainTabWidget));
 
-  // If a module is registered via the ModuleManager, add it the tree
+  // If a module is registered via the ModuleManager, add it to the tree
   connect(&moduleManager, SIGNAL(moduleRegistered(ctkCmdLineModuleReference)), ui->modulesTreeWidget, SLOT(addModuleItem(ctkCmdLineModuleReference)));
   connect(&moduleManager, SIGNAL(moduleUnregistered(ctkCmdLineModuleReference)), ui->modulesTreeWidget, SLOT(removeModuleItem(ctkCmdLineModuleReference)));
   // Double-clicking on an item in the tree creates a new tab with the default frontend
@@ -92,7 +92,11 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   connect(ui->modulesTreeWidget, SIGNAL(moduleFrontendCreated(ctkCmdLineModuleFrontend*)), tabList.data(), SLOT(addTab(ctkCmdLineModuleFrontend*)));
   // React to tab-changes
   connect(tabList.data(), SIGNAL(tabActivated(ctkCmdLineModuleFrontend*)), SLOT(moduleTabActivated(ctkCmdLineModuleFrontend*)));
+  connect(tabList.data(), SIGNAL(tabActivated(ctkCmdLineModuleFrontend*)), ui->progressListWidget, SLOT(setCurrentProgressWidget(ctkCmdLineModuleFrontend*)));
   connect(tabList.data(), SIGNAL(tabClosed(ctkCmdLineModuleFrontend*)), ui->outputText, SLOT(frontendRemoved(ctkCmdLineModuleFrontend*)));
+  connect(tabList.data(), SIGNAL(tabClosed(ctkCmdLineModuleFrontend*)), ui->progressListWidget, SLOT(removeProgressWidget(ctkCmdLineModuleFrontend*)));
+
+  connect(ui->ClearButton, SIGNAL(clicked()), ui->progressListWidget, SLOT(clearList()));
 
   // Listen to future events for the currently active tab
 
@@ -187,19 +191,18 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
   ctkCmdLineModuleFrontend* moduleFrontend = this->tabList->activeTab();
   Q_ASSERT(moduleFrontend);
 
-  ctkCmdLineModuleExplorerProgressWidget* progressWidget = new ctkCmdLineModuleExplorerProgressWidget();
-  this->ui->progressInfoWidget->layout()->addWidget(progressWidget);
-
   ui->actionRun->setEnabled(false);
   qobject_cast<QWidget*>(moduleFrontend->guiHandle())->setEnabled(false);
 
   ctkCmdLineModuleFuture future = moduleManager.run(moduleFrontend);
 
+  ui->progressListWidget->addProgressWidget(moduleFrontend, future);
+  ui->progressListWidget->setCurrentProgressWidget(moduleFrontend);
+
   ui->actionPause->setEnabled(future.canPause() && future.isRunning());
   ui->actionPause->setChecked(future.isPaused());
   ui->actionCancel->setEnabled(future.canCancel() && future.isRunning());
 
-  progressWidget->setFuture(future);
   this->currentFutureWatcher.setFuture(future);
 }
 

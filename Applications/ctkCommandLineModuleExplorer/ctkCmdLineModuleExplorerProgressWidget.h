@@ -49,9 +49,14 @@ public:
 
   void setFuture(const ctkCmdLineModuleFuture& future);
 
+  void setTitle(const QString& title);
+
+  void setHighlightStyle(bool highlight);
+
 private Q_SLOTS:
 
   void on_PauseButton_toggled(bool toggled);
+  void on_RemoveButton_clicked();
 
   void checkModulePaused();
 
