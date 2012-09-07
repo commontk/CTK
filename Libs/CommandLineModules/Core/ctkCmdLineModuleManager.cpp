@@ -96,6 +96,12 @@ ctkCmdLineModuleManager::~ctkCmdLineModuleManager()
 }
 
 //----------------------------------------------------------------------------
+ctkCmdLineModuleManager::ValidationMode ctkCmdLineModuleManager::validationMode() const
+{
+  return d->ValidationMode;
+}
+
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 {
   QMutexLocker lock(&d->Mutex);
