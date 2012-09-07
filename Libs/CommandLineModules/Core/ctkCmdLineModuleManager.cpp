@@ -266,7 +266,8 @@ void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& 
 ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QUrl &location) const
 {
   QMutexLocker lock(&d->Mutex);
-  return d->LocationToRef[location];
+  QHash<QUrl, ctkCmdLineModuleReference>::const_iterator iter = d->LocationToRef.find(location);
+  return (iter == d->LocationToRef.end()) ? ctkCmdLineModuleReference() : iter.value();
 }
 
 //----------------------------------------------------------------------------
