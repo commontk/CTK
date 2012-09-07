@@ -45,6 +45,7 @@
 #include <QMessageBox>
 #include <QFutureSynchronizer>
 #include <QCloseEvent>
+#include <QFileDialog>
 
 
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
@@ -52,7 +53,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   ui(new Ui::ctkCmdLineModuleExplorerMainWindow),
   defaultModuleFrontendFactory(NULL),
   moduleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)),
-  directoryWatcher(&moduleManager)
+  directoryWatcher(&moduleManager),
+  settingsDialog(NULL)
 {
   ui->setupUi(this);
 
@@ -76,12 +78,6 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   {
     moduleManager.registerBackend(moduleBackends[i]);
   }
-
-  settingsDialog = new ctkSettingsDialog(this);
-  settings.restoreState(settingsDialog->objectName(), *settingsDialog);
-  settingsDialog->setSettings(&settings);
-  settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings(&directoryWatcher));
-  settingsDialog->addPanel(new ctkCmdLineModuleExplorerModulesSettings(&moduleManager));
 
   tabList.reset(new ctkCmdLineModuleExplorerTabList(ui->mainTabWidget));
 
@@ -116,8 +112,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   }
 
   // Register persistent modules
-  QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
-                       ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
+  QFuture<void> future = QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
+                                              ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
 
   // Start watching directories
   directoryWatcher.setDebug(true);
@@ -126,6 +122,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   moduleTabActivated(NULL);
 
   pollPauseTimer.start();
+
+  future.waitForFinished();
 }
 
 ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
@@ -218,7 +216,47 @@ void ctkCLModuleExplorerMainWindow::on_actionCancel_triggered()
 
 void ctkCLModuleExplorerMainWindow::on_actionOptions_triggered()
 {
+  if (settingsDialog == NULL)
+  {
+    settingsDialog = new ctkSettingsDialog(this);
+    settings.restoreState(settingsDialog->objectName(), *settingsDialog);
+    settingsDialog->setSettings(&settings);
+    settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings(&directoryWatcher));
+    settingsDialog->addPanel(new ctkCmdLineModuleExplorerModulesSettings(&moduleManager));
+  }
+
   settingsDialog->exec();
+}
+
+void ctkCLModuleExplorerMainWindow::on_actionLoad_triggered()
+{
+  QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Load modules..."));
+
+  this->setCursor(Qt::BusyCursor);
+  QFuture<ctkCmdLineModuleReference> future = QtConcurrent::mapped(fileNames, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
+  future.waitForFinished();
+
+  QString errorMsg;
+  QList<ctkCmdLineModuleReference> refs = future.results();
+  for(int i = 0; i < fileNames.size(); ++i)
+  {
+    if (!refs.at(i))
+    {
+      errorMsg += tr("Failed to register ") + fileNames.at(i) + "\n\n";
+    }
+    else if (!refs.at(i).xmlValidationErrorString().isEmpty() &&
+             this->moduleManager.validationMode() == ctkCmdLineModuleManager::STRICT_VALIDATION)
+    {
+      errorMsg += tr("Failed to register ") + fileNames.at(i) + ":\n" + refs.at(i).xmlValidationErrorString() + "\n\n";
+    }
+  }
+
+  this->unsetCursor();
+
+  if (!errorMsg.isEmpty())
+  {
+    QMessageBox::critical(this, "Failed to register modules", errorMsg);
+  }
 }
 
 void ctkCLModuleExplorerMainWindow::on_actionQuit_triggered()

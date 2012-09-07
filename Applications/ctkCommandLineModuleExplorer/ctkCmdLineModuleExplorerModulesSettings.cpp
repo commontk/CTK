@@ -21,6 +21,8 @@
 
 #include "ctkCmdLineModuleExplorerModulesSettings.h"
 #include "ctkCmdLineModuleExplorerConstants.h"
+#include "ctkCmdLineModuleExplorerUtils.h"
+#include "ctkCmdLineModuleExplorerShowXmlAction.h"
 
 #include "ui_ctkCmdLineModuleExplorerModulesSettings.h"
 
@@ -28,15 +30,25 @@
 #include <ctkCmdLineModuleConcurrentHelpers.h>
 
 #include <QUrl>
+#include <QStandardItem>
 #include <QtConcurrentMap>
+#include <QFutureSynchronizer>
 
 ctkCmdLineModuleExplorerModulesSettings::ctkCmdLineModuleExplorerModulesSettings(ctkCmdLineModuleManager *moduleManager)
   : ui(new Ui::ctkCmdLineModuleExplorerModulesSettings)
   , ModuleManager(moduleManager)
+  , ShowXmlAction(new ctkCmdLineModuleExplorerShowXmlAction(this))
 {
   ui->setupUi(this);
 
   ui->PathListButtonsWidget->init(ui->PathListWidget);
+  ui->PathListWidget->addAction(this->ShowXmlAction);
+  ui->PathListWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+  this->ShowXmlAction->setEnabled(false);
+
+  connect(ui->PathListWidget, SIGNAL(currentPathChanged(QString,QString)), SLOT(pathSelected(QString)));
+  connect(ui->PathListWidget, SIGNAL(pathsChanged(QStringList,QStringList)), SLOT(pathsAdded(QStringList)));
 
   this->registerProperty(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES,
                          ui->PathListWidget, "paths", SIGNAL(pathsChanged(QStringList,QStringList)));
@@ -66,8 +78,47 @@ void ctkCmdLineModuleExplorerModulesSettings::applySettings()
     }
   }
 
-  QtConcurrent::mapped(removedModules, ctkCmdLineModuleConcurrentUnRegister(this->ModuleManager));
-  QtConcurrent::mapped(addedModules, ctkCmdLineModuleConcurrentRegister(this->ModuleManager));
+  this->setCursor(Qt::BusyCursor);
+
+  QFuture<void> future1 = QtConcurrent::mapped(removedModules, ctkCmdLineModuleConcurrentUnRegister(this->ModuleManager));
+  QFuture<void> future2 = QtConcurrent::mapped(addedModules, ctkCmdLineModuleConcurrentRegister(this->ModuleManager));
 
   ctkSettingsPanel::applySettings();
+
+  QFutureSynchronizer<void> sync;
+  sync.addFuture(future1);
+  sync.addFuture(future2);
+  sync.waitForFinished();
+
+  this->pathsAdded(addedModules);
+
+  this->unsetCursor();
+}
+
+void ctkCmdLineModuleExplorerModulesSettings::pathSelected(const QString &path)
+{
+  this->ShowXmlAction->setEnabled(!path.isEmpty());
+  ctkCmdLineModuleReference moduleRef = this->ModuleManager->moduleReference(QUrl::fromLocalFile(path));
+  this->ShowXmlAction->setModuleReference(moduleRef);
+}
+
+void ctkCmdLineModuleExplorerModulesSettings::pathsAdded(const QStringList &paths)
+{
+  // Check the validity of the entries
+  foreach(const QString& path, paths)
+  {
+    ctkCmdLineModuleReference moduleRef = this->ModuleManager->moduleReference(QUrl::fromLocalFile(path));
+    if (moduleRef && !moduleRef.xmlValidationErrorString().isEmpty())
+    {
+      QStandardItem* item = ui->PathListWidget->item(path);
+      item->setToolTip(item->toolTip() + "\n\nWarning:\n\n" + moduleRef.xmlValidationErrorString());
+      if (this->WarningIcon.isNull())
+      {
+        this->WarningIcon = ctkCmdLineModuleExplorerUtils::createIconOverlay(
+              item->icon().pixmap(item->icon().availableSizes().front()),
+              QApplication::style()->standardPixmap(QStyle::SP_MessageBoxWarning));
+      }
+      item->setIcon(this->WarningIcon);
+    }
+  }
 }

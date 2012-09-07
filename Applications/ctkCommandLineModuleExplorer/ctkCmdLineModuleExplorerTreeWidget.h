@@ -29,6 +29,7 @@
 
 class ctkCmdLineModuleFrontend;
 struct ctkCmdLineModuleFrontendFactory;
+class ctkCmdLineModuleExplorerShowXmlAction;
 
 class QStandardItem;
 class QStandardItemModel;
@@ -44,6 +45,8 @@ public:
 protected:
 
   bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+
+  bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
 };
 
 /**
@@ -83,6 +86,8 @@ private:
 
   QMenu* ContextMenu;
   QMenu* ShowFrontendMenu;
+
+  ctkCmdLineModuleExplorerShowXmlAction* ShowXmlAction;
 
   ctkCmdLineModuleReference ContextReference;
   QList<ctkCmdLineModuleFrontendFactory*> FrontendFactories;

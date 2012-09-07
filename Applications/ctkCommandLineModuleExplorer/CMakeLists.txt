@@ -14,8 +14,10 @@ set(KIT_SRCS
   ctkCmdLineModuleExplorerOutputText.cpp
   ctkCmdLineModuleExplorerProgressListWidget.cpp
   ctkCmdLineModuleExplorerProgressWidget.cpp
+  ctkCmdLineModuleExplorerShowXmlAction.cpp
   ctkCmdLineModuleExplorerTabList.cpp
   ctkCmdLineModuleExplorerTreeWidget.cpp
+  ctkCmdLineModuleExplorerUtils.cpp
 )
 
 # Headers that should run through moc
@@ -25,6 +27,7 @@ set(KIT_MOC_SRCS
   ctkCmdLineModuleExplorerOutputText.h
   ctkCmdLineModuleExplorerProgressListWidget.h
   ctkCmdLineModuleExplorerProgressWidget.h
+  ctkCmdLineModuleExplorerShowXmlAction.h
   ctkCmdLineModuleExplorerTabList.h
   ctkCmdLineModuleExplorerTreeWidget.h
 )

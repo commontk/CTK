@@ -20,6 +20,7 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleExplorerTreeWidget.h"
+#include "ctkCmdLineModuleExplorerShowXmlAction.h"
 
 #include <ctkCmdLineModuleFrontend.h>
 #include <ctkCmdLineModuleBackend.h>
@@ -85,7 +86,8 @@ ctkCmdLineModuleExplorerTreeWidget::ctkCmdLineModuleExplorerTreeWidget(QWidget *
   this->ContextMenu = new QMenu(this);
   this->ShowFrontendMenu = this->ContextMenu->addMenu("Create Frontend");
 
-  this->ContextMenu->addAction("Properties");
+  this->ShowXmlAction = new ctkCmdLineModuleExplorerShowXmlAction(this);
+  this->ContextMenu->addAction(ShowXmlAction);
 
   connect(this, SIGNAL(doubleClicked(QModelIndex)), SLOT(moduleDoubleClicked(QModelIndex)));
 
@@ -93,8 +95,8 @@ ctkCmdLineModuleExplorerTreeWidget::ctkCmdLineModuleExplorerTreeWidget(QWidget *
 
   FilterProxyModel = new ModuleSortFilterProxyModel(this);
   FilterProxyModel->setSourceModel(TreeModel);
-  FilterProxyModel->setDynamicSortFilter(true);
   FilterProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+  FilterProxyModel->setDynamicSortFilter(true);
   this->setModel(FilterProxyModel);
 }
 
@@ -115,66 +117,90 @@ void ctkCmdLineModuleExplorerTreeWidget::setModuleFrontendFactories(const QList<
 
 void ctkCmdLineModuleExplorerTreeWidget::addModuleItem(const ctkCmdLineModuleReference &moduleRef)
 {
-  QString category;
+  QString categories;
   try
   {
-    category = moduleRef.description().category();
+    categories = moduleRef.description().category();
   }
   catch (const ctkCmdLineModuleXmlException&)
   {
-    category = CATEGORY_UNKNOWN;
+    categories = CATEGORY_UNKNOWN;
   }
 
-  QStandardItem* rootItem = NULL;
-
-  if (category.isEmpty())
+  if (categories.isEmpty())
   {
-    category = CATEGORY_UNKNOWN;
+    categories = CATEGORY_UNKNOWN;
   }
 
-  rootItem = TreeWidgetCategories[category];
-  if (rootItem == NULL)
+  QString currentCategories;
+  QStandardItem* oldRootItem = NULL;
+  foreach (const QString& category, categories.split('.', QString::SkipEmptyParts))
   {
-    // lazily create the root item for the category
-    rootItem = new QStandardItem(category);
-    TreeWidgetCategories[category] = rootItem;
-    TreeModel->appendRow(rootItem);
+    currentCategories += (currentCategories.isEmpty() ? QString() : QString(".")) + category;
+    QStandardItem* rootItem = TreeWidgetCategories[currentCategories];
+    if (rootItem == NULL)
+    {
+      rootItem = new QStandardItem(category);
+      TreeWidgetCategories[currentCategories] = rootItem;
+      if (oldRootItem != NULL)
+      {
+        oldRootItem->appendRow(rootItem);
+      }
+      else
+      {
+        TreeModel->appendRow(rootItem);
+      }
+    }
+    oldRootItem = rootItem;
   }
+
   QStandardItem* moduleItem =  new ctkCmdLineModuleTreeWidgetItem(moduleRef);
   TreeWidgetItems[moduleRef] = moduleItem;
-  rootItem->appendRow(moduleItem);
+  oldRootItem->appendRow(moduleItem);
 }
 
 void ctkCmdLineModuleExplorerTreeWidget::removeModuleItem(const ctkCmdLineModuleReference &moduleRef)
 {
-  QString category;
-  try
-  {
-    category = moduleRef.description().category();
-  }
-  catch (const ctkCmdLineModuleXmlException&)
-  {
-    category = CATEGORY_UNKNOWN;
-  }
-
-  if (category.isEmpty())
-  {
-    category = CATEGORY_UNKNOWN;
-  }
-
-
   QStandardItem* treeWidgetItem = TreeWidgetItems.take(moduleRef);
   if (treeWidgetItem == NULL) return;
 
-  QStandardItem* rootItem = TreeWidgetCategories[category];
-  Q_ASSERT(rootItem);
-
-  rootItem->removeRow(treeWidgetItem->row());
-
-  if (rootItem->rowCount() == 0)
+  QString categories;
+  try
   {
-    TreeModel->removeRow(rootItem->row());
-    TreeWidgetCategories.remove(category);
+    categories = moduleRef.description().category();
+  }
+  catch (const ctkCmdLineModuleXmlException&)
+  {
+    categories = CATEGORY_UNKNOWN;
+  }
+
+  if (categories.isEmpty())
+  {
+    categories = CATEGORY_UNKNOWN;
+  }
+
+  QStringList categoryList = categories.split('.', QString::SkipEmptyParts);
+  while (!categoryList.isEmpty())
+  {
+    QStandardItem* rootItem = TreeWidgetCategories[categoryList.join(".")];
+    Q_ASSERT(rootItem);
+
+    rootItem->removeRow(treeWidgetItem->row());
+
+    if (rootItem->rowCount() == 0)
+    {
+      treeWidgetItem = rootItem;
+      TreeWidgetCategories.remove(categoryList.join("."));
+      categoryList.pop_back();
+    }
+    else
+    {
+      break;
+    }
+  }
+  if (categoryList.isEmpty())
+  {
+    TreeModel->removeRow(treeWidgetItem->row());
   }
 }
 
@@ -184,6 +210,7 @@ void ctkCmdLineModuleExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *eve
   if (index.isValid() && index.data(Qt::UserRole+1).isValid())
   {
     this->ContextReference = index.data(Qt::UserRole+1).value<ctkCmdLineModuleReference>();
+    this->ShowXmlAction->setModuleReference(this->ContextReference);
     this->ContextMenu->exec(event->globalPos());
     event->accept();
   }
@@ -258,6 +285,13 @@ bool ModuleSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInd
   }
 
   return (sourceModel()->data(index).toString().contains(filterRegExp()));
+}
+
+bool ModuleSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+{
+    QVariant l = (left.model() ? left.model()->data(left, this->sortRole()) : QVariant());
+    QVariant r = (right.model() ? right.model()->data(right, this->sortRole()) : QVariant());
+    return l.toString().compare(r.toString(), this->sortCaseSensitivity()) > 0;
 }
 
 

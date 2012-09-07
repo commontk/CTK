@@ -24,7 +24,10 @@
 
 #include <ctkSettingsPanel.h>
 
+#include <QIcon>
+
 class ctkCmdLineModuleManager;
+class ctkCmdLineModuleExplorerShowXmlAction;
 
 namespace Ui {
 class ctkCmdLineModuleExplorerModulesSettings;
@@ -39,11 +42,18 @@ public:
   ~ctkCmdLineModuleExplorerModulesSettings();
 
   void applySettings();
-  
+
 private:
+
+  Q_SLOT void pathSelected(const QString& path);
+
+  Q_SLOT void pathsAdded(const QStringList& paths);
+
   Ui::ctkCmdLineModuleExplorerModulesSettings *ui;
 
   ctkCmdLineModuleManager* ModuleManager;
+  ctkCmdLineModuleExplorerShowXmlAction* ShowXmlAction;
+  QIcon WarningIcon;
 };
 
 #endif // CTKCMDLINEMODULEEXPLORERMODULESSETTINGS_H

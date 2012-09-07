@@ -64,6 +64,7 @@ protected Q_SLOTS:
   void on_actionPause_toggled(bool toggled);
   void on_actionCancel_triggered();
   void on_actionOptions_triggered();
+  void on_actionLoad_triggered();
   void on_actionQuit_triggered();
 
   void on_actionReset_triggered();
