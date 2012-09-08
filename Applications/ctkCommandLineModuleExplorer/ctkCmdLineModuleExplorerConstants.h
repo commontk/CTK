@@ -28,6 +28,8 @@ struct ctkCmdLineModuleExplorerConstants
 {
   static const QString KEY_SEARCH_PATHS;
   static const QString KEY_REGISTERED_MODULES;
+
+  static const QString KEY_MAX_PARALLEL_MODULES;
 };
 
 #endif // CTKCMDLINEMODULEEXPLORERCONSTANTS_H

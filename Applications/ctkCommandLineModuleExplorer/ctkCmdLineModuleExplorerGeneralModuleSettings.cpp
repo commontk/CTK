@@ -19,9 +19,22 @@
 
 =============================================================================*/
 
+#include "ctkCmdLineModuleExplorerGeneralModuleSettings.h"
 #include "ctkCmdLineModuleExplorerConstants.h"
 
-const QString ctkCmdLineModuleExplorerConstants::KEY_SEARCH_PATHS = "ModuleSearchPaths";
-const QString ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES = "RegisteredModules";
+#include <QThreadPool>
+#include <QSettings>
 
-const QString ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES = "MaxParallelModules";
+ctkCmdLineModuleExplorerGeneralModuleSettings::ctkCmdLineModuleExplorerGeneralModuleSettings()
+{
+  this->setupUi(this);
+
+  this->registerProperty(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES,
+                         this->MaxParallelModules, "value", SIGNAL(valueChanged(int)));
+}
+
+void ctkCmdLineModuleExplorerGeneralModuleSettings::applySettings()
+{
+  int maxParallelModules = this->propertyValue(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES).toInt();
+  QThreadPool::globalInstance()->setMaxThreadCount(maxParallelModules);
+}

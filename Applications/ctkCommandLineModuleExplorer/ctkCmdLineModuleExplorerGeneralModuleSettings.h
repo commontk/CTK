@@ -19,9 +19,24 @@
 
 =============================================================================*/
 
-#include "ctkCmdLineModuleExplorerConstants.h"
+#ifndef CTKCMDLINEMODULEEXPLORERGENERALMODULESETTINGS_H
+#define CTKCMDLINEMODULEEXPLORERGENERALMODULESETTINGS_H
 
-const QString ctkCmdLineModuleExplorerConstants::KEY_SEARCH_PATHS = "ModuleSearchPaths";
-const QString ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES = "RegisteredModules";
+#include <ctkSettingsPanel.h>
 
-const QString ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES = "MaxParallelModules";
+#include "ui_ctkCmdLineModuleExplorerGeneralModuleSettings.h"
+
+class ctkCmdLineModuleExplorerGeneralModuleSettings : public ctkSettingsPanel,
+    public Ui::ctkCmdLineModuleExplorerGeneralModuleSettings
+{
+  Q_OBJECT
+
+public:
+
+  ctkCmdLineModuleExplorerGeneralModuleSettings();
+
+  void applySettings();
+
+};
+
+#endif // CTKCMDLINEMODULEEXPLORERGENERALMODULESETTINGS_H

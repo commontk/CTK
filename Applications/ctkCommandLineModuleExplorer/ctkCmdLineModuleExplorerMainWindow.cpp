@@ -22,6 +22,7 @@
 #include "ctkCmdLineModuleExplorerMainWindow.h"
 #include "ui_ctkCmdLineModuleExplorerMainWindow.h"
 
+#include "ctkCmdLineModuleExplorerGeneralModuleSettings.h"
 #include "ctkCmdLineModuleExplorerDirectorySettings.h"
 #include "ctkCmdLineModuleExplorerModulesSettings.h"
 #include "ctkCmdLineModuleExplorerTabList.h"
@@ -60,6 +61,13 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   ui->setupUi(this);
 
   settings.restoreState(this->objectName(), *this);
+
+  if (!settings.contains(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES))
+  {
+    settings.setValue(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES, QThread::idealThreadCount());
+  }
+  QThreadPool::globalInstance()->setMaxThreadCount(settings.value(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES,
+                                                                  QThread::idealThreadCount()).toInt());
 
   // Frontends
   moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtGui;
@@ -227,8 +235,10 @@ void ctkCLModuleExplorerMainWindow::on_actionOptions_triggered()
     settingsDialog = new ctkSettingsDialog(this);
     settings.restoreState(settingsDialog->objectName(), *settingsDialog);
     settingsDialog->setSettings(&settings);
-    settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings(&directoryWatcher));
-    settingsDialog->addPanel(new ctkCmdLineModuleExplorerModulesSettings(&moduleManager));
+    ctkSettingsPanel* generalModulePanel = new ctkCmdLineModuleExplorerGeneralModuleSettings();
+    settingsDialog->addPanel(generalModulePanel);
+    settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings(&directoryWatcher), generalModulePanel);
+    settingsDialog->addPanel(new ctkCmdLineModuleExplorerModulesSettings(&moduleManager), generalModulePanel);
   }
 
   settingsDialog->exec();

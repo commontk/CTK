@@ -8,6 +8,7 @@ set(KIT_SRCS
   ctkCommandLineModuleExplorerMain.cpp
   ctkCmdLineModuleExplorerConstants.cpp
   ctkCmdLineModuleExplorerDirectorySettings.cpp
+  ctkCmdLineModuleExplorerGeneralModuleSettings.cpp
   ctkCmdLineModuleExplorerMainWindow.h
   ctkCmdLineModuleExplorerMainWindow.cpp
   ctkCmdLineModuleExplorerModulesSettings.cpp
@@ -22,6 +23,8 @@ set(KIT_SRCS
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
+  ctkCmdLineModuleExplorerDirectorySettings.h
+  ctkCmdLineModuleExplorerGeneralModuleSettings.h
   ctkCmdLineModuleExplorerMainWindow.h
   ctkCmdLineModuleExplorerModulesSettings.h
   ctkCmdLineModuleExplorerOutputText.h
@@ -35,6 +38,7 @@ set(KIT_MOC_SRCS
 # UI files
 set(KIT_UI_FORMS
   ctkCmdLineModuleExplorerDirectorySettings.ui
+  ctkCmdLineModuleExplorerGeneralModuleSettings.ui
   ctkCmdLineModuleExplorerMainWindow.ui
   ctkCmdLineModuleExplorerModulesSettings.ui
   ctkCmdLineModuleExplorerProgressWidget.ui

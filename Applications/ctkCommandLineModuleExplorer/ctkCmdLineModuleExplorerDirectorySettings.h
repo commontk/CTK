@@ -34,6 +34,8 @@ class ctkCmdLineModuleDirectoryWatcher;
  */
 class ctkCmdLineModuleExplorerDirectorySettings : public ctkSettingsPanel, public Ui::ctkCmdLineModuleExplorerDirectorySettings
 {
+  Q_OBJECT
+
 public:
   ctkCmdLineModuleExplorerDirectorySettings(ctkCmdLineModuleDirectoryWatcher* directoryWatcher);
 
