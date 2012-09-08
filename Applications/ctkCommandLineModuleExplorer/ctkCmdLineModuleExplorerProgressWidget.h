@@ -23,6 +23,7 @@
 #define CTKCMDLINEMODULEEXPLORERPROGRESSWIDGET_H
 
 #include "ctkCmdLineModuleResult.h"
+#include "ctkCmdLineModuleFutureWatcher.h"
 
 #include <QWidget>
 #include <QFutureWatcher>
@@ -71,7 +72,7 @@ private Q_SLOTS:
 private:
   Ui::ctkCmdLineModuleExplorerProgressWidget *ui;
 
-  QFutureWatcher<ctkCmdLineModuleResult> FutureWatcher;
+  ctkCmdLineModuleFutureWatcher FutureWatcher;
   QTimer PollPauseTimer;
 
 };
