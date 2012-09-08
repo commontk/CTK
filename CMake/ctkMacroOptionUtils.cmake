@@ -37,14 +37,23 @@ endmacro()
 
 macro(ctk_lib_option name doc default)
   ctk_option(CTK_LIB ${name} ${doc} ${default} ${ARGN})
+  if(CTK_BUILD_ALL_LIBRARIES)
+    set(CTK_LIB_${name} 1)
+  endif()
 endmacro()
 
 macro(ctk_plugin_option name doc default)
   ctk_option(CTK_PLUGIN ${name} ${doc} ${default} ${ARGN})
+  if(CTK_BUILD_ALL_PLUGINS)
+    set(CTK_PLUGIN_${name} 1)
+  endif()
 endmacro()
 
 macro(ctk_app_option name doc default)
   ctk_option(CTK_APP ${name} ${doc} ${default} ${ARGN})
+  if(CTK_BUILD_ALL_APPS)
+    set(CTK_APP_${name} 1)
+  endif()
 endmacro()
 
 macro(ctk_enable_option_raw name doc default)

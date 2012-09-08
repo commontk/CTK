@@ -371,6 +371,26 @@ ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
                   CTK_LIB_PluginFramework)
 
 #-----------------------------------------------------------------------------
+# Special "BUILD ALL" options
+
+# Build all CTK plug-ins
+option(CTK_BUILD_ALL_PLUGINS "Build all CTK plug-ins" OFF)
+
+# Build all CTK libraries
+option(CTK_BUILD_ALL_LIBRARIES "Build all CTK libraries" OFF)
+
+# Build all CTK applications
+option(CTK_BUILD_ALL_APPS "Build all CTK applications" OFF)
+
+# Build everything
+option(CTK_BUILD_ALL "Build everything in CTK" OFF)
+if(CTK_BUILD_ALL)
+  set(CTK_BUILD_ALL_PLUGINS 1)
+  set(CTK_BUILD_ALL_LIBRARIES 1)
+  set(CTK_BUILD_ALL_APPS 1)
+endif()
+
+#-----------------------------------------------------------------------------
 # Other options
 
 # The CTK Python Wrapping
