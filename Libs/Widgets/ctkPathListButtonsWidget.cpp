@@ -306,14 +306,17 @@ void ctkPathListButtonsWidgetPrivate::addPathsWithWarningMessage(const QStringLi
     QString problematicPaths;
     foreach(const QString& path, paths)
     {
-      if (!addedPaths.contains(path))
+      if (!addedPaths.contains(path) && !this->PathListWidget->contains(path))
       {
         problematicPaths += path + '\n';
       }
     }
-    QMessageBox::information(q, tr("Adding paths failed"),
-                             QString(tr("Failed to add the following paths:\n\n%1\nPlease check your permissions."))
-                             .arg(problematicPaths));
+    if (!problematicPaths.isEmpty())
+    {
+      QMessageBox::information(q, tr("Adding paths failed"),
+                               QString(tr("Failed to add the following paths:\n\n%1\nPlease check your permissions."))
+                               .arg(problematicPaths));
+    }
   }
 }
 
