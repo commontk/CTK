@@ -88,16 +88,18 @@ void ctkCmdLineModuleExplorerProgressListWidget::setCurrentProgressWidget(ctkCmd
     return;
   }
 
-  ctkCmdLineModuleExplorerProgressWidget* progressWidget = FrontendToProgressWidgetMap[frontend];
-  if (progressWidget == NULL) return;
-
   if (CurrentWidget != NULL)
   {
     CurrentWidget->setHighlightStyle(false);
+    CurrentWidget = NULL;
   }
 
-  progressWidget->setHighlightStyle(true);
-  CurrentWidget = progressWidget;
+  ctkCmdLineModuleExplorerProgressWidget* progressWidget = FrontendToProgressWidgetMap[frontend];
+  if (progressWidget)
+  {
+    progressWidget->setHighlightStyle(true);
+    CurrentWidget = progressWidget;
+  }
 }
 
 void ctkCmdLineModuleExplorerProgressListWidget::progressWidgetClicked()
