@@ -93,6 +93,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   connect(tabList.data(), SIGNAL(tabClosed(ctkCmdLineModuleFrontend*)), ui->outputText, SLOT(frontendRemoved(ctkCmdLineModuleFrontend*)));
   connect(tabList.data(), SIGNAL(tabClosed(ctkCmdLineModuleFrontend*)), ui->progressListWidget, SLOT(removeProgressWidget(ctkCmdLineModuleFrontend*)));
 
+  connect(ui->progressListWidget, SIGNAL(progressWidgetClicked(ctkCmdLineModuleFrontend*)), tabList.data(), SLOT(setActiveTab(ctkCmdLineModuleFrontend*)));
+
   connect(ui->ClearButton, SIGNAL(clicked()), ui->progressListWidget, SLOT(clearList()));
 
   // Listen to future events for the currently active tab
@@ -325,7 +327,9 @@ void ctkCLModuleExplorerMainWindow::moduleTabActivated(ctkCmdLineModuleFrontend 
   {
     ui->actionRun->setEnabled(!module->isRunning());
     ui->actionPause->setEnabled(module->future().canPause() && module->isRunning());
+    ui->actionPause->blockSignals(true);
     ui->actionPause->setChecked(module->isPaused());
+    ui->actionPause->blockSignals(false);
     ui->actionCancel->setEnabled(module->future().canCancel() && module->isRunning());
     ui->actionReset->setEnabled(true);
     ui->outputText->setActiveFrontend(module);

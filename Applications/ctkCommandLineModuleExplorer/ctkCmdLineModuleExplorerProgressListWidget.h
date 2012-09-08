@@ -40,13 +40,15 @@ public:
 
 signals:
 
-  void progressWidgetDoubleClicked(ctkCmdLineModuleFrontend* frontend);
+  void progressWidgetClicked(ctkCmdLineModuleFrontend* frontend);
 
 public slots:
 
   void removeProgressWidget(ctkCmdLineModuleFrontend* frontend);
 
   void setCurrentProgressWidget(ctkCmdLineModuleFrontend* frontend);
+
+  void progressWidgetClicked();
 
   void clearList();
   

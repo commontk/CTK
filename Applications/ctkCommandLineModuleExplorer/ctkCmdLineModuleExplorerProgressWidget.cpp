@@ -81,6 +81,11 @@ void ctkCmdLineModuleExplorerProgressWidget::setHighlightStyle(bool highlight)
   ui->ProgressBar->setEnabled(highlight);
 }
 
+void ctkCmdLineModuleExplorerProgressWidget::mouseReleaseEvent(QMouseEvent*)
+{
+  emit clicked();
+}
+
 void ctkCmdLineModuleExplorerProgressWidget::on_PauseButton_toggled(bool toggled)
 {
   this->FutureWatcher.setPaused(toggled);

@@ -47,6 +47,7 @@ void ctkCmdLineModuleExplorerProgressListWidget::addProgressWidget(ctkCmdLineMod
     FrontendToProgressWidgetMap[frontend] = progressWidget;
     ProgressWidgetToFrontendMap[progressWidget] = frontend;
 
+    connect(progressWidget, SIGNAL(clicked()), SLOT(progressWidgetClicked()));
     connect(progressWidget, SIGNAL(destroyed(QObject*)), SLOT(progressWidgetDestroyed(QObject*)));
 
     this->layout()->addWidget(progressWidget);
@@ -97,6 +98,18 @@ void ctkCmdLineModuleExplorerProgressListWidget::setCurrentProgressWidget(ctkCmd
 
   progressWidget->setHighlightStyle(true);
   CurrentWidget = progressWidget;
+}
+
+void ctkCmdLineModuleExplorerProgressListWidget::progressWidgetClicked()
+{
+  ctkCmdLineModuleExplorerProgressWidget* progressWidget =
+      static_cast<ctkCmdLineModuleExplorerProgressWidget*>(this->sender());
+
+  ctkCmdLineModuleFrontend* frontend = ProgressWidgetToFrontendMap[progressWidget];
+  Q_ASSERT(frontend);
+
+  this->setCurrentProgressWidget(frontend);
+  emit progressWidgetClicked(frontend);
 }
 
 void ctkCmdLineModuleExplorerProgressListWidget::clearList()

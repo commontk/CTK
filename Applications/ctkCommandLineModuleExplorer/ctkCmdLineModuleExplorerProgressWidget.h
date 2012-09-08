@@ -54,6 +54,14 @@ public:
 
   void setHighlightStyle(bool highlight);
 
+Q_SIGNALS:
+
+  void clicked();
+
+protected:
+
+  void mouseReleaseEvent(QMouseEvent*);
+
 private Q_SLOTS:
 
   void on_PauseButton_toggled(bool toggled);
