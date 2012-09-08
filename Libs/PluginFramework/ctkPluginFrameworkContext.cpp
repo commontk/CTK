@@ -102,12 +102,31 @@ void ctkPluginFrameworkContext::init()
 
     foreach(QString preloadLib, preloadLibs)
     {
-      QLibrary lib(preloadLib);
+      QLibrary lib;
+      QStringList nameAndVersion = preloadLib.split(":");
+
+      QString libraryName;
+      if (nameAndVersion.count() == 1)
+      {
+        libraryName = nameAndVersion.front();
+        lib.setFileName(nameAndVersion.front());
+      }
+      else if (nameAndVersion.count() == 2)
+      {
+        libraryName = nameAndVersion.front() + "." + nameAndVersion.back();
+        lib.setFileNameAndVersion(nameAndVersion.front(), nameAndVersion.back());
+      }
+      else
+      {
+        qWarning() << "Wrong syntax in" << preloadLib << ". Use <lib-name>[:version]. Skipping.";
+        continue;
+      }
+
       lib.setLoadHints(loadHints);
-      log() << "Pre-loading library" << preloadLib << "with hints [" << static_cast<int>(loadHints) << "]";
+      log() << "Pre-loading library" << libraryName << "with hints [" << static_cast<int>(loadHints) << "]";
       if (!lib.load())
       {
-        qWarning() << "Pre-loading library" << preloadLib << "failed";
+        qWarning() << "Pre-loading library" << libraryName << "failed. Check your library search paths.";
       }
     }
   }
