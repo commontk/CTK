@@ -27,6 +27,7 @@
 #include "ctkCmdLineModuleExplorerTabList.h"
 #include "ctkCmdLineModuleExplorerProgressWidget.h"
 #include "ctkCmdLineModuleExplorerConstants.h"
+#include "ctkCmdLineModuleExplorerUtils.h"
 
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleConcurrentHelpers.h>
@@ -132,7 +133,10 @@ ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
   qDeleteAll(moduleFrontendFactories);
 
   settings.saveState(*this, this->objectName());
-  settings.saveState(*settingsDialog, settingsDialog->objectName());
+  if (settingsDialog)
+  {
+    settings.saveState(*settingsDialog, settingsDialog->objectName());
+  }
 }
 
 void ctkCLModuleExplorerMainWindow::addModule(const QUrl &location)
@@ -154,7 +158,7 @@ void ctkCLModuleExplorerMainWindow::closeEvent(QCloseEvent *event)
   if (!runningFrontends.empty())
   {
     QMessageBox::StandardButton button =
-        QMessageBox::warning(QApplication::topLevelWidgets().front(),
+        QMessageBox::warning(QApplication::activeWindow(),
                              QString("Closing %1 running modules").arg(runningFrontends.size()),
                              "Some modules are still running.\n"
                              "Closing the application will cancel all current computations.",
@@ -235,28 +239,10 @@ void ctkCLModuleExplorerMainWindow::on_actionLoad_triggered()
   this->setCursor(Qt::BusyCursor);
   QFuture<ctkCmdLineModuleReference> future = QtConcurrent::mapped(fileNames, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
   future.waitForFinished();
-
-  QString errorMsg;
-  QList<ctkCmdLineModuleReference> refs = future.results();
-  for(int i = 0; i < fileNames.size(); ++i)
-  {
-    if (!refs.at(i))
-    {
-      errorMsg += tr("Failed to register ") + fileNames.at(i) + "\n\n";
-    }
-    else if (!refs.at(i).xmlValidationErrorString().isEmpty() &&
-             this->moduleManager.validationMode() == ctkCmdLineModuleManager::STRICT_VALIDATION)
-    {
-      errorMsg += tr("Failed to register ") + fileNames.at(i) + ":\n" + refs.at(i).xmlValidationErrorString() + "\n\n";
-    }
-  }
-
   this->unsetCursor();
 
-  if (!errorMsg.isEmpty())
-  {
-    QMessageBox::critical(this, "Failed to register modules", errorMsg);
-  }
+  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(fileNames, future.results(),
+                                                              this->moduleManager.validationMode());
 }
 
 void ctkCLModuleExplorerMainWindow::on_actionQuit_triggered()

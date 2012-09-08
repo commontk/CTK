@@ -23,6 +23,7 @@
 #include "ctkCmdLineModuleExplorerConstants.h"
 #include "ctkCmdLineModuleExplorerUtils.h"
 #include "ctkCmdLineModuleExplorerShowXmlAction.h"
+#include "ctkCmdLineModuleExplorerUtils.h"
 
 #include "ui_ctkCmdLineModuleExplorerModulesSettings.h"
 
@@ -81,7 +82,7 @@ void ctkCmdLineModuleExplorerModulesSettings::applySettings()
   this->setCursor(Qt::BusyCursor);
 
   QFuture<void> future1 = QtConcurrent::mapped(removedModules, ctkCmdLineModuleConcurrentUnRegister(this->ModuleManager));
-  QFuture<void> future2 = QtConcurrent::mapped(addedModules, ctkCmdLineModuleConcurrentRegister(this->ModuleManager));
+  QFuture<ctkCmdLineModuleReference> future2 = QtConcurrent::mapped(addedModules, ctkCmdLineModuleConcurrentRegister(this->ModuleManager));
 
   ctkSettingsPanel::applySettings();
 
@@ -93,6 +94,10 @@ void ctkCmdLineModuleExplorerModulesSettings::applySettings()
   this->pathsAdded(addedModules);
 
   this->unsetCursor();
+
+  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(addedModules, future2.results(),
+                                                              this->ModuleManager->validationMode());
+
 }
 
 void ctkCmdLineModuleExplorerModulesSettings::pathSelected(const QString &path)
@@ -108,10 +113,9 @@ void ctkCmdLineModuleExplorerModulesSettings::pathsAdded(const QStringList &path
   foreach(const QString& path, paths)
   {
     ctkCmdLineModuleReference moduleRef = this->ModuleManager->moduleReference(QUrl::fromLocalFile(path));
-    if (moduleRef && !moduleRef.xmlValidationErrorString().isEmpty())
+    if (!moduleRef || !moduleRef.xmlValidationErrorString().isEmpty())
     {
       QStandardItem* item = ui->PathListWidget->item(path);
-      item->setToolTip(item->toolTip() + "\n\nWarning:\n\n" + moduleRef.xmlValidationErrorString());
       if (this->WarningIcon.isNull())
       {
         this->WarningIcon = ctkCmdLineModuleExplorerUtils::createIconOverlay(
@@ -119,6 +123,17 @@ void ctkCmdLineModuleExplorerModulesSettings::pathsAdded(const QStringList &path
               QApplication::style()->standardPixmap(QStyle::SP_MessageBoxWarning));
       }
       item->setIcon(this->WarningIcon);
+
+      QString toolTip = path + "\n\n" + tr("Warning") + ":\n\n";
+      if (moduleRef)
+      {
+        toolTip += moduleRef.xmlValidationErrorString();
+      }
+      else
+      {
+        toolTip += tr("No XML output available.");
+      }
+      item->setToolTip(toolTip);
     }
   }
 }
