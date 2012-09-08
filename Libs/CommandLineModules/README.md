@@ -83,7 +83,7 @@ For example a progress report containing a progress value and text would look li
 
 Here is the XML [progress and result schema documentation](ctkCmdLineModuleProcess.xsd)
 ([absolute link](http://www.commontk.org/docs/html/ctkCmdLineModuleProcess.xsd)) describing the valid XML fragments. The raw
-schema file is available [here](https://raw.github.com/commontk/CTK/master/Libs/CommandLineModules/Core/Resources/ctkCmdLineModuleProcess.xsd).
+schema file is available [here](https://raw.github.com/commontk/CTK/master/Libs/CommandLineModules/Backend/LocalProcess/Resources/ctkCmdLineModuleProcess.xsd).
 
 
 Library Design

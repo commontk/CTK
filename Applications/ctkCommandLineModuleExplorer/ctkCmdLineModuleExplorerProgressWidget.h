@@ -23,6 +23,7 @@
 #define CTKCMDLINEMODULEEXPLORERPROGRESSWIDGET_H
 
 #include "ctkCmdLineModuleResult.h"
+#include "ctkCmdLineModuleFutureWatcher.h"
 
 #include <QWidget>
 #include <QFutureWatcher>
@@ -49,9 +50,22 @@ public:
 
   void setFuture(const ctkCmdLineModuleFuture& future);
 
+  void setTitle(const QString& title);
+
+  void setHighlightStyle(bool highlight);
+
+Q_SIGNALS:
+
+  void clicked();
+
+protected:
+
+  void mouseReleaseEvent(QMouseEvent*);
+
 private Q_SLOTS:
 
   void on_PauseButton_toggled(bool toggled);
+  void on_RemoveButton_clicked();
 
   void checkModulePaused();
 
@@ -66,7 +80,7 @@ private Q_SLOTS:
 private:
   Ui::ctkCmdLineModuleExplorerProgressWidget *ui;
 
-  QFutureWatcher<ctkCmdLineModuleResult> FutureWatcher;
+  ctkCmdLineModuleFutureWatcher FutureWatcher;
   QTimer PollPauseTimer;
 
 };

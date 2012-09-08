@@ -584,10 +584,46 @@ QString ctkPathListWidget::path(int row) const
 }
 
 // --------------------------------------------------------------------------
+QStandardItem* ctkPathListWidget::item(int row) const
+{
+  Q_D(const ctkPathListWidget);
+  return d->PathListModel.item(row);
+}
+
+// --------------------------------------------------------------------------
+QStandardItem *ctkPathListWidget::item(const QString &absolutePath) const
+{
+  Q_D(const ctkPathListWidget);
+  QModelIndexList result = d->PathListModel.match(d->PathListModel.index(0,0), AbsolutePathRole,
+                                                  absolutePath, 1, Qt::MatchExactly);
+  Q_ASSERT(result.count() < 2);
+  if (result.isEmpty())
+  {
+    return NULL;
+  }
+  else
+  {
+    return d->PathListModel.item(result.front().row());
+  }
+}
+
+// --------------------------------------------------------------------------
 QString ctkPathListWidget::pathAt(const QPoint& point) const
 {
   Q_D(const ctkPathListWidget);
   return d->PathListModel.data(indexAt(point), AbsolutePathRole).toString();
+}
+
+// --------------------------------------------------------------------------
+QStandardItem* ctkPathListWidget::itemAt(const QPoint &point) const
+{
+  Q_D(const ctkPathListWidget);
+  QModelIndex index = this->indexAt(point);
+  if (index.isValid())
+  {
+    return d->PathListModel.item(index.row());
+  }
+  return NULL;
 }
 
 // --------------------------------------------------------------------------

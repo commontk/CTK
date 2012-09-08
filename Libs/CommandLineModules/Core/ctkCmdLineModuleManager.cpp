@@ -96,6 +96,12 @@ ctkCmdLineModuleManager::~ctkCmdLineModuleManager()
 }
 
 //----------------------------------------------------------------------------
+ctkCmdLineModuleManager::ValidationMode ctkCmdLineModuleManager::validationMode() const
+{
+  return d->ValidationMode;
+}
+
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 {
   QMutexLocker lock(&d->Mutex);
@@ -195,8 +201,8 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
     {
       if (d->ModuleCache)
       {
-        // validation failed, cache an empty description
-        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, QByteArray());
+        // validation failed, cache the description anyway
+        d->ModuleCache->cacheXmlDescription(location, newTimeStamp, xml);
       }
 
       if (d->ValidationMode == STRICT_VALIDATION)
@@ -266,7 +272,8 @@ void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& 
 ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QUrl &location) const
 {
   QMutexLocker lock(&d->Mutex);
-  return d->LocationToRef[location];
+  QHash<QUrl, ctkCmdLineModuleReference>::const_iterator iter = d->LocationToRef.find(location);
+  return (iter == d->LocationToRef.end()) ? ctkCmdLineModuleReference() : iter.value();
 }
 
 //----------------------------------------------------------------------------

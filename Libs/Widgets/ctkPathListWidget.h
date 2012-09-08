@@ -32,6 +32,8 @@
 
 class ctkPathListWidgetPrivate;
 
+class QStandardItem;
+
 /// \ingroup Widgets
 ///
 /// \brief The ctkPathListWidget lists files and/or directories.
@@ -181,12 +183,25 @@ public:
   /// \return The absolute path for \a row or a null QString if \a row is out of range.
   QString path(int row) const;
 
+  /// \return The item for \a row or NULL if \a row is out of range.
+  QStandardItem* item(int row) const;
+
+  /// \return The item for the given absolute path or NULL if the the path is not known.
+  QStandardItem* item(const QString& absolutePath) const;
+
   /// \return The absolute path for the entry located at the point \a point (in the
   ///         widget coordinate system) or a null QString if no entry could be found for \a point.
   QString pathAt(const QPoint& point) const;
 
+  /// \return The item for the entry located at the point \a point (in the widget
+  ///         coordinate system) or NULL if no ite could be found for \a point.
+  QStandardItem* itemAt(const QPoint& point) const;
+
   /// \see pathAt(const QPoint&)
   QString pathAt(int x, int y) const { return pathAt(QPoint(x, y)); }
+
+  /// \see itemAt(const QPoint&)
+  QStandardItem* itemAt(int x, int y) const { return itemAt(QPoint(x, y)); }
 
   /// \return The row number for the given \a path or -1 if \a path is not in the list of current
   ///         entries.

@@ -31,6 +31,8 @@ ctkCmdLineModuleExplorerProgressWidget::ctkCmdLineModuleExplorerProgressWidget(Q
 {
   ui->setupUi(this);
 
+  ui->RemoveButton->setIcon(QApplication::style()->standardIcon(QStyle::SP_TitleBarCloseButton));
+
   // Due to Qt bug 12152, we cannot listen to the "paused" signal because it is
   // not emitted directly when the QFuture is paused. Instead, it is emitted after
   // resuming the future, after the "resume" signal has been emitted... we use
@@ -60,12 +62,38 @@ void ctkCmdLineModuleExplorerProgressWidget::setFuture(const ctkCmdLineModuleFut
 {
   ui->PauseButton->setEnabled(future.canPause());
   ui->CancelButton->setEnabled(future.canCancel());
+  ui->RemoveButton->setEnabled(!future.isRunning());
+
   FutureWatcher.setFuture(future);
+}
+
+void ctkCmdLineModuleExplorerProgressWidget::setTitle(const QString &title)
+{
+  ui->ProgressTitle->setText(title);
+}
+
+void ctkCmdLineModuleExplorerProgressWidget::setHighlightStyle(bool highlight)
+{
+  QPalette::ColorRole labelRole = highlight ? QPalette::NoRole : QPalette::Midlight;
+
+  ui->ProgressTitle->setForegroundRole(labelRole);
+  ui->ProgressText->setForegroundRole(labelRole);
+  ui->ProgressBar->setEnabled(highlight);
+}
+
+void ctkCmdLineModuleExplorerProgressWidget::mouseReleaseEvent(QMouseEvent*)
+{
+  emit clicked();
 }
 
 void ctkCmdLineModuleExplorerProgressWidget::on_PauseButton_toggled(bool toggled)
 {
   this->FutureWatcher.setPaused(toggled);
+}
+
+void ctkCmdLineModuleExplorerProgressWidget::on_RemoveButton_clicked()
+{
+  this->deleteLater();
 }
 
 void ctkCmdLineModuleExplorerProgressWidget::moduleStarted()
@@ -78,6 +106,7 @@ void ctkCmdLineModuleExplorerProgressWidget::moduleCanceled()
   this->ui->PauseButton->setEnabled(false);
   this->ui->PauseButton->setChecked(false);
   this->ui->CancelButton->setEnabled(false);
+  this->ui->RemoveButton->setEnabled(true);
 }
 
 void ctkCmdLineModuleExplorerProgressWidget::moduleFinished()
@@ -85,6 +114,7 @@ void ctkCmdLineModuleExplorerProgressWidget::moduleFinished()
   this->ui->PauseButton->setEnabled(false);
   this->ui->PauseButton->setChecked(false);
   this->ui->CancelButton->setEnabled(false);
+  this->ui->RemoveButton->setEnabled(true);
 }
 
 void ctkCmdLineModuleExplorerProgressWidget::checkModulePaused()

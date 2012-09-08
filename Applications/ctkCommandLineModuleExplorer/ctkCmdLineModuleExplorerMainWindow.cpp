@@ -22,11 +22,13 @@
 #include "ctkCmdLineModuleExplorerMainWindow.h"
 #include "ui_ctkCmdLineModuleExplorerMainWindow.h"
 
+#include "ctkCmdLineModuleExplorerGeneralModuleSettings.h"
 #include "ctkCmdLineModuleExplorerDirectorySettings.h"
 #include "ctkCmdLineModuleExplorerModulesSettings.h"
 #include "ctkCmdLineModuleExplorerTabList.h"
 #include "ctkCmdLineModuleExplorerProgressWidget.h"
 #include "ctkCmdLineModuleExplorerConstants.h"
+#include "ctkCmdLineModuleExplorerUtils.h"
 
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleConcurrentHelpers.h>
@@ -36,6 +38,7 @@
 #include <ctkCmdLineModuleBackendLocalProcess.h>
 #include <ctkCmdLineModuleBackendFunctionPointer.h>
 #include <ctkException.h>
+#include <ctkCmdLineModuleXmlException.h>
 
 #include <ctkSettingsDialog.h>
 
@@ -44,26 +47,36 @@
 #include <QMessageBox>
 #include <QFutureSynchronizer>
 #include <QCloseEvent>
-#include <QDebug>
+#include <QFileDialog>
 
 
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkCmdLineModuleExplorerMainWindow),
   defaultModuleFrontendFactory(NULL),
-  moduleManager(ctkCmdLineModuleManager::STRICT_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)),
-  directoryWatcher(&moduleManager)
+  moduleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)),
+  directoryWatcher(&moduleManager),
+  settingsDialog(NULL)
 {
   ui->setupUi(this);
 
   settings.restoreState(this->objectName(), *this);
+
+  if (!settings.contains(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES))
+  {
+    settings.setValue(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES, QThread::idealThreadCount());
+  }
+  QThreadPool::globalInstance()->setMaxThreadCount(settings.value(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES,
+                                                                  QThread::idealThreadCount()).toInt());
 
   // Frontends
   moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtGui;
   moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtWebKit;
   defaultModuleFrontendFactory = moduleFrontendFactories.front();
 
-  ui->modulesTreeWidget->setModuleFrontendFactories(moduleFrontendFactories);
+  ui->modulesTreeWidget->setModuleFrontendFactories(moduleFrontendFactories, moduleFrontendFactories.front());
+  ui->modulesSearchBox->setClearIcon(QIcon(":/icons/clear.png"));
+  connect(ui->modulesSearchBox, SIGNAL(textChanged(QString)), ui->modulesTreeWidget, SLOT(setFilter(QString)));
 
   // Backends
   ctkCmdLineModuleBackendFunctionPointer* backendFunctionPointer = new ctkCmdLineModuleBackendFunctionPointer;
@@ -75,24 +88,22 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
     moduleManager.registerBackend(moduleBackends[i]);
   }
 
-  settingsDialog = new ctkSettingsDialog(this);
-  settings.restoreState(settingsDialog->objectName(), *settingsDialog);
-  settingsDialog->setSettings(&settings);
-  settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings(&directoryWatcher));
-  settingsDialog->addPanel(new ctkCmdLineModuleExplorerModulesSettings(&moduleManager));
-
   tabList.reset(new ctkCmdLineModuleExplorerTabList(ui->mainTabWidget));
 
-  // If a module is registered via the ModuleManager, add it the tree
+  // If a module is registered via the ModuleManager, add it to the tree
   connect(&moduleManager, SIGNAL(moduleRegistered(ctkCmdLineModuleReference)), ui->modulesTreeWidget, SLOT(addModuleItem(ctkCmdLineModuleReference)));
   connect(&moduleManager, SIGNAL(moduleUnregistered(ctkCmdLineModuleReference)), ui->modulesTreeWidget, SLOT(removeModuleItem(ctkCmdLineModuleReference)));
-  // Double-clicking on an item in the tree creates a new tab with the default frontend
-  connect(ui->modulesTreeWidget, SIGNAL(moduleDoubleClicked(ctkCmdLineModuleReference)), this, SLOT(addModuleTab(ctkCmdLineModuleReference)));
   // React to specific frontend creations
   connect(ui->modulesTreeWidget, SIGNAL(moduleFrontendCreated(ctkCmdLineModuleFrontend*)), tabList.data(), SLOT(addTab(ctkCmdLineModuleFrontend*)));
   // React to tab-changes
   connect(tabList.data(), SIGNAL(tabActivated(ctkCmdLineModuleFrontend*)), SLOT(moduleTabActivated(ctkCmdLineModuleFrontend*)));
+  connect(tabList.data(), SIGNAL(tabActivated(ctkCmdLineModuleFrontend*)), ui->progressListWidget, SLOT(setCurrentProgressWidget(ctkCmdLineModuleFrontend*)));
   connect(tabList.data(), SIGNAL(tabClosed(ctkCmdLineModuleFrontend*)), ui->outputText, SLOT(frontendRemoved(ctkCmdLineModuleFrontend*)));
+  connect(tabList.data(), SIGNAL(tabClosed(ctkCmdLineModuleFrontend*)), ui->progressListWidget, SLOT(removeProgressWidget(ctkCmdLineModuleFrontend*)));
+
+  connect(ui->progressListWidget, SIGNAL(progressWidgetClicked(ctkCmdLineModuleFrontend*)), tabList.data(), SLOT(setActiveTab(ctkCmdLineModuleFrontend*)));
+
+  connect(ui->ClearButton, SIGNAL(clicked()), ui->progressListWidget, SLOT(clearList()));
 
   // Listen to future events for the currently active tab
 
@@ -112,8 +123,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   }
 
   // Register persistent modules
-  QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
-                       ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
+  QFuture<void> future = QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
+                                              ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
 
   // Start watching directories
   directoryWatcher.setDebug(true);
@@ -122,6 +133,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   moduleTabActivated(NULL);
 
   pollPauseTimer.start();
+
+  future.waitForFinished();
 }
 
 ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
@@ -130,7 +143,10 @@ ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
   qDeleteAll(moduleFrontendFactories);
 
   settings.saveState(*this, this->objectName());
-  settings.saveState(*settingsDialog, settingsDialog->objectName());
+  if (settingsDialog)
+  {
+    settings.saveState(*settingsDialog, settingsDialog->objectName());
+  }
 }
 
 void ctkCLModuleExplorerMainWindow::addModule(const QUrl &location)
@@ -152,7 +168,7 @@ void ctkCLModuleExplorerMainWindow::closeEvent(QCloseEvent *event)
   if (!runningFrontends.empty())
   {
     QMessageBox::StandardButton button =
-        QMessageBox::warning(QApplication::topLevelWidgets().front(),
+        QMessageBox::warning(QApplication::activeWindow(),
                              QString("Closing %1 running modules").arg(runningFrontends.size()),
                              "Some modules are still running.\n"
                              "Closing the application will cancel all current computations.",
@@ -187,19 +203,18 @@ void ctkCLModuleExplorerMainWindow::on_actionRun_triggered()
   ctkCmdLineModuleFrontend* moduleFrontend = this->tabList->activeTab();
   Q_ASSERT(moduleFrontend);
 
-  ctkCmdLineModuleExplorerProgressWidget* progressWidget = new ctkCmdLineModuleExplorerProgressWidget();
-  this->ui->progressInfoWidget->layout()->addWidget(progressWidget);
-
   ui->actionRun->setEnabled(false);
   qobject_cast<QWidget*>(moduleFrontend->guiHandle())->setEnabled(false);
 
   ctkCmdLineModuleFuture future = moduleManager.run(moduleFrontend);
 
+  ui->progressListWidget->addProgressWidget(moduleFrontend, future);
+  ui->progressListWidget->setCurrentProgressWidget(moduleFrontend);
+
   ui->actionPause->setEnabled(future.canPause() && future.isRunning());
   ui->actionPause->setChecked(future.isPaused());
   ui->actionCancel->setEnabled(future.canCancel() && future.isRunning());
 
-  progressWidget->setFuture(future);
   this->currentFutureWatcher.setFuture(future);
 }
 
@@ -215,7 +230,31 @@ void ctkCLModuleExplorerMainWindow::on_actionCancel_triggered()
 
 void ctkCLModuleExplorerMainWindow::on_actionOptions_triggered()
 {
+  if (settingsDialog == NULL)
+  {
+    settingsDialog = new ctkSettingsDialog(this);
+    settings.restoreState(settingsDialog->objectName(), *settingsDialog);
+    settingsDialog->setSettings(&settings);
+    ctkSettingsPanel* generalModulePanel = new ctkCmdLineModuleExplorerGeneralModuleSettings();
+    settingsDialog->addPanel(generalModulePanel);
+    settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings(&directoryWatcher), generalModulePanel);
+    settingsDialog->addPanel(new ctkCmdLineModuleExplorerModulesSettings(&moduleManager), generalModulePanel);
+  }
+
   settingsDialog->exec();
+}
+
+void ctkCLModuleExplorerMainWindow::on_actionLoad_triggered()
+{
+  QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Load modules..."));
+
+  this->setCursor(Qt::BusyCursor);
+  QFuture<ctkCmdLineModuleReference> future = QtConcurrent::mapped(fileNames, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
+  future.waitForFinished();
+  this->unsetCursor();
+
+  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(fileNames, future.results(),
+                                                              this->moduleManager.validationMode());
 }
 
 void ctkCLModuleExplorerMainWindow::on_actionQuit_triggered()
@@ -298,16 +337,12 @@ void ctkCLModuleExplorerMainWindow::moduleTabActivated(ctkCmdLineModuleFrontend 
   {
     ui->actionRun->setEnabled(!module->isRunning());
     ui->actionPause->setEnabled(module->future().canPause() && module->isRunning());
+    ui->actionPause->blockSignals(true);
     ui->actionPause->setChecked(module->isPaused());
+    ui->actionPause->blockSignals(false);
     ui->actionCancel->setEnabled(module->future().canCancel() && module->isRunning());
     ui->actionReset->setEnabled(true);
     ui->outputText->setActiveFrontend(module);
     currentFutureWatcher.setFuture(module->future());
   }
-}
-
-void ctkCLModuleExplorerMainWindow::addModuleTab(const ctkCmdLineModuleReference &moduleRef)
-{
-  ctkCmdLineModuleFrontend* moduleFrontend = this->defaultModuleFrontendFactory->create(moduleRef);
-  this->tabList->addTab(moduleFrontend);
 }

@@ -19,41 +19,24 @@
 
 =============================================================================*/
 
-#ifndef CTKCMDLINEMODULEEXPLORERMODULESSETTINGS_H
-#define CTKCMDLINEMODULEEXPLORERMODULESSETTINGS_H
+#ifndef CTKCMDLINEMODULEEXPLORERGENERALMODULESETTINGS_H
+#define CTKCMDLINEMODULEEXPLORERGENERALMODULESETTINGS_H
 
 #include <ctkSettingsPanel.h>
 
-#include <QIcon>
+#include "ui_ctkCmdLineModuleExplorerGeneralModuleSettings.h"
 
-class ctkCmdLineModuleManager;
-class ctkCmdLineModuleExplorerShowXmlAction;
-
-namespace Ui {
-class ctkCmdLineModuleExplorerModulesSettings;
-}
-
-class ctkCmdLineModuleExplorerModulesSettings : public ctkSettingsPanel
+class ctkCmdLineModuleExplorerGeneralModuleSettings : public ctkSettingsPanel,
+    public Ui::ctkCmdLineModuleExplorerGeneralModuleSettings
 {
   Q_OBJECT
-  
+
 public:
-  explicit ctkCmdLineModuleExplorerModulesSettings(ctkCmdLineModuleManager* moduleManager);
-  ~ctkCmdLineModuleExplorerModulesSettings();
+
+  ctkCmdLineModuleExplorerGeneralModuleSettings();
 
   void applySettings();
 
-private:
-
-  Q_SLOT void pathSelected(const QString& path);
-
-  Q_SLOT void pathsAdded(const QStringList& paths);
-
-  Ui::ctkCmdLineModuleExplorerModulesSettings *ui;
-
-  ctkCmdLineModuleManager* ModuleManager;
-  ctkCmdLineModuleExplorerShowXmlAction* ShowXmlAction;
-  QIcon WarningIcon;
 };
 
-#endif // CTKCMDLINEMODULEEXPLORERMODULESSETTINGS_H
+#endif // CTKCMDLINEMODULEEXPLORERGENERALMODULESETTINGS_H

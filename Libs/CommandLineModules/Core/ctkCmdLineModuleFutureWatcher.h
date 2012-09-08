@@ -44,6 +44,16 @@ struct ctkCmdLineModuleFutureWatcherPrivate;
  * new error data (usually text written to the standard error channel).
  *
  * Use readPendingOutputData() or readPendingErrorData() to get the newly added data.
+ *
+ * \warning While you could use a QFutureWatcher<ctkCmdLineModuleResult> instance directly (and
+ *          provide a ctkCmdLineModuleFuture via QFutureWatcher<ctkCmdLineModuleResult>::setFuture(future)
+ *          by virtue of "slicing") this is discouraged. The reason is that a member variable of type
+ *          QFutureWatcher<ctkCmdLineModuleResult> will have a different size, depending on the inclusion
+ *          of the ctkCmdLineModuleFutureInterface.h header (this header provides a specialization of the
+ *          QFutureInterface template which adds a data member). This can lead to subtle heap corruptions.
+ *          Since the code compiles with or without the ctkCmdLindeModuleFutureInterface.h inclusion, you
+ *          should always use ctkCmdLineModuleFutureWatcher when working with ctkCmdLineModuleFuture objects
+ *          to avoid runtime heap corruptions.
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFutureWatcher : public QFutureWatcher<ctkCmdLineModuleResult>
 {

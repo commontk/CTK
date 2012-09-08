@@ -19,9 +19,22 @@
 
 =============================================================================*/
 
-#include "ctkCmdLineModuleExplorerConstants.h"
+#ifndef CTKCOMMANDLINEMODULEEXPLORERUTILS_H
+#define CTKCOMMANDLINEMODULEEXPLORERUTILS_H
 
-const QString ctkCmdLineModuleExplorerConstants::KEY_SEARCH_PATHS = "ModuleSearchPaths";
-const QString ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES = "RegisteredModules";
+#include "ctkCmdLineModuleManager.h"
 
-const QString ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES = "MaxParallelModules";
+#include <QPixmap>
+
+struct ctkCmdLineModuleExplorerUtils
+{
+
+  static QPixmap createIconOverlay(const QPixmap& base, const QPixmap& overlay);
+
+  static void messageBoxModuleRegistration(const QStringList& modulePaths,
+                                           const QList<ctkCmdLineModuleReference>& moduleRefs,
+                                           ctkCmdLineModuleManager::ValidationMode validationMode);
+
+};
+
+#endif // CTKCOMMANDLINEMODULEEXPLORERUTILS_H

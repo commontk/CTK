@@ -100,6 +100,12 @@ public:
   ~ctkCmdLineModuleManager();
 
   /**
+   * @brief Get the validation mode.
+   * @return The validation mode.
+   */
+  ValidationMode validationMode() const;
+
+  /**
    * @brief Registers a new back-end.
    * @param backend The new back-end.
    * @throws ctkInvalidArgumentException if another back-end was already registered handling
