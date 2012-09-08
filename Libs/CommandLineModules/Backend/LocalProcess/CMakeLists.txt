@@ -60,14 +60,6 @@ if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
     )
 endif()
 
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  # Copy XML schema file to the Doxygen output directory
-  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ctkCmdLineModuleProcess.xsd
-                                                  ${CTK_BINARY_DIR}/Documentation/html/ctkCmdLineModuleProcess.xsd)
-endif()
-
 # Testing
 if(BUILD_TESTING)
   #add_subdirectory(Testing)

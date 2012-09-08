@@ -872,8 +872,12 @@ add_subdirectory(Libs/Testing)
 # Add CTK library subdirectories
 #
 foreach(lib ${CTK_LIBS})
-  IF (CTK_LIB_${lib})
+  if(CTK_LIB_${lib})
     add_subdirectory(Libs/${lib})
+  endif()
+  # Always add the Documentation sub-directory for additional processing
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}/Documentation/CMakeLists.txt)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}/Documentation)
   endif()
 endforeach()
 
