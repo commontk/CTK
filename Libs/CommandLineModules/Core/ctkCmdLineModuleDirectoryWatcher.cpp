@@ -76,9 +76,23 @@ QStringList ctkCmdLineModuleDirectoryWatcher::directories() const
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcher::files() const
+void ctkCmdLineModuleDirectoryWatcher::setAdditionalModules(const QStringList& modules)
 {
-  return d->files();
+  d->setAdditionalModules(modules);
+}
+
+
+//-----------------------------------------------------------------------------
+QStringList ctkCmdLineModuleDirectoryWatcher::additionalModules() const
+{
+  return d->additionalModules();
+}
+
+
+//-----------------------------------------------------------------------------
+QStringList ctkCmdLineModuleDirectoryWatcher::commandLineModules() const
+{
+  return d->commandLineModules();
 }
 
 
@@ -114,6 +128,15 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::setDebug(bool debug)
 
 
 //-----------------------------------------------------------------------------
+void ctkCmdLineModuleDirectoryWatcherPrivate::setDirectories(const QStringList& directories)
+{
+  QStringList validDirectories = this->filterInvalidDirectories(directories);
+  this->setModules(validDirectories);
+  this->updateWatchedPaths(validDirectories, this->MapFileNameToReference.keys());
+}
+
+
+//-----------------------------------------------------------------------------
 QStringList ctkCmdLineModuleDirectoryWatcherPrivate::directories() const
 {
   return this->FileSystemWatcher->directories();
@@ -121,34 +144,67 @@ QStringList ctkCmdLineModuleDirectoryWatcherPrivate::directories() const
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcherPrivate::files() const
+QStringList ctkCmdLineModuleDirectoryWatcherPrivate::commandLineModules() const
 {
+  // So, the commandLineModules() method returns all files registered with
+  // QFileSystemWatcher, which means we must filter out any invalid ones before
+  // asking QFileSystemWatcher to watch them.
   return this->FileSystemWatcher->files();
 }
 
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDirectoryWatcherPrivate::setDirectories(const QStringList& directories)
+QStringList ctkCmdLineModuleDirectoryWatcherPrivate::additionalModules() const
 {
-  QStringList validDirectories = this->filterInvalidDirectories(directories);
-  this->setModuleReferences(validDirectories);
-  this->updateWatchedPaths(validDirectories, this->MapFileNameToReference.keys());
+  // So, in comparison to commandLineModules(), we store the list of
+  // modules that are watched in addition to the directories.
+  return this->AdditionalModules;
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDirectoryWatcherPrivate::setAdditionalModules(const QStringList& executables)
+{
+  QStringList filteredFileNames = this->filterFilesNotInCurrentDirectories(executables);
+  QStringList filteredAdditionalModules = this->filterFilesNotInCurrentDirectories(this->AdditionalModules);
+
+  this->unloadModules(filteredAdditionalModules);
+  QList<ctkCmdLineModuleReference> refs = this->loadModules(filteredFileNames);
+
+  QStringList validFileNames;
+
+  for (int i = 0; i < refs.size(); ++i)
+  {
+    if (refs[i])
+    {
+      validFileNames << refs[i].location().toLocalFile();
+    }
+  }
+
+  this->AdditionalModules = validFileNames;
+  this->updateWatchedPaths(this->directories(), this->MapFileNameToReference.keys());
+
+  if (this->Debug) qDebug() << "ctkCmdLineModuleDirectoryWatcherPrivate::setAdditionalModules watching:" << this->AdditionalModules;
 }
 
 
 //-----------------------------------------------------------------------------
 void ctkCmdLineModuleDirectoryWatcherPrivate::updateWatchedPaths(const QStringList& directories, const QStringList& files)
 {
+  // This method is the main interface to QFileSystemWatcher. The input parameters
+  // directories, and files are quite simply what is being watched. So all directories
+  // and all files must be valid examples of things to watch.
+
   QStringList currentDirectories = this->directories();
-  QStringList currentFiles = this->files();
+  QStringList currentCommandLineModules = this->commandLineModules();
 
   if (currentDirectories.size() > 0)
   {
     this->FileSystemWatcher->removePaths(currentDirectories);
   }
-  if (currentFiles.size() > 0)
+  if (currentCommandLineModules.size() > 0)
   {
-    this->FileSystemWatcher->removePaths(currentFiles);
+    this->FileSystemWatcher->removePaths(currentCommandLineModules);
   }
 
   if (directories.size() > 0)
@@ -158,6 +214,11 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::updateWatchedPaths(const QStringLi
   if (files.size() > 0)
   {
     this->FileSystemWatcher->addPaths(files);
+  }
+
+  if (this->Debug)
+  {
+    qDebug() << "ctkCmdLineModuleDirectoryWatcherPrivate::updateWatchedPaths watching directories:\n" << directories << "\n and files:\n" << files;
   }
 }
 
@@ -176,6 +237,50 @@ QStringList ctkCmdLineModuleDirectoryWatcherPrivate::filterInvalidDirectories(co
       {
         result << dir.absolutePath();
       }
+    }
+  }
+
+  return result;
+}
+
+
+//-----------------------------------------------------------------------------
+QStringList ctkCmdLineModuleDirectoryWatcherPrivate::filterFilesNotInCurrentDirectories(const QStringList& filenames) const
+{
+  QStringList currentDirectories = this->directories();
+  QStringList filteredFileNames;
+
+  for (int i = 0; i < filenames.size(); i++)
+  {
+    QFileInfo fileInfo(filenames[i]);
+
+    if (fileInfo.exists() && !(currentDirectories.contains(fileInfo.absolutePath())))
+    {
+      filteredFileNames << fileInfo.absoluteFilePath();
+    }
+  }
+  return filteredFileNames;
+}
+
+
+//-----------------------------------------------------------------------------
+QStringList ctkCmdLineModuleDirectoryWatcherPrivate::getExecutablesInDirectory(const QString& path) const
+{
+  QStringList result;
+
+  QString executable;
+  QFileInfo executableFileInfo;
+
+  QDir dir = QDir(path);
+  if (dir.exists())
+  {
+    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::Executable);
+    QFileInfoList executablesFileInfoList = dir.entryInfoList();
+
+    foreach (executableFileInfo, executablesFileInfoList)
+    {
+      executable = executableFileInfo.absoluteFilePath();
+      result << executable;
     }
   }
 
@@ -209,34 +314,9 @@ QStringList ctkCmdLineModuleDirectoryWatcherPrivate::extractCurrentlyWatchedFile
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDirectoryWatcherPrivate::getExecutablesInDirectory(const QString& path) const
+void ctkCmdLineModuleDirectoryWatcherPrivate::setModules(const QStringList &directories)
 {
-  QStringList result;
-
-  QString executable;
-  QFileInfo executableFileInfo;
-
-  QDir dir = QDir(path);
-  if (dir.exists())
-  {
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::Executable);
-    QFileInfoList executablesFileInfoList = dir.entryInfoList();
-
-    foreach (executableFileInfo, executablesFileInfoList)
-    {
-      executable = executableFileInfo.absoluteFilePath();
-      result << executable;
-    }
-  }
-
-  return result;
-}
-
-
-//-----------------------------------------------------------------------------
-void ctkCmdLineModuleDirectoryWatcherPrivate::setModuleReferences(const QStringList &directories)
-{
-  // Note: This method, is called from setDirectories and updateModuleReferences,
+  // Note: This method, is called from setDirectories and updateModules,
   // so the input directories list may be longer or shorter than the currently watched directories.
   // In addition, within those directories, programs may have been added/removed.
 
@@ -306,9 +386,9 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::setModuleReferences(const QStringL
 
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDirectoryWatcherPrivate::updateModuleReferences(const QString &directory)
+void ctkCmdLineModuleDirectoryWatcherPrivate::updateModules(const QString &directory)
 {
-  // Note: If updateModuleReferences is only called from onDirectoryChanged which is only called
+  // Note: If updateModules is only called from onDirectoryChanged which is only called
   // when an EXISTING directory is updated, then this if clause should never be true.
 
   QStringList currentlyWatchedDirectories = this->directories();
@@ -316,7 +396,8 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::updateModuleReferences(const QStri
   {
     currentlyWatchedDirectories << directory;
   }
-  this->setModuleReferences(currentlyWatchedDirectories);
+  this->setModules(currentlyWatchedDirectories);
+  this->updateWatchedPaths(currentlyWatchedDirectories, this->MapFileNameToReference.keys());
 }
 
 
@@ -373,7 +454,7 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::onDirectoryChanged(const QString &
 
   if (validDirectories.size() > 0)
   {
-    updateModuleReferences(path);
+    updateModules(path);
 
     if (this->Debug) qDebug() << "Reloaded modules in" << path;
   }
