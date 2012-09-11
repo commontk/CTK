@@ -3,6 +3,9 @@ CTK Command Line Modules   {#CommandLineModules_Page}
 
 \brief Overview about the Command Line Modules support in CTK.
 
+\internal This page is best viewed in its [Doxygen processed]
+(http://www.commontk.org/docs/html/CommandLineModules_Page.html) form. \endinternal
+
 [TOC]
 
 CTK provides an API for interfacing with self-describing *runnable* modules which can provide an
@@ -12,7 +15,7 @@ usually (but not constrained to) a local executable and also referred to as a *c
 The XML schema for the parameter description and most of the supported feature set for a module
 has been adopted from the [Slicer Execution Model](http://www.slicer.org/slicerWiki/index.php/Slicer3:Execution_Model_Documentation).
 
-The API provided by CTK allows the management, GUI generation, and asynchronuous execution
+The API provided by CTK allows the management, GUI generation, and asynchronous execution
 of such modules in a toolkit-independent and interoperable way. Application writers can rely on the
 provided libraries and their API to quickly integrate command line modules into their applications.
 
@@ -33,7 +36,7 @@ Here is short overview about the provided feature set:
 - XML validation and error reporting
 - Caching of XML descriptions
 - Partially thread-safe, allowing to concurrently add and remove modules
-- Asynchronuous communication with running modules
+- Asynchronous communication with running modules
   + Start/pause/cancel support (back-end and operating system dependent)
   + Result reporting
   + Output reporting
@@ -108,11 +111,11 @@ the module XML description for a specific module.
 
 The central class for managing modules is the ctkCmdLineModuleManager. There must be at least one back-end registered
 with the manager for module registrations to succeed. A module is registered by calling the
-ctkCmdLineModuleManager::register(const QUrl&) method, providing the URL to the module. If the URL scheme is not handled
+ctkCmdLineModuleManager::registerModule(const QUrl&) method, providing the URL to the module. If the URL scheme is not handled
 by a previously registerd back-end, an exception is thrown. If registration succeeds, the method returns a
 ctkCmdLineModuleReference object.
 
-Creating specific front-ends for a given module is actually independent of the ctkModuleManagerManager, except that a
+Creating specific front-ends for a given module is actually independent of the ctkCmdLineModuleManager, except that a
 ctkCmdLineModuleReference object is needed. To create a front-end, usually the
 ctkCmdLineModuleFrontendFactory::create(const ctkCmdLineModuleReference&) method is called, returning a
 ctkCmdLineModuleFrontend pointer.

@@ -114,7 +114,7 @@ public:
   void registerBackend(ctkCmdLineModuleBackend* backend);
 
   /**
-   * @brief Registers a module, identified by the give URL.
+   * @brief Registers a module, identified by the given URL.
    * @param location The URL for the new module.
    * @return A module reference.
    * @throws ctkInvalidArgumentException if no back-end for the given URL scheme was registered
