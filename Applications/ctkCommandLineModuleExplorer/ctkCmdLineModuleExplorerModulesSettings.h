@@ -54,6 +54,8 @@ private:
   ctkCmdLineModuleManager* ModuleManager;
   ctkCmdLineModuleExplorerShowXmlAction* ShowXmlAction;
   QIcon WarningIcon;
+
+  bool ModulesRegistered;
 };
 
 #endif // CTKCMDLINEMODULEEXPLORERMODULESSETTINGS_H

@@ -39,6 +39,7 @@ ctkCmdLineModuleExplorerModulesSettings::ctkCmdLineModuleExplorerModulesSettings
   : ui(new Ui::ctkCmdLineModuleExplorerModulesSettings)
   , ModuleManager(moduleManager)
   , ShowXmlAction(new ctkCmdLineModuleExplorerShowXmlAction(this))
+  , ModulesRegistered(false)
 {
   ui->setupUi(this);
 
@@ -91,7 +92,9 @@ void ctkCmdLineModuleExplorerModulesSettings::applySettings()
   sync.addFuture(future2);
   sync.waitForFinished();
 
+  this->ModulesRegistered = true;
   this->pathsAdded(addedModules);
+  this->ModulesRegistered = false;
 
   this->unsetCursor();
 
@@ -122,16 +125,21 @@ void ctkCmdLineModuleExplorerModulesSettings::pathsAdded(const QStringList &path
               item->icon().pixmap(item->icon().availableSizes().front()),
               QApplication::style()->standardPixmap(QStyle::SP_MessageBoxWarning));
       }
-      item->setIcon(this->WarningIcon);
 
       QString toolTip = path + "\n\n" + tr("Warning") + ":\n\n";
       if (moduleRef)
       {
+        item->setIcon(this->WarningIcon);
         toolTip += moduleRef.xmlValidationErrorString();
+      }
+      else if (this->ModulesRegistered)
+      {
+        item->setIcon(this->WarningIcon);
+        toolTip += tr("No XML output available.");
       }
       else
       {
-        toolTip += tr("No XML output available.");
+        toolTip = path;
       }
       item->setToolTip(toolTip);
     }
