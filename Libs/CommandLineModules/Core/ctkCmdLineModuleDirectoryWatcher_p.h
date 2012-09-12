@@ -33,7 +33,9 @@ class QFileSystemWatcher;
 
 /**
  * \class ctkCmdLineModuleDirectoryWatcherPrivate
- * \brief Private implementation class implementing directory scanning to load new modules into a ctkCmdLineModuleManager.
+ * \brief Private implementation class implementing directory/file watching to
+ * load new modules into a ctkCmdLineModuleManager.
+ *
  * \ingroup CommandLineModulesCore_API
  * \author m.clarkson@ucl.ac.uk
  */
@@ -63,10 +65,19 @@ public:
   QStringList directories() const;
 
   /**
-   * \see ctkCmdLineModuleDirectoryWatcher::files
+   * \see ctkCmdLineModuleDirectoryWatcher::setAdditionalModules
    */
-  QStringList files() const;
+  void setAdditionalModules(const QStringList& files);
 
+  /**
+   * \see ctkCmdLineModuleDirectoryWatcher::additionalModules
+   */
+  QStringList additionalModules() const;
+
+  /**
+   * \see ctkCmdLineModuleDirectoryWatcher::commandLineModules
+   */
+  QStringList commandLineModules() const;
 
 public Q_SLOTS:
 
@@ -84,6 +95,8 @@ private:
 
   /**
    * \brief Used to update the QFileSystemWatcher with the right list of directories and files to watch.
+   * This is the main method, called by others to update what is being watched in terms of both files and directories.
+   *
    * \param directories list of absolute directory paths
    * \param files list of absolute file paths
    */
@@ -92,46 +105,62 @@ private:
   /**
    * \brief Takes a list of directories, and only returns ones that are valid,
    * meaning that the directory name is non-null, non-empty, and the directory exists.
+   *
    * \param directories a list of directories, relative or absolute.
-   * \return a list of directories, denoted by their absolute path.
+   * \return a list of valid directories, denoted by their absolute path.
    */
   QStringList filterInvalidDirectories(const QStringList& directories) const;
 
   /**
+   * \brief Takes a list of filenames, and only returns ones that are not contained within
+   * the current list of directories that are being watched.
+   *
+   * \param filenames a list of filenames, relative or absolute.
+   * \return a list of valid filenames, denoted by absolute path, that are not contained within
+   * the current list of directories being scanned.
+   */
+  QStringList filterFilesNotInCurrentDirectories(const QStringList& filenames) const;
+
+  /**
+   * \brief Returns a list of executable files (not necessarily valid command line clients) in a directory.
+   *
+   * \param directory the absolute or relative path of a directory.
+   * \return a list of absolute path names to executable files
+   */
+  QStringList getExecutablesInDirectory(const QString& directory) const;
+
+  /**
    * \brief Uses the MapFileNameToReference to work out a list of valid command line modules in a given directory.
+   *
    * \param directory the absolute or relative path of a directory.
    * \return a list of executables, denoted by their absolute path.
    */
   QStringList extractCurrentlyWatchedFilenamesInDirectory(const QString& directory) const;
 
   /**
-   * \brief Returns a list of executable files (not necessarily valid command line clients) in a directory.
-   * \param directory A directory
-   * \return QStringList a list of absolute path names to executable files
-   */
-  QStringList getExecutablesInDirectory(const QString& directory) const;
-
-  /**
-   * \brief Main method to update the current list of watched directories and files.
+   * \brief Main method to update the current list of watched executables in a given set of directories.
    * \param directories a list of directories, denoted by their absolute path.
    */
-  void setModuleReferences(const QStringList &directories);
+  void setModules(const QStringList &directories);
 
   /**
-   * \brief Called from the onDirectoryChanged slot to update the current list by calling back to setModuleReferences.
+   * \brief Called from the onDirectoryChanged slot to update the current list of modules
+   * by calling back to setModules.
    * \param directory denoted by its absolute path.
    */
-  void updateModuleReferences(const QString &directory);
+  void updateModules(const QString &directory);
 
   /**
    * \brief Uses the ctkCmdLineModuleManager to try and add the executables to the list
    * of executables, and if successful it is added to this->MapFileNameToReference.
+   *
    * \param executables A list of paths to executable files, denoted by an absolute path.
    */
   QList<ctkCmdLineModuleReference> loadModules(const QStringList& executables);
 
   /**
    * \brief Removes the executables from both the ctkCmdLineModuleManager and this->MapFileNameToReference.
+   *
    * \param executables path to an executable file, denoted by its absolute path.
    */
   void unloadModules(const QStringList& executables);
@@ -139,6 +168,7 @@ private:
   QHash<QString, ctkCmdLineModuleReference> MapFileNameToReference;
   ctkCmdLineModuleManager* ModuleManager;
   QFileSystemWatcher* FileSystemWatcher;
+  QStringList AdditionalModules;
   bool Debug;
 };
 
