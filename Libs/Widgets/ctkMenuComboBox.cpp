@@ -126,7 +126,7 @@ void ctkMenuComboBoxPrivate::init()
 //  ------------------------------------------------------------------------
 QAction* ctkMenuComboBoxPrivate::actionByTitle(const QString& text, const QMenu* parentMenu)
 {
-  if (parentMenu->title() == text)
+  if (!parentMenu || parentMenu->title() == text)
     {
     return 0;
     }
