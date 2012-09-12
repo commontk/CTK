@@ -26,6 +26,14 @@
 #include <QDirIterator>
 #include <QTextStream>
 #include <QMutex>
+#include <QHash>
+
+#if (QT_VERSION < QT_VERSION_CHECK(4,7,0))
+int qHash(const QUrl& url)
+{
+  return qHash(url.toString());
+}
+#endif
 
 struct ctkCmdLineModuleCachePrivate
 {
