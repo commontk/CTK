@@ -30,6 +30,7 @@
 
 QList<QWidget*> ctkColorDialog::DefaultTabs;
 int ctkColorDialog::DefaultTab = -1;
+QString ctkColorDialog::LastColorName = QString();
 
 //------------------------------------------------------------------------------
 class ctkColorDialogPrivate
@@ -42,6 +43,7 @@ public:
   void init();
   QTabWidget* LeftTabWidget;
   QWidget*    BasicTab;
+  QString ColorName;
 };
 
 //------------------------------------------------------------------------------
@@ -72,6 +74,9 @@ void ctkColorDialogPrivate::init()
   // well.
   q->setSizeGripEnabled(true);
   q->layout()->setSizeConstraint(QLayout::SetDefaultConstraint);
+
+  QObject::connect(q, SIGNAL(currentColorChanged(QColor)),
+                   q, SLOT(resetColorName()));
 }
 
 //------------------------------------------------------------------------------
@@ -146,10 +151,15 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
     {
     dlg.insertTab(tab->property("tabIndex").toInt(), tab, tab->windowTitle());
-    if (tab->property("signal").isValid())
+    if (tab->property("colorSignal").isValid())
       {
-      QObject::connect(tab, tab->property("signal").toString().toLatin1(),
+      QObject::connect(tab, tab->property("colorSignal").toString().toLatin1(),
                        &dlg, SLOT(setColor(QColor)));
+      }
+    if (tab->property("nameSignal").isValid())
+      {
+      QObject::connect(tab, tab->property("nameSignal").toString().toLatin1(),
+                       &dlg, SLOT(setColorName(QString)));
       }
     }
   dlg.setCurrentTab(ctkColorDialog::DefaultTab);
@@ -157,23 +167,38 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
     {
     dlg.removeTab(dlg.indexOf(tab));
-    if (tab->property("signal").isValid())
+    if (tab->property("colorSignal").isValid())
       {
-      QObject::disconnect(tab, tab->property("signal").toString().toLatin1(),
+      QObject::disconnect(tab, tab->property("colorSignal").toString().toLatin1(),
                           &dlg, SLOT(setColor(QColor)));
+      }
+    if (tab->property("nameSignal").isValid())
+      {
+      QObject::disconnect(tab, tab->property("nameSignal").toString().toLatin1(),
+                          &dlg, SLOT(setColorName(QString)));
       }
     tab->setParent(0);
     tab->hide();
     }
-  
+  ctkColorDialog::LastColorName = dlg.colorName();
   return dlg.selectedColor();
 }
 
 //------------------------------------------------------------------------------
-void ctkColorDialog::insertDefaultTab(int tabIndex, QWidget* widget, const QString& label, const char* signal)
+QString ctkColorDialog::getColorName()
+{
+  return ctkColorDialog::LastColorName;
+}
+
+//------------------------------------------------------------------------------
+void ctkColorDialog::insertDefaultTab(int tabIndex, QWidget* widget,
+                                      const QString& label,
+                                      const char* colorSignal,
+                                      const char* nameSignal)
 {
   widget->setWindowTitle(label);
-  widget->setProperty("signal", signal);
+  widget->setProperty("colorSignal", colorSignal);
+  widget->setProperty("nameSignal", nameSignal);
   widget->setProperty("tabIndex", tabIndex);
 
   ctkColorDialog::DefaultTabs << widget;
@@ -192,4 +217,27 @@ void ctkColorDialog::setColor(const QColor& color)
   this->QColorDialog::setCurrentColor(color);
 }
 
+//------------------------------------------------------------------------------
+void ctkColorDialog::setColorName(const QString& name)
+{
+  Q_D(ctkColorDialog);
+  if (d->ColorName == name)
+    {
+    return;
+    }
+  d->ColorName = name;
+  emit currentColorNameChanged(d->ColorName);
+}
 
+//------------------------------------------------------------------------------
+QString ctkColorDialog::colorName()const
+{
+  Q_D(const ctkColorDialog);
+  return d->ColorName;
+}
+
+//------------------------------------------------------------------------------
+void ctkColorDialog::resetColorName()
+{
+  this->setColorName(QString());
+}

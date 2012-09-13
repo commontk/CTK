@@ -43,14 +43,19 @@ public:
   explicit ctkColorDialog(QWidget* parent = 0);
   explicit ctkColorDialog(const QColor& initial, QWidget* parent = 0);
   virtual ~ctkColorDialog();
-  
+
   /// Add an extra widget under the file format combobox. If a label is
   /// given, it will appear in the first column.
   /// The widget is reparented to ctkColorDialog
   /// The ownership of the widget is taken.
-  /// You must manually connect the color changed signal of the widget 
+  /// You must manually connect the color changed signal of the widget
   /// to ctkColorDialog::setColor(QColor)
+  /// Same apply if you want to specify a color name, you must connect the
+  /// color name changed signal to ctkColorDialog::setColorName(QString) but
+  /// you have to make sure the color name is set after setColor as it always
+  /// resets the color name.
   inline void addTab(QWidget* widget, const QString& label);
+
   /// Same as addTab(), in addition, \a tabIndex control the tab index of the widget.
   /// If index is -1, the tab is appended (same as addDefaultTab). The last
   /// tab added with an index of 0 will be the first tab open
@@ -67,10 +72,13 @@ public:
   /// Return the extra widget if any
   /// Be careful with the "Basic" tab.
   QWidget* widget(int index)const;
-  
+
   /// Returns the index position of the page occupied by the widget w,
   /// or -1 if the widget cannot be found
   int indexOf(QWidget* widget)const;
+
+  /// Return the current color name if any has been set.
+  QString colorName()const;
 
   /// Pops up a modal color dialog with the given window \a title (or "Select Color" if none is
   /// specified), lets the user choose a color, and returns that color. The color is initially set
@@ -81,28 +89,48 @@ public:
   /// QColorDialog::DontUseNativeDialog is forced
   static QColor getColor(const QColor &initial, QWidget *parent,
                          const QString &title, ColorDialogOptions options = 0);
-  /// Add a custom widget as an additional tab of the color dialog created by 
-  /// ctkColorDialog::getColor. \a label is title of the tab and \a signal is the signal fired by 
+  /// Return the last selected color name if any. getColorName() call is only
+  /// valid after a getColor() call.
+  /// \sa getColor
+  static QString getColorName();
+
+  /// Add a custom widget as an additional tab of the color dialog created by
+  /// ctkColorDialog::getColor. \a label is title of the tab and \a signal is the signal fired by
   /// the widget whenever a QColor is changed, typically: SIGNAL(currentColorChanged(QColor)). It
   /// is internally connected to set the current color of the dialog
-  static inline void addDefaultTab(QWidget* widget, const QString& label, const char* signal = 0);
+  static inline void addDefaultTab(QWidget* widget, const QString& label,
+                                   const char* colorSignal = 0,
+                                   const char* nameSignal = 0);
   /// Same as addDefaultTab, in addition, \a tabIndex control the tab index of the widget.
   /// If index is -1, the tab is appended (same as addDefaultTab). The last
   /// tab added with an index of 0 will be the first tab open
-  static void insertDefaultTab(int tabIndex, QWidget* widget, const QString& label, const char* signal = 0);
+  static void insertDefaultTab(int tabIndex, QWidget* widget, const QString& label,
+                               const char* colorSignal = 0,
+                               const char* nameSignal = 0);
   /// Index of the tab to make default (active when getColor is called).
   /// -1 for the "Basic Colors", it's the default behavior
   static void setDefaultTab(int index);
 
 public Q_SLOTS:
-  /// Slotify QColorDialog::setCurrentColor(QColor)
+  /// Slot-ify QColorDialog::setCurrentColor(QColor)
   void setColor(const QColor& color);
+
+  /// Set the color name.
+  /// Note that each time the color is changed the name is reset.
+  void setColorName(const QString& name);
+
+Q_SIGNALS:
+  void currentColorNameChanged(const QString& colorName);
+
+protected Q_SLOTS:
+  void resetColorName();
 
 protected:
   QScopedPointer<ctkColorDialogPrivate> d_ptr;
 
   static QList<QWidget*> DefaultTabs;
   static int DefaultTab;
+  static QString LastColorName;
 private:
   Q_DECLARE_PRIVATE(ctkColorDialog);
   Q_DISABLE_COPY(ctkColorDialog);
@@ -115,9 +143,11 @@ void ctkColorDialog::addTab(QWidget* widget, const QString& label)
 }
 
 //------------------------------------------------------------------------------
-void ctkColorDialog::addDefaultTab(QWidget* widget, const QString& label, const char* signal)
+void ctkColorDialog::addDefaultTab(QWidget* widget, const QString& label,
+                                   const char* colorSignal,
+                                   const char* nameSignal)
 {
-  ctkColorDialog::insertDefaultTab(-1, widget, label, signal);
+  ctkColorDialog::insertDefaultTab(-1, widget, label, colorSignal, nameSignal);
 }
 
 #endif
