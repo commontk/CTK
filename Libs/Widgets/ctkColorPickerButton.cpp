@@ -42,9 +42,11 @@ public:
   ctkColorPickerButtonPrivate(ctkColorPickerButton& object);
   void init();
   void computeIcon();
+  QString text()const;
 
   QIcon  Icon;
   QColor Color;
+  QString ColorName;
   bool   DisplayColorName;
   ctkColorPickerButton::ColorDialogOptions DialogOptions;
   mutable QSize CachedSizeHint;
@@ -55,6 +57,7 @@ ctkColorPickerButtonPrivate::ctkColorPickerButtonPrivate(ctkColorPickerButton& o
   : q_ptr(&object)
 {
   this->Color = Qt::black;
+  this->ColorName = QString();
   this->DisplayColorName = true;
   this->DialogOptions = 0;
 }
@@ -82,6 +85,24 @@ void ctkColorPickerButtonPrivate::computeIcon()
   p.drawRect(2, 2, pix.width() - 5, pix.height() - 5);
 
   this->Icon = QIcon(pix);
+}
+
+//-----------------------------------------------------------------------------
+QString ctkColorPickerButtonPrivate::text()const
+{
+  Q_Q(const ctkColorPickerButton);
+  if (!this->DisplayColorName)
+    {
+    return q->text();
+    }
+  if (this->ColorName.isEmpty())
+    {
+    return this->Color.name();
+    }
+  else
+    {
+    return this->ColorName;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -123,25 +144,28 @@ ctkColorPickerButton::~ctkColorPickerButton()
 void ctkColorPickerButton::changeColor()
 {
   Q_D(ctkColorPickerButton);
-  QColor res;
-    QColorDialog::ColorDialogOptions options;
-    options |= QColorDialog::ColorDialogOption(
-      static_cast<int>(d->DialogOptions & ShowAlphaChannel));
-    options |= QColorDialog::ColorDialogOption(
-      static_cast<int>(d->DialogOptions & NoButtons));
-    options |= QColorDialog::ColorDialogOption(
-      static_cast<int>(d->DialogOptions & DontUseNativeDialog));
+  QColor newColor;
+  QString newColorName;
+  QColorDialog::ColorDialogOptions options;
+  options |= QColorDialog::ColorDialogOption(
+    static_cast<int>(d->DialogOptions & ShowAlphaChannel));
+  options |= QColorDialog::ColorDialogOption(
+    static_cast<int>(d->DialogOptions & NoButtons));
+  options |= QColorDialog::ColorDialogOption(
+    static_cast<int>(d->DialogOptions & DontUseNativeDialog));
   if (d->DialogOptions & UseCTKColorDialog)
     {
-    res = ctkColorDialog::getColor(d->Color, this, QString(""),options);
+    newColor = ctkColorDialog::getColor(d->Color, this, QString(""),options);
+    newColorName = ctkColorDialog::getColorName();
     }
   else
     {
-    res = QColorDialog::getColor(d->Color, this, QString(""), options);
+    newColor = QColorDialog::getColor(d->Color, this, QString(""), options);
     }
-  if (res.isValid())
+  if (newColor.isValid())
     {
-    this->setColor(res);
+    this->setColor(newColor);
+    this->setColorName(newColorName);
     }
 }
 
@@ -210,16 +234,36 @@ QColor ctkColorPickerButton::color()const
 }
 
 //-----------------------------------------------------------------------------
+void ctkColorPickerButton::setColorName(const QString& newColorName)
+{
+  Q_D(ctkColorPickerButton);
+  if (newColorName == d->ColorName)
+    {
+    return;
+    }
+
+  d->ColorName = newColorName;
+  d->CachedSizeHint = QSize();
+  this->update();
+  this->updateGeometry();
+  emit colorNameChanged(d->ColorName);
+}
+
+//-----------------------------------------------------------------------------
+QString ctkColorPickerButton::colorName()const
+{
+  Q_D(const ctkColorPickerButton);
+  return d->ColorName;
+}
+
+//-----------------------------------------------------------------------------
 void ctkColorPickerButton::paintEvent(QPaintEvent *)
 {
   Q_D(ctkColorPickerButton);
   QStylePainter p(this);
   QStyleOptionButton option;
   this->initStyleOption(&option);
-  if (d->DisplayColorName)
-    {
-    option.text = d->Color.name();
-    }
+  option.text = d->text();
   option.icon = d->Icon;
   p.drawControl(QStyle::CE_PushButton, option);
 }
@@ -228,7 +272,7 @@ void ctkColorPickerButton::paintEvent(QPaintEvent *)
 QSize ctkColorPickerButton::sizeHint()const
 {
   Q_D(const ctkColorPickerButton);
-  if (d->DisplayColorName || !this->text().isEmpty())
+  if (!d->DisplayColorName && !this->text().isEmpty())
     {
     return this->QPushButton::sizeHint();
     }
@@ -237,17 +281,31 @@ QSize ctkColorPickerButton::sizeHint()const
     return d->CachedSizeHint;
     }
 
+  // If no text, the sizehint is a QToolButton sizeHint
   QStyleOptionButton pushButtonOpt;
   this->initStyleOption(&pushButtonOpt);
-  QStyleOptionToolButton opt;
-  (&opt)->QStyleOption::operator=(pushButtonOpt);
-  opt.arrowType = Qt::NoArrow;
-  opt.icon = d->Icon;
+  pushButtonOpt.text = d->text();
   int iconSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
-  opt.iconSize = QSize(iconSize, iconSize);
-  opt.rect.setSize(opt.iconSize); // PM_MenuButtonIndicator depends on the height
-  d->CachedSizeHint = this->style()->sizeFromContents(
-    QStyle::CT_ToolButton, &opt, opt.iconSize, this).
-    expandedTo(QApplication::globalStrut());
+  if (pushButtonOpt.text == QString())
+    {
+    QStyleOptionToolButton opt;
+    (&opt)->QStyleOption::operator=(pushButtonOpt);
+    opt.arrowType = Qt::NoArrow;
+    opt.icon = d->Icon;
+    opt.iconSize = QSize(iconSize, iconSize);
+    opt.rect.setSize(opt.iconSize); // PM_MenuButtonIndicator depends on the height
+    d->CachedSizeHint = this->style()->sizeFromContents(
+      QStyle::CT_ToolButton, &opt, opt.iconSize, this).
+      expandedTo(QApplication::globalStrut());
+    }
+  else
+    {
+    pushButtonOpt.icon = d->Icon;
+    pushButtonOpt.iconSize = QSize(iconSize, iconSize);
+    pushButtonOpt.rect.setSize(pushButtonOpt.iconSize); // PM_MenuButtonIndicator depends on the height
+    d->CachedSizeHint = (style()->sizeFromContents(
+                           QStyle::CT_PushButton, &pushButtonOpt, pushButtonOpt.iconSize, this).
+                         expandedTo(QApplication::globalStrut()));
+    }
   return d->CachedSizeHint;
 }
