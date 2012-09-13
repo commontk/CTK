@@ -65,6 +65,14 @@ QString ctkCmdLineModuleDescription::title() const
   return d->Title;
 }
 
+
+//----------------------------------------------------------------------------
+QString ctkCmdLineModuleDescription::categoryDotTitle() const
+{
+  return this->category() + "." + this->title();
+}
+
+
 //----------------------------------------------------------------------------
 QString ctkCmdLineModuleDescription::description() const
 {
