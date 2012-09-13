@@ -266,7 +266,8 @@ void ctkCmdLineModuleQtCustomizationTester::testCustomization()
   fpFrontend->guiHandle();
 
   QString expectedImageValue = "/path/to/image2";
-  QCOMPARE(fpFrontend->value("param0").toString(), expectedImageValue);
+  QString actualImageValue = fpFrontend->value("param0").toString();
+  QCOMPARE(actualImageValue, expectedImageValue);
 
   // get a custom QVariant value holding the custom widget
   QCOMPARE(fpFrontend->value("param0", ctkCmdLineModuleFrontend::UserRole).value<const MyImageData*>()->Path,

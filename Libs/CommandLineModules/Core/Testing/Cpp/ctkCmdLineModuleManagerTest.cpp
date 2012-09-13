@@ -32,6 +32,10 @@
 #include <QDataStream>
 #include <QDebug>
 
+#if (QT_VERSION < QT_VERSION_CHECK(4,7,0))
+extern int qHash(const QUrl& url);
+#endif
+
 namespace {
 
 class BackendMockUp : public ctkCmdLineModuleBackend

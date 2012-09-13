@@ -29,7 +29,8 @@
 #include <QHash>
 
 #if (QT_VERSION < QT_VERSION_CHECK(4,7,0))
-int qHash(const QUrl& url)
+#include "ctkCommandLineModulesCoreExport.h"
+CTK_CMDLINEMODULECORE_EXPORT int qHash(const QUrl& url)
 {
   return qHash(url.toString());
 }
