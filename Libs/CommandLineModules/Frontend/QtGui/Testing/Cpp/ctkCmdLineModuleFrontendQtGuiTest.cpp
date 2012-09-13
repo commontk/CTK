@@ -22,6 +22,11 @@
 // Qt includes
 #include <QSpinBox>
 #include <QComboBox>
+#include <QVariant>
+
+#if (QT_VERSION < QT_VERSION_CHECK(4,7,0))
+Q_DECLARE_METATYPE(QVariant)
+#endif
 
 // CTK includes
 #include "ctkCmdLineModuleManager.h"
@@ -32,6 +37,10 @@
 #include "ctkCmdLineModuleParameter.h"
 
 #include "ctkTest.h"
+
+#if (QT_VERSION < QT_VERSION_CHECK(4,7,0))
+extern int qHash(const QUrl& url);
+#endif
 
 namespace {
 
