@@ -382,7 +382,7 @@
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
+              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Readable</set>
             </property>
           </widget>
         </xsl:when>
@@ -391,7 +391,7 @@
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
+              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Writable</set>
             </property>
           </widget>
         </xsl:otherwise>
@@ -414,7 +414,7 @@
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
+              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Readable</set>
             </property>
           </widget>
         </xsl:when>
@@ -423,7 +423,7 @@
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
+              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Writable</set>
             </property>
           </widget>
         </xsl:otherwise>
