@@ -47,6 +47,10 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKAbstractView : public QWidget
   Q_PROPERTY(QColor backgroundColor2 READ backgroundColor2 WRITE setBackgroundColor)
   Q_PROPERTY(bool gradientBackground READ gradientBackground WRITE setGradientBackground)
   Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
+  /// This property controls whether a corner annotation is visible with the
+  /// last FPS value.
+  /// false by default.
+  Q_PROPERTY(bool fpsVisible READ isFPSVisible WRITE setFPSVisible)
 public:
 
   typedef QWidget Superclass;
@@ -82,6 +86,9 @@ public Q_SLOTS:
   /// Set corner annotation \a text
   virtual void setCornerAnnotationText(const QString& text);
 
+  /// Show/Hide the FPS annotation
+  void setFPSVisible(bool show);
+
 public:
   /// Get underlying RenderWindow
   Q_INVOKABLE vtkRenderWindow* renderWindow()const;
@@ -116,10 +123,20 @@ public:
   /// Return if rendering is enabled
   bool renderEnabled() const;
 
+  /// Return true if the FPS annotation is visible, false otherwise.
+  bool isFPSVisible() const;
+
+  /// Return the current FPS
+  double fps()const;
+
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
   virtual bool hasHeightForWidth()const;
   virtual int heightForWidth(int width)const;
+
+protected Q_SLOTS:
+  void onRender();
+  void updateFPS();
 
 protected:
   QScopedPointer<ctkVTKAbstractViewPrivate> d_ptr;
