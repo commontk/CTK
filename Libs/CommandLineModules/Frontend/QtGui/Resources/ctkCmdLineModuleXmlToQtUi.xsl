@@ -54,7 +54,8 @@
   <xsl:param name="fileInputValueProperty">currentPath</xsl:param>
   <xsl:param name="fileOutputValueProperty">currentPath</xsl:param>
   <xsl:param name="directoryValueProperty">currentPath</xsl:param>
-  <xsl:param name="geometryValueProperty">currentPath</xsl:param>
+  <xsl:param name="geometryInputValueProperty">currentPath</xsl:param>
+  <xsl:param name="geometryOutputValueProperty">currentPath</xsl:param>
   <xsl:param name="vectorValueProperty">text</xsl:param>
   <xsl:param name="enumerationValueProperty">currentEnumeration</xsl:param>
 
@@ -95,7 +96,8 @@
       <xsl:when test="$cliType='file' and $cliChannel='input'"><xsl:value-of select="$fileInputValueProperty"/></xsl:when>
       <xsl:when test="$cliType='file' and $cliChannel='output'"><xsl:value-of select="$fileOutputValueProperty"/></xsl:when>
       <xsl:when test="$cliType='directory'"><xsl:value-of select="$directoryValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='geometry'"><xsl:value-of select="$geometryValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='geometry' and $cliChannel='input'"><xsl:value-of select="$geometryInputValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='geometry' and $cliChannel='output'"><xsl:value-of select="$geometryOutputValueProperty"/></xsl:when>      
       <xsl:when test="$cliType='integer-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
       <xsl:when test="$cliType='double-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
       <xsl:when test="$cliType='float-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
