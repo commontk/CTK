@@ -29,6 +29,7 @@ namespace {
 
 static QString PREFIX_EXECUTABLE = "executable:";
 static QString PREFIX_PARAMETER_GROUP = "paramGroup:";
+static QString PREFIX_PARAMETER_CONTAINER = "paramContainer:";
 static QString PREFIX_PARAMETER = "parameter:";
 
 }
@@ -72,6 +73,14 @@ bool ctkCmdLineModuleObjectTreeWalker::isParameterGroup() const
   return CurrentToken == ParameterGroup;
 }
 
+
+//----------------------------------------------------------------------------
+bool ctkCmdLineModuleObjectTreeWalker::isParameterContainer() const
+{
+  return CurrentToken == ParameterContainer;
+}
+
+
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::isParameter() const
 {
@@ -86,6 +95,7 @@ QString ctkCmdLineModuleObjectTreeWalker::name() const
   {
   case Executable: return CurrentObject->objectName().mid(PREFIX_EXECUTABLE.size());
   case ParameterGroup: return CurrentObject->objectName().mid(PREFIX_PARAMETER_GROUP.size());
+  case ParameterContainer: return CurrentObject->objectName().mid(PREFIX_PARAMETER_CONTAINER.size());
   case Parameter: return CurrentObject->objectName().mid(PREFIX_PARAMETER.size());
   default: return QString();
   }
@@ -99,6 +109,7 @@ QString ctkCmdLineModuleObjectTreeWalker::label() const
   {
   case Executable: return CurrentObject->objectName().mid(PREFIX_EXECUTABLE.size());
   case ParameterGroup: return property("title").toString();
+  case ParameterContainer: return property("name").toString();
   case Parameter: return property("label").toString();
   default: return QString();
   }
@@ -235,6 +246,15 @@ bool ctkCmdLineModuleObjectTreeWalker::readNextParameterGroup()
   return !AtEnd;
 }
 
+
+//----------------------------------------------------------------------------
+bool ctkCmdLineModuleObjectTreeWalker::readNextParameterContainer()
+{
+  while (!(readNext() == ParameterContainer || AtEnd));
+  return !AtEnd;
+}
+
+
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::readNextParameter()
 {
@@ -258,6 +278,7 @@ QVariant ctkCmdLineModuleObjectTreeWalker::prefixedProperty(const QString& propN
   {
   case ctkCmdLineModuleObjectTreeWalker::Executable: prefixedName = PREFIX_EXECUTABLE + propName;
   case ctkCmdLineModuleObjectTreeWalker::ParameterGroup: prefixedName = PREFIX_PARAMETER_GROUP + propName;
+  case ctkCmdLineModuleObjectTreeWalker::ParameterContainer: prefixedName = PREFIX_PARAMETER_CONTAINER + propName;
   case ctkCmdLineModuleObjectTreeWalker::Parameter: prefixedName = PREFIX_PARAMETER + propName;
   default: ;
   }
@@ -273,6 +294,7 @@ ctkCmdLineModuleObjectTreeWalker::token(QObject* obj)
   QString name = obj->objectName();
   if (name.startsWith(PREFIX_EXECUTABLE)) return ctkCmdLineModuleObjectTreeWalker::Executable;
   if (name.startsWith(PREFIX_PARAMETER_GROUP)) return ctkCmdLineModuleObjectTreeWalker::ParameterGroup;
+  if (name.startsWith(PREFIX_PARAMETER_CONTAINER)) return ctkCmdLineModuleObjectTreeWalker::ParameterContainer;
   if (name.startsWith(PREFIX_PARAMETER)) return ctkCmdLineModuleObjectTreeWalker::Parameter;
   return ctkCmdLineModuleObjectTreeWalker::NoToken;
 }

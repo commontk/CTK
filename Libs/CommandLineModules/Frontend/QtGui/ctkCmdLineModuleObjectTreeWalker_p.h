@@ -42,6 +42,7 @@ public:
     NoToken,
     Executable,
     ParameterGroup,
+    ParameterContainer,
     Parameter
   };
 
@@ -54,6 +55,7 @@ public:
   bool atEnd() const;
 
   bool isParameterGroup() const;
+  bool isParameterContainer() const;
   bool isParameter() const;
 
   QString name() const;
@@ -74,6 +76,7 @@ public:
   TokenType readNext();
   bool readNextExecutable();
   bool readNextParameterGroup();
+  bool readNextParameterContainer();
   bool readNextParameter();
 
   TokenType tokenType() const;
