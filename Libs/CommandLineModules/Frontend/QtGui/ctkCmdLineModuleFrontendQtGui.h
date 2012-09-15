@@ -144,6 +144,13 @@ public:
 
   virtual QList<QString> parameterNames() const;
 
+  /**
+   * @brief Sets all parameters (but not parameter groups) to be enabled or disabled,
+   * so they can be made editable or not editable.
+   * @param enabled
+   */
+  virtual void setParametersEnabled(const bool& enabled);
+
 protected:
 
   /**
