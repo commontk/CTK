@@ -256,8 +256,14 @@
         <property name="checked">
           <bool><xsl:value-of select="not(@advanced)"></xsl:value-of></bool>
         </property>
-        <layout class="QGridLayout">
-          <xsl:apply-templates select="./description/following-sibling::*"/>
+        <layout class="QVBoxLayout" name="paramContainerLayout:${groupLabel}">
+          <item>
+            <widget class="QWidget" name="paramContainer:${groupLabel}">
+              <layout class="QGridLayout">
+                <xsl:apply-templates select="./description/following-sibling::*"/>
+              </layout>            
+            </widget>
+          </item>
         </layout>
       </widget>
     </item>
