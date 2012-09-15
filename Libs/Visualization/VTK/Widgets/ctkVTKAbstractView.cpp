@@ -48,6 +48,9 @@ ctkVTKAbstractViewPrivate::ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object)
   this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->RequestTimer = 0;
   this->RenderEnabled = true;
+  this->FPSVisible = false;
+  this->FPSTimer = 0;
+  this->FPS = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -67,6 +70,11 @@ void ctkVTKAbstractViewPrivate::init()
   this->RequestTimer->setSingleShot(true);
   QObject::connect(this->RequestTimer, SIGNAL(timeout()),
                    q, SLOT(forceRender()));
+
+  this->FPSTimer = new QTimer(q);
+  this->FPSTimer->setInterval(1000);
+  QObject::connect(this->FPSTimer, SIGNAL(timeout()),
+                   q, SLOT(updateFPS()));
 
   this->setupCornerAnnotation();
   this->setupRendering();
@@ -375,4 +383,54 @@ bool ctkVTKAbstractView::gradientBackground()const
   Q_D(const ctkVTKAbstractView);
   vtkRenderer* firstRenderer = d->firstRenderer();
   return firstRenderer ? firstRenderer->GetGradientBackground() : false;
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::setFPSVisible(bool show)
+{
+  Q_D(ctkVTKAbstractView);
+  if (d->FPSVisible == show)
+    {
+    return;
+    }
+  d->FPSVisible = show;
+  vtkRenderer* renderer = d->firstRenderer();
+  if (d->FPSVisible)
+    {
+    d->FPSTimer->start();
+    qvtkConnect(renderer,
+                vtkCommand::EndEvent, this, SLOT(onRender()));
+    }
+  else
+    {
+    d->FPSTimer->stop();
+    qvtkDisconnect(renderer,
+                   vtkCommand::EndEvent, this, SLOT(onRender()));
+    d->CornerAnnotation->SetText(1, "");
+    }
+}
+
+//----------------------------------------------------------------------------
+bool ctkVTKAbstractView::isFPSVisible()const
+{
+  Q_D(const ctkVTKAbstractView);
+  return d->FPSVisible;
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::onRender()
+{
+  Q_D(ctkVTKAbstractView);
+  ++d->FPS;
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::updateFPS()
+{
+  Q_D(ctkVTKAbstractView);
+  vtkRenderer* renderer = d->firstRenderer();
+  double lastRenderTime = renderer ? renderer->GetLastRenderTimeInSeconds() : 0.;
+  QString fpsString = tr("FPS: %1(%2s)").arg(d->FPS).arg(lastRenderTime);
+  d->FPS = 0;
+  d->CornerAnnotation->SetText(1, fpsString.toLatin1());
 }
