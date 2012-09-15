@@ -235,14 +235,14 @@ ctkCmdLineModuleObjectTreeWalker::TokenType ctkCmdLineModuleObjectTreeWalker::re
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::readNextExecutable()
 {
-  while (!(readNext() == Executable || AtEnd));
+  while (!(readNext() == Executable || AtEnd)) ; // deliberately empty loop body
   return !AtEnd;
 }
 
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::readNextParameterGroup()
 {
-  while (!(readNext() == ParameterGroup || AtEnd));
+  while (!(readNext() == ParameterGroup || AtEnd)) ; // deliberately empty loop body
   return !AtEnd;
 }
 
@@ -250,7 +250,7 @@ bool ctkCmdLineModuleObjectTreeWalker::readNextParameterGroup()
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::readNextParameterContainer()
 {
-  while (!(readNext() == ParameterContainer || AtEnd));
+  while (!(readNext() == ParameterContainer || AtEnd)) ; // deliberately empty loop body
   return !AtEnd;
 }
 
@@ -258,7 +258,7 @@ bool ctkCmdLineModuleObjectTreeWalker::readNextParameterContainer()
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleObjectTreeWalker::readNextParameter()
 {
-  while (!(readNext() == Parameter || AtEnd));
+  while (!(readNext() == Parameter || AtEnd)) ; // deliberately empty loop body
   return !AtEnd;
 }
 
