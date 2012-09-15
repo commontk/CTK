@@ -144,6 +144,15 @@ public:
 
   virtual QList<QString> parameterNames() const;
 
+  /**
+   * \brief There is a container QWidget within each group box, so you can
+   * set the container widget to enabled/disabled, thereby affecting all
+   * child widgets, without overwriting the enabled/disabled status of the
+   * child widget.
+   * @param enabled if true then enabled else disabled
+   */
+  virtual void setParameterContainerEnabled(const bool& enabled);
+
 protected:
 
   /**
