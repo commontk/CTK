@@ -147,16 +147,25 @@
   <!-- Set the default value by generating a Qt widget specific property which holds
        the current value -->
   <xsl:template match="default">
-    <xsl:if test="../channel/text()='output'">
-      <property name="{ctk:mapTypeToQtValueProperty(name(..),'output')}">
-        <xsl:element name="{ctk:mapTypeToQtDesigner(name(..))}"><xsl:value-of select="text()"/></xsl:element>
-      </property>
-    </xsl:if>
-    <xsl:if test="../channel/text()='input'">
-      <property name="{ctk:mapTypeToQtValueProperty(name(..),'input')}">
-        <xsl:element name="{ctk:mapTypeToQtDesigner(name(..))}"><xsl:value-of select="text()"/></xsl:element>
-      </property>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="../channel">
+        <xsl:if test="../channel/text()='output'">
+          <property name="{ctk:mapTypeToQtValueProperty(name(..),'output')}">
+            <xsl:element name="{ctk:mapTypeToQtDesigner(name(..))}"><xsl:value-of select="text()"/></xsl:element>
+          </property>
+        </xsl:if>
+        <xsl:if test="../channel/text()='input'">
+          <property name="{ctk:mapTypeToQtValueProperty(name(..),'input')}">
+            <xsl:element name="{ctk:mapTypeToQtDesigner(name(..))}"><xsl:value-of select="text()"/></xsl:element>
+          </property>
+        </xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+        <property name="{ctk:mapTypeToQtValueProperty(name(..),'dummy')}">
+          <xsl:element name="{ctk:mapTypeToQtDesigner(name(..))}"><xsl:value-of select="text()"/></xsl:element>
+        </property>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Set Qt widget (spinbox) specific properties for applying constraints of scalar parameters -->
@@ -204,14 +213,20 @@
       </property>
     </xsl:if>
     <property name="parameter:valueProperty"> <!-- property name containing current value -->
-      <xsl:if test="channel/text()='output'">
-        <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'output')"/></string>
-      </xsl:if>
-      <xsl:if test="channel/text()='input'">
-        <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'input')"/></string>
-      </xsl:if>      
-    </property>
-
+    <xsl:choose>
+      <xsl:when test="channel">      
+        <xsl:if test="channel/text()='output'">
+          <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'output')"/></string>
+        </xsl:if>
+        <xsl:if test="channel/text()='input'">
+          <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'input')"/></string>
+        </xsl:if>
+      </xsl:when>      
+      <xsl:otherwise>
+        <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'dummy')"/></string>
+      </xsl:otherwise> 
+    </xsl:choose>
+    </property>       
     <!-- add additional (optional) information as properties -->
     <xsl:apply-templates select="default"/>
     <xsl:apply-templates select="constraints"/>
