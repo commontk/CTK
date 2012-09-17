@@ -61,6 +61,7 @@ public:
   QToolButton*          BrowseButton;       //!< "..." button
 
   int                   MinimumContentsLength;
+  ctkPathLineEdit::SizeAdjustPolicy SizeAdjustPolicy;
 
   QString               Label;              //!< used in file dialogs
   QStringList           NameFilters;        //!< Regular expression (in wildcard mode) used to help the user to complete the line
@@ -77,8 +78,6 @@ public:
   static QString        sCurrentDirectory;   //!< Content the last value of the current directory
   static int            sMaxHistory;     //!< Size of the history, if the history is full and a new value is added, the oldest value is dropped
 
-  ctkPathLineEdit::SizeAdjustPolicy SizeAdjustPolicy;
-
   mutable QSize SizeHint;
   mutable QSize MinimumSizeHint;
 };
@@ -93,9 +92,9 @@ ctkPathLineEditPrivate::ctkPathLineEditPrivate(ctkPathLineEdit& object)
   , ComboBox(0)
   , BrowseButton(0)
   , MinimumContentsLength(0)
+  , SizeAdjustPolicy(ctkPathLineEdit::AdjustToContentsOnFirstShow)
   , Filters(QDir::AllEntries|QDir::NoDotAndDotDot|QDir::Readable)
   , HasValidInput(false)
-  , SizeAdjustPolicy(ctkPathLineEdit::AdjustToContentsOnFirstShow)
 {
 }
 
@@ -174,7 +173,7 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
     {
     int frame = 0;
     if (this->ComboBox)
-    {
+      {
       QStyleOptionComboBox option;
       int arrowWidth = this->ComboBox->style()->subControlRect(
             QStyle::CC_ComboBox, &option, QStyle::SC_ComboBoxArrow, this->ComboBox).width()
@@ -182,9 +181,9 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
       frame = 2 * (this->ComboBox->hasFrame() ? 3 : 0)
           + arrowWidth
           + 1; // for mac style, not sure why
-    }
+      }
     else
-    {
+      {
       QStyleOptionFrame option;
       int frameWidth = this->LineEdit->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, q);
       int horizontalMargin = 2; // QLineEditPrivate::horizontalMargin
@@ -195,16 +194,16 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
           + this->LineEdit->contentsMargins().left()
           + this->LineEdit->contentsMargins().right()
           + 2 * horizontalMargin;
-    }
+      }
     int browseWidth = 0;
     if (q->showBrowseButton())
-    {
+      {
       browseWidth = this->BrowseButton->minimumSizeHint().width();
-    }
+      }
 
     // text width
     int textWidth = 0;
-    if (&sh == &SizeHint || MinimumContentsLength == 0)
+    if (&sh == &this->SizeHint || this->MinimumContentsLength == 0)
       {
       switch (SizeAdjustPolicy)
         {
@@ -225,9 +224,9 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
         }
       }
 
-    if (MinimumContentsLength > 0)
+    if (this->MinimumContentsLength > 0)
       {
-      textWidth = qMax(textWidth, MinimumContentsLength * this->LineEdit->fontMetrics().width(QLatin1Char('X')));
+      textWidth = qMax(textWidth, this->MinimumContentsLength * this->LineEdit->fontMetrics().width(QLatin1Char('X')));
       }
 
     int height = (this->ComboBox ? this->ComboBox->minimumSizeHint() :
@@ -632,7 +631,7 @@ void ctkPathLineEdit::setSizeAdjustPolicy(ctkPathLineEdit::SizeAdjustPolicy poli
   d->SizeAdjustPolicy = policy;
   d->SizeHint = QSize();
   d->adjustPathLineEditSize();
-  updateGeometry();
+  this->updateGeometry();
 }
 
 //------------------------------------------------------------------------------
@@ -652,11 +651,11 @@ void ctkPathLineEdit::setMinimumContentsLength(int length)
 
   if (d->SizeAdjustPolicy == AdjustToContents ||
       d->SizeAdjustPolicy == AdjustToMinimumContentsLength)
-  {
+    {
     d->SizeHint = QSize();
     d->adjustPathLineEditSize();
     this->updateGeometry();
-  }
+    }
 }
 
 //------------------------------------------------------------------------------
