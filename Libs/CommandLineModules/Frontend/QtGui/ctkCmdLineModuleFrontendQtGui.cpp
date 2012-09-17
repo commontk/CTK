@@ -206,3 +206,17 @@ QList<QString> ctkCmdLineModuleFrontendQtGui::parameterNames() const
   }
   return d->ParameterNames;
 }
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleFrontendQtGui::setParameterContainerEnabled(const bool& enabled)
+{
+  if (d->Widget == 0) return;
+
+  ctkCmdLineModuleObjectTreeWalker walker(d->Widget);
+  while(walker.readNextParameterContainer())
+  {
+    QVariant value(enabled);
+    walker.setValue(value, "enabled");
+  }
+}

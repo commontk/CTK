@@ -49,10 +49,13 @@
   <xsl:param name="floatValueProperty">value</xsl:param>
   <xsl:param name="pointValueProperty">coordinates</xsl:param>
   <xsl:param name="regionValueProperty">coordinates</xsl:param>
-  <xsl:param name="imageValueProperty">currentPath</xsl:param>
-  <xsl:param name="fileValueProperty">currentPath</xsl:param>
+  <xsl:param name="imageInputValueProperty">currentPath</xsl:param>
+  <xsl:param name="imageOutputValueProperty">currentPath</xsl:param>
+  <xsl:param name="fileInputValueProperty">currentPath</xsl:param>
+  <xsl:param name="fileOutputValueProperty">currentPath</xsl:param>
   <xsl:param name="directoryValueProperty">currentPath</xsl:param>
-  <xsl:param name="geometryValueProperty">currentPath</xsl:param>
+  <xsl:param name="geometryInputValueProperty">currentPath</xsl:param>
+  <xsl:param name="geometryOutputValueProperty">currentPath</xsl:param>
   <xsl:param name="vectorValueProperty">text</xsl:param>
   <xsl:param name="enumerationValueProperty">currentEnumeration</xsl:param>
 
@@ -80,6 +83,7 @@
        (or be convertible to it). -->
   <xsl:function name="ctk:mapTypeToQtValueProperty">
     <xsl:param name="cliType"/>
+    <xsl:param name="cliChannel"/> 
     <xsl:choose>
       <xsl:when test="$cliType='boolean'"><xsl:value-of select="$booleanValueProperty"/></xsl:when>
       <xsl:when test="$cliType='integer'"><xsl:value-of select="$integerValueProperty"/></xsl:when>
@@ -87,10 +91,13 @@
       <xsl:when test="$cliType='double'"><xsl:value-of select="$floatValueProperty"/></xsl:when>
       <xsl:when test="$cliType='point'"><xsl:value-of select="$pointValueProperty"/></xsl:when>
       <xsl:when test="$cliType='region'"><xsl:value-of select="$regionValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='image'"><xsl:value-of select="$imageValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='file'"><xsl:value-of select="$fileValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='image' and $cliChannel='input'"><xsl:value-of select="$imageInputValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='image' and $cliChannel='output'"><xsl:value-of select="$imageOutputValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='file' and $cliChannel='input'"><xsl:value-of select="$fileInputValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='file' and $cliChannel='output'"><xsl:value-of select="$fileOutputValueProperty"/></xsl:when>
       <xsl:when test="$cliType='directory'"><xsl:value-of select="$directoryValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='geometry'"><xsl:value-of select="$geometryValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='geometry' and $cliChannel='input'"><xsl:value-of select="$geometryInputValueProperty"/></xsl:when>
+      <xsl:when test="$cliType='geometry' and $cliChannel='output'"><xsl:value-of select="$geometryOutputValueProperty"/></xsl:when>      
       <xsl:when test="$cliType='integer-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
       <xsl:when test="$cliType='double-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
       <xsl:when test="$cliType='float-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
@@ -140,9 +147,25 @@
   <!-- Set the default value by generating a Qt widget specific property which holds
        the current value -->
   <xsl:template match="default">
-    <property name="{ctk:mapTypeToQtValueProperty(name(..))}">
-      <xsl:element name="{ctk:mapTypeToQtDesigner(name(..))}"><xsl:value-of select="text()"/></xsl:element>
-    </property>
+    <xsl:choose>
+      <xsl:when test="../channel">
+        <xsl:if test="../channel/text()='output'">
+          <property name="{ctk:mapTypeToQtValueProperty(name(..),'output')}">
+            <xsl:element name="{ctk:mapTypeToQtDesigner(name(..))}"><xsl:value-of select="text()"/></xsl:element>
+          </property>
+        </xsl:if>
+        <xsl:if test="../channel/text()='input'">
+          <property name="{ctk:mapTypeToQtValueProperty(name(..),'input')}">
+            <xsl:element name="{ctk:mapTypeToQtDesigner(name(..))}"><xsl:value-of select="text()"/></xsl:element>
+          </property>
+        </xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+        <property name="{ctk:mapTypeToQtValueProperty(name(..),'dummy')}">
+          <xsl:element name="{ctk:mapTypeToQtDesigner(name(..))}"><xsl:value-of select="text()"/></xsl:element>
+        </property>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Set Qt widget (spinbox) specific properties for applying constraints of scalar parameters -->
@@ -176,7 +199,7 @@
   </xsl:template>
 
   <!-- A named template for adding properties common to all Qt widgets -->
-  <xsl:template name="commonWidgetProperties">
+  <xsl:template name="commonWidgetProperties">  
     <xsl:apply-templates select="description"/> <!-- tooltip -->
     <xsl:if test="@hidden='true'"> <!-- widget visibility -->
       <property  name="visible">
@@ -190,9 +213,20 @@
       </property>
     </xsl:if>
     <property name="parameter:valueProperty"> <!-- property name containing current value -->
-      <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name())"/></string>
-    </property>
-
+    <xsl:choose>
+      <xsl:when test="channel">      
+        <xsl:if test="channel/text()='output'">
+          <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'output')"/></string>
+        </xsl:if>
+        <xsl:if test="channel/text()='input'">
+          <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'input')"/></string>
+        </xsl:if>
+      </xsl:when>      
+      <xsl:otherwise>
+        <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'dummy')"/></string>
+      </xsl:otherwise> 
+    </xsl:choose>
+    </property>       
     <!-- add additional (optional) information as properties -->
     <xsl:apply-templates select="default"/>
     <xsl:apply-templates select="constraints"/>
@@ -256,8 +290,14 @@
         <property name="checked">
           <bool><xsl:value-of select="not(@advanced)"></xsl:value-of></bool>
         </property>
-        <layout class="QGridLayout">
-          <xsl:apply-templates select="./description/following-sibling::*"/>
+        <layout class="QVBoxLayout" name="paramContainerLayout:{$groupLabel}">
+          <item>
+            <widget class="QWidget" name="paramContainer:{$groupLabel}">
+              <layout class="QGridLayout">
+                <xsl:apply-templates select="./description/following-sibling::*"/>
+              </layout>            
+            </widget>
+          </item>
         </layout>
       </widget>
     </item>
@@ -382,7 +422,7 @@
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
+              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Readable</set>
             </property>
           </widget>
         </xsl:when>
@@ -391,7 +431,7 @@
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
+              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Writable</set>
             </property>
           </widget>
         </xsl:otherwise>
@@ -414,7 +454,7 @@
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
+              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Readable</set>
             </property>
           </widget>
         </xsl:when>
@@ -423,7 +463,7 @@
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <property name="filters">
-              <set>ctkPathLineEdit::Files</set>
+              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Writable</set>
             </property>
           </widget>
         </xsl:otherwise>

@@ -81,15 +81,15 @@ struct ctkCmdLineModuleFrontendQtGuiPrivate;
  * <tr><td>float-enumeration</td><td>enumWidget</td><td>QComboBox</td><td>enumerationValueProperty</td><td>currentEnumeration</td></tr>
  * <tr><td>double-enumeration</td><td>enumWidget</td><td>QComboBox</td><td>enumerationValueProperty</td><td>currentEnumeration</td></tr>
  * <tr><td>string-enumeration</td><td>enumWidget</td><td>QComboBox</td><td>enumerationValueProperty</td><td>currentEnumeration</td></tr>
- * <tr><td>file (input channel)</td><td>fileInputWidget</td><td>ctkPathLineEdit</td><td>fileValueProperty</td><td>currentPath</td></tr>
- * <tr><td>file (output channel)</td><td>fileOutputWidget</td><td>ctkPathLineEdit</td><td>fileValueProperty</td><td>currentPath</td></tr>
- * <tr><td>geometry (input channel)</td><td>fileInputWidget</td><td>ctkPathLineEdit</td><td>fileValueProperty</td><td>currentPath</td></tr>
- * <tr><td>geometry (output channel)</td><td>fileOutputWidget</td><td>ctkPathLineEdit</td><td>fileValueProperty</td><td>currentPath</td></tr>
+ * <tr><td>file (input channel)</td><td>fileInputWidget</td><td>ctkPathLineEdit</td><td>fileInputValueProperty</td><td>currentPath</td></tr>
+ * <tr><td>file (output channel)</td><td>fileOutputWidget</td><td>ctkPathLineEdit</td><td>fileOutputValueProperty</td><td>currentPath</td></tr>
+ * <tr><td>geometry (input channel)</td><td>fileInputWidget</td><td>ctkPathLineEdit</td><td>geometryInputValueProperty</td><td>currentPath</td></tr>
+ * <tr><td>geometry (output channel)</td><td>fileOutputWidget</td><td>ctkPathLineEdit</td><td>geometryOutputValueProperty</td><td>currentPath</td></tr>
  * <tr><td>directory</td><td>directoryWidget</td><td>ctkPathLineEdit</td><td>directoryValueProperty</td><td>currentPath</td></tr>
  * <tr><td>point</td><td>pointWidget</td><td>ctkCoordinatesWidget</td><td>pointValueProperty</td><td>coordinates</td></tr>
  * <tr><td>region</td><td>pointWidget</td><td>ctkCoordinatesWidget</td><td>pointValueProperty</td><td>coordinates</td></tr>
- * <tr><td>image (input channel)</td><td>imageInputWidget</td><td>ctkPathLineEdit</td><td>imageValueProperty</td><td>currentPath</td></tr>
- * <tr><td>image (output channel)</td><td>imageOutputWidget</td><td>ctkPathLineEdit</td><td>imageValueProperty</td><td>currentPath</td></tr>
+ * <tr><td>image (input channel)</td><td>imageInputWidget</td><td>ctkPathLineEdit</td><td>imageInputValueProperty</td><td>currentPath</td></tr>
+ * <tr><td>image (output channel)</td><td>imageOutputWidget</td><td>ctkPathLineEdit</td><td>imageOutputValueProperty</td><td>currentPath</td></tr>
  * <tr><td>[main container]</td><td>executableWidget</td><td>QWidget</td><td>n/a</td><td>n/a</td></tr>
  * <tr><td>[group container]</td><td>parametersWidget</td><td>ctkCollapsibleGroupBox</td><td>n/a</td><td>n/a</td></tr>
  * <tr><td>[unknown type]</td><td>unsupportedWidget</td><td>QLabel</td><td>n/a</td><td>n/a</td></tr>
@@ -143,6 +143,15 @@ public:
   virtual void setValue(const QString& parameter, const QVariant& value, int role = DisplayRole);
 
   virtual QList<QString> parameterNames() const;
+
+  /**
+   * \brief There is a container QWidget within each group box, so you can
+   * set the container widget to enabled/disabled, thereby affecting all
+   * child widgets, without overwriting the enabled/disabled status of the
+   * child widget.
+   * @param enabled if true then enabled else disabled
+   */
+  virtual void setParameterContainerEnabled(const bool& enabled);
 
 protected:
 

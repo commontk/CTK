@@ -66,6 +66,11 @@ public:
   QString title() const;
 
   /**
+   * @brief Helper method that returns the category followed by a dot followed by the title.
+   */
+  QString categoryDotTitle() const;
+
+  /**
    * @brief Returns the title, derived from the \code <description> \endcode tag.
    */
   QString description() const;
