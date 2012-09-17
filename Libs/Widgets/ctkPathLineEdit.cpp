@@ -19,6 +19,8 @@
 =========================================================================*/
 
 // Qt includes
+#include <QAbstractItemView>
+#include <QApplication>
 #include <QComboBox>
 #include <QCompleter>
 #include <QDebug>
@@ -31,7 +33,6 @@
 #include <QSettings>
 #include <QStyleOptionComboBox>
 #include <QToolButton>
-#include <QApplication>
 
 // CTK includes
 #include "ctkPathLineEdit.h"
@@ -52,6 +53,8 @@ public:
   void updateFilter();
 
   void adjustPathLineEditSize();
+
+  void _q_recomputeCompleterPopupSize();
 
   void createPathLineEditWidget(bool useComboBox);
   QString settingKey()const;
@@ -249,6 +252,9 @@ void ctkPathLineEditPrivate::updateFilter()
                            QDir::Name|QDir::DirsLast, newCompleter));
   this->LineEdit->setCompleter(newCompleter);
 
+  QObject::connect(this->LineEdit->completer()->completionModel(), SIGNAL(layoutChanged()),
+                   q, SLOT(_q_recomputeCompleterPopupSize()));
+
   // don't accept invalid path
   QRegExpValidator* validator = new QRegExpValidator(
     ctk::nameFiltersToRegExp(this->NameFilters), q);
@@ -265,6 +271,37 @@ void ctkPathLineEditPrivate::adjustPathLineEditSize()
     q->adjustSize();
     q->update();
     }
+}
+
+//-----------------------------------------------------------------------------
+void ctkPathLineEditPrivate::_q_recomputeCompleterPopupSize()
+{
+  QSize lineEditSize = this->LineEdit->size();
+
+  QAbstractItemView* view = this->LineEdit->completer()->popup();
+  const QFontMetrics& fm = view->fontMetrics();
+
+  int iconWidth = 0;
+  int textWidth = 0;
+
+  QStyleOptionFrame option;
+  int frameWidth = view->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, view);
+  int frame = 2 * frameWidth
+      + view->contentsMargins().left()
+      + view->contentsMargins().right();
+
+  QAbstractItemModel* model = this->LineEdit->completer()->completionModel();
+  for (int i = 0; i < model->rowCount(); ++i)
+    {
+    QVariant icon = model->data(model->index(i, 0), Qt::DecorationRole);
+    if (icon.isValid() && icon.canConvert<QIcon>())
+      {
+      iconWidth = qMax(iconWidth, icon.value<QIcon>().availableSizes().front().width() + 4);
+      }
+    textWidth = qMax(textWidth, fm.boundingRect(model->data(model->index(i, 0)).toString()).width());
+    }
+
+  view->setMinimumWidth(qMax(frame + iconWidth + textWidth, lineEditSize.width()));
 }
 
 //-----------------------------------------------------------------------------
@@ -671,3 +708,5 @@ QSize ctkPathLineEdit::sizeHint()const
   Q_D(const ctkPathLineEdit);
   return d->recomputeSizeHint(d->SizeHint);
 }
+
+#include "moc_ctkPathLineEdit.h"

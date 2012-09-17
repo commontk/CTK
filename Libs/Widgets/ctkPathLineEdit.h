@@ -271,6 +271,8 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkPathLineEdit);
   Q_DISABLE_COPY(ctkPathLineEdit);
+
+  Q_PRIVATE_SLOT(d_ptr, void _q_recomputeCompleterPopupSize())
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPathLineEdit::Filters)
