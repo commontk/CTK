@@ -74,7 +74,7 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
 #else
   Q_PROPERTY(Options options READ options WRITE setOptions)
-  Q_FLAGS(Option Options);
+  Q_FLAGS(Option Options)
 #endif
 
   /// This property controls the key used to search the settings for recorded
@@ -91,17 +91,23 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   /// not. Clicking on the button calls opens a dialog to select the current path.
   /// True by default
   /// \sa browse()
-  Q_PROPERTY(bool showBrowseButton READ showBrowseButton WRITE setShowBrowseButton);
+  Q_PROPERTY(bool showBrowseButton READ showBrowseButton WRITE setShowBrowseButton)
 
   /// This property controls whether the history button (arrow button that opens
   /// the history menu) is visible or not.
   /// True by default.
   /// \sa retrieveHistory(), addCurrentPathToHistory(), settingKey
-  Q_PROPERTY(bool showHistoryButton READ showHistoryButton WRITE setShowHistoryButton);
+  Q_PROPERTY(bool showHistoryButton READ showHistoryButton WRITE setShowHistoryButton)
+
+  /// This property holds the policy describing how the size of the path line edit widget
+  /// changes when the content changes.
+  /// The default value is AdjustToContentsOnFirstShow.
+  Q_PROPERTY(SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
 
   /// This property holds the minimum number of characters that should fit into
   /// the path line edit.
-  /// The default value is 17.
+  /// The default value is 0.
+  /// If this property is set to a positive value, the minimumSizeHint() and sizeHint() take it into account.
   Q_PROPERTY(int minimumContentsLength READ minimumContentsLength WRITE setMinimumContentsLength)
 
 public:
@@ -142,6 +148,17 @@ public:
   };
   Q_DECLARE_FLAGS(Options, Option)
 #endif
+
+  enum SizeAdjustPolicy
+  {
+    /// The path line edit will always adjust to the contents.
+    AdjustToContents,
+    /// The path line edit will adjust to its contents the first time it is shown.
+    AdjustToContentsOnFirstShow,
+    /// The combobox will adjust to minimumContentsLength. For performance reasons
+    /// use this policy on large models.
+    AdjustToMinimumContentsLength
+  };
 
   /** Default constructor
   */
@@ -191,6 +208,16 @@ public:
 
   bool showHistoryButton()const;
   void setShowHistoryButton(bool visible);
+
+  /// the policy describing how the size of the combobox changes
+  /// when the content changes
+  ///
+  /// The default value is \c AdjustToContentsOnFirstShow.
+  ///
+  /// \sa SizeAdjustPolicy
+  SizeAdjustPolicy sizeAdjustPolicy() const;
+
+  void setSizeAdjustPolicy(SizeAdjustPolicy policy);
 
   int minimumContentsLength()const;
   void setMinimumContentsLength(int lenght);
@@ -244,6 +271,8 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkPathLineEdit);
   Q_DISABLE_COPY(ctkPathLineEdit);
+
+  Q_PRIVATE_SLOT(d_ptr, void _q_recomputeCompleterPopupSize())
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPathLineEdit::Filters)

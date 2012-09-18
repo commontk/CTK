@@ -230,7 +230,6 @@ set(KIT_MOC_SRCS
   ctkMenuComboBox_p.h
   ctkMessageBox.h
   ctkModalityWidget.h
-  ctkPathLineEdit.h
   ctkPathListButtonsWidget.h
   ctkPathListButtonsWidget_p.h
   ctkPopupWidget.h
@@ -269,6 +268,7 @@ set(KIT_MOC_SRCS
   )
 
 QT4_GENERATE_MOCS(
+  ctkPathLineEdit.h
   ctkPathListWidget.h
 )
 
