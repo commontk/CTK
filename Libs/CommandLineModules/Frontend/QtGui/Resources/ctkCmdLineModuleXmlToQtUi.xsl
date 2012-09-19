@@ -288,7 +288,14 @@
         <xsl:apply-templates select="./label"/>
         <xsl:apply-templates select="./description"/>
         <property name="checked">
-          <bool><xsl:value-of select="not(@advanced)"></xsl:value-of></bool>
+          <xsl:choose>
+            <xsl:when test="@advanced = 'true'">
+              <bool>false</bool>
+            </xsl:when>      
+            <xsl:otherwise>
+              <bool>true</bool>            
+            </xsl:otherwise>
+          </xsl:choose>
         </property>
         <layout class="QVBoxLayout" name="paramContainerLayout:{$groupLabel}">
           <item>
