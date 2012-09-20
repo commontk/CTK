@@ -62,12 +62,12 @@ public Q_SLOTS:
   /// scheduleRender() respects the desired framerate of the render window,
   /// it won't render the window more than what the current render window
   /// framerate is.
-  void scheduleRender();
+  virtual void scheduleRender();
 
   /// Force a render even if a render is already ocurring
   /// Be careful when calling forceRender() as it can slow down your
   /// application. It is preferable to use scheduleRender() instead.
-  void forceRender();
+  virtual void forceRender();
 
   /// Set the background color of the rendering screen.
   virtual void setBackgroundColor(const QColor& newBackgroundColor);
