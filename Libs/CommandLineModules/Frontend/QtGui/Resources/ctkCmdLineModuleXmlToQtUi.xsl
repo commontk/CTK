@@ -59,10 +59,14 @@
   <xsl:param name="vectorValueProperty">text</xsl:param>
   <xsl:param name="enumerationValueProperty">currentEnumeration</xsl:param>
 
-  <xsl:param name="imageInputFilterProperty">filters</xsl:param>
-  <xsl:param name="imageOutputFilterProperty">filters</xsl:param>
-  <xsl:param name="fileInputFilterProperty">filters</xsl:param>
-  <xsl:param name="fileOutputFilterProperty">filters</xsl:param>
+  <xsl:param name="imageInputSetProperty">filters</xsl:param>
+  <xsl:param name="imageOutputSetProperty">filters</xsl:param>
+  <xsl:param name="fileInputSetProperty">filters</xsl:param>
+  <xsl:param name="fileOutputSetProperty">filters</xsl:param>
+  <xsl:param name="imageInputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Readable</xsl:param>
+  <xsl:param name="imageOutputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Writable</xsl:param>
+  <xsl:param name="fileInputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Readable</xsl:param>
+  <xsl:param name="fileOutputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Writable</xsl:param>
   
   <!--
   ===================================================================
@@ -432,9 +436,9 @@
           <widget class="{$imageInputWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <xsl:if test="$imageInputFilterProperty != ''">
-              <property name="{$imageInputFilterProperty}">
-                <set>ctkPathLineEdit::Files|ctkPathLineEdit::Readable</set>
+            <xsl:if test="$imageInputSetProperty != ''">
+              <property name="{$imageInputSetProperty}">
+                <set>{$imageInputSetValue}</set>
               </property>
             </xsl:if>
           </widget>
@@ -443,9 +447,9 @@
           <widget class="{$imageOutputWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <xsl:if test="$imageOutputFilterProperty != ''">
-              <property name="{$imageOutputFilterProperty}">
-                <set>ctkPathLineEdit::Files|ctkPathLineEdit::Writable</set>
+            <xsl:if test="$imageOutputSetProperty != ''">
+              <property name="{$imageOutputSetProperty}">
+                <set>{$imageOutputSetValue}</set>
               </property>
             </xsl:if>
           </widget>
@@ -468,9 +472,9 @@
           <widget class="{$fileInputWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <xsl:if test="$fileInputFilterProperty != ''">
-              <property name="{$fileInputFilterProperty}">
-                <set>ctkPathLineEdit::Files|ctkPathLineEdit::Readable</set>
+            <xsl:if test="$fileInputSetProperty != ''">
+              <property name="{$fileInputSetProperty}">
+                <set>{$fileInputSetValue}</set>
               </property>
             </xsl:if>
           </widget>
@@ -479,9 +483,9 @@
           <widget class="{$fileOutputWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <xsl:if test="$fileOutputFilterProperty != ''">
-              <property name="{$fileOutputFilterProperty}">
-                <set>ctkPathLineEdit::Files|ctkPathLineEdit::Writable</set>
+            <xsl:if test="$fileOutputSetProperty != ''">
+              <property name="{$fileOutputSetProperty}">
+                <set>{$fileOutputSetValue}</set>
               </property>
             </xsl:if>
           </widget>

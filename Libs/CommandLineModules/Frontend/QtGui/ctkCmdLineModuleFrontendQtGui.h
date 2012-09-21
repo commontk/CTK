@@ -95,6 +95,29 @@ struct ctkCmdLineModuleFrontendQtGuiPrivate;
  * <tr><td>[unknown type]</td><td>unsupportedWidget</td><td>QLabel</td><td>n/a</td><td>n/a</td></tr>
  * </table>
  * \endhtmlonly
+ *
+ * In addition, for image and file, input and output, it is normally necessary to define a set property within
+ * the generated .ui file to contain various configuration flags to pass to the widget. For example, ctkPathLineEdit
+ * has a "filters" property that can be used to configure the dialog behaviour when the browse button is pressed.
+ * The following XSL parameters are available to create a set property and are also setable via
+ * ctkCmdLineModuleXslTransform::bindVariable(). If the empty string is bound to the Set Property Name,
+ * the set property will be omitted.
+ *
+ * \htmlonly
+ * <style type="text/css">
+ * table.xslparam { color:#333333; border-collapse:collapse; }
+ * table.xslparam td { border: 1px solid #666666; padding: 5px; }
+ * table.xslparam th { border: 1px solid #666666; padding: 5px; background-color: #dedede; font-weight: bold; }
+ * </style>
+ * <table class="xslparam">
+ * <tr><th rowspan="2">Parameter Type</th><th colspan="4" align="center">XSL Parameters</th></tr>
+ * <tr><th>Set Property Name</th><th>Default</th><th>Set Property Value</th><th>Default</th></tr>
+ * <tr><td>file (input channel)</td><td>fileInputSetProperty</td><td>filters</td><td>fileInputSetValue</td><td>ctkPathLineEdit::Files|ctkPathLineEdit::Readable</td></tr>
+ * <tr><td>file (output channel)</td><td>fileOutputSetProperty</td><td>filters</td><td>fileOutputSetValue</td><td>ctkPathLineEdit::Files|ctkPathLineEdit::Writable</td></tr>
+ * <tr><td>image (input channel)</td><td>imageInputSetProperty</td><td>filters</td><td>imageInputSetProperty</td><td>ctkPathLineEdit::Files|ctkPathLineEdit::Readable</td></tr>
+ * <tr><td>image (output channel)</td><td>imageOutputSetProperty</td><td>filters</td><td>imageOutputSetProperty</td><td>ctkPathLineEdit::Files|ctkPathLineEdit::Writable</td></tr>
+ * </table>
+ * \endhtmlonly
  */
 class CTK_CMDLINEMODULEQTGUI_EXPORT ctkCmdLineModuleFrontendQtGui : public ctkCmdLineModuleFrontend
 {
