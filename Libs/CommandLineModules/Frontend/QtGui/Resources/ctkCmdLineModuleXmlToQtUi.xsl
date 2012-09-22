@@ -59,6 +59,14 @@
   <xsl:param name="vectorValueProperty">text</xsl:param>
   <xsl:param name="enumerationValueProperty">currentEnumeration</xsl:param>
 
+  <xsl:param name="imageInputSetProperty">filters</xsl:param>
+  <xsl:param name="imageOutputSetProperty">filters</xsl:param>
+  <xsl:param name="fileInputSetProperty">filters</xsl:param>
+  <xsl:param name="fileOutputSetProperty">filters</xsl:param>
+  <xsl:param name="imageInputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Readable</xsl:param>
+  <xsl:param name="imageOutputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Writable</xsl:param>
+  <xsl:param name="fileInputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Readable</xsl:param>
+  <xsl:param name="fileOutputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Writable</xsl:param>
   
   <!--
   ===================================================================
@@ -288,7 +296,14 @@
         <xsl:apply-templates select="./label"/>
         <xsl:apply-templates select="./description"/>
         <property name="checked">
-          <bool><xsl:value-of select="not(@advanced)"></xsl:value-of></bool>
+          <xsl:choose>
+            <xsl:when test="@advanced = 'true'">
+              <bool>false</bool>
+            </xsl:when>      
+            <xsl:otherwise>
+              <bool>true</bool>            
+            </xsl:otherwise>
+          </xsl:choose>
         </property>
         <layout class="QVBoxLayout" name="paramContainerLayout:{$groupLabel}">
           <item>
@@ -421,18 +436,22 @@
           <widget class="{$imageInputWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <property name="filters">
-              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Readable</set>
-            </property>
+            <xsl:if test="$imageInputSetProperty != ''">
+              <property name="{$imageInputSetProperty}">
+                <set>{$imageInputSetValue}</set>
+              </property>
+            </xsl:if>
           </widget>
         </xsl:when>
         <xsl:otherwise>
           <widget class="{$imageOutputWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <property name="filters">
-              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Writable</set>
-            </property>
+            <xsl:if test="$imageOutputSetProperty != ''">
+              <property name="{$imageOutputSetProperty}">
+                <set>{$imageOutputSetValue}</set>
+              </property>
+            </xsl:if>
           </widget>
         </xsl:otherwise>
       </xsl:choose>
@@ -453,18 +472,22 @@
           <widget class="{$fileInputWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <property name="filters">
-              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Readable</set>
-            </property>
+            <xsl:if test="$fileInputSetProperty != ''">
+              <property name="{$fileInputSetProperty}">
+                <set>{$fileInputSetValue}</set>
+              </property>
+            </xsl:if>
           </widget>
         </xsl:when>
         <xsl:otherwise>
           <widget class="{$fileOutputWidget}"  name="parameter:{name}">
             <xsl:call-template name="commonWidgetProperties"/>
             <xsl:call-template name="createQtDesignerStringListProperty"/>
-            <property name="filters">
-              <set>ctkPathLineEdit::Files,ctkPathLineEdit::Writable</set>
-            </property>
+            <xsl:if test="$fileOutputSetProperty != ''">
+              <property name="{$fileOutputSetProperty}">
+                <set>{$fileOutputSetValue}</set>
+              </property>
+            </xsl:if>
           </widget>
         </xsl:otherwise>
       </xsl:choose>
