@@ -26,6 +26,8 @@
 #include "ctkRangeSlider.h"
 #include "ctkDoubleRangeSlider.h"
 
+// STD includes
+#include <limits>
 
 //-----------------------------------------------------------------------------
 class ctkDoubleRangeSliderPrivate
