@@ -161,7 +161,7 @@ public:
    * ctkCmdLineModuleFrontend::DisplayRole. If it does, it sets the value of the default
    * QObject property to the provided value.
    *
-   * @see ctkCmdLiineModuleFrontend::setValue()
+   * @see ctkCmdLineModuleFrontend::setValue()
    */
   virtual void setValue(const QString& parameter, const QVariant& value, int role = DisplayRole);
 
