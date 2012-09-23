@@ -122,7 +122,9 @@ int ctkDoubleSliderPrivate::toInt(double doubleValue)const
 #ifndef QT_NO_DEBUG
   if (tmp < minInt || tmp > maxInt)
     {
-    qWarning("ctkDoubleSliderPrivate::toInt value out of bounds !");
+    qWarning() << __FUNCTION__ << ": value " << doubleValue
+              << " for singleStep " << this->SingleStep
+              << " is out of integer bounds !";
     }
 #endif
   tmp = qBound(minInt, tmp, maxInt);

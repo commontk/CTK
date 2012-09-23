@@ -125,7 +125,19 @@ void ctkDoubleRangeSliderPrivate::connectSlider()
 int ctkDoubleRangeSliderPrivate::toInt(double doubleValue)const
 {
   double tmp = doubleValue / this->SingleStep;
+  static const double minInt = std::numeric_limits<int>::min();
+  static const double maxInt = std::numeric_limits<int>::max();
+#ifndef QT_NO_DEBUG
+  if (tmp < minInt || tmp > maxInt)
+    {
+    qWarning() << __FUNCTION__ << ": value " << doubleValue
+               << " for singleStep " << this->SingleStep
+               << " is out of integer bounds !";
+    }
+#endif
+  tmp = qBound(minInt, tmp, maxInt);
   int intValue = qRound(tmp);
+  //qDebug() << __FUNCTION__ << doubleValue << tmp << intValue;
   return intValue;
 }
 
