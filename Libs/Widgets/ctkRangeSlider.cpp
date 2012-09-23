@@ -277,7 +277,12 @@ void ctkRangeSliderPrivate::drawMinimumSlider( QStylePainter* painter ) const
     option.activeSubControls = QStyle::SC_SliderHandle;
     option.state |= QStyle::State_Sunken;
     }
-
+#ifdef Q_OS_MAC
+  // On mac style, drawing just the handle actually draws also the groove.
+  QRect clip = q->style()->subControlRect(QStyle::CC_Slider, &option,
+                                          QStyle::SC_SliderHandle, q);
+  painter->setClipRect(clip);
+#endif
   painter->drawComplexControl(QStyle::CC_Slider, option);
 }
 
@@ -297,6 +302,12 @@ void ctkRangeSliderPrivate::drawMaximumSlider( QStylePainter* painter ) const
     option.activeSubControls = QStyle::SC_SliderHandle;
     option.state |= QStyle::State_Sunken;
     }
+#ifdef Q_OS_MAC
+  // On mac style, drawing just the handle actually draws also the groove.
+  QRect clip = q->style()->subControlRect(QStyle::CC_Slider, &option,
+                                          QStyle::SC_SliderHandle, q);
+  painter->setClipRect(clip);
+#endif
   painter->drawComplexControl(QStyle::CC_Slider, option);
 }
 
@@ -534,7 +545,11 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
 
   QStylePainter painter(this);
   option.subControls = QStyle::SC_SliderGroove;
-  option.sliderPosition = this->minimum(); // don't highlight the SliderGroove
+  // Move to minimum to not highlight the SliderGroove.
+  // On mac style, drawing just the slider groove also draws the handles,
+  // therefore we give a negative (outside of view) position.
+  option.sliderValue = this->minimum() - this->maximum();
+  option.sliderPosition = this->minimum() - this->maximum();
   painter.drawComplexControl(QStyle::CC_Slider, option);
 
   option.sliderPosition = d->m_MinimumPosition;
