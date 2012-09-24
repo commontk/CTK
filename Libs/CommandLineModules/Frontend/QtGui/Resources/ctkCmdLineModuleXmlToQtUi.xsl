@@ -438,7 +438,7 @@
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <xsl:if test="$imageInputSetProperty != ''">
               <property name="{$imageInputSetProperty}">
-                <set>{$imageInputSetValue}</set>
+                <set><xsl:value-of select="$imageInputSetValue"/></set>
               </property>
             </xsl:if>
           </widget>
@@ -449,7 +449,7 @@
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <xsl:if test="$imageOutputSetProperty != ''">
               <property name="{$imageOutputSetProperty}">
-                <set>{$imageOutputSetValue}</set>
+                <set><xsl:value-of select="$imageOutputSetValue"/></set>
               </property>
             </xsl:if>
           </widget>
@@ -474,7 +474,7 @@
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <xsl:if test="$fileInputSetProperty != ''">
               <property name="{$fileInputSetProperty}">
-                <set>{$fileInputSetValue}</set>
+                <set><xsl:value-of select="$fileInputSetValue"/></set>
               </property>
             </xsl:if>
           </widget>
@@ -485,7 +485,7 @@
             <xsl:call-template name="createQtDesignerStringListProperty"/>
             <xsl:if test="$fileOutputSetProperty != ''">
               <property name="{$fileOutputSetProperty}">
-                <set>{$fileOutputSetValue}</set>
+                <set><xsl:value-of select="$fileOutputSetValue"/></set>
               </property>
             </xsl:if>
           </widget>
