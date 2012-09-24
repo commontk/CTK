@@ -83,6 +83,8 @@ void ctkCmdLineModuleProcessTask::run()
   QObject::connect(&process, SIGNAL(finished(int)), &localLoop, SLOT(quit()));
   QObject::connect(&process, SIGNAL(error(QProcess::ProcessError)), &localLoop, SLOT(quit()));
 
+  qDebug() << "ctkCmdLineModuleProcessTask::run() starting d->Location=" << d->Location << ", d->Args=" << d->Args;
+
   process.start(d->Location, d->Args, QIODevice::ReadOnly | QIODevice::Text);
 
   ctkCmdLineModuleProcessWatcher progressWatcher(process, d->Location, *this);
