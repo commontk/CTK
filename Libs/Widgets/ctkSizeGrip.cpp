@@ -18,9 +18,7 @@
 
 =========================================================================*/
 
-// CTK includes
-#include "ctkSizeGrip.h"
-
+// Qt includes
 #include <QApplication>
 #include <QDebug>
 #include <QEvent>
@@ -31,19 +29,8 @@
 #include <QStyleOption>
 #include <QPainter>
 
-//------------------------------------------------------------------------------
-static inline bool hasHeightForWidth(QWidget *widget)
-{
-  if (!widget)
-    {
-    return false;
-    }
-  if (QLayout *layout = widget->layout())
-    {
-    return layout->hasHeightForWidth();
-    }
-  return widget->sizePolicy().hasHeightForWidth();
-}
+// CTK includes
+#include "ctkSizeGrip.h"
 
 //------------------------------------------------------------------------------
 class ctkSizeGripPrivate
@@ -57,28 +44,32 @@ public:
   ctkSizeGripPrivate(ctkSizeGrip& object);
   void init();
 
-  Qt::Orientations Orientations;
-
   QWidget* WidgetToResize;
+  Qt::Orientations Orientations;
+  bool Resize;
+  bool IgnoreWidgetMinimumSizeHint;
+
+  QSize WidgetSizeHint;
 
   QRect WidgetGeom;
-  QSize WidgetSizeHint;
+  QSize WidgetMinSize;
   QSize WidgetMaxSize;
-
   QPoint StartPos;
+
   bool Hover;
   bool Pressed;
-  bool Resize;
 };
 
 //------------------------------------------------------------------------------
 ctkSizeGripPrivate::ctkSizeGripPrivate(ctkSizeGrip& object)
   : q_ptr(&object)
-  , Orientations(Qt::Horizontal | Qt::Vertical)
   , WidgetToResize(0)
+  , Orientations(Qt::Horizontal | Qt::Vertical)
+  , Resize(false)
+  , IgnoreWidgetMinimumSizeHint(true)
+  , WidgetSizeHint(-1,-1)  ///< the default widget sizeHint should be used.
   , Hover(false)
   , Pressed(false)
-  , Resize(false)
 {
 }
 
@@ -186,11 +177,11 @@ void ctkSizeGrip::setWidgetSizeHint(QSize sizeHint)
   if (d->Resize && d->WidgetToResize)
     {
     QSize newSize = d->WidgetToResize->size();
-    if (sizeHint.width())
+    if (sizeHint.width() >= 0)
       {
       newSize.setWidth(sizeHint.width());
       }
-    if (sizeHint.height())
+    if (sizeHint.height() >= 0)
       {
       newSize.setHeight(sizeHint.height());
       }
@@ -312,7 +303,7 @@ void ctkSizeGrip::mousePressEvent(QMouseEvent * e)
   d->StartPos = e->globalPos();
   d->Pressed = true;
   d->WidgetGeom = d->WidgetToResize->geometry();
-  d->WidgetSizeHint = QSize();
+  d->WidgetMinSize = d->WidgetToResize->minimumSize();
   d->WidgetMaxSize = d->WidgetToResize->maximumSize();
 }
 
@@ -345,14 +336,32 @@ void ctkSizeGrip::mouseMoveEvent(QMouseEvent * e)
     {
     widgetSizeHint.rwidth() = d->WidgetGeom.width() + offset.width() * (this->isLeftToRight() ? 1 : -1);
     }
-  widgetSizeHint = widgetSizeHint.boundedTo(d->WidgetMaxSize);
+  // Make sure we don't allow "unreasonable" sizes.
+  widgetSizeHint = widgetSizeHint.expandedTo(d->WidgetMinSize).boundedTo(d->WidgetMaxSize);
 
-  widgetSizeHint = QLayout::closestAcceptableSize(d->WidgetToResize, widgetSizeHint)
-    .expandedTo(QApplication::globalStrut());
+  if (!d->IgnoreWidgetMinimumSizeHint)
+    {
+    widgetSizeHint = QLayout::closestAcceptableSize(d->WidgetToResize, widgetSizeHint);
+    }
+  else
+    {
+    // Here we can't use QLayout::closestAcceptableSize as it internally uses
+    // the widget minimumSizeHint to expand the size.
+    // This usually allows only enlarging the widget but prevent shrinking the
+    // widget.
+    // Manually assess the closest acceptable size
+    // Respect the heightForWidth ratio
+    if (d->WidgetToResize->heightForWidth(widgetSizeHint.width()) != -1)
+      {
+      widgetSizeHint.rheight() = d->WidgetToResize->heightForWidth(widgetSizeHint.width());
+      }
+    }
+
+  widgetSizeHint = widgetSizeHint.expandedTo(QApplication::globalStrut());
 
   this->setWidgetSizeHint(
-    QSize(d->Orientations & Qt::Horizontal ? widgetSizeHint.width() : 0,
-          d->Orientations & Qt::Vertical ? widgetSizeHint.height() : 0));
+    QSize(d->Orientations & Qt::Horizontal ? widgetSizeHint.width() : -1,
+          d->Orientations & Qt::Vertical ? widgetSizeHint.height() : -1));
 }
 
 //------------------------------------------------------------------------------
@@ -366,4 +375,15 @@ void ctkSizeGrip::mouseReleaseEvent(QMouseEvent *mouseEvent)
   Q_D(ctkSizeGrip);
   d->Pressed = false;
   d->StartPos = QPoint();
+}
+
+//------------------------------------------------------------------------------
+void ctkSizeGrip::mouseDoubleClickEvent(QMouseEvent *mouseEvent)
+{
+  if (mouseEvent->button() != Qt::LeftButton)
+    {
+    this->Superclass::mouseDoubleClickEvent(mouseEvent);
+    return;
+    }
+  this->setWidgetSizeHint(QSize(-1, -1));
 }

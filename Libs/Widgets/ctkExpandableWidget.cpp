@@ -41,6 +41,7 @@ public:
 
   void init();
   void positionSizeGrip();
+  QSize resizeHint(QSize sizeHint)const;
 
   ctkSizeGrip* SizeGrip;
   QSize SizeGripMargins;
@@ -99,6 +100,25 @@ void ctkExpandableWidgetPrivate::positionSizeGrip()
   int x = q->width() - w - this->SizeGripMargins.width();
   int y = q->height() - h - this->SizeGripMargins.height();
   this->SizeGrip->setGeometry(x, y, w, h);
+}
+
+//-----------------------------------------------------------------------------
+QSize ctkExpandableWidgetPrivate::resizeHint(QSize sizeHint)const
+{
+  Q_Q(const ctkExpandableWidget);
+  if (this->SizeGrip->widgetSizeHint().width() >= 0)
+    {
+    sizeHint.setWidth(this->SizeGrip->widgetSizeHint().width());
+    }
+  if (this->SizeGrip->widgetSizeHint().height() >= 0)
+    {
+    sizeHint.setHeight(this->SizeGrip->widgetSizeHint().height());
+    }
+  QSize minimumSize = this->SizeGrip->sizeHint()
+    + this->SizeGripMargins
+    + QSize(q->contentsMargins().right(), q->contentsMargins().bottom());
+  sizeHint = sizeHint.expandedTo( minimumSize );
+  return sizeHint;
 }
 
 //-----------------------------------------------------------------------------
@@ -163,28 +183,21 @@ QSize ctkExpandableWidget::sizeGripMargins()const
   return d->SizeGripMargins;
 }
 
-/*
 //------------------------------------------------------------------------------
 QSize ctkExpandableWidget::minimumSizeHint()const
 {
   Q_D(const ctkExpandableWidget);
-  return d->recomputeSizeHint(d->MinimumSizeHint);
+  QSize sizeHint = this->Superclass::minimumSizeHint();
+  sizeHint = d->resizeHint(sizeHint);
+  return sizeHint;
 }
-*/
 
 //------------------------------------------------------------------------------
 QSize ctkExpandableWidget::sizeHint()const
 {
   Q_D(const ctkExpandableWidget);
   QSize sizeHint = this->Superclass::sizeHint();
-  if (d->SizeGrip->widgetSizeHint().width())
-    {
-    sizeHint.setWidth(d->SizeGrip->widgetSizeHint().width());
-    }
-  if (d->SizeGrip->widgetSizeHint().height())
-    {
-    sizeHint.setHeight(d->SizeGrip->widgetSizeHint().height());
-    }
+  sizeHint = d->resizeHint(sizeHint);
   return sizeHint;
 }
 
