@@ -18,68 +18,62 @@
 
 =========================================================================*/
 
-// Qt includes
-#include <QDebug>
-
 // CTK includes
-#include "ctkCollapsibleGroupBoxPlugin.h"
-#include "ctkCollapsibleGroupBox.h"
+#include "ctkExpandableWidgetPlugin.h"
+#include "ctkExpandableWidget.h"
 
 // --------------------------------------------------------------------------
-ctkCollapsibleGroupBoxPlugin
-::ctkCollapsibleGroupBoxPlugin(QObject* parentObject)
+ctkExpandableWidgetPlugin
+::ctkExpandableWidgetPlugin(QObject* parentObject)
   : QObject(parentObject)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *ctkCollapsibleGroupBoxPlugin
+QWidget *ctkExpandableWidgetPlugin
 ::createWidget(QWidget* futurParentWidget)
 {
-  ctkCollapsibleGroupBox* widget =
-    new ctkCollapsibleGroupBox(futurParentWidget);
+  ctkExpandableWidget* widget =
+    new ctkExpandableWidget(futurParentWidget);
   return widget;
 }
 
 // --------------------------------------------------------------------------
-QString ctkCollapsibleGroupBoxPlugin::domXml() const
+QString ctkExpandableWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkCollapsibleGroupBox\" \
-          name=\"CollapsibleGroupBox\">\n"
+  return "<widget class=\"ctkExpandableWidget\" \
+          name=\"ResizableFrame\">\n"
           " <property name=\"geometry\">\n"
           "  <rect>\n"
           "   <x>0</x>\n"
           "   <y>0</y>\n"
           "   <width>300</width>\n"
-          "   <height>100</height>\n"
+          "   <height>300</height>\n"
           "  </rect>\n"
           " </property>\n"
-          " <property name=\"title\">"
-          "  <string>GroupBox</string>"
-          " </property>"
           "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkCollapsibleGroupBoxPlugin::icon() const
+QIcon ctkExpandableWidgetPlugin::icon() const
 {
-  return QIcon(":/Icons/groupboxcollapsible.png");
+  return QIcon(":/Icons/widget.png");
 }
 
 // --------------------------------------------------------------------------
-QString ctkCollapsibleGroupBoxPlugin::includeFile() const
+QString ctkExpandableWidgetPlugin::includeFile() const
 {
-  return "ctkCollapsibleGroupBox.h";
+  return "ctkExpandableWidget.h";
 }
 
 // --------------------------------------------------------------------------
-bool ctkCollapsibleGroupBoxPlugin::isContainer() const
+bool ctkExpandableWidgetPlugin::isContainer() const
 {
   return true;
 }
 
 // --------------------------------------------------------------------------
-QString ctkCollapsibleGroupBoxPlugin::name() const
+QString ctkExpandableWidgetPlugin::name() const
 {
-  return "ctkCollapsibleGroupBox";
+  return "ctkExpandableWidget";
 }

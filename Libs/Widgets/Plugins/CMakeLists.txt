@@ -44,6 +44,8 @@ set(PLUGIN_SRCS
   ctkDynamicSpacerPlugin.h
   ctkExpandButtonPlugin.cpp
   ctkExpandButtonPlugin.h
+  ctkExpandableWidgetPlugin.cpp
+  ctkExpandableWidgetPlugin.h
   #ctkExtensionFactory.cpp
   #ctkExtensionFactory.h
   ctkFittedTextBrowserPlugin.cpp
@@ -114,6 +116,7 @@ set(PLUGIN_MOC_SRCS
   ctkDoubleSliderPlugin.h
   ctkDynamicSpacerPlugin.h
   ctkExpandButtonPlugin.h
+  ctkExpandableWidgetPlugin.h
   #ctkExtensionFactory.h
   ctkFittedTextBrowserPlugin.h
   ctkFontButtonPlugin.h

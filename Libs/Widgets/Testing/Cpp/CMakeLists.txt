@@ -33,6 +33,7 @@ set(TEST_SOURCES
   ctkDynamicSpacerTest2.cpp
   ctkErrorLogWidgetTest1.cpp
   ctkExpandButtonTest1.cpp
+  ctkExpandableWidgetTest1.cpp
   ctkFileDialogTest1.cpp
   ctkFlatProxyModelTest.cpp
   ctkFittedTextBrowserTest1.cpp
@@ -256,6 +257,7 @@ SIMPLE_TEST( ctkRangeSliderTest )
 SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest2 )
+SIMPLE_TEST( ctkResizableFrameTest1 )
 SIMPLE_TEST( ctkScreenshotDialogTest1 )
 SIMPLE_TEST( ctkSearchBoxTest1 )
 SIMPLE_TEST( ctkSearchBoxTest2 )
