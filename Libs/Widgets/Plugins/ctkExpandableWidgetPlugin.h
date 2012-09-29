@@ -18,28 +18,26 @@
 
 =========================================================================*/
 
-#ifndef __ctkCollapsibleGroupBoxPlugin_h
-#define __ctkCollapsibleGroupBoxPlugin_h
+#ifndef __ctkExpandableWidgetPlugin_h
+#define __ctkExpandableWidgetPlugin_h
 
 // CTK includes
 #include "ctkWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkCollapsibleGroupBoxPlugin
+class CTK_WIDGETS_PLUGINS_EXPORT ctkExpandableWidgetPlugin
   : public QObject
   , public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
-
 public:
-  ctkCollapsibleGroupBoxPlugin(QObject* parent = 0);
-  
+  ctkExpandableWidgetPlugin(QObject* parent = 0);
+
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;
   QIcon    icon() const;
   QString  includeFile() const;
   bool     isContainer() const;
   QString  name() const;
-  
 };
 
 #endif

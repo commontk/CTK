@@ -75,6 +75,8 @@ set(KIT_SRCS
   ctkErrorLogWidget.h
   ctkExpandButton.cpp
   ctkExpandButton.h
+  ctkExpandableWidget.cpp
+  ctkExpandableWidget.h
   ctkFileDialog.cpp
   ctkFileDialog.h
   ctkFittedTextBrowser.cpp
@@ -139,6 +141,8 @@ set(KIT_SRCS
   ctkSignalMapper.h
   ctkSimpleLayoutManager.cpp
   ctkSimpleLayoutManager.h
+  ctkSizeGrip.cpp
+  ctkSizeGrip.h
   ctkSliderWidget.cpp
   ctkSliderWidget.h
   ctkTestApplication.cpp
@@ -214,6 +218,7 @@ set(KIT_MOC_SRCS
   ctkErrorLogWidget.h
   ctkErrorLogStatusMessageHandler.h
   ctkExpandButton.h
+  ctkExpandableWidget.h
   ctkFileDialog.h
   ctkFittedTextBrowser.h
   ctkFlatProxyModel.h
@@ -245,6 +250,7 @@ set(KIT_MOC_SRCS
   ctkSettingsPanel.h
   ctkSignalMapper.h
   ctkSimpleLayoutManager.h
+  ctkSizeGrip.h
   ctkSliderWidget.h
   ctkTestApplication.h
   ctkThumbnailLabel.h
