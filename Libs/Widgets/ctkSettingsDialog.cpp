@@ -90,6 +90,12 @@ void ctkSettingsDialogPrivate::init()
   QObject::connect(this->SettingsTreeWidget,
     SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
     q, SLOT(onCurrentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+
+  QObject::connect(this->SettingsTreeWidget, SIGNAL(expanded(QModelIndex)),
+    q, SLOT(adjustTreeWidgetToContents()));
+  QObject::connect(this->SettingsTreeWidget, SIGNAL(collapsed(QModelIndex)),
+    q, SLOT(adjustTreeWidgetToContents()));
+
   QObject::connect(this->SettingsButtonBox, SIGNAL(clicked(QAbstractButton*)),
                    q, SLOT(onDialogButtonClicked(QAbstractButton*)));
 
@@ -408,11 +414,10 @@ void ctkSettingsDialog::adjustTreeWidgetToContents()
   Q_D(const ctkSettingsDialog);
 
   d->SettingsTreeWidget->resizeColumnToContents(0);
-
   d->SettingsTreeWidget->setFixedWidth(
-      d->SettingsTreeWidget->QAbstractItemView::sizeHintForColumn(0) +
+      qobject_cast<QAbstractItemView*>(d->SettingsTreeWidget)->sizeHintForColumn(0) +
       d->SettingsTreeWidget->fontMetrics().width('*') +
-      2 * d->SettingsTreeWidget->indentation() +
+      d->SettingsTreeWidget->indentation() / 2+
       2 * d->SettingsTreeWidget->frameWidth());
 }
 

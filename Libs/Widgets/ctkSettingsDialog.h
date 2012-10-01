@@ -64,8 +64,6 @@ public:
   void addPanel(const QString& label, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
   void addPanel(const QString& label, const QIcon& icon, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
 
-  void adjustTreeWidgetToContents();
-
   bool resetButton()const;
   void setResetButton(bool show);
 
@@ -81,9 +79,12 @@ public Q_SLOTS:
   void applySettings();
   void resetSettings();
   void restoreDefaultSettings();
-  
+
   virtual void accept();
   virtual void reject();
+
+  /// Resize the left panel based on the panels titles.
+  void adjustTreeWidgetToContents();
 
 Q_SIGNALS:
   void settingChanged(const QString& key, const QVariant& value);
