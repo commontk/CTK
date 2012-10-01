@@ -73,7 +73,7 @@ int ctkMenuComboBoxTest1(int argc, char * argv [] )
   if (menuComboBox->toolButtonStyle() != Qt::ToolButtonIconOnly)
     {
     std::cerr << "Wrong default toolButtonStyle: "
-              << menuComboBox->toolButtonStyle()
+              << static_cast<unsigned int>(menuComboBox->toolButtonStyle())
               << std::endl;
     return EXIT_FAILURE;
     }
@@ -81,7 +81,7 @@ int ctkMenuComboBoxTest1(int argc, char * argv [] )
   if (menuComboBox->toolButtonStyle() != Qt::ToolButtonTextUnderIcon)
     {
     std::cerr << "Failed to set toolButtonStyle: "
-              << menuComboBox->toolButtonStyle()
+              << static_cast<unsigned int>(menuComboBox->toolButtonStyle())
               << std::endl;
     return EXIT_FAILURE;
     }
