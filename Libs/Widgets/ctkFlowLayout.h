@@ -36,45 +36,61 @@ class ctkFlowLayoutPrivate;
 class CTK_WIDGETS_EXPORT ctkFlowLayout : public QLayout
 {
   Q_OBJECT
+  /// If orientation is Qt::Horizontal, items are layed out from left to right
+  /// then top to bottom if there is no more horizontal space.
+  /// If orientation is Qt::Vertical, items are layed out from top to bottom
+  /// then left to right if there is no more vertical space.
+  /// Qt::Horizontal by default
+  /// \sa preferredExpandingDirections
   Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
-  Q_PROPERTY(int horizontalSpacing READ horizontalSpacing WRITE setHorizontalSpacing)
-  Q_PROPERTY(int verticalSpacing READ verticalSpacing WRITE setVerticalSpacing)
-  Q_PROPERTY(bool alignItems READ alignItems WRITE setAlignItems)
+
+  /// Indicates how the size hint of the layout should behave. The preferred
+  /// expanding direction can be different than the \a orientation of the
+  /// layout.
+  /// It can be a combination of Qt::Horizontal and Qt::Vertical, in that case
+  /// the layout will try to expand in a square shape (evenly distribute the
+  /// number of rows and columns).
+  /// Qt::Horizontal | Qt::Vertical by default.
+  /// \sa orientation
   Q_PROPERTY(Qt::Orientations preferredExpandingDirections READ preferredExpandingDirections WRITE setPreferredExpandingDirections)
+
+  /// Force the items to be horizontally aligned based on the largest item
+  /// to display.
+  /// True by default.
+  /// \sa orientation
+  Q_PROPERTY(bool alignItems READ alignItems WRITE setAlignItems)
+
+  /// Horizontal space between items, if the spacing is <0, a default spacing
+  /// set on the parent/style is used.
+  /// -1 by default.
+  /// \sa verticalSpacing
+  Q_PROPERTY(int horizontalSpacing READ horizontalSpacing WRITE setHorizontalSpacing)
+
+  /// Vertical space between items, if the spacing is <0, a default spacing
+  /// set on the parent/style is used.
+  /// -1 by default.
+  /// \sa horizontalSpacing
+  Q_PROPERTY(int verticalSpacing READ verticalSpacing WRITE setVerticalSpacing)
+
 public:
   typedef QLayout Superclass;
   explicit ctkFlowLayout(Qt::Orientation orientation, QWidget* parent = 0);
   explicit ctkFlowLayout(QWidget* parent);
   explicit ctkFlowLayout();
   virtual ~ctkFlowLayout();
-  
-  /// If orientation is Qt::Horizontal, items are layed out from left to right
-  /// then top to bottom. If orientation is Qt::Vertical, items are layed out
-  /// from top to bottom then left to right.
+
   void setOrientation(Qt::Orientation orientation);
   Qt::Orientation orientation()const;
 
-  /// Indicates how the size hint of the layout should behave. The preferred
-  /// expanding direction can be different than the orientation of the layout.
-  /// It can be a combination of Qt::Horizontal and Qt::Vertical, in that case
-  /// the layout will try to expand in a square shape (evenly distribute the
-  /// number of rows and columns).
   void setPreferredExpandingDirections(Qt::Orientations directions);
   Qt::Orientations preferredExpandingDirections()const;
 
-  /// Horizontal space between items, if the spacing is <0, a default spacing
-  /// set on the parent/style will be used.
   int horizontalSpacing() const;
   void setHorizontalSpacing(int);
 
-  /// Vertical space between items, if the spacing is <0, a default spacing
-  /// set on the parent/style will be used. 
   int verticalSpacing() const;
   void setVerticalSpacing(int);
-  
-  /// Force the items to be horizontally aligned based on the largest item
-  /// to display.
-  /// True by default.
+
   bool alignItems()const;
   void setAlignItems(bool);
 
@@ -87,6 +103,13 @@ public:
   /// \todo replaceLayout should take an existing layout instead of a widget,
   /// indeed, a layout can have another layout as a parent, not only a widget.
   static ctkFlowLayout* replaceLayout(QWidget* widget);
+
+  /// When the orientation is Qt::Vertical, heightForWidth doesn't work
+  /// correctly with ctkFlowLayout. Ideally widthForHeight should be used
+  /// instead.
+  /// \sa orientation widthForHeight hasHeightForWidth
+  virtual bool hasWidthForHeight() const;
+  virtual int widthForHeight(int) const;
 
   /// Reimplemented for internal reasons
   virtual void addItem(QLayoutItem *item);

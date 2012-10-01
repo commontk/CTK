@@ -21,12 +21,12 @@
 #ifndef __ctkThumbnailListWidget_h
 #define __ctkThumbnailListWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
+class QResizeEvent;
 
+// CTK includes
 #include "ctkWidgetsExport.h"
-
-class QModelIndex;
 class ctkThumbnailListWidgetPrivate;
 class ctkThumbnailLabel;
 
@@ -35,6 +35,7 @@ class CTK_WIDGETS_EXPORT ctkThumbnailListWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(int currentThumbnail READ currentThumbnail WRITE setCurrentThumbnail)
+  Q_PROPERTY(Qt::Orientation flow READ flow WRITE setFlow)
   Q_PROPERTY(QSize thumbnailSize READ thumbnailSize WRITE setThumbnailSize)
 public:
   typedef QWidget Superclass;
@@ -53,6 +54,12 @@ public:
   /// Clear all the thumbnails
   void clearThumbnails();
 
+  /// Flow of the layout
+  ///  - Qt::Horizontal: left to right
+  ///  - Qt::Vertical: top to bottom
+  void setFlow(Qt::Orientation orientation);
+  Qt::Orientation flow()const;
+
   /// Get thumbnail width
   QSize thumbnailSize()const;
 
@@ -70,6 +77,8 @@ protected Q_SLOTS:
 protected:
   explicit ctkThumbnailListWidget(ctkThumbnailListWidgetPrivate* ptr, QWidget* parent=0);
   ctkThumbnailListWidgetPrivate* d_ptr;
+
+  virtual void resizeEvent(QResizeEvent* event);
 
 private:
   Q_DECLARE_PRIVATE(ctkThumbnailListWidget);
