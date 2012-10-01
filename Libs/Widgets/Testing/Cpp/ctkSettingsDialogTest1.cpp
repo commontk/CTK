@@ -78,7 +78,7 @@ int ctkSettingsDialogTest1(int argc, char * argv [] )
   settingsDialog.addPanel("Panel 2", new ctkSettingsPanel);
   settingsDialog.addPanel("Panel 3", new ctkSettingsPanel);
   ctkSettingsPanel* panel4 = new ctkSettingsPanel;
-  settingsDialog.addPanel("Panel 4", panel4, panel1);
+  settingsDialog.addPanel("Panel 4 with long title", panel4, panel1);
 
   QCheckBox* box = new QCheckBox(panel4);
   box->setChecked(false); // false by default but we just want to make sure
