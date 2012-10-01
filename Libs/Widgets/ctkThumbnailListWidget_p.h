@@ -28,7 +28,8 @@ class ctkThumbnailListWidget;
 
 //----------------------------------------------------------------------------
 /// \ingroup Widgets
-class CTK_WIDGETS_EXPORT ctkThumbnailListWidgetPrivate : public Ui_ctkThumbnailListWidget
+class CTK_WIDGETS_EXPORT ctkThumbnailListWidgetPrivate
+  : public Ui_ctkThumbnailListWidget
 {
   Q_DECLARE_PUBLIC(ctkThumbnailListWidget);
 public:

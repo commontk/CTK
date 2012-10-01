@@ -21,12 +21,11 @@
 #ifndef __ctkThumbnailListWidget_h
 #define __ctkThumbnailListWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 
+// CTK includes
 #include "ctkWidgetsExport.h"
-
-class QModelIndex;
 class ctkThumbnailListWidgetPrivate;
 class ctkThumbnailLabel;
 
