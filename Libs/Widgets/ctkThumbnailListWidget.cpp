@@ -27,6 +27,7 @@
 #include <QPixmap>
 #include <QPushButton>
 #include <QResizeEvent>
+#include <QScrollBar>
 
 // ctk includes
 #include "ctkLogger.h"
@@ -194,7 +195,26 @@ void ctkThumbnailListWidget::onThumbnailSelected(const ctkThumbnailLabel &widget
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailListWidget::setThumbnailSize(QSize size){
+void ctkThumbnailListWidget::setFlow(Qt::Orientation flow)
+{
+  Q_D(ctkThumbnailListWidget);
+  ctkFlowLayout* flowLayout = qobject_cast<ctkFlowLayout*>(
+    d->ScrollAreaContentWidget->layout());
+  flowLayout->setOrientation(flow);
+}
+
+//----------------------------------------------------------------------------
+Qt::Orientation ctkThumbnailListWidget::flow()const
+{
+  Q_D(const ctkThumbnailListWidget);
+  ctkFlowLayout* flowLayout = qobject_cast<ctkFlowLayout*>(
+    d->ScrollAreaContentWidget->layout());
+  return flowLayout->orientation();
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailListWidget::setThumbnailSize(QSize size)
+{
   Q_D(ctkThumbnailListWidget);
   if (size.isValid())
     {
@@ -219,4 +239,42 @@ void ctkThumbnailListWidget::clearThumbnails()
 {
   Q_D(ctkThumbnailListWidget);
   d->clearAllThumbnails();
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailListWidget::resizeEvent(QResizeEvent* event)
+{
+  Q_D(ctkThumbnailListWidget);
+
+  QSize newViewportSize = event->size() - QSize(2 * d->ScrollArea->lineWidth(),
+                                                2 * d->ScrollArea->lineWidth());
+
+  ctkFlowLayout* flowLayout = qobject_cast<ctkFlowLayout*>(
+    d->ScrollAreaContentWidget->layout());
+  newViewportSize = newViewportSize.expandedTo(flowLayout->minimumSize());
+  if (flowLayout->hasHeightForWidth())
+    {
+    int newViewPortHeight = newViewportSize.height();
+    newViewportSize.rheight() = flowLayout->heightForWidth( newViewportSize.width() );
+    if (newViewportSize.height() > newViewPortHeight)
+      {
+      // The new width is too narrow, to fit everything, a vertical scrollbar
+      // is needed. Recompute with the scrollbar width.
+      newViewportSize.rwidth() -= d->ScrollArea->verticalScrollBar()->sizeHint().width();
+      newViewportSize.rheight() = flowLayout->heightForWidth( newViewportSize.width() );
+      }
+    }
+  else if (flowLayout->hasWidthForHeight())
+    {
+    int newViewPortWidth = newViewportSize.width();
+    newViewportSize.rwidth() = flowLayout->widthForHeight( newViewportSize.height() );
+    if (newViewportSize.width() > newViewPortWidth)
+      {
+      // The new height is too narrow, to fit everything, an horizontal scrollbar
+      // is needed. Recompute with the scrollbar height.
+      newViewportSize.rheight() -= d->ScrollArea->horizontalScrollBar()->sizeHint().height();
+      newViewportSize.rwidth() = flowLayout->widthForHeight( newViewportSize.height() );
+      }
+    }
+  d->ScrollAreaContentWidget->resize(newViewportSize);
 }

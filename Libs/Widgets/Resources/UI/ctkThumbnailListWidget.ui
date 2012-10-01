@@ -20,7 +20,7 @@
    <item>
     <widget class="QScrollArea" name="ScrollArea">
      <property name="widgetResizable">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <widget class="QWidget" name="ScrollAreaContentWidget">
       <property name="geometry">

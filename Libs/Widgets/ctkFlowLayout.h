@@ -104,6 +104,13 @@ public:
   /// indeed, a layout can have another layout as a parent, not only a widget.
   static ctkFlowLayout* replaceLayout(QWidget* widget);
 
+  /// When the orientation is Qt::Vertical, heightForWidth doesn't work
+  /// correctly with ctkFlowLayout. Ideally widthForHeight should be used
+  /// instead.
+  /// \sa orientation widthForHeight hasHeightForWidth
+  virtual bool hasWidthForHeight() const;
+  virtual int widthForHeight(int) const;
+
   /// Reimplemented for internal reasons
   virtual void addItem(QLayoutItem *item);
   virtual Qt::Orientations expandingDirections() const;

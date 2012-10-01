@@ -119,6 +119,7 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
   int length = 0;
   int max = this->Orientation == Qt::Horizontal ?
     effectiveRect.right() + 1 : effectiveRect.bottom() + 1;
+  int maxX = left + right;
   int maxY = top + bottom;
   QSize maxItemSize = this->AlignItems ? this->maxSizeHint() : QSize();
 
@@ -162,12 +163,13 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
       item->setGeometry(QRect(pos, item->sizeHint()));
       }
 
+    maxX = qMax( maxX , pos.x() + item->sizeHint().width() + right);
     maxY = qMax( maxY , pos.y() + item->sizeHint().height() + bottom);
     pos = next;
     length = qMax(length, this->Orientation == Qt::Horizontal ?
       itemSize.height() : itemSize.width());
     }
-  return maxY;
+  return this->Orientation == Qt::Horizontal ? maxY : maxX;
 }
 
 //-----------------------------------------------------------------------------
@@ -321,9 +323,26 @@ Qt::Orientations ctkFlowLayout::expandingDirections() const
 }
 
 // --------------------------------------------------------------------------
+bool ctkFlowLayout::hasWidthForHeight() const
+{
+  Q_D(const ctkFlowLayout);
+  return d->Orientation == Qt::Vertical;
+}
+
+// --------------------------------------------------------------------------
+int ctkFlowLayout::widthForHeight(int height) const
+{
+  Q_D(const ctkFlowLayout);
+  QRect rect(0, 0, 0, height);
+  int width = d->doLayout(rect, true);
+  return width;
+}
+
+// --------------------------------------------------------------------------
 bool ctkFlowLayout::hasHeightForWidth() const
 {
-  return true;
+  Q_D(const ctkFlowLayout);
+  return d->Orientation == Qt::Horizontal;
 }
 
 // --------------------------------------------------------------------------
