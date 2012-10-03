@@ -134,6 +134,7 @@ protected:
   bool    Normalized;
   int     Dimension;
   double* Coordinates;
+  QList<int> LastUserEditedCoordinates;
 };
 
 #endif
