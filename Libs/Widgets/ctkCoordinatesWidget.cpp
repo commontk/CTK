@@ -19,8 +19,9 @@
 =========================================================================*/
 
 // Qt includes
-#include <QHBoxLayout>
+#include <QDebug>
 #include <QDoubleSpinBox>
+#include <QHBoxLayout>
 
 // CTK includes
 #include "ctkCoordinatesWidget.h"
@@ -36,17 +37,14 @@ ctkCoordinatesWidget::ctkCoordinatesWidget(QWidget* _parent) :QWidget(_parent)
   this->Minimum = -100000.;
   this->Maximum = 100000.;
   this->Normalized = false;
-  this->Dimension = 3;
-  this->Coordinates = new double [this->Dimension];
+  this->Dimension = 0;
+  this->Coordinates = 0;
 
   QHBoxLayout* hboxLayout = new QHBoxLayout(this);
-  this->setLayout(hboxLayout);
-  for (int i = 0; i < this->Dimension; ++i)
-    {
-    this->Coordinates[i] = 0.;
-    this->addSpinBox();
-    }
   hboxLayout->setContentsMargins(0, 0, 0, 0);
+  this->setLayout(hboxLayout);
+
+  this->setDimension(3);
 }
 
 //------------------------------------------------------------------------------
@@ -357,6 +355,7 @@ void ctkCoordinatesWidget::updateCoordinate(double coordinate)
       mult = false;
       den = sqrt((1. - coordinate*coordinate) / (this->Dimension - 1));
       }
+    // Normalize coordinates
     double* normalizedCoordinates = new double[this->Dimension];
     for (int i = 0; i < this->Dimension; ++i)
       {
@@ -420,12 +419,30 @@ double ctkCoordinatesWidget::normalize(double* coordinates, int dimension)
 }
 
 //------------------------------------------------------------------------------
+double ctkCoordinatesWidget::norm()const
+{
+  return ctkCoordinatesWidget::norm(this->Coordinates, this->Dimension);
+}
+
+//------------------------------------------------------------------------------
 double ctkCoordinatesWidget::norm(double* coordinates, int dimension)
+{
+  return sqrt(ctkCoordinatesWidget::squaredNorm(coordinates, dimension));
+}
+
+//------------------------------------------------------------------------------
+double ctkCoordinatesWidget::squaredNorm()const
+{
+  return ctkCoordinatesWidget::squaredNorm(this->Coordinates, this->Dimension);
+}
+
+//------------------------------------------------------------------------------
+double ctkCoordinatesWidget::squaredNorm(double* coordinates, int dimension)
 {
   double sum = 0.;
   for (int i = 0; i < dimension; ++i)
     {
     sum += coordinates[i] * coordinates[i];
     }
-  return sqrt(sum);
+  return sum;
 }
