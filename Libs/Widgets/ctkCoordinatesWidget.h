@@ -87,6 +87,8 @@ public:
 
   /// Return the norm of the coordinates.
   double norm()const;
+  /// Return the squared norm of the coordinates.
+  double squaredNorm()const;
 
   /// Set/Get the coordinates. Use commas to separate elements, spaces are
   /// allowed: e.g. "0,0.0, 0."
@@ -123,6 +125,7 @@ protected:
 
   /// Compute the norm of a coordinates \a dimension vector
   static double norm(double* coordinates, int dimension);
+  static double squaredNorm(double* coordinates, int dimension);
 
   int     Decimals;
   double  SingleStep;
@@ -131,6 +134,7 @@ protected:
   bool    Normalized;
   int     Dimension;
   double* Coordinates;
+  QList<int> LastUserEditedCoordinates;
 };
 
 #endif
