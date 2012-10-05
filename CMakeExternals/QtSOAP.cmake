@@ -25,7 +25,7 @@ if(${add_project})
 
     if(NOT DEFINED QtSOAP_DIR)
 
-      set(revision_tag 6bf1b8c8)
+      set(revision_tag 3e49f7a4a1a684779eb66215bad46140d9153731)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()

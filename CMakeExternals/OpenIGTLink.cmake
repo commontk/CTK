@@ -31,6 +31,12 @@ if(${add_project})
       else()
         set(location_args SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink")
       endif()
+      
+      set(ep_project_include_arg)
+      if(CTEST_USE_LAUNCHERS)
+        set(ep_project_include_arg
+          "-DCMAKE_PROJECT_OpenIGTLink_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
+      endif()
 
     #   message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
@@ -42,6 +48,7 @@ if(${add_project})
         CMAKE_GENERATOR ${gen}
         CMAKE_CACHE_ARGS
           ${ep_common_cache_args}
+          ${ep_project_include_arg}
         DEPENDS
           ${proj_DEPENDENCIES}
         )

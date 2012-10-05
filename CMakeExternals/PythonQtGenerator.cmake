@@ -52,7 +52,7 @@ if(CTK_WRAP_PYTHONQT_FULL)
           )
       else()
 
-        set(revision_tag 3171a94e16ba9bfee137)
+        set(revision_tag 2114405a47836b3fb16a3f66fec6a02184f32e71)
         if(${proj}_REVISION_TAG)
           set(revision_tag ${${proj}_REVISION_TAG})
         endif()

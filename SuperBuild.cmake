@@ -81,7 +81,6 @@ set(ctk_cmake_boolean_args
   CTK_USE_KWSTYLE
   WITH_COVERAGE
   DOCUMENTATION_TARGET_IN_ALL
-  CTEST_USE_LAUNCHERS
   CTK_WRAP_PYTHONQT_FULL
   CTK_ENABLE_Python_Wrapping
   ${ctk_lib_options_list}
