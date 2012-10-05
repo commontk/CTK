@@ -97,7 +97,8 @@ endif()
 #message("force_build:${force_build}")
 
 # For more details, see http://www.kitware.com/blog/home/post/11
-set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} 1)
+set(CTEST_USE_LAUNCHERS 1)
+set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} ${CTEST_USE_LAUNCHERS})
 
 if(empty_binary_directory)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
