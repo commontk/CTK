@@ -296,6 +296,13 @@ void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& dicomDatabase, const QSt
   }
 
 //----------------------------------------------------------------------------
+void ctkDICOMIndexer::waitForImportFinished()
+{
+  Q_D(ctkDICOMIndexer);
+  d->DirectoryImportWatcher.waitForFinished();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMIndexer::cancel()
 {
   Q_D(ctkDICOMIndexer);
