@@ -38,6 +38,12 @@ if(${add_project})
         set(location_args GIT_REPOSITORY "${git_protocol}://git.dcmtk.org/dcmtk.git"
                           GIT_TAG ${revision_tag})
       endif()
+      
+      set(ep_project_include_arg)
+      if(CTEST_USE_LAUNCHERS)
+        set(ep_project_include_arg
+          "-DCMAKE_PROJECT_DCMTK_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
+      endif()
 
       #message(STATUS "Adding project:${proj}")
       ExternalProject_Add(${proj}
@@ -53,6 +59,7 @@ if(${add_project})
           -DDCMTK_INSTALL_LIBDIR:STRING=lib/${CMAKE_CFG_INTDIR}
         CMAKE_CACHE_ARGS
           ${ep_common_cache_args}
+          ${ep_project_include_arg}
           -DBUILD_SHARED_LIBS:BOOL=OFF
           -DDCMTK_WITH_DOXYGEN:BOOL=OFF
           -DDCMTK_WITH_ZLIB:BOOL=OFF # see github issue #25

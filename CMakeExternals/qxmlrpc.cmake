@@ -25,17 +25,20 @@ if(${add_project})
 
     if(NOT DEFINED qxmlrpc_DIR)
     
+      set(revision_tag 1d46d0e24d68049e726269dd3c6438671cd693ea)
+      if(${proj}_REVISION_TAG)
+        set(revision_tag ${${proj}_REVISION_TAG})
+      endif()
+      
       set(location_args )
       if(${proj}_URL)
         set(location_args URL ${${proj}_URL})
       elseif(${proj}_GIT_REPOSITORY)
-        set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY})
-        if(${proj}_REVISION_TAG)
-          list(APPEND location_args GIT_TAG ${${proj}_REVISION_TAG})
-        endif()
+        set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
+                          GIT_TAG ${revision_tag})
       else()
         set(location_args GIT_REPOSITORY "${git_protocol}://github.com/commontk/qxmlrpc.git"
-                          GIT_TAG "origin/patched")
+                          GIT_TAG ${revision_tag})
       endif()
       
       #message(STATUS "Adding project:${proj}")

@@ -97,10 +97,7 @@ endif()
 #message("force_build:${force_build}")
 
 # For more details, see http://www.kitware.com/blog/home/post/11
-set(CTEST_USE_LAUNCHERS 0)
-#if (NOT ${CTEST_CMAKE_GENERATOR} MATCHES "Visual Studio")
-#  set(CTEST_USE_LAUNCHERS 1)
-#endif()
+set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} 1)
 
 if(empty_binary_directory)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
@@ -127,7 +124,6 @@ macro(run_ctest)
 
     # Write initial cache.
     file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
-CTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
 QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
 SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:BOOL=TRUE
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}
