@@ -112,15 +112,24 @@ protected:
   ctkCheckableComboBox* const q_ptr;
   QModelIndexList checkedIndexes()const;
   QModelIndexList uncheckedIndexes()const;
+
 public:
   ctkCheckableComboBoxPrivate(ctkCheckableComboBox& object);
   void init();
 
+  QModelIndexList cachedCheckedIndexes()const;
   void updateCheckedList();
-  
+
   ctkCheckableModelHelper* CheckableModelHelper;
-  QModelIndexList          CheckedList;
-  bool                     MouseButtonPressed;
+  bool MouseButtonPressed;
+
+private:
+  QModelIndexList persistentIndexesToModelIndexes(
+    const QList<QPersistentModelIndex>& persistentModels)const;
+  QList<QPersistentModelIndex> modelIndexesToPersistentIndexes(
+    const QModelIndexList& modelIndexes)const;
+
+  mutable QList<QPersistentModelIndex> CheckedList;
 };
 
 //-----------------------------------------------------------------------------
@@ -150,13 +159,53 @@ void ctkCheckableComboBoxPrivate::init()
 void ctkCheckableComboBoxPrivate::updateCheckedList()
 {
   Q_Q(ctkCheckableComboBox);
-  QModelIndexList newCheckedList = this->checkedIndexes();
-  if (newCheckedList == this->CheckedList)
+  QList<QPersistentModelIndex> newCheckedPersistentList =
+    this->modelIndexesToPersistentIndexes(this->checkedIndexes());
+  if (newCheckedPersistentList == this->CheckedList)
     {
     return;
     }
-  this->CheckedList = newCheckedList;
+  this->CheckedList = newCheckedPersistentList;
   emit q->checkedIndexesChanged();
+}
+
+//-----------------------------------------------------------------------------
+QList<QPersistentModelIndex> ctkCheckableComboBoxPrivate
+::modelIndexesToPersistentIndexes(const QModelIndexList& indexes)const
+{
+  QList<QPersistentModelIndex> res;
+  foreach(const QModelIndex& index, indexes)
+    {
+    QPersistentModelIndex persistent(index);
+    if (persistent.isValid())
+      {
+      res << persistent;
+      }
+    }
+  return res;
+}
+
+//-----------------------------------------------------------------------------
+QModelIndexList ctkCheckableComboBoxPrivate
+::persistentIndexesToModelIndexes(
+  const QList<QPersistentModelIndex>& indexes)const
+{
+  QModelIndexList res;
+  foreach(const QPersistentModelIndex& index, indexes)
+    {
+    if (index.isValid())
+      {
+      res << index;
+      }
+    }
+  return res;
+}
+
+//-----------------------------------------------------------------------------
+QModelIndexList ctkCheckableComboBoxPrivate::cachedCheckedIndexes()const
+{
+  Q_Q(const ctkCheckableComboBox);
+  return this->persistentIndexesToModelIndexes(this->CheckedList);
 }
 
 //-----------------------------------------------------------------------------
@@ -266,7 +315,7 @@ QAbstractItemModel* ctkCheckableComboBox::checkableModel()const
 QModelIndexList ctkCheckableComboBox::checkedIndexes()const
 {
   Q_D(const ctkCheckableComboBox);
-  return d->CheckedList;
+  return d->cachedCheckedIndexes();
 }
 
 //-----------------------------------------------------------------------------
@@ -280,7 +329,7 @@ bool ctkCheckableComboBox::allChecked()const
 bool ctkCheckableComboBox::noneChecked()const
 {
   Q_D(const ctkCheckableComboBox);
-  return d->CheckedList.count() == 0;
+  return d->cachedCheckedIndexes().count() == 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -309,6 +358,8 @@ void ctkCheckableComboBox::onDataChanged(const QModelIndex& start, const QModelI
 //-----------------------------------------------------------------------------
 void ctkCheckableComboBox::paintEvent(QPaintEvent *)
 {
+  Q_D(ctkCheckableComboBox);
+
   QStylePainter painter(this);
   painter.setPen(palette().color(QPalette::Text));
 
@@ -329,7 +380,7 @@ void ctkCheckableComboBox::paintEvent(QPaintEvent *)
   else
     {
     //search the checked items
-    QModelIndexList indexes = this->checkedIndexes();
+    QModelIndexList indexes = d->cachedCheckedIndexes();
     if (indexes.count() == 1)
       {
       opt.currentText = this->model()->data(indexes[0], Qt::DisplayRole).toString();
