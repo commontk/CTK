@@ -204,7 +204,6 @@ QModelIndexList ctkCheckableComboBoxPrivate
 //-----------------------------------------------------------------------------
 QModelIndexList ctkCheckableComboBoxPrivate::cachedCheckedIndexes()const
 {
-  Q_Q(const ctkCheckableComboBox);
   return this->persistentIndexesToModelIndexes(this->CheckedList);
 }
 
