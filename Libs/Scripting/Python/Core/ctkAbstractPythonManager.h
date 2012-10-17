@@ -110,6 +110,10 @@ public:
   /// \sa PythonQt::errorOccured()
   bool pythonErrorOccured()const;
 
+  /// Reset error flag
+  /// \sa PythonQt::resetErrorFlag()
+  void resetErrorFlag();
+
 Q_SIGNALS:
 
   /// This signal is emitted after python is pre-initialized. Observers can listen
