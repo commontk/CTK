@@ -21,44 +21,20 @@
 #ifndef __ctkVTKObjectEventsObserver_h
 #define __ctkVTKObjectEventsObserver_h
 
-/// CTK includes
-#include <ctkSingleton.h>
-
 /// Qt includes
 #include <QObject>
 #include <QList>
 #include <QString>
 
-/// VTK includes
-#include <vtkCommand.h>
-
+/// CTK includes
+#include <ctkSingleton.h>
 #include "ctkVisualizationVTKCoreExport.h"
-
 class ctkVTKConnection;
-class vtkObject;
-class ctkVTKObjectEventsObserver;
 class ctkVTKObjectEventsObserverPrivate;
 
-//-----------------------------------------------------------------------------
-/// \ingroup Visualization_VTK_Core
-class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKConnectionFactory
-{
-public:
-  static ctkVTKConnectionFactory* instance();
-
-  /// The singleton takes ownerchip of the new factory instance and will take care
-  /// of cleaning the memory.
-  /// \note If \a newInstance is not null, the current factory instance will be
-  /// deleted. Note also that setting a null \a newInstance is a no-op.
-  static void setInstance(ctkVTKConnectionFactory* newInstance);
-
-  virtual ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const;
-protected:
-  ctkVTKConnectionFactory();
-  virtual ~ctkVTKConnectionFactory();
-  CTK_SINGLETON_DECLARE(ctkVTKConnectionFactory)
-};
-CTK_SINGLETON_DECLARE_INITIALIZER(CTK_VISUALIZATION_VTK_CORE_EXPORT, ctkVTKConnectionFactory)
+/// VTK includes
+#include <vtkCommand.h>
+class vtkObject;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Visualization_VTK_Core
@@ -137,7 +113,7 @@ public:
 
   ///
   /// Remove all the connections
-  inline int removeAllConnections();
+  int removeAllConnections();
 
   ///
   /// Temporarilly block all the connection
@@ -158,8 +134,9 @@ public:
   /// Return true if the connection exists and was blocked, otherwise returns
   /// false.
   bool blockConnection(const QString& id, bool blocked);
-  
-  /// Return true if there is at least 1 connection that match the parameter
+
+  /// Return true if there is at least 1 connection matching the parameters,
+  /// false otherwise.
   bool containsConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
                           const QObject* qt_obj =0, const char* qt_slot =0)const;
 
@@ -173,9 +150,24 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-int ctkVTKObjectEventsObserver::removeAllConnections()
+/// \ingroup Visualization_VTK_Core
+class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKConnectionFactory
 {
-  return this->removeConnection(0, vtkCommand::NoEvent, 0, 0);
-}
+public:
+  static ctkVTKConnectionFactory* instance();
+
+  /// The singleton takes ownerchip of the new factory instance and will take care
+  /// of cleaning the memory.
+  /// \note If \a newInstance is not null, the current factory instance will be
+  /// deleted. Note also that setting a null \a newInstance is a no-op.
+  static void setInstance(ctkVTKConnectionFactory* newInstance);
+
+  virtual ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const;
+protected:
+  ctkVTKConnectionFactory();
+  virtual ~ctkVTKConnectionFactory();
+  CTK_SINGLETON_DECLARE(ctkVTKConnectionFactory)
+};
+CTK_SINGLETON_DECLARE_INITIALIZER(CTK_VISUALIZATION_VTK_CORE_EXPORT, ctkVTKConnectionFactory)
 
 #endif
