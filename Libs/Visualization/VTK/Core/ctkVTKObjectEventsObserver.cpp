@@ -402,6 +402,12 @@ int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lo
 }
 
 //-----------------------------------------------------------------------------
+int ctkVTKObjectEventsObserver::removeAllConnections()
+{
+  return this->removeConnection(0, vtkCommand::NoEvent, 0, 0);
+}
+
+//-----------------------------------------------------------------------------
 bool ctkVTKObjectEventsObserver::containsConnection(vtkObject* vtk_obj, unsigned long vtk_event,
   const QObject* qt_obj, const char* qt_slot)const
 {
