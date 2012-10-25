@@ -38,9 +38,25 @@ class vtkObject;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Visualization_VTK_Core
+/// \brief Connect vtkObject events with QObject slots.
+/// Helper class that provides utility methods for connecting vtkObjects with
+/// QObjects.
 class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKObjectEventsObserver : public QObject
 {
 Q_OBJECT
+  /// This property controls wether or not you can replace a
+  /// connection by a connection from an object of a different VTK class tha
+  /// the first.
+  /// For example, if strictTypeCheck is on, the following will generate an error
+  /// \code
+  /// vtkActor* actor = vtkActor::New();
+  /// objectEventsObserver->addConnection(actor, vtkCommand::ModifiedEvent, ...);
+  /// vtkMapper* mapper = vtkMapper::New();
+  /// objectEventsObserver->addConnection(actor, mapper, vtkCommand::ModifiedEvent, ...);
+  /// \endcode
+  /// False by default.
+  /// \sa strictTypeCheck(), setStrictTypeCheck(),
+  /// addConnection()
   Q_PROPERTY(bool strictTypeCheck READ strictTypeCheck WRITE setStrictTypeCheck)
 public:
   typedef QObject Superclass;
@@ -48,57 +64,56 @@ public:
   virtual ~ctkVTKObjectEventsObserver();
 
   virtual void printAdditionalInfo();
-  
-  /// The property strictTypeCheck control wether or not you can replace a
-  /// connection by a connection from an object of a different VTK class tha
-  /// the first.
-  /// For example, if strictTypeCheck is on, the following will generate an error
-  /// <code>
-  /// vtkActor* actor = vtkActor::New();
-  /// objectEventsObserver->addConnection(actor, vtkCommand::ModifiedEvent, ...);
-  /// vtkMapper* mapper = vtkMapper::New();
-  /// objectEventsObserver->addConnection(actor, mapper, vtkCommand::ModifiedEvent, ...);
-  /// </code>
-  /// False by default.
+
+  /// Return the strictTypeCheck value.
+  /// \sa strictTypeCheck, setStrictTypeCheck()
   bool strictTypeCheck()const;
+  /// Set the strictTypeCheck value.
+  /// \sa strictTypeCheck, strictTypeCheck()
   void setStrictTypeCheck(bool check);
 
   ///
-  /// Add a connection, an Id allowing to uniquely identify the connection is
+  /// Add a connection between a \c vtkObject and a \c QObject.
+  /// When the \a vtk_obj \c vtkObject invokes the \a vtk_event event,
+  /// the slot \a qt_slot of the \c QObject \a qt_obj is called
+  /// \a priority is used for the \c vtkObject observation and
+  /// \a connectionType controls when the slot is called.
+  /// The slot must have the signature
+  /// \code (vtkObject*,void*,unsigned long,void*) \endcode where the
+  /// parameters are respectively \code (sender,callData,eventId,clientData)
+  /// \endcode.
+  /// Or with the signature
+  /// \code (vtkObject*,vtkObject*) \endcode where the first \c vtkObject* is
+  /// the sender and the second \c vtkObject* is the callData casted into a
+  /// \c vtkObject.
+  /// The slot can contain less parameters, but must be in the same order.
+  /// An ID allowing to uniquely identify the connection is
   /// returned. It is a no-op if vtk_obj is NULL, the parameters are invalid or
   /// if the connection already exist.
-  /// Warning the slot must have its signature order:
-  /// vtkObject*, vtkObject* : sender, callData
-  /// or
-  /// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
-  /// Of course the slot can contain less parameters, but always the same order
-  /// though.
+  /// \sa addConnection(vtkObject* old_vtk_obj,vtkObject* vtk_obj,
+  /// unsigned long vtk_event, const QObject* qt_obj, const char* qt_slot,
+  /// float priority = 0.0, Qt::ConnectionType connectionType =
+  /// Qt::AutoConnection), reconnection(), removeConnection(),
+  /// removeAllConnections(), containsConnection()
   QString addConnection(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0,
     Qt::ConnectionType connectionType = Qt::AutoConnection);
 
   ///
-  /// Utility function that remove a connection on old_vtk_obj and add a connection
-  /// to vtk_obj (same event, object, slot, priority)
-  /// Warning the slot must have its signature order:
-  /// vtkObject*, vtkObject* : sender, callData
-  /// or
-  /// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
-  /// Of course the slot can contain less parameters, but always the same order
-  /// though.
-  QString addConnection(vtkObject* old_vtk_obj, vtkObject* vtk_obj, unsigned long vtk_event,
+  /// Remove any connection to \a old_vtk_obj and add a connection
+  /// to \a vtk_obj (with same event, object, slot, priority and type).
+  /// \sa addConnection(), reconnection(),
+  /// removeConnection(), removeAllConnections(), containsConnection()
+  QString addConnection(vtkObject* old_vtk_obj,
+    vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.0,
     Qt::ConnectionType connectionType = Qt::AutoConnection);
 
   ///
   /// Utility function that remove a connection on old_vtk_obj and add a connection
-  /// to vtk_obj (same event, object, slot, priority)
-  /// Warning the slot must have its signature order:
-  /// vtkObject*, vtkObject* : sender, callData
-  /// or
-  /// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
-  /// Of course the slot can contain less parameters, but always the same order
-  /// though.
+  /// to vtk_obj (with same event, object, slot, priority)
+  /// \sa addConnection(), removeConnection(), removeAllConnections(),
+  /// containsConnection()
   QString reconnection(vtkObject* vtk_obj, unsigned long vtk_event,
                        const QObject* qt_obj, const char* qt_slot,
                        float priority = 0.0,
@@ -108,11 +123,14 @@ public:
   /// Remove all the connections matching vtkobj, event, qtobj and slot using
   /// wildcards or not.
   /// Returns the number of connection removed.
+  /// \sa addConnection(), reconnection(), removeAllConnections(),
+  /// containsConnection()
   int removeConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
                        const QObject* qt_obj = 0, const char* qt_slot = 0);
 
   ///
   /// Remove all the connections
+  /// \sa removeConnection()
   int removeAllConnections();
 
   ///
@@ -137,6 +155,8 @@ public:
 
   /// Return true if there is at least 1 connection matching the parameters,
   /// false otherwise.
+  /// \sa addConnection(), reconnection(), removeConnection(),
+  /// removeAllConnections()
   bool containsConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
                           const QObject* qt_obj =0, const char* qt_slot =0)const;
 
