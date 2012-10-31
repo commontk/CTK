@@ -61,7 +61,13 @@ public:
   void _q_readyRead()
   {
     input->seek(readPos);
-    reader.addData(input->readAll());
+
+    QByteArray buffer = input->readAll();
+
+    buffer.prepend("<module-snippet>");
+    buffer.append("</module-snippet>");
+
+    reader.addData(buffer);
     readPos = input->pos();
     parseProgressXml();
   }
@@ -123,7 +129,7 @@ public:
         QString parent;
         if (!stack.empty()) parent = stack.back();
 
-        if (name.compare("module-root") != 0)
+        if (name.compare("module-root") != 0 && name.compare("module-snippet") != 0)
         {
           stack.push_back(name.toString());
         }
@@ -171,13 +177,8 @@ public:
           if (!stack.empty()) parent = stack.back();
         }
 
-        if (parent.isEmpty())
+        if (parent.isEmpty() && name.compare("module-snippet") != 0)
         {
-          if (!outputData.isEmpty())
-          {
-            emit q->outputDataAvailable(outputData);
-            outputData.clear();
-          }
           if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0)
           {
             emit q->filterStarted(currentName, currentComment);
@@ -207,6 +208,12 @@ public:
       }
       default:
         break;
+      }
+
+      if (!outputData.isEmpty())
+      {
+        emit q->outputDataAvailable(outputData);
+        outputData.clear();
       }
       type = reader.readNext();
     }
