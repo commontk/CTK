@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <cstdlib>
+#include <QStringList>
 
 //----------------------------------------------------------------------------
 struct ctkCmdLineModuleDefaultPathBuilderPrivate
@@ -30,18 +31,21 @@ struct ctkCmdLineModuleDefaultPathBuilderPrivate
 public:
   ctkCmdLineModuleDefaultPathBuilderPrivate();
   ~ctkCmdLineModuleDefaultPathBuilderPrivate();
-  QStringList build() const;
+  void clear();
+  void setStrictMode(const bool& strict);
+  bool strictMode() const;
+  void addHomeDir(const QString& subFolder = QString());
+  void addCurrentDir(const QString& subFolder = QString());
+  void addApplicationDir(const QString& subFolder = QString());
+  void addCtkModuleLoadPathDir(const QString& subFolder = QString());
+  QStringList getDirectoryList() const;
 
-  void setLoadFromHomeDir(bool doLoad);
-  void setLoadFromCurrentDir(bool doLoad);
-  void setLoadFromApplicationDir(bool doLoad);
-  void setLoadFromCtkModuleLoadPath(bool doLoad);
+  bool isStrictMode;
+  QStringList directoryList;
 
-  bool LoadFromHomeDir;
-  bool LoadFromCurrentDir;
-  bool LoadFromApplicationDir;
-  bool LoadFromCtkModuleLoadPath;
+private:
 
+  QString addSubFolder(const QString& folder, const QString& subFolder);
 };
 
 //-----------------------------------------------------------------------------
@@ -49,91 +53,122 @@ public:
 
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleDefaultPathBuilderPrivate::ctkCmdLineModuleDefaultPathBuilderPrivate()
-: LoadFromHomeDir(false)
-, LoadFromCurrentDir(false)
-, LoadFromApplicationDir(false)
-, LoadFromCtkModuleLoadPath(false)
+: isStrictMode(false)
 {
-
 }
+
 
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleDefaultPathBuilderPrivate::~ctkCmdLineModuleDefaultPathBuilderPrivate()
 {
-
-}
-
-//-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromHomeDir(bool doLoad)
-{
-  LoadFromHomeDir = doLoad;
-}
-
-//-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromCurrentDir(bool doLoad)
-{
-  LoadFromCurrentDir = doLoad;
-}
-
-//-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromApplicationDir(bool doLoad)
-{
-  LoadFromApplicationDir = doLoad;
-}
-
-//-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilderPrivate::setLoadFromCtkModuleLoadPath(bool doLoad)
-{
-  LoadFromCtkModuleLoadPath = doLoad;
 }
 
 
 //-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDefaultPathBuilderPrivate::build() const
+void ctkCmdLineModuleDefaultPathBuilderPrivate::clear()
 {
-  QStringList result;
+  directoryList.clear();
+}
 
-  QString suffix = "cli-modules";
 
-  if (LoadFromCtkModuleLoadPath)
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDefaultPathBuilderPrivate::setStrictMode(const bool& strict)
+{
+  isStrictMode = strict;
+}
+
+
+//-----------------------------------------------------------------------------
+bool ctkCmdLineModuleDefaultPathBuilderPrivate::strictMode() const
+{
+  return isStrictMode;
+}
+
+
+//-----------------------------------------------------------------------------
+QString ctkCmdLineModuleDefaultPathBuilderPrivate::addSubFolder(
+    const QString& folder, const QString& subFolder)
+{
+  if (subFolder.length() > 0)
   {
-    char *ctkModuleLoadPath = getenv("CTK_MODULE_LOAD_PATH");
-    if (ctkModuleLoadPath != NULL)
+    return folder + QDir::separator() + subFolder;
+  }
+  else
+  {
+    return folder;
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDefaultPathBuilderPrivate::addHomeDir(const QString& subFolder)
+{
+  if (QDir::home().exists())
+  {
+    QString result = addSubFolder(QDir::homePath(), subFolder);
+    directoryList << result;
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDefaultPathBuilderPrivate::addCurrentDir(const QString& subFolder)
+{
+  if (QDir::current().exists())
+  {
+    QString result = addSubFolder(QDir::currentPath(), subFolder);
+    directoryList << result;
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDefaultPathBuilderPrivate::addApplicationDir(const QString& subFolder)
+{
+  QString result = addSubFolder(QCoreApplication::applicationDirPath(), subFolder);
+  directoryList << result;
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDefaultPathBuilderPrivate::addCtkModuleLoadPathDir(
+    const QString& subFolder)
+{
+  char *ctkModuleLoadPath = getenv("CTK_MODULE_LOAD_PATH");
+  if (ctkModuleLoadPath != NULL)
+  {
+    QDir dir = QDir(QString(ctkModuleLoadPath));
+    QString result = addSubFolder(dir.canonicalPath(), subFolder);
+    directoryList << result;
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+QStringList ctkCmdLineModuleDefaultPathBuilderPrivate::getDirectoryList() const
+{
+  if (!isStrictMode)
+  {
+    return directoryList;
+  }
+  else
+  {
+    QStringList filteredList;
+    foreach (QString directory, directoryList)
     {
-      QDir dir = QDir(QString(ctkModuleLoadPath));
+      QDir dir(directory);
       if (dir.exists())
       {
-        result << dir.canonicalPath();
+        filteredList << directory;
       }
     }
-  }
 
-  if (LoadFromHomeDir)
-  {
-    if (QDir::home().exists())
-    {
-      result << QDir::homePath();
-      result << QDir::homePath() + QDir::separator() + suffix;
-    }
+    qDebug() << "Filtered directory list " << directoryList << " to " << filteredList;
+    return filteredList;
   }
-
-  if (LoadFromCurrentDir)
-  {
-    if (QDir::current().exists())
-    {
-      result << QDir::currentPath();
-      result << QDir::currentPath() + QDir::separator() + suffix;
-    }
-  }
-
-  if (LoadFromApplicationDir)
-  {
-    result << QCoreApplication::applicationDirPath();
-    result << QCoreApplication::applicationDirPath() + QDir::separator() + suffix;
-  }
-
-  return result;
 }
+
+
 
 //-----------------------------------------------------------------------------
 // ctkCmdLineModuleDefaultPathBuilder methods
@@ -149,32 +184,59 @@ ctkCmdLineModuleDefaultPathBuilder::~ctkCmdLineModuleDefaultPathBuilder()
 {
 }
 
-//-----------------------------------------------------------------------------
-QStringList ctkCmdLineModuleDefaultPathBuilder::build() const
-{
-  return d->build();
-}
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilder::setLoadFromHomeDir(bool doLoad)
+void ctkCmdLineModuleDefaultPathBuilder::clear()
 {
-  d->setLoadFromHomeDir(doLoad);
+  d->clear();
 }
 
-//-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilder::setLoadFromCurrentDir(bool doLoad)
-{
-  d->setLoadFromCurrentDir(doLoad);
-}
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilder::setLoadFromApplicationDir(bool doLoad)
+void ctkCmdLineModuleDefaultPathBuilder::setStrictMode(const bool& strict)
 {
-  d->setLoadFromApplicationDir(doLoad);
+  d->setStrictMode(strict);
 }
 
+
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilder::setLoadFromCtkModuleLoadPath(bool doLoad)
+bool ctkCmdLineModuleDefaultPathBuilder::strictMode() const
 {
-  d->setLoadFromCtkModuleLoadPath(doLoad);
+  return d->strictMode();
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDefaultPathBuilder::addHomeDir(const QString& subFolder)
+{
+  d->addHomeDir(subFolder);
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDefaultPathBuilder::addCurrentDir(const QString& subFolder)
+{
+  d->addCurrentDir(subFolder);
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDefaultPathBuilder::addApplicationDir(const QString& subFolder)
+{
+  d->addApplicationDir(subFolder);
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDefaultPathBuilder::addCtkModuleLoadPathDir(
+    const QString& subFolder)
+{
+  d->addCtkModuleLoadPathDir(subFolder);
+}
+
+
+//-----------------------------------------------------------------------------
+QStringList ctkCmdLineModuleDefaultPathBuilder::getDirectoryList() const
+{
+  return d->getDirectoryList();
 }

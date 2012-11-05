@@ -29,24 +29,23 @@ struct ctkCmdLineModuleDefaultPathBuilderPrivate;
 
 /**
  * \class ctkCmdLineModuleDefaultPathBuilder
- * \brief Builds up a list of directory paths to search for command
- * line modules.
+ * \brief Builds up a list of directory paths to search for command line modules.
  * \ingroup CommandLineModulesCore_API
  * \author m.clarkson@ucl.ac.uk
  *
- * Implements the following basic strategy, depending on which boolean
- * flags are on: By default they are all off, as directory scanning is
- * often time consuming.
+ * Simple class to enable the user to easily add various directories
+ * to a list of directories. You create this object, add a load of directories
+ * and then call getDirectoryList() to get a StringList of directory locations.
  *
+ * The choices are:
  * <pre>
- * 1. CTK_MODULE_LOAD_PATH environment variable
- * 2. Home directory
- * 3. Home directory / cli-modules
- * 4. Current working directory
- * 5. Current working directory / cli-modules
- * 6. Application directory
- * 7. Application directory / cli-modules
+ * 1. The directory defined by the CTK_MODULE_LOAD_PATH environment variable or any sub-directory under this.
+ * 2. The directory defined by the users HOME directory, or any sub-directory under this.
+ * 3. The directory defined by the current working directory, or any sub-directory under this.
+ * 4. The directory defined by the application installation directory or any sub-directory under this.
  * </pre>
+ *
+ * A strictMode flag exists to decide if this class only returns directories that already exist.
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleDefaultPathBuilder
 {
@@ -57,35 +56,54 @@ public:
   ~ctkCmdLineModuleDefaultPathBuilder();
 
   /**
-   * @brief Instruct the builder to include the users
-   * home directory and sub-folder cli-modules.
+   * @brief Clears the current list of directories.
    */
-  virtual void setLoadFromHomeDir(bool doLoad);
+  virtual void clear();
 
   /**
-   * @brief Instruct the builder to include the current
-   * running directory and sub-folder cli-modules.
+   * @brief Sets strict mode which checks that all directories already exist.
+   * @param strict if true this object will only return existing directories,
+   * if false, the return StringList is un-checked.
    */
-  virtual void setLoadFromCurrentDir(bool doLoad);
+  virtual void setStrictMode(const bool& strict);
 
   /**
-   * @brief Instruct the builder to include the application
-   * installation directory and sub-folder cli-modules.
+   * @brief Returns the strict mode flag.
    */
-  virtual void setLoadFromApplicationDir(bool doLoad);
+  virtual bool strictMode() const;
 
   /**
-   * @brief Instruct the builder to include the path denoted
-   * by the environment variable CTK_MODULE_LOAD_PATH.
+   * @brief Adds the users home directory, or if specified a sub-directory.
+   *
+   * This depends on QDir::home() existing. If this is not the case,
+   * then this method will do nothing and ignore the request.
    */
-  virtual void setLoadFromCtkModuleLoadPath(bool doLoad);
+  virtual void addHomeDir(const QString& subFolder = QString());
 
   /**
-   * @brief Builds the list of paths to search and returns them
-   * as QStringList
-   * @return a QStringList of directory path names
+   * @brief Adds the current working directory, or if specified a sub-directory.
+   *
+   * This depends on QDir::current() existing. If this is not the case,
+   * then this method will do nothing and ignore the request.
    */
-  virtual QStringList build() const;
+  virtual void addCurrentDir(const QString& subFolder = QString());
+
+  /**
+   * @brief Adds the application installation directory, or if specified a sub-directory.
+   */
+  virtual void addApplicationDir(const QString& subFolder = QString());
+
+  /**
+   * @brief Adds the directory denoted by the environment variable CTK_MODULE_LOAD_PATH,
+   * or if specified a sub-directory.
+   */
+  virtual void addCtkModuleLoadPathDir(const QString& subFolder = QString());
+
+  /**
+   * @brief Returns the QStringList containing directories.
+   * @return QStringList of directories or, if in strict mode, directories that already exist.
+   */
+  virtual QStringList getDirectoryList() const;
 
 private:
 
