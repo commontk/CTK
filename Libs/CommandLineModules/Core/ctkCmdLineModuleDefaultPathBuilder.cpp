@@ -29,6 +29,7 @@
 struct ctkCmdLineModuleDefaultPathBuilderPrivate
 {
 public:
+
   ctkCmdLineModuleDefaultPathBuilderPrivate();
   ~ctkCmdLineModuleDefaultPathBuilderPrivate();
   void clear();
@@ -37,7 +38,7 @@ public:
   void addHomeDir(const QString& subFolder = QString());
   void addCurrentDir(const QString& subFolder = QString());
   void addApplicationDir(const QString& subFolder = QString());
-  void addCtkModuleLoadPathDir(const QString& subFolder = QString());
+  void addCtkModuleLoadPath();
   QStringList getDirectoryList() const;
 
   bool isStrictMode;
@@ -131,15 +132,27 @@ void ctkCmdLineModuleDefaultPathBuilderPrivate::addApplicationDir(const QString&
 
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilderPrivate::addCtkModuleLoadPathDir(
-    const QString& subFolder)
+void ctkCmdLineModuleDefaultPathBuilderPrivate::addCtkModuleLoadPath()
 {
   char *ctkModuleLoadPath = getenv("CTK_MODULE_LOAD_PATH");
   if (ctkModuleLoadPath != NULL)
   {
-    QDir dir = QDir(QString(ctkModuleLoadPath));
-    QString result = addSubFolder(dir.canonicalPath(), subFolder);
-    directoryList << result;
+    // The load path may in fact be a semi-colon or colon separated list of directories, not just one.
+    QString paths(ctkModuleLoadPath);
+
+#ifdef Q_OS_WIN32
+    QString pathSeparator(";");
+#else
+    QString pathSeparator(":");
+#endif
+
+    QStringList splitPath = paths.split(pathSeparator, QString::SkipEmptyParts);
+
+    foreach (QString path, splitPath)
+    {
+      QDir dir = QDir(path);
+      directoryList << dir.absolutePath();
+    }
   }
 }
 
@@ -228,10 +241,9 @@ void ctkCmdLineModuleDefaultPathBuilder::addApplicationDir(const QString& subFol
 
 
 //-----------------------------------------------------------------------------
-void ctkCmdLineModuleDefaultPathBuilder::addCtkModuleLoadPathDir(
-    const QString& subFolder)
+void ctkCmdLineModuleDefaultPathBuilder::addCtkModuleLoadPath()
 {
-  d->addCtkModuleLoadPathDir(subFolder);
+  d->addCtkModuleLoadPath();
 }
 
 

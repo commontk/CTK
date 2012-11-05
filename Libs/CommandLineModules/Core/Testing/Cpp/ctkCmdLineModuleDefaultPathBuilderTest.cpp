@@ -101,38 +101,59 @@ int ctkCmdLineModuleDefaultPathBuilderTest(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
+  QString tmp1 = result[0];
+  QString tmp2 = result[1];
+  QString expected = tmp1 + QDir::separator() + "cli-modules";
+
+  if (tmp2 != expected)
+  {
+    qDebug() << "Expected " << expected << ", but got " << tmp2;
+    return EXIT_FAILURE;
+  }
+
   builder.clear();
 
-  builder.addCtkModuleLoadPathDir();
+  builder.addCtkModuleLoadPath();
   result = builder.getDirectoryList();
 
   qDebug() << "5. Built:" << result;
 
-  // If the environment variable CTK_MODULE_LOAD_PATH exists, it should point to a valid directory.
-  // If it does not exist, then the list should not change.
+  // If the environment variable CTK_MODULE_LOAD_PATH exists, it should point to a valid list of directories.
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   qDebug() << "Environment is:" << env.toStringList();
 
+#ifdef Q_OS_WIN32
+    QString pathSeparator(";");
+#else
+    QString pathSeparator(":");
+#endif
+
   if (env.contains("CTK_MODULE_LOAD_PATH"))
   {
-    QDir loadDir(env.value("CTK_MODULE_LOAD_PATH"));
+    QString loadPath = env.value("CTK_MODULE_LOAD_PATH");
+    QStringList loadPaths = loadPath.split(pathSeparator, QString::SkipEmptyParts);
 
-    qDebug() << "CTK_MODULE_LOAD_PATH does exist, and is set to:" << env.value("CTK_MODULE_LOAD_PATH") << ", and isExists() returns " << loadDir.exists();
-
-    if (loadDir.exists() && result.size() != 1)
+    foreach (QString path, loadPaths)
     {
-      qDebug() << "Environment variable CTK_MODULE_LOAD_PATH did exist and is valid, so there should be 1 entries";
-      return EXIT_FAILURE;
-    }
-    else if (!loadDir.exists() && result.size() != 0)
-    {
-      qDebug() << "Environment variable CTK_MODULE_LOAD_PATH did exist but is invalid, so there should be 0 entries";
-      return EXIT_FAILURE;
+      if (!loadPaths.contains(path))
+      {
+        qDebug() << "Expecte loadPaths to contain path=" << path;
+        return EXIT_FAILURE;
+      }
     }
   }
-  else if (result.size() != 0)
+
+  builder.clear();
+
+  builder.addApplicationDir("blah-blah-blah");
+  builder.setStrictMode(true);
+  result = builder.getDirectoryList();
+
+  qDebug() << "6. Built:" << result;
+
+  if (result.size() != 0)
   {
-    qDebug() << "Environment variable CTK_MODULE_LOAD_PATH did not exist, so there should still be 0 entries.";
+    qDebug() << "Calling addApplicationDir(blah-blah-blah) should return nothing unless we do have a sub-folder called blah-blah-blah.";
     return EXIT_FAILURE;
   }
 
