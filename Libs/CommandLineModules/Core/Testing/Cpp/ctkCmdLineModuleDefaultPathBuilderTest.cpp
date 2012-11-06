@@ -48,86 +48,112 @@ int ctkCmdLineModuleDefaultPathBuilderTest(int argc, char* argv[])
 
   ctkCmdLineModuleDefaultPathBuilder builder;
 
-  QStringList defaultList = builder.build();
+  QStringList defaultList = builder.getDirectoryList();
   if (defaultList.size() != 0)
   {
     qDebug() << "The default list should be empty";
     return EXIT_FAILURE;
   }
 
-  builder.setLoadFromCurrentDir(true);
+  builder.addCurrentDir();
+  QStringList result = builder.getDirectoryList();
 
-  QStringList result = builder.build();
   qDebug() << "1. Built:" << result;
+
+  if (result.size() != 1)
+  {
+    qDebug() << "Calling addCurrentDir should add one directory to the list of directories.";
+    return EXIT_FAILURE;
+  }
+
+  builder.addCurrentDir("cli-modules");
+  result = builder.getDirectoryList();
+
+  qDebug() << "2. Built:" << result;
 
   if (result.size() != 2)
   {
-    qDebug() << "The flag setLoadFromCurrentDir enables scanning of the current working directory plus the subfolder cli-modules";
+    qDebug() << "Calling addCurrentDir(cli-modules) should add one directory to the list of directories.";
     return EXIT_FAILURE;
   }
 
-  builder.setLoadFromApplicationDir(true);
+  builder.clear();
 
-  result = builder.build();
-  qDebug() << "2. Built:" << result;
+  builder.addApplicationDir();
+  result = builder.getDirectoryList();
 
-  if (result.size() != 4)
-  {
-    qDebug() << "The flag setLoadFromApplicationDir enables scanning of the current installation directory plus the subfolder cli-modules";
-    return EXIT_FAILURE;
-  }
-
-  builder.setLoadFromCurrentDir(false);
-
-  result = builder.build();
   qDebug() << "3. Built:" << result;
 
-  if (!result.contains(runtimeDirectory.absolutePath()))
+  if (result.size() != 1)
   {
-    qDebug() << "Loading from the application diretory (where THIS application is located), should produce the same path as passed in via the command line argument ${CTK_CMAKE_RUNTIME_OUTPUT_DIRECTORY}";
-  }
-
-  builder.setLoadFromHomeDir(true);
-
-  result = builder.build();
-  qDebug() << "4. Built:" << result;
-
-  if (result.size() != 4)
-  {
-    qDebug() << "Should now be loading from applicationDir, applicationDir/cli-modules, homeDir, homeDir/cli-modules";
+    qDebug() << "Calling addApplicationDir should return the application installation dir.";
     return EXIT_FAILURE;
   }
 
-  builder.setLoadFromCtkModuleLoadPath(true);
+  builder.addApplicationDir("cli-modules");
+  result = builder.getDirectoryList();
 
-  result = builder.build();
+  qDebug() << "4. Built:" << result;
+
+  if (result.size() != 2)
+  {
+    qDebug() << "Calling addApplicationDir(cli-modules) should return 2 directories, one the sub-directory of the other.";
+    return EXIT_FAILURE;
+  }
+
+  QString tmp1 = result[0];
+  QString tmp2 = result[1];
+  QString expected = tmp1 + QDir::separator() + "cli-modules";
+
+  if (tmp2 != expected)
+  {
+    qDebug() << "Expected " << expected << ", but got " << tmp2;
+    return EXIT_FAILURE;
+  }
+
+  builder.clear();
+
+  builder.addCtkModuleLoadPath();
+  result = builder.getDirectoryList();
+
   qDebug() << "5. Built:" << result;
 
-  // If the environment variable CTK_MODULE_LOAD_PATH exists, it should point to a valid directory.
-  // If it does not exist, then the list should not change.
+  // If the environment variable CTK_MODULE_LOAD_PATH exists, it should point to a valid list of directories.
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   qDebug() << "Environment is:" << env.toStringList();
 
+#ifdef Q_OS_WIN32
+    QString pathSeparator(";");
+#else
+    QString pathSeparator(":");
+#endif
+
   if (env.contains("CTK_MODULE_LOAD_PATH"))
   {
-    QDir loadDir(env.value("CTK_MODULE_LOAD_PATH"));
+    QString loadPath = env.value("CTK_MODULE_LOAD_PATH");
+    QStringList loadPaths = loadPath.split(pathSeparator, QString::SkipEmptyParts);
 
-    qDebug() << "CTK_MODULE_LOAD_PATH does exist, and is set to:" << env.value("CTK_MODULE_LOAD_PATH") << ", and isExists() returns " << loadDir.exists();
-
-    if (loadDir.exists() && result.size() != 5)
+    foreach (QString path, loadPaths)
     {
-      qDebug() << "Environment variable CTK_MODULE_LOAD_PATH did exist and is valid, so there should be 5 entries";
-      return EXIT_FAILURE;
-    }
-    else if (!loadDir.exists() && result.size() != 4)
-    {
-      qDebug() << "Environment variable CTK_MODULE_LOAD_PATH did exist but is invalid, so there should be 4 entries";
-      return EXIT_FAILURE;
+      if (!loadPaths.contains(path))
+      {
+        qDebug() << "Expecte loadPaths to contain path=" << path;
+        return EXIT_FAILURE;
+      }
     }
   }
-  else if (result.size() != 4)
+
+  builder.clear();
+
+  builder.addApplicationDir("blah-blah-blah");
+  builder.setStrictMode(true);
+  result = builder.getDirectoryList();
+
+  qDebug() << "6. Built:" << result;
+
+  if (result.size() != 0)
   {
-    qDebug() << "Environment variable CTK_MODULE_LOAD_PATH did not exist, so there should still be 4 entries as previous test";
+    qDebug() << "Calling addApplicationDir(blah-blah-blah) should return nothing unless we do have a sub-folder called blah-blah-blah.";
     return EXIT_FAILURE;
   }
 
