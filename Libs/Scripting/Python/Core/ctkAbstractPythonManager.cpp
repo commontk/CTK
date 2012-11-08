@@ -143,7 +143,9 @@ void ctkAbstractPythonManager::initPythonQt(int flags)
   signal(SIGINT, SIG_DFL);
   #endif
 
-  PythonQtObjectPtr _mainContext = PythonQt::self()->getMainModule();
+  // Forward signal from PythonQt::self() to this instance of ctkAbstractPythonManager
+  this->connect(PythonQt::self(), SIGNAL(systemExitExceptionRaised(int)),
+                SIGNAL(systemExitExceptionRaised(int)));
 
   this->connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)),
                 SLOT(printStdout(QString)));
@@ -161,6 +163,7 @@ void ctkAbstractPythonManager::initPythonQt(int flags)
     initCode << QString("sys.path.append('%1')").arg(QDir::fromNativeSeparators(path));
     }
 
+  PythonQtObjectPtr _mainContext = PythonQt::self()->getMainModule();
   _mainContext.evalScript(initCode.join("\n"));
 
   this->preInitialization();
@@ -224,6 +227,20 @@ void ctkAbstractPythonManager::registerClassForPythonQt(const QMetaObject* metao
 void ctkAbstractPythonManager::registerCPPClassForPythonQt(const char* name)
 {
   PythonQt::self()->registerCPPClass(name);
+}
+
+//-----------------------------------------------------------------------------
+bool ctkAbstractPythonManager::systemExitExceptionHandlerEnabled()const
+{
+  Q_D(const ctkAbstractPythonManager);
+  return PythonQt::self()->systemExitExceptionHandlerEnabled();
+}
+
+//-----------------------------------------------------------------------------
+void ctkAbstractPythonManager::setSystemExitExceptionHandlerEnabled(bool value)
+{
+  Q_D(ctkAbstractPythonManager);
+  PythonQt::self()->setSystemExitExceptionHandlerEnabled(value);
 }
 
 //-----------------------------------------------------------------------------
