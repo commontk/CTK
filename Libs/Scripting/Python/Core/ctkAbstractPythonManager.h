@@ -68,6 +68,12 @@ public:
   void registerClassForPythonQt(const QMetaObject* metaobject);
   void registerCPPClassForPythonQt(const char* name);
 
+  /// \sa PythonQt::systemExitExceptionHandlerEnabled
+  bool systemExitExceptionHandlerEnabled()const;
+
+  /// \sa PythonQt::setSystemExitExceptionHandlerEnabled
+  void setSystemExitExceptionHandlerEnabled(bool value);
+
   /// This enum maps to Py_eval_input, Py_file_input and Py_single_input
   /// \see http://docs.python.org/c-api/veryhigh.html#Py_eval_input
   /// \see http://docs.python.org/c-api/veryhigh.html#Py_file_input
@@ -125,6 +131,11 @@ Q_SIGNALS:
   /// \sa preInitialization
   /// \sa executeScripts
   void pythonInitialized();
+
+  //! emitted when both custom SystemExit exception handler is enabled and a SystemExit
+  //! exception is raised.
+  //! \sa setSystemExitExceptionHandlerEnabled(bool), PythonQt::systemExitExceptionRaised(int)
+  void systemExitExceptionRaised(int exitCode);
 
 protected Q_SLOTS:
   void printStderr(const QString&);
