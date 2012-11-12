@@ -137,7 +137,7 @@ void ctkFDHandler::setEnabled(bool value)
 
     QString newline("\n");
 #ifdef Q_OS_WIN32
-    _write(fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
+    _write(_fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
 #else
     write(fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
 #endif
