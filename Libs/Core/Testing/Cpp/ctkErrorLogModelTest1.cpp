@@ -118,6 +118,13 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         printTextMessages(model);
         return EXIT_FAILURE;
         }
+        
+      // Check if handler can be enabled / disabled multiple times in a row
+      for (int idx = 0; idx < 3; ++idx)
+        {
+        model.setMsgHandlerEnabled(ctkErrorLogQtMessageHandler::HandlerName, false);
+        model.setMsgHandlerEnabled(ctkErrorLogQtMessageHandler::HandlerName, true);
+        }
 
       // Clear
       model.clear();
@@ -193,7 +200,14 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         printTextMessages(model);
         return EXIT_FAILURE;
         }
-
+      
+      // Check if handler can be enabled / disabled multiple times in a row
+      for (int idx = 0; idx < 3; ++idx)
+        {
+        model.setMsgHandlerEnabled(ctkErrorLogStreamMessageHandler::HandlerName, false);
+        model.setMsgHandlerEnabled(ctkErrorLogStreamMessageHandler::HandlerName, true);
+        }
+        
       // Clear
       model.clear();
 
@@ -274,6 +288,13 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
+        }
+
+      // Check if handler can be enabled / disabled multiple times in a row
+      for (int idx = 0; idx < 3; ++idx)
+        {
+        model.setMsgHandlerEnabled(ctkErrorLogFDMessageHandler::HandlerName, false);
+        model.setMsgHandlerEnabled(ctkErrorLogFDMessageHandler::HandlerName, true);
         }
 
       // Clear

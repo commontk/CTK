@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QFile>
 
 // CTK includes
 #include "ctkErrorLogFDMessageHandler.h"
@@ -50,22 +51,15 @@ ctkFDHandler::ctkFDHandler(ctkErrorLogFDMessageHandler* messageHandler,
   this->TerminalOutput = terminalOutput;
   this->SavedFDNumber = 0;
   this->Enabled = false;
-  this->Initialized = false;
-  this->init();
 }
 
 // --------------------------------------------------------------------------
 ctkFDHandler::~ctkFDHandler()
 {
-  if (this->Initialized)
-    {
-    this->RedirectionFile.close();
-    delete this->RedirectionStream;
-    }
 }
 
 // --------------------------------------------------------------------------
-void ctkFDHandler::init()
+void ctkFDHandler::setupPipe()
 {
 #ifdef Q_OS_WIN32
   int status = _pipe(this->Pipe, 65536, _O_TEXT);
@@ -77,9 +71,6 @@ void ctkFDHandler::init()
     qCritical().nospace() << "ctkFDHandler - Failed to create pipe !";
     return;
     }
-  this->RedirectionFile.open(this->Pipe[0], QIODevice::ReadOnly);
-  this->RedirectionStream = new QTextStream(&this->RedirectionFile);
-  this->Initialized = true;
 }
 
 // --------------------------------------------------------------------------
@@ -91,10 +82,6 @@ FILE* ctkFDHandler::terminalOutputFile()
 // --------------------------------------------------------------------------
 void ctkFDHandler::setEnabled(bool value)
 {
-  if (!this->Initialized)
-    {
-    return;
-    }
   if (this->Enabled == value)
     {
     return;
@@ -102,6 +89,8 @@ void ctkFDHandler::setEnabled(bool value)
 
   if (value)
     {
+    this->setupPipe();
+
     // Flush (stdout|stderr) so that any buffered messages are delivered
     fflush(this->terminalOutputFile());
 
@@ -123,11 +112,14 @@ void ctkFDHandler::setEnabled(bool value)
     }
   else
     {
+    // Print one character to "unblock" the read function associated with the polling thread
+    ssize_t res = write(fileno(this->terminalOutputFile()), "\n", 1);
+    if (res == -1)
+      {
+      return;
+      }
     // Flush stdout or stderr so that any buffered messages are delivered
     fflush(this->terminalOutputFile());
-
-    // Flush current stream so that any buffered messages are delivered
-    this->RedirectionFile.flush();
 
     // Stop polling thread
     {
@@ -156,11 +148,14 @@ void ctkFDHandler::setEnabled(bool value)
     clearerr(this->terminalOutputFile());
     fsetpos(this->terminalOutputFile(), &this->SavedFDPos);
 
+
 #ifdef Q_OS_WIN32
-    this->SavedFDNumber = _fileno(this->terminalOutputFile());
+    _close(this->Pipe[0]);
 #else
-    this->SavedFDNumber = fileno(this->terminalOutputFile());
+    close(this->Pipe[0]);
 #endif
+
+    this->SavedFDNumber = 0;
     }
 
   ctkErrorLogTerminalOutput * terminalOutput =

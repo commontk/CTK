@@ -106,6 +106,13 @@ int ctkITKErrorLogModelTest1(int argc, char * argv [])
       return EXIT_FAILURE;
       }
 
+    // Check if handler can be enabled / disabled multiple times in a row
+    for (int idx = 0; idx < 3; ++idx)
+      {
+      model.setMsgHandlerEnabled(ctkITKErrorLogMessageHandler::HandlerName, false);
+      model.setMsgHandlerEnabled(ctkITKErrorLogMessageHandler::HandlerName, true);
+      }
+
     // Clear
     model.clear();
 

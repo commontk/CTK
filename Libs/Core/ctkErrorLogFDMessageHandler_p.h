@@ -22,7 +22,6 @@
 #define __ctkErrorLogFDMessageHandler_p_h
 
 // Qt includes
-#include <QFile>
 #include <QMutex>
 #include <QThread>
 
@@ -33,7 +32,6 @@
 #include <cstdio>
 
 class ctkErrorLogFDMessageHandler;
-class QTextStream;
 
 // --------------------------------------------------------------------------
 // ctkFDHandler
@@ -61,7 +59,7 @@ public:
   FILE* terminalOutputFile();
 
 protected:
-  void init();
+  void setupPipe();
 
   void run();
 
@@ -75,8 +73,6 @@ private:
   fpos_t SavedFDPos;
 
   int          Pipe[2]; // 0: Read, 1: Write
-  QFile        RedirectionFile;
-  QTextStream* RedirectionStream;
 
   bool Initialized;
 
