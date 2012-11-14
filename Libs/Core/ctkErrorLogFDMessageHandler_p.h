@@ -59,7 +59,7 @@ public:
   FILE* terminalOutputFile();
 
 protected:
-  void init();
+  void setupPipe();
 
   void run();
 
