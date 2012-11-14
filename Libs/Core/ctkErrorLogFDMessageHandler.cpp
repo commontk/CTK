@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QFile>
 
 // CTK includes
 #include "ctkErrorLogFDMessageHandler.h"
@@ -57,11 +58,6 @@ ctkFDHandler::ctkFDHandler(ctkErrorLogFDMessageHandler* messageHandler,
 // --------------------------------------------------------------------------
 ctkFDHandler::~ctkFDHandler()
 {
-  if (this->Initialized)
-    {
-    this->RedirectionFile.close();
-    delete this->RedirectionStream;
-    }
 }
 
 // --------------------------------------------------------------------------
@@ -77,8 +73,6 @@ void ctkFDHandler::init()
     qCritical().nospace() << "ctkFDHandler - Failed to create pipe !";
     return;
     }
-  this->RedirectionFile.open(this->Pipe[0], QIODevice::ReadOnly);
-  this->RedirectionStream = new QTextStream(&this->RedirectionFile);
   this->Initialized = true;
 }
 
@@ -125,9 +119,6 @@ void ctkFDHandler::setEnabled(bool value)
     {
     // Flush stdout or stderr so that any buffered messages are delivered
     fflush(this->terminalOutputFile());
-
-    // Flush current stream so that any buffered messages are delivered
-    this->RedirectionFile.flush();
 
     // Stop polling thread
     {
