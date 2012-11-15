@@ -113,11 +113,12 @@ void ctkFDHandler::setEnabled(bool value)
   else
     {
     // Print one character to "unblock" the read function associated with the polling thread
-    ssize_t res = write(fileno(this->terminalOutputFile()), "\n", 1);
-    if (res == -1)
-      {
-      return;
-      }
+#ifdef Q_OS_WIN32
+    _write(_fileno(this->terminalOutputFile()), "\n", 1);
+#else
+    write(fileno(this->terminalOutputFile()), "\n", 1);
+#endif
+
     // Flush stdout or stderr so that any buffered messages are delivered
     fflush(this->terminalOutputFile());
 
