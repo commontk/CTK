@@ -80,6 +80,10 @@ public:
   void setDelay(int seconds);
   int delay()const;
 
+  /// Disable scaling or output resolution control and take a fixed 
+  /// resolution screenshot. Default output resolution is (300,300)
+  void enforceResolution(int width = 300, int height = 300); 
+
 public Q_SLOTS:
   /// Instantanely grabs the content of \a widgetToGrag. Generates a
   /// png file into \a directory. It automatically increments the image name

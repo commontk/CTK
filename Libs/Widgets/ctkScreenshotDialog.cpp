@@ -36,6 +36,7 @@ ctkScreenshotDialogPrivate::ctkScreenshotDialogPrivate(ctkScreenshotDialog& obje
 {
   this->CaptureButton = 0;
   this->CountDownValue = 0;
+  this->AspectRatio = 1.0;
 }
 
 //-----------------------------------------------------------------------------
@@ -68,6 +69,11 @@ void ctkScreenshotDialogPrivate::setupUi(QDialog * widget)
   connect(this->ImageVersionNumberSpinBox, SIGNAL(valueChanged(int)), SLOT(updateFullNameLabel()));
   connect(this->DelaySpinBox, SIGNAL(valueChanged(int)), SLOT(resetCountDownValue()));
   connect(&this->CountDownTimer, SIGNAL(timeout()), SLOT(updateCountDown()));
+  connect(this->ScaleFactorRadioButton, SIGNAL(toggled(bool)), SLOT(selectScaleFactor(bool)));
+  connect(this->OutputResolutionRadioButton, SIGNAL(toggled(bool)), SLOT(selectOutputResolution(bool)));
+  connect(this->LockAspectToolButton, SIGNAL(toggled(bool)), SLOT(lockAspectRatio(bool)));
+  connect(this->WidthLineEdit, SIGNAL(editingFinished()), SLOT(onWidthEdited()));
+  connect(this->HeightLineEdit, SIGNAL(editingFinished()), SLOT(onHeightEdited()));
 
   this->CaptureButton = okButton;
 
@@ -122,6 +128,69 @@ void ctkScreenshotDialogPrivate::updateCountDown()
   this->setCountDownLabel(--this->CountDownValue);
 }
 
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialogPrivate::useScalarFactor(bool scale)
+{
+  this->ScaleFactorSpinBox->setEnabled(scale);
+  this->WidthLineEdit->setEnabled(!scale);
+  this->HeightLineEdit->setEnabled(!scale);
+  this->xLabel->setEnabled(!scale);
+  this->LockAspectToolButton->setEnabled(!scale);
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialogPrivate::selectScaleFactor(bool scale)
+{
+  this->useScalarFactor(scale);
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialogPrivate::selectOutputResolution(bool scale)
+{
+  this->useScalarFactor(!scale);
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialogPrivate::lockAspectRatio(bool lock)
+{
+  if(lock)
+    {
+    QPixmap viewportPixmap = QPixmap::grabWidget(this->WidgetToGrab.data());
+    QSize curSize = viewportPixmap.size();
+    this->AspectRatio = curSize.width()/static_cast<double>(curSize.height());
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialogPrivate::onWidthEdited()
+{
+  if(this->LockAspectToolButton->isChecked())
+    {
+    this->HeightLineEdit->setText(QString::number(static_cast<int>(this->WidthLineEdit->text().toInt()/this->AspectRatio)));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialogPrivate::onHeightEdited()
+{
+  if(this->LockAspectToolButton->isChecked())
+    {
+    this->WidthLineEdit->setText(QString::number(static_cast<int>(this->HeightLineEdit->text().toInt()*this->AspectRatio)));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialog::enforceResolution(int width, int height)
+{
+  Q_D(ctkScreenshotDialog);
+  d->OutputResolutionRadioButton->setChecked(true);
+  d->useScalarFactor(true);
+  d->ScaleFactorRadioButton->setEnabled(false);
+  d->OutputResolutionRadioButton->setEnabled(false);
+  d->ScaleFactorSpinBox->setEnabled(false);
+  d->WidthLineEdit->setText(QString::number(width));
+  d->HeightLineEdit->setText(QString::number(height));
+}
 //-----------------------------------------------------------------------------
 void ctkScreenshotDialogPrivate::saveScreenshot(int delayInSeconds)
 {
@@ -247,10 +316,20 @@ void ctkScreenshotDialog::instantScreenshot()
   d->setWaitingForScreenshot(false);
   d->resetCountDownValue();
 
-  // Rescale
-  QPixmap rescaledViewportPixmap = viewportPixmap.scaled(
+  // Rescale based on scale factor or output resolution specified
+  QPixmap rescaledViewportPixmap = viewportPixmap;
+  if(d->ScaleFactorRadioButton->isChecked())
+    {
+    rescaledViewportPixmap = viewportPixmap.scaled(
       viewportPixmap.size().width() * d->ScaleFactorSpinBox->value(),
       viewportPixmap.size().height() * d->ScaleFactorSpinBox->value());
+    }
+  else if(d->OutputResolutionRadioButton->isChecked())
+    {
+    rescaledViewportPixmap = viewportPixmap.scaled(
+      d->WidthLineEdit->text().toInt(),
+      d->HeightLineEdit->text().toInt());
+    }
 
   QString filename = QString("%1/%2_%3.png").arg(d->DirectoryButton->directory())
                      .arg(d->ImageNameLineEdit->text())
