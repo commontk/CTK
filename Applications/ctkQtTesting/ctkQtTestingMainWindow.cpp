@@ -39,8 +39,8 @@ ctkQtTestingMainWindow::ctkQtTestingMainWindow()
 {
   this->Ui.setupUi(this);
 
-  QObject::connect(Ui.RecordButton, SIGNAL(clicked(bool)), this, SLOT(record()));
-  QObject::connect(Ui.PlayBackButton, SIGNAL(clicked(bool)), this, SLOT(play()));
+  QObject::connect(Ui.RecordButton, SIGNAL(toggled(bool)), this, SLOT(record(bool)));
+  QObject::connect(Ui.PlayBackButton, SIGNAL(clicked()), this, SLOT(play()));
 
   this->TestUtility = new ctkQtTestingUtility(this);
   this->TestUtility->addEventObserver("xml", new ctkXMLEventObserver(this->TestUtility));
@@ -50,7 +50,6 @@ ctkQtTestingMainWindow::ctkQtTestingMainWindow()
   Ui.renderView->setBackgroundColor2(QColor(Qt::darkBlue));
   Ui.renderView->setGradientBackground(true);
   Ui.renderView->setCornerAnnotationText("ctk Qt test");
-  Ui.renderView->show();
 
   // Create a cube.
   vtkSmartPointer<vtkCubeSource> cubeSource =
@@ -74,10 +73,6 @@ ctkQtTestingMainWindow::ctkQtTestingMainWindow()
 //  boxWidget->PlaceWidget();
 //  boxWidget->On();
 
-  // Render and interact
-//  Ui.renderView->renderWindow()->Render();
-//  Ui.renderView->interactor()->Start();
-
   Ui.renderView->resetCamera();
 }
 
@@ -91,14 +86,22 @@ ctkQtTestingMainWindow::~ctkQtTestingMainWindow()
 }
 
 //-----------------------------------------------------------------------------
-void ctkQtTestingMainWindow::record()
+void ctkQtTestingMainWindow::record(bool start)
 {
-  qDebug() << "Start Record";
-  QString filename = QFileDialog::getSaveFileName (this, "Test File Name",
-    QString(), "XML Files (*.xml)");
-  if (!filename.isEmpty())
+  if (start)
     {
-    this->TestUtility->recordTests(filename);
+    QString filename = QFileDialog::getSaveFileName (this, "Test File Name",
+                                                     QString(), "XML Files (*.xml)");
+    if (!filename.isEmpty())
+      {
+      qDebug() << "Start recording";
+      this->TestUtility->recordTests(filename);
+      }
+    }
+  else
+    {
+    qDebug() << "Stop recording";
+    this->TestUtility->stopRecords(1);
     }
 }
 
@@ -112,4 +115,5 @@ void ctkQtTestingMainWindow::play()
     {
     this->TestUtility->playTests(filename);
     }
+  qDebug() << "End Playback";
 }
