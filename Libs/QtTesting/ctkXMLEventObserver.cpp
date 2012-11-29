@@ -38,6 +38,7 @@ ctkXMLEventObserver::ctkXMLEventObserver(QObject* p)
 {
   this->XMLStream = NULL;
   this->TestUtility = qobject_cast<pqTestUtility*>(p);
+  Q_ASSERT(this->TestUtility);
 }
 
 //-----------------------------------------------------------------------------
@@ -50,50 +51,52 @@ ctkXMLEventObserver::~ctkXMLEventObserver()
 //-----------------------------------------------------------------------------
 void ctkXMLEventObserver::recordApplicationSettings()
 {
-  if(this->XMLStream)
+  Q_ASSERT(this->TestUtility);
+  if (!this->XMLStream)
     {
-    this->XMLStream->writeStartElement("settings");
-
-    // Informations about the application
-    this->recordApplicationSetting("name","qApp", "applicationName",
-                                   QCoreApplication::applicationName());
-    this->recordApplicationSetting("version" , "qApp", "applicationVersion",
-                                   QCoreApplication::applicationVersion());
-
-    // save Geometry and State of the application
-    QMainWindow* window = NULL;
-    foreach(QWidget * widget, QApplication::topLevelWidgets())
-      {
-      window = qobject_cast<QMainWindow*>(widget);
-      if (window)
-        {
-        this->recordApplicationSetting("geometry" , "MainWindow", "mainWindowGeometry",
-                                       QString(window->saveGeometry().toHex()));
-
-        this->recordApplicationSetting("state" , "MainWindow", "mainWindowState",
-                                       QString(window->saveState().toHex()));
-        break;
-        }
-      }
-
-    // Save extra properties from the application
-    QMap<QObject*, QStringList> states = this->TestUtility->objectStateProperty();
-    QMap<QObject*, QStringList>::iterator iter;
-    for(iter = states.begin() ; iter!=states.end() ; ++iter)
-      {
-      foreach(QString property, iter.value())
-        {
-        this->recordApplicationSetting(
-            QString("appsetting"),
-            iter.key()->metaObject()->className(),
-            property,
-            iter.key()->property(property.toLatin1()).toString()
-            );
-        }
-      }
-
-    this->XMLStream->writeEndElement();
+    return;
     }
+  this->XMLStream->writeStartElement("settings");
+
+  // Informations about the application
+  this->recordApplicationSetting("name","qApp", "applicationName",
+                                 QCoreApplication::applicationName());
+  this->recordApplicationSetting("version" , "qApp", "applicationVersion",
+                                 QCoreApplication::applicationVersion());
+
+  // save Geometry and State of the application
+  QMainWindow* window = NULL;
+  foreach(QWidget * widget, QApplication::topLevelWidgets())
+    {
+    window = qobject_cast<QMainWindow*>(widget);
+    if (window)
+      {
+      this->recordApplicationSetting("geometry" , "MainWindow", "mainWindowGeometry",
+                                     QString(window->saveGeometry().toHex()));
+
+      this->recordApplicationSetting("state" , "MainWindow", "mainWindowState",
+                                     QString(window->saveState().toHex()));
+      break;
+      }
+    }
+
+  // Save extra properties from the application
+  QMap<QObject*, QStringList> states = this->TestUtility->objectStateProperty();
+  QMap<QObject*, QStringList>::iterator iter;
+  for(iter = states.begin() ; iter!=states.end() ; ++iter)
+    {
+    foreach(QString property, iter.value())
+      {
+      this->recordApplicationSetting(
+        QString("appsetting"),
+        iter.key()->metaObject()->className(),
+        property,
+        iter.key()->property(property.toLatin1()).toString()
+      );
+      }
+    }
+
+  this->XMLStream->writeEndElement();
 }
 
 //-----------------------------------------------------------------------------

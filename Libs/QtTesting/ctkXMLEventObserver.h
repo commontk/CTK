@@ -46,7 +46,7 @@ class CTK_QTTESTING_EXPORT ctkXMLEventObserver : public pqEventObserver
   Q_OBJECT
 
 public:
-  ctkXMLEventObserver(QObject* p);
+  ctkXMLEventObserver(QObject* testUtility);
   ~ctkXMLEventObserver();
 
   virtual void setStream(QTextStream* stream);

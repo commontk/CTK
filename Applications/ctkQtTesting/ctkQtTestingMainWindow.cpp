@@ -43,8 +43,8 @@ ctkQtTestingMainWindow::ctkQtTestingMainWindow()
   QObject::connect(Ui.PlayBackButton, SIGNAL(clicked(bool)), this, SLOT(play()));
 
   this->TestUtility = new ctkQtTestingUtility(this);
-  this->TestUtility->addEventObserver("xml", new ctkXMLEventObserver(this));
-  this->TestUtility->addEventSource("xml", new ctkXMLEventSource(this));
+  this->TestUtility->addEventObserver("xml", new ctkXMLEventObserver(this->TestUtility));
+  this->TestUtility->addEventSource("xml", new ctkXMLEventSource(this->TestUtility));
 
   Ui.renderView->setBackgroundColor(QColor(Qt::gray));
   Ui.renderView->setBackgroundColor2(QColor(Qt::darkBlue));

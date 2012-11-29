@@ -36,12 +36,13 @@
 // ctkXMLEventSource methods
 
 //-----------------------------------------------------------------------------
-ctkXMLEventSource::ctkXMLEventSource(QObject* p)
-  : Superclass(p)
+ctkXMLEventSource::ctkXMLEventSource(QObject* testUtility)
+  : Superclass(testUtility)
 {
   this->Automatic = false;
   this->XMLStream = NULL;
-  this->TestUtility = qobject_cast<pqTestUtility*>(p);
+  this->TestUtility = qobject_cast<pqTestUtility*>(testUtility);
+  Q_ASSERT(this->TestUtility);
 }
 
 //-----------------------------------------------------------------------------

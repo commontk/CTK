@@ -44,7 +44,7 @@ class CTK_QTTESTING_EXPORT ctkXMLEventSource : public pqEventSource
 public:
   typedef pqEventSource Superclass;
 
-  ctkXMLEventSource(QObject* p);
+  ctkXMLEventSource(QObject* testUtility);
   ~ctkXMLEventSource();
 
   virtual void setContent(const QString& xmlfilename);
