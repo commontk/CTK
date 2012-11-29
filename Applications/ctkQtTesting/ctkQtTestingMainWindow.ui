@@ -48,9 +48,6 @@
         <property name="gradientBackground">
          <bool>false</bool>
         </property>
-        <property name="renderEnabled">
-         <bool>false</bool>
-        </property>
         <property name="orientationWidgetVisible">
          <bool>true</bool>
         </property>
