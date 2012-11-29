@@ -26,8 +26,14 @@ void ctkQtTestingUtility::addDefaultCTKWidgetEventTranslatorsToTranslator(pqTest
 {
   Q_UNUSED(util);
 @CTK_ADD_WIDGET_EVENT_TRANSLATORS@
-  this->eventTranslator()->removeWidgetEventTranslator(
+  pqWidgetEventTranslator* translator = this->eventTranslator()->getWidgetEventTranslator(
     QLatin1String("pqNativeFileDialogEventTranslator"));
+  if (translator)
+    {
+    this->eventTranslator()->removeWidgetEventTranslator(
+      QLatin1String("pqNativeFileDialogEventTranslator"));
+    delete translator;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -35,8 +41,14 @@ void ctkQtTestingUtility::addDefaultCTKWidgetEventPlayersToPlayer(pqTestUtility*
 {
   Q_UNUSED(util);
 @CTK_ADD_WIDGET_EVENT_PLAYERS@
-  this->eventPlayer()->removeWidgetEventPlayer(
+  pqWidgetEventPlayer* player = this->eventPlayer()->getWidgetEventPlayer(
     QLatin1String("pqNativeFileDialogEventPlayer"));
+  if (player)
+    {
+    this->eventPlayer()->removeWidgetEventPlayer(
+      QLatin1String("pqNativeFileDialogEventPlayer"));
+    delete player;
+    }
 }
 
 //-----------------------------------------------------------------------------

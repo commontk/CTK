@@ -14,7 +14,7 @@ public:
   ctkQtTestingMainWindow();
   ~ctkQtTestingMainWindow();
 protected slots:
-  void record();
+  void record(bool start);
   void play();
 
 private:
