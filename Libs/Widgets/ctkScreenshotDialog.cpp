@@ -37,6 +37,7 @@ ctkScreenshotDialogPrivate::ctkScreenshotDialogPrivate(ctkScreenshotDialog& obje
   this->CaptureButton = 0;
   this->CountDownValue = 0;
   this->AspectRatio = 1.0;
+  this->AllowTransparency = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -72,13 +73,17 @@ void ctkScreenshotDialogPrivate::setupUi(QDialog * widget)
   connect(this->ScaleFactorRadioButton, SIGNAL(toggled(bool)), SLOT(selectScaleFactor(bool)));
   connect(this->OutputResolutionRadioButton, SIGNAL(toggled(bool)), SLOT(selectOutputResolution(bool)));
   connect(this->LockAspectToolButton, SIGNAL(toggled(bool)), SLOT(lockAspectRatio(bool)));
-  connect(this->WidthLineEdit, SIGNAL(editingFinished()), SLOT(onWidthEdited()));
-  connect(this->HeightLineEdit, SIGNAL(editingFinished()), SLOT(onHeightEdited()));
+  connect(this->WidthSpinBox, SIGNAL(editingFinished()), SLOT(onWidthEdited()));
+  connect(this->HeightSpinBox, SIGNAL(editingFinished()), SLOT(onHeightEdited()));
 
   this->CaptureButton = okButton;
 
   // Called to enable/disable buttons
   q->setWidgetToGrab(0);
+  // Set a sufficient range (1, 2^16) on the spin boxes
+  this->WidthSpinBox->setRange(1, 65536);
+  this->HeightSpinBox->setRange(1, 65536);
+  this->DirectoryPathLineEdit->setFilters(ctkPathLineEdit::Dirs);
 }
 
 //-----------------------------------------------------------------------------
@@ -132,8 +137,8 @@ void ctkScreenshotDialogPrivate::updateCountDown()
 void ctkScreenshotDialogPrivate::useScalarFactor(bool scale)
 {
   this->ScaleFactorSpinBox->setEnabled(scale);
-  this->WidthLineEdit->setEnabled(!scale);
-  this->HeightLineEdit->setEnabled(!scale);
+  this->WidthSpinBox->setEnabled(!scale);
+  this->HeightSpinBox->setEnabled(!scale);
   this->xLabel->setEnabled(!scale);
   this->LockAspectToolButton->setEnabled(!scale);
 }
@@ -153,20 +158,42 @@ void ctkScreenshotDialogPrivate::selectOutputResolution(bool scale)
 //-----------------------------------------------------------------------------
 void ctkScreenshotDialogPrivate::lockAspectRatio(bool lock)
 {
+  Q_Q(ctkScreenshotDialog);
   if(lock)
     {
-    QPixmap viewportPixmap = QPixmap::grabWidget(this->WidgetToGrab.data());
-    QSize curSize = viewportPixmap.size();
-    this->AspectRatio = curSize.width()/static_cast<double>(curSize.height());
+    QSize curSize = q->widgetSize();
+    if(curSize.height() > 0)
+      {
+      this->AspectRatio = curSize.width()/static_cast<double>(curSize.height());
+      }
+    else
+      {
+      QString message = QString("Height of widget: ") + curSize.height() +\
+        QString(" is invalid. Check widget dimensions. Using default aspect\
+          ratio (1.0).");
+      QMessageBox::warning(q, "Invalid widget dimensions", message,
+        QMessageBox::Ok);
+      this->AspectRatio = 1.0;
+      }
     }
 }
 
 //-----------------------------------------------------------------------------
 void ctkScreenshotDialogPrivate::onWidthEdited()
 {
+  Q_Q(ctkScreenshotDialog);
   if(this->LockAspectToolButton->isChecked())
     {
-    this->HeightLineEdit->setText(QString::number(static_cast<int>(this->WidthLineEdit->text().toInt()/this->AspectRatio)));
+    if(this->AspectRatio > 0)
+      {
+      this->HeightSpinBox->setValue(static_cast<int>(this->WidthSpinBox->value()/this->AspectRatio));
+      }
+    else
+      {
+      QString message = QString("Aspect ratio: ") + this->AspectRatio +\
+        QString(" is invalid. Check widget dimensions.");
+      QMessageBox::warning(q, "Invalid aspect ratio", message, QMessageBox::Ok);
+      }
     }
 }
 
@@ -175,7 +202,7 @@ void ctkScreenshotDialogPrivate::onHeightEdited()
 {
   if(this->LockAspectToolButton->isChecked())
     {
-    this->WidthLineEdit->setText(QString::number(static_cast<int>(this->HeightLineEdit->text().toInt()*this->AspectRatio)));
+    this->WidthSpinBox->setValue(static_cast<int>(this->HeightSpinBox->value()*this->AspectRatio));
     }
 }
 
@@ -188,9 +215,31 @@ void ctkScreenshotDialog::enforceResolution(int width, int height)
   d->ScaleFactorRadioButton->setEnabled(false);
   d->OutputResolutionRadioButton->setEnabled(false);
   d->ScaleFactorSpinBox->setEnabled(false);
-  d->WidthLineEdit->setText(QString::number(width));
-  d->HeightLineEdit->setText(QString::number(height));
+  d->WidthSpinBox->setValue(width);
+  d->HeightSpinBox->setValue(height);
 }
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialog::enforceResolution(QSize size)
+{
+  this->enforceResolution(size.width(), size.height());
+}
+
+//-----------------------------------------------------------------------------
+QSize ctkScreenshotDialog::widgetSize()
+{
+  Q_D(ctkScreenshotDialog);
+  QPixmap viewportPixmap = QPixmap::grabWidget(d->WidgetToGrab.data());
+  return viewportPixmap.size();
+}
+
+//-----------------------------------------------------------------------------
+void ctkScreenshotDialog::enableTransparency(bool enable)
+{
+  Q_D(ctkScreenshotDialog);
+  d->AllowTransparency = enable;
+}
+
 //-----------------------------------------------------------------------------
 void ctkScreenshotDialogPrivate::saveScreenshot(int delayInSeconds)
 {
@@ -209,7 +258,7 @@ void ctkScreenshotDialogPrivate::saveScreenshot(int delayInSeconds)
   this->setWaitingForScreenshot(true);
   this->CountDownValue = delayInSeconds;
   this->CountDownTimer.start(1000);
-  // Add 1ms to give time to set the countdown at 0. 
+  // Add 1ms to give time to set the countdown at 0.
   QTimer::singleShot(delayInSeconds * 1000 + 1, q, SLOT(instantScreenshot()));
 }
 
@@ -239,6 +288,9 @@ void ctkScreenshotDialog::setWidgetToGrab(QWidget* newWidgetToGrab)
   d->CaptureButton->setEnabled(newWidgetToGrab != 0);
 
   d->WidgetToGrab = newWidgetToGrab;
+  QSize curSize = this->widgetSize();
+  d->HeightSpinBox->setValue(curSize.height());
+  d->WidthSpinBox->setValue(curSize.width());
 }
 
 //-----------------------------------------------------------------------------
@@ -266,14 +318,14 @@ QString ctkScreenshotDialog::baseFileName() const
 void ctkScreenshotDialog::setDirectory(const QString& newDirectory)
 {
   Q_D(ctkScreenshotDialog);
-  d->DirectoryButton->setDirectory(newDirectory);
+  d->DirectoryPathLineEdit->setCurrentPath(newDirectory);
 }
 
 //-----------------------------------------------------------------------------
 QString ctkScreenshotDialog::directory()const
 {
   Q_D(const ctkScreenshotDialog);
-  return d->DirectoryButton->directory();
+  return d->DirectoryPathLineEdit->currentPath();
 }
 
 //-----------------------------------------------------------------------------
@@ -327,11 +379,11 @@ void ctkScreenshotDialog::instantScreenshot()
   else if(d->OutputResolutionRadioButton->isChecked())
     {
     rescaledViewportPixmap = viewportPixmap.scaled(
-      d->WidthLineEdit->text().toInt(),
-      d->HeightLineEdit->text().toInt());
+      d->WidthSpinBox->value(),
+      d->HeightSpinBox->value());
     }
 
-  QString filename = QString("%1/%2_%3.png").arg(d->DirectoryButton->directory())
+  QString filename = QString("%1/%2_%3.png").arg(d->DirectoryPathLineEdit->currentPath())
                      .arg(d->ImageNameLineEdit->text())
                      .arg(d->ImageVersionNumberSpinBox->value());
 
@@ -357,7 +409,13 @@ void ctkScreenshotDialog::instantScreenshot()
       }
     }
 
-  rescaledViewportPixmap.save(filename);
+  QImage img = rescaledViewportPixmap.toImage();
+  if( !d->AllowTransparency &&
+      img.hasAlphaChannel())
+    {
+    img = img.convertToFormat(QImage::Format_RGB32);
+    }
+  img.save(filename);
 
   d->ImageVersionNumberSpinBox->setValue(d->ImageVersionNumberSpinBox->value() + 1);
 }

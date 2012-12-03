@@ -77,6 +77,7 @@ public:
   int                   CountDownValue;
   QTimer                CountDownTimer;
   double                AspectRatio;
+  bool                  AllowTransparency;
 };
 
 #endif
