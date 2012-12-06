@@ -71,13 +71,17 @@ public:
   ///                         new ctkBooleanMapper(checkBox, "checked", SIGNAL(toggled(bool))),
   ///                         "complement", SIGNAL(complementChanged(bool)));
   /// </code>
+  /// By default, property are associated with the general settings set using setSettings(QSettings*)
+  /// or ctkSettingsDialog::setSettings(QSettings*). Note that it also possible to associate
+  /// a specific \a settings for any given \a settingKey.
   /// \sa Q_PROPERTY(), \sa ctkBooleanMapper
   void registerProperty(const QString& settingKey,
                         QObject* object,
                         const QString& objectProperty,
                         const char* propertySignal,
                         const QString& settingLabel = QString(),
-                        SettingOptions options = OptionNone);
+                        SettingOptions options = OptionNone,
+                        QSettings * settings = 0);
 
   /// Set the setting to the property defined by the key.
   /// The old value can be restored using resetSettings()

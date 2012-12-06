@@ -49,7 +49,16 @@ private slots:
 //-----------------------------------------------------------------------------
 void ctkSettingsPanelTester::testChangeProperty()
 {
+  QFETCH(bool, registerSpecificSettings);
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  QSettings specificSettings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK-specific");
+  
+  // Clear settings
+  settings.clear();
+  settings.sync();
+  specificSettings.clear();
+  specificSettings.sync();
+  
   QSpinBox spinBox;
   ctkSettingsPanel panel;
   panel.setSettings(&settings);
@@ -59,7 +68,7 @@ void ctkSettingsPanelTester::testChangeProperty()
   QFETCH(ctkSettingsPanel::SettingOptions, options);
   panel.registerProperty("property", &spinBox,
                          "value", SIGNAL(valueChanged(int)),
-                         label, options);
+                         label, options, registerSpecificSettings ? &specificSettings : 0);
 
   QCOMPARE(spinBox.value(), 1);
   QCOMPARE(panel.settingLabel("property"), label);
@@ -86,6 +95,59 @@ void ctkSettingsPanelTester::testChangeProperty()
   // make sure it didn't change
   QCOMPARE(panel.settingLabel("property"), label);
   QCOMPARE(panel.settingOptions("property"), options);
+  
+  QString currentSettingContent;
+  {
+    settings.sync();
+    if (QFile::exists(settings.fileName()))
+      {
+      QFile file(settings.fileName());
+      QVERIFY(file.open(QIODevice::ReadOnly));
+      currentSettingContent = file.readAll();
+      file.close();
+      }
+  }
+  
+  QString currentSpecificSettingsContent;
+  {
+    specificSettings.sync();
+    if (QFile::exists(specificSettings.fileName()))
+      {
+      QFile file(specificSettings.fileName());
+      QVERIFY(file.open(QIODevice::ReadOnly));
+      currentSpecificSettingsContent = file.readAll();
+      file.close();
+      }
+  }
+
+  QString expectedSettingsContent = QLatin1String("[General]\nproperty=%1\n");
+ 
+  if (expectedChangedSettings.count() > 0)
+    {
+    if (registerSpecificSettings)
+      {
+      QCOMPARE(currentSettingContent, QString(""));
+      QCOMPARE(currentSpecificSettingsContent, expectedSettingsContent.arg(value));
+      }
+    else
+      {
+      QCOMPARE(currentSettingContent, expectedSettingsContent.arg(value));
+      QCOMPARE(currentSpecificSettingsContent, QString(""));
+      }
+    }
+  else
+    {
+    if (registerSpecificSettings)
+      {
+      QCOMPARE(currentSettingContent, QString(""));
+      QCOMPARE(currentSpecificSettingsContent, expectedSettingsContent.arg(1));
+      }
+    else
+      {
+      QCOMPARE(currentSettingContent, expectedSettingsContent.arg(1));
+      QCOMPARE(currentSpecificSettingsContent, QString(""));
+      }
+    }
 
   panel.resetSettings();
 }
@@ -97,33 +159,61 @@ void ctkSettingsPanelTester::testChangeProperty_data()
   QTest::addColumn<ctkSettingsPanel::SettingOptions>("options");
   QTest::addColumn<int>("value");
   QTest::addColumn<bool>("setOnObject");
+  QTest::addColumn<bool>("registerSpecificSettings");
   QTest::addColumn<int>("expectedSettingChangedCount");
   QTest::addColumn<QStringList>("expectedChangedSettings");
 
-  QTest::newRow("null none changed obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << 1 << QStringList("property");
-  QTest::newRow("null none changed panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << 1 << QStringList("property");
-  QTest::newRow("null none unchanged obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << true << 0 << QStringList();
-  QTest::newRow("null none unchanged panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << false << 0 << QStringList();
-  QTest::newRow("null RequireRestart changed obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << true << 1 << QStringList("property");
-  QTest::newRow("null RequireRestart changed panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << 1 << QStringList("property");
-  QTest::newRow("null RequireRestart unchanged obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << 0 << QStringList();
-  QTest::newRow("null RequireRestart unchanged panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << 0 << QStringList();
-  QTest::newRow("empty none changed obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << 1 << QStringList("property");
-  QTest::newRow("empty none changed panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << 1 << QStringList("property");
-  QTest::newRow("empty none unchanged obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << true << 0 << QStringList();
-  QTest::newRow("empty none unchanged panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << false << 0 << QStringList();
-  QTest::newRow("empty RequireRestart changed obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << true << 1 << QStringList("property");
-  QTest::newRow("empty RequireRestart changed panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << 1 << QStringList("property");
-  QTest::newRow("empty RequireRestart unchanged obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << 0 << QStringList();
-  QTest::newRow("empty RequireRestart unchanged panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << 0 << QStringList();
-  QTest::newRow("label none changed obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << 1 << QStringList("property");
-  QTest::newRow("label none changed panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << 1 << QStringList("property");
-  QTest::newRow("label none unchanged obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << true << 0 << QStringList();
-  QTest::newRow("label none unchanged panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << false << 0 << QStringList();
-  QTest::newRow("label RequireRestart changed obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << true << 1 << QStringList("property");
-  QTest::newRow("label RequireRestart changed panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << 1 << QStringList("property");
-  QTest::newRow("label RequireRestart unchanged obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << 0 << QStringList();
-  QTest::newRow("label RequireRestart unchanged panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << 0 << QStringList();
+  // registerSpecificSettings: false
+  QTest::newRow("null none changed obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << false << 1 << QStringList("property");
+  QTest::newRow("null none changed panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << false << 1 << QStringList("property");
+  QTest::newRow("null none unchanged obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << true << false << 0 << QStringList();
+  QTest::newRow("null none unchanged panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << false << false << 0 << QStringList();
+  QTest::newRow("null RequireRestart changed obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << true << false << 1 << QStringList("property");
+  QTest::newRow("null RequireRestart changed panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << false << 1 << QStringList("property");
+  QTest::newRow("null RequireRestart unchanged obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << false << 0 << QStringList();
+  QTest::newRow("null RequireRestart unchanged panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << false << 0 << QStringList();
+  QTest::newRow("empty none changed obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << false << 1 << QStringList("property");
+  QTest::newRow("empty none changed panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << false << 1 << QStringList("property");
+  QTest::newRow("empty none unchanged obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << true << false << 0 << QStringList();
+  QTest::newRow("empty none unchanged panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << false << false << 0 << QStringList();
+  QTest::newRow("empty RequireRestart changed obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << true << false << 1 << QStringList("property");
+  QTest::newRow("empty RequireRestart changed panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << false << 1 << QStringList("property");
+  QTest::newRow("empty RequireRestart unchanged obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << false << 0 << QStringList();
+  QTest::newRow("empty RequireRestart unchanged panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << false << 0 << QStringList();
+  QTest::newRow("label none changed obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << false << 1 << QStringList("property");
+  QTest::newRow("label none changed panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << false << 1 << QStringList("property");
+  QTest::newRow("label none unchanged obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << true << false << 0 << QStringList();
+  QTest::newRow("label none unchanged panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << false << false << 0 << QStringList();
+  QTest::newRow("label RequireRestart changed obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << true << false << 1 << QStringList("property");
+  QTest::newRow("label RequireRestart changed panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << false << 1 << QStringList("property");
+  QTest::newRow("label RequireRestart unchanged obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << false << 0 << QStringList();
+  QTest::newRow("label RequireRestart unchanged panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << false << 0 << QStringList();
+  
+  // registerSpecificSettings: true
+  QTest::newRow("null none changed obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << true << 1 << QStringList("property");
+  QTest::newRow("null none changed panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << true << 1 << QStringList("property");
+  QTest::newRow("null none unchanged obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << true << true << 0 << QStringList();
+  QTest::newRow("null none unchanged panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << false << true << 0 << QStringList();
+  QTest::newRow("null RequireRestart changed obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << true << true << 1 << QStringList("property");
+  QTest::newRow("null RequireRestart changed panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << true << 1 << QStringList("property");
+  QTest::newRow("null RequireRestart unchanged obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << true << 0 << QStringList();
+  QTest::newRow("null RequireRestart unchanged panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << true << 0 << QStringList();
+  QTest::newRow("empty none changed obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << true << 1 << QStringList("property");
+  QTest::newRow("empty none changed panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << true << 1 << QStringList("property");
+  QTest::newRow("empty none unchanged obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << true << true << 0 << QStringList();
+  QTest::newRow("empty none unchanged panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << false << true << 0 << QStringList();
+  QTest::newRow("empty RequireRestart changed obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << true << true << 1 << QStringList("property");
+  QTest::newRow("empty RequireRestart changed panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << true << 1 << QStringList("property");
+  QTest::newRow("empty RequireRestart unchanged obj") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << true << 0 << QStringList();
+  QTest::newRow("empty RequireRestart unchanged panel") << QString("") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << true << 0 << QStringList();
+  QTest::newRow("label none changed obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << true << 1 << QStringList("property");
+  QTest::newRow("label none changed panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << true << 1 << QStringList("property");
+  QTest::newRow("label none unchanged obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << true << true << 0 << QStringList();
+  QTest::newRow("label none unchanged panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 1 << false << true << 0 << QStringList();
+  QTest::newRow("label RequireRestart changed obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << true << true << 1 << QStringList("property");
+  QTest::newRow("label RequireRestart changed panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << true << 1 << QStringList("property");
+  QTest::newRow("label RequireRestart unchanged obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << true << 0 << QStringList();
+  QTest::newRow("label RequireRestart unchanged panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << true << 0 << QStringList();
 }
 
 //-----------------------------------------------------------------------------
