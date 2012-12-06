@@ -42,6 +42,7 @@ struct PropertyType
   QVariant PreviousValue;
   QVariant DefaultValue;
   QString  Label;
+  QSettings* Settings;
   ctkSettingsPanel::SettingOptions Options;
 
   QVariant value()const;
@@ -52,7 +53,7 @@ struct PropertyType
 
 // --------------------------------------------------------------------------
 PropertyType::PropertyType()
-  : Object(0)
+  : Object(0), Settings(0)
   , Options(ctkSettingsPanel::OptionNone)
 {
 }
@@ -115,6 +116,11 @@ public:
   ctkSettingsPanelPrivate(ctkSettingsPanel& object);
   void init();
 
+  /// Return QSettings associated with a given settingKey or the general \a Settings. 
+  /// If \a settingKey is not found, it will return 0.
+  /// \sa ctkSettingsPanel::registerProperty
+  QSettings* settings(const QString& settingKey)const;
+
   QSettings*                  Settings;
   QMap<QString, PropertyType> Properties;
   bool                        SaveToSettingsWhenRegister;
@@ -133,6 +139,21 @@ ctkSettingsPanelPrivate::ctkSettingsPanelPrivate(ctkSettingsPanel& object)
 // --------------------------------------------------------------------------
 void ctkSettingsPanelPrivate::init()
 {
+}
+
+// --------------------------------------------------------------------------
+QSettings* ctkSettingsPanelPrivate::settings(const QString& settingKey)const
+{
+  if (!this->Properties.contains(settingKey))
+    {
+    return 0;
+    }
+  const PropertyType& prop = this->Properties[settingKey];
+  if (prop.Settings != 0)
+    {
+    return prop.Settings;
+    }
+  return this->Settings;
 }
 
 // --------------------------------------------------------------------------
@@ -173,15 +194,16 @@ void ctkSettingsPanel::setSettings(QSettings* settings)
 void ctkSettingsPanel::updateProperties()
 {
   Q_D(ctkSettingsPanel);
-  if (!d->Settings)
-    {
-    return;
-    }
   foreach(const QString& key, d->Properties.keys())
     {
-    if (d->Settings->contains(key))
+    QSettings* settings = d->settings(key);
+    if (!settings)
       {
-      QVariant value = d->Settings->value(key);
+      continue;
+      }
+    if (settings->contains(key))
+      {
+      QVariant value = settings->value(key);
       PropertyType& prop = d->Properties[key];
       // Update object registered using registerProperty()
       prop.setValue(value);
@@ -198,7 +220,7 @@ void ctkSettingsPanel::updateProperties()
 void ctkSettingsPanel::updateSetting(const QString& key)
 {
   Q_D(ctkSettingsPanel);
-  if (!d->Settings)
+  if (!d->settings(key))
     {
     return;
     }
@@ -209,17 +231,18 @@ void ctkSettingsPanel::updateSetting(const QString& key)
 void ctkSettingsPanel::setSetting(const QString& key, const QVariant& newVal)
 {
   Q_D(ctkSettingsPanel);
-  if (!d->Settings)
+  QSettings* settings = d->settings(key);
+  if (!settings)
     {
     return;
     }
-  QVariant oldVal = d->Settings->value(key);
-  d->Settings->setValue(key, newVal);
+  QVariant oldVal = settings->value(key);
+  settings->setValue(key, newVal);
   d->Properties[key].setValue(newVal);
-  if (d->Settings->status() != QSettings::NoError)
+  if (settings->status() != QSettings::NoError)
     {
     logger.warn( QString("Error #%1 while writing setting \"%2\"")
-      .arg(static_cast<int>(d->Settings->status()))
+      .arg(static_cast<int>(settings->status()))
       .arg(key));
     }
   if (oldVal != newVal)
@@ -234,7 +257,8 @@ void ctkSettingsPanel::registerProperty(const QString& key,
                                         const QString& property,
                                         const char* signal,
                                         const QString& label,
-                                        ctkSettingsPanel::SettingOptions options)
+                                        ctkSettingsPanel::SettingOptions options,
+                                        QSettings* settings)
 {
   Q_D(ctkSettingsPanel);
   PropertyType prop;
@@ -243,13 +267,19 @@ void ctkSettingsPanel::registerProperty(const QString& key,
   prop.DefaultValue = prop.PreviousValue = prop.value();
   prop.Label = label;
   prop.Options = options;
-
-  if (d->Settings && d->Settings->contains(key))
+  if (d->Settings != settings)
     {
-    QVariant val = d->Settings->value(key);
+    prop.Settings = settings;
+    }
+  
+  QSettings* propSettings = settings ? settings : d->Settings;
+  if (propSettings && propSettings->contains(key))
+    {
+    QVariant val = propSettings->value(key);
     prop.setValue(val);
     prop.PreviousValue = val;
     }
+    
   d->Properties[key] = prop;
 
   // Create a signal mapper per property to be able to support
