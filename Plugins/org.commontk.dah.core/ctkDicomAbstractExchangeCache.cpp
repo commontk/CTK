@@ -130,3 +130,11 @@ bool ctkDicomAbstractExchangeCache::notifyDataAvailable(const ctkDicomAppHosting
   emit internalDataAvailable();
   return true;
 }
+
+//----------------------------------------------------------------------------
+void ctkDicomAbstractExchangeCache::cleanIncomingData()
+{
+  Q_D(ctkDicomAbstractExchangeCache);
+  d->IncomingAvailableData = ctkDicomAppHosting::AvailableData();
+  d->lastIncomingData = false;
+}

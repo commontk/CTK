@@ -163,6 +163,7 @@ void ctkExampleDicomHost::onCanceled()
 void ctkExampleDicomHost::onExited()
 {
   qDebug() << "App exited";
+  cleanIncomingData();
 }
 
 //----------------------------------------------------------------------------

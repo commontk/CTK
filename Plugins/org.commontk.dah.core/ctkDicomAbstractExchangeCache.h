@@ -119,6 +119,14 @@ public:
   */
   bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
 
+  /**
+   * @brief Clean internal data stucture that keeps the incoming data.
+   *
+   * Called when other side is gone (i.e., usually the other side is a hosted app).
+   *
+  */
+  void cleanIncomingData();
+
 Q_SIGNALS:
 
   void dataAvailable();
