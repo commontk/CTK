@@ -22,6 +22,8 @@
 // CTK includes
 #include "ctkDicomAppHostingTypes.h"
 
+namespace ctkDicomAppHosting {
+
 //----------------------------------------------------------------------------
 bool operator ==(const ctkDicomAppHosting::Status& left,
                  const ctkDicomAppHosting::Status& right)
@@ -141,3 +143,6 @@ bool operator !=(const ctkDicomAppHosting::AvailableData& left,
 {
   return !(left == right);
 }
+
+}
+
