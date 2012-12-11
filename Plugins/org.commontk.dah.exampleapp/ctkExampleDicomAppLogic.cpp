@@ -62,8 +62,6 @@ ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), AppWidget(0)
   {
     qDebug() << "ctkDicomAbstractApp: Could not getHostInterface()";
   }
-
-  ResultData = new ctkDicomAppHosting::AvailableData;
 }
 
 //----------------------------------------------------------------------------
@@ -75,8 +73,6 @@ ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
   {
     qDebug() << plugins.at(i)->getSymbolicName ();
   }
-
-  delete ResultData;
 }
 
 //----------------------------------------------------------------------------
@@ -297,11 +293,12 @@ void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
       tmppixmap.save(tempfile->fileName(), "JPEG");
       qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
 
-      ctkDicomAvailableDataHelper::addToAvailableData(*ResultData, 
+      ctkDicomAppHosting::AvailableData resultData;
+      ctkDicomAvailableDataHelper::addToAvailableData(resultData, 
         objectLocatorCache(), 
         tempfile->fileName());
 
-      bool success = publishData(*ResultData, true);
+      bool success = publishData(resultData, true);
       if(!success)
       {
         qCritical() << "Failed to publish data";

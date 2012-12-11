@@ -65,8 +65,6 @@ ModuleInstance(0)
   {
     qDebug() << "ctkDicomAbstractApp: Could not getHostInterface()";
   }
-
-  ResultData = new ctkDicomAppHosting::AvailableData;
 }
 
 //----------------------------------------------------------------------------
@@ -78,8 +76,6 @@ ctkCommandLineModuleAppLogic::~ctkCommandLineModuleAppLogic()
   {
     qDebug() << plugins.at(i)->getSymbolicName ();
   }
-
-  delete ResultData;
 }
 
 //----------------------------------------------------------------------------
@@ -332,11 +328,12 @@ void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
     //}
     qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
 
-    ctkDicomAvailableDataHelper::addToAvailableData(*ResultData, 
+    ctkDicomAppHosting::AvailableData resultData;
+    ctkDicomAvailableDataHelper::addToAvailableData(resultData, 
       objectLocatorCache(), 
       outputFileName);
 
-    bool success = publishData(*ResultData, true);
+    bool success = publishData(resultData, true);
     if(!success)
     {
       qCritical() << "Failed to publish data";

@@ -79,8 +79,6 @@ protected Q_SLOTS:
 private:
   QWidget * AppWidget;
   Ui::ctkExampleDicomAppWidget ui;
-
-  ctkDicomAppHosting::AvailableData* ResultData;
 }; // ctkExampleDicomAppLogic
 
 #endif // ctkExampleDicomAppLogic_P_H
