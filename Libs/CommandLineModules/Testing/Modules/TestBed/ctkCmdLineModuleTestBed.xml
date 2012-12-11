@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable xsi:noNamespaceSchemaLocation="../../../Core/Resources/ctkCmdLineModule.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <category>Testing</category>
+  <title>Test Bed</title>
+  <description>
+Configurable behaviour for testing purposes.
+  </description>
+  <version>1.0</version>
+  <documentation-url></documentation-url>
+  <license></license>
+  <contributor>Sascha Zelzer</contributor>
+
+  <parameters>
+    <label>Runtime behaviour</label>
+    <description>Configures the runtime behaviour of this module.</description>
+    <integer>
+      <name>runtimeVar</name>
+      <longflag>runtime</longflag>
+      <description>An integer with constraints</description>
+      <label>Runtime (seconds)</label>
+      <default>1</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>60</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <integer>
+      <name>numOutputsVar</name>
+      <longflag>numOutputs</longflag>
+      <description>Number of outputs which will be reported as the progress text via a QFutureWatcher.</description>
+      <label>Output Number</label>
+      <default>0</default>
+    </integer>
+    <integer>
+      <name>exitTimeVar</name>
+      <longflag>exitTime</longflag>
+      <description>The exit time of the module (premature finish).</description>
+      <label>Exit time</label>
+      <default>0</default>
+    </integer>
+    <integer>
+      <name>exitCodeVar</name>
+      <longflag>exitCode</longflag>
+      <description>The exit code of the module.</description>
+      <label>Exit code</label>
+      <default>0</default>
+    </integer>
+    <boolean>
+      <name>exitCrashVar</name>
+      <longflag>exitCrash</longflag>
+      <description>Exit by crashing.</description>
+      <label>Force a crash</label>
+      <default>false</default>
+    </boolean>
+    <string>
+      <name>errorTextVar</name>
+      <longflag>errorText</longflag>
+      <description>Final error message at the end.</description>
+      <label>Error text</label>
+    </string>
+  </parameters>
+  
+  <parameters>
+    <label>Output parameter</label>
+    <description>Output parameters for testing purposes.</description>
+    <integer>
+      <name>resultNumberOutput</name>
+      <index>1000</index>
+      <description>The number of results reported by this module.</description>
+      <label>Number of results</label>
+      <default>0</default>
+      <channel>output</channel>
+    </integer>
+    <string>
+      <name>errorMsgOutput</name>
+      <index>1000</index>
+      <description>Exit error message.</description>
+      <label>Error</label>
+      <channel>output</channel>
+    </string>
+    <string-enumeration>
+      <name>exitStatusOutput</name>
+      <index>1000</index>
+      <description>Exit status (crashed or normal exit)</description>
+      <label>Exit status</label>
+      <channel>output</channel>
+      <element>Normal exit</element>
+      <element>Crashed</element>
+    </string-enumeration>
+    <image>
+      <name>imageOutput</name>
+      <index>0</index>
+      <description>Image output path.</description>
+      <label>Output image</label>
+      <default>/tmp/out.nrrd</default>
+      <channel>output</channel>
+    </image>
+  </parameters>
+
+</executable>
+

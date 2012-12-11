@@ -21,7 +21,7 @@ limitations under the License.
 #include "ctkCmdLineModuleParameterGroup.h"
 
 #include "ctkCmdLineModuleParameter.h"
-#include "ctkCmdLineModuleParameterGroupPrivate.h"
+#include "ctkCmdLineModuleParameterGroup_p.h"
 
 #include "ctkException.h"
 

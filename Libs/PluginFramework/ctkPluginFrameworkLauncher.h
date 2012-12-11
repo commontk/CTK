@@ -50,7 +50,7 @@ public:
    *
    * <p>
    * If the framework has already been initialized by a call
-   * to #install(const QString&) or #start, the
+   * to #install or #start, the
    * new properties do not have any effect until the framework
    * is restarted.
    *
@@ -157,7 +157,7 @@ public:
   /**
    * Add a path to the list of search paths for plugins.
    *
-   * When calling #install(const QString&), #start, or
+   * When calling #install(const QString&, ctkPluginContext*), #start, or
    * #getPluginPath(const QString&), the plugin is searched in the
    * paths given as arguments to this method. The least recently added
    * path is searched first.

@@ -44,7 +44,7 @@ public:
   
   /// \brief Register an object in the factory
   /// The parameter \a key passed by reference will be updated with the
-  /// associated object name obtained using ::objectNameToKey()
+  /// associated object name obtained using objectNameToKey(const QString&)
   template<typename ClassType>
   bool registerQObject(QString& key);
 

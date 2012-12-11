@@ -25,37 +25,83 @@
 #include <ctkCommandLineModulesCoreExport.h>
 
 #include <QSharedDataPointer>
+#include <QMetaType>
 
+struct ctkCmdLineModuleBackend;
 class ctkCmdLineModuleDescription;
-class ctkCmdLineModuleReferencePrivate;
+struct ctkCmdLineModuleReferencePrivate;
 
 /**
- * \ingroup CommandLineModulesCore
+ * \class ctkCmdLineModuleReference
+ * \brief Defines a reference or handle to a module, including location,
+ * XML, description and access to the associated backend.
+ * \ingroup CommandLineModulesCore_API
+ *
+ * Instances of this class reference registered modules and can be used
+ * to retrieve information about their parameters or to create a specific
+ * front-end.
  */
 class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleReference
 {
 public:
 
+  /**
+   * @brief Creates an invalid module reference.
+   */
   ctkCmdLineModuleReference();
   ~ctkCmdLineModuleReference();
 
   ctkCmdLineModuleReference(const ctkCmdLineModuleReference& ref);
   ctkCmdLineModuleReference& operator=(const ctkCmdLineModuleReference& ref);
 
-  operator bool();
+  /**
+   * @brief Conversion operator to test the validity of this module reference.
+   */
+  operator bool() const;
 
+  /**
+   * @brief Get the module description for the parameters.
+   * @return The XML description as a class representation.
+   * @throws ctkCmdLineModuleXmlException if the raw XML description cannot be parsed.
+   */
   ctkCmdLineModuleDescription description() const;
 
+  /**
+   * @brief Get the raw XML description, as supplied by the back-end.
+   * @return The raw XML description.
+   */
   QByteArray rawXmlDescription() const;
 
-  QString location() const;
+  /**
+   * @brief Retrieve a validation error string.
+   * @return A non-empty string describing the validation error, if validation
+   *         of the XML description was not successful.
+   */
+  QString xmlValidationErrorString() const;
+
+  /**
+   * @brief Get the URL under which the module was registered.
+   * @return The module location.
+   */
+  QUrl location() const;
+
+  /**
+   * @brief Get the back-end which was registered to handle this module.
+   * @return The back-end handling this module.
+   */
+  ctkCmdLineModuleBackend* backend() const;
 
 private:
 
   friend class ctkCmdLineModuleManager;
+  friend uint CTK_CMDLINEMODULECORE_EXPORT qHash(const ctkCmdLineModuleReference&);
 
   QSharedDataPointer<ctkCmdLineModuleReferencePrivate> d;
 
 };
+
+Q_DECLARE_METATYPE(ctkCmdLineModuleReference)
+
+uint CTK_CMDLINEMODULECORE_EXPORT qHash(const ctkCmdLineModuleReference& moduleRef);
 
 #endif // CTKCMDLINEMODULEREFERENCE_H

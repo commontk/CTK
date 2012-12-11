@@ -19,7 +19,7 @@ limitations under the License.
 =============================================================================*/
 
 #include "ctkCmdLineModuleDescription.h"
-#include "ctkCmdLineModuleDescriptionPrivate.h"
+#include "ctkCmdLineModuleDescription_p.h"
 
 #include "ctkCmdLineModuleParameter.h"
 #include "ctkCmdLineModuleParameterGroup.h"
@@ -64,6 +64,14 @@ QString ctkCmdLineModuleDescription::title() const
 {
   return d->Title;
 }
+
+
+//----------------------------------------------------------------------------
+QString ctkCmdLineModuleDescription::categoryDotTitle() const
+{
+  return this->category() + "." + this->title();
+}
+
 
 //----------------------------------------------------------------------------
 QString ctkCmdLineModuleDescription::description() const

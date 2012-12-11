@@ -50,7 +50,7 @@ public:
   /// 
   /// \brief Resolve symbols
   /// \note The function will return False if it fails to resolve one
-  /// of the required symbols set using ::setSymbols
+  /// of the required symbols set using setSymbols(const QStringList&)
   bool resolve();
   
   /// 

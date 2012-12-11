@@ -39,8 +39,22 @@ class CTK_WIDGETS_EXPORT ctkColorPickerButton : public QPushButton
 {
   Q_OBJECT
   Q_FLAGS(ColorDialogOption ColorDialogOptions)
+
+  /// This property controls the name of the color.
+  /// Black (0,0,0) by default.
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged USER true)
+
+  /// This property controls the name of the color.
+  /// If empty (default), the color in the format "#RRGGBB" is displayed in the
+  /// button if \a displayColorName is true, otherwise, the color name is used.
+  Q_PROPERTY(QString colorName READ colorName WRITE setColorName NOTIFY colorNameChanged)
+
+  /// This properties controls whether the name of the color is shown on the
+  /// button if true or the button text instead. True by default.
+  /// \sa colorName, QPushButton::text
   Q_PROPERTY(bool displayColorName READ displayColorName WRITE setDisplayColorName DESIGNABLE true)
+
+  /// This property controls the properties of the dialog used in \a changeColor
   Q_PROPERTY(ColorDialogOptions dialogOptions READ dialogOptions WRITE setDialogOptions)
 public:
   enum ColorDialogOption {
@@ -53,19 +67,32 @@ public:
 
   /// By default, the color is black
   explicit ctkColorPickerButton(QWidget* parent = 0);
+
   /// By default, the color is black. The text will be shown on the button if
   /// displayColorName is false, otherwise the color name is shown.
   /// \sa QPushButton::setText
   explicit ctkColorPickerButton(const QString& text, QWidget* parent = 0 );
+
   /// The text will be shown on the button if
   /// displayColorName is false, otherwise the color name is shown.
   /// \sa setColor, QPushButton::setText
   explicit ctkColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
+
   virtual ~ctkColorPickerButton();
 
-  ///
   /// Current selected color
   QColor color()const;
+
+  /// Current selected color name.
+  /// Returns the name of the color in the format "#RRGGBB" or the string set
+  /// by setColorName().
+  /// \sa color(), setColorName()
+  QString colorName()const;
+
+  /// Set the current color name.
+  /// This allows you to give name other than the default "#RRGGBB"
+  /// Set an invalid QString to restore the default color names
+  void setColorName(const QString& name);
 
   ///
   /// Display the color name after color selection
@@ -87,8 +114,10 @@ public Q_SLOTS:
   /// Set a new current color without opening a dialog
   void setColor(const QColor& color);
 
-  ///
   /// Opens a color dialog to select a new current color.
+  /// If the CTK color dialog (\a UseCTKColorDialog) is used, then the color
+  /// name is also set if the user selects a named color.
+  /// \sa ctkColorDialog, color, colorName
   void changeColor();
 
   ///
@@ -100,6 +129,9 @@ Q_SIGNALS:
   /// colorChanged is fired anytime a new color is set. Programatically or
   /// by the user when choosing a color from the color dialog
   void colorChanged(QColor);
+
+  /// This signaled is fired anytime a new color name is set.
+  void colorNameChanged(QString);
 
 protected Q_SLOTS:
   void onToggled(bool change = true);

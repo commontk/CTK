@@ -25,7 +25,8 @@ int ctkVTKHistogramTest3( int argc, char * argv [])
   //------Test build--------------------------------
   ctkVTKHistogram histogram;
 
-  vtkSmartPointer<vtkDataArray> dataArray = vtkDataArray::CreateDataArray(VTK_CHAR);
+  vtkSmartPointer<vtkDataArray> dataArray;
+  dataArray.TakeReference(vtkDataArray::CreateDataArray(VTK_CHAR));
   dataArray->InsertNextTuple1(0);
   dataArray->InsertNextTuple1(0);
   dataArray->InsertNextTuple1(0);

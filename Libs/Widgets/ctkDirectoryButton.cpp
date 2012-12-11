@@ -81,7 +81,6 @@ void ctkDirectoryButtonPrivate::init()
 //-----------------------------------------------------------------------------
 void ctkDirectoryButtonPrivate::updateDisplayText()
 {
-  Q_Q(ctkDirectoryButton);
   QString buttonText = this->DisplayText;
   if (buttonText.isNull())
     {

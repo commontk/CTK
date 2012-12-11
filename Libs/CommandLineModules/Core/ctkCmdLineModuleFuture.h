@@ -1,93 +1,84 @@
 /*=============================================================================
-  
+
   Library: CTK
-  
+
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
-    
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  
+
 =============================================================================*/
 
 #ifndef CTKCMDLINEMODULEFUTURE_H
 #define CTKCMDLINEMODULEFUTURE_H
 
-#include <ctkCommandLineModulesCoreExport.h>
+#include "ctkCommandLineModulesCoreExport.h"
 
-//#include <QFutureInterface>
-//#include <QFutureWatcher>
-#include <QProcess>
+#include "ctkCmdLineModuleFutureInterface.h"
+
+#include <QFuture>
 
 /**
- * \ingroup CommandLineModulesCore
+ * \class ctkCmdLineModuleFuture
+ * \brief QFuture sub-class for enhanced communication with running modules.
+ * \ingroup CommandLineModulesCore_API
+ *
+ * Please see the QFuture documentation of Qt for details. This sub-class provides
+ * additional query methods to check if a module can be paused and/or canceled and
+ * also provides the ability to retrieve the arbitrary output and error data
+ * from the module.
+ *
+ * \see ctkCmdLineModuleFutureWatcher
  */
-class ctkCmdLineModuleFuture
+class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleFuture : public QFuture<ctkCmdLineModuleResult>
 {
-
 public:
 
-  ctkCmdLineModuleFuture()
-    : d(ctkCmdLineModuleFutureInterface::canceledResult())
-  { }
+  ctkCmdLineModuleFuture();
 
-  explicit ctkCmdLineModuleFuture(const ctkCmdLineModuleProcess& p) // internal
-    : d(*p)
-  { }
+  /** \cond */
+  explicit ctkCmdLineModuleFuture(ctkCmdLineModuleFutureInterface* p); // internal
+  /** \endcond */
 
-  ctkCmdLineModuleFuture(const ctkCmdLineModuleFuture &other)
-    : d(other.d)
-  { }
+  /**
+   * @brief Read all output data reported by the running module so far.
+   * @return Returns the reported output.
+   */
+  QByteArray readAllOutputData() const;
 
-  ~ctkCmdLineModuleFuture()
-  { }
+  /**
+   * @brief Read all error data reported by the running module so far.
+   * @return Returns the reported error.
+   */
+  QByteArray readAllErrorData() const;
 
-  ctkCmdLineModuleFuture& operator=(const ctkCmdLineModuleFuture& other);
-  bool operator==(const ctkCmdLineModuleFuture& other) const { return (d == other.d); }
-  bool operator!=(const ctkCmdLineModuleFuture& other) const { return (d != other.d); }
+  /**
+   * @brief Check if this module can be canceled via cancel().
+   * @return \c true if this module can be canceled, \c false otherwise.
+   */
+  bool canCancel() const;
 
-  void cancel() { d.cancel(); }
-  bool isCanceled() const { return d.isCanceled(); }
+  /**
+   * @brief Check if this module can be paused via pause() and similar QFuture methods.
+   * @return \c true if this module can be paused, \c false otherwise.
+   */
+  bool canPause() const;
 
-  bool isStarted() const { return d.isStarted(); }
-  bool isFinished() const { return d.isFinished(); }
-  bool isRunning() const { return d.isRunning(); }
-
-  int exitCode() const { return d.exitCode(); }
-  int exitStatus() const { return d.exitStatus(); }
-  QProcess::ProcessError error() const { return d.error(); }
-  QString errorString() const { return d.errorString(); }
-
-  QString standardOutput() const { return d.standardOutput(); }
-  QString standardError() const { return d.standardError(); }
-
-  int progressValue() const { return d.progressValue(); }
-  int progressMinimum() const { return d.progressMinimum(); }
-  int progressMaximum() const { return d.progressMaximum(); }
-  QString progressText() const { return d.progressText(); }
-  void waitForFinished() { d.waitForFinished(); }
-
-private:
-
-  friend class ctkCmdLineModuleFutureWatcher;
-
-  mutable ctkCmdLineModuleProcess d;
 };
 
-
-inline ctkCmdLineModuleFuture& ctkCmdLineModuleFuture::operator=(const ctkCmdLineModuleFuture& other)
+inline ctkCmdLineModuleFuture ctkCmdLineModuleFutureInterface::future()
 {
-  d = other.d;
-  return *this;
+  return ctkCmdLineModuleFuture(this);
 }
 
 #endif // CTKCMDLINEMODULEFUTURE_H

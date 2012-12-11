@@ -22,7 +22,7 @@
 #include "ctkLDAPSearchFilter.h"
 
 #include "ctkLDAPExpr_p.h"
-#include "ctkServiceReferencePrivate.h"
+#include "ctkServiceReference_p.h"
 
 //----------------------------------------------------------------------------
 class ctkLDAPSearchFilterData : public QSharedData

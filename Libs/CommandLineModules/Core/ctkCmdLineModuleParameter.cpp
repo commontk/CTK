@@ -20,11 +20,37 @@ limitations under the License.
 
 #include "ctkCmdLineModuleParameter.h"
 
-#include "ctkCmdLineModuleParameterPrivate.h"
+#include "ctkCmdLineModuleParameter_p.h"
 
 #include <QStringList>
 #include <QTextStream>
 
+//----------------------------------------------------------------------------
+ctkCmdLineModuleParameterPrivate::ctkCmdLineModuleParameterPrivate()
+  : Hidden(false), Constraints(false), Channel("input"), Index(-1), Multiple(false)
+{}
+
+//----------------------------------------------------------------------------
+QStringList ctkCmdLineModuleParameterPrivate::splitAndTrim(const QString& str, const QString& separator)
+{
+  QStringList l = str.split(separator, QString::SkipEmptyParts);
+  l.removeDuplicates();
+  // trim the strings
+  QMutableStringListIterator i(l);
+  while(i.hasNext())
+  {
+    QString& n = i.next();
+    n = n.trimmed();
+  }
+  return l;
+}
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleParameterPrivate::setFileExtensionsAsString(const QString& extensions)
+{
+  FileExtensions = splitAndTrim(extensions, ",");
+  FileExtensionsAsString = FileExtensions.join(",");
+}
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleParameter::ctkCmdLineModuleParameter()
@@ -55,23 +81,10 @@ QString ctkCmdLineModuleParameter::tag() const
   return d->Tag;
 }
 
-////----------------------------------------------------------------------------
-//QString ctkCmdLineModuleParameter::cppType() const
-//{
-//  Q_D(const ctkCmdLineModuleParameter);
-//  return d->CPPType;
-//}
-
 //----------------------------------------------------------------------------
 QString ctkCmdLineModuleParameter::type() const
 {
   return d->Type;
-}
-
-//----------------------------------------------------------------------------
-QString ctkCmdLineModuleParameter::reference() const
-{
-  return d->Reference;
 }
 
 //----------------------------------------------------------------------------
@@ -83,9 +96,8 @@ bool ctkCmdLineModuleParameter::hidden() const
 //----------------------------------------------------------------------------
 bool ctkCmdLineModuleParameter::isReturnParameter() const
 {
-  // could check for tag == float, int, float-vector, ...
-  if (d->Channel == "output"
-      && !this->isFlagParameter() && !this->isIndexParameter())
+  if (d->Channel == "output" && this->isIndexParameter() &&
+      this->index() == 1000)
   {
     return true;
   }
@@ -103,19 +115,6 @@ bool ctkCmdLineModuleParameter::isIndexParameter() const
 {
   return (d->Index > -1);
 }
-
-//----------------------------------------------------------------------------
-QString ctkCmdLineModuleParameter::argType() const
-{
-  return d->ArgType;
-}
-
-////----------------------------------------------------------------------------
-//QString ctkCmdLineModuleParameter::stringToType() const
-//{
-//  Q_D(const ctkCmdLineModuleParameter);
-//  return d->StringToType;
-//}
 
 //----------------------------------------------------------------------------
 QString ctkCmdLineModuleParameter::name() const
@@ -244,12 +243,6 @@ bool ctkCmdLineModuleParameter::multiple() const
 }
 
 //----------------------------------------------------------------------------
-QString ctkCmdLineModuleParameter::aggregate() const
-{
-  return d->Aggregate;
-}
-
-//----------------------------------------------------------------------------
 QString ctkCmdLineModuleParameter::fileExtensionsAsString() const
 {
   return d->FileExtensionsAsString;
@@ -274,12 +267,6 @@ QStringList ctkCmdLineModuleParameter::elements() const
 }
 
 //----------------------------------------------------------------------------
-//QStringList& ctkCmdLineModuleParameter::elements()
-//{
-//  return d->Elements;
-//}
-
-//----------------------------------------------------------------------------
 QTextStream& operator<<(QTextStream& os, const ctkCmdLineModuleParameter& parameter)
 {
   os << "    Parameter" << '\n';
@@ -288,11 +275,7 @@ QTextStream& operator<<(QTextStream& os, const ctkCmdLineModuleParameter& parame
   os << "      " << "Description: " << parameter.description() << '\n';
   os << "      " << "Label: " << parameter.label() << '\n';
   os << "      " << "Type: " << parameter.type() << '\n';
-  os << "      " << "Reference: " << parameter.reference() << '\n';
   os << "      " << "Hidden: " << (parameter.hidden() ? "true" : "false") << '\n';
-  //os << "      " << "CPPType: " << parameter.cppType() << '\n';
-  os << "      " << "ArgType: " << parameter.argType() << '\n';
-  //os << "      " << "StringToType: " << parameter.stringToType() << '\n';
   os << "      " << "Default: " << parameter.defaultValue() << '\n';
   os << "      " << "Elements: " << parameter.elements().join(", ") << '\n';
   os << "      " << "Constraints: " << (parameter.constraints() ? "true" : "false") << '\n';
@@ -308,7 +291,6 @@ QTextStream& operator<<(QTextStream& os, const ctkCmdLineModuleParameter& parame
   os << "      " << "Channel: " << parameter.channel() << '\n';
   os << "      " << "Index: " << parameter.index() << '\n';
   os << "      " << "Multiple: " << (parameter.multiple() ? "true" : "false") << '\n';
-  os << "      " << "Aggregate: " << parameter.aggregate() << '\n';
   os << "      " << "FileExtensions: " << parameter.fileExtensionsAsString() << '\n';
   os << "      " << "CoordinateSystem: " << parameter.coordinateSystem() << '\n';
   return os;

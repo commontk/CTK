@@ -186,6 +186,7 @@ include(CMake/ctkMacroBuildPlugin.cmake)
 include(CMake/ctkMacroBuildApp.cmake)
 include(CMake/ctkMacroBuildQtPlugin.cmake)
 include(CMake/ctkMacroCompilePythonScript.cmake)
+include(CMake/ctkMacroGenerateMocs.cmake)
 include(CMake/ctkMacroWrapPythonQt.cmake)
 include(CMake/ctkMacroSetupQt.cmake)
 include(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
@@ -370,6 +371,26 @@ ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
                   CTK_LIB_PluginFramework)
 
 #-----------------------------------------------------------------------------
+# Special "BUILD ALL" options
+
+# Build all CTK plug-ins
+option(CTK_BUILD_ALL_PLUGINS "Build all CTK plug-ins" OFF)
+
+# Build all CTK libraries
+option(CTK_BUILD_ALL_LIBRARIES "Build all CTK libraries" OFF)
+
+# Build all CTK applications
+option(CTK_BUILD_ALL_APPS "Build all CTK applications" OFF)
+
+# Build everything
+option(CTK_BUILD_ALL "Build everything in CTK" OFF)
+if(CTK_BUILD_ALL)
+  set(CTK_BUILD_ALL_PLUGINS 1)
+  set(CTK_BUILD_ALL_LIBRARIES 1)
+  set(CTK_BUILD_ALL_APPS 1)
+endif()
+
+#-----------------------------------------------------------------------------
 # Other options
 
 # The CTK Python Wrapping
@@ -451,9 +472,18 @@ ctk_lib_option(Visualization/VTK/Widgets
                
 ctk_lib_option(CommandLineModules/Core
                "Build the Command Line Module core library" OFF)
+               
+ctk_lib_option(CommandLineModules/Frontend/QtWebKit
+               "Build the QtWebKit based Command Line Module front-end" OFF)
 
-ctk_lib_option(CommandLineModules/QtGui
-               "Build the QtGui based Command Line Module library" OFF)
+ctk_lib_option(CommandLineModules/Frontend/QtGui
+               "Build the QtGui based Command Line Module front-end" OFF)
+
+ctk_lib_option(CommandLineModules/Backend/LocalProcess
+               "Build the Command Line Module back-end for local processes" OFF)
+               
+ctk_lib_option(CommandLineModules/Backend/FunctionPointer
+               "Build the Command Line Module back-end for function pointers" OFF)
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
@@ -513,7 +543,22 @@ ctk_app_option(ctkEventBusDemo
 ctk_app_option(ctkCommandLineModuleExplorer
                "Build the Command Line Module Explorer" OFF
                CTK_BUILD_EXAMPLES)
-               
+
+# We use the CTKWidgets library together with the Qt Designer plug-in
+# in ctkCommandLineModuleExplorer, so enabling the options here.
+# (We do not need to link them into the executable, hence no entries
+# in target_libraries.cmake)
+
+if(CTK_APP_ctkCommandLineModuleExplorer)
+  foreach(_option CTK_BUILD_QTDESIGNER_PLUGINS)
+    if(NOT ${_option})
+      get_property(_docstring CACHE ${_option} PROPERTY HELPSTRING)
+      set(${_option} ON CACHE BOOL "${_docstring}" FORCE)
+      message("Enabling option [${_option}] required by [ctkCommandLineModuleExplorer]")
+    endif()
+  endforeach()
+endif()
+
 ctk_app_option(ctkPluginBrowser
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
@@ -557,9 +602,6 @@ set(plugin_list
   org.commontk.log
   org.commontk.log4qt
   org.commontk.metatype
-
-  # Misc
-  #org.commontk.slicermodule
   )
 
 foreach(_plugin ${plugin_list})  
@@ -858,10 +900,17 @@ add_subdirectory(Libs/Testing)
 # Add CTK library subdirectories
 #
 foreach(lib ${CTK_LIBS})
-  IF (CTK_LIB_${lib})
+  if(CTK_LIB_${lib})
     add_subdirectory(Libs/${lib})
   endif()
+  # Always add the Documentation sub-directory for additional processing
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}/Documentation/CMakeLists.txt)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Libs/${lib}/Documentation)
+  endif()
 endforeach()
+
+# Add the CommandLineModules root directory for additional processing
+add_subdirectory(Libs/CommandLineModules)
 
 #-----------------------------------------------------------------------------
 if(CTK_USE_QTTESTING)
@@ -896,6 +945,7 @@ endif()
 #
 #add_subdirectory(Testing)
 #add_subdirectory(Examples)
+
 
 #-----------------------------------------------------------------------------
 # Style Checking configuration

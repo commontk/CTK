@@ -72,6 +72,10 @@ endforeach()
 
 set(ctk_cmake_boolean_args
   BUILD_TESTING
+  CTK_BUILD_ALL
+  CTK_BUILD_ALL_APPS
+  CTK_BUILD_ALL_LIBRARIES
+  CTK_BUILD_ALL_PLUGINS
   CTK_BUILD_QTDESIGNER_PLUGINS
   CTK_USE_QTTESTING
   CTK_USE_KWSTYLE
@@ -80,15 +84,19 @@ set(ctk_cmake_boolean_args
   CTEST_USE_LAUNCHERS
   CTK_WRAP_PYTHONQT_FULL
   CTK_ENABLE_Python_Wrapping
-  ${ctk_libs_bool_vars}
-  ${ctk_plugins_bool_vars}
-  ${ctk_applications_bool_vars}
   ${ctk_lib_options_list}
   )
 
 set(ctk_superbuild_boolean_args)
 foreach(ctk_cmake_arg ${ctk_cmake_boolean_args})
   list(APPEND ctk_superbuild_boolean_args -D${ctk_cmake_arg}:BOOL=${${ctk_cmake_arg}})
+endforeach()
+
+foreach(ctk_cmake_arg ${ctk_libs_bool_vars} ${ctk_plugins_bool_vars} ${ctk_applications_bool_vars})
+  # Use the cached value of the option in case the current value has been
+  # overridden by a "CTK_BUILD_ALL" option.
+  get_property(arg_value CACHE ${ctk_cmake_arg} PROPERTY VALUE)
+  list(APPEND ctk_superbuild_boolean_args -D${ctk_cmake_arg}:BOOL=${arg_value})
 endforeach()
 
 # message("CMake boolean args:")

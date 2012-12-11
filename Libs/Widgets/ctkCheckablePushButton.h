@@ -64,13 +64,13 @@ public:
 
   ///
   /// Set the alignment of the text on the button,
-  /// Qt::Left|Qt::VCenter by default.
+  /// Qt::AlignLeft|Qt::AlignVCenter by default.
   void setButtonTextAlignment(Qt::Alignment textAlignment);
   Qt::Alignment buttonTextAlignment()const;
 
   ///
   /// Set the alignment of the indicator (arrow) on the button,
-  /// Qt::Left|Qt::VCenter by default.
+  /// Qt::AlignLeft|Qt::AlignVCenter by default.
   void setIndicatorAlignment(Qt::Alignment indicatorAlignment);
   Qt::Alignment indicatorAlignment()const;
 

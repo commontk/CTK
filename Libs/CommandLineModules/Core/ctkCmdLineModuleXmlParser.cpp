@@ -28,9 +28,9 @@ limitations under the License.
 // CTK includes
 #include "ctkCmdLineModuleXmlParser_p.h"
 #include "ctkCmdLineModuleDescription.h"
-#include "ctkCmdLineModuleDescriptionPrivate.h"
+#include "ctkCmdLineModuleDescription_p.h"
 #include "ctkCmdLineModuleParameterGroup.h"
-#include "ctkCmdLineModuleParameterGroupPrivate.h"
+#include "ctkCmdLineModuleParameterGroup_p.h"
 #include "ctkCmdLineModuleParameterParsers_p.h"
 
 #include "ctkCmdLineModuleXmlException.h"
@@ -67,7 +67,7 @@ ctkCmdLineModuleXmlParser::ctkCmdLineModuleXmlParser(QIODevice* device,
   _paramParsers["float-enumeration"] = new ctkCmdLineModuleEnumerationParameterParser; // type="enumerationType"/>
   _paramParsers["double-enumeration"] = new ctkCmdLineModuleEnumerationParameterParser; // type="enumerationType"/>
   _paramParsers["file"] = new ctkCmdLineModuleFileParameterParser; // type="fileType"/>
-  _paramParsers["directory"] = new ctkCmdLineModuleChannelParameterParser; // type="channelType"/>
+  _paramParsers["directory"] = new ctkCmdLineModuleMultipleParameterParser; // type="multipleType"/>
   _paramParsers["image"] = new ctkCmdLineModuleImageParameterParser; // type="imageType"/>
   _paramParsers["geometry"] = new ctkCmdLineModuleGeometryParameterParser; // type="geometryType"/>
 }

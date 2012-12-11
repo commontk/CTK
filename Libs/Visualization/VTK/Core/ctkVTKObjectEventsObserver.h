@@ -54,6 +54,8 @@ public:
 
   virtual ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const;
 protected:
+  ctkVTKConnectionFactory();
+  virtual ~ctkVTKConnectionFactory();
   CTK_SINGLETON_DECLARE(ctkVTKConnectionFactory)
 };
 CTK_SINGLETON_DECLARE_INITIALIZER(CTK_VISUALIZATION_VTK_CORE_EXPORT, ctkVTKConnectionFactory)

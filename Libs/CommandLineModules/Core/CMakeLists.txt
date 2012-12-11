@@ -14,22 +14,32 @@ set(KIT_export_directive "CTK_CMDLINEMODULECORE_EXPORT")
 
 # Source files
 set(KIT_SRCS
+  ctkCmdLineModuleBackend.cpp
+  ctkCmdLineModuleCache.cpp
+  ctkCmdLineModuleCache_p.h
+  ctkCmdLineModuleConcurrentHelpers.cpp
+  ctkCmdLineModuleDefaultPathBuilder.cpp
   ctkCmdLineModuleDescription.cpp
-  ctkCmdLineModuleDescriptionPrivate.h
-  ctkCmdLineModuleFuture.h
-  #ctkCmdLineModuleFuture.cpp
-  ctkCmdLineModuleInstance.cpp
-  ctkCmdLineModuleInstanceFactory.cpp
+  ctkCmdLineModuleDescription_p.h
+  ctkCmdLineModuleDirectoryWatcher.cpp
+  ctkCmdLineModuleDirectoryWatcher_p.h
+  ctkCmdLineModuleFrontend.cpp
+  ctkCmdLineModuleFrontendFactory.cpp
+  ctkCmdLineModuleFuture.cpp
+  ctkCmdLineModuleFutureInterface_p.h
+  ctkCmdLineModuleFutureInterface.cpp
+  ctkCmdLineModuleFutureWatcher.cpp
   ctkCmdLineModuleManager.cpp
   ctkCmdLineModuleParameter.cpp
-  ctkCmdLineModuleParameterPrivate.cpp
+  ctkCmdLineModuleParameter_p.h
   ctkCmdLineModuleParameterGroup.cpp
-  ctkCmdLineModuleParameterGroupPrivate.h
+  ctkCmdLineModuleParameterGroup_p.h
   ctkCmdLineModuleParameterParsers_p.h
-  #ctkCmdLineModuleProcess.cpp
-  ctkCmdLineModuleProcess_p.h
+  ctkCmdLineModulePathBuilder.cpp
+  ctkCmdLineModuleResult.cpp
+  ctkCmdLineModuleXmlProgressWatcher.cpp
   ctkCmdLineModuleReference.cpp
-  ctkCmdLineModuleReferencePrivate.cpp
+  ctkCmdLineModuleRunException.cpp
   ctkCmdLineModuleXmlException.cpp
   ctkCmdLineModuleXmlMsgHandler_p.h
   ctkCmdLineModuleXmlMsgHandler.cpp
@@ -41,9 +51,20 @@ set(KIT_SRCS
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  ctkCmdLineModuleInstance.h
-  #ctkCmdLineModuleProcess_p.h
+  ctkCmdLineModuleDirectoryWatcher.h
+  ctkCmdLineModuleDirectoryWatcher_p.h
+  ctkCmdLineModuleFutureWatcher.h
+  ctkCmdLineModuleManager.h
 )
+
+QT4_GENERATE_MOCS(
+  ctkCmdLineModuleFrontend.h
+  ctkCmdLineModuleXmlProgressWatcher.h
+)
+
+#list(APPEND KIT_SRCS
+#  ${CMAKE_CURRENT_BINARY_DIR}/moc_ctkCmdLineModuleXmlProgressWatcher.h
+#)
 
 # UI files
 set(KIT_UI_FORMS

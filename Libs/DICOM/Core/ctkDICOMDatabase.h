@@ -29,6 +29,7 @@
 #include "ctkDICOMDataset.h"
 #include "ctkDICOMCoreExport.h"
 
+class QDateTime;
 class ctkDICOMDatabasePrivate;
 class DcmDataset;
 class ctkDICOMAbstractThumbnailGenerator;
@@ -55,6 +56,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(bool isOpen READ isOpen)
   Q_PROPERTY(QString lastError READ lastError)
   Q_PROPERTY(QString databaseFilename READ databaseFilename)
+  Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
 
 public:
   explicit ctkDICOMDatabase(QObject *parent = 0);
@@ -100,15 +102,30 @@ public:
   ///        written to disk at all but instead only kept in memory (and
   ///        thus expires after destruction of this object).
   /// @param connectionName The database connection name.
+  /// @param update the schema if it is found to be out of date
   Q_INVOKABLE virtual void openDatabase(const QString databaseFile,
-                                        const QString& connectionName = "DICOM-DB" );
+                                        const QString& connectionName = "DICOM-DB");
 
   ///
   /// close the database. It must not be used afterwards.
   Q_INVOKABLE void closeDatabase();
   ///
-  /// delete all data and reinitialize the database.
+  /// delete all data and (re-)initialize the database.
   Q_INVOKABLE bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
+
+  /// updates the database schema and reinserts all existing files
+  Q_INVOKABLE bool updateSchema(const char* schemaFile = ":/dicom/dicom-schema.sql");
+
+  /// updates the database schema only if the versions don't match
+  /// Returns true if schema was updated
+  Q_INVOKABLE bool updateSchemaIfNeeded(const char* schemaFile = ":/dicom/dicom-schema.sql");
+
+  /// returns the schema version needed by the current version of this code
+  Q_INVOKABLE QString schemaVersion();
+
+  /// returns the schema version for the currently open database
+  /// in order to support schema updating
+  Q_INVOKABLE QString schemaVersionLoaded();
 
   ///
   /// \brief database accessors
@@ -117,7 +134,10 @@ public:
   Q_INVOKABLE QStringList seriesForStudy (const QString studyUID);
   Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
   Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
+  Q_INVOKABLE QString instanceForFile (const QString fileName);
+  Q_INVOKABLE QDateTime insertDateTimeForInstance (const QString fileName);
 
+  Q_INVOKABLE QStringList allFiles ();
   ///
   /// \brief load the header from a file and allow access to elements
   /// @param sopInstanceUID A string with the uid for a given instance
@@ -128,6 +148,19 @@ public:
   Q_INVOKABLE void loadFileHeader (const QString fileName);
   Q_INVOKABLE QStringList headerKeys ();
   Q_INVOKABLE QString headerValue (const QString key);
+
+  ///
+  /// \brief application-defined tags of interest
+  /// This list of tags is added to the internal tag cache during import
+  /// operations.  The list should be prepared by the application as
+  /// a hint to the database that these tags are likely to be accessed
+  /// later.  Internally, the database will cache the values of these
+  /// tags so that subsequent calls to fileValue or instanceValue will
+  /// be able to use the cache rather than re-reading the file.
+  /// @param tags should be a list of ascii hex group/element tags
+  ///  like "0008,0008" as in the instanceValue and fileValue calls
+  void setTagsToPrecache(const QStringList tags);
+  const QStringList tagsToPrecache();
 
   /// Insert into the database if not already exsting.
   /// @param dataset The dataset to store into the database. Usually, this is
@@ -144,10 +177,15 @@ public:
   ///                  does only make sense if a full object is received.
   /// @param @generateThumbnail If true, a thumbnail is generated.
   ///
-  Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail);
-  void insert ( DcmDataset *dataset, bool storeFile = true, bool generateThumbnail = true);
-  Q_INVOKABLE void insert ( const QString& filePath, bool storeFile = true, bool generateThumbnail = true, bool createHierarchy = true, const QString& destinationDirectoryName = QString() );
-  
+  Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset,
+                              bool storeFile, bool generateThumbnail);
+  void insert ( DcmDataset *dataset,
+                              bool storeFile = true, bool generateThumbnail = true);
+  Q_INVOKABLE void insert ( const QString& filePath,
+                            bool storeFile = true, bool generateThumbnail = true,
+                            bool createHierarchy = true,
+                            const QString& destinationDirectoryName = QString() );
+
   /// Check if file is already in database and up-to-date
   bool fileExistsAndUpToDate(const QString& filePath);
 
@@ -166,16 +204,43 @@ public:
   /// @param key A group,element tag in zero-filled hex
   /// @param group The group portion of the tag as an integer
   /// @param element The element portion of the tag as an integer
-  /// @Returns empty string is element is missing
+  /// @Returns empty string if element is missing
   Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const QString tag);
   Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const unsigned short group, const unsigned short element);
   Q_INVOKABLE QString fileValue (const QString fileName, const QString tag);
   Q_INVOKABLE QString fileValue (const QString fileName, const unsigned short group, const unsigned short element);
-  bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
+  Q_INVOKABLE bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
+  Q_INVOKABLE QString groupElementToTag (const unsigned short& group, const unsigned short& element);
+
+  ///
+  /// \brief store values of previously requested instance elements
+  /// These are meant to be internal methods used by the instanceValue and fileValue
+  /// methods, but they can be used by calling classes to populate or access
+  /// instance tag values as needed.
+  /// @param sopInstanceUID A string with the uid for a given instance
+  ///                       (corresponding file will be found via database)
+  /// @param key A group,element tag in zero-filled hex
+  /// @Returns empty string if element for uid is missing from cache
+  ///
+  /// Lightweight check of tag cache existence (once db check per runtime)
+  Q_INVOKABLE bool tagCacheExists ();
+  /// Create a tagCache in the current database.  Delete the existing one if it exists.
+  Q_INVOKABLE bool initializeTagCache ();
+  /// Return the value of a cached tag
+  Q_INVOKABLE QString cachedTag (const QString sopInstanceUID, const QString tag);
+  /// Insert an instance tag's value into to the cache
+  Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value);
 
 
 Q_SIGNALS:
   void databaseChanged();
+  /// Indicates that the schema is about to be updated and how many files will be processed
+  void schemaUpdateStarted(int);
+  /// Indicates progress in updating schema (int is file number, string is file name)
+  void schemaUpdateProgress(int);
+  void schemaUpdateProgress(QString);
+  /// Indicates schema update finished
+  void schemaUpdated();
 
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;

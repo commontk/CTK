@@ -25,7 +25,7 @@
 #include <QXmlStreamReader>
 
 #include "ctkCmdLineModuleParameter.h"
-#include "ctkCmdLineModuleParameterPrivate.h"
+#include "ctkCmdLineModuleParameter_p.h"
 
 namespace {
 
@@ -114,6 +114,10 @@ protected:
     else if (name.compare("index", Qt::CaseInsensitive) == 0)
     {
       moduleParamPrivate->Index = xmlReader.readElementText().toInt();
+    }
+    else if (name.compare("channel", Qt::CaseInsensitive) == 0)
+    {
+      moduleParamPrivate->Channel = xmlReader.readElementText().trimmed();
     }
     else
     {
@@ -237,35 +241,14 @@ protected:
   }
 };
 
-class ctkCmdLineModuleChannelParameterParser : public ctkCmdLineModuleMultipleParameterParser
-{
-
-protected:
-
-  bool handleSubElement(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
-  {
-    QStringRef name = xmlReader.name();
-
-    if (name.compare("channel", Qt::CaseInsensitive) == 0)
-    {
-      moduleParamPrivate->Channel = xmlReader.readElementText().trimmed();
-      return true;
-    }
-    else
-    {
-      return ctkCmdLineModuleMultipleParameterParser::handleSubElement(moduleParamPrivate, xmlReader);
-    }
-  }
-};
-
-class ctkCmdLineModuleFileParameterParser : public ctkCmdLineModuleChannelParameterParser
+class ctkCmdLineModuleFileParameterParser : public ctkCmdLineModuleMultipleParameterParser
 {
 
 protected:
 
   void handleAttributes(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
-    ctkCmdLineModuleChannelParameterParser::handleAttributes(moduleParamPrivate, xmlReader);
+    ctkCmdLineModuleMultipleParameterParser::handleAttributes(moduleParamPrivate, xmlReader);
     moduleParamPrivate->FileExtensionsAsString =xmlReader.attributes().value("fileExtensions").toString().trimmed();
   }
 };
@@ -283,14 +266,14 @@ protected:
   }
 };
 
-class ctkCmdLineModuleImageParameterParser : public ctkCmdLineModuleChannelParameterParser
+class ctkCmdLineModuleImageParameterParser : public ctkCmdLineModuleMultipleParameterParser
 {
 
 protected:
 
   void handleAttributes(ctkCmdLineModuleParameterPrivate* moduleParamPrivate, QXmlStreamReader& xmlReader)
   {
-    ctkCmdLineModuleChannelParameterParser::handleAttributes(moduleParamPrivate, xmlReader);
+    ctkCmdLineModuleMultipleParameterParser::handleAttributes(moduleParamPrivate, xmlReader);
     moduleParamPrivate->setFileExtensionsAsString(xmlReader.attributes().value("fileExtensions").toString().trimmed());
     moduleParamPrivate->Type = xmlReader.attributes().value("type").toString().trimmed();
   }

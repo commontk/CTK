@@ -46,6 +46,9 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
 
   ctkDICOMDatabase database;
   QDir databaseDirectory = QDir::temp();
+  databaseDirectory.remove("ctkDICOMDatabase.sql");
+  databaseDirectory.remove("ctkDICOMTagCache.sql");
+
   QFileInfo databaseFile(databaseDirectory, QString("database.test"));
   database.openDatabase(databaseFile.absoluteFilePath());
 
@@ -67,11 +70,11 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     {
     std::cerr << "ctkDICOMDatabase::openDatabase() failed: "
               << "database should not be in memory" << std::endl;
-    return EXIT_FAILURE;    
+    return EXIT_FAILURE;
     }
 
   bool res = database.initializeDatabase();
-  
+
   if (!res)
     {
     std::cerr << "ctkDICOMDatabase::initializeDatabase() failed." << std::endl;
@@ -97,6 +100,13 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  if ( database.groupElementToTag(group, element) != tag )
+    {
+    std::cerr << "ctkDICOMDatabase: could not convert a uints to tag string" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
   //
   // Basic test:
   // - insert the file specified on the command line
@@ -112,11 +122,81 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     std::cerr << "ctkDICOMDatabase: didn't get back the original file path" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
+  QString foundInstance = database.instanceForFile(dicomFilePath);
+
+  if (foundInstance != instanceUID)
+    {
+    std::cerr << "ctkDICOMDatabase: didn't get back the original instance uid" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+  //
+  // Test the tag cache
+  //
+
+  if (database.tagCacheExists())
+    {
+    std::cerr << "ctkDICOMDatabase: tag cache should not exist in fresh database" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (!database.initializeTagCache())
+    {
+    std::cerr << "ctkDICOMDatabase: could not initialize tag cache" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (!database.tagCacheExists())
+    {
+    std::cerr << "ctkDICOMDatabase: tag cache should exist but is not detected" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
+  if (database.cachedTag(instanceUID, tag) != QString(""))
+    {
+    std::cerr << "ctkDICOMDatabase: tag cache should return empty string for unknown instance tag" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   QString knownSeriesDescription("3D Cor T1 FAST IR-prepped GRE");
 
+  if (!database.cacheTag(instanceUID, tag, knownSeriesDescription))
+    {
+    std::cerr << "ctkDICOMDatabase: could not insert instance tag" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (database.cachedTag(instanceUID, tag) != knownSeriesDescription)
+    {
+    std::cerr << "ctkDICOMDatabase: could not retrieve cached tag" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+
   QString foundSeriesDescription = database.instanceValue(instanceUID, tag);
+
+  if (foundSeriesDescription != knownSeriesDescription)
+    {
+    std::cerr << "ctkDICOMDatabase: invalid element value returned" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // now update the database
+  database.updateSchema();
+
+  // and repeat the above checks
+  foundFile = database.fileForInstance(instanceUID);
+
+  if (foundFile != dicomFilePath)
+    {
+    std::cerr << "ctkDICOMDatabase: didn't get back the original file path" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  foundSeriesDescription = database.instanceValue(instanceUID, tag);
 
   if (foundSeriesDescription != knownSeriesDescription)
     {

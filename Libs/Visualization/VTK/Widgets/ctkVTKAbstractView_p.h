@@ -62,6 +62,9 @@ public:
   QTimer*                                       RequestTimer;
   QTime                                         RequestTime;
   bool                                          RenderEnabled;
+  bool                                          FPSVisible;
+  QTimer*                                       FPSTimer;
+  int                                           FPS;
 
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
 };

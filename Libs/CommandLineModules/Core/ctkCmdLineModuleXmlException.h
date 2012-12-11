@@ -27,7 +27,9 @@
 #include "ctkCommandLineModulesCoreExport.h"
 
 /**
- * \ingroup CommandLineModulesCore
+ * \class ctkCmdLineModuleXmlException
+ * \brief Exception class to describe problems with XML processing.
+ * \ingroup CommandLineModulesCore_API
  */
 CTK_DECLARE_EXCEPTION(CTK_CMDLINEMODULECORE_EXPORT, ctkCmdLineModuleXmlException, ctkException)
 

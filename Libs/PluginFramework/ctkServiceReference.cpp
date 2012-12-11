@@ -19,15 +19,15 @@
 
 =============================================================================*/
 
-#include "ctkServiceReference.h"
-#include "ctkServiceReferencePrivate.h"
-#include "ctkServiceRegistrationPrivate.h"
-#include "ctkPluginPrivate_p.h"
-#include "ctkPluginConstants.h"
-
 #include <QStringList>
 #include <QMutexLocker>
 #include <QDebug>
+
+#include "ctkPlugin_p.h"
+#include "ctkPluginConstants.h"
+#include "ctkServiceReference.h"
+#include "ctkServiceReference_p.h"
+#include "ctkServiceRegistration_p.h"
 
 //----------------------------------------------------------------------------
 ctkServiceReference::ctkServiceReference()

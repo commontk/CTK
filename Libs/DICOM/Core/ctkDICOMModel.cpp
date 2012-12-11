@@ -335,7 +335,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
           condition.append(" ( StudyDate BETWEEN \'" + QDate::fromString(this->SearchParameters["StartDate"].toString(), "yyyyMMdd").toString("yyyy-MM-dd")
                            + "\' AND \'" + QDate::fromString(this->SearchParameters["EndDate"].toString(), "yyyyMMdd").toString("yyyy-MM-dd") + "\' ) AND ");
         }
-      query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, ReferringPhysician as Institution, ReferringPhysician as Referrer, PerformingPhysiciansName as Performer", "Studies", condition + QString("PatientsUID='%1'").arg(node->UID));
+      query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, InstitutionName as Institution, ReferringPhysician as Referrer, PerformingPhysiciansName as Performer", "Studies", condition + QString("PatientsUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Patient: query is: " + query );
       break;
     case ctkDICOMModel::StudyType:
@@ -344,7 +344,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
         {
         condition.append("SeriesDescription LIKE \"%" + this->SearchParameters["Series"].toString() + "%\"" + " AND ");
         }
-      query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number","Series",condition + QString("StudyInstanceUID='%1'").arg(node->UID));
+      query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, Modality as Age, SeriesNumber as Scan, BodyPartExamined as \"Subject ID\", SeriesDate as Date, AcquisitionNumber as Number","Series",condition + QString("StudyInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Study: query is: " + query );
       break;
     case ctkDICOMModel::SeriesType:
@@ -497,7 +497,16 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
     // invalid).
     return QString();
     }
-  return d->value(parentIndex, dataIndex.row(), field);
+
+  QVariant dataValue=d->value(parentIndex, dataIndex.row(), field);
+  if (dataValue.isNull())
+  {
+    if (columnName.compare("Name")==0)
+    {
+      return QString("No description");
+    }
+  }
+  return dataValue;
 }
 
 //------------------------------------------------------------------------------

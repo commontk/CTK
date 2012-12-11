@@ -1,5 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-  <qresource>
-    <file alias="slicerModuleDescription.xsd">Xml/slicerModuleDescription.xsd</file>
-  </qresource>
-</RCC>

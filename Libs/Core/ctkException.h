@@ -163,6 +163,7 @@ protected:
 private:
 
   QString Msg;
+  mutable std::string WhatMsg;
   ctkException* NestedException;
 
   void printEnclosedStackTrace(QDebug dbg, const QList<QString>& enclosingTrace,
