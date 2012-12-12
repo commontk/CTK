@@ -29,6 +29,9 @@
 #include <QTime>
 #include <QDebug>
 
+// dcmtk includes
+#include "dcvrpn.h"
+
 // ctkDICOMCore includes
 #include "ctkDICOMModel.h"
 #include "ctkLogger.h"
@@ -506,6 +509,14 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
       return QString("No description");
     }
   }
+
+  if (columnName.compare("Name")==0)
+  {
+    OFString formattedName;
+    DcmPersonName::getFormattedNameFromString(OFString(dataValue.toString().toStdString().c_str()), formattedName);
+    return QString(formattedName.c_str());
+  }
+
   return dataValue;
 }
 
