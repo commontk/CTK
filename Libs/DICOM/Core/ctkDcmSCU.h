@@ -32,6 +32,24 @@
 #include "dcmtk/ofstd/oflist.h"
 
 
+/* Remove below  if changing to more current DCMTK */
+const unsigned short ECC_AlreadyConnected                  = 0x901;
+const unsigned short ECC_NoAcceptablePresentationContexts  = 0x902;
+const unsigned short ECC_NoPresentationContextsDefined     = 0x903;
+const unsigned short ECC_InvalidSOPInstanceUID             = 0x904;
+const unsigned short ECC_InvalidSOPClassUID                = 0x905;
+const unsigned short ECC_UnknownTransferSyntax             = 0x906;
+// 
+extern const OFCondition NET_EC_AlreadyConnected;
+extern const OFCondition NET_EC_NoAcceptablePresentationContexts;
+extern const OFCondition NET_EC_NoPresentationContextsDefined;
+extern const OFCondition NET_EC_InvalidSOPClassUID;
+extern const OFCondition NET_EC_InvalidSOPInstanceUID;
+extern const OFCondition NET_EC_UnknownTransferSyntax;
+/* Remove above if changing to more current DCMTK */
+
+
+
 /** Different types of closing an association
  */
 enum DcmCloseAssociationType

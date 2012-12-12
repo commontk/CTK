@@ -35,6 +35,18 @@
 #include <zlib.h>                   /* for zlibVersion() */
 #endif
 
+/* Remove below if changing to more current DCMTK */
+const OFConditionConst ECE_AlreadyConnected(                   OFM_dcmnet, ECC_AlreadyConnected,                  OF_error, "Already Connected");
+const OFConditionConst ECE_NoAcceptablePresentationContexts(   OFM_dcmnet, ECC_NoAcceptablePresentationContexts,  OF_error, "No Acceptable Presentation Contexts");
+const OFConditionConst ECE_NoPresentationContextsDefined(      OFM_dcmnet, ECC_NoPresentationContextsDefined,     OF_error, "No Presentation Contexts defined");
+const OFConditionConst ECE_InvalidSOPClassUID(                 OFM_dcmnet, ECC_InvalidSOPClassUID,                OF_error, "Invalid SOP Class UID");
+const OFConditionConst ECE_InvalidSOPInstanceUID(              OFM_dcmnet, ECC_InvalidSOPInstanceUID,             OF_error, "Invalid SOP Instance UID");
+const OFConditionConst ECE_UnknownTransferSyntax(              OFM_dcmnet, ECC_UnknownTransferSyntax,             OF_error, "Unknown Transfer Syntax");
+
+const OFCondition NET_EC_AlreadyConnected(                ECE_AlreadyConnected);
+const OFCondition NET_EC_NoAcceptablePresentationContext( ECE_NoAcceptablePresentationContexts);
+const OFCondition NET_EC_NoPresentationContextsDefined(   ECE_NoPresentationContextsDefined);
+/* Remove above if changing to more current DCMTK */
 
 DcmSCU::DcmSCU() :
   m_assoc(NULL),
@@ -599,7 +611,7 @@ OFCondition DcmSCU::sendECHORequest(const T_ASC_PresentationContextID presID)
 
   /* Send request */
   OFString tempStr;
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending C-ECHO Request");
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, msg, DIMSE_OUTGOING, NULL, pcid));
@@ -625,12 +637,12 @@ OFCondition DcmSCU::sendECHORequest(const T_ASC_PresentationContextID presID)
   /* Check whether we received C-ECHO response, otherwise print error */
   if (rsp.CommandField == DIMSE_C_ECHO_RSP)
   {
-    if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+    if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
     {
       DCMNET_INFO("Received C-ECHO Response");
       DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, rsp, DIMSE_INCOMING, NULL, pcid));
     } else {
-      DCMNET_INFO("Received C-ECHO Response (" << DU_cechoStatusString(rsp.msg.CEchoRSP.DimseStatus) << ")");
+      DCMNET_INFO("Received C-ECHO Response (" << rsp.msg.CEchoRSP.DimseStatus << ")");
     }
   } else {
     DCMNET_ERROR("Expected C-ECHO response but received DIMSE command 0x"
@@ -760,7 +772,7 @@ OFCondition DcmSCU::sendSTORERequest(const T_ASC_PresentationContextID presID,
   }
 
   /* Send request */
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending C-STORE Request");
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, msg, DIMSE_OUTGOING, NULL, pcid));
@@ -788,7 +800,7 @@ OFCondition DcmSCU::sendSTORERequest(const T_ASC_PresentationContextID presID,
 
   if (rsp.CommandField == DIMSE_C_STORE_RSP)
   {
-    if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+    if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
     {
       DCMNET_INFO("Received C-STORE Response");
       DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, rsp, DIMSE_INCOMING, NULL, pcid));
@@ -857,7 +869,7 @@ OFCondition DcmSCU::sendMOVERequest(const T_ASC_PresentationContextID presID,
   OFStandard::strlcpy(req->AffectedSOPClassUID, abstractSyntax.c_str(), sizeof(req->AffectedSOPClassUID));
 
   /* Send request */
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending C-MOVE Request");
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, msg, DIMSE_OUTGOING, dataset, pcid));
@@ -889,7 +901,7 @@ OFCondition DcmSCU::sendMOVERequest(const T_ASC_PresentationContextID presID,
 
     if (rsp.CommandField == DIMSE_C_MOVE_RSP)
     {
-      if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+      if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
       {
         DCMNET_INFO("Received C-MOVE Response");
         DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, rsp, DIMSE_INCOMING, NULL, pcid));
@@ -1060,7 +1072,7 @@ OFCondition DcmSCU::sendCGETRequest(const T_ASC_PresentationContextID presID,
   OFStandard::strlcpy(req->AffectedSOPClassUID, abstractSyntax.c_str(), sizeof(req->AffectedSOPClassUID));
 
   /* Send request */
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending C-GET Request");
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, msg, DIMSE_OUTGOING, dataset, pcid));
@@ -1107,7 +1119,7 @@ OFCondition DcmSCU::handleCGETSession(const T_ASC_PresentationContextID /* presI
     // Handle C-GET Response
     if (rsp.CommandField == DIMSE_C_GET_RSP)
     {
-      if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+      if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
       {
         DCMNET_INFO("Received C-GET Response");
         DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, rsp, DIMSE_INCOMING, NULL, pcid));
@@ -1148,7 +1160,7 @@ OFCondition DcmSCU::handleCGETSession(const T_ASC_PresentationContextID /* presI
     // Handle C-STORE Request
     else if (rsp.CommandField == DIMSE_C_STORE_RQ)
     {
-      if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+      if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
       {
         DCMNET_INFO("Received C-STORE Request");
         DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, rsp, DIMSE_INCOMING, NULL, pcid));
@@ -1398,7 +1410,7 @@ OFCondition DcmSCU::sendSTOREResponse(T_ASC_PresentationContextID presID,
   OFStandard::strlcpy(storeRsp.AffectedSOPInstanceUID, request.AffectedSOPInstanceUID, sizeof(storeRsp.AffectedSOPInstanceUID));
 
   OFString tempStr;
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending C-STORE Response");
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, response, DIMSE_OUTGOING, NULL, presID));
@@ -1500,7 +1512,7 @@ OFCondition DcmSCU::sendFINDRequest(const T_ASC_PresentationContextID presID,
   OFStandard::strlcpy(req->AffectedSOPClassUID, abstractSyntax.c_str(), sizeof(req->AffectedSOPClassUID));
 
   /* Send request */
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending C-FIND Request");
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, msg, DIMSE_OUTGOING, queryKeys, pcid));
@@ -1531,7 +1543,7 @@ OFCondition DcmSCU::sendFINDRequest(const T_ASC_PresentationContextID presID,
 
     if (rsp.CommandField == DIMSE_C_FIND_RSP)
     {
-      if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+      if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
       {
         DCMNET_INFO("Received C-FIND Response");
         DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, rsp, DIMSE_INCOMING, NULL, pcid));
@@ -1670,7 +1682,7 @@ OFCondition DcmSCU::sendCANCELRequest(const T_ASC_PresentationContextID presID)
      dataset is transported at all, i.e. we trust that the user provided
      the correct presentation context ID (could be private one).
    */
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending C-CANCEL Request");
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, msg, DIMSE_OUTGOING, NULL, pcid));
@@ -1728,11 +1740,11 @@ OFCondition DcmSCU::sendACTIONRequest(const T_ASC_PresentationContextID presID,
   OFStandard::strlcpy(actionReq.RequestedSOPInstanceUID, sopInstanceUID.c_str(), sizeof(actionReq.RequestedSOPInstanceUID));
 
   // Send request
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending N-ACTION Request");
     // Output dataset only if trace level is enabled
-    if (DCM_dcmnetLogger.isEnabledFor(OFLogger::TRACE_LOG_LEVEL))
+    if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::TRACE_LOG_LEVEL))
       DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, request, DIMSE_OUTGOING, reqDataset, pcid));
     else
       DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, request, DIMSE_OUTGOING, NULL, pcid));
@@ -1758,7 +1770,7 @@ OFCondition DcmSCU::sendACTIONRequest(const T_ASC_PresentationContextID presID,
   // Check command set
   if (response.CommandField == DIMSE_N_ACTION_RSP)
   {
-    if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+    if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
     {
       DCMNET_INFO("Received N-ACTION Response");
       DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, response, DIMSE_INCOMING, NULL, pcid));
@@ -1853,11 +1865,11 @@ OFCondition DcmSCU::sendEVENTREPORTRequest(const T_ASC_PresentationContextID pre
   OFStandard::strlcpy(eventReportReq.AffectedSOPInstanceUID, sopInstanceUID.c_str(), sizeof(eventReportReq.AffectedSOPInstanceUID));
 
   // Send request
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending N-EVENT-REPORT Request");
     // Output dataset only if trace level is enabled
-    if (DCM_dcmnetLogger.isEnabledFor(OFLogger::TRACE_LOG_LEVEL))
+    if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::TRACE_LOG_LEVEL))
       DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, request, DIMSE_OUTGOING, reqDataset, pcid));
     else
       DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, request, DIMSE_OUTGOING, NULL, pcid));
@@ -1882,7 +1894,7 @@ OFCondition DcmSCU::sendEVENTREPORTRequest(const T_ASC_PresentationContextID pre
   // Check command set
   if (response.CommandField == DIMSE_N_EVENT_REPORT_RSP)
   {
-    if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+    if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
     {
       DCMNET_INFO("Received N-EVENT-REPORT Response");
       DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, response, DIMSE_INCOMING, NULL, pcid));
@@ -1973,7 +1985,7 @@ OFCondition DcmSCU::handleEVENTREPORTRequest(DcmDataset *&reqDataset,
   // Check command set
   if (request.CommandField == DIMSE_N_EVENT_REPORT_RQ)
   {
-    if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+    if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
       DCMNET_INFO("Received N-EVENT-REPORT Request");
     else
       DCMNET_INFO("Received N-EVENT-REPORT Request (MsgID " << eventReportReq.MessageID << ")");
@@ -2008,7 +2020,7 @@ OFCondition DcmSCU::handleEVENTREPORTRequest(DcmDataset *&reqDataset,
   }
 
   // Output dataset only if trace level is enabled
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::TRACE_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::TRACE_LOG_LEVEL))
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, request, DIMSE_INCOMING, dataset, presID));
   else
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, request, DIMSE_INCOMING, NULL, presID));
@@ -2037,7 +2049,7 @@ OFCondition DcmSCU::handleEVENTREPORTRequest(DcmDataset *&reqDataset,
   eventReportRsp.AffectedSOPClassUID[0] = 0;
   eventReportRsp.AffectedSOPInstanceUID[0] = 0;
 
-  if (DCM_dcmnetLogger.isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
+  if (DCM_dcmnetGetLogger().isEnabledFor(OFLogger::DEBUG_LOG_LEVEL))
   {
     DCMNET_INFO("Sending N-EVENT-REPORT Response");
     DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, response, DIMSE_OUTGOING, NULL, presID));
