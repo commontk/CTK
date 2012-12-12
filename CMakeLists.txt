@@ -411,11 +411,11 @@ ctk_lib_option(ImageProcessing/ITK/Core
                "Build the ITK Core library" OFF)
                
 ctk_lib_option(Scripting/Python/Core
-               "Build the Python Core library" OFF)
+               "Build the Python Core library" OFF
+               CTK_ENABLE_Python_Wrapping)
                
 ctk_lib_option(Scripting/Python/Widgets
-               "Build the Python Widgets library" OFF
-               CTK_LIB_Widgets AND CTK_ENABLE_Python_Wrapping)
+               "Build the Python Widgets library" OFF)
                
 ctk_lib_option(Visualization/VTK/Core
                "Build the VTK Core library" OFF)
