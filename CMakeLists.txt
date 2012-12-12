@@ -385,9 +385,9 @@ option(CTK_BUILD_ALL_APPS "Build all CTK applications" OFF)
 # Build everything
 option(CTK_BUILD_ALL "Build everything in CTK" OFF)
 if(CTK_BUILD_ALL)
-  set(CTK_BUILD_ALL_PLUGINS 1)
-  set(CTK_BUILD_ALL_LIBRARIES 1)
-  set(CTK_BUILD_ALL_APPS 1)
+  set(CTK_BUILD_ALL_PLUGINS ON CACHE BOOL "Build all CTK plug-ins" FORCE)
+  set(CTK_BUILD_ALL_LIBRARIES ON CACHE BOOL "Build all CTK libraries" FORCE)
+  set(CTK_BUILD_ALL_APPS ON CACHE BOOL "Build all CTK applications" FORCE)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -462,7 +462,7 @@ ctk_lib_option(Scripting/Python/Core
                
 ctk_lib_option(Scripting/Python/Widgets
                "Build the Python Widgets library" OFF
-               CTK_LIB_Widgets AND CTK_ENABLE_Python_Wrapping)
+               CTK_ENABLE_Python_Wrapping)
                
 ctk_lib_option(Visualization/VTK/Core
                "Build the VTK Core library" OFF)
