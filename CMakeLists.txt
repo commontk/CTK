@@ -342,35 +342,6 @@ endif()
 #
 
 #-----------------------------------------------------------------------------
-# High-Level CTK options
-
-# The ctk_enable_option macro expects a logical expression after the first
-# three arguments. This expression should only contain build option names
-# which belong to leafs in the required dependency tree.
-
-# The CTK infrastructure for high-level DICOM support. This includes
-# DICOM indexing, networking, and GUI widgets.
-ctk_enable_option(DICOM "Enable default DICOM support" OFF
-                  CTK_LIB_DICOM/Widgets)
-
-# The CTK infrastructure for building a DICOM Part 19 compliant application
-# host and/or hosted application. This will not enable any example plugins
-# or executables (enable CTK_ENABLE_EXAMPLES for that).
-ctk_enable_option(DICOMApplicationHosting "Enable DICOM Part 19 Application Hosting support" OFF
-                  CTK_PLUGIN_org.commontk.dah.host AND CTK_PLUGIN_org.commontk.dah.app)
-
-# The CTK Qt Widgets. This will enable the Qt Widget library only.
-# It might trigger the enabling of other widget libraries in combination
-# with other enabled options.
-ctk_enable_option(Widgets "Enable Qt Widget libraries" OFF
-                  CTK_LIB_Widgets)
-
-# The CTK Plugin Framework, a dynamic component system based on OSGi.
-# This will enable only the framework itself.                  
-ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
-                  CTK_LIB_PluginFramework)
-
-#-----------------------------------------------------------------------------
 # Special "BUILD ALL" options
 
 # Build all CTK plug-ins
@@ -392,24 +363,6 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Other options
-
-# The CTK Python Wrapping
-ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
-                  CTK_LIB_Scripting/Python/Core)
-
-# Build examples
-# Create the logical expression containing the minium set of required options
-# for the CTK_BUILD_EXAMPLES option to be ON
-set(_build_examples_logical_expr)
-foreach(_app ${CTK_ENABLED_APPS})
-  list(APPEND _build_examples_logical_expr CTK_APP_${_app} AND)
-endforeach()
-if(_build_examples_logical_expr)
-  list(REMOVE_AT _build_examples_logical_expr -1)
-endif()
-
-ctk_enable_option_raw(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF
-                  ${_build_examples_logical_expr})
 
 # Git protocol option
 option(CTK_USE_GIT_PROTOCOL "If behind a firewall turn this OFF to use http instead." ON)
@@ -629,6 +582,53 @@ ctk_plugin_option(org.commontk.dah.examplehost
 ctk_plugin_option(org.commontk.eventbus
                   "Build the org.commontk.eventbus plugin." OFF
                   CTK_APP_ctkEventBusDemo)
+
+#-----------------------------------------------------------------------------
+# High-Level CTK options
+
+# The ctk_enable_option macro expects a logical expression after the first
+# three arguments. This expression should only contain build option names
+# which belong to leafs in the required dependency tree.
+
+# The CTK infrastructure for high-level DICOM support. This includes
+# DICOM indexing, networking, and GUI widgets.
+ctk_enable_option(DICOM "Enable default DICOM support" OFF
+                  CTK_LIB_DICOM/Widgets)
+
+# The CTK infrastructure for building a DICOM Part 19 compliant application
+# host and/or hosted application. This will not enable any example plugins
+# or executables (enable CTK_ENABLE_EXAMPLES for that).
+ctk_enable_option(DICOMApplicationHosting "Enable DICOM Part 19 Application Hosting support" OFF
+                  CTK_PLUGIN_org.commontk.dah.host AND CTK_PLUGIN_org.commontk.dah.app)
+
+# The CTK Qt Widgets. This will enable the Qt Widget library only.
+# It might trigger the enabling of other widget libraries in combination
+# with other enabled options.
+ctk_enable_option(Widgets "Enable Qt Widget libraries" OFF
+                  CTK_LIB_Widgets)
+
+# The CTK Plugin Framework, a dynamic component system based on OSGi.
+# This will enable only the framework itself.
+ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
+                  CTK_LIB_PluginFramework)
+
+# The CTK Python Wrapping
+ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
+                  CTK_LIB_Scripting/Python/Core)
+
+# Build examples
+# Create the logical expression containing the minium set of required options
+# for the CTK_BUILD_EXAMPLES option to be ON
+set(_build_examples_logical_expr)
+foreach(_app ${CTK_ENABLED_APPS})
+  list(APPEND _build_examples_logical_expr CTK_APP_${_app} AND)
+endforeach()
+if(_build_examples_logical_expr)
+  list(REMOVE_AT _build_examples_logical_expr -1)
+endif()
+
+ctk_enable_option_raw(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF
+                  ${_build_examples_logical_expr})
 
 #-----------------------------------------------------------------------------
 # Generate target_directories list - List of directory corresponding to the different

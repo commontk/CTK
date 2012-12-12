@@ -22,11 +22,8 @@ macro(ctk_option option_prefix name doc default)
   set(_logical_expr ${ARGN})
   if(_logical_expr AND NOT ${option_prefix}_${name})
     if(${ARGN})
-      # Force the option to ON. This is okay since the
-      # logical expression should contain a CTK_ENABLE_*
-      # option value, which requires the current option to be ON.
-      get_property(_doc_string CACHE ${option_prefix}_${name} PROPERTY HELPSTRING)
-      set(${option_prefix}_${name} ON CACHE BOOL ${_doc_string} FORCE)
+      # Set the variable ON.
+      set(${option_prefix}_${name} ON)
       # Generate user-friendly message
       set(enabling_msg)
       ctk_option_logical_expression_to_message(enabling_msg "${ARGN}")
