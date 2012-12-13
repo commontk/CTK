@@ -54,5 +54,8 @@ int ctkDICOMIndexerTest1( int argc, char * argv [] )
   // make sure it doesn't crash
   indexer.refreshDatabase(database, QDir::tempPath());
 
+  // ensure all concurrent inserts are complete
+  indexer.waitForImportFinished();
+
   return EXIT_SUCCESS;
 }
