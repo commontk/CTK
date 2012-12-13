@@ -39,15 +39,22 @@ const unsigned short ECC_NoPresentationContextsDefined     = 0x903;
 const unsigned short ECC_InvalidSOPInstanceUID             = 0x904;
 const unsigned short ECC_InvalidSOPClassUID                = 0x905;
 const unsigned short ECC_UnknownTransferSyntax             = 0x906;
-// 
-extern const OFCondition NET_EC_AlreadyConnected;
-extern const OFCondition NET_EC_NoAcceptablePresentationContexts;
-extern const OFCondition NET_EC_NoPresentationContextsDefined;
-extern const OFCondition NET_EC_InvalidSOPClassUID;
-extern const OFCondition NET_EC_InvalidSOPInstanceUID;
-extern const OFCondition NET_EC_UnknownTransferSyntax;
-/* Remove above if changing to more current DCMTK */
 
+const OFConditionConst ECE_NoAcceptablePresentationContexts(   OFM_dcmnet, ECC_NoAcceptablePresentationContexts,  OF_error, "No Acceptable Presentation Contexts");
+const OFConditionConst ECE_NoPresentationContextsDefined(      OFM_dcmnet, ECC_NoPresentationContextsDefined,     OF_error, "No Presentation Contexts defined");
+const OFConditionConst ECE_InvalidSOPClassUID(                 OFM_dcmnet, ECC_InvalidSOPClassUID,                OF_error, "Invalid SOP Class UID");
+const OFConditionConst ECE_InvalidSOPInstanceUID(              OFM_dcmnet, ECC_InvalidSOPInstanceUID,             OF_error, "Invalid SOP Instance UID");
+const OFConditionConst ECE_UnknownTransferSyntax(              OFM_dcmnet, ECC_UnknownTransferSyntax,             OF_error, "Unknown Transfer Syntax");
+const OFConditionConst ECE_AlreadyConnected(                   OFM_dcmnet, ECC_AlreadyConnected,                  OF_error, "Already Connected");
+
+const OFCondition NET_EC_AlreadyConnected(                ECE_AlreadyConnected);
+const OFCondition NET_EC_NoAcceptablePresentationContexts( ECE_NoAcceptablePresentationContexts);
+const OFCondition NET_EC_NoPresentationContextsDefined(   ECE_NoPresentationContextsDefined);
+const OFCondition NET_EC_UnknownTransferSyntax(   ECE_UnknownTransferSyntax);
+const OFCondition NET_EC_InvalidSOPClassUID(   ECE_InvalidSOPClassUID);
+const OFCondition NET_EC_InvalidSOPInstanceUID(   ECE_InvalidSOPInstanceUID);
+
+/* Remove above if changing to more current DCMTK */
 
 
 /** Different types of closing an association
