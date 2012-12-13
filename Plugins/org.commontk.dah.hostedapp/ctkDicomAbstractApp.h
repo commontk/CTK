@@ -85,7 +85,6 @@ public:
   */
   virtual ctkDicomAppHosting::State getState();
 
-protected:
   /**
    * @brief Gets a handle to the host, in order to call methods on it.
    *
