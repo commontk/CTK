@@ -43,9 +43,13 @@ const OFConditionConst ECE_InvalidSOPClassUID(                 OFM_dcmnet, ECC_I
 const OFConditionConst ECE_InvalidSOPInstanceUID(              OFM_dcmnet, ECC_InvalidSOPInstanceUID,             OF_error, "Invalid SOP Instance UID");
 const OFConditionConst ECE_UnknownTransferSyntax(              OFM_dcmnet, ECC_UnknownTransferSyntax,             OF_error, "Unknown Transfer Syntax");
 
-const OFCondition NET_EC_AlreadyConnected(                ECE_AlreadyConnected);
-const OFCondition NET_EC_NoAcceptablePresentationContext( ECE_NoAcceptablePresentationContexts);
-const OFCondition NET_EC_NoPresentationContextsDefined(   ECE_NoPresentationContextsDefined);
+static const OFCondition NET_EC_AlreadyConnected(                ECE_AlreadyConnected);
+static const OFCondition NET_EC_NoAcceptablePresentationContexts( ECE_NoAcceptablePresentationContexts);
+static const OFCondition NET_EC_NoPresentationContextsDefined(   ECE_NoPresentationContextsDefined);
+static const OFCondition NET_EC_UnknownTransferSyntax(   ECE_UnknownTransferSyntax);
+static const OFCondition NET_EC_InvalidSOPClassUID(   ECE_InvalidSOPClassUID);
+static const OFCondition NET_EC_InvalidSOPInstanceUID(   ECE_InvalidSOPInstanceUID);
+
 /* Remove above if changing to more current DCMTK */
 
 DcmSCU::DcmSCU() :
