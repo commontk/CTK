@@ -189,7 +189,9 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   vtkNew<vtkPolyDataMapper2D> polyDataMapper;
   polyDataMapper->SetInput(poly.GetPointer());
   polyDataMapper->SetTransformCoordinate(coordinate.GetPointer());
-  polyDataMapper->SetTransformCoordinateUseDouble(true);
+  #if ! (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION == 8)
+    polyDataMapper->SetTransformCoordinateUseDouble(true);
+  #endif
 
   this->HighlightedBoxActor = vtkSmartPointer<vtkActor2D>::New();
   this->HighlightedBoxActor->SetMapper(polyDataMapper.GetPointer());
