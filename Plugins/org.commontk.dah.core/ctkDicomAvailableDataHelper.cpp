@@ -297,7 +297,9 @@ bool addToAvailableData(ctkDicomAppHosting::AvailableData& data,
 
   //first check if its a non-DICOM file, if so add it first.
   QString ext = fileinfo.suffix();
-  if ( (ext.compare("txt") == 0) || (ext.compare("xml") ==0) || (ext.compare("jpg") ==0) || (ext.compare("bmp") ==0) || (ext.compare("csv") ==0)|| (ext.compare("nii") ==0))
+  if ( (ext.compare("txt") == 0) || (ext.compare("xml") ==0) || (ext.compare("jpg") ==0) || 
+       (ext.compare("bmp") ==0) || (ext.compare("csv") ==0) || (ext.compare("nii") ==0) || 
+       (ext.compare("nrrd") ==0) )
   {
   	  qDebug() << "adding Non DICOM File";
       return addNonDICOMToAvailableData(data, objectLocatorCache, fileinfo.size(), 0, uri);
