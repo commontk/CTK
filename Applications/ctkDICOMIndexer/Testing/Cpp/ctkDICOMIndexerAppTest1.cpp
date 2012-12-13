@@ -26,18 +26,25 @@
 #include <cstdlib>
 #include <iostream>
 
-int ctkDICOMIndexerTest1(int argc, char * argv [])
+int ctkDICOMIndexerAppTest1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
   QString database("test.db");
 
+  if (argc < 2)
+    {
+    std::cerr << "Must specify path to ctkDICOMIndexer on command line\n";
+    return EXIT_FAILURE;
+    }
+  std::cout << "Testing ctkDICOMIndexer: " << argv[1] << "\n";
+  QString command = QString(argv[1]);
+
   QStringList parameters;
   parameters << "--init" << database;
-  QString command = QString("ctkDICOMIndexer");
   int res = QProcess::execute(command, parameters);
   if (res != EXIT_SUCCESS)
     {
-    std::cerr << '\"' << qPrintable(command + parameters.join(" ")) << '\"'
+    std::cerr << '\"' << qPrintable(command + " " + parameters.join(" ")) << '\"'
               << " returned " << res << std::endl;
     return res;
     }
@@ -46,7 +53,7 @@ int ctkDICOMIndexerTest1(int argc, char * argv [])
   res = QProcess::execute(command, parameters);
   if (res != EXIT_SUCCESS)
     {
-    std::cerr << '\"' << qPrintable(command + parameters.join(" ")) << '\"'
+    std::cerr << '\"' << qPrintable(command + " " + parameters.join(" ")) << '\"'
               << " returned " << res << std::endl;
     return res;
     }
@@ -55,7 +62,7 @@ int ctkDICOMIndexerTest1(int argc, char * argv [])
   res = QProcess::execute(command, parameters);
   if (res != EXIT_SUCCESS)
     {
-    std::cerr << '\"' << qPrintable(command + parameters.join(" ")) << '\"'
+    std::cerr << '\"' << qPrintable(command + " " + parameters.join(" ")) << '\"'
               << " returned " << res << std::endl;
     return res;
     }
