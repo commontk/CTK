@@ -25,6 +25,7 @@
 #include <QStylePainter>
 #include <QStyleOptionGroupBox>
 #include <QStyle>
+#include <QApplication>
 
 // CTK includes
 #include "ctkCollapsibleGroupBox.h"
@@ -65,8 +66,6 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
     return this->QProxyStyle::pixelMetric(metric, option, widget);
   }
 };
-#else
-
 #endif
 
 //-----------------------------------------------------------------------------
@@ -95,6 +94,11 @@ public:
   /// as we need to do special processing the first time the button is
   /// setVisible, we track its created state with the variable
   bool     IsStateCreated;
+
+#if QT_VERSION >= 0x040600
+  /// Pointer to keep track of the proxy style
+  ctkCollapsibleGroupBoxStyle* ProxyStyle;
+#endif
 };
 
 //-----------------------------------------------------------------------------
@@ -106,6 +110,9 @@ ctkCollapsibleGroupBoxPrivate::ctkCollapsibleGroupBoxPrivate(
   this->IsStateCreated = false;
   this->MaxHeight = 0;
   this->CollapsedHeight = 14;
+#if QT_VERSION >= 0x040600
+  this->ProxyStyle = 0;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -117,7 +124,10 @@ void ctkCollapsibleGroupBoxPrivate::init()
 
   this->MaxHeight = q->maximumHeight();
 #if QT_VERSION >= 0x040600
-  q->setStyle(new ctkCollapsibleGroupBoxStyle(0));
+  QWidget * parent = q->parentWidget();
+  QStyle * parentStyle = (parent) ? parent->style() : QApplication::style();
+  this->ProxyStyle = new ctkCollapsibleGroupBoxStyle(parentStyle);
+  q->setStyle(this->ProxyStyle);
 #else
   this->setStyleSheet(
     "ctkCollapsibleGroupBox::indicator:checked{"

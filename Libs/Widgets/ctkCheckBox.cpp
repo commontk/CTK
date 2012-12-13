@@ -20,6 +20,7 @@
 // QT includes
 #include <QProxyStyle>
 #include <QStyleOption>
+#include <QApplication>
 
 // CTK includes
 #include "ctkCheckBox.h"
@@ -135,8 +136,9 @@ ctkCheckBoxPrivate::ctkCheckBoxPrivate(ctkCheckBox &object)
 void ctkCheckBoxPrivate::init()
 {
   Q_Q(ctkCheckBox);
-  this->iconStyle = new ctkCheckBoxStyle(0);
-  this->iconStyle->setParent(q);
+  QWidget * parent = q->parentWidget();
+  QStyle * parentStyle = (parent) ? parent->style() : QApplication::style();
+  this->iconStyle = new ctkCheckBoxStyle(parentStyle);
   q->setStyle(this->iconStyle);
 }
 
