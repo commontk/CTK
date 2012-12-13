@@ -38,7 +38,7 @@
 
 struct ctkDicomHostInterface;
 
-class ctkCmdLineModuleInstance;
+class ctkCmdLineModuleFrontend;
 
 class QWidget;
 
@@ -86,7 +86,7 @@ private:
   QString ModuleLocation;
 
   ctkCmdLineModuleManager ModuleManager;
-  ctkCmdLineModuleInstance* ModuleInstance;
+  ctkCmdLineModuleFrontend* ModuleFrontend;
 
   QString OutputLocation;
 }; // ctkCommandLineModuleAppLogic

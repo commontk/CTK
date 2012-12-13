@@ -7,5 +7,6 @@
 set(target_libraries
   CTKDICOMCore
   CTKDICOMWidgets
-  CTKCommandLineModulesQtGui
+  CTKCommandLineModulesFrontendQtGui
+  CTKCommandLineModulesBackendLocalProcess
   )

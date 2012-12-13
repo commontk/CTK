@@ -37,18 +37,20 @@
 #include "ctkCommandLineModuleAppLogic_p.h"
 #include "ctkCommandLineModuleAppPlugin_p.h"
 #include "ctkDicomAvailableDataHelper.h"
-#include "ctkCmdLineModuleInstanceFactoryQtGui.h"
+#include "ctkCmdLineModuleFrontendQtGui.h"
 #include "ctkCmdLineModuleReference.h"
-#include "ctkCmdLineModuleInstance.h"
+#include "ctkCmdLineModuleFuture.h"
+#include "ctkCmdLineModuleBackendLocalProcess.h"
 
 // DCMTK includes
 #include <dcmimage.h>
 
+#include <QDesktopServices>
 //----------------------------------------------------------------------------
 ctkCommandLineModuleAppLogic::ctkCommandLineModuleAppLogic(const QString & modulelocation):
 ctkDicomAbstractApp(ctkCommandLineModuleAppPlugin::getPluginContext()), AppWidget(0),
-ModuleLocation(modulelocation), ModuleManager(new ctkCmdLineModuleInstanceFactoryQtGui()), 
-ModuleInstance(0)
+ModuleLocation(modulelocation), ModuleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)), 
+ModuleFrontend(0)
 {
   connect(this, SIGNAL(startProgress()), this, SLOT(onStartProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(resumeProgress()), this, SLOT(onResumeProgress()), Qt::QueuedConnection);
@@ -57,6 +59,7 @@ ModuleInstance(0)
   connect(this, SIGNAL(exitHostedApp()), this, SLOT(onExitHostedApp()), Qt::QueuedConnection);
   connect(this, SIGNAL(dataAvailable()), this, SLOT(onDataAvailable()));
 
+  ModuleManager.registerBackend(new ctkCmdLineModuleBackendLocalProcess);
   //notify Host we are ready.
   try {
     getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
@@ -103,8 +106,10 @@ void ctkCommandLineModuleAppLogic::do_something()
   ui.CLModuleName->setText(ModuleLocation);
 
   ctkCmdLineModuleReference moduleRef = ModuleManager.registerModule(ModuleLocation);
-  ModuleInstance = ModuleManager.createModuleInstance(moduleRef);
-  QObject* guiHandle = ModuleInstance->guiHandle();
+  
+  ModuleFrontend = new ctkCmdLineModuleFrontendQtGui(moduleRef);
+
+  QObject* guiHandle = ModuleFrontend->guiHandle();
   QWidget* widget = qobject_cast<QWidget*>(guiHandle);
   widget->setParent(ui.PlaceHolder);
   verticalLayout->addWidget(widget);
@@ -311,9 +316,9 @@ void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
 
     pixmap->save(inputFileName);
 
-    ModuleInstance->setValue("fileVar", inputFileName);
-    ModuleInstance->setValue("dirVar", outputFileName);
-    ModuleInstance->run();
+    ModuleFrontend->setValue("fileVar", inputFileName);
+    ModuleFrontend->setValue("dirVar", outputFileName);
+    ModuleManager.run(ModuleFrontend);
 
     QPixmap resultpix(outputFileName);
     ui.PlaceHolderForResult->setPixmap(resultpix);
