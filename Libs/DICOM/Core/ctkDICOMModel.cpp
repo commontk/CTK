@@ -48,7 +48,7 @@ class ctkDICOMModelPrivate
   Q_DECLARE_PUBLIC(ctkDICOMModel);
 protected:
   ctkDICOMModel* const q_ptr;
-  
+
 public:
   ctkDICOMModelPrivate(ctkDICOMModel&);
   virtual ~ctkDICOMModelPrivate();
@@ -153,7 +153,7 @@ QModelIndexList ctkDICOMModelPrivate::indexListFromNode(const Node* node)const
   Q_Q(const ctkDICOMModel);
   Q_ASSERT(node);
   QModelIndexList indexList;
-  
+
   Node* parentNode = node->Parent;
   if (parentNode == 0)
     {
@@ -233,7 +233,7 @@ Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)c
     }
   else
     {
-    nodeParent = this->nodeFromIndex(parentValue); 
+    nodeParent = this->nodeFromIndex(parentValue);
     nodeParent->Children.push_back(node);
     node->Parent = nodeParent;
     node->Type = ctkDICOMModel::IndexType(nodeParent->Type + 1);
@@ -247,13 +247,13 @@ Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)c
     node->Data[Qt::CheckStateRole] = node->Parent->Data[Qt::CheckStateRole];
 #endif
     }
-  
+
   node->RowCount = 0;
   node->AtEnd = false;
   node->Fetching = false;
 
   this->updateQueries(node);
-  
+
   return node;
 }
 
@@ -262,7 +262,7 @@ QVariant ctkDICOMModelPrivate::value(const QModelIndex& parentValue, int row, in
 {
   Node* node = this->nodeFromIndex(parentValue);
   if (row >= node->RowCount)
-    {      
+    {
     const_cast<ctkDICOMModelPrivate *>(this)->fetch(parentValue, row + 256);
     }
   return this->value(node, row, column);
@@ -275,7 +275,7 @@ QVariant ctkDICOMModelPrivate::value(Node* parentNode, int row, int column) cons
     {
     return QVariant();
     }
-  
+
   if (!parentNode->Query.seek(row))
     {
     qDebug() << parentNode->Query.lastError();
@@ -384,35 +384,35 @@ void ctkDICOMModelPrivate::fetch(const QModelIndex& indexValue, int limit)
   const int oldRowCount = node->RowCount;
 
   // try to seek directly
-  if (node->Query.seek(limit - 1)) 
+  if (node->Query.seek(limit - 1))
     {
     newRowCount = limit;
-    } 
-  else 
+    }
+  else
     {
     newRowCount = qMax(oldRowCount, 1);
-    if (node->Query.seek(newRowCount - 1)) 
+    if (node->Query.seek(newRowCount - 1))
       {
       while (node->Query.next())
         {
         ++newRowCount;
         }
-      } 
-    else 
+      }
+    else
       {
       // empty or invalid query
       newRowCount = 0;
       }
     node->AtEnd = true; // this is the end.
     }
-  if (newRowCount > 0 && newRowCount > node->RowCount) 
+  if (newRowCount > 0 && newRowCount > node->RowCount)
     {
     q->beginInsertRows(indexValue, node->RowCount, newRowCount - 1);
     node->RowCount = newRowCount;
     node->Fetching = false;
     q->endInsertRows();
-    } 
-  else 
+    }
+  else
     {
     node->RowCount = newRowCount;
     node->Fetching = false;
@@ -488,7 +488,7 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
   QModelIndex parentIndex = this->parent(dataIndex);
   Node* parentNode = d->nodeFromIndex(parentIndex);
   if (dataIndex.row() >= parentNode->RowCount)
-    {      
+    {
     const_cast<ctkDICOMModelPrivate *>(d)->fetch(dataIndex, dataIndex.row());
     }
   QString columnName = d->Headers[dataIndex.column()][Qt::DisplayRole].toString();
@@ -511,11 +511,50 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
   }
 
   if (columnName.compare("Name")==0)
-  {
+    {
+    OFString dicomName = dataValue.toString().toStdString().c_str();
     OFString formattedName;
-    DcmPersonName::getFormattedNameFromString(OFString(dataValue.toString().toStdString().c_str()), formattedName);
-    return QString(formattedName.c_str());
-  }
+    OFString lastName, firstName, middleName, namePrefix, nameSuffix;
+    OFCondition l_error = DcmPersonName::getNameComponentsFromString(dicomName,
+                                          lastName, firstName, middleName, namePrefix, nameSuffix);
+    if (l_error.good())
+      {
+      formattedName.clear();
+      /* concatenate name components per this convention
+       * Last, First Middle, Suffix (Prefix)
+       * */
+      if (!lastName.empty())
+        {
+        formattedName += lastName;
+        if ( !(firstName.empty() && middleName.empty()) )
+          {
+          formattedName += ",";
+          }
+        }
+      if (!firstName.empty())
+        {
+        formattedName += " ";
+        formattedName += firstName;
+        }
+      if (!middleName.empty())
+        {
+        formattedName += " ";
+        formattedName += middleName;
+        }
+      if (!nameSuffix.empty())
+        {
+        formattedName += ", ";
+        formattedName += nameSuffix;
+        }
+      if (!namePrefix.empty())
+        {
+        formattedName += " (";
+        formattedName += namePrefix;
+        formattedName += ")";
+        }
+      }
+      return QString(formattedName.c_str());
+    }
 
   return dataValue;
 }
@@ -807,7 +846,7 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db)
 
   this->beginResetModel();
   d->DataBase = db;
-  
+
   delete d->RootNode;
   d->RootNode = 0;
 
@@ -817,14 +856,14 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db)
     this->endResetModel();
     return;
     }
-    
+
   d->RootNode = d->createNode(-1, QModelIndex());
-  
+
   this->endResetModel();
 
   // TODO, use hasQuerySize everywhere, not only in setDataBase()
   bool hasQuerySize = d->RootNode->Query.driver()->hasFeature(QSqlDriver::QuerySize);
-  if (hasQuerySize && d->RootNode->Query.size() > 0) 
+  if (hasQuerySize && d->RootNode->Query.size() > 0)
     {
     int newRowCount= d->RootNode->Query.size();
     beginInsertRows(QModelIndex(), 0, qMax(0, newRowCount - 1));
@@ -919,7 +958,7 @@ void ctkDICOMModel::sort(int column, Qt::SortOrder order)
     .arg(d->Headers[column][Qt::DisplayRole].toString())
     .arg(order == Qt::AscendingOrder ? "ASC" : "DESC");
   d->RootNode = d->createNode(-1, QModelIndex());
-  
+
   this->endResetModel();
 }
 
