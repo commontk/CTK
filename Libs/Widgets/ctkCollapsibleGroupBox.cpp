@@ -19,13 +19,13 @@
 =========================================================================*/
 
 // Qt includes
+#include <QApplication>
 #include <QDebug>
 #include <QChildEvent>
 #include <QMouseEvent>
 #include <QStylePainter>
 #include <QStyleOptionGroupBox>
 #include <QStyle>
-#include <QApplication>
 
 // CTK includes
 #include "ctkCollapsibleGroupBox.h"
@@ -97,7 +97,7 @@ public:
 
 #if QT_VERSION >= 0x040600
   /// Pointer to keep track of the proxy style
-  ctkCollapsibleGroupBoxStyle* ProxyStyle;
+  ctkCollapsibleGroupBoxStyle* GroupBoxStyle;
 #endif
 };
 
@@ -111,7 +111,7 @@ ctkCollapsibleGroupBoxPrivate::ctkCollapsibleGroupBoxPrivate(
   this->MaxHeight = 0;
   this->CollapsedHeight = 14;
 #if QT_VERSION >= 0x040600
-  this->ProxyStyle = 0;
+  this->GroupBoxStyle = 0;
 #endif
 }
 
@@ -124,10 +124,10 @@ void ctkCollapsibleGroupBoxPrivate::init()
 
   this->MaxHeight = q->maximumHeight();
 #if QT_VERSION >= 0x040600
-  QWidget * parent = q->parentWidget();
-  QStyle * parentStyle = (parent) ? parent->style() : QApplication::style();
-  this->ProxyStyle = new ctkCollapsibleGroupBoxStyle(parentStyle);
-  q->setStyle(this->ProxyStyle);
+  QWidget* parent = q->parentWidget();
+  QStyle* parentStyle = (parent) ? parent->style() : QApplication::style();
+  this->GroupBoxStyle = new ctkCollapsibleGroupBoxStyle(parentStyle);
+  q->setStyle(this->GroupBoxStyle);
 #else
   this->setStyleSheet(
     "ctkCollapsibleGroupBox::indicator:checked{"
