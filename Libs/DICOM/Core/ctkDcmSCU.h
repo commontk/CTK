@@ -18,11 +18,15 @@
  *  Purpose: Base class for Service Class Users (SCUs)
  *
  */
+#include "dcmtk/config/osconfig.h"  /* make sure OS specific configuration is included first */
+
+#if ! ( PACKAGE_VERSION_NUMBER == 360 )
+#include "dcmtk/dcmnet/scu.h"
+#else
 
 #ifndef SCU_H
 #define SCU_H
 
-#include "dcmtk/config/osconfig.h"  /* make sure OS specific configuration is included first */
 
 #include "dcmtk/dcmdata/dctk.h"     /* Covers most common dcmdata classes */
 #include "dcmtk/dcmnet/dcompat.h"
@@ -1037,5 +1041,7 @@ private:
    */
   Uint16 nextMessageID();
 };
+
+#endif // DCMTK 3.6.0
 
 #endif // SCU_H
