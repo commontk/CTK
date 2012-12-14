@@ -207,6 +207,10 @@ void ctkExampleDicomAppLogic::onDataAvailable()
       }
     }
   }
+  else
+  {
+    s = s+", objectDescriptors.count()= " + QString().setNum(data.objectDescriptors.count());
+  }
   ui.ReceivedDataInformation->setText(s);
   ui.LoadDataButton->setEnabled(true);
 }
@@ -215,10 +219,18 @@ void ctkExampleDicomAppLogic::onDataAvailable()
 void ctkExampleDicomAppLogic::onLoadDataClicked()
 {
   const ctkDicomAppHosting::AvailableData& data = getIncomingAvailableData();
-  if(data.patients.count()==0)
+  QList<QUuid> uuidlist;
+  if(data.patients.count()!=0)
+  {
+    const ctkDicomAppHosting::Patient& firstpatient = *data.patients.begin();
+    uuidlist = ctkDicomAvailableDataHelper::getAllUuids(firstpatient);
+  }
+  else if(data.objectDescriptors.count()!=0)
+  {
+    uuidlist = ctkDicomAvailableDataHelper::getAllUuids(data);
+  }
+  else
     return;
-  const ctkDicomAppHosting::Patient& firstpatient = *data.patients.begin();
-  QList<QUuid> uuidlist = ctkDicomAvailableDataHelper::getAllUuids(firstpatient);
   
   QString transfersyntax("1.2.840.10008.1.2.1");
   QList<QString> transfersyntaxlist;
