@@ -23,7 +23,7 @@ if(${add_project})
 
     if(NOT DEFINED ITK_DIR)
 
-      set(revision_tag "v3.20.0")
+      set(revision_tag "v3.20.1")
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
