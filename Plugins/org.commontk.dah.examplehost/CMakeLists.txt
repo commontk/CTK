@@ -8,6 +8,7 @@ set(PLUGIN_SRCS
   ctkExampleDicomHostPlugin_p.h
   ctkHostedAppPlaceholderWidget.cpp
   ctkExampleHostControlWidget.cpp
+  ctkExampleHostLogic.cpp
 )
 
 # Files which should be processed by Qts moc
@@ -16,6 +17,7 @@ set(PLUGIN_MOC_SRCS
   ctkExampleDicomHostPlugin_p.h
   ctkHostedAppPlaceholderWidget.h
   ctkExampleHostControlWidget.h
+  ctkExampleHostLogic.h
 )
 
 # Qt Designer files which should be processed by Qts uic
