@@ -30,6 +30,7 @@ set(KIT_SRCS
   ctkDICOMRetrieve.h
   ctkDICOMTester.cpp
   ctkDICOMTester.h
+  ctkDcmSCU.cc
 )
 
 # Abstract class should not be wrapped !
