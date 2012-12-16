@@ -21,33 +21,42 @@
 #! \ingroup CMakeUtilities
 macro(ctkMacroSetupQt)
 
-  set(minimum_required_qt_version "4.6")
-
-  find_package(Qt4)
-  
-  if(QT4_FOUND)
-
-    if("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "${minimum_required_qt_version}")
-      message(FATAL_ERROR "error: CTK requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
+  if(CTK_USE_QT5)
+    cmake_minimum_required(VERSION 2.8.9)
+    set(QT5_INSTALL_PREFIX "" CACHE PATH "The install location of Qt5")
+    if(NOT QT5_INSTALL_PREFIX OR NOT EXISTS ${QT5_INSTALL_PREFIX}/bin/qmake)
+      message(FATAL_ERROR "You must specify the install location of Qt5")
     endif()
-
-    set(QT_USE_QTNETWORK ON)
-    set(QT_USE_QTSQL ON)
-    set(QT_USE_QTOPENGL ON)
-    set(QT_USE_QTXML ON)
-    set(QT_USE_QTXMLPATTERNS ON)
-    set(QT_USE_QTTEST ${BUILD_TESTING})
-    include(${QT_USE_FILE})
-
-    # Set variable QT_INSTALLED_LIBRARY_DIR that will contains
-    # Qt shared library
-    set(QT_INSTALLED_LIBRARY_DIR ${QT_LIBRARY_DIR})
-    if(WIN32)
-      get_filename_component(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
-    endif()
-
+    set(CMAKE_PREFIX_PATH ${QT5_INSTALL_PREFIX})
   else()
-    message(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
-  endif()
+    set(minimum_required_qt_version "4.6")
 
+    find_package(Qt4)
+    
+    if(QT4_FOUND)
+
+      if("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "${minimum_required_qt_version}")
+        message(FATAL_ERROR "error: CTK requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
+      endif()
+
+      set(QT_USE_QTNETWORK ON)
+      set(QT_USE_QTSQL ON)
+      set(QT_USE_QTOPENGL ON)
+      set(QT_USE_QTXML ON)
+      set(QT_USE_QTXMLPATTERNS ON)
+      set(QT_USE_QTTEST ${BUILD_TESTING})
+      include(${QT_USE_FILE})
+
+      # Set variable QT_INSTALLED_LIBRARY_DIR that will contains
+      # Qt shared library
+      set(QT_INSTALLED_LIBRARY_DIR ${QT_LIBRARY_DIR})
+      if(WIN32)
+        get_filename_component(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
+      endif()
+
+    else()
+      message(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
+    endif()
+
+  endif()
 endmacro()

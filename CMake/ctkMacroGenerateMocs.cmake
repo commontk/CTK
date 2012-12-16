@@ -4,7 +4,11 @@
 macro(QT4_GENERATE_MOCS)
   foreach(file ${ARGN})
     set(moc_file moc_${file})
-    QT4_GENERATE_MOC(${file} ${moc_file})
+    if(CTK_USE_QT5)
+      qt5_generate_moc(${file} ${moc_file})
+    else()
+      QT4_GENERATE_MOC(${file} ${moc_file})
+    endif()
 
     get_filename_component(source_name ${file} NAME_WE)
     get_filename_component(source_ext ${file} EXT)
@@ -19,3 +23,7 @@ macro(QT4_GENERATE_MOCS)
   endforeach()
 endmacro()
 
+# create a Qt5 alias
+macro(QT5_GENERATE_MOCS)
+  QT4_GENERATE_MOCS(${ARGN})
+endmacro()

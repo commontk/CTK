@@ -28,7 +28,7 @@
 #! \ingroup CMakeAPI
 macro(ctkMacroBuildLib)
   ctkMacroParseArguments(MY
-    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
+    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;GENERATE_MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;QT5_MODULES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
     "ENABLE_QTTESTING"
     ${ARGN}
     )
@@ -46,6 +46,20 @@ macro(ctkMacroBuildLib)
   endif()
   if(NOT DEFINED MY_LIBRARY_TYPE)
     set(MY_LIBRARY_TYPE "SHARED")
+  endif()
+  
+  if(MY_QT5_MODULES)
+    set(qt5_use_modules_list)
+    if(NOT CTK_USE_QT5)
+      message(WARNING "Argument QT5_MODULES ignored because CTK_USE_QT5 is not set.")
+    else()
+      foreach(qt5_module ${MY_QT5_MODULES})
+        find_package(${qt5_module} REQUIRED)
+        # strip the "Qt5" string from the module name
+        string(SUBSTRING ${qt5_module} 3 -1 _qt5_module_name)
+        list(APPEND qt5_use_modules_list ${_qt5_module_name})
+      endforeach()
+    endif()
   endif()
 
   # Define library name
@@ -105,13 +119,34 @@ macro(ctkMacroBuildLib)
   if(MY_MOC_SRCS)
     # this is a workaround for Visual Studio. The relative include paths in the generated
     # moc files can get very long and can't be resolved by the MSVC compiler.
-    foreach(moc_src ${MY_MOC_SRCS})
-      QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
-    endforeach()
+    if(Qt5Core_FOUND)
+      foreach(moc_src ${MY_MOC_SRCS})
+        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+      endforeach()
+    else()
+      foreach(moc_src ${MY_MOC_SRCS})
+        QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+      endforeach()
+    endif()
   endif()
-  QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+  if(MY_GENERATE_MOC_SRCS)
+    QT4_GENERATE_MOCS(${MY_GENERATE_MOC_SRCS})
+  endif()
+  if(CTK_USE_QT5)
+    if(Qt5Widgets_FOUND)
+      qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
+    elseif(MY_UI_FORMS)
+      message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
+    endif()
+  else()
+    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+  endif()
   if(DEFINED MY_RESOURCES)
-    QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    if(Qt5Core_FOUND)
+      qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
+    else()
+      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
   endif()
 
   source_group("Resources" FILES
@@ -132,6 +167,10 @@ macro(ctkMacroBuildLib)
     ${MY_UI_CPP}
     ${MY_QRC_SRCS}
     )
+    
+  if(CTK_USE_QT5 AND qt5_use_modules_list)
+    qt5_use_modules(${lib_name} ${qt5_use_modules_list})
+  endif()
 
   # Set labels associated with the target.
   set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})

@@ -28,7 +28,7 @@ macro(ctkMacroBuildQtPlugin)
   cmake_parse_arguments(MY
     "" # no options
     "NAME;EXPORT_DIRECTIVE;PLUGIN_DIR" # one value args
-    "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
+    "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;QT5_MODULES;RESOURCES" # multi value args
     ${ARGN}
     )
 
@@ -43,6 +43,20 @@ macro(ctkMacroBuildQtPlugin)
     message(FATAL_ERROR "PLUGIN_DIR (e.g. designer, iconengines, imageformats...) is mandatory")
   endif()
   set(MY_LIBRARY_TYPE "MODULE")
+  
+  if(MY_QT5_MODULES)
+    set(qt5_use_modules_list)
+    if(NOT CTK_USE_QT5)
+      message(WARNING "Argument QT5_MODULES ignored because CTK_USE_QT5 is not set.")
+    else()
+      foreach(qt5_module ${MY_QT5_MODULES})
+        find_package(${qt5_module} REQUIRED)
+        # strip the "Qt5" string from the module name
+        string(SUBSTRING ${qt5_module} 3 -1 _qt5_module_name)
+        list(APPEND qt5_use_modules_list ${_qt5_module_name})
+      endforeach()
+    endif()
+  endif()
 
   # Define library name
   set(lib_name ${MY_NAME})
@@ -82,11 +96,27 @@ macro(ctkMacroBuildQtPlugin)
   set(MY_QRC_SRCS)
 
   # Wrap
-  QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
-  QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
   set(MY_QRC_SRCS "")
-  if(DEFINED MY_RESOURCES)
-    QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+  if(Qt5Core_FOUND)
+    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS})
+    if(DEFINED MY_RESOURCES)
+      qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+  else()
+    QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
+    if(DEFINED MY_RESOURCES)
+      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+  endif()
+  
+  if(CTK_USE_QT5)
+    if(Qt5Widgets_FOUND)
+      qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
+    elseif(MY_UI_FORMS)
+      message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
+    endif()
+  else()
+    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
   endif()
 
   source_group("Resources" FILES
@@ -106,6 +136,10 @@ macro(ctkMacroBuildQtPlugin)
     ${MY_UI_CPP}
     ${MY_QRC_SRCS}
     )
+  
+  if(CTK_USE_QT5 AND qt5_use_modules_list)
+    qt5_use_modules(${lib_name} ${qt5_use_modules_list})
+  endif()
 
   # Extract library name associated with the plugin and use it as label
   string(REGEX REPLACE "(.*)Plugin[s]?" "\\1" label ${lib_name})
