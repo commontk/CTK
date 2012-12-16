@@ -100,11 +100,18 @@ set(Tests_Helpers_MOC_SRCS
   ctkExampleWorkflowStepUsingSignalsAndSlots.h
   )
 
-set(Tests_Helpers_MOC_CPP)
-QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
-QT4_GENERATE_MOCS(
+set(Tests_Helpers_MOC_CPPS
   ctkBooleanMapperTest.cpp
   )
+
+set(Tests_Helpers_MOC_CPP)
+if(CTK_USE_QT5)
+  qt5_wrap_cpp(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
+  qt5_generate_mocs(${Tests_Helpers_MOC_CPPS})
+else()
+  QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
+  QT4_GENERATE_MOCS(${Tests_Helpers_MOC_CPPS})
+endif()
 
 if(HAVE_BFD)
   add_executable(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
@@ -119,6 +126,10 @@ endif()
 #
 add_executable(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
+
+if(CTK_USE_QT5)
+  qt5_use_modules(${KIT}CppTests Test Widgets)
+endif()
 
 #
 # Add Tests

@@ -25,8 +25,6 @@
 // CTK includes
 #include "ctkDummyPlugin.h"
 
-Q_EXPORT_PLUGIN2( ctkDummyPlugin , ctkDummyPlugin)
-
 //-----------------------------------------------------------------------------
 ctkDummyPlugin::ctkDummyPlugin(QObject* parent)
   :QObject(parent)
@@ -45,3 +43,7 @@ void ctkDummyPlugin::dummyInterface()
 {
   qDebug() << "dummyInterface()";
 }
+
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+Q_EXPORT_PLUGIN2( ctkDummyPlugin , ctkDummyPlugin)
+#endif

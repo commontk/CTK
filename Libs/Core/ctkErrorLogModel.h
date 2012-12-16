@@ -22,7 +22,6 @@
 #define __ctkErrorLogModel_h
 
 // Qt includes
-#include <QPointer>
 #include <QSortFilterProxyModel>
 
 // CTK includes

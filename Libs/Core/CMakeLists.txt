@@ -97,6 +97,7 @@ set(KIT_MOC_SRCS
   ctkLogger.h
   ctkHistogram.h
   ctkModelTester.h
+  ctkErrorLogQtMessageHandler.h
   ctkTransferFunction.h
   ctkTransferFunctionRepresentation.h
   ctkWorkflow.h
@@ -119,6 +120,13 @@ set(KIT_target_libraries)
 
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
+if(CTK_USE_QT5)
+  # This line below should actually be
+  # set(qt5_modules Qt5Core)
+  # see https://github.com/commontk/CTK/issues/278
+  set(qt5_modules Qt5Widgets)
+endif()
+
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
@@ -128,6 +136,7 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
+  QT5_MODULES ${qt5_modules}
   )
 
 # Needed for ctkBackTrace

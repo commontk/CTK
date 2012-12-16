@@ -34,6 +34,9 @@ class CTK_DUMMY_EXPORT ctkDummyPlugin: public QObject//, public ctkDummyInterfac
 {
   Q_OBJECT
 //  Q_INTERFACES(ctkDummyInterface)
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  Q_PLUGIN_METADATA(IID "org.commontk.DummyPlugin")
+#endif
 public:
   ctkDummyPlugin(QObject* parent = 0);
   ~ctkDummyPlugin();
