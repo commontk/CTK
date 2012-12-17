@@ -636,7 +636,10 @@ ctk_plugin_option(org.commontk.eventbus
 option(CTK_USE_CONTRIBUTED_PLUGINS OFF "Use CTK plug-ins from the PluginsContrib repository")
 mark_as_advanced(CTK_USE_CONTRIBUTED_PLUGINS)
 if(CTK_USE_CONTRIBUTED_PLUGINS)
-  ctkFunctionAddPluginRepo(NAME PluginsContrib GIT_URL github.com/commontk/PluginsContrib.git)
+  ctkFunctionAddPluginRepo(NAME PluginsContrib
+                           GIT_URL github.com/commontk/PluginsContrib.git
+                           GIT_TAG 7fc37f400c
+                          )
 endif()
 
 #-----------------------------------------------------------------------------
@@ -821,6 +824,7 @@ if(CTK_USE_CONTRIBUTED_PLUGINS)
     ctkFunctionCheckoutRepo(
       NAME ExternalProjectsContrib
       GIT_URL github.com/commontk/ExternalProjectsContrib.git
+      GIT_TAG 97dcdc261b
       )
   endif()
 
