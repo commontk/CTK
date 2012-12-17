@@ -173,7 +173,11 @@ macro(ctkMacroCollectAllTargetLibraries targets subdir varname)
     set(option_name ${option_prefix}${target})
     #message(STATUS option_name:${option_name})
 
-    set(target_dir "${CTK_SOURCE_DIR}/${subdir}/${target}")
+    if(${target}_SOURCE_DIR)
+      set(target_dir "${${target}_SOURCE_DIR}")
+    else()
+      set(target_dir "${CTK_SOURCE_DIR}/${subdir}/${target}")
+    endif()
     #message(STATUS target_dir:${target_dir})
 
     set(target_libraries)

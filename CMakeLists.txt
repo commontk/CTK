@@ -197,7 +197,9 @@ include(CMake/ctkFunctionGenerateDGraphInput.cmake)
 include(CMake/ctkFunctionGenerateProjectXml.cmake)
 include(CMake/ctkFunctionGeneratePluginManifest.cmake)
 include(CMake/ctkMacroGeneratePluginResourceFile.cmake)
+include(CMake/ctkFunctionAddPluginRepo.cmake)
 include(CMake/ctkFunctionCheckCompilerFlags.cmake)
+include(CMake/ctkFunctionCheckoutRepo.cmake)
 include(CMake/ctkFunctionGetIncludeDirs.cmake)
 include(CMake/ctkFunctionGetLibraryDirs.cmake)
 include(CMake/ctkFunctionGetGccVersion.cmake)
@@ -630,6 +632,16 @@ ctk_plugin_option(org.commontk.eventbus
                   "Build the org.commontk.eventbus plugin." OFF
                   CTK_APP_ctkEventBusDemo)
 
+# Add the PluginsContrib repo to the build system
+option(CTK_USE_CONTRIBUTED_PLUGINS OFF "Use CTK plug-ins from the PluginsContrib repository")
+mark_as_advanced(CTK_USE_CONTRIBUTED_PLUGINS)
+if(CTK_USE_CONTRIBUTED_PLUGINS)
+  ctkFunctionAddPluginRepo(NAME PluginsContrib
+                           GIT_URL github.com/commontk/PluginsContrib.git
+                           GIT_TAG 7fc37f400c
+                          )
+endif()
+
 #-----------------------------------------------------------------------------
 # Generate target_directories list - List of directory corresponding to the different
 # libraries, plugins and applications associated with the corresponding option name.
@@ -663,7 +675,11 @@ foreach(lib ${CTK_LIBS})
 endforeach()
 
 foreach(plugin ${CTK_PLUGINS})
-  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^CTK_PLUGIN_${plugin}")
+  if(${plugin}_SOURCE_DIR)
+    list(APPEND target_directories "${${plugin}_SOURCE_DIR}^^CTK_PLUGIN_${plugin}")
+  else()
+    list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^CTK_PLUGIN_${plugin}")
+  endif()
 endforeach()
 
 foreach(app ${CTK_APPS})
@@ -800,6 +816,26 @@ set(CTK_POSSIBLE_DEPENDENCIES
   XIP
   ITK
   )
+
+#-----------------------------------------------------------------------------
+# Check out the ExternalProjectsContrib repository
+if(CTK_USE_CONTRIBUTED_PLUGINS)
+  if(CTK_SUPERBUILD)
+    ctkFunctionCheckoutRepo(
+      NAME ExternalProjectsContrib
+      GIT_URL github.com/commontk/ExternalProjectsContrib.git
+      GIT_TAG 97dcdc261b
+      )
+  endif()
+
+  file(GLOB _contrib_scripts ${ExternalProjectsContrib_DIR}/*.cmake)
+  foreach(_contrib_script ${_contrib_scripts})
+    get_filename_component(_script_name ${_contrib_script} NAME_WE)
+    list(APPEND CTK_POSSIBLE_DEPENDENCIES ${_script_name})
+    set(${_script_name}_FILEPATH ${_contrib_script})
+  endforeach()
+endif()
+
 set(CTK_DEPENDENCIES) # This variable will contain the list of required CTK dependencies
 include(CMake/ctkBlockCheckDependencies.cmake)
 
@@ -914,7 +950,11 @@ endif()
 #
 foreach(plugin ${CTK_PLUGINS})
   if(CTK_PLUGIN_${plugin})
-    add_subdirectory(Plugins/${plugin})
+    if(${plugin}_SOURCE_DIR)
+      add_subdirectory(${${plugin}_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/Plugins/${plugin})
+    else()
+      add_subdirectory(Plugins/${plugin})
+    endif()
   endif()
 endforeach()
 

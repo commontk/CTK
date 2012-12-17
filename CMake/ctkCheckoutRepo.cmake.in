@@ -1,0 +1,18 @@
+
+project(${_NAME})
+
+cmake_minimum_required(VERSION 2.8.4)
+
+include(ExternalProject)
+
+ExternalProject_Add(${_NAME}
+        SOURCE_DIR ${_CHECKOUT_DIR}/${_NAME}
+        BINARY_DIR bin
+        PREFIX ep
+        GIT_REPOSITORY ${_GIT_PROTOCOL}://${_GIT_URL}
+        GIT_TAG ${_GIT_TAG}
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        )
+  
