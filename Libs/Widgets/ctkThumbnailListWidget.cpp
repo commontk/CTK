@@ -21,6 +21,7 @@
 // Qt include
 #include <QDateTime>
 #include <QDir>
+#include <QEvent>
 #include <QFile>
 #include <QFileInfo>
 #include <QGridLayout>
@@ -28,6 +29,7 @@
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollBar>
+#include <QTimer>
 
 // ctk includes
 #include "ctkLogger.h"
@@ -52,6 +54,7 @@ static ctkLogger logger("org.commontk.Widgets.ctkThumbnailListWidget");
 ctkThumbnailListWidgetPrivate
 ::ctkThumbnailListWidgetPrivate(ctkThumbnailListWidget* parent)
   : q_ptr(parent)
+  , RequestRelayout(false)
 {
 }
 
@@ -98,6 +101,8 @@ void ctkThumbnailListWidgetPrivate::addThumbnail(ctkThumbnailLabel* thumbnail)
   Q_Q(ctkThumbnailListWidget);
 
   this->ScrollAreaContentWidget->layout()->addWidget(thumbnail);
+  thumbnail->installEventFilter(q);
+  this->RequestRelayout = true;
 
   q->connect(thumbnail, SIGNAL(selected(ctkThumbnailLabel)),
     q, SLOT(onThumbnailSelected(ctkThumbnailLabel)));
@@ -302,6 +307,24 @@ void ctkThumbnailListWidget::resizeEvent(QResizeEvent* event)
   d->updateScrollAreaContentWidgetSize(event->size());
 }
 
+//----------------------------------------------------------------------------
+bool ctkThumbnailListWidget::eventFilter(QObject* watched, QEvent* event)
+{
+  Q_D(ctkThumbnailListWidget);
+  if (d->RequestRelayout &&
+      qobject_cast<ctkThumbnailLabel*>(watched) &&
+      event->type() == QEvent::Show)
     {
+    d->RequestRelayout = false;
+    watched->removeEventFilter(this);
+    QTimer::singleShot(0, this, SLOT(updateLayout()));
     }
+  return this->Superclass::eventFilter(watched, event);
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailListWidget::updateLayout()
+{
+  Q_D(ctkThumbnailListWidget);
+  d->updateScrollAreaContentWidgetSize(this->size());
 }

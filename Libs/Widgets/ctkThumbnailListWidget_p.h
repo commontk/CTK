@@ -45,6 +45,7 @@ public:
 
   int CurrentThumbnail;
   QSize ThumbnailSize;
+  bool RequestRelayout;
 
 protected:
   ctkThumbnailListWidget* const q_ptr;

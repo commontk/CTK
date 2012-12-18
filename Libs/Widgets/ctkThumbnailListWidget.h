@@ -66,6 +66,8 @@ public:
   /// Get thumbnail width
   QSize thumbnailSize()const;
 
+  virtual bool eventFilter(QObject* watched, QEvent* event);
+
 public Q_SLOTS:
   /// Set thumbnail width
   void setThumbnailSize(QSize size);
@@ -76,6 +78,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
   void onThumbnailSelected(const ctkThumbnailLabel& widget);
+  void updateLayout();
 
 protected:
   explicit ctkThumbnailListWidget(ctkThumbnailListWidgetPrivate* ptr, QWidget* parent=0);
