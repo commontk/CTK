@@ -117,6 +117,7 @@ if(CTK_USE_QTTESTING)
     ctkExpandButtonEventTranslatorPlayerTest1.cpp
     ctkFileDialogEventTranslatorPlayerTest1.cpp
     ctkFontButtonEventTranslatorPlayerTest1.cpp
+    ctkLanguageComboBoxTest.cpp
     ctkMaterialPropertyWidgetEventTranslatorPlayerTest1.cpp
     ctkMatrixWidgetEventTranslatorPlayerTest1.cpp
     ctkMenuButtonEventTranslatorPlayerTest1.cpp
@@ -177,6 +178,7 @@ QT4_GENERATE_MOCS(
   ctkCoordinatesWidgetTest.cpp
   ctkFlatProxyModelTest.cpp
   ctkFontButtonTest.cpp
+  ctkLanguageComboBoxTest.cpp
   ctkMessageBoxDontShowAgainTest.cpp
   ctkPathListWidgetTest.cpp
   ctkPathListWidgetWithButtonsTest.cpp
@@ -238,6 +240,7 @@ SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkFlowLayoutTest1 )
 SIMPLE_TEST( ctkFontButtonTest )
+SIMPLE_TEST( ctkLanguageComboBoxTest )
 SIMPLE_TEST( ctkLayoutManagerTest1 )
 SIMPLE_TEST( ctkMaterialPropertyPreviewLabelTest1 )
 SIMPLE_TEST( ctkMaterialPropertyWidgetTest1 )
