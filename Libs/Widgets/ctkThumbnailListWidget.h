@@ -41,9 +41,12 @@ public:
   typedef QWidget Superclass;
   explicit ctkThumbnailListWidget(QWidget* parent=0);
   virtual ~ctkThumbnailListWidget();
-  
+
+  /// Add a thumbnail to the widget
+  void addThumbnail(const QString& label, const QPixmap& thumbnail);
+
   /// Add multiple thumbnails to the widget
-  void addThumbnails(QList<QPixmap> thumbnails);
+  void addThumbnails(const QList<QPixmap>& thumbnails);
 
   /// Set current thumbnail
   void setCurrentThumbnail(int index);

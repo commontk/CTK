@@ -46,7 +46,7 @@ private:
   Q_DISABLE_COPY(ctkDICOMThumbnailListWidget);
 
 public Q_SLOTS:
-  void onModelSelected(const QModelIndex& index);
+  void addThumbnails(const QModelIndex& index);
 };
 
 #endif
