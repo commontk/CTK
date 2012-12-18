@@ -21,6 +21,7 @@
 // Qt includes
 #include <QApplication>
 #include <QDir>
+#include <QFileInfo>
 #include <QTimer>
 
 // ctkDICOMCore includes
@@ -44,8 +45,9 @@ int ctkDICOMThumbnailListWidgetTest1( int argc, char * argv [] )
 
   try
     {
-    QFileInfo databasePath(QString(argv[1]));
-    ctkDICOMDatabase myCTK( databasePath.absoluteFilePath() );
+    QString databaseFilePath = QString(argv[1]);
+    QFileInfo databaseFileInfo(databaseFilePath);
+    ctkDICOMDatabase myCTK( databaseFileInfo.absoluteFilePath() );
 
     if (!myCTK.initializeDatabase(argv[2]))
       {
@@ -57,7 +59,7 @@ int ctkDICOMThumbnailListWidgetTest1( int argc, char * argv [] )
     model.setDatabase(myCTK.database());
 
     ctkDICOMThumbnailListWidget widget;
-    widget.setDatabaseDirectory(databasePath.absolutePath());
+    widget.setDatabaseDirectory(databaseFileInfo.absolutePath());
     widget.addThumbnails(model.index(0,0));
     widget.show();
 
