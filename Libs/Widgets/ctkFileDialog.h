@@ -34,7 +34,10 @@ class ctkFileDialogPrivate;
 /// Customizable QFileDialog.
 /// An extra widget can be added at the bottom of the dialog
 /// under the file format combobox. The Accept button is also controllable
-/// using setAcceptButtonEnable()
+/// using setAcceptButtonEnable().
+/// The behavior of the "return" key is the following:
+///  - it selects the directory written in the line edit or it
+///  - it accepts the dialog if the directory is already selected.
 class CTK_WIDGETS_EXPORT ctkFileDialog : public QFileDialog
 {
   Q_OBJECT
@@ -61,6 +64,7 @@ public:
 
   /// Internally used
   bool eventFilter(QObject *obj, QEvent *event);
+
 public Q_SLOTS:
   /// Can be used to prevent the accept button to be enabled. It's typically
   /// a slot that can be connected to assure that the user doesn't accept the
@@ -78,6 +82,9 @@ protected Q_SLOTS:
 
 protected:
   QScopedPointer<ctkFileDialogPrivate> d_ptr;
+
+  /// Reimplemented to override the return key behavior
+  virtual void accept();
 
 private:
   Q_DECLARE_PRIVATE(ctkFileDialog);
