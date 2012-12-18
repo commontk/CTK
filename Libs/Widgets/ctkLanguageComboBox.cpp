@@ -34,11 +34,14 @@ protected:
 public:
   ctkLanguageComboBoxPrivate(ctkLanguageComboBox& object);
   void init();
-  void addLanguages(const QStringList& languages);
-  void addLanguage(const QString& language);
+  void addLanguageFiles(const QStringList& fileNames);
+  bool addLanguage(const QString& language);
+  bool insertLanguage(int index, const QString& language);
+  bool languageItem(const QString& language,
+                    QIcon& icon, QString& text,QVariant& data);
 
-  QString   DefaultLanguage;
-  QString   Dir;
+  QString DefaultLanguage;
+  QString LanguageDirectory;
 };
 
 // ----------------------------------------------------------------------------
@@ -51,43 +54,78 @@ ctkLanguageComboBoxPrivate::ctkLanguageComboBoxPrivate(ctkLanguageComboBox &obje
 void ctkLanguageComboBoxPrivate::init()
 {
   Q_Q(ctkLanguageComboBox);
-  /// Recover all the translation file from the directory Translations
-  QDir translationDir = QDir(this->Dir);
-
-  QStringList languages = translationDir.entryList(QStringList("*.qm"));
-
-  /// Add default language.
-  if (!this->DefaultLanguage.isEmpty())
-    {
-    this->addLanguage(this->DefaultLanguage);
-    }
-  /// Add all the languages availables
-  this->addLanguages(languages);
 
   QObject::connect(q, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onLanguageChanged(int)));
+
+  /// Add default language if any
+  if (this->DefaultLanguage.isEmpty())
+    {
+    this->addLanguage(this->DefaultLanguage);
+    }
 }
 
 // ----------------------------------------------------------------------------
-void ctkLanguageComboBoxPrivate::addLanguages(const QStringList& languages)
+void ctkLanguageComboBoxPrivate::addLanguageFiles(const QStringList& fileNames)
 {
-  foreach(QString language, languages)
+  foreach(QString fileName, fileNames)
     {
+    QFileInfo file(fileName);
+    if (!file.exists())
+      {
+      qWarning() << "File " << file.absoluteFilePath() << " doesn't exist.";
+      }
+    // language is "de_ch" for a file named "/abc/def_de_ch.qm"
+    QString language = file.completeBaseName();
     language.remove(0,language.indexOf('_') + 1);
-    language.chop(3);
     this->addLanguage(language);
     }
 }
 
 // ----------------------------------------------------------------------------
-void ctkLanguageComboBoxPrivate::addLanguage(const QString& language)
+bool ctkLanguageComboBoxPrivate::addLanguage(const QString& language)
 {
   Q_Q(ctkLanguageComboBox);
-  QLocale lang(language);
-  QString icon = ":Icons/Languages/";
-  icon += language;
-  icon += ".png";
-  q->addItem(QIcon(icon), QLocale::languageToString(lang.language()), language);
+  return this->insertLanguage(q->count(), language);
+}
+
+// ----------------------------------------------------------------------------
+bool ctkLanguageComboBoxPrivate::insertLanguage(int index, const QString& language)
+{
+  Q_Q(ctkLanguageComboBox);
+  QIcon icon;
+  QString text;
+  QVariant data;
+  bool res =this->languageItem(language, icon, text, data);
+  if (res)
+    {
+    q->insertItem(index, icon, text, data);
+    }
+  return res;
+}
+
+// ----------------------------------------------------------------------------
+bool ctkLanguageComboBoxPrivate::languageItem(const QString& language,
+                                              QIcon& icon,
+                                              QString& text,
+                                              QVariant& data)
+{
+  QLocale locale(language);
+  if (language.isEmpty() ||
+      locale.name() == "C")
+    {
+    icon = QIcon();
+    text = QString();
+    data = QVariant();
+    return false;
+    }
+  QString countryFlag = locale.name();
+  countryFlag.remove(0, countryFlag.lastIndexOf('_') + 1);
+  countryFlag = countryFlag.toLower();
+  icon = QIcon(QString(":Icons/Languages/%1.png").arg(countryFlag));
+  text = QLocale::languageToString(locale.language());
+  data = locale.name();
+  return true;
 }
 
 // ----------------------------------------------------------------------------
@@ -95,11 +133,61 @@ ctkLanguageComboBox::ctkLanguageComboBox(QWidget* _parent)
   : QComboBox(_parent)
   , d_ptr(new ctkLanguageComboBoxPrivate(*this))
 {
+  Q_D(ctkLanguageComboBox);
+  d->init();
+}
+
+// ----------------------------------------------------------------------------
+ctkLanguageComboBox::ctkLanguageComboBox(const QString& defaultLanguage,
+                                         QWidget* _parent)
+  : QComboBox(_parent)
+  , d_ptr(new ctkLanguageComboBoxPrivate(*this))
+{
+  Q_D(ctkLanguageComboBox);
+  d->DefaultLanguage = defaultLanguage;
+  d->init();
 }
 
 // ----------------------------------------------------------------------------
 ctkLanguageComboBox::~ctkLanguageComboBox()
 {
+}
+
+// ----------------------------------------------------------------------------
+QString ctkLanguageComboBox::defaultLanguage() const
+{
+  Q_D(const ctkLanguageComboBox);
+  return d->DefaultLanguage;
+}
+
+// ----------------------------------------------------------------------------
+void ctkLanguageComboBox::setDefaultLanguage(const QString& language)
+{
+  Q_D(ctkLanguageComboBox);
+  bool isValid = false;
+  if (!d->DefaultLanguage.isEmpty())
+    {
+    QIcon icon;
+    QString text;
+    QVariant data;
+    isValid = d->languageItem(language, icon, text, data);
+    if (isValid)
+      {
+      // Replace the default language
+      this->setItemIcon(0, icon);
+      this->setItemText(0, text);
+      this->setItemData(0, data);
+      }
+    else
+      {
+      this->removeItem(0);
+      }
+    }
+  else
+    {
+    isValid = d->insertLanguage(0, language);
+    }
+  d->DefaultLanguage = isValid ? this->itemData(0).toString() : QString();
 }
 
 // ----------------------------------------------------------------------------
@@ -116,39 +204,33 @@ void ctkLanguageComboBox::setCurrentLanguage(const QString &language)
 }
 
 // ----------------------------------------------------------------------------
-QString ctkLanguageComboBox::defaultLanguage() const
-{
-  Q_D(const ctkLanguageComboBox);
-  return d->DefaultLanguage;
-}
-
-// ----------------------------------------------------------------------------
-void ctkLanguageComboBox::setDefaultLanguage(const QString& language)
-{
-  Q_D(ctkLanguageComboBox);
-  d->DefaultLanguage = language;
-}
-
-// ----------------------------------------------------------------------------
 QString ctkLanguageComboBox::directory() const
 {
   Q_D(const ctkLanguageComboBox);
-  return d->Dir;
+  return d->LanguageDirectory;
 }
 
 // ----------------------------------------------------------------------------
 void ctkLanguageComboBox::setDirectory(const QString& dir)
 {
   Q_D(ctkLanguageComboBox);
-  d->Dir = dir;
-  d->init();
+
+  d->LanguageDirectory = dir;
+
+  /// Recover all the translation file from the directory Translations
+  QDir translationDir = QDir(d->LanguageDirectory);
+  QStringList languages = translationDir.entryList(QStringList("*.qm"));
+
+  /// Add all the languages availables
+  d->addLanguageFiles(languages);
+
   this->update();
 }
 
 // ----------------------------------------------------------------------------
 void ctkLanguageComboBox::onLanguageChanged(int index)
 {
-  QVariant lang = this->itemData(index);
-  //QLocale locale(lang.toString());
-  emit currentLanguageNameChanged(lang.toString());
+  Q_UNUSED(index);
+  QString currentLanguage = this->currentLanguage();
+  emit currentLanguageNameChanged(currentLanguage);
 }
