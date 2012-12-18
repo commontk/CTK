@@ -94,7 +94,6 @@ ctkDICOMThumbnailListWidgetPrivate
 void ctkDICOMThumbnailListWidgetPrivate
 ::addPatientThumbnails(const QModelIndex &index)
 {
-  Q_Q(ctkDICOMThumbnailListWidget);
   QModelIndex patientIndex = index;
 
   ctkDICOMModel* model = const_cast<ctkDICOMModel*>(
@@ -122,7 +121,6 @@ void ctkDICOMThumbnailListWidgetPrivate
 void ctkDICOMThumbnailListWidgetPrivate
 ::addStudyThumbnails(const QModelIndex &index)
 {
-  Q_Q(ctkDICOMThumbnailListWidget);
   QModelIndex studyIndex = index;
 
   ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
@@ -148,7 +146,6 @@ void ctkDICOMThumbnailListWidgetPrivate
 void ctkDICOMThumbnailListWidgetPrivate
 ::addSeriesThumbnails(const QModelIndex &index)
 {
-  Q_Q(ctkDICOMThumbnailListWidget);
   QModelIndex studyIndex = index.parent();
   QModelIndex seriesIndex = index;
 
@@ -175,9 +172,8 @@ void ctkDICOMThumbnailListWidgetPrivate
 ::addThumbnailWidget(const QModelIndex& imageIndex,
                      const QModelIndex& sourceIndex, const QString &text)
 {
-  Q_Q(ctkDICOMThumbnailListWidget);
-
-  ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
+  ctkDICOMModel* model = const_cast<ctkDICOMModel*>(
+    qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
 
   if(!model)
     {
