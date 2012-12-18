@@ -284,7 +284,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->ImportDialog->setWindowModality(Qt::ApplicationModal);
 
   //connect signal and slots
-  connect(d->TreeView, SIGNAL(clicked(QModelIndex)), d->ThumbnailsWidget, SLOT(onModelSelected(QModelIndex)));
+  connect(d->TreeView, SIGNAL(clicked(QModelIndex)), d->ThumbnailsWidget, SLOT(addThumbnails(QModelIndex)));
   connect(d->TreeView, SIGNAL(clicked(QModelIndex)), d->ImagePreview, SLOT(onModelSelected(QModelIndex)));
   connect(d->TreeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onModelSelected(QModelIndex)));
 
@@ -550,7 +550,7 @@ void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkThumbnailLabel& widget
       {
         this->onModelSelected(index0);
         d->TreeView->setCurrentIndex(index0);
-        d->ThumbnailsWidget->onModelSelected(index0);
+        d->ThumbnailsWidget->addThumbnails(index0);
         d->ImagePreview->onModelSelected(index0);
       }
 }
@@ -868,7 +868,7 @@ void ctkDICOMAppWidget::onSearchParameterChanged(){
 
   this->onModelSelected(d->DICOMModel.index(0,0));
   d->ThumbnailsWidget->clearThumbnails();
-  d->ThumbnailsWidget->onModelSelected(d->DICOMModel.index(0,0));
+  d->ThumbnailsWidget->addThumbnails(d->DICOMModel.index(0,0));
   d->ImagePreview->clearImages();
   d->ImagePreview->onModelSelected(d->DICOMModel.index(0,0));
 }

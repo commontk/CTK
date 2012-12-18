@@ -24,6 +24,7 @@
 #include "ctkWidgetsExport.h"
 #include "ui_ctkThumbnailListWidget.h"
 
+class ctkThumbnailLabel;
 class ctkThumbnailListWidget;
 
 //----------------------------------------------------------------------------
@@ -39,9 +40,12 @@ public:
   void init();
 
   void clearAllThumbnails();
+  void addThumbnail(ctkThumbnailLabel* thumbnail);
+  void updateScrollAreaContentWidgetSize(QSize size);
 
   int CurrentThumbnail;
   QSize ThumbnailSize;
+  bool RequestRelayout;
 
 protected:
   ctkThumbnailListWidget* const q_ptr;

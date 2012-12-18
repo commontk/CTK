@@ -41,9 +41,12 @@ public:
   typedef QWidget Superclass;
   explicit ctkThumbnailListWidget(QWidget* parent=0);
   virtual ~ctkThumbnailListWidget();
-  
+
+  /// Add a thumbnail to the widget
+  void addThumbnail(const QString& label, const QPixmap& thumbnail);
+
   /// Add multiple thumbnails to the widget
-  void addThumbnails(QList<QPixmap> thumbnails);
+  void addThumbnails(const QList<QPixmap>& thumbnails);
 
   /// Set current thumbnail
   void setCurrentThumbnail(int index);
@@ -63,6 +66,8 @@ public:
   /// Get thumbnail width
   QSize thumbnailSize()const;
 
+  virtual bool eventFilter(QObject* watched, QEvent* event);
+
 public Q_SLOTS:
   /// Set thumbnail width
   void setThumbnailSize(QSize size);
@@ -73,6 +78,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
   void onThumbnailSelected(const ctkThumbnailLabel& widget);
+  void updateLayout();
 
 protected:
   explicit ctkThumbnailListWidget(ctkThumbnailListWidgetPrivate* ptr, QWidget* parent=0);
