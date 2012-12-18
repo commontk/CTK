@@ -358,7 +358,7 @@ QString ctkDICOMDataset::Decode( const DcmTag& tag, const OFString& raw ) const
       // out in the real world: e.g. http://www.openi18n.org/subgroups/sa/locnameguide/final/CodesetAliasTable.html
 
                                               //    DICOM        Qt
-      qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 192", "UTF-8");
+      qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 6", "UTF-8"); // actually ASCII, but ok
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 100", "ISO-8859-1");
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 101", "ISO-8859-2");
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 109", "ISO-8859-3");
@@ -369,7 +369,13 @@ QString ctkDICOMDataset::Decode( const DcmTag& tag, const OFString& raw ) const
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 138", "ISO-8859-8");
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 148", "ISO-8859-9");
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 179", "ISO-8859-13");
-      qtEncodingNamesForDICOMEncodingNames.insert("ISO 2022 IR 13", "jisx0201*-0");
+      qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 192", "UTF-8");
+      // japanese
+      qtEncodingNamesForDICOMEncodingNames.insert("ISO 2022 IR 13", "ISO 2022-JP"); // Single byte charset, JIS X 0201: Katakana, Romaji
+      qtEncodingNamesForDICOMEncodingNames.insert("ISO 2022 IR 87", "ISO 2022-JP"); // Multi byte charset, JIS X 0208: Kanji, Kanji set
+      qtEncodingNamesForDICOMEncodingNames.insert("ISO 2022 IR 159", "ISO 2022-JP");
+      // korean
+      qtEncodingNamesForDICOMEncodingNames.insert("ISO 2022 IR 149", "EUC-KR"); // Multi byte charset, KS X 1001: Hangul, Hanja
 
       // use all names that Qt knows by itself
       foreach( QByteArray c, QTextCodec::availableCodecs() )
