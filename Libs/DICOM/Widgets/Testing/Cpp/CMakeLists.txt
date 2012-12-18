@@ -38,4 +38,4 @@ SIMPLE_TEST(ctkDICOMModelTest2
   )
 SIMPLE_TEST(ctkDICOMQueryRetrieveWidgetTest1)
 SIMPLE_TEST(ctkDICOMQueryResultsTabWidgetTest1)
-SIMPLE_TEST(ctkDICOMThumbnailListWidgetTest1)
+SIMPLE_TEST(ctkDICOMThumbnailListWidgetTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql)

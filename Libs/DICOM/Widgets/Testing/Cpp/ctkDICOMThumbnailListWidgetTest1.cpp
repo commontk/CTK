@@ -24,6 +24,8 @@
 #include <QTimer>
 
 // ctkDICOMCore includes
+#include "ctkDICOMDatabase.h"
+#include "ctkDICOMModel.h"
 #include "ctkDICOMThumbnailListWidget.h"
 
 // STD includes
@@ -33,14 +35,42 @@ int ctkDICOMThumbnailListWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkDICOMThumbnailListWidget widget;
-  widget.setDatabaseDirectory(QDir::currentPath());
-  widget.show();
-
-  if (argc <= 1 || QString(argv[1]) != "-I")
+  if (argc <= 2)
     {
-    QTimer::singleShot(200, &app, SLOT(quit()));
+    std::cerr << "Warning, no sql file given. Test stops" << std::endl;
+    std::cerr << "Usage: qctkDICOMModelTest1 <scratch.db> <dumpfile.sql>" << std::endl;
+    return EXIT_FAILURE;
     }
 
-  return app.exec();
+  try
+    {
+    ctkDICOMDatabase myCTK( argv[1] );
+
+    if (!myCTK.initializeDatabase(argv[2]))
+      {
+      std::cerr << "Error when initializing the data base: " << argv[2]
+                << " error: " << myCTK.lastError().toStdString();
+      }
+
+    ctkDICOMModel model;
+    model.setDatabase(myCTK.database());
+
+    ctkDICOMThumbnailListWidget widget;
+    //widget.setDatabaseDirectory(QDir::currentPath());
+    widget.setDatabaseDirectory("E:\\work\\CTK\\CTK-VTK-64\\CTK-build\\Libs\\DICOM\\Widgets\\Testing\\Cpp");
+    widget.addThumbnails(model.index(0,0));
+    widget.show();
+
+    if (argc <= 3 || QString(argv[3]) != "-I")
+      {
+      QTimer::singleShot(200, &app, SLOT(quit()));
+      }
+    return app.exec();
+    }
+  catch (...)
+    {
+    std::cerr << "Error" << std::endl;
+    return EXIT_FAILURE;
+    }
+  return EXIT_FAILURE;
 }
