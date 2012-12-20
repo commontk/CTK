@@ -47,6 +47,8 @@ public:
   void setWaitingForScreenshot(bool waiting);
   bool isWaitingForScreenshot()const;
 
+  void useScalarFactor(bool use = true);
+
 public Q_SLOTS:
 
   void saveScreenshot(int delayInSeconds);
@@ -59,11 +61,23 @@ public Q_SLOTS:
 
   void updateCountDown();
 
+  void selectScaleFactor(bool scale);
+
+  void selectOutputResolution(bool scale);
+
+  void lockAspectRatio(bool lock);
+
+  void onWidthEdited();
+
+  void onHeightEdited();
+
 public:
   QWeakPointer<QWidget> WidgetToGrab;
   QPushButton*          CaptureButton;
   int                   CountDownValue;
   QTimer                CountDownTimer;
+  double                AspectRatio;
+  bool                  AllowTransparency;
 };
 
 #endif

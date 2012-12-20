@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>Icons/edit.png</file>
+        <file>Icons/lock.png</file>
+        <file>Icons/unlock.png</file>
         <file>Icons/minus.png</file>
         <file>Icons/plus.png</file>
         <file>Icons/expand-down.png</file>
@@ -234,7 +236,6 @@
         <file>Icons/Languages/ua.png</file>
         <file>Icons/Languages/ug.png</file>
         <file>Icons/Languages/um.png</file>
-        <file>Icons/Languages/us.png</file>
         <file>Icons/Languages/uy.png</file>
         <file>Icons/Languages/uz.png</file>
         <file>Icons/Languages/va.png</file>
