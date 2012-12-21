@@ -283,7 +283,6 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
   QFileInfo fileInfo(d->DatabaseFileName);
   d->TagCacheDatabaseFilename = QString( fileInfo.dir().path() + "/ctkDICOMTagCache.sql" );
   d->TagCacheVerified = false;
-
   if ( !this->tagCacheExists() )
     {
     this->initializeTagCache();
@@ -1469,7 +1468,7 @@ bool ctkDICOMDatabase::tagCacheExists()
   if ( !(d->TagCacheDatabase.isOpen()) )
     {
     qDebug() << "TagCacheDatabase not open\n";
-    d->TagCacheDatabase = QSqlDatabase::addDatabase("QSQLITE", "TagCache");
+    d->TagCacheDatabase = QSqlDatabase::addDatabase("QSQLITE", d->Database.connectionName() + "TagCache");
     d->TagCacheDatabase.setDatabaseName(d->TagCacheDatabaseFilename);
     if ( !(d->TagCacheDatabase.open()) )
       {
