@@ -283,6 +283,11 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
   QFileInfo fileInfo(d->DatabaseFileName);
   d->TagCacheDatabaseFilename = QString( fileInfo.dir().path() + "/ctkDICOMTagCache.sql" );
   d->TagCacheVerified = false;
+
+  if ( !this->tagCacheExists() )
+    {
+    this->initializeTagCache();
+    }
 }
 
 
