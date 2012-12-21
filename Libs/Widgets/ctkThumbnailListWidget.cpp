@@ -54,6 +54,8 @@ static ctkLogger logger("org.commontk.Widgets.ctkThumbnailListWidget");
 ctkThumbnailListWidgetPrivate
 ::ctkThumbnailListWidgetPrivate(ctkThumbnailListWidget* parent)
   : q_ptr(parent)
+  , CurrentThumbnail(-1)
+  , ThumbnailSize(-1, -1)
   , RequestRelayout(false)
 {
 }
@@ -70,9 +72,6 @@ void ctkThumbnailListWidgetPrivate::init()
   flowLayout->setHorizontalSpacing(4);
   this->ScrollAreaContentWidget->setLayout(flowLayout);
   this->ScrollArea->installEventFilter(q);
-
-  this->ThumbnailSize = QSize(-1, -1);
-  this->CurrentThumbnail = -1;
 }
 
 //----------------------------------------------------------------------------
@@ -185,16 +184,16 @@ void ctkThumbnailListWidget::addThumbnails(const QList<QPixmap>& thumbnails)
 {
   for(int i=0; i<thumbnails.count(); i++)
     {
-    this->addThumbnail("", thumbnails[i]);
+    this->addThumbnail(thumbnails[i]);
     }
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailListWidget::addThumbnail(const QString& label, const QPixmap& pixmap)
+void ctkThumbnailListWidget::addThumbnail(const QPixmap& pixmap, const QString& label)
 {
   Q_D(ctkThumbnailListWidget);
   ctkThumbnailLabel* widget = new ctkThumbnailLabel(d->ScrollAreaContentWidget);
-  widget->setText("");
+  widget->setText(label);
   if(d->ThumbnailSize.isValid())
     {
     widget->setFixedSize(d->ThumbnailSize);

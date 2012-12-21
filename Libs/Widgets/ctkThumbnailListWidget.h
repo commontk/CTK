@@ -43,7 +43,7 @@ public:
   virtual ~ctkThumbnailListWidget();
 
   /// Add a thumbnail to the widget
-  void addThumbnail(const QString& label, const QPixmap& thumbnail);
+  void addThumbnail(const QPixmap& thumbnail, const QString& label = QString());
 
   /// Add multiple thumbnails to the widget
   void addThumbnails(const QList<QPixmap>& thumbnails);

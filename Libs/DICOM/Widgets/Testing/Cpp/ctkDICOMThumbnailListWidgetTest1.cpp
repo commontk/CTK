@@ -44,7 +44,8 @@ int ctkDICOMThumbnailListWidgetTest1( int argc, char * argv [] )
 
   try
     {
-    ctkDICOMDatabase myCTK( argv[1] );
+    QFileInfo databasePath(QString(argv[1]));
+    ctkDICOMDatabase myCTK( databasePath.absoluteFilePath() );
 
     if (!myCTK.initializeDatabase(argv[2]))
       {
@@ -56,8 +57,7 @@ int ctkDICOMThumbnailListWidgetTest1( int argc, char * argv [] )
     model.setDatabase(myCTK.database());
 
     ctkDICOMThumbnailListWidget widget;
-    //widget.setDatabaseDirectory(QDir::currentPath());
-    widget.setDatabaseDirectory("E:\\work\\CTK\\CTK-VTK-64\\CTK-build\\Libs\\DICOM\\Widgets\\Testing\\Cpp");
+    widget.setDatabaseDirectory(databasePath.absolutePath());
     widget.addThumbnails(model.index(0,0));
     widget.show();
 

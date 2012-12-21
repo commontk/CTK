@@ -43,12 +43,12 @@ public:
   void addThumbnail(ctkThumbnailLabel* thumbnail);
   void updateScrollAreaContentWidgetSize(QSize size);
 
+protected:
+  ctkThumbnailListWidget* const q_ptr;
+
   int CurrentThumbnail;
   QSize ThumbnailSize;
   bool RequestRelayout;
-
-protected:
-  ctkThumbnailListWidget* const q_ptr;
 
 private:
   Q_DISABLE_COPY( ctkThumbnailListWidgetPrivate );

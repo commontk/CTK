@@ -24,6 +24,7 @@
 #include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
+#include <QLineEdit>
 #include <QListView>
 #include <QPushButton>
 
@@ -186,4 +187,20 @@ bool ctkFileDialog::eventFilter(QObject *obj, QEvent *event)
 void ctkFileDialog::onSelectionChanged()
 {
   emit this->fileSelectionChanged(this->selectedFiles());
+}
+
+//------------------------------------------------------------------------------
+void ctkFileDialog::accept()
+{
+  QLineEdit* fileNameEdit = qobject_cast<QLineEdit*>(this->sender());
+  if (fileNameEdit)
+    {
+    QFileInfo info(fileNameEdit->text());
+    if (info.isDir())
+      {
+      setDirectory(info.absoluteFilePath());
+      return;
+      }
+    }
+  this->Superclass::accept();
 }
