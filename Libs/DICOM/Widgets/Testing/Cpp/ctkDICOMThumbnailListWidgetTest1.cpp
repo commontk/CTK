@@ -44,7 +44,8 @@ int ctkDICOMThumbnailListWidgetTest1( int argc, char * argv [] )
 
   try
     {
-    QFileInfo databasePath(QString(argv[1]));
+    QFileInfo databasePath;
+    databasePath.setFile(argv[1]);
     ctkDICOMDatabase myCTK( databasePath.absoluteFilePath() );
 
     if (!myCTK.initializeDatabase(argv[2]))
