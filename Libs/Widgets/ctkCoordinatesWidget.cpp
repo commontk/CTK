@@ -39,6 +39,7 @@ ctkCoordinatesWidget::ctkCoordinatesWidget(QWidget* _parent) :QWidget(_parent)
   this->Normalized = false;
   this->Dimension = 0;
   this->Coordinates = 0;
+  this->KeyboardTracking = false;
 
   QHBoxLayout* hboxLayout = new QHBoxLayout(this);
   hboxLayout->setContentsMargins(0, 0, 0, 0);
@@ -61,8 +62,12 @@ void ctkCoordinatesWidget::addSpinBox()
   spinBox->setSingleStep(this->SingleStep);
   spinBox->setMinimum(this->Minimum);
   spinBox->setMaximum(this->Maximum);
-  connect( spinBox, SIGNAL(valueChanged(double)),
-           this, SLOT(updateCoordinate(double)));
+  // Set the existing KeyboardTracking value for the new spinBox
+  spinBox->setKeyboardTracking(this->KeyboardTracking);
+  connect(spinBox, SIGNAL(valueChanged(double)),
+           this, SLOT(coordinateValueChanged(double)));
+  connect(spinBox, SIGNAL(editingFinished()),
+           this, SLOT(updateCoordinate()));
   this->layout()->addWidget(spinBox);
 }
 
@@ -101,8 +106,9 @@ void ctkCoordinatesWidget::setDimension(int dim)
   this->Dimension = dim;
 
   this->updateGeometry();
-  
+
   this->updateCoordinates();
+  emit coordinatesChanged(this->Coordinates);
 }
 
 //------------------------------------------------------------------------------
@@ -283,6 +289,7 @@ void ctkCoordinatesWidget::setCoordinates(double* coordinates)
     }
   this->blockSignals(blocked);
   this->updateCoordinates();
+  emit coordinatesChanged(this->Coordinates);
 }
 
 //------------------------------------------------------------------------------
@@ -420,10 +427,17 @@ void ctkCoordinatesWidget::updateCoordinate(double coordinate)
     this->setCoordinates(normalizedCoordinates);
     delete [] normalizedCoordinates;
     }
-  else
-    {
-    emit coordinatesChanged(this->Coordinates);
-    }
+}
+
+//------------------------------------------------------------------------------
+void ctkCoordinatesWidget::updateCoordinate()
+{
+  Q_ASSERT(this->children().contains(this->sender()));
+  QDoubleSpinBox* spinBox = qobject_cast<QDoubleSpinBox*>(this->sender());
+  Q_ASSERT(spinBox);
+  double coordinate = spinBox->value();
+  this->updateCoordinate(coordinate);
+  emit coordinatesEditingFinished(this->Coordinates);
 }
 
 //------------------------------------------------------------------------------
@@ -439,6 +453,12 @@ void ctkCoordinatesWidget::updateCoordinates()
       this->Coordinates[i] = spinBox->value();
       }
     }
+}
+
+//------------------------------------------------------------------------------
+void ctkCoordinatesWidget::coordinateValueChanged(double coordinate)
+{
+  this->updateCoordinate(coordinate);
   emit coordinatesChanged(this->Coordinates);
 }
 
@@ -494,4 +514,27 @@ double ctkCoordinatesWidget::squaredNorm(double* coordinates, int dimension)
     sum += coordinates[i] * coordinates[i];
     }
   return sum;
+}
+
+//------------------------------------------------------------------------------
+void ctkCoordinatesWidget::setKeyboardTracking(bool enable)
+{
+  this->KeyboardTracking = enable;
+  // Make sure all the existing spinBoxes get the new KeyboardTracking value
+  for (int i = 0; i < this->Dimension; ++i)
+    {
+    QLayoutItem* item = this->layout()->itemAt(i);
+    QDoubleSpinBox* spinBox =
+      item ? qobject_cast<QDoubleSpinBox*>(item->widget()) : 0;
+    if ( spinBox)
+      {
+      spinBox->setKeyboardTracking(this->KeyboardTracking);
+      }
+    }
+}
+
+//------------------------------------------------------------------------------
+bool ctkCoordinatesWidget::keyboardTracking()const
+{
+  return this->KeyboardTracking;
 }
