@@ -638,7 +638,7 @@ mark_as_advanced(CTK_USE_CONTRIBUTED_PLUGINS)
 if(CTK_USE_CONTRIBUTED_PLUGINS)
   ctkFunctionAddPluginRepo(NAME PluginsContrib
                            GIT_URL github.com/commontk/PluginsContrib.git
-                           GIT_TAG 7fc37f400c
+                           GIT_TAG 3dc1b4343f
                           )
 endif()
 
@@ -824,7 +824,7 @@ if(CTK_USE_CONTRIBUTED_PLUGINS)
     ctkFunctionCheckoutRepo(
       NAME ExternalProjectsContrib
       GIT_URL github.com/commontk/ExternalProjectsContrib.git
-      GIT_TAG 97dcdc261b
+      GIT_TAG 7a792c7628
       )
   endif()
 
