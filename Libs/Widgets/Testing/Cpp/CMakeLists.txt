@@ -55,6 +55,7 @@ set(TEST_SOURCES
   ctkPathListWidgetTest.cpp
   ctkPathListWidgetWithButtonsTest.cpp
   ctkPopupWidgetTest1.cpp
+  ctkProxyStyleTest1.cpp
   ctkRangeSliderTest.cpp
   ctkRangeSliderTest1.cpp
   ctkRangeWidgetTest1.cpp
@@ -257,6 +258,7 @@ SIMPLE_TEST( ctkPathLineEditTest1 )
 SIMPLE_TEST( ctkPathListWidgetTest )
 SIMPLE_TEST( ctkPathListWidgetWithButtonsTest )
 SIMPLE_TEST( ctkPopupWidgetTest1 )
+SIMPLE_TEST( ctkProxyStyleTest1 )
 SIMPLE_TEST( ctkRangeSliderTest )
 SIMPLE_TEST( ctkRangeSliderTest1 )
 SIMPLE_TEST( ctkRangeWidgetTest1 )

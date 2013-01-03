@@ -19,19 +19,22 @@
 =========================================================================*/
 // QT includes
 #include <QApplication>
-#include <QProxyStyle>
 #include <QStyleOption>
 
 // CTK includes
 #include "ctkCheckBox.h"
+#include "ctkProxyStyle.h"
 
+// STD includes
 #include <iostream>
 
 // ----------------------------------------------------------------------------
-class ctkCheckBoxStyle : public QProxyStyle
+class ctkCheckBoxStyle : public ctkProxyStyle
 {
-  public:
-  ctkCheckBoxStyle(QStyle *parentStyle);
+public:
+  typedef ctkProxyStyle Superclass;
+  ctkCheckBoxStyle(QStyle* baseStyle, QObject* parent = 0);
+  virtual ~ctkCheckBoxStyle();
 
   virtual void drawPrimitive(QStyle::PrimitiveElement pe,
                              const QStyleOption * opt,
@@ -50,8 +53,14 @@ class ctkCheckBoxStyle : public QProxyStyle
 //  Methods ctkCheckBoxStyle
 
 // ----------------------------------------------------------------------------
-ctkCheckBoxStyle::ctkCheckBoxStyle(QStyle *parentStyle)
-  : QProxyStyle(parentStyle)
+ctkCheckBoxStyle::ctkCheckBoxStyle(QStyle *baseStyle, QObject* parent)
+  : Superclass(baseStyle)
+{
+  this->setParent(parent);
+}
+
+// ----------------------------------------------------------------------------
+ctkCheckBoxStyle::~ctkCheckBoxStyle()
 {
 }
 
@@ -86,7 +95,7 @@ void ctkCheckBoxStyle::drawPrimitive(QStyle::PrimitiveElement pe,
       return;
       }
     }
-  this->QProxyStyle::drawPrimitive(pe, opt, p, widget);
+  this->Superclass::drawPrimitive(pe, opt, p, widget);
 }
 
 // ----------------------------------------------------------------------------
@@ -106,7 +115,7 @@ int ctkCheckBoxStyle::pixelMetric(QStyle::PixelMetric metric,
       return this->indicatorIcon.actualSize(this->indicatorSize).width();
       }
     }
-  return this->QProxyStyle::pixelMetric(metric, option, widget);
+  return this->Superclass::pixelMetric(metric, option, widget);
 }
 
 // ----------------------------------------------------------------------------
@@ -138,8 +147,9 @@ void ctkCheckBoxPrivate::init()
   Q_Q(ctkCheckBox);
   QWidget* parent = q->parentWidget();
   QStyle* parentStyle = (parent) ? parent->style() : QApplication::style();
-  this->iconStyle = new ctkCheckBoxStyle(parentStyle);
+  this->iconStyle = new ctkCheckBoxStyle(parentStyle, q);
   q->setStyle(this->iconStyle);
+  this->iconStyle->ensureBaseStyle();
 }
 
 // ----------------------------------------------------------------------------
