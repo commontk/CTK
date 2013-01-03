@@ -21,34 +21,45 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
-#include <QStyle>
+#include <QFormLayout>
+#include <QProxyStyle>
 #include <QTimer>
-#include <QVBoxLayout>
 
 // CTK includes
 #include "ctkCheckBox.h"
+#include "ctkProxyStyle.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkCheckBoxTest1(int argc, char * argv [] )
+int ctkCheckBoxTest1(int argc, char * argv [])
 {
+  //QPlastiqueStyle* style = new QPlastiqueStyle;
+  //QApplication::setStyle(style);
   QApplication app(argc, argv);
+
+  QPixmap onPixmap =
+    QApplication::style()->standardPixmap(QStyle::SP_DriveCDIcon);
+  QPixmap offPixmap =
+    QApplication::style()->standardPixmap(QStyle::SP_DesktopIcon);
+  QIcon icon;
+  icon.addPixmap(offPixmap,
+                 QIcon::Normal,
+                 QIcon::On);
+  icon.addPixmap(onPixmap,
+                 QIcon::Normal,
+                 QIcon::Off);
 
   QWidget topLevel;
   ctkCheckBox* checkBoxWithoutIcon = new ctkCheckBox(0);
+  checkBoxWithoutIcon->setIndicatorIcon(icon);
+
   ctkCheckBox* checkBoxWithIcon = new ctkCheckBox(0);
   checkBoxWithIcon->setIcon(QApplication::style()->standardIcon(QStyle::SP_FileIcon));
+
   ctkCheckBox* checkBoxWithIconAndText = new ctkCheckBox(0);
-  QIcon icon;
-  icon.addPixmap(QApplication::style()->standardPixmap(QStyle::SP_DriveCDIcon),
-                 QIcon::Normal,
-                 QIcon::On);
-  icon.addPixmap(QApplication::style()->standardPixmap(QStyle::SP_DesktopIcon),
-                 QIcon::Normal,
-                 QIcon::Off);
   checkBoxWithoutIcon->setIndicatorIcon(icon);
 //  checkBoxWithoutIcon->setIndicatorIconSize(QSize(15,15));
   checkBoxWithIcon->setIndicatorIcon(icon);
@@ -76,16 +87,29 @@ int ctkCheckBoxTest1(int argc, char * argv [] )
   checkBoxWithIconAndText2->setText("Test1");
   checkBoxWithIconAndText2->setIcon(QApplication::style()->standardIcon(QStyle::SP_FileIcon));
 
-  QVBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(checkBoxWithoutIcon);
-  layout->addWidget(checkBoxWithIcon);
-  layout->addWidget(checkBoxWithIconAndText);
-  layout->addWidget(checkBoxWithoutIcon2);
-  layout->addWidget(checkBoxWithIcon2);
-  layout->addWidget(checkBoxWithIconAndText2);
+  QFormLayout* layout = new QFormLayout(&topLevel);
+  layout->addRow("Indicator:", checkBoxWithoutIcon);
+  layout->addRow("Icon:", checkBoxWithIcon);
+  layout->addRow("Indicator, Icon, Text:", checkBoxWithIconAndText);
+  layout->addRow("Default:", checkBoxWithoutIcon2);
+  layout->addRow("Icon:", checkBoxWithIcon2);
+  layout->addRow("Icon, Text:", checkBoxWithIconAndText2);
   topLevel.setLayout(layout);
   topLevel.show();
 
+  // Style check
+  ctkProxyStyle* checkBoxStyle = qobject_cast<ctkProxyStyle*>(checkBoxWithoutIcon->style());
+  if (!checkBoxStyle)
+    {
+    std::cerr << "Not a ctkProxyStyle" << std::endl;
+    return EXIT_FAILURE;
+    }
+  checkBoxStyle->ensureBaseStyle();
+  if (checkBoxStyle->baseStyle()->proxy() != checkBoxStyle)
+    {
+    std::cerr << "Wrong proxy: " << checkBoxStyle->baseStyle()->proxy() << std::endl;
+    return EXIT_FAILURE;
+    }
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {

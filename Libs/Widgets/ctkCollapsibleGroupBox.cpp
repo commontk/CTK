@@ -31,13 +31,14 @@
 #include "ctkCollapsibleGroupBox.h"
 
 #if QT_VERSION >= 0x040600
-#include <QProxyStyle>
+#include "ctkProxyStyle.h"
 
 //-----------------------------------------------------------------------------
-class ctkCollapsibleGroupBoxStyle:public QProxyStyle
+class ctkCollapsibleGroupBoxStyle:public ctkProxyStyle
 {
-  public:
-  ctkCollapsibleGroupBoxStyle(QStyle* style = 0) : QProxyStyle(style)
+public:
+  typedef ctkProxyStyle Superclass;
+  ctkCollapsibleGroupBoxStyle(QStyle* style = 0) : Superclass(style)
   {
   }
   virtual void drawPrimitive(PrimitiveElement pe, const QStyleOption * opt, QPainter * p, const QWidget * widget = 0) const
@@ -47,11 +48,11 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
       const ctkCollapsibleGroupBox* groupBox= qobject_cast<const ctkCollapsibleGroupBox*>(widget);
       if (groupBox)
         {
-        this->QProxyStyle::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowDown : QStyle::PE_IndicatorArrowRight, opt, p, widget);
+        this->Superclass::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowDown : QStyle::PE_IndicatorArrowRight, opt, p, widget);
         return;
         }
       }
-    this->QProxyStyle::drawPrimitive(pe, opt, p, widget);
+    this->Superclass::drawPrimitive(pe, opt, p, widget);
   }
   virtual int pixelMetric(PixelMetric metric, const QStyleOption * option, const QWidget * widget) const
   {
@@ -63,7 +64,7 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
         return groupBox->fontMetrics().height();
         }
       }
-    return this->QProxyStyle::pixelMetric(metric, option, widget);
+    return this->Superclass::pixelMetric(metric, option, widget);
   }
 };
 #endif
@@ -128,6 +129,7 @@ void ctkCollapsibleGroupBoxPrivate::init()
   QStyle* parentStyle = (parent) ? parent->style() : QApplication::style();
   this->GroupBoxStyle = new ctkCollapsibleGroupBoxStyle(parentStyle);
   q->setStyle(this->GroupBoxStyle);
+  this->GroupBoxStyle->ensureBaseStyle();
 #else
   this->setStyleSheet(
     "ctkCollapsibleGroupBox::indicator:checked{"

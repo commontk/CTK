@@ -44,7 +44,7 @@ class CTK_WIDGETS_EXPORT ctkCheckBox : public QCheckBox
 public:
   typedef QCheckBox Superclass;
 
-  ctkCheckBox(QWidget *_parent);
+  ctkCheckBox(QWidget *_parent = 0);
   virtual ~ctkCheckBox();
 
   void setIndicatorIcon(const QIcon& newIcon);

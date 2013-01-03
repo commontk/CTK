@@ -120,6 +120,8 @@ set(KIT_SRCS
   ctkPopupWidget.cpp
   ctkPopupWidget.h
   ctkPopupWidget_p.h
+  ctkProxyStyle.cpp
+  ctkProxyStyle.h
   ctkQImageView.cpp
   ctkQImageView.h
   ctkRangeSlider.cpp
@@ -239,6 +241,7 @@ set(KIT_MOC_SRCS
   ctkPathListButtonsWidget_p.h
   ctkPopupWidget.h
   ctkPopupWidget_p.h
+  ctkProxyStyle.h
   ctkQImageView.h
   ctkRangeSlider.h
   ctkRangeWidget.h
