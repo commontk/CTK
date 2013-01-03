@@ -37,14 +37,12 @@ public:
   void setBaseStyle(QProxyStyle* proxyStyle, QStyle* baseStyle)const;
 private:
   ctkProxyStylePrivate(ctkProxyStyle& object);
-  mutable bool InEnsureBaseStyle;
   mutable QPointer <QStyle> baseStyle;
 };
 
 // ----------------------------------------------------------------------------
 ctkProxyStylePrivate::ctkProxyStylePrivate(ctkProxyStyle& object)
   : q_ptr(&object)
-  , InEnsureBaseStyle(false)
 {
 }
 
@@ -78,10 +76,6 @@ void ctkProxyStylePrivate::setBaseStyle(QProxyStyle* proxy, QStyle *style)const
     {
     oldStyle->setParent(oldParent);
     }
-  //if (style == qApp->style())
-  //  {
-  //  style->setParent(qApp); // don't delete the application style.
-  //  }
 }
 
 // ----------------------------------------------------------------------------
@@ -108,11 +102,6 @@ void ctkProxyStyle::ensureBaseStyle() const
 {
   Q_D(const ctkProxyStyle);
   d->baseStyle = this->baseStyle();
-  if (d->InEnsureBaseStyle)
-    {
-    //return;
-    }
-  d->InEnsureBaseStyle = true;
   // Set the proxy to the entire hierarchy.
   QProxyStyle* proxyStyle = const_cast<QProxyStyle*>(qobject_cast<const QProxyStyle*>(
     this->proxy() ? this->proxy() : this));
@@ -125,7 +114,6 @@ void ctkProxyStyle::ensureBaseStyle() const
     baseStyle = proxy ? proxy->baseStyle() : 0;
     }
   d->setBaseStyle(proxyStyle, proxyBaseStyle);
-  d->InEnsureBaseStyle = false;
 }
 
 // ----------------------------------------------------------------------------
