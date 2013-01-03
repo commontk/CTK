@@ -45,8 +45,8 @@ public:
                           const QStyleOption *option,
                           const QWidget *widget = 0) const;
 
-  QIcon   indicatorIcon;
-  QSize   indicatorSize;
+  QIcon   IndicatorIcon;
+  QSize   IndicatorSize;
 };
 
 // ----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ void ctkCheckBoxStyle::drawPrimitive(QStyle::PrimitiveElement pe,
   if (pe == QStyle::PE_IndicatorCheckBox)
     {
     const ctkCheckBox* checkBox= qobject_cast<const ctkCheckBox*>(widget);
-    if (checkBox && !indicatorIcon.isNull())
+    if (checkBox && !this->IndicatorIcon.isNull())
       {
       QIcon::Mode mode =
           (opt->state & QStyle::State_MouseOver) == QStyle::State_MouseOver
@@ -88,7 +88,7 @@ void ctkCheckBoxStyle::drawPrimitive(QStyle::PrimitiveElement pe,
               ? QIcon::Off : state ;
 
       this->drawItemPixmap(p, opt->rect, Qt::AlignHCenter,
-                           this->indicatorIcon.pixmap(
+                           this->IndicatorIcon.pixmap(
                              opt->rect.width(), opt->rect.height(),
                              mode,
                              state));
@@ -104,15 +104,15 @@ int ctkCheckBoxStyle::pixelMetric(QStyle::PixelMetric metric,
                                   const QWidget *widget) const
 {
   const ctkCheckBox* checkBox= qobject_cast<const ctkCheckBox*>(widget);
-  if (checkBox && !indicatorIcon.isNull())
+  if (checkBox && !this->IndicatorIcon.isNull())
     {
-    if(metric == QStyle::PM_IndicatorHeight && !this->indicatorSize.isEmpty())
+    if(metric == QStyle::PM_IndicatorHeight && !this->IndicatorSize.isEmpty())
       {
-      return this->indicatorIcon.actualSize(this->indicatorSize).height();
+      return this->IndicatorIcon.actualSize(this->IndicatorSize).height();
       }
-    if(metric == QStyle::PM_IndicatorWidth && !this->indicatorSize.isEmpty())
+    if(metric == QStyle::PM_IndicatorWidth && !this->IndicatorSize.isEmpty())
       {
-      return this->indicatorIcon.actualSize(this->indicatorSize).width();
+      return this->IndicatorIcon.actualSize(this->IndicatorSize).width();
       }
     }
   return this->Superclass::pixelMetric(metric, option, widget);
@@ -128,7 +128,7 @@ public:
   ctkCheckBoxPrivate(ctkCheckBox& object);
   void init();
 
-  ctkCheckBoxStyle* iconStyle;
+  ctkCheckBoxStyle* IconStyle;
 };
 
 // ----------------------------------------------------------------------------
@@ -138,7 +138,7 @@ public:
 ctkCheckBoxPrivate::ctkCheckBoxPrivate(ctkCheckBox &object)
   : q_ptr(&object)
 {
-  this->iconStyle = 0;
+  this->IconStyle = 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -147,9 +147,9 @@ void ctkCheckBoxPrivate::init()
   Q_Q(ctkCheckBox);
   QWidget* parent = q->parentWidget();
   QStyle* parentStyle = (parent) ? parent->style() : QApplication::style();
-  this->iconStyle = new ctkCheckBoxStyle(parentStyle, q);
-  q->setStyle(this->iconStyle);
-  this->iconStyle->ensureBaseStyle();
+  this->IconStyle = new ctkCheckBoxStyle(parentStyle, q);
+  q->setStyle(this->IconStyle);
+  this->IconStyle->ensureBaseStyle();
 }
 
 // ----------------------------------------------------------------------------
@@ -173,7 +173,7 @@ ctkCheckBox::~ctkCheckBox()
 void ctkCheckBox::setIndicatorIcon(const QIcon& newIcon)
 {
   Q_D(ctkCheckBox);
-  d->iconStyle->indicatorIcon = newIcon;
+  d->IconStyle->IndicatorIcon = newIcon;
   this->update();
 }
 
@@ -181,14 +181,14 @@ void ctkCheckBox::setIndicatorIcon(const QIcon& newIcon)
 QIcon ctkCheckBox::indicatorIcon() const
 {
   Q_D(const ctkCheckBox);
-  return d->iconStyle->indicatorIcon;
+  return d->IconStyle->IndicatorIcon;
 }
 
 // ----------------------------------------------------------------------------
 void ctkCheckBox::setIndicatorIconSize(const QSize& newSize)
 {
   Q_D(ctkCheckBox);
-  d->iconStyle->indicatorSize = newSize;
+  d->IconStyle->IndicatorSize = newSize;
   this->update();
 }
 
@@ -196,5 +196,5 @@ void ctkCheckBox::setIndicatorIconSize(const QSize& newSize)
 QSize ctkCheckBox::indicatorIconSize() const
 {
   Q_D(const ctkCheckBox);
-  return d->iconStyle->indicatorSize;
+  return d->IconStyle->IndicatorSize;
 }
