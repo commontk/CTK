@@ -637,8 +637,8 @@ option(CTK_USE_CONTRIBUTED_PLUGINS OFF "Use CTK plug-ins from the PluginsContrib
 mark_as_advanced(CTK_USE_CONTRIBUTED_PLUGINS)
 if(CTK_USE_CONTRIBUTED_PLUGINS)
   ctkFunctionAddPluginRepo(NAME PluginsContrib
-                           GIT_URL github.com/commontk/PluginsContrib.git
-                           GIT_TAG 3dc1b4343f
+                           GIT_URL github.com/espakm/PluginsContrib.git
+                           GIT_TAG 603bf31afb
                           )
 endif()
 
