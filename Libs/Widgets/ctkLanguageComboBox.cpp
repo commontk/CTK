@@ -219,10 +219,15 @@ void ctkLanguageComboBox::setDirectory(const QString& dir)
 
   /// Recover all the translation file from the directory Translations
   QDir translationDir = QDir(d->LanguageDirectory);
-  QStringList languages = translationDir.entryList(QStringList("*.qm"));
+  QStringList files;
+  QStringList fileNames = translationDir.entryList(QStringList("*.qm"));
+  foreach(const QString& fileName, fileNames)
+    {
+    files << translationDir.filePath(fileName);
+    }
 
   /// Add all the languages availables
-  d->addLanguageFiles(languages);
+  d->addLanguageFiles(files);
 
   this->update();
 }
