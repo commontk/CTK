@@ -638,7 +638,7 @@ mark_as_advanced(CTK_USE_CONTRIBUTED_PLUGINS)
 if(CTK_USE_CONTRIBUTED_PLUGINS)
   ctkFunctionAddPluginRepo(NAME PluginsContrib
                            GIT_URL github.com/espakm/PluginsContrib.git
-                           GIT_TAG 4fc3eb1d18
+                           GIT_TAG 1571da2bd1
                           )
 endif()
 
