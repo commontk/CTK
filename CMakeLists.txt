@@ -824,7 +824,7 @@ if(CTK_USE_CONTRIBUTED_PLUGINS)
     ctkFunctionCheckoutRepo(
       NAME ExternalProjectsContrib
       GIT_URL github.com/espakm/ExternalProjectsContrib.git
-      GIT_TAG b8af3fa094
+      GIT_TAG 4966039547
       )
   endif()
 
