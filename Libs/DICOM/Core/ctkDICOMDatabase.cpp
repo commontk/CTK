@@ -1060,6 +1060,10 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
   QString fileName = q->fileForInstance(sopInstanceUID);
   dataset.InitializeFromFile(fileName);
 
+  QSqlQuery transaction( this->TagCacheDatabase );
+  transaction.prepare( "BEGIN TRANSACTION" );
+  this->loggedExec(transaction);
+
   foreach (const QString &tag, this->TagsToPrecache)
     {
     unsigned short group, element;
@@ -1068,6 +1072,9 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
     QString value = dataset.GetAllElementValuesAsString(tagKey);
     q->cacheTag(sopInstanceUID, tag, value);
     }
+
+  transaction.prepare( "END TRANSACTION" );
+  this->loggedExec(transaction);
 }
 
 //------------------------------------------------------------------------------
