@@ -25,6 +25,7 @@
 
 // Qt includes
 #include <QAction>
+#include <QCoreApplication>
 #include <QCheckBox>
 #include <QDebug>
 #include <QMetaType>
@@ -135,12 +136,7 @@ void ctkDICOMAppWidgetPrivate::showUpdateSchemaDialog()
     // by creating our own
     QLabel* progressLabel = new QLabel(q->tr("Initialization..."));
     UpdateSchemaProgress->setLabel(progressLabel);
-#ifdef Q_WS_MAC
-    // BUG: avoid deadlock of dialogs on mac
-    UpdateSchemaProgress->setWindowModality(Qt::NonModal);
-#else
     UpdateSchemaProgress->setWindowModality(Qt::ApplicationModal);
-#endif
     UpdateSchemaProgress->setMinimumDuration(0);
     UpdateSchemaProgress->setValue(0);
 
@@ -182,12 +178,7 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
     // by creating our own
     QLabel* progressLabel = new QLabel(q->tr("Initialization..."));
     IndexerProgress->setLabel(progressLabel);
-#ifdef Q_WS_MAC
-    // BUG: avoid deadlock of dialogs on mac
-    IndexerProgress->setWindowModality(Qt::NonModal);
-#else
     IndexerProgress->setWindowModality(Qt::ApplicationModal);
-#endif
     IndexerProgress->setMinimumDuration(0);
     IndexerProgress->setValue(0);
 
@@ -198,6 +189,8 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
             IndexerProgress, SLOT(setValue(int)));
     q->connect(DICOMIndexer.data(), SIGNAL(indexingFilePath(QString)),
             progressLabel, SLOT(setText(QString)));
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingFilePath(QString)),
+            q, SLOT(onFileIndexed(QString)));
 
     // close the dialog
     q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete()),
@@ -422,11 +415,13 @@ void ctkDICOMAppWidget::setSearchWidgetPopUpMode(bool flag){
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onAddToDatabase()
+void ctkDICOMAppWidget::onFileIndexed(const QString& filePath)
 {
-  //Q_D(ctkDICOMAppWidget);
-
-  //d->
+  // Update the progress dialog when the file name changes
+  // - also allows for cancel button
+  QCoreApplication::instance()->processEvents();
+  qDebug() << "Indexing \n\n\n\n" << filePath <<"\n\n\n";
+  
 }
 
 //----------------------------------------------------------------------------

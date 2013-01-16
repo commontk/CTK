@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QTimer>
+#include <QString>
 
 // ctkDICOMCore includes
 #include "ctkDICOMAppWidget.h"
@@ -40,7 +41,8 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
   
   ctkDICOMAppWidget appWidget;
   appWidget.setDatabaseDirectory(QDir::currentPath());
-  appWidget.onAddToDatabase();
+  QString testString = QString("Test String");
+  appWidget.onFileIndexed(testString);
   appWidget.openImportDialog();
   appWidget.openExportDialog();
   appWidget.openQueryDialog();
