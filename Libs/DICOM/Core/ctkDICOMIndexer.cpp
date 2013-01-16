@@ -173,6 +173,25 @@ void ctkDICOMIndexer::addListOfFiles(ctkDICOMDatabase& ctkDICOMDatabase,
                                      const QString& destinationDirectoryName)
 {
   Q_D(ctkDICOMIndexer);
+  d->Canceled = false;
+  int CurrentFileIndex = 0;
+  foreach(QString filePath, listOfFiles)
+  {
+
+    int percent = ( 100 * CurrentFileIndex ) / listOfFiles.size();
+    emit this->progress(percent);
+    this->addFile(ctkDICOMDatabase, filePath, destinationDirectoryName);
+    CurrentFileIndex++;
+
+    if( d->Canceled )
+      {
+      break;
+      }
+  }
+  emit this->indexingComplete();
+
+
+#if 0
   if(!listOfFiles.isEmpty())
   {
     if(d->DirectoryImportWatcher.isRunning())
@@ -184,6 +203,7 @@ void ctkDICOMIndexer::addListOfFiles(ctkDICOMDatabase& ctkDICOMDatabase,
     d->DirectoryImportFuture = QtConcurrent::filter(d->FilesToIndex,AddFileFunctor(this,ctkDICOMDatabase,destinationDirectoryName));
     d->DirectoryImportWatcher.setFuture(d->DirectoryImportFuture);
   }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -307,4 +327,5 @@ void ctkDICOMIndexer::cancel()
 {
   Q_D(ctkDICOMIndexer);
   d->DirectoryImportWatcher.cancel();
+  d->Canceled = true;
 }
