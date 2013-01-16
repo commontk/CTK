@@ -86,6 +86,12 @@ public:
   bool loggedExec(QSqlQuery& query, const QString& queryString);
   bool LoggedExecVerbose;
 
+  ///
+  /// \brief group several inserts into a single transaction
+  ///
+  void beginTransaction();
+  void endTransaction();
+
   // dataset must be set always
   // filePath has to be set if this is an import of an actual file
   void insert ( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile = true, bool generateThumbnail = true);
@@ -125,8 +131,9 @@ public:
   /// resets the variables to new inserts won't be fooled by leftover values
   void resetLastInsertedValues();
 
-  /// parallel inserts are not allowed (yet)
-  QMutex insertMutex;
+  /// parallel accesses are not allowed
+  /// - http://qt-project.org/doc/qt-4.8/threads-modules.html#threads-and-the-sql-module
+  QMutex databaseAccessMutex;
 
   /// tagCache table has been checked to exist
   bool TagCacheVerified;
@@ -204,6 +211,8 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query)
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryString)
 {
+  QMutexLocker lock(&(this->databaseAccessMutex));
+
   bool success;
   if (queryString.compare(""))
     {
@@ -227,6 +236,28 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
       }
     }
   return (success);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::beginTransaction()
+{
+  Q_Q(ctkDICOMDatabase);
+  QMutexLocker lock(&(this->databaseAccessMutex));
+
+  QSqlQuery transaction( this->Database );
+  transaction.prepare( "BEGIN TRANSACTION" );
+  transaction.exec();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::endTransaction()
+{
+  Q_Q(ctkDICOMDatabase);
+  QMutexLocker lock(&(this->databaseAccessMutex));
+
+  QSqlQuery transaction( this->Database );
+  transaction.prepare( "END TRANSACTION" );
+  transaction.exec();
 }
 
 //------------------------------------------------------------------------------
@@ -275,9 +306,12 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
     }
 
   //Disable synchronous writing to make modifications faster
+  {
+  QMutexLocker lock(&(d->databaseAccessMutex));
   QSqlQuery pragmaSyncQuery(d->Database);
   pragmaSyncQuery.exec("PRAGMA synchronous = OFF");
   pragmaSyncQuery.finish();
+  }
 
   // set up the tag cache for use later
   QFileInfo fileInfo(d->DatabaseFileName);
@@ -360,6 +394,7 @@ ctkDICOMAbstractThumbnailGenerator* ctkDICOMDatabase::thumbnailGenerator(){
 
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabasePrivate::executeScript(const QString script) {
+  QMutexLocker lock(&(this->databaseAccessMutex));
   QFile scriptFile(script);
   scriptFile.open(QIODevice::ReadOnly);
   if  ( !scriptFile.isOpen() )
@@ -521,6 +556,7 @@ void ctkDICOMDatabase::closeDatabase()
 QStringList ctkDICOMDatabase::patients()
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
   QSqlQuery query(d->Database);
   query.prepare ( "SELECT UID FROM Patients" );
   query.exec();
@@ -536,6 +572,7 @@ QStringList ctkDICOMDatabase::patients()
 QStringList ctkDICOMDatabase::studiesForPatient(QString dbPatientID)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
   QSqlQuery query(d->Database);
   query.prepare ( "SELECT StudyInstanceUID FROM Studies WHERE PatientsUID = ?" );
   query.bindValue ( 0, dbPatientID );
@@ -552,6 +589,7 @@ QStringList ctkDICOMDatabase::studiesForPatient(QString dbPatientID)
 QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
   QSqlQuery query(d->Database);
   query.prepare ( "SELECT SeriesInstanceUID FROM Series WHERE StudyInstanceUID=?");
   query.bindValue ( 0, studyUID );
@@ -568,6 +606,7 @@ QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
 QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
   QSqlQuery query(d->Database);
   query.prepare ( "SELECT Filename FROM Images WHERE SeriesInstanceUID=?");
   query.bindValue ( 0, seriesUID );
@@ -584,6 +623,7 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
 QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
   QSqlQuery query(d->Database);
   query.prepare ( "SELECT Filename FROM Images WHERE SOPInstanceUID=?");
   query.bindValue ( 0, sopInstanceUID );
@@ -600,6 +640,7 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
 QString ctkDICOMDatabase::instanceForFile(QString fileName)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
   QSqlQuery query(d->Database);
   query.prepare ( "SELECT SOPInstanceUID FROM Images WHERE Filename=?");
   query.bindValue ( 0, fileName );
@@ -616,6 +657,7 @@ QString ctkDICOMDatabase::instanceForFile(QString fileName)
 QDateTime ctkDICOMDatabase::insertDateTimeForInstance(QString sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
   QSqlQuery query(d->Database);
   query.prepare ( "SELECT InsertTimestamp FROM Images WHERE SOPInstanceUID=?");
   query.bindValue ( 0, sopInstanceUID );
@@ -930,6 +972,7 @@ int ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMDataset& ctkDataset)
 //------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMDataset& ctkDataset, int dbPatientID)
 {
+  QMutexLocker lock(&(this->databaseAccessMutex));
   QString studyInstanceUID(ctkDataset.GetElementAsString(DCM_StudyInstanceUID) );
   QSqlQuery checkStudyExistsQuery (Database);
   checkStudyExistsQuery.prepare ( "SELECT * FROM Studies WHERE StudyInstanceUID = ?" );
@@ -980,12 +1023,13 @@ void ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMDataset& ctkDataset, int
 //------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QString studyInstanceUID)
 {
+  QMutexLocker lock(&(this->databaseAccessMutex));
   QString seriesInstanceUID(ctkDataset.GetElementAsString(DCM_SeriesInstanceUID) );
   QSqlQuery checkSeriesExistsQuery (Database);
   checkSeriesExistsQuery.prepare ( "SELECT * FROM Series WHERE SeriesInstanceUID = ?" );
   checkSeriesExistsQuery.bindValue ( 0, seriesInstanceUID );
   logger.warn ( "Statement: " + checkSeriesExistsQuery.lastQuery() );
-  loggedExec(checkSeriesExistsQuery);
+  checkSeriesExistsQuery.exec();
   if(!checkSeriesExistsQuery.next())
     {
       qDebug() << "Need to insert new series: " << seriesInstanceUID;
@@ -1084,26 +1128,31 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
 
   // this is the method that all other insert signatures end up calling
   // after they have pre-parsed their arguments
-
-  QMutexLocker lock(&insertMutex);
-
+ 
   // Check to see if the file has already been loaded
   // TODO:
   // It could make sense to actually remove the dataset and re-add it. This needs the remove
   // method we still have to write.
   //
+  //
+  
+  this->beginTransaction();
 
   QString sopInstanceUID ( ctkDataset.GetElementAsString(DCM_SOPInstanceUID) );
 
   QSqlQuery fileExists ( Database );
   fileExists.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
   fileExists.bindValue(":sopInstanceUID",sopInstanceUID);
+  {
+  QMutexLocker lock(&(this->databaseAccessMutex));
   bool success = fileExists.exec();
   if (!success)
     {
       logger.error("SQLITE ERROR: " + fileExists.lastError().driverText());
+      this->endTransaction();
       return;
     }
+  }
 
   QString databaseFilename(fileExists.value(1).toString());
   QDateTime fileLastModified(QFileInfo(databaseFilename).lastModified());
@@ -1116,12 +1165,14 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
     }
   else
     {
+      QMutexLocker lock(&(this->databaseAccessMutex));
       qDebug() << "database filename for " << sopInstanceUID << " is: " << databaseFilename;
       qDebug() << "modified date is: " << fileLastModified;
       qDebug() << "db insert date is: " << databaseInsertTimestamp;
       if ( fileExists.next() && fileLastModified < databaseInsertTimestamp )
         {
           logger.debug ( "File " + databaseFilename + " already added" );
+          this->endTransaction();
           return;
         }
     }
@@ -1145,6 +1196,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   if ( patientsName.isEmpty() || studyInstanceUID.isEmpty() || patientID.isEmpty() )
     {
       logger.error("Dataset is missing necessary information (patient name, study instance UID, or patient ID)!");
+      this->endTransaction();
       return;
     }
 
@@ -1173,6 +1225,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
           if ( !ctkDataset.SaveToFile( filename) )
             {
               logger.error ( "Error saving file: " + filename );
+              this->endTransaction();
               return;
             }
         }
@@ -1277,6 +1330,8 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
     {
     qDebug() << "No patient name or no patient id - not inserting!";
     }
+
+  this->endTransaction();
 }
 
 //------------------------------------------------------------------------------
@@ -1319,6 +1374,7 @@ bool ctkDICOMDatabase::isInMemory() const
 bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
 
   // get all images from series
   QSqlQuery fileExists ( d->Database );
@@ -1396,6 +1452,7 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
 bool ctkDICOMDatabase::cleanup()
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
   QSqlQuery seriesCleanup ( d->Database );
   seriesCleanup.exec("DELETE FROM Series WHERE ( SELECT COUNT(*) FROM Images WHERE Images.SeriesInstanceUID = Series.SeriesInstanceUID ) = 0;");
   seriesCleanup.exec("DELETE FROM Studies WHERE ( SELECT COUNT(*) FROM Series WHERE Series.StudyInstanceUID = Studies.StudyInstanceUID ) = 0;");
@@ -1407,6 +1464,7 @@ bool ctkDICOMDatabase::cleanup()
 bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
 
   QSqlQuery seriesForStudy( d->Database );
   seriesForStudy.prepare("SELECT SeriesInstanceUID FROM Series WHERE StudyInstanceUID = :studyID");
@@ -1434,6 +1492,7 @@ bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID)
 bool ctkDICOMDatabase::removePatient(const QString& patientID)
 {
   Q_D(ctkDICOMDatabase);
+  QMutexLocker lock(&(d->databaseAccessMutex));
 
   QSqlQuery studiesForPatient( d->Database );
   studiesForPatient.prepare("SELECT StudyInstanceUID FROM Studies WHERE PatientsUID = :patientsID");
@@ -1474,6 +1533,7 @@ bool ctkDICOMDatabase::tagCacheExists()
   // try to open the database if it's not already open
   if ( !(d->TagCacheDatabase.isOpen()) )
     {
+    QMutexLocker lock(&(d->databaseAccessMutex));
     qDebug() << "TagCacheDatabase not open\n";
     d->TagCacheDatabase = QSqlDatabase::addDatabase("QSQLITE", d->Database.connectionName() + "TagCache");
     d->TagCacheDatabase.setDatabaseName(d->TagCacheDatabaseFilename);
