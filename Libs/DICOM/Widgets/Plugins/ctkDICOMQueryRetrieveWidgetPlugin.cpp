@@ -38,7 +38,7 @@ QWidget *ctkDICOMQueryRetrieveWidgetPlugin::createWidget(QWidget *parentForWidge
 //-----------------------------------------------------------------------------
 QString ctkDICOMQueryRetrieveWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkDICOMQueryRetrieve\" \
+  return "<widget class=\"ctkDICOMQueryRetrieveWidget\" \
           name=\"QueryRetrieve\">\n"
           "</widget>\n";
 }
@@ -52,7 +52,7 @@ QIcon ctkDICOMQueryRetrieveWidgetPlugin::icon() const
 //-----------------------------------------------------------------------------
 QString ctkDICOMQueryRetrieveWidgetPlugin::includeFile() const
 {
-  return "ctkDICOMQueryRetrieve.h";
+  return "ctkDICOMQueryRetrieveWidget.h";
 }
 
 //-----------------------------------------------------------------------------
@@ -64,5 +64,5 @@ bool ctkDICOMQueryRetrieveWidgetPlugin::isContainer() const
 //-----------------------------------------------------------------------------
 QString ctkDICOMQueryRetrieveWidgetPlugin::name() const
 {
-  return "ctkDICOMQueryRetrieve";
+  return "ctkDICOMQueryRetrieveWidget";
 }
