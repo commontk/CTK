@@ -23,6 +23,7 @@
 // VTK includes
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
+#include <vtkConfigure.h>
 #include <vtkCornerAnnotation.h>
 #include <vtkImageData.h>
 #include <vtkImageMapper.h>
@@ -180,7 +181,11 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   coordinate->SetViewport(this->Renderer);
 
   vtkNew<vtkPolyDataMapper2D> polyDataMapper;
+#if VTK_MAJOR_VERSION <= 5
   polyDataMapper->SetInput(poly.GetPointer());
+#else
+  polyDataMapper->SetInputData(poly.GetPointer());
+#endif
   polyDataMapper->SetTransformCoordinate(coordinate.GetPointer());
   polyDataMapper->SetTransformCoordinateUseDouble(true);
 
@@ -455,7 +460,11 @@ void vtkLightBoxRendererManager::SetImageData(vtkImageData* newImageData)
       it != this->Internal->RenderWindowItemList.end();
       ++it)
     {
+#if VTK_MAJOR_VERSION <= 5
     (*it)->ImageMapper->SetInput(newImageData);
+#else
+    (*it)->ImageMapper->SetInputData(newImageData);
+#endif
     }
 
   if (newImageData)
@@ -616,7 +625,11 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
                                this->Internal->HighlightedBoxColor,
                                this->Internal->ColorWindow, this->Internal->ColorLevel);
       item->Renderer->SetLayer(this->Internal->RendererLayer);
+#if VTK_MAJOR_VERSION <= 5
       item->ImageMapper->SetInput(this->Internal->ImageData);
+#else
+      item->ImageMapper->SetInputData(this->Internal->ImageData);
+#endif
       this->Internal->RenderWindowItemList.push_back(item);
       --extraItem;
       }
