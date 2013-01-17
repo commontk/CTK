@@ -66,7 +66,7 @@ public:
 
 public Q_SLOTS:
   void setDatabaseDirectory(const QString& directory);
-  void onAddToDatabase();
+  void onFileIndexed(const QString& filePath);
 
   void openImportDialog();
   void openExportDialog();

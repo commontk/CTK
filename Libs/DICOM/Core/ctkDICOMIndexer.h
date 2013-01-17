@@ -82,12 +82,6 @@ public:
 
   Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 
-  ///
-  /// \brief ensures that the QFuture threads have all finished indexing
-  /// before returning control.
-  ///
-  Q_INVOKABLE void waitForImportFinished();
-
 Q_SIGNALS:
   void foundFilesToIndex(int);
   void indexingFileNumber(int);

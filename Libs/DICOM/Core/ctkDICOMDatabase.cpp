@@ -23,11 +23,9 @@
 // Qt includes
 #include <QDate>
 #include <QDebug>
-#include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
 #include <QFileSystemWatcher>
-#include <QMutexLocker>
 #include <QSet>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -86,6 +84,12 @@ public:
   bool loggedExec(QSqlQuery& query, const QString& queryString);
   bool LoggedExecVerbose;
 
+  ///
+  /// \brief group several inserts into a single transaction
+  ///
+  void beginTransaction();
+  void endTransaction();
+
   // dataset must be set always
   // filePath has to be set if this is an import of an actual file
   void insert ( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile = true, bool generateThumbnail = true);
@@ -124,9 +128,6 @@ public:
 
   /// resets the variables to new inserts won't be fooled by leftover values
   void resetLastInsertedValues();
-
-  /// parallel inserts are not allowed (yet)
-  QMutex insertMutex;
 
   /// tagCache table has been checked to exist
   bool TagCacheVerified;
@@ -230,6 +231,26 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::beginTransaction()
+{
+  Q_Q(ctkDICOMDatabase);
+
+  QSqlQuery transaction( this->Database );
+  transaction.prepare( "BEGIN TRANSACTION" );
+  transaction.exec();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::endTransaction()
+{
+  Q_Q(ctkDICOMDatabase);
+
+  QSqlQuery transaction( this->Database );
+  transaction.prepare( "END TRANSACTION" );
+  transaction.exec();
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::createBackupFileList()
 {
   QSqlQuery query(this->Database);
@@ -275,9 +296,11 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
     }
 
   //Disable synchronous writing to make modifications faster
+  {
   QSqlQuery pragmaSyncQuery(d->Database);
   pragmaSyncQuery.exec("PRAGMA synchronous = OFF");
   pragmaSyncQuery.finish();
+  }
 
   // set up the tag cache for use later
   QFileInfo fileInfo(d->DatabaseFileName);
@@ -985,7 +1008,7 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QS
   checkSeriesExistsQuery.prepare ( "SELECT * FROM Series WHERE SeriesInstanceUID = ?" );
   checkSeriesExistsQuery.bindValue ( 0, seriesInstanceUID );
   logger.warn ( "Statement: " + checkSeriesExistsQuery.lastQuery() );
-  loggedExec(checkSeriesExistsQuery);
+  checkSeriesExistsQuery.exec();
   if(!checkSeriesExistsQuery.next())
     {
       qDebug() << "Need to insert new series: " << seriesInstanceUID;
@@ -1060,9 +1083,7 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
   QString fileName = q->fileForInstance(sopInstanceUID);
   dataset.InitializeFromFile(fileName);
 
-  QSqlQuery transaction( this->TagCacheDatabase );
-  transaction.prepare( "BEGIN TRANSACTION" );
-  this->loggedExec(transaction);
+  this->beginTransaction();
 
   foreach (const QString &tag, this->TagsToPrecache)
     {
@@ -1073,8 +1094,7 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
     q->cacheTag(sopInstanceUID, tag, value);
     }
 
-  transaction.prepare( "END TRANSACTION" );
-  this->loggedExec(transaction);
+  this->endTransaction();
 }
 
 //------------------------------------------------------------------------------
@@ -1084,26 +1104,27 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
 
   // this is the method that all other insert signatures end up calling
   // after they have pre-parsed their arguments
-
-  QMutexLocker lock(&insertMutex);
-
+ 
   // Check to see if the file has already been loaded
   // TODO:
   // It could make sense to actually remove the dataset and re-add it. This needs the remove
   // method we still have to write.
   //
-
+  //
+  
   QString sopInstanceUID ( ctkDataset.GetElementAsString(DCM_SOPInstanceUID) );
 
   QSqlQuery fileExists ( Database );
   fileExists.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
   fileExists.bindValue(":sopInstanceUID",sopInstanceUID);
+  {
   bool success = fileExists.exec();
   if (!success)
     {
       logger.error("SQLITE ERROR: " + fileExists.lastError().driverText());
       return;
     }
+  }
 
   QString databaseFilename(fileExists.value(1).toString());
   QDateTime fileLastModified(QFileInfo(databaseFilename).lastModified());

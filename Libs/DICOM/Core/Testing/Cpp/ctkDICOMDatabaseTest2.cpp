@@ -136,9 +136,9 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
   // Test the tag cache
   //
 
-  if (database.tagCacheExists())
+  if (!database.tagCacheExists())
     {
-    std::cerr << "ctkDICOMDatabase: tag cache should not exist in fresh database" << std::endl;
+    std::cerr << "ctkDICOMDatabase: tag cache should be configured when database opens" << std::endl;
     return EXIT_FAILURE;
     }
 
