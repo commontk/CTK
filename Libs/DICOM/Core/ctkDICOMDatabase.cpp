@@ -1104,9 +1104,7 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
   QString fileName = q->fileForInstance(sopInstanceUID);
   dataset.InitializeFromFile(fileName);
 
-  QSqlQuery transaction( this->TagCacheDatabase );
-  transaction.prepare( "BEGIN TRANSACTION" );
-  this->loggedExec(transaction);
+  this->beginTransaction();
 
   foreach (const QString &tag, this->TagsToPrecache)
     {
@@ -1117,8 +1115,7 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
     q->cacheTag(sopInstanceUID, tag, value);
     }
 
-  transaction.prepare( "END TRANSACTION" );
-  this->loggedExec(transaction);
+  this->endTransaction();
 }
 
 //------------------------------------------------------------------------------
@@ -1136,8 +1133,6 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   //
   //
   
-  this->beginTransaction();
-
   QString sopInstanceUID ( ctkDataset.GetElementAsString(DCM_SOPInstanceUID) );
 
   QSqlQuery fileExists ( Database );
@@ -1149,7 +1144,6 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   if (!success)
     {
       logger.error("SQLITE ERROR: " + fileExists.lastError().driverText());
-      this->endTransaction();
       return;
     }
   }
@@ -1172,7 +1166,6 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
       if ( fileExists.next() && fileLastModified < databaseInsertTimestamp )
         {
           logger.debug ( "File " + databaseFilename + " already added" );
-          this->endTransaction();
           return;
         }
     }
@@ -1196,7 +1189,6 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
   if ( patientsName.isEmpty() || studyInstanceUID.isEmpty() || patientID.isEmpty() )
     {
       logger.error("Dataset is missing necessary information (patient name, study instance UID, or patient ID)!");
-      this->endTransaction();
       return;
     }
 
@@ -1225,7 +1217,6 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
           if ( !ctkDataset.SaveToFile( filename) )
             {
               logger.error ( "Error saving file: " + filename );
-              this->endTransaction();
               return;
             }
         }
@@ -1330,8 +1321,6 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
     {
     qDebug() << "No patient name or no patient id - not inserting!";
     }
-
-  this->endTransaction();
 }
 
 //------------------------------------------------------------------------------
