@@ -38,7 +38,8 @@ class ctkCollapsibleGroupBoxStyle:public ctkProxyStyle
 {
 public:
   typedef ctkProxyStyle Superclass;
-  ctkCollapsibleGroupBoxStyle(QStyle* style = 0) : Superclass(style)
+  ctkCollapsibleGroupBoxStyle(QStyle* style = 0, QObject* parent =0)
+    : Superclass(style, parent)
   {
   }
   virtual void drawPrimitive(PrimitiveElement pe, const QStyleOption * opt, QPainter * p, const QWidget * widget = 0) const
@@ -126,8 +127,8 @@ void ctkCollapsibleGroupBoxPrivate::init()
   this->MaxHeight = q->maximumHeight();
 #if QT_VERSION >= 0x040600
   QWidget* parent = q->parentWidget();
-  QStyle* parentStyle = (parent) ? parent->style() : QApplication::style();
-  this->GroupBoxStyle = new ctkCollapsibleGroupBoxStyle(parentStyle);
+  QStyle* parentStyle = (parent) ? parent->style() : qApp->style();
+  this->GroupBoxStyle = new ctkCollapsibleGroupBoxStyle(parentStyle, qApp);
   q->setStyle(this->GroupBoxStyle);
   this->GroupBoxStyle->ensureBaseStyle();
 #else

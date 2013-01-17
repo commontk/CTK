@@ -36,7 +36,7 @@ class CTK_WIDGETS_EXPORT ctkProxyStyle : public QProxyStyle
 {
   Q_OBJECT
 public:
-  ctkProxyStyle(QStyle *baseStyle = 0);
+  ctkProxyStyle(QStyle *baseStyle = 0, QObject* parent = 0);
   virtual ~ctkProxyStyle();
 
   void ensureBaseStyle()const;

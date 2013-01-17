@@ -79,19 +79,20 @@ void ctkProxyStylePrivate::setBaseStyle(QProxyStyle* proxy, QStyle *style)const
 }
 
 // ----------------------------------------------------------------------------
-ctkProxyStyle::ctkProxyStyle(QStyle *style)
+ctkProxyStyle::ctkProxyStyle(QStyle *style, QObject* parent)
   : d_ptr(new ctkProxyStylePrivate(*this))
 {
   Q_D(ctkProxyStyle);
   d->baseStyle = style;
   this->setBaseStyle(style);
+  this->setParent(parent);
 }
 
 // ----------------------------------------------------------------------------
 ctkProxyStyle::~ctkProxyStyle()
 {
   Q_D(ctkProxyStyle);
-  if (d->baseStyle == qApp->style())
+  if (!QApplication::closingDown() && d->baseStyle == QApplication::style())
     {
     d->baseStyle->setParent(qApp); // don't delete the application style.
     }
