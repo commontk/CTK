@@ -54,9 +54,8 @@ public:
 
 // ----------------------------------------------------------------------------
 ctkCheckBoxStyle::ctkCheckBoxStyle(QStyle *baseStyle, QObject* parent)
-  : Superclass(baseStyle)
+  : Superclass(baseStyle, parent)
 {
-  this->setParent(parent);
 }
 
 // ----------------------------------------------------------------------------
@@ -146,8 +145,8 @@ void ctkCheckBoxPrivate::init()
 {
   Q_Q(ctkCheckBox);
   QWidget* parent = q->parentWidget();
-  QStyle* parentStyle = (parent) ? parent->style() : QApplication::style();
-  this->IconStyle = new ctkCheckBoxStyle(parentStyle, q);
+  QStyle* parentStyle = (parent) ? parent->style() : qApp->style();
+  this->IconStyle = new ctkCheckBoxStyle(parentStyle, qApp);
   q->setStyle(this->IconStyle);
   this->IconStyle->ensureBaseStyle();
 }
