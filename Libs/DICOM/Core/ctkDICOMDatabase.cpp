@@ -233,8 +233,6 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
 //------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::beginTransaction()
 {
-  Q_Q(ctkDICOMDatabase);
-
   QSqlQuery transaction( this->Database );
   transaction.prepare( "BEGIN TRANSACTION" );
   transaction.exec();
@@ -243,8 +241,6 @@ void ctkDICOMDatabasePrivate::beginTransaction()
 //------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::endTransaction()
 {
-  Q_Q(ctkDICOMDatabase);
-
   QSqlQuery transaction( this->Database );
   transaction.prepare( "END TRANSACTION" );
   transaction.exec();
