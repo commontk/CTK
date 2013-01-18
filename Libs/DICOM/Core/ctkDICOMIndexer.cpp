@@ -62,7 +62,6 @@ static ctkLogger logger("org.commontk.dicom.DICOMIndexer" );
 //------------------------------------------------------------------------------
 ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate(ctkDICOMIndexer& o) : q_ptr(&o), Canceled(false)
 {
-  Q_Q(ctkDICOMIndexer);
 }
 
 //------------------------------------------------------------------------------
@@ -107,8 +106,6 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
                                    const QString& directoryName,
                                    const QString& destinationDirectoryName)
 {
-  Q_D(ctkDICOMIndexer);
-
   QStringList listOfFiles;
   QDir directory(directoryName);
 
@@ -157,8 +154,6 @@ void ctkDICOMIndexer::addDicomdir(ctkDICOMDatabase& ctkDICOMDatabase,
                  const QString& destinationDirectoryName
                  )
 {
-  Q_D(ctkDICOMIndexer);
-
   //Initialize dicomdir with directory path
   QString dcmFilePath = directoryName;
   dcmFilePath.append("/DICOMDIR");
