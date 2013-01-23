@@ -63,6 +63,9 @@ static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
 // Flag for tag cache to avoid repeated serarches for
 // tags that do no exist.
 static QString TagNotInInstance("__TAG_NOT_IN_INSTANCE__");
+// Flag for tag cache indicating that the value
+// really is the empty string
+static QString ValueIsEmptyString("__VALUE_IS_EMPTY_STRING__");
 
 //------------------------------------------------------------------------------
 class ctkDICOMDatabasePrivate
@@ -725,7 +728,7 @@ QString ctkDICOMDatabase::headerValue (QString key)
 QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
 {
   QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance)
+  if (value == TagNotInInstance || value == ValueIsEmptyString)
     {
     return "";
     }
@@ -743,7 +746,7 @@ QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsi
 {
   QString tag = this->groupElementToTag(group,element);
   QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance)
+  if (value == TagNotInInstance || value == ValueIsEmptyString)
     {
     return "";
     }
@@ -771,7 +774,7 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   this->tagToGroupElement(tag, group, element);
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance)
+  if (value == TagNotInInstance || value == ValueIsEmptyString)
     {
     return "";
     }
@@ -801,7 +804,7 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
   QString tag = this->groupElementToTag(group, element);
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance)
+  if (value == TagNotInInstance || value == ValueIsEmptyString)
     {
     return "";
     }
@@ -1570,6 +1573,10 @@ QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString 
   if (selectValue.next())
     {
     result = selectValue.value(0).toString();
+    if (result == QString(""))
+      {
+      result = ValueIsEmptyString;
+      }
     }
   return( result );
 }
