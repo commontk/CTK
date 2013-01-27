@@ -26,11 +26,13 @@
 # This script should be invoked either as a CUSTOM_COMMAND 
 # or from the command line using the following syntax:
 #
-#    cmake -DWRAPPING_NAMESPACE:STRING=org.commontk -DTARGET:STRING=MyLib
-#          -DOUTPUT_DIR:PATH=/path -DINCLUDE_DIRS:STRING=/path1:/path2
-#          -DWRAPPER_MASTER_MOC_FILE:FILEPATH=/path/to/file
-#          -DQT_QMAKE_EXECUTABLE:PATH=/path/to/qt/qmake
-#           -P ctkScriptWrapPythonQt.cmake
+#    cmake -DWRAPPING_NAMESPACE:STRING=org.commontk 
+#      -DTARGET:STRING=MyLib
+#      -DOUTPUT_DIR:PATH=/path
+#      -DMOC_FLAGS:STRING=-I/path/to/lib1^^-I/path/to/lib2^^-DOPT1
+#      -DWRAPPER_MASTER_MOC_FILE:FILEPATH=/path/to/file
+#      -DQT_QMAKE_EXECUTABLE:PATH=/path/to/qt/qmake
+#      -P ctkScriptMocPythonQtWrapper.cmake
 #
 #
 
@@ -76,17 +78,32 @@ endif()
 
 # Moc'ified each one of them
 foreach(header ${wrapper_headers})
-
-  # what is the filename without the extension
-  get_filename_component(TMP_FILENAME ${header} NAME_WE)
   
-  set(moc_options)
+  set(moc_extra_options)
   set(wrapper_h_file ${OUTPUT_DIR}/${WRAP_INT_DIR}/${header})
   set(wrapper_moc_file ${OUTPUT_DIR}/${WRAP_INT_DIR}/moc_${header}.cpp)
-  #message("wrapper_h_file: ${wrapper_h_file}")
-  #message("wrapper_moc_file: ${wrapper_moc_file}")
+  
+  # Dump moc executable options into a file to avoid command line length limitations
+  # See http://qt-project.org/doc/qt-4.8/moc.html#command-line-options
+  
+  # As required when using the @ option of moc executable, process MOC_FLAGS list 
+  # to obtain a string with one flag per line
+  set(moc_flags_with_newline "")
+  foreach(flag ${MOC_FLAGS})
+    set(moc_flags_with_newline "${moc_flags_with_newline}\n${flag}")
+  endforeach()
+  
+  # Dump flags into a file
+  get_filename_component(header_we ${header} NAME_WE)
+  set(wrapper_moc_options_file ${OUTPUT_DIR}/${WRAP_INT_DIR}/${header_we}_moc_opts.txt)
+  file(WRITE ${wrapper_moc_options_file}
+"${moc_flags_with_newline}
+${moc_extra_options}")
+
+  message("${QT_MOC_EXECUTABLE} @${wrapper_moc_options_file} -o ${wrapper_moc_file} ${wrapper_h_file}")
+  # Invoke moc executable passing "@" parameter
   execute_process(
-    COMMAND ${QT_MOC_EXECUTABLE} ${MOC_FLAGS} ${moc_options} -o ${wrapper_moc_file} ${wrapper_h_file}
+    COMMAND ${QT_MOC_EXECUTABLE} @${wrapper_moc_options_file} -o ${wrapper_moc_file} ${wrapper_h_file}
     WORKING_DIRECTORY ${OUTPUT_DIR}
     RESULT_VARIABLE RESULT_VAR
     ERROR_VARIABLE error
