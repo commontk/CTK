@@ -255,6 +255,13 @@ void ctkDICOMIndexer::refreshDatabase(ctkDICOMDatabase& dicomDatabase, const QSt
   */
   }
 
+//------------------------------------------------------------------------------
+void ctkDICOMIndexer::waitForImportFinished()
+{
+  // No-op - this had been used when the indexing was multi-threaded,
+  // and has only been retained for API compatibility.
+}
+
 //----------------------------------------------------------------------------
 void ctkDICOMIndexer::cancel()
 {
