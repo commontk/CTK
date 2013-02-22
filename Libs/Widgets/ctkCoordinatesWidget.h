@@ -103,22 +103,57 @@ public:
   /// Convenient function that sets up to 4 elements of the coordinates.
   void setCoordinates(double x, double y = 0., double z = 0., double w = 0.);
 
+  /// Set/Get the keyboardTracking property of the coordinates widget
+  /// If keyboardTracking is enabled (the default), the coordinatesWidget emits
+  /// the coordinatesChanged() signal while the new value is being entered from
+  /// the keyboard.
+  /// E.g. when the user enters the value 600 by typing 6, 0, and 0,
+  /// the spinbox emits 3 signals with the values 6, 60, and 600 respectively.
+  /// \sa coordinatesChanged(double* pos)
+  void setKeyboardTracking(bool enable);
+  bool keyboardTracking()const;
+
 public Q_SLOTS:
   void normalize();
 
 Q_SIGNALS:
   ///
-  /// valueChanged is fired anytime a coordinate is modified, the returned
-  /// value is the point coordinates
-  /// TODO: Don't fire the signal if the new values are not changed 
+  /// coordinatesChanged is fired anytime a coordinate is modified, the returned
+  /// value is the point coordinates.
+  /// This signal will be fired while the user is editing a coordinate or
+  /// once he/she is done editing based on keyboardTracking flag.
+  /// TODO: Don't fire the signal if the new values are not changed
+  /// \sa keyboardTracking(), setKeyboardTracking(bool enable)
   void coordinatesChanged(double* pos);
 
+  /// coordinatesEditingFinished is fired anytime a user modifies a coordinate
+  /// and is done editing. This happens when the corresponding spinBox loses
+  /// focus or enter is pressed. The returned value is the point coordinates.
+  /// \sa coordinatesChanged(double* pos)
+  void coordinatesEditingFinished(double* pos);
+
 protected Q_SLOTS:
-  void updateCoordinate(double);
-  void updateCoordinates();
+  ///
+  /// updateCoordinate is invoked whenever any spinBox in the
+  /// ctkCoordinatesWidget emits an editingFinished() signal. This slot is
+  /// responsible for emitting the coordinatesEditingFinished() signal.
+  /// \sa coordinatesEditingFinished(double* pos)
+  void updateCoordinate();
+  
+  /// coordinateValueChanged() is invoked whenever any spinBox in the
+  /// ctkCoordinatesWidget emits a valueChanged() signal. This slot is
+  /// responsible for emitting the coordinatesChanged() signal.
+  /// \sa coordinatesChanged(double* pos)
+  void coordinateValueChanged(double);
 
 protected:
   void addSpinBox();
+
+  /// Update the coordinate according to the new value
+  void updateCoordinate(double);
+
+  /// Update all coordinates based on any value change
+  void updateCoordinates();
 
   /// Normalize coordinates vector and return the previous norm.
   static double normalize(double* coordinates, int dimension);
@@ -134,6 +169,7 @@ protected:
   bool    Normalized;
   int     Dimension;
   double* Coordinates;
+  bool    KeyboardTracking;
   QList<int> LastUserEditedCoordinates;
 };
 
