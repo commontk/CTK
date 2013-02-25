@@ -318,7 +318,7 @@ void ctkSearchBox::mouseMoveEvent(QMouseEvent *e)
   if(d->clearRect().contains(e->pos()) ||
      (d->showSearchIcon && d->searchRect().contains(e->pos())))
     {
-    this->setCursor(Qt::ArrowCursor);
+    this->setCursor(Qt::PointingHandCursor);
     }
   else
     {
