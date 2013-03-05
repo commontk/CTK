@@ -82,12 +82,6 @@
              </property>
              <item>
               <widget class="ctkFittedTextBrowser" name="SubTitleTextBrowser">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -106,7 +100,7 @@
              <item>
               <widget class="ctkFittedTextBrowser" name="PreTextBrowser">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <sizepolicy hsizetype="Ignored" vsizetype="Maximum">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -146,12 +140,6 @@
              </item>
              <item>
               <widget class="ctkFittedTextBrowser" name="PostTextBrowser">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="frameShape">
                 <enum>QFrame::Box</enum>
                </property>
@@ -159,12 +147,6 @@
              </item>
              <item>
               <widget class="ctkFittedTextBrowser" name="ErrorTextBrowser">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="frameShape">
                 <enum>QFrame::Box</enum>
                </property>
