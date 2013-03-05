@@ -31,6 +31,8 @@ ctkFittedTextBrowser::ctkFittedTextBrowser(QWidget* _parent)
   : QTextBrowser(_parent)
 {
   this->connect(this, SIGNAL(textChanged()), SLOT(heightForWidthMayHaveChanged()));
+  QSizePolicy newSizePolicy = QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+  this->setSizePolicy(newSizePolicy);
 }
 
 //-----------------------------------------------------------------------------
