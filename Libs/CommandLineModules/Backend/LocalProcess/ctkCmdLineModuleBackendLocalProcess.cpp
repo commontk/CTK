@@ -87,10 +87,10 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
           }
           else
           {
-            QString arg = valuesIter.value().toString();
+            QString arg = valuesIter.value().toString().trimmed();
             if (arg.isEmpty())
             {
-              arg = parameter.defaultValue();
+              arg = parameter.defaultValue().trimmed();
             }
             if (!arg.isEmpty())
             {
