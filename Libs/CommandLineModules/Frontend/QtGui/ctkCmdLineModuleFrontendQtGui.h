@@ -73,6 +73,7 @@ struct ctkCmdLineModuleFrontendQtGuiPrivate;
  * <tr><td>integer</td><td>integerWidget</td><td>QSpinBox</td><td>integerValueProperty</td><td>value</td></tr>
  * <tr><td>float</td><td>floatingWidget</td><td>QDoubleSpinBox</td><td>floatValueProperty</td><td>value</td></tr>
  * <tr><td>double</td><td>floatingWidget</td><td>QDoubleSpinBox</td><td>floatValueProperty</td><td>value</td></tr>
+ * <tr><td>string</td><td>vectorWidget</td><td>QLineEdit</td><td>vectorValueProperty</td><td>text</td></tr>
  * <tr><td>integer-vector</td><td>vectorWidget</td><td>QLineEdit</td><td>vectorValueProperty</td><td>text</td></tr>
  * <tr><td>float-vector</td><td>vectorWidget</td><td>QLineEdit</td><td>vectorValueProperty</td><td>value</td></tr>
  * <tr><td>double-vector</td><td>vectorWidget</td><td>QLineEdit</td><td>vectorValueProperty</td><td>value</td></tr>
