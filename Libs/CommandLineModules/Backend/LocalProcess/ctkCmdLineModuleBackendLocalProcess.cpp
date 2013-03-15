@@ -31,7 +31,6 @@
 #include "ctkCmdLineModuleRunException.h"
 
 #include "ctkUtils.h"
-#include <iostream>
 #include <QProcess>
 #include <QUrl>
 
