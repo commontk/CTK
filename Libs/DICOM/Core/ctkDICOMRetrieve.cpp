@@ -503,8 +503,9 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
 // ctkDICOMRetrieve methods
 
 //------------------------------------------------------------------------------
-ctkDICOMRetrieve::ctkDICOMRetrieve()
-   : d_ptr(new ctkDICOMRetrievePrivate(*this))
+ctkDICOMRetrieve::ctkDICOMRetrieve(QObject* parent)
+  : QObject(parent),
+    d_ptr(new ctkDICOMRetrievePrivate(*this))
 {
   Q_D(ctkDICOMRetrieve);
   d->SCU.retrieve = this; // give the dcmtk level access to this for emitting signals
@@ -603,6 +604,13 @@ QString ctkDICOMRetrieve::moveDestinationAETitle()const
 {
   Q_D(const ctkDICOMRetrieve);
   return d->MoveDestinationAETitle;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::setDatabase(ctkDICOMDatabase& dicomDatabase)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->Database = QSharedPointer<ctkDICOMDatabase>(&dicomDatabase);
 }
 
 //------------------------------------------------------------------------------
