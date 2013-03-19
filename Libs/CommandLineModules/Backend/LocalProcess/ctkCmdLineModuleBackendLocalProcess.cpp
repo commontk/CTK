@@ -31,6 +31,7 @@
 #include "ctkCmdLineModuleRunException.h"
 
 #include "ctkUtils.h"
+#include <iostream>
 #include <QProcess>
 #include <QUrl>
 
@@ -95,12 +96,6 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
             {
 
               QString trimmedArg = arg.trimmed();
-              QString trimmedDefault = parameter.defaultValue().trimmed();
-
-              if (trimmedArg.length() == 0)
-              {
-                trimmedArg = trimmedDefault;
-              }
 
               if (parameter.tag() == "string")
               {
@@ -115,7 +110,7 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
               }
               else
               {
-                if (trimmedArg.length() != 0) // If not string, no arg, and no default, we don't output. We need this policy for integers, doubles, etc.
+                if (trimmedArg.length() != 0) // If not string, no arg, we don't output. We need this policy for integers, doubles, etc.
                 {
                   cmdLineArgs << argFlag << arg;
                 }
