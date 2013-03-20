@@ -94,14 +94,11 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
           {
             foreach(QString arg, args)
             {
-
-              QString trimmedArg = arg.trimmed();
-
               if (parameter.tag() == "string")
               {
-                if (trimmedArg.length() != 0)
+                if (arg.length() != 0)
                 {
-                  cmdLineArgs << argFlag << trimmedArg;
+                  cmdLineArgs << argFlag << arg;
                 }
                 else
                 {
@@ -110,9 +107,10 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
               }
               else
               {
-                if (trimmedArg.length() != 0) // If not string, no arg, we don't output. We need this policy for integers, doubles, etc.
+                QString trimmedArg = arg.trimmed();
+                if (trimmedArg.length() != 0) // If not string, and no arg, we don't output. We need this policy for integers, doubles, etc.
                 {
-                  cmdLineArgs << argFlag << arg;
+                  cmdLineArgs << argFlag << trimmedArg;
                 }
               }
             } // end foreach
