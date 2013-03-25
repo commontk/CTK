@@ -198,6 +198,8 @@ void ctkVTKTextPropertyWidget::setColor(const QColor& color)
     return;
     }
   d->TextProperty->SetColor(color.redF(), color.greenF(), color.blueF());
+
+  emit modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -216,6 +218,8 @@ void ctkVTKTextPropertyWidget::setOpacity(double opacity)
     return;
     }
   d->TextProperty->SetOpacity(opacity);
+
+  emit modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -234,6 +238,8 @@ void ctkVTKTextPropertyWidget::setFont(const QString& font)
     return;
     }
   d->TextProperty->SetFontFamilyAsString(font.toStdString().data());
+  
+  emit modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -252,6 +258,8 @@ void ctkVTKTextPropertyWidget::setBold(bool enable)
     return;
     }
   d->TextProperty->SetBold(enable);
+  
+  emit modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -270,6 +278,8 @@ void ctkVTKTextPropertyWidget::setItalic(bool enable)
     return;
     }
   d->TextProperty->SetItalic(enable);
+  
+  emit modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -288,4 +298,6 @@ void ctkVTKTextPropertyWidget::setShadow(bool enable)
     return;
     }
   d->TextProperty->SetShadow(enable);
+  
+  emit modified();
 }

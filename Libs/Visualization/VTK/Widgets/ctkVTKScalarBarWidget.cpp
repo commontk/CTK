@@ -63,8 +63,11 @@ void ctkVTKScalarBarWidgetPrivate::init()
                    q, SLOT(setNumberOfLabels(int)));
   QObject::connect(this->TitleTextPropertyWidget, SIGNAL(textChanged(QString)),
                    q, SLOT(setTitle(QString)));
+  
   QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(textChanged(QString)),
                    q, SLOT(setLabelsFormat(QString)));
+  QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(modified()),
+                   q, SIGNAL(modified()));
 }
 
 //-----------------------------------------------------------------------------

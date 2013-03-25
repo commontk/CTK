@@ -82,6 +82,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void textChanged(const QString& text);
+  void modified();
 
 protected Q_SLOTS:
   void updateFromTextProperty();
