@@ -96,14 +96,7 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
             {
               if (parameter.tag() == "string")
               {
-                if (arg.length() != 0)
-                {
-                  cmdLineArgs << argFlag << arg;
-                }
-                else
-                {
-                  cmdLineArgs << argFlag << "\"\""; // Per discussion, Issue #307: For empty string, more explicit to output empty string.
-                }
+                cmdLineArgs << argFlag << arg;
               }
               else
               {
