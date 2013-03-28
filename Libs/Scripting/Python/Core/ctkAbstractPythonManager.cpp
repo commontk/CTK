@@ -232,14 +232,12 @@ void ctkAbstractPythonManager::registerCPPClassForPythonQt(const char* name)
 //-----------------------------------------------------------------------------
 bool ctkAbstractPythonManager::systemExitExceptionHandlerEnabled()const
 {
-  Q_D(const ctkAbstractPythonManager);
   return PythonQt::self()->systemExitExceptionHandlerEnabled();
 }
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::setSystemExitExceptionHandlerEnabled(bool value)
 {
-  Q_D(ctkAbstractPythonManager);
   PythonQt::self()->setSystemExitExceptionHandlerEnabled(value);
 }
 
