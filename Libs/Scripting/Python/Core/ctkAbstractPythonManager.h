@@ -113,11 +113,11 @@ public:
   bool isPythonInitialized()const;
 
   /// Returns True if a python error occured.
-  /// \sa PythonQt::errorOccured()
+  /// \sa PythonQt::hadError()
   bool pythonErrorOccured()const;
 
   /// Reset error flag
-  /// \sa PythonQt::resetErrorFlag()
+  /// \sa PythonQt::clearError()
   void resetErrorFlag();
 
 Q_SIGNALS:

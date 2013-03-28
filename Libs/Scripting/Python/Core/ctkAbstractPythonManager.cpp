@@ -186,13 +186,13 @@ bool ctkAbstractPythonManager::isPythonInitialized()const
 //-----------------------------------------------------------------------------
 bool ctkAbstractPythonManager::pythonErrorOccured()const
 {
-  return PythonQt::self()->errorOccured();
+  return PythonQt::self()->hadError();
 }
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::resetErrorFlag()
 {
-  PythonQt::self()->resetErrorFlag();
+  PythonQt::self()->clearError();
 }
 
 //-----------------------------------------------------------------------------
@@ -232,14 +232,12 @@ void ctkAbstractPythonManager::registerCPPClassForPythonQt(const char* name)
 //-----------------------------------------------------------------------------
 bool ctkAbstractPythonManager::systemExitExceptionHandlerEnabled()const
 {
-  Q_D(const ctkAbstractPythonManager);
   return PythonQt::self()->systemExitExceptionHandlerEnabled();
 }
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::setSystemExitExceptionHandlerEnabled(bool value)
 {
-  Q_D(ctkAbstractPythonManager);
   PythonQt::self()->setSystemExitExceptionHandlerEnabled(value);
 }
 
