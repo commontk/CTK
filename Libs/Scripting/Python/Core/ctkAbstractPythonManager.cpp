@@ -186,13 +186,13 @@ bool ctkAbstractPythonManager::isPythonInitialized()const
 //-----------------------------------------------------------------------------
 bool ctkAbstractPythonManager::pythonErrorOccured()const
 {
-  return PythonQt::self()->errorOccured();
+  return PythonQt::self()->hadError();
 }
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::resetErrorFlag()
 {
-  PythonQt::self()->resetErrorFlag();
+  PythonQt::self()->clearError();
 }
 
 //-----------------------------------------------------------------------------
