@@ -499,6 +499,20 @@ void ctkDoubleRangeSlider::setTickInterval(double newTickInterval)
 }
 
 // --------------------------------------------------------------------------
+QSlider::TickPosition ctkDoubleRangeSlider::tickPosition()const
+{
+  Q_D(const ctkDoubleRangeSlider);
+  return d->Slider->tickPosition();
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleRangeSlider::setTickPosition(QSlider::TickPosition newTickPosition)
+{
+  Q_D(ctkDoubleRangeSlider);
+  d->Slider->setTickPosition(newTickPosition);
+}
+
+// --------------------------------------------------------------------------
 bool ctkDoubleRangeSlider::hasTracking()const
 {
   Q_D(const ctkDoubleRangeSlider);
@@ -635,6 +649,7 @@ void ctkDoubleRangeSlider::setSlider(ctkRangeSlider* slider)
   slider->setSingleStep(d->Slider->singleStep());
   slider->setTracking(d->Slider->hasTracking());
   slider->setTickInterval(d->Slider->tickInterval());
+  slider->setTickPosition(d->Slider->tickPosition());
   delete d->Slider;
   qobject_cast<QHBoxLayout*>(this->layout())->addWidget(slider);
   d->Slider = slider;

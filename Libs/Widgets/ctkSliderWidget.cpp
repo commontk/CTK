@@ -443,6 +443,20 @@ void ctkSliderWidget::setTickInterval(double ti)
   d->Slider->setTickInterval(ti);
 }
 
+// --------------------------------------------------------------------------
+QSlider::TickPosition ctkSliderWidget::tickPosition()const
+{
+  Q_D(const ctkSliderWidget);
+  return d->Slider->tickPosition();
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidget::setTickPosition(QSlider::TickPosition newTickPosition)
+{
+  Q_D(ctkSliderWidget);
+  d->Slider->setTickPosition(newTickPosition);
+}
+
 // -------------------------------------------------------------------------
 void ctkSliderWidget::reset()
 {

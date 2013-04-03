@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QWidget>
-#include <QAbstractSlider>
+#include <QSlider>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -50,6 +50,7 @@ class CTK_WIDGETS_EXPORT ctkDoubleRangeSlider : public QWidget
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
+  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
   Q_PROPERTY(bool symmetricMoves READ symmetricMoves WRITE setSymmetricMoves)
 public:
   // Superclass typedef
@@ -80,6 +81,13 @@ public:
   /// The default value is 0.
   void setTickInterval(double ti);
   double tickInterval()const;
+  
+  /// 
+  /// This property holds the tickmark position for this slider.
+  /// The valid values are described by the QSlider::TickPosition enum.
+  /// The default value is QSlider::NoTicks.
+  void setTickPosition(QSlider::TickPosition position);
+  QSlider::TickPosition tickPosition()const;
   
   /// 
   /// This property holds the sliders's minimum value.
