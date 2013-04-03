@@ -328,6 +328,20 @@ void ctkDoubleSlider::setTickInterval(double newTickInterval)
 }
 
 // --------------------------------------------------------------------------
+QSlider::TickPosition ctkDoubleSlider::tickPosition()const
+{
+  Q_D(const ctkDoubleSlider);
+  return d->Slider->tickPosition();
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleSlider::setTickPosition(QSlider::TickPosition newTickPosition)
+{
+  Q_D(ctkDoubleSlider);
+  d->Slider->setTickPosition(newTickPosition);
+}
+
+// --------------------------------------------------------------------------
 bool ctkDoubleSlider::hasTracking()const
 {
   Q_D(const ctkDoubleSlider);

@@ -50,6 +50,7 @@ class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
+  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
   Q_PROPERTY(QString handleToolTip READ handleToolTip WRITE setHandleToolTip)
@@ -119,6 +120,13 @@ public:
   void setTickInterval(double ti);
   double tickInterval()const;
 
+  /// 
+  /// This property holds the tickmark position for this slider.
+  /// The valid values are described by the QSlider::TickPosition enum.
+  /// The default value is QSlider::NoTicks.
+  void setTickPosition(QSlider::TickPosition position);
+  QSlider::TickPosition tickPosition()const;
+  
   /// 
   /// This property holds the current slider position.
   /// If tracking is enabled (the default), this is identical to value.
