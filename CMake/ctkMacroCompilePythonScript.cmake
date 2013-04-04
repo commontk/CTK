@@ -249,7 +249,11 @@ endif()
 
 execute_process(
   COMMAND \"@PYTHON_EXECUTABLE@\" \"@compile_all_script@\"
+  RESULT_VARIABLE result_var
   )
+if(NOT result_var STREQUAL 0)
+  message(FATAL_ERROR \"Failed to compile python scripts: ${target} \")
+endif()
 ")
 
     add_custom_command(
