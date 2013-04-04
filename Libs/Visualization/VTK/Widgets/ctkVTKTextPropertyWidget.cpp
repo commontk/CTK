@@ -199,7 +199,7 @@ void ctkVTKTextPropertyWidget::setColor(const QColor& color)
     }
   d->TextProperty->SetColor(color.redF(), color.greenF(), color.blueF());
 
-  emit modified();
+  emit colorChanged(color);
 }
 
 //-----------------------------------------------------------------------------
@@ -219,7 +219,7 @@ void ctkVTKTextPropertyWidget::setOpacity(double opacity)
     }
   d->TextProperty->SetOpacity(opacity);
 
-  emit modified();
+  emit opacityChanged(opacity);
 }
 
 //-----------------------------------------------------------------------------
@@ -239,7 +239,7 @@ void ctkVTKTextPropertyWidget::setFont(const QString& font)
     }
   d->TextProperty->SetFontFamilyAsString(font.toStdString().data());
   
-  emit modified();
+  emit fontFamilyChanged(font);
 }
 
 //-----------------------------------------------------------------------------
@@ -259,7 +259,7 @@ void ctkVTKTextPropertyWidget::setBold(bool enable)
     }
   d->TextProperty->SetBold(enable);
   
-  emit modified();
+  emit boldChanged(enable);
 }
 
 //-----------------------------------------------------------------------------
@@ -279,7 +279,7 @@ void ctkVTKTextPropertyWidget::setItalic(bool enable)
     }
   d->TextProperty->SetItalic(enable);
   
-  emit modified();
+  emit italicChanged(enable);
 }
 
 //-----------------------------------------------------------------------------
@@ -299,5 +299,5 @@ void ctkVTKTextPropertyWidget::setShadow(bool enable)
     }
   d->TextProperty->SetShadow(enable);
   
-  emit modified();
+  emit shadowChanged(enable);
 }

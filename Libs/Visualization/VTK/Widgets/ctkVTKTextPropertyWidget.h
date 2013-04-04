@@ -82,7 +82,12 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void textChanged(const QString& text);
-  void modified();
+  void colorChanged(const QColor& color);
+  void opacityChanged(double opacity);
+  void fontFamilyChanged(const QString &font);
+  void boldChanged(bool enable);
+  void italicChanged(bool enable);
+  void shadowChanged(bool enable);
 
 protected Q_SLOTS:
   void updateFromTextProperty();
