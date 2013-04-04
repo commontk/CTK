@@ -51,6 +51,7 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
+  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
   Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
@@ -141,6 +142,13 @@ public:
   double tickInterval()const;
   void setTickInterval(double ti);
 
+  /// 
+  /// This property holds the tickmark position for the slider.
+  /// The valid values are described by the QSlider::TickPosition enum.
+  /// The default value is QSlider::NoTicks.
+  void setTickPosition(QSlider::TickPosition position);
+  QSlider::TickPosition tickPosition()const;
+  
   /// 
   /// This property holds the alignment of the spin box.
   /// Possible Values are Qt::AlignLeft, Qt::AlignRight, and Qt::AlignHCenter.
