@@ -59,22 +59,22 @@ public:
   void setDimension(int dim);
   int dimension() const;
 
-  /// Set/Get the number of decimals of each coordinate QDoubleSpinBoxes
+  /// Set/Get the number of decimals of each coordinate spin box
   /// The default number of decimals is 3.
   void setDecimals(int decimals);
   int decimals() const;
 
-  /// Set/Get the single step of each coordinate QDoubleSpinBoxes
+  /// Set/Get the single step of each coordinate spin box
   /// The default single step is 1.
   void setSingleStep(double step);
   double singleStep() const;
 
-  /// Set/Get the minimum value of each coordinate QDoubleSpinBoxes
+  /// Set/Get the minimum value of each coordinate spin box
   /// The default minimum is -100000.
   void setMinimum(double minimum);
   double minimum() const;
 
-  /// Set/Get the maximum value of each coordinate QDoubleSpinBoxes
+  /// Set/Get the maximum value of each coordinate spin box
   /// The default maximum is 100000.
   void setMaximum(double minimum);
   double maximum() const;

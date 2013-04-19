@@ -90,6 +90,8 @@ set(PLUGIN_SRCS
   ctkSettingsDialogPlugin.h
   ctkSliderWidgetPlugin.cpp
   ctkSliderWidgetPlugin.h
+  ctkSpinBoxPlugin.cpp
+  ctkSpinBoxPlugin.h
   ctkWorkflowButtonBoxWidgetPlugin.cpp
   ctkWorkflowButtonBoxWidgetPlugin.h
   ctkWorkflowWidgetStepPlugin.cpp
@@ -139,6 +141,7 @@ set(PLUGIN_MOC_SRCS
   ctkSettingsPanelPlugin.h
   ctkSettingsDialogPlugin.h
   ctkSliderWidgetPlugin.h
+  ctkSpinBoxPlugin.h
   ctkWorkflowButtonBoxWidgetPlugin.h
   ctkWorkflowWidgetStepPlugin.h
   )

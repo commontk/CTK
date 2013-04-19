@@ -71,6 +71,7 @@ set(TEST_SOURCES
   ctkSignalMapperTest1.cpp
   ctkSliderWidgetTest1.cpp
   ctkSliderWidgetTest2.cpp
+  ctkSpinBoxTest1.cpp
   ctkThumbnailListWidgetTest1.cpp
   ctkThumbnailLabelTest1.cpp
   ctkToolTipTrapperTest1.cpp
@@ -274,6 +275,7 @@ SIMPLE_TEST( ctkSettingsTest1 )
 SIMPLE_TEST( ctkSignalMapperTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest2 )
+SIMPLE_TEST( ctkSpinBoxTest1 )
 SIMPLE_TEST( ctkThumbnailListWidgetTest1 )
 SIMPLE_TEST( ctkThumbnailLabelTest1 )
 SIMPLE_TEST( ctkToolTipTrapperTest1 )
