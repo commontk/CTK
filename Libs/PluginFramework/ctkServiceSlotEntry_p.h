@@ -80,6 +80,8 @@ public:
 
 private:
 
+  friend uint qHash(const ctkServiceSlotEntry& serviceSlot);
+
   QExplicitlySharedDataPointer<ctkServiceSlotEntryData> d;
 
 };
