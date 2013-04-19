@@ -18,20 +18,20 @@
 
 =========================================================================*/
 
-#ifndef __ctkVTKSurfaceMaterialPropertyWidgetPlugin_h
-#define __ctkVTKSurfaceMaterialPropertyWidgetPlugin_h
+#ifndef __ctkVTKPropertyWidgetPlugin_h
+#define __ctkVTKPropertyWidgetPlugin_h
 
 // CTK includes
 #include "ctkVTKWidgetsAbstractPlugin.h"
 
-class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKSurfaceMaterialPropertyWidgetPlugin
+class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKPropertyWidgetPlugin
   : public QObject
   , public ctkVTKWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkVTKSurfaceMaterialPropertyWidgetPlugin(QObject *_parent = 0);
+  ctkVTKPropertyWidgetPlugin(QObject *_parent = 0);
 
   QWidget *createWidget(QWidget *_parent);
   QString domXml() const;

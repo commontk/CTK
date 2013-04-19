@@ -19,47 +19,47 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkVTKSurfaceMaterialPropertyWidget.h"
-#include "ctkVTKSurfaceMaterialPropertyWidgetPlugin.h"
+#include "ctkVTKPropertyWidget.h"
+#include "ctkVTKPropertyWidgetPlugin.h"
 
 //-----------------------------------------------------------------------------
-ctkVTKSurfaceMaterialPropertyWidgetPlugin
-::ctkVTKSurfaceMaterialPropertyWidgetPlugin(QObject* pluginParent)
+ctkVTKPropertyWidgetPlugin
+::ctkVTKPropertyWidgetPlugin(QObject* pluginParent)
  : QObject(pluginParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkVTKSurfaceMaterialPropertyWidgetPlugin
+QWidget *ctkVTKPropertyWidgetPlugin
 ::createWidget(QWidget *parentWidget)
 {
-  ctkVTKSurfaceMaterialPropertyWidget* newWidget =
-    new ctkVTKSurfaceMaterialPropertyWidget(parentWidget);
+  ctkVTKPropertyWidget* newWidget =
+    new ctkVTKPropertyWidget(parentWidget);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKSurfaceMaterialPropertyWidgetPlugin::domXml() const
+QString ctkVTKPropertyWidgetPlugin::domXml() const
 {
-  return "<widget class=\"ctkVTKSurfaceMaterialPropertyWidget\" \
-          name=\"SurfaceMaterialPropertyWidget\">\n"
+  return "<widget class=\"ctkVTKPropertyWidget\" \
+          name=\"PropertyWidget\">\n"
           "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKSurfaceMaterialPropertyWidgetPlugin::includeFile() const
+QString ctkVTKPropertyWidgetPlugin::includeFile() const
 {
-  return "ctkVTKSurfaceMaterialPropertyWidget.h";
+  return "ctkVTKPropertyWidget.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkVTKSurfaceMaterialPropertyWidgetPlugin::isContainer() const
+bool ctkVTKPropertyWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkVTKSurfaceMaterialPropertyWidgetPlugin::name() const
+QString ctkVTKPropertyWidgetPlugin::name() const
 {
-  return "ctkVTKSurfaceMaterialPropertyWidget";
+  return "ctkVTKPropertyWidget";
 }
