@@ -147,6 +147,8 @@ set(KIT_SRCS
   ctkSizeGrip.h
   ctkSliderWidget.cpp
   ctkSliderWidget.h
+  ctkSpinBox.cpp
+  ctkSpinBox.h
   ctkTestApplication.cpp
   ctkTestApplication.h
   ctkThumbnailLabel.cpp
@@ -255,6 +257,7 @@ set(KIT_MOC_SRCS
   ctkSimpleLayoutManager.h
   ctkSizeGrip.h
   ctkSliderWidget.h
+  ctkSpinBox.h
   ctkTestApplication.h
   ctkThumbnailLabel.h
   ctkThumbnailListWidget.h
