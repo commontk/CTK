@@ -17,6 +17,8 @@ set(PLUGIN_SRCS
   ctkVTKDataSetArrayComboBoxPlugin.h
   ctkVTKMagnifyViewPlugin.cpp
   ctkVTKMagnifyViewPlugin.h
+  ctkVTKPropertyWidgetPlugin.cpp
+  ctkVTKPropertyWidgetPlugin.h
   ctkVTKRenderViewPlugin.cpp
   ctkVTKRenderViewPlugin.h
   ctkVTKScalarBarWidgetPlugin.cpp
@@ -37,6 +39,7 @@ set(PLUGIN_MOC_SRCS
 
   ctkVTKDataSetArrayComboBoxPlugin.h
   ctkVTKMagnifyViewPlugin.h
+  ctkVTKPropertyWidgetPlugin.h
   ctkVTKRenderViewPlugin.h
   ctkVTKScalarBarWidgetPlugin.h
   ctkVTKSliceViewPlugin.h
@@ -44,7 +47,7 @@ set(PLUGIN_MOC_SRCS
   ctkVTKTextPropertyWidgetPlugin.h
   ctkVTKThresholdWidgetPlugin.h
   )
-  
+
 if(CTK_USE_CHARTS)
   set(PLUGIN_SRCS
       ctkVTKChartViewPlugin.cpp

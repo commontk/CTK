@@ -16,6 +16,7 @@ set(TEST_SOURCES
   ctkTransferFunctionViewTest3.cpp
   ctkTransferFunctionViewTest4.cpp
   ctkTransferFunctionViewTest5.cpp
+  ctkVTKPropertyWidgetTest.cpp
   ctkVTKRenderViewTest1.cpp
   ctkVTKScalarsToColorsUtilsTest1.cpp
   ctkVTKSliceViewTest1.cpp
@@ -72,6 +73,9 @@ if(CTK_USE_QTTESTING)
     )
 endif()
 
+include_directories(${CMAKE_SOURCE_DIR}/Libs/Testing
+                    ${CMAKE_CURRENT_BINARY_DIR})
+
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ${TEST_SOURCES}
   #EXTRA_INCLUDE TestingMacros.h
@@ -93,6 +97,10 @@ set(TEST_MOC_CPP)
 if(TEST_MOC_SOURCES)
   QT4_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
 endif()
+QT4_GENERATE_MOCS(
+  ctkVTKPropertyWidgetTest.cpp
+  )
+
 set(TEST_UI_CPP)
 if(TEST_UI_FORMS)
   QT4_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
@@ -111,6 +119,7 @@ SIMPLE_TEST( ctkVTKDataSetArrayComboBoxTest1 )
 SIMPLE_TEST( ctkVTKDataSetModelTest1 )
 SIMPLE_TEST( ctkVTKMagnifyViewTest1 )
 SIMPLE_TEST( ctkVTKMatrixWidgetTest1 )
+SIMPLE_TEST( ctkVTKPropertyWidgetTest )
 SIMPLE_TEST( ctkVTKScalarBarWidgetTest1 )
 SIMPLE_TEST( ctkVTKScalarsToColorsUtilsTest1 )
 SIMPLE_TEST( ctkVTKThresholdWidgetTest1 )

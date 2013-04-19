@@ -34,6 +34,8 @@ set(KIT_SRCS
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
+  ctkVTKPropertyWidget.cpp
+  ctkVTKPropertyWidget.h
   ctkVTKRenderView.cpp
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
@@ -66,6 +68,7 @@ set(KIT_MOC_SRCS
   ctkVTKMagnifyView.h
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.h
+  ctkVTKPropertyWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.h
@@ -81,6 +84,7 @@ set(KIT_MOC_SRCS
 set(KIT_UI_FORMS
   Resources/UI/ctkVTKScalarBarWidget.ui
   Resources/UI/ctkVTKTextPropertyWidget.ui
+  Resources/UI/ctkVTKPropertyWidget.ui
   Resources/UI/ctkVTKThresholdWidget.ui
 )
 
