@@ -143,12 +143,7 @@ bool ctkEvent::containsProperty(const QString& name) const
 //----------------------------------------------------------------------------
 QStringList ctkEvent::getPropertyNames() const
 {
-  QStringList result;
-  foreach (ctkCaseInsensitiveString key, d->properties.keys())
-  {
-    result << key;
-  }
-  return result;
+  return d->properties.keys();
 }
 
 //----------------------------------------------------------------------------
