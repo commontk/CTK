@@ -31,7 +31,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="SpinBox"/>
+    <widget class="ctkSpinBox" name="SpinBox"/>
    </item>
   </layout>
  </widget>
@@ -40,6 +40,11 @@
    <class>ctkDoubleSlider</class>
    <extends>QWidget</extends>
    <header>ctkDoubleSlider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

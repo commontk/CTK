@@ -401,11 +401,6 @@ void ctkSliderWidget::setPrefix(const QString& newPrefix)
 {
   Q_D(ctkSliderWidget);
   d->SpinBox->setPrefix(newPrefix);
-#if QT_VERSION < 0x040800
-  /// Setting the prefix doesn't recompute the sizehint, do it manually here:
-  /// See: http://bugreports.qt.nokia.com/browse/QTBUG-9530
-  d->SpinBox->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
-#endif
   d->updateSpinBoxWidth();
 }
 
@@ -421,11 +416,6 @@ void ctkSliderWidget::setSuffix(const QString& newSuffix)
 {
   Q_D(ctkSliderWidget);
   d->SpinBox->setSuffix(newSuffix);
-#if QT_VERSION < 0x040800
-  /// Setting the suffix doesn't recompute the sizehint, do it manually here:
-  /// See: http://bugreports.qt.nokia.com/browse/QTBUG-9530
-  d->SpinBox->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
-#endif
   d->updateSpinBoxWidth();
 }
 
@@ -566,7 +556,7 @@ ctkPopupWidget* ctkSliderWidget::popup()const
 }
 
 // --------------------------------------------------------------------------
-QDoubleSpinBox* ctkSliderWidget::spinBox()
+ctkSpinBox* ctkSliderWidget::spinBox()
 {
   Q_D(ctkSliderWidget);
   return d->SpinBox;

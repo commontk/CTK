@@ -23,7 +23,6 @@
 
 // Qt includes
 #include <QSlider>
-class QDoubleSpinBox;
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -33,6 +32,7 @@ class QDoubleSpinBox;
 class ctkDoubleSlider;
 class ctkPopupWidget;
 class ctkSliderWidgetPrivate;
+class ctkSpinBox;
 
 /// \ingroup Widgets
 ///
@@ -198,7 +198,7 @@ public:
   /// Returns the spinbox synchronized with the slider. Be careful
   /// with what you do with the spinbox as the slider might change
   /// properties automatically.
-  QDoubleSpinBox* spinBox();
+  ctkSpinBox* spinBox();
 
   ///
   /// Returns the slider synchronized with the spinbox. Be careful
