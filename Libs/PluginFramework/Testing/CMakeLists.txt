@@ -24,6 +24,8 @@ add_subdirectory(org.commontk.pluginfwtest)
 add_subdirectory(FrameworkTestPlugins)
 
 add_subdirectory(org.commontk.pluginfwtest.perf)
+add_subdirectory(org.commontk.eventadmintest.perf)
+
 add_subdirectory(org.commontk.configadmintest)
 add_subdirectory(org.commontk.eventadmintest)
 
