@@ -22,10 +22,6 @@
 
 #include "ctkEACyclicBarrier_p.h"
 
-// for ctk::msecsTo() - remove after switching to Qt 4.7
-#include <ctkUtils.h>
-
-#include <QDateTime>
 #include <QRunnable>
 #include <QDebug>
 
@@ -34,6 +30,8 @@
 
 #include "ctkEATimeoutException_p.h"
 #include "ctkEABrokenBarrierException_p.h"
+
+#include "ctkHighPrecisionTimer.h"
 
 ctkEACyclicBarrier::ctkEACyclicBarrier(int parties, ctkEARunnable* command)
   : parties_(parties), broken_(false), barrierCommand_(command),
@@ -90,7 +88,7 @@ int ctkEACyclicBarrier::doBarrier(bool timed, long msecs)
 
   ctkEAInterruptibleThread* currThread = ctkEAInterruptibleThread::currentThread();
   Q_ASSERT(currThread != 0); // ctkEACyclicBarrier can only be used with ctkEAInterruptibleThread
-  
+
   if (broken_)
   {
     throw ctkEABrokenBarrierException(index);
@@ -131,7 +129,8 @@ int ctkEACyclicBarrier::doBarrier(bool timed, long msecs)
   else
   { // wait until next reset
     int r = resets_;
-    QDateTime startTime = QDateTime::currentDateTime();
+    ctkHighPrecisionTimer t;
+    t.start();
     qint64 waitTime = static_cast<qint64>(msecs);
     forever
     {
@@ -165,9 +164,7 @@ int ctkEACyclicBarrier::doBarrier(bool timed, long msecs)
       }
       else if (timed)
       {
-        //TODO use Qt 4.7 API
-        //waitTime = msecs - QDateTime::toMSecs(startTime);
-        waitTime = static_cast<qint64>(msecs) - ctk::msecsTo(startTime, QDateTime::currentDateTime());
+        waitTime = static_cast<qint64>(msecs) - t.elapsedMilli();
         if  (waitTime <= 0)
         {
           broken_ = true;
