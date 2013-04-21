@@ -113,12 +113,15 @@ QSet<ctkServiceSlotEntry> ctkPluginFrameworkListeners::getMatchingServiceSlots(
   QMutexLocker lock(&mutex); Q_UNUSED(lock);
 
   QSet<ctkServiceSlotEntry> set;
+  set.reserve(serviceSet.size());
   // Check complicated or empty listener filters
   int n = 0;
-  foreach (ctkServiceSlotEntry sse, complicatedListeners)
+  ctkLDAPExpr expr;
+  foreach (const ctkServiceSlotEntry& sse, complicatedListeners)
   {
     ++n;
-    if (sse.getLDAPExpr().isNull() || sse.getLDAPExpr().evaluate(sr.d_func()->getProperties(), false))
+    expr = sse.getLDAPExpr();
+    if (expr.isNull() || expr.evaluate(sr.d_func()->getProperties(), false))
     {
       set.insert(sse);
     }

@@ -19,36 +19,40 @@
 
 =============================================================================*/
 
+#include "ctkPluginFrameworkTestPerfActivator_p.h"
 
-#include "ctkDictionary.h"
+#include "ctkPluginFrameworkPerfRegistryTestSuite_p.h"
 
-#include <ctkException.h>
+#include <QtPlugin>
+
 
 //----------------------------------------------------------------------------
-ctkDictionary::ctkDictionary()
+ctkPluginFrameworkTestPerfActivator::ctkPluginFrameworkTestPerfActivator()
+  : perfTestSuite(0)
 {
 
 }
 
 //----------------------------------------------------------------------------
-ctkDictionary::ctkDictionary(const ctkDictionary& other)
-  : Super(other)
+ctkPluginFrameworkTestPerfActivator::~ctkPluginFrameworkTestPerfActivator()
 {
-
+  delete perfTestSuite;
 }
 
 //----------------------------------------------------------------------------
-ctkDictionary::ctkDictionary(const ctkProperties& properties)
+void ctkPluginFrameworkTestPerfActivator::start(ctkPluginContext* context)
 {
-  ctkProperties::ConstIterator end = properties.end();
-  for (ctkProperties::ConstIterator it = properties.begin(); it != end; ++it)
-  {
-    if (this->contains(it.key()))
-    {
-      QString msg("ctkProperties object contains case variants of the key: ");
-      msg += it.key();
-      throw ctkInvalidArgumentException(msg);
-    }
-    this->insert(it.key(), it.value());
-  }
+  perfTestSuite = new ctkPluginFrameworkPerfRegistryTestSuite(context);
+  context->registerService<ctkTestSuiteInterface>(perfTestSuite);
 }
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkTestPerfActivator::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context);
+
+  delete perfTestSuite;
+  perfTestSuite = 0;
+}
+
+Q_EXPORT_PLUGIN2(org_commontk_pluginfwtest_perf, ctkPluginFrameworkTestPerfActivator)

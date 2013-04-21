@@ -20,20 +20,29 @@
 =============================================================================*/
 
 
-#ifndef CTKDICTIONARY_H
-#define CTKDICTIONARY_H
+#ifndef CTKEVENTADMINTESTPERFACTIVATOR_H
+#define CTKEVENTADMINTESTPERFACTIVATOR_H
 
-#include <ctkPluginFrameworkExport.h>
+#include <ctkPluginActivator.h>
 
-#include "ctkPluginFramework_global.h"
 
-/**
- * \ingroup PluginFramework
- *
- * A typedef for a QString to QVariant hash map. Typically used for service properties.
- *
- * \note This is equivalent to using ctkProperties.
- */
-typedef QHash<QString,QVariant> ctkDictionary;
+class ctkEventAdminTestPerfActivator : public QObject,
+    public ctkPluginActivator
+{
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator)
 
-#endif // CTKDICTIONARY_H
+public:
+
+  ctkEventAdminTestPerfActivator();
+  ~ctkEventAdminTestPerfActivator();
+
+  void start(ctkPluginContext* context);
+  void stop(ctkPluginContext* context);
+
+private:
+
+  QObject* perfTestSuite;
+};
+
+#endif // CTKEVENTADMINTESTPERFACTIVATOR_H

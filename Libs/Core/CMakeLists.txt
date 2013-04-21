@@ -52,6 +52,7 @@ set(KIT_SRCS
   ctkErrorLogStreamMessageHandler.h
   ctkException.cpp
   ctkException.h
+  ctkHighPrecisionTimer.h
   ctkLogger.cpp
   ctkLogger.h
   ctkHistogram.cpp

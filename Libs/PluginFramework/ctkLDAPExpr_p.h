@@ -23,7 +23,7 @@ limitations under the License.
 #define CTKLDAPEXPR_P_H
 
 #include "ctkPluginConstants.h"
-#include "ctkDictionary.h"
+#include "ctkServiceProperties_p.h"
 
 #include <QString>
 #include <QHash>
@@ -120,13 +120,13 @@ public:
    */
   bool isNull() const;
 
-  //! 
+  //!
   static bool query(const QString &filter, const ctkDictionary &pd);
 
   //! Evaluate this LDAP filter.
-  bool evaluate(const ctkDictionary &p, bool matchCase) const;
+  bool evaluate(const ctkServiceProperties &p, bool matchCase) const;
 
-  //! 
+  //!
   const QString toString() const;
 
 
@@ -149,13 +149,13 @@ private:
   //!
   bool compare(const QVariant &obj, int op, const QString &s) const;
 
-  //! 
+  //!
   static bool compareString(const QString &s1, int op, const QString &s2);
 
-  //! 
+  //!
   static QString fixupString(const QString &s);
 
-  //! 
+  //!
   static bool patSubstr(const QString &s, const QString &pat);
 
   //!

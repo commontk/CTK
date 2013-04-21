@@ -144,7 +144,7 @@ public:
    * @see ctkPluginContext#ungetService
    * @see ctkServiceFactory#ungetService
    */
-  virtual void unregister();
+  void unregister();
 
   bool operator<(const ctkServiceRegistration& o) const;
 

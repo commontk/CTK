@@ -27,7 +27,7 @@
 
 #include <service/event/ctkEvent.h>
 
-struct ctkEventAdminService;
+class ctkEventAdminService;
 
 class ctkEASignalPublisher : public QObject
 {
