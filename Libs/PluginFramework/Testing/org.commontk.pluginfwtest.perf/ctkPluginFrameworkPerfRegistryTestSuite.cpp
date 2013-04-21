@@ -23,8 +23,10 @@
 #include "ctkPluginFrameworkPerfRegistryTestSuite_p.h"
 
 #include <ctkPluginContext.h>
-#include <ctkServiceEvent.h>
 #include <ctkHighPrecisionTimer.h>
+
+#undef REGISTERED
+#include <ctkServiceEvent.h>
 
 #include <QTest>
 #include <QDebug>
