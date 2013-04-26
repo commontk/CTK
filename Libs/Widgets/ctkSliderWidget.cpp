@@ -42,8 +42,12 @@ public:
   virtual ~ctkSliderWidgetPrivate();
 
   void updateSpinBoxWidth();
-  int synchronizedSpinBoxWidth()const;
-  void synchronizeSiblingSpinBox(int newWidth);
+  void updateSpinBoxDecimals();
+
+  int synchronizedSpinBoxWidth() const;
+
+  void synchronizeSiblingWidth(int width);
+  void synchronizeSiblingDecimals(int decimals);
   bool equal(double spinBoxValue, double sliderValue)const
   {
     return qAbs(sliderValue - spinBoxValue) < std::pow(10., -this->SpinBox->decimals());
@@ -52,7 +56,7 @@ public:
   bool   Tracking;
   bool   Changing;
   double ValueBeforeChange;
-  bool   AutoSpinBoxWidth;
+  ctkSliderWidget::SynchronizeSiblings SynchronizeMode;
   ctkPopupWidget* SliderPopup;
 };
 
@@ -60,13 +64,15 @@ public:
 ctkSliderWidgetPrivate::ctkSliderWidgetPrivate(ctkSliderWidget& object)
   :q_ptr(&object)
 {
+  qRegisterMetaType<ctkSliderWidget::SynchronizeSiblings>(
+    "ctkSliderWidget::SynchronizeSiblings");
   this->Tracking = true;
   this->Changing = false;
   this->ValueBeforeChange = 0.;
-  this->AutoSpinBoxWidth = true;
+  this->SynchronizeMode =
+    ctkSliderWidget::SynchronizeWidth | ctkSliderWidget::SynchronizeDecimals;
   this->SliderPopup = 0;
 }
-
 
 // --------------------------------------------------------------------------
 ctkSliderWidgetPrivate::~ctkSliderWidgetPrivate()
@@ -77,7 +83,7 @@ ctkSliderWidgetPrivate::~ctkSliderWidgetPrivate()
 void ctkSliderWidgetPrivate::updateSpinBoxWidth()
 {
   int spinBoxWidth = this->synchronizedSpinBoxWidth();
-  if (this->AutoSpinBoxWidth)
+  if (this->SynchronizeMode.testFlag(ctkSliderWidget::SynchronizeWidth))
     {
     this->SpinBox->setMinimumWidth(spinBoxWidth);
     }
@@ -85,7 +91,17 @@ void ctkSliderWidgetPrivate::updateSpinBoxWidth()
     {
     this->SpinBox->setMinimumWidth(0);
     }
-  this->synchronizeSiblingSpinBox(spinBoxWidth);
+
+  this->synchronizeSiblingWidth(spinBoxWidth);
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidgetPrivate::updateSpinBoxDecimals()
+{
+  if (this->SynchronizeMode.testFlag(ctkSliderWidget::SynchronizeDecimals))
+    {
+    this->synchronizeSiblingDecimals(this->SpinBox->decimals());
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -107,16 +123,34 @@ int ctkSliderWidgetPrivate::synchronizedSpinBoxWidth()const
 }
 
 // --------------------------------------------------------------------------
-void ctkSliderWidgetPrivate::synchronizeSiblingSpinBox(int width)
+void ctkSliderWidgetPrivate::synchronizeSiblingWidth(int width)
 {
   Q_Q(const ctkSliderWidget);
   QList<ctkSliderWidget*> siblings =
     q->parent()->findChildren<ctkSliderWidget*>();
   foreach(ctkSliderWidget* sibling, siblings)
     {
-    if (sibling != q && sibling->isAutoSpinBoxWidth())
+    if (sibling != q
+      && sibling->synchronizeSiblings().testFlag(ctkSliderWidget::SynchronizeWidth))
       {
-      sibling->d_func()->SpinBox->setMinimumWidth(width);
+      sibling->d_func()->SpinBox->setMinimumWidth(
+        this->SpinBox->minimumWidth());
+      }
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidgetPrivate::synchronizeSiblingDecimals(int decimals)
+{
+  Q_Q(const ctkSliderWidget);
+  QList<ctkSliderWidget*> siblings =
+    q->parent()->findChildren<ctkSliderWidget*>();
+  foreach(ctkSliderWidget* sibling, siblings)
+    {
+    if (sibling != q
+      && sibling->synchronizeSiblings().testFlag(ctkSliderWidget::SynchronizeDecimals))
+      {
+      sibling->d_func()->SpinBox->setDecimals(this->SpinBox->decimals());
       }
     }
 }
@@ -133,6 +167,7 @@ ctkSliderWidget::ctkSliderWidget(QWidget* _parent) : Superclass(_parent)
   d->Slider->setMinimum(d->SpinBox->minimum());
 
   this->connect(d->SpinBox, SIGNAL(valueChanged(double)), d->Slider, SLOT(setValue(double)));
+  this->connect(d->SpinBox, SIGNAL(decimalsChanged(int)), this, SLOT(setDecimals(int)));
 
   //this->connect(d->Slider, SIGNAL(valueChanged(double)), SIGNAL(valueChanged(double)));
   this->connect(d->Slider, SIGNAL(sliderPressed()), this, SLOT(startChanging()));
@@ -387,6 +422,7 @@ void ctkSliderWidget::setDecimals(int newDecimals)
   Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
   Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
   Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
+  d->updateSpinBoxDecimals();
 }
 
 // --------------------------------------------------------------------------
@@ -482,18 +518,21 @@ bool ctkSliderWidget::hasTracking()const
 }
 
 // -------------------------------------------------------------------------
-bool ctkSliderWidget::isAutoSpinBoxWidth()const
+ctkSliderWidget::SynchronizeSiblings
+ctkSliderWidget::synchronizeSiblings() const
 {
   Q_D(const ctkSliderWidget);
-  return d->AutoSpinBoxWidth;
+  return d->SynchronizeMode;
 }
 
 // -------------------------------------------------------------------------
-void ctkSliderWidget::setAutoSpinBoxWidth(bool autoWidth)
+void ctkSliderWidget
+::setSynchronizeSiblings(ctkSliderWidget::SynchronizeSiblings flag)
 {
   Q_D(ctkSliderWidget);
-  d->AutoSpinBoxWidth = autoWidth;
+  d->SynchronizeMode = flag;
   d->updateSpinBoxWidth();
+  d->updateSpinBoxDecimals();
 }
 
 // -------------------------------------------------------------------------

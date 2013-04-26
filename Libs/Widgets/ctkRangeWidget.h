@@ -118,10 +118,7 @@ public:
 
   ///
   /// This property holds the precision of the spin box, in decimals.
-  /// Sets how many decimals the spinbox will use for displaying and
-  /// interpreting doubles.
   int decimals()const;
-  void setDecimals(int decimals);
 
   ///
   /// This property holds the spin box's prefix.
@@ -191,6 +188,10 @@ public Q_SLOTS:
   ///
   /// Utility function that set the min and max values at once
   void setValues(double minValue, double maxValue);
+
+  /// Sets how many decimals the spinbox will use for displaying and
+  /// interpreting doubles.
+  void setDecimals(int decimals);
 
 Q_SIGNALS:
   /// Use with care:

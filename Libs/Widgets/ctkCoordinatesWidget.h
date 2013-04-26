@@ -59,9 +59,8 @@ public:
   void setDimension(int dim);
   int dimension() const;
 
-  /// Set/Get the number of decimals of each coordinate spin box
+  /// Get the number of decimals of each coordinate spin box
   /// The default number of decimals is 3.
-  void setDecimals(int decimals);
   int decimals() const;
 
   /// Set/Get the single step of each coordinate spin box
@@ -105,6 +104,9 @@ public:
 
 public Q_SLOTS:
   void normalize();
+
+  /// Set the number of decimals of each coordinate spin box.
+  void setDecimals(int decimals);
 
 Q_SIGNALS:
   ///
