@@ -52,13 +52,36 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
   Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
-  Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
+  Q_FLAGS(SynchronizeSiblings)
+  Q_PROPERTY(SynchronizeSiblings SynchronizeSibling READ synchronizeSiblings WRITE setSynchronizeSiblings)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(bool spinBoxVisible READ isSpinBoxVisible WRITE setSpinBoxVisible);
   Q_PROPERTY(bool popupSlider READ hasPopupSlider WRITE setPopupSlider);
 
 public:
+
+  /// Synchronize properties of the slider siblings:
+  /// NoSynchronize:
+  /// The slider widget siblings aren't updated and this widget does not update
+  /// from its siblings.
+  /// SynchronizeWidth:
+  /// The width of the SpinBox is set to the same width of the largest QSpinBox
+  /// of its ctkSliderWidget siblings.
+  /// SynchronizeDecimals:
+  /// Whenever one of the siblings changes its number of decimals, all its
+  /// siblings Synchronize to the new number of decimals.
+  ///
+  /// Default is SynchronizeWidth |SynchronizeDecimals.
+  /// \sa SynchronizeSiblings(), setSynchronizeSiblings()
+  enum SynchronizeSibling
+    {
+    NoSynchronize = 0x000,
+    SynchronizeWidth = 0x001,
+    SynchronizeDecimals = 0x002,
+    };
+  Q_DECLARE_FLAGS(SynchronizeSiblings, SynchronizeSibling)
+
   /// Superclass typedef
   typedef QWidget Superclass;
 
@@ -116,9 +139,7 @@ public:
 
   /// 
   /// This property holds the precision of the spin box, in decimals.
-  /// Sets how many decimals the spinbox will use for displaying and interpreting doubles.
   int decimals()const;
-  void setDecimals(int decimals);
 
   ///
   /// This property holds the spin box's prefix.
@@ -140,7 +161,7 @@ public:
   /// If it is 0, the slider will choose between lineStep() and pageStep().
   /// The default value is 0.
   double tickInterval()const;
-  void setTickInterval(double ti);
+  void setTickInterval(double tick);
 
   /// 
   /// This property holds the tickmark position for the slider.
@@ -166,12 +187,12 @@ public:
   bool hasTracking()const;
 
   /// 
-  /// Set/Get the auto spinbox width
-  /// When the autoSpinBoxWidth property is on, the width of the SpinBox is
-  /// set to the same width of the largest QSpinBox of its
-  // ctkSliderWidget siblings.
-  bool isAutoSpinBoxWidth()const;
-  void setAutoSpinBoxWidth(bool autoWidth);
+  /// Set/Get the synchronize siblings mode. This helps when having multiple
+  /// ctkSliderWidget stacked upon each other.
+  /// Default flag is SynchronizeWidth | SynchronizeDecimals.
+  /// \sa SynchronizeSiblingsModes
+  ctkSliderWidget::SynchronizeSiblings synchronizeSiblings() const;
+  void setSynchronizeSiblings(ctkSliderWidget::SynchronizeSiblings options);
 
   ///
   /// The Spinbox visibility can be controlled using setSpinBoxVisible() and
@@ -212,6 +233,10 @@ public Q_SLOTS:
   void setValue(double value);
   void setSpinBoxVisible(bool);
 
+  /// Sets how many decimals the spinbox uses for displaying and
+  /// interpreting doubles.
+  void setDecimals(int decimals);
+
 Q_SIGNALS:
   /// When tracking is on (default), valueChanged is emitted when the
   /// user drags the slider.
@@ -231,7 +256,7 @@ protected Q_SLOTS:
   void startChanging();
   void stopChanging();
   void changeValue(double value);
-  
+
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
   
@@ -243,5 +268,7 @@ private:
   Q_DISABLE_COPY(ctkSliderWidget);
 
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkSliderWidget::SynchronizeSiblings);
 
 #endif

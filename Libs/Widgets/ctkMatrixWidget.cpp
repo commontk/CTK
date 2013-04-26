@@ -56,6 +56,9 @@ namespace
       this->setMaximum(matrixWidget->maximum());
       this->setDecimals(matrixWidget->decimals());
       this->setSingleStep(matrixWidget->singleStep());
+
+      this->connect(this, SIGNAL(decimalsChanged(int)),
+        matrixWidget, SLOT(setDecimals(int)));
     }
   };
 }

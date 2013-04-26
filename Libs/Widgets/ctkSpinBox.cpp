@@ -29,7 +29,7 @@
 #include <QDoubleSpinBox>
 #include <QEvent>
 #include <QHBoxLayout>
-#include <QKeySequence>
+#include <QKeyEvent>
 #include <QShortcut>
 #include <QSizePolicy>
 #include <QVariant>
@@ -45,18 +45,27 @@ public:
 
   QDoubleSpinBox* SpinBox;
   ctkSpinBox::SetMode Mode;
+  int DefaultDecimals;
+  ctkSpinBox::DecimalsOptions DOption;
 
   void init();
   // Compare two double previously rounded according to the number of decimals
   bool compare(double x1, double x2) const;
+
+  // Set the number of decimals of the spinbox and emit the signal
+  // No check if they are the same.
+  void setDecimals(int dec);
 };
 
 //-----------------------------------------------------------------------------
 ctkSpinBoxPrivate::ctkSpinBoxPrivate(ctkSpinBox& object) : q_ptr(&object)
 {
   qRegisterMetaType<ctkSpinBox::SetMode>("ctkSpinBox::SetMode");
+  qRegisterMetaType<ctkSpinBox::DecimalsOptions>("ctkSpinBox::DecimalsOption");
   this->SpinBox = 0;
   this->Mode = ctkSpinBox::SetIfDifferent;
+  this->DefaultDecimals = 2;
+  this->DOption = ctkSpinBox::UseShortcuts;
 }
 
 //-----------------------------------------------------------------------------
@@ -77,6 +86,8 @@ void ctkSpinBoxPrivate::init()
   q->setLayout(l);
   q->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
     QSizePolicy::Fixed, QSizePolicy::ButtonBox));
+
+  this->SpinBox->installEventFilter(q);
 }
 
 //-----------------------------------------------------------------------------
@@ -84,6 +95,14 @@ bool ctkSpinBoxPrivate::compare(double x1, double x2) const
 {
   Q_Q(const ctkSpinBox);
   return q->round(x1) == q->round(x2);
+}
+
+//-----------------------------------------------------------------------------
+void ctkSpinBoxPrivate::setDecimals(int dec)
+{
+  Q_Q(ctkSpinBox);
+  this->SpinBox->setDecimals(dec);
+  emit q->decimalsChanged(dec);
 }
 
 //-----------------------------------------------------------------------------
@@ -115,7 +134,6 @@ double ctkSpinBox::value() const
 //-----------------------------------------------------------------------------
 double ctkSpinBox::displayedValue() const
 {
-  Q_D(const ctkSpinBox);
   return this->round(this->value());
 }
 
@@ -304,13 +322,15 @@ int ctkSpinBox::decimals() const
 //-----------------------------------------------------------------------------
 void ctkSpinBox::setDecimals(int dec)
 {
-  Q_D(const ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent && dec == d->SpinBox->decimals())
+  Q_D(ctkSpinBox);
+  dec = qMax(0, dec);
+  if (d->Mode == ctkSpinBox::SetIfDifferent && dec == this->decimals())
     {
     return;
     }
 
-  d->SpinBox->setDecimals(dec);
+  d->DefaultDecimals = dec;
+  d->setDecimals(d->DefaultDecimals);
 }
 
 //-----------------------------------------------------------------------------
@@ -330,7 +350,7 @@ QDoubleSpinBox* ctkSpinBox::spinBox() const
 //-----------------------------------------------------------------------------
 void ctkSpinBox::setValue(double value)
 {
-  Q_D(const ctkSpinBox);
+  Q_D(ctkSpinBox);
   if (d->Mode == ctkSpinBox::SetIfDifferent)
     {
     this->setValueIfDifferent(value);
@@ -386,3 +406,59 @@ void ctkSpinBox::setSetMode(ctkSpinBox::SetMode newMode)
   d->Mode = newMode;
 }
 
+//-----------------------------------------------------------------------------
+ctkSpinBox::DecimalsOptions ctkSpinBox::decimalsOption()
+{
+  Q_D(const ctkSpinBox);
+  return d->DOption;
+}
+
+//-----------------------------------------------------------------------------
+void ctkSpinBox::setDecimalsOption(ctkSpinBox::DecimalsOptions option)
+{
+  Q_D(ctkSpinBox);
+  if (d->Mode == ctkSpinBox::SetIfDifferent && option == d->DOption)
+    {
+    return;
+    }
+
+  d->DOption = option;
+}
+
+//-----------------------------------------------------------------------------
+bool ctkSpinBox::eventFilter(QObject* obj, QEvent* event)
+{
+  Q_D(ctkSpinBox);
+  if (d->DOption & ctkSpinBox::UseShortcuts &&
+    obj == d->SpinBox && event->type() == QEvent::KeyPress)
+    {
+    QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+    Q_ASSERT(keyEvent);
+    if (keyEvent->modifiers() & Qt::ControlModifier)
+      {
+      if (keyEvent->key() == Qt::Key_Plus
+        || keyEvent->key() == Qt::Key_Equal)
+        {
+        d->setDecimals(this->decimals() + 1);
+        return true;
+        }
+      else if (keyEvent->key() == Qt::Key_Minus)
+        {
+        d->setDecimals(this->decimals() - 1);
+        return true;
+        }
+      else if (keyEvent->key() == Qt::Key_0)
+        {
+        d->setDecimals(d->DefaultDecimals);
+        return true;
+        }
+      }
+
+    return QWidget::eventFilter(obj, event);
+    }
+  else
+    {
+    // pass the event on to the parent class
+    return QWidget::eventFilter(obj, event);
+    }
+}

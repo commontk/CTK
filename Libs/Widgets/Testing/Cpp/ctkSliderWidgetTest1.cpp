@@ -152,13 +152,14 @@ int ctkSliderWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  sliderSpinBox.setAutoSpinBoxWidth(false);
+  sliderSpinBox.setSynchronizeSiblings(ctkSliderWidget::NoSynchronize);
 
-  if (sliderSpinBox.isAutoSpinBoxWidth() != false || 
+  if (sliderSpinBox.synchronizeSiblings().testFlag(
+      ctkSliderWidget::SynchronizeWidth) != false ||
       !qFuzzyCompare(sliderSpinBox.value(), 80.6))
     {
     std::cerr << "ctkSliderWidget::setAutoSpinBoxWidth failed."
-              << sliderSpinBox.isAutoSpinBoxWidth() << " "
+              << sliderSpinBox.synchronizeSiblings() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
     }
