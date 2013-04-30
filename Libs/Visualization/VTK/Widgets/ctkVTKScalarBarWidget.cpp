@@ -63,8 +63,21 @@ void ctkVTKScalarBarWidgetPrivate::init()
                    q, SLOT(setNumberOfLabels(int)));
   QObject::connect(this->TitleTextPropertyWidget, SIGNAL(textChanged(QString)),
                    q, SLOT(setTitle(QString)));
+  
   QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(textChanged(QString)),
                    q, SLOT(setLabelsFormat(QString)));
+  QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(colorChanged(QColor)),
+                   q, SIGNAL(modified()));
+  QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(opacityChanged(double)),
+                   q, SIGNAL(modified()));
+  QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(fontFamilyChanged(QString)),
+                   q, SIGNAL(modified()));
+  QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(boldChanged(bool)),
+                   q, SIGNAL(modified()));
+  QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(italicChanged(bool)),
+                   q, SIGNAL(modified()));
+  QObject::connect(this->LabelsTextPropertyWidget, SIGNAL(shadowChanged(bool)),
+                   q, SIGNAL(modified()));
 }
 
 //-----------------------------------------------------------------------------
