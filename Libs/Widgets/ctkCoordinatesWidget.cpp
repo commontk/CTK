@@ -63,6 +63,9 @@ void ctkCoordinatesWidget::addSpinBox()
   spinBox->setMaximum(this->Maximum);
   connect( spinBox, SIGNAL(valueChanged(double)),
            this, SLOT(updateCoordinate(double)));
+  // Same number of decimals within the spinboxes.
+  connect( spinBox, SIGNAL(decimalsChanged(int)),
+           this, SLOT(setDecimals(int)));
   this->layout()->addWidget(spinBox);
 }
 

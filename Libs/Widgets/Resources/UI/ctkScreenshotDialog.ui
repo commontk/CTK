@@ -155,6 +155,9 @@
         <property name="toolTip">
          <string>Select an integer scale factor (between 0.5 and 5) for the image file, e.g. a value of &quot;2&quot; will save an image twice the size.</string>
         </property>
+        <property name="decimalsOption">
+         <enum>ctkSpinBox::Fixed</enum>
+        </property>
         <property name="decimals">
          <number>1</number>
         </property>

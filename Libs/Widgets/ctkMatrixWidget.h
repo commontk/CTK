@@ -122,7 +122,6 @@ public:
   /// Dictates how many decimals will be used for displaying and interpreting doubles by the spinbox
   /// used to adjust the value of a matrix element.
   int decimals()const;
-  void setDecimals(int decimals);
 
   ///
   /// Reimplemented from QAbstractScrollArea
@@ -134,6 +133,11 @@ public Q_SLOTS:
   ///
   /// Reset the matrix to identity
   void identity();
+
+  ///
+  /// Set how many decimals will be used for displaying and interpreting
+  /// doubles by the spinbox used to adjust the value of a matrix element.
+  void setDecimals(int decimals);
 
 Q_SIGNALS:
   void matrixChanged();

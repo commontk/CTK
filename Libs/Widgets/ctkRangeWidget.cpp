@@ -92,6 +92,10 @@ void ctkRangeWidgetPrivate::connectSlider()
                    q, SLOT(setMinimumToMaximumSpinBox(double)));
   QObject::connect(this->MaximumSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setMaximumToMinimumSpinBox(double)));
+  QObject::connect(this->MinimumSpinBox, SIGNAL(decimalsChanged(int)),
+                   q, SLOT(setDecimals(int)));
+  QObject::connect(this->MaximumSpinBox, SIGNAL(decimalsChanged(int)),
+                   q, SLOT(setDecimals(int)));
 
   QObject::connect(this->Slider, SIGNAL(sliderPressed()),
                    q, SLOT(startChanging()));
