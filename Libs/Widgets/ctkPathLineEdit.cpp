@@ -519,12 +519,15 @@ void ctkPathLineEdit::addCurrentPathToHistory()
   //if more than m_MaxHistory entrees, drop the oldest.
   QString key = d->settingKey();
   QStringList history = settings.value(key).toStringList();
-  if (history.contains(this->currentPath()))
+  QString pathToAdd = this->currentPath();
+  if (history.contains(pathToAdd))
     {
-    history.removeAll(this->currentPath());
+    history.removeAll(pathToAdd);
     }
-  history.push_front(this->currentPath());
+  history.push_front(pathToAdd);
   settings.setValue(key, history);
+  // don't fire intermediate events.
+  bool wasBlocking = d->ComboBox->blockSignals(false);
   int index = d->ComboBox->findText(this->currentPath());
   if (index >= 0)
     {
@@ -534,7 +537,9 @@ void ctkPathLineEdit::addCurrentPathToHistory()
     {
     d->ComboBox->removeItem(d->ComboBox->count() - 1);
     }
-  d->ComboBox->insertItem(0, this->currentPath());
+  d->ComboBox->insertItem(0, pathToAdd);
+  d->ComboBox->setCurrentIndex(0);
+  d->ComboBox->blockSignals(wasBlocking);
 }
 
 //------------------------------------------------------------------------------
