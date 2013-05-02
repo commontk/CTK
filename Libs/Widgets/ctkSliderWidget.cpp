@@ -517,6 +517,35 @@ bool ctkSliderWidget::hasTracking()const
   return d->Tracking;
 }
 
+// --------------------------------------------------------------------------
+bool ctkSliderWidget::invertedAppearance()const
+{
+  Q_D(const ctkSliderWidget);
+  return d->Slider->invertedAppearance();
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidget::setInvertedAppearance(bool invertedAppearance)
+{
+  Q_D(ctkSliderWidget);
+  d->Slider->setInvertedAppearance(invertedAppearance);
+}
+
+// --------------------------------------------------------------------------
+bool ctkSliderWidget::invertedControls()const
+{
+  Q_D(const ctkSliderWidget);
+  return d->Slider->invertedControls() && d->SpinBox->invertedControls();
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidget::setInvertedControls(bool invertedControls)
+{
+  Q_D(ctkSliderWidget);
+  d->Slider->setInvertedControls(invertedControls);
+  d->SpinBox->setInvertedControls(invertedControls);
+}
+
 // -------------------------------------------------------------------------
 ctkSliderWidget::SynchronizeSiblings
 ctkSliderWidget::synchronizeSiblings() const
@@ -595,7 +624,7 @@ ctkPopupWidget* ctkSliderWidget::popup()const
 }
 
 // --------------------------------------------------------------------------
-ctkSpinBox* ctkSliderWidget::spinBox()
+ctkDoubleSpinBox* ctkSliderWidget::spinBox()
 {
   Q_D(ctkSliderWidget);
   return d->SpinBox;
