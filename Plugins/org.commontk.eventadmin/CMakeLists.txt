@@ -114,7 +114,7 @@ set(PLUGIN_CACHED_RESOURCEFILES
 
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   list(APPEND PLUGIN_target_libraries rt)
 endif()
 
