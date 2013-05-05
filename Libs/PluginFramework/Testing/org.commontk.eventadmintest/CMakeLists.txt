@@ -36,7 +36,7 @@ set(PLUGIN_resources
 
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   list(APPEND PLUGIN_target_libraries rt)
 endif()
 
