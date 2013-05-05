@@ -36,6 +36,7 @@ set(KITTests_SRCS
   ctkErrorLogQtMessageHandlerWithThreadsTest1.cpp
   ctkErrorLogStreamMessageHandlerWithThreadsTest1.cpp
   ctkExceptionTest.cpp
+  ctkHighPrecisionTimerTest.cpp
   ctkHistogramTest1.cpp
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
@@ -147,6 +148,7 @@ SIMPLE_TEST( ctkErrorLogFDMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkErrorLogQtMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkErrorLogStreamMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkExceptionTest )
+SIMPLE_TEST( ctkHighPrecisionTimerTest )
 SIMPLE_TEST( ctkHistogramTest1 )
 SIMPLE_TEST( ctkLoggerTest1 )
 set_property(TEST ctkLoggerTest1 PROPERTY PASS_REGULAR_EXPRESSION "logger.debug\nlogger.info\nlogger.trace\nlogger.warn\nlogger.error\nlogger.fatal")
