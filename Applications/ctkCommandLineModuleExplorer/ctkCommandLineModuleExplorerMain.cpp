@@ -29,8 +29,8 @@
 
 #include <QDebug>
 
-#include <QtXmlPatterns/QXmlQuery>
-#include <QtUiTools/QUiLoader>
+#include <QXmlQuery>
+#include <QUiLoader>
 
 // CTK includes
 #include <ctkCommandLineParser.h>
