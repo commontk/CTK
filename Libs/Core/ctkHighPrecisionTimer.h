@@ -72,10 +72,12 @@ public:
 
 private:
 
+  // only used on MacOS, but needs to be defined in the .cpp file
+  static double timeConvert;
+
 #ifdef _ctk_use_high_precision_timer_fallback
   QTime startTime;
 #elif defined(Q_OS_MAC)
-  static double timeConvert;
   quint64 startTime;
 #elif defined(Q_OS_UNIX)
   timespec startTime;
@@ -108,8 +110,6 @@ inline qint64 ctkHighPrecisionTimer::elapsedMicro()
 }
 
 #elif defined(Q_OS_MAC)
-
-double ctkHighPrecisionTimer::timeConvert = 0.0;
 
 inline ctkHighPrecisionTimer::ctkHighPrecisionTimer()
 : startTime(0)
