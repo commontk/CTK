@@ -25,16 +25,28 @@
 
 #include <qglobal.h>
 
-#ifdef Q_OS_UNIX
+#undef _ctk_use_high_precision_timer_fallback
+
+#ifdef Q_OS_MAC
+#include <mach/mach_time.h>
+#elif defined(Q_OS_UNIX)
 #include <time.h>
 #include <unistd.h>
+#ifndef _POSIX_MONOTONIC_CLOCK
+#warning Monotonic clock support missing on this POSIX platform
+#define _ctk_use_high_precision_timer_fallback
+#endif
 #elif defined(Q_OS_WIN)
 #include <windows.h>
 #else
+#define _ctk_use_high_precision_timer_fallback
+#endif
+
+#ifdef _ctk_use_high_precision_timer_fallback
+#warning ctkHighPrecisionTimer is using the slower QTime fallback
 #include <QTime>
 #endif
 
-#include "ctkException.h"
 
 /**
  * \ingroup Core
@@ -60,17 +72,74 @@ public:
 
 private:
 
-#ifdef _POSIX_MONOTONIC_CLOCK
+  // only used on MacOS, but needs to be defined in the .cpp file
+  static double timeConvert;
+
+#ifdef _ctk_use_high_precision_timer_fallback
+  QTime startTime;
+#elif defined(Q_OS_MAC)
+  quint64 startTime;
+#elif defined(Q_OS_UNIX)
   timespec startTime;
 #elif defined(Q_OS_WIN)
   LARGE_INTEGER timerFrequency;
   LARGE_INTEGER startTime;
-#else
-  QTime startTime;
 #endif
 };
 
-#ifdef _POSIX_MONOTONIC_CLOCK
+#ifdef _ctk_use_high_precision_timer_fallback
+
+inline ctkHighPrecisionTimer::ctkHighPrecisionTimer()
+  : startTime(QTime::currentTime())
+{
+}
+
+inline void ctkHighPrecisionTimer::start()
+{
+  startTime = QTime::currentTime();
+}
+
+inline qint64 ctkHighPrecisionTimer::elapsedMilli()
+{
+  return startTime.elapsed();
+}
+
+inline qint64 ctkHighPrecisionTimer::elapsedMicro()
+{
+  return startTime.elapsed() * 1000;
+}
+
+#elif defined(Q_OS_MAC)
+
+inline ctkHighPrecisionTimer::ctkHighPrecisionTimer()
+: startTime(0)
+{
+  if (timeConvert == 0)
+  {
+    mach_timebase_info_data_t timeBase;
+    mach_timebase_info(&timeBase);
+    timeConvert = static_cast<double>(timeBase.numer) / static_cast<double>(timeBase.denom) / 1000.0;
+  }
+}
+
+inline void ctkHighPrecisionTimer::start()
+{
+  startTime = mach_absolute_time();
+}
+
+inline qint64 ctkHighPrecisionTimer::elapsedMilli()
+{
+  quint64 current = mach_absolute_time();
+  return static_cast<double>(current - startTime) * timeConvert / 1000.0;
+}
+
+inline qint64 ctkHighPrecisionTimer::elapsedMicro()
+{
+  quint64 current = mach_absolute_time();
+  return static_cast<double>(current - startTime) * timeConvert;
+}
+
+#elif defined(Q_OS_UNIX)
 
 inline ctkHighPrecisionTimer::ctkHighPrecisionTimer()
 {
@@ -101,6 +170,8 @@ inline qint64 ctkHighPrecisionTimer::elapsedMicro()
 
 #elif defined(Q_OS_WIN)
 
+#include "ctkException.h"
+
 inline ctkHighPrecisionTimer::ctkHighPrecisionTimer()
 {
   if (!QueryPerformanceFrequency(&timerFrequency))
@@ -126,28 +197,6 @@ inline qint64 ctkHighPrecisionTimer::elapsedMicro()
   LARGE_INTEGER current;
   QueryPerformanceCounter(&current);
   return (current.QuadPart - startTime.QuadPart) / (timerFrequency.QuadPart / (1000*1000));
-}
-
-#else
-
-inline ctkHighPrecisionTimer::ctkHighPrecisionTimer()
-  : startTime(QTime::currentTime())
-{
-}
-
-inline void ctkHighPrecisionTimer::start()
-{
-  startTime = QTime::currentTime();
-}
-
-inline qint64 ctkHighPrecisionTimer::elapsedMilli()
-{
-  return startTime.elapsed();
-}
-
-inline qint64 ctkHighPrecisionTimer::elapsedMicro()
-{
-  return startTime.elapsed() * 1000;
 }
 
 #endif
