@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // QT includes
+#include <QChildEvent>
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QEvent>
@@ -40,6 +41,7 @@ protected:
 public:
   ctkFileDialogPrivate(ctkFileDialog& object);
   void init();
+  void observeAcceptButton();
 
   QPushButton* acceptButton()const;
   QListView* listView()const;
@@ -62,14 +64,8 @@ ctkFileDialogPrivate::ctkFileDialogPrivate(ctkFileDialog& object)
 void ctkFileDialogPrivate::init()
 {
   Q_Q(ctkFileDialog);
-  QPushButton* button = this->acceptButton();
-  Q_ASSERT(button);
-  this->AcceptButtonState =
-    button->isEnabledTo(qobject_cast<QWidget*>(button->parent()));
-  // TODO: catching the event of the enable state is not enough, if the user 
-  // double click on the file, the dialog will be accepted, that event should
-  // be intercepted as well
-  button->installEventFilter(q);
+
+  this->observeAcceptButton();
 
   QObject::connect(this->listView()->selectionModel(),
                    SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
@@ -94,6 +90,20 @@ QListView* ctkFileDialogPrivate::listView()const
   QListView* listView= q->findChild<QListView*>("listView");
   Q_ASSERT(listView);
   return listView;
+}
+
+//------------------------------------------------------------------------------
+void ctkFileDialogPrivate::observeAcceptButton()
+{
+  Q_Q(ctkFileDialog);
+  QPushButton* button = this->acceptButton();
+  Q_ASSERT(button);
+  this->AcceptButtonState =
+    button->isEnabledTo(qobject_cast<QWidget*>(button->parent()));
+  // TODO: catching the event of the enable state is not enough, if the user
+  // double click on the file, the dialog will be accepted, that event should
+  // be intercepted as well
+  button->installEventFilter(q);
 }
 
 //------------------------------------------------------------------------------
@@ -172,6 +182,7 @@ bool ctkFileDialog::eventFilter(QObject *obj, QEvent *event)
 {
   Q_D(ctkFileDialog);
   QPushButton* button = d->acceptButton();
+  QDialogButtonBox* dialogButtonBox = qobject_cast<QDialogButtonBox*>(obj);
   if (obj == button && event->type() == QEvent::EnabledChange &&
       !d->IgnoreEvent)
     {
@@ -179,6 +190,16 @@ bool ctkFileDialog::eventFilter(QObject *obj, QEvent *event)
     d->AcceptButtonState = button->isEnabledTo(qobject_cast<QWidget*>(button->parent()));
     button->setEnabled(d->AcceptButtonEnable && d->AcceptButtonState);
     d->IgnoreEvent = false;
+    }
+  else if (obj == button && event->type() == QEvent::Destroy)
+    {
+    // The accept button is deleted probably because setAcceptMode() is being called.
+    // observe the parent to check when the accept button is added back
+    obj->parent()->installEventFilter(this);
+    }
+  else if (dialogButtonBox && event->type() == QEvent::ChildAdded)
+    {
+    dynamic_cast<QChildEvent*>(event)->child()->installEventFilter(this);
     }
   return QFileDialog::eventFilter(obj, event);
 }
