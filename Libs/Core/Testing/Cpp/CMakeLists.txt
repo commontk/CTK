@@ -121,6 +121,11 @@ endif()
 add_executable(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
+if(UNIX AND NOT APPLE)
+  target_link_libraries(${KIT}CppTests rt)
+endif()
+
+
 #
 # Add Tests
 #
