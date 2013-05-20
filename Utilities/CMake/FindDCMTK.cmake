@@ -34,22 +34,19 @@
 # Modified for EasyViz by Thomas Sondergaard.
 #
 
+set(_SAVED_DCMTK_DIR ${DCMTK_DIR})
+
 #
 # First, try to use NO_MODULE
-set(_DCMTK_REQUIRED)
-set(_DCMTK_QUIET)
-if(DCMTK_FIND_QUIETLY)
-  set(_DCMTK_QUIET QUIET)
-endif()
-if(DCMTK_FIND_REQUIRED)
-  set(_DCMTK_REQUIRED REQUIRED)
-endif()
-find_package(DCMTK ${_DCMTK_REQUIRED} ${_DCMTK_QUIET} NO_MODULE)
+find_package(DCMTK QUIET NO_MODULE)
 if(DCMTK_FOUND
     AND NOT "x" STREQUAL "x${DCMTK_LIBRARIES}"
     AND NOT "x" STREQUAL "x${DCMTK_INCLUDE_DIRS}")
   return()
 endif()
+
+# Restore the value reset by the previous call to 'find_package(DCMTK QUIET NO_MODULE)'
+set(DCMTK_DIR ${_SAVED_DCMTK_DIR} CACHE PATH "The directory containing a CMake configuration file for DCMTK." FORCE) 
 
 # prefer DCMTK_DIR over default system paths like /usr/lib
 if(DCMTK_DIR)
@@ -188,7 +185,6 @@ foreach(dir
     ${DCMTK_DIR}/include/${dir}
     ${SOURCE_DIR_PATH}
     )
-
   mark_as_advanced(DCMTK_${dir}_INCLUDE_DIR)
   list(APPEND DCMTK_INCLUDE_DIR_NAMES DCMTK_${dir}_INCLUDE_DIR)
 
