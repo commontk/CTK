@@ -52,27 +52,36 @@ ctkDicomAppPlugin::~ctkDicomAppPlugin()
 //----------------------------------------------------------------------------
 void ctkDicomAppPlugin::start(ctkPluginContext* context)
 {
+  bool canStart = true;
+
   ctkDicomAppPlugin::Context = context;
 
 
   QUrl appURL(context->getProperty("dah.appURL").toString());
   if (!appURL.isValid())
     {
-    throw ctkRuntimeException("The plugin framework does not contain a valid \"dah.appURL\" property");
+    //throw ctkRuntimeException("The plugin framework does not contain a valid \"dah.appURL\" property");
+    qDebug() << "ctkDicomAppPlugin: The plugin framework does not contain a valid \"dah.appURL\" property";
+    canStart = false;
     }
 
   QUrl hostURL(context->getProperty("dah.hostURL").toString());
   if (!hostURL.isValid())
     {
-    throw ctkRuntimeException("The plugin framework does not contain a valid \"dah.hostURL\" property");
+    //throw ctkRuntimeException("The plugin framework does not contain a valid \"dah.hostURL\" property");
+    qDebug() << "ctkDicomAppPlugin: The plugin framework does not contain a valid \"dah.hostURL\" property";
+    canStart = false;
     }
 
-  // start the application server
-  this->AppServer = new ctkDicomAppServer(appURL.port(), appURL.path());
+  if(canStart)
+    {
+    // start the application server
+    this->AppServer = new ctkDicomAppServer(appURL.port(), appURL.path());
 
-  // register the host service, providing callbacks to the hosting application
-  this->HostInterface = new ctkDicomHostService(QUrl(hostURL).port(), hostURL.path());
-  context->registerService<ctkDicomHostInterface>(HostInterface);
+    // register the host service, providing callbacks to the hosting application
+    this->HostInterface = new ctkDicomHostService(QUrl(hostURL).port(), hostURL.path());
+    context->registerService<ctkDicomHostInterface>(HostInterface);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -93,4 +102,4 @@ ctkPluginContext* ctkDicomAppPlugin::getPluginContext()
   return ctkDicomAppPlugin::Context;
 }
 
-Q_EXPORT_PLUGIN2(org_commontk_dah_app, ctkDicomAppPlugin)
+Q_EXPORT_PLUGIN2(org_commontk_dah_hostedapp, ctkDicomAppPlugin)

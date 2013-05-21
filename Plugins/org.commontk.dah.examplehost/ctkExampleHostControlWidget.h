@@ -19,50 +19,56 @@
 
 =============================================================================*/
 
-#ifndef CTKHOSTAPPEXAMPLEWIDGET_H
-#define CTKHOSTAPPEXAMPLEWIDGET_H
+#ifndef ctkExampleHostControlWidget_H
+#define ctkExampleHostControlWidget_H
 
 #include <QWidget>
 #include <QProcess>
 
 #include <ctkDicomAppHostingTypes.h>
 
+#include <org_commontk_dah_examplehost_Export.h>
+
 class ctkExampleDicomHost;
-class ctkExampleHostControlWidget;
 
 namespace Ui {
-  class ctkHostAppExampleWidget;
+  class ctkExampleHostControlWidget;
 }
 
-class ctkHostAppExampleWidget : public QWidget
+class org_commontk_dah_examplehost_EXPORT ctkExampleHostControlWidget : public QWidget
 {
   Q_OBJECT
 
 public:
 
-  explicit ctkHostAppExampleWidget(QWidget *parent = 0);
+  explicit ctkExampleHostControlWidget(ctkExampleDicomHost * host, QWidget *parent = 0);
+  virtual ~ctkExampleHostControlWidget();
+
+  bool validAppFileName();
+public slots:
+  // the following to in capital letters for compatibility to ctkExampleDicomHost
+  void StartApplication(QString appFileName="");
+
   void setAppFileName(QString name);
 
-  virtual ~ctkHostAppExampleWidget();
-
-public Q_SLOTS:
-
-  void loadButtonClicked();
-
-  void placeholderResized();
-
+  void runButtonClicked();
+  void stopButtonClicked();
+  void suspendButtonClicked();
+  void cancelButtonClicked();
   void appProcessError(QProcess::ProcessError error);
+  void appProcessStateChanged(QProcess::ProcessState state);
+  void appStateChanged(ctkDicomAppHosting::State state);
 
+  void outputMessage();
 protected:
 
   ctkExampleDicomHost* Host;
-  ctkExampleHostControlWidget* HostControls;
   QString AppFileName;
-
 private:
 
-  Ui::ctkHostAppExampleWidget *ui;
+  bool ValidAppFileName;
 
+  Ui::ctkExampleHostControlWidget *ui;
 };
 
 #endif // CTKHOSTWIDGET_H

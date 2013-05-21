@@ -119,7 +119,7 @@ bool ctkDicomAbstractApp::setState(ctkDicomAppHosting::State newState)
     if (d_ptr->currentState == ctkDicomAppHosting::IDLE)
     {
       //maybe not useful:
-      getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
+      //getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
       emit exitHostedApp();
       result = true;
     }
@@ -147,6 +147,12 @@ ctkDicomHostInterface* ctkDicomAbstractApp::getHostInterface() const
 }
 
 //----------------------------------------------------------------------------
+ctkDicomExchangeInterface* ctkDicomAbstractApp::getOtherSideExchangeService() const
+{
+  return getHostInterface();
+}
+
+//----------------------------------------------------------------------------
 ctkDicomAppHosting::State ctkDicomAbstractApp::getState()
 {
   return d_ptr->currentState;
@@ -155,37 +161,4 @@ ctkDicomAppHosting::State ctkDicomAbstractApp::getState()
 void ctkDicomAbstractApp::setInternalState(ctkDicomAppHosting::State state)
 {
   d_ptr->currentState = state;
-}
-
-//----------------------------------------------------------------------------
-QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractApp::getData(
-  const QList<QUuid>& objectUUIDs,
-  const QList<QString>& acceptableTransferSyntaxUIDs,
-  bool includeBulkData)
-{
-  Q_UNUSED(acceptableTransferSyntaxUIDs);
-  Q_UNUSED(includeBulkData);
-  return this->objectLocatorCache()->getData(objectUUIDs);
-}
-
-//----------------------------------------------------------------------------
-ctkDicomObjectLocatorCache* ctkDicomAbstractApp::objectLocatorCache()const
-{
-  Q_D(const ctkDicomAbstractApp);
-  return const_cast<ctkDicomObjectLocatorCache*>(&d->ObjectLocatorCache);
-}
-
-//----------------------------------------------------------------------------
-bool ctkDicomAbstractApp::publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData)
-{
-  if (!this->objectLocatorCache()->isCached(availableData))
-    {
-    return false;
-    }
-  bool success = this->getHostInterface()->notifyDataAvailable(availableData, lastData);
-  if(!success)
-    {
-    return false;
-    }
-  return true;
 }

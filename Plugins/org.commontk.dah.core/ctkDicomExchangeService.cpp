@@ -58,7 +58,7 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomExchangeService::getData(
   QList<QtSoapType*> list;
 
   list << new ctkDicomSoapArrayOfUUIDS("objects",objectUUIDs);
-  list << new ctkDicomSoapArrayOfStringType("UID","acceptableTransferSyntaxes", acceptableTransferSyntaxUIDs);
+  list << new ctkDicomSoapArrayOfUIDS("acceptableTransferSyntaxes", acceptableTransferSyntaxUIDs);
   list << new ctkDicomSoapBool("includeBulkData", includeBulkData);
   const QtSoapType & result = submitSoapRequest("GetData",list);
 //QtSoapType *tt;

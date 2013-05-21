@@ -1,27 +1,28 @@
-project(org_commontk_dah_exampleapp)
+project(org_commontk_dah_cmdlinemoduleapp)
 
-set(PLUGIN_export_directive "org_commontk_example_dicomapp_EXPORT")
+set(PLUGIN_export_directive "org_commontk_dah_cmdlinemoduleapp_EXPORT")
 
 set(PLUGIN_SRCS
-  ctkExampleDicomAppLogic_p.h
-  ctkExampleDicomAppPlugin_p.h
-  ctkExampleDicomAppLogic.cpp
-  ctkExampleDicomAppPlugin.cpp
+  ctkCommandLineModuleAppLogic_p.h
+  ctkCommandLineModuleAppPlugin_p.h
+  ctkCommandLineModuleAppLogic.cpp
+  ctkCommandLineModuleAppPlugin.cpp
 )
 
 # Files which should be processed by Qts moc
 set(PLUGIN_MOC_SRCS
-  ctkExampleDicomAppLogic_p.h
-  ctkExampleDicomAppPlugin_p.h
+  ctkCommandLineModuleAppLogic_p.h
+  ctkCommandLineModuleAppPlugin_p.h
 )
 
 # Qt Designer files which should be processed by Qts uic
 set(PLUGIN_UI_FORMS
-  ctkExampleDicomAppWidget.ui
+  ctkCommandLineModuleAppWidget.ui
 )
 
 # QRC Files which should be compiled into the plugin
 set(PLUGIN_resources
+#  resources/ctkCommandLineModuleApp.qrc
 )
 
 #Compute the plugin dependencies

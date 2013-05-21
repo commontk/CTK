@@ -389,6 +389,12 @@ const QStringList ctkDICOMAppWidget::tagsToPrecache()
 
 
 //----------------------------------------------------------------------------
+ctkDICOMDatabase* ctkDICOMAppWidget::database(){
+  Q_D(ctkDICOMAppWidget);
+  return d->DICOMDatabase.data();
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::setSearchWidgetPopUpMode(bool flag){
   Q_D(ctkDICOMAppWidget);
 

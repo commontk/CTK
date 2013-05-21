@@ -20,8 +20,8 @@
 =============================================================================*/
 
 
-#ifndef CTKEXAMPLEDICOMAPPLOGIC_P_H
-#define CTKEXAMPLEDICOMAPPLOGIC_P_H
+#ifndef CTKCOMMANDLINEMODULEAPPLOGIC_P_H
+#define CTKCOMMANDLINEMODULEAPPLOGIC_P_H
 
 // Qt includes
 #include <QUuid>
@@ -29,25 +29,28 @@
 // CTK includes
 #include <ctkDicomAbstractApp.h>
 #include <ctkDicomHostInterface.h>
+#include <ctkCmdLineModuleManager.h>
 
 #include <ctkServiceTracker.h>
 
 // ui of this application
-#include "ui_ctkExampleDicomAppWidget.h"
+#include "ui_ctkCommandLineModuleAppWidget.h"
 
 struct ctkDicomHostInterface;
 
+class ctkCmdLineModuleFrontend;
+
 class QWidget;
 
-class ctkExampleDicomAppLogic : public ctkDicomAbstractApp
+class ctkCommandLineModuleAppLogic : public ctkDicomAbstractApp
 {
   Q_OBJECT
   Q_INTERFACES(ctkDicomAppInterface)
 
 public:
 
-  ctkExampleDicomAppLogic();
-  virtual ~ctkExampleDicomAppLogic();
+  ctkCommandLineModuleAppLogic(const QString & modulelocation);
+  virtual ~ctkCommandLineModuleAppLogic();
 
   // ctkDicomAppInterface
 
@@ -78,7 +81,14 @@ protected Q_SLOTS:
   void onDataAvailable();
 private:
   QWidget * AppWidget;
-  Ui::ctkExampleDicomAppWidget ui;
-}; // ctkExampleDicomAppLogic
+  Ui::ctkCommandLineModuleAppWidget ui;
 
-#endif // ctkExampleDicomAppLogic_P_H
+  QString ModuleLocation;
+
+  ctkCmdLineModuleManager ModuleManager;
+  ctkCmdLineModuleFrontend* ModuleFrontend;
+
+  QString OutputLocation;
+}; // ctkCommandLineModuleAppLogic
+
+#endif // CTKCOMMANDLINEMODULEAPPLOGIC_P_H

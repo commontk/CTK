@@ -34,19 +34,24 @@
 
 // CTK includes
 #include "ctkDICOMImage.h"
-#include "ctkExampleDicomAppLogic_p.h"
-#include "ctkExampleDicomAppPlugin_p.h"
+#include "ctkCommandLineModuleAppLogic_p.h"
+#include "ctkCommandLineModuleAppPlugin_p.h"
 #include "ctkDicomAvailableDataHelper.h"
+#include "ctkCmdLineModuleFrontendQtGui.h"
+#include "ctkCmdLineModuleReference.h"
+#include "ctkCmdLineModuleFuture.h"
+#include "ctkCmdLineModuleBackendLocalProcess.h"
 
 // DCMTK includes
 #include <dcmimage.h>
 
+#include <QDesktopServices>
 //----------------------------------------------------------------------------
-ctkExampleDicomAppLogic::ctkExampleDicomAppLogic():
-ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), AppWidget(0)
+ctkCommandLineModuleAppLogic::ctkCommandLineModuleAppLogic(const QString & modulelocation):
+ctkDicomAbstractApp(ctkCommandLineModuleAppPlugin::getPluginContext()), AppWidget(0),
+ModuleLocation(modulelocation), ModuleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)), 
+ModuleFrontend(0)
 {
-
-
   connect(this, SIGNAL(startProgress()), this, SLOT(onStartProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(resumeProgress()), this, SLOT(onResumeProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(suspendProgress()), this, SLOT(onSuspendProgress()), Qt::QueuedConnection);
@@ -54,6 +59,7 @@ ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), AppWidget(0)
   connect(this, SIGNAL(exitHostedApp()), this, SLOT(onExitHostedApp()), Qt::QueuedConnection);
   connect(this, SIGNAL(dataAvailable()), this, SLOT(onDataAvailable()));
 
+  ModuleManager.registerBackend(new ctkCmdLineModuleBackendLocalProcess);
   //notify Host we are ready.
   try {
     getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
@@ -65,9 +71,9 @@ ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), AppWidget(0)
 }
 
 //----------------------------------------------------------------------------
-ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
+ctkCommandLineModuleAppLogic::~ctkCommandLineModuleAppLogic()
 {
-  ctkPluginContext* context = ctkExampleDicomAppPlugin::getPluginContext();
+  ctkPluginContext* context = ctkCommandLineModuleAppPlugin::getPluginContext();
   QList <QSharedPointer<ctkPlugin> > plugins = context->getPlugins();
   for (int i = 0; i < plugins.size(); ++i)
   {
@@ -76,7 +82,7 @@ ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
 }
 
 //----------------------------------------------------------------------------
-bool ctkExampleDicomAppLogic::bringToFront(const QRect& requestedScreenArea)
+bool ctkCommandLineModuleAppLogic::bringToFront(const QRect& requestedScreenArea)
 {
   if(this->AppWidget!=NULL)
   {
@@ -89,10 +95,24 @@ bool ctkExampleDicomAppLogic::bringToFront(const QRect& requestedScreenArea)
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::do_something()
+void ctkCommandLineModuleAppLogic::do_something()
 {
   AppWidget = new QWidget;
   ui.setupUi(AppWidget);
+
+  QVBoxLayout *verticalLayout = new QVBoxLayout(ui.PlaceHolder);
+  verticalLayout->setObjectName(QString::fromUtf8("cmdlineparentverticalLayout"));
+
+  ui.CLModuleName->setText(ModuleLocation);
+
+  ctkCmdLineModuleReference moduleRef = ModuleManager.registerModule(ModuleLocation);
+  
+  ModuleFrontend = new ctkCmdLineModuleFrontendQtGui(moduleRef);
+
+  QObject* guiHandle = ModuleFrontend->guiHandle();
+  QWidget* widget = qobject_cast<QWidget*>(guiHandle);
+  widget->setParent(ui.PlaceHolder);
+  verticalLayout->addWidget(widget);
 
   connect(ui.LoadDataButton, SIGNAL(clicked()), this, SLOT(onLoadDataClicked()));
   connect(ui.CreateSecondaryCaptureButton, SIGNAL(clicked()), this, SLOT(onCreateSecondaryCapture()));
@@ -114,7 +134,7 @@ void ctkExampleDicomAppLogic::do_something()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::onStartProgress()
+void ctkCommandLineModuleAppLogic::onStartProgress()
 {
   setInternalState(ctkDicomAppHosting::INPROGRESS);
 
@@ -127,7 +147,7 @@ void ctkExampleDicomAppLogic::onStartProgress()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::onResumeProgress()
+void ctkCommandLineModuleAppLogic::onResumeProgress()
 {
   //reclame all resources.
 
@@ -140,7 +160,7 @@ void ctkExampleDicomAppLogic::onResumeProgress()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::onSuspendProgress()
+void ctkCommandLineModuleAppLogic::onSuspendProgress()
 {
   //release resources it can reclame later to resume work
   ui.LoadDataButton->setEnabled(false);
@@ -152,7 +172,7 @@ void ctkExampleDicomAppLogic::onSuspendProgress()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::onCancelProgress()
+void ctkCommandLineModuleAppLogic::onCancelProgress()
 {
   //release all resources
   onReleaseResources();
@@ -162,7 +182,7 @@ void ctkExampleDicomAppLogic::onCancelProgress()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::onExitHostedApp()
+void ctkCommandLineModuleAppLogic::onExitHostedApp()
 {
   //useless move, but correct:
   setInternalState(ctkDicomAppHosting::EXIT);
@@ -173,7 +193,7 @@ void ctkExampleDicomAppLogic::onExitHostedApp()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::onReleaseResources()
+void ctkCommandLineModuleAppLogic::onReleaseResources()
 {
   this->AppWidget->hide();
   delete (this->AppWidget);
@@ -182,7 +202,7 @@ void ctkExampleDicomAppLogic::onReleaseResources()
 
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::onDataAvailable()
+void ctkCommandLineModuleAppLogic::onDataAvailable()
 {
   QString s;
   const ctkDicomAppHosting::AvailableData& data = getIncomingAvailableData();
@@ -207,30 +227,23 @@ void ctkExampleDicomAppLogic::onDataAvailable()
       }
     }
   }
-  else
-  {
-    s = s+", objectDescriptors.count()= " + QString().setNum(data.objectDescriptors.count());
-  }
   ui.ReceivedDataInformation->setText(s);
   ui.LoadDataButton->setEnabled(true);
+
+  //FIX: still does not work here: need to postpone onDataAvailable even further (not just via QueuedConnection)
+  QStringList preferredProtocols;
+  preferredProtocols.append("file:");
+  OutputLocation = getHostInterface()->getOutputLocation(preferredProtocols);
 }
 
 
-void ctkExampleDicomAppLogic::onLoadDataClicked()
+void ctkCommandLineModuleAppLogic::onLoadDataClicked()
 {
   const ctkDicomAppHosting::AvailableData& data = getIncomingAvailableData();
-  QList<QUuid> uuidlist;
-  if(data.patients.count()!=0)
-  {
-    const ctkDicomAppHosting::Patient& firstpatient = *data.patients.begin();
-    uuidlist = ctkDicomAvailableDataHelper::getAllUuids(firstpatient);
-  }
-  else if(data.objectDescriptors.count()!=0)
-  {
-    uuidlist = ctkDicomAvailableDataHelper::getAllUuids(data);
-  }
-  else
+  if(data.patients.count()==0)
     return;
+  const ctkDicomAppHosting::Patient& firstpatient = *data.patients.begin();
+  QList<QUuid> uuidlist = ctkDicomAvailableDataHelper::getAllUuids(firstpatient);
   
   QString transfersyntax("1.2.840.10008.1.2.1");
   QList<QString> transfersyntaxlist;
@@ -278,48 +291,58 @@ void ctkExampleDicomAppLogic::onLoadDataClicked()
   ui.ReceivedDataInformation->setText(s);
 }
 
-void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
+void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
 {
   const QPixmap* pixmap = ui.PlaceHolderForImage->pixmap();
   if(pixmap!=NULL)
   {
-    QStringList preferredProtocols;
-    preferredProtocols.append("file:");
-    QString outputlocation = getHostInterface()->getOutputLocation(preferredProtocols);
-    QString templatefilename = QDir(outputlocation).absolutePath();
+    QString templatefilename = QDir(OutputLocation).absolutePath();
     if(templatefilename.isEmpty()==false) templatefilename.append('/'); 
     templatefilename.append("ctkdahscXXXXXX.jpg");
-    QTemporaryFile *tempfile = new QTemporaryFile(templatefilename,this->AppWidget);
-
-    if(tempfile->open())
+    QString inputFileName, outputFileName;
     {
-      QString filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
-      qDebug() << "Created file: " << filename;
-      tempfile->close();
-      QPixmap tmppixmap(*pixmap);
-      QPainter painter(&tmppixmap);
-      painter.setPen(Qt::white);
-      painter.setFont(QFont("Arial", 15));
-      painter.drawText(tmppixmap.rect(),Qt::AlignBottom|Qt::AlignLeft,"Secondary capture by ctkExampleDicomApp");
-     //painter.drawText(rect(), Qt::AlignCenter, "Qt");
-      tmppixmap.save(tempfile->fileName(), "JPEG");
-      qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
+      QTemporaryFile inputtmp(templatefilename,this->AppWidget);
+      if(!inputtmp.open())
+        return;
+      inputFileName = inputtmp.fileName();
+      inputtmp.close();
 
-      ctkDicomAppHosting::AvailableData resultData;
-      ctkDicomAvailableDataHelper::addToAvailableData(resultData, 
-        objectLocatorCache(), 
-        tempfile->fileName());
-
-      bool success = publishData(resultData, true);
-      if(!success)
-      {
-        qCritical() << "Failed to publish data";
-      }
-      qDebug() << "  publishData returned: " << success;
-
+      QTemporaryFile outputtmp(templatefilename,this->AppWidget);
+      if(!outputtmp.open())
+        return;
+      outputFileName = outputtmp.fileName();
+      outputtmp.close();
     }
-    else
-      qDebug() << "Creating temporary file failed.";
-  }
 
+    pixmap->save(inputFileName);
+
+    ModuleFrontend->setValue("fileVar", inputFileName);
+    ModuleFrontend->setValue("dirVar", outputFileName);
+    ModuleManager.run(ModuleFrontend);
+
+    QPixmap resultpix(outputFileName);
+    ui.PlaceHolderForResult->setPixmap(resultpix);
+
+    //if(tempfile->open())
+    //{
+    //  QString filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
+    //  qDebug() << "Created file: " << filename;
+    //  tempfile->close();
+    //else
+    //  qDebug() << "Creating temporary file failed.";
+    //}
+    qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
+
+    ctkDicomAppHosting::AvailableData resultData;
+    ctkDicomAvailableDataHelper::addToAvailableData(resultData, 
+      objectLocatorCache(), 
+      outputFileName);
+
+    bool success = publishData(resultData, true);
+    if(!success)
+    {
+      qCritical() << "Failed to publish data";
+    }
+    qDebug() << "  publishData returned: " << success;
+  }
 }

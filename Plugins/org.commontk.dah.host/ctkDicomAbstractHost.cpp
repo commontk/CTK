@@ -39,7 +39,6 @@ public:
   ctkDicomHostServer* Server;
   ctkDicomAppInterface* AppService;
   ctkDicomAppHosting::State AppState;
-  ctkDicomObjectLocatorCache ObjectLocatorCache;
   // ctkDicomAppHosting::Status
 
 };
@@ -49,7 +48,7 @@ public:
 
 //----------------------------------------------------------------------------
 ctkDicomAbstractHostPrivate::ctkDicomAbstractHostPrivate(
-  ctkDicomAbstractHost* hostInterface, int hostPort, int appPort) : HostPort(hostPort), AppPort(appPort),AppState(ctkDicomAppHosting::EXIT)
+  ctkDicomAbstractHost* hostInterface, int hostPort, int appPort) : HostPort(hostPort), AppPort(appPort), AppState(ctkDicomAppHosting::EXIT)
 {
   // start server
   if (this->HostPort == 0)
@@ -82,7 +81,6 @@ ctkDicomAbstractHostPrivate::~ctkDicomAbstractHostPrivate()
 ctkDicomAbstractHost::ctkDicomAbstractHost(int hostPort, int appPort) :
   d_ptr(new ctkDicomAbstractHostPrivate(this, hostPort, appPort))
 {
-
 }
 
 //----------------------------------------------------------------------------
@@ -112,36 +110,9 @@ ctkDicomAppInterface* ctkDicomAbstractHost::getDicomAppService() const
 }
 
 //----------------------------------------------------------------------------
-QList<ctkDicomAppHosting::ObjectLocator> ctkDicomAbstractHost::getData(
-  const QList<QUuid>& objectUUIDs,
-  const QList<QString>& acceptableTransferSyntaxUIDs,
-  bool includeBulkData)
+ctkDicomExchangeInterface* ctkDicomAbstractHost::getOtherSideExchangeService() const
 {
-  Q_UNUSED(acceptableTransferSyntaxUIDs);
-  Q_UNUSED(includeBulkData);
-  return this->objectLocatorCache()->getData(objectUUIDs);
-}
-
-//----------------------------------------------------------------------------
-ctkDicomObjectLocatorCache* ctkDicomAbstractHost::objectLocatorCache()const
-{
-  Q_D(const ctkDicomAbstractHost);
-  return const_cast<ctkDicomObjectLocatorCache*>(&d->ObjectLocatorCache);
-}
-
-//----------------------------------------------------------------------------
-bool ctkDicomAbstractHost::publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData)
-{
-  if (!this->objectLocatorCache()->isCached(availableData))
-  {
-    return false;
-  }
-  bool success = this->getDicomAppService()->notifyDataAvailable(availableData, lastData);
-  if(!success)
-  {
-    return false;
-  }
-  return true;
+  return getDicomAppService();
 }
 
 //----------------------------------------------------------------------------
@@ -218,5 +189,6 @@ void ctkDicomAbstractHost::notifyStateChanged(ctkDicomAppHosting::State newState
 
 ctkDicomAppHosting::State ctkDicomAbstractHost::getApplicationState()const
 {
+  // todo: probably move code from ctkExampleHostWidget::getApplicationState() here
   return d_ptr->AppState;
 }

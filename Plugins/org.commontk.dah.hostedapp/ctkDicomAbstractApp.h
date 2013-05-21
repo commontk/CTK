@@ -22,14 +22,20 @@
 #ifndef CTKDICOMABSTRACTAPP_H
 #define CTKDICOMABSTRACTAPP_H
 
+#include <ctkDicomAbstractExchangeCache.h>
 #include <ctkDicomAppInterface.h>
 #include <QScopedPointer>
-#include <org_commontk_dah_app_Export.h>
+#include <org_commontk_dah_hostedapp_Export.h>
 
 class ctkDicomAbstractAppPrivate;
 struct ctkDicomHostInterface;
 class ctkPluginContext;
 class ctkDicomObjectLocatorCache;
+
+#ifdef _MSC_VER
+// disable inheritance by dominance warnings
+#pragma warning( disable : 4250 )
+#endif
 
 /**
  * @brief Provides a basic implementation for an application app.
@@ -40,7 +46,7 @@ class ctkDicomObjectLocatorCache;
  *
  *
 */
-class org_commontk_dah_app_EXPORT ctkDicomAbstractApp : public QObject, public ctkDicomAppInterface
+class org_commontk_dah_hostedapp_EXPORT ctkDicomAbstractApp : public ctkDicomAbstractExchangeCache, public ctkDicomAppInterface
 {
   Q_OBJECT
   Q_INTERFACES(ctkDicomAppInterface)
@@ -80,41 +86,13 @@ public:
   virtual ctkDicomAppHosting::State getState();
 
   /**
-   * @brief Gets ctkDicomAppHosting::ObjectLocators from the hosting system.
-   *
-   * @param objectUUIDs
-   * @param acceptableTransferSyntaxUIDs
-   * @param includeBulkData
-   * @return QList<ctkDicomAppHosting::ObjectLocator>
-  */
-  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-    const QList<QUuid>& objectUUIDs,
-    const QList<QString>& acceptableTransferSyntaxUIDs,
-    bool includeBulkData);
-
-  /**
-   * @brief
-   *
-   * @return ctkDicomObjectLocatorCache *
-  */
-  ctkDicomObjectLocatorCache* objectLocatorCache()const;
-
-  /**
-   * @brief
-   *
-   * @param availableData
-   * @param lastData
-   * @return bool
-  */
-  bool publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData);
-
-protected:
-  /**
    * @brief Gets a handle to the host, in order to call methods on it.
    *
    * @return ctkDicomHostInterface *
   */
   virtual ctkDicomHostInterface* getHostInterface() const;
+
+  ctkDicomExchangeInterface* getOtherSideExchangeService() const;
 
   /**
    * @brief Sets the internal representation of the current state.

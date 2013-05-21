@@ -22,6 +22,7 @@
 #ifndef CTKDICOMABSTRACTHOST_H
 #define CTKDICOMABSTRACTHOST_H
 
+#include <ctkDicomAbstractExchangeCache.h>
 #include <ctkDicomHostInterface.h>
 #include <ctkDicomAppInterface.h>
 #include <QScopedPointer>
@@ -30,6 +31,11 @@
 
 class ctkDicomAbstractHostPrivate;
 class ctkDicomObjectLocatorCache;
+
+#ifdef _MSC_VER
+// disable inheritance by dominance warnings
+#pragma warning( disable : 4250 )
+#endif
 
 /**
  * @brief Provides a basic implementation for an application host.
@@ -40,7 +46,7 @@ class ctkDicomObjectLocatorCache;
  * The methods of the ctkDicomHostInterface have to be implemented for the business logic,
  *
 */
-class org_commontk_dah_host_EXPORT ctkDicomAbstractHost : public QObject, public ctkDicomHostInterface
+class org_commontk_dah_host_EXPORT ctkDicomAbstractHost : public ctkDicomAbstractExchangeCache, public ctkDicomHostInterface
 {
  Q_OBJECT
  Q_INTERFACES(ctkDicomHostInterface)
@@ -102,34 +108,7 @@ public:
   */
   ctkDicomAppInterface* getDicomAppService() const;
 
-  /**
-   * @brief Gets ctkDicomAppHosting::ObjectLocators from the hosted app.
-   *
-   * @param objectUUIDs
-   * @param acceptableTransferSyntaxUIDs
-   * @param includeBulkData
-   * @return QList<ctkDicomAppHosting::ObjectLocator>
-  */
-  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-    const QList<QUuid>& objectUUIDs,
-    const QList<QString>& acceptableTransferSyntaxUIDs,
-    bool includeBulkData);
-
-  /**
-   * @brief
-   *
-   * @return ctkDicomObjectLocatorCache *
-  */
-  ctkDicomObjectLocatorCache* objectLocatorCache() const;
-
-  /**
-   * @brief
-   *
-   * @param availableData
-   * @param lastData
-   * @return bool
-  */
-  bool publishData(const ctkDicomAppHosting::AvailableData& availableData, bool lastData);
+  ctkDicomExchangeInterface* getOtherSideExchangeService() const;
 
 Q_SIGNALS:
   /**

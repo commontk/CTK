@@ -29,11 +29,13 @@
 class ctkDICOMAppWidgetPrivate;
 class ctkThumbnailLabel;
 class QModelIndex;
+class ctkDICOMDatabase;
 
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(ctkDICOMDatabase* database READ database)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(bool searchWidgetPopUpMode READ searchWidgetPopUpMode WRITE setSearchWidgetPopUpMode)
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
@@ -63,6 +65,7 @@ public:
   /// search widget to be displayed as pop-up widget
   void setSearchWidgetPopUpMode(bool flag);
   bool searchWidgetPopUpMode();
+  ctkDICOMDatabase* database();
 
 public Q_SLOTS:
   void setDatabaseDirectory(const QString& directory);
@@ -104,7 +107,6 @@ protected Q_SLOTS:
     void onPreviousSeries();
     void onNextStudy();
     void onPreviousStudy();
-
     /// To be called when dialog finishes
     void onQueryRetrieveFinished();
 

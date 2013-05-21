@@ -96,7 +96,7 @@ void ctkExchangeSoapMessageProcessor::processGetData(
   const QtSoapType& inputType = message.method()["objects"];
   const QList<QUuid> objectUUIDs = ctkDicomSoapArrayOfUUIDS::getArray(inputType);
   const QtSoapType& inputType2 = message.method()["acceptableTransferSyntaxes"];
-  const QStringList acceptableTransferSyntaxUIDs = ctkDicomSoapArrayOfStringType::getArray(inputType2);
+  const QList<QString> acceptableTransferSyntaxUIDs = ctkDicomSoapArrayOfUIDS::getArray(inputType2);
   const QtSoapType& inputType3 = message.method()["includeBulkData"];
   const bool includeBulkData = ctkDicomSoapBool::getBool(inputType3);
   // query interface

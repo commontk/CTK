@@ -19,30 +19,36 @@
 
 =============================================================================*/
 
-// Qt includes
-#include <QDebug>
 
-// CTK includes
-#include "ctkHostedAppPlaceholderWidget.h"
+#ifndef CTKCOMMANDLINEMODULEAPPPLUGIN_P_H
+#define CTKCOMMANDLINEMODULEAPPPLUGIN_P_H
 
-//----------------------------------------------------------------------------
-ctkHostedAppPlaceholderWidget::ctkHostedAppPlaceholderWidget(QWidget *parent) :
-    QFrame(parent)
+#include <ctkPluginActivator.h>
+
+class ctkCommandLineModuleAppLogic;
+
+class ctkCommandLineModuleAppPlugin :
+  public QObject, public ctkPluginActivator
 {
-}
+  Q_OBJECT
+  Q_INTERFACES(ctkPluginActivator)
 
-//----------------------------------------------------------------------------
-QRect ctkHostedAppPlaceholderWidget::getAbsolutePosition()
-{
-  QWidget* current = this;
-  int x = 0;
-  int y = 0;
-  do
-    {
-    x = x + current->geometry().x();
-    y = y + current->geometry().y();
-    current = dynamic_cast<QWidget*>(current->parent());
-    }
-  while (current);
-  return QRect(x,y,width(),height());
-}
+public:
+
+  ctkCommandLineModuleAppPlugin();
+  virtual ~ctkCommandLineModuleAppPlugin();
+
+  virtual void start(ctkPluginContext* context);
+  virtual void stop(ctkPluginContext* context);
+
+  static ctkPluginContext* getPluginContext();
+
+private:
+
+  static ctkPluginContext* Context;
+
+  QObject* AppLogic;
+
+}; // ctkCommandLineModuleAppPlugin
+
+#endif // CTKCOMMANDLINEMODULEAPPPLUGIN_P_H

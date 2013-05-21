@@ -359,7 +359,7 @@ ctk_enable_option(DICOM "Enable default DICOM support" OFF
 # host and/or hosted application. This will not enable any example plugins
 # or executables (enable CTK_ENABLE_EXAMPLES for that).
 ctk_enable_option(DICOMApplicationHosting "Enable DICOM Part 19 Application Hosting support" OFF
-                  CTK_PLUGIN_org.commontk.dah.host AND CTK_PLUGIN_org.commontk.dah.app)
+                  CTK_PLUGIN_org.commontk.dah.host AND CTK_PLUGIN_org.commontk.dah.hostedapp)
 
 # The CTK Qt Widgets. This will enable the Qt Widget library only.
 # It might trigger the enabling of other widget libraries in combination
@@ -526,6 +526,10 @@ ctk_app_option(ctkDICOMQueryRetrieve
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
                
+ctk_app_option(ctkDICOMHost
+               "Build the DICOM application host example application" OFF
+               CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
+               
 ctk_app_option(ctkExampleHost
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
@@ -614,7 +618,7 @@ ctk_plugin_option(org.commontk.plugingenerator.ui
 
 # Plug-ins related to DICOM WG23 (Application Hosting)
 ctk_plugin_option(org.commontk.dah.core "Build the org.commontk.dah.core plugin." OFF)
-ctk_plugin_option(org.commontk.dah.app "Build the org.commontk.dah.app plugin." OFF
+ctk_plugin_option(org.commontk.dah.hostedapp "Build the org.commontk.dah.hostedapp plugin." OFF
                   CTK_ENABLE_DICOMApplicationHosting)
 ctk_plugin_option(org.commontk.dah.host "Build the org.commontk.dah.host plugin." OFF
                   CTK_ENABLE_DICOMApplicationHosting)
@@ -622,6 +626,10 @@ ctk_plugin_option(org.commontk.dah.host "Build the org.commontk.dah.host plugin.
 ctk_plugin_option(org.commontk.dah.exampleapp
                   "Build the org.commontk.dah.exampleapp plugin." OFF
                   CTK_APP_ctkExampleHostedApp)
+                  
+ctk_plugin_option(org.commontk.dah.cmdlinemoduleapp
+                  "Build the org.commontk.dah.cmdlinemoduleapp plugin." OFF
+                  CTK_APP_ctkCommandLineModuleApp)
                   
 ctk_plugin_option(org.commontk.dah.examplehost
                   "Build the org.commontk.dah.examplehost plugin." OFF
