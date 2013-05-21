@@ -53,11 +53,21 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
 
   Q_ENUMS(DisplayDensity)
   /**
-  * This property holds the density of tables in the table Manager. There are three denisity
+  * This property holds the density of tables in the table Manager. There are three density
   * levels: Comfortable (least dense), Cozy and Compact (most dense).
    */
-
   Q_PROPERTY(ctkDICOMTableManager::DisplayDensity displayDensity READ displayDensity WRITE setDisplayDensity);
+
+  /**
+    * Property for automatic selection of series when a study is selected. On by default
+    */
+  Q_PROPERTY(bool autoSelectSeries READ autoSelectSeries WRITE setAutoSelectSeries)
+
+  /**
+    * Property for selection mode of the contained three table views.
+    * QAbstractItemView::SelectionMode values are cast to/from integer. ExtendedSelection by default
+    */
+  Q_PROPERTY(int selectionMode READ selectionMode WRITE setSelectionMode);
 
 public:
   typedef QWidget Superclass;
@@ -86,6 +96,12 @@ public:
   void setDynamicTableLayout(bool);
   bool dynamicTableLayout() const;
 
+  void setAutoSelectSeries(bool);
+  bool autoSelectSeries() const;
+
+  void setSelectionMode(int mode);
+  int selectionMode() const;
+
   Q_INVOKABLE void updateTableViews();
 
   enum DisplayDensity
@@ -102,9 +118,7 @@ public:
   Q_INVOKABLE ctkDICOMTableView* studiesTable();
   Q_INVOKABLE ctkDICOMTableView* seriesTable();
 
-
 public Q_SLOTS:
-
   void onPatientsQueryChanged(const QStringList&);
   void onStudiesQueryChanged(const QStringList&);
   void onPatientsSelectionChanged(const QStringList&);
@@ -130,15 +144,12 @@ Q_SIGNALS:
   void studiesRightClicked(const QPoint&);
   void seriesRightClicked(const QPoint&);
 
-
 protected:
-
   virtual void resizeEvent(QResizeEvent *);
 
   QScopedPointer<ctkDICOMTableManagerPrivate> d_ptr;
 
 private:
-
   Q_DECLARE_PRIVATE(ctkDICOMTableManager)
   Q_DISABLE_COPY(ctkDICOMTableManager)
 };

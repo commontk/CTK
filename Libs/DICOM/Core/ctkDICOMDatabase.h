@@ -175,10 +175,10 @@ public:
   void setTagsToPrecache(const QStringList tags);
   const QStringList tagsToPrecache();
 
-  /// Insert into the database if not already exsting.
+  /// Insert into the database if not already existing.
   /// @param dataset The dataset to store into the database. Usually, this is
   ///                is a complete DICOM object, like a complete image. However
-  ///                the database also inserts partial objects, like studyl
+  ///                the database also inserts partial objects, like study
   ///                information to the database, even if no image data is
   ///                contained. This can be helpful to store results from
   ///                querying the PACS for patient/study/series or image
@@ -198,6 +198,13 @@ public:
                             bool storeFile = true, bool generateThumbnail = true,
                             bool createHierarchy = true,
                             const QString& destinationDirectoryName = QString() );
+
+  /// Update the fields in the database that are used for displaying information
+  /// from information stored in the tag-cache.
+  /// Displayed fields are useful if the raw DICOM tags are not human readable, or
+  /// when we want to show a derived piece of information (such as image size or
+  /// number of studies in a patient).
+  Q_INVOKABLE void updateDisplayedFields();
 
   /// Reset cached item IDs to make sure previous
   /// inserts do not interfere with upcoming insert operations.
@@ -253,11 +260,31 @@ public:
   Q_INVOKABLE bool initializeTagCache ();
   /// Return the value of a cached tag
   Q_INVOKABLE QString cachedTag (const QString sopInstanceUID, const QString tag);
+  /// Return the list of all cached tags and values for the specified sopInstanceUID. Returns with empty string if the tag is not present in the cache.
+  Q_INVOKABLE void getCachedTags(const QString sopInstanceUID, QMap<QString, QString> &cachedTags);
   /// Insert an instance tag's value into to the cache
   Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value);
   /// Insert lists of tags into the cache as a batch query operation
   Q_INVOKABLE bool cacheTags (const QStringList sopInstanceUIDs, const QStringList tags, const QStringList values);
 
+  /// Get displayed name of a given field
+  Q_INVOKABLE QString displayedNameForField(QString table, QString field) const;
+  /// Set displayed name of a given field
+  Q_INVOKABLE void setDisplayedNameForField(QString table, QString field, QString displayedName);
+  /// Get visibility of a given field
+  Q_INVOKABLE bool visibilityForField(QString table, QString field) const;
+  /// Set visibility of a given field
+  Q_INVOKABLE void setVisibilityForField(QString table, QString field, bool visibility);
+  /// Get weight of a given field.
+  /// Weight specifies the order of the field columns in the table. Smaller values are positioned towards the left ("heaviest sinks down")
+  Q_INVOKABLE int weightForField(QString table, QString field) const;
+  /// Set weight of a given field
+  /// Weight specifies the order of the field columns in the table. Smaller values are positioned towards the left ("heaviest sinks down")
+  Q_INVOKABLE void setWeightForField(QString table, QString field, int weight);
+  /// Get format of a given field
+  Q_INVOKABLE QString formatForField(QString table, QString field) const;
+  /// Set format of a given field
+  Q_INVOKABLE void setFormatForField(QString table, QString field, QString format);
 
 Q_SIGNALS:
   /// Things inserted to database.
@@ -277,20 +304,27 @@ Q_SIGNALS:
   /// instanceAdded arguments:
   ///  - instanceUID (unique)
   void instanceAdded(QString);
-  /// Indicates that an in-memory database has been updated
+
+  /// Indicate that an in-memory database has been updated
   void databaseChanged();
-  /// Indicates that the schema is about to be updated and how many files will be processed
+
+  /// Indicate that the schema is about to be updated and how many files will be processed
   void schemaUpdateStarted(int);
-  /// Indicates progress in updating schema (int is file number, string is file name)
+  /// Indicate progress in updating schema (int is file number, string is file name)
   void schemaUpdateProgress(int);
   void schemaUpdateProgress(QString);
-  /// Indicates schema update finished
+  /// Indicate schema update finished
   void schemaUpdated();
+
+  /// Trigger showing progress dialog for displayed fields update
+  void displayedFieldsUpdateStarted();
+  /// Indicate progress in updating displayed fields (int is step number)
+  void displayedFieldsUpdateProgress(int);
+  /// Indicate displayed fields update finished
+  void displayedFieldsUpdated();
 
 protected:
   QScopedPointer<ctkDICOMDatabasePrivate> d_ptr;
-
-
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMDatabase);

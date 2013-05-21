@@ -84,7 +84,7 @@ public:
   void setQueryTableName(const QString &tableName);
 
   /**
-   * Setting the foreign key for the database query. This is usefull if e.g. you
+   * Setting the foreign key for the database query. This is useful if e.g. you
    * want to select the studies for a certain patient
    * @param foreignKey the foreign key which will be used for the query
    */
@@ -95,7 +95,7 @@ public:
    * entries with the according uids are selected
    * @param uids a list of uids which should be selected
    */
-  void setQuery (const QStringList &uids = QStringList());
+  void setQuery(const QStringList &uids = QStringList());
 
   /**
    * @brief Add a where condition to the usual select statement
@@ -124,10 +124,9 @@ public:
   * @brief Get the actual QTableView, for specific view settings
   * @return a pointer to QTableView* tblDicomDatabaseView
   */
-  QTableView* tableView();
+  Q_INVOKABLE QTableView* tableView();
 
 public Q_SLOTS:
-
   /**
    * @brief slot is called if the selection of the tableview is changed
    * Within this slot the signal signalSelectionChanged is emitted
@@ -146,6 +145,21 @@ public Q_SLOTS:
    * Emits customContextMenuRequested with the global point
    */
   void onCustomContextMenuRequested(const QPoint &point);
+  
+  /**
+   * @brief Select all items in the view
+   */
+  void selectAll();
+
+  /**
+   * @brief Select first item in the view
+   */
+  void selectFirst();
+
+  /**
+   * @brief Clear any selection in the view
+   */
+  void clearSelection();
 
 protected Q_SLOTS:
   /**
@@ -162,8 +176,6 @@ protected Q_SLOTS:
    * @brief Called if a new instance was added to the database
    */
   void onInstanceAdded();
-
-  void selectAll();
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);

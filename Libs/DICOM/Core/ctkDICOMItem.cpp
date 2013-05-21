@@ -940,6 +940,11 @@ QString ctkDICOMItem::TagKey( const DcmTag& tag )
   return QString("(%1,%2)").arg( tag.getGroup(), 4, 16, QLatin1Char('0')).arg( tag.getElement(), 4, 16, QLatin1Char('0') );
 }
 
+QString ctkDICOMItem::TagKeyStripped( const DcmTag& tag )
+{
+  return QString("%1,%2").arg( tag.getGroup(), 4, 16, QLatin1Char('0')).arg( tag.getElement(), 4, 16, QLatin1Char('0') );
+}
+
 QString ctkDICOMItem::TagDescription( const DcmTag& tag )
 {
   if (!dcmDataDict.isDictionaryLoaded())
