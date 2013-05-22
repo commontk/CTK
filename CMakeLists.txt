@@ -820,6 +820,7 @@ set(CTK_POSSIBLE_DEPENDENCIES
   ZMQ
   QtSOAP
   qxmlrpc
+  qRestAPI
   OpenIGTLink
   XIP
   ITK
