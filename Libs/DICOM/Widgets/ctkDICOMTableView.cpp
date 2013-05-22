@@ -140,16 +140,43 @@ void ctkDICOMTableView::setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dic
   }
 }
 
-void ctkDICOMTableView::onSelectionChanged(const QItemSelection &, const QItemSelection &)
+void ctkDICOMTableView::onSelectionChanged()
 {
-  //Do something
+  Q_D(ctkDICOMTableView);
+
+  QModelIndexList currentSelection = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
+//  QString query;
+  QStringList uids;
+  if (currentSelection.empty())
+  {
+    emit signalSelectionChanged(uids);
+  }
+  else
+  {
+    foreach(QModelIndex i, currentSelection)
+    {
+      qDebug() << i.data();
+      uids << (QString("'") + i.data().toString() +"'");
+    }
+    //    query.append(inExpression.join(",")).append(");");
+    emit signalSelectionChanged(uids);
+  }
+  foreach(QString s, uids)
+  {
+    qDebug() << s;
+  }
 }
 
 void ctkDICOMTableView::onDatabaseChanged()
 {
   Q_D(ctkDICOMTableView);
-  d->DICOMSQLModel.setQuery("select * from Patients", d->ctkDICOMDatabase->database());
+  d->DICOMSQLModel.setQuery("select * from Patients", d->DICOMDatabase->database());
+}
 
-      d->tblDicomDatabaseView->setColumnHidden(0, true);
+void ctkDICOMTableView::onQueryChanged(const QStringList& uids)
+{
+  Q_D(ctkDICOMTableView);
+//  d->DICOMSQLModel.setQuery(query);
+  //Query zusammenfummeln
 }
 
