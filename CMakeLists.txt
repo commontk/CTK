@@ -487,8 +487,8 @@ ctk_lib_option(CommandLineModules/Backend/LocalProcess
 ctk_lib_option(CommandLineModules/Backend/FunctionPointer
                "Build the Command Line Module back-end for function pointers" OFF)
 
-ctk_lib_option(XNAT
-               "Build the XNAT library" OFF)
+ctk_lib_option(XNAT/Core
+               "Build the XNAT Core library" OFF)
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)

@@ -19,61 +19,65 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatSubject_h
-#define ctkXnatSubject_h
+#ifndef ctkctkXnatProject_h
+#define ctkctkXnatProject_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
+class ctkXnatProjectPrivate;
 
-class ctkXnatSubjectPrivate;
-
-class CTK_XNAT_EXPORT ctkXnatSubject : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatProject : public ctkXnatObject
 {
   Q_OBJECT
 
   Q_PROPERTY(QString ID READ id WRITE setId)
-  Q_PROPERTY(QString project READ project WRITE setProject)
-  Q_PROPERTY(QString label READ label WRITE setLabel)
-  Q_PROPERTY(QString insert_date READ insertDate WRITE setInsertDate)
-  Q_PROPERTY(QString insert_user READ insertUser WRITE setInsertUser)
+  Q_PROPERTY(QString secondary_ID READ secondaryId WRITE setSecondaryId)
+  Q_PROPERTY(QString name READ name WRITE setName)
+  Q_PROPERTY(QString description READ description WRITE setDescription)
+  Q_PROPERTY(QString pi_firstname READ piFirstName WRITE setPiFirstName)
+  Q_PROPERTY(QString pi_lastname READ piLastName WRITE setPiLastName)
   Q_PROPERTY(QString URI READ uri WRITE setUri)
 
 public:
-  explicit ctkXnatSubject(ctkXnatObject* parent = 0);
-  virtual ~ctkXnatSubject();
+  explicit ctkXnatProject(ctkXnatObject* parent = 0);
+  virtual ~ctkXnatProject();
 
   const QString& id() const;
   void setId(const QString& id);
 
-  const QString& project() const;
-  void setProject(const QString& project);
+  const QString& secondaryId() const;
+  void setSecondaryId(const QString& secondaryId);
 
-  const QString& label() const;
-  void setLabel(const QString& label);
+  const QString& name() const;
+  void setName(const QString& name);
 
-  const QString& insertDate() const;
-  void setInsertDate(const QString& insertDate);
+  const QString& description() const;
+  void setDescription(const QString& description);
 
-  const QString& insertUser() const;
-  void setInsertUser(const QString& insertUser);
+  const QString& piFirstName() const;
+  void setPiFirstName(const QString& piFirstName);
+
+  const QString& piLastName() const;
+  void setPiLastName(const QString& piLastName);
 
   const QString& uri() const;
   void setUri(const QString& uri);
 
   virtual void fetch(ctkXnatConnection* connection);
+  virtual void remove(ctkXnatConnection* connection);
 
   virtual QString getKind() const;
-
   virtual bool isModifiable(int parentIndex) const;
+  virtual QString getModifiableChildKind(int parentIndex) const;
 
 private:
-  QScopedPointer<ctkXnatSubjectPrivate> d_ptr;
+  QScopedPointer<ctkXnatProjectPrivate> d_ptr;
 
-  Q_DECLARE_PRIVATE(ctkXnatSubject);
-  Q_DISABLE_COPY(ctkXnatSubject);
+  Q_DECLARE_PRIVATE(ctkXnatProject);
+  Q_DISABLE_COPY(ctkXnatProject);
 };
 
 #endif

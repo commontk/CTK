@@ -22,14 +22,14 @@
 #ifndef ctkXnatReconstruction_h
 #define ctkXnatReconstruction_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
 class ctkXnatReconstructionPrivate;
 
-class CTK_XNAT_EXPORT ctkXnatReconstruction : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatReconstruction : public ctkXnatObject
 {
   Q_OBJECT
 

@@ -22,13 +22,13 @@
 #ifndef ctkXnatScanFolder_h
 #define ctkXnatScanFolder_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
 
-class CTK_XNAT_EXPORT ctkXnatScanFolder : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatScanFolder : public ctkXnatObject
 {
 public:
   explicit ctkXnatScanFolder(ctkXnatObject* parent = 0);

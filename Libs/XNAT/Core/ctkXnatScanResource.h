@@ -19,17 +19,17 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatReconstructionResource_h
-#define ctkXnatReconstructionResource_h
+#ifndef ctkXnatScanResource_h
+#define ctkXnatScanResource_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
-class ctkXnatReconstructionResourcePrivate;
+class ctkXnatScanResourcePrivate;
 
-class CTK_XNAT_EXPORT ctkXnatReconstructionResource : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatScanResource : public ctkXnatObject
 {
   Q_OBJECT
 
@@ -41,8 +41,8 @@ class CTK_XNAT_EXPORT ctkXnatReconstructionResource : public ctkXnatObject
   Q_PROPERTY(QString cat_desc READ categoryDescription WRITE setCategoryDescription)
 
 public:
-  explicit ctkXnatReconstructionResource(ctkXnatObject* parent = 0);
-  virtual ~ctkXnatReconstructionResource();
+  explicit ctkXnatScanResource(ctkXnatObject* parent = 0);
+  virtual ~ctkXnatScanResource();
 
   const QString& resourceId() const;
   void setResourceId(const QString& resourceId);
@@ -65,17 +65,14 @@ public:
   virtual void fetch(ctkXnatConnection* connection);
 
   virtual void download(ctkXnatConnection* connection, const QString& zipFilename);
-  virtual void upload(ctkXnatConnection* connection, const QString& zipFilename);
-  virtual void remove(ctkXnatConnection* connection);
 
   virtual bool isFile() const;
-  virtual bool isDeletable() const;
 
 private:
-  QScopedPointer<ctkXnatReconstructionResourcePrivate> d_ptr;
+  QScopedPointer<ctkXnatScanResourcePrivate> d_ptr;
 
-  Q_DECLARE_PRIVATE(ctkXnatReconstructionResource);
-  Q_DISABLE_COPY(ctkXnatReconstructionResource);
+  Q_DECLARE_PRIVATE(ctkXnatScanResource);
+  Q_DISABLE_COPY(ctkXnatScanResource);
 };
 
 #endif

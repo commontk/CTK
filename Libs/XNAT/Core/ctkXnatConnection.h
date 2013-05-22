@@ -22,7 +22,7 @@
 #ifndef ctkXnatConnection_h
 #define ctkXnatConnection_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include <QScopedPointer>
 #include <QString>
@@ -50,7 +50,7 @@ class ctkXnatScanResourceFile;
 class ctkXnatServer;
 class ctkXnatSubject;
 
-class CTK_XNAT_EXPORT ctkXnatConnection : public QObject
+class CTK_XNAT_CORE_EXPORT ctkXnatConnection : public QObject
 {
 
   Q_OBJECT

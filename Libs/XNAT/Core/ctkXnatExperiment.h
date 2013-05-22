@@ -22,7 +22,7 @@
 #ifndef ctkXnatExperiment_h
 #define ctkXnatExperiment_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 
@@ -30,7 +30,7 @@ class ctkXnatConnection;
 
 class ctkXnatExperimentPrivate;
 
-class CTK_XNAT_EXPORT ctkXnatExperiment : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatExperiment : public ctkXnatObject
 {
   Q_OBJECT
 

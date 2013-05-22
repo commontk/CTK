@@ -22,7 +22,7 @@
 #ifndef ctkXnatObject_h
 #define ctkXnatObject_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include <QList>
 #include <QObject>
@@ -31,7 +31,7 @@
 class ctkXnatConnection;
 class ctkXnatObjectPrivate;
 
-class CTK_XNAT_EXPORT ctkXnatObject : public QObject
+class CTK_XNAT_CORE_EXPORT ctkXnatObject : public QObject
 {
   Q_OBJECT
 

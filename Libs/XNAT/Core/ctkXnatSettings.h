@@ -22,14 +22,14 @@
 #ifndef ctkXnatSettings_h
 #define ctkXnatSettings_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include <QMap>
 #include <QString>
 
 class ctkXnatLoginProfile;
 
-class CTK_XNAT_EXPORT ctkXnatSettings
+class CTK_XNAT_CORE_EXPORT ctkXnatSettings
 {
 public:
   virtual QString getDefaultDirectory() const = 0;

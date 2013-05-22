@@ -22,14 +22,14 @@
 #ifndef ctkXnatScan_h
 #define ctkXnatScan_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
 class ctkXnatScanPrivate;
 
-class CTK_XNAT_EXPORT ctkXnatScan : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatScan : public ctkXnatObject
 {
   Q_OBJECT
 

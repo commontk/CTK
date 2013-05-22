@@ -19,36 +19,25 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatReconstructionFolder_h
-#define ctkXnatReconstructionFolder_h
+#ifndef ctkXnatServer_h
+#define ctkXnatServer_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
 
-class CTK_XNAT_EXPORT ctkXnatReconstructionFolder : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatServer : public ctkXnatObject
 {
 public:
-  explicit ctkXnatReconstructionFolder(ctkXnatObject* parent = 0);
-  virtual ~ctkXnatReconstructionFolder();
+  explicit ctkXnatServer(ctkXnatObject* parent = 0);
+  virtual ~ctkXnatServer();
 
   virtual void fetch(ctkXnatConnection* connection);
 
-  void download(ctkXnatConnection* connection, const QString& zipFilename);
-  void add(ctkXnatConnection* connection, const QString& categoryEntry);
-  QString getModifiableChildKind() const;
-  QString getModifiableParentName() const;
-  bool isModifiable() const;
-
   virtual QString getKind() const;
-  virtual QString getModifiableChildKind(int parentIndex) const;
-  virtual QString getModifiableParentName(int parentIndex) const;
 
-  virtual bool holdsFiles() const;
-  virtual bool isModifiable(int parentIndex) const;
-  virtual bool isDeletable() const;
 };
 
 #endif

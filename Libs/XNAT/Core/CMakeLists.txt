@@ -1,10 +1,10 @@
-project(CTKXNAT)
+project(CTKXNATCore)
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
 
-set(KIT_export_directive "CTK_XNAT_EXPORT")
+set(KIT_export_directive "CTK_XNAT_CORE_EXPORT")
 
 set(KIT_SRCS
   ctkXnatConnection.cpp

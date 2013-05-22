@@ -19,29 +19,23 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatConnectionFactory_h
-#define ctkXnatConnectionFactory_h
+#ifndef ctkXnatException_h
+#define ctkXnatException_h
 
-#include "ctkXNATExport.h"
+#include "ctkXNATCoreExport.h"
 
-#include <QString>
+#include <exception>
+#include <string>
 
-class ctkXnatConnection;
-
-class CTK_XNAT_EXPORT ctkXnatConnectionFactory
+class CTK_XNAT_CORE_EXPORT ctkXnatException : public std::exception
 {
 public:
-  static ctkXnatConnectionFactory& instance();
-  ~ctkXnatConnectionFactory();
+  ctkXnatException(const std::string& message);
 
-  ctkXnatConnection* makeConnection(const QString& url, const QString& user, const QString& password);
+  virtual const char* what() const throw();
 
 private:
-  ctkXnatConnectionFactory();
-  ctkXnatConnectionFactory& operator=(ctkXnatConnectionFactory& f);
-  ctkXnatConnectionFactory(const ctkXnatConnectionFactory& f);
-
-  void testConnection(ctkXnatConnection* conn);
+  const char* message;
 };
 
 #endif
