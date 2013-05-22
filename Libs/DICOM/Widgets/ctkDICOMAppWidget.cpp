@@ -28,6 +28,7 @@
 #include <QCoreApplication>
 #include <QCheckBox>
 #include <QDebug>
+#include <QMessageBox>
 #include <QMetaType>
 #include <QModelIndex>
 #include <QPersistentModelIndex>
@@ -94,6 +95,14 @@ public:
   QTimer* AutoPlayTimer;
 
   bool IsSearchWidgetPopUpMode;
+
+  // local count variables to keep track of the number of items
+  // added to the database during an import operation
+  bool DisplayImportSummary;
+  int PatientsAddedDuringImport;
+  int StudiesAddedDuringImport;
+  int SeriesAddedDuringImport;
+  int InstancesAddedDuringImport;
 };
 
 //----------------------------------------------------------------------------
@@ -106,6 +115,11 @@ ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(ctkDICOMAppWidget* parent): q
   DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
   IndexerProgress = 0;
   UpdateSchemaProgress = 0;
+  DisplayImportSummary = true;
+  PatientsAddedDuringImport = 0;
+  StudiesAddedDuringImport = 0;
+  SeriesAddedDuringImport = 0;
+  InstancesAddedDuringImport = 0;
 }
 
 ctkDICOMAppWidgetPrivate::~ctkDICOMAppWidgetPrivate()
@@ -243,6 +257,14 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
   d->ThumbnailsWidget->setThumbnailSize(
     QSize(d->ThumbnailWidthSlider->value(), d->ThumbnailWidthSlider->value()));
 
+  // signals related to tracking inserts
+  connect(d->DICOMDatabase.data(), SIGNAL(patientAdded(int,QString,QString,QString)), this,
+                              SLOT(onPatientAdded(int,QString,QString,QString)));
+  connect(d->DICOMDatabase.data(), SIGNAL(studyAdded(QString)), this, SLOT(onStudyAdded(QString)));
+  connect(d->DICOMDatabase.data(), SIGNAL(seriesAdded(QString)), this, SLOT(onSeriesAdded(QString)));
+  connect(d->DICOMDatabase.data(), SIGNAL(instanceAdded(QString)), this, SLOT(onInstanceAdded(QString)));
+
+  // Treeview signals
   connect(d->TreeView, SIGNAL(collapsed(QModelIndex)), this, SLOT(onTreeCollapsed(QModelIndex)));
   connect(d->TreeView, SIGNAL(expanded(QModelIndex)), this, SLOT(onTreeExpanded(QModelIndex)));
 
@@ -304,6 +326,54 @@ ctkDICOMAppWidget::~ctkDICOMAppWidget()
 
   d->QueryRetrieveWidget->deleteLater();
   d->ImportDialog->deleteLater();
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMAppWidget::displayImportSummary()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  return d->DisplayImportSummary;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::setDisplayImportSummary(bool onOff)
+{
+  Q_D(ctkDICOMAppWidget);
+
+  d->DisplayImportSummary = onOff;
+}
+
+//----------------------------------------------------------------------------
+int ctkDICOMAppWidget::patientsAddedDuringImport()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  return d->PatientsAddedDuringImport;
+}
+
+//----------------------------------------------------------------------------
+int ctkDICOMAppWidget::studiesAddedDuringImport()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  return d->StudiesAddedDuringImport;
+}
+
+//----------------------------------------------------------------------------
+int ctkDICOMAppWidget::seriesAddedDuringImport()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  return d->SeriesAddedDuringImport;
+}
+
+//----------------------------------------------------------------------------
+int ctkDICOMAppWidget::instancesAddedDuringImport()
+{
+  Q_D(ctkDICOMAppWidget);
+
+  return d->InstancesAddedDuringImport;
 }
 
 //----------------------------------------------------------------------------
@@ -557,6 +627,41 @@ void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkThumbnailLabel& widget
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onPatientAdded(int databaseID, QString patientID, QString patientName, QString patientBirthDate )
+{
+  Q_D(ctkDICOMAppWidget);
+  Q_UNUSED(databaseID);
+  Q_UNUSED(patientID);
+  Q_UNUSED(patientName);
+  Q_UNUSED(patientBirthDate);
+  ++d->PatientsAddedDuringImport;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onStudyAdded(QString studyUID)
+{
+  Q_D(ctkDICOMAppWidget);
+  Q_UNUSED(studyUID);
+  ++d->StudiesAddedDuringImport;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onSeriesAdded(QString seriesUID)
+{
+  Q_D(ctkDICOMAppWidget);
+  Q_UNUSED(seriesUID);
+  ++d->SeriesAddedDuringImport;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMAppWidget::onInstanceAdded(QString instanceUID)
+{
+  Q_D(ctkDICOMAppWidget);
+  Q_UNUSED(instanceUID);
+  ++d->InstancesAddedDuringImport;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMAppWidget::onImportDirectory(QString directory)
 {
   Q_D(ctkDICOMAppWidget);
@@ -568,8 +673,27 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
       {
       targetDirectory = d->DICOMDatabase->databaseDirectory();
       }
+
+    // reset counts
+    d->PatientsAddedDuringImport = 0;
+    d->StudiesAddedDuringImport = 0;
+    d->SeriesAddedDuringImport = 0;
+    d->InstancesAddedDuringImport = 0;
+
+    // show progress dialog and perform indexing
     d->showIndexerDialog();
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
+
+    // display summary result
+    if (d->DisplayImportSummary)
+      {
+      QString message = "Directory import completed.\n\n";
+      message += QString("%1 New Patients\n").arg(QString::number(d->PatientsAddedDuringImport));
+      message += QString("%1 New Studies\n").arg(QString::number(d->StudiesAddedDuringImport));
+      message += QString("%1 New Series\n").arg(QString::number(d->SeriesAddedDuringImport));
+      message += QString("%1 New Instances\n").arg(QString::number(d->InstancesAddedDuringImport));
+      QMessageBox::information(this,"DICOM Directory Import", message);
+      }
   }
 }
 

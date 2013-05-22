@@ -1228,6 +1228,9 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
 
           dbPatientID = insertPatient( ctkDataset );
 
+          // let users of this class track when things happen
+          emit q->patientAdded(dbPatientID, patientID, patientsName, patientsBirthDate);
+
           /// keep this for the next image
           LastPatientUID = dbPatientID;
           LastPatientID = patientID;
@@ -1242,11 +1245,17 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
       if ( studyInstanceUID != "" && LastStudyInstanceUID != studyInstanceUID )
         {
           insertStudy(ctkDataset,dbPatientID);
+
+          // let users of this class track when things happen
+          emit q->studyAdded(studyInstanceUID);
         }
 
       if ( seriesInstanceUID != "" && seriesInstanceUID != LastSeriesInstanceUID )
         {
           insertSeries(ctkDataset, studyInstanceUID);
+
+          // let users of this class track when things happen
+          emit q->seriesAdded(seriesInstanceUID);
         }
       // TODO: what to do with imported files
       //
@@ -1268,6 +1277,9 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
 
               // insert was needed, so cache any application-requested tags
               this->precacheTags(sopInstanceUID);
+
+              // let users of this class track when things happen
+              emit q->instanceAdded(sopInstanceUID);
             }
         }
 
