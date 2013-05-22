@@ -849,14 +849,14 @@ QString ctkDICOMDatabase::groupElementToTag(const unsigned short& group, const u
 //
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::insert( DcmDataset *dataset, bool storeFile, bool generateThumbnail)
+void ctkDICOMDatabase::insert( DcmItem *item, bool storeFile, bool generateThumbnail)
 {
-  if (!dataset)
+  if (!item)
     {
       return;
     }
   ctkDICOMDataset ctkDataset;
-  ctkDataset.InitializeFromDataset(dataset, false /* do not take ownership */);
+  ctkDataset.InitializeFromItem(item, false /* do not take ownership */);
   this->insert(ctkDataset,storeFile,generateThumbnail);
 }
 void ctkDICOMDatabase::insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail)

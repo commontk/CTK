@@ -179,7 +179,7 @@ public:
   ///
   Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset,
                               bool storeFile, bool generateThumbnail);
-  void insert ( DcmDataset *dataset,
+  void insert ( DcmItem *item,
                               bool storeFile = true, bool generateThumbnail = true);
   Q_INVOKABLE void insert ( const QString& filePath,
                             bool storeFile = true, bool generateThumbnail = true,

@@ -78,7 +78,7 @@ public:
     /// should copy information from a DcmDataset object.
 
     /// \warning Derived classes must call PDICOMDataset::InitializeFromDataset(...) to correctly copy encoding information.
-    virtual void InitializeFromDataset(DcmDataset* dataset, bool takeOwnership = false);
+    virtual void InitializeFromItem(DcmItem* dataset, bool takeOwnership = false);
 
     ///
     /// \brief For initialization from file in a constructor / assignment.
@@ -250,7 +250,7 @@ protected:
 
   QScopedPointer<ctkDICOMDatasetPrivate> d_ptr;
 
-  DcmDataset& GetDcmDataset() const;
+  DcmItem& GetDcmItem() const;
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMDataset);

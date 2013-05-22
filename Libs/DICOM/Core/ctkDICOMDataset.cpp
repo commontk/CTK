@@ -32,14 +32,14 @@ class ctkDICOMDatasetPrivate
 {
   public:
 
-    ctkDICOMDatasetPrivate() : m_DcmDataset(0), m_TakeOwnership(true) {}
+    ctkDICOMDatasetPrivate() : m_DcmItem(0), m_TakeOwnership(true) {}
 
     QString m_SpecificCharacterSet;
 
     bool m_DICOMDataSetInitialized;
     bool m_StrictErrorHandling;
 
-    DcmDataset* m_DcmDataset;
+    DcmItem* m_DcmItem;
     bool m_TakeOwnership;
 };
 
@@ -48,7 +48,7 @@ ctkDICOMDataset::ctkDICOMDataset(bool strictErrorHandling)
 :d_ptr(new ctkDICOMDatasetPrivate)
 {
   Q_D(ctkDICOMDataset);
-  d->m_DcmDataset = new DcmDataset();
+  d->m_DcmItem = new DcmDataset();
   d->m_TakeOwnership = true;
   d->m_DICOMDataSetInitialized = false;
   d->m_StrictErrorHandling = strictErrorHandling;
@@ -59,27 +59,27 @@ ctkDICOMDataset::~ctkDICOMDataset()
   Q_D(ctkDICOMDataset);
   if ( d->m_TakeOwnership)
   {
-    delete d->m_DcmDataset;
+    delete d->m_DcmItem;
   }
 }
 
 
-void ctkDICOMDataset::InitializeFromDataset(DcmDataset* dataset, bool takeOwnership)
+void ctkDICOMDataset::InitializeFromItem(DcmItem *dataset, bool takeOwnership)
 {
   Q_D(ctkDICOMDataset);
 
-  if(d->m_DcmDataset != dataset)
+  if(d->m_DcmItem != dataset)
   {
     if (d->m_TakeOwnership)
     {
-      delete d->m_DcmDataset;
+      delete d->m_DcmItem;
     }
-    d->m_DcmDataset = NULL;
+    d->m_DcmItem = NULL;
   }
 
   if (dataset)
   {
-    d->m_DcmDataset=dataset;
+    d->m_DcmItem=dataset;
     d->m_TakeOwnership = takeOwnership;
     if (!d->m_DICOMDataSetInitialized)
     {
@@ -125,7 +125,7 @@ void ctkDICOMDataset::InitializeFromFile(const QString& filename,
     return;
   }
 
-  InitializeFromDataset(dataset, true);
+  InitializeFromItem(dataset, true);
 }
 
 void ctkDICOMDataset::Serialize()
@@ -139,9 +139,9 @@ void ctkDICOMDataset::Serialize()
 
   // write into buffer
   DcmOutputBufferStream dcmbuffer(writebuffer, buffersize);
-  d->m_DcmDataset->transferInit();
-  OFCondition condition = d->m_DcmDataset->write(dcmbuffer, EXS_LittleEndianImplicit, EET_UndefinedLength, NULL );
-  d->m_DcmDataset->transferEnd();
+  d->m_DcmItem->transferInit();
+  OFCondition condition = d->m_DcmItem->write(dcmbuffer, EXS_LittleEndianImplicit, EET_UndefinedLength, NULL );
+  d->m_DcmItem->transferEnd();
   if ( condition.bad() )
   {
     std::cerr << "Could not DcmDataset::write(..): " << condition.text() << std::endl;
@@ -221,7 +221,7 @@ void ctkDICOMDataset::Deserialize()
   dataset.transferEnd();
 
   // do this in all cases, even when reading reported an error
-  this->InitializeFromDataset(&dataset);
+  this->InitializeFromItem(&dataset);
 
   if ( condition.bad() )
   {
@@ -240,24 +240,24 @@ void ctkDICOMDataset::Deserialize()
   }
 }
 
-DcmDataset& ctkDICOMDataset::GetDcmDataset() const
+DcmItem& ctkDICOMDataset::GetDcmItem() const
 {
   const Q_D(ctkDICOMDataset);
-  return *d->m_DcmDataset;
+  return *d->m_DcmItem;
 }
 
 OFCondition ctkDICOMDataset::findAndGetElement(const DcmTag& tag, DcmElement*& element, const OFBool searchIntoSub) const
 {
   EnsureDcmDataSetIsInitialized();
   // this one const_cast allows us to declare quite a lot of methods nicely with const
-  return GetDcmDataset().findAndGetElement(tag, element, searchIntoSub);
+  return GetDcmItem().findAndGetElement(tag, element, searchIntoSub);
 }
 
 OFCondition ctkDICOMDataset::findAndGetOFString(const DcmTag& tag, OFString& value, const unsigned long pos, const OFBool searchIntoSub) const
 {
   EnsureDcmDataSetIsInitialized();
   // this second const_cast allows us to declare quite a lot of methods nicely with const
-  return GetDcmDataset().findAndGetOFString(tag, value, pos, searchIntoSub);
+  return GetDcmItem().findAndGetOFString(tag, value, pos, searchIntoSub);
 }
 
 bool ctkDICOMDataset::CheckCondition(const OFCondition& condition)
@@ -292,7 +292,7 @@ bool ctkDICOMDataset::CopyElement( DcmDataset* dataset, const DcmTagKey& tag, in
   bool copied(true);
 
   if (!dataset) return false;
-  if (dataset == d->m_DcmDataset)
+  if (dataset == d->m_DcmItem)
   {
     throw std::logic_error("Trying to copy tag to yourself. Please check application logic!"); 
   }
@@ -316,7 +316,7 @@ bool ctkDICOMDataset::CopyElement( DcmDataset* dataset, const DcmTagKey& tag, in
     dataset->findAndGetElement( tag, element, OFFalse, OFTrue ); // OFTrue is important (copies element), DcmDataset takes ownership and deletes elements on its own destruction
     if (element)
     {
-      copied = CheckCondition( d->m_DcmDataset->insert(element) );
+      copied = CheckCondition( d->m_DcmItem->insert(element) );
     }
   }
 
@@ -692,7 +692,7 @@ bool ctkDICOMDataset::SetElementAsString( const DcmTag& tag, QString string )
   Q_D(ctkDICOMDataset);
   this->EnsureDcmDataSetIsInitialized();
   // TODO: Evaluate DICOM tag for proper encoding (see GetElementAsString())
-  return CheckCondition( d->m_DcmDataset->putAndInsertString( tag, string.toLatin1().data() ) );
+  return CheckCondition( d->m_DcmItem->putAndInsertString( tag, string.toLatin1().data() ) );
 }
 
 bool ctkDICOMDataset::SetElementAsStringList( const DcmTag& /*tag*/, QStringList /*stringList*/ )
@@ -716,7 +716,7 @@ bool ctkDICOMDataset::SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonN
     Encode( tag, personName.namePrefix() ),
     Encode( tag, personName.nameSuffix() ) ) ) )
   {
-    return CheckCondition( d->m_DcmDataset->insert( dcmPersonName ) );
+    return CheckCondition( d->m_DcmItem->insert( dcmPersonName ) );
   }
 
   return false;
@@ -741,7 +741,7 @@ bool ctkDICOMDataset::SetElementAsDate( const DcmTag& tag, QDate date )
 
   if ( CheckCondition( dcmDate->setOFDate( ofDate ) ) )
   {
-    return CheckCondition( d->m_DcmDataset->insert( dcmDate ) );
+    return CheckCondition( d->m_DcmItem->insert( dcmDate ) );
   }
 
   return false;
@@ -756,7 +756,7 @@ bool ctkDICOMDataset::SetElementAsTime( const DcmTag& tag, QTime time )
 
   if ( CheckCondition( dcmTime->setOFTime( ofTime ) ) )
   {
-    return CheckCondition( d->m_DcmDataset->insert( dcmTime ) );
+    return CheckCondition( d->m_DcmItem->insert( dcmTime ) );
   }
 
   return false;
@@ -775,7 +775,7 @@ bool ctkDICOMDataset::SetElementAsDateTime( const DcmTag& tag, QDateTime dateTim
 
   if ( CheckCondition( dcmDateTime->setOFDateTime( ofDateTime ) ) )
   {
-    return CheckCondition( d->m_DcmDataset->insert( dcmDateTime ) );
+    return CheckCondition( d->m_DcmItem->insert( dcmDateTime ) );
   }
 
   return false;
@@ -786,7 +786,7 @@ bool ctkDICOMDataset::SetElementAsInteger( const DcmTag& tag, long value, unsign
   Q_D(ctkDICOMDataset);
   this->EnsureDcmDataSetIsInitialized();
   //std::cerr << "TagVR: " << TagVR( tag ).toStdString() << std::endl;
-  return CheckCondition( d->m_DcmDataset->putAndInsertSint32( tag, value, pos ) );
+  return CheckCondition( d->m_DcmItem->putAndInsertSint32( tag, value, pos ) );
 }
 
 bool ctkDICOMDataset::SetElementAsSignedShort( const DcmTag& tag, int value, unsigned long pos )
@@ -794,7 +794,7 @@ bool ctkDICOMDataset::SetElementAsSignedShort( const DcmTag& tag, int value, uns
   Q_D(ctkDICOMDataset);
   this->EnsureDcmDataSetIsInitialized();
   //std::cerr << "TagVR: " << TagVR( tag ).toStdString() << std::endl;
-  return CheckCondition( d->m_DcmDataset->putAndInsertSint16( tag, value, pos ) );
+  return CheckCondition( d->m_DcmItem->putAndInsertSint16( tag, value, pos ) );
 }
 
 bool ctkDICOMDataset::SetElementAsUnsignedShort( const DcmTag& tag, int value, unsigned long pos )
@@ -802,7 +802,7 @@ bool ctkDICOMDataset::SetElementAsUnsignedShort( const DcmTag& tag, int value, u
   Q_D(ctkDICOMDataset);
   this->EnsureDcmDataSetIsInitialized();
   //std::cerr << "TagVR: " << TagVR( tag ).toStdString() << std::endl;
-  return CheckCondition( d->m_DcmDataset->putAndInsertUint16( tag, value, pos ) );
+  return CheckCondition( d->m_DcmItem->putAndInsertUint16( tag, value, pos ) );
 }
 
 QString ctkDICOMDataset::GetStudyInstanceUID() const
@@ -984,7 +984,12 @@ void ctkDICOMDataset::SetStoredSerialization(QString serializedDataset)
 bool ctkDICOMDataset::SaveToFile(const QString& filePath) const
 {
   Q_D(const ctkDICOMDataset);
-  DcmFileFormat* fileformat = new DcmFileFormat ( d->m_DcmDataset );
+
+  if (! dynamic_cast<DcmDataset*>(d->m_DcmItem) )
+  {
+    return false;
+  }
+  DcmFileFormat* fileformat = new DcmFileFormat ( dynamic_cast<DcmDataset*>(d->m_DcmItem) );
   OFCondition status = fileformat->saveFile ( qPrintable(QDir::toNativeSeparators( filePath)) );
   delete fileformat;
   return status.good();
