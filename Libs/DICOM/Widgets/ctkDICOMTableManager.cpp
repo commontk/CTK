@@ -20,9 +20,13 @@
 
 // ctk includes
 #include "ctkDICOMTableManager.h"
+#include "ctkDICOMTableView.h"
 
 // Qt includes
 #include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QRadioButton>
+#include <QButtonGroup>
 #include <QPushButton>
 
 class ctkDICOMTableManagerPrivate
@@ -35,6 +39,13 @@ protected:
 public:
   ctkDICOMTableManagerPrivate(ctkDICOMTableManager& obj);
   ~ctkDICOMTableManagerPrivate();
+
+  QVBoxLayout* layout;
+  QBoxLayout* layoutTables;
+
+  ctkDICOMTableView* patientsTable;
+  ctkDICOMTableView* studiesTable;
+  ctkDICOMTableView* seriesTable;
 
   void init();
 };
@@ -54,10 +65,23 @@ void ctkDICOMTableManagerPrivate::init()
 {
   //setup UI
   Q_Q(ctkDICOMTableManager);
-  QHBoxLayout layout;
-  QPushButton button("Test");
-  layout.addWidget(&button);
-  q->setLayout(&layout);
+
+  this->layout = new QVBoxLayout();
+  this->layoutTables = new QBoxLayout(QBoxLayout::LeftToRight);
+  this->patientsTable = new ctkDICOMTableView();
+  this->studiesTable = new ctkDICOMTableView();
+  this->seriesTable = new ctkDICOMTableView();
+  this->layoutTables->addWidget(patientsTable);
+  this->layoutTables->addWidget(studiesTable);
+  this->layoutTables->addWidget(seriesTable);
+
+  QPushButton* changeLayoutButton = new QPushButton("Change Layout");
+  QObject::connect(changeLayoutButton, SIGNAL(clicked()), q, SLOT(onChangeLayoutPushed()));
+
+  this->layout->addWidget(changeLayoutButton);
+  this->layout->addLayout(this->layoutTables);
+
+  q->setLayout(layout);
 }
 
 //----------------------------------------------------------------------------
@@ -78,7 +102,30 @@ ctkDICOMTableManager::~ctkDICOMTableManager()
 
 }
 
-void ctkDICOMTableManager::onChangeLayout()
+void ctkDICOMTableManager::onChangeLayoutPushed()
 {
+  Q_D(ctkDICOMTableManager);
+  if (d->layoutTables->direction() == QBoxLayout::TopToBottom)
+  {
+    this->changeTableLayout(QBoxLayout::LeftToRight);
+  }
+  else
+  {
+    this->changeTableLayout(QBoxLayout::TopToBottom);
+  }
+}
 
+void ctkDICOMTableManager::changeTableLayout(QBoxLayout::Direction direction)
+{
+  Q_D(ctkDICOMTableManager);
+  d->layoutTables->removeWidget(d->patientsTable);
+  d->layoutTables->removeWidget(d->studiesTable);
+  d->layoutTables->removeWidget(d->seriesTable);
+  delete d->layoutTables;
+
+  d->layoutTables = new QBoxLayout(direction);
+  d->layoutTables->addWidget(d->patientsTable);
+  d->layoutTables->addWidget(d->studiesTable);
+  d->layoutTables->addWidget(d->seriesTable);
+  d->layout->addLayout(d->layoutTables);
 }
