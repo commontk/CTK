@@ -46,6 +46,10 @@ public:
   QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
   QSqlQueryModel DICOMSQLModel;
   QSortFilterProxyModel* DICOMSQLFilterModel;
+  QString queryTableName;
+  QString queryForeignKey;
+  QString queryPrimaryKey;
+
 };
 
 ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj)
@@ -134,10 +138,22 @@ void ctkDICOMTableView::setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dic
   d->setUpTableView();
 }
 
-    QObject::connect(d->ctkDICOMDatabase.data(), SIGNAL(databaseChanged()), this, SLOT(onDatabaseChanged()));
+void ctkDICOMTableView::setQueryTableName(const QString &tableName)
+{
+  Q_D(ctkDICOMTableView);
+  d->queryTableName = tableName;
+}
 
-//    d->tblDicomDatabaseView->setColumnHidden(0, true);
-  }
+void ctkDICOMTableView::setQueryForeignKey(const QString &foreignKey)
+{
+  Q_D(ctkDICOMTableView);
+  d->queryForeignKey = foreignKey;
+}
+
+void ctkDICOMTableView::setQueryPrimaryKey(const QString &primaryKey)
+{
+  Q_D(ctkDICOMTableView);
+  d->queryPrimaryKey = primaryKey;
 }
 
 void ctkDICOMTableView::onSelectionChanged()
