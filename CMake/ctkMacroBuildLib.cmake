@@ -50,7 +50,7 @@ macro(ctkMacroBuildLib)
 
   # Define library name
   set(lib_name ${MY_NAME})
-  
+
   # Library target names must not contain a '_' (reserved for plug-in target names)
   if(lib_name MATCHES _)
     message(FATAL_ERROR "The library name ${lib_name} must not contain a '_' character.")
@@ -76,6 +76,9 @@ macro(ctkMacroBuildLib)
   #foreach(i ${my_includes})
   #  message(i:${i})
   #endforeach()
+
+  # Add Qt include dirs and defines
+  include(${QT_USE_FILE})
 
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
