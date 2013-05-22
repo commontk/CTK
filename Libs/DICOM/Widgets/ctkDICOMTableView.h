@@ -51,10 +51,14 @@ public:
   void hideColumn(int column);
 
 public Q_SLOTS:
-  void onSelectionChanged(const QItemSelection &, const QItemSelection &);
+  void onSelectionChanged();
+  void onQueryChanged(const QStringList &uids);
 
 protected Q_SLOTS:
   void onDatabaseChanged();
+
+Q_SIGNALS:
+  void signalSelectionChanged(const QStringList &uids);
 
 protected:
   QScopedPointer<ctkDICOMTableViewPrivate> d_ptr;
