@@ -25,6 +25,7 @@
 
 // Qt includes
 #include <QWidget>
+#include <QBoxLayout>
 
 class ctkDICOMTableManagerPrivate;
 
@@ -44,9 +45,11 @@ protected:
   QScopedPointer<ctkDICOMTableManagerPrivate> d_ptr;
 
 private Q_SLOTS:
-  void onChangeLayout(/*param*/);
+  void onChangeLayoutPushed();
 
 private:
+  void changeTableLayout(QBoxLayout::Direction direction);
+
   Q_DECLARE_PRIVATE(ctkDICOMTableManager)
   Q_DISABLE_COPY(ctkDICOMTableManager)
 };
