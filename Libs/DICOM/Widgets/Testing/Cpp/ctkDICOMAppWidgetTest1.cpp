@@ -22,8 +22,12 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
+#include <QKeyEvent>
 #include <QTimer>
 #include <QString>
+
+// ctk includes
+#include "ctkUtils.h"
 
 // ctkDICOMCore includes
 #include "ctkDICOMAppWidget.h"
@@ -32,7 +36,9 @@
 #include <iostream>
 
 /* Test from build directory:
- ./CTK-build/bin/CTKDICOMWidgetsCxxTests ctkDICOMAppWidgetTest1 test.db ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
+ ./CTK-build/bin/CTKDICOMWidgetsCppTests ctkDICOMAppWidgetTest1 <test directory>
+
+ if the test directory does not have 100 instances in one patient/study/series, test will fail
 */
 
 int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
@@ -40,18 +46,44 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
   QApplication app(argc, argv);
   
   ctkDICOMAppWidget appWidget;
-  appWidget.setDatabaseDirectory(QDir::currentPath());
+
+  QFileInfo tempFileInfo(QDir::tempPath() + QString("/ctkDICOMAppWidgetTest1-db"));
+  QString dbDir = tempFileInfo.absoluteFilePath();
+  std::cerr << "\n\nUsing directory: " << dbDir.toLatin1().data() << std::endl;
+  if (tempFileInfo.exists())
+    {
+    std::cerr << "\n\nRemoving directory: " << dbDir.toLatin1().data() << std::endl;
+    ctk::removeDirRecursively(dbDir);
+    }
+  std::cerr << "\n\nMaking directory: " << dbDir.toLatin1().data() << std::endl;
+  QDir dir(dbDir);
+  dir.mkdir(dbDir);
+
+  appWidget.setDatabaseDirectory(dbDir);
   QString testString = QString("Test String");
   appWidget.onFileIndexed(testString);
   appWidget.openImportDialog();
   appWidget.openExportDialog();
   appWidget.openQueryDialog();
-  
-  appWidget.show();
 
-  if (argc <= 1 || QString(argv[1]) != "-I")
+  appWidget.openQueryDialog();
+  
+  appWidget.setDisplayImportSummary(false);
+  appWidget.onImportDirectory(argv[argc -1]);
+  if ( appWidget.patientsAddedDuringImport() != 1
+    || appWidget.studiesAddedDuringImport() != 1
+    || appWidget.seriesAddedDuringImport() != 1
+    || appWidget.instancesAddedDuringImport() != 100)
+    {
+    std::cerr << "\n\nDirectory did not import as expected!\n\n";
+    exit(-1);
+    }
+
+
+  if (argc <= 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
+  std::cerr << "\n\nAdded to database directory: " << dbDir.toLatin1().data() << std::endl;
   return app.exec();
 }
