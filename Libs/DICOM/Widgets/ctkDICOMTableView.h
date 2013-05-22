@@ -47,8 +47,10 @@ public:
 
   void setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDataBase);
 
-  // Settings for QTableView
-  void hideColumn(int column);
+  // Settings for querying the database
+  void setQueryTableName(const QString &tableName);
+  void setQueryForeignKey(const QString &foreignKey);
+  void setQueryPrimaryKey(const QString &primaryKey);
 
 public Q_SLOTS:
   void onSelectionChanged();
