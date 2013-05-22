@@ -19,7 +19,7 @@
 
 =============================================================================*/
 
-#include "ctkDICOMDataset.h"
+#include "ctkDICOMItem.h"
 
 #include <dctk.h>
 #include <dcostrmb.h>
@@ -28,11 +28,11 @@
 #include <stdexcept>
 
 
-class ctkDICOMDatasetPrivate
+class ctkDICOMItemPrivate
 {
   public:
 
-    ctkDICOMDatasetPrivate() : m_DcmItem(0), m_TakeOwnership(true) {}
+    ctkDICOMItemPrivate() : m_DcmItem(0), m_TakeOwnership(true) {}
 
     QString m_SpecificCharacterSet;
 
@@ -44,19 +44,19 @@ class ctkDICOMDatasetPrivate
 };
 
 
-ctkDICOMDataset::ctkDICOMDataset(bool strictErrorHandling)
-:d_ptr(new ctkDICOMDatasetPrivate)
+ctkDICOMItem::ctkDICOMItem(bool strictErrorHandling)
+:d_ptr(new ctkDICOMItemPrivate)
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   d->m_DcmItem = new DcmDataset();
   d->m_TakeOwnership = true;
   d->m_DICOMDataSetInitialized = false;
   d->m_StrictErrorHandling = strictErrorHandling;
 }
 
-ctkDICOMDataset::~ctkDICOMDataset()
+ctkDICOMItem::~ctkDICOMItem()
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   if ( d->m_TakeOwnership)
   {
     delete d->m_DcmItem;
@@ -64,9 +64,9 @@ ctkDICOMDataset::~ctkDICOMDataset()
 }
 
 
-void ctkDICOMDataset::InitializeFromItem(DcmItem *dataset, bool takeOwnership)
+void ctkDICOMItem::InitializeFromItem(DcmItem *dataset, bool takeOwnership)
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
 
   if(d->m_DcmItem != dataset)
   {
@@ -106,7 +106,7 @@ void ctkDICOMDataset::InitializeFromItem(DcmItem *dataset, bool takeOwnership)
   }
 
 
-void ctkDICOMDataset::InitializeFromFile(const QString& filename,
+void ctkDICOMItem::InitializeFromFile(const QString& filename,
                                          const E_TransferSyntax readXfer,
                                          const E_GrpLenEncoding groupLength,
                                          const Uint32 maxReadLength,
@@ -128,12 +128,12 @@ void ctkDICOMDataset::InitializeFromFile(const QString& filename,
   InitializeFromItem(dataset, true);
 }
 
-void ctkDICOMDataset::Serialize()
+void ctkDICOMItem::Serialize()
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   EnsureDcmDataSetIsInitialized();
 
-  // store content of current DcmDataset (our parent) as QByteArray into m_ctkDICOMDataset
+  // store content of current DcmDataset (our parent) as QByteArray into m_ctkDICOMItem
   Uint32 buffersize = 1024*1024; // reserve 1MB
   char* writebuffer = new char[buffersize];
 
@@ -152,7 +152,7 @@ void ctkDICOMDataset::Serialize()
   void* readbuffer = NULL;
   dcmbuffer.flushBuffer(readbuffer, datasetsize);
 
-  //std::cerr << "** " << (void*)this << " ctkDICOMDataset: Serializing Dataset into " << datasetsize << " bytes" << std::endl;
+  //std::cerr << "** " << (void*)this << " ctkDICOMItem: Serializing Dataset into " << datasetsize << " bytes" << std::endl;
 
   // construct Qt type from that contents
   QByteArray qtArray = QByteArray::fromRawData( static_cast<const char*>(readbuffer), datasetsize );
@@ -166,29 +166,29 @@ void ctkDICOMDataset::Serialize()
   delete[] writebuffer;
 }
 
-void ctkDICOMDataset::MarkForInitialization()
+void ctkDICOMItem::MarkForInitialization()
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   d->m_DICOMDataSetInitialized = false;
 }
-bool ctkDICOMDataset::IsInitialized() const
+bool ctkDICOMItem::IsInitialized() const
 {
-  Q_D(const ctkDICOMDataset);
+  Q_D(const ctkDICOMItem);
   return d->m_DICOMDataSetInitialized;
 }
-void ctkDICOMDataset::EnsureDcmDataSetIsInitialized() const
+void ctkDICOMItem::EnsureDcmDataSetIsInitialized() const
 {
   if ( ! this->IsInitialized() )
   {
-      throw std::logic_error("Calling methods on uninitialized ctkDICOMDataset");
+      throw std::logic_error("Calling methods on uninitialized ctkDICOMItem");
   }
-  // const_cast<ctkDICOMDataset*>(this)->Deserialize();
+  // const_cast<ctkDICOMItem*>(this)->Deserialize();
 }
 
-void ctkDICOMDataset::Deserialize()
+void ctkDICOMItem::Deserialize()
 {
-  Q_D(ctkDICOMDataset);
-  // read attribute m_ctkDICOMDataset
+  Q_D(ctkDICOMItem);
+  // read attribute m_ctkDICOMItem
   // construct a DcmDataset from it
   // calls InitializeData(DcmDataset*)
 
@@ -205,10 +205,10 @@ void ctkDICOMDataset::Deserialize()
   }
 
 
-  //std::cerr << "** " << (void*)this << " ctkDICOMDataset: Deserialize Dataset from string of size " << stringbuffer.size() << "\n" << stringbuffer.toStdString() << std::endl;
+  //std::cerr << "** " << (void*)this << " ctkDICOMItem: Deserialize Dataset from string of size " << stringbuffer.size() << "\n" << stringbuffer.toStdString() << std::endl;
 
   QByteArray qtArray = QByteArray::fromBase64( stringbuffer.toAscii() );
-  //std::cerr << "** " << (void*)this << " ctkDICOMDataset: Deserialize Dataset from byte array of size " << qtArray.size() << std::endl;
+  //std::cerr << "** " << (void*)this << " ctkDICOMItem: Deserialize Dataset from byte array of size " << qtArray.size() << std::endl;
 
   DcmInputBufferStream dcmbuffer;
   dcmbuffer.setBuffer( qtArray.data(), qtArray.size() );
@@ -240,27 +240,27 @@ void ctkDICOMDataset::Deserialize()
   }
 }
 
-DcmItem& ctkDICOMDataset::GetDcmItem() const
+DcmItem& ctkDICOMItem::GetDcmItem() const
 {
-  const Q_D(ctkDICOMDataset);
+  const Q_D(ctkDICOMItem);
   return *d->m_DcmItem;
 }
 
-OFCondition ctkDICOMDataset::findAndGetElement(const DcmTag& tag, DcmElement*& element, const OFBool searchIntoSub) const
+OFCondition ctkDICOMItem::findAndGetElement(const DcmTag& tag, DcmElement*& element, const OFBool searchIntoSub) const
 {
   EnsureDcmDataSetIsInitialized();
   // this one const_cast allows us to declare quite a lot of methods nicely with const
   return GetDcmItem().findAndGetElement(tag, element, searchIntoSub);
 }
 
-OFCondition ctkDICOMDataset::findAndGetOFString(const DcmTag& tag, OFString& value, const unsigned long pos, const OFBool searchIntoSub) const
+OFCondition ctkDICOMItem::findAndGetOFString(const DcmTag& tag, OFString& value, const unsigned long pos, const OFBool searchIntoSub) const
 {
   EnsureDcmDataSetIsInitialized();
   // this second const_cast allows us to declare quite a lot of methods nicely with const
   return GetDcmItem().findAndGetOFString(tag, value, pos, searchIntoSub);
 }
 
-bool ctkDICOMDataset::CheckCondition(const OFCondition& condition)
+bool ctkDICOMItem::CheckCondition(const OFCondition& condition)
 {
   if ( condition.bad() )
   {
@@ -270,9 +270,9 @@ bool ctkDICOMDataset::CheckCondition(const OFCondition& condition)
   return condition.good();
 }
 
-bool ctkDICOMDataset::CopyElement( DcmDataset* dataset, const DcmTagKey& tag, int type )
+bool ctkDICOMItem::CopyElement( DcmDataset* dataset, const DcmTagKey& tag, int type )
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   switch (type)
   {
     case 0x1:
@@ -333,9 +333,9 @@ bool ctkDICOMDataset::CopyElement( DcmDataset* dataset, const DcmTagKey& tag, in
   return !missing && copied;
 }
 
-QString ctkDICOMDataset::Decode( const DcmTag& tag, const OFString& raw ) const
+QString ctkDICOMItem::Decode( const DcmTag& tag, const OFString& raw ) const
 {
-  Q_D(const ctkDICOMDataset);
+  Q_D(const ctkDICOMItem);
   // decode for types LO, LT, PN, SH, ST, UT
   QString vr = TagVR(tag);
   if ( !d->m_SpecificCharacterSet.isEmpty()
@@ -424,14 +424,14 @@ QString ctkDICOMDataset::Decode( const DcmTag& tag, const OFString& raw ) const
 
 }
 
-OFString ctkDICOMDataset::Encode( const DcmTag& tag, const QString& qstring ) const
+OFString ctkDICOMItem::Encode( const DcmTag& tag, const QString& qstring ) const
 {
   // TODO: respect given character-set when encoding; see Decode()
   Q_UNUSED(tag);
   return OFString( qstring.toLatin1().data() ); // Latin1 is ISO 8859, which is the default character set of DICOM (PS 3.5-2008, Page 18)
 }
 
-QString ctkDICOMDataset::GetAllElementValuesAsString( const DcmTag& tag ) const
+QString ctkDICOMItem::GetAllElementValuesAsString( const DcmTag& tag ) const
 {
   this->EnsureDcmDataSetIsInitialized();
 
@@ -445,7 +445,7 @@ QString ctkDICOMDataset::GetAllElementValuesAsString( const DcmTag& tag ) const
   for (unsigned long i = 0; i < count; ++i)
   {
     OFString s;
-    if ( CheckCondition( const_cast<ctkDICOMDataset*>(this)->findAndGetOFString(tag, s, i) ) )
+    if ( CheckCondition( const_cast<ctkDICOMItem*>(this)->findAndGetOFString(tag, s, i) ) )
     {
       qsl << Decode( tag, s );
     }
@@ -455,7 +455,7 @@ QString ctkDICOMDataset::GetAllElementValuesAsString( const DcmTag& tag ) const
 }
 
 
-QString ctkDICOMDataset::GetElementAsString( const DcmTag& tag, unsigned long pos ) const
+QString ctkDICOMItem::GetElementAsString( const DcmTag& tag, unsigned long pos ) const
 {
   this->EnsureDcmDataSetIsInitialized();
 
@@ -470,7 +470,7 @@ QString ctkDICOMDataset::GetElementAsString( const DcmTag& tag, unsigned long po
   }
 }
 
-QStringList ctkDICOMDataset::GetElementAsStringList( const DcmTag& tag ) const
+QStringList ctkDICOMItem::GetElementAsStringList( const DcmTag& tag ) const
 {
   this->EnsureDcmDataSetIsInitialized();
   QStringList qsl;
@@ -488,7 +488,7 @@ QStringList ctkDICOMDataset::GetElementAsStringList( const DcmTag& tag ) const
   return qsl;
 }
 
-ctkDICOMPersonName ctkDICOMDataset::GetElementAsPersonName( const DcmTag& tag, unsigned long pos ) const
+ctkDICOMPersonName ctkDICOMItem::GetElementAsPersonName( const DcmTag& tag, unsigned long pos ) const
 {
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
@@ -518,7 +518,7 @@ ctkDICOMPersonName ctkDICOMDataset::GetElementAsPersonName( const DcmTag& tag, u
   }
 }
 
-ctkDICOMPersonNameList ctkDICOMDataset::GetElementAsPersonNameList( const DcmTag& tag ) const
+ctkDICOMPersonNameList ctkDICOMItem::GetElementAsPersonNameList( const DcmTag& tag ) const
 {
   this->EnsureDcmDataSetIsInitialized();
   ctkDICOMPersonNameList qpnl;
@@ -536,7 +536,7 @@ ctkDICOMPersonNameList ctkDICOMDataset::GetElementAsPersonNameList( const DcmTag
   return qpnl;
 }
 
-QDate ctkDICOMDataset::GetElementAsDate( const DcmTag& tag, unsigned long pos ) const
+QDate ctkDICOMItem::GetElementAsDate( const DcmTag& tag, unsigned long pos ) const
 {
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
@@ -558,7 +558,7 @@ QDate ctkDICOMDataset::GetElementAsDate( const DcmTag& tag, unsigned long pos ) 
   }
 }
 
-QTime ctkDICOMDataset::GetElementAsTime( const DcmTag& tag, unsigned long pos ) const
+QTime ctkDICOMItem::GetElementAsTime( const DcmTag& tag, unsigned long pos ) const
 {
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
@@ -580,7 +580,7 @@ QTime ctkDICOMDataset::GetElementAsTime( const DcmTag& tag, unsigned long pos ) 
   }
 }
 
-QDateTime ctkDICOMDataset::GetElementAsDateTime( const DcmTag& tag, unsigned long pos ) const
+QDateTime ctkDICOMItem::GetElementAsDateTime( const DcmTag& tag, unsigned long pos ) const
 {
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
@@ -602,9 +602,9 @@ QDateTime ctkDICOMDataset::GetElementAsDateTime( const DcmTag& tag, unsigned lon
   }
 }
 
-double ctkDICOMDataset::GetElementAsDouble( const DcmTag& tag, unsigned long pos ) const
+double ctkDICOMItem::GetElementAsDouble( const DcmTag& tag, unsigned long pos ) const
 {
-  Q_D(const ctkDICOMDataset);
+  Q_D(const ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
   findAndGetElement(tag, element);
@@ -628,9 +628,9 @@ double ctkDICOMDataset::GetElementAsDouble( const DcmTag& tag, unsigned long pos
   return dvalue;
 }
 
-long ctkDICOMDataset::GetElementAsInteger( const DcmTag& tag, unsigned long pos ) const
+long ctkDICOMItem::GetElementAsInteger( const DcmTag& tag, unsigned long pos ) const
 {
-  Q_D(const ctkDICOMDataset);
+  Q_D(const ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
   findAndGetElement(tag, element);
@@ -655,7 +655,7 @@ long ctkDICOMDataset::GetElementAsInteger( const DcmTag& tag, unsigned long pos 
   return i;
 }
 
-int ctkDICOMDataset::GetElementAsSignedShort( const DcmTag& tag, unsigned long pos ) const // type SS
+int ctkDICOMItem::GetElementAsSignedShort( const DcmTag& tag, unsigned long pos ) const // type SS
 {
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
@@ -671,7 +671,7 @@ int ctkDICOMDataset::GetElementAsSignedShort( const DcmTag& tag, unsigned long p
   return i;
 }
 
-int ctkDICOMDataset::GetElementAsUnsignedShort( const DcmTag& tag, unsigned long pos ) const // type US
+int ctkDICOMItem::GetElementAsUnsignedShort( const DcmTag& tag, unsigned long pos ) const // type US
 {
   this->EnsureDcmDataSetIsInitialized();
   DcmElement* element(NULL);
@@ -687,15 +687,15 @@ int ctkDICOMDataset::GetElementAsUnsignedShort( const DcmTag& tag, unsigned long
   return i;
 }
 
-bool ctkDICOMDataset::SetElementAsString( const DcmTag& tag, QString string )
+bool ctkDICOMItem::SetElementAsString( const DcmTag& tag, QString string )
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   // TODO: Evaluate DICOM tag for proper encoding (see GetElementAsString())
   return CheckCondition( d->m_DcmItem->putAndInsertString( tag, string.toLatin1().data() ) );
 }
 
-bool ctkDICOMDataset::SetElementAsStringList( const DcmTag& /*tag*/, QStringList /*stringList*/ )
+bool ctkDICOMItem::SetElementAsStringList( const DcmTag& /*tag*/, QStringList /*stringList*/ )
 {
   this->EnsureDcmDataSetIsInitialized();
   // TODO: Find out how this can be implemented with DcmDataset methods; there is no method for
@@ -703,9 +703,9 @@ bool ctkDICOMDataset::SetElementAsStringList( const DcmTag& /*tag*/, QStringList
   return false;
 }
 
-bool ctkDICOMDataset::SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonName personName )
+bool ctkDICOMItem::SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonName personName )
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   DcmPersonName* dcmPersonName = new DcmPersonName( tag ); // TODO leak?
 
@@ -722,7 +722,7 @@ bool ctkDICOMDataset::SetElementAsPersonName( const DcmTag& tag, ctkDICOMPersonN
   return false;
 }
 
-bool ctkDICOMDataset::SetElementAsPersonNameList( const DcmTag& tag, ctkDICOMPersonNameList personNameList )
+bool ctkDICOMItem::SetElementAsPersonNameList( const DcmTag& tag, ctkDICOMPersonNameList personNameList )
 {
   Q_UNUSED(tag);
   Q_UNUSED(personNameList);
@@ -732,9 +732,9 @@ bool ctkDICOMDataset::SetElementAsPersonNameList( const DcmTag& tag, ctkDICOMPer
   return false;
 }
 
-bool ctkDICOMDataset::SetElementAsDate( const DcmTag& tag, QDate date )
+bool ctkDICOMItem::SetElementAsDate( const DcmTag& tag, QDate date )
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   OFDate ofDate( date.year(), date.month(), date.day() );
   DcmDate* dcmDate = new DcmDate( tag ); // TODO leak?
@@ -747,9 +747,9 @@ bool ctkDICOMDataset::SetElementAsDate( const DcmTag& tag, QDate date )
   return false;
 }
 
-bool ctkDICOMDataset::SetElementAsTime( const DcmTag& tag, QTime time )
+bool ctkDICOMItem::SetElementAsTime( const DcmTag& tag, QTime time )
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   OFTime ofTime( time.hour(), time.minute(), time.second() );
   DcmTime* dcmTime = new DcmTime( tag ); // TODO leak?
@@ -762,9 +762,9 @@ bool ctkDICOMDataset::SetElementAsTime( const DcmTag& tag, QTime time )
   return false;
 }
 
-bool ctkDICOMDataset::SetElementAsDateTime( const DcmTag& tag, QDateTime dateTime )
+bool ctkDICOMItem::SetElementAsDateTime( const DcmTag& tag, QDateTime dateTime )
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   QDate date = dateTime.date();
   QTime time = dateTime.time();
@@ -781,46 +781,46 @@ bool ctkDICOMDataset::SetElementAsDateTime( const DcmTag& tag, QDateTime dateTim
   return false;
 }
 
-bool ctkDICOMDataset::SetElementAsInteger( const DcmTag& tag, long value, unsigned long pos )
+bool ctkDICOMItem::SetElementAsInteger( const DcmTag& tag, long value, unsigned long pos )
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   //std::cerr << "TagVR: " << TagVR( tag ).toStdString() << std::endl;
   return CheckCondition( d->m_DcmItem->putAndInsertSint32( tag, value, pos ) );
 }
 
-bool ctkDICOMDataset::SetElementAsSignedShort( const DcmTag& tag, int value, unsigned long pos )
+bool ctkDICOMItem::SetElementAsSignedShort( const DcmTag& tag, int value, unsigned long pos )
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   //std::cerr << "TagVR: " << TagVR( tag ).toStdString() << std::endl;
   return CheckCondition( d->m_DcmItem->putAndInsertSint16( tag, value, pos ) );
 }
 
-bool ctkDICOMDataset::SetElementAsUnsignedShort( const DcmTag& tag, int value, unsigned long pos )
+bool ctkDICOMItem::SetElementAsUnsignedShort( const DcmTag& tag, int value, unsigned long pos )
 {
-  Q_D(ctkDICOMDataset);
+  Q_D(ctkDICOMItem);
   this->EnsureDcmDataSetIsInitialized();
   //std::cerr << "TagVR: " << TagVR( tag ).toStdString() << std::endl;
   return CheckCondition( d->m_DcmItem->putAndInsertUint16( tag, value, pos ) );
 }
 
-QString ctkDICOMDataset::GetStudyInstanceUID() const
+QString ctkDICOMItem::GetStudyInstanceUID() const
 {
   return this->GetElementAsString(DCM_StudyInstanceUID);
 }
 
-QString ctkDICOMDataset::GetSeriesInstanceUID() const
+QString ctkDICOMItem::GetSeriesInstanceUID() const
 {
   return this->GetElementAsString(DCM_SeriesInstanceUID);
 }
 
-QString ctkDICOMDataset::GetSOPInstanceUID() const
+QString ctkDICOMItem::GetSOPInstanceUID() const
 {
   return this->GetElementAsString(DCM_SOPInstanceUID);
 }
 
-QString ctkDICOMDataset::TranslateDefinedTermPatientPosition( const QString& dt )
+QString ctkDICOMItem::TranslateDefinedTermPatientPosition( const QString& dt )
 {
   static bool initialized = false;
   static QMap<QString, QString> descriptionOfTerms;
@@ -848,7 +848,7 @@ QString ctkDICOMDataset::TranslateDefinedTermPatientPosition( const QString& dt 
   }
 }
 
-QString ctkDICOMDataset::TranslateDefinedTermModality( const QString& dt )
+QString ctkDICOMItem::TranslateDefinedTermModality( const QString& dt )
 {
   static bool initialized = false;
   static QMap<QString, QString> descriptionOfTerms;
@@ -934,12 +934,12 @@ QString ctkDICOMDataset::TranslateDefinedTermModality( const QString& dt )
   }
 }
 
-QString ctkDICOMDataset::TagKey( const DcmTag& tag )
+QString ctkDICOMItem::TagKey( const DcmTag& tag )
 {
   return QString("(%1,%2)").arg( tag.getGroup(), 4, 16, QLatin1Char('0')).arg( tag.getElement(), 4, 16, QLatin1Char('0') );
 }
 
-QString ctkDICOMDataset::TagDescription( const DcmTag& tag )
+QString ctkDICOMItem::TagDescription( const DcmTag& tag )
 {
   if (!dcmDataDict.isDictionaryLoaded())
     return QString("<no DICOM dictionary loaded. application broken>");
@@ -954,7 +954,7 @@ QString ctkDICOMDataset::TagDescription( const DcmTag& tag )
   return returnName;
 }
 
-QString ctkDICOMDataset::TagVR( const DcmTag& tag )
+QString ctkDICOMItem::TagVR( const DcmTag& tag )
 {
   if (!dcmDataDict.isDictionaryLoaded()) return QString("<no DICOM dictionary loaded. application broken>");
   const DcmDataDictionary& globalDataDict = dcmDataDict.rdlock();
@@ -968,22 +968,22 @@ QString ctkDICOMDataset::TagVR( const DcmTag& tag )
   return returnVR;
 }
 
-QString ctkDICOMDataset::GetStoredSerialization()
+QString ctkDICOMItem::GetStoredSerialization()
 {
   throw std::runtime_error("No serialization implemented for this object!");
 }
 
 
 
-void ctkDICOMDataset::SetStoredSerialization(QString serializedDataset)
+void ctkDICOMItem::SetStoredSerialization(QString serializedDataset)
 {
   Q_UNUSED(serializedDataset);
   throw std::runtime_error("No serialization implemented for this object!");
 }
 
-bool ctkDICOMDataset::SaveToFile(const QString& filePath) const
+bool ctkDICOMItem::SaveToFile(const QString& filePath) const
 {
-  Q_D(const ctkDICOMDataset);
+  Q_D(const ctkDICOMItem);
 
   if (! dynamic_cast<DcmDataset*>(d->m_DcmItem) )
   {

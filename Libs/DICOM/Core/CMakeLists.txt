@@ -30,13 +30,14 @@ set(KIT_SRCS
   ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDatabase.cpp
   ctkDICOMDatabase.h
-  ctkDICOMDataset.cpp
   ctkDICOMDataset.h
   ctkDICOMFilterProxyModel.cpp
   ctkDICOMFilterProxyModel.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
   ctkDICOMIndexer_p.h
+  ctkDICOMItem.cpp
+  ctkDICOMItem.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
   ctkDICOMPersonName.cpp
