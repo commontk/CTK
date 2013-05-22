@@ -192,7 +192,17 @@ void ctkDICOMTableView::onDatabaseChanged()
 void ctkDICOMTableView::onQueryChanged(const QStringList& uids)
 {
   Q_D(ctkDICOMTableView);
-//  d->DICOMSQLModel.setQuery(query);
-  //Query zusammenfummeln
+  QString query;
+  if (uids.empty())
+  {
+    query = "select * from " + d->queryTableName;
+  }
+  else
+  {
+    query = "select * from "+d->queryTableName+" where "+d->queryForeignKey+" in ( ";
+    query.append(uids.join(",")).append(");");
+  }
+  qDebug() << query;
+  d->DICOMSQLModel.setQuery(query, d->DICOMDatabase->database());
 }
 
