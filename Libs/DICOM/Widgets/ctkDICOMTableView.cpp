@@ -36,16 +36,27 @@ protected:
 
 public:
   ctkDICOMTableViewPrivate(ctkDICOMTableView& obj);
+  ctkDICOMTableViewPrivate(ctkDICOMTableView& obj, QSharedPointer<ctkDICOMDatabase> db);
   ~ctkDICOMTableViewPrivate();
+  // Initialize UI
   void init();
+  // Setup tableview with tablemodel if database is available
+  void setUpTableView();
 
-  QSharedPointer<ctkDICOMDatabase> ctkDICOMDatabase;
+  QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
   QSqlQueryModel DICOMSQLModel;
   QSortFilterProxyModel* DICOMSQLFilterModel;
 };
 
 ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj)
   : q_ptr(&obj)
+{
+  this->DICOMSQLFilterModel = new QSortFilterProxyModel();
+}
+
+ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj, QSharedPointer<ctkDICOMDatabase> db)
+  : q_ptr(&obj)
+  , DICOMDatabase(db)
 {
   this->DICOMSQLFilterModel = new QSortFilterProxyModel();
 }
@@ -60,15 +71,35 @@ void ctkDICOMTableViewPrivate::init()
   Q_Q(ctkDICOMTableView);
   this->setupUi(q);
 
-  //TODO need model information
-//  this->tblDicomDatabaseView->setModel(QSqlTableModel);
-
   this->tblDicomDatabaseView->setSelectionBehavior(QAbstractItemView::SelectRows);
-  this->tblDicomDatabaseView->setSelectionMode(QAbstractItemView::SingleSelection);
-//  this->tblDicomDatabaseView->setColumnHidden(1, true);
+  this->tblDicomDatabaseView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  this->tblDicomDatabaseView->verticalHeader()->setHidden(true);
+//  this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+  this->tblDicomDatabaseView->horizontalHeader()->adjustSize();
 
-  QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-                   q, SLOT(onSelectionChanged(const QItemSelection &,const QItemSelection &)));
+  if (this->DICOMDatabase)
+  {
+    this->setUpTableView();
+  }
+}
+
+void ctkDICOMTableViewPrivate::setUpTableView()
+{
+  Q_Q(ctkDICOMTableView);
+  if (this->DICOMDatabase)
+  {
+    this->DICOMSQLModel.setQuery("select * from Patients", this->DICOMDatabase->database());
+    this->DICOMSQLFilterModel->setSourceModel(&this->DICOMSQLModel);
+    this->DICOMSQLFilterModel->setFilterKeyColumn(-1);
+    this->DICOMSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    this->tblDicomDatabaseView->setModel(this->DICOMSQLFilterModel);
+    this->tblDicomDatabaseView->setColumnHidden(0, true);
+
+    QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                     q, SLOT(onSelectionChanged()));
+    QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), this->DICOMSQLFilterModel, SLOT(setFilterWildcard(QString)));
+    QObject::connect(this->DICOMDatabase.data(), SIGNAL(databaseChanged()), q, SLOT(onDatabaseChanged()));
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -87,9 +118,9 @@ ctkDICOMTableView::ctkDICOMTableView(QWidget *parent, QSharedPointer<ctkDICOMDat
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableViewPrivate(*this))
 {
-  Q_D(ctkDICOMTableView);
-//  d->ctkDICOMDatabase = ctkDicomDataBase;
   this->setCTKDicomDataBase(ctkDicomDataBase);
+  Q_D(ctkDICOMTableView);
+  d->init();
 }
 
 ctkDICOMTableView::~ctkDICOMTableView()
@@ -99,15 +130,9 @@ ctkDICOMTableView::~ctkDICOMTableView()
 void ctkDICOMTableView::setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDataBase)
 {
   Q_D(ctkDICOMTableView);
-  d->ctkDICOMDatabase = dicomDataBase;
-  if (d->ctkDICOMDatabase)
-  {
-    d->DICOMSQLModel.setQuery("select * from Patients", d->ctkDICOMDatabase->database());
-    d->DICOMSQLFilterModel->setSourceModel(&d->DICOMSQLModel);
-    d->DICOMSQLFilterModel->setFilterKeyColumn(-1);
-    d->DICOMSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    QObject::connect(d->leSearchBox, SIGNAL(textChanged(QString)), d->DICOMSQLFilterModel, SLOT(setFilterWildcard(QString)));
-    d->tblDicomDatabaseView->setModel(d->DICOMSQLFilterModel);
+  d->DICOMDatabase = dicomDataBase;
+  d->setUpTableView();
+}
 
     QObject::connect(d->ctkDICOMDatabase.data(), SIGNAL(databaseChanged()), this, SLOT(onDatabaseChanged()));
 
