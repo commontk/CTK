@@ -11,14 +11,14 @@ set(KIT_export_directive "CTK_DICOM_WIDGETS_EXPORT")
 set(KIT_SRCS
   ctkDICOMAppWidget.cpp
   ctkDICOMAppWidget.h
-  ctkDICOMDatasetView.cpp
-  ctkDICOMDatasetView.h
   ctkDICOMDirectoryListWidget.cpp
   ctkDICOMDirectoryListWidget.h
   ctkDICOMImage.cpp
   ctkDICOMImage.h
   ctkDICOMImportWidget.cpp
   ctkDICOMImportWidget.h
+  ctkDICOMItemView.cpp
+  ctkDICOMItemView.h
   ctkDICOMListenerWidget.cpp
   ctkDICOMListenerWidget.h
   ctkDICOMQueryResultsTabWidget.cpp
@@ -38,7 +38,7 @@ set(KIT_SRCS
 # Headers that should run through moc
 set(KIT_MOC_SRCS
   ctkDICOMAppWidget.h
-  ctkDICOMDatasetView.h
+  ctkDICOMItemView.h
   ctkDICOMDirectoryListWidget.h
   ctkDICOMImage.h
   ctkDICOMImportWidget.h

@@ -19,16 +19,16 @@
 =========================================================================*/
 
 // ctkDICOMCore includes
-#include "ctkDICOMDataset.h"
+#include "ctkDICOMItem.h"
 
 // STD includes
 #include <iostream>
 
-int ctkDICOMDatasetTest1( int argc, char * argv [] )
+int ctkDICOMItemTest1( int argc, char * argv [] )
 {
   Q_UNUSED(argc);
   Q_UNUSED(argv);
-  ctkDICOMDataset dataset;
+  ctkDICOMItem dataset;
   dataset.InitializeFromItem(0);
   dataset.InitializeFromFile(QString());
   try
@@ -37,7 +37,7 @@ int ctkDICOMDatasetTest1( int argc, char * argv [] )
     }
   catch(...)
     {
-    std::cout << "ctkDICOMDataset::Serialize() throws exceptions" << std::endl;
+    std::cout << "ctkDICOMItem::Serialize() throws exceptions" << std::endl;
     //return EXIT_FAILURE;
     }
   try
@@ -46,7 +46,7 @@ int ctkDICOMDatasetTest1( int argc, char * argv [] )
     }
   catch(...)
     {
-    std::cout << "ctkDICOMDataset::Deserialize() throws exceptions"
+    std::cout << "ctkDICOMItem::Deserialize() throws exceptions"
               << std::endl;
     //return EXIT_FAILURE;
     }
@@ -57,7 +57,7 @@ int ctkDICOMDatasetTest1( int argc, char * argv [] )
     }
   catch(...)
     {
-    std::cout << "ctkDICOMDataset::EnsureDcmDataSetIsInitialized() throws"
+    std::cout << "ctkDICOMItem::EnsureDcmDataSetIsInitialized() throws"
               << " exceptions" << std::endl;
     //return EXIT_FAILURE;
     }
@@ -70,23 +70,23 @@ int ctkDICOMDatasetTest1( int argc, char * argv [] )
   QString decode = dataset.Decode(DcmTag(),OFString());
   if (!decode.isEmpty())
     {
-    std::cerr << "ctkDICOMDataset::Decode() failed: "
+    std::cerr << "ctkDICOMItem::Decode() failed: "
               << qPrintable(decode) << std::endl;
     return EXIT_FAILURE;
     }
   OFString encode = dataset.Encode(DcmTag(), decode);
   DcmElement* element = 0;
   OFCondition condition = dataset.findAndGetElement(DcmTag(), element);
-  if (ctkDICOMDataset::CheckCondition(condition))
+  if (ctkDICOMItem::CheckCondition(condition))
     {
-    std::cerr << "ctkDICOMDataset::findAndGetElement() failed" << std::endl;
+    std::cerr << "ctkDICOMItem::findAndGetElement() failed" << std::endl;
     return EXIT_FAILURE;
     }
   OFString string;
   condition = dataset.findAndGetOFString(DcmTag(), string);
-  if (ctkDICOMDataset::CheckCondition(condition))
+  if (ctkDICOMItem::CheckCondition(condition))
     {
-    std::cerr << "ctkDICOMDataset::findAndGetOFString() failed" << std::endl;
+    std::cerr << "ctkDICOMItem::findAndGetOFString() failed" << std::endl;
     return EXIT_FAILURE;
     }
    try
@@ -129,15 +129,15 @@ int ctkDICOMDatasetTest1( int argc, char * argv [] )
     }
   catch(...)
     {
-    std::cout << "ctkDICOMDataset::GetElementValueAsXXX() throws exceptions"
+    std::cout << "ctkDICOMItem::GetElementValueAsXXX() throws exceptions"
               << std::endl;
     //return EXIT_FAILURE;
     }
-  ctkDICOMDataset::TranslateDefinedTermPatientPosition(QString());
-  ctkDICOMDataset::TranslateDefinedTermModality(QString());
-  ctkDICOMDataset::TagKey(DcmTag());
-  ctkDICOMDataset::TagDescription(DcmTag());
-  ctkDICOMDataset::TagVR(DcmTag());
+  ctkDICOMItem::TranslateDefinedTermPatientPosition(QString());
+  ctkDICOMItem::TranslateDefinedTermModality(QString());
+  ctkDICOMItem::TagKey(DcmTag());
+  ctkDICOMItem::TagDescription(DcmTag());
+  ctkDICOMItem::TagVR(DcmTag());
   
   return EXIT_SUCCESS;
 }

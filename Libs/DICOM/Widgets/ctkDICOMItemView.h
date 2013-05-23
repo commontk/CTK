@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMDatasetView_h
-#define __ctkDICOMDatasetView_h
+#ifndef __ctkDICOMItemView_h
+#define __ctkDICOMItemView_h
 
 /// Qt includes
 #include <QWidget>
@@ -31,13 +31,13 @@
 #include "ctkPimpl.h"
 #include "ctkDICOMWidgetsExport.h"
 
-class ctkDICOMDatasetViewPrivate;
+class ctkDICOMItemViewPrivate;
 class DicomImage;
 
 /// \ingroup DICOM_Widgets
 ///
-/// ctkDICOMDatasetView is the base class of image viewer widgets.
-class CTK_DICOM_WIDGETS_EXPORT ctkDICOMDatasetView
+/// ctkDICOMItemView is the base class of image viewer widgets.
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMItemView
 : public ctkQImageView
 {
 
@@ -49,10 +49,10 @@ public:
   typedef ctkQImageView Superclass;
 
   /// Constructor
-  ctkDICOMDatasetView( QWidget * parent = 0 );
+  ctkDICOMItemView( QWidget * parent = 0 );
   
   /// Destructor
-  virtual ~ctkDICOMDatasetView( void );
+  virtual ~ctkDICOMItemView( void );
 
   void setDatabaseDirectory(const QString& directory);
 
@@ -80,7 +80,7 @@ public Q_SLOTS:
 protected:
 
   /// protected constructor to derive private implementations
-  ctkDICOMDatasetView( ctkDICOMDatasetViewPrivate & pvt,
+  ctkDICOMItemView( ctkDICOMItemViewPrivate & pvt,
     QWidget* parent=0 );
 
   /// re-implemented QWidget event functions
@@ -89,11 +89,11 @@ protected:
 
 private:
 
-  QScopedPointer< ctkDICOMDatasetViewPrivate > d_ptr;
+  QScopedPointer< ctkDICOMItemViewPrivate > d_ptr;
 
-  Q_DECLARE_PRIVATE( ctkDICOMDatasetView );
+  Q_DECLARE_PRIVATE( ctkDICOMItemView );
 
-  Q_DISABLE_COPY( ctkDICOMDatasetView );
+  Q_DISABLE_COPY( ctkDICOMItemView );
 
   void emitImageDisplayedSignal(int imageID, int count);
 

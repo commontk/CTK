@@ -61,7 +61,7 @@ class ctkDICOMItemPrivate;
 ///  is stored in a base64 encoded string. For deserialization we decode the string and use DcmDataset::read(..).
 class ctkDICOMItem;
 
-typedef ctkDICOMItem ctkDICOMDataset;
+typedef ctkDICOMItem ctkDICOMItem;
 
 class CTK_DICOM_CORE_EXPORT ctkDICOMItem
 {

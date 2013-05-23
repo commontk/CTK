@@ -419,7 +419,7 @@
          </layout>
         </item>
         <item>
-         <widget class="ctkDICOMDatasetView" name="ImagePreview" native="true">
+         <widget class="ctkDICOMItemView" name="ImagePreview" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -543,9 +543,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkDICOMDatasetView</class>
+   <class>ctkDICOMItemView</class>
    <extends>QWidget</extends>
-   <header location="global">ctkDICOMDatasetView.h</header>
+   <header location="global">ctkDICOMItemView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
