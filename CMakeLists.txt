@@ -589,6 +589,10 @@ if(CTK_USE_QTTESTING)
                 CTK_BUILD_EXAMPLES)
 endif()
 
+ctk_app_option(ctkXNATBrowser
+               "Build the XNAT Browser application" OFF
+               CTK_BUILD_EXAMPLES)
+
 # Save the set of enabled apps in a cache file
 set(_enabled_apps)
 foreach(_app ${CTK_APPS})
