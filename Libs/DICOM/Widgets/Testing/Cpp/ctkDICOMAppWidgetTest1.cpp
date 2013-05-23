@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
-#include <QKeyEvent>
 #include <QTimer>
 #include <QString>
 
@@ -49,13 +48,13 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
 
   QFileInfo tempFileInfo(QDir::tempPath() + QString("/ctkDICOMAppWidgetTest1-db"));
   QString dbDir = tempFileInfo.absoluteFilePath();
-  std::cerr << "\n\nUsing directory: " << dbDir.toLatin1().data() << std::endl;
+  qDebug() << "\n\nUsing directory: " << dbDir;
   if (tempFileInfo.exists())
     {
-    std::cerr << "\n\nRemoving directory: " << dbDir.toLatin1().data() << std::endl;
+    qDebug() << "\n\nRemoving directory: " << dbDir;
     ctk::removeDirRecursively(dbDir);
     }
-  std::cerr << "\n\nMaking directory: " << dbDir.toLatin1().data() << std::endl;
+  qDebug() << "\n\nMaking directory: " << dbDir;
   QDir dir(dbDir);
   dir.mkdir(dbDir);
 
@@ -75,15 +74,14 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
     || appWidget.seriesAddedDuringImport() != 1
     || appWidget.instancesAddedDuringImport() != 100)
     {
-    std::cerr << "\n\nDirectory did not import as expected!\n\n";
-    exit(-1);
+    qDebug() << "\n\nDirectory did not import as expected!\n\n";
+    return EXIT_FAILURE;
     }
-
 
   if (argc <= 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
-  std::cerr << "\n\nAdded to database directory: " << dbDir.toLatin1().data() << std::endl;
+  qDebug() << "\n\nAdded to database directory: " << dbDir;
   return app.exec();
 }
