@@ -7,18 +7,29 @@ project(CTKXNATWidgets)
 set(KIT_export_directive "CTK_XNAT_WIDGETS_EXPORT")
 
 set(KIT_SRCS
+  ctkXnatLoginDialog.cpp
+  ctkXnatLoginProfile.cpp
   ctkXnatProjectListModel.cpp
+  ctkXnatSettings.cpp
   )
 
 # Files which should be processed by Qts moc
 set(KIT_MOC_SRCS
+  ctkXnatLoginDialog.h
   ctkXnatProjectListModel.h
 )
 
 
+# UI forms
+set(KIT_UI_FORMS
+  ctkXnatLoginDialog.ui
+)
+
 # Resources
 set(KIT_resources
 )
+
+set(QT_USE_QTSCRIPT 1)
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
