@@ -49,7 +49,7 @@ set(KIT_MOC_SRCS
 set(KIT_resources
 )
 
-find_package(Qt4 COMPONENTS QtScript REQUIRED)
+set(QT_USE_QTSCRIPT 1)
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
