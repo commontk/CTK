@@ -24,12 +24,16 @@
 
 #include "ctkXNATWidgetsExport.h"
 
+#include <QScopedPointer>
 #include <QString>
+
+class ctkXnatLoginProfilePrivate;
 
 class CTK_XNAT_WIDGETS_EXPORT ctkXnatLoginProfile
 {
 public:
-  explicit ctkXnatLoginProfile();
+  ctkXnatLoginProfile();
+  ctkXnatLoginProfile(const ctkXnatLoginProfile& otherLoginProfile);
   virtual ~ctkXnatLoginProfile();
 
   QString name() const;
@@ -45,14 +49,13 @@ public:
   void setPassword(const QString& password);
 
   bool isDefault() const;
-  void setDefault(const bool& default_);
+  void setDefault(bool default_);
 
 private:
-  QString m_name;
-  QString m_serverUri;
-  QString m_userName;
-  QString m_password;
-  bool m_default;
+  /// \brief d pointer of the pimpl pattern
+  QScopedPointer<ctkXnatLoginProfilePrivate> d_ptr;
+
+  Q_DECLARE_PRIVATE(ctkXnatLoginProfile);
 };
 
 #endif

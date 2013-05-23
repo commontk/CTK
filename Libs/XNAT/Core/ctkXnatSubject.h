@@ -41,6 +41,8 @@ class CTK_XNAT_CORE_EXPORT ctkXnatSubject : public ctkXnatObject
   Q_PROPERTY(QString insert_user READ insertUser WRITE setInsertUser)
   Q_PROPERTY(QString URI READ uri WRITE setUri)
 
+  typedef ctkXnatObject Superclass;
+
 public:
   explicit ctkXnatSubject(ctkXnatObject* parent = 0);
   virtual ~ctkXnatSubject();
@@ -67,6 +69,7 @@ public:
 
   virtual QString getKind() const;
 
+  using Superclass::isModifiable;
   virtual bool isModifiable(int parentIndex) const;
 
 private:

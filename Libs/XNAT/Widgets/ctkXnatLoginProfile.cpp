@@ -21,9 +21,40 @@
 
 #include "ctkXnatLoginProfile.h"
 
-ctkXnatLoginProfile::ctkXnatLoginProfile()
+class ctkXnatLoginProfilePrivate
 {
-  m_default = false;
+public:
+  ctkXnatLoginProfilePrivate();
+
+  QString Name;
+  QString ServerUri;
+  QString UserName;
+  QString Password;
+  bool Default;
+};
+
+ctkXnatLoginProfilePrivate::ctkXnatLoginProfilePrivate()
+{
+}
+
+ctkXnatLoginProfile::ctkXnatLoginProfile()
+  : d_ptr(new ctkXnatLoginProfilePrivate())
+{
+  Q_D(ctkXnatLoginProfile);
+
+  d->Default = false;
+}
+
+ctkXnatLoginProfile::ctkXnatLoginProfile(const ctkXnatLoginProfile& otherLoginProfile)
+  : d_ptr(new ctkXnatLoginProfilePrivate())
+{
+  Q_D(ctkXnatLoginProfile);
+
+  d->Name = otherLoginProfile.name();
+  d->ServerUri = otherLoginProfile.serverUri();
+  d->UserName = otherLoginProfile.userName();
+  d->Password = otherLoginProfile.password();
+  d->Default = false;
 }
 
 ctkXnatLoginProfile::~ctkXnatLoginProfile()
@@ -32,50 +63,70 @@ ctkXnatLoginProfile::~ctkXnatLoginProfile()
 
 QString ctkXnatLoginProfile::name() const
 {
-  return m_name;
+  Q_D(const ctkXnatLoginProfile);
+
+  return d->Name;
 }
 
 void ctkXnatLoginProfile::setName(const QString& name)
 {
-  m_name = name;
+  Q_D(ctkXnatLoginProfile);
+
+  d->Name = name;
 }
 
 QString ctkXnatLoginProfile::serverUri() const
 {
-  return m_serverUri;
+  Q_D(const ctkXnatLoginProfile);
+
+  return d->ServerUri;
 }
 
 void ctkXnatLoginProfile::setServerUri(const QString& serverUri)
 {
-  m_serverUri = serverUri;
+  Q_D(ctkXnatLoginProfile);
+
+  d->ServerUri = serverUri;
 }
 
 QString ctkXnatLoginProfile::userName() const
 {
-  return m_userName;
+  Q_D(const ctkXnatLoginProfile);
+
+  return d->UserName;
 }
 
 void ctkXnatLoginProfile::setUserName(const QString& userName)
 {
-  m_userName = userName;
+  Q_D(ctkXnatLoginProfile);
+
+  d->UserName = userName;
 }
 
 QString ctkXnatLoginProfile::password() const
 {
-  return m_password;
+  Q_D(const ctkXnatLoginProfile);
+
+  return d->Password;
 }
 
 void ctkXnatLoginProfile::setPassword(const QString& password)
 {
-  m_password = password;
+  Q_D(ctkXnatLoginProfile);
+
+  d->Password = password;
 }
 
 bool ctkXnatLoginProfile::isDefault() const
 {
-  return m_default;
+  Q_D(const ctkXnatLoginProfile);
+
+  return d->Default;
 }
 
-void ctkXnatLoginProfile::setDefault(const bool& default_)
+void ctkXnatLoginProfile::setDefault(bool default_)
 {
-  m_default = default_;
+  Q_D(ctkXnatLoginProfile);
+
+  d->Default = default_;
 }

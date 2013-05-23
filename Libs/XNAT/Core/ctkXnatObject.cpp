@@ -64,7 +64,7 @@ void ctkXnatObject::setParentIndex(int parentIndex)
   d->parentIndex = parentIndex;
 }
 
-void ctkXnatObject::fetch(ctkXnatConnection* connection)
+void ctkXnatObject::fetch(ctkXnatConnection* /*connection*/)
 {
 //  connection->fetch(this);
 }
@@ -121,22 +121,22 @@ void ctkXnatObject::removeChild(int childIndex)
   }
 }
 
-void ctkXnatObject::download(ctkXnatConnection* connection, const QString& zipFilename)
+void ctkXnatObject::download(ctkXnatConnection* /*connection*/, const QString& /*zipFilename*/)
 {
   // do nothing
 }
 
-void ctkXnatObject::upload(ctkXnatConnection* connection, const QString& zipFilename)
+void ctkXnatObject::upload(ctkXnatConnection* /*connection*/, const QString& /*zipFilename*/)
 {
   // do nothing
 }
 
-void ctkXnatObject::add(ctkXnatConnection* connection, const QString& name)
+void ctkXnatObject::add(ctkXnatConnection* /*connection*/, const QString& /*name*/)
 {
   // do nothing
 }
 
-void ctkXnatObject::remove(ctkXnatConnection* connection)
+void ctkXnatObject::remove(ctkXnatConnection* /*connection*/)
 {
   // do nothing
 }
@@ -171,7 +171,7 @@ bool ctkXnatObject::receivesFiles() const
   return false;
 }
 
-bool ctkXnatObject::isModifiable(int childIndex) const
+bool ctkXnatObject::isModifiable(int /*childIndex*/) const
 {
   return false;
 }

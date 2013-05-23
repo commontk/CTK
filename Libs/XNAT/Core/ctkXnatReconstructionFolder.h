@@ -30,6 +30,8 @@ class ctkXnatConnection;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatReconstructionFolder : public ctkXnatObject
 {
+  Q_OBJECT
+
 public:
   explicit ctkXnatReconstructionFolder(ctkXnatObject* parent = 0);
   virtual ~ctkXnatReconstructionFolder();

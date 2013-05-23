@@ -30,6 +30,8 @@ class ctkXnatConnection;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatScanFolder : public ctkXnatObject
 {
+  Q_OBJECT
+
 public:
   explicit ctkXnatScanFolder(ctkXnatObject* parent = 0);
   virtual ~ctkXnatScanFolder();

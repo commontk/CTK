@@ -30,6 +30,8 @@ class ctkXnatConnection;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatServer : public ctkXnatObject
 {
+  Q_OBJECT
+
 public:
   explicit ctkXnatServer(ctkXnatObject* parent = 0);
   virtual ~ctkXnatServer();

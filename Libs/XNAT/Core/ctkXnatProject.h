@@ -41,6 +41,8 @@ class CTK_XNAT_CORE_EXPORT ctkXnatProject : public ctkXnatObject
   Q_PROPERTY(QString pi_lastname READ piLastName WRITE setPiLastName)
   Q_PROPERTY(QString URI READ uri WRITE setUri)
 
+  typedef ctkXnatObject Superclass;
+
 public:
   explicit ctkXnatProject(ctkXnatObject* parent = 0);
   virtual ~ctkXnatProject();
@@ -70,7 +72,11 @@ public:
   virtual void remove(ctkXnatConnection* connection);
 
   virtual QString getKind() const;
+
+  using Superclass::isModifiable;
   virtual bool isModifiable(int parentIndex) const;
+
+  using Superclass::getModifiableChildKind;
   virtual QString getModifiableChildKind(int parentIndex) const;
 
 private:

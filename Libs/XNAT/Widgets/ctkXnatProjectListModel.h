@@ -28,6 +28,8 @@
 
 class CTK_XNAT_WIDGETS_EXPORT ctkXnatProjectListModel : public QAbstractListModel
 {
+  Q_OBJECT
+
 public:
   ctkXnatProjectListModel();
 

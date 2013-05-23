@@ -144,12 +144,12 @@ QString ctkXnatProject::getKind() const
   return "subject";
 }
 
-bool ctkXnatProject::isModifiable(int parentIndex) const
+bool ctkXnatProject::isModifiable(int /*parentIndex*/) const
 {
   return true;
 }
 
-QString ctkXnatProject::getModifiableChildKind(int parentIndex) const
+QString ctkXnatProject::getModifiableChildKind(int /*parentIndex*/) const
 {
   return "project";
 }

@@ -36,9 +36,9 @@
 #include "ctkXnatServer.h"
 #include "ctkXnatSubject.h"
 
-#include <QStringBuilder>
 #include <QDebug>
 #include <QScopedPointer>
+#include <QStringBuilder>
 
 #include <qXnatAPI.h>
 #include <qRestResult.h>
@@ -80,7 +80,7 @@ ctkXnatConnection::~ctkXnatConnection()
 
 void ctkXnatConnection::createConnections()
 {
-  Q_D(ctkXnatConnection);
+//  Q_D(ctkXnatConnection);
 //  connect(d->xnat, SIGNAL(resultReceived(QUuid,QList<QVariantMap>)),
 //           this, SLOT(processResult(QUuid,QList<QVariantMap>)));
 //  connect(d->xnat, SIGNAL(progress(QUuid,double)),
@@ -146,7 +146,7 @@ ctkXnatServer* ctkXnatConnection::server()
 void ctkXnatConnection::fetch(ctkXnatServer* server)
 {
   Q_D(ctkXnatConnection);
-  qDebug() << "ctkXnatConnection::fetch(ctkXnatServer* server)";
+//  qDebug() << "ctkXnatConnection::fetch(ctkXnatServer* server)";
 
   QString query("/REST/projects");
 
@@ -471,7 +471,7 @@ void ctkXnatConnection::create(ctkXnatSubject* subject)
 
 void ctkXnatConnection::downloadScanFiles(ctkXnatExperiment* experiment, const QString& fileName)
 {
-  qDebug() << "ctkXnatConnection::downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFilename)";
+//  qDebug() << "ctkXnatConnection::downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFilename)";
   const QString& experimentName = experiment->getName();
   ctkXnatObject* subject = experiment->getParent();
   const QString& subjectName = subject->getName();
@@ -504,19 +504,15 @@ void ctkXnatConnection::downloadReconstructionFiles(ctkXnatExperiment* experimen
   d->xnat->sync(queryId);
 }
 
-void ctkXnatConnection::addReconstruction(ctkXnatExperiment* experiment, const QString& reconstruction)
+void ctkXnatConnection::addReconstruction(ctkXnatExperiment* /*experiment*/, const QString& /*reconstruction*/)
 {
-  const QString& experimentName = experiment->getName();
-  ctkXnatObject* subject = experiment->getParent();
-  const QString& subjectName = subject->getName();
-  ctkXnatObject* project = subject->getParent();
-  const QString& projectName = project->getName();
+//  const QString& experimentName = experiment->getName();
+//  ctkXnatObject* subject = experiment->getParent();
+//  const QString& subjectName = subject->getName();
+//  ctkXnatObject* project = subject->getParent();
+//  const QString& projectName = project->getName();
 
-//  XnatRestStatus status = putXnatRestReconstruction(projectName.toStdString().c_str(), subjectName.toStdString().c_str(), experimentName.toStdString().c_str(), reconstruction.toStdString().c_str());
-//  if ( status != XNATREST_OK )
-//    {
-//    throw XnatException(status);
-//  }
+  // TODO
 }
 
 void ctkXnatConnection::downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& fileName)
@@ -538,39 +534,30 @@ void ctkXnatConnection::downloadReconstruction(ctkXnatReconstruction* reconstruc
   d->xnat->sync(queryId);
 }
 
-void ctkXnatConnection::addReconstructionResource(ctkXnatReconstruction* reconstruction, const QString& resourceName)
+void ctkXnatConnection::addReconstructionResource(ctkXnatReconstruction* /*reconstruction*/, const QString& /*resourceName*/)
 {
-  const QString& reconstructionName = reconstruction->getName();
-  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
-  const QString& experimentName = experiment->getName();
-  ctkXnatObject* subject = experiment->getParent();
-  const QString& subjectName = subject->getName();
-  ctkXnatObject* project = subject->getParent();
-  const QString& projectName = project->getName();
+//  const QString& reconstructionName = reconstruction->getName();
+//  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
+//  const QString& experimentName = experiment->getName();
+//  ctkXnatObject* subject = experiment->getParent();
+//  const QString& subjectName = subject->getName();
+//  ctkXnatObject* project = subject->getParent();
+//  const QString& projectName = project->getName();
 
-//  XnatRestStatus status = putXnatRestReconResource(projectName.toStdString().c_str(), subjectName.toStdString().c_str(), experimentName.toStdString().c_str(),
-//                                                   reconstructionName.toStdString().c_str(), resourceName.toStdString().c_str());
-//  if ( status != XNATREST_OK )
-//  {
-//    throw XnatException(status);
-//  }
+  // TODO
 }
 
-void ctkXnatConnection::removeReconstruction(ctkXnatReconstruction* reconstruction)
+void ctkXnatConnection::removeReconstruction(ctkXnatReconstruction* /*reconstruction*/)
 {
-  const QString& reconstructionName = reconstruction->getName();
-  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
-  const QString& experimentName = experiment->getName();
-  ctkXnatObject* subject = experiment->getParent();
-  const QString& subjectName = subject->getName();
-  ctkXnatObject* project = subject->getParent();
-  const QString& projectName = project->getName();
+//  const QString& reconstructionName = reconstruction->getName();
+//  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
+//  const QString& experimentName = experiment->getName();
+//  ctkXnatObject* subject = experiment->getParent();
+//  const QString& subjectName = subject->getName();
+//  ctkXnatObject* project = subject->getParent();
+//  const QString& projectName = project->getName();
 
-//  XnatRestStatus status = deleteXnatRestReconstruction(projectName.toStdString().c_str(), subjectName.toStdString().c_str(), experimentName.toStdString().c_str(), reconstructionName.toStdString().c_str());
-//  if ( status != XNATREST_OK )
-//  {
-//    throw XnatException(status);
-//  }
+  // TODO
 }
 
 void ctkXnatConnection::downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& fileName)
@@ -594,49 +581,39 @@ void ctkXnatConnection::downloadReconstructionResourceFiles(ctkXnatReconstructio
   d->xnat->sync(queryId);
 }
 
-void ctkXnatConnection::uploadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename)
+void ctkXnatConnection::uploadReconstructionResourceFiles(ctkXnatReconstructionResource* /*reconstructionResource*/, const QString& /*zipFilename*/)
 {
-  const QString& resourceName = reconstructionResource->getName();
-  ctkXnatObject* reconstruction = reconstructionResource->getParent();
-  const QString& reconstructionName = reconstruction->getName();
-  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
-  const QString& experimentName = experiment->getName();
-  ctkXnatObject* subject = experiment->getParent();
-  const QString& subjectName = subject->getName();
-  ctkXnatObject* project = subject->getParent();
-  const QString& projectName = project->getName();
+//  const QString& resourceName = reconstructionResource->getName();
+//  ctkXnatObject* reconstruction = reconstructionResource->getParent();
+//  const QString& reconstructionName = reconstruction->getName();
+//  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
+//  const QString& experimentName = experiment->getName();
+//  ctkXnatObject* subject = experiment->getParent();
+//  const QString& subjectName = subject->getName();
+//  ctkXnatObject* project = subject->getParent();
+//  const QString& projectName = project->getName();
 
-//  XnatRestStatus status = putXnatRestAsynReconRsrcFiles(projectName.toStdString().c_str(), subjectName.toStdString().c_str(), experimentName.toStdString().c_str(), reconstructionName.toStdString().c_str(),
-//                                                        resourceName.toStdString().c_str(), zipFilename.toStdString().c_str());
-//  if ( status != XNATREST_OK )
-//  {
-//    throw ctkXnatException(status);
-//  }
+  // TODO
 }
 
-void ctkXnatConnection::removeReconstructionResource(ctkXnatReconstructionResource* reconstructionResource)
+void ctkXnatConnection::removeReconstructionResource(ctkXnatReconstructionResource* /*reconstructionResource*/)
 {
-  const QString& resourceName = reconstructionResource->getName();
-  ctkXnatObject* reconstruction = reconstructionResource->getParent();
-  const QString& reconstructionName = reconstruction->getName();
-  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
-  const QString& experimentName = experiment->getName();
-  ctkXnatObject* subject = experiment->getParent();
-  const QString& subjectName = subject->getName();
-  ctkXnatObject* project = subject->getParent();
-  const QString& projectName = project->getName();
+//  const QString& resourceName = reconstructionResource->getName();
+//  ctkXnatObject* reconstruction = reconstructionResource->getParent();
+//  const QString& reconstructionName = reconstruction->getName();
+//  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
+//  const QString& experimentName = experiment->getName();
+//  ctkXnatObject* subject = experiment->getParent();
+//  const QString& subjectName = subject->getName();
+//  ctkXnatObject* project = subject->getParent();
+//  const QString& projectName = project->getName();
 
-//  XnatRestStatus status = deleteXnatRestReconResource(projectName.toStdString().c_str(), subjectName.toStdString().c_str(), experimentName.toStdString().c_str(),
-//                                                      reconstructionName.toStdString().c_str(), resourceName.toStdString().c_str());
-//  if ( status != XNATREST_OK )
-//  {
-//    throw ctkXnatException(status);
-//  }
+  // TODO
 }
 
 void ctkXnatConnection::download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& fileName)
 {
-  qDebug() <<  "ctkXnatConnection::download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFilename)";
+//  qDebug() <<  "ctkXnatConnection::download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFilename)";
   const QString& reconstructionResourceFileName = reconstructionResourceFile->getName();
   ctkXnatObject* reconstructionResource = reconstructionResourceFile->getParent();
   const QString& reconstructionResourceName = reconstructionResource->getName();
@@ -658,31 +635,26 @@ void ctkXnatConnection::download(ctkXnatReconstructionResourceFile* reconstructi
   d->xnat->sync(queryId);
 }
 
-void ctkXnatConnection::remove(ctkXnatReconstructionResourceFile* reconstructionResourceFile)
+void ctkXnatConnection::remove(ctkXnatReconstructionResourceFile* /*reconstructionResourceFile*/)
 {
-  const QString& filename = reconstructionResourceFile->getName();
-  ctkXnatObject* reconstructionResource = reconstructionResourceFile->getParent();
-  const QString& resourceName = reconstructionResource->getName();
-  ctkXnatObject* reconstruction = reconstructionResource->getParent();
-  const QString& reconstructionName = reconstruction->getName();
-  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
-  const QString& experimentName = experiment->getName();
-  ctkXnatObject* subject = experiment->getParent();
-  const QString& subjectName = subject->getName();
-  ctkXnatObject* project = subject->getParent();
-  const QString& projectName = project->getName();
+//  const QString& filename = reconstructionResourceFile->getName();
+//  ctkXnatObject* reconstructionResource = reconstructionResourceFile->getParent();
+//  const QString& resourceName = reconstructionResource->getName();
+//  ctkXnatObject* reconstruction = reconstructionResource->getParent();
+//  const QString& reconstructionName = reconstruction->getName();
+//  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
+//  const QString& experimentName = experiment->getName();
+//  ctkXnatObject* subject = experiment->getParent();
+//  const QString& subjectName = subject->getName();
+//  ctkXnatObject* project = subject->getParent();
+//  const QString& projectName = project->getName();
 
-//  XnatRestStatus status = deleteXnatRestReconRsrcFile(projectName.toStdString().c_str(), subjectName.toStdString().c_str(), experimentName.toStdString().c_str(), reconstructionName.toStdString().c_str(),
-//                                                      resourceName.toStdString().c_str(), filename.toStdString().c_str());
-//  if ( status != XNATREST_OK )
-//  {
-//    throw ctkXnatException(status);
-//  }
+  // TODO
 }
 
 void ctkXnatConnection::download(ctkXnatScan* scan, const QString& fileName)
 {
-  qDebug() << "ctkXnatConnection::download(ctkXnatScan* scan, const QString& zipFilename)";
+//  qDebug() << "ctkXnatConnection::download(ctkXnatScan* scan, const QString& zipFilename)";
   const QString& scanName = scan->getName();
   ctkXnatObject* experiment = scan->getParent()->getParent();
   const QString& experimentName = experiment->getName();
@@ -702,7 +674,7 @@ void ctkXnatConnection::download(ctkXnatScan* scan, const QString& fileName)
 
 void ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QString& fileName)
 {
-  qDebug() << "ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QString& zipFilename)";
+//  qDebug() << "ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QString& zipFilename)";
   const QString& scanResourceName = scanResource->getName();
   ctkXnatObject* scan = scanResource->getParent();
   const QString& scanName = scan->getName();
@@ -724,7 +696,7 @@ void ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QStrin
 
 void ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName)
 {
-  qDebug() << "ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile)";
+//  qDebug() << "ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile)";
   const QString& scanResourceFileName = scanResourceFile->getName();
   ctkXnatObject* scanResource = scanResourceFile->getParent();
   const QString& scanResourceName = scanResource->getName();
@@ -746,6 +718,6 @@ void ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile, cons
   d->xnat->sync(queryId);
 }
 
-void ctkXnatConnection::processResult(QUuid queryId, QList<QVariantMap> parameters)
+void ctkXnatConnection::processResult(QUuid /*queryId*/, QList<QVariantMap> /*parameters*/)
 {
 }
