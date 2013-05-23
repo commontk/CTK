@@ -23,7 +23,7 @@
 #include "ctkDicomAvailableDataHelper.h"
 #include "ctkDicomAvailableDataHelper.h"
 #include "ctkDicomObjectLocatorCache.h"
-#include <ctkDICOMDataset.h>
+#include <ctkDICOMItem.h>
 
 // DCMTK includes
 #include <dcmtk/dcmdata/dcdeftag.h>
@@ -206,7 +206,7 @@ bool addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data,
 
 bool addToAvailableData(ctkDicomAppHosting::AvailableData& data, 
                         ctkDicomObjectLocatorCache* objectLocatorCache, 
-                        const ctkDICOMDataset& dataset, 
+                        const ctkDICOMItem& dataset, 
                         long length, 
                         long offset, 
                         const QString& uri)
@@ -305,7 +305,7 @@ bool addToAvailableData(ctkDicomAppHosting::AvailableData& data,
       return addNonDICOMToAvailableData(data, objectLocatorCache, fileinfo.size(), 0, uri);
   }
   //this could be a DICOM file then
-  ctkDICOMDataset ctkdataset;
+  ctkDICOMItem ctkdataset;
   ctkdataset.InitializeFromFile(filename, EXS_Unknown, EGL_noChange, 400);
 
   return addToAvailableData(data, objectLocatorCache, ctkdataset, fileinfo.size(), 0, uri);

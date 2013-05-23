@@ -33,7 +33,7 @@
 #include <ctkDicomAppHostingTypes.h>
 
 class ctkDicomObjectLocatorCache;
-class ctkDICOMDataset;
+class ctkDICOMItem;
 
 namespace ctkDicomAvailableDataHelper {
 
@@ -81,7 +81,7 @@ private:
 //----------------------------------------------------------------------------
 bool org_commontk_dah_core_EXPORT addToAvailableData(ctkDicomAppHosting::AvailableData& data, 
                         ctkDicomObjectLocatorCache* objectLocatorCache, 
-                        const ctkDICOMDataset& dataset, 
+                        const ctkDICOMItem& dataset, 
                         long length, 
                         long offset, 
                         const QString& uri);
@@ -94,7 +94,7 @@ bool org_commontk_dah_core_EXPORT addToAvailableData(ctkDicomAppHosting::Availab
 //----------------------------------------------------------------------------
 bool org_commontk_dah_core_EXPORT addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data, 
                         ctkDicomObjectLocatorCache* objectLocatorCache, 
-                        const ctkDICOMDataset& dataset, 
+                        const ctkDICOMItem& dataset, 
                         long length, 
                         long offset, 
                         const QString& uri);

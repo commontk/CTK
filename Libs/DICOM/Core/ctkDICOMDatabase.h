@@ -26,7 +26,7 @@
 #include <QStringList>
 #include <QSqlDatabase>
 
-#include "ctkDICOMDataset.h"
+#include "ctkDICOMItem.h"
 #include "ctkDICOMCoreExport.h"
 
 class QDateTime;
@@ -177,9 +177,9 @@ public:
   ///                  does only make sense if a full object is received.
   /// @param @generateThumbnail If true, a thumbnail is generated.
   ///
-  Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset,
+  Q_INVOKABLE void insert( const ctkDICOMItem& ctkDataset,
                               bool storeFile, bool generateThumbnail);
-  void insert ( DcmDataset *dataset,
+  void insert ( DcmItem *item,
                               bool storeFile = true, bool generateThumbnail = true);
   Q_INVOKABLE void insert ( const QString& filePath,
                             bool storeFile = true, bool generateThumbnail = true,

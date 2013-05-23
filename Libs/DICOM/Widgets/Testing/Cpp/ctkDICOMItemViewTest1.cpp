@@ -25,7 +25,7 @@
 #include <QTimer>
 
 // ctkDICOMCore includes
-#include "ctkDICOMDatasetView.h"
+#include "ctkDICOMItemView.h"
 
 // DCMTK includes
 #include <dcmimage.h>
@@ -34,15 +34,15 @@
 #include <iostream>
 
 /* Test from build directory:
- ./CTK-build/bin/CTKDICOMWidgetsCxxTests ctkDICOMDatasetViewTest1 test.db ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
+ ./CTK-build/bin/CTKDICOMWidgetsCxxTests ctkDICOMItemViewTest1 test.db ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
 */
 
-int ctkDICOMDatasetViewTest1( int argc, char * argv [] )
+int ctkDICOMItemViewTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   if (argc < 2)
     {
-    std::cerr << "Usage: ctkDICOMDatasetViewTest1 dcmimage [-I]" << std::endl;
+    std::cerr << "Usage: ctkDICOMItemViewTest1 dcmimage [-I]" << std::endl;
     return EXIT_FAILURE;
     }
   
@@ -50,7 +50,7 @@ int ctkDICOMDatasetViewTest1( int argc, char * argv [] )
   QImage image;
   QImage image2(200, 200, QImage::Format_RGB32);
   
-  ctkDICOMDatasetView datasetView;
+  ctkDICOMItemView datasetView;
   datasetView.addImage(img);
   datasetView.addImage(image);
   datasetView.addImage(image2);
