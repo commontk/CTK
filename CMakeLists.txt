@@ -490,6 +490,9 @@ ctk_lib_option(CommandLineModules/Backend/FunctionPointer
 ctk_lib_option(XNAT/Core
                "Build the XNAT Core library" OFF)
 
+ctk_lib_option(XNAT/Widgets
+               "Build the XNAT Widgets library" OFF)
+
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
 
