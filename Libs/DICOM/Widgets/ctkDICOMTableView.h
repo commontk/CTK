@@ -41,8 +41,8 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableView : public QWidget
 public:
   typedef QWidget Superclass;
 
-  explicit ctkDICOMTableView(QWidget* parent = 0);
-  ctkDICOMTableView (QWidget* parent, QSharedPointer<ctkDICOMDatabase> ctkDicomDataBase);
+  explicit ctkDICOMTableView(QWidget* parent = 0, QString queryTableName = "Patients");
+  ctkDICOMTableView (QSharedPointer<ctkDICOMDatabase> ctkDicomDataBase, QWidget* parent = 0, QString queryTableName = "Patients");
   virtual ~ctkDICOMTableView();
 
   void setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDataBase);
@@ -54,18 +54,23 @@ public:
 
 public Q_SLOTS:
   void onSelectionChanged();
-  void onQueryChanged(const QStringList &uids);
+  void onUpdateQuery(const QStringList &uids);
 
 protected Q_SLOTS:
   void onDatabaseChanged();
+  void onFilterChanged();
 
 Q_SIGNALS:
   void signalSelectionChanged(const QStringList &uids);
+  void signalFilterChanged(const QStringList &uids);
+  void signalQueryChanged(const QStringList &uids);
 
 protected:
   QScopedPointer<ctkDICOMTableViewPrivate> d_ptr;
 
 private:
+  QStringList getUIDsForAllRows();
+
   Q_DECLARE_PRIVATE(ctkDICOMTableView)
   Q_DISABLE_COPY(ctkDICOMTableView)
 };
