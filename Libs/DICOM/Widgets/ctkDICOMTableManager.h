@@ -54,8 +54,6 @@ private Q_SLOTS:
   void onChangeLayoutPushed();
 
 private:
-  void changeTableLayout(QBoxLayout::Direction direction);
-
   Q_DECLARE_PRIVATE(ctkDICOMTableManager)
   Q_DISABLE_COPY(ctkDICOMTableManager)
 };
