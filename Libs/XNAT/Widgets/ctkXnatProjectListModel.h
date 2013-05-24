@@ -23,8 +23,11 @@
 #define CTKXNATPROJECTLISTMODEL_H
 
 #include "QAbstractListModel"
+#include "QSharedPointer"
 
 #include "ctkXNATWidgetsExport.h"
+
+class ctkXnatObject;
 
 class CTK_XNAT_WIDGETS_EXPORT ctkXnatProjectListModel : public QAbstractListModel
 {
@@ -32,6 +35,15 @@ class CTK_XNAT_WIDGETS_EXPORT ctkXnatProjectListModel : public QAbstractListMode
 
 public:
   ctkXnatProjectListModel();
+  void setRootObject(const QSharedPointer<ctkXnatObject>& root);
+
+  int rowCount(const QModelIndex &parent) const;
+  QVariant data(const QModelIndex &index, int role) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+
+private:
+
+  QSharedPointer<ctkXnatObject> rootObject;
 
 };
 

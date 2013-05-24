@@ -21,6 +21,60 @@
 
 #include "ctkXnatProjectListModel.h"
 
+#include "ctkXnatProject.h"
+
+#include <QDebug>
+
 ctkXnatProjectListModel::ctkXnatProjectListModel()
 {
 }
+
+void ctkXnatProjectListModel::setRootObject(const ctkXnatObject::Pointer& root)
+{
+  rootObject = root;
+}
+
+int ctkXnatProjectListModel::rowCount(const QModelIndex& /*parent*/) const
+{
+  if (!rootObject) return 0;
+  return rootObject->getChildren().size();
+}
+
+QVariant ctkXnatProjectListModel::data(const QModelIndex& index, int role) const
+{
+  if (!rootObject) return QVariant();
+
+  if (role == Qt::DisplayRole)
+  {
+    ctkXnatObject::Pointer child = rootObject->getChildren().at(index.row());
+    if (child.isNull())
+    {
+      qWarning() << "child at index" << index << "is NULL!";
+    }
+    else
+    {
+      QString displayData = child->getName();
+      if (displayData.isEmpty())
+      {
+        displayData = child->getId();
+      }
+      return displayData;
+    }
+  }
+  else if (role == Qt::UserRole)
+  {
+    return QVariant::fromValue(rootObject->getChildren().at(index.row()));
+  }
+  return QVariant();
+}
+
+QVariant ctkXnatProjectListModel::headerData(int /*section*/, Qt::Orientation /*orientation*/, int role) const
+{
+  if (role == Qt::DisplayRole)
+  {
+    if (!rootObject) return QString("Unavailable");
+    return QString("Bla");
+  }
+  return QVariant();
+}
+
