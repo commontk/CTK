@@ -26,7 +26,6 @@
 #include <QSqlQueryModel>
 #include <QSortFilterProxyModel>
 
-
 class ctkDICOMTableViewPrivate : public Ui_ctkDICOMTableView
 {
   Q_DECLARE_PUBLIC (ctkDICOMTableView)
@@ -42,6 +41,8 @@ public:
   void init();
   // Setup tableview with tablemodel if database is available
   void setUpTableView();
+  //Temporay solution to hide UID columns
+  void hideUIDColumns();
 
   QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
   QSqlQueryModel DICOMSQLModel;
@@ -78,8 +79,8 @@ void ctkDICOMTableViewPrivate::init()
   this->tblDicomDatabaseView->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->tblDicomDatabaseView->setSelectionMode(QAbstractItemView::ExtendedSelection);
   this->tblDicomDatabaseView->verticalHeader()->setHidden(true);
-//  this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-  this->tblDicomDatabaseView->horizontalHeader()->adjustSize();
+  this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+  this->tblDicomDatabaseView->horizontalHeader()->setStretchLastSection(true);
 
   if (this->DICOMDatabase)
   {
@@ -99,12 +100,29 @@ void ctkDICOMTableViewPrivate::setUpTableView()
     this->DICOMSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
     this->tblDicomDatabaseView->setModel(this->DICOMSQLFilterModel);
     this->tblDicomDatabaseView->setColumnHidden(0, true);
+    this->tblDicomDatabaseView->setSortingEnabled(true);
+    this->hideUIDColumns();
 
     QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                      q, SLOT(onSelectionChanged()));
     QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), this->DICOMSQLFilterModel, SLOT(setFilterWildcard(QString)));
     QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
     QObject::connect(this->DICOMDatabase.data(), SIGNAL(databaseChanged()), q, SLOT(onDatabaseChanged()));
+  }
+}
+
+//Temporay solution to hide UID columns
+void ctkDICOMTableViewPrivate::hideUIDColumns()
+{
+  int numberOfColumns = this->tblDicomDatabaseView->horizontalHeader()->count();
+  QString columnName = " ";
+  for (int i = 0; i < numberOfColumns; ++i)
+  {
+    columnName = this->tblDicomDatabaseView->model()->headerData(i, Qt::Horizontal).toString();
+    if (columnName.contains("UID"))
+    {
+      this->tblDicomDatabaseView->hideColumn(i);
+    }
   }
 }
 
