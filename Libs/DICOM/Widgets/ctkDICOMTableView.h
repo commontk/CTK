@@ -64,6 +64,7 @@ Q_SIGNALS:
   void signalSelectionChanged(const QStringList &uids);
   void signalFilterChanged(const QStringList &uids);
   void signalQueryChanged(const QStringList &uids);
+  void signalSelectionChanged(const QItemSelection&,const QItemSelection&);
 
 protected:
   QScopedPointer<ctkDICOMTableViewPrivate> d_ptr;

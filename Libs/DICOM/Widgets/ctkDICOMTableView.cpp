@@ -105,6 +105,8 @@ void ctkDICOMTableViewPrivate::setUpTableView()
 
     QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                      q, SLOT(onSelectionChanged()));
+    QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+                     q, SIGNAL(signalSelectionChanged(const QItemSelection&,const QItemSelection&)));
     QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), this->DICOMSQLFilterModel, SLOT(setFilterWildcard(QString)));
     QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
     QObject::connect(this->DICOMDatabase.data(), SIGNAL(schemaUpdated()), q, SLOT(onDatabaseChanged()));
