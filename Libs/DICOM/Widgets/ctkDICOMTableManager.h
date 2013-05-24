@@ -32,6 +32,8 @@
 class ctkDICOMTableManagerPrivate;
 class ctkDICOMDatabase;
 
+class QItemSelection;
+
 /// \ingroup DICOM_Widgets
 
 class ctkDICOMTableManager : public QWidget
@@ -46,6 +48,9 @@ public:
   virtual ~ctkDICOMTableManager();
 
   void setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db);
+
+Q_SIGNALS:
+  void signalPatientsSelectionChanged(const QItemSelection&, const QItemSelection&);
 
 protected:
   QScopedPointer<ctkDICOMTableManagerPrivate> d_ptr;

@@ -78,18 +78,25 @@ void ctkDICOMTableManagerPrivate::init()
   this->seriesTable = new ctkDICOMTableView(q, "Series");
   this->seriesTable->setQueryForeignKey("StudyInstanceUID");
 
+  //Connect changed tableview selection with query update of "child" table
   QObject::connect(this->patientsTable, SIGNAL(signalSelectionChanged(QStringList)),
                    this->studiesTable, SLOT(onUpdateQuery(QStringList)));
   QObject::connect(this->studiesTable, SIGNAL(signalSelectionChanged(QStringList)),
                    this->seriesTable, SLOT(onUpdateQuery(QStringList)));
+
+  //Connect changed filter with query update of "child" table
   QObject::connect(this->patientsTable, SIGNAL(signalFilterChanged(const QStringList&)),
                    this->studiesTable, SLOT(onUpdateQuery(const QStringList&)));
   QObject::connect(this->studiesTable, SIGNAL(signalFilterChanged(const QStringList&)),
                    this->seriesTable, SLOT(onUpdateQuery(const QStringList&)));
+  //This way a patient filter change can be propageted to series table without
+  //any selection in the study table
   QObject::connect(this->studiesTable, SIGNAL(signalQueryChanged(QStringList)),
                    this->seriesTable, SLOT(onUpdateQuery(const QStringList&)));
 
-  //TODO Set the right sizepolicy
+  QObject::connect(this->patientsTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
+                   q, SIGNAL(signalPatientsSelectionChanged(const QItemSelection&, const QItemSelection&)));
+
   this->patientsTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
   this->studiesTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
   this->seriesTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
