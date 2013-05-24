@@ -25,15 +25,14 @@
 #include "ctkXNATCoreExport.h"
 
 #include <QScopedPointer>
+#include <QSharedPointer>
 #include <QString>
-#include <QScriptValue>
 
-#include <qXnatAPI.h>
+#include <QObject>
+#include <QVariantMap>
+#include <QUuid>
 
 class ctkXnatConnectionPrivate;
-
-class QAuthenticator;
-class QNetworkReply;
 
 class ctkXnatExperiment;
 class ctkXnatObject;
@@ -50,10 +49,8 @@ class ctkXnatScanResourceFile;
 class ctkXnatServer;
 class ctkXnatSubject;
 
-class CTK_XNAT_CORE_EXPORT ctkXnatConnection : public QObject
+class CTK_XNAT_CORE_EXPORT ctkXnatConnection
 {
-
-  Q_OBJECT
 
 public:
 
@@ -71,18 +68,18 @@ public:
   QString password() const;
   void setPassword(const QString& password);
 
-  ctkXnatServer* server();
+  QSharedPointer<ctkXnatServer> server() const;
 
-  void fetch(ctkXnatServer* server);
-  void fetch(ctkXnatProject* project);
-  void fetch(ctkXnatSubject* subject);
-  void fetch(ctkXnatExperiment* experiment);
-  void fetch(ctkXnatScanFolder* scanFolder);
-  void fetch(ctkXnatScan* scan);
-  void fetch(ctkXnatScanResource* scanResource);
-  void fetch(ctkXnatReconstructionFolder* reconstructionFolder);
-  void fetch(ctkXnatReconstruction* reconstruction);
-  void fetch(ctkXnatReconstructionResource* reconstructionResource);
+  void fetch(const QSharedPointer<ctkXnatServer>& server);
+  void fetch(const QSharedPointer<ctkXnatProject>& project);
+  void fetch(const QSharedPointer<ctkXnatSubject>& subject);
+//  void fetch(ctkXnatExperiment* experiment);
+//  void fetch(ctkXnatScanFolder* scanFolder);
+//  void fetch(ctkXnatScan* scan);
+//  void fetch(ctkXnatScanResource* scanResource);
+//  void fetch(ctkXnatReconstructionFolder* reconstructionFolder);
+//  void fetch(ctkXnatReconstruction* reconstruction);
+//  void fetch(ctkXnatReconstructionResource* reconstructionResource);
 
   void create(ctkXnatProject* project);
   void create(ctkXnatSubject* subject);
@@ -116,8 +113,8 @@ protected:
   QScopedPointer<ctkXnatConnectionPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkXnatConnection);
-  Q_DISABLE_COPY(ctkXnatConnection);
+  Q_DECLARE_PRIVATE(ctkXnatConnection)
+  Q_DISABLE_COPY(ctkXnatConnection)
 };
 
 #endif

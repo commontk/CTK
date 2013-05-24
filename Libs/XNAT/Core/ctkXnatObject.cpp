@@ -20,165 +20,126 @@
 =============================================================================*/
 
 #include "ctkXnatObject.h"
+#include "ctkXnatObjectPrivate.h"
 
 #include <QDebug>
 
-class ctkXnatObjectPrivate
-{
-public:
-  ctkXnatObject* parent;
-  int parentIndex;
-  QList<QString> childrenNames;
-  QList<ctkXnatObject*> children;
-};
-
-ctkXnatObject::ctkXnatObject(ctkXnatObject* parent)
-: QObject(parent)
-, d_ptr(new ctkXnatObjectPrivate())
-{
-  Q_D(ctkXnatObject);
-  d->parent = parent;
-  d->parentIndex = -1;
-}
 
 ctkXnatObject::~ctkXnatObject()
 {
 }
 
-void ctkXnatObject::setParent(ctkXnatObject* parent)
+QString ctkXnatObject::getId() const
 {
-  Q_D(ctkXnatObject);
-  QObject::setParent(parent);
-  d->parent = parent;
-}
-
-int ctkXnatObject::parentIndex()
-{
-  Q_D(ctkXnatObject);
-  return d->parentIndex;
-}
-
-void ctkXnatObject::setParentIndex(int parentIndex)
-{
-  Q_D(ctkXnatObject);
-  d->parentIndex = parentIndex;
-}
-
-void ctkXnatObject::fetch(ctkXnatConnection* /*connection*/)
-{
-//  connection->fetch(this);
+  return getProperty("ID");
 }
 
 QString ctkXnatObject::getName() const
 {
-  Q_D(const ctkXnatObject);
-  return d->parent ? d->parent->childName(d->parentIndex) : 0;
+  return getProperty("name");
 }
 
-ctkXnatObject* ctkXnatObject::getParent() const
+QString ctkXnatObject::getDescription() const
+{
+  return getProperty("description");
+}
+
+QString ctkXnatObject::getProperty(const QString& name) const
+{
+  Q_D(const ctkXnatObject);
+  ctkXnatObjectPrivate::PropertyMapConstInterator iter = d->properties.find(name);
+  if (iter != d->properties.end())
+  {
+    return iter.value();
+  }
+  return QString::null;
+}
+
+void ctkXnatObject::setProperty(const QString& name, const QVariant& value)
+{
+  Q_D(ctkXnatObject);
+  d->properties.insert(name, value.toString());
+}
+
+ctkXnatObject::Pointer ctkXnatObject::getParent() const
 {
   Q_D(const ctkXnatObject);
   return d->parent;
 }
 
-const QList<ctkXnatObject*>& ctkXnatObject::getChildren() const
+QList<ctkXnatObject::Pointer> ctkXnatObject::getChildren() const
 {
   Q_D(const ctkXnatObject);
   return d->children;
 }
 
-QString ctkXnatObject::childName(int childIndex) const
-{
-  Q_D(const ctkXnatObject);
-  return d->childrenNames[childIndex];
-}
-
-void ctkXnatObject::addChild(const QString& name, ctkXnatObject* child)
+void ctkXnatObject::addChild(const ctkXnatObject::Pointer& child)
 {
   Q_D(ctkXnatObject);
-  int index = d->childrenNames.indexOf(name);
-  if (index == -1)
+  d->children.push_back(child);
+  if (child->getConnection() == NULL)
   {
-    index = d->childrenNames.size();
-    d->childrenNames.push_back(name);
-    d->children.push_back(child);
+    child->d_func()->connection = this->getConnection();
   }
-  else
-  {
-    d->children[index] = child;
-  }
-  child->setParent(this);
-  child->setParentIndex(index);
 }
 
-void ctkXnatObject::removeChild(int childIndex)
+void ctkXnatObject::reset()
 {
   Q_D(ctkXnatObject);
-  if (d->children[childIndex])
-  {
-    delete d->children[childIndex];
-    d->children[childIndex] = NULL;
-  }
+  //d->properties.clear();
+  d->children.clear();
 }
 
-void ctkXnatObject::download(ctkXnatConnection* /*connection*/, const QString& /*zipFilename*/)
+void ctkXnatObject::fetch()
+{
+  this->reset();
+  this->fetchImpl();
+}
+
+void ctkXnatObject::download(const QString& /*zipFilename*/)
 {
   // do nothing
 }
 
-void ctkXnatObject::upload(ctkXnatConnection* /*connection*/, const QString& /*zipFilename*/)
+void ctkXnatObject::upload(const QString& /*zipFilename*/)
 {
   // do nothing
 }
 
-void ctkXnatObject::add(ctkXnatConnection* /*connection*/, const QString& /*name*/)
+void ctkXnatObject::add(const QString& /*name*/)
 {
   // do nothing
 }
 
-void ctkXnatObject::remove(ctkXnatConnection* /*connection*/)
+void ctkXnatObject::remove()
 {
   // do nothing
-}
-
-QString ctkXnatObject::getKind() const
-{
-  return NULL;
-}
-
-QString ctkXnatObject::getModifiableChildKind() const
-{
-  return NULL;
-}
-
-QString ctkXnatObject::getModifiableParentName() const
-{
-  return NULL;
-}
-
-bool ctkXnatObject::isFile() const
-{
-  return false;
-}
-
-bool ctkXnatObject::holdsFiles() const
-{
-  return false;
-}
-
-bool ctkXnatObject::receivesFiles() const
-{
-  return false;
-}
-
-bool ctkXnatObject::isModifiable(int /*childIndex*/) const
-{
-  return false;
 }
 
 bool ctkXnatObject::isModifiable() const
 {
   return false;
+}
+
+ctkXnatObject::ctkXnatObject(ctkXnatConnection* connection)
+  : d_ptr(new ctkXnatObjectPrivate(connection))
+{
+}
+
+ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd)
+  : d_ptr(&dd)
+{
+}
+
+ctkXnatConnection* ctkXnatObject::getConnection() const
+{
+  Q_D(const ctkXnatObject);
+  return d->connection;
+}
+
+void ctkXnatObject::setId(const QString& id)
+{
+  setProperty("ID", id);
 }
 
 bool ctkXnatObject::isDeletable() const

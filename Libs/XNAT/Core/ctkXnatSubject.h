@@ -26,35 +26,23 @@
 
 #include "ctkXnatObject.h"
 
-class ctkXnatConnection;
-
+class ctkXnatProject;
 class ctkXnatSubjectPrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatSubject : public ctkXnatObject
 {
-  Q_OBJECT
-
-  Q_PROPERTY(QString ID READ id WRITE setId)
-  Q_PROPERTY(QString project READ project WRITE setProject)
-  Q_PROPERTY(QString label READ label WRITE setLabel)
-  Q_PROPERTY(QString insert_date READ insertDate WRITE setInsertDate)
-  Q_PROPERTY(QString insert_user READ insertUser WRITE setInsertUser)
-  Q_PROPERTY(QString URI READ uri WRITE setUri)
-
-  typedef ctkXnatObject Superclass;
 
 public:
-  explicit ctkXnatSubject(ctkXnatObject* parent = 0);
+
+  typedef QSharedPointer<ctkXnatSubject> Pointer;
+  typedef QWeakPointer<ctkXnatSubject> WeakPointer;
+
+  static Pointer Create(ctkXnatConnection* connection);
+
   virtual ~ctkXnatSubject();
 
-  const QString& id() const;
-  void setId(const QString& id);
-
-  const QString& project() const;
-  void setProject(const QString& project);
-
-  const QString& label() const;
-  void setLabel(const QString& label);
+  QSharedPointer<ctkXnatProject> getPrimaryProject() const;
+  QList<QSharedPointer<ctkXnatProject> > getProjects() const;
 
   const QString& insertDate() const;
   void setInsertDate(const QString& insertDate);
@@ -65,18 +53,18 @@ public:
   const QString& uri() const;
   void setUri(const QString& uri);
 
-  virtual void fetch(ctkXnatConnection* connection);
-
-  virtual QString getKind() const;
-
-  using Superclass::isModifiable;
-  virtual bool isModifiable(int parentIndex) const;
+  virtual void reset();
 
 private:
-  QScopedPointer<ctkXnatSubjectPrivate> d_ptr;
 
-  Q_DECLARE_PRIVATE(ctkXnatSubject);
-  Q_DISABLE_COPY(ctkXnatSubject);
+  friend class qRestResult;
+
+  explicit ctkXnatSubject(ctkXnatConnection* connection = NULL);
+
+  virtual void fetchImpl();
+
+  Q_DECLARE_PRIVATE(ctkXnatSubject)
+  Q_DISABLE_COPY(ctkXnatSubject)
 };
 
 #endif

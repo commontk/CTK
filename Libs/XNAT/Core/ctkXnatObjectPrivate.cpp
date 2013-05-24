@@ -1,9 +1,9 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: CTK
 
-  Copyright (c) University College London,
-    Centre for Medical Image Computing
+  Copyright (c) German Cancer Research Center,
+    Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,30 +19,15 @@
 
 =============================================================================*/
 
-#include "ctkXnatServer.h"
-
 #include "ctkXnatObjectPrivate.h"
-#include "ctkXnatConnection.h"
 
-#include <QDebug>
+#include <QString>
 
-ctkXnatServer::ctkXnatServer(ctkXnatConnection* connection)
-  : ctkXnatObject(connection)
+ctkXnatObjectPrivate::ctkXnatObjectPrivate(ctkXnatConnection* connection)
+  : connection(connection)
 {
 }
 
-ctkXnatServer::Pointer ctkXnatServer::Create(ctkXnatConnection* connection)
+ctkXnatObjectPrivate::~ctkXnatObjectPrivate()
 {
-  Pointer server(new ctkXnatServer(connection));
-  server->d_func()->selfPtr = server;
-  return server;
 }
-
-void ctkXnatServer::fetchImpl()
-{
-  Q_D(ctkXnatObject);
-  qDebug() << "Starting to fetch projects...";
-  ctkXnatObject::Pointer self = d->selfPtr;
-  return getConnection()->fetch(self.staticCast<ctkXnatServer>());
-}
-

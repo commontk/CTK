@@ -31,15 +31,10 @@ class ctkXnatConnection;
 class CTK_XNAT_CORE_EXPORT ctkXnatConnectionFactory
 {
 public:
-  static ctkXnatConnectionFactory& instance();
-  ~ctkXnatConnectionFactory();
 
   ctkXnatConnection* makeConnection(const QString& url, const QString& user, const QString& password);
 
 private:
-  ctkXnatConnectionFactory();
-  ctkXnatConnectionFactory& operator=(ctkXnatConnectionFactory& f);
-  ctkXnatConnectionFactory(const ctkXnatConnectionFactory& f);
 
   void testConnection(ctkXnatConnection* conn);
 };

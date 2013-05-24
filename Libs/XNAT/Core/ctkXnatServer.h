@@ -30,15 +30,21 @@ class ctkXnatConnection;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatServer : public ctkXnatObject
 {
-  Q_OBJECT
 
 public:
-  explicit ctkXnatServer(ctkXnatObject* parent = 0);
-  virtual ~ctkXnatServer();
 
-  virtual void fetch(ctkXnatConnection* connection);
+  typedef QSharedPointer<ctkXnatServer> Pointer;
+  typedef QWeakPointer<ctkXnatServer> WeakPointer;
 
-  virtual QString getKind() const;
+  static Pointer Create(ctkXnatConnection* connection);
+
+private:
+
+  ctkXnatServer(ctkXnatConnection* connection);
+
+  virtual void fetchImpl();
+
+  Q_DECLARE_PRIVATE(ctkXnatObject)
 
 };
 

@@ -22,39 +22,44 @@
 #include "ctkXnatProject.h"
 
 #include "ctkXnatConnection.h"
+#include "ctkXnatObjectPrivate.h"
 
-class ctkXnatProjectPrivate
+class ctkXnatProjectPrivate : public ctkXnatObjectPrivate
 {
 public:
-  QString id;
+
+  ctkXnatProjectPrivate(ctkXnatConnection* connection)
+    : ctkXnatObjectPrivate(connection)
+  {}
+
+  void reset()
+  {
+    secondaryId.clear();
+    piFirstName.clear();
+    piLastName.clear();
+    uri.clear();
+  }
+
   QString secondaryId;
-  QString name;
-  QString description;
   QString piFirstName;
   QString piLastName;
   QString uri;
 };
 
-ctkXnatProject::ctkXnatProject(ctkXnatObject* parent)
-: ctkXnatObject(parent)
-, d_ptr(new ctkXnatProjectPrivate())
+ctkXnatProject::ctkXnatProject(ctkXnatConnection* connection)
+  : ctkXnatObject(*new ctkXnatProjectPrivate(connection))
 {
+}
+
+ctkXnatProject::Pointer ctkXnatProject::Create(ctkXnatConnection* connection)
+{
+  Pointer project(new ctkXnatProject(connection));
+  project->d_func()->selfPtr = project;
+  return project;
 }
 
 ctkXnatProject::~ctkXnatProject()
 {
-}
-
-const QString& ctkXnatProject::id() const
-{
-  Q_D(const ctkXnatProject);
-  return d->id;
-}
-
-void ctkXnatProject::setId(const QString& id)
-{
-  Q_D(ctkXnatProject);
-  d->id = id;
 }
 
 const QString& ctkXnatProject::secondaryId() const
@@ -67,30 +72,6 @@ void ctkXnatProject::setSecondaryId(const QString& secondaryId)
 {
   Q_D(ctkXnatProject);
   d->secondaryId = secondaryId;
-}
-
-const QString& ctkXnatProject::name() const
-{
-  Q_D(const ctkXnatProject);
-  return d->name;
-}
-
-void ctkXnatProject::setName(const QString& name)
-{
-  Q_D(ctkXnatProject);
-  d->name = name;
-}
-
-const QString& ctkXnatProject::description() const
-{
-  Q_D(const ctkXnatProject);
-  return d->description;
-}
-
-void ctkXnatProject::setDescription(const QString& description)
-{
-  Q_D(ctkXnatProject);
-  d->description = description;
 }
 
 const QString& ctkXnatProject::piFirstName() const
@@ -129,27 +110,20 @@ void ctkXnatProject::setUri(const QString& uri)
   d->uri = uri;
 }
 
-void ctkXnatProject::fetch(ctkXnatConnection* connection)
+void ctkXnatProject::reset()
 {
-  return connection->fetch(this);
+  Q_D(ctkXnatProject);
+  ctkXnatObject::reset();
 }
 
-void ctkXnatProject::remove(ctkXnatConnection* connection)
+void ctkXnatProject::fetchImpl()
 {
-  connection->remove(this);
+  Q_D(ctkXnatProject);
+  ctkXnatObject::Pointer self = d->selfPtr;
+  getConnection()->fetch(self.staticCast<ctkXnatProject>());
 }
 
-QString ctkXnatProject::getKind() const
+void ctkXnatProject::remove()
 {
-  return "subject";
-}
-
-bool ctkXnatProject::isModifiable(int /*parentIndex*/) const
-{
-  return true;
-}
-
-QString ctkXnatProject::getModifiableChildKind(int /*parentIndex*/) const
-{
-  return "project";
+  //connection->remove(this);
 }

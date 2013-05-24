@@ -28,20 +28,6 @@
 
 // ctkXnatConnectionFactory class
 
-ctkXnatConnectionFactory::ctkXnatConnectionFactory()
-{
-}
-
-ctkXnatConnectionFactory::~ctkXnatConnectionFactory()
-{
-}
-
-ctkXnatConnectionFactory& ctkXnatConnectionFactory::instance()
-{
-  static ctkXnatConnectionFactory connectionFactory;
-  return connectionFactory;
-}
-
 ctkXnatConnection* ctkXnatConnectionFactory::makeConnection(const QString& url, const QString& user, const QString& password)
 {
   // create XNAT connection
@@ -69,20 +55,7 @@ ctkXnatConnection* ctkXnatConnectionFactory::makeConnection(const QString& url, 
 void ctkXnatConnectionFactory::testConnection(ctkXnatConnection* connection)
 {
   // test connection by retrieving project names from XNAT
-  ctkXnatServer* server = NULL;
-  try
-  {
-    // create XNAT root
-    server = connection->server();
+  ctkXnatServer::Pointer server = connection->server();
 
-    // TODO E.g. get version
-  }
-  catch (ctkXnatException& e)
-  {
-    if (server != NULL)
-    {
-      delete server;
-    }
-    throw;
-  }
+  // TODO E.g. get version
 }

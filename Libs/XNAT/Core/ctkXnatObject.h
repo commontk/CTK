@@ -27,54 +27,68 @@
 #include <QList>
 #include <QObject>
 #include <QString>
+#include <QSharedPointer>
+#include <QMetaType>
 
 class ctkXnatConnection;
 class ctkXnatObjectPrivate;
 
-class CTK_XNAT_CORE_EXPORT ctkXnatObject : public QObject
+class CTK_XNAT_CORE_EXPORT ctkXnatObject
 {
-  Q_OBJECT
 
 public:
-  explicit ctkXnatObject(ctkXnatObject* parent = 0);
+
+  typedef QSharedPointer<ctkXnatObject> Pointer;
+  typedef QWeakPointer<ctkXnatObject> WeakPointer;
+
   virtual ~ctkXnatObject();
 
+  QString getId() const;
   QString getName() const;
-  ctkXnatObject* getParent() const;
-  int parentIndex();
-  const QList<ctkXnatObject*>& getChildren() const;
-  QString childName(int childIndex) const;
+  QString getDescription() const;
 
-  void addChild(const QString& name, ctkXnatObject* child);
+  QString getProperty(const QString& name) const;
+  void setProperty(const QString& name, const QVariant& value);
 
-  virtual void fetch(ctkXnatConnection* connection);
-  void removeChild(int parentIndex);
+  ctkXnatObject::Pointer getParent() const;
+  QList<ctkXnatObject::Pointer> getChildren() const;
 
-  virtual void download(ctkXnatConnection* connection, const QString& zipFilename);
-  virtual void upload(ctkXnatConnection* connection, const QString& zipFilename);
-  virtual void add(ctkXnatConnection* connection, const QString& name);
-  virtual void remove(ctkXnatConnection* connection);
+  void addChild(const Pointer& child);
 
-  virtual QString getKind() const;
-  virtual QString getModifiableChildKind() const;
-  virtual QString getModifiableParentName() const;
+  virtual void reset();
+  void fetch();
 
-  virtual bool isFile() const;
-  virtual bool holdsFiles() const;
-  virtual bool receivesFiles() const;
-  virtual bool isModifiable(int childIndex) const;
+  virtual void download(const QString& zipFilename);
+  virtual void upload(const QString& zipFilename);
+  virtual void add(const QString& name);
+  virtual void remove();
+
   virtual bool isDeletable() const;
-
   virtual bool isModifiable() const;
 
+protected:
+
+  ctkXnatObject(ctkXnatConnection* connection);
+  ctkXnatObject(ctkXnatObjectPrivate& dd);
+
+  ctkXnatConnection* getConnection() const;
+
+  void setId(const QString& id);
+  void setName(const QString& name);
+  void setDescription(const QString& description);
+
+  const QScopedPointer<ctkXnatObjectPrivate> d_ptr;
+
 private:
-  void setParent(ctkXnatObject* parent);
-  void setParentIndex(int index);
 
-  QScopedPointer<ctkXnatObjectPrivate> d_ptr;
+  friend class ctkXnatConnection;
 
-  Q_DECLARE_PRIVATE(ctkXnatObject);
-  Q_DISABLE_COPY(ctkXnatObject);
+  virtual void fetchImpl() = 0;
+
+  Q_DECLARE_PRIVATE(ctkXnatObject)
+  Q_DISABLE_COPY(ctkXnatObject)
 };
+
+Q_DECLARE_METATYPE(ctkXnatObject::Pointer)
 
 #endif

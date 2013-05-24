@@ -21,64 +21,41 @@
 
 #include "ctkXnatSubject.h"
 
-#include "ctkXnatConnection.h"
-#include "ctkXnatSubject.h"
+#include "ctkXnatProject.h"
 
-class ctkXnatSubjectPrivate
+#include "ctkXnatConnection.h"
+#include "ctkXnatObjectPrivate.h"
+
+class ctkXnatSubjectPrivate : public ctkXnatObjectPrivate
 {
 public:
-  QString id;
-  QString project;
-  QString label;
+
+  ctkXnatSubjectPrivate(ctkXnatConnection* connection)
+    : ctkXnatObjectPrivate(connection)
+  {}
+
+  void reset()
+  {
+    insertDate.clear();
+    insertUser.clear();
+    uri.clear();
+    projects.clear();
+  }
+
   QString insertDate;
   QString insertUser;
   QString uri;
+
+  QList<ctkXnatProject::WeakPointer> projects;
 };
 
-ctkXnatSubject::ctkXnatSubject(ctkXnatObject* parent)
-: ctkXnatObject(parent)
-, d_ptr(new ctkXnatSubjectPrivate())
+ctkXnatSubject::ctkXnatSubject(ctkXnatConnection* connection)
+: ctkXnatObject(*new ctkXnatSubjectPrivate(connection))
 {
 }
 
 ctkXnatSubject::~ctkXnatSubject()
 {
-}
-
-const QString& ctkXnatSubject::id() const
-{
-  Q_D(const ctkXnatSubject);
-  return d->id;
-}
-
-void ctkXnatSubject::setId(const QString& id)
-{
-  Q_D(ctkXnatSubject);
-  d->id = id;
-}
-
-const QString& ctkXnatSubject::project() const
-{
-  Q_D(const ctkXnatSubject);
-  return d->project;
-}
-
-void ctkXnatSubject::setProject(const QString& project)
-{
-  Q_D(ctkXnatSubject);
-  d->project = project;
-}
-
-const QString& ctkXnatSubject::label() const
-{
-  Q_D(const ctkXnatSubject);
-  return d->label;
-}
-
-void ctkXnatSubject::setLabel(const QString& label)
-{
-  Q_D(ctkXnatSubject);
-  d->label = label;
 }
 
 const QString& ctkXnatSubject::insertDate() const
@@ -117,21 +94,22 @@ void ctkXnatSubject::setUri(const QString& uri)
   d->uri = uri;
 }
 
-void ctkXnatSubject::fetch(ctkXnatConnection* connection)
+void ctkXnatSubject::reset()
 {
-  connection->fetch(this);
+  Q_D(ctkXnatSubject);
+  d->reset();
 }
 
-QString ctkXnatSubject::getKind() const
+void ctkXnatSubject::fetchImpl()
 {
-  return "experiment";
+  Q_D(ctkXnatSubject);
+  ctkXnatObject::Pointer self = d->selfPtr;
+  getConnection()->fetch(self.staticCast<ctkXnatSubject>());
 }
 
-bool ctkXnatSubject::isModifiable(int childIndex) const
+ctkXnatSubject::Pointer ctkXnatSubject::Create(ctkXnatConnection* connection)
 {
-  if (getChildren()[childIndex] == 0)
-  {
-    return false;
-  }
-  return getChildren()[childIndex]->isModifiable();
+  Pointer subject(new ctkXnatSubject(connection));
+  subject->d_func()->selfPtr = subject;
+  return subject;
 }
