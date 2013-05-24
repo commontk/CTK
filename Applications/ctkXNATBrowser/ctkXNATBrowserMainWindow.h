@@ -24,6 +24,14 @@
 
 #include <QMainWindow>
 
+class QModelIndex;
+
+#include "ctkXnatConnectionFactory.h"
+
+class ctkXnatConnection;
+class ctkXnatProjectListModel;
+class ctkXnatProject;
+
 namespace Ui {
 class ctkXNATBrowserMainWindow;
 }
@@ -36,8 +44,19 @@ public:
   explicit ctkXNATBrowserMainWindow(QWidget *parent = 0);
   ~ctkXNATBrowserMainWindow();
 
+private Q_SLOTS:
+
+  void loginButtonPushed();
+
+  void projectSelected(const QModelIndex& index);
+
 private:
   Ui::ctkXNATBrowserMainWindow *ui;
+
+  ctkXnatConnection* xnatConnection;
+  ctkXnatProjectListModel* projectsModel;
+  ctkXnatProjectListModel* subjectsModel;
+  ctkXnatConnectionFactory xnatConnectionFactory;
 };
 
 #endif // CTKXNATBROWSERMAINWINDOW_H
