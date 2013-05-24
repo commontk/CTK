@@ -171,21 +171,6 @@ void ctkDICOMTableManager::onChangeLayoutPushed()
   }
 }
 
-void ctkDICOMTableManager::changeTableLayout(QBoxLayout::Direction direction)
-{
-  Q_D(ctkDICOMTableManager);
-  d->layoutTables->removeWidget(d->patientsTable);
-  d->layoutTables->removeWidget(d->studiesTable);
-  d->layoutTables->removeWidget(d->seriesTable);
-  delete d->layoutTables;
-
-  d->layoutTables = new QBoxLayout(direction);
-  d->layoutTables->addWidget(d->patientsTable);
-  d->layoutTables->addWidget(d->studiesTable);
-  d->layoutTables->addWidget(d->seriesTable);
-  d->layout->addLayout(d->layoutTables);
-}
-
 void ctkDICOMTableManager::setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db)
 {
   Q_D(ctkDICOMTableManager);
