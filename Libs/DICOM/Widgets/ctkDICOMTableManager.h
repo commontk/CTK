@@ -22,12 +22,15 @@
 #define CTKDICOMTABLEMANAGER_H
 
 #include "ctkDICOMWidgetsExport.h"
+#include "ctkDICOMDatabase.h"
 
 // Qt includes
 #include <QWidget>
 #include <QBoxLayout>
+#include <QSharedPointer>
 
 class ctkDICOMTableManagerPrivate;
+class ctkDICOMDatabase;
 
 /// \ingroup DICOM_Widgets
 
@@ -39,7 +42,10 @@ public:
   typedef QWidget Superclass;
 
   explicit ctkDICOMTableManager(QWidget* parent = 0);
+  ctkDICOMTableManager(QSharedPointer<ctkDICOMDatabase> db, QWidget* parent = 0);
   virtual ~ctkDICOMTableManager();
+
+  void setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db);
 
 protected:
   QScopedPointer<ctkDICOMTableManagerPrivate> d_ptr;

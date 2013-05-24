@@ -28,6 +28,7 @@
 #include <QRadioButton>
 #include <QButtonGroup>
 #include <QPushButton>
+#include <QSplitter>
 
 class ctkDICOMTableManagerPrivate
 {
@@ -42,12 +43,15 @@ public:
 
   QVBoxLayout* layout;
   QBoxLayout* layoutTables;
+  QPushButton* changeLayoutButton;
+  QSplitter* tableSplitter;
 
   ctkDICOMTableView* patientsTable;
   ctkDICOMTableView* studiesTable;
   ctkDICOMTableView* seriesTable;
 
   void init();
+  void setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db);
 };
 
 ctkDICOMTableManagerPrivate::ctkDICOMTableManagerPrivate(ctkDICOMTableManager &obj)
@@ -68,20 +72,59 @@ void ctkDICOMTableManagerPrivate::init()
 
   this->layout = new QVBoxLayout();
   this->layoutTables = new QBoxLayout(QBoxLayout::LeftToRight);
-  this->patientsTable = new ctkDICOMTableView();
-  this->studiesTable = new ctkDICOMTableView();
-  this->seriesTable = new ctkDICOMTableView();
-  this->layoutTables->addWidget(patientsTable);
-  this->layoutTables->addWidget(studiesTable);
-  this->layoutTables->addWidget(seriesTable);
+  this->patientsTable = new ctkDICOMTableView(q, "Patients");
+  this->studiesTable = new ctkDICOMTableView(q, "Studies");
+  this->studiesTable->setQueryForeignKey("PatientsUID");
+  this->seriesTable = new ctkDICOMTableView(q, "Series");
+  this->seriesTable->setQueryForeignKey("StudyInstanceUID");
 
-  QPushButton* changeLayoutButton = new QPushButton("Change Layout");
-  QObject::connect(changeLayoutButton, SIGNAL(clicked()), q, SLOT(onChangeLayoutPushed()));
+  QObject::connect(this->patientsTable, SIGNAL(signalSelectionChanged(QStringList)),
+                   this->studiesTable, SLOT(onUpdateQuery(QStringList)));
+  QObject::connect(this->studiesTable, SIGNAL(signalSelectionChanged(QStringList)),
+                   this->seriesTable, SLOT(onUpdateQuery(QStringList)));
+  QObject::connect(this->patientsTable, SIGNAL(signalFilterChanged(const QStringList&)),
+                   this->studiesTable, SLOT(onUpdateQuery(const QStringList&)));
+  QObject::connect(this->studiesTable, SIGNAL(signalFilterChanged(const QStringList&)),
+                   this->seriesTable, SLOT(onUpdateQuery(const QStringList&)));
+  QObject::connect(this->studiesTable, SIGNAL(signalQueryChanged(QStringList)),
+                   this->seriesTable, SLOT(onUpdateQuery(const QStringList&)));
 
-  this->layout->addWidget(changeLayoutButton);
-  this->layout->addLayout(this->layoutTables);
+  //TODO Set the right sizepolicy
+  this->patientsTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+  this->studiesTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+  this->seriesTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+
+  tableSplitter = new QSplitter();
+  tableSplitter->setChildrenCollapsible(false);
+
+//  tableSplitter->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+
+  tableSplitter->addWidget(this->patientsTable);
+  tableSplitter->addWidget(this->studiesTable);
+  tableSplitter->addWidget(this->seriesTable);
+
+  QHBoxLayout* buttonLayout = new QHBoxLayout();
+  this->changeLayoutButton = new QPushButton();
+  this->changeLayoutButton->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+  QPixmap icon(":/Icons/vertical.png");
+  this->changeLayoutButton->setIcon(icon);
+  QObject::connect(this->changeLayoutButton, SIGNAL(clicked()), q, SLOT(onChangeLayoutPushed()));
+  buttonLayout->addWidget(this->changeLayoutButton);
+
+  QSpacerItem* spacer = new QSpacerItem(20,20,QSizePolicy::Expanding,QSizePolicy::Fixed);
+
+  buttonLayout->addItem(spacer);
+  this->layout->addLayout(buttonLayout);
+  this->layout->addWidget(this->tableSplitter);
 
   q->setLayout(layout);
+}
+
+void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db)
+{
+  this->patientsTable->setCTKDicomDataBase(db);
+  this->studiesTable->setCTKDicomDataBase(db);
+  this->seriesTable->setCTKDicomDataBase(db);
 }
 
 //----------------------------------------------------------------------------
@@ -97,6 +140,15 @@ ctkDICOMTableManager::ctkDICOMTableManager(QWidget *parent)
   d->init();
 }
 
+ctkDICOMTableManager::ctkDICOMTableManager(QSharedPointer<ctkDICOMDatabase> db, QWidget *parent)
+  : Superclass(parent)
+  , d_ptr(new ctkDICOMTableManagerPrivate(*this))
+{
+  Q_D(ctkDICOMTableManager);
+  d->init();
+  d->setCTKDICOMDatabase(db);
+}
+
 ctkDICOMTableManager::~ctkDICOMTableManager()
 {
 
@@ -105,13 +157,17 @@ ctkDICOMTableManager::~ctkDICOMTableManager()
 void ctkDICOMTableManager::onChangeLayoutPushed()
 {
   Q_D(ctkDICOMTableManager);
-  if (d->layoutTables->direction() == QBoxLayout::TopToBottom)
+  if(d->tableSplitter->orientation() == Qt::Vertical)
   {
-    this->changeTableLayout(QBoxLayout::LeftToRight);
+    QPixmap icon(":/Icons/vertical.png");
+    d->changeLayoutButton->setIcon(icon);
+    d->tableSplitter->setOrientation(Qt::Horizontal);
   }
   else
   {
-    this->changeTableLayout(QBoxLayout::TopToBottom);
+    QPixmap icon(":/Icons/horizontal.png");
+    d->changeLayoutButton->setIcon(icon);
+    d->tableSplitter->setOrientation(Qt::Vertical);
   }
 }
 
@@ -128,4 +184,10 @@ void ctkDICOMTableManager::changeTableLayout(QBoxLayout::Direction direction)
   d->layoutTables->addWidget(d->studiesTable);
   d->layoutTables->addWidget(d->seriesTable);
   d->layout->addLayout(d->layoutTables);
+}
+
+void ctkDICOMTableManager::setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db)
+{
+  Q_D(ctkDICOMTableManager);
+  d->setCTKDICOMDatabase(db);
 }
