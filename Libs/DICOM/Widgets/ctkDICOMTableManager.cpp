@@ -97,11 +97,12 @@ void ctkDICOMTableManagerPrivate::init()
   tableSplitter = new QSplitter();
   tableSplitter->setChildrenCollapsible(false);
 
-//  tableSplitter->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-
   tableSplitter->addWidget(this->patientsTable);
   tableSplitter->addWidget(this->studiesTable);
   tableSplitter->addWidget(this->seriesTable);
+
+  tableSplitter->setStyleSheet("QSplitter::handle {background-color: rgb(224,224,224);}QSplitter::handle:horizontal {width: 2px;}QSplitter::handle:vertical {height: 2px;}");
+
 
   QHBoxLayout* buttonLayout = new QHBoxLayout();
   this->changeLayoutButton = new QPushButton();
