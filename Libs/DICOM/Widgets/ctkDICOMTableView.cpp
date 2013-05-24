@@ -238,11 +238,20 @@ void ctkDICOMTableView::onFilterChanged()
 QStringList ctkDICOMTableView::getUIDsForAllRows()
 {
   Q_D(ctkDICOMTableView);
-  int numberOfRows = d->tblDicomDatabaseView->model()->rowCount();
+  QAbstractItemModel* tableModel = d->tblDicomDatabaseView->model();
+  int numberOfRows = tableModel->rowCount();
   QStringList uids;
-  for(int i = 0; i < numberOfRows; ++i)
+  if (numberOfRows == 0)
   {
-    uids << (QString("'") + d->tblDicomDatabaseView->model()->index(i,0).data().toString() +"'");
+    //Return invalid UID if there are no rows
+    uids << QString("'#'");
+  }
+  else
+  {
+    for(int i = 0; i < numberOfRows; ++i)
+    {
+      uids << (QString("'") + tableModel->index(i,0).data().toString() +"'");
+    }
   }
   return uids;
 }
