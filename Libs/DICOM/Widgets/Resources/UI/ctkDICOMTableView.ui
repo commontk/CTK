@@ -37,7 +37,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLineEdit" name="leSearchBox">
+      <widget class="ctkSearchBox" name="leSearchBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -51,18 +51,7 @@
         <string/>
        </property>
        <property name="placeholderText">
-        <string>Search...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pBDeleteSearch">
-       <property name="text">
         <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../../../Widgets/Resources/ctkWidgets.qrc">
-         <normaloff>:/Icons/clear.svg</normaloff>:/Icons/clear.svg</iconset>
        </property>
       </widget>
      </item>
@@ -73,25 +62,13 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../../../Widgets/Resources/ctkWidgets.qrc"/>
- </resources>
- <connections>
-  <connection>
-   <sender>pBDeleteSearch</sender>
-   <signal>clicked()</signal>
-   <receiver>leSearchBox</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>743</x>
-     <y>30</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>680</x>
-     <y>29</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <customwidgets>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header location="global">ctkSearchBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
 </ui>

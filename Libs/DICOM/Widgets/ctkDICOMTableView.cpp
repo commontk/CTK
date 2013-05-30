@@ -82,6 +82,9 @@ void ctkDICOMTableViewPrivate::init()
   this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
   this->tblDicomDatabaseView->horizontalHeader()->setStretchLastSection(true);
 
+  this->leSearchBox->setAlwaysShowClearIcon(true);
+  this->leSearchBox->setShowSearchIcon(true);
+
   if (this->DICOMDatabase)
   {
     this->setUpTableView();
