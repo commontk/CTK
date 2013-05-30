@@ -103,7 +103,7 @@ void ctkDICOMTableViewPrivate::setUpTableView()
     this->tblDicomDatabaseView->setSortingEnabled(true);
     this->hideUIDColumns();
 
-    QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+    QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
                      q, SLOT(onSelectionChanged()));
     QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
                      q, SIGNAL(signalSelectionChanged(const QItemSelection&,const QItemSelection&)));
