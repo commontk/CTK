@@ -78,14 +78,6 @@ void ctkPluginFrameworkContext::init()
     firstInit = false;
   }
 
-  ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin->d_func();
-  systemPluginPrivate->initSystemPlugin();
-
-  storage = new ctkPluginStorageSQL(this);
-  dataStorage = ctkPluginFrameworkUtil::getFileStorage(this, "data");
-  services = new ctkServices(this);
-  plugins = new ctkPlugins(this);
-
   // Pre-load libraries
   // This may speed up installing new plug-ins if they have dependencies on
   // one of these libraries. It prevents repeated loading and unloading of the
@@ -123,13 +115,21 @@ void ctkPluginFrameworkContext::init()
       }
 
       lib.setLoadHints(loadHints);
-      log() << "Pre-loading library" << libraryName << "with hints [" << static_cast<int>(loadHints) << "]";
+      log() << "Pre-loading library" << lib.fileName() << "with hints [" << static_cast<int>(loadHints) << "]";
       if (!lib.load())
       {
-        qWarning() << "Pre-loading library" << libraryName << "failed. Check your library search paths.";
+        qWarning() << "Pre-loading library" << lib.fileName() << "failed:" << lib.errorString() << "\nCheck your library search paths.";
       }
     }
   }
+
+  ctkPluginFrameworkPrivate* const systemPluginPrivate = systemPlugin->d_func();
+  systemPluginPrivate->initSystemPlugin();
+
+  storage = new ctkPluginStorageSQL(this);
+  dataStorage = ctkPluginFrameworkUtil::getFileStorage(this, "data");
+  services = new ctkServices(this);
+  plugins = new ctkPlugins(this);
 
   plugins->load();
 
