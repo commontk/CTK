@@ -43,8 +43,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkFontButtonEventTranslator(const ctkFontButtonEventTranslator&); // NOT implemented
-  ctkFontButtonEventTranslator& operator=(const ctkFontButtonEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkFontButtonEventTranslator);
 
   QObject* CurrentObject;
 

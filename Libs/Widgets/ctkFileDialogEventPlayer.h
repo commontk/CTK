@@ -43,8 +43,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkFileDialogEventPlayer(const ctkFileDialogEventPlayer&); // NOT implemented
-  ctkFileDialogEventPlayer& operator=(const ctkFileDialogEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkFileDialogEventPlayer);
 
 };
 

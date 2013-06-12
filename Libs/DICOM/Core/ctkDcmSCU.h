@@ -136,16 +136,7 @@ class QRResponse
   DcmDataset *m_statusDetail;
 
 private:
-
-  /** Private undefined copy constructor.
-   * @param other The find response to copy from
-   */
-  QRResponse(const QRResponse &other);
-
-  /** Private undefined assignment operator.
-   *  @param other The find response that should be assigned from
-   */
-  QRResponse &operator=(const QRResponse &other);
+  Q_DISABLE_COPY(QRResponse);
 };
 
 
@@ -190,16 +181,7 @@ public:
   Uint16 m_numberOfWarningSubops;
 
 private:
-
-  /** Private undefined copy constructor
-   *  @param other Response to copy from
-   */
-  RetrieveResponse(const RetrieveResponse &other);
-
-  /** Private undefined assignment operator
-   *  @param other Response that should be assigned from
-   */
-  RetrieveResponse &operator=(const RetrieveResponse &other);
+  Q_DISABLE_COPY(RetrieveResponse);
 };
 
 
@@ -935,17 +917,7 @@ protected:
                                       unsigned long byteCount);
 
 private:
-
-  /** Private undefined copy-constructor. Shall never be called.
-   *  @param src Source object
-   */
-  DcmSCU(const DcmSCU &src);
-
-  /** Private undefined operator=. Shall never be called.
-   *  @param src Source object
-   *  @return Reference to this
-   */
-  DcmSCU &operator=(const DcmSCU &src);
+  Q_DISABLE_COPY(DcmSCU);
 
   /// Associaton of this SCU. This class only handles 1 association at a time.
   T_ASC_Association *m_assoc;

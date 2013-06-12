@@ -40,8 +40,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkCheckableHeaderViewEventTranslator(const ctkCheckableHeaderViewEventTranslator&); // NOT implemented
-  ctkCheckableHeaderViewEventTranslator& operator=(const ctkCheckableHeaderViewEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkCheckableHeaderViewEventTranslator);
 
   QObject* CurrentObject;
 

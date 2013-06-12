@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkMenuComboBoxEventPlayer(const ctkMenuComboBoxEventPlayer&); // NOT implemented
-  ctkMenuComboBoxEventPlayer& operator=(const ctkMenuComboBoxEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkMenuComboBoxEventPlayer);
 
 };
 

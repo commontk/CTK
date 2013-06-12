@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkMatrixWidgetEventPlayer(const ctkMatrixWidgetEventPlayer&); // NOT implemented
-  ctkMatrixWidgetEventPlayer& operator=(const ctkMatrixWidgetEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkMatrixWidgetEventPlayer);
 
 };
 

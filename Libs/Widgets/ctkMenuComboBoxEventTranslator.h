@@ -45,8 +45,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkMenuComboBoxEventTranslator(const ctkMenuComboBoxEventTranslator&); // NOT implemented
-  ctkMenuComboBoxEventTranslator& operator=(const ctkMenuComboBoxEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkMenuComboBoxEventTranslator);
 
   QObject*            CurrentObject;
   QAbstractItemView*  CurrentView;

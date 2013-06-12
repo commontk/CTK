@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkFontButtonEventPlayer(const ctkFontButtonEventPlayer&); // NOT implemented
-  ctkFontButtonEventPlayer& operator=(const ctkFontButtonEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkFontButtonEventPlayer);
 
 };
 

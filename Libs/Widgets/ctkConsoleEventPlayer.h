@@ -38,8 +38,7 @@ public:
                  const QString &Arguments, bool &Error);
 
 private:
-  ctkConsoleEventPlayer(const ctkConsoleEventPlayer&); // Not Implemented
-  ctkConsoleEventPlayer& operator=(const ctkConsoleEventPlayer&); // Not Implemented
+  Q_DISABLE_COPY(ctkConsoleEventPlayer);
 };
 
 #endif // __ctkConsoleEventPlayer_h

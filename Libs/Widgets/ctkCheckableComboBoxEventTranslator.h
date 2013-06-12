@@ -43,8 +43,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkCheckableComboBoxEventTranslator(const ctkCheckableComboBoxEventTranslator&); // NOT implemented
-  ctkCheckableComboBoxEventTranslator& operator=(const ctkCheckableComboBoxEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkCheckableComboBoxEventTranslator);
 
   QObject* CurrentObject;
   QModelIndexList OldIndexList;

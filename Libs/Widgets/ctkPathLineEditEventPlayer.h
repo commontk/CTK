@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkPathLineEditEventPlayer(const ctkPathLineEditEventPlayer&); // NOT implemented
-  ctkPathLineEditEventPlayer& operator=(const ctkPathLineEditEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkPathLineEditEventPlayer);
 
 };
 

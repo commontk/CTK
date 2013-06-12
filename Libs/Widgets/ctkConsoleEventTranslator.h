@@ -39,9 +39,8 @@ public:
 
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
-private :
-  ctkConsoleEventTranslator(const ctkConsoleEventTranslator&); // Not implemented
-  ctkConsoleEventTranslator& operator=(const ctkConsoleEventTranslator&); // Not implemented
+private:
+  Q_DISABLE_COPY(ctkConsoleEventTranslator);
 
   QObject* CurrentObject;
   QObject* CurrentCompleter;
