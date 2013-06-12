@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkCheckableHeaderViewEventPlayer(const ctkCheckableHeaderViewEventPlayer&); // NOT implemented
-  ctkCheckableHeaderViewEventPlayer& operator=(const ctkCheckableHeaderViewEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkCheckableHeaderViewEventPlayer);
 
 };
 

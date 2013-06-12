@@ -45,8 +45,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkFileDialogEventTranslator(const ctkFileDialogEventTranslator&); // NOT implemented
-  ctkFileDialogEventTranslator& operator=(const ctkFileDialogEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkFileDialogEventTranslator);
 
   QObject* CurrentObject;
 

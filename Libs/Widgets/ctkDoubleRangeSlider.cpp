@@ -63,7 +63,7 @@ public:
   double MaxValue;
 
 private:
-  ctkDoubleRangeSliderPrivate & operator=(const ctkDoubleRangeSliderPrivate &);
+  Q_DISABLE_COPY(ctkDoubleRangeSliderPrivate);
 };
 
 // --------------------------------------------------------------------------

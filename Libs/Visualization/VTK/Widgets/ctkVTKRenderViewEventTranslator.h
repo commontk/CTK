@@ -49,8 +49,7 @@ protected:
   QMouseEvent  lastMouseEvent;
 
 private:
-  ctkVTKRenderViewEventTranslator(const ctkVTKRenderViewEventTranslator&); // NOT implemented
-  ctkVTKRenderViewEventTranslator& operator=(const ctkVTKRenderViewEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkVTKRenderViewEventTranslator);
 };
 
 #endif

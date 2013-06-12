@@ -41,8 +41,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkRangeSliderEventTranslator(const ctkRangeSliderEventTranslator&); // NOT implemented
-  ctkRangeSliderEventTranslator& operator=(const ctkRangeSliderEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkRangeSliderEventTranslator);
 
   QObject* CurrentObject;
 

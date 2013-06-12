@@ -43,8 +43,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkTreeComboBoxEventTranslator(const ctkTreeComboBoxEventTranslator&); // NOT implemented
-  ctkTreeComboBoxEventTranslator& operator=(const ctkTreeComboBoxEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkTreeComboBoxEventTranslator);
 
   QObject* CurrentObject;
 

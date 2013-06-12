@@ -95,7 +95,7 @@ public:
   QString m_HandleToolTip;
 
 private:
-  ctkRangeSliderPrivate & operator=(const ctkRangeSliderPrivate &);
+  Q_DISABLE_COPY(ctkRangeSliderPrivate);
 };
 
 // --------------------------------------------------------------------------

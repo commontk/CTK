@@ -44,8 +44,7 @@ protected:
   QByteArray mClassType;
 
 private:
-  ctkVTKRenderViewEventPlayer(const ctkVTKRenderViewEventPlayer&); // NOT implemented
-  ctkVTKRenderViewEventPlayer& operator=(const ctkVTKRenderViewEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkVTKRenderViewEventPlayer);
 
 };
 
