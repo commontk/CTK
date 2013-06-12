@@ -54,10 +54,10 @@ class QComboBox;
 #include "ctkWidgetsExport.h"
 class ctkPathLineEditPrivate;
 
-/**
- * \ingroup Widgets
- * \brief Advanced line edit to select file or directory
-*/
+/// \ingroup Widgets
+/// \brief Advanced line edit to select a file or directory.
+/// \sa ctkDirectoryButton, ctkPathListWidget
+///
 class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
 {
   Q_OBJECT

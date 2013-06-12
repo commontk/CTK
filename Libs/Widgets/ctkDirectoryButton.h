@@ -39,7 +39,7 @@ class ctkDirectoryButtonPrivate;
 /// ctkDirectoryButton is a QPushButton to select a directory path.
 /// The absolute path is displayed on the button. When clicked, a
 /// file dialog pops up to select a new directory path.
-/// \sa QPushButton, QDir
+/// \sa ctkPathLineEdit, ctkPathListWidget, QPushButton, QDir
 class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
 {
   Q_OBJECT
