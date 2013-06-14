@@ -72,6 +72,8 @@ set(PLUGIN_SRCS
   ctkPathListWidgetPlugin.h
   ctkPopupWidgetPlugin.cpp
   ctkPopupWidgetPlugin.h
+  ctkPushButtonPlugin.cpp
+  ctkPushButtonPlugin.h
   ctkRangeSliderPlugin.cpp
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.cpp
@@ -132,6 +134,7 @@ set(PLUGIN_MOC_SRCS
   ctkPathListButtonsWidgetPlugin.h
   ctkPathListWidgetPlugin.h
   ctkPopupWidgetPlugin.h
+  ctkPushButtonPlugin.h
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.h
   ctkThumbnailLabelPlugin.h

@@ -54,6 +54,7 @@
 #include "ctkPathListButtonsWidgetPlugin.h"
 #include "ctkPathListWidgetPlugin.h"
 #include "ctkPopupWidgetPlugin.h"
+#include "ctkPushButtonPlugin.h"
 #include "ctkRangeSliderPlugin.h"
 #include "ctkRangeWidgetPlugin.h"
 #include "ctkSearchBoxPlugin.h"
@@ -106,6 +107,7 @@ public:
             << new ctkPathListButtonsWidgetPlugin
             << new ctkPathListWidgetPlugin
             << new ctkPopupWidgetPlugin
+            << new ctkPushButtonPlugin
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
             << new ctkSearchBoxPlugin
