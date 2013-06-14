@@ -62,6 +62,7 @@ public:
 
   // Direction for layout (for use with QBoxLayout only)
   QBoxLayout::Direction Direction;
+  QSizePolicy ButtonSizePolicy;
 
   bool HideGoToButtons;
   bool HideInvalidButtons;
@@ -85,6 +86,7 @@ ctkWorkflowButtonBoxWidgetPrivate::ctkWorkflowButtonBoxWidgetPrivate(ctkWorkflow
   this->NextButton = 0;
   this->NextButtonDefaultText = "Next";
   this->Direction = QBoxLayout::LeftToRight;
+  this->ButtonSizePolicy = QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   this->HideGoToButtons = false;
   this->HideInvalidButtons = false;
 }
@@ -103,9 +105,11 @@ void ctkWorkflowButtonBoxWidgetPrivate::setupUi(QWidget * newParent)
 
   // Setup the buttons
   this->BackButton = new QPushButton(backIcon, this->BackButtonDefaultText, newParent);
+  this->BackButton->setSizePolicy(this->ButtonSizePolicy);
   newParent->layout()->addWidget(this->BackButton);
 
   this->NextButton = new QPushButton(nextIcon, this->NextButtonDefaultText, newParent);
+  this->NextButton->setSizePolicy(this->ButtonSizePolicy);
   this->NextButton->setLayoutDirection(Qt::RightToLeft);
   newParent->layout()->addWidget(this->NextButton);
 }
@@ -221,6 +225,7 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateGoToButtons(ctkWorkflowStep* curre
       {
       // TODO shouldn't have id here
       QPushButton* goToButton = new QPushButton(step->id());
+      goToButton->setSizePolicy(this->ButtonSizePolicy);
       q->layout()->addWidget(goToButton);
       QObject::connect(goToButton, SIGNAL(clicked()), q, SLOT(prepareGoToStep()));
       this->GoToButtonToStepMap[goToButton] = step;
