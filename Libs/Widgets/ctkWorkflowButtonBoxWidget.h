@@ -64,6 +64,11 @@ class CTK_WIDGETS_EXPORT ctkWorkflowButtonBoxWidget : public QWidget
   Q_PROPERTY(QString nextButtonDefaultText
              READ nextButtonDefaultText WRITE setNextButtonDefaultText)
 
+  /// This property controls whether the goTo buttons are visible or hidden.
+  /// False (visible) by default.
+  /// \sa hideInvalidButtons
+  Q_PROPERTY(bool hideGoToButtons READ hideGoToButtons WRITE setHideGoToButtons)
+
   /// This property controls whether the back, next or goTo buttons are hidden when disabled.
   /// Note that buttons can also be hidden via ctkWorkflowWidgetStep::buttonHints.
   /// \sa ctkWofklowWidgetStep::buttonBoxHints
@@ -108,6 +113,13 @@ public:
   /// QBoxLayout::LeftToRight)
   QBoxLayout::Direction direction()const;
   void setDirection(const QBoxLayout::Direction& newDirection);
+
+  /// Return the hideGoToButtons property value.
+  /// \sa hideGoToButtons
+  bool hideGoToButtons()const;
+  /// Set the hideGoToButtons property value.
+  /// \sa hideGoToButtons
+  void setHideGoToButtons(bool hide);
 
   /// If true, invalid buttons are hidden.  If false, invalid buttons are shown but disabled.
   /// Default is false.

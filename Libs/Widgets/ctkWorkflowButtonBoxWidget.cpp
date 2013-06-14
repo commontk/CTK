@@ -63,6 +63,7 @@ public:
   // Direction for layout (for use with QBoxLayout only)
   QBoxLayout::Direction Direction;
 
+  bool HideGoToButtons;
   bool HideInvalidButtons;
 
   // Functions to add/remove buttons
@@ -84,6 +85,7 @@ ctkWorkflowButtonBoxWidgetPrivate::ctkWorkflowButtonBoxWidgetPrivate(ctkWorkflow
   this->NextButton = 0;
   this->NextButtonDefaultText = "Next";
   this->Direction = QBoxLayout::LeftToRight;
+  this->HideGoToButtons = false;
   this->HideInvalidButtons = false;
 }
 
@@ -243,6 +245,7 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateGoToButtons(ctkWorkflowStep* curre
     bool enable = currentStep && this->Workflow->canGoToStep(goToStep->id(), currentStep);
     bool visible = step ? !(step->buttonBoxHints() & ctkWorkflowWidgetStep::ButtonBoxHidden) : true;
     if ((!enable && this->HideInvalidButtons)
+        || this->HideGoToButtons
         )
       {
       visible = false;
@@ -337,6 +340,8 @@ void ctkWorkflowButtonBoxWidget::setNextButtonDefaultText(const QString& default
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, ctkWorkflow*, workflow, Workflow);
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QPushButton*, backButton, BackButton);
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QBoxLayout::Direction, direction, Direction);
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, bool, hideGoToButtons, HideGoToButtons);
+CTK_SET_CPP(ctkWorkflowButtonBoxWidget, bool, setHideGoToButtons, HideGoToButtons);
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, bool, hideInvalidButtons, HideInvalidButtons);
 CTK_SET_CPP(ctkWorkflowButtonBoxWidget, bool, setHideInvalidButtons, HideInvalidButtons);
 
