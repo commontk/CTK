@@ -21,13 +21,13 @@
 // Qt includes
 #include <QWidget>
 #include <QList>
-#include <QPushButton>
 #include <QBoxLayout>
 #include <QDebug>
 #include <QPointer>
 #include <QStyle>
 
 // CTK includes
+#include "ctkPushButton.h"
 #include "ctkWorkflowButtonBoxWidget.h"
 #include "ctkWorkflowStep.h"
 #include "ctkWorkflowWidgetStep.h"
@@ -54,9 +54,9 @@ public:
   typedef QMap<QPushButton*, ctkWorkflowStep*> ButtonToStepMapType;
 
   // The buttons on the widget (maintain maps associating each forward/goTo button with its step)
-  QPushButton*        BackButton;
+  ctkPushButton*      BackButton;
   QString             BackButtonDefaultText;
-  QPushButton*        NextButton;
+  ctkPushButton*      NextButton;
   QString             NextButtonDefaultText;
   ButtonToStepMapType GoToButtonToStepMap;
 
@@ -104,13 +104,14 @@ void ctkWorkflowButtonBoxWidgetPrivate::setupUi(QWidget * newParent)
   QIcon nextIcon = newParent->style()->standardIcon(QStyle::SP_ArrowRight);
 
   // Setup the buttons
-  this->BackButton = new QPushButton(backIcon, this->BackButtonDefaultText, newParent);
+  this->BackButton = new ctkPushButton(backIcon, this->BackButtonDefaultText, newParent);
   this->BackButton->setSizePolicy(this->ButtonSizePolicy);
+  this->BackButton->setIconAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   newParent->layout()->addWidget(this->BackButton);
 
-  this->NextButton = new QPushButton(nextIcon, this->NextButtonDefaultText, newParent);
+  this->NextButton = new ctkPushButton(nextIcon, this->NextButtonDefaultText, newParent);
   this->NextButton->setSizePolicy(this->ButtonSizePolicy);
-  this->NextButton->setLayoutDirection(Qt::RightToLeft);
+  this->NextButton->setIconAlignment(Qt::AlignRight | Qt::AlignVCenter);
   newParent->layout()->addWidget(this->NextButton);
 }
 
