@@ -240,8 +240,7 @@
         </xsd:annotation>
       </xsd:element>
       
-      <!-- the 'channel' element is optional -->
-      <xsd:element minOccurs="0" maxOccurs="1" name="channel">
+      <xsd:element minOccurs="0" name="channel">
         <xsd:annotation>
           <xsd:documentation>Specifies whether the parameter is an input or output parameter. Output parameters can for
           example specify file paths where to write output data (e.g. using the "image" element) or they can represent
