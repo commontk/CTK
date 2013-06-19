@@ -151,6 +151,14 @@ void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)
 }
 
 // --------------------------------------------------------------------------
+ctkWorkflowWidgetStep* ctkWorkflowWidget::widgetStep(const QString& id)const
+{
+  Q_D(const ctkWorkflowWidget);
+  return dynamic_cast<ctkWorkflowWidgetStep*>(
+    !d->Workflow.isNull() ? d->Workflow.data()->step(id) : 0);
+}
+
+// --------------------------------------------------------------------------
 void ctkWorkflowWidget::onCurrentStepChanged(ctkWorkflowStep* currentStep)
 {
   if (currentStep)

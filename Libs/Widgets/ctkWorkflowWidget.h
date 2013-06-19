@@ -55,6 +55,8 @@ public:
   Q_INVOKABLE virtual ctkWorkflow* workflow()const;
   Q_INVOKABLE virtual void setWorkflow(ctkWorkflow* newWorkflow);
 
+  Q_INVOKABLE ctkWorkflowWidgetStep* widgetStep(const QString& id)const;
+
   /// Get the widget constaining the title, subtitle, pre-text, post-text, error-text and client area
   /// layout.
   Q_INVOKABLE virtual ctkWorkflowGroupBox* workflowGroupBox()const;

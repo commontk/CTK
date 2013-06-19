@@ -107,14 +107,21 @@ public:
 
   /// \brief Set/get the initial step.
   /// \note In not specified, the first step added will be considered as the initialStep
+  /// \sa currentStep(), step(), hasStep(), steps()
   Q_INVOKABLE ctkWorkflowStep* initialStep()const;
   Q_INVOKABLE virtual void setInitialStep(ctkWorkflowStep* step);
 
   /// Get the current step of the state machine
+  /// \sa initialStep(), step(), hasStep(), steps()
   Q_INVOKABLE ctkWorkflowStep* currentStep()const;
 
   /// Check to see if there is a step with a given id in the workflow.
+  /// \sa step(), currentStep(), steps()
   Q_INVOKABLE bool hasStep(const QString& id)const;
+
+  /// Return the step with matching \a id if any, 0 otherwise.
+  /// \sa hasStep(), currentStep(), steps()
+  Q_INVOKABLE ctkWorkflowStep* step(const QString& id)const;
 
   /// Returns whether or not we can go forward: i.e. there exists a step that directly follows the
   /// given step.

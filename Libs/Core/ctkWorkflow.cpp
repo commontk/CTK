@@ -774,6 +774,14 @@ bool ctkWorkflow::hasStep(const QString& id)const
 }
 
 // --------------------------------------------------------------------------
+ctkWorkflowStep* ctkWorkflow::step(const QString& id)const
+{
+  Q_D(const ctkWorkflow);
+  return d->stepFromId(id);
+}
+
+
+// --------------------------------------------------------------------------
 // Convenience method to set the QStateMachine's initialState to a
 // specific step's processing state.
 CTK_GET_CPP(ctkWorkflow, ctkWorkflowStep*, initialStep, InitialStep);
