@@ -43,6 +43,20 @@ class CTK_WIDGETS_EXPORT ctkWorkflowGroupBox : public QWidget
   Q_OBJECT
   Q_PROPERTY(QString preText READ preText WRITE setPreText)
   Q_PROPERTY(QString postText READ postText WRITE setPostText)
+  /// This property controls the text, icon and tooltip of the title button.
+  /// "{current:name}" by default.
+  /// \sa titleFormat(), setTitleFormat(), ctkWorkflow::formatButton()
+  Q_PROPERTY(QString titleFormat READ titleFormat WRITE setTitleFormat)
+  /// This property controls the text of the subtitle view.
+  /// "{current:description}" by default.
+  /// \sa subTitleFormat(), setSubTitleFormat(), ctkWorkflow::formatButton(),
+  /// titleFormat, errorTextFormat
+  Q_PROPERTY(QString subTitleFormat READ subTitleFormat WRITE setSubTitleFormat)
+  /// This property controls the textof the error view.
+  /// "{current:statusText}" by default.
+  /// \sa errorTextFormat(), setErrorTextFormat(), ctkWorkflow::formatButton(),
+  /// titleFormat, subTitleFormat
+  Q_PROPERTY(QString errorTextFormat READ errorTextFormat WRITE setErrorTextFormat)
   Q_PROPERTY(bool hideWidgetsOfNonCurrentSteps READ hideWidgetsOfNonCurrentSteps WRITE setHideWidgetsOfNonCurrentSteps)
   Q_PROPERTY(bool errorTextEnabled READ errorTextEnabled WRITE setErrorTextEnabled)
 
@@ -85,6 +99,30 @@ public:
   /// \brief Get the layout onto which step specific widgets are placed.
   QLayout* clientAreaLayout()const;
 
+  /// Return the titleFormat property value.
+  /// \sa titleFormat, setTitleFormat()
+  QString titleFormat()const;
+
+  /// Set the titleFormat property value.
+  /// \sa titleFormat, titleFormat()
+  void setTitleFormat(const QString& format);
+
+  /// Return the subTitleFormat property value.
+  /// \sa subTitleFormat, setSubTitleFormat()
+  QString subTitleFormat()const;
+
+  /// Set the subTitleFormat property value.
+  /// \sa subTitleFormat, subTitleFormat()
+  void setSubTitleFormat(const QString& format);
+
+  /// Return the errorTextFormat property value.
+  /// \sa errorTextFormat, setErrorTextFormat()
+  QString errorTextFormat()const;
+
+  /// Set the errorTextFormat property value.
+  /// \sa errorTextFormat, errorTextFormat()
+  void setErrorTextFormat(const QString& format);
+
   ///
   /// If hideWidgetsOfNonCurrentSteps is turned on, then a step's
   /// widgets will be hidden when that step is not the current step.
@@ -107,7 +145,6 @@ public Q_SLOTS:
   virtual void updateGroupBox(ctkWorkflowStep* currentStep);
 
 protected:
-  virtual void setTitle(const QString& newTitle);
   virtual void setSubTitle(const QString& newSubTitle);
   virtual void setErrorText(const QString& newErrorText);
 
