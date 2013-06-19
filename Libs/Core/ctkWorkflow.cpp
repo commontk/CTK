@@ -23,6 +23,8 @@
 #include <QStateMachine>
 #include <QState>
 
+#include <QQueue>
+
 // CTK includes
 #include "ctkWorkflow.h"
 #include "ctkWorkflowStep.h"
@@ -1120,4 +1122,47 @@ void ctkWorkflow::goToStepFailed()
   //   this->goToProcessingStateAfterValidationFailed();
   //   }
 
+}
+
+// --------------------------------------------------------------------------
+int ctkWorkflow::backwardDistanceToStep(ctkWorkflowStep* fromStep,
+                                        ctkWorkflowStep* origin) const
+{
+  if (!fromStep)
+    {
+    fromStep = this->currentStep();
+    }
+  if (!origin)
+    {
+    origin = this->initialStep();
+    }
+
+  if (!fromStep || !origin)
+    {
+    return -1;
+    }
+
+  QQueue< std::pair<ctkWorkflowStep*, int> > queue;
+  queue.append(std::make_pair(fromStep, 0));
+  while (! queue.isEmpty())
+    {
+    std::pair<ctkWorkflowStep*, int> p = queue.dequeue();
+    ctkWorkflowStep* step = p.first;
+    if (! step)
+      {
+      return -1;
+      }
+
+    if (step->id() == origin->id())
+      {
+      return p.second;
+      }
+
+    foreach(ctkWorkflowStep* previousStep, this->backwardSteps(step))
+      {
+      queue.append(std::make_pair(previousStep, p.second + 1));
+      }
+    }
+
+  return -1;
 }

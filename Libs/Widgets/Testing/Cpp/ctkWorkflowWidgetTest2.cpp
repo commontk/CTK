@@ -29,6 +29,7 @@
 #include <QDebug>
 
 // CTK includes
+#include "ctkPushButton.h"
 #include "ctkWorkflow.h"
 #include "ctkWorkflowWidget.h"
 #include "ctkWorkflowStackedWidget.h"

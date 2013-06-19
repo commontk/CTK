@@ -160,6 +160,14 @@ public:
   /// Returns list of steps managed by the workflow
   Q_INVOKABLE QList<ctkWorkflowStep*> steps()const;
 
+  // Returns the distance of a given to step to another step.
+  // The directionality used here is ctkWorkflow::Bidirectional or ctkWorkflow::Backward.
+  // By default, step is the current step and origin the initial step.
+  //
+  // This is different from the other method as it's not limited to the backward or forward steps
+  // but actually performs a recursive search.
+  Q_INVOKABLE int backwardDistanceToStep(ctkWorkflowStep* fromStep = 0, ctkWorkflowStep* origin = 0)const;
+
   /// Configures the behavior of goToStep(targetId).
   ///
   /// If set to true, goToStep(targetId) goes back to the origin step after

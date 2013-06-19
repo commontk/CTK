@@ -19,17 +19,18 @@
   =========================================================================*/
 
 // Qt includes
-#include <QWidget>
-#include <QList>
 #include <QBoxLayout>
 #include <QDebug>
+#include <QList>
 #include <QPointer>
 #include <QStyle>
+#include <QVariant>
 
 // CTK includes
 #include "ctkPushButton.h"
 #include "ctkWorkflowButtonBoxWidget.h"
 #include "ctkWorkflowStep.h"
+#include "ctkWorkflowWidget.h"
 #include "ctkWorkflowWidgetStep.h"
 #include "ctkWorkflow.h"
 
@@ -51,14 +52,15 @@ public:
   QPointer<ctkWorkflow>    Workflow;
 
   // Convenient typedefs
-  typedef QMap<QPushButton*, ctkWorkflowStep*> ButtonToStepMapType;
+  typedef QMap<ctkPushButton*, ctkWorkflowStep*> ButtonToStepMapType;
 
   // The buttons on the widget (maintain maps associating each forward/goTo button with its step)
   ctkPushButton*      BackButton;
-  QString             BackButtonDefaultText;
+  QString             BackButtonFormat;
   ctkPushButton*      NextButton;
-  QString             NextButtonDefaultText;
+  QString             NextButtonFormat;
   ButtonToStepMapType GoToButtonToStepMap;
+  QString             GoToButtonsFormat;
 
   // Direction for layout (for use with QBoxLayout only)
   QBoxLayout::Direction Direction;
@@ -82,9 +84,10 @@ ctkWorkflowButtonBoxWidgetPrivate::ctkWorkflowButtonBoxWidgetPrivate(ctkWorkflow
   :q_ptr(&object)
 {
   this->BackButton = 0;
-  this->BackButtonDefaultText = "Back";
+  this->BackButtonFormat = "[<-]{backButtonText|\"Back\"}(back:description)";
   this->NextButton = 0;
-  this->NextButtonDefaultText = "Next";
+  this->NextButtonFormat = "{nextButtonText|\"Next\"}(next:description)[->]";
+  this->GoToButtonsFormat = "[icon]{stepid|\"Finish\"}(description)";
   this->Direction = QBoxLayout::LeftToRight;
   this->ButtonSizePolicy = QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   this->HideGoToButtons = false;
@@ -104,12 +107,12 @@ void ctkWorkflowButtonBoxWidgetPrivate::setupUi(QWidget * newParent)
   QIcon nextIcon = newParent->style()->standardIcon(QStyle::SP_ArrowRight);
 
   // Setup the buttons
-  this->BackButton = new ctkPushButton(backIcon, this->BackButtonDefaultText, newParent);
+  this->BackButton = new ctkPushButton(backIcon, this->BackButtonFormat, newParent);
   this->BackButton->setSizePolicy(this->ButtonSizePolicy);
   this->BackButton->setIconAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   newParent->layout()->addWidget(this->BackButton);
 
-  this->NextButton = new ctkPushButton(nextIcon, this->NextButtonDefaultText, newParent);
+  this->NextButton = new ctkPushButton(nextIcon, this->NextButtonFormat, newParent);
   this->NextButton->setSizePolicy(this->ButtonSizePolicy);
   this->NextButton->setIconAlignment(Qt::AlignRight | Qt::AlignVCenter);
   newParent->layout()->addWidget(this->NextButton);
@@ -127,13 +130,8 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateBackButton(ctkWorkflowStep* curren
 
   ctkWorkflowWidgetStep* step = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep);
 
-  // Set the back button text
-  QString backButtonText = this->BackButtonDefaultText;
-  if (step && !step->backButtonText().isEmpty())
-    {
-    backButtonText = step->backButtonText();
-    }
-  this->BackButton->setText(backButtonText);
+  // Set the back button text and icon
+  ctkWorkflowWidget::formatButton(this->BackButton, this->BackButtonFormat, step);
 
   // Disable the back button if we can't go backward
   bool enable = currentStep && this->Workflow->canGoBackward(currentStep);
@@ -166,14 +164,8 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateNextButton(ctkWorkflowStep* curren
 
   ctkWorkflowWidgetStep* step = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep);
 
-  // Set the next button text
-  QString nextButtonText = this->NextButtonDefaultText;
-  if (step && !step->nextButtonText().isEmpty())
-    {
-    nextButtonText = step->nextButtonText();
-    }
-  this->NextButton->setText(nextButtonText);
-
+  // Set the next button text and icon
+  ctkWorkflowWidget::formatButton(this->NextButton, this->NextButtonFormat, step);
 
   // Disable the next button if we can't go backward
   bool enable = currentStep && this->Workflow->canGoForward(currentStep);
@@ -210,7 +202,7 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateGoToButtons(ctkWorkflowStep* curre
   // Remove the buttons if the set of steps to have goTo buttons has changed
   if (goToStepsThatHaveButtons != goToStepsToHaveButtons)
     {
-    foreach (QPushButton* goToButton, this->GoToButtonToStepMap.keys())
+    foreach (ctkPushButton* goToButton, this->GoToButtonToStepMap.keys())
       {
       q->layout()->removeWidget(goToButton);
       goToButton->deleteLater();
@@ -225,22 +217,19 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateGoToButtons(ctkWorkflowStep* curre
     foreach (ctkWorkflowStep* step, goToStepsToHaveButtons)
       {
       // TODO shouldn't have id here
-      QPushButton* goToButton = new QPushButton(step->id());
+      ctkPushButton* goToButton = new ctkPushButton();
       goToButton->setSizePolicy(this->ButtonSizePolicy);
+      ctkWorkflowWidgetStep* wwStep = dynamic_cast<ctkWorkflowWidgetStep*>(step);
+      ctkWorkflowWidget::formatButton(goToButton, this->GoToButtonsFormat, wwStep);
       q->layout()->addWidget(goToButton);
       QObject::connect(goToButton, SIGNAL(clicked()), q, SLOT(prepareGoToStep()));
       this->GoToButtonToStepMap[goToButton] = step;
-      // if the goTo step has an icon associated with it, then add it to the button
-      if (ctkWorkflowWidgetStep* wwStep = dynamic_cast<ctkWorkflowWidgetStep*>(step))
-        {
-        goToButton->setIcon(wwStep->icon());
-        }
       }
     }
 
   // Show/hide the goTo buttons depending on whether they are accessible from the current step
   ctkWorkflowWidgetStep* step = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep);
-  foreach (QPushButton* goToButton, this->GoToButtonToStepMap.keys())
+  foreach (ctkPushButton* goToButton, this->GoToButtonToStepMap.keys())
     {
     // TODO enable and show the goTo button if we can go to it
     // ctkWorkflowStep* goToStep = this->GoToButtonToStepMap[goToButton];
@@ -319,32 +308,44 @@ void ctkWorkflowButtonBoxWidget::setWorkflow(ctkWorkflow * newWorkflow)
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QString, backButtonDefaultText,
-            BackButtonDefaultText);
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QString, backButtonFormat,
+            BackButtonFormat);
 
 //-----------------------------------------------------------------------------
-void ctkWorkflowButtonBoxWidget::setBackButtonDefaultText(const QString& defaultText)
+void ctkWorkflowButtonBoxWidget::setBackButtonFormat(const QString& format)
 {
   Q_D(ctkWorkflowButtonBoxWidget);
-  d->BackButtonDefaultText = defaultText;
+  d->BackButtonFormat = format;
   d->updateBackButton(d->Workflow ? d->Workflow->currentStep() : 0);
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QString, nextButtonDefaultText,
-            NextButtonDefaultText);
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QString, nextButtonFormat,
+            NextButtonFormat);
 
 //-----------------------------------------------------------------------------
-void ctkWorkflowButtonBoxWidget::setNextButtonDefaultText(const QString& defaultText)
+void ctkWorkflowButtonBoxWidget::setNextButtonFormat(const QString& format)
 {
   Q_D(ctkWorkflowButtonBoxWidget);
-  d->NextButtonDefaultText = defaultText;
+  d->NextButtonFormat = format;
   d->updateNextButton(d->Workflow ? d->Workflow->currentStep() : 0);
 }
 
 //-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QString, goToButtonsFormat,
+            GoToButtonsFormat);
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowButtonBoxWidget::setGoToButtonsFormat(const QString& format)
+{
+  Q_D(ctkWorkflowButtonBoxWidget);
+  d->GoToButtonsFormat = format;
+  d->updateGoToButtons(d->Workflow ? d->Workflow->currentStep() : 0);
+}
+
+//-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, ctkWorkflow*, workflow, Workflow);
-CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QPushButton*, backButton, BackButton);
+CTK_GET_CPP(ctkWorkflowButtonBoxWidget, ctkPushButton*, backButton, BackButton);
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, QBoxLayout::Direction, direction, Direction);
 CTK_GET_CPP(ctkWorkflowButtonBoxWidget, bool, hideGoToButtons, HideGoToButtons);
 CTK_SET_CPP(ctkWorkflowButtonBoxWidget, bool, setHideGoToButtons, HideGoToButtons);
@@ -353,14 +354,14 @@ CTK_SET_CPP(ctkWorkflowButtonBoxWidget, bool, setHideInvalidButtons, HideInvalid
 
 //-----------------------------------------------------------------------------
 // TODO will be list of next buttons for branching workflow
-QPushButton* ctkWorkflowButtonBoxWidget::nextButton()const
+ctkPushButton* ctkWorkflowButtonBoxWidget::nextButton()const
 {
   Q_D(const ctkWorkflowButtonBoxWidget);
   return d->NextButton;
 }
 
 //-----------------------------------------------------------------------------
-QList<QPushButton*> ctkWorkflowButtonBoxWidget::goToButtons()const
+QList<ctkPushButton*> ctkWorkflowButtonBoxWidget::goToButtons()const
 {
   Q_D(const ctkWorkflowButtonBoxWidget);
   return d->GoToButtonToStepMap.keys();
@@ -388,7 +389,7 @@ void ctkWorkflowButtonBoxWidget::updateButtons(ctkWorkflowStep* currentStep)
 void ctkWorkflowButtonBoxWidget::prepareGoToStep()
 {
   Q_D(ctkWorkflowButtonBoxWidget);
-  if (QPushButton* button = qobject_cast<QPushButton*>(QObject::sender()))
+  if (ctkPushButton* button = qobject_cast<ctkPushButton*>(QObject::sender()))
     {
     if (ctkWorkflowStep* step = d->GoToButtonToStepMap.value(button))
       {
