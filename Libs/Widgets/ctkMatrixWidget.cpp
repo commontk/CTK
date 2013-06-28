@@ -20,7 +20,7 @@
 
 // CTK includes
 #include "ctkMatrixWidget.h"
-#include "ctkSpinBox.h"
+#include "ctkDoubleSpinBox.h"
 
 // Qt includes
 #include <QDebug>
@@ -40,11 +40,11 @@
 namespace
 {
 //-----------------------------------------------------------------------------
-  class ctkMatrixDoubleSpinBox : public ctkSpinBox
+  class ctkMatrixDoubleSpinBox : public ctkDoubleSpinBox
   {
   public:
     ctkMatrixDoubleSpinBox(QWidget * parentWidget)
-      : ctkSpinBox(parentWidget)
+      : ctkDoubleSpinBox(parentWidget)
     {
       // We know that the parentWidget() of parentWidget will be a
       // ctkMatrixWidget because this object is

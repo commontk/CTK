@@ -24,7 +24,7 @@
 
 // CTK includes
 #include "ctkCoordinatesWidget.h"
-#include "ctkSpinBox.h"
+#include "ctkDoubleSpinBox.h"
 
 // STD includes
 #include <cmath>
@@ -56,7 +56,7 @@ ctkCoordinatesWidget::~ctkCoordinatesWidget()
 //------------------------------------------------------------------------------
 void ctkCoordinatesWidget::addSpinBox()
 {
-  ctkSpinBox* spinBox = new ctkSpinBox(this);
+  ctkDoubleSpinBox* spinBox = new ctkDoubleSpinBox(this);
   spinBox->setDecimals(this->Decimals);
   spinBox->setSingleStep(this->SingleStep);
   spinBox->setMinimum(this->Minimum);
@@ -120,7 +120,7 @@ void ctkCoordinatesWidget::setMinimum(double min)
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
     QLayoutItem* item = this->layout()->itemAt(i);
-    ctkSpinBox* spinBox = item ? qobject_cast<ctkSpinBox*>(
+    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
       item->widget()) : 0;
     if (spinBox)
       {
@@ -142,7 +142,7 @@ void ctkCoordinatesWidget::setMaximum(double max)
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
     QLayoutItem* item = this->layout()->itemAt(i);
-    ctkSpinBox* spinBox = item ? qobject_cast<ctkSpinBox*>(
+    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
       item->widget()) : 0;
     if (spinBox)
       {
@@ -189,7 +189,7 @@ void ctkCoordinatesWidget::setDecimals(int newDecimals)
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
     QLayoutItem* item = this->layout()->itemAt(i);
-    ctkSpinBox* spinBox = item ? qobject_cast<ctkSpinBox*>(
+    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
       item->widget()) : 0;
     if (spinBox)
       {
@@ -210,7 +210,7 @@ void ctkCoordinatesWidget::setSingleStep(double step)
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
     QLayoutItem* item = this->layout()->itemAt(i);
-    ctkSpinBox* spinBox = item ? qobject_cast<ctkSpinBox*>(
+    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
       item->widget()) : 0;
     if (spinBox)
       {
@@ -273,8 +273,8 @@ void ctkCoordinatesWidget::setCoordinates(double* coordinates)
   for (int i = 0; i < this->Dimension; ++i)
     {
     QLayoutItem* item = this->layout()->itemAt(i);
-    ctkSpinBox* spinBox =
-      item ? qobject_cast<ctkSpinBox*>(item->widget()) : 0;
+    ctkDoubleSpinBox* spinBox =
+      item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
     if (spinBox)
       {
       // we don't want updateCoordinate() to be called.
@@ -329,8 +329,8 @@ void ctkCoordinatesWidget::updateCoordinate(double coordinate)
   for (int i = 0; i < this->Dimension; ++i)
     {
     QLayoutItem* item = this->layout()->itemAt(i);
-    ctkSpinBox* spinBox =
-      item ? qobject_cast<ctkSpinBox*>(item->widget()) : 0;
+    ctkDoubleSpinBox* spinBox =
+      item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
     if ( spinBox && spinBox == this->sender())
       {
       this->Coordinates[i] = coordinate;
@@ -435,8 +435,8 @@ void ctkCoordinatesWidget::updateCoordinates()
   for (int i = 0; i < this->Dimension; ++i)
     {
     QLayoutItem* item = this->layout()->itemAt(i);
-    ctkSpinBox* spinBox =
-      item ? qobject_cast<ctkSpinBox*>(item->widget()) : 0;
+    ctkDoubleSpinBox* spinBox =
+      item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
     if ( spinBox)
       {
       this->Coordinates[i] = spinBox->value();

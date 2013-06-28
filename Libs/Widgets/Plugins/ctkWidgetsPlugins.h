@@ -60,7 +60,7 @@
 #include "ctkSettingsPanelPlugin.h"
 #include "ctkSettingsDialogPlugin.h"
 #include "ctkSliderWidgetPlugin.h"
-#include "ctkSpinBoxPlugin.h"
+#include "ctkDoubleSpinBoxPlugin.h"
 #include "ctkThumbnailLabelPlugin.h"
 #include "ctkTransferFunctionViewPlugin.h"
 #include "ctkTreeComboBoxPlugin.h"
@@ -112,7 +112,7 @@ public:
             << new ctkSettingsPanelPlugin
             << new ctkSettingsDialogPlugin
             << new ctkSliderWidgetPlugin
-            << new ctkSpinBoxPlugin
+            << new ctkDoubleSpinBoxPlugin
             << new ctkThumbnailLabelPlugin
             << new ctkTransferFunctionViewPlugin
             << new ctkTreeComboBoxPlugin

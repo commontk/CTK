@@ -25,18 +25,18 @@
 #include <QTimer>
 
 // CTK includes
-#include "ctkSpinBox.h"
+#include "ctkDoubleSpinBox.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkSpinBoxTest1(int argc, char * argv [] )
+int ctkDoubleSpinBoxTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkSpinBox spinBox;
+  ctkDoubleSpinBox spinBox;
 
   // ----------------------------------------
   // Regular SpinBox methods

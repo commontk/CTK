@@ -19,49 +19,49 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkSpinBoxPlugin.h"
-#include "ctkSpinBox.h"
+#include "ctkDoubleSpinBoxPlugin.h"
+#include "ctkDoubleSpinBox.h"
 
 // --------------------------------------------------------------------------
-ctkSpinBoxPlugin::ctkSpinBoxPlugin(QObject *_parent)
+ctkDoubleSpinBoxPlugin::ctkDoubleSpinBoxPlugin(QObject *_parent)
   : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *ctkSpinBoxPlugin::createWidget(QWidget *_parent)
+QWidget *ctkDoubleSpinBoxPlugin::createWidget(QWidget *_parent)
 {
-  ctkSpinBox* _widget = new ctkSpinBox(_parent);
-  return _widget;
+  ctkDoubleSpinBox* newWidget = new ctkDoubleSpinBox(_parent);
+  return newWidget;
 }
 
 // --------------------------------------------------------------------------
-QString ctkSpinBoxPlugin::domXml() const
+QString ctkDoubleSpinBoxPlugin::domXml() const
 {
-  return "<widget class=\"ctkSpinBox\" name=\"SpinBox\">\n"
+  return "<widget class=\"ctkDoubleSpinBox\" name=\"DoubleSpinBox\">\n"
     "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkSpinBoxPlugin::icon() const
+QIcon ctkDoubleSpinBoxPlugin::icon() const
 {
   return QIcon(":/Icons/doublespinbox.png");
 }
 
 // --------------------------------------------------------------------------
-QString ctkSpinBoxPlugin::includeFile() const
+QString ctkDoubleSpinBoxPlugin::includeFile() const
 {
-  return "ctkSpinBox.h";
+  return "ctkDoubleSpinBox.h";
 }
 
 // --------------------------------------------------------------------------
-bool ctkSpinBoxPlugin::isContainer() const
+bool ctkDoubleSpinBoxPlugin::isContainer() const
 {
   return false;
 }
 
 // --------------------------------------------------------------------------
-QString ctkSpinBoxPlugin::name() const
+QString ctkDoubleSpinBoxPlugin::name() const
 {
-  return "ctkSpinBox";
+  return "ctkDoubleSpinBox";
 }

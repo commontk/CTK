@@ -595,7 +595,7 @@ ctkPopupWidget* ctkSliderWidget::popup()const
 }
 
 // --------------------------------------------------------------------------
-ctkSpinBox* ctkSliderWidget::spinBox()
+ctkDoubleSpinBox* ctkSliderWidget::spinBox()
 {
   Q_D(ctkSliderWidget);
   return d->SpinBox;

@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkSpinBox_h
-#define __ctkSpinBox_h
+#ifndef __ctkDoubleSpinBox_h
+#define __ctkDoubleSpinBox_h
 
 // Qt includes
 #include <QMetaType>
@@ -34,13 +34,13 @@ class QObject;
 // CTK includes
 #include "ctkWidgetsExport.h"
 
-class ctkSpinBoxPrivate;
+class ctkDoubleSpinBoxPrivate;
 
 /// \brief Custom SpinBox
-/// The ctkSpinBox internaly uses a QDoubleSpinBox while it retain controls
+/// The ctkDoubleSpinBox internaly uses a QDoubleSpinBox while it retain controls
 /// over it.
 /// \sa ctkDoubleSlider, ctkSliderWidget, ctkRangeSlider
-class CTK_WIDGETS_EXPORT ctkSpinBox : public QWidget
+class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
 {
   Q_OBJECT
   Q_ENUMS(SetMode)
@@ -99,10 +99,10 @@ public:
 
   typedef QWidget Superclass;
 
-  /// Constructor, creates a ctkSpinBox. The look and feel
+  /// Constructor, creates a ctkDoubleSpinBox. The look and feel
   /// are the same as of a QDoubleSpinBox
-  ctkSpinBox(QWidget* parent = 0);
-  ctkSpinBox(ctkSpinBox::SetMode mode, QWidget* parent = 0);
+  ctkDoubleSpinBox(QWidget* parent = 0);
+  ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* parent = 0);
 
   /// Get the spinbox current value
   /// \sa setValue(), cleanText()
@@ -156,7 +156,7 @@ public:
 
   /// Set/Get number of displayed decimals.
   /// For a spinbox dealing only with integers, set this to 0.
-  /// \sa ctkSpinBox::DecimalsOption
+  /// \sa ctkDoubleSpinBox::DecimalsOption
   int decimals() const;
   void setDecimals(int decimal);
 
@@ -172,13 +172,13 @@ public:
 
   /// Set the spinbox mode when using a set*() method.
   //// \sa round(), setValue(), setValueIfDifferent(), setValueAlways()
-  ctkSpinBox::SetMode setMode() const;
+  ctkDoubleSpinBox::SetMode setMode() const;
   void setSetMode(SetMode mode);
 
   /// Set/Get the option used to input the decimals.
-  /// \sa ctkSpinBox::DecimalsOption
-  ctkSpinBox::DecimalsOptions decimalsOption();
-  void setDecimalsOption(ctkSpinBox::DecimalsOptions option);
+  /// \sa ctkDoubleSpinBox::DecimalsOption
+  ctkDoubleSpinBox::DecimalsOptions decimalsOption();
+  void setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions option);
 
 public Q_SLOTS:
   /// Set the value of the spinbox following the current mode.
@@ -212,16 +212,16 @@ Q_SIGNALS:
   void decimalsChanged(int);
 
 protected:
-  ctkSpinBoxPrivate* const d_ptr;
+  ctkDoubleSpinBoxPrivate* const d_ptr;
 
   bool eventFilter(QObject *obj, QEvent *event);
 
 private:
-  Q_DECLARE_PRIVATE(ctkSpinBox);
-  Q_DISABLE_COPY(ctkSpinBox);
+  Q_DECLARE_PRIVATE(ctkDoubleSpinBox);
+  Q_DISABLE_COPY(ctkDoubleSpinBox);
 };
 
-Q_DECLARE_METATYPE(ctkSpinBox::SetMode)
-Q_DECLARE_OPERATORS_FOR_FLAGS(ctkSpinBox::DecimalsOptions)
+Q_DECLARE_METATYPE(ctkDoubleSpinBox::SetMode)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkDoubleSpinBox::DecimalsOptions)
 
-#endif //__ctkSpinBox_h
+#endif //__ctkDoubleSpinBox_h
