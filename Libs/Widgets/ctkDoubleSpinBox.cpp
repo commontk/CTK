@@ -19,7 +19,7 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkSpinBox.h"
+#include "ctkDoubleSpinBox.h"
 #include "ctkUtils.h"
 #include "ctkPimpl.h"
 
@@ -35,18 +35,18 @@
 #include <QVariant>
 
 //-----------------------------------------------------------------------------
-class ctkSpinBoxPrivate
+class ctkDoubleSpinBoxPrivate
 {
-  Q_DECLARE_PUBLIC(ctkSpinBox);
+  Q_DECLARE_PUBLIC(ctkDoubleSpinBox);
 protected:
-  ctkSpinBox* const q_ptr;
+  ctkDoubleSpinBox* const q_ptr;
 public:
-  ctkSpinBoxPrivate(ctkSpinBox& object);
+  ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object);
 
   QDoubleSpinBox* SpinBox;
-  ctkSpinBox::SetMode Mode;
+  ctkDoubleSpinBox::SetMode Mode;
   int DefaultDecimals;
-  ctkSpinBox::DecimalsOptions DOption;
+  ctkDoubleSpinBox::DecimalsOptions DOption;
 
   void init();
   // Compare two double previously rounded according to the number of decimals
@@ -58,20 +58,20 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-ctkSpinBoxPrivate::ctkSpinBoxPrivate(ctkSpinBox& object) : q_ptr(&object)
+ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object) : q_ptr(&object)
 {
-  qRegisterMetaType<ctkSpinBox::SetMode>("ctkSpinBox::SetMode");
-  qRegisterMetaType<ctkSpinBox::DecimalsOptions>("ctkSpinBox::DecimalsOption");
+  qRegisterMetaType<ctkDoubleSpinBox::SetMode>("ctkDoubleSpinBox::SetMode");
+  qRegisterMetaType<ctkDoubleSpinBox::DecimalsOptions>("ctkDoubleSpinBox::DecimalsOption");
   this->SpinBox = 0;
-  this->Mode = ctkSpinBox::SetIfDifferent;
+  this->Mode = ctkDoubleSpinBox::SetIfDifferent;
   this->DefaultDecimals = 2;
-  this->DOption = ctkSpinBox::UseShortcuts;
+  this->DOption = ctkDoubleSpinBox::UseShortcuts;
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBoxPrivate::init()
+void ctkDoubleSpinBoxPrivate::init()
 {
-  Q_Q(ctkSpinBox);
+  Q_Q(ctkDoubleSpinBox);
   this->SpinBox = new QDoubleSpinBox(q);
   QObject::connect(this->SpinBox, SIGNAL(valueChanged(double)),
     q, SIGNAL(valueChanged(double)));
@@ -91,78 +91,78 @@ void ctkSpinBoxPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-bool ctkSpinBoxPrivate::compare(double x1, double x2) const
+bool ctkDoubleSpinBoxPrivate::compare(double x1, double x2) const
 {
-  Q_Q(const ctkSpinBox);
+  Q_Q(const ctkDoubleSpinBox);
   return q->round(x1) == q->round(x2);
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBoxPrivate::setDecimals(int dec)
+void ctkDoubleSpinBoxPrivate::setDecimals(int dec)
 {
-  Q_Q(ctkSpinBox);
+  Q_Q(ctkDoubleSpinBox);
   this->SpinBox->setDecimals(dec);
   emit q->decimalsChanged(dec);
 }
 
 //-----------------------------------------------------------------------------
-ctkSpinBox::ctkSpinBox(QWidget* newParent)
+ctkDoubleSpinBox::ctkDoubleSpinBox(QWidget* newParent)
   : QWidget(newParent)
-  , d_ptr(new ctkSpinBoxPrivate(*this))
+  , d_ptr(new ctkDoubleSpinBoxPrivate(*this))
 {
-  Q_D(ctkSpinBox);
+  Q_D(ctkDoubleSpinBox);
   d->init();
 }
 
 //-----------------------------------------------------------------------------
-ctkSpinBox::ctkSpinBox(ctkSpinBox::SetMode mode, QWidget* newParent)
+ctkDoubleSpinBox::ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* newParent)
   : QWidget(newParent)
-  , d_ptr(new ctkSpinBoxPrivate(*this))
+  , d_ptr(new ctkDoubleSpinBoxPrivate(*this))
 {
-  Q_D(ctkSpinBox);
+  Q_D(ctkDoubleSpinBox);
   d->init();
   this->setSetMode(mode);
 }
 
 //-----------------------------------------------------------------------------
-double ctkSpinBox::value() const
+double ctkDoubleSpinBox::value() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->value();
 }
 
 //-----------------------------------------------------------------------------
-double ctkSpinBox::displayedValue() const
+double ctkDoubleSpinBox::displayedValue() const
 {
   return this->round(this->value());
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSpinBox::text() const
+QString ctkDoubleSpinBox::text() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->text();
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSpinBox::cleanText() const
+QString ctkDoubleSpinBox::cleanText() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->cleanText();
 }
 
 //-----------------------------------------------------------------------------
-Qt::Alignment ctkSpinBox::alignment() const
+Qt::Alignment ctkDoubleSpinBox::alignment() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->alignment();
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setAlignment(Qt::Alignment flag)
+void ctkDoubleSpinBox::setAlignment(Qt::Alignment flag)
 {
-  Q_D(const ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent && flag == d->SpinBox->alignment())
+  Q_D(const ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent && flag == d->SpinBox->alignment())
     {
     return;
     }
@@ -171,10 +171,10 @@ void ctkSpinBox::setAlignment(Qt::Alignment flag)
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setFrame(bool frame)
+void ctkDoubleSpinBox::setFrame(bool frame)
 {
-  Q_D(const ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent && frame == d->SpinBox->hasFrame())
+  Q_D(const ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent && frame == d->SpinBox->hasFrame())
     {
     return;
     }
@@ -183,24 +183,24 @@ void ctkSpinBox::setFrame(bool frame)
 }
 
 //-----------------------------------------------------------------------------
-bool ctkSpinBox::hasFrame() const
+bool ctkDoubleSpinBox::hasFrame() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->hasFrame();
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSpinBox::prefix() const
+QString ctkDoubleSpinBox::prefix() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->prefix();
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setPrefix(const QString &prefix)
+void ctkDoubleSpinBox::setPrefix(const QString &prefix)
 {
-  Q_D(const ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent && prefix == d->SpinBox->prefix())
+  Q_D(const ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent && prefix == d->SpinBox->prefix())
     {
     return;
     }
@@ -215,17 +215,17 @@ void ctkSpinBox::setPrefix(const QString &prefix)
 }
 
 //-----------------------------------------------------------------------------
-QString ctkSpinBox::suffix() const
+QString ctkDoubleSpinBox::suffix() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->suffix();
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setSuffix(const QString &suffix)
+void ctkDoubleSpinBox::setSuffix(const QString &suffix)
 {
-  Q_D(const ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent && suffix == d->SpinBox->suffix())
+  Q_D(const ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent && suffix == d->SpinBox->suffix())
     {
     return;
     }
@@ -240,17 +240,17 @@ void ctkSpinBox::setSuffix(const QString &suffix)
 }
 
 //-----------------------------------------------------------------------------
-double ctkSpinBox::singleStep() const
+double ctkDoubleSpinBox::singleStep() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->singleStep();
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setSingleStep(double step)
+void ctkDoubleSpinBox::setSingleStep(double step)
 {
-  Q_D(ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
     && d->compare(step, this->singleStep()))
     {
     return;
@@ -260,17 +260,17 @@ void ctkSpinBox::setSingleStep(double step)
 }
 
 //-----------------------------------------------------------------------------
-double ctkSpinBox::minimum() const
+double ctkDoubleSpinBox::minimum() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->minimum();
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setMinimum(double min)
+void ctkDoubleSpinBox::setMinimum(double min)
 {
-  Q_D(ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
     && d->compare(min, this->minimum()))
     {
     return;
@@ -280,17 +280,17 @@ void ctkSpinBox::setMinimum(double min)
 }
 
 //-----------------------------------------------------------------------------
-double ctkSpinBox::maximum() const
+double ctkDoubleSpinBox::maximum() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->maximum();
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setMaximum(double max)
+void ctkDoubleSpinBox::setMaximum(double max)
 {
-  Q_D(ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
     && d->compare(max, this->maximum()))
     {
     return;
@@ -300,10 +300,10 @@ void ctkSpinBox::setMaximum(double max)
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setRange(double min, double max)
+void ctkDoubleSpinBox::setRange(double min, double max)
 {
-  Q_D(ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
     && d->compare(max, this->maximum()) && d->compare(min, this->minimum()))
     {
     return;
@@ -313,18 +313,18 @@ void ctkSpinBox::setRange(double min, double max)
 }
 
 //-----------------------------------------------------------------------------
-int ctkSpinBox::decimals() const
+int ctkDoubleSpinBox::decimals() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox->decimals();
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setDecimals(int dec)
+void ctkDoubleSpinBox::setDecimals(int dec)
 {
-  Q_D(ctkSpinBox);
+  Q_D(ctkDoubleSpinBox);
   dec = qMax(0, dec);
-  if (d->Mode == ctkSpinBox::SetIfDifferent && dec == this->decimals())
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent && dec == this->decimals())
     {
     return;
     }
@@ -334,24 +334,24 @@ void ctkSpinBox::setDecimals(int dec)
 }
 
 //-----------------------------------------------------------------------------
-double ctkSpinBox::round(double value) const
+double ctkDoubleSpinBox::round(double value) const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return QString::number(value, 'f', d->SpinBox->decimals()).toDouble();
 }
 
 //-----------------------------------------------------------------------------
-QDoubleSpinBox* ctkSpinBox::spinBox() const
+QDoubleSpinBox* ctkDoubleSpinBox::spinBox() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->SpinBox;
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setValue(double value)
+void ctkDoubleSpinBox::setValue(double value)
 {
-  Q_D(ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent)
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent)
     {
     this->setValueIfDifferent(value);
     }
@@ -362,9 +362,9 @@ void ctkSpinBox::setValue(double value)
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setValueIfDifferent(double value)
+void ctkDoubleSpinBox::setValueIfDifferent(double value)
 {
-  Q_D(ctkSpinBox);
+  Q_D(ctkDoubleSpinBox);
   if (! d->compare(this->value(), value))
     {
     d->SpinBox->setValue(value);
@@ -372,52 +372,52 @@ void ctkSpinBox::setValueIfDifferent(double value)
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setValueAlways(double value)
+void ctkDoubleSpinBox::setValueAlways(double value)
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   d->SpinBox->setValue(value);
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::stepUp()
+void ctkDoubleSpinBox::stepUp()
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   d->SpinBox->stepUp();
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::stepDown()
+void ctkDoubleSpinBox::stepDown()
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   d->SpinBox->stepDown();
 }
 
 //-----------------------------------------------------------------------------
-ctkSpinBox::SetMode ctkSpinBox::setMode() const
+ctkDoubleSpinBox::SetMode ctkDoubleSpinBox::setMode() const
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->Mode;
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setSetMode(ctkSpinBox::SetMode newMode)
+void ctkDoubleSpinBox::setSetMode(ctkDoubleSpinBox::SetMode newMode)
 {
-  Q_D(ctkSpinBox);
+  Q_D(ctkDoubleSpinBox);
   d->Mode = newMode;
 }
 
 //-----------------------------------------------------------------------------
-ctkSpinBox::DecimalsOptions ctkSpinBox::decimalsOption()
+ctkDoubleSpinBox::DecimalsOptions ctkDoubleSpinBox::decimalsOption()
 {
-  Q_D(const ctkSpinBox);
+  Q_D(const ctkDoubleSpinBox);
   return d->DOption;
 }
 
 //-----------------------------------------------------------------------------
-void ctkSpinBox::setDecimalsOption(ctkSpinBox::DecimalsOptions option)
+void ctkDoubleSpinBox::setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions option)
 {
-  Q_D(ctkSpinBox);
-  if (d->Mode == ctkSpinBox::SetIfDifferent && option == d->DOption)
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent && option == d->DOption)
     {
     return;
     }
@@ -426,10 +426,10 @@ void ctkSpinBox::setDecimalsOption(ctkSpinBox::DecimalsOptions option)
 }
 
 //-----------------------------------------------------------------------------
-bool ctkSpinBox::eventFilter(QObject* obj, QEvent* event)
+bool ctkDoubleSpinBox::eventFilter(QObject* obj, QEvent* event)
 {
-  Q_D(ctkSpinBox);
-  if (d->DOption & ctkSpinBox::UseShortcuts &&
+  Q_D(ctkDoubleSpinBox);
+  if (d->DOption & ctkDoubleSpinBox::UseShortcuts &&
     obj == d->SpinBox && event->type() == QEvent::KeyPress)
     {
     QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);

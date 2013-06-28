@@ -18,20 +18,20 @@
 
 =========================================================================*/
 
-#ifndef __ctkSpinBoxPlugin_h
-#define __ctkSpinBoxPlugin_h
+#ifndef __ctkDoubleSpinBoxPlugin_h
+#define __ctkDoubleSpinBoxPlugin_h
 
 // CTK includes
 #include "ctkWidgetsAbstractPlugin.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkSpinBoxPlugin :
+class CTK_WIDGETS_PLUGINS_EXPORT ctkDoubleSpinBoxPlugin :
   public QObject,
   public ctkWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  ctkSpinBoxPlugin(QObject *_parent = 0);
+  ctkDoubleSpinBoxPlugin(QObject *_parent = 0);
 
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;
