@@ -32,13 +32,13 @@
 class ctkDoubleSlider;
 class ctkPopupWidget;
 class ctkSliderWidgetPrivate;
-class ctkSpinBox;
+class ctkDoubleSpinBox;
 
 /// \ingroup Widgets
 ///
-/// ctkSliderWidget is a wrapper around a ctkDoubleSlider and a QDoubleSpinBox
+/// ctkSliderWidget is a wrapper around a ctkDoubleSlider and a ctkDoubleSpinBox
 /// where the slider value and the spinbox value are synchronized.
-/// \sa ctkRangeWidget, ctkDoubleRangeSlider, QSpinBox
+/// \sa ctkRangeWidget, ctkDoubleRangeSlider, QDoubleSpinBox
 class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
 {
   Q_OBJECT
@@ -58,6 +58,8 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(bool spinBoxVisible READ isSpinBoxVisible WRITE setSpinBoxVisible);
   Q_PROPERTY(bool popupSlider READ hasPopupSlider WRITE setPopupSlider);
+  Q_PROPERTY(bool invertedAppearance READ invertedAppearance WRITE setInvertedAppearance)
+  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
 
 public:
 
@@ -66,7 +68,7 @@ public:
   /// The slider widget siblings aren't updated and this widget does not update
   /// from its siblings.
   /// SynchronizeWidth:
-  /// The width of the SpinBox is set to the same width of the largest QSpinBox
+  /// The width of the SpinBox is set to the same width of the largest QDoubleSpinBox
   /// of its ctkSliderWidget siblings.
   /// SynchronizeDecimals:
   /// Whenever one of the siblings changes its number of decimals, all its
@@ -194,6 +196,28 @@ public:
   ctkSliderWidget::SynchronizeSiblings synchronizeSiblings() const;
   void setSynchronizeSiblings(ctkSliderWidget::SynchronizeSiblings options);
 
+  /// This property holds whether or not a slider shows its values inverted.
+  /// If this property is false (the default), the minimum and maximum will
+  /// be shown in its classic position for the inherited widget. If the value
+  /// is true, the minimum and maximum appear at their opposite location.
+  /// Note: This property makes most sense for sliders and dials. For scroll
+  /// bars, the visual effect of the scroll bar subcontrols depends on whether
+  /// or not the styles understand inverted appearance; most styles ignore this
+  /// property for scroll bars.
+  /// \sa invertedControls
+  void setInvertedAppearance(bool invertedAppearance);
+  bool invertedAppearance()const;
+
+  /// This property holds whether or not the slider and the spinbox invert
+  /// their wheel and key events.
+  /// If this property is false, scrolling the mouse wheel "up" and using keys
+  /// like page up will increase the value of the slider widget towards its
+  /// maximum. Otherwise, pressing page up will move value towards the minimum.
+  /// The default value of the property is false.
+  /// \sa invertedAppearance
+  void setInvertedControls(bool invertedControls);
+  bool invertedControls()const;
+
   ///
   /// The Spinbox visibility can be controlled using setSpinBoxVisible() and
   /// isSpinBoxVisible().
@@ -219,7 +243,7 @@ public:
   /// Returns the spinbox synchronized with the slider. Be careful
   /// with what you do with the spinbox as the slider might change
   /// properties automatically.
-  ctkSpinBox* spinBox();
+  ctkDoubleSpinBox* spinBox();
 
   ///
   /// Returns the slider synchronized with the spinbox. Be careful

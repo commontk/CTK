@@ -356,6 +356,34 @@ void ctkDoubleSlider::setTracking(bool enable)
 }
 
 // --------------------------------------------------------------------------
+bool ctkDoubleSlider::invertedAppearance()const
+{
+  Q_D(const ctkDoubleSlider);
+  return d->Slider->invertedAppearance();
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleSlider::setInvertedAppearance(bool invertedAppearance)
+{
+  Q_D(ctkDoubleSlider);
+  d->Slider->setInvertedAppearance(invertedAppearance);
+}
+
+// --------------------------------------------------------------------------
+bool ctkDoubleSlider::invertedControls()const
+{
+  Q_D(const ctkDoubleSlider);
+  return d->Slider->invertedControls();
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleSlider::setInvertedControls(bool invertedControls)
+{
+  Q_D(ctkDoubleSlider);
+  d->Slider->setInvertedControls(invertedControls);
+}
+
+// --------------------------------------------------------------------------
 void ctkDoubleSlider::triggerAction( QAbstractSlider::SliderAction action)
 {
   Q_D(ctkDoubleSlider);
