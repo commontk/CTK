@@ -19,14 +19,13 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkDoubleSpinBox.h"
+#include "ctkDoubleSpinBox_p.h"
 #include "ctkUtils.h"
 #include "ctkPimpl.h"
 
 #include <QDebug>
 
 // Qt includes
-#include <QDoubleSpinBox>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QKeyEvent>
@@ -34,31 +33,69 @@
 #include <QSizePolicy>
 #include <QVariant>
 
-//-----------------------------------------------------------------------------
-class ctkDoubleSpinBoxPrivate
+//----------------------------------------------------------------------------
+ctkQDoubleSpinBox::ctkQDoubleSpinBox(QWidget* spinBoxParent)
+  : QDoubleSpinBox(spinBoxParent)
 {
-  Q_DECLARE_PUBLIC(ctkDoubleSpinBox);
-protected:
-  ctkDoubleSpinBox* const q_ptr;
-public:
-  ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object);
+  this->InvertedControls = false;
+}
 
-  QDoubleSpinBox* SpinBox;
-  ctkDoubleSpinBox::SetMode Mode;
-  int DefaultDecimals;
-  ctkDoubleSpinBox::DecimalsOptions DOption;
+//----------------------------------------------------------------------------
+void ctkQDoubleSpinBox::setInvertedControls(bool invertedControls)
+{
+  this->InvertedControls = invertedControls;
+}
 
-  void init();
-  // Compare two double previously rounded according to the number of decimals
-  bool compare(double x1, double x2) const;
+//----------------------------------------------------------------------------
+bool ctkQDoubleSpinBox::invertedControls() const
+{
+  return this->InvertedControls;
+}
 
-  // Set the number of decimals of the spinbox and emit the signal
-  // No check if they are the same.
-  void setDecimals(int dec);
-};
+//----------------------------------------------------------------------------
+void ctkQDoubleSpinBox::stepBy(int steps)
+{
+  if (this->InvertedControls)
+    {
+    steps = -steps;
+    }
+  this->Superclass::stepBy(steps);
+}
+
+//----------------------------------------------------------------------------
+QAbstractSpinBox::StepEnabled ctkQDoubleSpinBox::stepEnabled() const
+{
+  if (!this->InvertedControls)
+    {
+    return this->Superclass::stepEnabled();
+    }
+
+  if (this->isReadOnly())
+    {
+    return StepNone;
+    }
+
+  if (this->wrapping())
+    {
+    return StepEnabled(StepUpEnabled | StepDownEnabled);
+    }
+
+  StepEnabled ret = StepNone;
+  double value = this->value();
+  if (value < this->maximum())
+    {
+    ret |= StepDownEnabled;
+    }
+  if (value > this->minimum())
+    {
+    ret |= StepUpEnabled;
+    }
+  return ret;
+}
 
 //-----------------------------------------------------------------------------
-ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object) : q_ptr(&object)
+ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object)
+  : q_ptr(&object)
 {
   qRegisterMetaType<ctkDoubleSpinBox::SetMode>("ctkDoubleSpinBox::SetMode");
   qRegisterMetaType<ctkDoubleSpinBox::DecimalsOptions>("ctkDoubleSpinBox::DecimalsOption");
@@ -66,13 +103,15 @@ ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object) : q_p
   this->Mode = ctkDoubleSpinBox::SetIfDifferent;
   this->DefaultDecimals = 2;
   this->DOption = ctkDoubleSpinBox::UseShortcuts;
+  this->InvertedControls = false;
 }
 
 //-----------------------------------------------------------------------------
 void ctkDoubleSpinBoxPrivate::init()
 {
   Q_Q(ctkDoubleSpinBox);
-  this->SpinBox = new QDoubleSpinBox(q);
+  this->SpinBox = new ctkQDoubleSpinBox(q);
+  this->SpinBox->setInvertedControls(this->InvertedControls);
   QObject::connect(this->SpinBox, SIGNAL(valueChanged(double)),
     q, SIGNAL(valueChanged(double)));
   QObject::connect(this->SpinBox, SIGNAL(valueChanged(const QString&)),
@@ -423,6 +462,21 @@ void ctkDoubleSpinBox::setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions optio
     }
 
   d->DOption = option;
+}
+
+//----------------------------------------------------------------------------
+void ctkDoubleSpinBox::setInvertedControls(bool invertedControls)
+{
+  Q_D(ctkDoubleSpinBox);
+  d->InvertedControls = invertedControls;
+  d->SpinBox->setInvertedControls(d->InvertedControls);
+}
+
+//----------------------------------------------------------------------------
+bool ctkDoubleSpinBox::invertedControls() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  return d->InvertedControls;
 }
 
 //-----------------------------------------------------------------------------

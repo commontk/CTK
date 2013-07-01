@@ -59,6 +59,12 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
+  /// This property controls whether decreasing the value by the mouse
+  /// button or mouse wheel increases the value of the widget, and inverts the
+  /// control similarly in the other way round or not. The property is switched off by
+  /// default.
+  /// \sa invertedControls(), setInvertedControls()
+  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
 
 public:
 
@@ -179,6 +185,14 @@ public:
   /// \sa ctkDoubleSpinBox::DecimalsOption
   ctkDoubleSpinBox::DecimalsOptions decimalsOption();
   void setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions option);
+
+  /// This property holds whether or not the spin box inverts its wheel and key
+  /// events.
+  /// If this property is false, scrolling the mouse wheel "up" and using keys
+  /// like page up will increase the spinbox's value towards its maximum.
+  /// Otherwise pressing page up will move value towards the slider's minimum.
+  void setInvertedControls(bool invertedControls);
+  bool invertedControls() const;
 
 public Q_SLOTS:
   /// Set the value of the spinbox following the current mode.
