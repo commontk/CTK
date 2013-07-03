@@ -30,13 +30,17 @@
 class ctkComboBoxPrivate;
 
 /// \ingroup Widgets
-/// ctkComboBox is an advanced QComboBox. It allows the display of a default
-/// text/icon when the combobox current index is invalid (-1). A typical
-/// default text would be "Select a XXX..."
-/// forceDefault can force the display of the default text at all time (with
-/// a valid current index). The text displayed in the combo box can be
-/// elided when the size is too small.
+/// \brief ctkComboBox is an advanced QComboBox.
+/// It adds multiple features:
+///  * Display a default text and/or icon when the combobox current index is
+///    invalid (-1). A typical default text would be "Select a XXX...".
+///    forceDefault can force the display of the default text at all time (with
+///    a valid current index). The text displayed in the combo box can be
+///    elided when the size is too small.
+///  * Optionally prevent the mouse scroll events from changing the current
+///    index.
 /// ctkComboBox works exactly the same as QComboBox by default.
+/// \sa QComboBox
 class CTK_WIDGETS_EXPORT ctkComboBox : public QComboBox
 {
   Q_OBJECT
@@ -44,7 +48,12 @@ class CTK_WIDGETS_EXPORT ctkComboBox : public QComboBox
   Q_PROPERTY(QIcon defaultIcon READ defaultIcon WRITE setDefaultIcon)
   Q_PROPERTY(bool forceDefault READ isDefaultForced WRITE forceDefault)
   Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
+  /// This property controls the behavior of the mouse scroll wheel.
+  /// ScrollOn by default.
+  /// /sa scrollWheelEffect, setScrollWheelEffect
+  Q_PROPERTY(ScrollEffect scrollWheelEffect READ scrollWheelEffect WRITE setScrollWheelEffect)
 
+  Q_ENUMS(ScrollEffect);
 public:
   /// Constructor, build a ctkComboBox that behave like QComboBox.
   explicit ctkComboBox(QWidget* parent = 0);
@@ -68,6 +77,27 @@ public:
   void setElideMode(const Qt::TextElideMode& newMode);
   Qt::TextElideMode elideMode()const;
 
+  /// \tbd turn into flags ?
+  enum ScrollEffect
+  {
+    /// Scrolling is not possible with the mouse wheel.
+    NeverScroll,
+    /// Scrolling is always possible with the mouse wheel.
+    AlwaysScroll,
+    /// Scrolling is only possible if the combobox has the focus.
+    /// The focus policy is automatically set to Qt::StrongFocus
+    ScrollWithFocus,
+    /// Scrolling is not possible when the combobox is inside a scrollarea with
+    /// a visible vertical scrollbar.
+    ScrollWithNoVScrollBar
+  };
+  /// Return the scrollWheelEffect property value.
+  /// \sa scrollEffect
+  ScrollEffect scrollWheelEffect()const;
+  /// Set the scrollWheelEffect property value.
+  /// \sa scrollEffect
+  void setScrollWheelEffect(ScrollEffect scroll);
+
   /// Reimplemented for internal reasons
   virtual QSize minimumSizeHint()const;
   /// Reimplemented for internal reasons
@@ -75,8 +105,9 @@ public:
 
 protected:
   /// Reimplemented for internal reasons
-  virtual void paintEvent(QPaintEvent*);
-  virtual void changeEvent(QEvent *e);
+  virtual void paintEvent(QPaintEvent* event);
+  virtual void changeEvent(QEvent* event);
+  virtual void wheelEvent(QWheelEvent* event);
 
 protected:
   QScopedPointer<ctkComboBoxPrivate> d_ptr;
