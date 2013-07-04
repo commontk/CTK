@@ -19,11 +19,11 @@
 =========================================================================*/
 
 // Qt includes
-#include <QStylePainter>
+#include <QAbstractScrollArea>
 #include <QApplication>
 #include <QDebug>
-#include <QScrollArea>
 #include <QScrollBar>
+#include <QStylePainter>
 #include <QWheelEvent>
 
 // CTK includes
@@ -342,7 +342,8 @@ void ctkComboBox::wheelEvent(QWheelEvent* event)
       for (QWidget* ancestor = this->parentWidget();
            ancestor; ancestor = ancestor->parentWidget())
         {
-        if (QScrollArea* scrollArea = qobject_cast<QScrollArea*>(ancestor))
+        if (QAbstractScrollArea* scrollArea =
+            qobject_cast<QAbstractScrollArea*>(ancestor))
           {
           scroll = !scrollArea->verticalScrollBar()->isVisible();
           if (!scroll)
