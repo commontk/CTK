@@ -67,6 +67,8 @@ set(KIT_SRCS
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.cpp
   ctkDoubleSlider.h
+  ctkDoubleSpinBox.cpp
+  ctkDoubleSpinBox.h
   ctkDynamicSpacer.cpp
   ctkDynamicSpacer.h
   ctkErrorLogStatusMessageHandler.cpp
@@ -147,8 +149,6 @@ set(KIT_SRCS
   ctkSizeGrip.h
   ctkSliderWidget.cpp
   ctkSliderWidget.h
-  ctkDoubleSpinBox.cpp
-  ctkDoubleSpinBox.h
   ctkTestApplication.cpp
   ctkTestApplication.h
   ctkThumbnailLabel.cpp
@@ -218,6 +218,8 @@ set(KIT_MOC_SRCS
   ctkDirectoryButton.h
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
+  ctkDoubleSpinBox.h
+  ctkDoubleSpinBox_p.h
   ctkDynamicSpacer.h
   ctkErrorLogWidget.h
   ctkErrorLogStatusMessageHandler.h
@@ -257,7 +259,6 @@ set(KIT_MOC_SRCS
   ctkSimpleLayoutManager.h
   ctkSizeGrip.h
   ctkSliderWidget.h
-  ctkDoubleSpinBox.h
   ctkTestApplication.h
   ctkThumbnailLabel.h
   ctkThumbnailListWidget.h

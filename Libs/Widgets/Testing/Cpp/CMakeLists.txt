@@ -29,6 +29,7 @@ set(TEST_SOURCES
   ctkDoubleRangeSliderTest2.cpp
   ctkDoubleSliderTest1.cpp
   ctkDoubleSliderTest2.cpp
+  ctkDoubleSpinBoxTest1.cpp
   ctkDynamicSpacerTest1.cpp
   ctkDynamicSpacerTest2.cpp
   ctkErrorLogWidgetTest1.cpp
@@ -71,7 +72,6 @@ set(TEST_SOURCES
   ctkSignalMapperTest1.cpp
   ctkSliderWidgetTest1.cpp
   ctkSliderWidgetTest2.cpp
-  ctkDoubleSpinBoxTest1.cpp
   ctkThumbnailListWidgetTest1.cpp
   ctkThumbnailLabelTest1.cpp
   ctkToolTipTrapperTest1.cpp
@@ -230,6 +230,7 @@ SIMPLE_TEST( ctkDoubleRangeSliderTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest2 )
 SIMPLE_TEST( ctkDoubleSliderTest1 )
 SIMPLE_TEST( ctkDoubleSliderTest2 )
+SIMPLE_TEST( ctkDoubleSpinBoxTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest2 )
 SIMPLE_TEST( ctkErrorLogWidgetTest1 )
@@ -275,7 +276,6 @@ SIMPLE_TEST( ctkSettingsTest1 )
 SIMPLE_TEST( ctkSignalMapperTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest2 )
-SIMPLE_TEST( ctkDoubleSpinBoxTest1 )
 SIMPLE_TEST( ctkThumbnailListWidgetTest1 )
 SIMPLE_TEST( ctkThumbnailLabelTest1 )
 SIMPLE_TEST( ctkToolTipTrapperTest1 )

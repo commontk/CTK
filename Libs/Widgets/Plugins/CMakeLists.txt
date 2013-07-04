@@ -40,6 +40,8 @@ set(PLUGIN_SRCS
   ctkDoubleRangeSliderPlugin.h
   ctkDoubleSliderPlugin.cpp
   ctkDoubleSliderPlugin.h
+  ctkDoubleSpinBoxPlugin.cpp
+  ctkDoubleSpinBoxPlugin.h
   ctkDynamicSpacerPlugin.cpp
   ctkDynamicSpacerPlugin.h
   ctkExpandButtonPlugin.cpp
@@ -90,8 +92,6 @@ set(PLUGIN_SRCS
   ctkSettingsDialogPlugin.h
   ctkSliderWidgetPlugin.cpp
   ctkSliderWidgetPlugin.h
-  ctkDoubleSpinBoxPlugin.cpp
-  ctkDoubleSpinBoxPlugin.h
   ctkWorkflowButtonBoxWidgetPlugin.cpp
   ctkWorkflowButtonBoxWidgetPlugin.h
   ctkWorkflowWidgetStepPlugin.cpp
@@ -116,6 +116,7 @@ set(PLUGIN_MOC_SRCS
   ctkDirectoryButtonPlugin.h
   ctkDoubleRangeSliderPlugin.h
   ctkDoubleSliderPlugin.h
+  ctkDoubleSpinBoxPlugin.h
   ctkDynamicSpacerPlugin.h
   ctkExpandButtonPlugin.h
   ctkExpandableWidgetPlugin.h
@@ -141,7 +142,6 @@ set(PLUGIN_MOC_SRCS
   ctkSettingsPanelPlugin.h
   ctkSettingsDialogPlugin.h
   ctkSliderWidgetPlugin.h
-  ctkDoubleSpinBoxPlugin.h
   ctkWorkflowButtonBoxWidgetPlugin.h
   ctkWorkflowWidgetStepPlugin.h
   )
