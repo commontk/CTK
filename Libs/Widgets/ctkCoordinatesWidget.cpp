@@ -33,6 +33,8 @@
 ctkCoordinatesWidget::ctkCoordinatesWidget(QWidget* _parent) :QWidget(_parent)
 {
   this->Decimals = 3;
+  ctkDoubleSpinBox temp;
+  this->DecimalsOption = temp.decimalsOption();
   this->SingleStep = 1.;
   this->Minimum = -100000.;
   this->Maximum = 100000.;
@@ -58,6 +60,7 @@ void ctkCoordinatesWidget::addSpinBox()
 {
   ctkDoubleSpinBox* spinBox = new ctkDoubleSpinBox(this);
   spinBox->setDecimals(this->Decimals);
+  spinBox->setDecimalsOption(this->DecimalsOption);
   spinBox->setSingleStep(this->SingleStep);
   spinBox->setMinimum(this->Minimum);
   spinBox->setMaximum(this->Maximum);
@@ -202,6 +205,29 @@ void ctkCoordinatesWidget::setDecimals(int newDecimals)
 int ctkCoordinatesWidget::decimals() const
 {
   return this->Decimals;
+}
+
+// --------------------------------------------------------------------------
+ctkDoubleSpinBox::DecimalsOptions ctkCoordinatesWidget::decimalsOption()const
+{
+  return this->DecimalsOption;
+}
+
+// --------------------------------------------------------------------------
+void ctkCoordinatesWidget
+::setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions newDecimalsOption)
+{
+  for (int i = 0; this->layout()->itemAt(i); ++i)
+    {
+    QLayoutItem* item = this->layout()->itemAt(i);
+    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
+      item->widget()) : 0;
+    if (spinBox)
+      {
+      spinBox->setDecimalsOption(newDecimalsOption);
+      }
+    }
+  this->DecimalsOption = newDecimalsOption;
 }
 
 //------------------------------------------------------------------------------

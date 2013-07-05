@@ -25,6 +25,7 @@
 #include <QWidget>
 
 // CTK includes
+#include "ctkDoubleSpinBox.h"
 #include "ctkWidgetsExport.h"
 
 /// \ingroup Widgets
@@ -44,6 +45,10 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   Q_PROPERTY(bool normalized READ isNormalized WRITE setNormalized)
 
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  /// This property provides more controls over the decimals.
+  /// \sa ctkDoubleSpinBox::DecimalsOptions, decimals
+  Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
+
   Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
@@ -62,6 +67,13 @@ public:
   /// Get the number of decimals of each coordinate spin box
   /// The default number of decimals is 3.
   int decimals() const;
+
+  /// Return the decimalsOption property value
+  /// \sa decimalsOption
+  ctkDoubleSpinBox::DecimalsOptions decimalsOption()const;
+  /// Set the decimalsOption property value.
+  /// \sa decimalsOption
+  void setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions option);
 
   /// Set/Get the single step of each coordinate spin box
   /// The default single step is 1.
@@ -130,6 +142,7 @@ protected:
   static double squaredNorm(double* coordinates, int dimension);
 
   int     Decimals;
+  ctkDoubleSpinBox::DecimalsOptions DecimalsOption;
   double  SingleStep;
   double  Minimum;
   double  Maximum;

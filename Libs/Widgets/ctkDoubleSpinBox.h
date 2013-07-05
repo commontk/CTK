@@ -64,6 +64,8 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   /// \sa decimalsOption, decimals(), setDecimals(), decimalsChanged
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
   /// This property provides more controls over the decimals.
+  /// The default (DecimalsByShortcuts|InsertDecimals) behaves as a QDoubleSpinbox
+  /// with an explicit control of decimals via shortcuts.
   /// \sa DecimalsOptions, decimals
   Q_PROPERTY(DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
@@ -114,20 +116,32 @@ public:
     DecimalsByShortcuts = 0x001,
     /// Allow the number of decimals to be controlled by adding/removing digits
     /// with key strokes.
+    /// \sa InsertDecimals, ReplaceDecimals
     DecimalsByKey = 0x002,
     /// Allow the number of decimals to be controlled by the value set by
     /// setValue().
     DecimalsByValue = 0x004,
-    /// This flag controls whether intermediate decimals are replaced or added
-    /// with key strokes. This is similar to NumLock but just for decimal
-    /// digits.
-    ReplaceDecimals = 0x008,
+    /// This flag controls whether inserted intermediate decimals increase the
+    /// number of decimals (on) or not (off).
+    /// It is incompatible with the ReplaceDecimals flag.
+    /// \sa DecimalsByKey.
+    InsertDecimals = 0x008,
+    /// This flag controls whether inserted intermediate decimals replace the
+    /// existing decimals (on) or not (off). This is similar to Insert but just
+    /// for decimal digits.
+    /// It is incompatible with the InsertDecimals flag.
+    /// \sa DecimalsByKey, InsertDecimals
+    ReplaceDecimals = 0x010,
     /// Use the "decimals" property as a maximum limit for the number of
     /// decimals.
-    DecimalsAsMax = 0x010,
+    DecimalsAsMax = 0x020,
     /// Use the "decimals" property as a minimum limit for the number of
     /// decimals.
-    DecimalsAsMin = 0x020
+    DecimalsAsMin = 0x040,
+    /// Even if the number of decimals is 0, it enforces the decimal to be visible
+    /// (e.g. "0." )
+    /// \sa decimals
+    DecimalPointAlwaysVisible = 0x080
     };
   Q_DECLARE_FLAGS(DecimalsOptions, DecimalsOption)
 

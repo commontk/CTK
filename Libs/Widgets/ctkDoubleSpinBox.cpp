@@ -127,13 +127,11 @@ QString ctkQDoubleSpinBox::textFromValue(double value) const
     text = "0";
     }
   // If there is no decimal, it does not mean there won't be any.
-  if (text.indexOf(this->locale().decimalPoint()) == -1 &&
-      ((d->DOption & ctkDoubleSpinBox::DecimalsByKey) ||
-       (d->DOption & ctkDoubleSpinBox::DecimalsByValue)))
+  if (d->DOption & ctkDoubleSpinBox::DecimalPointAlwaysVisible &&
+      text.indexOf(this->locale().decimalPoint()) == -1)
     {
     text += this->locale().decimalPoint();
     }
-  //qDebug() << "textFromValue" << text;
   return text;
 }
 
@@ -172,7 +170,9 @@ ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object)
   this->SpinBox = 0;
   this->Mode = ctkDoubleSpinBox::SetIfDifferent;
   this->DefaultDecimals = 2;
-  this->DOption = ctkDoubleSpinBox::DecimalsByShortcuts;
+  // InsertDecimals is not a great default, but it is QDoubleSpinBox's default.
+  this->DOption = ctkDoubleSpinBox::DecimalsByShortcuts
+    | ctkDoubleSpinBox::InsertDecimals;
   this->InvertedControls = false;
 }
 
@@ -321,7 +321,10 @@ double ctkDoubleSpinBoxPrivate
   const double max = q->maximum();
   const double min = q->minimum();
 
-  QString text = this->stripped(input, &pos);
+  int posInValue = pos;
+  QString text = this->stripped(input, &posInValue);
+  // posInValue can change, track the offset.
+  const int oldPosInValue = posInValue;
   //qDebug() << "text: " << text << pos;
   state = QValidator::Acceptable;
   decimals = 0;
@@ -376,7 +379,7 @@ double ctkDoubleSpinBoxPrivate
     // move the cursor pos to the right then
     if (dec + 1 < text.size() &&
         text.at(dec + 1) == q->locale().decimalPoint() &&
-        pos == dec + 1)
+        posInValue == dec + 1)
       {
       text.remove(dec + 1, 1);
       value = q->locale().toDouble(text, &ok);
@@ -390,12 +393,21 @@ double ctkDoubleSpinBoxPrivate
       if (decimals > q->decimals())
         {
         // With ReplaceDecimals on, key strokes replace decimal digits
-        if (this->DOption & ctkDoubleSpinBox::ReplaceDecimals &&
-            pos > dec && pos < text.size())
+        if (posInValue > dec && posInValue < text.size())
           {
-          text.remove(pos, decimals - q->decimals());
-          decimals = q->decimals();
-          value = q->locale().toDouble(text, &ok);
+          const int extraDecimals = decimals - q->decimals();
+          if (this->DOption & ctkDoubleSpinBox::ReplaceDecimals)
+            {
+            text.remove(posInValue, extraDecimals);
+            decimals = q->decimals();
+            value = q->locale().toDouble(text, &ok);
+            }
+          else if (!(this->DOption & ctkDoubleSpinBox::InsertDecimals))
+            {
+            text.remove(text.size() - extraDecimals, extraDecimals);
+            decimals = q->decimals();
+            value = q->locale().toDouble(text, &ok);
+            }
           }
         }
       // When DecimalsByKey is set, it is possible to extend the number of decimals
@@ -436,6 +448,7 @@ double ctkDoubleSpinBoxPrivate
     value = max > 0 ? min : max;
     }
 
+  pos += posInValue - oldPosInValue;
   input = q->prefix() + text + q->suffix();
   this->CachedText = input;
   this->CachedState = state;
@@ -969,6 +982,7 @@ void ctkDoubleSpinBox::setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions optio
     }
 
   d->DOption = option;
+  this->setValueAlways(this->value());
 }
 
 //----------------------------------------------------------------------------

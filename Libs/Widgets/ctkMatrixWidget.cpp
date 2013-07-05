@@ -55,6 +55,7 @@ namespace
       this->setMinimum(matrixWidget->minimum());
       this->setMaximum(matrixWidget->maximum());
       this->setDecimals(matrixWidget->decimals());
+      this->setDecimalsOption(matrixWidget->decimalsOption());
       this->setSingleStep(matrixWidget->singleStep());
 
       this->connect(this, SIGNAL(decimalsChanged(int)),
@@ -83,6 +84,7 @@ public:
   double Minimum;
   double Maximum;
   int    Decimals;
+  ctkDoubleSpinBox::DecimalsOptions DecimalsOption;
   double SingleStep;
 };
 
@@ -346,6 +348,21 @@ void ctkMatrixWidget::setDecimals(int decimals)
 {
   Q_D(ctkMatrixWidget);
   d->Decimals = qMax(0, decimals);
+}
+
+// --------------------------------------------------------------------------
+ctkDoubleSpinBox::DecimalsOptions ctkMatrixWidget::decimalsOption()const
+{
+  Q_D(const ctkMatrixWidget);
+  return d->DecimalsOption;
+}
+
+// --------------------------------------------------------------------------
+void ctkMatrixWidget
+::setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions newDecimalsOption)
+{
+  Q_D(ctkMatrixWidget);
+  d->DecimalsOption = newDecimalsOption;
 }
 
 // --------------------------------------------------------------------------
