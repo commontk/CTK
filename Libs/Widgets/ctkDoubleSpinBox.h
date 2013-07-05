@@ -29,6 +29,7 @@
 class QDoubleSpinBox;
 class QEvent;
 class QKeyEvent;
+class QLineEdit;
 class QObject;
 
 // CTK includes
@@ -44,21 +45,35 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
 {
   Q_OBJECT
   Q_ENUMS(SetMode)
-  Q_PROPERTY(SetMode setMode READ setMode WRITE setSetMode)
-
   Q_FLAGS(DecimalsOption DecimalsOptions)
-  Q_PROPERTY(DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
 
   Q_PROPERTY(Qt::Alignment alignment READ alignment WRITE setAlignment)
   Q_PROPERTY(bool frame READ hasFrame WRITE setFrame)
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(QString cleanText READ cleanText)
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  /// This property holds the precision of the spin box, in decimals.
+  /// Sets how many decimals the spinbox will use for displaying and
+  /// interpreting doubles.
+  /// If the flag DecimalsByShortcuts is set, decimals can be increased/decreased by
+  /// Ctrl+/Ctrl-, Ctrl0 restores the original decimals value.
+  /// If the flag DecimalsAsMax and/or DecimalsAsMin are set, decimals behave also
+  /// as the max and/or min number of decimals settable by DecimalsByShortcuts,
+  /// DecimalsByKey and DecimalsByValue.
+  /// 2 by default.
+  /// \sa decimalsOption, decimals(), setDecimals(), decimalsChanged
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
+  /// This property provides more controls over the decimals.
+  /// \sa DecimalsOptions, decimals
+  Q_PROPERTY(DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
+  /// \sa setMode, decimals
   Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
+  /// This property controls how setValue behaves.
+  /// \sa SetMode, setMode(), setSetMode(), value
+  Q_PROPERTY(SetMode setMode READ setMode WRITE setSetMode)
   /// This property controls whether decreasing the value by the mouse
   /// button or mouse wheel increases the value of the widget, and inverts the
   /// control similarly in the other way round or not. The property is switched off by
@@ -85,21 +100,34 @@ public:
     };
 
   /// DecimalsOption enums the input style of the spinbox decimals.
-  /// Fixed:
-  /// Behaves just like a QDoubleSpinBox. The maximum number of decimals
-  /// allowed is given by decimals().
-  /// UseShortcuts:
-  /// When the spinbox has focus, entering the shortcut "CTRL +"
-  /// adds decimals to the current number of decimals. "CTRL -" decreases the
-  /// number of decimals and "CTRL 0" returns it to its original decimals()
-  /// value.
-  ///
-  /// Default option is UseShortcuts.
+  /// Default option is DecimalsByShortcuts.
   /// \sa decimals(), currentDecimals()
   enum DecimalsOption
     {
-    Fixed =         0x0,
-    UseShortcuts =  0x01,
+    /// Behaves just like a QDoubleSpinBox. The maximum number of decimals
+    /// allowed is given by decimals().
+    FixedDecimals = 0x000,
+    /// When the spinbox has focus, entering the shortcut "CTRL +"
+    /// adds decimals to the current number of decimals. "CTRL -" decreases the
+    /// number of decimals and "CTRL 0" returns it to its original decimals()
+    /// value.
+    DecimalsByShortcuts = 0x001,
+    /// Allow the number of decimals to be controlled by adding/removing digits
+    /// with key strokes.
+    DecimalsByKey = 0x002,
+    /// Allow the number of decimals to be controlled by the value set by
+    /// setValue().
+    DecimalsByValue = 0x004,
+    /// This flag controls whether intermediate decimals are replaced or added
+    /// with key strokes. This is similar to NumLock but just for decimal
+    /// digits.
+    ReplaceDecimals = 0x008,
+    /// Use the "decimals" property as a maximum limit for the number of
+    /// decimals.
+    DecimalsAsMax = 0x010,
+    /// Use the "decimals" property as a minimum limit for the number of
+    /// decimals.
+    DecimalsAsMin = 0x020
     };
   Q_DECLARE_FLAGS(DecimalsOptions, DecimalsOption)
 
@@ -173,8 +201,12 @@ public:
 
   /// Get a pointer on the spinbox used internally. It can be useful to
   /// change display properties for example. To use with caution.
-  /// \sa QDoubleSpinBox::QDoubleSpinBox
+  /// \sa QDoubleSpinBox, lineEdit()
   QDoubleSpinBox* spinBox() const;
+
+  /// Get a pointer on the line edit of the spinbox.
+  /// \sa QLineEdit, spinBox()
+  QLineEdit* lineEdit()const;
 
   /// Set the spinbox mode when using a set*() method.
   //// \sa round(), setValue(), setValueIfDifferent(), setValueAlways()
