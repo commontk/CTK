@@ -448,6 +448,7 @@ void ctkSliderWidget::setDecimals(int newDecimals)
   this->setSpinBoxValue(d->Slider->value());
   Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
   d->updateSpinBoxDecimals();
+  emit decimalsChanged(d->SpinBox->decimals());
 }
 
 // --------------------------------------------------------------------------

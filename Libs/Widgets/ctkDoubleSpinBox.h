@@ -206,7 +206,6 @@ public:
   /// For a spinbox dealing only with integers, set this to 0.
   /// \sa ctkDoubleSpinBox::DecimalsOption
   int decimals() const;
-  void setDecimals(int decimal);
 
   /// Returns the rounded value according to the number of decimals of
   /// the spinbox.
@@ -257,6 +256,10 @@ public Q_SLOTS:
   /// \sa value(), singleStep()
   void stepUp();
   void stepDown();
+
+  /// Set the decimals property value.
+  /// \sa decimals
+  void setDecimals(int decimal);
 
 Q_SIGNALS:
   /// Emitted everytime the spinbox value is modified

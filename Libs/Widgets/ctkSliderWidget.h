@@ -42,7 +42,7 @@ class ctkDoubleSpinBox;
 class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
@@ -75,7 +75,7 @@ public:
   /// siblings Synchronize to the new number of decimals.
   ///
   /// Default is SynchronizeWidth |SynchronizeDecimals.
-  /// \sa SynchronizeSiblings(), setSynchronizeSiblings()
+  /// \sa SynchronizeSiblings(), setSynchronizeSiblings(), decimalsChanged()
   enum SynchronizeSibling
     {
     NoSynchronize = 0x000,
@@ -274,6 +274,10 @@ Q_SIGNALS:
   /// It behaves the same way than QAbstractSlider::sliderMoved()
   /// \sa valueChanged QAbstractSlider::sliderMoved
   void valueIsChanging(double value);
+
+  /// This signal is emitted whenever the number of decimals is changed.
+  /// \sa decimals, SynchronizeDecimals
+  void decimalsChanged(int decimals);
 
 protected Q_SLOTS:
   
