@@ -372,7 +372,13 @@ void ctkMatrixWidget::setRange(double newMinimum, double newMaximum)
 void ctkMatrixWidget::setDecimals(int decimals)
 {
   Q_D(ctkMatrixWidget);
+  if (d->Decimals == decimals)
+    {
+    return;
+    }
   d->Decimals = qMax(0, decimals);
+  this->update();
+  this->emit decimalsChanged(d->Decimals);
 }
 
 // --------------------------------------------------------------------------

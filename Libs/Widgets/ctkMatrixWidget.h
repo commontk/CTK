@@ -43,7 +43,10 @@ class CTK_WIDGETS_EXPORT ctkMatrixWidget: public QWidget
   Q_PROPERTY(bool editable READ isEditable WRITE setEditable)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  /// This property controls how many decimals are used to display and edit the
+  /// matrix values.
+  /// \sa decimals(), setDecimals(), decimalsChanged(), decimalsOption
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
   /// This property provides more controls over the decimals.
   /// \sa ctkDoubleSpinBox::DecimalsOptions, decimals
   Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
@@ -152,6 +155,10 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void matrixChanged();
+  /// This signal is fired when the number of decimals is changed.
+  /// This can be useful when synchronizing decimals between widgets.
+  /// \sa decimals
+  void decimalsChanged(int);
 
 protected:
   virtual void resizeEvent(QResizeEvent* event);
