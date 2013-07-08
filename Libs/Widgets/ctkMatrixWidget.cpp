@@ -62,6 +62,30 @@ namespace
         matrixWidget, SLOT(setDecimals(int)));
     }
   };
+
+//-----------------------------------------------------------------------------
+// Reimplemented to display the numbers with the matrix decimals.
+class ctkMatrixItemDelegate : public QStyledItemDelegate
+{
+public:
+  ctkMatrixItemDelegate(ctkMatrixWidget* matrixWidget)
+    : QStyledItemDelegate(matrixWidget)
+  {
+  }
+  virtual QString	displayText ( const QVariant & value, const QLocale & locale ) const
+  {
+    ctkMatrixWidget* matrix = qobject_cast<ctkMatrixWidget*>(this->parent());
+    Q_ASSERT(matrix);
+    switch(value.type())
+      {
+      case QVariant::Double:
+        return locale.toString(value.toDouble(), 'f', matrix->decimals());
+      default:
+        return this->QStyledItemDelegate::displayText(value, locale);
+      }
+  }
+};
+
 }
 
 //-----------------------------------------------------------------------------
@@ -99,6 +123,7 @@ ctkMatrixWidgetPrivate::ctkMatrixWidgetPrivate(ctkMatrixWidget& object, int rows
 void ctkMatrixWidgetPrivate::init()
 {
   Q_Q(ctkMatrixWidget);
+  this->Table->setItemDelegate(new ctkMatrixItemDelegate(q));
 
   this->Table->setParent(q);
   QHBoxLayout* layout = new QHBoxLayout(q);

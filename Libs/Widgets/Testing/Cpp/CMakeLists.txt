@@ -45,6 +45,7 @@ set(TEST_SOURCES
   ctkMaterialPropertyPreviewLabelTest1.cpp
   ctkMaterialPropertyWidgetTest1.cpp
   ctkMaterialPropertyWidgetTest2.cpp
+  ctkMatrixWidgetTest.cpp
   ctkMatrixWidgetTest1.cpp
   ctkMatrixWidgetTest2.cpp
   ctkMenuButtonTest1.cpp
@@ -184,6 +185,7 @@ QT4_GENERATE_MOCS(
   ctkFlatProxyModelTest.cpp
   ctkFontButtonTest.cpp
   ctkLanguageComboBoxTest.cpp
+  ctkMatrixWidgetTest.cpp
   ctkMessageBoxDontShowAgainTest.cpp
   ctkPathListWidgetTest.cpp
   ctkPathListWidgetWithButtonsTest.cpp
@@ -253,6 +255,7 @@ SIMPLE_TEST( ctkLayoutManagerTest1 )
 SIMPLE_TEST( ctkMaterialPropertyPreviewLabelTest1 )
 SIMPLE_TEST( ctkMaterialPropertyWidgetTest1 )
 SIMPLE_TEST( ctkMaterialPropertyWidgetTest2 )
+SIMPLE_TEST( ctkMatrixWidgetTest )
 SIMPLE_TEST( ctkMatrixWidgetTest1 )
 SIMPLE_TEST( ctkMatrixWidgetTest2 )
 SIMPLE_TEST( ctkMenuButtonTest1 )
