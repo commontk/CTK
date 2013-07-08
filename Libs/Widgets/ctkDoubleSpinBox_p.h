@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QDoubleSpinBox>
-
+class ctkDoubleSpinBoxPrivate;
 
 //-----------------------------------------------------------------------------
 class ctkQDoubleSpinBox: public QDoubleSpinBox
@@ -37,7 +37,7 @@ class ctkQDoubleSpinBox: public QDoubleSpinBox
   Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
 public:
   typedef QDoubleSpinBox Superclass;
-  ctkQDoubleSpinBox(QWidget* widget);
+  ctkQDoubleSpinBox(ctkDoubleSpinBoxPrivate* pimpl, QWidget* widget);
   void setInvertedControls(bool invertedControls);
   bool invertedControls() const;
 
@@ -45,7 +45,18 @@ public:
   /// invertedControls property is true.
   virtual void stepBy(int steps);
 
+  /// Expose lineEdit() publicly.
+  /// \sa QAbstractSpinBox::lineEdit()
+  virtual QLineEdit* lineEdit()const;
+
+  virtual double valueFromText(const QString &text) const;
+  virtual QString textFromValue(double value) const;
+  virtual int decimalsFromText(const QString &text) const;
+  virtual QValidator::State	validate(QString& input, int& pos)const;
+
 protected:
+  ctkDoubleSpinBoxPrivate* const d_ptr;
+
   /// If the invertedControls property is false (by default) then this function
   /// behavesLike QDoubleSpinBox::stepEnabled(). If the property is true then
   /// stepping down is allowed if the value is less then the maximum, and
@@ -54,12 +65,14 @@ protected:
 
   bool InvertedControls;
 private:
+  Q_DECLARE_PRIVATE(ctkDoubleSpinBox);
   Q_DISABLE_COPY(ctkQDoubleSpinBox);
 };
 
 //-----------------------------------------------------------------------------
-class ctkDoubleSpinBoxPrivate
+class ctkDoubleSpinBoxPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(ctkDoubleSpinBox);
 protected:
   ctkDoubleSpinBox* const q_ptr;
@@ -69,15 +82,40 @@ public:
   ctkQDoubleSpinBox* SpinBox;
   ctkDoubleSpinBox::SetMode Mode;
   int DefaultDecimals;
+  int MinimumDecimals;
   ctkDoubleSpinBox::DecimalsOptions DOption;
   bool InvertedControls;
 
+  mutable QString CachedText;
+  mutable double CachedValue;
+  mutable QValidator::State CachedState;
+  mutable int CachedDecimals;
+
   void init();
-  // Compare two double previously rounded according to the number of decimals
+  /// Compare two double previously rounded according to the number of decimals
   bool compare(double x1, double x2) const;
 
-  // Set the number of decimals of the spinbox and emit the signal
-  // No check if they are the same.
+  /// Remove prefix and suffix
+  QString stripped(const QString& text, int* pos)const;
+
+  /// Return the number of decimals bounded by the allowed min and max number of
+  /// decimals.
+  /// If -1, returns the current number of decimals.
+  int boundDecimals(int decimals)const;
+  /// Set the number of decimals of the spinbox and emit the signal
+  /// No check if they are the same.
   void setDecimals(int dec);
+  /// Set value with a specific number of decimals. -1 means the number of
+  /// decimals stays the same.
+  void setValue(double value, int dec = -1);
+
+  /// Ensure the spinbox text is meaningful.
+  /// It is called multiple times when the spinbox line edit is modified,
+  /// therefore values are cached.
+  double validateAndInterpret(QString &input, int &pos,
+                              QValidator::State &state, int &decimals) const;
+
+public Q_SLOTS:
+  void editorTextChanged(const QString& text);
 
 };

@@ -29,6 +29,7 @@ set(TEST_SOURCES
   ctkDoubleRangeSliderTest2.cpp
   ctkDoubleSliderTest1.cpp
   ctkDoubleSliderTest2.cpp
+  ctkDoubleSpinBoxTest.cpp
   ctkDoubleSpinBoxTest1.cpp
   ctkDynamicSpacerTest1.cpp
   ctkDynamicSpacerTest2.cpp
@@ -70,6 +71,7 @@ set(TEST_SOURCES
   ctkSettingsTest1.cpp
   ctkSettingsDialogTest1.cpp
   ctkSignalMapperTest1.cpp
+  ctkSliderWidgetTest.cpp
   ctkSliderWidgetTest1.cpp
   ctkSliderWidgetTest2.cpp
   ctkThumbnailListWidgetTest1.cpp
@@ -178,6 +180,7 @@ set(Tests_MOC_CPP)
 QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
   ctkCoordinatesWidgetTest.cpp
+  ctkDoubleSpinBoxTest.cpp
   ctkFlatProxyModelTest.cpp
   ctkFontButtonTest.cpp
   ctkLanguageComboBoxTest.cpp
@@ -186,6 +189,7 @@ QT4_GENERATE_MOCS(
   ctkPathListWidgetWithButtonsTest.cpp
   ctkRangeSliderTest.cpp
   ctkSettingsPanelTest.cpp
+  ctkSliderWidgetTest.cpp
   )
 set(Tests_UI_CPP)
 if(TEST_UI_FORMS)
@@ -230,6 +234,7 @@ SIMPLE_TEST( ctkDoubleRangeSliderTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest2 )
 SIMPLE_TEST( ctkDoubleSliderTest1 )
 SIMPLE_TEST( ctkDoubleSliderTest2 )
+SIMPLE_TEST( ctkDoubleSpinBoxTest )
 SIMPLE_TEST( ctkDoubleSpinBoxTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest2 )
@@ -274,6 +279,7 @@ SIMPLE_TEST( ctkSettingsPanelTest )
 SIMPLE_TEST( ctkSettingsPanelTest1 )
 SIMPLE_TEST( ctkSettingsTest1 )
 SIMPLE_TEST( ctkSignalMapperTest1 )
+SIMPLE_TEST( ctkSliderWidgetTest )
 SIMPLE_TEST( ctkSliderWidgetTest1 )
 SIMPLE_TEST( ctkSliderWidgetTest2 )
 SIMPLE_TEST( ctkThumbnailListWidgetTest1 )

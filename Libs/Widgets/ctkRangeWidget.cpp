@@ -741,3 +741,16 @@ void ctkRangeWidget::setSlider(ctkDoubleRangeSlider* slider)
   d->relayout();
 }
 
+// -------------------------------------------------------------------------
+ctkDoubleSpinBox* ctkRangeWidget::minimumSpinBox()const
+{
+  Q_D(const ctkRangeWidget);
+  return d->MinimumSpinBox;
+}
+
+// -------------------------------------------------------------------------
+ctkDoubleSpinBox* ctkRangeWidget::maximumSpinBox()const
+{
+  Q_D(const ctkRangeWidget);
+  return d->MaximumSpinBox;
+}

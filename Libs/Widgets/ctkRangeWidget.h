@@ -30,6 +30,7 @@
 #include "ctkWidgetsExport.h"
 
 class ctkDoubleRangeSlider;
+class ctkDoubleSpinBox;
 class ctkRangeWidgetPrivate;
 
 /// \ingroup Widgets
@@ -179,6 +180,16 @@ public:
   bool symmetricMoves()const;
   void setSymmetricMoves(bool symmetry);
 
+  /// Return the slider of the range widget.
+  /// \sa minimumSpinBox(), maximumSpinBox()
+  ctkDoubleRangeSlider* slider()const;
+  /// Return the minimum spinbox.
+  /// \sa maximumSpinBox(), slider()
+  ctkDoubleSpinBox* minimumSpinBox()const;
+  /// Return the maximum spinbox.
+  /// \sa minimumSpinBox(), slider()
+  ctkDoubleSpinBox* maximumSpinBox()const;
+
 public Q_SLOTS:
   ///
   /// Reset the slider and spinbox to zero (value and position)
@@ -218,7 +229,6 @@ protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
 
   /// can be used to change the slider by a custom one
-  ctkDoubleRangeSlider* slider()const;
   void setSlider(ctkDoubleRangeSlider* slider);
 
 protected:

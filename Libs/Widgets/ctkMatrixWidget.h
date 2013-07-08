@@ -26,6 +26,7 @@
 #include <QWidget>
 
 /// CTK includes
+#include "ctkDoubleSpinBox.h"
 #include "ctkPimpl.h"
 #include "ctkWidgetsExport.h"
 
@@ -43,6 +44,9 @@ class CTK_WIDGETS_EXPORT ctkMatrixWidget: public QWidget
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  /// This property provides more controls over the decimals.
+  /// \sa ctkDoubleSpinBox::DecimalsOptions, decimals
+  Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(QVector<double> values READ values WRITE setValues)
 
@@ -122,6 +126,13 @@ public:
   /// Dictates how many decimals will be used for displaying and interpreting doubles by the spinbox
   /// used to adjust the value of a matrix element.
   int decimals()const;
+
+  /// Return the decimalsOption property value
+  /// \sa decimalsOption
+  ctkDoubleSpinBox::DecimalsOptions decimalsOption()const;
+  /// Set the decimalsOption property value.
+  /// \sa decimalsOption
+  void setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions option);
 
   ///
   /// Reimplemented from QAbstractScrollArea
