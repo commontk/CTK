@@ -279,6 +279,8 @@ double ctkSliderWidget::value()const
 {
   Q_D(const ctkSliderWidget);
   Q_ASSERT(d->equal(d->SpinBox->value(), d->Slider->value()));
+  // The slider is the most precise as it does not round the value with the
+  // decimals number.
   return d->Changing ? d->ValueBeforeChange : d->Slider->value();
 }
 
@@ -433,12 +435,18 @@ void ctkSliderWidget::setDecimals(int newDecimals)
   d->SpinBox->setDecimals(newDecimals);
   // The number of decimals can change the range values
   // i.e. 50.55 with 2 decimals -> 51 with 0 decimals
-  // As the SpinBox range change doesn't fire signals, 
+  // As the SpinBox range change doesn't fire signals,
   // we have to do the synchronization manually here
   d->Slider->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
   Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
-  Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
   Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
+  // Last time the value was set on the spinbox, the value might have been
+  // rounded by the previous number of decimals. The slider however never rounds
+  // the value. Now, if the number of decimals is higher, such rounding is lost
+  // precision. The "true" value must be set again to the spinbox to "recover"
+  // the precision.
+  this->setSpinBoxValue(d->Slider->value());
+  Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
   d->updateSpinBoxDecimals();
 }
 

@@ -274,7 +274,10 @@ Q_SIGNALS:
 protected:
   ctkDoubleSpinBoxPrivate* const d_ptr;
 
-  bool eventFilter(QObject *obj, QEvent *event);
+  /// Reimplemented to support shortcuts.
+  virtual void keyPressEvent(QKeyEvent* event);
+  /// Reimplemented to support shortcuts on the double spinbox.
+  virtual bool eventFilter(QObject *obj, QEvent *event);
 
 private:
   Q_DECLARE_PRIVATE(ctkDoubleSpinBox);

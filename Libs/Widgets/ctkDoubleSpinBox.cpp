@@ -1001,6 +1001,14 @@ bool ctkDoubleSpinBox::invertedControls() const
 }
 
 //-----------------------------------------------------------------------------
+void ctkDoubleSpinBox::keyPressEvent(QKeyEvent* event)
+{
+  Q_D(ctkDoubleSpinBox);
+  const bool accept = this->eventFilter(d->SpinBox, event);
+  event->setAccepted(accept);
+}
+
+//-----------------------------------------------------------------------------
 bool ctkDoubleSpinBox::eventFilter(QObject* obj, QEvent* event)
 {
   Q_D(ctkDoubleSpinBox);
