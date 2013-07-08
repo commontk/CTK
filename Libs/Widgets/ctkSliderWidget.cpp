@@ -56,6 +56,7 @@ public:
   bool   Tracking;
   bool   Changing;
   double ValueBeforeChange;
+  bool   BlockSetSliderValue;
   ctkSliderWidget::SynchronizeSiblings SynchronizeMode;
   ctkPopupWidget* SliderPopup;
 };
@@ -69,6 +70,7 @@ ctkSliderWidgetPrivate::ctkSliderWidgetPrivate(ctkSliderWidget& object)
   this->Tracking = true;
   this->Changing = false;
   this->ValueBeforeChange = 0.;
+  this->BlockSetSliderValue = false;
   this->SynchronizeMode =
     ctkSliderWidget::SynchronizeWidth | ctkSliderWidget::SynchronizeDecimals;
   this->SliderPopup = 0;
@@ -166,13 +168,13 @@ ctkSliderWidget::ctkSliderWidget(QWidget* _parent) : Superclass(_parent)
   d->Slider->setMaximum(d->SpinBox->maximum());
   d->Slider->setMinimum(d->SpinBox->minimum());
 
-  this->connect(d->SpinBox, SIGNAL(valueChanged(double)), d->Slider, SLOT(setValue(double)));
+  this->connect(d->SpinBox, SIGNAL(valueChanged(double)), this, SLOT(setSliderValue(double)));
   this->connect(d->SpinBox, SIGNAL(decimalsChanged(int)), this, SLOT(setDecimals(int)));
 
-  //this->connect(d->Slider, SIGNAL(valueChanged(double)), SIGNAL(valueChanged(double)));
   this->connect(d->Slider, SIGNAL(sliderPressed()), this, SLOT(startChanging()));
   this->connect(d->Slider, SIGNAL(sliderReleased()), this, SLOT(stopChanging()));
-  this->connect(d->Slider, SIGNAL(valueChanged(double)), this, SLOT(changeValue(double)));
+  // setSpinBoxValue will fire the valueChanged signal.
+  this->connect(d->Slider, SIGNAL(valueChanged(double)), this, SLOT(setSpinBoxValue(double)));
   d->SpinBox->installEventFilter(this);
 }
 
@@ -201,9 +203,10 @@ double ctkSliderWidget::maximum()const
 void ctkSliderWidget::setMinimum(double min)
 {
   Q_D(ctkSliderWidget);
-  bool wasBlocked = d->SpinBox->blockSignals(true);
+  bool wasBlockSetSliderValue = d->BlockSetSliderValue;
+  d->BlockSetSliderValue = true;
   d->SpinBox->setMinimum(min);
-  d->SpinBox->blockSignals(wasBlocked);
+  d->BlockSetSliderValue = wasBlockSetSliderValue;
 
   // SpinBox can truncate min (depending on decimals).
   // use Spinbox's min to set Slider's min
@@ -218,9 +221,10 @@ void ctkSliderWidget::setMinimum(double min)
 void ctkSliderWidget::setMaximum(double max)
 {
   Q_D(ctkSliderWidget);
-  bool wasBlocked = d->SpinBox->blockSignals(true);
+  bool wasBlockSetSliderValue = d->BlockSetSliderValue;
+  d->BlockSetSliderValue = true;
   d->SpinBox->setMaximum(max);
-  d->SpinBox->blockSignals(wasBlocked);
+  d->BlockSetSliderValue = wasBlockSetSliderValue;
 
   // SpinBox can truncate max (depending on decimals).
   // use Spinbox's max to set Slider's max
@@ -236,9 +240,10 @@ void ctkSliderWidget::setRange(double min, double max)
 {
   Q_D(ctkSliderWidget);
   
-  bool wasBlocked = d->SpinBox->blockSignals(true);
+  bool wasBlockSetSliderValue = d->BlockSetSliderValue;
+  d->BlockSetSliderValue = true;
   d->SpinBox->setRange(min, max);
-  d->SpinBox->blockSignals(wasBlocked);
+  d->BlockSetSliderValue = wasBlockSetSliderValue;
   
   // SpinBox can truncate the range (depending on decimals).
   // use Spinbox's range to set Slider's range
@@ -282,7 +287,7 @@ void ctkSliderWidget::setValue(double _value)
 {
   Q_D(ctkSliderWidget);
   // disable the tracking temporally to emit the
-  // signal valueChanged if changeValue() is called
+  // signal valueChanged if setSpinBoxValue() is called
   bool isChanging = d->Changing;
   d->Changing = false;
   d->SpinBox->setValue(_value);
@@ -324,22 +329,34 @@ void ctkSliderWidget::stopChanging()
 }
 
 // --------------------------------------------------------------------------
-void ctkSliderWidget::changeValue(double newValue)
+void ctkSliderWidget::setSliderValue(double spinBoxValue)
+{
+  Q_D(ctkSliderWidget);
+  if (d->BlockSetSliderValue)
+    {
+    return;
+    }
+  d->Slider->setValue(spinBoxValue);
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidget::setSpinBoxValue(double sliderValue)
 {
   Q_D(ctkSliderWidget);
   
-  bool wasBlocked = d->SpinBox->blockSignals(true);
-  d->SpinBox->setValue(newValue);
-  d->SpinBox->blockSignals(wasBlocked);
+  bool wasBlockSetSliderValue = d->BlockSetSliderValue;
+  d->BlockSetSliderValue = true;
+  d->SpinBox->setValue(sliderValue);
+  d->BlockSetSliderValue = wasBlockSetSliderValue;
   Q_ASSERT(d->equal(d->SpinBox->value(), d->Slider->value()));
   
   if (!d->Tracking)
     {
-    emit this->valueIsChanging(newValue);
+    emit this->valueIsChanging(sliderValue);
     }
   if (!d->Changing)
     {
-    emit this->valueChanged(newValue);
+    emit this->valueChanged(sliderValue);
     }
 }
 

@@ -279,7 +279,8 @@ protected Q_SLOTS:
   
   void startChanging();
   void stopChanging();
-  void changeValue(double value);
+  void setSpinBoxValue(double sliderValue);
+  void setSliderValue(double spinBoxValue);
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
