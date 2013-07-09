@@ -48,9 +48,13 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKAbstractView : public QWidget
   Q_PROPERTY(bool gradientBackground READ gradientBackground WRITE setGradientBackground)
   Q_PROPERTY(bool renderEnabled READ renderEnabled WRITE setRenderEnabled)
   /// This property controls whether a corner annotation is visible with the
-  /// last FPS value.
+  /// last frames per second (FPS) value.
   /// false by default.
   Q_PROPERTY(bool fpsVisible READ isFPSVisible WRITE setFPSVisible)
+  /// This property controls whether the render window uses depth peeling or
+  /// not.
+  /// false by default.
+  Q_PROPERTY(bool useDepthPeeling READ useDepthPeeling WRITE setUseDepthPeeling)
 public:
 
   typedef QWidget Superclass;
@@ -88,6 +92,10 @@ public Q_SLOTS:
 
   /// Show/Hide the FPS annotation
   void setFPSVisible(bool show);
+
+  /// Set the useDepthPeeling property value.
+  /// \sa useDepthPeeling
+  void setUseDepthPeeling(bool use);
 
 public:
   /// Get underlying RenderWindow
@@ -128,6 +136,10 @@ public:
 
   /// Return the current FPS
   double fps()const;
+
+  /// Return the useDepthPeeling property value.
+  /// \sa useDepthPeeling
+  bool useDepthPeeling()const;
 
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
