@@ -127,6 +127,7 @@ int ctkSliderWidgetPrivate::synchronizedSpinBoxWidth()const
 // --------------------------------------------------------------------------
 void ctkSliderWidgetPrivate::synchronizeSiblingWidth(int width)
 {
+  Q_UNUSED(width);
   Q_Q(const ctkSliderWidget);
   QList<ctkSliderWidget*> siblings =
     q->parent()->findChildren<ctkSliderWidget*>();
@@ -144,6 +145,7 @@ void ctkSliderWidgetPrivate::synchronizeSiblingWidth(int width)
 // --------------------------------------------------------------------------
 void ctkSliderWidgetPrivate::synchronizeSiblingDecimals(int decimals)
 {
+  Q_UNUSED(decimals);
   Q_Q(const ctkSliderWidget);
   QList<ctkSliderWidget*> siblings =
     q->parent()->findChildren<ctkSliderWidget*>();
