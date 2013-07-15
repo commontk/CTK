@@ -57,6 +57,15 @@ public:
 // --------------------------------------------------------------------------
 bool ctkRangeWidgetPrivate::equal(double v1, double v2)const
 {
+  if (v1 == v2)
+    {// don't bother computing difference as it could fail for infinity numbers
+    return true;
+    }
+  if (v1 != v1 && v2 != v2)
+    {// NaN check
+    return true;
+    }
+  qDebug() << "equal: " << v1 << v2 << qAbs(v1 - v2) << pow(10., -this->MinimumSpinBox->decimals());
   return qAbs(v1 - v2) < pow(10., -this->MinimumSpinBox->decimals());
 }
 
@@ -406,14 +415,28 @@ void ctkRangeWidget::setMaximumValue(double _value)
 void ctkRangeWidget::setValues(double newMinimumValue, double newMaximumValue)
 {
   Q_D(ctkRangeWidget);
+  if (newMinimumValue > newMaximumValue)
+    {
+    qSwap(newMinimumValue, newMaximumValue);
+    }
+  const bool minimumFirst = (newMinimumValue <= this->maximumValue());
+
   // disable the tracking temporally to emit the
   // signal valueChanged if changeValue() is called
   bool isChanging = d->Changing;
   d->Changing = false;
-  // the pb here is that setting the spinbox separately will fired 2 signals and
-  // between the state will be inconsistent
-  d->MinimumSpinBox->setValue(newMinimumValue);
-  d->MaximumSpinBox->setValue(newMaximumValue);
+  // \todo: setting the spinbox separately is currently firing 2 signals and
+  // between the signals, the state of the widget is inconsistent.
+  if (minimumFirst)
+    {
+    d->MinimumSpinBox->setValue(newMinimumValue);
+    d->MaximumSpinBox->setValue(newMaximumValue);
+    }
+  else
+    {
+    d->MaximumSpinBox->setValue(newMaximumValue);
+    d->MinimumSpinBox->setValue(newMinimumValue);
+    }
 
   Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
   Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
@@ -425,6 +448,10 @@ void ctkRangeWidget::setValues(double newMinimumValue, double newMaximumValue)
 void ctkRangeWidget::setMinimumToMaximumSpinBox(double minimum)
 {
   Q_D(ctkRangeWidget);
+  if (minimum != minimum) // NaN check
+    {
+    return;
+    }
   d->MaximumSpinBox->setMinimum(minimum);
 }
 
@@ -432,6 +459,10 @@ void ctkRangeWidget::setMinimumToMaximumSpinBox(double minimum)
 void ctkRangeWidget::setMaximumToMinimumSpinBox(double maximum)
 {
   Q_D(ctkRangeWidget);
+  if (maximum != maximum) // NaN check
+    {
+    return;
+    }
   d->MinimumSpinBox->setMaximum(maximum);
 }
 

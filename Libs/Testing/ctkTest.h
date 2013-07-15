@@ -21,6 +21,12 @@
 // Qt includes
 #include <QtTest/QtTest>
 
+// STD includes
+#include <limits>
+
+#ifndef __ctkTest_h
+#define __ctkTest_h
+
 #define CTK_TEST_NOOP_MAIN(TestObject) \
 int TestObject(int argc, char *argv[]) \
 { \
@@ -95,4 +101,31 @@ inline void mouseMove(QWidget *widget, Qt::MouseButton button, Qt::KeyboardModif
                       QPoint pos = QPoint(), int delay=-1)
   { ctkTest::mouseEvent(QTest::MouseMove, widget, button, stateKey, pos, delay); }
 
+
+// ----------------------------------------------------------------------------
+static void COMPARE(double v1, double v2)
+{
+  // QCOMPARE fails to compare NaN numbers
+  if (v2 != v2)
+    {
+    QVERIFY(v1 != v1);
+    }
+  // QCOMPARE fails to compare - infinity
+  else if (v2 == -std::numeric_limits<double>::infinity())
+    {
+    QVERIFY(v1 == -std::numeric_limits<double>::infinity());
+    }
+  // QCOMPARE fails to compare infinity
+  else if (v2 == std::numeric_limits<double>::infinity())
+    {
+    QVERIFY(v1 == std::numeric_limits<double>::infinity());
+    }
+  else
+    {
+    QCOMPARE(v1, v2);
+    }
 }
+
+}; // end ctkTest namespace
+
+#endif

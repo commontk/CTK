@@ -31,6 +31,9 @@
 #include "ctkDoubleSpinBox.h"
 #include "ctkTest.h"
 
+// STD includes
+#include <limits>
+
 // ----------------------------------------------------------------------------
 class ctkDoubleSpinBoxTester: public QObject
 {
@@ -39,6 +42,12 @@ private slots:
   void testUI();
 
   void testToLocals();
+
+  void testSetValue();
+  void testSetValue_data();
+
+  void testSetRange();
+  void testSetRange_data();
 
   void testDecimalsByKey();
   void testDecimalsByKey_data();
@@ -86,6 +95,118 @@ void ctkDoubleSpinBoxTester::testToLocals()
   qDebug() << "+.0" << ok;
   QLocale().toDouble("0.0 1", &ok);
   qDebug() << "0.0 1" << ok;
+}
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testSetValue()
+{
+  ctkDoubleSpinBox spinBox;
+  spinBox.setValue(25.);
+  // Compare with a QDoubleSpinBox as we are supposed to have the same behavior.
+  QDoubleSpinBox compareSpinBox;
+  compareSpinBox.setValue(25.);
+
+  QFETCH(double, value);
+
+  QSignalSpy valueChangedSpy(&spinBox,
+                             SIGNAL(valueChanged(double)));
+  spinBox.setValue(value);
+  QSignalSpy compareValueChangedSpy(&compareSpinBox,
+                                    SIGNAL(valueChanged(double)));
+  compareSpinBox.setValue(value);
+
+  QCOMPARE(spinBox.value(), compareSpinBox.value());
+  QCOMPARE(valueChangedSpy.count(), compareValueChangedSpy.count());
+
+  QFETCH(double, expectedValue);
+  QCOMPARE(spinBox.value(), expectedValue);
+
+  const bool valueChanged = expectedValue != 25.;
+  QCOMPARE(valueChangedSpy.count(), valueChanged ? 1 : 0);
+}
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testSetValue_data()
+{
+  QTest::addColumn<double>("value");
+  QTest::addColumn<double>("expectedValue");
+
+  QTest::newRow("1. -> 1.]") << 1. << 1.;
+  QTest::newRow("100. -> 99.99]") << 100. << 99.99;
+  QTest::newRow("-1. -> 0.]") << -1. << 0.;
+
+  QTest::newRow("min -> 0.") << std::numeric_limits<double>::min() << 0.;
+  QTest::newRow("max -> 99.99") << std::numeric_limits<double>::max() << 99.99;
+  QTest::newRow("-inf -> 0.") << -std::numeric_limits<double>::infinity() << 0.;
+  QTest::newRow("inf -> 99.99") << std::numeric_limits<double>::infinity() << 99.99;
+  QTest::newRow("NaN -> 99.99") << std::numeric_limits<double>::quiet_NaN() << 99.99;
+}
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testSetRange()
+{
+  ctkDoubleSpinBox spinBox;
+  spinBox.setValue(25.);
+  QDoubleSpinBox compareSpinBox;
+  compareSpinBox.setValue(25.);
+
+  QSignalSpy valueChangedSpy(&spinBox,
+                             SIGNAL(valueChanged(double)));
+  QSignalSpy compareValueChangedSpy(&compareSpinBox,
+                             SIGNAL(valueChanged(double)));
+
+  QFETCH(double, minimum);
+  QFETCH(double, maximum);
+  spinBox.setRange(minimum, maximum);
+  compareSpinBox.setRange(minimum, maximum);
+
+  ctkTest::COMPARE(spinBox.minimum(), compareSpinBox.minimum());
+  ctkTest::COMPARE(spinBox.maximum(), compareSpinBox.maximum());
+  ctkTest::COMPARE(spinBox.value(), compareSpinBox.value());
+
+  QFETCH(double, expectedMinimum);
+  QFETCH(double, expectedMaximum);
+  ctkTest::COMPARE(spinBox.minimum(), expectedMinimum);
+  ctkTest::COMPARE(spinBox.maximum(), expectedMaximum);
+
+  QFETCH(double, expectedValue);
+  ctkTest::COMPARE(spinBox.value(), expectedValue);
+
+  const bool valueChanged = expectedValue != 25.;
+  ctkTest::COMPARE(valueChangedSpy.count(), valueChanged ? 1 : 0);
+}
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testSetRange_data()
+{
+  QTest::addColumn<double>("minimum");
+  QTest::addColumn<double>("maximum");
+  QTest::addColumn<double>("expectedMinimum");
+  QTest::addColumn<double>("expectedMaximum");
+  QTest::addColumn<double>("expectedValue");
+
+  QTest::newRow("[1.,98.]") << 1. << 98. << 1. << 98. << 25.;
+  QTest::newRow("[-1.,101.]") << -1. << 101. << -1. << 101. << 25.;
+  QTest::newRow("[1.,10.]") << 1. << 10. << 1. << 10. << 10.;
+  QTest::newRow("[90.,99.]") << 90. << 99. << 90. << 99. << 90.;
+  QTest::newRow("[min,max]")
+    << std::numeric_limits<double>::min()
+    << std::numeric_limits<double>::max()
+    << 0. // \tbd Qt bug ?
+    << std::numeric_limits<double>::max()
+    << 25.;
+  QTest::newRow("[-inf,inf]")
+    << -std::numeric_limits<double>::infinity()
+    << std::numeric_limits<double>::infinity()
+    << -std::numeric_limits<double>::infinity()
+    << std::numeric_limits<double>::infinity()
+    << 25.;
+  QTest::newRow("[NaN,NaN]")
+    << std::numeric_limits<double>::quiet_NaN()
+    << std::numeric_limits<double>::quiet_NaN()
+    << std::numeric_limits<double>::quiet_NaN()
+    << std::numeric_limits<double>::quiet_NaN()
+    << std::numeric_limits<double>::quiet_NaN();
 }
 
 // ----------------------------------------------------------------------------
