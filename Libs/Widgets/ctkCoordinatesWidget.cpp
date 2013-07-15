@@ -295,6 +295,8 @@ void ctkCoordinatesWidget::setCoordinates(double* coordinates)
     {
     this->normalize(this->Coordinates, this->Dimension);
     }
+  bool valuesModified = false;
+  int maxDecimals = 0;
   bool blocked = this->blockSignals(true);
   for (int i = 0; i < this->Dimension; ++i)
     {
@@ -305,13 +307,22 @@ void ctkCoordinatesWidget::setCoordinates(double* coordinates)
       {
       // we don't want updateCoordinate() to be called.
       // it could mess with the LastUserEditedCoordinates list.
-      bool spinBoxSignalWasBlocked = spinBox->blockSignals(true);
-      spinBox->setValue(this->Coordinates[i]);
-      spinBox->blockSignals(spinBoxSignalWasBlocked);
+      if (spinBox->displayedValue() != this->Coordinates[i])
+        {
+        bool spinBoxSignalWasBlocked = spinBox->blockSignals(true);
+        spinBox->setValue(this->Coordinates[i]);
+        spinBox->blockSignals(spinBoxSignalWasBlocked);
+        valuesModified = true;
+        }
+      maxDecimals = qMax(maxDecimals, spinBox->decimals());
       }
     }
   this->blockSignals(blocked);
-  this->updateCoordinates();
+  if (valuesModified)
+    {
+    this->setDecimals(maxDecimals);
+    this->updateCoordinates();
+    }
 }
 
 //------------------------------------------------------------------------------
