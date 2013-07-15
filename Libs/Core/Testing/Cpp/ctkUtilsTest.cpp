@@ -78,6 +78,12 @@ void ctkUtilsTester::testOrderOfMagnitude_data()
   QTest::newRow("10.0001 -> 1") << 10.0001 << 1;
   QTest::newRow("100000000001.0001 -> 11") << 100000000001.0001 << 11;
   QTest::newRow("0. -> min") << 0. << std::numeric_limits<int>::min();
+  QTest::newRow("inf -> min") << std::numeric_limits<double>::infinity() << std::numeric_limits<int>::min();
+  QTest::newRow("-inf -> min") << -std::numeric_limits<double>::infinity() << std::numeric_limits<int>::min();
+  QTest::newRow("nan -> min") << std::numeric_limits<double>::quiet_NaN()  << std::numeric_limits<int>::min();
+  QTest::newRow("min -> min") << std::numeric_limits<double>::min() << std::numeric_limits<int>::min();
+  QTest::newRow("max -> 308") << std::numeric_limits<double>::max() << 308;
+  QTest::newRow("denorm -> min") << std::numeric_limits<double>::denorm_min() << std::numeric_limits<int>::min();
 }
 
 // ----------------------------------------------------------------------------
@@ -85,17 +91,24 @@ void ctkUtilsTester::testClosestPowerOfTen()
 {
   QFETCH(double, value);
   QFETCH(double, expectedValue);
-  QFETCH(bool, compareWithEpsilon);
+  QFETCH(int, compareMode);
   const double closestValue = ctk::closestPowerOfTen(value);
-  if (compareWithEpsilon)
+  switch (compareMode)
     {
-    const double epsilon = std::numeric_limits<double>::epsilon();
-    QVERIFY( closestValue > expectedValue - epsilon );
-    QVERIFY( closestValue < expectedValue + epsilon );
-    }
-  else
-    {
-    QCOMPARE(closestValue, expectedValue);
+    default:
+    case 0:
+      QVERIFY(closestValue == expectedValue);
+      break;
+    case 1:
+      {
+      const double epsilon = std::numeric_limits<double>::epsilon();
+      QVERIFY( closestValue > expectedValue - epsilon );
+      QVERIFY( closestValue < expectedValue + epsilon );
+      break;
+      }
+    case 2:
+      QVERIFY( closestValue != closestValue );
+      break;
     }
 }
 
@@ -104,20 +117,41 @@ void ctkUtilsTester::testClosestPowerOfTen_data()
 {
   QTest::addColumn<double>("value");
   QTest::addColumn<double>("expectedValue");
-  QTest::addColumn<bool>("compareWithEpsilon");
+  /// 0 exact compare
+  /// 1 compare with epsilon
+  /// 2 isNaN
+  QTest::addColumn<int>("compareMode");
 
-  QTest::newRow("1. -> 1.") << 1. << 1. << false;
-  QTest::newRow("2. -> 1.") << 2. << 1. << false;
-  QTest::newRow("10. -> 10.") << 10. << 10. << false;
-  QTest::newRow("45. -> 10.") << 45. << 10. << false;
-  QTest::newRow("98. -> 100.") << 98. << 100. << false;
-  QTest::newRow("50. -> 10.") << 50. << 10. << false;
-  QTest::newRow("-1234. -> -1000.") << -1234. << -1000. << false;
-  QTest::newRow("0.01 -> 0.01") << 0.01 << 0.01 << true;
+  QTest::newRow("1. -> 1.") << 1. << 1. << 0;
+  QTest::newRow("2. -> 1.") << 2. << 1. << 0;
+  QTest::newRow("10. -> 10.") << 10. << 10. << 0;
+  QTest::newRow("45. -> 10.") << 45. << 10. << 0;
+  QTest::newRow("98. -> 100.") << 98. << 100. << 0;
+  QTest::newRow("50. -> 10.") << 50. << 10. << 0;
+  QTest::newRow("-1234. -> -1000.") << -1234. << -1000. << 0;
+  QTest::newRow("0.01 -> 0.01") << 0.01 << 0.01 << 1;
   QTest::newRow("0.00000000015 -> 0.0000000001")
-    << 0.00000000015 << 0.0000000001 << true;
-  QTest::newRow("0.1 -> 0.1") << 0.1 << 0.1 << true;
-  QTest::newRow("0. -> 0.") << 0. << 0. << false;
+    << 0.00000000015 << 0.0000000001 << 1;
+  QTest::newRow("0.1 -> 0.1") << 0.1 << 0.1 << 1;
+  QTest::newRow("0. -> 0.") << 0. << 0. << 0;
+  QTest::newRow("inf -> inf") << std::numeric_limits<double>::infinity()
+                              << std::numeric_limits<double>::infinity()
+                              << 0;
+  QTest::newRow("-inf -> -inf") << -std::numeric_limits<double>::infinity()
+                                << -std::numeric_limits<double>::infinity()
+                                << 0;
+  QTest::newRow("nan -> nan") << std::numeric_limits<double>::quiet_NaN()
+                              << std::numeric_limits<double>::quiet_NaN()
+                              << 2;
+  QTest::newRow("min -> min") << std::numeric_limits<double>::min()
+                              << std::numeric_limits<double>::min()
+                              << 0;
+  //QTest::newRow("max -> max") << std::numeric_limits<double>::max()
+  //                            << 1e+308
+  //                            << 0;
+  QTest::newRow("denorm -> denorm") << std::numeric_limits<double>::denorm_min()
+                                    << std::numeric_limits<double>::denorm_min()
+                                    << 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -163,6 +197,15 @@ void ctkUtilsTester::testSignificantDecimals_data()
   QTest::newRow("0.25 -> 2") << 0.25 << 2;
   QTest::newRow("0.125 -> 3") << 0.125 << 3;
   QTest::newRow("0.1234567891013151 -> 16") << 0.1234567891013151 << 16;
+  QTest::newRow("0. -> 0") << 0. << 0;
+  QTest::newRow("inf -> 0") << std::numeric_limits<double>::infinity() << 0;
+  QTest::newRow("-inf -> 0") << -std::numeric_limits<double>::infinity() << 0;
+  QTest::newRow("nan -> -1") << std::numeric_limits<double>::quiet_NaN() << -1;
+  QTest::newRow("min -> 16") << std::numeric_limits<double>::min() << 16;
+  QTest::newRow("max -> 0") << std::numeric_limits<double>::max() << 0;
+  QTest::newRow("denorm -> 16") << std::numeric_limits<double>::denorm_min()
+                                << 16;
+
 }
 
 // ----------------------------------------------------------------------------
