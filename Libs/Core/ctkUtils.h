@@ -78,7 +78,7 @@ QRegExp CTK_CORE_EXPORT nameFiltersToRegExp(const QStringList& nameFilters);
 ///
 /// \ingroup Core
 /// Return a "smart" number of decimals needed to display (in a gui) a floating
-/// number.
+/// number. 16 is the max that can be returned, -1 for NaN numbers.
 /// e.g. significantDecimals(120.01) returns 2
 ///      significantDecimals(123456.1333333) returns 3
 ///      significantDecimals(123456.26999999999999996) returns 2
@@ -87,7 +87,8 @@ int CTK_CORE_EXPORT significantDecimals(double value);
 
 ///
 /// \ingroup Core
-/// Return the order of magnitude of a number.
+/// Return the order of magnitude of a number or numeric_limits<int>::min() if
+/// the order of magnitude can't be computed (e.g. 0, inf, Nan, denorm)...
 /// e.g.: orderOfMagnitude(1) returns 0
 ///       orderOfMagnitude(10) returns 1
 ///       orderOfMagnitude(99) returns 1
