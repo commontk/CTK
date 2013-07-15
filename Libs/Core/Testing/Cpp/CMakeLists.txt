@@ -41,11 +41,9 @@ set(KITTests_SRCS
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
   ctkModelTesterTest2.cpp
-  ctkUtilsClosestPowerOfTenTest1.cpp
   ctkUtilsCopyDirRecursivelyTest1.cpp
-  ctkUtilsOrderOfMagnitudeTest1.cpp
   ctkUtilsQtHandleToStringTest1.cpp
-  ctkUtilsSignificantDecimalsTest1.cpp
+  ctkUtilsTest.cpp
   ctkUtilsTest1.cpp
   ctkUtilsTest2.cpp
   ctkUtilsTest3.cpp
@@ -105,6 +103,7 @@ set(Tests_Helpers_MOC_CPP)
 QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
 QT4_GENERATE_MOCS(
   ctkBooleanMapperTest.cpp
+  ctkUtilsTest.cpp
   )
 
 if(HAVE_BFD)
@@ -165,11 +164,9 @@ SIMPLE_TEST( ctkSingletonTest1 )
 SIMPLE_TEST( ctkTransferFunctionTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest2 )
-SIMPLE_TEST( ctkUtilsClosestPowerOfTenTest1 )
 SIMPLE_TEST( ctkUtilsCopyDirRecursivelyTest1 )
-SIMPLE_TEST( ctkUtilsOrderOfMagnitudeTest1 )
 SIMPLE_TEST( ctkUtilsQtHandleToStringTest1 )
-SIMPLE_TEST( ctkUtilsSignificantDecimalsTest1 )
+SIMPLE_TEST( ctkUtilsTest )
 SIMPLE_TEST( ctkUtilsTest1 )
 SIMPLE_TEST( ctkUtilsTest2 )
 SIMPLE_TEST( ctkUtilsTest3 )
