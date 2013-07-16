@@ -192,7 +192,13 @@ void ctkDoubleSpinBoxTester::testSetRange_data()
   QTest::newRow("[min,max]")
     << std::numeric_limits<double>::min()
     << std::numeric_limits<double>::max()
-    << 0. // \tbd Qt bug ?
+    << std::numeric_limits<double>::min()
+    << std::numeric_limits<double>::max()
+    << 25.;
+  QTest::newRow("[-max,max]")
+    << -std::numeric_limits<double>::max()
+    << std::numeric_limits<double>::max()
+    << -std::numeric_limits<double>::max()
     << std::numeric_limits<double>::max()
     << 25.;
   QTest::newRow("[-inf,inf]")

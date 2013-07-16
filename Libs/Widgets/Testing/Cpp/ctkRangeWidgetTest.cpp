@@ -47,6 +47,10 @@ private slots:
 
   void testSetRange();
   void testSetRange_data();
+
+  void testSetRangeSetValues();
+  void testSetRangeSetValues_data();
+
 };
 
 // ----------------------------------------------------------------------------
@@ -265,6 +269,37 @@ void ctkRangeWidgetTester::testSetRange_data()
     << std::numeric_limits<double>::quiet_NaN()
     << std::numeric_limits<double>::quiet_NaN()
     << std::numeric_limits<double>::quiet_NaN();
+}
+
+//-----------------------------------------------------------------------------
+void ctkRangeWidgetTester::testSetRangeSetValues()
+{
+  ctkRangeWidget rangeWidget;
+  QFETCH(double, minimum);
+  QFETCH(double, maximum);
+  rangeWidget.setRange(minimum, maximum);
+
+  rangeWidget.setDecimals(0);
+  rangeWidget.setSingleStep(std::numeric_limits<double>::infinity());
+  QFETCH(double, lowerValue);
+  QFETCH(double, upperValue);
+  rangeWidget.setValues(lowerValue, upperValue);
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkRangeWidgetTester::testSetRangeSetValues_data()
+{
+  QTest::addColumn<double>("minimum");
+  QTest::addColumn<double>("maximum");
+  QTest::addColumn<double>("lowerValue");
+  QTest::addColumn<double>("upperValue");
+
+  QTest::newRow("[-inf,inf,-inf,inf]")
+    << -std::numeric_limits<double>::infinity()
+    << std::numeric_limits<double>::infinity()
+    << -std::numeric_limits<double>::infinity()
+    << std::numeric_limits<double>::infinity();
 }
 
 // ----------------------------------------------------------------------------

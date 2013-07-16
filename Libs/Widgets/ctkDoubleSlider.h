@@ -43,7 +43,7 @@ class ctkDoubleSliderPrivate;
 class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(double value READ value WRITE setValue)
+  Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
   Q_PROPERTY(double sliderPosition READ sliderPosition WRITE setSliderPosition)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
