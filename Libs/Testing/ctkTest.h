@@ -61,6 +61,7 @@ int TestObject(int argc, char *argv[]) \
 
 namespace ctkTest
 {
+// ----------------------------------------------------------------------------
 static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButton button,
                        Qt::KeyboardModifiers stateKey, QPoint pos, int delay=-1)
 {
@@ -97,13 +98,14 @@ static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButt
     }
 }
 
+// ----------------------------------------------------------------------------
 inline void mouseMove(QWidget *widget, Qt::MouseButton button, Qt::KeyboardModifiers stateKey = 0,
                       QPoint pos = QPoint(), int delay=-1)
   { ctkTest::mouseEvent(QTest::MouseMove, widget, button, stateKey, pos, delay); }
 
 
 // ----------------------------------------------------------------------------
-static void COMPARE(double v1, double v2)
+inline void COMPARE(double v1, double v2)
 {
   // QCOMPARE fails to compare NaN numbers
   if (v2 != v2)
