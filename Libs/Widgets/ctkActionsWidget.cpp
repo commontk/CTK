@@ -21,6 +21,7 @@
 // Qt includes
 #include <QAction>
 #include <QDebug>
+#include <QHeaderView>
 #include <QPainter>
 #include <QSortFilterProxyModel>
 #include <QStandardItem>
@@ -170,10 +171,14 @@ void ctkActionsWidget::addAction(QAction* action, const QString& group)
 //-----------------------------------------------------------------------------
 void ctkActionsWidget::addActions(QList<QAction*> actions, const QString& group)
 {
+  Q_D(ctkActionsWidget);
+  bool wasSortinEnabled = d->ActionsTreeView->isSortingEnabled();
+  d->ActionsTreeView->setSortingEnabled(false);
   foreach(QAction* action, actions)
     {
     this->addAction(action, group);
     }
+  d->ActionsTreeView->setSortingEnabled(wasSortinEnabled);
 }
 
 //-----------------------------------------------------------------------------
@@ -238,6 +243,22 @@ bool ctkActionsWidget::areMenuActionsVisible()const
 {
   Q_D(const ctkActionsWidget);
   return d->SortFilterActionsProxyModel->areMenuActionsVisible();
+}
+
+//-----------------------------------------------------------------------------
+void ctkActionsWidget::setSortColumn(int column)
+{
+  Q_D(ctkActionsWidget);
+  d->ActionsTreeView->sortByColumn(column, Qt::AscendingOrder);
+  d->ActionsTreeView->setSortingEnabled(column != -1);
+}
+
+//-----------------------------------------------------------------------------
+int ctkActionsWidget::sortColumn()const
+{
+  Q_D(const ctkActionsWidget);
+  return d->ActionsTreeView->isSortingEnabled() ?
+    d->ActionsTreeView->header()->sortIndicatorSection() : -1;
 }
 
 //-----------------------------------------------------------------------------
