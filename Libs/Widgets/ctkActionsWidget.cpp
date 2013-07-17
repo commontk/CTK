@@ -164,7 +164,8 @@ void ctkActionsWidget::addAction(QAction* action, const QString& group)
     d->ActionsTreeView->expand(
       d->SortFilterActionsProxyModel->mapFromSource(d->ActionsModel->indexFromItem(actionGroupItem)));
     }
-  d->ActionsTreeView->resizeColumnToContents(0);
+  d->ActionsTreeView->resizeColumnToContents(ctkActionsWidget::NameColumn);
+  d->ActionsTreeView->resizeColumnToContents(ctkActionsWidget::DetailsColumn);
   connect(action, SIGNAL(changed()), this, SLOT(updateAction()));
 }
 
