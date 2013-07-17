@@ -141,7 +141,13 @@ void ctkCollapsibleButtonPrivate::setChildVisibility(QWidget* childWidget)
     visible = false;
     }
 
-  childWidget->setVisible(visible);
+  // Setting Qt::WA_WState_Visible to true during child construction can have
+  // undesirable side effects.
+  if (childWidget->testAttribute(Qt::WA_WState_Created) ||
+      !visible)
+    {
+    childWidget->setVisible(visible);
+    }
 
   // setVisible() has set the ExplicitShowHide flag, restore it as we don't want
   // to make it like it was an explicit visible set because we want
