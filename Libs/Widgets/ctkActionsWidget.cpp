@@ -72,6 +72,7 @@ void ctkActionsWidgetPrivate::setupUI()
   this->ActionsTreeView = new QTreeView(q);
   QVBoxLayout* layout = new QVBoxLayout(q);
   layout->addWidget(this->ActionsTreeView);
+  layout->setContentsMargins(0,0,0,0);
   q->setLayout(layout);
   this->ActionsTreeView->setModel(this->SortFilterActionsProxyModel);
   this->ActionsTreeView->setAlternatingRowColors(true);
