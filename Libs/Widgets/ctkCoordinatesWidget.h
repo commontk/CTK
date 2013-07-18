@@ -130,6 +130,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
   void updateCoordinate(double);
   void updateCoordinates();
+  void setTemporaryDecimals(int);
 
 protected:
   void addSpinBox();

@@ -94,6 +94,8 @@ public:
   void init();
   /// Compare two double previously rounded according to the number of decimals
   bool compare(double x1, double x2) const;
+  /// Return a value rounded with the number of decimals
+  double round(double value, int decimals)const;
 
   /// Remove prefix and suffix
   QString stripped(const QString& text, int* pos)const;

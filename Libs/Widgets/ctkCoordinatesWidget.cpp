@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QDoubleSpinBox>
 #include <QHBoxLayout>
 
 // CTK includes
@@ -68,7 +69,7 @@ void ctkCoordinatesWidget::addSpinBox()
            this, SLOT(updateCoordinate(double)));
   // Same number of decimals within the spinboxes.
   connect( spinBox, SIGNAL(decimalsChanged(int)),
-           this, SLOT(setDecimals(int)));
+           this, SLOT(setTemporaryDecimals(int)));
   this->layout()->addWidget(spinBox);
 }
 
@@ -202,6 +203,21 @@ void ctkCoordinatesWidget::setDecimals(int newDecimals)
 }
 
 //------------------------------------------------------------------------------
+void ctkCoordinatesWidget::setTemporaryDecimals(int newDecimals)
+{
+  for (int i = 0; this->layout()->itemAt(i); ++i)
+    {
+    QLayoutItem* item = this->layout()->itemAt(i);
+    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
+      item->widget()) : 0;
+    if (spinBox)
+      {
+      spinBox->spinBox()->setDecimals(newDecimals);
+      }
+    }
+}
+
+//------------------------------------------------------------------------------
 int ctkCoordinatesWidget::decimals() const
 {
   return this->Decimals;
@@ -307,20 +323,22 @@ void ctkCoordinatesWidget::setCoordinates(double* coordinates)
       {
       // we don't want updateCoordinate() to be called.
       // it could mess with the LastUserEditedCoordinates list.
-      if (spinBox->displayedValue() != this->Coordinates[i])
+      bool spinBoxSignalWasBlocked = spinBox->blockSignals(true);
+      if (spinBox->value() != this->Coordinates[i])
         {
-        bool spinBoxSignalWasBlocked = spinBox->blockSignals(true);
-        spinBox->setValue(this->Coordinates[i]);
-        spinBox->blockSignals(spinBoxSignalWasBlocked);
         valuesModified = true;
         }
+      // Still setValue needs to be called to recompute the number of decimals
+      // if DecimalsByValue is set.
+      spinBox->setValue(this->Coordinates[i]);
+      spinBox->blockSignals(spinBoxSignalWasBlocked);
       maxDecimals = qMax(maxDecimals, spinBox->decimals());
       }
     }
   this->blockSignals(blocked);
+  this->setTemporaryDecimals(maxDecimals);
   if (valuesModified)
     {
-    this->setDecimals(maxDecimals);
     this->updateCoordinates();
     }
 }

@@ -214,6 +214,12 @@ bool ctkDoubleSpinBoxPrivate::compare(double x1, double x2) const
 }
 
 //-----------------------------------------------------------------------------
+double ctkDoubleSpinBoxPrivate::round(double value, int decimals) const
+{
+  return QString::number(value, 'f', decimals).toDouble();
+}
+
+//-----------------------------------------------------------------------------
 QString ctkDoubleSpinBoxPrivate::stripped(const QString& text, int* pos) const
 {
   Q_Q(const ctkDoubleSpinBox);
@@ -869,7 +875,9 @@ int ctkDoubleSpinBox::decimals() const
 void ctkDoubleSpinBox::setDecimals(int dec)
 {
   Q_D(ctkDoubleSpinBox);
-  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent && dec == this->decimals())
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
+      && dec == this->decimals()
+      && dec == d->DefaultDecimals)
     {
     return;
     }
@@ -914,12 +922,23 @@ void ctkDoubleSpinBox::setValue(double value)
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setValueIfDifferent(double value)
+void ctkDoubleSpinBox::setValueIfDifferent(double newValue)
 {
   Q_D(ctkDoubleSpinBox);
-  if (! d->compare(this->value(), value))
+  bool set = false;
+  if (d->DOption & ctkDoubleSpinBox::DecimalsByValue)
     {
-    this->setValueAlways(value);
+    int newValueDecimals = ctk::significantDecimals(newValue, d->DefaultDecimals);
+    set = this->value() != d->round(newValue, newValueDecimals)
+      || d->SpinBox->decimals() != newValueDecimals;
+    }
+  else
+    {
+    set = !d->compare(this->value(), newValue);
+    }
+  if (set)
+    {
+    this->setValueAlways(newValue);
     }
 }
 
@@ -929,7 +948,7 @@ void ctkDoubleSpinBox::setValueAlways(double value)
   Q_D(ctkDoubleSpinBox);
   if (d->DOption & ctkDoubleSpinBox::DecimalsByValue)
     {
-    d->setValue(value, ctk::significantDecimals(value));
+    d->setValue(value, ctk::significantDecimals(value, d->DefaultDecimals));
     }
   else
     {
