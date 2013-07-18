@@ -467,6 +467,12 @@ double ctkDoubleRangeSlider::singleStep()const
 void ctkDoubleRangeSlider::setSingleStep(double newStep)
 {
   Q_D(ctkDoubleRangeSlider);
+  if (!this->isValidStep(newStep))
+    {
+    qWarning() << "Single step " << newStep << "is out of bounds.";
+    return;
+    }
+
   d->SingleStep = newStep;
   // The following can fire A LOT of signals that shouldn't be 
   // fired.
@@ -485,6 +491,16 @@ void ctkDoubleRangeSlider::setSingleStep(double newStep)
   this->setMaximumValue(_maxvalue);
   this->setMaximumPosition(_maxvalue);
   this->blockSignals(oldBlockSignals);
+}
+
+// --------------------------------------------------------------------------
+bool ctkDoubleRangeSlider::isValidStep(double step)const
+{
+  const double minStep( qMax(this->maximum() / std::numeric_limits<int>::max(),
+                                   std::numeric_limits<double>::epsilon()) );
+  const double maxStep( qMin(this->maximum() - this->minimum(),
+                                   static_cast<double>(std::numeric_limits<int>::max())) );
+  return step > minStep && step < maxStep;
 }
 
 // --------------------------------------------------------------------------

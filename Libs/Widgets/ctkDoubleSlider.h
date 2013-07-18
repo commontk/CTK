@@ -103,8 +103,16 @@ public:
   /// The smaller of two natural steps that an abstract sliders provides and
   /// typically corresponds to the user pressing an arrow key
   /// Default value is 1.
+  /// \sa isValidStep
   void setSingleStep(double step);
   double singleStep()const;
+
+  /// This utility function checks whether singleStep is
+  /// valid or not. To be valid, single step should not be too
+  /// small or too large. The singleStep property is used to convert
+  /// the slider value from int to double, therefore the boundary.
+  /// \sa singleStep
+  bool isValidStep(double singleStep)const;
 
   /// 
   /// This property holds the page step.

@@ -596,21 +596,13 @@ double ctkRangeWidget::singleStep()const
 void ctkRangeWidget::setSingleStep(double step)
 {
   Q_D(ctkRangeWidget);
-  const double minSingleStep( qMax(this->maximum() / std::numeric_limits<int>::max(),
-                                   std::numeric_limits<double>::epsilon()) );
-  const double maxSingleStep( qMin(this->maximum() - this->minimum(),
-                                   static_cast<double>(std::numeric_limits<int>::max())) );
-  if (step < minSingleStep || step > maxSingleStep)
+  if (!d->Slider->isValidStep(step))
     {
-    qWarning() << "ctkRangeWidget single step is out of bounds";
+    qWarning() << "Single step" << step << "is out of bounds.";
     return;
     }
-  qDebug() << "setSingleStep" << step;
-  qDebug() << "min slider: " << d->Slider->minimumValue() << "max slider" << d->Slider->maximumValue();
-  qDebug() << "min spinbox: " << d->MinimumSpinBox->value() << "max spinBox" << d->MaximumSpinBox->value();
   d->MinimumSpinBox->setSingleStep(step);
   d->MaximumSpinBox->setSingleStep(step);
-  qDebug() << "min single step: " << d->MinimumSpinBox->singleStep();
   d->Slider->setSingleStep(d->MinimumSpinBox->singleStep());
   Q_ASSERT(d->equal(d->Slider->singleStep(), d->MinimumSpinBox->singleStep()));
   Q_ASSERT(d->equal(d->Slider->singleStep(), d->MaximumSpinBox->singleStep()));

@@ -399,10 +399,15 @@ double ctkSliderWidget::singleStep()const
 }
 
 // --------------------------------------------------------------------------
-void ctkSliderWidget::setSingleStep(double step)
+void ctkSliderWidget::setSingleStep(double newStep)
 {
   Q_D(ctkSliderWidget);
-  d->SpinBox->setSingleStep(step);
+  if (!d->Slider->isValidStep(newStep))
+    {
+    qWarning() << "Single step " << newStep << "is out of bounds.";
+    return;
+    }
+  d->SpinBox->setSingleStep(newStep);
   d->Slider->setSingleStep(d->SpinBox->singleStep());
   Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
   Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
