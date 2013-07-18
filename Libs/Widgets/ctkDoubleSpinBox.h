@@ -36,6 +36,7 @@ class QObject;
 #include "ctkWidgetsExport.h"
 
 class ctkDoubleSpinBoxPrivate;
+class ctkValueProxy;
 
 /// \brief Custom SpinBox
 /// The ctkDoubleSpinBox internaly uses a QDoubleSpinBox while it retain controls
@@ -157,8 +158,15 @@ public:
   double value() const;
 
   /// Get the spinbox current displayed value
-  /// \sa value(), cleanText()
+  /// \sa value(), cleanText(), setValue(), displayedValue()
   double displayedValue() const;
+
+  /// Set the displayed value if there is no proxy installed.
+  /// If there is a proxy installed, then it allows to modify the proxy value.
+  /// If there is no value proxy installed, then it's just a setter to the
+  /// value property.
+  /// \sa displayedValue(), setValue(), value(), setValueProxy()
+  void setDisplayedValue(double displayValue);
 
   /// Get the spinbox current text. This includes any prefix or suffix.
   /// \sa prefix(), suffix()
@@ -238,6 +246,17 @@ public:
   /// Otherwise pressing page up will move value towards the slider's minimum.
   void setInvertedControls(bool invertedControls);
   bool invertedControls() const;
+
+  /// Install or remove a value proxy filter. The value proxy decouples the
+  /// displayed value from the value retrieved by the value property.
+  /// For example, the value proxy can allow one to display celsius in the
+  /// spinbox while the value retrieved from the value property and signals
+  /// are in farenheit.
+  /// To remove the proxy, simply install a new empty proxy. The proxy
+  /// installation/removal is silent.
+  /// \sa installValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
 
 public Q_SLOTS:
   /// Set the value of the spinbox following the current mode.

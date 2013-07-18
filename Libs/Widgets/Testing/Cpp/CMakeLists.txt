@@ -31,6 +31,7 @@ set(TEST_SOURCES
   ctkDoubleSliderTest1.cpp
   ctkDoubleSpinBoxTest.cpp
   ctkDoubleSpinBoxTest1.cpp
+  ctkDoubleSpinBoxValueProxyTest.cpp
   ctkDynamicSpacerTest1.cpp
   ctkDynamicSpacerTest2.cpp
   ctkErrorLogWidgetTest1.cpp
@@ -183,6 +184,7 @@ QT4_GENERATE_MOCS(
   ctkCoordinatesWidgetTest.cpp
   ctkDoubleSliderTest.cpp
   ctkDoubleSpinBoxTest.cpp
+  ctkDoubleSpinBoxValueProxyTest.cpp
   ctkFlatProxyModelTest.cpp
   ctkFontButtonTest.cpp
   ctkLanguageComboBoxTest.cpp
@@ -240,6 +242,7 @@ SIMPLE_TEST( ctkDoubleSliderTest )
 SIMPLE_TEST( ctkDoubleSliderTest1 )
 SIMPLE_TEST( ctkDoubleSpinBoxTest )
 SIMPLE_TEST( ctkDoubleSpinBoxTest1 )
+SIMPLE_TEST( ctkDoubleSpinBoxValueProxyTest )
 SIMPLE_TEST( ctkDynamicSpacerTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest2 )
 SIMPLE_TEST( ctkErrorLogWidgetTest1 )

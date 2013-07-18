@@ -21,9 +21,8 @@
 // CTK includes
 #include "ctkDoubleSpinBox_p.h"
 #include "ctkUtils.h"
+#include "ctkValueProxy.h"
 #include "ctkPimpl.h"
-
-#include <QDebug>
 
 // Qt includes
 #include <QEvent>
@@ -190,9 +189,7 @@ void ctkDoubleSpinBoxPrivate::init()
   lineEdit->setObjectName(QLatin1String("qt_spinbox_lineedit"));
 
   QObject::connect(this->SpinBox, SIGNAL(valueChanged(double)),
-    q, SIGNAL(valueChanged(double)));
-  QObject::connect(this->SpinBox, SIGNAL(valueChanged(const QString&)),
-    q, SIGNAL(valueChanged(const QString &)));
+    this, SLOT(onValueChanged()));
   QObject::connect(this->SpinBox, SIGNAL(editingFinished()),
     q, SIGNAL(editingFinished()));
 
@@ -655,6 +652,16 @@ end:
     return num;
 }
 */
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxPrivate::onValueChanged()
+{
+  Q_Q(ctkDoubleSpinBox);
+  double value = q->value();
+  emit q->valueChanged(value);
+  emit q->valueChanged(QString::number(value, 'f', this->SpinBox->decimals()));
+}
+
 //-----------------------------------------------------------------------------
 // ctkDoubleSpinBox
 //-----------------------------------------------------------------------------
@@ -680,13 +687,26 @@ ctkDoubleSpinBox::ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* newP
 double ctkDoubleSpinBox::value() const
 {
   Q_D(const ctkDoubleSpinBox);
-  return d->SpinBox->value();
+  double val = d->SpinBox->value();
+  if (d->Proxy)
+    {
+    val = this->round(d->Proxy.data()->valueFromProxyValue(val));
+    }
+  return val;
 }
 
 //-----------------------------------------------------------------------------
 double ctkDoubleSpinBox::displayedValue() const
 {
-  return this->round(this->value());
+  Q_D(const ctkDoubleSpinBox);
+  return d->SpinBox->value();
+}
+
+//----------------------------------------------------------------------------
+void ctkDoubleSpinBox::setDisplayedValue(double value)
+{
+  Q_D(ctkDoubleSpinBox);
+  d->SpinBox->setValue(value);
 }
 
 //-----------------------------------------------------------------------------
@@ -926,18 +946,27 @@ void ctkDoubleSpinBox::setValueIfDifferent(double newValue)
 {
   Q_D(ctkDoubleSpinBox);
   bool set = false;
+  double proxyValue = newValue;
+  if (d->Proxy)
+    {
+    proxyValue = d->Proxy.data()->proxyValueFromValue(proxyValue);
+    }
+
   if (d->DOption & ctkDoubleSpinBox::DecimalsByValue)
     {
-    int newValueDecimals = ctk::significantDecimals(newValue, d->DefaultDecimals);
-    set = this->value() != d->round(newValue, newValueDecimals)
+    int newValueDecimals =
+      ctk::significantDecimals(proxyValue, d->DefaultDecimals);
+    set = this->value() != d->round(proxyValue, newValueDecimals)
       || d->SpinBox->decimals() != newValueDecimals;
     }
   else
     {
-    set = !d->compare(this->value(), newValue);
+    set = !d->compare(this->value(), proxyValue);
     }
   if (set)
     {
+    // Pass newValue and not proxyValue as setValueAlways also computes the
+    // proxyValue from the given value
     this->setValueAlways(newValue);
     }
 }
@@ -946,14 +975,18 @@ void ctkDoubleSpinBox::setValueIfDifferent(double newValue)
 void ctkDoubleSpinBox::setValueAlways(double value)
 {
   Q_D(ctkDoubleSpinBox);
+  if (d->Proxy)
+    {
+    value = d->Proxy.data()->proxyValueFromValue(value);
+    }
+
+  int decimals = -1;
   if (d->DOption & ctkDoubleSpinBox::DecimalsByValue)
     {
-    d->setValue(value, ctk::significantDecimals(value, d->DefaultDecimals));
+    decimals = ctk::significantDecimals(value, d->DefaultDecimals);
     }
-  else
-    {
-    d->setValue(value);
-    }
+
+  d->setValue(value, decimals);
 }
 
 //-----------------------------------------------------------------------------
@@ -1017,6 +1050,25 @@ bool ctkDoubleSpinBox::invertedControls() const
 {
   Q_D(const ctkDoubleSpinBox);
   return d->InvertedControls;
+}
+
+//----------------------------------------------------------------------------
+void ctkDoubleSpinBox::setValueProxy(ctkValueProxy* proxy)
+{
+  Q_D(ctkDoubleSpinBox);
+  if (d->Proxy.data() == proxy)
+    {
+    return;
+    }
+
+  d->Proxy = proxy;
+}
+
+//----------------------------------------------------------------------------
+ctkValueProxy* ctkDoubleSpinBox::valueProxy() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  return d->Proxy.data();
 }
 
 //-----------------------------------------------------------------------------

@@ -53,6 +53,8 @@ set(KIT_SRCS
   ctkException.cpp
   ctkException.h
   ctkHighPrecisionTimer.cpp
+  ctkLinearValueProxy.cpp
+  ctkLinearValueProxy.h
   ctkLogger.cpp
   ctkLogger.h
   ctkHistogram.cpp
@@ -69,6 +71,8 @@ set(KIT_SRCS
   ctkTransferFunctionRepresentation.h
   ctkUtils.cpp
   ctkUtils.h
+  ctkValueProxy.cpp
+  ctkValueProxy.h
   ctkWorkflow.h
   ctkWorkflow.cpp
   ctkWorkflow_p.h
@@ -95,11 +99,13 @@ set(KIT_MOC_SRCS
   ctkCommandLineParser.h
   ctkErrorLogFDMessageHandler_p.h
   ctkErrorLogModel.h
+  ctkLinearValueProxy.h
   ctkLogger.h
   ctkHistogram.h
   ctkModelTester.h
   ctkTransferFunction.h
   ctkTransferFunctionRepresentation.h
+  ctkValueProxy.h
   ctkWorkflow.h
   ctkWorkflow_p.h
   ctkWorkflowStep_p.h

@@ -23,7 +23,9 @@
 
 // Qt includes
 #include <QDoubleSpinBox>
+#include <QWeakPointer>
 class ctkDoubleSpinBoxPrivate;
+class ctkValueProxy;
 
 //-----------------------------------------------------------------------------
 class ctkQDoubleSpinBox: public QDoubleSpinBox
@@ -91,6 +93,8 @@ public:
   mutable QValidator::State CachedState;
   mutable int CachedDecimals;
 
+  QWeakPointer<ctkValueProxy> Proxy;
+
   void init();
   /// Compare two double previously rounded according to the number of decimals
   bool compare(double x1, double x2) const;
@@ -117,7 +121,10 @@ public:
   double validateAndInterpret(QString &input, int &pos,
                               QValidator::State &state, int &decimals) const;
 
+  void connectSpinBoxValueChanged();
+  void disconnectSpinBoxValueChanged();
+
 public Q_SLOTS:
   void editorTextChanged(const QString& text);
-
+  void onValueChanged();
 };
