@@ -85,7 +85,7 @@ void ctkActionsWidgetPrivate::setupHeaders()
 {
   this->ActionsModel->setColumnCount(4);
   QStringList headers;
-  headers << "Action" << "Shortcut" << "Context" << "Details";
+  headers << "Action" << "Shortcut(s)" << "Context" << "Details";
   this->ActionsModel->setHorizontalHeaderLabels(headers);
 }
 
@@ -103,8 +103,13 @@ void ctkActionsWidgetPrivate
   items[ctkActionsWidget::NameColumn]->setText(actionText);
   items[ctkActionsWidget::NameColumn]->setIcon(action->icon());
   // Shortcut
+  QStringList shortcuts;
+  foreach(const QKeySequence& keySequence, action->shortcuts())
+    {
+    shortcuts << keySequence.toString(QKeySequence::NativeText);
+    }
   items[ctkActionsWidget::ShortcutColumn]->setText(
-    action->shortcut().toString(QKeySequence::NativeText));
+    shortcuts.join("; "));
   // Context
   QString shortcutContext;
   switch (action->shortcutContext())
