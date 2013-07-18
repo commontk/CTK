@@ -78,12 +78,15 @@ QRegExp CTK_CORE_EXPORT nameFiltersToRegExp(const QStringList& nameFilters);
 ///
 /// \ingroup Core
 /// Return a "smart" number of decimals needed to display (in a gui) a floating
-/// number. 16 is the max that can be returned, -1 for NaN numbers.
+/// number. 16 is the max that can be returned, -1 for NaN numbers. When the
+/// number of decimals is not obvious, it defaults to defaultDecimals if it is
+/// different from -1, 16 otherwise.
 /// e.g. significantDecimals(120.01) returns 2
 ///      significantDecimals(123456.1333333) returns 3
 ///      significantDecimals(123456.26999999999999996) returns 2
+///      significantDecimals(123456.12345678901234567, 3) return 3
 /// See more cases in the test ctkUtilsSignificantDecimalsTest1
-int CTK_CORE_EXPORT significantDecimals(double value);
+int CTK_CORE_EXPORT significantDecimals(double value, int defaultDecimals = -1);
 
 ///
 /// \ingroup Core

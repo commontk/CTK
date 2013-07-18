@@ -447,8 +447,10 @@ void ctkDoubleSpinBoxTester::testDecimalsByValue()
   spinBox.setMaximum(100.);
   spinBox.setValue(1.23);
   spinBox.setDecimalsOption( ctkDoubleSpinBox::DecimalsByValue );
-  QSignalSpy spy(&spinBox, SIGNAL(decimalsChanged(int)));
+  spinBox.setDecimals(4);
+
   const int oldDecimals = spinBox.decimals();
+  QSignalSpy spy(&spinBox, SIGNAL(decimalsChanged(int)));
 
   QFETCH(double, value);
   spinBox.setValue(value);
@@ -457,7 +459,7 @@ void ctkDoubleSpinBoxTester::testDecimalsByValue()
   QFETCH(int, expectedDecimals);
 
   QCOMPARE(spinBox.text(), expectedText);
-  QCOMPARE(spinBox.value(), value);
+  QCOMPARE(spinBox.value(), expectedText.toDouble());
   QCOMPARE(spinBox.decimals(), expectedDecimals);
   QCOMPARE(spy.count(), spinBox.decimals() != oldDecimals ? 1 : 0);
 }
@@ -469,15 +471,18 @@ void ctkDoubleSpinBoxTester::testDecimalsByValue_data()
   QTest::addColumn<QString>("expectedText");
   QTest::addColumn<int>("expectedDecimals");
 
-  QTest::newRow("ctkDoubleSpinBox::DecimalsByValue 0") << 0. << "0"<< 0;
-  QTest::newRow("ctkDoubleSpinBox::DecimalsByValue 0.1") << 0.1 << "0.1" << 1;
-  QTest::newRow("ctkDoubleSpinBox::DecimalsByValue 0.02") << 0.02 << "0.02" << 2;
-  QTest::newRow("ctkDoubleSpinBox::DecimalsByValue 10.003") << 10.003 << "10.003" << 3;
-  QTest::newRow("ctkDoubleSpinBox::DecimalsByValue -0.0004") << -0.0004 << "-0.0004" << 4;
-  QTest::newRow("ctkDoubleSpinBox::DecimalsByValue 0.000056") << 0.000056 << "0.000056" << 6;
+  QTest::newRow("0") << 0. << "0"<< 0;
+  QTest::newRow("0.1") << 0.1 << "0.1" << 1;
+  QTest::newRow("0.02") << 0.02 << "0.02" << 2;
+  QTest::newRow("10.003") << 10.003 << "10.003" << 3;
+  QTest::newRow("-0.0004") << -0.0004 << "-0.0004" << 4;
+  QTest::newRow("0.000056") << 0.000056 << "0.000056" << 6;
   // internally represented as 123456.001109999997425
-  QTest::newRow("ctkDoubleSpinBox::DecimalsByValue 5.00111") << 5.00111 << "5.00111" << 5;
-  QTest::newRow("ctkDoubleSpinBox::DecimalsByValue 0.1234567891013151") << 0.1234567891013151 << "0.1234567891013151" << 16;
+  QTest::newRow("5.00111") << 5.00111 << "5.00111" << 5;
+  QTest::newRow("same value with more decimals") << 1.234567 << "1.234567" << 6;
+  QTest::newRow("same value") << 1.23 << "1.23" << 2;
+  QTest::newRow("same value with less decimals") << 1.234 << "1.234" << 3;
+  QTest::newRow("16 decimals") << 0.1234567891013151 << "0.1235" << 4;
 }
 
 // ----------------------------------------------------------------------------

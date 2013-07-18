@@ -158,9 +158,10 @@ void ctkUtilsTester::testClosestPowerOfTen_data()
 void ctkUtilsTester::testSignificantDecimals()
 {
   QFETCH(double, value);
+  QFETCH(int, defaultDecimals);
   QFETCH(int, expectedDecimals);
 
-  QCOMPARE(ctk::significantDecimals(value), expectedDecimals);
+  QCOMPARE(ctk::significantDecimals(value, defaultDecimals), expectedDecimals);
 }
 
 // ----------------------------------------------------------------------------
@@ -169,42 +170,81 @@ void ctkUtilsTester::testSignificantDecimals_data()
   QTest::addColumn<double>("value");
   QTest::addColumn<int>("expectedDecimals");
 
-  QTest::newRow("123456 -> 0") << 123456. << 0;
-  QTest::newRow("123456.1 -> 1") << 123456.1 << 1;
-  QTest::newRow("123456.12 -> 2") << 123456.12 << 2;
-  QTest::newRow("123456.123 -> 3") << 123456.123 << 3;
-  QTest::newRow("123456.122 -> 3") << 123456.122 << 3;
-  QTest::newRow("123456.1223 -> 4") << 123456.1223 << 4;
-  QTest::newRow("123456.1234 -> 4") << 123456.1234 << 4;
-  QTest::newRow("123456.0123 -> 4") << 123456.0123 << 4;
-  QTest::newRow("123456.0012 -> 4") << 123456.0012 << 4;
-  QTest::newRow("123456.001234 -> 6") << 123456.001234 << 6;
-  QTest::newRow("123456.000123 -> 6") << 123456.000123 << 6;
-  QTest::newRow("123456.0000 -> 0") << 123456.0000 << 0;
-  QTest::newRow("123456.0001 -> 4") << 123456.0001 << 4;
-  QTest::newRow("123456.3333333 -> 2") << 123456.3333333 << 2;
-  QTest::newRow("123456.1333333 -> 3") << 123456.1333333 << 3;
-  QTest::newRow("123456.3333334 -> 2") << 123456.3333334 << 2;
-  QTest::newRow("123456.00122 -> 5") << 123456.00122 << 5;
-  QTest::newRow("123456.00123 -> 5") << 123456.00123 << 5;
+  // Default decimals= -1
+  QTest::newRow("123456 -> 0") << 123456. << -1 << 0;
+  QTest::newRow("123456.1 -> 1") << 123456.1 << -1 << 1;
+  QTest::newRow("123456.12 -> 2") << 123456.12 << -1 << 2;
+  QTest::newRow("123456.123 -> 3") << 123456.123 << -1 << 3;
+  QTest::newRow("123456.122 -> 3") << 123456.122 << -1 << 3;
+  QTest::newRow("123456.1223 -> 4") << 123456.1223 << -1 << 4;
+  QTest::newRow("123456.1234 -> 4") << 123456.1234 << -1 << 4;
+  QTest::newRow("123456.0123 -> 4") << 123456.0123 << -1 << 4;
+  QTest::newRow("123456.0012 -> 4") << 123456.0012 << -1 << 4;
+  QTest::newRow("123456.001234 -> 6") << 123456.001234 << -1 << 6;
+  QTest::newRow("123456.000123 -> 6") << 123456.000123 << -1 << 6;
+  QTest::newRow("123456.0000 -> 0") << 123456.0000 << -1 << 0;
+  QTest::newRow("123456.0001 -> 4") << 123456.0001 << -1 << 4;
+  QTest::newRow("123456.3333333 -> 2") << 123456.3333333 << -1 << 2;
+  QTest::newRow("123456.1333333 -> 3") << 123456.1333333 << -1 << 3;
+  QTest::newRow("123456.3333334 -> 2") << 123456.3333334 << -1 << 2;
+  QTest::newRow("123456.00122 -> 5") << 123456.00122 << -1 << 5;
+  QTest::newRow("123456.00123 -> 5") << 123456.00123 << -1 << 5;
   // internally representated as 123456.001109999997425
-  QTest::newRow("123456.00111 -> 5") << 123456.00111 << 5;
+  QTest::newRow("123456.00111 -> 5") << 123456.00111 << -1 << 5;
   // internally representated as 123456.270000000004075
   QTest::newRow("123456.26999999999999996 -> 2")
-    << 123456.26999999999999996 << 2;
-  QTest::newRow("123456.863899999999987 -> 4") << 123456.863899999999987 << 4;
-  QTest::newRow("0.5 -> 1") << 0.5 << 1;
-  QTest::newRow("0.25 -> 2") << 0.25 << 2;
-  QTest::newRow("0.125 -> 3") << 0.125 << 3;
-  QTest::newRow("0.1234567891013151 -> 16") << 0.1234567891013151 << 16;
-  QTest::newRow("0. -> 0") << 0. << 0;
-  QTest::newRow("inf -> 0") << std::numeric_limits<double>::infinity() << 0;
-  QTest::newRow("-inf -> 0") << -std::numeric_limits<double>::infinity() << 0;
-  QTest::newRow("nan -> -1") << std::numeric_limits<double>::quiet_NaN() << -1;
-  QTest::newRow("min -> 16") << std::numeric_limits<double>::min() << 16;
-  QTest::newRow("max -> 0") << std::numeric_limits<double>::max() << 0;
+    << 123456.26999999999999996 << -1 << 2;
+  QTest::newRow("123456.863899999999987 -> 4") << 123456.863899999999987 << -1 << 4;
+  QTest::newRow("0.5 -> 1") << 0.5 << -1 << 1;
+  QTest::newRow("0.25 -> 2") << 0.25 << -1 << 2;
+  QTest::newRow("0.125 -> 3") << 0.125 << -1 << 3;
+  QTest::newRow("0.1234567891013151 -> 16") << 0.1234567891013151 << -1 << 16;
+  QTest::newRow("0. -> 0") << 0. << -1 << 0;
+  QTest::newRow("inf -> 0") << std::numeric_limits<double>::infinity() << -1 << 0;
+  QTest::newRow("-inf -> 0") << -std::numeric_limits<double>::infinity() << -1 << 0;
+  QTest::newRow("nan -> -1") << std::numeric_limits<double>::quiet_NaN() << -1 << -1;
+  QTest::newRow("min -> 16") << std::numeric_limits<double>::min() << -1 << 16;
+  QTest::newRow("max -> 0") << std::numeric_limits<double>::max() << -1 << 0;
   QTest::newRow("denorm -> 16") << std::numeric_limits<double>::denorm_min()
-                                << 16;
+                                << -1 << 16;
+
+  // Default decimals= 3
+  QTest::newRow("123456 -> 0") << 123456. << 3 << 0;
+  QTest::newRow("123456.1 -> 1") << 123456.1 << 3 << 1;
+  QTest::newRow("123456.12 -> 2") << 123456.12 << 3 << 2;
+  QTest::newRow("123456.123 -> 3") << 123456.123 << 3 << 3;
+  QTest::newRow("123456.122 -> 3") << 123456.122 << 3 << 3;
+  QTest::newRow("123456.1223 -> 4") << 123456.1223 << 3 << 4;
+  QTest::newRow("123456.1234 -> 4") << 123456.1234 << 3 << 4;
+  QTest::newRow("123456.0123 -> 4") << 123456.0123 << 3 << 4;
+  QTest::newRow("123456.0012 -> 4") << 123456.0012 << 3 << 4;
+  QTest::newRow("123456.001234 -> 6") << 123456.001234 << 3 << 6;
+  QTest::newRow("123456.000123 -> 6") << 123456.000123 << 3 << 6;
+  QTest::newRow("123456.0000 -> 0") << 123456.0000 << 3 << 0;
+  QTest::newRow("123456.0001 -> 4") << 123456.0001 << 3 << 4;
+  QTest::newRow("123456.3333333 -> 2") << 123456.3333333 << 3 << 2;
+  QTest::newRow("123456.1333333 -> 3") << 123456.1333333 << 3 << 3;
+  QTest::newRow("123456.3333334 -> 2") << 123456.3333334 << 3 << 2;
+  QTest::newRow("123456.00122 -> 5") << 123456.00122 << 3 << 5;
+  QTest::newRow("123456.00123 -> 5") << 123456.00123 << 3 << 5;
+  // internally representated as 123456.001109999997425
+  QTest::newRow("123456.00111 -> 5") << 123456.00111 << 3 << 5;
+  // internally representated as 123456.270000000004075
+  QTest::newRow("123456.26999999999999996 -> 2")
+    << 123456.26999999999999996 << 3 << 2;
+  QTest::newRow("123456.863899999999987 -> 4") << 123456.863899999999987 << 3 << 4;
+  QTest::newRow("0.5 -> 1") << 0.5 << 3 << 1;
+  QTest::newRow("0.25 -> 2") << 0.25 << 3 << 2;
+  QTest::newRow("0.125 -> 3") << 0.125 << 3 << 3;
+  QTest::newRow("0.1234567891013151 -> 16") << 0.1234567891013151 << 3 << 3;
+  QTest::newRow("0. -> 0") << 0. << 3 << 0;
+  QTest::newRow("inf -> 0") << std::numeric_limits<double>::infinity() << 3 << 0;
+  QTest::newRow("-inf -> 0") << -std::numeric_limits<double>::infinity() << 3 << 0;
+  QTest::newRow("nan -> -1") << std::numeric_limits<double>::quiet_NaN() << 3 << -1;
+  QTest::newRow("min -> 16") << std::numeric_limits<double>::min() << 3 << 16;
+  QTest::newRow("max -> 0") << std::numeric_limits<double>::max() << 3 << 0;
+  QTest::newRow("denorm -> 16") << std::numeric_limits<double>::denorm_min()
+                                << 3 << 16;
 
 }
 

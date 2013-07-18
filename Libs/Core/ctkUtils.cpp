@@ -162,7 +162,7 @@ QRegExp ctk::nameFiltersToRegExp(const QStringList& nameFilters)
 }
 
 //-----------------------------------------------------------------------------
-int ctk::significantDecimals(double value)
+int ctk::significantDecimals(double value, int defaultDecimals)
 {
   if (value == 0.
       || qAbs(value) == std::numeric_limits<double>::infinity())
@@ -200,9 +200,16 @@ int ctk::significantDecimals(double value)
     // Last digit
     if (i == fractional.length() - 1)
       {
+      // If we are here, that means that the right number of significant
+      // decimals for the number has not been figured out yet.
       if (previousRepeat > 2 && !(only0s && isUnit) )
         {
         return i - previousRepeat;
+        }
+      // If defaultDecimals has been provided, just use it.
+      if (defaultDecimals >= 0)
+        {
+        return defaultDecimals;
         }
       return fractional.length();
       }
