@@ -30,6 +30,7 @@
 #include "ctkWidgetsExport.h"
 
 class ctkDoubleSliderPrivate;
+class ctkValueProxy;
 
 /// \ingroup Widgets
 /// ctkDoubleSlider is a QSlider that controls doubles instead of integers.
@@ -139,7 +140,10 @@ public:
   
   /// 
   /// This property holds the current slider position.
-  /// If tracking is enabled (the default), this is identical to value.
+  /// If there is no proxy installed and tracking is enabled (the default),
+  /// this is identical to value.
+  /// With a proxy installed, it allows to modify the proxy value.
+  /// \sa value(), setValue(), setValueProxy(), valueProxy()
   double sliderPosition()const;
   void setSliderPosition(double);
 
@@ -194,6 +198,17 @@ public:
 
   /// Reimplemented for internal reasons (handle tooltip).
   virtual bool eventFilter(QObject*, QEvent*);
+
+  /// Install or remove a value proxy filter. The value proxy decouples the
+  /// displayed value from the value retrieved by the value property.
+  /// For example, the value proxy can allow one to display celsius in the
+  /// spinbox while the value retrieved from the value property and signals
+  /// are in farenheit.
+  /// To remove the proxy, simply install a new empty proxy. The proxy
+  /// installation/removal is silent.
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
 
 public Q_SLOTS:
   /// 

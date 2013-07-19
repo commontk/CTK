@@ -21,9 +21,11 @@
 // Qt includes
 #include <QDebug>
 #include <QMouseEvent>
+#include <QWeakPointer>
 
 // CTK includes
 #include "ctkRangeWidget.h"
+#include "ctkValueProxy.h"
 #include "ui_ctkRangeWidget.h"
 
 // STD includes
@@ -53,6 +55,7 @@ public:
   double        MaximumValueBeforeChange;
   bool          AutoSpinBoxWidth;
   Qt::Alignment SpinBoxAlignment;
+  QWeakPointer<ctkValueProxy> Proxy;
 };
 
 // --------------------------------------------------------------------------
@@ -66,7 +69,6 @@ bool ctkRangeWidgetPrivate::equal(double v1, double v2)const
     {// NaN check
     return true;
     }
-  qDebug() << "equal: " << v1 << v2 << qAbs(v1 - v2) << pow(10., -this->MinimumSpinBox->decimals());
   return qAbs(v1 - v2) < pow(10., -this->MinimumSpinBox->decimals());
 }
 
@@ -301,7 +303,6 @@ void ctkRangeWidget::setMaximum(double max)
 void ctkRangeWidget::setRange(double min, double max)
 {
   Q_D(ctkRangeWidget);
-  qDebug() << "setRange" << min << max;
   
   double oldMin = d->MinimumSpinBox->minimum();
   double oldMax = d->MaximumSpinBox->maximum();
@@ -326,7 +327,6 @@ void ctkRangeWidget::setRange(double min, double max)
     {
     emit rangeChanged(d->MinimumSpinBox->minimum(), d->MaximumSpinBox->maximum());
     }
-  qDebug() << "end setRange";
 }
 
 // --------------------------------------------------------------------------
@@ -368,6 +368,12 @@ void ctkRangeWidget::values(double &minValue, double &maxValue)const
   Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
   minValue = d->Changing ? d->MinimumValueBeforeChange : d->Slider->minimumValue();
   maxValue = d->Changing ? d->MaximumValueBeforeChange : d->Slider->maximumValue();
+
+  if (d->Proxy)
+    {
+    minValue = d->Proxy.data()->valueFromProxyValue(minValue);
+    maxValue = d->Proxy.data()->valueFromProxyValue(maxValue);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -375,7 +381,14 @@ double ctkRangeWidget::minimumValue()const
 {
   Q_D(const ctkRangeWidget);
   Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
-  return d->Changing ? d->MinimumValueBeforeChange : d->Slider->minimumValue();
+
+  double val =
+    d->Changing ? d->MinimumValueBeforeChange : d->Slider->minimumValue();
+  if (d->Proxy)
+    {
+    val = d->Proxy.data()->valueFromProxyValue(val);
+    }
+  return val;
 }
 
 // --------------------------------------------------------------------------
@@ -383,14 +396,24 @@ double ctkRangeWidget::maximumValue()const
 {
   Q_D(const ctkRangeWidget);
   Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
-  return d->Changing ? d->MaximumValueBeforeChange : d->Slider->maximumValue();
+
+  double val =
+    d->Changing ? d->MaximumValueBeforeChange : d->Slider->maximumValue();
+  if (d->Proxy)
+    {
+    val = d->Proxy.data()->valueFromProxyValue(val);
+    }
+  return val;
 }
 
 // --------------------------------------------------------------------------
 void ctkRangeWidget::setMinimumValue(double _value)
 {
   Q_D(ctkRangeWidget);
-  qDebug() << "setMinimumValue" << _value;
+  if (d->Proxy)
+    {
+    _value = d->Proxy.data()->proxyValueFromValue(_value);
+    }
 
   // disable the tracking temporally to emit the
   // signal valueChanged if changeValue() is called
@@ -401,14 +424,17 @@ void ctkRangeWidget::setMinimumValue(double _value)
   Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
   // restore the prop
   d->Changing = isChanging;
-  qDebug() << "end setMinimumValue";
 }
 
 // --------------------------------------------------------------------------
 void ctkRangeWidget::setMaximumValue(double _value)
 {
   Q_D(ctkRangeWidget);
-  qDebug() << "setMaximumValue" << _value;
+  if (d->Proxy)
+    {
+    _value = d->Proxy.data()->proxyValueFromValue(_value);
+    }
+
   // disable the tracking temporally to emit the
   // signal valueChanged if changeValue() is called
   bool isChanging = d->Changing;
@@ -418,14 +444,18 @@ void ctkRangeWidget::setMaximumValue(double _value)
   Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
   // restore the prop
   d->Changing = isChanging;
-  qDebug() << "end setMaximumValue";
 }
 
 // --------------------------------------------------------------------------
 void ctkRangeWidget::setValues(double newMinimumValue, double newMaximumValue)
 {
   Q_D(ctkRangeWidget);
-  qDebug() << "setValues" << newMinimumValue << newMaximumValue;
+  if (d->Proxy)
+    {
+    newMinimumValue = d->Proxy.data()->proxyValueFromValue(newMinimumValue);
+    newMaximumValue = d->Proxy.data()->proxyValueFromValue(newMaximumValue);
+    }
+
   if (newMinimumValue > newMaximumValue)
     {
     qSwap(newMinimumValue, newMaximumValue);
@@ -453,7 +483,6 @@ void ctkRangeWidget::setValues(double newMinimumValue, double newMaximumValue)
   Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
   // restore the prop
   d->Changing = isChanging;
-  qDebug() << "end setValues";
 }
 
 // --------------------------------------------------------------------------
@@ -475,6 +504,7 @@ void ctkRangeWidget::setMaximumToMinimumSpinBox(double maximum)
     {
     return;
     }
+
   d->MinimumSpinBox->setMaximum(maximum);
 }
 
@@ -803,4 +833,23 @@ ctkDoubleSpinBox* ctkRangeWidget::maximumSpinBox()const
 {
   Q_D(const ctkRangeWidget);
   return d->MaximumSpinBox;
+}
+
+//----------------------------------------------------------------------------
+void ctkRangeWidget::setValueProxy(ctkValueProxy* proxy)
+{
+  Q_D(ctkRangeWidget);
+  if (d->Proxy.data() == proxy)
+    {
+    return;
+    }
+
+  d->Proxy = proxy;
+}
+
+//----------------------------------------------------------------------------
+ctkValueProxy* ctkRangeWidget::valueProxy() const
+{
+  Q_D(const ctkRangeWidget);
+  return d->Proxy.data();
 }

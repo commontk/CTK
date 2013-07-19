@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QWidget>
+#include <QWeakPointer>
 
 // CTK includes
 #include "ctkDoubleSpinBox.h"
@@ -114,6 +115,11 @@ public:
   /// Convenient function that sets up to 4 elements of the coordinates.
   void setCoordinates(double x, double y = 0., double z = 0., double w = 0.);
 
+  /// Set/Get the value proxy of the spinboxes used to display the coordinates.
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
+
 public Q_SLOTS:
   void normalize();
 
@@ -151,6 +157,7 @@ protected:
   int     Dimension;
   double* Coordinates;
   QList<int> LastUserEditedCoordinates;
+  QWeakPointer<ctkValueProxy> Proxy;
 };
 
 #endif

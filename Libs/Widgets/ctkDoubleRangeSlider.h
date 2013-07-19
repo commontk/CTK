@@ -31,6 +31,7 @@
 
 class ctkRangeSlider;
 class ctkDoubleRangeSliderPrivate;
+class ctkValueProxy;
 
 /// \ingroup Widgets
 /// ctkDoubleRangeSlider is a slider that controls 2 numbers as double.
@@ -176,6 +177,11 @@ public:
   /// symmetrically, otherwise the handles are independent. False by default
   bool symmetricMoves()const; 
   void setSymmetricMoves(bool symmetry);
+
+  /// Set/Get the value proxy of the internal range slider.
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
 
 Q_SIGNALS:
   ///

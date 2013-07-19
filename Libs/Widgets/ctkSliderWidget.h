@@ -33,6 +33,7 @@ class ctkDoubleSlider;
 class ctkPopupWidget;
 class ctkSliderWidgetPrivate;
 class ctkDoubleSpinBox;
+class ctkValueProxy;
 
 /// \ingroup Widgets
 ///
@@ -250,6 +251,15 @@ public:
   /// with what you do with the slider as the spinbox might change
   /// properties automatically.
   ctkDoubleSlider* slider();
+
+  ///
+  /// Set/Get a value proxy filter.
+  /// This simply sets the same value proxy filter on the spinbox
+  /// and the slider
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
+
 public Q_SLOTS:
   /// 
   /// Reset the slider and spinbox to zero (value and position)

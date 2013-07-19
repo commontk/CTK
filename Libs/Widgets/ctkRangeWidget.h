@@ -32,6 +32,7 @@
 class ctkDoubleRangeSlider;
 class ctkDoubleSpinBox;
 class ctkRangeWidgetPrivate;
+class ctkValueProxy;
 
 /// \ingroup Widgets
 ///
@@ -189,6 +190,11 @@ public:
   /// Return the maximum spinbox.
   /// \sa minimumSpinBox(), slider()
   ctkDoubleSpinBox* maximumSpinBox()const;
+
+  /// Set/Get the value proxy of the slider and spinboxes.
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
 
 public Q_SLOTS:
   ///

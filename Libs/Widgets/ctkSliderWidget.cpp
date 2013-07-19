@@ -21,10 +21,12 @@
 // Qt includes
 #include <QDebug>
 #include <QMouseEvent>
+#include <QWeakPointer>
 
 // CTK includes
 #include "ctkPopupWidget.h"
 #include "ctkSliderWidget.h"
+#include "ctkValueProxy.h"
 #include "ui_ctkSliderWidget.h"
 
 // STD includes 
@@ -59,6 +61,7 @@ public:
   bool   BlockSetSliderValue;
   ctkSliderWidget::SynchronizeSiblings SynchronizeMode;
   ctkPopupWidget* SliderPopup;
+  QWeakPointer<ctkValueProxy> Proxy;
 };
 
 // --------------------------------------------------------------------------
@@ -668,4 +671,25 @@ ctkDoubleSlider* ctkSliderWidget::slider()
 {
   Q_D(ctkSliderWidget);
   return d->Slider;
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidget::setValueProxy(ctkValueProxy* proxy)
+{
+  Q_D(ctkSliderWidget);
+  if (d->Proxy.data() == proxy)
+    {
+    return;
+    }
+
+  d->Proxy = proxy;
+  this->slider()->setValueProxy(proxy);
+  this->spinBox()->setValueProxy(proxy);
+}
+
+// --------------------------------------------------------------------------
+ctkValueProxy* ctkSliderWidget::valueProxy() const
+{
+  Q_D(const ctkSliderWidget);
+  return d->Proxy.data();
 }

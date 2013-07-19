@@ -26,6 +26,7 @@
 // CTK includes
 #include "ctkCoordinatesWidget.h"
 #include "ctkDoubleSpinBox.h"
+#include "ctkValueProxy.h"
 
 // STD includes
 #include <cmath>
@@ -65,6 +66,7 @@ void ctkCoordinatesWidget::addSpinBox()
   spinBox->setSingleStep(this->SingleStep);
   spinBox->setMinimum(this->Minimum);
   spinBox->setMaximum(this->Maximum);
+  spinBox->setValueProxy(this->Proxy.data());
   connect( spinBox, SIGNAL(valueChanged(double)),
            this, SLOT(updateCoordinate(double)));
   // Same number of decimals within the spinboxes.
@@ -552,4 +554,31 @@ double ctkCoordinatesWidget::squaredNorm(double* coordinates, int dimension)
     sum += coordinates[i] * coordinates[i];
     }
   return sum;
+}
+
+//----------------------------------------------------------------------------
+void ctkCoordinatesWidget::setValueProxy(ctkValueProxy* proxy)
+{
+  if (this->Proxy.data() == proxy)
+    {
+    return;
+    }
+
+  this->Proxy = proxy;
+  for (int i = 0; i < this->Dimension; ++i)
+    {
+    QLayoutItem* item = this->layout()->itemAt(i);
+    ctkDoubleSpinBox* spinBox =
+      item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
+    if ( spinBox)
+      {
+      spinBox->setValueProxy(this->Proxy.data());
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+ctkValueProxy* ctkCoordinatesWidget::valueProxy() const
+{
+  return this->Proxy.data();
 }
