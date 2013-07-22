@@ -146,7 +146,6 @@ ctkXnatServer::Pointer ctkXnatConnection::server() const
 void ctkXnatConnection::fetch(const ctkXnatServer::Pointer& server)
 {
   Q_D(ctkXnatConnection);
-  //qDebug() << "ctkXnatConnection::fetch(ctkXnatServer* server)";
 
   QString query("/data/archive/projects");
 

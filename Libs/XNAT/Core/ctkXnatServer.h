@@ -27,6 +27,7 @@
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
+class ctkXnatServerPrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatServer : public ctkXnatObject
 {
@@ -38,14 +39,18 @@ public:
 
   static Pointer Create(ctkXnatConnection* connection);
 
+protected:
+
+  virtual ctkXnatConnection* getConnection() const;
+
 private:
 
   ctkXnatServer(ctkXnatConnection* connection);
 
   virtual void fetchImpl();
 
-  Q_DECLARE_PRIVATE(ctkXnatObject)
-
+  Q_DECLARE_PRIVATE(ctkXnatServer)
+  Q_DISABLE_COPY(ctkXnatServer)
 };
 
 #endif

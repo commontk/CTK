@@ -23,8 +23,7 @@
 
 #include <QString>
 
-ctkXnatObjectPrivate::ctkXnatObjectPrivate(ctkXnatConnection* connection)
-  : connection(connection)
+ctkXnatObjectPrivate::ctkXnatObjectPrivate()
 {
 }
 

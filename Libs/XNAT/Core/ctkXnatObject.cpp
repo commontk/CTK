@@ -22,8 +22,9 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 
+#include "ctkXnatServer.h"
+#include <QVariant>
 #include <QDebug>
-
 
 ctkXnatObject::~ctkXnatObject()
 {
@@ -73,14 +74,11 @@ QList<ctkXnatObject::Pointer> ctkXnatObject::getChildren() const
   return d->children;
 }
 
-void ctkXnatObject::addChild(const ctkXnatObject::Pointer& child)
+void ctkXnatObject::addChild(ctkXnatObject::Pointer& child)
 {
   Q_D(ctkXnatObject);
   d->children.push_back(child);
-  if (child->getConnection() == NULL)
-  {
-    child->d_func()->connection = this->getConnection();
-  }
+  child->d_func()->parent = d->selfPtr;
 }
 
 void ctkXnatObject::reset()
@@ -121,20 +119,27 @@ bool ctkXnatObject::isModifiable() const
   return false;
 }
 
-ctkXnatObject::ctkXnatObject(ctkXnatConnection* connection)
-  : d_ptr(new ctkXnatObjectPrivate(connection))
+ctkXnatObject::ctkXnatObject()
+: d_ptr(new ctkXnatObjectPrivate())
 {
 }
 
-ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd)
-  : d_ptr(&dd)
+ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& d)
+: d_ptr(&d)
 {
 }
 
 ctkXnatConnection* ctkXnatObject::getConnection() const
 {
-  Q_D(const ctkXnatObject);
-  return d->connection;
+  const ctkXnatObject* xnatObject = this;
+  const ctkXnatServer* server;
+  do {
+    xnatObject = xnatObject->getParent().data();
+    server = dynamic_cast<const ctkXnatServer*>(xnatObject);
+  }
+  while (xnatObject && !server);
+
+  return server ? xnatObject->getConnection() : 0;
 }
 
 void ctkXnatObject::setId(const QString& id)

@@ -37,7 +37,7 @@ public:
   typedef QMap<QString,QString>::Iterator PropertyMapIterator;
   typedef QMap<QString,QString>::ConstIterator PropertyMapConstInterator;
 
-  explicit ctkXnatObjectPrivate(ctkXnatConnection* connection);
+  explicit ctkXnatObjectPrivate();
   virtual ~ctkXnatObjectPrivate();
 
   QWeakPointer<ctkXnatObject> selfPtr;
@@ -50,7 +50,6 @@ private:
   QMap<QString,QString> properties;
 
   QWeakPointer<ctkXnatObject> parent;
-  ctkXnatConnection* connection;
 };
 
 #endif // CTKXNATOBJECTPRIVATE_H

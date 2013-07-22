@@ -28,9 +28,10 @@ class ctkXnatProjectPrivate : public ctkXnatObjectPrivate
 {
 public:
 
-  ctkXnatProjectPrivate(ctkXnatConnection* connection)
-    : ctkXnatObjectPrivate(connection)
-  {}
+  ctkXnatProjectPrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
 
   void reset()
   {
@@ -46,14 +47,14 @@ public:
   QString uri;
 };
 
-ctkXnatProject::ctkXnatProject(ctkXnatConnection* connection)
-  : ctkXnatObject(*new ctkXnatProjectPrivate(connection))
+ctkXnatProject::ctkXnatProject()
+: ctkXnatObject(*new ctkXnatProjectPrivate())
 {
 }
 
-ctkXnatProject::Pointer ctkXnatProject::Create(ctkXnatConnection* connection)
+ctkXnatProject::Pointer ctkXnatProject::Create()
 {
-  Pointer project(new ctkXnatProject(connection));
+  Pointer project(new ctkXnatProject());
   project->d_func()->selfPtr = project;
   return project;
 }
@@ -120,7 +121,7 @@ void ctkXnatProject::fetchImpl()
 {
   Q_D(ctkXnatProject);
   ctkXnatObject::Pointer self = d->selfPtr;
-  getConnection()->fetch(self.staticCast<ctkXnatProject>());
+  this->getConnection()->fetch(self.staticCast<ctkXnatProject>());
 }
 
 void ctkXnatProject::remove()

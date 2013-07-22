@@ -37,7 +37,7 @@ public:
   typedef QSharedPointer<ctkXnatProject> Pointer;
   typedef QWeakPointer<ctkXnatProject> WeakPointer;
 
-  static Pointer Create(ctkXnatConnection* connection);
+  static Pointer Create();
 
   virtual ~ctkXnatProject();
 
@@ -61,7 +61,7 @@ private:
 
   friend class qRestResult;
 
-  explicit ctkXnatProject(ctkXnatConnection* connection = NULL);
+  explicit ctkXnatProject();
 
   virtual void fetchImpl();
 

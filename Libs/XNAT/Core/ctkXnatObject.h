@@ -53,7 +53,7 @@ public:
   ctkXnatObject::Pointer getParent() const;
   QList<ctkXnatObject::Pointer> getChildren() const;
 
-  void addChild(const Pointer& child);
+  void addChild(Pointer& child);
 
   virtual void reset();
   void fetch();
@@ -68,10 +68,10 @@ public:
 
 protected:
 
-  ctkXnatObject(ctkXnatConnection* connection);
+  ctkXnatObject();
   ctkXnatObject(ctkXnatObjectPrivate& dd);
 
-  ctkXnatConnection* getConnection() const;
+  virtual ctkXnatConnection* getConnection() const;
 
   void setId(const QString& id);
   void setName(const QString& name);

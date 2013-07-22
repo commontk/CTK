@@ -30,9 +30,10 @@ class ctkXnatSubjectPrivate : public ctkXnatObjectPrivate
 {
 public:
 
-  ctkXnatSubjectPrivate(ctkXnatConnection* connection)
-    : ctkXnatObjectPrivate(connection)
-  {}
+  ctkXnatSubjectPrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
 
   void reset()
   {
@@ -49,8 +50,8 @@ public:
   QList<ctkXnatProject::WeakPointer> projects;
 };
 
-ctkXnatSubject::ctkXnatSubject(ctkXnatConnection* connection)
-: ctkXnatObject(*new ctkXnatSubjectPrivate(connection))
+ctkXnatSubject::ctkXnatSubject()
+: ctkXnatObject(*new ctkXnatSubjectPrivate())
 {
 }
 
@@ -107,9 +108,9 @@ void ctkXnatSubject::fetchImpl()
   getConnection()->fetch(self.staticCast<ctkXnatSubject>());
 }
 
-ctkXnatSubject::Pointer ctkXnatSubject::Create(ctkXnatConnection* connection)
+ctkXnatSubject::Pointer ctkXnatSubject::Create()
 {
-  Pointer subject(new ctkXnatSubject(connection));
+  Pointer subject(new ctkXnatSubject());
   subject->d_func()->selfPtr = subject;
   return subject;
 }

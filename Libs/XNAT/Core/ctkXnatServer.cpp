@@ -26,8 +26,29 @@
 
 #include <QDebug>
 
+class ctkXnatServerPrivate : public ctkXnatObjectPrivate
+{
+  explicit ctkXnatServerPrivate(ctkXnatConnection* connection);
+  virtual ~ctkXnatServerPrivate();
+
+private:
+  friend class ctkXnatServer;
+
+  ctkXnatConnection* connection;
+};
+
+ctkXnatServerPrivate::ctkXnatServerPrivate(ctkXnatConnection* connection)
+: ctkXnatObjectPrivate()
+, connection(connection)
+{
+}
+
+ctkXnatServerPrivate::~ctkXnatServerPrivate()
+{
+}
+
 ctkXnatServer::ctkXnatServer(ctkXnatConnection* connection)
-  : ctkXnatObject(connection)
+: ctkXnatObject(*new ctkXnatServerPrivate(connection))
 {
 }
 
@@ -46,3 +67,8 @@ void ctkXnatServer::fetchImpl()
   return getConnection()->fetch(self.staticCast<ctkXnatServer>());
 }
 
+ctkXnatConnection* ctkXnatServer::getConnection() const
+{
+  Q_D(const ctkXnatServer);
+  return d->connection;
+}
