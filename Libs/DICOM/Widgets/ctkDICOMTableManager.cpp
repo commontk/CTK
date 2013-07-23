@@ -96,24 +96,18 @@ void ctkDICOMTableManagerPrivate::init()
 
   QObject::connect(this->patientsTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
                    q, SIGNAL(signalPatientsSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  QObject::connect(this->patientsTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SLOT(onPatientSelectionChanged()));
   QObject::connect(this->patientsTable, SIGNAL(signalSelectionChanged(const QStringList&)),
-                   q, SLOT(onPatientSelectionChanged(const QStringList&)));
+                   q, SIGNAL(signalPatientsSelectionChanged(const QStringList&)));
 
   QObject::connect(this->studiesTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
                    q, SIGNAL(signalStudiesSelectionsChanged(const QItemSelection&, const QItemSelection&)));
-  QObject::connect(this->studiesTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SLOT(signalStudiesSelectionsChanged(const QItemSelection&, const QItemSelection&)));
   QObject::connect(this->studiesTable, SIGNAL(signalSelectionChanged(const QStringList&)),
-                   q, SLOT(signalStudiesSelectionsChanged(const QStringList&)));
+                   q, SIGNAL(signalStudiesSelectionsChanged(const QStringList&)));
 
   QObject::connect(this->seriesTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
                    q, SIGNAL(signalSeriesSelectionsChanged(const QItemSelection&, const QItemSelection&)));
-  QObject::connect(this->seriesTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SLOT(signalSeriesSelectionChanged(const QItemSelection&, const QItemSelection&)));
   QObject::connect(this->seriesTable, SIGNAL(signalSelectionChanged(const QStringList&)),
-                   q, SLOT(signalSeriesSelectionChanged(const QStringList&)));
+                   q, SIGNAL(signalSeriesSelectionChanged(const QStringList&)));
 
   this->patientsTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
   this->studiesTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
