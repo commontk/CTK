@@ -120,27 +120,15 @@ void ctkDICOMTableManagerPrivate::init()
   this->seriesTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
 
   tableSplitter = new QSplitter();
-  tableSplitter->setChildrenCollapsible(false);
 
   tableSplitter->addWidget(this->patientsTable);
   tableSplitter->addWidget(this->studiesTable);
   tableSplitter->addWidget(this->seriesTable);
 
-  tableSplitter->setStyleSheet("QSplitter::handle {background-color: rgb(224,224,224);}QSplitter::handle:horizontal {width: 2px;}QSplitter::handle:vertical {height: 2px;}");
+  tableSplitter->setStyleSheet("QSplitter::handle {background-color: rgb(200,200,200);}"
+                               "QSplitter::handle:horizontal {width: 2px;}"
+                               "QSplitter::handle:vertical {height: 2px;}");
 
-
-  QHBoxLayout* buttonLayout = new QHBoxLayout();
-  this->changeLayoutButton = new QPushButton();
-  this->changeLayoutButton->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-  QPixmap icon(":/Icons/vertical.png");
-  this->changeLayoutButton->setIcon(icon);
-  QObject::connect(this->changeLayoutButton, SIGNAL(clicked()), q, SLOT(onChangeLayoutPushed()));
-  buttonLayout->addWidget(this->changeLayoutButton);
-
-  QSpacerItem* spacer = new QSpacerItem(20,20,QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-  buttonLayout->addItem(spacer);
-  this->layout->addLayout(buttonLayout);
   this->layout->addWidget(this->tableSplitter);
 
   q->setLayout(layout);
@@ -180,25 +168,14 @@ ctkDICOMTableManager::~ctkDICOMTableManager()
 
 }
 
-void ctkDICOMTableManager::onChangeLayoutPushed()
-{
-  Q_D(ctkDICOMTableManager);
-  if(d->tableSplitter->orientation() == Qt::Vertical)
-  {
-    QPixmap icon(":/Icons/vertical.png");
-    d->changeLayoutButton->setIcon(icon);
-    d->tableSplitter->setOrientation(Qt::Horizontal);
-  }
-  else
-  {
-    QPixmap icon(":/Icons/horizontal.png");
-    d->changeLayoutButton->setIcon(icon);
-    d->tableSplitter->setOrientation(Qt::Vertical);
-  }
-}
-
 void ctkDICOMTableManager::setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db)
 {
   Q_D(ctkDICOMTableManager);
   d->setCTKDICOMDatabase(db);
+}
+
+void ctkDICOMTableManager::setOrientation(const Qt::Orientation &o)
+{
+  Q_D(ctkDICOMTableManager);
+  d->tableSplitter->setOrientation(o);
 }

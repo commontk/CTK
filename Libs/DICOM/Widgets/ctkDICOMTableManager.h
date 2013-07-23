@@ -48,6 +48,7 @@ public:
   virtual ~ctkDICOMTableManager();
 
   void setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db);
+  void setOrientation(const Qt::Orientation &o);
 
 Q_SIGNALS:
   void signalPatientsSelectionChanged(const QItemSelection&, const QItemSelection&);
@@ -60,9 +61,6 @@ Q_SIGNALS:
 
 protected:
   QScopedPointer<ctkDICOMTableManagerPrivate> d_ptr;
-
-private Q_SLOTS:
-  void onChangeLayoutPushed();
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMTableManager)
