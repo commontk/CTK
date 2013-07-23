@@ -100,12 +100,12 @@ void ctkDICOMTableManagerPrivate::init()
                    q, SIGNAL(signalPatientsSelectionChanged(const QStringList&)));
 
   QObject::connect(this->studiesTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SIGNAL(signalStudiesSelectionsChanged(const QItemSelection&, const QItemSelection&)));
+                   q, SIGNAL(signalStudiesSelectionChanged(const QItemSelection&, const QItemSelection&)));
   QObject::connect(this->studiesTable, SIGNAL(signalSelectionChanged(const QStringList&)),
-                   q, SIGNAL(signalStudiesSelectionsChanged(const QStringList&)));
+                   q, SIGNAL(signalStudiesSelectionChanged(const QStringList&)));
 
   QObject::connect(this->seriesTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SIGNAL(signalSeriesSelectionsChanged(const QItemSelection&, const QItemSelection&)));
+                   q, SIGNAL(signalSeriesSelectionChanged(const QItemSelection&, const QItemSelection&)));
   QObject::connect(this->seriesTable, SIGNAL(signalSelectionChanged(const QStringList&)),
                    q, SIGNAL(signalSeriesSelectionChanged(const QStringList&)));
 
