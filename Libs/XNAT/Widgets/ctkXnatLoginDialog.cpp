@@ -28,6 +28,7 @@
 #include <QTimer>
 
 #include <ctkXnatConnection.h>
+#include <ctkXnatConnectionFactory.h>
 #include <ctkXnatException.h>
 #include "ctkXnatLoginProfile.h"
 #include "ctkXnatSettings.h"
@@ -35,14 +36,14 @@
 class ctkXnatLoginDialogPrivate
 {
 public:
-  ctkXnatLoginDialogPrivate(ctkXnatConnectionFactory& f)
+  ctkXnatLoginDialogPrivate(ctkXnatConnectionFactory* f)
   : Factory(f)
   {
   }
 
   ctkXnatSettings* Settings;
 
-  ctkXnatConnectionFactory& Factory;
+  ctkXnatConnectionFactory* Factory;
   ctkXnatConnection* Connection;
 
   QMap<QString, ctkXnatLoginProfile*> Profiles;
@@ -53,7 +54,7 @@ public:
   bool Dirty;
 };
 
-ctkXnatLoginDialog::ctkXnatLoginDialog(ctkXnatConnectionFactory& f, QWidget* parent, Qt::WindowFlags flags)
+ctkXnatLoginDialog::ctkXnatLoginDialog(ctkXnatConnectionFactory* f, QWidget* parent, Qt::WindowFlags flags)
 : QDialog(parent, flags)
 , ui(0)
 , d_ptr(new ctkXnatLoginDialogPrivate(f))
@@ -80,7 +81,7 @@ ctkXnatLoginDialog::ctkXnatLoginDialog(ctkXnatConnectionFactory& f, QWidget* par
     ui->btnSave->setEnabled(false);
 
     // Create connections after setting defaults, so you don't trigger stuff when setting defaults.
-    createConnections();
+    this->createConnections();
     }
 }
 
@@ -122,6 +123,10 @@ void ctkXnatLoginDialog::setSettings(ctkXnatSettings* settings)
 {
   Q_D(ctkXnatLoginDialog);
   d->Settings = settings;
+  if (!settings)
+  {
+    return;
+  }
   d->Profiles = d->Settings->getLoginProfiles();
 
   d->ProfileNames = d->Profiles.keys();
@@ -173,9 +178,9 @@ void ctkXnatLoginDialog::accept()
   if (d->Dirty)
     {
     const QString& profileName = ui->edtProfileName->text();
-    if (askToSaveProfile(profileName))
+    if (this->askToSaveProfile(profileName))
       {
-      saveProfile(profileName);
+      this->saveProfile(profileName);
       }
     }
 
@@ -184,7 +189,7 @@ void ctkXnatLoginDialog::accept()
   // create XNAT connection
   try
     {
-    d->Connection = d->Factory.makeConnection(url.toAscii().constData(), userName.toAscii().constData(),
+    d->Connection = d->Factory->makeConnection(url.toAscii().constData(), userName.toAscii().constData(),
                                         password.toAscii().constData());
     d->Connection->setProfileName(ui->edtProfileName->text());
     }
@@ -205,7 +210,7 @@ void ctkXnatLoginDialog::onCurrentProfileChanged(const QModelIndex& currentIndex
 
   if (!currentIndex.isValid())
     {
-    loadProfile();
+    this->loadProfile();
     return;
     }
 
@@ -217,14 +222,14 @@ void ctkXnatLoginDialog::onCurrentProfileChanged(const QModelIndex& currentIndex
   if (d->Dirty)
     {
     QString profileName = ui->edtProfileName->text();
-    if (askToSaveProfile(profileName))
+    if (this->askToSaveProfile(profileName))
       {
-      saveProfile(profileName);
+      this->saveProfile(profileName);
       newProfileSaved = true;
       }
     }
 
-  loadProfile(*profile);
+  this->loadProfile(*profile);
 
   d->Dirty = false;
   ui->btnSave->setEnabled(false);
@@ -280,7 +285,7 @@ void ctkXnatLoginDialog::saveProfile(const QString& profileName)
     d->Model.setData(d->Model.index(idx), profileName);
     }
   
-  storeProfile(*profile);
+  this->storeProfile(*profile);
   
   // If the profile is to be default then remove the default flag from the other profiles.
   // This code assumes that the newly created profiles are not default.
@@ -292,12 +297,18 @@ void ctkXnatLoginDialog::saveProfile(const QString& profileName)
       if (otherProfileName != profileName && otherProfile->isDefault())
         {
         otherProfile->setDefault(false);
-        d->Settings->setLoginProfile(otherProfileName, otherProfile);
+        if (d->Settings)
+          {
+          d->Settings->setLoginProfile(otherProfileName, otherProfile);
+          }
         }
       }
     }
   
-  d->Settings->setLoginProfile(profileName, profile);
+  if (d->Settings)
+    {
+    d->Settings->setLoginProfile(profileName, profile);
+    }
   d->Dirty = false;
   ui->btnSave->setEnabled(false);
 }
@@ -319,7 +330,7 @@ void ctkXnatLoginDialog::on_btnSave_clicked()
       }
     }
 
-  saveProfile(editedProfileName);
+  this->saveProfile(editedProfileName);
 
   if (selectSavedProfile)
     {
@@ -340,7 +351,7 @@ void ctkXnatLoginDialog::blockSignalsOfFields(bool value)
 
 void ctkXnatLoginDialog::loadProfile(const ctkXnatLoginProfile& profile)
 {
-  blockSignalsOfFields(true);
+  this->blockSignalsOfFields(true);
 
   ui->edtProfileName->setText(profile.name());
   ui->edtServerUri->setText(profile.serverUri());
@@ -348,7 +359,7 @@ void ctkXnatLoginDialog::loadProfile(const ctkXnatLoginProfile& profile)
   ui->edtPassword->setText(profile.password());
   ui->cbxDefaultProfile->setChecked(profile.isDefault());
 
-  blockSignalsOfFields(false);
+  this->blockSignalsOfFields(false);
 }
 
 void ctkXnatLoginDialog::storeProfile(ctkXnatLoginProfile& profile)
@@ -377,7 +388,10 @@ void ctkXnatLoginDialog::on_btnDelete_clicked()
     ui->edtProfileName->setFocus();
     }
   
-  d->Settings->removeLoginProfile(profileName);
+  if (d->Settings)
+    {
+    d->Settings->removeLoginProfile(profileName);
+    }
 }
 
 void ctkXnatLoginDialog::on_edtProfileName_textChanged(const QString& /*text*/)

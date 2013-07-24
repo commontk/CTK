@@ -28,10 +28,10 @@
 
 #include "ui_ctkXnatLoginDialog.h"
 
-#include <ctkXnatConnectionFactory.h>
 #include "ctkXnatLoginProfile.h"
 
 class ctkXnatConnection;
+class ctkXnatConnectionFactory;
 class ctkXnatLoginDialogPrivate;
 class ctkXnatSettings;
 
@@ -40,7 +40,7 @@ class CTK_XNAT_WIDGETS_EXPORT ctkXnatLoginDialog : public QDialog
   Q_OBJECT
 
 public:
-  explicit ctkXnatLoginDialog(ctkXnatConnectionFactory& f, QWidget* parent = 0, Qt::WindowFlags flags = 0);
+  explicit ctkXnatLoginDialog(ctkXnatConnectionFactory* f, QWidget* parent = 0, Qt::WindowFlags flags = 0);
   virtual ~ctkXnatLoginDialog();
 
   ctkXnatSettings* settings() const;

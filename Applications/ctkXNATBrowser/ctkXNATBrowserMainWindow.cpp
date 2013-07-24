@@ -25,6 +25,7 @@
 #include "ctkXnatLoginDialog.h"
 #include "ctkXnatProjectListModel.h"
 #include "ctkXnatConnection.h"
+#include "ctkXnatConnectionFactory.h"
 #include "ctkXnatServer.h"
 #include "ctkXnatProject.h"
 
@@ -33,51 +34,60 @@
 ctkXNATBrowserMainWindow::ctkXNATBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkXNATBrowserMainWindow),
-  xnatConnection(NULL),
-  projectsModel(new ctkXnatProjectListModel()),
-  subjectsModel(new ctkXnatProjectListModel())
+  m_ConnectionFactory(new ctkXnatConnectionFactory()),
+  m_Connection(0),
+  m_ProjectsModel(new ctkXnatProjectListModel()),
+  m_SubjectsModel(new ctkXnatProjectListModel())
 {
   ui->setupUi(this);
 
-  ui->projectsList->setModel(projectsModel);
-  ui->subjectsList->setModel(subjectsModel);
+  ui->projectsList->setModel(m_ProjectsModel);
+  ui->subjectsList->setModel(m_SubjectsModel);
 
-  connect(ui->projectsList, SIGNAL(clicked(QModelIndex)), SLOT(projectSelected(QModelIndex)));
-  connect(ui->loginButton, SIGNAL(clicked()), SLOT(loginButtonPushed()));
+  this->connect(ui->projectsList, SIGNAL(clicked(QModelIndex)), SLOT(projectSelected(QModelIndex)));
+  this->connect(ui->loginButton, SIGNAL(clicked()), SLOT(loginButtonPushed()));
 }
 
 ctkXNATBrowserMainWindow::~ctkXNATBrowserMainWindow()
 {
+  if (m_Connection)
+  {
+    delete m_Connection;
+  }
+  delete m_ConnectionFactory;
   delete ui;
+
+  delete m_SubjectsModel;
+  delete m_ProjectsModel;
 }
 
 void ctkXNATBrowserMainWindow::loginButtonPushed()
 {
-  if (xnatConnection)
+  if (m_Connection)
   {
-    delete xnatConnection;
-    xnatConnection = NULL;
+    delete m_Connection;
+    m_Connection = 0;
     ui->loginButton->setText("Login");
     ui->loginLabel->setText("Disconnected");
 
-    projectsModel->setRootObject(ctkXnatObject::Pointer());
+    m_ProjectsModel->setRootObject(ctkXnatObject::Pointer());
     ui->projectsList->reset();
   }
   else
   {
-    ctkXnatLoginDialog loginDialog(xnatConnectionFactory);
+    ctkXnatLoginDialog loginDialog(m_ConnectionFactory);
     if (loginDialog.exec() == QDialog::Accepted)
     {
-      xnatConnection = loginDialog.getConnection();
-      if (xnatConnection)
+      m_Connection = loginDialog.getConnection();
+      if (m_Connection)
       {
         ui->loginButton->setText("Logout");
-        ui->loginLabel->setText(QString("Connected: %1").arg(xnatConnection->url()));
+        ui->loginLabel->setText(QString("Connected: %1").arg(m_Connection->url()));
 
-        ctkXnatServer::Pointer server = xnatConnection->server();
+        ctkXnatServer::Pointer server = m_Connection->server();
         //xnatConnection->fetch(server);
         server->fetch();
-        projectsModel->setRootObject(server);
+        m_ProjectsModel->setRootObject(server);
         ui->projectsList->reset();
       }
     }
@@ -87,13 +97,13 @@ void ctkXNATBrowserMainWindow::loginButtonPushed()
 void ctkXNATBrowserMainWindow::projectSelected(const QModelIndex& index)
 {
   qDebug() << "Project selected";
-  QVariant variant = projectsModel->data(index, Qt::UserRole);
+  QVariant variant = m_ProjectsModel->data(index, Qt::UserRole);
   if (variant.isValid())
   {
     ctkXnatObject::Pointer project = variant.value<ctkXnatObject::Pointer>();
     qDebug() << "selected project id:" << project->getId();
     project->fetch();
-    subjectsModel->setRootObject(project);
+    m_SubjectsModel->setRootObject(project);
     ui->subjectsList->reset();
   }
 }

@@ -25,52 +25,58 @@
 #include "ctkXnatLoginDialog.h"
 #include "ctkXnatTreeModel.h"
 #include "ctkXnatConnection.h"
+#include "ctkXnatConnectionFactory.h"
 #include "ctkXnatServer.h"
 #include "ctkXnatProject.h"
-
-#include <QDebug>
 
 ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkXnatTreeBrowserMainWindow),
-  xnatConnection(0),
-  treeModel(new ctkXnatTreeModel())
+  m_ConnectionFactory(new ctkXnatConnectionFactory()),
+  m_Connection(0),
+  m_TreeModel(new ctkXnatTreeModel())
 {
   ui->setupUi(this);
 
-  ui->treeView->setModel(treeModel);
+  ui->treeView->setModel(m_TreeModel);
 
-  connect(ui->loginButton, SIGNAL(clicked()), SLOT(loginButtonPushed()));
+  this->connect(ui->loginButton, SIGNAL(clicked()), SLOT(loginButtonPushed()));
 }
 
 ctkXnatTreeBrowserMainWindow::~ctkXnatTreeBrowserMainWindow()
 {
-  delete treeModel;
+  if (m_Connection)
+  {
+    delete m_Connection;
+  }
+  delete m_ConnectionFactory;
   delete ui;
+
+  delete m_TreeModel;
 }
 
 void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
 {
-  if (xnatConnection)
+  if (m_Connection)
   {
-    delete xnatConnection;
-    xnatConnection = NULL;
+    delete m_Connection;
+    m_Connection = 0;
     ui->loginButton->setText("Login");
     ui->loginLabel->setText("Disconnected");
   }
   else
   {
-    ctkXnatLoginDialog loginDialog(xnatConnectionFactory);
+    ctkXnatLoginDialog loginDialog(m_ConnectionFactory);
     if (loginDialog.exec() == QDialog::Accepted)
     {
-      xnatConnection = loginDialog.getConnection();
-      if (xnatConnection)
+      m_Connection = loginDialog.getConnection();
+      if (m_Connection)
       {
         ui->loginButton->setText("Logout");
-        ui->loginLabel->setText(QString("Connected: %1").arg(xnatConnection->url()));
+        ui->loginLabel->setText(QString("Connected: %1").arg(m_Connection->url()));
 
-        ctkXnatServer::Pointer server = xnatConnection->server();
-        treeModel->addServer(server);
+        ctkXnatServer::Pointer server = m_Connection->server();
+        m_TreeModel->addServer(server);
         ui->treeView->reset();
       }
     }

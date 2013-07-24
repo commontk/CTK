@@ -26,9 +26,8 @@
 
 class QModelIndex;
 
-#include "ctkXnatConnectionFactory.h"
-
 class ctkXnatConnection;
+class ctkXnatConnectionFactory;
 class ctkXnatTreeModel;
 
 namespace Ui {
@@ -50,9 +49,9 @@ private Q_SLOTS:
 private:
   Ui::ctkXnatTreeBrowserMainWindow* ui;
 
-  ctkXnatConnection* xnatConnection;
-  ctkXnatTreeModel* treeModel;
-  ctkXnatConnectionFactory xnatConnectionFactory;
+  ctkXnatConnectionFactory* m_ConnectionFactory;
+  ctkXnatConnection* m_Connection;
+  ctkXnatTreeModel* m_TreeModel;
 };
 
 #endif

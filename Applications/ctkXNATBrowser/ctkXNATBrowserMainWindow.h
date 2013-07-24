@@ -26,9 +26,8 @@
 
 class QModelIndex;
 
-#include "ctkXnatConnectionFactory.h"
-
 class ctkXnatConnection;
+class ctkXnatConnectionFactory;
 class ctkXnatProjectListModel;
 class ctkXnatProject;
 
@@ -53,10 +52,10 @@ private Q_SLOTS:
 private:
   Ui::ctkXNATBrowserMainWindow *ui;
 
-  ctkXnatConnection* xnatConnection;
-  ctkXnatProjectListModel* projectsModel;
-  ctkXnatProjectListModel* subjectsModel;
-  ctkXnatConnectionFactory xnatConnectionFactory;
+  ctkXnatConnectionFactory* m_ConnectionFactory;
+  ctkXnatConnection* m_Connection;
+  ctkXnatProjectListModel* m_ProjectsModel;
+  ctkXnatProjectListModel* m_SubjectsModel;
 };
 
 #endif // CTKXNATBROWSERMAINWINDOW_H
