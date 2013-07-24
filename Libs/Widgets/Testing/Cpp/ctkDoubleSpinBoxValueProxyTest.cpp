@@ -66,6 +66,9 @@ private slots:
 
   void testSetDisplayedValue();
   void testSetDisplayedValue_data();
+
+  void testSetCoefficient();
+  void testSetCoefficient_data();
 };
 
 //-----------------------------------------------------------------------------
@@ -73,8 +76,7 @@ void ctkDoubleSpinBoxValueProxyTester::testSetValue()
 {
   // Setup
   ctkDoubleSpinBox spinBox;
-  spinBox.setMinimum(-200);
-  spinBox.setMaximum(200);
+  spinBox.setRange(-200., 200.);
   spinBox.setValue(-32.6);
 
   QFETCH(double, coefficient);
@@ -113,101 +115,44 @@ void ctkDoubleSpinBoxValueProxyTester::testSetValue_data()
   QTest::newRow("Offset only") << 1.0 << 42.19176 << 0.1 << 0.1 << "0.10";
 
   QTest::newRow("Offset only: less than min")
-    << 1.0 << 42.19176 << -510.0 << -242.19 << "-242.19";
-  QTest::newRow("Offset only: less than min but ok with offset")
-    << 1.0 << 42.19176 << -230.0 << -230.0 << "-230.00";
+    << 1.0 << -42.19176 << -220.0 << -200. << "-200.00";
   QTest::newRow("Offset only: less than min with offset")
-    << 1.0 << -42.1976 << -190.0 << -157.8 << "-157.80";
+    << 1.0 << -42.1976 << -190.0 << -190. << "-190.00";
+  QTest::newRow("Offset only: more than min")
+    << 1.0 << 42.1976 << -190.0 << -190. << "-190.00";
+  QTest::newRow("Offset only: more than min with offset")
+    << 1.0 << 42.19176 << -220.0 << -200. << "-200.00";
 
-  QTest::newRow("Offset only: more than max with offset")
-    << 1.0 << 42.19176 << 160.0 << 157.81 << "157.81";
   QTest::newRow("Offset only: more than max")
-    << 1.0 << -42.1976 << 65010.0 << 242.2 << "242.20";
-  QTest::newRow("Offset only: less than max but ok with offset")
-    << 1.0 << -42.1976 << 229.1 << 229.1 << "229.10";
+    << 1.0 << 42.1976 << 220.0 << 200. << "200.00";
+  QTest::newRow("Offset only: more than max with offset")
+    << 1.0 << 42.19176 << 190.0 << 190. << "190.00";
+  QTest::newRow("Offset only: less than max")
+    << 1.0 << -42.1976 << 190.0 << 190. << "190.00";
+  QTest::newRow("Offset only: less than max with offset")
+    << 1.0 << -42.19176 << 220.0 << 200. << "200.00";
 
-  QTest::newRow("Offset only: max")
-    << 1.0 << 42.19176 << std::numeric_limits<double>::max()
-    << 157.81 << "157.81";
-  QTest::newRow("Offset only:  min")
-    << 1.0 << 42.19176 << -std::numeric_limits<double>::max()
-    << -242.19 << "-242.19";
-  QTest::newRow("Offset only: infinity")
-    << 1.0 << 42.19176 << std::numeric_limits<double>::infinity()
-    << 157.81 << "157.81";
-  QTest::newRow("Offset only:  - infinity")
-    << 1.0 << 42.19176 << -std::numeric_limits<double>::infinity()
-    << -242.19 << "-242.19";
-  QTest::newRow("Offset only: Nan")
-    << 1.0 << 42.19176 << std::numeric_limits<double>::quiet_NaN()
-    << 157.81 << "157.81";
-
-  // coeff // offset // value // expectedValue // expectedStringValue
   //---------------------------------------------------------------------------
   // Coefficient
   QTest::newRow("Coeff only") << 5.0 << 0.0 << 0.1 << 0.1 << "0.10";
 
   QTest::newRow("Coeff only: less than min")
-    << 5.0 << 0.0 << -510.0 << -40.0 << "-40.00";
-  QTest::newRow("Coeff only: less than min but ok with coeff")
-    << 0.5 << 0.0 << -230.0 << -230.0 << "-230.00";
-  QTest::newRow("Coeff only: less than min with coeff")
-    << 5.0 << 0.0 << -190.0 << -40.0 << "-40.00";
+    << 5.0 << 0. << -220.0 << -200. << "-200.00";
+  QTest::newRow("Coeff only: less than min with offset")
+    << 5.0 << 0. << -190.0 << -190. << "-190.00";
+  QTest::newRow("Coeff only: more than min")
+    << 0.5 << 0. << -190.0 << -190. << "-190.00";
+  QTest::newRow("Coeff only: more than min with offset")
+    << 0.5 << 0. << -220.0 << -200. << "-200.00";
 
-  QTest::newRow("Coeff only: more than max with coeff")
-    << 5.0 << 0.0 << 160.0 << 40.0 << "40.00";
   QTest::newRow("Coeff only: more than max")
-    << 5.0 << 0.0 << 65010.0 << 40.0 << "40.00";
-  QTest::newRow("Offset only: less than max but ok with coeff")
-    << 0.5 << 0.0 << 229.2 << 229.2 << "229.20";
-
-  QTest::newRow("Coeff only: max")
-    << 5.0 << 0.0 << std::numeric_limits<double>::max() << 40.0 << "40.00";
-  QTest::newRow("Coeff only:  min")
-    << 5.0 << 0.0 << -std::numeric_limits<double>::max() << -40.0 << "-40.00";
-  QTest::newRow("Coeff only: infinity")
-    << 5.0 << 0.0 << std::numeric_limits<double>::infinity()
-    << 40.0 << "40.00";
-  QTest::newRow("Coeff only:  - infinity")
-    << 5.0 << 0.0 << -std::numeric_limits<double>::infinity()
-    << -40.0 << "-40.00";
-  QTest::newRow("Coeff only: Nan")
-    << 5.0 << 0.0 << std::numeric_limits<double>::quiet_NaN()
-    << 40.0 << "40.00";
-
-
-  // coeff // offset // value // expectedValue // expectedStringValue
-  //---------------------------------------------------------------------------
-  // Linear
-  QTest::newRow("Linear") << 5.0 << 0.0 << 0.1 << 0.1 << "0.10";
-
-  QTest::newRow("Linear: less than min")
-    << 5.0 << 12.0 << -510.0 << -42.4 << "-42.40";
-  QTest::newRow("Linear: less than min but ok with function")
-    << 0.5 << 12.0 << -230.0 << -230.0 << "-230.00";
-  QTest::newRow("Linear: less than min with function")
-    << 5.0 << 12.0 << -61.5 << -42.4 << "-42.40";
-
-  QTest::newRow("Linear: more than max with function")
-    << 5.0 << 12.0 << 160.0 << 37.6 << "37.60";
-  QTest::newRow("Linear: more than max")
-    << 5.0 << 12.0 << 65010.0 << 37.6 << "37.60";
-  QTest::newRow("Offset only: less than max but ok with function")
-    << 0.5 << 12.0 << 229.2 << 229.2 << "229.20";
-
-  QTest::newRow("Linear: max")
-    << 5.0 << 12.0 << std::numeric_limits<double>::max() << 37.6 << "37.60";
-  QTest::newRow("Linear:  min")
-    << 5.0 << 12.0 << -std::numeric_limits<double>::max() << -42.4 << "-42.40";
-  QTest::newRow("Linear: infinity")
-    << 5.0 << 12.0 << std::numeric_limits<double>::infinity()
-    << 37.6 << "37.60";
-  QTest::newRow("Linear:  - infinity")
-    << 5.0 << 12.0 << -std::numeric_limits<double>::infinity()
-    << -42.4 << "-42.40";
-  QTest::newRow("Linear: Nan")
-    << 5.0 << 12.0 << std::numeric_limits<double>::quiet_NaN()
-    << 37.6 << "37.60";
+    << 5. << 0. << 220.0 << 200. << "200.00";
+  QTest::newRow("Coeff only: more than max with offset")
+    << 5. << 0. << 190.0 << 190. << "190.00";
+  QTest::newRow("Coeff only: less than max")
+    << 0.5 << 0. << 190.0 << 190. << "190.00";
+  QTest::newRow("Coeff only: less than max with offset")
+    << 0.5 << 0. << 220.0 << 200. << "200.00";
 }
 
 //-----------------------------------------------------------------------------
@@ -259,25 +204,9 @@ void ctkDoubleSpinBoxValueProxyTester::testSetDisplayedValue_data()
     << 1.0 << 42.19176 << 0.1 << -42.09 << "-42.09" << 0.1;
 
   QTest::newRow("Offset only: less than min")
-    << 1.0 << 42.19176 << -510.0 << -242.19 << "-242.19" << -200.0;
+    << 1.0 << 42.19176 << -510.0 << -200. << "-200.00" << -157.81;
   QTest::newRow("Offset only: more than max")
-    << 1.0 << -42.1976 << 65010.0 << 242.2 << "242.20" << 200.0;
-
-  QTest::newRow("Offset only: max")
-    << 1.0 << 42.19176 << std::numeric_limits<double>::max()
-    << 157.81 << "157.81" << 200.0;
-  QTest::newRow("Offset only:  min")
-    << 1.0 << 42.19176 << -std::numeric_limits<double>::max()
-    << -242.19 << "-242.19" << -200.0;
-  QTest::newRow("Offset only: infinity")
-    << 1.0 << 42.19176 << std::numeric_limits<double>::infinity()
-    << 157.81 << "157.81" << 200.0;
-  QTest::newRow("Offset only:  - infinity")
-    << 1.0 << 42.19176 << -std::numeric_limits<double>::infinity()
-    << -242.19 << "-242.19" << -200.0;
-  QTest::newRow("Offset only: Nan")
-    << 1.0 << 42.19176 << std::numeric_limits<double>::quiet_NaN()
-    << 157.81 << "157.81" << 200.0;
+    << 1.0 << -42.1976 << 65010.0 << 200. << "200.00" << 157.8;
 
   //---------------------------------------------------------------------------
   // Coefficient
@@ -285,51 +214,53 @@ void ctkDoubleSpinBoxValueProxyTester::testSetDisplayedValue_data()
     << 5.0 << 0.0 << 5.0 << 1.0 << "1.00" << 5.0;
 
   QTest::newRow("Coeff only: less than min")
-    << 5.0 << 0.0 << -1010.0 << -40.0 << "-40.00" << -200.0;
+    << 5.0 << 0.0 << -1010.0 << -200. << "-200.00" << -1000.;
   QTest::newRow("Coeff only: more than max")
-    << 5.0 << 0.0 << 65010.0 << 40.0 << "40.00" << 200.0;
-
-  QTest::newRow("Coeff only: max")
-    << 5.0 << 0.0 << std::numeric_limits<double>::max()
-    << 40.0 << "40.00" << 200.0;
-  QTest::newRow("Coeff only:  min")
-    << 5.0 << 0.0 << -std::numeric_limits<double>::max()
-    << -40.0 << "-40.00" << -200.0;
-  QTest::newRow("Coeff only: infinity")
-    << 5.0 << 0.0 << std::numeric_limits<double>::infinity()
-    << 40.0 << "40.00" << 200.0;
-  QTest::newRow("Coeff only:  - infinity")
-    << 5.0 << 0.0 << -std::numeric_limits<double>::infinity()
-    << -40.0 << "-40.00" << -200.0;
-  QTest::newRow("Coeff only: Nan")
-    << 5.0 << 0.0 << std::numeric_limits<double>::quiet_NaN()
-    << 40.0 << "40.00" << 200.0;
+    << 5.0 << 0.0 << 65010.0 << 200.0 << "200.00" << 1000.0;
 
   //---------------------------------------------------------------------------
   // Linear
   QTest::newRow("Linear") << 5.0 << 12.0 << 42.0 << 6.0 << "6.00" << 42.0;
 
   QTest::newRow("Linear: less than min")
-    << 5.0 << 12.0 << -5010.0 << -42.4 << "-42.40" << -200.0;
-
+    << 5.0 << 12.0 << -5010.0 << -200. << "-200.00" << -988.;
   QTest::newRow("Linear: more than max")
-    << 5.0 << 12.0 << 65010.0 << 37.6 << "37.60" << 200.0;
+    << 5.0 << 12.0 << 65010.0 << 200.00 << "200.00" << 1012.;
+}
 
-  QTest::newRow("Linear: max")
-    << 5.0 << 12.0 << std::numeric_limits<double>::max()
-    << 37.6 << "37.60" << 200.0;
-  QTest::newRow("Linear:  min")
-    << 5.0 << 12.0 << -std::numeric_limits<double>::max()
-    << -42.4 << "-42.40" << -200.0;
-  QTest::newRow("Linear: infinity")
-    << 5.0 << 12.0 << std::numeric_limits<double>::infinity()
-    << 37.6 << "37.60" << 200.0;
-  QTest::newRow("Linear:  - infinity")
-    << 5.0 << 12.0 << -std::numeric_limits<double>::infinity()
-    << -42.4 << "-42.40" << -200.0;
-  QTest::newRow("Linear: Nan")
-    << 5.0 << 12.0 << std::numeric_limits<double>::quiet_NaN()
-    << 37.6 << "37.60" << 200.0;
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxValueProxyTester::testSetCoefficient()
+{
+  ctkDoubleSpinBox spinBox;
+  spinBox.setRange(-10000., 10000.);
+  spinBox.setValue(10.);
+
+  ctkLinearValueProxy proxy;
+  proxy.setCoefficient(10.);
+  spinBox.setValueProxy(&proxy);
+
+  ctkTest::COMPARE(spinBox.value(), 10.);
+  ctkTest::COMPARE(spinBox.displayedValue(), 100.);
+
+  QFETCH(double, newCoefficient);
+  proxy.setCoefficient(newCoefficient);
+
+  QFETCH(double, expectedDisplayedValue);
+  ctkTest::COMPARE(spinBox.value(), 10.);
+  ctkTest::COMPARE(spinBox.displayedValue(), expectedDisplayedValue);
+}
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxValueProxyTester::testSetCoefficient_data()
+{
+  QTest::addColumn<double>("newCoefficient");
+  QTest::addColumn<double>("expectedDisplayedValue");
+
+  QTest::newRow("100") << 100.0 << 1000.;
+  QTest::newRow("10") << 10.0 << 100.;
+  QTest::newRow("1") << 1.0 << 10.;
+  QTest::newRow("0.10") << 0.1 << 1.;
+  QTest::newRow("-10") << -10.0 << -100.;
 }
 
 // ----------------------------------------------------------------------------

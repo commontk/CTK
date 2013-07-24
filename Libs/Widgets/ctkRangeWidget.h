@@ -231,6 +231,9 @@ protected Q_SLOTS:
   void setMaximumToMinimumSpinBox(double maximum);
   void onSliderRangeChanged(double min, double max);
 
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
+
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
 

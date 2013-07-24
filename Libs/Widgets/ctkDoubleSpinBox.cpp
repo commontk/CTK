@@ -25,6 +25,7 @@
 #include "ctkPimpl.h"
 
 // Qt includes
+#include <QDebug>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QKeyEvent>
@@ -663,6 +664,24 @@ void ctkDoubleSpinBoxPrivate::onValueChanged()
 }
 
 //-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxPrivate::onValueProxyAboutToBeModified()
+{
+  Q_Q(ctkDoubleSpinBox);
+  this->SpinBox->setProperty("inputValue", q->value());
+  this->SpinBox->setProperty("inputMinimum", q->minimum());
+  this->SpinBox->setProperty("inputMaximum", q->maximum());
+}
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxPrivate::onValueProxyModified()
+{
+  Q_Q(ctkDoubleSpinBox);
+  q->setRange(this->SpinBox->property("inputMinimum").toDouble(),
+              this->SpinBox->property("inputMaximum").toDouble());
+  q->setValue(this->SpinBox->property("inputValue").toDouble());
+}
+
+//-----------------------------------------------------------------------------
 // ctkDoubleSpinBox
 //-----------------------------------------------------------------------------
 ctkDoubleSpinBox::ctkDoubleSpinBox(QWidget* newParent)
@@ -815,73 +834,102 @@ void ctkDoubleSpinBox::setSuffix(const QString &suffix)
 double ctkDoubleSpinBox::singleStep() const
 {
   Q_D(const ctkDoubleSpinBox);
-  return d->SpinBox->singleStep();
+  double step = d->SpinBox->singleStep();
+  return step;
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setSingleStep(double step)
+void ctkDoubleSpinBox::setSingleStep(double newStep)
 {
   Q_D(ctkDoubleSpinBox);
   if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-    && d->compare(step, this->singleStep()))
+    && d->compare(newStep, this->singleStep()))
     {
     return;
     }
 
-  d->SpinBox->setSingleStep(step);
+  d->SpinBox->setSingleStep(newStep);
 }
 
 //-----------------------------------------------------------------------------
 double ctkDoubleSpinBox::minimum() const
 {
   Q_D(const ctkDoubleSpinBox);
-  return d->SpinBox->minimum();
+  double min = d->SpinBox->minimum();
+  if (d->Proxy)
+    {
+    min = d->Proxy.data()->valueFromProxyValue(min);
+    }
+  return min;
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setMinimum(double min)
+void ctkDoubleSpinBox::setMinimum(double newMin)
 {
   Q_D(ctkDoubleSpinBox);
+  if (d->Proxy)
+    {
+    newMin = d->Proxy.data()->proxyValueFromValue(newMin);
+    }
   if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-    && d->compare(min, this->minimum()))
+      && d->compare(newMin, d->SpinBox->minimum()))
     {
     return;
     }
 
-  d->SpinBox->setMinimum(min);
+  d->SpinBox->setMinimum(newMin);
 }
 
 //-----------------------------------------------------------------------------
 double ctkDoubleSpinBox::maximum() const
 {
   Q_D(const ctkDoubleSpinBox);
-  return d->SpinBox->maximum();
+  double max = d->SpinBox->maximum();
+  if (d->Proxy)
+    {
+    max = d->Proxy.data()->valueFromProxyValue(max);
+    }
+  return max;
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setMaximum(double max)
+void ctkDoubleSpinBox::setMaximum(double newMax)
 {
   Q_D(ctkDoubleSpinBox);
+  if (d->Proxy)
+    {
+    newMax = d->Proxy.data()->proxyValueFromValue(newMax);
+    }
   if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-    && d->compare(max, this->maximum()))
+    && d->compare(newMax, d->SpinBox->maximum()))
     {
     return;
     }
 
-  d->SpinBox->setMaximum(max);
+  d->SpinBox->setMaximum(newMax);
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setRange(double min, double max)
+void ctkDoubleSpinBox::setRange(double newMin, double newMax)
 {
   Q_D(ctkDoubleSpinBox);
+  if (d->Proxy)
+    {
+    newMin = d->Proxy.data()->proxyValueFromValue(newMin);
+    newMax = d->Proxy.data()->proxyValueFromValue(newMax);
+    }
+  if (newMin > newMax)
+    {
+    qSwap(newMin, newMax);
+    }
   if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-    && d->compare(max, this->maximum()) && d->compare(min, this->minimum()))
+      && d->compare(newMax, d->SpinBox->maximum())
+      && d->compare(newMin, d->SpinBox->minimum()))
     {
     return;
     }
 
-  d->SpinBox->setRange(min, max);
+  d->SpinBox->setRange(newMin, newMax);
 }
 
 //-----------------------------------------------------------------------------
@@ -1056,12 +1104,32 @@ bool ctkDoubleSpinBox::invertedControls() const
 void ctkDoubleSpinBox::setValueProxy(ctkValueProxy* proxy)
 {
   Q_D(ctkDoubleSpinBox);
-  if (d->Proxy.data() == proxy)
+  if (proxy == d->Proxy.data())
     {
     return;
     }
 
+  d->onValueProxyAboutToBeModified();
+
+  if (d->Proxy)
+    {
+    disconnect(d->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
+               d, SLOT(onValueProxyAboutToBeModified()));
+    disconnect(d->Proxy.data(), SIGNAL(proxyModified()),
+               d, SLOT(onValueProxyModified()));
+    }
+
   d->Proxy = proxy;
+
+  if (d->Proxy)
+    {
+    connect(d->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
+            d, SLOT(onValueProxyAboutToBeModified()));
+    connect(d->Proxy.data(), SIGNAL(proxyModified()),
+            d, SLOT(onValueProxyModified()));
+    }
+
+  d->onValueProxyModified();
 }
 
 //----------------------------------------------------------------------------

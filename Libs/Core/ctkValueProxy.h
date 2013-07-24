@@ -78,6 +78,9 @@ Q_SIGNALS:
   void valueChanged(double);
   void proxyValueChanged(double);
 
+  void proxyAboutToBeModified();
+  void proxyModified();
+
 protected:
   QScopedPointer<ctkValueProxyPrivate> d_ptr;
 

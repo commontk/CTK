@@ -63,8 +63,7 @@ void ctkDoubleSliderValueProxyTester::testSetValue()
 {
   // Setup
   ctkDoubleSlider slider;
-  slider.setMinimum(-200);
-  slider.setMaximum(200);
+  slider.setRange(-200., 200.);
   slider.setSingleStep(0.01);
   slider.setValue(-32.6);
 
@@ -100,90 +99,58 @@ void ctkDoubleSliderValueProxyTester::testSetValue_data()
   QTest::newRow("Offset only") << 1.0 << 42.19176 << 0.1 << 0.1;
 
   QTest::newRow("Offset only: less than min")
-    << 1.0 << 42.19 << -510.0 << -242.19;
+    << 1. << 42.19 << -510. << -200.;
   QTest::newRow("Offset only: less than min but ok with offset")
-    << 1.0 << 42.19 << -230.0 << -230.0;
+    << 1. << 42.19 << -230. << -200.;
   QTest::newRow("Offset only: less than min with offset")
-    << 1.0 << -42.19 << -190.0 << -157.81;
+    << 1. << -42.19 << -190. << -190.;
 
   QTest::newRow("Offset only: more than max with offset")
-    << 1.0 << 42.19 << 160.0 << 157.81;
+    << 1. << 42.19 << 160. << 160.;
   QTest::newRow("Offset only: more than max")
-    << 1.0 << -42.19 << 65010.0 << 242.19;
+    << 1. << -42.19 << 65010.0 << 200.;
   QTest::newRow("Offset only: less than max but ok with offset")
-    << 1.0 << -42.19 << 229.1 << 229.1;
+    << 1. << -42.19 << 229.1 << 200.;
 
-  QTest::newRow("Offset only: max")
-    << 1.0 << 42.19 << std::numeric_limits<double>::max() << 157.81;
-  QTest::newRow("Offset only:  min")
-    << 1.0 << 42.19 << -std::numeric_limits<double>::max() << -242.19;
-  QTest::newRow("Offset only: infinity")
-    << 1.0 << 42.19 << std::numeric_limits<double>::infinity() << 157.81;
-  QTest::newRow("Offset only:  - infinity")
-    << 1.0 << 42.19 << -std::numeric_limits<double>::infinity() << -242.19;
-  QTest::newRow("Offset only: Nan")
-    << 1.0 << 42.19 << std::numeric_limits<double>::quiet_NaN() << -242.19;
 
   // coeff // offset // value // expectedValue
   //---------------------------------------------------------------------------
   // Coefficient
-  QTest::newRow("Coeff only") << 5.0 << 0.0 << 0.1 << 0.1;
+  QTest::newRow("Coeff only") << 5. << 0. << 0.1 << 0.1;
 
   QTest::newRow("Coeff only: less than min")
-    << 5.0 << 0.0 << -510.0 << -40.0;
+    << 5. << 0. << -510. << -200.;
   QTest::newRow("Coeff only: less than min but ok with coeff")
-    << 0.5 << 0.0 << -230.0 << -230.0;
+    << 0.5 << 0. << -230. << -200.;
   QTest::newRow("Coeff only: less than min with coeff")
-    << 5.0 << 0.0 << -190.0 << -40.0;
+    << 5. << 0. << -190. << -190.;
 
   QTest::newRow("Coeff only: more than max with coeff")
-    << 5.0 << 0.0 << 160.0 << 40.0;
+    << 5. << 0. << 160. << 160.;
   QTest::newRow("Coeff only: more than max")
-    << 5.0 << 0.0 << 65010.0 << 40.0;
+    << 5. << 0. << 65010. << 200.;
   QTest::newRow("Offset only: less than max but ok with coeff")
-    << 0.5 << 0.0 << 229.2 << 229.2;
-
-  QTest::newRow("Coeff only: max")
-    << 5.0 << 0.0 << std::numeric_limits<double>::max() << 40.0;
-  QTest::newRow("Coeff only:  min")
-    << 5.0 << 0.0 << -std::numeric_limits<double>::max() << -40.0;
-  QTest::newRow("Coeff only: infinity")
-    << 5.0 << 0.0 << std::numeric_limits<double>::infinity() << 40.0;
-  QTest::newRow("Coeff only:  - infinity")
-    << 5.0 << 0.0 << -std::numeric_limits<double>::infinity() << -40.0;
-  QTest::newRow("Coeff only: Nan")
-    << 5.0 << 0.0 << std::numeric_limits<double>::quiet_NaN() << -40.0;
+    << 0.5 << 0. << 229.2 << 200.;
 
 
   // coeff // offset // value // expectedValue
   //---------------------------------------------------------------------------
   // Linear
-  QTest::newRow("Linear") << 5.0 << 0.0 << 0.1 << 0.1;
+  QTest::newRow("Linear") << 5. << 0. << 0.1 << 0.1;
 
   QTest::newRow("Linear: less than min")
-    << 5.0 << 12.0 << -510.0 << -42.4;
+    << 5.0 << 12.0 << -510. << -200.;
   QTest::newRow("Linear: less than min but ok with function")
-    << 0.5 << 12.0 << -230.0 << -230.0;
+    << 0.5 << 12.0 << -230. << -200.;
   QTest::newRow("Linear: less than min with function")
-    << 5.0 << 12.0 << -61.5 << -42.4;
+    << 5.0 << 12.0 << -61.5 << -61.5;
 
   QTest::newRow("Linear: more than max with function")
-    << 5.0 << 12.0 << 160.0 << 37.6;
+    << 5.0 << 12.0 << 160. << 160.;
   QTest::newRow("Linear: more than max")
-    << 5.0 << 12.0 << 65010.0 << 37.6;
+    << 5.0 << 12.0 << 65010. << 200.;
   QTest::newRow("Offset only: less than max but ok with function")
-    << 0.5 << 12.0 << 229.2 << 229.2;
-
-  QTest::newRow("Linear: max")
-    << 5.0 << 12.0 << std::numeric_limits<double>::max() << 37.6;
-  QTest::newRow("Linear:  min")
-    << 5.0 << 12.0 << -std::numeric_limits<double>::max() << -42.4;
-  QTest::newRow("Linear: infinity")
-    << 5.0 << 12.0 << std::numeric_limits<double>::infinity() << 37.6;
-  QTest::newRow("Linear:  - infinity")
-    << 5.0 << 12.0 << -std::numeric_limits<double>::infinity() << -42.4;
-  QTest::newRow("Linear: Nan")
-    << 5.0 << 12.0 << std::numeric_limits<double>::quiet_NaN() << -42.4;
+    << 0.5 << 12.0 << 229.2 << 200.;
 }
 
 //-----------------------------------------------------------------------------
@@ -191,8 +158,7 @@ void ctkDoubleSliderValueProxyTester::testSetSliderPosition()
 {
   // Setup
   ctkDoubleSlider slider;
-  slider.setMinimum(-200);
-  slider.setMaximum(200);
+  slider.setRange(-200., 200.);
   slider.setSingleStep(0.01);
   slider.setValue(-32.6);
 
@@ -228,73 +194,32 @@ void ctkDoubleSliderValueProxyTester::testSetSliderPosition_data()
 
   //---------------------------------------------------------------------------
   // Offset
-  QTest::newRow("Offset only") << 1.0 << 42.19 << 0.1 << -42.09 << 0.1;
+  QTest::newRow("Offset only") << 1. << 42.19 << 0.1 << 0.1 << 0.1;
 
   QTest::newRow("Offset only: less than min")
-    << 1.0 << 42.19 << -510.0 << -242.19 << -200.0;
+    << 1. << 42.19 << -510. << -200. << -200.;
   QTest::newRow("Offset only: more than max")
-    << 1.0 << -42.19 << 65010.0 << 242.19 << 200.0;
-
-  QTest::newRow("Offset only: max")
-    << 1.0 << 42.19 << std::numeric_limits<double>::max()
-    << 157.81 << 200.0;
-  QTest::newRow("Offset only:  min")
-    << 1.0 << 42.19 << -std::numeric_limits<double>::max()
-    << -242.19 << -200.0;
-  QTest::newRow("Offset only: infinity")
-    << 1.0 << 42.19 << std::numeric_limits<double>::infinity()
-    << 157.81 << 200.0;
-  QTest::newRow("Offset only:  - infinity")
-    << 1.0 << 42.19 << -std::numeric_limits<double>::infinity()
-    << -242.19 << -200.0;
-  QTest::newRow("Offset only: Nan")
-    << 1.0 << 42.19 << std::numeric_limits<double>::quiet_NaN()
-    << -242.19 << -200.0;
+    << 1. << -42.19 << 65010. << 200. << 200.;
 
   //---------------------------------------------------------------------------
   // Coefficient
-  QTest::newRow("Coeff only") << 5.0 << 0.0 << 5.0 << 1.0 << 5.0;
+  QTest::newRow("Coeff only") << 5. << 0. << 5. << 5. << 5.;
 
   QTest::newRow("Coeff only: less than min")
-    << 5.0 << 0.0 << -1010.0 << -40.0 << -200.0;
+    << 5. << 0. << -1010. << -200. << -200.;
   QTest::newRow("Coeff only: more than max")
-    << 5.0 << 0.0 << 65010.0 << 40.0 << 200.0;
-
-  QTest::newRow("Coeff only: max")
-    << 5.0 << 0.0 << std::numeric_limits<double>::max() << 40.0 << 200.0;
-  QTest::newRow("Coeff only:  min")
-    << 5.0 << 0.0 << -std::numeric_limits<double>::max() << -40.0 << -200.0;
-  QTest::newRow("Coeff only: infinity")
-    << 5.0 << 0.0 << std::numeric_limits<double>::infinity() << 40.0 << 200.0;
-  QTest::newRow("Coeff only:  - infinity")
-    << 5.0 << 0.0 << -std::numeric_limits<double>::infinity()
-    << -40.0 << -200.0;
-  QTest::newRow("Coeff only: Nan")
-    << 5.0 << 0.0 << std::numeric_limits<double>::quiet_NaN()
-    << -40.0 << -200.0;
+    << 5. << 0. << 65010. << 200. << 200.;
 
   //---------------------------------------------------------------------------
   // Linear
-  QTest::newRow("Linear") << 5.0 << 12.0 << 42.0 << 6.0 << 42.0;
+  QTest::newRow("Linear") << 5. << 12. << 42. << 42. << 42.;
 
   QTest::newRow("Linear: less than min")
-    << 5.0 << 12.0 << -5010.0 << -42.4 << -200.0;
+    << 5. << 12. << -5010. << -200. << -200.;
 
   QTest::newRow("Linear: more than max")
-    << 5.0 << 12.0 << 65010.0 << 37.6 << 200.0;
+    << 5. << 12. << 65010. << 200. << 200.;
 
-  QTest::newRow("Linear: max")
-    << 5.0 << 12.0 << std::numeric_limits<double>::max() << 37.6 << 200.0;
-  QTest::newRow("Linear:  min")
-    << 5.0 << 12.0 << -std::numeric_limits<double>::max() << -42.4 << -200.0;
-  QTest::newRow("Linear: infinity")
-    << 5.0 << 12.0 << std::numeric_limits<double>::infinity() << 37.6 << 200.0;
-  QTest::newRow("Linear:  - infinity")
-    << 5.0 << 12.0 << -std::numeric_limits<double>::infinity()
-    << -42.4 << -200.0;
-  QTest::newRow("Linear: Nan")
-    << 5.0 << 12.0 << std::numeric_limits<double>::quiet_NaN()
-    << -42.4 << -200.0;
 }
 
 // ----------------------------------------------------------------------------

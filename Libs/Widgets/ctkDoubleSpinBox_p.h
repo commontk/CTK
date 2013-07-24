@@ -127,4 +127,7 @@ public:
 public Q_SLOTS:
   void editorTextChanged(const QString& text);
   void onValueChanged();
+
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 };

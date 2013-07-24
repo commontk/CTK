@@ -1,0 +1,127 @@
+/*=========================================================================
+
+  Library:   CTK
+
+  Copyright (c) Kitware Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.commontk.org/LICENSE
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=========================================================================*/
+
+// Qt includes
+#include <QApplication>
+#include <QTest>
+
+// CTK includes
+#include "ctkDoubleRangeSlider.h"
+#include "ctkTest.h"
+
+//-----------------------------------------------------------------------------
+class ctkDoubleRangeSliderTester: public QObject
+{
+  Q_OBJECT
+private slots:
+  void testUI();
+
+  void testRange();
+  void testRange_data();
+
+  void testSingleStep();
+  void testSingleStep_data();
+};
+
+// ----------------------------------------------------------------------------
+void ctkDoubleRangeSliderTester::testUI()
+{
+  ctkDoubleRangeSlider slider;
+  slider.show();
+  QTest::qWaitForWindowShown(&slider);
+  // qApp->exec();
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleRangeSliderTester::testRange()
+{
+  ctkDoubleRangeSlider slider;
+
+  QFETCH(double, minimum);
+  QFETCH(double, maximum);
+  slider.setRange(minimum, maximum);
+
+  QFETCH(double, expectedMinimum);
+  QFETCH(double, expectedMaximum);
+  QFETCH(double, expectedMinimumValue);
+  QFETCH(double, expectedMaximumValue);
+
+  QCOMPARE(slider.minimum(), expectedMinimum);
+  QCOMPARE(slider.maximum(), expectedMaximum);
+  QCOMPARE(slider.minimumValue(), expectedMinimumValue);
+  QCOMPARE(slider.maximumValue(), expectedMaximumValue);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleRangeSliderTester::testRange_data()
+{
+  QTest::addColumn<double>("minimum");
+  QTest::addColumn<double>("maximum");
+  QTest::addColumn<double>("expectedMinimum");
+  QTest::addColumn<double>("expectedMaximum");
+  QTest::addColumn<double>("expectedMinimumValue");
+  QTest::addColumn<double>("expectedMaximumValue");
+
+  QTest::newRow("[20.123,20.1234]") << 20.123 << 20.1234
+                                    << 20.123 << 20.1234 << 20.123 << 20.1234;
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleRangeSliderTester::testSingleStep()
+{
+  ctkDoubleRangeSlider slider;
+  slider.setValues(25., 75.);
+
+  QFETCH(double, minimum);
+  QFETCH(double, maximum);
+  slider.setRange(minimum, maximum);
+
+  QFETCH(double, singleStep);
+  slider.setSingleStep(singleStep);
+
+  QFETCH(double, expectedMinimumValue);
+  QFETCH(double, expectedMaximumValue);
+  QCOMPARE(slider.minimumValue(), expectedMinimumValue);
+  QCOMPARE(slider.maximumValue(), expectedMaximumValue);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleRangeSliderTester::testSingleStep_data()
+{
+  QTest::addColumn<double>("minimum");
+  QTest::addColumn<double>("maximum");
+  QTest::addColumn<double>("singleStep");
+  QTest::addColumn<double>("expectedMinimumValue");
+  QTest::addColumn<double>("expectedMaximumValue");
+
+  QTest::newRow("1.") << 0. << 100. << 1. << 25. << 75.;
+  QTest::newRow("100.") << 0. << 100. << 100. << 25. << 75.;
+  QTest::newRow("0.1") << 0. << 100. << 0.1 << 25. << 75.;
+  QTest::newRow("min") << 0. << 100. << std::numeric_limits<double>::min() << 25. << 75.;
+  QTest::newRow("max") << 0. << 100. << std::numeric_limits<double>::max() << 25. << 75.;
+  QTest::newRow("-max") << 0. << 100. << -std::numeric_limits<double>::max() << 25. << 75.;
+  QTest::newRow("-inf") << 0. << 100. << -std::numeric_limits<double>::infinity() << 25. << 75.;
+  QTest::newRow("inf") << 0. << 100. << std::numeric_limits<double>::infinity() << 25. << 75.;
+  QTest::newRow("NaN") << 0. << 100. << std::numeric_limits<double>::quiet_NaN() << 25. << 75.;
+}
+
+// ----------------------------------------------------------------------------
+CTK_TEST_MAIN(ctkDoubleRangeSliderTest)
+#include "moc_ctkDoubleRangeSliderTest.cpp"

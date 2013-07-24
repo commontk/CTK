@@ -50,6 +50,9 @@ private Q_SLOTS:
 
   void testSetProxyValueNullCoeff();
   void testSetProxyValueNullCoeff_data();
+
+  void testProxyModified();
+  void testProxyModified_data();
 };
 
 // ----------------------------------------------------------------------------
@@ -458,6 +461,47 @@ void ctkLinearValueProxyTester::testSetProxyValueNullCoeff_data()
     << - std::numeric_limits<double>::infinity();
   QTest::newRow("Null coeff: Nan") << std::numeric_limits<double>::quiet_NaN()
     << std::numeric_limits<double>::quiet_NaN();
+}
+
+
+// ----------------------------------------------------------------------------
+void ctkLinearValueProxyTester::testProxyModified()
+{
+  ctkLinearValueProxy proxy;
+  proxy.setCoefficient(5.0);
+  proxy.setOffset(5.0);
+
+  QSignalSpy proxyAboutToBeModifiedSpy(&proxy, SIGNAL(proxyAboutToBeModified()));
+  QSignalSpy proxyModifiedSpy(&proxy, SIGNAL(proxyModified()));
+
+  QFETCH(bool, changeCoefficient);
+  QFETCH(double, coefficientOrOffset);
+  if (changeCoefficient)
+    {
+    proxy.setCoefficient(coefficientOrOffset);
+    }
+  else
+    {
+    proxy.setOffset(coefficientOrOffset);
+    }
+  QFETCH(int, expectedSignalCount);
+  ctkTest::COMPARE(proxyAboutToBeModifiedSpy.count(), expectedSignalCount);
+  ctkTest::COMPARE(proxyModifiedSpy.count(), expectedSignalCount);
+}
+
+// ----------------------------------------------------------------------------
+void ctkLinearValueProxyTester::testProxyModified_data()
+{
+  QTest::addColumn<double>("coefficientOrOffset");
+  QTest::addColumn<bool>("changeCoefficient");
+  QTest::addColumn<int>("expectedSignalCount");
+
+  QTest::newRow("change coefficient") << 10.0 << true << 1;
+  QTest::newRow("same coefficient") << 5.0 << true << 0;
+  QTest::newRow("null coefficient") << 0.0 << true << 1;
+  QTest::newRow("change offset") << 10.0 << false << 1;
+  QTest::newRow("same offset") << 5.0 << false << 0;
+  QTest::newRow("null offset") << 0.0 << false << 1;
 }
 
 // ----------------------------------------------------------------------------

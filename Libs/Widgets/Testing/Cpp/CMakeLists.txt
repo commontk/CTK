@@ -26,6 +26,7 @@ set(TEST_SOURCES
   ctkCoordinatesWidgetValueProxyTest.cpp
   ctkCrosshairLabelTest1.cpp
   ctkDirectoryButtonTest1.cpp
+  ctkDoubleRangeSliderTest.cpp
   ctkDoubleRangeSliderTest1.cpp
   ctkDoubleRangeSliderTest2.cpp
   ctkDoubleRangeSliderValueProxyTest.cpp
@@ -188,6 +189,7 @@ QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
   ctkCoordinatesWidgetTest.cpp
   ctkCoordinatesWidgetValueProxyTest.cpp
+  ctkDoubleRangeSliderTest.cpp
   ctkDoubleRangeSliderValueProxyTest.cpp
   ctkDoubleSliderTest.cpp
   ctkDoubleSliderValueProxyTest.cpp
@@ -247,6 +249,7 @@ SIMPLE_TEST( ctkCoordinatesWidgetValueProxyTest )
 SIMPLE_TEST( ctkCrosshairLabelTest1 )
 SIMPLE_TEST( ctkDateRangeWidgetTest1 )
 SIMPLE_TEST( ctkDirectoryButtonTest1 )
+SIMPLE_TEST( ctkDoubleRangeSliderTest )
 SIMPLE_TEST( ctkDoubleRangeSliderTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest2 )
 SIMPLE_TEST( ctkDoubleRangeSliderValueProxyTest )

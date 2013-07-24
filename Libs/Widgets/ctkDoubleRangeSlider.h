@@ -76,12 +76,11 @@ public:
   void setSingleStep(double ss);
   double singleStep()const;
 
-  /// This utility function checks whether singleStep is
-  /// valid or not. To be valid, single step should not be too
-  /// small or too large. The singleStep property is used to convert
-  /// the slider value from int to double, therefore the boundary.
+  /// Return true if the step can be handled by the slider, false otherwise.
+  /// An invalid step is a step that can't be used to convert from double
+  /// to int (too large or too small).
   /// \sa singleStep
-  bool isValidStep(double singleStep)const;
+  bool isValidStep(double step)const;
 
   /// 
   /// This property holds the interval between tickmarks.
@@ -260,6 +259,9 @@ protected Q_SLOTS:
   void onMaxPosChanged(int value);
   void onPositionsChanged(int min, int max);
   void onRangeChanged(int min, int max);
+
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 
 protected:
   ctkRangeSlider* slider()const;

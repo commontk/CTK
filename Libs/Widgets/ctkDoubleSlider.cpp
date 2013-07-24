@@ -76,6 +76,7 @@ public:
   double      SingleStep;
   double      PageStep;
   double      Value;
+  /// Converts input value with displayed value
   QWeakPointer<ctkValueProxy> Proxy;
 };
 
@@ -190,24 +191,33 @@ ctkDoubleSlider::~ctkDoubleSlider()
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setMinimum(double min)
 {
-  Q_D(ctkDoubleSlider);
-  this->setRange(min, qMax(min, d->Maximum));
+  this->setRange(min, this->maximum());
 }
 
 // --------------------------------------------------------------------------
 void ctkDoubleSlider::setMaximum(double max)
 {
-  Q_D(ctkDoubleSlider);
-  this->setRange(qMin(d->Minimum, max), max);
+  this->setRange(this->minimum(), max);
 }
 
 // --------------------------------------------------------------------------
-void ctkDoubleSlider::setRange(double min, double max)
+void ctkDoubleSlider::setRange(double newMin, double newMax)
 {
   Q_D(ctkDoubleSlider);
-  d->Minimum = min;
-  d->Maximum = max;
-  
+  if (d->Proxy)
+    {
+    newMin = d->Proxy.data()->proxyValueFromValue(newMin);
+    newMax = d->Proxy.data()->proxyValueFromValue(newMax);
+    }
+
+  if (newMin > newMax)
+    {
+    qSwap(newMin, newMax);
+    }
+
+  d->Minimum = newMin;
+  d->Maximum = newMax;
+
   if (d->Minimum >= d->Value)
     {
     d->updateOffset(d->Minimum);
@@ -217,7 +227,7 @@ void ctkDoubleSlider::setRange(double min, double max)
     d->updateOffset(d->Maximum);
     }
   d->SettingRange = true;
-  d->Slider->setRange(d->toInt(min), d->toInt(max));
+  d->Slider->setRange(d->toInt(newMin), d->toInt(newMax));
   d->SettingRange = false;
   emit this->rangeChanged(d->Minimum, d->Maximum);
   /// In case QSlider::setRange(...) didn't notify the value
@@ -229,28 +239,49 @@ void ctkDoubleSlider::setRange(double min, double max)
 double ctkDoubleSlider::minimum()const
 {
   Q_D(const ctkDoubleSlider);
-  return d->Minimum;
+  double min = d->Minimum;
+  if (d->Proxy)
+    {
+    min = d->Proxy.data()->valueFromProxyValue(min);
+    }
+  return min;
 }
 
 // --------------------------------------------------------------------------
 double ctkDoubleSlider::maximum()const
 {
   Q_D(const ctkDoubleSlider);
-  return d->Maximum;
+  double max = d->Maximum;
+  if (d->Proxy)
+    {
+    max = d->Proxy.data()->valueFromProxyValue(max);
+    }
+  return max;
 }
 
 // --------------------------------------------------------------------------
 double ctkDoubleSlider::sliderPosition()const
 {
   Q_D(const ctkDoubleSlider);
-  return d->safeFromInt(d->Slider->sliderPosition());
+  int intPosition = d->Slider->sliderPosition();
+  double position = d->safeFromInt(intPosition);
+  if (d->Proxy)
+    {
+    position = d->Proxy.data()->valueFromProxyValue(position);
+    }
+  return position;
 }
 
 // --------------------------------------------------------------------------
-void ctkDoubleSlider::setSliderPosition(double newSliderPosition)
+void ctkDoubleSlider::setSliderPosition(double newPosition)
 {
   Q_D(ctkDoubleSlider);
-  d->Slider->setSliderPosition(d->toInt(newSliderPosition));
+  if (d->Proxy)
+    {
+    newPosition = d->Proxy.data()->proxyValueFromValue(newPosition);
+    }
+  int newIntPosition = d->toInt(newPosition);
+  d->Slider->setSliderPosition(newIntPosition);
 }
 
 // --------------------------------------------------------------------------
@@ -300,7 +331,8 @@ void ctkDoubleSlider::setValue(double newValue)
 double ctkDoubleSlider::singleStep()const
 {
   Q_D(const ctkDoubleSlider);
-  return d->SingleStep;
+  double step = d->SingleStep;
+  return step;
 }
 
 // --------------------------------------------------------------------------
@@ -309,7 +341,8 @@ void ctkDoubleSlider::setSingleStep(double newStep)
   Q_D(ctkDoubleSlider);
   if (!this->isValidStep(newStep))
     {
-    qWarning() << "Single step " << newStep << "is out of bounds.";
+    qWarning() << "ctkDoubleSlider::setSingleStep("<< newStep <<")"
+               << "is outside of valid bounds.";
     return;
     }
   d->SingleStep = newStep;
@@ -326,11 +359,12 @@ void ctkDoubleSlider::setSingleStep(double newStep)
 // --------------------------------------------------------------------------
 bool ctkDoubleSlider::isValidStep(double step)const
 {
-  const double minStep( qMax(this->maximum() / std::numeric_limits<int>::max(),
-                                   std::numeric_limits<double>::epsilon()) );
-  const double maxStep( qMin(this->maximum() - this->minimum(),
-                                   static_cast<double>(std::numeric_limits<int>::max())) );
-  return step > minStep && step < maxStep;
+  Q_D(const ctkDoubleSlider);
+  const double minStep = qMax(d->Maximum / std::numeric_limits<double>::max(),
+                              std::numeric_limits<double>::epsilon());
+  const double maxStep = qMin(d->Maximum - d->Minimum,
+                              static_cast<double>(std::numeric_limits<int>::max()));
+  return step >= minStep && step <= maxStep;
 }
 
 // --------------------------------------------------------------------------
@@ -345,7 +379,8 @@ void ctkDoubleSlider::setPageStep(double newStep)
 {
   Q_D(ctkDoubleSlider);
   d->PageStep = newStep;
-  d->Slider->setPageStep(d->toInt(d->PageStep));
+  int intPageStep = d->toInt(d->PageStep);
+  d->Slider->setPageStep(intPageStep);
 }
 
 // --------------------------------------------------------------------------
@@ -536,12 +571,29 @@ bool ctkDoubleSlider::eventFilter(QObject* watched, QEvent* event)
 void ctkDoubleSlider::setValueProxy(ctkValueProxy* proxy)
 {
   Q_D(ctkDoubleSlider);
-  if (d->Proxy.data() == proxy)
+  if (proxy == d->Proxy.data())
     {
     return;
     }
 
+  this->onValueProxyAboutToBeModified();
+
+  if (d->Proxy.data())
+    {
+    disconnect(d->Proxy.data(), 0, this, 0);
+    }
+
   d->Proxy = proxy;
+
+  if (d->Proxy)
+    {
+    connect(d->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
+            this, SLOT(onValueProxyAboutToBeModified()));
+    connect(d->Proxy.data(), SIGNAL(proxyModified()),
+            this, SLOT(onValueProxyModified()));
+    }
+
+  this->onValueProxyModified();
 }
 
 //----------------------------------------------------------------------------
@@ -549,5 +601,23 @@ ctkValueProxy* ctkDoubleSlider::valueProxy() const
 {
   Q_D(const ctkDoubleSlider);
   return d->Proxy.data();
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleSlider::onValueProxyAboutToBeModified()
+{
+  Q_D(ctkDoubleSlider);
+  d->Slider->setProperty("inputValue", this->value());
+  d->Slider->setProperty("inputMinimum", this->minimum());
+  d->Slider->setProperty("inputMaximum", this->maximum());
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleSlider::onValueProxyModified()
+{
+  Q_D(ctkDoubleSlider);
+  this->setRange(d->Slider->property("inputMinimum").toDouble(),
+                 d->Slider->property("inputMaximum").toDouble());
+  this->setValue(d->Slider->property("inputValue").toDouble());
 }
 

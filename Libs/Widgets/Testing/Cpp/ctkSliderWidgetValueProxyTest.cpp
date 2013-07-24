@@ -55,6 +55,9 @@ private slots:
 
   void testSetValue();
   void testSetValue_data();
+
+  void testSetCoefficient();
+  void testSetCoefficient_data();
 };
 
 //-----------------------------------------------------------------------------
@@ -181,6 +184,43 @@ void ctkSliderWidgetValueProxyTester::testSetValue_data()
     << 5.0 << 12.0 << -std::numeric_limits<double>::infinity() << -42.4;
   QTest::newRow("Linear: Nan")
     << 5.0 << 12.0 << std::numeric_limits<double>::quiet_NaN() << 37.6;
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkSliderWidgetValueProxyTester::testSetCoefficient()
+{
+  ctkSliderWidget sliderWidget;
+  sliderWidget.setRange(-10000., 10000.);
+  sliderWidget.setValue(10.);
+
+  ctkLinearValueProxy proxy;
+  proxy.setCoefficient(10.);
+  sliderWidget.setValueProxy(&proxy);
+
+  QCOMPARE(sliderWidget.value(), 10.);
+  QCOMPARE(sliderWidget.spinBox()->displayedValue(), 100.);
+
+  QFETCH(double, newCoefficient);
+  proxy.setCoefficient(newCoefficient);
+
+  QFETCH(double, expectedDisplayedValue);
+  QCOMPARE(sliderWidget.value(), 10.);
+  QCOMPARE(sliderWidget.spinBox()->displayedValue(),
+                   expectedDisplayedValue);
+}
+
+//-----------------------------------------------------------------------------
+void ctkSliderWidgetValueProxyTester::testSetCoefficient_data()
+{
+  QTest::addColumn<double>("newCoefficient");
+  QTest::addColumn<double>("expectedDisplayedValue");
+
+  QTest::newRow("100") << 100.0 << 1000.;
+  QTest::newRow("10") << 10.0 << 100.;
+  QTest::newRow("1") << 1.0 << 10.;
+  QTest::newRow("0.10") << 0.1 << 1.;
+  QTest::newRow("-10") << -10.0 << -100.;
 }
 
 // ----------------------------------------------------------------------------
