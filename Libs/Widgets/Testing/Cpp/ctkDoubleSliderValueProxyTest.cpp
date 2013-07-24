@@ -51,17 +51,38 @@ class ctkDoubleSliderValueProxyTester: public QObject
   Q_OBJECT
 private slots:
 
+  void testSetValueProxy();
+
   void testSetValue();
   void testSetValue_data();
 
   void testSetSliderPosition();
   void testSetSliderPosition_data();
+
 };
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSliderValueProxyTester::testSetValueProxy()
+{
+  ctkDoubleSlider slider;
+  slider.setRange(-200., 200.);
+  slider.setValue(-32.6);
+
+  ctkLinearValueProxy proxy;
+  proxy.setCoefficient(-1.);
+  proxy.setOffset(20.);
+
+  QSignalSpy valueSpy(&slider, SIGNAL(valueChanged(double)));
+  QSignalSpy rangeSpy(&slider, SIGNAL(rangeChanged(double,double)));
+  slider.setValueProxy(&proxy);
+
+  QCOMPARE(valueSpy.count(), 0);
+  QCOMPARE(rangeSpy.count(), 0);
+}
 
 //-----------------------------------------------------------------------------
 void ctkDoubleSliderValueProxyTester::testSetValue()
 {
-  // Setup
   ctkDoubleSlider slider;
   slider.setRange(-200., 200.);
   slider.setSingleStep(0.01);

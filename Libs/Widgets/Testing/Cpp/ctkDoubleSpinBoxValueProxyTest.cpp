@@ -41,7 +41,7 @@ void getSpyReport(QSignalSpy& spy, double expectedValue)
   QCOMPARE(spy.count(), 1);
 
   QList<QVariant> arguments = spy.takeFirst(); // take the first signal
-  ctkTest::COMPARE(arguments.at(0).toDouble(), expectedValue);
+  QCOMPARE(arguments.at(0).toDouble(), expectedValue);
 }
 
 //-----------------------------------------------------------------------------
@@ -112,47 +112,52 @@ void ctkDoubleSpinBoxValueProxyTester::testSetValue_data()
 
   //---------------------------------------------------------------------------
   // Offset
-  QTest::newRow("Offset only") << 1.0 << 42.19176 << 0.1 << 0.1 << "0.10";
+  QTest::newRow("Offset only") << 1. << 42.19 << 0.1 << 0.1 << "0.10";
+  // \tbd could be improved ?
+  QTest::newRow("Precision descrepancy 3")
+    << 1. << 42.197 << 0.1 << 0.103 << "0.10";
+  QTest::newRow("Precision descrepancy 4")
+    << 1. << 42.1971 << 0.1 << 0.1029 << "0.10";
 
   QTest::newRow("Offset only: less than min")
-    << 1.0 << -42.19176 << -220.0 << -200. << "-200.00";
+    << 1. << -42.19 << -220.0 << -200. << "-200.00";
   QTest::newRow("Offset only: less than min with offset")
-    << 1.0 << -42.1976 << -190.0 << -190. << "-190.00";
+    << 1. << -42.19 << -190.0 << -190. << "-190.00";
   QTest::newRow("Offset only: more than min")
-    << 1.0 << 42.1976 << -190.0 << -190. << "-190.00";
+    << 1. << 42.19 << -190.0 << -190. << "-190.00";
   QTest::newRow("Offset only: more than min with offset")
-    << 1.0 << 42.19176 << -220.0 << -200. << "-200.00";
+    << 1. << 42.19 << -220.0 << -200. << "-200.00";
 
   QTest::newRow("Offset only: more than max")
-    << 1.0 << 42.1976 << 220.0 << 200. << "200.00";
+    << 1. << 42.19 << 220.0 << 200. << "200.00";
   QTest::newRow("Offset only: more than max with offset")
-    << 1.0 << 42.19176 << 190.0 << 190. << "190.00";
+    << 1. << 42.19 << 190.0 << 190. << "190.00";
   QTest::newRow("Offset only: less than max")
-    << 1.0 << -42.1976 << 190.0 << 190. << "190.00";
+    << 1. << -42.19 << 190.0 << 190. << "190.00";
   QTest::newRow("Offset only: less than max with offset")
-    << 1.0 << -42.19176 << 220.0 << 200. << "200.00";
+    << 1. << -42.19 << 220.0 << 200. << "200.00";
 
   //---------------------------------------------------------------------------
   // Coefficient
   QTest::newRow("Coeff only") << 5.0 << 0.0 << 0.1 << 0.1 << "0.10";
 
   QTest::newRow("Coeff only: less than min")
-    << 5.0 << 0. << -220.0 << -200. << "-200.00";
+    << 5. << 0. << -220. << -200. << "-200.00";
   QTest::newRow("Coeff only: less than min with offset")
-    << 5.0 << 0. << -190.0 << -190. << "-190.00";
+    << 5. << 0. << -190. << -190. << "-190.00";
   QTest::newRow("Coeff only: more than min")
-    << 0.5 << 0. << -190.0 << -190. << "-190.00";
+    << 0.5 << 0. << -190. << -190. << "-190.00";
   QTest::newRow("Coeff only: more than min with offset")
-    << 0.5 << 0. << -220.0 << -200. << "-200.00";
+    << 0.5 << 0. << -220. << -200. << "-200.00";
 
   QTest::newRow("Coeff only: more than max")
-    << 5. << 0. << 220.0 << 200. << "200.00";
+    << 5. << 0. << 220. << 200. << "200.00";
   QTest::newRow("Coeff only: more than max with offset")
-    << 5. << 0. << 190.0 << 190. << "190.00";
+    << 5. << 0. << 190. << 190. << "190.00";
   QTest::newRow("Coeff only: less than max")
-    << 0.5 << 0. << 190.0 << 190. << "190.00";
+    << 0.5 << 0. << 190. << 190. << "190.00";
   QTest::newRow("Coeff only: less than max with offset")
-    << 0.5 << 0. << 220.0 << 200. << "200.00";
+    << 0.5 << 0. << 220. << 200. << "200.00";
 }
 
 //-----------------------------------------------------------------------------
@@ -184,7 +189,7 @@ void ctkDoubleSpinBoxValueProxyTester::testSetDisplayedValue()
   QFETCH(double, expectedDisplayValue);
   getSpyReport(valueSpy, expectedValue);
   getSpyReport(valueStringSpy, expectedStringValue);
-  ctkTest::COMPARE(spinBox.value(), expectedValue);
+  QCOMPARE(spinBox.value(), expectedValue);
   QCOMPARE(spinBox.displayedValue(), expectedDisplayValue);
 }
 
@@ -201,12 +206,12 @@ void ctkDoubleSpinBoxValueProxyTester::testSetDisplayedValue_data()
   //---------------------------------------------------------------------------
   // Offset
   QTest::newRow("Offset only")
-    << 1.0 << 42.19176 << 0.1 << -42.09 << "-42.09" << 0.1;
+    << 1.0 << 42.19 << 0.1 << -42.09 << "-42.09" << 0.1;
 
   QTest::newRow("Offset only: less than min")
-    << 1.0 << 42.19176 << -510.0 << -200. << "-200.00" << -157.81;
+    << 1.0 << 42.19 << -510.0 << -200. << "-200.00" << -157.81;
   QTest::newRow("Offset only: more than max")
-    << 1.0 << -42.1976 << 65010.0 << 200. << "200.00" << 157.8;
+    << 1.0 << -42.19 << 65010.0 << 200. << "200.00" << 157.81;
 
   //---------------------------------------------------------------------------
   // Coefficient
@@ -233,34 +238,36 @@ void ctkDoubleSpinBoxValueProxyTester::testSetCoefficient()
 {
   ctkDoubleSpinBox spinBox;
   spinBox.setRange(-10000., 10000.);
-  spinBox.setValue(10.);
+  spinBox.setValue(10.12);
 
   ctkLinearValueProxy proxy;
   proxy.setCoefficient(10.);
   spinBox.setValueProxy(&proxy);
 
-  ctkTest::COMPARE(spinBox.value(), 10.);
-  ctkTest::COMPARE(spinBox.displayedValue(), 100.);
+  QCOMPARE(spinBox.value(), 10.12);
+  QCOMPARE(spinBox.displayedValue(), 101.2);
 
   QFETCH(double, newCoefficient);
   proxy.setCoefficient(newCoefficient);
 
+  QFETCH(double, expectedValue);
   QFETCH(double, expectedDisplayedValue);
-  ctkTest::COMPARE(spinBox.value(), 10.);
-  ctkTest::COMPARE(spinBox.displayedValue(), expectedDisplayedValue);
+  QCOMPARE(spinBox.value(), expectedValue);
+  QCOMPARE(spinBox.displayedValue(), expectedDisplayedValue);
 }
 
 //-----------------------------------------------------------------------------
 void ctkDoubleSpinBoxValueProxyTester::testSetCoefficient_data()
 {
   QTest::addColumn<double>("newCoefficient");
+  QTest::addColumn<double>("expectedValue");
   QTest::addColumn<double>("expectedDisplayedValue");
 
-  QTest::newRow("100") << 100.0 << 1000.;
-  QTest::newRow("10") << 10.0 << 100.;
-  QTest::newRow("1") << 1.0 << 10.;
-  QTest::newRow("0.10") << 0.1 << 1.;
-  QTest::newRow("-10") << -10.0 << -100.;
+  QTest::newRow("100") << 100.0 << 10.12 << 1012.;
+  QTest::newRow("10") << 10.0 << 10.12 << 101.2;
+  QTest::newRow("1") << 1.0 << 10.12 << 10.12;
+  QTest::newRow("0.10") << 0.1 << 10.1 << 1.01;
+  QTest::newRow("-10") << -10.0 << 10.12 << -101.2;
 }
 
 // ----------------------------------------------------------------------------

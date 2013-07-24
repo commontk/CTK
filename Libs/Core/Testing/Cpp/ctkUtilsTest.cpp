@@ -168,6 +168,7 @@ void ctkUtilsTester::testSignificantDecimals()
 void ctkUtilsTester::testSignificantDecimals_data()
 {
   QTest::addColumn<double>("value");
+  QTest::addColumn<int>("defaultDecimals");
   QTest::addColumn<int>("expectedDecimals");
 
   // Default decimals= -1
@@ -241,10 +242,10 @@ void ctkUtilsTester::testSignificantDecimals_data()
   QTest::newRow("inf -> 0") << std::numeric_limits<double>::infinity() << 3 << 0;
   QTest::newRow("-inf -> 0") << -std::numeric_limits<double>::infinity() << 3 << 0;
   QTest::newRow("nan -> -1") << std::numeric_limits<double>::quiet_NaN() << 3 << -1;
-  QTest::newRow("min -> 16") << std::numeric_limits<double>::min() << 3 << 16;
+  QTest::newRow("min -> 3") << std::numeric_limits<double>::min() << 3 << 3;
   QTest::newRow("max -> 0") << std::numeric_limits<double>::max() << 3 << 0;
-  QTest::newRow("denorm -> 16") << std::numeric_limits<double>::denorm_min()
-                                << 3 << 16;
+  QTest::newRow("denorm -> 3") << std::numeric_limits<double>::denorm_min()
+                                << 3 << 3;
 
 }
 

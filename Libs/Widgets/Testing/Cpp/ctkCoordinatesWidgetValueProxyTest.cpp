@@ -41,14 +41,14 @@ public:
 
   void getSpyReport(QString coordinatesString)
     {
-    ctkTest::COMPARE(AcknowledgedSignals, 1);
+    QCOMPARE(AcknowledgedSignals, 1);
     AcknowledgedSignals = 0;
 
     QStringList coordinatesList = coordinatesString.split(',');
-    ctkTest::COMPARE(coordinatesList.count(), this->Coordinates.size());
+    QCOMPARE(coordinatesList.count(), this->Coordinates.size());
     for (int i = 0; i < this->Coordinates.size(); ++i)
       {
-      ctkTest::COMPARE(this->Coordinates[i], coordinatesList[i].toDouble());
+      QCOMPARE(this->Coordinates[i], coordinatesList[i].toDouble());
       }
     this->Coordinates.clear();
     };
@@ -87,12 +87,14 @@ private slots:
 
   void testSetValue();
   void testSetValue_data();
+
+  void testPrecision();
+  void testPrecision_data();
 };
 
 //-----------------------------------------------------------------------------
 void ctkCoordinatesWidgetValueProxyTester::testSetValue()
 {
-  // Setup
   ctkCoordinatesWidget coordinatesWidget;
   coordinatesWidget.setMinimum(-200);
   coordinatesWidget.setMaximum(200);
@@ -129,47 +131,23 @@ void ctkCoordinatesWidgetValueProxyTester::testSetValue_data()
 
   //---------------------------------------------------------------------------
   // Offset
-  QTest::newRow("Offset only") << 1.0 << 42.19 << "0.1,0.2,0.3"
+  QTest::newRow("Offset only") << 1. << 42.19 << "0.1,0.2,0.3"
     << "0.1,0.2,0.3";
 
   QTest::newRow("Offset only: less than min")
-    << 1.0 << 42.19 << "-250.0,-900.0,-3000.0" << "-242.19,-242.19,-242.19";
+    << 1. << 42.19 << "-250.,-900.,-3000." << "-200,-200,-200";
   QTest::newRow("Offset only: less than min but ok with offset")
-    << 1.0 << 42.19 << "-240.3,-232.1,-200.01" << "-240.3,-232.1,-200.01";
+    << 1. << 42.19 << "-240.3,-232.1,-200.01" << "-200,-200,-200";
   QTest::newRow("Offset only: less than min with offset")
-    << 1.0 << -42.19 << "-160.15,-199.99,-159.0" << "-157.81,-157.81,-157.81";
+    << 1. << -42.19 << "-160.15,-199.99,-159." << "-160.15,-199.99,-159";
 
   QTest::newRow("Offset only: more than max with offset")
-    << 1.0 << 42.19 << "160.0,199.9,163.32" << "157.81,157.81,157.81";
+    << 1. << 42.19 << "160.,199.9,163.32" << "160,199.9,163.32";
   QTest::newRow("Offset only: more than max")
-    << 1.0 << -42.19 << "4830.0,250.01,1e6" << "242.19,242.19,242.19";
+    << 1. << -42.19 << "4830.,250.01,1e6" << "200,200,200";
   QTest::newRow("Offset only: less than max but ok with offset")
-    << 1.0 << -42.19 << "210.3,200.01,241.03" << "210.3,200.01,241.03";
+    << 1. << -42.19 << "210.3,200.01,241.03" << "200,200,200";
 
-  QTest::newRow("Offset only: max")
-    << 1.0 << 42.19
-    << coordinatesFromValue(std::numeric_limits<double>::max())
-    << "157.81,157.81,157.81";
-
-  QTest::newRow("Offset only:  min")
-    << 1.0 << 42.19
-    << coordinatesFromValue(- std::numeric_limits<double>::max())
-    << "-242.19,-242.19,-242.19";
-
-  QTest::newRow("Offset only: infinity")
-    << 1.0 << 42.19
-    << coordinatesFromValue(std::numeric_limits<double>::infinity())
-    << "157.81,157.81,157.81";
-
-  QTest::newRow("Offset only:  - infinity")
-    << 1.0 << 42.19
-    << coordinatesFromValue(- std::numeric_limits<double>::infinity())
-    << "-242.19,-242.19,-242.19";
-
-  QTest::newRow("Offset only: Nan")
-    << 1.0 << 42.19
-    << coordinatesFromValue(std::numeric_limits<double>::quiet_NaN())
-    << "157.81,157.81,157.81";
 
   //---------------------------------------------------------------------------
   // Coefficient
@@ -177,43 +155,19 @@ void ctkCoordinatesWidgetValueProxyTester::testSetValue_data()
     << "0.1,0.2,0.3";
 
   QTest::newRow("Coeff only: less than min")
-    << 5.0 << 0.0 << "-510.08,-2000,-1000000." << "-40,-40,-40";
+    << 5. << 0. << "-510.08,-2000,-1000000." << "-200,-200,-200";
   QTest::newRow("Coeff only: less than min but ok with coeff")
-    << 0.5 << 0.0 << "-250.08,-399.99,-120" << "-250.08,-399.99,-120";
+    << 0.5 << 0. << "-250.08,-399.99,-120" << "-200,-200,-120";
   QTest::newRow("Coeff only: less than min with coeff")
-    << 5.0 << 0.0<< "-42.08,-199.99,-40.01" << "-40,-40,-40";
+    << 5. << 0.<< "-42.08,-199.99,-40.01" << "-42.08,-199.99,-40.01";
 
   QTest::newRow("Coeff only: more than max with coeff")
-    << 5.0 << 0.0 << "160.08,40.01,199.99" << "40,40,40";
+    << 5. << 0. << "160.08,40.01,199.99" << "160.08,40.01,199.99";
   QTest::newRow("Coeff only: more than max")
-    << 5.0 << 0.0 << "510.08,2000,1000000." << "40,40,40";
+    << 5. << 0. << "510.08,2000,1000000." << "200,200,200";
   QTest::newRow("Offset only: more than max but ok with coeff")
-    << 0.5 << 0.0 << "380.08,399.99,200.01" << "380.08,399.99,200.01";
+    << 0.5 << 0. << "380.08,399.99,200.01" << "200,200,200";
 
-  QTest::newRow("Offset only: max")
-    << 5.0 << 0.0
-    << coordinatesFromValue(std::numeric_limits<double>::max())
-    << "40,40,40";
-
-  QTest::newRow("Offset only:  min")
-    << 5.0 << 0.0
-    << coordinatesFromValue(- std::numeric_limits<double>::max())
-    << "-40,-40,-40";
-
-  QTest::newRow("Offset only: infinity")
-    << 5.0 << 0.0
-    << coordinatesFromValue(std::numeric_limits<double>::infinity())
-    << "40,40,40";
-
-  QTest::newRow("Offset only:  - infinity")
-    << 5.0 << 0.0
-    << coordinatesFromValue(- std::numeric_limits<double>::infinity())
-    << "-40,-40,-40";
-
-  QTest::newRow("Offset only: Nan")
-    << 5.0 << 0.0
-    << coordinatesFromValue(std::numeric_limits<double>::quiet_NaN())
-    << "40,40,40";
 
   //---------------------------------------------------------------------------
   // Linear
@@ -221,43 +175,60 @@ void ctkCoordinatesWidgetValueProxyTester::testSetValue_data()
     << "0.1,0.2,0.3";
 
   QTest::newRow("Linear: less than min")
-    << 5.0 << 12.0 << "-510.08,-2000,-1000000." << "-42.4,-42.4,-42.4";
+    << 5.0 << 12.0 << "-510.08,-2000,-1000000." << "-200,-200,-200";
   QTest::newRow("Linear: less than min but ok with function")
-    << 0.5 << 12.0 << "-250.08,-411.99,-120" << "-250.08,-411.99,-120";
+    << 0.5 << 12.0 << "-250.08,-411.99,-120" << "-200,-200,-120";
   QTest::newRow("Linear: less than min with function")
-    << 5.0 << 12.0 << "-64.08,-199.99,-52.01" << "-42.4,-42.4,-42.4";
+    << 5.0 << 12.0 << "-64.08,-199.99,-52.01" << "-64.08,-199.99,-52.01";
 
   QTest::newRow("Linear: more than max with function")
-    << 5.0 << 12.0 << "64.08,189.99,37.61" << "37.6,37.6,37.6";
+    << 5.0 << 12.0 << "64.08,189.99,37.61" << "64.08,189.99,37.61";
   QTest::newRow("Linear: more than max")
-    << 5.0 << 12.0 << "200.01,900000.0,411.99" << "37.6,37.6,37.6";
-  QTest::newRow("Offset only: more than max but ok with function")
-    << 0.5 << 12.0 << "209.01,356.9,350.9" << "209.01,356.9,350.9";
+    << 5.0 << 12.0 << "200.01,900000.0,411.99" << "200,200,200";
+  QTest::newRow("Linear: more than max but ok with function")
+    << 0.5 << 12.0 << "209.01,356.9,350.9" << "200,200,200";
+}
 
-  QTest::newRow("Linear: max")
-    << 5.0 << 12.0
-    << coordinatesFromValue(std::numeric_limits<double>::max())
-    << "37.6,37.6,37.6";
+//-----------------------------------------------------------------------------
+void ctkCoordinatesWidgetValueProxyTester::testPrecision()
+{
+  ctkCoordinatesWidget coordinatesWidget;
+  coordinatesWidget.setDecimalsOption(ctkDoubleSpinBox::DecimalsByValue);
+  double coordinates[3] = {0., 0., 0.};
+  coordinatesWidget.setCoordinates(coordinates);
+  coordinatesWidget.setDecimals(3);
+  coordinatesWidget.setSingleStep(0.001);
+  coordinatesWidget.setRange(-10000., 10000.);
+  coordinatesWidget.setDecimals(3);
+  coordinatesWidget.setSingleStep(0.001);
 
-  QTest::newRow("Offset only:  min")
-    << 5.0 << 12.0
-    << coordinatesFromValue(- std::numeric_limits<double>::max())
-    << "-42.4,-42.4,-42.4";
 
-  QTest::newRow("Offset only: infinity")
-    << 5.0 << 12.0
-    << coordinatesFromValue(std::numeric_limits<double>::infinity())
-    << "37.6,37.6,37.6";
+  coordinates[0] = 1.;
+  coordinates[1] = 1.;
+  coordinates[1] = 1.;
+//  coordinatesWidget.setCoordinates(coordinates);
 
-  QTest::newRow("Offset only:  - infinity")
-    << 5.0 << 12.0
-    << coordinatesFromValue(- std::numeric_limits<double>::infinity())
-    << "-42.4,-42.4,-42.4";
+  QFETCH(double, coefficient);
 
-  QTest::newRow("Offset only: Nan")
-    << 5.0 << 12.0
-    << coordinatesFromValue(std::numeric_limits<double>::quiet_NaN())
-    << "37.6,37.6,37.6";
+  ctkLinearValueProxy proxy;
+  proxy.setCoefficient(coefficient);
+  coordinatesWidget.setValueProxy(&proxy);
+
+  coordinatesWidget.setCoordinates(coordinates);
+  coordinates[2] = 1.3;
+  coordinatesWidget.setCoordinates(coordinates);
+  const double* res = coordinatesWidget.coordinates();
+
+  QCOMPARE(coordinates[0], res[0]);
+  QCOMPARE(coordinates[1], res[1]);
+  QCOMPARE(coordinates[2], res[2]);
+}
+
+//-----------------------------------------------------------------------------
+void ctkCoordinatesWidgetValueProxyTester::testPrecision_data()
+{
+  QTest::addColumn<double>("coefficient");
+  QTest::newRow("1000000.") << 1000000.;
 }
 
 // ----------------------------------------------------------------------------

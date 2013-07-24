@@ -91,6 +91,10 @@ public:
   void setMaximum(double minimum);
   double maximum() const;
 
+  /// Set the minimum and maximum of each coordinate spinbox at once.
+  /// \sa minimum, maximum
+  void setRange(double minimum, double maximum);
+
   /// Change the normalized property. If \a normalize is true, it normalizes
   /// the current coordinates, the range of possible values is reset to [-1, 1].
   /// \sa isNormalized
@@ -120,6 +124,8 @@ public:
   void setValueProxy(ctkValueProxy* proxy);
   ctkValueProxy* valueProxy() const;
 
+  /// Return the spinbox identitfied by id
+  ctkDoubleSpinBox* spinBox(int id);
 public Q_SLOTS:
   void normalize();
 
@@ -136,7 +142,10 @@ Q_SIGNALS:
 protected Q_SLOTS:
   void updateCoordinate(double);
   void updateCoordinates();
+  void updateDecimals();
   void setTemporaryDecimals(int);
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 
 protected:
   void addSpinBox();

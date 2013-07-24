@@ -125,13 +125,7 @@ void ctkCoordinatesWidget::setMinimum(double min)
 {
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
-      item->widget()) : 0;
-    if (spinBox)
-      {
-      spinBox->setMinimum(min);
-      }
+    this->spinBox(i)->setMinimum(min);
     }
   this->Minimum = min;
 }
@@ -147,13 +141,7 @@ void ctkCoordinatesWidget::setMaximum(double max)
 {
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
-      item->widget()) : 0;
-    if (spinBox)
-      {
-      spinBox->setMaximum(max);
-      }
+    this->spinBox(i)->setMaximum(max);
     }
   this->Maximum = max;
 }
@@ -162,6 +150,17 @@ void ctkCoordinatesWidget::setMaximum(double max)
 double ctkCoordinatesWidget::maximum() const
 {
   return this->Maximum;
+}
+
+//------------------------------------------------------------------------------
+void ctkCoordinatesWidget::setRange(double min, double max)
+{
+  for (int i = 0; this->layout()->itemAt(i); ++i)
+    {
+    this->spinBox(i)->setRange(min, max);
+    }
+  this->Minimum = min;
+  this->Maximum = max;
 }
 
 //------------------------------------------------------------------------------
@@ -194,14 +193,19 @@ void ctkCoordinatesWidget::setDecimals(int newDecimals)
   this->Decimals = newDecimals;
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
-      item->widget()) : 0;
-    if (spinBox)
-      {
-      spinBox->setDecimals(newDecimals);
-      }
+    this->spinBox(i)->setDecimals(newDecimals);
     }
+}
+
+//------------------------------------------------------------------------------
+void ctkCoordinatesWidget::updateDecimals()
+{
+  int maxDecimals = 0;
+  for (int i = 0; this->layout()->itemAt(i); ++i)
+    {
+    maxDecimals = qMax(maxDecimals, this->spinBox(i)->decimals());
+    }
+  this->setTemporaryDecimals(maxDecimals);
 }
 
 //------------------------------------------------------------------------------
@@ -209,13 +213,7 @@ void ctkCoordinatesWidget::setTemporaryDecimals(int newDecimals)
 {
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
-      item->widget()) : 0;
-    if (spinBox)
-      {
-      spinBox->spinBox()->setDecimals(newDecimals);
-      }
+    this->spinBox(i)->spinBox()->setDecimals(newDecimals);
     }
 }
 
@@ -237,13 +235,7 @@ void ctkCoordinatesWidget
 {
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
-      item->widget()) : 0;
-    if (spinBox)
-      {
-      spinBox->setDecimalsOption(newDecimalsOption);
-      }
+    this->spinBox(i)->setDecimalsOption(newDecimalsOption);
     }
   this->DecimalsOption = newDecimalsOption;
 }
@@ -253,13 +245,7 @@ void ctkCoordinatesWidget::setSingleStep(double step)
 {
   for (int i = 0; this->layout()->itemAt(i); ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox = item ? qobject_cast<ctkDoubleSpinBox*>(
-      item->widget()) : 0;
-    if (spinBox)
-      {
-      spinBox->setSingleStep(step);
-      }
+    this->spinBox(i)->setSingleStep(step);
     }
   this->SingleStep = step;
 }
@@ -314,31 +300,27 @@ void ctkCoordinatesWidget::setCoordinates(double* coordinates)
     this->normalize(this->Coordinates, this->Dimension);
     }
   bool valuesModified = false;
-  int maxDecimals = 0;
   bool blocked = this->blockSignals(true);
   for (int i = 0; i < this->Dimension; ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox =
-      item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
-    if (spinBox)
+    ctkDoubleSpinBox* spinbox = this->spinBox(i);
+    if (spinbox)
       {
       // we don't want updateCoordinate() to be called.
       // it could mess with the LastUserEditedCoordinates list.
-      bool spinBoxSignalWasBlocked = spinBox->blockSignals(true);
-      if (spinBox->value() != this->Coordinates[i])
+      bool spinBoxSignalWasBlocked = spinbox->blockSignals(true);
+      if (spinbox->value() != this->Coordinates[i])
         {
         valuesModified = true;
         }
       // Still setValue needs to be called to recompute the number of decimals
       // if DecimalsByValue is set.
-      spinBox->setValue(this->Coordinates[i]);
-      spinBox->blockSignals(spinBoxSignalWasBlocked);
-      maxDecimals = qMax(maxDecimals, spinBox->decimals());
+      spinbox->setValue(this->Coordinates[i]);
+      spinbox->blockSignals(spinBoxSignalWasBlocked);
       }
     }
   this->blockSignals(blocked);
-  this->setTemporaryDecimals(maxDecimals);
+  this->updateDecimals();
   if (valuesModified)
     {
     this->updateCoordinates();
@@ -385,10 +367,7 @@ void ctkCoordinatesWidget::updateCoordinate(double coordinate)
   int element = -1;
   for (int i = 0; i < this->Dimension; ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox =
-      item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
-    if ( spinBox && spinBox == this->sender())
+    if ( this->spinBox(i) && this->spinBox(i) == this->sender())
       {
       this->Coordinates[i] = coordinate;
       element = i;
@@ -491,13 +470,7 @@ void ctkCoordinatesWidget::updateCoordinates()
 {
   for (int i = 0; i < this->Dimension; ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox =
-      item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
-    if ( spinBox)
-      {
-      this->Coordinates[i] = spinBox->value();
-      }
+    this->Coordinates[i] = this->spinBox(i)->value();
     }
   emit coordinatesChanged(this->Coordinates);
 }
@@ -557,6 +530,15 @@ double ctkCoordinatesWidget::squaredNorm(double* coordinates, int dimension)
 }
 
 //----------------------------------------------------------------------------
+ctkDoubleSpinBox* ctkCoordinatesWidget::spinBox(int i)
+{
+  QLayoutItem* item = this->layout()->itemAt(i);
+  ctkDoubleSpinBox* spinBox =
+    item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
+  return spinBox;
+}
+
+//----------------------------------------------------------------------------
 void ctkCoordinatesWidget::setValueProxy(ctkValueProxy* proxy)
 {
   if (this->Proxy.data() == proxy)
@@ -564,21 +546,60 @@ void ctkCoordinatesWidget::setValueProxy(ctkValueProxy* proxy)
     return;
     }
 
+  this->onValueProxyAboutToBeModified();
+
+  if (this->Proxy)
+    {
+    disconnect(this->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
+               this, SLOT(onValueProxyAboutToBeModified()));
+    disconnect(this->Proxy.data(), SIGNAL(proxyModified()),
+               this, SLOT(onValueProxyModified()));
+    }
+
   this->Proxy = proxy;
+
+  if (this->Proxy)
+    {
+    connect(this->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
+            this, SLOT(onValueProxyAboutToBeModified()));
+    }
+
   for (int i = 0; i < this->Dimension; ++i)
     {
-    QLayoutItem* item = this->layout()->itemAt(i);
-    ctkDoubleSpinBox* spinBox =
-      item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
-    if ( spinBox)
-      {
-      spinBox->setValueProxy(this->Proxy.data());
-      }
+    this->spinBox(i)->setValueProxy(this->Proxy.data());
     }
+
+  if (this->Proxy)
+    {
+    connect(this->Proxy.data(), SIGNAL(proxyModified()),
+            this, SLOT(onValueProxyModified()));
+    }
+  this->onValueProxyModified();
 }
 
 //----------------------------------------------------------------------------
 ctkValueProxy* ctkCoordinatesWidget::valueProxy() const
 {
   return this->Proxy.data();
+}
+
+//----------------------------------------------------------------------------
+void ctkCoordinatesWidget::onValueProxyAboutToBeModified()
+{
+  for (int i = 0; i < this->Dimension; ++i)
+    {
+    this->spinBox(i)->blockSignals(true);
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkCoordinatesWidget::onValueProxyModified()
+{
+  for (int i = 0; i < this->Dimension; ++i)
+    {
+    this->spinBox(i)->blockSignals(false);
+    }
+  // Only decimals (not range/nor value) may have change during a proxy
+  // modification.
+  this->updateDecimals();
 }

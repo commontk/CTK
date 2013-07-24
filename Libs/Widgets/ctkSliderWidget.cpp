@@ -52,6 +52,11 @@ public:
   void synchronizeSiblingDecimals(int decimals);
   bool equal(double spinBoxValue, double sliderValue)const
   {
+    if (this->Proxy)
+      {
+      spinBoxValue = this->Proxy.data()->proxyValueFromValue(spinBoxValue);
+      sliderValue = this->Proxy.data()->proxyValueFromValue(sliderValue);
+      }
     return qAbs(sliderValue - spinBoxValue) < std::pow(10., -this->SpinBox->decimals());
   }
 
@@ -407,7 +412,8 @@ void ctkSliderWidget::setSingleStep(double newStep)
   Q_D(ctkSliderWidget);
   if (!d->Slider->isValidStep(newStep))
     {
-    qWarning() << "Single step " << newStep << "is out of bounds.";
+    qWarning() << "ctkSliderWidget::setSingleStep() " << newStep << "is out of bounds." <<
+      this->minimum() << this->maximum() <<this->value();
     return;
     }
   d->SpinBox->setSingleStep(newStep);
@@ -682,9 +688,32 @@ void ctkSliderWidget::setValueProxy(ctkValueProxy* proxy)
     return;
     }
 
+  this->onValueProxyAboutToBeModified();
+
+  if (d->Proxy)
+    {
+    disconnect(d->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
+               this, SLOT(onValueProxyAboutToBeModified()));
+    disconnect(d->Proxy.data(), SIGNAL(proxyModified()),
+               this, SLOT(onValueProxyModified()));
+    }
+
   d->Proxy = proxy;
+
+  if (d->Proxy)
+    {
+    connect(d->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
+            this, SLOT(onValueProxyAboutToBeModified()));
+    }
   this->slider()->setValueProxy(proxy);
   this->spinBox()->setValueProxy(proxy);
+
+  if (d->Proxy)
+    {
+    connect(d->Proxy.data(), SIGNAL(proxyModified()),
+            this, SLOT(onValueProxyModified()));
+    }
+  this->onValueProxyModified();
 }
 
 // --------------------------------------------------------------------------
@@ -692,4 +721,21 @@ ctkValueProxy* ctkSliderWidget::valueProxy() const
 {
   Q_D(const ctkSliderWidget);
   return d->Proxy.data();
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidget::onValueProxyAboutToBeModified()
+{
+}
+
+// --------------------------------------------------------------------------
+void ctkSliderWidget::onValueProxyModified()
+{
+  Q_D(ctkSliderWidget);
+  Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
+  Q_ASSERT(d->equal(d->SpinBox->maximum(),d->Slider->maximum()));
+  // resync as the modification of proxy could have discarded decimals
+  // in the process. The slider always keeps the exact value (no rounding).
+  d->SpinBox->setValue(d->Slider->value());
+  Q_ASSERT(d->equal(d->SpinBox->value(),d->Slider->value()));
 }

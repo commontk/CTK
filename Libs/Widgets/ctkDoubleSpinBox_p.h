@@ -84,7 +84,6 @@ public:
   ctkQDoubleSpinBox* SpinBox;
   ctkDoubleSpinBox::SetMode Mode;
   int DefaultDecimals;
-  int MinimumDecimals;
   ctkDoubleSpinBox::DecimalsOptions DOption;
   bool InvertedControls;
 
@@ -108,6 +107,10 @@ public:
   /// decimals.
   /// If -1, returns the current number of decimals.
   int boundDecimals(int decimals)const;
+  /// Return the number of decimals to use to display the value.
+  /// Note that if DecimalsByValue is not set, the number of decimals to use
+  /// is DefaultDecimals.
+  int decimalsForValue(double value)const;
   /// Set the number of decimals of the spinbox and emit the signal
   /// No check if they are the same.
   void setDecimals(int dec);

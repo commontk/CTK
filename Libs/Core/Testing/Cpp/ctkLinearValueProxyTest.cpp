@@ -126,7 +126,7 @@ void ctkLinearValueProxyTester::testCoefficient_data()
   QTest::addColumn<double>("expectedProxyValue");
 
   QTest::newRow("Null coeff") << 0.0 << 0.0;
-  QTest::newRow("Very very small coeff") << 1e-26 << 0.0;
+  QTest::newRow("Very very small coeff") << 1e-26 << 1.32e-25;
   QTest::newRow("Not so small coeff") << 1e-6 << 1.32e-5;
   QTest::newRow("Normal coeff") << 2.0 << 26.4;
   QTest::newRow("Negative coeff") << -2.0 << -26.4;

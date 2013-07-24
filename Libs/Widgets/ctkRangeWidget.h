@@ -89,9 +89,7 @@ public:
   /// Description
   /// Utility function that set the min/max in once
   void setRange(double min, double max);
-  /// Description
-  /// Return the range of the slider
-  void range(double* range)const;
+  void range(double minimumAndMaximum[2])const;
 
   ///
   /// This property holds the slider and spinbox minimum value.
@@ -227,6 +225,8 @@ protected Q_SLOTS:
   void changeValues(double newMinValue, double newMaxValue);
   void changeMinimumValue(double value);
   void changeMaximumValue(double value);
+  /// A spinbox value has been modified, update the slider.
+  void setSliderValues();
   void setMinimumToMaximumSpinBox(double minimum);
   void setMaximumToMinimumSpinBox(double maximum);
   void onSliderRangeChanged(double min, double max);

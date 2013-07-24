@@ -255,6 +255,17 @@ int ctkDoubleSpinBoxPrivate::boundDecimals(int dec)const
 }
 
 //-----------------------------------------------------------------------------
+int ctkDoubleSpinBoxPrivate::decimalsForValue(double value) const
+{
+  int decimals = this->DefaultDecimals;
+  if (this->DOption & ctkDoubleSpinBox::DecimalsByValue)
+    {
+    decimals = ctk::significantDecimals(value, decimals);
+    }
+  return this->boundDecimals(decimals);
+}
+
+//-----------------------------------------------------------------------------
 void ctkDoubleSpinBoxPrivate::setValue(double value, int dec)
 {
   Q_Q(ctkDoubleSpinBox);
@@ -313,23 +324,19 @@ double ctkDoubleSpinBoxPrivate
                        QValidator::State &state, int &decimals) const
 {
   Q_Q(const ctkDoubleSpinBox);
-  //qDebug() << "input: " << input << "pos:" << pos;
   if (this->CachedText == input)
     {
     state = this->CachedState;
     decimals = this->CachedDecimals;
-    //qDebug() << "cachedText was '" << this->CachedText << "' state was "
-    //         << int(state) << " and value was " << this->CachedValue;
     return this->CachedValue;
     }
-  const double max = q->maximum();
-  const double min = q->minimum();
+  const double max = this->SpinBox->maximum();
+  const double min = this->SpinBox->minimum();
 
   int posInValue = pos;
   QString text = this->stripped(input, &posInValue);
   // posInValue can change, track the offset.
   const int oldPosInValue = posInValue;
-  //qDebug() << "text: " << text << pos;
   state = QValidator::Acceptable;
   decimals = 0;
 
@@ -424,7 +431,6 @@ double ctkDoubleSpinBoxPrivate
     }
   if (state == QValidator::Acceptable)
     {
-    //qDebug() << "Acceptable: " << text << value << ok;
     if (!ok)
       {
       state = QValidator::Invalid;
@@ -458,201 +464,8 @@ double ctkDoubleSpinBoxPrivate
   this->CachedState = state;
   this->CachedValue = value;
   this->CachedDecimals = decimals;
-  //qDebug() << "end: text is '" << this->CachedText << "' state is "
-  //         << int(state) << ", value is " << this->CachedValue
-  //         << " decimals is " << decimals
-  //         << " and pos is " << pos;
   return value;
 }
-
-/*
-//-----------------------------------------------------------------------------
-double ctkDoubleSpinBoxPrivate
-::validateAndInterpret(QString &input, int &pos,
-                       QValidator::State &state, int &decimals) const
-{
-  Q_Q(const ctkDoubleSpinBox);
-  qDebug() << "input: " << input << "pos:" << pos;
-  if (this->CachedText == input && !input.isEmpty())
-    {
-    state = this->CachedState;
-    decimals = this->CachedDecimals;
-    qDebug() << "cachedText was '" << this->CachedText << "' state was "
-             << int(state) << " and value was " << this->CachedValue;
-    return this->CachedValue;
-    }
-  const double max = q->maximum();
-  const double min = q->minimum();
-
-  QString copy = this->stripped(input, &pos);
-  qDebug() << "copy: " << copy << pos;
-  int len = copy.size();
-  double num = min;
-  const bool plus = max >= 0;
-  const bool minus = min <= 0;
-  decimals = 0;
-
-
-  switch (len)
-    {
-    case 0:
-      state = max != min ? QValidator::Intermediate : QValidator::Invalid;
-      goto end;
-      break;
-    case 1:
-      if (copy.at(0) == q->locale().decimalPoint()
-          || (plus && copy.at(0) == QLatin1Char('+'))
-          || (minus && copy.at(0) == QLatin1Char('-')))
-        {
-        state = QValidator::Intermediate;
-        goto end;
-        }
-      break;
-    case 2:
-      if (copy.at(1) == q->locale().decimalPoint()
-          && ((plus && copy.at(0) == QLatin1Char('+')) || (minus && copy.at(0) == QLatin1Char('-'))))
-        {
-        state = QValidator::Intermediate;
-        goto end;
-        }
-      break;
-    default:
-      break;
-    }
-
-  if (copy.at(0) == q->locale().groupSeparator())
-    {
-    state = QValidator::Invalid;
-    goto end;
-    }
-  else if (len > 1)
-    {
-    const int dec = copy.indexOf(q->locale().decimalPoint());
-    if (dec != -1)
-      {
-      if (dec + 1 < copy.size() && copy.at(dec + 1) == q->locale().decimalPoint() && pos == dec + 1)
-        {
-        copy.remove(dec + 1, 1); // typing a delimiter when you are on the delimiter
-        } // should be treated as typing right arrow
-      // When DecimalsByKey is set, it is possible to extend the number of decimals
-      if (!(this->DOption & ctkDoubleSpinBox::DecimalsByKey) &&
-          (copy.size() - dec > q->decimals() + 1))
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      for (int i=dec + 1; i<copy.size(); ++i)
-        {
-        if (copy.at(i).isSpace() || copy.at(i) == q->locale().groupSeparator())
-          {
-          state = QValidator::Invalid;
-          goto end;
-          }
-        }
-      decimals = copy.size() - dec - 1;
-      }
-    else
-      {
-      /// Don't accept lack of decimal point.
-      /// It could change 1.00 into 100 in 1 key stroke (delete or backspace).
-      if (this->DOption & ctkDoubleSpinBox::DecimalsByKey)
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      const QChar &last = copy.at(len - 1);
-      const QChar &secondLast = copy.at(len - 2);
-      if ((last == q->locale().groupSeparator() || last.isSpace())
-          && (secondLast == q->locale().groupSeparator() || secondLast.isSpace()))
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      else if (last.isSpace() && (!q->locale().groupSeparator().isSpace() || secondLast.isSpace()))
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      }
-    }
-
-    {
-    bool ok = false;
-    num = q->locale().toDouble(copy, &ok);
-
-    if (!ok) {
-    if (q->locale().groupSeparator().isPrint())
-      {
-      if (max < 1000 && min > -1000 && copy.contains(q->locale().groupSeparator()))
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      const int len = copy.size();
-      for (int i=0; i<len- 1; ++i)
-        {
-        if (copy.at(i) == q->locale().groupSeparator() && copy.at(i + 1) == q->locale().groupSeparator())
-          {
-          state = QValidator::Invalid;
-          goto end;
-          }
-        }
-
-      QString copy2 = copy;
-      copy2.remove(q->locale().groupSeparator());
-      num = q->locale().toDouble(copy2, &ok);
-
-      if (!ok)
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      }
-    }
-
-    if (!ok)
-      {
-      state = QValidator::Invalid;
-      }
-    else if (num >= min && num <= max)
-      {
-      state = QValidator::Acceptable;
-      }
-    else if (max == min)
-      { // when max and min is the same the only non-Invalid input is max (or min)
-      state = QValidator::Invalid;
-      }
-    else
-      {
-      if ((num >= 0 && num > max) || (num < 0 && num < min))
-        {
-        state = QValidator::Invalid;
-        }
-      else
-        {
-        state = QValidator::Intermediate;
-        }
-      }
-    }
-end:
-    if (state != QValidator::Acceptable)
-      {
-      num = max > 0 ? min : max;
-      }
-
-    input = q->prefix() + copy + q->suffix();
-    this->CachedText = input;
-    this->CachedState = state;
-    this->CachedValue = num;
-    this->CachedDecimals = decimals;
-    qDebug() << "end: text is '" << this->CachedText << "' state is "
-             << int(state) << ", value is " << this->CachedValue
-             << " decimals is " << decimals
-             << " and pos is " << pos;
-
-    return num;
-}
-*/
 
 //-----------------------------------------------------------------------------
 void ctkDoubleSpinBoxPrivate::onValueChanged()
@@ -676,9 +489,18 @@ void ctkDoubleSpinBoxPrivate::onValueProxyAboutToBeModified()
 void ctkDoubleSpinBoxPrivate::onValueProxyModified()
 {
   Q_Q(ctkDoubleSpinBox);
+  int decimals = q->decimals();
+  bool wasBlocking = q->blockSignals(true);
   q->setRange(this->SpinBox->property("inputMinimum").toDouble(),
               this->SpinBox->property("inputMaximum").toDouble());
   q->setValue(this->SpinBox->property("inputValue").toDouble());
+  q->value();
+  q->blockSignals(wasBlocking);
+  // only decimals can change when value proxy is modified.
+  if (decimals != q->decimals())
+    {
+    emit q->decimalsChanged(q->decimals());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -709,7 +531,7 @@ double ctkDoubleSpinBox::value() const
   double val = d->SpinBox->value();
   if (d->Proxy)
     {
-    val = this->round(d->Proxy.data()->valueFromProxyValue(val));
+    val = d->Proxy.data()->valueFromProxyValue(val);
     }
   return val;
 }
@@ -856,11 +678,13 @@ double ctkDoubleSpinBox::minimum() const
 {
   Q_D(const ctkDoubleSpinBox);
   double min = d->SpinBox->minimum();
+  double max = d->SpinBox->maximum();
   if (d->Proxy)
     {
     min = d->Proxy.data()->valueFromProxyValue(min);
+    max = d->Proxy.data()->valueFromProxyValue(max);
     }
-  return min;
+  return qMin(min, max);
 }
 
 //-----------------------------------------------------------------------------
@@ -884,12 +708,14 @@ void ctkDoubleSpinBox::setMinimum(double newMin)
 double ctkDoubleSpinBox::maximum() const
 {
   Q_D(const ctkDoubleSpinBox);
+  double min = d->SpinBox->minimum();
   double max = d->SpinBox->maximum();
   if (d->Proxy)
     {
+    min = d->Proxy.data()->valueFromProxyValue(min);
     max = d->Proxy.data()->valueFromProxyValue(max);
     }
-  return max;
+  return qMax(min, max);
 }
 
 //-----------------------------------------------------------------------------
@@ -951,7 +777,15 @@ void ctkDoubleSpinBox::setDecimals(int dec)
     }
 
   d->DefaultDecimals = dec;
-  d->setDecimals(d->DefaultDecimals);
+  // The number of decimals may or may not depend on the value. Recompute the
+  // new number of decimals.
+  double value = this->value();
+  if (d->Proxy)
+    {
+    value = d->Proxy.data()->proxyValueFromValue(value);
+    }
+  int newDecimals = d->decimalsForValue(value);
+  d->setDecimals(newDecimals);
 }
 
 //-----------------------------------------------------------------------------
@@ -993,27 +827,17 @@ void ctkDoubleSpinBox::setValue(double value)
 void ctkDoubleSpinBox::setValueIfDifferent(double newValue)
 {
   Q_D(ctkDoubleSpinBox);
-  bool set = false;
-  double proxyValue = newValue;
+  double newValueToDisplay = newValue;
   if (d->Proxy)
     {
-    proxyValue = d->Proxy.data()->proxyValueFromValue(proxyValue);
+    newValueToDisplay = d->Proxy.data()->proxyValueFromValue(newValueToDisplay);
     }
 
-  if (d->DOption & ctkDoubleSpinBox::DecimalsByValue)
+  int newValueDecimals = d->decimalsForValue(newValueToDisplay);
+  if (d->SpinBox->value() != d->round(newValueToDisplay, newValueDecimals)
+      || d->SpinBox->decimals() != newValueDecimals)
     {
-    int newValueDecimals =
-      ctk::significantDecimals(proxyValue, d->DefaultDecimals);
-    set = this->value() != d->round(proxyValue, newValueDecimals)
-      || d->SpinBox->decimals() != newValueDecimals;
-    }
-  else
-    {
-    set = !d->compare(this->value(), proxyValue);
-    }
-  if (set)
-    {
-    // Pass newValue and not proxyValue as setValueAlways also computes the
+    // Pass newValue and not newValueToDisplay as setValueAlways also computes the
     // proxyValue from the given value
     this->setValueAlways(newValue);
     }
@@ -1028,12 +852,7 @@ void ctkDoubleSpinBox::setValueAlways(double value)
     value = d->Proxy.data()->proxyValueFromValue(value);
     }
 
-  int decimals = -1;
-  if (d->DOption & ctkDoubleSpinBox::DecimalsByValue)
-    {
-    decimals = ctk::significantDecimals(value, d->DefaultDecimals);
-    }
-
+  int decimals = d->decimalsForValue(value);
   d->setValue(value, decimals);
 }
 

@@ -43,6 +43,8 @@ class ctkValueProxy;
 class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
 {
   Q_OBJECT
+  Q_FLAGS(SynchronizeSiblings)
+
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
@@ -53,8 +55,7 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
   Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
-  Q_FLAGS(SynchronizeSiblings)
-  Q_PROPERTY(SynchronizeSiblings SynchronizeSibling READ synchronizeSiblings WRITE setSynchronizeSiblings)
+  Q_PROPERTY(SynchronizeSiblings synchronizeSiblings READ synchronizeSiblings WRITE setSynchronizeSiblings)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(bool spinBoxVisible READ isSpinBoxVisible WRITE setSpinBoxVisible);
@@ -295,6 +296,8 @@ protected Q_SLOTS:
   void stopChanging();
   void setSpinBoxValue(double sliderValue);
   void setSliderValue(double spinBoxValue);
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
