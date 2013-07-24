@@ -24,7 +24,6 @@
 
 #include "ctkXnatServer.h"
 #include <QVariant>
-#include <QDebug>
 
 ctkXnatObject::~ctkXnatObject()
 {
@@ -86,12 +85,23 @@ void ctkXnatObject::reset()
   Q_D(ctkXnatObject);
   //d->properties.clear();
   d->children.clear();
+  d->fetched = false;
+}
+
+bool ctkXnatObject::isFetched() const
+{
+  Q_D(const ctkXnatObject);
+  return d->fetched;
 }
 
 void ctkXnatObject::fetch()
 {
-  this->reset();
-  this->fetchImpl();
+  Q_D(ctkXnatObject);
+  if (!d->fetched)
+  {
+    this->fetchImpl();
+    d->fetched = true;
+  }
 }
 
 void ctkXnatObject::download(const QString& /*zipFilename*/)

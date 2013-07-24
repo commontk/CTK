@@ -49,6 +49,8 @@ private:
   QList<QSharedPointer<ctkXnatObject> > children;
   QMap<QString,QString> properties;
 
+  bool fetched;
+
   QWeakPointer<ctkXnatObject> parent;
 };
 

@@ -47,6 +47,7 @@
 class ctkXnatConnectionPrivate
 {
 public:
+  QString profileName;
   QString url;
   QString userName;
   QString password;
@@ -94,6 +95,19 @@ void ctkXnatConnection::progress(QUuid queryId, double progress)
   qDebug() << "progress:" << (progress * 100.0) << "%";
 }
 
+QString ctkXnatConnection::profileName() const
+{
+  Q_D(const ctkXnatConnection);
+  return d->profileName;
+}
+
+void ctkXnatConnection::setProfileName(const QString& profileName)
+{
+  Q_D(ctkXnatConnection);
+  d->profileName = profileName;
+  d->server->setProperty("name", profileName);
+}
+
 QString ctkXnatConnection::url() const
 {
   Q_D(const ctkXnatConnection);
@@ -105,6 +119,7 @@ void ctkXnatConnection::setUrl(const QString& url)
   Q_D(ctkXnatConnection);
   d->url = url;
   d->xnat->setServerUrl(d->url);
+  d->server->setProperty("ID", url);
 }
 
 QString ctkXnatConnection::userName() const

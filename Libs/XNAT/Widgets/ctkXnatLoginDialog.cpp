@@ -186,6 +186,7 @@ void ctkXnatLoginDialog::accept()
     {
     d->Connection = d->Factory.makeConnection(url.toAscii().constData(), userName.toAscii().constData(),
                                         password.toAscii().constData());
+    d->Connection->setProfileName(ui->edtProfileName->text());
     }
   catch (ctkXnatException& e)
     {

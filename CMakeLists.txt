@@ -593,6 +593,10 @@ ctk_app_option(ctkXNATBrowser
                "Build the XNAT Browser application" OFF
                CTK_BUILD_EXAMPLES)
 
+ctk_app_option(ctkXnatTreeBrowser
+               "Build the XNAT Tree Browser application" OFF
+               CTK_BUILD_EXAMPLES)
+
 # Save the set of enabled apps in a cache file
 set(_enabled_apps)
 foreach(_app ${CTK_APPS})

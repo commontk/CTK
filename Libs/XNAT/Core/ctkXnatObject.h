@@ -55,6 +55,8 @@ public:
 
   void addChild(Pointer& child);
 
+  bool isFetched() const;
+
   virtual void reset();
   void fetch();
 

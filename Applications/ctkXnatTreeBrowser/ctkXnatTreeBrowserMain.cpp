@@ -19,15 +19,19 @@
 
 =============================================================================*/
 
-#include "ctkXnatObjectPrivate.h"
+// Qt includes
+#include <QApplication>
 
-#include <QString>
+#include "ctkXnatTreeBrowserMainWindow.h"
 
-ctkXnatObjectPrivate::ctkXnatObjectPrivate()
-: fetched(false)
+int main(int argc, char** argv)
 {
-}
+  QApplication myApp(argc, argv);
+  myApp.setOrganizationName("CommonTK");
+  myApp.setApplicationName("XnatTreeBrowser");
 
-ctkXnatObjectPrivate::~ctkXnatObjectPrivate()
-{
+  ctkXnatTreeBrowserMainWindow mainWindow;
+  mainWindow.show();
+
+  return myApp.exec();
 }

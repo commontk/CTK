@@ -19,15 +19,40 @@
 
 =============================================================================*/
 
-#include "ctkXnatObjectPrivate.h"
+#ifndef CTKXNATTREEBROWSERMAINWINDOW_H
+#define CTKXNATTREEBROWSERMAINWINDOW_H
 
-#include <QString>
+#include <QMainWindow>
 
-ctkXnatObjectPrivate::ctkXnatObjectPrivate()
-: fetched(false)
-{
+class QModelIndex;
+
+#include "ctkXnatConnectionFactory.h"
+
+class ctkXnatConnection;
+class ctkXnatTreeModel;
+
+namespace Ui {
+class ctkXnatTreeBrowserMainWindow;
 }
 
-ctkXnatObjectPrivate::~ctkXnatObjectPrivate()
+class ctkXnatTreeBrowserMainWindow : public QMainWindow
 {
-}
+  Q_OBJECT
+
+public:
+  explicit ctkXnatTreeBrowserMainWindow(QWidget *parent = 0);
+  ~ctkXnatTreeBrowserMainWindow();
+
+private Q_SLOTS:
+
+  void loginButtonPushed();
+
+private:
+  Ui::ctkXnatTreeBrowserMainWindow* ui;
+
+  ctkXnatConnection* xnatConnection;
+  ctkXnatTreeModel* treeModel;
+  ctkXnatConnectionFactory xnatConnectionFactory;
+};
+
+#endif

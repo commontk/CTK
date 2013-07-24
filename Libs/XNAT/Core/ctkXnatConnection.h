@@ -59,6 +59,9 @@ public:
 
   void createConnections();
 
+  QString profileName() const;
+  void setProfileName(const QString& profileName);
+
   QString url() const;
   void setUrl(const QString& url);
 

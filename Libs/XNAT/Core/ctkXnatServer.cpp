@@ -64,7 +64,7 @@ void ctkXnatServer::fetchImpl()
   Q_D(ctkXnatObject);
   qDebug() << "Starting to fetch projects...";
   ctkXnatObject::Pointer self = d->selfPtr;
-  return getConnection()->fetch(self.staticCast<ctkXnatServer>());
+  this->getConnection()->fetch(self.staticCast<ctkXnatServer>());
 }
 
 ctkXnatConnection* ctkXnatServer::getConnection() const
