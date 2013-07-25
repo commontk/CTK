@@ -22,34 +22,75 @@
 #include "ctkXnatScanFolder.h"
 
 #include "ctkXnatConnection.h"
-#include "ctkXnatExperiment.h"
-#include "ctkXnatScan.h"
+#include "ctkXnatObjectPrivate.h"
 
-ctkXnatScanFolder::ctkXnatScanFolder(ctkXnatObject* parent)
-: ctkXnatObject(parent)
+
+class ctkXnatScanFolderPrivate : public ctkXnatObjectPrivate
 {
+public:
+
+  ctkXnatScanFolderPrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
+
+  void reset()
+  {
+    uri.clear();
+  }
+  
+  QString uri;
+};
+
+
+ctkXnatScanFolder::ctkXnatScanFolder()
+: ctkXnatObject(new ctkXnatScanFolderPrivate())
+{
+  this->setProperty("ID", "Scans");
+}
+
+ctkXnatScanFolder::Pointer ctkXnatScanFolder::Create()
+{
+  Pointer experiment(new ctkXnatScanFolder());
+  experiment->d_func()->selfPtr = experiment;
+  return experiment;
 }
 
 ctkXnatScanFolder::~ctkXnatScanFolder()
 {
 }
 
-void ctkXnatScanFolder::fetch(ctkXnatConnection* connection)
+const QString& ctkXnatScanFolder::uri() const
 {
-  connection->fetch(this);
+  Q_D(const ctkXnatScanFolder);
+  return d->uri;
 }
 
-void ctkXnatScanFolder::download(ctkXnatConnection* connection, const QString& zipFileName)
+void ctkXnatScanFolder::setUri(const QString& uri)
 {
-  connection->downloadScanFiles(dynamic_cast<ctkXnatExperiment*>(getParent()), zipFileName);
+  Q_D(ctkXnatScanFolder);
+  d->uri = uri;
 }
 
-QString ctkXnatScanFolder::getKind() const
+void ctkXnatScanFolder::reset()
 {
-  return "scan";
+  Q_D(ctkXnatScanFolder);
+  ctkXnatObject::reset();
 }
 
-bool ctkXnatScanFolder::holdsFiles() const
+void ctkXnatScanFolder::fetchImpl()
 {
-  return true;
+  Q_D(ctkXnatScanFolder);
+  ctkXnatObject::Pointer self = d->selfPtr;
+  this->getConnection()->fetch(self.staticCast<ctkXnatScanFolder>());
 }
+
+void ctkXnatScanFolder::remove()
+{
+  //connection->remove(this);
+}
+
+// void ctkXnatScanFolder::download(ctkXnatConnection* connection, const QString& zipFileName)
+// {
+//   connection->downloadScanFiles(dynamic_cast<ctkXnatExperiment*>(getParent()), zipFileName);
+// }

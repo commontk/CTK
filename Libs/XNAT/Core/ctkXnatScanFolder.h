@@ -27,21 +27,33 @@
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
+class ctkXnatScanFolderPrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatScanFolder : public ctkXnatObject
 {
-  Q_OBJECT
 
 public:
-  explicit ctkXnatScanFolder(ctkXnatObject* parent = 0);
+  
+  typedef QSharedPointer<ctkXnatScanFolder> Pointer;
+  typedef QWeakPointer<ctkXnatScanFolder> WeakPointer;
+  
+  static Pointer Create();
   virtual ~ctkXnatScanFolder();
-
-  virtual void fetch(ctkXnatConnection* connection);
-
-  void download(ctkXnatConnection* connection, const QString& zipFilename);
-
-  virtual QString getKind() const;
-  virtual bool holdsFiles() const;
+  
+  const QString& uri() const;
+  void setUri(const QString& uri);
+  
+  virtual void reset();
+  virtual void remove();
+  
+private:
+  
+  friend class qRestResult;
+  explicit ctkXnatScanFolder();
+  virtual void fetchImpl();
+  
+  Q_DECLARE_PRIVATE(ctkXnatScanFolder);
+  Q_DISABLE_COPY(ctkXnatScanFolder);
 };
 
 #endif

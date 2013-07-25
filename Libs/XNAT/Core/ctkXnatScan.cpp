@@ -22,113 +22,41 @@
 #include "ctkXnatScan.h"
 
 #include "ctkXnatConnection.h"
-#include "ctkXnatScanResource.h"
+#include "ctkXnatObjectPrivate.h"
+// #include "ctkXnatScanResource.h"
 
-class ctkXnatScanPrivate
+class ctkXnatScanPrivate : public ctkXnatObjectPrivate
 {
 public:
-  QString imageScanId;
-  QString id;
-  QString type;
-  QString quality;
-  QString xsiType;
-  QString note;
-  QString seriesDescription;
+
+  ctkXnatScanPrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
+
+  void reset()
+  {
+    uri.clear();
+  }
+  
   QString uri;
 };
 
-ctkXnatScan::ctkXnatScan(ctkXnatObject* parent)
-: ctkXnatObject(parent)
-, d_ptr(new ctkXnatScanPrivate())
+
+ctkXnatScan::ctkXnatScan()
+: ctkXnatObject(new ctkXnatScanPrivate())
 {
+}
+
+ctkXnatScan::Pointer ctkXnatScan::Create()
+{
+  Pointer experiment(new ctkXnatScan());
+  experiment->d_func()->selfPtr = experiment;
+  return experiment;
 }
 
 ctkXnatScan::~ctkXnatScan()
 {
-}
-
-const QString& ctkXnatScan::imageScanId() const
-{
-  Q_D(const ctkXnatScan);
-  return d->imageScanId;
-}
-
-void ctkXnatScan::setImageScanId(const QString& imageScanId)
-{
-  Q_D(ctkXnatScan);
-  d->imageScanId = imageScanId;
-}
-
-const QString& ctkXnatScan::id() const
-{
-  Q_D(const ctkXnatScan);
-  return d->id;
-}
-
-void ctkXnatScan::setId(const QString& id)
-{
-  Q_D(ctkXnatScan);
-  d->id = id;
-}
-
-const QString& ctkXnatScan::type() const
-{
-  Q_D(const ctkXnatScan);
-  return d->type;
-}
-
-void ctkXnatScan::setType(const QString& type)
-{
-  Q_D(ctkXnatScan);
-  d->type = type;
-}
-
-const QString& ctkXnatScan::quality() const
-{
-  Q_D(const ctkXnatScan);
-  return d->quality;
-}
-
-void ctkXnatScan::setQuality(const QString& quality)
-{
-  Q_D(ctkXnatScan);
-  d->quality = quality;
-}
-
-const QString& ctkXnatScan::xsiType() const
-{
-  Q_D(const ctkXnatScan);
-  return d->xsiType;
-}
-
-void ctkXnatScan::setXsiType(const QString& xsiType)
-{
-  Q_D(ctkXnatScan);
-  d->xsiType = xsiType;
-}
-
-const QString& ctkXnatScan::note() const
-{
-  Q_D(const ctkXnatScan);
-  return d->note;
-}
-
-void ctkXnatScan::setNote(const QString& note)
-{
-  Q_D(ctkXnatScan);
-  d->note = note;
-}
-
-const QString& ctkXnatScan::seriesDescription() const
-{
-  Q_D(const ctkXnatScan);
-  return d->seriesDescription;
-}
-
-void ctkXnatScan::setSeriesDescription(const QString& seriesDescription)
-{
-  Q_D(ctkXnatScan);
-  d->seriesDescription = seriesDescription;
 }
 
 const QString& ctkXnatScan::uri() const
@@ -143,22 +71,25 @@ void ctkXnatScan::setUri(const QString& uri)
   d->uri = uri;
 }
 
-void ctkXnatScan::fetch(ctkXnatConnection* connection)
+void ctkXnatScan::reset()
 {
-  connection->fetch(this);
+  Q_D(ctkXnatScan);
+  ctkXnatObject::reset();
 }
 
-void ctkXnatScan::download(ctkXnatConnection* connection, const QString& zipFileName)
+void ctkXnatScan::fetchImpl()
 {
-  connection->download(this, zipFileName);
+  Q_D(ctkXnatScan);
+  ctkXnatObject::Pointer self = d->selfPtr;
+  this->getConnection()->fetch(self.staticCast<ctkXnatScan>());
 }
 
-QString ctkXnatScan::getKind() const
+void ctkXnatScan::remove()
 {
-  return "resource";
+  //connection->remove(this);
 }
 
-bool ctkXnatScan::holdsFiles() const
-{
-  return true;
-}
+// void ctkXnatScan::download(ctkXnatConnection* connection, const QString& zipFileName)
+// {
+//   connection->download(this, zipFileName);
+// }

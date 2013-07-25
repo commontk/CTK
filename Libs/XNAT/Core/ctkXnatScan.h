@@ -33,43 +33,25 @@ class CTK_XNAT_CORE_EXPORT ctkXnatScan : public ctkXnatObject
 {
 
 public:
-  explicit ctkXnatScan(ctkXnatObject* parent = 0);
+
+  typedef QSharedPointer<ctkXnatScan> Pointer;
+  typedef QWeakPointer<ctkXnatScan> WeakPointer;
+  
+  static Pointer Create();
   virtual ~ctkXnatScan();
-
-  const QString& imageScanId() const;
-  void setImageScanId(const QString& imageScanId);
-
-  const QString& id() const;
-  void setId(const QString& id);
-
-  const QString& type() const;
-  void setType(const QString& type);
-
-  const QString& quality() const;
-  void setQuality(const QString& quality);
-
-  const QString& xsiType() const;
-  void setXsiType(const QString& xsiType);
-
-  const QString& note() const;
-  void setNote(const QString& note);
-
-  const QString& seriesDescription() const;
-  void setSeriesDescription(const QString& seriesDescription);
-
+  
   const QString& uri() const;
   void setUri(const QString& uri);
-
-  virtual void fetch(ctkXnatConnection* connection);
-
-  virtual void download(ctkXnatConnection* connection, const QString& zipFilename);
-
-  virtual QString getKind() const;
-  virtual bool holdsFiles() const;
-
+  
+  virtual void reset();
+  virtual void remove();
+  
 private:
-  QScopedPointer<ctkXnatScanPrivate> d_ptr;
-
+  
+  friend class qRestResult;
+  explicit ctkXnatScan();
+  virtual void fetchImpl();
+  
   Q_DECLARE_PRIVATE(ctkXnatScan);
   Q_DISABLE_COPY(ctkXnatScan);
 };

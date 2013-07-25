@@ -77,8 +77,8 @@ public:
   void fetch(const QSharedPointer<ctkXnatProject>& project);
   void fetch(const QSharedPointer<ctkXnatSubject>& subject);
   void fetch(const QSharedPointer<ctkXnatExperiment>& experiment);
-//  void fetch(ctkXnatScanFolder* scanFolder);
-//  void fetch(ctkXnatScan* scan);
+  void fetch(const QSharedPointer<ctkXnatScanFolder>& scanFolder);
+  void fetch(const QSharedPointer<ctkXnatScan>& scan);
 //  void fetch(ctkXnatScanResource* scanResource);
 //  void fetch(ctkXnatReconstructionFolder* reconstructionFolder);
 //  void fetch(ctkXnatReconstruction* reconstruction);

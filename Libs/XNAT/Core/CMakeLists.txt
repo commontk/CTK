@@ -14,14 +14,14 @@ set(KIT_SRCS
   ctkXnatObject.cpp
   ctkXnatObjectPrivate.cpp
   ctkXnatProject.cpp
+  ctkXnatScan.cpp
+  ctkXnatScanFolder.cpp
+  #ctkXnatScanResource.cpp
+  #ctkXnatScanResourceFile.cpp
   #ctkXnatReconstruction.cpp
   #ctkXnatReconstructionFolder.cpp
   #ctkXnatReconstructionResource.cpp
   #ctkXnatReconstructionResourceFile.cpp
-  #ctkXnatScan.cpp
-  #ctkXnatScanFolder.cpp
-  #ctkXnatScanResource.cpp
-  #ctkXnatScanResourceFile.cpp
   ctkXnatServer.cpp
   ctkXnatSettings.cpp
   ctkXnatSubject.cpp

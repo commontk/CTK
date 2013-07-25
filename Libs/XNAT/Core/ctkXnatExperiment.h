@@ -29,29 +29,25 @@
 class ctkXnatConnection;
 class ctkXnatExperimentPrivate;
 
-
 class CTK_XNAT_CORE_EXPORT ctkXnatExperiment : public ctkXnatObject
 {
-
+  
 public:
-
+  
   typedef QSharedPointer<ctkXnatExperiment> Pointer;
   typedef QWeakPointer<ctkXnatExperiment> WeakPointer;
   
   static Pointer Create();
   virtual ~ctkXnatExperiment();
-
-  const QString& project() const;
-  void setProject(const QString& project);
-
+  
   const QString& uri() const;
   void setUri(const QString& uri);
-
+  
   virtual void reset();
   virtual void remove();
-
+  
 private:
-
+  
   friend class qRestResult;
   explicit ctkXnatExperiment();
   virtual void fetchImpl();

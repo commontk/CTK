@@ -232,111 +232,87 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatExperiment>& experimen
   const QString& projectName = project->getId();
 
   Q_D(ctkXnatConnection);
+  
+  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans").arg(projectName, subjectName, experimentName);
+  QUuid queryId = d->xnat->get(query);
+  qRestResult* restResult = d->xnat->takeResult(queryId);
+  
+  QList<ctkXnatScan*> scans = restResult->results<ctkXnatScan>();
+  
+  if (scans.size() > 0)
+  {
+    ctkXnatObject::Pointer ptr = ctkXnatScanFolder::Create();
+    ptr->d_func()->selfPtr = ptr;
+    // experiment->addChild("Scan", scanFolder);
+    experiment->addChild(ptr);
+  }
+  
+  /** The reconstruction scans are not supported by XNAT so we don't fetch them
 
+      query = QString("/REST/projects/%1/subjects/%2/experiments/%3/reconstructions").arg(projectName, subjectName, experimentName);
+      queryId = d->xnat->get(query);
+      restResult = d->xnat->takeResult(queryId);
+      QList<ctkXnatReconstruction*> rconstructions = restResult->results<ctkXnatReconstruction>();
+      if (reconstructions.size() > 0)
+      {
+        ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder(experiment);
+        experiment->addChild("Reconstruction", reconstructionFolder);
+      }
+  */
+
+  delete restResult;
+}
+
+void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanFolder>& scanFolder)
+{
+  ctkXnatObject::Pointer experiment = scanFolder->getParent();
+  const QString& experimentName = experiment->getId();
+  ctkXnatObject::Pointer subject = experiment->getParent();
+  const QString& subjectName = subject->getId();
+  ctkXnatObject::Pointer project = subject->getParent();
+  const QString& projectName = project->getId();
+  
+  Q_D(ctkXnatConnection);
+  
   QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans").arg(projectName, subjectName, experimentName);
   QUuid queryId = d->xnat->get(query);
   qRestResult* restResult = d->xnat->takeResult(queryId);
 
-//  QList<ctkXnatExperiment*> scans = restResult->results<ctkXnatScan>();
-
-
-//  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans").arg(projectName, subjectName, experimentName);
-//  QList<QVariantMap> result;
-//  bool success = d->xnat->sync(d->xnat->get(query), result);
-//  if (!success)
-//  {
-//    throw ctkXnatException("Error occurred while retrieving scan list from XNAT.");
-//  }
-
-//  int scanNumber = result.size();
-
-//  query = QString("/REST/projects/%1/subjects/%2/experiments/%3/reconstructions").arg(projectName, subjectName, experimentName);
-//  success = d->xnat->sync(d->xnat->get(query), result);
-//  if (!success)
-//  {
-//    throw ctkXnatException("Error occurred while retrieving reconstruction list from XNAT.");
-//  }
-
-//  int reconstructionNumber = result.size();
-
-//  if (scanNumber > 0)
-//  {
-//    ctkXnatScanFolder* scanFolder = new ctkXnatScanFolder(experiment);
-//    experiment->addChild("Scan", scanFolder);
-//  }
-
-//  if (reconstructionNumber > 0)
-//  {
-//    ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder(experiment);
-//    experiment->addChild("Reconstruction", reconstructionFolder);
-//  }
-
-
+  QList<ctkXnatScan*> scans = restResult->results<ctkXnatScan>();
+  
+  foreach (ctkXnatScan* scan, scans)
+  {
+    ctkXnatObject::Pointer ptr(scan);
+    ptr->d_func()->selfPtr = ptr;
+    scanFolder->addChild(ptr);
+  }
+  
+  delete restResult;
+  
 }
 
-//void ctkXnatConnection::fetch(ctkXnatScanFolder* scanFolder)
-//{
-//  ctkXnatObject* experiment = scanFolder->getParent();
-//  const QString& experimentName = experiment->getName();
-//  ctkXnatObject* subject = experiment->getParent();
-//  const QString& subjectName = subject->getName();
-//  ctkXnatObject* project = subject->getParent();
-//  const QString& projectName = project->getName();
-
-//  Q_D(ctkXnatConnection);
-
-//  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans").arg(projectName, subjectName, experimentName);
-//  QList<QVariantMap> result;
-//  bool success = d->xnat->sync(d->xnat->get(query), result);
-//  if (!success)
-//  {
-//    throw ctkXnatException("Error occurred while retrieving scan list from XNAT.");
-//  }
-
-//  foreach (QVariantMap map, result)
-//  {
-//    ctkXnatScan* scan = new ctkXnatScan(scanFolder);
-//    QString scanID = map["ID"].toString();
-//    scanFolder->addChild(scanID, scan);
-//  }
-////  QUuid queryId = d->xnat->get(query);
-////  qRestResult* restResult = d->xnat->takeResult(queryId);
-////  QList<ctkXnatScan*> scans = restResult->results<ctkXnatScan>();
-////
-////  foreach (ctkXnatScan* scan, scans)
-////  {
-////    experiment->addChild(scan->id(), scan);
-////  }
-////  delete restResult;
-//}
-
-//void ctkXnatConnection::fetch(ctkXnatScan* scan)
-//{
-//  const QString& scanName = scan->getName();
-//  ctkXnatObject* experiment = scan->getParent()->getParent();
-//  const QString& experimentName = experiment->getName();
-//  ctkXnatObject* subject = experiment->getParent();
-//  const QString& subjectName = subject->getName();
-//  ctkXnatObject* project = subject->getParent();
-//  const QString& projectName = project->getName();
-
-//  Q_D(ctkXnatConnection);
-
-//  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans/%4/resources").arg(projectName, subjectName, experimentName, scanName);
-//  QList<QVariantMap> result;
-//  bool success = d->xnat->sync(d->xnat->get(query), result);
-//  if (!success)
-//  {
-//    throw ctkXnatException("Error occurred while retrieving scan resource list from XNAT.");
-//  }
-
-//  foreach (QVariantMap map, result)
-//  {
-//    QString scanResourceLabel = map["label"].toString();
-//    ctkXnatScanResource* scanResource = new ctkXnatScanResource(scan);
-//    scan->addChild(scanResourceLabel, scanResource);
-//  }
-//}
+void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScan>& scan)
+{
+  const QString& scanName = scan->getId();
+  ctkXnatObject::Pointer experiment = scan->getParent()->getParent();
+  const QString& experimentName = experiment->getId();
+  ctkXnatObject::Pointer subject = experiment->getParent();
+  const QString& subjectName = subject->getId();
+  ctkXnatObject::Pointer project = subject->getParent();
+  const QString& projectName = project->getId();
+  
+  Q_D(ctkXnatConnection);
+  
+  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans/%4/resources").arg(projectName, subjectName, experimentName, scanName);
+  // QList<ctkXnatScanResource*> resources = restResult->results<ctkXnatScanResource>();
+  
+  // foreach (resource, resources)
+  // {
+  //   ctkXnatObject::Pointer ptr(resource);
+  //   ptr->d_func()->selfPtr = ptr;
+  //   scan->addChild(ptr);
+  // }
+}
 
 //void ctkXnatConnection::fetch(ctkXnatScanResource* scanResource)
 //{
@@ -368,90 +344,98 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatExperiment>& experimen
 //  }
 //}
 
-//void ctkXnatConnection::fetch(ctkXnatReconstructionFolder* reconstructionFolder)
-//{
-//  ctkXnatObject* experiment = reconstructionFolder->getParent();
-//  const QString& experimentName = experiment->getName();
-//  ctkXnatObject* subject = experiment->getParent();
-//  const QString& subjectName = subject->getName();
-//  ctkXnatObject* project = subject->getParent();
-//  const QString& projectName = project->getName();
 
-//  Q_D(ctkXnatConnection);
 
-//  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/reconstructions").arg(projectName, subjectName, experimentName);
-//  QList<QVariantMap> result;
-//  bool success = d->xnat->sync(d->xnat->get(query), result);
-//  if (!success)
-//  {
-//    throw ctkXnatException("Error occurred while retrieving reconstruction list from XNAT.");
-//  }
+  /** The reconstruction scans are not supported by XNAT so we don't fetch them
 
-//  foreach (QVariantMap map, result)
-//  {
-//    QString reconstructionID = map["ID"].toString();
-//    ctkXnatReconstruction* reconstruction = new ctkXnatReconstruction(reconstructionFolder);
-//    reconstructionFolder->addChild(reconstructionID, reconstruction);
-//  }
-//}
+      void ctkXnatConnection::fetch(ctkXnatReconstructionFolder* reconstructionFolder)
+      {
+      ctkXnatObject* experiment = reconstructionFolder->getParent();
+      const QString& experimentName = experiment->getName();
+      ctkXnatObject* subject = experiment->getParent();
+      const QString& subjectName = subject->getName();
+      ctkXnatObject* project = subject->getParent();
+      const QString& projectName = project->getName();
 
-//void ctkXnatConnection::fetch(ctkXnatReconstruction* reconstruction)
-//{
-//  const QString& reconstructionName = reconstruction->getName();
-//  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
-//  const QString& experimentName = experiment->getName();
-//  ctkXnatObject* subject = experiment->getParent();
-//  const QString& subjectName = subject->getName();
-//  ctkXnatObject* project = subject->getParent();
-//  const QString& projectName = project->getName();
+      Q_D(ctkXnatConnection);
 
-//  Q_D(ctkXnatConnection);
+      QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/reconstructions").arg(projectName, subjectName, experimentName);
+      QList<QVariantMap> result;
+      bool success = d->xnat->sync(d->xnat->get(query), result);
+      if (!success)
+      {
+      throw ctkXnatException("Error occurred while retrieving reconstruction list from XNAT.");
+      }
 
-//  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/reconstructions/%4/ALL/resources").arg(projectName, subjectName, experimentName, reconstructionName);
-//  QList<QVariantMap> result;
-//  bool success = d->xnat->sync(d->xnat->get(query), result);
-//  if (!success)
-//  {
-//    throw ctkXnatException("Error occurred while retrieving reconstruction resource list from XNAT.");
-//  }
+      foreach (QVariantMap map, result)
+      {
+      QString reconstructionID = map["ID"].toString();
+      ctkXnatReconstruction* reconstruction = new ctkXnatReconstruction(reconstructionFolder);
+      reconstructionFolder->addChild(reconstructionID, reconstruction);
+      }
+      }
 
-//  foreach (QVariantMap map, result)
-//  {
-//    QString reconstructionResourceLabel = map["label"].toString();
-//    ctkXnatReconstructionResource* reconstructionResource = new ctkXnatReconstructionResource(reconstruction);
-//    reconstruction->addChild(reconstructionResourceLabel, reconstructionResource);
-//  }
-//}
+      void ctkXnatConnection::fetch(ctkXnatReconstruction* reconstruction)
+      {
+      const QString& reconstructionName = reconstruction->getName();
+      ctkXnatObject* experiment = reconstruction->getParent()->getParent();
+      const QString& experimentName = experiment->getName();
+      ctkXnatObject* subject = experiment->getParent();
+      const QString& subjectName = subject->getName();
+      ctkXnatObject* project = subject->getParent();
+      const QString& projectName = project->getName();
 
-//void ctkXnatConnection::fetch(ctkXnatReconstructionResource* reconstructionResource)
-//{
-//  const QString& resourceName = reconstructionResource->getName();
-//  ctkXnatObject* reconstruction = reconstructionResource->getParent();
-//  const QString& reconstructionName = reconstruction->getName();
-//  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
-//  const QString& experimentName = experiment->getName();
-//  ctkXnatObject* subject = experiment->getParent();
-//  const QString& subjectName = subject->getName();
-//  ctkXnatObject* project = subject->getParent();
-//  const QString& projectName = project->getName();
+      Q_D(ctkXnatConnection);
 
-//  Q_D(ctkXnatConnection);
+      QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/reconstructions/%4/ALL/resources").arg(projectName, subjectName, experimentName, reconstructionName);
+      QList<QVariantMap> result;
+      bool success = d->xnat->sync(d->xnat->get(query), result);
+      if (!success)
+      {
+      throw ctkXnatException("Error occurred while retrieving reconstruction resource list from XNAT.");
+      }
 
-//  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/reconstructions/%4/ALL/resources/%5/files").arg(projectName, subjectName, experimentName, reconstructionName, resourceName);
-//  QList<QVariantMap> result;
-//  bool success = d->xnat->sync(d->xnat->get(query), result);
-//  if (!success)
-//  {
-//    throw ctkXnatException("Error occurred while retrieving reconstruction resource file list from XNAT.");
-//  }
+      foreach (QVariantMap map, result)
+      {
+      QString reconstructionResourceLabel = map["label"].toString();
+      ctkXnatReconstructionResource* reconstructionResource = new ctkXnatReconstructionResource(reconstruction);
+      reconstruction->addChild(reconstructionResourceLabel, reconstructionResource);
+      }
+      }
 
-//  foreach (QVariantMap map, result)
-//  {
-//    QString reconstructionResourceFileName = map["Name"].toString();
-//    ctkXnatReconstructionResourceFile* reconstructionResourceFile = new ctkXnatReconstructionResourceFile(reconstructionResource);
-//    reconstructionResource->addChild(reconstructionResourceFileName, reconstructionResourceFile);
-//  }
-//}
+      void ctkXnatConnection::fetch(ctkXnatReconstructionResource* reconstructionResource)
+      {
+      const QString& resourceName = reconstructionResource->getName();
+      ctkXnatObject* reconstruction = reconstructionResource->getParent();
+      const QString& reconstructionName = reconstruction->getName();
+      ctkXnatObject* experiment = reconstruction->getParent()->getParent();
+      const QString& experimentName = experiment->getName();
+      ctkXnatObject* subject = experiment->getParent();
+      const QString& subjectName = subject->getName();
+      ctkXnatObject* project = subject->getParent();
+      const QString& projectName = project->getName();
+
+      Q_D(ctkXnatConnection);
+
+      QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/reconstructions/%4/ALL/resources/%5/files").arg(projectName, subjectName, experimentName, reconstructionName, resourceName);
+      QList<QVariantMap> result;
+      bool success = d->xnat->sync(d->xnat->get(query), result);
+      if (!success)
+      {
+      throw ctkXnatException("Error occurred while retrieving reconstruction resource file list from XNAT.");
+      }
+
+      foreach (QVariantMap map, result)
+      {
+      QString reconstructionResourceFileName = map["Name"].toString();
+      ctkXnatReconstructionResourceFile* reconstructionResourceFile = new ctkXnatReconstructionResourceFile(reconstructionResource);
+      reconstructionResource->addChild(reconstructionResourceFileName, reconstructionResourceFile);
+      }
+      }
+
+  */
+
+
 
 //void ctkXnatConnection::create(ctkXnatProject* project)
 //{
