@@ -22,99 +22,40 @@
 #include "ctkXnatExperiment.h"
 
 #include "ctkXnatConnection.h"
+#include "ctkXnatObjectPrivate.h"
 
-class ctkXnatExperimentPrivate
+class ctkXnatExperimentPrivate : public ctkXnatObjectPrivate
 {
 public:
-  QString id;
-  QString project;
-  QString date;
-  QString xsiType;
-  QString label;
-  QString insertDate;
+
+  ctkXnatExperimentPrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
+
+  void reset()
+  {
+    uri.clear();
+  }
+  
   QString uri;
 };
 
-ctkXnatExperiment::ctkXnatExperiment(ctkXnatObject* parent)
-: ctkXnatObject(parent)
-, d_ptr(new ctkXnatExperimentPrivate())
+
+ctkXnatExperiment::ctkXnatExperiment()
+: ctkXnatObject(new ctkXnatExperimentPrivate())
 {
+}
+
+ctkXnatExperiment::Pointer ctkXnatExperiment::Create()
+{
+  Pointer experiment(new ctkXnatExperiment());
+  experiment->d_func()->selfPtr = experiment;
+  return experiment;
 }
 
 ctkXnatExperiment::~ctkXnatExperiment()
 {
-}
-
-const QString& ctkXnatExperiment::id() const
-{
-  Q_D(const ctkXnatExperiment);
-  return d->id;
-}
-
-void ctkXnatExperiment::setId(const QString& id)
-{
-  Q_D(ctkXnatExperiment);
-  d->id = id;
-}
-
-const QString& ctkXnatExperiment::project() const
-{
-  Q_D(const ctkXnatExperiment);
-  return d->project;
-}
-
-void ctkXnatExperiment::setProject(const QString& project)
-{
-  Q_D(ctkXnatExperiment);
-  d->project = project;
-}
-
-const QString& ctkXnatExperiment::date() const
-{
-  Q_D(const ctkXnatExperiment);
-  return d->date;
-}
-
-void ctkXnatExperiment::setDate(const QString& date)
-{
-  Q_D(ctkXnatExperiment);
-  d->date = date;
-}
-
-const QString& ctkXnatExperiment::xsiType() const
-{
-  Q_D(const ctkXnatExperiment);
-  return d->xsiType;
-}
-
-void ctkXnatExperiment::setXsiType(const QString& xsiType)
-{
-  Q_D(ctkXnatExperiment);
-  d->xsiType = xsiType;
-}
-
-const QString& ctkXnatExperiment::label() const
-{
-  Q_D(const ctkXnatExperiment);
-  return d->label;
-}
-
-void ctkXnatExperiment::setLabel(const QString& label)
-{
-  Q_D(ctkXnatExperiment);
-  d->label = label;
-}
-
-const QString& ctkXnatExperiment::insertDate() const
-{
-  Q_D(const ctkXnatExperiment);
-  return d->insertDate;
-}
-
-void ctkXnatExperiment::setInsertDate(const QString& insertDate)
-{
-  Q_D(ctkXnatExperiment);
-  d->insertDate = insertDate;
 }
 
 const QString& ctkXnatExperiment::uri() const
@@ -129,51 +70,20 @@ void ctkXnatExperiment::setUri(const QString& uri)
   d->uri = uri;
 }
 
-bool ctkXnatExperiment::holdsFiles() const
+void ctkXnatExperiment::reset()
 {
-  return true;
+  Q_D(ctkXnatExperiment);
+  ctkXnatObject::reset();
 }
 
-void ctkXnatExperiment::fetch(ctkXnatConnection* connection)
+void ctkXnatExperiment::fetchImpl()
 {
-  connection->fetch(this);
+  Q_D(ctkXnatExperiment);
+  ctkXnatObject::Pointer self = d->selfPtr;
+  this->getConnection()->fetch(self.staticCast<ctkXnatExperiment>());
 }
 
-bool ctkXnatExperiment::isModifiable(int parentIndex) const
+void ctkXnatExperiment::remove()
 {
-  ctkXnatObject* child = getChildren()[parentIndex];
-  if (child == 0)
-  {
-    return false;
-  }
-  return child->isModifiable();
-}
-
-void ctkXnatExperiment::add(ctkXnatConnection* connection, const QString& reconstruction)
-{
-  connection->addReconstruction(this, reconstruction);
-}
-
-QString ctkXnatExperiment::getModifiableChildKind() const
-{
-  return "reconstruction";
-}
-
-QString ctkXnatExperiment::getModifiableParentName() const
-{
-  return getName();
-}
-
-bool ctkXnatExperiment::isModifiable() const
-{
-  int childNumber = getChildren().size();
-  for (int i = 0; i < childNumber; i++)
-  {
-    if (childName(i) == QString("Reconstruction"))
-    {
-      return false;
-    }
-  }
-
-  return true;
+  //connection->remove(this);
 }

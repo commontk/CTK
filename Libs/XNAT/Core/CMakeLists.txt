@@ -10,7 +10,7 @@ set(KIT_SRCS
   ctkXnatConnection.cpp
   ctkXnatConnectionFactory.cpp
   ctkXnatException.cpp
-  #ctkXnatExperiment.cpp
+  ctkXnatExperiment.cpp
   ctkXnatObject.cpp
   ctkXnatObjectPrivate.cpp
   ctkXnatProject.cpp

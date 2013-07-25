@@ -31,16 +31,6 @@ class ctkXnatScanPrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatScan : public ctkXnatObject
 {
-  Q_OBJECT
-
-  Q_PROPERTY(QString xnat_imagescandata_id READ imageScanId WRITE setImageScanId)
-  Q_PROPERTY(QString ID READ id WRITE setId)
-  Q_PROPERTY(QString type READ type WRITE setType)
-  Q_PROPERTY(QString quality READ quality WRITE setQuality)
-  Q_PROPERTY(QString xsiType READ xsiType WRITE setXsiType)
-  Q_PROPERTY(QString note READ note WRITE setNote)
-  Q_PROPERTY(QString series_description READ seriesDescription WRITE setSeriesDescription)
-  Q_PROPERTY(QString URI READ uri WRITE setUri)
 
 public:
   explicit ctkXnatScan(ctkXnatObject* parent = 0);

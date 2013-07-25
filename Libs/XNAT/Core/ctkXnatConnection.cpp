@@ -210,25 +210,35 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatSubject>& subject)
   QString query = QString("/REST/projects/%1/subjects/%2/experiments").arg(projectName, subjectName);
   QUuid queryId = d->xnat->get(query);
   qRestResult* restResult = d->xnat->takeResult(queryId);
-  //QList<ctkXnatExperiment*> experiments = restResult->results<ctkXnatExperiment>();
 
-  //foreach (ctkXnatExperiment* experiment, experiments)
-  //{
-  //  subject->addChild(experiment->id(), experiment);
-  //}
+  QList<ctkXnatExperiment*> experiments = restResult->results<ctkXnatExperiment>();
+
+  foreach (ctkXnatExperiment* experiment, experiments)
+  {
+    ctkXnatObject::Pointer ptr(experiment);
+    ptr->d_func()->selfPtr = ptr;
+    subject->addChild(ptr);
+  }
 
   delete restResult;
 }
 
-//void ctkXnatConnection::fetch(ctkXnatExperiment* experiment)
-//{
-//  const QString& experimentName = experiment->getName();
-//  ctkXnatObject* subject = experiment->getParent();
-//  const QString& subjectName = subject->getName();
-//  ctkXnatObject* project = subject->getParent();
-//  const QString& projectName = project->getName();
+void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatExperiment>& experiment)
+{
+  const QString& experimentName = experiment->getId();
+  ctkXnatObject::Pointer subject = experiment->getParent();
+  const QString& subjectName = subject->getId();
+  ctkXnatObject::Pointer project = subject->getParent();
+  const QString& projectName = project->getId();
 
-//  Q_D(ctkXnatConnection);
+  Q_D(ctkXnatConnection);
+
+  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans").arg(projectName, subjectName, experimentName);
+  QUuid queryId = d->xnat->get(query);
+  qRestResult* restResult = d->xnat->takeResult(queryId);
+
+//  QList<ctkXnatExperiment*> scans = restResult->results<ctkXnatScan>();
+
 
 //  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans").arg(projectName, subjectName, experimentName);
 //  QList<QVariantMap> result;
@@ -260,7 +270,9 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatSubject>& subject)
 //    ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder(experiment);
 //    experiment->addChild("Reconstruction", reconstructionFolder);
 //  }
-//}
+
+
+}
 
 //void ctkXnatConnection::fetch(ctkXnatScanFolder* scanFolder)
 //{
