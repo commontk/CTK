@@ -46,14 +46,14 @@ public:
 ctkXnatScanFolder::ctkXnatScanFolder()
 : ctkXnatObject(new ctkXnatScanFolderPrivate())
 {
-  this->setProperty("ID", "Scans");
+  this->setProperty("ID", "scans");
 }
 
 ctkXnatScanFolder::Pointer ctkXnatScanFolder::Create()
 {
-  Pointer experiment(new ctkXnatScanFolder());
-  experiment->d_func()->selfPtr = experiment;
-  return experiment;
+  Pointer ptr(new ctkXnatScanFolder());
+  ptr->d_func()->selfPtr = ptr;
+  return ptr;
 }
 
 ctkXnatScanFolder::~ctkXnatScanFolder()
@@ -74,7 +74,6 @@ void ctkXnatScanFolder::setUri(const QString& uri)
 
 void ctkXnatScanFolder::reset()
 {
-  Q_D(ctkXnatScanFolder);
   ctkXnatObject::reset();
 }
 

@@ -23,7 +23,6 @@
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatObjectPrivate.h"
-// #include "ctkXnatScanResource.h"
 
 class ctkXnatScanPrivate : public ctkXnatObjectPrivate
 {
@@ -50,9 +49,9 @@ ctkXnatScan::ctkXnatScan()
 
 ctkXnatScan::Pointer ctkXnatScan::Create()
 {
-  Pointer experiment(new ctkXnatScan());
-  experiment->d_func()->selfPtr = experiment;
-  return experiment;
+  Pointer ptr(new ctkXnatScan());
+  ptr->d_func()->selfPtr = ptr;
+  return ptr;
 }
 
 ctkXnatScan::~ctkXnatScan()

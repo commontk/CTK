@@ -170,7 +170,6 @@ void ctkXnatConnection::fetch(const ctkXnatServer::Pointer& server)
 
   foreach (ctkXnatProject* project, projects)
   {
-    qDebug() << "Found project:" << project->getName();
     ctkXnatObject::Pointer ptr(project);
     ptr->d_func()->selfPtr = ptr;
     server->addChild(ptr);
@@ -192,6 +191,9 @@ void ctkXnatConnection::fetch(const ctkXnatProject::Pointer& project)
 
   foreach (ctkXnatSubject* subject, subjects)
   {
+    QString label = subject->getProperty ("label");
+    if (label.size())
+      subject->setProperty ("ID", label);
     ctkXnatObject::Pointer ptr(subject);
     ptr->d_func()->selfPtr = ptr;
     project->addChild(ptr);
@@ -215,6 +217,9 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatSubject>& subject)
 
   foreach (ctkXnatExperiment* experiment, experiments)
   {
+    QString label = experiment->getProperty ("label");
+    if (label.size())
+      experiment->setProperty ("ID", label);
     ctkXnatObject::Pointer ptr(experiment);
     ptr->d_func()->selfPtr = ptr;
     subject->addChild(ptr);
@@ -243,7 +248,6 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatExperiment>& experimen
   {
     ctkXnatObject::Pointer ptr = ctkXnatScanFolder::Create();
     ptr->d_func()->selfPtr = ptr;
-    // experiment->addChild("Scan", scanFolder);
     experiment->addChild(ptr);
   }
   
@@ -304,45 +308,52 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScan>& scan)
   Q_D(ctkXnatConnection);
   
   QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans/%4/resources").arg(projectName, subjectName, experimentName, scanName);
-  // QList<ctkXnatScanResource*> resources = restResult->results<ctkXnatScanResource>();
+  QUuid queryId = d->xnat->get(query);
+  qRestResult* restResult = d->xnat->takeResult(queryId);
   
-  // foreach (resource, resources)
-  // {
-  //   ctkXnatObject::Pointer ptr(resource);
-  //   ptr->d_func()->selfPtr = ptr;
-  //   scan->addChild(ptr);
-  // }
+  QList<ctkXnatScanResource*> resources = restResult->results<ctkXnatScanResource>();
+  
+  foreach (ctkXnatScanResource* resource, resources)
+  {
+    QString label = resource->getProperty ("label");
+    if (label.size())
+      resource->setProperty ("ID", label);
+    ctkXnatObject::Pointer ptr(resource);
+    ptr->d_func()->selfPtr = ptr;
+    scan->addChild(ptr);
+  }
 }
 
-//void ctkXnatConnection::fetch(ctkXnatScanResource* scanResource)
-//{
-//  const QString& resourceName = scanResource->getName();
-//  ctkXnatObject* scan = scanResource->getParent();
-//  const QString& scanName = scan->getName();
-//  ctkXnatObject* experiment = scan->getParent()->getParent();
-//  const QString& experimentName = experiment->getName();
-//  ctkXnatObject* subject = experiment->getParent();
-//  const QString& subjectName = subject->getName();
-//  ctkXnatObject* project = subject->getParent();
-//  const QString& projectName = project->getName();
+void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanResource)
+{
+  const QString& resourceName = scanResource->getProperty ("label");
+  ctkXnatObject::Pointer scan = scanResource->getParent();
+  const QString& scanName = scan->getId();
+  ctkXnatObject::Pointer experiment = scan->getParent()->getParent();
+  const QString& experimentName = experiment->getId();
+  ctkXnatObject::Pointer subject = experiment->getParent();
+  const QString& subjectName = subject->getId();
+  ctkXnatObject::Pointer project = subject->getParent();
+  const QString& projectName = project->getId();
+  
+  Q_D(ctkXnatConnection);
+  
+  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans/%4/resources/%5/files").arg(projectName, subjectName, experimentName, scanName, resourceName);
+  QUuid queryId = d->xnat->get(query);
+  qRestResult* restResult = d->xnat->takeResult(queryId);
+  
+  QList<ctkXnatScanResourceFile*> files = restResult->results<ctkXnatScanResourceFile>();
 
-//  Q_D(ctkXnatConnection);
-
-//  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans/%4/resources/%5/files").arg(projectName, subjectName, experimentName, scanName, resourceName);
-//  QList<QVariantMap> result;
-//  bool success = d->xnat->sync(d->xnat->get(query), result);
-//  if (!success)
-//  {
-//    throw ctkXnatException("Error occurred while retrieving scan resource file list from XNAT.");
-//  }
-
-//  foreach (QVariantMap map, result)
-//  {
-//    QString scanResourceFileName = map["Name"].toString();
-//    ctkXnatScanResourceFile* scanResourceFile = new ctkXnatScanResourceFile(scanResource);
-//    scanResource->addChild(scanResourceFileName, scanResourceFile);
-//  }
-//}
+  foreach (ctkXnatScanResourceFile* file, files)
+  {
+    QString label = file->getProperty ("Name");
+    if (label.size())
+      file->setProperty ("ID", label);
+    ctkXnatObject::Pointer ptr(file);
+    ptr->d_func()->selfPtr = ptr;
+    scanResource->addChild(ptr);
+  }
+}
 
 
 

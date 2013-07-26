@@ -60,9 +60,9 @@ public:
   virtual void reset();
   void fetch();
 
-  virtual void download(const QString& zipFilename);
-  virtual void upload(const QString& zipFilename);
-  virtual void add(const QString& name);
+  virtual void download(const QString&);
+  virtual void upload(const QString&);
+  virtual void add(const QString&);
   virtual void remove();
 
   virtual bool isDeletable() const;

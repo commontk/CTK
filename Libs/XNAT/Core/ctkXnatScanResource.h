@@ -31,48 +31,30 @@ class ctkXnatScanResourcePrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatScanResource : public ctkXnatObject
 {
-  Q_OBJECT
-
-  Q_PROPERTY(QString xnat_abstractresource_id READ resourceId WRITE setResourceId)
-  Q_PROPERTY(QString label READ label WRITE setLabel)
-  Q_PROPERTY(QString elementName READ elementName WRITE setElementName)
-  Q_PROPERTY(QString category READ category WRITE setCategory)
-  Q_PROPERTY(QString cat_id READ categoryId WRITE setCategoryId)
-  Q_PROPERTY(QString cat_desc READ categoryDescription WRITE setCategoryDescription)
-
+  
 public:
-  explicit ctkXnatScanResource(ctkXnatObject* parent = 0);
+
+  typedef QSharedPointer<ctkXnatScanResource> Pointer;
+  typedef QWeakPointer<ctkXnatScanResource> WeakPointer;
+  
+  static Pointer Create();
   virtual ~ctkXnatScanResource();
-
-  const QString& resourceId() const;
-  void setResourceId(const QString& resourceId);
-
-  const QString& label() const;
-  void setLabel(const QString& label);
-
-  const QString& elementName() const;
-  void setElementName(const QString& elementName);
-
-  const QString& category() const;
-  void setCategory(const QString& category);
-
-  const QString& categoryId() const;
-  void setCategoryId(const QString& categoryId);
-
-  const QString& categoryDescription() const;
-  void setCategoryDescription(const QString& categoryDescription);
-
-  virtual void fetch(ctkXnatConnection* connection);
-
-  virtual void download(ctkXnatConnection* connection, const QString& zipFilename);
-
-  virtual bool isFile() const;
-
+  
+  const QString& uri() const;
+  void setUri(const QString& uri);
+  
+  virtual void reset();
+  virtual void remove();
+  
 private:
-  QScopedPointer<ctkXnatScanResourcePrivate> d_ptr;
-
+  
+  friend class qRestResult;
+  explicit ctkXnatScanResource();
+  virtual void fetchImpl();
+  
   Q_DECLARE_PRIVATE(ctkXnatScanResource);
   Q_DISABLE_COPY(ctkXnatScanResource);
+  
 };
 
 #endif

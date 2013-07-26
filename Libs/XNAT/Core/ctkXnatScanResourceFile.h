@@ -31,53 +31,27 @@ class ctkXnatScanResourceFilePrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatScanResourceFile : public ctkXnatObject
 {
-  Q_OBJECT
-
-  Q_PROPERTY(QString Name READ name WRITE setName)
-  Q_PROPERTY(QString Size READ size WRITE setSize)
-  Q_PROPERTY(QString URI READ uri WRITE setUri)
-  Q_PROPERTY(QString collection READ collection WRITE setCollection)
-  Q_PROPERTY(QString file_tags READ fileTags WRITE setFileTags)
-  Q_PROPERTY(QString file_format READ fileFormat WRITE setFileFormat)
-  Q_PROPERTY(QString file_content READ fileContent WRITE setFileContent)
-  Q_PROPERTY(QString cat_ID READ categoryId WRITE setCategoryId)
 
 public:
-  explicit ctkXnatScanResourceFile(ctkXnatObject* parent = 0);
+
+  typedef QSharedPointer<ctkXnatScanResourceFile> Pointer;
+  typedef QWeakPointer<ctkXnatScanResourceFile> WeakPointer;
+  
+  static Pointer Create();
   virtual ~ctkXnatScanResourceFile();
-
-  const QString& name() const;
-  void setName(const QString& name);
-
-  const QString& size() const;
-  void setSize(const QString& size);
-
+  
   const QString& uri() const;
   void setUri(const QString& uri);
-
-  const QString& collection() const;
-  void setCollection(const QString& collection);
-
-  const QString& fileTags() const;
-  void setFileTags(const QString& fileTags);
-
-  const QString& fileFormat() const;
-  void setFileFormat(const QString& fileFormat);
-
-  const QString& fileContent() const;
-  void setFileContent(const QString& fileContent);
-
-  const QString& categoryId() const;
-  void setCategoryId(const QString& categoryId);
-
-  virtual void download(ctkXnatConnection* connection, const QString& zipFilename);
-
-  virtual bool isFile() const;
-  virtual bool isDeletable() const;
-
+  
+  virtual void reset();
+  virtual void remove();
+  
 private:
-  QScopedPointer<ctkXnatScanResourceFilePrivate> d_ptr;
-
+  
+  friend class qRestResult;
+  explicit ctkXnatScanResourceFile();
+  virtual void fetchImpl();
+  
   Q_DECLARE_PRIVATE(ctkXnatScanResourceFile);
   Q_DISABLE_COPY(ctkXnatScanResourceFile);
 };

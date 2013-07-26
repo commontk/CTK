@@ -22,51 +22,41 @@
 #include "ctkXnatScanResourceFile.h"
 
 #include "ctkXnatConnection.h"
+#include "ctkXnatObjectPrivate.h"
 
-class ctkXnatScanResourceFilePrivate
+
+class ctkXnatScanResourceFilePrivate : public ctkXnatObjectPrivate
 {
 public:
-  QString name;
-  QString size;
+
+  ctkXnatScanResourceFilePrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
+
+  void reset()
+  {
+    uri.clear();
+  }
+  
   QString uri;
-  QString collection;
-  QString fileTags;
-  QString fileFormat;
-  QString fileContent;
-  QString categoryId;
 };
 
-ctkXnatScanResourceFile::ctkXnatScanResourceFile(ctkXnatObject* parent)
-: ctkXnatObject(parent)
+
+ctkXnatScanResourceFile::ctkXnatScanResourceFile()
+: ctkXnatObject(new ctkXnatScanResourceFilePrivate())
 {
+}
+
+ctkXnatScanResourceFile::Pointer ctkXnatScanResourceFile::Create()
+{
+  Pointer ptr(new ctkXnatScanResourceFile());
+  ptr->d_func()->selfPtr = ptr;
+  return ptr;
 }
 
 ctkXnatScanResourceFile::~ctkXnatScanResourceFile()
 {
-}
-
-const QString& ctkXnatScanResourceFile::name() const
-{
-  Q_D(const ctkXnatScanResourceFile);
-  return d->name;
-}
-
-void ctkXnatScanResourceFile::setName(const QString& name)
-{
-  Q_D(ctkXnatScanResourceFile);
-  d->name = name;
-}
-
-const QString& ctkXnatScanResourceFile::size() const
-{
-  Q_D(const ctkXnatScanResourceFile);
-  return d->size;
-}
-
-void ctkXnatScanResourceFile::setSize(const QString& size)
-{
-  Q_D(ctkXnatScanResourceFile);
-  d->size = size;
 }
 
 const QString& ctkXnatScanResourceFile::uri() const
@@ -81,77 +71,22 @@ void ctkXnatScanResourceFile::setUri(const QString& uri)
   d->uri = uri;
 }
 
-const QString& ctkXnatScanResourceFile::collection() const
+void ctkXnatScanResourceFile::reset()
 {
-  Q_D(const ctkXnatScanResourceFile);
-  return d->collection;
+  ctkXnatObject::reset();
 }
 
-void ctkXnatScanResourceFile::setCollection(const QString& collection)
+void ctkXnatScanResourceFile::fetchImpl()
 {
-  Q_D(ctkXnatScanResourceFile);
-  d->collection = collection;
+
 }
 
-const QString& ctkXnatScanResourceFile::fileTags() const
+void ctkXnatScanResourceFile::remove()
 {
-  Q_D(const ctkXnatScanResourceFile);
-  return d->fileTags;
+  //connection->remove(this);
 }
 
-void ctkXnatScanResourceFile::setFileTags(const QString& fileTags)
-{
-  Q_D(ctkXnatScanResourceFile);
-  d->fileTags = fileTags;
-}
-
-const QString& ctkXnatScanResourceFile::fileFormat() const
-{
-  Q_D(const ctkXnatScanResourceFile);
-  return d->fileFormat;
-}
-
-void ctkXnatScanResourceFile::setFileFormat(const QString& fileFormat)
-{
-  Q_D(ctkXnatScanResourceFile);
-  d->fileFormat = fileFormat;
-}
-
-const QString& ctkXnatScanResourceFile::fileContent() const
-{
-  Q_D(const ctkXnatScanResourceFile);
-  return d->fileContent;
-}
-
-void ctkXnatScanResourceFile::setFileContent(const QString& fileContent)
-{
-  Q_D(ctkXnatScanResourceFile);
-  d->fileContent = fileContent;
-}
-
-const QString& ctkXnatScanResourceFile::categoryId() const
-{
-  Q_D(const ctkXnatScanResourceFile);
-  return d->categoryId;
-}
-
-void ctkXnatScanResourceFile::setCategoryId(const QString& categoryId)
-{
-  Q_D(ctkXnatScanResourceFile);
-  d->categoryId = categoryId;
-}
-
-void ctkXnatScanResourceFile::download(ctkXnatConnection* connection, const QString& fileName)
-{
-  connection->download(this, fileName);
-}
-
-bool ctkXnatScanResourceFile::isFile() const
-{
-  return true;
-}
-
-bool ctkXnatScanResourceFile::isDeletable() const
-{
-  return true;
-}
+// void ctkXnatScanResourceFile::download(ctkXnatConnection* connection, const QString& zipFileName)
+// {
+//   connection->download(this, zipFileName);
+// }

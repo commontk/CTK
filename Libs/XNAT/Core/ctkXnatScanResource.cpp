@@ -23,113 +23,73 @@
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatScanResourceFile.h"
+#include "ctkXnatObjectPrivate.h"
 
-#include <QDebug>
 
-class ctkXnatScanResourcePrivate
+class ctkXnatScanResourcePrivate : public ctkXnatObjectPrivate
 {
 public:
-  QString resourceId;
-  QString label;
-  QString elementName;
-  QString category;
-  QString categoryId;
-  QString categoryDescription;
+
+  ctkXnatScanResourcePrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
+
+  void reset()
+  {
+    uri.clear();
+  }
+  
+  QString uri;
 };
 
-ctkXnatScanResource::ctkXnatScanResource(ctkXnatObject* parent)
-: ctkXnatObject(parent)
-, d_ptr(new ctkXnatScanResourcePrivate())
+
+ctkXnatScanResource::ctkXnatScanResource()
+: ctkXnatObject(new ctkXnatScanResourcePrivate())
 {
+}
+
+ctkXnatScanResource::Pointer ctkXnatScanResource::Create()
+{
+  Pointer ptr(new ctkXnatScanResource());
+  ptr->d_func()->selfPtr = ptr;
+  return ptr;
 }
 
 ctkXnatScanResource::~ctkXnatScanResource()
 {
 }
 
-const QString& ctkXnatScanResource::resourceId() const
+const QString& ctkXnatScanResource::uri() const
 {
   Q_D(const ctkXnatScanResource);
-  return d->resourceId;
+  return d->uri;
 }
 
-void ctkXnatScanResource::setResourceId(const QString& resourceId)
+void ctkXnatScanResource::setUri(const QString& uri)
 {
   Q_D(ctkXnatScanResource);
-  d->resourceId = resourceId;
+  d->uri = uri;
 }
 
-const QString& ctkXnatScanResource::label() const
+void ctkXnatScanResource::reset()
 {
-  Q_D(const ctkXnatScanResource);
-  return d->label;
+  ctkXnatObject::reset();
 }
 
-void ctkXnatScanResource::setLabel(const QString& label)
-{
-  Q_D(ctkXnatScanResource);
-  d->label = label;
-}
-
-const QString& ctkXnatScanResource::elementName() const
-{
-  Q_D(const ctkXnatScanResource);
-  return d->elementName;
-}
-
-void ctkXnatScanResource::setElementName(const QString& elementName)
+void ctkXnatScanResource::fetchImpl()
 {
   Q_D(ctkXnatScanResource);
-  d->elementName = elementName;
+  ctkXnatObject::Pointer self = d->selfPtr;
+  this->getConnection()->fetch(self.staticCast<ctkXnatScanResource>());
 }
 
-const QString& ctkXnatScanResource::category() const
+void ctkXnatScanResource::remove()
 {
-  Q_D(const ctkXnatScanResource);
-  return d->category;
+  //connection->remove(this);
 }
 
-void ctkXnatScanResource::setCategory(const QString& category)
-{
-  Q_D(ctkXnatScanResource);
-  d->category = category;
-}
-
-const QString& ctkXnatScanResource::categoryId() const
-{
-  Q_D(const ctkXnatScanResource);
-  return d->categoryId;
-}
-
-void ctkXnatScanResource::setCategoryId(const QString& categoryId)
-{
-  Q_D(ctkXnatScanResource);
-  d->categoryId = categoryId;
-}
-
-const QString& ctkXnatScanResource::categoryDescription() const
-{
-  Q_D(const ctkXnatScanResource);
-  return d->categoryDescription;
-}
-
-void ctkXnatScanResource::setCategoryDescription(const QString& categoryDescription)
-{
-  Q_D(ctkXnatScanResource);
-  d->categoryDescription = categoryDescription;
-}
-
-void ctkXnatScanResource::fetch(ctkXnatConnection* connection)
-{
-  connection->fetch(this);
-}
-
-void ctkXnatScanResource::download(ctkXnatConnection* connection, const QString& zipFileName)
-{
-  connection->download(this, zipFileName);
-}
-
-bool ctkXnatScanResource::isFile() const
-{
-  return true;
-}
+// void ctkXnatScanResource::download(ctkXnatConnection* connection, const QString& zipFileName)
+// {
+//   connection->download(this, zipFileName);
+// }

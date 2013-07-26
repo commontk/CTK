@@ -16,8 +16,8 @@ set(KIT_SRCS
   ctkXnatProject.cpp
   ctkXnatScan.cpp
   ctkXnatScanFolder.cpp
-  #ctkXnatScanResource.cpp
-  #ctkXnatScanResourceFile.cpp
+  ctkXnatScanResource.cpp
+  ctkXnatScanResourceFile.cpp
   #ctkXnatReconstruction.cpp
   #ctkXnatReconstructionFolder.cpp
   #ctkXnatReconstructionResource.cpp

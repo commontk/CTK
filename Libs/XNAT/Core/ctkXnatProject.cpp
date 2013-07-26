@@ -113,7 +113,6 @@ void ctkXnatProject::setUri(const QString& uri)
 
 void ctkXnatProject::reset()
 {
-  Q_D(ctkXnatProject);
   ctkXnatObject::reset();
 }
 

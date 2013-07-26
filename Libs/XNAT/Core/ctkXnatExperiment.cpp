@@ -49,9 +49,9 @@ ctkXnatExperiment::ctkXnatExperiment()
 
 ctkXnatExperiment::Pointer ctkXnatExperiment::Create()
 {
-  Pointer experiment(new ctkXnatExperiment());
-  experiment->d_func()->selfPtr = experiment;
-  return experiment;
+  Pointer ptr(new ctkXnatExperiment());
+  ptr->d_func()->selfPtr = ptr;
+  return ptr;
 }
 
 ctkXnatExperiment::~ctkXnatExperiment()
@@ -72,7 +72,6 @@ void ctkXnatExperiment::setUri(const QString& uri)
 
 void ctkXnatExperiment::reset()
 {
-  Q_D(ctkXnatExperiment);
   ctkXnatObject::reset();
 }
 
