@@ -65,6 +65,9 @@ public:
   virtual void add(const QString&);
   virtual void remove();
 
+  virtual bool isFile() const;
+  virtual bool receivesFiles() const;
+  virtual bool holdsFiles() const;
   virtual bool isDeletable() const;
   virtual bool isModifiable() const;
 

@@ -124,7 +124,27 @@ void ctkXnatObject::remove()
   // do nothing
 }
 
+bool ctkXnatObject::isFile() const
+{
+  return false;
+}
+
+bool ctkXnatObject::receivesFiles() const
+{
+  return false;
+}
+
+bool ctkXnatObject::holdsFiles() const
+{
+  return false;
+}
+
 bool ctkXnatObject::isModifiable() const
+{
+  return false;
+}
+
+bool ctkXnatObject::isDeletable() const
 {
   return false;
 }
@@ -157,7 +177,3 @@ void ctkXnatObject::setId(const QString& id)
   setProperty("ID", id);
 }
 
-bool ctkXnatObject::isDeletable() const
-{
-  return false;
-}

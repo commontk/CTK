@@ -72,7 +72,6 @@ void ctkXnatScan::setUri(const QString& uri)
 
 void ctkXnatScan::reset()
 {
-  Q_D(ctkXnatScan);
   ctkXnatObject::reset();
 }
 
