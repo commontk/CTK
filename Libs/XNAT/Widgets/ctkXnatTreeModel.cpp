@@ -26,6 +26,7 @@
 #include "ctkXnatSubject.h"
 
 #include <QList>
+#include <QDebug>
 
 ctkXnatTreeModel::ctkXnatTreeModel()
 : m_RootItem(new ctkXnatTreeItem())
@@ -53,7 +54,7 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
   else if (role == Qt::DisplayRole)
   {
     ctkXnatObject::Pointer xnatObject = this->itemAt(index)->xnatObject();
-
+    
     QString displayData = xnatObject->getName();
     if (displayData.isEmpty())
     {
@@ -251,10 +252,11 @@ void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zip
   }
 
   ctkXnatTreeItem* item = this->itemAt(index);
-  ctkXnatObject::Pointer xnatObject = item->xnatObject();
-  ctkXnatObject::Pointer child = xnatObject->getChildren()[index.row()];
+  ctkXnatObject::Pointer object = item->xnatObject();
+
+  // ctkXnatObject::Pointer child = object->getChildren()[index.row()];
   
-  child->download (zipFilename);
+  object->download (zipFilename);
 
   return;
 }

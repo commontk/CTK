@@ -50,6 +50,8 @@ public:
   QString getProperty(const QString& name) const;
   void setProperty(const QString& name, const QVariant& value);
 
+  QList<QString> getProperties();
+  
   ctkXnatObject::Pointer getParent() const;
   QList<ctkXnatObject::Pointer> getChildren() const;
 
@@ -72,6 +74,7 @@ public:
   virtual bool isDeletable() const;
   virtual bool isModifiable() const;
 
+  
 protected:
 
   ctkXnatObject();

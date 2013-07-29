@@ -81,6 +81,23 @@ void ctkXnatObject::setProperty(const QString& name, const QVariant& value)
   d->properties.insert(name, value.toString());
 }
 
+
+QList<QString> ctkXnatObject::getProperties()
+{
+  Q_D(ctkXnatObject);
+  
+  QList<QString> value;
+
+  QMapIterator<QString, QString> it(d->properties);
+  while (it.hasNext())
+  {
+    it.next();
+    value.push_back (it.key());
+  }
+
+  return value;
+}
+
 ctkXnatObject::Pointer ctkXnatObject::getParent() const
 {
   Q_D(const ctkXnatObject);

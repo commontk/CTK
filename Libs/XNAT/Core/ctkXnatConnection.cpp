@@ -346,9 +346,14 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanRes
 
   foreach (ctkXnatScanResourceFile* file, files)
   {
+    QString uri = file->getProperty ("URI");
+    if (uri.size())
+      file->setUri (uri);
+
     QString label = file->getProperty ("Name");
     if (label.size())
       file->setProperty ("ID", label);
+
     ctkXnatObject::Pointer ptr(file);
     ptr->d_func()->selfPtr = ptr;
     scanResource->addChild(ptr);

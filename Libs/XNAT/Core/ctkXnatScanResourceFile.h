@@ -42,7 +42,10 @@ public:
   
   const QString& uri() const;
   void setUri(const QString& uri);
-  
+
+  void download(const QString& filename);
+  void upload(const QString& filename);
+
   void reset();
   void remove();
   
