@@ -49,13 +49,24 @@ class ctkWorkflowButtonBoxWidgetPrivate;
 /// should be called whenever the workflow's current step has changed
 
 class CTK_WIDGETS_EXPORT ctkWorkflowButtonBoxWidget : public QWidget
-{ 
+{
   Q_OBJECT
 
+  /// This property controls the text of the back button when the step text is empty.
+  /// "Back" by default.
+  /// \sa nextButtonDefaultText, goToButtonDefaultText
   Q_PROPERTY(QString backButtonDefaultText
              READ backButtonDefaultText WRITE setBackButtonDefaultText)
+
+  /// This property controls the text of the next button when the step text is empty.
+  /// "Next" by default.
+  /// \sa backButtonDefaultText, goToButtonDefaultText
   Q_PROPERTY(QString nextButtonDefaultText
              READ nextButtonDefaultText WRITE setNextButtonDefaultText)
+
+  /// This property controls whether the back, next or goTo buttons are hidden when disabled.
+  /// Note that buttons can also be hidden via ctkWorkflowWidgetStep::buttonHints.
+  /// \sa ctkWofklowWidgetStep::buttonBoxHints
   Q_PROPERTY(bool hideInvalidButtons READ hideInvalidButtons WRITE setHideInvalidButtons)
 
 public:
