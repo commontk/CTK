@@ -25,6 +25,21 @@
 #include "ctkXnatServer.h"
 #include <QVariant>
 
+#include <QDebug>
+
+
+
+ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& d)
+: d_ptr(&d)
+{
+}
+
+
+ctkXnatObject::ctkXnatObject()
+: d_ptr(new ctkXnatObjectPrivate())
+{
+}
+
 ctkXnatObject::~ctkXnatObject()
 {
 }
@@ -32,6 +47,11 @@ ctkXnatObject::~ctkXnatObject()
 QString ctkXnatObject::getId() const
 {
   return getProperty("ID");
+}
+
+void ctkXnatObject::setId(const QString& id)
+{
+  setProperty("ID", id);
 }
 
 QString ctkXnatObject::getName() const
@@ -80,10 +100,19 @@ void ctkXnatObject::addChild(ctkXnatObject::Pointer& child)
   child->d_func()->parent = d->selfPtr;
 }
 
+void ctkXnatObject::removeChild(ctkXnatObject::Pointer& child)
+{
+  Q_D(ctkXnatObject);
+  if (!d->children.removeOne(child))
+  {
+    qWarning() << "ctkXnatObject::removeChild(): Child does not exist";
+  }
+}
+
 void ctkXnatObject::reset()
 {
   Q_D(ctkXnatObject);
-  //d->properties.clear();
+  // d->properties.clear();
   d->children.clear();
   d->fetched = false;
 }
@@ -104,25 +133,19 @@ void ctkXnatObject::fetch()
   }
 }
 
-void ctkXnatObject::download(const QString& /*zipFilename*/)
+ctkXnatConnection* ctkXnatObject::getConnection() const
 {
-  // do nothing
+  const ctkXnatObject* xnatObject = this;
+  const ctkXnatServer* server;
+  do {
+    xnatObject = xnatObject->getParent().data();
+    server = dynamic_cast<const ctkXnatServer*>(xnatObject);
+  }
+  while (xnatObject && !server);
+
+  return server ? xnatObject->getConnection() : 0;
 }
 
-void ctkXnatObject::upload(const QString& /*zipFilename*/)
-{
-  // do nothing
-}
-
-void ctkXnatObject::add(const QString& /*name*/)
-{
-  // do nothing
-}
-
-void ctkXnatObject::remove()
-{
-  // do nothing
-}
 
 bool ctkXnatObject::isFile() const
 {
@@ -149,31 +172,27 @@ bool ctkXnatObject::isDeletable() const
   return false;
 }
 
-ctkXnatObject::ctkXnatObject()
-: d_ptr(new ctkXnatObjectPrivate())
+
+void ctkXnatObject::download(const QString& /*zipFilename*/)
 {
+  // do nothing
+  // if (!this->isFile())
+  //   return;  
 }
 
-ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& d)
-: d_ptr(&d)
+void ctkXnatObject::upload(const QString& /*zipFilename*/)
 {
+  // do nothing
+  // if (!this->isFile())
+  //   return;  
 }
 
-ctkXnatConnection* ctkXnatObject::getConnection() const
+void ctkXnatObject::add(const QString& /*name*/)
 {
-  const ctkXnatObject* xnatObject = this;
-  const ctkXnatServer* server;
-  do {
-    xnatObject = xnatObject->getParent().data();
-    server = dynamic_cast<const ctkXnatServer*>(xnatObject);
-  }
-  while (xnatObject && !server);
-
-  return server ? xnatObject->getConnection() : 0;
+  // do nothing
 }
 
-void ctkXnatObject::setId(const QString& id)
+void ctkXnatObject::remove()
 {
-  setProperty("ID", id);
+  // do nothing
 }
-

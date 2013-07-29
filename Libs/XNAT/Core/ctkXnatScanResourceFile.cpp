@@ -42,7 +42,6 @@ public:
   QString uri;
 };
 
-
 ctkXnatScanResourceFile::ctkXnatScanResourceFile()
 : ctkXnatObject(new ctkXnatScanResourceFilePrivate())
 {
@@ -83,10 +82,11 @@ void ctkXnatScanResourceFile::fetchImpl()
 
 void ctkXnatScanResourceFile::remove()
 {
-  //connection->remove(this);
+  // ctkXnatObject::remove();
+  // getConnection()->remove(this);
 }
 
-// void ctkXnatScanResourceFile::download(ctkXnatConnection* connection, const QString& zipFileName)
-// {
-//   connection->download(this, zipFileName);
-// }
+bool ctkXnatScanResourceFile::isFile() const
+{
+  return true;
+}

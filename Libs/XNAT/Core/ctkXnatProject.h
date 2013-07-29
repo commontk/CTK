@@ -53,9 +53,15 @@ public:
   const QString& uri() const;
   void setUri(const QString& uri);
 
-  virtual void reset();
+  void reset();
+  void remove();
+  
+  bool isFile() const;
 
-  virtual void remove();
+  /* bool receivesFiles() const; */
+  /* bool holdsFiles() const; */
+  /* bool isDeletable() const; */
+  /* bool isModifiable() const; */
 
 private:
 

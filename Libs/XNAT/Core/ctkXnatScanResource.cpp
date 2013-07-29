@@ -86,10 +86,11 @@ void ctkXnatScanResource::fetchImpl()
 
 void ctkXnatScanResource::remove()
 {
-  //connection->remove(this);
+  // ctkXnatObject::remove();
+  // getConnection()->remove(this);
 }
 
-// void ctkXnatScanResource::download(ctkXnatConnection* connection, const QString& zipFileName)
-// {
-//   connection->download(this, zipFileName);
-// }
+bool ctkXnatScanResource::isFile() const
+{
+  return false;
+}

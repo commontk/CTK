@@ -54,6 +54,7 @@ public:
   QList<ctkXnatObject::Pointer> getChildren() const;
 
   void addChild(Pointer& child);
+  void removeChild(Pointer& child);
 
   bool isFetched() const;
 

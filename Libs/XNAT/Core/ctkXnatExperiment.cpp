@@ -84,5 +84,11 @@ void ctkXnatExperiment::fetchImpl()
 
 void ctkXnatExperiment::remove()
 {
-  //connection->remove(this);
+  // ctkXnatObject::remove();
+  // getConnection()->remove(this);
+}
+
+bool ctkXnatExperiment::isFile() const
+{
+  return false;
 }

@@ -125,5 +125,11 @@ void ctkXnatProject::fetchImpl()
 
 void ctkXnatProject::remove()
 {
-  //connection->remove(this);
+  // ctkXnatObject::remove();
+  // getConnection()->remove(this);
+}
+
+bool ctkXnatProject::isFile() const
+{
+  return false;
 }

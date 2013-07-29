@@ -46,9 +46,17 @@ public:
   virtual bool hasChildren(const QModelIndex& parent) const;
   virtual bool canFetchMore(const QModelIndex& parent) const;
   virtual void fetchMore(const QModelIndex& parent);
-
+  
   void addServer(ctkXnatServer::Pointer server);
 
+  void addEntry (const QModelIndex& index, const QString& name);
+  void removeEntry (const QModelIndex& index);
+
+  bool removeAllRows (const QModelIndex& parent);
+
+  void uploadFile (const QModelIndex& index, const QString& zipFilename);
+  void downloadFile (const QModelIndex& index, const QString& zipFilename);
+  
 private:
 
   ctkXnatTreeItem* itemAt(const QModelIndex& index) const;
