@@ -23,6 +23,8 @@
 #include <QStateMachine>
 #include <QState>
 
+#include <QQueue>
+
 // CTK includes
 #include "ctkWorkflow.h"
 #include "ctkWorkflowStep.h"
@@ -772,6 +774,14 @@ bool ctkWorkflow::hasStep(const QString& id)const
 }
 
 // --------------------------------------------------------------------------
+ctkWorkflowStep* ctkWorkflow::step(const QString& id)const
+{
+  Q_D(const ctkWorkflow);
+  return d->stepFromId(id);
+}
+
+
+// --------------------------------------------------------------------------
 // Convenience method to set the QStateMachine's initialState to a
 // specific step's processing state.
 CTK_GET_CPP(ctkWorkflow, ctkWorkflowStep*, initialStep, InitialStep);
@@ -1120,4 +1130,47 @@ void ctkWorkflow::goToStepFailed()
   //   this->goToProcessingStateAfterValidationFailed();
   //   }
 
+}
+
+// --------------------------------------------------------------------------
+int ctkWorkflow::backwardDistanceToStep(ctkWorkflowStep* fromStep,
+                                        ctkWorkflowStep* origin) const
+{
+  if (!fromStep)
+    {
+    fromStep = this->currentStep();
+    }
+  if (!origin)
+    {
+    origin = this->initialStep();
+    }
+
+  if (!fromStep || !origin)
+    {
+    return -1;
+    }
+
+  QQueue< std::pair<ctkWorkflowStep*, int> > queue;
+  queue.append(std::make_pair(fromStep, 0));
+  while (! queue.isEmpty())
+    {
+    std::pair<ctkWorkflowStep*, int> p = queue.dequeue();
+    ctkWorkflowStep* step = p.first;
+    if (! step)
+      {
+      return -1;
+      }
+
+    if (step->id() == origin->id())
+      {
+      return p.second;
+      }
+
+    foreach(ctkWorkflowStep* previousStep, this->backwardSteps(step))
+      {
+      queue.append(std::make_pair(previousStep, p.second + 1));
+      }
+    }
+
+  return -1;
 }

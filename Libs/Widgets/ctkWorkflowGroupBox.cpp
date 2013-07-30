@@ -26,6 +26,7 @@
 
 // CTK includes
 #include "ctkWorkflowGroupBox.h"
+#include "ctkWorkflowWidget.h"
 #include "ctkWorkflowWidgetStep.h"
 #include "ctkFittedTextBrowser.h"
 #include "ui_ctkWorkflowGroupBox.h"
@@ -37,11 +38,14 @@ static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowGroupBox");
 
 //-----------------------------------------------------------------------------
 class ctkWorkflowGroupBoxPrivate: public Ui_ctkWorkflowGroupBox
-                                  
 {
 public:
   ctkWorkflowGroupBoxPrivate();
   ~ctkWorkflowGroupBoxPrivate();
+
+  QString TitleFormat;
+  QString SubTitleFormat;
+  QString ErrorTextFormat;
 
   bool HideWidgetsOfNonCurrentSteps;
   bool ErrorTextEnabled;
@@ -58,6 +62,10 @@ public:
 //---------------------------------------------------------------------------
 ctkWorkflowGroupBoxPrivate::ctkWorkflowGroupBoxPrivate()
 {
+  this->TitleFormat = "{current:name}";
+  this->SubTitleFormat = "{current:description}";
+  this->ErrorTextFormat = "{current:statusText}";
+
   this->HideWidgetsOfNonCurrentSteps = false;
 
   this->ErrorTextEnabled = true;
@@ -105,14 +113,19 @@ void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
 {
   Q_D(ctkWorkflowGroupBox);
 
-  d->StepShownPreviously = d->StepShownCurrently;
+  d->StepShownPreviously = (currentStep != d->StepShownCurrently ?
+                            d->StepShownCurrently : d->StepShownPreviously);
   d->StepShownCurrently = currentStep;
 
-  if (currentStep)
-    { 
-    this->setTitle(currentStep->name());
-    this->setSubTitle(currentStep->description());
-    this->setErrorText(currentStep->statusText());
+  ctkWorkflowWidgetStep* currentWidgetStep = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep);
+
+  if (currentWidgetStep)
+    {
+    ctkWorkflowWidget::formatButton(d->CollapsibleButton, d->TitleFormat, currentWidgetStep);
+    QString subTitleText = ctkWorkflowWidget::formatText(d->SubTitleFormat, currentWidgetStep);
+    this->setSubTitle(subTitleText);
+    QString errorText = ctkWorkflowWidget::formatText(d->ErrorTextFormat, currentWidgetStep);
+    this->setErrorText(errorText);
 
     // don't show textual elements if they are empty
     d->SubTitleTextBrowser->setVisible(!this->subTitle().isEmpty());
@@ -134,8 +147,7 @@ void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
         }
       }
     }
-  
-  ctkWorkflowWidgetStep* currentWidgetStep = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep);
+
   // show/enable the current step
   if (currentWidgetStep)
     {
@@ -161,13 +173,6 @@ QString ctkWorkflowGroupBox::title()const
 {
   Q_D(const ctkWorkflowGroupBox);
   return d->CollapsibleButton->text();
-}
-
-// --------------------------------------------------------------------------
-void ctkWorkflowGroupBox::setTitle(const QString& newTitleText)
-{
-  Q_D(ctkWorkflowGroupBox);
-  d->CollapsibleButton->setText(newTitleText);
 }
 
 // --------------------------------------------------------------------------
@@ -224,4 +229,49 @@ void ctkWorkflowGroupBox::setErrorText(const QString& newErrorText)
 {
   Q_D(ctkWorkflowGroupBox);
   d->ErrorTextBrowser->setPlainText(newErrorText);
+}
+
+// --------------------------------------------------------------------------
+QString ctkWorkflowGroupBox::titleFormat()const
+{
+  Q_D(const ctkWorkflowGroupBox);
+  return d->TitleFormat;
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowGroupBox::setTitleFormat(const QString& format)
+{
+  Q_D(ctkWorkflowGroupBox);
+  d->TitleFormat = format;
+  this->updateGroupBox(d->StepShownCurrently);
+}
+
+// --------------------------------------------------------------------------
+QString ctkWorkflowGroupBox::subTitleFormat()const
+{
+  Q_D(const ctkWorkflowGroupBox);
+  return d->SubTitleFormat;
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowGroupBox::setSubTitleFormat(const QString& format)
+{
+  Q_D(ctkWorkflowGroupBox);
+  d->SubTitleFormat = format;
+  this->updateGroupBox(d->StepShownCurrently);
+}
+
+// --------------------------------------------------------------------------
+QString ctkWorkflowGroupBox::errorTextFormat()const
+{
+  Q_D(const ctkWorkflowGroupBox);
+  return d->ErrorTextFormat;
+}
+
+// --------------------------------------------------------------------------
+void ctkWorkflowGroupBox::setErrorTextFormat(const QString& format)
+{
+  Q_D(ctkWorkflowGroupBox);
+  d->ErrorTextFormat = format;
+  this->updateGroupBox(d->StepShownCurrently);
 }
