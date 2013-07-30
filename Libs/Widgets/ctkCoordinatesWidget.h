@@ -143,6 +143,7 @@ protected Q_SLOTS:
   void updateCoordinate(double);
   void updateCoordinates();
   void updateDecimals();
+  void updateOtherDecimals(int);
   void setTemporaryDecimals(int);
   void onValueProxyAboutToBeModified();
   void onValueProxyModified();
@@ -166,6 +167,7 @@ protected:
   int     Dimension;
   double* Coordinates;
   QList<int> LastUserEditedCoordinates;
+  bool    ChangingDecimals;
   QWeakPointer<ctkValueProxy> Proxy;
 };
 

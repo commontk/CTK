@@ -21,6 +21,7 @@
 // Qt includes
 #include <QApplication>
 #include <QDoubleSpinBox>
+#include <QLineEdit>
 #include <QString>
 #include <QStyle>
 #include <QStyleOptionSlider>
@@ -43,6 +44,9 @@ private slots:
 
   void testDecimalsByValue();
   void testDecimalsByValue_data();
+
+  void testDecimalsByKey();
+  void testDecimalsByKey_data();
 private:
   void testDecimals(ctkCoordinatesWidget* coordinatesWidget, int decimals);
 };
@@ -138,6 +142,92 @@ void ctkCoordinatesWidgetTester::testDecimalsByValue_data()
                                           133.98765432198765432,
                                           116.01234567891011121) << 3;
   QTest::newRow("same value more digits") << QVector3D(0.001, 0.002, 0.0004) << 4;
+}
+
+
+// ----------------------------------------------------------------------------
+void ctkCoordinatesWidgetTester::testDecimalsByKey()
+{
+  ctkCoordinatesWidget coordinatesWidget;
+  coordinatesWidget.setDecimalsOption(
+    ctkDoubleSpinBox::DecimalsByValue | ctkDoubleSpinBox::DecimalsByKey);
+  coordinatesWidget.setDecimals(3);
+  coordinatesWidget.setCoordinates(1.,1.,1.3);
+
+  QFETCH(QVector3D, coordinates);
+  coordinatesWidget.setCoordinates(coordinates.x(), coordinates.y(), coordinates.z());
+
+  QFETCH(int, expectedDecimals);
+  testDecimals(&coordinatesWidget, expectedDecimals);
+
+  // Simulate decimals by key
+  QFETCH(int, decimalsOffset);
+  QList<QDoubleSpinBox*> spinBoxes =
+    coordinatesWidget.findChildren<QDoubleSpinBox*>();
+  QList<QLineEdit*> lineEdits =
+    spinBoxes[0]->findChildren<QLineEdit*>();
+  QString text = lineEdits[0]->text();
+  switch (decimalsOffset)
+    {
+    case 1:
+      if (!text.contains('.'))
+        {
+        text += '.';
+        }
+      text += '7';
+      break;
+    case 0:
+      text = QString("7") + text;
+      break;
+    case -1:
+      text.chop(1);
+      break;
+    default:
+      break;
+    }
+  lineEdits[0]->setText(text);
+
+  QFETCH(QVector3D, finalDecimals);
+  QCOMPARE(spinBoxes[0]->decimals(), static_cast<int>(finalDecimals.x()));
+  QCOMPARE(spinBoxes[1]->decimals(), static_cast<int>(finalDecimals.y()));
+  QCOMPARE(spinBoxes[2]->decimals(), static_cast<int>(finalDecimals.z()));
+}
+
+// ----------------------------------------------------------------------------
+void ctkCoordinatesWidgetTester::testDecimalsByKey_data()
+{
+  QTest::addColumn<QVector3D>("coordinates");
+  QTest::addColumn<int>("expectedDecimals");
+  QTest::addColumn<int>("decimalsOffset");
+  QTest::addColumn<QVector3D>("finalDecimals");
+
+  QTest::newRow("(1, 1, 1) +1") << QVector3D(1., 1., 1.) << 0 << 1 << QVector3D(1,1,1);
+  QTest::newRow("(1, 1, 1) +0") << QVector3D(1., 1., 1.) << 0 << 0 << QVector3D(0,0,0);
+  QTest::newRow("(1, 1, 1) -1") << QVector3D(1., 1., 1.) << 0 << -1 << QVector3D(0,0,0);
+
+  QTest::newRow("(1, 1, 1.3) +1") << QVector3D(1., 1., 1.3) << 1 << 1 << QVector3D(2,2,2);
+  QTest::newRow("(1, 1, 1.3) +0") << QVector3D(1., 1., 1.3) << 1 << 0 << QVector3D(1,1,1);
+  QTest::newRow("(1, 1, 1.3) -1") << QVector3D(1., 1., 1.3) << 1 << -1 << QVector3D(0,1,1);
+
+  QTest::newRow("(1.3, 1, 1) +1") << QVector3D(1.3, 1., 1.) << 1 << 1 << QVector3D(2,2,2);
+  QTest::newRow("(1.3, 1, 1) +0") << QVector3D(1.3, 1., 1.) << 1 << 0 << QVector3D(1,1,1);
+  QTest::newRow("(1.3, 1, 1) -1") << QVector3D(1.3, 1., 1.) << 1 << -1 << QVector3D(0,0,0);
+
+  QTest::newRow("(1.3, 1, 1.3) +1") << QVector3D(1.3, 1., 1.3) << 1 << 1 << QVector3D(2,2,2);
+  QTest::newRow("(1.3, 1, 1.3) +0") << QVector3D(1.3, 1., 1.3) << 1 << 0 << QVector3D(1,1,1);
+  QTest::newRow("(1.3, 1, 1.3) -1") << QVector3D(1.3, 1., 1.3) << 1 << -1 << QVector3D(0,1,1);
+
+  QTest::newRow("(1.*, 1, 1.3) +1") << QVector3D(1.12345678910121416, 1., 1.3) << 3 << 1 << QVector3D(4,4,4);
+  QTest::newRow("(1.*, 1, 1.3) +0") << QVector3D(1.12345678910121416, 1., 1.3) << 3 << 0 << QVector3D(3,3,3);
+  QTest::newRow("(1.*, 1, 1.3) -1") << QVector3D(1.12345678910121416, 1., 1.3) << 3 << -1 << QVector3D(2,2,2);
+
+  QTest::newRow("(1, 1.*, 1.3) +1") << QVector3D(1., 1.12345678910121416, 1.3) << 3 << 1 << QVector3D(4,4,4);
+  QTest::newRow("(1, 1.*, 1.3) +0") << QVector3D(1., 1.12345678910121416, 1.3) << 3 << 0 << QVector3D(3,3,3);
+  QTest::newRow("(1, 1.*, 1.3) -1") << QVector3D(1., 1.12345678910121416, 1.3) << 3 << -1 << QVector3D(2,3,3);
+
+  QTest::newRow("(1.*, 1.*, 1.3) +1") << QVector3D(1., 1.12345678910121416, 1.3) << 3 << 1 << QVector3D(4,4,4);
+  QTest::newRow("(1.*, 1.*, 1.3) +0") << QVector3D(1., 1.12345678910121416, 1.3) << 3 << 0 << QVector3D(3,3,3);
+  QTest::newRow("(1.*, 1.*, 1.3) -1") << QVector3D(1., 1.12345678910121416, 1.3) << 3 << -1 << QVector3D(2,3,3);
 }
 
 // ----------------------------------------------------------------------------

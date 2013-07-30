@@ -26,6 +26,7 @@
 // CTK includes
 #include "ctkCoordinatesWidget.h"
 #include "ctkDoubleSpinBox.h"
+#include "ctkUtils.h"
 #include "ctkValueProxy.h"
 
 // STD includes
@@ -43,6 +44,7 @@ ctkCoordinatesWidget::ctkCoordinatesWidget(QWidget* _parent) :QWidget(_parent)
   this->Normalized = false;
   this->Dimension = 0;
   this->Coordinates = 0;
+  this->ChangingDecimals = false;
 
   QHBoxLayout* hboxLayout = new QHBoxLayout(this);
   hboxLayout->setContentsMargins(0, 0, 0, 0);
@@ -71,7 +73,7 @@ void ctkCoordinatesWidget::addSpinBox()
            this, SLOT(updateCoordinate(double)));
   // Same number of decimals within the spinboxes.
   connect( spinBox, SIGNAL(decimalsChanged(int)),
-           this, SLOT(setTemporaryDecimals(int)));
+           this, SLOT(updateOtherDecimals(int)));
   this->layout()->addWidget(spinBox);
 }
 
@@ -123,7 +125,7 @@ int ctkCoordinatesWidget::dimension() const
 //------------------------------------------------------------------------------
 void ctkCoordinatesWidget::setMinimum(double min)
 {
-  for (int i = 0; this->layout()->itemAt(i); ++i)
+  for (int i = 0; i < this->Dimension; ++i)
     {
     this->spinBox(i)->setMinimum(min);
     }
@@ -139,7 +141,7 @@ double ctkCoordinatesWidget::minimum() const
 //------------------------------------------------------------------------------
 void ctkCoordinatesWidget::setMaximum(double max)
 {
-  for (int i = 0; this->layout()->itemAt(i); ++i)
+  for (int i = 0; i < this->Dimension; ++i)
     {
     this->spinBox(i)->setMaximum(max);
     }
@@ -155,7 +157,7 @@ double ctkCoordinatesWidget::maximum() const
 //------------------------------------------------------------------------------
 void ctkCoordinatesWidget::setRange(double min, double max)
 {
-  for (int i = 0; this->layout()->itemAt(i); ++i)
+  for (int i = 0; i < this->Dimension; ++i)
     {
     this->spinBox(i)->setRange(min, max);
     }
@@ -191,7 +193,7 @@ bool ctkCoordinatesWidget::isNormalized() const
 void ctkCoordinatesWidget::setDecimals(int newDecimals)
 {
   this->Decimals = newDecimals;
-  for (int i = 0; this->layout()->itemAt(i); ++i)
+  for (int i = 0; i < this->Dimension; ++i)
     {
     this->spinBox(i)->setDecimals(newDecimals);
     }
@@ -200,19 +202,56 @@ void ctkCoordinatesWidget::setDecimals(int newDecimals)
 //------------------------------------------------------------------------------
 void ctkCoordinatesWidget::updateDecimals()
 {
+  if (this->ChangingDecimals)
+    {
+    return;
+    }
   int maxDecimals = 0;
-  for (int i = 0; this->layout()->itemAt(i); ++i)
+  for (int i = 0; i < this->Dimension; ++i)
     {
     maxDecimals = qMax(maxDecimals, this->spinBox(i)->decimals());
     }
+  this->ChangingDecimals = true;
   this->setTemporaryDecimals(maxDecimals);
+  this->ChangingDecimals = false;
+}
+
+//------------------------------------------------------------------------------
+void ctkCoordinatesWidget::updateOtherDecimals(int decimals)
+{
+  if (this->ChangingDecimals)
+    {
+    return;
+    }
+  int maxDecimals = decimals;
+  for (int i = 0; i < this->Dimension; ++i)
+    {
+    if (this->sender() == this->spinBox(i))
+      {
+      continue;
+      }
+    int spinBoxDecimals = this->spinBox(i)->decimals();
+    if (this->decimalsOption() & ctkDoubleSpinBox::DecimalsByValue)
+      {
+      spinBoxDecimals = ctk::significantDecimals(
+        this->spinBox(i)->displayedValue(), maxDecimals);
+      }
+    maxDecimals = qMax(maxDecimals, spinBoxDecimals);
+    }
+  this->ChangingDecimals = true;
+  this->setTemporaryDecimals(maxDecimals);
+  this->ChangingDecimals = false;
 }
 
 //------------------------------------------------------------------------------
 void ctkCoordinatesWidget::setTemporaryDecimals(int newDecimals)
 {
-  for (int i = 0; this->layout()->itemAt(i); ++i)
+  for (int i = 0; i < this->Dimension; ++i)
     {
+    if (this->sender() == this->spinBox(i))
+      {
+      continue;
+      }
     this->spinBox(i)->spinBox()->setDecimals(newDecimals);
     }
 }
@@ -233,7 +272,7 @@ ctkDoubleSpinBox::DecimalsOptions ctkCoordinatesWidget::decimalsOption()const
 void ctkCoordinatesWidget
 ::setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions newDecimalsOption)
 {
-  for (int i = 0; this->layout()->itemAt(i); ++i)
+  for (int i = 0; i < this->Dimension; ++i)
     {
     this->spinBox(i)->setDecimalsOption(newDecimalsOption);
     }
@@ -243,7 +282,7 @@ void ctkCoordinatesWidget
 //------------------------------------------------------------------------------
 void ctkCoordinatesWidget::setSingleStep(double step)
 {
-  for (int i = 0; this->layout()->itemAt(i); ++i)
+  for (int i = 0; i < this->Dimension; ++i)
     {
     this->spinBox(i)->setSingleStep(step);
     }
