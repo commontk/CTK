@@ -255,6 +255,9 @@ void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zip
   ctkXnatObject::Pointer object = item->xnatObject();
 
   // ctkXnatObject::Pointer child = object->getChildren()[index.row()];
+
+  qDebug() << "object is null ? " << object.isNull();
+  qDebug() << "object is file ? " << object->isFile();
   
   object->download (zipFilename);
 

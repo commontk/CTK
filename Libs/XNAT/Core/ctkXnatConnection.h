@@ -89,24 +89,25 @@ public:
 
   void remove(ctkXnatProject* project);
 
-  void downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
-  void downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
-  void addReconstruction(ctkXnatExperiment* experiment, const QString& categoryEntry);
+  /* void downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFileName); */
+  /* void downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& zipFileName); */
+  /* void addReconstruction(ctkXnatExperiment* experiment, const QString& categoryEntry); */
 
-  void download(ctkXnatScan* scan, const QString& zipFileName);
-  void download(ctkXnatScanResource* scanResource, const QString& zipFileName);
+  /* void download(ctkXnatScan* scan, const QString& zipFileName); */
+  /* void download(ctkXnatScanResource* scanResource, const QString& zipFileName); */
+
   void download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName);
 
-  void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename);
-  void addReconstructionResource(ctkXnatReconstruction* reconstruction, const QString& resource);
-  void removeReconstruction(ctkXnatReconstruction* reconstruction);
+  /* void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename); */
+  /* void addReconstructionResource(ctkXnatReconstruction* reconstruction, const QString& resource); */
+  /* void removeReconstruction(ctkXnatReconstruction* reconstruction); */
 
-  void downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename);
-  void uploadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename);
-  void removeReconstructionResource(ctkXnatReconstructionResource* reconstructionResource);
+  /* void downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename); */
+  /* void uploadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename); */
+  /* void removeReconstructionResource(ctkXnatReconstructionResource* reconstructionResource); */
 
-  void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFileName);
-  void remove(ctkXnatReconstructionResourceFile* reconstructionResourceFile);
+  /* void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFileName); */
+  /* void remove(ctkXnatReconstructionResourceFile* reconstructionResourceFile); */
 
 public slots:
   void processResult(QUuid queryId, QList<QVariantMap> parameters);

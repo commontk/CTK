@@ -65,6 +65,7 @@ ctkXnatConnection::ctkXnatConnection()
 {
   Q_D(ctkXnatConnection);
   d->xnat = new qXnatAPI();
+  
 //  d->xnat->setSuppressSslErrors(true);
   d->rawHeaders["User-Agent"] = "Qt";
   d->xnat->setDefaultRawHeaders(d->rawHeaders);
@@ -725,29 +726,41 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanRes
 //  d->xnat->sync(queryId);
 //}
 
-//void ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName)
-//{
-////  qDebug() << "ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile)";
-//  const QString& scanResourceFileName = scanResourceFile->getName();
-//  ctkXnatObject* scanResource = scanResourceFile->getParent();
-//  const QString& scanResourceName = scanResource->getName();
-//  ctkXnatObject* scan = scanResource->getParent();
-//  const QString& scanName = scan->getName();
-//  ctkXnatObject* experiment = scan->getParent()->getParent();
-//  const QString& experimentName = experiment->getName();
-//  ctkXnatObject* subject = experiment->getParent();
-//  const QString& subjectName = subject->getName();
-//  ctkXnatObject* project = subject->getParent();
-//  const QString& projectName = project->getName();
+void ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName)
+{
+ const QString& scanResourceFileName = scanResourceFile->getId();
+ ctkXnatObject::Pointer scanResource = scanResourceFile->getParent();
+ const QString& scanResourceName = scanResource->getProperty ("label");
+ ctkXnatObject::Pointer scan = scanResource->getParent();
+ const QString& scanName = scan->getId();
+ ctkXnatObject::Pointer experiment = scan->getParent()->getParent();
+ const QString& experimentName = experiment->getId();
+ ctkXnatObject::Pointer subject = experiment->getParent();
+ const QString& subjectName = subject->getId();
+ ctkXnatObject::Pointer project = subject->getParent();
+ const QString& projectName = project->getId();
 
-//  Q_D(ctkXnatConnection);
+ Q_D(ctkXnatConnection);
 
-//  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans/%4/resources/%5/files/%6").arg(projectName, subjectName, experimentName, scanName, scanResourceName, scanResourceFileName);
-//  qRestAPI::Parameters parameters;
-//  parameters["format"] = "zip";
-//  QUuid queryId = d->xnat->download(fileName, query, parameters);
-//  d->xnat->sync(queryId);
-//}
+ QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans/%4/resources/%5/files/%6").arg(projectName, subjectName, experimentName, scanName, scanResourceName, scanResourceFileName);
+
+ qRestAPI::Parameters parameters;
+ parameters["format"] = "zip";
+
+ qDebug() << "launching qRestAPI download with ";
+ qDebug() << "query : "<< query;
+ qDebug() << "object properties : ";
+
+ QList<QString> propertieskeys = scanResourceFile->getProperties();
+
+ foreach (QString key, propertieskeys)
+ {
+   qDebug() << key << " : " << scanResourceFile->getProperty (key);
+ }
+ 
+ QUuid queryId = d->xnat->download(fileName, query, parameters);
+ d->xnat->sync(queryId);
+}
 
 void ctkXnatConnection::processResult(QUuid /*queryId*/, QList<QVariantMap> /*parameters*/)
 {

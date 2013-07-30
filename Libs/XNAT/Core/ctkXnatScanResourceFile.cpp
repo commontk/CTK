@@ -77,6 +77,8 @@ void ctkXnatScanResourceFile::download(const QString& filename)
   
   qDebug() << "file uri is" << object->uri();
   qDebug() << "downloading towards: " << filename;
+
+  object->getConnection()->download (this, filename);
 }
 
 void ctkXnatScanResourceFile::upload(const QString& filename)
