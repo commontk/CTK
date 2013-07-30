@@ -23,9 +23,8 @@
 
 // Qt includes
 #include <QWidget>
-class QPushButton;
-class QGroupBox;
-#include <QBoxLayout>
+#include <QVariant>
+class QAbstractButton;
 
 // CTK includes
 #include "ctkPimpl.h"
@@ -34,6 +33,7 @@ class ctkWorkflow;
 class ctkWorkflowStep;
 class ctkWorkflowButtonBoxWidget;
 class ctkWorkflowGroupBox;
+class ctkWorkflowWidgetStep;
 
 class ctkWorkflowWidgetPrivate;
 
@@ -55,6 +55,8 @@ public:
   Q_INVOKABLE virtual ctkWorkflow* workflow()const;
   Q_INVOKABLE virtual void setWorkflow(ctkWorkflow* newWorkflow);
 
+  Q_INVOKABLE ctkWorkflowWidgetStep* widgetStep(const QString& id)const;
+
   /// Get the widget constaining the title, subtitle, pre-text, post-text, error-text and client area
   /// layout.
   Q_INVOKABLE virtual ctkWorkflowGroupBox* workflowGroupBox()const;
@@ -65,6 +67,34 @@ public:
 
   /// Get the widget with the 'next', 'back' and 'goTo' buttons
   Q_INVOKABLE ctkWorkflowButtonBoxWidget* buttonBoxWidget()const;
+
+  /// Apply the text, icon and tooltip format to the button.
+  ///  * {PROP}, [prop] or (PROP): value of the PROP property (e.g. stepid,
+  /// name, description...) used as button text, icon or tooltip respectively.
+  /// PROP can be prefixed by 'back:', 'next:' or 'current:',
+  /// the property will then be the one of the previous, next or current step.
+  ///  * [<-]: Back arrow icon. If it is the first item, the icon is to the left
+  /// of the button text.
+  ///  * [->]: Next arrow icon. If it is the last item, the icon is to the right
+  ///  of the button text if the button is a ctkPushButton.
+  ///  * {#} or (#): 1-based index of the step (int)
+  ///  * {!#} or {!#} : Total number of steps (int)
+  ///  * "ABCD": text for the button
+  ///  * {PROP|"ABCD"}: Use ABCD as fallback if PROP is not a valid property or
+  /// if the text is empty.
+  ///
+  /// Examples:
+  ///   "{next:#}"/"{!#}") "{next:name}(next:description)[->]" will format the button with:
+  ///  * text="3/3) Compute Algorithm" if the next step is the last step of a
+  /// 3-step-workflow, and its name is "Compute Algorithm".
+  ///  * icon=QStyle::SP_ArrowRight
+  ///  * tooltip="This step computes the algorithm" if the next step description
+  /// is "This step...".
+  /// \sa parse(), formatText()
+  static void formatButton(QAbstractButton* button, const QString& format, ctkWorkflowWidgetStep* step);
+  /// Return the text contained in \a format.
+  /// \sa parse(), formatButton()
+  static QString formatText(const QString& format, ctkWorkflowWidgetStep* step);
 
 public Q_SLOTS:
   /// Triggers updates of the the workflowGroupBox and the buttonBoxWidget when the current workflow
@@ -81,6 +111,13 @@ protected:
 
   // Triggers updates of the buttonBoxWidget when the current workflow step has changed.
   void updateButtonBoxUI(ctkWorkflowStep* currentStep);
+
+  /// Return the value of the formatItem.
+  /// \sa format()
+  static QVariant buttonItem(QString formatItem, ctkWorkflowWidgetStep* step);
+  /// Return a dictionary of formats. Keys can be 'text', 'icon', 'iconalignment' or 'tooltip'.
+  /// \sa buttonItem(), formatButton(), formatText()
+  static QMap<QString, QVariant> parse(const QString& format, ctkWorkflowWidgetStep* step);
 
 protected:
   QScopedPointer<ctkWorkflowWidgetPrivate> d_ptr;

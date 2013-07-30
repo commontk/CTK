@@ -286,6 +286,14 @@ int ctkWorkflowTest3(int argc, char * argv [] )
     }
 
   workflow->stop();
+
+  int d = workflow->backwardDistanceToStep(s7);
+  if (d != 5)
+    {
+    std::cerr << "error distance between s7->s0, got"<< d << std::endl;
+    return EXIT_FAILURE;
+    }
+
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
 
