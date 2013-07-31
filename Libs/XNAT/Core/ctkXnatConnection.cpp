@@ -728,36 +728,15 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanRes
 
 void ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName)
 {
- const QString& scanResourceFileName = scanResourceFile->getId();
- ctkXnatObject::Pointer scanResource = scanResourceFile->getParent();
- const QString& scanResourceName = scanResource->getProperty ("label");
- ctkXnatObject::Pointer scan = scanResource->getParent();
- const QString& scanName = scan->getId();
- ctkXnatObject::Pointer experiment = scan->getParent()->getParent();
- const QString& experimentName = experiment->getId();
- ctkXnatObject::Pointer subject = experiment->getParent();
- const QString& subjectName = subject->getId();
- ctkXnatObject::Pointer project = subject->getParent();
- const QString& projectName = project->getId();
-
  Q_D(ctkXnatConnection);
-
- QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans/%4/resources/%5/files/%6").arg(projectName, subjectName, experimentName, scanName, scanResourceName, scanResourceFileName);
-
+ QString query = scanResourceFile->uri();
  qRestAPI::Parameters parameters;
- parameters["format"] = "zip";
+ /**
+    nt: When the object is a file we don't need to use the "?format=zip" parameter
+    in the URI. So we leave the parameter map empty
+ */
+ // parameters["format"] = "zip";
 
- qDebug() << "launching qRestAPI download with ";
- qDebug() << "query : "<< query;
- qDebug() << "object properties : ";
-
- QList<QString> propertieskeys = scanResourceFile->getProperties();
-
- foreach (QString key, propertieskeys)
- {
-   qDebug() << key << " : " << scanResourceFile->getProperty (key);
- }
- 
  QUuid queryId = d->xnat->download(fileName, query, parameters);
  d->xnat->sync(queryId);
 }
