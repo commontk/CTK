@@ -26,7 +26,6 @@
 #include "ctkXnatSubject.h"
 
 #include <QList>
-#include <QDebug>
 
 ctkXnatTreeModel::ctkXnatTreeModel()
 : m_RootItem(new ctkXnatTreeItem())
@@ -244,9 +243,9 @@ bool ctkXnatTreeModel::removeAllRows(const QModelIndex& parent)
   return true;
 }
 
-void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zipFilename)
+void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zipFileName)
 {
-  if ( !index.isValid() )
+  if (!index.isValid())
   {
     return;
   }
@@ -254,19 +253,14 @@ void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zip
   ctkXnatTreeItem* item = this->itemAt(index);
   ctkXnatObject::Pointer object = item->xnatObject();
 
-  // ctkXnatObject::Pointer child = object->children()[index.row()];
-
-  qDebug() << "object is null ? " << object.isNull();
-  qDebug() << "object is file ? " << object->isFile();
-  
-  object->download (zipFilename);
+  object->download(zipFileName);
 
   return;
 }
 
-void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFilename)
+void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFileName)
 {
-  if ( !index.isValid() )
+  if (!index.isValid())
   {
     return;
   }
@@ -275,12 +269,12 @@ void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFi
   ctkXnatObject::Pointer xnatObject = item->xnatObject();
   ctkXnatObject::Pointer child = xnatObject->children()[index.row()];
   
-  child->upload(zipFilename);
+  child->upload(zipFileName);
 }
 
 void ctkXnatTreeModel::addEntry(const QModelIndex& index, const QString& name)
 {
-  if ( !index.isValid() )
+  if (!index.isValid())
   {
     return;
   }
@@ -294,7 +288,7 @@ void ctkXnatTreeModel::addEntry(const QModelIndex& index, const QString& name)
 
 void ctkXnatTreeModel::removeEntry(const QModelIndex& index)
 {
-  if ( !index.isValid() )
+  if (!index.isValid())
   {
     return;
   }

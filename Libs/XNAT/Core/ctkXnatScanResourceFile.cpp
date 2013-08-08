@@ -24,7 +24,6 @@
 #include "ctkXnatConnection.h"
 #include "ctkXnatObjectPrivate.h"
 
-#include <QDebug>
 
 class ctkXnatScanResourceFilePrivate : public ctkXnatObjectPrivate
 {
@@ -73,20 +72,11 @@ ctkXnatScanResourceFile::~ctkXnatScanResourceFile()
 
 void ctkXnatScanResourceFile::download(const QString& filename)
 {
-  ctkXnatScanResourceFile* object = this;
-  
-  qDebug() << "file uri is" << object->uri();
-  qDebug() << "downloading towards: " << filename;
-
-  object->connection()->download(this, filename);
+  this->connection()->download(this, filename);
 }
 
 void ctkXnatScanResourceFile::upload(const QString& filename)
 {
-  ctkXnatScanResourceFile* object = this;
-  
-  qDebug() << "file uri is" << object->uri();
-  qDebug() << "uploading from: " << filename;
 }
 
 

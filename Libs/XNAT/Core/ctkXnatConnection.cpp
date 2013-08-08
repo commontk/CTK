@@ -37,7 +37,6 @@
 #include "ctkXnatServer.h"
 #include "ctkXnatSubject.h"
 
-#include <QDebug>
 #include <QScopedPointer>
 #include <QStringBuilder>
 
@@ -93,9 +92,9 @@ void ctkXnatConnection::createConnections()
 
 void ctkXnatConnection::progress(QUuid queryId, double progress)
 {
-  qDebug() << "ctkXnatConnection::progress(QUuid queryId, double progress)";
-  qDebug() << "query id:" << queryId;
-  qDebug() << "progress:" << (progress * 100.0) << "%";
+//  qDebug() << "ctkXnatConnection::progress(QUuid queryId, double progress)";
+//  qDebug() << "query id:" << queryId;
+//  qDebug() << "progress:" << (progress * 100.0) << "%";
 }
 
 QString ctkXnatConnection::profileName() const
@@ -487,7 +486,6 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstructionResource
 
 //void ctkXnatConnection::downloadScanFiles(ctkXnatExperiment* experiment, const QString& fileName)
 //{
-////  qDebug() << "ctkXnatConnection::downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFilename)";
 //  const QString& experimentName = experiment->getName();
 //  ctkXnatObject* subject = experiment->getParent();
 //  const QString& subjectName = subject->getName();
@@ -629,7 +627,6 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstructionResource
 
 //void ctkXnatConnection::download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& fileName)
 //{
-////  qDebug() <<  "ctkXnatConnection::download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFilename)";
 //  const QString& reconstructionResourceFileName = reconstructionResourceFile->getName();
 //  ctkXnatObject* reconstructionResource = reconstructionResourceFile->getParent();
 //  const QString& reconstructionResourceName = reconstructionResource->getName();
@@ -670,7 +667,6 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstructionResource
 
 //void ctkXnatConnection::download(ctkXnatScan* scan, const QString& fileName)
 //{
-////  qDebug() << "ctkXnatConnection::download(ctkXnatScan* scan, const QString& zipFilename)";
 //  const QString& scanName = scan->getName();
 //  ctkXnatObject* experiment = scan->getParent()->getParent();
 //  const QString& experimentName = experiment->getName();

@@ -23,10 +23,8 @@
 #include "ctkXnatObjectPrivate.h"
 
 #include "ctkXnatServer.h"
-#include <QVariant>
-
 #include <QDebug>
-
+#include <QVariant>
 
 
 ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& d)

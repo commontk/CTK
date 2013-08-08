@@ -24,8 +24,6 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatConnection.h"
 
-#include <QDebug>
-
 class ctkXnatServerPrivate : public ctkXnatObjectPrivate
 {
   explicit ctkXnatServerPrivate(ctkXnatConnection* connection);
