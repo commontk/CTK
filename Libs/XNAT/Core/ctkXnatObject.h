@@ -43,17 +43,18 @@ public:
 
   virtual ~ctkXnatObject();
 
-  QString getId() const;
-  QString getName() const;
-  QString getDescription() const;
+  QString id() const;
+  QString uri() const;
+  QString name() const;
+  QString description() const;
 
-  QString getProperty(const QString& name) const;
+  QString property(const QString& name) const;
   void setProperty(const QString& name, const QVariant& value);
 
-  QList<QString> getProperties();
+  QList<QString> properties();
   
-  ctkXnatObject::Pointer getParent() const;
-  QList<ctkXnatObject::Pointer> getChildren() const;
+  ctkXnatObject::Pointer parent() const;
+  QList<ctkXnatObject::Pointer> children() const;
 
   void addChild(Pointer& child);
   void removeChild(Pointer& child);
@@ -80,9 +81,10 @@ protected:
   ctkXnatObject();
   ctkXnatObject(ctkXnatObjectPrivate& dd);
 
-  virtual ctkXnatConnection* getConnection() const;
+  virtual ctkXnatConnection* connection() const;
 
   void setId(const QString& id);
+  void setUri(const QString& uri);
   void setName(const QString& name);
   void setDescription(const QString& description);
 

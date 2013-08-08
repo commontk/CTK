@@ -39,13 +39,13 @@ public:
   {
     insertDate.clear();
     insertUser.clear();
-    uri.clear();
+//    uri.clear();
     projects.clear();
   }
 
   QString insertDate;
   QString insertUser;
-  QString uri;
+//  QString uri;
 
   QList<ctkXnatProject::WeakPointer> projects;
 };
@@ -83,17 +83,17 @@ void ctkXnatSubject::setInsertUser(const QString& insertUser)
   d->insertUser = insertUser;
 }
 
-const QString& ctkXnatSubject::uri() const
-{
-  Q_D(const ctkXnatSubject);
-  return d->uri;
-}
+//const QString& ctkXnatSubject::uri() const
+//{
+//  Q_D(const ctkXnatSubject);
+//  return d->uri;
+//}
 
-void ctkXnatSubject::setUri(const QString& uri)
-{
-  Q_D(ctkXnatSubject);
-  d->uri = uri;
-}
+//void ctkXnatSubject::setUri(const QString& uri)
+//{
+//  Q_D(ctkXnatSubject);
+//  d->uri = uri;
+//}
 
 void ctkXnatSubject::reset()
 {
@@ -105,7 +105,7 @@ void ctkXnatSubject::fetchImpl()
 {
   Q_D(ctkXnatSubject);
   ctkXnatObject::Pointer self = d->selfPtr;
-  getConnection()->fetch(self.staticCast<ctkXnatSubject>());
+  connection()->fetch(self.staticCast<ctkXnatSubject>());
 }
 
 ctkXnatSubject::Pointer ctkXnatSubject::Create()

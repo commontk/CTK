@@ -41,7 +41,7 @@ public:
 
 protected:
 
-  virtual ctkXnatConnection* getConnection() const;
+  virtual ctkXnatConnection* connection() const;
 
 private:
 

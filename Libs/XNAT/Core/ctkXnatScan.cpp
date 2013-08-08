@@ -79,7 +79,7 @@ void ctkXnatScan::fetchImpl()
 {
   Q_D(ctkXnatScan);
   ctkXnatObject::Pointer self = d->selfPtr;
-  this->getConnection()->fetch(self.staticCast<ctkXnatScan>());
+  this->connection()->fetch(self.staticCast<ctkXnatScan>());
 }
 
 void ctkXnatScan::remove()

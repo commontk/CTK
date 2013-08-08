@@ -56,18 +56,18 @@ ctkXnatServer::Pointer ctkXnatServer::Create(ctkXnatConnection* connection)
 {
   Pointer server(new ctkXnatServer(connection));
   server->d_func()->selfPtr = server;
+  server->setUri(connection->url());
   return server;
 }
 
 void ctkXnatServer::fetchImpl()
 {
   Q_D(ctkXnatObject);
-  qDebug() << "Starting to fetch projects...";
   ctkXnatObject::Pointer self = d->selfPtr;
-  this->getConnection()->fetch(self.staticCast<ctkXnatServer>());
+  this->connection()->fetch(self.staticCast<ctkXnatServer>());
 }
 
-ctkXnatConnection* ctkXnatServer::getConnection() const
+ctkXnatConnection* ctkXnatServer::connection() const
 {
   Q_D(const ctkXnatServer);
   return d->connection;

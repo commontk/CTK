@@ -35,10 +35,10 @@ public:
 
   void reset()
   {
-    uri.clear();
+//    uri.clear();
   }
   
-  QString uri;
+//  QString uri;
 };
 
 
@@ -58,17 +58,17 @@ ctkXnatExperiment::~ctkXnatExperiment()
 {
 }
 
-const QString& ctkXnatExperiment::uri() const
-{
-  Q_D(const ctkXnatExperiment);
-  return d->uri;
-}
+//const QString& ctkXnatExperiment::uri() const
+//{
+//  Q_D(const ctkXnatExperiment);
+//  return d->uri;
+//}
 
-void ctkXnatExperiment::setUri(const QString& uri)
-{
-  Q_D(ctkXnatExperiment);
-  d->uri = uri;
-}
+//void ctkXnatExperiment::setUri(const QString& uri)
+//{
+//  Q_D(ctkXnatExperiment);
+//  d->uri = uri;
+//}
 
 void ctkXnatExperiment::reset()
 {
@@ -79,7 +79,7 @@ void ctkXnatExperiment::fetchImpl()
 {
   Q_D(ctkXnatExperiment);
   ctkXnatObject::Pointer self = d->selfPtr;
-  this->getConnection()->fetch(self.staticCast<ctkXnatExperiment>());
+  this->connection()->fetch(self.staticCast<ctkXnatExperiment>());
 }
 
 void ctkXnatExperiment::remove()

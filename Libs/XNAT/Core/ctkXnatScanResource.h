@@ -40,8 +40,8 @@ public:
   static Pointer Create();
   virtual ~ctkXnatScanResource();
   
-  const QString& uri() const;
-  void setUri(const QString& uri);
+//  const QString& uri() const;
+//  void setUri(const QString& uri);
   
   void reset();
   void remove();

@@ -44,9 +44,9 @@ ctkXnatObject::~ctkXnatObject()
 {
 }
 
-QString ctkXnatObject::getId() const
+QString ctkXnatObject::id() const
 {
-  return getProperty("ID");
+  return property("ID");
 }
 
 void ctkXnatObject::setId(const QString& id)
@@ -54,17 +54,27 @@ void ctkXnatObject::setId(const QString& id)
   setProperty("ID", id);
 }
 
-QString ctkXnatObject::getName() const
+QString ctkXnatObject::uri() const
 {
-  return getProperty("name");
+  return property("URI");
 }
 
-QString ctkXnatObject::getDescription() const
+void ctkXnatObject::setUri(const QString& uri)
 {
-  return getProperty("description");
+  setProperty("URI", uri);
 }
 
-QString ctkXnatObject::getProperty(const QString& name) const
+QString ctkXnatObject::name() const
+{
+  return property("name");
+}
+
+QString ctkXnatObject::description() const
+{
+  return property("description");
+}
+
+QString ctkXnatObject::property(const QString& name) const
 {
   Q_D(const ctkXnatObject);
   ctkXnatObjectPrivate::PropertyMapConstInterator iter = d->properties.find(name);
@@ -82,7 +92,7 @@ void ctkXnatObject::setProperty(const QString& name, const QVariant& value)
 }
 
 
-QList<QString> ctkXnatObject::getProperties()
+QList<QString> ctkXnatObject::properties()
 {
   Q_D(ctkXnatObject);
   
@@ -98,13 +108,13 @@ QList<QString> ctkXnatObject::getProperties()
   return value;
 }
 
-ctkXnatObject::Pointer ctkXnatObject::getParent() const
+ctkXnatObject::Pointer ctkXnatObject::parent() const
 {
   Q_D(const ctkXnatObject);
   return d->parent;
 }
 
-QList<ctkXnatObject::Pointer> ctkXnatObject::getChildren() const
+QList<ctkXnatObject::Pointer> ctkXnatObject::children() const
 {
   Q_D(const ctkXnatObject);
   return d->children;
@@ -150,17 +160,17 @@ void ctkXnatObject::fetch()
   }
 }
 
-ctkXnatConnection* ctkXnatObject::getConnection() const
+ctkXnatConnection* ctkXnatObject::connection() const
 {
   const ctkXnatObject* xnatObject = this;
   const ctkXnatServer* server;
   do {
-    xnatObject = xnatObject->getParent().data();
+    xnatObject = xnatObject->parent().data();
     server = dynamic_cast<const ctkXnatServer*>(xnatObject);
   }
   while (xnatObject && !server);
 
-  return server ? xnatObject->getConnection() : 0;
+  return server ? xnatObject->connection() : 0;
 }
 
 

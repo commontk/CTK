@@ -80,7 +80,7 @@ int ctkXnatTreeItem::columnCount() const
 QVariant ctkXnatTreeItem::data(int column) const
 {
   Q_UNUSED(column);
-  return m_XnatObject->getName();
+  return m_XnatObject->name();
 }
 
 ctkXnatTreeItem* ctkXnatTreeItem::parent()

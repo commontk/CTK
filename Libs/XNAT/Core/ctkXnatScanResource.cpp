@@ -36,10 +36,10 @@ public:
 
   void reset()
   {
-    uri.clear();
+//    uri.clear();
   }
   
-  QString uri;
+//  QString uri;
 };
 
 
@@ -59,17 +59,17 @@ ctkXnatScanResource::~ctkXnatScanResource()
 {
 }
 
-const QString& ctkXnatScanResource::uri() const
-{
-  Q_D(const ctkXnatScanResource);
-  return d->uri;
-}
+//const QString& ctkXnatScanResource::uri() const
+//{
+//  Q_D(const ctkXnatScanResource);
+//  return d->uri;
+//}
 
-void ctkXnatScanResource::setUri(const QString& uri)
-{
-  Q_D(ctkXnatScanResource);
-  d->uri = uri;
-}
+//void ctkXnatScanResource::setUri(const QString& uri)
+//{
+//  Q_D(ctkXnatScanResource);
+//  d->uri = uri;
+//}
 
 void ctkXnatScanResource::reset()
 {
@@ -80,12 +80,12 @@ void ctkXnatScanResource::fetchImpl()
 {
   Q_D(ctkXnatScanResource);
   ctkXnatObject::Pointer self = d->selfPtr;
-  this->getConnection()->fetch(self.staticCast<ctkXnatScanResource>());
+  this->connection()->fetch(self.staticCast<ctkXnatScanResource>());
 }
 
 void ctkXnatScanResource::download(const QString& filename)
 {
-  this->getConnection()->download(this, filename);
+  this->connection()->download(this, filename);
 }
 
 void ctkXnatScanResource::remove()

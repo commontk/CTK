@@ -50,8 +50,8 @@ public:
   const QString& insertUser() const;
   void setInsertUser(const QString& insertUser);
 
-  const QString& uri() const;
-  void setUri(const QString& uri);
+//  const QString& uri() const;
+//  void setUri(const QString& uri);
 
   void reset();
   void remove();

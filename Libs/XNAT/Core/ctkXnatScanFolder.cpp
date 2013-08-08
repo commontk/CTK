@@ -36,17 +36,17 @@ public:
 
   void reset()
   {
-    uri.clear();
+//    uri.clear();
   }
   
-  QString uri;
+//  QString uri;
 };
 
 
 ctkXnatScanFolder::ctkXnatScanFolder()
 : ctkXnatObject(new ctkXnatScanFolderPrivate())
 {
-  this->setProperty("ID", "scans");
+  this->setProperty("ID", "Scans");
 }
 
 ctkXnatScanFolder::Pointer ctkXnatScanFolder::Create()
@@ -60,17 +60,17 @@ ctkXnatScanFolder::~ctkXnatScanFolder()
 {
 }
 
-const QString& ctkXnatScanFolder::uri() const
-{
-  Q_D(const ctkXnatScanFolder);
-  return d->uri;
-}
+//const QString& ctkXnatScanFolder::uri() const
+//{
+//  Q_D(const ctkXnatScanFolder);
+//  return d->uri;
+//}
 
-void ctkXnatScanFolder::setUri(const QString& uri)
-{
-  Q_D(ctkXnatScanFolder);
-  d->uri = uri;
-}
+//void ctkXnatScanFolder::setUri(const QString& uri)
+//{
+//  Q_D(ctkXnatScanFolder);
+//  d->uri = uri;
+//}
 
 void ctkXnatScanFolder::reset()
 {
@@ -81,7 +81,7 @@ void ctkXnatScanFolder::fetchImpl()
 {
   Q_D(ctkXnatScanFolder);
   ctkXnatObject::Pointer self = d->selfPtr;
-  this->getConnection()->fetch(self.staticCast<ctkXnatScanFolder>());
+  this->connection()->fetch(self.staticCast<ctkXnatScanFolder>());
 }
 
 void ctkXnatScanFolder::remove()

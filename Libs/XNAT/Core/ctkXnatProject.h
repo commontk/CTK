@@ -50,8 +50,8 @@ public:
   const QString& piLastName() const;
   void setPiLastName(const QString& piLastName);
 
-  const QString& uri() const;
-  void setUri(const QString& uri);
+//  const QString& uri() const;
+//  void setUri(const QString& uri);
 
   void reset();
   void remove();

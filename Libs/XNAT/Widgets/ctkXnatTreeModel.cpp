@@ -55,10 +55,10 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
   {
     ctkXnatObject::Pointer xnatObject = this->itemAt(index)->xnatObject();
     
-    QString displayData = xnatObject->getName();
+    QString displayData = xnatObject->name();
     if (displayData.isEmpty())
     {
-      displayData = xnatObject->getId();
+      displayData = xnatObject->id();
     }
     return displayData;
   }
@@ -66,7 +66,7 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
   {
     ctkXnatObject::Pointer xnatObject = this->itemAt(index)->xnatObject();
 
-    return xnatObject->getDescription();
+    return xnatObject->description();
   }
 
   return QVariant();
@@ -183,7 +183,7 @@ void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
 
   xnatObject->fetch();
 
-  QList<ctkXnatObject::Pointer> children = xnatObject->getChildren();
+  QList<ctkXnatObject::Pointer> children = xnatObject->children();
   if (!children.isEmpty())
   {
     beginInsertRows(index, 0, children.size() - 1);
@@ -218,15 +218,15 @@ bool ctkXnatTreeModel::removeAllRows(const QModelIndex& parent)
   ctkXnatObject::Pointer xnatObject = item->xnatObject();
 
   // nt: not sure why the parent.row() is used here instead of the first item in list
-  // that is xnatObject->getChildren()[0];
-  ctkXnatObject::Pointer child = xnatObject->getChildren()[parent.row()];
+  // that is xnatObject->children()[0];
+  ctkXnatObject::Pointer child = xnatObject->children()[parent.row()];
 
   if ( child == NULL )
   {
     return false;
   }
 
-  int numberofchildren = child->getChildren().size();
+  int numberofchildren = child->children().size();
   if (numberofchildren > 0)
   {
     beginRemoveRows(parent, 0, numberofchildren - 1);
@@ -254,7 +254,7 @@ void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zip
   ctkXnatTreeItem* item = this->itemAt(index);
   ctkXnatObject::Pointer object = item->xnatObject();
 
-  // ctkXnatObject::Pointer child = object->getChildren()[index.row()];
+  // ctkXnatObject::Pointer child = object->children()[index.row()];
 
   qDebug() << "object is null ? " << object.isNull();
   qDebug() << "object is file ? " << object->isFile();
@@ -273,7 +273,7 @@ void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFi
 
   ctkXnatTreeItem* item = this->itemAt(index);
   ctkXnatObject::Pointer xnatObject = item->xnatObject();
-  ctkXnatObject::Pointer child = xnatObject->getChildren()[index.row()];
+  ctkXnatObject::Pointer child = xnatObject->children()[index.row()];
   
   child->upload(zipFilename);
 }
@@ -287,7 +287,7 @@ void ctkXnatTreeModel::addEntry(const QModelIndex& index, const QString& name)
 
   ctkXnatTreeItem* item = this->itemAt(index);
   ctkXnatObject::Pointer xnatObject = item->xnatObject();
-  ctkXnatObject::Pointer child = xnatObject->getChildren()[index.row()];
+  ctkXnatObject::Pointer child = xnatObject->children()[index.row()];
 
   child->add(name);
 }
@@ -301,7 +301,7 @@ void ctkXnatTreeModel::removeEntry(const QModelIndex& index)
 
   ctkXnatTreeItem* item = this->itemAt(index);
   ctkXnatObject::Pointer xnatObject = item->xnatObject();
-  ctkXnatObject::Pointer child = xnatObject->getChildren()[index.row()];
+  ctkXnatObject::Pointer child = xnatObject->children()[index.row()];
 
   child->remove();
 }

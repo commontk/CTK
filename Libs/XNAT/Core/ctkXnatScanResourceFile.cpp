@@ -37,10 +37,10 @@ public:
 
   void reset()
   {
-    uri.clear();
+//    uri.clear();
   }
   
-  QString uri;
+//  QString uri;
 };
 
 ctkXnatScanResourceFile::ctkXnatScanResourceFile()
@@ -59,17 +59,17 @@ ctkXnatScanResourceFile::~ctkXnatScanResourceFile()
 {
 }
 
-const QString& ctkXnatScanResourceFile::uri() const
-{
-  Q_D(const ctkXnatScanResourceFile);
-  return d->uri;
-}
+//const QString& ctkXnatScanResourceFile::uri() const
+//{
+//  Q_D(const ctkXnatScanResourceFile);
+//  return d->uri;
+//}
 
-void ctkXnatScanResourceFile::setUri(const QString& uri)
-{
-  Q_D(ctkXnatScanResourceFile);
-  d->uri = uri;
-}
+//void ctkXnatScanResourceFile::setUri(const QString& uri)
+//{
+//  Q_D(ctkXnatScanResourceFile);
+//  d->uri = uri;
+//}
 
 void ctkXnatScanResourceFile::download(const QString& filename)
 {
@@ -78,7 +78,7 @@ void ctkXnatScanResourceFile::download(const QString& filename)
   qDebug() << "file uri is" << object->uri();
   qDebug() << "downloading towards: " << filename;
 
-  object->getConnection()->download (this, filename);
+  object->connection()->download(this, filename);
 }
 
 void ctkXnatScanResourceFile::upload(const QString& filename)

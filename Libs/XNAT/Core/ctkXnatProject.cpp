@@ -38,13 +38,13 @@ public:
     secondaryId.clear();
     piFirstName.clear();
     piLastName.clear();
-    uri.clear();
+//    uri.clear();
   }
 
   QString secondaryId;
   QString piFirstName;
   QString piLastName;
-  QString uri;
+//  QString uri;
 };
 
 ctkXnatProject::ctkXnatProject()
@@ -99,17 +99,17 @@ void ctkXnatProject::setPiLastName(const QString& piLastName)
   d->piLastName = piLastName;
 }
 
-const QString& ctkXnatProject::uri() const
-{
-  Q_D(const ctkXnatProject);
-  return d->uri;
-}
+//const QString& ctkXnatProject::uri() const
+//{
+//  Q_D(const ctkXnatProject);
+//  return d->uri;
+//}
 
-void ctkXnatProject::setUri(const QString& uri)
-{
-  Q_D(ctkXnatProject);
-  d->uri = uri;
-}
+//void ctkXnatProject::setUri(const QString& uri)
+//{
+//  Q_D(ctkXnatProject);
+//  d->uri = uri;
+//}
 
 void ctkXnatProject::reset()
 {
@@ -120,7 +120,7 @@ void ctkXnatProject::fetchImpl()
 {
   Q_D(ctkXnatProject);
   ctkXnatObject::Pointer self = d->selfPtr;
-  this->getConnection()->fetch(self.staticCast<ctkXnatProject>());
+  this->connection()->fetch(self.staticCast<ctkXnatProject>());
 }
 
 void ctkXnatProject::remove()

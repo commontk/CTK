@@ -181,7 +181,7 @@ void ctkXnatConnection::fetch(const ctkXnatServer::Pointer& server)
 
 void ctkXnatConnection::fetch(const ctkXnatProject::Pointer& project)
 {
-  const QString& projectTitle = project->getId();
+  const QString& projectTitle = project->id();
 
   Q_D(ctkXnatConnection);
 
@@ -192,7 +192,7 @@ void ctkXnatConnection::fetch(const ctkXnatProject::Pointer& project)
 
   foreach (ctkXnatSubject* subject, subjects)
   {
-    QString label = subject->getProperty("label");
+    QString label = subject->property("label");
     if (label.size())
     {
       subject->setProperty("ID", label);
@@ -207,8 +207,8 @@ void ctkXnatConnection::fetch(const ctkXnatProject::Pointer& project)
 
 void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatSubject>& subject)
 {
-  const QString& subjectName = subject->getId();
-  const QString& projectName = subject->getParent()->getId();
+  const QString& subjectName = subject->id();
+  const QString& projectName = subject->parent()->id();
 
   Q_D(ctkXnatConnection);
 
@@ -220,7 +220,7 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatSubject>& subject)
 
   foreach (ctkXnatExperiment* experiment, experiments)
   {
-    QString label = experiment->getProperty ("label");
+    QString label = experiment->property ("label");
     if (label.size())
       experiment->setProperty ("ID", label);
     ctkXnatObject::Pointer ptr(experiment);
@@ -233,11 +233,11 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatSubject>& subject)
 
 void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatExperiment>& experiment)
 {
-  const QString& experimentName = experiment->getId();
-  ctkXnatObject::Pointer subject = experiment->getParent();
-  const QString& subjectName = subject->getId();
-  ctkXnatObject::Pointer project = subject->getParent();
-  const QString& projectName = project->getId();
+  const QString& experimentName = experiment->id();
+  ctkXnatObject::Pointer subject = experiment->parent();
+  const QString& subjectName = subject->id();
+  ctkXnatObject::Pointer project = subject->parent();
+  const QString& projectName = project->id();
 
   Q_D(ctkXnatConnection);
   
@@ -272,12 +272,12 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatExperiment>& experimen
 
 void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanFolder>& scanFolder)
 {
-  ctkXnatObject::Pointer experiment = scanFolder->getParent();
-  const QString& experimentName = experiment->getId();
-  ctkXnatObject::Pointer subject = experiment->getParent();
-  const QString& subjectName = subject->getId();
-  ctkXnatObject::Pointer project = subject->getParent();
-  const QString& projectName = project->getId();
+  ctkXnatObject::Pointer experiment = scanFolder->parent();
+  const QString& experimentName = experiment->id();
+  ctkXnatObject::Pointer subject = experiment->parent();
+  const QString& subjectName = subject->id();
+  ctkXnatObject::Pointer project = subject->parent();
+  const QString& projectName = project->id();
   
   Q_D(ctkXnatConnection);
   
@@ -300,13 +300,13 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanFolder>& scanFolde
 
 void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScan>& scan)
 {
-  const QString& scanName = scan->getId();
-  ctkXnatObject::Pointer experiment = scan->getParent()->getParent();
-  const QString& experimentName = experiment->getId();
-  ctkXnatObject::Pointer subject = experiment->getParent();
-  const QString& subjectName = subject->getId();
-  ctkXnatObject::Pointer project = subject->getParent();
-  const QString& projectName = project->getId();
+  const QString& scanName = scan->id();
+  ctkXnatObject::Pointer experiment = scan->parent()->parent();
+  const QString& experimentName = experiment->id();
+  ctkXnatObject::Pointer subject = experiment->parent();
+  const QString& subjectName = subject->id();
+  ctkXnatObject::Pointer project = subject->parent();
+  const QString& projectName = project->id();
   
   Q_D(ctkXnatConnection);
   
@@ -318,7 +318,7 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScan>& scan)
   
   foreach (ctkXnatScanResource* resource, resources)
   {
-    QString label = resource->getProperty("label");
+    QString label = resource->property("label");
     if (label.size())
     {
       resource->setProperty("ID", label);
@@ -335,15 +335,15 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScan>& scan)
 
 void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanResource)
 {
-  const QString& resourceName = scanResource->getProperty ("label");
-  ctkXnatObject::Pointer scan = scanResource->getParent();
-  const QString& scanName = scan->getId();
-  ctkXnatObject::Pointer experiment = scan->getParent()->getParent();
-  const QString& experimentName = experiment->getId();
-  ctkXnatObject::Pointer subject = experiment->getParent();
-  const QString& subjectName = subject->getId();
-  ctkXnatObject::Pointer project = subject->getParent();
-  const QString& projectName = project->getId();
+  const QString& resourceName = scanResource->property ("label");
+  ctkXnatObject::Pointer scan = scanResource->parent();
+  const QString& scanName = scan->id();
+  ctkXnatObject::Pointer experiment = scan->parent()->parent();
+  const QString& experimentName = experiment->id();
+  ctkXnatObject::Pointer subject = experiment->parent();
+  const QString& subjectName = subject->id();
+  ctkXnatObject::Pointer project = subject->parent();
+  const QString& projectName = project->id();
   
   Q_D(ctkXnatConnection);
   
@@ -355,13 +355,13 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanRes
 
   foreach (ctkXnatScanResourceFile* file, files)
   {
-    QString uri = file->getProperty("URI");
+    QString uri = file->property("URI");
     if (uri.size())
     {
       file->setUri(uri);
     }
 
-    QString label = file->getProperty("Name");
+    QString label = file->property("Name");
     if (label.size())
     {
       file->setProperty("ID", label);
