@@ -26,6 +26,7 @@
 // CTK includes
 #include "ctkCoordinatesWidget.h"
 #include "ctkDoubleSpinBox.h"
+#include "ctkDoubleSpinBox_p.h"
 #include "ctkUtils.h"
 #include "ctkValueProxy.h"
 
@@ -209,7 +210,22 @@ void ctkCoordinatesWidget::updateDecimals()
   int maxDecimals = 0;
   for (int i = 0; i < this->Dimension; ++i)
     {
-    maxDecimals = qMax(maxDecimals, this->spinBox(i)->decimals());
+    int spinBoxDecimals = this->Decimals;
+    if (this->decimalsOption() & ctkDoubleSpinBox::DecimalsByKey ||
+        this->decimalsOption() & ctkDoubleSpinBox::DecimalsByShortcuts)
+      {
+      spinBoxDecimals = this->spinBox(i)->decimals();
+      }
+    if (this->decimalsOption() & ctkDoubleSpinBox::DecimalsByValue)
+      {
+      spinBoxDecimals = ctkCoordinatesWidget::spinBoxSignificantDecimals(
+        this->spinBox(i));
+      if (spinBoxDecimals == 16)
+        {
+        spinBoxDecimals = this->spinBox(i)->decimals();
+        }
+      }
+    maxDecimals = qMax(maxDecimals, spinBoxDecimals);
     }
   this->ChangingDecimals = true;
   this->setTemporaryDecimals(maxDecimals);
@@ -217,24 +233,40 @@ void ctkCoordinatesWidget::updateDecimals()
 }
 
 //------------------------------------------------------------------------------
-void ctkCoordinatesWidget::updateOtherDecimals(int decimals)
+void ctkCoordinatesWidget::updateOtherDecimals(int senderDecimals)
 {
   if (this->ChangingDecimals)
     {
     return;
     }
-  int maxDecimals = decimals;
+  int senderSpinBoxDecimals = ctkCoordinatesWidget::spinBoxSignificantDecimals(
+    qobject_cast<ctkDoubleSpinBox*>(this->sender()));
+
+  int maxDecimals = senderDecimals;
   for (int i = 0; i < this->Dimension; ++i)
     {
     if (this->sender() == this->spinBox(i))
       {
       continue;
       }
-    int spinBoxDecimals = this->spinBox(i)->decimals();
+    int spinBoxDecimals = maxDecimals;
+    if (this->decimalsOption() & ctkDoubleSpinBox::DecimalsByKey)
+      {
+      spinBoxDecimals = this->spinBox(i)->decimals();
+      }
     if (this->decimalsOption() & ctkDoubleSpinBox::DecimalsByValue)
       {
-      spinBoxDecimals = ctk::significantDecimals(
-        this->spinBox(i)->displayedValue(), maxDecimals);
+      spinBoxDecimals = ctkCoordinatesWidget::spinBoxSignificantDecimals(
+        this->spinBox(i));
+      // if the edited spinbox has an undefined number of decimals and the
+      // the current spinbox too, then use the new number of decimals otherwise
+      // there would be no way to increase/decrease decimals for all the
+      // spinboxes.
+      if (spinBoxDecimals == 16)
+        {
+        spinBoxDecimals = (senderSpinBoxDecimals == 16)?
+          senderDecimals : this->spinBox(i)->decimals();
+        }
       }
     maxDecimals = qMax(maxDecimals, spinBoxDecimals);
     }
@@ -252,8 +284,29 @@ void ctkCoordinatesWidget::setTemporaryDecimals(int newDecimals)
       {
       continue;
       }
-    this->spinBox(i)->spinBox()->setDecimals(newDecimals);
+    // Increasing the number of decimals might have lost precision.
+    double currentValue = this->spinBox(i)->value();
+    if (this->spinBox(i)->valueProxy())
+      {
+      currentValue = this->spinBox(i)->valueProxy()->proxyValueFromValue(currentValue);
+      }
+    this->spinBox(i)->d_ptr->setValue(currentValue, newDecimals);
     }
+}
+
+//------------------------------------------------------------------------------
+int ctkCoordinatesWidget::spinBoxSignificantDecimals(ctkDoubleSpinBox* spinBox)
+{
+  if (!spinBox)
+    {
+    return 0;
+    }
+  double currentValue = spinBox->value();
+  if (spinBox->valueProxy())
+    {
+    currentValue = spinBox->valueProxy()->proxyValueFromValue(currentValue);
+    }
+  return ctk::significantDecimals(currentValue);
 }
 
 //------------------------------------------------------------------------------

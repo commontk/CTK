@@ -119,7 +119,7 @@ int ctkCoordinatesWidgetTest1(int argc, char * argv [] )
   coordinates = coordinatesWidget.coordinates();
   
   if (coordinates[0] != 1. ||
-      coordinates[1] != 10.0001 ||
+      coordinates[1] != 10.00012 ||
       coordinates[2] != -9999. ||
       coordinates[3] != 0.4)
     {
@@ -140,7 +140,7 @@ int ctkCoordinatesWidgetTest1(int argc, char * argv [] )
   
   coordinatesWidget.setCoordinatesAsString("1.000000001, -2, 3.01, 40000.01");
   coordinates = coordinatesWidget.coordinates();
-  if (!qFuzzyCompare(coordinates[0], 1.) ||
+  if (!qFuzzyCompare(coordinates[0], 1.000000001) ||
       !qFuzzyCompare(coordinates[1], -2.) ||
       !qFuzzyCompare(coordinates[2], 3.01) ||
       !qFuzzyCompare(coordinates[3], 9999.))

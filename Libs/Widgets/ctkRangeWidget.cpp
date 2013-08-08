@@ -426,7 +426,8 @@ void ctkRangeWidget::setValues(double newMinimumValue, double newMaximumValue)
     {
     qSwap(newMinimumValue, newMaximumValue);
     }
-  const bool minimumFirst = (newMinimumValue <= this->maximumValue());
+  // This test must take into account NaN values
+  const bool minimumFirst = !(newMinimumValue > this->maximumValue());
 
   // disable the tracking temporally to emit the
   // signal valueChanged if changeValue() is called

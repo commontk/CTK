@@ -158,6 +158,11 @@ protected:
   static double norm(double* coordinates, int dimension);
   static double squaredNorm(double* coordinates, int dimension);
 
+  /// Return the ideal number of decimals based on the spinBox value or
+  /// 16 if there is no "good" number of decimals.
+  /// \sa ctk::significantDecimals()
+  static int spinBoxSignificantDecimals(ctkDoubleSpinBox* spinBox);
+
   int     Decimals;
   ctkDoubleSpinBox::DecimalsOptions DecimalsOption;
   double  SingleStep;

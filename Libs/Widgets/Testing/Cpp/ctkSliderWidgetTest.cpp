@@ -40,6 +40,12 @@ class ctkSliderWidgetTester: public QObject
 private slots:
   void testUI();
 
+  void testSetMinimum();
+  void testSetMinimum_data();
+
+  void testSetMaximum();
+  void testSetMaximum_data();
+
   void testDecimalsByValue();
   /// This test makes sure the number of decimals increased with Ctrl+'+' does
   /// not break the synchronization between the value of the slider and the
@@ -63,6 +69,60 @@ void ctkSliderWidgetTester::testUI()
 
 
   //qApp->exec();
+}
+
+// ----------------------------------------------------------------------------
+void ctkSliderWidgetTester::testSetMinimum()
+{
+  ctkSliderWidget slider;
+  QFETCH(double, minimum);
+  slider.setMinimum(minimum);
+
+  QFETCH(double, expectedMinimum);
+  QFETCH(double, expectedValue);
+
+  QCOMPARE(slider.minimum(), expectedMinimum);
+  QCOMPARE(slider.value(), expectedValue);
+}
+
+// ----------------------------------------------------------------------------
+void ctkSliderWidgetTester::testSetMinimum_data()
+{
+  QTest::addColumn<double>("minimum");
+  QTest::addColumn<double>("expectedMinimum");
+  QTest::addColumn<double>("expectedValue");
+
+  QTest::newRow("0. -> 0.]") << 0. << 0. << 0.;
+  QTest::newRow("10.0123 -> 10.0123]") << 10.0123 << 10.0123 << 10.0123;
+  QTest::newRow("-10.0123 -> -10.0123]") << -10.0123 << -10.0123 << 0.;
+  QTest::newRow("200.0123 -> 200.0123]") << 200.0123 << 200.0123 << 200.0123;
+}
+
+// ----------------------------------------------------------------------------
+void ctkSliderWidgetTester::testSetMaximum()
+{
+  ctkSliderWidget slider;
+  QFETCH(double, maximum);
+  slider.setMaximum(maximum);
+
+  QFETCH(double, expectedMaximum);
+  QFETCH(double, expectedValue);
+  QCOMPARE(slider.maximum(), expectedMaximum);
+  QCOMPARE(slider.value(), expectedValue);
+
+}
+
+// ----------------------------------------------------------------------------
+void ctkSliderWidgetTester::testSetMaximum_data()
+{
+  QTest::addColumn<double>("maximum");
+  QTest::addColumn<double>("expectedMaximum");
+  QTest::addColumn<double>("expectedValue");
+
+  QTest::newRow("0. -> 0.") << 0. << 0. << 0.;
+  QTest::newRow("10.0123 -> 0.") << 10.0123 << 10.0123 << 0.;
+  QTest::newRow("-10.0123 -> -10.0123") << -10.0123 << -10.0123 << -10.0123;
+  QTest::newRow("200.0123 -> 0.") << 200.0123 << 200.0123 << 0.;
 }
 
 // ----------------------------------------------------------------------------

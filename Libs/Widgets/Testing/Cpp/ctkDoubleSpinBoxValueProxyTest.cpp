@@ -114,10 +114,10 @@ void ctkDoubleSpinBoxValueProxyTester::testSetValue_data()
   // Offset
   QTest::newRow("Offset only") << 1. << 42.19 << 0.1 << 0.1 << "0.10";
   // \tbd could be improved ?
-  QTest::newRow("Precision descrepancy 3")
-    << 1. << 42.197 << 0.1 << 0.103 << "0.10";
-  QTest::newRow("Precision descrepancy 4")
-    << 1. << 42.1971 << 0.1 << 0.1029 << "0.10";
+  QTest::newRow("Offset only: keep precision 3")
+    << 1. << 42.197 << 0.1 << 0.1 << "0.10";
+  QTest::newRow("Offset only: keep precision 4")
+    << 1. << 42.1971 << 0.1 << 0.1 << "0.10";
 
   QTest::newRow("Offset only: less than min")
     << 1. << -42.19 << -220.0 << -200. << "-200.00";
@@ -266,7 +266,7 @@ void ctkDoubleSpinBoxValueProxyTester::testSetCoefficient_data()
   QTest::newRow("100") << 100.0 << 10.12 << 1012.;
   QTest::newRow("10") << 10.0 << 10.12 << 101.2;
   QTest::newRow("1") << 1.0 << 10.12 << 10.12;
-  QTest::newRow("0.10") << 0.1 << 10.1 << 1.01;
+  QTest::newRow("0.10") << 0.1 << 10.12 << 1.01;
   QTest::newRow("-10") << -10.0 << 10.12 << -101.2;
 }
 

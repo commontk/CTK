@@ -168,7 +168,7 @@ int ctkDoubleSpinBoxTest1(int argc, char * argv [] )
     }
 
   spinBox.setValue(28.366917352);
-  if (!qFuzzyCompare(spinBox.value(), 28.367))
+  if (!qFuzzyCompare(spinBox.value(), 28.366917352))
     {
     qDebug()<<"setValue does not correspond. Got: "<<spinBox.value() ;
     return EXIT_FAILURE;
@@ -176,26 +176,26 @@ int ctkDoubleSpinBoxTest1(int argc, char * argv [] )
 
   qDebug()<<"SetValueIfDifferent:";
   spinBox.setValueIfDifferent(33.312587);
-  if (!qFuzzyCompare(spinBox.value(), 33.313))
+  if (!qFuzzyCompare(spinBox.value(), 33.312587))
     {
     qDebug()<<"setValueIfDifferent does not correspond. Got: "<<spinBox.value() ;
     return EXIT_FAILURE;
     }
 
   spinBox.setValueIfDifferent(33.312960134);
-  if (!qFuzzyCompare(spinBox.value(), 33.313))
+  if (!qFuzzyCompare(spinBox.value(), 33.312960134))
     {
     qDebug()<<"setValueIfDifferent does not correspond. Got: "<<spinBox.value() ;
     return EXIT_FAILURE;
     }
 
-  if (spy.count() != 3)
+  if (spy.count() != 4)
     {
     qDebug()<<"spy got wrong number of signal sent : "<<spy.count() ;
     return EXIT_FAILURE;
     }
 
-//-----------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------
   spinBox.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )

@@ -87,10 +87,14 @@ public:
   ctkDoubleSpinBox::DecimalsOptions DOption;
   bool InvertedControls;
 
+  double InputValue;
+  double InputRange[2];
+
   mutable QString CachedText;
   mutable double CachedValue;
   mutable QValidator::State CachedState;
   mutable int CachedDecimals;
+  bool ForceInputValueUpdate;
 
   QWeakPointer<ctkValueProxy> Proxy;
 

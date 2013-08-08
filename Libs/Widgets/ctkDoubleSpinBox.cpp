@@ -174,6 +174,10 @@ ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object)
   this->DOption = ctkDoubleSpinBox::DecimalsByShortcuts
     | ctkDoubleSpinBox::InsertDecimals;
   this->InvertedControls = false;
+  this->InputValue = 0.;
+  this->InputRange[0] = 0.;
+  this->InputRange[1] = 99.99;
+  this->ForceInputValueUpdate = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -188,6 +192,9 @@ void ctkDoubleSpinBoxPrivate::init()
                    this, SLOT(editorTextChanged(QString)));
   this->SpinBox->setLineEdit(lineEdit);
   lineEdit->setObjectName(QLatin1String("qt_spinbox_lineedit"));
+  this->InputValue = this->SpinBox->value();
+  this->InputRange[0] = this->SpinBox->minimum();
+  this->InputRange[1] = this->SpinBox->maximum();
 
   QObject::connect(this->SpinBox, SIGNAL(valueChanged(double)),
     this, SLOT(onValueChanged()));
@@ -311,7 +318,9 @@ void ctkDoubleSpinBoxPrivate::editorTextChanged(const QString& text)
         decimals != this->SpinBox->decimals();
       if (changeDecimals)
         {
+        this->ForceInputValueUpdate = true;
         this->setValue(newValue, decimals);
+        this->ForceInputValueUpdate = false;
         }
       // else, let QDoubleSpinBox process the validation.
       }
@@ -471,33 +480,74 @@ double ctkDoubleSpinBoxPrivate
 void ctkDoubleSpinBoxPrivate::onValueChanged()
 {
   Q_Q(ctkDoubleSpinBox);
-  double value = q->value();
-  emit q->valueChanged(value);
-  emit q->valueChanged(QString::number(value, 'f', this->SpinBox->decimals()));
+  double newValue = this->SpinBox->value();
+  double oldValue = q->value();
+  if (this->Proxy)
+    {
+    oldValue = this->Proxy.data()->proxyValueFromValue(oldValue);
+    }
+  // Don't trigger value changed signal if the difference only happened on the
+  // precision.
+  if (this->compare(oldValue, newValue) && !this->ForceInputValueUpdate)
+    {
+    return;
+    }
+  // Force it only once (when the user typed a new number that could have change
+  // the number of decimals which could have make the compare test always pass.
+  this->ForceInputValueUpdate = false;
+
+  double minimum = q->minimum();
+  double maximum = q->maximum();
+  if (this->Proxy)
+    {
+    minimum = this->Proxy.data()->proxyValueFromValue(minimum);
+    maximum = this->Proxy.data()->proxyValueFromValue(maximum);
+    }
+  // Special case to return max precision
+  if (this->compare(minimum, newValue))
+    {
+    newValue = q->minimum();
+    }
+  else if (this->compare(maximum, newValue))
+    {
+    newValue = q->maximum();
+    }
+  else if (this->Proxy)
+    {
+    newValue = this->Proxy.data()->valueFromProxyValue(newValue);
+    }
+  this->InputValue = newValue;
+  emit q->valueChanged(newValue);
+  // \tbd The string might not make much sense when using proxies.
+  emit q->valueChanged(
+    QString::number(newValue, 'f', this->SpinBox->decimals()));
 }
 
 //-----------------------------------------------------------------------------
 void ctkDoubleSpinBoxPrivate::onValueProxyAboutToBeModified()
 {
-  Q_Q(ctkDoubleSpinBox);
-  this->SpinBox->setProperty("inputValue", q->value());
-  this->SpinBox->setProperty("inputMinimum", q->minimum());
-  this->SpinBox->setProperty("inputMaximum", q->maximum());
 }
 
 //-----------------------------------------------------------------------------
 void ctkDoubleSpinBoxPrivate::onValueProxyModified()
 {
   Q_Q(ctkDoubleSpinBox);
-  int decimals = q->decimals();
+  int oldDecimals = q->decimals();
+  double oldValue = this->InputValue;
+  ctkDoubleSpinBox::SetMode oldSetMode = this->Mode;
+
+  // Only the display is changed, not the programatic value, no need to trigger
+  // signals
   bool wasBlocking = q->blockSignals(true);
-  q->setRange(this->SpinBox->property("inputMinimum").toDouble(),
-              this->SpinBox->property("inputMaximum").toDouble());
-  q->setValue(this->SpinBox->property("inputValue").toDouble());
-  q->value();
+  // Enforce a refresh. Signals are blocked so it should not trigger unwanted
+  // signals
+  this->Mode = ctkDoubleSpinBox::SetAlways;
+  q->setRange(this->InputRange[0], this->InputRange[1]);
+  q->setValue(oldValue);
+  this->Mode = oldSetMode;
   q->blockSignals(wasBlocking);
-  // only decimals can change when value proxy is modified.
-  if (decimals != q->decimals())
+  // Decimals might change when value proxy is modified.
+  if (oldDecimals != q->decimals())
     {
     emit q->decimalsChanged(q->decimals());
     }
@@ -528,12 +578,7 @@ ctkDoubleSpinBox::ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* newP
 double ctkDoubleSpinBox::value() const
 {
   Q_D(const ctkDoubleSpinBox);
-  double val = d->SpinBox->value();
-  if (d->Proxy)
-    {
-    val = d->Proxy.data()->valueFromProxyValue(val);
-    }
-  return val;
+  return d->InputValue;
 }
 
 //-----------------------------------------------------------------------------
@@ -677,82 +722,52 @@ void ctkDoubleSpinBox::setSingleStep(double newStep)
 double ctkDoubleSpinBox::minimum() const
 {
   Q_D(const ctkDoubleSpinBox);
-  double min = d->SpinBox->minimum();
-  double max = d->SpinBox->maximum();
-  if (d->Proxy)
-    {
-    min = d->Proxy.data()->valueFromProxyValue(min);
-    max = d->Proxy.data()->valueFromProxyValue(max);
-    }
-  return qMin(min, max);
+  return d->InputRange[0];
 }
 
 //-----------------------------------------------------------------------------
 void ctkDoubleSpinBox::setMinimum(double newMin)
 {
-  Q_D(ctkDoubleSpinBox);
-  if (d->Proxy)
-    {
-    newMin = d->Proxy.data()->proxyValueFromValue(newMin);
-    }
-  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-      && d->compare(newMin, d->SpinBox->minimum()))
-    {
-    return;
-    }
-
-  d->SpinBox->setMinimum(newMin);
+  this->setRange(newMin, qMax(newMin, this->maximum()));
 }
 
 //-----------------------------------------------------------------------------
 double ctkDoubleSpinBox::maximum() const
 {
   Q_D(const ctkDoubleSpinBox);
-  double min = d->SpinBox->minimum();
-  double max = d->SpinBox->maximum();
-  if (d->Proxy)
-    {
-    min = d->Proxy.data()->valueFromProxyValue(min);
-    max = d->Proxy.data()->valueFromProxyValue(max);
-    }
-  return qMax(min, max);
+  return d->InputRange[1];
 }
 
 //-----------------------------------------------------------------------------
 void ctkDoubleSpinBox::setMaximum(double newMax)
 {
-  Q_D(ctkDoubleSpinBox);
-  if (d->Proxy)
-    {
-    newMax = d->Proxy.data()->proxyValueFromValue(newMax);
-    }
-  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-    && d->compare(newMax, d->SpinBox->maximum()))
-    {
-    return;
-    }
-
-  d->SpinBox->setMaximum(newMax);
+  this->setRange(qMin(newMax, this->minimum()), newMax);
 }
 
 //-----------------------------------------------------------------------------
 void ctkDoubleSpinBox::setRange(double newMin, double newMax)
 {
   Q_D(ctkDoubleSpinBox);
-  if (d->Proxy)
-    {
-    newMin = d->Proxy.data()->proxyValueFromValue(newMin);
-    newMax = d->Proxy.data()->proxyValueFromValue(newMax);
-    }
   if (newMin > newMax)
     {
     qSwap(newMin, newMax);
     }
   if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-      && d->compare(newMax, d->SpinBox->maximum())
-      && d->compare(newMin, d->SpinBox->minimum()))
+      && newMin == d->InputRange[0]
+      && newMax == d->InputRange[1])
     {
     return;
+    }
+  d->InputRange[0] = newMin;
+  d->InputRange[1] = newMax;
+  if (d->Proxy)
+    {
+    newMin = d->Proxy.data()->proxyValueFromValue(newMin);
+    newMax = d->Proxy.data()->proxyValueFromValue(newMax);
+    if (newMin > newMax)
+      {
+      qSwap(newMin, newMax);
+      }
     }
 
   d->SpinBox->setRange(newMin, newMax);
@@ -779,13 +794,13 @@ void ctkDoubleSpinBox::setDecimals(int dec)
   d->DefaultDecimals = dec;
   // The number of decimals may or may not depend on the value. Recompute the
   // new number of decimals.
-  double value = this->value();
+  double currentValue = this->value();
   if (d->Proxy)
     {
-    value = d->Proxy.data()->proxyValueFromValue(value);
+    currentValue = d->Proxy.data()->proxyValueFromValue(currentValue);
     }
-  int newDecimals = d->decimalsForValue(value);
-  d->setDecimals(newDecimals);
+  int newDecimals = d->decimalsForValue(currentValue);
+  d->setValue(currentValue, newDecimals);
 }
 
 //-----------------------------------------------------------------------------
@@ -827,33 +842,33 @@ void ctkDoubleSpinBox::setValue(double value)
 void ctkDoubleSpinBox::setValueIfDifferent(double newValue)
 {
   Q_D(ctkDoubleSpinBox);
+  if (newValue == d->InputValue)
+    {
+    return;
+    }
+  this->setValueAlways(newValue);
+}
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBox::setValueAlways(double newValue)
+{
+  Q_D(ctkDoubleSpinBox);
+  newValue = qBound(d->InputRange[0], newValue, d->InputRange[1]);
+  const bool valueModified = d->InputValue != newValue;
+  d->InputValue = newValue;
   double newValueToDisplay = newValue;
   if (d->Proxy)
     {
     newValueToDisplay = d->Proxy.data()->proxyValueFromValue(newValueToDisplay);
     }
-
-  int newValueDecimals = d->decimalsForValue(newValueToDisplay);
-  if (d->SpinBox->value() != d->round(newValueToDisplay, newValueDecimals)
-      || d->SpinBox->decimals() != newValueDecimals)
+  const int decimals = d->decimalsForValue(newValueToDisplay);
+  d->setValue(newValueToDisplay, decimals);
+  const bool signalsEmitted = (newValue != d->InputValue);
+  if (valueModified && !signalsEmitted)
     {
-    // Pass newValue and not newValueToDisplay as setValueAlways also computes the
-    // proxyValue from the given value
-    this->setValueAlways(newValue);
+    emit valueChanged(d->InputValue);
+    emit valueChanged(QString::number(d->InputValue, 'f', d->SpinBox->decimals()));
     }
-}
-
-//-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setValueAlways(double value)
-{
-  Q_D(ctkDoubleSpinBox);
-  if (d->Proxy)
-    {
-    value = d->Proxy.data()->proxyValueFromValue(value);
-    }
-
-  int decimals = d->decimalsForValue(value);
-  d->setValue(value, decimals);
 }
 
 //-----------------------------------------------------------------------------
@@ -975,26 +990,34 @@ bool ctkDoubleSpinBox::eventFilter(QObject* obj, QEvent* event)
     {
     QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
     Q_ASSERT(keyEvent);
+    int newDecimals = -1;
     if (keyEvent->modifiers() & Qt::ControlModifier)
       {
       if (keyEvent->key() == Qt::Key_Plus
         || keyEvent->key() == Qt::Key_Equal)
         {
-        d->setDecimals(this->decimals() + 1);
-        return true;
+        newDecimals = this->decimals() + 1;
         }
       else if (keyEvent->key() == Qt::Key_Minus)
         {
-        d->setDecimals(this->decimals() - 1);
-        return true;
+        newDecimals = this->decimals() - 1;
         }
       else if (keyEvent->key() == Qt::Key_0)
         {
-        d->setDecimals(d->DefaultDecimals);
-        return true;
+        newDecimals = d->DefaultDecimals;
         }
       }
-
+    if (newDecimals != -1)
+      {
+      double currentValue = this->value();
+      if (d->Proxy)
+        {
+        currentValue = d->Proxy.data()->proxyValueFromValue(currentValue);
+        }
+      // increasing the number of decimals should restore lost precision
+      d->setValue(currentValue, newDecimals);
+      return true;
+      }
     return QWidget::eventFilter(obj, event);
     }
   else

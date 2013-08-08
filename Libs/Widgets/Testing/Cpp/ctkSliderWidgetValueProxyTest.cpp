@@ -102,7 +102,7 @@ void ctkSliderWidgetValueProxyTester::testSetValue_data()
   //---------------------------------------------------------------------------
   // Offset
   QTest::newRow("Offset only") << 1.0 << 42.19 << 0.1 << 0.1;
-  QTest::newRow("Offset only: lost precision") << 1.0 << 42.19176 << 0.1 << 0.09824;
+  QTest::newRow("Offset only: keep precision") << 1.0 << 42.19176 << 0.1 << 0.1;
 
   QTest::newRow("Offset only: less than min")
     << 1.0 << 42.19 << -510.0 << -200.;
