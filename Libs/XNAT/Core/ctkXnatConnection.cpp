@@ -65,8 +65,10 @@ ctkXnatConnection::ctkXnatConnection()
 {
   Q_D(ctkXnatConnection);
   d->xnat = new qXnatAPI();
-  
-//  d->xnat->setSuppressSslErrors(true);
+
+  // TODO This is a workaround for connecting to sites with self-signed
+  // certificate. Should be replaced with something more clever.  
+  d->xnat->setSuppressSslErrors(true);
   d->rawHeaders["User-Agent"] = "Qt";
   d->xnat->setDefaultRawHeaders(d->rawHeaders);
 
