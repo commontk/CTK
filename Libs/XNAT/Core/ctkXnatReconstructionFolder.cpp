@@ -22,74 +22,75 @@
 #include "ctkXnatReconstructionFolder.h"
 
 #include "ctkXnatConnection.h"
-#include "ctkXnatExperiment.h"
-#include "ctkXnatReconstruction.h"
+#include "ctkXnatObjectPrivate.h"
 
-ctkXnatReconstructionFolder::ctkXnatReconstructionFolder(ctkXnatObject* parent)
-: ctkXnatObject(parent)
+
+class ctkXnatReconstructionFolderPrivate : public ctkXnatObjectPrivate
 {
+public:
+
+  ctkXnatReconstructionFolderPrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
+
+  void reset()
+  {
+//    uri.clear();
+  }
+  
+//  QString uri;
+};
+
+
+ctkXnatReconstructionFolder::ctkXnatReconstructionFolder()
+: ctkXnatObject(new ctkXnatReconstructionFolderPrivate())
+{
+  this->setProperty("ID", "Reconstructions");
+}
+
+ctkXnatReconstructionFolder::Pointer ctkXnatReconstructionFolder::Create()
+{
+  Pointer ptr(new ctkXnatReconstructionFolder());
+  ptr->d_func()->selfPtr = ptr;
+  return ptr;
 }
 
 ctkXnatReconstructionFolder::~ctkXnatReconstructionFolder()
 {
 }
 
-void ctkXnatReconstructionFolder::fetch(ctkXnatConnection* connection)
+//const QString& ctkXnatReconstructionFolder::uri() const
+//{
+//  Q_D(const ctkXnatReconstructionFolder);
+//  return d->uri;
+//}
+
+//void ctkXnatReconstructionFolder::setUri(const QString& uri)
+//{
+//  Q_D(ctkXnatReconstructionFolder);
+//  d->uri = uri;
+//}
+
+void ctkXnatReconstructionFolder::reset()
 {
-  connection->fetch(this);
+  ctkXnatObject::reset();
 }
 
-void ctkXnatReconstructionFolder::download(ctkXnatConnection* connection, const QString& zipFileName)
+void ctkXnatReconstructionFolder::fetchImpl()
 {
-  connection->downloadReconstructionFiles(dynamic_cast<ctkXnatExperiment*>(getParent()), zipFileName);
+  Q_D(ctkXnatReconstructionFolder);
+  ctkXnatObject::Pointer self = d->selfPtr;
+  this->connection()->fetch(self.staticCast<ctkXnatReconstructionFolder>());
 }
 
-void ctkXnatReconstructionFolder::add(ctkXnatConnection* connection, const QString& categoryEntry)
+void ctkXnatReconstructionFolder::remove()
 {
-  connection->addReconstruction(dynamic_cast<ctkXnatExperiment*>(getParent()), categoryEntry);
+  // ctkXnatObject::remove();
+  // getConnection()->remove(this);
 }
 
-QString ctkXnatReconstructionFolder::getModifiableChildKind() const
+bool ctkXnatReconstructionFolder::isFile() const
 {
-  return "reconstruction";
-}
-
-QString ctkXnatReconstructionFolder::getModifiableParentName() const
-{
-  return getParent()->getName();
-}
-
-bool ctkXnatReconstructionFolder::isModifiable() const
-{
-  return true;
-}
-
-QString ctkXnatReconstructionFolder::getKind() const
-{
-  return "reconstruction";
-}
-
-QString ctkXnatReconstructionFolder::getModifiableChildKind(int parentIndex) const
-{
-  return "resource";
-}
-
-QString ctkXnatReconstructionFolder::getModifiableParentName(int parentIndex) const
-{
-  return this->childName(parentIndex);
-}
-
-bool ctkXnatReconstructionFolder::holdsFiles() const
-{
-  return true;
-}
-
-bool ctkXnatReconstructionFolder::isModifiable(int parentIndex) const
-{
-  return true;
-}
-
-bool ctkXnatReconstructionFolder::isDeletable() const
-{
-  return true;
+  return false;
 }

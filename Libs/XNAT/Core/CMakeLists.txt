@@ -18,10 +18,10 @@ set(KIT_SRCS
   ctkXnatScanFolder.cpp
   ctkXnatScanResource.cpp
   ctkXnatScanResourceFile.cpp
-  #ctkXnatReconstruction.cpp
-  #ctkXnatReconstructionFolder.cpp
-  #ctkXnatReconstructionResource.cpp
-  #ctkXnatReconstructionResourceFile.cpp
+  ctkXnatReconstruction.cpp
+  ctkXnatReconstructionFolder.cpp
+  ctkXnatReconstructionResource.cpp
+  ctkXnatReconstructionResourceFile.cpp
   ctkXnatServer.cpp
   ctkXnatSettings.cpp
   ctkXnatSubject.cpp
@@ -29,20 +29,6 @@ set(KIT_SRCS
 
 # Files which should be processed by Qts moc
 set(KIT_MOC_SRCS
-  #ctkXnatConnection.h
-  #ctkXnatExperiment.h
-  #ctkXnatObject.h
-  #ctkXnatProject.h
-  #ctkXnatReconstruction.h
-  #ctkXnatReconstructionFolder.h
-  #ctkXnatReconstructionResource.h
-  #ctkXnatReconstructionResourceFile.h
-  #ctkXnatScan.h
-  #ctkXnatScanFolder.h
-  #ctkXnatScanResource.h
-  #ctkXnatScanResourceFile.h
-  #ctkXnatServer.h
-  #ctkXnatSubject.h
 )
 
 

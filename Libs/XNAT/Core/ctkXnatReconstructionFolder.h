@@ -27,30 +27,40 @@
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
+class ctkXnatReconstructionFolderPrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatReconstructionFolder : public ctkXnatObject
 {
-  Q_OBJECT
 
 public:
-  explicit ctkXnatReconstructionFolder(ctkXnatObject* parent = 0);
+  
+  typedef QSharedPointer<ctkXnatReconstructionFolder> Pointer;
+  typedef QWeakPointer<ctkXnatReconstructionFolder> WeakPointer;
+  
+  static Pointer Create();
   virtual ~ctkXnatReconstructionFolder();
+  
+//  const QString& uri() const;
+//  void setUri(const QString& uri);
+  
+  void reset();
+  void remove();
+  
+  bool isFile() const;
 
-  virtual void fetch(ctkXnatConnection* connection);
-
-  void download(ctkXnatConnection* connection, const QString& zipFilename);
-  void add(ctkXnatConnection* connection, const QString& categoryEntry);
-  QString getModifiableChildKind() const;
-  QString getModifiableParentName() const;
-  bool isModifiable() const;
-
-  virtual QString getKind() const;
-  virtual QString getModifiableChildKind(int parentIndex) const;
-  virtual QString getModifiableParentName(int parentIndex) const;
-
-  virtual bool holdsFiles() const;
-  virtual bool isModifiable(int parentIndex) const;
-  virtual bool isDeletable() const;
+  /* bool receivesFiles() const; */
+  /* bool holdsFiles() const; */
+  /* bool isDeletable() const; */
+  /* bool isModifiable() const; */
+  
+private:
+  
+  friend class qRestResult;
+  explicit ctkXnatReconstructionFolder();
+  virtual void fetchImpl();
+  
+  Q_DECLARE_PRIVATE(ctkXnatReconstructionFolder);
+  Q_DISABLE_COPY(ctkXnatReconstructionFolder);
 };
 
 #endif

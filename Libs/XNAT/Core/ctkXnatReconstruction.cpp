@@ -22,77 +22,40 @@
 #include "ctkXnatReconstruction.h"
 
 #include "ctkXnatConnection.h"
-#include "ctkXnatReconstructionResource.h"
+#include "ctkXnatObjectPrivate.h"
 
-class ctkXnatReconstructionPrivate
+class ctkXnatReconstructionPrivate : public ctkXnatObjectPrivate
 {
 public:
-  QString reconstructedImageId;
-  QString id;
-  QString type;
-  QString quality;
-  QString baseScanType;
-  QString note;
-  QString seriesDescription;
+
+  ctkXnatReconstructionPrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
+
+  void reset()
+  {
+    uri.clear();
+  }
+  
   QString uri;
 };
 
-ctkXnatReconstruction::ctkXnatReconstruction(ctkXnatObject* parent)
-: ctkXnatObject(parent)
-, d_ptr(new ctkXnatReconstructionPrivate())
+
+ctkXnatReconstruction::ctkXnatReconstruction()
+: ctkXnatObject(new ctkXnatReconstructionPrivate())
 {
+}
+
+ctkXnatReconstruction::Pointer ctkXnatReconstruction::Create()
+{
+  Pointer ptr(new ctkXnatReconstruction());
+  ptr->d_func()->selfPtr = ptr;
+  return ptr;
 }
 
 ctkXnatReconstruction::~ctkXnatReconstruction()
 {
-}
-
-const QString& ctkXnatReconstruction::reconstructedImageId() const
-{
-  Q_D(const ctkXnatReconstruction);
-  return d->reconstructedImageId;
-}
-
-void ctkXnatReconstruction::setReconstructedImageId(const QString& reconstructeImageId)
-{
-  Q_D(ctkXnatReconstruction);
-  d->reconstructedImageId = reconstructeImageId;
-}
-
-const QString& ctkXnatReconstruction::id() const
-{
-  Q_D(const ctkXnatReconstruction);
-  return d->id;
-}
-
-void ctkXnatReconstruction::setId(const QString& id)
-{
-  Q_D(ctkXnatReconstruction);
-  d->id = id;
-}
-
-const QString& ctkXnatReconstruction::type() const
-{
-  Q_D(const ctkXnatReconstruction);
-  return d->type;
-}
-
-void ctkXnatReconstruction::setType(const QString& type)
-{
-  Q_D(ctkXnatReconstruction);
-  d->type = type;
-}
-
-const QString& ctkXnatReconstruction::baseScanType() const
-{
-  Q_D(const ctkXnatReconstruction);
-  return d->baseScanType;
-}
-
-void ctkXnatReconstruction::setBaseScanType(const QString& baseScanType)
-{
-  Q_D(ctkXnatReconstruction);
-  d->baseScanType = baseScanType;
 }
 
 const QString& ctkXnatReconstruction::uri() const
@@ -107,42 +70,25 @@ void ctkXnatReconstruction::setUri(const QString& uri)
   d->uri = uri;
 }
 
-void ctkXnatReconstruction::fetch(ctkXnatConnection* connection)
+void ctkXnatReconstruction::reset()
 {
-  connection->fetch(this);
+  ctkXnatObject::reset();
 }
 
-void ctkXnatReconstruction::download(ctkXnatConnection* connection, const QString& zipFileName)
+void ctkXnatReconstruction::fetchImpl()
 {
-  connection->downloadReconstruction(this, zipFileName);
+  Q_D(ctkXnatReconstruction);
+  ctkXnatObject::Pointer self = d->selfPtr;
+  this->connection()->fetch(self.staticCast<ctkXnatReconstruction>());
 }
 
-void ctkXnatReconstruction::add(ctkXnatConnection* connection, const QString& resource)
+void ctkXnatReconstruction::remove()
 {
-  connection->addReconstructionResource(this, resource);
+  // ctkXnatObject::remove();
+  // getConnection()->remove(this);
 }
 
-void ctkXnatReconstruction::remove(ctkXnatConnection* connection)
+bool ctkXnatReconstruction::isFile() const
 {
-  connection->removeReconstruction(this);
-}
-
-QString ctkXnatReconstruction::getKind() const
-{
-  return "resource";
-}
-
-bool ctkXnatReconstruction::holdsFiles() const
-{
-  return true;
-}
-
-bool ctkXnatReconstruction::receivesFiles() const
-{
-  return true;
-}
-
-bool ctkXnatReconstruction::isDeletable() const
-{
-  return true;
+  return false;
 }

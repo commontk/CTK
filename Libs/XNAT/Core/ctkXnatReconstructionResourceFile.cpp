@@ -22,141 +22,91 @@
 #include "ctkXnatReconstructionResourceFile.h"
 
 #include "ctkXnatConnection.h"
+#include "ctkXnatObjectPrivate.h"
 
-class ctkXnatReconstructionResourceFilePrivate
+#include <QDebug>
+
+class ctkXnatReconstructionResourceFilePrivate : public ctkXnatObjectPrivate
 {
 public:
-  QString name;
-  QString size;
-  QString uri;
-  QString collection;
-  QString fileTags;
-  QString fileFormat;
-  QString fileContent;
-  QString categoryId;
+
+  ctkXnatReconstructionResourceFilePrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
+
+  void reset()
+  {
+//    uri.clear();
+  }
+  
+//  QString uri;
 };
 
-ctkXnatReconstructionResourceFile::ctkXnatReconstructionResourceFile(ctkXnatObject* parent)
-: ctkXnatObject(parent)
+ctkXnatReconstructionResourceFile::ctkXnatReconstructionResourceFile()
+: ctkXnatObject(new ctkXnatReconstructionResourceFilePrivate())
 {
+}
+
+ctkXnatReconstructionResourceFile::Pointer ctkXnatReconstructionResourceFile::Create()
+{
+  Pointer ptr(new ctkXnatReconstructionResourceFile());
+  ptr->d_func()->selfPtr = ptr;
+  return ptr;
 }
 
 ctkXnatReconstructionResourceFile::~ctkXnatReconstructionResourceFile()
 {
 }
 
-const QString& ctkXnatReconstructionResourceFile::name() const
+//const QString& ctkXnatReconstructionResourceFile::uri() const
+//{
+//  Q_D(const ctkXnatReconstructionResourceFile);
+//  return d->uri;
+//}
+
+//void ctkXnatReconstructionResourceFile::setUri(const QString& uri)
+//{
+//  Q_D(ctkXnatReconstructionResourceFile);
+//  d->uri = uri;
+//}
+
+void ctkXnatReconstructionResourceFile::download(const QString& filename)
 {
-  Q_D(const ctkXnatReconstructionResourceFile);
-  return d->name;
+  ctkXnatReconstructionResourceFile* object = this;
+  
+  qDebug() << "file uri is" << object->uri();
+  qDebug() << "downloading towards: " << filename;
+
+  object->connection()->download(this, filename);
 }
 
-void ctkXnatReconstructionResourceFile::setName(const QString& name)
+void ctkXnatReconstructionResourceFile::upload(const QString& filename)
 {
-  Q_D(ctkXnatReconstructionResourceFile);
-  d->name = name;
+  ctkXnatReconstructionResourceFile* object = this;
+  
+  qDebug() << "file uri is" << object->uri();
+  qDebug() << "uploading from: " << filename;
 }
 
-const QString& ctkXnatReconstructionResourceFile::size() const
+
+void ctkXnatReconstructionResourceFile::reset()
 {
-  Q_D(const ctkXnatReconstructionResourceFile);
-  return d->size;
+  ctkXnatObject::reset();
 }
 
-void ctkXnatReconstructionResourceFile::setSize(const QString& size)
+void ctkXnatReconstructionResourceFile::fetchImpl()
 {
-  Q_D(ctkXnatReconstructionResourceFile);
-  d->size = size;
+
 }
 
-const QString& ctkXnatReconstructionResourceFile::uri() const
+void ctkXnatReconstructionResourceFile::remove()
 {
-  Q_D(const ctkXnatReconstructionResourceFile);
-  return d->uri;
-}
-
-void ctkXnatReconstructionResourceFile::setUri(const QString& uri)
-{
-  Q_D(ctkXnatReconstructionResourceFile);
-  d->uri = uri;
-}
-
-const QString& ctkXnatReconstructionResourceFile::collection() const
-{
-  Q_D(const ctkXnatReconstructionResourceFile);
-  return d->collection;
-}
-
-void ctkXnatReconstructionResourceFile::setCollection(const QString& collection)
-{
-  Q_D(ctkXnatReconstructionResourceFile);
-  d->collection = collection;
-}
-
-const QString& ctkXnatReconstructionResourceFile::fileTags() const
-{
-  Q_D(const ctkXnatReconstructionResourceFile);
-  return d->fileTags;
-}
-
-void ctkXnatReconstructionResourceFile::setFileTags(const QString& fileTags)
-{
-  Q_D(ctkXnatReconstructionResourceFile);
-  d->fileTags = fileTags;
-}
-
-const QString& ctkXnatReconstructionResourceFile::fileFormat() const
-{
-  Q_D(const ctkXnatReconstructionResourceFile);
-  return d->fileFormat;
-}
-
-void ctkXnatReconstructionResourceFile::setFileFormat(const QString& fileFormat)
-{
-  Q_D(ctkXnatReconstructionResourceFile);
-  d->fileFormat = fileFormat;
-}
-
-const QString& ctkXnatReconstructionResourceFile::fileContent() const
-{
-  Q_D(const ctkXnatReconstructionResourceFile);
-  return d->fileContent;
-}
-
-void ctkXnatReconstructionResourceFile::setFileContent(const QString& fileContent)
-{
-  Q_D(ctkXnatReconstructionResourceFile);
-  d->fileContent = fileContent;
-}
-
-const QString& ctkXnatReconstructionResourceFile::categoryId() const
-{
-  Q_D(const ctkXnatReconstructionResourceFile);
-  return d->categoryId;
-}
-
-void ctkXnatReconstructionResourceFile::setCategoryId(const QString& categoryId)
-{
-  Q_D(ctkXnatReconstructionResourceFile);
-  d->categoryId = categoryId;
-}
-
-void ctkXnatReconstructionResourceFile::download(ctkXnatConnection* connection, const QString& zipFileName)
-{
-  connection->download(this, zipFileName);
-}
-
-void ctkXnatReconstructionResourceFile::remove(ctkXnatConnection* connection)
-{
-  connection->remove(this);
+  // ctkXnatObject::remove();
+  // getConnection()->remove(this);
 }
 
 bool ctkXnatReconstructionResourceFile::isFile() const
-{
-  return true;
-}
-
-bool ctkXnatReconstructionResourceFile::isDeletable() const
 {
   return true;
 }

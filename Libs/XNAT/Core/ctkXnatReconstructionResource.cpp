@@ -23,126 +23,78 @@
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatReconstructionResourceFile.h"
+#include "ctkXnatObjectPrivate.h"
 
-class ctkXnatReconstructionResourcePrivate
+class ctkXnatReconstructionResourcePrivate : public ctkXnatObjectPrivate
 {
 public:
-  QString resourceId;
-  QString label;
-  QString elementName;
-  QString category;
-  QString categoryId;
-  QString categoryDescription;
+
+  ctkXnatReconstructionResourcePrivate()
+  : ctkXnatObjectPrivate()
+  {
+  }
+
+  void reset()
+  {
+//    uri.clear();
+  }
+  
+//  QString uri;
 };
 
-ctkXnatReconstructionResource::ctkXnatReconstructionResource(ctkXnatObject* parent)
-: ctkXnatObject(parent)
-, d_ptr(new ctkXnatReconstructionResourcePrivate())
+
+ctkXnatReconstructionResource::ctkXnatReconstructionResource()
+: ctkXnatObject(new ctkXnatReconstructionResourcePrivate())
 {
+}
+
+ctkXnatReconstructionResource::Pointer ctkXnatReconstructionResource::Create()
+{
+  Pointer ptr(new ctkXnatReconstructionResource());
+  ptr->d_func()->selfPtr = ptr;
+  return ptr;
 }
 
 ctkXnatReconstructionResource::~ctkXnatReconstructionResource()
 {
 }
 
-const QString& ctkXnatReconstructionResource::resourceId() const
+//const QString& ctkXnatReconstructionResource::uri() const
+//{
+//  Q_D(const ctkXnatReconstructionResource);
+//  return d->uri;
+//}
+
+//void ctkXnatReconstructionResource::setUri(const QString& uri)
+//{
+//  Q_D(ctkXnatReconstructionResource);
+//  d->uri = uri;
+//}
+
+void ctkXnatReconstructionResource::reset()
 {
-  Q_D(const ctkXnatReconstructionResource);
-  return d->resourceId;
+  ctkXnatObject::reset();
 }
 
-void ctkXnatReconstructionResource::setResourceId(const QString& resourceId)
+void ctkXnatReconstructionResource::fetchImpl()
 {
   Q_D(ctkXnatReconstructionResource);
-  d->resourceId = resourceId;
+  ctkXnatObject::Pointer self = d->selfPtr;
+  this->connection()->fetch(self.staticCast<ctkXnatReconstructionResource>());
 }
 
-const QString& ctkXnatReconstructionResource::label() const
+void ctkXnatReconstructionResource::download(const QString& filename)
 {
-  Q_D(const ctkXnatReconstructionResource);
-  return d->label;
+  this->connection()->download(this, filename);
 }
 
-void ctkXnatReconstructionResource::setLabel(const QString& label)
+void ctkXnatReconstructionResource::remove()
 {
-  Q_D(ctkXnatReconstructionResource);
-  d->label = label;
-}
-
-const QString& ctkXnatReconstructionResource::elementName() const
-{
-  Q_D(const ctkXnatReconstructionResource);
-  return d->elementName;
-}
-
-void ctkXnatReconstructionResource::setElementName(const QString& elementName)
-{
-  Q_D(ctkXnatReconstructionResource);
-  d->elementName = elementName;
-}
-
-const QString& ctkXnatReconstructionResource::category() const
-{
-  Q_D(const ctkXnatReconstructionResource);
-  return d->category;
-}
-
-void ctkXnatReconstructionResource::setCategory(const QString& category)
-{
-  Q_D(ctkXnatReconstructionResource);
-  d->category = category;
-}
-
-const QString& ctkXnatReconstructionResource::categoryId() const
-{
-  Q_D(const ctkXnatReconstructionResource);
-  return d->categoryId;
-}
-
-void ctkXnatReconstructionResource::setCategoryId(const QString& categoryId)
-{
-  Q_D(ctkXnatReconstructionResource);
-  d->categoryId = categoryId;
-}
-
-const QString& ctkXnatReconstructionResource::categoryDescription() const
-{
-  Q_D(const ctkXnatReconstructionResource);
-  return d->categoryDescription;
-}
-
-void ctkXnatReconstructionResource::setCategoryDescription(const QString& categoryDescription)
-{
-  Q_D(ctkXnatReconstructionResource);
-  d->categoryDescription = categoryDescription;
-}
-
-void ctkXnatReconstructionResource::fetch(ctkXnatConnection* connection)
-{
-  connection->fetch(this);
-}
-
-void ctkXnatReconstructionResource::download(ctkXnatConnection* connection, const QString& zipFileName)
-{
-  connection->downloadReconstructionResourceFiles(this, zipFileName);
-}
-
-void ctkXnatReconstructionResource::upload(ctkXnatConnection* connection, const QString& zipFileName)
-{
-  connection->uploadReconstructionResourceFiles(this, zipFileName);
-}
-
-void ctkXnatReconstructionResource::remove(ctkXnatConnection* connection)
-{
-  connection->removeReconstructionResource(this);
+  // ctkXnatObject::remove();
+  // getConnection()->remove(this);
 }
 
 bool ctkXnatReconstructionResource::isFile() const
 {
-  return true;
-}
-
-bool ctkXnatReconstructionResource::isDeletable() const
-{
-  return true;
+  return false;
 }

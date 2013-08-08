@@ -80,9 +80,9 @@ public:
   void fetch(const QSharedPointer<ctkXnatScanFolder>& scanFolder);
   void fetch(const QSharedPointer<ctkXnatScan>& scan);
   void fetch(const QSharedPointer<ctkXnatScanResource>& scanResource);
-//  void fetch(ctkXnatReconstructionFolder* reconstructionFolder);
-//  void fetch(ctkXnatReconstruction* reconstruction);
-//  void fetch(ctkXnatReconstructionResource* reconstructionResource);
+  void fetch(const QSharedPointer<ctkXnatReconstructionFolder>& reconstructionFolder);
+  void fetch(const QSharedPointer<ctkXnatReconstruction>& reconstruction);
+  void fetch(const QSharedPointer<ctkXnatReconstructionResource>& reconstructionResource);
 
   void create(ctkXnatProject* project);
   void create(ctkXnatSubject* subject);
@@ -97,6 +97,8 @@ public:
 
   void download(ctkXnatScanResource* scanResource, const QString& zipFileName);
   void download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName);
+  void download(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFileName);
+  void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& fileName);
 
   /* void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename); */
   /* void addReconstructionResource(ctkXnatReconstruction* reconstruction, const QString& resource); */

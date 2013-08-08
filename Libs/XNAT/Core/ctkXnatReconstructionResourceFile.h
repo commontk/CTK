@@ -31,54 +31,37 @@ class ctkXnatReconstructionResourceFilePrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatReconstructionResourceFile : public ctkXnatObject
 {
-  Q_OBJECT
-
-  Q_PROPERTY(QString Name READ name WRITE setName)
-  Q_PROPERTY(QString Size READ size WRITE setSize)
-  Q_PROPERTY(QString URI READ uri WRITE setUri)
-  Q_PROPERTY(QString collection READ collection WRITE setCollection)
-  Q_PROPERTY(QString file_tags READ fileTags WRITE setFileTags)
-  Q_PROPERTY(QString file_format READ fileFormat WRITE setFileFormat)
-  Q_PROPERTY(QString file_content READ fileContent WRITE setFileContent)
-  Q_PROPERTY(QString cat_ID READ categoryId WRITE setCategoryId)
 
 public:
-  explicit ctkXnatReconstructionResourceFile(ctkXnatObject* parent = 0);
+
+  typedef QSharedPointer<ctkXnatReconstructionResourceFile> Pointer;
+  typedef QWeakPointer<ctkXnatReconstructionResourceFile> WeakPointer;
+  
+  static Pointer Create();
   virtual ~ctkXnatReconstructionResourceFile();
+  
+//  const QString& uri() const;
+//  void setUri(const QString& uri);
 
-  const QString& name() const;
-  void setName(const QString& name);
+  void download(const QString& filename);
+  void upload(const QString& filename);
 
-  const QString& size() const;
-  void setSize(const QString& size);
+  void reset();
+  void remove();
+  
+  bool isFile() const;
 
-  const QString& uri() const;
-  void setUri(const QString& uri);
-
-  const QString& collection() const;
-  void setCollection(const QString& collection);
-
-  const QString& fileTags() const;
-  void setFileTags(const QString& fileTags);
-
-  const QString& fileFormat() const;
-  void setFileFormat(const QString& fileFormat);
-
-  const QString& fileContent() const;
-  void setFileContent(const QString& fileContent);
-
-  const QString& categoryId() const;
-  void setCategoryId(const QString& categoryId);
-
-  virtual void download(ctkXnatConnection* connection, const QString& zipFilename);
-  virtual void remove(ctkXnatConnection* connection);
-
-  virtual bool isFile() const;
-  virtual bool isDeletable() const;
-
+  /* bool receivesFiles() const; */
+  /* bool holdsFiles() const; */
+  /* bool isDeletable() const; */
+  /* bool isModifiable() const; */
+  
 private:
-  QScopedPointer<ctkXnatReconstructionResourceFilePrivate> d_ptr;
-
+  
+  friend class qRestResult;
+  explicit ctkXnatReconstructionResourceFile();
+  virtual void fetchImpl();
+  
   Q_DECLARE_PRIVATE(ctkXnatReconstructionResourceFile);
   Q_DISABLE_COPY(ctkXnatReconstructionResourceFile);
 };

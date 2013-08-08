@@ -31,47 +31,34 @@ class ctkXnatReconstructionPrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatReconstruction : public ctkXnatObject
 {
-  Q_OBJECT
-
-  Q_PROPERTY(QString xnat_reconstructedimagedata_id READ reconstructedImageId WRITE setReconstructedImageId)
-  Q_PROPERTY(QString ID READ id WRITE setId)
-  Q_PROPERTY(QString type READ type WRITE setType)
-  Q_PROPERTY(QString baseScanType READ baseScanType WRITE setBaseScanType)
-  Q_PROPERTY(QString URI READ uri WRITE setUri)
 
 public:
-  explicit ctkXnatReconstruction(ctkXnatObject* parent = 0);
+
+  typedef QSharedPointer<ctkXnatReconstruction> Pointer;
+  typedef QWeakPointer<ctkXnatReconstruction> WeakPointer;
+  
+  static Pointer Create();
   virtual ~ctkXnatReconstruction();
-
-  const QString& reconstructedImageId() const;
-  void setReconstructedImageId(const QString& reconstructedImageId);
-
-  const QString& id() const;
-  void setId(const QString& id);
-
-  const QString& type() const;
-  void setType(const QString& type);
-
-  const QString& baseScanType() const;
-  void setBaseScanType(const QString& baseScanType);
-
+  
   const QString& uri() const;
   void setUri(const QString& uri);
+  
+  void reset();
+  void remove();
+  
+  bool isFile() const;
 
-  virtual void fetch(ctkXnatConnection* connection);
-
-  virtual void download(ctkXnatConnection* connection, const QString& zipFilename);
-  virtual void add(ctkXnatConnection* connection, const QString& name);
-  virtual void remove(ctkXnatConnection* connection);
-
-  virtual QString getKind() const;
-  virtual bool holdsFiles() const;
-  virtual bool receivesFiles() const;
-  virtual bool isDeletable() const;
-
+  /* bool receivesFiles() const; */
+  /* bool holdsFiles() const; */
+  /* bool isDeletable() const; */
+  /* bool isModifiable() const; */
+  
 private:
-  QScopedPointer<ctkXnatReconstructionPrivate> d_ptr;
-
+  
+  friend class qRestResult;
+  explicit ctkXnatReconstruction();
+  virtual void fetchImpl();
+  
   Q_DECLARE_PRIVATE(ctkXnatReconstruction);
   Q_DISABLE_COPY(ctkXnatReconstruction);
 };
