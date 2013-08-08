@@ -56,6 +56,8 @@ public:
   virtual int decimalsFromText(const QString &text) const;
   virtual QValidator::State	validate(QString& input, int& pos)const;
 
+  /// Expose publicly QAbstractSpinBox::initStyleOption()
+  void initStyleOptionSpinBox(QStyleOptionSpinBox* option);
 protected:
   ctkDoubleSpinBoxPrivate* const d_ptr;
 
@@ -86,6 +88,7 @@ public:
   int DefaultDecimals;
   ctkDoubleSpinBox::DecimalsOptions DOption;
   bool InvertedControls;
+  ctkDoubleSpinBox::SizeHintPolicy SizeHintPolicy;
 
   double InputValue;
   double InputRange[2];
@@ -94,6 +97,7 @@ public:
   mutable double CachedValue;
   mutable QValidator::State CachedState;
   mutable int CachedDecimals;
+  mutable QSize CachedSizeHint;
   bool ForceInputValueUpdate;
 
   QWeakPointer<ctkValueProxy> Proxy;

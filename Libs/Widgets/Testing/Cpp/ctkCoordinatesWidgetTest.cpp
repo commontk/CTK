@@ -63,8 +63,8 @@ void ctkCoordinatesWidgetTester::testDefaults()
   QCOMPARE(coordinatesWidget.dimension(), 3);
   QCOMPARE(coordinatesWidget.decimals(), 3);
   QCOMPARE(coordinatesWidget.singleStep(), 1.);
-  QCOMPARE(coordinatesWidget.minimum(), -100000.);
-  QCOMPARE(coordinatesWidget.maximum(), 100000.);
+  QCOMPARE(coordinatesWidget.minimum(), -std::numeric_limits<double>::max());
+  QCOMPARE(coordinatesWidget.maximum(), std::numeric_limits<double>::max());
   QCOMPARE(coordinatesWidget.isNormalized(), false);
   QCOMPARE(coordinatesWidget.coordinatesAsString(), QString("0,0,0"));
   QCOMPARE(QVector3D(coordinatesWidget.coordinates()[0],

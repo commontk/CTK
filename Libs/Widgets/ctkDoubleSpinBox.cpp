@@ -25,6 +25,7 @@
 #include "ctkPimpl.h"
 
 // Qt includes
+#include <QApplication>
 #include <QDebug>
 #include <QEvent>
 #include <QHBoxLayout>
@@ -32,6 +33,8 @@
 #include <QLineEdit>
 #include <QShortcut>
 #include <QSizePolicy>
+#include <QStyle>
+#include <QStyleOptionSpinBox>
 #include <QVariant>
 
 //-----------------------------------------------------------------------------
@@ -49,6 +52,11 @@ ctkQDoubleSpinBox::ctkQDoubleSpinBox(ctkDoubleSpinBoxPrivate* pimpl,
 QLineEdit* ctkQDoubleSpinBox::lineEdit()const
 {
   return this->QDoubleSpinBox::lineEdit();
+}
+//----------------------------------------------------------------------------
+void ctkQDoubleSpinBox::initStyleOptionSpinBox(QStyleOptionSpinBox* option)
+{
+  this->initStyleOption(option);
 }
 
 //----------------------------------------------------------------------------
@@ -174,6 +182,7 @@ ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object)
   this->DOption = ctkDoubleSpinBox::DecimalsByShortcuts
     | ctkDoubleSpinBox::InsertDecimals;
   this->InvertedControls = false;
+  this->SizeHintPolicy = ctkDoubleSpinBox::SizeHintByMinMax;
   this->InputValue = 0.;
   this->InputRange[0] = 0.;
   this->InputRange[1] = 99.99;
@@ -288,6 +297,11 @@ void ctkDoubleSpinBoxPrivate::setValue(double value, int dec)
   if (changeDecimals)
     {
     emit q->decimalsChanged(dec);
+    }
+  if (this->SizeHintPolicy == ctkDoubleSpinBox::SizeHintByValue)
+    {
+    this->CachedSizeHint = QSize();
+    q->updateGeometry();
     }
 }
 
@@ -935,6 +949,28 @@ bool ctkDoubleSpinBox::invertedControls() const
 }
 
 //----------------------------------------------------------------------------
+void ctkDoubleSpinBox
+::setSizeHintPolicy(ctkDoubleSpinBox::SizeHintPolicy newSizeHintPolicy)
+{
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
+      && newSizeHintPolicy == d->SizeHintPolicy)
+    {
+    return;
+    }
+  d->SizeHintPolicy = newSizeHintPolicy;
+  d->CachedSizeHint = QSize();
+  this->updateGeometry();
+}
+
+//----------------------------------------------------------------------------
+ctkDoubleSpinBox::SizeHintPolicy ctkDoubleSpinBox::sizeHintPolicy() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  return d->SizeHintPolicy;
+}
+
+//----------------------------------------------------------------------------
 void ctkDoubleSpinBox::setValueProxy(ctkValueProxy* proxy)
 {
   Q_D(ctkDoubleSpinBox);
@@ -971,6 +1007,61 @@ ctkValueProxy* ctkDoubleSpinBox::valueProxy() const
 {
   Q_D(const ctkDoubleSpinBox);
   return d->Proxy.data();
+}
+
+//----------------------------------------------------------------------------
+QSize ctkDoubleSpinBox::sizeHint() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  if (d->SizeHintPolicy == ctkDoubleSpinBox::SizeHintByMinMax)
+    {
+    return this->Superclass::sizeHint();
+    }
+  if (!d->CachedSizeHint.isEmpty())
+    {
+    return d->CachedSizeHint;
+    }
+
+  QSize newSizeHint;
+  newSizeHint.setHeight(this->lineEdit()->sizeHint().height());
+
+  QString extraString = " "; // give some room
+  QString s = this->text() + extraString;
+  s.truncate(18);
+  int extraWidth = 2; // cursor width
+
+  this->ensurePolished(); // ensure we are using the right font
+  const QFontMetrics fm(this->fontMetrics());
+  newSizeHint.setWidth(fm.width(s + extraString) + extraWidth);
+
+  QStyleOptionSpinBox opt;
+  d->SpinBox->initStyleOptionSpinBox(&opt);
+
+  QSize extraSize(35, 6);
+  opt.rect.setSize(newSizeHint + extraSize);
+  extraSize += newSizeHint - this->style()->subControlRect(
+    QStyle::CC_SpinBox, &opt,
+    QStyle::SC_SpinBoxEditField, this).size();
+  // Converging size hint...
+  opt.rect.setSize(newSizeHint + extraSize);
+  extraSize += newSizeHint - this->style()->subControlRect(
+    QStyle::CC_SpinBox, &opt,
+    QStyle::SC_SpinBoxEditField, this).size();
+  newSizeHint += extraSize;
+
+  opt.rect = this->rect();
+  d->CachedSizeHint = this->style()->sizeFromContents(
+    QStyle::CT_SpinBox, &opt, newSizeHint, this)
+    .expandedTo(QApplication::globalStrut());
+  return d->CachedSizeHint;
+}
+
+//----------------------------------------------------------------------------
+QSize ctkDoubleSpinBox::minimumSizeHint() const
+{
+  // For some reasons, Superclass::minimumSizeHint() returns the spinbox
+  // sizeHint()
+  return this->spinBox()->minimumSizeHint();
 }
 
 //-----------------------------------------------------------------------------

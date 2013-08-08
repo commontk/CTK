@@ -45,16 +45,31 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   /// False by default.
   Q_PROPERTY(bool normalized READ isNormalized WRITE setNormalized)
 
+  /// This property controls how many decimals should be displayed by the
+  /// spinboxes. This number might not be used depending on decimalsOption.
+  /// In general, the coordinatesWidget tries to use the same number of
+  /// decimals for all the spinboxes except if numbers require more decimals.
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
   /// This property provides more controls over the decimals.
   /// \sa ctkDoubleSpinBox::DecimalsOptions, decimals
   Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
 
   Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
+  /// This property controls the minimum value of the spinboxes.
+  /// No limit (-max double) by default.
+  /// \sa minimum(), setMinimum(), maximum, sizeHintPolicy
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
+  /// This property the maximum value of the spinboxes.
+  /// No limit (max double) by default.
+  /// \sa maximum(), setMaximum(), minimum, sizeHintPolicy
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
 
   Q_PROPERTY(QString coordinates READ coordinatesAsString WRITE setCoordinatesAsString)
+
+  /// This property controls the size hint of the spinboxes.
+  /// ctkDoubleSpinBox::SizeHintByValue by default
+  /// \sa ctkDoubleSpinBox::SizeHintPolicy
+  Q_PROPERTY(ctkDoubleSpinBox::SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy)
 
 public:
   explicit ctkCoordinatesWidget(QWidget* parent = 0);
@@ -119,6 +134,13 @@ public:
   /// Convenient function that sets up to 4 elements of the coordinates.
   void setCoordinates(double x, double y = 0., double z = 0., double w = 0.);
 
+  /// Set the sizeHintPolicy property value.
+  /// \sa sizeHintPolicy
+  void setSizeHintPolicy(ctkDoubleSpinBox::SizeHintPolicy newSizeHintPolicy);
+  /// Return the sizeHintPolicy property value.
+  /// \sa sizeHintPolicy
+  ctkDoubleSpinBox::SizeHintPolicy sizeHintPolicy()const;
+
   /// Set/Get the value proxy of the spinboxes used to display the coordinates.
   /// \sa setValueProxy(), valueProxy()
   void setValueProxy(ctkValueProxy* proxy);
@@ -170,6 +192,8 @@ protected:
   double  Maximum;
   bool    Normalized;
   int     Dimension;
+  ctkDoubleSpinBox::SizeHintPolicy SizeHintPolicy;
+
   double* Coordinates;
   QList<int> LastUserEditedCoordinates;
   bool    ChangingDecimals;

@@ -32,6 +32,7 @@
 
 // STD includes
 #include <cmath>
+#include <limits>
 
 //------------------------------------------------------------------------------
 ctkCoordinatesWidget::ctkCoordinatesWidget(QWidget* _parent) :QWidget(_parent)
@@ -40,10 +41,11 @@ ctkCoordinatesWidget::ctkCoordinatesWidget(QWidget* _parent) :QWidget(_parent)
   ctkDoubleSpinBox temp;
   this->DecimalsOption = temp.decimalsOption();
   this->SingleStep = 1.;
-  this->Minimum = -100000.;
-  this->Maximum = 100000.;
+  this->Minimum = -std::numeric_limits<double>::max();
+  this->Maximum = std::numeric_limits<double>::max();
   this->Normalized = false;
   this->Dimension = 0;
+  this->SizeHintPolicy = ctkDoubleSpinBox::SizeHintByValue;
   this->Coordinates = 0;
   this->ChangingDecimals = false;
 
@@ -69,13 +71,14 @@ void ctkCoordinatesWidget::addSpinBox()
   spinBox->setSingleStep(this->SingleStep);
   spinBox->setMinimum(this->Minimum);
   spinBox->setMaximum(this->Maximum);
+  spinBox->setSizeHintPolicy(this->SizeHintPolicy);
   spinBox->setValueProxy(this->Proxy.data());
   connect( spinBox, SIGNAL(valueChanged(double)),
            this, SLOT(updateCoordinate(double)));
   // Same number of decimals within the spinboxes.
   connect( spinBox, SIGNAL(decimalsChanged(int)),
            this, SLOT(updateOtherDecimals(int)));
-  this->layout()->addWidget(spinBox);
+  qobject_cast<QHBoxLayout*>(this->layout())->addWidget(spinBox, 1.);
 }
 
 //------------------------------------------------------------------------------
@@ -619,6 +622,23 @@ double ctkCoordinatesWidget::squaredNorm(double* coordinates, int dimension)
     sum += coordinates[i] * coordinates[i];
     }
   return sum;
+}
+
+
+//----------------------------------------------------------------------------
+void ctkCoordinatesWidget::setSizeHintPolicy(ctkDoubleSpinBox::SizeHintPolicy newSizeHintPolicy)
+{
+  for (int i = 0; i < this->Dimension; ++i)
+    {
+    this->spinBox(i)->setSizeHintPolicy(newSizeHintPolicy);
+    }
+  this->SizeHintPolicy = newSizeHintPolicy;
+}
+
+//----------------------------------------------------------------------------
+ctkDoubleSpinBox::SizeHintPolicy ctkCoordinatesWidget::sizeHintPolicy()const
+{
+  return this->SizeHintPolicy;
 }
 
 //----------------------------------------------------------------------------

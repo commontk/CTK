@@ -50,15 +50,6 @@ int ctkCoordinatesWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if (coordinatesWidget.decimals() != 3 ||
-      coordinatesWidget.singleStep() != 1. ||
-      coordinatesWidget.minimum() != -100000. ||
-      coordinatesWidget.maximum() != 100000.)
-    {
-    std::cerr << "Bad default ctkCoordinatesWidget values" << std::endl;
-    return EXIT_FAILURE;
-    }
-
   coordinatesWidget.setDecimals(4); 
 
   if (coordinatesWidget.decimals() != 4)
