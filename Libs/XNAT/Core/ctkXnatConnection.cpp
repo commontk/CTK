@@ -192,9 +192,11 @@ void ctkXnatConnection::fetch(const ctkXnatProject::Pointer& project)
 
   foreach (ctkXnatSubject* subject, subjects)
   {
-    QString label = subject->getProperty ("label");
+    QString label = subject->getProperty("label");
     if (label.size())
-      subject->setProperty ("ID", label);
+    {
+      subject->setProperty("ID", label);
+    }
     ctkXnatObject::Pointer ptr(subject);
     ptr->d_func()->selfPtr = ptr;
     project->addChild(ptr);
@@ -316,9 +318,15 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScan>& scan)
   
   foreach (ctkXnatScanResource* resource, resources)
   {
-    QString label = resource->getProperty ("label");
+    QString label = resource->getProperty("label");
     if (label.size())
-      resource->setProperty ("ID", label);
+    {
+      resource->setProperty("ID", label);
+    }
+    
+    resource->setUri(query + "/" + label);
+    qDebug() << "ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScan>& scan): resource uri:" << resource->uri();
+
     ctkXnatObject::Pointer ptr(resource);
     ptr->d_func()->selfPtr = ptr;
     scan->addChild(ptr);
@@ -347,13 +355,17 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanRes
 
   foreach (ctkXnatScanResourceFile* file, files)
   {
-    QString uri = file->getProperty ("URI");
+    QString uri = file->getProperty("URI");
     if (uri.size())
-      file->setUri (uri);
+    {
+      file->setUri(uri);
+    }
 
-    QString label = file->getProperty ("Name");
+    QString label = file->getProperty("Name");
     if (label.size())
-      file->setProperty ("ID", label);
+    {
+      file->setProperty("ID", label);
+    }
 
     ctkXnatObject::Pointer ptr(file);
     ptr->d_func()->selfPtr = ptr;
@@ -704,43 +716,28 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanRes
 //  d->xnat->sync(queryId);
 //}
 
-//void ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QString& fileName)
-//{
-////  qDebug() << "ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QString& zipFilename)";
-//  const QString& scanResourceName = scanResource->getName();
-//  ctkXnatObject* scan = scanResource->getParent();
-//  const QString& scanName = scan->getName();
-//  ctkXnatObject* experiment = scan->getParent()->getParent();
-//  const QString& experimentName = experiment->getName();
-//  ctkXnatObject* subject = experiment->getParent();
-//  const QString& subjectName = subject->getName();
-//  ctkXnatObject* project = subject->getParent();
-//  const QString& projectName = project->getName();
+void ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QString& fileName)
+{
+  Q_D(ctkXnatConnection);
 
-//  Q_D(ctkXnatConnection);
-
-//  QString query = QString("/REST/projects/%1/subjects/%2/experiments/%3/scans/%4/resources/%5/files").arg(projectName, subjectName, experimentName, scanName, scanResourceName);
-//  qRestAPI::Parameters parameters;
-//  parameters["format"] = "zip";
-//  QUuid queryId = d->xnat->download(fileName, query, parameters);
-//  d->xnat->sync(queryId);
-//}
+  QString query = scanResource->uri() + "/files";
+  qRestAPI::Parameters parameters;
+  parameters["format"] = "zip";
+  QUuid queryId = d->xnat->download(fileName, query, parameters);
+  d->xnat->sync(queryId);
+}
 
 void ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName)
 {
- Q_D(ctkXnatConnection);
- QString query = scanResourceFile->uri();
- qRestAPI::Parameters parameters;
- /**
-    nt: When the object is a file we don't need to use the "?format=zip" parameter
-    in the URI. So we leave the parameter map empty
- */
- // parameters["format"] = "zip";
+  Q_D(ctkXnatConnection);
+  QString query = scanResourceFile->uri();
 
- QUuid queryId = d->xnat->download(fileName, query, parameters);
- d->xnat->sync(queryId);
+  QUuid queryId = d->xnat->download(fileName, query);
+  d->xnat->sync(queryId);
 }
 
-void ctkXnatConnection::processResult(QUuid /*queryId*/, QList<QVariantMap> /*parameters*/)
+void ctkXnatConnection::processResult(QUuid queryId, QList<QVariantMap> parameters)
 {
+  Q_UNUSED(queryId)
+  Q_UNUSED(parameters)
 }

@@ -25,7 +25,6 @@
 #include "ctkXnatScanResourceFile.h"
 #include "ctkXnatObjectPrivate.h"
 
-
 class ctkXnatScanResourcePrivate : public ctkXnatObjectPrivate
 {
 public:
@@ -82,6 +81,11 @@ void ctkXnatScanResource::fetchImpl()
   Q_D(ctkXnatScanResource);
   ctkXnatObject::Pointer self = d->selfPtr;
   this->getConnection()->fetch(self.staticCast<ctkXnatScanResource>());
+}
+
+void ctkXnatScanResource::download(const QString& filename)
+{
+  this->getConnection()->download(this, filename);
 }
 
 void ctkXnatScanResource::remove()

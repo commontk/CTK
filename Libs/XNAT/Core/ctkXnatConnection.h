@@ -94,8 +94,8 @@ public:
   /* void addReconstruction(ctkXnatExperiment* experiment, const QString& categoryEntry); */
 
   /* void download(ctkXnatScan* scan, const QString& zipFileName); */
-  /* void download(ctkXnatScanResource* scanResource, const QString& zipFileName); */
 
+  void download(ctkXnatScanResource* scanResource, const QString& zipFileName);
   void download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName);
 
   /* void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename); */

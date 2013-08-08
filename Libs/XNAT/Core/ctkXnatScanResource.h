@@ -48,6 +48,8 @@ public:
   
   bool isFile() const;
 
+  void download(const QString& filename);
+
   /* bool receivesFiles() const; */
   /* bool holdsFiles() const; */
   /* bool isDeletable() const; */
