@@ -56,7 +56,6 @@ ctkXnatServer::Pointer ctkXnatServer::Create(ctkXnatConnection* connection)
 {
   Pointer server(new ctkXnatServer(connection));
   server->d_func()->selfPtr = server;
-  server->setUri(connection->url());
   return server;
 }
 
