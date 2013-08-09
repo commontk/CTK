@@ -46,7 +46,9 @@ public:
   virtual bool hasChildren(const QModelIndex& parent) const;
   virtual bool canFetchMore(const QModelIndex& parent) const;
   virtual void fetchMore(const QModelIndex& parent);
-  
+
+  ctkXnatObject::Pointer xnatObject(const QModelIndex& index) const;
+
   void addServer(ctkXnatServer::Pointer server);
 
   void addEntry (const QModelIndex& index, const QString& name);
