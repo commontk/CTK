@@ -21,17 +21,20 @@
 // CTK includes
 #include "ctkDoubleSpinBox_p.h"
 #include "ctkUtils.h"
+#include "ctkValueProxy.h"
 #include "ctkPimpl.h"
 
-#include <QDebug>
-
 // Qt includes
+#include <QApplication>
+#include <QDebug>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QShortcut>
 #include <QSizePolicy>
+#include <QStyle>
+#include <QStyleOptionSpinBox>
 #include <QVariant>
 
 //-----------------------------------------------------------------------------
@@ -49,6 +52,11 @@ ctkQDoubleSpinBox::ctkQDoubleSpinBox(ctkDoubleSpinBoxPrivate* pimpl,
 QLineEdit* ctkQDoubleSpinBox::lineEdit()const
 {
   return this->QDoubleSpinBox::lineEdit();
+}
+//----------------------------------------------------------------------------
+void ctkQDoubleSpinBox::initStyleOptionSpinBox(QStyleOptionSpinBox* option)
+{
+  this->initStyleOption(option);
 }
 
 //----------------------------------------------------------------------------
@@ -174,6 +182,11 @@ ctkDoubleSpinBoxPrivate::ctkDoubleSpinBoxPrivate(ctkDoubleSpinBox& object)
   this->DOption = ctkDoubleSpinBox::DecimalsByShortcuts
     | ctkDoubleSpinBox::InsertDecimals;
   this->InvertedControls = false;
+  this->SizeHintPolicy = ctkDoubleSpinBox::SizeHintByMinMax;
+  this->InputValue = 0.;
+  this->InputRange[0] = 0.;
+  this->InputRange[1] = 99.99;
+  this->ForceInputValueUpdate = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -188,11 +201,12 @@ void ctkDoubleSpinBoxPrivate::init()
                    this, SLOT(editorTextChanged(QString)));
   this->SpinBox->setLineEdit(lineEdit);
   lineEdit->setObjectName(QLatin1String("qt_spinbox_lineedit"));
+  this->InputValue = this->SpinBox->value();
+  this->InputRange[0] = this->SpinBox->minimum();
+  this->InputRange[1] = this->SpinBox->maximum();
 
   QObject::connect(this->SpinBox, SIGNAL(valueChanged(double)),
-    q, SIGNAL(valueChanged(double)));
-  QObject::connect(this->SpinBox, SIGNAL(valueChanged(const QString&)),
-    q, SIGNAL(valueChanged(const QString &)));
+    this, SLOT(onValueChanged()));
   QObject::connect(this->SpinBox, SIGNAL(editingFinished()),
     q, SIGNAL(editingFinished()));
 
@@ -257,6 +271,17 @@ int ctkDoubleSpinBoxPrivate::boundDecimals(int dec)const
 }
 
 //-----------------------------------------------------------------------------
+int ctkDoubleSpinBoxPrivate::decimalsForValue(double value) const
+{
+  int decimals = this->DefaultDecimals;
+  if (this->DOption & ctkDoubleSpinBox::DecimalsByValue)
+    {
+    decimals = ctk::significantDecimals(value, decimals);
+    }
+  return this->boundDecimals(decimals);
+}
+
+//-----------------------------------------------------------------------------
 void ctkDoubleSpinBoxPrivate::setValue(double value, int dec)
 {
   Q_Q(ctkDoubleSpinBox);
@@ -272,6 +297,11 @@ void ctkDoubleSpinBoxPrivate::setValue(double value, int dec)
   if (changeDecimals)
     {
     emit q->decimalsChanged(dec);
+    }
+  if (this->SizeHintPolicy == ctkDoubleSpinBox::SizeHintByValue)
+    {
+    this->CachedSizeHint = QSize();
+    q->updateGeometry();
     }
 }
 
@@ -302,7 +332,9 @@ void ctkDoubleSpinBoxPrivate::editorTextChanged(const QString& text)
         decimals != this->SpinBox->decimals();
       if (changeDecimals)
         {
+        this->ForceInputValueUpdate = true;
         this->setValue(newValue, decimals);
+        this->ForceInputValueUpdate = false;
         }
       // else, let QDoubleSpinBox process the validation.
       }
@@ -315,23 +347,19 @@ double ctkDoubleSpinBoxPrivate
                        QValidator::State &state, int &decimals) const
 {
   Q_Q(const ctkDoubleSpinBox);
-  //qDebug() << "input: " << input << "pos:" << pos;
   if (this->CachedText == input)
     {
     state = this->CachedState;
     decimals = this->CachedDecimals;
-    //qDebug() << "cachedText was '" << this->CachedText << "' state was "
-    //         << int(state) << " and value was " << this->CachedValue;
     return this->CachedValue;
     }
-  const double max = q->maximum();
-  const double min = q->minimum();
+  const double max = this->SpinBox->maximum();
+  const double min = this->SpinBox->minimum();
 
   int posInValue = pos;
   QString text = this->stripped(input, &posInValue);
   // posInValue can change, track the offset.
   const int oldPosInValue = posInValue;
-  //qDebug() << "text: " << text << pos;
   state = QValidator::Acceptable;
   decimals = 0;
 
@@ -426,7 +454,6 @@ double ctkDoubleSpinBoxPrivate
     }
   if (state == QValidator::Acceptable)
     {
-    //qDebug() << "Acceptable: " << text << value << ok;
     if (!ok)
       {
       state = QValidator::Invalid;
@@ -460,201 +487,86 @@ double ctkDoubleSpinBoxPrivate
   this->CachedState = state;
   this->CachedValue = value;
   this->CachedDecimals = decimals;
-  //qDebug() << "end: text is '" << this->CachedText << "' state is "
-  //         << int(state) << ", value is " << this->CachedValue
-  //         << " decimals is " << decimals
-  //         << " and pos is " << pos;
   return value;
 }
 
-/*
 //-----------------------------------------------------------------------------
-double ctkDoubleSpinBoxPrivate
-::validateAndInterpret(QString &input, int &pos,
-                       QValidator::State &state, int &decimals) const
+void ctkDoubleSpinBoxPrivate::onValueChanged()
 {
-  Q_Q(const ctkDoubleSpinBox);
-  qDebug() << "input: " << input << "pos:" << pos;
-  if (this->CachedText == input && !input.isEmpty())
+  Q_Q(ctkDoubleSpinBox);
+  double newValue = this->SpinBox->value();
+  double oldValue = q->value();
+  if (this->Proxy)
     {
-    state = this->CachedState;
-    decimals = this->CachedDecimals;
-    qDebug() << "cachedText was '" << this->CachedText << "' state was "
-             << int(state) << " and value was " << this->CachedValue;
-    return this->CachedValue;
+    oldValue = this->Proxy.data()->proxyValueFromValue(oldValue);
     }
-  const double max = q->maximum();
-  const double min = q->minimum();
-
-  QString copy = this->stripped(input, &pos);
-  qDebug() << "copy: " << copy << pos;
-  int len = copy.size();
-  double num = min;
-  const bool plus = max >= 0;
-  const bool minus = min <= 0;
-  decimals = 0;
-
-
-  switch (len)
+  // Don't trigger value changed signal if the difference only happened on the
+  // precision.
+  if (this->compare(oldValue, newValue) && !this->ForceInputValueUpdate)
     {
-    case 0:
-      state = max != min ? QValidator::Intermediate : QValidator::Invalid;
-      goto end;
-      break;
-    case 1:
-      if (copy.at(0) == q->locale().decimalPoint()
-          || (plus && copy.at(0) == QLatin1Char('+'))
-          || (minus && copy.at(0) == QLatin1Char('-')))
-        {
-        state = QValidator::Intermediate;
-        goto end;
-        }
-      break;
-    case 2:
-      if (copy.at(1) == q->locale().decimalPoint()
-          && ((plus && copy.at(0) == QLatin1Char('+')) || (minus && copy.at(0) == QLatin1Char('-'))))
-        {
-        state = QValidator::Intermediate;
-        goto end;
-        }
-      break;
-    default:
-      break;
+    return;
     }
+  // Force it only once (when the user typed a new number that could have change
+  // the number of decimals which could have make the compare test always pass.
+  this->ForceInputValueUpdate = false;
 
-  if (copy.at(0) == q->locale().groupSeparator())
+  double minimum = q->minimum();
+  double maximum = q->maximum();
+  if (this->Proxy)
     {
-    state = QValidator::Invalid;
-    goto end;
+    minimum = this->Proxy.data()->proxyValueFromValue(minimum);
+    maximum = this->Proxy.data()->proxyValueFromValue(maximum);
     }
-  else if (len > 1)
+  // Special case to return max precision
+  if (this->compare(minimum, newValue))
     {
-    const int dec = copy.indexOf(q->locale().decimalPoint());
-    if (dec != -1)
-      {
-      if (dec + 1 < copy.size() && copy.at(dec + 1) == q->locale().decimalPoint() && pos == dec + 1)
-        {
-        copy.remove(dec + 1, 1); // typing a delimiter when you are on the delimiter
-        } // should be treated as typing right arrow
-      // When DecimalsByKey is set, it is possible to extend the number of decimals
-      if (!(this->DOption & ctkDoubleSpinBox::DecimalsByKey) &&
-          (copy.size() - dec > q->decimals() + 1))
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      for (int i=dec + 1; i<copy.size(); ++i)
-        {
-        if (copy.at(i).isSpace() || copy.at(i) == q->locale().groupSeparator())
-          {
-          state = QValidator::Invalid;
-          goto end;
-          }
-        }
-      decimals = copy.size() - dec - 1;
-      }
-    else
-      {
-      /// Don't accept lack of decimal point.
-      /// It could change 1.00 into 100 in 1 key stroke (delete or backspace).
-      if (this->DOption & ctkDoubleSpinBox::DecimalsByKey)
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      const QChar &last = copy.at(len - 1);
-      const QChar &secondLast = copy.at(len - 2);
-      if ((last == q->locale().groupSeparator() || last.isSpace())
-          && (secondLast == q->locale().groupSeparator() || secondLast.isSpace()))
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      else if (last.isSpace() && (!q->locale().groupSeparator().isSpace() || secondLast.isSpace()))
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      }
+    newValue = q->minimum();
     }
-
+  else if (this->compare(maximum, newValue))
     {
-    bool ok = false;
-    num = q->locale().toDouble(copy, &ok);
-
-    if (!ok) {
-    if (q->locale().groupSeparator().isPrint())
-      {
-      if (max < 1000 && min > -1000 && copy.contains(q->locale().groupSeparator()))
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      const int len = copy.size();
-      for (int i=0; i<len- 1; ++i)
-        {
-        if (copy.at(i) == q->locale().groupSeparator() && copy.at(i + 1) == q->locale().groupSeparator())
-          {
-          state = QValidator::Invalid;
-          goto end;
-          }
-        }
-
-      QString copy2 = copy;
-      copy2.remove(q->locale().groupSeparator());
-      num = q->locale().toDouble(copy2, &ok);
-
-      if (!ok)
-        {
-        state = QValidator::Invalid;
-        goto end;
-        }
-      }
+    newValue = q->maximum();
     }
-
-    if (!ok)
-      {
-      state = QValidator::Invalid;
-      }
-    else if (num >= min && num <= max)
-      {
-      state = QValidator::Acceptable;
-      }
-    else if (max == min)
-      { // when max and min is the same the only non-Invalid input is max (or min)
-      state = QValidator::Invalid;
-      }
-    else
-      {
-      if ((num >= 0 && num > max) || (num < 0 && num < min))
-        {
-        state = QValidator::Invalid;
-        }
-      else
-        {
-        state = QValidator::Intermediate;
-        }
-      }
+  else if (this->Proxy)
+    {
+    newValue = this->Proxy.data()->valueFromProxyValue(newValue);
     }
-end:
-    if (state != QValidator::Acceptable)
-      {
-      num = max > 0 ? min : max;
-      }
-
-    input = q->prefix() + copy + q->suffix();
-    this->CachedText = input;
-    this->CachedState = state;
-    this->CachedValue = num;
-    this->CachedDecimals = decimals;
-    qDebug() << "end: text is '" << this->CachedText << "' state is "
-             << int(state) << ", value is " << this->CachedValue
-             << " decimals is " << decimals
-             << " and pos is " << pos;
-
-    return num;
+  this->InputValue = newValue;
+  emit q->valueChanged(newValue);
+  // \tbd The string might not make much sense when using proxies.
+  emit q->valueChanged(
+    QString::number(newValue, 'f', this->SpinBox->decimals()));
 }
-*/
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxPrivate::onValueProxyAboutToBeModified()
+{
+}
+
+//-----------------------------------------------------------------------------
+void ctkDoubleSpinBoxPrivate::onValueProxyModified()
+{
+  Q_Q(ctkDoubleSpinBox);
+  int oldDecimals = q->decimals();
+  double oldValue = this->InputValue;
+  ctkDoubleSpinBox::SetMode oldSetMode = this->Mode;
+
+  // Only the display is changed, not the programatic value, no need to trigger
+  // signals
+  bool wasBlocking = q->blockSignals(true);
+  // Enforce a refresh. Signals are blocked so it should not trigger unwanted
+  // signals
+  this->Mode = ctkDoubleSpinBox::SetAlways;
+  q->setRange(this->InputRange[0], this->InputRange[1]);
+  q->setValue(oldValue);
+  this->Mode = oldSetMode;
+  q->blockSignals(wasBlocking);
+  // Decimals might change when value proxy is modified.
+  if (oldDecimals != q->decimals())
+    {
+    emit q->decimalsChanged(q->decimals());
+    }
+}
+
 //-----------------------------------------------------------------------------
 // ctkDoubleSpinBox
 //-----------------------------------------------------------------------------
@@ -680,13 +592,21 @@ ctkDoubleSpinBox::ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* newP
 double ctkDoubleSpinBox::value() const
 {
   Q_D(const ctkDoubleSpinBox);
-  return d->SpinBox->value();
+  return d->InputValue;
 }
 
 //-----------------------------------------------------------------------------
 double ctkDoubleSpinBox::displayedValue() const
 {
-  return this->round(this->value());
+  Q_D(const ctkDoubleSpinBox);
+  return d->SpinBox->value();
+}
+
+//----------------------------------------------------------------------------
+void ctkDoubleSpinBox::setDisplayedValue(double value)
+{
+  Q_D(ctkDoubleSpinBox);
+  d->SpinBox->setValue(value);
 }
 
 //-----------------------------------------------------------------------------
@@ -795,73 +715,76 @@ void ctkDoubleSpinBox::setSuffix(const QString &suffix)
 double ctkDoubleSpinBox::singleStep() const
 {
   Q_D(const ctkDoubleSpinBox);
-  return d->SpinBox->singleStep();
+  double step = d->SpinBox->singleStep();
+  return step;
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setSingleStep(double step)
+void ctkDoubleSpinBox::setSingleStep(double newStep)
 {
   Q_D(ctkDoubleSpinBox);
   if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-    && d->compare(step, this->singleStep()))
+    && d->compare(newStep, this->singleStep()))
     {
     return;
     }
 
-  d->SpinBox->setSingleStep(step);
+  d->SpinBox->setSingleStep(newStep);
 }
 
 //-----------------------------------------------------------------------------
 double ctkDoubleSpinBox::minimum() const
 {
   Q_D(const ctkDoubleSpinBox);
-  return d->SpinBox->minimum();
+  return d->InputRange[0];
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setMinimum(double min)
+void ctkDoubleSpinBox::setMinimum(double newMin)
 {
-  Q_D(ctkDoubleSpinBox);
-  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-    && d->compare(min, this->minimum()))
-    {
-    return;
-    }
-
-  d->SpinBox->setMinimum(min);
+  this->setRange(newMin, qMax(newMin, this->maximum()));
 }
 
 //-----------------------------------------------------------------------------
 double ctkDoubleSpinBox::maximum() const
 {
   Q_D(const ctkDoubleSpinBox);
-  return d->SpinBox->maximum();
+  return d->InputRange[1];
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setMaximum(double max)
+void ctkDoubleSpinBox::setMaximum(double newMax)
 {
-  Q_D(ctkDoubleSpinBox);
-  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-    && d->compare(max, this->maximum()))
-    {
-    return;
-    }
-
-  d->SpinBox->setMaximum(max);
+  this->setRange(qMin(newMax, this->minimum()), newMax);
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setRange(double min, double max)
+void ctkDoubleSpinBox::setRange(double newMin, double newMax)
 {
   Q_D(ctkDoubleSpinBox);
+  if (newMin > newMax)
+    {
+    qSwap(newMin, newMax);
+    }
   if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
-    && d->compare(max, this->maximum()) && d->compare(min, this->minimum()))
+      && newMin == d->InputRange[0]
+      && newMax == d->InputRange[1])
     {
     return;
     }
+  d->InputRange[0] = newMin;
+  d->InputRange[1] = newMax;
+  if (d->Proxy)
+    {
+    newMin = d->Proxy.data()->proxyValueFromValue(newMin);
+    newMax = d->Proxy.data()->proxyValueFromValue(newMax);
+    if (newMin > newMax)
+      {
+      qSwap(newMin, newMax);
+      }
+    }
 
-  d->SpinBox->setRange(min, max);
+  d->SpinBox->setRange(newMin, newMax);
 }
 
 //-----------------------------------------------------------------------------
@@ -883,7 +806,15 @@ void ctkDoubleSpinBox::setDecimals(int dec)
     }
 
   d->DefaultDecimals = dec;
-  d->setDecimals(d->DefaultDecimals);
+  // The number of decimals may or may not depend on the value. Recompute the
+  // new number of decimals.
+  double currentValue = this->value();
+  if (d->Proxy)
+    {
+    currentValue = d->Proxy.data()->proxyValueFromValue(currentValue);
+    }
+  int newDecimals = d->decimalsForValue(currentValue);
+  d->setValue(currentValue, newDecimals);
 }
 
 //-----------------------------------------------------------------------------
@@ -925,34 +856,32 @@ void ctkDoubleSpinBox::setValue(double value)
 void ctkDoubleSpinBox::setValueIfDifferent(double newValue)
 {
   Q_D(ctkDoubleSpinBox);
-  bool set = false;
-  if (d->DOption & ctkDoubleSpinBox::DecimalsByValue)
+  if (newValue == d->InputValue)
     {
-    int newValueDecimals = ctk::significantDecimals(newValue, d->DefaultDecimals);
-    set = this->value() != d->round(newValue, newValueDecimals)
-      || d->SpinBox->decimals() != newValueDecimals;
+    return;
     }
-  else
-    {
-    set = !d->compare(this->value(), newValue);
-    }
-  if (set)
-    {
-    this->setValueAlways(newValue);
-    }
+  this->setValueAlways(newValue);
 }
 
 //-----------------------------------------------------------------------------
-void ctkDoubleSpinBox::setValueAlways(double value)
+void ctkDoubleSpinBox::setValueAlways(double newValue)
 {
   Q_D(ctkDoubleSpinBox);
-  if (d->DOption & ctkDoubleSpinBox::DecimalsByValue)
+  newValue = qBound(d->InputRange[0], newValue, d->InputRange[1]);
+  const bool valueModified = d->InputValue != newValue;
+  d->InputValue = newValue;
+  double newValueToDisplay = newValue;
+  if (d->Proxy)
     {
-    d->setValue(value, ctk::significantDecimals(value, d->DefaultDecimals));
+    newValueToDisplay = d->Proxy.data()->proxyValueFromValue(newValueToDisplay);
     }
-  else
+  const int decimals = d->decimalsForValue(newValueToDisplay);
+  d->setValue(newValueToDisplay, decimals);
+  const bool signalsEmitted = (newValue != d->InputValue);
+  if (valueModified && !signalsEmitted)
     {
-    d->setValue(value);
+    emit valueChanged(d->InputValue);
+    emit valueChanged(QString::number(d->InputValue, 'f', d->SpinBox->decimals()));
     }
 }
 
@@ -1019,6 +948,122 @@ bool ctkDoubleSpinBox::invertedControls() const
   return d->InvertedControls;
 }
 
+//----------------------------------------------------------------------------
+void ctkDoubleSpinBox
+::setSizeHintPolicy(ctkDoubleSpinBox::SizeHintPolicy newSizeHintPolicy)
+{
+  Q_D(ctkDoubleSpinBox);
+  if (d->Mode == ctkDoubleSpinBox::SetIfDifferent
+      && newSizeHintPolicy == d->SizeHintPolicy)
+    {
+    return;
+    }
+  d->SizeHintPolicy = newSizeHintPolicy;
+  d->CachedSizeHint = QSize();
+  this->updateGeometry();
+}
+
+//----------------------------------------------------------------------------
+ctkDoubleSpinBox::SizeHintPolicy ctkDoubleSpinBox::sizeHintPolicy() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  return d->SizeHintPolicy;
+}
+
+//----------------------------------------------------------------------------
+void ctkDoubleSpinBox::setValueProxy(ctkValueProxy* proxy)
+{
+  Q_D(ctkDoubleSpinBox);
+  if (proxy == d->Proxy.data())
+    {
+    return;
+    }
+
+  d->onValueProxyAboutToBeModified();
+
+  if (d->Proxy)
+    {
+    disconnect(d->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
+               d, SLOT(onValueProxyAboutToBeModified()));
+    disconnect(d->Proxy.data(), SIGNAL(proxyModified()),
+               d, SLOT(onValueProxyModified()));
+    }
+
+  d->Proxy = proxy;
+
+  if (d->Proxy)
+    {
+    connect(d->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
+            d, SLOT(onValueProxyAboutToBeModified()));
+    connect(d->Proxy.data(), SIGNAL(proxyModified()),
+            d, SLOT(onValueProxyModified()));
+    }
+
+  d->onValueProxyModified();
+}
+
+//----------------------------------------------------------------------------
+ctkValueProxy* ctkDoubleSpinBox::valueProxy() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  return d->Proxy.data();
+}
+
+//----------------------------------------------------------------------------
+QSize ctkDoubleSpinBox::sizeHint() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  if (d->SizeHintPolicy == ctkDoubleSpinBox::SizeHintByMinMax)
+    {
+    return this->Superclass::sizeHint();
+    }
+  if (!d->CachedSizeHint.isEmpty())
+    {
+    return d->CachedSizeHint;
+    }
+
+  QSize newSizeHint;
+  newSizeHint.setHeight(this->lineEdit()->sizeHint().height());
+
+  QString extraString = " "; // give some room
+  QString s = this->text() + extraString;
+  s.truncate(18);
+  int extraWidth = 2; // cursor width
+
+  this->ensurePolished(); // ensure we are using the right font
+  const QFontMetrics fm(this->fontMetrics());
+  newSizeHint.setWidth(fm.width(s + extraString) + extraWidth);
+
+  QStyleOptionSpinBox opt;
+  d->SpinBox->initStyleOptionSpinBox(&opt);
+
+  QSize extraSize(35, 6);
+  opt.rect.setSize(newSizeHint + extraSize);
+  extraSize += newSizeHint - this->style()->subControlRect(
+    QStyle::CC_SpinBox, &opt,
+    QStyle::SC_SpinBoxEditField, this).size();
+  // Converging size hint...
+  opt.rect.setSize(newSizeHint + extraSize);
+  extraSize += newSizeHint - this->style()->subControlRect(
+    QStyle::CC_SpinBox, &opt,
+    QStyle::SC_SpinBoxEditField, this).size();
+  newSizeHint += extraSize;
+
+  opt.rect = this->rect();
+  d->CachedSizeHint = this->style()->sizeFromContents(
+    QStyle::CT_SpinBox, &opt, newSizeHint, this)
+    .expandedTo(QApplication::globalStrut());
+  return d->CachedSizeHint;
+}
+
+//----------------------------------------------------------------------------
+QSize ctkDoubleSpinBox::minimumSizeHint() const
+{
+  // For some reasons, Superclass::minimumSizeHint() returns the spinbox
+  // sizeHint()
+  return this->spinBox()->minimumSizeHint();
+}
+
 //-----------------------------------------------------------------------------
 void ctkDoubleSpinBox::keyPressEvent(QKeyEvent* event)
 {
@@ -1036,26 +1081,34 @@ bool ctkDoubleSpinBox::eventFilter(QObject* obj, QEvent* event)
     {
     QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
     Q_ASSERT(keyEvent);
+    int newDecimals = -1;
     if (keyEvent->modifiers() & Qt::ControlModifier)
       {
       if (keyEvent->key() == Qt::Key_Plus
         || keyEvent->key() == Qt::Key_Equal)
         {
-        d->setDecimals(this->decimals() + 1);
-        return true;
+        newDecimals = this->decimals() + 1;
         }
       else if (keyEvent->key() == Qt::Key_Minus)
         {
-        d->setDecimals(this->decimals() - 1);
-        return true;
+        newDecimals = this->decimals() - 1;
         }
       else if (keyEvent->key() == Qt::Key_0)
         {
-        d->setDecimals(d->DefaultDecimals);
-        return true;
+        newDecimals = d->DefaultDecimals;
         }
       }
-
+    if (newDecimals != -1)
+      {
+      double currentValue = this->value();
+      if (d->Proxy)
+        {
+        currentValue = d->Proxy.data()->proxyValueFromValue(currentValue);
+        }
+      // increasing the number of decimals should restore lost precision
+      d->setValue(currentValue, newDecimals);
+      return true;
+      }
     return QWidget::eventFilter(obj, event);
     }
   else

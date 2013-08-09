@@ -59,11 +59,11 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/Slider" command="set_min_double" arguments="35"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/Slider" command="set_min_double" arguments="36"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/Slider" command="set_min_double" arguments="37"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="70"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="71"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="72"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MinimumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="32"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MinimumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="33"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MinimumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="34"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MaximumSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="70"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MaximumSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="71"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MaximumSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="72"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MinimumSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="32"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MinimumSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="33"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget1/MinimumSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="34"/>
     </events>
 </QtTesting>

@@ -93,11 +93,12 @@ void ctkRangeWidgetTester::testSetMinimumValue_data()
   QTest::newRow("100. -> 75.]") << 100. << 75.;
   QTest::newRow("-1. -> 0.]") << -1. << 0.;
 
-  QTest::newRow("min -> 0.") << std::numeric_limits<double>::min() << 0.;
+  QTest::newRow("min -> min") << std::numeric_limits<double>::min()
+                              << std::numeric_limits<double>::min();
   QTest::newRow("max -> 75.") << std::numeric_limits<double>::max() << 75.;
   QTest::newRow("-inf -> 0.") << -std::numeric_limits<double>::infinity() << 0.;
   QTest::newRow("inf -> 75.") << std::numeric_limits<double>::infinity() << 75.;
-  QTest::newRow("NaN -> 75.") << std::numeric_limits<double>::quiet_NaN() << 75.;
+  QTest::newRow("NaN -> 75.") << std::numeric_limits<double>::quiet_NaN() << 0.;
 }
 
 
@@ -137,7 +138,7 @@ void ctkRangeWidgetTester::testSetMaximumValue_data()
   QTest::newRow("max -> 99.") << std::numeric_limits<double>::max() << 99.;
   QTest::newRow("-inf -> 25.") << -std::numeric_limits<double>::infinity() << 25.;
   QTest::newRow("inf -> 99.") << std::numeric_limits<double>::infinity() << 99.;
-  QTest::newRow("NaN -> 99.") << std::numeric_limits<double>::quiet_NaN() << 99.;
+  QTest::newRow("NaN -> 99.") << std::numeric_limits<double>::quiet_NaN() << 25.;
 }
 
 //-----------------------------------------------------------------------------
@@ -185,15 +186,16 @@ void ctkRangeWidgetTester::testSetValues_data()
   QTest::newRow("[10.,1.] -> [1., 10.]") << 10. << 1. << 1. << 10.;
   QTest::newRow("[-1.,100.] -> [0., 99.]") << -1. << 100. << 0. << 99.;
 
-  QTest::newRow("[min,max] -> [0., 99.]")
+  QTest::newRow("[min,max] -> [min, 99.]")
     << std::numeric_limits<double>::min()
-    << std::numeric_limits<double>::max() << 0. << 99.;
+    << std::numeric_limits<double>::max()
+    << std::numeric_limits<double>::min() << 99.;
   QTest::newRow("[-inf,inf] -> [0., 99.]")
     << -std::numeric_limits<double>::infinity()
     << std::numeric_limits<double>::infinity() << 0. << 99.;
   QTest::newRow("[NaN,NaN] -> [99., 99.]")
     << std::numeric_limits<double>::quiet_NaN()
-    << std::numeric_limits<double>::quiet_NaN() << 99. << 99.;
+    << std::numeric_limits<double>::quiet_NaN() << 0. << 0.;
 }
 
 
@@ -245,15 +247,19 @@ void ctkRangeWidgetTester::testSetRange_data()
   QTest::addColumn<double>("expectedUpperValue");
 
   QTest::newRow("[1.,98.]") << 1. << 98. << 1. << 98. << 25. << 75.;
+  QTest::newRow("[10.0123,99.99]") << 10.0123 << 99.99 << 10.0123 << 99.99 << 25. << 75.;
+  QTest::newRow("[0.,2050.9876.]") << 0. << 2050.9876 << 0. << 2050.9876 << 25. << 75.;
   QTest::newRow("[-1.,101.]") << -1. << 101. << -1. << 101. << 25. << 75.;
   QTest::newRow("[1.,50.]") << 1. << 50. << 1. << 50. << 25. << 50.;
+  QTest::newRow("[1., 50.5678]") << 1. << 50.5678 << 1. << 50.5678 << 25. << 50.5678 ;
   QTest::newRow("[50.,99.]") << 50. << 99. << 50. << 99. << 50. << 75. ;
+  QTest::newRow("[50.5678,99.]") << 50.5678 << 99. << 50.5678 << 99. << 50.5678 << 75. ;
   QTest::newRow("[1.,10.]") << 1. << 10. << 1. << 10. << 10. << 10.;
   QTest::newRow("[90.,99.]") << 90. << 99. << 90. << 99. << 90. << 90.;
   QTest::newRow("[min,max]")
     << std::numeric_limits<double>::min()
     << std::numeric_limits<double>::max()
-    << 0.
+    << std::numeric_limits<double>::min()
     << std::numeric_limits<double>::max()
     << 25. << 75.;
   QTest::newRow("[-inf,inf]")

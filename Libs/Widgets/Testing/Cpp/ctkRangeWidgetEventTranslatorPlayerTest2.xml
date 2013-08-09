@@ -17,7 +17,7 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="0.4"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="-4.6"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/Slider" command="set_max_double" arguments="-9.6"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/MinimumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="-36"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/MinimumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="-35"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/MinimumSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-36"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/RangeWidget2/MinimumSpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="-35"/>
     </events>
 </QtTesting>

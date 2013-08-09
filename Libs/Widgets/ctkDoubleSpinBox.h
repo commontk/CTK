@@ -36,6 +36,7 @@ class QObject;
 #include "ctkWidgetsExport.h"
 
 class ctkDoubleSpinBoxPrivate;
+class ctkValueProxy;
 
 /// \brief Custom SpinBox
 /// The ctkDoubleSpinBox internaly uses a QDoubleSpinBox while it retain controls
@@ -46,6 +47,7 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   Q_OBJECT
   Q_ENUMS(SetMode)
   Q_FLAGS(DecimalsOption DecimalsOptions)
+  Q_ENUMS(SizeHintPolicy)
 
   Q_PROPERTY(Qt::Alignment alignment READ alignment WRITE setAlignment)
   Q_PROPERTY(bool frame READ hasFrame WRITE setFrame)
@@ -82,6 +84,10 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
   /// default.
   /// \sa invertedControls(), setInvertedControls()
   Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
+  /// This property controls the size hint of the spinbox.
+  /// SizeHintByMinMax by default
+  /// SizeHintPolicy, sizeHintPolicy(), setSizeHintPolicy()
+  Q_PROPERTY(SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy)
 
 public:
 
@@ -145,6 +151,12 @@ public:
     };
   Q_DECLARE_FLAGS(DecimalsOptions, DecimalsOption)
 
+  enum SizeHintPolicy
+    {
+    SizeHintByMinMax,
+    SizeHintByValue
+    };
+
   typedef QWidget Superclass;
 
   /// Constructor, creates a ctkDoubleSpinBox. The look and feel
@@ -157,8 +169,15 @@ public:
   double value() const;
 
   /// Get the spinbox current displayed value
-  /// \sa value(), cleanText()
+  /// \sa value(), cleanText(), setValue(), displayedValue()
   double displayedValue() const;
+
+  /// Set the displayed value if there is no proxy installed.
+  /// If there is a proxy installed, then it allows to modify the proxy value.
+  /// If there is no value proxy installed, then it's just a setter to the
+  /// value property.
+  /// \sa displayedValue(), setValue(), value(), setValueProxy()
+  void setDisplayedValue(double displayValue);
 
   /// Get the spinbox current text. This includes any prefix or suffix.
   /// \sa prefix(), suffix()
@@ -239,6 +258,31 @@ public:
   void setInvertedControls(bool invertedControls);
   bool invertedControls() const;
 
+  /// Set the sizeHintPolicy property value.
+  /// \sa sizeHintPolicy
+  void setSizeHintPolicy(SizeHintPolicy newSizeHintPolicy);
+  /// Return the sizeHintPolicy property value.
+  /// \sa sizeHintPolicy
+  SizeHintPolicy sizeHintPolicy()const;
+
+  /// Install or remove a value proxy filter. The value proxy decouples the
+  /// displayed value from the value retrieved by the value property.
+  /// For example, the value proxy can allow one to display celsius in the
+  /// spinbox while the value retrieved from the value property and signals
+  /// are in farenheit.
+  /// To remove the proxy, simply install a new empty proxy. The proxy
+  /// installation/removal is silent.
+  /// \sa installValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
+
+  /// Reimplemented to respect the sizeHintPolicy property value.
+  /// \sa sizeHintPolicy
+  virtual QSize sizeHint()const;
+  /// Reimplemented to respect the sizeHintPolicy property value.
+  /// \sa sizeHintPolicy
+  virtual QSize minimumSizeHint()const;
+
 public Q_SLOTS:
   /// Set the value of the spinbox following the current mode.
   /// \sa setMode(), value(), setValueIfDifferent(), setValueAlways()
@@ -282,6 +326,7 @@ protected:
   /// Reimplemented to support shortcuts on the double spinbox.
   virtual bool eventFilter(QObject *obj, QEvent *event);
 
+  friend class ctkCoordinatesWidget;
 private:
   Q_DECLARE_PRIVATE(ctkDoubleSpinBox);
   Q_DISABLE_COPY(ctkDoubleSpinBox);

@@ -38,6 +38,7 @@ set(KITTests_SRCS
   ctkExceptionTest.cpp
   ctkHighPrecisionTimerTest.cpp
   ctkHistogramTest1.cpp
+  ctkLinearValueProxyTest.cpp
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
   ctkModelTesterTest2.cpp
@@ -103,6 +104,7 @@ set(Tests_Helpers_MOC_CPP)
 QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
 QT4_GENERATE_MOCS(
   ctkBooleanMapperTest.cpp
+  ctkLinearValueProxyTest.cpp
   ctkUtilsTest.cpp
   )
 
@@ -154,6 +156,7 @@ SIMPLE_TEST( ctkErrorLogStreamMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkExceptionTest )
 SIMPLE_TEST( ctkHighPrecisionTimerTest )
 SIMPLE_TEST( ctkHistogramTest1 )
+SIMPLE_TEST( ctkLinearValueProxyTest )
 SIMPLE_TEST( ctkLoggerTest1 )
 set_property(TEST ctkLoggerTest1 PROPERTY PASS_REGULAR_EXPRESSION "logger.debug\nlogger.info\nlogger.trace\nlogger.warn\nlogger.error\nlogger.fatal")
 SIMPLE_TEST( ctkModelTesterTest1 )

@@ -122,6 +122,7 @@ inline void COMPARE(double v1, double v2)
     {
     QVERIFY(v1 == std::numeric_limits<double>::infinity());
     }
+  // QCOMPARE doesn't like to compare zeroes
   else
     {
     QCOMPARE(v1, v2);

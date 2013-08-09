@@ -23,7 +23,9 @@
 
 // Qt includes
 #include <QDoubleSpinBox>
+#include <QWeakPointer>
 class ctkDoubleSpinBoxPrivate;
+class ctkValueProxy;
 
 //-----------------------------------------------------------------------------
 class ctkQDoubleSpinBox: public QDoubleSpinBox
@@ -54,6 +56,8 @@ public:
   virtual int decimalsFromText(const QString &text) const;
   virtual QValidator::State	validate(QString& input, int& pos)const;
 
+  /// Expose publicly QAbstractSpinBox::initStyleOption()
+  void initStyleOptionSpinBox(QStyleOptionSpinBox* option);
 protected:
   ctkDoubleSpinBoxPrivate* const d_ptr;
 
@@ -82,14 +86,21 @@ public:
   ctkQDoubleSpinBox* SpinBox;
   ctkDoubleSpinBox::SetMode Mode;
   int DefaultDecimals;
-  int MinimumDecimals;
   ctkDoubleSpinBox::DecimalsOptions DOption;
   bool InvertedControls;
+  ctkDoubleSpinBox::SizeHintPolicy SizeHintPolicy;
+
+  double InputValue;
+  double InputRange[2];
 
   mutable QString CachedText;
   mutable double CachedValue;
   mutable QValidator::State CachedState;
   mutable int CachedDecimals;
+  mutable QSize CachedSizeHint;
+  bool ForceInputValueUpdate;
+
+  QWeakPointer<ctkValueProxy> Proxy;
 
   void init();
   /// Compare two double previously rounded according to the number of decimals
@@ -104,6 +115,10 @@ public:
   /// decimals.
   /// If -1, returns the current number of decimals.
   int boundDecimals(int decimals)const;
+  /// Return the number of decimals to use to display the value.
+  /// Note that if DecimalsByValue is not set, the number of decimals to use
+  /// is DefaultDecimals.
+  int decimalsForValue(double value)const;
   /// Set the number of decimals of the spinbox and emit the signal
   /// No check if they are the same.
   void setDecimals(int dec);
@@ -117,7 +132,13 @@ public:
   double validateAndInterpret(QString &input, int &pos,
                               QValidator::State &state, int &decimals) const;
 
+  void connectSpinBoxValueChanged();
+  void disconnectSpinBoxValueChanged();
+
 public Q_SLOTS:
   void editorTextChanged(const QString& text);
+  void onValueChanged();
 
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 };

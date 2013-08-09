@@ -33,6 +33,7 @@ class ctkDoubleSlider;
 class ctkPopupWidget;
 class ctkSliderWidgetPrivate;
 class ctkDoubleSpinBox;
+class ctkValueProxy;
 
 /// \ingroup Widgets
 ///
@@ -42,6 +43,8 @@ class ctkDoubleSpinBox;
 class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
 {
   Q_OBJECT
+  Q_FLAGS(SynchronizeSiblings)
+
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
@@ -52,8 +55,7 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
   Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
-  Q_FLAGS(SynchronizeSiblings)
-  Q_PROPERTY(SynchronizeSiblings SynchronizeSibling READ synchronizeSiblings WRITE setSynchronizeSiblings)
+  Q_PROPERTY(SynchronizeSiblings synchronizeSiblings READ synchronizeSiblings WRITE setSynchronizeSiblings)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(bool spinBoxVisible READ isSpinBoxVisible WRITE setSpinBoxVisible);
@@ -250,6 +252,15 @@ public:
   /// with what you do with the slider as the spinbox might change
   /// properties automatically.
   ctkDoubleSlider* slider();
+
+  ///
+  /// Set/Get a value proxy filter.
+  /// This simply sets the same value proxy filter on the spinbox
+  /// and the slider
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
+
 public Q_SLOTS:
   /// 
   /// Reset the slider and spinbox to zero (value and position)
@@ -285,6 +296,8 @@ protected Q_SLOTS:
   void stopChanging();
   void setSpinBoxValue(double sliderValue);
   void setSliderValue(double spinBoxValue);
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);

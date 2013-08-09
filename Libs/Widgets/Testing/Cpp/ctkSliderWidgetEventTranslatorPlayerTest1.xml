@@ -95,8 +95,8 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/SliderWidgetTest1/Slider/1QSlider0" command="set_int" arguments="33"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/SliderWidgetTest1" command="mousePress" arguments="1,1,0,328,247"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/SliderWidgetTest1" command="mouseRelease" arguments="1,0,0,328,247"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/SliderWidgetTest1/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="32"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/SliderWidgetTest1/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="31"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/SliderWidgetTest1/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="30"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/SliderWidgetTest1/SpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="32"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/SliderWidgetTest1/SpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="31"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/SliderWidgetTest1/SpinBox/1ctkQDoubleSpinBox0" command="set_double" arguments="30"/>
     </events>
 </QtTesting>
