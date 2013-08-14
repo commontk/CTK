@@ -50,7 +50,7 @@
 #! \ingroup CMakeAPI
 macro(ctkMacroBuildPlugin)
   CtkMacroParseArguments(MY
-    "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;EXPORTED_INCLUDE_SUFFIXES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;TRANSLATIONS;OUTPUT_DIR"
+    "EXPORT_DIRECTIVE;SRCS;MOC_SRCS;MOC_OPTIONS;UI_FORMS;INCLUDE_DIRECTORIES;EXPORTED_INCLUDE_SUFFIXES;TARGET_LIBRARIES;RESOURCES;CACHED_RESOURCEFILES;TRANSLATIONS;OUTPUT_DIR"
     "TEST_PLUGIN"
     ${ARGN}
     )
@@ -174,7 +174,7 @@ macro(ctkMacroBuildPlugin)
     # this is a workaround for Visual Studio. The relative include paths in the generated
     # moc files can get very long and can't be resolved by the MSVC compiler.
     foreach(moc_src ${MY_MOC_SRCS})
-      QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+      QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} ${MY_MOC_OPTIONS})
     endforeach()
   endif()
   QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
