@@ -47,6 +47,17 @@ QString checkRowCount(int line, int currentRowCount, int expectedRowCount)
 }
 
 //-----------------------------------------------------------------------------
+QString checkSpyCount(int line, int currentSpyCount, int expectedSpyCount)
+{
+  if (currentSpyCount != expectedSpyCount)
+    {
+    QString errorMsg("Line %1 - Expected spyCount: %2 - Current spyCount: %3\n");
+    return errorMsg.arg(line).arg(expectedSpyCount).arg(currentSpyCount);
+    }
+  return QString();
+}
+
+//-----------------------------------------------------------------------------
 QString checkTextMessages(int line, const QStringList& currentMessages, const QStringList& expectedMessages)
 {
   for(int i = 0; i < expectedMessages.count(); ++i)
