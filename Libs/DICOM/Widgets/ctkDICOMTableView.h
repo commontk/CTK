@@ -64,6 +64,10 @@ public:
 
   virtual ~ctkDICOMTableView();
 
+  /**
+   * @brief Setting the ctkDICOMDatabase which shall be queried
+   * @param dicomDataBase the underlying database
+   */
   void setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDataBase);
 
   /**
@@ -78,8 +82,6 @@ public:
    * @param foreignKey the foreign key which will be used for the query
    */
   void setQueryForeignKey(const QString &foreignKey);
-
-  void setQueryPrimaryKey(const QString &primaryKey);
 
 public Q_SLOTS:
 
@@ -112,11 +114,16 @@ Q_SIGNALS:
    * @param uids the list of uids of the selected objects
    */
   void signalSelectionChanged(const QStringList &uids);
+
   /**
-   * @brief Is emitted when the filter text has changed
-   * @param uids the list of uids of the selected objects
+   * @brief Is emitted when the query text has changed
+   * @param uids the list of uids of the objects included in the query
    */
   void signalQueryChanged(const QStringList &uids);
+
+  /**
+   * @brief Is emitted when the data selection has changed
+   */
   void signalSelectionChanged(const QItemSelection&,const QItemSelection&);
 
 protected:
