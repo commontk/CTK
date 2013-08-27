@@ -67,7 +67,7 @@ public:
    * @brief Setting the ctkDICOMDatabase which shall be queried
    * @param dicomDataBase the underlying database
    */
-  void setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDataBase);
+  void setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
 
   /**
    * Setting the table name which shall be used for the database query
