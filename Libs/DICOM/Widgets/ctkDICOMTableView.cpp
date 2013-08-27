@@ -44,6 +44,8 @@ public:
   //Temporay solution to hide UID columns
   void hideUIDColumns();
 
+  QStringList getUIDsForAllRows();
+
   QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
   QSqlQueryModel DICOMSQLModel;
   QSortFilterProxyModel* DICOMSQLFilterModel;
@@ -131,6 +133,27 @@ void ctkDICOMTableViewPrivate::hideUIDColumns()
   }
 }
 
+QStringList ctkDICOMTableViewPrivate::getUIDsForAllRows()
+{
+  QAbstractItemModel* tableModel = this->tblDicomDatabaseView->model();
+  int numberOfRows = tableModel->rowCount();
+  QStringList uids;
+  if (numberOfRows == 0)
+  {
+    //Return invalid UID if there are no rows
+    uids << QString("'#'");
+  }
+  else
+  {
+    for(int i = 0; i < numberOfRows; ++i)
+    {
+      uids << (QString("'") + tableModel->index(i,0).data().toString() +"'");
+    }
+  }
+  return uids;
+}
+
+
 //----------------------------------------------------------------------------
 // ctkDICOMTableView methods
 
@@ -215,7 +238,7 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
     query.append(uids.join(",")).append(");");
   }
   d->DICOMSQLModel.setQuery(query, d->DICOMDatabase->database());
-  QStringList newUIDS = this->getUIDsForAllRows();
+  QStringList newUIDS = d->getUIDsForAllRows();
   emit signalQueryChanged(newUIDS);
 }
 
@@ -223,28 +246,6 @@ void ctkDICOMTableView::onFilterChanged()
 {
   Q_D(ctkDICOMTableView);
 
-  QStringList uids = this->getUIDsForAllRows();
+  QStringList uids = d->getUIDsForAllRows();
   emit signalQueryChanged(uids);
 }
-
-QStringList ctkDICOMTableView::getUIDsForAllRows()
-{
-  Q_D(ctkDICOMTableView);
-  QAbstractItemModel* tableModel = d->tblDicomDatabaseView->model();
-  int numberOfRows = tableModel->rowCount();
-  QStringList uids;
-  if (numberOfRows == 0)
-  {
-    //Return invalid UID if there are no rows
-    uids << QString("'#'");
-  }
-  else
-  {
-    for(int i = 0; i < numberOfRows; ++i)
-    {
-      uids << (QString("'") + tableModel->index(i,0).data().toString() +"'");
-    }
-  }
-  return uids;
-}
-

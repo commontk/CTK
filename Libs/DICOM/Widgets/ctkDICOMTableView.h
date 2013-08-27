@@ -129,9 +129,6 @@ Q_SIGNALS:
 protected:
   QScopedPointer<ctkDICOMTableViewPrivate> d_ptr;
 
-private:
-  QStringList getUIDsForAllRows();
-
   Q_DECLARE_PRIVATE(ctkDICOMTableView)
   Q_DISABLE_COPY(ctkDICOMTableView)
 };
