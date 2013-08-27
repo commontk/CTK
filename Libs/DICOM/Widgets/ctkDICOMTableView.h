@@ -18,17 +18,16 @@
 
 =========================================================================*/
 
-#ifndef CTKDICOMTABLEVIEW_H
-#define CTKDICOMTABLEVIEW_H
+#ifndef __ctkDICOMTableView_h
+#define __ctkDICOMTableView_h
 
-#include "ctkDICOMWidgetsExport.h"
+// Qt includes
+#include <QItemSelection>
+#include <QWidget>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
-
-// Qt includes
-#include <QWidget>
-#include <QItemSelection>
+#include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMTableViewPrivate;
 
