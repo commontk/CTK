@@ -31,14 +31,14 @@ set(KIT_SRCS
   ctkDICOMQueryWidget.h
   ctkDICOMServerNodeWidget.cpp
   ctkDICOMServerNodeWidget.h
+  ctkDICOMTableManager.h
+  ctkDICOMTableManager.cpp
+  ctkDICOMTableView.cpp
+  ctkDICOMTableView.h
   ctkDICOMThumbnailGenerator.cpp
   ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.cpp
   ctkDICOMThumbnailListWidget.h
-  ctkDICOMTableView.cpp
-  ctkDICOMTableView.h
-  ctkDICOMTableManager.h
-  ctkDICOMTableManager.cpp
   )
 
 # Headers that should run through moc
@@ -52,10 +52,10 @@ set(KIT_MOC_SRCS
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMQueryWidget.h
   ctkDICOMServerNodeWidget.h
+  ctkDICOMTableManager.h
+  ctkDICOMTableView.h
   ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.h
-  ctkDICOMTableView.h
-  ctkDICOMTableManager.h
   )
 
 # UI files - includes new widgets
