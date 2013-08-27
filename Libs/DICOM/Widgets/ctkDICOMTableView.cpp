@@ -192,18 +192,12 @@ void ctkDICOMTableView::onSelectionChanged()
 
   QModelIndexList currentSelection = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
   QStringList uids;
-  if (currentSelection.empty())
+
+  foreach(QModelIndex i, currentSelection)
   {
-    emit signalSelectionChanged(uids);
+    uids << (QString("'") + i.data().toString() +"'");
   }
-  else
-  {
-    foreach(QModelIndex i, currentSelection)
-    {
-      uids << (QString("'") + i.data().toString() +"'");
-    }
-    emit signalSelectionChanged(uids);
-  }
+  emit signalQueryChanged(uids);
 }
 
 void ctkDICOMTableView::onDatabaseChanged()
@@ -237,7 +231,7 @@ void ctkDICOMTableView::onFilterChanged()
   Q_D(ctkDICOMTableView);
 
   QStringList uids = this->getUIDsForAllRows();
-  emit signalFilterChanged(uids);
+  emit signalQueryChanged(uids);
 }
 
 QStringList ctkDICOMTableView::getUIDsForAllRows()
