@@ -49,7 +49,6 @@ public:
   QSortFilterProxyModel* DICOMSQLFilterModel;
   QString queryTableName;
   QString queryForeignKey;
-  QString queryPrimaryKey;
 
 };
 
@@ -178,12 +177,6 @@ void ctkDICOMTableView::setQueryForeignKey(const QString &foreignKey)
 {
   Q_D(ctkDICOMTableView);
   d->queryForeignKey = foreignKey;
-}
-
-void ctkDICOMTableView::setQueryPrimaryKey(const QString &primaryKey)
-{
-  Q_D(ctkDICOMTableView);
-  d->queryPrimaryKey = primaryKey;
 }
 
 void ctkDICOMTableView::onSelectionChanged()
