@@ -26,7 +26,6 @@
 
 // Qt includes
 #include <QWidget>
-#include <QBoxLayout>
 #include <QSharedPointer>
 
 class ctkDICOMTableManagerPrivate;
@@ -51,6 +50,7 @@ public:
   void setOrientation(const Qt::Orientation &o);
 
 Q_SIGNALS:
+  // Signals for propagating selection changes of the different tables
   void signalPatientsSelectionChanged(const QItemSelection&, const QItemSelection&);
   void signalStudiesSelectionChanged(const QItemSelection&, const QItemSelection&);
   void signalSeriesSelectionChanged(const QItemSelection&, const QItemSelection&);
