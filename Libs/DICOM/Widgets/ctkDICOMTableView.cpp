@@ -46,9 +46,9 @@ public:
 
   QStringList getUIDsForAllRows();
 
-  QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
-  QSqlQueryModel DICOMSQLModel;
-  QSortFilterProxyModel* DICOMSQLFilterModel;
+  QSharedPointer<ctkDICOMDatabase> dicomDatabase;
+  QSqlQueryModel dicomSQLModel;
+  QSortFilterProxyModel* dicomSQLFilterModel;
   QString queryTableName;
   QString queryForeignKey;
 
@@ -57,19 +57,19 @@ public:
 ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj)
   : q_ptr(&obj)
 {
-  this->DICOMSQLFilterModel = new QSortFilterProxyModel();
+  this->dicomSQLFilterModel = new QSortFilterProxyModel();
 }
 
 ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj, QSharedPointer<ctkDICOMDatabase> db)
   : q_ptr(&obj)
-  , DICOMDatabase(db)
+  , dicomDatabase(db)
 {
-  this->DICOMSQLFilterModel = new QSortFilterProxyModel();
+  this->dicomSQLFilterModel = new QSortFilterProxyModel();
 }
 
 ctkDICOMTableViewPrivate::~ctkDICOMTableViewPrivate()
 {
-  delete this->DICOMSQLFilterModel;
+  delete this->dicomSQLFilterModel;
 }
 
 void ctkDICOMTableViewPrivate::init()
@@ -86,7 +86,7 @@ void ctkDICOMTableViewPrivate::init()
   this->leSearchBox->setAlwaysShowClearIcon(true);
   this->leSearchBox->setShowSearchIcon(true);
 
-  if (this->DICOMDatabase)
+  if (this->dicomDatabase)
   {
     this->setUpTableView();
   }
@@ -95,14 +95,14 @@ void ctkDICOMTableViewPrivate::init()
 void ctkDICOMTableViewPrivate::setUpTableView()
 {
   Q_Q(ctkDICOMTableView);
-  if (this->DICOMDatabase)
+  if (this->dicomDatabase)
   {
     QString query = "select * from "+this->queryTableName;
-    this->DICOMSQLModel.setQuery(query, this->DICOMDatabase->database());
-    this->DICOMSQLFilterModel->setSourceModel(&this->DICOMSQLModel);
-    this->DICOMSQLFilterModel->setFilterKeyColumn(-1);
-    this->DICOMSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    this->tblDicomDatabaseView->setModel(this->DICOMSQLFilterModel);
+    this->dicomSQLModel.setQuery(query, this->dicomDatabase->database());
+    this->dicomSQLFilterModel->setSourceModel(&this->dicomSQLModel);
+    this->dicomSQLFilterModel->setFilterKeyColumn(-1);
+    this->dicomSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    this->tblDicomDatabaseView->setModel(this->dicomSQLFilterModel);
     this->tblDicomDatabaseView->setColumnHidden(0, true);
     this->tblDicomDatabaseView->setSortingEnabled(true);
     this->hideUIDColumns();
@@ -111,10 +111,10 @@ void ctkDICOMTableViewPrivate::setUpTableView()
                      q, SLOT(onSelectionChanged()));
     QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
                      q, SIGNAL(signalSelectionChanged(const QItemSelection&,const QItemSelection&)));
-    QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), this->DICOMSQLFilterModel, SLOT(setFilterWildcard(QString)));
+    QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), this->dicomSQLFilterModel, SLOT(setFilterWildcard(QString)));
     QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
-    QObject::connect(this->DICOMDatabase.data(), SIGNAL(schemaUpdated()), q, SLOT(onDatabaseChanged()));
-    QObject::connect(this->DICOMDatabase.data(), SIGNAL(databaseChanged()), q, SLOT(onDatabaseChanged()));
+    QObject::connect(this->dicomDatabase.data(), SIGNAL(schemaUpdated()), q, SLOT(onDatabaseChanged()));
+    QObject::connect(this->dicomDatabase.data(), SIGNAL(databaseChanged()), q, SLOT(onDatabaseChanged()));
   }
 }
 
@@ -183,10 +183,10 @@ ctkDICOMTableView::~ctkDICOMTableView()
 {
 }
 
-void ctkDICOMTableView::setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDataBase)
+void ctkDICOMTableView::setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDatabase)
 {
   Q_D(ctkDICOMTableView);
-  d->DICOMDatabase = dicomDataBase;
+  d->dicomDatabase = dicomDatabase;
   d->setUpTableView();
 }
 
@@ -220,7 +220,7 @@ void ctkDICOMTableView::onDatabaseChanged()
 {
   Q_D(ctkDICOMTableView);
   QString query = "select * from " + d->queryTableName;
-  d->DICOMSQLModel.setQuery(query, d->DICOMDatabase->database());
+  d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
 }
 
 void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
@@ -237,7 +237,7 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
     query = "select * from "+d->queryTableName+" where "+d->queryForeignKey+" in ( ";
     query.append(uids.join(",")).append(");");
   }
-  d->DICOMSQLModel.setQuery(query, d->DICOMDatabase->database());
+  d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
   QStringList newUIDS = d->getUIDsForAllRows();
   emit signalQueryChanged(newUIDS);
 }
