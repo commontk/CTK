@@ -25,9 +25,6 @@
 // Qt includes
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QRadioButton>
-#include <QButtonGroup>
-#include <QPushButton>
 #include <QSplitter>
 
 class ctkDICOMTableManagerPrivate
@@ -43,7 +40,6 @@ public:
 
   QVBoxLayout* layout;
   QBoxLayout* layoutTables;
-  QPushButton* changeLayoutButton;
   QSplitter* tableSplitter;
 
   ctkDICOMTableView* patientsTable;
