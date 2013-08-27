@@ -112,18 +112,19 @@ Q_SIGNALS:
    * @brief Is emitted when the selection in the tableview has changed
    * @param uids the list of uids of the selected objects
    */
-  void signalSelectionChanged(const QStringList &uids);
+  void selectionChanged(const QStringList &uids);
+
+  /**
+   * @brief Is emitted when the data selection has changed
+   */
+  void selectionChanged(const QItemSelection&,const QItemSelection&);
 
   /**
    * @brief Is emitted when the query text has changed
    * @param uids the list of uids of the objects included in the query
    */
-  void signalQueryChanged(const QStringList &uids);
+  void queryChanged(const QStringList &uids);
 
-  /**
-   * @brief Is emitted when the data selection has changed
-   */
-  void signalSelectionChanged(const QItemSelection&,const QItemSelection&);
 
 protected:
   QScopedPointer<ctkDICOMTableViewPrivate> d_ptr;

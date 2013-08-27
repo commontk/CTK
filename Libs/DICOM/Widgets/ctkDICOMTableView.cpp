@@ -110,7 +110,7 @@ void ctkDICOMTableViewPrivate::setUpTableView()
     QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
                      q, SLOT(onSelectionChanged()));
     QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
-                     q, SIGNAL(signalSelectionChanged(const QItemSelection&,const QItemSelection&)));
+                     q, SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)));
     QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), this->dicomSQLFilterModel, SLOT(setFilterWildcard(QString)));
     QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
     QObject::connect(this->dicomDatabase.data(), SIGNAL(schemaUpdated()), q, SLOT(onDatabaseChanged()));
@@ -159,7 +159,7 @@ QStringList ctkDICOMTableViewPrivate::getUIDsForAllRows()
 
 //----------------------------------------------------------------------------
 ctkDICOMTableView::ctkDICOMTableView(QWidget *parent, QString queryTableName)
-  :Superclass(parent)
+  : Superclass(parent)
   , d_ptr(new ctkDICOMTableViewPrivate(*this))
 {
   Q_D(ctkDICOMTableView);
@@ -213,7 +213,7 @@ void ctkDICOMTableView::onSelectionChanged()
   {
     uids << (QString("'") + i.data().toString() +"'");
   }
-  emit signalQueryChanged(uids);
+  emit queryChanged(uids);
 }
 
 void ctkDICOMTableView::onDatabaseChanged()
@@ -239,7 +239,7 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
   }
   d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
   QStringList newUIDS = d->getUIDsForAllRows();
-  emit signalQueryChanged(newUIDS);
+  emit queryChanged(newUIDS);
 }
 
 void ctkDICOMTableView::onFilterChanged()
@@ -247,5 +247,5 @@ void ctkDICOMTableView::onFilterChanged()
   Q_D(ctkDICOMTableView);
 
   QStringList uids = d->getUIDsForAllRows();
-  emit signalQueryChanged(uids);
+  emit queryChanged(uids);
 }
