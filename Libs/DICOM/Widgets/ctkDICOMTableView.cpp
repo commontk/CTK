@@ -44,7 +44,7 @@ public:
   //Temporay solution to hide UID columns
   void hideUIDColumns();
 
-  QStringList getUIDsForAllRows();
+  QStringList uidsForAllRows();
 
   QSharedPointer<ctkDICOMDatabase> dicomDatabase;
   QSqlQueryModel dicomSQLModel;
@@ -234,7 +234,7 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
     query.append(uids.join(",")).append(");");
   }
   d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
-  QStringList newUIDS = d->getUIDsForAllRows();
+  QStringList newUIDS = d->uidsForAllRows();
   emit queryChanged(newUIDS);
 }
 
@@ -242,6 +242,6 @@ void ctkDICOMTableView::onFilterChanged()
 {
   Q_D(ctkDICOMTableView);
 
-  QStringList uids = d->getUIDsForAllRows();
+  QStringList uids = d->uidsForAllRows();
   emit queryChanged(uids);
 }
