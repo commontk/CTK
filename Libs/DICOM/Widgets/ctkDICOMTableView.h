@@ -82,6 +82,13 @@ public:
    */
   void setQueryForeignKey(const QString &foreignKey);
 
+  /**
+   * Set the query for the underlying database. If the uid list is not empty just the
+   * entries with the according uids are selected
+   * @param uids a list of uids which should be selected
+   */
+  void setQuery (const QStringList &uids = QStringList());
+
 public Q_SLOTS:
 
   /**
