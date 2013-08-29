@@ -77,11 +77,7 @@ void ctkDICOMTableViewPrivate::init()
   Q_Q(ctkDICOMTableView);
   this->setupUi(q);
 
-  this->tblDicomDatabaseView->setSelectionBehavior(QAbstractItemView::SelectRows);
-  this->tblDicomDatabaseView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  this->tblDicomDatabaseView->verticalHeader()->setHidden(true);
   this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-  this->tblDicomDatabaseView->horizontalHeader()->setStretchLastSection(true);
 
   this->leSearchBox->setAlwaysShowClearIcon(true);
   this->leSearchBox->setShowSearchIcon(true);
