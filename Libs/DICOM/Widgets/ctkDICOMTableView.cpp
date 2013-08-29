@@ -97,8 +97,7 @@ void ctkDICOMTableViewPrivate::setUpTableView()
   Q_Q(ctkDICOMTableView);
   if (this->dicomDatabase)
     {
-      QString query = "select * from "+this->queryTableName;
-      this->dicomSQLModel.setQuery(query, this->dicomDatabase->database());
+      q->setQuery();
       this->dicomSQLFilterModel->setSourceModel(&this->dicomSQLModel);
       this->dicomSQLFilterModel->setFilterKeyColumn(-1);
       this->dicomSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -219,11 +218,28 @@ void ctkDICOMTableView::onSelectionChanged()
 void ctkDICOMTableView::onDatabaseChanged()
 {
   Q_D(ctkDICOMTableView);
-  QString query = "select * from " + d->queryTableName;
-  d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
+  setQuery();
 }
 
 void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
+{
+  Q_D(ctkDICOMTableView);
+
+  setQuery(uids);
+
+  QStringList newUIDS = d->uidsForAllRows();
+  emit queryChanged(newUIDS);
+}
+
+void ctkDICOMTableView::onFilterChanged()
+{
+  Q_D(ctkDICOMTableView);
+
+  QStringList uids = d->uidsForAllRows();
+  emit queryChanged(uids);
+}
+
+void ctkDICOMTableView::setQuery(const QStringList &uids)
 {
   Q_D(ctkDICOMTableView);
   QString query;
@@ -238,14 +254,4 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
       query.append(uids.join(",")).append(");");
     }
   d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
-  QStringList newUIDS = d->uidsForAllRows();
-  emit queryChanged(newUIDS);
-}
-
-void ctkDICOMTableView::onFilterChanged()
-{
-  Q_D(ctkDICOMTableView);
-
-  QStringList uids = d->uidsForAllRows();
-  emit queryChanged(uids);
 }
