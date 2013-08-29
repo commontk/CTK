@@ -18,17 +18,16 @@
 
 =========================================================================*/
 
-#ifndef CTKDICOMTABLEVIEW_H
-#define CTKDICOMTABLEVIEW_H
+#ifndef __ctkDICOMTableView_h
+#define __ctkDICOMTableView_h
 
-#include "ctkDICOMWidgetsExport.h"
+// Qt includes
+#include <QItemSelection>
+#include <QWidget>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
-
-// Qt includes
-#include <QWidget>
-#include <QItemSelection>
+#include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMTableViewPrivate;
 
@@ -68,7 +67,7 @@ public:
    * @brief Setting the ctkDICOMDatabase which shall be queried
    * @param dicomDataBase the underlying database
    */
-  void setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDataBase);
+  void setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
 
   /**
    * Setting the table name which shall be used for the database query
@@ -82,6 +81,13 @@ public:
    * @param foreignKey the foreign key which will be used for the query
    */
   void setQueryForeignKey(const QString &foreignKey);
+
+  /**
+   * Set the query for the underlying database. If the uid list is not empty just the
+   * entries with the according uids are selected
+   * @param uids a list of uids which should be selected
+   */
+  void setQuery (const QStringList &uids = QStringList());
 
 public Q_SLOTS:
 
@@ -113,24 +119,22 @@ Q_SIGNALS:
    * @brief Is emitted when the selection in the tableview has changed
    * @param uids the list of uids of the selected objects
    */
-  void signalSelectionChanged(const QStringList &uids);
+  void selectionChanged(const QStringList &uids);
+
+  /**
+   * @brief Is emitted when the data selection has changed
+   */
+  void selectionChanged(const QItemSelection&,const QItemSelection&);
 
   /**
    * @brief Is emitted when the query text has changed
    * @param uids the list of uids of the objects included in the query
    */
-  void signalQueryChanged(const QStringList &uids);
+  void queryChanged(const QStringList &uids);
 
-  /**
-   * @brief Is emitted when the data selection has changed
-   */
-  void signalSelectionChanged(const QItemSelection&,const QItemSelection&);
 
 protected:
   QScopedPointer<ctkDICOMTableViewPrivate> d_ptr;
-
-private:
-  QStringList getUIDsForAllRows();
 
   Q_DECLARE_PRIVATE(ctkDICOMTableView)
   Q_DISABLE_COPY(ctkDICOMTableView)
