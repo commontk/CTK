@@ -102,7 +102,7 @@ void ctkDICOMModelObjectPrivate::itemInsert( DcmItem *dataset, QStandardItem *pa
 	  return;
 	}
 
-            std::cerr << "node is dcmElem=" << dcmElem << "\n";
+        //    std::cerr << "node is dcmElem=" << dcmElem << "\n";
 
       if( dcmElem)
 	{
@@ -137,12 +137,12 @@ void ctkDICOMModelObjectPrivate::itemInsert( DcmItem *dataset, QStandardItem *pa
 void ctkDICOMModelObjectPrivate::seqInsert( DcmSequenceOfItems *dataset, QStandardItem *parent)
 {
 
-   std::clog << "Entering seqInsert" << "\n";
+  // std::clog << "Entering seqInsert" << "\n";
   
   DcmObject *dO = dataset->nextInContainer( NULL);
 
-  std::clog << "Entered nested level   d0=" << dO << "\n";
-  std::clog << "First node is dcmElem=" << dynamic_cast<DcmElement *> (dO) << "\n";
+  //std::clog << "Entered nested level   d0=" << dO << "\n";
+  //std::clog << "First node is dcmElem=" << dynamic_cast<DcmElement *> (dO) << "\n";
 
   for( ; dO; dO = dataset->nextInContainer(dO))
     {
@@ -193,7 +193,7 @@ void ctkDICOMModelObjectPrivate::seqInsert( DcmSequenceOfItems *dataset, QStanda
 QString ctkDICOMModelObjectPrivate::getTagValue( DcmElement *dcmElem)
 {
 	QString tagValue = "";
-std::ostringstream value;
+    std::ostringstream value;
 	  OFString part;
 	  std::string sep;
 	  int mult = dcmElem->getVM();
@@ -244,8 +244,7 @@ ctkDICOMModelObject::ctkDICOMModelObject(QObject* parentObject)
 {
 Q_D(ctkDICOMModelObject);
 d->init();
-  
-}
+ }
 
 //------------------------------------------------------------------------------
 ctkDICOMModelObject::ctkDICOMModelObject(const ctkDICOMModelObject& other)
