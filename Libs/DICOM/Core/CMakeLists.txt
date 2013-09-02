@@ -40,6 +40,8 @@ set(KIT_SRCS
   ctkDICOMItem.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
+  ctkDICOMModelObject.cpp
+  ctkDICOMModelObject.h
   ctkDICOMPersonName.cpp
   ctkDICOMPersonName.h
   ctkDICOMQuery.cpp
@@ -48,6 +50,7 @@ set(KIT_SRCS
   ctkDICOMRetrieve.h
   ctkDICOMTester.cpp
   ctkDICOMTester.h
+
 )
 
 if(DCMTK_VERSION_IS_360)
