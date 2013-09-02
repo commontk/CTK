@@ -51,6 +51,8 @@ public:
   void init();
   void ctkDICOMModelObjectPrivate::itemInsert( DcmItem *dataset, QStandardItem *parent);
   void ctkDICOMModelObjectPrivate::seqInsert( DcmSequenceOfItems *dataset, QStandardItem *parent);
+  QString ctkDICOMModelObjectPrivate::getTagValue( DcmElement *dcmElem);
+  QStandardItem* ctkDICOMModelObjectPrivate::populateModelRow(const QString& tagName,const QString& tagValue, QStandardItem *parent);
 
   DcmFileFormat fileFormat;
   QStandardItem *rootItem;
@@ -100,48 +102,19 @@ void ctkDICOMModelObjectPrivate::itemInsert( DcmItem *dataset, QStandardItem *pa
 	  return;
 	}
 
-      //      std::cerr << "node is dcmElem=" << dcmElem << "\n";
+            std::cerr << "node is dcmElem=" << dcmElem << "\n";
 
       if( dcmElem)
 	{
-	  std::ostringstream value;
-	  OFString part;
-	  std::string sep;
-	  int mult = dcmElem->getVM();
-	  int pos;
-	  if( mult>1)
-	    {
-	      value << "[" << mult << "] ";
-	    }
-	  // TODO define max elem per line
-	  for( pos=0; pos < std::min(mult,10); pos++)
-	    {
-	      value << sep;
-	      OFCondition status = dcmElem->getOFString( part, pos);
-	      if( status.good())
-		{
-		  value << part.c_str();
-		  sep = ", ";
-		}
-	    }
-	  if( pos < mult-1)
-	    {
-	      value << " ...";
-	    }
-	  tagValue = value.str().c_str();
+     
+	  tagValue = getTagValue(dcmElem);
 	}
       // create items ...
-      QStandardItem *tagItem = new QStandardItem( tagName);
-      QStandardItem *valItem = new QStandardItem( tagValue);
-      // ... and insert them
-      QList<QStandardItem *> modelRow;
-      modelRow.append( tagItem);
-      modelRow.append( valItem);
-      parent->appendRow( modelRow);
+     QStandardItem *tagItem = populateModelRow(tagName,tagValue,parent);
 
 
-      //      std::cerr << "    "
-      //		<< tagName.toStdString() << " " << tagValue.toStdString();
+           // std::cerr << "    "
+     	//	<< tagName.toStdString() << " " << tagValue.toStdString();
 
 
       if( dcmElem)
@@ -164,11 +137,12 @@ void ctkDICOMModelObjectPrivate::itemInsert( DcmItem *dataset, QStandardItem *pa
 void ctkDICOMModelObjectPrivate::seqInsert( DcmSequenceOfItems *dataset, QStandardItem *parent)
 {
 
-  //  std::cerr << "Entering seqInsert" << "\n";
+   std::clog << "Entering seqInsert" << "\n";
+  
   DcmObject *dO = dataset->nextInContainer( NULL);
 
-  //  std::cerr << "Entered nested level   d0=" << dO << "\n";
-  //  std::cerr << "First node is dcmElem=" << dynamic_cast<DcmElement *> (dO) << "\n";
+  std::clog << "Entered nested level   d0=" << dO << "\n";
+  std::clog << "First node is dcmElem=" << dynamic_cast<DcmElement *> (dO) << "\n";
 
   for( ; dO; dO = dataset->nextInContainer(dO))
     {
@@ -189,7 +163,37 @@ void ctkDICOMModelObjectPrivate::seqInsert( DcmSequenceOfItems *dataset, QStanda
 
       if( dcmElem)
 	{
-	  std::ostringstream value;
+	  tagValue = getTagValue(dcmElem);
+	}
+      
+      QStandardItem *tagItem = populateModelRow(tagName,tagValue,parent);
+
+      //      std::cerr << "    "
+      //		<< tagName.toStdString() << " " << tagValue.toStdString();
+
+
+      if( dcmElem)
+	{
+	  // 	  std::cerr << " >> l=" << dcmElem->isLeaf() 
+	  //		    << "  nx=" << dataset->nextInContainer( dcmElem);
+	  if( !dcmElem->isLeaf())
+	    {
+	      // now dcmElem  points to a sequenceOfItems
+			ctkDICOMModelObjectPrivate::seqInsert( dynamic_cast<DcmSequenceOfItems*> (dcmElem), tagItem);	 
+	    }
+	}
+      else if( tag.getXTag() == DCM_Item)
+	{
+	      itemInsert( dynamic_cast<DcmItem*> (dO), tagItem);	 
+	}
+      //      std::cerr  << "\n";
+    }
+}
+//------------------------------------------------------------------------------
+QString ctkDICOMModelObjectPrivate::getTagValue( DcmElement *dcmElem)
+{
+	QString tagValue = "";
+std::ostringstream value;
 	  OFString part;
 	  std::string sep;
 	  int mult = dcmElem->getVM();
@@ -214,8 +218,13 @@ void ctkDICOMModelObjectPrivate::seqInsert( DcmSequenceOfItems *dataset, QStanda
 	      value << " ...";
 	    }
 	  tagValue = value.str().c_str();
-	}
-      // create items ...
+	  return tagValue;
+}
+
+//------------------------------------------------------------------------------
+ QStandardItem* ctkDICOMModelObjectPrivate::populateModelRow(const QString& tagName,const QString& tagValue, QStandardItem *parent)
+ {
+     // create items ...
       QStandardItem *tagItem = new QStandardItem( tagName);
       QStandardItem *valItem = new QStandardItem( tagValue);
       // ... and insert them
@@ -223,29 +232,8 @@ void ctkDICOMModelObjectPrivate::seqInsert( DcmSequenceOfItems *dataset, QStanda
       modelRow.append( tagItem);
       modelRow.append( valItem);
       parent->appendRow( modelRow);
-
-
-      //      std::cerr << "    "
-      //		<< tagName.toStdString() << " " << tagValue.toStdString();
-
-
-      if( dcmElem)
-	{
-	  // 	  std::cerr << " >> l=" << dcmElem->isLeaf() 
-	  //		    << "  nx=" << dataset->nextInContainer( dcmElem);
-	  if( !dcmElem->isLeaf())
-	    {
-	      // now dcmElem  points to a sequenceOfItems
-			ctkDICOMModelObjectPrivate::seqInsert( dynamic_cast<DcmSequenceOfItems*> (dcmElem), tagItem);	 
-	    }
-	}
-      else if( tag.getXTag() == DCM_Item)
-	{
-	      itemInsert( dynamic_cast<DcmItem*> (dO), tagItem);	 
-	}
-      //      std::cerr  << "\n";
-    }
-}
+	  return tagItem;
+ }
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

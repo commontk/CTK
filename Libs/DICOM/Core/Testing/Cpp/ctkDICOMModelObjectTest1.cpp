@@ -26,8 +26,6 @@
 // CTK Core
 #include "ctkDICOMModelObject.h"
 
-
-
 // Qt includes
 #include <QApplication>
 #include <QFileDialog>
@@ -35,16 +33,9 @@
 #include <QTreeView>
 #include <QHeaderView>
 
-
-
-
 int main(int argv, char** argc)
 {
   QApplication app(argv, argc);
-
-  qApp->setOrganizationName("CTK");
-  qApp->setOrganizationDomain("commontk.org");
-  qApp->setApplicationName("ctkDICOMHeaderViewer");
 
   QString fileName;
 
@@ -64,9 +55,11 @@ int main(int argv, char** argc)
 	}
     }
   
+
   ctkDICOMModelObject dcmInfoModel;
   dcmInfoModel.setFile(fileName);
- 
+    
+
   QTreeView *viewer = new QTreeView();
   viewer->setModel( &dcmInfoModel);
   viewer->expandAll();
