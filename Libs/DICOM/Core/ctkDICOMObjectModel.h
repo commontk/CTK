@@ -18,45 +18,43 @@
 
 =============================================================================*/
 
-#ifndef __ctkDICOMModelObject_h
-#define __ctkDICOMModelObject_h
+#ifndef __ctkDICOMObjectModel_h
+#define __ctkDICOMObjectModel_h
+
+// STD includes
+#include <string>
 
 // Qt includes
+#include <QMetaType>
 #include <QStandardItemModel>
 #include <QString>
 #include <QStringList>
-#include <QMetaType>
 
 #include "ctkDICOMCoreExport.h"
 
-#include <string>
-
-//class ctkDICOMModelObjectData;
-class ctkDICOMModelObjectPrivate;
+class ctkDICOMObjectModelPrivate;
 /// \ingroup DICOM_Core
 ///
 /// \brief .
 ///
-class CTK_DICOM_CORE_EXPORT ctkDICOMModelObject
-//class  ctkDICOMModelObject
+class CTK_DICOM_CORE_EXPORT ctkDICOMObjectModel
 	: public QStandardItemModel
 {
-
   typedef QStandardItemModel Superclass;
 
 public:
 
-  explicit ctkDICOMModelObject(QObject* parent = 0);
-  ctkDICOMModelObject(const ctkDICOMModelObject& other);
-  virtual ~ctkDICOMModelObject();
+  explicit ctkDICOMObjectModel(QObject* parent = 0);
+  ctkDICOMObjectModel(const ctkDICOMObjectModel& other);
+  virtual ~ctkDICOMObjectModel();
   void setFile (const QString& fileName);
 
 protected:
-  QScopedPointer<ctkDICOMModelObjectPrivate> d_ptr;
+  QScopedPointer<ctkDICOMObjectModelPrivate> d_ptr;
 
 private:
-Q_DECLARE_PRIVATE(ctkDICOMModelObject);
+Q_DECLARE_PRIVATE(ctkDICOMObjectModel);
 };
 
 
-#endif // ctkDICOMModelObject_h
+#endif // ctkDICOMObjectModel_h

@@ -23,15 +23,15 @@
 #include <algorithm>
 #include <limits>
 
-// CTK Core
-#include "ctkDICOMModelObject.h"
-
 // Qt includes
 #include <QApplication>
 #include <QFileDialog>
+#include <QHeaderView>
 #include <QString>
 #include <QTreeView>
-#include <QHeaderView>
+
+// CTK Core
+#include "ctkDICOMObjectModel.h"
 
 int main(int argv, char** argc)
 {
@@ -41,25 +41,20 @@ int main(int argv, char** argc)
 
   if( QApplication::argc() > 1)
     {
-      fileName = QApplication::argv()[1];
+    fileName = QApplication::argv()[1];
     }
   else
     {
-      fileName = QFileDialog::getOpenFileName( 0,
-       "Choose an image file", ".",
-       "DCM (*)" 
-       );
-      if( fileName.size() == 0 )
-	{
-	  return EXIT_SUCCESS;
-	}
+    fileName = QFileDialog::getOpenFileName( 0,
+    "Choose an image file", ".","DCM (*)" );
+    if( fileName.size() == 0 )
+	    {
+	    return EXIT_SUCCESS;
+	    }
     }
-  
-
-  ctkDICOMModelObject dcmInfoModel;
+  ctkDICOMObjectModel dcmInfoModel;
   dcmInfoModel.setFile(fileName);
-    
-
+  
   QTreeView *viewer = new QTreeView();
   viewer->setModel( &dcmInfoModel);
   viewer->expandAll();
@@ -68,5 +63,6 @@ int main(int argv, char** argc)
   viewer->header()->setResizeMode( QHeaderView::Stretch);
   viewer->show();
   viewer->raise();
+  
   return app.exec();
 }
