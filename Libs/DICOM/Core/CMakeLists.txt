@@ -48,6 +48,8 @@ set(KIT_SRCS
   ctkDICOMRetrieve.h
   ctkDICOMTester.cpp
   ctkDICOMTester.h
+  ctkDICOMUtil.cpp
+  ctkDICOMUtil.h
 )
 
 if(DCMTK_VERSION_IS_360)
@@ -72,6 +74,7 @@ set(KIT_MOC_SRCS
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h
   ctkDICOMTester.h
+  ctkDICOMUtil.h
   )
 
 # UI files
