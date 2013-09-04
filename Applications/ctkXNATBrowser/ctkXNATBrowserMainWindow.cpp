@@ -101,7 +101,7 @@ void ctkXNATBrowserMainWindow::projectSelected(const QModelIndex& index)
   if (variant.isValid())
   {
     ctkXnatObject::Pointer project = variant.value<ctkXnatObject::Pointer>();
-    qDebug() << "selected project id:" << project->getId();
+    qDebug() << "selected project id:" << project->id();
     project->fetch();
     m_SubjectsModel->setRootObject(project);
     ui->subjectsList->reset();
