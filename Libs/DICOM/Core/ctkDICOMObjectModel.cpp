@@ -48,8 +48,7 @@ public:
   ctkDICOMObjectModelPrivate(ctkDICOMObjectModel&);
   virtual ~ctkDICOMObjectModelPrivate();
   void init();
-  void ctkDICOMObjectModelPrivate::itemInsert( DcmItem *dataset, QStandardItem *parent);
-  void ctkDICOMObjectModelPrivate::seqInsert( DcmSequenceOfItems *dataset, QStandardItem *parent);
+  void ctkDICOMObjectModelPrivate::traverseDataElements( DcmItem *dataset, QStandardItem *parent);
   QString ctkDICOMObjectModelPrivate::getTagValue( DcmElement *dcmElem);
   QStandardItem* ctkDICOMObjectModelPrivate::populateModelRow(const QString& tagName,const QString& tagValue, QStandardItem *parent);
 
@@ -76,22 +75,20 @@ void ctkDICOMObjectModelPrivate::init()
 	
 }
 //------------------------------------------------------------------------------
-void ctkDICOMObjectModelPrivate::itemInsert( DcmItem *dataset, QStandardItem *parent)
+void ctkDICOMObjectModelPrivate::traverseDataElements( DcmItem *dataset, QStandardItem *parent)
 {
   DcmStack stack;
   dataset->nextObject( stack, OFTrue);
   for( ; stack.top(); dataset->nextObject( stack, OFFalse))
     {
     DcmObject *dO =  stack.top();
-    // DcmElement *dcmElem = dataset->getElement( idx);
-    DcmElement *dcmElem = dynamic_cast<DcmElement *> (dO);
+    // put in the visit node function
     QString tagValue = "";
-
     DcmTag tag = dO->getTag();
-	// std::cout<<tag;
+	  // std::cout<<tag;
     QString tagName = tag.getTagName();
     DcmTag tagKey = tag.getXTag();
-	// std::cout<< tagName.toUtf8().constData()<<std::endl;
+	  // std::cout<< tagName.toUtf8().constData()<<std::endl;
     if( tagKey == DCM_SequenceDelimitationItem
     || tagKey == DCM_ItemDelimitationItem
     || "Item" == tagName)
@@ -99,52 +96,27 @@ void ctkDICOMObjectModelPrivate::itemInsert( DcmItem *dataset, QStandardItem *pa
 	    return;
 	    }
   
+    DcmElement *dcmElem = dynamic_cast<DcmElement *> (dO);
     tagValue = getTagValue(dcmElem);
   
-    // Create items
+    // Populate QStandardModel with current DICOM element tag name and value
     QStandardItem *tagItem = populateModelRow(tagName,tagValue,parent);
-
+    
+    // check if the DICOM object is a SQ Data element and extract the nested DICOM objects
     if( dcmElem && !dcmElem->isLeaf())
-      {
-      // now dcmElem  points to a sequenceOfItems
-      ctkDICOMObjectModelPrivate::seqInsert( dynamic_cast<DcmSequenceOfItems*> (dcmElem), tagItem);	 
-      }
-    }
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMObjectModelPrivate::seqInsert( DcmSequenceOfItems *dataset, QStandardItem *parent)
-{
-  DcmObject *dO = dataset->nextInContainer( NULL);
-  
-  for( ; dO; dO = dataset->nextInContainer(dO))
-    {
-    DcmElement *dcmElem = dynamic_cast<DcmElement *> (dO);
-    QString tagValue = "";
-    DcmTag tag = dO->getTag();
-	DcmTag tagKey = tag.getXTag();
-
-    if( tagKey == DCM_SequenceDelimitationItem
-	  || tagKey == DCM_ItemDelimitationItem)
-	   {
-	   return;
-	    }
-  
-  QString tagName = tag.getTagName();
-  if( dcmElem)
-	  {
-	  tagValue = getTagValue(dcmElem);
-	  }
-  QStandardItem *tagItem = populateModelRow(tagName,tagValue,parent);
-  
-  if( dcmElem && !dcmElem->isLeaf())
-	  {
-	  ctkDICOMObjectModelPrivate::seqInsert( dynamic_cast<DcmSequenceOfItems*> (dcmElem), tagItem);	 
-    }
-  else if( tag.getXTag() == DCM_Item)
-	  {
-	  itemInsert( dynamic_cast<DcmItem*> (dO), tagItem);	 
-	  }
+      {	 
+      DcmSequenceOfItems* newNode = dynamic_cast<DcmSequenceOfItems*> (dcmElem);
+      dO = newNode->nextInContainer( NULL);
+      for( ; dO; dO = newNode->nextInContainer( dO))
+        {
+        DcmElement *dcmElem2 = dynamic_cast<DcmElement *> (dO);
+        tag = dO->getTag();
+        if( tag.getXTag() == DCM_Item)
+          {
+          traverseDataElements( dynamic_cast<DcmItem*> (dO),parent);
+          } 
+         }
+        }
     }
 }
 
@@ -230,5 +202,5 @@ void ctkDICOMObjectModel::setFile(const QString &fileName)
   
   DcmDataset *dataset = d->fileFormat.getDataset();
   d->rootItem = ctkDICOMObjectModel::invisibleRootItem();
-  d->itemInsert( dataset, d->rootItem);
+  d->traverseDataElements( dataset, d->rootItem);
 }
