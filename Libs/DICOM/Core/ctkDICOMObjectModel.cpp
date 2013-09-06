@@ -48,9 +48,9 @@ public:
   ctkDICOMObjectModelPrivate(ctkDICOMObjectModel&);
   virtual ~ctkDICOMObjectModelPrivate();
   void init();
-  void ctkDICOMObjectModelPrivate::traverseDataElements( DcmItem *dataset, QStandardItem *parent);
-  QString ctkDICOMObjectModelPrivate::getTagValue( DcmElement *dcmElem);
-  QStandardItem* ctkDICOMObjectModelPrivate::populateModelRow(const QString& tagName,const QString& tagValue, QStandardItem *parent);
+  void traverseDataElements( DcmItem *dataset, QStandardItem *parent);
+  QString getTagValue( DcmElement *dcmElem);
+  QStandardItem* populateModelRow(const QString& tagName,const QString& tagValue, QStandardItem *parent);
 
   DcmFileFormat fileFormat;
   QStandardItem *rootItem;
@@ -72,7 +72,6 @@ void ctkDICOMObjectModelPrivate::init()
   horizontalHeaderLabels.append( QString("Tag"));
   horizontalHeaderLabels.append( QString("Value"));
   q->setHorizontalHeaderLabels(horizontalHeaderLabels);
-	
 }
 //------------------------------------------------------------------------------
 void ctkDICOMObjectModelPrivate::traverseDataElements( DcmItem *dataset, QStandardItem *parent)
