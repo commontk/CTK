@@ -9,6 +9,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMItemTest1.cpp
   ctkDICOMIndexerTest1.cpp
   ctkDICOMModelTest1.cpp
+  ctkDICOMObjectModelTest1.cpp
   ctkDICOMPersonNameTest1.cpp
   ctkDICOMQueryTest1.cpp
   ctkDICOMQueryTest2.cpp
