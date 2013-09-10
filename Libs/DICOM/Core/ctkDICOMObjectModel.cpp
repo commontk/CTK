@@ -71,8 +71,8 @@ void ctkDICOMObjectModelPrivate::init()
 {
   Q_Q(ctkDICOMObjectModel);
   QStringList horizontalHeaderLabels;
-  horizontalHeaderLabels.append( QString("VR"));
   horizontalHeaderLabels.append( QString("Tag"));
+  horizontalHeaderLabels.append( QString("VR"));
   horizontalHeaderLabels.append( QString("Value"));
   q->setHorizontalHeaderLabels(horizontalHeaderLabels);
 }
@@ -200,8 +200,9 @@ QString ctkDICOMObjectModelPrivate::getTagValue( DcmElement *dcmElem)
   QStandardItem *valItem = new QStandardItem( tagValue);
   // Insert items
   QList<QStandardItem *> modelRow;
-  modelRow.append( VRItem);
+  
   modelRow.append( tagItem);
+  modelRow.append( VRItem);
   modelRow.append( valItem);
   parent->appendRow( modelRow);
   return tagItem;
