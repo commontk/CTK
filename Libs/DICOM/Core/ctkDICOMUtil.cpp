@@ -19,82 +19,51 @@
 =========================================================================*/
 
 // Qt includes
-#include <QStringList>
-#include <QFlags>
+#include <QDebug>
 
-// ctkDICOMCore includes
+// CTK includes
 #include "ctkDICOMUtil.h"
-#include "ctkLogger.h"
 
 // DCMTK includes
 #include <dcmtk/dcmnet/diutil.h>
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMUtil" );
-
 //------------------------------------------------------------------------------
-class ctkDICOMUtilPrivate
-{
-public:
-  ctkDICOMUtilPrivate() {};
-  ~ctkDICOMUtilPrivate() {};
-};
-
-//------------------------------------------------------------------------------
-// ctkDICOMUtil methods
-
-//------------------------------------------------------------------------------
-ctkDICOMUtil::ctkDICOMUtil(QObject* parentObject)
-  : QObject(parentObject)
-  , d_ptr(new ctkDICOMUtilPrivate)
-{
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMUtil::~ctkDICOMUtil()
-{
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMUtil::setDICOMLogLevel(ctkDICOMUtil::LogLevel level)
+void ctk::setDICOMLogLevel(ctkErrorLogLevel::LogLevel level)
 {
   dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();
-  
   switch (level)
     {
-    case ctkDICOMUtil::Trace: log.setLogLevel(OFLogger::TRACE_LOG_LEVEL); break;
-    case ctkDICOMUtil::Debug: log.setLogLevel(OFLogger::DEBUG_LOG_LEVEL); break;
-    case ctkDICOMUtil::Info: log.setLogLevel(OFLogger::INFO_LOG_LEVEL); break;
-    case ctkDICOMUtil::Warning: log.setLogLevel(OFLogger::WARN_LOG_LEVEL); break;
-    case ctkDICOMUtil::Error: log.setLogLevel(OFLogger::ERROR_LOG_LEVEL); break;
-    case ctkDICOMUtil::Fatal: log.setLogLevel(OFLogger::FATAL_LOG_LEVEL); break;
+    case ctkErrorLogLevel::Trace: log.setLogLevel(OFLogger::TRACE_LOG_LEVEL); break;
+    case ctkErrorLogLevel::Debug: log.setLogLevel(OFLogger::DEBUG_LOG_LEVEL); break;
+    case ctkErrorLogLevel::Info: log.setLogLevel(OFLogger::INFO_LOG_LEVEL); break;
+    case ctkErrorLogLevel::Warning: log.setLogLevel(OFLogger::WARN_LOG_LEVEL); break;
+    case ctkErrorLogLevel::Error: log.setLogLevel(OFLogger::ERROR_LOG_LEVEL); break;
+    case ctkErrorLogLevel::Fatal: log.setLogLevel(OFLogger::FATAL_LOG_LEVEL); break;
     default:
-      logger.info("ctkDICOMUtil::setDICOMLogLevel: Unsupported DICOM log level specified");
+      qWarning() << "Failed to set DICOM log level - Supported levels are Trace, Debug, "
+                    "Info, Warning, Error and Fatal !";
       break;
     }
 }
 
-ctkDICOMUtil::LogLevel ctkDICOMUtil::getDICOMLogLevel() const
+//------------------------------------------------------------------------------
+ctkErrorLogLevel::LogLevel ctk::dicomLogLevel()
 {
   dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();
-  
   switch (log.getLogLevel())
     {
-    case OFLogger::TRACE_LOG_LEVEL: return ctkDICOMUtil::Trace;
-    case OFLogger::DEBUG_LOG_LEVEL: return ctkDICOMUtil::Debug;
-    case OFLogger::INFO_LOG_LEVEL: return ctkDICOMUtil::Info;
-    case OFLogger::WARN_LOG_LEVEL: return ctkDICOMUtil::Warning;
-    case OFLogger::ERROR_LOG_LEVEL: return ctkDICOMUtil::Error;
-    case OFLogger::FATAL_LOG_LEVEL: return ctkDICOMUtil::Fatal;
-    default:
-      return ctkDICOMUtil::None;
+    case OFLogger::TRACE_LOG_LEVEL: return ctkErrorLogLevel::Trace;
+    case OFLogger::DEBUG_LOG_LEVEL: return ctkErrorLogLevel::Debug;
+    case OFLogger::INFO_LOG_LEVEL: return ctkErrorLogLevel::Info;
+    case OFLogger::WARN_LOG_LEVEL: return ctkErrorLogLevel::Warning;
+    case OFLogger::ERROR_LOG_LEVEL: return ctkErrorLogLevel::Error;
+    case OFLogger::FATAL_LOG_LEVEL: return ctkErrorLogLevel::Fatal;
+    default: return ctkErrorLogLevel::None;
     }
 }
 
-// --------------------------------------------------------------------------
-QString ctkDICOMUtil::DICOMLogLevel()const
+//------------------------------------------------------------------------------
+QString ctk::dicomLogLevelAsString()
 {
-  ctkDICOMUtil::LogLevel logLevel = getDICOMLogLevel();
-  QMetaEnum logLevelEnum = this->metaObject()->enumerator(0);
-  Q_ASSERT(QString("LogLevel").compare(logLevelEnum.name()) == 0);
-  return QLatin1String(logLevelEnum.valueToKey(logLevel));
+  return ctkErrorLogLevel::logLevelAsString(ctk::dicomLogLevel());
 }

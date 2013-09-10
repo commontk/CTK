@@ -74,7 +74,6 @@ set(KIT_MOC_SRCS
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h
   ctkDICOMTester.h
-  ctkDICOMUtil.h
   )
 
 # UI files

@@ -21,49 +21,18 @@
 #ifndef __ctkDICOMUtil_h
 #define __ctkDICOMUtil_h
 
-// Qt includes 
-#include <QObject>
-#include <QString>
-
 // CTK includes
 #include "ctkDICOMCoreExport.h"
-#include "ctkDICOMDatabase.h"
+#include "ctkErrorLogModel.h"
 
-class ctkDICOMUtilPrivate;
+namespace ctk {
 
-class CTK_DICOM_CORE_EXPORT ctkDICOMUtil : public QObject
-{
-  Q_OBJECT
-  Q_FLAGS(LogLevel)
-public:
-   enum LogLevel
-    {
-    None     = 0x0,
-    Unknown  = 0x1,
-    Status   = 0x2,
-    Trace    = 0x4,
-    Debug    = 0x8,
-    Info     = 0x10,
-    Warning  = 0x20,
-    Error    = 0x40,
-    Critical = 0x80,
-    Fatal    = 0x100
-    };
-  Q_DECLARE_FLAGS(LogLevels, LogLevel)
-  Q_ENUMS(LogLevel)
- 
-  explicit ctkDICOMUtil(QObject* parent = 0);
-  virtual ~ctkDICOMUtil();
+void CTK_DICOM_CORE_EXPORT setDICOMLogLevel(ctkErrorLogLevel::LogLevel level);
 
-  Q_INVOKABLE void setDICOMLogLevel(LogLevel level);
-  Q_INVOKABLE LogLevel getDICOMLogLevel() const;
-  Q_INVOKABLE QString DICOMLogLevel() const;
+ctkErrorLogLevel::LogLevel CTK_DICOM_CORE_EXPORT dicomLogLevel();
 
-protected:
-  QScopedPointer<ctkDICOMUtilPrivate> d_ptr;
+QString CTK_DICOM_CORE_EXPORT dicomLogLevelAsString();
 
-private:
-  Q_DECLARE_PRIVATE(ctkDICOMUtil);
-  Q_DISABLE_COPY(ctkDICOMUtil);
-};
+} // end of ctk namespace
+
 #endif
