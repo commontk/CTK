@@ -55,13 +55,13 @@ ctkErrorLogLevel::ctkErrorLogLevel()
 // --------------------------------------------------------------------------
 QString ctkErrorLogLevel::operator()(ctkErrorLogLevel::LogLevel logLevel)
 {
-  return this->logLevelAsString(logLevel);
+  return ctkErrorLogLevel::logLevelAsString(logLevel);
 }
 
 // --------------------------------------------------------------------------
-QString ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)const
+QString ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)
 {
-  QMetaEnum logLevelEnum = this->metaObject()->enumerator(0);
+  QMetaEnum logLevelEnum = ctkErrorLogLevel::staticMetaObject.enumerator(0);
   Q_ASSERT(QString("LogLevel").compare(logLevelEnum.name()) == 0);
   return QLatin1String(logLevelEnum.valueToKey(logLevel));
 }
