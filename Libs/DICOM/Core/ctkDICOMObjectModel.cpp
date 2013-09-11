@@ -51,7 +51,7 @@ public:
   void itemInsert( DcmItem *dataset, QStandardItem *parent);
   void seqInsert( DcmSequenceOfItems *dataset, QStandardItem *parent);
   QString getTagValue( DcmElement *dcmElem);
-  QStandardItem* populateModelRow(const QString& tagName,const QString& tagValue,
+  QStandardItem* populateModelRow(const QString& tagName,const QString& tagHexName,const QString& tagValue,
     const QString& VRName, const QString& elementLengthQString, QStandardItem *parent);
 
   DcmFileFormat fileFormat;
@@ -72,6 +72,7 @@ void ctkDICOMObjectModelPrivate::init()
   Q_Q(ctkDICOMObjectModel);
   QStringList horizontalHeaderLabels;
   horizontalHeaderLabels.append( QString("Tag"));
+  horizontalHeaderLabels.append( QString("Tag HEX"));
   horizontalHeaderLabels.append( QString("VR"));
   horizontalHeaderLabels.append( QString("Length"));
   horizontalHeaderLabels.append( QString("Value"));
@@ -91,9 +92,13 @@ void ctkDICOMObjectModelPrivate::itemInsert( DcmItem *dataset, QStandardItem *pa
 	  // std::cout<<tag;
     QString tagName = tag.getTagName();
     //
+    DcmTagKey tagX = tag.getXTag();
+    QString tagHexName = tagX.toString().c_str();    
+    //
     DcmVR VR = dO->getVR();
     QString VRName = VR.getVRName();
-    // Getting length
+    //
+        // Getting length
     int elementLength;
     elementLength = dO->getLength();
     QString elementLengthQString = QString::number(elementLength);
@@ -111,7 +116,7 @@ void ctkDICOMObjectModelPrivate::itemInsert( DcmItem *dataset, QStandardItem *pa
     tagValue = getTagValue(dcmElem);
   
     // Populate QStandardModel with current DICOM element tag name and value
-    QStandardItem *tagItem = populateModelRow(tagName,tagValue,VRName,elementLengthQString,parent);
+    QStandardItem *tagItem = populateModelRow(tagName,tagHexName,tagValue,VRName,elementLengthQString,parent);
     
     // check if the DICOM object is a SQ Data element and extract the nested DICOM objects
     if( dcmElem && !dcmElem->isLeaf())
@@ -141,6 +146,10 @@ void ctkDICOMObjectModelPrivate::seqInsert( DcmSequenceOfItems *dataset, QStanda
     }
    
    QString tagName = tag.getTagName();
+   //
+   DcmTagKey tagX = tag.getXTag();
+   QString tagHexName = tagX.toString().c_str();
+   //
    DcmVR VR = dO->getVR();
    QString VRName = VR.getVRName();
    // Getting length
@@ -152,7 +161,7 @@ void ctkDICOMObjectModelPrivate::seqInsert( DcmSequenceOfItems *dataset, QStanda
    {
      tagValue = getTagValue(dcmElem);
    }
-  QStandardItem *tagItem = populateModelRow(tagName,tagValue,VRName,elementLengthQString,parent);
+  QStandardItem *tagItem = populateModelRow(tagName,tagHexName,tagValue,VRName,elementLengthQString,parent);
  
   if( dcmElem && !dcmElem->isLeaf())
    {
@@ -202,18 +211,20 @@ QString ctkDICOMObjectModelPrivate::getTagValue( DcmElement *dcmElem)
 }
 
 //------------------------------------------------------------------------------
- QStandardItem* ctkDICOMObjectModelPrivate::populateModelRow(const QString& tagName,
+ QStandardItem* ctkDICOMObjectModelPrivate::populateModelRow(const QString& tagName, const QString& tagHexName,
    const QString& tagValue,const QString& VRName, const QString& elementLengthQString, QStandardItem *parent)
  {
   // Create items
   QStandardItem *VRItem = new QStandardItem( VRName);
   QStandardItem *tagItem = new QStandardItem( tagName);
+  QStandardItem *tagHexItem = new QStandardItem( tagHexName);
   QStandardItem *lengthItem = new QStandardItem( elementLengthQString);
   QStandardItem *valItem = new QStandardItem( tagValue);
   // Insert items
   QList<QStandardItem *> modelRow;
   
   modelRow.append( tagItem);
+  modelRow.append( tagHexItem);
   modelRow.append( VRItem);
   modelRow.append( lengthItem);
   modelRow.append( valItem);
