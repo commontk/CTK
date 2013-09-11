@@ -220,6 +220,12 @@ QString ctkDICOMObjectModelPrivate::getTagValue( DcmElement *dcmElem)
   QStandardItem *tagHexItem = new QStandardItem( tagHexName);
   QStandardItem *lengthItem = new QStandardItem( elementLengthQString);
   QStandardItem *valItem = new QStandardItem( tagValue);
+  //
+  VRItem->setFlags(VRItem->flags() & ~Qt::ItemIsEditable);
+  tagItem->setFlags(tagItem->flags() & ~Qt::ItemIsEditable);
+  tagHexItem->setFlags(tagHexItem->flags() & ~Qt::ItemIsEditable);
+  lengthItem->setFlags(lengthItem->flags() & ~Qt::ItemIsEditable);
+  valItem->setFlags(valItem->flags() & ~Qt::ItemIsEditable);
   // Insert items
   QList<QStandardItem *> modelRow;
   
