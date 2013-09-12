@@ -46,9 +46,12 @@ int ctkDICOMObjectModelTest1( int argc, char * argv [] )
   QTreeView *viewer = new QTreeView();
   viewer->setModel( &dcmInfoModel);
   viewer->expandAll();
+  viewer->resizeColumnToContents(0);
   viewer->resizeColumnToContents(1);
   viewer->resizeColumnToContents(2);
-  viewer->header()->setResizeMode( QHeaderView::Stretch);
+  viewer->resizeColumnToContents(3);
+  viewer->resizeColumnToContents(4);
+  //viewer->header()->setResizeMode( QHeaderView::Stretch);
   viewer->show();
   viewer->raise();
 
