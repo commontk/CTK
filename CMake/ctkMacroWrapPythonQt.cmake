@@ -299,7 +299,9 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   set(moc_flags)
 
   # Grab moc flags
-  QT4_GET_MOC_FLAGS(moc_flags)
+  if (CTK_QT_VERSION VERSION_EQUAL "4")
+    QT4_GET_MOC_FLAGS(moc_flags)
+  endif()
 
   # Prepare custom_command argument
   set(moc_flags_arg)

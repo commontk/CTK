@@ -112,7 +112,7 @@ void ctkNetworkConnectorQXMLRPC::stopServer() {
 
 void ctkNetworkConnectorQXMLRPC::registerServerMethod(mafRegisterMethodsMap registerMethodsList) {
     if(m_Server->isListening()) {
-        qDebug("%s", tr("Server is already listening on port %1").arg(m_Server->property("port").toUInt()).toAscii().data());
+        qDebug("%s", tr("Server is already listening on port %1").arg(m_Server->property("port").toUInt()).toLatin1().data());
         return;
     }
     // cycle over map:  method name and parameter list
@@ -163,7 +163,7 @@ void ctkNetworkConnectorQXMLRPC::send(const QString event_id, ctkEventArgumentsL
             typeArgument = argList->at(i).name();
             if(typeArgument != "QVariantList") {
                 qDebug() << typeArgument;
-                qWarning("%s", tr("Remote Dispatcher need to have arguments that are QVariantList").toAscii().data());
+                qWarning("%s", tr("Remote Dispatcher need to have arguments that are QVariantList").toLatin1().data());
                 delete vl;
                 return;
             }
@@ -177,7 +177,7 @@ void ctkNetworkConnectorQXMLRPC::send(const QString event_id, ctkEventArgumentsL
             vl->push_back(var); //only the first parameter represent the whole list of arguments
         }
         if(size == 0) {
-            qWarning("%s", tr("Remote Dispatcher need to have at least one argument that is a QVariantList").toAscii().data());
+            qWarning("%s", tr("Remote Dispatcher need to have at least one argument that is a QVariantList").toLatin1().data());
             return;
         }
     }
@@ -209,13 +209,13 @@ void ctkNetworkConnectorQXMLRPC::xmlrpcSend(const QString &methodName, QList<xml
 void ctkNetworkConnectorQXMLRPC::processReturnValue( int requestId, QVariant value ) {
     Q_UNUSED( requestId );
     Q_ASSERT( value.canConvert( QVariant::String ) );
-    qDebug("%s", value.toString().toAscii().data());
+    qDebug("%s", value.toString().toLatin1().data());
     ctkEventBusManager::instance()->notifyEvent("ctk/local/eventBus/remoteCommunicationDone", ctkEventTypeLocal);
 }
 
 void ctkNetworkConnectorQXMLRPC::processFault( int requestId, int errorCode, QString errorString ) {
     // Log the error.
-    qDebug("%s", tr("Process Fault for requestID %1 with error %2 - %3").arg(QString::number(requestId), QString::number(errorCode), errorString).toAscii().data());
+    qDebug("%s", tr("Process Fault for requestID %1 with error %2 - %3").arg(QString::number(requestId), QString::number(errorCode), errorString).toLatin1().data());
     ctkEventBusManager::instance()->notifyEvent("ctk/local/eventBus/remoteCommunicationFailed", ctkEventTypeLocal);
 }
 

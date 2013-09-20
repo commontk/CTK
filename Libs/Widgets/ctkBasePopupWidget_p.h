@@ -22,8 +22,9 @@
 #define __ctkBasePopupWidget_p_h
 
 // Qt includes
-class QPropertyAnimation;
+#include <QPointer>
 class QLabel;
+class QPropertyAnimation;
 
 // CTK includes
 #include "ctkBasePopupWidget.h"
@@ -84,7 +85,7 @@ public:
   void hideAll();
 
 protected:
-  QWidget* BaseWidget;
+  QPointer<QWidget> BaseWidget;
 
   double EffectAlpha;
 

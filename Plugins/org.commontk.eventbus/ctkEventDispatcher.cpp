@@ -92,7 +92,7 @@ bool ctkEventDispatcher::disconnectSignal(ctkBusEvent &props) {
     QString sig = props[SIGNATURE].toString();
     QString event_sig = SIGNAL_SIGNATURE;
     event_sig.append(sig);
-    bool result = obj_signal->disconnect(obj_signal, event_sig.toAscii(), 0, 0);
+    bool result = obj_signal->disconnect(obj_signal, event_sig.toLatin1(), 0, 0);
     return result;
 }
 
@@ -108,7 +108,7 @@ bool ctkEventDispatcher::disconnectCallback(ctkBusEvent &props) {
     QObject *objSignal = (*itemSignal)[OBJECT].value<QObject *>();
     QObject *objSlot = props[OBJECT].value<QObject *>();
 
-    return disconnect(objSignal, event_sig.toAscii(), objSlot, observer_sig.toAscii());
+    return disconnect(objSignal, event_sig.toLatin1(), objSlot, observer_sig.toLatin1());
 }
 
 bool ctkEventDispatcher::removeEventItem(ctkBusEvent &props) {
@@ -189,7 +189,7 @@ bool ctkEventDispatcher::addObserver(ctkBusEvent &props) {
         this->m_CallbacksHash.insertMulti(topic, dict);
         QObject *objSignal = (*itemEventProp)[OBJECT].value<QObject *>();
 
-        return connect(objSignal, event_sig.toAscii(), objSlot, observer_sig.toAscii());
+        return connect(objSignal, event_sig.toLatin1(), objSlot, observer_sig.toLatin1());
     }
     
     qDebug() << tr("Signal not valid for topic: %1").arg(topic);
@@ -303,9 +303,9 @@ bool ctkEventDispatcher::registerSignal(ctkBusEvent &props) {
         // Only one signal for a given id can be registered!!
         QObject *obj = props[OBJECT].value<QObject *>();
         if(obj != NULL) {
-            qWarning("%s", tr("Object %1 is trying to register a signal with Topic '%2' that has been already registered!!").arg(obj->metaObject()->className(), topic).toAscii().data());
+            qWarning("%s", tr("Object %1 is trying to register a signal with Topic '%2' that has been already registered!!").arg(obj->metaObject()->className(), topic).toLatin1().data());
         } else {
-            qWarning("%s", tr("NULL is trying to register a signal with Topic '%2' that has been already registered!!").arg(topic).toAscii().data());
+            qWarning("%s", tr("NULL is trying to register a signal with Topic '%2' that has been already registered!!").arg(topic).toLatin1().data());
         }
         return false;
     }
@@ -338,7 +338,7 @@ bool ctkEventDispatcher::registerSignal(ctkBusEvent &props) {
              event_sig.append(sig);
 
              QObject *objSlot = (*currentEvent)[OBJECT].value<QObject *>();
-             cumulativeConnect = cumulativeConnect && connect(objSignal, event_sig.toAscii(), objSlot, observer_sig.toAscii());
+             cumulativeConnect = cumulativeConnect && connect(objSignal, event_sig.toLatin1(), objSlot, observer_sig.toLatin1());
          }
          ctkBusEvent *dict = const_cast<ctkBusEvent *>(&props);
          this->m_SignalsHash.insert(topic, dict);

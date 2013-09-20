@@ -64,8 +64,13 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* parentWidget)
     NameColumn, Qt::Horizontal, static_cast<int>(Qt::Unchecked), Qt::CheckStateRole);
   QHeaderView* previousHeaderView = d->NodeTable->horizontalHeader();
   ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, d->NodeTable);
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  headerView->setSectionsClickable(previousHeaderView->sectionsClickable());
+  headerView->setSectionsMovable(previousHeaderView->sectionsMovable());
+#else
   headerView->setClickable(previousHeaderView->isClickable());
   headerView->setMovable(previousHeaderView->isMovable());
+#endif
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   headerView->checkableModelHelper()->setPropagateDepth(-1);
   d->NodeTable->setHorizontalHeader(headerView);

@@ -80,6 +80,10 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
 {
   Q_Q(ctkPopupWidget);
   QWidget* widget = qobject_cast<QWidget*>(obj);
+  if (!widget)
+    {
+    return this->Superclass::eventFilter(obj, event);
+    }
   // Here are the application events, it's a lot of events, so we need to be
   // careful to be fast.
   if (event->type() == QEvent::ApplicationDeactivate)
@@ -91,7 +95,7 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
     {
     QTimer::singleShot(0, this, SLOT(updateVisibility()));
     }
-  if (!this->BaseWidget)
+  if (this->BaseWidget.isNull())
     {
     return false;
     }
@@ -159,7 +163,7 @@ void ctkPopupWidgetPrivate::updateVisibility()
   Q_Q(ctkPopupWidget);
   // If the BaseWidget window is active, then there is no reason to cover the
   // popup.
-  if (!this->BaseWidget  ||
+  if (this->BaseWidget.isNull()  ||
       // the popupwidget active window is not active
       (!this->BaseWidget->window()->isActiveWindow() &&
       // and no other active window
@@ -179,7 +183,7 @@ void ctkPopupWidgetPrivate::updateVisibility()
           !(topLevelWidget->windowState() & Qt::WindowMinimized) &&
           topLevelWidget->windowType() != Qt::ToolTip &&
           topLevelWidget->windowType() != Qt::Popup &&
-          topLevelWidget != (this->BaseWidget ? this->BaseWidget->window() : 0) &&
+          topLevelWidget != (!this->BaseWidget.isNull() ? this->BaseWidget->window() : 0) &&
           topLevelWidget->frameGeometry().intersects(q->geometry()))
         {
         //qDebug() << "hide" << q << "because of: " << topLevelWidget
@@ -194,7 +198,7 @@ void ctkPopupWidgetPrivate::updateVisibility()
     }
   // If the base widget is hidden or minimized, we don't want to restore the
   // popup.
-  if (this->BaseWidget &&
+  if (!this->BaseWidget.isNull() &&
       (!this->BaseWidget->isVisible() ||
         this->BaseWidget->window()->windowState() & Qt::WindowMinimized))
     {
@@ -273,7 +277,7 @@ void ctkPopupWidget::setActive(bool active)
   d->Active = active;
   if (d->Active)
     {
-    if (d->BaseWidget)
+    if (!d->BaseWidget.isNull())
       {
       d->BaseWidget->installEventFilter(this);
       }
@@ -285,7 +289,7 @@ void ctkPopupWidget::setActive(bool active)
     }
   else // not active
     {
-    if (d->BaseWidget)
+    if (!d->BaseWidget.isNull())
       {
       d->BaseWidget->removeEventFilter(this);
       }
@@ -301,12 +305,12 @@ void ctkPopupWidget::setActive(bool active)
 void ctkPopupWidget::setBaseWidget(QWidget* widget)
 {
   Q_D(ctkPopupWidget);
-  if (d->BaseWidget)
+  if (!d->BaseWidget.isNull())
     {
     d->BaseWidget->removeEventFilter(this);
     }
   this->Superclass::setBaseWidget(widget);
-  if (d->BaseWidget && d->Active)
+  if (!d->BaseWidget.isNull() && d->Active)
     {
     d->BaseWidget->installEventFilter(this);
     }
@@ -513,7 +517,7 @@ void ctkPopupWidget::updatePopup()
      // to be automatically open, the mouse has to be over a child widget
       mouseOver &&
      // disable opening the popup when the popup is disabled
-      (!d->BaseWidget || d->BaseWidget->isEnabled()))
+      (d->BaseWidget.isNull() || d->BaseWidget->isEnabled()))
     {
     this->showPopup();
     }

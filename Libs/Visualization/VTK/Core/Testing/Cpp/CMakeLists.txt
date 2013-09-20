@@ -42,7 +42,11 @@ set(KIT_HELPER_SRCS
   ctkVTKObjectTestHelper.cpp
   )
 
-QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  QT5_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
+else()
+  QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
+endif()
 
 #
 # Tests

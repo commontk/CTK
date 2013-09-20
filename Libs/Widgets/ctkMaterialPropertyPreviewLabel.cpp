@@ -295,16 +295,20 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
         ref.setZ( 2.*normal.z()*dot - light.z());
         ref.normalize();
 
-        qreal diffuseComp = qMax(diffuse * dot, 0.);
+        const qreal zero = 0.;
+        const qreal one = 1.;
+
+        qreal diffuseComp = qMax(diffuse * dot, zero);
         
-        qreal specularDot = qMax(QVector3D::dotProduct(ref, view), 0.);
+        dot = QVector3D::dotProduct(ref, view);
+        qreal specularDot = qMax(dot, zero);
         
         qreal specularComp = specular*pow(specularDot, specular_power);
         
         QVector3D intensity;
-        intensity.setX( qMin((ambient + diffuseComp)*d->Color.redF() + specularComp, 1.));
-        intensity.setY( qMin((ambient + diffuseComp)*d->Color.greenF() + specularComp, 1.));
-        intensity.setZ( qMin((ambient + diffuseComp)*d->Color.blueF() + specularComp, 1.));
+        intensity.setX( qMin((ambient + diffuseComp)*d->Color.redF() + specularComp, one));
+        intensity.setY( qMin((ambient + diffuseComp)*d->Color.greenF() + specularComp, one));
+        intensity.setZ( qMin((ambient + diffuseComp)*d->Color.blueF() + specularComp, one));
         
         if (opacity == 1.)
           {

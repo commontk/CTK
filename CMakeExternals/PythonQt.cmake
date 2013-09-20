@@ -33,7 +33,18 @@ if(${add_project})
       endif()
 
       # Enable Qt libraries PythonQt wrapping if required
-      set(qtlibs core gui network opengl sql svg uitools webkit xml)
+      if (CTK_QT_VERSION VERSION_GREATER "4")
+        list(APPEND ep_PythonQt_args
+          -DPythonQt_QT_VERSION:STRING=${CTK_QT_VERSION}
+          -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
+          )
+        set(qtlibs Core Gui Widgets Network OpenGL PrintSupport Sql Svg UiTools WebKit WebKitWidgets Xml)
+      else()
+        list(APPEND ep_PythonQt_args
+          -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+          )
+        set(qtlibs core gui network opengl sql svg uitools webkit xml)
+      endif()
       foreach(qtlib All ${qtlibs})
         string(TOUPPER ${qtlib} qtlib_uppercase)
         list(APPEND ep_PythonQt_args -DPythonQt_Wrap_Qt${qtlib}:BOOL=${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib_uppercase}})
@@ -53,7 +64,7 @@ if(${add_project})
         message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
       endif()
 
-      set(revision_tag 9c92fd212605bb5ff4d462323763acf65d87e4a7)
+      set(revision_tag 42864bb4747ea1442429a6bc4c2a665bcb011cc9)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
@@ -79,7 +90,6 @@ if(${add_project})
         BUILD_COMMAND ""
         CMAKE_CACHE_ARGS
           ${ep_common_cache_args}
-          -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
           -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
           -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
           ${ep_PythonQt_args}

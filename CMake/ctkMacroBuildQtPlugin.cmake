@@ -49,16 +49,20 @@ macro(ctkMacroBuildQtPlugin)
 
   # --------------------------------------------------------------------------
   # Include dirs
+
   set(my_includes
     ${CTK_BASE_INCLUDE_DIRS}
-    ${QT_QTDESIGNER_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MY_INCLUDE_DIRECTORIES}
     )
-  include_directories(
-    ${my_includes}
-    )
+
+  if (CTK_QT_VERSION VERSION_GREATER "4")
+    list(APPEND my_includes ${Qt5Designer_INCLUDE_DIRS})
+  else()
+    list(APPEND my_includes ${QT_QTDESIGNER_INCLUDE_DIR})
+  endif()
+  include_directories(${my_includes})
 
   set(MY_LIBRARY_EXPORT_DIRECTIVE ${MY_EXPORT_DIRECTIVE})
   set(MY_EXPORT_HEADER_PREFIX ${MY_NAME})
@@ -82,11 +86,20 @@ macro(ctkMacroBuildQtPlugin)
   set(MY_QRC_SRCS)
 
   # Wrap
-  QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
-  QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
-  set(MY_QRC_SRCS "")
-  if(DEFINED MY_RESOURCES)
-    QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+  if (CTK_QT_VERSION VERSION_GREATER "4")
+    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS})
+    qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
+    set(MY_QRC_SRCS "")
+    if(DEFINED MY_RESOURCES)
+      qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+  else()
+    QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
+    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+    set(MY_QRC_SRCS "")
+    if(DEFINED MY_RESOURCES)
+      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
   endif()
 
   source_group("Resources" FILES

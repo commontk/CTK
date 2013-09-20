@@ -34,7 +34,7 @@
 #    cmake -DWRAPPING_NAMESPACE:STRING=org.commontk -DTARGET:STRING=MyLib
 #          -DSOURCES:STRING="file1^^file2" -DINCLUDE_DIRS:STRING=/path1:/path2
 #          -DWRAP_INT_DIR:STRING=subir/subir/
-#          -DOUTPUT_DIR:PATH=/path  -DQT_QMAKE_EXECUTABLE:PATH=/path/to/qt/qmake
+#          -DOUTPUT_DIR:PATH=/path  [-DQT_QMAKE_EXECUTABLE:PATH=/path/to/qt/qmake]
 #          -DPYTHON_EXECUTABLE:FILEPATH=/path/to/python
 #          -DPYTHON_LIBRARY_PATH:PATH=/path/to/pythonlib
 #          -DHAS_DECORATOR:BOOL=True
@@ -112,7 +112,11 @@ foreach(var WRAPPING_NAMESPACE TARGET SOURCES INCLUDE_DIRS WRAP_INT_DIR HAS_DECO
 endforeach()
 
 # Check for non-existing ${var}
-foreach(var QT_QMAKE_EXECUTABLE OUTPUT_DIR PYTHON_EXECUTABLE PYTHON_LIBRARY_PATH)
+set(requiredVariables OUTPUT_DIR PYTHON_EXECUTABLE PYTHON_LIBRARY_PATH)
+if (CTK_QT_VERSION VERSION_EQUAL "4")
+  list(APPEND QT_QMAKE_EXECUTABLE requiredVariables)
+endif()
+foreach(var )
   if(NOT EXISTS ${${var}})
     message(FATAL_ERROR "Failed to find ${var}=\"${${var}}\" when calling ctkScriptWrapPythonQt")
   endif()

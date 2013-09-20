@@ -35,7 +35,11 @@ public:
 
 //------------------------------------------------------------------------------
 ctkIconEnginePlugin::ctkIconEnginePlugin(QObject* parentObject)
- :QIconEnginePluginV2(parentObject)
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  : QIconEnginePlugin(parentObject)
+#else
+  : QIconEnginePluginV2(parentObject)
+#endif
   , d_ptr(new ctkIconEnginePluginPrivate)
 {
 }
@@ -46,7 +50,11 @@ ctkIconEnginePlugin::~ctkIconEnginePlugin()
 }
 
 //------------------------------------------------------------------------------
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+QIconEngine* ctkIconEnginePlugin::create(const QString& fileName)
+#else
 QIconEngineV2* ctkIconEnginePlugin::create(const QString& fileName)
+#endif
 {
   Q_D(ctkIconEnginePlugin);
   Q_UNUSED(fileName);

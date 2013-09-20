@@ -101,12 +101,21 @@ set(Tests_Helpers_MOC_SRCS
   )
 
 set(Tests_Helpers_MOC_CPP)
-QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
-QT4_GENERATE_MOCS(
-  ctkBooleanMapperTest.cpp
-  ctkLinearValueProxyTest.cpp
-  ctkUtilsTest.cpp
-  )
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  QT5_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
+  QT5_GENERATE_MOCS(
+    ctkBooleanMapperTest.cpp
+    ctkLinearValueProxyTest.cpp
+    ctkUtilsTest.cpp
+    )
+else()
+  QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
+  QT4_GENERATE_MOCS(
+    ctkBooleanMapperTest.cpp
+    ctkLinearValueProxyTest.cpp
+    ctkUtilsTest.cpp
+    )
+endif()
 
 if(HAVE_BFD)
   add_executable(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)

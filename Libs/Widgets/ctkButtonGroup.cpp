@@ -18,10 +18,9 @@
 
 =========================================================================*/
 
-//Qt includes  
+//Qt includes
 #include <QAbstractButton>
 #include <QDebug>
-#include <QWeakPointer>
 
 // CTK includes
 #include "ctkButtonGroup.h"

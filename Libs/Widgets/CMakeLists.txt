@@ -284,10 +284,17 @@ set(KIT_MOC_SRCS
   ctkWorkflowWidgetStep_p.h
   )
 
-QT4_GENERATE_MOCS(
-  ctkPathLineEdit.h
-  ctkPathListWidget.h
-)
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  QT5_GENERATE_MOCS(
+    ctkPathLineEdit.h
+    ctkPathListWidget.h
+    )
+else()
+  QT4_GENERATE_MOCS(
+    ctkPathLineEdit.h
+    ctkPathListWidget.h
+    )
+endif()
 
 # UI files
 set(KIT_UI_FORMS

@@ -185,36 +185,67 @@ if(CTK_USE_QTTESTING)
 endif()
 
 set(Tests_MOC_CPP)
-QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
-QT4_GENERATE_MOCS(
-  ctkCoordinatesWidgetTest.cpp
-  ctkCoordinatesWidgetValueProxyTest.cpp
-  ctkDoubleRangeSliderTest.cpp
-  ctkDoubleRangeSliderValueProxyTest.cpp
-  ctkDoubleSliderTest.cpp
-  ctkDoubleSliderValueProxyTest.cpp
-  ctkDoubleSpinBoxTest.cpp
-  ctkDoubleSpinBoxValueProxyTest.cpp
-  ctkFlatProxyModelTest.cpp
-  ctkFontButtonTest.cpp
-  ctkLanguageComboBoxTest.cpp
-  ctkMatrixWidgetTest.cpp
-  ctkMessageBoxDontShowAgainTest.cpp
-  ctkPathListWidgetTest.cpp
-  ctkPathListWidgetWithButtonsTest.cpp
-  ctkRangeSliderTest.cpp
-  ctkRangeWidgetTest.cpp
-  ctkRangeWidgetValueProxyTest.cpp
-  ctkSettingsPanelTest.cpp
-  ctkSliderWidgetTest.cpp
-  ctkSliderWidgetValueProxyTest.cpp
-  )
 set(Tests_UI_CPP)
-if(TEST_UI_FORMS)
-  QT4_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})
-endif()
 set(Tests_RESOURCES_SRCS)
-QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  QT5_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
+  QT5_GENERATE_MOCS(
+    ctkCoordinatesWidgetTest.cpp
+    ctkCoordinatesWidgetValueProxyTest.cpp
+    ctkDoubleRangeSliderTest.cpp
+    ctkDoubleRangeSliderValueProxyTest.cpp
+    ctkDoubleSliderTest.cpp
+    ctkDoubleSliderValueProxyTest.cpp
+    ctkDoubleSpinBoxTest.cpp
+    ctkDoubleSpinBoxValueProxyTest.cpp
+    ctkFlatProxyModelTest.cpp
+    ctkFontButtonTest.cpp
+    ctkLanguageComboBoxTest.cpp
+    ctkMatrixWidgetTest.cpp
+    ctkMessageBoxDontShowAgainTest.cpp
+    ctkPathListWidgetTest.cpp
+    ctkPathListWidgetWithButtonsTest.cpp
+    ctkRangeSliderTest.cpp
+    ctkRangeWidgetTest.cpp
+    ctkRangeWidgetValueProxyTest.cpp
+    ctkSettingsPanelTest.cpp
+    ctkSliderWidgetTest.cpp
+    ctkSliderWidgetValueProxyTest.cpp
+    )
+  if(TEST_UI_FORMS)
+    QT5_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})
+  endif()
+  QT5_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+else()
+  QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
+  QT4_GENERATE_MOCS(
+    ctkCoordinatesWidgetTest.cpp
+    ctkCoordinatesWidgetValueProxyTest.cpp
+    ctkDoubleRangeSliderTest.cpp
+    ctkDoubleRangeSliderValueProxyTest.cpp
+    ctkDoubleSliderTest.cpp
+    ctkDoubleSliderValueProxyTest.cpp
+    ctkDoubleSpinBoxTest.cpp
+    ctkDoubleSpinBoxValueProxyTest.cpp
+    ctkFlatProxyModelTest.cpp
+    ctkFontButtonTest.cpp
+    ctkLanguageComboBoxTest.cpp
+    ctkMatrixWidgetTest.cpp
+    ctkMessageBoxDontShowAgainTest.cpp
+    ctkPathListWidgetTest.cpp
+    ctkPathListWidgetWithButtonsTest.cpp
+    ctkRangeSliderTest.cpp
+    ctkRangeWidgetTest.cpp
+    ctkRangeWidgetValueProxyTest.cpp
+    ctkSettingsPanelTest.cpp
+    ctkSliderWidgetTest.cpp
+    ctkSliderWidgetValueProxyTest.cpp
+    )
+  if(TEST_UI_FORMS)
+    QT4_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})
+  endif()
+  QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+endif()
 
 add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})

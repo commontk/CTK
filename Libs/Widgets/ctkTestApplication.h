@@ -98,7 +98,11 @@ public:
   /// produced by QDebug during execution.
   static int exec(bool reportErrorsOnExit=false);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  static void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+#else
   static void messageHandler(QtMsgType type, const char *msg);
+#endif
 
   static void delay(int ms);
 

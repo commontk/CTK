@@ -22,8 +22,8 @@
 #define __ctkCoordinatesWidget_h
 
 // Qt includes
+#include <QPointer>
 #include <QWidget>
-#include <QWeakPointer>
 
 // CTK includes
 #include "ctkDoubleSpinBox.h"
@@ -197,7 +197,7 @@ protected:
   double* Coordinates;
   QList<int> LastUserEditedCoordinates;
   bool    ChangingDecimals;
-  QWeakPointer<ctkValueProxy> Proxy;
+  QPointer<ctkValueProxy> Proxy;
 };
 
 #endif

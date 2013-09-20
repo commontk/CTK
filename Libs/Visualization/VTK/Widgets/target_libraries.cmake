@@ -9,3 +9,6 @@ set(target_libraries
   CTKWidgets
   CTKVisualizationVTKCore
   )
+if (CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND target_libraries Qt5Network_LIBRARIES Qt5WebKit_LIBRARIES)
+endif()

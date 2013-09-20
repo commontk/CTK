@@ -63,7 +63,7 @@ void ctkPluginFrameworkTestSuite::initTestCase()
   catch (const ctkException& e)
   {
     QString msg  = QString("plugin framework test suite ") + e.what() + ": SETUP:FAIL";
-    QFAIL(msg.toAscii());
+    QFAIL(msg.toLatin1());
   }
 
   try
@@ -77,7 +77,7 @@ void ctkPluginFrameworkTestSuite::initTestCase()
   catch (const ctkException& e)
   {
     QString msg  = QString("plugin framework test suite ") + e.what() + ": SETUP:FAIL";
-    QFAIL(msg.toAscii());
+    QFAIL(msg.toLatin1());
   }
 
   try
@@ -91,7 +91,7 @@ void ctkPluginFrameworkTestSuite::initTestCase()
   catch (const ctkException& e)
   {
     QString msg  = QString("plugin framework test suite ") + e.what() + ": SETUP:FAIL";
-    QFAIL(msg.toAscii());
+    QFAIL(msg.toLatin1());
   }
 
   try
@@ -101,7 +101,7 @@ void ctkPluginFrameworkTestSuite::initTestCase()
   catch (const ctkException& e)
   {
     QString msg  = QString("plugin framework test suite ") + e.what() + ": SETUP:FAIL";
-    QFAIL(msg.toAscii());
+    QFAIL(msg.toLatin1());
   }
 
   qDebug() << "### plugin framework test suite: SETUP:PASS";

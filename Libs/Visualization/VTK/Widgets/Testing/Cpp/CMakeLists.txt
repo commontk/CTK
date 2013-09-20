@@ -94,19 +94,31 @@ if(CTK_USE_QTTESTING)
 endif()
 
 set(TEST_MOC_CPP)
-if(TEST_MOC_SOURCES)
-  QT4_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
-endif()
-QT4_GENERATE_MOCS(
-  ctkVTKPropertyWidgetTest.cpp
-  )
-
 set(TEST_UI_CPP)
-if(TEST_UI_FORMS)
-  QT4_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
-endif()
 set(Tests_RESOURCES_SRCS)
-QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  if(TEST_MOC_SOURCES)
+    QT5_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
+  endif()
+  QT5_GENERATE_MOCS(
+    ctkVTKPropertyWidgetTest.cpp
+    )
+  if(TEST_UI_FORMS)
+    QT5_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
+  endif()
+  QT5_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+else()
+  if(TEST_MOC_SOURCES)
+    QT4_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
+  endif()
+  QT4_GENERATE_MOCS(
+    ctkVTKPropertyWidgetTest.cpp
+    )
+  if(TEST_UI_FORMS)
+    QT4_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
+  endif()
+  QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+endif()
 
 add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRARIES})

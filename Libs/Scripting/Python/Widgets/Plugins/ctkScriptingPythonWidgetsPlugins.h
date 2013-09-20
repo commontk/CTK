@@ -29,10 +29,14 @@
 #include "ctkPythonConsolePlugin.h"
 
 /// \class Group the plugins in one library
-class CTK_SCRIPTING_PYTHON_WIDGETS_PLUGINS_EXPORT ctkScriptingPythonWidgetsPlugins : 
-  public QObject, public QDesignerCustomWidgetCollectionInterface
+class CTK_SCRIPTING_PYTHON_WIDGETS_PLUGINS_EXPORT ctkScriptingPythonWidgetsPlugins
+  : public QObject
+  , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  Q_PLUGIN_METADATA(IID "org.commontk.Python")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:

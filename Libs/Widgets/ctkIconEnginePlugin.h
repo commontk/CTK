@@ -21,14 +21,19 @@
 #ifndef __ctkIconEnginePlugin_h
 #define __ctkIconEnginePlugin_h
 
+#include "ctkWidgetsExport.h"
 // Qt includes
-#include <QIconEngineV2>
-#include <QIconEnginePluginV2>
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+# include <QIconEngine>
+# include <QIconEnginePlugin>
+#else
+# include <QIconEngineV2>
+# include <QIconEnginePluginV2>
+#endif
 
 // CTK includes
 #include "ctkPimpl.h"
 #include "ctkPixmapIconEngine.h"
-#include "ctkWidgetsExport.h"
 
 class ctkIconEnginePluginPrivate;
 class ctkIconEnginePrivate;
@@ -42,14 +47,23 @@ class ctkIconEnginePrivate;
 /// where the plugin must be located in "MyApp-build/plugins/iconengines"
 /// don't forget to declare in the cpp file:
 ///   Q_EXPORT_PLUGIN2(yourpluginName, ctkIconEnginePlugin)
-class CTK_WIDGETS_EXPORT ctkIconEnginePlugin: public QIconEnginePluginV2
+class CTK_WIDGETS_EXPORT ctkIconEnginePlugin
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  : public QIconEnginePlugin
+#else
+  : public QIconEnginePluginV2
+#endif
 {
   Q_OBJECT;
 public:
   ctkIconEnginePlugin(QObject* parent = 0);
   virtual ~ctkIconEnginePlugin();
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  virtual QIconEngine* create(const QString& filename=QString());
+#else
   virtual QIconEngineV2* create(const QString& filename=QString());
+#endif
   /// Support all the Qt image formats by default
   virtual QStringList keys()const;
 

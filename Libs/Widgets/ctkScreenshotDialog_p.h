@@ -22,6 +22,7 @@
 #define __ctkScreenshotDialog_p_h
 
 // Qt includes
+#include <QPointer>
 #include <QTimer>
 
 // CTK includes
@@ -72,7 +73,7 @@ public Q_SLOTS:
   void onHeightEdited();
 
 public:
-  QWeakPointer<QWidget> WidgetToGrab;
+  QPointer<QWidget>     WidgetToGrab;
   QPushButton*          CaptureButton;
   int                   CountDownValue;
   QTimer                CountDownTimer;

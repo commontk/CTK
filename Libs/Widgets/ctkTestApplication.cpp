@@ -54,8 +54,11 @@ int ctkTestApplication::Error = 0;
 //-----------------------------------------------------------------------------
 ctkTestApplication::ctkTestApplication(int _argc, char** _argv)
 {
+#if QT_VERSION > QT_VERSION_CHECK(5,0,0)
+  qInstallMessageHandler(ctkTestApplication::messageHandler);
+#else
   qInstallMsgHandler(ctkTestApplication::messageHandler);
-  
+#endif
   // CMake generated driver removes argv[0], 
   // so let's put a dummy back in
   this->Argv.append("ctkTestApplication");
@@ -75,7 +78,11 @@ ctkTestApplication::ctkTestApplication(int _argc, char** _argv)
 ctkTestApplication::~ctkTestApplication()
 {
   delete this->App;
+#if QT_VERSION > QT_VERSION_CHECK(5,0,0)
+  qInstallMessageHandler(0);
+#else
   qInstallMsgHandler(0);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -110,23 +117,27 @@ int ctkTestApplication::exec(bool reportErrorsOnExit)
 }
 
 //-----------------------------------------------------------------------------
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+void ctkTestApplication::messageHandler(QtMsgType type, const QMessageLogContext &context, const QString& msg)
+#else
 void ctkTestApplication::messageHandler(QtMsgType type, const char *msg)
+#endif
 {
   switch(type)
   {
   case QtDebugMsg:
-    std::cerr << "Debug: " << msg << std::endl;
+    std::cerr << "Debug: " << msg.toStdString() << std::endl;
     break;
   case QtWarningMsg:
-    std::cerr << "Warning: " << msg << std::endl;
+    std::cerr << "Warning: " << msg.toStdString() << std::endl;
     Error++;
     break;
   case QtCriticalMsg:
-    std::cerr << "Critical: " << msg << std::endl;
+    std::cerr << "Critical: " << msg.toStdString() << std::endl;
     Error++;
     break;
   case QtFatalMsg:
-    std::cerr << "Fatal: " << msg << std::endl;
+    std::cerr << "Fatal: " << msg.toStdString() << std::endl;
     abort();
   }
 }
@@ -161,7 +172,7 @@ void ctkTestApplication::keyUp(QWidget* w, Qt::Key key, Qt::KeyboardModifiers mo
     off = 'A';
   if(key >= Qt::Key_A && key <= Qt::Key_Z)
     {
-    text.append(QChar::fromAscii(key - Qt::Key_A + off));
+    text.append(QChar::fromLatin1(key - Qt::Key_A + off));
     }
   QKeyEvent e(QEvent::KeyRelease, key, mod, text);
   if(!simulateEvent(w, &e))
@@ -182,7 +193,7 @@ void ctkTestApplication::keyDown(QWidget* w, Qt::Key key, Qt::KeyboardModifiers 
     off = 'A';
   if(key >= Qt::Key_A && key <= Qt::Key_Z)
     {
-    text.append(QChar::fromAscii(key - Qt::Key_A + off));
+    text.append(QChar::fromLatin1(key - Qt::Key_A + off));
     }
   QKeyEvent e(QEvent::KeyPress, key, mod, text);
   if(!simulateEvent(w, &e))

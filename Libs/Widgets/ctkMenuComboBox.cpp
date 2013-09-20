@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QAbstractItemView>
 #include <QActionEvent>
 #include <QCompleter>
 #include <QDebug>

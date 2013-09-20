@@ -21,8 +21,8 @@
 // Qt includes
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QPointer>
 #include <QVariant>
-#include <QWeakPointer>
 
 // CTK includes
 #include "ctkRangeSlider.h"
@@ -65,7 +65,7 @@ public:
   double MinValue;
   double MaxValue;
 
-  QWeakPointer<ctkValueProxy> Proxy;
+  QPointer<ctkValueProxy> Proxy;
 
 private:
   Q_DISABLE_COPY(ctkDoubleRangeSliderPrivate);

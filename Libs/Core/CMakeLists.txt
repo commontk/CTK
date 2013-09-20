@@ -99,6 +99,7 @@ set(KIT_MOC_SRCS
   ctkCommandLineParser.h
   ctkErrorLogFDMessageHandler_p.h
   ctkErrorLogModel.h
+  ctkErrorLogQtMessageHandler.h
   ctkLinearValueProxy.h
   ctkLogger.h
   ctkHistogram.h

@@ -37,7 +37,7 @@ if(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
 
     if(NOT DEFINED VTK_DIR)
 
-      set(revision_tag v5.10.0)
+      set(revision_tag v5.10.1-qt5)
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()
@@ -49,7 +49,7 @@ if(${add_project} OR CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
         set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
                           GIT_TAG ${revision_tag})
       else()
-        set(location_args GIT_REPOSITORY "${git_protocol}://vtk.org/VTK.git"
+        set(location_args GIT_REPOSITORY "${git_protocol}://github.com/finetjul/VTK.git"
                           GIT_TAG ${revision_tag})
       endif()
 

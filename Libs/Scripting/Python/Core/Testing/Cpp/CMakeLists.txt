@@ -13,9 +13,15 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 include_directories(${CMAKE_SOURCE_DIR}/Libs/Testing
                     ${CMAKE_CURRENT_BINARY_DIR})
 
-QT4_GENERATE_MOCS(
-  ctkAbstractPythonManagerTest.cpp
-  )
+if (CTK_QT_VERSION VERSION_GREATER "4")
+  QT5_GENERATE_MOCS(
+    ctkAbstractPythonManagerTest.cpp
+    )
+else()
+  QT4_GENERATE_MOCS(
+    ctkAbstractPythonManagerTest.cpp
+    )
+endif()
 
 add_executable(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})

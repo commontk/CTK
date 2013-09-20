@@ -7,3 +7,6 @@
 set(target_libraries
   CTKCore
   )
+if (CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND target_libraries Qt5Xml_LIBRARIES Qt5OpenGL_LIBRARIES)
+endif()

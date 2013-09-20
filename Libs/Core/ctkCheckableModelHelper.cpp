@@ -22,8 +22,8 @@
 #include <QAbstractItemModel>
 #include <QApplication>
 #include <QDebug>
+#include <QPointer>
 #include <QStandardItemModel>
-#include <QWeakPointer>
 
 // CTK includes
 #include "ctkCheckableModelHelper.h"
@@ -56,7 +56,7 @@ public:
 
   void forceCheckability(const QModelIndex& index);
 
-  QWeakPointer<QAbstractItemModel> Model;
+  QPointer<QAbstractItemModel> Model;
   QModelIndex         RootIndex;
   Qt::Orientation     Orientation;
   bool                HeaderIsUpdating;

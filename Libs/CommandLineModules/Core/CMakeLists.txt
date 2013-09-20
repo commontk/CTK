@@ -57,10 +57,17 @@ set(KIT_MOC_SRCS
   ctkCmdLineModuleManager.h
 )
 
-QT4_GENERATE_MOCS(
-  ctkCmdLineModuleFrontend.h
-  ctkCmdLineModuleXmlProgressWatcher.h
-)
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  QT5_GENERATE_MOCS(
+    ctkCmdLineModuleFrontend.h
+    ctkCmdLineModuleXmlProgressWatcher.h
+    )
+else()
+  QT4_GENERATE_MOCS(
+    ctkCmdLineModuleFrontend.h
+    ctkCmdLineModuleXmlProgressWatcher.h
+    )
+endif()
 
 #list(APPEND KIT_SRCS
 #  ${CMAKE_CURRENT_BINARY_DIR}/moc_ctkCmdLineModuleXmlProgressWatcher.h
