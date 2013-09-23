@@ -180,6 +180,13 @@ void ctkErrorLogWidget::setErrorLogModel(ctkErrorLogModel * newErrorLogModel)
 }
 
 // --------------------------------------------------------------------------
+void ctkErrorLogWidget::setColumnHidden(int columnId, bool hidden) const
+{
+  Q_D(const ctkErrorLogWidget);
+  d->ErrorLogTableView->setColumnHidden(columnId, hidden);
+}
+
+// --------------------------------------------------------------------------
 void ctkErrorLogWidget::setAllEntriesVisible(bool visibility)
 {
   this->setErrorEntriesVisible(visibility);
