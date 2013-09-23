@@ -20,8 +20,10 @@
 
 // Qt includes
 #include <QDebug>
+#include <QFileSystemModel>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QSortFilterProxyModel>
 #include <QStyle>
 
 // CTK includes
@@ -51,6 +53,7 @@ public:
 #endif
   // TODO expose DisplayAbsolutePath into the API
   bool         DisplayAbsolutePath;
+  QFileDialog::AcceptMode AcceptMode;
 };
 
 //-----------------------------------------------------------------------------
@@ -63,6 +66,7 @@ ctkDirectoryButtonPrivate::ctkDirectoryButtonPrivate(ctkDirectoryButton& object)
   this->DialogOptions = ctkDirectoryButton::ShowDirsOnly;
 #endif
   this->DisplayAbsolutePath = true;
+  this->AcceptMode = QFileDialog::AcceptOpen;
 }
 
 //-----------------------------------------------------------------------------
@@ -229,20 +233,64 @@ const ctkDirectoryButton::Options& ctkDirectoryButton::options()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkDirectoryButton::browse()
+QFileDialog::AcceptMode ctkDirectoryButton::acceptMode() const
+{
+  Q_D(const ctkDirectoryButton);
+  return d->AcceptMode;
+}
+
+//-----------------------------------------------------------------------------
+void ctkDirectoryButton::setAcceptMode(QFileDialog::AcceptMode mode)
 {
   Q_D(ctkDirectoryButton);
-  QString dir =
-    QFileDialog::getExistingDirectory(
-      this,
-      d->DialogCaption.isEmpty() ? this->toolTip() : d->DialogCaption,
-      d->Directory.path(),
-#ifdef USE_QFILEDIALOG_OPTIONS
-      d->DialogOptions);
-#else
-      QFlags<QFileDialog::Option>(int(d->DialogOptions)));
-#endif
-  // An empty directory means that the user cancelled the dialog.
+  d->AcceptMode = mode;
+}
+
+//-----------------------------------------------------------------------------
+void ctkDirectoryButton::browse()
+{
+  // See https://bugreports.qt-project.org/browse/QTBUG-10244
+  class ExcludeReadOnlyFilterProxyModel : public QSortFilterProxyModel
+  {
+  public:
+    ExcludeReadOnlyFilterProxyModel(QObject *parent):QSortFilterProxyModel(parent)
+    {
+    }
+    virtual bool filterAcceptsRow(int source_row, const QModelIndex & source_parent) const
+    {
+      QString filePath =
+          this->sourceModel()->data(sourceModel()->index(source_row, 0, source_parent),
+          QFileSystemModel::FilePathRole).toString();
+      return QFileInfo(filePath).isWritable();
+    }
+  };
+
+  Q_D(ctkDirectoryButton);
+  QScopedPointer<QFileDialog> fileDialog(
+          new QFileDialog(this, d->DialogCaption.isEmpty() ? this->toolTip() :
+          d->DialogCaption, d->Directory.path()));
+  #ifdef USE_QFILEDIALOG_OPTIONS
+    fileDialog->setOptions(d->DialogOptions);
+  #else
+    fileDialog->setOptions(QFlags<QFileDialog::Option>(int(d->DialogOptions)));
+  #endif
+    fileDialog->setAcceptMode(d->AcceptMode);
+    fileDialog->setFileMode(QFileDialog::DirectoryOnly);
+
+  if (d->AcceptMode == QFileDialog::AcceptSave)
+    {
+    // Ideally "Choose" button of QFileDialog should be disabled if a read-only folder
+    // is selected and the acceptMode was AcceptSave.
+    // This is captured in https://github.com/commontk/CTK/issues/365
+    fileDialog->setProxyModel(new ExcludeReadOnlyFilterProxyModel(fileDialog.data()));
+    }
+
+  QString dir;
+  if (fileDialog->exec())
+    {
+    dir = fileDialog->selectedFiles().at(0);
+    }
+  // An empty directory means either that the user cancelled the dialog or the selected directory is readonly
   if (dir.isEmpty())
     {
     return;
