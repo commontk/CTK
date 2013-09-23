@@ -217,6 +217,7 @@ public:
 ctkErrorLogModelPrivate::ctkErrorLogModelPrivate(ctkErrorLogModel& object)
   : q_ptr(&object)
 {
+  this->StandardItemModel.setColumnCount(ctkErrorLogModel::MaxColumn);
   this->LogEntryGrouping = false;
   this->AsynchronousLogging = true;
   this->AddingEntry = false;
