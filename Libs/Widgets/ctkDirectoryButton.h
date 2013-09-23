@@ -43,6 +43,13 @@ class ctkDirectoryButtonPrivate;
 class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
 {
   Q_OBJECT
+  /// This property holds the accept mode of the dialog.
+  /// The action mode defines whether the dialog is for opening or saving files.
+  /// By default, this property is set to AcceptOpen.
+  /// If set to QFileDialog::AcceptSave mode, the regular behavior of QFileDialog will be extended
+  /// to prevent user from selecting read-only folder. The caveat is that writable folder existing
+  /// in a readonly one won't be selectable.
+  Q_PROPERTY(QFileDialog::AcceptMode acceptMode READ acceptMode WRITE setAcceptMode)
   Q_PROPERTY(QString directory READ directory WRITE setDirectory NOTIFY directoryChanged USER true)
   /// This property holds the title of the file dialog used to select a new directory
   /// If caption is not set, internally use QWidget::tooltip()
@@ -128,6 +135,12 @@ public:
   const Options& options()const;
 #endif
 
+  /// \sa setAcceptMode QFileDialog::AcceptMode
+  QFileDialog::AcceptMode acceptMode() const;
+
+  /// \sa acceptMode QFileDialog::AcceptMode
+  void setAcceptMode(QFileDialog::AcceptMode mode);
+
 public Q_SLOTS:
   /// browse() opens a pop up where the user can select a new directory for the
   /// button. browse() is automatically called when the button is clicked.
@@ -146,6 +159,7 @@ Q_SIGNALS:
   /// the current directory.
   /// \sa directoryChanged
   void directorySelected(const QString&);
+
 protected:
   QScopedPointer<ctkDirectoryButtonPrivate> d_ptr;
 
