@@ -57,6 +57,7 @@ set(KIT_SRCS
   ctkConsole_p.h
   ctkCoordinatesWidget.cpp
   ctkCoordinatesWidget.h
+  ctkCoordinatesWidget_p.h
   ctkCrosshairLabel.cpp
   ctkCrosshairLabel.h
   ctkDateRangeWidget.cpp
@@ -216,6 +217,7 @@ set(KIT_MOC_SRCS
   ctkConsole.h
   ctkConsole_p.h
   ctkCoordinatesWidget.h
+  ctkCoordinatesWidget_p.h
   ctkCrosshairLabel.h
   ctkDateRangeWidget.h
   ctkDirectoryButton.h
