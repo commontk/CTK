@@ -157,9 +157,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     // Set to true if there's a current selection
     const bool selection = text_cursor.anchor() != text_cursor.position();
     // Set to true if the cursor overlaps the history area
-    const bool history_area =
-      text_cursor.anchor() < this->InteractivePosition
-      || text_cursor.position() < this->InteractivePosition;
+    const bool history_area = this->isCursorInHistoryArea();
 
     // Allow copying anywhere in the console ...
     if(e->key() == Qt::Key_C && e->modifiers() == Qt::ControlModifier)
@@ -185,48 +183,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       return;
       }
 
-    // Allow paste only if the selection is in the interactive area ...
-    if(e->key() == Qt::Key_V && e->modifiers() == Qt::ControlModifier)
-      {
-      if(!history_area)
-        {
-        const QMimeData* const clipboard = QApplication::clipboard()->mimeData();
-        const QString text = clipboard->text();
-        if(!text.isNull())
-          {
-          if (this->EditorHints & ctkConsole::SplitCopiedTextByLine)
-            {
-            QStringList lines = text.split(QRegExp("(?:\r\n|\r|\n)"));
-            for(int i=0; i < lines.count(); ++i)
-              {
-              this->switchToUserInputTextColor(&text_cursor);
-              text_cursor.insertText(lines.at(i));
-              this->updateCommandBuffer();
-              if (i < lines.count() - 1)
-                {
-                this->internalExecuteCommand();
-                }
-              }
-            }
-          else
-            {
-            this->switchToUserInputTextColor(&text_cursor);
-            text_cursor.insertText(text);
-            this->updateCommandBuffer();
-            }
-          }
-        }
-
-      e->accept();
-      return;
-      }
-
     // Force the cursor back to the interactive area
     if(history_area && e->key() != Qt::Key_Control)
       {
       text_cursor.setPosition(this->documentEnd());
       this->setTextCursor(text_cursor);
-
       }
 
     switch(e->key())
@@ -647,6 +608,63 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
 void ctkConsolePrivate::onScrollBarValueChanged(int value)
 {
   this->ScrollbarAtBottom = (this->verticalScrollBar()->maximum() == value);
+}
+
+//-----------------------------------------------------------------------------
+bool ctkConsolePrivate::isCursorInHistoryArea()const
+{
+  return this->textCursor().anchor() < this->InteractivePosition
+    || this->textCursor().position() < this->InteractivePosition;
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::insertFromMimeData(const QMimeData* source)
+{
+  if (this->isCursorInHistoryArea())
+    {
+    QTextCursor textCursor = this->textCursor();
+    textCursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
+    this->setTextCursor(textCursor);
+    }
+  const QString text = source->text();
+  if (!text.isEmpty())
+    {
+    this->pasteText(text);
+    }
+  else
+    {
+    this->Superclass::insertFromMimeData(source);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::pasteText(const QString& text)
+{
+  if(text.isNull())
+    {
+    return;
+    }
+  QTextCursor textCursor = this->textCursor();
+  if (this->EditorHints & ctkConsole::SplitCopiedTextByLine)
+    {
+    QStringList lines = text.split(QRegExp("(?:\r\n|\r|\n)"));
+    for(int i=0; i < lines.count(); ++i)
+      {
+      this->switchToUserInputTextColor(&textCursor);
+      textCursor.insertText(lines.at(i));
+      this->updateCommandBuffer();
+      if (i < lines.count() - 1)
+        {
+        this->internalExecuteCommand();
+        }
+      }
+    }
+  else
+    {
+    this->switchToUserInputTextColor(&textCursor);
+    textCursor.insertText(text);
+    this->updateCommandBuffer();
+    }
 }
 
 //-----------------------------------------------------------------------------
