@@ -23,11 +23,11 @@
 
 // Qt includes
 #include <QWidget>
-#include <QWeakPointer>
 
 // CTK includes
 #include "ctkDoubleSpinBox.h"
 #include "ctkWidgetsExport.h"
+class ctkCoordinatesWidgetPrivate;
 
 /// \ingroup Widgets
 ///
@@ -162,42 +162,15 @@ Q_SIGNALS:
   void coordinatesChanged(double* pos);
 
 protected Q_SLOTS:
-  void updateCoordinate(double);
   void updateCoordinates();
-  void updateDecimals();
-  void updateOtherDecimals(int);
-  void setTemporaryDecimals(int);
-  void onValueProxyAboutToBeModified();
-  void onValueProxyModified();
+  void updateCoordinate(double coordinate);
 
 protected:
-  void addSpinBox();
+  QScopedPointer<ctkCoordinatesWidgetPrivate> d_ptr;
 
-  /// Normalize coordinates vector and return the previous norm.
-  static double normalize(double* coordinates, int dimension);
-
-  /// Compute the norm of a coordinates \a dimension vector
-  static double norm(double* coordinates, int dimension);
-  static double squaredNorm(double* coordinates, int dimension);
-
-  /// Return the ideal number of decimals based on the spinBox value or
-  /// 16 if there is no "good" number of decimals.
-  /// \sa ctk::significantDecimals()
-  static int spinBoxSignificantDecimals(ctkDoubleSpinBox* spinBox);
-
-  int     Decimals;
-  ctkDoubleSpinBox::DecimalsOptions DecimalsOption;
-  double  SingleStep;
-  double  Minimum;
-  double  Maximum;
-  bool    Normalized;
-  int     Dimension;
-  ctkDoubleSpinBox::SizeHintPolicy SizeHintPolicy;
-
-  double* Coordinates;
-  QList<int> LastUserEditedCoordinates;
-  bool    ChangingDecimals;
-  QWeakPointer<ctkValueProxy> Proxy;
+private:
+  Q_DECLARE_PRIVATE(ctkCoordinatesWidget);
+  Q_DISABLE_COPY(ctkCoordinatesWidget);
 };
 
 #endif
