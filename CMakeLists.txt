@@ -142,6 +142,9 @@ endif()
 if(NOT CTK_INSTALL_LIB_DIR)
   set(CTK_INSTALL_LIB_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
 endif()
+if(NOT CTK_INSTALL_PACKAGE_DIR)
+  set(CTK_INSTALL_PACKAGE_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
+endif()
 if(NOT CTK_INSTALL_INCLUDE_DIR)
   set(CTK_INSTALL_INCLUDE_DIR "include/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
 endif()
@@ -176,6 +179,41 @@ set(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
 #-----------------------------------------------------------------------------
 # CMake function(s) and macro(s)
 #
+
+INSTALL(FILES
+    ${CTK_CMAKE_DIR}/ctkMacroParseArguments.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroSetPaths.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroListFilter.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroOptionUtils.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroBuildLib.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroBuildLibWrapper.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroBuildPlugin.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroBuildApp.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroBuildQtPlugin.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroCompilePythonScript.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroWrapPythonQt.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroSetupQt.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroTargetLibraries.cmake
+    ${CTK_CMAKE_DIR}/ctkFunctionExtractOptionNameAndValue.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroValidateBuildOptions.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroAddCtkLibraryOptions.cmake
+    ${CTK_CMAKE_DIR}/ctkFunctionGenerateDGraphInput.cmake
+    ${CTK_CMAKE_DIR}/ctkFunctionGenerateProjectXml.cmake
+    ${CTK_CMAKE_DIR}/ctkFunctionGeneratePluginManifest.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroGeneratePluginResourceFile.cmake
+    ${CTK_CMAKE_DIR}/ctkFunctionCheckCompilerFlags.cmake
+    ${CTK_CMAKE_DIR}/ctkFunctionGetIncludeDirs.cmake
+    ${CTK_CMAKE_DIR}/ctkFunctionGetLibraryDirs.cmake
+    ${CTK_CMAKE_DIR}/ctkFunctionGetGccVersion.cmake
+    ${CTK_CMAKE_DIR}/ctkFunctionCompileSnippets.cmake
+    ${CTK_CMAKE_DIR}/ctkScriptMocPythonQtWrapper.cmake
+    ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_Light.cmake
+    ${CTK_CMAKE_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in 
+    Libs/ctkExport.h.in
+    DESTINATION ${CTK_INSTALL_PACKAGE_DIR}/CMake
+    COMPONENT Development
+    )
+
 include(CMake/ctkMacroParseArguments.cmake)
 include(CMake/ctkMacroSetPaths.cmake)
 include(CMake/ctkMacroListFilter.cmake)
