@@ -46,6 +46,11 @@ QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT grabVTKWidget(QWidget* widget, QRect
 /// Convert a vtkImageData into a QImage
 QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT vtkImageDataToQImage(vtkImageData* imageData);
 
+///
+/// \ingroup Visualization_VTK_Widgets
+/// Convert a QImage into a vtkImageData.
+bool CTK_VISUALIZATION_VTK_WIDGETS_EXPORT qImageToVtkImageData(const QImage& qImage, vtkImageData* vtkimage);
+
 }
 
 #endif

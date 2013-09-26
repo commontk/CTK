@@ -30,6 +30,8 @@
 // VTK includes
 #include <QVTKWidget.h>
 #include <vtkImageData.h>
+#include <vtkNew.h>
+#include <vtkQImageToImageSource.h>
 
 //----------------------------------------------------------------------------
 QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
@@ -89,4 +91,19 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
     rgbPtr -= width * 2;
     }
   return image;
+}
+
+//----------------------------------------------------------------------------
+bool ctk::qImageToVtkImageData(const QImage& qImage, vtkImageData* vtkimage)
+{
+  if (vtkimage == 0)
+    {
+    return false;
+    }
+  QImage img = qImage;
+  vtkNew<vtkQImageToImageSource> converter;
+  converter->SetQImage(&img);
+  converter->Update();
+  vtkimage = converter->GetOutput();
+  return true;
 }
