@@ -282,7 +282,7 @@ bool ctkVTKConnection::isValid(vtkObject* vtk_obj, unsigned long vtk_event,
     {
     return false;
     }
-  if (qt_slot == 0 || strlen(qt_slot) == 0)
+  if (qt_slot == 0 || qt_slot[0] == 0)
     {
     return false;
     }

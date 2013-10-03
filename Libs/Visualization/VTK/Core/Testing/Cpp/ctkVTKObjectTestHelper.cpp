@@ -27,6 +27,8 @@
 
 // VTK includes
 #include <vtkObject.h>
+#include <vtkTimerLog.h>
+#include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
 class ctkVTKObjectTestPrivate
@@ -91,6 +93,24 @@ bool ctkVTKObjectTest::test()
     qDebug() << "ctkVTKObject::qvtkConnect() failed: "<< connection;
     return false;
     }
+
+  int numberOfConnections=10000;
+  qCritical() << "Create "<<numberOfConnections<<" connections...";
+  vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
+  timerLog->StartTimer();
+  for (int i = 0; i < numberOfConnections; ++i)
+    {
+    connection = this->qvtkConnect(object, i, 
+                                 this, SLOT(onVTKObjectModifiedPublic()));
+    }
+  for (int i = 0; i < numberOfConnections; ++i)
+    {
+    connection = this->qvtkDisconnect(object, i, 
+                                 this, SLOT(onVTKObjectModifiedPublic()));
+    }
+  timerLog->StopTimer();
+  double t1 = timerLog->GetElapsedTime();
+  qCritical() << "  elapsed time: " << t1 << "seconds";
 
   object->Modified();
 
