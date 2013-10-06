@@ -21,13 +21,14 @@
 // ctk includes
 #include "ctkDICOMTableManager.h"
 #include "ctkDICOMTableView.h"
+#include "ui_ctkDICOMTableManager.h"
 
 // Qt includes
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QSplitter>
 
-class ctkDICOMTableManagerPrivate
+class ctkDICOMTableManagerPrivate : public Ui_ctkDICOMTableManager
 {
   Q_DECLARE_PUBLIC(ctkDICOMTableManager)
 
@@ -37,14 +38,6 @@ protected:
 public:
   ctkDICOMTableManagerPrivate(ctkDICOMTableManager& obj);
   ~ctkDICOMTableManagerPrivate();
-
-  QVBoxLayout* layout;
-  QBoxLayout* layoutTables;
-  QSplitter* tableSplitter;
-
-  ctkDICOMTableView* patientsTable;
-  ctkDICOMTableView* studiesTable;
-  ctkDICOMTableView* seriesTable;
 
   void init();
   void setCTKDICOMDatabase(ctkDICOMDatabase *db);
@@ -65,13 +58,12 @@ void ctkDICOMTableManagerPrivate::init()
 {
   //setup UI
   Q_Q(ctkDICOMTableManager);
+  this->setupUi(q);
 
-  this->layout = new QVBoxLayout();
-  this->layoutTables = new QBoxLayout(QBoxLayout::LeftToRight);
-  this->patientsTable = new ctkDICOMTableView(q, "Patients");
-  this->studiesTable = new ctkDICOMTableView(q, "Studies");
+  this->patientsTable->setQueryTableName("Patients");
+  this->studiesTable->setQueryTableName("Studies");
   this->studiesTable->setQueryForeignKey("PatientsUID");
-  this->seriesTable = new ctkDICOMTableView(q, "Series");
+  this->seriesTable->setQueryTableName("Series");
   this->seriesTable->setQueryForeignKey("StudyInstanceUID");
 
   // For propagating patient selection changes
@@ -91,24 +83,6 @@ void ctkDICOMTableManagerPrivate::init()
                    q, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)));
   QObject::connect(this->seriesTable, SIGNAL(selectionChanged(const QStringList&)),
                    q, SIGNAL(seriesSelectionChanged(const QStringList&)));
-
-  this->patientsTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-  this->studiesTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-  this->seriesTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-
-  tableSplitter = new QSplitter();
-
-  tableSplitter->addWidget(this->patientsTable);
-  tableSplitter->addWidget(this->studiesTable);
-  tableSplitter->addWidget(this->seriesTable);
-
-  tableSplitter->setStyleSheet("QSplitter::handle {background-color: rgb(200,200,200);}"
-                               "QSplitter::handle:horizontal {width: 2px;}"
-                               "QSplitter::handle:vertical {height: 2px;}");
-
-  this->layout->addWidget(this->tableSplitter);
-
-  q->setLayout(layout);
 }
 
 void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(ctkDICOMDatabase* db)

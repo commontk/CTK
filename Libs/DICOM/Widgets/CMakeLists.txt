@@ -68,6 +68,7 @@ set(KIT_UI_FORMS
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMQueryWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget.ui
+  Resources/UI/ctkDICOMTableManager.ui
   Resources/UI/ctkDICOMTableView.ui
 )
 
