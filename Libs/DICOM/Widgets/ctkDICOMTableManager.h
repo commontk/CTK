@@ -47,7 +47,10 @@ public:
   virtual ~ctkDICOMTableManager();
 
   void setCTKDICOMDatabase(ctkDICOMDatabase* db);
-  void setOrientation(const Qt::Orientation &o);
+
+  Q_PROPERTY(Qt::Orientation tableOrientation READ tableOrientation WRITE setTableOrientation)
+  void setTableOrientation(const Qt::Orientation&);
+  Qt::Orientation tableOrientation();
 
 Q_SIGNALS:
   // Signals for propagating selection changes of the different tables
