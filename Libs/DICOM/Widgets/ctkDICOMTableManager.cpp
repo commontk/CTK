@@ -47,7 +47,7 @@ public:
   ctkDICOMTableView* seriesTable;
 
   void init();
-  void setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db);
+  void setCTKDICOMDatabase(ctkDICOMDatabase *db);
 };
 
 ctkDICOMTableManagerPrivate::ctkDICOMTableManagerPrivate(ctkDICOMTableManager &obj)
@@ -111,7 +111,7 @@ void ctkDICOMTableManagerPrivate::init()
   q->setLayout(layout);
 }
 
-void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db)
+void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(ctkDICOMDatabase* db)
 {
   this->patientsTable->setCTKDicomDataBase(db);
   this->studiesTable->setCTKDicomDataBase(db);
@@ -131,7 +131,7 @@ ctkDICOMTableManager::ctkDICOMTableManager(QWidget *parent)
   d->init();
 }
 
-ctkDICOMTableManager::ctkDICOMTableManager(QSharedPointer<ctkDICOMDatabase> db, QWidget *parent)
+ctkDICOMTableManager::ctkDICOMTableManager(ctkDICOMDatabase *db, QWidget *parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableManagerPrivate(*this))
 {
@@ -145,7 +145,7 @@ ctkDICOMTableManager::~ctkDICOMTableManager()
 
 }
 
-void ctkDICOMTableManager::setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db)
+void ctkDICOMTableManager::setCTKDICOMDatabase(ctkDICOMDatabase* db)
 {
   Q_D(ctkDICOMTableManager);
   d->setCTKDICOMDatabase(db);

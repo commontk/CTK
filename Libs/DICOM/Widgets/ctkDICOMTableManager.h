@@ -43,10 +43,10 @@ public:
   typedef QWidget Superclass;
 
   explicit ctkDICOMTableManager(QWidget* parent = 0);
-  ctkDICOMTableManager(QSharedPointer<ctkDICOMDatabase> db, QWidget* parent = 0);
+  ctkDICOMTableManager(ctkDICOMDatabase* db, QWidget* parent = 0);
   virtual ~ctkDICOMTableManager();
 
-  void setCTKDICOMDatabase(QSharedPointer<ctkDICOMDatabase> db);
+  void setCTKDICOMDatabase(ctkDICOMDatabase* db);
   void setOrientation(const Qt::Orientation &o);
 
 Q_SIGNALS:
