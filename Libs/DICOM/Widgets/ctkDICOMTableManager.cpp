@@ -151,8 +151,14 @@ void ctkDICOMTableManager::setCTKDICOMDatabase(ctkDICOMDatabase* db)
   d->setCTKDICOMDatabase(db);
 }
 
-void ctkDICOMTableManager::setOrientation(const Qt::Orientation &o)
+void ctkDICOMTableManager::setTableOrientation(const Qt::Orientation &o)
 {
   Q_D(ctkDICOMTableManager);
   d->tableSplitter->setOrientation(o);
+}
+
+Qt::Orientation ctkDICOMTableManager::tableOrientation()
+{
+  Q_D(ctkDICOMTableManager);
+  return d->tableSplitter->orientation();
 }
