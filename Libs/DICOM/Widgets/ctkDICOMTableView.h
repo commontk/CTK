@@ -59,7 +59,7 @@ public:
    * @param parent the parent widget
    * @param queryTableName the name of the table of the ctkDICOMDatabase which shall be displayed
    */
-  explicit ctkDICOMTableView (QSharedPointer<ctkDICOMDatabase> ctkDicomDataBase, QWidget* parent = 0, QString queryTableName = "Patients");
+  explicit ctkDICOMTableView (ctkDICOMDatabase* ctkDicomDataBase, QWidget* parent = 0, QString queryTableName = "Patients");
 
   virtual ~ctkDICOMTableView();
 
@@ -67,7 +67,7 @@ public:
    * @brief Setting the ctkDICOMDatabase which shall be queried
    * @param dicomDataBase the underlying database
    */
-  void setCTKDicomDataBase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
+  void setCTKDicomDataBase(ctkDICOMDatabase* dicomDatabase);
 
   /**
    * Setting the table name which shall be used for the database query
