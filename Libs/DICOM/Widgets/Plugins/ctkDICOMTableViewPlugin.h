@@ -18,33 +18,28 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMWidgetsPlugins_h
-#define __ctkDICOMWidgetsPlugins_h
+#ifndef __ctkDICOMTableViewPlugin_h
+#define __ctkDICOMTableViewPlugin_h
 
-// Qt includes
-#include <QDesignerCustomWidgetCollectionInterface>
+// CTK include
+#include "ctkDICOMWidgetsAbstractPlugin.h"
 
-// CTK includes
-#include "ctkDICOMWidgetsPluginsExport.h"
-#include "ctkDICOMQueryRetrieveWidgetPlugin.h"
-#include "ctkDICOMTableViewPlugin.h"
-
-/// \class Group the plugins in one library
-class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMWidgetsPlugins
+class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMTableViewPlugin
   : public QObject
-  , public QDesignerCustomWidgetCollectionInterface
+  , public ctkDICOMWidgetsAbstractPlugin
 {
   Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
-  QList<QDesignerCustomWidgetInterface*> customWidgets() const
-    {
-    QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new ctkDICOMQueryRetrieveWidgetPlugin;
-    plugins << new ctkDICOMTableViewPlugin;
-    return plugins;
-    }
+  ctkDICOMTableViewPlugin(QObject *_parent = 0);
+
+  QWidget *createWidget(QWidget *_parent);
+  QString  domXml() const;
+  QIcon    icon() const;
+  QString  includeFile() const;
+  bool     isContainer() const;
+  QString  name() const;
+
 };
 
 #endif
