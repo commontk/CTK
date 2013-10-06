@@ -15,6 +15,9 @@ set(PLUGIN_SRCS
 
   ctkDICOMQueryRetrieveWidgetPlugin.cpp
   ctkDICOMQueryRetrieveWidgetPlugin.h
+
+  ctkDICOMTableViewPlugin.cpp
+  ctkDICOMTableViewPlugin.h
   )
 
 # Headers that should run through moc
@@ -22,6 +25,7 @@ set(PLUGIN_MOC_SRCS
   ctkDICOMWidgetsPlugins.h
 
   ctkDICOMQueryRetrieveWidgetPlugin.h
+  ctkDICOMTableViewPlugin.h
   )
 
 # Resources
