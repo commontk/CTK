@@ -74,28 +74,23 @@ void ctkDICOMTableManagerPrivate::init()
   this->seriesTable = new ctkDICOMTableView(q, "Series");
   this->seriesTable->setQueryForeignKey("StudyInstanceUID");
 
-  QObject::connect(this->patientsTable, SIGNAL(signalQueryChanged(QStringList)),
-                   this->studiesTable, SLOT(onUpdateQuery(const QStringList&)));//any selection in the study table
-  QObject::connect(this->studiesTable, SIGNAL(signalQueryChanged(QStringList)),
-                   this->seriesTable, SLOT(onUpdateQuery(const QStringList&)));
-
   // For propagating patient selection changes
-  QObject::connect(this->patientsTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SIGNAL(signalPatientsSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  QObject::connect(this->patientsTable, SIGNAL(signalSelectionChanged(const QStringList&)),
-                   q, SIGNAL(signalPatientsSelectionChanged(const QStringList&)));
+  QObject::connect(this->patientsTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+                   q, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)));
+  QObject::connect(this->patientsTable, SIGNAL(selectionChanged(const QStringList&)),
+                   q, SIGNAL(patientsSelectionChanged(const QStringList&)));
 
   // For propagating study selection changes
-  QObject::connect(this->studiesTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SIGNAL(signalStudiesSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  QObject::connect(this->studiesTable, SIGNAL(signalSelectionChanged(const QStringList&)),
-                   q, SIGNAL(signalStudiesSelectionChanged(const QStringList&)));
+  QObject::connect(this->studiesTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+                   q, SIGNAL(studiesSelectionChanged(const QItemSelection&, const QItemSelection&)));
+  QObject::connect(this->studiesTable, SIGNAL(selectionChanged(const QStringList&)),
+                   q, SIGNAL(studiesSelectionChanged(const QStringList&)));
 
   // For propagating series selection changes
-  QObject::connect(this->seriesTable, SIGNAL(signalSelectionChanged(const QItemSelection&, const QItemSelection&)),
-                   q, SIGNAL(signalSeriesSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  QObject::connect(this->seriesTable, SIGNAL(signalSelectionChanged(const QStringList&)),
-                   q, SIGNAL(signalSeriesSelectionChanged(const QStringList&)));
+  QObject::connect(this->seriesTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+                   q, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)));
+  QObject::connect(this->seriesTable, SIGNAL(selectionChanged(const QStringList&)),
+                   q, SIGNAL(seriesSelectionChanged(const QStringList&)));
 
   this->patientsTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
   this->studiesTable->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);

@@ -51,13 +51,13 @@ public:
 
 Q_SIGNALS:
   // Signals for propagating selection changes of the different tables
-  void signalPatientsSelectionChanged(const QItemSelection&, const QItemSelection&);
-  void signalStudiesSelectionChanged(const QItemSelection&, const QItemSelection&);
-  void signalSeriesSelectionChanged(const QItemSelection&, const QItemSelection&);
+  void patientsSelectionChanged(const QItemSelection&, const QItemSelection&);
+  void studiesSelectionChanged(const QItemSelection&, const QItemSelection&);
+  void seriesSelectionChanged(const QItemSelection&, const QItemSelection&);
 
-  void signalPatientsSelectionChanged(const QStringList &uids);
-  void signalStudiesSelectionChanged(const QStringList &uids);
-  void signalSeriesSelectionChanged(const QStringList &uids);
+  void patientsSelectionChanged(const QStringList &uids);
+  void studiesSelectionChanged(const QStringList &uids);
+  void seriesSelectionChanged(const QStringList &uids);
 
 protected:
   QScopedPointer<ctkDICOMTableManagerPrivate> d_ptr;
