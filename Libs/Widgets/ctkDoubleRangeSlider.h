@@ -31,6 +31,7 @@
 
 class ctkRangeSlider;
 class ctkDoubleRangeSliderPrivate;
+class ctkValueProxy;
 
 /// \ingroup Widgets
 /// ctkDoubleRangeSlider is a slider that controls 2 numbers as double.
@@ -71,9 +72,16 @@ public:
   /// This property holds the single step.
   /// The smaller of two natural steps that an abstract sliders provides and
   /// typically corresponds to the user pressing an arrow key
+  /// \sa isValidStep()
   void setSingleStep(double ss);
   double singleStep()const;
-  
+
+  /// Return true if the step can be handled by the slider, false otherwise.
+  /// An invalid step is a step that can't be used to convert from double
+  /// to int (too large or too small).
+  /// \sa singleStep
+  bool isValidStep(double step)const;
+
   /// 
   /// This property holds the interval between tickmarks.
   /// This is a value interval, not a pixel interval. If it is 0, the slider
@@ -169,6 +177,11 @@ public:
   bool symmetricMoves()const; 
   void setSymmetricMoves(bool symmetry);
 
+  /// Set/Get the value proxy of the internal range slider.
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
+
 Q_SIGNALS:
   ///
   /// This signal is emitted when the slider minimum value has changed, 
@@ -246,6 +259,9 @@ protected Q_SLOTS:
   void onMaxPosChanged(int value);
   void onPositionsChanged(int min, int max);
   void onRangeChanged(int min, int max);
+
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 
 protected:
   ctkRangeSlider* slider()const;

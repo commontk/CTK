@@ -23,8 +23,10 @@
 
 // Qt includes
 #include <QWidget>
+#include <QWeakPointer>
 
 // CTK includes
+#include "ctkDoubleSpinBox.h"
 #include "ctkWidgetsExport.h"
 
 /// \ingroup Widgets
@@ -43,12 +45,31 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   /// False by default.
   Q_PROPERTY(bool normalized READ isNormalized WRITE setNormalized)
 
+  /// This property controls how many decimals should be displayed by the
+  /// spinboxes. This number might not be used depending on decimalsOption.
+  /// In general, the coordinatesWidget tries to use the same number of
+  /// decimals for all the spinboxes except if numbers require more decimals.
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  /// This property provides more controls over the decimals.
+  /// \sa ctkDoubleSpinBox::DecimalsOptions, decimals
+  Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
+
   Q_PROPERTY(double singleStep  READ singleStep WRITE setSingleStep STORED false)
+  /// This property controls the minimum value of the spinboxes.
+  /// No limit (-max double) by default.
+  /// \sa minimum(), setMinimum(), maximum, sizeHintPolicy
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
+  /// This property the maximum value of the spinboxes.
+  /// No limit (max double) by default.
+  /// \sa maximum(), setMaximum(), minimum, sizeHintPolicy
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
 
   Q_PROPERTY(QString coordinates READ coordinatesAsString WRITE setCoordinatesAsString)
+
+  /// This property controls the size hint of the spinboxes.
+  /// ctkDoubleSpinBox::SizeHintByValue by default
+  /// \sa ctkDoubleSpinBox::SizeHintPolicy
+  Q_PROPERTY(ctkDoubleSpinBox::SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy)
 
 public:
   explicit ctkCoordinatesWidget(QWidget* parent = 0);
@@ -62,6 +83,13 @@ public:
   /// Get the number of decimals of each coordinate spin box
   /// The default number of decimals is 3.
   int decimals() const;
+
+  /// Return the decimalsOption property value
+  /// \sa decimalsOption
+  ctkDoubleSpinBox::DecimalsOptions decimalsOption()const;
+  /// Set the decimalsOption property value.
+  /// \sa decimalsOption
+  void setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions option);
 
   /// Set/Get the single step of each coordinate spin box
   /// The default single step is 1.
@@ -77,6 +105,10 @@ public:
   /// The default maximum is 100000.
   void setMaximum(double minimum);
   double maximum() const;
+
+  /// Set the minimum and maximum of each coordinate spinbox at once.
+  /// \sa minimum, maximum
+  void setRange(double minimum, double maximum);
 
   /// Change the normalized property. If \a normalize is true, it normalizes
   /// the current coordinates, the range of possible values is reset to [-1, 1].
@@ -102,6 +134,20 @@ public:
   /// Convenient function that sets up to 4 elements of the coordinates.
   void setCoordinates(double x, double y = 0., double z = 0., double w = 0.);
 
+  /// Set the sizeHintPolicy property value.
+  /// \sa sizeHintPolicy
+  void setSizeHintPolicy(ctkDoubleSpinBox::SizeHintPolicy newSizeHintPolicy);
+  /// Return the sizeHintPolicy property value.
+  /// \sa sizeHintPolicy
+  ctkDoubleSpinBox::SizeHintPolicy sizeHintPolicy()const;
+
+  /// Set/Get the value proxy of the spinboxes used to display the coordinates.
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
+
+  /// Return the spinbox identitfied by id
+  ctkDoubleSpinBox* spinBox(int id);
 public Q_SLOTS:
   void normalize();
 
@@ -118,6 +164,11 @@ Q_SIGNALS:
 protected Q_SLOTS:
   void updateCoordinate(double);
   void updateCoordinates();
+  void updateDecimals();
+  void updateOtherDecimals(int);
+  void setTemporaryDecimals(int);
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 
 protected:
   void addSpinBox();
@@ -129,14 +180,24 @@ protected:
   static double norm(double* coordinates, int dimension);
   static double squaredNorm(double* coordinates, int dimension);
 
+  /// Return the ideal number of decimals based on the spinBox value or
+  /// 16 if there is no "good" number of decimals.
+  /// \sa ctk::significantDecimals()
+  static int spinBoxSignificantDecimals(ctkDoubleSpinBox* spinBox);
+
   int     Decimals;
+  ctkDoubleSpinBox::DecimalsOptions DecimalsOption;
   double  SingleStep;
   double  Minimum;
   double  Maximum;
   bool    Normalized;
   int     Dimension;
+  ctkDoubleSpinBox::SizeHintPolicy SizeHintPolicy;
+
   double* Coordinates;
   QList<int> LastUserEditedCoordinates;
+  bool    ChangingDecimals;
+  QWeakPointer<ctkValueProxy> Proxy;
 };
 
 #endif

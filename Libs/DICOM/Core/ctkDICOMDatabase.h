@@ -26,7 +26,7 @@
 #include <QStringList>
 #include <QSqlDatabase>
 
-#include "ctkDICOMDataset.h"
+#include "ctkDICOMItem.h"
 #include "ctkDICOMCoreExport.h"
 
 class QDateTime;
@@ -177,9 +177,9 @@ public:
   ///                  does only make sense if a full object is received.
   /// @param @generateThumbnail If true, a thumbnail is generated.
   ///
-  Q_INVOKABLE void insert( const ctkDICOMDataset& ctkDataset,
+  Q_INVOKABLE void insert( const ctkDICOMItem& ctkDataset,
                               bool storeFile, bool generateThumbnail);
-  void insert ( DcmDataset *dataset,
+  void insert ( DcmItem *item,
                               bool storeFile = true, bool generateThumbnail = true);
   Q_INVOKABLE void insert ( const QString& filePath,
                             bool storeFile = true, bool generateThumbnail = true,
@@ -233,6 +233,24 @@ public:
 
 
 Q_SIGNALS:
+  /// Things inserted to database.
+  /// patientAdded arguments:
+  ///  - int: database index of patient (unique) within CTK database
+  ///  - QString: patient ID (not unique across institutions)
+  ///  - QString: patient Name (not unique)
+  ///  - QString: patient Birth Date (not unique)
+  void patientAdded(int, QString, QString, QString);
+  /// studyAdded arguments:
+  ///  - studyUID (unique)
+  void studyAdded(QString);
+  /// seriesAdded arguments:
+  ///  - seriesUID (unique)
+  void seriesAdded(QString);
+  /// instance UID is provided
+  /// instanceAdded arguments:
+  ///  - instanceUID (unique)
+  void instanceAdded(QString);
+  /// Indicates that an in-memory database has been updated
   void databaseChanged();
   /// Indicates that the schema is about to be updated and how many files will be processed
   void schemaUpdateStarted(int);

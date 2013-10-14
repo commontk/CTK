@@ -30,6 +30,7 @@
 #include "ctkWidgetsExport.h"
 
 class ctkDoubleSliderPrivate;
+class ctkValueProxy;
 
 /// \ingroup Widgets
 /// ctkDoubleSlider is a QSlider that controls doubles instead of integers.
@@ -43,7 +44,7 @@ class ctkDoubleSliderPrivate;
 class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(double value READ value WRITE setValue)
+  Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
   Q_PROPERTY(double sliderPosition READ sliderPosition WRITE setSliderPosition)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
@@ -54,6 +55,8 @@ class CTK_WIDGETS_EXPORT ctkDoubleSlider : public QWidget
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
   Q_PROPERTY(QString handleToolTip READ handleToolTip WRITE setHandleToolTip)
+  Q_PROPERTY(bool invertedAppearance READ invertedAppearance WRITE setInvertedAppearance)
+  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
 
 public:
   /// Superclass typedef
@@ -101,8 +104,15 @@ public:
   /// The smaller of two natural steps that an abstract sliders provides and
   /// typically corresponds to the user pressing an arrow key
   /// Default value is 1.
+  /// \sa isValidStep()
   void setSingleStep(double step);
   double singleStep()const;
+
+  /// Return true if the step can be handled by the slider, false otherwise.
+  /// An invalid step is a step that can't be used to convert from double
+  /// to int (too large or too small).
+  /// \sa singleStep
+  bool isValidStep(double step)const;
 
   /// 
   /// This property holds the page step.
@@ -129,7 +139,10 @@ public:
   
   /// 
   /// This property holds the current slider position.
-  /// If tracking is enabled (the default), this is identical to value.
+  /// If there is no proxy installed and tracking is enabled (the default),
+  /// this is identical to value.
+  /// With a proxy installed, it allows to modify the proxy value.
+  /// \sa value(), setValue(), setValueProxy(), valueProxy()
   double sliderPosition()const;
   void setSliderPosition(double);
 
@@ -153,6 +166,27 @@ public:
   /// The orientation must be Qt::Vertical (the default) or Qt::Horizontal.
   Qt::Orientation orientation()const;
 
+  /// This property holds whether or not a slider shows its values inverted.
+  /// If this property is false (the default), the minimum and maximum will
+  /// be shown in its classic position for the inherited widget. If the value
+  /// is true, the minimum and maximum appear at their opposite location.
+  /// Note: This property makes most sense for sliders and dials. For scroll
+  /// bars, the visual effect of the scroll bar subcontrols depends on whether
+  /// or not the styles understand inverted appearance; most styles ignore this
+  /// property for scroll bars.
+  /// \sa invertedControls
+  void setInvertedAppearance(bool invertedAppearance);
+  bool invertedAppearance()const;
+
+  /// This property holds whether or not the slider inverts its wheel and key
+  /// events.
+  /// If this property is false, scrolling the mouse wheel "up" and using keys
+  /// like page up will increase the slider's value towards its maximum.
+  /// Otherwise pressing page up will move value towards the slider's minimum.
+  /// \sa invertedAppearance
+  void setInvertedControls(bool invertedControls);
+  bool invertedControls()const;
+
   ///
   /// Controls the text to display for the handle tooltip. It is in addition
   /// to the widget tooltip.
@@ -163,6 +197,17 @@ public:
 
   /// Reimplemented for internal reasons (handle tooltip).
   virtual bool eventFilter(QObject*, QEvent*);
+
+  /// Install or remove a value proxy filter. The value proxy decouples the
+  /// displayed value from the value retrieved by the value property.
+  /// For example, the value proxy can allow one to display celsius in the
+  /// spinbox while the value retrieved from the value property and signals
+  /// are in farenheit.
+  /// To remove the proxy, simply install a new empty proxy. The proxy
+  /// installation/removal is silent.
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
 
 public Q_SLOTS:
   /// 
@@ -211,6 +256,8 @@ protected Q_SLOTS:
   void onValueChanged(int value);
   void onSliderMoved(int position);
   void onRangeChanged(int min, int max);
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 
 protected:
   QScopedPointer<ctkDoubleSliderPrivate> d_ptr;

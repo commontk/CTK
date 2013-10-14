@@ -329,7 +329,7 @@ void ctkCmdLineModuleQtXslTransformTester::testBindVariable_data()
     + parametersWidgetFooter
     + mainWidgetFooter;
   integerParameterUi.replace("QSpinBox", "ctkSliderWidget");
-  QTest::newRow("QSpinBox -> ctkSpinBox") << integerParameter
+  QTest::newRow("QSpinBox -> ctkDoubleSpinBox") << integerParameter
                                           << QString("integerWidget")
                                           << QString("ctkSliderWidget")
                                           << integerParameterUi;

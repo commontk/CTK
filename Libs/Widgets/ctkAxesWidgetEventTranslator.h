@@ -39,8 +39,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkAxesWidgetEventTranslator(const ctkAxesWidgetEventTranslator&); // NOT implemented
-  ctkAxesWidgetEventTranslator& operator=(const ctkAxesWidgetEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkAxesWidgetEventTranslator);
 };
 
 #endif

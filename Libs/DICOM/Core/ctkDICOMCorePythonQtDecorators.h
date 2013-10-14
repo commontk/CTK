@@ -25,6 +25,7 @@
 #include <PythonQt.h>
 
 // CTK includes
+#include <ctkDICOMUtil.h>
 
 // NOTE:
 //
@@ -52,9 +53,32 @@ public Q_SLOTS:
 };
 
 //-----------------------------------------------------------------------------
+class PythonQtWrapper_CTKDICOMCore : public QObject
+{
+  Q_OBJECT
+
+public Q_SLOTS:
+  ctkErrorLogLevel::LogLevel static_ctk_dicomLogLevel()
+    {
+    return ctk::dicomLogLevel();
+    }
+
+  void static_ctk_setDICOMLogLevel(ctkErrorLogLevel::LogLevel level)
+    {
+    ctk::setDICOMLogLevel(level);
+    }
+
+  QString static_ctk_dicomLogLevelAsString()
+    {
+    return ctk::dicomLogLevelAsString();
+    }
+};
+
+//-----------------------------------------------------------------------------
 void initCTKDICOMCorePythonQtDecorators()
 {
   PythonQt::self()->addDecorators(new ctkDICOMCorePythonQtDecorators);
+  PythonQt::self()->registerCPPClass("ctk", "", "CTKDICOMCore", PythonQtCreateObject<PythonQtWrapper_CTKDICOMCore>);
 }
 
 #endif

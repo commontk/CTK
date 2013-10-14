@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <QtTesting>
     <events>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="1"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="2"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="3"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="6"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="15.0"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="8.36"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkDoubleSpinBox0/1ctkQDoubleSpinBox0" command="set_double" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkDoubleSpinBox0/1ctkQDoubleSpinBox0" command="set_double" arguments="2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkDoubleSpinBox0/1ctkQDoubleSpinBox0" command="set_double" arguments="3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkDoubleSpinBox0/1ctkQDoubleSpinBox0" command="set_double" arguments="6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkDoubleSpinBox1/1ctkQDoubleSpinBox0" command="set_double" arguments="15.0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkDoubleSpinBox2/1ctkQDoubleSpinBox0" command="set_double" arguments="8.36"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1ctkCoordinatesWidget0/1ctkDoubleSpinBox2/1ctkQDoubleSpinBox0" command="set_double" arguments="3"/>
     </events>
 </QtTesting>

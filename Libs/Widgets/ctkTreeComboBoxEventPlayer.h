@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkTreeComboBoxEventPlayer(const ctkTreeComboBoxEventPlayer&); // NOT implemented
-  ctkTreeComboBoxEventPlayer& operator=(const ctkTreeComboBoxEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkTreeComboBoxEventPlayer);
 
 };
 

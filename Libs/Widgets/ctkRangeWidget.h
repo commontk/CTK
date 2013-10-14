@@ -30,7 +30,9 @@
 #include "ctkWidgetsExport.h"
 
 class ctkDoubleRangeSlider;
+class ctkDoubleSpinBox;
 class ctkRangeWidgetPrivate;
+class ctkValueProxy;
 
 /// \ingroup Widgets
 ///
@@ -87,9 +89,7 @@ public:
   /// Description
   /// Utility function that set the min/max in once
   void setRange(double min, double max);
-  /// Description
-  /// Return the range of the slider
-  void range(double* range)const;
+  void range(double minimumAndMaximum[2])const;
 
   ///
   /// This property holds the slider and spinbox minimum value.
@@ -179,6 +179,21 @@ public:
   bool symmetricMoves()const;
   void setSymmetricMoves(bool symmetry);
 
+  /// Return the slider of the range widget.
+  /// \sa minimumSpinBox(), maximumSpinBox()
+  ctkDoubleRangeSlider* slider()const;
+  /// Return the minimum spinbox.
+  /// \sa maximumSpinBox(), slider()
+  ctkDoubleSpinBox* minimumSpinBox()const;
+  /// Return the maximum spinbox.
+  /// \sa minimumSpinBox(), slider()
+  ctkDoubleSpinBox* maximumSpinBox()const;
+
+  /// Set/Get the value proxy of the slider and spinboxes.
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
+
 public Q_SLOTS:
   ///
   /// Reset the slider and spinbox to zero (value and position)
@@ -210,15 +225,19 @@ protected Q_SLOTS:
   void changeValues(double newMinValue, double newMaxValue);
   void changeMinimumValue(double value);
   void changeMaximumValue(double value);
+  /// A spinbox value has been modified, update the slider.
+  void setSliderValues();
   void setMinimumToMaximumSpinBox(double minimum);
   void setMaximumToMinimumSpinBox(double maximum);
   void onSliderRangeChanged(double min, double max);
+
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
 
   /// can be used to change the slider by a custom one
-  ctkDoubleRangeSlider* slider()const;
   void setSlider(ctkDoubleRangeSlider* slider);
 
 protected:

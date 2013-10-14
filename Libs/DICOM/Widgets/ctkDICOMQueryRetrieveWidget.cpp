@@ -438,7 +438,7 @@ void ctkDICOMQueryRetrieveWidget::onSelectionChanged(const QItemSelection &selec
 {
   Q_UNUSED(selected);
   Q_UNUSED(deselected);
-  Q_D(ctkDICOMQueryRetrieveWidget);
+  //Q_D(ctkDICOMQueryRetrieveWidget);
 
   logger.debug("Selection change");
   // TODO: allow selection of individual studies to retrieve.  Requires

@@ -40,6 +40,7 @@
 #include "ctkDirectoryButtonPlugin.h"
 #include "ctkDoubleRangeSliderPlugin.h"
 #include "ctkDoubleSliderPlugin.h"
+#include "ctkDoubleSpinBoxPlugin.h"
 #include "ctkDynamicSpacerPlugin.h"
 #include "ctkExpandButtonPlugin.h"
 #include "ctkExpandableWidgetPlugin.h"
@@ -54,13 +55,13 @@
 #include "ctkPathListButtonsWidgetPlugin.h"
 #include "ctkPathListWidgetPlugin.h"
 #include "ctkPopupWidgetPlugin.h"
+#include "ctkPushButtonPlugin.h"
 #include "ctkRangeSliderPlugin.h"
 #include "ctkRangeWidgetPlugin.h"
 #include "ctkSearchBoxPlugin.h"
 #include "ctkSettingsPanelPlugin.h"
 #include "ctkSettingsDialogPlugin.h"
 #include "ctkSliderWidgetPlugin.h"
-#include "ctkSpinBoxPlugin.h"
 #include "ctkThumbnailLabelPlugin.h"
 #include "ctkTransferFunctionViewPlugin.h"
 #include "ctkTreeComboBoxPlugin.h"
@@ -92,6 +93,7 @@ public:
             << new ctkDirectoryButtonPlugin
             << new ctkDoubleRangeSliderPlugin
             << new ctkDoubleSliderPlugin
+            << new ctkDoubleSpinBoxPlugin
             << new ctkDynamicSpacerPlugin
             << new ctkExpandButtonPlugin
             << new ctkExpandableWidgetPlugin
@@ -106,13 +108,13 @@ public:
             << new ctkPathListButtonsWidgetPlugin
             << new ctkPathListWidgetPlugin
             << new ctkPopupWidgetPlugin
+            << new ctkPushButtonPlugin
             << new ctkRangeSliderPlugin
             << new ctkRangeWidgetPlugin
             << new ctkSearchBoxPlugin
             << new ctkSettingsPanelPlugin
             << new ctkSettingsDialogPlugin
             << new ctkSliderWidgetPlugin
-            << new ctkSpinBoxPlugin
             << new ctkThumbnailLabelPlugin
             << new ctkTransferFunctionViewPlugin
             << new ctkTreeComboBoxPlugin

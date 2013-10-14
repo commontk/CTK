@@ -83,7 +83,11 @@ bool PropertyType::setValue(const QVariant& val)
     {
     value = QVariant(QStringList());
     }
-  bool success = this->Object->setProperty(this->Property.toLatin1(), value);
+  bool success = true;
+  if (this->Object->property(this->Property.toLatin1()) != value)
+    {
+    success = this->Object->setProperty(this->Property.toLatin1(), value);
+    }
   Q_ASSERT(success);
   return success;
 }

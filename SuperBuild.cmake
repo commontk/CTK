@@ -125,6 +125,14 @@ string(REPLACE ";" "^" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}
 # endforeach()
 
 #-----------------------------------------------------------------------------
+if(CTK_USE_CONTRIBUTED_PLUGINS)
+  list(APPEND CTK_SUPERBUILD_EP_ARGS
+    -DExternalProjectsContrib_DIR:STRING=${ExternalProjectsContrib_DIR}
+    -DPluginsContrib_DIR:STRING=${PluginsContrib_DIR}
+    )
+endif()
+
+#-----------------------------------------------------------------------------
 # CTK Configure
 #
 set(proj CTK-Configure)
@@ -157,8 +165,6 @@ ExternalProject_Add(${proj}
     -DCTK_INSTALL_INCLUDE_DIR:STRING=${CTK_INSTALL_INCLUDE_DIR}
     -DCTK_INSTALL_DOC_DIR:STRING=${CTK_INSTALL_DOC_DIR}
     -DCTK_EXTERNAL_LIBRARY_DIRS:STRING=${CTK_EXTERNAL_LIBRARY_DIRS}
-    -DExternalProjectsContrib_DIR:STRING=${ExternalProjectsContrib_DIR}
-    -DPluginsContrib_DIR:STRING=${PluginsContrib_DIR}
     -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     ${CTK_SUPERBUILD_EP_ARGS}
     -DCTK_SUPERBUILD_EP_VARNAMES:STRING=${CTK_SUPERBUILD_EP_VARNAMES}

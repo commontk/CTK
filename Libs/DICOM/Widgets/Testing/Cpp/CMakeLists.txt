@@ -2,7 +2,7 @@ set(KIT ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMAppWidgetTest1.cpp
-  ctkDICOMDatasetViewTest1.cpp
+  ctkDICOMItemViewTest1.cpp
   ctkDICOMDirectoryListWidgetTest1.cpp
   ctkDICOMImageTest1.cpp
   ctkDICOMImportWidgetTest1.cpp

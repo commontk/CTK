@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkCheckableComboBoxEventPlayer(const ctkCheckableComboBoxEventPlayer&); // NOT implemented
-  ctkCheckableComboBoxEventPlayer& operator=(const ctkCheckableComboBoxEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkCheckableComboBoxEventPlayer);
 
 };
 

@@ -19,11 +19,13 @@
 =========================================================================*/
 
 // Qt includes
+#include <QApplication>
 #include <QDebug>
-#include <QWidget>
+#include <QStyle>
 #include <QWeakPointer>
 
 // CTK includes
+#include "ctkPushButton.h"
 #include "ctkWorkflowWidget.h"
 #include "ctkWorkflowStep.h"
 #include "ctkWorkflowWidgetStep.h"
@@ -149,6 +151,14 @@ void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)
 }
 
 // --------------------------------------------------------------------------
+ctkWorkflowWidgetStep* ctkWorkflowWidget::widgetStep(const QString& id)const
+{
+  Q_D(const ctkWorkflowWidget);
+  return dynamic_cast<ctkWorkflowWidgetStep*>(
+    !d->Workflow.isNull() ? d->Workflow.data()->step(id) : 0);
+}
+
+// --------------------------------------------------------------------------
 void ctkWorkflowWidget::onCurrentStepChanged(ctkWorkflowStep* currentStep)
 {
   if (currentStep)
@@ -206,4 +216,196 @@ void ctkWorkflowWidget::updateButtonBoxUI(ctkWorkflowStep* currentStep)
     {
     d->ButtonBoxWidget->updateButtons(currentStep);
     }
+}
+
+//-----------------------------------------------------------------------------
+QVariant ctkWorkflowWidget::buttonItem(QString item,
+                                       ctkWorkflowWidgetStep* step)
+{
+  QRegExp backRegExp("^[\\{\\(\\[]back:(.*)[\\}\\)\\]]$");
+  QRegExp nextRegExp("^[\\{\\(\\[]next:(.*)[\\}\\)\\]]$");
+  QRegExp currentRegExp("^[\\{\\(\\[]current:(.*)[\\}\\)\\]]$");
+  if (backRegExp.exactMatch(item))
+    {
+    QList<ctkWorkflowStep*> backs =
+      (step ? step->workflow()->backwardSteps(step) : QList<ctkWorkflowStep*>());
+    step = (backs.size() ? dynamic_cast<ctkWorkflowWidgetStep*>(backs[0]) : 0);
+    item.remove("back:");
+    return ctkWorkflowWidget::buttonItem(item, step);
+    }
+  else if (nextRegExp.exactMatch(item))
+    {
+    QList<ctkWorkflowStep*> nexts =
+      step ? step->workflow()->forwardSteps(step) : QList<ctkWorkflowStep*>();
+    step = (nexts.size() ? dynamic_cast<ctkWorkflowWidgetStep*>(nexts[0]) : 0);
+    item.remove("next:");
+    return ctkWorkflowWidget::buttonItem(item, step);
+    }
+  else if (currentRegExp.exactMatch(item))
+    {
+    item.remove("current:");
+    }
+  QVariant res;
+  QRegExp quotesRegExp("^\"(.*)\"$");
+  QRegExp propsRegExp("^[\\{\\(\\[](.*)[\\}\\)\\]]$");
+  QStyle* style = (step ? step->style() : qApp->style());
+  if (item == "[<-]")
+    {
+    res.setValue(style->standardIcon(QStyle::SP_ArrowLeft));
+    }
+  else if (item == "[->]")
+    {
+    res.setValue(style->standardIcon(QStyle::SP_ArrowRight));
+    }
+  else if (item == "{#}" || item == "(#)")
+    {
+    res = QVariant(step ? step->workflow()->backwardDistanceToStep(step) + 1 : 0);
+    }
+  else if (item == "{!#}" || item == "(!#)")
+    {
+    res = QVariant(step ? step->workflow()->steps().count() : 0);
+    }
+  else if (quotesRegExp.exactMatch(item))
+    {
+    res = quotesRegExp.cap(1);
+    }
+  else if (propsRegExp.exactMatch(item))
+    {
+    item = propsRegExp.cap(1);
+    if (quotesRegExp.exactMatch(item))
+      {
+      res = quotesRegExp.cap(1);
+      }
+    else
+      {
+      res = step ? step->property(item.toLatin1()) : QVariant();
+      if (res.isValid() && res.type() == QVariant::String && res.toString().isEmpty())
+        {
+        res = QVariant();
+        }
+      }
+    }
+  else
+    {
+    qWarning() << "Item" << item << "not supported";
+    }
+  return res;
+}
+
+//-----------------------------------------------------------------------------
+void ctkWorkflowWidget
+::formatButton(QAbstractButton* button, const QString& buttonFormat,
+               ctkWorkflowWidgetStep* step)
+{
+  QMap<QString, QVariant> formats =
+    ctkWorkflowWidget::parse(buttonFormat, step);
+  button->setIcon(formats["icon"].value<QIcon>());
+  if (qobject_cast<ctkPushButton*>(button))
+    {
+    qobject_cast<ctkPushButton*>(button)->setIconAlignment(
+      static_cast<Qt::Alignment>(formats["iconalignment"].toInt()));
+    }
+  button->setText(formats["text"].toString());
+  button->setToolTip(formats["tooltip"].toString());
+}
+
+//-----------------------------------------------------------------------------
+QString ctkWorkflowWidget
+::formatText(const QString& textFormat, ctkWorkflowWidgetStep* step)
+{
+  QMap<QString, QVariant> formats =
+    ctkWorkflowWidget::parse(textFormat, step);
+  return formats["text"].toString();
+}
+
+//-----------------------------------------------------------------------------
+QMap<QString, QVariant> ctkWorkflowWidget
+::parse(const QString& format, ctkWorkflowWidgetStep* step)
+{
+  QIcon buttonIcon;
+  Qt::Alignment buttonIconAlignment = Qt::AlignLeft | Qt::AlignVCenter;
+  QString buttonText;
+  QString buttonToolTip;
+
+  QString textRegExp("\\{[^{}]+\\}");
+  QString simpleTextRegExp("\"[^\"]+\"");
+  QString toolTipRegExp("\\([^\\(\\)]+\\)");
+  QString iconRegExp("\\[[^\\[\\]]+\\]");
+
+  //QRegExp splitBrackets("\\{([^}]+)\\}");
+  //QRegExp splitBrackets("(\\{[^{}]+\\}|\\([^\\(\\)]+\\)|\"[^\"]+\")");
+  QRegExp splitBrackets(QString("(%1|%2|%3|%4)")
+                        .arg(textRegExp).arg(simpleTextRegExp)
+                        .arg(toolTipRegExp)
+                        .arg(iconRegExp));
+  QStringList brackets;
+  int pos = 0;
+  while ((pos = splitBrackets.indexIn(format, pos)) != -1)
+    {
+    brackets << splitBrackets.cap(1);
+    pos += splitBrackets.matchedLength();
+    }
+
+  foreach(const QString& withBracket, brackets)
+    {
+    bool isSimpleText =
+      QRegExp(QString("^") + simpleTextRegExp + QString("$")).exactMatch(withBracket);
+
+    QString withoutBracket = withBracket.mid(1, withBracket.size() - 2);
+    // If the item is empty, then check the next item. For example:
+    // {next:description|next:name|next:stepid}: if 'next:description' is empty, then
+    // use 'next:name' if not empty, otherwise 'next:stepid'
+    // Don't split simple text, it is never empty.
+    QStringList tokens = isSimpleText ? QStringList(withoutBracket) : withoutBracket.split('|');
+
+    QIcon icon;
+    Qt::Alignment iconAlignment = buttonIconAlignment;
+    QString text;
+    foreach (const QString& token, tokens)
+      {
+      QString tokenWithBracket = withBracket[0] + token + withBracket[withBracket.size()-1];
+      QVariant item = ctkWorkflowWidget::buttonItem(tokenWithBracket, step);
+      if (item.isValid())
+        {
+        switch (item.type())
+          {
+          case QVariant::Icon:
+            icon = item.value<QIcon>();
+            if (!buttonText.isEmpty())
+              {
+              iconAlignment = Qt::AlignRight | Qt::AlignVCenter;
+              }
+            break;
+          case QVariant::String:
+          case QVariant::Int:
+            text += item.toString();
+            break;
+          default:
+            break;
+          }
+        // skip the other cases if the item was valid, otherwise keep on searching
+        break;
+        }
+      }
+    if (QRegExp(QString("^") + textRegExp + QString("$")).exactMatch(withBracket) ||
+        isSimpleText)
+      {
+      buttonText += text;
+      }
+    else if (QRegExp(QString("^") + iconRegExp + QString("$")).exactMatch(withBracket))
+      {
+      buttonIcon = icon;
+      buttonIconAlignment = iconAlignment;
+      }
+    else if (QRegExp(QString("^") + toolTipRegExp + QString("$")).exactMatch(withBracket))
+      {
+      buttonToolTip = text;
+      }
+    }
+  QMap<QString, QVariant> formats;
+  formats["icon"] = buttonIcon;
+  formats["iconalignment"] = static_cast<int>(buttonIconAlignment);
+  formats["text"] = buttonText;
+  formats["tooltip"] = buttonToolTip;
+  return formats;
 }

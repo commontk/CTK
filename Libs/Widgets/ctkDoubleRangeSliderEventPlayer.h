@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkDoubleRangeSliderEventPlayer(const ctkDoubleRangeSliderEventPlayer&); // NOT implemented
-  ctkDoubleRangeSliderEventPlayer& operator=(const ctkDoubleRangeSliderEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkDoubleRangeSliderEventPlayer);
 
 };
 

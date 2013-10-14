@@ -30,13 +30,14 @@ set(KIT_SRCS
   ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDatabase.cpp
   ctkDICOMDatabase.h
-  ctkDICOMDataset.cpp
-  ctkDICOMDataset.h
+  ctkDICOMItem.h
   ctkDICOMFilterProxyModel.cpp
   ctkDICOMFilterProxyModel.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
   ctkDICOMIndexer_p.h
+  ctkDICOMItem.cpp
+  ctkDICOMItem.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
   ctkDICOMPersonName.cpp
@@ -47,6 +48,8 @@ set(KIT_SRCS
   ctkDICOMRetrieve.h
   ctkDICOMTester.cpp
   ctkDICOMTester.h
+  ctkDICOMUtil.cpp
+  ctkDICOMUtil.h
 )
 
 if(DCMTK_VERSION_IS_360)

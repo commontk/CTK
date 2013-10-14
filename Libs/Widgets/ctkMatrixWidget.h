@@ -26,6 +26,7 @@
 #include <QWidget>
 
 /// CTK includes
+#include "ctkDoubleSpinBox.h"
 #include "ctkPimpl.h"
 #include "ctkWidgetsExport.h"
 
@@ -42,7 +43,13 @@ class CTK_WIDGETS_EXPORT ctkMatrixWidget: public QWidget
   Q_PROPERTY(bool editable READ isEditable WRITE setEditable)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  /// This property controls how many decimals are used to display and edit the
+  /// matrix values.
+  /// \sa decimals(), setDecimals(), decimalsChanged(), decimalsOption
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
+  /// This property provides more controls over the decimals.
+  /// \sa ctkDoubleSpinBox::DecimalsOptions, decimals
+  Q_PROPERTY(ctkDoubleSpinBox::DecimalsOptions decimalsOption READ decimalsOption WRITE setDecimalsOption)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(QVector<double> values READ values WRITE setValues)
 
@@ -123,6 +130,13 @@ public:
   /// used to adjust the value of a matrix element.
   int decimals()const;
 
+  /// Return the decimalsOption property value
+  /// \sa decimalsOption
+  ctkDoubleSpinBox::DecimalsOptions decimalsOption()const;
+  /// Set the decimalsOption property value.
+  /// \sa decimalsOption
+  void setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions option);
+
   ///
   /// Reimplemented from QAbstractScrollArea
   virtual QSize minimumSizeHint () const;
@@ -141,6 +155,10 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void matrixChanged();
+  /// This signal is fired when the number of decimals is changed.
+  /// This can be useful when synchronizing decimals between widgets.
+  /// \sa decimals
+  void decimalsChanged(int);
 
 protected:
   virtual void resizeEvent(QResizeEvent* event);

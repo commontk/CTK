@@ -42,6 +42,7 @@ class QStandardItem;
 /// lists of file and/or directory entries. A \e path denotes either a file or a directory.
 /// Paths can be relative or absolute and the range of valid paths can be constrained
 /// by setting file and directory options.
+/// \sa ctkPathLineEdit, ctkDirectoryButton
 ///
 class CTK_WIDGETS_EXPORT ctkPathListWidget : public QListView
 {

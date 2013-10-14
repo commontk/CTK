@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkAxesWidgetEventPlayer(const ctkAxesWidgetEventPlayer&); // NOT implemented
-  ctkAxesWidgetEventPlayer& operator=(const ctkAxesWidgetEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkAxesWidgetEventPlayer);
 
 };
 

@@ -151,12 +151,12 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="ctkSpinBox" name="ScaleFactorSpinBox">
+       <widget class="ctkDoubleSpinBox" name="ScaleFactorSpinBox">
         <property name="toolTip">
          <string>Select an integer scale factor (between 0.5 and 5) for the image file, e.g. a value of &quot;2&quot; will save an image twice the size.</string>
         </property>
         <property name="decimalsOption">
-         <enum>ctkSpinBox::Fixed</enum>
+         <enum>ctkDoubleSpinBox::FixedDecimals</enum>
         </property>
         <property name="decimals">
          <number>1</number>
@@ -289,9 +289,9 @@
    <header>ctkPathLineEdit.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkSpinBox</class>
+   <class>ctkDoubleSpinBox</class>
    <extends>QWidget</extends>
-   <header>ctkSpinBox.h</header>
+   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

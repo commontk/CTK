@@ -29,6 +29,7 @@
 #include "ctkLogger.h"
 
 // VTK includes
+#include <vtkOpenGLRenderWindow.h>
 #include <vtkRendererCollection.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkTextProperty.h>
@@ -433,4 +434,27 @@ void ctkVTKAbstractView::updateFPS()
   QString fpsString = tr("FPS: %1(%2s)").arg(d->FPS).arg(lastRenderTime);
   d->FPS = 0;
   d->CornerAnnotation->SetText(1, fpsString.toLatin1());
+}
+
+//----------------------------------------------------------------------------
+bool ctkVTKAbstractView::useDepthPeeling()const
+{
+  Q_D(const ctkVTKAbstractView);
+  vtkRenderer* renderer = d->firstRenderer();
+  return renderer ? static_cast<bool>(renderer->GetUseDepthPeeling()):0;
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::setUseDepthPeeling(bool use)
+{
+  Q_D(ctkVTKAbstractView);
+  vtkRenderer* renderer = d->firstRenderer();
+  if (!renderer)
+    {
+    return;
+    }
+  this->renderWindow()->SetAlphaBitPlanes( use ? 1 : 0);
+  this->renderWindow()->SetMultiSamples(
+    use ? 0 : vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples());
+  renderer->SetUseDepthPeeling(use ? 1 : 0);
 }

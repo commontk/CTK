@@ -1,0 +1,762 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ctkDICOMBrowser</class>
+ <widget class="QWidget" name="ctkDICOMBrowser">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>788</width>
+    <height>607</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>ctkDICOMBrowser</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>12</number>
+   </property>
+   <item>
+    <widget class="QToolBar" name="ToolBar">
+     <property name="windowTitle">
+      <string>toolBar</string>
+     </property>
+     <property name="floatable">
+      <bool>true</bool>
+     </property>
+     <addaction name="ActionImport"/>
+     <addaction name="ActionExport"/>
+     <addaction name="ActionQuery"/>
+     <addaction name="ActionSend"/>
+     <addaction name="ActionRemove"/>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="VerticalLayout">
+     <property name="spacing">
+      <number>12</number>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" name="TopLayout">
+       <property name="leftMargin">
+        <number>12</number>
+       </property>
+       <property name="rightMargin">
+        <number>12</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="DatabaseNameLabel">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>LocalDatabase:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ctkDirectoryButton" name="DirectoryButton" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="HorizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="SearchPopUpButton">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Search</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="QueryLayout" stretch="1,0">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>12</number>
+     </property>
+     <property name="rightMargin">
+      <number>12</number>
+     </property>
+     <item>
+      <widget class="QTreeView" name="TreeView">
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="searchOptionLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QDockWidget" name="SearchDockWidget">
+         <property name="floating">
+          <bool>false</bool>
+         </property>
+         <property name="features">
+          <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+         </property>
+         <property name="windowTitle">
+          <string/>
+         </property>
+         <widget class="QWidget" name="dockWidgetContents">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="ctkDICOMQueryWidget" name="SearchOption" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <spacer name="VerticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="UserFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="ViewerLayout">
+     <property name="leftMargin">
+      <number>12</number>
+     </property>
+     <property name="rightMargin">
+      <number>12</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="ctkDICOMThumbnailListWidget" name="ThumbnailsWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>200</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QSlider" name="ThumbnailWidthSlider">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="minimum">
+            <number>64</number>
+           </property>
+           <property name="maximum">
+            <number>256</number>
+           </property>
+           <property name="value">
+            <number>64</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QFrame" name="PreviewFrame">
+       <property name="minimumSize">
+        <size>
+         <width>256</width>
+         <height>256</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QHBoxLayout" name="HorizontalLayout">
+          <item>
+           <widget class="QPushButton" name="PrevStudyButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>32</horstretch>
+              <verstretch>32</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Previous study</string>
+            </property>
+            <property name="text">
+             <string>&lt;&lt;&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="PrevSeriesButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>32</horstretch>
+              <verstretch>32</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Previous series</string>
+            </property>
+            <property name="text">
+             <string>&lt;&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="PrevImageButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>32</horstretch>
+              <verstretch>32</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Previous image</string>
+            </property>
+            <property name="text">
+             <string>&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="NextImageButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>32</horstretch>
+              <verstretch>32</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Next image</string>
+            </property>
+            <property name="text">
+             <string>&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="NextSeriesButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>32</horstretch>
+              <verstretch>32</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Next series</string>
+            </property>
+            <property name="text">
+             <string>&gt;&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="NextStudyButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>32</horstretch>
+              <verstretch>32</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Next study</string>
+            </property>
+            <property name="text">
+             <string>&gt;&gt;&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="ctkDICOMItemView" name="ImagePreview" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QCheckBox" name="AutoPlayCheckbox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>90</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>auto-play</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="PlaySlider">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+  <action name="ActionImport">
+   <property name="text">
+    <string>Import</string>
+   </property>
+   <property name="toolTip">
+    <string>Import a DICOM file or folder</string>
+   </property>
+  </action>
+  <action name="ActionExport">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="toolTip">
+    <string>Export selected study/series to a DICOM folder (not yet available)</string>
+   </property>
+  </action>
+  <action name="ActionQuery">
+   <property name="text">
+    <string>Query</string>
+   </property>
+   <property name="toolTip">
+    <string>Query and Retrieve DICOM studies from a DICOM node</string>
+   </property>
+  </action>
+  <action name="ActionSend">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Send</string>
+   </property>
+   <property name="toolTip">
+    <string>Send DICOM Studies to a DICOM node (not yet available)</string>
+   </property>
+  </action>
+  <action name="ActionRemove">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Remove</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove from database</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkDICOMQueryWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkDICOMQueryWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDirectoryButton</class>
+   <extends>QWidget</extends>
+   <header>ctkDirectoryButton.h</header>
+   <container>1</container>
+   <slots>
+    <signal>directoryChanged(QString)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>ctkDICOMThumbnailListWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkDICOMThumbnailListWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDICOMItemView</class>
+   <extends>QWidget</extends>
+   <header location="global">ctkDICOMItemView.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>ActionImport</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>openImportDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ActionExport</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>openExportDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ActionQuery</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>openQueryDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>NextImageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onNextImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>608</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PrevImageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onPreviousImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>566</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>NextSeriesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onNextSeries()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>650</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PrevSeriesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onPreviousSeries()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>524</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>NextStudyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onNextStudy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>692</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PrevStudyButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onPreviousStudy()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>AutoPlayCheckbox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onAutoPlayCheckboxStateChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>430</x>
+     <y>596</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ThumbnailWidthSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onThumbnailWidthSliderValueChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>610</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>369</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ActionRemove</sender>
+   <signal>triggered()</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onRemoveAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>391</x>
+     <y>303</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>openImportDialog()</slot>
+  <slot>openExportDialog()</slot>
+  <slot>openQueryDialog()</slot>
+  <slot>onDatabaseDirectoryChaged(QString)</slot>
+  <slot>onNextImage()</slot>
+  <slot>onPreviousImage()</slot>
+  <slot>onNextSeries()</slot>
+  <slot>onPreviousSeries()</slot>
+  <slot>onNextStudy()</slot>
+  <slot>onPreviousStudy()</slot>
+  <slot>onAutoPlayCheckboxStateChanged(int)</slot>
+  <slot>onThumbnailWidthSliderValueChanged(int)</slot>
+  <slot>onRemoveAction()</slot>
+ </slots>
+</ui>

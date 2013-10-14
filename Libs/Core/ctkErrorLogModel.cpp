@@ -55,13 +55,13 @@ ctkErrorLogLevel::ctkErrorLogLevel()
 // --------------------------------------------------------------------------
 QString ctkErrorLogLevel::operator()(ctkErrorLogLevel::LogLevel logLevel)
 {
-  return this->logLevelAsString(logLevel);
+  return ctkErrorLogLevel::logLevelAsString(logLevel);
 }
 
 // --------------------------------------------------------------------------
-QString ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)const
+QString ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)
 {
-  QMetaEnum logLevelEnum = this->metaObject()->enumerator(0);
+  QMetaEnum logLevelEnum = ctkErrorLogLevel::staticMetaObject.enumerator(0);
   Q_ASSERT(QString("LogLevel").compare(logLevelEnum.name()) == 0);
   return QLatin1String(logLevelEnum.valueToKey(logLevel));
 }
@@ -437,29 +437,19 @@ void ctkErrorLogModel::addEntry(const QDateTime& currentDateTime, const QString&
   bool groupEntry = false;
   if (d->LogEntryGrouping)
     {
-    // Retrieve threadId associated with last row
-    QModelIndex lastRowThreadIdIndex =
-        d->StandardItemModel.index(d->StandardItemModel.rowCount() - 1, ctkErrorLogModel::ThreadIdColumn);
+    int lastRowIndex = d->StandardItemModel.rowCount() - 1;
 
-    bool threadIdMatched = threadId == lastRowThreadIdIndex.data().toString();
+    QString lastRowThreadId = this->logEntryData(lastRowIndex, Self::ThreadIdColumn).toString();
+    bool threadIdMatched = threadId == lastRowThreadId;
 
-    // Retrieve logLevel associated with last row
-    QModelIndex lastRowLogLevelIndex =
-        d->StandardItemModel.index(d->StandardItemModel.rowCount() - 1, ctkErrorLogModel::LogLevelColumn);
+    QString lastRowLogLevel = this->logEntryData(lastRowIndex, Self::LogLevelColumn).toString();
+    bool logLevelMatched = d->ErrorLogLevel(logLevel) == lastRowLogLevel;
 
-    bool logLevelMatched = d->ErrorLogLevel(logLevel) == lastRowLogLevelIndex.data().toString();
+    QString lastRowOrigin = this->logEntryData(lastRowIndex, Self::OriginColumn).toString();
+    bool originMatched = origin == lastRowOrigin;
 
-    // Retrieve origin associated with last row
-    QModelIndex lastRowOriginIndex =
-        d->StandardItemModel.index(d->StandardItemModel.rowCount() - 1, ctkErrorLogModel::OriginColumn);
-
-    bool originMatched = origin == lastRowOriginIndex.data().toString();
-
-    // Retrieve time associated with last row
-    QModelIndex lastRowTimeIndex =
-            d->StandardItemModel.index(d->StandardItemModel.rowCount() - 1, ctkErrorLogModel::TimeColumn);
-    QDateTime lastRowDateTime = QDateTime::fromString(lastRowTimeIndex.data().toString(), timeFormat);
-
+    QDateTime lastRowDateTime =
+        QDateTime::fromString(this->logEntryData(lastRowIndex, Self::TimeColumn).toString(), timeFormat);
     int groupingIntervalInMsecs = 1000;
     bool withinGroupingInterval = lastRowDateTime.time().msecsTo(currentDateTime.time()) <= groupingIntervalInMsecs;
 
@@ -522,6 +512,8 @@ void ctkErrorLogModel::addEntry(const QDateTime& currentDateTime, const QString&
     }
 
   d->AddingEntry = false;
+
+  emit this->entryAdded(logLevel);
 }
 
 //------------------------------------------------------------------------------
@@ -651,6 +643,32 @@ void ctkErrorLogModel::setAsynchronousLogging(bool value)
     }
 
   d->AsynchronousLogging = value;
+}
+
+// --------------------------------------------------------------------------
+QVariant ctkErrorLogModel::logEntryData(int row, int column, int role) const
+{
+  Q_D(const ctkErrorLogModel);
+  if (column < 0 || column > Self::MaxColumn
+      || row < 0 || row > this->logEntryCount())
+    {
+    return QVariant();
+    }
+  QModelIndex rowDescriptionIndex = d->StandardItemModel.index(row, column);
+  return rowDescriptionIndex.data(role);
+}
+
+// --------------------------------------------------------------------------
+QString ctkErrorLogModel::logEntryDescription(int row) const
+{
+  return this->logEntryData(row, Self::DescriptionColumn, Self::DescriptionTextRole).toString();
+}
+
+// --------------------------------------------------------------------------
+int ctkErrorLogModel::logEntryCount()const
+{
+  Q_D(const ctkErrorLogModel);
+  return d->StandardItemModel.rowCount();
 }
 
 // --------------------------------------------------------------------------

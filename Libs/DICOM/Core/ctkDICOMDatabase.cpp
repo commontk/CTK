@@ -36,7 +36,7 @@
 // ctkDICOM includes
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMAbstractThumbnailGenerator.h"
-#include "ctkDICOMDataset.h"
+#include "ctkDICOMItem.h"
 
 #include "ctkLogger.h"
 
@@ -95,7 +95,7 @@ public:
 
   // dataset must be set always
   // filePath has to be set if this is an import of an actual file
-  void insert ( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile = true, bool generateThumbnail = true);
+  void insert ( const ctkDICOMItem& ctkDataset, const QString& filePath, bool storeFile = true, bool generateThumbnail = true);
 
   ///
   /// copy the complete list of files to an extra table
@@ -142,9 +142,9 @@ public:
   QStringList TagsToPrecache;
   void precacheTags( const QString sopInstanceUID );
 
-  int insertPatient(const ctkDICOMDataset& ctkDataset);
-  void insertStudy(const ctkDICOMDataset& ctkDataset, int dbPatientID);
-  void insertSeries( const ctkDICOMDataset& ctkDataset, QString studyInstanceUID);
+  int insertPatient(const ctkDICOMItem& ctkDataset);
+  void insertStudy(const ctkDICOMItem& ctkDataset, int dbPatientID);
+  void insertSeries( const ctkDICOMItem& ctkDataset, QString studyInstanceUID);
 };
 
 //------------------------------------------------------------------------------
@@ -791,7 +791,7 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
   // here is where the real lookup happens
   // - first we check the tagCache to see if the value exists for this instance tag
   // If not,
-  // - for now we create a ctkDICOMDataset and extract the value from there
+  // - for now we create a ctkDICOMItem and extract the value from there
   // - then we convert to the appropriate type of string
   //
   //As an optimization we could consider
@@ -813,7 +813,7 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
     return value;
     }
 
-  ctkDICOMDataset dataset;
+  ctkDICOMItem dataset;
   dataset.InitializeFromFile(fileName);
 
   DcmTagKey tagKey(group, element);
@@ -849,17 +849,17 @@ QString ctkDICOMDatabase::groupElementToTag(const unsigned short& group, const u
 //
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::insert( DcmDataset *dataset, bool storeFile, bool generateThumbnail)
+void ctkDICOMDatabase::insert( DcmItem *item, bool storeFile, bool generateThumbnail)
 {
-  if (!dataset)
+  if (!item)
     {
       return;
     }
-  ctkDICOMDataset ctkDataset;
-  ctkDataset.InitializeFromDataset(dataset, false /* do not take ownership */);
+  ctkDICOMItem ctkDataset;
+  ctkDataset.InitializeFromItem(item, false /* do not take ownership */);
   this->insert(ctkDataset,storeFile,generateThumbnail);
 }
-void ctkDICOMDatabase::insert( const ctkDICOMDataset& ctkDataset, bool storeFile, bool generateThumbnail)
+void ctkDICOMDatabase::insert( const ctkDICOMItem& ctkDataset, bool storeFile, bool generateThumbnail)
 {
   Q_D(ctkDICOMDatabase);
   d->insert(ctkDataset, QString(), storeFile, generateThumbnail);
@@ -885,7 +885,7 @@ void ctkDICOMDatabase::insert ( const QString& filePath, bool storeFile, bool ge
   std::string filename = filePath.toStdString();
 
   DcmFileFormat fileformat;
-  ctkDICOMDataset ctkDataset;
+  ctkDICOMItem ctkDataset;
 
   ctkDataset.InitializeFromFile(filePath);
   if ( ctkDataset.IsInitialized() )
@@ -899,7 +899,7 @@ void ctkDICOMDatabase::insert ( const QString& filePath, bool storeFile, bool ge
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMDataset& ctkDataset)
+int ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& ctkDataset)
 {
   int dbPatientID;
 
@@ -950,7 +950,7 @@ int ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMDataset& ctkDataset)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMDataset& ctkDataset, int dbPatientID)
+void ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMItem& ctkDataset, int dbPatientID)
 {
   QString studyInstanceUID(ctkDataset.GetElementAsString(DCM_StudyInstanceUID) );
   QSqlQuery checkStudyExistsQuery (Database);
@@ -1000,7 +1000,7 @@ void ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMDataset& ctkDataset, int
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMDataset& ctkDataset, QString studyInstanceUID)
+void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMItem& ctkDataset, QString studyInstanceUID)
 {
   QString seriesInstanceUID(ctkDataset.GetElementAsString(DCM_SeriesInstanceUID) );
   QSqlQuery checkSeriesExistsQuery (Database);
@@ -1078,7 +1078,7 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
 {
   Q_Q(ctkDICOMDatabase);
 
-  ctkDICOMDataset dataset;
+  ctkDICOMItem dataset;
   QString fileName = q->fileForInstance(sopInstanceUID);
   dataset.InitializeFromFile(fileName);
 
@@ -1097,7 +1097,7 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const QString& filePath, bool storeFile, bool generateThumbnail)
+void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QString& filePath, bool storeFile, bool generateThumbnail)
 {
   Q_Q(ctkDICOMDatabase);
 
@@ -1228,6 +1228,9 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
 
           dbPatientID = insertPatient( ctkDataset );
 
+          // let users of this class track when things happen
+          emit q->patientAdded(dbPatientID, patientID, patientsName, patientsBirthDate);
+
           /// keep this for the next image
           LastPatientUID = dbPatientID;
           LastPatientID = patientID;
@@ -1242,11 +1245,17 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
       if ( studyInstanceUID != "" && LastStudyInstanceUID != studyInstanceUID )
         {
           insertStudy(ctkDataset,dbPatientID);
+
+          // let users of this class track when things happen
+          emit q->studyAdded(studyInstanceUID);
         }
 
       if ( seriesInstanceUID != "" && seriesInstanceUID != LastSeriesInstanceUID )
         {
           insertSeries(ctkDataset, studyInstanceUID);
+
+          // let users of this class track when things happen
+          emit q->seriesAdded(seriesInstanceUID);
         }
       // TODO: what to do with imported files
       //
@@ -1268,6 +1277,9 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMDataset& ctkDataset, const Q
 
               // insert was needed, so cache any application-requested tags
               this->precacheTags(sopInstanceUID);
+
+              // let users of this class track when things happen
+              emit q->instanceAdded(sopInstanceUID);
             }
         }
 

@@ -20,43 +20,49 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDebug>
+#include <QDir>
 #include <QTimer>
 
-// CTK includes
-#include "ctkRangeWidget.h"
+// ctkDICOMCore includes
+#include "ctkDICOMItemView.h"
+
+// DCMTK includes
+#include <dcmimage.h>
 
 // STD includes
-#include <cstdlib>
 #include <iostream>
 
-//-----------------------------------------------------------------------------
-int ctkRangeWidgetTest2(int argc, char * argv [] )
+/* Test from build directory:
+ ./CTK-build/bin/CTKDICOMWidgetsCxxTests ctkDICOMItemViewTest1 test.db ../CTK/Libs/DICOM/Core/Resources/dicom-sample.sql
+*/
+
+int ctkDICOMItemViewTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-
-  ctkRangeWidget sliderSpinBox;
-  sliderSpinBox.setDecimals(2);
-  sliderSpinBox.setRange(0, 99);
+  if (argc < 2)
+    {
+    std::cerr << "Usage: ctkDICOMItemViewTest1 dcmimage [-I]" << std::endl;
+    return EXIT_FAILURE;
+    }
   
-  sliderSpinBox.setValues(1., 10.);
-  sliderSpinBox.setRange(-10., -0.10);
-
-  sliderSpinBox.setMaximum(-11.);
+  DicomImage    img(argv[1]);
+  QImage image;
+  QImage image2(200, 200, QImage::Format_RGB32);
   
-  sliderSpinBox.setMinimum(101.);
-  
-  sliderSpinBox.setValues(0., 1000.);
-  
-  sliderSpinBox.setRange(-2002, 2002);
+  ctkDICOMItemView datasetView;
+  datasetView.addImage(img);
+  datasetView.addImage(image);
+  datasetView.addImage(image2);
+  datasetView.update( false, false );
+  datasetView.update( false, true);
+  datasetView.update( true, false);
+  datasetView.update( true, true);
+  datasetView.show();
 
-  sliderSpinBox.show();
-
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc <= 2 || QString(argv[2]) != "-I")
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
-
   return app.exec();
-
 }
-

@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Workflow</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="margin">
@@ -131,7 +131,7 @@
                 <item>
                  <layout class="QVBoxLayout" name="ClientAreaLayout">
                   <property name="margin">
-                   <number>9</number>
+                   <number>0</number>
                   </property>
                  </layout>
                 </item>

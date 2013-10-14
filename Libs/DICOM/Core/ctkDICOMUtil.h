@@ -2,7 +2,7 @@
 
   Library:   CTK
 
-  Copyright (c) Kitware Inc.
+  Copyright (c) Brigham & Women's Hospital
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,28 +18,21 @@
 
 =========================================================================*/
 
-#ifndef __ctkSpinBoxPlugin_h
-#define __ctkSpinBoxPlugin_h
+#ifndef __ctkDICOMUtil_h
+#define __ctkDICOMUtil_h
 
 // CTK includes
-#include "ctkWidgetsAbstractPlugin.h"
+#include "ctkDICOMCoreExport.h"
+#include "ctkErrorLogModel.h"
 
-class CTK_WIDGETS_PLUGINS_EXPORT ctkSpinBoxPlugin :
-  public QObject,
-  public ctkWidgetsAbstractPlugin
-{
-  Q_OBJECT
+namespace ctk {
 
-public:
-  ctkSpinBoxPlugin(QObject *_parent = 0);
+void CTK_DICOM_CORE_EXPORT setDICOMLogLevel(ctkErrorLogLevel::LogLevel level);
 
-  QWidget *createWidget(QWidget *_parent);
-  QString  domXml() const;
-  QIcon    icon() const;
-  QString  includeFile() const;
-  bool     isContainer() const;
-  QString  name() const;
+ctkErrorLogLevel::LogLevel CTK_DICOM_CORE_EXPORT dicomLogLevel();
 
-};
+QString CTK_DICOM_CORE_EXPORT dicomLogLevelAsString();
+
+} // end of ctk namespace
 
 #endif

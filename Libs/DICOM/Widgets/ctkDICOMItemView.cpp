@@ -33,7 +33,7 @@
 #include "ctkDICOMModel.h"
 
 // ctkDICOMWidgets includex
-#include "ctkDICOMDatasetView.h"
+#include "ctkDICOMItemView.h"
 
 // Qt includes
 #include <QDebug>
@@ -46,17 +46,17 @@
 #include <QPainter>
 #include <QResizeEvent>
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMDatasetView");
+static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMItemView");
 
 //--------------------------------------------------------------------------
-class ctkDICOMDatasetViewPrivate 
+class ctkDICOMItemViewPrivate 
 {
 
-  Q_DECLARE_PUBLIC( ctkDICOMDatasetView );
+  Q_DECLARE_PUBLIC( ctkDICOMItemView );
 
 public:
 
-  ctkDICOMDatasetViewPrivate( ctkDICOMDatasetView& object );
+  ctkDICOMItemViewPrivate( ctkDICOMItemView& object );
 
   QString DatabaseDirectory;
   QModelIndex CurrentImageIndex;
@@ -75,23 +75,23 @@ public:
   void onImageModelSelected(const QModelIndex& index);
 
 protected:
-  ctkDICOMDatasetView* const q_ptr;
+  ctkDICOMItemView* const q_ptr;
 
 private:
-  Q_DISABLE_COPY( ctkDICOMDatasetViewPrivate );
+  Q_DISABLE_COPY( ctkDICOMItemViewPrivate );
 };
 
 //--------------------------------------------------------------------------
-ctkDICOMDatasetViewPrivate::ctkDICOMDatasetViewPrivate(
-  ctkDICOMDatasetView& object )
+ctkDICOMItemViewPrivate::ctkDICOMItemViewPrivate(
+  ctkDICOMItemView& object )
   : q_ptr( & object )
 {
 }
 
 //--------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::init()
+void ctkDICOMItemViewPrivate::init()
 {
-  Q_Q( ctkDICOMDatasetView );
+  Q_Q( ctkDICOMItemView );
 
   q->setMouseTracking(true);
 
@@ -111,8 +111,8 @@ void ctkDICOMDatasetViewPrivate::init()
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool defaultIntensity){
-    Q_Q(ctkDICOMDatasetView);
+void ctkDICOMItemViewPrivate::setImage(const QModelIndex &imageIndex, bool defaultIntensity){
+    Q_Q(ctkDICOMItemView);
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
 
@@ -140,8 +140,8 @@ void ctkDICOMDatasetViewPrivate::setImage(const QModelIndex &imageIndex, bool de
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMDatasetView);
+void ctkDICOMItemViewPrivate::onPatientModelSelected(const QModelIndex &index){
+    Q_Q(ctkDICOMItemView);
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
@@ -162,8 +162,8 @@ void ctkDICOMDatasetViewPrivate::onPatientModelSelected(const QModelIndex &index
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMDatasetView);
+void ctkDICOMItemViewPrivate::onStudyModelSelected(const QModelIndex &index){
+    Q_Q(ctkDICOMItemView);
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
@@ -182,8 +182,8 @@ void ctkDICOMDatasetViewPrivate::onStudyModelSelected(const QModelIndex &index){
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMDatasetView);
+void ctkDICOMItemViewPrivate::onSeriesModelSelected(const QModelIndex &index){
+    Q_Q(ctkDICOMItemView);
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
@@ -200,8 +200,8 @@ void ctkDICOMDatasetViewPrivate::onSeriesModelSelected(const QModelIndex &index)
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
-    Q_Q(ctkDICOMDatasetView);
+void ctkDICOMItemViewPrivate::onImageModelSelected(const QModelIndex &index){
+    Q_Q(ctkDICOMItemView);
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
@@ -219,53 +219,53 @@ void ctkDICOMDatasetViewPrivate::onImageModelSelected(const QModelIndex &index){
 }
 
 // -------------------------------------------------------------------------
-ctkDICOMDatasetView::ctkDICOMDatasetView( QWidget* _parent )
+ctkDICOMItemView::ctkDICOMItemView( QWidget* _parent )
   : Superclass( _parent ),
-    d_ptr( new ctkDICOMDatasetViewPrivate( *this ) )
+    d_ptr( new ctkDICOMItemViewPrivate( *this ) )
 {
-  Q_D( ctkDICOMDatasetView );
+  Q_D( ctkDICOMItemView );
   d->init();
 }
 
 // -------------------------------------------------------------------------
-ctkDICOMDatasetView::ctkDICOMDatasetView(
-  ctkDICOMDatasetViewPrivate& pvt,
+ctkDICOMItemView::ctkDICOMItemView(
+  ctkDICOMItemViewPrivate& pvt,
   QWidget* _parent)
   : Superclass(_parent), d_ptr(&pvt)
 {
-  Q_D(ctkDICOMDatasetView);
+  Q_D(ctkDICOMItemView);
   d->init();
 }
 
 // -------------------------------------------------------------------------
-ctkDICOMDatasetView::~ctkDICOMDatasetView()
+ctkDICOMItemView::~ctkDICOMItemView()
 {
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::setDatabaseDirectory(const QString &directory){
-    Q_D(ctkDICOMDatasetView);
+void ctkDICOMItemView::setDatabaseDirectory(const QString &directory){
+    Q_D(ctkDICOMItemView);
 
     d->DatabaseDirectory = directory;
 }
 
 // -------------------------------------------------------------------------
-QModelIndex ctkDICOMDatasetView::currentImageIndex(){
-    Q_D(ctkDICOMDatasetView);
+QModelIndex ctkDICOMItemView::currentImageIndex(){
+    Q_D(ctkDICOMItemView);
 
     return d->CurrentImageIndex;
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::addImage( const QImage & image )
+void ctkDICOMItemView::addImage( const QImage & image )
 {
   Superclass::addImage( image );
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::addImage( DicomImage & dcmImage, bool defaultIntensity )
+void ctkDICOMItemView::addImage( DicomImage & dcmImage, bool defaultIntensity )
 {
-    Q_D(ctkDICOMDatasetView);
+    Q_D(ctkDICOMItemView);
     QImage image;
     // Check whether we have a valid image
     EI_Status result = dcmImage.getStatus();
@@ -334,23 +334,23 @@ void ctkDICOMDatasetView::addImage( DicomImage & dcmImage, bool defaultIntensity
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::update( bool zoomChanged,
+void ctkDICOMItemView::update( bool zoomChanged,
   bool sizeChanged )
 {
   Superclass::update( zoomChanged, sizeChanged );
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::mousePressEvent(QMouseEvent* event){
-    Q_D(ctkDICOMDatasetView);
+void ctkDICOMItemView::mousePressEvent(QMouseEvent* event){
+    Q_D(ctkDICOMItemView);
 
     event->accept();
     d->OldMousePos = event->pos();
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
-    Q_D(ctkDICOMDatasetView);
+void ctkDICOMItemView::mouseMoveEvent(QMouseEvent* event){
+    Q_D(ctkDICOMItemView);
 
     if(event->buttons() == Qt::RightButton){
         event->accept();
@@ -386,8 +386,8 @@ void ctkDICOMDatasetView::mouseMoveEvent(QMouseEvent* event){
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::onModelSelected(const QModelIndex &index){
-    Q_D(ctkDICOMDatasetView);
+void ctkDICOMItemView::onModelSelected(const QModelIndex &index){
+    Q_D(ctkDICOMItemView);
 
     ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
@@ -407,8 +407,8 @@ void ctkDICOMDatasetView::onModelSelected(const QModelIndex &index){
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::displayImage(int imageIndex){
-  Q_D(ctkDICOMDatasetView);
+void ctkDICOMItemView::displayImage(int imageIndex){
+  Q_D(ctkDICOMItemView);
 
   if(d->CurrentImageIndex.isValid())
     {
@@ -430,7 +430,7 @@ void ctkDICOMDatasetView::displayImage(int imageIndex){
 }
 
 // -------------------------------------------------------------------------
-void ctkDICOMDatasetView::emitImageDisplayedSignal(int imageID, int count){
+void ctkDICOMItemView::emitImageDisplayedSignal(int imageID, int count){
   emit imageDisplayed(imageID, count);
 }
 

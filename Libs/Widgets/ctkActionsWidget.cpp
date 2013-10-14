@@ -21,6 +21,7 @@
 // Qt includes
 #include <QAction>
 #include <QDebug>
+#include <QHeaderView>
 #include <QPainter>
 #include <QSortFilterProxyModel>
 #include <QStandardItem>
@@ -72,6 +73,7 @@ void ctkActionsWidgetPrivate::setupUI()
   this->ActionsTreeView = new QTreeView(q);
   QVBoxLayout* layout = new QVBoxLayout(q);
   layout->addWidget(this->ActionsTreeView);
+  layout->setContentsMargins(0,0,0,0);
   q->setLayout(layout);
   this->ActionsTreeView->setModel(this->SortFilterActionsProxyModel);
   this->ActionsTreeView->setAlternatingRowColors(true);
@@ -83,7 +85,7 @@ void ctkActionsWidgetPrivate::setupHeaders()
 {
   this->ActionsModel->setColumnCount(4);
   QStringList headers;
-  headers << "Action" << "Shortcut" << "Context" << "Details";
+  headers << "Action" << "Shortcut(s)" << "Context" << "Details";
   this->ActionsModel->setHorizontalHeaderLabels(headers);
 }
 
@@ -101,8 +103,13 @@ void ctkActionsWidgetPrivate
   items[ctkActionsWidget::NameColumn]->setText(actionText);
   items[ctkActionsWidget::NameColumn]->setIcon(action->icon());
   // Shortcut
+  QStringList shortcuts;
+  foreach(const QKeySequence& keySequence, action->shortcuts())
+    {
+    shortcuts << keySequence.toString(QKeySequence::NativeText);
+    }
   items[ctkActionsWidget::ShortcutColumn]->setText(
-    action->shortcut().toString(QKeySequence::NativeText));
+    shortcuts.join("; "));
   // Context
   QString shortcutContext;
   switch (action->shortcutContext())
@@ -162,17 +169,22 @@ void ctkActionsWidget::addAction(QAction* action, const QString& group)
     d->ActionsTreeView->expand(
       d->SortFilterActionsProxyModel->mapFromSource(d->ActionsModel->indexFromItem(actionGroupItem)));
     }
-  d->ActionsTreeView->resizeColumnToContents(0);
+  d->ActionsTreeView->resizeColumnToContents(ctkActionsWidget::NameColumn);
+  d->ActionsTreeView->resizeColumnToContents(ctkActionsWidget::DetailsColumn);
   connect(action, SIGNAL(changed()), this, SLOT(updateAction()));
 }
 
 //-----------------------------------------------------------------------------
 void ctkActionsWidget::addActions(QList<QAction*> actions, const QString& group)
 {
+  Q_D(ctkActionsWidget);
+  bool wasSortinEnabled = d->ActionsTreeView->isSortingEnabled();
+  d->ActionsTreeView->setSortingEnabled(false);
   foreach(QAction* action, actions)
     {
     this->addAction(action, group);
     }
+  d->ActionsTreeView->setSortingEnabled(wasSortinEnabled);
 }
 
 //-----------------------------------------------------------------------------
@@ -237,6 +249,22 @@ bool ctkActionsWidget::areMenuActionsVisible()const
 {
   Q_D(const ctkActionsWidget);
   return d->SortFilterActionsProxyModel->areMenuActionsVisible();
+}
+
+//-----------------------------------------------------------------------------
+void ctkActionsWidget::setSortColumn(int column)
+{
+  Q_D(ctkActionsWidget);
+  d->ActionsTreeView->sortByColumn(column, Qt::AscendingOrder);
+  d->ActionsTreeView->setSortingEnabled(column != -1);
+}
+
+//-----------------------------------------------------------------------------
+int ctkActionsWidget::sortColumn()const
+{
+  Q_D(const ctkActionsWidget);
+  return d->ActionsTreeView->isSortingEnabled() ?
+    d->ActionsTreeView->header()->sortIndicatorSection() : -1;
 }
 
 //-----------------------------------------------------------------------------

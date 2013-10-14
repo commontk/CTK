@@ -25,18 +25,18 @@
 #include <QTimer>
 
 // CTK includes
-#include "ctkSpinBox.h"
+#include "ctkDoubleSpinBox.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int ctkSpinBoxTest1(int argc, char * argv [] )
+int ctkDoubleSpinBoxTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkSpinBox spinBox;
+  ctkDoubleSpinBox spinBox;
 
   // ----------------------------------------
   // Regular SpinBox methods
@@ -79,20 +79,20 @@ int ctkSpinBoxTest1(int argc, char * argv [] )
 
   qDebug()<<"SingleStep:";
   spinBox.setSingleStep(0.01);
-  if (spinBox.singleStep() != 0.01)
+  if (!qFuzzyCompare(spinBox.singleStep(), 0.01))
     {
     qDebug()<<"singleStep does not correspond. Got: "<<spinBox.singleStep();
     return EXIT_FAILURE;
     }
   spinBox.stepUp();
-  if (spinBox.value() != 8.70)
+  if (!qFuzzyCompare(spinBox.value(), 8.70))
     {
     qDebug()<<"Value does not correspond. Got: "<<spinBox.value();
     return EXIT_FAILURE;
     }
   spinBox.setSingleStep(1.0);
   spinBox.stepDown();
-  if (spinBox.displayedValue() != 7.7)
+  if (!qFuzzyCompare(spinBox.displayedValue(), 7.7))
     {
     qDebug()<<"Value does not correspond. Got: "<<spinBox.value();
     return EXIT_FAILURE;
@@ -100,12 +100,12 @@ int ctkSpinBoxTest1(int argc, char * argv [] )
 
   qDebug()<<"Minimum:";
   spinBox.setMinimum(9.1);
-  if (spinBox.minimum() != 9.1)
+  if (!qFuzzyCompare(spinBox.minimum(), 9.1))
     {
     qDebug()<<"minimum does not correspond. Got: "<<spinBox.minimum();
     return EXIT_FAILURE;
     }
-  if (spinBox.value() != 9.1)
+  if (!qFuzzyCompare(spinBox.value(), 9.1))
     {
     qDebug()<<"Value does not correspond. Got: "<<spinBox.value();
     return EXIT_FAILURE;
@@ -114,12 +114,12 @@ int ctkSpinBoxTest1(int argc, char * argv [] )
   qDebug()<<"Maximum:";
   spinBox.setValue(18.34);
   spinBox.setMaximum(15);
-  if (spinBox.maximum() != 15)
+  if (!qFuzzyCompare(spinBox.maximum(), 15.0))
     {
     qDebug()<<"maximum does not correspond. Got: "<<spinBox.maximum();
     return EXIT_FAILURE;
     }
-  if (spinBox.value() != 15)
+  if (!qFuzzyCompare(spinBox.value(), 15.0))
     {
     qDebug()<<"Value does not correspond. Got: "<<spinBox.value();
     return EXIT_FAILURE;
@@ -127,7 +127,8 @@ int ctkSpinBoxTest1(int argc, char * argv [] )
 
   qDebug()<<"Range:";
   spinBox.setRange(-3.6, 42);
-  if (spinBox.maximum() != 42 || spinBox.minimum() != -3.6)
+  if (!qFuzzyCompare(spinBox.maximum(), 42)
+    || !qFuzzyCompare(spinBox.minimum(), -3.6))
     {
     qDebug()<<"Range does not correspond. Got: "
       <<spinBox.minimum()<<" : "<<spinBox.minimum();
@@ -150,7 +151,7 @@ int ctkSpinBoxTest1(int argc, char * argv [] )
   qDebug()<<"Round:";
   spinBox.setDecimals(3);
   double roundedValue = spinBox.round(6.67899156);
-  if (roundedValue != 6.679)
+  if (!qFuzzyCompare(roundedValue, 6.679))
     {
     qDebug()<<"Round does not correspond. Got: "<<roundedValue;
     return EXIT_FAILURE;
@@ -160,14 +161,14 @@ int ctkSpinBoxTest1(int argc, char * argv [] )
 
   qDebug()<<"SetValue:";
   spinBox.setValue(28.36);
-  if (spinBox.value() != 28.36)
+  if (!qFuzzyCompare(spinBox.value(), 28.36))
     {
     qDebug()<<"setValue does not correspond. Got: "<<spinBox.value() ;
     return EXIT_FAILURE;
     }
 
   spinBox.setValue(28.366917352);
-  if (spinBox.value() != 28.367)
+  if (!qFuzzyCompare(spinBox.value(), 28.366917352))
     {
     qDebug()<<"setValue does not correspond. Got: "<<spinBox.value() ;
     return EXIT_FAILURE;
@@ -175,26 +176,26 @@ int ctkSpinBoxTest1(int argc, char * argv [] )
 
   qDebug()<<"SetValueIfDifferent:";
   spinBox.setValueIfDifferent(33.312587);
-  if (spinBox.value() != 33.313)
+  if (!qFuzzyCompare(spinBox.value(), 33.312587))
     {
     qDebug()<<"setValueIfDifferent does not correspond. Got: "<<spinBox.value() ;
     return EXIT_FAILURE;
     }
 
   spinBox.setValueIfDifferent(33.312960134);
-  if (spinBox.value() != 33.313)
+  if (!qFuzzyCompare(spinBox.value(), 33.312960134))
     {
     qDebug()<<"setValueIfDifferent does not correspond. Got: "<<spinBox.value() ;
     return EXIT_FAILURE;
     }
 
-  if (spy.count() != 3)
+  if (spy.count() != 4)
     {
     qDebug()<<"spy got wrong number of signal sent : "<<spy.count() ;
     return EXIT_FAILURE;
     }
 
-//-----------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------
   spinBox.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )

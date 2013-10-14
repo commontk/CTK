@@ -19,17 +19,16 @@
 =========================================================================*/
 
 #ifndef __ctkWorkflowButtonBoxWidget_h
-#define __ctkWorkflowButtonBoxWidget_h 
+#define __ctkWorkflowButtonBoxWidget_h
 
 // QT includes
-#include <QWidget>
-//class QList;
-class QPushButton;
 #include <QBoxLayout>
+#include <QWidget>
 
 // CTK includes
 #include "ctkPimpl.h"
 #include "ctkWidgetsExport.h"
+class ctkPushButton;
 class ctkWorkflow;
 class ctkWorkflowStep;
 
@@ -49,13 +48,39 @@ class ctkWorkflowButtonBoxWidgetPrivate;
 /// should be called whenever the workflow's current step has changed
 
 class CTK_WIDGETS_EXPORT ctkWorkflowButtonBoxWidget : public QWidget
-{ 
+{
   Q_OBJECT
 
-  Q_PROPERTY(QString backButtonDefaultText
-             READ backButtonDefaultText WRITE setBackButtonDefaultText)
-  Q_PROPERTY(QString nextButtonDefaultText
-             READ nextButtonDefaultText WRITE setNextButtonDefaultText)
+  /// This property controls the text, icon and tooltip of the back button.
+  /// "[<-]{backButtonText|\"Back\"}(back:description)" by default.
+  /// \sa backButtonFormat(), setBackButtonFormat(),
+  /// ctkWorkflow::formatButton(), nextButtonFormat, goToButtonFormat
+  Q_PROPERTY(QString backButtonFormat
+             READ backButtonFormat WRITE setBackButtonFormat)
+
+  /// This property controls the text, icon and tooltip of the next button.
+  /// "{nextButtonText|\"Next\"}(next:description)[->]" by default.
+  /// \sa nextButtonFormat(), setNextButtonFormat(),
+  /// ctkWorkflow::formatButton(), backButtonFormat, goToButtonFormat
+  Q_PROPERTY(QString nextButtonFormat
+             READ nextButtonFormat WRITE setNextButtonFormat)
+
+  /// This property controls the text, icon and tooltip of the goTo/finish
+  /// button.
+  /// "[icon]{stepid|\"Finish\"}" by default.
+  /// \sa goToButtonsFormat(), setGoToButtonsFormat(),
+  /// ctkWorkflow::formatButton(), backButtonFormat, nextButtonFormat
+  Q_PROPERTY(QString goToButtonsFormat
+             READ goToButtonsFormat WRITE setGoToButtonsFormat)
+
+  /// This property controls whether the goTo buttons are visible or hidden.
+  /// False (visible) by default.
+  /// \sa hideInvalidButtons
+  Q_PROPERTY(bool hideGoToButtons READ hideGoToButtons WRITE setHideGoToButtons)
+
+  /// This property controls whether the back, next or goTo buttons are hidden when disabled.
+  /// Note that buttons can also be hidden via ctkWorkflowWidgetStep::buttonHints.
+  /// \sa ctkWofklowWidgetStep::buttonBoxHints
   Q_PROPERTY(bool hideInvalidButtons READ hideInvalidButtons WRITE setHideInvalidButtons)
 
 public:
@@ -71,32 +96,49 @@ public:
   void setWorkflow(ctkWorkflow * newWorkflow);
 
   /// Get the 'back' button
-  QPushButton* backButton()const;
+  Q_INVOKABLE ctkPushButton* backButton()const;
 
-  /// Get 'back' button default text
-  QString backButtonDefaultText()const;
+  /// Return the backButtonFormat property value.
+  /// \sa backButtonFormat, setBackButtonFormat()
+  QString backButtonFormat()const;
 
-  /// \brief Set 'back' button \a defaultText
-  /// \a defaultText is used if the text associated with the current step is empty
-  void setBackButtonDefaultText(const QString& defaultText);
+  /// Set the backButtonFormat property value.
+  /// \sa backButtonFormat, backButtonFormat()
+  void setBackButtonFormat(const QString& format);
 
   /// Get the 'next' button
-  QPushButton* nextButton()const;
+  Q_INVOKABLE ctkPushButton* nextButton()const;
 
-  /// Get 'next' button default text
-  QString nextButtonDefaultText()const;
+  /// Return the nextButtonFormat property value.
+  /// \sa nextButtonFormat, setNextButtonFormat()
+  QString nextButtonFormat()const;
 
-  /// \brief Set 'next' button \a defaultText
-  /// \a defaultText is used if the text associated with the current step is empty
-  void setNextButtonDefaultText(const QString& defaultText);
+  /// Set the nextButtonFormat property value.
+  /// \sa nextButtonFormat, nextButtonFormat()
+  void setNextButtonFormat(const QString& format);
+
+  /// Return the goToButtonsFormat property value.
+  /// \sa goToButtonsFormat, setGoToButtonsFormat()
+  QString goToButtonsFormat()const;
+
+  /// Set the goToButtonsFormat property value.
+  /// \sa goToButtonsFormat, goToButtonsFormat()
+  void setGoToButtonsFormat(const QString& format);
 
   /// Get a list of the 'goTo' buttons
-  QList<QPushButton*> goToButtons()const;
+  QList<ctkPushButton*> goToButtons()const;
 
   /// Sets the direction of the QBoxLayout that manages this widget (default is
   /// QBoxLayout::LeftToRight)
   QBoxLayout::Direction direction()const;
   void setDirection(const QBoxLayout::Direction& newDirection);
+
+  /// Return the hideGoToButtons property value.
+  /// \sa hideGoToButtons
+  bool hideGoToButtons()const;
+  /// Set the hideGoToButtons property value.
+  /// \sa hideGoToButtons
+  void setHideGoToButtons(bool hide);
 
   /// If true, invalid buttons are hidden.  If false, invalid buttons are shown but disabled.
   /// Default is false.
