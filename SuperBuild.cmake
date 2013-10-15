@@ -25,12 +25,11 @@
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Declare CTK_EXTERNAL_LIBRARY_DIRS variable - This variable stores
+# The CTK_EXTERNAL_LIBRARY_DIRS variable stores
 # the library output directory associated with the different external project
 # It's then used in CMake/LastConfigureStep/CTKGenerateCTKConfig.cmake to
 # configure CTKConfig.cmake.in
 # This variable would then be exposed to project building against CTK
-set(CTK_EXTERNAL_LIBRARY_DIRS)
 
 #-----------------------------------------------------------------------------
 # Make sure ${CTK_BINARY_DIR}/CTK-build/bin exists
