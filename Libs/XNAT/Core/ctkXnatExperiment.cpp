@@ -43,7 +43,7 @@ public:
 
 
 ctkXnatExperiment::ctkXnatExperiment()
-: ctkXnatObject(new ctkXnatExperimentPrivate())
+: ctkXnatObject(*new ctkXnatExperimentPrivate())
 {
 }
 

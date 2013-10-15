@@ -43,7 +43,7 @@ public:
 
 
 ctkXnatReconstruction::ctkXnatReconstruction()
-: ctkXnatObject(new ctkXnatReconstructionPrivate())
+: ctkXnatObject(*new ctkXnatReconstructionPrivate())
 {
 }
 

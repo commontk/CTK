@@ -44,7 +44,7 @@ public:
 
 
 ctkXnatScanFolder::ctkXnatScanFolder()
-: ctkXnatObject(new ctkXnatScanFolderPrivate())
+: ctkXnatObject(*new ctkXnatScanFolderPrivate())
 {
   this->setProperty("ID", "Scans");
 }

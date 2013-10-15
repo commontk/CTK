@@ -43,7 +43,7 @@ public:
 };
 
 ctkXnatScanResourceFile::ctkXnatScanResourceFile()
-: ctkXnatObject(new ctkXnatScanResourceFilePrivate())
+: ctkXnatObject(*new ctkXnatScanResourceFilePrivate())
 {
 }
 
@@ -75,7 +75,7 @@ void ctkXnatScanResourceFile::download(const QString& filename)
   this->connection()->download(this, filename);
 }
 
-void ctkXnatScanResourceFile::upload(const QString& filename)
+void ctkXnatScanResourceFile::upload(const QString& /*filename*/)
 {
 }
 

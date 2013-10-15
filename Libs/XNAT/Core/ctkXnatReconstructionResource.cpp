@@ -44,7 +44,7 @@ public:
 
 
 ctkXnatReconstructionResource::ctkXnatReconstructionResource()
-: ctkXnatObject(new ctkXnatReconstructionResourcePrivate())
+: ctkXnatObject(*new ctkXnatReconstructionResourcePrivate())
 {
 }
 

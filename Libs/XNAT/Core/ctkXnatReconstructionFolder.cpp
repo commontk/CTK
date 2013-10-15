@@ -44,7 +44,7 @@ public:
 
 
 ctkXnatReconstructionFolder::ctkXnatReconstructionFolder()
-: ctkXnatObject(new ctkXnatReconstructionFolderPrivate())
+: ctkXnatObject(*new ctkXnatReconstructionFolderPrivate())
 {
   this->setProperty("ID", "Reconstructions");
 }

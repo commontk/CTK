@@ -44,7 +44,7 @@ public:
 
 
 ctkXnatScanResource::ctkXnatScanResource()
-: ctkXnatObject(new ctkXnatScanResourcePrivate())
+: ctkXnatObject(*new ctkXnatScanResourcePrivate())
 {
 }
 

@@ -43,7 +43,7 @@ public:
 };
 
 ctkXnatReconstructionResourceFile::ctkXnatReconstructionResourceFile()
-: ctkXnatObject(new ctkXnatReconstructionResourceFilePrivate())
+: ctkXnatObject(*new ctkXnatReconstructionResourceFilePrivate())
 {
 }
 
@@ -75,7 +75,7 @@ void ctkXnatReconstructionResourceFile::download(const QString& fileName)
   this->connection()->download(this, fileName);
 }
 
-void ctkXnatReconstructionResourceFile::upload(const QString& fileName)
+void ctkXnatReconstructionResourceFile::upload(const QString& /*fileName*/)
 {
 }
 

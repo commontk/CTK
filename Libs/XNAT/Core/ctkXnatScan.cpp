@@ -43,7 +43,7 @@ public:
 
 
 ctkXnatScan::ctkXnatScan()
-: ctkXnatObject(new ctkXnatScanPrivate())
+: ctkXnatObject(*new ctkXnatScanPrivate())
 {
 }
 
