@@ -115,6 +115,12 @@ public:
   bool AllBlocked;
   bool ObserveDeletion;
   
+  /// An associative container to speed up findConnection.
+  /// No need to iterate through all the existing connections and check if it is
+  /// equal with the searched one.
+  /// All the connections are present in the index (to allow quick decision that
+  /// a connection does not exist), but a lazy deletion method is used (items
+  /// not necessarily removed from the index immediately when a connection is deleted).
   mutable ConnectionIndexType ConnectionIndex;
 };
 
@@ -152,6 +158,7 @@ ctkVTKObjectEventsObserverPrivate::findConnection(
   const QObject* qt_obj, const char* qt_slot)const
 {
   // Linear search for connections is prohibitively slow when observing many objects
+  // (because connection->isEqual is slow)
   Q_Q(const ctkVTKObjectEventsObserver);
 
   if(vtk_obj != NULL && qt_slot != NULL &&
@@ -197,8 +204,6 @@ ctkVTKObjectEventsObserverPrivate::findConnections(
   vtkObject* vtk_obj, unsigned long vtk_event,
   const QObject* qt_obj, const char* qt_slot)const
 {
-  Q_Q(const ctkVTKObjectEventsObserver);
-
   bool all_info = true;
   if(vtk_obj == NULL || qt_slot == NULL ||
      qt_obj == NULL || vtk_event == vtkCommand::NoEvent)
@@ -453,9 +458,29 @@ int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lo
 
   foreach (ctkVTKConnection* connection, connections)
     {    
-    // no need to update the index, it'll be updated on-the fly when searching for connections
     delete connection;
     }
+
+  // Only remove shadow connections (connections in the index without a corresponding actual connection)
+  // from the index if the index size grew too big (shadow elements ratio >50% and minimum 100)
+  if (false && static_cast<int>(d->ConnectionIndex.size())>100+children().count()*2)
+  {
+    for (ctkVTKObjectEventsObserverPrivate::ConnectionIndexType::iterator connectionIndexIt=d->ConnectionIndex.begin();
+      connectionIndexIt!=d->ConnectionIndex.end();
+      /*upon deletion the increment is done already, so don't increment here*/)
+    {
+      if (children().contains(connectionIndexIt->second))
+      {
+        ++connectionIndexIt;
+      }
+      else
+      {
+        // shadow element, remove it from the index
+        connectionIndexIt=d->ConnectionIndex.erase(connectionIndexIt);
+      }
+    }
+  }
+
   return connections.count();
 }
 

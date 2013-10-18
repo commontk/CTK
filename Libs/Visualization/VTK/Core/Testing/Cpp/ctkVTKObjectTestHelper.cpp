@@ -86,6 +86,30 @@ bool ctkVTKObjectTest::test()
   
   vtkObject* object = vtkObject::New();
 
+
+  int numberOfConnections=10000;
+
+  qDebug() << "Create "<<numberOfConnections<<" connections...";
+  vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
+  timerLog->StartTimer();
+  for (int i = 1; i <= numberOfConnections; ++i)
+    {
+    this->qvtkConnect(object, i, this, SLOT(onVTKObjectModifiedPublic()));
+    }
+  timerLog->StopTimer();
+  double t1 = timerLog->GetElapsedTime();
+  qDebug() << "  elapsed time: " << t1 << "seconds";
+  
+  qDebug() << "Remove "<<numberOfConnections<<" connections...";
+  timerLog->StartTimer();
+  for (int i = numberOfConnections; i>=1 ; --i)
+    {
+    this->qvtkDisconnect(object, i, this, SLOT(onVTKObjectModifiedPublic()));
+    }
+  timerLog->StopTimer();
+  t1 = timerLog->GetElapsedTime();
+  qDebug() << "  elapsed time: " << t1 << "seconds";
+
   connection = this->qvtkConnect(object, vtkCommand::ModifiedEvent, 
                                  this, SLOT(onVTKObjectModifiedPublic()));
   if (connection.isEmpty() || object->GetReferenceCount() != 1)
