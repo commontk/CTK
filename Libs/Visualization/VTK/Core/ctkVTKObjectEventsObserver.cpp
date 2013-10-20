@@ -24,6 +24,7 @@
 #include <QList>
 #include <QHash>
 #include <QDebug>
+#include <QMultiMap>
 
 // CTK includes
 #include "ctkVTKObjectEventsObserver.h"
@@ -82,7 +83,10 @@ class ctkVTKObjectEventsObserverPrivate
 protected:
   ctkVTKObjectEventsObserver* const q_ptr;
 public:
-  typedef std::multimap<unsigned long, ctkVTKConnection*> ConnectionIndexType; // first: originating vtkObject, second: QT connection object name
+  /// ConnectionIndexType:
+  ///  key = hash (generated from the connection parameters)
+  ///  value = QT connection object name
+  typedef QMultiMap<unsigned long, ctkVTKConnection*> ConnectionIndexType;
   ctkVTKObjectEventsObserverPrivate(ctkVTKObjectEventsObserver& object);
 
   ///
@@ -105,10 +109,12 @@ public:
     return q->findChildren<ctkVTKConnection*>();
   }
 
-  static unsigned long generateConnectionIndexHash(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, const char* qt_slot)
+  /// Generate a number from the connection parameters that is most often
+  /// unique for each connection. The slot parameter is not used, as probably
+  /// the same objects with the same event are not connected to different slot.
+  static unsigned long generateConnectionIndexHash(const vtkObject* vtk_obj, unsigned long vtk_event, const QObject* qt_obj)
   {
-    return (unsigned char*)vtk_obj-(unsigned char*)qt_obj+vtk_event;
+    return reinterpret_cast<const unsigned char*>(vtk_obj)-reinterpret_cast<const unsigned char*>(qt_obj)+vtk_event;
   }
 
   bool StrictTypeCheck;
@@ -163,29 +169,27 @@ ctkVTKObjectEventsObserverPrivate::findConnection(
 
   if(vtk_obj != NULL && qt_slot != NULL &&
      qt_obj != NULL || vtk_event != vtkCommand::NoEvent)
-  {
-    // All information is specified, so we can use the index to find the connection
-    std::pair<ConnectionIndexType::iterator, ConnectionIndexType::iterator> rangeConnectionsForObject;
-    rangeConnectionsForObject = this->ConnectionIndex.equal_range(generateConnectionIndexHash(vtk_obj, vtk_event, qt_obj, qt_slot));
-    for (ConnectionIndexType::iterator connectionForObjectIt = rangeConnectionsForObject.first; 
-      connectionForObjectIt != rangeConnectionsForObject.second;
-      /*upon deletion the increment is done already, so don't increment here*/)
     {
-      ctkVTKConnection* connection=connectionForObjectIt->second;
-      if (!q->children().contains(connection))
+    // All information is specified, so we can use the index to find the connection
+    unsigned long hash=generateConnectionIndexHash(vtk_obj, vtk_event, qt_obj);
+    ConnectionIndexType::iterator connectionIt = this->ConnectionIndex.find(hash);
+    while (connectionIt != this->ConnectionIndex.end() && connectionIt.key() == hash)
       {
+      ctkVTKConnection* connection=connectionIt.value();
+      if (!q->children().contains(connection))
+        {
         // connection has been deleted, so remove it from the index
-        connectionForObjectIt=this->ConnectionIndex.erase(connectionForObjectIt);
+        connectionIt=this->ConnectionIndex.erase(connectionIt);
         continue;
-      }
+        }
       if (connection->isEqual(vtk_obj, vtk_event, qt_obj, qt_slot))
-      {        
+        {
         return connection;
+        }
+      ++connectionIt;
       }
-      ++connectionForObjectIt;
-    }
     return 0;
-  }
+    }
 
   foreach (ctkVTKConnection* connection, this->connections())
     {
@@ -204,24 +208,19 @@ ctkVTKObjectEventsObserverPrivate::findConnections(
   vtkObject* vtk_obj, unsigned long vtk_event,
   const QObject* qt_obj, const char* qt_slot)const
 {
-  bool all_info = true;
-  if(vtk_obj == NULL || qt_slot == NULL ||
-     qt_obj == NULL || vtk_event == vtkCommand::NoEvent)
-    {
-    all_info = false;
-    }
-
   QList<ctkVTKConnection*> foundConnections;
 
-  if (all_info)
-  {
+  if(vtk_obj != NULL && qt_slot != NULL &&
+     qt_obj != NULL || vtk_event != vtkCommand::NoEvent)
+    {
+    // All information is specified, so we can use the index to find the connection
     ctkVTKConnection* connection=findConnection(vtk_obj, vtk_event, qt_obj, qt_slot);
     if (connection)
-    {
+      {
       foundConnections.append(connection);
-    }
+      }
     return foundConnections;
-  }
+    }
 
   // Loop through all connection
   foreach (ctkVTKConnection* connection, this->connections())
@@ -229,10 +228,6 @@ ctkVTKObjectEventsObserverPrivate::findConnections(
     if (connection->isEqual(vtk_obj, vtk_event, qt_obj, qt_slot))
       {
       foundConnections.append(connection);
-      if (all_info)
-        {
-        break;
-        }
       }
     }
 
@@ -371,9 +366,7 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
 
   // Instantiate a new connection, set its parameters and add it to the list
   ctkVTKConnection * connection = ctkVTKConnectionFactory::instance()->createConnection(this);
-  QString objName=connection->objectName();
-  d->ConnectionIndex.insert(ctkVTKObjectEventsObserverPrivate::ConnectionIndexType::value_type(
-    ctkVTKObjectEventsObserverPrivate::generateConnectionIndexHash(vtk_obj, vtk_event, qt_obj, qt_slot), connection));
+  d->ConnectionIndex.insert(ctkVTKObjectEventsObserverPrivate::generateConnectionIndexHash(vtk_obj, vtk_event, qt_obj), connection);
   
   connection->observeDeletion(d->ObserveDeletion);
   connection->setup(vtk_obj, vtk_event, qt_obj, qt_slot, priority, connectionType);
@@ -457,27 +450,26 @@ int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lo
     d->findConnections(vtk_obj, vtk_event, qt_obj, qt_slot);
 
   foreach (ctkVTKConnection* connection, connections)
-    {    
+    {
     delete connection;
     }
 
   // Only remove shadow connections (connections in the index without a corresponding actual connection)
   // from the index if the index size grew too big (shadow elements ratio >50% and minimum 100)
-  if (false && static_cast<int>(d->ConnectionIndex.size())>100+children().count()*2)
+  if (static_cast<int>(d->ConnectionIndex.size())>100+children().count()*2)
   {
-    for (ctkVTKObjectEventsObserverPrivate::ConnectionIndexType::iterator connectionIndexIt=d->ConnectionIndex.begin();
-      connectionIndexIt!=d->ConnectionIndex.end();
+    for (ctkVTKObjectEventsObserverPrivate::ConnectionIndexType::iterator connectionIt=d->ConnectionIndex.begin();
+      connectionIt!=d->ConnectionIndex.end();
       /*upon deletion the increment is done already, so don't increment here*/)
     {
-      if (children().contains(connectionIndexIt->second))
-      {
-        ++connectionIndexIt;
-      }
-      else
-      {
-        // shadow element, remove it from the index
-        connectionIndexIt=d->ConnectionIndex.erase(connectionIndexIt);
-      }
+      ctkVTKConnection* connection=connectionIt.value();
+      if (!children().contains(connection))
+        {
+        // connection has been deleted, so remove it from the index
+        connectionIt=d->ConnectionIndex.erase(connectionIt);
+        continue;
+        }
+      ++connectionIt;
     }
   }
 
