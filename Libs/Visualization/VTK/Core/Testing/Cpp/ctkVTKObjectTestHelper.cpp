@@ -118,24 +118,6 @@ bool ctkVTKObjectTest::test()
     return false;
     }
 
-  int numberOfConnections=10000;
-  qCritical() << "Create "<<numberOfConnections<<" connections...";
-  vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
-  timerLog->StartTimer();
-  for (int i = 0; i < numberOfConnections; ++i)
-    {
-    connection = this->qvtkConnect(object, i, 
-                                 this, SLOT(onVTKObjectModifiedPublic()));
-    }
-  for (int i = 0; i < numberOfConnections; ++i)
-    {
-    connection = this->qvtkDisconnect(object, i, 
-                                 this, SLOT(onVTKObjectModifiedPublic()));
-    }
-  timerLog->StopTimer();
-  double t1 = timerLog->GetElapsedTime();
-  qCritical() << "  elapsed time: " << t1 << "seconds";
-
   object->Modified();
 
   if (d->PublicSlotCalled != 1)

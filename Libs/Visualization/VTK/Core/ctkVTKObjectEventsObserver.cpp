@@ -168,7 +168,7 @@ ctkVTKObjectEventsObserverPrivate::findConnection(
   Q_Q(const ctkVTKObjectEventsObserver);
 
   if(vtk_obj != NULL && qt_slot != NULL &&
-     qt_obj != NULL || vtk_event != vtkCommand::NoEvent)
+     qt_obj != NULL && vtk_event != vtkCommand::NoEvent)
     {
     // All information is specified, so we can use the index to find the connection
     unsigned long hash=generateConnectionIndexHash(vtk_obj, vtk_event, qt_obj);
@@ -211,7 +211,7 @@ ctkVTKObjectEventsObserverPrivate::findConnections(
   QList<ctkVTKConnection*> foundConnections;
 
   if(vtk_obj != NULL && qt_slot != NULL &&
-     qt_obj != NULL || vtk_event != vtkCommand::NoEvent)
+     qt_obj != NULL && vtk_event != vtkCommand::NoEvent)
     {
     // All information is specified, so we can use the index to find the connection
     ctkVTKConnection* connection=findConnection(vtk_obj, vtk_event, qt_obj, qt_slot);
