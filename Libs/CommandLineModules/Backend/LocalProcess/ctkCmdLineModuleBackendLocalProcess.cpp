@@ -171,7 +171,7 @@ QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &lo
   process.setReadChannel(QProcess::StandardOutput);
   process.start(location.toLocalFile(), QStringList("--xml"));
 
-  if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
+  if (!process.waitForFinished(-1) || process.exitStatus() == QProcess::CrashExit ||
       process.error() != QProcess::UnknownError)
   {
     throw ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString());
