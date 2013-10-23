@@ -54,7 +54,7 @@ public:
 
   QString operator ()(LogLevel logLevel);
 
-  QString logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)const;
+  static QString logLevelAsString(ctkErrorLogLevel::LogLevel logLevel);
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkErrorLogLevel::LogLevels)
 

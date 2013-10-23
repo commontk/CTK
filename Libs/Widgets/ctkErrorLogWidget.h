@@ -45,6 +45,10 @@ public:
   ctkErrorLogModel* errorLogModel()const;
   void setErrorLogModel(ctkErrorLogModel * newErrorLogModel);
 
+  /// Hide table column identified by /a columnId.
+  /// \sa ctkErrorLogModel::ColumnsIds
+  Q_INVOKABLE void setColumnHidden(int columnId, bool hidden) const;
+
 public Q_SLOTS:
   void setAllEntriesVisible(bool visibility = true);
 
