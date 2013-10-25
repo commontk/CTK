@@ -86,7 +86,7 @@ void ctkDICOMTableViewPrivate::init()
 
   this->lblTableName->setText(this->queryTableName);
 
-  if (this->dicomDatabase)
+  if (this->dicomDatabase != 0)
     {
       this->setUpTableView();
     }
@@ -95,7 +95,7 @@ void ctkDICOMTableViewPrivate::init()
 void ctkDICOMTableViewPrivate::setUpTableView()
 {
   Q_Q(ctkDICOMTableView);
-  if (this->dicomDatabase)
+  if (this->dicomDatabase != 0)
     {
       q->setQuery();
       this->dicomSQLFilterModel->setSourceModel(&this->dicomSQLModel);
@@ -120,7 +120,7 @@ void ctkDICOMTableViewPrivate::setUpTableView()
 //Temporay solution to hide UID columns
 void ctkDICOMTableViewPrivate::hideUIDColumns()
 {
-  int numberOfColumns = this->tblDicomDatabaseView->horizontalHeader()->count();
+  int numberOfColumns = this->tblDicomDatabaseView->model()->columnCount();
   QString columnName = " ";
   for (int i = 0; i < numberOfColumns; ++i)
     {
@@ -162,9 +162,9 @@ ctkDICOMTableView::ctkDICOMTableView(QWidget *parent, QString queryTableName)
   , d_ptr(new ctkDICOMTableViewPrivate(*this))
 {
   Q_D(ctkDICOMTableView);
-  d->queryTableName = queryTableName;
   d->dicomDatabase = 0;
   d->init();
+  d->queryTableName = queryTableName;
   d->lblTableName->setText(queryTableName);
 }
 
