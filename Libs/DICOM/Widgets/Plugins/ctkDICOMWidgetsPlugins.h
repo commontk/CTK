@@ -27,6 +27,7 @@
 // CTK includes
 #include "ctkDICOMWidgetsPluginsExport.h"
 #include "ctkDICOMQueryRetrieveWidgetPlugin.h"
+#include "ctkDICOMTableManagerPlugin.h"
 #include "ctkDICOMTableViewPlugin.h"
 
 /// \class Group the plugins in one library
@@ -42,6 +43,7 @@ public:
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkDICOMQueryRetrieveWidgetPlugin;
+    plugins << new ctkDICOMTableManagerPlugin;
     plugins << new ctkDICOMTableViewPlugin;
     return plugins;
     }

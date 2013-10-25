@@ -16,6 +16,8 @@ set(PLUGIN_SRCS
   ctkDICOMQueryRetrieveWidgetPlugin.cpp
   ctkDICOMQueryRetrieveWidgetPlugin.h
 
+  ctkDICOMTableManagerPlugin.cpp
+  ctkDICOMTableManagerPlugin.h
   ctkDICOMTableViewPlugin.cpp
   ctkDICOMTableViewPlugin.h
   )
@@ -25,6 +27,7 @@ set(PLUGIN_MOC_SRCS
   ctkDICOMWidgetsPlugins.h
 
   ctkDICOMQueryRetrieveWidgetPlugin.h
+  ctkDICOMTableManagerPlugin.h
   ctkDICOMTableViewPlugin.h
   )
 
