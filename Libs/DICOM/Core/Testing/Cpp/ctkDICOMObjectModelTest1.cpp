@@ -40,11 +40,11 @@ int ctkDICOMObjectModelTest1( int argc, char * argv [] )
   //TODO: Add the option for reading the test file from argv
   fileName = QFileDialog::getOpenFileName( 0,
     "Choose a DCM File", ".","DCM (*)" );
-  ctkDICOMObjectModel dcmInfoModel;
-  dcmInfoModel.setFile(fileName);
+  ctkDICOMObjectModel dcmObjModel;
+  dcmObjModel.setFile(fileName);
 
   QTreeView *viewer = new QTreeView();
-  viewer->setModel( &dcmInfoModel);
+  viewer->setModel( &dcmObjModel);
   viewer->expandAll();
   viewer->resizeColumnToContents(0);
   viewer->resizeColumnToContents(1);

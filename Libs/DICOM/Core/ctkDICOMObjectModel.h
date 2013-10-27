@@ -40,14 +40,16 @@ class ctkDICOMObjectModelPrivate;
 class CTK_DICOM_CORE_EXPORT ctkDICOMObjectModel
 	: public QStandardItemModel
 {
+  Q_OBJECT
   typedef QStandardItemModel Superclass;
+  //Q_PROPERTY(setFile);
 
 public:
 
   explicit ctkDICOMObjectModel(QObject* parent = 0);
   ctkDICOMObjectModel(const ctkDICOMObjectModel& other);
   virtual ~ctkDICOMObjectModel();
-  void setFile (const QString& fileName);
+  Q_INVOKABLE void setFile (const QString& fileName);
 
 protected:
   QScopedPointer<ctkDICOMObjectModelPrivate> d_ptr;

@@ -73,6 +73,7 @@ set(KIT_MOC_SRCS
   ctkDICOMIndexer_p.h
   ctkDICOMFilterProxyModel.h
   ctkDICOMModel.h
+  ctkDICOMObjectModel.h
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h
   ctkDICOMTester.h
