@@ -27,6 +27,8 @@
 
 // VTK includes
 #include <vtkObject.h>
+#include <vtkTimerLog.h>
+#include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
 class ctkVTKObjectTestPrivate
