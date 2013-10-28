@@ -46,11 +46,23 @@ public:
   ctkDICOMTableManager(ctkDICOMDatabase* db, QWidget* parent = 0);
   virtual ~ctkDICOMTableManager();
 
+  /**
+   * @brief Set the ctkDICOMDatabase
+   * @param db the dicom database which should be used
+   */
   void setCTKDICOMDatabase(ctkDICOMDatabase* db);
 
+  /**
+    * Property for setting the table layout either to vertical or horizontal alignment
+    */
   Q_PROPERTY(Qt::Orientation tableOrientation READ tableOrientation WRITE setTableOrientation)
   void setTableOrientation(const Qt::Orientation&);
   Qt::Orientation tableOrientation();
+
+  /**
+   * @brief Deletes the selected row from the database
+   */
+  void deleteSelectedRows();
 
 Q_SIGNALS:
   // Signals for propagating selection changes of the different tables

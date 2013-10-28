@@ -41,6 +41,8 @@ public:
 
   void init();
   void setCTKDICOMDatabase(ctkDICOMDatabase *db);
+
+  ctkDICOMDatabase* dicomDatabase;
 };
 
 ctkDICOMTableManagerPrivate::ctkDICOMTableManagerPrivate(ctkDICOMTableManager &obj)
@@ -90,6 +92,7 @@ void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(ctkDICOMDatabase* db)
   this->patientsTable->setCTKDicomDataBase(db);
   this->studiesTable->setCTKDicomDataBase(db);
   this->seriesTable->setCTKDicomDataBase(db);
+  dicomDatabase = db;
 }
 
 //----------------------------------------------------------------------------
@@ -135,4 +138,39 @@ Qt::Orientation ctkDICOMTableManager::tableOrientation()
 {
   Q_D(ctkDICOMTableManager);
   return d->tableSplitter->orientation();
+}
+
+void ctkDICOMTableManager::deleteSelectedRows()
+{
+  Q_D(ctkDICOMTableManager);
+  QStringList seriesUIDS = d->seriesTable->currentSelection();
+  if (seriesUIDS.size() != 0)
+    {
+      QString seriesUID;
+      foreach (seriesUID, seriesUIDS)
+        {
+          d->dicomDatabase->removeSeries(seriesUID);
+        }
+      return;
+    }
+  QStringList studiesUIDS = d->studiesTable->currentSelection();
+  if (studiesUIDS.size() != 0)
+    {
+      QString studyUID;
+      foreach (studyUID, studiesUIDS)
+        {
+          d->dicomDatabase->removeStudy(studyUID);
+        }
+      return;
+    }
+  QStringList patientsUIDS = d->patientsTable->currentSelection();
+  if (patientsUIDS.size() != 0)
+    {
+      QString patienUID;
+      foreach (patienUID, patientsUIDS)
+        {
+          d->dicomDatabase->removePatient(patienUID);
+        }
+      return;
+    }
 }
