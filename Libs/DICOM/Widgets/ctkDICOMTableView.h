@@ -89,6 +89,12 @@ public:
    */
   void setQuery (const QStringList &uids = QStringList());
 
+  /**
+   * @brief Returns the uids of the current selected rows
+   * @return a list containing all the uids of the selected rows
+   */
+  QStringList currentSelection();
+
 public Q_SLOTS:
 
   /**

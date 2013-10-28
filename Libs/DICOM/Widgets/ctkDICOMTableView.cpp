@@ -53,6 +53,8 @@ public:
   QString queryTableName;
   QString queryForeignKey;
 
+  QStringList currentSelection;
+
 };
 //------------------------------------------------------------------------------
 
@@ -206,12 +208,12 @@ void ctkDICOMTableView::onSelectionChanged()
 {
   Q_D(ctkDICOMTableView);
 
-  QModelIndexList currentSelection = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
+  QModelIndexList selectedRows = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
   QStringList uids;
 
-  foreach(QModelIndex i, currentSelection)
+  foreach(QModelIndex i, selectedRows)
     {
-      uids << (QString("'") + i.data().toString() +"'");
+      uids<< (QString("'") + i.data().toString() +"'");
     }
   emit queryChanged(uids);
 }
@@ -256,4 +258,20 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
     }
   if (d->dicomDatabase != 0)
     d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
+}
+
+
+QStringList ctkDICOMTableView::currentSelection()
+{
+  Q_D(ctkDICOMTableView);
+
+  QModelIndexList currentSelection = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
+  QStringList uids;
+
+  foreach(QModelIndex i, currentSelection)
+    {
+      uids<< /*(QString("'") + */i.data().toString() /*+"'")*/;
+    }
+
+  return  uids;
 }
