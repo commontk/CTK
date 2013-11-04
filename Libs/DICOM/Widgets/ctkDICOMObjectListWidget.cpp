@@ -80,6 +80,7 @@ ctkDICOMObjectListWidget::ctkDICOMObjectListWidget(QWidget* _parent):Superclass(
   Q_D(ctkDICOMObjectListWidget);
   
   d->setupUi(this);
+  d->currentPathLineEdit->setReadOnly(true);
   connect(d->fileSlider, SIGNAL(valueChanged(int)), this, SLOT(updateWidget()));
   
 }
