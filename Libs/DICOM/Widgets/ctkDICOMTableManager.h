@@ -61,9 +61,12 @@ public:
   Qt::Orientation tableOrientation();
 
   /**
-   * @brief Deletes the selected row from the database
+   * @brief Get the current selection of the dicomTableViews
+   * @return a list with the uids of the selected items
    */
-  void deleteSelectedRows();
+  QStringList currentPatientsSelection();
+  QStringList currentStudiesSelection();
+  QStringList currentSeriesSelection();
 
 Q_SIGNALS:
   // Signals for propagating selection changes of the different tables

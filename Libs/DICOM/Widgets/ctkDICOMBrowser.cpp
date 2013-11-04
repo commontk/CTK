@@ -432,7 +432,22 @@ void ctkDICOMBrowser::onQueryRetrieveFinished()
 void ctkDICOMBrowser::onRemoveAction()
 {
   Q_D(ctkDICOMBrowser);
-  d->dicomTableManager->deleteSelectedRows();
+  QStringList selectedSeriesUIDs = d->dicomTableManager->currentSeriesSelection();
+  QString uid;
+  foreach (uid, selectedSeriesUIDs)
+    {
+      d->DICOMDatabase->removeSeries(uid);
+    }
+  QStringList selectedStudiesUIDs = d->dicomTableManager->currentStudiesSelection();
+  foreach(uid, selectedStudiesUIDs)
+    {
+      d->DICOMDatabase->removeStudy(uid);
+    }
+  QStringList selectedPatientUIDs = d->dicomTableManager->currentPatientsSelection();
+  foreach(uid, selectedPatientUIDs)
+    {
+      d->DICOMDatabase->removePatient(uid);
+    }
 }
 
 //----------------------------------------------------------------------------

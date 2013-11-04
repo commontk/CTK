@@ -160,37 +160,20 @@ Qt::Orientation ctkDICOMTableManager::tableOrientation()
 
 //------------------------------------------------------------------------------
 
-void ctkDICOMTableManager::deleteSelectedRows()
+QStringList ctkDICOMTableManager::currentPatientsSelection()
 {
   Q_D(ctkDICOMTableManager);
-  QStringList seriesUIDS = d->seriesTable->currentSelection();
-  if (seriesUIDS.size() != 0)
-    {
-      QString seriesUID;
-      foreach (seriesUID, seriesUIDS)
-        {
-          d->dicomDatabase->removeSeries(seriesUID);
-        }
-      return;
-    }
-  QStringList studiesUIDS = d->studiesTable->currentSelection();
-  if (studiesUIDS.size() != 0)
-    {
-      QString studyUID;
-      foreach (studyUID, studiesUIDS)
-        {
-          d->dicomDatabase->removeStudy(studyUID);
-        }
-      return;
-    }
-  QStringList patientsUIDS = d->patientsTable->currentSelection();
-  if (patientsUIDS.size() != 0)
-    {
-      QString patienUID;
-      foreach (patienUID, patientsUIDS)
-        {
-          d->dicomDatabase->removePatient(patienUID);
-        }
-      return;
-    }
+  return d->patientsTable->currentSelection();
+}
+
+QStringList ctkDICOMTableManager::currentStudiesSelection()
+{
+  Q_D(ctkDICOMTableManager);
+  return d->studiesTable->currentSelection();
+}
+
+QStringList ctkDICOMTableManager::currentSeriesSelection()
+{
+  Q_D(ctkDICOMTableManager);
+  return d->seriesTable->currentSelection();
 }
