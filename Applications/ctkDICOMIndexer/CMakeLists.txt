@@ -3,7 +3,7 @@ project(ctkDICOMIndexer)
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
-  
+
 # Source files
 set(KIT_SRCS
   ctkDICOMIndexerMain.cpp

@@ -320,7 +320,7 @@ SIMPLE_TEST( ctkWorkflowWidgetTest2 )
 # Add Tests expecting CTKData to be set
 #
 if(EXISTS "${CTKData_DIR}")
-  set(baseline_relative_location "Libs/Widgets") 
+  set(baseline_relative_location "Libs/Widgets")
   SIMPLE_TEST_WITH_DATA( ctkCrosshairLabelTest2 ${baseline_relative_location})
 endif()
 

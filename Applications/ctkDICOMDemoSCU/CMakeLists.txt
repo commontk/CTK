@@ -3,7 +3,7 @@ project(ctkDICOMDemoSCU)
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
-  
+
 # Source files
 set(KIT_SRCS
   ctkDICOMDemoSCUMain.cpp
@@ -11,7 +11,7 @@ set(KIT_SRCS
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  
+
   )
 
 # UI files

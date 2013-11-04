@@ -3,7 +3,7 @@ project(ctkDICOM)
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
-  
+
 # Source files
 set(KIT_SRCS
   ctkDICOMMain.cpp

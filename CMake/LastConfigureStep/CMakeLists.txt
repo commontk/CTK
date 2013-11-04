@@ -54,7 +54,7 @@ endforeach()
 
 set(CTK_EXTERNAL_LIBRARIES)
 
-# Loop over dependencies and append to CTK_EXTERNAL_LIBRARIES 
+# Loop over dependencies and append to CTK_EXTERNAL_LIBRARIES
 # target dependency which are neither CTK or static library
 set(link_type)
 foreach(ctk_target_dependency ${ctk_target_dependencies})

@@ -109,7 +109,7 @@ set(PLUGIN_resources
 )
 
 set(PLUGIN_CACHED_RESOURCEFILES
-  
+
 )
 
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
