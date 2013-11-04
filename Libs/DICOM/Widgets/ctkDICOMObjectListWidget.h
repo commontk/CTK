@@ -39,8 +39,6 @@ public:
   typedef QWidget Superclass;
   explicit ctkDICOMObjectListWidget(QWidget* parent=0);
   virtual ~ctkDICOMObjectListWidget();
-  
-  /// 
 
   QString currentFile();
   QStringList fileList();
@@ -53,8 +51,6 @@ private:
   Q_DISABLE_COPY(ctkDICOMObjectListWidget);
 
 Q_SIGNALS:
-  /// 
-
 
 public Q_SLOTS:
   void setCurrentFile(const QString& newFileName);
@@ -62,7 +58,6 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
   void updateWidget();
-
 };
 
 #endif

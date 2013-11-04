@@ -35,7 +35,6 @@
 #include <ctkLogger.h>
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMObjectListWidget");
 
-
 //----------------------------------------------------------------------------
 class ctkDICOMObjectListWidgetPrivate: public Ui_ctkDICOMObjectListWidget
 {
@@ -46,30 +45,33 @@ public:
 
   QString currentFile;
   QStringList fileList;
-
 };
 
 //----------------------------------------------------------------------------
 // ctkDICOMObjectListWidgetPrivate methods
 
 //----------------------------------------------------------------------------
-ctkDICOMObjectListWidgetPrivate::ctkDICOMObjectListWidgetPrivate(){
-    
+ctkDICOMObjectListWidgetPrivate::ctkDICOMObjectListWidgetPrivate()
+{
+
 }
 
 //----------------------------------------------------------------------------
 ctkDICOMObjectListWidgetPrivate::~ctkDICOMObjectListWidgetPrivate(){
 
 }
+
 //----------------------------------------------------------------------------
-void ctkDICOMObjectListWidgetPrivate::populateDICOMObjectTreeView(const QString& fileName){
-  //memory management??
+void ctkDICOMObjectListWidgetPrivate::populateDICOMObjectTreeView(const QString& fileName)
+{
+  //TODO: Check memory management
   ctkDICOMObjectModel* dcmObjModel = new ctkDICOMObjectModel;
   dcmObjModel->setFile(fileName);
   std::cerr << "fileName is =" << fileName.toUtf8().constData() << "\n";
   this->dcmObjectTreeView->reset();
   this->dcmObjectTreeView->setModel( dcmObjModel);
 }
+
 //----------------------------------------------------------------------------
 // ctkDICOMObjectListWidget methods
 
@@ -78,23 +80,24 @@ ctkDICOMObjectListWidget::ctkDICOMObjectListWidget(QWidget* _parent):Superclass(
   d_ptr(new ctkDICOMObjectListWidgetPrivate)
 {
   Q_D(ctkDICOMObjectListWidget);
-  
+
   d->setupUi(this);
   d->currentPathLineEdit->setReadOnly(true);
   connect(d->fileSlider, SIGNAL(valueChanged(int)), this, SLOT(updateWidget()));
-  
 }
 
 //----------------------------------------------------------------------------
 ctkDICOMObjectListWidget::~ctkDICOMObjectListWidget()
 {
 }
+
 //----------------------------------------------------------------------------
 void ctkDICOMObjectListWidget::setCurrentFile(const QString& newFileName)
 {
-Q_D(ctkDICOMObjectListWidget);
-d->currentPathLineEdit->setText(newFileName);
+  Q_D(ctkDICOMObjectListWidget);
+  d->currentPathLineEdit->setText(newFileName);
 }
+
 // --------------------------------------------------------------------------
 void ctkDICOMObjectListWidget::setFileList(const QStringList& fileList)
 {
@@ -102,24 +105,27 @@ void ctkDICOMObjectListWidget::setFileList(const QStringList& fileList)
   d->fileList = fileList;
   if (d-> fileList.size()> 0)
   {
-    d->currentFile =d->fileList[0];
+    d->currentFile = d->fileList[0];
     d->currentPathLineEdit->setText(d->currentFile );
     d->populateDICOMObjectTreeView(d->currentFile );
     d->fileSlider->setMaximum(d->fileList.size()-1);
   }
 }
+
 // --------------------------------------------------------------------------
 QString ctkDICOMObjectListWidget::currentFile()
 {
   Q_D(const ctkDICOMObjectListWidget);
   return d->currentFile;
 }
+
 // --------------------------------------------------------------------------
 QStringList ctkDICOMObjectListWidget::fileList()
 {
   Q_D(const ctkDICOMObjectListWidget);
   return d->fileList;
 }
+
 // --------------------------------------------------------------------------
 void ctkDICOMObjectListWidget::updateWidget()
 {

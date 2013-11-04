@@ -28,7 +28,6 @@
 #include <QMetaType>
 #include <QStandardItemModel>
 #include <QString>
-#include <QStringList>
 
 #include "ctkDICOMCoreExport.h"
 
@@ -38,7 +37,7 @@ class ctkDICOMObjectModelPrivate;
 /// \brief Provides a Qt MVC-compatible wrapper around a ctkDICOMItem.
 ///
 class CTK_DICOM_CORE_EXPORT ctkDICOMObjectModel
-	: public QStandardItemModel
+  : public QStandardItemModel
 {
   Q_OBJECT
   typedef QStandardItemModel Superclass;
@@ -55,8 +54,7 @@ protected:
   QScopedPointer<ctkDICOMObjectModelPrivate> d_ptr;
 
 private:
-Q_DECLARE_PRIVATE(ctkDICOMObjectModel);
+  Q_DECLARE_PRIVATE(ctkDICOMObjectModel);
 };
-
 
 #endif // ctkDICOMObjectModel_h
