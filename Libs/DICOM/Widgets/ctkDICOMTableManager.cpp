@@ -18,7 +18,7 @@
 
 =========================================================================*/
 
-// ctk includes
+// CTK includes
 #include "ctkDICOMTableManager.h"
 #include "ctkDICOMTableView.h"
 #include "ui_ctkDICOMTableManager.h"
@@ -45,16 +45,22 @@ public:
   ctkDICOMDatabase* dicomDatabase;
 };
 
+//------------------------------------------------------------------------------
+
 ctkDICOMTableManagerPrivate::ctkDICOMTableManagerPrivate(ctkDICOMTableManager &obj)
   : q_ptr(&obj)
 {
 
 }
 
+//------------------------------------------------------------------------------
+
 ctkDICOMTableManagerPrivate::~ctkDICOMTableManagerPrivate()
 {
 
 }
+
+//------------------------------------------------------------------------------
 
 void ctkDICOMTableManagerPrivate::init()
 {
@@ -87,12 +93,14 @@ void ctkDICOMTableManagerPrivate::init()
                    q, SIGNAL(seriesSelectionChanged(const QStringList&)));
 }
 
+//------------------------------------------------------------------------------
+
 void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(ctkDICOMDatabase* db)
 {
   this->patientsTable->setCTKDicomDataBase(db);
   this->studiesTable->setCTKDicomDataBase(db);
   this->seriesTable->setCTKDicomDataBase(db);
-  dicomDatabase = db;
+  this->dicomDatabase = db;
 }
 
 //----------------------------------------------------------------------------
@@ -108,6 +116,8 @@ ctkDICOMTableManager::ctkDICOMTableManager(QWidget *parent)
   d->init();
 }
 
+//------------------------------------------------------------------------------
+
 ctkDICOMTableManager::ctkDICOMTableManager(ctkDICOMDatabase *db, QWidget *parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableManagerPrivate(*this))
@@ -117,10 +127,14 @@ ctkDICOMTableManager::ctkDICOMTableManager(ctkDICOMDatabase *db, QWidget *parent
   d->setCTKDICOMDatabase(db);
 }
 
+//------------------------------------------------------------------------------
+
 ctkDICOMTableManager::~ctkDICOMTableManager()
 {
 
 }
+
+//------------------------------------------------------------------------------
 
 void ctkDICOMTableManager::setCTKDICOMDatabase(ctkDICOMDatabase* db)
 {
@@ -128,17 +142,23 @@ void ctkDICOMTableManager::setCTKDICOMDatabase(ctkDICOMDatabase* db)
   d->setCTKDICOMDatabase(db);
 }
 
-void ctkDICOMTableManager::setTableOrientation(const Qt::Orientation &o)
+//------------------------------------------------------------------------------
+
+void ctkDICOMTableManager::setTableOrientation(const Qt::Orientation &o) const
 {
-  Q_D(ctkDICOMTableManager);
+  Q_D(const ctkDICOMTableManager);
   d->tableSplitter->setOrientation(o);
 }
+
+//------------------------------------------------------------------------------
 
 Qt::Orientation ctkDICOMTableManager::tableOrientation()
 {
   Q_D(ctkDICOMTableManager);
   return d->tableSplitter->orientation();
 }
+
+//------------------------------------------------------------------------------
 
 void ctkDICOMTableManager::deleteSelectedRows()
 {

@@ -228,9 +228,12 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
   d->DirectoryButton->setDirectory(databaseDirectory);
 
   // TableView signals
-  connect(d->dicomTableManager, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)),this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
-  connect(d->dicomTableManager, SIGNAL(studiesSelectionChanged(const QItemSelection&, const QItemSelection&)),this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
-  connect(d->dicomTableManager, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)),this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
+  connect(d->dicomTableManager, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)),
+          this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
+  connect(d->dicomTableManager, SIGNAL(studiesSelectionChanged(const QItemSelection&, const QItemSelection&)),
+          this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
+  connect(d->dicomTableManager, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)),
+          this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
   d->dicomTableManager->setCTKDICOMDatabase(d->DICOMDatabase.data());
 
   connect(d->DirectoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(setDatabaseDirectory(QString)));
@@ -504,8 +507,10 @@ void ctkDICOMBrowser::onImportDirectory(QString directory)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onModelSelected(const QItemSelection &, const QItemSelection &)
+void ctkDICOMBrowser::onModelSelected(const QItemSelection &item1, const QItemSelection &item2)
 {
+  Q_UNUSED(item1);
+  Q_UNUSED(item2);
   Q_D(ctkDICOMBrowser);
   d->ActionRemove->setEnabled(true);
 }

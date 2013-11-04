@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef CTKDICOMTABLEMANAGER_H
-#define CTKDICOMTABLEMANAGER_H
+#ifndef __ctkDICOMTableManager_h
+#define __ctkDICOMTableManager_h
 
 #include "ctkDICOMWidgetsExport.h"
 #include "ctkDICOMDatabase.h"
@@ -39,6 +39,11 @@ class ctkDICOMTableManager : public QWidget
 {
   Q_OBJECT
 
+  /**
+    * Property for setting the table layout either to vertical or horizontal alignment
+    */
+  Q_PROPERTY(Qt::Orientation tableOrientation READ tableOrientation WRITE setTableOrientation)
+
 public:
   typedef QWidget Superclass;
 
@@ -52,11 +57,7 @@ public:
    */
   void setCTKDICOMDatabase(ctkDICOMDatabase* db);
 
-  /**
-    * Property for setting the table layout either to vertical or horizontal alignment
-    */
-  Q_PROPERTY(Qt::Orientation tableOrientation READ tableOrientation WRITE setTableOrientation)
-  void setTableOrientation(const Qt::Orientation&);
+  void setTableOrientation(const Qt::Orientation&) const;
   Qt::Orientation tableOrientation();
 
   /**
@@ -82,4 +83,4 @@ private:
   Q_DISABLE_COPY(ctkDICOMTableManager)
 };
 
-#endif // CTKDICOMTABLEMANAGER_H
+#endif // __ctkDICOMTableManager_h
