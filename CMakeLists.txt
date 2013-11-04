@@ -306,7 +306,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
   ctkFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
-  
+
   ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
 
   # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
@@ -371,7 +371,7 @@ ctk_enable_option(Widgets "Enable Qt Widget libraries" OFF
                   CTK_LIB_Widgets)
 
 # The CTK Plugin Framework, a dynamic component system based on OSGi.
-# This will enable only the framework itself.                  
+# This will enable only the framework itself.
 ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
                   CTK_LIB_PluginFramework)
 
@@ -450,34 +450,34 @@ ctk_lib_option(PluginFramework
 ctk_lib_option(Widgets
                "Build the Widgets library" OFF
                CTK_ENABLE_Widgets OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES) OR CTK_USE_QTTESTING)
-               
+
 ctk_lib_option(DICOM/Core
                "Build the DICOM Core library" OFF
                CTK_ENABLE_DICOM OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES))
-               
+
 ctk_lib_option(DICOM/Widgets
                "Build the DICOM Widgets library" OFF
                CTK_ENABLE_DICOM AND CTK_ENABLE_Widgets OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES))
-               
+
 ctk_lib_option(ImageProcessing/ITK/Core
                "Build the ITK Core library" OFF)
-               
+
 ctk_lib_option(Scripting/Python/Core
                "Build the Python Core library" OFF)
-               
+
 ctk_lib_option(Scripting/Python/Widgets
                "Build the Python Widgets library" OFF
                CTK_LIB_Widgets AND CTK_ENABLE_Python_Wrapping)
-               
+
 ctk_lib_option(Visualization/VTK/Core
                "Build the VTK Core library" OFF)
-               
+
 ctk_lib_option(Visualization/VTK/Widgets
                "Build the VTK Widgets library" OFF)
-               
+
 ctk_lib_option(CommandLineModules/Core
                "Build the Command Line Module core library" OFF)
-               
+
 ctk_lib_option(CommandLineModules/Frontend/QtWebKit
                "Build the QtWebKit based Command Line Module front-end" OFF)
 
@@ -486,7 +486,7 @@ ctk_lib_option(CommandLineModules/Frontend/QtGui
 
 ctk_lib_option(CommandLineModules/Backend/LocalProcess
                "Build the Command Line Module back-end for local processes" OFF)
-               
+
 ctk_lib_option(CommandLineModules/Backend/FunctionPointer
                "Build the Command Line Module back-end for function pointers" OFF)
 
@@ -504,7 +504,7 @@ set(CTK_ENABLED_LIBS ${_enabled_libs} CACHE INTERNAL "" FORCE)
 #-----------------------------------------------------------------------------
 # CTK Applications - Use ON or OFF to indicate if the application should be built by default
 #
- 
+
 ctk_app_option(ctkDICOM
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
@@ -513,39 +513,39 @@ ctk_app_option(ctkDICOM
 ctk_app_option(ctkDICOM2
                "Build the new DICOM example application (experimental)" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMIndexer
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMDemoSCU
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMQuery
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMRetrieve
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMQueryRetrieve
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMHost
                "Build the DICOM application host example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkExampleHost
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkExampleHostedApp
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkEventBusDemo
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
@@ -572,15 +572,15 @@ endif()
 ctk_app_option(ctkPluginBrowser
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkPluginGenerator
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMObjectViewer
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkSimplePythonShell
                "Build the DICOM example application" OFF
                CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
@@ -614,7 +614,7 @@ set(plugin_list
   org.commontk.metatype
   )
 
-foreach(_plugin ${plugin_list})  
+foreach(_plugin ${plugin_list})
   ctk_plugin_option(${_plugin} "Build the ${_plugin} plugin." OFF)
 endforeach()
 
@@ -630,15 +630,15 @@ ctk_plugin_option(org.commontk.dah.hostedapp "Build the org.commontk.dah.hosteda
                   CTK_ENABLE_DICOMApplicationHosting)
 ctk_plugin_option(org.commontk.dah.host "Build the org.commontk.dah.host plugin." OFF
                   CTK_ENABLE_DICOMApplicationHosting)
-                  
+
 ctk_plugin_option(org.commontk.dah.exampleapp
                   "Build the org.commontk.dah.exampleapp plugin." OFF
                   CTK_APP_ctkExampleHostedApp)
-                  
+
 ctk_plugin_option(org.commontk.dah.cmdlinemoduleapp
                   "Build the org.commontk.dah.cmdlinemoduleapp plugin." OFF
                   CTK_APP_ctkCommandLineModuleApp)
-                  
+
 ctk_plugin_option(org.commontk.dah.examplehost
                   "Build the org.commontk.dah.examplehost plugin." OFF
                   CTK_APP_ctkExampleHost)

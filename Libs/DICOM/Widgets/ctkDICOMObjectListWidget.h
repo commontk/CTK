@@ -31,9 +31,9 @@ class ctkDICOMObjectListWidgetPrivate;
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMObjectListWidget : public QWidget
 {
-    Q_OBJECT
-    Q_PROPERTY(QString currentFile READ currentFile WRITE setCurrentFile)
-    Q_PROPERTY(QStringList fileList READ fileList WRITE setFileList)
+  Q_OBJECT
+  Q_PROPERTY(QString currentFile READ currentFile WRITE setCurrentFile)
+  Q_PROPERTY(QStringList fileList READ fileList WRITE setFileList)
 
 public:
   typedef QWidget Superclass;
@@ -42,8 +42,8 @@ public:
   
   /// 
 
-  QString ctkDICOMObjectListWidget::currentFile()const;
-  QStringList ctkDICOMObjectListWidget::fileList()const;
+  QString currentFile();
+  QStringList fileList();
 
 protected:
   QScopedPointer<ctkDICOMObjectListWidgetPrivate> d_ptr;
