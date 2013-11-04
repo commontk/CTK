@@ -46,8 +46,11 @@ private:
 
   friend class ctkXnatObject;
 
-  QList<QSharedPointer<ctkXnatObject> > children;
+  QString xsiType;
+
   QMap<QString,QString> properties;
+
+  QList<QSharedPointer<ctkXnatObject> > children;
 
   bool fetched;
 

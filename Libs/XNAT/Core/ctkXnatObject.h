@@ -55,6 +55,9 @@ public:
   /// the REST API.
   QString uri() const;
 
+  /// Gets the XML Schema type of the object.
+  QString xsiType() const;
+
   /// Gets the name of the object.
   QString name() const;
 
@@ -94,6 +97,9 @@ public:
   /// Fetches the children and the properties of the object.
   void fetch();
 
+  /// Creates the object from the XNAT server.
+  virtual void create();
+
   /// Removes the object from the XNAT server.
   virtual void remove();
 
@@ -118,6 +124,9 @@ protected:
   /// Sets the resource URI of the object that can be used to access it through
   /// the REST API.
   void setUri(const QString& uri);
+
+  /// Sets the XML Schema type of the object.
+  void setXsiType(const QString& xsiType);
 
   /// Sets the name of the object.
   void setName(const QString& name);

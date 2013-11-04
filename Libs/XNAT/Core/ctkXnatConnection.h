@@ -83,6 +83,8 @@ public:
   void fetch(const QSharedPointer<ctkXnatReconstruction>& reconstruction);
   void fetch(const QSharedPointer<ctkXnatReconstructionResource>& reconstructionResource);
 
+  void create(ctkXnatObject* object);
+
   void create(ctkXnatProject* project);
   void create(ctkXnatSubject* subject);
 
@@ -90,22 +92,19 @@ public:
 
   void download(ctkXnatFile* file, const QString& fileName);
 
-  /* void downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFileName); */
-  /* void downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& zipFileName); */
-  /* void addReconstruction(ctkXnatExperiment* experiment, const QString& categoryEntry); */
+//  void downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
+//  void downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
 
-  /* void download(ctkXnatScan* scan, const QString& zipFileName); */
+//  void download(ctkXnatScan* scan, const QString& zipFileName);
 
   void download(ctkXnatScanResource* scanResource, const QString& zipFileName);
   void download(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFileName);
 
-  /* void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename); */
-  /* void addReconstructionResource(ctkXnatReconstruction* reconstruction, const QString& resource); */
+//  void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename);
 
-  /* void downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename); */
-  /* void uploadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename); */
+//  void downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename);
 
-  /* void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFileName); */
+//  void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFileName);
 
 public slots:
   void processResult(QUuid queryId, QList<QVariantMap> parameters);

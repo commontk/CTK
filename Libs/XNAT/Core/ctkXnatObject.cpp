@@ -64,6 +64,18 @@ void ctkXnatObject::setUri(const QString& uri)
   setProperty("URI", uri);
 }
 
+QString ctkXnatObject::xsiType() const
+{
+  Q_D(const ctkXnatObject);
+  return d->xsiType;
+}
+
+void ctkXnatObject::setXsiType(const QString& xsiType)
+{
+  Q_D(ctkXnatObject);
+  d->xsiType = xsiType;
+}
+
 QString ctkXnatObject::name() const
 {
   return property("name");
@@ -171,6 +183,11 @@ ctkXnatConnection* ctkXnatObject::connection() const
   while (xnatObject && !server);
 
   return server ? xnatObject->connection() : 0;
+}
+
+void ctkXnatObject::create()
+{
+  this->connection()->create(this);
 }
 
 void ctkXnatObject::remove()

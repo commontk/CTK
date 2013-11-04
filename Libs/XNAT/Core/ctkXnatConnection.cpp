@@ -436,20 +436,20 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstructionResource
   }
 }
 
-//void ctkXnatConnection::create(ctkXnatProject* project)
-//{
-//  const QString& projectName = project->name();
+void ctkXnatConnection::create(ctkXnatObject* object)
+{
+  const QString& uri = object->uri();
 
-//  Q_D(ctkXnatConnection);
+  Q_D(ctkXnatConnection);
 
-//  QString query = QString("/REST/projects/%1").arg(projectName);
-//  bool success = d->xnat->sync(d->xnat->put(query));
+  QString query = uri;
+  bool success = d->xnat->sync(d->xnat->put(query));
 
-//  if (!success)
-//  {
-//    throw ctkXnatException("Error occurred while creating the project.");
-//  }
-//}
+  if (!success)
+  {
+    throw ctkXnatException("Error occurred while removing the data.");
+  }
+}
 
 void ctkXnatConnection::remove(ctkXnatObject* object)
 {
@@ -517,17 +517,6 @@ void ctkXnatConnection::remove(ctkXnatObject* object)
 //  d->xnat->sync(queryId);
 //}
 
-//void ctkXnatConnection::addReconstruction(ctkXnatExperiment* /*experiment*/, const QString& /*reconstruction*/)
-//{
-////  const QString& experimentName = experiment->getName();
-////  ctkXnatObject* subject = experiment->getParent();
-////  const QString& subjectName = subject->getName();
-////  ctkXnatObject* project = subject->getParent();
-////  const QString& projectName = project->getName();
-
-//  // TODO
-//}
-
 //void ctkXnatConnection::downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& fileName)
 //{
 //  const QString& reconstructionName = reconstruction->getName();
@@ -545,19 +534,6 @@ void ctkXnatConnection::remove(ctkXnatObject* object)
 //  parameters["format"] = "zip";
 //  QUuid queryId = d->xnat->download(fileName, query, parameters);
 //  d->xnat->sync(queryId);
-//}
-
-//void ctkXnatConnection::addReconstructionResource(ctkXnatReconstruction* /*reconstruction*/, const QString& /*resourceName*/)
-//{
-////  const QString& reconstructionName = reconstruction->getName();
-////  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
-////  const QString& experimentName = experiment->getName();
-////  ctkXnatObject* subject = experiment->getParent();
-////  const QString& subjectName = subject->getName();
-////  ctkXnatObject* project = subject->getParent();
-////  const QString& projectName = project->getName();
-
-//  // TODO
 //}
 
 //void ctkXnatConnection::downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& fileName)
@@ -579,21 +555,6 @@ void ctkXnatConnection::remove(ctkXnatObject* object)
 //  parameters["format"] = "zip";
 //  QUuid queryId = d->xnat->download(fileName, query, parameters);
 //  d->xnat->sync(queryId);
-//}
-
-//void ctkXnatConnection::uploadReconstructionResourceFiles(ctkXnatReconstructionResource* /*reconstructionResource*/, const QString& /*zipFilename*/)
-//{
-////  const QString& resourceName = reconstructionResource->getName();
-////  ctkXnatObject* reconstruction = reconstructionResource->getParent();
-////  const QString& reconstructionName = reconstruction->getName();
-////  ctkXnatObject* experiment = reconstruction->getParent()->getParent();
-////  const QString& experimentName = experiment->getName();
-////  ctkXnatObject* subject = experiment->getParent();
-////  const QString& subjectName = subject->getName();
-////  ctkXnatObject* project = subject->getParent();
-////  const QString& projectName = project->getName();
-
-//  // TODO
 //}
 
 //void ctkXnatConnection::download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& fileName)
@@ -638,6 +599,15 @@ void ctkXnatConnection::remove(ctkXnatObject* object)
 //  d->xnat->sync(queryId);
 //}
 
+void ctkXnatConnection::download(ctkXnatFile* file, const QString& fileName)
+{
+  Q_D(ctkXnatConnection);
+  QString query = file->uri();
+
+  QUuid queryId = d->xnat->download(fileName, query);
+  d->xnat->sync(queryId);
+}
+
 void ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QString& fileName)
 {
   Q_D(ctkXnatConnection);
@@ -646,15 +616,6 @@ void ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QStrin
   qRestAPI::Parameters parameters;
   parameters["format"] = "zip";
   QUuid queryId = d->xnat->download(fileName, query, parameters);
-  d->xnat->sync(queryId);
-}
-
-void ctkXnatConnection::download(ctkXnatFile* file, const QString& fileName)
-{
-  Q_D(ctkXnatConnection);
-  QString query = file->uri();
-
-  QUuid queryId = d->xnat->download(fileName, query);
   d->xnat->sync(queryId);
 }
 
