@@ -35,7 +35,7 @@
 class ctkDICOMObjectModelPrivate;
 /// \ingroup DICOM_Core
 ///
-/// \brief .
+/// \brief Provides a Qt MVC-compatible wrapper around a ctkDICOMItem.
 ///
 class CTK_DICOM_CORE_EXPORT ctkDICOMObjectModel
 	: public QStandardItemModel

@@ -44,8 +44,8 @@ public:
   ~ctkDICOMObjectListWidgetPrivate();
   void populateDICOMObjectTreeView(const QString& fileName);
 
-QString currentFile;
-QStringList fileList;
+  QString currentFile;
+  QStringList fileList;
 
 };
 
@@ -108,13 +108,13 @@ void ctkDICOMObjectListWidget::setFileList(const QStringList& fileList)
   }
 }
 // --------------------------------------------------------------------------
-QString ctkDICOMObjectListWidget::currentFile()const
+QString ctkDICOMObjectListWidget::currentFile()
 {
   Q_D(const ctkDICOMObjectListWidget);
   return d->currentFile;
 }
 // --------------------------------------------------------------------------
-QStringList ctkDICOMObjectListWidget::fileList()const
+QStringList ctkDICOMObjectListWidget::fileList()
 {
   Q_D(const ctkDICOMObjectListWidget);
   return d->fileList;
