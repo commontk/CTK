@@ -237,7 +237,7 @@ void ctkDICOMTableView::onSelectionChanged()
     {
       uids<< (QString("'") + i.data().toString() +"'");
     }
-  emit queryChanged(uids);
+  emit selectionChanged(uids);
 }
 
 //------------------------------------------------------------------------------

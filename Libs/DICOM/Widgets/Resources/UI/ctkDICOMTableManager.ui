@@ -84,6 +84,38 @@ QSplitter::handle:vertical {height: 2px;}</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>patientsTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>studiesTable</receiver>
+   <slot>onUpdateQuery(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>244</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>267</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>studiesTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>seriesTable</receiver>
+   <slot>onUpdateQuery(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>502</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>608</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>seriesSelectionChanged(QStringList)</signal>
