@@ -26,7 +26,7 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 # Add Tests
 #
 
-SIMPLE_TEST(ctkDICOMAppWidgetTest1)
+SIMPLE_TEST(ctkDICOMAppWidgetTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD)
 SIMPLE_TEST(ctkDICOMDatasetViewTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMDirectoryListWidgetTest1)
 SIMPLE_TEST(ctkDICOMImageTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
