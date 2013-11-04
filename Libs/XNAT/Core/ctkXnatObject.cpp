@@ -22,7 +22,9 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 
+#include "ctkXnatConnection.h"
 #include "ctkXnatServer.h"
+
 #include <QDebug>
 #include <QVariant>
 
@@ -171,53 +173,15 @@ ctkXnatConnection* ctkXnatObject::connection() const
   return server ? xnatObject->connection() : 0;
 }
 
-
-bool ctkXnatObject::isFile() const
+void ctkXnatObject::remove()
 {
-  return false;
+  this->connection()->remove(this);
 }
-
-bool ctkXnatObject::receivesFiles() const
-{
-  return false;
-}
-
-bool ctkXnatObject::holdsFiles() const
-{
-  return false;
-}
-
-bool ctkXnatObject::isModifiable() const
-{
-  return false;
-}
-
-bool ctkXnatObject::isDeletable() const
-{
-  return false;
-}
-
 
 void ctkXnatObject::download(const QString& /*zipFilename*/)
 {
-  // do nothing
-  // if (!this->isFile())
-  //   return;  
 }
 
 void ctkXnatObject::upload(const QString& /*zipFilename*/)
 {
-  // do nothing
-  // if (!this->isFile())
-  //   return;  
-}
-
-void ctkXnatObject::add(const QString& /*name*/)
-{
-  // do nothing
-}
-
-void ctkXnatObject::remove()
-{
-  // do nothing
 }

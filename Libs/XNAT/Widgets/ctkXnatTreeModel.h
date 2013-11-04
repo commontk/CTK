@@ -51,12 +51,9 @@ public:
 
   void addServer(ctkXnatServer::Pointer server);
 
-  void addEntry (const QModelIndex& index, const QString& name);
-  void removeEntry (const QModelIndex& index);
+  bool removeAllRows(const QModelIndex& parent);
 
-  bool removeAllRows (const QModelIndex& parent);
-
-  void uploadFile (const QModelIndex& index, const QString& zipFilename);
+  void uploadFile(const QModelIndex& index, const QString& zipFilename);
   void downloadFile (const QModelIndex& index, const QString& zipFilename);
   
 private:

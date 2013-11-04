@@ -44,17 +44,9 @@ public:
 //  void setUri(const QString& uri);
   
   void reset();
-  void remove();
   
-  bool isFile() const;
-
   void download(const QString& filename);
 
-  /* bool receivesFiles() const; */
-  /* bool holdsFiles() const; */
-  /* bool isDeletable() const; */
-  /* bool isModifiable() const; */
-  
 private:
   
   friend class qRestResult;

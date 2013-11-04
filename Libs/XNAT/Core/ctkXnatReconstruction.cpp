@@ -81,14 +81,3 @@ void ctkXnatReconstruction::fetchImpl()
   ctkXnatObject::Pointer self = d->selfPtr;
   this->connection()->fetch(self.staticCast<ctkXnatReconstruction>());
 }
-
-void ctkXnatReconstruction::remove()
-{
-  // ctkXnatObject::remove();
-  // getConnection()->remove(this);
-}
-
-bool ctkXnatReconstruction::isFile() const
-{
-  return false;
-}

@@ -87,14 +87,3 @@ void ctkXnatScanResource::download(const QString& filename)
 {
   this->connection()->download(this, filename);
 }
-
-void ctkXnatScanResource::remove()
-{
-  // ctkXnatObject::remove();
-  // getConnection()->remove(this);
-}
-
-bool ctkXnatScanResource::isFile() const
-{
-  return false;
-}

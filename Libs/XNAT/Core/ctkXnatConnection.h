@@ -87,7 +87,7 @@ public:
   void create(ctkXnatProject* project);
   void create(ctkXnatSubject* subject);
 
-  void remove(ctkXnatProject* project);
+  void remove(ctkXnatObject* object);
 
   /* void downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFileName); */
   /* void downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& zipFileName); */
@@ -102,14 +102,11 @@ public:
 
   /* void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename); */
   /* void addReconstructionResource(ctkXnatReconstruction* reconstruction, const QString& resource); */
-  /* void removeReconstruction(ctkXnatReconstruction* reconstruction); */
 
   /* void downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename); */
   /* void uploadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename); */
-  /* void removeReconstructionResource(ctkXnatReconstructionResource* reconstructionResource); */
 
   /* void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFileName); */
-  /* void remove(ctkXnatReconstructionResourceFile* reconstructionResourceFile); */
 
 public slots:
   void processResult(QUuid queryId, QList<QVariantMap> parameters);

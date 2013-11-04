@@ -87,16 +87,4 @@ void ctkXnatScanResourceFile::reset()
 
 void ctkXnatScanResourceFile::fetchImpl()
 {
-
-}
-
-void ctkXnatScanResourceFile::remove()
-{
-  // ctkXnatObject::remove();
-  // getConnection()->remove(this);
-}
-
-bool ctkXnatScanResourceFile::isFile() const
-{
-  return true;
 }

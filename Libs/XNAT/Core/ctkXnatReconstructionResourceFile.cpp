@@ -89,14 +89,3 @@ void ctkXnatReconstructionResourceFile::fetchImpl()
 {
 
 }
-
-void ctkXnatReconstructionResourceFile::remove()
-{
-  // ctkXnatObject::remove();
-  // getConnection()->remove(this);
-}
-
-bool ctkXnatReconstructionResourceFile::isFile() const
-{
-  return true;
-}

@@ -83,14 +83,3 @@ void ctkXnatScanFolder::fetchImpl()
   ctkXnatObject::Pointer self = d->selfPtr;
   this->connection()->fetch(self.staticCast<ctkXnatScanFolder>());
 }
-
-void ctkXnatScanFolder::remove()
-{
-  // ctkXnatObject::remove();
-  // getConnection()->remove(this);
-}
-
-bool ctkXnatScanFolder::isFile() const
-{
-  return false;
-}

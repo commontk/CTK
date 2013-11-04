@@ -264,29 +264,3 @@ void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFi
 
   child->upload(zipFileName);
 }
-
-void ctkXnatTreeModel::addEntry(const QModelIndex& index, const QString& name)
-{
-  if (!index.isValid())
-  {
-    return;
-  }
-
-  ctkXnatObject::Pointer xnatObject = this->xnatObject(index);
-  ctkXnatObject::Pointer child = xnatObject->children()[index.row()];
-
-  child->add(name);
-}
-
-void ctkXnatTreeModel::removeEntry(const QModelIndex& index)
-{
-  if (!index.isValid())
-  {
-    return;
-  }
-
-  ctkXnatObject::Pointer xnatObject = this->xnatObject(index);
-  ctkXnatObject::Pointer child = xnatObject->children()[index.row()];
-
-  child->remove();
-}

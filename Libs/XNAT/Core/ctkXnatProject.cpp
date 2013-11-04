@@ -122,14 +122,3 @@ void ctkXnatProject::fetchImpl()
   ctkXnatObject::Pointer self = d->selfPtr;
   this->connection()->fetch(self.staticCast<ctkXnatProject>());
 }
-
-void ctkXnatProject::remove()
-{
-  // ctkXnatObject::remove();
-  // getConnection()->remove(this);
-}
-
-bool ctkXnatProject::isFile() const
-{
-  return false;
-}

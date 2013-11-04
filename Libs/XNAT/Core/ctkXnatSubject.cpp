@@ -114,15 +114,3 @@ ctkXnatSubject::Pointer ctkXnatSubject::Create()
   subject->d_func()->selfPtr = subject;
   return subject;
 }
-
-
-void ctkXnatSubject::remove()
-{
-  // ctkXnatObject::remove();
-  // getConnection()->remove(this);
-}
-
-bool ctkXnatSubject::isFile() const
-{
-  return false;
-}
