@@ -54,10 +54,7 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-## Testing
-#if(BUILD_TESTING)
-#  add_subdirectory(Testing)
-#
-#  # Compile source code snippets
-#  add_subdirectory(Documentation/Snippets)
-#endif()
+# Testing
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
