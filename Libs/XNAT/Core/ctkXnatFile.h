@@ -19,26 +19,26 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatScanResourceFile_h
-#define ctkXnatScanResourceFile_h
+#ifndef ctkXnatFile_h
+#define ctkXnatFile_h
 
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
-class ctkXnatScanResourceFilePrivate;
+class ctkXnatFilePrivate;
 
-class CTK_XNAT_CORE_EXPORT ctkXnatScanResourceFile : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatFile : public ctkXnatObject
 {
 
 public:
 
-  typedef QSharedPointer<ctkXnatScanResourceFile> Pointer;
-  typedef QWeakPointer<ctkXnatScanResourceFile> WeakPointer;
+  typedef QSharedPointer<ctkXnatFile> Pointer;
+  typedef QWeakPointer<ctkXnatFile> WeakPointer;
   
   static Pointer Create();
-  virtual ~ctkXnatScanResourceFile();
+  virtual ~ctkXnatFile();
   
 //  const QString& uri() const;
 //  void setUri(const QString& uri);
@@ -51,11 +51,11 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatScanResourceFile();
+  explicit ctkXnatFile();
   virtual void fetchImpl();
   
-  Q_DECLARE_PRIVATE(ctkXnatScanResourceFile);
-  Q_DISABLE_COPY(ctkXnatScanResourceFile);
+  Q_DECLARE_PRIVATE(ctkXnatFile);
+  Q_DISABLE_COPY(ctkXnatFile);
 };
 
 #endif

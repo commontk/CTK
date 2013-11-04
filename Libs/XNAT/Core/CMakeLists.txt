@@ -11,17 +11,16 @@ set(KIT_SRCS
   ctkXnatConnectionFactory.cpp
   ctkXnatException.cpp
   ctkXnatExperiment.cpp
+  ctkXnatFile.cpp
   ctkXnatObject.cpp
   ctkXnatObjectPrivate.cpp
   ctkXnatProject.cpp
   ctkXnatScan.cpp
   ctkXnatScanFolder.cpp
   ctkXnatScanResource.cpp
-  ctkXnatScanResourceFile.cpp
   ctkXnatReconstruction.cpp
   ctkXnatReconstructionFolder.cpp
   ctkXnatReconstructionResource.cpp
-  ctkXnatReconstructionResourceFile.cpp
   ctkXnatServer.cpp
   ctkXnatSettings.cpp
   ctkXnatSubject.cpp

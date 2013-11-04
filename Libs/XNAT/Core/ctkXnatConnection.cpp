@@ -23,17 +23,16 @@
 
 #include "ctkXnatException.h"
 #include "ctkXnatExperiment.h"
+#include "ctkXnatFile.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatProject.h"
 #include "ctkXnatReconstruction.h"
 #include "ctkXnatReconstructionFolder.h"
 #include "ctkXnatReconstructionResource.h"
-#include "ctkXnatReconstructionResourceFile.h"
 #include "ctkXnatScan.h"
 #include "ctkXnatScanFolder.h"
 #include "ctkXnatScanResource.h"
-#include "ctkXnatScanResourceFile.h"
 #include "ctkXnatServer.h"
 #include "ctkXnatSubject.h"
 
@@ -332,25 +331,25 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanRes
   QUuid queryId = d->xnat->get(scanResourceFilesUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
   
-  QList<ctkXnatScanResourceFile*> scanResourceFiles = restResult->results<ctkXnatScanResourceFile>();
+  QList<ctkXnatFile*> files = restResult->results<ctkXnatFile>();
 
-  foreach (ctkXnatScanResourceFile* scanResourceFile, scanResourceFiles)
+  foreach (ctkXnatFile* file, files)
   {
-    QString uri = scanResourceFile->property("URI");
+    QString uri = file->property("URI");
     if (uri.size())
     {
-      scanResourceFile->setUri(uri);
+      file->setUri(uri);
     }
 
-    QString label = scanResourceFile->property("Name");
+    QString label = file->property("Name");
     if (label.size())
     {
-      scanResourceFile->setProperty("ID", label);
+      file->setProperty("ID", label);
     }
 
-    scanResourceFile->setUri(scanResourceFilesUri + "/" + label);
+    file->setUri(scanResourceFilesUri + "/" + label);
 
-    ctkXnatObject::Pointer ptr(scanResourceFile);
+    ctkXnatObject::Pointer ptr(file);
     ptr->d_func()->selfPtr = ptr;
     scanResource->addChild(ptr);
   }
@@ -413,25 +412,25 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstructionResource
   QUuid queryId = d->xnat->get(reconstructionResourceFilesUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
 
-  QList<ctkXnatReconstructionResourceFile*> reconstructionResourceFiles = restResult->results<ctkXnatReconstructionResourceFile>();
+  QList<ctkXnatFile*> files = restResult->results<ctkXnatFile>();
 
-  foreach (ctkXnatReconstructionResourceFile* reconstructionResourceFile, reconstructionResourceFiles)
+  foreach (ctkXnatFile* file, files)
   {
-    QString uri = reconstructionResourceFile->property("URI");
+    QString uri = file->property("URI");
     if (uri.size())
     {
-      reconstructionResourceFile->setUri(uri);
+      file->setUri(uri);
     }
 
-    QString label = reconstructionResourceFile->property("Name");
+    QString label = file->property("Name");
     if (label.size())
     {
-      reconstructionResourceFile->setProperty("ID", label);
+      file->setProperty("ID", label);
     }
 
-    reconstructionResourceFile->setUri(reconstructionResourceFilesUri + "/" + label);
+    file->setUri(reconstructionResourceFilesUri + "/" + label);
 
-    ctkXnatObject::Pointer ptr(reconstructionResourceFile);
+    ctkXnatObject::Pointer ptr(file);
     ptr->d_func()->selfPtr = ptr;
     reconstructionResource->addChild(ptr);
   }
@@ -650,10 +649,10 @@ void ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QStrin
   d->xnat->sync(queryId);
 }
 
-void ctkXnatConnection::download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName)
+void ctkXnatConnection::download(ctkXnatFile* file, const QString& fileName)
 {
   Q_D(ctkXnatConnection);
-  QString query = scanResourceFile->uri();
+  QString query = file->uri();
 
   QUuid queryId = d->xnat->download(fileName, query);
   d->xnat->sync(queryId);
@@ -667,15 +666,6 @@ void ctkXnatConnection::download(ctkXnatReconstructionResource* reconstructionRe
   qRestAPI::Parameters parameters;
   parameters["format"] = "zip";
   QUuid queryId = d->xnat->download(fileName, query, parameters);
-  d->xnat->sync(queryId);
-}
-
-void ctkXnatConnection::download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& fileName)
-{
-  Q_D(ctkXnatConnection);
-  QString query = reconstructionResourceFile->uri();
-
-  QUuid queryId = d->xnat->download(fileName, query);
   d->xnat->sync(queryId);
 }
 

@@ -19,17 +19,17 @@
 
 =============================================================================*/
 
-#include "ctkXnatScanResourceFile.h"
+#include "ctkXnatFile.h"
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatObjectPrivate.h"
 
 
-class ctkXnatScanResourceFilePrivate : public ctkXnatObjectPrivate
+class ctkXnatFilePrivate : public ctkXnatObjectPrivate
 {
 public:
 
-  ctkXnatScanResourceFilePrivate()
+  ctkXnatFilePrivate()
   : ctkXnatObjectPrivate()
   {
   }
@@ -42,49 +42,49 @@ public:
 //  QString uri;
 };
 
-ctkXnatScanResourceFile::ctkXnatScanResourceFile()
-: ctkXnatObject(*new ctkXnatScanResourceFilePrivate())
+ctkXnatFile::ctkXnatFile()
+: ctkXnatObject(*new ctkXnatFilePrivate())
 {
 }
 
-ctkXnatScanResourceFile::Pointer ctkXnatScanResourceFile::Create()
+ctkXnatFile::Pointer ctkXnatFile::Create()
 {
-  Pointer ptr(new ctkXnatScanResourceFile());
+  Pointer ptr(new ctkXnatFile());
   ptr->d_func()->selfPtr = ptr;
   return ptr;
 }
 
-ctkXnatScanResourceFile::~ctkXnatScanResourceFile()
+ctkXnatFile::~ctkXnatFile()
 {
 }
 
-//const QString& ctkXnatScanResourceFile::uri() const
+//const QString& ctkXnatFile::uri() const
 //{
-//  Q_D(const ctkXnatScanResourceFile);
+//  Q_D(const ctkXnatFile);
 //  return d->uri;
 //}
 
-//void ctkXnatScanResourceFile::setUri(const QString& uri)
+//void ctkXnatFile::setUri(const QString& uri)
 //{
-//  Q_D(ctkXnatScanResourceFile);
+//  Q_D(ctkXnatFile);
 //  d->uri = uri;
 //}
 
-void ctkXnatScanResourceFile::download(const QString& filename)
+void ctkXnatFile::download(const QString& filename)
 {
   this->connection()->download(this, filename);
 }
 
-void ctkXnatScanResourceFile::upload(const QString& /*filename*/)
+void ctkXnatFile::upload(const QString& /*filename*/)
 {
 }
 
 
-void ctkXnatScanResourceFile::reset()
+void ctkXnatFile::reset()
 {
   ctkXnatObject::reset();
 }
 
-void ctkXnatScanResourceFile::fetchImpl()
+void ctkXnatFile::fetchImpl()
 {
 }

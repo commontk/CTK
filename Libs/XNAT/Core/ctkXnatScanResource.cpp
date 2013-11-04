@@ -22,7 +22,6 @@
 #include "ctkXnatScanResource.h"
 
 #include "ctkXnatConnection.h"
-#include "ctkXnatScanResourceFile.h"
 #include "ctkXnatObjectPrivate.h"
 
 class ctkXnatScanResourcePrivate : public ctkXnatObjectPrivate

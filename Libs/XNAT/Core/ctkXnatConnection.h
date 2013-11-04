@@ -35,17 +35,16 @@
 class ctkXnatConnectionPrivate;
 
 class ctkXnatExperiment;
+class ctkXnatFile;
 class ctkXnatObject;
 class ctkXnatProject;
 class ctkXnatReconstruction;
 class ctkXnatReconstructionFolder;
 class ctkXnatReconstructionResource;
-class ctkXnatReconstructionResourceFile;
 class ctkXnatRoot;
 class ctkXnatScan;
 class ctkXnatScanFolder;
 class ctkXnatScanResource;
-class ctkXnatScanResourceFile;
 class ctkXnatServer;
 class ctkXnatSubject;
 
@@ -89,6 +88,8 @@ public:
 
   void remove(ctkXnatObject* object);
 
+  void download(ctkXnatFile* file, const QString& fileName);
+
   /* void downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFileName); */
   /* void downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& zipFileName); */
   /* void addReconstruction(ctkXnatExperiment* experiment, const QString& categoryEntry); */
@@ -96,9 +97,7 @@ public:
   /* void download(ctkXnatScan* scan, const QString& zipFileName); */
 
   void download(ctkXnatScanResource* scanResource, const QString& zipFileName);
-  void download(ctkXnatScanResourceFile* scanResourceFile, const QString& fileName);
   void download(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFileName);
-  void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& fileName);
 
   /* void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename); */
   /* void addReconstructionResource(ctkXnatReconstruction* reconstruction, const QString& resource); */

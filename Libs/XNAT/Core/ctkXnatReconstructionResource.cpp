@@ -22,7 +22,6 @@
 #include "ctkXnatReconstructionResource.h"
 
 #include "ctkXnatConnection.h"
-#include "ctkXnatReconstructionResourceFile.h"
 #include "ctkXnatObjectPrivate.h"
 
 class ctkXnatReconstructionResourcePrivate : public ctkXnatObjectPrivate
