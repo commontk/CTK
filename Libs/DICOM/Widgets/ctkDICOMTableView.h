@@ -138,6 +138,8 @@ Q_SIGNALS:
    */
   void queryChanged(const QStringList &uids);
 
+  void doubleClicked(const QModelIndex&);
+
 
 protected:
   QScopedPointer<ctkDICOMTableViewPrivate> d_ptr;

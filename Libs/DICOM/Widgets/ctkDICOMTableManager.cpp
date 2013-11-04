@@ -91,6 +91,9 @@ void ctkDICOMTableManagerPrivate::init()
                    q, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)));
   QObject::connect(this->seriesTable, SIGNAL(selectionChanged(const QStringList&)),
                    q, SIGNAL(seriesSelectionChanged(const QStringList&)));
+
+  QObject::connect(this->seriesTable, SIGNAL(doubleClicked(const QModelIndex&)),
+                   q, SIGNAL(seriesDoubleClicked(const QModelIndex&)));
 }
 
 //------------------------------------------------------------------------------

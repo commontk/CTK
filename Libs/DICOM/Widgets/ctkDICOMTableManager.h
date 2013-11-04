@@ -32,6 +32,7 @@ class ctkDICOMTableManagerPrivate;
 class ctkDICOMDatabase;
 
 class QItemSelection;
+class QModelIndex;
 
 /// \ingroup DICOM_Widgets
 
@@ -77,6 +78,8 @@ Q_SIGNALS:
   void patientsSelectionChanged(const QStringList &uids);
   void studiesSelectionChanged(const QStringList &uids);
   void seriesSelectionChanged(const QStringList &uids);
+
+  void seriesDoubleClicked(const QModelIndex&);
 
 protected:
   QScopedPointer<ctkDICOMTableManagerPrivate> d_ptr;
