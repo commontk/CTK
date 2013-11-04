@@ -70,6 +70,7 @@ void ctkDICOMObjectListWidgetPrivate::populateDICOMObjectTreeView(const QString&
   std::cerr << "fileName is =" << fileName.toUtf8().constData() << "\n";
   this->dcmObjectTreeView->reset();
   this->dcmObjectTreeView->setModel( dcmObjModel);
+  this->dcmObjectTreeView->expandAll();
 }
 
 //----------------------------------------------------------------------------
