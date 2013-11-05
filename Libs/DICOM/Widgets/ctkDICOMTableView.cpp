@@ -221,7 +221,8 @@ void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 {
   Q_D(ctkDICOMTableView);
   d->dicomDatabase = dicomDatabase;
-  d->setUpTableView();
+  this->setQuery();
+  d->hideUIDColumns();
 }
 
 //------------------------------------------------------------------------------
@@ -297,7 +298,6 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
       query += " where "+d->queryForeignKey+" in ( ";
       query.append(uids.join(",")).append(");");
     }
-
   if (d->dicomDatabase != 0)
     d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
 }
