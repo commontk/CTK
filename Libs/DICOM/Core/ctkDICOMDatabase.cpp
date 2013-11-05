@@ -1113,21 +1113,21 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
   
   QString sopInstanceUID ( ctkDataset.GetElementAsString(DCM_SOPInstanceUID) );
 
-  QSqlQuery fileExists ( Database );
-  fileExists.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
-  fileExists.bindValue(":sopInstanceUID",sopInstanceUID);
+  QSqlQuery fileExistsQuery ( Database );
+  fileExistsQuery.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
+  fileExistsQuery.bindValue(":sopInstanceUID",sopInstanceUID);
   {
-  bool success = fileExists.exec();
+  bool success = fileExistsQuery.exec();
   if (!success)
     {
-      logger.error("SQLITE ERROR: " + fileExists.lastError().driverText());
+      logger.error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
       return;
     }
   }
 
-  QString databaseFilename(fileExists.value(1).toString());
+  QString databaseFilename(fileExistsQuery.value(1).toString());
   QDateTime fileLastModified(QFileInfo(databaseFilename).lastModified());
-  QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExists.value(0).toString(),Qt::ISODate));
+  QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExistsQuery.value(0).toString(),Qt::ISODate));
 
   qDebug() << "inserting filePath: " << filePath;
   if (databaseFilename == "")
@@ -1139,7 +1139,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
       qDebug() << "database filename for " << sopInstanceUID << " is: " << databaseFilename;
       qDebug() << "modified date is: " << fileLastModified;
       qDebug() << "db insert date is: " << databaseInsertTimestamp;
-      if ( fileExists.next() && fileLastModified < databaseInsertTimestamp )
+      if ( fileExistsQuery.next() && fileLastModified < databaseInsertTimestamp )
         {
           logger.debug ( "File " + databaseFilename + " already added" );
           return;
@@ -1353,22 +1353,22 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
   Q_D(ctkDICOMDatabase);
 
   // get all images from series
-  QSqlQuery fileExists ( d->Database );
-  fileExists.prepare("SELECT Filename, SOPInstanceUID, StudyInstanceUID FROM Images,Series WHERE Series.SeriesInstanceUID = Images.SeriesInstanceUID AND Images.SeriesInstanceUID = :seriesID");
-  fileExists.bindValue(":seriesID",seriesInstanceUID);
-  bool success = fileExists.exec();
+  QSqlQuery fileExistsQuery ( d->Database );
+  fileExistsQuery.prepare("SELECT Filename, SOPInstanceUID, StudyInstanceUID FROM Images,Series WHERE Series.SeriesInstanceUID = Images.SeriesInstanceUID AND Images.SeriesInstanceUID = :seriesID");
+  fileExistsQuery.bindValue(":seriesID",seriesInstanceUID);
+  bool success = fileExistsQuery.exec();
   if (!success)
     {
-      logger.error("SQLITE ERROR: " + fileExists.lastError().driverText());
+      logger.error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
       return false;
     }
 
   QList< QPair<QString,QString> > removeList;
-  while ( fileExists.next() )
+  while ( fileExistsQuery.next() )
     {
-      QString dbFilePath = fileExists.value(fileExists.record().indexOf("Filename")).toString();
-      QString sopInstanceUID = fileExists.value(fileExists.record().indexOf("SOPInstanceUID")).toString();
-      QString studyInstanceUID = fileExists.value(fileExists.record().indexOf("StudyInstanceUID")).toString();
+      QString dbFilePath = fileExistsQuery.value(fileExistsQuery.record().indexOf("Filename")).toString();
+      QString sopInstanceUID = fileExistsQuery.value(fileExistsQuery.record().indexOf("SOPInstanceUID")).toString();
+      QString studyInstanceUID = fileExistsQuery.value(fileExistsQuery.record().indexOf("StudyInstanceUID")).toString();
       QString internalFilePath = studyInstanceUID + "/" + seriesInstanceUID + "/" + sopInstanceUID;
       removeList << qMakePair(dbFilePath,internalFilePath);
     }
