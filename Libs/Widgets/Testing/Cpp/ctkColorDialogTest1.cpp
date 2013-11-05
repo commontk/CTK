@@ -91,6 +91,11 @@ int ctkColorDialogTest1(int argc, char * argv [] )
     {
     QTimer::singleShot(200, &colorDialog, SLOT(accept()));
     }
+  // the following is only in interactive mode
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(400, &app, SLOT(quit()));
+    }
 
   return app.exec();
 }
