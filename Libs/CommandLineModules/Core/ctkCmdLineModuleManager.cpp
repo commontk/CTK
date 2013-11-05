@@ -272,6 +272,14 @@ void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& 
   emit moduleUnregistered(ref);
 }
 
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleManager::clearCache()
+{
+  d->ModuleCache->clearCache();
+}
+
+
 //----------------------------------------------------------------------------
 ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QUrl &location) const
 {

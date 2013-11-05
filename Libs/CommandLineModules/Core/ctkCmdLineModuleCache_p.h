@@ -32,6 +32,11 @@ class QUrl;
  * \class ctkCmdLineModuleCache
  * \brief Private non-exported class to contain a cache of
  * XML descriptions and time-stamps.
+ *
+ * The intention is that this Cache is an in-memory representation
+ * of a file-system directory containing XML files and a corresponding
+ * timestamp. Hence these should always be in synch.
+ *
  * \ingroup CommandLineModulesCore_API
  */
 class ctkCmdLineModuleCache
@@ -79,6 +84,11 @@ public:
    * for example a file path for a local process.
    */
   void removeCacheEntry(const QUrl& moduleLocation);
+
+  /**
+   * @brief Clears all entries from the XML/timestamp cache.
+   */
+  void clearCache();
 
 private:
 
