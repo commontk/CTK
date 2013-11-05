@@ -433,18 +433,18 @@ void ctkDICOMBrowser::onRemoveAction()
 {
   Q_D(ctkDICOMBrowser);
   QStringList selectedSeriesUIDs = d->dicomTableManager->currentSeriesSelection();
-  QString uid;
-  foreach (uid, selectedSeriesUIDs)
+
+  foreach (const QString& uid, selectedSeriesUIDs)
     {
       d->DICOMDatabase->removeSeries(uid);
     }
   QStringList selectedStudiesUIDs = d->dicomTableManager->currentStudiesSelection();
-  foreach(uid, selectedStudiesUIDs)
+  foreach (const QString& uid, selectedStudiesUIDs)
     {
       d->DICOMDatabase->removeStudy(uid);
     }
   QStringList selectedPatientUIDs = d->dicomTableManager->currentPatientsSelection();
-  foreach(uid, selectedPatientUIDs)
+  foreach (const QString& uid, selectedPatientUIDs)
     {
       d->DICOMDatabase->removePatient(uid);
     }

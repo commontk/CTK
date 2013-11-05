@@ -61,7 +61,7 @@ public:
 ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj)
   : q_ptr(&obj)
 {
-  this->dicomSQLFilterModel = new QSortFilterProxyModel();
+  this->dicomSQLFilterModel = new QSortFilterProxyModel(&obj);
 }
 
 //------------------------------------------------------------------------------
@@ -70,14 +70,13 @@ ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj, ctkDI
   : q_ptr(&obj)
   , dicomDatabase(db)
 {
-  this->dicomSQLFilterModel = new QSortFilterProxyModel();
+  this->dicomSQLFilterModel = new QSortFilterProxyModel(&obj);
 }
 
 //------------------------------------------------------------------------------
 
 ctkDICOMTableViewPrivate::~ctkDICOMTableViewPrivate()
 {
-  delete this->dicomSQLFilterModel;
 }
 
 void ctkDICOMTableViewPrivate::init()
@@ -114,15 +113,24 @@ void ctkDICOMTableViewPrivate::setUpTableView()
       this->tblDicomDatabaseView->setSortingEnabled(true);
       this->hideUIDColumns();
 
-      QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+      QObject::connect(this->tblDicomDatabaseView->selectionModel(),
+                       SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
                        q, SLOT(onSelectionChanged()));
-      QObject::connect(this->tblDicomDatabaseView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+
+      QObject::connect(this->tblDicomDatabaseView->selectionModel(),
+                       SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
                        q, SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)));
+
       QObject::connect(this->tblDicomDatabaseView, SIGNAL(doubleClicked(const QModelIndex&)),
                        q, SIGNAL(doubleClicked(const QModelIndex&)));
-      QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), this->dicomSQLFilterModel, SLOT(setFilterWildcard(QString)));
+
+      QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)),
+                       this->dicomSQLFilterModel, SLOT(setFilterWildcard(QString)));
+
       QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
+
       QObject::connect(this->dicomDatabase, SIGNAL(schemaUpdated()), q, SLOT(onDatabaseChanged()));
+
       QObject::connect(this->dicomDatabase, SIGNAL(databaseChanged()), q, SLOT(onDatabaseChanged()));
     }
 }
@@ -132,15 +140,15 @@ void ctkDICOMTableViewPrivate::setUpTableView()
 //Temporay solution to hide UID columns
 void ctkDICOMTableViewPrivate::hideUIDColumns()
 {
-  int numberOfColumns = this->tblDicomDatabaseView->model()->columnCount();
-  QString columnName = " ";
+  const int numberOfColumns = this->tblDicomDatabaseView->model()->columnCount();
+  QString columnName;
   for (int i = 0; i < numberOfColumns; ++i)
     {
-      columnName = this->tblDicomDatabaseView->model()->headerData(i, Qt::Horizontal).toString();
-      if (columnName.contains("UID"))
-        {
-          this->tblDicomDatabaseView->hideColumn(i);
-        }
+    columnName = this->tblDicomDatabaseView->model()->headerData(i, Qt::Horizontal).toString();
+    if (columnName.contains("UID"))
+      {
+        this->tblDicomDatabaseView->hideColumn(i);
+      }
     }
 }
 

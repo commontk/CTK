@@ -70,7 +70,7 @@ public:
   QStringList currentSeriesSelection();
 
 Q_SIGNALS:
-  // Signals for propagating selection changes of the different tables
+  /// Signals for propagating selection changes of the different tables
   void patientsSelectionChanged(const QItemSelection&, const QItemSelection&);
   void studiesSelectionChanged(const QItemSelection&, const QItemSelection&);
   void seriesSelectionChanged(const QItemSelection&, const QItemSelection&);
