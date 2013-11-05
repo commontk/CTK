@@ -29,13 +29,30 @@ if(KIT_TEST_SRCS)
   ## Query / Retrieve Testing
   if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
 
+    #
     # create a dcm query/retrieve service config file that points to the build dir
+    #
     set(DCMQRSCP_STORE_DIR ${CTK_BINARY_DIR}/Testing/Temporary)
     set(ctkDICOMRetrieve_STORE_DIR ${CTK_BINARY_DIR}/Testing/Temporary/ctkDICOMRetrieveStorage)
     set(DCMQRSCP_CONFIG ${CTK_BINARY_DIR}/Testing/Temporary/dcmqrscp.cfg)
     configure_file( dcmqrscp.cfg.in ${DCMQRSCP_CONFIG} )
 
     set(ctkDICOMQuery_DB_FILE ${CTK_BINARY_DIR}/Testing/Temporary/ctkDICOMApplicationTest1.db)
+
+    #
+    # find the helper executables
+    #
+    find_program(DCMTK_DCMQRSCP_EXECUTABLE dcmqrscp
+      PATHS
+        ${DCMTK_DIR}/bin
+      NO_DEFAULT_PATH
+      )
+
+    find_program(DCMTK_STORESCU_EXECUTABLE storescu
+      PATHS
+        ${DCMTK_DIR}/bin
+      NO_DEFAULT_PATH
+      )
 
     #
     # Add Tests
