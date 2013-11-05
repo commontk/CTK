@@ -63,6 +63,7 @@ ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj)
   : q_ptr(&obj)
 {
   this->dicomSQLFilterModel = new QSortFilterProxyModel(&obj);
+  this->dicomDatabase = new ctkDICOMDatabase(&obj);
 }
 
 //------------------------------------------------------------------------------
@@ -180,19 +181,27 @@ QString ctkDICOMTableViewPrivate::queryTableName() const
 // ctkDICOMTableView methods
 
 //----------------------------------------------------------------------------
-ctkDICOMTableView::ctkDICOMTableView(QWidget *parent, QString queryTableName)
+ctkDICOMTableView::ctkDICOMTableView(QWidget *parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableViewPrivate(*this))
 {
   Q_D(ctkDICOMTableView);
-  d->dicomDatabase = 0;
+  d->init();
+}
+
+//----------------------------------------------------------------------------
+ctkDICOMTableView::ctkDICOMTableView(QString queryTableName, QWidget *parent)
+  : Superclass(parent)
+  , d_ptr(new ctkDICOMTableViewPrivate(*this))
+{
+  Q_D(ctkDICOMTableView);
   d->init();
   this->setQueryTableName(queryTableName);
   d->lblTableName->setText(queryTableName);
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMTableView::ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QWidget* parent, QString queryTableName)
+ctkDICOMTableView::ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QString queryTableName, QWidget* parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableViewPrivate(*this))
 {
@@ -241,6 +250,11 @@ void ctkDICOMTableView::onSelectionChanged()
   foreach(QModelIndex i, selectedRows)
     {
       uids<< (QString("'") + i.data().toString() +"'");
+    }
+
+  if (uids.empty())
+    {
+      uids = d->uidsForAllRows();
     }
   emit selectionChanged(uids);
 }

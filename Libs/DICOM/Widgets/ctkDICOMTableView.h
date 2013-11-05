@@ -47,11 +47,16 @@ public:
   typedef QWidget Superclass;
 
   /**
+   * Constructs ctkDICOMTableView without underlying database and table name
+   * @param parent parentwidget
+   */
+  explicit ctkDICOMTableView(QWidget* parent = 0);
+  /**
    * ctor with tablename as parameter
    * @param parent the parent widget
    * @param queryTableName the name of the table of the ctkDICOMDatabase which shall be displayed
    */
-  explicit ctkDICOMTableView(QWidget* parent = 0, QString queryTableName = "Patients");
+  explicit ctkDICOMTableView(QString queryTableName = "Patients", QWidget* parent = 0);
 
   /**
    * ctor with tablename and database as parameter
@@ -59,7 +64,7 @@ public:
    * @param parent the parent widget
    * @param queryTableName the name of the table of the ctkDICOMDatabase which shall be displayed
    */
-  explicit ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QWidget* parent = 0, QString queryTableName = "Patients");
+  explicit ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QString queryTableName = "Patients", QWidget* parent = 0);
 
   virtual ~ctkDICOMTableView();
 
