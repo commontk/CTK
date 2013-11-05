@@ -100,9 +100,9 @@ void ctkDICOMTableManagerPrivate::init()
 
 void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(ctkDICOMDatabase* db)
 {
-  this->patientsTable->setCTKDicomDataBase(db);
-  this->studiesTable->setCTKDicomDataBase(db);
-  this->seriesTable->setCTKDicomDataBase(db);
+  this->patientsTable->setDicomDataBase(db);
+  this->studiesTable->setDicomDataBase(db);
+  this->seriesTable->setDicomDataBase(db);
   this->dicomDatabase = db;
 }
 

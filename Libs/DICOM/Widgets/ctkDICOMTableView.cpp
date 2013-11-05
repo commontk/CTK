@@ -45,19 +45,20 @@ public:
   //Temporay solution to hide UID columns
   void hideUIDColumns();
 
-  QStringList uidsForAllRows();
+  QString queryTableName() const;
+
+  QStringList uidsForAllRows() const;
 
   ctkDICOMDatabase* dicomDatabase;
   QSqlQueryModel dicomSQLModel;
   QSortFilterProxyModel* dicomSQLFilterModel;
-  QString queryTableName;
   QString queryForeignKey;
 
   QStringList currentSelection;
 
 };
-//------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
 ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj)
   : q_ptr(&obj)
 {
@@ -65,7 +66,6 @@ ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj)
 }
 
 //------------------------------------------------------------------------------
-
 ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj, ctkDICOMDatabase* db)
   : q_ptr(&obj)
   , dicomDatabase(db)
@@ -74,7 +74,6 @@ ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj, ctkDI
 }
 
 //------------------------------------------------------------------------------
-
 ctkDICOMTableViewPrivate::~ctkDICOMTableViewPrivate()
 {
 }
@@ -89,8 +88,6 @@ void ctkDICOMTableViewPrivate::init()
   this->leSearchBox->setAlwaysShowClearIcon(true);
   this->leSearchBox->setShowSearchIcon(true);
 
-  this->lblTableName->setText(this->queryTableName);
-
   if (this->dicomDatabase != 0)
     {
       this->setUpTableView();
@@ -98,7 +95,6 @@ void ctkDICOMTableViewPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableViewPrivate::setUpTableView()
 {
   Q_Q(ctkDICOMTableView);
@@ -138,15 +134,13 @@ void ctkDICOMTableViewPrivate::setUpTableView()
 }
 
 //------------------------------------------------------------------------------
-
 //Temporay solution to hide UID columns
 void ctkDICOMTableViewPrivate::hideUIDColumns()
 {
   const int numberOfColumns = this->tblDicomDatabaseView->model()->columnCount();
-  QString columnName;
   for (int i = 0; i < numberOfColumns; ++i)
     {
-    columnName = this->tblDicomDatabaseView->model()->headerData(i, Qt::Horizontal).toString();
+    QString columnName = this->tblDicomDatabaseView->model()->headerData(i, Qt::Horizontal).toString();
     if (columnName.contains("UID"))
       {
         this->tblDicomDatabaseView->hideColumn(i);
@@ -155,8 +149,7 @@ void ctkDICOMTableViewPrivate::hideUIDColumns()
 }
 
 //------------------------------------------------------------------------------
-
-QStringList ctkDICOMTableViewPrivate::uidsForAllRows()
+QStringList ctkDICOMTableViewPrivate::uidsForAllRows() const
 {
   QAbstractItemModel* tableModel = this->tblDicomDatabaseView->model();
   int numberOfRows = tableModel->rowCount();
@@ -170,10 +163,16 @@ QStringList ctkDICOMTableViewPrivate::uidsForAllRows()
     {
       for(int i = 0; i < numberOfRows; ++i)
         {
-          uids << (QString("'") + tableModel->index(i,0).data().toString() +"'");
+          uids << QString("'%1'").arg(tableModel->index(i,0).data().toString());
         }
     }
   return uids;
+}
+
+//----------------------------------------------------------------------------
+QString ctkDICOMTableViewPrivate::queryTableName() const
+{
+  return this->lblTableName->text();
 }
 
 
@@ -188,31 +187,28 @@ ctkDICOMTableView::ctkDICOMTableView(QWidget *parent, QString queryTableName)
   Q_D(ctkDICOMTableView);
   d->dicomDatabase = 0;
   d->init();
-  d->queryTableName = queryTableName;
+  this->setQueryTableName(queryTableName);
   d->lblTableName->setText(queryTableName);
 }
 
 //------------------------------------------------------------------------------
-
-ctkDICOMTableView::ctkDICOMTableView(ctkDICOMDatabase* ctkDicomDataBase, QWidget *parent, QString queryTableName)
+ctkDICOMTableView::ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QWidget* parent, QString queryTableName)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableViewPrivate(*this))
 {
-  this->setCTKDicomDataBase(ctkDicomDataBase);
+  this->setDicomDataBase(dicomDataBase);
   Q_D(ctkDICOMTableView);
-  d->queryTableName = queryTableName;
+  this->setQueryTableName(queryTableName);
   d->init();
 }
 
 //------------------------------------------------------------------------------
-
 ctkDICOMTableView::~ctkDICOMTableView()
 {
 }
 
 //------------------------------------------------------------------------------
-
-void ctkDICOMTableView::setCTKDicomDataBase(ctkDICOMDatabase *dicomDatabase)
+void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 {
   Q_D(ctkDICOMTableView);
   d->dicomDatabase = dicomDatabase;
@@ -220,16 +216,13 @@ void ctkDICOMTableView::setCTKDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableView::setQueryTableName(const QString &tableName)
 {
   Q_D(ctkDICOMTableView);
-  d->queryTableName = tableName;
   d->lblTableName->setText(tableName);
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableView::setQueryForeignKey(const QString &foreignKey)
 {
   Q_D(ctkDICOMTableView);
@@ -237,12 +230,12 @@ void ctkDICOMTableView::setQueryForeignKey(const QString &foreignKey)
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableView::onSelectionChanged()
 {
   Q_D(ctkDICOMTableView);
 
-  QModelIndexList selectedRows = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
+  const QModelIndexList selectedRows = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
+
   QStringList uids;
 
   foreach(QModelIndex i, selectedRows)
@@ -253,7 +246,6 @@ void ctkDICOMTableView::onSelectionChanged()
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableView::onDatabaseChanged()
 {
   Q_D(ctkDICOMTableView);
@@ -261,52 +253,45 @@ void ctkDICOMTableView::onDatabaseChanged()
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
 {
   Q_D(ctkDICOMTableView);
 
   setQuery(uids);
 
-  QStringList newUIDS = d->uidsForAllRows();
+  const QStringList& newUIDS = d->uidsForAllRows();
   emit queryChanged(newUIDS);
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableView::onFilterChanged()
 {
   Q_D(ctkDICOMTableView);
 
-  QStringList uids = d->uidsForAllRows();
+  const QStringList uids = d->uidsForAllRows();
   emit queryChanged(uids);
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableView::setQuery(const QStringList &uids)
 {
   Q_D(ctkDICOMTableView);
-  QString query;
+  QString query= "select * from " + d->queryTableName();
 
-  if (uids.empty() || d->queryForeignKey.length() == 0)
+  if (!uids.empty() && d->queryForeignKey.length() != 0)
     {
-      query = "select * from " + d->queryTableName;
-    }
-  else
-    {
-      query = "select * from "+d->queryTableName+" where "+d->queryForeignKey+" in ( ";
+      query += " where "+d->queryForeignKey+" in ( ";
       query.append(uids.join(",")).append(");");
     }
+
   if (d->dicomDatabase != 0)
     d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
 }
 
 //------------------------------------------------------------------------------
-
-QStringList ctkDICOMTableView::currentSelection()
+QStringList ctkDICOMTableView::currentSelection() const
 {
-  Q_D(ctkDICOMTableView);
+  Q_D(const ctkDICOMTableView);
 
   QModelIndexList currentSelection = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
   QStringList uids;

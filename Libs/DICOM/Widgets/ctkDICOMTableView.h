@@ -59,7 +59,7 @@ public:
    * @param parent the parent widget
    * @param queryTableName the name of the table of the ctkDICOMDatabase which shall be displayed
    */
-  explicit ctkDICOMTableView (ctkDICOMDatabase* ctkDicomDataBase, QWidget* parent = 0, QString queryTableName = "Patients");
+  explicit ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QWidget* parent = 0, QString queryTableName = "Patients");
 
   virtual ~ctkDICOMTableView();
 
@@ -67,7 +67,7 @@ public:
    * @brief Setting the ctkDICOMDatabase which shall be queried
    * @param dicomDataBase the underlying database
    */
-  void setCTKDicomDataBase(ctkDICOMDatabase* dicomDatabase);
+  void setDicomDataBase(ctkDICOMDatabase* dicomDatabase);
 
   /**
    * Setting the table name which shall be used for the database query
@@ -93,7 +93,7 @@ public:
    * @brief Returns the uids of the current selected rows
    * @return a list containing all the uids of the selected rows
    */
-  QStringList currentSelection();
+  QStringList currentSelection() const;
 
 public Q_SLOTS:
 
@@ -148,4 +148,4 @@ protected:
   Q_DISABLE_COPY(ctkDICOMTableView)
 };
 
-#endif // CTKDICOMTABLEVIEW_H
+#endif // __ctkDICOMTableView_h
