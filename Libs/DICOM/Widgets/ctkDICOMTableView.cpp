@@ -111,6 +111,8 @@ void ctkDICOMTableViewPrivate::setUpTableView()
       this->tblDicomDatabaseView->setModel(this->dicomSQLFilterModel);
       this->tblDicomDatabaseView->setColumnHidden(0, true);
       this->tblDicomDatabaseView->setSortingEnabled(true);
+      this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+      this->tblDicomDatabaseView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
       this->hideUIDColumns();
 
       QObject::connect(this->tblDicomDatabaseView->selectionModel(),
