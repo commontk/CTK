@@ -48,7 +48,9 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatExperiment();
+
+  explicit ctkXnatExperiment(const QString& schemaType = "xnat:experimentData");
+
   virtual void fetchImpl();
   
   Q_DECLARE_PRIVATE(ctkXnatExperiment);

@@ -42,8 +42,8 @@ public:
 };
 
 
-ctkXnatExperiment::ctkXnatExperiment()
-: ctkXnatObject(*new ctkXnatExperimentPrivate())
+ctkXnatExperiment::ctkXnatExperiment(const QString& schemaType)
+: ctkXnatObject(*new ctkXnatExperimentPrivate(), schemaType)
 {
 }
 

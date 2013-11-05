@@ -56,7 +56,7 @@ public:
   QString uri() const;
 
   /// Gets the XML Schema type of the object.
-  QString xsiType() const;
+  QString schemaType() const;
 
   /// Gets the name of the object.
   QString name() const;
@@ -109,10 +109,10 @@ public:
 protected:
 
   /// Constructs the ctkXnatObject.
-  ctkXnatObject();
+  ctkXnatObject(const QString& schemaType = QString());
 
   /// Constructs the ctkXnatObject with the given private part.
-  ctkXnatObject(ctkXnatObjectPrivate& dd);
+  ctkXnatObject(ctkXnatObjectPrivate& dd, const QString& schemaType = QString());
 
   /// Gets the object that represents the connection to the XNAT server
   /// that stores the current object.
@@ -124,9 +124,6 @@ protected:
   /// Sets the resource URI of the object that can be used to access it through
   /// the REST API.
   void setUri(const QString& uri);
-
-  /// Sets the XML Schema type of the object.
-  void setXsiType(const QString& xsiType);
 
   /// Sets the name of the object.
   void setName(const QString& name);

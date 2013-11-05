@@ -48,7 +48,7 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatScan();
+  explicit ctkXnatScan(const QString& schemaType = "xnat:imageScanData");
   virtual void fetchImpl();
   
   Q_DECLARE_PRIVATE(ctkXnatScan);

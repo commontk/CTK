@@ -59,7 +59,7 @@ private:
 
   friend class qRestResult;
 
-  explicit ctkXnatProject();
+  explicit ctkXnatProject(const QString& schemaType = "xnat:projectData");
 
   virtual void fetchImpl();
 

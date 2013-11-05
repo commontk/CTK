@@ -46,7 +46,7 @@ private:
 
   friend class ctkXnatObject;
 
-  QString xsiType;
+  QString schemaType;
 
   QMap<QString,QString> properties;
 

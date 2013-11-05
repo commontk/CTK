@@ -42,8 +42,8 @@ public:
 };
 
 
-ctkXnatReconstruction::ctkXnatReconstruction()
-: ctkXnatObject(*new ctkXnatReconstructionPrivate())
+ctkXnatReconstruction::ctkXnatReconstruction(const QString& schemaType)
+: ctkXnatObject(*new ctkXnatReconstructionPrivate(), schemaType)
 {
 }
 

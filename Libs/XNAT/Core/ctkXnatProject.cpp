@@ -47,8 +47,8 @@ public:
 //  QString uri;
 };
 
-ctkXnatProject::ctkXnatProject()
-: ctkXnatObject(*new ctkXnatProjectPrivate())
+ctkXnatProject::ctkXnatProject(const QString& schemaType)
+: ctkXnatObject(*new ctkXnatProjectPrivate(), schemaType)
 {
 }
 

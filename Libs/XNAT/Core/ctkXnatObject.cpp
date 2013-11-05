@@ -29,16 +29,20 @@
 #include <QVariant>
 
 
-ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& d)
-: d_ptr(&d)
-{
-}
-
-
-ctkXnatObject::ctkXnatObject()
+ctkXnatObject::ctkXnatObject(const QString& schemaType)
 : d_ptr(new ctkXnatObjectPrivate())
 {
+  Q_D(ctkXnatObject);
+  d->schemaType = schemaType;
 }
+
+ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, const QString& schemaType)
+: d_ptr(&dd)
+{
+  Q_D(ctkXnatObject);
+  d->schemaType = schemaType;
+}
+
 
 ctkXnatObject::~ctkXnatObject()
 {
@@ -64,16 +68,10 @@ void ctkXnatObject::setUri(const QString& uri)
   setProperty("URI", uri);
 }
 
-QString ctkXnatObject::xsiType() const
+QString ctkXnatObject::schemaType() const
 {
   Q_D(const ctkXnatObject);
-  return d->xsiType;
-}
-
-void ctkXnatObject::setXsiType(const QString& xsiType)
-{
-  Q_D(ctkXnatObject);
-  d->xsiType = xsiType;
+  return d->schemaType;
 }
 
 QString ctkXnatObject::name() const

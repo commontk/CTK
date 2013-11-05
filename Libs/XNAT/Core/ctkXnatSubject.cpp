@@ -50,8 +50,8 @@ public:
   QList<ctkXnatProject::WeakPointer> projects;
 };
 
-ctkXnatSubject::ctkXnatSubject()
-: ctkXnatObject(*new ctkXnatSubjectPrivate())
+ctkXnatSubject::ctkXnatSubject(const QString& schemaType)
+: ctkXnatObject(*new ctkXnatSubjectPrivate(), schemaType)
 {
 }
 

@@ -42,8 +42,8 @@ public:
 };
 
 
-ctkXnatScan::ctkXnatScan()
-: ctkXnatObject(*new ctkXnatScanPrivate())
+ctkXnatScan::ctkXnatScan(const QString& schemaType)
+: ctkXnatObject(*new ctkXnatScanPrivate(), schemaType)
 {
 }
 

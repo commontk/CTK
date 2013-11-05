@@ -48,7 +48,7 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatReconstruction();
+  explicit ctkXnatReconstruction(const QString& schemaType = "xnat:reconstructedImageData");
   virtual void fetchImpl();
   
   Q_DECLARE_PRIVATE(ctkXnatReconstruction);
