@@ -1123,11 +1123,17 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
       logger.error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
       return;
     }
-  }
 
   QString databaseFilename(fileExistsQuery.value(1).toString());
   QDateTime fileLastModified(QFileInfo(databaseFilename).lastModified());
   QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExistsQuery.value(0).toString(),Qt::ISODate));
+
+  qDebug() << "Looking for sopInstanceUID: " << sopInstanceUID;
+  qDebug() << " bound value : " << fileExistsQuery.boundValue(0);
+  qDebug() << " Ran Query : " << fileExistsQuery.lastQuery();
+  qDebug() << " Found databaseFilename : " << databaseFilename;
+  qDebug() << "  databaseInsertTimestamp : " << databaseInsertTimestamp;
+  qDebug() << "  fileLastModified : " << fileLastModified;
 
   qDebug() << "inserting filePath: " << filePath;
   if (databaseFilename == "")
@@ -1145,6 +1151,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
           return;
         }
     }
+  }
 
   //If the following fields can not be evaluated, cancel evaluation of the DICOM file
   QString patientsName(ctkDataset.GetElementAsString(DCM_PatientName) );
@@ -1248,7 +1255,9 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
           // let users of this class track when things happen
           emit q->studyAdded(studyInstanceUID);
+          qDebug() << "Study Added";
         }
+
 
       if ( seriesInstanceUID != "" && seriesInstanceUID != LastSeriesInstanceUID )
         {
@@ -1256,6 +1265,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
           // let users of this class track when things happen
           emit q->seriesAdded(seriesInstanceUID);
+          qDebug() << "Series Added";
         }
       // TODO: what to do with imported files
       //
@@ -1265,6 +1275,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
           checkImageExistsQuery.prepare ( "SELECT * FROM Images WHERE Filename = ?" );
           checkImageExistsQuery.bindValue ( 0, filename );
           checkImageExistsQuery.exec();
+          qDebug() << "Maybe add Instance";
           if(!checkImageExistsQuery.next())
             {
               QSqlQuery insertImageStatement ( Database );
@@ -1280,6 +1291,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
               // let users of this class track when things happen
               emit q->instanceAdded(sopInstanceUID);
+              qDebug() << "Instance Added";
             }
         }
 
