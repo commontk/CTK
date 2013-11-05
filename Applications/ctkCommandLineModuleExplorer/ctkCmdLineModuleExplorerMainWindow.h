@@ -69,6 +69,7 @@ protected Q_SLOTS:
 
   void on_actionReset_triggered();
   void on_actionClear_Cache_triggered();
+  void on_actionReload_Modules_triggered();
 
   void checkModulePaused();
   void currentModuleResumed();

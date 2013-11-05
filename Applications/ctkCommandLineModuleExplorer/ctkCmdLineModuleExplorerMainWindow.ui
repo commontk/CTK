@@ -67,6 +67,7 @@
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
     <addaction name="actionClear_Cache"/>
+    <addaction name="actionReload_Modules"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuModule"/>
@@ -353,6 +354,11 @@
   <action name="actionClear_Cache">
    <property name="text">
     <string>Clear Cache</string>
+   </property>
+  </action>
+  <action name="actionReload_Modules">
+   <property name="text">
+    <string>Reload Modules</string>
    </property>
   </action>
  </widget>

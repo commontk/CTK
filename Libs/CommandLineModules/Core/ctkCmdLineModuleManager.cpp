@@ -284,6 +284,18 @@ void ctkCmdLineModuleManager::clearCache()
 
 
 //----------------------------------------------------------------------------
+void ctkCmdLineModuleManager::reloadModules()
+{
+  foreach(const QUrl &location, d->LocationToRef.keys())
+  {
+    ctkCmdLineModuleReference ref = d->LocationToRef[location];
+    this->unregisterModule(ref);
+    this->registerModule(location);
+  }
+}
+
+
+//----------------------------------------------------------------------------
 ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QUrl &location) const
 {
   QMutexLocker lock(&d->Mutex);
