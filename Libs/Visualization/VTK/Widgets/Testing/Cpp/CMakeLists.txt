@@ -7,7 +7,6 @@ set(TEST_SOURCES
   ctkVTKDataSetArrayComboBoxTest1.cpp
   ctkVTKDataSetModelTest1.cpp
   ctkVTKMatrixWidgetTest1.cpp
-  ctkVTKMagnifyViewTest1.cpp
   ctkVTKScalarBarWidgetTest1.cpp
   ctkVTKThresholdWidgetTest1.cpp
   ctkTransferFunctionBarsItemTest1.cpp
@@ -45,7 +44,6 @@ endif()
 #
 if(EXISTS "${CTKData_DIR}")
   list(APPEND TEST_SOURCES
-    ctkVTKMagnifyViewTest2.cpp
     ctkVTKSliceViewTest2.cpp
     ctkVTKRenderViewTest2.cpp
     )
@@ -58,7 +56,6 @@ if(CTK_USE_QTTESTING)
   list(APPEND TEST_SOURCES
     ctkVTKDataSetArrayComboBoxEventTranslatorPlayerTest1.cpp
     ctkVTKDataSetModelEventTranslatorPlayerTest1.cpp
-#    ctkVTKMagnifyViewEventTranslatorPlayerTest1.cpp
     ctkVTKMatrixWidgetEventTranslatorPlayerTest1.cpp
     ctkVTKRenderViewEventTranslatorPlayerTest1.cpp
     ctkVTKScalarBarWidgetEventTranslatorPlayerTest1.cpp
@@ -117,7 +114,6 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRAR
 
 SIMPLE_TEST( ctkVTKDataSetArrayComboBoxTest1 )
 SIMPLE_TEST( ctkVTKDataSetModelTest1 )
-SIMPLE_TEST( ctkVTKMagnifyViewTest1 )
 SIMPLE_TEST( ctkVTKMatrixWidgetTest1 )
 SIMPLE_TEST( ctkVTKPropertyWidgetTest )
 SIMPLE_TEST( ctkVTKScalarBarWidgetTest1 )
@@ -161,23 +157,6 @@ if(EXISTS "${CTKData_DIR}")
       )
   endmacro()
 
-  #
-  # Dependencies required so that these tests won't run in parallel
-  #
-  MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 OddOdd 341 17 )
-  MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 EvenEven 340 18 )
-  set_tests_properties( ctkVTKMagnifyViewTest2EvenEven
-                        PROPERTIES DEPENDS
-                        ctkVTKMagnifyViewTest2OddOdd )
-  MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 OddEven 341 18 )
-  set_tests_properties( ctkVTKMagnifyViewTest2OddEven
-                        PROPERTIES DEPENDS
-                        ctkVTKMagnifyViewTest2EvenEven )
-  MAGNIFY_WIDGET_TEST( ctkVTKMagnifyViewTest2 EvenOdd 340 17 )
-  set_tests_properties( ctkVTKMagnifyViewTest2EvenOdd
-                        PROPERTIES DEPENDS
-                        ctkVTKMagnifyViewTest2OddEven )
-
   SIMPLE_TEST_WITH_DATA( ctkVTKRenderViewTest2 ${baseline_relative_location})
   SIMPLE_TEST_WITH_DATA( ctkVTKSliceViewTest2 ${baseline_relative_location})
 endif()
@@ -188,7 +167,6 @@ endif()
 if(CTK_USE_QTTESTING)
     SIMPLE_TEST( ctkVTKDataSetArrayComboBoxEventTranslatorPlayerTest1 )
     SIMPLE_TEST( ctkVTKDataSetModelEventTranslatorPlayerTest1 )
-#    SIMPLE_TEST( ctkVTKMagnifyViewEventTranslatorPlayerTest1 )
     SIMPLE_TEST( ctkVTKMatrixWidgetEventTranslatorPlayerTest1 )
     SIMPLE_TEST( ctkVTKRenderViewEventTranslatorPlayerTest1 )
     SIMPLE_TEST( ctkVTKScalarBarWidgetEventTranslatorPlayerTest1 )

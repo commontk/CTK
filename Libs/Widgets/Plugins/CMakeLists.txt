@@ -32,8 +32,6 @@ set(PLUGIN_SRCS
   ctkComboBoxPlugin.h
   ctkCoordinatesWidgetPlugin.cpp
   ctkCoordinatesWidgetPlugin.h
-  ctkCrosshairLabelPlugin.cpp
-  ctkCrosshairLabelPlugin.h
   ctkDirectoryButtonPlugin.cpp
   ctkDirectoryButtonPlugin.h
   ctkDoubleRangeSliderPlugin.cpp
@@ -114,7 +112,6 @@ set(PLUGIN_MOC_SRCS
   ctkColorPickerButtonPlugin.h
   ctkComboBoxPlugin.h
   ctkCoordinatesWidgetPlugin.h
-  ctkCrosshairLabelPlugin.h
   ctkDirectoryButtonPlugin.h
   ctkDoubleRangeSliderPlugin.h
   ctkDoubleSliderPlugin.h
