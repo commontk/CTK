@@ -31,6 +31,7 @@ class ctkDICOMBrowserPrivate;
 class ctkThumbnailLabel;
 class QModelIndex;
 class ctkDICOMDatabase;
+class ctkDICOMTableManager;
 
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
@@ -40,6 +41,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
   Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
+  Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager)
 
 public:
   typedef QWidget Superclass;
@@ -62,6 +64,8 @@ public:
   void updateDatabaseSchemaIfNeeded();
 
   ctkDICOMDatabase* database();
+
+  ctkDICOMTableManager* dicomTableManager();
 
   /// Option to show or not import summary dialog.
   /// Since the summary dialog is modal, we give the option
