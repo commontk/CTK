@@ -37,6 +37,8 @@ public:
   explicit ctkXnatProject(const QString& schemaType = "xnat:projectData");
   virtual ~ctkXnatProject();
 
+  virtual QString resourceUri() const;
+
   const QString& secondaryId() const;
   void setSecondaryId(const QString& secondaryId);
 

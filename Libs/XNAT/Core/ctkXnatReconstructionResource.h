@@ -37,9 +37,8 @@ public:
   explicit ctkXnatReconstructionResource();
   virtual ~ctkXnatReconstructionResource();
   
-//  const QString& uri() const;
-//  void setUri(const QString& uri);
-  
+  virtual QString resourceUri() const;
+
   void reset();
   
   void download(const QString& filename);

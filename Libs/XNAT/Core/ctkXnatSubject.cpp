@@ -83,17 +83,10 @@ void ctkXnatSubject::setInsertUser(const QString& insertUser)
   d->insertUser = insertUser;
 }
 
-//const QString& ctkXnatSubject::uri() const
-//{
-//  Q_D(const ctkXnatSubject);
-//  return d->uri;
-//}
-
-//void ctkXnatSubject::setUri(const QString& uri)
-//{
-//  Q_D(ctkXnatSubject);
-//  d->uri = uri;
-//}
+QString ctkXnatSubject::resourceUri() const
+{
+  return QString("%1/subjects/%2").arg(parent()->resourceUri(), this->id());
+}
 
 void ctkXnatSubject::reset()
 {

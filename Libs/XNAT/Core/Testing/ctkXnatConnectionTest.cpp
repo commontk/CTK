@@ -95,25 +95,33 @@ void ctkXnatConnectionTestCase::testProjectList()
   QVERIFY(projects.size() > 0);
 }
 
+void ctkXnatConnectionTestCase::testResourceUri()
+{
+  Q_D(ctkXnatConnectionTestCase);
+
+  ctkXnatServer* server = d->Connection->server();
+  QVERIFY(!server->resourceUri().isNull());
+  QVERIFY(server->resourceUri().isEmpty());
+}
+
 void ctkXnatConnectionTestCase::testCreateProject()
 {
   Q_D(ctkXnatConnectionTestCase);
 
   ctkXnatServer* server = d->Connection->server();
 
+  QString projectId = QString("CTK_") + QUuid::createUuid().toString().mid(1, 8);
+  d->Project = projectId;
+  qDebug() << "Creating project" << id;
+
   ctkXnatProject* project = new ctkXnatProject();
-  project->setId("CTK_432");
-  project->setName("CTK 432");
+  project->setId(projectId);
+  project->setName(projectId);
   project->setDescription("CTK test project");
   server->add(project);
 
-//  project->save();
-
-//  bool saved = project->exists();
-
-//  QVERIFY(projects.size() > 0);
+  d->Connection->create(project);
 }
-
 
 // --------------------------------------------------------------------------
 int ctkXnatConnectionTest(int argc, char* argv[])

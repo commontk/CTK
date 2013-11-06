@@ -37,8 +37,7 @@ public:
   explicit ctkXnatFile();
   virtual ~ctkXnatFile();
   
-//  const QString& uri() const;
-//  void setUri(const QString& uri);
+  virtual QString resourceUri() const;
 
   void download(const QString& filename);
   void upload(const QString& filename);

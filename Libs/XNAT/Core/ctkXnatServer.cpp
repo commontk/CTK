@@ -24,6 +24,8 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatConnection.h"
 
+#include <QDebug>
+
 class ctkXnatServerPrivate : public ctkXnatObjectPrivate
 {
   explicit ctkXnatServerPrivate(ctkXnatConnection* connection);
@@ -48,6 +50,11 @@ ctkXnatServerPrivate::~ctkXnatServerPrivate()
 ctkXnatServer::ctkXnatServer(ctkXnatConnection* connection)
 : ctkXnatObject(*new ctkXnatServerPrivate(connection))
 {
+}
+
+QString ctkXnatServer::resourceUri() const
+{
+  return "";
 }
 
 void ctkXnatServer::fetchImpl()

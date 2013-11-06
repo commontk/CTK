@@ -55,11 +55,7 @@ public:
 
   /// Gets the resource URI of the object that can be used to access it through
   /// the REST API.
-  QString uri() const;
-
-  /// Sets the resource URI of the object that can be used to access it through
-  /// the REST API.
-  void setUri(const QString& uri);
+  virtual QString resourceUri() const = 0;
 
   /// Gets the name of the object.
   QString name() const;

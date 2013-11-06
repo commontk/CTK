@@ -36,6 +36,7 @@
 #include "ctkXnatServer.h"
 #include "ctkXnatSubject.h"
 
+#include <QDebug>
 #include <QScopedPointer>
 #include <QStringBuilder>
 
@@ -170,9 +171,10 @@ void ctkXnatConnection::fetch(ctkXnatServer* server)
   qRestResult* restResult = d->xnat->takeResult(queryId);
   QList<ctkXnatProject*> projects = restResult->results<ctkXnatProject>();
 
+  qDebug() << "ctkXnatConnection::fetch(ctkXnatServer* server): project number:" << projects.size();
+
   foreach (ctkXnatProject* project, projects)
   {
-    project->setUri(projectsUri + "/" + project->id());
     server->add(project);
   }
 
@@ -183,7 +185,7 @@ void ctkXnatConnection::fetch(ctkXnatProject* project)
 {
   Q_D(ctkXnatConnection);
 
-  QString subjectsUri = project->uri() + "/subjects";
+  QString subjectsUri = project->resourceUri() + "/subjects";
   QUuid queryId = d->xnat->get(subjectsUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
   QList<ctkXnatSubject*> subjects = restResult->results<ctkXnatSubject>();
@@ -195,7 +197,6 @@ void ctkXnatConnection::fetch(ctkXnatProject* project)
     {
       subject->setProperty("ID", label);
     }
-    subject->setUri(subjectsUri + "/" + subject->id());
 
     project->add(subject);
   }
@@ -207,7 +208,7 @@ void ctkXnatConnection::fetch(ctkXnatSubject* subject)
 {
   Q_D(ctkXnatConnection);
 
-  QString experimentsUri = subject->uri() + "/experiments";
+  QString experimentsUri = subject->resourceUri() + "/experiments";
   QUuid queryId = d->xnat->get(experimentsUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
 
@@ -220,7 +221,6 @@ void ctkXnatConnection::fetch(ctkXnatSubject* subject)
     {
       experiment->setProperty ("ID", label);
     }
-    experiment->setUri(experimentsUri + "/" + experiment->id());
 
     subject->add(experiment);
   }
@@ -232,7 +232,7 @@ void ctkXnatConnection::fetch(ctkXnatExperiment* experiment)
 {
   Q_D(ctkXnatConnection);
   
-  QString scansUri = experiment->uri() + "/scans";
+  QString scansUri = experiment->resourceUri() + "/scans";
   QUuid scansQueryId = d->xnat->get(scansUri);
   qRestResult* restResult = d->xnat->takeResult(scansQueryId);
   
@@ -241,13 +241,12 @@ void ctkXnatConnection::fetch(ctkXnatExperiment* experiment)
   if (scans.size() > 0)
   {
     ctkXnatScanFolder* scanFolder = new ctkXnatScanFolder();
-    scanFolder->setUri(scansUri);
     experiment->add(scanFolder);
   }
   
   delete restResult;
 
-  QString reconstructionsUri = experiment->uri() + "/reconstructions";
+  QString reconstructionsUri = experiment->resourceUri() + "/reconstructions";
   QUuid reconstructionsQueryId = d->xnat->get(reconstructionsUri);
   restResult = d->xnat->takeResult(reconstructionsQueryId);
 
@@ -256,7 +255,6 @@ void ctkXnatConnection::fetch(ctkXnatExperiment* experiment)
   if (reconstructions.size() > 0)
   {
     ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder();
-    reconstructionFolder->setUri(reconstructionsUri);
     experiment->add(reconstructionFolder);
   }
 
@@ -267,7 +265,7 @@ void ctkXnatConnection::fetch(ctkXnatScanFolder* scanFolder)
 {
   Q_D(ctkXnatConnection);
   
-  QString scansUri = scanFolder->uri();
+  QString scansUri = scanFolder->resourceUri();
   QUuid queryId = d->xnat->get(scansUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
 
@@ -275,7 +273,6 @@ void ctkXnatConnection::fetch(ctkXnatScanFolder* scanFolder)
   
   foreach (ctkXnatScan* scan, scans)
   {
-    scan->setUri(scansUri + "/" + scan->id());
     scanFolder->add(scan);
   }
   
@@ -287,7 +284,7 @@ void ctkXnatConnection::fetch(ctkXnatScan* scan)
 {
   Q_D(ctkXnatConnection);
   
-  QString scanResourcesUri = scan->uri() + "/resources";
+  QString scanResourcesUri = scan->resourceUri() + "/resources";
   QUuid queryId = d->xnat->get(scanResourcesUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
   
@@ -300,8 +297,6 @@ void ctkXnatConnection::fetch(ctkXnatScan* scan)
     {
       scanResource->setProperty("ID", label);
     }
-    
-    scanResource->setUri(scanResourcesUri + "/" + label);
     scan->add(scanResource);
   }
 }
@@ -310,7 +305,7 @@ void ctkXnatConnection::fetch(ctkXnatScanResource* scanResource)
 {
   Q_D(ctkXnatConnection);
   
-  QString scanResourceFilesUri = scanResource->uri() + "/files";
+  QString scanResourceFilesUri = scanResource->resourceUri() + "/files";
   QUuid queryId = d->xnat->get(scanResourceFilesUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
   
@@ -318,19 +313,11 @@ void ctkXnatConnection::fetch(ctkXnatScanResource* scanResource)
 
   foreach (ctkXnatFile* file, files)
   {
-    QString uri = file->property("URI");
-    if (uri.size())
-    {
-      file->setUri(uri);
-    }
-
     QString label = file->property("Name");
     if (label.size())
     {
       file->setProperty("ID", label);
     }
-
-    file->setUri(scanResourceFilesUri + "/" + label);
     scanResource->add(file);
   }
 }
@@ -339,7 +326,7 @@ void ctkXnatConnection::fetch(ctkXnatReconstructionFolder* reconstructionFolder)
 {
   Q_D(ctkXnatConnection);
 
-  QString reconstructionsUri = reconstructionFolder->uri();
+  QString reconstructionsUri = reconstructionFolder->resourceUri();
   QUuid queryId = d->xnat->get(reconstructionsUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
 
@@ -347,8 +334,6 @@ void ctkXnatConnection::fetch(ctkXnatReconstructionFolder* reconstructionFolder)
 
   foreach (ctkXnatReconstruction* reconstruction, reconstructions)
   {
-    reconstruction->setUri(reconstructionsUri + "/" + reconstruction->id());
-
     reconstructionFolder->add(reconstruction);
   }
 
@@ -360,7 +345,7 @@ void ctkXnatConnection::fetch(ctkXnatReconstruction* reconstruction)
 {
   Q_D(ctkXnatConnection);
 
-  QString reconstructionResourcesUri = reconstruction->uri() + "/resources";
+  QString reconstructionResourcesUri = reconstruction->resourceUri() + "/resources";
   QUuid queryId = d->xnat->get(reconstructionResourcesUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
 
@@ -374,8 +359,6 @@ void ctkXnatConnection::fetch(ctkXnatReconstruction* reconstruction)
       reconstructionResource->setProperty("ID", label);
     }
 
-    reconstructionResource->setUri(reconstructionResourcesUri + "/" + label);
-
     reconstruction->add(reconstructionResource);
   }
 }
@@ -384,7 +367,7 @@ void ctkXnatConnection::fetch(ctkXnatReconstructionResource* reconstructionResou
 {
   Q_D(ctkXnatConnection);
 
-  QString reconstructionResourceFilesUri = reconstructionResource->uri() + "/files";
+  QString reconstructionResourceFilesUri = reconstructionResource->resourceUri() + "/files";
   QUuid queryId = d->xnat->get(reconstructionResourceFilesUri);
   qRestResult* restResult = d->xnat->takeResult(queryId);
 
@@ -392,19 +375,11 @@ void ctkXnatConnection::fetch(ctkXnatReconstructionResource* reconstructionResou
 
   foreach (ctkXnatFile* file, files)
   {
-    QString uri = file->property("URI");
-    if (uri.size())
-    {
-      file->setUri(uri);
-    }
-
     QString label = file->property("Name");
     if (label.size())
     {
       file->setProperty("ID", label);
     }
-
-    file->setUri(reconstructionResourceFilesUri + "/" + label);
 
     reconstructionResource->add(file);
   }
@@ -412,11 +387,10 @@ void ctkXnatConnection::fetch(ctkXnatReconstructionResource* reconstructionResou
 
 void ctkXnatConnection::create(ctkXnatObject* object)
 {
-  const QString& uri = object->uri();
-
   Q_D(ctkXnatConnection);
 
-  QString query = uri;
+  QString query = object->resourceUri();
+  qDebug() << "ctkXnatConnection::create() query:" << query;
   bool success = d->xnat->sync(d->xnat->put(query));
 
   if (!success)
@@ -427,11 +401,9 @@ void ctkXnatConnection::create(ctkXnatObject* object)
 
 void ctkXnatConnection::remove(ctkXnatObject* object)
 {
-  const QString& uri = object->uri();
-
   Q_D(ctkXnatConnection);
 
-  QString query = uri;
+  QString query = object->resourceUri();
   bool success = d->xnat->sync(d->xnat->del(query));
 
   if (!success)
@@ -576,7 +548,7 @@ void ctkXnatConnection::remove(ctkXnatObject* object)
 void ctkXnatConnection::download(ctkXnatFile* file, const QString& fileName)
 {
   Q_D(ctkXnatConnection);
-  QString query = file->uri();
+  QString query = file->resourceUri();
 
   QUuid queryId = d->xnat->download(fileName, query);
   d->xnat->sync(queryId);
@@ -586,7 +558,7 @@ void ctkXnatConnection::download(ctkXnatScanResource* scanResource, const QStrin
 {
   Q_D(ctkXnatConnection);
 
-  QString query = scanResource->uri() + "/files";
+  QString query = scanResource->resourceUri() + "/files";
   qRestAPI::Parameters parameters;
   parameters["format"] = "zip";
   QUuid queryId = d->xnat->download(fileName, query, parameters);
@@ -597,7 +569,7 @@ void ctkXnatConnection::download(ctkXnatReconstructionResource* reconstructionRe
 {
   Q_D(ctkXnatConnection);
 
-  QString query = reconstructionResource->uri() + "/files";
+  QString query = reconstructionResource->resourceUri() + "/files";
   qRestAPI::Parameters parameters;
   parameters["format"] = "zip";
   QUuid queryId = d->xnat->download(fileName, query, parameters);

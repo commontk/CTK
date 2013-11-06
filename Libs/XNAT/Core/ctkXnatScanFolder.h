@@ -37,8 +37,7 @@ public:
   explicit ctkXnatScanFolder();
   virtual ~ctkXnatScanFolder();
   
-//  const QString& uri() const;
-//  void setUri(const QString& uri);
+  virtual QString resourceUri() const;
   
   void reset();
   

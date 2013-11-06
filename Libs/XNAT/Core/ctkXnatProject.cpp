@@ -56,6 +56,11 @@ ctkXnatProject::~ctkXnatProject()
 {
 }
 
+QString ctkXnatProject::resourceUri() const
+{
+  return QString("%1/data/archive/projects/%2").arg(parent()->resourceUri(), this->id());
+}
+
 const QString& ctkXnatProject::secondaryId() const
 {
   Q_D(const ctkXnatProject);

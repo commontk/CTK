@@ -26,6 +26,8 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatServer.h"
 
+#include <QDebug>
+
 // ctkXnatConnectionFactory class
 
 ctkXnatConnection* ctkXnatConnectionFactory::makeConnection(const QString& url, const QString& user, const QString& password)
@@ -45,6 +47,7 @@ ctkXnatConnection* ctkXnatConnectionFactory::makeConnection(const QString& url, 
   }
 
   connection->setUrl(url);
+  qDebug() << "ctkXnatConnectionFactory::makeConnection(const QString& url, const QString& user, const QString& password) url:" << url;
   connection->setUserName(user);
   connection->setPassword(password);
 

@@ -51,17 +51,10 @@ ctkXnatExperiment::~ctkXnatExperiment()
 {
 }
 
-//const QString& ctkXnatExperiment::uri() const
-//{
-//  Q_D(const ctkXnatExperiment);
-//  return d->uri;
-//}
-
-//void ctkXnatExperiment::setUri(const QString& uri)
-//{
-//  Q_D(ctkXnatExperiment);
-//  d->uri = uri;
-//}
+QString ctkXnatExperiment::resourceUri() const
+{
+  return QString("%1/experiments/%2").arg(parent()->resourceUri(), this->id());
+}
 
 void ctkXnatExperiment::reset()
 {

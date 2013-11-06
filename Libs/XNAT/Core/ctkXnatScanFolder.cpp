@@ -53,17 +53,10 @@ ctkXnatScanFolder::~ctkXnatScanFolder()
 {
 }
 
-//const QString& ctkXnatScanFolder::uri() const
-//{
-//  Q_D(const ctkXnatScanFolder);
-//  return d->uri;
-//}
-
-//void ctkXnatScanFolder::setUri(const QString& uri)
-//{
-//  Q_D(ctkXnatScanFolder);
-//  d->uri = uri;
-//}
+QString ctkXnatScanFolder::resourceUri() const
+{
+  return QString("%1/%d").arg(parent()->resourceUri(), this->id());
+}
 
 void ctkXnatScanFolder::reset()
 {

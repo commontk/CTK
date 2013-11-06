@@ -46,8 +46,7 @@ public:
   const QString& insertUser() const;
   void setInsertUser(const QString& insertUser);
 
-//  const QString& uri() const;
-//  void setUri(const QString& uri);
+  virtual QString resourceUri() const;
 
   void reset();
   

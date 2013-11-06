@@ -37,9 +37,8 @@ public:
   explicit ctkXnatScan(const QString& schemaType = "xnat:imageScanData");
   virtual ~ctkXnatScan();
   
-  const QString& uri() const;
-  void setUri(const QString& uri);
-  
+  virtual QString resourceUri() const;
+
   void reset();
   
 private:

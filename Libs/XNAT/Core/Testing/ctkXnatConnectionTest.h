@@ -44,6 +44,8 @@ private slots:
 
   void testProjectList();
 
+  void testResourceUri();
+
   void testCreateProject();
 
 private:

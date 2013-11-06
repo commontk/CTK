@@ -53,17 +53,10 @@ ctkXnatReconstructionFolder::~ctkXnatReconstructionFolder()
 {
 }
 
-//const QString& ctkXnatReconstructionFolder::uri() const
-//{
-//  Q_D(const ctkXnatReconstructionFolder);
-//  return d->uri;
-//}
-
-//void ctkXnatReconstructionFolder::setUri(const QString& uri)
-//{
-//  Q_D(ctkXnatReconstructionFolder);
-//  d->uri = uri;
-//}
+QString ctkXnatReconstructionFolder::resourceUri() const
+{
+  return QString("%1/%d").arg(parent()->resourceUri(), this->id());
+}
 
 void ctkXnatReconstructionFolder::reset()
 {

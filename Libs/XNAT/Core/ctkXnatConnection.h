@@ -83,10 +83,6 @@ public:
   void fetch(ctkXnatReconstructionResource* reconstructionResource);
 
   void create(ctkXnatObject* object);
-
-  void create(ctkXnatProject* project);
-  void create(ctkXnatSubject* subject);
-
   void remove(ctkXnatObject* object);
 
   void download(ctkXnatFile* file, const QString& fileName);

@@ -51,17 +51,10 @@ ctkXnatFile::~ctkXnatFile()
 {
 }
 
-//const QString& ctkXnatFile::uri() const
-//{
-//  Q_D(const ctkXnatFile);
-//  return d->uri;
-//}
-
-//void ctkXnatFile::setUri(const QString& uri)
-//{
-//  Q_D(ctkXnatFile);
-//  d->uri = uri;
-//}
+QString ctkXnatFile::resourceUri() const
+{
+  return QString("%1/files/%2").arg(parent()->resourceUri(), this->id());
+}
 
 void ctkXnatFile::download(const QString& filename)
 {

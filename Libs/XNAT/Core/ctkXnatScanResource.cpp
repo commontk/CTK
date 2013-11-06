@@ -51,17 +51,10 @@ ctkXnatScanResource::~ctkXnatScanResource()
 {
 }
 
-//const QString& ctkXnatScanResource::uri() const
-//{
-//  Q_D(const ctkXnatScanResource);
-//  return d->uri;
-//}
-
-//void ctkXnatScanResource::setUri(const QString& uri)
-//{
-//  Q_D(ctkXnatScanResource);
-//  d->uri = uri;
-//}
+QString ctkXnatScanResource::resourceUri() const
+{
+  return QString("%1/resources/%d").arg(parent()->resourceUri(), this->property("label"));
+}
 
 void ctkXnatScanResource::reset()
 {

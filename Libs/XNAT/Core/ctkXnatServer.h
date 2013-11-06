@@ -37,6 +37,8 @@ public:
 
   ctkXnatServer(ctkXnatConnection* connection);
 
+  virtual QString resourceUri() const;
+
 protected:
 
   virtual ctkXnatConnection* connection() const;

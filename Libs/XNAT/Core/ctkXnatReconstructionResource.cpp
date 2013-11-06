@@ -51,17 +51,10 @@ ctkXnatReconstructionResource::~ctkXnatReconstructionResource()
 {
 }
 
-//const QString& ctkXnatReconstructionResource::uri() const
-//{
-//  Q_D(const ctkXnatReconstructionResource);
-//  return d->uri;
-//}
-
-//void ctkXnatReconstructionResource::setUri(const QString& uri)
-//{
-//  Q_D(ctkXnatReconstructionResource);
-//  d->uri = uri;
-//}
+QString ctkXnatReconstructionResource::resourceUri() const
+{
+  return QString("%1/resources/%d").arg(parent()->resourceUri(), this->property("label"));
+}
 
 void ctkXnatReconstructionResource::reset()
 {

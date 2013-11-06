@@ -36,9 +36,8 @@ public:
 
   explicit ctkXnatScanResource();
   virtual ~ctkXnatScanResource();
-  
-//  const QString& uri() const;
-//  void setUri(const QString& uri);
+
+  QString resourceUri() const;
   
   void reset();
   

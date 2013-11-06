@@ -37,9 +37,8 @@ public:
   explicit ctkXnatReconstructionFolder();
   virtual ~ctkXnatReconstructionFolder();
   
-//  const QString& uri() const;
-//  void setUri(const QString& uri);
-  
+  virtual QString resourceUri() const;
+
   void reset();
   
 private:

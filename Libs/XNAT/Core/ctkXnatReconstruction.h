@@ -37,9 +37,8 @@ public:
   explicit ctkXnatReconstruction(const QString& schemaType = "xnat:reconstructedImageData");
   virtual ~ctkXnatReconstruction();
   
-  const QString& uri() const;
-  void setUri(const QString& uri);
-  
+  virtual QString resourceUri() const;
+
   void reset();
   
 private:

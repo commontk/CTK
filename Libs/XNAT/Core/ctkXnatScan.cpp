@@ -51,16 +51,9 @@ ctkXnatScan::~ctkXnatScan()
 {
 }
 
-const QString& ctkXnatScan::uri() const
+QString ctkXnatScan::resourceUri() const
 {
-  Q_D(const ctkXnatScan);
-  return d->uri;
-}
-
-void ctkXnatScan::setUri(const QString& uri)
-{
-  Q_D(ctkXnatScan);
-  d->uri = uri;
+  return QString("%1/scans/%2").arg(parent()->resourceUri(), this->id());
 }
 
 void ctkXnatScan::reset()
@@ -70,6 +63,5 @@ void ctkXnatScan::reset()
 
 void ctkXnatScan::fetchImpl()
 {
-  Q_D(ctkXnatScan);
   this->connection()->fetch(this);
 }

@@ -25,6 +25,7 @@
 
 ctkXnatObjectPrivate::ctkXnatObjectPrivate()
 : fetched(false)
+, parent(0)
 {
 }
 

@@ -63,16 +63,6 @@ void ctkXnatObject::setId(const QString& id)
   setProperty("ID", id);
 }
 
-QString ctkXnatObject::uri() const
-{
-  return property("URI");
-}
-
-void ctkXnatObject::setUri(const QString& uri)
-{
-  setProperty("URI", uri);
-}
-
 QString ctkXnatObject::schemaType() const
 {
   Q_D(const ctkXnatObject);
@@ -152,7 +142,6 @@ void ctkXnatObject::setParent(ctkXnatObject* parent)
     {
       parent->add(this);
     }
-    d->parent = parent;
   }
 }
 
@@ -167,20 +156,28 @@ void ctkXnatObject::add(ctkXnatObject* child)
   Q_D(ctkXnatObject);
   if (child->parent() != this)
   {
-    child->setParent(this);
+    child->d_func()->parent = this;
   }
   if (!d->children.contains(child))
   {
     d->children.push_back(child);
+  }
+  else
+  {
+    qWarning() << "ctkXnatObject::add(): Child already exists";
   }
 }
 
 void ctkXnatObject::remove(ctkXnatObject* child)
 {
   Q_D(ctkXnatObject);
+  if (child->parent() == this)
+  {
+    child->d_func()->parent = 0;
+  }
   if (!d->children.removeOne(child))
   {
-    qWarning() << "ctkXnatObject::removeChild(): Child does not exist";
+    qWarning() << "ctkXnatObject::remove(): Child does not exist";
   }
 }
 

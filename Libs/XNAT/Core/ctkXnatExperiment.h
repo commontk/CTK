@@ -37,9 +37,8 @@ public:
   explicit ctkXnatExperiment(const QString& schemaType = "xnat:experimentData");
   virtual ~ctkXnatExperiment();
   
-//  const QString& uri() const;
-//  void setUri(const QString& uri);
-  
+  virtual QString resourceUri() const;
+
   void reset();
   
 private:
