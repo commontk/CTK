@@ -26,7 +26,7 @@
 #include <QResource>
 
 // CTK widget includes
-#include <ctkDICOMBrowser.h>
+#include <ctkDICOMAppWidget.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
     }
   }
 
-  ctkDICOMBrowser DICOMApp;
+  ctkDICOMAppWidget DICOMApp;
 
   DICOMApp.setDatabaseDirectory(databaseDirectory);
   DICOMApp.show();
