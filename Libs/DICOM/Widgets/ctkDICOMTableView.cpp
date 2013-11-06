@@ -255,11 +255,6 @@ void ctkDICOMTableView::onSelectionChanged()
     {
       uids<< (QString("'") + i.data().toString() +"'");
     }
-
-  if (uids.empty())
-    {
-      uids = d->quotedUidsForAllRows();
-    }
   emit selectionChanged(uids);
 }
 
@@ -335,7 +330,7 @@ QStringList ctkDICOMTableView::currentSelection() const
 
   foreach(QModelIndex i, currentSelection)
     {
-      uids<< /*(QString("'") + */i.data().toString() /*+"'")*/;
+      uids<< i.data().toString();
     }
 
   return  uids;
