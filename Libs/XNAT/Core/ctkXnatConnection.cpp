@@ -385,6 +385,16 @@ void ctkXnatConnection::fetch(ctkXnatReconstructionResource* reconstructionResou
   }
 }
 
+bool ctkXnatConnection::exists(ctkXnatObject* object)
+{
+  Q_D(ctkXnatConnection);
+
+  QString query = object->resourceUri();
+  bool success = d->xnat->sync(d->xnat->get(query));
+
+  return success;
+}
+
 void ctkXnatConnection::create(ctkXnatObject* object)
 {
   Q_D(ctkXnatConnection);

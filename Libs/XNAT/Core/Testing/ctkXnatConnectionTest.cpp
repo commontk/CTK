@@ -112,7 +112,6 @@ void ctkXnatConnectionTestCase::testCreateProject()
 
   QString projectId = QString("CTK_") + QUuid::createUuid().toString().mid(1, 8);
   d->Project = projectId;
-  qDebug() << "Creating project" << id;
 
   ctkXnatProject* project = new ctkXnatProject();
   project->setId(projectId);
@@ -120,7 +119,13 @@ void ctkXnatConnectionTestCase::testCreateProject()
   project->setDescription("CTK test project");
   server->add(project);
 
+  bool exists = d->Connection->exists(project);
+  QVERIFY(!exists);
+
   d->Connection->create(project);
+
+  exists = d->Connection->exists(project);
+  QVERIFY(exists);
 }
 
 // --------------------------------------------------------------------------

@@ -82,6 +82,8 @@ public:
   void fetch(ctkXnatReconstruction* reconstruction);
   void fetch(ctkXnatReconstructionResource* reconstructionResource);
 
+  bool exists(ctkXnatObject* object);
+
   void create(ctkXnatObject* object);
   void remove(ctkXnatObject* object);
 
