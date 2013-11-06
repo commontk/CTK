@@ -1113,21 +1113,21 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
   
   QString sopInstanceUID ( ctkDataset.GetElementAsString(DCM_SOPInstanceUID) );
 
-  QSqlQuery fileExists ( Database );
-  fileExists.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
-  fileExists.bindValue(":sopInstanceUID",sopInstanceUID);
+  QSqlQuery fileExistsQuery ( Database );
+  fileExistsQuery.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
+  fileExistsQuery.bindValue(":sopInstanceUID",sopInstanceUID);
   {
-  bool success = fileExists.exec();
+  bool success = fileExistsQuery.exec();
   if (!success)
     {
-      logger.error("SQLITE ERROR: " + fileExists.lastError().driverText());
+      logger.error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
       return;
     }
-  }
+  fileExistsQuery.next();
 
-  QString databaseFilename(fileExists.value(1).toString());
+  QString databaseFilename(fileExistsQuery.value(1).toString());
   QDateTime fileLastModified(QFileInfo(databaseFilename).lastModified());
-  QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExists.value(0).toString(),Qt::ISODate));
+  QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExistsQuery.value(0).toString(),Qt::ISODate));
 
   qDebug() << "inserting filePath: " << filePath;
   if (databaseFilename == "")
@@ -1136,15 +1136,25 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
     }
   else
     {
-      qDebug() << "database filename for " << sopInstanceUID << " is: " << databaseFilename;
-      qDebug() << "modified date is: " << fileLastModified;
-      qDebug() << "db insert date is: " << databaseInsertTimestamp;
-      if ( fileExists.next() && fileLastModified < databaseInsertTimestamp )
+      if ( databaseFilename == filePath && fileLastModified < databaseInsertTimestamp )
         {
           logger.debug ( "File " + databaseFilename + " already added" );
           return;
         }
+      else
+        {
+        QSqlQuery deleteFile ( Database );
+        deleteFile.prepare("DELETE FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
+        deleteFile.bindValue(":sopInstanceUID",sopInstanceUID);
+        bool success = deleteFile.exec();
+        if (!success)
+          {
+            logger.error("SQLITE ERROR deleting old image row: " + deleteFile.lastError().driverText());
+            return;
+          }
+        }
     }
+  }
 
   //If the following fields can not be evaluated, cancel evaluation of the DICOM file
   QString patientsName(ctkDataset.GetElementAsString(DCM_PatientName) );
@@ -1248,7 +1258,9 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
           // let users of this class track when things happen
           emit q->studyAdded(studyInstanceUID);
+          qDebug() << "Study Added";
         }
+
 
       if ( seriesInstanceUID != "" && seriesInstanceUID != LastSeriesInstanceUID )
         {
@@ -1256,6 +1268,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
           // let users of this class track when things happen
           emit q->seriesAdded(seriesInstanceUID);
+          qDebug() << "Series Added";
         }
       // TODO: what to do with imported files
       //
@@ -1265,6 +1278,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
           checkImageExistsQuery.prepare ( "SELECT * FROM Images WHERE Filename = ?" );
           checkImageExistsQuery.bindValue ( 0, filename );
           checkImageExistsQuery.exec();
+          qDebug() << "Maybe add Instance";
           if(!checkImageExistsQuery.next())
             {
               QSqlQuery insertImageStatement ( Database );
@@ -1280,6 +1294,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
               // let users of this class track when things happen
               emit q->instanceAdded(sopInstanceUID);
+              qDebug() << "Instance Added";
             }
         }
 
@@ -1353,22 +1368,22 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
   Q_D(ctkDICOMDatabase);
 
   // get all images from series
-  QSqlQuery fileExists ( d->Database );
-  fileExists.prepare("SELECT Filename, SOPInstanceUID, StudyInstanceUID FROM Images,Series WHERE Series.SeriesInstanceUID = Images.SeriesInstanceUID AND Images.SeriesInstanceUID = :seriesID");
-  fileExists.bindValue(":seriesID",seriesInstanceUID);
-  bool success = fileExists.exec();
+  QSqlQuery fileExistsQuery ( d->Database );
+  fileExistsQuery.prepare("SELECT Filename, SOPInstanceUID, StudyInstanceUID FROM Images,Series WHERE Series.SeriesInstanceUID = Images.SeriesInstanceUID AND Images.SeriesInstanceUID = :seriesID");
+  fileExistsQuery.bindValue(":seriesID",seriesInstanceUID);
+  bool success = fileExistsQuery.exec();
   if (!success)
     {
-      logger.error("SQLITE ERROR: " + fileExists.lastError().driverText());
+      logger.error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
       return false;
     }
 
   QList< QPair<QString,QString> > removeList;
-  while ( fileExists.next() )
+  while ( fileExistsQuery.next() )
     {
-      QString dbFilePath = fileExists.value(fileExists.record().indexOf("Filename")).toString();
-      QString sopInstanceUID = fileExists.value(fileExists.record().indexOf("SOPInstanceUID")).toString();
-      QString studyInstanceUID = fileExists.value(fileExists.record().indexOf("StudyInstanceUID")).toString();
+      QString dbFilePath = fileExistsQuery.value(fileExistsQuery.record().indexOf("Filename")).toString();
+      QString sopInstanceUID = fileExistsQuery.value(fileExistsQuery.record().indexOf("SOPInstanceUID")).toString();
+      QString studyInstanceUID = fileExistsQuery.value(fileExistsQuery.record().indexOf("StudyInstanceUID")).toString();
       QString internalFilePath = studyInstanceUID + "/" + seriesInstanceUID + "/" + sopInstanceUID;
       removeList << qMakePair(dbFilePath,internalFilePath);
     }
