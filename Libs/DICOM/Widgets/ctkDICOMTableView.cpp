@@ -47,6 +47,7 @@ public:
 
   QString queryTableName() const;
 
+  //For selection query
   QStringList quotedUidsForAllRows() const;
 
   ctkDICOMDatabase* dicomDatabase;
@@ -55,6 +56,8 @@ public:
   QString queryForeignKey;
 
   QStringList currentSelection;
+  //Key = QString for columns, Values = QStringList
+  QHash<QString, QStringList> sqlWhereConditions;
 
 };
 
@@ -291,15 +294,35 @@ void ctkDICOMTableView::onFilterChanged()
 void ctkDICOMTableView::setQuery(const QStringList &uids)
 {
   Q_D(ctkDICOMTableView);
-  QString query= "select * from " + d->queryTableName();
+  QString query = ("select distinct %1.* from Patients, Series, Studies where "
+                   "Patients.UID = Studies.PatientsUID and Studies.StudyInstanceUID = Series.StudyInstanceUID");
 
   if (!uids.empty() && d->queryForeignKey.length() != 0)
     {
-      query += " where "+d->queryForeignKey+" in ( ";
-      query.append(uids.join(",")).append(");");
+      query += " and %1."+d->queryForeignKey+" in ( ";
+      query.append(uids.join(",")).append(")");
+    }
+  if (!d->sqlWhereConditions.empty())
+    {
+      QHash<QString, QStringList>::const_iterator i = d->sqlWhereConditions.begin();
+      while (i != d->sqlWhereConditions.end())
+        {
+          if (!i.value().empty())
+            {
+              query += " and "+i.key()+" in ( ";
+              query.append(i.value().join(",")).append(")");
+            }
+          ++i;
+        }
     }
   if (d->dicomDatabase != 0)
-    d->dicomSQLModel.setQuery(query, d->dicomDatabase->database());
+    d->dicomSQLModel.setQuery(query.arg(d->queryTableName()), d->dicomDatabase->database());
+}
+
+void ctkDICOMTableView::addSqlWhereCondition(const std::pair<QString, QStringList> &condition)
+{
+  Q_D(ctkDICOMTableView);
+  d->sqlWhereConditions.insert(condition.first, condition.second);
 }
 
 //------------------------------------------------------------------------------

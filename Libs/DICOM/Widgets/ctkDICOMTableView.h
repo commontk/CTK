@@ -95,6 +95,12 @@ public:
   void setQuery (const QStringList &uids = QStringList());
 
   /**
+   * @brief Add a where condition to the usual select statement
+   * @param condition std::pair with column name and a value list
+   */
+  void addSqlWhereCondition(const std::pair<QString, QStringList>& condition);
+
+  /**
    * @brief Returns the uids of the current selected rows
    * @return a list containing all the uids of the selected rows
    */
