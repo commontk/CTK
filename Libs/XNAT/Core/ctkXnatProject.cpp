@@ -52,13 +52,6 @@ ctkXnatProject::ctkXnatProject(const QString& schemaType)
 {
 }
 
-ctkXnatProject::Pointer ctkXnatProject::Create()
-{
-  Pointer project(new ctkXnatProject());
-  project->d_func()->selfPtr = project;
-  return project;
-}
-
 ctkXnatProject::~ctkXnatProject()
 {
 }
@@ -119,6 +112,5 @@ void ctkXnatProject::reset()
 void ctkXnatProject::fetchImpl()
 {
   Q_D(ctkXnatProject);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  this->connection()->fetch(self.staticCast<ctkXnatProject>());
+  this->connection()->fetch(this);
 }

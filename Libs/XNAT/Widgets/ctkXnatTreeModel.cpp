@@ -52,7 +52,7 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
   }
   else if (role == Qt::DisplayRole)
   {
-    ctkXnatObject::Pointer xnatObject = this->xnatObject(index);
+    ctkXnatObject* xnatObject = this->xnatObject(index);
 
     QString displayData = xnatObject->name();
     if (displayData.isEmpty())
@@ -171,15 +171,15 @@ void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
 
   ctkXnatTreeItem* item = this->itemAt(index);
 
-  ctkXnatObject::Pointer xnatObject = item->xnatObject();
+  ctkXnatObject* xnatObject = item->xnatObject();
 
   xnatObject->fetch();
 
-  QList<ctkXnatObject::Pointer> children = xnatObject->children();
+  QList<ctkXnatObject*> children = xnatObject->children();
   if (!children.isEmpty())
   {
     beginInsertRows(index, 0, children.size() - 1);
-    foreach (ctkXnatObject::Pointer child, children)
+    foreach (ctkXnatObject* child, children)
     {
       item->appendChild(new ctkXnatTreeItem(child, item));
     }
@@ -187,12 +187,12 @@ void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
   }
 }
 
-ctkXnatObject::Pointer ctkXnatTreeModel::xnatObject(const QModelIndex& index) const
+ctkXnatObject* ctkXnatTreeModel::xnatObject(const QModelIndex& index) const
 {
   return this->itemAt(index)->xnatObject();
 }
 
-void ctkXnatTreeModel::addServer(ctkXnatServer::Pointer server)
+void ctkXnatTreeModel::addServer(ctkXnatServer* server)
 {
   m_RootItem->appendChild(new ctkXnatTreeItem(server, m_RootItem));
 }
@@ -211,11 +211,11 @@ bool ctkXnatTreeModel::removeAllRows(const QModelIndex& parent)
     return false;
   }
 
-  ctkXnatObject::Pointer xnatObject = this->xnatObject(parent);
+  ctkXnatObject* xnatObject = this->xnatObject(parent);
 
   // nt: not sure why the parent.row() is used here instead of the first item in list
   // that is xnatObject->children()[0];
-  ctkXnatObject::Pointer child = xnatObject->children()[parent.row()];
+  ctkXnatObject* child = xnatObject->children()[parent.row()];
 
   if ( child == NULL )
   {
@@ -228,14 +228,14 @@ bool ctkXnatTreeModel::removeAllRows(const QModelIndex& parent)
     beginRemoveRows(parent, 0, numberofchildren - 1);
     // xnatObject->removeChild(parent.row());
     // nt: not sure if this is the right implementation here, should iterate ?
-    xnatObject->removeChild(child);
+    xnatObject->remove(child);
     endRemoveRows();
   }
   else
   {
     // xnatObject->removeChild(parent.row());
     // nt: not sure if this is the right implementation here, should iterate ?
-    xnatObject->removeChild(child);
+    xnatObject->remove(child);
   }
   return true;
 }
@@ -259,8 +259,8 @@ void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFi
     return;
   }
 
-  ctkXnatObject::Pointer xnatObject = this->xnatObject(index);
-  ctkXnatObject::Pointer child = xnatObject->children()[index.row()];
+  ctkXnatObject* xnatObject = this->xnatObject(index);
+  ctkXnatObject* child = xnatObject->children()[index.row()];
 
   child->upload(zipFileName);
 }

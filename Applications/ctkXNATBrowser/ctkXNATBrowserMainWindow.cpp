@@ -70,7 +70,7 @@ void ctkXNATBrowserMainWindow::loginButtonPushed()
     ui->loginButton->setText("Login");
     ui->loginLabel->setText("Disconnected");
 
-    m_ProjectsModel->setRootObject(ctkXnatObject::Pointer());
+    m_ProjectsModel->setRootObject(0);
     ui->projectsList->reset();
   }
   else
@@ -84,7 +84,7 @@ void ctkXNATBrowserMainWindow::loginButtonPushed()
         ui->loginButton->setText("Logout");
         ui->loginLabel->setText(QString("Connected: %1").arg(m_Connection->url()));
 
-        ctkXnatServer::Pointer server = m_Connection->server();
+        ctkXnatServer* server = m_Connection->server();
         //xnatConnection->fetch(server);
         server->fetch();
         m_ProjectsModel->setRootObject(server);
@@ -100,7 +100,7 @@ void ctkXNATBrowserMainWindow::projectSelected(const QModelIndex& index)
   QVariant variant = m_ProjectsModel->data(index, Qt::UserRole);
   if (variant.isValid())
   {
-    ctkXnatObject::Pointer project = variant.value<ctkXnatObject::Pointer>();
+    ctkXnatObject* project = variant.value<ctkXnatObject*>();
     qDebug() << "selected project id:" << project->id();
     project->fetch();
     m_SubjectsModel->setRootObject(project);

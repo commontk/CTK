@@ -47,7 +47,7 @@ public:
   QString insertUser;
 //  QString uri;
 
-  QList<ctkXnatProject::WeakPointer> projects;
+  QList<ctkXnatProject*> projects;
 };
 
 ctkXnatSubject::ctkXnatSubject(const QString& schemaType)
@@ -103,14 +103,5 @@ void ctkXnatSubject::reset()
 
 void ctkXnatSubject::fetchImpl()
 {
-  Q_D(ctkXnatSubject);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  connection()->fetch(self.staticCast<ctkXnatSubject>());
-}
-
-ctkXnatSubject::Pointer ctkXnatSubject::Create()
-{
-  Pointer subject(new ctkXnatSubject());
-  subject->d_func()->selfPtr = subject;
-  return subject;
+  connection()->fetch(this);
 }

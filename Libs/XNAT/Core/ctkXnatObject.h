@@ -27,7 +27,6 @@
 #include <QList>
 #include <QObject>
 #include <QString>
-#include <QSharedPointer>
 #include <QMetaType>
 
 class ctkXnatConnection;
@@ -42,27 +41,37 @@ class CTK_XNAT_CORE_EXPORT ctkXnatObject
 
 public:
 
-  typedef QSharedPointer<ctkXnatObject> Pointer;
-  typedef QWeakPointer<ctkXnatObject> WeakPointer;
-
   /// Destructs the ctkXnatObject.
   virtual ~ctkXnatObject();
 
+  /// Gets the XML Schema type of the object.
+  QString schemaType() const;
+
   /// Gets the ID of the object.
   QString id() const;
+
+  /// Sets the ID of the object.
+  void setId(const QString& id);
 
   /// Gets the resource URI of the object that can be used to access it through
   /// the REST API.
   QString uri() const;
 
-  /// Gets the XML Schema type of the object.
-  QString schemaType() const;
+  /// Sets the resource URI of the object that can be used to access it through
+  /// the REST API.
+  void setUri(const QString& uri);
 
   /// Gets the name of the object.
   QString name() const;
 
+  /// Sets the name of the object.
+  void setName(const QString& name);
+
   /// Gets the description of the object.
   QString description() const;
+
+  /// Sets the description of the object.
+  void setDescription(const QString& description);
 
   /// Gets the value of the property with the given name.
   QString property(const QString& name) const;
@@ -76,16 +85,19 @@ public:
   /// Gets the parent of the object in the data hierarchy. The returned pointer
   /// is 0 for the ctkXnatServer objects and different for any other type of
   /// XNAT objects.
-  ctkXnatObject::Pointer parent() const;
+  ctkXnatObject* parent() const;
+
+  /// Sets the parent of the object in the data hierarchy.
+  void setParent(ctkXnatObject* parent);
 
   /// Gets the children of the object.
-  QList<ctkXnatObject::Pointer> children() const;
+  QList<ctkXnatObject*> children() const;
 
   /// Adds an object to the children of the current one.
-  void addChild(Pointer& child);
+  void addChild(ctkXnatObject* child);
 
   /// Removes the object from the children of the current object.
-  void removeChild(Pointer& child);
+  void remove(ctkXnatObject* child);
 
   /// Tells if the children and the properties of the objects have been fetched.
   bool isFetched() const;
@@ -96,12 +108,6 @@ public:
 
   /// Fetches the children and the properties of the object.
   void fetch();
-
-  /// Creates the object from the XNAT server.
-  virtual void create();
-
-  /// Removes the object from the XNAT server.
-  virtual void remove();
 
   virtual void download(const QString&);
   virtual void upload(const QString&);
@@ -118,19 +124,6 @@ protected:
   /// that stores the current object.
   virtual ctkXnatConnection* connection() const;
 
-  /// Sets the ID of the object.
-  void setId(const QString& id);
-
-  /// Sets the resource URI of the object that can be used to access it through
-  /// the REST API.
-  void setUri(const QString& uri);
-
-  /// Sets the name of the object.
-  void setName(const QString& name);
-
-  /// Sets the description of the object.
-  void setDescription(const QString& description);
-
   /// The private implementation part of the object.
   const QScopedPointer<ctkXnatObjectPrivate> d_ptr;
 
@@ -145,6 +138,6 @@ private:
   Q_DISABLE_COPY(ctkXnatObject)
 };
 
-Q_DECLARE_METATYPE(ctkXnatObject::Pointer)
+Q_DECLARE_METATYPE(ctkXnatObject*)
 
 #endif

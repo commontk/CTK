@@ -53,7 +53,7 @@ public:
   qXnatAPI* xnat;
   qXnatAPI::RawHeaders rawHeaders;
 
-  QSharedPointer<ctkXnatServer> server;
+  ctkXnatServer* server;
 };
 
 // ctkXnatConnection class
@@ -70,13 +70,14 @@ ctkXnatConnection::ctkXnatConnection()
   d->rawHeaders["User-Agent"] = "Qt";
   d->xnat->setDefaultRawHeaders(d->rawHeaders);
 
-  d->server = ctkXnatServer::Create(this);
+  d->server = new ctkXnatServer(this);
   createConnections();
 }
 
 ctkXnatConnection::~ctkXnatConnection()
 {
   Q_D(ctkXnatConnection);
+  delete d->server;
   delete d->xnat;
 }
 
@@ -153,13 +154,13 @@ void ctkXnatConnection::setPassword(const QString& password)
   d->xnat->setDefaultRawHeaders(d->rawHeaders);
 }
 
-ctkXnatServer::Pointer ctkXnatConnection::server() const
+ctkXnatServer* ctkXnatConnection::server() const
 {
   Q_D(const ctkXnatConnection);
   return d->server;
 }
 
-void ctkXnatConnection::fetch(const ctkXnatServer::Pointer& server)
+void ctkXnatConnection::fetch(ctkXnatServer* server)
 {
   Q_D(ctkXnatConnection);
 
@@ -172,15 +173,13 @@ void ctkXnatConnection::fetch(const ctkXnatServer::Pointer& server)
   foreach (ctkXnatProject* project, projects)
   {
     project->setUri(projectsUri + "/" + project->id());
-    ctkXnatObject::Pointer ptr(project);
-    ptr->d_func()->selfPtr = ptr;
-    server->addChild(ptr);
+    server->addChild(project);
   }
 
   delete restResult;
 }
 
-void ctkXnatConnection::fetch(const ctkXnatProject::Pointer& project)
+void ctkXnatConnection::fetch(ctkXnatProject* project)
 {
   Q_D(ctkXnatConnection);
 
@@ -198,15 +197,13 @@ void ctkXnatConnection::fetch(const ctkXnatProject::Pointer& project)
     }
     subject->setUri(subjectsUri + "/" + subject->id());
 
-    ctkXnatObject::Pointer ptr(subject);
-    ptr->d_func()->selfPtr = ptr;
-    project->addChild(ptr);
+    project->addChild(subject);
   }
 
   delete restResult;
 }
 
-void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatSubject>& subject)
+void ctkXnatConnection::fetch(ctkXnatSubject* subject)
 {
   Q_D(ctkXnatConnection);
 
@@ -225,15 +222,13 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatSubject>& subject)
     }
     experiment->setUri(experimentsUri + "/" + experiment->id());
 
-    ctkXnatObject::Pointer ptr(experiment);
-    ptr->d_func()->selfPtr = ptr;
-    subject->addChild(ptr);
+    subject->addChild(experiment);
   }
 
   delete restResult;
 }
 
-void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatExperiment>& experiment)
+void ctkXnatConnection::fetch(ctkXnatExperiment* experiment)
 {
   Q_D(ctkXnatConnection);
   
@@ -245,12 +240,9 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatExperiment>& experimen
   
   if (scans.size() > 0)
   {
-    ctkXnatObject::Pointer ptr = ctkXnatScanFolder::Create();
-
-    ptr->setUri(scansUri);
-
-    ptr->d_func()->selfPtr = ptr;
-    experiment->addChild(ptr);
+    ctkXnatScanFolder* scanFolder = new ctkXnatScanFolder();
+    scanFolder->setUri(scansUri);
+    experiment->addChild(scanFolder);
   }
   
   delete restResult;
@@ -263,18 +255,15 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatExperiment>& experimen
 
   if (reconstructions.size() > 0)
   {
-    ctkXnatObject::Pointer ptr = ctkXnatReconstructionFolder::Create();
-
-    ptr->setUri(reconstructionsUri);
-
-    ptr->d_func()->selfPtr = ptr;
-    experiment->addChild(ptr);
+    ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder();
+    reconstructionFolder->setUri(reconstructionsUri);
+    experiment->addChild(reconstructionFolder);
   }
 
   delete restResult;
 }
 
-void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanFolder>& scanFolder)
+void ctkXnatConnection::fetch(ctkXnatScanFolder* scanFolder)
 {
   Q_D(ctkXnatConnection);
   
@@ -287,17 +276,14 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanFolder>& scanFolde
   foreach (ctkXnatScan* scan, scans)
   {
     scan->setUri(scansUri + "/" + scan->id());
-
-    ctkXnatObject::Pointer ptr(scan);
-    ptr->d_func()->selfPtr = ptr;
-    scanFolder->addChild(ptr);
+    scanFolder->addChild(scan);
   }
   
   delete restResult;
   
 }
 
-void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScan>& scan)
+void ctkXnatConnection::fetch(ctkXnatScan* scan)
 {
   Q_D(ctkXnatConnection);
   
@@ -316,14 +302,11 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScan>& scan)
     }
     
     scanResource->setUri(scanResourcesUri + "/" + label);
-
-    ctkXnatObject::Pointer ptr(scanResource);
-    ptr->d_func()->selfPtr = ptr;
-    scan->addChild(ptr);
+    scan->addChild(scanResource);
   }
 }
 
-void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanResource)
+void ctkXnatConnection::fetch(ctkXnatScanResource* scanResource)
 {
   Q_D(ctkXnatConnection);
   
@@ -348,14 +331,11 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatScanResource>& scanRes
     }
 
     file->setUri(scanResourceFilesUri + "/" + label);
-
-    ctkXnatObject::Pointer ptr(file);
-    ptr->d_func()->selfPtr = ptr;
-    scanResource->addChild(ptr);
+    scanResource->addChild(file);
   }
 }
 
-void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstructionFolder>& reconstructionFolder)
+void ctkXnatConnection::fetch(ctkXnatReconstructionFolder* reconstructionFolder)
 {
   Q_D(ctkXnatConnection);
 
@@ -369,16 +349,14 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstructionFolder>&
   {
     reconstruction->setUri(reconstructionsUri + "/" + reconstruction->id());
 
-    ctkXnatObject::Pointer ptr(reconstruction);
-    ptr->d_func()->selfPtr = ptr;
-    reconstructionFolder->addChild(ptr);
+    reconstructionFolder->addChild(reconstruction);
   }
 
   delete restResult;
 
 }
 
-void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstruction>& reconstruction)
+void ctkXnatConnection::fetch(ctkXnatReconstruction* reconstruction)
 {
   Q_D(ctkXnatConnection);
 
@@ -398,13 +376,11 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstruction>& recon
 
     reconstructionResource->setUri(reconstructionResourcesUri + "/" + label);
 
-    ctkXnatObject::Pointer ptr(reconstructionResource);
-    ptr->d_func()->selfPtr = ptr;
-    reconstruction->addChild(ptr);
+    reconstruction->addChild(reconstructionResource);
   }
 }
 
-void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstructionResource>& reconstructionResource)
+void ctkXnatConnection::fetch(ctkXnatReconstructionResource* reconstructionResource)
 {
   Q_D(ctkXnatConnection);
 
@@ -430,9 +406,7 @@ void ctkXnatConnection::fetch(const QSharedPointer<ctkXnatReconstructionResource
 
     file->setUri(reconstructionResourceFilesUri + "/" + label);
 
-    ctkXnatObject::Pointer ptr(file);
-    ptr->d_func()->selfPtr = ptr;
-    reconstructionResource->addChild(ptr);
+    reconstructionResource->addChild(file);
   }
 }
 

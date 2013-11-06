@@ -34,10 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatScanResource : public ctkXnatObject
   
 public:
 
-  typedef QSharedPointer<ctkXnatScanResource> Pointer;
-  typedef QWeakPointer<ctkXnatScanResource> WeakPointer;
-  
-  static Pointer Create();
+  explicit ctkXnatScanResource();
   virtual ~ctkXnatScanResource();
   
 //  const QString& uri() const;
@@ -50,7 +47,6 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatScanResource();
   virtual void fetchImpl();
   
   Q_DECLARE_PRIVATE(ctkXnatScanResource);

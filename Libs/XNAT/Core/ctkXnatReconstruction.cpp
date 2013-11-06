@@ -47,13 +47,6 @@ ctkXnatReconstruction::ctkXnatReconstruction(const QString& schemaType)
 {
 }
 
-ctkXnatReconstruction::Pointer ctkXnatReconstruction::Create()
-{
-  Pointer ptr(new ctkXnatReconstruction());
-  ptr->d_func()->selfPtr = ptr;
-  return ptr;
-}
-
 ctkXnatReconstruction::~ctkXnatReconstruction()
 {
 }
@@ -77,7 +70,5 @@ void ctkXnatReconstruction::reset()
 
 void ctkXnatReconstruction::fetchImpl()
 {
-  Q_D(ctkXnatReconstruction);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  this->connection()->fetch(self.staticCast<ctkXnatReconstruction>());
+  this->connection()->fetch(this);
 }

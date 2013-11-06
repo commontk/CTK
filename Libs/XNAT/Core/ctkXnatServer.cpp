@@ -50,18 +50,9 @@ ctkXnatServer::ctkXnatServer(ctkXnatConnection* connection)
 {
 }
 
-ctkXnatServer::Pointer ctkXnatServer::Create(ctkXnatConnection* connection)
-{
-  Pointer server(new ctkXnatServer(connection));
-  server->d_func()->selfPtr = server;
-  return server;
-}
-
 void ctkXnatServer::fetchImpl()
 {
-  Q_D(ctkXnatObject);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  this->connection()->fetch(self.staticCast<ctkXnatServer>());
+  this->connection()->fetch(this);
 }
 
 ctkXnatConnection* ctkXnatServer::connection() const

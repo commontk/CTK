@@ -47,9 +47,9 @@ public:
   virtual bool canFetchMore(const QModelIndex& parent) const;
   virtual void fetchMore(const QModelIndex& parent);
 
-  ctkXnatObject::Pointer xnatObject(const QModelIndex& index) const;
+  ctkXnatObject* xnatObject(const QModelIndex& index) const;
 
-  void addServer(ctkXnatServer::Pointer server);
+  void addServer(ctkXnatServer* server);
 
   bool removeAllRows(const QModelIndex& parent);
 

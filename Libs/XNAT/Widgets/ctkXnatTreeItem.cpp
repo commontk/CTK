@@ -30,7 +30,7 @@ ctkXnatTreeItem::ctkXnatTreeItem()
 {
 }
 
-ctkXnatTreeItem::ctkXnatTreeItem(ctkXnatObject::Pointer xnatObject, ctkXnatTreeItem* parentItem)
+ctkXnatTreeItem::ctkXnatTreeItem(ctkXnatObject* xnatObject, ctkXnatTreeItem* parentItem)
 : m_XnatObject(xnatObject)
 , m_ParentItem(parentItem)
 {
@@ -41,7 +41,7 @@ ctkXnatTreeItem::~ctkXnatTreeItem()
   qDeleteAll(m_ChildItems);
 }
 
-ctkXnatObject::Pointer ctkXnatTreeItem::xnatObject() const
+ctkXnatObject* ctkXnatTreeItem::xnatObject() const
 {
   return m_XnatObject;
 }

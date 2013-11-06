@@ -55,7 +55,7 @@ ctkXnatConnection* ctkXnatConnectionFactory::makeConnection(const QString& url, 
 void ctkXnatConnectionFactory::testConnection(ctkXnatConnection* connection)
 {
   // test connection by retrieving project names from XNAT
-  ctkXnatServer::Pointer server = connection->server();
+  ctkXnatServer* server = connection->server();
 
   // TODO E.g. get version
 }

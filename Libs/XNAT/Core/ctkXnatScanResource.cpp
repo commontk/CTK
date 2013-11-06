@@ -47,13 +47,6 @@ ctkXnatScanResource::ctkXnatScanResource()
 {
 }
 
-ctkXnatScanResource::Pointer ctkXnatScanResource::Create()
-{
-  Pointer ptr(new ctkXnatScanResource());
-  ptr->d_func()->selfPtr = ptr;
-  return ptr;
-}
-
 ctkXnatScanResource::~ctkXnatScanResource()
 {
 }
@@ -77,9 +70,7 @@ void ctkXnatScanResource::reset()
 
 void ctkXnatScanResource::fetchImpl()
 {
-  Q_D(ctkXnatScanResource);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  this->connection()->fetch(self.staticCast<ctkXnatScanResource>());
+  this->connection()->fetch(this);
 }
 
 void ctkXnatScanResource::download(const QString& filename)

@@ -25,7 +25,6 @@
 #include "ctkXNATCoreExport.h"
 
 #include <QScopedPointer>
-#include <QSharedPointer>
 #include <QString>
 
 #include <QObject>
@@ -70,18 +69,18 @@ public:
   QString password() const;
   void setPassword(const QString& password);
 
-  QSharedPointer<ctkXnatServer> server() const;
+  ctkXnatServer* server() const;
 
-  void fetch(const QSharedPointer<ctkXnatServer>& server);
-  void fetch(const QSharedPointer<ctkXnatProject>& project);
-  void fetch(const QSharedPointer<ctkXnatSubject>& subject);
-  void fetch(const QSharedPointer<ctkXnatExperiment>& experiment);
-  void fetch(const QSharedPointer<ctkXnatScanFolder>& scanFolder);
-  void fetch(const QSharedPointer<ctkXnatScan>& scan);
-  void fetch(const QSharedPointer<ctkXnatScanResource>& scanResource);
-  void fetch(const QSharedPointer<ctkXnatReconstructionFolder>& reconstructionFolder);
-  void fetch(const QSharedPointer<ctkXnatReconstruction>& reconstruction);
-  void fetch(const QSharedPointer<ctkXnatReconstructionResource>& reconstructionResource);
+  void fetch(ctkXnatServer* server);
+  void fetch(ctkXnatProject* project);
+  void fetch(ctkXnatSubject* subject);
+  void fetch(ctkXnatExperiment* experiment);
+  void fetch(ctkXnatScanFolder* scanFolder);
+  void fetch(ctkXnatScan* scan);
+  void fetch(ctkXnatScanResource* scanResource);
+  void fetch(ctkXnatReconstructionFolder* reconstructionFolder);
+  void fetch(ctkXnatReconstruction* reconstruction);
+  void fetch(ctkXnatReconstructionResource* reconstructionResource);
 
   void create(ctkXnatObject* object);
 

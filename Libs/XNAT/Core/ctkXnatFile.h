@@ -34,10 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatFile : public ctkXnatObject
 
 public:
 
-  typedef QSharedPointer<ctkXnatFile> Pointer;
-  typedef QWeakPointer<ctkXnatFile> WeakPointer;
-  
-  static Pointer Create();
+  explicit ctkXnatFile();
   virtual ~ctkXnatFile();
   
 //  const QString& uri() const;
@@ -51,7 +48,6 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatFile();
   virtual void fetchImpl();
   
   Q_DECLARE_PRIVATE(ctkXnatFile);

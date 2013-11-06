@@ -87,12 +87,31 @@ void ctkXnatConnectionTestCase::testProjectList()
 {
   Q_D(ctkXnatConnectionTestCase);
 
-  ctkXnatServer::Pointer server = d->Connection->server();
+  ctkXnatServer* server = d->Connection->server();
   server->fetch();
 
-  QList<ctkXnatObject::Pointer> projects = server->children();
+  QList<ctkXnatObject*> projects = server->children();
 
   QVERIFY(projects.size() > 0);
+}
+
+void ctkXnatConnectionTestCase::testCreateProject()
+{
+  Q_D(ctkXnatConnectionTestCase);
+
+  ctkXnatServer* server = d->Connection->server();
+
+  ctkXnatProject* project = new ctkXnatProject();
+  project->setId("CTK_432");
+  project->setName("CTK 432");
+  project->setDescription("CTK test project");
+  server->addChild(project);
+
+//  project->save();
+
+//  bool saved = project->exists();
+
+//  QVERIFY(projects.size() > 0);
 }
 
 

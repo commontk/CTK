@@ -46,6 +46,11 @@ ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, const QString& schemaType
 
 ctkXnatObject::~ctkXnatObject()
 {
+  Q_D(ctkXnatObject);
+  foreach (ctkXnatObject* child, d->children)
+  {
+    delete child;
+  }
 }
 
 QString ctkXnatObject::id() const
@@ -79,9 +84,19 @@ QString ctkXnatObject::name() const
   return property("name");
 }
 
+void ctkXnatObject::setName(const QString& name)
+{
+  setProperty("name", name);
+}
+
 QString ctkXnatObject::description() const
 {
   return property("description");
+}
+
+void ctkXnatObject::setDescription(const QString& description)
+{
+  setProperty("description", description);
 }
 
 QString ctkXnatObject::property(const QString& name) const
@@ -118,26 +133,49 @@ QList<QString> ctkXnatObject::properties()
   return value;
 }
 
-ctkXnatObject::Pointer ctkXnatObject::parent() const
+ctkXnatObject* ctkXnatObject::parent() const
 {
   Q_D(const ctkXnatObject);
   return d->parent;
 }
 
-QList<ctkXnatObject::Pointer> ctkXnatObject::children() const
+void ctkXnatObject::setParent(ctkXnatObject* parent)
+{
+  Q_D(ctkXnatObject);
+  if (d->parent != parent)
+  {
+    if (d->parent)
+    {
+      d->parent->remove(this);
+    }
+    if (parent)
+    {
+      parent->addChild(this);
+    }
+    d->parent = parent;
+  }
+}
+
+QList<ctkXnatObject*> ctkXnatObject::children() const
 {
   Q_D(const ctkXnatObject);
   return d->children;
 }
 
-void ctkXnatObject::addChild(ctkXnatObject::Pointer& child)
+void ctkXnatObject::addChild(ctkXnatObject* child)
 {
   Q_D(ctkXnatObject);
-  d->children.push_back(child);
-  child->d_func()->parent = d->selfPtr;
+  if (child->parent() != this)
+  {
+    child->setParent(this);
+  }
+  if (!d->children.contains(child))
+  {
+    d->children.push_back(child);
+  }
 }
 
-void ctkXnatObject::removeChild(ctkXnatObject::Pointer& child)
+void ctkXnatObject::remove(ctkXnatObject* child)
 {
   Q_D(ctkXnatObject);
   if (!d->children.removeOne(child))
@@ -175,22 +213,12 @@ ctkXnatConnection* ctkXnatObject::connection() const
   const ctkXnatObject* xnatObject = this;
   const ctkXnatServer* server;
   do {
-    xnatObject = xnatObject->parent().data();
+    xnatObject = xnatObject->parent();
     server = dynamic_cast<const ctkXnatServer*>(xnatObject);
   }
   while (xnatObject && !server);
 
   return server ? xnatObject->connection() : 0;
-}
-
-void ctkXnatObject::create()
-{
-  this->connection()->create(this);
-}
-
-void ctkXnatObject::remove()
-{
-  this->connection()->remove(this);
 }
 
 void ctkXnatObject::download(const QString& /*zipFilename*/)

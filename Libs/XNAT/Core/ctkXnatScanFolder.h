@@ -34,10 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatScanFolder : public ctkXnatObject
 
 public:
   
-  typedef QSharedPointer<ctkXnatScanFolder> Pointer;
-  typedef QWeakPointer<ctkXnatScanFolder> WeakPointer;
-  
-  static Pointer Create();
+  explicit ctkXnatScanFolder();
   virtual ~ctkXnatScanFolder();
   
 //  const QString& uri() const;
@@ -48,7 +45,6 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatScanFolder();
   virtual void fetchImpl();
   
   Q_DECLARE_PRIVATE(ctkXnatScanFolder);

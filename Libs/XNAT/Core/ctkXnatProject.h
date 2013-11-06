@@ -34,11 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatProject : public ctkXnatObject
 
 public:
 
-  typedef QSharedPointer<ctkXnatProject> Pointer;
-  typedef QWeakPointer<ctkXnatProject> WeakPointer;
-
-  static Pointer Create();
-
+  explicit ctkXnatProject(const QString& schemaType = "xnat:projectData");
   virtual ~ctkXnatProject();
 
   const QString& secondaryId() const;
@@ -50,16 +46,11 @@ public:
   const QString& piLastName() const;
   void setPiLastName(const QString& piLastName);
 
-//  const QString& uri() const;
-//  void setUri(const QString& uri);
-
   void reset();
   
 private:
 
   friend class qRestResult;
-
-  explicit ctkXnatProject(const QString& schemaType = "xnat:projectData");
 
   virtual void fetchImpl();
 

@@ -29,7 +29,7 @@ ctkXnatProjectListModel::ctkXnatProjectListModel()
 {
 }
 
-void ctkXnatProjectListModel::setRootObject(const ctkXnatObject::Pointer& root)
+void ctkXnatProjectListModel::setRootObject(ctkXnatObject* root)
 {
   rootObject = root;
 }
@@ -46,8 +46,8 @@ QVariant ctkXnatProjectListModel::data(const QModelIndex& index, int role) const
 
   if (role == Qt::DisplayRole)
   {
-    ctkXnatObject::Pointer child = rootObject->children().at(index.row());
-    if (child.isNull())
+    ctkXnatObject* child = rootObject->children().at(index.row());
+    if (!child)
     {
       qWarning() << "child at index" << index << "is NULL!";
     }

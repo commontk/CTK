@@ -49,13 +49,6 @@ ctkXnatScanFolder::ctkXnatScanFolder()
   this->setProperty("ID", "Scans");
 }
 
-ctkXnatScanFolder::Pointer ctkXnatScanFolder::Create()
-{
-  Pointer ptr(new ctkXnatScanFolder());
-  ptr->d_func()->selfPtr = ptr;
-  return ptr;
-}
-
 ctkXnatScanFolder::~ctkXnatScanFolder()
 {
 }
@@ -79,7 +72,5 @@ void ctkXnatScanFolder::reset()
 
 void ctkXnatScanFolder::fetchImpl()
 {
-  Q_D(ctkXnatScanFolder);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  this->connection()->fetch(self.staticCast<ctkXnatScanFolder>());
+  this->connection()->fetch(this);
 }

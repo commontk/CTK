@@ -34,10 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatExperiment : public ctkXnatObject
   
 public:
   
-  typedef QSharedPointer<ctkXnatExperiment> Pointer;
-  typedef QWeakPointer<ctkXnatExperiment> WeakPointer;
-  
-  static Pointer Create();
+  explicit ctkXnatExperiment(const QString& schemaType = "xnat:experimentData");
   virtual ~ctkXnatExperiment();
   
 //  const QString& uri() const;
@@ -48,8 +45,6 @@ public:
 private:
   
   friend class qRestResult;
-
-  explicit ctkXnatExperiment(const QString& schemaType = "xnat:experimentData");
 
   virtual void fetchImpl();
   

@@ -34,10 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatReconstructionFolder : public ctkXnatObject
 
 public:
   
-  typedef QSharedPointer<ctkXnatReconstructionFolder> Pointer;
-  typedef QWeakPointer<ctkXnatReconstructionFolder> WeakPointer;
-  
-  static Pointer Create();
+  explicit ctkXnatReconstructionFolder();
   virtual ~ctkXnatReconstructionFolder();
   
 //  const QString& uri() const;
@@ -48,7 +45,7 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatReconstructionFolder();
+
   virtual void fetchImpl();
   
   Q_DECLARE_PRIVATE(ctkXnatReconstructionFolder);

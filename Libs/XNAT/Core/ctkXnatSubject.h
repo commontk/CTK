@@ -34,15 +34,11 @@ class CTK_XNAT_CORE_EXPORT ctkXnatSubject : public ctkXnatObject
 
 public:
 
-  typedef QSharedPointer<ctkXnatSubject> Pointer;
-  typedef QWeakPointer<ctkXnatSubject> WeakPointer;
-
-  static Pointer Create();
-
+  explicit ctkXnatSubject(const QString& schemaType = "xnat:subjectData");
   virtual ~ctkXnatSubject();
 
-  QSharedPointer<ctkXnatProject> getPrimaryProject() const;
-  QList<QSharedPointer<ctkXnatProject> > getProjects() const;
+  ctkXnatProject* getPrimaryProject() const;
+  QList<ctkXnatProject*> getProjects() const;
 
   const QString& insertDate() const;
   void setInsertDate(const QString& insertDate);
@@ -58,8 +54,6 @@ public:
 private:
 
   friend class qRestResult;
-
-  explicit ctkXnatSubject(const QString& schemaType = "xnat:subjectData");
 
   virtual void fetchImpl();
 

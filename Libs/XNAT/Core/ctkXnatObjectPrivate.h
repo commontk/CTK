@@ -23,7 +23,7 @@
 #define CTKXNATOBJECTPRIVATE_H
 
 #include <QMap>
-#include <QSharedPointer>
+#include <QString>
 
 class ctkXnatObject;
 class ctkXnatConnection;
@@ -40,8 +40,6 @@ public:
   explicit ctkXnatObjectPrivate();
   virtual ~ctkXnatObjectPrivate();
 
-  QWeakPointer<ctkXnatObject> selfPtr;
-
 private:
 
   friend class ctkXnatObject;
@@ -50,11 +48,11 @@ private:
 
   QMap<QString,QString> properties;
 
-  QList<QSharedPointer<ctkXnatObject> > children;
+  QList<ctkXnatObject*> children;
 
   bool fetched;
 
-  QWeakPointer<ctkXnatObject> parent;
+  ctkXnatObject* parent;
 };
 
 #endif // CTKXNATOBJECTPRIVATE_H

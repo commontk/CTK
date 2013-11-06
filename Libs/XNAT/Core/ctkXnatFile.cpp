@@ -47,13 +47,6 @@ ctkXnatFile::ctkXnatFile()
 {
 }
 
-ctkXnatFile::Pointer ctkXnatFile::Create()
-{
-  Pointer ptr(new ctkXnatFile());
-  ptr->d_func()->selfPtr = ptr;
-  return ptr;
-}
-
 ctkXnatFile::~ctkXnatFile()
 {
 }

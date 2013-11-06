@@ -78,7 +78,7 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
         ui->loginButton->setText("Logout");
         ui->loginLabel->setText(QString("Connected: %1").arg(m_Connection->url()));
 
-        ctkXnatServer::Pointer server = m_Connection->server();
+        ctkXnatServer* server = m_Connection->server();
         m_TreeModel->addServer(server);
         ui->treeView->reset();
       }

@@ -25,6 +25,7 @@
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
+#include "ctkXnatProject.h"
 
 class ctkXnatConnection;
 class ctkXnatServerPrivate;
@@ -34,18 +35,13 @@ class CTK_XNAT_CORE_EXPORT ctkXnatServer : public ctkXnatObject
 
 public:
 
-  typedef QSharedPointer<ctkXnatServer> Pointer;
-  typedef QWeakPointer<ctkXnatServer> WeakPointer;
-
-  static Pointer Create(ctkXnatConnection* connection);
+  ctkXnatServer(ctkXnatConnection* connection);
 
 protected:
 
   virtual ctkXnatConnection* connection() const;
 
 private:
-
-  ctkXnatServer(ctkXnatConnection* connection);
 
   virtual void fetchImpl();
 

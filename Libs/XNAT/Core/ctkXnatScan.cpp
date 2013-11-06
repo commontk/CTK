@@ -47,13 +47,6 @@ ctkXnatScan::ctkXnatScan(const QString& schemaType)
 {
 }
 
-ctkXnatScan::Pointer ctkXnatScan::Create()
-{
-  Pointer ptr(new ctkXnatScan());
-  ptr->d_func()->selfPtr = ptr;
-  return ptr;
-}
-
 ctkXnatScan::~ctkXnatScan()
 {
 }
@@ -78,6 +71,5 @@ void ctkXnatScan::reset()
 void ctkXnatScan::fetchImpl()
 {
   Q_D(ctkXnatScan);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  this->connection()->fetch(self.staticCast<ctkXnatScan>());
+  this->connection()->fetch(this);
 }

@@ -34,10 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatReconstruction : public ctkXnatObject
 
 public:
 
-  typedef QSharedPointer<ctkXnatReconstruction> Pointer;
-  typedef QWeakPointer<ctkXnatReconstruction> WeakPointer;
-  
-  static Pointer Create();
+  explicit ctkXnatReconstruction(const QString& schemaType = "xnat:reconstructedImageData");
   virtual ~ctkXnatReconstruction();
   
   const QString& uri() const;
@@ -48,7 +45,6 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatReconstruction(const QString& schemaType = "xnat:reconstructedImageData");
   virtual void fetchImpl();
   
   Q_DECLARE_PRIVATE(ctkXnatReconstruction);

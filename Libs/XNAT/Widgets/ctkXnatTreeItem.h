@@ -34,10 +34,10 @@ class ctkXnatTreeItem
 public:
 
   explicit ctkXnatTreeItem();
-  explicit ctkXnatTreeItem(ctkXnatObject::Pointer xnatObject, ctkXnatTreeItem* parentItem = 0);
+  explicit ctkXnatTreeItem(ctkXnatObject* xnatObject, ctkXnatTreeItem* parentItem = 0);
   virtual ~ctkXnatTreeItem();
 
-  ctkXnatObject::Pointer xnatObject() const;
+  ctkXnatObject* xnatObject() const;
 
   void appendChild(ctkXnatTreeItem* child);
   void removeChildren();
@@ -51,7 +51,7 @@ public:
 
 private:
 
-  ctkXnatObject::Pointer m_XnatObject;
+  ctkXnatObject* m_XnatObject;
 
   ctkXnatTreeItem* m_ParentItem;
   QList<ctkXnatTreeItem*> m_ChildItems;

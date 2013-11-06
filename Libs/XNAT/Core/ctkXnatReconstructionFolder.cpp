@@ -49,13 +49,6 @@ ctkXnatReconstructionFolder::ctkXnatReconstructionFolder()
   this->setProperty("ID", "Reconstructions");
 }
 
-ctkXnatReconstructionFolder::Pointer ctkXnatReconstructionFolder::Create()
-{
-  Pointer ptr(new ctkXnatReconstructionFolder());
-  ptr->d_func()->selfPtr = ptr;
-  return ptr;
-}
-
 ctkXnatReconstructionFolder::~ctkXnatReconstructionFolder()
 {
 }
@@ -79,7 +72,5 @@ void ctkXnatReconstructionFolder::reset()
 
 void ctkXnatReconstructionFolder::fetchImpl()
 {
-  Q_D(ctkXnatReconstructionFolder);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  this->connection()->fetch(self.staticCast<ctkXnatReconstructionFolder>());
+  this->connection()->fetch(this);
 }

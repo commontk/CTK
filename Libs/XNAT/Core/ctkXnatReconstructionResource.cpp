@@ -47,13 +47,6 @@ ctkXnatReconstructionResource::ctkXnatReconstructionResource()
 {
 }
 
-ctkXnatReconstructionResource::Pointer ctkXnatReconstructionResource::Create()
-{
-  Pointer ptr(new ctkXnatReconstructionResource());
-  ptr->d_func()->selfPtr = ptr;
-  return ptr;
-}
-
 ctkXnatReconstructionResource::~ctkXnatReconstructionResource()
 {
 }
@@ -77,9 +70,7 @@ void ctkXnatReconstructionResource::reset()
 
 void ctkXnatReconstructionResource::fetchImpl()
 {
-  Q_D(ctkXnatReconstructionResource);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  this->connection()->fetch(self.staticCast<ctkXnatReconstructionResource>());
+  this->connection()->fetch(this);
 }
 
 void ctkXnatReconstructionResource::download(const QString& filename)

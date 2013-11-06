@@ -34,10 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatScan : public ctkXnatObject
 
 public:
 
-  typedef QSharedPointer<ctkXnatScan> Pointer;
-  typedef QWeakPointer<ctkXnatScan> WeakPointer;
-  
-  static Pointer Create();
+  explicit ctkXnatScan(const QString& schemaType = "xnat:imageScanData");
   virtual ~ctkXnatScan();
   
   const QString& uri() const;
@@ -48,7 +45,6 @@ public:
 private:
   
   friend class qRestResult;
-  explicit ctkXnatScan(const QString& schemaType = "xnat:imageScanData");
   virtual void fetchImpl();
   
   Q_DECLARE_PRIVATE(ctkXnatScan);

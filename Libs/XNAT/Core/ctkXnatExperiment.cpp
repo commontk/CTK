@@ -47,13 +47,6 @@ ctkXnatExperiment::ctkXnatExperiment(const QString& schemaType)
 {
 }
 
-ctkXnatExperiment::Pointer ctkXnatExperiment::Create()
-{
-  Pointer ptr(new ctkXnatExperiment());
-  ptr->d_func()->selfPtr = ptr;
-  return ptr;
-}
-
 ctkXnatExperiment::~ctkXnatExperiment()
 {
 }
@@ -78,6 +71,5 @@ void ctkXnatExperiment::reset()
 void ctkXnatExperiment::fetchImpl()
 {
   Q_D(ctkXnatExperiment);
-  ctkXnatObject::Pointer self = d->selfPtr;
-  this->connection()->fetch(self.staticCast<ctkXnatExperiment>());
+  this->connection()->fetch(this);
 }
