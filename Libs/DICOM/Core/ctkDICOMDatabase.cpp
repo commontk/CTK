@@ -1123,17 +1123,11 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
       logger.error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
       return;
     }
+  fileExistsQuery.next();
 
   QString databaseFilename(fileExistsQuery.value(1).toString());
   QDateTime fileLastModified(QFileInfo(databaseFilename).lastModified());
   QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExistsQuery.value(0).toString(),Qt::ISODate));
-
-  qDebug() << "Looking for sopInstanceUID: " << sopInstanceUID;
-  qDebug() << " bound value : " << fileExistsQuery.boundValue(0);
-  qDebug() << " Ran Query : " << fileExistsQuery.lastQuery();
-  qDebug() << " Found databaseFilename : " << databaseFilename;
-  qDebug() << "  databaseInsertTimestamp : " << databaseInsertTimestamp;
-  qDebug() << "  fileLastModified : " << fileLastModified;
 
   qDebug() << "inserting filePath: " << filePath;
   if (databaseFilename == "")
@@ -1142,13 +1136,22 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
     }
   else
     {
-      qDebug() << "database filename for " << sopInstanceUID << " is: " << databaseFilename;
-      qDebug() << "modified date is: " << fileLastModified;
-      qDebug() << "db insert date is: " << databaseInsertTimestamp;
-      if ( fileExistsQuery.next() && fileLastModified < databaseInsertTimestamp )
+      if ( databaseFilename == filePath && fileLastModified < databaseInsertTimestamp )
         {
           logger.debug ( "File " + databaseFilename + " already added" );
           return;
+        }
+      else
+        {
+        QSqlQuery deleteFile ( Database );
+        deleteFile.prepare("DELETE FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
+        deleteFile.bindValue(":sopInstanceUID",sopInstanceUID);
+        bool success = deleteFile.exec();
+        if (!success)
+          {
+            logger.error("SQLITE ERROR deleting old image row: " + deleteFile.lastError().driverText());
+            return;
+          }
         }
     }
   }
