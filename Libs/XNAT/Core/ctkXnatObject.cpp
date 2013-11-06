@@ -150,7 +150,7 @@ void ctkXnatObject::setParent(ctkXnatObject* parent)
     }
     if (parent)
     {
-      parent->addChild(this);
+      parent->add(this);
     }
     d->parent = parent;
   }
@@ -162,7 +162,7 @@ QList<ctkXnatObject*> ctkXnatObject::children() const
   return d->children;
 }
 
-void ctkXnatObject::addChild(ctkXnatObject* child)
+void ctkXnatObject::add(ctkXnatObject* child)
 {
   Q_D(ctkXnatObject);
   if (child->parent() != this)

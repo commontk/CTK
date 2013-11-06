@@ -105,7 +105,7 @@ void ctkXnatConnectionTestCase::testCreateProject()
   project->setId("CTK_432");
   project->setName("CTK 432");
   project->setDescription("CTK test project");
-  server->addChild(project);
+  server->add(project);
 
 //  project->save();
 

@@ -94,7 +94,7 @@ public:
   QList<ctkXnatObject*> children() const;
 
   /// Adds an object to the children of the current one.
-  void addChild(ctkXnatObject* child);
+  void add(ctkXnatObject* child);
 
   /// Removes the object from the children of the current object.
   void remove(ctkXnatObject* child);

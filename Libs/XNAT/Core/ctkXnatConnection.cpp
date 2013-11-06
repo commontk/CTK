@@ -173,7 +173,7 @@ void ctkXnatConnection::fetch(ctkXnatServer* server)
   foreach (ctkXnatProject* project, projects)
   {
     project->setUri(projectsUri + "/" + project->id());
-    server->addChild(project);
+    server->add(project);
   }
 
   delete restResult;
@@ -197,7 +197,7 @@ void ctkXnatConnection::fetch(ctkXnatProject* project)
     }
     subject->setUri(subjectsUri + "/" + subject->id());
 
-    project->addChild(subject);
+    project->add(subject);
   }
 
   delete restResult;
@@ -222,7 +222,7 @@ void ctkXnatConnection::fetch(ctkXnatSubject* subject)
     }
     experiment->setUri(experimentsUri + "/" + experiment->id());
 
-    subject->addChild(experiment);
+    subject->add(experiment);
   }
 
   delete restResult;
@@ -242,7 +242,7 @@ void ctkXnatConnection::fetch(ctkXnatExperiment* experiment)
   {
     ctkXnatScanFolder* scanFolder = new ctkXnatScanFolder();
     scanFolder->setUri(scansUri);
-    experiment->addChild(scanFolder);
+    experiment->add(scanFolder);
   }
   
   delete restResult;
@@ -257,7 +257,7 @@ void ctkXnatConnection::fetch(ctkXnatExperiment* experiment)
   {
     ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder();
     reconstructionFolder->setUri(reconstructionsUri);
-    experiment->addChild(reconstructionFolder);
+    experiment->add(reconstructionFolder);
   }
 
   delete restResult;
@@ -276,7 +276,7 @@ void ctkXnatConnection::fetch(ctkXnatScanFolder* scanFolder)
   foreach (ctkXnatScan* scan, scans)
   {
     scan->setUri(scansUri + "/" + scan->id());
-    scanFolder->addChild(scan);
+    scanFolder->add(scan);
   }
   
   delete restResult;
@@ -302,7 +302,7 @@ void ctkXnatConnection::fetch(ctkXnatScan* scan)
     }
     
     scanResource->setUri(scanResourcesUri + "/" + label);
-    scan->addChild(scanResource);
+    scan->add(scanResource);
   }
 }
 
@@ -331,7 +331,7 @@ void ctkXnatConnection::fetch(ctkXnatScanResource* scanResource)
     }
 
     file->setUri(scanResourceFilesUri + "/" + label);
-    scanResource->addChild(file);
+    scanResource->add(file);
   }
 }
 
@@ -349,7 +349,7 @@ void ctkXnatConnection::fetch(ctkXnatReconstructionFolder* reconstructionFolder)
   {
     reconstruction->setUri(reconstructionsUri + "/" + reconstruction->id());
 
-    reconstructionFolder->addChild(reconstruction);
+    reconstructionFolder->add(reconstruction);
   }
 
   delete restResult;
@@ -376,7 +376,7 @@ void ctkXnatConnection::fetch(ctkXnatReconstruction* reconstruction)
 
     reconstructionResource->setUri(reconstructionResourcesUri + "/" + label);
 
-    reconstruction->addChild(reconstructionResource);
+    reconstruction->add(reconstructionResource);
   }
 }
 
@@ -406,7 +406,7 @@ void ctkXnatConnection::fetch(ctkXnatReconstructionResource* reconstructionResou
 
     file->setUri(reconstructionResourceFilesUri + "/" + label);
 
-    reconstructionResource->addChild(file);
+    reconstructionResource->add(file);
   }
 }
 
