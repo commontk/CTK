@@ -48,7 +48,7 @@ public:
   QString queryTableName() const;
 
   //For selection query
-  QStringList quotedUidsForAllRows() const;
+  QStringList uidsForAllRows() const;
 
   ctkDICOMDatabase* dicomDatabase;
   QSqlQueryModel dicomSQLModel;
@@ -150,7 +150,7 @@ void ctkDICOMTableViewPrivate::hideUIDColumns()
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMTableViewPrivate::quotedUidsForAllRows() const
+QStringList ctkDICOMTableViewPrivate::uidsForAllRows() const
 {
   QAbstractItemModel* tableModel = this->tblDicomDatabaseView->model();
   int numberOfRows = tableModel->rowCount();
@@ -158,13 +158,13 @@ QStringList ctkDICOMTableViewPrivate::quotedUidsForAllRows() const
   if (numberOfRows == 0)
     {
       //Return invalid UID if there are no rows
-      uids << QString("'#'");
+      uids << QString("#");
     }
   else
     {
       for(int i = 0; i < numberOfRows; ++i)
         {
-          uids << QString("'%1'").arg(tableModel->index(i,0).data().toString());
+          uids << QString("%1").arg(tableModel->index(i,0).data().toString());
         }
     }
   return uids;
@@ -179,7 +179,6 @@ QString ctkDICOMTableViewPrivate::queryTableName() const
 
 //----------------------------------------------------------------------------
 // ctkDICOMTableView methods
-
 //----------------------------------------------------------------------------
 ctkDICOMTableView::ctkDICOMTableView(QWidget *parent)
   : Superclass(parent)
@@ -245,17 +244,7 @@ void ctkDICOMTableView::setQueryForeignKey(const QString &foreignKey)
 //------------------------------------------------------------------------------
 void ctkDICOMTableView::onSelectionChanged()
 {
-  Q_D(ctkDICOMTableView);
-
-  const QModelIndexList selectedRows = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
-
-  QStringList uids;
-
-  foreach(QModelIndex i, selectedRows)
-    {
-      uids<< (QString("'") + i.data().toString() +"'");
-    }
-  emit selectionChanged(uids);
+  emit selectionChanged(currentSelection());
 }
 
 //------------------------------------------------------------------------------
@@ -272,7 +261,7 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
 
   setQuery(uids);
 
-  const QStringList& newUIDS = d->quotedUidsForAllRows();
+  const QStringList& newUIDS = d->uidsForAllRows();
   emit queryChanged(newUIDS);
 }
 
@@ -281,7 +270,8 @@ void ctkDICOMTableView::onFilterChanged()
 {
   Q_D(ctkDICOMTableView);
 
-  const QStringList uids = d->quotedUidsForAllRows();
+  const QStringList uids = d->uidsForAllRows();
+  d->tblDicomDatabaseView->clearSelection();
   emit queryChanged(uids);
 }
 
@@ -292,10 +282,11 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
   QString query = ("select distinct %1.* from Patients, Series, Studies where "
                    "Patients.UID = Studies.PatientsUID and Studies.StudyInstanceUID = Series.StudyInstanceUID");
 
+  QString separator = "','";
   if (!uids.empty() && d->queryForeignKey.length() != 0)
     {
-      query += " and %1."+d->queryForeignKey+" in ( ";
-      query.append(uids.join(",")).append(")");
+      query += " and %1."+d->queryForeignKey+" in ('";
+      query.append(uids.join(separator)).append("')");
     }
   if (!d->sqlWhereConditions.empty())
     {
@@ -304,8 +295,8 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
         {
           if (!i.value().empty())
             {
-              query += " and "+i.key()+" in ( ";
-              query.append(i.value().join(",")).append(")");
+              query += " and "+i.key()+" in ('";
+              query.append(i.value().join(separator)).append("')");
             }
           ++i;
         }
