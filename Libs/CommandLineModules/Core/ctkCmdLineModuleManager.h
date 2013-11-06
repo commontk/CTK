@@ -132,6 +132,16 @@ public:
   void unregisterModule(const ctkCmdLineModuleReference& moduleRef);
 
   /**
+   * @brief Clears the XML/timestamp cache.
+   */
+  void clearCache();
+
+  /**
+   * @brief Reloads all currently valid modules, forcing the cache to be refreshed.
+   */
+  void reloadModules();
+
+  /**
    * @brief Returns a ctkCmdLineModuleReference object for the given URL.
    * @param location The location URL for which to get a module reference.
    * @return The module reference for the location or an invalid module reference

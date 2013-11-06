@@ -45,7 +45,7 @@
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -66,6 +66,8 @@
     <addaction name="actionReset"/>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
+    <addaction name="actionClear_Cache"/>
+    <addaction name="actionReload_Modules"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuModule"/>
@@ -201,7 +203,7 @@
              <x>0</x>
              <y>0</y>
              <width>250</width>
-             <height>194</height>
+             <height>208</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -347,6 +349,16 @@
    </property>
    <property name="toolTip">
     <string>Reset to default values</string>
+   </property>
+  </action>
+  <action name="actionClear_Cache">
+   <property name="text">
+    <string>Clear Cache</string>
+   </property>
+  </action>
+  <action name="actionReload_Modules">
+   <property name="text">
+    <string>Reload Modules</string>
    </property>
   </action>
  </widget>

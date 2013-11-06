@@ -267,6 +267,16 @@ void ctkCLModuleExplorerMainWindow::on_actionReset_triggered()
   this->tabList->activeTab()->resetValues();
 }
 
+void ctkCLModuleExplorerMainWindow::on_actionClear_Cache_triggered()
+{
+  moduleManager.clearCache();
+}
+
+void ctkCLModuleExplorerMainWindow::on_actionReload_Modules_triggered()
+{
+  moduleManager.reloadModules();
+}
+
 void ctkCLModuleExplorerMainWindow::checkModulePaused()
 {
   if (this->currentFutureWatcher.future().isPaused())
