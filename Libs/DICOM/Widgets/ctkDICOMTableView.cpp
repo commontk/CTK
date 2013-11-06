@@ -47,7 +47,7 @@ public:
 
   QString queryTableName() const;
 
-  QStringList uidsForAllRows() const;
+  QStringList quotedUidsForAllRows() const;
 
   ctkDICOMDatabase* dicomDatabase;
   QSqlQueryModel dicomSQLModel;
@@ -150,7 +150,7 @@ void ctkDICOMTableViewPrivate::hideUIDColumns()
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMTableViewPrivate::uidsForAllRows() const
+QStringList ctkDICOMTableViewPrivate::quotedUidsForAllRows() const
 {
   QAbstractItemModel* tableModel = this->tblDicomDatabaseView->model();
   int numberOfRows = tableModel->rowCount();
@@ -255,7 +255,7 @@ void ctkDICOMTableView::onSelectionChanged()
 
   if (uids.empty())
     {
-      uids = d->uidsForAllRows();
+      uids = d->quotedUidsForAllRows();
     }
   emit selectionChanged(uids);
 }
@@ -274,7 +274,7 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
 
   setQuery(uids);
 
-  const QStringList& newUIDS = d->uidsForAllRows();
+  const QStringList& newUIDS = d->quotedUidsForAllRows();
   emit queryChanged(newUIDS);
 }
 
@@ -283,7 +283,7 @@ void ctkDICOMTableView::onFilterChanged()
 {
   Q_D(ctkDICOMTableView);
 
-  const QStringList uids = d->uidsForAllRows();
+  const QStringList uids = d->quotedUidsForAllRows();
   emit queryChanged(uids);
 }
 
