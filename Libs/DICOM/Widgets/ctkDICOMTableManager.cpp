@@ -186,6 +186,5 @@ void ctkDICOMTableManager::onPatientsSelectionChanged(const QStringList &uids)
 {
   Q_D(ctkDICOMTableManager);
   std::pair<QString, QStringList> patientCondition("Patients.UID", uids);
-  qDebug()<<"New IDS: "<<uids;
   d->seriesTable->addSqlWhereCondition(patientCondition);
 }
