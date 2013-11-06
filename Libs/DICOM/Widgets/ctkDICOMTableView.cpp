@@ -200,6 +200,9 @@ void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 {
   Q_D(ctkDICOMTableView);
   d->dicomDatabase = dicomDatabase;
+  //Create connections for new database
+  QObject::connect(d->dicomDatabase, SIGNAL(schemaUpdated()), this, SLOT(onDatabaseChanged()));
+  QObject::connect(d->dicomDatabase, SIGNAL(databaseChanged()), this, SLOT(onDatabaseChanged()));
   this->setQuery();
   d->hideUIDColumns();
 }
