@@ -87,6 +87,22 @@ QSplitter::handle:vertical {height: 2px;}</string>
   <connection>
    <sender>patientsTable</sender>
    <signal>selectionChanged(QStringList)</signal>
+   <receiver>ctkDICOMTableManager</receiver>
+   <slot>onPatientsSelectionChanged(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>patientsTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
    <receiver>studiesTable</receiver>
    <slot>onUpdateQuery(QStringList)</slot>
    <hints>
@@ -124,5 +140,6 @@ QSplitter::handle:vertical {height: 2px;}</string>
   <signal>studiesSelectionsChanged(QItemSelection,QItemSelection)</signal>
   <signal>patientsSelectionChanged(QStringList)</signal>
   <signal>patientsSelectionChanged(QItemSelection,QItemSelection)</signal>
+  <slot>onPatientsSelectionChanged(QStringList)</slot>
  </slots>
 </ui>

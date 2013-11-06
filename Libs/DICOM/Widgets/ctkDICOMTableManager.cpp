@@ -94,6 +94,7 @@ void ctkDICOMTableManagerPrivate::init()
 
   QObject::connect(this->seriesTable, SIGNAL(doubleClicked(const QModelIndex&)),
                    q, SIGNAL(seriesDoubleClicked(const QModelIndex&)));
+
 }
 
 //------------------------------------------------------------------------------
@@ -179,4 +180,12 @@ QStringList ctkDICOMTableManager::currentSeriesSelection()
 {
   Q_D(ctkDICOMTableManager);
   return d->seriesTable->currentSelection();
+}
+
+void ctkDICOMTableManager::onPatientsSelectionChanged(const QStringList &uids)
+{
+  Q_D(ctkDICOMTableManager);
+  std::pair<QString, QStringList> patientCondition("Patients.UID", uids);
+  qDebug()<<"New IDS: "<<uids;
+  d->seriesTable->addSqlWhereCondition(patientCondition);
 }
