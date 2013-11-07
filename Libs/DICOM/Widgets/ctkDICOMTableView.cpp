@@ -84,8 +84,6 @@ void ctkDICOMTableViewPrivate::init()
   Q_Q(ctkDICOMTableView);
   this->setupUi(q);
 
-  this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-
   this->leSearchBox->setAlwaysShowClearIcon(true);
   this->leSearchBox->setShowSearchIcon(true);
 
@@ -109,7 +107,6 @@ void ctkDICOMTableViewPrivate::setUpTableView()
       this->tblDicomDatabaseView->setColumnHidden(0, true);
       this->tblDicomDatabaseView->setSortingEnabled(true);
       this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-      this->tblDicomDatabaseView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
       this->hideUIDColumns();
 
       QObject::connect(this->tblDicomDatabaseView->selectionModel(),
