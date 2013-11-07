@@ -142,6 +142,9 @@ endif()
 if(NOT CTK_INSTALL_LIB_DIR)
   set(CTK_INSTALL_LIB_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
 endif()
+if(NOT CTK_INSTALL_CMAKE_DIR)
+  set(CTK_INSTALL_CMAKE_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}/CMake")
+endif()
 if(NOT CTK_INSTALL_INCLUDE_DIR)
   set(CTK_INSTALL_INCLUDE_DIR "include/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
 endif()
@@ -176,35 +179,46 @@ set(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
 #-----------------------------------------------------------------------------
 # CMake function(s) and macro(s)
 #
-include(CMake/ctkMacroParseArguments.cmake)
-include(CMake/ctkMacroSetPaths.cmake)
-include(CMake/ctkMacroListFilter.cmake)
-include(CMake/ctkMacroOptionUtils.cmake)
-include(CMake/ctkMacroBuildLib.cmake)
-include(CMake/ctkMacroBuildLibWrapper.cmake)
-include(CMake/ctkMacroBuildPlugin.cmake)
-include(CMake/ctkMacroBuildApp.cmake)
-include(CMake/ctkMacroBuildQtPlugin.cmake)
-include(CMake/ctkMacroCompilePythonScript.cmake)
-include(CMake/ctkMacroGenerateMocs.cmake)
-include(CMake/ctkMacroWrapPythonQt.cmake)
-include(CMake/ctkMacroSetupQt.cmake)
-include(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
-include(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
-include(CMake/ctkMacroValidateBuildOptions.cmake)
-include(CMake/ctkMacroAddCtkLibraryOptions.cmake)
-include(CMake/ctkFunctionGenerateDGraphInput.cmake)
-include(CMake/ctkFunctionGenerateProjectXml.cmake)
-include(CMake/ctkFunctionGeneratePluginManifest.cmake)
-include(CMake/ctkMacroGeneratePluginResourceFile.cmake)
-include(CMake/ctkFunctionAddPluginRepo.cmake)
-include(CMake/ctkFunctionCheckCompilerFlags.cmake)
-include(CMake/ctkFunctionCheckoutRepo.cmake)
-include(CMake/ctkFunctionGetIncludeDirs.cmake)
-include(CMake/ctkFunctionGetLibraryDirs.cmake)
-include(CMake/ctkFunctionGetGccVersion.cmake)
-include(CMake/ctkFunctionGetCompilerVisibilityFlags.cmake)
-include(CMake/ctkFunctionCompileSnippets.cmake)
+foreach(file
+  CMake/ctkMacroParseArguments.cmake
+  CMake/ctkMacroSetPaths.cmake
+  CMake/ctkMacroListFilter.cmake
+  CMake/ctkMacroOptionUtils.cmake
+  CMake/ctkMacroBuildLib.cmake
+  CMake/ctkMacroBuildLibWrapper.cmake
+  CMake/ctkMacroBuildPlugin.cmake
+  CMake/ctkMacroBuildApp.cmake
+  CMake/ctkMacroBuildQtPlugin.cmake
+  CMake/ctkMacroCompilePythonScript.cmake
+  CMake/ctkMacroGenerateMocs.cmake
+  CMake/ctkMacroWrapPythonQt.cmake
+  CMake/ctkMacroSetupQt.cmake
+  CMake/ctkMacroTargetLibraries.cmake # Import multiple macros
+  CMake/ctkFunctionExtractOptionNameAndValue.cmake
+  CMake/ctkMacroValidateBuildOptions.cmake
+  CMake/ctkMacroAddCtkLibraryOptions.cmake
+  CMake/ctkFunctionGenerateDGraphInput.cmake
+  CMake/ctkFunctionGenerateProjectXml.cmake
+  CMake/ctkFunctionGeneratePluginManifest.cmake
+  CMake/ctkMacroGeneratePluginResourceFile.cmake
+  CMake/ctkFunctionAddPluginRepo.cmake
+  CMake/ctkFunctionCheckCompilerFlags.cmake
+  CMake/ctkFunctionCheckoutRepo.cmake
+  CMake/ctkFunctionGetIncludeDirs.cmake
+  CMake/ctkFunctionGetLibraryDirs.cmake
+  CMake/ctkFunctionGetGccVersion.cmake
+  CMake/ctkFunctionGetCompilerVisibilityFlags.cmake
+  CMake/ctkFunctionCompileSnippets.cmake
+  )
+  include(${file})
+  install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
+endforeach()
+
+foreach(file
+  Libs/ctkExport.h.in
+  )
+  install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Testing
