@@ -106,6 +106,11 @@ public:
   ValidationMode validationMode() const;
 
   /**
+   * @brief Set the validation mode.
+   */
+  void setValidationMode(const ValidationMode& mode);
+
+  /**
    * @brief Registers a new back-end.
    * @param backend The new back-end.
    * @throws ctkInvalidArgumentException if another back-end was already registered handling

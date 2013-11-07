@@ -85,7 +85,7 @@ struct ctkCmdLineModuleManagerPrivate
   QHash<QUrl, ctkCmdLineModuleReference> LocationToRef;
   QScopedPointer<ctkCmdLineModuleCache> ModuleCache;
 
-  const ctkCmdLineModuleManager::ValidationMode ValidationMode;
+  ctkCmdLineModuleManager::ValidationMode ValidationMode;
 };
 
 //----------------------------------------------------------------------------
@@ -104,6 +104,14 @@ ctkCmdLineModuleManager::ValidationMode ctkCmdLineModuleManager::validationMode(
 {
   return d->ValidationMode;
 }
+
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleManager::setValidationMode(const ValidationMode& mode)
+{
+  d->ValidationMode = mode;
+}
+
 
 //----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
