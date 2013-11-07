@@ -35,6 +35,7 @@ class ctkCmdLineModuleExplorerTabList;
 class ctkCmdLineModuleReference;
 class ctkCmdLineModuleResult;
 class ctkSettingsDialog;
+class ctkCmdLineModuleBackendXMLChecker;
 
 namespace Ui {
 class ctkCmdLineModuleExplorerMainWindow;
@@ -98,7 +99,7 @@ private:
 
   ctkSettings settings;
   ctkSettingsDialog* settingsDialog;
-
+  ctkCmdLineModuleBackendXMLChecker* xmlCheckerBackEnd;
 };
 
 #endif // CTKCLIPLUGINEXPLORERMAINWINDOW_H

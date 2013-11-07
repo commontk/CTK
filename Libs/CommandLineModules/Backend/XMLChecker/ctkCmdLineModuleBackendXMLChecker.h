@@ -42,6 +42,7 @@ class CTK_CMDLINEMODULEBACKENDXMLCHECKER_EXPORT ctkCmdLineModuleBackendXMLChecke
 
 public:
 
+  ctkCmdLineModuleBackendXMLChecker();
   ctkCmdLineModuleBackendXMLChecker(const QString &xmlToValidate);
   ~ctkCmdLineModuleBackendXMLChecker();
 
@@ -77,6 +78,9 @@ public:
    * @return A future object for communicating with the running process.
    */
   virtual ctkCmdLineModuleFuture run(ctkCmdLineModuleFrontend *frontend);
+
+  void setXML(const QString& xml);
+  QString xml() const;
 
 private:
 

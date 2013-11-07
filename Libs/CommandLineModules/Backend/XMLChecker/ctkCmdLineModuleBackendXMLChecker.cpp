@@ -32,7 +32,17 @@
 struct ctkCmdLineModuleBackendXMLCheckerPrivate
 {
   QString m_HardCodedXML;
+  QDateTime m_LastModified;
 };
+
+
+//----------------------------------------------------------------------------
+ctkCmdLineModuleBackendXMLChecker::ctkCmdLineModuleBackendXMLChecker()
+  : d(new ctkCmdLineModuleBackendXMLCheckerPrivate)
+{
+  d->m_HardCodedXML = QString("");
+  d->m_LastModified = QDateTime::currentDateTime();
+}
 
 
 //----------------------------------------------------------------------------
@@ -40,12 +50,28 @@ ctkCmdLineModuleBackendXMLChecker::ctkCmdLineModuleBackendXMLChecker(const QStri
   : d(new ctkCmdLineModuleBackendXMLCheckerPrivate)
 {
   d->m_HardCodedXML = xmlToValidate;
+  d->m_LastModified = QDateTime::currentDateTime();
 }
 
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleBackendXMLChecker::~ctkCmdLineModuleBackendXMLChecker()
 {
+}
+
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleBackendXMLChecker::setXML(const QString& xml)
+{
+  d->m_HardCodedXML = xml;
+  d->m_LastModified = QDateTime::currentDateTime();
+}
+
+
+//----------------------------------------------------------------------------
+QString ctkCmdLineModuleBackendXMLChecker::xml() const
+{
+  return d->m_HardCodedXML;
 }
 
 
@@ -59,14 +85,14 @@ QString ctkCmdLineModuleBackendXMLChecker::name() const
 //----------------------------------------------------------------------------
 QString ctkCmdLineModuleBackendXMLChecker::description() const
 {
-  return "Fakes a backend process, returning a hard coded piece of XML, provided at construction time.";
+  return "Fakes a backend process, returning a static piece of XML.";
 }
 
 
 //----------------------------------------------------------------------------
 QList<QString> ctkCmdLineModuleBackendXMLChecker::schemes() const
 {
-  static QList<QString> supportedSchemes = QList<QString>() << "xml checker";
+  static QList<QString> supportedSchemes = QList<QString>() << "xmlchecker";
   return supportedSchemes;
 }
 
@@ -74,8 +100,7 @@ QList<QString> ctkCmdLineModuleBackendXMLChecker::schemes() const
 //----------------------------------------------------------------------------
 qint64 ctkCmdLineModuleBackendXMLChecker::timeStamp(const QUrl & /*location*/) const
 {
-  QDateTime now = QDateTime::currentDateTime();
-  return ctk::msecsTo(QDateTime::fromTime_t(0), now);
+  return ctk::msecsTo(QDateTime::fromTime_t(0), d->m_LastModified);
 }
 
 

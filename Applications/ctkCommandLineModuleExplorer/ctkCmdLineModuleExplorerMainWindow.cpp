@@ -37,6 +37,7 @@
 #include <ctkCmdLineModuleFrontendFactoryQtWebKit.h>
 #include <ctkCmdLineModuleBackendLocalProcess.h>
 #include <ctkCmdLineModuleBackendFunctionPointer.h>
+#include <ctkCmdLineModuleBackendXMLChecker.h>
 #include <ctkException.h>
 #include <ctkCmdLineModuleXmlException.h>
 
@@ -48,6 +49,7 @@
 #include <QFutureSynchronizer>
 #include <QCloseEvent>
 #include <QFileDialog>
+#include <QMessageBox>
 
 //-----------------------------------------------------------------------------
 ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
@@ -80,9 +82,13 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
 
   // Backends
   ctkCmdLineModuleBackendFunctionPointer* backendFunctionPointer = new ctkCmdLineModuleBackendFunctionPointer;
+  moduleBackends.push_back(backendFunctionPointer);
+
+  xmlCheckerBackEnd = new ctkCmdLineModuleBackendXMLChecker;
+  moduleBackends.push_back(xmlCheckerBackEnd);
 
   moduleBackends.push_back(new ctkCmdLineModuleBackendLocalProcess);
-  moduleBackends.push_back(backendFunctionPointer);
+
   for(int i = 0; i < moduleBackends.size(); ++i)
   {
     moduleManager.registerBackend(moduleBackends[i]);
@@ -369,6 +375,31 @@ void ctkCLModuleExplorerMainWindow::currentModuleFinished()
 //-----------------------------------------------------------------------------
 void ctkCLModuleExplorerMainWindow::checkXMLPressed()
 {
+  xmlCheckerBackEnd->setXML(ui->m_XMLToValidate->toPlainText());
+  QUrl url(QString("xmlchecker://should call ctkCmdLineModuleBackendXMLChecker"));
+
+  qDebug() << "ctkCLModuleExplorerMainWindow::checkXMLPressed validating:\n" << ui->m_XMLToValidate->toPlainText();
+
+  ctkCmdLineModuleManager::ValidationMode previousMode = moduleManager.validationMode();
+
+  try
+  {
+    ctkCmdLineModuleReference ref = moduleManager.moduleReference(url);
+    if (ref)
+    {
+      moduleManager.unregisterModule(ref);
+    }
+    moduleManager.setValidationMode(ctkCmdLineModuleManager::STRICT_VALIDATION);
+    moduleManager.registerModule(url);
+    moduleManager.setValidationMode(previousMode);
+
+  } catch (ctkException& except)
+  {
+    moduleManager.setValidationMode(previousMode);
+    QWidget* widget = QApplication::activeModalWidget();
+    if (widget == NULL) widget = QApplication::activeWindow();
+    QMessageBox::critical(widget, QObject::tr("Failed while checking XML:"), except.message());
+  }
 }
 
 
