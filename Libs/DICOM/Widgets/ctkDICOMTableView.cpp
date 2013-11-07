@@ -224,17 +224,7 @@ void ctkDICOMTableView::setQueryForeignKey(const QString &foreignKey)
 //------------------------------------------------------------------------------
 void ctkDICOMTableView::onSelectionChanged()
 {
-  Q_D(ctkDICOMTableView);
-
-  const QModelIndexList selectedRows = d->tblDicomDatabaseView->selectionModel()->selectedRows(0);
-
-  QStringList uids;
-
-  foreach(QModelIndex i, selectedRows)
-    {
-      uids<< i.data().toString();
-    }
-  emit selectionChanged(uids);
+  emit selectionChanged(currentSelection());
 }
 
 //------------------------------------------------------------------------------
