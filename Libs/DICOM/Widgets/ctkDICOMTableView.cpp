@@ -47,9 +47,6 @@ public:
 
   QString queryTableName() const;
 
-  //For selection query
-  QStringList quotedUidsForAllRows() const;
-
   ctkDICOMDatabase* dicomDatabase;
   QSqlQueryModel dicomSQLModel;
   QSortFilterProxyModel* dicomSQLFilterModel;
@@ -150,27 +147,6 @@ void ctkDICOMTableViewPrivate::hideUIDColumns()
         this->tblDicomDatabaseView->hideColumn(i);
       }
     }
-}
-
-//------------------------------------------------------------------------------
-QStringList ctkDICOMTableViewPrivate::quotedUidsForAllRows() const
-{
-  QAbstractItemModel* tableModel = this->tblDicomDatabaseView->model();
-  int numberOfRows = tableModel->rowCount();
-  QStringList uids;
-  if (numberOfRows == 0)
-    {
-      //Return invalid UID if there are no rows
-      uids << QString("'#'");
-    }
-  else
-    {
-      for(int i = 0; i < numberOfRows; ++i)
-        {
-          uids << QString("'%1'").arg(tableModel->index(i,0).data().toString());
-        }
-    }
-  return uids;
 }
 
 //----------------------------------------------------------------------------
@@ -277,7 +253,7 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
 
   setQuery(uids);
 
-  const QStringList& newUIDS = d->quotedUidsForAllRows();
+  const QStringList& newUIDS = this->uidsForAllRows();
   emit queryChanged(newUIDS);
 }
 
@@ -286,7 +262,7 @@ void ctkDICOMTableView::onFilterChanged()
 {
   Q_D(ctkDICOMTableView);
 
-  const QStringList uids = d->quotedUidsForAllRows();
+  const QStringList uids = this->uidsForAllRows();
   d->tblDicomDatabaseView->clearSelection();
 //  emit filterChanged(uids);
   emit queryChanged(uids);
@@ -326,6 +302,28 @@ void ctkDICOMTableView::addSqlWhereCondition(const std::pair<QString, QStringLis
 {
   Q_D(ctkDICOMTableView);
   d->sqlWhereConditions.insert(condition.first, condition.second);
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMTableView::uidsForAllRows() const
+{
+  Q_D(const ctkDICOMTableView);
+  QAbstractItemModel* tableModel = d->tblDicomDatabaseView->model();
+  int numberOfRows = tableModel->rowCount();
+  QStringList uids;
+  if (numberOfRows == 0)
+    {
+      //Return invalid UID if there are no rows
+      uids << QString("#");
+    }
+  else
+    {
+      for(int i = 0; i < numberOfRows; ++i)
+        {
+          uids << QString("%1").arg(tableModel->index(i,0).data().toString());
+        }
+    }
+  return uids;
 }
 
 //------------------------------------------------------------------------------
