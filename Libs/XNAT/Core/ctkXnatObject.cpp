@@ -209,7 +209,8 @@ ctkXnatConnection* ctkXnatObject::connection() const
 {
   const ctkXnatObject* xnatObject = this;
   const ctkXnatServer* server;
-  do {
+  do
+  {
     xnatObject = xnatObject->parent();
     server = dynamic_cast<const ctkXnatServer*>(xnatObject);
   }

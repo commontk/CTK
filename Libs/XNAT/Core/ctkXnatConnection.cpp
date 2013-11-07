@@ -40,7 +40,7 @@
 #include <QScopedPointer>
 #include <QStringBuilder>
 
-#include <qXnatAPI.h>
+#include <ctkXnatAPI_p.h>
 #include <qRestResult.h>
 
 class ctkXnatConnectionPrivate
@@ -51,8 +51,8 @@ public:
   QString userName;
   QString password;
 
-  qXnatAPI* xnat;
-  qXnatAPI::RawHeaders rawHeaders;
+  ctkXnatAPI* xnat;
+  ctkXnatAPI::RawHeaders rawHeaders;
 
   ctkXnatServer* server;
 };
@@ -63,7 +63,7 @@ ctkXnatConnection::ctkXnatConnection()
 : d_ptr(new ctkXnatConnectionPrivate())
 {
   Q_D(ctkXnatConnection);
-  d->xnat = new qXnatAPI();
+  d->xnat = new ctkXnatAPI();
 
   // TODO This is a workaround for connecting to sites with self-signed
   // certificate. Should be replaced with something more clever.  
@@ -405,7 +405,7 @@ void ctkXnatConnection::create(ctkXnatObject* object)
 
   if (!success)
   {
-    throw ctkXnatException("Error occurred while removing the data.");
+    throw ctkXnatException("Error occurred while creating the data.");
   }
 }
 

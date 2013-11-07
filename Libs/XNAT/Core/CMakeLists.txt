@@ -7,6 +7,7 @@ project(CTKXNATCore)
 set(KIT_export_directive "CTK_XNAT_CORE_EXPORT")
 
 set(KIT_SRCS
+  ctkXnatAPI.cpp
   ctkXnatConnection.cpp
   ctkXnatConnectionFactory.cpp
   ctkXnatException.cpp
@@ -28,6 +29,7 @@ set(KIT_SRCS
 
 # Files which should be processed by Qts moc
 set(KIT_MOC_SRCS
+  ctkXnatAPI_p.h
 )
 
 
