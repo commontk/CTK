@@ -31,6 +31,10 @@ set(KIT_SRCS
   ctkDICOMQueryWidget.h
   ctkDICOMServerNodeWidget.cpp
   ctkDICOMServerNodeWidget.h
+  ctkDICOMTableManager.h
+  ctkDICOMTableManager.cpp
+  ctkDICOMTableView.cpp
+  ctkDICOMTableView.h
   ctkDICOMThumbnailGenerator.cpp
   ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.cpp
@@ -48,6 +52,8 @@ set(KIT_MOC_SRCS
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMQueryWidget.h
   ctkDICOMServerNodeWidget.h
+  ctkDICOMTableManager.h
+  ctkDICOMTableView.h
   ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.h
   )
@@ -62,6 +68,8 @@ set(KIT_UI_FORMS
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMQueryWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget.ui
+  Resources/UI/ctkDICOMTableManager.ui
+  Resources/UI/ctkDICOMTableView.ui
 )
 
 # Resources
