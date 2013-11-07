@@ -317,7 +317,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="m_CheckXMLButton">
          <property name="text">
           <string>Check</string>
          </property>

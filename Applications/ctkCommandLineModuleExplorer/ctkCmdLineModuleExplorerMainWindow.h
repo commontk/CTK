@@ -77,7 +77,8 @@ protected Q_SLOTS:
   void currentModuleFinished();
 
   void moduleTabActivated(ctkCmdLineModuleFrontend* module);
-  
+  void checkXMLPressed();
+
 private:
 
   QScopedPointer<Ui::ctkCmdLineModuleExplorerMainWindow> ui;
