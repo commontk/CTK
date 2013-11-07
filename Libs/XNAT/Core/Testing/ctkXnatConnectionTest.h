@@ -48,6 +48,8 @@ private slots:
 
   void testCreateProject();
 
+  void testCreateSubject();
+
 private:
   QScopedPointer<ctkXnatConnectionTestCasePrivate> d_ptr;
 

@@ -75,9 +75,9 @@ public:
   /// Sets the value of the property with the given name.
   void setProperty(const QString& name, const QVariant& value);
 
-  /// Gets the list of the properties of the object.
-  QList<QString> properties();
-  
+  /// Gets the properties of the object.
+  const QMap<QString, QString>& properties() const;
+
   /// Gets the parent of the object in the data hierarchy. The returned pointer
   /// is 0 for the ctkXnatServer objects and different for any other type of
   /// XNAT objects.
@@ -92,7 +92,7 @@ public:
   /// Adds an object to the children of the current one.
   void add(ctkXnatObject* child);
 
-  /// Removes the object from the children of the current object.
+  /// Removes the object from the children of the current object and removes it from the XNAT server.
   void remove(ctkXnatObject* child);
 
   /// Tells if the children and the properties of the objects have been fetched.
@@ -104,6 +104,15 @@ public:
 
   /// Fetches the children and the properties of the object.
   void fetch();
+
+  /// Checks if the object exists on the XNAT server.
+  bool exists() const;
+
+  /// Creates the object on the XNAT server and sets the new ID.
+  void save();
+
+  /// Deletes the object on the XNAT server and removes it from its parent.
+  void erase();
 
   virtual void download(const QString&);
   virtual void upload(const QString&);
