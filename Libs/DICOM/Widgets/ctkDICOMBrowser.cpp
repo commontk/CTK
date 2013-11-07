@@ -390,7 +390,7 @@ ctkDICOMDatabase* ctkDICOMBrowser::database(){
 ctkDICOMTableManager* ctkDICOMBrowser::dicomTableManager()
 {
   Q_D(ctkDICOMBrowser);
-  return d->dicomTableManagers;
+  return d->dicomTableManager;
 }
 
 //----------------------------------------------------------------------------
