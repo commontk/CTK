@@ -57,7 +57,8 @@ ctkDICOMObjectListWidgetPrivate::ctkDICOMObjectListWidgetPrivate()
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMObjectListWidgetPrivate::~ctkDICOMObjectListWidgetPrivate(){
+ctkDICOMObjectListWidgetPrivate::~ctkDICOMObjectListWidgetPrivate()
+{
 
 }
 
@@ -67,9 +68,8 @@ void ctkDICOMObjectListWidgetPrivate::populateDICOMObjectTreeView(const QString&
   //TODO: Check memory management
   ctkDICOMObjectModel* dcmObjModel = new ctkDICOMObjectModel;
   dcmObjModel->setFile(fileName);
-  std::cerr << "fileName is =" << fileName.toUtf8().constData() << "\n";
   this->dcmObjectTreeView->reset();
-  this->dcmObjectTreeView->setModel( dcmObjModel);
+  this->dcmObjectTreeView->setModel(dcmObjModel);
   this->dcmObjectTreeView->expandAll();
 }
 
@@ -105,12 +105,12 @@ void ctkDICOMObjectListWidget::setFileList(const QStringList& fileList)
   Q_D(ctkDICOMObjectListWidget);
   d->fileList = fileList;
   if (d-> fileList.size()> 0)
-  {
+    {
     d->currentFile = d->fileList[0];
     d->currentPathLineEdit->setText(d->currentFile );
     d->populateDICOMObjectTreeView(d->currentFile );
     d->fileSlider->setMaximum(d->fileList.size()-1);
-  }
+    }
 }
 
 // --------------------------------------------------------------------------
