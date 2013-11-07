@@ -36,7 +36,7 @@ class QModelIndex;
 
 /// \ingroup DICOM_Widgets
 
-class ctkDICOMTableManager : public QWidget
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
 {
   Q_OBJECT
 
