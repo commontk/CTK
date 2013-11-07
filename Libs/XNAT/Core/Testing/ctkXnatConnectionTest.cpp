@@ -126,7 +126,10 @@ void ctkXnatConnectionTestCase::testCreateProject()
   exists = d->Connection->exists(project);
   QVERIFY(exists);
 
-  d->Connection->create(project);
+  d->Connection->remove(project);
+
+  exists = d->Connection->exists(project);
+  QVERIFY(!exists);
 }
 
 // --------------------------------------------------------------------------
