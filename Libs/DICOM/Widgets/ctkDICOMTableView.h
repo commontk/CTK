@@ -42,6 +42,7 @@ class ctkDICOMTableViewPrivate;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableView : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool filterActive READ filterActive)
 
 public:
   typedef QWidget Superclass;
@@ -106,6 +107,14 @@ public:
    */
   QStringList currentSelection() const;
 
+  /**
+   * @brief Getting the UIDs for all rows
+   * @return a QStringList with the uids for all rows
+   */
+  QStringList uidsForAllRows() const;
+
+  bool filterActive();
+
 public Q_SLOTS:
 
   /**
@@ -150,7 +159,6 @@ Q_SIGNALS:
   void queryChanged(const QStringList &uids);
 
   void doubleClicked(const QModelIndex&);
-
 
 protected:
   QScopedPointer<ctkDICOMTableViewPrivate> d_ptr;

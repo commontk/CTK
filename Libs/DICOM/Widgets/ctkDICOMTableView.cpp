@@ -288,6 +288,7 @@ void ctkDICOMTableView::onFilterChanged()
 
   const QStringList uids = d->quotedUidsForAllRows();
   d->tblDicomDatabaseView->clearSelection();
+//  emit filterChanged(uids);
   emit queryChanged(uids);
 }
 
@@ -341,4 +342,11 @@ QStringList ctkDICOMTableView::currentSelection() const
     }
 
   return  uids;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::filterActive()
+{
+  Q_D(ctkDICOMTableView);
+  return (d->leSearchBox->text().length() != 0);
 }
