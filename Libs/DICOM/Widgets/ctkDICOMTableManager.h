@@ -69,6 +69,12 @@ public:
   QStringList currentStudiesSelection();
   QStringList currentSeriesSelection();
 
+public Q_SLOTS:
+
+  void onPatientsQueryChanged(const QStringList&);
+  void onStudiesQueryChanged(const QStringList&);
+  void onSeriesQueryChanged(const QStringList&);
+
 Q_SIGNALS:
   /// Signals for propagating selection changes of the different tables
   void patientsSelectionChanged(const QItemSelection&, const QItemSelection&);

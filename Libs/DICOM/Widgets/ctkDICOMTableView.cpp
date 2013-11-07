@@ -287,12 +287,14 @@ void ctkDICOMTableView::onFilterChanged()
   Q_D(ctkDICOMTableView);
 
   const QStringList uids = d->quotedUidsForAllRows();
+  d->tblDicomDatabaseView->clearSelection();
   emit queryChanged(uids);
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMTableView::setQuery(const QStringList &uids)
 {
+  qDebug()<<"###PatientSEtQUERY";
   Q_D(ctkDICOMTableView);
   QString query = ("select distinct %1.* from Patients, Series, Studies where "
                    "Patients.UID = Studies.PatientsUID and Studies.StudyInstanceUID = Series.StudyInstanceUID");

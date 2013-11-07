@@ -74,6 +74,9 @@ void ctkDICOMTableManagerPrivate::init()
   this->seriesTable->setQueryTableName("Series");
   this->seriesTable->setQueryForeignKey("StudyInstanceUID");
 
+//  QObject::connect(this->patientsTable, SIGNAL(queryChanged(const QStringList&)),
+//                   q, SLOT(onPatientsQueryChanged(const QStringList&)));
+
   // For propagating patient selection changes
   QObject::connect(this->patientsTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
                    q, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)));
@@ -179,4 +182,19 @@ QStringList ctkDICOMTableManager::currentSeriesSelection()
 {
   Q_D(ctkDICOMTableManager);
   return d->seriesTable->currentSelection();
+}
+
+void ctkDICOMTableManager::onPatientsQueryChanged(const QStringList &uids)
+{
+  qDebug()<<"###PatientQUERY";
+}
+
+void ctkDICOMTableManager::onStudiesQueryChanged(const QStringList &uids)
+{
+
+}
+
+void ctkDICOMTableManager::onSeriesQueryChanged(const QStringList &uids)
+{
+
 }
