@@ -484,6 +484,9 @@ ctk_lib_option(CommandLineModules/Frontend/QtWebKit
 ctk_lib_option(CommandLineModules/Frontend/QtGui
                "Build the QtGui based Command Line Module front-end" OFF)
 
+ctk_lib_option(CommandLineModules/Backend/XMLChecker
+               "Build the Command Line Module back-end for checking XML" OFF)
+
 ctk_lib_option(CommandLineModules/Backend/LocalProcess
                "Build the Command Line Module back-end for local processes" OFF)
 
