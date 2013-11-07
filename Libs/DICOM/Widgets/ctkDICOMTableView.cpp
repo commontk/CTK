@@ -45,6 +45,8 @@ public:
   //Temporay solution to hide UID columns
   void hideUIDColumns();
 
+  void showFilterActiveWarning(bool);
+
   QString queryTableName() const;
 
   ctkDICOMDatabase* dicomDatabase;
@@ -152,6 +154,22 @@ QString ctkDICOMTableViewPrivate::queryTableName() const
   return this->lblTableName->text();
 }
 
+#include <QTableWidgetItem>
+//----------------------------------------------------------------------------
+void ctkDICOMTableViewPrivate::showFilterActiveWarning(bool showWarning)
+{
+  QPalette palette;
+  if (showWarning)
+    {
+      palette.setColor(QPalette::Base,Qt::yellow);
+    }
+  else
+    {
+      palette.setColor(QPalette::Base,Qt::white);
+    }
+  this->leSearchBox->setPalette(palette);
+}
+
 
 //----------------------------------------------------------------------------
 // ctkDICOMTableView methods
@@ -238,6 +256,9 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
 
   setQuery(uids);
 
+  d->showFilterActiveWarning( d->dicomSQLFilterModel->rowCount() == 0 &&
+                              d->leSearchBox->text().length() != 0 );
+
   const QStringList& newUIDS = this->uidsForAllRows();
   emit queryChanged(newUIDS);
 }
@@ -248,6 +269,9 @@ void ctkDICOMTableView::onFilterChanged()
   Q_D(ctkDICOMTableView);
 
   const QStringList uids = this->uidsForAllRows();
+
+  d->showFilterActiveWarning( d->dicomSQLFilterModel->rowCount() == 0 );
+
   d->tblDicomDatabaseView->clearSelection();
   emit queryChanged(uids);
 }
