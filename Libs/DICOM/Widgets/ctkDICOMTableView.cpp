@@ -154,7 +154,6 @@ QString ctkDICOMTableViewPrivate::queryTableName() const
   return this->lblTableName->text();
 }
 
-#include <QTableWidgetItem>
 //----------------------------------------------------------------------------
 void ctkDICOMTableViewPrivate::showFilterActiveWarning(bool showWarning)
 {
