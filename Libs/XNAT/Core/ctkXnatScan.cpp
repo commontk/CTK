@@ -22,6 +22,7 @@
 #include "ctkXnatScan.h"
 
 #include "ctkXnatConnection.h"
+#include "ctkXnatScanFolder.h"
 #include "ctkXnatObjectPrivate.h"
 
 class ctkXnatScanPrivate : public ctkXnatObjectPrivate
@@ -42,8 +43,8 @@ public:
 };
 
 
-ctkXnatScan::ctkXnatScan(const QString& schemaType)
-: ctkXnatObject(*new ctkXnatScanPrivate(), schemaType)
+ctkXnatScan::ctkXnatScan(ctkXnatScanFolder* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatScanPrivate(), parent, schemaType)
 {
 }
 

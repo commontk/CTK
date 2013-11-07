@@ -28,13 +28,14 @@
 
 class ctkXnatConnection;
 class ctkXnatReconstructionResourcePrivate;
+class ctkXnatReconstruction;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatReconstructionResource : public ctkXnatObject
 {
   
 public:
 
-  explicit ctkXnatReconstructionResource();
+  explicit ctkXnatReconstructionResource(ctkXnatReconstruction* parent = 0);
   virtual ~ctkXnatReconstructionResource();
   
   virtual QString resourceUri() const;

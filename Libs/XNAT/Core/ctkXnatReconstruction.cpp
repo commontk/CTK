@@ -23,6 +23,7 @@
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatReconstructionFolder.h"
 
 class ctkXnatReconstructionPrivate : public ctkXnatObjectPrivate
 {
@@ -42,8 +43,8 @@ public:
 };
 
 
-ctkXnatReconstruction::ctkXnatReconstruction(const QString& schemaType)
-: ctkXnatObject(*new ctkXnatReconstructionPrivate(), schemaType)
+ctkXnatReconstruction::ctkXnatReconstruction(ctkXnatReconstructionFolder* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatReconstructionPrivate(), parent, schemaType)
 {
 }
 

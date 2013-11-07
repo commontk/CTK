@@ -29,17 +29,19 @@
 #include <QVariant>
 
 
-ctkXnatObject::ctkXnatObject(const QString& schemaType)
+ctkXnatObject::ctkXnatObject(ctkXnatObject* parent, const QString& schemaType)
 : d_ptr(new ctkXnatObjectPrivate())
 {
   Q_D(ctkXnatObject);
+  this->setParent(parent);
   d->schemaType = schemaType;
 }
 
-ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, const QString& schemaType)
+ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent, const QString& schemaType)
 : d_ptr(&dd)
 {
   Q_D(ctkXnatObject);
+  this->setParent(parent);
   d->schemaType = schemaType;
 }
 

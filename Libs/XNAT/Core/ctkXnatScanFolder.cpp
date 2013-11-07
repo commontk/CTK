@@ -22,6 +22,7 @@
 #include "ctkXnatScanFolder.h"
 
 #include "ctkXnatConnection.h"
+#include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
 
 
@@ -43,8 +44,8 @@ public:
 };
 
 
-ctkXnatScanFolder::ctkXnatScanFolder()
-: ctkXnatObject(*new ctkXnatScanFolderPrivate())
+ctkXnatScanFolder::ctkXnatScanFolder(ctkXnatExperiment* parent)
+: ctkXnatObject(*new ctkXnatScanFolderPrivate(), parent)
 {
   this->setProperty("ID", "Scans");
 }

@@ -22,6 +22,7 @@
 #include "ctkXnatReconstructionFolder.h"
 
 #include "ctkXnatConnection.h"
+#include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
 
 
@@ -43,8 +44,8 @@ public:
 };
 
 
-ctkXnatReconstructionFolder::ctkXnatReconstructionFolder()
-: ctkXnatObject(*new ctkXnatReconstructionFolderPrivate())
+ctkXnatReconstructionFolder::ctkXnatReconstructionFolder(ctkXnatExperiment* parent)
+: ctkXnatObject(*new ctkXnatReconstructionFolderPrivate(), parent)
 {
   this->setProperty("ID", "Reconstructions");
 }

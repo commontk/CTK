@@ -42,8 +42,8 @@ public:
 //  QString uri;
 };
 
-ctkXnatFile::ctkXnatFile()
-: ctkXnatObject(*new ctkXnatFilePrivate())
+ctkXnatFile::ctkXnatFile(ctkXnatObject* parent)
+: ctkXnatObject(*new ctkXnatFilePrivate(), parent)
 {
 }
 

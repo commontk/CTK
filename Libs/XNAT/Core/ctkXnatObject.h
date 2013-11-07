@@ -111,10 +111,10 @@ public:
 protected:
 
   /// Constructs the ctkXnatObject.
-  ctkXnatObject(const QString& schemaType = QString());
+  ctkXnatObject(ctkXnatObject* parent = 0, const QString& schemaType = QString());
 
   /// Constructs the ctkXnatObject with the given private part.
-  ctkXnatObject(ctkXnatObjectPrivate& dd, const QString& schemaType = QString());
+  ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent = 0, const QString& schemaType = QString());
 
   /// Gets the object that represents the connection to the XNAT server
   /// that stores the current object.

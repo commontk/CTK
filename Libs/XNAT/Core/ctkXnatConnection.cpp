@@ -25,7 +25,6 @@
 #include "ctkXnatExperiment.h"
 #include "ctkXnatFile.h"
 #include "ctkXnatObject.h"
-#include "ctkXnatObjectPrivate.h"
 #include "ctkXnatProject.h"
 #include "ctkXnatReconstruction.h"
 #include "ctkXnatReconstructionFolder.h"

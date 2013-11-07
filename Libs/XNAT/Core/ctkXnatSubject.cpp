@@ -25,6 +25,7 @@
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatProject.h"
 
 class ctkXnatSubjectPrivate : public ctkXnatObjectPrivate
 {
@@ -50,8 +51,8 @@ public:
   QList<ctkXnatProject*> projects;
 };
 
-ctkXnatSubject::ctkXnatSubject(const QString& schemaType)
-: ctkXnatObject(*new ctkXnatSubjectPrivate(), schemaType)
+ctkXnatSubject::ctkXnatSubject(ctkXnatProject* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatSubjectPrivate(), parent, schemaType)
 {
 }
 

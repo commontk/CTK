@@ -28,13 +28,14 @@
 
 class ctkXnatConnection;
 class ctkXnatProjectPrivate;
+class ctkXnatServer;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatProject : public ctkXnatObject
 {
 
 public:
 
-  explicit ctkXnatProject(const QString& schemaType = "xnat:projectData");
+  explicit ctkXnatProject(ctkXnatServer* parent = 0, const QString& schemaType = "xnat:projectData");
   virtual ~ctkXnatProject();
 
   virtual QString resourceUri() const;
