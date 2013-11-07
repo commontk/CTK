@@ -232,12 +232,7 @@ void ctkDICOMTableView::onSelectionChanged()
 
   foreach(QModelIndex i, selectedRows)
     {
-      uids<< (QString("'") + i.data().toString() +"'");
-    }
-
-  if (uids.empty())
-    {
-      uids = d->quotedUidsForAllRows();
+      uids<< i.data().toString();
     }
   emit selectionChanged(uids);
 }
@@ -267,22 +262,20 @@ void ctkDICOMTableView::onFilterChanged()
 
   const QStringList uids = this->uidsForAllRows();
   d->tblDicomDatabaseView->clearSelection();
-//  emit filterChanged(uids);
   emit queryChanged(uids);
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMTableView::setQuery(const QStringList &uids)
 {
-  qDebug()<<"###PatientSEtQUERY";
   Q_D(ctkDICOMTableView);
   QString query = ("select distinct %1.* from Patients, Series, Studies where "
                    "Patients.UID = Studies.PatientsUID and Studies.StudyInstanceUID = Series.StudyInstanceUID");
 
   if (!uids.empty() && d->queryForeignKey.length() != 0)
     {
-      query += " and %1."+d->queryForeignKey+" in ( ";
-      query.append(uids.join(",")).append(")");
+      query += " and %1."+d->queryForeignKey+" in ( '";
+      query.append(uids.join("','")).append("')");
     }
   if (!d->sqlWhereConditions.empty())
     {
@@ -291,8 +284,8 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
         {
           if (!i.value().empty())
             {
-              query += " and "+i.key()+" in ( ";
-              query.append(i.value().join(",")).append(")");
+              query += " and "+i.key()+" in ( '";
+              query.append(i.value().join("','")).append("')");
             }
           ++i;
         }
@@ -339,7 +332,7 @@ QStringList ctkDICOMTableView::currentSelection() const
 
   foreach(QModelIndex i, currentSelection)
     {
-      uids<< /*(QString("'") + */i.data().toString() /*+"'")*/;
+      uids<< i.data().toString();
     }
 
   return  uids;

@@ -54,9 +54,57 @@ QSplitter::handle:vertical {height: 2px;}</string>
  <connections>
  <connection>
    <sender>patientsTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>ctkDICOMTableManager</receiver>
+   <slot>onPatientsSelectionChanged(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>studiesTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>ctkDICOMTableManager</receiver>
+   <slot>onStudiesSelectionChanged(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>patientsTable</sender>
    <signal>queryChanged(QStringList)</signal>
    <receiver>ctkDICOMTableManager</receiver>
    <slot>onPatientsQueryChanged(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>studiesTable</sender>
+   <signal>queryChanged(QStringList)</signal>
+   <receiver>ctkDICOMTableManager</receiver>
+   <slot>onStudiesQueryChanged(QStringList)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>220</x>

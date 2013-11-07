@@ -74,9 +74,6 @@ void ctkDICOMTableManagerPrivate::init()
   this->seriesTable->setQueryTableName("Series");
   this->seriesTable->setQueryForeignKey("StudyInstanceUID");
 
-//  QObject::connect(this->patientsTable, SIGNAL(queryChanged(const QStringList&)),
-//                   q, SLOT(onPatientsQueryChanged(const QStringList&)));
-
   // For propagating patient selection changes
   QObject::connect(this->patientsTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
                    q, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)));
@@ -186,15 +183,48 @@ QStringList ctkDICOMTableManager::currentSeriesSelection()
 
 void ctkDICOMTableManager::onPatientsQueryChanged(const QStringList &uids)
 {
-  qDebug()<<"###PatientQUERY";
+  Q_D(ctkDICOMTableManager);
+  const std::pair<QString, QStringList> patientCondition("Patients.UID", uids);
+  d->seriesTable->addSqlWhereCondition(patientCondition);
+  d->studiesTable->addSqlWhereCondition(patientCondition);
 }
 
 void ctkDICOMTableManager::onStudiesQueryChanged(const QStringList &uids)
 {
-
+  Q_D(ctkDICOMTableManager);
+  const std::pair<QString, QStringList> studiesCondition("Studies.StudyInstanceUID", uids);
+  d->seriesTable->addSqlWhereCondition(studiesCondition);
 }
 
-void ctkDICOMTableManager::onSeriesQueryChanged(const QStringList &uids)
+void ctkDICOMTableManager::onPatientsSelectionChanged(const QStringList &uids)
 {
+  std::pair<QString, QStringList> patientCondition;
+  patientCondition.first = "Patients.UID";
+  Q_D(ctkDICOMTableManager);
+  if (!uids.empty())
+    {
+      patientCondition.second = uids;
+    }
+  else
+    {
+      patientCondition.second = d->patientsTable->uidsForAllRows();
+    }
+  d->studiesTable->addSqlWhereCondition(patientCondition);
+  d->seriesTable->addSqlWhereCondition(patientCondition);
+}
 
+void ctkDICOMTableManager::onStudiesSelectionChanged(const QStringList &uids)
+{
+  std::pair<QString, QStringList> studiesCondition;
+  studiesCondition.first = "Studies.StudyInstanceUID";
+  Q_D(ctkDICOMTableManager);
+  if (!uids.empty())
+    {
+      studiesCondition.second = uids;
+    }
+  else
+    {
+      studiesCondition.second = d->studiesTable->uidsForAllRows();
+    }
+  d->seriesTable->addSqlWhereCondition(studiesCondition);
 }
