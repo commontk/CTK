@@ -57,7 +57,7 @@ public:
    * @param parent the parent widget
    * @param queryTableName the name of the table of the ctkDICOMDatabase which shall be displayed
    */
-  explicit ctkDICOMTableView(QString queryTableName = "Patients", QWidget* parent = 0);
+  explicit ctkDICOMTableView(QString queryTableName, QWidget* parent = 0);
 
   /**
    * ctor with tablename and database as parameter
@@ -65,7 +65,7 @@ public:
    * @param parent the parent widget
    * @param queryTableName the name of the table of the ctkDICOMDatabase which shall be displayed
    */
-  explicit ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QString queryTableName = "Patients", QWidget* parent = 0);
+  explicit ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QString queryTableName, QWidget* parent = 0);
 
   virtual ~ctkDICOMTableView();
 
