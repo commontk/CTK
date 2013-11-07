@@ -26,6 +26,7 @@
 #include <QDebug>
 
 ctkXnatProjectListModel::ctkXnatProjectListModel()
+  : rootObject(0)
 {
 }
 
