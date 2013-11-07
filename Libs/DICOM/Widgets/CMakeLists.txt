@@ -29,6 +29,8 @@ set(KIT_SRCS
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMQueryWidget.cpp
   ctkDICOMQueryWidget.h
+  ctkDICOMObjectListWidget.cpp
+  ctkDICOMObjectListWidget.h
   ctkDICOMServerNodeWidget.cpp
   ctkDICOMServerNodeWidget.h
   ctkDICOMTableManager.h
@@ -49,6 +51,7 @@ set(KIT_MOC_SRCS
   ctkDICOMDirectoryListWidget.h
   ctkDICOMImage.h
   ctkDICOMImportWidget.h
+  ctkDICOMObjectListWidget.h
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMQueryWidget.h
   ctkDICOMServerNodeWidget.h
@@ -67,6 +70,7 @@ set(KIT_UI_FORMS
   Resources/UI/ctkDICOMListenerWidget.ui
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMQueryWidget.ui
+  Resources/UI/ctkDICOMObjectListWidget.ui 
   Resources/UI/ctkDICOMServerNodeWidget.ui
   Resources/UI/ctkDICOMTableManager.ui
   Resources/UI/ctkDICOMTableView.ui
