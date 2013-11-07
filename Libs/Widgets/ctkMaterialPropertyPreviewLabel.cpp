@@ -302,9 +302,9 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
         qreal specularComp = specular*pow(specularDot, specular_power);
         
         QVector3D intensity;
-        intensity.setX( qMin((ambient + diffuseComp)*d->Color.redF() + specularComp, 1.));
-        intensity.setY( qMin((ambient + diffuseComp)*d->Color.greenF() + specularComp, 1.));
-        intensity.setZ( qMin((ambient + diffuseComp)*d->Color.blueF() + specularComp, 1.));
+        intensity.setX( qMin((ambient + diffuseComp)*d->Color.redF() + specularComp, static_cast<qreal>(1.)));
+        intensity.setY( qMin((ambient + diffuseComp)*d->Color.greenF() + specularComp, static_cast<qreal>(1.)));
+        intensity.setZ( qMin((ambient + diffuseComp)*d->Color.blueF() + specularComp, static_cast<qreal>(1.)));
         
         if (opacity == 1.)
           {
@@ -315,10 +315,10 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
           }
         else
           {
-          rgba = qRgba(static_cast<unsigned char>(qMin(255. * intensity.x() * opacity + qRed(rgba)*(1. - opacity), 255.)),
-                       static_cast<unsigned char>(qMin(255. * intensity.y() * opacity + qGreen(rgba)*(1. - opacity), 255.)),
-                       static_cast<unsigned char>(qMin(255. * intensity.z() * opacity + qBlue(rgba)*(1. - opacity), 255.)),
-                       static_cast<unsigned char>(qMin(255. * opacity + qAlpha(rgba)*(1. - opacity), 255.)));
+          rgba = qRgba(static_cast<unsigned char>(qMin(255. * intensity.x() * opacity + qRed(rgba)*(1. - opacity), static_cast<qreal>(255.))),
+                       static_cast<unsigned char>(qMin(255. * intensity.y() * opacity + qGreen(rgba)*(1. - opacity), static_cast<qreal>(255.))),
+                       static_cast<unsigned char>(qMin(255. * intensity.z() * opacity + qBlue(rgba)*(1. - opacity), static_cast<qreal>(255.))),
+                       static_cast<unsigned char>(qMin(255. * opacity + qAlpha(rgba)*(1. - opacity), static_cast<qreal>(255.))));
           }
         }
       image.setPixel(i,j,rgba);
