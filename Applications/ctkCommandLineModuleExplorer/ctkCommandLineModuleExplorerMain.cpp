@@ -48,11 +48,11 @@ int main(int argc, char** argv)
   cmdLineParser.setArgumentPrefix("--", "-");
   cmdLineParser.setStrictModeEnabled(true);
 
-  cmdLineParser.addArgument("module", "", QVariant::String, "Path to a CLI module (executable)");
-  //cmdLineParser.addArgument("module-xml", "", QVariant::String, "Path to a CLI XML description.");
-
-  cmdLineParser.addArgument("validate-module", "", QVariant::String, "Path to a CLI module");
-  cmdLineParser.addArgument("validate-xml", "", QVariant::String, "Path to a CLI XML description.");
+  cmdLineParser.addArgument("module", "", QVariant::String, "Path to a CLI module (executable), and show the generated GUI.");
+  cmdLineParser.addArgument("validate-module", "", QVariant::String, "Path to a CLI module (executable), and validate the XML.");
+  cmdLineParser.addArgument("validate-xml", "", QVariant::String, "Path to a CLI XML file, and validate the XML.");
+  cmdLineParser.addArgument("string", "", QVariant::String, "An XML string to validate. Be careful to quote correctly." );
+  cmdLineParser.addArgument("xml", "", QVariant::Bool, "Generate XML for this application");
   cmdLineParser.addArgument("verbose", "v", QVariant::Bool, "Be verbose.");
   cmdLineParser.addArgument("help", "h", QVariant::Bool, "Print this help text.");
 
@@ -139,9 +139,50 @@ int main(int argc, char** argv)
 
     return EXIT_SUCCESS;
   }
+  else if (args.contains("string"))
+  {
+    QByteArray byteArray;
+    byteArray.append(args["string"].toString());
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::ReadOnly);
 
+    ctkCmdLineModuleXmlValidator validator(&buffer);
+    if (!validator.validateInput())
+    {
+      qCritical() << validator.errorString();
+      return EXIT_FAILURE;
+    }
 
-  //ctkCmdLineModuleDescription* descr = ctkCmdLineModuleDescription::parse(&input);
+    out << "Validated successfully";
+    return EXIT_SUCCESS;
+  }
+  else if (args.contains("xml"))
+  {
+    out << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+    out << "<executable>\n";
+    out << "  <category>Utilities</category>\n";
+    out << "  <title>ctkCommandLineModuleExplorer</title>\n";
+    out << "  <description><![CDATA[Used to check the validity of CLI XML descriptors.]]></description>\n";
+    out << "  <version>0.0.1</version>\n";
+    out << "  <documentation-url>http://www.commontk.org</documentation-url>\n";
+    out << "  <license>Apache 2</license>\n";
+    out << "  <contributor>Various</contributor>\n";
+    out << "  <acknowledgements><![CDATA[]]></acknowledgements>\n";
+    out << "  <parameters>\n";
+    out << "    <label>Input parameters</label>\n";
+    out << "    <description><![CDATA[Input/output parameters]]></description>\n";
+    out << "    <string>\n";
+    out << "      <name>inputText</name>\n";
+    out << "      <longflag>string</longflag>\n";
+    out << "      <description>Input text containing an XML string.</description>\n";
+    out << "      <label>Enter XML as a string:</label>\n";
+    out << "      <channel>input</channel>\n";
+    out << "    </string>\n";
+    out << "  </parameters>\n";
+    out << "</executable>\n";
+    out.flush();
+    return EXIT_SUCCESS;
+  }
 
   ctkCLModuleExplorerMainWindow mainWindow;
 
