@@ -311,14 +311,13 @@ macro(ctkMacroBuildPlugin)
     PREFIX "lib"
     )
 
-  # Note: The plugin may be installed in some other location ???
-  # Install rules
-# if(MY_LIBRARY_TYPE STREQUAL "SHARED")
-# install(TARGETS ${lib_name}
-# RUNTIME DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT RuntimePlugins
-# LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT RuntimePlugins
-# ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
-# endif()
+  if(NOT MY_TEST_PLUGIN)
+    # Install rules
+    install(TARGETS ${lib_name} EXPORT CTKExports
+      RUNTIME DESTINATION ${CTK_INSTALL_PLUGIN_DIR} COMPONENT RuntimePlugins
+      LIBRARY DESTINATION ${CTK_INSTALL_PLUGIN_DIR} COMPONENT RuntimePlugins
+      ARCHIVE DESTINATION ${CTK_INSTALL_PLUGIN_DIR} COMPONENT Development)
+  endif()
 
   set(my_libs
     ${MY_TARGET_LIBRARIES}
@@ -334,13 +333,15 @@ macro(ctkMacroBuildPlugin)
     set(${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES} ${lib_name} CACHE INTERNAL "CTK plugins" FORCE)
   endif()
 
-  # Install headers
-  #file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/*.tpp")
-  #install(FILES
-  # ${headers}
-  # ${dynamicHeaders}
-  # DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
-  # )
+  if(NOT MY_TEST_PLUGIN)
+    # Install headers
+    file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/*.tpp")
+    install(FILES
+      ${headers}
+      ${dynamicHeaders}
+      DESTINATION ${CTK_INSTALL_PLUGIN_INCLUDE_DIR}/${Plugin-SymbolicName} COMPONENT Development
+      )
+  endif()
 
 endmacro()
 
