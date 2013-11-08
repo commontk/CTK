@@ -28,6 +28,7 @@
 #include "ctkXnatConnectionFactory.h"
 #include "ctkXnatServer.h"
 #include "ctkXnatProject.h"
+#include "ctkXnatFile.h"
 
 ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -39,8 +40,11 @@ ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   ui->setupUi(this);
 
   ui->treeView->setModel(m_TreeModel);
+  ui->downloadLabel->hide();
 
   this->connect(ui->loginButton, SIGNAL(clicked()), SLOT(loginButtonPushed()));
+  this->connect(ui->treeView, SIGNAL(clicked(const QModelIndex&)), SLOT(itemSelected(const QModelIndex&)));
+  this->connect(ui->downloadButton, SIGNAL(clicked()), SLOT(downloadButtonClicked()));
 }
 
 ctkXnatTreeBrowserMainWindow::~ctkXnatTreeBrowserMainWindow()
@@ -63,6 +67,7 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
     m_Connection = 0;
     ui->loginButton->setText("Login");
     ui->loginLabel->setText("Disconnected");
+    ui->downloadLabel->hide();
 
     // nt: download tests... //
     // m_TreeModel->downloadFile (ui->treeView->selectionModel()->currentIndex(), "/Users/nicolastoussaint/Desktop/test.nii.gz");
@@ -81,7 +86,27 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
         ctkXnatServer* server = m_Connection->server();
         m_TreeModel->addServer(server);
         ui->treeView->reset();
+        ui->downloadLabel->show();
       }
     }
+  }
+}
+
+void ctkXnatTreeBrowserMainWindow::itemSelected(const QModelIndex &index)
+{
+  ctkXnatObject* xnatObject = m_TreeModel->xnatObject(index);
+  ctkXnatFile* xnatFile = dynamic_cast<ctkXnatFile*>(xnatObject);
+  ui->downloadButton->setEnabled(xnatFile != 0);
+  ui->downloadLabel->setVisible(!(xnatFile != 0));
+}
+
+void ctkXnatTreeBrowserMainWindow::downloadButtonClicked()
+{
+  const QModelIndex index = ui->treeView->selectionModel()->currentIndex();
+  QVariant variant = m_TreeModel->data(index, Qt::DisplayRole);
+  QString fileName = variant.value<QString>();
+  if ( fileName.length() != 0 )
+  {
+    m_TreeModel->downloadFile(index, fileName);
   }
 }

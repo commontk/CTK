@@ -25,6 +25,16 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="downloadButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Download</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="loginLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -53,6 +63,21 @@
       </property>
      </widget>
     </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="downloadLabel">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(64, 64, 64);
+font: 75 10pt &quot;Lucida Grande&quot;;</string>
+        </property>
+        <property name="text">
+         <string>Select a xnat file to download...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -80,22 +105,5 @@
   </action>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>action_Quit</sender>
-   <signal>triggered()</signal>
-   <receiver>ctkXnatBrowserMainWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
