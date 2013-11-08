@@ -42,6 +42,8 @@ private slots:
 
   void cleanupTestCase();
 
+  void testParentChild();
+
   void testProjectList();
 
   void testResourceUri();

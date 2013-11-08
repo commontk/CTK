@@ -105,6 +105,43 @@ void ctkXnatConnectionTestCase::testResourceUri()
   QVERIFY(server->resourceUri().isEmpty());
 }
 
+void ctkXnatConnectionTestCase::testParentChild()
+{
+  Q_D(ctkXnatConnectionTestCase);
+
+  ctkXnatServer* server = d->Connection->server();
+
+  ctkXnatProject* project = new ctkXnatProject(server);
+
+  QVERIFY(project->parent() == server);
+
+  QVERIFY(server->children().contains(project));
+
+  server->add(project);
+
+  int numberOfOccurrences = 0;
+  foreach (ctkXnatObject* serverProject, server->children())
+  {
+    if (serverProject == project || serverProject->id() == project->id())
+    {
+      ++numberOfOccurrences;
+    }
+  }
+  QVERIFY(numberOfOccurrences == 1);
+
+  server->remove(project);
+  numberOfOccurrences = 0;
+  foreach (ctkXnatObject* serverProject, server->children())
+  {
+    if (serverProject == project || serverProject->id() == project->id())
+    {
+      ++numberOfOccurrences;
+    }
+  }
+  QVERIFY(numberOfOccurrences == 0);
+  delete project;
+}
+
 void ctkXnatConnectionTestCase::testCreateProject()
 {
   Q_D(ctkXnatConnectionTestCase);
@@ -117,7 +154,7 @@ void ctkXnatConnectionTestCase::testCreateProject()
   ctkXnatProject* project = new ctkXnatProject(server);
   project->setId(projectId);
   project->setName(projectId);
-  project->setDescription("CTK test project");
+  project->setDescription("CTK_test_project");
 
   bool exists = d->Connection->exists(project);
   QVERIFY(!exists);
@@ -145,7 +182,7 @@ void ctkXnatConnectionTestCase::testCreateSubject()
   ctkXnatProject* project = new ctkXnatProject(server);
   project->setId(projectId);
   project->setName(projectId);
-  project->setDescription("CTK test project");
+  project->setDescription("CTK_test_project");
 
   QVERIFY(!project->exists());
 
