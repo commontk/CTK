@@ -400,18 +400,13 @@ void ctkXnatConnection::save(ctkXnatObject* object)
 
   QString query = object->resourceUri();
 
+  query.append(QString("?%1=%2").arg("xsi:type", object->schemaType()));
   const QMap<QString, QString>& properties = object->properties();
-  QMap<QString, QString>::ConstIterator itProperties = properties.begin();
-  QMap<QString, QString>::ConstIterator endProperties = properties.end();
-  if (itProperties != endProperties)
+  QMapIterator<QString, QString> itProperties(properties);
+  while (itProperties.hasNext())
   {
-    query.append(QString("?%1=%2").arg(itProperties.key(), itProperties.value()));
-    ++itProperties;
-  }
-  while (itProperties != endProperties)
-  {
+    itProperties.next();
     query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
-    ++itProperties;
   }
 
   qDebug() << "ctkXnatConnection::create() query:" << query;
