@@ -46,7 +46,7 @@ public:
 ctkXnatScanFolder::ctkXnatScanFolder()
 : ctkXnatObject(*new ctkXnatScanFolderPrivate())
 {
-  this->setProperty("ID", "Scans");
+  this->setProperty("ID", "scans");
 }
 
 ctkXnatScanFolder::~ctkXnatScanFolder()
@@ -55,7 +55,7 @@ ctkXnatScanFolder::~ctkXnatScanFolder()
 
 QString ctkXnatScanFolder::resourceUri() const
 {
-  return QString("%1/%d").arg(parent()->resourceUri(), this->id());
+  return QString("%1/%2").arg(parent()->resourceUri(), this->id());
 }
 
 void ctkXnatScanFolder::reset()

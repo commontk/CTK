@@ -53,7 +53,7 @@ ctkXnatScan::~ctkXnatScan()
 
 QString ctkXnatScan::resourceUri() const
 {
-  return QString("%1/scans/%2").arg(parent()->resourceUri(), this->id());
+  return QString("%1/%2").arg(parent()->resourceUri(), this->id());
 }
 
 void ctkXnatScan::reset()

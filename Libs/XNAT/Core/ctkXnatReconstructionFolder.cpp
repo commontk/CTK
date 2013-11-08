@@ -46,7 +46,7 @@ public:
 ctkXnatReconstructionFolder::ctkXnatReconstructionFolder()
 : ctkXnatObject(*new ctkXnatReconstructionFolderPrivate())
 {
-  this->setProperty("ID", "Reconstructions");
+  this->setProperty("ID", "reconstructions");
 }
 
 ctkXnatReconstructionFolder::~ctkXnatReconstructionFolder()
@@ -55,7 +55,7 @@ ctkXnatReconstructionFolder::~ctkXnatReconstructionFolder()
 
 QString ctkXnatReconstructionFolder::resourceUri() const
 {
-  return QString("%1/%d").arg(parent()->resourceUri(), this->id());
+  return QString("%1/%2").arg(parent()->resourceUri(), this->id());
 }
 
 void ctkXnatReconstructionFolder::reset()
