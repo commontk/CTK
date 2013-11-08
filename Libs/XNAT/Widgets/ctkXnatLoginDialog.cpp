@@ -29,7 +29,7 @@
 
 #include <ctkXnatConnection.h>
 #include <ctkXnatConnectionFactory.h>
-#include <ctkXnatException.h>
+#include <ctkException.h>
 #include "ctkXnatLoginProfile.h"
 #include "ctkXnatSettings.h"
 
@@ -193,7 +193,7 @@ void ctkXnatLoginDialog::accept()
                                         password.toAscii().constData());
     d->Connection->setProfileName(ui->edtProfileName->text());
     }
-  catch (ctkXnatException& e)
+  catch (const ctkException& e)
     {
     QMessageBox::warning(this, tr("Invalid Login Error"), tr(e.what()));
     ui->edtServerUri->selectAll();

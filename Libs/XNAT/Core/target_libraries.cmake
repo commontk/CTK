@@ -5,6 +5,7 @@
 #
 
 set(target_libraries
+  CTKCore
   qRestAPI_LIBRARIES
   QT_LIBRARIES
   QtScript

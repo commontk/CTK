@@ -54,7 +54,29 @@ public:
   ctkXnatAPI::RawHeaders rawHeaders;
 
   ctkXnatServer* server;
+
+  void throwXnatException(const QString& msg);
 };
+
+void ctkXnatConnectionPrivate::throwXnatException(const QString& msg)
+{
+  QString errorMsg = msg.trimmed();
+  if (!errorMsg.isEmpty())
+  {
+    errorMsg.append(' ');
+  }
+  errorMsg.append(xnat->errorString());
+
+  switch (xnat->error())
+  {
+  case qRestAPI::TimeoutError:
+    throw ctkXnatTimeoutException(errorMsg);
+  case qRestAPI::ResponseParseError:
+    throw ctkXnatResponseParseError(errorMsg);
+  default:
+    throw ctkRuntimeException(errorMsg);
+  }
+}
 
 // ctkXnatConnection class
 
@@ -415,7 +437,7 @@ void ctkXnatConnection::save(ctkXnatObject* object)
 
   if (!result || !result->error().isNull())
   {
-    throw ctkXnatException("Error occurred while creating the data.");
+    d->throwXnatException("Error occurred while creating the data.");
   }
 
   const QList<QVariantMap>& maps = result->results();
@@ -438,7 +460,7 @@ void ctkXnatConnection::remove(ctkXnatObject* object)
 
   if (!success)
   {
-    throw ctkXnatException("Error occurred while removing the data.");
+    d->throwXnatException("Error occurred while removing the data.");
   }
 }
 

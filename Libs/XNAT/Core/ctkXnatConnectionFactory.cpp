@@ -22,7 +22,6 @@
 #include "ctkXnatConnectionFactory.h"
 
 #include "ctkXnatConnection.h"
-#include "ctkXnatException.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatServer.h"
 
@@ -40,7 +39,7 @@ ctkXnatConnection* ctkXnatConnectionFactory::makeConnection(const QString& url, 
   {
     testConnection(connection);
   }
-  catch (ctkXnatException& e)
+  catch (...)
   {
     delete connection;
     throw;

@@ -24,18 +24,10 @@
 
 #include "ctkXNATCoreExport.h"
 
-#include <exception>
-#include <string>
+#include "ctkException.h"
 
-class CTK_XNAT_CORE_EXPORT ctkXnatException : public std::exception
-{
-public:
-  ctkXnatException(const std::string& message);
-
-  virtual const char* what() const throw();
-
-private:
-  const char* message;
-};
+CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatTimeoutException, ctkRuntimeException)
+CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatSessionExpiredException, ctkRuntimeException)
+CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatResponseParseError, ctkRuntimeException)
 
 #endif

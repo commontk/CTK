@@ -21,7 +21,6 @@
 
 #include "ctkXnatTreeModel.h"
 
-#include "ctkXnatException.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatSubject.h"
 

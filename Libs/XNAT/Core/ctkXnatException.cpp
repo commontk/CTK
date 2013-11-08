@@ -21,12 +21,6 @@
 
 #include "ctkXnatException.h"
 
-ctkXnatException::ctkXnatException(const std::string& message)
-: message(message.c_str())
-{
-}
-
-const char* ctkXnatException::what() const throw()
-{
-  return message;
-}
+CTK_IMPLEMENT_EXCEPTION(ctkXnatTimeoutException, ctkRuntimeException, "ctkXnatTimeoutException")
+CTK_IMPLEMENT_EXCEPTION(ctkXnatSessionExpiredException, ctkRuntimeException, "ctkXnatSessionExpiredException")
+CTK_IMPLEMENT_EXCEPTION(ctkXnatResponseParseError, ctkRuntimeException, "ctkXnatResponseParseError")
