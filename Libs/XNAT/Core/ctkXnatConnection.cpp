@@ -112,7 +112,7 @@ void ctkXnatConnection::createConnections()
 //           this, SLOT(progress(QUuid,double)));
 }
 
-void ctkXnatConnection::progress(QUuid queryId, double progress)
+void ctkXnatConnection::progress(QUuid /*queryId*/, double /*progress*/)
 {
 //  qDebug() << "ctkXnatConnection::progress(QUuid queryId, double progress)";
 //  qDebug() << "query id:" << queryId;

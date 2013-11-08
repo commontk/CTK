@@ -64,6 +64,5 @@ void ctkXnatExperiment::reset()
 
 void ctkXnatExperiment::fetchImpl()
 {
-  Q_D(ctkXnatExperiment);
   this->connection()->fetch(this);
 }

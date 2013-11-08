@@ -117,6 +117,5 @@ void ctkXnatProject::reset()
 
 void ctkXnatProject::fetchImpl()
 {
-  Q_D(ctkXnatProject);
   this->connection()->fetch(this);
 }
