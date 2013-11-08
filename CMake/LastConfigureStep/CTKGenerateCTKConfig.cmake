@@ -40,22 +40,6 @@
 
 include(ctkFunctionGeneratePluginUseFile)
 
-# Construct version numbers for CTKConfigVersion.cmake.
-set(_CTK_VERSION_MAJOR ${CTK_MAJOR_VERSION})
-set(_CTK_VERSION_MINOR ${CTK_MINOR_VERSION})
-set(_CTK_VERSION_PATCH ${CTK_PATCH_VERSION})
-# We use odd minor numbers for development versions.
-# Use a date for the development patch level.
-# if("${_CTK_VERSION_MINOR}" MATCHES "[13579]$")
-#   include(${CTK_SOURCE_DIR}/Utilities/kwsys/kwsysDateStamp.cmake)
-#   set(_CTK_VERSION_PATCH
-#     "${KWSYS_DATE_STAMP_YEAR}${KWSYS_DATE_STAMP_MONTH}${KWSYS_DATE_STAMP_DAY}"
-#     )
-# endif()
-
-#-----------------------------------------------------------------------------
-# Settings shared between the build tree and install tree.
-
 
 #-----------------------------------------------------------------------------
 # Settings specific to the build tree.
@@ -158,8 +142,6 @@ foreach(varname ${CTK_SUPERBUILD_EP_VARNAMES})
    "${CTK_SUPERBUILD_EP_VARS_CONFIG}
 set(CTK_${varname} \"${${varname}}\")")
 endforeach()
-
-# Executable locations.
 
 # CMake extension module directory.
 set(CTK_CMAKE_DIR_CONFIG ${CTK_CMAKE_DIR})
