@@ -82,9 +82,9 @@ public:
   void fetch(ctkXnatReconstruction* reconstruction);
   void fetch(ctkXnatReconstructionResource* reconstructionResource);
 
-  bool exists(ctkXnatObject* object);
+  bool exists(const ctkXnatObject* object);
 
-  void create(ctkXnatObject* object);
+  void save(ctkXnatObject* object);
   void remove(ctkXnatObject* object);
 
   void download(ctkXnatFile* file, const QString& fileName);

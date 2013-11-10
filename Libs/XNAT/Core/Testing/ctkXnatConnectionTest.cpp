@@ -35,6 +35,7 @@
 #include <ctkXnatConnectionFactory.h>
 #include <ctkXnatProject.h>
 #include <ctkXnatServer.h>
+#include <ctkXnatSubject.h>
 
 class ctkXnatConnectionTestCasePrivate
 {
@@ -104,6 +105,43 @@ void ctkXnatConnectionTestCase::testResourceUri()
   QVERIFY(server->resourceUri().isEmpty());
 }
 
+void ctkXnatConnectionTestCase::testParentChild()
+{
+  Q_D(ctkXnatConnectionTestCase);
+
+  ctkXnatServer* server = d->Connection->server();
+
+  ctkXnatProject* project = new ctkXnatProject(server);
+
+  QVERIFY(project->parent() == server);
+
+  QVERIFY(server->children().contains(project));
+
+  server->add(project);
+
+  int numberOfOccurrences = 0;
+  foreach (ctkXnatObject* serverProject, server->children())
+  {
+    if (serverProject == project || serverProject->id() == project->id())
+    {
+      ++numberOfOccurrences;
+    }
+  }
+  QVERIFY(numberOfOccurrences == 1);
+
+  server->remove(project);
+  numberOfOccurrences = 0;
+  foreach (ctkXnatObject* serverProject, server->children())
+  {
+    if (serverProject == project || serverProject->id() == project->id())
+    {
+      ++numberOfOccurrences;
+    }
+  }
+  QVERIFY(numberOfOccurrences == 0);
+  delete project;
+}
+
 void ctkXnatConnectionTestCase::testCreateProject()
 {
   Q_D(ctkXnatConnectionTestCase);
@@ -113,21 +151,62 @@ void ctkXnatConnectionTestCase::testCreateProject()
   QString projectId = QString("CTK_") + QUuid::createUuid().toString().mid(1, 8);
   d->Project = projectId;
 
-  ctkXnatProject* project = new ctkXnatProject();
+  ctkXnatProject* project = new ctkXnatProject(server);
   project->setId(projectId);
   project->setName(projectId);
-  project->setDescription("CTK test project");
-  server->add(project);
+  project->setDescription("CTK_test_project");
 
   bool exists = d->Connection->exists(project);
   QVERIFY(!exists);
 
-  d->Connection->create(project);
+  d->Connection->save(project);
 
   exists = d->Connection->exists(project);
   QVERIFY(exists);
 
-  d->Connection->create(project);
+  d->Connection->remove(project);
+
+  exists = d->Connection->exists(project);
+  QVERIFY(!exists);
+}
+
+void ctkXnatConnectionTestCase::testCreateSubject()
+{
+  Q_D(ctkXnatConnectionTestCase);
+
+  ctkXnatServer* server = d->Connection->server();
+
+  QString projectId = QString("CTK_") + QUuid::createUuid().toString().mid(1, 8);
+  d->Project = projectId;
+
+  ctkXnatProject* project = new ctkXnatProject(server);
+  project->setId(projectId);
+  project->setName(projectId);
+  project->setDescription("CTK_test_project");
+
+  QVERIFY(!project->exists());
+
+  project->save();
+
+  QVERIFY(project->exists());
+
+  ctkXnatSubject* subject = new ctkXnatSubject(project);
+
+  QString subjectName = QString("CTK_S") + QUuid::createUuid().toString().mid(1, 8);
+  subject->setId(subjectName);
+  subject->setName(subjectName);
+
+  subject->save();
+
+  QVERIFY(!subject->id().isNull());
+
+  subject->erase();
+
+  QVERIFY(!subject->exists());
+
+  project->erase();
+
+  QVERIFY(!project->exists());
 }
 
 // --------------------------------------------------------------------------

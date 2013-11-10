@@ -34,7 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatSubject : public ctkXnatObject
 
 public:
 
-  explicit ctkXnatSubject(const QString& schemaType = "xnat:subjectData");
+  explicit ctkXnatSubject(ctkXnatProject* parent = 0, const QString& schemaType = "xnat:subjectData");
   virtual ~ctkXnatSubject();
 
   ctkXnatProject* getPrimaryProject() const;

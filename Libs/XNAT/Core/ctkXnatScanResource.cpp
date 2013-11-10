@@ -23,6 +23,7 @@
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatScan.h"
 
 class ctkXnatScanResourcePrivate : public ctkXnatObjectPrivate
 {
@@ -42,8 +43,8 @@ public:
 };
 
 
-ctkXnatScanResource::ctkXnatScanResource()
-: ctkXnatObject(*new ctkXnatScanResourcePrivate())
+ctkXnatScanResource::ctkXnatScanResource(ctkXnatScan* parent)
+: ctkXnatObject(*new ctkXnatScanResourcePrivate(), parent)
 {
 }
 

@@ -23,6 +23,7 @@
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatServer.h"
 
 class ctkXnatProjectPrivate : public ctkXnatObjectPrivate
 {
@@ -47,8 +48,8 @@ public:
 //  QString uri;
 };
 
-ctkXnatProject::ctkXnatProject(const QString& schemaType)
-: ctkXnatObject(*new ctkXnatProjectPrivate(), schemaType)
+ctkXnatProject::ctkXnatProject(ctkXnatServer* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatProjectPrivate(), parent, schemaType)
 {
 }
 

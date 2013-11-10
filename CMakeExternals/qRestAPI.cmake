@@ -23,7 +23,7 @@ if(${add_project})
 
     if(NOT DEFINED qRestAPI_DIR)
 
-      set(revision_tag "5830a8146b")
+      set(revision_tag "d81b73b330")
       if(${proj}_REVISION_TAG)
         set(revision_tag ${${proj}_REVISION_TAG})
       endif()

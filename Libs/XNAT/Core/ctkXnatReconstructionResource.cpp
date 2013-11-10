@@ -23,6 +23,7 @@
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatReconstruction.h"
 
 class ctkXnatReconstructionResourcePrivate : public ctkXnatObjectPrivate
 {
@@ -42,8 +43,8 @@ public:
 };
 
 
-ctkXnatReconstructionResource::ctkXnatReconstructionResource()
-: ctkXnatObject(*new ctkXnatReconstructionResourcePrivate())
+ctkXnatReconstructionResource::ctkXnatReconstructionResource(ctkXnatReconstruction* parent)
+: ctkXnatObject(*new ctkXnatReconstructionResourcePrivate(), parent)
 {
 }
 

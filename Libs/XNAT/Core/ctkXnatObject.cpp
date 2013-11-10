@@ -29,17 +29,19 @@
 #include <QVariant>
 
 
-ctkXnatObject::ctkXnatObject(const QString& schemaType)
+ctkXnatObject::ctkXnatObject(ctkXnatObject* parent, const QString& schemaType)
 : d_ptr(new ctkXnatObjectPrivate())
 {
   Q_D(ctkXnatObject);
+  this->setParent(parent);
   d->schemaType = schemaType;
 }
 
-ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, const QString& schemaType)
+ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent, const QString& schemaType)
 : d_ptr(&dd)
 {
   Q_D(ctkXnatObject);
+  this->setParent(parent);
   d->schemaType = schemaType;
 }
 
@@ -106,21 +108,10 @@ void ctkXnatObject::setProperty(const QString& name, const QVariant& value)
   d->properties.insert(name, value.toString());
 }
 
-
-QList<QString> ctkXnatObject::properties()
+const QMap<QString, QString>& ctkXnatObject::properties() const
 {
-  Q_D(ctkXnatObject);
-  
-  QList<QString> value;
-
-  QMapIterator<QString, QString> it(d->properties);
-  while (it.hasNext())
-  {
-    it.next();
-    value.push_back (it.key());
-  }
-
-  return value;
+  Q_D(const ctkXnatObject);
+  return d->properties;
 }
 
 ctkXnatObject* ctkXnatObject::parent() const
@@ -171,10 +162,6 @@ void ctkXnatObject::add(ctkXnatObject* child)
 void ctkXnatObject::remove(ctkXnatObject* child)
 {
   Q_D(ctkXnatObject);
-  if (child->parent() == this)
-  {
-    child->d_func()->parent = 0;
-  }
   if (!d->children.removeOne(child))
   {
     qWarning() << "ctkXnatObject::remove(): Child does not exist";
@@ -225,4 +212,20 @@ void ctkXnatObject::download(const QString& /*zipFilename*/)
 
 void ctkXnatObject::upload(const QString& /*zipFilename*/)
 {
+}
+
+bool ctkXnatObject::exists() const
+{
+  return this->connection()->exists(this);
+}
+
+void ctkXnatObject::save()
+{
+  this->connection()->save(this);
+}
+
+void ctkXnatObject::erase()
+{
+  this->connection()->remove(this);
+  this->parent()->remove(this);
 }

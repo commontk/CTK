@@ -23,6 +23,7 @@
 
 #include "ctkXnatConnection.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatSubject.h"
 
 class ctkXnatExperimentPrivate : public ctkXnatObjectPrivate
 {
@@ -42,8 +43,8 @@ public:
 };
 
 
-ctkXnatExperiment::ctkXnatExperiment(const QString& schemaType)
-: ctkXnatObject(*new ctkXnatExperimentPrivate(), schemaType)
+ctkXnatExperiment::ctkXnatExperiment(ctkXnatSubject* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatExperimentPrivate(), parent, schemaType)
 {
 }
 

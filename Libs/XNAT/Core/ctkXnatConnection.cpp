@@ -25,7 +25,6 @@
 #include "ctkXnatExperiment.h"
 #include "ctkXnatFile.h"
 #include "ctkXnatObject.h"
-#include "ctkXnatObjectPrivate.h"
 #include "ctkXnatProject.h"
 #include "ctkXnatReconstruction.h"
 #include "ctkXnatReconstructionFolder.h"
@@ -385,7 +384,7 @@ void ctkXnatConnection::fetch(ctkXnatReconstructionResource* reconstructionResou
   }
 }
 
-bool ctkXnatConnection::exists(ctkXnatObject* object)
+bool ctkXnatConnection::exists(const ctkXnatObject* object)
 {
   Q_D(ctkXnatConnection);
 
@@ -395,17 +394,38 @@ bool ctkXnatConnection::exists(ctkXnatObject* object)
   return success;
 }
 
-void ctkXnatConnection::create(ctkXnatObject* object)
+void ctkXnatConnection::save(ctkXnatObject* object)
 {
   Q_D(ctkXnatConnection);
 
   QString query = object->resourceUri();
-  qDebug() << "ctkXnatConnection::create() query:" << query;
-  bool success = d->xnat->sync(d->xnat->put(query));
 
-  if (!success)
+  query.append(QString("?%1=%2").arg("xsi:type", object->schemaType()));
+  const QMap<QString, QString>& properties = object->properties();
+  QMapIterator<QString, QString> itProperties(properties);
+  while (itProperties.hasNext())
+  {
+    itProperties.next();
+    query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
+  }
+
+  qDebug() << "ctkXnatConnection::create() query:" << query;
+  QUuid queryId = d->xnat->put(query);
+  qRestResult* result = d->xnat->takeResult(queryId);
+
+  if (!result || !result->error().isNull())
   {
     throw ctkXnatException("Error occurred while creating the data.");
+  }
+
+  const QList<QVariantMap>& maps = result->results();
+  if (maps.size() == 1 && maps[0].size() == 1)
+  {
+    QVariant id = maps[0]["ID"];
+    if (!id.isNull())
+    {
+      object->setId(id.toString());
+    }
   }
 }
 

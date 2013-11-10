@@ -42,11 +42,15 @@ private slots:
 
   void cleanupTestCase();
 
+  void testParentChild();
+
   void testProjectList();
 
   void testResourceUri();
 
   void testCreateProject();
+
+  void testCreateSubject();
 
 private:
   QScopedPointer<ctkXnatConnectionTestCasePrivate> d_ptr;

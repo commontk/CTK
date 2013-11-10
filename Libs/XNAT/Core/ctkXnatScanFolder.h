@@ -27,6 +27,7 @@
 #include "ctkXnatObject.h"
 
 class ctkXnatConnection;
+class ctkXnatExperiment;
 class ctkXnatScanFolderPrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatScanFolder : public ctkXnatObject
@@ -34,7 +35,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatScanFolder : public ctkXnatObject
 
 public:
   
-  explicit ctkXnatScanFolder();
+  explicit ctkXnatScanFolder(ctkXnatExperiment* parent = 0);
   virtual ~ctkXnatScanFolder();
   
   virtual QString resourceUri() const;

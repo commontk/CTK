@@ -46,7 +46,7 @@ private:
 
   QString schemaType;
 
-  QMap<QString,QString> properties;
+  QMap<QString, QString> properties;
 
   QList<ctkXnatObject*> children;
 

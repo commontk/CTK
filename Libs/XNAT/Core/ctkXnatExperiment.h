@@ -28,13 +28,14 @@
 
 class ctkXnatConnection;
 class ctkXnatExperimentPrivate;
+class ctkXnatSubject;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatExperiment : public ctkXnatObject
 {
   
 public:
   
-  explicit ctkXnatExperiment(const QString& schemaType = "xnat:experimentData");
+  explicit ctkXnatExperiment(ctkXnatSubject* parent = 0, const QString& schemaType = "xnat:experimentData");
   virtual ~ctkXnatExperiment();
   
   virtual QString resourceUri() const;

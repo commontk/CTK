@@ -34,7 +34,7 @@ class CTK_XNAT_CORE_EXPORT ctkXnatFile : public ctkXnatObject
 
 public:
 
-  explicit ctkXnatFile();
+  explicit ctkXnatFile(ctkXnatObject* parent = 0);
   virtual ~ctkXnatFile();
   
   virtual QString resourceUri() const;
