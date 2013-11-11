@@ -21,7 +21,7 @@
 
 #include "ctkXnatScan.h"
 
-#include "ctkXnatConnection.h"
+#include "ctkXnatSession.h"
 #include "ctkXnatScanFolder.h"
 #include "ctkXnatObjectPrivate.h"
 
@@ -38,7 +38,7 @@ public:
   {
     uri.clear();
   }
-  
+
   QString uri;
 };
 
@@ -64,5 +64,5 @@ void ctkXnatScan::reset()
 
 void ctkXnatScan::fetchImpl()
 {
-  this->connection()->fetch(this);
+  this->session()->fetch(this);
 }

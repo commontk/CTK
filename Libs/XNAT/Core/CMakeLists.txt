@@ -8,21 +8,21 @@ set(KIT_export_directive "CTK_XNAT_CORE_EXPORT")
 
 set(KIT_SRCS
   ctkXnatAPI.cpp
-  ctkXnatConnection.cpp
-  ctkXnatConnectionFactory.cpp
+  ctkXnatDataModel.cpp
   ctkXnatException.cpp
   ctkXnatExperiment.cpp
   ctkXnatFile.cpp
   ctkXnatObject.cpp
   ctkXnatObjectPrivate.cpp
   ctkXnatProject.cpp
-  ctkXnatScan.cpp
-  ctkXnatScanFolder.cpp
-  ctkXnatScanResource.cpp
   ctkXnatReconstruction.cpp
   ctkXnatReconstructionFolder.cpp
   ctkXnatReconstructionResource.cpp
-  ctkXnatServer.cpp
+  ctkXnatScan.cpp
+  ctkXnatScanFolder.cpp
+  ctkXnatScanResource.cpp
+  ctkXnatSession.cpp
+  ctkXnatSessionFactory.cpp
   ctkXnatSettings.cpp
   ctkXnatSubject.cpp
 )

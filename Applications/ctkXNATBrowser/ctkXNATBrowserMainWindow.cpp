@@ -24,9 +24,9 @@
 
 #include "ctkXnatLoginDialog.h"
 #include "ctkXnatProjectListModel.h"
-#include "ctkXnatConnection.h"
-#include "ctkXnatConnectionFactory.h"
-#include "ctkXnatServer.h"
+#include "ctkXnatSession.h"
+#include "ctkXnatSessionFactory.h"
+#include "ctkXnatDataModel.h"
 #include "ctkXnatProject.h"
 
 #include <QDebug>
@@ -34,8 +34,8 @@
 ctkXNATBrowserMainWindow::ctkXNATBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkXNATBrowserMainWindow),
-  m_ConnectionFactory(new ctkXnatConnectionFactory()),
-  m_Connection(0),
+  m_SessionFactory(new ctkXnatSessionFactory()),
+  m_Session(0),
   m_ProjectsModel(new ctkXnatProjectListModel()),
   m_SubjectsModel(new ctkXnatProjectListModel())
 {
@@ -50,11 +50,11 @@ ctkXNATBrowserMainWindow::ctkXNATBrowserMainWindow(QWidget *parent) :
 
 ctkXNATBrowserMainWindow::~ctkXNATBrowserMainWindow()
 {
-  if (m_Connection)
+  if (m_Session)
   {
-    delete m_Connection;
+    delete m_Session;
   }
-  delete m_ConnectionFactory;
+  delete m_SessionFactory;
   delete ui;
 
   delete m_SubjectsModel;
@@ -63,10 +63,10 @@ ctkXNATBrowserMainWindow::~ctkXNATBrowserMainWindow()
 
 void ctkXNATBrowserMainWindow::loginButtonPushed()
 {
-  if (m_Connection)
+  if (m_Session)
   {
-    delete m_Connection;
-    m_Connection = 0;
+    delete m_Session;
+    m_Session = 0;
     ui->loginButton->setText("Login");
     ui->loginLabel->setText("Disconnected");
 
@@ -75,19 +75,19 @@ void ctkXNATBrowserMainWindow::loginButtonPushed()
   }
   else
   {
-    ctkXnatLoginDialog loginDialog(m_ConnectionFactory);
+    ctkXnatLoginDialog loginDialog(m_SessionFactory);
     if (loginDialog.exec() == QDialog::Accepted)
     {
-      m_Connection = loginDialog.getConnection();
-      if (m_Connection)
+      m_Session = loginDialog.getSession();
+      if (m_Session)
       {
         ui->loginButton->setText("Logout");
-        ui->loginLabel->setText(QString("Connected: %1").arg(m_Connection->url()));
+        ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url()));
 
-        ctkXnatServer* server = m_Connection->server();
+        ctkXnatDataModel* dataModel = m_Session->dataModel();
         //xnatConnection->fetch(server);
-        server->fetch();
-        m_ProjectsModel->setRootObject(server);
+        dataModel->fetch();
+        m_ProjectsModel->setRootObject(dataModel);
         ui->projectsList->reset();
       }
     }

@@ -21,9 +21,9 @@
 
 #include "ctkXnatProject.h"
 
-#include "ctkXnatConnection.h"
+#include "ctkXnatDataModel.h"
+#include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
-#include "ctkXnatServer.h"
 
 class ctkXnatProjectPrivate : public ctkXnatObjectPrivate
 {
@@ -48,7 +48,7 @@ public:
 //  QString uri;
 };
 
-ctkXnatProject::ctkXnatProject(ctkXnatServer* parent, const QString& schemaType)
+ctkXnatProject::ctkXnatProject(ctkXnatDataModel* parent, const QString& schemaType)
 : ctkXnatObject(*new ctkXnatProjectPrivate(), parent, schemaType)
 {
 }
@@ -117,5 +117,5 @@ void ctkXnatProject::reset()
 
 void ctkXnatProject::fetchImpl()
 {
-  this->connection()->fetch(this);
+  this->session()->fetch(this);
 }

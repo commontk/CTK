@@ -27,8 +27,8 @@
 #include <QStringListModel>
 #include <QTimer>
 
-#include <ctkXnatConnection.h>
-#include <ctkXnatConnectionFactory.h>
+#include <ctkXnatSession.h>
+#include <ctkXnatSessionFactory.h>
 #include <ctkException.h>
 #include "ctkXnatLoginProfile.h"
 #include "ctkXnatSettings.h"
@@ -36,15 +36,15 @@
 class ctkXnatLoginDialogPrivate
 {
 public:
-  ctkXnatLoginDialogPrivate(ctkXnatConnectionFactory* f)
+  ctkXnatLoginDialogPrivate(ctkXnatSessionFactory* f)
   : Factory(f)
   {
   }
 
   ctkXnatSettings* Settings;
 
-  ctkXnatConnectionFactory* Factory;
-  ctkXnatConnection* Connection;
+  ctkXnatSessionFactory* Factory;
+  ctkXnatSession* Session;
 
   QMap<QString, ctkXnatLoginProfile*> Profiles;
 
@@ -54,7 +54,7 @@ public:
   bool Dirty;
 };
 
-ctkXnatLoginDialog::ctkXnatLoginDialog(ctkXnatConnectionFactory* f, QWidget* parent, Qt::WindowFlags flags)
+ctkXnatLoginDialog::ctkXnatLoginDialog(ctkXnatSessionFactory* f, QWidget* parent, Qt::WindowFlags flags)
 : QDialog(parent, flags)
 , ui(0)
 , d_ptr(new ctkXnatLoginDialogPrivate(f))
@@ -63,7 +63,7 @@ ctkXnatLoginDialog::ctkXnatLoginDialog(ctkXnatConnectionFactory* f, QWidget* par
 
   // initialize data members
   d->Settings = 0;
-  d->Connection = 0;
+  d->Session = 0;
   d->Dirty = false;
 
   if (!ui)
@@ -132,7 +132,7 @@ void ctkXnatLoginDialog::setSettings(ctkXnatSettings* settings)
   d->ProfileNames = d->Profiles.keys();
   d->ProfileNames.sort();
   d->Model.setStringList(d->ProfileNames);
-  
+
   ctkXnatLoginProfile* defaultProfile = d->Settings->getDefaultLoginProfile();
 
   if (defaultProfile)
@@ -147,10 +147,10 @@ void ctkXnatLoginDialog::setSettings(ctkXnatSettings* settings)
     }
 }
 
-ctkXnatConnection* ctkXnatLoginDialog::getConnection()
+ctkXnatSession* ctkXnatLoginDialog::getSession()
 {
   Q_D(ctkXnatLoginDialog);
-  return d->Connection;
+  return d->Session;
 }
 
 void ctkXnatLoginDialog::accept()
@@ -189,9 +189,9 @@ void ctkXnatLoginDialog::accept()
   // create XNAT connection
   try
     {
-    d->Connection = d->Factory->makeConnection(url.toAscii().constData(), userName.toAscii().constData(),
+    d->Session = d->Factory->makeConnection(url.toAscii().constData(), userName.toAscii().constData(),
                                         password.toAscii().constData());
-    d->Connection->setProfileName(ui->edtProfileName->text());
+    d->Session->setProfileName(ui->edtProfileName->text());
     }
   catch (const ctkException& e)
     {
@@ -265,7 +265,7 @@ bool ctkXnatLoginDialog::askToSaveProfile(const QString& profileName)
 void ctkXnatLoginDialog::saveProfile(const QString& profileName)
 {
   Q_D(ctkXnatLoginDialog);
-  
+
   ctkXnatLoginProfile* profile = d->Profiles[profileName];
   bool oldProfileWasDefault = profile && profile->isDefault();
   if (!profile)
@@ -273,7 +273,7 @@ void ctkXnatLoginDialog::saveProfile(const QString& profileName)
     profile = new ctkXnatLoginProfile();
     d->Profiles[profileName] = profile;
     int profileNumber = d->ProfileNames.size();
-    
+
     // Insertion into the profile name list and the listView (ascending order)
     int idx = 0;
     while (idx < profileNumber && QString::localeAwareCompare(profileName, d->ProfileNames[idx]) > 0)
@@ -284,9 +284,9 @@ void ctkXnatLoginDialog::saveProfile(const QString& profileName)
     d->Model.insertRow(idx);
     d->Model.setData(d->Model.index(idx), profileName);
     }
-  
+
   this->storeProfile(*profile);
-  
+
   // If the profile is to be default then remove the default flag from the other profiles.
   // This code assumes that the newly created profiles are not default.
   if (profile->isDefault() && !oldProfileWasDefault)
@@ -304,7 +304,7 @@ void ctkXnatLoginDialog::saveProfile(const QString& profileName)
         }
       }
     }
-  
+
   if (d->Settings)
     {
     d->Settings->setLoginProfile(profileName, profile);
@@ -319,7 +319,7 @@ void ctkXnatLoginDialog::on_btnSave_clicked()
   QString editedProfileName = ui->edtProfileName->text();
 
   bool selectSavedProfile = true;
-  
+
   QModelIndex currentIndex = ui->lstProfiles->currentIndex();
   if (currentIndex.isValid())
     {
@@ -387,7 +387,7 @@ void ctkXnatLoginDialog::on_btnDelete_clicked()
     ui->btnDelete->setEnabled(false);
     ui->edtProfileName->setFocus();
     }
-  
+
   if (d->Settings)
     {
     d->Settings->removeLoginProfile(profileName);

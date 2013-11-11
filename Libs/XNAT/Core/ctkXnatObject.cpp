@@ -22,8 +22,8 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 
-#include "ctkXnatConnection.h"
-#include "ctkXnatServer.h"
+#include "ctkXnatSession.h"
+#include "ctkXnatDataModel.h"
 
 #include <QDebug>
 #include <QVariant>
@@ -192,18 +192,15 @@ void ctkXnatObject::fetch()
   }
 }
 
-ctkXnatConnection* ctkXnatObject::connection() const
+ctkXnatSession* ctkXnatObject::session() const
 {
   const ctkXnatObject* xnatObject = this;
-  const ctkXnatServer* server;
-  do
+  while (ctkXnatObject* parent = xnatObject->parent())
   {
-    xnatObject = xnatObject->parent();
-    server = dynamic_cast<const ctkXnatServer*>(xnatObject);
+    xnatObject = parent;
   }
-  while (xnatObject && !server);
-
-  return server ? xnatObject->connection() : 0;
+  const ctkXnatDataModel* dataModel = dynamic_cast<const ctkXnatDataModel*>(xnatObject);
+  return dataModel ? dataModel->session() : NULL;
 }
 
 void ctkXnatObject::download(const QString& /*zipFilename*/)
@@ -216,16 +213,16 @@ void ctkXnatObject::upload(const QString& /*zipFilename*/)
 
 bool ctkXnatObject::exists() const
 {
-  return this->connection()->exists(this);
+  return this->session()->exists(this);
 }
 
 void ctkXnatObject::save()
 {
-  this->connection()->save(this);
+  this->session()->save(this);
 }
 
 void ctkXnatObject::erase()
 {
-  this->connection()->remove(this);
+  this->session()->remove(this);
   this->parent()->remove(this);
 }

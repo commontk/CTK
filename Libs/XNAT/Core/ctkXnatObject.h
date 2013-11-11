@@ -29,7 +29,7 @@
 #include <QString>
 #include <QMetaType>
 
-class ctkXnatConnection;
+class ctkXnatSession;
 class ctkXnatObjectPrivate;
 
 //----------------------------------------------------------------------------
@@ -117,6 +117,21 @@ public:
   virtual void download(const QString&);
   virtual void upload(const QString&);
 
+  //QObject* asyncObject() const;
+
+  // *********************
+  // Add signals for async API
+  //Q_SIGNAL downloadFinished(const QString&);
+
+  // *********************
+  // SLOTS for async error handling
+  //Q_SLOT serverError(XnatError errorType, const QString& message);
+
+  // *********************
+  // Add blocking methods
+  // throws ctkXnatTimeoutException
+  //bool waitForDownloadFinished(const QString&);
+
 protected:
 
   /// Constructs the ctkXnatObject.
@@ -127,7 +142,7 @@ protected:
 
   /// Gets the object that represents the connection to the XNAT server
   /// that stores the current object.
-  virtual ctkXnatConnection* connection() const;
+  ctkXnatSession* session() const;
 
   /// The private implementation part of the object.
   const QScopedPointer<ctkXnatObjectPrivate> d_ptr;

@@ -27,7 +27,7 @@
 #include <QAbstractItemModel>
 
 #include "ctkXnatTreeItem.h"
-#include "ctkXnatServer.h"
+#include "ctkXnatDataModel.h"
 
 
 class CTK_XNAT_WIDGETS_EXPORT ctkXnatTreeModel : public QAbstractItemModel
@@ -49,13 +49,13 @@ public:
 
   ctkXnatObject* xnatObject(const QModelIndex& index) const;
 
-  void addServer(ctkXnatServer* server);
+  void addDataModel(ctkXnatDataModel* dataModel);
 
   bool removeAllRows(const QModelIndex& parent);
 
   void uploadFile(const QModelIndex& index, const QString& zipFilename);
   void downloadFile (const QModelIndex& index, const QString& zipFilename);
-  
+
 private:
 
   ctkXnatTreeItem* itemAt(const QModelIndex& index) const;

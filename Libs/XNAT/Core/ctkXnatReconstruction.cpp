@@ -21,7 +21,7 @@
 
 #include "ctkXnatReconstruction.h"
 
-#include "ctkXnatConnection.h"
+#include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatReconstructionFolder.h"
 
@@ -38,7 +38,7 @@ public:
   {
     uri.clear();
   }
-  
+
   QString uri;
 };
 
@@ -64,5 +64,5 @@ void ctkXnatReconstruction::reset()
 
 void ctkXnatReconstruction::fetchImpl()
 {
-  this->connection()->fetch(this);
+  this->session()->fetch(this);
 }

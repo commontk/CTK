@@ -26,16 +26,15 @@
 
 #include "ctkXnatObject.h"
 
-class ctkXnatConnection;
+class ctkXnatDataModel;
 class ctkXnatProjectPrivate;
-class ctkXnatServer;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatProject : public ctkXnatObject
 {
 
 public:
 
-  explicit ctkXnatProject(ctkXnatServer* parent = 0, const QString& schemaType = "xnat:projectData");
+  explicit ctkXnatProject(ctkXnatDataModel* parent = 0, const QString& schemaType = "xnat:projectData");
   virtual ~ctkXnatProject();
 
   virtual QString resourceUri() const;
@@ -50,7 +49,7 @@ public:
   void setPiLastName(const QString& piLastName);
 
   void reset();
-  
+
 private:
 
   friend class qRestResult;

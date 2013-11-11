@@ -21,7 +21,7 @@
 
 #include "ctkXnatFile.h"
 
-#include "ctkXnatConnection.h"
+#include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 
 
@@ -38,7 +38,7 @@ public:
   {
 //    uri.clear();
   }
-  
+
 //  QString uri;
 };
 
@@ -58,7 +58,7 @@ QString ctkXnatFile::resourceUri() const
 
 void ctkXnatFile::download(const QString& filename)
 {
-  this->connection()->download(this, filename);
+  this->session()->download(this, filename);
 }
 
 void ctkXnatFile::upload(const QString& /*filename*/)

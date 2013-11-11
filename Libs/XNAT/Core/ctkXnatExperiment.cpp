@@ -21,7 +21,7 @@
 
 #include "ctkXnatExperiment.h"
 
-#include "ctkXnatConnection.h"
+#include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSubject.h"
 
@@ -38,7 +38,7 @@ public:
   {
 //    uri.clear();
   }
-  
+
 //  QString uri;
 };
 
@@ -64,5 +64,5 @@ void ctkXnatExperiment::reset()
 
 void ctkXnatExperiment::fetchImpl()
 {
-  this->connection()->fetch(this);
+  this->session()->fetch(this);
 }

@@ -24,17 +24,17 @@
 
 #include "ctkXnatLoginDialog.h"
 #include "ctkXnatTreeModel.h"
-#include "ctkXnatConnection.h"
-#include "ctkXnatConnectionFactory.h"
-#include "ctkXnatServer.h"
+#include "ctkXnatSession.h"
+#include "ctkXnatSessionFactory.h"
+#include "ctkXnatDataModel.h"
 #include "ctkXnatProject.h"
 #include "ctkXnatFile.h"
 
 ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkXnatTreeBrowserMainWindow),
-  m_ConnectionFactory(new ctkXnatConnectionFactory()),
-  m_Connection(0),
+  m_SessionFactory(new ctkXnatSessionFactory()),
+  m_Session(0),
   m_TreeModel(new ctkXnatTreeModel())
 {
   ui->setupUi(this);
@@ -49,11 +49,11 @@ ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
 
 ctkXnatTreeBrowserMainWindow::~ctkXnatTreeBrowserMainWindow()
 {
-  if (m_Connection)
+  if (m_Session)
   {
-    delete m_Connection;
+    delete m_Session;
   }
-  delete m_ConnectionFactory;
+  delete m_SessionFactory;
   delete ui;
 
   delete m_TreeModel;
@@ -61,10 +61,10 @@ ctkXnatTreeBrowserMainWindow::~ctkXnatTreeBrowserMainWindow()
 
 void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
 {
-  if (m_Connection)
+  if (m_Session)
   {
-    delete m_Connection;
-    m_Connection = 0;
+    delete m_Session;
+    m_Session = 0;
     ui->loginButton->setText("Login");
     ui->loginLabel->setText("Disconnected");
     ui->downloadLabel->hide();
@@ -74,17 +74,17 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
   }
   else
   {
-    ctkXnatLoginDialog loginDialog(m_ConnectionFactory);
+    ctkXnatLoginDialog loginDialog(m_SessionFactory);
     if (loginDialog.exec() == QDialog::Accepted)
     {
-      m_Connection = loginDialog.getConnection();
-      if (m_Connection)
+      m_Session = loginDialog.getSession();
+      if (m_Session)
       {
         ui->loginButton->setText("Logout");
-        ui->loginLabel->setText(QString("Connected: %1").arg(m_Connection->url()));
+        ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url()));
 
-        ctkXnatServer* server = m_Connection->server();
-        m_TreeModel->addServer(server);
+        ctkXnatDataModel* dataModel = m_Session->dataModel();
+        m_TreeModel->addDataModel(dataModel);
         ui->treeView->reset();
         ui->downloadLabel->show();
       }

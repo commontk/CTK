@@ -1,0 +1,80 @@
+/*=============================================================================
+
+  Plugin: org.commontk.xnat
+
+  Copyright (c) University College London,
+    Centre for Medical Image Computing
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+=============================================================================*/
+
+#include "ctkXnatDataModel.h"
+
+#include "ctkXnatObjectPrivate.h"
+#include "ctkXnatSession.h"
+#include "ctkXnatProject.h"
+
+#include <QDebug>
+
+class ctkXnatDataModelPrivate : public ctkXnatObjectPrivate
+{
+  explicit ctkXnatDataModelPrivate(ctkXnatSession* session);
+  virtual ~ctkXnatDataModelPrivate();
+
+private:
+  friend class ctkXnatDataModel;
+
+  ctkXnatSession* session;
+};
+
+ctkXnatDataModelPrivate::ctkXnatDataModelPrivate(ctkXnatSession* connection)
+: ctkXnatObjectPrivate()
+, session(connection)
+{
+}
+
+ctkXnatDataModelPrivate::~ctkXnatDataModelPrivate()
+{
+}
+
+ctkXnatDataModel::ctkXnatDataModel(ctkXnatSession* session)
+: ctkXnatObject(*new ctkXnatDataModelPrivate(session))
+{
+}
+
+QList<ctkXnatProject*> ctkXnatDataModel::projects() const
+{
+  QList<ctkXnatProject*> result;
+  foreach(ctkXnatObject* obj, this->children())
+  {
+    result.push_back(static_cast<ctkXnatProject*>(obj));
+  }
+  return result;
+}
+
+QString ctkXnatDataModel::resourceUri() const
+{
+  return "";
+}
+
+void ctkXnatDataModel::fetchImpl()
+{
+  this->session()->fetch(this);
+}
+
+ctkXnatSession* ctkXnatDataModel::session() const
+{
+  Q_D(const ctkXnatDataModel);
+  return d->session;
+}

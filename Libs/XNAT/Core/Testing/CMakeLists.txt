@@ -1,7 +1,7 @@
 set(KIT ${PROJECT_NAME})
 
 set(KITTests_SRCS
-  ctkXnatConnectionTest.cpp
+  ctkXnatSessionTest.cpp
   )
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
@@ -9,7 +9,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   )
 
 set(KITTests_MOC_SRCS
-  ctkXnatConnectionTest.h
+  ctkXnatSessionTest.h
   )
 
 QT4_WRAP_CPP(KITTests_MOC_CPP ${KITTests_MOC_SRCS})
@@ -21,4 +21,4 @@ macro(SIMPLE_TEST TESTNAME)
   add_test(NAME ${TESTNAME} COMMAND ${KIT}Tests ${TESTNAME})
 endmacro()
 
-SIMPLE_TEST(ctkXnatConnectionTest)
+SIMPLE_TEST(ctkXnatSessionTest)

@@ -23,7 +23,7 @@
 
 #include "ctkXnatProject.h"
 
-#include "ctkXnatConnection.h"
+#include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatProject.h"
 
@@ -97,5 +97,5 @@ void ctkXnatSubject::reset()
 
 void ctkXnatSubject::fetchImpl()
 {
-  connection()->fetch(this);
+  this->session()->fetch(this);
 }

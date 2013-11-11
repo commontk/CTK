@@ -21,7 +21,7 @@
 
 #include "ctkXnatScanResource.h"
 
-#include "ctkXnatConnection.h"
+#include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatScan.h"
 
@@ -38,7 +38,7 @@ public:
   {
 //    uri.clear();
   }
-  
+
 //  QString uri;
 };
 
@@ -64,10 +64,10 @@ void ctkXnatScanResource::reset()
 
 void ctkXnatScanResource::fetchImpl()
 {
-  this->connection()->fetch(this);
+  this->session()->fetch(this);
 }
 
 void ctkXnatScanResource::download(const QString& filename)
 {
-  this->connection()->download(this, filename);
+  this->session()->download(this, filename);
 }

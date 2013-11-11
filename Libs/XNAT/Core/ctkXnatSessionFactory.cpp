@@ -19,45 +19,45 @@
 
 =============================================================================*/
 
-#include "ctkXnatConnectionFactory.h"
+#include "ctkXnatSessionFactory.h"
 
-#include "ctkXnatConnection.h"
+#include "ctkXnatSession.h"
 #include "ctkXnatObject.h"
-#include "ctkXnatServer.h"
+#include "ctkXnatDataModel.h"
 
 #include <QDebug>
 
-// ctkXnatConnectionFactory class
+// ctkXnatSessionFactory class
 
-ctkXnatConnection* ctkXnatConnectionFactory::makeConnection(const QString& url, const QString& user, const QString& password)
+ctkXnatSession* ctkXnatSessionFactory::makeConnection(const QString& url, const QString& user, const QString& password)
 {
   // create XNAT connection
-  ctkXnatConnection* connection = new ctkXnatConnection;
+  ctkXnatSession* session = new ctkXnatSession;
 
   // test XNAT connection
   try
   {
-    testConnection(connection);
+    testConnection(session);
   }
   catch (...)
   {
-    delete connection;
+    delete session;
     throw;
   }
 
-  connection->setUrl(url);
-  qDebug() << "ctkXnatConnectionFactory::makeConnection(const QString& url, const QString& user, const QString& password) url:" << url;
-  connection->setUserName(user);
-  connection->setPassword(password);
+  session->setUrl(url);
+  qDebug() << "ctkXnatSessionFactory::makeConnection(const QString& url, const QString& user, const QString& password) url:" << url;
+  session->setUserName(user);
+  session->setPassword(password);
 
   // return XNAT connection
-  return connection;
+  return session;
 }
 
-void ctkXnatConnectionFactory::testConnection(ctkXnatConnection* connection)
+void ctkXnatSessionFactory::testConnection(ctkXnatSession* session)
 {
   // test connection by retrieving project names from XNAT
-  ctkXnatServer* server = connection->server();
+  session->dataModel();
 
   // TODO E.g. get version
 }

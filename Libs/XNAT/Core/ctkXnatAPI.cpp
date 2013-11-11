@@ -65,7 +65,7 @@ void ctkXnatAPI::parseResponse(qRestResult* restResult, const QByteArray& respon
     {
     // Some operations return an XML description of an object.
     // E.g. GET query for a specific subject.
-    restResult->setError(qRestAPI::ResponseParseError, QString("Bad data: ") + response);
+    restResult->setError(QString("Bad data: ") + response, qRestAPI::ResponseParseError);
     }
   else if (response.startsWith("<?xml "))
     {
@@ -89,7 +89,7 @@ void ctkXnatAPI::parseResponse(qRestResult* restResult, const QByteArray& respon
     }
   else
     {
-    restResult->setError(qRestAPI::ResponseParseError, QString("Bad data: ") + response);
+    restResult->setError(QString("Bad data: ") + response, qRestAPI::ResponseParseError);
     }
 
   restResult->setResult(result);
@@ -117,7 +117,7 @@ QList<QVariantMap> ctkXnatAPI::parseJsonResponse(qRestResult* restResult, const 
     {
     if (!data.toString().isEmpty())
       {
-      restResult->setError(qRestAPI::ResponseParseError, QString("Bad data: ") + data.toString());
+      restResult->setError(QString("Bad data: ") + data.toString(), qRestAPI::ResponseParseError);
       }
     }
   if (data.isArray())

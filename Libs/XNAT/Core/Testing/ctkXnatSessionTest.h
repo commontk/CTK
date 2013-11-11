@@ -18,14 +18,14 @@
 
 =========================================================================*/
 
-#ifndef __ctkXnatConnectionTest_h
-#define __ctkXnatConnectionTest_h
+#ifndef __CTKXNATSESSIONTEST_H
+#define __CTKXNATSESSIONTEST_H
 
 #include <QObject>
 
-class ctkXnatConnectionTestCasePrivate;
+class ctkXnatSessionTestCasePrivate;
 
-class ctkXnatConnectionTestCase: public QObject
+class ctkXnatSessionTestCase: public QObject
 {
   Q_OBJECT
 
@@ -33,8 +33,8 @@ class ctkXnatConnectionTestCase: public QObject
 
 public:
 
-  explicit ctkXnatConnectionTestCase();
-  virtual ~ctkXnatConnectionTestCase();
+  explicit ctkXnatSessionTestCase();
+  virtual ~ctkXnatSessionTestCase();
 
 private slots:
 
@@ -53,13 +53,13 @@ private slots:
   void testCreateSubject();
 
 private:
-  QScopedPointer<ctkXnatConnectionTestCasePrivate> d_ptr;
+  QScopedPointer<ctkXnatSessionTestCasePrivate> d_ptr;
 
-  Q_DECLARE_PRIVATE(ctkXnatConnectionTestCase);
-  Q_DISABLE_COPY(ctkXnatConnectionTestCase);
+  Q_DECLARE_PRIVATE(ctkXnatSessionTestCase)
+  Q_DISABLE_COPY(ctkXnatSessionTestCase)
 };
 
 // --------------------------------------------------------------------------
-int ctkXnatConnectionTest(int argc, char* argv[]);
+int ctkXnatSessionTest(int argc, char* argv[]);
 
 #endif

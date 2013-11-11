@@ -19,24 +19,24 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatConnectionFactory_h
-#define ctkXnatConnectionFactory_h
+#ifndef CTKXNATSESSIONFACTORY_H
+#define CTKXNATSESSIONFACTORY_H
 
 #include "ctkXNATCoreExport.h"
 
 #include <QString>
 
-class ctkXnatConnection;
+class ctkXnatSession;
 
-class CTK_XNAT_CORE_EXPORT ctkXnatConnectionFactory
+class CTK_XNAT_CORE_EXPORT ctkXnatSessionFactory
 {
 public:
 
-  ctkXnatConnection* makeConnection(const QString& url, const QString& user, const QString& password);
+  ctkXnatSession* makeConnection(const QString& url, const QString& user, const QString& password);
 
 private:
 
-  void testConnection(ctkXnatConnection* conn);
+  void testConnection(ctkXnatSession* conn);
 };
 
 #endif

@@ -19,36 +19,36 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatServer_h
-#define ctkXnatServer_h
+#ifndef CTKXNATDATAMODEL_H
+#define CTKXNATDATAMODEL_H
 
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
-#include "ctkXnatProject.h"
 
-class ctkXnatConnection;
-class ctkXnatServerPrivate;
+class ctkXnatDataModelPrivate;
+class ctkXnatProject;
+class ctkXnatSession;
 
-class CTK_XNAT_CORE_EXPORT ctkXnatServer : public ctkXnatObject
+class ctkXnatDataModel : public ctkXnatObject
 {
 
 public:
 
-  ctkXnatServer(ctkXnatConnection* connection);
+  ctkXnatDataModel(ctkXnatSession* connection);
 
-  virtual QString resourceUri() const;
+  QList<ctkXnatProject*> projects() const;
 
-protected:
-
-  virtual ctkXnatConnection* connection() const;
+  ctkXnatSession* session() const;
 
 private:
 
+  QString resourceUri() const;
+
   virtual void fetchImpl();
 
-  Q_DECLARE_PRIVATE(ctkXnatServer)
-  Q_DISABLE_COPY(ctkXnatServer)
+  Q_DECLARE_PRIVATE(ctkXnatDataModel)
+  Q_DISABLE_COPY(ctkXnatDataModel)
 };
 
 #endif

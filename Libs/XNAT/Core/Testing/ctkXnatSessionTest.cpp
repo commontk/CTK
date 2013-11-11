@@ -18,7 +18,7 @@
 
 =========================================================================*/
 
-#include "ctkXnatConnectionTest.h"
+#include "ctkXnatSessionTest.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -31,17 +31,17 @@
 #include <QUrl>
 #include <QUuid>
 
-#include <ctkXnatConnection.h>
-#include <ctkXnatConnectionFactory.h>
+#include <ctkXnatDataModel.h>
+#include <ctkXnatSession.h>
+#include <ctkXnatSessionFactory.h>
 #include <ctkXnatProject.h>
-#include <ctkXnatServer.h>
 #include <ctkXnatSubject.h>
 
-class ctkXnatConnectionTestCasePrivate
+class ctkXnatSessionTestCasePrivate
 {
 public:
-  ctkXnatConnectionFactory* ConnectionFactory;
-  ctkXnatConnection* Connection;
+  ctkXnatSessionFactory* SessionFactory;
+  ctkXnatSession* Session;
 
   QString ServerUri;
   QString UserName;
@@ -53,74 +53,75 @@ public:
 };
 
 // --------------------------------------------------------------------------
-ctkXnatConnectionTestCase::ctkXnatConnectionTestCase()
-: d_ptr(new ctkXnatConnectionTestCasePrivate())
+ctkXnatSessionTestCase::ctkXnatSessionTestCase()
+: d_ptr(new ctkXnatSessionTestCasePrivate())
 {
 }
 
 // --------------------------------------------------------------------------
-ctkXnatConnectionTestCase::~ctkXnatConnectionTestCase()
+ctkXnatSessionTestCase::~ctkXnatSessionTestCase()
 {
 }
 
 // --------------------------------------------------------------------------
-void ctkXnatConnectionTestCase::initTestCase()
+void ctkXnatSessionTestCase::initTestCase()
 {
-  Q_D(ctkXnatConnectionTestCase);
+  Q_D(ctkXnatSessionTestCase);
 
   d->ServerUri = "https://central.xnat.org";
   d->UserName = "ctk";
   d->Password = "ctk";
 
-  d->ConnectionFactory = new ctkXnatConnectionFactory();
-  d->Connection = d->ConnectionFactory->makeConnection(d->ServerUri, d->UserName, d->Password);
-  d->Connection->setProfileName("ctk");
+  d->SessionFactory = new ctkXnatSessionFactory();
+  d->Session = d->SessionFactory->makeConnection(d->ServerUri, d->UserName, d->Password);
+  d->Session->setProfileName("ctk");
 }
 
-void ctkXnatConnectionTestCase::cleanupTestCase()
+void ctkXnatSessionTestCase::cleanupTestCase()
 {
-  Q_D(ctkXnatConnectionTestCase);
+  Q_D(ctkXnatSessionTestCase);
 
-  delete d->ConnectionFactory;
+  delete d->Session;
+  delete d->SessionFactory;
 }
 
-void ctkXnatConnectionTestCase::testProjectList()
+void ctkXnatSessionTestCase::testProjectList()
 {
-  Q_D(ctkXnatConnectionTestCase);
+  Q_D(ctkXnatSessionTestCase);
 
-  ctkXnatServer* server = d->Connection->server();
-  server->fetch();
+  ctkXnatObject* dataModel = d->Session->dataModel();
+  dataModel->fetch();
 
-  QList<ctkXnatObject*> projects = server->children();
+  QList<ctkXnatObject*> projects = dataModel->children();
 
   QVERIFY(projects.size() > 0);
 }
 
-void ctkXnatConnectionTestCase::testResourceUri()
+void ctkXnatSessionTestCase::testResourceUri()
 {
-  Q_D(ctkXnatConnectionTestCase);
+  Q_D(ctkXnatSessionTestCase);
 
-  ctkXnatServer* server = d->Connection->server();
-  QVERIFY(!server->resourceUri().isNull());
-  QVERIFY(server->resourceUri().isEmpty());
+  ctkXnatObject* dataModel = d->Session->dataModel();
+  QVERIFY(!dataModel->resourceUri().isNull());
+  QVERIFY(dataModel->resourceUri().isEmpty());
 }
 
-void ctkXnatConnectionTestCase::testParentChild()
+void ctkXnatSessionTestCase::testParentChild()
 {
-  Q_D(ctkXnatConnectionTestCase);
+  Q_D(ctkXnatSessionTestCase);
 
-  ctkXnatServer* server = d->Connection->server();
+  ctkXnatDataModel* dataModel = d->Session->dataModel();
 
-  ctkXnatProject* project = new ctkXnatProject(server);
+  ctkXnatProject* project = new ctkXnatProject(dataModel);
 
-  QVERIFY(project->parent() == server);
+  QVERIFY(project->parent() == dataModel);
 
-  QVERIFY(server->children().contains(project));
+  QVERIFY(dataModel->children().contains(project));
 
-  server->add(project);
+  dataModel->add(project);
 
   int numberOfOccurrences = 0;
-  foreach (ctkXnatObject* serverProject, server->children())
+  foreach (ctkXnatObject* serverProject, dataModel->children())
   {
     if (serverProject == project || serverProject->id() == project->id())
     {
@@ -129,9 +130,9 @@ void ctkXnatConnectionTestCase::testParentChild()
   }
   QVERIFY(numberOfOccurrences == 1);
 
-  server->remove(project);
+  dataModel->remove(project);
   numberOfOccurrences = 0;
-  foreach (ctkXnatObject* serverProject, server->children())
+  foreach (ctkXnatObject* serverProject, dataModel->children())
   {
     if (serverProject == project || serverProject->id() == project->id())
     {
@@ -142,44 +143,44 @@ void ctkXnatConnectionTestCase::testParentChild()
   delete project;
 }
 
-void ctkXnatConnectionTestCase::testCreateProject()
+void ctkXnatSessionTestCase::testCreateProject()
 {
-  Q_D(ctkXnatConnectionTestCase);
+  Q_D(ctkXnatSessionTestCase);
 
-  ctkXnatServer* server = d->Connection->server();
+  ctkXnatDataModel* dataModel = d->Session->dataModel();
 
   QString projectId = QString("CTK_") + QUuid::createUuid().toString().mid(1, 8);
   d->Project = projectId;
 
-  ctkXnatProject* project = new ctkXnatProject(server);
+  ctkXnatProject* project = new ctkXnatProject(dataModel);
   project->setId(projectId);
   project->setName(projectId);
   project->setDescription("CTK_test_project");
 
-  bool exists = d->Connection->exists(project);
+  bool exists = d->Session->exists(project);
   QVERIFY(!exists);
 
-  d->Connection->save(project);
+  d->Session->save(project);
 
-  exists = d->Connection->exists(project);
+  exists = d->Session->exists(project);
   QVERIFY(exists);
 
-  d->Connection->remove(project);
+  d->Session->remove(project);
 
-  exists = d->Connection->exists(project);
+  exists = d->Session->exists(project);
   QVERIFY(!exists);
 }
 
-void ctkXnatConnectionTestCase::testCreateSubject()
+void ctkXnatSessionTestCase::testCreateSubject()
 {
-  Q_D(ctkXnatConnectionTestCase);
+  Q_D(ctkXnatSessionTestCase);
 
-  ctkXnatServer* server = d->Connection->server();
+  ctkXnatDataModel* dataModel = d->Session->dataModel();
 
   QString projectId = QString("CTK_") + QUuid::createUuid().toString().mid(1, 8);
   d->Project = projectId;
 
-  ctkXnatProject* project = new ctkXnatProject(server);
+  ctkXnatProject* project = new ctkXnatProject(dataModel);
   project->setId(projectId);
   project->setName(projectId);
   project->setDescription("CTK_test_project");
@@ -210,9 +211,9 @@ void ctkXnatConnectionTestCase::testCreateSubject()
 }
 
 // --------------------------------------------------------------------------
-int ctkXnatConnectionTest(int argc, char* argv[])
+int ctkXnatSessionTest(int argc, char* argv[])
 {
   QCoreApplication app(argc, argv);
-  ctkXnatConnectionTestCase test;
+  ctkXnatSessionTestCase test;
   return QTest::qExec(&test, argc, argv);
 }

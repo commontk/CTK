@@ -19,8 +19,8 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatConnection_h
-#define ctkXnatConnection_h
+#ifndef CTKXNATSESSION_H
+#define CTKXNATSESSION_H
 
 #include "ctkXNATCoreExport.h"
 
@@ -31,8 +31,9 @@
 #include <QVariantMap>
 #include <QUuid>
 
-class ctkXnatConnectionPrivate;
+class ctkXnatSessionPrivate;
 
+class ctkXnatDataModel;
 class ctkXnatExperiment;
 class ctkXnatFile;
 class ctkXnatObject;
@@ -44,18 +45,25 @@ class ctkXnatRoot;
 class ctkXnatScan;
 class ctkXnatScanFolder;
 class ctkXnatScanResource;
-class ctkXnatServer;
 class ctkXnatSubject;
 
-class CTK_XNAT_CORE_EXPORT ctkXnatConnection
+class CTK_XNAT_CORE_EXPORT ctkXnatSession
 {
 
 public:
 
-  ctkXnatConnection();
-  ~ctkXnatConnection();
+  //********
+  // Add ctkXnatLoginProfile argument
+  ctkXnatSession();
+  ~ctkXnatSession();
 
+  // **********
+  // Remove ?
+  // For Qt singal/slots; should go into the constructor or private impl.
   void createConnections();
+
+  // **********
+  // Remove / replase
 
   QString profileName() const;
   void setProfileName(const QString& profileName);
@@ -69,9 +77,11 @@ public:
   QString password() const;
   void setPassword(const QString& password);
 
-  ctkXnatServer* server() const;
+  ctkXnatDataModel* dataModel() const;
 
-  void fetch(ctkXnatServer* server);
+  // **********
+  // Should these methods still be moved to the subclasses?
+  void fetch(ctkXnatDataModel* server);
   void fetch(ctkXnatProject* project);
   void fetch(ctkXnatSubject* subject);
   void fetch(ctkXnatExperiment* experiment);
@@ -108,11 +118,11 @@ public slots:
   void progress(QUuid queryId, double progress);
 
 protected:
-  QScopedPointer<ctkXnatConnectionPrivate> d_ptr;
+  QScopedPointer<ctkXnatSessionPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkXnatConnection)
-  Q_DISABLE_COPY(ctkXnatConnection)
+  Q_DECLARE_PRIVATE(ctkXnatSession)
+  Q_DISABLE_COPY(ctkXnatSession)
 };
 
 #endif

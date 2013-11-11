@@ -191,9 +191,9 @@ ctkXnatObject* ctkXnatTreeModel::xnatObject(const QModelIndex& index) const
   return this->itemAt(index)->xnatObject();
 }
 
-void ctkXnatTreeModel::addServer(ctkXnatServer* server)
+void ctkXnatTreeModel::addDataModel(ctkXnatDataModel* dataModel)
 {
-  m_RootItem->appendChild(new ctkXnatTreeItem(server, m_RootItem));
+  m_RootItem->appendChild(new ctkXnatTreeItem(dataModel, m_RootItem));
 }
 
 ctkXnatTreeItem* ctkXnatTreeModel::itemAt(const QModelIndex& index) const
