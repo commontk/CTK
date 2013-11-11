@@ -26,6 +26,7 @@
 // Qt includes
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QResizeEvent>
 #include <QSplitter>
 
 class ctkDICOMTableManagerPrivate : public Ui_ctkDICOMTableManager
@@ -114,6 +115,7 @@ void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(ctkDICOMDatabase* db)
 ctkDICOMTableManager::ctkDICOMTableManager(QWidget *parent)
   :Superclass(parent)
   , d_ptr(new ctkDICOMTableManagerPrivate(*this))
+  , m_DynamicLayout(false)
 {
   Q_D(ctkDICOMTableManager);
   d->init();
@@ -124,6 +126,7 @@ ctkDICOMTableManager::ctkDICOMTableManager(QWidget *parent)
 ctkDICOMTableManager::ctkDICOMTableManager(ctkDICOMDatabase *db, QWidget *parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableManagerPrivate(*this))
+  , m_DynamicLayout(false)
 {
   Q_D(ctkDICOMTableManager);
   d->init();
@@ -227,4 +230,21 @@ void ctkDICOMTableManager::onStudiesSelectionChanged(const QStringList &uids)
       studiesCondition.second = d->studiesTable->uidsForAllRows();
     }
   d->seriesTable->addSqlWhereCondition(studiesCondition);
+}
+
+void ctkDICOMTableManager::setDynamicTableLayout(bool dynamic)
+{
+  this->m_DynamicLayout = dynamic;
+}
+
+void ctkDICOMTableManager::resizeEvent(QResizeEvent *e)
+{
+  Q_D(ctkDICOMTableManager);
+  if (!m_DynamicLayout)
+    return;
+
+  if (e->size().width() == this->minimumWidth())
+    this->setTableOrientation(Qt::Vertical);
+  else
+    this->setTableOrientation(Qt::Horizontal);
 }

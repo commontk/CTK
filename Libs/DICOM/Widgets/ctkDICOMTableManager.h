@@ -44,6 +44,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
     * Property for setting the table layout either to vertical or horizontal alignment
     */
   Q_PROPERTY(Qt::Orientation tableOrientation READ tableOrientation WRITE setTableOrientation)
+  Q_PROPERTY(bool m_DynamicLayout WRITE setDynamicTableLayout)
 
 public:
   typedef QWidget Superclass;
@@ -69,6 +70,8 @@ public:
   QStringList currentStudiesSelection();
   QStringList currentSeriesSelection();
 
+  void setDynamicTableLayout(bool);
+
 public Q_SLOTS:
 
   void onPatientsQueryChanged(const QStringList&);
@@ -92,6 +95,11 @@ protected:
   QScopedPointer<ctkDICOMTableManagerPrivate> d_ptr;
 
 private:
+
+  void resizeEvent(QResizeEvent *);
+
+  bool m_DynamicLayout;
+
   Q_DECLARE_PRIVATE(ctkDICOMTableManager)
   Q_DISABLE_COPY(ctkDICOMTableManager)
 };
