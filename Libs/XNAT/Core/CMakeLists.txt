@@ -12,6 +12,7 @@ set(KIT_SRCS
   ctkXnatException.cpp
   ctkXnatExperiment.cpp
   ctkXnatFile.cpp
+  ctkXnatLoginProfile.cpp
   ctkXnatObject.cpp
   ctkXnatObjectPrivate.cpp
   ctkXnatProject.cpp

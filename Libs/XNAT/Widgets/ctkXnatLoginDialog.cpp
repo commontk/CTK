@@ -354,7 +354,7 @@ void ctkXnatLoginDialog::loadProfile(const ctkXnatLoginProfile& profile)
   this->blockSignalsOfFields(true);
 
   ui->edtProfileName->setText(profile.name());
-  ui->edtServerUri->setText(profile.serverUri());
+  ui->edtServerUri->setText(profile.serverUrl().toString());
   ui->edtUserName->setText(profile.userName());
   ui->edtPassword->setText(profile.password());
   ui->cbxDefaultProfile->setChecked(profile.isDefault());
@@ -365,7 +365,7 @@ void ctkXnatLoginDialog::loadProfile(const ctkXnatLoginProfile& profile)
 void ctkXnatLoginDialog::storeProfile(ctkXnatLoginProfile& profile)
 {
   profile.setName(ui->edtProfileName->text());
-  profile.setServerUri(ui->edtServerUri->text());
+  profile.setServerUrl(ui->edtServerUri->text());
   profile.setUserName(ui->edtUserName->text());
   profile.setPassword(ui->edtPassword->text());
   profile.setDefault(ui->cbxDefaultProfile->isChecked());

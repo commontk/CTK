@@ -27,7 +27,7 @@ public:
   ctkXnatLoginProfilePrivate();
 
   QString Name;
-  QString ServerUri;
+  QUrl ServerUrl;
   QString UserName;
   QString Password;
   bool Default;
@@ -46,15 +46,8 @@ ctkXnatLoginProfile::ctkXnatLoginProfile()
 }
 
 ctkXnatLoginProfile::ctkXnatLoginProfile(const ctkXnatLoginProfile& otherLoginProfile)
-  : d_ptr(new ctkXnatLoginProfilePrivate())
+  : d_ptr(new ctkXnatLoginProfilePrivate(*otherLoginProfile.d_ptr.data()))
 {
-  Q_D(ctkXnatLoginProfile);
-
-  d->Name = otherLoginProfile.name();
-  d->ServerUri = otherLoginProfile.serverUri();
-  d->UserName = otherLoginProfile.userName();
-  d->Password = otherLoginProfile.password();
-  d->Default = false;
 }
 
 ctkXnatLoginProfile::~ctkXnatLoginProfile()
@@ -75,18 +68,18 @@ void ctkXnatLoginProfile::setName(const QString& name)
   d->Name = name;
 }
 
-QString ctkXnatLoginProfile::serverUri() const
+QUrl ctkXnatLoginProfile::serverUrl() const
 {
   Q_D(const ctkXnatLoginProfile);
 
-  return d->ServerUri;
+  return d->ServerUrl;
 }
 
-void ctkXnatLoginProfile::setServerUri(const QString& serverUri)
+void ctkXnatLoginProfile::setServerUrl(const QUrl& serverUrl)
 {
   Q_D(ctkXnatLoginProfile);
 
-  d->ServerUri = serverUri;
+  d->ServerUrl = serverUrl;
 }
 
 QString ctkXnatLoginProfile::userName() const

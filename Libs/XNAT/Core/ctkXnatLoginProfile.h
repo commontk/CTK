@@ -22,40 +22,89 @@
 #ifndef ctkXnatLoginProfile_h
 #define ctkXnatLoginProfile_h
 
-#include "ctkXNATWidgetsExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include <QScopedPointer>
-#include <QString>
+#include <QUrl>
 
 class ctkXnatLoginProfilePrivate;
 
-class CTK_XNAT_WIDGETS_EXPORT ctkXnatLoginProfile
+/**
+ * @brief A login profile for XNAT sessions
+ */
+class CTK_XNAT_CORE_EXPORT ctkXnatLoginProfile
 {
 public:
   ctkXnatLoginProfile();
   ctkXnatLoginProfile(const ctkXnatLoginProfile& otherLoginProfile);
-  virtual ~ctkXnatLoginProfile();
+  ~ctkXnatLoginProfile();
 
+  /**
+   * @brief Get the name for this profile.
+   * @return The profile name.
+   */
   QString name() const;
+
+  /**
+   * @brief Set the name for this profile.
+   * @param profileName The new profile name.
+   */
   void setName(const QString& profileName);
 
-  QString serverUri() const;
-  void setServerUri(const QString& serverUri);
+  /**
+   * @brief Get the XNAT server URL.
+   * @return The XNAT server URL.
+   */
+  QUrl serverUrl() const;
 
+  /**
+   * @brief Set the XNAT server URL.
+   * @param serverUri The new XNAT server URL.
+   */
+  void setServerUrl(const QUrl& serverUri);
+
+  /**
+   * @brief Get the login user name.
+   * @return The user name.
+   */
   QString userName() const;
+
+  /**
+   * @brief Set the login user name.
+   * @param userName The new user name.
+   */
   void setUserName(const QString& userName);
 
+  /**
+   * @brief Get the login password.
+   * @return The password.
+   */
   QString password() const;
+
+  /**
+   * @brief Set the login password.
+   * @param password The new password.
+   */
   void setPassword(const QString& password);
 
+  /**
+   * @brief Returns a boolean value indicating if this login profile is the default profile.
+   * @return \c true if this is the default login profile, \c false
+   *         otherwise.
+   */
   bool isDefault() const;
+
+  /**
+   * @brief Set the default login profile to this profile.
+   * @param default_ If \c true, marks this login profile as the default profile.
+   */
   void setDefault(bool default_);
 
 private:
   /// \brief d pointer of the pimpl pattern
   QScopedPointer<ctkXnatLoginProfilePrivate> d_ptr;
 
-  Q_DECLARE_PRIVATE(ctkXnatLoginProfile);
+  Q_DECLARE_PRIVATE(ctkXnatLoginProfile)
 };
 
 #endif

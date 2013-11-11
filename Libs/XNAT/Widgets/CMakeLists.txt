@@ -8,7 +8,6 @@ set(KIT_export_directive "CTK_XNAT_WIDGETS_EXPORT")
 
 set(KIT_SRCS
   ctkXnatLoginDialog.cpp
-  ctkXnatLoginProfile.cpp
   ctkXnatTreeItem.cpp
   ctkXnatProjectListModel.cpp
   ctkXnatTreeModel.cpp
