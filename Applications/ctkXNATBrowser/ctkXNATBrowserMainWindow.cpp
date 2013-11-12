@@ -25,7 +25,6 @@
 #include "ctkXnatLoginDialog.h"
 #include "ctkXnatProjectListModel.h"
 #include "ctkXnatSession.h"
-#include "ctkXnatSessionFactory.h"
 #include "ctkXnatDataModel.h"
 #include "ctkXnatProject.h"
 
@@ -34,7 +33,6 @@
 ctkXNATBrowserMainWindow::ctkXNATBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkXNATBrowserMainWindow),
-  m_SessionFactory(new ctkXnatSessionFactory()),
   m_Session(0),
   m_ProjectsModel(new ctkXnatProjectListModel()),
   m_SubjectsModel(new ctkXnatProjectListModel())
@@ -54,7 +52,6 @@ ctkXNATBrowserMainWindow::~ctkXNATBrowserMainWindow()
   {
     delete m_Session;
   }
-  delete m_SessionFactory;
   delete ui;
 
   delete m_SubjectsModel;
@@ -82,7 +79,7 @@ void ctkXNATBrowserMainWindow::loginButtonPushed()
       if (m_Session)
       {
         ui->loginButton->setText("Logout");
-        ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url()));
+        ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url().toString()));
 
         ctkXnatDataModel* dataModel = m_Session->dataModel();
         //xnatConnection->fetch(server);

@@ -25,7 +25,6 @@
 #include "ctkXnatLoginDialog.h"
 #include "ctkXnatTreeModel.h"
 #include "ctkXnatSession.h"
-#include "ctkXnatSessionFactory.h"
 #include "ctkXnatDataModel.h"
 #include "ctkXnatProject.h"
 #include "ctkXnatFile.h"
@@ -33,7 +32,6 @@
 ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkXnatTreeBrowserMainWindow),
-  m_SessionFactory(new ctkXnatSessionFactory()),
   m_Session(0),
   m_TreeModel(new ctkXnatTreeModel())
 {
@@ -53,7 +51,6 @@ ctkXnatTreeBrowserMainWindow::~ctkXnatTreeBrowserMainWindow()
   {
     delete m_Session;
   }
-  delete m_SessionFactory;
   delete ui;
 
   delete m_TreeModel;
@@ -81,7 +78,7 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
       if (m_Session)
       {
         ui->loginButton->setText("Logout");
-        ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url()));
+        ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url().toString()));
 
         ctkXnatDataModel* dataModel = m_Session->dataModel();
         m_TreeModel->addDataModel(dataModel);

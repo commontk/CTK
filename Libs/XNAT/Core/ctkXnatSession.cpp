@@ -25,6 +25,7 @@
 #include "ctkXnatException.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatFile.h"
+#include "ctkXnatLoginProfile.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatProject.h"
 #include "ctkXnatReconstruction.h"
@@ -45,18 +46,32 @@
 class ctkXnatSessionPrivate
 {
 public:
-  QString profileName;
-  QString url;
-  QString userName;
-  QString password;
+  const ctkXnatLoginProfile loginProfile;
 
   ctkXnatAPI* xnat;
-  ctkXnatAPI::RawHeaders rawHeaders;
-
   ctkXnatDataModel* dataModel;
+
+  ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q);
+  ~ctkXnatSessionPrivate();
 
   void throwXnatException(const QString& msg);
 };
+
+ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q)
+  : loginProfile(loginProfile)
+  , xnat(new ctkXnatAPI())
+  , dataModel(new ctkXnatDataModel(q))
+{
+  // TODO This is a workaround for connecting to sites with self-signed
+  // certificate. Should be replaced with something more clever.
+  xnat->setSuppressSslErrors(true);
+}
+
+ctkXnatSessionPrivate::~ctkXnatSessionPrivate()
+{
+  delete dataModel;
+  delete xnat;
+}
 
 void ctkXnatSessionPrivate::throwXnatException(const QString& msg)
 {
@@ -80,27 +95,28 @@ void ctkXnatSessionPrivate::throwXnatException(const QString& msg)
 
 // ctkXnatSession class
 
-ctkXnatSession::ctkXnatSession()
-: d_ptr(new ctkXnatSessionPrivate())
+ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
+: d_ptr(new ctkXnatSessionPrivate(loginProfile, this))
 {
   Q_D(ctkXnatSession);
-  d->xnat = new ctkXnatAPI();
 
-  // TODO This is a workaround for connecting to sites with self-signed
-  // certificate. Should be replaced with something more clever.
-  d->xnat->setSuppressSslErrors(true);
-  d->rawHeaders["User-Agent"] = "Qt";
-  d->xnat->setDefaultRawHeaders(d->rawHeaders);
+  ctkXnatAPI::RawHeaders rawHeaders;
+  rawHeaders["User-Agent"] = "Qt";
+  rawHeaders["Authorization"] = "Basic " +
+      QByteArray(QString("%1:%2").arg(d->loginProfile.userName())
+                 .arg(d->loginProfile.password()).toAscii()).toBase64();
+  d->xnat->setDefaultRawHeaders(rawHeaders);
 
-  d->dataModel = new ctkXnatDataModel(this);
+  QString url = d->loginProfile.serverUrl().toString();
+  d->xnat->setServerUrl(url);
+
+  d->dataModel->setProperty("ID", url);
+
   createConnections();
 }
 
 ctkXnatSession::~ctkXnatSession()
 {
-  Q_D(ctkXnatSession);
-  delete d->dataModel;
-  delete d->xnat;
 }
 
 void ctkXnatSession::createConnections()
@@ -109,7 +125,13 @@ void ctkXnatSession::createConnections()
 //  connect(d->xnat, SIGNAL(resultReceived(QUuid,QList<QVariantMap>)),
 //           this, SLOT(processResult(QUuid,QList<QVariantMap>)));
 //  connect(d->xnat, SIGNAL(progress(QUuid,double)),
-//           this, SLOT(progress(QUuid,double)));
+  //           this, SLOT(progress(QUuid,double)));
+}
+
+ctkXnatLoginProfile ctkXnatSession::loginProfile() const
+{
+  Q_D(const ctkXnatSession);
+  return d->loginProfile;
 }
 
 void ctkXnatSession::progress(QUuid /*queryId*/, double /*progress*/)
@@ -119,61 +141,22 @@ void ctkXnatSession::progress(QUuid /*queryId*/, double /*progress*/)
 //  qDebug() << "progress:" << (progress * 100.0) << "%";
 }
 
-QString ctkXnatSession::profileName() const
+QUrl ctkXnatSession::url() const
 {
   Q_D(const ctkXnatSession);
-  return d->profileName;
-}
-
-void ctkXnatSession::setProfileName(const QString& profileName)
-{
-  Q_D(ctkXnatSession);
-  d->profileName = profileName;
-  d->dataModel->setProperty("name", profileName);
-}
-
-QString ctkXnatSession::url() const
-{
-  Q_D(const ctkXnatSession);
-  return d->url;
-}
-
-void ctkXnatSession::setUrl(const QString& url)
-{
-  Q_D(ctkXnatSession);
-  d->url = url;
-  d->xnat->setServerUrl(d->url);
-  d->dataModel->setProperty("ID", url);
+  return d->loginProfile.serverUrl();
 }
 
 QString ctkXnatSession::userName() const
 {
   Q_D(const ctkXnatSession);
-  return d->userName;
-}
-
-void ctkXnatSession::setUserName(const QString& userName)
-{
-  Q_D(ctkXnatSession);
-  d->userName = userName;
-  d->rawHeaders["Authorization"] = "Basic " +
-      QByteArray(QString("%1:%2").arg(d->userName).arg(d->password).toAscii()).toBase64();
-  d->xnat->setDefaultRawHeaders(d->rawHeaders);
+  return d->loginProfile.userName();
 }
 
 QString ctkXnatSession::password() const
 {
   Q_D(const ctkXnatSession);
-  return d->password;
-}
-
-void ctkXnatSession::setPassword(const QString& password)
-{
-  Q_D(ctkXnatSession);
-  d->password = password;
-  d->rawHeaders["Authorization"] = "Basic " +
-      QByteArray(QString("%1:%2").arg(d->userName).arg(d->password).toAscii()).toBase64();
-  d->xnat->setDefaultRawHeaders(d->rawHeaders);
+  return d->loginProfile.password();
 }
 
 ctkXnatDataModel* ctkXnatSession::dataModel() const

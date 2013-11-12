@@ -32,20 +32,17 @@
 #include <QUuid>
 
 #include <ctkXnatDataModel.h>
+#include <ctkXnatLoginProfile.h>
 #include <ctkXnatSession.h>
-#include <ctkXnatSessionFactory.h>
 #include <ctkXnatProject.h>
 #include <ctkXnatSubject.h>
 
 class ctkXnatSessionTestCasePrivate
 {
 public:
-  ctkXnatSessionFactory* SessionFactory;
   ctkXnatSession* Session;
 
-  QString ServerUri;
-  QString UserName;
-  QString Password;
+  ctkXnatLoginProfile LoginProfile;
 
   QString Project;
   QString Subject;
@@ -68,13 +65,12 @@ void ctkXnatSessionTestCase::initTestCase()
 {
   Q_D(ctkXnatSessionTestCase);
 
-  d->ServerUri = "https://central.xnat.org";
-  d->UserName = "ctk";
-  d->Password = "ctk";
+  d->LoginProfile.setName("ctk");
+  d->LoginProfile.setServerUrl(QString("https://central.xnat.org"));
+  d->LoginProfile.setUserName("ctk");
+  d->LoginProfile.setPassword("ctk");
 
-  d->SessionFactory = new ctkXnatSessionFactory();
-  d->Session = d->SessionFactory->makeConnection(d->ServerUri, d->UserName, d->Password);
-  d->Session->setProfileName("ctk");
+  d->Session = new ctkXnatSession(d->LoginProfile);
 }
 
 void ctkXnatSessionTestCase::cleanupTestCase()
@@ -82,7 +78,6 @@ void ctkXnatSessionTestCase::cleanupTestCase()
   Q_D(ctkXnatSessionTestCase);
 
   delete d->Session;
-  delete d->SessionFactory;
 }
 
 void ctkXnatSessionTestCase::testProjectList()

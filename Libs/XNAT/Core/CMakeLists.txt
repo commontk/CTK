@@ -23,7 +23,6 @@ set(KIT_SRCS
   ctkXnatScanFolder.cpp
   ctkXnatScanResource.cpp
   ctkXnatSession.cpp
-  ctkXnatSessionFactory.cpp
   ctkXnatSettings.cpp
   ctkXnatSubject.cpp
 )

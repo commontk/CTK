@@ -36,6 +36,7 @@ class ctkXnatSessionPrivate;
 class ctkXnatDataModel;
 class ctkXnatExperiment;
 class ctkXnatFile;
+class ctkXnatLoginProfile;
 class ctkXnatObject;
 class ctkXnatProject;
 class ctkXnatReconstruction;
@@ -54,7 +55,7 @@ public:
 
   //********
   // Add ctkXnatLoginProfile argument
-  ctkXnatSession();
+  ctkXnatSession(const ctkXnatLoginProfile& loginProfile);
   ~ctkXnatSession();
 
   // **********
@@ -62,20 +63,38 @@ public:
   // For Qt singal/slots; should go into the constructor or private impl.
   void createConnections();
 
-  // **********
-  // Remove / replase
+  /**
+   * @brief Get the current login profile for this session object.
+   * @return A copy of the currently used login profile.
+   */
+  ctkXnatLoginProfile loginProfile() const;
 
-  QString profileName() const;
-  void setProfileName(const QString& profileName);
+  /**
+   * @brief Get XNAT server url.
+   *
+   * The url is the one specified by the login profile.
+   *
+   * @return The XNAT server url.
+   */
+  QUrl url() const;
 
-  QString url() const;
-  void setUrl(const QString& url);
-
+  /**
+   * @brief Get the user name for this XNAT session.
+   *
+   * The user name is the one specified by the login profile.
+   *
+   * @return The XNAT session user name.
+   */
   QString userName() const;
-  void setUserName(const QString& userName);
 
+  /**
+   * @brief Get the password for this XNAT session.
+   *
+   * The password is the one specified by the login profile.
+   *
+   * @return The XNAT session password.
+   */
   QString password() const;
-  void setPassword(const QString& password);
 
   ctkXnatDataModel* dataModel() const;
 

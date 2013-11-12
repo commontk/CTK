@@ -28,7 +28,6 @@
 #include <QTimer>
 
 #include <ctkXnatSession.h>
-#include <ctkXnatSessionFactory.h>
 #include <ctkException.h>
 #include "ctkXnatLoginProfile.h"
 #include "ctkXnatSettings.h"
@@ -187,11 +186,15 @@ void ctkXnatLoginDialog::accept()
   QString password = ui->edtPassword->text();
 
   // create XNAT connection
+  QScopedPointer<ctkXnatSession> session;
   try
     {
-    d->Session = d->Factory->makeConnection(url.toAscii().constData(), userName.toAscii().constData(),
-                                        password.toAscii().constData());
-    d->Session->setProfileName(ui->edtProfileName->text());
+    ctkXnatLoginProfile loginProfile;
+    loginProfile.setName(ui->edtProfileName->text());
+    loginProfile.setServerUrl(url);
+    loginProfile.setUserName(userName);
+    loginProfile.setPassword(password);
+    session.reset(new ctkXnatSession(loginProfile));
     }
   catch (const ctkException& e)
     {
@@ -200,6 +203,7 @@ void ctkXnatLoginDialog::accept()
     ui->edtServerUri->setFocus();
     return;
     }
+  d->Session = session.take();
 
   QDialog::accept();
 }
