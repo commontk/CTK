@@ -23,6 +23,8 @@
 
 #include "ctkXnatSession.h"
 #include "ctkXnatScanFolder.h"
+#include "ctkXnatScanResource.h"
+#include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 
 class ctkXnatScanPrivate : public ctkXnatObjectPrivate
@@ -43,8 +45,8 @@ public:
 };
 
 
-ctkXnatScan::ctkXnatScan(ctkXnatScanFolder* parent, const QString& schemaType)
-: ctkXnatObject(*new ctkXnatScanPrivate(), parent, schemaType)
+ctkXnatScan::ctkXnatScan(ctkXnatScanFolder* parent)
+: ctkXnatObject(*new ctkXnatScanPrivate(), parent)
 {
 }
 
@@ -64,5 +66,19 @@ void ctkXnatScan::reset()
 
 void ctkXnatScan::fetchImpl()
 {
-  this->session()->fetch(this);
+  QString scanResourcesUri = this->resourceUri() + "/resources";
+  ctkXnatSession* const session = this->session();
+  QUuid queryId = session->httpGet(scanResourcesUri);
+
+  QList<ctkXnatObject*> scanResources = session->httpResults(queryId, ctkXnatScanResource::staticSchemaType());
+
+  foreach (ctkXnatObject* scanResource, scanResources)
+  {
+    QString label = scanResource->property("label");
+    if (!label.isEmpty())
+    {
+      scanResource->setProperty("ID", label);
+    }
+    this->add(scanResource);
+  }
 }

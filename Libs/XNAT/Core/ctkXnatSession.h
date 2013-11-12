@@ -33,35 +33,23 @@
 
 class ctkXnatSessionPrivate;
 
-class ctkXnatDataModel;
-class ctkXnatExperiment;
 class ctkXnatFile;
 class ctkXnatLoginProfile;
+class ctkXnatDataModel;
 class ctkXnatObject;
-class ctkXnatProject;
-class ctkXnatReconstruction;
-class ctkXnatReconstructionFolder;
-class ctkXnatReconstructionResource;
-class ctkXnatRoot;
-class ctkXnatScan;
-class ctkXnatScanFolder;
 class ctkXnatScanResource;
-class ctkXnatSubject;
+class ctkXnatReconstructionResource;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatSession
 {
 
 public:
 
-  //********
-  // Add ctkXnatLoginProfile argument
+  typedef QMap<QString, QString> UrlParameters;
+  typedef QMap<QByteArray, QByteArray> HttpRawHeaders;
+
   ctkXnatSession(const ctkXnatLoginProfile& loginProfile);
   ~ctkXnatSession();
-
-  // **********
-  // Remove ?
-  // For Qt singal/slots; should go into the constructor or private impl.
-  void createConnections();
 
   /**
    * @brief Get the current login profile for this session object.
@@ -98,18 +86,11 @@ public:
 
   ctkXnatDataModel* dataModel() const;
 
-  // **********
-  // Should these methods still be moved to the subclasses?
-  void fetch(ctkXnatDataModel* server);
-  void fetch(ctkXnatProject* project);
-  void fetch(ctkXnatSubject* subject);
-  void fetch(ctkXnatExperiment* experiment);
-  void fetch(ctkXnatScanFolder* scanFolder);
-  void fetch(ctkXnatScan* scan);
-  void fetch(ctkXnatScanResource* scanResource);
-  void fetch(ctkXnatReconstructionFolder* reconstructionFolder);
-  void fetch(ctkXnatReconstruction* reconstruction);
-  void fetch(ctkXnatReconstructionResource* reconstructionResource);
+  QUuid httpGet(const QString& resource,
+                const UrlParameters& parameters = UrlParameters(),
+                const HttpRawHeaders& rawHeaders = HttpRawHeaders());
+
+  QList<ctkXnatObject*> httpResults(const QUuid& uuid, const QString& schemaType);
 
   bool exists(const ctkXnatObject* object);
 

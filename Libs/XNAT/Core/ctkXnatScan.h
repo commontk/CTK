@@ -35,20 +35,21 @@ class CTK_XNAT_CORE_EXPORT ctkXnatScan : public ctkXnatObject
 
 public:
 
-  explicit ctkXnatScan(ctkXnatScanFolder* parent = 0, const QString& schemaType = "xnat:imageScanData");
+  CTK_XNAT_OBJECT(ctkXnatScan, ctkXnatObject, "xnat:imageScanData")
+
+  explicit ctkXnatScan(ctkXnatScanFolder* parent = 0);
   virtual ~ctkXnatScan();
-  
+
   virtual QString resourceUri() const;
 
   void reset();
-  
+
 private:
-  
+
   friend class qRestResult;
   virtual void fetchImpl();
-  
-  Q_DECLARE_PRIVATE(ctkXnatScan);
-  Q_DISABLE_COPY(ctkXnatScan);
+
+  Q_DECLARE_PRIVATE(ctkXnatScan)
 };
 
 #endif

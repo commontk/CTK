@@ -34,7 +34,9 @@ class CTK_XNAT_CORE_EXPORT ctkXnatSubject : public ctkXnatObject
 
 public:
 
-  explicit ctkXnatSubject(ctkXnatProject* parent = 0, const QString& schemaType = "xnat:subjectData");
+  CTK_XNAT_OBJECT(ctkXnatSubject, ctkXnatObject, "xnat:subjectData")
+
+  explicit ctkXnatSubject(ctkXnatProject* parent = 0);
   virtual ~ctkXnatSubject();
 
   ctkXnatProject* getPrimaryProject() const;
@@ -49,7 +51,7 @@ public:
   virtual QString resourceUri() const;
 
   void reset();
-  
+
 private:
 
   friend class qRestResult;
@@ -57,7 +59,6 @@ private:
   virtual void fetchImpl();
 
   Q_DECLARE_PRIVATE(ctkXnatSubject)
-  Q_DISABLE_COPY(ctkXnatSubject)
 };
 
 #endif

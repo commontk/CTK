@@ -44,8 +44,6 @@ private:
 
   friend class ctkXnatObject;
 
-  QString schemaType;
-
   QMap<QString, QString> properties;
 
   QList<ctkXnatObject*> children;

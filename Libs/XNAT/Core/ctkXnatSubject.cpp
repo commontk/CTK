@@ -25,6 +25,7 @@
 
 #include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatExperiment.h"
 #include "ctkXnatProject.h"
 
 class ctkXnatSubjectPrivate : public ctkXnatObjectPrivate
@@ -51,8 +52,8 @@ public:
   QList<ctkXnatProject*> projects;
 };
 
-ctkXnatSubject::ctkXnatSubject(ctkXnatProject* parent, const QString& schemaType)
-: ctkXnatObject(*new ctkXnatSubjectPrivate(), parent, schemaType)
+ctkXnatSubject::ctkXnatSubject(ctkXnatProject* parent)
+: ctkXnatObject(*new ctkXnatSubjectPrivate(), parent)
 {
 }
 
@@ -97,5 +98,19 @@ void ctkXnatSubject::reset()
 
 void ctkXnatSubject::fetchImpl()
 {
-  this->session()->fetch(this);
+  QString experimentsUri = this->resourceUri() + "/experiments";
+  ctkXnatSession* const session = this->session();
+  QUuid queryId = session->httpGet(experimentsUri);
+  QList<ctkXnatObject*> experiments = session->httpResults(queryId, ctkXnatExperiment::staticSchemaType());
+
+  foreach (ctkXnatObject* experiment, experiments)
+  {
+    QString label = experiment->property ("label");
+    if (!label.isEmpty())
+    {
+      experiment->setProperty ("ID", label);
+    }
+
+    this->add(experiment);
+  }
 }

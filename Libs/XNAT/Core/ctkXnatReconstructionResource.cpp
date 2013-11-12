@@ -22,6 +22,7 @@
 #include "ctkXnatReconstructionResource.h"
 
 #include "ctkXnatSession.h"
+#include "ctkXnatFile.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatReconstruction.h"
 
@@ -64,7 +65,22 @@ void ctkXnatReconstructionResource::reset()
 
 void ctkXnatReconstructionResource::fetchImpl()
 {
-  this->session()->fetch(this);
+  QString reconstructionResourceFilesUri = this->resourceUri() + "/files";
+  ctkXnatSession* const session = this->session();
+  QUuid queryId = session->httpGet(reconstructionResourceFilesUri);
+
+  QList<ctkXnatObject*> files = session->httpResults(queryId, ctkXnatFile::staticSchemaType());
+
+  foreach (ctkXnatObject* file, files)
+  {
+    QString label = file->property("Name");
+    if (label.isEmpty())
+    {
+      file->setProperty("ID", label);
+    }
+
+    this->add(file);
+  }
 }
 
 void ctkXnatReconstructionResource::download(const QString& filename)

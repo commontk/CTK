@@ -24,6 +24,10 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSubject.h"
+#include "ctkXnatScan.h"
+#include "ctkXnatReconstruction.h"
+#include "ctkXnatScanFolder.h"
+#include "ctkXnatReconstructionFolder.h"
 
 class ctkXnatExperimentPrivate : public ctkXnatObjectPrivate
 {
@@ -43,8 +47,8 @@ public:
 };
 
 
-ctkXnatExperiment::ctkXnatExperiment(ctkXnatSubject* parent, const QString& schemaType)
-: ctkXnatObject(*new ctkXnatExperimentPrivate(), parent, schemaType)
+ctkXnatExperiment::ctkXnatExperiment(ctkXnatSubject* parent)
+: ctkXnatObject(*new ctkXnatExperimentPrivate(), parent)
 {
 }
 
@@ -64,5 +68,27 @@ void ctkXnatExperiment::reset()
 
 void ctkXnatExperiment::fetchImpl()
 {
-  this->session()->fetch(this);
+  QString scansUri = this->resourceUri() + "/scans";
+  ctkXnatSession* const session = this->session();
+  QUuid scansQueryId = session->httpGet(scansUri);
+
+  QList<ctkXnatObject*> scans = session->httpResults(scansQueryId, ctkXnatScan::staticSchemaType());
+
+  if (!scans.isEmpty())
+  {
+    ctkXnatScanFolder* scanFolder = new ctkXnatScanFolder();
+    this->add(scanFolder);
+  }
+
+  QString reconstructionsUri = this->resourceUri() + "/reconstructions";
+  QUuid reconstructionsQueryId = session->httpGet(reconstructionsUri);
+
+  QList<ctkXnatObject*> reconstructions = session->httpResults(reconstructionsQueryId,
+                                                                   ctkXnatReconstruction::staticSchemaType());
+
+  if (!reconstructions.isEmpty())
+  {
+    ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder();
+    this->add(reconstructionFolder);
+  }
 }

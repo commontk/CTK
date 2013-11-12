@@ -24,6 +24,7 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatReconstruction.h"
 
 
 class ctkXnatReconstructionFolderPrivate : public ctkXnatObjectPrivate
@@ -66,5 +67,15 @@ void ctkXnatReconstructionFolder::reset()
 
 void ctkXnatReconstructionFolder::fetchImpl()
 {
-  this->session()->fetch(this);
+  QString reconstructionsUri = this->resourceUri();
+  ctkXnatSession* const session = this->session();
+  QUuid queryId = session->httpGet(reconstructionsUri);
+
+  QList<ctkXnatObject*> reconstructions = session->httpResults(queryId, ctkXnatReconstruction::staticSchemaType());
+
+  foreach (ctkXnatObject* reconstruction, reconstructions)
+  {
+    this->add(reconstruction);
+  }
+
 }

@@ -55,6 +55,8 @@ public:
   ~ctkXnatSessionPrivate();
 
   void throwXnatException(const QString& msg);
+
+  void createConnections();
 };
 
 ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q)
@@ -65,6 +67,8 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
   // TODO This is a workaround for connecting to sites with self-signed
   // certificate. Should be replaced with something more clever.
   xnat->setSuppressSslErrors(true);
+
+  createConnections();
 }
 
 ctkXnatSessionPrivate::~ctkXnatSessionPrivate()
@@ -93,12 +97,31 @@ void ctkXnatSessionPrivate::throwXnatException(const QString& msg)
   }
 }
 
+void ctkXnatSessionPrivate::createConnections()
+{
+//  Q_D(ctkXnatSession);
+//  connect(d->xnat, SIGNAL(resultReceived(QUuid,QList<QVariantMap>)),
+//           this, SLOT(processResult(QUuid,QList<QVariantMap>)));
+//  connect(d->xnat, SIGNAL(progress(QUuid,double)),
+  //           this, SLOT(progress(QUuid,double)));
+}
+
 // ctkXnatSession class
 
 ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
 : d_ptr(new ctkXnatSessionPrivate(loginProfile, this))
 {
   Q_D(ctkXnatSession);
+
+  qRegisterMetaType<ctkXnatProject>(ctkXnatProject::staticSchemaType());
+  qRegisterMetaType<ctkXnatSubject>(ctkXnatSubject::staticSchemaType());
+  qRegisterMetaType<ctkXnatExperiment>(ctkXnatExperiment::staticSchemaType());
+  qRegisterMetaType<ctkXnatScan>(ctkXnatScan::staticSchemaType());
+  qRegisterMetaType<ctkXnatScanFolder>(ctkXnatScanFolder::staticSchemaType());
+  qRegisterMetaType<ctkXnatReconstruction>(ctkXnatReconstruction::staticSchemaType());
+  qRegisterMetaType<ctkXnatScanResource>(ctkXnatScanResource::staticSchemaType());
+  qRegisterMetaType<ctkXnatFile>(ctkXnatFile::staticSchemaType());
+  qRegisterMetaType<ctkXnatReconstructionResource>(ctkXnatReconstructionResource::staticSchemaType());
 
   ctkXnatAPI::RawHeaders rawHeaders;
   rawHeaders["User-Agent"] = "Qt";
@@ -111,21 +134,10 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   d->xnat->setServerUrl(url);
 
   d->dataModel->setProperty("ID", url);
-
-  createConnections();
 }
 
 ctkXnatSession::~ctkXnatSession()
 {
-}
-
-void ctkXnatSession::createConnections()
-{
-//  Q_D(ctkXnatSession);
-//  connect(d->xnat, SIGNAL(resultReceived(QUuid,QList<QVariantMap>)),
-//           this, SLOT(processResult(QUuid,QList<QVariantMap>)));
-//  connect(d->xnat, SIGNAL(progress(QUuid,double)),
-  //           this, SLOT(progress(QUuid,double)));
 }
 
 ctkXnatLoginProfile ctkXnatSession::loginProfile() const
@@ -165,228 +177,22 @@ ctkXnatDataModel* ctkXnatSession::dataModel() const
   return d->dataModel;
 }
 
-void ctkXnatSession::fetch(ctkXnatDataModel* dataModel)
+QUuid ctkXnatSession::httpGet(const QString& resource, const ctkXnatSession::UrlParameters& parameters, const ctkXnatSession::HttpRawHeaders& rawHeaders)
 {
   Q_D(ctkXnatSession);
-
-  QString projectsUri("/data/archive/projects");
-
-  QUuid queryId = d->xnat->get(projectsUri);
-  qRestResult* restResult = d->xnat->takeResult(queryId);
-  QList<ctkXnatProject*> projects = restResult->results<ctkXnatProject>();
-
-  qDebug() << "ctkXnatSession::fetch(ctkXnatDataModel* server): project number:" << projects.size();
-
-  foreach (ctkXnatProject* project, projects)
-  {
-    dataModel->add(project);
-  }
-
-  delete restResult;
+  return d->xnat->get(resource, parameters, rawHeaders);
 }
 
-void ctkXnatSession::fetch(ctkXnatProject* project)
+QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QString& schemaType)
 {
   Q_D(ctkXnatSession);
 
-  QString subjectsUri = project->resourceUri() + "/subjects";
-  QUuid queryId = d->xnat->get(subjectsUri);
-  qRestResult* restResult = d->xnat->takeResult(queryId);
-  QList<ctkXnatSubject*> subjects = restResult->results<ctkXnatSubject>();
-
-  foreach (ctkXnatSubject* subject, subjects)
+  QScopedPointer<qRestResult> restResult(d->xnat->takeResult(uuid));
+  if (restResult == NULL)
   {
-    QString label = subject->property("label");
-    if (label.size())
-    {
-      subject->setProperty("ID", label);
-    }
-
-    project->add(subject);
+    d->throwXnatException("REST result is NULL");
   }
-
-  delete restResult;
-}
-
-void ctkXnatSession::fetch(ctkXnatSubject* subject)
-{
-  Q_D(ctkXnatSession);
-
-  QString experimentsUri = subject->resourceUri() + "/experiments";
-  QUuid queryId = d->xnat->get(experimentsUri);
-  qRestResult* restResult = d->xnat->takeResult(queryId);
-
-  QList<ctkXnatExperiment*> experiments = restResult->results<ctkXnatExperiment>();
-
-  foreach (ctkXnatExperiment* experiment, experiments)
-  {
-    QString label = experiment->property ("label");
-    if (label.size())
-    {
-      experiment->setProperty ("ID", label);
-    }
-
-    subject->add(experiment);
-  }
-
-  delete restResult;
-}
-
-void ctkXnatSession::fetch(ctkXnatExperiment* experiment)
-{
-  Q_D(ctkXnatSession);
-
-  QString scansUri = experiment->resourceUri() + "/scans";
-  QUuid scansQueryId = d->xnat->get(scansUri);
-  qRestResult* restResult = d->xnat->takeResult(scansQueryId);
-
-  QList<ctkXnatScan*> scans = restResult->results<ctkXnatScan>();
-
-  if (scans.size() > 0)
-  {
-    ctkXnatScanFolder* scanFolder = new ctkXnatScanFolder();
-    experiment->add(scanFolder);
-  }
-
-  delete restResult;
-
-  QString reconstructionsUri = experiment->resourceUri() + "/reconstructions";
-  QUuid reconstructionsQueryId = d->xnat->get(reconstructionsUri);
-  restResult = d->xnat->takeResult(reconstructionsQueryId);
-
-  QList<ctkXnatReconstruction*> reconstructions = restResult->results<ctkXnatReconstruction>();
-
-  if (reconstructions.size() > 0)
-  {
-    ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder();
-    experiment->add(reconstructionFolder);
-  }
-
-  delete restResult;
-}
-
-void ctkXnatSession::fetch(ctkXnatScanFolder* scanFolder)
-{
-  Q_D(ctkXnatSession);
-
-  QString scansUri = scanFolder->resourceUri();
-  QUuid queryId = d->xnat->get(scansUri);
-  qRestResult* restResult = d->xnat->takeResult(queryId);
-
-  QList<ctkXnatScan*> scans = restResult->results<ctkXnatScan>();
-
-  foreach (ctkXnatScan* scan, scans)
-  {
-    scanFolder->add(scan);
-  }
-
-  delete restResult;
-
-}
-
-void ctkXnatSession::fetch(ctkXnatScan* scan)
-{
-  Q_D(ctkXnatSession);
-
-  QString scanResourcesUri = scan->resourceUri() + "/resources";
-  QUuid queryId = d->xnat->get(scanResourcesUri);
-  qRestResult* restResult = d->xnat->takeResult(queryId);
-
-  QList<ctkXnatScanResource*> scanResources = restResult->results<ctkXnatScanResource>();
-
-  foreach (ctkXnatScanResource* scanResource, scanResources)
-  {
-    QString label = scanResource->property("label");
-    if (label.size())
-    {
-      scanResource->setProperty("ID", label);
-    }
-    scan->add(scanResource);
-  }
-}
-
-void ctkXnatSession::fetch(ctkXnatScanResource* scanResource)
-{
-  Q_D(ctkXnatSession);
-
-  QString scanResourceFilesUri = scanResource->resourceUri() + "/files";
-  QUuid queryId = d->xnat->get(scanResourceFilesUri);
-  qRestResult* restResult = d->xnat->takeResult(queryId);
-
-  QList<ctkXnatFile*> files = restResult->results<ctkXnatFile>();
-
-  foreach (ctkXnatFile* file, files)
-  {
-    QString label = file->property("Name");
-    if (label.size())
-    {
-      file->setProperty("ID", label);
-    }
-    scanResource->add(file);
-  }
-}
-
-void ctkXnatSession::fetch(ctkXnatReconstructionFolder* reconstructionFolder)
-{
-  Q_D(ctkXnatSession);
-
-  QString reconstructionsUri = reconstructionFolder->resourceUri();
-  QUuid queryId = d->xnat->get(reconstructionsUri);
-  qRestResult* restResult = d->xnat->takeResult(queryId);
-
-  QList<ctkXnatReconstruction*> reconstructions = restResult->results<ctkXnatReconstruction>();
-
-  foreach (ctkXnatReconstruction* reconstruction, reconstructions)
-  {
-    reconstructionFolder->add(reconstruction);
-  }
-
-  delete restResult;
-
-}
-
-void ctkXnatSession::fetch(ctkXnatReconstruction* reconstruction)
-{
-  Q_D(ctkXnatSession);
-
-  QString reconstructionResourcesUri = reconstruction->resourceUri() + "/resources";
-  QUuid queryId = d->xnat->get(reconstructionResourcesUri);
-  qRestResult* restResult = d->xnat->takeResult(queryId);
-
-  QList<ctkXnatReconstructionResource*> reconstructionResources = restResult->results<ctkXnatReconstructionResource>();
-
-  foreach (ctkXnatReconstructionResource* reconstructionResource, reconstructionResources)
-  {
-    QString label = reconstructionResource->property("label");
-    if (label.size())
-    {
-      reconstructionResource->setProperty("ID", label);
-    }
-
-    reconstruction->add(reconstructionResource);
-  }
-}
-
-void ctkXnatSession::fetch(ctkXnatReconstructionResource* reconstructionResource)
-{
-  Q_D(ctkXnatSession);
-
-  QString reconstructionResourceFilesUri = reconstructionResource->resourceUri() + "/files";
-  QUuid queryId = d->xnat->get(reconstructionResourceFilesUri);
-  qRestResult* restResult = d->xnat->takeResult(queryId);
-
-  QList<ctkXnatFile*> files = restResult->results<ctkXnatFile>();
-
-  foreach (ctkXnatFile* file, files)
-  {
-    QString label = file->property("Name");
-    if (label.size())
-    {
-      file->setProperty("ID", label);
-    }
-
-    reconstructionResource->add(file);
-  }
+  return restResult->results<ctkXnatObject>(schemaType);
 }
 
 bool ctkXnatSession::exists(const ctkXnatObject* object)

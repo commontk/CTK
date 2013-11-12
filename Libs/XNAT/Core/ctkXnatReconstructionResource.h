@@ -32,26 +32,27 @@ class ctkXnatReconstruction;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatReconstructionResource : public ctkXnatObject
 {
-  
+
 public:
+
+  CTK_XNAT_OBJECT(ctkXnatReconstructionResource, ctkXnatObject, "xnat:reconstructionResource")
 
   explicit ctkXnatReconstructionResource(ctkXnatReconstruction* parent = 0);
   virtual ~ctkXnatReconstructionResource();
-  
+
   virtual QString resourceUri() const;
 
   void reset();
-  
+
   void download(const QString& filename);
 
 private:
-  
+
   friend class qRestResult;
   virtual void fetchImpl();
-  
-  Q_DECLARE_PRIVATE(ctkXnatReconstructionResource);
-  Q_DISABLE_COPY(ctkXnatReconstructionResource);
-  
+
+  Q_DECLARE_PRIVATE(ctkXnatReconstructionResource)
+
 };
 
 #endif

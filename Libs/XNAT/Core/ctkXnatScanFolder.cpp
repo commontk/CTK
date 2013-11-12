@@ -24,7 +24,7 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
-
+#include "ctkXnatScan.h"
 
 class ctkXnatScanFolderPrivate : public ctkXnatObjectPrivate
 {
@@ -66,5 +66,14 @@ void ctkXnatScanFolder::reset()
 
 void ctkXnatScanFolder::fetchImpl()
 {
-  this->session()->fetch(this);
+  QString scansUri = this->resourceUri();
+  ctkXnatSession* const session = this->session();
+  QUuid queryId = session->httpGet(scansUri);
+
+  QList<ctkXnatObject*> scans = session->httpResults(queryId, ctkXnatScan::staticSchemaType());
+
+  foreach (ctkXnatObject* scan, scans)
+  {
+    this->add(scan);
+  }
 }

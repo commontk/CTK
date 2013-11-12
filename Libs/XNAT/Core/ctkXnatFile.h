@@ -34,23 +34,23 @@ class CTK_XNAT_CORE_EXPORT ctkXnatFile : public ctkXnatObject
 
 public:
 
+  CTK_XNAT_OBJECT(ctkXnatFile, ctkXnatObject, "xnat:abstractResource")
+
   explicit ctkXnatFile(ctkXnatObject* parent = 0);
   virtual ~ctkXnatFile();
-  
+
   virtual QString resourceUri() const;
 
   void download(const QString& filename);
   void upload(const QString& filename);
 
   void reset();
-  
+
 private:
-  
-  friend class qRestResult;
+
   virtual void fetchImpl();
-  
-  Q_DECLARE_PRIVATE(ctkXnatFile);
-  Q_DISABLE_COPY(ctkXnatFile);
+
+  Q_DECLARE_PRIVATE(ctkXnatFile)
 };
 
 #endif

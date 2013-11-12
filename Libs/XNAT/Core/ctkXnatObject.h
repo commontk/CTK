@@ -24,6 +24,8 @@
 
 #include "ctkXNATCoreExport.h"
 
+#include "ctkException.h"
+
 #include <QList>
 #include <QObject>
 #include <QString>
@@ -31,6 +33,11 @@
 
 class ctkXnatSession;
 class ctkXnatObjectPrivate;
+
+#define CTK_XNAT_OBJECT(classType_, baseType_, schemaType_) \
+  classType_(const classType_& other) : baseType_(other) { throw ctkRuntimeException("Copy constructor not implemented"); } \
+  static const char* staticSchemaType() { return schemaType_; } \
+  virtual const char* schemaType() const { return schemaType_; }
 
 //----------------------------------------------------------------------------
 /// \ingroup XNATCore
@@ -41,11 +48,14 @@ class CTK_XNAT_CORE_EXPORT ctkXnatObject
 
 public:
 
+  /// No-op. Throws a ctkRuntimeException
+  ctkXnatObject(const ctkXnatObject& other);
+
   /// Destructs the ctkXnatObject.
   virtual ~ctkXnatObject();
 
-  /// Gets the XML Schema type of the object.
-  QString schemaType() const;
+  /// Get the dynamic schema type of object.
+  virtual const char* schemaType() const = 0;
 
   /// Gets the ID of the object.
   QString id() const;
@@ -135,10 +145,10 @@ public:
 protected:
 
   /// Constructs the ctkXnatObject.
-  ctkXnatObject(ctkXnatObject* parent = 0, const QString& schemaType = QString());
+  ctkXnatObject(ctkXnatObject* parent = 0);
 
   /// Constructs the ctkXnatObject with the given private part.
-  ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent = 0, const QString& schemaType = QString());
+  ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent = 0);
 
   /// Gets the object that represents the connection to the XNAT server
   /// that stores the current object.
@@ -155,7 +165,6 @@ private:
   virtual void fetchImpl() = 0;
 
   Q_DECLARE_PRIVATE(ctkXnatObject)
-  Q_DISABLE_COPY(ctkXnatObject)
 };
 
 Q_DECLARE_METATYPE(ctkXnatObject*)

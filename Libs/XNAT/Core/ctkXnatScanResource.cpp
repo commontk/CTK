@@ -24,6 +24,7 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatScan.h"
+#include "ctkXnatFile.h"
 
 class ctkXnatScanResourcePrivate : public ctkXnatObjectPrivate
 {
@@ -64,7 +65,21 @@ void ctkXnatScanResource::reset()
 
 void ctkXnatScanResource::fetchImpl()
 {
-  this->session()->fetch(this);
+  QString scanResourceFilesUri = this->resourceUri() + "/files";
+  ctkXnatSession* const session = this->session();
+  QUuid queryId = session->httpGet(scanResourceFilesUri);
+
+  QList<ctkXnatObject*> files = session->httpResults(queryId, ctkXnatFile::staticSchemaType());
+
+  foreach (ctkXnatObject* file, files)
+  {
+    QString label = file->property("Name");
+    if (!label.isEmpty())
+    {
+      file->setProperty("ID", label);
+    }
+    this->add(file);
+  }
 }
 
 void ctkXnatScanResource::download(const QString& filename)

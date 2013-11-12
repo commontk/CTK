@@ -32,26 +32,27 @@ class ctkXnatScanResourcePrivate;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatScanResource : public ctkXnatObject
 {
-  
+
 public:
+
+  CTK_XNAT_OBJECT(ctkXnatScanResource, ctkXnatObject, "xnat:scanResource")
 
   explicit ctkXnatScanResource(ctkXnatScan* parent = 0);
   virtual ~ctkXnatScanResource();
 
   QString resourceUri() const;
-  
+
   void reset();
-  
+
   void download(const QString& filename);
 
 private:
-  
+
   friend class qRestResult;
   virtual void fetchImpl();
-  
-  Q_DECLARE_PRIVATE(ctkXnatScanResource);
-  Q_DISABLE_COPY(ctkXnatScanResource);
-  
+
+  Q_DECLARE_PRIVATE(ctkXnatScanResource)
+
 };
 
 #endif

@@ -70,7 +70,19 @@ QString ctkXnatDataModel::resourceUri() const
 
 void ctkXnatDataModel::fetchImpl()
 {
-  this->session()->fetch(this);
+  Q_D(ctkXnatDataModel);
+
+  QString projectsUri("/data/archive/projects");
+
+  QUuid queryId = d->session->httpGet(projectsUri);
+  QList<ctkXnatObject*> projects = d->session->httpResults(queryId, ctkXnatProject::staticSchemaType());
+
+  qDebug() << "ctkXnatDataModel::fetchImpl(): project number:" << projects.size();
+
+  foreach (ctkXnatObject* project, projects)
+  {
+    this->add(project);
+  }
 }
 
 ctkXnatSession* ctkXnatDataModel::session() const

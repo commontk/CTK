@@ -34,22 +34,21 @@ class CTK_XNAT_CORE_EXPORT ctkXnatReconstructionFolder : public ctkXnatObject
 {
 
 public:
-  
+
+  CTK_XNAT_OBJECT(ctkXnatReconstructionFolder, ctkXnatObject, "xnat:reconstructedImageFolder")
+
   explicit ctkXnatReconstructionFolder(ctkXnatExperiment* parent = 0);
   virtual ~ctkXnatReconstructionFolder();
-  
+
   virtual QString resourceUri() const;
 
   void reset();
-  
+
 private:
-  
-  friend class qRestResult;
 
   virtual void fetchImpl();
-  
-  Q_DECLARE_PRIVATE(ctkXnatReconstructionFolder);
-  Q_DISABLE_COPY(ctkXnatReconstructionFolder);
+
+  Q_DECLARE_PRIVATE(ctkXnatReconstructionFolder)
 };
 
 #endif

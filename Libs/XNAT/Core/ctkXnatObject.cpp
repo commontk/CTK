@@ -29,22 +29,25 @@
 #include <QVariant>
 
 
-ctkXnatObject::ctkXnatObject(ctkXnatObject* parent, const QString& schemaType)
+ctkXnatObject::ctkXnatObject(ctkXnatObject* parent)
 : d_ptr(new ctkXnatObjectPrivate())
 {
   Q_D(ctkXnatObject);
   this->setParent(parent);
-  d->schemaType = schemaType;
 }
 
-ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent, const QString& schemaType)
+ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent)
 : d_ptr(&dd)
 {
   Q_D(ctkXnatObject);
   this->setParent(parent);
-  d->schemaType = schemaType;
 }
 
+
+ctkXnatObject::ctkXnatObject(const ctkXnatObject& /*other*/)
+{
+  throw ctkRuntimeException("Copy constructor not implemented");
+}
 
 ctkXnatObject::~ctkXnatObject()
 {
@@ -63,12 +66,6 @@ QString ctkXnatObject::id() const
 void ctkXnatObject::setId(const QString& id)
 {
   setProperty("ID", id);
-}
-
-QString ctkXnatObject::schemaType() const
-{
-  Q_D(const ctkXnatObject);
-  return d->schemaType;
 }
 
 QString ctkXnatObject::name() const

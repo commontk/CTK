@@ -34,21 +34,22 @@ class CTK_XNAT_CORE_EXPORT ctkXnatScanFolder : public ctkXnatObject
 {
 
 public:
-  
+
+  CTK_XNAT_OBJECT(ctkXnatScanFolder, ctkXnatObject, "xnat:imageScanFolder")
+
   explicit ctkXnatScanFolder(ctkXnatExperiment* parent = 0);
   virtual ~ctkXnatScanFolder();
-  
+
   virtual QString resourceUri() const;
-  
+
   void reset();
-  
+
 private:
-  
+
   friend class qRestResult;
   virtual void fetchImpl();
-  
-  Q_DECLARE_PRIVATE(ctkXnatScanFolder);
-  Q_DISABLE_COPY(ctkXnatScanFolder);
+
+  Q_DECLARE_PRIVATE(ctkXnatScanFolder)
 };
 
 #endif

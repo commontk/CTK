@@ -32,24 +32,23 @@ class ctkXnatSubject;
 
 class CTK_XNAT_CORE_EXPORT ctkXnatExperiment : public ctkXnatObject
 {
-  
+
 public:
-  
-  explicit ctkXnatExperiment(ctkXnatSubject* parent = 0, const QString& schemaType = "xnat:experimentData");
+
+  CTK_XNAT_OBJECT(ctkXnatExperiment, ctkXnatObject, "xnat:experimentData")
+
+  explicit ctkXnatExperiment(ctkXnatSubject* parent = 0);
   virtual ~ctkXnatExperiment();
-  
+
   virtual QString resourceUri() const;
 
   void reset();
-  
+
 private:
-  
-  friend class qRestResult;
 
   virtual void fetchImpl();
-  
-  Q_DECLARE_PRIVATE(ctkXnatExperiment);
-  Q_DISABLE_COPY(ctkXnatExperiment);
+
+  Q_DECLARE_PRIVATE(ctkXnatExperiment)
 };
 
 #endif
