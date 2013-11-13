@@ -22,5 +22,6 @@
 #include "ctkXnatException.h"
 
 CTK_IMPLEMENT_EXCEPTION(ctkXnatTimeoutException, ctkRuntimeException, "ctkXnatTimeoutException")
-CTK_IMPLEMENT_EXCEPTION(ctkXnatSessionExpiredException, ctkRuntimeException, "ctkXnatSessionExpiredException")
-CTK_IMPLEMENT_EXCEPTION(ctkXnatResponseParseError, ctkRuntimeException, "ctkXnatResponseParseError")
+CTK_IMPLEMENT_EXCEPTION(ctkXnatSessionException, ctkRuntimeException, "ctkXnatSessionException")
+CTK_IMPLEMENT_EXCEPTION(ctkXnatAuthenticationException, ctkXnatSessionException, "ctkXnatAuthenticationException")
+CTK_IMPLEMENT_EXCEPTION(ctkXnatProtocolFailureException, ctkRuntimeException, "ctkXnatProtocolFailureException")

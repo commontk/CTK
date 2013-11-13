@@ -39,17 +39,31 @@
 #include <QDebug>
 #include <QScopedPointer>
 #include <QStringBuilder>
+#include <QNetworkCookie>
+#include <QDateTime>
 
 #include <ctkXnatAPI_p.h>
 #include <qRestResult.h>
+
+static const char* HEADER_AUTHORIZATION = "Authorization";
+static const char* HEADER_USER_AGENT = "User-Agent";
+static const char* HEADER_COOKIE = "Cookie";
+
+static QString SERVER_VERSION = "version";
+static QString SESSION_EXPIRATION_DATE = "expires";
 
 class ctkXnatSessionPrivate
 {
 public:
   const ctkXnatLoginProfile loginProfile;
 
-  ctkXnatAPI* xnat;
-  ctkXnatDataModel* dataModel;
+  QScopedPointer<ctkXnatAPI> xnat;
+  QScopedPointer<ctkXnatDataModel> dataModel;
+  QString sessionId;
+
+  QMap<QString, QString> sessionProperties;
+
+  ctkXnatSession* q;
 
   ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q);
   ~ctkXnatSessionPrivate();
@@ -57,12 +71,19 @@ public:
   void throwXnatException(const QString& msg);
 
   void createConnections();
+  void setDefaultHttpHeaders();
+  void checkSession() const;
+  void setSessionProperties();
+  QDateTime updateExpirationDate(qRestResult* restResult);
+
+  void close();
 };
 
-ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q)
+ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile,
+                                             ctkXnatSession* q)
   : loginProfile(loginProfile)
   , xnat(new ctkXnatAPI())
-  , dataModel(new ctkXnatDataModel(q))
+  , q(q)
 {
   // TODO This is a workaround for connecting to sites with self-signed
   // certificate. Should be replaced with something more clever.
@@ -73,8 +94,6 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
 
 ctkXnatSessionPrivate::~ctkXnatSessionPrivate()
 {
-  delete dataModel;
-  delete xnat;
 }
 
 void ctkXnatSessionPrivate::throwXnatException(const QString& msg)
@@ -91,7 +110,14 @@ void ctkXnatSessionPrivate::throwXnatException(const QString& msg)
   case qRestAPI::TimeoutError:
     throw ctkXnatTimeoutException(errorMsg);
   case qRestAPI::ResponseParseError:
-    throw ctkXnatResponseParseError(errorMsg);
+    throw ctkXnatProtocolFailureException(errorMsg);
+  case qRestAPI::UnknownUuidError:
+    throw ctkInvalidArgumentException(errorMsg);
+  case qRestAPI::AuthenticationError:
+    // This signals either an initial authentication error
+    // or a session timeout.
+    this->close();
+    throw ctkXnatAuthenticationException(errorMsg);
   default:
     throw ctkRuntimeException(errorMsg);
   }
@@ -104,6 +130,91 @@ void ctkXnatSessionPrivate::createConnections()
 //           this, SLOT(processResult(QUuid,QList<QVariantMap>)));
 //  connect(d->xnat, SIGNAL(progress(QUuid,double)),
   //           this, SLOT(progress(QUuid,double)));
+}
+
+void ctkXnatSessionPrivate::setDefaultHttpHeaders()
+{
+  ctkXnatAPI::RawHeaders rawHeaders;
+  rawHeaders[HEADER_USER_AGENT] = "Qt";
+  /*
+  rawHeaders["Authorization"] = "Basic " +
+      QByteArray(QString("%1:%2").arg(d->loginProfile.userName())
+                 .arg(d->loginProfile.password()).toAscii()).toBase64();
+  */
+  if (!sessionId.isEmpty())
+  {
+    rawHeaders[HEADER_COOKIE] = QString("JSESSIONID=%1").arg(sessionId).toAscii();
+  }
+  xnat->setDefaultRawHeaders(rawHeaders);
+}
+
+void ctkXnatSessionPrivate::checkSession() const
+{
+  if (sessionId.isEmpty())
+  {
+    throw ctkXnatSessionException("Session closed.");
+  }
+}
+
+void ctkXnatSessionPrivate::setSessionProperties()
+{
+  sessionProperties.clear();
+  QUuid uuid = xnat->get("/data/version");
+  QScopedPointer<qRestResult> restResult(xnat->takeResult(uuid));
+  if (restResult)
+  {
+    QString version = restResult->result()["content"].toString();
+    if (version.isEmpty())
+    {
+      throw ctkXnatProtocolFailureException("No version information available.");
+    }
+    sessionProperties[SERVER_VERSION] = version;
+  }
+  else
+  {
+    this->throwXnatException("Retrieving session properties failed.");
+  }
+}
+
+QDateTime ctkXnatSessionPrivate::updateExpirationDate(qRestResult* restResult)
+{
+  QByteArray cookieHeader = restResult->rawHeader("Set-Cookie");
+  QDateTime expirationDate = QDateTime::currentDateTime();
+  if (!cookieHeader.isEmpty())
+  {
+    QList<QNetworkCookie> cookies = QNetworkCookie::parseCookies(cookieHeader);
+    foreach(const QNetworkCookie& cookie, cookies)
+    {
+      if (cookie.name() == "SESSION_EXPIRATION_TIME")
+      {
+        QList<QByteArray> expirationCookie = cookie.value().split(',');
+        if (expirationCookie.size() == 2)
+        {
+          unsigned long long startTime = expirationCookie[0].mid(1).toULongLong();
+          if (startTime > 0)
+          {
+            expirationDate = QDateTime::fromTime_t(startTime / 1000);
+          }
+          QByteArray timeSpan = expirationCookie[1];
+          timeSpan.chop(1);
+          expirationDate = expirationDate.addMSecs(timeSpan.toLong());
+          sessionProperties[SESSION_EXPIRATION_DATE] = expirationDate.toString(Qt::ISODate);
+          emit q->sessionRenewed(expirationDate);
+        }
+      }
+    }
+  }
+  qDebug() << "NEW EXPIR " << expirationDate;
+  return expirationDate;
+}
+
+void ctkXnatSessionPrivate::close()
+{
+  sessionProperties.clear();
+  sessionId.clear();
+  this->setDefaultHttpHeaders();
+
+  dataModel.reset();
 }
 
 // ctkXnatSession class
@@ -123,21 +234,93 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   qRegisterMetaType<ctkXnatFile>(ctkXnatFile::staticSchemaType());
   qRegisterMetaType<ctkXnatReconstructionResource>(ctkXnatReconstructionResource::staticSchemaType());
 
-  ctkXnatAPI::RawHeaders rawHeaders;
-  rawHeaders["User-Agent"] = "Qt";
-  rawHeaders["Authorization"] = "Basic " +
-      QByteArray(QString("%1:%2").arg(d->loginProfile.userName())
-                 .arg(d->loginProfile.password()).toAscii()).toBase64();
-  d->xnat->setDefaultRawHeaders(rawHeaders);
-
   QString url = d->loginProfile.serverUrl().toString();
   d->xnat->setServerUrl(url);
 
-  d->dataModel->setProperty("ID", url);
+  d->setDefaultHttpHeaders();
 }
 
 ctkXnatSession::~ctkXnatSession()
 {
+  this->close();
+}
+
+void ctkXnatSession::open()
+{
+  Q_D(ctkXnatSession);
+
+  if (this->isOpen()) return;
+
+  qRestAPI::RawHeaders headers;
+  headers[HEADER_AUTHORIZATION] = "Basic " +
+                                  QByteArray(QString("%1:%2").arg(this->userName())
+                                             .arg(this->password()).toAscii()).toBase64();
+  QUuid uuid = d->xnat->get("/data/JSESSION", qRestAPI::Parameters(), headers);
+  QScopedPointer<qRestResult> restResult(d->xnat->takeResult(uuid));
+  if (restResult)
+  {
+    QString sessionId = restResult->result()["content"].toString();
+    d->sessionId = sessionId;
+    d->setDefaultHttpHeaders();
+    d->setSessionProperties();
+    d->updateExpirationDate(restResult.data());
+  }
+  else
+  {
+    d->throwXnatException("Could not get a session id.");
+  }
+
+  d->dataModel.reset(new ctkXnatDataModel(this));
+  d->dataModel->setProperty("ID", this->url().toString());
+}
+
+void ctkXnatSession::close()
+{
+  Q_D(ctkXnatSession);
+
+  if (!this->isOpen()) return;
+
+  d->close();
+}
+
+bool ctkXnatSession::isOpen() const
+{
+  Q_D(const ctkXnatSession);
+  return !d->sessionId.isEmpty();
+}
+
+QString ctkXnatSession::version() const
+{
+  Q_D(const ctkXnatSession);
+  if (d->sessionProperties.contains(SERVER_VERSION))
+  {
+    return d->sessionProperties[SERVER_VERSION];
+  }
+  else
+  {
+    return QString::null;
+  }
+}
+
+QDateTime ctkXnatSession::expirationDate() const
+{
+  Q_D(const ctkXnatSession);
+  d->checkSession();
+  return QDateTime::fromString(d->sessionProperties[SESSION_EXPIRATION_DATE], Qt::ISODate);
+}
+
+QDateTime ctkXnatSession::renew()
+{
+  Q_D(ctkXnatSession);
+  d->checkSession();
+
+  QUuid uuid = d->xnat->get("/data/auth");
+  QScopedPointer<qRestResult> restResult(d->xnat->takeResult(uuid));
+  if (!restResult)
+  {
+    d->throwXnatException("Session renewal failed.");
+  }
+  return d->updateExpirationDate(restResult.data());
 }
 
 ctkXnatLoginProfile ctkXnatSession::loginProfile() const
@@ -174,25 +357,47 @@ QString ctkXnatSession::password() const
 ctkXnatDataModel* ctkXnatSession::dataModel() const
 {
   Q_D(const ctkXnatSession);
-  return d->dataModel;
+  d->checkSession();
+  return d->dataModel.data();
 }
 
 QUuid ctkXnatSession::httpGet(const QString& resource, const ctkXnatSession::UrlParameters& parameters, const ctkXnatSession::HttpRawHeaders& rawHeaders)
 {
   Q_D(ctkXnatSession);
+  d->checkSession();
   return d->xnat->get(resource, parameters, rawHeaders);
 }
 
 QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QString& schemaType)
 {
   Q_D(ctkXnatSession);
+  d->checkSession();
 
   QScopedPointer<qRestResult> restResult(d->xnat->takeResult(uuid));
   if (restResult == NULL)
   {
-    d->throwXnatException("REST result is NULL");
+    d->throwXnatException("Http request failed.");
   }
   return restResult->results<ctkXnatObject>(schemaType);
+}
+
+QList<QVariantMap> ctkXnatSession::httpSync(const QUuid& uuid)
+{
+  Q_D(ctkXnatSession);
+  d->checkSession();
+
+  QList<QVariantMap> result;
+  qRestResult* restResult = d->xnat->takeResult(uuid);
+  if (restResult == NULL)
+  {
+    d->throwXnatException("Syncing with http request failed.");
+  }
+  else
+  {
+    d->updateExpirationDate(restResult);
+    result = restResult->results();
+  }
+  return result;
 }
 
 bool ctkXnatSession::exists(const ctkXnatObject* object)

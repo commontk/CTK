@@ -36,6 +36,7 @@
 #include <ctkXnatSession.h>
 #include <ctkXnatProject.h>
 #include <ctkXnatSubject.h>
+#include <ctkXnatException.h>
 
 class ctkXnatSessionTestCasePrivate
 {
@@ -47,6 +48,8 @@ public:
   QString Project;
   QString Subject;
   QString Experiment;
+
+  QDateTime DateTime;
 };
 
 // --------------------------------------------------------------------------
@@ -69,15 +72,28 @@ void ctkXnatSessionTestCase::initTestCase()
   d->LoginProfile.setServerUrl(QString("https://central.xnat.org"));
   d->LoginProfile.setUserName("ctk");
   d->LoginProfile.setPassword("ctk");
+}
 
+void ctkXnatSessionTestCase::init()
+{
+  Q_D(ctkXnatSessionTestCase);
+
+  d->DateTime = QDateTime::currentDateTime();
+  qDebug() << "d->DateTime " << d->DateTime;
   d->Session = new ctkXnatSession(d->LoginProfile);
+  d->Session->open();
 }
 
 void ctkXnatSessionTestCase::cleanupTestCase()
 {
+}
+
+void ctkXnatSessionTestCase::cleanup()
+{
   Q_D(ctkXnatSessionTestCase);
 
   delete d->Session;
+  d->Session = NULL;
 }
 
 void ctkXnatSessionTestCase::testProjectList()
@@ -136,6 +152,60 @@ void ctkXnatSessionTestCase::testParentChild()
   }
   QVERIFY(numberOfOccurrences == 0);
   delete project;
+}
+
+void ctkXnatSessionTestCase::testSession()
+{
+  Q_D(ctkXnatSessionTestCase);
+
+  QVERIFY(d->Session->isOpen());
+  QVERIFY(d->Session->version() == "1.6.1");
+  QDateTime expirationDate = d->Session->expirationDate();
+
+  QVERIFY(d->DateTime < expirationDate);
+
+  QTest::qSleep(2000);
+
+  QUuid uuid = d->Session->httpGet("/data/version");
+  QVERIFY(!uuid.isNull());
+  d->Session->httpSync(uuid);
+
+  QVERIFY(expirationDate < d->Session->expirationDate());
+
+  try
+  {
+    d->Session->httpSync(uuid);
+    QFAIL("Exception for unknown uuid expected");
+  }
+  catch(const ctkInvalidArgumentException&)
+  {}
+
+  d->Session->close();
+  try
+  {
+    d->Session->dataModel();
+    QFAIL("Exception for closed session expected");
+  }
+  catch(const ctkXnatSessionException&)
+  {}
+}
+
+void ctkXnatSessionTestCase::testAuthenticationError()
+{
+  ctkXnatLoginProfile loginProfile;
+  loginProfile.setName("error");
+  loginProfile.setServerUrl(QString("https://central.xnat.org"));
+  loginProfile.setUserName("x");
+  loginProfile.setPassword("y");
+
+  ctkXnatSession session(loginProfile);
+  try
+  {
+    session.open();
+    QFAIL("Authenication error exception expected");
+  }
+  catch (const ctkXnatAuthenticationException&)
+  {}
 }
 
 void ctkXnatSessionTestCase::testCreateProject()

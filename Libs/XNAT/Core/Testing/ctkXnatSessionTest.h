@@ -40,9 +40,17 @@ private slots:
 
   void initTestCase();
 
+  void init();
+
   void cleanupTestCase();
 
+  void cleanup();
+
   void testParentChild();
+
+  void testSession();
+
+  void testAuthenticationError();
 
   void testProjectList();
 

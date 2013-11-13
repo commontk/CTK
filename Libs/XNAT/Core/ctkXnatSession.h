@@ -31,6 +31,8 @@
 #include <QVariantMap>
 #include <QUuid>
 
+class QDateTime;
+
 class ctkXnatSessionPrivate;
 
 class ctkXnatFile;
@@ -40,8 +42,9 @@ class ctkXnatObject;
 class ctkXnatScanResource;
 class ctkXnatReconstructionResource;
 
-class CTK_XNAT_CORE_EXPORT ctkXnatSession
+class CTK_XNAT_CORE_EXPORT ctkXnatSession : public QObject
 {
+  Q_OBJECT
 
 public:
 
@@ -50,6 +53,16 @@ public:
 
   ctkXnatSession(const ctkXnatLoginProfile& loginProfile);
   ~ctkXnatSession();
+
+  void open();
+  void close();
+
+  bool isOpen() const;
+
+  QString version() const;
+
+  QDateTime expirationDate() const;
+  QDateTime renew();
 
   /**
    * @brief Get the current login profile for this session object.
@@ -92,6 +105,8 @@ public:
 
   QList<ctkXnatObject*> httpResults(const QUuid& uuid, const QString& schemaType);
 
+  QList<QVariantMap> httpSync(const QUuid& uuid);
+
   bool exists(const ctkXnatObject* object);
 
   void save(ctkXnatObject* object);
@@ -112,6 +127,8 @@ public:
 //  void downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename);
 
 //  void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFileName);
+
+  Q_SIGNAL void sessionRenewed(const QDateTime& expirationDate);
 
 public slots:
   void processResult(QUuid queryId, QList<QVariantMap> parameters);

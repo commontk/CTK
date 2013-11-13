@@ -30,6 +30,7 @@ set(KIT_SRCS
 # Files which should be processed by Qts moc
 set(KIT_MOC_SRCS
   ctkXnatAPI_p.h
+  ctkXnatSession.h
 )
 
 

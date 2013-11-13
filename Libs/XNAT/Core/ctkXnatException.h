@@ -27,7 +27,8 @@
 #include "ctkException.h"
 
 CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatTimeoutException, ctkRuntimeException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatSessionExpiredException, ctkRuntimeException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatResponseParseError, ctkRuntimeException)
+CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatSessionException, ctkRuntimeException)
+CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatAuthenticationException, ctkXnatSessionException)
+CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatProtocolFailureException, ctkRuntimeException)
 
 #endif

@@ -85,11 +85,14 @@ void ctkXnatAPI::parseResponse(qRestResult* restResult, const QByteArray& respon
     // E.g. creating a subject.
     QVariantMap map;
     map["ID"] = response;
+    map["content"] = response;
     result.push_back(map);
     }
   else
     {
-    restResult->setError(QString("Bad data: ") + response, qRestAPI::ResponseParseError);
+    QVariantMap map;
+    map["content"] = response;
+    result.push_back(map);
     }
 
   restResult->setResult(result);
