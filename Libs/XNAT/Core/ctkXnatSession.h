@@ -54,14 +54,51 @@ public:
   ctkXnatSession(const ctkXnatLoginProfile& loginProfile);
   ~ctkXnatSession();
 
+  /**
+   * @brief Open a new XNAT session.
+   *
+   * This method must be called on all ctkXnatSession objects before
+   * any of the methods which communicate with an XNAT server are called.
+   *
+   * If the session has already been opened, this method does nothing.
+   *
+   * @throws ctkXnatAuthenticationException if the user credentials are invalid.
+   * @throws ctkXnatException (or one of its subclasses) if a network error occurred.
+   */
   void open();
+
+  /**
+   * @brief Closes this XNAT session.
+   */
   void close();
 
+  /**
+   * @brief Returns the open state of this XNAT session.
+   * @return \c true if the session is open, \c false otherwise.
+   */
   bool isOpen() const;
 
+  /**
+   * @brief Get the XNAT server version.
+   * @return The XNAT version running on the remote server. Returns a null string
+   *         if the session is not open.
+   */
   QString version() const;
 
+  /**
+   * @brief Get the expiration date for this XNAT session.
+   *
+   * @sa renew()
+   * @throws ctkXnatInvalidSessionException if the session is closed.
+   * @return The session expiration date.
+   */
   QDateTime expirationDate() const;
+
+  /**
+   * @brief Re-new the XNAT session.
+   * @throws ctkXnatInvalidSessionException if the session is closed.
+   * @return The new session expiration data.
+   */
   QDateTime renew();
 
   /**
@@ -99,12 +136,36 @@ public:
 
   ctkXnatDataModel* dataModel() const;
 
+  /**
+   * @brief TODO
+   * @param resource
+   * @param parameters
+   * @param rawHeaders
+   *
+   * @throws ctkXnatInvalidSessionException if the session is closed.
+   * @return
+   */
   QUuid httpGet(const QString& resource,
                 const UrlParameters& parameters = UrlParameters(),
                 const HttpRawHeaders& rawHeaders = HttpRawHeaders());
 
+  /**
+   * @brief TODO
+   * @param uuid
+   * @param schemaType
+   *
+   * @throws ctkXnatInvalidSessionException if the session is closed.
+   * @return
+   */
   QList<ctkXnatObject*> httpResults(const QUuid& uuid, const QString& schemaType);
 
+  /**
+   * @brief TODO
+   * @param uuid
+   *
+   * @throws ctkXnatInvalidSessionException if the session is closed.
+   * @return
+   */
   QList<QVariantMap> httpSync(const QUuid& uuid);
 
   bool exists(const ctkXnatObject* object);
@@ -128,6 +189,10 @@ public:
 
 //  void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFileName);
 
+  /**
+   * @brief Signals that the session was re-newed.
+   * @param expirationDate The new session expiration date.
+   */
   Q_SIGNAL void sessionRenewed(const QDateTime& expirationDate);
 
 public slots:
