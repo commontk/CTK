@@ -6,7 +6,6 @@ project(CTKDICOMCore)
 
 set(KIT_export_directive "CTK_DICOM_CORE_EXPORT")
 
-
 # determine the DCMTK version we're using
 if(EXISTS ${DCMTK_config_INCLUDE_DIR}/cfunix.h)
   set(_DCMTK_CONFIG_HEADER ${DCMTK_config_INCLUDE_DIR}/cfunix.h)
@@ -15,7 +14,6 @@ elseif(EXISTS ${DCMTK_config_INCLUDE_DIR}/osconfig.h)
 else()
   message(SEND_ERROR "DCMTK version cannot be determined!")
 endif()
-
 
 file(READ ${_DCMTK_CONFIG_HEADER} _DCMTK_CONFIG)
 # simple check, we do not expect anything else
@@ -64,6 +62,23 @@ set_source_files_properties(
   ctkDICOMAbstractThumbnailGenerator.h
   WRAP_EXCLUDE
   )
+
+# Check if DCMTK provides 'dcmtk::log4cplus::Logger', if not fallback to 'log4cplus::Logger'.
+# Indeed, following DCMTK-3.6.1_20110519 (commit e39d190), log4cplus has been moved
+# into dcmtk::log4cplus namespace.
+include(CheckCXXSourceCompiles)
+set(CMAKE_REQUIRED_DEFINITIONS -DHAVE_CONFIG_H)
+set(CMAKE_REQUIRED_INCLUDES ${DCMTK_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_LIBRARIES ${DCMTK_LIBRARIES})
+check_cxx_source_compiles(
+  "#include <dcmtk/oflog/oflog.h>\nint main(int, char*[]){dcmtk::log4cplus::Logger logger; return 0;}"
+  HAVE_DCMTK_LOG4CPLUS_LOGGER)
+if(HAVE_DCMTK_LOG4CPLUS_LOGGER)
+  set_source_files_properties(
+    ctkDICOMUtil.cpp
+    PROPERTIES COMPILE_DEFINITIONS HAVE_DCMTK_LOG4CPLUS_LOGGER
+    )
+endif()
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
