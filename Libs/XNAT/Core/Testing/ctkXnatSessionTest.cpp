@@ -79,7 +79,6 @@ void ctkXnatSessionTestCase::init()
   Q_D(ctkXnatSessionTestCase);
 
   d->DateTime = QDateTime::currentDateTime();
-  qDebug() << "d->DateTime " << d->DateTime;
   d->Session = new ctkXnatSession(d->LoginProfile);
   d->Session->open();
 }

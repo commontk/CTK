@@ -204,7 +204,6 @@ QDateTime ctkXnatSessionPrivate::updateExpirationDate(qRestResult* restResult)
       }
     }
   }
-  qDebug() << "NEW EXPIR " << expirationDate;
   return expirationDate;
 }
 
