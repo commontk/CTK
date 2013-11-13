@@ -185,7 +185,7 @@ void ctkXnatSessionTestCase::testSession()
     d->Session->dataModel();
     QFAIL("Exception for closed session expected");
   }
-  catch(const ctkXnatSessionException&)
+  catch(const ctkXnatInvalidSessionException&)
   {}
 }
 

@@ -152,7 +152,7 @@ void ctkXnatSessionPrivate::checkSession() const
 {
   if (sessionId.isEmpty())
   {
-    throw ctkXnatSessionException("Session closed.");
+    throw ctkXnatInvalidSessionException("Session closed.");
   }
 }
 
