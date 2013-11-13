@@ -31,7 +31,7 @@
 #include "ctkVisualizationVTKWidgetsExport.h"
 
 class vtkDataSet;
-class vtkDataArray;
+class vtkAbstractArray;
 
 /// \ingroup Visualization_VTK_Widgets
 namespace ctkVTK
@@ -84,27 +84,27 @@ public:
   AttributeTypes attributeTypes()const;
   void setAttributeTypes(const AttributeTypes& attributeTypes);
 
-  /// Return the vtkDataArray associated to the index.
-  /// 0 if the index doesn't contain a vtkDataArray
-  inline vtkDataArray* arrayFromIndex(const QModelIndex& arrayIndex)const;
-  vtkDataArray* arrayFromItem(QStandardItem* nodeItem)const;
-  inline QModelIndex indexFromArray(vtkDataArray* dataArray, int column = 0)const;
-  QStandardItem* itemFromArray(vtkDataArray* dataArray, int column = 0)const;
-  QModelIndexList indexes(vtkDataArray* dataArray)const;
+  /// Return the vtkAbstractArray associated to the index.
+  /// 0 if the index doesn't contain a vtkAbstractArray
+  inline vtkAbstractArray* arrayFromIndex(const QModelIndex& arrayIndex)const;
+  vtkAbstractArray* arrayFromItem(QStandardItem* nodeItem)const;
+  inline QModelIndex indexFromArray(vtkAbstractArray* array, int column = 0)const;
+  QStandardItem* itemFromArray(vtkAbstractArray* array, int column = 0)const;
+  QModelIndexList indexes(vtkAbstractArray* array)const;
 
 protected Q_SLOTS:
   void onDataSetModified(vtkObject* dataSet);
-  void onArrayModified(vtkObject* dataArray);
+  void onArrayModified(vtkObject* array);
   void onItemChanged(QStandardItem * item);
 
 protected:
 
   ctkVTKDataSetModel(ctkVTKDataSetModelPrivate* pimpl, QObject *parent=0);
 
-  virtual void insertArray(vtkDataArray* dataArray);
-  virtual void insertArray(vtkDataArray* dataArray, int row);
-  virtual void updateItemFromArray(QStandardItem* item, vtkDataArray* dataArray, int column);
-  virtual void updateArrayFromItem(vtkDataArray* dataArray, QStandardItem* item);
+  virtual void insertArray(vtkAbstractArray* array);
+  virtual void insertArray(vtkAbstractArray* array, int row);
+  virtual void updateItemFromArray(QStandardItem* item, vtkAbstractArray* array, int column);
+  virtual void updateArrayFromItem(vtkAbstractArray* array, QStandardItem* item);
   virtual void updateDataSet();
   virtual void populateDataSet();
 
@@ -118,15 +118,15 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkVTKDataSetModel::AttributeTypes);
 
 // -----------------------------------------------------------------------------
-vtkDataArray* ctkVTKDataSetModel::arrayFromIndex(const QModelIndex &nodeIndex)const
+vtkAbstractArray* ctkVTKDataSetModel::arrayFromIndex(const QModelIndex &nodeIndex)const
 {
   return this->arrayFromItem(this->itemFromIndex(nodeIndex));
 }
 
 // -----------------------------------------------------------------------------
-QModelIndex ctkVTKDataSetModel::indexFromArray(vtkDataArray* dataArray, int column)const
+QModelIndex ctkVTKDataSetModel::indexFromArray(vtkAbstractArray* array, int column)const
 {
-  QStandardItem* item = this->itemFromArray(dataArray, column);
+  QStandardItem* item = this->itemFromArray(array, column);
   return item ? item->index() : QModelIndex();
 }
 

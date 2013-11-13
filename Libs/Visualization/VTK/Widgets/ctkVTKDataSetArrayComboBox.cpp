@@ -25,7 +25,7 @@
 #include "ctkVTKDataSetArrayComboBox.h"
 
 // VTK includes
-#include <vtkDataArray.h>
+#include <vtkAbstractArray.h>
 
 //-----------------------------------------------------------------------------
 class ctkVTKDataSetArrayComboBoxPrivate
@@ -39,8 +39,8 @@ public:
   ctkVTKDataSetModel* dataSetModel()const;
 
   int indexFromArrayName(const QString& dataArrayName)const;
-  int indexFromArray(vtkDataArray* dataArray)const;
-  vtkDataArray* arrayFromIndex(int index)const;
+  int indexFromArray(vtkAbstractArray* dataArray)const;
+  vtkAbstractArray* arrayFromIndex(int index)const;
   QString arrayNameFromIndex(int index)const;
 };
 
@@ -77,13 +77,13 @@ int ctkVTKDataSetArrayComboBoxPrivate::indexFromArrayName(const QString& dataArr
 }
 
 // --------------------------------------------------------------------------
-int ctkVTKDataSetArrayComboBoxPrivate::indexFromArray(vtkDataArray* dataArray)const
+int ctkVTKDataSetArrayComboBoxPrivate::indexFromArray(vtkAbstractArray* dataArray)const
 {
   return this->dataSetModel()->indexFromArray(dataArray,0).row();
 }
 
 // --------------------------------------------------------------------------
-vtkDataArray* ctkVTKDataSetArrayComboBoxPrivate::arrayFromIndex(int index)const
+vtkAbstractArray* ctkVTKDataSetArrayComboBoxPrivate::arrayFromIndex(int index)const
 {
   return this->dataSetModel()->arrayFromIndex(
     this->dataSetModel()->index(index, 0));
@@ -92,7 +92,7 @@ vtkDataArray* ctkVTKDataSetArrayComboBoxPrivate::arrayFromIndex(int index)const
 // --------------------------------------------------------------------------
 QString ctkVTKDataSetArrayComboBoxPrivate::arrayNameFromIndex(int index)const
 {
-  vtkDataArray* dataArray = this->arrayFromIndex(index);
+  vtkAbstractArray* dataArray = this->arrayFromIndex(index);
   return dataArray ? dataArray->GetName() : "";
 }
 
@@ -114,7 +114,7 @@ ctkVTKDataSetArrayComboBox::~ctkVTKDataSetArrayComboBox()
 }
 
 // --------------------------------------------------------------------------
-vtkDataArray* ctkVTKDataSetArrayComboBox::currentArray()const
+vtkAbstractArray* ctkVTKDataSetArrayComboBox::currentArray()const
 {
   Q_D(const ctkVTKDataSetArrayComboBox);
   return d->arrayFromIndex(this->currentIndex());
@@ -123,7 +123,7 @@ vtkDataArray* ctkVTKDataSetArrayComboBox::currentArray()const
 // --------------------------------------------------------------------------
 QString ctkVTKDataSetArrayComboBox::currentArrayName()const
 {
-  vtkDataArray* dataArray = this->currentArray();
+  vtkAbstractArray* dataArray = this->currentArray();
   return dataArray ? dataArray->GetName() : "";
 }
 
@@ -160,7 +160,7 @@ ctkVTKDataSetModel* ctkVTKDataSetArrayComboBox::dataSetModel()const
 }
 
 // --------------------------------------------------------------------------
-void ctkVTKDataSetArrayComboBox::setCurrentArray(vtkDataArray* dataArray)
+void ctkVTKDataSetArrayComboBox::setCurrentArray(vtkAbstractArray* dataArray)
 {
   Q_D(ctkVTKDataSetArrayComboBox);
   this->setCurrentIndex(d->indexFromArray(dataArray));
