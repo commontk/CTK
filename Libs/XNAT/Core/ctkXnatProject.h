@@ -25,6 +25,7 @@
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 class ctkXnatDataModel;
 class ctkXnatProjectPrivate;
@@ -34,9 +35,8 @@ class CTK_XNAT_CORE_EXPORT ctkXnatProject : public ctkXnatObject
 
 public:
 
-  CTK_XNAT_OBJECT(ctkXnatProject, ctkXnatObject, "xnat::projectData")
+  ctkXnatProject(ctkXnatObject* parent = 0, const QString& schemaType = ctkXnatDefaultSchemaTypes::XSI_PROJECT);
 
-  explicit ctkXnatProject(ctkXnatDataModel* parent = 0);
   virtual ~ctkXnatProject();
 
   virtual QString resourceUri() const;

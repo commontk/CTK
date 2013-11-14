@@ -25,6 +25,7 @@
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 class ctkXnatConnection;
 class ctkXnatScanFolder;
@@ -35,9 +36,8 @@ class CTK_XNAT_CORE_EXPORT ctkXnatScan : public ctkXnatObject
 
 public:
 
-  CTK_XNAT_OBJECT(ctkXnatScan, ctkXnatObject, "xnat:imageScanData")
+  ctkXnatScan(ctkXnatObject* parent = 0, const QString& schemaType = ctkXnatDefaultSchemaTypes::XSI_SCAN);
 
-  explicit ctkXnatScan(ctkXnatScanFolder* parent = 0);
   virtual ~ctkXnatScan();
 
   virtual QString resourceUri() const;

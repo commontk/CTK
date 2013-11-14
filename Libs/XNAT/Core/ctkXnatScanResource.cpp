@@ -25,6 +25,7 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatScan.h"
 #include "ctkXnatFile.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 class ctkXnatScanResourcePrivate : public ctkXnatObjectPrivate
 {
@@ -44,8 +45,8 @@ public:
 };
 
 
-ctkXnatScanResource::ctkXnatScanResource(ctkXnatScan* parent)
-: ctkXnatObject(*new ctkXnatScanResourcePrivate(), parent)
+ctkXnatScanResource::ctkXnatScanResource(ctkXnatObject* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatScanResourcePrivate(), parent, schemaType)
 {
 }
 
@@ -69,7 +70,8 @@ void ctkXnatScanResource::fetchImpl()
   ctkXnatSession* const session = this->session();
   QUuid queryId = session->httpGet(scanResourceFilesUri);
 
-  QList<ctkXnatObject*> files = session->httpResults(queryId, ctkXnatFile::staticSchemaType());
+  QList<ctkXnatObject*> files = session->httpResults(queryId,
+                                                     ctkXnatDefaultSchemaTypes::XSI_FILE);
 
   foreach (ctkXnatObject* file, files)
   {

@@ -1,9 +1,9 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
-  Copyright (c) University College London,
-    Centre for Medical Image Computing
+  Copyright (c) German Cancer Research Center,
+    Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.

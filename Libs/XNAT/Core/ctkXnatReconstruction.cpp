@@ -25,6 +25,7 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatReconstructionFolder.h"
 #include "ctkXnatReconstructionResource.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 class ctkXnatReconstructionPrivate : public ctkXnatObjectPrivate
 {
@@ -44,8 +45,8 @@ public:
 };
 
 
-ctkXnatReconstruction::ctkXnatReconstruction(ctkXnatReconstructionFolder* parent)
-: ctkXnatObject(*new ctkXnatReconstructionPrivate(), parent)
+ctkXnatReconstruction::ctkXnatReconstruction(ctkXnatObject* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatReconstructionPrivate(), parent, schemaType)
 {
 }
 
@@ -70,7 +71,7 @@ void ctkXnatReconstruction::fetchImpl()
   QUuid queryId = session->httpGet(reconstructionResourcesUri);
 
   QList<ctkXnatObject*> reconstructionResources = session->httpResults(queryId,
-                                                                   ctkXnatReconstructionResource::staticSchemaType());
+                                                                       ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE);
 
   foreach (ctkXnatObject* reconstructionResource, reconstructionResources)
   {

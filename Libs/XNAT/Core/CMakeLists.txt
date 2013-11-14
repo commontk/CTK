@@ -9,6 +9,7 @@ set(KIT_export_directive "CTK_XNAT_CORE_EXPORT")
 set(KIT_SRCS
   ctkXnatAPI.cpp
   ctkXnatDataModel.cpp
+  ctkXnatDefaultSchemaTypes.cpp
   ctkXnatException.cpp
   ctkXnatExperiment.cpp
   ctkXnatFile.cpp

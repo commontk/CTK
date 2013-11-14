@@ -19,17 +19,23 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatException_h
-#define ctkXnatException_h
+#ifndef CTKXNATDEFAULTSCHEMATYPES_H
+#define CTKXNATDEFAULTSCHEMATYPES_H
 
 #include "ctkXNATCoreExport.h"
 
-#include "ctkException.h"
+#include <QString>
 
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatException, ctkRuntimeException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatTimeoutException, ctkXnatException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatInvalidSessionException, ctkXnatException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatAuthenticationException, ctkXnatException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatProtocolFailureException, ctkXnatException)
+struct CTK_XNAT_CORE_EXPORT ctkXnatDefaultSchemaTypes
+{
+  static QString XSI_EXPERIMENT; // = "xnat:experimentData"
+  static QString XSI_FILE; // = "xnat:abstractResource"
+  static QString XSI_PROJECT; // = "xnat:projectData"
+  static QString XSI_RECONSTRUCTION; // = "xnat:reconstructedImageData"
+  static QString XSI_RECONSTRUCTION_RESOURCE; // = "xnat:reconstructionResource"
+  static QString XSI_SCAN; // = "xnat:imageScanData"
+  static QString XSI_SCAN_RESOURCE; // = "xnat:scanResource"
+  static QString XSI_SUBJECT; // = "xnat:subjectData"
+};
 
-#endif
+#endif // CTKXNATDEFAULTSCHEMATYPES_H

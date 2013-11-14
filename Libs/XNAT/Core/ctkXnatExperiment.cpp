@@ -28,6 +28,7 @@
 #include "ctkXnatReconstruction.h"
 #include "ctkXnatScanFolder.h"
 #include "ctkXnatReconstructionFolder.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 class ctkXnatExperimentPrivate : public ctkXnatObjectPrivate
 {
@@ -47,8 +48,8 @@ public:
 };
 
 
-ctkXnatExperiment::ctkXnatExperiment(ctkXnatSubject* parent)
-: ctkXnatObject(*new ctkXnatExperimentPrivate(), parent)
+ctkXnatExperiment::ctkXnatExperiment(ctkXnatObject* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatExperimentPrivate(), parent, schemaType)
 {
 }
 
@@ -72,7 +73,8 @@ void ctkXnatExperiment::fetchImpl()
   ctkXnatSession* const session = this->session();
   QUuid scansQueryId = session->httpGet(scansUri);
 
-  QList<ctkXnatObject*> scans = session->httpResults(scansQueryId, ctkXnatScan::staticSchemaType());
+  QList<ctkXnatObject*> scans = session->httpResults(scansQueryId,
+                                                     ctkXnatDefaultSchemaTypes::XSI_SCAN);
 
   if (!scans.isEmpty())
   {
@@ -84,7 +86,7 @@ void ctkXnatExperiment::fetchImpl()
   QUuid reconstructionsQueryId = session->httpGet(reconstructionsUri);
 
   QList<ctkXnatObject*> reconstructions = session->httpResults(reconstructionsQueryId,
-                                                                   ctkXnatReconstruction::staticSchemaType());
+                                                               ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION);
 
   if (!reconstructions.isEmpty())
   {

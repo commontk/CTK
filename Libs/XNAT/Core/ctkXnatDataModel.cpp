@@ -24,6 +24,7 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSession.h"
 #include "ctkXnatProject.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 #include <QDebug>
 
@@ -75,7 +76,8 @@ void ctkXnatDataModel::fetchImpl()
   QString projectsUri("/data/archive/projects");
 
   QUuid queryId = d->session->httpGet(projectsUri);
-  QList<ctkXnatObject*> projects = d->session->httpResults(queryId, ctkXnatProject::staticSchemaType());
+  QList<ctkXnatObject*> projects = d->session->httpResults(queryId,
+                                                           ctkXnatDefaultSchemaTypes::XSI_PROJECT);
 
   qDebug() << "ctkXnatDataModel::fetchImpl(): project number:" << projects.size();
 

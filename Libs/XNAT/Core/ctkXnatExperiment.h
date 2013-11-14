@@ -25,6 +25,7 @@
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 class ctkXnatConnection;
 class ctkXnatExperimentPrivate;
@@ -35,9 +36,8 @@ class CTK_XNAT_CORE_EXPORT ctkXnatExperiment : public ctkXnatObject
 
 public:
 
-  CTK_XNAT_OBJECT(ctkXnatExperiment, ctkXnatObject, "xnat:experimentData")
+  ctkXnatExperiment(ctkXnatObject* parent = 0, const QString& schemaType = ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT);
 
-  explicit ctkXnatExperiment(ctkXnatSubject* parent = 0);
   virtual ~ctkXnatExperiment();
 
   virtual QString resourceUri() const;

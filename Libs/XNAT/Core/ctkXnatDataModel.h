@@ -35,8 +35,6 @@ class ctkXnatDataModel : public ctkXnatObject
 
 public:
 
-  CTK_XNAT_OBJECT(ctkXnatDataModel, ctkXnatObject, "https://central.xnat.org/schemas/xnat/xnat.xsd")
-
   ctkXnatDataModel(ctkXnatSession* connection);
 
   QList<ctkXnatProject*> projects() const;

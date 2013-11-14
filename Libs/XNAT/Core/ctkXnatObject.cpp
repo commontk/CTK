@@ -28,25 +28,23 @@
 #include <QDebug>
 #include <QVariant>
 
-
-ctkXnatObject::ctkXnatObject(ctkXnatObject* parent)
-: d_ptr(new ctkXnatObjectPrivate())
-{
-  Q_D(ctkXnatObject);
-  this->setParent(parent);
-}
-
-ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent)
-: d_ptr(&dd)
-{
-  Q_D(ctkXnatObject);
-  this->setParent(parent);
-}
-
-
-ctkXnatObject::ctkXnatObject(const ctkXnatObject& /*other*/)
+ctkXnatObject::ctkXnatObject(const ctkXnatObject&)
 {
   throw ctkRuntimeException("Copy constructor not implemented");
+}
+
+ctkXnatObject::ctkXnatObject(ctkXnatObject* parent, const QString& schemaType)
+: d_ptr(new ctkXnatObjectPrivate())
+{
+  this->setParent(parent);
+  this->setSchemaType(schemaType);
+}
+
+ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent, const QString& schemaType)
+: d_ptr(&dd)
+{
+  this->setParent(parent);
+  this->setSchemaType(schemaType);
 }
 
 ctkXnatObject::~ctkXnatObject()
@@ -179,6 +177,11 @@ bool ctkXnatObject::isFetched() const
   return d->fetched;
 }
 
+QString ctkXnatObject::schemaType() const
+{
+  return this->property("xsiType");
+}
+
 void ctkXnatObject::fetch()
 {
   Q_D(ctkXnatObject);
@@ -198,6 +201,11 @@ ctkXnatSession* ctkXnatObject::session() const
   }
   const ctkXnatDataModel* dataModel = dynamic_cast<const ctkXnatDataModel*>(xnatObject);
   return dataModel ? dataModel->session() : NULL;
+}
+
+void ctkXnatObject::setSchemaType(const QString& schemaType)
+{
+  this->setProperty("xsiType", schemaType);
 }
 
 void ctkXnatObject::download(const QString& /*zipFilename*/)

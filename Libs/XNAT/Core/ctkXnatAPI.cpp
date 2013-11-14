@@ -114,7 +114,6 @@ QList<QVariantMap> ctkXnatAPI::parseJsonResponse(qRestResult* restResult, const 
 
   // e.g. {"ResultSet":{"Result": [{"p1":"v1","p2":"v2",...}], "totalRecords":"13"}}
   QScriptValue resultSet = scriptValue.property("ResultSet");
-  QScriptValue dataLength = resultSet.property("totalRecords");
   QScriptValue data = resultSet.property("Result");
   if (!data.isObject())
     {

@@ -35,6 +35,7 @@
 #include "ctkXnatScanFolder.h"
 #include "ctkXnatScanResource.h"
 #include "ctkXnatSubject.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 #include <QDebug>
 #include <QScopedPointer>
@@ -77,6 +78,8 @@ public:
   QDateTime updateExpirationDate(qRestResult* restResult);
 
   void close();
+
+  static QList<ctkXnatObject*> results(qRestResult* restResult, QString schemaType);
 };
 
 ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile,
@@ -216,6 +219,61 @@ void ctkXnatSessionPrivate::close()
   dataModel.reset();
 }
 
+QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QString schemaType)
+{
+  QList<ctkXnatObject*> results;
+  foreach (const QVariantMap& propertyMap, restResult->results())
+  {
+    QString customSchemaType;
+    if (propertyMap.contains("xsiType"))
+    {
+      customSchemaType = propertyMap["xsiType"].toString();
+    }
+
+    int typeId = 0;
+    // try to create an object based on the custom schema type first
+    if (!customSchemaType.isEmpty())
+    {
+      typeId = QMetaType::type(qPrintable(customSchemaType));
+      if (!typeId)
+      {
+        qWarning() << QString("No ctkXnatObject sub-class registered for the schema %1. Falling back to the default class.").arg(customSchemaType);
+      }
+    }
+
+    // Fall back. Create the default class according to the default schema type
+    if (!typeId)
+    {
+      typeId = QMetaType::type(qPrintable(schemaType));
+    }
+
+    if (!typeId)
+    {
+      qWarning() << QString("No ctkXnatObject sub-class registered as a meta-type for the schema %1. Skipping result.").arg(schemaType);
+      continue;
+    }
+
+    ctkXnatObject* object = reinterpret_cast<ctkXnatObject*>(QMetaType::construct(typeId));
+    if (!customSchemaType.isEmpty())
+    {
+      // We might have created the default ctkXnatObject sub-class, but can still set
+      // the custom schema type.
+      object->setSchemaType(customSchemaType);
+    }
+
+    // Fill in the properties
+    QMapIterator<QString, QVariant> it(propertyMap);
+    while (it.hasNext())
+    {
+      it.next();
+      object->setProperty(it.key().toAscii().data(), it.value());
+    }
+
+    results.push_back(object);
+  }
+  return results;
+}
+
 // ctkXnatSession class
 
 ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
@@ -223,15 +281,14 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
 {
   Q_D(ctkXnatSession);
 
-  qRegisterMetaType<ctkXnatProject>(ctkXnatProject::staticSchemaType());
-  qRegisterMetaType<ctkXnatSubject>(ctkXnatSubject::staticSchemaType());
-  qRegisterMetaType<ctkXnatExperiment>(ctkXnatExperiment::staticSchemaType());
-  qRegisterMetaType<ctkXnatScan>(ctkXnatScan::staticSchemaType());
-  qRegisterMetaType<ctkXnatScanFolder>(ctkXnatScanFolder::staticSchemaType());
-  qRegisterMetaType<ctkXnatReconstruction>(ctkXnatReconstruction::staticSchemaType());
-  qRegisterMetaType<ctkXnatScanResource>(ctkXnatScanResource::staticSchemaType());
-  qRegisterMetaType<ctkXnatFile>(ctkXnatFile::staticSchemaType());
-  qRegisterMetaType<ctkXnatReconstructionResource>(ctkXnatReconstructionResource::staticSchemaType());
+  qRegisterMetaType<ctkXnatProject>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_PROJECT));
+  qRegisterMetaType<ctkXnatSubject>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_SUBJECT));
+  qRegisterMetaType<ctkXnatExperiment>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT));
+  qRegisterMetaType<ctkXnatScan>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_SCAN));
+  qRegisterMetaType<ctkXnatReconstruction>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION));
+  qRegisterMetaType<ctkXnatScanResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE));
+  qRegisterMetaType<ctkXnatFile>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_FILE));
+  qRegisterMetaType<ctkXnatReconstructionResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE));
 
   QString url = d->loginProfile.serverUrl().toString();
   d->xnat->setServerUrl(url);
@@ -377,7 +434,7 @@ QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QStri
   {
     d->throwXnatException("Http request failed.");
   }
-  return restResult->results<ctkXnatObject>(schemaType);
+  return d->results(restResult.data(), schemaType);
 }
 
 QList<QVariantMap> ctkXnatSession::httpSync(const QUuid& uuid)

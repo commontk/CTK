@@ -25,6 +25,7 @@
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 class ctkXnatConnection;
 class ctkXnatReconstructionFolder;
@@ -35,9 +36,8 @@ class CTK_XNAT_CORE_EXPORT ctkXnatReconstruction : public ctkXnatObject
 
 public:
 
-  CTK_XNAT_OBJECT(ctkXnatReconstruction, ctkXnatObject, "xnat:reconstructedImageData")
+  ctkXnatReconstruction(ctkXnatObject* parent = 0, const QString& schemaType = ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION);
 
-  explicit ctkXnatReconstruction(ctkXnatReconstructionFolder* parent = 0);
   virtual ~ctkXnatReconstruction();
 
   virtual QString resourceUri() const;

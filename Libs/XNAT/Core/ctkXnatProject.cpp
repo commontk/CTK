@@ -25,6 +25,7 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatSubject.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 class ctkXnatProjectPrivate : public ctkXnatObjectPrivate
 {
@@ -49,8 +50,8 @@ public:
 //  QString uri;
 };
 
-ctkXnatProject::ctkXnatProject(ctkXnatDataModel* parent)
-: ctkXnatObject(*new ctkXnatProjectPrivate(), parent)
+ctkXnatProject::ctkXnatProject(ctkXnatObject* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatProjectPrivate(), parent, schemaType)
 {
 }
 
@@ -121,7 +122,8 @@ void ctkXnatProject::fetchImpl()
   QString subjectsUri = this->resourceUri() + "/subjects";
   ctkXnatSession* const session = this->session();
   QUuid queryId = session->httpGet(subjectsUri);
-  QList<ctkXnatObject*> subjects = session->httpResults(queryId, ctkXnatSubject::staticSchemaType());
+  QList<ctkXnatObject*> subjects = session->httpResults(queryId,
+                                                        ctkXnatDefaultSchemaTypes::XSI_SUBJECT);
 
   foreach (ctkXnatObject* subject, subjects)
   {

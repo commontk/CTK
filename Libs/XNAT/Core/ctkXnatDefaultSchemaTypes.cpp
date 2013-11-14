@@ -19,17 +19,13 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatException_h
-#define ctkXnatException_h
+#include "ctkXnatDefaultSchemaTypes.h"
 
-#include "ctkXNATCoreExport.h"
-
-#include "ctkException.h"
-
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatException, ctkRuntimeException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatTimeoutException, ctkXnatException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatInvalidSessionException, ctkXnatException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatAuthenticationException, ctkXnatException)
-CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatProtocolFailureException, ctkXnatException)
-
-#endif
+QString ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT = "xnat:experimentData";
+QString ctkXnatDefaultSchemaTypes::XSI_FILE = "xnat:abstractResource";
+QString ctkXnatDefaultSchemaTypes::XSI_PROJECT = "xnat:projectData";
+QString ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION = "xnat:reconstructedImageData";
+QString ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE = "xnat:reconstructionResource";
+QString ctkXnatDefaultSchemaTypes::XSI_SCAN = "xnat:imageScanData";
+QString ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE = "xnat:scanResource";
+QString ctkXnatDefaultSchemaTypes::XSI_SUBJECT = "xnat:subjectData";

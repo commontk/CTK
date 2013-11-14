@@ -35,9 +35,8 @@ class CTK_XNAT_CORE_EXPORT ctkXnatScanFolder : public ctkXnatObject
 
 public:
 
-  CTK_XNAT_OBJECT(ctkXnatScanFolder, ctkXnatObject, "xnat:imageScanFolder")
+  ctkXnatScanFolder(ctkXnatObject* parent = NULL);
 
-  explicit ctkXnatScanFolder(ctkXnatExperiment* parent = 0);
   virtual ~ctkXnatScanFolder();
 
   virtual QString resourceUri() const;

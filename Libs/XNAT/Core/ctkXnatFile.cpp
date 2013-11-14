@@ -42,8 +42,8 @@ public:
 //  QString uri;
 };
 
-ctkXnatFile::ctkXnatFile(ctkXnatObject* parent)
-: ctkXnatObject(*new ctkXnatFilePrivate(), parent)
+ctkXnatFile::ctkXnatFile(ctkXnatObject* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatFilePrivate(), parent, schemaType)
 {
 }
 

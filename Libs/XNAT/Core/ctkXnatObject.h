@@ -34,11 +34,6 @@
 class ctkXnatSession;
 class ctkXnatObjectPrivate;
 
-#define CTK_XNAT_OBJECT(classType_, baseType_, schemaType_) \
-  classType_(const classType_& other) : baseType_(other) { throw ctkRuntimeException("Copy constructor not implemented"); } \
-  static const char* staticSchemaType() { return schemaType_; } \
-  virtual const char* schemaType() const { return schemaType_; }
-
 //----------------------------------------------------------------------------
 /// \ingroup XNATCore
 /// ctkXnatObject is the base class of the objects that represent the nodes in
@@ -48,14 +43,8 @@ class CTK_XNAT_CORE_EXPORT ctkXnatObject
 
 public:
 
-  /// No-op. Throws a ctkRuntimeException
-  ctkXnatObject(const ctkXnatObject& other);
-
   /// Destructs the ctkXnatObject.
   virtual ~ctkXnatObject();
-
-  /// Get the dynamic schema type of object.
-  virtual const char* schemaType() const = 0;
 
   /// Gets the ID of the object.
   QString id() const;
@@ -108,6 +97,8 @@ public:
   /// Tells if the children and the properties of the objects have been fetched.
   bool isFetched() const;
 
+  QString schemaType() const;
+
   /// Resets the object so that its properties and children needs to be fetched
   /// again at the next request.
   virtual void reset();
@@ -144,11 +135,13 @@ public:
 
 protected:
 
+  ctkXnatObject(const ctkXnatObject&);
+
   /// Constructs the ctkXnatObject.
-  ctkXnatObject(ctkXnatObject* parent = 0);
+  ctkXnatObject(ctkXnatObject* parent = 0, const QString& schemaType = QString::null);
 
   /// Constructs the ctkXnatObject with the given private part.
-  ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent = 0);
+  ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent = 0, const QString& schemaType = QString::null);
 
   /// Gets the object that represents the connection to the XNAT server
   /// that stores the current object.
@@ -159,7 +152,9 @@ protected:
 
 private:
 
-  friend class ctkXnatConnection;
+  friend class ctkXnatSessionPrivate;
+
+  void setSchemaType(const QString& schemaType);
 
   /// The implementation of the fetch mechanism, called by the fetch() function.
   virtual void fetchImpl() = 0;
