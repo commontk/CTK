@@ -199,9 +199,19 @@ endforeach()
 
 foreach(file
   Libs/ctkExport.h.in
+  CMake/ctkLinkerAsNeededFlagCheck.cmake
   )
   install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
 endforeach()
+
+install(FILES
+  CMake/ctkLinkerAsNeededFlagCheck/CMakeLists.txt
+  CMake/ctkLinkerAsNeededFlagCheck/A.cpp
+  CMake/ctkLinkerAsNeededFlagCheck/B.cpp
+  CMake/ctkLinkerAsNeededFlagCheck/C.cpp
+  DESTINATION ${CTK_INSTALL_CMAKE_DIR}/ctkLinkerAsNeededFlagCheck
+  COMPONENT Development
+  )
 
 #-----------------------------------------------------------------------------
 # Testing
@@ -326,6 +336,18 @@ if(MSVC)
     "/wd4290" # C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
   )
   set(CTK_CXX_FLAGS "${CTK_CXX_FLAGS} ${msvc_suppressed_warnings}")
+endif()
+
+#-----------------------------------------------------------------------------
+# Check if the linker will resolve symbols of underlinked libraries
+#
+if(UNIX AND NOT APPLE)
+  include(ctkLinkerAsNeededFlagCheck)
+  if(CTK_LINKER_NO_AS_NEEDED_FLAG_REQUIRED)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed"
+      CACHE STRING "Flags used by the linker"
+      FORCE)
+  endif()
 endif()
 
 #-----------------------------------------------------------------------------
