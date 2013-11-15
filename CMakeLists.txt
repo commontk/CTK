@@ -938,7 +938,12 @@ endif()
 # Configure files with settings
 #
 configure_file(${CTK_SOURCE_DIR}/CMake/UseCTK.cmake.in
-               ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake COPYONLY IMMEDIATE)
+               ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake COPYONLY)
+
+install(
+  FILES ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake
+  DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development
+  )
 
 set(CTK_CONFIG_H_INCLUDE_DIR ${CTK_BINARY_DIR})
 
