@@ -50,6 +50,7 @@ int ctkVTKTransferFunctionRepresentationTest1( int argc, char * argv [])
   defaultControlPoint = defaultCTF.controlPoint(0);
   defaultControlPoint = defaultCTF.controlPoint(firstIndex);
   defaultControlPoint = defaultCTF.controlPoint(secondIndex);
+  Q_UNUSED(defaultControlPoint)
 
   representation.computeCurve();
   representation.computeGradient();
