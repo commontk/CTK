@@ -27,7 +27,7 @@
 macro(ctkMacroBuildApp)
   ctkMacroParseArguments(MY
     "NAME;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    ""
+    "INSTALL"
     ${ARGN}
     )
 
@@ -120,12 +120,14 @@ macro(ctkMacroBuildApp)
   target_link_libraries(${proj_name} ${my_libs})
 
   # Install headers
-  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  install(FILES
-    ${headers}
-    ${dynamicHeaders}
-    DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
-    )
+  if(MY_INSTALL)
+    file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+    install(FILES
+      ${headers}
+      ${dynamicHeaders}
+      DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
+      )
+  endif()
 
 endmacro()
 

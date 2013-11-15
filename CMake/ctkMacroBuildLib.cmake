@@ -151,7 +151,7 @@ macro(ctkMacroBuildLib)
 
   # Install rules
   if(MY_LIBRARY_TYPE STREQUAL "SHARED")
-    install(TARGETS ${lib_name}
+    install(TARGETS ${lib_name} EXPORT CTKExports
       RUNTIME DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
       LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
       ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
