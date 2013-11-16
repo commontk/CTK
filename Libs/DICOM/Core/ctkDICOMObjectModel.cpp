@@ -78,10 +78,10 @@ void ctkDICOMObjectModelPrivate::init()
   Q_Q(ctkDICOMObjectModel);
   QStringList horizontalHeaderLabels;
   horizontalHeaderLabels.append( QString("Tag"));
-  horizontalHeaderLabels.append( QString("Tag HEX"));
+  horizontalHeaderLabels.append( QString("Attribute"));
+  horizontalHeaderLabels.append( QString("Value"));
   horizontalHeaderLabels.append( QString("VR"));
   horizontalHeaderLabels.append( QString("Length"));
-  horizontalHeaderLabels.append( QString("Value"));
   q->setHorizontalHeaderLabels(horizontalHeaderLabels);
 }
 
@@ -234,14 +234,14 @@ QStandardItem* ctkDICOMObjectModelPrivate::populateModelRow(const QString& tagNa
   // Insert items
   QList<QStandardItem *> modelRow;
 
-  modelRow.append( tagItem);
   modelRow.append( tagHexItem);
+  modelRow.append( tagItem);
+  modelRow.append( valItem);
   modelRow.append( VRItem);
   modelRow.append( lengthItem);
-  modelRow.append( valItem);
   parent->appendRow( modelRow);
 
-  return tagItem;
+  return tagHexItem;
 }
 
 //------------------------------------------------------------------------------
@@ -251,11 +251,6 @@ ctkDICOMObjectModel::ctkDICOMObjectModel(QObject* parentObject)
 {
   Q_D(ctkDICOMObjectModel);
   d->init();
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMObjectModel::ctkDICOMObjectModel(const ctkDICOMObjectModel& other)
-{
 }
 
 //------------------------------------------------------------------------------
@@ -275,6 +270,12 @@ void ctkDICOMObjectModel::setFile(const QString &fileName)
     }
 
   DcmDataset *dataset = d->fileFormat.getDataset();
-  d->rootItem = ctkDICOMObjectModel::invisibleRootItem();
+  d->rootItem = this->invisibleRootItem();
+
+  if(d->rootItem->hasChildren())
+    {
+    d->rootItem->removeRows(0, d->rootItem->rowCount());
+    }
+
   d->itemInsert( dataset, d->rootItem);
 }
