@@ -138,6 +138,10 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
     {
     QTimer::singleShot(0, this, SLOT(updateVisibility()));
     }
+  else if (event->type() == QEvent::RequestSoftwareInputPanel)
+    {
+    qApp->setActiveWindow(widget->window());
+    }
   return false;
 }
 
