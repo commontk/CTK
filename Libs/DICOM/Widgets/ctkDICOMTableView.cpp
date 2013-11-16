@@ -270,7 +270,8 @@ void ctkDICOMTableView::onFilterChanged()
 
   const QStringList uids = this->uidsForAllRows();
 
-  d->showFilterActiveWarning( d->dicomSQLFilterModel->rowCount() == 0 );
+  d->showFilterActiveWarning( d->dicomSQLFilterModel->rowCount() == 0 &&
+                              d->dicomSQLModel.rowCount() != 0);
 
   d->tblDicomDatabaseView->clearSelection();
   emit queryChanged(uids);
