@@ -31,12 +31,12 @@ set_and_check(CTK_EXPORT_HEADER_TEMPLATE "@PACKAGE_CTK_EXPORT_HEADER_TEMPLATE_DI
 set_and_check(CTK_LIBRARY_DIR "@PACKAGE_CTK_LIBRARY_DIR_CONFIG@")
 set(CTK_LIBRARY_DIRS ${CTK_LIBRARY_DIR})
 
-@CTK_CONFIG_CODE@
-
 # Import CTK targets
 if(NOT TARGET CTKCore)
   include(${CTK_TARGETS})
 endif()
+
+@CTK_CONFIG_CODE@
 
 # Include CTK macros
 include("${CTK_CMAKE_DIR}/ctkFunctionGetGccVersion.cmake")
