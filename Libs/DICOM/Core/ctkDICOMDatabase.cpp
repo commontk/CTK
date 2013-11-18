@@ -85,6 +85,7 @@ public:
   ///
   bool loggedExec(QSqlQuery& query);
   bool loggedExec(QSqlQuery& query, const QString& queryString);
+  bool loggedExecBatch(QSqlQuery& query);
   bool LoggedExecVerbose;
 
   ///
@@ -217,6 +218,27 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
     {
       success = query.exec();
     }
+  if (!success)
+    {
+      QSqlError sqlError = query.lastError();
+      logger.debug( "SQL failed\n Bad SQL: " + query.lastQuery());
+      logger.debug( "Error text: " + sqlError.text());
+    }
+  else
+    {
+      if (LoggedExecVerbose)
+      {
+      logger.debug( "SQL worked!\n SQL: " + query.lastQuery());
+      }
+    }
+  return (success);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabasePrivate::loggedExecBatch(QSqlQuery& query)
+{
+  bool success;
+  success = query.execBatch();
   if (!success)
     {
       QSqlError sqlError = query.lastError();
@@ -1082,17 +1104,21 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
   QString fileName = q->fileForInstance(sopInstanceUID);
   dataset.InitializeFromFile(fileName);
 
-  this->beginTransaction();
 
+  QStringList sopInstanceUIDs, tags, values;
   foreach (const QString &tag, this->TagsToPrecache)
     {
     unsigned short group, element;
     q->tagToGroupElement(tag, group, element);
     DcmTagKey tagKey(group, element);
     QString value = dataset.GetAllElementValuesAsString(tagKey);
-    q->cacheTag(sopInstanceUID, tag, value);
+    sopInstanceUIDs << sopInstanceUID;
+    tags << tag;
+    values << value;
     }
 
+  this->beginTransaction();
+  q->cacheTags(sopInstanceUIDs, tags, values);
   this->endTransaction();
 }
 
@@ -1611,6 +1637,16 @@ QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString 
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabase::cacheTag(const QString sopInstanceUID, const QString tag, const QString value)
 {
+  QStringList sopInstanceUIDs, tags, values;
+  sopInstanceUIDs << sopInstanceUID;
+  tags << tag;
+  values << value;
+  return this->cacheTags(sopInstanceUIDs, tags, values);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::cacheTags(const QStringList sopInstanceUIDs, const QStringList tags, QStringList values)
+{
   Q_D(ctkDICOMDatabase);
   if ( !this->tagCacheExists() )
     {
@@ -1619,15 +1655,21 @@ bool ctkDICOMDatabase::cacheTag(const QString sopInstanceUID, const QString tag,
       return false;
       }
     }
-  QString valueToInsert(value);
-  if (valueToInsert == "")
+
+  // replace empty strings with special flag string
+  QStringList::iterator i;
+  for (i = values.begin(); i != values.end(); ++i)
     {
-    valueToInsert = TagNotInInstance;
+    if (*i == "")
+      {
+      *i = TagNotInInstance;
+      }
     }
-  QSqlQuery insertTag( d->TagCacheDatabase );
-  insertTag.prepare( "INSERT OR REPLACE INTO TagCache VALUES(:sopInstanceUID, :tag, :value)" );
-  insertTag.bindValue(":sopInstanceUID",sopInstanceUID);
-  insertTag.bindValue(":tag",tag);
-  insertTag.bindValue(":value",valueToInsert);
-  return d->loggedExec(insertTag);
+
+  QSqlQuery insertTags( d->TagCacheDatabase );
+  insertTags.prepare( "INSERT OR REPLACE INTO TagCache VALUES(?,?,?)" );
+  insertTags.addBindValue(sopInstanceUIDs);
+  insertTags.addBindValue(tags);
+  insertTags.addBindValue(values);
+  return d->loggedExecBatch(insertTags);
 }
