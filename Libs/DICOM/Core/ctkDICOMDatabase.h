@@ -230,6 +230,8 @@ public:
   Q_INVOKABLE QString cachedTag (const QString sopInstanceUID, const QString tag);
   /// Insert an instance tag's value into to the cache
   Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value);
+  /// Insert lists of tags into the cache as a batch query operation
+  Q_INVOKABLE bool cacheTags (const QStringList sopInstanceUIDs, const QStringList tags, const QStringList values);
 
 
 Q_SIGNALS:
