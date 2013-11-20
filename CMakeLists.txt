@@ -163,6 +163,7 @@ set(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
 # CMake function(s) and macro(s)
 #
 foreach(file
+  CMake/ctkListToString.cmake
   CMake/ctkMacroParseArguments.cmake
   CMake/ctkMacroSetPaths.cmake
   CMake/ctkMacroListFilter.cmake
