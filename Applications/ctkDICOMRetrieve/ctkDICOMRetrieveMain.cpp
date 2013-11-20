@@ -24,6 +24,7 @@
 
 // CTK includes
 #include <ctkDICOMRetrieve.h>
+#include <ctkDICOMUtil.h>
 #include <ctkDICOMDatabase.h>
 #include "ctkLogger.h"
 
@@ -51,8 +52,7 @@ int main(int argc, char** argv)
   ctkLogger logger ( "org.commontk.dicom.DICOMRetieveApp" );
 
   // Set the DCMTK log level to debug
-  dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
-  rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);
+  ctk::setDICOMLogLevel(ctkErrorLogLevel::Debug);
 
   if (argc < 9)
   {
