@@ -886,6 +886,9 @@ if(CTK_SUPERBUILD)
   return()
 endif()
 
+if(BUILD_TESTING)
+  add_subdirectory(CMake/Testing)
+endif()
 
 #-----------------------------------------------------------------------------
 # Expand variables containing include and library directories for external projects
