@@ -30,6 +30,7 @@ ctkMacroGetAllNonProjectTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPEND
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
 #
+
 if(CTK_SUPERBUILD)
   include(ExternalProject)
   include(ctkMacroEmptyExternalProject)
@@ -83,18 +84,17 @@ if(CTK_SUPERBUILD)
   set(CTK_SUPERBUILD_EP_VARS)
 endif()
 
-if(NOT DEFINED CTK_POSSIBLE_DEPENDENCIES)
-  message(FATAL_ERROR "error: CTK_POSSIBLE_DEPENDENCIES variable is not defined !")
+if(NOT DEFINED CTK_DEPENDENCIES)
+  message(FATAL_ERROR "error: CTK_DEPENDENCIES variable is not defined !")
 endif()
-foreach(p ${CTK_POSSIBLE_DEPENDENCIES})
-  if(${p}_FILEPATH)
-    include(${${p}_FILEPATH})
-  else()
-    include(CMakeExternals/${p}.cmake)
-  endif()
-endforeach()
 
-#message("CTK_POSSIBLE_DEPENDENCIES:")
-#foreach(dep ${CTK_POSSIBLE_DEPENDENCIES})
+set(EXTERNAL_PROJECT_DIR ${${CMAKE_PROJECT_NAME}_SOURCE_DIR}/CMakeExternals)
+set(EXTERNAL_PROJECT_FILE_PREFIX "")
+include(ctkMacroCheckExternalProjectDependency)
+
+ctkMacroCheckExternalProjectDependency(CTK)
+
+#message("Updated CTK_DEPENDENCIES:")
+#foreach(dep ${CTK_DEPENDENCIES})
 #  message("  ${dep}")
 #endforeach()

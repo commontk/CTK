@@ -839,14 +839,10 @@ ctkFunctionGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_direct
 #-----------------------------------------------------------------------------
 # CTK dependencies - Projects should be TOPOLOGICALLY ordered
 #-----------------------------------------------------------------------------
-set(CTK_POSSIBLE_DEPENDENCIES
-  CTKData
-  QtTesting
+set(CTK_DEPENDENCIES
   Log4Qt
-  KWStyle
   VTK
   PythonQt
-  PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
   DCMTK
   ZMQ
   QtSOAP
@@ -856,6 +852,22 @@ set(CTK_POSSIBLE_DEPENDENCIES
   ITK
   )
 
+if(BUILD_TESTING)
+  list(APPEND CTK_DEPENDENCIES CTKData)
+endif()
+
+if(CTK_USE_KWSTYLE)
+  list(APPEND CTK_DEPENDENCIES KWStyle)
+endif()
+
+if(CTK_USE_QTTESTING)
+  list(APPEND CTK_DEPENDENCIES QtTesting)
+endif()
+
+if(CTK_WRAP_PYTHONQT_FULL)
+  list(APPEND CTK_DEPENDENCIES PythonQtGenerator)
+endif()
+
 #-----------------------------------------------------------------------------
 # Check out the ExternalProjectsContrib repository
 if(CTK_USE_CONTRIBUTED_PLUGINS)
@@ -863,19 +875,18 @@ if(CTK_USE_CONTRIBUTED_PLUGINS)
     ctkFunctionCheckoutRepo(
       NAME ExternalProjectsContrib
       GIT_URL github.com/commontk/ExternalProjectsContrib.git
-      GIT_TAG c15781914f
+      GIT_TAG 4710b4b
       )
   endif()
 
   file(GLOB _contrib_scripts ${ExternalProjectsContrib_DIR}/*.cmake)
   foreach(_contrib_script ${_contrib_scripts})
     get_filename_component(_script_name ${_contrib_script} NAME_WE)
-    list(APPEND CTK_POSSIBLE_DEPENDENCIES ${_script_name})
+    list(APPEND CTK_DEPENDENCIES ${_script_name})
     set(${_script_name}_FILEPATH ${_contrib_script})
   endforeach()
 endif()
 
-set(CTK_DEPENDENCIES) # This variable will contain the list of required CTK dependencies
 include(CMake/ctkBlockCheckDependencies.cmake)
 
 #-----------------------------------------------------------------------------
