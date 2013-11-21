@@ -114,7 +114,10 @@ foreach(arg ${CTK_SUPERBUILD_EP_VARS})
   set(target_info_list ${target_info_list})
   list(GET varname_and_vartype 0 _varname)
   list(GET varname_and_vartype 1 _vartype)
-  list(APPEND CTK_SUPERBUILD_EP_ARGS -D${_varname}:${_vartype}=${${_varname}})
+  # Separate list item with <sep>
+  set(ep_arg_as_string "")
+  ctk_list_to_string(${sep} "${${_varname}}" ep_arg_as_string)
+  list(APPEND CTK_SUPERBUILD_EP_ARGS -D${_varname}:${_vartype}=${ep_arg_as_string})
   list(APPEND CTK_SUPERBUILD_EP_VARNAMES ${_varname})
 endforeach()
 string(REPLACE ";" "^" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
@@ -140,6 +143,7 @@ set(proj CTK-Configure)
 ExternalProject_Add(${proj}
   DOWNLOAD_COMMAND ""
   CMAKE_GENERATOR ${gen}
+  LIST_SEPARATOR ${sep}
   CMAKE_ARGS
     -DCTK_SUPERBUILD:BOOL=OFF
     -DCTK_SUPERBUILD_BINARY_DIR:PATH=${CTK_BINARY_DIR}
