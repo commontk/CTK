@@ -201,15 +201,15 @@ foreach(lib
     ${DCMTK_DIR}/dcmjpeg/lib${lib}/Debug
     NO_DEFAULT_PATH
     )
-    
+
   mark_as_advanced(DCMTK_${lib}_LIBRARY_RELEASE)
   mark_as_advanced(DCMTK_${lib}_LIBRARY_DEBUG)
-  
+
   # Add libraries to variable according to build type
   if(DCMTK_${lib}_LIBRARY_RELEASE)
     list(APPEND DCMTK_LIBRARIES optimized ${DCMTK_${lib}_LIBRARY_RELEASE})
   endif()
-  
+
   if(DCMTK_${lib}_LIBRARY_DEBUG)
     list(APPEND DCMTK_LIBRARIES debug ${DCMTK_${lib}_LIBRARY_DEBUG})
   endif()
@@ -329,10 +329,6 @@ find_package_handle_standard_args(DCMTK
 
 # Workaround bug in packaging of DCMTK 3.6.0 on Debian.
 # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=637687
-#
-# By setting 'DCMTK_FIND_PACKAGE_SKIP_ADD_DEFINITIONS' to '1' before
-# calling 'find_package(DCMTK)', the variable 'DCMTK_DEFINITIONS' will be set
-# appropriately.
 if(DCMTK_FOUND AND UNIX AND NOT APPLE)
   include(CheckCXXSourceCompiles)
   set(CMAKE_REQUIRED_FLAGS )
@@ -345,10 +341,6 @@ if(DCMTK_FOUND AND UNIX AND NOT APPLE)
   if(NOT DCMTK_HAVE_CONFIG_H_OPTIONAL)
     set(DCMTK_DEFINITIONS "HAVE_CONFIG_H")
   endif()
-  if(NOT DCMTK_HAVE_CONFIG_H_OPTIONAL AND NOT DCMTK_FIND_PACKAGE_SKIP_ADD_DEFINITIONS)
-    add_definitions(-D${DCMTK_DEFINITIONS})
-  endif()
 endif()
 
 message(STATUS "Trying to find DCMTK relying on FindDCMTK.cmake - ok")
-
