@@ -329,10 +329,6 @@ find_package_handle_standard_args(DCMTK
 
 # Workaround bug in packaging of DCMTK 3.6.0 on Debian.
 # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=637687
-#
-# By setting 'DCMTK_FIND_PACKAGE_SKIP_ADD_DEFINITIONS' to '1' before
-# calling 'find_package(DCMTK)', the variable 'DCMTK_DEFINITIONS' will be set
-# appropriately.
 if(DCMTK_FOUND AND UNIX AND NOT APPLE)
   include(CheckCXXSourceCompiles)
   set(CMAKE_REQUIRED_FLAGS )
@@ -343,10 +339,7 @@ if(DCMTK_FOUND AND UNIX AND NOT APPLE)
     DCMTK_HAVE_CONFIG_H_OPTIONAL
     )
   if(NOT DCMTK_HAVE_CONFIG_H_OPTIONAL)
-    set(DCMTK_DEFINITIONS "-DHAVE_CONFIG_H")
-  endif()
-  if(NOT DCMTK_HAVE_CONFIG_H_OPTIONAL AND NOT DCMTK_FIND_PACKAGE_SKIP_ADD_DEFINITIONS)
-    add_definitions(${DCMTK_DEFINITIONS})
+    set(DCMTK_DEFINITIONS "HAVE_CONFIG_H")
   endif()
 endif()
 
