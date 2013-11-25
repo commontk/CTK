@@ -63,6 +63,19 @@ set_source_files_properties(
   WRAP_EXCLUDE
   )
 
+# XXX DCMTK 3.6.1: Remove the HAVE_DCMTK_LOG4CPLUS_LOGGER test when DCMTK 3.6.1
+#     can be expected on all supported platforms.
+# XXX On multi configuration system, there is no way to run 'try_compile` configure
+#     tests based on the configuration that WILL be selected to build the project.
+#     Since the try compile test 'HAVE_DCMTK_LOG4CPLUS_LOGGER' has originally been
+#     added to be able to build against DCMTK 3.6.0 available by default on linux
+#     distribution. Let's skip it in the case of multi configuration system and
+#     assume DCMTK provides 'dcmtk::log4cplus::Logger'.
+# TODO When build as external project, the config of the parent project could be passed to CTK
+#      and used as a hint. We need to define what would be the convention for such hint.
+if(CMAKE_CONFIGURATION_TYPES AND NOT DEFINED HAVE_DCMTK_LOG4CPLUS_LOGGER)
+  set(HAVE_DCMTK_LOG4CPLUS_LOGGER 1 CACHE INTERNAL "Test HAVE_DCMTK_LOG4CPLUS_LOGGER")
+endif()
 # Check if DCMTK provides 'dcmtk::log4cplus::Logger', if not fallback to 'log4cplus::Logger'.
 # Indeed, following DCMTK-3.6.1_20110519 (commit e39d190), log4cplus has been moved
 # into dcmtk::log4cplus namespace.
