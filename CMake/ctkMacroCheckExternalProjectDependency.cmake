@@ -69,11 +69,15 @@ macro(ctkMacroCheckExternalProjectDependency proj)
     message(FATAL_ERROR "${__indent}${proj}_DEPENDENCIES variable is NOT defined !")
   endif()
 
-  # Keep track of the projects
-  list(APPEND __epd_${CMAKE_PROJECT_NAME}_projects ${proj})
+  if(NOT DEFINED SUPERBUILD_TOPLEVEL_PROJECT)
+    set(SUPERBUILD_TOPLEVEL_PROJECT ${proj})
+  endif()
 
-  # Is this the first run ? (used to set the <CMAKE_PROJECT_NAME>_USE_SYSTEM_* variables)
-  if(${proj} STREQUAL ${CMAKE_PROJECT_NAME} AND NOT DEFINED __epd_first_pass)
+  # Keep track of the projects
+  list(APPEND __epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects ${proj})
+
+  # Is this the first run ? (used to set the <SUPERBUILD_TOPLEVEL_PROJECT>_USE_SYSTEM_* variables)
+  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND NOT DEFINED __epd_first_pass)
     message(STATUS "SuperBuild - First pass")
     set(__epd_first_pass TRUE)
   endif()
@@ -81,7 +85,7 @@ macro(ctkMacroCheckExternalProjectDependency proj)
   # Set message strings
   set(__${proj}_indent ${__indent})
   set(__${proj}_superbuild_message "SuperBuild - ${__indent}${proj}[OK]")
-  if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj})
     set(__${proj}_superbuild_message "${__${proj}_superbuild_message} (SYSTEM)")
   endif()
 
@@ -102,11 +106,11 @@ macro(ctkMacroCheckExternalProjectDependency proj)
   endif()
 
   foreach(dep ${${proj}_DEPENDENCIES})
-    if(${${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}})
-      set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${dep} ${${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}})
+    if(${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}})
+      set(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${dep} ${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}})
     endif()
     #if(__epd_first_pass)
-    #  message("${CMAKE_PROJECT_NAME}_USE_SYSTEM_${dep} set to [${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}:${${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}}]")
+    #  message("${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${dep} set to [${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}:${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}}]")
     #endif()
   endforeach()
 
@@ -139,17 +143,17 @@ macro(ctkMacroCheckExternalProjectDependency proj)
     string(SUBSTRING "${__indent}" 0 ${__indent_length} __indent)
   endif()
 
-  if(${proj} STREQUAL ${CMAKE_PROJECT_NAME} AND __epd_first_pass)
+  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND __epd_first_pass)
     message(STATUS "SuperBuild - First pass - done")
     unset(__indent)
-    if(${CMAKE_PROJECT_NAME}_SUPERBUILD)
+    if(${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
       set(__epd_first_pass FALSE)
     endif()
 
-    unset(${CMAKE_PROJECT_NAME}_DEPENDENCIES) # XXX - Refactor
+    unset(${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES) # XXX - Refactor
 
-    foreach(possible_proj ${__epd_${CMAKE_PROJECT_NAME}_projects})
-      if(NOT ${possible_proj} STREQUAL ${CMAKE_PROJECT_NAME})
+    foreach(possible_proj ${__epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects})
+      if(NOT ${possible_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
 
         set_property(GLOBAL PROPERTY ${EXTERNAL_PROJECT_FILE_PREFIX}${possible_proj}_FILE_INCLUDED 0)
 
@@ -157,23 +161,23 @@ macro(ctkMacroCheckExternalProjectDependency proj)
         if(DEFINED ${possible_proj}_enabling_variable)
           ctkMacroShouldAddExternalproject(${${possible_proj}_enabling_variable} add_project)
           if(${add_project})
-            list(APPEND ${CMAKE_PROJECT_NAME}_DEPENDENCIES ${possible_proj})
+            list(APPEND ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES ${possible_proj})
           else()
             # XXX HACK
             if(${possible_proj} STREQUAL "VTK"
                AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-              list(APPEND ${CMAKE_PROJECT_NAME}_DEPENDENCIES VTK)
+              list(APPEND ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES VTK)
             else()
               unset(${${possible_proj}_enabling_variable}_INCLUDE_DIRS)
               unset(${${possible_proj}_enabling_variable}_LIBRARY_DIRS)
               unset(${${possible_proj}_enabling_variable}_FIND_PACKAGE_CMD)
-              if(${CMAKE_PROJECT_NAME}_SUPERBUILD)
+              if(${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
                 message(STATUS "SuperBuild - ${possible_proj}[OPTIONAL]")
               endif()
             endif()
           endif()
         else()
-          list(APPEND ${CMAKE_PROJECT_NAME}_DEPENDENCIES ${possible_proj})
+          list(APPEND ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES ${possible_proj})
         endif()
         # XXX
 
@@ -182,10 +186,11 @@ macro(ctkMacroCheckExternalProjectDependency proj)
       endif()
     endforeach()
 
-    list(REMOVE_DUPLICATES ${CMAKE_PROJECT_NAME}_DEPENDENCIES)
+    list(REMOVE_DUPLICATES ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES)
 
-    if(${CMAKE_PROJECT_NAME}_SUPERBUILD)
-      ctkMacroCheckExternalProjectDependency(${CMAKE_PROJECT_NAME})
+    if(${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
+
+      ctkMacroCheckExternalProjectDependency(${SUPERBUILD_TOPLEVEL_PROJECT})
     endif()
 
   endif()
