@@ -26,6 +26,7 @@
 // Qt includes
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QResizeEvent>
 #include <QSplitter>
 
 class ctkDICOMTableManagerPrivate : public Ui_ctkDICOMTableManager
@@ -43,12 +44,15 @@ public:
   void setCTKDICOMDatabase(ctkDICOMDatabase *db);
 
   ctkDICOMDatabase* dicomDatabase;
+
+  bool m_DynamicLayout;
 };
 
 //------------------------------------------------------------------------------
 
 ctkDICOMTableManagerPrivate::ctkDICOMTableManagerPrivate(ctkDICOMTableManager &obj)
   : q_ptr(&obj)
+  , m_DynamicLayout(false)
 {
 
 }
@@ -227,4 +231,27 @@ void ctkDICOMTableManager::onStudiesSelectionChanged(const QStringList &uids)
       studiesCondition.second = d->studiesTable->uidsForAllRows();
     }
   d->seriesTable->addSqlWhereCondition(studiesCondition);
+}
+
+void ctkDICOMTableManager::setDynamicTableLayout(bool dynamic)
+{
+  Q_D(ctkDICOMTableManager);
+  d->m_DynamicLayout = dynamic;
+}
+
+bool ctkDICOMTableManager::dynamicTableLayout()
+{
+  Q_D(ctkDICOMTableManager);
+  return d->m_DynamicLayout;
+}
+
+void ctkDICOMTableManager::resizeEvent(QResizeEvent *e)
+{
+  this->Superclass::resizeEvent(e);
+  Q_D(ctkDICOMTableManager);
+  if (!d->m_DynamicLayout)
+    return;
+
+  //Minimum size = 800 * 1.28 = 1024 => use horizontal layout (otherwise table size would be too small)
+  this->setTableOrientation(e->size().width() > 1.28*this->minimumWidth() ? Qt::Horizontal : Qt::Vertical);
 }
