@@ -252,8 +252,6 @@ void ctkDICOMTableManager::resizeEvent(QResizeEvent *e)
   if (!d->m_DynamicLayout)
     return;
 
-  if (e->size().width() == this->minimumWidth())
-    this->setTableOrientation(Qt::Vertical);
-  else
-    this->setTableOrientation(Qt::Horizontal);
+  //Minimum size = 800 * 1.28 = 1024 => use horizontal layout (otherwise table size would be too small)
+  this->setTableOrientation(e->size().width() > 1.28*this->minimumWidth() ? Qt::Horizontal : Qt::Vertical);
 }
