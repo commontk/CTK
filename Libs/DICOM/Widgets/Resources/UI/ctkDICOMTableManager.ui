@@ -42,6 +42,9 @@ QSplitter::handle:vertical {height: 2px;}</string>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
      <widget class="ctkDICOMTableView" name="patientsTable"/>
      <widget class="ctkDICOMTableView" name="studiesTable"/>
      <widget class="ctkDICOMTableView" name="seriesTable"/>
