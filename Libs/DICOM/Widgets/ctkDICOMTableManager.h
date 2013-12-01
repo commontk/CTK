@@ -61,7 +61,7 @@ public:
    * @brief Set the ctkDICOMDatabase
    * @param db the dicom database which should be used
    */
-  void setCTKDICOMDatabase(ctkDICOMDatabase* db);
+  void setDICOMDatabase(ctkDICOMDatabase* db);
 
   void setTableOrientation(const Qt::Orientation&) const;
   Qt::Orientation tableOrientation();

@@ -277,6 +277,7 @@ void ctkDICOMTableView::onFilterChanged()
   emit queryChanged(uids);
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMTableView::onInstanceAdded()
 {
   Q_D(ctkDICOMTableView);

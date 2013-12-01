@@ -227,7 +227,7 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
   this->setDatabaseDirectory(databaseDirectory);
   d->DirectoryButton->setDirectory(databaseDirectory);
 
-  d->dicomTableManager->setCTKDICOMDatabase(d->DICOMDatabase.data());
+  d->dicomTableManager->setDICOMDatabase(d->DICOMDatabase.data());
   d->dicomTableManager->setDynamicTableLayout(true);
 
   // TableView signals

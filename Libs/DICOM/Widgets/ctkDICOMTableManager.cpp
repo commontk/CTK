@@ -41,7 +41,7 @@ public:
   ~ctkDICOMTableManagerPrivate();
 
   void init();
-  void setCTKDICOMDatabase(ctkDICOMDatabase *db);
+  void setDICOMDatabase(ctkDICOMDatabase *db);
 
   ctkDICOMDatabase* dicomDatabase;
 
@@ -102,7 +102,7 @@ void ctkDICOMTableManagerPrivate::init()
 
 //------------------------------------------------------------------------------
 
-void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(ctkDICOMDatabase* db)
+void ctkDICOMTableManagerPrivate::setDICOMDatabase(ctkDICOMDatabase* db)
 {
   this->patientsTable->setDicomDataBase(db);
   this->studiesTable->setDicomDataBase(db);
@@ -131,7 +131,7 @@ ctkDICOMTableManager::ctkDICOMTableManager(ctkDICOMDatabase *db, QWidget *parent
 {
   Q_D(ctkDICOMTableManager);
   d->init();
-  d->setCTKDICOMDatabase(db);
+  d->setDICOMDatabase(db);
 }
 
 //------------------------------------------------------------------------------
@@ -143,10 +143,10 @@ ctkDICOMTableManager::~ctkDICOMTableManager()
 
 //------------------------------------------------------------------------------
 
-void ctkDICOMTableManager::setCTKDICOMDatabase(ctkDICOMDatabase* db)
+void ctkDICOMTableManager::setDICOMDatabase(ctkDICOMDatabase* db)
 {
   Q_D(ctkDICOMTableManager);
-  d->setCTKDICOMDatabase(db);
+  d->setDICOMDatabase(db);
 }
 
 //------------------------------------------------------------------------------
