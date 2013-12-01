@@ -44,12 +44,15 @@ public:
   void setCTKDICOMDatabase(ctkDICOMDatabase *db);
 
   ctkDICOMDatabase* dicomDatabase;
+
+  bool m_DynamicLayout;
 };
 
 //------------------------------------------------------------------------------
 
 ctkDICOMTableManagerPrivate::ctkDICOMTableManagerPrivate(ctkDICOMTableManager &obj)
   : q_ptr(&obj)
+  , m_DynamicLayout(false)
 {
 
 }
@@ -115,7 +118,6 @@ void ctkDICOMTableManagerPrivate::setCTKDICOMDatabase(ctkDICOMDatabase* db)
 ctkDICOMTableManager::ctkDICOMTableManager(QWidget *parent)
   :Superclass(parent)
   , d_ptr(new ctkDICOMTableManagerPrivate(*this))
-  , m_DynamicLayout(false)
 {
   Q_D(ctkDICOMTableManager);
   d->init();
@@ -126,7 +128,6 @@ ctkDICOMTableManager::ctkDICOMTableManager(QWidget *parent)
 ctkDICOMTableManager::ctkDICOMTableManager(ctkDICOMDatabase *db, QWidget *parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableManagerPrivate(*this))
-  , m_DynamicLayout(false)
 {
   Q_D(ctkDICOMTableManager);
   d->init();
@@ -234,13 +235,21 @@ void ctkDICOMTableManager::onStudiesSelectionChanged(const QStringList &uids)
 
 void ctkDICOMTableManager::setDynamicTableLayout(bool dynamic)
 {
-  this->m_DynamicLayout = dynamic;
+  Q_D(ctkDICOMTableManager);
+  d->m_DynamicLayout = dynamic;
+}
+
+bool ctkDICOMTableManager::dynamicTableLayout()
+{
+  Q_D(ctkDICOMTableManager);
+  return d->m_DynamicLayout;
 }
 
 void ctkDICOMTableManager::resizeEvent(QResizeEvent *e)
 {
+  this->Superclass::resizeEvent(e);
   Q_D(ctkDICOMTableManager);
-  if (!m_DynamicLayout)
+  if (!d->m_DynamicLayout)
     return;
 
   if (e->size().width() == this->minimumWidth())
