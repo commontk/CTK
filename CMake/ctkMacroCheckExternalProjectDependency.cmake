@@ -26,13 +26,27 @@ if(NOT DEFINED EXTERNAL_PROJECT_FILE_PREFIX)
   set(EXTERNAL_PROJECT_FILE_PREFIX "External_")
 endif()
 
-macro(ctk_include_once)
+#
+# superbuild_include_once()
+#
+# superbuild_include_once() is a macro intented to be used as include guard.
+#
+# It ensures that the CMake code placed after the include guard in a CMake file included
+# using either 'include(/path/to/file.cmake)' or 'include(cmake_module)' will be executed
+# once.
+#
+# It internally set the global property '<CMAKE_CURRENT_LIST_FILENAME>_FILE_INCLUDED' to check if
+# a file has already been included.
+#
+macro(superbuild_include_once)
   # Make sure this file is included only once
   get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-  if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  set(_property_name ${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  get_property(${_property_name} GLOBAL PROPERTY ${_property_name})
+  if(${_property_name})
     return()
   endif()
-  set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+  set_property(GLOBAL PROPERTY ${_property_name} 1)
 endmacro()
 
 macro(_epd_status txt)
@@ -77,7 +91,8 @@ macro(ctkMacroCheckExternalProjectDependency proj)
   else()
     set(dependency_str " ")
     foreach(dep ${${proj}_DEPENDENCIES})
-      if(${EXTERNAL_PROJECT_FILE_PREFIX}${dep}_FILE_INCLUDED)
+      get_property(_is_included GLOBAL PROPERTY ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}_FILE_INCLUDED)
+      if(_is_included)
         set(dependency_str "${dependency_str}${dep}[INCLUDED], ")
       else()
         set(dependency_str "${dependency_str}${dep}, ")
@@ -97,7 +112,8 @@ macro(ctkMacroCheckExternalProjectDependency proj)
 
   # Include dependencies
   foreach(dep ${${proj}_DEPENDENCIES})
-    if(NOT External_${dep}_FILE_INCLUDED)
+    get_property(_is_included GLOBAL PROPERTY External_${dep}_FILE_INCLUDED)
+    if(NOT _is_included)
       # XXX - Refactor - Add a single variable named 'EXTERNAL_PROJECT_DIRS'
       if(EXISTS "${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
         include(${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
@@ -135,7 +151,7 @@ macro(ctkMacroCheckExternalProjectDependency proj)
     foreach(possible_proj ${__epd_${CMAKE_PROJECT_NAME}_projects})
       if(NOT ${possible_proj} STREQUAL ${CMAKE_PROJECT_NAME})
 
-        unset(${EXTERNAL_PROJECT_FILE_PREFIX}${possible_proj}_FILE_INCLUDED)
+        set_property(GLOBAL PROPERTY ${EXTERNAL_PROJECT_FILE_PREFIX}${possible_proj}_FILE_INCLUDED 0)
 
         # XXX - Refactor - The following code should be re-organized
         if(DEFINED ${possible_proj}_enabling_variable)

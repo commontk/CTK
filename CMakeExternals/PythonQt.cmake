@@ -2,7 +2,7 @@
 # PythonQt
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(PythonQt_enabling_variable PYTHONQT_LIBRARIES)
 set(${PythonQt_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR PYTHON_INCLUDE_DIRS)

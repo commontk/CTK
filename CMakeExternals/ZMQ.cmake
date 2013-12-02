@@ -2,7 +2,7 @@
 # ZMQ
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(ZMQ_enabling_variable ZMQ_LIBRARIES)
 set(${ZMQ_enabling_variable}_LIBRARY_DIRS ZMQ_LIBRARY_DIRS)

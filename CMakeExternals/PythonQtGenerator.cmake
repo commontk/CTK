@@ -2,7 +2,7 @@
 # PythonQtGenerator
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 # Sanity checks
 if(DEFINED PYTHONQTGENERATOR_EXECUTABLE AND NOT EXISTS ${PYTHONQTGENERATOR_EXECUTABLE})

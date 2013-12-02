@@ -2,7 +2,7 @@
 # qxmlrpc
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(qxmlrpc_enabling_variable qxmlrpc_LIBRARY)
 set(${qxmlrpc_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)

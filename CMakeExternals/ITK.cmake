@@ -2,7 +2,7 @@
 # ITK
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(ITK_enabling_variable ITK_LIBRARIES)
 set(${ITK_enabling_variable}_LIBRARY_DIRS ITK_LIBRARY_DIRS)

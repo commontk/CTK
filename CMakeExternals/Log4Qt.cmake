@@ -2,7 +2,7 @@
 # Log4Qt
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(Log4Qt_enabling_variable Log4Qt_LIBRARIES)
 set(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
