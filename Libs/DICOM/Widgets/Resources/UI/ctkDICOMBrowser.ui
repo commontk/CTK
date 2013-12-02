@@ -113,6 +113,9 @@
      </property>
      <item>
       <widget class="ctkDICOMTableManager" name="dicomTableManager">
+       <property name="dynamicTableLayout">
+        <bool>true</bool>
+       </property>
        <property name="m_DynamicLayout" stdset="0">
         <bool>true</bool>
        </property>

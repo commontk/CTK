@@ -45,14 +45,14 @@ public:
 
   ctkDICOMDatabase* dicomDatabase;
 
-  bool m_DynamicLayout;
+  bool m_DynamicTableLayout;
 };
 
 //------------------------------------------------------------------------------
 
 ctkDICOMTableManagerPrivate::ctkDICOMTableManagerPrivate(ctkDICOMTableManager &obj)
   : q_ptr(&obj)
-  , m_DynamicLayout(false)
+  , m_DynamicTableLayout(false)
 {
 
 }
@@ -236,20 +236,20 @@ void ctkDICOMTableManager::onStudiesSelectionChanged(const QStringList &uids)
 void ctkDICOMTableManager::setDynamicTableLayout(bool dynamic)
 {
   Q_D(ctkDICOMTableManager);
-  d->m_DynamicLayout = dynamic;
+  d->m_DynamicTableLayout = dynamic;
 }
 
-bool ctkDICOMTableManager::dynamicTableLayout()
+bool ctkDICOMTableManager::dynamicTableLayout() const
 {
-  Q_D(ctkDICOMTableManager);
-  return d->m_DynamicLayout;
+  Q_D(const ctkDICOMTableManager);
+  return d->m_DynamicTableLayout;
 }
 
 void ctkDICOMTableManager::resizeEvent(QResizeEvent *e)
 {
   this->Superclass::resizeEvent(e);
   Q_D(ctkDICOMTableManager);
-  if (!d->m_DynamicLayout)
+  if (!d->m_DynamicTableLayout)
     return;
 
   //Minimum size = 800 * 1.28 = 1024 => use horizontal layout (otherwise table size would be too small)

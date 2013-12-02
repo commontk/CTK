@@ -48,7 +48,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
     * Property for setting a dynamic table layout which switches according to the current
     * window size between vertical and horizontal layout
     */
-  Q_PROPERTY(bool m_DynamicLayout READ dynamicTableLayout WRITE setDynamicTableLayout)
+  Q_PROPERTY(bool dynamicTableLayout READ dynamicTableLayout WRITE setDynamicTableLayout)
 
 public:
   typedef QWidget Superclass;
@@ -75,7 +75,7 @@ public:
   QStringList currentSeriesSelection();
 
   void setDynamicTableLayout(bool);
-  bool dynamicTableLayout();
+  bool dynamicTableLayout() const;
 
 public Q_SLOTS:
 
