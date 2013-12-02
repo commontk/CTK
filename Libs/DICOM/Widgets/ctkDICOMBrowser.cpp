@@ -227,6 +227,8 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
   this->setDatabaseDirectory(databaseDirectory);
   d->DirectoryButton->setDirectory(databaseDirectory);
 
+  d->dicomTableManager->setDICOMDatabase(d->DICOMDatabase.data());
+
   // TableView signals
   connect(d->dicomTableManager, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)),
           this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
@@ -234,7 +236,6 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
           this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
   connect(d->dicomTableManager, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)),
           this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
-  d->dicomTableManager->setCTKDICOMDatabase(d->DICOMDatabase.data());
 
   connect(d->DirectoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(setDatabaseDirectory(QString)));
 

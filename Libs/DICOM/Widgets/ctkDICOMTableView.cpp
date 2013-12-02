@@ -127,9 +127,9 @@ void ctkDICOMTableViewPrivate::setUpTableView()
 
       QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
 
-      QObject::connect(this->dicomDatabase, SIGNAL(schemaUpdated()), q, SLOT(onDatabaseChanged()));
-
       QObject::connect(this->dicomDatabase, SIGNAL(databaseChanged()), q, SLOT(onDatabaseChanged()));
+      QObject::connect(this->dicomDatabase, SIGNAL(instanceAdded(QString)),
+                       q, SLOT(onInstanceAdded()));
     }
 }
 
@@ -215,7 +215,8 @@ void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
   Q_D(ctkDICOMTableView);
   d->dicomDatabase = dicomDatabase;
   //Create connections for new database
-  QObject::connect(d->dicomDatabase, SIGNAL(schemaUpdated()), this, SLOT(onDatabaseChanged()));
+  QObject::connect(d->dicomDatabase, SIGNAL(instanceAdded(const QString&)),
+                   this, SLOT(onInstanceAdded()));
   QObject::connect(d->dicomDatabase, SIGNAL(databaseChanged()), this, SLOT(onDatabaseChanged()));
   this->setQuery();
   d->hideUIDColumns();
@@ -269,10 +270,20 @@ void ctkDICOMTableView::onFilterChanged()
 
   const QStringList uids = this->uidsForAllRows();
 
-  d->showFilterActiveWarning( d->dicomSQLFilterModel->rowCount() == 0 );
+  d->showFilterActiveWarning( d->dicomSQLFilterModel->rowCount() == 0 &&
+                              d->dicomSQLModel.rowCount() != 0);
 
   d->tblDicomDatabaseView->clearSelection();
   emit queryChanged(uids);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::onInstanceAdded()
+{
+  Q_D(ctkDICOMTableView);
+  d->sqlWhereConditions.clear();
+  d->tblDicomDatabaseView->clearSelection();
+  d->leSearchBox->clear();
 }
 
 //------------------------------------------------------------------------------

@@ -140,6 +140,11 @@ protected Q_SLOTS:
    */
   void onFilterChanged();
 
+  /**
+   * @brief Called if a new instance was added to the database
+   */
+  void onInstanceAdded();
+
 Q_SIGNALS:
   /**
    * @brief Is emitted when the selection in the tableview has changed

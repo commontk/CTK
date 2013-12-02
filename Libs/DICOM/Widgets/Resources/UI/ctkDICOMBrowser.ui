@@ -106,13 +106,20 @@
       <number>0</number>
      </property>
      <property name="leftMargin">
-      <number>12</number>
+      <number>0</number>
      </property>
      <property name="rightMargin">
-      <number>12</number>
+      <number>0</number>
      </property>
      <item>
-      <widget class="ctkDICOMTableManager" name="dicomTableManager" native="true"/>
+      <widget class="ctkDICOMTableManager" name="dicomTableManager">
+       <property name="dynamicTableLayout">
+        <bool>true</bool>
+       </property>
+       <property name="m_DynamicLayout" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -169,6 +176,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkDICOMTableManager</class>
+   <extends>QWidget</extends>
+   <header>ctkDICOMTableManager.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkDirectoryButton</class>
    <extends>QWidget</extends>
    <header>ctkDirectoryButton.h</header>
@@ -176,12 +189,6 @@
    <slots>
     <signal>directoryChanged(QString)</signal>
    </slots>
-  </customwidget>
-  <customwidget>
-   <class>ctkDICOMTableManager</class>
-   <extends>QWidget</extends>
-   <header>ctkDICOMTableManager.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
