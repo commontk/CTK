@@ -128,7 +128,7 @@ void ctkDICOMTableViewPrivate::setUpTableView()
       QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
 
       QObject::connect(this->dicomDatabase, SIGNAL(databaseChanged()), q, SLOT(onDatabaseChanged()));
-      QObject::connect(this->dicomDatabase, SIGNAL(instanceAdded(const QString&)),
+      QObject::connect(this->dicomDatabase, SIGNAL(instanceAdded(QString)),
                        q, SLOT(onInstanceAdded()));
     }
 }
