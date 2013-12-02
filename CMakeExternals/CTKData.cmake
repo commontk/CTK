@@ -2,7 +2,7 @@
 # CTKData
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(CTKData_DEPENDENCIES "")
 

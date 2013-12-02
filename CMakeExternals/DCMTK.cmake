@@ -2,7 +2,7 @@
 # DCMTK
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(DCMTK_enabling_variable DCMTK_LIBRARIES)
 set(${DCMTK_enabling_variable}_INCLUDE_DIRS DCMTK_INCLUDE_DIR)

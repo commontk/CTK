@@ -2,7 +2,7 @@
 # QtSOAP
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(QtSOAP_enabling_variable QtSOAP_LIBRARIES)
 set(${QtSOAP_enabling_variable}_LIBRARY_DIRS QtSOAP_LIBRARY_DIRS)

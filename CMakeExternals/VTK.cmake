@@ -2,7 +2,7 @@
 # VTK
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(VTK_enabling_variable VTK_LIBRARIES)
 set(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)

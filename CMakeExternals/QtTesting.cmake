@@ -2,7 +2,7 @@
 # QtTesting
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(QtTesting_DEPENDS)
 

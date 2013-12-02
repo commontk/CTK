@@ -2,7 +2,7 @@
 # XIP
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(XIP_enabling_variable XIP_LIBRARIES)
 set(${XIP_enabling_variable}_LIBRARY_DIRS XIP_LIBRARY_DIRS)

@@ -2,7 +2,7 @@
 # OpenIGTLink
 #
 
-ctk_include_once()
+superbuild_include_once()
 
 set(OpenIGTLink_enabling_variable OpenIGTLink_LIBRARIES)
 set(${OpenIGTLink_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
