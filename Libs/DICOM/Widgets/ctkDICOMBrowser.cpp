@@ -228,7 +228,6 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
   d->DirectoryButton->setDirectory(databaseDirectory);
 
   d->dicomTableManager->setDICOMDatabase(d->DICOMDatabase.data());
-  d->dicomTableManager->setDynamicTableLayout(true);
 
   // TableView signals
   connect(d->dicomTableManager, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)),
