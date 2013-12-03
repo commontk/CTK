@@ -55,7 +55,6 @@ if(NOT DEFINED QtTesting_DIR)
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    CMAKE_GENERATOR ${gen}
     UPDATE_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}

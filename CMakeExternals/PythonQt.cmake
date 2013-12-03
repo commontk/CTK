@@ -71,7 +71,6 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    CMAKE_GENERATOR ${gen}
     UPDATE_COMMAND ""
     BUILD_COMMAND ""
     CMAKE_CACHE_ARGS

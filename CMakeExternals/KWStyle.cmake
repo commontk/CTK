@@ -39,7 +39,6 @@ if(NOT DEFINED KWSTYLE_EXECUTABLE)
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    CMAKE_GENERATOR ${gen}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
     DEPENDS

@@ -42,7 +42,6 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     PREFIX ${proj}${ep_suffix}
     ${location_args}
     INSTALL_COMMAND ""
-    CMAKE_GENERATOR ${gen}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       ${ep_project_include_arg}

@@ -37,7 +37,6 @@ if(NOT DEFINED XIP_DIR)
     PREFIX ${proj}${ep_suffix}
     ${location_args}
     INSTALL_COMMAND ""
-    CMAKE_GENERATOR ${gen}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DHAS_VTK:BOOL=OFF

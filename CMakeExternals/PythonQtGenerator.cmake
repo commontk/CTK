@@ -36,7 +36,6 @@ if(NOT DEFINED PYTHONQTGENERATOR_EXECUTABLE)
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     DOWNLOAD_COMMAND ""
-    CMAKE_GENERATOR ${gen}
     INSTALL_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}

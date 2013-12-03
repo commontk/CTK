@@ -43,7 +43,6 @@ if(NOT DEFINED Log4Qt_DIR)
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    CMAKE_GENERATOR ${gen}
     INSTALL_COMMAND ""
     UPDATE_COMMAND ""
     CMAKE_CACHE_ARGS
