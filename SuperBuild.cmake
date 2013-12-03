@@ -136,9 +136,7 @@ if(CTK_USE_CONTRIBUTED_PLUGINS)
 endif()
 
 #-----------------------------------------------------------------------------
-# CTK Configure
-#
-set(proj CTK-Configure)
+set(proj CTK)
 
 ExternalProject_Add(${proj}
   DOWNLOAD_COMMAND ""
@@ -176,38 +174,8 @@ ExternalProject_Add(${proj}
     -DCTK_SUPERBUILD_EP_VARNAMES:STRING=${CTK_SUPERBUILD_EP_VARNAMES}
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
-  BUILD_COMMAND ""
   INSTALL_COMMAND ""
   DEPENDS
     ${CTK_DEPENDENCIES}
-  )
-
-if(CMAKE_GENERATOR MATCHES ".*Makefiles.*")
-  set(ctk_build_cmd "$(MAKE)")
-else()
-  set(ctk_build_cmd ${CMAKE_COMMAND} --build ${CTK_BINARY_DIR}/CTK-build --config ${CMAKE_CFG_INTDIR})
-endif()
-
-#-----------------------------------------------------------------------------
-# CTK
-#
-#message(STATUS SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:${SUPERBUILD_EXCLUDE_CTKBUILD_TARGET})
-if(NOT DEFINED SUPERBUILD_EXCLUDE_CTKBUILD_TARGET OR NOT SUPERBUILD_EXCLUDE_CTKBUILD_TARGET)
-  set(CTKBUILD_TARGET_ALL_OPTION "ALL")
-else()
-  set(CTKBUILD_TARGET_ALL_OPTION "")
-endif()
-
-add_custom_target(CTK-build ${CTKBUILD_TARGET_ALL_OPTION}
-  COMMAND ${ctk_build_cmd}
-  WORKING_DIRECTORY ${CTK_BINARY_DIR}/CTK-build
-  )
-add_dependencies(CTK-build CTK-Configure)
-
-#-----------------------------------------------------------------------------
-# Custom target allowing to drive the build of CTK project itself
-#
-add_custom_target(CTK
-  COMMAND ${ctk_build_cmd}
-  WORKING_DIRECTORY ${CTK_BINARY_DIR}/CTK-build
+  STEP_TARGETS configure
   )
