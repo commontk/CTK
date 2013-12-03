@@ -46,9 +46,6 @@ if(NOT DEFINED PYTHONQTGENERATOR_EXECUTABLE)
 
   set(PYTHONQTGENERATOR_EXECUTABLE ${CMAKE_BINARY_DIR}/PythonQtGenerator-build/PythonQtGenerator)
 
-  # Since PythonQtGenerator is an executable, there is no need to add its corresponding
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
   superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()

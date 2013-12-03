@@ -84,9 +84,6 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     )
   set(PYTHONQT_INSTALL_DIR ${ep_install_dir})
 
-  # Since the full path of PythonQt library is used, there is not need to add
-  # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
   superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()

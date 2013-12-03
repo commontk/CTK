@@ -72,22 +72,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
   set(DCMTK_DIR ${ep_install_dir})
 
-# This was used during heavy development on DCMTK itself.
-# Disabling it for now. (It also leads to to build errors
-# with the XCode CMake generator on Mac).
-#
-#    ExternalProject_Add_Step(${proj} force_rebuild
-#      COMMENT "Force ${proj} re-build"
-#      DEPENDERS build    # Steps that depend on this step
-#      ALWAYS 1
-#      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${proj}-build
-#      DEPENDS
-#        ${proj_DEPENDENCIES}
-#      )
-
-  # Since DCMTK is statically build, there is not need to add its corresponding
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
   superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()

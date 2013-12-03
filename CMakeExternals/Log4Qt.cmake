@@ -53,9 +53,6 @@ if(NOT DEFINED Log4Qt_DIR)
     )
   set(Log4Qt_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
-  # Since Log4Qt is statically build, there is not need to add its corresponding
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
   superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()

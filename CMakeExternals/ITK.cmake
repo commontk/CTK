@@ -69,10 +69,6 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
   set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
-  # Since the link directories associated with ITK is used, it makes sens to
-  # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory
-  list(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${ITK_DIR}/bin)
-
 else()
   superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()

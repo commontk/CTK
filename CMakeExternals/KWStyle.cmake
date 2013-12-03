@@ -46,8 +46,6 @@ if(NOT DEFINED KWSTYLE_EXECUTABLE)
     )
   set(KWSTYLE_EXECUTABLE ${ep_install_dir}/bin/KWStyle)
 
-  # Since KWStyle is an executable, there is not need to add its corresponding
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 else()
   superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()

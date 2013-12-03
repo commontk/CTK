@@ -54,9 +54,6 @@ if(NOT DEFINED QtSOAP_DIR)
     )
   set(QtSOAP_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
 
-  # Since the QtSOAP dll is created directly in CTK-build/bin, there is not need to add a
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
   superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
