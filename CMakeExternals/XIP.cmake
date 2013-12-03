@@ -6,11 +6,6 @@ superbuild_include_once()
 
 set(proj XIP)
 
-set(${proj}_enabling_variable XIP_LIBRARIES)
-set(${${proj}_enabling_variable}_LIBRARY_DIRS XIP_LIBRARY_DIRS)
-set(${${proj}_enabling_variable}_INCLUDE_DIRS XIP_INCLUDE_DIRS)
-set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD XIP)
-
 set(${proj}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj)

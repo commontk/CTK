@@ -6,10 +6,6 @@ superbuild_include_once()
 
 set(proj DCMTK)
 
-set(${proj}_enabling_variable DCMTK_LIBRARIES)
-set(${${proj}_enabling_variable}_INCLUDE_DIRS DCMTK_INCLUDE_DIR)
-set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD DCMTK)
-
 set(${proj}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj)

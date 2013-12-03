@@ -6,11 +6,6 @@ superbuild_include_once()
 
 set(proj OpenIGTLink)
 
-set(${proj}_enabling_variable OpenIGTLink_LIBRARIES)
-set(${${proj}_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
-set(${${proj}_enabling_variable}_INCLUDE_DIRS OpenIGTLink_INCLUDE_DIRS)
-set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD OpenIGTLink)
-
 set(${proj}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj)

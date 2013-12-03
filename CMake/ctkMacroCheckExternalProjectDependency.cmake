@@ -469,36 +469,19 @@ macro(superbuild_include_dependencies)
     set(SUPERBUILD_FIRST_PASS FALSE)
 
     foreach(possible_proj ${__epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects})
+
+      set_property(GLOBAL PROPERTY ${EXTERNAL_PROJECT_FILE_PREFIX}${possible_proj}_FILE_INCLUDED 0)
+
       if(NOT ${possible_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
-
-        set_property(GLOBAL PROPERTY ${EXTERNAL_PROJECT_FILE_PREFIX}${possible_proj}_FILE_INCLUDED 0)
-
-        # XXX - Refactor - The following code should be re-organized
-        if(DEFINED ${possible_proj}_enabling_variable)
-          ctkMacroShouldAddExternalproject(${${possible_proj}_enabling_variable} add_project)
-          if(${add_project})
-            list(APPEND ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES ${possible_proj})
-          else()
-            # XXX HACK
-            if(${possible_proj} STREQUAL "VTK"
-               AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-              list(APPEND ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES VTK)
-            else()
-              unset(${${possible_proj}_enabling_variable}_INCLUDE_DIRS)
-              unset(${${possible_proj}_enabling_variable}_LIBRARY_DIRS)
-              unset(${${possible_proj}_enabling_variable}_FIND_PACKAGE_CMD)
-              if(${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
-                message(STATUS "SuperBuild - ${possible_proj}[OPTIONAL]")
-              endif()
-            endif()
-          endif()
-        else()
-          list(APPEND ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES ${possible_proj})
+        set(_include_project 1)
+        if(COMMAND superbuild_is_external_project_includable)
+          superbuild_is_external_project_includable("${possible_proj}" _include_project)
         endif()
-        # XXX
-
-      else()
-
+        if(_include_project)
+          list(APPEND ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES ${possible_proj})
+        else()
+          superbuild_message(STATUS "${possible_proj}[OPTIONAL]")
+        endif()
       endif()
     endforeach()
 

@@ -6,11 +6,6 @@ superbuild_include_once()
 
 set(proj qxmlrpc)
 
-set(${proj}_enabling_variable qxmlrpc_LIBRARY)
-set(${${proj}_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)
-set(${${proj}_enabling_variable}_INCLUDE_DIRS qxmlrpc_INCLUDE_DIRS)
-set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD qxmlrpc)
-
 set(${proj}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj)

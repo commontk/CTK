@@ -6,11 +6,6 @@ superbuild_include_once()
 
 set(proj QtSOAP)
 
-set(${proj}_enabling_variable QtSOAP_LIBRARIES)
-set(${${proj}_enabling_variable}_LIBRARY_DIRS QtSOAP_LIBRARY_DIRS)
-set(${${proj}_enabling_variable}_INCLUDE_DIRS QtSOAP_INCLUDE_DIRS)
-set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD QtSOAP)
-
 set(${proj}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj)

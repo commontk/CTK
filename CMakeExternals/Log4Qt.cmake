@@ -6,10 +6,6 @@ superbuild_include_once()
 
 set(proj Log4Qt)
 
-set(${proj}_enabling_variable Log4Qt_LIBRARIES)
-set(${${proj}_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
-set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
-
 set(${proj}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj)

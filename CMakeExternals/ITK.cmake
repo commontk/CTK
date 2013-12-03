@@ -6,11 +6,6 @@ superbuild_include_once()
 
 set(proj ITK)
 
-set(${proj}_enabling_variable ITK_LIBRARIES)
-set(${${proj}_enabling_variable}_LIBRARY_DIRS ITK_LIBRARY_DIRS)
-set(${${proj}_enabling_variable}_INCLUDE_DIRS ITK_INCLUDE_DIRS)
-set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD ITK)
-
 set(${proj}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj)

@@ -6,11 +6,6 @@ superbuild_include_once()
 
 set(proj ZMQ)
 
-set(${proj}_enabling_variable ZMQ_LIBRARIES)
-set(${${proj}_enabling_variable}_LIBRARY_DIRS ZMQ_LIBRARY_DIRS)
-set(${${proj}_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
-set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
-
 set(${proj}_DEPENDENCIES "")
 
 superbuild_include_dependencies(PROJECT_VAR proj)
