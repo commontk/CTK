@@ -77,6 +77,8 @@ public:
   void setDynamicTableLayout(bool);
   bool dynamicTableLayout() const;
 
+  void updateTableViews();
+
 public Q_SLOTS:
 
   void onPatientsQueryChanged(const QStringList&);

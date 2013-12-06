@@ -114,7 +114,6 @@ void ctkDICOMTableManagerPrivate::setDICOMDatabase(ctkDICOMDatabase* db)
 // ctkDICOMTableManager methods
 
 //----------------------------------------------------------------------------
-
 ctkDICOMTableManager::ctkDICOMTableManager(QWidget *parent)
   :Superclass(parent)
   , d_ptr(new ctkDICOMTableManagerPrivate(*this))
@@ -124,7 +123,6 @@ ctkDICOMTableManager::ctkDICOMTableManager(QWidget *parent)
 }
 
 //------------------------------------------------------------------------------
-
 ctkDICOMTableManager::ctkDICOMTableManager(ctkDICOMDatabase *db, QWidget *parent)
   : Superclass(parent)
   , d_ptr(new ctkDICOMTableManagerPrivate(*this))
@@ -135,14 +133,12 @@ ctkDICOMTableManager::ctkDICOMTableManager(ctkDICOMDatabase *db, QWidget *parent
 }
 
 //------------------------------------------------------------------------------
-
 ctkDICOMTableManager::~ctkDICOMTableManager()
 {
 
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableManager::setDICOMDatabase(ctkDICOMDatabase* db)
 {
   Q_D(ctkDICOMTableManager);
@@ -150,7 +146,6 @@ void ctkDICOMTableManager::setDICOMDatabase(ctkDICOMDatabase* db)
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableManager::setTableOrientation(const Qt::Orientation &o) const
 {
   Q_D(const ctkDICOMTableManager);
@@ -158,7 +153,6 @@ void ctkDICOMTableManager::setTableOrientation(const Qt::Orientation &o) const
 }
 
 //------------------------------------------------------------------------------
-
 Qt::Orientation ctkDICOMTableManager::tableOrientation()
 {
   Q_D(ctkDICOMTableManager);
@@ -166,25 +160,27 @@ Qt::Orientation ctkDICOMTableManager::tableOrientation()
 }
 
 //------------------------------------------------------------------------------
-
 QStringList ctkDICOMTableManager::currentPatientsSelection()
 {
   Q_D(ctkDICOMTableManager);
   return d->patientsTable->currentSelection();
 }
 
+//------------------------------------------------------------------------------
 QStringList ctkDICOMTableManager::currentStudiesSelection()
 {
   Q_D(ctkDICOMTableManager);
   return d->studiesTable->currentSelection();
 }
 
+//------------------------------------------------------------------------------
 QStringList ctkDICOMTableManager::currentSeriesSelection()
 {
   Q_D(ctkDICOMTableManager);
   return d->seriesTable->currentSelection();
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMTableManager::onPatientsQueryChanged(const QStringList &uids)
 {
   Q_D(ctkDICOMTableManager);
@@ -193,6 +189,7 @@ void ctkDICOMTableManager::onPatientsQueryChanged(const QStringList &uids)
   d->studiesTable->addSqlWhereCondition(patientCondition);
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMTableManager::onStudiesQueryChanged(const QStringList &uids)
 {
   Q_D(ctkDICOMTableManager);
@@ -200,6 +197,7 @@ void ctkDICOMTableManager::onStudiesQueryChanged(const QStringList &uids)
   d->seriesTable->addSqlWhereCondition(studiesCondition);
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMTableManager::onPatientsSelectionChanged(const QStringList &uids)
 {
   std::pair<QString, QStringList> patientCondition;
@@ -217,6 +215,7 @@ void ctkDICOMTableManager::onPatientsSelectionChanged(const QStringList &uids)
   d->seriesTable->addSqlWhereCondition(patientCondition);
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMTableManager::onStudiesSelectionChanged(const QStringList &uids)
 {
   std::pair<QString, QStringList> studiesCondition;
@@ -233,6 +232,7 @@ void ctkDICOMTableManager::onStudiesSelectionChanged(const QStringList &uids)
   d->seriesTable->addSqlWhereCondition(studiesCondition);
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMTableManager::setDynamicTableLayout(bool dynamic)
 {
   Q_D(ctkDICOMTableManager);
@@ -245,6 +245,16 @@ bool ctkDICOMTableManager::dynamicTableLayout() const
   return d->m_DynamicTableLayout;
 }
 
+//------------------------------------------------------------------------------
+void ctkDICOMTableManager::updateTableViews()
+{
+  Q_D(ctkDICOMTableManager);
+  d->patientsTable->setQuery();
+  d->studiesTable->setQuery();
+  d->seriesTable->setQuery();
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMTableManager::resizeEvent(QResizeEvent *e)
 {
   this->Superclass::resizeEvent(e);
