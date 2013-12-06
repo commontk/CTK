@@ -456,6 +456,8 @@ void ctkDICOMBrowser::onRemoveAction()
     {
       d->DICOMDatabase->removePatient(uid);
     }
+  // Update the table views
+  d->dicomTableManager->updateTableViews();
 }
 
 //----------------------------------------------------------------------------

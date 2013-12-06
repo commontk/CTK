@@ -245,7 +245,6 @@ void ctkDICOMTableView::onSelectionChanged()
 //------------------------------------------------------------------------------
 void ctkDICOMTableView::onDatabaseChanged()
 {
-  Q_D(ctkDICOMTableView);
   setQuery();
 }
 
@@ -284,6 +283,7 @@ void ctkDICOMTableView::onInstanceAdded()
   d->sqlWhereConditions.clear();
   d->tblDicomDatabaseView->clearSelection();
   d->leSearchBox->clear();
+  setQuery();
 }
 
 //------------------------------------------------------------------------------
