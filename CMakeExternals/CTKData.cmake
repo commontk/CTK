@@ -42,7 +42,6 @@ if(NOT DEFINED CTKData_DIR)
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
-    LIST_SEPARATOR ${sep}
     ${location_args}
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""

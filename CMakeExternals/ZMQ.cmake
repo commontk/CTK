@@ -46,7 +46,6 @@ if(NOT DEFINED ZMQ_DIR)
     UPDATE_COMMAND ""
     INSTALL_COMMAND ""
     CMAKE_GENERATOR ${gen}
-    LIST_SEPARATOR ${sep}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DBUILD_SHARED_LIBS:BOOL=ON

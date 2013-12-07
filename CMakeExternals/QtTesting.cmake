@@ -57,7 +57,6 @@ if(NOT DEFINED QtTesting_DIR)
     ${location_args}
     CMAKE_GENERATOR ${gen}
     UPDATE_COMMAND ""
-    LIST_SEPARATOR ${sep}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DBUILD_SHARED_LIBS:BOOL=ON

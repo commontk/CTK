@@ -40,7 +40,6 @@ if(NOT DEFINED KWSTYLE_EXECUTABLE)
     PREFIX ${proj}${ep_suffix}
     ${location_args}
     CMAKE_GENERATOR ${gen}
-    LIST_SEPARATOR ${sep}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
     DEPENDS
