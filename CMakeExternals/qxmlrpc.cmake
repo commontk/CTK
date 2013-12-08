@@ -49,7 +49,7 @@ if(NOT DEFINED qxmlrpc_DIR)
     CMAKE_GENERATOR ${gen}
     INSTALL_COMMAND ""
     LIST_SEPARATOR ${sep}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     DEPENDS

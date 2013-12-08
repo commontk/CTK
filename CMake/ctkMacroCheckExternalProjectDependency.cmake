@@ -49,6 +49,52 @@ macro(superbuild_include_once)
   set_property(GLOBAL PROPERTY ${_property_name} 1)
 endmacro()
 
+#!
+#! superbuild_cmakevar_to_cmakearg(<cmake_varname_and_type> <cmake_arg_var> <cmake_arg_type> [<varname_var> [<vartype_var>]])
+#!
+#! <cmake_varname_and_type> corresponds to variable name and variable type passed as "<varname>:<vartype>"
+#!
+#! <cmake_arg_var> is a variable name that will be set to "-D<varname>:<vartype>=${<varname>}"
+#!
+#! <cmake_arg_type> is set to either CMAKE_CACHE or CMAKE_CMD.
+#!                  CMAKE_CACHE means that the generated cmake argument will be passed to
+#!                  ExternalProject_Add as CMAKE_CACHE_ARGS.
+#!                  CMAKE_CMD means that the generated cmake argument will be passed to
+#!                  ExternalProject_Add as CMAKE_ARGS.
+#!
+#! <varname_var> is an optional variable name that will be set to "<varname>"
+#!
+#! <vartype_var> is an optional variable name that will be set to "<vartype>"
+function(superbuild_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var cmake_arg_type)
+  set(_varname_var ${ARGV3})
+  set(_vartype_var ${ARGV4})
+  string(REPLACE ":" ";" varname_and_vartype ${cmake_varname_and_type})
+  list(GET varname_and_vartype 0 _varname)
+  list(GET varname_and_vartype 1 _vartype)
+  set(_var_value "${${_varname}}")
+  get_property(_value_set_in_cache CACHE ${_varname} PROPERTY VALUE SET)
+  if(_value_set_in_cache)
+    get_property(_var_value CACHE ${_varname} PROPERTY VALUE)
+  endif()
+
+  # XXX Add check for <cmake_arg_type> value
+
+  if(cmake_arg_type STREQUAL "CMAKE_CMD")
+    # Separate list item with <sep>
+    set(ep_arg_as_string "")
+    ctk_list_to_string(${sep} "${_var_value}" _var_value)
+  endif()
+
+  set(${cmake_arg_var} -D${_varname}:${_vartype}=${_var_value} PARENT_SCOPE)
+
+  if(_varname_var MATCHES ".+")
+    set(${_varname_var} ${_varname} PARENT_SCOPE)
+  endif()
+  if(_vartype_var MATCHES ".+")
+    set(${_vartype_var} ${_vartype} PARENT_SCOPE)
+  endif()
+endfunction()
+
 macro(_epd_status txt)
   if(NOT __epd_first_pass)
     message(STATUS ${txt})

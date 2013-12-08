@@ -110,15 +110,9 @@ endforeach()
 set(CTK_SUPERBUILD_EP_ARGS)
 set(CTK_SUPERBUILD_EP_VARNAMES)
 foreach(arg ${CTK_SUPERBUILD_EP_VARS})
-  string(REPLACE ":" ";" varname_and_vartype ${arg})
-  set(target_info_list ${target_info_list})
-  list(GET varname_and_vartype 0 _varname)
-  list(GET varname_and_vartype 1 _vartype)
-  # Separate list item with <sep>
-  set(ep_arg_as_string "")
-  ctk_list_to_string(${sep} "${${_varname}}" ep_arg_as_string)
-  list(APPEND CTK_SUPERBUILD_EP_ARGS -D${_varname}:${_vartype}=${ep_arg_as_string})
-  list(APPEND CTK_SUPERBUILD_EP_VARNAMES ${_varname})
+  superbuild_cmakevar_to_cmakearg(${arg} cmake_arg varname)
+  list(APPEND CTK_SUPERBUILD_EP_ARGS ${cmake_arg})
+  list(APPEND CTK_SUPERBUILD_EP_VARNAMES ${varname})
 endforeach()
 string(REPLACE ";" "^" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
 
@@ -142,7 +136,7 @@ ExternalProject_Add(${proj}
   DOWNLOAD_COMMAND ""
   CMAKE_GENERATOR ${gen}
   LIST_SEPARATOR ${sep}
-  CMAKE_ARGS
+  CMAKE_CACHE_ARGS
     -DCTK_SUPERBUILD:BOOL=OFF
     -DCTK_SUPERBUILD_BINARY_DIR:PATH=${CTK_BINARY_DIR}
     ${ctk_superbuild_boolean_args}
