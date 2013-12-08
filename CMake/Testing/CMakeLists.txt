@@ -13,4 +13,4 @@ endmacro()
 #
 # Add 'CMake script' Tests
 #
-add_cmakescript_test(list_to_string_test ctkListToString)
+add_cmakescript_test(ctk_list_to_string_test ctkListToString)
