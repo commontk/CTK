@@ -36,7 +36,7 @@ if(APPLE)
   include(${CMAKE_SOURCE_DIR}/CMake/ctkBlockSetCMakeOSXVariables.cmake)
   mark_as_superbuild(
     VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING
-    PROJECT CTK
+    PROJECTS CTK
     )
 endif()
 

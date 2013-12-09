@@ -13,3 +13,8 @@ endfunction()
 check_variable(LibA_VAR "LibA")
 
 check_variable(LibA_EP_LABEL_LABEL_A "LibA_VAR_WITH_LABELS")
+
+check_variable(MULTIPROJECT_VAR "MultiProjectVar")
+
+check_variable(LibA_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABELS")
+check_variable(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")

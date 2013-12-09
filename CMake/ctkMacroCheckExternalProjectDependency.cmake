@@ -68,14 +68,14 @@ endmacro()
 #!
 #! mark_as_superbuild(
 #!     VARS <varname1>[:<vartype1>] [<varname2>[:<vartype2>] [...]]
-#!     [PROJECT <projectname>]
+#!     [PROJECTS <projectname> [<projectname> [...]]]
 #!     [LABELS <label1> [<label2> [...]]]
 #!     [CMAKE_CMD]
 #!   )
 #!
-#! PROJECT corresponds to a <projectname> that will be added using 'ExternalProject_Add' function.
-#!         If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
-#!         Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#! PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
+#!          If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
+#!          Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
 #!
 #! VARS is an expected list of variables specified as <varname>:<vartype> to pass to <projectname>
 #!
@@ -87,14 +87,14 @@ endmacro()
 #!
 function(mark_as_superbuild)
   set(options CMAKE_CMD)
-  set(oneValueArgs PROJECT)
-  set(multiValueArgs VARS LABELS)
+  set(oneValueArgs)
+  set(multiValueArgs VARS PROJECTS LABELS)
   cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   set(_vars ${_sb_UNPARSED_ARGUMENTS})
 
   set(_named_parameters_expected 0)
-  if(_sb_PROJECT OR _sb_LABELS OR _sb_VARS)
+  if(_sb_PROJECTS OR _sb_LABELS OR _sb_VARS)
     set(_named_parameters_expected 1)
     set(_vars ${_sb_VARS})
   endif()
@@ -126,7 +126,7 @@ function(mark_as_superbuild)
     set(optional_arg_CMAKE_CMD "CMAKE_CMD")
   endif()
 
-  _sb_append_to_cmake_args(VARS ${_vars_with_type} PROJECT ${_sb_PROJECT} LABELS ${_sb_LABELS} ${optional_arg_CMAKE_CMD})
+  _sb_append_to_cmake_args(VARS ${_vars_with_type} PROJECTS ${_sb_PROJECTS} LABELS ${_sb_LABELS} ${optional_arg_CMAKE_CMD})
 endfunction()
 
 #!
@@ -197,14 +197,14 @@ endfunction()
 #!
 #! _sb_append_to_cmake_args(
 #!     VARS <varname1>:<vartype1> [<varname2>:<vartype2> [...]]
-#!     [PROJECT <projectname>]
+#!     [PROJECTS <projectname> [<projectname> [...]]]
 #!     [LABELS <label1> [<label2> [...]]]
 #!     [CMAKE_CMD]
 #!   )
 #!
-#! PROJECT corresponds to a <projectname> that will be added using 'ExternalProject_Add' function.
-#!         If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
-#!         Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#! PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
+#!          If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
+#!          Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
 #!
 #! VARS is an expected list of variables specified as <varname>:<vartype> to pass to <projectname>
 #!
@@ -216,42 +216,44 @@ endfunction()
 #!
 function(_sb_append_to_cmake_args)
   set(options CMAKE_CMD)
-  set(oneValueArgs PROJECT)
-  set(multiValueArgs VARS LABELS)
+  set(oneValueArgs)
+  set(multiValueArgs VARS PROJECTS LABELS)
   cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(NOT _sb_PROJECT)
+  if(NOT _sb_PROJECTS)
     if(SUPERBUILD_TOPLEVEL_PROJECT)
-      set(_sb_PROJECT ${SUPERBUILD_TOPLEVEL_PROJECT})
+      set(_sb_PROJECTS ${SUPERBUILD_TOPLEVEL_PROJECT})
     else()
-      set(_sb_PROJECT ${CMAKE_PROJECT_NAME})
+      set(_sb_PROJECTS ${CMAKE_PROJECT_NAME})
     endif()
   endif()
 
-  set(_cmake_arg_type "CMAKE_CACHE")
-  if(_sb_CMAKE_CMD)
-    set(_cmake_arg_type "CMAKE")
-    set(optional_arg_CMAKE_CMD "CMAKE_CMD")
-  endif()
-  set(_ep_property "${_cmake_arg_type}_ARGS")
-  set(_ep_varnames "")
-  foreach(varname_and_vartype ${_sb_VARS})
-    if(NOT TARGET ${_sb_PROJECT})
-      set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_${_ep_property} ${varname_and_vartype})
-      _sb_extract_varname_and_vartype(${varname_and_vartype} _varname)
-      set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_PROPERTIES ${_ep_property})
-    else()
-      message(FATAL_ERROR "Function _sb_append_to_cmake_args not allowed is project already added !")
+  foreach(_sb_PROJECT ${_sb_PROJECTS})
+    set(_cmake_arg_type "CMAKE_CACHE")
+    if(_sb_CMAKE_CMD)
+      set(_cmake_arg_type "CMAKE")
+      set(optional_arg_CMAKE_CMD "CMAKE_CMD")
     endif()
-    list(APPEND _ep_varnames ${_varname})
-  endforeach()
-
-  if(_sb_LABELS)
-    set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_LABELS ${_sb_LABELS})
-    foreach(label ${_sb_LABELS})
-      set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_LABEL_${label} ${_ep_varnames})
+    set(_ep_property "${_cmake_arg_type}_ARGS")
+    set(_ep_varnames "")
+    foreach(varname_and_vartype ${_sb_VARS})
+      if(NOT TARGET ${_sb_PROJECT})
+        set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_${_ep_property} ${varname_and_vartype})
+        _sb_extract_varname_and_vartype(${varname_and_vartype} _varname)
+        set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_PROPERTIES ${_ep_property})
+      else()
+        message(FATAL_ERROR "Function _sb_append_to_cmake_args not allowed is project already added !")
+      endif()
+      list(APPEND _ep_varnames ${_varname})
     endforeach()
-  endif()
+
+    if(_sb_LABELS)
+      set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_LABELS ${_sb_LABELS})
+      foreach(label ${_sb_LABELS})
+        set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_LABEL_${label} ${_ep_varnames})
+      endforeach()
+    endif()
+  endforeach()
 endfunction()
 
 function(_sb_get_external_project_arguments proj varname)
@@ -265,7 +267,7 @@ function(_sb_get_external_project_arguments proj varname)
     foreach(label ${_labels})
       get_property(${proj}_EP_LABEL_${label} GLOBAL PROPERTY ${proj}_EP_LABEL_${label})
       list(REMOVE_DUPLICATES ${proj}_EP_LABEL_${label})
-      _sb_append_to_cmake_args(PROJECT ${proj}
+      _sb_append_to_cmake_args(PROJECTS ${proj}
         VARS ${proj}_EP_LABEL_${label}:STRING)
     endforeach()
   endif()

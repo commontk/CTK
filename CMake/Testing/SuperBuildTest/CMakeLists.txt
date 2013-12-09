@@ -31,10 +31,16 @@ if(${PROJECT_NAME}_SUPERBUILD)
   mark_as_superbuild(VARS BAR_VAR_WITH_LABELS LABELS "LABEL_B")
 
   set(LibA_VAR "LibA")
-  mark_as_superbuild(VARS LibA_VAR PROJECT LibA)
+  mark_as_superbuild(VARS LibA_VAR PROJECTS LibA)
 
   set(LibA_VAR_WITH_LABELS "LibAWithLabels")
-  mark_as_superbuild(VARS LibA_VAR_WITH_LABELS PROJECT LibA LABELS "LABEL_A")
+  mark_as_superbuild(VARS LibA_VAR_WITH_LABELS PROJECTS LibA LABELS "LABEL_A")
+
+  set(MULTIPROJECT_VAR "MultiProjectVar")
+  mark_as_superbuild(VARS MULTIPROJECT_VAR PROJECTS ${PROJECT_NAME} LibA)
+
+  set(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
+  mark_as_superbuild(VARS MULTIPROJECT_VAR_WITH_LABELS PROJECTS ${PROJECT_NAME} LibA LABELS "MULTIPROJECT")
 
   # Since LibC depends on LibD, LibD will also be expected to be found on the system
   set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC 1)
@@ -88,3 +94,8 @@ check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibA "")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibB "")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC 1)
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibD 1)
+
+check_variable(MULTIPROJECT_VAR "MultiProjectVar")
+
+check_variable(SuperBuildTest_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABELS")
+check_variable(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
