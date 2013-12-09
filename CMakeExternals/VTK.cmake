@@ -4,15 +4,16 @@
 
 superbuild_include_once()
 
-set(VTK_enabling_variable VTK_LIBRARIES)
-set(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
-set(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
-set(${VTK_enabling_variable}_FIND_PACKAGE_CMD VTK)
-
-set(VTK_DEPENDENCIES "")
-
-superbuild_include_dependencies(VTK)
 set(proj VTK)
+
+set(${proj}_enabling_variable VTK_LIBRARIES)
+set(${${proj}_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
+set(${${proj}_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
+set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD VTK)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(VTK_DIR CACHE)

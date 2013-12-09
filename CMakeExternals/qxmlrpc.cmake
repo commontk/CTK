@@ -4,15 +4,16 @@
 
 superbuild_include_once()
 
-set(qxmlrpc_enabling_variable qxmlrpc_LIBRARY)
-set(${qxmlrpc_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)
-set(${qxmlrpc_enabling_variable}_INCLUDE_DIRS qxmlrpc_INCLUDE_DIRS)
-set(${qxmlrpc_enabling_variable}_FIND_PACKAGE_CMD qxmlrpc)
-
-set(qxmlrpc_DEPENDENCIES "")
-
-superbuild_include_dependencies(qxmlrpc)
 set(proj qxmlrpc)
+
+set(${proj}_enabling_variable qxmlrpc_LIBRARY)
+set(${${proj}_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)
+set(${${proj}_enabling_variable}_INCLUDE_DIRS qxmlrpc_INCLUDE_DIRS)
+set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD qxmlrpc)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")

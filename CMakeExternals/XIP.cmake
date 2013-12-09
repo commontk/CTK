@@ -4,15 +4,16 @@
 
 superbuild_include_once()
 
-set(XIP_enabling_variable XIP_LIBRARIES)
-set(${XIP_enabling_variable}_LIBRARY_DIRS XIP_LIBRARY_DIRS)
-set(${XIP_enabling_variable}_INCLUDE_DIRS XIP_INCLUDE_DIRS)
-set(${XIP_enabling_variable}_FIND_PACKAGE_CMD XIP)
-
-set(XIP_DEPENDENCIES "")
-
-superbuild_include_dependencies(XIP)
 set(proj XIP)
+
+set(${proj}_enabling_variable XIP_LIBRARIES)
+set(${${proj}_enabling_variable}_LIBRARY_DIRS XIP_LIBRARY_DIRS)
+set(${${proj}_enabling_variable}_INCLUDE_DIRS XIP_INCLUDE_DIRS)
+set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD XIP)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")

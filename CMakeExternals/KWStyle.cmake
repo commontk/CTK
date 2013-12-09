@@ -4,10 +4,11 @@
 
 superbuild_include_once()
 
-set(KWStyle_DEPENDENCIES "")
-
-superbuild_include_dependencies(KWStyle)
 set(proj KWStyle)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(KWSTYLE_EXECUTABLE CACHE)

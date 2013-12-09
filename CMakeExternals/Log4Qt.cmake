@@ -4,14 +4,15 @@
 
 superbuild_include_once()
 
-set(Log4Qt_enabling_variable Log4Qt_LIBRARIES)
-set(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
-set(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
-
-set(Log4Qt_DEPENDENCIES "")
-
-superbuild_include_dependencies(Log4Qt)
 set(proj Log4Qt)
+
+set(${proj}_enabling_variable Log4Qt_LIBRARIES)
+set(${${proj}_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
+set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")

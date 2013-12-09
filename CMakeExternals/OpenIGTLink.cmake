@@ -4,15 +4,16 @@
 
 superbuild_include_once()
 
-set(OpenIGTLink_enabling_variable OpenIGTLink_LIBRARIES)
-set(${OpenIGTLink_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
-set(${OpenIGTLink_enabling_variable}_INCLUDE_DIRS OpenIGTLink_INCLUDE_DIRS)
-set(${OpenIGTLink_enabling_variable}_FIND_PACKAGE_CMD OpenIGTLink)
-
-set(OpenIGTLink_DEPENDENCIES "")
-
-superbuild_include_dependencies(OpenIGTLink)
 set(proj OpenIGTLink)
+
+set(${proj}_enabling_variable OpenIGTLink_LIBRARIES)
+set(${${proj}_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
+set(${${proj}_enabling_variable}_INCLUDE_DIRS OpenIGTLink_INCLUDE_DIRS)
+set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD OpenIGTLink)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(OpenIGTLink_DIR CACHE)

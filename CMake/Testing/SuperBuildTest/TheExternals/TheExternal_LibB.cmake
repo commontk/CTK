@@ -4,10 +4,11 @@
 
 superbuild_include_once()
 
-set(LibB_DEPENDENCIES LibA)
-
-superbuild_include_dependencies(LibB)
 set(proj LibB)
+
+set(${proj}_DEPENDENCIES LibA)
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")

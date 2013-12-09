@@ -4,14 +4,15 @@
 
 superbuild_include_once()
 
-set(PythonQt_enabling_variable PYTHONQT_LIBRARIES)
-set(${PythonQt_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR PYTHON_INCLUDE_DIRS)
-set(${PythonQt_enabling_variable}_FIND_PACKAGE_CMD PythonQt)
-
-set(PythonQt_DEPENDENCIES "")
-
-superbuild_include_dependencies(PythonQt)
 set(proj PythonQt)
+
+set(${proj}_enabling_variable PYTHONQT_LIBRARIES)
+set(${${proj}_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR PYTHON_INCLUDE_DIRS)
+set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD ${proj})
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")

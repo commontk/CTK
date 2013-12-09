@@ -4,15 +4,16 @@
 
 superbuild_include_once()
 
+set(proj PythonQtGenerator)
+
 # Sanity checks
 if(DEFINED PYTHONQTGENERATOR_EXECUTABLE AND NOT EXISTS ${PYTHONQTGENERATOR_EXECUTABLE})
   message(FATAL_ERROR "PYTHONQTGENERATOR_EXECUTABLE variable is defined but corresponds to non-existing executable")
 endif()
 
-set(PythonQtGenerator_DEPENDENCIES PythonQt)
+set(${proj}_DEPENDENCIES PythonQt)
 
-superbuild_include_dependencies(PythonQtGenerator)
-set(proj PythonQtGenerator)
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")

@@ -4,10 +4,11 @@
 
 superbuild_include_once()
 
-set(LibC_DEPENDENCIES LibD)
-
-superbuild_include_dependencies(LibC)
 set(proj LibC)
+
+set(${proj}_DEPENDENCIES LibD)
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(LibC_DIR CACHE)

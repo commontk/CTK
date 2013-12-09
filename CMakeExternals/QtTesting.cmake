@@ -4,12 +4,13 @@
 
 superbuild_include_once()
 
-set(QtTesting_DEPENDS)
-
-set(QtTesting_DEPENDENCIES "")
-
-superbuild_include_dependencies(QtTesting)
 set(proj QtTesting)
+
+set(${proj}_DEPENDS)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")

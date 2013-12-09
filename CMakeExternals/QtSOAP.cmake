@@ -4,15 +4,16 @@
 
 superbuild_include_once()
 
-set(QtSOAP_enabling_variable QtSOAP_LIBRARIES)
-set(${QtSOAP_enabling_variable}_LIBRARY_DIRS QtSOAP_LIBRARY_DIRS)
-set(${QtSOAP_enabling_variable}_INCLUDE_DIRS QtSOAP_INCLUDE_DIRS)
-set(${QtSOAP_enabling_variable}_FIND_PACKAGE_CMD QtSOAP)
-
-set(QtSOAP_DEPENDENCIES "")
-
-superbuild_include_dependencies(QtSOAP)
 set(proj QtSOAP)
+
+set(${proj}_enabling_variable QtSOAP_LIBRARIES)
+set(${${proj}_enabling_variable}_LIBRARY_DIRS QtSOAP_LIBRARY_DIRS)
+set(${${proj}_enabling_variable}_INCLUDE_DIRS QtSOAP_INCLUDE_DIRS)
+set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD QtSOAP)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")

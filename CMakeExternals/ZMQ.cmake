@@ -4,15 +4,16 @@
 
 superbuild_include_once()
 
-set(ZMQ_enabling_variable ZMQ_LIBRARIES)
-set(${ZMQ_enabling_variable}_LIBRARY_DIRS ZMQ_LIBRARY_DIRS)
-set(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
-set(${ZMQ_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
-
-set(ZMQ_DEPENDENCIES "")
-
-superbuild_include_dependencies(ZMQ)
 set(proj ZMQ)
+
+set(${proj}_enabling_variable ZMQ_LIBRARIES)
+set(${${proj}_enabling_variable}_LIBRARY_DIRS ZMQ_LIBRARY_DIRS)
+set(${${proj}_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
+set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(${proj})
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")

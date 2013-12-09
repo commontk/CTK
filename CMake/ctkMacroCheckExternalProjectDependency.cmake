@@ -296,6 +296,60 @@ macro(_epd_status txt)
   endif()
 endmacro()
 
+#!
+#! superbuild_stack_content(<stack_name> <output_var>)
+#!
+#! <stack_name> corresponds to the name of stack.
+#!
+#! <output_var> is the name of CMake variable that will be set with the content
+#! of the stack identified by <stack_name>.
+function(superbuild_stack_content stack_name output_var)
+  get_property(_stack GLOBAL PROPERTY ${stack_name})
+  set(${output_var} ${_stack} PARENT_SCOPE)
+endfunction()
+
+#!
+#! superbuild_stack_size(<stack_name> <output_var>)
+#!
+#! <stack_name> corresponds to the name of stack.
+#!
+#! <output_var> is the name of CMake variable that will be set with the size
+#! of the stack identified by <stack_name>.
+function(superbuild_stack_size stack_name output_var)
+  get_property(_stack GLOBAL PROPERTY ${stack_name})
+  list(LENGTH _stack _stack_size)
+  set(${output_var} ${_stack_size} PARENT_SCOPE)
+endfunction()
+
+#!
+#! superbuild_stack_push(<stack_name> <value>)
+#!
+#! <stack_name> corresponds to the name of stack.
+#!
+#! <value> is appended to the stack identified by <stack_name>.
+function(superbuild_stack_push stack_name value)
+  set_property(GLOBAL APPEND PROPERTY ${stack_name} ${value})
+endfunction()
+
+#!
+#! superbuild_stack_pop(<stack_name> <item_var>)
+#!
+#! <stack_name> corresponds to the name of stack.
+#!
+#! <item_var> names a CMake variable that will be set with the item
+#! removed from the stack identified by <stack_name>.
+function(superbuild_stack_pop stack_name item_var)
+  get_property(_stack GLOBAL PROPERTY ${stack_name})
+  list(LENGTH _stack _stack_size)
+  if(_stack_size GREATER 0)
+    math(EXPR _index_to_remove "${_stack_size} - 1")
+    list(GET _stack ${_index_to_remove} _item)
+    list(REMOVE_AT _stack ${_index_to_remove})
+    set_property(GLOBAL PROPERTY ${stack_name} ${_stack})
+    set(${item_var} ${_item} PARENT_SCOPE)
+  endif()
+endfunction()
+
 #
 # superbuild_include_dependencies(<project>)
 macro(superbuild_include_dependencies proj)
@@ -312,7 +366,8 @@ macro(superbuild_include_dependencies proj)
     message(FATAL_ERROR "${__indent}${proj}_DEPENDENCIES variable is NOT defined !")
   endif()
 
-  if(NOT DEFINED SUPERBUILD_TOPLEVEL_PROJECT)
+  superbuild_stack_size(SUPERBUILD_PROJECT_STACK _stack_size)
+  if(_stack_size EQUAL 0)
     set(SUPERBUILD_TOPLEVEL_PROJECT ${proj})
   endif()
 
@@ -357,6 +412,8 @@ macro(superbuild_include_dependencies proj)
     #endif()
   endforeach()
 
+  superbuild_stack_push(SUPERBUILD_PROJECT_STACK ${proj})
+
   # Include dependencies
   foreach(dep ${${proj}_DEPENDENCIES})
     get_property(_is_included GLOBAL PROPERTY External_${dep}_FILE_INCLUDED)
@@ -373,6 +430,8 @@ macro(superbuild_include_dependencies proj)
       endif()
     endif()
   endforeach()
+
+  superbuild_stack_pop(SUPERBUILD_PROJECT_STACK proj)
 
   # If project being process has dependencies, indicates it has also been added.
   if(NOT "${${proj}_DEPENDENCIES}" STREQUAL "")
