@@ -13,7 +13,7 @@ set(${${proj}_enabling_variable}_FIND_PACKAGE_CMD OpenIGTLink)
 
 set(${proj}_DEPENDENCIES "")
 
-superbuild_include_dependencies(${proj})
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(OpenIGTLink_DIR CACHE)

@@ -352,7 +352,22 @@ endfunction()
 
 #
 # superbuild_include_dependencies(<project>)
-macro(superbuild_include_dependencies proj)
+#
+# superbuild_include_dependencies(PROJECT_VAR <project_var>)
+#
+macro(superbuild_include_dependencies)
+  set(options)
+  set(oneValueArgs PROJECT_VAR)
+  set(multiValueArgs)
+  cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  # XXX Implement invalid parameter checking
+
+  if(NOT "x" STREQUAL "x${_sb_PROJECT_VAR}")
+    set(proj ${${_sb_PROJECT_VAR}})
+  else()
+    set(proj ${_sb_UNPARSED_ARGUMENTS})
+  endif()
 
   # Set indent variable if needed
   if(NOT DEFINED __indent)

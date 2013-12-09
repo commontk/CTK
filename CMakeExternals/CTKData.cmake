@@ -8,7 +8,7 @@ set(proj CTKData)
 
 set(${proj}_DEPENDENCIES "")
 
-superbuild_include_dependencies(${proj})
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
