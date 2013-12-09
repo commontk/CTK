@@ -11,7 +11,7 @@ set(${proj}_DEPENDENCIES LibA)
 superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
+  message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
 endif()
 
 mark_as_superbuild(
@@ -28,9 +28,9 @@ if(NOT DEFINED LibB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${proj}
     BINARY_DIR ${proj}-build
     DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     DEPENDS
@@ -42,3 +42,7 @@ else()
   superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
+mark_as_superbuild(
+  VARS LibB_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

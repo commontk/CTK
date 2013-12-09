@@ -31,10 +31,25 @@ if(${PROJECT_NAME}_SUPERBUILD)
   mark_as_superbuild(VARS BAR_VAR_WITH_LABELS LABELS "LABEL_B")
 
   set(LibA_VAR "LibA")
-  mark_as_superbuild(VARS LibA_VAR PROJECT LibA)
+  mark_as_superbuild(VARS LibA_VAR PROJECTS LibA)
+
+  set(LibB_VAR "LibB")
+  mark_as_superbuild(VARS LibB_VAR PROJECTS LibB)
 
   set(LibA_VAR_WITH_LABELS "LibAWithLabels")
-  mark_as_superbuild(VARS LibA_VAR_WITH_LABELS PROJECT LibA LABELS "LABEL_A")
+  mark_as_superbuild(VARS LibA_VAR_WITH_LABELS PROJECTS LibA LABELS "LABEL_A")
+
+  set(MULTIPROJECT_VAR "MultiProjectVar")
+  mark_as_superbuild(VARS MULTIPROJECT_VAR PROJECTS ${PROJECT_NAME} LibA LibB)
+
+  set(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
+  mark_as_superbuild(VARS MULTIPROJECT_VAR_WITH_LABELS PROJECTS ${PROJECT_NAME} LibA LibB LABELS "MULTIPROJECT")
+
+  set(ALL_PROJECTS_VAR "AllProjectsVar")
+  mark_as_superbuild(VARS ALL_PROJECTS_VAR ALL_PROJECTS)
+
+  #set(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
+  #mark_as_superbuild(VARS MULTIPROJECT_VAR_WITH_LABELS PROJECTS ${PROJECT_NAME} LibA LABELS "MULTIPROJECT")
 
   # Since LibC depends on LibD, LibD will also be expected to be found on the system
   set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC 1)
@@ -82,9 +97,20 @@ check_variable(SuperBuildTest_EP_LABEL_FIND_PACKAGE "LibA_DIR")
 get_filename_component(expected_LibA_DIR "${CMAKE_CURRENT_BINARY_DIR}/../LibA-build" REALPATH)
 check_variable(LibA_DIR ${expected_LibA_DIR})
 
+check_variable(SuperBuildTest_EP_LABEL_FIND_PACKAGE "LibB_DIR")
+get_filename_component(expected_LibB_DIR "${CMAKE_CURRENT_BINARY_DIR}/../LibB-build" REALPATH)
+check_variable(LibB_DIR ${expected_LibB_DIR})
+
 check_variable(SuperBuildTest_EP_LABEL_USE_SYSTEM
   "${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibA;${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibB;${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC;${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibD")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibA "")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibB "")
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC 1)
 check_variable(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibD 1)
+
+check_variable(MULTIPROJECT_VAR "MultiProjectVar")
+
+check_variable(SuperBuildTest_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABELS")
+check_variable(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
+
+check_variable(ALL_PROJECTS_VAR "AllProjectsVar")
