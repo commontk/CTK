@@ -722,7 +722,7 @@ mark_as_superbuild(CTK_USE_CONTRIBUTED_PLUGINS)
 if(CTK_USE_CONTRIBUTED_PLUGINS)
   ctkFunctionAddPluginRepo(NAME PluginsContrib
                            GIT_URL github.com/commontk/PluginsContrib.git
-                           GIT_TAG 7fc37f400c
+                           GIT_TAG f016d35
                           )
   mark_as_superbuild(PluginsContrib_DIR:PATH)
 endif()
