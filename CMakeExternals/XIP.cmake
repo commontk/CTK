@@ -11,7 +11,7 @@ set(${XIP_enabling_variable}_FIND_PACKAGE_CMD XIP)
 
 set(XIP_DEPENDENCIES "")
 
-ctkMacroCheckExternalProjectDependency(XIP)
+superbuild_include_dependencies(XIP)
 set(proj XIP)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -35,6 +35,7 @@ if(NOT DEFINED XIP_DIR)
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
@@ -52,7 +53,10 @@ if(NOT DEFINED XIP_DIR)
   set(XIP_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS XIP_DIR:PATH)
+mark_as_superbuild(
+  VARS XIP_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

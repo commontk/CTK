@@ -21,10 +21,23 @@
 cmake_minimum_required(VERSION 2.8.4)
 
 #-----------------------------------------------------------------------------
+# Superbuild
+#
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
+set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/CMakeExternals)
+set(EXTERNAL_PROJECT_FILE_PREFIX "")
+include(ExternalProject)
+include(ctkMacroCheckExternalProjectDependency)
+
+#-----------------------------------------------------------------------------
 if(APPLE)
   # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
   #       we ensure that the bitness will be properly detected.
   include(${CMAKE_SOURCE_DIR}/CMake/ctkBlockSetCMakeOSXVariables.cmake)
+  mark_as_superbuild(
+    VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING
+    PROJECT CTK
+    )
 endif()
 
 #-----------------------------------------------------------------------------
@@ -38,6 +51,7 @@ set(CTK_LIBRARY_MODE "SHARED")
 
 option(CTK_BUILD_SHARED_LIBS "Build CTK libraries as shared module." ON)
 mark_as_advanced(CTK_BUILD_SHARED_LIBS)
+mark_as_superbuild(CTK_BUILD_SHARED_LIBS)
 if(NOT CTK_BUILD_SHARED_LIBS)
   set(CTK_LIBRARY_MODE "STATIC")
 endif()
@@ -75,6 +89,7 @@ foreach(type LIBRARY RUNTIME ARCHIVE)
     if(NOT DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
       set(CTK_CMAKE_${type}_OUTPUT_DIRECTORY ${CTK_BINARY_DIR}/CTK-build/bin)
     endif()
+    mark_as_superbuild(CTK_CMAKE_${type}_OUTPUT_DIRECTORY:PATH)
   else()
     if(NOT DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
       set(output_dir ${CTK_BINARY_DIR}/bin)
@@ -135,13 +150,23 @@ if(NOT CTK_INSTALL_DOC_DIR)
   set(CTK_INSTALL_DOC_DIR "doc")
 endif()
 
+mark_as_superbuild(
+  CTK_INSTALL_BIN_DIR:STRING
+  CTK_INSTALL_LIB_DIR:STRING
+  CTK_INSTALL_PLUGIN_DIR:STRING
+  CTK_INSTALL_CMAKE_DIR:STRING
+  CTK_INSTALL_INCLUDE_DIR:STRING
+  CTK_INSTALL_PLUGIN_INCLUDE_DIR:STRING
+  CTK_INSTALL_QTPLUGIN_DIR:STRING
+  CTK_INSTALL_DOC_DIR:STRING
+  )
+
 #-----------------------------------------------------------------------------
 # Update CMake module path
 # Note: FindXXX.cmake script specific to utility should be copied into Utilities/CMake
 #
 set(CMAKE_MODULE_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/Utilities/CMake"
-  "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
   ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
@@ -219,6 +244,7 @@ install(FILES
 #
 include(CTest)
 mark_as_advanced(BUILD_TESTING)
+mark_as_superbuild(BUILD_TESTING)
 
 if(BUILD_TESTING)
   set(CPP_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -258,30 +284,41 @@ endif()
 #
 option(CTK_USE_QTTESTING "Enable/Disable QtTesting" OFF)
 mark_as_advanced(CTK_USE_QTTESTING)
+mark_as_superbuild(CTK_USE_QTTESTING)
 
 #-----------------------------------------------------------------------------
 # Coverage
 #
 option(WITH_COVERAGE "Enable/Disable coverage" OFF)
 mark_as_advanced(WITH_COVERAGE)
+mark_as_superbuild(WITH_COVERAGE)
 
 #-----------------------------------------------------------------------------
 # Documentation
 #
 option(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
 mark_as_advanced(DOCUMENTATION_TARGET_IN_ALL)
+mark_as_superbuild(DOCUMENTATION_TARGET_IN_ALL)
 
 set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
  CACHE PATH "Where documentation archives should be stored")
 mark_as_advanced(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+mark_as_superbuild(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+
+# Attempt to discover Doxygen so that DOXYGEN_EXECUTABLE is set to an appropriate default value
+find_package(Doxygen QUIET)
+mark_as_superbuild(DOXYGEN_EXECUTABLE)
 
 #-----------------------------------------------------------------------------
 # Additional CXX/C Flags
 #
 set(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional C Flags")
 mark_as_advanced(ADDITIONAL_C_FLAGS)
+mark_as_superbuild(ADDITIONAL_C_FLAGS)
+
 set(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional CXX Flags")
 mark_as_advanced(ADDITIONAL_CXX_FLAGS)
+mark_as_superbuild(ADDITIONAL_CXX_FLAGS)
 
 #-----------------------------------------------------------------------------
 # Set symbol visibility Flags
@@ -400,15 +437,19 @@ ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
 
 # Build all CTK plug-ins
 option(CTK_BUILD_ALL_PLUGINS "Build all CTK plug-ins" OFF)
+mark_as_superbuild(CTK_BUILD_ALL_PLUGINS)
 
 # Build all CTK libraries
 option(CTK_BUILD_ALL_LIBRARIES "Build all CTK libraries" OFF)
+mark_as_superbuild(CTK_BUILD_ALL_LIBRARIES)
 
 # Build all CTK applications
 option(CTK_BUILD_ALL_APPS "Build all CTK applications" OFF)
+mark_as_superbuild(CTK_BUILD_ALL_APPS)
 
 # Build everything
 option(CTK_BUILD_ALL "Build everything in CTK" OFF)
+mark_as_superbuild(CTK_BUILD_ALL)
 if(CTK_BUILD_ALL)
   set(CTK_BUILD_ALL_PLUGINS 1)
   set(CTK_BUILD_ALL_LIBRARIES 1)
@@ -421,6 +462,7 @@ endif()
 # The CTK Python Wrapping
 ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
                   CTK_LIB_Scripting/Python/Core)
+mark_as_superbuild(CTK_ENABLE_Python_Wrapping)
 
 # Build examples
 # Create the logical expression containing the minium set of required options
@@ -451,10 +493,12 @@ mark_as_advanced(DART_TESTING_TIMEOUT)
 # KWStyle
 option(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 mark_as_advanced(CTK_USE_KWSTYLE)
+mark_as_superbuild(CTK_USE_KWSTYLE)
 
 # Qt Designer Plugins
 option(CTK_BUILD_QTDESIGNER_PLUGINS "Build Qt Designer plugins" ON)
 mark_as_advanced(CTK_BUILD_QTDESIGNER_PLUGINS)
+mark_as_superbuild(CTK_BUILD_QTDESIGNER_PLUGINS)
 
 #-----------------------------------------------------------------------------
 # CTK Libraries
@@ -674,11 +718,13 @@ ctk_plugin_option(org.commontk.eventbus
 # Add the PluginsContrib repo to the build system
 option(CTK_USE_CONTRIBUTED_PLUGINS OFF "Use CTK plug-ins from the PluginsContrib repository")
 mark_as_advanced(CTK_USE_CONTRIBUTED_PLUGINS)
+mark_as_superbuild(CTK_USE_CONTRIBUTED_PLUGINS)
 if(CTK_USE_CONTRIBUTED_PLUGINS)
   ctkFunctionAddPluginRepo(NAME PluginsContrib
                            GIT_URL github.com/commontk/PluginsContrib.git
                            GIT_TAG 7fc37f400c
                           )
+  mark_as_superbuild(PluginsContrib_DIR:PATH)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -705,7 +751,6 @@ endif()
 # Create list of directories corresponding to the enabled targets
 set(target_directories)
 
-set(ctk_lib_options_list) # This list will be updated in ctkMacroAddCtkLibraryOptions
 foreach(lib ${CTK_LIBS})
   if(CTK_LIB_${lib})
     ctkMacroAddCtkLibraryOptions(${lib})
@@ -762,6 +807,7 @@ ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${targe
 set(CTK_WRAP_PYTHONQT_LIGHT ${CTK_ENABLE_Python_Wrapping})
 option(CTK_WRAP_PYTHONQT_FULL "Experimental - Wrap CTK classes using Qt meta-object system into Python language" OFF)
 mark_as_advanced(CTK_WRAP_PYTHONQT_FULL)
+mark_as_superbuild(CTK_WRAP_PYTHONQT_FULL)
 if(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
   message(FATAL_ERROR "CTK_ENABLE_Python_Wrapping AND CTK_WRAP_PYTHONQT_FULL options are mutually exclusive. Please enable only one !")
 endif()
@@ -875,8 +921,9 @@ if(CTK_USE_CONTRIBUTED_PLUGINS)
     ctkFunctionCheckoutRepo(
       NAME ExternalProjectsContrib
       GIT_URL github.com/commontk/ExternalProjectsContrib.git
-      GIT_TAG 80ce3d5
+      GIT_TAG 2bed266
       )
+    mark_as_superbuild(ExternalProjectsContrib_DIR:PATH)
   endif()
 
   file(GLOB _contrib_scripts ${ExternalProjectsContrib_DIR}/*.cmake)

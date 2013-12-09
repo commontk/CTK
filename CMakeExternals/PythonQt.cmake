@@ -10,7 +10,7 @@ set(${PythonQt_enabling_variable}_FIND_PACKAGE_CMD PythonQt)
 
 set(PythonQt_DEPENDENCIES "")
 
-ctkMacroCheckExternalProjectDependency(PythonQt)
+superbuild_include_dependencies(PythonQt)
 set(proj PythonQt)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -69,6 +69,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
@@ -92,12 +93,14 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
 
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS
-  PYTHONQT_INSTALL_DIR:PATH
-  PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
-  PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
-  PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+mark_as_superbuild(
+  VARS
+    PYTHONQT_INSTALL_DIR:PATH
+    PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
+    PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
+    PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+  LABELS "FIND_PACKAGE"
   )

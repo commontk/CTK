@@ -18,6 +18,12 @@
 #
 ###########################################################################
 
+include(CMakeParseArguments)
+include(ctkListToString)
+
+# Use this value where semi-colons are needed in ep_add args:
+set(sep "^^")
+
 if(NOT EXISTS "${EXTERNAL_PROJECT_DIR}")
   set(EXTERNAL_PROJECT_DIR ${${CMAKE_PROJECT_NAME}_SOURCE_DIR}/SuperBuild)
 endif()
@@ -50,7 +56,92 @@ macro(superbuild_include_once)
 endmacro()
 
 #!
-#! superbuild_cmakevar_to_cmakearg(<cmake_varname_and_type> <cmake_arg_var> <cmake_arg_type> [<varname_var> [<vartype_var>]])
+#! mark_as_superbuild(<varname1>[:<vartype1>] [<varname2>[:<vartype2>] [...]])
+#!
+#! mark_as_superbuild(
+#!     VARS <varname1>[:<vartype1>] [<varname2>[:<vartype2>] [...]]
+#!     [PROJECT <projectname>]
+#!     [LABELS <label1> [<label2> [...]]]
+#!     [CMAKE_CMD]
+#!   )
+#!
+#! PROJECT corresponds to a <projectname> that will be added using 'ExternalProject_Add' function.
+#!         If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
+#!         Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#!
+#! VARS is an expected list of variables specified as <varname>:<vartype> to pass to <projectname>
+#!
+#!
+#! LABELS is an optional list of label to associate with the variable names specified using 'VARS' and passed to
+#!        the <projectname> as CMake CACHE args of the form:
+#!          -D<projectname>_EP_LABEL_<label1>=<varname1>;<varname2>[...]
+#!          -D<projectname>_EP_LABEL_<label2>=<varname1>;<varname2>[...]
+#!
+function(mark_as_superbuild)
+  set(options CMAKE_CMD)
+  set(oneValueArgs PROJECT)
+  set(multiValueArgs VARS LABELS)
+  cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(_vars ${_sb_UNPARSED_ARGUMENTS})
+
+  set(_named_parameters_expected 0)
+  if(_sb_PROJECT OR _sb_LABELS OR _sb_VARS)
+    set(_named_parameters_expected 1)
+    set(_vars ${_sb_VARS})
+  endif()
+
+  if(_named_parameters_expected AND _sb_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Arguments '${_sb_UNPARSED_ARGUMENTS}' should be associated with VARS parameter !")
+  endif()
+
+  foreach(var ${_vars})
+    set(_type_specified 0)
+    if(${var} MATCHES ":")
+      set(_type_specified 1)
+    endif()
+    # XXX Display warning with variable type is also specified for cache variable.
+    set(_var ${var})
+    if(NOT _type_specified)
+      get_property(_type_set_in_cache CACHE ${_var} PROPERTY TYPE SET)
+      set(_var_name ${_var})
+      set(_var_type "STRING")
+      if(_type_set_in_cache)
+        get_property(_var_type CACHE ${_var_name} PROPERTY TYPE)
+      endif()
+      set(_var ${_var_name}:${_var_type})
+    endif()
+    list(APPEND _vars_with_type ${_var})
+  endforeach()
+
+  if(_sb_CMAKE_CMD)
+    set(optional_arg_CMAKE_CMD "CMAKE_CMD")
+  endif()
+
+  _sb_append_to_cmake_args(VARS ${_vars_with_type} PROJECT ${_sb_PROJECT} LABELS ${_sb_LABELS} ${optional_arg_CMAKE_CMD})
+endfunction()
+
+#!
+#! _sb_extract_varname_and_vartype(<cmake_varname_and_type> <varname_var> [<vartype_var>])
+#!
+#! <cmake_varname_and_type> corresponds to variable name and variable type passed as "<varname>:<vartype>"
+#!
+#! <varname_var> will be set to "<varname>"
+#!
+#! <vartype_var> is an optional variable name that will be set to "<vartype>"
+function(_sb_extract_varname_and_vartype cmake_varname_and_type varname_var)
+  set(_vartype_var ${ARGV2})
+  string(REPLACE ":" ";" varname_and_vartype ${cmake_varname_and_type})
+  list(GET varname_and_vartype 0 _varname)
+  list(GET varname_and_vartype 1 _vartype)
+  set(${varname_var} ${_varname} PARENT_SCOPE)
+  if(_vartype_var MATCHES ".+")
+    set(${_vartype_var} ${_vartype} PARENT_SCOPE)
+  endif()
+endfunction()
+
+#!
+#! _sb_cmakevar_to_cmakearg(<cmake_varname_and_type> <cmake_arg_var> <cmake_arg_type> [<varname_var> [<vartype_var>]])
 #!
 #! <cmake_varname_and_type> corresponds to variable name and variable type passed as "<varname>:<vartype>"
 #!
@@ -65,19 +156,19 @@ endmacro()
 #! <varname_var> is an optional variable name that will be set to "<varname>"
 #!
 #! <vartype_var> is an optional variable name that will be set to "<vartype>"
-function(superbuild_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var cmake_arg_type)
+function(_sb_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var cmake_arg_type)
   set(_varname_var ${ARGV3})
   set(_vartype_var ${ARGV4})
-  string(REPLACE ":" ";" varname_and_vartype ${cmake_varname_and_type})
-  list(GET varname_and_vartype 0 _varname)
-  list(GET varname_and_vartype 1 _vartype)
+
+  # XXX Add check for <cmake_arg_type> value
+
+  _sb_extract_varname_and_vartype(${cmake_varname_and_type} _varname _vartype)
+
   set(_var_value "${${_varname}}")
   get_property(_value_set_in_cache CACHE ${_varname} PROPERTY VALUE SET)
   if(_value_set_in_cache)
     get_property(_var_value CACHE ${_varname} PROPERTY VALUE)
   endif()
-
-  # XXX Add check for <cmake_arg_type> value
 
   if(cmake_arg_type STREQUAL "CMAKE_CMD")
     # Separate list item with <sep>
@@ -95,13 +186,119 @@ function(superbuild_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var cm
   endif()
 endfunction()
 
+#!
+#! _sb_append_to_cmake_args(
+#!     VARS <varname1>:<vartype1> [<varname2>:<vartype2> [...]]
+#!     [PROJECT <projectname>]
+#!     [LABELS <label1> [<label2> [...]]]
+#!     [CMAKE_CMD]
+#!   )
+#!
+#! PROJECT corresponds to a <projectname> that will be added using 'ExternalProject_Add' function.
+#!         If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
+#!         Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#!
+#! VARS is an expected list of variables specified as <varname>:<vartype> to pass to <projectname>
+#!
+#!
+#! LABELS is an optional list of label to associate with the variable names specified using 'VARS' and passed to
+#!        the <projectname> as CMake CACHE args of the form:
+#!          -D<projectname>_EP_LABEL_<label1>=<varname1>;<varname2>[...]
+#!          -D<projectname>_EP_LABEL_<label2>=<varname1>;<varname2>[...]
+#!
+function(_sb_append_to_cmake_args)
+  set(options CMAKE_CMD)
+  set(oneValueArgs PROJECT)
+  set(multiValueArgs VARS LABELS)
+  cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(NOT _sb_PROJECT)
+    if(SUPERBUILD_TOPLEVEL_PROJECT)
+      set(_sb_PROJECT ${SUPERBUILD_TOPLEVEL_PROJECT})
+    else()
+      set(_sb_PROJECT ${CMAKE_PROJECT_NAME})
+    endif()
+  endif()
+
+  set(_cmake_arg_type "CMAKE_CACHE")
+  if(_sb_CMAKE_CMD)
+    set(_cmake_arg_type "CMAKE")
+    set(optional_arg_CMAKE_CMD "CMAKE_CMD")
+  endif()
+  set(_ep_property "${_cmake_arg_type}_ARGS")
+  set(_ep_varnames "")
+  foreach(varname_and_vartype ${_sb_VARS})
+    if(NOT TARGET ${_sb_PROJECT})
+      set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_${_ep_property} ${varname_and_vartype})
+      _sb_extract_varname_and_vartype(${varname_and_vartype} _varname)
+      set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_PROPERTIES ${_ep_property})
+    else()
+      message(FATAL_ERROR "Function _sb_append_to_cmake_args not allowed is project already added !")
+    endif()
+    list(APPEND _ep_varnames ${_varname})
+  endforeach()
+
+  if(_sb_LABELS)
+    set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_LABELS ${_sb_LABELS})
+    foreach(label ${_sb_LABELS})
+      set_property(GLOBAL APPEND PROPERTY ${_sb_PROJECT}_EP_LABEL_${label} ${_ep_varnames})
+    endforeach()
+  endif()
+endfunction()
+
+function(_sb_get_external_project_arguments proj varname)
+
+  mark_as_superbuild(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}:BOOL)
+
+  # Set list of CMake args associated with each label
+  get_property(_labels GLOBAL PROPERTY ${proj}_EP_LABELS)
+  if(_labels)
+    list(REMOVE_DUPLICATES _labels)
+    foreach(label ${_labels})
+      get_property(${proj}_EP_LABEL_${label} GLOBAL PROPERTY ${proj}_EP_LABEL_${label})
+      list(REMOVE_DUPLICATES ${proj}_EP_LABEL_${label})
+      _sb_append_to_cmake_args(PROJECT ${proj}
+        VARS ${proj}_EP_LABEL_${label}:STRING)
+    endforeach()
+  endif()
+
+  foreach(cmake_arg_type CMAKE_CMD CMAKE_CACHE)
+
+    set(_ep_property "CMAKE_CACHE_ARGS")
+    if(cmake_arg_type STREQUAL "CMAKE_CMD")
+      set(_ep_property "CMAKE_ARGS")
+    endif()
+
+    get_property(_args GLOBAL PROPERTY ${proj}_EP_${_ep_property})
+    foreach(var ${_args})
+      _sb_cmakevar_to_cmakearg(${var} cmake_arg ${cmake_arg_type})
+      set_property(GLOBAL APPEND PROPERTY ${proj}_EP_PROPERTY_${_ep_property} ${cmake_arg})
+    endforeach()
+
+  endforeach()
+
+  set(_ep_arguments "")
+  get_property(_properties GLOBAL PROPERTY ${proj}_EP_PROPERTIES)
+  if(_properties)
+    list(REMOVE_DUPLICATES _properties)
+    foreach(property ${_properties})
+      get_property(${proj}_EP_PROPERTY_${property} GLOBAL PROPERTY ${proj}_EP_PROPERTY_${property})
+      list(APPEND _ep_arguments ${property} ${${proj}_EP_PROPERTY_${property}})
+    endforeach()
+  endif()
+
+  set(${varname} ${_ep_arguments} PARENT_SCOPE)
+endfunction()
+
 macro(_epd_status txt)
-  if(NOT __epd_first_pass)
+  if(NOT SUPERBUILD_FIRST_PASS)
     message(STATUS ${txt})
   endif()
 endmacro()
 
-macro(ctkMacroCheckExternalProjectDependency proj)
+#
+# superbuild_include_dependencies(<project>)
+macro(superbuild_include_dependencies proj)
 
   # Set indent variable if needed
   if(NOT DEFINED __indent)
@@ -123,9 +320,9 @@ macro(ctkMacroCheckExternalProjectDependency proj)
   list(APPEND __epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects ${proj})
 
   # Is this the first run ? (used to set the <SUPERBUILD_TOPLEVEL_PROJECT>_USE_SYSTEM_* variables)
-  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND NOT DEFINED __epd_first_pass)
+  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND NOT DEFINED SUPERBUILD_FIRST_PASS)
     message(STATUS "SuperBuild - First pass")
-    set(__epd_first_pass TRUE)
+    set(SUPERBUILD_FIRST_PASS TRUE)
   endif()
 
   # Set message strings
@@ -155,7 +352,7 @@ macro(ctkMacroCheckExternalProjectDependency proj)
     if(${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}})
       set(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${dep} ${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}})
     endif()
-    #if(__epd_first_pass)
+    #if(SUPERBUILD_FIRST_PASS)
     #  message("${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${dep} set to [${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}:${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}}]")
     #endif()
   endforeach()
@@ -189,14 +386,13 @@ macro(ctkMacroCheckExternalProjectDependency proj)
     string(SUBSTRING "${__indent}" 0 ${__indent_length} __indent)
   endif()
 
-  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND __epd_first_pass)
+  if(${proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND SUPERBUILD_FIRST_PASS)
     message(STATUS "SuperBuild - First pass - done")
     unset(__indent)
-    if(${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
-      set(__epd_first_pass FALSE)
-    endif()
 
     unset(${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES) # XXX - Refactor
+
+    set(SUPERBUILD_FIRST_PASS FALSE)
 
     foreach(possible_proj ${__epd_${SUPERBUILD_TOPLEVEL_PROJECT}_projects})
       if(NOT ${possible_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
@@ -235,13 +431,37 @@ macro(ctkMacroCheckExternalProjectDependency proj)
     list(REMOVE_DUPLICATES ${SUPERBUILD_TOPLEVEL_PROJECT}_DEPENDENCIES)
 
     if(${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
-
-      ctkMacroCheckExternalProjectDependency(${SUPERBUILD_TOPLEVEL_PROJECT})
+      superbuild_include_dependencies(${SUPERBUILD_TOPLEVEL_PROJECT})
     endif()
 
+    set(SUPERBUILD_FIRST_PASS TRUE)
   endif()
 
-  if(__epd_first_pass)
+  if(SUPERBUILD_FIRST_PASS)
     return()
+  else()
+    unset(${proj}_EXTERNAL_PROJECT_ARGS)
+    _sb_get_external_project_arguments(${proj} ${proj}_EXTERNAL_PROJECT_ARGS)
+    #message("${proj}_EXTERNAL_PROJECT_ARGS:${${proj}_EXTERNAL_PROJECT_ARGS}")
   endif()
+endmacro()
+
+#!
+#! Convenient macro allowing to define a "empty" project in case an external one is provided
+#! using for example <proj>_DIR.
+#! Doing so allows to keep the external project dependency system happy.
+#!
+#! \ingroup CMakeUtilities
+macro(superbuild_add_empty_external_project proj dependencies)
+
+  ExternalProject_Add(${proj}
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+    BINARY_DIR ${proj}-build
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    DEPENDS
+      ${dependencies}
+    )
 endmacro()

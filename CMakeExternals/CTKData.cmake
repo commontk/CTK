@@ -6,7 +6,7 @@ superbuild_include_once()
 
 set(CTKData_DEPENDENCIES "")
 
-ctkMacroCheckExternalProjectDependency(CTKData)
+superbuild_include_dependencies(CTKData)
 set(proj CTKData)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -37,6 +37,7 @@ if(NOT DEFINED CTKData_DIR)
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
@@ -51,7 +52,10 @@ if(NOT DEFINED CTKData_DIR)
     )
   set(CTKData_DIR ${CMAKE_BINARY_DIR}/${proj})
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS CTKData_DIR:PATH)
+mark_as_superbuild(
+  VARS CTKData_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

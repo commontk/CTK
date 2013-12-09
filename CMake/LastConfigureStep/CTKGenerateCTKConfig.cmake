@@ -73,9 +73,8 @@ else()
 endif()
 
 # CTK external projects variables
-string(REPLACE "^" ";" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
 set(CTK_SUPERBUILD_EP_VARS_CONFIG)
-foreach(varname ${CTK_SUPERBUILD_EP_VARNAMES})
+foreach(varname ${CTK_EP_LABEL_FIND_PACKAGE})
   set(CTK_SUPERBUILD_EP_VARS_CONFIG
    "${CTK_SUPERBUILD_EP_VARS_CONFIG}
 set(CTK_${varname} \"${${varname}}\")")

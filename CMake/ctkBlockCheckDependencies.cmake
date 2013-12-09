@@ -32,12 +32,6 @@ ctkMacroGetAllNonProjectTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPEND
 #
 
 if(CTK_SUPERBUILD)
-  include(ExternalProject)
-  include(ctkMacroEmptyExternalProject)
-
-  #set(ep_base "${CMAKE_BINARY_DIR}/CMakeExternals")
-  #set_property(DIRECTORY PROPERTY EP_BASE ${ep_base})
-
   set(ep_install_dir ${CMAKE_BINARY_DIR}/CMakeExternals/Install)
   set(ep_suffix      "-cmake")
 
@@ -54,45 +48,19 @@ if(CTK_SUPERBUILD)
       -DBUILD_TESTING:BOOL=OFF
      )
 
-  # Set CMake OSX variable to pass down the external projects
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-  if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-         -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-         -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-         -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}
-        )
-    list(APPEND ep_common_cache_args ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS})
-  endif()
-
   # Compute -G arg for configuring external projects with the same CMake generator:
   if(CMAKE_EXTRA_GENERATOR)
     set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
   else()
     set(gen "${CMAKE_GENERATOR}")
   endif()
-
-  # Use this value where semi-colons are needed in ep_add args:
-  set(sep "^^")
-
-  # This variable will contain the list of CMake variable specific to each external project
-  # that should passed to CTK.
-  # The item of this list should have the following form: <EP_VAR>:<TYPE>
-  # where '<EP_VAR>' is an external project variable and TYPE is either BOOL, PATH or FILEPATH.
-  # Variable appended to this list will be automatically exported in CTKConfig.cmake, prefix 'CTK_'
-  # will be prepended if it applied.
-  set(CTK_SUPERBUILD_EP_VARS)
 endif()
 
 if(NOT DEFINED CTK_DEPENDENCIES)
   message(FATAL_ERROR "error: CTK_DEPENDENCIES variable is not defined !")
 endif()
 
-set(EXTERNAL_PROJECT_DIR ${${CMAKE_PROJECT_NAME}_SOURCE_DIR}/CMakeExternals)
-set(EXTERNAL_PROJECT_FILE_PREFIX "")
-include(ctkMacroCheckExternalProjectDependency)
-
-ctkMacroCheckExternalProjectDependency(CTK)
+superbuild_include_dependencies(CTK)
 
 #message("Updated CTK_DEPENDENCIES:")
 #foreach(dep ${CTK_DEPENDENCIES})
