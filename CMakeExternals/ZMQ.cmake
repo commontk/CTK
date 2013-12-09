@@ -4,15 +4,11 @@
 
 superbuild_include_once()
 
-set(ZMQ_enabling_variable ZMQ_LIBRARIES)
-set(${ZMQ_enabling_variable}_LIBRARY_DIRS ZMQ_LIBRARY_DIRS)
-set(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
-set(${ZMQ_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
-
-set(ZMQ_DEPENDENCIES "")
-
-ctkMacroCheckExternalProjectDependency(ZMQ)
 set(proj ZMQ)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -42,14 +38,13 @@ if(NOT DEFINED ZMQ_DIR)
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
     UPDATE_COMMAND ""
     INSTALL_COMMAND ""
-    CMAKE_GENERATOR ${gen}
-    LIST_SEPARATOR ${sep}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DBUILD_SHARED_LIBS:BOOL=ON
@@ -61,7 +56,10 @@ if(NOT DEFINED ZMQ_DIR)
   set(ZMQ_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS ZMQ_DIR:PATH)
+mark_as_superbuild(
+  VARS ZMQ_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

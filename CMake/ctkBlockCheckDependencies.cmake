@@ -32,12 +32,6 @@ ctkMacroGetAllNonProjectTargetLibraries("${ALL_TARGET_LIBRARIES}" NON_CTK_DEPEND
 #
 
 if(CTK_SUPERBUILD)
-  include(ExternalProject)
-  include(ctkMacroEmptyExternalProject)
-
-  #set(ep_base "${CMAKE_BINARY_DIR}/CMakeExternals")
-  #set_property(DIRECTORY PROPERTY EP_BASE ${ep_base})
-
   set(ep_install_dir ${CMAKE_BINARY_DIR}/CMakeExternals/Install)
   set(ep_suffix      "-cmake")
 
@@ -53,46 +47,78 @@ if(CTK_SUPERBUILD)
       -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
       -DBUILD_TESTING:BOOL=OFF
      )
-
-  # Set CMake OSX variable to pass down the external projects
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-  if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-         -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-         -DCMAKE_OSX_SYSROOT:STRING=${CMAKE_OSX_SYSROOT}
-         -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}
-        )
-    list(APPEND ep_common_cache_args ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS})
-  endif()
-
-  # Compute -G arg for configuring external projects with the same CMake generator:
-  if(CMAKE_EXTRA_GENERATOR)
-    set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
-  else()
-    set(gen "${CMAKE_GENERATOR}")
-  endif()
-
-  # Use this value where semi-colons are needed in ep_add args:
-  set(sep "^^")
-
-  # This variable will contain the list of CMake variable specific to each external project
-  # that should passed to CTK.
-  # The item of this list should have the following form: <EP_VAR>:<TYPE>
-  # where '<EP_VAR>' is an external project variable and TYPE is either BOOL, PATH or FILEPATH.
-  # Variable appended to this list will be automatically exported in CTKConfig.cmake, prefix 'CTK_'
-  # will be prepended if it applied.
-  set(CTK_SUPERBUILD_EP_VARS)
 endif()
 
 if(NOT DEFINED CTK_DEPENDENCIES)
   message(FATAL_ERROR "error: CTK_DEPENDENCIES variable is not defined !")
 endif()
 
-set(EXTERNAL_PROJECT_DIR ${${CMAKE_PROJECT_NAME}_SOURCE_DIR}/CMakeExternals)
-set(EXTERNAL_PROJECT_FILE_PREFIX "")
-include(ctkMacroCheckExternalProjectDependency)
+set(DCMTK_enabling_variable DCMTK_LIBRARIES)
+set(${DCMTK_enabling_variable}_INCLUDE_DIRS DCMTK_INCLUDE_DIR)
+set(${DCMTK_enabling_variable}_FIND_PACKAGE_CMD DCMTK)
 
-ctkMacroCheckExternalProjectDependency(CTK)
+set(ITK_enabling_variable ITK_LIBRARIES)
+set(${ITK_enabling_variable}_LIBRARY_DIRS ITK_LIBRARY_DIRS)
+set(${ITK_enabling_variable}_INCLUDE_DIRS ITK_INCLUDE_DIRS)
+set(${ITK_enabling_variable}_FIND_PACKAGE_CMD ITK)
+
+set(Log4Qt_enabling_variable Log4Qt_LIBRARIES)
+set(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
+set(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
+
+set(OpenIGTLink_enabling_variable OpenIGTLink_LIBRARIES)
+set(${OpenIGTLink_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
+set(${OpenIGTLink_enabling_variable}_INCLUDE_DIRS OpenIGTLink_INCLUDE_DIRS)
+set(${OpenIGTLink_enabling_variable}_FIND_PACKAGE_CMD OpenIGTLink)
+
+set(PythonQt_enabling_variable PYTHONQT_LIBRARIES)
+set(${PythonQt_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR PYTHON_INCLUDE_DIRS)
+set(${PythonQt_enabling_variable}_FIND_PACKAGE_CMD PythonQt)
+
+set(QtSOAP_enabling_variable QtSOAP_LIBRARIES)
+set(${QtSOAP_enabling_variable}_LIBRARY_DIRS QtSOAP_LIBRARY_DIRS)
+set(${QtSOAP_enabling_variable}_INCLUDE_DIRS QtSOAP_INCLUDE_DIRS)
+set(${QtSOAP_enabling_variable}_FIND_PACKAGE_CMD QtSOAP)
+
+set(qxmlrpc_enabling_variable qxmlrpc_LIBRARY)
+set(${qxmlrpc_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)
+set(${qxmlrpc_enabling_variable}_INCLUDE_DIRS qxmlrpc_INCLUDE_DIRS)
+set(${qxmlrpc_enabling_variable}_FIND_PACKAGE_CMD qxmlrpc)
+
+set(VTK_enabling_variable VTK_LIBRARIES)
+set(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
+set(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
+set(${VTK_enabling_variable}_FIND_PACKAGE_CMD VTK)
+
+set(XIP_enabling_variable XIP_LIBRARIES)
+set(${XIP_enabling_variable}_LIBRARY_DIRS XIP_LIBRARY_DIRS)
+set(${XIP_enabling_variable}_INCLUDE_DIRS XIP_INCLUDE_DIRS)
+set(${XIP_enabling_variable}_FIND_PACKAGE_CMD XIP)
+
+set(ZMQ_enabling_variable ZMQ_LIBRARIES)
+set(${ZMQ_enabling_variable}_LIBRARY_DIRS ZMQ_LIBRARY_DIRS)
+set(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
+set(${ZMQ_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
+
+macro(superbuild_is_external_project_includable possible_proj output_var)
+  if(DEFINED ${possible_proj}_enabling_variable)
+    ctkMacroShouldAddExternalProject(${${possible_proj}_enabling_variable} ${output_var})
+    if(NOT ${${output_var}})
+      if(${possible_proj} STREQUAL "VTK"
+         AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+        set(${output_var} 1)
+      else()
+        unset(${${possible_proj}_enabling_variable}_INCLUDE_DIRS)
+        unset(${${possible_proj}_enabling_variable}_LIBRARY_DIRS)
+        unset(${${possible_proj}_enabling_variable}_FIND_PACKAGE_CMD)
+      endif()
+    endif()
+  else()
+    set(${output_var} 1)
+  endif()
+endmacro()
+
+superbuild_include_dependencies(CTK)
 
 #message("Updated CTK_DEPENDENCIES:")
 #foreach(dep ${CTK_DEPENDENCIES})

@@ -4,15 +4,16 @@
 
 superbuild_include_once()
 
+set(proj PythonQtGenerator)
+
 # Sanity checks
 if(DEFINED PYTHONQTGENERATOR_EXECUTABLE AND NOT EXISTS ${PYTHONQTGENERATOR_EXECUTABLE})
   message(FATAL_ERROR "PYTHONQTGENERATOR_EXECUTABLE variable is defined but corresponds to non-existing executable")
 endif()
 
-set(PythonQtGenerator_DEPENDENCIES PythonQt)
+set(${proj}_DEPENDENCIES PythonQt)
 
-ctkMacroCheckExternalProjectDependency(PythonQtGenerator)
-set(proj PythonQtGenerator)
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -30,13 +31,12 @@ if(NOT DEFINED PYTHONQTGENERATOR_EXECUTABLE)
   #
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/PythonQt/generator
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     DOWNLOAD_COMMAND ""
-    CMAKE_GENERATOR ${gen}
     INSTALL_COMMAND ""
-    LIST_SEPARATOR ${sep}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
@@ -46,11 +46,11 @@ if(NOT DEFINED PYTHONQTGENERATOR_EXECUTABLE)
 
   set(PYTHONQTGENERATOR_EXECUTABLE ${CMAKE_BINARY_DIR}/PythonQtGenerator-build/PythonQtGenerator)
 
-  # Since PythonQtGenerator is an executable, there is no need to add its corresponding
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS PYTHONQTGENERATOR_EXECUTABLE:FILEPATH)
+mark_as_superbuild(
+  VARS PYTHONQTGENERATOR_EXECUTABLE:FILEPATH
+  LABELS "FIND_PACKAGE"
+  )

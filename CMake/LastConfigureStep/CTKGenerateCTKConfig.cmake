@@ -73,9 +73,8 @@ else()
 endif()
 
 # CTK external projects variables
-string(REPLACE "^" ";" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
 set(CTK_SUPERBUILD_EP_VARS_CONFIG)
-foreach(varname ${CTK_SUPERBUILD_EP_VARNAMES})
+foreach(varname ${CTK_EP_LABEL_FIND_PACKAGE})
   set(CTK_SUPERBUILD_EP_VARS_CONFIG
    "${CTK_SUPERBUILD_EP_VARS_CONFIG}
 set(CTK_${varname} \"${${varname}}\")")
@@ -160,8 +159,12 @@ foreach(lib ${CTK_LIBRARIES})
 endforeach()
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# External project libraries\n")
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_EXTERNAL_LIBRARIES \"${CTK_EXTERNAL_LIBRARIES}\")\n")
-set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# External project library directories\n")
-set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_EXTERNAL_LIBRARY_DIRS \"${CTK_EXTERNAL_LIBRARY_DIRS}\")\n")
+if(DEFINED DCMTK_HAVE_CONFIG_H_OPTIONAL AND NOT DCMTK_HAVE_CONFIG_H_OPTIONAL AND TARGET CTKDICOMCore)
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# Definition required to build DCMTK dependent libraries\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}if(\"\${CMAKE_VERSION}\" VERSION_GREATER 2.8.10)\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}  set_target_properties(CTKDICOMCore PROPERTIES INTERFACE_COMPILE_DEFINITIONS ${DCMTK_DEFINITIONS})\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}endif()\n")
+endif()
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}##################################################")
 
 set(ctk_config ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfig.cmake)
@@ -200,6 +203,12 @@ set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# CTK library directories that could be u
 foreach(lib ${CTK_LIBRARIES})
   set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(${lib}_LIBRARY_DIRS \"\")\n")
 endforeach()
+if(DEFINED DCMTK_HAVE_CONFIG_H_OPTIONAL AND NOT DCMTK_HAVE_CONFIG_H_OPTIONAL AND TARGET CTKDICOMCore)
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# Definition required to build DCMTK dependent libraries\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}if(\"\${CMAKE_VERSION}\" VERSION_GREATER 2.8.10)\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}  set_target_properties(CTKDICOMCore PROPERTIES INTERFACE_COMPILE_DEFINITIONS ${DCMTK_DEFINITIONS})\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}endif()\n")
+endif()
 
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}##################################################")
 

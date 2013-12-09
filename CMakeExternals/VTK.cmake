@@ -4,15 +4,11 @@
 
 superbuild_include_once()
 
-set(VTK_enabling_variable VTK_LIBRARIES)
-set(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
-set(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
-set(${VTK_enabling_variable}_FIND_PACKAGE_CMD VTK)
-
-set(VTK_DEPENDENCIES "")
-
-ctkMacroCheckExternalProjectDependency(VTK)
 set(proj VTK)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(VTK_DIR CACHE)
@@ -56,14 +52,13 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
     UPDATE_COMMAND ""
     INSTALL_COMMAND ""
-    CMAKE_GENERATOR ${gen}
-    LIST_SEPARATOR ${sep}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       ${additional_vtk_cmakevars}
@@ -83,12 +78,11 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
   set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
-  # Since the link directories associated with VTK is used, it makes sens to
-  # update CTK_EXTERNAL_LIBRARY_DIRS with its associated library output directory
-  list(APPEND CTK_EXTERNAL_LIBRARY_DIRS ${VTK_DIR}/bin)
-
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS VTK_DIR:PATH)
+mark_as_superbuild(
+  VARS VTK_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

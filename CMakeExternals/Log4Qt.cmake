@@ -4,14 +4,11 @@
 
 superbuild_include_once()
 
-set(Log4Qt_enabling_variable Log4Qt_LIBRARIES)
-set(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
-set(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
-
-set(Log4Qt_DEPENDENCIES "")
-
-ctkMacroCheckExternalProjectDependency(Log4Qt)
 set(proj Log4Qt)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -41,14 +38,13 @@ if(NOT DEFINED Log4Qt_DIR)
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    CMAKE_GENERATOR ${gen}
     INSTALL_COMMAND ""
     UPDATE_COMMAND ""
-    LIST_SEPARATOR ${sep}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
@@ -57,11 +53,11 @@ if(NOT DEFINED Log4Qt_DIR)
     )
   set(Log4Qt_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
-  # Since Log4Qt is statically build, there is not need to add its corresponding
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS Log4Qt_DIR:PATH)
+mark_as_superbuild(
+  VARS Log4Qt_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )

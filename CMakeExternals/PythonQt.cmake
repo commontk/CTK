@@ -4,14 +4,11 @@
 
 superbuild_include_once()
 
-set(PythonQt_enabling_variable PYTHONQT_LIBRARIES)
-set(${PythonQt_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR PYTHON_INCLUDE_DIRS)
-set(${PythonQt_enabling_variable}_FIND_PACKAGE_CMD PythonQt)
-
-set(PythonQt_DEPENDENCIES "")
-
-ctkMacroCheckExternalProjectDependency(PythonQt)
 set(proj PythonQt)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -69,14 +66,13 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    CMAKE_GENERATOR ${gen}
     UPDATE_COMMAND ""
     BUILD_COMMAND ""
-    LIST_SEPARATOR ${sep}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
@@ -88,16 +84,15 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     )
   set(PYTHONQT_INSTALL_DIR ${ep_install_dir})
 
-  # Since the full path of PythonQt library is used, there is not need to add
-  # its corresponding library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS
-  PYTHONQT_INSTALL_DIR:PATH
-  PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
-  PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
-  PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+mark_as_superbuild(
+  VARS
+    PYTHONQT_INSTALL_DIR:PATH
+    PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
+    PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
+    PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+  LABELS "FIND_PACKAGE"
   )

@@ -4,12 +4,13 @@
 
 superbuild_include_once()
 
-set(QtTesting_DEPENDS)
-
-set(QtTesting_DEPENDENCIES "")
-
-ctkMacroCheckExternalProjectDependency(QtTesting)
 set(proj QtTesting)
+
+set(${proj}_DEPENDS)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -49,13 +50,12 @@ if(NOT DEFINED QtTesting_DIR)
 
   message(STATUS "Adding project:${proj}")
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    CMAKE_GENERATOR ${gen}
     UPDATE_COMMAND ""
-    LIST_SEPARATOR ${sep}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DBUILD_SHARED_LIBS:BOOL=ON
@@ -66,14 +66,13 @@ if(NOT DEFINED QtTesting_DIR)
   set(QtTesting_INSTALL_DIR ${ep_install_dir})
   set(QtTesting_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
-  # Since QtTesting is statically build, there is not need to add its corresponding
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS
-  QtTesting_INSTALL_DIR:PATH
-  QtTesting_DIR:PATH
+mark_as_superbuild(
+  VARS
+    QtTesting_INSTALL_DIR:PATH
+    QtTesting_DIR:PATH
+  LABELS "FIND_PACKAGE"
   )

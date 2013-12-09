@@ -4,14 +4,11 @@
 
 superbuild_include_once()
 
-set(DCMTK_enabling_variable DCMTK_LIBRARIES)
-set(${DCMTK_enabling_variable}_INCLUDE_DIRS DCMTK_INCLUDE_DIR)
-set(${DCMTK_enabling_variable}_FIND_PACKAGE_CMD DCMTK)
-
-set(DCMTK_DEPENDENCIES "")
-
-ctkMacroCheckExternalProjectDependency(DCMTK)
 set(proj DCMTK)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(DCMTK_DIR CACHE)
@@ -47,14 +44,13 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    CMAKE_GENERATOR ${gen}
     UPDATE_COMMAND ""
     BUILD_COMMAND ""
-    LIST_SEPARATOR ${sep}
     CMAKE_ARGS
       -DDCMTK_INSTALL_BINDIR:STRING=bin/${CMAKE_CFG_INTDIR}
       -DDCMTK_INSTALL_LIBDIR:STRING=lib/${CMAKE_CFG_INTDIR}
@@ -76,27 +72,12 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
   set(DCMTK_DIR ${ep_install_dir})
 
-# This was used during heavy development on DCMTK itself.
-# Disabling it for now. (It also leads to to build errors
-# with the XCode CMake generator on Mac).
-#
-#    ExternalProject_Add_Step(${proj} force_rebuild
-#      COMMENT "Force ${proj} re-build"
-#      DEPENDERS build    # Steps that depend on this step
-#      ALWAYS 1
-#      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/${proj}-build
-#      DEPENDS
-#        ${proj_DEPENDENCIES}
-#      )
-
-  # Since DCMTK is statically build, there is not need to add its corresponding
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS
-  DCMTK_DIR:PATH
+mark_as_superbuild(
+  VARS DCMTK_DIR:PATH
+  LABELS "FIND_PACKAGE"
   )
 

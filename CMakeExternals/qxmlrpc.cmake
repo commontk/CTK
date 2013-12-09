@@ -4,15 +4,11 @@
 
 superbuild_include_once()
 
-set(qxmlrpc_enabling_variable qxmlrpc_LIBRARY)
-set(${qxmlrpc_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)
-set(${qxmlrpc_enabling_variable}_INCLUDE_DIRS qxmlrpc_INCLUDE_DIRS)
-set(${qxmlrpc_enabling_variable}_FIND_PACKAGE_CMD qxmlrpc)
-
-set(qxmlrpc_DEPENDENCIES "")
-
-ctkMacroCheckExternalProjectDependency(qxmlrpc)
 set(proj qxmlrpc)
+
+set(${proj}_DEPENDENCIES "")
+
+superbuild_include_dependencies(PROJECT_VAR proj)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -42,14 +38,13 @@ if(NOT DEFINED qxmlrpc_DIR)
   endif()
 
   ExternalProject_Add(${proj}
+    ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    CMAKE_GENERATOR ${gen}
     INSTALL_COMMAND ""
-    LIST_SEPARATOR ${sep}
-    CMAKE_ARGS
+    CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     DEPENDS
@@ -57,11 +52,11 @@ if(NOT DEFINED qxmlrpc_DIR)
     )
   set(qxmlrpc_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
 
-  # Since qxmlrpc is statically build, there is not need to add its corresponding
-  # library output directory to CTK_EXTERNAL_LIBRARY_DIRS
-
 else()
-  ctkMacroEmptyExternalproject(${proj} "${${proj}_DEPENDENCIES}")
+  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND CTK_SUPERBUILD_EP_VARS qxmlrpc_DIR:PATH)
+mark_as_superbuild(
+  VARS qxmlrpc_DIR:PATH
+  LABELS "FIND_PACKAGE"
+  )
