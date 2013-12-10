@@ -21,6 +21,7 @@
 #include "vtkLightBoxRendererManager.h"
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
 #include <vtkConfigure.h>
@@ -38,6 +39,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkTextProperty.h>
+#include <vtkVersion.h>
 #include <vtkWeakPointer.h>
 
 // STD includes
@@ -45,7 +47,6 @@
 #include <cassert>
 
 //----------------------------------------------------------------------------
-vtkCxxRevisionMacro(vtkLightBoxRendererManager, "$Revision:$");
 vtkStandardNewMacro(vtkLightBoxRendererManager);
 
 namespace
@@ -99,7 +100,11 @@ RenderWindowItem::RenderWindowItem(const double rendererBackgroundColor[3],
 //-----------------------------------------------------------------------------
 RenderWindowItem::~RenderWindowItem()
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->ImageMapper->SetInput(0);
+#else
+  this->ImageMapper->SetInputConnection(0);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -242,7 +247,11 @@ public:
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
   std::string                                   CornerAnnotationText;
 
+#if (VTK_MAJOR_VERSION <= 5)
   vtkWeakPointer<vtkImageData>                  ImageData;
+#else
+  vtkWeakPointer<vtkAlgorithmOutput>            ImageDataPort;
+#endif
   double                                        ColorWindow;
   double                                        ColorLevel;
   double                                        RendererBackgroundColor[3];
@@ -457,11 +466,19 @@ bool vtkLightBoxRendererManager::IsInitialized()
 }
 
 //----------------------------------------------------------------------------
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkLightBoxRendererManager::SetImageData(vtkImageData* newImageData)
+#else
+void vtkLightBoxRendererManager::SetImageDataPort(vtkAlgorithmOutput* newImageDataPort)
+#endif
 {
   if (!this->IsInitialized())
     {
+#if (VTK_MAJOR_VERSION <= 5)
     vtkErrorMacro(<< "SetImageData failed - vtkLightBoxRendererManager is NOT initialized");
+#else
+    vtkErrorMacro(<< "SetImageDataPort failed - vtkLightBoxRendererManager is NOT initialized");
+#endif
     return;
     }
   vtkInternal::RenderWindowItemListIt it;
@@ -469,19 +486,27 @@ void vtkLightBoxRendererManager::SetImageData(vtkImageData* newImageData)
       it != this->Internal->RenderWindowItemList.end();
       ++it)
     {
-#if VTK_MAJOR_VERSION <= 5
+#if (VTK_MAJOR_VERSION <= 5)
     (*it)->ImageMapper->SetInput(newImageData);
 #else
-    (*it)->ImageMapper->SetInputData(newImageData);
+    (*it)->ImageMapper->SetInputConnection(newImageDataPort);
 #endif
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   if (newImageData)
+#else
+  if (newImageDataPort)
+#endif
     {
     this->Internal->updateRenderWindowItemsZIndex(this->Internal->RenderWindowLayoutType);
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   this->Internal->ImageData = newImageData;
+#else
+  this->Internal->ImageDataPort = newImageDataPort;
+#endif
 
   this->Modified();
 }
@@ -581,7 +606,11 @@ void vtkLightBoxRendererManager::SetRenderWindowLayoutType(int layoutType)
     return;
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   if (this->Internal->ImageData)
+#else
+  if (this->Internal->ImageDataPort)
+#endif
     {
     this->Internal->updateRenderWindowItemsZIndex(layoutType);
     }
@@ -635,7 +664,7 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
 #if VTK_MAJOR_VERSION <= 5
       item->ImageMapper->SetInput(this->Internal->ImageData);
 #else
-      item->ImageMapper->SetInputData(this->Internal->ImageData);
+      item->ImageMapper->SetInputConnection(this->Internal->ImageDataPort);
 #endif
       this->Internal->RenderWindowItemList.push_back(item);
       --extraItem;
@@ -659,7 +688,11 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
   this->Internal->setupRendering();
   this->Internal->SetupCornerAnnotation();
 
+#if (VTK_MAJOR_VERSION <= 5)
   if (this->Internal->ImageData)
+#else
+  if (this->Internal->ImageDataPort)
+#endif
     {
     this->Internal->updateRenderWindowItemsZIndex(this->Internal->RenderWindowLayoutType);
     }

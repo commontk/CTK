@@ -74,16 +74,34 @@ if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_
 endif()
 
 # Set VTK_LIBRARIES variable
-set(VTK_LIBRARIES
-  vtkCommon
-  vtkFiltering
-  vtkRendering
-  vtkHybrid
-  )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    vtkCommonCore
+    vtkCommonDataModel
+    vtkCommonSystem
+    vtkIOImage
+    vtkInteractionStyle
+    vtkRenderingAnnotation
+    vtkRenderingCore
+    vtkRenderingFreeTypeFontConfig
+    vtkRenderingFreeTypeOpenGL
+    vtkRenderingOpenGL
+    vtkTestingRendering
+    )
+else()
+  set(VTK_LIBRARIES
+    vtkCommon
+    vtkFiltering
+    vtkRendering
+    vtkHybrid
+    )
+endif()
 
 if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   list(APPEND VTK_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
-  if(${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} VERSION_GREATER 5.6)
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    list(APPEND VTK_LIBRARIES vtkWrappingPythonCore)
+  elseif(${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} VERSION_GREATER 5.6)
     list(APPEND VTK_LIBRARIES vtkPythonCore)
   else()
     list(APPEND VTK_LIBRARIES vtkCommonPythonD)

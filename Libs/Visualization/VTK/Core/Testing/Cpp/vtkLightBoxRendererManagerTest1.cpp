@@ -63,7 +63,11 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   // Read image
   imageReader->SetFileName(imageFilename);
   imageReader->Update();
+#if (VTK_MAJOR_VERSION <= 5)
   vtkSmartPointer<vtkImageData> image = imageReader->GetOutput();
+#else
+  vtkSmartPointer<vtkAlgorithmOutput> imagePort = imageReader->GetOutputPort();
+#endif
 
   //----------------------------------------------------------------------------
   // Renderer, RenderWindow and Interactor
@@ -168,10 +172,18 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   lightBoxRendererManager->SetImageData(image);
+#else
+  lightBoxRendererManager->SetImageDataPort(imagePort);
+#endif
   if (mtime != lightBoxRendererManager->GetMTime())
     {
+#if (VTK_MAJOR_VERSION <= 5)
     std::cerr << "line " << __LINE__ << " - Problem with SetImageData()" << std::endl;
+#else
+    std::cerr << "line " << __LINE__ << " - Problem with SetImageDataPort()" << std::endl;
+#endif
     return EXIT_FAILURE;
     }
   

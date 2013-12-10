@@ -94,9 +94,34 @@ set(KIT_resources
 )
 
 # Set VTK_LIBRARIES variable
-set(VTK_LIBRARIES
-  QVTK
-  )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    vtkChartsCore
+    vtkCommonCore
+    vtkCommonDataModel
+    vtkCommonMath
+    vtkCommonSystem
+    vtkFiltersSources
+    vtkIOImage
+    vtkImagingGeneral
+    vtkImagingStatistics
+    vtkInteractionStyle
+    vtkInteractionWidgets
+    vtkRenderingAnnotation
+    vtkRenderingContext2D
+    vtkRenderingCore
+    vtkRenderingFreeTypeFontConfig
+    vtkRenderingFreeTypeOpenGL
+    vtkRenderingOpenGL
+    vtkViewsContext2D
+    vtkWrappingPythonCore
+    vtkGUISupportQt
+    )
+else()
+  set(VTK_LIBRARIES
+    QVTK
+    )
+endif()
 
 if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(CTK_USE_CHARTS 1)
@@ -123,9 +148,15 @@ IF (${CTK_USE_CHARTS})
       Resources/UI/ctkVTKVolumePropertyWidget.ui
       Resources/UI/ctkVTKScalarsToColorsWidget.ui
       ${KIT_UI_FORMS})
-  set(VTK_LIBRARIES
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    set(VTK_LIBRARIES
+      vtkChartsCore
+      ${VTK_LIBRARIES})
+  else()
+    set(VTK_LIBRARIES
       vtkCharts
       ${VTK_LIBRARIES})
+  endif()
   add_definitions(-DCTK_USE_CHARTS)
 endif()
 

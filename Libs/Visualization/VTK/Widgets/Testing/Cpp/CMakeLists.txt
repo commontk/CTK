@@ -109,7 +109,13 @@ set(Tests_RESOURCES_SRCS)
 QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 
 add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
-target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRARIES})
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_CHARTS_LIB vtkChartsCore)
+else()
+  set(VTK_CHARTS_LIB vtkCharts)
+endif()
+
+target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${VTK_CHARTS_LIB} ${CTK_BASE_LIBRARIES})
 
 #
 # Add Tests

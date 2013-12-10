@@ -34,6 +34,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <cstdlib>
@@ -51,7 +52,11 @@ int ctkVTKThumbnailViewTest1(int argc, char * argv [] )
 
   vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
   vtkCubeSource *cube= vtkCubeSource::New();
+#if (VTK_MAJOR_VERSION <= 5)
   mapper->SetInput(cube->GetOutput());
+#else
+  mapper->SetInputConnection(cube->GetOutputPort());
+#endif
   cube->Delete();
   vtkActor *actor = vtkActor::New();
   actor->SetMapper(mapper);
