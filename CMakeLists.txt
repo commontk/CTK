@@ -71,7 +71,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
 #
-option(CTK_SUPERBUILD "Build CTK and the projects it depends on via SuperBuild.cmake." ON)
+option(CTK_SUPERBUILD "Build ${PROJECT_NAME} and the projects it depends on." ON)
 mark_as_advanced(CTK_SUPERBUILD)
 
 #-----------------------------------------------------------------------------
