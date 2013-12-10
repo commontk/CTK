@@ -26,6 +26,15 @@ function(_sb_cmakevar_to_cmakearg_test)
     endif()
   endfunction()
 
+  function(check_variable id var_name expected_value)
+    if(NOT "x${${var_name}}" STREQUAL "x${expected_value}")
+      message(FATAL_ERROR "Problem with _sb_cmakevar_to_cmakearg() - See testcase: ${id}\n"
+                          "CMake variable [${var_name}] has wrong value !\n"
+                          "current:${${var_name}}\n"
+                          "expected:${expected_value}")
+    endif()
+  endfunction()
+
   set(id 1)
   set(case${id}_input "Hello")
   set(case${id}_expected_varname "")
@@ -38,6 +47,7 @@ function(_sb_cmakevar_to_cmakearg_test)
       "${case${id}_cmake_arg_var}" "${case${id}_expected_cmake_arg_var}"
       "${case${id}_varname}" "${case${id}_expected_varname}"
       "${case${id}_vartype}" "${case${id}_expected_vartype}")
+  check_variable(${id} case${id}_input "Hello")
 
   set(id 2)
   set(case${id}_input "Hello")
@@ -51,6 +61,7 @@ function(_sb_cmakevar_to_cmakearg_test)
       "${case${id}_cmake_arg_var}" "${case${id}_expected_cmake_arg_var}"
       "${case${id}_varname}" "${case${id}_expected_varname}"
       "${case${id}_vartype}" "${case${id}_expected_vartype}")
+  check_variable(${id} case${id}_input "Hello")
 
   set(id 3)
   set(case${id}_input Hello World)
@@ -64,6 +75,7 @@ function(_sb_cmakevar_to_cmakearg_test)
       "${case${id}_cmake_arg_var}" "${case${id}_expected_cmake_arg_var}"
       "${case${id}_varname}" "${case${id}_expected_varname}"
       "${case${id}_vartype}" "${case${id}_expected_vartype}")
+  check_variable(${id} case${id}_input "Hello;World")
 
   set(id 4)
   set(case${id}_input Hello World)
@@ -77,6 +89,7 @@ function(_sb_cmakevar_to_cmakearg_test)
       "${case${id}_cmake_arg_var}" "${case${id}_expected_cmake_arg_var}"
       "${case${id}_varname}" "${case${id}_expected_varname}"
       "${case${id}_vartype}" "${case${id}_expected_vartype}")
+  check_variable(${id} case${id}_input "Hello;World")
 
   message("SUCCESS")
 endfunction()
