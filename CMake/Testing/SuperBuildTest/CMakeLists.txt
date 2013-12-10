@@ -51,6 +51,9 @@ if(${PROJECT_NAME}_SUPERBUILD)
   #set(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
   #mark_as_superbuild(VARS MULTIPROJECT_VAR_WITH_LABELS PROJECTS ${PROJECT_NAME} LibA LABELS "MULTIPROJECT")
 
+  set(WITHCOLON_VAR "c:/path/to/something" CACHE PATH "Variable with colon")
+  mark_as_superbuild(WITHCOLON_VAR)
+
   # Since LibC depends on LibD, LibD will also be expected to be found on the system
   set(${CMAKE_PROJECT_NAME}_USE_SYSTEM_LibC 1)
 endif()
@@ -114,3 +117,5 @@ check_variable(SuperBuildTest_EP_LABEL_MULTIPROJECT "MULTIPROJECT_VAR_WITH_LABEL
 check_variable(MULTIPROJECT_VAR_WITH_LABELS "MultiProjectVarWithLabels")
 
 check_variable(ALL_PROJECTS_VAR "AllProjectsVar")
+
+check_variable(WITHCOLON_VAR "c:/path/to/something")

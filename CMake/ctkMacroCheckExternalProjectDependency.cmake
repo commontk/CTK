@@ -110,7 +110,7 @@ function(mark_as_superbuild)
 
   foreach(var ${_vars})
     set(_type_specified 0)
-    if(${var} MATCHES ":")
+    if(var MATCHES ":")
       set(_type_specified 1)
     endif()
     # XXX Display warning with variable type is also specified for cache variable.
