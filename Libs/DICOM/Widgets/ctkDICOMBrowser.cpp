@@ -355,6 +355,7 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
 
   // update the button and let any connected slots know about the change
   d->DirectoryButton->setDirectory(directory);
+  d->dicomTableManager->updateTableViews();
   emit databaseDirectoryChanged(directory);
 }
 
