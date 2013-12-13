@@ -2,8 +2,6 @@
 # PythonQtGenerator
 #
 
-superbuild_include_once()
-
 set(proj PythonQtGenerator)
 
 # Sanity checks
@@ -13,7 +11,12 @@ endif()
 
 set(${proj}_DEPENDENCIES PythonQt)
 
-superbuild_include_dependencies(PROJECT_VAR proj)
+ExternalProject_Include_Dependencies(${proj}
+  PROJECT_VAR proj
+  DEPENDS_VAR ${proj}_DEPENDENCIES
+  EP_ARGS_VAR ${proj}_EXTERNAL_PROJECT_ARGS
+  USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
+  )
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -47,7 +50,7 @@ if(NOT DEFINED PYTHONQTGENERATOR_EXECUTABLE)
   set(PYTHONQTGENERATOR_EXECUTABLE ${CMAKE_BINARY_DIR}/PythonQtGenerator-build/PythonQtGenerator)
 
 else()
-  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
 mark_as_superbuild(

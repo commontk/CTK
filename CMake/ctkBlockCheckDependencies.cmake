@@ -118,7 +118,12 @@ macro(superbuild_is_external_project_includable possible_proj output_var)
   endif()
 endmacro()
 
-superbuild_include_dependencies(CTK)
+set(proj CTK)
+ExternalProject_Include_Dependencies(CTK
+  PROJECT_VAR proj
+  DEPENDS_VAR CTK_DEPENDENCIES
+  USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
+  )
 
 #message("Updated CTK_DEPENDENCIES:")
 #foreach(dep ${CTK_DEPENDENCIES})

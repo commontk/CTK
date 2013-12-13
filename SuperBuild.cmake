@@ -35,7 +35,7 @@ endif()
 set(proj CTK)
 
 ExternalProject_Add(${proj}
-  ${CTK_EXTERNAL_PROJECT_ARGS}
+  ${${proj}_EP_ARGS}
   DOWNLOAD_COMMAND ""
   CMAKE_CACHE_ARGS
     -DCTK_SUPERBUILD:BOOL=OFF

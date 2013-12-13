@@ -2,13 +2,16 @@
 # PythonQt
 #
 
-superbuild_include_once()
-
 set(proj PythonQt)
 
 set(${proj}_DEPENDENCIES "")
 
-superbuild_include_dependencies(PROJECT_VAR proj)
+ExternalProject_Include_Dependencies(${proj}
+  PROJECT_VAR proj
+  DEPENDS_VAR ${proj}_DEPENDENCIES
+  EP_ARGS_VAR ${proj}_EXTERNAL_PROJECT_ARGS
+  USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
+  )
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(FATAL_ERROR "Enabling ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} is not supported !")
@@ -85,7 +88,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   set(PYTHONQT_INSTALL_DIR ${ep_install_dir})
 
 else()
-  superbuild_add_empty_external_project(${proj} "${${proj}_DEPENDENCIES}")
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
 mark_as_superbuild(
