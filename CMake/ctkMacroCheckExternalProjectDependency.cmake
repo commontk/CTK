@@ -342,8 +342,15 @@ function(_sb_update_indent proj)
   set_property(GLOBAL PROPERTY SUPERBUILD_${proj}_INDENT ${_indent})
 endfunction()
 
-function(superbuild_message proj msg)
-  if(NOT SB_FIRST_PASS)
+#!
+#! ExternalProject_Message(<project_name> <msg> [condition])
+#!
+function(ExternalProject_Message proj msg)
+  set(_display 1)
+  if("${ARGV2}" MATCHES ".+")
+    set(_display ${ARGN})
+  endif()
+  if(${_display})
     get_property(_indent GLOBAL PROPERTY SUPERBUILD_${proj}_INDENT)
     message(STATUS "SuperBuild - ${_indent}${msg}")
   endif()
@@ -443,6 +450,14 @@ macro(ExternalProject_Include_Dependencies project_name)
   if(_sb_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "Invalid arguments: ${_sb_UNPARSED_ARGUMENTS}")
   endif()
+
+  # Set default for optional PROJECT_VAR parameter
+  if(NOT _sb_PROJECT_VAR)
+    set(_sb_PROJECT_VAR proj)
+    set(${_sb_PROJECT_VAR} ${project_name})
+    #message("[${project_name}] Setting _sb_PROJECT_VAR with default value '${_sb_PROJECT_VAR}'")
+  endif()
+
   if(_sb_PROJECT_VAR AND NOT x${project_name} STREQUAL x${${_sb_PROJECT_VAR}})
     message(FATAL_ERROR
       "Argument <project_name>:${project_name} and PROJECT_VAR:${_sb_PROJECT_VAR}:${${_sb_PROJECT_VAR}} are different !")
@@ -456,17 +471,11 @@ macro(ExternalProject_Include_Dependencies project_name)
     return()
   endif()
 
-  # Set default for optional PROJECT_VAR parameter
-  if(NOT _sb_PROJECT_VAR)
-    set(_sb_PROJECT_VAR proj)
-    #message("Setting _sb_PROJECT_VAR with default value '${_sb_PROJECT_VAR}'")
-  endif()
-
   # Set default for optional DEPENDS_VAR and EP_ARGS parameters
   foreach(param DEPENDS EP_ARGS)
     if(NOT _sb_${param}_VAR)
       set(_sb_${param}_VAR ${_sb_proj}_${param})
-      #message("Setting _sb_${param}_VAR with default value '${_sb_${param}_VAR}'")
+      #message("[${project_name}] Setting _sb_${param}_VAR with default value '${_sb_${param}_VAR}'")
     endif()
   endforeach()
 
@@ -479,19 +488,19 @@ macro(ExternalProject_Include_Dependencies project_name)
   # Set default for optional USE_SYSTEM_VAR parameter
   if(NOT _sb_USE_SYSTEM_VAR)
     set(_sb_USE_SYSTEM_VAR ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${_sb_proj})
-    #message("Setting _sb_USE_SYSTEM_VAR with default value '${_sb_USE_SYSTEM_VAR}'")
+    #message("[${project_name}] Setting _sb_USE_SYSTEM_VAR with default value '${_sb_USE_SYSTEM_VAR}'")
   endif()
 
   # Set default for optional SUPERBUILD_VAR parameter
   if(NOT _sb_SUPERBUILD_VAR)
     set(_sb_SUPERBUILD_VAR ${SUPERBUILD_TOPLEVEL_PROJECT}_SUPERBUILD)
-    #message("Setting _sb_SUPERBUILD_VAR with default value '${_sb_SUPERBUILD_VAR}'")
+    #message("[${project_name}] Setting _sb_SUPERBUILD_VAR with default value '${_sb_SUPERBUILD_VAR}'")
   endif()
 
   # Keeping track of variable name independently of the recursion
   if(NOT DEFINED _sb_SB_VAR)
     set(_sb_SB_VAR ${_sb_SUPERBUILD_VAR})
-    #message("Setting _sb_SB_VAR with default value '${_sb_SB_VAR}'")
+    #message("[${project_name}] Setting _sb_SB_VAR with default value '${_sb_SB_VAR}'")
   endif()
 
   # Set local variables
@@ -515,21 +524,7 @@ macro(ExternalProject_Include_Dependencies project_name)
     set(SB_FIRST_PASS TRUE)
   endif()
 
-  # Display dependency of project being processed
-  if(_sb_DEPENDS)
-    set(dependency_str "")
-    foreach(dep ${_sb_DEPENDS})
-      get_property(_is_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
-      set(_include_status "")
-      if(_is_included)
-        set(_include_status "[INCLUDED]")
-      endif()
-      set(dependency_str "${dependency_str}${dep}${_include_status}, ")
-    endforeach()
-    superbuild_message(${_sb_proj} "${_sb_proj} => Requires ${dependency_str}")
-  endif()
-
-
+  set(_sb_REQUIRED_DEPENDS)
   foreach(dep ${_sb_DEPENDS})
     if(NOT ${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
       if(_sb_USE_SYSTEM)
@@ -539,10 +534,28 @@ macro(ExternalProject_Include_Dependencies project_name)
     endif()
     _sb_is_optional(${dep} _optional)
     set_property(GLOBAL PROPERTY SB_${dep}_OPTIONAL ${_optional})
-    #message(${_sb_proj} "Property SB_${dep}_OPTIONAL set to ${_optional}")
+    #message(${_sb_proj} "[${_sb_proj}] Property SB_${dep}_OPTIONAL set to ${_optional}")
+    if(NOT _optional)
+      list(APPEND _sb_REQUIRED_DEPENDS ${dep})
+    endif()
   endforeach()
 
+  # Display dependency of project being processed
+  if(_sb_REQUIRED_DEPENDS AND SB_SECOND_PASS AND ${_sb_SB_VAR})
+    set(dependency_str "")
+    foreach(dep ${_sb_REQUIRED_DEPENDS})
+      get_property(_is_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
+      set(_include_status "")
+      if(_is_included)
+        set(_include_status "[INCLUDED]")
+      endif()
+      set(dependency_str "${dependency_str}${dep}${_include_status}, ")
+    endforeach()
+    ExternalProject_Message(${_sb_proj} "${_sb_proj} => Requires ${dependency_str}")
+  endif()
+
   # Save variables
+  set_property(GLOBAL PROPERTY SB_${_sb_proj}_REQUIRED_DEPENDS ${_sb_REQUIRED_DEPENDS})
   set_property(GLOBAL PROPERTY SB_${_sb_proj}_DEPENDS          ${_sb_DEPENDS})
   set_property(GLOBAL PROPERTY SB_${_sb_proj}_DEPENDS_VAR      ${_sb_DEPENDS_VAR})
   set_property(GLOBAL PROPERTY SB_${_sb_proj}_EP_ARGS_VAR      ${_sb_EP_ARGS_VAR})
@@ -554,13 +567,7 @@ macro(ExternalProject_Include_Dependencies project_name)
   # Include dependencies
   foreach(dep ${_sb_DEPENDS})
     get_property(_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
-    get_property(_optional GLOBAL PROPERTY SB_${dep}_OPTIONAL)
-    set(_include 0)
-    if( (SB_FIRST_PASS AND NOT _included)
-        OR (NOT SB_FIRST_PASS AND NOT _included AND NOT _optional))
-      set(_include 1)
-    endif()
-    if(_include)
+    if(NOT _included)
       # XXX - Refactor - Add a single variable named 'EXTERNAL_PROJECT_DIRS'
       if(EXISTS "${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
         include(${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
@@ -583,50 +590,44 @@ macro(ExternalProject_Include_Dependencies project_name)
   get_property(_sb_EP_ARGS_VAR      GLOBAL PROPERTY SB_${_sb_proj}_EP_ARGS_VAR)
   get_property(_sb_DEPENDS_VAR      GLOBAL PROPERTY SB_${_sb_proj}_DEPENDS_VAR)
   get_property(_sb_DEPENDS          GLOBAL PROPERTY SB_${_sb_proj}_DEPENDS)
+  get_property(_sb_REQUIRED_DEPENDS GLOBAL PROPERTY SB_${_sb_proj}_REQUIRED_DEPENDS)
 
   # Use system ?
   set(_include_type "")
   if(_sb_USE_SYSTEM)
     set(_include_type " (SYSTEM)")
   endif()
-  superbuild_message(${_sb_proj} "${_sb_proj}[OK]${_include_type}")
+  get_property(_optional GLOBAL PROPERTY SB_${_sb_proj}_OPTIONAL)
+  ExternalProject_Message(${_sb_proj} "${_sb_proj}[OK]${_include_type}" SB_SECOND_PASS AND ${_sb_SB_VAR} AND NOT _optional)
 
   if(${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND SB_FIRST_PASS)
     set(SB_FIRST_PASS FALSE)
-    superbuild_message(${_sb_proj} "First pass - done")
+    ExternalProject_Message(${_sb_proj} "First pass - done")
 
-    foreach(possible_proj ${SB_${SUPERBUILD_TOPLEVEL_PROJECT}_POSSIBLE_DEPENDS})
-      get_property(_optional GLOBAL PROPERTY SB_${possible_proj}_OPTIONAL)
-      if(_optional)
-        superbuild_message(${_sb_proj} "${possible_proj}[OPTIONAL]")
-      endif()
-      set_property(GLOBAL PROPERTY SB_${possible_proj}_FILE_INCLUDED 0)
-    endforeach()
+    if(${_sb_SB_VAR})
+      foreach(possible_proj ${SB_${SUPERBUILD_TOPLEVEL_PROJECT}_POSSIBLE_DEPENDS})
+        get_property(_optional GLOBAL PROPERTY SB_${possible_proj}_OPTIONAL)
+        if(_optional)
+          ExternalProject_Message(${_sb_proj} "${possible_proj}[OPTIONAL]")
+        endif()
+        set_property(GLOBAL PROPERTY SB_${possible_proj}_FILE_INCLUDED 0)
+      endforeach()
 
-    set(_required_depends)
-    foreach(possible_proj ${${_sb_DEPENDS_VAR}})
-      get_property(_optional GLOBAL PROPERTY SB_${possible_proj}_OPTIONAL)
-      if(NOT _optional)
-        list(APPEND _required_depends ${possible_proj})
-      endif()
-      set_property(GLOBAL PROPERTY SB_${possible_proj}_FILE_INCLUDED 0)
-    endforeach()
-    set(_sb_DEPENDS ${_required_depends})
-    set(${_sb_DEPENDS_VAR} ${_sb_DEPENDS})
+      set(${_sb_PROJECT_VAR} ${_sb_proj})
 
-    set(SB_SECOND_PASS TRUE)
-    ExternalProject_Include_Dependencies(${_sb_proj}
-      PROJECT_VAR SUPERBUILD_TOPLEVEL_PROJECT
-      DEPENDS_VAR ${_sb_DEPENDS_VAR}
-      EP_ARGS_VAR ${_sb_EP_ARGS_VAR}
-      USE_SYSTEM_VAR _sb_USE_SYSTEM
-      SUPERBUILD_VAR ${_sb_SB_VAR}
-      )
-    set(SB_SECOND_PASS FALSE)
-
+      set(SB_SECOND_PASS TRUE)
+      ExternalProject_Include_Dependencies(${_sb_proj}
+        PROJECT_VAR ${_sb_PROJECT_VAR}
+        DEPENDS_VAR ${_sb_DEPENDS_VAR}
+        EP_ARGS_VAR ${_sb_EP_ARGS_VAR}
+        USE_SYSTEM_VAR _sb_USE_SYSTEM
+        SUPERBUILD_VAR ${_sb_SB_VAR}
+        )
+      set(SB_SECOND_PASS FALSE)
+    endif()
   endif()
 
-  if(SB_FIRST_PASS OR NOT ${_sb_SB_VAR})
+  if(SB_FIRST_PASS OR _optional)
     if(NOT ${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
       return()
     endif()
@@ -638,7 +639,7 @@ macro(ExternalProject_Include_Dependencies project_name)
 
   if(NOT SB_FIRST_PASS AND NOT SB_SECOND_PASS
       AND ${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT})
-    #superbuild_message(${_sb_proj} "Clean up")
+    #ExternalProject_Message(${_sb_proj} "Clean up")
     unset(_sb_SB_VAR)
     unset(SB_FIRST_PASS)
     unset(SB_SECOND_PASS)
@@ -646,13 +647,13 @@ macro(ExternalProject_Include_Dependencies project_name)
 
   # Set public variables
   set(${_sb_PROJECT_VAR} ${_sb_proj})
-  set(${_sb_DEPENDS_VAR} ${_sb_DEPENDS})
+  set(${_sb_DEPENDS_VAR} ${_sb_REQUIRED_DEPENDS})
   set(${_sb_USE_SYSTEM_VAR} ${_sb_USE_SYSTEM})
 
   #message("[${_sb_proj}] #################################")
   #message("[${_sb_proj}] Setting ${_sb_PROJECT_VAR}:${_sb_proj}")
   #message("[${_sb_proj}] Setting ${_sb_EP_ARGS_VAR}:${${_sb_EP_ARGS_VAR}}")
-  #message("[${_sb_proj}] Setting ${_sb_DEPENDS_VAR}:${_sb_DEPENDS}")
+  #message("[${_sb_proj}] Setting ${_sb_DEPENDS_VAR}:${${_sb_DEPENDS_VAR}}")
   #message("[${_sb_proj}] Setting ${_sb_USE_SYSTEM_VAR}:${_sb_USE_SYSTEM}")
 endmacro()
 
