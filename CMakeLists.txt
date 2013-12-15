@@ -921,7 +921,7 @@ if(CTK_USE_CONTRIBUTED_PLUGINS)
     ctkFunctionCheckoutRepo(
       NAME ExternalProjectsContrib
       GIT_URL github.com/commontk/ExternalProjectsContrib.git
-      GIT_TAG 8cea706
+      GIT_TAG 4c944ef
       )
     mark_as_superbuild(ExternalProjectsContrib_DIR:PATH)
   endif()
