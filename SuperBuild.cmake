@@ -53,3 +53,13 @@ ExternalProject_Add(${proj}
     ${CTK_DEPENDENCIES}
   STEP_TARGETS configure
   )
+
+# This custom external project step forces the build and later
+# steps to run whenever a top level build is done...
+ExternalProject_Add_Step(${proj} forcebuild
+  COMMAND ${CMAKE_COMMAND} -E echo_append ""
+  COMMENT "Forcing build step for '${proj}'"
+  DEPENDEES configure
+  DEPENDERS build
+  ALWAYS 1
+  )
