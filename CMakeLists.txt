@@ -953,9 +953,13 @@ endif()
 # Expand variables containing include and library directories for external projects
 # This relies on the variable EXTERNAL_TARGETS set in ctkMacroValidateBuildOptions
 foreach(_external_target ${EXTERNAL_TARGETS})
-  if(${_external_target}_FIND_PACKAGE_CMD)
-    #message("Calling find_package(${${_external_target}_FIND_PACKAGE_CMD})")
-    find_package(${${_external_target}_FIND_PACKAGE_CMD} REQUIRED)
+  set(_package_name ${${_external_target}_FIND_PACKAGE_CMD})
+  if(_package_name)
+    superbuild_is_external_project_includable(${_package_name} required)
+    if(required)
+      #message("Calling find_package(${_package_name})")
+      find_package(${_package_name} REQUIRED)
+    endif()
   endif()
 endforeach()
 
