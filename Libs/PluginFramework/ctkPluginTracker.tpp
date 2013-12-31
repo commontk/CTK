@@ -220,6 +220,7 @@ QMap<QSharedPointer<ctkPlugin>, T> ctkPluginTracker<T>::getTracked() const
 template<class T>
 bool ctkPluginTracker<T>::isEmpty() const
 {
+  Q_D(const PluginTracker);
   QSharedPointer<TrackedPlugin> t = d->tracked();
   if (t.isNull())
   { /* if PluginTracker is not open */
