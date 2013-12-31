@@ -143,7 +143,7 @@ T ctkPluginTracker<T>::getObject(QSharedPointer<ctkPlugin> plugin) const
   QSharedPointer<TrackedPlugin> t = d->tracked();
   if (t.isNull())
   {
-    return QVariant();
+    return T();
   }
 
   {
