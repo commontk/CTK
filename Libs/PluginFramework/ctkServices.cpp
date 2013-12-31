@@ -151,7 +151,7 @@ void ctkServices::updateServiceRegistrationOrder(const ctkServiceRegistration& s
 //----------------------------------------------------------------------------
 bool ctkServices::checkServiceClass(QObject* service, const QString& cls) const
 {
-  return service->inherits(cls.toAscii());
+  return service->inherits(cls.toLatin1());
 }
 
 //----------------------------------------------------------------------------
