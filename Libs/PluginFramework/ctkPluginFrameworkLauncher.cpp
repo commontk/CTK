@@ -267,18 +267,18 @@ void ctkPluginFrameworkLauncher::appendPathEnv(const QString& path)
     LPVOID lpMsgBuf;
     DWORD dw = GetLastError();
 
-    FormatMessage(
+    FormatMessageW(
         FORMAT_MESSAGE_ALLOCATE_BUFFER |
         FORMAT_MESSAGE_FROM_SYSTEM |
         FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,
         dw,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        (LPTSTR) &lpMsgBuf,
+        (LPWSTR) &lpMsgBuf,
         0, NULL );
 
     QString msg = QString("Adding '%1' to the PATH environment variable failed: %2")
-      .arg(path).arg(QString((LPCTSTR)lpMsgBuf));
+      .arg(path).arg(QString::fromWCharArray((LPWSTR)lpMsgBuf));
 
     qWarning() << msg;
 
