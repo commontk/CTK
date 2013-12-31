@@ -19,11 +19,9 @@
 =========================================================================*/
 
 // Qt includes
-#include <QApplication>
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
-#include <QMainWindow>
 #include <QMetaEnum>
 #include <QMetaType>
 #include <QMutexLocker>
