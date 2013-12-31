@@ -53,10 +53,12 @@ ctkErrorLogQtMessageHandler::ctkErrorLogQtMessageHandler() : Superclass()
 namespace
 {
 //------------------------------------------------------------------------------
-void ctkErrorLogModelQtMessageOutput(QtMsgType type, const char *msg)
+void ctkErrorLogModelQtMessageOutput(QtMsgType type,
+                                     const QMessageLogContext& context,
+                                     const QString& msg)
 {
   // Warning: To avoid inifinite loop, do not use Q_ASSERT in this function.
-  if (QString(msg).isEmpty())
+  if (msg.isEmpty())
     {
     return;
     }
@@ -107,10 +109,18 @@ void ctkErrorLogQtMessageHandler::setEnabledInternal(bool value)
 {
   if (value)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    this->SavedQtMessageHandler = qInstallMessageHandler(ctkErrorLogModelQtMessageOutput);
+#else
     this->SavedQtMessageHandler = qInstallMsgHandler(ctkErrorLogModelQtMessageOutput);
+#endif
     }
   else
     {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    qInstallMessageHandler(this->SavedQtMessageHandler);
+#else
     qInstallMsgHandler(this->SavedQtMessageHandler);
+#endif
     }
 }

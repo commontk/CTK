@@ -29,6 +29,7 @@
 /// \ingroup Core
 class CTK_CORE_EXPORT ctkErrorLogQtMessageHandler : public ctkErrorLogAbstractMessageHandler
 {
+  Q_OBJECT
 public:
   typedef ctkErrorLogAbstractMessageHandler Superclass;
 
@@ -39,7 +40,11 @@ public:
   virtual QString handlerName()const;
   virtual void setEnabledInternal(bool value);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  QtMessageHandler SavedQtMessageHandler;
+#else
   QtMsgHandler SavedQtMessageHandler;
+#endif
 };
 
 #endif
