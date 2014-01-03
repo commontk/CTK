@@ -223,7 +223,7 @@ def ctk_compile_file(fullname, ddir=None, force=0, rx=None, quiet=0):
                 print err.msg
                 success = 0
             except IOError, e:
-                print "Sorry", e
+                print 'Sorry', e
                 success = 0
             else:
                 if ok == 0:
