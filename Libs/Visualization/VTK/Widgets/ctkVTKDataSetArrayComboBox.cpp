@@ -42,6 +42,7 @@ public:
   int indexFromArray(vtkAbstractArray* dataArray)const;
   vtkAbstractArray* arrayFromIndex(int index)const;
   QString arrayNameFromIndex(int index)const;
+  int locationFromIndex(int index)const;
 };
 
 // --------------------------------------------------------------------------
@@ -97,6 +98,13 @@ QString ctkVTKDataSetArrayComboBoxPrivate::arrayNameFromIndex(int index)const
 }
 
 // --------------------------------------------------------------------------
+int ctkVTKDataSetArrayComboBoxPrivate::locationFromIndex(int index)const
+{
+  return this->dataSetModel()->locationFromIndex(
+    this->dataSetModel()->index(index, 0));
+}
+
+// --------------------------------------------------------------------------
 // ctkVTKDataSetArrayComboBox methods
 
 // --------------------------------------------------------------------------
@@ -125,6 +133,13 @@ QString ctkVTKDataSetArrayComboBox::currentArrayName()const
 {
   vtkAbstractArray* dataArray = this->currentArray();
   return dataArray ? dataArray->GetName() : "";
+}
+
+// --------------------------------------------------------------------------
+int ctkVTKDataSetArrayComboBox::currentArrayLocation()const
+{
+  Q_D(const ctkVTKDataSetArrayComboBox);
+  return d->locationFromIndex(this->currentIndex());
 }
 
 // --------------------------------------------------------------------------

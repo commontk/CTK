@@ -53,6 +53,11 @@ public:
   QString currentArrayName()const;
   vtkDataSet* dataSet()const;
 
+  /// Return the current array location, i.e. whether it's a point data
+  /// array or a cell data array.
+  /// \sa currentArrayChanged(int), ctkVTKDataSetModel::locationFromItem()
+  int currentArrayLocation()const;
+
   ctkVTKDataSetModel::AttributeTypes attributeTypes()const;
   void setAttributeTypes(const ctkVTKDataSetModel::AttributeTypes& attributeTypes);
 
@@ -72,6 +77,7 @@ public Q_SLOTS:
 Q_SIGNALS:
   void currentArrayChanged(vtkAbstractArray*);
   void currentArrayChanged(const QString& name);
+
 protected Q_SLOTS:
   void onCurrentIndexChanged(int);
 protected:

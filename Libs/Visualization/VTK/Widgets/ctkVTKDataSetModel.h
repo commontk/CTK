@@ -37,7 +37,8 @@ class vtkAbstractArray;
 namespace ctkVTK
 {
  enum ItemDataRole {
-   PointerRole = Qt::UserRole + 1
+   PointerRole = Qt::UserRole + 1,
+   LocationRole,
  };
 };
 
@@ -87,7 +88,19 @@ public:
   /// Return the vtkAbstractArray associated to the index.
   /// 0 if the index doesn't contain a vtkAbstractArray
   inline vtkAbstractArray* arrayFromIndex(const QModelIndex& arrayIndex)const;
+
+  /// Return the location from a given item. Fails and returns -1 if either
+  /// the given index points to a null item or an invisible item.
+  /// \sa locationFromItem()
+  inline int locationFromIndex(const QModelIndex& arrayIndex)const;
+
   vtkAbstractArray* arrayFromItem(QStandardItem* nodeItem)const;
+
+  /// Return the location from a given item. Fails and returns -1 if either
+  /// the given item is null or should be invisible).
+  /// \sa locationFromIndex(), invisibleRootItem()
+  int locationFromItem(QStandardItem* nodeItem)const;
+
   inline QModelIndex indexFromArray(vtkAbstractArray* array, int column = 0)const;
   QStandardItem* itemFromArray(vtkAbstractArray* array, int column = 0)const;
   QModelIndexList indexes(vtkAbstractArray* array)const;
@@ -101,9 +114,9 @@ protected:
 
   ctkVTKDataSetModel(ctkVTKDataSetModelPrivate* pimpl, QObject *parent=0);
 
-  virtual void insertArray(vtkAbstractArray* array);
-  virtual void insertArray(vtkAbstractArray* array, int row);
-  virtual void updateItemFromArray(QStandardItem* item, vtkAbstractArray* array, int column);
+  virtual void insertArray(vtkAbstractArray* array, int location);
+  virtual void insertArray(vtkAbstractArray* array, int location, int row);
+  virtual void updateItemFromArray(QStandardItem* item, vtkAbstractArray* array, int location, int column);
   virtual void updateArrayFromItem(vtkAbstractArray* array, QStandardItem* item);
   virtual void updateDataSet();
   virtual void populateDataSet();
@@ -121,6 +134,12 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(ctkVTKDataSetModel::AttributeTypes);
 vtkAbstractArray* ctkVTKDataSetModel::arrayFromIndex(const QModelIndex &nodeIndex)const
 {
   return this->arrayFromItem(this->itemFromIndex(nodeIndex));
+}
+
+// -----------------------------------------------------------------------------
+int ctkVTKDataSetModel::locationFromIndex(const QModelIndex &nodeIndex)const
+{
+  return this->locationFromItem(this->itemFromIndex(nodeIndex));
 }
 
 // -----------------------------------------------------------------------------
