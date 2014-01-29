@@ -84,7 +84,7 @@ public:
   int m_SubclassPosition;
   
   /// Original width between the 2 bounds before any moves
-  int m_SubclassWidth;
+  float m_SubclassWidth;
 
   ctkRangeSliderPrivate::Handles m_SelectedHandles;
 
@@ -110,7 +110,7 @@ ctkRangeSliderPrivate::ctkRangeSliderPrivate(ctkRangeSlider& object)
   this->m_MaximumSliderSelected = QStyle::SC_None;
   this->m_SubclassClickOffset = 0;
   this->m_SubclassPosition = 0;
-  this->m_SubclassWidth = 0;
+  this->m_SubclassWidth = 0.0;
   this->m_SelectedHandles = 0;
   this->m_SymmetricMoves = false;
 }
@@ -692,7 +692,7 @@ void ctkRangeSlider::mousePressEvent(QMouseEvent* mouseEvent)
     // warning lost of precision it might be fatal
     d->m_SubclassPosition = (d->m_MinimumPosition + d->m_MaximumPosition) / 2.;
     d->m_SubclassClickOffset = mepos - d->pixelPosFromRangeValue(d->m_SubclassPosition);
-    d->m_SubclassWidth = (d->m_MaximumPosition - d->m_MinimumPosition) / 2;
+    d->m_SubclassWidth = (d->m_MaximumPosition - d->m_MinimumPosition) / 2.;
     qMax(d->m_SubclassPosition - d->m_MinimumPosition, d->m_MaximumPosition - d->m_SubclassPosition);
     this->setSliderDown(true);
     if (!this->isMinimumSliderDown() || !this->isMaximumSliderDown())
@@ -755,8 +755,8 @@ void ctkRangeSlider::mouseMoveEvent(QMouseEvent* mouseEvent)
   // Both handles are down (the user clicked in between the handles)
   else if (this->isMinimumSliderDown() && this->isMaximumSliderDown())
     {
-    this->setPositions(newPosition - d->m_SubclassWidth,
-                       newPosition + d->m_SubclassWidth );
+    this->setPositions(newPosition - static_cast<int>(d->m_SubclassWidth),
+                       newPosition + static_cast<int>(d->m_SubclassWidth + .5));
     }
   mouseEvent->accept();
 }
