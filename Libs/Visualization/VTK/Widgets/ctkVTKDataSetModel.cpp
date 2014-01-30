@@ -26,6 +26,7 @@
 
 // VTK includes
 #include <vtkAbstractArray.h>
+#include <vtkAssignAttribute.h>
 #include <vtkCellData.h>
 #include <vtkDataSet.h>
 #include <vtkPointData.h>
@@ -212,6 +213,16 @@ vtkAbstractArray* ctkVTKDataSetModel::arrayFromItem(QStandardItem* arrayItem)con
 }
 
 //------------------------------------------------------------------------------
+int ctkVTKDataSetModel::locationFromItem(QStandardItem* arrayItem)const
+{
+  if (arrayItem == 0 || arrayItem == this->invisibleRootItem())
+    {
+    return -1;
+    }
+  return arrayItem->data(ctkVTK::LocationRole).toInt();
+}
+
+//------------------------------------------------------------------------------
 QStandardItem* ctkVTKDataSetModel::itemFromArray(vtkAbstractArray* array, int column)const
 {
   if (array == 0)
@@ -283,23 +294,28 @@ void ctkVTKDataSetModel::populateDataSet()
   Q_D(ctkVTKDataSetModel);
   Q_ASSERT(d->DataSet);
 
-  QList<vtkAbstractArray*> attributeArrays;
-  attributeArrays << ctkVTKDataSetModelPrivate::attributeArrayToInsert(d->AttributeType, d->DataSet->GetPointData());
-  attributeArrays << ctkVTKDataSetModelPrivate::attributeArrayToInsert(d->AttributeType, d->DataSet->GetCellData());
-  foreach(vtkAbstractArray* attributeArray, attributeArrays)
+  foreach(vtkAbstractArray* attributeArray,
+    ctkVTKDataSetModelPrivate::attributeArrayToInsert(d->AttributeType, d->DataSet->GetPointData()))
     {
-    this->insertArray(attributeArray);
+    this->insertArray(attributeArray, vtkAssignAttribute::POINT_DATA);
+    }
+
+  foreach(vtkAbstractArray* attributeArray,
+    ctkVTKDataSetModelPrivate::attributeArrayToInsert(d->AttributeType, d->DataSet->GetCellData()))
+    {
+    this->insertArray(attributeArray, vtkAssignAttribute::CELL_DATA);
     }
 }
 
 //------------------------------------------------------------------------------
-void ctkVTKDataSetModel::insertArray(vtkAbstractArray* array)
+void ctkVTKDataSetModel::insertArray(vtkAbstractArray* array, int location)
 {
-  this->insertArray(array, this->rowCount());
+  this->insertArray(array, location, this->rowCount());
 }
 
 //------------------------------------------------------------------------------
-void ctkVTKDataSetModel::insertArray(vtkAbstractArray* array, int row)
+void ctkVTKDataSetModel
+::insertArray(vtkAbstractArray* array, int location, int row)
 {
   Q_D(ctkVTKDataSetModel);
   Q_ASSERT(vtkAbstractArray::SafeDownCast(array));
@@ -308,7 +324,7 @@ void ctkVTKDataSetModel::insertArray(vtkAbstractArray* array, int row)
   for (int i= 0; i < this->columnCount(); ++i)
     {
     QStandardItem* newArrayItem = new QStandardItem();
-    this->updateItemFromArray(newArrayItem, array, i);
+    this->updateItemFromArray(newArrayItem, array, location, i);
     items.append(newArrayItem);
     }
   this->insertRow(row,items);
@@ -321,9 +337,13 @@ void ctkVTKDataSetModel::insertArray(vtkAbstractArray* array, int row)
 }
 
 //------------------------------------------------------------------------------
-void ctkVTKDataSetModel::updateItemFromArray(QStandardItem* item, vtkAbstractArray* array, int column)
+void ctkVTKDataSetModel::updateItemFromArray(QStandardItem* item,
+                                             vtkAbstractArray* array,
+                                             int location,
+                                             int column)
 {
   item->setData(QVariant::fromValue(reinterpret_cast<long long>(array)), ctkVTK::PointerRole);
+  item->setData(location, ctkVTK::LocationRole);
   switch (column)
     {
     case 0:
@@ -394,7 +414,8 @@ void ctkVTKDataSetModel::onArrayModified(vtkObject* modifiedArray)
   foreach (QModelIndex index, arrayIndexes)
     {
     QStandardItem* item = this->itemFromIndex(index);
-    this->updateItemFromArray(item, array, item->column());
+    this->updateItemFromArray(
+      item, array, item->data(ctkVTK::LocationRole).toInt(), item->column());
     }
 }
 
