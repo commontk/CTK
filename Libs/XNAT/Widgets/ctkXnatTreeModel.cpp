@@ -20,10 +20,11 @@
 =============================================================================*/
 
 #include "ctkXnatTreeModel.h"
-
+#include "ctkXnatObjectPrivate.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatSubject.h"
 
+#include <QSharedPointer>
 #include <QList>
 
 ctkXnatTreeModel::ctkXnatTreeModel()
@@ -63,6 +64,10 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
   else if (role == Qt::ToolTipRole)
   {
     return this->xnatObject(index)->description();
+  }
+  else if (role == Qt::EditRole)
+  {
+    return QVariant::fromValue<ctkXnatObject*>(this->xnatObject(index));
   }
 
   return QVariant();
@@ -148,7 +153,7 @@ bool ctkXnatTreeModel::hasChildren(const QModelIndex& index) const
   }
 
   ctkXnatTreeItem* item = this->itemAt(index);
-  return !item->xnatObject()->isFetched() || (item->childCount() > 0);
+  return !item->xnatObject()->isFetched() || (item->childCount() > 0) || m_RootItem->child(0)->xnatObject()->children().count() > 0;
 }
 
 bool ctkXnatTreeModel::canFetchMore(const QModelIndex& index) const
@@ -157,8 +162,8 @@ bool ctkXnatTreeModel::canFetchMore(const QModelIndex& index) const
   {
     return false;
   }
-
-  return !this->xnatObject(index)->isFetched();
+  ctkXnatTreeItem* item = this->itemAt(index);
+  return !(item->childCount() > 0);
 }
 
 void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
@@ -172,7 +177,10 @@ void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
 
   ctkXnatObject* xnatObject = item->xnatObject();
 
-  xnatObject->fetch();
+  if ( !xnatObject->isFetched() )
+  {
+    xnatObject->fetch();
+  }
 
   QList<ctkXnatObject*> children = xnatObject->children();
   if (!children.isEmpty())
@@ -262,4 +270,13 @@ void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFi
   ctkXnatObject* child = xnatObject->children()[index.row()];
 
   child->upload(zipFileName);
+}
+
+QVariant ctkXnatTreeModel::headerData(int /*section*/, Qt::Orientation /*orientation*/, int role) const
+{
+  if (role == Qt::DisplayRole)
+  {
+    if (!m_RootItem) return QString("Unavailable");
+  }
+  return QVariant();
 }

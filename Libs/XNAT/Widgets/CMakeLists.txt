@@ -12,6 +12,7 @@ set(KIT_SRCS
   ctkXnatProjectListModel.cpp
   ctkXnatTreeModel.cpp
   ctkXnatSettings.cpp
+  ctkXnatListModel.cpp
 )
 
 # Files which should be processed by Qts moc
@@ -19,6 +20,7 @@ set(KIT_MOC_SRCS
   ctkXnatLoginDialog.h
   ctkXnatProjectListModel.h
   ctkXnatTreeModel.h
+  ctkXnatListModel.h
 )
 
 
