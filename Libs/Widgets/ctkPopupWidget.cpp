@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
 #include <QDesktopWidget>
 #include <QDir>
 #include <QEvent>
@@ -99,14 +98,7 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
     {
     if (widget->isAncestorOf(this->BaseWidget))
       {
-      QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
-      QPoint topLeft = widget->parentWidget() ? widget->parentWidget()->mapToGlobal(moveEvent->pos()) : moveEvent->pos();
-      topLeft += this->BaseWidget->mapTo(widget, QPoint(0,0));
-      //q->move(q->pos() + moveEvent->pos() - moveEvent->oldPos());
-      QRect newBaseGeometry = this->baseGeometry();
-	    newBaseGeometry.moveTopLeft(topLeft);
-	    QRect desiredGeometry = this->desiredOpenGeometry(newBaseGeometry);
-	    q->move(desiredGeometry.topLeft());
+      q->setGeometry(this->desiredOpenGeometry());
       }
     else if (widget->isWindow() &&
              widget->windowType() != Qt::ToolTip &&
@@ -117,8 +109,11 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
     }
   else if (event->type() == QEvent::Resize)
     {
-    if (widget->isWindow() &&
-        widget != this->BaseWidget->window() &&
+    if (widget->isAncestorOf(this->BaseWidget))
+      {
+      q->setGeometry(this->desiredOpenGeometry());
+      }
+    else if (widget->isWindow() &&
         widget->windowType() != Qt::ToolTip &&
         widget->windowType() != Qt::Popup)
       {
@@ -450,22 +445,22 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
     case QEvent::Show:
       if (obj != d->BaseWidget)
         {
-	      break;
-	      }
-	    this->setGeometry(d->desiredOpenGeometry());
-	    d->temporarilyHiddenOff();
-	    break;
-	  case QEvent::Resize:
-	    if (obj != d->BaseWidget ||
-	        !(d->Alignment & Qt::AlignJustify ||
-	         (d->Alignment & Qt::AlignTop && d->Alignment & Qt::AlignBottom)) ||
-	         !(d->isOpening() || this->isVisible()))
-	      {
-	      break;
-	      }
-	    // TODO: bug when the effect is WindowOpacityFadeEffect
-	    this->setGeometry(d->desiredOpenGeometry());
-	    break;
+        break;
+        }
+      this->setGeometry(d->desiredOpenGeometry());
+      d->temporarilyHiddenOff();
+      break;
+    case QEvent::Resize:
+      if (obj != d->BaseWidget ||
+          !(d->Alignment & Qt::AlignJustify ||
+           (d->Alignment & Qt::AlignTop && d->Alignment & Qt::AlignBottom)) ||
+           !(d->isOpening() || this->isVisible()))
+        {
+        break;
+        }
+      // TODO: bug when the effect is WindowOpacityFadeEffect
+      this->setGeometry(d->desiredOpenGeometry());
+      break;
     case QEvent::Enter:
       if ( d->currentAnimation()->state() == QAbstractAnimation::Stopped )
         {
