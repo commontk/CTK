@@ -34,33 +34,33 @@
 #include <QDebug>
 
 ctkXnatListModel::ctkXnatListModel()
-  : rootObject(0)
+  : RootObject(0)
 {
 }
 
 void ctkXnatListModel::setRootObject(ctkXnatObject* root)
 {
-  rootObject = root;
+  RootObject = root;
 }
 
-ctkXnatObject* ctkXnatListModel::getRootObject()
+ctkXnatObject* ctkXnatListModel::rootObject()
 {
-  return rootObject;
+  return RootObject;
 }
 
 int ctkXnatListModel::rowCount(const QModelIndex& /*parent*/) const
 {
-  if (!rootObject) return 0;
-  return rootObject->children().size();
+  if (!RootObject) return 0;
+  return RootObject->children().size();
 }
 
 QVariant ctkXnatListModel::data(const QModelIndex& index, int role) const
 {
-  if (!rootObject) return QVariant();
+  if (!RootObject) return QVariant();
 
   if (role == Qt::DisplayRole)
   {
-    ctkXnatObject* child = rootObject->children().at(index.row());
+    ctkXnatObject* child = RootObject->children().at(index.row());
     if (!child)
     {
       qWarning() << "child at index" << index << "is NULL!";
@@ -77,7 +77,7 @@ QVariant ctkXnatListModel::data(const QModelIndex& index, int role) const
   }
   else if (role == Qt::UserRole)
   {
-    return QVariant::fromValue(rootObject->children().at(index.row()));
+    return QVariant::fromValue(RootObject->children().at(index.row()));
   }
   return QVariant();
 }
@@ -86,40 +86,9 @@ QVariant ctkXnatListModel::headerData(int /*section*/, Qt::Orientation /*orienta
 {
   if (role == Qt::DisplayRole)
   {
-    if (!rootObject) return QString("Unavailable");
+    if (!RootObject) return QString("Unavailable");
 
-    if( dynamic_cast<ctkXnatDataModel*>(rootObject) != NULL )
-    {
-      return QString("Projects");
-    }
-    else if( dynamic_cast<ctkXnatProject*>(rootObject) != NULL )
-    {
-      return QString("Subjects");
-    }
-    else if( dynamic_cast<ctkXnatSubject*>(rootObject) != NULL )
-    {
-      return QString("Experiments");
-    }
-    else if( dynamic_cast<ctkXnatExperiment*>(rootObject) != NULL )
-    {
-      return QString("Kinds of data");
-    }
-    else if( dynamic_cast<ctkXnatScanFolder*>(rootObject) != NULL )
-    {
-      return QString("Image Sessions");
-    }
-    else if( dynamic_cast<ctkXnatScan*>(rootObject) != NULL )
-    {
-      return QString("Resource Folders");
-    }
-    else if( dynamic_cast<ctkXnatScanResource*>(rootObject) != NULL )
-    {
-      return QString("Files");
-    }
-    else
-    {
-      return QString("ERROR");
-    }
+    return RootObject->childDataType();
   }
   return QVariant();
 }

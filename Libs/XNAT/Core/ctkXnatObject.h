@@ -99,6 +99,9 @@ public:
 
   QString schemaType() const;
 
+  /// Gets a human readable name of the child object type.
+  virtual QString childDataType() const;
+
   /// Resets the object so that its properties and children needs to be fetched
   /// again at the next request.
   virtual void reset();
