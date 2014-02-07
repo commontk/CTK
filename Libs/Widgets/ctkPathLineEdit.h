@@ -110,6 +110,11 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   /// If this property is set to a positive value, the minimumSizeHint() and sizeHint() take it into account.
   Q_PROPERTY(int minimumContentsLength READ minimumContentsLength WRITE setMinimumContentsLength)
 
+  /// This property holds the list of regular expressions (in wildcard mode) used to help the user
+  /// complete a line.
+  /// For example: "Images (*.jpg *.gif *.png)"
+  Q_PROPERTY(QStringList nameFilters READ nameFilters WRITE setNameFilters)
+
 public:
   enum Filter { Dirs        = 0x001,
                 Files       = 0x002,
