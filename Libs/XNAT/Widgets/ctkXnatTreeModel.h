@@ -38,7 +38,6 @@ public:
   explicit ctkXnatTreeModel();
   virtual ~ctkXnatTreeModel();
 
-  QVariant headerData(int /*section*/, Qt::Orientation /*orientation*/, int role) const;
   virtual QVariant data(const QModelIndex& index, int role) const;
   virtual QModelIndex parent(const QModelIndex& child) const;
   virtual QModelIndex index(int row, int column, const QModelIndex& parent) const;

@@ -20,11 +20,8 @@
 =============================================================================*/
 
 #include "ctkXnatTreeModel.h"
-#include "ctkXnatObjectPrivate.h"
 #include "ctkXnatObject.h"
-#include "ctkXnatSubject.h"
 
-#include <QSharedPointer>
 #include <QList>
 
 ctkXnatTreeModel::ctkXnatTreeModel()
@@ -65,7 +62,7 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
   {
     return this->xnatObject(index)->description();
   }
-  else if (role == Qt::EditRole)
+  else if (role == Qt::UserRole)
   {
     return QVariant::fromValue<ctkXnatObject*>(this->xnatObject(index));
   }
@@ -153,7 +150,7 @@ bool ctkXnatTreeModel::hasChildren(const QModelIndex& index) const
   }
 
   ctkXnatTreeItem* item = this->itemAt(index);
-  return !item->xnatObject()->isFetched() || (item->childCount() > 0) || m_RootItem->child(0)->xnatObject()->children().count() > 0;
+  return !item->xnatObject()->isFetched() || !item->xnatObject()->children().isEmpty();
 }
 
 bool ctkXnatTreeModel::canFetchMore(const QModelIndex& index) const
@@ -177,10 +174,7 @@ void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
 
   ctkXnatObject* xnatObject = item->xnatObject();
 
-  if ( !xnatObject->isFetched() )
-  {
-    xnatObject->fetch();
-  }
+  xnatObject->fetch();
 
   QList<ctkXnatObject*> children = xnatObject->children();
   if (!children.isEmpty())
@@ -270,13 +264,4 @@ void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFi
   ctkXnatObject* child = xnatObject->children()[index.row()];
 
   child->upload(zipFileName);
-}
-
-QVariant ctkXnatTreeModel::headerData(int /*section*/, Qt::Orientation /*orientation*/, int role) const
-{
-  if (role == Qt::DisplayRole)
-  {
-    if (!m_RootItem) return QString("Unavailable");
-  }
-  return QVariant();
 }
