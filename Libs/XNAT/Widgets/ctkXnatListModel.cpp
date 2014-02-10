@@ -19,35 +19,48 @@
 
 =============================================================================*/
 
-#include "ctkXnatProjectListModel.h"
-
+#include "ctkXnatDataModel.h"
+#include "ctkXnatListModel.h"
 #include "ctkXnatProject.h"
+#include "ctkXnatSubject.h"
+#include "ctkXnatExperiment.h"
+#include "ctkXnatScanFolder.h"
+#include "ctkXnatScan.h"
+#include "ctkXnatScanResource.h"
+
+#include <iostream>
+#include <typeinfo>
 
 #include <QDebug>
 
-ctkXnatProjectListModel::ctkXnatProjectListModel()
-  : rootObject(0)
+ctkXnatListModel::ctkXnatListModel()
+  : RootObject(0)
 {
 }
 
-void ctkXnatProjectListModel::setRootObject(ctkXnatObject* root)
+void ctkXnatListModel::setRootObject(ctkXnatObject* root)
 {
-  rootObject = root;
+  RootObject = root;
 }
 
-int ctkXnatProjectListModel::rowCount(const QModelIndex& /*parent*/) const
+ctkXnatObject* ctkXnatListModel::rootObject()
 {
-  if (!rootObject) return 0;
-  return rootObject->children().size();
+  return RootObject;
 }
 
-QVariant ctkXnatProjectListModel::data(const QModelIndex& index, int role) const
+int ctkXnatListModel::rowCount(const QModelIndex& /*parent*/) const
 {
-  if (!rootObject) return QVariant();
+  if (!RootObject) return 0;
+  return RootObject->children().size();
+}
+
+QVariant ctkXnatListModel::data(const QModelIndex& index, int role) const
+{
+  if (!RootObject) return QVariant();
 
   if (role == Qt::DisplayRole)
   {
-    ctkXnatObject* child = rootObject->children().at(index.row());
+    ctkXnatObject* child = RootObject->children().at(index.row());
     if (!child)
     {
       qWarning() << "child at index" << index << "is NULL!";
@@ -64,18 +77,18 @@ QVariant ctkXnatProjectListModel::data(const QModelIndex& index, int role) const
   }
   else if (role == Qt::UserRole)
   {
-    return QVariant::fromValue(rootObject->children().at(index.row()));
+    return QVariant::fromValue(RootObject->children().at(index.row()));
   }
   return QVariant();
 }
 
-QVariant ctkXnatProjectListModel::headerData(int /*section*/, Qt::Orientation /*orientation*/, int role) const
+QVariant ctkXnatListModel::headerData(int /*section*/, Qt::Orientation /*orientation*/, int role) const
 {
   if (role == Qt::DisplayRole)
   {
-    if (!rootObject) return QString("Unavailable");
-    return QString("Bla");
+    if (!RootObject) return QString("Unavailable");
+
+    return RootObject->childDataType();
   }
   return QVariant();
 }
-

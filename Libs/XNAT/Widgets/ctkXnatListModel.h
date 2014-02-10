@@ -19,8 +19,8 @@
 
 =============================================================================*/
 
-#ifndef CTKXNATPROJECTLISTMODEL_H
-#define CTKXNATPROJECTLISTMODEL_H
+#ifndef CTKXNATLISTMODEL_H
+#define CTKXNATLISTMODEL_H
 
 #include "QAbstractListModel"
 
@@ -28,22 +28,21 @@
 
 class ctkXnatObject;
 
-class CTK_XNAT_WIDGETS_EXPORT ctkXnatProjectListModel : public QAbstractListModel
+class CTK_XNAT_WIDGETS_EXPORT ctkXnatListModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
-  ctkXnatProjectListModel();
+  ctkXnatListModel();
   void setRootObject(ctkXnatObject* root);
+  ctkXnatObject* rootObject();
 
   int rowCount(const QModelIndex &parent) const;
   QVariant data(const QModelIndex &index, int role) const;
   QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
-
-  ctkXnatObject* rootObject;
-
+  ctkXnatObject* RootObject;
 };
 
-#endif // CTKXNATPROJECTLISTMODEL_H
+#endif // CTKXNATLISTMODEL_H

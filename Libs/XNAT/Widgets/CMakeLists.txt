@@ -9,16 +9,16 @@ set(KIT_export_directive "CTK_XNAT_WIDGETS_EXPORT")
 set(KIT_SRCS
   ctkXnatLoginDialog.cpp
   ctkXnatTreeItem.cpp
-  ctkXnatProjectListModel.cpp
   ctkXnatTreeModel.cpp
   ctkXnatSettings.cpp
+  ctkXnatListModel.cpp
 )
 
 # Files which should be processed by Qts moc
 set(KIT_MOC_SRCS
   ctkXnatLoginDialog.h
-  ctkXnatProjectListModel.h
   ctkXnatTreeModel.h
+  ctkXnatListModel.h
 )
 
 

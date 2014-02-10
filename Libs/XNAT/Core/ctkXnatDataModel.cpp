@@ -69,6 +69,11 @@ QString ctkXnatDataModel::resourceUri() const
   return "";
 }
 
+QString ctkXnatDataModel::childDataType() const
+{
+  return "Projects";
+}
+
 void ctkXnatDataModel::fetchImpl()
 {
   Q_D(ctkXnatDataModel);

@@ -20,9 +20,7 @@
 =============================================================================*/
 
 #include "ctkXnatTreeModel.h"
-
 #include "ctkXnatObject.h"
-#include "ctkXnatSubject.h"
 
 #include <QList>
 
@@ -63,6 +61,10 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
   else if (role == Qt::ToolTipRole)
   {
     return this->xnatObject(index)->description();
+  }
+  else if (role == Qt::UserRole)
+  {
+    return QVariant::fromValue<ctkXnatObject*>(this->xnatObject(index));
   }
 
   return QVariant();
@@ -148,7 +150,7 @@ bool ctkXnatTreeModel::hasChildren(const QModelIndex& index) const
   }
 
   ctkXnatTreeItem* item = this->itemAt(index);
-  return !item->xnatObject()->isFetched() || (item->childCount() > 0);
+  return !item->xnatObject()->isFetched() || !item->xnatObject()->children().isEmpty();
 }
 
 bool ctkXnatTreeModel::canFetchMore(const QModelIndex& index) const
@@ -157,8 +159,8 @@ bool ctkXnatTreeModel::canFetchMore(const QModelIndex& index) const
   {
     return false;
   }
-
-  return !this->xnatObject(index)->isFetched();
+  ctkXnatTreeItem* item = this->itemAt(index);
+  return !(item->childCount() > 0);
 }
 
 void ctkXnatTreeModel::fetchMore(const QModelIndex& index)

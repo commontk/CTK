@@ -41,6 +41,8 @@ public:
 
   virtual QString resourceUri() const;
 
+  virtual QString childDataType() const;
+
   const QString& secondaryId() const;
   void setSecondaryId(const QString& secondaryId);
 

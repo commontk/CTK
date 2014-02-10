@@ -86,6 +86,11 @@ void ctkXnatObject::setDescription(const QString& description)
   setProperty("description", description);
 }
 
+QString ctkXnatObject::childDataType() const
+{
+  return "Resources";
+}
+
 QString ctkXnatObject::property(const QString& name) const
 {
   Q_D(const ctkXnatObject);

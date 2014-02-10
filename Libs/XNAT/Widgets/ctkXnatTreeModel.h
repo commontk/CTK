@@ -61,6 +61,7 @@ private:
   ctkXnatTreeItem* itemAt(const QModelIndex& index) const;
 
   ctkXnatTreeItem* m_RootItem;
+
 };
 
 #endif

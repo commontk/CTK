@@ -41,6 +41,8 @@ public:
 
   ctkXnatSession* session() const;
 
+  virtual QString childDataType() const;
+
 private:
 
   QString resourceUri() const;

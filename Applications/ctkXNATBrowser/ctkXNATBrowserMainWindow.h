@@ -28,7 +28,7 @@ class QModelIndex;
 
 class ctkXnatSession;
 class ctkXnatSessionFactory;
-class ctkXnatProjectListModel;
+class ctkXnatListModel;
 class ctkXnatProject;
 
 namespace Ui {
@@ -54,8 +54,8 @@ private:
 
   ctkXnatSessionFactory* m_SessionFactory;
   ctkXnatSession* m_Session;
-  ctkXnatProjectListModel* m_ProjectsModel;
-  ctkXnatProjectListModel* m_SubjectsModel;
+  ctkXnatListModel* m_ProjectsModel;
+  ctkXnatListModel* m_SubjectsModel;
 };
 
 #endif // CTKXNATBROWSERMAINWINDOW_H

@@ -23,7 +23,7 @@
 #include "ui_ctkXNATBrowserMainWindow.h"
 
 #include "ctkXnatLoginDialog.h"
-#include "ctkXnatProjectListModel.h"
+#include "ctkXnatListModel.h"
 #include "ctkXnatSession.h"
 #include "ctkXnatDataModel.h"
 #include "ctkXnatProject.h"
@@ -34,8 +34,8 @@ ctkXNATBrowserMainWindow::ctkXNATBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkXNATBrowserMainWindow),
   m_Session(0),
-  m_ProjectsModel(new ctkXnatProjectListModel()),
-  m_SubjectsModel(new ctkXnatProjectListModel())
+  m_ProjectsModel(new ctkXnatListModel()),
+  m_SubjectsModel(new ctkXnatListModel())
 {
   ui->setupUi(this);
 
