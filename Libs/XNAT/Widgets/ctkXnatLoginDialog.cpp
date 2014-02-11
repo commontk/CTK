@@ -195,6 +195,7 @@ void ctkXnatLoginDialog::accept()
     loginProfile.setUserName(userName);
     loginProfile.setPassword(password);
     session.reset(new ctkXnatSession(loginProfile));
+    session->open();
     }
   catch (const ctkException& e)
     {
