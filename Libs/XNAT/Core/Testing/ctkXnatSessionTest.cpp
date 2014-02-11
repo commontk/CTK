@@ -71,7 +71,7 @@ void ctkXnatSessionTestCase::initTestCase()
   d->LoginProfile.setName("ctk");
   d->LoginProfile.setServerUrl(QString("https://central.xnat.org"));
   d->LoginProfile.setUserName("ctk");
-  d->LoginProfile.setPassword("ctk");
+  d->LoginProfile.setPassword("ctk-xnat");
 }
 
 void ctkXnatSessionTestCase::init()
@@ -158,7 +158,6 @@ void ctkXnatSessionTestCase::testSession()
   Q_D(ctkXnatSessionTestCase);
 
   QVERIFY(d->Session->isOpen());
-  QVERIFY(d->Session->version() == "1.6.1");
   QDateTime expirationDate = d->Session->expirationDate();
 
   QVERIFY(d->DateTime < expirationDate);
