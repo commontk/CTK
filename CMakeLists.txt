@@ -597,10 +597,6 @@ if(CTK_USE_QTTESTING)
                 CTK_BUILD_EXAMPLES)
 endif()
 
-ctk_app_option(ctkXNATBrowser
-               "Build the XNAT Browser application" OFF
-               CTK_BUILD_EXAMPLES)
-
 ctk_app_option(ctkXnatTreeBrowser
                "Build the XNAT Tree Browser application" OFF
                CTK_BUILD_EXAMPLES)
