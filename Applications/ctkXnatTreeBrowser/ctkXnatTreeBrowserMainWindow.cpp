@@ -74,7 +74,7 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
     ctkXnatLoginDialog loginDialog(m_SessionFactory);
     if (loginDialog.exec() == QDialog::Accepted)
     {
-      m_Session = loginDialog.getSession();
+      m_Session = loginDialog.session();
       if (m_Session)
       {
         ui->loginButton->setText("Logout");

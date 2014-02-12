@@ -126,13 +126,13 @@ void ctkXnatLoginDialog::setSettings(ctkXnatSettings* settings)
   {
     return;
   }
-  d->Profiles = d->Settings->getLoginProfiles();
+  d->Profiles = d->Settings->loginProfiles();
 
   d->ProfileNames = d->Profiles.keys();
   d->ProfileNames.sort();
   d->Model.setStringList(d->ProfileNames);
 
-  ctkXnatLoginProfile* defaultProfile = d->Settings->getDefaultLoginProfile();
+  ctkXnatLoginProfile* defaultProfile = d->Settings->defaultLoginProfile();
 
   if (defaultProfile)
     {
@@ -146,9 +146,9 @@ void ctkXnatLoginDialog::setSettings(ctkXnatSettings* settings)
     }
 }
 
-ctkXnatSession* ctkXnatLoginDialog::getSession()
+ctkXnatSession* ctkXnatLoginDialog::session() const
 {
-  Q_D(ctkXnatLoginDialog);
+  Q_D(const ctkXnatLoginDialog);
   return d->Session;
 }
 

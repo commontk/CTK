@@ -46,7 +46,7 @@ public:
   ctkXnatSettings* settings() const;
   void setSettings(ctkXnatSettings* settings);
 
-  ctkXnatSession* getSession();
+  ctkXnatSession* session() const;
 
   virtual void accept();
 

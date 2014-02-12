@@ -25,19 +25,12 @@
 #include <QFileInfo>
 #include <QUuid>
 
-ctkXnatSettings::ctkXnatSettings()
-{
-}
-
-ctkXnatSettings::~ctkXnatSettings()
-{
-}
-
-QString ctkXnatSettings::getWorkSubdirectory() const
+//----------------------------------------------------------------------------
+QString ctkXnatSettings::workSubdirectory() const
 {
   // set work directory name
   QDir workDir;
-  QString workDirName = getDefaultWorkDirectory();
+  QString workDirName = defaultWorkDirectory();
   if ( !workDirName.isEmpty() )
   {
     workDir = QDir(workDirName);
