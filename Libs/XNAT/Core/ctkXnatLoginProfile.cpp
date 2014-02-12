@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Library: CTK
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -21,6 +21,7 @@
 
 #include "ctkXnatLoginProfile.h"
 
+//----------------------------------------------------------------------------
 class ctkXnatLoginProfilePrivate
 {
 public:
@@ -33,10 +34,13 @@ public:
   bool Default;
 };
 
+//----------------------------------------------------------------------------
 ctkXnatLoginProfilePrivate::ctkXnatLoginProfilePrivate()
 {
 }
 
+
+//----------------------------------------------------------------------------
 ctkXnatLoginProfile::ctkXnatLoginProfile()
   : d_ptr(new ctkXnatLoginProfilePrivate())
 {
@@ -45,15 +49,18 @@ ctkXnatLoginProfile::ctkXnatLoginProfile()
   d->Default = false;
 }
 
+//----------------------------------------------------------------------------
 ctkXnatLoginProfile::ctkXnatLoginProfile(const ctkXnatLoginProfile& otherLoginProfile)
   : d_ptr(new ctkXnatLoginProfilePrivate(*otherLoginProfile.d_ptr.data()))
 {
 }
 
+//----------------------------------------------------------------------------
 ctkXnatLoginProfile::~ctkXnatLoginProfile()
 {
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatLoginProfile::name() const
 {
   Q_D(const ctkXnatLoginProfile);
@@ -61,6 +68,7 @@ QString ctkXnatLoginProfile::name() const
   return d->Name;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginProfile::setName(const QString& name)
 {
   Q_D(ctkXnatLoginProfile);
@@ -68,6 +76,7 @@ void ctkXnatLoginProfile::setName(const QString& name)
   d->Name = name;
 }
 
+//----------------------------------------------------------------------------
 QUrl ctkXnatLoginProfile::serverUrl() const
 {
   Q_D(const ctkXnatLoginProfile);
@@ -75,6 +84,7 @@ QUrl ctkXnatLoginProfile::serverUrl() const
   return d->ServerUrl;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginProfile::setServerUrl(const QUrl& serverUrl)
 {
   Q_D(ctkXnatLoginProfile);
@@ -82,6 +92,7 @@ void ctkXnatLoginProfile::setServerUrl(const QUrl& serverUrl)
   d->ServerUrl = serverUrl;
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatLoginProfile::userName() const
 {
   Q_D(const ctkXnatLoginProfile);
@@ -89,6 +100,7 @@ QString ctkXnatLoginProfile::userName() const
   return d->UserName;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginProfile::setUserName(const QString& userName)
 {
   Q_D(ctkXnatLoginProfile);
@@ -96,6 +108,7 @@ void ctkXnatLoginProfile::setUserName(const QString& userName)
   d->UserName = userName;
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatLoginProfile::password() const
 {
   Q_D(const ctkXnatLoginProfile);
@@ -103,6 +116,7 @@ QString ctkXnatLoginProfile::password() const
   return d->Password;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginProfile::setPassword(const QString& password)
 {
   Q_D(ctkXnatLoginProfile);
@@ -110,6 +124,7 @@ void ctkXnatLoginProfile::setPassword(const QString& password)
   d->Password = password;
 }
 
+//----------------------------------------------------------------------------
 bool ctkXnatLoginProfile::isDefault() const
 {
   Q_D(const ctkXnatLoginProfile);
@@ -117,6 +132,7 @@ bool ctkXnatLoginProfile::isDefault() const
   return d->Default;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginProfile::setDefault(bool default_)
 {
   Q_D(ctkXnatLoginProfile);

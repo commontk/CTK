@@ -13,6 +13,7 @@ set(KIT_SRCS
   ctkXnatException.cpp
   ctkXnatExperiment.cpp
   ctkXnatFile.cpp
+  ctkXnatListModel.cpp
   ctkXnatLoginProfile.cpp
   ctkXnatObject.cpp
   ctkXnatObjectPrivate.cpp
@@ -26,12 +27,17 @@ set(KIT_SRCS
   ctkXnatSession.cpp
   ctkXnatSettings.cpp
   ctkXnatSubject.cpp
+  ctkXnatTreeItem.cpp
+  ctkXnatTreeItem_p.h
+  ctkXnatTreeModel.cpp
 )
 
 # Files which should be processed by Qts moc
 set(KIT_MOC_SRCS
   ctkXnatAPI_p.h
   ctkXnatSession.h
+  ctkXnatListModel.h
+  ctkXnatTreeModel.h
 )
 
 

@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Library: CTK
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -30,6 +30,8 @@
 class ctkXnatLoginProfilePrivate;
 
 /**
+ * @ingroup XNAT_Core
+ *
  * @brief A login profile for XNAT sessions
  */
 class CTK_XNAT_CORE_EXPORT ctkXnatLoginProfile

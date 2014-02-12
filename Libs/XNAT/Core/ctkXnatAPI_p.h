@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -28,8 +28,10 @@
 #include <QScriptEngine>
 #include <QScriptValue>
 
-/// ctkXnatAPI is a simple interface class to communicate with an XNAT
-/// server through its REST API.
+/**
+ * ctkXnatAPI is a simple interface class to communicate with an XNAT
+ * server through its REST API.
+ */
 class ctkXnatAPI : public qRestAPI
 {
   Q_OBJECT
@@ -56,7 +58,7 @@ private:
 
   QScriptEngine ScriptEngine;
 
-  Q_DISABLE_COPY(ctkXnatAPI);
+  Q_DISABLE_COPY(ctkXnatAPI)
 };
 
 #endif

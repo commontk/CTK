@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -29,6 +29,8 @@
 #include "ctkXnatProject.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
+
+//----------------------------------------------------------------------------
 class ctkXnatSubjectPrivate : public ctkXnatObjectPrivate
 {
 public:
@@ -53,50 +55,60 @@ public:
   QList<ctkXnatProject*> projects;
 };
 
+
+//----------------------------------------------------------------------------
 ctkXnatSubject::ctkXnatSubject(ctkXnatObject* parent, const QString& schemaType)
 : ctkXnatObject(*new ctkXnatSubjectPrivate(), parent, schemaType)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkXnatSubject::~ctkXnatSubject()
 {
 }
 
+//----------------------------------------------------------------------------
 const QString& ctkXnatSubject::insertDate() const
 {
   Q_D(const ctkXnatSubject);
   return d->insertDate;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSubject::setInsertDate(const QString& insertDate)
 {
   Q_D(ctkXnatSubject);
   d->insertDate = insertDate;
 }
 
+//----------------------------------------------------------------------------
 const QString& ctkXnatSubject::insertUser() const
 {
   Q_D(const ctkXnatSubject);
   return d->insertUser;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSubject::setInsertUser(const QString& insertUser)
 {
   Q_D(ctkXnatSubject);
   d->insertUser = insertUser;
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatSubject::resourceUri() const
 {
   return QString("%1/subjects/%2").arg(parent()->resourceUri(), this->id());
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSubject::reset()
 {
   Q_D(ctkXnatSubject);
   d->reset();
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSubject::fetchImpl()
 {
   QString experimentsUri = this->resourceUri() + "/experiments";

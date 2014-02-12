@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Library: CTK
+  Library: XNAT/Core
 
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics

@@ -26,10 +26,13 @@
 
 #include "ctkException.h"
 
+/// @ingroup XNAT_Core
+/// @{
 CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatException, ctkRuntimeException)
 CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatTimeoutException, ctkXnatException)
 CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatInvalidSessionException, ctkXnatException)
 CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatAuthenticationException, ctkXnatException)
 CTK_DECLARE_EXCEPTION(CTK_XNAT_CORE_EXPORT, ctkXnatProtocolFailureException, ctkXnatException)
+/// @}
 
 #endif

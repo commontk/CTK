@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Library: CTK
+  Library: XNAT/Core
 
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
@@ -33,27 +33,33 @@
 
 #include <QDebug>
 
+
+//----------------------------------------------------------------------------
 ctkXnatListModel::ctkXnatListModel()
   : RootObject(0)
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatListModel::setRootObject(ctkXnatObject* root)
 {
   RootObject = root;
 }
 
+//----------------------------------------------------------------------------
 ctkXnatObject* ctkXnatListModel::rootObject()
 {
   return RootObject;
 }
 
+//----------------------------------------------------------------------------
 int ctkXnatListModel::rowCount(const QModelIndex& /*parent*/) const
 {
   if (!RootObject) return 0;
   return RootObject->children().size();
 }
 
+//----------------------------------------------------------------------------
 QVariant ctkXnatListModel::data(const QModelIndex& index, int role) const
 {
   if (!RootObject) return QVariant();
@@ -82,6 +88,7 @@ QVariant ctkXnatListModel::data(const QModelIndex& index, int role) const
   return QVariant();
 }
 
+//----------------------------------------------------------------------------
 QVariant ctkXnatListModel::headerData(int /*section*/, Qt::Orientation /*orientation*/, int role) const
 {
   if (role == Qt::DisplayRole)

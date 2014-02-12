@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -27,6 +27,8 @@
 #include "ctkXnatReconstructionResource.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
+
+//----------------------------------------------------------------------------
 class ctkXnatReconstructionPrivate : public ctkXnatObjectPrivate
 {
 public:
@@ -45,25 +47,30 @@ public:
 };
 
 
+//----------------------------------------------------------------------------
 ctkXnatReconstruction::ctkXnatReconstruction(ctkXnatObject* parent, const QString& schemaType)
 : ctkXnatObject(*new ctkXnatReconstructionPrivate(), parent, schemaType)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkXnatReconstruction::~ctkXnatReconstruction()
 {
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatReconstruction::resourceUri() const
 {
   return QString("%1/reconstructions/%2").arg(parent()->resourceUri(), this->id());
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatReconstruction::reset()
 {
   ctkXnatObject::reset();
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatReconstruction::fetchImpl()
 {
   QString reconstructionResourcesUri = this->resourceUri() + "/resources";

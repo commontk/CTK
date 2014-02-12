@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -46,6 +46,7 @@
 #include <ctkXnatAPI_p.h>
 #include <qRestResult.h>
 
+//----------------------------------------------------------------------------
 static const char* HEADER_AUTHORIZATION = "Authorization";
 static const char* HEADER_USER_AGENT = "User-Agent";
 static const char* HEADER_COOKIE = "Cookie";
@@ -53,6 +54,7 @@ static const char* HEADER_COOKIE = "Cookie";
 static QString SERVER_VERSION = "version";
 static QString SESSION_EXPIRATION_DATE = "expires";
 
+//----------------------------------------------------------------------------
 class ctkXnatSessionPrivate
 {
 public:
@@ -82,6 +84,7 @@ public:
   static QList<ctkXnatObject*> results(qRestResult* restResult, QString schemaType);
 };
 
+//----------------------------------------------------------------------------
 ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile,
                                              ctkXnatSession* q)
   : loginProfile(loginProfile)
@@ -95,10 +98,12 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
   createConnections();
 }
 
+//----------------------------------------------------------------------------
 ctkXnatSessionPrivate::~ctkXnatSessionPrivate()
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSessionPrivate::throwXnatException(const QString& msg)
 {
   QString errorMsg = msg.trimmed();
@@ -126,6 +131,7 @@ void ctkXnatSessionPrivate::throwXnatException(const QString& msg)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSessionPrivate::createConnections()
 {
 //  Q_D(ctkXnatSession);
@@ -135,6 +141,7 @@ void ctkXnatSessionPrivate::createConnections()
   //           this, SLOT(progress(QUuid,double)));
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSessionPrivate::setDefaultHttpHeaders()
 {
   ctkXnatAPI::RawHeaders rawHeaders;
@@ -151,6 +158,7 @@ void ctkXnatSessionPrivate::setDefaultHttpHeaders()
   xnat->setDefaultRawHeaders(rawHeaders);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSessionPrivate::checkSession() const
 {
   if (sessionId.isEmpty())
@@ -159,6 +167,7 @@ void ctkXnatSessionPrivate::checkSession() const
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSessionPrivate::setSessionProperties()
 {
   sessionProperties.clear();
@@ -179,6 +188,7 @@ void ctkXnatSessionPrivate::setSessionProperties()
   }
 }
 
+//----------------------------------------------------------------------------
 QDateTime ctkXnatSessionPrivate::updateExpirationDate(qRestResult* restResult)
 {
   QByteArray cookieHeader = restResult->rawHeader("Set-Cookie");
@@ -210,6 +220,7 @@ QDateTime ctkXnatSessionPrivate::updateExpirationDate(qRestResult* restResult)
   return expirationDate;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSessionPrivate::close()
 {
   sessionProperties.clear();
@@ -219,6 +230,7 @@ void ctkXnatSessionPrivate::close()
   dataModel.reset();
 }
 
+//----------------------------------------------------------------------------
 QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QString schemaType)
 {
   QList<ctkXnatObject*> results;
@@ -274,8 +286,11 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
   return results;
 }
 
+
+//----------------------------------------------------------------------------
 // ctkXnatSession class
 
+//----------------------------------------------------------------------------
 ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
 : d_ptr(new ctkXnatSessionPrivate(loginProfile, this))
 {
@@ -296,11 +311,13 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   d->setDefaultHttpHeaders();
 }
 
+//----------------------------------------------------------------------------
 ctkXnatSession::~ctkXnatSession()
 {
   this->close();
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSession::open()
 {
   Q_D(ctkXnatSession);
@@ -330,6 +347,7 @@ void ctkXnatSession::open()
   d->dataModel->setProperty("ID", this->url().toString());
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSession::close()
 {
   Q_D(ctkXnatSession);
@@ -339,12 +357,14 @@ void ctkXnatSession::close()
   d->close();
 }
 
+//----------------------------------------------------------------------------
 bool ctkXnatSession::isOpen() const
 {
   Q_D(const ctkXnatSession);
   return !d->sessionId.isEmpty();
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatSession::version() const
 {
   Q_D(const ctkXnatSession);
@@ -358,6 +378,7 @@ QString ctkXnatSession::version() const
   }
 }
 
+//----------------------------------------------------------------------------
 QDateTime ctkXnatSession::expirationDate() const
 {
   Q_D(const ctkXnatSession);
@@ -365,6 +386,7 @@ QDateTime ctkXnatSession::expirationDate() const
   return QDateTime::fromString(d->sessionProperties[SESSION_EXPIRATION_DATE], Qt::ISODate);
 }
 
+//----------------------------------------------------------------------------
 QDateTime ctkXnatSession::renew()
 {
   Q_D(ctkXnatSession);
@@ -379,12 +401,14 @@ QDateTime ctkXnatSession::renew()
   return d->updateExpirationDate(restResult.data());
 }
 
+//----------------------------------------------------------------------------
 ctkXnatLoginProfile ctkXnatSession::loginProfile() const
 {
   Q_D(const ctkXnatSession);
   return d->loginProfile;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSession::progress(QUuid /*queryId*/, double /*progress*/)
 {
 //  qDebug() << "ctkXnatSession::progress(QUuid queryId, double progress)";
@@ -392,24 +416,28 @@ void ctkXnatSession::progress(QUuid /*queryId*/, double /*progress*/)
 //  qDebug() << "progress:" << (progress * 100.0) << "%";
 }
 
+//----------------------------------------------------------------------------
 QUrl ctkXnatSession::url() const
 {
   Q_D(const ctkXnatSession);
   return d->loginProfile.serverUrl();
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatSession::userName() const
 {
   Q_D(const ctkXnatSession);
   return d->loginProfile.userName();
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatSession::password() const
 {
   Q_D(const ctkXnatSession);
   return d->loginProfile.password();
 }
 
+//----------------------------------------------------------------------------
 ctkXnatDataModel* ctkXnatSession::dataModel() const
 {
   Q_D(const ctkXnatSession);
@@ -417,6 +445,7 @@ ctkXnatDataModel* ctkXnatSession::dataModel() const
   return d->dataModel.data();
 }
 
+//----------------------------------------------------------------------------
 QUuid ctkXnatSession::httpGet(const QString& resource, const ctkXnatSession::UrlParameters& parameters, const ctkXnatSession::HttpRawHeaders& rawHeaders)
 {
   Q_D(ctkXnatSession);
@@ -424,6 +453,7 @@ QUuid ctkXnatSession::httpGet(const QString& resource, const ctkXnatSession::Url
   return d->xnat->get(resource, parameters, rawHeaders);
 }
 
+//----------------------------------------------------------------------------
 QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QString& schemaType)
 {
   Q_D(ctkXnatSession);
@@ -437,6 +467,7 @@ QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QStri
   return d->results(restResult.data(), schemaType);
 }
 
+//----------------------------------------------------------------------------
 QList<QVariantMap> ctkXnatSession::httpSync(const QUuid& uuid)
 {
   Q_D(ctkXnatSession);
@@ -456,6 +487,7 @@ QList<QVariantMap> ctkXnatSession::httpSync(const QUuid& uuid)
   return result;
 }
 
+//----------------------------------------------------------------------------
 bool ctkXnatSession::exists(const ctkXnatObject* object)
 {
   Q_D(ctkXnatSession);
@@ -466,6 +498,7 @@ bool ctkXnatSession::exists(const ctkXnatObject* object)
   return success;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSession::save(ctkXnatObject* object)
 {
   Q_D(ctkXnatSession);
@@ -500,6 +533,7 @@ void ctkXnatSession::save(ctkXnatObject* object)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSession::remove(ctkXnatObject* object)
 {
   Q_D(ctkXnatSession);
@@ -513,6 +547,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
   }
 }
 
+//----------------------------------------------------------------------------
 //void ctkXnatSession::create(ctkXnatSubject* subject)
 //{
 //  const QString& subjectName = subject->getName();
@@ -530,6 +565,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 //  }
 //}
 
+//----------------------------------------------------------------------------
 //void ctkXnatSession::downloadScanFiles(ctkXnatExperiment* experiment, const QString& fileName)
 //{
 //  const QString& experimentName = experiment->getName();
@@ -547,6 +583,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 //  d->xnat->sync(queryId);
 //}
 
+//----------------------------------------------------------------------------
 //void ctkXnatSession::downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& fileName)
 //{
 //  const QString& experimentName = experiment->getName();
@@ -564,6 +601,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 //  d->xnat->sync(queryId);
 //}
 
+//----------------------------------------------------------------------------
 //void ctkXnatSession::downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& fileName)
 //{
 //  const QString& reconstructionName = reconstruction->getName();
@@ -583,6 +621,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 //  d->xnat->sync(queryId);
 //}
 
+//----------------------------------------------------------------------------
 //void ctkXnatSession::downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& fileName)
 //{
 //  const QString& reconstructionResourceName = reconstructionResource->getName();
@@ -604,6 +643,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 //  d->xnat->sync(queryId);
 //}
 
+//----------------------------------------------------------------------------
 //void ctkXnatSession::download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& fileName)
 //{
 //  const QString& reconstructionResourceFileName = reconstructionResourceFile->getName();
@@ -627,6 +667,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 //  d->xnat->sync(queryId);
 //}
 
+//----------------------------------------------------------------------------
 //void ctkXnatSession::download(ctkXnatScan* scan, const QString& fileName)
 //{
 //  const QString& scanName = scan->getName();
@@ -646,6 +687,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 //  d->xnat->sync(queryId);
 //}
 
+//----------------------------------------------------------------------------
 void ctkXnatSession::download(ctkXnatFile* file, const QString& fileName)
 {
   Q_D(ctkXnatSession);
@@ -655,6 +697,7 @@ void ctkXnatSession::download(ctkXnatFile* file, const QString& fileName)
   d->xnat->sync(queryId);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSession::download(ctkXnatScanResource* scanResource, const QString& fileName)
 {
   Q_D(ctkXnatSession);
@@ -666,6 +709,7 @@ void ctkXnatSession::download(ctkXnatScanResource* scanResource, const QString& 
   d->xnat->sync(queryId);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSession::download(ctkXnatReconstructionResource* reconstructionResource, const QString& fileName)
 {
   Q_D(ctkXnatSession);
@@ -677,6 +721,7 @@ void ctkXnatSession::download(ctkXnatReconstructionResource* reconstructionResou
   d->xnat->sync(queryId);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatSession::processResult(QUuid queryId, QList<QVariantMap> parameters)
 {
   Q_UNUSED(queryId)

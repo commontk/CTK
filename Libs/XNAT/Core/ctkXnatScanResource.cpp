@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -27,6 +27,8 @@
 #include "ctkXnatFile.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
+
+//----------------------------------------------------------------------------
 class ctkXnatScanResourcePrivate : public ctkXnatObjectPrivate
 {
 public:
@@ -45,25 +47,30 @@ public:
 };
 
 
+//----------------------------------------------------------------------------
 ctkXnatScanResource::ctkXnatScanResource(ctkXnatObject* parent, const QString& schemaType)
 : ctkXnatObject(*new ctkXnatScanResourcePrivate(), parent, schemaType)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkXnatScanResource::~ctkXnatScanResource()
 {
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatScanResource::resourceUri() const
 {
   return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("label"));
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatScanResource::reset()
 {
   ctkXnatObject::reset();
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatScanResource::fetchImpl()
 {
   QString scanResourceFilesUri = this->resourceUri() + "/files";
@@ -84,6 +91,7 @@ void ctkXnatScanResource::fetchImpl()
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatScanResource::download(const QString& filename)
 {
   this->session()->download(this, filename);

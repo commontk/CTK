@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Library: CTK
+  Library: XNAT/Core
 
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
@@ -24,11 +24,14 @@
 
 #include "QAbstractListModel"
 
-#include "ctkXNATWidgetsExport.h"
+#include "ctkXNATCoreExport.h"
 
 class ctkXnatObject;
 
-class CTK_XNAT_WIDGETS_EXPORT ctkXnatListModel : public QAbstractListModel
+/**
+ * @ingroup XNAT_Core
+ */
+class CTK_XNAT_CORE_EXPORT ctkXnatListModel : public QAbstractListModel
 {
   Q_OBJECT
 

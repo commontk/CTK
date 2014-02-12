@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -19,70 +19,82 @@
 
 =============================================================================*/
 
-#include "ctkXnatTreeItem.h"
+#include "ctkXnatTreeItem_p.h"
 
 #include "ctkXnatObject.h"
-#include "ctkXnatTreeItem.h"
 
+
+//----------------------------------------------------------------------------
 ctkXnatTreeItem::ctkXnatTreeItem()
 : m_XnatObject(0)
 , m_ParentItem(0)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkXnatTreeItem::ctkXnatTreeItem(ctkXnatObject* xnatObject, ctkXnatTreeItem* parentItem)
 : m_XnatObject(xnatObject)
 , m_ParentItem(parentItem)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkXnatTreeItem::~ctkXnatTreeItem()
 {
   qDeleteAll(m_ChildItems);
 }
 
+//----------------------------------------------------------------------------
 ctkXnatObject* ctkXnatTreeItem::xnatObject() const
 {
   return m_XnatObject;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatTreeItem::appendChild(ctkXnatTreeItem* item)
 {
   m_ChildItems.append(item);
   item->m_ParentItem = this;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatTreeItem::removeChildren()
 {
   qDeleteAll(m_ChildItems);
 }
 
+//----------------------------------------------------------------------------
 ctkXnatTreeItem* ctkXnatTreeItem::child(int row)
 {
   return m_ChildItems.value(row);
 }
 
+//----------------------------------------------------------------------------
 int ctkXnatTreeItem::childCount() const
 {
   return m_ChildItems.count();
 }
 
+//----------------------------------------------------------------------------
 int ctkXnatTreeItem::row() const
 {
   return m_ParentItem->m_ChildItems.indexOf(const_cast<ctkXnatTreeItem*>(this));
 }
 
+//----------------------------------------------------------------------------
 int ctkXnatTreeItem::columnCount() const
 {
   return 1;
 }
 
+//----------------------------------------------------------------------------
 QVariant ctkXnatTreeItem::data(int column) const
 {
   Q_UNUSED(column);
   return m_XnatObject->name();
 }
 
+//----------------------------------------------------------------------------
 ctkXnatTreeItem* ctkXnatTreeItem::parent()
 {
   return m_ParentItem;

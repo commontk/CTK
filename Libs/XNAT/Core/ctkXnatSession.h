@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -42,6 +42,12 @@ class ctkXnatObject;
 class ctkXnatScanResource;
 class ctkXnatReconstructionResource;
 
+/**
+ * @ingroup XNAT_Core
+ *
+ * @brief The ctkXnatSession class reprents a session object associated
+ * with a specific XNAT connection.
+ */
 class CTK_XNAT_CORE_EXPORT ctkXnatSession : public QObject
 {
   Q_OBJECT

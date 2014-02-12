@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -28,11 +28,14 @@
 #include <QDebug>
 #include <QVariant>
 
+
+//----------------------------------------------------------------------------
 ctkXnatObject::ctkXnatObject(const ctkXnatObject&)
 {
   throw ctkRuntimeException("Copy constructor not implemented");
 }
 
+//----------------------------------------------------------------------------
 ctkXnatObject::ctkXnatObject(ctkXnatObject* parent, const QString& schemaType)
 : d_ptr(new ctkXnatObjectPrivate())
 {
@@ -40,6 +43,7 @@ ctkXnatObject::ctkXnatObject(ctkXnatObject* parent, const QString& schemaType)
   this->setSchemaType(schemaType);
 }
 
+//----------------------------------------------------------------------------
 ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent, const QString& schemaType)
 : d_ptr(&dd)
 {
@@ -47,6 +51,7 @@ ctkXnatObject::ctkXnatObject(ctkXnatObjectPrivate& dd, ctkXnatObject* parent, co
   this->setSchemaType(schemaType);
 }
 
+//----------------------------------------------------------------------------
 ctkXnatObject::~ctkXnatObject()
 {
   Q_D(ctkXnatObject);
@@ -56,41 +61,49 @@ ctkXnatObject::~ctkXnatObject()
   }
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatObject::id() const
 {
   return property("ID");
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::setId(const QString& id)
 {
   setProperty("ID", id);
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatObject::name() const
 {
   return property("name");
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::setName(const QString& name)
 {
   setProperty("name", name);
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatObject::description() const
 {
   return property("description");
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::setDescription(const QString& description)
 {
   setProperty("description", description);
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatObject::childDataType() const
 {
   return "Resources";
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatObject::property(const QString& name) const
 {
   Q_D(const ctkXnatObject);
@@ -102,24 +115,28 @@ QString ctkXnatObject::property(const QString& name) const
   return QString::null;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::setProperty(const QString& name, const QVariant& value)
 {
   Q_D(ctkXnatObject);
   d->properties.insert(name, value.toString());
 }
 
+//----------------------------------------------------------------------------
 const QMap<QString, QString>& ctkXnatObject::properties() const
 {
   Q_D(const ctkXnatObject);
   return d->properties;
 }
 
+//----------------------------------------------------------------------------
 ctkXnatObject* ctkXnatObject::parent() const
 {
   Q_D(const ctkXnatObject);
   return d->parent;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::setParent(ctkXnatObject* parent)
 {
   Q_D(ctkXnatObject);
@@ -136,12 +153,14 @@ void ctkXnatObject::setParent(ctkXnatObject* parent)
   }
 }
 
+//----------------------------------------------------------------------------
 QList<ctkXnatObject*> ctkXnatObject::children() const
 {
   Q_D(const ctkXnatObject);
   return d->children;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::add(ctkXnatObject* child)
 {
   Q_D(ctkXnatObject);
@@ -159,6 +178,7 @@ void ctkXnatObject::add(ctkXnatObject* child)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::remove(ctkXnatObject* child)
 {
   Q_D(ctkXnatObject);
@@ -168,6 +188,7 @@ void ctkXnatObject::remove(ctkXnatObject* child)
   }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::reset()
 {
   Q_D(ctkXnatObject);
@@ -176,17 +197,20 @@ void ctkXnatObject::reset()
   d->fetched = false;
 }
 
+//----------------------------------------------------------------------------
 bool ctkXnatObject::isFetched() const
 {
   Q_D(const ctkXnatObject);
   return d->fetched;
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatObject::schemaType() const
 {
   return this->property("xsiType");
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::fetch()
 {
   Q_D(ctkXnatObject);
@@ -197,6 +221,7 @@ void ctkXnatObject::fetch()
   }
 }
 
+//----------------------------------------------------------------------------
 ctkXnatSession* ctkXnatObject::session() const
 {
   const ctkXnatObject* xnatObject = this;
@@ -208,29 +233,35 @@ ctkXnatSession* ctkXnatObject::session() const
   return dataModel ? dataModel->session() : NULL;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::setSchemaType(const QString& schemaType)
 {
   this->setProperty("xsiType", schemaType);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::download(const QString& /*zipFilename*/)
 {
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::upload(const QString& /*zipFilename*/)
 {
 }
 
+//----------------------------------------------------------------------------
 bool ctkXnatObject::exists() const
 {
   return this->session()->exists(this);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::save()
 {
   this->session()->save(this);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatObject::erase()
 {
   this->session()->remove(this);

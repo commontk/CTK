@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -28,6 +28,7 @@
 
 #include <QDebug>
 
+// --------------------------------------------------------------------------
 class ctkXnatDataModelPrivate : public ctkXnatObjectPrivate
 {
   explicit ctkXnatDataModelPrivate(ctkXnatSession* session);
@@ -39,21 +40,25 @@ private:
   ctkXnatSession* session;
 };
 
+// --------------------------------------------------------------------------
 ctkXnatDataModelPrivate::ctkXnatDataModelPrivate(ctkXnatSession* connection)
 : ctkXnatObjectPrivate()
 , session(connection)
 {
 }
 
+// --------------------------------------------------------------------------
 ctkXnatDataModelPrivate::~ctkXnatDataModelPrivate()
 {
 }
 
+// --------------------------------------------------------------------------
 ctkXnatDataModel::ctkXnatDataModel(ctkXnatSession* session)
 : ctkXnatObject(*new ctkXnatDataModelPrivate(session))
 {
 }
 
+// --------------------------------------------------------------------------
 QList<ctkXnatProject*> ctkXnatDataModel::projects() const
 {
   QList<ctkXnatProject*> result;
@@ -64,16 +69,19 @@ QList<ctkXnatProject*> ctkXnatDataModel::projects() const
   return result;
 }
 
+// --------------------------------------------------------------------------
 QString ctkXnatDataModel::resourceUri() const
 {
   return "";
 }
 
+// --------------------------------------------------------------------------
 QString ctkXnatDataModel::childDataType() const
 {
   return "Projects";
 }
 
+// --------------------------------------------------------------------------
 void ctkXnatDataModel::fetchImpl()
 {
   Q_D(ctkXnatDataModel);
@@ -92,6 +100,7 @@ void ctkXnatDataModel::fetchImpl()
   }
 }
 
+// --------------------------------------------------------------------------
 ctkXnatSession* ctkXnatDataModel::session() const
 {
   Q_D(const ctkXnatDataModel);

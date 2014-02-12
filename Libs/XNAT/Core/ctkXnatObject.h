@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -34,10 +34,12 @@
 class ctkXnatSession;
 class ctkXnatObjectPrivate;
 
-//----------------------------------------------------------------------------
-/// \ingroup XNATCore
-/// ctkXnatObject is the base class of the objects that represent the nodes in
-/// the XNAT data hierarchy.
+/**
+ * @ingroup XNAT_Core
+ *
+ * ctkXnatObject is the base class of the objects that represent the nodes in
+ * the XNAT data hierarchy.
+ */
 class CTK_XNAT_CORE_EXPORT ctkXnatObject
 {
 

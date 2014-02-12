@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -27,6 +27,8 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
+
+//----------------------------------------------------------------------------
 class ctkXnatProjectPrivate : public ctkXnatObjectPrivate
 {
 public:
@@ -50,78 +52,93 @@ public:
 //  QString uri;
 };
 
+
+//----------------------------------------------------------------------------
 ctkXnatProject::ctkXnatProject(ctkXnatObject* parent, const QString& schemaType)
 : ctkXnatObject(*new ctkXnatProjectPrivate(), parent, schemaType)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkXnatProject::~ctkXnatProject()
 {
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatProject::resourceUri() const
 {
   return QString("%1/data/archive/projects/%2").arg(parent()->resourceUri(), this->id());
 }
 
+//----------------------------------------------------------------------------
 QString ctkXnatProject::childDataType() const
 {
   return "Subjects";
 }
 
+//----------------------------------------------------------------------------
 const QString& ctkXnatProject::secondaryId() const
 {
   Q_D(const ctkXnatProject);
   return d->secondaryId;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatProject::setSecondaryId(const QString& secondaryId)
 {
   Q_D(ctkXnatProject);
   d->secondaryId = secondaryId;
 }
 
+//----------------------------------------------------------------------------
 const QString& ctkXnatProject::piFirstName() const
 {
   Q_D(const ctkXnatProject);
   return d->piFirstName;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatProject::setPiFirstName(const QString& piFirstName)
 {
   Q_D(ctkXnatProject);
   d->piFirstName = piFirstName;
 }
 
+//----------------------------------------------------------------------------
 const QString& ctkXnatProject::piLastName() const
 {
   Q_D(const ctkXnatProject);
   return d->piLastName;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatProject::setPiLastName(const QString& piLastName)
 {
   Q_D(ctkXnatProject);
   d->piLastName = piLastName;
 }
 
+//----------------------------------------------------------------------------
 //const QString& ctkXnatProject::uri() const
 //{
 //  Q_D(const ctkXnatProject);
 //  return d->uri;
 //}
 
+//----------------------------------------------------------------------------
 //void ctkXnatProject::setUri(const QString& uri)
 //{
 //  Q_D(ctkXnatProject);
 //  d->uri = uri;
 //}
 
+//----------------------------------------------------------------------------
 void ctkXnatProject::reset()
 {
   ctkXnatObject::reset();
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatProject::fetchImpl()
 {
   QString subjectsUri = this->resourceUri() + "/subjects";

@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Library: CTK
+  Library: XNAT/Core
 
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
@@ -23,12 +23,15 @@
 
 #include <QString>
 
+
+//----------------------------------------------------------------------------
 ctkXnatObjectPrivate::ctkXnatObjectPrivate()
 : fetched(false)
 , parent(0)
 {
 }
 
+//----------------------------------------------------------------------------
 ctkXnatObjectPrivate::~ctkXnatObjectPrivate()
 {
 }

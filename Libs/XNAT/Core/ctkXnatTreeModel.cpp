@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -21,19 +21,41 @@
 
 #include "ctkXnatTreeModel.h"
 #include "ctkXnatObject.h"
+#include "ctkXnatTreeItem_p.h"
+#include "ctkXnatDataModel.h"
 
 #include <QList>
 
+class ctkXnatTreeModelPrivate
+{
+public:
+
+  ctkXnatTreeModelPrivate()
+    : m_RootItem(new ctkXnatTreeItem())
+  {
+  }
+
+  ctkXnatTreeItem* itemAt(const QModelIndex& index) const
+  {
+    return static_cast<ctkXnatTreeItem*>(index.internalPointer());
+  }
+
+  QScopedPointer<ctkXnatTreeItem> m_RootItem;
+
+};
+
+//----------------------------------------------------------------------------
 ctkXnatTreeModel::ctkXnatTreeModel()
-: m_RootItem(new ctkXnatTreeItem())
+: d_ptr(new ctkXnatTreeModelPrivate())
 {
 }
 
+//----------------------------------------------------------------------------
 ctkXnatTreeModel::~ctkXnatTreeModel()
 {
-  delete m_RootItem;
 }
 
+//----------------------------------------------------------------------------
 // returns name (project, subject, etc.) for row and column of
 //   parent in index if role is Qt::DisplayRole
 QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
@@ -70,6 +92,7 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
   return QVariant();
 }
 
+//----------------------------------------------------------------------------
 QModelIndex ctkXnatTreeModel::index(int row, int column, const QModelIndex& index) const
 {
   if (!this->hasIndex(row, column, index))
@@ -77,14 +100,15 @@ QModelIndex ctkXnatTreeModel::index(int row, int column, const QModelIndex& inde
     return QModelIndex();
   }
 
+  Q_D(const ctkXnatTreeModel);
   ctkXnatTreeItem* item;
   if (!index.isValid())
   {
-    item = m_RootItem;
+    item = d->m_RootItem.data();
   }
   else
   {
-    item = this->itemAt(index);
+    item = d->itemAt(index);
   }
 
   ctkXnatTreeItem* childItem = item->child(row);
@@ -97,6 +121,7 @@ QModelIndex ctkXnatTreeModel::index(int row, int column, const QModelIndex& inde
   return QModelIndex();
 }
 
+//----------------------------------------------------------------------------
 QModelIndex ctkXnatTreeModel::parent(const QModelIndex& index) const
 {
   if (!index.isValid())
@@ -104,10 +129,11 @@ QModelIndex ctkXnatTreeModel::parent(const QModelIndex& index) const
     return QModelIndex();
   }
 
-  ctkXnatTreeItem* item = this->itemAt(index);
+  Q_D(const ctkXnatTreeModel);
+  ctkXnatTreeItem* item = d->itemAt(index);
   ctkXnatTreeItem* parentItem = item->parent();
 
-  if (parentItem == m_RootItem)
+  if (parentItem == d->m_RootItem.data())
   {
     return QModelIndex();
   }
@@ -115,6 +141,7 @@ QModelIndex ctkXnatTreeModel::parent(const QModelIndex& index) const
   return this->createIndex(parentItem->row(), 0, parentItem);
 }
 
+//----------------------------------------------------------------------------
 int ctkXnatTreeModel::rowCount(const QModelIndex& index) const
 {
   if (index.column() > 0)
@@ -122,47 +149,55 @@ int ctkXnatTreeModel::rowCount(const QModelIndex& index) const
     return 0;
   }
 
+  Q_D(const ctkXnatTreeModel);
   ctkXnatTreeItem* item;
   if (!index.isValid())
   {
-    item = m_RootItem;
+    item = d->m_RootItem.data();
   }
   else
   {
-    item = this->itemAt(index);
+    item = d->itemAt(index);
   }
 
   return item->childCount();
 }
 
+//----------------------------------------------------------------------------
 int ctkXnatTreeModel::columnCount(const QModelIndex& index) const
 {
   Q_UNUSED(index);
   return 1;
 }
 
+//----------------------------------------------------------------------------
 // defer request for children until actually needed by QTreeView object
 bool ctkXnatTreeModel::hasChildren(const QModelIndex& index) const
 {
+  Q_D(const ctkXnatTreeModel);
   if (!index.isValid())
   {
-    return m_RootItem->childCount() > 0;
+    return d->m_RootItem->childCount() > 0;
   }
 
-  ctkXnatTreeItem* item = this->itemAt(index);
+  ctkXnatTreeItem* item = d->itemAt(index);
   return !item->xnatObject()->isFetched() || !item->xnatObject()->children().isEmpty();
 }
 
+//----------------------------------------------------------------------------
 bool ctkXnatTreeModel::canFetchMore(const QModelIndex& index) const
 {
   if (!index.isValid())
   {
     return false;
   }
-  ctkXnatTreeItem* item = this->itemAt(index);
+
+  Q_D(const ctkXnatTreeModel);
+  ctkXnatTreeItem* item = d->itemAt(index);
   return !(item->childCount() > 0);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
 {
   if (!index.isValid())
@@ -170,7 +205,8 @@ void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
     return;
   }
 
-  ctkXnatTreeItem* item = this->itemAt(index);
+  Q_D(const ctkXnatTreeModel);
+  ctkXnatTreeItem* item = d->itemAt(index);
 
   ctkXnatObject* xnatObject = item->xnatObject();
 
@@ -188,22 +224,21 @@ void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
   }
 }
 
+//----------------------------------------------------------------------------
 ctkXnatObject* ctkXnatTreeModel::xnatObject(const QModelIndex& index) const
 {
-  return this->itemAt(index)->xnatObject();
+  Q_D(const ctkXnatTreeModel);
+  return d->itemAt(index)->xnatObject();
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatTreeModel::addDataModel(ctkXnatDataModel* dataModel)
 {
-  m_RootItem->appendChild(new ctkXnatTreeItem(dataModel, m_RootItem));
+  Q_D(ctkXnatTreeModel);
+  d->m_RootItem->appendChild(new ctkXnatTreeItem(dataModel, d->m_RootItem.data()));
 }
 
-ctkXnatTreeItem* ctkXnatTreeModel::itemAt(const QModelIndex& index) const
-{
-  return static_cast<ctkXnatTreeItem*>(index.internalPointer());
-}
-
-
+//----------------------------------------------------------------------------
 bool ctkXnatTreeModel::removeAllRows(const QModelIndex& parent)
 {
   // do nothing for the root
@@ -241,6 +276,7 @@ bool ctkXnatTreeModel::removeAllRows(const QModelIndex& parent)
   return true;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zipFileName)
 {
   if (!index.isValid())
@@ -253,6 +289,7 @@ void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zip
   return;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFileName)
 {
   if (!index.isValid())

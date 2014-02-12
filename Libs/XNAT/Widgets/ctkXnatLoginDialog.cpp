@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Library: CTK
+  Library: XNAT/Widgets
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -32,6 +32,8 @@
 #include "ctkXnatLoginProfile.h"
 #include "ctkXnatSettings.h"
 
+
+//----------------------------------------------------------------------------
 class ctkXnatLoginDialogPrivate
 {
 public:
@@ -53,6 +55,7 @@ public:
   bool Dirty;
 };
 
+//----------------------------------------------------------------------------
 ctkXnatLoginDialog::ctkXnatLoginDialog(ctkXnatSessionFactory* f, QWidget* parent, Qt::WindowFlags flags)
 : QDialog(parent, flags)
 , ui(0)
@@ -84,6 +87,7 @@ ctkXnatLoginDialog::ctkXnatLoginDialog(ctkXnatSessionFactory* f, QWidget* parent
     }
 }
 
+//----------------------------------------------------------------------------
 ctkXnatLoginDialog::~ctkXnatLoginDialog()
 {
   Q_D(ctkXnatLoginDialog);
@@ -99,6 +103,7 @@ ctkXnatLoginDialog::~ctkXnatLoginDialog()
     }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::createConnections()
 {
   connect(ui->edtProfileName, SIGNAL(textChanged(const QString&)), this, SLOT(onFieldChanged()));
@@ -111,6 +116,7 @@ void ctkXnatLoginDialog::createConnections()
       this, SLOT(onCurrentProfileChanged(const QModelIndex&)));
 }
 
+//----------------------------------------------------------------------------
 ctkXnatSettings* ctkXnatLoginDialog::settings() const
 {
   Q_D(const ctkXnatLoginDialog);
@@ -118,6 +124,7 @@ ctkXnatSettings* ctkXnatLoginDialog::settings() const
   return d->Settings;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::setSettings(ctkXnatSettings* settings)
 {
   Q_D(ctkXnatLoginDialog);
@@ -146,12 +153,14 @@ void ctkXnatLoginDialog::setSettings(ctkXnatSettings* settings)
     }
 }
 
+//----------------------------------------------------------------------------
 ctkXnatSession* ctkXnatLoginDialog::session() const
 {
   Q_D(const ctkXnatLoginDialog);
   return d->Session;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::accept()
 {
   Q_D(ctkXnatLoginDialog);
@@ -209,6 +218,7 @@ void ctkXnatLoginDialog::accept()
   QDialog::accept();
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::onCurrentProfileChanged(const QModelIndex& currentIndex)
 {
   Q_D(ctkXnatLoginDialog);
@@ -250,12 +260,14 @@ void ctkXnatLoginDialog::onCurrentProfileChanged(const QModelIndex& currentIndex
     }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::resetLstProfilesCurrentIndex()
 {
   // Yes, this is really needed. See the comment above.
   ui->lstProfiles->setCurrentIndex(ui->lstProfiles->currentIndex());
 }
 
+//----------------------------------------------------------------------------
 bool ctkXnatLoginDialog::askToSaveProfile(const QString& profileName)
 {
   QString question = QString(
@@ -267,6 +279,7 @@ bool ctkXnatLoginDialog::askToSaveProfile(const QString& profileName)
   return answer == QMessageBox::Yes;
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::saveProfile(const QString& profileName)
 {
   Q_D(ctkXnatLoginDialog);
@@ -318,6 +331,7 @@ void ctkXnatLoginDialog::saveProfile(const QString& profileName)
   ui->btnSave->setEnabled(false);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::on_btnSave_clicked()
 {
   Q_D(ctkXnatLoginDialog);
@@ -345,6 +359,7 @@ void ctkXnatLoginDialog::on_btnSave_clicked()
     }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::blockSignalsOfFields(bool value)
 {
   ui->edtProfileName->blockSignals(value);
@@ -354,6 +369,7 @@ void ctkXnatLoginDialog::blockSignalsOfFields(bool value)
   ui->cbxDefaultProfile->blockSignals(value);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::loadProfile(const ctkXnatLoginProfile& profile)
 {
   this->blockSignalsOfFields(true);
@@ -367,6 +383,7 @@ void ctkXnatLoginDialog::loadProfile(const ctkXnatLoginProfile& profile)
   this->blockSignalsOfFields(false);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::storeProfile(ctkXnatLoginProfile& profile)
 {
   profile.setName(ui->edtProfileName->text());
@@ -376,6 +393,7 @@ void ctkXnatLoginDialog::storeProfile(ctkXnatLoginProfile& profile)
   profile.setDefault(ui->cbxDefaultProfile->isChecked());
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::on_btnDelete_clicked()
 {
   Q_D(ctkXnatLoginDialog);
@@ -399,12 +417,14 @@ void ctkXnatLoginDialog::on_btnDelete_clicked()
     }
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::on_edtProfileName_textChanged(const QString& /*text*/)
 {
   ui->lstProfiles->clearSelection();
   ui->btnDelete->setEnabled(false);
 }
 
+//----------------------------------------------------------------------------
 void ctkXnatLoginDialog::onFieldChanged()
 {
   Q_D(ctkXnatLoginDialog);

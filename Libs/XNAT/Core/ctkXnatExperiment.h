@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -31,6 +31,9 @@ class ctkXnatConnection;
 class ctkXnatExperimentPrivate;
 class ctkXnatSubject;
 
+/**
+ * @ingroup XNAT_Core
+ */
 class CTK_XNAT_CORE_EXPORT ctkXnatExperiment : public ctkXnatObject
 {
 

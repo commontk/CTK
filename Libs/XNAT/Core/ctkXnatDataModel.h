@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -30,12 +30,18 @@ class ctkXnatDataModelPrivate;
 class ctkXnatProject;
 class ctkXnatSession;
 
+/**
+ * @ingroup XNAT_Core
+ *
+ * @brief The ctkXnatDataModel class reprents the root object in a
+ * XNAT data hierarchy.
+ */
 class ctkXnatDataModel : public ctkXnatObject
 {
 
 public:
 
-  ctkXnatDataModel(ctkXnatSession* connection);
+  explicit ctkXnatDataModel(ctkXnatSession* connection);
 
   QList<ctkXnatProject*> projects() const;
 

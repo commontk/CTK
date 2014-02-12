@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Library: CTK
+  Library: XNAT/Widgets
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -35,6 +35,9 @@ class ctkXnatSessionFactory;
 class ctkXnatLoginDialogPrivate;
 class ctkXnatSettings;
 
+/**
+ * @ingroup XNAT_Widgets
+ */
 class CTK_XNAT_WIDGETS_EXPORT ctkXnatLoginDialog : public QDialog
 {
   Q_OBJECT
@@ -74,8 +77,8 @@ private:
   /// \brief d pointer of the pimpl pattern
   QScopedPointer<ctkXnatLoginDialogPrivate> d_ptr;
 
-  Q_DECLARE_PRIVATE(ctkXnatLoginDialog);
-  Q_DISABLE_COPY(ctkXnatLoginDialog);
+  Q_DECLARE_PRIVATE(ctkXnatLoginDialog)
+  Q_DISABLE_COPY(ctkXnatLoginDialog)
 };
 
 #endif

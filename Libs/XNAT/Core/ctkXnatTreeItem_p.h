@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -27,7 +27,6 @@
 #include <QList>
 #include <QVariant>
 
-class ctkXnatTreeItem;
 
 class ctkXnatTreeItem
 {

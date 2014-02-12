@@ -26,6 +26,9 @@
 
 #include <QString>
 
+/**
+ * @ingroup XNAT_Core
+ */
 struct CTK_XNAT_CORE_EXPORT ctkXnatDefaultSchemaTypes
 {
   static QString XSI_EXPERIMENT; // = "xnat:experimentData"

@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Plugin: org.commontk.xnat
+  Library: XNAT/Core
 
   Copyright (c) University College London,
     Centre for Medical Image Computing
@@ -22,15 +22,18 @@
 #ifndef ctkXnatTreeModel_h
 #define ctkXnatTreeModel_h
 
-#include "ctkXNATWidgetsExport.h"
+#include "ctkXNATCoreExport.h"
 
 #include <QAbstractItemModel>
 
-#include "ctkXnatTreeItem.h"
-#include "ctkXnatDataModel.h"
+class ctkXnatObject;
+class ctkXnatDataModel;
+class ctkXnatTreeModelPrivate;
 
-
-class CTK_XNAT_WIDGETS_EXPORT ctkXnatTreeModel : public QAbstractItemModel
+/**
+ * @ingroup XNAT_Core
+ */
+class CTK_XNAT_CORE_EXPORT ctkXnatTreeModel : public QAbstractItemModel
 {
   Q_OBJECT
 
@@ -58,9 +61,9 @@ public:
 
 private:
 
-  ctkXnatTreeItem* itemAt(const QModelIndex& index) const;
+  const QScopedPointer<ctkXnatTreeModelPrivate> d_ptr;
 
-  ctkXnatTreeItem* m_RootItem;
+  Q_DECLARE_PRIVATE(ctkXnatTreeModel)
 
 };
 
