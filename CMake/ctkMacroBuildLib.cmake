@@ -77,6 +77,9 @@ macro(ctkMacroBuildLib)
   #  message(i:${i})
   #endforeach()
 
+  # Add Qt include dirs and defines
+  include(${QT_USE_FILE})
+
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
 

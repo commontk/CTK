@@ -85,6 +85,11 @@ set(${qxmlrpc_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)
 set(${qxmlrpc_enabling_variable}_INCLUDE_DIRS qxmlrpc_INCLUDE_DIRS)
 set(${qxmlrpc_enabling_variable}_FIND_PACKAGE_CMD qxmlrpc)
 
+set(qRestAPI_enabling_variable qRestAPI_LIBRARIES)
+set(${qRestAPI_enabling_variable}_LIBRARY_DIRS qRestAPI_LIBRARY_DIRS)
+set(${qRestAPI_enabling_variable}_INCLUDE_DIRS qRestAPI_INCLUDE_DIRS)
+set(${qRestAPI_enabling_variable}_FIND_PACKAGE_CMD qRestAPI)
+
 set(VTK_enabling_variable VTK_LIBRARIES)
 set(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
 set(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
