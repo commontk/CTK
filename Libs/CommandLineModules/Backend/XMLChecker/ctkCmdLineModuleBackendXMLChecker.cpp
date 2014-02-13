@@ -24,6 +24,7 @@
 #include "ctkCmdLineModuleFrontend.h"
 #include "ctkCmdLineModuleFuture.h"
 #include <QUrl>
+#include <QFile>
 #include <QString>
 #include <QDateTime>
 #include <ctkUtils.h>
@@ -105,8 +106,14 @@ qint64 ctkCmdLineModuleBackendXMLChecker::timeStamp(const QUrl & /*location*/) c
 
 
 //----------------------------------------------------------------------------
-QByteArray ctkCmdLineModuleBackendXMLChecker::rawXmlDescription(const QUrl &/*location*/)
+QByteArray ctkCmdLineModuleBackendXMLChecker::rawXmlDescription(const QUrl& location)
 {
+  if (location.isValid())
+  {
+    QFile file(location.path());
+    file.open(QFile::ReadOnly);
+    return file.readAll();
+  }
   return d->m_HardCodedXML.toAscii();
 }
 

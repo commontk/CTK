@@ -49,6 +49,7 @@ int main(int argc, char** argv)
   cmdLineParser.setStrictModeEnabled(true);
 
   cmdLineParser.addArgument("module", "", QVariant::String, "Path to a CLI module (executable), and show the generated GUI.");
+  cmdLineParser.addArgument("gui", "", QVariant::String, "Path to a CLI XML file, and show the generated GUI.");
   cmdLineParser.addArgument("validate-module", "", QVariant::String, "Path to a CLI module (executable), and validate the XML.");
   cmdLineParser.addArgument("validate-xml", "", QVariant::String, "Path to a CLI XML file, and validate the XML.");
   cmdLineParser.addArgument("string", "", QVariant::String, "An XML string to validate. Be careful to quote correctly." );
@@ -189,6 +190,11 @@ int main(int argc, char** argv)
   if (args.contains("module"))
   {
     mainWindow.addModule(args["module"].toString());
+  }
+
+  if (args.contains("gui"))
+  {
+    mainWindow.addModule(QString("xmlchecker://") + args["gui"].toString());
   }
 
   mainWindow.show();
