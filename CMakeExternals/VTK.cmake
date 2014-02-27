@@ -25,7 +25,7 @@ endif()
 
 if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(revision_tag v5.10.0)
+  set(revision_tag d3b66526624ba8e55addcddb0ec28c40982473ac)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
