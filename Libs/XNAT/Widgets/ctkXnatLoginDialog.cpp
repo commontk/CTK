@@ -37,14 +37,12 @@
 class ctkXnatLoginDialogPrivate
 {
 public:
-  ctkXnatLoginDialogPrivate(ctkXnatSessionFactory* f)
-  : Factory(f)
+  ctkXnatLoginDialogPrivate()
   {
   }
 
   ctkXnatSettings* Settings;
 
-  ctkXnatSessionFactory* Factory;
   ctkXnatSession* Session;
 
   QMap<QString, ctkXnatLoginProfile*> Profiles;
@@ -56,10 +54,10 @@ public:
 };
 
 //----------------------------------------------------------------------------
-ctkXnatLoginDialog::ctkXnatLoginDialog(ctkXnatSessionFactory* f, QWidget* parent, Qt::WindowFlags flags)
+ctkXnatLoginDialog::ctkXnatLoginDialog(QWidget* parent, Qt::WindowFlags flags)
 : QDialog(parent, flags)
 , ui(0)
-, d_ptr(new ctkXnatLoginDialogPrivate(f))
+, d_ptr(new ctkXnatLoginDialogPrivate())
 {
   Q_D(ctkXnatLoginDialog);
 

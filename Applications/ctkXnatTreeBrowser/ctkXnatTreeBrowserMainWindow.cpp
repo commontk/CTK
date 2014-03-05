@@ -71,7 +71,7 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
   }
   else
   {
-    ctkXnatLoginDialog loginDialog(m_SessionFactory);
+    ctkXnatLoginDialog loginDialog;
     if (loginDialog.exec() == QDialog::Accepted)
     {
       m_Session = loginDialog.session();
