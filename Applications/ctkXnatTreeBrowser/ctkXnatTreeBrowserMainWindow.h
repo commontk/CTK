@@ -27,7 +27,6 @@
 class QModelIndex;
 
 class ctkXnatSession;
-class ctkXnatSessionFactory;
 class ctkXnatTreeModel;
 
 namespace Ui {
@@ -51,7 +50,6 @@ private Q_SLOTS:
 private:
   Ui::ctkXnatTreeBrowserMainWindow* ui;
 
-  ctkXnatSessionFactory* m_SessionFactory;
   ctkXnatSession* m_Session;
   ctkXnatTreeModel* m_TreeModel;
 };
