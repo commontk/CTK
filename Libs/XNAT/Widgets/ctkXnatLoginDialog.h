@@ -31,7 +31,6 @@
 #include "ctkXnatLoginProfile.h"
 
 class ctkXnatSession;
-class ctkXnatSessionFactory;
 class ctkXnatLoginDialogPrivate;
 class ctkXnatSettings;
 
@@ -43,7 +42,7 @@ class CTK_XNAT_WIDGETS_EXPORT ctkXnatLoginDialog : public QDialog
   Q_OBJECT
 
 public:
-  explicit ctkXnatLoginDialog(ctkXnatSessionFactory* f, QWidget* parent = 0, Qt::WindowFlags flags = 0);
+  explicit ctkXnatLoginDialog(QWidget* parent = 0, Qt::WindowFlags flags = 0);
   virtual ~ctkXnatLoginDialog();
 
   ctkXnatSettings* settings() const;
