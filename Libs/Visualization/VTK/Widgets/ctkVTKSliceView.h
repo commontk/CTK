@@ -131,7 +131,7 @@ Q_SIGNALS:
   void resized(const QSize& size);
 
 protected:
-  virtual void resizeEvent(QResizeEvent * event);
+  virtual bool eventFilter(QObject *object, QEvent *event);
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKSliceView);
