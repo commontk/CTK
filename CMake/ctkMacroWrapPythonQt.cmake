@@ -210,15 +210,12 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     # if we should wrap it
     IF (NOT skip_wrapping)
 
-      # the input file might be full path so handle that
-      get_filename_component(TMP_FILEPATH ${FILE} PATH)
-
       # compute the input filename
-      IF (TMP_FILEPATH)
-        set(TMP_INPUT ${TMP_FILEPATH}/${TMP_FILENAME}.h)
-      ELSE (TMP_FILEPATH)
-        set(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${TMP_FILENAME}.h)
-      ENDIF (TMP_FILEPATH)
+      if(IS_ABSOLUTE FILE)
+        set(TMP_INPUT ${FILE})
+      else()
+        set(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${FILE})
+      endif()
 
       list(APPEND SOURCES_TO_WRAP ${TMP_INPUT})
 
