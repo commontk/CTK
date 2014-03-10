@@ -287,6 +287,13 @@ void ctkDICOMTableView::onInstanceAdded()
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMTableView::selectAll()
+{
+  Q_D(ctkDICOMTableView);
+  d->tblDicomDatabaseView->selectAll();
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMTableView::setQuery(const QStringList &uids)
 {
   Q_D(ctkDICOMTableView);

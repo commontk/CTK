@@ -61,7 +61,7 @@ QSplitter::handle:vertical {height: 2px;}</string>
  </customwidgets>
  <resources/>
  <connections>
- <connection>
+  <connection>
    <sender>patientsTable</sender>
    <signal>selectionChanged(QStringList)</signal>
    <receiver>ctkDICOMTableManager</receiver>
@@ -186,6 +186,38 @@ QSplitter::handle:vertical {height: 2px;}</string>
     <hint type="destinationlabel">
      <x>608</x>
      <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>patientsTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>studiesTable</receiver>
+   <slot>selectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>143</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>studiesTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>seriesTable</receiver>
+   <slot>selectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>416</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>688</x>
+     <y>227</y>
     </hint>
    </hints>
   </connection>

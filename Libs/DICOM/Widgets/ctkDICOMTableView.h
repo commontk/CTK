@@ -145,6 +145,8 @@ protected Q_SLOTS:
    */
   void onInstanceAdded();
 
+  void selectAll();
+
 Q_SIGNALS:
   /**
    * @brief Is emitted when the selection in the tableview has changed
