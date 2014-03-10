@@ -93,6 +93,7 @@ ctkVTKSliceView::ctkVTKSliceView(QWidget* parentWidget)
 {
   Q_D(ctkVTKSliceView);
   d->init();
+  this->VTKWidget()->installEventFilter(this);
 }
 
 // --------------------------------------------------------------------------
@@ -223,10 +224,24 @@ void ctkVTKSliceView::setColorWindow(double newColorWindow)
 }
 
 //----------------------------------------------------------------------------
-void ctkVTKSliceView::resizeEvent(QResizeEvent * event)
+bool ctkVTKSliceView::eventFilter(QObject *object, QEvent *event)
 {
-  this->QWidget::resizeEvent(event);
-  emit this->resized(event->size());
+  Q_D(ctkVTKSliceView);
+  if (object == this->VTKWidget())
+    {
+    if (event->type() == QEvent::Resize)
+      {
+      QResizeEvent * resizeEvent = dynamic_cast<QResizeEvent*>(event);
+      object->event(event);
+      emit this->resized(resizeEvent->size());
+      return true;
+      }
+    return false;
+    }
+  else
+    {
+    return this->Superclass::eventFilter(object, event);
+    }
 }
 
 //----------------------------------------------------------------------------
