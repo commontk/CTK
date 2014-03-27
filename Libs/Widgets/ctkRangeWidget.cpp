@@ -497,9 +497,9 @@ void ctkRangeWidget::startChanging()
     {
     return;
     }
-  d->Changing = true;
   d->MinimumValueBeforeChange = this->minimumValue();
   d->MaximumValueBeforeChange = this->maximumValue();
+  d->Changing = true;
 }
 
 // --------------------------------------------------------------------------

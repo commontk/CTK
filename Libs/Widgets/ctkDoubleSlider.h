@@ -198,6 +198,11 @@ public:
   /// Reimplemented for internal reasons (handle tooltip).
   virtual bool eventFilter(QObject*, QEvent*);
 
+  /// Return a pointer to the QSlider used internally.
+  /// Use with caution.
+  /// \sa QSlider
+  QSlider* slider()const;
+
   /// Install or remove a value proxy filter. The value proxy decouples the
   /// displayed value from the value retrieved by the value property.
   /// For example, the value proxy can allow one to display celsius in the

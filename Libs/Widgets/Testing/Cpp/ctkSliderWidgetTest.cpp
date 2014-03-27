@@ -52,6 +52,9 @@ private slots:
   /// value of the spinbox.
   void testDecimalsByShortcuts();
 
+  /// This test makes sure a valueChanged signal is fired when moving
+  /// the handle to 0 for the first time.
+  void testValueChangedWithNoTracking();
 };
 
 // ----------------------------------------------------------------------------
@@ -169,6 +172,28 @@ void ctkSliderWidgetTester::testDecimalsByShortcuts()
   QTest::keyClick(slider.spinBox(), Qt::Key_Plus, Qt::ControlModifier);
   QTest::keyClick(slider.spinBox(), Qt::Key_Plus, Qt::ControlModifier);
   QCOMPARE(slider.decimals(), 5);
+}
+
+// ----------------------------------------------------------------------------
+void ctkSliderWidgetTester::testValueChangedWithNoTracking()
+{
+  ctkSliderWidget slider;
+  slider.setValue((slider.maximum() + slider.minimum()) / 2);
+
+  slider.show();
+  QTest::qWaitForWindowShown(&slider);
+
+  slider.setTracking(false);
+  QSignalSpy spy(&slider, SIGNAL(valueChanged(double)));
+
+  QPoint currentPoint = slider.slider()->rect().center();
+  QPoint nextPoint = QPoint(slider.slider()->rect().left(), currentPoint.y());
+
+  QTest::mousePress(slider.slider()->slider(), Qt::LeftButton, 0, currentPoint);
+  ctkTest::mouseMove(slider.slider()->slider(), Qt::LeftButton, 0, nextPoint);
+  QTest::mouseRelease(slider.slider()->slider(), Qt::LeftButton, 0, nextPoint);
+
+  QCOMPARE(spy.count(), 1);
 }
 
 // ----------------------------------------------------------------------------

@@ -321,8 +321,8 @@ void ctkSliderWidget::startChanging()
     {
     return;
     }
-  d->Changing = true;
   d->ValueBeforeChange = this->value();
+  d->Changing = true;
 }
 
 // --------------------------------------------------------------------------

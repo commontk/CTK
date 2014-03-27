@@ -592,6 +592,13 @@ bool ctkDoubleSlider::eventFilter(QObject* watched, QEvent* event)
   return this->Superclass::eventFilter(watched, event);
 }
 
+// --------------------------------------------------------------------------
+QSlider* ctkDoubleSlider::slider()const
+{
+  Q_D(const ctkDoubleSlider);
+  return d->Slider;
+}
+
 //----------------------------------------------------------------------------
 void ctkDoubleSlider::setValueProxy(ctkValueProxy* proxy)
 {
