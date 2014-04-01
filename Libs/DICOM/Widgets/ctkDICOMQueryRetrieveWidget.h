@@ -30,7 +30,7 @@
 #include <QVariant>
 #include <QString>
 
-
+class ctkDICOMTableManager;
 // CTK includes
 #include <ctkDICOMDatabase.h>
 
@@ -40,11 +40,14 @@ class ctkDICOMQueryRetrieveWidgetPrivate;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryRetrieveWidget : public QWidget
 {
 Q_OBJECT;
+Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager)
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMQueryRetrieveWidget(QWidget* parent=0);
   virtual ~ctkDICOMQueryRetrieveWidget();
   QMap<QString,QVariant> getServerParameters();
+
+  ctkDICOMTableManager* dicomTableManager();
 
   QSharedPointer<ctkDICOMDatabase> retrieveDatabase()const;
 
@@ -56,7 +59,6 @@ public Q_SLOTS:
   void query();
   void retrieve();
   void cancel();
-  void onSelectionChanged(const QItemSelection &, const QItemSelection &);
 
 Q_SIGNALS:
   /// Signal emit when studies have been retrieved (user clicked on the

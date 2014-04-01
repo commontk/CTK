@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>843</width>
-    <height>613</height>
+    <height>815</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -114,11 +114,17 @@
     </widget>
    </item>
    <item>
-    <widget class="QTreeView" name="results"/>
+    <widget class="ctkDICOMTableManager" name="dicomTableManager"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkDICOMTableManager</class>
+   <extends>QWidget</extends>
+   <header>ctkDICOMTableManager.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>ctkDICOMQueryWidget</class>
    <extends>QWidget</extends>
