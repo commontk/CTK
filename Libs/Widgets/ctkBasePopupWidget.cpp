@@ -107,6 +107,7 @@ void ctkBasePopupWidgetPrivate::init()
   // case, we sometimes aren't the active window but we still would like to
   // show the children tooltips.
   q->setAttribute(Qt::WA_AlwaysShowToolTips, true);
+  //q->setAttribute(Qt::WA_MacAlwaysShowToolWindow, true);
 
   this->AlphaAnimation = new QPropertyAnimation(q, "effectAlpha", q);
   this->AlphaAnimation->setDuration(this->EffectDuration);
@@ -429,7 +430,7 @@ void ctkBasePopupWidgetPrivate::hideAll()
   // It is possible to have the popup widget not being a popup but inside
   // a layout: maybe the popup has been pin-down in a way that it gets parented
   // In that case, there is no reason to hide the popup.
-  if (!(q->windowFlags() & Qt::ToolTip))
+  if (!(q->windowFlags() & PopupWindowType))
     {
     return;
     }
@@ -461,7 +462,7 @@ void ctkBasePopupWidgetPrivate::hideAll()
 ctkBasePopupWidget::ctkBasePopupWidget(QWidget* parentWidget)
   //: Superclass(QApplication::desktop()->screen(QApplication::desktop()->screenNumber(parentWidget)),
   : Superclass(parentWidget,
-               Qt::ToolTip | Qt::FramelessWindowHint)
+               PopupWindowType | Qt::FramelessWindowHint)
   , d_ptr(new ctkBasePopupWidgetPrivate(*this))
 {
   Q_D(ctkBasePopupWidget);
@@ -472,7 +473,7 @@ ctkBasePopupWidget::ctkBasePopupWidget(QWidget* parentWidget)
 ctkBasePopupWidget::ctkBasePopupWidget(ctkBasePopupWidgetPrivate* pimpl, QWidget* parentWidget)
   //: //Superclass(QApplication::desktop()->screen(QApplication::desktop()->screenNumber(parentWidget)),
   : Superclass(parentWidget,
-               Qt::ToolTip | Qt::FramelessWindowHint)
+               PopupWindowType | Qt::FramelessWindowHint)
   , d_ptr(pimpl)
 {
 }
