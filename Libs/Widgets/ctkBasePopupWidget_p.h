@@ -27,6 +27,7 @@ class QLabel;
 
 // CTK includes
 #include "ctkBasePopupWidget.h"
+#define PopupWindowType Qt::Tool
 
 // -------------------------------------------------------------------------
 /// \ingroup Widgets

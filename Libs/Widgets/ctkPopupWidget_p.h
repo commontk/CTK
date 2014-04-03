@@ -50,6 +50,8 @@ public:
   void temporarilyHiddenOn();
   void temporarilyHiddenOff();
 
+  bool isHidingCandidate(QWidget* widget)const;
+
 public Q_SLOTS:
   void updateVisibility();
   void onApplicationDeactivate();
