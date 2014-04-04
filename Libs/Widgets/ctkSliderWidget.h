@@ -45,6 +45,9 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_OBJECT
   Q_FLAGS(SynchronizeSiblings)
 
+  /// This property holds the precision of the spin box, in decimals.
+  /// 2 by default.
+  /// \sa decimals(), setDecimals(), decimalsChanged()
   Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
@@ -76,7 +79,7 @@ public:
   /// Whenever one of the siblings changes its number of decimals, all its
   /// siblings Synchronize to the new number of decimals.
   ///
-  /// Default is SynchronizeWidth |SynchronizeDecimals.
+  /// Default is SynchronizeWidth.
   /// \sa SynchronizeSiblings(), setSynchronizeSiblings(), decimalsChanged()
   enum SynchronizeSibling
     {
@@ -141,8 +144,9 @@ public:
   double pageStep()const;
   void setPageStep(double step);
 
-  /// 
-  /// This property holds the precision of the spin box, in decimals.
+  ///
+  /// Return the decimals property value.
+  /// \sa decimals, setDecimals(), decimalsChanged()
   int decimals()const;
 
   ///

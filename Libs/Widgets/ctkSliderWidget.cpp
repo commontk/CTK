@@ -79,8 +79,7 @@ ctkSliderWidgetPrivate::ctkSliderWidgetPrivate(ctkSliderWidget& object)
   this->Changing = false;
   this->ValueBeforeChange = 0.;
   this->BlockSetSliderValue = false;
-  this->SynchronizeMode =
-    ctkSliderWidget::SynchronizeWidth | ctkSliderWidget::SynchronizeDecimals;
+  this->SynchronizeMode = ctkSliderWidget::SynchronizeWidth;
   this->SliderPopup = 0;
 }
 
