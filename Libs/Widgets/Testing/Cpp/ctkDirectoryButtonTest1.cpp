@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QFormLayout>
 #include <QSignalSpy>
 #include <QStyle>
 #include <QTimer>
@@ -46,11 +47,16 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
 
   ctkDirectoryButton button2(".");
   ctkDirectoryButton button3(icon, "..");
-  
-  QVBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(&button);
-  layout->addWidget(&button2);
-  layout->addWidget(&button3);
+  ctkDirectoryButton button4;
+  button4.setAcceptMode(QFileDialog::AcceptSave);
+  button4.setOptions(button4.options() | ctkDirectoryButton::DontUseNativeDialog);
+
+
+  QFormLayout* layout = new QFormLayout;
+  layout->addRow("Default button:", &button);
+  layout->addRow("Current (.) directory: ", &button2);
+  layout->addRow("Top (..) directory with icon:", &button3);
+  layout->addRow("Writable directory only:", &button4);
   topLevel.setLayout(layout);
   
   button.setCaption("Select a directory");

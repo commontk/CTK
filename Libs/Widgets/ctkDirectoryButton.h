@@ -49,6 +49,7 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   /// If set to QFileDialog::AcceptSave mode, the regular behavior of QFileDialog will be extended
   /// to prevent user from selecting read-only folder. The caveat is that writable folder existing
   /// in a readonly one won't be selectable.
+  /// AcceptOpen by default.
   Q_PROPERTY(QFileDialog::AcceptMode acceptMode READ acceptMode WRITE setAcceptMode)
   Q_PROPERTY(QString directory READ directory WRITE setDirectory NOTIFY directoryChanged USER true)
   /// This property holds the title of the file dialog used to select a new directory
