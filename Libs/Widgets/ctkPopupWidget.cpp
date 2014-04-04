@@ -102,12 +102,15 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
       {
       QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
       QPoint topLeft = widget->parentWidget() ? widget->parentWidget()->mapToGlobal(moveEvent->pos()) : moveEvent->pos();
+#if defined Q_OS_MAC
+      topLeft += QPoint(widget->geometry().x() - widget->x(), widget->geometry().y() - widget->y());
+#endif
       topLeft += this->BaseWidget->mapTo(widget, QPoint(0,0));
       //q->move(q->pos() + moveEvent->pos() - moveEvent->oldPos());
       QRect newBaseGeometry = this->baseGeometry();
-	    newBaseGeometry.moveTopLeft(topLeft);
-	    QRect desiredGeometry = this->desiredOpenGeometry(newBaseGeometry);
-	    q->move(desiredGeometry.topLeft());
+      newBaseGeometry.moveTopLeft(topLeft);
+      QRect desiredGeometry = this->desiredOpenGeometry(newBaseGeometry);
+      q->move(desiredGeometry.topLeft());
       }
     else if (this->isHidingCandidate(widget))
       {
@@ -154,6 +157,10 @@ void ctkPopupWidgetPrivate::onApplicationDeactivate()
 // -------------------------------------------------------------------------
 bool ctkPopupWidgetPrivate::isHidingCandidate(QWidget* widget)const
 {
+  // The mac window manager is keeping the Qt:Tool widgets always on top,
+  // so if a non modal dialog is moved near the popup widget, the popup will
+  // always appear on top of the dialog. For this reason we manually have to
+  // hide the popup when a dialog is intersecting with the popup.
   bool canWindowsHidePopup = false;
 #if defined Q_OS_MAC
   canWindowsHidePopup = true;
