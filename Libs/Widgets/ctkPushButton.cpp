@@ -145,6 +145,11 @@ QStyleOptionButton ctkPushButtonPrivate::drawIcon(QPainter* p)
   QStyleOptionButton iconOpt;
   iconOpt.init(q);
   iconOpt.rect = this->iconRect();
+  if (q->icon().isNull())
+    {
+    iconOpt.rect.setWidth(0);
+    return iconOpt;
+    }
   QIcon::Mode mode = iconOpt.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled;
   if (mode == QIcon::Normal && iconOpt.state & QStyle::State_HasFocus)
     {
