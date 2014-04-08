@@ -24,7 +24,6 @@ set(TEST_SOURCES
   ctkCoordinatesWidgetTest.cpp
   ctkCoordinatesWidgetTest1.cpp
   ctkCoordinatesWidgetValueProxyTest.cpp
-  ctkCrosshairLabelTest1.cpp
   ctkDirectoryButtonTest1.cpp
   ctkDoubleRangeSliderTest.cpp
   ctkDoubleRangeSliderTest1.cpp
@@ -100,7 +99,6 @@ set(TEST_SOURCES
 #
 if(EXISTS "${CTKData_DIR}")
   list(APPEND TEST_SOURCES
-    ctkCrosshairLabelTest2.cpp
     )
 endif()
 
@@ -248,7 +246,6 @@ SIMPLE_TEST( ctkConsoleTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetTest )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetValueProxyTest )
-SIMPLE_TEST( ctkCrosshairLabelTest1 )
 SIMPLE_TEST( ctkDateRangeWidgetTest1 )
 SIMPLE_TEST( ctkDirectoryButtonTest1 )
 SIMPLE_TEST( ctkDoubleRangeSliderTest )
@@ -323,8 +320,6 @@ SIMPLE_TEST( ctkWorkflowWidgetTest2 )
 # Add Tests expecting CTKData to be set
 #
 if(EXISTS "${CTKData_DIR}")
-  set(baseline_relative_location "Libs/Widgets")
-  SIMPLE_TEST_WITH_DATA( ctkCrosshairLabelTest2 ${baseline_relative_location})
 endif()
 
 # Add Tests expecting CTK_USE_QTTESTING to be set

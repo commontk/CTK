@@ -58,8 +58,6 @@ set(KIT_SRCS
   ctkCoordinatesWidget.cpp
   ctkCoordinatesWidget.h
   ctkCoordinatesWidget_p.h
-  ctkCrosshairLabel.cpp
-  ctkCrosshairLabel.h
   ctkDateRangeWidget.cpp
   ctkDateRangeWidget.h
   ctkDirectoryButton.cpp
@@ -218,7 +216,6 @@ set(KIT_MOC_SRCS
   ctkConsole_p.h
   ctkCoordinatesWidget.h
   ctkCoordinatesWidget_p.h
-  ctkCrosshairLabel.h
   ctkDateRangeWidget.h
   ctkDirectoryButton.h
   ctkDoubleRangeSlider.h
