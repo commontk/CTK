@@ -72,6 +72,7 @@ set(TEST_SOURCES
   ctkRangeWidgetValueProxyTest.cpp
   ctkDateRangeWidgetTest1.cpp
   ctkScreenshotDialogTest1.cpp
+  ctkSearchBoxTest.cpp
   ctkSearchBoxTest1.cpp
   ctkSearchBoxTest2.cpp
   ctkSettingsPanelTest.cpp
@@ -207,6 +208,7 @@ QT4_GENERATE_MOCS(
   ctkRangeSliderTest.cpp
   ctkRangeWidgetTest.cpp
   ctkRangeWidgetValueProxyTest.cpp
+  ctkSearchBoxTest.cpp
   ctkSettingsPanelTest.cpp
   ctkSliderWidgetTest.cpp
   ctkSliderWidgetValueProxyTest.cpp
@@ -299,6 +301,7 @@ SIMPLE_TEST( ctkRangeWidgetTest )
 SIMPLE_TEST( ctkRangeWidgetTest1 )
 SIMPLE_TEST( ctkRangeWidgetValueProxyTest )
 SIMPLE_TEST( ctkScreenshotDialogTest1 )
+SIMPLE_TEST( ctkSearchBoxTest )
 SIMPLE_TEST( ctkSearchBoxTest1 )
 SIMPLE_TEST( ctkSearchBoxTest2 )
 SIMPLE_TEST( ctkSettingsDialogTest1 )
