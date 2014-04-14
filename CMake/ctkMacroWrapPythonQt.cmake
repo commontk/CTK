@@ -215,12 +215,6 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     endif()
   endforeach()
 
-  # PythonQtGenerator expects a colon ':' separated list
-  set(INCLUDE_DIRS_TO_WRAP)
-  foreach(include ${CTK_BASE_INCLUDE_DIRS})
-    set(INCLUDE_DIRS_TO_WRAP "${INCLUDE_DIRS_TO_WRAP}:${include}")
-  endforeach()
-
   # Prepare custom_command argument
   set(SOURCES_TO_WRAP_ARG)
   foreach(source ${SOURCES_TO_WRAP})
@@ -233,16 +227,6 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
 
   # Create intermediate output directory
   execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir})
-
-  # On Windows, to avoid "too long input" error, dump INCLUDE_DIRS_TO_WRAP into a file
-  if(WIN32)
-    # File containing the moc flags
-    set(include_dirs_to_wrap_filename includeDirsToWrap_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}.txt)
-    set(include_dirs_to_wrap_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${include_dirs_to_wrap_filename})
-    file(WRITE ${include_dirs_to_wrap_file} ${INCLUDE_DIRS_TO_WRAP})
-    # The arg passed to the custom command will be the file containing the list of include dirs to wrap
-    set(INCLUDE_DIRS_TO_WRAP ${include_dirs_to_wrap_file})
-  endif()
 
   set(wrapper_init_cpp_filename ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp)
   set(wrapper_init_cpp_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_init_cpp_filename})
@@ -267,7 +251,6 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       -DWRAPPING_NAMESPACE:STRING=${WRAPPING_NAMESPACE}
       -DTARGET:STRING=${TARGET}
       -DSOURCES:STRING=${SOURCES_TO_WRAP_ARG}
-      -DINCLUDE_DIRS:STRING=${INCLUDE_DIRS_TO_WRAP}
       -DOUTPUT_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}
       -DWRAP_INT_DIR:STRING=${wrap_int_dir}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}

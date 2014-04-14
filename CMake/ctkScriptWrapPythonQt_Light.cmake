@@ -32,7 +32,7 @@
 # or from the command line using the following syntax:
 #
 #    cmake -DWRAPPING_NAMESPACE:STRING=org.commontk -DTARGET:STRING=MyLib
-#          -DSOURCES:STRING="file1^^file2" -DINCLUDE_DIRS:STRING=/path1:/path2
+#          -DSOURCES:STRING="file1^^file2"
 #          -DWRAP_INT_DIR:STRING=subir/subir/
 #          -DOUTPUT_DIR:PATH=/path  -DQT_QMAKE_EXECUTABLE:PATH=/path/to/qt/qmake
 #          -DPYTHON_EXECUTABLE:FILEPATH=/path/to/python
@@ -105,7 +105,7 @@ if(NOT DEFINED CMAKE_CURRENT_LIST_FILENAME)
 endif()
 
 # Check for non-defined var
-foreach(var WRAPPING_NAMESPACE TARGET SOURCES INCLUDE_DIRS WRAP_INT_DIR HAS_DECORATOR)
+foreach(var WRAPPING_NAMESPACE TARGET SOURCES WRAP_INT_DIR HAS_DECORATOR)
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
   endif()
