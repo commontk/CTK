@@ -271,7 +271,6 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       ${wrap_int_dir}${wrapper_module_init_cpp_filename}
       ${extra_files}
     DEPENDS
-      ${pythonqtgenerator_executable_depends}
       ${SOURCES_TO_WRAP}
       ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_${wrap_type}.cmake
       ${CTK_CMAKE_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
