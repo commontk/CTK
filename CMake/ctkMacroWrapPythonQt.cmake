@@ -25,7 +25,6 @@
 #!
 #! Depends on:
 #!  PythonQt
-#!  PythonQtGenerator (Only if IS_WRAP_FULL is TRUE)
 #!  PythonInterp (See function reSearchFile)
 #!
 
@@ -40,8 +39,6 @@
 #!                        For example: KIT_PYTHONQT_SRCS
 #!
 #!    SOURCES ..........: List of source files that should be wrapped.
-#!
-#!    IS_WRAP_FULL .....: Indicate if a Full wrapping if desired.
 #!
 #!    HAS_DECORATOR ....: Indicate if a custom PythonQt decorator header is expected.
 #!
@@ -102,8 +99,8 @@ endfunction()
 macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_WRAP_FULL HAS_DECORATOR)
 
   # Sanity check
-  if(IS_WRAP_FULL AND NOT EXISTS "${PYTHONQTGENERATOR_EXECUTABLE}")
-    message(FATAL_ERROR "PYTHONQTGENERATOR_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
+  if(IS_WRAP_FULL)
+    message(FATAL_ERROR "IS_WRAP_FULL option is not supported anymore. See https://github.com/commontk/CTK/issues/449")
   endif()
 
   # TODO: this find package seems not to work when called form a superbuild, but the call is needed
@@ -168,30 +165,26 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     set(className ${TMP_FILENAME})
 
     if(NOT skip_wrapping)
-      # Skip wrapping if IS_WRAP_FULL=FALSE and if file do NOT contain Q_OBJECT
-      if(NOT IS_WRAP_FULL)
-        file(READ ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} file_content)
-        if(NOT "${file_content}" MATCHES "Q_OBJECT")
-          set(skip_wrapping TRUE)
-          ctkMacroWrapPythonQt_log("${FILE}: skipping - No Q_OBJECT macro")
-        endif()
+      # Skip wrapping if file do NOT contain Q_OBJECT
+      file(READ ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} file_content)
+      if(NOT "${file_content}" MATCHES "Q_OBJECT")
+        set(skip_wrapping TRUE)
+        ctkMacroWrapPythonQt_log("${FILE}: skipping - No Q_OBJECT macro")
       endif()
     endif()
 
     if(NOT skip_wrapping)
-      # Skip wrapping if IS_WRAP_FULL=FALSE and if constructor doesn't match:
+      # Skip wrapping if constructor doesn't match:
       #    my_class()
       #    my_class(QObject* newParent ...)
       #    my_class(QWidget* newParent ...)
-      if(NOT IS_WRAP_FULL)
-        # Constructor with either QWidget or QObject as first parameter
-        set(regex "[^~]${className}[\\s\\n]*\\([\\s\\n]*((QObject|QWidget)[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\)|\\)))")
-        ctkMacroWrapPythonQt_reSearchfile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH}
-                                          ${regex} ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} is_matching)
-        if(NOT is_matching)
-          set(skip_wrapping TRUE)
-          ctkMacroWrapPythonQt_log("${FILE}: skipping - Missing expected constructor signature")
-        endif()
+      # Constructor with either QWidget or QObject as first parameter
+      set(regex "[^~]${className}[\\s\\n]*\\([\\s\\n]*((QObject|QWidget)[\\s\\n]*\\*[\\s\\n]*\\w+[\\s\\n]*(\\=[\\s\\n]*(0|NULL)|,.*\\=.*\\)|\\)|\\)))")
+      ctkMacroWrapPythonQt_reSearchfile(${PYTHON_EXECUTABLE} ${PYTHON_LIBRARY_PATH}
+                                        ${regex} ${CMAKE_CURRENT_SOURCE_DIR}/${FILE} is_matching)
+      if(NOT is_matching)
+        set(skip_wrapping TRUE)
+        ctkMacroWrapPythonQt_log("${FILE}: skipping - Missing expected constructor signature")
       endif()
     endif()
 
@@ -235,14 +228,8 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   endforeach()
 
   # Define wrap type and wrap intermediate directory
-  set(wrap_type "Light")
   set(wrap_int_dir generated_cpp/${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}/)
-  set(extra_files )
-  if(${IS_WRAP_FULL})
-    set(wrap_type "Full")
-    set(extra_files ${wrap_int_dir}ctkPythonQt_${TARGET}_masterinclude.h)
-  endif()
-  #message("wrap_type:${wrap_type} - wrap_int_dir:${wrap_int_dir}")
+  #message("wrap_int_dir:${wrap_int_dir}")
 
   # Create intermediate output directory
   execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir})
@@ -269,10 +256,9 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     OUTPUT
       ${wrap_int_dir}${wrapper_init_cpp_filename}
       ${wrap_int_dir}${wrapper_module_init_cpp_filename}
-      ${extra_files}
     DEPENDS
       ${SOURCES_TO_WRAP}
-      ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_${wrap_type}.cmake
+      ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_Light.cmake
       ${CTK_CMAKE_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
     COMMAND ${CMAKE_COMMAND}
       -DPYTHONQTGENERATOR_EXECUTABLE:FILEPATH=${PYTHONQTGENERATOR_EXECUTABLE}
@@ -286,8 +272,8 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       -DWRAP_INT_DIR:STRING=${wrap_int_dir}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       -DHAS_DECORATOR:BOOL=${HAS_DECORATOR}
-      -P ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_${wrap_type}.cmake
-    COMMENT "PythonQt ${wrap_type} Wrapping - Generating ${wrapper_init_cpp_filename}"
+      -P ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_Light.cmake
+    COMMENT "PythonQt Wrapping - Generating ${wrapper_init_cpp_filename}"
     VERBATIM
     )
 
@@ -333,7 +319,7 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       -DOUTPUT_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}
       -DQT_MOC_EXECUTABLE:FILEPATH=${QT_MOC_EXECUTABLE}
       -P ${CTK_CMAKE_DIR}/ctkScriptMocPythonQtWrapper.cmake
-    COMMENT "PythonQt ${wrap_type} Wrapping - Moc'ing ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET} wrapper headers"
+    COMMENT "PythonQt Wrapping - Moc'ing ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET} wrapper headers"
     VERBATIM
     )
 

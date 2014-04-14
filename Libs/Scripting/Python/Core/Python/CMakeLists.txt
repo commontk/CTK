@@ -8,7 +8,7 @@ set(KIT_PYTHON_SCRIPTS
 # the comma separated list of package to load
 set(CTK_PYTHON_WRAPPED_LIBRARIES)
 
-if(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+if(CTK_WRAP_PYTHONQT_LIGHT)
 
   foreach(lib_name ${CTK_LIBS})
     if(${CTK_LIB_${lib_name}})
