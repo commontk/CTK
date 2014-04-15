@@ -51,18 +51,6 @@
 
 set(verbose 0)
 
-#!
-#! Convenient function allowing to log the reason why a given class hasn't been wrapped
-#! If verbose=1, it will also be displayed on the standard output
-#!
-#! \ingroup CMakeUtilities
-function(ctkMacroWrapPythonQt_log msg)
-  if(verbose)
-    message(${msg})
-  endif()
-  file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "${msg}\n")
-endfunction()
-
 #! \ingroup CMakeUtilities
 macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_WRAP_FULL HAS_DECORATOR)
 
@@ -79,9 +67,6 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     message(FATAL_ERROR "PYTHON_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
   endif()
 
-  # Clear log file
-  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "")
-
   set(SOURCES_TO_WRAP)
 
   # For each class
@@ -93,7 +78,9 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       # Skip wrapping if file is NOT regular header
       if(NOT ${FILE} MATCHES "^.*\\.[hH]$")
         set(skip_wrapping TRUE)
-        ctkMacroWrapPythonQt_log("${FILE}: skipping - Not a regular header")
+        if(verbose)
+          message("${FILE}: skipping - Not a regular header")
+        endif()
       endif()
     endif()
 
@@ -101,7 +88,9 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       # Skip wrapping if file is a pimpl header
       if(${FILE} MATCHES "^.*_[pP]\\.[hH]$")
         set(skip_wrapping TRUE)
-        ctkMacroWrapPythonQt_log("${FILE}: skipping - Pimpl header (*._p.h)")
+        if(verbose)
+          message("${FILE}: skipping - Pimpl header (*._p.h)")
+        endif()
       endif()
     endif()
 
@@ -113,7 +102,9 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
         set(skip_wrapping FALSE)
       endif()
       if(skip_wrapping)
-        ctkMacroWrapPythonQt_log("${FILE}: skipping - WRAP_EXCLUDE")
+        if(verbose)
+          message("${FILE}: skipping - WRAP_EXCLUDE")
+        endif()
       endif()
     endif()
 
