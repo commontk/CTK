@@ -93,6 +93,8 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   string(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
 
   set(SOURCES_TO_WRAP)
+  set(SOURCES_TO_WRAP_ARG) # Custom_command argument
+
   # For each class
   foreach(FILE ${SOURCES})
 
@@ -137,14 +139,8 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       endif()
 
       list(APPEND SOURCES_TO_WRAP ${TMP_INPUT})
-
+      set(SOURCES_TO_WRAP_ARG "${SOURCES_TO_WRAP_ARG}^^${TMP_INPUT}")
     endif()
-  endforeach()
-
-  # Prepare custom_command argument
-  set(SOURCES_TO_WRAP_ARG)
-  foreach(source ${SOURCES_TO_WRAP})
-    set(SOURCES_TO_WRAP_ARG "${SOURCES_TO_WRAP_ARG}^^${source}")
   endforeach()
 
   # Define wrap type and wrap intermediate directory
