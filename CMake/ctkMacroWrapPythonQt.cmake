@@ -89,9 +89,6 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   # Clear log file
   file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "")
 
-  # Convert wrapping namespace to subdir
-  string(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
-
   set(SOURCES_TO_WRAP)
   set(SOURCES_TO_WRAP_ARG) # Custom_command argument
 
@@ -143,26 +140,32 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     endif()
   endforeach()
 
+  # Convert wrapping namespace to subdir
+  string(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
+
   # Define wrap type and wrap intermediate directory
   set(wrap_int_dir generated_cpp/${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}/)
-  #message("wrap_int_dir:${wrap_int_dir}")
-
-  set(wrapper_init_cpp_filename ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp)
-  set(wrapper_init_cpp_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_init_cpp_filename})
 
   set(wrapper_module_init_cpp_filename ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_module_init.cpp)
-  set(wrapper_module_init_cpp_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_module_init_cpp_filename})
+
+  # Configure 'ctkMacroWrapPythonQtModuleInit.cpp.in' using TARGET, HAS_DECORATOR and
+  # WRAPPING_NAMESPACE_UNDERSCORE.
+  set(TARGET_CONFIG ${TARGET})
+  configure_file(
+    ${CTK_CMAKE_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
+    ${wrap_int_dir}${wrapper_module_init_cpp_filename}
+    @ONLY
+    )
 
   # Custom command allow to generate ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp and
   # associated wrappers ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}{0-N}.cpp
+  set(wrapper_init_cpp_filename ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp)
   add_custom_command(
     OUTPUT
       ${wrap_int_dir}${wrapper_init_cpp_filename}
-      ${wrap_int_dir}${wrapper_module_init_cpp_filename}
     DEPENDS
       ${SOURCES_TO_WRAP}
       ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_Light.cmake
-      ${CTK_CMAKE_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
     COMMAND ${CMAKE_COMMAND}
       -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
       -DPYTHON_LIBRARY_PATH:PATH=${PYTHON_LIBRARY_PATH}
@@ -171,7 +174,6 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       -DTARGET:STRING=${TARGET}
       -DSOURCES:STRING=${SOURCES_TO_WRAP_ARG}
       -DOUTPUT_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}
-      -DHAS_DECORATOR:BOOL=${HAS_DECORATOR}
       -P ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_Light.cmake
     COMMENT "PythonQt Wrapping - Generating ${wrapper_init_cpp_filename}"
     VERBATIM
@@ -208,8 +210,7 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     OUTPUT ${wrap_int_dir}${wrapper_master_moc_filename}
     DEPENDS
       ${wrap_int_dir}${wrapper_init_cpp_filename}
-      ${wrap_int_dir}${wrapper_module_init_cpp_filename}
-      ${extra_files} ${CTK_CMAKE_DIR}/ctkScriptMocPythonQtWrapper.cmake
+      ${CTK_CMAKE_DIR}/ctkScriptMocPythonQtWrapper.cmake
     COMMAND ${CMAKE_COMMAND}
       -DWRAPPING_NAMESPACE:STRING=${WRAPPING_NAMESPACE}
       -DTARGET:STRING=${TARGET}

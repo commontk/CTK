@@ -32,7 +32,6 @@
 #          -DOUTPUT_DIR:PATH=/path
 #          -DPYTHON_EXECUTABLE:FILEPATH=/path/to/python
 #          -DPYTHON_LIBRARY_PATH:PATH=/path/to/pythonlib
-#          -DHAS_DECORATOR:BOOL=True
 #          -P ctkScriptWrapPythonQt_Light.cmake
 #
 
@@ -43,7 +42,7 @@
 #
 
 # Check for non-defined var
-foreach(var WRAPPING_NAMESPACE TARGET SOURCES HAS_DECORATOR)
+foreach(var WRAPPING_NAMESPACE TARGET SOURCES)
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "${var} not specified when calling ctkScriptWrapPythonQt")
   endif()
@@ -90,15 +89,5 @@ else()
     message(${output})
   endif()
 endif()
-
-# Convert wrapping namespace to subdir
-string(REPLACE "." "_" WRAPPING_NAMESPACE_UNDERSCORE ${WRAPPING_NAMESPACE})
-
-# Configure 'ctkMacroWrapPythonQtModuleInit.cpp.in' using TARGET, HAS_DECORATOR and
-# WRAPPING_NAMESPACE_UNDERSCORE.
-configure_file(
-  ${CMAKE_CURRENT_LIST_DIR}/ctkMacroWrapPythonQtModuleInit.cpp.in
-  ${OUTPUT_DIR}/${WRAP_INT_DIR}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_module_init.cpp
-  )
 
 
