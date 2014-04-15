@@ -158,11 +158,13 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     )
 
   # Custom command allow to generate ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp and
-  # associated wrappers ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}{0-N}.cpp
+  # associated wrappers ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}.cpp
   set(wrapper_init_cpp_filename ${wrap_int_dir}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp)
+  set(wrapper_h_filename ${wrap_int_dir}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}.h)
   add_custom_command(
     OUTPUT
       ${wrapper_init_cpp_filename}
+      ${wrapper_h_filename}
     DEPENDS
       ${SOURCES_TO_WRAP}
       ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_Light.cmake
@@ -179,56 +181,13 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     VERBATIM
     )
 
-  # Clear variable
-  set(moc_flags)
-
-  # Grab moc flags
-  QT4_GET_MOC_FLAGS(moc_flags)
-
-  # Prepare custom_command argument
-  set(moc_flags_arg)
-  foreach(flag ${moc_flags})
-    set(moc_flags_arg "${moc_flags_arg}^^${flag}")
-  endforeach()
-
-  # On Windows, to avoid "too long input" error, dump moc flags.
-  if(WIN32)
-    # File containing the moc flags
-    set(wrapper_moc_flags_filename mocflags_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_all.txt)
-    set(wrapper_master_moc_flags_file ${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}${wrapper_moc_flags_filename})
-    file(WRITE ${wrapper_master_moc_flags_file} ${moc_flags_arg})
-    # The arg passed to the custom command will be the file containing the list of moc flags
-    set(moc_flags_arg ${wrapper_master_moc_flags_file})
-  endif()
-
-  # File to run through moc
-  set(wrapper_master_moc_filename ${wrap_int_dir}moc_${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_all.cpp)
-  set(wrapper_master_moc_file ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_master_moc_filename})
-
-  # Custom command allowing to call moc to process the wrapper headers
-  add_custom_command(
-    OUTPUT ${wrapper_master_moc_filename}
-    DEPENDS
-      ${wrapper_init_cpp_filename}
-      ${CTK_CMAKE_DIR}/ctkScriptMocPythonQtWrapper.cmake
-    COMMAND ${CMAKE_COMMAND}
-      -DWRAPPING_NAMESPACE:STRING=${WRAPPING_NAMESPACE}
-      -DTARGET:STRING=${TARGET}
-      -DMOC_FLAGS:STRING=${moc_flags_arg}
-      -DWRAP_INT_DIR:STRING=${wrap_int_dir}
-      -DWRAPPER_MASTER_MOC_FILE:STRING=${wrapper_master_moc_file}
-      -DOUTPUT_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}
-      -DQT_MOC_EXECUTABLE:FILEPATH=${QT_MOC_EXECUTABLE}
-      -P ${CTK_CMAKE_DIR}/ctkScriptMocPythonQtWrapper.cmake
-    COMMENT "PythonQt Wrapping - Moc'ing ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET} wrapper headers"
-    VERBATIM
-    )
+  QT4_WRAP_CPP(${TARGET}_MOC_CXX ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_h_filename})
 
   # The following files are generated
   set_source_files_properties(
     ${wrapper_init_cpp_filename}
+    ${wrapper_h_filename}
     ${wrapper_module_init_cpp_filename}
-    ${wrapper_master_moc_filename}
     PROPERTIES GENERATED TRUE)
 
   # Create the Init File
@@ -236,7 +195,7 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     ${${SRCS_LIST_NAME}}
     ${wrapper_init_cpp_filename}
     ${wrapper_module_init_cpp_filename}
-    ${wrapper_master_moc_filename}
+    ${${TARGET}_MOC_CXX}
     )
 
   #
