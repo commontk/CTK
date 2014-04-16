@@ -119,7 +119,6 @@ function(_ctk_add_copy_python_files_target target type)
     if(entries)
       add_custom_target(${target_name} ALL
         DEPENDS
-          ${input_files}
           ${copied_files}
           )
     endif()
