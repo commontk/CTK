@@ -79,18 +79,10 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     message(FATAL_ERROR "PYTHON_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
   endif()
 
-  # Extract python lib path
-  get_filename_component(PYTHON_DIR_PATH ${PYTHON_EXECUTABLE} PATH)
-  set(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH}/../lib)
-  if(WIN32)
-    set(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH})
-  endif()
-
   # Clear log file
   file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ctkMacroWrapPythonQt_log.txt" "")
 
   set(SOURCES_TO_WRAP)
-  set(SOURCES_TO_WRAP_ARG) # Custom_command argument
 
   # For each class
   foreach(FILE ${SOURCES})
@@ -136,7 +128,6 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       endif()
 
       list(APPEND SOURCES_TO_WRAP ${TMP_INPUT})
-      set(SOURCES_TO_WRAP_ARG "${SOURCES_TO_WRAP_ARG}^^${TMP_INPUT}")
     endif()
   endforeach()
 
@@ -157,6 +148,11 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     @ONLY
     )
 
+  set(extra_args)
+  if(verbose)
+    set(extra_args --extra-verbose)
+  endif()
+
   # Custom command allow to generate ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp and
   # associated wrappers ${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}.cpp
   set(wrapper_init_cpp_filename ${wrap_int_dir}${WRAPPING_NAMESPACE_UNDERSCORE}_${TARGET}_init.cpp)
@@ -167,16 +163,12 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
       ${wrapper_h_filename}
     DEPENDS
       ${SOURCES_TO_WRAP}
-      ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_Light.cmake
-    COMMAND ${CMAKE_COMMAND}
-      -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
-      -DPYTHON_LIBRARY_PATH:PATH=${PYTHON_LIBRARY_PATH}
-      -DWRAPPING_SCRIPT:FILEPATH=${CTK_CMAKE_DIR}/ctkWrapPythonQt.py
-      -DWRAPPING_NAMESPACE:STRING=${WRAPPING_NAMESPACE}
-      -DTARGET:STRING=${TARGET}
-      -DSOURCES:STRING=${SOURCES_TO_WRAP_ARG}
-      -DOUTPUT_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir}
-      -P ${CTK_CMAKE_DIR}/ctkScriptWrapPythonQt_Light.cmake
+      ${CTK_CMAKE_DIR}/ctkWrapPythonQt.py
+    COMMAND ${PYTHON_EXECUTABLE} ${CTK_CMAKE_DIR}/ctkWrapPythonQt.py
+      --target=${TARGET}
+      --namespace=${WRAPPING_NAMESPACE}
+      --output-dir=${CMAKE_CURRENT_BINARY_DIR}/${wrap_int_dir} ${extra_args}
+      ${SOURCES_TO_WRAP}
     COMMENT "PythonQt Wrapping - Generating ${wrapper_init_cpp_filename}"
     VERBATIM
     )
