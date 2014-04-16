@@ -714,4 +714,4 @@ QSize ctkPathLineEdit::sizeHint()const
   return d->recomputeSizeHint(d->SizeHint);
 }
 
-#include "moc_ctkPathLineEdit.h"
+#include "moc_ctkPathLineEdit.cpp"
