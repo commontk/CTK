@@ -229,6 +229,7 @@ endforeach()
 foreach(file
   Libs/ctkExport.h.in
   CMake/ctkLinkerAsNeededFlagCheck.cmake
+  CMake/ctk_compile_python_scripts.cmake.in
   )
   install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
 endforeach()
@@ -815,17 +816,11 @@ ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${targe
 
 #-----------------------------------------------------------------------------
 # CTK Python wrapping
-# Enable CTK_LIB_Scripting/Python/Core if either CTK_ENABLE_Python_Wrapping OR CTK_WRAP_PYTHONQT_FULL
+# Enable CTK_LIB_Scripting/Python/Core if CTK_ENABLE_Python_Wrapping is ON
 #
 set(CTK_WRAP_PYTHONQT_LIGHT ${CTK_ENABLE_Python_Wrapping})
-option(CTK_WRAP_PYTHONQT_FULL "Experimental - Wrap CTK classes using Qt meta-object system into Python language" OFF)
-mark_as_advanced(CTK_WRAP_PYTHONQT_FULL)
-mark_as_superbuild(CTK_WRAP_PYTHONQT_FULL)
-if(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
-  message(FATAL_ERROR "CTK_ENABLE_Python_Wrapping AND CTK_WRAP_PYTHONQT_FULL options are mutually exclusive. Please enable only one !")
-endif()
 
-set(logical_expr CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+set(logical_expr CTK_WRAP_PYTHONQT_LIGHT)
 if((${logical_expr}) AND NOT CTK_LIB_Scripting/Python/Core)
   set(CTK_LIB_Scripting/Python/Core ON CACHE BOOL "Build the Python Core library" FORCE)
   set(enabling_msg)
@@ -922,10 +917,6 @@ endif()
 
 if(CTK_USE_QTTESTING)
   list(APPEND CTK_DEPENDENCIES QtTesting)
-endif()
-
-if(CTK_WRAP_PYTHONQT_FULL)
-  list(APPEND CTK_DEPENDENCIES PythonQtGenerator)
 endif()
 
 #-----------------------------------------------------------------------------

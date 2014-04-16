@@ -52,7 +52,7 @@ ctkMacroBuildLib(
 
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

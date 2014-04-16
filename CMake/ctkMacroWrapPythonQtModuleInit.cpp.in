@@ -1,14 +1,14 @@
-// Configured by cmake macro @CMAKE_CURRENT_LIST_FILENAME@
+// Configured by cmake macro @CMAKE_CURRENT_LIST_FILE@
 
 #include <PythonQt.h>
 #include <Python.h>
 
 //-----------------------------------------------------------------------------
-static PyMethodDef Py@TARGET@PythonQt_ClassMethods[] = {
+static PyMethodDef Py@TARGET_CONFIG@PythonQt_ClassMethods[] = {
 {NULL, NULL, 0, NULL}};
 
 //-----------------------------------------------------------------------------
-extern "C" { void Q_DECL_EXPORT init@TARGET@PythonQt(); }
+extern "C" { void Q_DECL_EXPORT init@TARGET_CONFIG@PythonQt(); }
 
 #ifdef __GNUC__
 // Disable warnings related to Py_DECREF() macro
@@ -50,26 +50,26 @@ void copyAttributes(PyObject* orig_module, PyObject* dest_module)
 } // end of anonymous namespace
 
 //-----------------------------------------------------------------------------
-void init@TARGET@PythonQt()
+void init@TARGET_CONFIG@PythonQt()
 {
-  static const char modulename[] = "@TARGET@PythonQt";
+  static const char modulename[] = "@TARGET_CONFIG@PythonQt";
   PyObject *m;
 
-  m = Py_InitModule((char*)modulename, Py@TARGET@PythonQt_ClassMethods);
-  extern void PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET@(PyObject*);
-  PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET@(m);
+  m = Py_InitModule((char*)modulename, Py@TARGET_CONFIG@PythonQt_ClassMethods);
+  extern void PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET_CONFIG@(PyObject*);
+  PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET_CONFIG@(m);
 
 #ifdef HAS_DECORATOR
-  extern void init@TARGET@PythonQtDecorators();
-  init@TARGET@PythonQtDecorators();
+  extern void init@TARGET_CONFIG@PythonQtDecorators();
+  init@TARGET_CONFIG@PythonQtDecorators();
 #endif
 
-  // Since invoking 'PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET@', will create
-  // the module "PythonQt.@TARGET@". Let's copy its content into the current module.
-  PythonQtObjectPtr currentModule = PyImport_ImportModule((char*)"PythonQt.@TARGET@");
+  // Since invoking 'PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET_CONFIG@', will create
+  // the module "PythonQt.@TARGET_CONFIG@". Let's copy its content into the current module.
+  PythonQtObjectPtr currentModule = PyImport_ImportModule((char*)"PythonQt.@TARGET_CONFIG@");
   if(currentModule.isNull())
     {
-    PyErr_SetString(PyExc_ImportError, (char*)"Failed to import PythonQt.@TARGET@");
+    PyErr_SetString(PyExc_ImportError, (char*)"Failed to import PythonQt.@TARGET_CONFIG@");
     return;
     }
   copyAttributes(currentModule, m);
