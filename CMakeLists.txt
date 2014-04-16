@@ -229,6 +229,7 @@ endforeach()
 foreach(file
   Libs/ctkExport.h.in
   CMake/ctkLinkerAsNeededFlagCheck.cmake
+  CMake/ctk_compile_python_scripts.cmake.in
   )
   install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
 endforeach()
