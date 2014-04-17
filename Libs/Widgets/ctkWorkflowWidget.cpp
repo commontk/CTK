@@ -32,14 +32,9 @@
 #include "ctkWorkflow.h"
 #include "ctkWorkflowButtonBoxWidget.h"
 #include "ctkWorkflowGroupBox.h"
-#include "ctkLogger.h"
 
 // STD includes
 #include <iostream>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowWidget");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class ctkWorkflowWidgetPrivate
@@ -122,7 +117,7 @@ void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)
 
   if (!newWorkflow)
     {
-    logger.error(QString("setWorkflow - cannot set workflow to NULL"));
+    qWarning() << "setWorkflow - cannot set workflow to NULL";
     return;
     }
 

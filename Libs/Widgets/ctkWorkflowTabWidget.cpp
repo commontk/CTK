@@ -27,14 +27,9 @@
 // CTK includes
 #include "ctkWorkflowTabWidget.h"
 #include "ctkWorkflowButtonBoxWidget.h"
-#include "ctkLogger.h"
 
 // STD includes
 #include <iostream>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowTabWidget");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class ctkWorkflowTabWidgetPrivate
