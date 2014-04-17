@@ -30,11 +30,6 @@
 #include "ctkWorkflowWidgetStep.h"
 #include "ctkFittedTextBrowser.h"
 #include "ui_ctkWorkflowGroupBox.h"
-#include "ctkLogger.h"
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowGroupBox");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class ctkWorkflowGroupBoxPrivate: public Ui_ctkWorkflowGroupBox
@@ -137,7 +132,7 @@ void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
   // disable/hide the previously shown step
   if (ctkWorkflowWidgetStep* prevStep = dynamic_cast<ctkWorkflowWidgetStep*>(d->StepShownPreviously))
     {
-    logger.debug(QString("updateClientArea - hiding %1").arg(prevStep->name()));
+    //qDebug() << QString("updateClientArea - hiding %1").arg(prevStep->name());
     if (QWidget* stepArea = prevStep->stepArea())
       {
       stepArea->setEnabled(false);

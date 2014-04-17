@@ -28,14 +28,9 @@
 #include "ctkWorkflowStep.h"
 #include "ctkWorkflowStep_p.h"
 #include "ctkWorkflow.h"
-#include "ctkLogger.h"
 
 // STD includes
 #include <iostream>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.core.ctkWorkflowStep");
-//--------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
 // ctkWorkflowStepPrivate methods
@@ -164,8 +159,8 @@ void ctkWorkflowStep::setId(const QString& newId)
   Q_D(ctkWorkflowStep);
   if (d->Workflow && d->Workflow->hasStep(newId) && !this->id().isEmpty())
     {
-    logger.error(QString("ctkWorkflowStep - Failed to change id from '%1' to '%2' - "
-                         "Step already added to a workflow !").arg(this->id()).arg(newId));
+    qWarning() << QString("ctkWorkflowStep - Failed to change id from '%1' to '%2' - "
+                          "Step already added to a workflow !").arg(this->id()).arg(newId);
     return;
     }
   d->Id = newId;
@@ -260,7 +255,10 @@ void ctkWorkflowStep::invokeOnExitCommand(const ctkWorkflowStep* goingTo, const 
 void ctkWorkflowStep::validate(const QString& desiredBranchId)
 {
   Q_D(ctkWorkflowStep);
-  logger.info(QString("validate - validating the input from %1").arg(d->Name));
+  if (this->workflow()->verbose())
+    {
+    qDebug() << QString("validate - validating the input from %1").arg(d->Name);
+    }
 
   this->validationComplete(true, desiredBranchId);
 }

@@ -29,14 +29,9 @@
 #include "ctkWorkflowWidget.h"
 #include "ctkWorkflowGroupBox.h"
 #include "ctkWorkflowButtonBoxWidget.h"
-#include "ctkLogger.h"
 
 // STD includes
 #include <iostream>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowWidget");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class ctkWorkflowAbstractPagedWidgetPrivate
@@ -123,7 +118,7 @@ void ctkWorkflowAbstractPagedWidget::associateStepWithPage(ctkWorkflowStep* step
 
   if (index < 0)
     {
-    logger.error(QString("Cannot associate step with a page of index -1"));
+    qWarning() << "Cannot associate step with a page of index -1";
     return;
     }
 
