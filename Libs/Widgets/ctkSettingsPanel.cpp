@@ -301,6 +301,16 @@ void ctkSettingsPanel::registerProperty(const QString& key,
 }
 
 // --------------------------------------------------------------------------
+void ctkSettingsPanel::registerProperty(
+  const QString& key, QObject* object, const QString& property,
+  const QByteArray& signal, const QString& label,
+  ctkSettingsPanel::SettingOptions options, QSettings* settings)
+{
+  this->registerProperty(key, object, property, signal.constData(),
+                         label, options, settings);
+}
+
+// --------------------------------------------------------------------------
 QVariant ctkSettingsPanel::defaultPropertyValue(const QString& key) const
 {
   Q_D(const ctkSettingsPanel);
