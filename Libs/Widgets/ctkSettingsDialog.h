@@ -80,6 +80,14 @@ public Q_SLOTS:
   void resetSettings();
   void restoreDefaultSettings();
 
+  /// Reload settings for all registered panels.
+  ///
+  /// This reloads the settings for all panels, effectively throwing out any
+  /// values in the UI or the panels' caches and reverting to the values in the
+  /// associated QSettings. You should call this if you have made changes to
+  /// the QSettings that were not made through ctkSettingsPanel.
+  void reloadSettings();
+
   virtual void accept();
   virtual void reject();
 
