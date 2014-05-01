@@ -23,12 +23,14 @@
 
 // CTK includes
 #include "ctkVTKAbstractView.h"
+#include "vtkVersion.h"
 class vtkLightBoxRendererManager;
 class ctkVTKSliceViewPrivate;
 
 class vtkCamera;
 class vtkImageData;
 class vtkRenderer;
+class vtkAlgorithmOutput;
 
 /// \ingroup Visualization_VTK_Widgets
 /// Specific implementation for a 2D view that supports lightbox display.
@@ -99,7 +101,11 @@ public Q_SLOTS:
 
   /// Set image data
   /// \sa vtkLightBoxRendererManager::SetImageData
+#if (VTK_MAJOR_VERSION <= 5)
   void setImageData(vtkImageData* newImageData);
+#else
+  void setImageDataConnection(vtkAlgorithmOutput* newImageDataPort);
+#endif
 
   /// Set highlightedBox color
   /// \sa vtkLightBoxRendererManager::SetHighlightedBoxColor

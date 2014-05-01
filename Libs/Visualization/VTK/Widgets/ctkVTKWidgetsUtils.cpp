@@ -30,6 +30,7 @@
 // VTK includes
 #include <QVTKWidget.h>
 #include <vtkImageData.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
@@ -72,7 +73,9 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
     {
     return QImage();
     }
+#if VTK_MAJOR_VERSION <= 5
   imageData->Update();
+#endif
   /// \todo retrieve just the UpdateExtent
   int width = imageData->GetDimensions()[0];
   int height = imageData->GetDimensions()[1];

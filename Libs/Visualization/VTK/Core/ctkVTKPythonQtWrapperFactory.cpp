@@ -5,6 +5,7 @@
 /// VTK includes
 #include <vtkPythonUtil.h>
 #include <vtkObject.h>
+#include <vtkVersion.h>
 
 //-----------------------------------------------------------------------------
 ctkVTKPythonQtWrapperFactory::ctkVTKPythonQtWrapperFactory():Superclass()
