@@ -76,6 +76,7 @@ public:
   vtkSmartPointer<vtkRenderer>                Renderer;
   vtkSmartPointer<vtkImageMapper>             ImageMapper;
   vtkSmartPointer<vtkActor2D>                 HighlightedBoxActor;
+  vtkSmartPointer<vtkActor2D>                 ImageActor;
 };
 }
 
@@ -127,12 +128,12 @@ void RenderWindowItem::SetupImageMapperActor(double colorWindow, double colorLev
   this->ImageMapper->SetColorLevel(colorLevel);
 
   // .. and its corresponding 2D actor
-  vtkNew<vtkActor2D> actor2D;
-  actor2D->SetMapper(this->ImageMapper);
-  actor2D->GetProperty()->SetDisplayLocationToBackground();
+  this->ImageActor = vtkSmartPointer<vtkActor2D>::New();
+  this->ImageActor->SetMapper(this->ImageMapper);
+  this->ImageActor->GetProperty()->SetDisplayLocationToBackground();
 
   // .. and add it to the renderer
-  this->Renderer->AddActor2D(actor2D.GetPointer());
+  //this->Renderer->AddActor2D(this->ImageActor.GetPointer());
 }
 
 //---------------------------------------------------------------------------
@@ -212,7 +213,7 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   this->HighlightedBoxActor->GetProperty()->SetLineWidth(1.0f);
   this->HighlightedBoxActor->SetVisibility(visible);
 
-  this->Renderer->AddActor2D(this->HighlightedBoxActor);
+  //this->Renderer->AddActor2D(this->HighlightedBoxActor);
 }
 
 //-----------------------------------------------------------------------------
@@ -236,6 +237,7 @@ public:
 
   /// Update render window ImageMapper Z slice according to \a layoutType
   void updateRenderWindowItemsZIndex(int layoutType);
+  void SetItemInput(RenderWindowItem* item);
 
   vtkSmartPointer<vtkRenderWindow>              RenderWindow;
   int                                           RenderWindowRowCount;
@@ -250,7 +252,7 @@ public:
 #if (VTK_MAJOR_VERSION <= 5)
   vtkWeakPointer<vtkImageData>                  ImageData;
 #else
-  vtkWeakPointer<vtkAlgorithmOutput>            ImageDataPort;
+  vtkWeakPointer<vtkAlgorithmOutput>            ImageDataConnection;
 #endif
   double                                        ColorWindow;
   double                                        ColorLevel;
@@ -394,6 +396,29 @@ void vtkLightBoxRendererManager::vtkInternal::updateRenderWindowItemsZIndex(int 
     }
 }
 
+
+// --------------------------------------------------------------------------
+void vtkLightBoxRendererManager::vtkInternal
+::SetItemInput(RenderWindowItem* item)
+{
+#if (VTK_MAJOR_VERSION <= 5)
+  item->ImageMapper->SetInput(this->ImageData);
+#else
+  item->ImageMapper->SetInputConnection(this->ImageDataConnection);
+  bool hasViewProp = item->Renderer->HasViewProp(item->ImageActor);
+  if (!this->ImageDataConnection && hasViewProp)
+    {
+    item->Renderer->RemoveViewProp(item->ImageActor);
+    item->Renderer->RemoveViewProp(item->HighlightedBoxActor);
+    }
+  else if (this->ImageDataConnection && !hasViewProp)
+    {
+    item->Renderer->AddActor2D(item->ImageActor);
+    item->Renderer->AddActor2D(item->HighlightedBoxActor);
+    }
+#endif
+}
+
 //---------------------------------------------------------------------------
 // vtkLightBoxRendererManager methods
 
@@ -469,7 +494,7 @@ bool vtkLightBoxRendererManager::IsInitialized()
 #if (VTK_MAJOR_VERSION <= 5)
 void vtkLightBoxRendererManager::SetImageData(vtkImageData* newImageData)
 #else
-void vtkLightBoxRendererManager::SetImageDataPort(vtkAlgorithmOutput* newImageDataPort)
+void vtkLightBoxRendererManager::SetImageDataConnection(vtkAlgorithmOutput* newImageDataConnection)
 #endif
 {
   if (!this->IsInitialized())
@@ -477,36 +502,33 @@ void vtkLightBoxRendererManager::SetImageDataPort(vtkAlgorithmOutput* newImageDa
 #if (VTK_MAJOR_VERSION <= 5)
     vtkErrorMacro(<< "SetImageData failed - vtkLightBoxRendererManager is NOT initialized");
 #else
-    vtkErrorMacro(<< "SetImageDataPort failed - vtkLightBoxRendererManager is NOT initialized");
+    vtkErrorMacro(<< "SetImageDataConnection failed - vtkLightBoxRendererManager is NOT initialized");
 #endif
     return;
-    }
-  vtkInternal::RenderWindowItemListIt it;
-  for(it = this->Internal->RenderWindowItemList.begin();
-      it != this->Internal->RenderWindowItemList.end();
-      ++it)
-    {
-#if (VTK_MAJOR_VERSION <= 5)
-    (*it)->ImageMapper->SetInput(newImageData);
-#else
-    (*it)->ImageMapper->SetInputConnection(newImageDataPort);
-#endif
-    }
-
-#if (VTK_MAJOR_VERSION <= 5)
-  if (newImageData)
-#else
-  if (newImageDataPort)
-#endif
-    {
-    this->Internal->updateRenderWindowItemsZIndex(this->Internal->RenderWindowLayoutType);
     }
 
 #if (VTK_MAJOR_VERSION <= 5)
   this->Internal->ImageData = newImageData;
 #else
-  this->Internal->ImageDataPort = newImageDataPort;
+  this->Internal->ImageDataConnection = newImageDataConnection;
 #endif
+
+  vtkInternal::RenderWindowItemListIt it;
+  for(it = this->Internal->RenderWindowItemList.begin();
+      it != this->Internal->RenderWindowItemList.end();
+      ++it)
+    {
+    this->Internal->SetItemInput(*it);
+    }
+
+#if (VTK_MAJOR_VERSION <= 5)
+  if (newImageData)
+#else
+  if (newImageDataConnection)
+#endif
+    {
+    this->Internal->updateRenderWindowItemsZIndex(this->Internal->RenderWindowLayoutType);
+    }
 
   this->Modified();
 }
@@ -609,7 +631,7 @@ void vtkLightBoxRendererManager::SetRenderWindowLayoutType(int layoutType)
 #if (VTK_MAJOR_VERSION <= 5)
   if (this->Internal->ImageData)
 #else
-  if (this->Internal->ImageDataPort)
+  if (this->Internal->ImageDataConnection)
 #endif
     {
     this->Internal->updateRenderWindowItemsZIndex(layoutType);
@@ -661,11 +683,7 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
                                this->Internal->HighlightedBoxColor,
                                this->Internal->ColorWindow, this->Internal->ColorLevel);
       item->Renderer->SetLayer(this->Internal->RendererLayer);
-#if VTK_MAJOR_VERSION <= 5
-      item->ImageMapper->SetInput(this->Internal->ImageData);
-#else
-      item->ImageMapper->SetInputConnection(this->Internal->ImageDataPort);
-#endif
+      this->Internal->SetItemInput(item);
       this->Internal->RenderWindowItemList.push_back(item);
       --extraItem;
       }
@@ -691,7 +709,7 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
 #if (VTK_MAJOR_VERSION <= 5)
   if (this->Internal->ImageData)
 #else
-  if (this->Internal->ImageDataPort)
+  if (this->Internal->ImageDataConnection)
 #endif
     {
     this->Internal->updateRenderWindowItemsZIndex(this->Internal->RenderWindowLayoutType);

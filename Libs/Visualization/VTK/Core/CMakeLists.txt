@@ -83,11 +83,18 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkInteractionStyle
     vtkRenderingAnnotation
     vtkRenderingCore
-    vtkRenderingFreeTypeFontConfig
     vtkRenderingFreeTypeOpenGL
     vtkRenderingOpenGL
     vtkTestingRendering
     )
+  if (UNIX AND NOT APPLE)
+    find_package(FontConfig QUIET)
+    if (FONTCONFIG_FOUND)
+      list(APPEND VTK_LIBRARIES
+        vtkRenderingFreeTypeFontConfig
+        )
+    endif()
+  endif()
 else()
   set(VTK_LIBRARIES
     vtkCommon

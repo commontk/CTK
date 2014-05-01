@@ -104,7 +104,7 @@ public Q_SLOTS:
 #if (VTK_MAJOR_VERSION <= 5)
   void setImageData(vtkImageData* newImageData);
 #else
-  void setImageDataPort(vtkAlgorithmOutput* newImageDataPort);
+  void setImageDataConnection(vtkAlgorithmOutput* newImageDataPort);
 #endif
 
   /// Set highlightedBox color

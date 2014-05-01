@@ -131,10 +131,10 @@ void ctkVTKSliceView::setImageData(vtkImageData* newImageData)
   d->LightBoxRendererManager->SetImageData(newImageData);
 }
 #else
-void ctkVTKSliceView::setImageDataPort(vtkAlgorithmOutput* newImageDataPort)
+void ctkVTKSliceView::setImageDataConnection(vtkAlgorithmOutput* newImageDataPort)
 {
   Q_D(ctkVTKSliceView);
-  d->LightBoxRendererManager->SetImageDataPort(newImageDataPort);
+  d->LightBoxRendererManager->SetImageDataConnection(newImageDataPort);
 }
 #endif
 

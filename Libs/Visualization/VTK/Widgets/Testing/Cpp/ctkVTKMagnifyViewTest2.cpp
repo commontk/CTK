@@ -258,7 +258,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
     allSliceViews[i]->setImageData(image);
 #else
-    allSliceViews[i]->setImageDataPort(imagePort);
+    allSliceViews[i]->setImageDataConnection(imagePort);
 #endif
     allSliceViews[i]->setHighlightedBoxColor(Qt::yellow);
     allSliceViews[i]->scheduleRender();
@@ -392,7 +392,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   allSliceViews[0]->setImageData(gaussian->GetOutput());
 #else
-  allSliceViews[0]->setImageDataPort(gaussian->GetOutputPort());
+  allSliceViews[0]->setImageDataConnection(gaussian->GetOutputPort());
 #endif
   allSliceViews[0]->scheduleRender();
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
@@ -423,7 +423,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   allSliceViews[0]->setImageData(gaussian->GetOutput());
 #else
-  allSliceViews[0]->setImageDataPort(gaussian->GetOutputPort());
+  allSliceViews[0]->setImageDataConnection(gaussian->GetOutputPort());
 #endif
   allSliceViews[0]->scheduleRender();
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
@@ -439,7 +439,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
 #if (VTK_MAJOR_VERSION <= 5)
   allSliceViews[0]->setImageData(image);
 #else
-  allSliceViews[0]->setImageDataPort(imagePort);
+  allSliceViews[0]->setImageDataConnection(imagePort);
 #endif
   allSliceViews[0]->scheduleRender();
   QCursor::setPos(insideSlice0bottomRightCorner);

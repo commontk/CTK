@@ -97,22 +97,12 @@ set(KIT_resources
 if(${VTK_VERSION_MAJOR} GREATER 5)
   set(VTK_LIBRARIES
     vtkChartsCore
-    vtkCommonCore
-    vtkCommonDataModel
     vtkCommonMath
-    vtkCommonSystem
     vtkFiltersSources
-    vtkIOImage
     vtkImagingGeneral
     vtkImagingStatistics
-    vtkInteractionStyle
     vtkInteractionWidgets
-    vtkRenderingAnnotation
     vtkRenderingContext2D
-    vtkRenderingCore
-    vtkRenderingFreeTypeFontConfig
-    vtkRenderingFreeTypeOpenGL
-    vtkRenderingOpenGL
     vtkViewsContext2D
     vtkWrappingPythonCore
     vtkGUISupportQt

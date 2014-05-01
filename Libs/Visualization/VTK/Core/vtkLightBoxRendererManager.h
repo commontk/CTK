@@ -56,7 +56,7 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
 #if (VTK_MAJOR_VERSION <= 5)
   void SetImageData(vtkImageData* newImageData);
 #else
-  void SetImageDataPort(vtkAlgorithmOutput* newImageDataPort);
+  void SetImageDataConnection(vtkAlgorithmOutput* newImageDataConnection);
 #endif
 
   /// Get active camera
