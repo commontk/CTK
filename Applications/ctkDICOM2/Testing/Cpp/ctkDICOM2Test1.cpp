@@ -26,7 +26,7 @@
 #include <cstdlib>
 #include <iostream>
 
-int ctkDICOMTest1(int argc, char * argv [])
+int ctkDICOM2Test1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
   if (app.arguments().count() != 2)

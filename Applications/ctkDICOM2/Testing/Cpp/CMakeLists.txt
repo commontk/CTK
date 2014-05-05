@@ -1,7 +1,7 @@
 set(KIT ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
-  ctkDICOMTest1.cpp
+  ctkDICOM2Test1.cpp
   )
 
 SET (TestsToRun ${Tests})
@@ -18,4 +18,4 @@ target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 # Add Tests
 #
 
-SIMPLE_TEST(ctkDICOMTest1 $<TARGET_FILE:ctkDICOM>)
+SIMPLE_TEST(ctkDICOM2Test1 $<TARGET_FILE:ctkDICOM2>)
