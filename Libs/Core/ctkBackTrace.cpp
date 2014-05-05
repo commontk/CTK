@@ -147,7 +147,7 @@ QList<QString> ctkBackTrace::stackTrace() const
 #if defined(CTK_HAVE_EXECINFO)
 
 // --------------------------------------------------------------------------
-int ctkBackTracePrivate::trace(void** array, int n) const
+int ctkBackTracePrivate::trace(void** array, size_t n) const
 {
   return :: backtrace(array,n);
 }
@@ -165,7 +165,7 @@ int ctkBackTracePrivate::trace(void** array, size_t n) const
 #else
 
 // --------------------------------------------------------------------------
-int ctkBackTracePrivate::trace(void** /*array*/, int /*n*/) const
+int ctkBackTracePrivate::trace(void** /*array*/, size_t /*n*/) const
 {
   return 0;
 }
