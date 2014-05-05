@@ -64,8 +64,6 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
        
         # what is the filename without the extension
         filename_we = os.path.splitext(filename)[0]
-        
-        includes.append('#include "%s.h"' % filename_we)
 
         # Extract classname - NOTE: We assume the filename matches the associated class
         className = filename_we
@@ -133,7 +131,10 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
                     parentClassName = "QWidget"
                     if extra_verbose:
                         print("\tconstructor of the form: %s(QWidget * parent ... )" % className)
-                        
+
+        if parentClassName is not None:
+            includes.append('#include "%s.h"' % filename_we)
+
         # Generate PythonQtWrapper class
         if parentClassName == "QObject" or parentClassName == "QWidget":
             pythonqtWrappers.append(
