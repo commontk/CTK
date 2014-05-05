@@ -60,7 +60,7 @@ public:
   void setActiveCamera(vtkCamera * newActiveCamera);
 
   /// Get lightBoxRendererManager
-  vtkLightBoxRendererManager* lightBoxRendererManager() const;
+  Q_INVOKABLE vtkLightBoxRendererManager* lightBoxRendererManager() const;
 
   /// Get overlay renderer
   vtkRenderer* overlayRenderer() const;

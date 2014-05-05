@@ -133,7 +133,9 @@ void RenderWindowItem::SetupImageMapperActor(double colorWindow, double colorLev
   this->ImageActor->GetProperty()->SetDisplayLocationToBackground();
 
   // .. and add it to the renderer
-  //this->Renderer->AddActor2D(this->ImageActor.GetPointer());
+#if VTK_MAJOR_VERSION <= 5
+  this->Renderer->AddActor2D(this->ImageActor.GetPointer());
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -213,7 +215,9 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   this->HighlightedBoxActor->GetProperty()->SetLineWidth(1.0f);
   this->HighlightedBoxActor->SetVisibility(visible);
 
-  //this->Renderer->AddActor2D(this->HighlightedBoxActor);
+#if VTK_MAJOR_VERSION <= 5
+  this->Renderer->AddActor2D(this->HighlightedBoxActor);
+#endif
 }
 
 //-----------------------------------------------------------------------------
