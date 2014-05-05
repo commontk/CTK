@@ -39,6 +39,11 @@ ctkPushButtonPrivate::ctkPushButtonPrivate(ctkPushButton& object)
 }
 
 //-----------------------------------------------------------------------------
+ctkPushButtonPrivate::~ctkPushButtonPrivate()
+{
+}
+
+//-----------------------------------------------------------------------------
 void ctkPushButtonPrivate::init()
 {
 }
