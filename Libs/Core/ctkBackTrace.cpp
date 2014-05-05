@@ -73,7 +73,7 @@ struct ctkBackTracePrivate
 {
   std::vector<void *> Frames;
 
-  int trace(void** addresses, int size) const;
+  int trace(void** addresses, size_t size) const;
   std::string getSymbol(void* address) const;
 };
 
@@ -89,7 +89,7 @@ ctkBackTrace::ctkBackTrace(size_t framesNumber)
   if(framesNumber == 0)
     return;
   d->Frames.resize(framesNumber, 0);
-  int size = d->trace(&d->Frames.front(), framesNumber);
+  size_t size = d->trace(&d->Frames.front(), framesNumber);
   d->Frames.resize(size);
 }
 
@@ -155,7 +155,7 @@ int ctkBackTracePrivate::trace(void** array, int n) const
 #elif defined(Q_CC_MSVC)
 
 // --------------------------------------------------------------------------
-int ctkBackTracePrivate::trace(void** array, int n) const
+int ctkBackTracePrivate::trace(void** array, size_t n) const
 {
   if(n>=63)
     n=62;

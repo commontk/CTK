@@ -359,8 +359,8 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
     }
     // Select the last MOVE response to output meaningful status information
     OFIterator<RetrieveResponse*> it = responses.begin();
-  Uint32 numResults = responses.size();
-  for (Uint32 i = 1; i < numResults; i++)
+  size_t numResults = responses.size();
+  for (size_t i = 1; i < numResults; i++)
     {
     it++;
     }
@@ -480,8 +480,8 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     }
   // Select the last GET response to output meaningful status information
   OFIterator<RetrieveResponse*> it = responses.begin();
-  Uint32 numResults = responses.size();
-  for (Uint32 i = 1; i < numResults; i++)
+  size_t numResults = responses.size();
+  for (size_t i = 1; i < numResults; i++)
     {
     it++;
     }
