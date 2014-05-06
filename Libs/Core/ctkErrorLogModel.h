@@ -53,7 +53,7 @@ public:
 
   QString operator ()(LogLevel logLevel);
 
-  QString logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)const;
+  static QString logLevelAsString(ctkErrorLogLevel::LogLevel logLevel);
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkErrorLogLevel::LogLevels)
 
@@ -109,7 +109,8 @@ public:
     ThreadIdColumn,
     LogLevelColumn,
     OriginColumn,
-    DescriptionColumn
+    DescriptionColumn,
+    MaxColumn = DescriptionColumn
     };
 
   enum ItemDataRole{
@@ -155,9 +156,6 @@ public:
   /// \sa TerminalOutput
   void setTerminalOutputs(const TerminalOutputs& terminalOutput);
 
-  /// Remove all message from model
-  void clear();
-
   ctkErrorLogLevel::LogLevels logLevelFilter()const;
 
   void filterEntry(const ctkErrorLogLevel::LogLevels& logLevel = ctkErrorLogLevel::Unknown, bool disableFilter = false);
@@ -168,12 +166,34 @@ public:
   bool asynchronousLogging()const;
   void setAsynchronousLogging(bool value);
 
+  /// Return log entry information associated with \a row and \a column.
+  /// \internal
+  QVariant logEntryData(int row,
+                        int column = ctkErrorLogModel::DescriptionColumn,
+                        int role = Qt::DisplayRole) const;
+
+  /// Return log entry information associated with Description column.
+  /// \sa ctkErrorLogModel::DescriptionColumn, logEntryData()
+  Q_INVOKABLE QString logEntryDescription(int row) const;
+
+  /// Return current number of log entries.
+  /// \sa clear()
+  Q_INVOKABLE int logEntryCount() const;
+
 public Q_SLOTS:
+
+  /// Remove all log entries from model
+  void clear();
+
+  /// \sa logEntryGrouping(), asynchronousLogging()
   void addEntry(const QDateTime& currentDateTime, const QString& threadId,
                 ctkErrorLogLevel::LogLevel logLevel, const QString& origin, const QString& text);
 
 Q_SIGNALS:
   void logLevelFilterChanged();
+
+  /// \sa addEntry()
+  void entryAdded(ctkErrorLogLevel::LogLevel logLevel);
 
 protected:
   QScopedPointer<ctkErrorLogModelPrivate> d_ptr;

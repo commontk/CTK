@@ -21,6 +21,7 @@
 // Qt include
 #include <QDateTime>
 #include <QDir>
+#include <QEvent>
 #include <QFile>
 #include <QFileInfo>
 #include <QGridLayout>
@@ -28,6 +29,7 @@
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollBar>
+#include <QTimer>
 
 // ctk includes
 #include "ctkLogger.h"
@@ -52,6 +54,9 @@ static ctkLogger logger("org.commontk.Widgets.ctkThumbnailListWidget");
 ctkThumbnailListWidgetPrivate
 ::ctkThumbnailListWidgetPrivate(ctkThumbnailListWidget* parent)
   : q_ptr(parent)
+  , CurrentThumbnail(-1)
+  , ThumbnailSize(-1, -1)
+  , RequestRelayout(false)
 {
 }
 
@@ -67,9 +72,6 @@ void ctkThumbnailListWidgetPrivate::init()
   flowLayout->setHorizontalSpacing(4);
   this->ScrollAreaContentWidget->setLayout(flowLayout);
   this->ScrollArea->installEventFilter(q);
-
-  this->ThumbnailSize = QSize(-1, -1);
-  this->CurrentThumbnail = -1;
 }
 
 //----------------------------------------------------------------------------
@@ -93,6 +95,59 @@ void ctkThumbnailListWidgetPrivate::clearAllThumbnails()
 }
 
 //----------------------------------------------------------------------------
+void ctkThumbnailListWidgetPrivate::addThumbnail(ctkThumbnailLabel* thumbnail)
+{
+  Q_Q(ctkThumbnailListWidget);
+
+  this->ScrollAreaContentWidget->layout()->addWidget(thumbnail);
+  thumbnail->installEventFilter(q);
+  this->RequestRelayout = true;
+
+  q->connect(thumbnail, SIGNAL(selected(ctkThumbnailLabel)),
+    q, SLOT(onThumbnailSelected(ctkThumbnailLabel)));
+  q->connect(thumbnail, SIGNAL(selected(ctkThumbnailLabel)),
+    q, SIGNAL(selected(ctkThumbnailLabel)));
+  q->connect(thumbnail, SIGNAL(doubleClicked(ctkThumbnailLabel)),
+    q, SIGNAL(doubleClicked(ctkThumbnailLabel)));
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailListWidgetPrivate::updateScrollAreaContentWidgetSize(QSize size)
+{
+  QSize newViewportSize = size - QSize(2 * this->ScrollArea->lineWidth(),
+                                       2 * this->ScrollArea->lineWidth());
+
+  ctkFlowLayout* flowLayout = qobject_cast<ctkFlowLayout*>(
+    this->ScrollAreaContentWidget->layout());
+  newViewportSize = newViewportSize.expandedTo(flowLayout->minimumSize());
+  if (flowLayout->hasHeightForWidth())
+    {
+    int newViewPortHeight = newViewportSize.height();
+    newViewportSize.rheight() = flowLayout->heightForWidth( newViewportSize.width() );
+    if (newViewportSize.height() > newViewPortHeight)
+      {
+      // The new width is too narrow, to fit everything, a vertical scrollbar
+      // is needed. Recompute with the scrollbar width.
+      newViewportSize.rwidth() -= this->ScrollArea->verticalScrollBar()->sizeHint().width();
+      newViewportSize.rheight() = flowLayout->heightForWidth( newViewportSize.width() );
+      }
+    }
+  else if (flowLayout->hasWidthForHeight())
+    {
+    int newViewPortWidth = newViewportSize.width();
+    newViewportSize.rwidth() = flowLayout->widthForHeight( newViewportSize.height() );
+    if (newViewportSize.width() > newViewPortWidth)
+      {
+      // The new height is too narrow, to fit everything, an horizontal scrollbar
+      // is needed. Recompute with the scrollbar height.
+      newViewportSize.rheight() -= this->ScrollArea->horizontalScrollBar()->sizeHint().height();
+      newViewportSize.rwidth() = flowLayout->widthForHeight( newViewportSize.height() );
+      }
+    }
+  this->ScrollAreaContentWidget->resize(newViewportSize);
+}
+
+//----------------------------------------------------------------------------
 // ctkThumbnailListWidget methods
 
 //----------------------------------------------------------------------------
@@ -106,9 +161,10 @@ ctkThumbnailListWidget::ctkThumbnailListWidget(QWidget* _parent):
 }
 
 //----------------------------------------------------------------------------
-ctkThumbnailListWidget::ctkThumbnailListWidget(ctkThumbnailListWidgetPrivate *_ptr, QWidget *_parent):
-  Superclass(_parent),
-  d_ptr(_ptr)
+ctkThumbnailListWidget
+::ctkThumbnailListWidget(ctkThumbnailListWidgetPrivate *_ptr, QWidget *_parent)
+  : Superclass(_parent)
+  , d_ptr(_ptr)
 {
   Q_D(ctkThumbnailListWidget);
 
@@ -124,24 +180,26 @@ ctkThumbnailListWidget::~ctkThumbnailListWidget()
 }
 
 //----------------------------------------------------------------------------
-void ctkThumbnailListWidget::addThumbnails(QList<QPixmap> thumbnails)
+void ctkThumbnailListWidget::addThumbnails(const QList<QPixmap>& thumbnails)
 {
-  Q_D(ctkThumbnailListWidget);
   for(int i=0; i<thumbnails.count(); i++)
     {
-    ctkThumbnailLabel* widget = new ctkThumbnailLabel(d->ScrollAreaContentWidget);
-    widget->setText("");
-    if(d->ThumbnailSize.isValid())
-      {
-      widget->setFixedSize(d->ThumbnailSize);
-      }
-    widget->setPixmap(thumbnails[i]);
-    d->ScrollAreaContentWidget->layout()->addWidget(widget);
-
-    this->connect(widget, SIGNAL(selected(ctkThumbnailLabel)), this, SLOT(onThumbnailSelected(ctkThumbnailLabel)));
-    this->connect(widget, SIGNAL(selected(ctkThumbnailLabel)), this, SIGNAL(selected(ctkThumbnailLabel)));
-    this->connect(widget, SIGNAL(doubleClicked(ctkThumbnailLabel)), this, SIGNAL(doubleClicked(ctkThumbnailLabel)));
+    this->addThumbnail(thumbnails[i]);
     }
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailListWidget::addThumbnail(const QPixmap& pixmap, const QString& label)
+{
+  Q_D(ctkThumbnailListWidget);
+  ctkThumbnailLabel* widget = new ctkThumbnailLabel(d->ScrollAreaContentWidget);
+  widget->setText(label);
+  if(d->ThumbnailSize.isValid())
+    {
+    widget->setFixedSize(d->ThumbnailSize);
+    }
+  widget->setPixmap(pixmap);
+  d->addThumbnail(widget);
 }
 
 //----------------------------------------------------------------------------
@@ -245,36 +303,27 @@ void ctkThumbnailListWidget::clearThumbnails()
 void ctkThumbnailListWidget::resizeEvent(QResizeEvent* event)
 {
   Q_D(ctkThumbnailListWidget);
+  d->updateScrollAreaContentWidgetSize(event->size());
+}
 
-  QSize newViewportSize = event->size() - QSize(2 * d->ScrollArea->lineWidth(),
-                                                2 * d->ScrollArea->lineWidth());
+//----------------------------------------------------------------------------
+bool ctkThumbnailListWidget::eventFilter(QObject* watched, QEvent* event)
+{
+  Q_D(ctkThumbnailListWidget);
+  if (d->RequestRelayout &&
+      qobject_cast<ctkThumbnailLabel*>(watched) &&
+      event->type() == QEvent::Show)
+    {
+    d->RequestRelayout = false;
+    watched->removeEventFilter(this);
+    QTimer::singleShot(0, this, SLOT(updateLayout()));
+    }
+  return this->Superclass::eventFilter(watched, event);
+}
 
-  ctkFlowLayout* flowLayout = qobject_cast<ctkFlowLayout*>(
-    d->ScrollAreaContentWidget->layout());
-  newViewportSize = newViewportSize.expandedTo(flowLayout->minimumSize());
-  if (flowLayout->hasHeightForWidth())
-    {
-    int newViewPortHeight = newViewportSize.height();
-    newViewportSize.rheight() = flowLayout->heightForWidth( newViewportSize.width() );
-    if (newViewportSize.height() > newViewPortHeight)
-      {
-      // The new width is too narrow, to fit everything, a vertical scrollbar
-      // is needed. Recompute with the scrollbar width.
-      newViewportSize.rwidth() -= d->ScrollArea->verticalScrollBar()->sizeHint().width();
-      newViewportSize.rheight() = flowLayout->heightForWidth( newViewportSize.width() );
-      }
-    }
-  else if (flowLayout->hasWidthForHeight())
-    {
-    int newViewPortWidth = newViewportSize.width();
-    newViewportSize.rwidth() = flowLayout->widthForHeight( newViewportSize.height() );
-    if (newViewportSize.width() > newViewPortWidth)
-      {
-      // The new height is too narrow, to fit everything, an horizontal scrollbar
-      // is needed. Recompute with the scrollbar height.
-      newViewportSize.rheight() -= d->ScrollArea->horizontalScrollBar()->sizeHint().height();
-      newViewportSize.rwidth() = flowLayout->widthForHeight( newViewportSize.height() );
-      }
-    }
-  d->ScrollAreaContentWidget->resize(newViewportSize);
+//----------------------------------------------------------------------------
+void ctkThumbnailListWidget::updateLayout()
+{
+  Q_D(ctkThumbnailListWidget);
+  d->updateScrollAreaContentWidgetSize(this->size());
 }

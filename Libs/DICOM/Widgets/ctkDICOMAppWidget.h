@@ -29,14 +29,17 @@
 class ctkDICOMAppWidgetPrivate;
 class ctkThumbnailLabel;
 class QModelIndex;
+class ctkDICOMDatabase;
 
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMAppWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(ctkDICOMDatabase* database READ database)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(bool searchWidgetPopUpMode READ searchWidgetPopUpMode WRITE setSearchWidgetPopUpMode)
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
+  Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
 
 public:
   typedef QWidget Superclass;
@@ -63,10 +66,22 @@ public:
   /// search widget to be displayed as pop-up widget
   void setSearchWidgetPopUpMode(bool flag);
   bool searchWidgetPopUpMode();
+  ctkDICOMDatabase* database();
+
+  /// Option to show or not import summary dialog.
+  /// Since the summary dialog is modal, we give the option
+  /// of disabling it for batch modes or testing.
+  void setDisplayImportSummary(bool);
+  bool displayImportSummary();
+  /// Accessors to status of last directory import operation
+  int patientsAddedDuringImport();
+  int studiesAddedDuringImport();
+  int seriesAddedDuringImport();
+  int instancesAddedDuringImport();
 
 public Q_SLOTS:
   void setDatabaseDirectory(const QString& directory);
-  void onAddToDatabase();
+  void onFileIndexed(const QString& filePath);
 
   void openImportDialog();
   void openExportDialog();
@@ -76,6 +91,18 @@ public Q_SLOTS:
   void suspendModel();
   void resumeModel();
   void resetModel();
+
+  /// Import a directory - this is used when the user selects a directory
+  /// from the Import Dialog, but can also be used externally to trigger
+  /// an import (i.e. for testing or to support drag-and-drop)
+  void onImportDirectory(QString directory);
+
+  /// slots to capture status updates from the database during an 
+  /// import operation
+  void onPatientAdded(int, QString, QString, QString);
+  void onStudyAdded(QString);
+  void onSeriesAdded(QString);
+  void onInstanceAdded(QString);
 
 Q_SIGNALS:
   /// Emited when directory is changed
@@ -88,7 +115,6 @@ Q_SIGNALS:
 protected:
     QScopedPointer<ctkDICOMAppWidgetPrivate> d_ptr;
 protected Q_SLOTS:
-    void onImportDirectory(QString directory);
     void onModelSelected(const QModelIndex& index);
 
     /// To be called when a thumbnail in thumbnail list widget is selected
@@ -104,7 +130,6 @@ protected Q_SLOTS:
     void onPreviousSeries();
     void onNextStudy();
     void onPreviousStudy();
-
     /// To be called when dialog finishes
     void onQueryRetrieveFinished();
 

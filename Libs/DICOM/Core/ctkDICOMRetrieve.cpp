@@ -29,7 +29,7 @@
 // DCMTK includes
 #include "dcmtk/dcmnet/dimse.h"
 #include "dcmtk/dcmnet/diutil.h"
-#include <dcmtk/dcmnet/scu.h>
+#include "ctkDcmSCU.h"
 
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcfilefo.h>
@@ -359,8 +359,8 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
     }
     // Select the last MOVE response to output meaningful status information
     OFIterator<RetrieveResponse*> it = responses.begin();
-  Uint32 numResults = responses.size();
-  for (Uint32 i = 1; i < numResults; i++)
+  size_t numResults = responses.size();
+  for (size_t i = 1; i < numResults; i++)
     {
     it++;
     }
@@ -480,8 +480,8 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     }
   // Select the last GET response to output meaningful status information
   OFIterator<RetrieveResponse*> it = responses.begin();
-  Uint32 numResults = responses.size();
-  for (Uint32 i = 1; i < numResults; i++)
+  size_t numResults = responses.size();
+  for (size_t i = 1; i < numResults; i++)
     {
     it++;
     }
@@ -503,8 +503,9 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
 // ctkDICOMRetrieve methods
 
 //------------------------------------------------------------------------------
-ctkDICOMRetrieve::ctkDICOMRetrieve()
-   : d_ptr(new ctkDICOMRetrievePrivate(*this))
+ctkDICOMRetrieve::ctkDICOMRetrieve(QObject* parent)
+  : QObject(parent),
+    d_ptr(new ctkDICOMRetrievePrivate(*this))
 {
   Q_D(ctkDICOMRetrieve);
   d->SCU.retrieve = this; // give the dcmtk level access to this for emitting signals
@@ -603,6 +604,13 @@ QString ctkDICOMRetrieve::moveDestinationAETitle()const
 {
   Q_D(const ctkDICOMRetrieve);
   return d->MoveDestinationAETitle;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::setDatabase(ctkDICOMDatabase& dicomDatabase)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->Database = QSharedPointer<ctkDICOMDatabase>(&dicomDatabase);
 }
 
 //------------------------------------------------------------------------------

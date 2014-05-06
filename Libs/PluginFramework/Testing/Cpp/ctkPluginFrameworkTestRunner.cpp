@@ -165,7 +165,9 @@ public:
     while(dirIter.hasNext())
     {
       dirIter.next();
-      if (dirIter.fileName().contains(name))
+      QString fileName = dirIter.fileName().mid(3); // strip the "lib" prefix
+      fileName.truncate(fileName.lastIndexOf('.')); // remove the suffix
+      if (fileName == name)
       {
         try
         {
@@ -253,6 +255,7 @@ void ctkPluginFrameworkTestRunner::init(const ctkProperties& fwProps)
   foreach(ctkPluginFrameworkTestRunnerPrivate::InstallCandPair candidate,
           d->installCandidates)
   {
+    qDebug() << "Installing" << candidate.first << "," << candidate.second;
     d->installPlugin(candidate.first, candidate.second);
   }
 }

@@ -2,7 +2,7 @@ set(KIT ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMAppWidgetTest1.cpp
-  ctkDICOMDatasetViewTest1.cpp
+  ctkDICOMItemViewTest1.cpp
   ctkDICOMDirectoryListWidgetTest1.cpp
   ctkDICOMImageTest1.cpp
   ctkDICOMImportWidgetTest1.cpp
@@ -26,8 +26,8 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 # Add Tests
 #
 
-SIMPLE_TEST(ctkDICOMAppWidgetTest1)
-SIMPLE_TEST(ctkDICOMDatasetViewTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
+SIMPLE_TEST(ctkDICOMAppWidgetTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD)
+SIMPLE_TEST(ctkDICOMItemViewTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMDirectoryListWidgetTest1)
 SIMPLE_TEST(ctkDICOMImageTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMImportWidgetTest1)
@@ -38,4 +38,4 @@ SIMPLE_TEST(ctkDICOMModelTest2
   )
 SIMPLE_TEST(ctkDICOMQueryRetrieveWidgetTest1)
 SIMPLE_TEST(ctkDICOMQueryResultsTabWidgetTest1)
-SIMPLE_TEST(ctkDICOMThumbnailListWidgetTest1)
+SIMPLE_TEST(ctkDICOMThumbnailListWidgetTest1 ${CMAKE_CURRENT_BINARY_DIR}/dicom.db ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql)

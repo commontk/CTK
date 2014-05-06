@@ -7,7 +7,7 @@ set(SCRIPTS
   wrappedSlotTest.py
   )
 
-# Since QTimer is part of QtCore and is used in both 'ctkWidgetsTest.py' and 'derivedQWidgetTest.py', 
+# Since QTimer is part of QtCore and is used in both 'ctkWidgetsTest.py' and 'derivedQWidgetTest.py',
 # these two tests should be included only if CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE is ON
 
 if(CTK_LIB_Widgets AND CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE)
@@ -30,7 +30,7 @@ endif()
 foreach(script ${SCRIPTS})
   get_filename_component(scriptname ${script} NAME_WE)
   add_test(
-    NAME ctkSimplePythonShell_${scriptname} 
+    NAME ctkSimplePythonShell_${scriptname}
     COMMAND $<TARGET_FILE:ctkSimplePythonShell> ${CMAKE_CURRENT_SOURCE_DIR}/${script}
     )
   set_property(TEST ctkSimplePythonShell_${scriptname} PROPERTY LABELS ${KIT})

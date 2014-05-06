@@ -39,8 +39,8 @@ QRect ctkHostedAppPlaceholderWidget::getAbsolutePosition()
   int y = 0;
   do
     {
-    x = x + current->x();
-    y = y + current->y();
+    x = x + current->geometry().x();
+    y = y + current->geometry().y();
     current = dynamic_cast<QWidget*>(current->parent());
     }
   while (current);

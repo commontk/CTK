@@ -40,6 +40,8 @@ set(PLUGIN_SRCS
   ctkDoubleRangeSliderPlugin.h
   ctkDoubleSliderPlugin.cpp
   ctkDoubleSliderPlugin.h
+  ctkDoubleSpinBoxPlugin.cpp
+  ctkDoubleSpinBoxPlugin.h
   ctkDynamicSpacerPlugin.cpp
   ctkDynamicSpacerPlugin.h
   ctkExpandButtonPlugin.cpp
@@ -72,6 +74,8 @@ set(PLUGIN_SRCS
   ctkPathListWidgetPlugin.h
   ctkPopupWidgetPlugin.cpp
   ctkPopupWidgetPlugin.h
+  ctkPushButtonPlugin.cpp
+  ctkPushButtonPlugin.h
   ctkRangeSliderPlugin.cpp
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.cpp
@@ -114,6 +118,7 @@ set(PLUGIN_MOC_SRCS
   ctkDirectoryButtonPlugin.h
   ctkDoubleRangeSliderPlugin.h
   ctkDoubleSliderPlugin.h
+  ctkDoubleSpinBoxPlugin.h
   ctkDynamicSpacerPlugin.h
   ctkExpandButtonPlugin.h
   ctkExpandableWidgetPlugin.h
@@ -130,6 +135,7 @@ set(PLUGIN_MOC_SRCS
   ctkPathListButtonsWidgetPlugin.h
   ctkPathListWidgetPlugin.h
   ctkPopupWidgetPlugin.h
+  ctkPushButtonPlugin.h
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.h
   ctkThumbnailLabelPlugin.h

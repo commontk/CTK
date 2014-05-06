@@ -32,12 +32,13 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMQuery.h"
+#include "ctkDICOMUtil.h"
 #include "ctkLogger.h"
 
 // DCMTK includes
 #include "dcmtk/dcmnet/dimse.h"
 #include "dcmtk/dcmnet/diutil.h"
-#include <dcmtk/dcmnet/scu.h>
+#include "ctkDcmSCU.h"
 
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcfilefo.h>
@@ -237,9 +238,8 @@ QStringList ctkDICOMQuery::studyInstanceUIDQueried()const
 //------------------------------------------------------------------------------
 bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 {
-  //// turn on logging if needed for debug:
-  //dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();
-  //log.setLogLevel(OFLogger::DEBUG_LOG_LEVEL);
+  // turn on logging if needed for debug:
+  //ctk::setDICOMLogLevel(ctkErrorLogLevel::Debug);
 
   // ctkDICOMDatabase::setDatabase ( database );
   Q_D(ctkDICOMQuery);

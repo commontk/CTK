@@ -23,12 +23,15 @@
 #include "ctkVTKSurfaceMaterialPropertyWidgetPlugin.h"
 
 //-----------------------------------------------------------------------------
-ctkVTKSurfaceMaterialPropertyWidgetPlugin::ctkVTKSurfaceMaterialPropertyWidgetPlugin(QObject *_parent):QObject(_parent)
+ctkVTKSurfaceMaterialPropertyWidgetPlugin
+::ctkVTKSurfaceMaterialPropertyWidgetPlugin(QObject* pluginParent)
+ : QObject(pluginParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkVTKSurfaceMaterialPropertyWidgetPlugin::createWidget(QWidget *parentWidget)
+QWidget *ctkVTKSurfaceMaterialPropertyWidgetPlugin
+::createWidget(QWidget *parentWidget)
 {
   ctkVTKSurfaceMaterialPropertyWidget* newWidget =
     new ctkVTKSurfaceMaterialPropertyWidget(parentWidget);

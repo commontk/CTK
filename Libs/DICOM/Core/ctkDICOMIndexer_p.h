@@ -39,17 +39,9 @@ public:
   ctkDICOMIndexerPrivate(ctkDICOMIndexer&);
   ~ctkDICOMIndexerPrivate();
 
-public Q_SLOTS:
-
-  void OnProgress(int progress);
 public:
-
   ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator;
   bool                    Canceled;
-  QStringList FilesToIndex;
-  QFutureWatcher<void> DirectoryImportWatcher;
-  QFuture<void> DirectoryImportFuture;
-  int CurrentPercentageProgress;
 };
 
 

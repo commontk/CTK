@@ -56,6 +56,10 @@ QImage ctk::grabWidget(QWidget* widget, QRect rectangle)
   painter.begin(&widgetImage);
   foreach(QGLWidget* glWidget, widget->findChildren<QGLWidget*>())
     {
+    if (!glWidget->isVisible())
+      {
+      continue;
+      }
     QRect subWidgetRect = QRect(glWidget->mapTo(widget, QPoint(0,0)), glWidget->size());
     if (!rectangle.intersects(subWidgetRect))
       {

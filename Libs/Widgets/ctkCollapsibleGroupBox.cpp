@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QApplication>
 #include <QDebug>
 #include <QChildEvent>
 #include <QMouseEvent>
@@ -30,13 +31,15 @@
 #include "ctkCollapsibleGroupBox.h"
 
 #if QT_VERSION >= 0x040600
-#include <QProxyStyle>
+#include "ctkProxyStyle.h"
 
 //-----------------------------------------------------------------------------
-class ctkCollapsibleGroupBoxStyle:public QProxyStyle
+class ctkCollapsibleGroupBoxStyle:public ctkProxyStyle
 {
-  public:
-  ctkCollapsibleGroupBoxStyle(QStyle* style = 0) : QProxyStyle(style)
+public:
+  typedef ctkProxyStyle Superclass;
+  ctkCollapsibleGroupBoxStyle(QStyle* style = 0, QObject* parent =0)
+    : Superclass(style, parent)
   {
   }
   virtual void drawPrimitive(PrimitiveElement pe, const QStyleOption * opt, QPainter * p, const QWidget * widget = 0) const
@@ -46,11 +49,11 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
       const ctkCollapsibleGroupBox* groupBox= qobject_cast<const ctkCollapsibleGroupBox*>(widget);
       if (groupBox)
         {
-        this->QProxyStyle::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowDown : QStyle::PE_IndicatorArrowRight, opt, p, widget);
+        this->Superclass::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowDown : QStyle::PE_IndicatorArrowRight, opt, p, widget);
         return;
         }
       }
-    this->QProxyStyle::drawPrimitive(pe, opt, p, widget);
+    this->Superclass::drawPrimitive(pe, opt, p, widget);
   }
   virtual int pixelMetric(PixelMetric metric, const QStyleOption * option, const QWidget * widget) const
   {
@@ -62,11 +65,9 @@ class ctkCollapsibleGroupBoxStyle:public QProxyStyle
         return groupBox->fontMetrics().height();
         }
       }
-    return this->QProxyStyle::pixelMetric(metric, option, widget);
+    return this->Superclass::pixelMetric(metric, option, widget);
   }
 };
-#else
-
 #endif
 
 //-----------------------------------------------------------------------------
@@ -92,9 +93,14 @@ public:
   /// who is changing children's visibility.
   bool     ForcingVisibility;
   /// Sometimes the creation of the widget is not done inside setVisible,
-  /// as we need to do special processing the first time the button is
+  /// as we need to do special processing the first time the groupBox is
   /// setVisible, we track its created state with the variable
   bool     IsStateCreated;
+
+#if QT_VERSION >= 0x040600
+  /// Pointer to keep track of the proxy style
+  ctkCollapsibleGroupBoxStyle* GroupBoxStyle;
+#endif
 };
 
 //-----------------------------------------------------------------------------
@@ -106,6 +112,9 @@ ctkCollapsibleGroupBoxPrivate::ctkCollapsibleGroupBoxPrivate(
   this->IsStateCreated = false;
   this->MaxHeight = 0;
   this->CollapsedHeight = 14;
+#if QT_VERSION >= 0x040600
+  this->GroupBoxStyle = 0;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -117,7 +126,11 @@ void ctkCollapsibleGroupBoxPrivate::init()
 
   this->MaxHeight = q->maximumHeight();
 #if QT_VERSION >= 0x040600
-  q->setStyle(new ctkCollapsibleGroupBoxStyle(0));
+  QWidget* parent = q->parentWidget();
+  QStyle* parentStyle = (parent) ? parent->style() : qApp->style();
+  this->GroupBoxStyle = new ctkCollapsibleGroupBoxStyle(parentStyle, qApp);
+  q->setStyle(this->GroupBoxStyle);
+  this->GroupBoxStyle->ensureBaseStyle();
 #else
   this->setStyleSheet(
     "ctkCollapsibleGroupBox::indicator:checked{"
@@ -150,11 +163,17 @@ void ctkCollapsibleGroupBoxPrivate::setChildVisibility(QWidget* childWidget)
     visible = false;
     }
 
-  childWidget->setVisible(visible);
+  // Setting Qt::WA_WState_Visible to true during child construction can have
+  // undesirable side effects.
+  if (childWidget->testAttribute(Qt::WA_WState_Created) ||
+      !visible)
+    {
+    childWidget->setVisible(visible);
+    }
 
   // setVisible() has set the ExplicitShowHide flag, restore it as we don't want
   // to make it like it was an explicit visible set because we want
-  // to allow the children to be explicitly hidden by the user.
+  // to allow any children to be explicitly hidden by the user.
   if ((!childWidget->property("visibilityToParent").isValid() ||
       childWidget->property("visibilityToParent").toBool()))
     {

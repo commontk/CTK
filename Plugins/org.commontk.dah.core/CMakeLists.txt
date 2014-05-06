@@ -2,9 +2,10 @@ project(org_commontk_dah_core)
 
 #message(QtSOAP_LIBRARY_DIRS:${QtSOAP_LIBRARY_DIRS})
 
-set(PLUGIN_export_directive "org_commontk_dah_core_EXPORT")
+SET(PLUGIN_export_directive "org_commontk_dah_core_EXPORT")
 
 set(PLUGIN_SRCS
+  ctkDicomAbstractExchangeCache.cpp
   ctkDicomAppHostingCorePlugin.cpp
   ctkDicomAppHostingCorePlugin_p.h
   ctkDicomAppHostingTypes.cpp
@@ -27,6 +28,7 @@ set(PLUGIN_SRCS
 
 # Files which should be processed by Qts moc
 set(PLUGIN_MOC_SRCS
+  ctkDicomAbstractExchangeCache.h
   ctkDicomAppHostingCorePlugin_p.h
   ctkSimpleSoapClient.h
   ctkSimpleSoapServer.h

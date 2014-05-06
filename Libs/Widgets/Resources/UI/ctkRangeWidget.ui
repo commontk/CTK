@@ -24,7 +24,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QDoubleSpinBox" name="MinimumSpinBox"/>
+    <widget class="ctkDoubleSpinBox" name="MinimumSpinBox"/>
    </item>
    <item row="0" column="1">
     <widget class="ctkDoubleRangeSlider" name="Slider">
@@ -34,7 +34,7 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QDoubleSpinBox" name="MaximumSpinBox"/>
+    <widget class="ctkDoubleSpinBox" name="MaximumSpinBox"/>
    </item>
   </layout>
  </widget>
@@ -43,6 +43,11 @@
    <class>ctkDoubleRangeSlider</class>
    <extends>QWidget</extends>
    <header>ctkDoubleRangeSlider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

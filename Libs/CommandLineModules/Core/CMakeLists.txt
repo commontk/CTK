@@ -23,6 +23,7 @@ set(KIT_SRCS
   ctkCmdLineModuleDescription_p.h
   ctkCmdLineModuleDirectoryWatcher.cpp
   ctkCmdLineModuleDirectoryWatcher_p.h
+  ctkCmdLineModuleFrontend.h
   ctkCmdLineModuleFrontend.cpp
   ctkCmdLineModuleFrontendFactory.cpp
   ctkCmdLineModuleFuture.cpp
@@ -37,6 +38,7 @@ set(KIT_SRCS
   ctkCmdLineModuleParameterParsers_p.h
   ctkCmdLineModulePathBuilder.cpp
   ctkCmdLineModuleResult.cpp
+  ctkCmdLineModuleXmlProgressWatcher.h
   ctkCmdLineModuleXmlProgressWatcher.cpp
   ctkCmdLineModuleReference.cpp
   ctkCmdLineModuleRunException.cpp
@@ -96,7 +98,7 @@ ctkMacroBuildLib(
 
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

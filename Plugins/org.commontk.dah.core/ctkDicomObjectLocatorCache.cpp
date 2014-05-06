@@ -91,7 +91,7 @@ bool ctkDicomObjectLocatorCache::isCached(const ctkDicomAppHosting::AvailableDat
   // Loop over top level object descriptors
   foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, availableData.objectDescriptors)
     {
-    if (!hasCachedData) { hasCachedData = true; }
+    hasCachedData = true;
     if (!uuids.contains(objectDescriptor.descriptorUUID))
       {
       return false;
@@ -114,9 +114,9 @@ bool ctkDicomObjectLocatorCache::isCached(const ctkDicomAppHosting::AvailableDat
     {
       // Loop over study level object descriptors
       foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, study.objectDescriptors)
-      {
-          if (!hasCachedData) { hasCachedData = true; }
-          if (!uuids.contains(objectDescriptor.descriptorUUID))
+        {
+        hasCachedData = true;
+        if (!uuids.contains(objectDescriptor.descriptorUUID))
           {
           return false;
           }
@@ -126,9 +126,9 @@ bool ctkDicomObjectLocatorCache::isCached(const ctkDicomAppHosting::AvailableDat
       {
         // Loop over series level object descriptors
         foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, series.objectDescriptors)
-        {
-            if (!hasCachedData) { hasCachedData = true; }
-            if (!uuids.contains(objectDescriptor.descriptorUUID))
+          {
+          hasCachedData = true;
+          if (!uuids.contains(objectDescriptor.descriptorUUID))
             {
             return false;
             }

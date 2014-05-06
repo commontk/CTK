@@ -85,7 +85,7 @@ struct ctkCmdLineModuleManagerPrivate
   QHash<QUrl, ctkCmdLineModuleReference> LocationToRef;
   QScopedPointer<ctkCmdLineModuleCache> ModuleCache;
 
-  const ctkCmdLineModuleManager::ValidationMode ValidationMode;
+  ctkCmdLineModuleManager::ValidationMode ValidationMode;
 };
 
 //----------------------------------------------------------------------------
@@ -104,6 +104,14 @@ ctkCmdLineModuleManager::ValidationMode ctkCmdLineModuleManager::validationMode(
 {
   return d->ValidationMode;
 }
+
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleManager::setValidationMode(const ValidationMode& mode)
+{
+  d->ValidationMode = mode;
+}
+
 
 //----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
@@ -151,10 +159,13 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
 
   bool fromCache = false;
   qint64 newTimeStamp = 0;
+  qint64 cacheTimeStamp = 0;
   if (d->ModuleCache)
   {
     newTimeStamp = backend->timeStamp(location);
-    if (d->ModuleCache->timeStamp(location) < newTimeStamp)
+    cacheTimeStamp = d->ModuleCache->timeStamp(location);
+    if (cacheTimeStamp < 0                // i.e. timestamp is invalid
+        || cacheTimeStamp < newTimeStamp) // i.e. timestamp is genuinely out of date
     {
       // newly fetch the XML description
       try
@@ -221,7 +232,7 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
     }
     else
     {
-      if (d->ModuleCache && newTimeStamp > 0)
+      if (d->ModuleCache && newTimeStamp > 0 && !fromCache)
       {
         // successfully validated the xml, cache it
         d->ModuleCache->cacheXmlDescription(location, newTimeStamp, xml);
@@ -271,6 +282,26 @@ void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& 
   }
   emit moduleUnregistered(ref);
 }
+
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleManager::clearCache()
+{
+  d->ModuleCache->clearCache();
+}
+
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleManager::reloadModules()
+{
+  foreach(const QUrl &location, d->LocationToRef.keys())
+  {
+    ctkCmdLineModuleReference ref = d->LocationToRef[location];
+    this->unregisterModule(ref);
+    this->registerModule(location);
+  }
+}
+
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleReference ctkCmdLineModuleManager::moduleReference(const QUrl &location) const

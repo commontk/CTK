@@ -162,14 +162,24 @@ QRegExp ctk::nameFiltersToRegExp(const QStringList& nameFilters)
 }
 
 //-----------------------------------------------------------------------------
-int ctk::significantDecimals(double value)
+int ctk::significantDecimals(double value, int defaultDecimals)
 {
+  if (value == 0.
+      || qAbs(value) == std::numeric_limits<double>::infinity())
+    {
+    return 0;
+    }
+  if (value != value) // is NaN
+    {
+    return -1;
+    }
   QString number = QString::number(value, 'f', 16);
   QString fractional = number.section('.', 1, 1);
   Q_ASSERT(fractional.length() == 16);
   QChar previous;
   int previousRepeat=0;
   bool only0s = true;
+  bool isUnit = value > -1. && value < 1.;
   for (int i = 0; i < fractional.length(); ++i)
     {
     QChar digit = fractional.at(i);
@@ -190,9 +200,16 @@ int ctk::significantDecimals(double value)
     // Last digit
     if (i == fractional.length() - 1)
       {
-      if (previousRepeat > 2)
+      // If we are here, that means that the right number of significant
+      // decimals for the number has not been figured out yet.
+      if (previousRepeat > 2 && !(only0s && isUnit) )
         {
         return i - previousRepeat;
+        }
+      // If defaultDecimals has been provided, just use it.
+      if (defaultDecimals >= 0)
+        {
+        return defaultDecimals;
         }
       return fractional.length();
       }
@@ -215,7 +232,11 @@ int ctk::significantDecimals(double value)
 int ctk::orderOfMagnitude(double value)
 {
   value = qAbs(value);
-  if (value == 0.)
+  if (value == 0.
+      || value == std::numeric_limits<double>::infinity()
+      || value != value // is NaN
+      || value < std::numeric_limits<double>::epsilon() // is tool small to compute
+  )
     {
     return std::numeric_limits<int>::min();
     }
@@ -232,8 +253,9 @@ int ctk::orderOfMagnitude(double value)
     magnitudeFactor = 0.1;
     }
 
+  double epsilon = std::numeric_limits<double>::epsilon();
   while ( (magnitudeStep > 0 && value >= magnitude) ||
-          (magnitudeStep < 0 && value < magnitude - std::numeric_limits<double>::epsilon()))
+          (magnitudeStep < 0 && value < magnitude - epsilon))
     {
     magnitude *= magnitudeFactor;
     magnitudeOrder += magnitudeStep;
@@ -243,13 +265,17 @@ int ctk::orderOfMagnitude(double value)
 }
 
 //-----------------------------------------------------------------------------
-double ctk::closestPowerOfTen(double value)
+double ctk::closestPowerOfTen(double _value)
 {
-  double sign = value >= 0. ? 1 : -1;
-  value = qAbs(value);
-  if (value == 0.)
+  const double sign = _value >= 0. ? 1 : -1;
+  const double value = qAbs(_value);
+  if (value == 0.
+      || value == std::numeric_limits<double>::infinity()
+      || value != value // is NaN
+      || value < std::numeric_limits<double>::epsilon() // is denormalized
+  )
     {
-    return 0.;
+    return _value;
     }
 
   double magnitude = 1.;

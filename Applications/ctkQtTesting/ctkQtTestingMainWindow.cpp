@@ -95,6 +95,11 @@ void ctkQtTestingMainWindow::record(bool start)
     if (!filename.isEmpty())
       {
       qDebug() << "Start recording";
+      QFileInfo fileInfo(filename);
+      if (fileInfo.suffix() != "xml")
+        {
+        filename += ".xml";
+        }
       this->TestUtility->recordTests(filename);
       }
     }

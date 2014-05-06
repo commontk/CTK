@@ -20,7 +20,7 @@ set(PLUGIN_UI_FORMS
 )
 
 set(PLUGIN_resources
-  
+
 )
 
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)

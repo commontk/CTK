@@ -23,6 +23,8 @@
 #include <QProcess>
 #include <QtDebug>
 #include <QRect>
+#include <QStringList>
+#include <QDir>
 
 // CTK includes
 #include "ctkExampleDicomHost.h"
@@ -32,13 +34,16 @@
 // STD includes
 #include <iostream>
 
+// DCMTK includes
+#include <dcuid.h>
+
 //----------------------------------------------------------------------------
 ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :
     ctkDicomAbstractHost(hostPort, appPort),
     PlaceholderWidget(placeholderWidget),
     exitingApplication(false)
 {
-  connect(this,SIGNAL(appReady()),SLOT(onAppReady()));
+  connect(this,SIGNAL(appReady()),SLOT(onAppReady()), Qt::QueuedConnection);
   connect(this,SIGNAL(startProgress()),this,SLOT(onStartProgress()));
   connect(this,SIGNAL(releaseAvailableResources()),this,SLOT(onReleaseAvailableResources()));
   connect(this,SIGNAL(resumed()),this,SLOT(onResumed()));
@@ -90,19 +95,13 @@ void ctkExampleDicomHost::notifyStatus(const ctkDicomAppHosting::Status& status)
 //----------------------------------------------------------------------------
 ctkExampleDicomHost::~ctkExampleDicomHost()
 {
-  qDebug() << "Exiting host: trying to terminate app";
-  this->AppProcess.terminate();
-  qDebug() << "Exiting host: trying to kill app";
-  this->AppProcess.kill();
-}
-
-
-//----------------------------------------------------------------------------
-bool ctkExampleDicomHost::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
-{
-  Q_UNUSED(data)
-  Q_UNUSED(lastData)
-  return false;
+  if(this->AppProcess.state()!=QProcess::NotRunning)
+  {
+    qDebug() << "Exiting host: trying to terminate app";
+    this->AppProcess.terminate();
+    qDebug() << "Exiting host: trying to kill app";
+    this->AppProcess.kill();
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -164,6 +163,7 @@ void ctkExampleDicomHost::onCanceled()
 void ctkExampleDicomHost::onExited()
 {
   qDebug() << "App exited";
+  cleanIncomingData();
 }
 
 //----------------------------------------------------------------------------
@@ -173,13 +173,73 @@ void ctkExampleDicomHost::onReleaseAvailableResources()
 }
 
 //----------------------------------------------------------------------------
-void ctkExampleDicomHost::releaseData(const QList<QUuid>& objectUUIDs)
-{
-  Q_UNUSED(objectUUIDs)
-}
-
 void ctkExampleDicomHost::exitApplication()
 {
   this->exitingApplication=true;
-  getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
+  if(this->getAppProcess().state() == QProcess::Running)
+  {
+    if(this->getApplicationState() == ctkDicomAppHosting::EXIT)
+      return;
+    if(this->getApplicationState() == ctkDicomAppHosting::IDLE)
+    {
+      getDicomAppService ()->setState (ctkDicomAppHosting::EXIT);
+      return;
+    }
+    getDicomAppService ()->setState (ctkDicomAppHosting::CANCELED);
+  }
+}
+
+//----------------------------------------------------------------------------
+QString ctkExampleDicomHost::getOutputLocation(const QStringList& preferredProtocols)
+{ 
+  if(preferredProtocols.indexOf("file:")>=0)
+    return QDir::temp().absolutePath();
+
+  return ""; 
+}
+
+//----------------------------------------------------------------------------
+ctkDicomAppHosting::State ctkExampleDicomHost::getApplicationState()const
+{
+  if(this->getAppProcess().state() == QProcess::NotRunning)
+    return ctkDicomAppHosting::EXIT;
+  return ctkDicomAbstractHost::getApplicationState();
+}
+
+//----------------------------------------------------------------------------
+QString ctkExampleDicomHost::generateUID()
+{
+  char uid[100];
+  dcmGenerateUniqueIdentifier(uid, SITE_INSTANCE_UID_ROOT);
+  return uid;
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::exitApplicationBlocking(int timeout)
+{
+  connect(&this->AppProcess,SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(onBlockingExiting(QProcess::ProcessState)));
+
+  if(this->getApplicationState() != ctkDicomAppHosting::EXIT)
+  {
+    this->exitApplication();
+    QTimer::singleShot(timeout,this,SLOT(onBlockingExiting()));
+    BlockingLoopForExiting.exec(QEventLoop::ExcludeUserInputEvents | QEventLoop::WaitForMoreEvents);
+  }
+  if(this->AppProcess.state()!=QProcess::NotRunning)
+  {
+    this->AppProcess.kill();
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onBlockingExiting(QProcess::ProcessState)
+{
+  this->AppProcess.disconnect(SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(onBlockingExiting(QProcess::ProcessState)));
+  BlockingLoopForExiting.exit(0);
+}
+
+//----------------------------------------------------------------------------
+void ctkExampleDicomHost::onBlockingExiting()
+{
+  BlockingLoopForExiting.exit(0);
 }

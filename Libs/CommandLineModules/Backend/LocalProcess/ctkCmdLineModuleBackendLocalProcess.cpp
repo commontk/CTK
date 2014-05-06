@@ -31,7 +31,7 @@
 #include "ctkCmdLineModuleRunException.h"
 
 #include "ctkUtils.h"
-
+#include <iostream>
 #include <QProcess>
 #include <QUrl>
 
@@ -87,24 +87,27 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
           }
           else
           {
-            QString arg = valuesIter.value().toString();
-            if (arg.isEmpty())
-            {
-              arg = parameter.defaultValue();
-            }
-            if (!arg.isEmpty())
-            {
-              args.push_back(valuesIter.value().toString());
-            }
+            args.push_back(valuesIter.value().toString());
           }
 
-          if (args.length() > 0) // don't write the argFlag if there was no argument, and no default.
+          if (args.length() > 0)
           {
             foreach(QString arg, args)
             {
-              cmdLineArgs << argFlag << arg;
-            }
-          }
+              if (parameter.tag() == "string")
+              {
+                cmdLineArgs << argFlag << arg;
+              }
+              else
+              {
+                QString trimmedArg = arg.trimmed();
+                if (trimmedArg.length() != 0) // If not string, and no arg, we don't output. We need this policy for integers, doubles, etc.
+                {
+                  cmdLineArgs << argFlag << trimmedArg;
+                }
+              }
+            } // end foreach
+          } // end if (args.length() > 0)
         }
       }
     }

@@ -32,8 +32,16 @@ struct QUuid;
 struct ctkDicomExchangeInterface
 {
 
+  virtual ~ctkDicomExchangeInterface() {};
+
   // Data exchange interface methods
 
+  /**
+   * The source of the data calls this method with descriptions of the available data that it can provide to the
+   * recipient. If the source of the data expects that additional data will become available, it shall pass FALSE
+   * in the lastData parameter. Otherwise, it shall pass TRUE.
+   * \return TRUE if the recipient of the data successfully received the AvailableData list.
+   */
   virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData) = 0;
 
   virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
@@ -41,6 +49,10 @@ struct ctkDicomExchangeInterface
     const QList<QString>& acceptableTransferSyntaxUIDs,
     bool includeBulkData) = 0;
 
+  /**
+   * The recipient of data invokes this method to release access to binary data provided by the source of the
+   * data through a getData() call. The ArrayOfUUID identifies the data streams that the recipient is releasing.
+   */
   virtual void releaseData(const QList<QUuid>& objectUUIDs) = 0;
 
 //    8.3.3 getAsModels(objectUUIDs : ArrayOfUUID, classUID : UID, supportedInfosetTypes : ArrayOfMimeType) : ModelSetDescriptor	33

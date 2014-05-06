@@ -52,6 +52,10 @@ class CTK_WIDGETS_EXPORT ctkActionsWidget : public QWidget
   Q_OBJECT
   Q_PROPERTY(bool actionsWithNoShortcutVisible READ areActionsWithNoShortcutVisible WRITE setActionsWithNoShortcutVisible)
   Q_PROPERTY(bool menuActionsVisible READ areMenuActionsVisible WRITE setMenuActionsVisible)
+  /// This property controls whether the actions are sorted by column (>=0) or
+  /// not (-1). Not sorted by default.
+  /// \sa sortColumn(), setSortColumn()
+  Q_PROPERTY(int sortColumn READ sortColumn WRITE setSortColumn)
 public:
   explicit ctkActionsWidget(QWidget* parent = 0);
   virtual ~ctkActionsWidget();
@@ -80,6 +84,13 @@ public:
   /// True by default
   void setMenuActionsVisible(bool show);
   bool areMenuActionsVisible()const;
+
+  /// Set the sortColumn property value.
+  /// \sa sortColumn
+  void setSortColumn(int column);
+  /// Return the sortColumn property value.
+  /// \sa sortColumn
+  int sortColumn()const;
 
   /// Return the unsorted/unfiltered model of all the actions
   QStandardItemModel* model()const;

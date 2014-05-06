@@ -42,8 +42,7 @@ public:
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
-  ctkPopupWidgetEventPlayer(const ctkPopupWidgetEventPlayer&); // NOT implemented
-  ctkPopupWidgetEventPlayer& operator=(const ctkPopupWidgetEventPlayer&); // NOT implemented
+  Q_DISABLE_COPY(ctkPopupWidgetEventPlayer);
 
 };
 

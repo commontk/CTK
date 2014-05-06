@@ -17,4 +17,4 @@ target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 #
 # Add Tests
 #
-SIMPLE_TEST(ctkDICOMDemoSCUTest1)
+SIMPLE_TEST(ctkDICOMDemoSCUTest1 $<TARGET_FILE:ctkDICOMDemoSCU> )

@@ -36,15 +36,15 @@ set(KITTests_SRCS
   ctkErrorLogQtMessageHandlerWithThreadsTest1.cpp
   ctkErrorLogStreamMessageHandlerWithThreadsTest1.cpp
   ctkExceptionTest.cpp
+  ctkHighPrecisionTimerTest.cpp
   ctkHistogramTest1.cpp
+  ctkLinearValueProxyTest.cpp
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
   ctkModelTesterTest2.cpp
-  ctkUtilsClosestPowerOfTenTest1.cpp
   ctkUtilsCopyDirRecursivelyTest1.cpp
-  ctkUtilsOrderOfMagnitudeTest1.cpp
   ctkUtilsQtHandleToStringTest1.cpp
-  ctkUtilsSignificantDecimalsTest1.cpp
+  ctkUtilsTest.cpp
   ctkUtilsTest1.cpp
   ctkUtilsTest2.cpp
   ctkUtilsTest3.cpp
@@ -102,6 +102,8 @@ set(Tests_Helpers_MOC_SRCS
 
 set(Tests_Helpers_MOC_CPPS
   ctkBooleanMapperTest.cpp
+  ctkLinearValueProxyTest.cpp
+  ctkUtilsTest.cpp
   )
 
 set(Tests_Helpers_MOC_CPP)
@@ -131,6 +133,10 @@ if(CTK_USE_QT5)
   qt5_use_modules(${KIT}CppTests Test Widgets)
 endif()
 
+if(UNIX AND NOT APPLE)
+  target_link_libraries(${KIT}CppTests rt)
+endif()
+
 #
 # Add Tests
 #
@@ -158,7 +164,9 @@ SIMPLE_TEST( ctkErrorLogFDMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkErrorLogQtMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkErrorLogStreamMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkExceptionTest )
+SIMPLE_TEST( ctkHighPrecisionTimerTest )
 SIMPLE_TEST( ctkHistogramTest1 )
+SIMPLE_TEST( ctkLinearValueProxyTest )
 SIMPLE_TEST( ctkLoggerTest1 )
 set_property(TEST ctkLoggerTest1 PROPERTY PASS_REGULAR_EXPRESSION "logger.debug\nlogger.info\nlogger.trace\nlogger.warn\nlogger.error\nlogger.fatal")
 SIMPLE_TEST( ctkModelTesterTest1 )
@@ -169,11 +177,9 @@ SIMPLE_TEST( ctkSingletonTest1 )
 SIMPLE_TEST( ctkTransferFunctionTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest2 )
-SIMPLE_TEST( ctkUtilsClosestPowerOfTenTest1 )
 SIMPLE_TEST( ctkUtilsCopyDirRecursivelyTest1 )
-SIMPLE_TEST( ctkUtilsOrderOfMagnitudeTest1 )
 SIMPLE_TEST( ctkUtilsQtHandleToStringTest1 )
-SIMPLE_TEST( ctkUtilsSignificantDecimalsTest1 )
+SIMPLE_TEST( ctkUtilsTest )
 SIMPLE_TEST( ctkUtilsTest1 )
 SIMPLE_TEST( ctkUtilsTest2 )
 SIMPLE_TEST( ctkUtilsTest3 )

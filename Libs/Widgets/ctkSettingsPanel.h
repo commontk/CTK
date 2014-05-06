@@ -37,6 +37,9 @@ class CTK_WIDGETS_EXPORT ctkSettingsPanel : public QWidget
   Q_OBJECT
   Q_ENUMS(SettingOption)
   Q_FLAGS(SettingOptions)
+
+  Q_PROPERTY(QSettings* settings READ settings WRITE setSettings);
+
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -82,6 +85,15 @@ public:
                         const QString& settingLabel = QString(),
                         SettingOptions options = OptionNone,
                         QSettings * settings = 0);
+
+  /// \copybrief registerProperty
+  /// \overload
+  Q_INVOKABLE void registerProperty(const QString& settingKey, QObject* object,
+                                    const QString& objectProperty,
+                                    const QByteArray& propertySignal,
+                                    const QString& settingLabel = QString(),
+                                    SettingOptions options = OptionNone,
+                                    QSettings * settings = 0);
 
   /// Set the setting to the property defined by the key.
   /// The old value can be restored using resetSettings()

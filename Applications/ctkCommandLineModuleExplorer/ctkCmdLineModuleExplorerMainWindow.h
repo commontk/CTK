@@ -35,6 +35,7 @@ class ctkCmdLineModuleExplorerTabList;
 class ctkCmdLineModuleReference;
 class ctkCmdLineModuleResult;
 class ctkSettingsDialog;
+class ctkCmdLineModuleBackendXMLChecker;
 
 namespace Ui {
 class ctkCmdLineModuleExplorerMainWindow;
@@ -68,6 +69,8 @@ protected Q_SLOTS:
   void on_actionQuit_triggered();
 
   void on_actionReset_triggered();
+  void on_actionClear_Cache_triggered();
+  void on_actionReload_Modules_triggered();
 
   void checkModulePaused();
   void currentModuleResumed();
@@ -75,7 +78,8 @@ protected Q_SLOTS:
   void currentModuleFinished();
 
   void moduleTabActivated(ctkCmdLineModuleFrontend* module);
-  
+  void checkXMLPressed();
+
 private:
 
   QScopedPointer<Ui::ctkCmdLineModuleExplorerMainWindow> ui;
@@ -95,7 +99,7 @@ private:
 
   ctkSettings settings;
   ctkSettingsDialog* settingsDialog;
-
+  ctkCmdLineModuleBackendXMLChecker* xmlCheckerBackEnd;
 };
 
 #endif // CTKCLIPLUGINEXPLORERMAINWINDOW_H

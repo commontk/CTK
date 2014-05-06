@@ -30,9 +30,6 @@ IF(NOT CTK_USE_FILE_INCLUDED)
   # Add include directories needed to use CTK.
   INCLUDE_DIRECTORIES(${CTK_INCLUDE_DIRS})
 
-  # Add link directories needed to use CTK.
-  # LINK_DIRECTORIES(${CTK_LIBRARY_DIRS} ${CTK_EXTERNAL_LIBRARY_DIRS})
-
   if (NOT DEFINED QT_QMAKE_EXECUTABLE)
     set(QT_QMAKE_EXECUTABLE ${CTK_QT_QMAKE_EXECUTABLE})
   endif()

@@ -28,6 +28,7 @@
 #include <ctkDicomAppHostingTypes.h>
 
 class ctkExampleDicomHost;
+class ctkExampleHostControlWidget;
 
 namespace Ui {
   class ctkHostAppExampleWidget;
@@ -47,20 +48,15 @@ public:
 public Q_SLOTS:
 
   void loadButtonClicked();
-  void startButtonClicked();
-  void runButtonClicked();
-  void stopButtonClicked();
-  void suspendButtonClicked();
-  void cancelButtonClicked();
-  void appProcessError(QProcess::ProcessError error);
-  void appProcessStateChanged(QProcess::ProcessState state);
-  void appStateChanged(ctkDicomAppHosting::State state);
 
   void placeholderResized();
-  void outputMessage();
+
+  void appProcessError(QProcess::ProcessError error);
+
 protected:
 
   ctkExampleDicomHost* Host;
+  ctkExampleHostControlWidget* HostControls;
   QString AppFileName;
 
 private:

@@ -83,7 +83,9 @@ public:
   Q_INVOKABLE void refreshDatabase(ctkDICOMDatabase& database, const QString& directoryName);
 
   ///
-  /// \brief ensures that the QFuture threads have all finished indexing
+  /// \brief Deprecated - no op.
+  /// \deprecated
+  /// Previously ensured that the QFuture threads have all finished indexing
   /// before returning control.
   ///
   Q_INVOKABLE void waitForImportFinished();

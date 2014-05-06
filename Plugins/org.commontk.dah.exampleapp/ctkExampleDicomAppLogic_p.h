@@ -32,9 +32,12 @@
 
 #include <ctkServiceTracker.h>
 
+// ui of this application
+#include "ui_ctkExampleDicomAppWidget.h"
+
 struct ctkDicomHostInterface;
 
-class QPushButton;
+class QWidget;
 
 class ctkExampleDicomAppLogic : public ctkDicomAbstractApp
 {
@@ -47,19 +50,16 @@ public:
   virtual ~ctkExampleDicomAppLogic();
 
   // ctkDicomAppInterface
+
+  /**
+   * Method triggered by the host. By calling this method, the Hosting System is asking the Hosted Application to take whatever steps are
+   * needed to make its GUI visible as the topmost window, and to gain focus.
+   * \return TRUE if the Hosted Application received the request and will act on it. Otherwise it returns FALSE
+   */
   virtual bool bringToFront(const QRect& requestedScreenArea);
 
-  // ctkDicomExchangeInterface
-  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
-
-  virtual QList<ctkDicomAppHosting::ObjectLocator> getData(
-    const QList<QUuid>& objectUUIDs,
-    const QList<QString>& acceptableTransferSyntaxUIDs,
-    bool includeBulkData);
-
-  virtual void releaseData(const QList<QUuid>& objectUUIDs);
-
   // some logic
+  /** Test function for checking */
   void do_something();
 
 
@@ -72,12 +72,13 @@ protected Q_SLOTS:
   void onExitHostedApp();
   void onReleaseResources();
 
-  void buttonClicked();
+  void onLoadDataClicked();
+  void onCreateSecondaryCapture();
+
+  void onDataAvailable();
 private:
-  QPushButton * Button;
-
-  QUuid uuid;
-
+  QWidget * AppWidget;
+  Ui::ctkExampleDicomAppWidget ui;
 }; // ctkExampleDicomAppLogic
 
 #endif // ctkExampleDicomAppLogic_P_H

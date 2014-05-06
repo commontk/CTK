@@ -42,22 +42,42 @@ public:
   ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort = 8080, int appPort = 8081);
   virtual ~ctkExampleDicomHost();
 
-  ctkDicomAppHosting::State getApplicationState() const;
-
   virtual void StartApplication(QString AppPath);
-  virtual QString generateUID() { return ""; }
-  virtual QRect getAvailableScreen(const QRect& preferredScreen);
-  virtual QString getOutputLocation(const QStringList& /*preferredProtocols*/) { return ""; }
 
+  /**
+   * Returns a newly created DICOM UID that the Hosted Application might use, e.g., to create new data
+   * objects and structures.
+   */
+  virtual QString generateUID();
+
+  /**
+   * The Hosted Application supplies its preferred screen size in the appPreferredScreen parameter. The
+   * Hosting System may utilize this information as a hint, but may return a window location and size that best
+   * suits the Hosting System's GUI.
+   */
+  virtual QRect getAvailableScreen(const QRect& preferredScreen);
+  
+  /**
+   * This method returns a URI that a Hosted Application may use to store output that it may provide back to
+   * the Hosting System (e.g. in response to a getData() call).
+   * \return a URI that a Hosted Application may use to store output.
+   */
+  virtual QString getOutputLocation(const QStringList& preferredProtocols);
+
+  /**
+   * Method used by the Hosted Application to inform the Hosting System of notable events that occur during execution.
+   * The Hosted Application invoks this method, passing the information in the status parameter.
+   */
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status);
-  // exchange methods
-  virtual bool notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData);
-  virtual void releaseData(const QList<QUuid>& objectUUIDs);
+
+  ctkDicomAppHosting::State getApplicationState() const;
 
   const QProcess& getAppProcess() const { return this->AppProcess; }
   void exitApplication();
 
   QByteArray processReadAll(){return this->AppProcess.readAllStandardOutput ();}
+
+  void exitApplicationBlocking(int timeout = 2000);
 
 public Q_SLOTS:
   void onAppReady();
@@ -73,6 +93,13 @@ Q_SIGNALS:
 
 
   void giveAvailableScreen(QRect rect);
+
+protected:
+  QEventLoop BlockingLoopForExiting;
+
+protected slots:
+  void onBlockingExiting(QProcess::ProcessState);
+  void onBlockingExiting();
 
 protected:
 

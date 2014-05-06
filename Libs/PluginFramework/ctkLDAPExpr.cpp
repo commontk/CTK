@@ -281,11 +281,13 @@ bool ctkLDAPExpr::query( const QString &filter, const ctkDictionary &pd )
 }
 
 //----------------------------------------------------------------------------
-bool ctkLDAPExpr::evaluate( const ctkDictionary &p, bool matchCase ) const
+bool ctkLDAPExpr::evaluate( const ctkServiceProperties &p, bool matchCase ) const
 {
   if ((d->m_operator & SIMPLE) != 0) {
-    return compare(p[ matchCase ? d->m_attrName : d->m_attrName.toLower() ],
-      d->m_operator, d->m_attrValue);
+    // try case sensitive match first
+    int index = p.findCaseSensitive(d->m_attrName);
+    if (index < 0 && !matchCase) index = p.find(d->m_attrName);
+    return index < 0 ? false : compare(p.value(index), d->m_operator, d->m_attrValue);
   } else { // (d->m_operator & COMPLEX) != 0
     switch (d->m_operator) {
     case AND:

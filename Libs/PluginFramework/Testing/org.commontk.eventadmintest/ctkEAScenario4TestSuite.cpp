@@ -234,7 +234,7 @@ void ctkEAScenario4TestSuite::initTestCase()
   eventConsumers.push_back(new ctkEAScenario4EventConsumer(pluginContext, scenario4_topics1,
                                                            1, 1, scenario4_filter1));
   eventConsumers.push_back(new ctkEAScenario4EventConsumer(pluginContext, scenario4_topics1,
-                                                           2, 2, scenario4_filter2));
+                                                           1, 1, scenario4_filter2));
   eventConsumers.push_back(new ctkEAScenario4EventConsumer(pluginContext, scenario4_topics1,
                                                            0, 0, scenario4_filter3));
   eventConsumers.push_back(new ctkEAScenario4EventConsumer(pluginContext, scenario4_topics1,

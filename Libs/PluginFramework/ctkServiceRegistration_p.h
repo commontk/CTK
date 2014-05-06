@@ -26,7 +26,7 @@
 #include <QHash>
 #include <QMutex>
 
-#include "ctkDictionary.h"
+#include "ctkServiceProperties_p.h"
 #include "ctkServiceReference.h"
 
 
@@ -75,7 +75,7 @@ public:
   /**
    * Service properties.
    */
-  ctkDictionary properties;
+  ctkServiceProperties properties;
 
   /**
    * Plugins dependent on this service. Integer is used as

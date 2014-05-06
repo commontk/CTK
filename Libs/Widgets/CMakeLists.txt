@@ -57,6 +57,7 @@ set(KIT_SRCS
   ctkConsole_p.h
   ctkCoordinatesWidget.cpp
   ctkCoordinatesWidget.h
+  ctkCoordinatesWidget_p.h
   ctkCrosshairLabel.cpp
   ctkCrosshairLabel.h
   ctkDateRangeWidget.cpp
@@ -67,6 +68,8 @@ set(KIT_SRCS
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.cpp
   ctkDoubleSlider.h
+  ctkDoubleSpinBox.cpp
+  ctkDoubleSpinBox.h
   ctkDynamicSpacer.cpp
   ctkDynamicSpacer.h
   ctkErrorLogStatusMessageHandler.cpp
@@ -120,6 +123,11 @@ set(KIT_SRCS
   ctkPopupWidget.cpp
   ctkPopupWidget.h
   ctkPopupWidget_p.h
+  ctkProxyStyle.cpp
+  ctkProxyStyle.h
+  ctkPushButton.cpp
+  ctkPushButton.h
+  ctkPushButton_p.h
   ctkQImageView.cpp
   ctkQImageView.h
   ctkRangeSlider.cpp
@@ -209,11 +217,14 @@ set(KIT_MOC_SRCS
   ctkConsole.h
   ctkConsole_p.h
   ctkCoordinatesWidget.h
+  ctkCoordinatesWidget_p.h
   ctkCrosshairLabel.h
   ctkDateRangeWidget.h
   ctkDirectoryButton.h
   ctkDoubleRangeSlider.h
   ctkDoubleSlider.h
+  ctkDoubleSpinBox.h
+  ctkDoubleSpinBox_p.h
   ctkDynamicSpacer.h
   ctkErrorLogWidget.h
   ctkErrorLogStatusMessageHandler.h
@@ -239,6 +250,8 @@ set(KIT_MOC_SRCS
   ctkPathListButtonsWidget_p.h
   ctkPopupWidget.h
   ctkPopupWidget_p.h
+  ctkProxyStyle.h
+  ctkPushButton.h
   ctkQImageView.h
   ctkRangeSlider.h
   ctkRangeWidget.h
@@ -402,7 +415,7 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

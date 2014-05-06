@@ -81,7 +81,7 @@ if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_
     )
 endif()
 
-# Configure file will be configured using CTK_WRAP_PYTHONQT_{LIGHT, FULL} and
+# Configure file will be configured using CTK_WRAP_PYTHONQT_LIGHT and
 # CTK_BUILD_SHARED_LIBS variables
 configure_file(
   ctkSimplePythonShellConfigure.h.in
@@ -90,8 +90,7 @@ configure_file(
 
 # The following block generate the code required to initialize the wrapper
 # when CTK is statically built.
-if(NOT CTK_BUILD_SHARED_LIBS
-   AND (CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL))
+if(NOT CTK_BUILD_SHARED_LIBS AND CTK_WRAP_PYTHONQT_LIGHT)
 
   # Update list of target libraries with the list of available PythonQt libraries
   # and set variables holding list of pythonqt initialization method

@@ -19,9 +19,12 @@
 =========================================================================*/
 
 // Qt includes
-#include <QStylePainter>
+#include <QAbstractScrollArea>
 #include <QApplication>
 #include <QDebug>
+#include <QScrollBar>
+#include <QStylePainter>
+#include <QWheelEvent>
 
 // CTK includes
 #include "ctkComboBox.h"
@@ -40,6 +43,7 @@ public:
   QIcon   DefaultIcon;
   bool    ForceDefault;
   Qt::TextElideMode ElideMode;
+  ctkComboBox::ScrollEffect ScrollWheelEffect;
 
   mutable QSize MinimumSizeHint;
   mutable QSize SizeHint;
@@ -52,6 +56,7 @@ ctkComboBoxPrivate::ctkComboBoxPrivate(ctkComboBox& object)
   this->DefaultText = "";
   this->ForceDefault = false;
   this->ElideMode = Qt::ElideNone;
+  this->ScrollWheelEffect = ctkComboBox::AlwaysScroll;
 }
 
 // -------------------------------------------------------------------------
@@ -248,6 +253,22 @@ bool ctkComboBox::isDefaultForced()const
 }
 
 // -------------------------------------------------------------------------
+ctkComboBox::ScrollEffect ctkComboBox::scrollWheelEffect()const
+{
+  Q_D(const ctkComboBox);
+  return d->ScrollWheelEffect;
+}
+
+// -------------------------------------------------------------------------
+void ctkComboBox::setScrollWheelEffect(ctkComboBox::ScrollEffect scroll)
+{
+  Q_D(ctkComboBox);
+  d->ScrollWheelEffect = scroll;
+  this->setFocusPolicy( d->ScrollWheelEffect == ctkComboBox::ScrollWithFocus ?
+                        Qt::StrongFocus : Qt::WheelFocus );
+}
+
+// -------------------------------------------------------------------------
 void ctkComboBox::paintEvent(QPaintEvent*)
 {
   Q_D(ctkComboBox);
@@ -301,4 +322,47 @@ void ctkComboBox::changeEvent(QEvent *e)
     }
 
   this->QComboBox::changeEvent(e);
+}
+
+// -------------------------------------------------------------------------
+void ctkComboBox::wheelEvent(QWheelEvent* event)
+{
+  Q_D(ctkComboBox);
+  bool scroll = false;
+  switch (d->ScrollWheelEffect)
+    {
+    case AlwaysScroll:
+      scroll = true;
+      break;
+    case ScrollWithFocus:
+      scroll = this->hasFocus();
+      break;
+    case ScrollWithNoVScrollBar:
+      scroll = true;
+      for (QWidget* ancestor = this->parentWidget();
+           ancestor; ancestor = ancestor->parentWidget())
+        {
+        if (QAbstractScrollArea* scrollArea =
+            qobject_cast<QAbstractScrollArea*>(ancestor))
+          {
+          scroll = !scrollArea->verticalScrollBar()->isVisible();
+          if (!scroll)
+            {
+            break;
+            }
+          }
+        }
+      break;
+    default:
+    case NeverScroll:
+      break;
+    }
+  if (scroll)
+    {
+    this->QComboBox::wheelEvent(event);
+    }
+  else
+    {
+    event->ignore();
+    }
 }

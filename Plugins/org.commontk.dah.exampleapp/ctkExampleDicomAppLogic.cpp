@@ -26,18 +26,24 @@
 #include <QPushButton>
 #include <QApplication>
 #include <QLabel>
+#include <QRect>
+#include <QStringList>
+#include <QDir>
+#include <QTemporaryFile>
+#include <QPainter>
 
 // CTK includes
 #include "ctkDICOMImage.h"
 #include "ctkExampleDicomAppLogic_p.h"
 #include "ctkExampleDicomAppPlugin_p.h"
+#include "ctkDicomAvailableDataHelper.h"
 
 // DCMTK includes
 #include <dcmimage.h>
 
 //----------------------------------------------------------------------------
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic():
-ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
+ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), AppWidget(0)
 {
 
 
@@ -46,9 +52,16 @@ ctkDicomAbstractApp(ctkExampleDicomAppPlugin::getPluginContext()), Button(0)
   connect(this, SIGNAL(suspendProgress()), this, SLOT(onSuspendProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(cancelProgress()), this, SLOT(onCancelProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(exitHostedApp()), this, SLOT(onExitHostedApp()), Qt::QueuedConnection);
+  connect(this, SIGNAL(dataAvailable()), this, SLOT(onDataAvailable()));
 
   //notify Host we are ready.
-  getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
+  try {
+    getHostInterface()->notifyStateChanged(ctkDicomAppHosting::IDLE);
+  }
+  catch(...)
+  {
+    qDebug() << "ctkDicomAbstractApp: Could not getHostInterface()";
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -62,34 +75,42 @@ ctkExampleDicomAppLogic::~ctkExampleDicomAppLogic()
   }
 }
 
-
-
 //----------------------------------------------------------------------------
-bool ctkExampleDicomAppLogic::bringToFront(const QRect& /*requestedScreenArea*/)
+bool ctkExampleDicomAppLogic::bringToFront(const QRect& requestedScreenArea)
 {
-  return false;
+  if(this->AppWidget!=NULL)
+  {
+    this->AppWidget->move(requestedScreenArea.topLeft());
+    this->AppWidget->resize(requestedScreenArea.size());
+    this->AppWidget->activateWindow();
+    this->AppWidget->raise();
+  }
+  return true;
 }
 
 //----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::do_something()
 {
-  this->Button = new QPushButton("Button from App");
-  connect(this->Button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
+  AppWidget = new QWidget;
+  ui.setupUi(AppWidget);
+
+  connect(ui.LoadDataButton, SIGNAL(clicked()), this, SLOT(onLoadDataClicked()));
+  connect(ui.CreateSecondaryCaptureButton, SIGNAL(clicked()), this, SLOT(onCreateSecondaryCapture()));
   try
     {
     QRect preferred(50,50,100,100);
     qDebug() << "  Asking:getAvailableScreen";
     QRect rect = getHostInterface()->getAvailableScreen(preferred);
     qDebug() << "  got sth:" << rect.top();
-    this->Button->move(rect.topLeft());
-    this->Button->resize(rect.size());
+    this->AppWidget->move(rect.topLeft());
+    this->AppWidget->resize(rect.size());
     }
   catch (const ctkRuntimeException& e)
     {
     qCritical() << e.what();
     return;
     }
-  this->Button->show();
+  this->AppWidget->show();
 }
 
 //----------------------------------------------------------------------------
@@ -115,14 +136,14 @@ void ctkExampleDicomAppLogic::onResumeProgress()
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
   //we're rolling
   //do something else normally, but this is an example
-  this->Button->setEnabled(true);
+  ui.LoadDataButton->setEnabled(true);
 }
 
 //----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::onSuspendProgress()
 {
   //release resources it can reclame later to resume work
-  this->Button->setEnabled(false);
+  ui.LoadDataButton->setEnabled(false);
   //notify state changed
   setInternalState(ctkDicomAppHosting::SUSPENDED);
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::SUSPENDED);
@@ -146,6 +167,7 @@ void ctkExampleDicomAppLogic::onExitHostedApp()
   //useless move, but correct:
   setInternalState(ctkDicomAppHosting::EXIT);
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::EXIT);
+  qDebug() << "Exiting";
   //die
   qApp->exit(0);
 }
@@ -153,21 +175,21 @@ void ctkExampleDicomAppLogic::onExitHostedApp()
 //----------------------------------------------------------------------------
 void ctkExampleDicomAppLogic::onReleaseResources()
 {
-  this->Button->hide();
-  delete (this->Button);
-  this->Button = 0 ;
+  this->AppWidget->hide();
+  delete (this->AppWidget);
+  this->AppWidget = 0 ;
 }
 
 
 //----------------------------------------------------------------------------
-bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::AvailableData& data, bool lastData)
+void ctkExampleDicomAppLogic::onDataAvailable()
 {
-  Q_UNUSED(lastData)
   QString s;
-  if(this->Button == 0)
+  const ctkDicomAppHosting::AvailableData& data = getIncomingAvailableData();
+  if(this->AppWidget == 0)
     {
     qCritical() << "Button is null!";
-    return false;
+    return;
     }
   s = "Received notifyDataAvailable with patients.count()= " + QString().setNum(data.patients.count());
   if(data.patients.count()>0)
@@ -180,39 +202,36 @@ bool ctkExampleDicomAppLogic::notifyDataAvailable(const ctkDicomAppHosting::Avai
       {
         s=s+" uid:" + data.patients.begin()->studies.begin()->series.begin()->seriesUID;
 //        QUuid uuid("93097dc1-caf9-43a3-a814-51a57f8d861d");//data.patients.begin()->studies.begin()->series.begin()->seriesUID);
-        uuid = data.patients.begin()->studies.begin()->series.begin()->objectDescriptors.begin()->descriptorUUID;
+        QUuid uuid = data.patients.begin()->studies.begin()->series.begin()->objectDescriptors.begin()->descriptorUUID;
         s=s+" uuid:"+uuid.toString();
       }
     }
   }
-  this->Button->setText(s);
-  return false;
-}
-
-//----------------------------------------------------------------------------
-QList<ctkDicomAppHosting::ObjectLocator> ctkExampleDicomAppLogic::getData(
-  const QList<QUuid>& objectUUIDs,
-  const QList<QString>& acceptableTransferSyntaxUIDs,
-  bool includeBulkData)
-{
-  Q_UNUSED(objectUUIDs)
-  Q_UNUSED(acceptableTransferSyntaxUIDs)
-  Q_UNUSED(includeBulkData)
-  return QList<ctkDicomAppHosting::ObjectLocator>();
-}
-
-//----------------------------------------------------------------------------
-void ctkExampleDicomAppLogic::releaseData(const QList<QUuid>& objectUUIDs)
-{
-  Q_UNUSED(objectUUIDs)
+  else
+  {
+    s = s+", objectDescriptors.count()= " + QString().setNum(data.objectDescriptors.count());
+  }
+  ui.ReceivedDataInformation->setText(s);
+  ui.LoadDataButton->setEnabled(true);
 }
 
 
-
-void ctkExampleDicomAppLogic::buttonClicked()
+void ctkExampleDicomAppLogic::onLoadDataClicked()
 {
+  const ctkDicomAppHosting::AvailableData& data = getIncomingAvailableData();
   QList<QUuid> uuidlist;
-  uuidlist.append(uuid);
+  if(data.patients.count()!=0)
+  {
+    const ctkDicomAppHosting::Patient& firstpatient = *data.patients.begin();
+    uuidlist = ctkDicomAvailableDataHelper::getAllUuids(firstpatient);
+  }
+  else if(data.objectDescriptors.count()!=0)
+  {
+    uuidlist = ctkDicomAvailableDataHelper::getAllUuids(data);
+  }
+  else
+    return;
+  
   QString transfersyntax("1.2.840.10008.1.2.1");
   QList<QString> transfersyntaxlist;
   transfersyntaxlist.append(transfersyntax);
@@ -230,20 +249,77 @@ void ctkExampleDicomAppLogic::buttonClicked()
     if(filename.startsWith("file:/",Qt::CaseInsensitive))
       filename=filename.remove(0,8);
     qDebug()<<filename;
-    DicomImage dcmtkImage(filename.toLatin1().data());
-    ctkDICOMImage ctkImage(&dcmtkImage);
-
-    QLabel* qtImage = new QLabel;
-    QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
-    if (pixmap.isNull())
+    if(QFileInfo(filename).exists())
     {
-      qCritical() << "Failed to convert QImage to QPixmap" ;
+      try {
+        DicomImage dcmtkImage(filename.toLatin1().data());
+        ctkDICOMImage ctkImage(&dcmtkImage);
+
+        QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
+        if (pixmap.isNull())
+        {
+          qCritical() << "Failed to convert QImage to QPixmap" ;
+        }
+        else
+        {
+          ui.PlaceHolderForImage->setPixmap(pixmap);
+        }
+      }
+      catch(...)
+      {
+        qCritical() << "Caught exception while trying to load file" << filename;
+      }
     }
     else
     {
-      qtImage->setPixmap(pixmap);
-      qtImage->show();
+      qCritical() << "File does not exist: " << filename;
     }
   }
-  this->Button->setText(s);
+  ui.ReceivedDataInformation->setText(s);
+}
+
+void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
+{
+  const QPixmap* pixmap = ui.PlaceHolderForImage->pixmap();
+  if(pixmap!=NULL)
+  {
+    QStringList preferredProtocols;
+    preferredProtocols.append("file:");
+    QString outputlocation = getHostInterface()->getOutputLocation(preferredProtocols);
+    QString templatefilename = QDir(outputlocation).absolutePath();
+    if(templatefilename.isEmpty()==false) templatefilename.append('/'); 
+    templatefilename.append("ctkdahscXXXXXX.jpg");
+    QTemporaryFile *tempfile = new QTemporaryFile(templatefilename,this->AppWidget);
+
+    if(tempfile->open())
+    {
+      QString filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
+      qDebug() << "Created file: " << filename;
+      tempfile->close();
+      QPixmap tmppixmap(*pixmap);
+      QPainter painter(&tmppixmap);
+      painter.setPen(Qt::white);
+      painter.setFont(QFont("Arial", 15));
+      painter.drawText(tmppixmap.rect(),Qt::AlignBottom|Qt::AlignLeft,"Secondary capture by ctkExampleDicomApp");
+     //painter.drawText(rect(), Qt::AlignCenter, "Qt");
+      tmppixmap.save(tempfile->fileName(), "JPEG");
+      qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
+
+      ctkDicomAppHosting::AvailableData resultData;
+      ctkDicomAvailableDataHelper::addToAvailableData(resultData, 
+        objectLocatorCache(), 
+        tempfile->fileName());
+
+      bool success = publishData(resultData, true);
+      if(!success)
+      {
+        qCritical() << "Failed to publish data";
+      }
+      qDebug() << "  publishData returned: " << success;
+
+    }
+    else
+      qDebug() << "Creating temporary file failed.";
+  }
+
 }

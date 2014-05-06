@@ -3,7 +3,7 @@ project(ctkDICOMRetrieve)
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
-  
+
 # Source files
 set(KIT_SRCS
   ctkDICOMRetrieveMain.cpp

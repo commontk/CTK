@@ -140,6 +140,8 @@ macro(ctkMacroBuildLib)
     endif()
   else()
     QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+    # Add Qt include dirs and defines
+    include(${QT_USE_FILE})
   endif()
   if(DEFINED MY_RESOURCES)
     if(Qt5Core_FOUND)
@@ -190,7 +192,7 @@ macro(ctkMacroBuildLib)
 
   # Install rules
   if(MY_LIBRARY_TYPE STREQUAL "SHARED")
-    install(TARGETS ${lib_name}
+    install(TARGETS ${lib_name} EXPORT CTKExports
       RUNTIME DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
       LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
       ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)

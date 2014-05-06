@@ -41,8 +41,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkMatrixWidgetEventTranslator(const ctkMatrixWidgetEventTranslator&); // NOT implemented
-  ctkMatrixWidgetEventTranslator& operator=(const ctkMatrixWidgetEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkMatrixWidgetEventTranslator);
 
   QObject* CurrentObject;
 

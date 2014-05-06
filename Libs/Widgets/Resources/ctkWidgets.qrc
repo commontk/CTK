@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>Icons/edit.png</file>
+        <file>Icons/lock.png</file>
+        <file>Icons/unlock.png</file>
         <file>Icons/minus.png</file>
         <file>Icons/plus.png</file>
         <file>Icons/expand-down.png</file>

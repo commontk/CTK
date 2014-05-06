@@ -21,6 +21,12 @@
 // Qt includes
 #include <QtTest/QtTest>
 
+// STD includes
+#include <limits>
+
+#ifndef __ctkTest_h
+#define __ctkTest_h
+
 #define CTK_TEST_NOOP_MAIN(TestObject) \
 int TestObject(int argc, char *argv[]) \
 { \
@@ -55,6 +61,7 @@ int TestObject(int argc, char *argv[]) \
 
 namespace ctkTest
 {
+// ----------------------------------------------------------------------------
 static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButton button,
                        Qt::KeyboardModifiers stateKey, QPoint pos, int delay=-1)
 {
@@ -91,8 +98,37 @@ static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButt
     }
 }
 
+// ----------------------------------------------------------------------------
 inline void mouseMove(QWidget *widget, Qt::MouseButton button, Qt::KeyboardModifiers stateKey = 0,
                       QPoint pos = QPoint(), int delay=-1)
   { ctkTest::mouseEvent(QTest::MouseMove, widget, button, stateKey, pos, delay); }
 
+
+// ----------------------------------------------------------------------------
+inline void COMPARE(double v1, double v2)
+{
+  // QCOMPARE fails to compare NaN numbers
+  if (v2 != v2)
+    {
+    QVERIFY(v1 != v1);
+    }
+  // QCOMPARE fails to compare - infinity
+  else if (v2 == -std::numeric_limits<double>::infinity())
+    {
+    QVERIFY(v1 == -std::numeric_limits<double>::infinity());
+    }
+  // QCOMPARE fails to compare infinity
+  else if (v2 == std::numeric_limits<double>::infinity())
+    {
+    QVERIFY(v1 == std::numeric_limits<double>::infinity());
+    }
+  // QCOMPARE doesn't like to compare zeroes
+  else
+    {
+    QCOMPARE(v1, v2);
+    }
 }
+
+}; // end ctkTest namespace
+
+#endif

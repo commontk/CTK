@@ -30,6 +30,7 @@
 // VTK includes
 #include <QVTKWidget.h>
 #include <vtkImageData.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
@@ -47,6 +48,10 @@ QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
   painter.begin(&widgetImage);
   foreach(QVTKWidget* vtkWidget, widget->findChildren<QVTKWidget*>())
     {
+    if (!vtkWidget->isVisible())
+      {
+      continue;
+      }
     QRect subWidgetRect = QRect(vtkWidget->mapTo(widget, QPoint(0,0)), vtkWidget->size());
     if (!rectangle.intersects(subWidgetRect))
       {
@@ -68,7 +73,9 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
     {
     return QImage();
     }
+#if VTK_MAJOR_VERSION <= 5
   imageData->Update();
+#endif
   /// \todo retrieve just the UpdateExtent
   int width = imageData->GetDimensions()[0];
   int height = imageData->GetDimensions()[1];

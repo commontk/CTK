@@ -23,12 +23,14 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QProcess>
+#include <QtGui/QVBoxLayout>
 
 // CTK includes
 #include "ctkHostAppExampleWidget.h"
 #include "ui_ctkHostAppExampleWidget.h"
 #include "ctkExampleDicomHost.h"
 #include "ctkDicomAppService.h"
+#include <ctkExampleHostControlWidget.h>
 #include <ctkDicomAppHostingTypesHelper.h>
 
 //----------------------------------------------------------------------------
@@ -39,14 +41,13 @@ ctkHostAppExampleWidget::ctkHostAppExampleWidget(QWidget *parent) :
   qDebug() << "setup ui";
   ui->setupUi(this);
   ui->crashLabel->setVisible(false);
-  ui->messageOutput->setVisible(true);
   this->Host = new ctkExampleDicomHost(ui->placeholderFrame);
+  this->HostControls = new ctkExampleHostControlWidget(Host, ui->placeHolderForControls);
+  this->HostControls->setObjectName(QString::fromUtf8("exampleHostControls"));
+  ui->verticalLayout->addWidget(HostControls);
 
   connect(&this->Host->getAppProcess(),SIGNAL(error(QProcess::ProcessError)),SLOT(appProcessError(QProcess::ProcessError)));
-  connect(&this->Host->getAppProcess(),SIGNAL(stateChanged(QProcess::ProcessState)),SLOT(appProcessStateChanged(QProcess::ProcessState)));
   connect(ui->placeholderFrame,SIGNAL(resized()),SLOT(placeholderResized()));
-  connect(this->Host,SIGNAL(stateChangedReceived(ctkDicomAppHosting::State)),SLOT(appStateChanged(ctkDicomAppHosting::State)));
-
 }
 
 //----------------------------------------------------------------------------
@@ -59,36 +60,6 @@ ctkHostAppExampleWidget::~ctkHostAppExampleWidget()
 }
 
 //----------------------------------------------------------------------------
-void ctkHostAppExampleWidget::startButtonClicked()
-{
-  qDebug() << "start button clicked";
-  if (this->Host)
-    {
-    this->Host->StartApplication(this->AppFileName);
-    //forward output to textedit
-    connect(&this->Host->getAppProcess(),SIGNAL(readyReadStandardOutput()),this,SLOT(outputMessage()));
-    }
-}
-
-//----------------------------------------------------------------------------
-void ctkHostAppExampleWidget::runButtonClicked()
-{
-  qDebug() << "run button clicked";
-  if (this->Host)
-    {
-    bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
-    qDebug() << "  setState(INPROGRESS) returned: " << reply;
-    }
-}
-
-//----------------------------------------------------------------------------
-void ctkHostAppExampleWidget::stopButtonClicked()
-{
-  qDebug() << "stop button clicked";
-  this->Host->exitApplication();
-}
-
-//----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::loadButtonClicked()
 {
   qDebug() << "load button clicked";
@@ -98,16 +69,14 @@ void ctkHostAppExampleWidget::loadButtonClicked()
 //----------------------------------------------------------------------------
 void ctkHostAppExampleWidget::setAppFileName(QString name)
 {
-  this->AppFileName = name;
-  if (QFile(this->AppFileName).permissions() & QFile::ExeUser )
-    {
-    this->ui->applicationPathLabel->setText(this->AppFileName);
-    }
-  else
-    {
-    this->ui->applicationPathLabel->setText(
-        QString("<font color='red'>Not executable:</font>").append(this->AppFileName));
-    }
+  HostControls->setAppFileName(name);
+}
+
+//----------------------------------------------------------------------------
+void ctkHostAppExampleWidget::placeholderResized()
+{
+  qDebug() << "resized";
+  //ui->placeholderFrame->printPosition();
 }
 
 //----------------------------------------------------------------------------
@@ -119,65 +88,3 @@ void ctkHostAppExampleWidget::appProcessError(QProcess::ProcessError error)
     ui->crashLabel->setVisible(true);
     }
 }
-
-//----------------------------------------------------------------------------
-void ctkHostAppExampleWidget::appProcessStateChanged(QProcess::ProcessState state)
-{
-  QString labelText;
-  switch (state)
-    {
-    case QProcess::Running:
-      ui->processStateLabel->setText("Running");
-      break;
-    case QProcess::NotRunning:
-      if (this->Host->getAppProcess().exitStatus() == QProcess::CrashExit )
-      {
-        labelText = "crashed";
-      }
-      else
-      {
-        labelText = "Not Running, last exit code ";
-        labelText.append(QString::number(this->Host->getAppProcess().exitCode()));
-      }
-      ui->processStateLabel->setText(labelText);
-      break;
-    case QProcess::Starting:
-      ui->processStateLabel->setText("Starting");
-      break;
-    default:
-      ;
-    }
-}
-
-//----------------------------------------------------------------------------
-void ctkHostAppExampleWidget::placeholderResized()
-{
-  qDebug() << "resized";
-  //ui->placeholderFrame->printPosition();
-}
-
-
-
-void ctkHostAppExampleWidget::appStateChanged(ctkDicomAppHosting::State state)
-{
-  ui->statusLabel->setText(ctkDicomSoapState::toStringValue(state));
-}
-
-
-//----------------------------------------------------------------------------
-void ctkHostAppExampleWidget::outputMessage ()
-{
-  ui->messageOutput->append (this->Host->processReadAll ());
-}
-
-//----------------------------------------------------------------------------
-void ctkHostAppExampleWidget::suspendButtonClicked()
-{
-  this->Host->getDicomAppService()->setState(ctkDicomAppHosting::SUSPENDED);
-}
-
-void ctkHostAppExampleWidget::cancelButtonClicked()
-{
-  this->Host->getDicomAppService()->setState(ctkDicomAppHosting::CANCELED);
-}
-

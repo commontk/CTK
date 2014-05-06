@@ -9,8 +9,7 @@ set(KIT_export_directive "CTK_PLUGINFW_EXPORT")
 
 # Source files
 set(KIT_SRCS
-  ctkCaseInsensitiveString.cpp
-  ctkDictionary.cpp
+  ctkDictionary.h
   ctkLDAPExpr.cpp
   ctkLDAPExpr_p.h
   ctkLDAPSearchFilter.cpp
@@ -62,6 +61,8 @@ set(KIT_SRCS
   ctkServiceEvent.cpp
   ctkServiceException.cpp
   ctkServiceFactory.h
+  ctkServiceProperties_p.h
+  ctkServiceProperties.cpp
   ctkServiceReference.cpp
   ctkServiceReference_p.cpp
   ctkServiceRegistration.cpp
@@ -151,7 +152,7 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

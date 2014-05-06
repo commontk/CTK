@@ -74,16 +74,41 @@ if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_
 endif()
 
 # Set VTK_LIBRARIES variable
-set(VTK_LIBRARIES
-  vtkCommon
-  vtkFiltering
-  vtkRendering
-  vtkHybrid
-  )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    vtkCommonCore
+    vtkCommonDataModel
+    vtkCommonSystem
+    vtkIOImage
+    vtkInteractionStyle
+    vtkRenderingAnnotation
+    vtkRenderingCore
+    vtkRenderingFreeTypeOpenGL
+    vtkRenderingOpenGL
+    vtkTestingRendering
+    )
+  if (UNIX AND NOT APPLE)
+    find_package(FontConfig QUIET)
+    if (FONTCONFIG_FOUND)
+      list(APPEND VTK_LIBRARIES
+        vtkRenderingFreeTypeFontConfig
+        )
+    endif()
+  endif()
+else()
+  set(VTK_LIBRARIES
+    vtkCommon
+    vtkFiltering
+    vtkRendering
+    vtkHybrid
+    )
+endif()
 
 if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   list(APPEND VTK_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
-  if(${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} VERSION_GREATER 5.6)
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    list(APPEND VTK_LIBRARIES vtkWrappingPythonCore)
+  elseif(${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} VERSION_GREATER 5.6)
     list(APPEND VTK_LIBRARIES vtkPythonCore)
   else()
     list(APPEND VTK_LIBRARIES vtkCommonPythonD)
@@ -113,7 +138,7 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

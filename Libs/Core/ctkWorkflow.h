@@ -42,6 +42,7 @@ class CTK_CORE_EXPORT ctkWorkflow : public QObject
   Q_ENUMS(TransitionDirectionality)
   Q_PROPERTY(bool isRunning READ isRunning DESIGNABLE false)
   Q_PROPERTY(bool goBackToOriginStepUponSuccess READ goBackToOriginStepUponSuccess WRITE setGoBackToOriginStepUponSuccess)
+  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose)
 
 public:
 
@@ -107,14 +108,21 @@ public:
 
   /// \brief Set/get the initial step.
   /// \note In not specified, the first step added will be considered as the initialStep
+  /// \sa currentStep(), step(), hasStep(), steps()
   Q_INVOKABLE ctkWorkflowStep* initialStep()const;
   Q_INVOKABLE virtual void setInitialStep(ctkWorkflowStep* step);
 
   /// Get the current step of the state machine
+  /// \sa initialStep(), step(), hasStep(), steps()
   Q_INVOKABLE ctkWorkflowStep* currentStep()const;
 
   /// Check to see if there is a step with a given id in the workflow.
+  /// \sa step(), currentStep(), steps()
   Q_INVOKABLE bool hasStep(const QString& id)const;
+
+  /// Return the step with matching \a id if any, 0 otherwise.
+  /// \sa hasStep(), currentStep(), steps()
+  Q_INVOKABLE ctkWorkflowStep* step(const QString& id)const;
 
   /// Returns whether or not we can go forward: i.e. there exists a step that directly follows the
   /// given step.
@@ -160,6 +168,14 @@ public:
   /// Returns list of steps managed by the workflow
   Q_INVOKABLE QList<ctkWorkflowStep*> steps()const;
 
+  // Returns the distance of a given to step to another step.
+  // The directionality used here is ctkWorkflow::Bidirectional or ctkWorkflow::Backward.
+  // By default, step is the current step and origin the initial step.
+  //
+  // This is different from the other method as it's not limited to the backward or forward steps
+  // but actually performs a recursive search.
+  Q_INVOKABLE int backwardDistanceToStep(ctkWorkflowStep* fromStep = 0, ctkWorkflowStep* origin = 0)const;
+
   /// Configures the behavior of goToStep(targetId).
   ///
   /// If set to true, goToStep(targetId) goes back to the origin step after
@@ -168,6 +184,10 @@ public:
   /// succeeded.
   bool goBackToOriginStepUponSuccess()const;
   void setGoBackToOriginStepUponSuccess(bool flag);
+
+  /// If set debug messages will be displayed on standard output.
+  bool verbose()const;
+  void setVerbose(bool value);
 
 public Q_SLOTS:
 

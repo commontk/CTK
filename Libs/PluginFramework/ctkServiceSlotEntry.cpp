@@ -37,7 +37,8 @@ public:
   ctkServiceSlotEntryData(QSharedPointer<ctkPlugin> p, QObject* receiver,
                           const char* slot)
     : plugin(p), receiver(receiver),
-      slot(slot), removed(false)
+      slot(slot), removed(false),
+      hashValue(0)
   {
 
   }
@@ -69,6 +70,7 @@ public:
   const char* slot;
   bool removed;
 
+  uint hashValue;
 };
 
 //----------------------------------------------------------------------------
@@ -171,5 +173,10 @@ ctkLDAPExpr::LocalCache& ctkServiceSlotEntry::getLocalCache() const
 //----------------------------------------------------------------------------
 uint qHash(const ctkServiceSlotEntry& serviceSlot)
 {
-  return qHash(serviceSlot.getPlugin());
+  if (serviceSlot.d->hashValue == 0)
+  {
+    serviceSlot.d->hashValue = qHash(serviceSlot.d->plugin) * 4 +
+        qHash(serviceSlot.d->receiver) * 2 + qHash(serviceSlot.d->slot);
+  }
+  return serviceSlot.d->hashValue;
 }

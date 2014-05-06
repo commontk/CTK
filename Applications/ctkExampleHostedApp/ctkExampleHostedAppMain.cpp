@@ -62,6 +62,7 @@ int main(int argv, char** argc)
   // Add command line argument names
   parser.addArgument("hostURL", "", QVariant::String, "Hosting system URL");
   parser.addArgument("applicationURL", "", QVariant::String, "Hosted Application URL");
+  parser.addArgument("plugin", "", QVariant::String, "Plugin implementing the DicomAppInterface", "org_commontk_dah_exampleapp");
   parser.addArgument("help", "h", QVariant::Bool, "Show this help text");
 
   bool ok = false;
@@ -74,16 +75,24 @@ int main(int argv, char** argc)
     }
 
   // Show a help message
-   if (parsedArgs.contains("help"))
-     {
-     print_usage();
-     QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
-     return EXIT_SUCCESS;
-     }
-
-  if(parsedArgs.count() != 2)
+  if (parsedArgs.contains("help"))
     {
-    qCritical() << "Wrong number of command line arguments.";
+    print_usage();
+    QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
+    return EXIT_SUCCESS;
+    }
+
+  if (parsedArgs.contains("hostURL") == false)
+    {
+    qCritical() << "Missing parameter hostURL.";
+    print_usage();
+    QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
+    return EXIT_FAILURE;
+    }
+
+  if (parsedArgs.contains("applicationURL") == false)
+    {
+    qCritical() << "Missing parameter hostURL.";
     print_usage();
     QTextStream(stdout, QIODevice::WriteOnly) << parser.helpText();
     return EXIT_FAILURE;
@@ -93,12 +102,26 @@ int main(int argv, char** argc)
   QString appURL = parsedArgs.value("applicationURL").toString();
   qDebug() << "appURL is: " << appURL << " . Extracted port is: " << QUrl(appURL).port();
 
-  // setup the plugin framework
+  // Get the name of the plugin with the business logic
+  // (thus the actual logic of the hosted app)
+  QString pluginName = parsedArgs.value("plugin").toString();
+  qCritical() << "  Plugin name: " << pluginName;
+
   ctkProperties fwProps;
+  // pass further parameters the plugins
+  if(parser.unparsedArguments().count() > 0)
+    {
+    QString args = parser.unparsedArguments().join(" ");
+    fwProps.insert("dah.args", parser.unparsedArguments().join(" "));
+    }
+
+  // setup the plugin framework
   fwProps.insert("dah.hostURL", hostURL);
   fwProps.insert("dah.appURL", appURL);
+  fwProps.insert(ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN, ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
   ctkPluginFrameworkFactory fwFactory(fwProps);
   QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
+
 
   try
     {
@@ -117,14 +140,6 @@ int main(int argv, char** argc)
 #endif
 
   qApp->addLibraryPath(pluginPath);
-
-  // Construct the name of the plugin with the business logic
-  // (thus the actual logic of the hosted app)
-  QString pluginName("org_commontk_dah_exampleapp");
-  if(parser.unparsedArguments().count() > 0)
-    {
-    pluginName = parser.unparsedArguments().at(0);
-    }
 
   // try to find the plugin and install all plugins available in
   // pluginPath containing the string "org_commontk_dah" (but do not start them)

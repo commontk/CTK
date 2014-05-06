@@ -121,6 +121,17 @@ public Q_SLOTS:
   /// Update the value of ScrollbarAtBottom given the current position of the scollbar
   void onScrollBarValueChanged(int value);
 
+protected:
+  /// Return true if the cursor position is in the history area
+  /// false if it is after the InteractivePosition.
+  bool isCursorInHistoryArea()const;
+
+  /// Reimplemented to make sure there is no text added into the
+  /// history logs.
+  virtual void insertFromMimeData(const QMimeData* source);
+
+  /// Paste text at the current text cursor position.
+  void pasteText(const QString& text);
 public:
 
   /// A custom completer

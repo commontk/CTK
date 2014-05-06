@@ -53,7 +53,7 @@ public:
   ///
   QString shortDescription();
   static QString shortDescription(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, QString qt_slot = "");
+    const QObject* qt_obj, const char* qt_slot = 0);
 
   /// 
   /// Warning the slot must have its signature order:
@@ -63,14 +63,14 @@ public:
   /// Of course the slot can contain less parameters, but always the same order
   /// though.
   void setup(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, QString qt_slot, float priority = 0.f,
+    const QObject* qt_obj, const char* qt_slot, float priority = 0.f,
     Qt::ConnectionType connectionType = Qt::AutoConnection);
 
   /// 
   /// Check the validity of the parameters. Parameters must be valid to add 
   /// a connection
   static bool isValid(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, QString qt_slot);
+    const QObject* qt_obj, const char* qt_slot);
 
   /// 
   /// Temporarilly block any signals/slots. If the event is fired, the slot
@@ -81,7 +81,7 @@ public:
 
   /// 
   bool isEqual(vtkObject* vtk_obj, unsigned long vtk_event,
-               const QObject* qt_obj, QString qt_slot)const;
+               const QObject* qt_obj, const char* qt_slot)const;
 
   /// 
   /// Return a string uniquely identifying the connection within the current process

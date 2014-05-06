@@ -41,8 +41,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkPopupWidgetEventTranslator(const ctkPopupWidgetEventTranslator&); // NOT implemented
-  ctkPopupWidgetEventTranslator& operator=(const ctkPopupWidgetEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkPopupWidgetEventTranslator);
 
   QObject* CurrentObject;
 

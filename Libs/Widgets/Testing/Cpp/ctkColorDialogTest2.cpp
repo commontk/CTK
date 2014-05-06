@@ -53,5 +53,5 @@ int ctkColorDialogTest2(int argc, char * argv [] )
               << std::endl;
     return EXIT_FAILURE;
     }
-  return app.exec();
+  return EXIT_SUCCESS;
 }

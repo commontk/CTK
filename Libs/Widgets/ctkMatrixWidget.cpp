@@ -20,10 +20,10 @@
 
 // CTK includes
 #include "ctkMatrixWidget.h"
+#include "ctkDoubleSpinBox.h"
 
 // Qt includes
 #include <QDebug>
-#include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QItemEditorFactory>
@@ -40,11 +40,11 @@
 namespace
 {
 //-----------------------------------------------------------------------------
-  class ctkMatrixDoubleSpinBox : public QDoubleSpinBox
+  class ctkMatrixDoubleSpinBox : public ctkDoubleSpinBox
   {
   public:
     ctkMatrixDoubleSpinBox(QWidget * parentWidget)
-      : QDoubleSpinBox(parentWidget)
+      : ctkDoubleSpinBox(parentWidget)
     {
       // We know that the parentWidget() of parentWidget will be a
       // ctkMatrixWidget because this object is
@@ -55,9 +55,37 @@ namespace
       this->setMinimum(matrixWidget->minimum());
       this->setMaximum(matrixWidget->maximum());
       this->setDecimals(matrixWidget->decimals());
+      this->setDecimalsOption(matrixWidget->decimalsOption());
       this->setSingleStep(matrixWidget->singleStep());
+
+      this->connect(this, SIGNAL(decimalsChanged(int)),
+        matrixWidget, SLOT(setDecimals(int)));
     }
   };
+
+//-----------------------------------------------------------------------------
+// Reimplemented to display the numbers with the matrix decimals.
+class ctkMatrixItemDelegate : public QStyledItemDelegate
+{
+public:
+  ctkMatrixItemDelegate(ctkMatrixWidget* matrixWidget)
+    : QStyledItemDelegate(matrixWidget)
+  {
+  }
+  virtual QString	displayText ( const QVariant & value, const QLocale & locale ) const
+  {
+    ctkMatrixWidget* matrix = qobject_cast<ctkMatrixWidget*>(this->parent());
+    Q_ASSERT(matrix);
+    switch(value.type())
+      {
+      case QVariant::Double:
+        return locale.toString(value.toDouble(), 'f', matrix->decimals());
+      default:
+        return this->QStyledItemDelegate::displayText(value, locale);
+      }
+  }
+};
+
 }
 
 //-----------------------------------------------------------------------------
@@ -80,6 +108,7 @@ public:
   double Minimum;
   double Maximum;
   int    Decimals;
+  ctkDoubleSpinBox::DecimalsOptions DecimalsOption;
   double SingleStep;
 };
 
@@ -94,6 +123,7 @@ ctkMatrixWidgetPrivate::ctkMatrixWidgetPrivate(ctkMatrixWidget& object, int rows
 void ctkMatrixWidgetPrivate::init()
 {
   Q_Q(ctkMatrixWidget);
+  this->Table->setItemDelegate(new ctkMatrixItemDelegate(q));
 
   this->Table->setParent(q);
   QHBoxLayout* layout = new QHBoxLayout(q);
@@ -342,7 +372,28 @@ void ctkMatrixWidget::setRange(double newMinimum, double newMaximum)
 void ctkMatrixWidget::setDecimals(int decimals)
 {
   Q_D(ctkMatrixWidget);
+  if (d->Decimals == decimals)
+    {
+    return;
+    }
   d->Decimals = qMax(0, decimals);
+  this->update();
+  this->emit decimalsChanged(d->Decimals);
+}
+
+// --------------------------------------------------------------------------
+ctkDoubleSpinBox::DecimalsOptions ctkMatrixWidget::decimalsOption()const
+{
+  Q_D(const ctkMatrixWidget);
+  return d->DecimalsOption;
+}
+
+// --------------------------------------------------------------------------
+void ctkMatrixWidget
+::setDecimalsOption(ctkDoubleSpinBox::DecimalsOptions newDecimalsOption)
+{
+  Q_D(ctkMatrixWidget);
+  d->DecimalsOption = newDecimalsOption;
 }
 
 // --------------------------------------------------------------------------

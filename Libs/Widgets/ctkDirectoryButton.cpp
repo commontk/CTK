@@ -20,12 +20,15 @@
 
 // Qt includes
 #include <QDebug>
+#include <QFileSystemModel>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QSortFilterProxyModel>
 #include <QStyle>
 
 // CTK includes
 #include "ctkDirectoryButton.h"
+#include "ctkFileDialog.h"
 
 //-----------------------------------------------------------------------------
 class ctkDirectoryButtonPrivate
@@ -51,6 +54,7 @@ public:
 #endif
   // TODO expose DisplayAbsolutePath into the API
   bool         DisplayAbsolutePath;
+  QFileDialog::AcceptMode AcceptMode;
 };
 
 //-----------------------------------------------------------------------------
@@ -63,6 +67,7 @@ ctkDirectoryButtonPrivate::ctkDirectoryButtonPrivate(ctkDirectoryButton& object)
   this->DialogOptions = ctkDirectoryButton::ShowDirsOnly;
 #endif
   this->DisplayAbsolutePath = true;
+  this->AcceptMode = QFileDialog::AcceptOpen;
 }
 
 //-----------------------------------------------------------------------------
@@ -229,20 +234,75 @@ const ctkDirectoryButton::Options& ctkDirectoryButton::options()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkDirectoryButton::browse()
+QFileDialog::AcceptMode ctkDirectoryButton::acceptMode() const
+{
+  Q_D(const ctkDirectoryButton);
+  return d->AcceptMode;
+}
+
+//-----------------------------------------------------------------------------
+void ctkDirectoryButton::setAcceptMode(QFileDialog::AcceptMode mode)
 {
   Q_D(ctkDirectoryButton);
-  QString dir =
-    QFileDialog::getExistingDirectory(
-      this,
-      d->DialogCaption.isEmpty() ? this->toolTip() : d->DialogCaption,
-      d->Directory.path(),
-#ifdef USE_QFILEDIALOG_OPTIONS
-      d->DialogOptions);
-#else
-      QFlags<QFileDialog::Option>(int(d->DialogOptions)));
-#endif
-  // An empty directory means that the user cancelled the dialog.
+  d->AcceptMode = mode;
+}
+
+//-----------------------------------------------------------------------------
+void ctkDirectoryButton::browse()
+{
+  // See https://bugreports.qt-project.org/browse/QTBUG-10244
+  class ExcludeReadOnlyFilterProxyModel : public QSortFilterProxyModel
+  {
+  public:
+    ExcludeReadOnlyFilterProxyModel(QPalette palette, QObject *parent)
+      : QSortFilterProxyModel(parent)
+      , Palette(palette)
+    {
+    }
+    virtual Qt::ItemFlags flags(const QModelIndex& index)const
+    {
+      QString filePath =
+        this->sourceModel()->data(this->mapToSource(index),
+                                  QFileSystemModel::FilePathRole).toString();
+      if (!QFileInfo(filePath).isWritable())
+        {
+        // Double clickable (to open) but can't be "choosen".
+        return Qt::ItemIsSelectable;
+        }
+      return this->QSortFilterProxyModel::flags(index);
+    }
+    QPalette Palette;
+  };
+
+  Q_D(ctkDirectoryButton);
+  // Use a ctkFileDialog (vs QFileDialog) for the AcceptSave mode so it does not
+  // select non writable folders.
+  QScopedPointer<ctkFileDialog> fileDialog(
+    new ctkFileDialog(this, d->DialogCaption.isEmpty() ? this->toolTip() :
+                      d->DialogCaption, d->Directory.path()));
+  #ifdef USE_QFILEDIALOG_OPTIONS
+    fileDialog->setOptions(d->DialogOptions);
+  #else
+    fileDialog->setOptions(QFlags<QFileDialog::Option>(int(d->DialogOptions)));
+  #endif
+    fileDialog->setAcceptMode(d->AcceptMode);
+    fileDialog->setFileMode(QFileDialog::DirectoryOnly);
+
+  if (d->AcceptMode == QFileDialog::AcceptSave)
+    {
+    // Gray out the non-writable folders. They are still openable with double click,
+    // but they can't be selected because they don't have the ItemIsEnabled
+    // flag and because ctkFileDialog would not let it to be selected.
+    fileDialog->setProxyModel(
+      new ExcludeReadOnlyFilterProxyModel(this->palette(), fileDialog.data()));
+    }
+
+  QString dir;
+  if (fileDialog->exec())
+    {
+    dir = fileDialog->selectedFiles().at(0);
+    }
+  // An empty directory means either that the user cancelled the dialog or the selected directory is readonly
   if (dir.isEmpty())
     {
     return;

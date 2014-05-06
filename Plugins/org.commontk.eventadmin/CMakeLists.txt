@@ -109,10 +109,14 @@ set(PLUGIN_resources
 )
 
 set(PLUGIN_CACHED_RESOURCEFILES
-  
+
 )
 
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
+
+if(UNIX AND NOT APPLE)
+  list(APPEND PLUGIN_target_libraries rt)
+endif()
 
 ctkMacroBuildPlugin(
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}

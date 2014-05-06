@@ -52,6 +52,9 @@ set(KIT_SRCS
   ctkErrorLogStreamMessageHandler.h
   ctkException.cpp
   ctkException.h
+  ctkHighPrecisionTimer.cpp
+  ctkLinearValueProxy.cpp
+  ctkLinearValueProxy.h
   ctkLogger.cpp
   ctkLogger.h
   ctkHistogram.cpp
@@ -68,6 +71,8 @@ set(KIT_SRCS
   ctkTransferFunctionRepresentation.h
   ctkUtils.cpp
   ctkUtils.h
+  ctkValueProxy.cpp
+  ctkValueProxy.h
   ctkWorkflow.h
   ctkWorkflow.cpp
   ctkWorkflow_p.h
@@ -94,12 +99,14 @@ set(KIT_MOC_SRCS
   ctkCommandLineParser.h
   ctkErrorLogFDMessageHandler_p.h
   ctkErrorLogModel.h
+  ctkLinearValueProxy.h
   ctkLogger.h
   ctkHistogram.h
   ctkModelTester.h
   ctkErrorLogQtMessageHandler.h
   ctkTransferFunction.h
   ctkTransferFunctionRepresentation.h
+  ctkValueProxy.h
   ctkWorkflow.h
   ctkWorkflow_p.h
   ctkWorkflowStep_p.h
@@ -146,7 +153,7 @@ elseif(WIN32 AND NOT MINGW)
   target_link_libraries(${PROJECT_NAME} dbghelp)
 endif()
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}
@@ -158,7 +165,7 @@ endif()
 # Testing
 if(BUILD_TESTING)
   add_subdirectory(Testing)
-  
+
   # Compile source code snippets
   add_subdirectory(Documentation/Snippets)
 endif()

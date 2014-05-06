@@ -23,7 +23,6 @@
 
 // Qt includes
 #include <QSlider>
-class QDoubleSpinBox;
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -33,16 +32,23 @@ class QDoubleSpinBox;
 class ctkDoubleSlider;
 class ctkPopupWidget;
 class ctkSliderWidgetPrivate;
+class ctkDoubleSpinBox;
+class ctkValueProxy;
 
 /// \ingroup Widgets
 ///
-/// ctkSliderWidget is a wrapper around a ctkDoubleSlider and a QDoubleSpinBox
+/// ctkSliderWidget is a wrapper around a ctkDoubleSlider and a ctkDoubleSpinBox
 /// where the slider value and the spinbox value are synchronized.
-/// \sa ctkRangeWidget, ctkDoubleRangeSlider, QSpinBox
+/// \sa ctkRangeWidget, ctkDoubleRangeSlider, QDoubleSpinBox
 class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_FLAGS(SynchronizeSiblings)
+
+  /// This property holds the precision of the spin box, in decimals.
+  /// 2 by default.
+  /// \sa decimals(), setDecimals(), decimalsChanged()
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
   Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
   Q_PROPERTY(double pageStep READ pageStep WRITE setPageStep)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
@@ -51,13 +57,38 @@ class CTK_WIDGETS_EXPORT ctkSliderWidget : public QWidget
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(double tickInterval READ tickInterval WRITE setTickInterval)
-  Q_PROPERTY(bool autoSpinBoxWidth READ isAutoSpinBoxWidth WRITE setAutoSpinBoxWidth)
+  Q_PROPERTY(QSlider::TickPosition tickPosition READ tickPosition WRITE setTickPosition)
+  Q_PROPERTY(SynchronizeSiblings synchronizeSiblings READ synchronizeSiblings WRITE setSynchronizeSiblings)
   Q_PROPERTY(Qt::Alignment spinBoxAlignment READ spinBoxAlignment WRITE setSpinBoxAlignment)
   Q_PROPERTY(bool tracking READ hasTracking WRITE setTracking)
   Q_PROPERTY(bool spinBoxVisible READ isSpinBoxVisible WRITE setSpinBoxVisible);
   Q_PROPERTY(bool popupSlider READ hasPopupSlider WRITE setPopupSlider);
+  Q_PROPERTY(bool invertedAppearance READ invertedAppearance WRITE setInvertedAppearance)
+  Q_PROPERTY(bool invertedControls READ invertedControls WRITE setInvertedControls)
 
 public:
+
+  /// Synchronize properties of the slider siblings:
+  /// NoSynchronize:
+  /// The slider widget siblings aren't updated and this widget does not update
+  /// from its siblings.
+  /// SynchronizeWidth:
+  /// The width of the SpinBox is set to the same width of the largest QDoubleSpinBox
+  /// of its ctkSliderWidget siblings.
+  /// SynchronizeDecimals:
+  /// Whenever one of the siblings changes its number of decimals, all its
+  /// siblings Synchronize to the new number of decimals.
+  ///
+  /// Default is SynchronizeWidth.
+  /// \sa SynchronizeSiblings(), setSynchronizeSiblings(), decimalsChanged()
+  enum SynchronizeSibling
+    {
+    NoSynchronize = 0x000,
+    SynchronizeWidth = 0x001,
+    SynchronizeDecimals = 0x002,
+    };
+  Q_DECLARE_FLAGS(SynchronizeSiblings, SynchronizeSibling)
+
   /// Superclass typedef
   typedef QWidget Superclass;
 
@@ -113,11 +144,10 @@ public:
   double pageStep()const;
   void setPageStep(double step);
 
-  /// 
-  /// This property holds the precision of the spin box, in decimals.
-  /// Sets how many decimals the spinbox will use for displaying and interpreting doubles.
+  ///
+  /// Return the decimals property value.
+  /// \sa decimals, setDecimals(), decimalsChanged()
   int decimals()const;
-  void setDecimals(int decimals);
 
   ///
   /// This property holds the spin box's prefix.
@@ -139,8 +169,15 @@ public:
   /// If it is 0, the slider will choose between lineStep() and pageStep().
   /// The default value is 0.
   double tickInterval()const;
-  void setTickInterval(double ti);
+  void setTickInterval(double tick);
 
+  /// 
+  /// This property holds the tickmark position for the slider.
+  /// The valid values are described by the QSlider::TickPosition enum.
+  /// The default value is QSlider::NoTicks.
+  void setTickPosition(QSlider::TickPosition position);
+  QSlider::TickPosition tickPosition()const;
+  
   /// 
   /// This property holds the alignment of the spin box.
   /// Possible Values are Qt::AlignLeft, Qt::AlignRight, and Qt::AlignHCenter.
@@ -158,12 +195,34 @@ public:
   bool hasTracking()const;
 
   /// 
-  /// Set/Get the auto spinbox width
-  /// When the autoSpinBoxWidth property is on, the width of the SpinBox is
-  /// set to the same width of the largest QSpinBox of its
-  // ctkSliderWidget siblings.
-  bool isAutoSpinBoxWidth()const;
-  void setAutoSpinBoxWidth(bool autoWidth);
+  /// Set/Get the synchronize siblings mode. This helps when having multiple
+  /// ctkSliderWidget stacked upon each other.
+  /// Default flag is SynchronizeWidth | SynchronizeDecimals.
+  /// \sa SynchronizeSiblingsModes
+  ctkSliderWidget::SynchronizeSiblings synchronizeSiblings() const;
+  void setSynchronizeSiblings(ctkSliderWidget::SynchronizeSiblings options);
+
+  /// This property holds whether or not a slider shows its values inverted.
+  /// If this property is false (the default), the minimum and maximum will
+  /// be shown in its classic position for the inherited widget. If the value
+  /// is true, the minimum and maximum appear at their opposite location.
+  /// Note: This property makes most sense for sliders and dials. For scroll
+  /// bars, the visual effect of the scroll bar subcontrols depends on whether
+  /// or not the styles understand inverted appearance; most styles ignore this
+  /// property for scroll bars.
+  /// \sa invertedControls
+  void setInvertedAppearance(bool invertedAppearance);
+  bool invertedAppearance()const;
+
+  /// This property holds whether or not the slider and the spinbox invert
+  /// their wheel and key events.
+  /// If this property is false, scrolling the mouse wheel "up" and using keys
+  /// like page up will increase the value of the slider widget towards its
+  /// maximum. Otherwise, pressing page up will move value towards the minimum.
+  /// The default value of the property is false.
+  /// \sa invertedAppearance
+  void setInvertedControls(bool invertedControls);
+  bool invertedControls()const;
 
   ///
   /// The Spinbox visibility can be controlled using setSpinBoxVisible() and
@@ -190,19 +249,32 @@ public:
   /// Returns the spinbox synchronized with the slider. Be careful
   /// with what you do with the spinbox as the slider might change
   /// properties automatically.
-  QDoubleSpinBox* spinBox();
+  ctkDoubleSpinBox* spinBox();
 
   ///
   /// Returns the slider synchronized with the spinbox. Be careful
   /// with what you do with the slider as the spinbox might change
   /// properties automatically.
   ctkDoubleSlider* slider();
+
+  ///
+  /// Set/Get a value proxy filter.
+  /// This simply sets the same value proxy filter on the spinbox
+  /// and the slider
+  /// \sa setValueProxy(), valueProxy()
+  void setValueProxy(ctkValueProxy* proxy);
+  ctkValueProxy* valueProxy() const;
+
 public Q_SLOTS:
   /// 
   /// Reset the slider and spinbox to zero (value and position)
   void reset();
   void setValue(double value);
   void setSpinBoxVisible(bool);
+
+  /// Sets how many decimals the spinbox uses for displaying and
+  /// interpreting doubles.
+  void setDecimals(int decimals);
 
 Q_SIGNALS:
   /// When tracking is on (default), valueChanged is emitted when the
@@ -218,12 +290,19 @@ Q_SIGNALS:
   /// \sa valueChanged QAbstractSlider::sliderMoved
   void valueIsChanging(double value);
 
+  /// This signal is emitted whenever the number of decimals is changed.
+  /// \sa decimals, SynchronizeDecimals
+  void decimalsChanged(int decimals);
+
 protected Q_SLOTS:
   
   void startChanging();
   void stopChanging();
-  void changeValue(double value);
-  
+  void setSpinBoxValue(double sliderValue);
+  void setSliderValue(double spinBoxValue);
+  void onValueProxyAboutToBeModified();
+  void onValueProxyModified();
+
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
   
@@ -235,5 +314,7 @@ private:
   Q_DISABLE_COPY(ctkSliderWidget);
 
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkSliderWidget::SynchronizeSiblings);
 
 #endif

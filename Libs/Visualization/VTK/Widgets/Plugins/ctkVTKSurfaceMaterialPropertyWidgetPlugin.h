@@ -24,9 +24,9 @@
 // CTK includes
 #include "ctkVTKWidgetsAbstractPlugin.h"
 
-class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKSurfaceMaterialPropertyWidgetPlugin :
-  public QObject,
-  public ctkVTKWidgetsAbstractPlugin
+class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKSurfaceMaterialPropertyWidgetPlugin
+  : public QObject
+  , public ctkVTKWidgetsAbstractPlugin
 {
   Q_OBJECT
 

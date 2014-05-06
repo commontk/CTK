@@ -516,7 +516,7 @@ void ctkPluginFrameworkTestSuite::frame070a()
   {
     pA->update(urk);
   }
-  catch (const ctkPluginException& pe)
+  catch (const ctkPluginException& /*pe*/)
   {
     QFAIL("framework test plug-in, update without new plug-in source :FRAME070A:FAIL");
   }

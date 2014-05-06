@@ -6,5 +6,5 @@
 
 set(target_libraries
   CTKCore
-  org_commontk_dah_app
+  org_commontk_dah_hostedapp
   )

@@ -34,6 +34,8 @@ set(KIT_SRCS
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
+  ctkVTKPropertyWidget.cpp
+  ctkVTKPropertyWidget.h
   ctkVTKRenderView.cpp
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
@@ -66,6 +68,7 @@ set(KIT_MOC_SRCS
   ctkVTKMagnifyView.h
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.h
+  ctkVTKPropertyWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.h
@@ -81,6 +84,7 @@ set(KIT_MOC_SRCS
 set(KIT_UI_FORMS
   Resources/UI/ctkVTKScalarBarWidget.ui
   Resources/UI/ctkVTKTextPropertyWidget.ui
+  Resources/UI/ctkVTKPropertyWidget.ui
   Resources/UI/ctkVTKThresholdWidget.ui
 )
 
@@ -90,9 +94,24 @@ set(KIT_resources
 )
 
 # Set VTK_LIBRARIES variable
-set(VTK_LIBRARIES
-  QVTK
-  )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    vtkChartsCore
+    vtkCommonMath
+    vtkFiltersSources
+    vtkImagingGeneral
+    vtkImagingStatistics
+    vtkInteractionWidgets
+    vtkRenderingContext2D
+    vtkViewsContext2D
+    vtkWrappingPythonCore
+    vtkGUISupportQt
+    )
+else()
+  set(VTK_LIBRARIES
+    QVTK
+    )
+endif()
 
 if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(CTK_USE_CHARTS 1)
@@ -119,9 +138,15 @@ IF (${CTK_USE_CHARTS})
       Resources/UI/ctkVTKVolumePropertyWidget.ui
       Resources/UI/ctkVTKScalarsToColorsWidget.ui
       ${KIT_UI_FORMS})
-  set(VTK_LIBRARIES
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    set(VTK_LIBRARIES
+      vtkChartsCore
+      ${VTK_LIBRARIES})
+  else()
+    set(VTK_LIBRARIES
       vtkCharts
       ${VTK_LIBRARIES})
+  endif()
   add_definitions(-DCTK_USE_CHARTS)
 endif()
 
@@ -156,7 +181,7 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

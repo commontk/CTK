@@ -41,8 +41,7 @@ public:
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
-  ctkPathLineEditEventTranslator(const ctkPathLineEditEventTranslator&); // NOT implemented
-  ctkPathLineEditEventTranslator& operator=(const ctkPathLineEditEventTranslator&); // NOT implemented
+  Q_DISABLE_COPY(ctkPathLineEditEventTranslator);
 
   QObject* CurrentObject;
 

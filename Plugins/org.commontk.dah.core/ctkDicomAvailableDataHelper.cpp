@@ -23,7 +23,7 @@
 #include "ctkDicomAvailableDataHelper.h"
 #include "ctkDicomAvailableDataHelper.h"
 #include "ctkDicomObjectLocatorCache.h"
-#include <ctkDICOMDataset.h>
+#include <ctkDICOMItem.h>
 
 // DCMTK includes
 #include <dcmtk/dcmdata/dcdeftag.h>
@@ -185,9 +185,9 @@ bool addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data,
   else
 	   objectDescriptor.mimeType = "text/plain"; //default
 
-  ctkDicomAppHosting::Patient* ppatient;
-  ctkDicomAppHosting::Study* pstudy;
-  ctkDicomAppHosting::Series* pseries;
+  //ctkDicomAppHosting::Patient* ppatient;
+  //ctkDicomAppHosting::Study* pstudy;
+  //ctkDicomAppHosting::Series* pseries;
 
   data.objectDescriptors.append(objectDescriptor);
 
@@ -206,7 +206,7 @@ bool addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data,
 
 bool addToAvailableData(ctkDicomAppHosting::AvailableData& data, 
                         ctkDicomObjectLocatorCache* objectLocatorCache, 
-                        const ctkDICOMDataset& dataset, 
+                        const ctkDICOMItem& dataset, 
                         long length, 
                         long offset, 
                         const QString& uri)
@@ -297,16 +297,84 @@ bool addToAvailableData(ctkDicomAppHosting::AvailableData& data,
 
   //first check if its a non-DICOM file, if so add it first.
   QString ext = fileinfo.suffix();
-  if ( (ext.compare("txt") == 0) || (ext.compare("xml") ==0) || (ext.compare("jpg") ==0) || (ext.compare("bmp") ==0) || (ext.compare("csv") ==0)|| (ext.compare("nii") ==0))
+  if ( (ext.compare("txt") == 0) || (ext.compare("xml") ==0) || (ext.compare("jpg") ==0) || 
+       (ext.compare("bmp") ==0) || (ext.compare("csv") ==0) || (ext.compare("nii") ==0) || 
+       (ext.compare("nrrd") ==0) )
   {
   	  qDebug() << "adding Non DICOM File";
       return addNonDICOMToAvailableData(data, objectLocatorCache, fileinfo.size(), 0, uri);
   }
   //this could be a DICOM file then
-  ctkDICOMDataset ctkdataset;
+  ctkDICOMItem ctkdataset;
   ctkdataset.InitializeFromFile(filename, EXS_Unknown, EGL_noChange, 400);
 
   return addToAvailableData(data, objectLocatorCache, ctkdataset, fileinfo.size(), 0, uri);
 
 }
+
+//----------------------------------------------------------------------------
+bool appendToAvailableData(ctkDicomAppHosting::AvailableData& dest,
+                        const ctkDicomAppHosting::AvailableData& src)
+{
+  dest.objectDescriptors.append(src.objectDescriptors);
+  dest.patients.append(src.patients);
+  return true;
 }
+
+//----------------------------------------------------------------------------
+void appendAllUuids(const ctkDicomAppHosting::Patient& patient, QList<QUuid> & uuidlist)
+{
+  // Loop over patient level object descriptors
+  foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, patient.objectDescriptors)
+    {
+    uuidlist.append(objectDescriptor.descriptorUUID);
+    }
+
+  // Loop over studies
+  foreach(const ctkDicomAppHosting::Study& study, patient.studies)
+    {
+    // Loop over study level object descriptors
+    foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, study.objectDescriptors)
+      {
+      uuidlist.append(objectDescriptor.descriptorUUID);
+      }
+    // Loop over series
+    foreach(const ctkDicomAppHosting::Series& series, study.series)
+      {
+      // Loop over series level object descriptors
+      foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, series.objectDescriptors)
+        {
+        uuidlist.append(objectDescriptor.descriptorUUID);
+        }
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+QList<QUuid> getAllUuids(const ctkDicomAppHosting::Patient& patient)
+{
+  QList<QUuid> uuidlist;
+  appendAllUuids(patient, uuidlist);
+  return uuidlist;
+}
+
+//----------------------------------------------------------------------------
+QList<QUuid> getAllUuids(const ctkDicomAppHosting::AvailableData& availableData)
+{
+  QList<QUuid> uuidlist;
+
+  // Loop over top level object descriptors
+  foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, availableData.objectDescriptors)
+    {
+    uuidlist.append(objectDescriptor.descriptorUUID);
+    }
+
+   // Loop over patients
+  foreach(const ctkDicomAppHosting::Patient& patient, availableData.patients)
+    {
+    appendAllUuids(patient, uuidlist);
+    }
+  return uuidlist;
+}
+
+} //end namespace ctkDicomAvailableDataHelper

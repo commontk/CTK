@@ -27,14 +27,18 @@ set(PLUGIN_MOC_SRCS
 )
 
 set(PLUGIN_UI_FORMS
-  
+
 )
 
 set(PLUGIN_resources
-  
+
 )
 
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
+
+if(UNIX AND NOT APPLE)
+  list(APPEND PLUGIN_target_libraries rt)
+endif()
 
 ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}

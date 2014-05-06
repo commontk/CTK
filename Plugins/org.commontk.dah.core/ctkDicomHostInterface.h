@@ -25,13 +25,40 @@
 
 #include "ctkDicomExchangeInterface.h"
 
-struct ctkDicomHostInterface: public ctkDicomExchangeInterface
+struct ctkDicomHostInterface : public virtual ctkDicomExchangeInterface
 {
   // Host interface methods
+
+  /**
+   * Returns a newly created DICOM UID that the Hosted Application might use, e.g., to create new data
+   * objects and structures.
+   */
   virtual QString generateUID() = 0;
+
+  /**
+   * The Hosted Application supplies its preferred screen size in the appPreferredScreen parameter. The
+   * Hosting System may utilize this information as a hint, but may return a window location and size that best
+   * suits the Hosting System's GUI.
+   */
   virtual QRect getAvailableScreen(const QRect& preferredScreen) = 0;
+
+  /**
+   * This method returns a URI that a Hosted Application may use to store output that it may provide back to
+   * the Hosting System (e.g. in response to a getData() call).
+   * \return a URI that a Hosted Application may use to store output.
+   */
   virtual QString getOutputLocation(const QStringList& preferredProtocols) = 0;
+
+  /**
+   * The Hosted Application shall invoke this method each time the Hosted Application successfully transitions
+   * to a new state. The new state is passed in the state parameter.
+   */
   virtual void notifyStateChanged(ctkDicomAppHosting::State state) = 0;
+
+  /**
+   * Method used by the Hosted Application to inform the Hosting System of notable events that occur during execution.
+   * The Hosted Application invoks this method, passing the information in the status parameter.
+   */
   virtual void notifyStatus(const ctkDicomAppHosting::Status& status) = 0;
 
   // Data exchange interface methods

@@ -57,7 +57,7 @@
 //      ./CTK-build/Testing/Temporary/ctkDICOMRetrieveStorage
 //
 
-int ctkDICOMApplicationTest1(int argc, char * argv []) {
+int main(int argc, char * argv []) {
 
   QCoreApplication app(argc, argv);
   QTextStream out(stdout);

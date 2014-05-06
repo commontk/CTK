@@ -1,7 +1,7 @@
 set(KIT ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
-  ctkDICOMIndexerTest1.cpp
+  ctkDICOMIndexerAppTest1.cpp
   )
 
 SET (TestsToRun ${Tests})
@@ -17,4 +17,4 @@ target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 #
 # Add Tests
 #
-SIMPLE_TEST( ctkDICOMIndexerTest1 )
+SIMPLE_TEST( ctkDICOMIndexerAppTest1 $<TARGET_FILE:ctkDICOMIndexer> )

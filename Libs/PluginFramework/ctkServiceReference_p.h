@@ -26,7 +26,7 @@
 #include <QAtomicInt>
 #include <QSharedPointer>
 
-#include "ctkDictionary.h"
+#include "ctkServiceProperties_p.h"
 
 class QObject;
 
@@ -70,7 +70,7 @@ public:
    * @return A ctkDictionary object containing properties or being empty
    *         if service has been removed.
    */
-  ctkDictionary getProperties() const;
+  const ctkServiceProperties& getProperties() const;
 
   /**
    * Returns the property value to which the specified property key is mapped

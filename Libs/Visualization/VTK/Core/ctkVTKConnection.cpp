@@ -167,6 +167,38 @@ void ctkVTKConnectionPrivate::disconnect()
 }
 
 //-----------------------------------------------------------------------------
+bool ctkVTKConnectionPrivate::IsSameQtSlot(const char* qt_slot)const
+{
+  if (qt_slot == 0)
+    {
+    return true;
+    }
+  const char* ptr = qt_slot;
+  for (QString::const_iterator it = this->QtSlot.begin();
+       it != this->QtSlot.end() && *ptr != '\0'; )
+    {
+    if (*it == *ptr)
+      {
+      ++it;
+      ++ptr;
+      }
+    else if (*it == ' ')
+      {
+      ++it;
+      }
+    else if (*ptr == ' ')
+      {
+      ++ptr;
+      }
+    else
+      {
+      return false;
+      }
+    }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 // ctkVTKConnection methods
 
 //-----------------------------------------------------------------------------
@@ -223,23 +255,23 @@ QString ctkVTKConnection::shortDescription()
 {
   Q_D(ctkVTKConnection);
   
-  return ctkVTKConnection::shortDescription(d->VTKObject, d->VTKEvent, d->QtObject, d->QtSlot);
+  return ctkVTKConnection::shortDescription(d->VTKObject, d->VTKEvent, d->QtObject, d->QtSlot.toLatin1());
 }
 
 //-----------------------------------------------------------------------------
 QString ctkVTKConnection::shortDescription(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, QString qt_slot)
+    const QObject* qt_obj, const char* qt_slot)
 {
   QString ret;
   QTextStream ts( &ret );
   ts << (vtk_obj ? vtk_obj->GetClassName() : "NULL") << " "
-     << vtk_event << " " << qt_obj << " " << qt_slot;
+     << vtk_event << " " << qt_obj << " " << (qt_slot ? qt_slot : "");
   return ret;
 }
 
 //-----------------------------------------------------------------------------
 bool ctkVTKConnection::isValid(vtkObject* vtk_obj, unsigned long vtk_event,
-                               const QObject* qt_obj, QString qt_slot)
+                               const QObject* qt_obj, const char* qt_slot)
 {
   Q_UNUSED(vtk_event);
   if (!vtk_obj)
@@ -250,7 +282,7 @@ bool ctkVTKConnection::isValid(vtkObject* vtk_obj, unsigned long vtk_event,
     {
     return false;
     }
-  if (qt_slot.isEmpty())
+  if (qt_slot == 0 || strlen(qt_slot) == 0)
     {
     return false;
     }
@@ -259,7 +291,7 @@ bool ctkVTKConnection::isValid(vtkObject* vtk_obj, unsigned long vtk_event,
 
 //-----------------------------------------------------------------------------
 void ctkVTKConnection::setup(vtkObject* vtk_obj, unsigned long vtk_event,
-                             const QObject* qt_obj, QString qt_slot, 
+                             const QObject* qt_obj, const char* qt_slot, 
                              float priority,
                              Qt::ConnectionType connectionType)
 {
@@ -277,7 +309,7 @@ void ctkVTKConnection::setup(vtkObject* vtk_obj, unsigned long vtk_event,
   d->Priority = priority;
   d->ConnectionType = connectionType;
 
-  if (qt_slot.contains(QRegExp(QString("\\( ?vtkObject ?\\* ?, ?vtkObject ?\\* ?\\)"))))
+  if (d->QtSlot.contains(QRegExp(QString("\\( ?vtkObject ?\\* ?, ?vtkObject ?\\* ?\\)"))))
     {
     d->SlotType = ctkVTKConnectionPrivate::ARG_VTKOBJECT_AND_VTKOBJECT;
     }
@@ -304,7 +336,7 @@ bool ctkVTKConnection::isBlocked()const
 
 //-----------------------------------------------------------------------------
 bool ctkVTKConnection::isEqual(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, QString qt_slot)const
+    const QObject* qt_obj, const char* qt_slot)const
 {
   Q_D(const ctkVTKConnection);
   
@@ -320,9 +352,7 @@ bool ctkVTKConnection::isEqual(vtkObject* vtk_obj, unsigned long vtk_event,
     {
     return false;
     }
-  if (!qt_slot.isEmpty() && 
-      (QString(d->QtSlot).remove(' ').compare(
-        QString(qt_slot).remove(' ')) != 0))
+  if (!d->IsSameQtSlot(qt_slot))
     {
     return false;
     }

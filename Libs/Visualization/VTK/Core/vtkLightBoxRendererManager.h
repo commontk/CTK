@@ -22,6 +22,7 @@
 #define __vtkLightBoxRendererManager_h
 
 #include <vtkObject.h>
+#include <vtkVersion.h>
 
 #include "ctkVisualizationVTKCoreExport.h"
 
@@ -30,11 +31,12 @@ class vtkRenderer;
 class vtkImageData;
 class vtkCamera;
 class vtkCornerAnnotation;
+class vtkAlgorithmOutput;
 
 /// \ingroup Visualization_VTK_Core
 class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkObject
 {
-  vtkTypeRevisionMacro(vtkLightBoxRendererManager,vtkObject);
+  vtkTypeMacro(vtkLightBoxRendererManager,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   static vtkLightBoxRendererManager *New();
 
@@ -51,7 +53,11 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
   vtkRenderWindow* GetRenderWindow();
 
   /// Set image data
+#if (VTK_MAJOR_VERSION <= 5)
   void SetImageData(vtkImageData* newImageData);
+#else
+  void SetImageDataConnection(vtkAlgorithmOutput* newImageDataConnection);
+#endif
 
   /// Get active camera
   /// Note that the same camera is used with all the renderWindowItem

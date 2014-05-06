@@ -32,6 +32,7 @@
  * @{
  */
 typedef QHash<QString, QVariant> ctkProperties;
+typedef ctkProperties ctkDictionary;
 
 #if QT_VERSION < 0x040700
 #include <QSharedPointer>

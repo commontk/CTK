@@ -112,6 +112,13 @@ public:
   QString handleToolTip()const;
   void setHandleToolTip(const QString& toolTip);
 
+  /// Returns true if the minimum value handle is down, false if it is up.
+  /// \sa isMaximumSliderDown()
+  bool isMinimumSliderDown()const;
+  /// Returns true if the maximum value handle is down, false if it is up.
+  /// \sa isMinimumSliderDown()
+  bool isMaximumSliderDown()const;
+
 Q_SIGNALS:
   ///
   /// This signal is emitted when the slider minimum value has changed, 
@@ -182,9 +189,6 @@ protected:
   virtual void mousePressEvent(QMouseEvent* ev);
   virtual void mouseMoveEvent(QMouseEvent* ev);
   virtual void mouseReleaseEvent(QMouseEvent* ev);
-
-  bool isMinimumSliderDown()const;
-  bool isMaximumSliderDown()const;
 
   // Description:
   // Rendering is done here.

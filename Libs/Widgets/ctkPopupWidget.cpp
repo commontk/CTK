@@ -20,8 +20,8 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
 #include <QDesktopWidget>
+#include <QDialog>
 #include <QDir>
 #include <QEvent>
 #include <QLabel>
@@ -99,36 +99,26 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
     {
     if (widget->isAncestorOf(this->BaseWidget))
       {
-      QMoveEvent* moveEvent = dynamic_cast<QMoveEvent*>(event);
-      QPoint topLeft = widget->parentWidget() ? widget->parentWidget()->mapToGlobal(moveEvent->pos()) : moveEvent->pos();
-      topLeft += this->BaseWidget->mapTo(widget, QPoint(0,0));
-      //q->move(q->pos() + moveEvent->pos() - moveEvent->oldPos());
-      QRect newBaseGeometry = this->baseGeometry();
-	    newBaseGeometry.moveTopLeft(topLeft);
-	    QRect desiredGeometry = this->desiredOpenGeometry(newBaseGeometry);
-	    q->move(desiredGeometry.topLeft());
+      q->setGeometry(this->desiredOpenGeometry());
       }
-    else if (widget->isWindow() &&
-             widget->windowType() != Qt::ToolTip &&
-             widget->windowType() != Qt::Popup)
+    else if (this->isHidingCandidate(widget))
       {
       QTimer::singleShot(0, this, SLOT(updateVisibility()));
       }
     }
   else if (event->type() == QEvent::Resize)
     {
-    if (widget->isWindow() &&
-        widget != this->BaseWidget->window() &&
-        widget->windowType() != Qt::ToolTip &&
-        widget->windowType() != Qt::Popup)
+    if (widget->isAncestorOf(this->BaseWidget))
+      {
+      q->setGeometry(this->desiredOpenGeometry());
+      }
+    else if (this->isHidingCandidate(widget))
       {
       QTimer::singleShot(0, this, SLOT(updateVisibility()));
       }
     }
   else if (event->type() == QEvent::WindowStateChange &&
-           widget != this->BaseWidget->window() &&
-           widget->windowType() != Qt::ToolTip &&
-           widget->windowType() != Qt::Popup)
+           this->isHidingCandidate(widget))
     {
     QTimer::singleShot(0, this, SLOT(updateVisibility()));
     }
@@ -137,6 +127,10 @@ bool ctkPopupWidgetPrivate::eventFilter(QObject* obj, QEvent* event)
            widget == this->BaseWidget->window())
     {
     QTimer::singleShot(0, this, SLOT(updateVisibility()));
+    }
+  else if (event->type() == QEvent::RequestSoftwareInputPanel)
+    {
+    qApp->setActiveWindow(widget->window());
     }
   return false;
 }
@@ -154,6 +148,29 @@ void ctkPopupWidgetPrivate::onApplicationDeactivate()
 }
 
 // -------------------------------------------------------------------------
+bool ctkPopupWidgetPrivate::isHidingCandidate(QWidget* widget)const
+{
+  // The mac window manager is keeping the Qt:Tool widgets always on top,
+  // so if a non modal dialog is moved near the popup widget, the popup will
+  // always appear on top of the dialog. For this reason we manually have to
+  // hide the popup when a dialog is intersecting with the popup.
+  bool canWindowsHidePopup = false;
+#if defined Q_OS_MAC
+  canWindowsHidePopup = true;
+#endif
+  bool isWindow = widget->isWindow();
+  QDialog* dialog = qobject_cast<QDialog*>(widget);
+  bool isModal = dialog ? dialog->isModal() : false;
+  bool isBasePopupWidget = qobject_cast<ctkBasePopupWidget*>(widget);
+  bool isToolTip = widget->windowType() == Qt::ToolTip;
+  bool isPopup = widget->windowType() == Qt::Popup;
+  bool isSelf = (widget == (this->BaseWidget ? this->BaseWidget->window() : 0));
+
+  return canWindowsHidePopup && isWindow && !isModal && !isBasePopupWidget &&
+    !isToolTip && !isPopup && !isSelf;
+}
+
+// -------------------------------------------------------------------------
 void ctkPopupWidgetPrivate::updateVisibility()
 {
   Q_Q(ctkPopupWidget);
@@ -164,8 +181,8 @@ void ctkPopupWidgetPrivate::updateVisibility()
       (!this->BaseWidget->window()->isActiveWindow() &&
       // and no other active window
        (!qApp->activeWindow() ||
-      // or the active window is a popup/tooltip
-        (qApp->activeWindow()->windowType() != Qt::ToolTip &&
+      // or the active window is a popup
+        (!qobject_cast<ctkBasePopupWidget*>(qApp->activeWindow()) && //->windowType() != PopupWindowType &&
          qApp->activeWindow()->windowType() != Qt::Popup))))
     {
     foreach(QWidget* topLevelWidget, qApp->topLevelWidgets())
@@ -177,9 +194,7 @@ void ctkPopupWidgetPrivate::updateVisibility()
       // Of course, tooltips and popups don't count as covering windows.
       if (topLevelWidget->isVisible() &&
           !(topLevelWidget->windowState() & Qt::WindowMinimized) &&
-          topLevelWidget->windowType() != Qt::ToolTip &&
-          topLevelWidget->windowType() != Qt::Popup &&
-          topLevelWidget != (this->BaseWidget ? this->BaseWidget->window() : 0) &&
+          this->isHidingCandidate(topLevelWidget) &&
           topLevelWidget->frameGeometry().intersects(q->geometry()))
         {
         //qDebug() << "hide" << q << "because of: " << topLevelWidget
@@ -222,7 +237,6 @@ void ctkPopupWidgetPrivate::temporarilyHiddenOn()
 void ctkPopupWidgetPrivate::temporarilyHiddenOff()
 {
   Q_Q(ctkPopupWidget);
-
   int forcedClosed = this->property("forcedClosed").toInt();
   if (forcedClosed > 0)
     {
@@ -446,22 +460,11 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
     case QEvent::Show:
       if (obj != d->BaseWidget)
         {
-	      break;
-	      }
-	    this->setGeometry(d->desiredOpenGeometry());
-	    d->temporarilyHiddenOff();
-	    break;
-	  case QEvent::Resize:
-	    if (obj != d->BaseWidget ||
-	        !(d->Alignment & Qt::AlignJustify ||
-	         (d->Alignment & Qt::AlignTop && d->Alignment & Qt::AlignBottom)) ||
-	         !(d->isOpening() || this->isVisible()))
-	      {
-	      break;
-	      }
-	    // TODO: bug when the effect is WindowOpacityFadeEffect
-	    this->setGeometry(d->desiredOpenGeometry());
-	    break;
+        break;
+        }
+      this->setGeometry(d->desiredOpenGeometry());
+      d->temporarilyHiddenOff();
+      break;
     case QEvent::Enter:
       if ( d->currentAnimation()->state() == QAbstractAnimation::Stopped )
         {

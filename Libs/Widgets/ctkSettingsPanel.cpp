@@ -83,7 +83,11 @@ bool PropertyType::setValue(const QVariant& val)
     {
     value = QVariant(QStringList());
     }
-  bool success = this->Object->setProperty(this->Property.toLatin1(), value);
+  bool success = true;
+  if (this->Object->property(this->Property.toLatin1()) != value)
+    {
+    success = this->Object->setProperty(this->Property.toLatin1(), value);
+    }
   Q_ASSERT(success);
   return success;
 }
@@ -294,6 +298,16 @@ void ctkSettingsPanel::registerProperty(const QString& key,
     {
     this->updateSetting(key);
     }
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsPanel::registerProperty(
+  const QString& key, QObject* object, const QString& property,
+  const QByteArray& signal, const QString& label,
+  ctkSettingsPanel::SettingOptions options, QSettings* settings)
+{
+  this->registerProperty(key, object, property, signal.constData(),
+                         label, options, settings);
 }
 
 // --------------------------------------------------------------------------

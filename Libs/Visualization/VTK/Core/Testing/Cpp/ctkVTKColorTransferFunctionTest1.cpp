@@ -205,6 +205,7 @@ int ctkVTKColorTransferFunctionTest1( int argc, char * argv [])
   defaultControlPoint = defaultTF.controlPoint(0);
   defaultControlPoint = defaultTF.controlPoint(firstIndex);
   defaultControlPoint = defaultTF.controlPoint(secondIndex);
+  Q_UNUSED(defaultControlPoint)
 
   colorTransferFunction->Delete();
   return EXIT_SUCCESS;

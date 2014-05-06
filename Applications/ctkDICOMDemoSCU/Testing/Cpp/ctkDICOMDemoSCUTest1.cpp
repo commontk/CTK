@@ -34,7 +34,15 @@ int ctkDICOMDemoSCUTest1(int argc, char * argv [])
   QString aeTitle("MOVESCP");
   QStringList parameters;
   parameters << peer << port << aeTitle;
-  QString command = QString("ctkDICOMDemoSCU");
+
+  if (argc < 2)
+    {
+    std::cerr << "Must specify path to ctkDICOMDemoSCU on command line\n";
+    return EXIT_FAILURE;
+    }
+  std::cout << "Testing ctkDICOMDemoSCU: " << argv[1] << "\n";
+  QString command = QString(argv[1]);
+
   int res = QProcess::execute(command, parameters);
   if (res != EXIT_SUCCESS)
     {

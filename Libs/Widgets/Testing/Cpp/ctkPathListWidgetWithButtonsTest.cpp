@@ -75,6 +75,7 @@ void ctkPathListWidgetWithButtonsTester::testButtons()
     {
       QTest::qWait(1000);
       QTimer::singleShot(0, QApplication::activeModalWidget(), SLOT(accept()));
+      QTest::qWait(1000);
     }
   };
   QThreadPool::globalInstance()->start(new CloseModalDialog);

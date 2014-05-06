@@ -25,6 +25,9 @@
 #include <ctkErrorLogModel.h>
 #include "ctkWidgetsExport.h"
 
+// Qt includes
+#include <QPointer>
+
 class QMainWindow;
 
 //------------------------------------------------------------------------------

@@ -38,86 +38,23 @@
 # one for installation.  The file tells external projects how to use CTK.
 #
 
-include(ctkFunctionGeneratePluginUseFile)
 
-# Construct version numbers for CTKConfigVersion.cmake.
-set(_CTK_VERSION_MAJOR ${CTK_MAJOR_VERSION})
-set(_CTK_VERSION_MINOR ${CTK_MINOR_VERSION})
-set(_CTK_VERSION_PATCH ${CTK_PATCH_VERSION})
-# We use odd minor numbers for development versions.
-# Use a date for the development patch level.
-# if("${_CTK_VERSION_MINOR}" MATCHES "[13579]$")
-#   include(${CTK_SOURCE_DIR}/Utilities/kwsys/kwsysDateStamp.cmake)
-#   set(_CTK_VERSION_PATCH
-#     "${KWSYS_DATE_STAMP_YEAR}${KWSYS_DATE_STAMP_MONTH}${KWSYS_DATE_STAMP_DAY}"
-#     )
-# endif()
-
-#-----------------------------------------------------------------------------
-# Settings shared between the build tree and install tree.
-
-
-#-----------------------------------------------------------------------------
-# Settings specific to the build tree.
-
-# The install-only section is empty for the build tree.
-set(CTK_CONFIG_INSTALL_ONLY)
-
-# The "use" file.
-set(CTK_USE_FILE ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake)
-
-# Generate list of target to exports
-set(CTK_TARGETS_TO_EXPORT ${CTK_LIBRARIES} ${CTK_PLUGIN_LIBRARIES})
-
-# Append CTK PythonQt static libraries
-if(NOT CTK_BUILD_SHARED_LIBS)
-  foreach(lib ${CTK_WRAPPED_LIBRARIES_PYTHONQT})
-    list(APPEND CTK_TARGETS_TO_EXPORT ${lib}PythonQt)
-  endforeach()
+message(STATUS "Including CMake built-in module CMakePackageConfigHelpers")
+include(CMakePackageConfigHelpers OPTIONAL)
+if(COMMAND configure_package_config_file)
+  message(STATUS "Including CMake built-in module CMakePackageConfigHelpers - ok")
+else()
+  message(STATUS "Including CMake built-in module CMakePackageConfigHelpers - failed")
+  message(STATUS "Including CTK module CMakePackageConfigHelpers")
+  list(APPEND CMAKE_MODULE_PATH ${CTK_CMAKE_DIR}/configure_package_config_file)
+  include(CMakePackageConfigHelpers)
+  message(STATUS "Including CTK module CMakePackageConfigHelpers - ok")
 endif()
 
-# Export targets so they can be imported by a project using CTK
-# as an external library
-export(TARGETS ${CTK_TARGETS_TO_EXPORT} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
-
-# Generate a file containing plugin specific variables
-set(CTK_PLUGIN_USE_FILE "${CTK_SUPERBUILD_BINARY_DIR}/CTKPluginUseFile.cmake")
-ctkFunctionGeneratePluginUsefile(${CTK_PLUGIN_USE_FILE})
-
-# Write a set of variables containing library specific include and library directories
-set(CTK_LIBRARY_INCLUDE_DIRS_CONFIG)
-foreach(lib ${CTK_LIBRARIES})
-  set(${lib}_INCLUDE_DIRS ${${lib}_SOURCE_DIR} ${${lib}_BINARY_DIR})
-  ctkFunctionGetIncludeDirs(${lib}_INCLUDE_DIRS ${lib})
-  set(CTK_LIBRARY_INCLUDE_DIRS_CONFIG "${CTK_LIBRARY_INCLUDE_DIRS_CONFIG}
-set(${lib}_INCLUDE_DIRS \"${${lib}_INCLUDE_DIRS}\")")
-
-  ctkFunctionGetLibraryDirs(${lib}_LIBRARY_DIRS ${lib})
-  set(CTK_LIBRARY_LIBRARY_DIRS_CONFIG "${CTK_LIBRARY_LIBRARY_DIRS_CONFIG}
-set(${lib}_LIBRARY_DIRS \"${${lib}_LIBRARY_DIRS}\")")
-endforeach()
-
-# Determine the include directories needed.
-set(CTK_INCLUDE_DIRS_CONFIG
-  ${CTK_BASE_INCLUDE_DIRS}
-)
+include(ctkFunctionGeneratePluginUseFile)
 
 set(CTKTesting_CMAKE_DIR_CONFIG "${CTKTesting_SOURCE_DIR}/CMake")
 
-# Consider "headeronly" libraries
-set(headeronly_libs CTKTesting)
-foreach(lib ${headeronly_libs})
-  set(${lib}_INCLUDE_DIRS ${${lib}_SOURCE_DIR} ${${lib}_BINARY_DIR})
-  ctkFunctionGetIncludeDirs(${lib}_INCLUDE_DIRS ${lib})
-  set(CTK_LIBRARY_INCLUDE_DIRS_CONFIG "${CTK_LIBRARY_INCLUDE_DIRS_CONFIG}
-set(${lib}_INCLUDE_DIRS \"${${lib}_INCLUDE_DIRS}\")")
-  set(CTK_INCLUDE_DIRS_CONFIG ${CTK_INCLUDE_DIRS_CONFIG} ${${lib}_INCLUDE_DIRS})
-endforeach()
-
-
-
-# Library directory.
-set(CTK_LIBRARY_DIRS_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 # Plug-in output directory
 if(WIN32)
@@ -135,31 +72,13 @@ else()
   set(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CMAKE_${_plugin_output_type}_OUTPUT_DIRECTORY}/plugins")
 endif()
 
-# External project libraries.
-set(CTK_EXTERNAL_LIBRARIES_CONFIG ${CTK_EXTERNAL_LIBRARIES})
-
-# External project library directory.
-set(CTK_EXTERNAL_LIBRARY_DIRS_CONFIG ${CTK_EXTERNAL_LIBRARY_DIRS})
-
-# Runtime library directory.
-set(CTK_RUNTIME_LIBRARY_DIRS_CONFIG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
-# Binary executable directory.
-set(CTK_EXECUTABLE_DIRS_CONFIG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
-# QtDesigner plugins directory
-set(CTK_QTDESIGNERPLUGINS_DIR_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-
 # CTK external projects variables
-string(REPLACE "^" ";" CTK_SUPERBUILD_EP_VARNAMES "${CTK_SUPERBUILD_EP_VARNAMES}")
 set(CTK_SUPERBUILD_EP_VARS_CONFIG)
-foreach(varname ${CTK_SUPERBUILD_EP_VARNAMES})
+foreach(varname ${CTK_EP_LABEL_FIND_PACKAGE})
   set(CTK_SUPERBUILD_EP_VARS_CONFIG
    "${CTK_SUPERBUILD_EP_VARS_CONFIG}
 set(CTK_${varname} \"${${varname}}\")")
 endforeach()
-
-# Executable locations.
 
 # CMake extension module directory.
 set(CTK_CMAKE_DIR_CONFIG ${CTK_CMAKE_DIR})
@@ -170,16 +89,160 @@ set(CTK_CONFIGURATION_TYPES_CONFIG ${CMAKE_CONFIGURATION_TYPES})
 set(CTK_BUILD_TYPE_CONFIG ${CMAKE_BUILD_TYPE})
 
 #-----------------------------------------------------------------------------
-# Configure CTKConfig.cmake for the build tree.
-configure_file(${CTK_SOURCE_DIR}/CMake/CTKConfig.cmake.in
-               ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfig.cmake @ONLY IMMEDIATE)
-configure_file(${CTK_SOURCE_DIR}/CMake/CTKConfigVersion.cmake.in
-               ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfigVersion.cmake @ONLY IMMEDIATE)
-configure_file(${CTK_SOURCE_DIR}/CMake/ctkConfig.h.in
-               ${CTK_CONFIG_H_INCLUDE_DIR}/ctkConfig.h @ONLY IMMEDIATE)
+configure_file(
+  ${CTK_SOURCE_DIR}/CMake/ctkConfig.h.in
+  ${CTK_CONFIG_H_INCLUDE_DIR}/ctkConfig.h @ONLY
+  )
+
+install(
+  FILES ${CTK_CONFIG_H_INCLUDE_DIR}/ctkConfig.h
+  DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
+  )
 
 #-----------------------------------------------------------------------------
-# Settings specific to the install tree.
+# Generate a file containing plugin specific variables
+set(ctk_plugin_use_file "${CTK_SUPERBUILD_BINARY_DIR}/CTKPluginUseFile.cmake")
+ctkFunctionGeneratePluginUsefile(${ctk_plugin_use_file})
+
+install(
+  FILES ${ctk_plugin_use_file}
+  DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development
+  )
 
 #-----------------------------------------------------------------------------
-# Configure CTKConfig.cmake for the install tree.
+# Generate list of target to exports
+set(CTK_TARGETS_TO_EXPORT ${CTK_LIBRARIES} ${CTK_PLUGIN_LIBRARIES})
+
+# Append CTK PythonQt static libraries
+if(NOT CTK_BUILD_SHARED_LIBS)
+  foreach(lib ${CTK_WRAPPED_LIBRARIES_PYTHONQT})
+    list(APPEND CTK_TARGETS_TO_EXPORT ${lib}PythonQt)
+  endforeach()
+endif()
+
+# Export targets so they can be imported by a project using CTK
+# as an external library
+export(TARGETS ${CTK_TARGETS_TO_EXPORT} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
+
+install(EXPORT CTKExports DESTINATION ${CTK_INSTALL_CMAKE_DIR})
+
+#-----------------------------------------------------------------------------
+# Configure 'CTKConfig.cmake' for a build tree
+
+set(CTK_CONFIG_DIR_CONFIG ${CTK_SUPERBUILD_BINARY_DIR})
+set(CTK_CMAKE_DIR_CONFIG ${CTK_CMAKE_DIR})
+set(CTK_CMAKE_UTILITIES_DIR_CONFIG ${CTK_CMAKE_UTILITIES_DIR})
+set(CTK_CONFIG_H_INCLUDE_DIR_CONFIG ${CTK_CONFIG_H_INCLUDE_DIR})
+set(CTK_EXPORT_HEADER_TEMPLATE_DIR_CONFIG ${CTK_SOURCE_DIR}/Libs)
+set(CTK_LIBRARY_DIR_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+
+set(CTK_CONFIG_CODE "####### Expanded from \@CTK_CONFIG_CODE\@ #######\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# The CTK DGraph executable used to compute target dependency graphs\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_DGRAPH_EXECUTABLE \"${DGraph_EXECUTABLE}\")\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# Qt configuration\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_QT_QMAKE_EXECUTABLE \"${QT_QMAKE_EXECUTABLE}\")\n") # FIXME: Just pass Qt version (and bitness?)
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# The CTK Qt designer plugins directory\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_QTDESIGNERPLUGINS_DIR \"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\")\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# CTK library include dirctories\n")
+foreach(lib ${CTK_LIBRARIES} CTKTesting)
+  set(${lib}_INCLUDE_DIRS ${${lib}_SOURCE_DIR} ${${lib}_BINARY_DIR})
+  ctkFunctionGetIncludeDirs(${lib}_INCLUDE_DIRS ${lib})
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(${lib}_INCLUDE_DIRS \"${${lib}_INCLUDE_DIRS}\")\n")
+endforeach()
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_INCLUDE_DIRS \"${CTK_BASE_INCLUDE_DIRS}\")\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}list(APPEND CTK_INCLUDE_DIRS \"${CTKTesting_INCLUDE_DIRS}\")\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# CTK library directories that could be used for linking\n")
+foreach(lib ${CTK_LIBRARIES})
+  set(${lib}_LIBRARY_DIRS "")
+  ctkFunctionGetLibraryDirs(${lib}_LIBRARY_DIRS ${lib})
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(${lib}_LIBRARY_DIRS \"${${lib}_LIBRARY_DIRS}\")\n")
+endforeach()
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# External project libraries\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_EXTERNAL_LIBRARIES \"${CTK_EXTERNAL_LIBRARIES}\")\n")
+if(DEFINED DCMTK_HAVE_CONFIG_H_OPTIONAL AND NOT DCMTK_HAVE_CONFIG_H_OPTIONAL AND TARGET CTKDICOMCore)
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# Definition required to build DCMTK dependent libraries\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}if(\"\${CMAKE_VERSION}\" VERSION_GREATER 2.8.10)\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}  set_target_properties(CTKDICOMCore PROPERTIES INTERFACE_COMPILE_DEFINITIONS ${DCMTK_DEFINITIONS})\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}endif()\n")
+endif()
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}##################################################")
+
+set(ctk_config ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfig.cmake)
+
+configure_package_config_file(
+  ${CMAKE_SOURCE_DIR}/CMake/CTKConfig.cmake.in
+  ${ctk_config}
+  INSTALL_DESTINATION ${CTK_SUPERBUILD_BINARY_DIR}
+  PATH_VARS
+    CTK_CONFIG_DIR_CONFIG
+    CTK_CMAKE_DIR_CONFIG
+    CTK_CMAKE_UTILITIES_DIR_CONFIG
+    CTK_CONFIG_H_INCLUDE_DIR_CONFIG
+    CTK_EXPORT_HEADER_TEMPLATE_DIR_CONFIG
+    CTK_LIBRARY_DIR_CONFIG
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO
+  )
+
+#-----------------------------------------------------------------------------
+# Configure 'CTKConfig.cmake' for an install tree
+
+set(CTK_CONFIG_DIR_CONFIG ${CTK_INSTALL_CMAKE_DIR})
+set(CTK_CMAKE_DIR_CONFIG ${CTK_INSTALL_CMAKE_DIR})
+set(CTK_CMAKE_UTILITIES_DIR_CONFIG ${CTK_INSTALL_CMAKE_DIR})
+set(CTK_CONFIG_H_INCLUDE_DIR_CONFIG ${CTK_INSTALL_INCLUDE_DIR})
+set(CTK_EXPORT_HEADER_TEMPLATE_DIR_CONFIG ${CTK_INSTALL_CMAKE_DIR})
+set(CTK_LIBRARY_DIR_CONFIG ${CTK_INSTALL_LIB_DIR})
+
+set(CTK_CONFIG_CODE "####### Expanded from \@CTK_CONFIG_CODE\@ #######\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# CTK library include dirctories\n")
+foreach(libname ${CTK_LIBRARIES} CTKTesting)
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(${libname}_INCLUDE_DIRS \"\${PACKAGE_PREFIX_DIR}/${CTK_INSTALL_INCLUDE_DIR}\")\n")
+endforeach()
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_INCLUDE_DIRS \"\${PACKAGE_PREFIX_DIR}/${CTK_INSTALL_INCLUDE_DIR}\")\n")
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# CTK library directories that could be used for linking\n")
+foreach(lib ${CTK_LIBRARIES})
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(${lib}_LIBRARY_DIRS \"\")\n")
+endforeach()
+if(DEFINED DCMTK_HAVE_CONFIG_H_OPTIONAL AND NOT DCMTK_HAVE_CONFIG_H_OPTIONAL AND TARGET CTKDICOMCore)
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# Definition required to build DCMTK dependent libraries\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}if(\"\${CMAKE_VERSION}\" VERSION_GREATER 2.8.10)\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}  set_target_properties(CTKDICOMCore PROPERTIES INTERFACE_COMPILE_DEFINITIONS ${DCMTK_DEFINITIONS})\n")
+  set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}endif()\n")
+endif()
+
+set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}##################################################")
+
+set(ctk_install_config ${CMAKE_BINARY_DIR}/CMakeFiles/CTKConfig.cmake)
+
+configure_package_config_file(
+  ${CMAKE_SOURCE_DIR}/CMake/CTKConfig.cmake.in
+  ${ctk_install_config}
+  INSTALL_DESTINATION ${CTK_INSTALL_CMAKE_DIR}
+  PATH_VARS
+    CTK_CONFIG_DIR_CONFIG
+    CTK_CMAKE_DIR_CONFIG
+    CTK_CMAKE_UTILITIES_DIR_CONFIG
+    CTK_CONFIG_H_INCLUDE_DIR_CONFIG
+    CTK_EXPORT_HEADER_TEMPLATE_DIR_CONFIG
+    CTK_LIBRARY_DIR_CONFIG
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO
+  )
+
+install(
+  FILES ${ctk_install_config}
+  DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development
+  )
+
+#-----------------------------------------------------------------------------
+# Configure and install 'CTKConfigVersion.cmake'
+set(ctk_config_version ${CTK_SUPERBUILD_BINARY_DIR}/CTKConfigVersion.cmake)
+write_basic_package_version_file(
+  ${ctk_config_version}
+  VERSION ${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}.${CTK_PATCH_VERSION}
+  COMPATIBILITY SameMajorVersion
+  )
+
+install(
+  FILES ${ctk_config_version}
+  DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development
+  )

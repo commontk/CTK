@@ -22,7 +22,7 @@ set(KIT_UI_FORMS
 
 # Resources
 set(KIT_resources
-  
+
 )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake

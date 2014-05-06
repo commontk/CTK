@@ -21,36 +21,23 @@
 cmake_minimum_required(VERSION 2.8.4)
 
 #-----------------------------------------------------------------------------
-# See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details
+# Superbuild
 #
-
-set(project_policies
-  CMP0001 # NEW: CMAKE_BACKWARDS_COMPATIBILITY should no longer be used.
-  CMP0002 # NEW: Logical target names must be globally unique.
-  CMP0003 # NEW: Libraries linked via full path no longer produce linker search paths.
-  CMP0004 # NEW: Libraries linked may NOT have leading or trailing whitespace.
-  CMP0005 # NEW: Preprocessor definition values are now escaped automatically.
-  CMP0006 # NEW: Installing MACOSX_BUNDLE targets requires a BUNDLE DESTINATION.
-  CMP0007 # NEW: List command no longer ignores empty elements.
-  CMP0008 # NEW: Libraries linked by full-path must have a valid library file name.
-  CMP0009 # NEW: FILE GLOB_RECURSE calls should not follow symlinks by default.
-  CMP0010 # NEW: Bad variable reference syntax is an error.
-  CMP0011 # NEW: Included scripts do automatic cmake_policy PUSH and POP.
-  CMP0012 # NEW: if() recognizes numbers and boolean constants.
-  CMP0013 # NEW: Duplicate binary directories are not allowed.
-  CMP0014 # NEW: Input directories must have CMakeLists.txt
-  )
-foreach(policy ${project_policies})
-  if(POLICY ${policy})
-    cmake_policy(SET ${policy} NEW)
-  endif()
-endforeach()
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
+set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/CMakeExternals)
+set(EXTERNAL_PROJECT_FILE_PREFIX "")
+include(ExternalProject)
+include(ctkMacroCheckExternalProjectDependency)
 
 #-----------------------------------------------------------------------------
 if(APPLE)
   # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
   #       we ensure that the bitness will be properly detected.
-  include(${CMAKE_SOURCE_DIR}/CMake/ctkBlockSetCMakeOSXVariables.cmake)
+  include(ctkBlockSetCMakeOSXVariables)
+  mark_as_superbuild(
+    VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING
+    ALL_PROJECTS
+    )
 endif()
 
 #-----------------------------------------------------------------------------
@@ -64,6 +51,7 @@ set(CTK_LIBRARY_MODE "SHARED")
 
 option(CTK_BUILD_SHARED_LIBS "Build CTK libraries as shared module." ON)
 mark_as_advanced(CTK_BUILD_SHARED_LIBS)
+mark_as_superbuild(CTK_BUILD_SHARED_LIBS)
 if(NOT CTK_BUILD_SHARED_LIBS)
   set(CTK_LIBRARY_MODE "STATIC")
 endif()
@@ -79,11 +67,14 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
     "MinSizeRel" "RelWithDebInfo")
 endif()
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
+endif()
 
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
 #
-option(CTK_SUPERBUILD "Build CTK and the projects it depends on via SuperBuild.cmake." ON)
+option(CTK_SUPERBUILD "Build ${PROJECT_NAME} and the projects it depends on." ON)
 mark_as_advanced(CTK_SUPERBUILD)
 
 #-----------------------------------------------------------------------------
@@ -101,6 +92,7 @@ foreach(type LIBRARY RUNTIME ARCHIVE)
     if(NOT DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
       set(CTK_CMAKE_${type}_OUTPUT_DIRECTORY ${CTK_BINARY_DIR}/CTK-build/bin)
     endif()
+    mark_as_superbuild(CTK_CMAKE_${type}_OUTPUT_DIRECTORY:PATH)
   else()
     if(NOT DEFINED CTK_CMAKE_${type}_OUTPUT_DIRECTORY)
       set(output_dir ${CTK_BINARY_DIR}/bin)
@@ -142,12 +134,35 @@ endif()
 if(NOT CTK_INSTALL_LIB_DIR)
   set(CTK_INSTALL_LIB_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
 endif()
+if(NOT CTK_INSTALL_PLUGIN_DIR)
+  set(CTK_INSTALL_PLUGIN_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}/plugins")
+endif()
+if(NOT CTK_INSTALL_CMAKE_DIR)
+  set(CTK_INSTALL_CMAKE_DIR "lib/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}/CMake")
+endif()
 if(NOT CTK_INSTALL_INCLUDE_DIR)
   set(CTK_INSTALL_INCLUDE_DIR "include/ctk-${CTK_MAJOR_VERSION}.${CTK_MINOR_VERSION}")
+endif()
+if(NOT CTK_INSTALL_PLUGIN_INCLUDE_DIR)
+  set(CTK_INSTALL_PLUGIN_INCLUDE_DIR ${CTK_INSTALL_INCLUDE_DIR})
+endif()
+if(NOT CTK_INSTALL_QTPLUGIN_DIR)
+  set(CTK_INSTALL_QTPLUGIN_DIR ${CTK_INSTALL_LIB_DIR})
 endif()
 if(NOT CTK_INSTALL_DOC_DIR)
   set(CTK_INSTALL_DOC_DIR "doc")
 endif()
+
+mark_as_superbuild(
+  CTK_INSTALL_BIN_DIR:STRING
+  CTK_INSTALL_LIB_DIR:STRING
+  CTK_INSTALL_PLUGIN_DIR:STRING
+  CTK_INSTALL_CMAKE_DIR:STRING
+  CTK_INSTALL_INCLUDE_DIR:STRING
+  CTK_INSTALL_PLUGIN_INCLUDE_DIR:STRING
+  CTK_INSTALL_QTPLUGIN_DIR:STRING
+  CTK_INSTALL_DOC_DIR:STRING
+  )
 
 #-----------------------------------------------------------------------------
 # Update CMake module path
@@ -155,7 +170,6 @@ endif()
 #
 set(CMAKE_MODULE_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/Utilities/CMake"
-  "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
   ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
@@ -176,39 +190,65 @@ set(CTK_CMAKE_UTILITIES_DIR ${CTK_SOURCE_DIR}/Utilities/CMake)
 #-----------------------------------------------------------------------------
 # CMake function(s) and macro(s)
 #
-include(CMake/ctkMacroParseArguments.cmake)
-include(CMake/ctkMacroSetPaths.cmake)
-include(CMake/ctkMacroListFilter.cmake)
-include(CMake/ctkMacroOptionUtils.cmake)
-include(CMake/ctkMacroBuildLib.cmake)
-include(CMake/ctkMacroBuildLibWrapper.cmake)
-include(CMake/ctkMacroBuildPlugin.cmake)
-include(CMake/ctkMacroBuildApp.cmake)
-include(CMake/ctkMacroBuildQtPlugin.cmake)
-include(CMake/ctkMacroCompilePythonScript.cmake)
-include(CMake/ctkMacroGenerateMocs.cmake)
-include(CMake/ctkMacroWrapPythonQt.cmake)
-include(CMake/ctkMacroSetupQt.cmake)
-include(CMake/ctkMacroTargetLibraries.cmake) # Import multiple macros
-include(CMake/ctkFunctionExtractOptionNameAndValue.cmake)
-include(CMake/ctkMacroValidateBuildOptions.cmake)
-include(CMake/ctkMacroAddCtkLibraryOptions.cmake)
-include(CMake/ctkFunctionGenerateDGraphInput.cmake)
-include(CMake/ctkFunctionGenerateProjectXml.cmake)
-include(CMake/ctkFunctionGeneratePluginManifest.cmake)
-include(CMake/ctkMacroGeneratePluginResourceFile.cmake)
-include(CMake/ctkFunctionCheckCompilerFlags.cmake)
-include(CMake/ctkFunctionGetIncludeDirs.cmake)
-include(CMake/ctkFunctionGetLibraryDirs.cmake)
-include(CMake/ctkFunctionGetGccVersion.cmake)
-include(CMake/ctkFunctionGetCompilerVisibilityFlags.cmake)
-include(CMake/ctkFunctionCompileSnippets.cmake)
+foreach(file
+  CMake/ctkListToString.cmake
+  CMake/ctkMacroParseArguments.cmake
+  CMake/ctkMacroSetPaths.cmake
+  CMake/ctkMacroListFilter.cmake
+  CMake/ctkMacroOptionUtils.cmake
+  CMake/ctkMacroBuildLib.cmake
+  CMake/ctkMacroBuildLibWrapper.cmake
+  CMake/ctkMacroBuildPlugin.cmake
+  CMake/ctkMacroBuildApp.cmake
+  CMake/ctkMacroBuildQtPlugin.cmake
+  CMake/ctkMacroCompilePythonScript.cmake
+  CMake/ctkMacroGenerateMocs.cmake
+  CMake/ctkMacroWrapPythonQt.cmake
+  CMake/ctkMacroSetupQt.cmake
+  CMake/ctkMacroTargetLibraries.cmake # Import multiple macros
+  CMake/ctkFunctionExtractOptionNameAndValue.cmake
+  CMake/ctkMacroValidateBuildOptions.cmake
+  CMake/ctkMacroAddCtkLibraryOptions.cmake
+  CMake/ctkFunctionGenerateDGraphInput.cmake
+  CMake/ctkFunctionGenerateProjectXml.cmake
+  CMake/ctkFunctionGeneratePluginManifest.cmake
+  CMake/ctkMacroGeneratePluginResourceFile.cmake
+  CMake/ctkFunctionAddPluginRepo.cmake
+  CMake/ctkFunctionCheckCompilerFlags.cmake
+  CMake/ctkFunctionCheckoutRepo.cmake
+  CMake/ctkFunctionGetIncludeDirs.cmake
+  CMake/ctkFunctionGetLibraryDirs.cmake
+  CMake/ctkFunctionGetGccVersion.cmake
+  CMake/ctkFunctionGetCompilerVisibilityFlags.cmake
+  CMake/ctkFunctionCompileSnippets.cmake
+  )
+  include(${file})
+  install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
+endforeach()
+
+foreach(file
+  Libs/ctkExport.h.in
+  CMake/ctkLinkerAsNeededFlagCheck.cmake
+  CMake/ctk_compile_python_scripts.cmake.in
+  )
+  install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
+endforeach()
+
+install(FILES
+  CMake/ctkLinkerAsNeededFlagCheck/CMakeLists.txt
+  CMake/ctkLinkerAsNeededFlagCheck/A.cpp
+  CMake/ctkLinkerAsNeededFlagCheck/B.cpp
+  CMake/ctkLinkerAsNeededFlagCheck/C.cpp
+  DESTINATION ${CTK_INSTALL_CMAKE_DIR}/ctkLinkerAsNeededFlagCheck
+  COMPONENT Development
+  )
 
 #-----------------------------------------------------------------------------
 # Testing
 #
 include(CTest)
 mark_as_advanced(BUILD_TESTING)
+mark_as_superbuild(BUILD_TESTING)
 
 if(BUILD_TESTING)
   set(CPP_TEST_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -248,30 +288,41 @@ endif()
 #
 option(CTK_USE_QTTESTING "Enable/Disable QtTesting" OFF)
 mark_as_advanced(CTK_USE_QTTESTING)
+mark_as_superbuild(CTK_USE_QTTESTING)
 
 #-----------------------------------------------------------------------------
 # Coverage
 #
 option(WITH_COVERAGE "Enable/Disable coverage" OFF)
 mark_as_advanced(WITH_COVERAGE)
+mark_as_superbuild(WITH_COVERAGE)
 
 #-----------------------------------------------------------------------------
 # Documentation
 #
 option(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
 mark_as_advanced(DOCUMENTATION_TARGET_IN_ALL)
+mark_as_superbuild(DOCUMENTATION_TARGET_IN_ALL)
 
 set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
  CACHE PATH "Where documentation archives should be stored")
 mark_as_advanced(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+mark_as_superbuild(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+
+# Attempt to discover Doxygen so that DOXYGEN_EXECUTABLE is set to an appropriate default value
+find_package(Doxygen QUIET)
+mark_as_superbuild(DOXYGEN_EXECUTABLE)
 
 #-----------------------------------------------------------------------------
 # Additional CXX/C Flags
 #
 set(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional C Flags")
 mark_as_advanced(ADDITIONAL_C_FLAGS)
+mark_as_superbuild(ADDITIONAL_C_FLAGS)
+
 set(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional CXX Flags")
 mark_as_advanced(ADDITIONAL_CXX_FLAGS)
+mark_as_superbuild(ADDITIONAL_CXX_FLAGS)
 
 #-----------------------------------------------------------------------------
 # Set symbol visibility Flags
@@ -297,11 +348,14 @@ set(CTK_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}
 set(CTK_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${VISIBILITY_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  set(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings -D_FORTIFY_SOURCE=2")
+  set(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings")
+  if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    set(cflags "${cflags} -D_FORTIFY_SOURCE=2")
+  endif()
 
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
   ctkFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
-  
+
   ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
 
   # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
@@ -327,6 +381,18 @@ if(MSVC)
 endif()
 
 #-----------------------------------------------------------------------------
+# Check if the linker will resolve symbols of underlinked libraries
+#
+if(UNIX AND NOT APPLE)
+  include(ctkLinkerAsNeededFlagCheck)
+  if(CTK_LINKER_NO_AS_NEEDED_FLAG_REQUIRED)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed"
+      CACHE STRING "Flags used by the linker"
+      FORCE)
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
 # QT
 #
 ctkMacroSetupQt()
@@ -342,48 +408,23 @@ endif()
 #
 
 #-----------------------------------------------------------------------------
-# High-Level CTK options
-
-# The ctk_enable_option macro expects a logical expression after the first
-# three arguments. This expression should only contain build option names
-# which belong to leafs in the required dependency tree.
-
-# The CTK infrastructure for high-level DICOM support. This includes
-# DICOM indexing, networking, and GUI widgets.
-ctk_enable_option(DICOM "Enable default DICOM support" OFF
-                  CTK_LIB_DICOM/Widgets)
-
-# The CTK infrastructure for building a DICOM Part 19 compliant application
-# host and/or hosted application. This will not enable any example plugins
-# or executables (enable CTK_ENABLE_EXAMPLES for that).
-ctk_enable_option(DICOMApplicationHosting "Enable DICOM Part 19 Application Hosting support" OFF
-                  CTK_PLUGIN_org.commontk.dah.host AND CTK_PLUGIN_org.commontk.dah.app)
-
-# The CTK Qt Widgets. This will enable the Qt Widget library only.
-# It might trigger the enabling of other widget libraries in combination
-# with other enabled options.
-ctk_enable_option(Widgets "Enable Qt Widget libraries" OFF
-                  CTK_LIB_Widgets)
-
-# The CTK Plugin Framework, a dynamic component system based on OSGi.
-# This will enable only the framework itself.                  
-ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
-                  CTK_LIB_PluginFramework)
-
-#-----------------------------------------------------------------------------
 # Special "BUILD ALL" options
 
 # Build all CTK plug-ins
 option(CTK_BUILD_ALL_PLUGINS "Build all CTK plug-ins" OFF)
+mark_as_superbuild(CTK_BUILD_ALL_PLUGINS)
 
 # Build all CTK libraries
 option(CTK_BUILD_ALL_LIBRARIES "Build all CTK libraries" OFF)
+mark_as_superbuild(CTK_BUILD_ALL_LIBRARIES)
 
 # Build all CTK applications
 option(CTK_BUILD_ALL_APPS "Build all CTK applications" OFF)
+mark_as_superbuild(CTK_BUILD_ALL_APPS)
 
 # Build everything
 option(CTK_BUILD_ALL "Build everything in CTK" OFF)
+mark_as_superbuild(CTK_BUILD_ALL)
 if(CTK_BUILD_ALL)
   set(CTK_BUILD_ALL_PLUGINS 1)
   set(CTK_BUILD_ALL_LIBRARIES 1)
@@ -392,24 +433,6 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Other options
-
-# The CTK Python Wrapping
-ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
-                  CTK_LIB_Scripting/Python/Core)
-
-# Build examples
-# Create the logical expression containing the minium set of required options
-# for the CTK_BUILD_EXAMPLES option to be ON
-set(_build_examples_logical_expr)
-foreach(_app ${CTK_ENABLED_APPS})
-  list(APPEND _build_examples_logical_expr CTK_APP_${_app} AND)
-endforeach()
-if(_build_examples_logical_expr)
-  list(REMOVE_AT _build_examples_logical_expr -1)
-endif()
-
-ctk_enable_option_raw(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF
-                  ${_build_examples_logical_expr})
 
 # Git protocol option
 option(CTK_USE_GIT_PROTOCOL "If behind a firewall turn this OFF to use http instead." ON)
@@ -426,10 +449,12 @@ mark_as_advanced(DART_TESTING_TIMEOUT)
 # KWStyle
 option(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
 mark_as_advanced(CTK_USE_KWSTYLE)
+mark_as_superbuild(CTK_USE_KWSTYLE)
 
 # Qt Designer Plugins
 option(CTK_BUILD_QTDESIGNER_PLUGINS "Build Qt Designer plugins" ON)
 mark_as_advanced(CTK_BUILD_QTDESIGNER_PLUGINS)
+mark_as_superbuild(CTK_BUILD_QTDESIGNER_PLUGINS)
 
 #-----------------------------------------------------------------------------
 # CTK Libraries
@@ -445,45 +470,54 @@ ctk_lib_option(PluginFramework
 ctk_lib_option(Widgets
                "Build the Widgets library" OFF
                CTK_ENABLE_Widgets OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES) OR CTK_USE_QTTESTING)
-               
+
 ctk_lib_option(DICOM/Core
                "Build the DICOM Core library" OFF
                CTK_ENABLE_DICOM OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES))
-               
+
 ctk_lib_option(DICOM/Widgets
                "Build the DICOM Widgets library" OFF
                CTK_ENABLE_DICOM AND CTK_ENABLE_Widgets OR (CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES))
-               
+
 ctk_lib_option(ImageProcessing/ITK/Core
                "Build the ITK Core library" OFF)
-               
+
 ctk_lib_option(Scripting/Python/Core
-               "Build the Python Core library" OFF)
-               
+               "Build the Python Core library" OFF
+               CTK_ENABLE_Python_Wrapping)
+
 ctk_lib_option(Scripting/Python/Widgets
-               "Build the Python Widgets library" OFF
-               CTK_LIB_Widgets AND CTK_ENABLE_Python_Wrapping)
-               
+               "Build the Python Widgets library" OFF)
+
 ctk_lib_option(Visualization/VTK/Core
                "Build the VTK Core library" OFF)
-               
+
 ctk_lib_option(Visualization/VTK/Widgets
                "Build the VTK Widgets library" OFF)
-               
+
 ctk_lib_option(CommandLineModules/Core
                "Build the Command Line Module core library" OFF)
-               
+
 ctk_lib_option(CommandLineModules/Frontend/QtWebKit
                "Build the QtWebKit based Command Line Module front-end" OFF)
 
 ctk_lib_option(CommandLineModules/Frontend/QtGui
                "Build the QtGui based Command Line Module front-end" OFF)
 
+ctk_lib_option(CommandLineModules/Backend/XMLChecker
+               "Build the Command Line Module back-end for checking XML" OFF)
+
 ctk_lib_option(CommandLineModules/Backend/LocalProcess
                "Build the Command Line Module back-end for local processes" OFF)
-               
+
 ctk_lib_option(CommandLineModules/Backend/FunctionPointer
                "Build the Command Line Module back-end for function pointers" OFF)
+
+ctk_lib_option(XNAT/Core
+               "Build the XNAT Core library" OFF)
+
+ctk_lib_option(XNAT/Widgets
+               "Build the XNAT Widgets library" OFF)
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
@@ -499,39 +533,48 @@ set(CTK_ENABLED_LIBS ${_enabled_libs} CACHE INTERNAL "" FORCE)
 #-----------------------------------------------------------------------------
 # CTK Applications - Use ON or OFF to indicate if the application should be built by default
 #
- 
+
 ctk_app_option(ctkDICOM
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
+
+ctk_app_option(ctkDICOM2
+               "Build the new DICOM example application (experimental)" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+
 ctk_app_option(ctkDICOMIndexer
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMDemoSCU
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMQuery
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMRetrieve
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMQueryRetrieve
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
+ctk_app_option(ctkDICOMHost
+               "Build the DICOM application host example application" OFF
+               CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
+
 ctk_app_option(ctkExampleHost
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkExampleHostedApp
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkEventBusDemo
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
@@ -558,15 +601,15 @@ endif()
 ctk_app_option(ctkPluginBrowser
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkPluginGenerator
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkDICOMObjectViewer
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
-               
+
 ctk_app_option(ctkSimplePythonShell
                "Build the DICOM example application" OFF
                CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
@@ -576,6 +619,10 @@ if(CTK_USE_QTTESTING)
                 "Build the ctkQtTesting example application" OFF
                 CTK_BUILD_EXAMPLES)
 endif()
+
+ctk_app_option(ctkXnatTreeBrowser
+               "Build the XNAT Tree Browser application" OFF
+               CTK_BUILD_EXAMPLES)
 
 # Save the set of enabled apps in a cache file
 set(_enabled_apps)
@@ -600,7 +647,7 @@ set(plugin_list
   org.commontk.metatype
   )
 
-foreach(_plugin ${plugin_list})  
+foreach(_plugin ${plugin_list})
   ctk_plugin_option(${_plugin} "Build the ${_plugin} plugin." OFF)
 endforeach()
 
@@ -612,15 +659,19 @@ ctk_plugin_option(org.commontk.plugingenerator.ui
 
 # Plug-ins related to DICOM WG23 (Application Hosting)
 ctk_plugin_option(org.commontk.dah.core "Build the org.commontk.dah.core plugin." OFF)
-ctk_plugin_option(org.commontk.dah.app "Build the org.commontk.dah.app plugin." OFF
+ctk_plugin_option(org.commontk.dah.hostedapp "Build the org.commontk.dah.hostedapp plugin." OFF
                   CTK_ENABLE_DICOMApplicationHosting)
 ctk_plugin_option(org.commontk.dah.host "Build the org.commontk.dah.host plugin." OFF
                   CTK_ENABLE_DICOMApplicationHosting)
-                  
+
 ctk_plugin_option(org.commontk.dah.exampleapp
                   "Build the org.commontk.dah.exampleapp plugin." OFF
                   CTK_APP_ctkExampleHostedApp)
-                  
+
+ctk_plugin_option(org.commontk.dah.cmdlinemoduleapp
+                  "Build the org.commontk.dah.cmdlinemoduleapp plugin." OFF
+                  CTK_APP_ctkCommandLineModuleApp)
+
 ctk_plugin_option(org.commontk.dah.examplehost
                   "Build the org.commontk.dah.examplehost plugin." OFF
                   CTK_APP_ctkExampleHost)
@@ -629,6 +680,66 @@ ctk_plugin_option(org.commontk.dah.examplehost
 ctk_plugin_option(org.commontk.eventbus
                   "Build the org.commontk.eventbus plugin." OFF
                   CTK_APP_ctkEventBusDemo)
+
+# Add the PluginsContrib repo to the build system
+option(CTK_USE_CONTRIBUTED_PLUGINS OFF "Use CTK plug-ins from the PluginsContrib repository")
+mark_as_advanced(CTK_USE_CONTRIBUTED_PLUGINS)
+mark_as_superbuild(CTK_USE_CONTRIBUTED_PLUGINS)
+if(CTK_USE_CONTRIBUTED_PLUGINS)
+  ctkFunctionAddPluginRepo(NAME PluginsContrib
+                           GIT_URL github.com/commontk/PluginsContrib.git
+                           GIT_TAG f016d35
+                          )
+  mark_as_superbuild(PluginsContrib_DIR:PATH)
+endif()
+
+#-----------------------------------------------------------------------------
+# High-Level CTK options
+
+# The ctk_enable_option macro expects a logical expression after the first
+# three arguments. This expression should only contain build option names
+# which belong to leafs in the required dependency tree.
+
+# The CTK infrastructure for high-level DICOM support. This includes
+# DICOM indexing, networking, and GUI widgets.
+ctk_enable_option(DICOM "Enable default DICOM support" OFF
+                  CTK_LIB_DICOM/Widgets)
+
+# The CTK infrastructure for building a DICOM Part 19 compliant application
+# host and/or hosted application. This will not enable any example plugins
+# or executables (enable CTK_ENABLE_EXAMPLES for that).
+ctk_enable_option(DICOMApplicationHosting "Enable DICOM Part 19 Application Hosting support" OFF
+                  CTK_PLUGIN_org.commontk.dah.host AND CTK_PLUGIN_org.commontk.dah.app)
+
+# The CTK Qt Widgets. This will enable the Qt Widget library only.
+# It might trigger the enabling of other widget libraries in combination
+# with other enabled options.
+ctk_enable_option(Widgets "Enable Qt Widget libraries" OFF
+                  CTK_LIB_Widgets)
+
+# The CTK Plugin Framework, a dynamic component system based on OSGi.
+# This will enable only the framework itself.
+ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
+                  CTK_LIB_PluginFramework)
+
+# The CTK Python Wrapping
+ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
+                  CTK_LIB_Scripting/Python/Core)
+mark_as_superbuild(CTK_ENABLE_Python_Wrapping)
+
+# Build examples
+# Create the logical expression containing the minium set of required options
+# for the CTK_BUILD_EXAMPLES option to be ON
+set(_build_examples_logical_expr)
+foreach(_app ${CTK_ENABLED_APPS})
+  list(APPEND _build_examples_logical_expr CTK_APP_${_app} AND)
+endforeach()
+if(_build_examples_logical_expr)
+  list(REMOVE_AT _build_examples_logical_expr -1)
+endif()
+
+ctk_enable_option_raw(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF
+                  ${_build_examples_logical_expr})
 
 #-----------------------------------------------------------------------------
 # Generate target_directories list - List of directory corresponding to the different
@@ -654,7 +765,6 @@ ctk_plugin_option(org.commontk.eventbus
 # Create list of directories corresponding to the enabled targets
 set(target_directories)
 
-set(ctk_lib_options_list) # This list will be updated in ctkMacroAddCtkLibraryOptions
 foreach(lib ${CTK_LIBS})
   if(CTK_LIB_${lib})
     ctkMacroAddCtkLibraryOptions(${lib})
@@ -663,7 +773,11 @@ foreach(lib ${CTK_LIBS})
 endforeach()
 
 foreach(plugin ${CTK_PLUGINS})
-  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^CTK_PLUGIN_${plugin}")
+  if(${plugin}_SOURCE_DIR)
+    list(APPEND target_directories "${${plugin}_SOURCE_DIR}^^CTK_PLUGIN_${plugin}")
+  else()
+    list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${plugin}^^CTK_PLUGIN_${plugin}")
+  endif()
 endforeach()
 
 foreach(app ${CTK_APPS})
@@ -702,16 +816,11 @@ ctkMacroValidateBuildOptions("${CTK_BINARY_DIR}" "${DGraph_EXECUTABLE}" "${targe
 
 #-----------------------------------------------------------------------------
 # CTK Python wrapping
-# Enable CTK_LIB_Scripting/Python/Core if either CTK_ENABLE_Python_Wrapping OR CTK_WRAP_PYTHONQT_FULL
+# Enable CTK_LIB_Scripting/Python/Core if CTK_ENABLE_Python_Wrapping is ON
 #
 set(CTK_WRAP_PYTHONQT_LIGHT ${CTK_ENABLE_Python_Wrapping})
-option(CTK_WRAP_PYTHONQT_FULL "Experimental - Wrap CTK classes using Qt meta-object system into Python language" OFF)
-mark_as_advanced(CTK_WRAP_PYTHONQT_FULL)
-if(CTK_WRAP_PYTHONQT_FULL AND CTK_WRAP_PYTHONQT_LIGHT)
-  message(FATAL_ERROR "CTK_ENABLE_Python_Wrapping AND CTK_WRAP_PYTHONQT_FULL options are mutually exclusive. Please enable only one !")
-endif()
 
-set(logical_expr CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+set(logical_expr CTK_WRAP_PYTHONQT_LIGHT)
 if((${logical_expr}) AND NOT CTK_LIB_Scripting/Python/Core)
   set(CTK_LIB_Scripting/Python/Core ON CACHE BOOL "Build the Python Core library" FORCE)
   set(enabling_msg)
@@ -784,23 +893,52 @@ ctkFunctionGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_direct
 #-----------------------------------------------------------------------------
 # CTK dependencies - Projects should be TOPOLOGICALLY ordered
 #-----------------------------------------------------------------------------
-set(CTK_POSSIBLE_DEPENDENCIES
-  CTKData
-  QtTesting
+set(CTK_DEPENDENCIES
   Log4Qt
-  KWStyle
   VTK
   PythonQt
-  PythonQtGenerator # Should be added after PythonQt - See comment in CMakeExternals/PythonQtGenerator.cmake
   DCMTK
   ZMQ
   QtSOAP
   qxmlrpc
+  qRestAPI
   OpenIGTLink
   XIP
   ITK
   )
-set(CTK_DEPENDENCIES) # This variable will contain the list of required CTK dependencies
+
+if(BUILD_TESTING)
+  list(APPEND CTK_DEPENDENCIES CTKData)
+endif()
+
+if(CTK_USE_KWSTYLE)
+  list(APPEND CTK_DEPENDENCIES KWStyle)
+endif()
+
+if(CTK_USE_QTTESTING)
+  list(APPEND CTK_DEPENDENCIES QtTesting)
+endif()
+
+#-----------------------------------------------------------------------------
+# Check out the ExternalProjectsContrib repository
+if(CTK_USE_CONTRIBUTED_PLUGINS)
+  if(CTK_SUPERBUILD)
+    ctkFunctionCheckoutRepo(
+      NAME ExternalProjectsContrib
+      GIT_URL github.com/commontk/ExternalProjectsContrib.git
+      GIT_TAG 4c944ef
+      )
+    mark_as_superbuild(ExternalProjectsContrib_DIR:PATH)
+  endif()
+
+  file(GLOB _contrib_scripts ${ExternalProjectsContrib_DIR}/*.cmake)
+  foreach(_contrib_script ${_contrib_scripts})
+    get_filename_component(_script_name ${_contrib_script} NAME_WE)
+    list(APPEND CTK_DEPENDENCIES ${_script_name})
+    set(${_script_name}_FILEPATH ${_contrib_script})
+  endforeach()
+endif()
+
 include(CMake/ctkBlockCheckDependencies.cmake)
 
 #-----------------------------------------------------------------------------
@@ -812,43 +950,72 @@ if(CTK_SUPERBUILD)
   return()
 endif()
 
+if(BUILD_TESTING)
+  add_subdirectory(CMake/Testing)
+endif()
 
 #-----------------------------------------------------------------------------
 # Expand variables containing include and library directories for external projects
 # This relies on the variable EXTERNAL_TARGETS set in ctkMacroValidateBuildOptions
 foreach(_external_target ${EXTERNAL_TARGETS})
-  if(${_external_target}_FIND_PACKAGE_CMD)
-    #message("Calling find_package(${${_external_target}_FIND_PACKAGE_CMD})")
-    find_package(${${_external_target}_FIND_PACKAGE_CMD} REQUIRED)
+  set(_package_name ${${_external_target}_FIND_PACKAGE_CMD})
+  if(_package_name)
+    superbuild_is_external_project_includable(${_package_name} required)
+    if(required)
+      #message("Calling find_package(${_package_name})")
+      find_package(${_package_name} REQUIRED)
+    endif()
   endif()
 endforeach()
 
 foreach(_external_target ${EXTERNAL_TARGETS})
+  set(_package_name ${${_external_target}_FIND_PACKAGE_CMD})
+  if("${_package_name}" STREQUAL "")
+    set(_package_name ${_external_target})
+  endif()
   if(${_external_target}_INCLUDE_DIRS)
-    #message("[${_external_target}] Resolving include variables: ${${_external_target}_INCLUDE_DIRS}")
+    #message("[${_package_name}] Resolving include variables: ${${_external_target}_INCLUDE_DIRS}")
+    set(_updated_include_dirs)
     foreach(_include_variable ${${_external_target}_INCLUDE_DIRS})
-      #message("[${_external_target}] Appending ${${_include_variable}}")
+      set(_expanded_include_variable ${_include_variable})
       if(${_include_variable})
-        list(APPEND ${_external_target}_INCLUDE_DIRS ${${_include_variable}})
-      else()
-        list(APPEND ${_external_target}_INCLUDE_DIRS ${_include_variable})
+        #message("[${_package_name}] Expanding [${_include_variable}] into [${${_include_variable}}]")
+        set(_expanded_include_variable ${${_include_variable}})
       endif()
-      #message("[${_external_target}] New dirs: ${${_external_target}_INCLUDE_DIRS}")
+      foreach(_include_dir ${_expanded_include_variable})
+        if(EXISTS ${_include_dir})
+          #message("[${_package_name}] Appending ${_include_dir}")
+          list(APPEND _updated_include_dirs ${_include_dir})
+        else()
+          message(STATUS "[${_package_name}] Skipping nonexistent include directory or not set variable [${_include_dir}]")
+        endif()
+      endforeach()
+      #message("[${_package_name}] New dirs: ${_updated_include_dirs}")
     endforeach()
-    #message("[${_external_target}] Appended dirs: ${${_external_target}_INCLUDE_DIRS}")
+    set(${_external_target}_INCLUDE_DIRS ${_updated_include_dirs})
+    #message("[${_package_name}] Appended dirs: ${${_external_target}_INCLUDE_DIRS}")
   endif()
   if(${_external_target}_LIBRARY_DIRS)
-    #message("[${_external_target}] Resolving library variables: ${${_external_target}_LIBRARY_DIRS}")
+    #message("[${_package_name}] Resolving library variables: ${${_external_target}_LIBRARY_DIRS}")
+    set(_updated_library_dirs)
     foreach(_library_variable ${${_external_target}_LIBRARY_DIRS})
-      #message("[${_external_target}] Appending ${${_library_variable}}")
+      set(_expanded_library_variable ${_library_variable})
       if(${_library_variable})
-        list(APPEND ${_external_target}_LIBRARY_DIRS ${${_library_variable}})
-      else()
-        list(APPEND ${_external_target}_LIBRARY_DIRS ${_library_variable})
+        #message("[${_package_name}] Expanding [${_library_variable}] into [${${_library_variable}}]")
+        set(_expanded_library_variable ${${_library_variable}})
       endif()
-      #message("[${_external_target}] New dirs: ${${_external_target}_LIBRARY_DIRS}")
+      foreach(_library_dir ${_expanded_library_variable})
+        if(EXISTS ${_library_dir})
+          #message("[${_package_name}] Appending ${_library_dir}")
+          list(APPEND _updated_library_dirs ${_library_dir})
+        else()
+          message(STATUS "[${_package_name}] Skipping nonexistent library directory or not set variable [${_library_dir}]")
+        endif()
+      endforeach()
+      #message("[${_package_name}] New dirs: ${_updated_library_dirs}")
     endforeach()
-    #message("[${_external_target}] Appended dirs: ${${_external_target}_LIBRARY_DIRS}")
+    set(${_external_target}_LIBRARY_DIRS ${_updated_library_dirs})
+    #message("[${_package_name}] Appended dirs: ${${_external_target}_LIBRARY_DIRS}")
   endif()
 endforeach()
 
@@ -867,7 +1034,12 @@ endif()
 # Configure files with settings
 #
 configure_file(${CTK_SOURCE_DIR}/CMake/UseCTK.cmake.in
-               ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake COPYONLY IMMEDIATE)
+               ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake COPYONLY)
+
+install(
+  FILES ${CTK_SUPERBUILD_BINARY_DIR}/UseCTK.cmake
+  DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development
+  )
 
 set(CTK_CONFIG_H_INCLUDE_DIR ${CTK_BINARY_DIR})
 
@@ -914,7 +1086,11 @@ endif()
 #
 foreach(plugin ${CTK_PLUGINS})
   if(CTK_PLUGIN_${plugin})
-    add_subdirectory(Plugins/${plugin})
+    if(${plugin}_SOURCE_DIR)
+      add_subdirectory(${${plugin}_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/Plugins/${plugin})
+    else()
+      add_subdirectory(Plugins/${plugin})
+    endif()
   endif()
 endforeach()
 

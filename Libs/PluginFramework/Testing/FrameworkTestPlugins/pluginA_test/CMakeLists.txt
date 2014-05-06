@@ -14,7 +14,7 @@ set(PLUGIN_MOC_SRCS
 )
 
 set(PLUGIN_resources
-  
+
 )
 
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)

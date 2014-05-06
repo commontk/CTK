@@ -55,6 +55,8 @@ public:
   void connect();
   void disconnect();
 
+  bool IsSameQtSlot(const char* qt_slot)const;
+
   /// 
   /// VTK Callback
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
