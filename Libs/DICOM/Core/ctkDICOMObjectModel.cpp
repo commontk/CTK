@@ -254,11 +254,6 @@ ctkDICOMObjectModel::ctkDICOMObjectModel(QObject* parentObject)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMObjectModel::ctkDICOMObjectModel(const ctkDICOMObjectModel& other)
-{
-}
-
-//------------------------------------------------------------------------------
 ctkDICOMObjectModel::~ctkDICOMObjectModel()
 {
 }

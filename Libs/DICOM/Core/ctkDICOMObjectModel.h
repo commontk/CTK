@@ -47,7 +47,6 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMObjectModel
 public:
 
   explicit ctkDICOMObjectModel(QObject* parent = 0);
-  ctkDICOMObjectModel(const ctkDICOMObjectModel& other);
   virtual ~ctkDICOMObjectModel();
   Q_INVOKABLE void setFile (const QString& fileName);
 
@@ -55,7 +54,8 @@ protected:
   QScopedPointer<ctkDICOMObjectModelPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(ctkDICOMObjectModel);
+  Q_DECLARE_PRIVATE(ctkDICOMObjectModel)
+  Q_DISABLE_COPY(ctkDICOMObjectModel)
 };
 
 #endif // ctkDICOMObjectModel_h
