@@ -210,7 +210,6 @@ foreach(file
   CMake/ctkMacroValidateBuildOptions.cmake
   CMake/ctkMacroAddCtkLibraryOptions.cmake
   CMake/ctkFunctionGenerateDGraphInput.cmake
-  CMake/ctkFunctionGenerateProjectXml.cmake
   CMake/ctkFunctionGeneratePluginManifest.cmake
   CMake/ctkMacroGeneratePluginResourceFile.cmake
   CMake/ctkFunctionAddPluginRepo.cmake
