@@ -115,6 +115,9 @@ public:
 
   bool filterActive();
 
+  void setTableSectionSize(int);
+  int tableSectionSize();
+
 public Q_SLOTS:
 
   /**

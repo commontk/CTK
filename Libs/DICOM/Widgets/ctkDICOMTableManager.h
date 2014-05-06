@@ -50,6 +50,14 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
     */
   Q_PROPERTY(bool dynamicTableLayout READ dynamicTableLayout WRITE setDynamicTableLayout)
 
+  Q_ENUMS(DisplayDensity)
+  /**
+  * This property holds the density of tables in the table Manager. There are three denisity
+  * levels: Comfortable (least dense), Cozy and Compact (most dense).
+   */
+
+  Q_PROPERTY(ctkDICOMTableManager::DisplayDensity displayDensity READ displayDensity WRITE setDisplayDensity);
+
 public:
   typedef QWidget Superclass;
 
@@ -78,6 +86,16 @@ public:
   bool dynamicTableLayout() const;
 
   void updateTableViews();
+
+  enum DisplayDensity
+  {
+    Compact = 0,
+    Cozy = 1,
+    Comfortable = 2
+  };
+
+  DisplayDensity displayDensity();
+  void setDisplayDensity(DisplayDensity density);
 
 public Q_SLOTS:
 

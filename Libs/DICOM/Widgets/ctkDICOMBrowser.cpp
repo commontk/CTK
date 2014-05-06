@@ -43,6 +43,7 @@
 #include "ctkDICOMQueryResultsTabWidget.h"
 #include "ctkDICOMQueryRetrieveWidget.h"
 #include "ctkDICOMQueryWidget.h"
+#include "ctkDICOMTableManager.h"
 
 #include "ui_ctkDICOMBrowser.h"
 
@@ -207,6 +208,8 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
   connect(d->DICOMDatabase.data(), SIGNAL(seriesAdded(QString)), this, SLOT(onSeriesAdded(QString)));
   connect(d->DICOMDatabase.data(), SIGNAL(instanceAdded(QString)), this, SLOT(onInstanceAdded(QString)));
 
+  connect(d->tableDensityComboBox ,SIGNAL(currentIndexChanged (const QString&)),
+     this, SLOT(onTablesDensityComboBox(QString)));
 
   //Set ToolBar button style
   d->ToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -459,6 +462,25 @@ void ctkDICOMBrowser::onRemoveAction()
     }
   // Update the table views
   d->dicomTableManager->updateTableViews();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onTablesDensityComboBox(QString density)
+{
+  Q_D(ctkDICOMBrowser);
+
+  if ( density == "Comfortable")
+  {
+    d->dicomTableManager->setDisplayDensity(ctkDICOMTableManager::Comfortable);
+  }
+  else if ( density == "Cozy")
+  {
+    d->dicomTableManager->setDisplayDensity(ctkDICOMTableManager::Cozy);
+  }
+  else if ( density == "Compact")
+  {
+    d->dicomTableManager->setDisplayDensity(ctkDICOMTableManager::Compact);
+  }
 }
 
 //----------------------------------------------------------------------------

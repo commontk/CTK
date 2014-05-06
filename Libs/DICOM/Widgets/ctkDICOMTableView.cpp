@@ -372,3 +372,18 @@ bool ctkDICOMTableView::filterActive()
   Q_D(ctkDICOMTableView);
   return (d->leSearchBox->text().length() != 0);
 }
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::setTableSectionSize(int size)
+{
+  Q_D(ctkDICOMTableView);
+  d->tblDicomDatabaseView->verticalHeader()->setDefaultSectionSize(size);
+  d->setUpTableView();
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMTableView::tableSectionSize()
+{
+  Q_D(ctkDICOMTableView);
+  return d->tblDicomDatabaseView->verticalHeader()->defaultSectionSize();
+}
