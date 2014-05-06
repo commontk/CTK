@@ -875,20 +875,9 @@ set(CTEST_PROJECT_SUBPROJECTS ${CTEST_PROJECT_SUBPROJECTS})
 
 # If the list of subproject is empty, let's at least build CTKCore
 list(LENGTH CTEST_PROJECT_SUBPROJECTS subproject_count)
-IF (subproject_count EQUAL 0)
+if(subproject_count EQUAL 0)
   set(CTEST_PROJECT_SUBPROJECTS CTKCore)
 endif()
-
-# Configure CTestConfigSubProject.cmake that could be used by CTest scripts
-configure_file(${CTK_SOURCE_DIR}/CMake/CTestConfigSubProject.cmake.in
-               ${CTK_BINARY_DIR}/CTestConfigSubProject.cmake)
-
-#-----------------------------------------------------------------------------
-# Project.xml
-#
-
-# Generate Project.xml file expected by the CTest driver script
-ctkFunctionGenerateProjectXml(${CTK_BINARY_DIR} ${PROJECT_NAME} "${target_directories}" ${CTK_SUPERBUILD})
 
 #-----------------------------------------------------------------------------
 # CTK dependencies - Projects should be TOPOLOGICALLY ordered
