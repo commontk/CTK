@@ -708,7 +708,7 @@ ctk_enable_option(DICOM "Enable default DICOM support" OFF
 # host and/or hosted application. This will not enable any example plugins
 # or executables (enable CTK_ENABLE_EXAMPLES for that).
 ctk_enable_option(DICOMApplicationHosting "Enable DICOM Part 19 Application Hosting support" OFF
-                  CTK_PLUGIN_org.commontk.dah.host AND CTK_PLUGIN_org.commontk.dah.app)
+                  CTK_PLUGIN_org.commontk.dah.host AND CTK_PLUGIN_org.commontk.dah.hostedapp)
 
 # The CTK Qt Widgets. This will enable the Qt Widget library only.
 # It might trigger the enabling of other widget libraries in combination
