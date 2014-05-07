@@ -34,6 +34,9 @@
 #include "ctkXnatScan.h"
 #include "ctkXnatScanFolder.h"
 #include "ctkXnatScanResource.h"
+#include "ctkXnatAssessor.h"
+#include "ctkXnatAssessorFolder.h"
+#include "ctkXnatAssessorResource.h"
 #include "ctkXnatSubject.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
@@ -256,6 +259,7 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
     // Fall back. Create the default class according to the default schema type
     if (!typeId)
     {
+      qDebug() << "fallback to : " << schemaType << " from custom " << customSchemaType;
       typeId = QMetaType::type(qPrintable(schemaType));
     }
 
@@ -304,6 +308,8 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   qRegisterMetaType<ctkXnatScanResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE));
   qRegisterMetaType<ctkXnatFile>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_FILE));
   qRegisterMetaType<ctkXnatReconstructionResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE));
+  qRegisterMetaType<ctkXnatAssessor>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_ASSESSOR));
+  qRegisterMetaType<ctkXnatAssessorResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_ASSESSOR_RESOURCE));
 
   QString url = d->loginProfile.serverUrl().toString();
   d->xnat->setServerUrl(url);
@@ -703,6 +709,18 @@ void ctkXnatSession::download(ctkXnatScanResource* scanResource, const QString& 
   Q_D(ctkXnatSession);
 
   QString query = scanResource->resourceUri() + "/files";
+  qRestAPI::Parameters parameters;
+  parameters["format"] = "zip";
+  QUuid queryId = d->xnat->download(fileName, query, parameters);
+  d->xnat->sync(queryId);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSession::download(ctkXnatAssessorResource* assessorResource, const QString& fileName)
+{
+  Q_D(ctkXnatSession);
+
+  QString query = assessorResource->resourceUri() + "/files";
   qRestAPI::Parameters parameters;
   parameters["format"] = "zip";
   QUuid queryId = d->xnat->download(fileName, query, parameters);
