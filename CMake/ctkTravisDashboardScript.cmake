@@ -16,8 +16,9 @@ cmake_minimum_required(VERSION 2.8)
 #
 # Dashboard properties
 #
-set(MY_COMPILER "gcc")
-#set(MY_QT_VERSION "4.6.2")
+set(MY_OPERATING_SYSTEM "Ubuntu-12.04")
+set(MY_COMPILER "g++4.6.3")
+set(MY_QT_VERSION "4.8.1")
 set(QT_QMAKE_EXECUTABLE "/usr/bin/qmake")
 set(CTEST_SITE "travis-ci") # for example: mymachine.kitware, mymachine.dkfz, ...
 set(CTEST_DASHBOARD_ROOT "/tmp")
@@ -58,7 +59,48 @@ set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/CTK-Superbuild-${CTEST_BUILD
 # CTK_APP_ctkDICOM:BOOL=ON
 
 set(ADDITIONNAL_CMAKECACHE_OPTION "
-#CTK_LIB_Scripting/Python/Widgets:BOOL=ON
+CTK_USE_SYSTEM_DCMTK:BOOL=ON
+CTK_USE_SYSTEM_ITK:BOOL=ON
+
+CTK_APP_ctkCommandLineModuleExplorer:BOOL=ON
+CTK_APP_ctkDICOM:BOOL=ON
+CTK_APP_ctkDICOM2:BOOL=ON
+CTK_APP_ctkDICOMHost:BOOL=ON
+CTK_APP_ctkDICOMIndexer:BOOL=ON
+CTK_APP_ctkExampleHost:BOOL=ON
+CTK_APP_ctkExampleHostedApp:BOOL=ON
+CTK_APP_ctkPluginBrowser:BOOL=ON
+CTK_APP_ctkPluginGenerator:BOOL=ON
+CTK_APP_ctkXnatTreeBrowser:BOOL=ON
+
+CTK_LIB_CommandLineModules/Backend/FunctionPointer:BOOL=ON
+CTK_LIB_CommandLineModules/Backend/LocalProcess:BOOL=ON
+CTK_LIB_CommandLineModules/Backend/XMLChecker:BOOL=ON
+CTK_LIB_CommandLineModules/Core:BOOL=ON
+CTK_LIB_CommandLineModules/Frontend/QtGui:BOOL=ON
+CTK_LIB_CommandLineModules/Frontend/QtWebKit:BOOL=ON
+
+CTK_LIB_DICOM/Core:BOOL=ON
+CTK_LIB_DICOM/Widgets:BOOL=ON
+
+CTK_LIB_ImageProcessing/ITK/Core:BOOL=ON
+CTK_LIB_PluginFramework:BOOL=ON
+CTK_LIB_Widgets:BOOL=ON
+CTK_LIB_XNAT/Core:BOOL=ON
+CTK_LIB_XNAT/Widgets:BOOL=ON
+
+CTK_PLUGIN_org.commontk.configadmin:BOOL=ON
+CTK_PLUGIN_org.commontk.dah.cmdlinemoduleapp:BOOL=ON
+CTK_PLUGIN_org.commontk.dah.core:BOOL=ON
+CTK_PLUGIN_org.commontk.dah.exampleapp:BOOL=ON
+CTK_PLUGIN_org.commontk.dah.examplehost:BOOL=ON
+CTK_PLUGIN_org.commontk.dah.host:BOOL=ON
+CTK_PLUGIN_org.commontk.dah.hostedapp:BOOL=ON
+CTK_PLUGIN_org.commontk.eventadmin:BOOL=ON
+CTK_PLUGIN_org.commontk.log:BOOL=ON
+CTK_PLUGIN_org.commontk.metatype:BOOL=ON
+CTK_PLUGIN_org.commontk.plugingenerator.core:BOOL=ON
+CTK_PLUGIN_org.commontk.plugingenerator.ui:BOOL=ON
 ")
 
 # List of test that should be explicitly disabled on this machine
@@ -116,3 +158,6 @@ set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)
 downloadfile(${url} ${dest})
 include(${dest})
 
+set(travis_url "/tmp/travis.url")
+file(WRITE ${travis_url} "https://travis-ci.org/commontk/CTK/builds/$ENV{TRAVIS_BUILD_ID}")
+ctest_submit(FILES ${travis_url})
