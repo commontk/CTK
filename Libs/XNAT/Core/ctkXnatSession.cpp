@@ -278,8 +278,6 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
       object->setProperty(it.key().toAscii().data(), it.value());
     }
 
-    qDebug() << "\n\n" << "xnat object found with properties \n" << object->properties() << "\n\n";
-
     results.push_back(object);
   }
   return results;
