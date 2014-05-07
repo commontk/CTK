@@ -21,11 +21,13 @@
 
 #include "ctkXnatDefaultSchemaTypes.h"
 
-QString ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT = "xnat:experimentData";
-QString ctkXnatDefaultSchemaTypes::XSI_FILE = "xnat:abstractResource";
 QString ctkXnatDefaultSchemaTypes::XSI_PROJECT = "xnat:projectData";
-QString ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION = "xnat:reconstructedImageData";
-QString ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE = "xnat:reconstructionResource";
+QString ctkXnatDefaultSchemaTypes::XSI_SUBJECT = "xnat:subjectData";
+QString ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT = "xnat:experimentData";
 QString ctkXnatDefaultSchemaTypes::XSI_SCAN = "xnat:imageScanData";
 QString ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE = "xnat:scanResource";
-QString ctkXnatDefaultSchemaTypes::XSI_SUBJECT = "xnat:subjectData";
+QString ctkXnatDefaultSchemaTypes::XSI_ASSESSOR = "xnat:mrAssessorData";
+QString ctkXnatDefaultSchemaTypes::XSI_ASSESSOR_RESOURCE = "xnat:abstractResource";
+QString ctkXnatDefaultSchemaTypes::XSI_FILE = "xnat:abstractResource";
+QString ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION = "xnat:reconstructedImageData";
+QString ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE = "xnat:reconstructionResource";
