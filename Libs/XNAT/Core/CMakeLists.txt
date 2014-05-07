@@ -24,6 +24,9 @@ set(KIT_SRCS
   ctkXnatScan.cpp
   ctkXnatScanFolder.cpp
   ctkXnatScanResource.cpp
+  ctkXnatAssessor.cpp
+  ctkXnatAssessorFolder.cpp
+  ctkXnatAssessorResource.cpp
   ctkXnatSession.cpp
   ctkXnatSettings.cpp
   ctkXnatSubject.cpp
