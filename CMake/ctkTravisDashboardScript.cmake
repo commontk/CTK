@@ -61,6 +61,7 @@ set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/CTK-Superbuild-${CTEST_BUILD
 set(ADDITIONNAL_CMAKECACHE_OPTION "
 CTK_USE_SYSTEM_DCMTK:BOOL=ON
 CTK_USE_SYSTEM_ITK:BOOL=ON
+ITK_DIR:PATH=/usr/lib/InsightToolkit
 
 CTK_APP_ctkCommandLineModuleExplorer:BOOL=ON
 CTK_APP_ctkDICOM:BOOL=ON
@@ -160,4 +161,4 @@ include(${dest})
 
 set(travis_url "/tmp/travis.url")
 file(WRITE ${travis_url} "https://travis-ci.org/commontk/CTK/builds/$ENV{TRAVIS_BUILD_ID}")
-ctest_submit(FILES ${travis_url})
+ctest_upload(FILES ${travis_url})
