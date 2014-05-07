@@ -46,8 +46,8 @@ macro(ctkMacroBuildQtPlugin)
   
   if(MY_QT5_MODULES)
     set(qt5_use_modules_list)
-    if(NOT CTK_USE_QT5)
-      message(WARNING "Argument QT5_MODULES ignored because CTK_USE_QT5 is not set.")
+    if(CTK_QT_VERSION VERSION_LOWER "5")
+      message(WARNING "Argument QT5_MODULES ignored because Qt version < 5")
     else()
       foreach(qt5_module ${MY_QT5_MODULES})
         find_package(${qt5_module} REQUIRED)
@@ -63,6 +63,7 @@ macro(ctkMacroBuildQtPlugin)
 
   # --------------------------------------------------------------------------
   # Include dirs
+
   set(my_includes
     ${CTK_BASE_INCLUDE_DIRS}
     ${QT_QTDESIGNER_INCLUDE_DIR}
@@ -109,7 +110,7 @@ macro(ctkMacroBuildQtPlugin)
     endif()
   endif()
   
-  if(CTK_USE_QT5)
+  if(CTK_QT_VERSION VERSION_GREATER "4")
     if(Qt5Widgets_FOUND)
       qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
     elseif(MY_UI_FORMS)
@@ -137,7 +138,7 @@ macro(ctkMacroBuildQtPlugin)
     ${MY_QRC_SRCS}
     )
   
-  if(CTK_USE_QT5 AND qt5_use_modules_list)
+  if(CTK_QT_VERSION VERSION_GREATER "4" AND qt5_use_modules_list)
     qt5_use_modules(${lib_name} ${qt5_use_modules_list})
   endif()
 

@@ -26,7 +26,7 @@
 #include "ctkCoreExport.h"
 
 // Qt includes
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x50000
 #include <QtMessageHandler>
 #endif
 
@@ -46,7 +46,7 @@ public:
   virtual QString handlerName()const;
   virtual void setEnabledInternal(bool value);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x50000
   QtMessageHandler SavedQtMessageHandler;
 #else
   QtMsgHandler SavedQtMessageHandler;

@@ -286,10 +286,12 @@ set(KIT_MOC_SRCS
   ctkWorkflowWidgetStep_p.h
   )
 
-QT4_GENERATE_MOCS(
+# Headers that should run through moc without adding
+# the generated cpp file to the source list
+set(KIT_GENERATE_MOC_SRCS
   ctkPathLineEdit.h
   ctkPathListWidget.h
-)
+  )
 
 # UI files
 set(KIT_UI_FORMS
@@ -404,15 +406,21 @@ if(CTK_USE_QTTESTING)
   list(APPEND KIT_target_libraries QtTesting)
 endif()
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  set(qt5_modules Qt5Widgets Qt5Xml Qt5OpenGL)
+endif()
+
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
+  GENERATE_MOC_SRCS ${KIT_GENERATE_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
+  QT5_MODULES ${qt5_modules}
   )
 
 if(CTK_WRAP_PYTHONQT_LIGHT)

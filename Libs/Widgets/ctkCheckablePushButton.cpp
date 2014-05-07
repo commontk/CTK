@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QApplication>
-#include <QCleanlooksStyle>
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QLayout>

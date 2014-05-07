@@ -22,7 +22,7 @@
 #define __ctkCoordinatesWidget_p_h
 
 // Qt includes
-#include <QWeakPointer>
+#include <QPointer>
 
 // CTK includes
 #include "ctkCoordinatesWidget.h"
@@ -72,7 +72,7 @@ public:
   double* Coordinates;
   QList<int> LastUserEditedCoordinates;
   bool    ChangingDecimals;
-  QWeakPointer<ctkValueProxy> Proxy;
+  QPointer<ctkValueProxy> Proxy;
 
 private:
   Q_DISABLE_COPY(ctkCoordinatesWidgetPrivate);

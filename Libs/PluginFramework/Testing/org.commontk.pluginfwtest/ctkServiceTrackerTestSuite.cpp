@@ -64,7 +64,7 @@ void ctkServiceTrackerTestSuite::runTest()
   catch (const ctkPluginException& pexcS)
   {
     QString msg = QString("Test plugin: ") + pexcS.what();
-    QFAIL(msg.toAscii());
+    QFAIL(msg.toLatin1());
   }
 
   // 1. Create a ctkServiceTracker with ctkServiceTrackerCustomizer == null

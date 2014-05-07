@@ -1,8 +1,16 @@
 
 
-set(KIT_PYTHON_SCRIPTS
-  qt/__init__
+set(KIT_PYTHON_SCRIPTS)
+
+string(REPLACE ";" "', '" QT_PYTHON_WRAPPED_LIBRARIES "${QT_PYTHON_WRAPPED_LIBRARIES_LIST}" )
+set(QT_PYTHON_WRAPPED_LIBRARIES "'${QT_PYTHON_WRAPPED_LIBRARIES}'")
+
+configure_file(
+  qt/__init__.py.in
+  ${CMAKE_CURRENT_BINARY_DIR}/qt/__init__.py
+  @ONLY
   )
+list(APPEND KIT_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/qt/__init__.py)
 
 # If it applies, the variable CTK_PYTHON_WRAPPED_LIBRARIES will contain
 # the comma separated list of package to load

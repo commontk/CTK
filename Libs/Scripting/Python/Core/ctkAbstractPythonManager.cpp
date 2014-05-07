@@ -312,7 +312,7 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
   QStringList moduleList = module.split(".", QString::SkipEmptyParts);
   foreach(const QString& module, moduleList)
     {
-    object = PyDict_GetItemString(dict, module.toAscii().data());
+    object = PyDict_GetItemString(dict, module.toLatin1().data());
     if (prevObject) { Py_DECREF(prevObject); }
     if (!object)
       {
@@ -327,7 +327,7 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
     return QStringList();
     }
 
-//  PyObject* object = PyDict_GetItemString(dict, module.toAscii().data());
+//  PyObject* object = PyDict_GetItemString(dict, module.toLatin1().data());
 //  if (!object)
 //    {
 //    return QStringList();

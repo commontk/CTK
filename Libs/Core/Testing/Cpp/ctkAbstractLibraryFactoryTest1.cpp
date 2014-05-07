@@ -45,7 +45,7 @@ protected:
     QScopedPointer<ctkDummyLibrary> module(new ctkDummyLibrary());
     foreach(QString symbol, this->Symbols)
       {
-      SymbolAdressType res = this->symbolAddress(symbol);
+      SymbolAddressType res = this->symbolAddress(symbol);
       if (!res)
         {
         }

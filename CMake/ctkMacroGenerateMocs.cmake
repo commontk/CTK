@@ -4,7 +4,7 @@
 include(MacroAddFileDependencies)
 
 function(QT4_GENERATE_MOCS)
-  if(CTK_USE_QT5)
+  if(CTK_QT_VERSION VERSION_GREATER "4")
     QT5_GET_MOC_FLAGS(_moc_flags)
   else()
     QT4_GET_MOC_FLAGS(_moc_flags)
@@ -25,7 +25,7 @@ function(QT4_GENERATE_MOCS)
 
     set(moc_file ${CMAKE_CURRENT_BINARY_DIR}/moc_${source_name}${source_ext})
 
-    if(CTK_USE_QT5)
+    if(CTK_QT_VERSION VERSION_GREATER "4")
       QT5_CREATE_MOC_COMMAND(${abs_file} ${moc_file} "${_moc_flags}" "" "")
     else()
       QT4_CREATE_MOC_COMMAND(${abs_file} ${moc_file} "${_moc_flags}" "" "")

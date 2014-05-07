@@ -107,7 +107,7 @@ set(Tests_Helpers_MOC_CPPS
   )
 
 set(Tests_Helpers_MOC_CPP)
-if(CTK_USE_QT5)
+if(CTK_QT_VERSION VERSION_GREATER "4")
   qt5_wrap_cpp(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
   qt5_generate_mocs(${Tests_Helpers_MOC_CPPS})
 else()
@@ -129,7 +129,7 @@ endif()
 add_executable(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
-if(CTK_USE_QT5)
+if(CTK_QT_VERSION VERSION_GREATER "4")
   qt5_use_modules(${KIT}CppTests Test Widgets)
 endif()
 

@@ -115,7 +115,7 @@ void ctkDICOMItem::InitializeFromFile(const QString& filename,
   DcmDataset *dataset;
 
   DcmFileFormat fileformat;
-  OFCondition status = fileformat.loadFile(filename.toAscii().data(), readXfer, groupLength, maxReadLength, readMode);
+  OFCondition status = fileformat.loadFile(filename.toLatin1().data(), readXfer, groupLength, maxReadLength, readMode);
   dataset = fileformat.getAndRemoveDataset();
 
   if (!status.good())
@@ -157,7 +157,7 @@ void ctkDICOMItem::Serialize()
   // construct Qt type from that contents
   QByteArray qtArray = QByteArray::fromRawData( static_cast<const char*>(readbuffer), datasetsize );
   //std::cerr << "** Buffer size: " << qtArray.size() << std::endl;
-  QString stringbuffer = QString::fromAscii(qtArray.toBase64());
+  QString stringbuffer = QString::fromLatin1(qtArray.toBase64());
 
   //std::cerr << "** String of size " << stringbuffer.size() << " looks like this:\n" << stringbuffer.toStdString() << std::endl << std::endl;
 
@@ -207,7 +207,7 @@ void ctkDICOMItem::Deserialize()
 
   //std::cerr << "** " << (void*)this << " ctkDICOMItem: Deserialize Dataset from string of size " << stringbuffer.size() << "\n" << stringbuffer.toStdString() << std::endl;
 
-  QByteArray qtArray = QByteArray::fromBase64( stringbuffer.toAscii() );
+  QByteArray qtArray = QByteArray::fromBase64( stringbuffer.toLatin1() );
   //std::cerr << "** " << (void*)this << " ctkDICOMItem: Deserialize Dataset from byte array of size " << qtArray.size() << std::endl;
 
   DcmInputBufferStream dcmbuffer;
@@ -390,11 +390,11 @@ QString ctkDICOMItem::Decode( const DcmTag& tag, const OFString& raw ) const
       QString encodingName( qtEncodingNamesForDICOMEncodingNames[d->m_SpecificCharacterSet] );
       if ( !decoders.contains( encodingName ) )
       {
-        QTextCodec* codec = QTextCodec::codecForName( encodingName.toAscii() );
+        QTextCodec* codec = QTextCodec::codecForName( encodingName.toLatin1() );
         if (!codec)
         {
           std::cerr << "Could not create QTextCodec object for '" << encodingName.toStdString() << "'. Using default encoding instead." << std::endl;
-          decoders.insert( encodingName, QTextCodec::codecForCStrings()->makeDecoder() ); // uses Latin1
+          decoders.insert( encodingName, QTextCodec::codecForName("UTF-8")->makeDecoder() ); // uses Latin1
         }
         else
         {

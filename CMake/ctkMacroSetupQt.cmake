@@ -20,8 +20,17 @@
 
 #! \ingroup CMakeUtilities
 macro(ctkMacroSetupQt)
+  set(CTK_QT_VERSION "4" CACHE STRING "Expected Qt version")
+  mark_as_advanced(CTK_QT_VERSION)
 
-  if(CTK_USE_QT5)
+  set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 4 5)
+
+  if(NOT (CTK_QT_VERSION VERSION_EQUAL "4" OR CTK_QT_VERSION VERSION_EQUAL "5"))
+    message(FATAL_ERROR "Expected value for CTK_QT_VERSION is either '4' or '5'")
+  endif()
+
+
+  if(CTK_QT_VERSION VERSION_GREATER "4")
     cmake_minimum_required(VERSION 2.8.9)
     set(QT5_INSTALL_PREFIX "" CACHE PATH "The install location of Qt5")
     if(NOT QT5_INSTALL_PREFIX OR NOT EXISTS ${QT5_INSTALL_PREFIX}/bin/qmake)
@@ -32,7 +41,7 @@ macro(ctkMacroSetupQt)
     set(minimum_required_qt_version "4.6")
 
     find_package(Qt4)
-    
+
     if(QT4_FOUND)
 
       if("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "${minimum_required_qt_version}")

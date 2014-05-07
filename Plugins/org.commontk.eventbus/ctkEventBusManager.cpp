@@ -214,7 +214,7 @@ void ctkEventBusManager::startListen() {
     if(connector) {
         connector->startListen();
     } else {
-        qWarning("%s", tr("Server can not start. Create it first, then call startListen again!!").toAscii().data());
+        qWarning("%s", tr("Server can not start. Create it first, then call startListen again!!").toLatin1().data());
     }
 }
 

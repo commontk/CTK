@@ -83,7 +83,7 @@ bool ctkFactoryLibraryItem<BaseClassType>::resolve()
       continue;
       }
 
-    SymbolAdressType resolvedSymbol = this->Library.resolve(symbol.toLatin1());
+    SymbolAddressType resolvedSymbol = this->Library.resolve(symbol.toLatin1());
     if (!resolvedSymbol)
       {
       this->appendLoadErrorString(QString("Failed to resolve mandatory symbol '%1'").arg(symbol));
@@ -96,7 +96,7 @@ bool ctkFactoryLibraryItem<BaseClassType>::resolve()
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType>
-typename ctkFactoryLibraryItem<BaseClassType>::SymbolAdressType
+typename ctkFactoryLibraryItem<BaseClassType>::SymbolAddressType
 ctkFactoryLibraryItem<BaseClassType>::symbolAddress(const QString& symbol)const
 {
   ConstIterator iter = this->ResolvedSymbols.find(symbol);

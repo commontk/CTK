@@ -186,9 +186,7 @@ if(CTK_USE_QTTESTING)
   ctkQtTesting(Tests_SRCS Tests_MOC_SRCS Tests_UI_FORMS Tests_RESOURCES)
 endif()
 
-set(Tests_MOC_CPP)
-QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
-QT4_GENERATE_MOCS(
+set(Tests_MOC_CPPS
   ctkCoordinatesWidgetTest.cpp
   ctkCoordinatesWidgetValueProxyTest.cpp
   ctkDoubleRangeSliderTest.cpp
@@ -213,12 +211,25 @@ QT4_GENERATE_MOCS(
   ctkSliderWidgetTest.cpp
   ctkSliderWidgetValueProxyTest.cpp
   )
+
+set(Tests_MOC_CPP)
 set(Tests_UI_CPP)
-if(TEST_UI_FORMS)
-  QT4_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})
-endif()
 set(Tests_RESOURCES_SRCS)
-QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  qt5_wrap_cpp(Tests_MOC_CPP ${Tests_MOC_SRCS})
+  qt5_generate_mocs(${Tests_MOC_CPPS})
+  if(TEST_UI_FORMS)
+    qt5_wrap_ui(Tests_UI_CPP ${Tests_UI_FORMS})
+  endif()
+  qt5_add_resources(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+else()
+  QT4_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
+  QT4_GENERATE_MOCS(${Tests_MOC_CPPS})
+  if(TEST_UI_FORMS)
+    QT4_WRAP_UI(Tests_UI_CPP ${Tests_UI_FORMS})
+  endif()
+  QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+endif()
 
 add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})

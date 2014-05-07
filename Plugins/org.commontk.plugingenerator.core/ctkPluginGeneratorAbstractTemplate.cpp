@@ -134,7 +134,7 @@ void ctkPluginGeneratorAbstractTemplate::create(const QString& location)
   const QString path = location + "/" + filename;
   QFile file(path);
   file.open(QIODevice::WriteOnly | QIODevice::Text);
-  file.write(this->generateContent().toAscii());
+  file.write(this->generateContent().toLatin1());
   file.close();
 }
 

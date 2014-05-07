@@ -102,14 +102,14 @@ macro(ctkMacroSetupPlugins )
   endif()
   
   # Set up Qt, if not already done
-  if(NOT QT4_FOUND)
-    set(minimum_required_qt_version "4.6")
-    find_package(Qt4 REQUIRED)
+  #if(NOT QT4_FOUND)
+  #  set(minimum_required_qt_version "4.6")
+  #  find_package(Qt4 REQUIRED)
 
-    if("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "${minimum_required_qt_version}")
-      message(FATAL_ERROR "error: CTK requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
-    endif()
-  endif()
+  #  if("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "${minimum_required_qt_version}")
+  #    message(FATAL_ERROR "error: CTK requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
+  #  endif()
+  #endif()
   
   # Set the variable QT_INSTALLED_LIBRARY_DIR that contains all
   # Qt shared libraries

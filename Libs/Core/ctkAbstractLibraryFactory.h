@@ -37,15 +37,15 @@ class ctkFactoryLibraryItem : public ctkAbstractFactoryFileBasedItem<BaseClassTy
 
 public:
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-  typedef void* SymbolAdressType;
+#if QT_VERSION < 0x50000
+  typedef void* SymbolAddressType;
 #else
-  typedef QFunctionPointer SymbolAdressType;
+  typedef QFunctionPointer SymbolAddressType;
 #endif
 
 protected:
-  typedef typename QHash<QString, SymbolAdressType>::const_iterator ConstIterator;
-  typedef typename QHash<QString, SymbolAdressType>::iterator       Iterator;
+  typedef typename QHash<QString, SymbolAddressType>::const_iterator ConstIterator;
+  typedef typename QHash<QString, SymbolAddressType>::iterator       Iterator;
 
 public:
   //explicit ctkFactoryLibraryItem(const QString& path);
@@ -64,11 +64,11 @@ public:
   
   /// 
   /// Get symbol address
-  SymbolAdressType symbolAddress(const QString& symbol)const;
+  SymbolAddressType symbolAddress(const QString& symbol)const;
 
 protected:
   mutable QLibrary      Library;
-  QHash<QString, SymbolAdressType> ResolvedSymbols;
+  QHash<QString, SymbolAddressType> ResolvedSymbols;
   QStringList           Symbols;
 };
 

@@ -99,6 +99,7 @@ set(KIT_MOC_SRCS
   ctkCommandLineParser.h
   ctkErrorLogFDMessageHandler_p.h
   ctkErrorLogModel.h
+  ctkErrorLogQtMessageHandler.h
   ctkLinearValueProxy.h
   ctkLogger.h
   ctkHistogram.h
@@ -127,7 +128,7 @@ set(KIT_target_libraries)
 
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
-if(CTK_USE_QT5)
+if(CTK_QT_VERSION VERSION_GREATER "4")
   # This line below should actually be
   # set(qt5_modules Qt5Core)
   # see https://github.com/commontk/CTK/issues/278

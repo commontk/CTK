@@ -406,7 +406,7 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
     }
   QVariant foregroundBrush = this->model()->headerData(section, this->orientation(),
                                                   Qt::ForegroundRole);
-  if (qVariantCanConvert<QBrush>(foregroundBrush))
+  if (foregroundBrush.canConvert<QBrush>())
     {
     option->palette.setBrush(QPalette::ButtonText, qvariant_cast<QBrush>(foregroundBrush));
     }
@@ -414,7 +414,7 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
   //QPointF oldBO = painter->brushOrigin();
   QVariant backgroundBrush = this->model()->headerData(section, this->orientation(),
                                                   Qt::BackgroundRole);
-  if (qVariantCanConvert<QBrush>(backgroundBrush)) 
+  if (backgroundBrush.canConvert<QBrush>())
     {
     option->palette.setBrush(QPalette::Button, qvariant_cast<QBrush>(backgroundBrush));
     option->palette.setBrush(QPalette::Window, qvariant_cast<QBrush>(backgroundBrush));

@@ -114,15 +114,15 @@ void ctkNetworkConnectorQtSoap::createClient(const QString hostName, const unsig
 
 void ctkNetworkConnectorQtSoap::createServer(const unsigned int port) {
     Q_UNUSED(port);
-    qDebug() << tr("QtSoap doesn't support server side implementation.").toAscii();
+    qDebug() << tr("QtSoap doesn't support server side implementation.").toLatin1();
 }
 
 void ctkNetworkConnectorQtSoap::stopServer() {
-    qDebug() << tr("QtSoap doesn't support server side implementation.").toAscii();
+    qDebug() << tr("QtSoap doesn't support server side implementation.").toLatin1();
 }
 
 void ctkNetworkConnectorQtSoap::startListen() {
-    qDebug() << tr("QtSoap doesn't support server side implementation.").toAscii();
+    qDebug() << tr("QtSoap doesn't support server side implementation.").toLatin1();
 }
 
 QtSoapType *ctkNetworkConnectorQtSoap::marshall(const QString name, const QVariant &parameter) {
@@ -258,13 +258,13 @@ void ctkNetworkConnectorQtSoap::retrieveRemoteResponse()
 void ctkNetworkConnectorQtSoap::processReturnValue( int requestId, QVariant value ) {
     Q_UNUSED( requestId );
     Q_ASSERT( value.canConvert( QVariant::String ) );
-    qDebug("%s", value.toString().toAscii().data());
+    qDebug("%s", value.toString().toLatin1().data());
     ctkEventBusManager::instance()->notifyEvent("ctk/local/eventBus/remoteCommunicationDone", ctkEventTypeLocal);
 }
 
 void ctkNetworkConnectorQtSoap::processFault( int requestId, int errorCode, QString errorString ) {
     // Log the error.
-    qDebug("%s", tr("Process Fault for requestID %1 with error %2 - %3").arg(QString::number(requestId), QString::number(errorCode), errorString).toAscii().data());
+    qDebug("%s", tr("Process Fault for requestID %1 with error %2 - %3").arg(QString::number(requestId), QString::number(errorCode), errorString).toLatin1().data());
     ctkEventBusManager::instance()->notifyEvent("ctk/local/eventBus/remoteCommunicationFailed", ctkEventTypeLocal);
 }
 

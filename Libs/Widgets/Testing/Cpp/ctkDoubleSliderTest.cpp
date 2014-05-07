@@ -45,7 +45,11 @@ void ctkDoubleSliderTester::testUI()
 {
   ctkDoubleSlider slider;
   slider.show();
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&slider);
+#else
   QTest::qWaitForWindowShown(&slider);
+#endif
   // qApp->exec();
 }
 

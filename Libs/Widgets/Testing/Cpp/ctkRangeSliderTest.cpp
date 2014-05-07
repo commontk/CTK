@@ -20,7 +20,9 @@
 
 // Qt includes
 #include <QApplication>
+#if (QT_VERSION < 0x50000)
 #include <QCleanlooksStyle>
+#endif
 #include <QString>
 #include <QStyle>
 #include <QStyleOptionSlider>
@@ -52,7 +54,9 @@ private slots:
 void ctkRangeSliderTester::initTestCase()
 {
   // Mouse position on handles does not with with gtk style.
+#if (QT_VERSION < 0x50000)
   QApplication::setStyle(new QCleanlooksStyle());
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -112,7 +116,7 @@ void ctkRangeSliderTester::testGrooveMouseEvents()
   QRect sliderHandleSize = rangeSlider.style()->subControlRect(
     QStyle::CC_Slider, &option, QStyle::SC_SliderHandle, &rangeSlider );
   rangeSlider.resize(100 + sliderHandleSize.width(), 20);
-  
+
   QFETCH(int, moveInPx);
   QFETCH(int, expectedMinValue);
   QFETCH(int, expectedMaxValue);
@@ -159,7 +163,11 @@ void ctkRangeSliderTester::testHandleMouseEvents()
   rangeSlider.resize(100 + sliderHandleSize.width(), 20);
 
   rangeSlider.show();
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&rangeSlider);
+#else
   QTest::qWaitForWindowShown(&rangeSlider);
+#endif
 
   QFETCH(bool, minHandle);
   QFETCH(bool, symmetricMoves);

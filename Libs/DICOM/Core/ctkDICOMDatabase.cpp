@@ -1336,7 +1336,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
                 && (thumbnailInfo.lastModified() > QFileInfo(filename).lastModified())))
             {
               QDir(q->databaseDirectory() + "/thumbs/").mkpath(studySeriesDirectory);
-              DicomImage dcmImage(QDir::toNativeSeparators(filename).toAscii());
+              DicomImage dcmImage(QDir::toNativeSeparators(filename).toLatin1());
               thumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
             }
         }
