@@ -24,7 +24,6 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatScan.h"
-#include "ctkXnatFile.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
 
