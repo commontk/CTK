@@ -297,7 +297,7 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
 
         qreal diffuseComp = qMax(diffuse * dot, 0.);
 
-        qreal specularDot = qMax(QVector3D::dotProduct(ref, view), static_cast<float>(0));
+        qreal specularDot = qMax(static_cast<qreal>(QVector3D::dotProduct(ref, view)), static_cast<qreal>(0));
 
         qreal specularComp = specular*pow(specularDot, specular_power);
 

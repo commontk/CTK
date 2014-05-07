@@ -5,6 +5,7 @@ set(TEST_SOURCES
   ctkAddRemoveComboBoxTest1.cpp
   ctkAxesWidgetTest1.cpp
   ctkButtonGroupTest1.cpp
+  ctkCheckableModelHelperTest1.cpp
   ctkCheckBoxPixmapsTest1.cpp
   ctkCheckBoxTest1.cpp
   ctkCheckableComboBoxTest1.cpp
@@ -38,6 +39,13 @@ set(TEST_SOURCES
   ctkDoubleSpinBoxValueProxyTest.cpp
   ctkDynamicSpacerTest1.cpp
   ctkDynamicSpacerTest2.cpp
+  ctkErrorLogFDMessageHandlerWithThreadsTest1.cpp
+  ctkErrorLogModelTest1.cpp
+  ctkErrorLogModelEntryGroupingTest1.cpp
+  ctkErrorLogModelTerminalOutputTest1.cpp
+  ctkErrorLogModelTest4.cpp
+  ctkErrorLogQtMessageHandlerWithThreadsTest1.cpp
+  ctkErrorLogStreamMessageHandlerWithThreadsTest1.cpp
   ctkErrorLogWidgetTest1.cpp
   ctkExpandButtonTest1.cpp
   ctkExpandableWidgetTest1.cpp
@@ -46,6 +54,7 @@ set(TEST_SOURCES
   ctkFittedTextBrowserTest1.cpp
   ctkFlowLayoutTest1.cpp
   ctkFontButtonTest.cpp
+  ctkHistogramTest1.cpp
   ctkLayoutManagerTest1.cpp
   ctkMaterialPropertyPreviewLabelTest1.cpp
   ctkMaterialPropertyWidgetTest1.cpp
@@ -87,6 +96,9 @@ set(TEST_SOURCES
   ctkThumbnailListWidgetTest1.cpp
   ctkThumbnailLabelTest1.cpp
   ctkToolTipTrapperTest1.cpp
+  ctkTransferFunctionTest1.cpp
+  ctkTransferFunctionRepresentationTest1.cpp
+  ctkTransferFunctionRepresentationTest2.cpp
   ctkTreeComboBoxTest1.cpp
   ctkWidgetsUtilsTest1.cpp
   ctkWidgetsUtilsTestGrabWidget.cpp
@@ -234,6 +246,11 @@ endif()
 add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  find_package(Qt5Test REQUIRED)
+  target_link_libraries(${KIT}CppTests Qt5::Test)
+endif()
+
 #
 # Add Tests
 #
@@ -242,6 +259,7 @@ SIMPLE_TEST( ctkActionsWidgetTest1 )
 SIMPLE_TEST( ctkAddRemoveComboBoxTest1 )
 SIMPLE_TEST( ctkAxesWidgetTest1 )
 SIMPLE_TEST( ctkButtonGroupTest1 )
+SIMPLE_TEST( ctkCheckableModelHelperTest1 )
 SIMPLE_TEST( ctkCheckBoxPixmapsTest1 )
 SIMPLE_TEST( ctkCheckBoxTest1 )
 SIMPLE_TEST( ctkCheckableComboBoxTest1 )
@@ -276,6 +294,13 @@ SIMPLE_TEST( ctkDoubleSpinBoxTest1 )
 SIMPLE_TEST( ctkDoubleSpinBoxValueProxyTest )
 SIMPLE_TEST( ctkDynamicSpacerTest1 )
 SIMPLE_TEST( ctkDynamicSpacerTest2 )
+SIMPLE_TEST( ctkErrorLogFDMessageHandlerWithThreadsTest1 )
+SIMPLE_TEST( ctkErrorLogModelTest1 )
+SIMPLE_TEST( ctkErrorLogModelEntryGroupingTest1 )
+SIMPLE_TEST( ctkErrorLogModelTerminalOutputTest1 --test-launcher $<TARGET_FILE:${KIT}CppTests>)
+SIMPLE_TEST( ctkErrorLogModelTest4 )
+SIMPLE_TEST( ctkErrorLogQtMessageHandlerWithThreadsTest1 )
+SIMPLE_TEST( ctkErrorLogStreamMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkErrorLogWidgetTest1 )
 SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingDerivedSteps )
 SIMPLE_TEST( ctkExampleUseOfWorkflowWidgetUsingSignalsAndSlots )
@@ -286,6 +311,7 @@ SIMPLE_TEST( ctkFileDialogTest1 )
 SIMPLE_TEST( ctkFittedTextBrowserTest1 )
 SIMPLE_TEST( ctkFlowLayoutTest1 )
 SIMPLE_TEST( ctkFontButtonTest )
+SIMPLE_TEST( ctkHistogramTest1 )
 SIMPLE_TEST( ctkLanguageComboBoxTest )
 SIMPLE_TEST( ctkLayoutManagerTest1 )
 SIMPLE_TEST( ctkMaterialPropertyPreviewLabelTest1 )
@@ -327,6 +353,9 @@ SIMPLE_TEST( ctkSliderWidgetValueProxyTest )
 SIMPLE_TEST( ctkThumbnailListWidgetTest1 )
 SIMPLE_TEST( ctkThumbnailLabelTest1 )
 SIMPLE_TEST( ctkToolTipTrapperTest1 )
+SIMPLE_TEST( ctkTransferFunctionTest1 )
+SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
+SIMPLE_TEST( ctkTransferFunctionRepresentationTest2 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )
 SIMPLE_TEST( ctkWidgetsUtilsTest1 )
 SIMPLE_TEST( ctkWidgetsUtilsTestGrabWidget )

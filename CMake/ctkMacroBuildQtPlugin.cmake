@@ -28,7 +28,7 @@ macro(ctkMacroBuildQtPlugin)
   cmake_parse_arguments(MY
     "" # no options
     "NAME;EXPORT_DIRECTIVE;PLUGIN_DIR" # one value args
-    "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;QT5_MODULES;RESOURCES" # multi value args
+    "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
     ${ARGN}
     )
 
@@ -43,20 +43,6 @@ macro(ctkMacroBuildQtPlugin)
     message(FATAL_ERROR "PLUGIN_DIR (e.g. designer, iconengines, imageformats...) is mandatory")
   endif()
   set(MY_LIBRARY_TYPE "MODULE")
-  
-  if(MY_QT5_MODULES)
-    set(qt5_use_modules_list)
-    if(CTK_QT_VERSION VERSION_LOWER "5")
-      message(WARNING "Argument QT5_MODULES ignored because Qt version < 5")
-    else()
-      foreach(qt5_module ${MY_QT5_MODULES})
-        find_package(${qt5_module} REQUIRED)
-        # strip the "Qt5" string from the module name
-        string(SUBSTRING ${qt5_module} 3 -1 _qt5_module_name)
-        list(APPEND qt5_use_modules_list ${_qt5_module_name})
-      endforeach()
-    endif()
-  endif()
 
   # Define library name
   set(lib_name ${MY_NAME})
@@ -98,8 +84,8 @@ macro(ctkMacroBuildQtPlugin)
 
   # Wrap
   set(MY_QRC_SRCS "")
-  if(Qt5Core_FOUND)
-    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS})
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} TARGET ${lib_name})
     if(DEFINED MY_RESOURCES)
       qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
     endif()
@@ -109,7 +95,7 @@ macro(ctkMacroBuildQtPlugin)
       QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
     endif()
   endif()
-  
+
   if(CTK_QT_VERSION VERSION_GREATER "4")
     if(Qt5Widgets_FOUND)
       qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
@@ -137,10 +123,6 @@ macro(ctkMacroBuildQtPlugin)
     ${MY_UI_CPP}
     ${MY_QRC_SRCS}
     )
-  
-  if(CTK_QT_VERSION VERSION_GREATER "4" AND qt5_use_modules_list)
-    qt5_use_modules(${lib_name} ${qt5_use_modules_list})
-  endif()
 
   # Extract library name associated with the plugin and use it as label
   string(REGEX REPLACE "(.*)Plugin[s]?" "\\1" label ${lib_name})
@@ -196,6 +178,10 @@ macro(ctkMacroBuildQtDesignerPlugin)
   ctkMacroBuildQtPlugin(
     PLUGIN_DIR designer
     ${ARGN})
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    find_package(Qt5Designer REQUIRED)
+    target_link_libraries(${lib_name} Qt5::Designer)
+  endif()
 endmacro()
 
 macro(ctkMacroBuildQtIconEnginesPlugin)

@@ -26,7 +26,8 @@
 #include <QThread>
 
 // CTK includes
-#include "ctkErrorLogModel.h"
+#include "ctkErrorLogAbstractMessageHandler.h"
+#include "ctkErrorLogTerminalOutput.h"
 
 // STD includes
 #include <cstdio>
@@ -47,7 +48,7 @@ public:
 
   ctkFDHandler(ctkErrorLogFDMessageHandler* messageHandler,
                ctkErrorLogLevel::LogLevel logLevel,
-               ctkErrorLogModel::TerminalOutput terminalOutput);
+               ctkErrorLogTerminalOutput::TerminalOutput terminalOutput);
   virtual ~ctkFDHandler();
 
   /// Enable/Disable the handler.
@@ -67,7 +68,7 @@ private:
   ctkErrorLogFDMessageHandler * MessageHandler;
   ctkErrorLogLevel::LogLevel LogLevel;
 
-  ctkErrorLogModel::TerminalOutput TerminalOutput;
+  ctkErrorLogTerminalOutput::TerminalOutput TerminalOutput;
 
   int    SavedFDNumber;
   fpos_t SavedFDPos;

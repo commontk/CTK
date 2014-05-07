@@ -18,38 +18,44 @@
 
 =========================================================================*/
 
-#ifndef __ctkErrorLogStatusMessageHandler_h
-#define __ctkErrorLogStatusMessageHandler_h
-
-// CTK includes
-#include <ctkErrorLogAbstractMessageHandler.h>
-#include "ctkWidgetsExport.h"
+#ifndef CTKERRORLOGLEVEL_H
+#define CTKERRORLOGLEVEL_H
 
 // Qt includes
-#include <QPointer>
+#include <QObject>
 
-class QMainWindow;
+// CTK includes
+#include "ctkCoreExport.h"
 
 //------------------------------------------------------------------------------
-/// \ingroup Widgets
-class CTK_WIDGETS_EXPORT ctkErrorLogStatusMessageHandler :
-    public ctkErrorLogAbstractMessageHandler
+/// \ingroup Core
+class CTK_CORE_EXPORT ctkErrorLogLevel : public QObject
 {
   Q_OBJECT
+  Q_FLAGS(LogLevel)
 public:
-  ctkErrorLogStatusMessageHandler(QMainWindow * mainWindow);
+  ctkErrorLogLevel();
 
-  static QString HandlerName;
+  enum LogLevel
+    {
+    None     = 0x0,
+    Unknown  = 0x1,
+    Status   = 0x2,
+    Trace    = 0x4,
+    Debug    = 0x8,
+    Info     = 0x10,
+    Warning  = 0x20,
+    Error    = 0x40,
+    Critical = 0x80,
+    Fatal    = 0x100
+    };
+  Q_DECLARE_FLAGS(LogLevels, LogLevel)
 
-  virtual QString handlerName()const;
-  virtual void setEnabledInternal(bool value);
+  QString operator ()(LogLevel logLevel);
 
-public Q_SLOTS:
-  void statusBarMessageChanged(const QString& text);
-
-private:
-  QPointer<QMainWindow> MainWindow;
+  static QString logLevelAsString(ctkErrorLogLevel::LogLevel logLevel);
 };
+Q_DECLARE_OPERATORS_FOR_FLAGS(ctkErrorLogLevel::LogLevels)
 
-#endif
 
+#endif // CTKERRORLOGLEVEL_H

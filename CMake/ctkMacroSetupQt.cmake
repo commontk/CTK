@@ -31,7 +31,7 @@ macro(ctkMacroSetupQt)
 
 
   if(CTK_QT_VERSION VERSION_GREATER "4")
-    cmake_minimum_required(VERSION 2.8.9)
+    cmake_minimum_required(VERSION 2.8.12)
     set(QT5_INSTALL_PREFIX "" CACHE PATH "The install location of Qt5")
     if(NOT QT5_INSTALL_PREFIX OR NOT EXISTS ${QT5_INSTALL_PREFIX}/bin/qmake)
       message(FATAL_ERROR "You must specify the install location of Qt5")

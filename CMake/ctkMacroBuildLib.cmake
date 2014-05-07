@@ -28,7 +28,7 @@
 #! \ingroup CMakeAPI
 macro(ctkMacroBuildLib)
   ctkMacroParseArguments(MY
-    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;GENERATE_MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;QT5_MODULES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
+    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;GENERATE_MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
     "ENABLE_QTTESTING"
     ${ARGN}
     )
@@ -47,24 +47,10 @@ macro(ctkMacroBuildLib)
   if(NOT DEFINED MY_LIBRARY_TYPE)
     set(MY_LIBRARY_TYPE "SHARED")
   endif()
-  
-  if(MY_QT5_MODULES)
-    set(qt5_use_modules_list)
-    if(CTK_QT_VERSION VERSION_LESS "5")
-      message(WARNING "Argument QT5_MODULES ignored because Qt version < 5.")
-    else()
-      foreach(qt5_module ${MY_QT5_MODULES})
-        find_package(${qt5_module} REQUIRED)
-        # strip the "Qt5" string from the module name
-        string(SUBSTRING ${qt5_module} 3 -1 _qt5_module_name)
-        list(APPEND qt5_use_modules_list ${_qt5_module_name})
-      endforeach()
-    endif()
-  endif()
 
   # Define library name
   set(lib_name ${MY_NAME})
-  
+
   # Library target names must not contain a '_' (reserved for plug-in target names)
   if(lib_name MATCHES _)
     message(FATAL_ERROR "The library name ${lib_name} must not contain a '_' character.")
@@ -119,7 +105,7 @@ macro(ctkMacroBuildLib)
   if(MY_MOC_SRCS)
     # this is a workaround for Visual Studio. The relative include paths in the generated
     # moc files can get very long and can't be resolved by the MSVC compiler.
-    if(Qt5Core_FOUND)
+    if(CTK_QT_VERSION VERSION_GREATER "4")
       foreach(moc_src ${MY_MOC_SRCS})
         qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
       endforeach()
@@ -169,10 +155,6 @@ macro(ctkMacroBuildLib)
     ${MY_UI_CPP}
     ${MY_QRC_SRCS}
     )
-    
-  if(CTK_QT_VERSION VERSION_GREATER "4" AND qt5_use_modules_list)
-    qt5_use_modules(${lib_name} ${qt5_use_modules_list})
-  endif()
 
   # Set labels associated with the target.
   set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})

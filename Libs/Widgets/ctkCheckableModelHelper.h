@@ -58,14 +58,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class QAbstractItemModel;
 
 // CTK includes
-#include "ctkCoreExport.h"
+#include "ctkWidgetsExport.h"
 
 class ctkCheckableModelHelperPrivate;
 
-/// \ingroup Core
+/// \ingroup Widgets
 ///
 /// ctkCheckableModelHelper expose functions to handle checkable models
-class CTK_CORE_EXPORT ctkCheckableModelHelper : public QObject
+class CTK_WIDGETS_EXPORT ctkCheckableModelHelper : public QObject
 {
   Q_OBJECT;
   Q_PROPERTY(bool forceCheckability READ forceCheckability WRITE setForceCheckability);

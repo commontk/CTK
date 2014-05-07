@@ -30,144 +30,8 @@
 
 // CTK includes
 #include "ctkErrorLogModel.h"
-#include <ctkPimpl.h>
+#include "ctkErrorLogAbstractMessageHandler.h"
 
-// STD includes
-#include <cstdio> // For _fileno or fileno
-#ifdef _MSC_VER
-# include <io.h> // For _write()
-#else
-# include <unistd.h>
-#endif
-
-// --------------------------------------------------------------------------
-// ctkErrorLogLevel methods
-
-// --------------------------------------------------------------------------
-ctkErrorLogLevel::ctkErrorLogLevel()
-{
-  qRegisterMetaType<ctkErrorLogLevel::LogLevel>("ctkErrorLogLevel::LogLevel");
-}
-
-// --------------------------------------------------------------------------
-QString ctkErrorLogLevel::operator()(ctkErrorLogLevel::LogLevel logLevel)
-{
-  return ctkErrorLogLevel::logLevelAsString(logLevel);
-}
-
-// --------------------------------------------------------------------------
-QString ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)
-{
-  QMetaEnum logLevelEnum = ctkErrorLogLevel::staticMetaObject.enumerator(0);
-  Q_ASSERT(QString("LogLevel").compare(logLevelEnum.name()) == 0);
-  return QLatin1String(logLevelEnum.valueToKey(logLevel));
-}
-
-// --------------------------------------------------------------------------
-// ctkErrorLogTerminalOutputPrivate
-
-// --------------------------------------------------------------------------
-class ctkErrorLogTerminalOutputPrivate
-{
-public:
-  ctkErrorLogTerminalOutputPrivate();
-  ~ctkErrorLogTerminalOutputPrivate();
-
-  bool Enabled;
-  mutable QMutex EnableMutex;
-
-  int FD;
-  mutable QMutex OutputMutex;
-};
-
-// --------------------------------------------------------------------------
-ctkErrorLogTerminalOutputPrivate::ctkErrorLogTerminalOutputPrivate()
-  : Enabled(false)
-{
-#ifdef Q_OS_WIN32
-  this->FD = _fileno(stdout);
-#else
-  this->FD = fileno(stdout);
-#endif
-}
-
-// --------------------------------------------------------------------------
-ctkErrorLogTerminalOutputPrivate::~ctkErrorLogTerminalOutputPrivate()
-{
-}
-
-// --------------------------------------------------------------------------
-// ctkErrorLogTerminalOutput methods
-
-// --------------------------------------------------------------------------
-ctkErrorLogTerminalOutput::ctkErrorLogTerminalOutput()
-  : d_ptr(new ctkErrorLogTerminalOutputPrivate)
-{
-}
-
-// --------------------------------------------------------------------------
-ctkErrorLogTerminalOutput::~ctkErrorLogTerminalOutput()
-{
-}
-
-// --------------------------------------------------------------------------
-bool ctkErrorLogTerminalOutput::enabled()const
-{
-  Q_D(const ctkErrorLogTerminalOutput);
-  QMutexLocker locker(&d->EnableMutex);
-  return d->Enabled;
-}
-
-// --------------------------------------------------------------------------
-void ctkErrorLogTerminalOutput::setEnabled(bool value)
-{
-  Q_D(ctkErrorLogTerminalOutput);
-  QMutexLocker locker(&d->EnableMutex);
-  d->Enabled = value;
-}
-
-// --------------------------------------------------------------------------
-int ctkErrorLogTerminalOutput::fileDescriptor()const
-{
-  Q_D(const ctkErrorLogTerminalOutput);
-  QMutexLocker locker(&d->OutputMutex);
-  return d->FD;
-}
-
-// --------------------------------------------------------------------------
-void ctkErrorLogTerminalOutput::setFileDescriptor(int fd)
-{
-  Q_D(ctkErrorLogTerminalOutput);
-  QMutexLocker locker(&d->OutputMutex);
-  d->FD = fd;
-}
-
-// --------------------------------------------------------------------------
-void ctkErrorLogTerminalOutput::output(const QString& text)
-{
-  Q_D(ctkErrorLogTerminalOutput);
-  {
-    QMutexLocker locker(&d->EnableMutex);
-    if (!d->Enabled)
-      {
-      return;
-      }
-  }
-
-  {
-    QMutexLocker locker(&d->OutputMutex);
-    QString textWithNewLine = text + "\n";
-#ifdef _MSC_VER
-    int res = _write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
-#else
-    ssize_t res = write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
-#endif
-    if (res == -1)
-      {
-      return;
-      }
-  }
-}
 
 // --------------------------------------------------------------------------
 // ctkErrorLogModelPrivate
@@ -303,8 +167,8 @@ bool ctkErrorLogModel::registerMsgHandler(ctkErrorLogAbstractMessageHandler * ms
 
   d->setMessageHandlerConnection(msgHandler, d->AsynchronousLogging);
 
-  msgHandler->setTerminalOutput(Self::StandardError, &d->StdErrTerminalOutput);
-  msgHandler->setTerminalOutput(Self::StandardOutput, &d->StdOutTerminalOutput);
+  msgHandler->setTerminalOutput(ctkErrorLogTerminalOutput::StandardError, &d->StdErrTerminalOutput);
+  msgHandler->setTerminalOutput(ctkErrorLogTerminalOutput::StandardOutput, &d->StdOutTerminalOutput);
 
   d->RegisteredHandlers.insert(msgHandler->handlerName(), msgHandler);
   return true;
@@ -388,22 +252,22 @@ void ctkErrorLogModel::setAllMsgHandlerEnabled(bool enabled)
 }
 
 //------------------------------------------------------------------------------
-ctkErrorLogModel::TerminalOutputs ctkErrorLogModel::terminalOutputs()const
+ctkErrorLogTerminalOutput::TerminalOutputs ctkErrorLogModel::terminalOutputs()const
 {
   Q_D(const ctkErrorLogModel);
-  ctkErrorLogModel::TerminalOutputs currentTerminalOutputs;
-  currentTerminalOutputs |= d->StdErrTerminalOutput.enabled() ? Self::StandardError : Self::None;
-  currentTerminalOutputs |= d->StdOutTerminalOutput.enabled() ? Self::StandardOutput : Self::None;
+  ctkErrorLogTerminalOutput::TerminalOutputs currentTerminalOutputs;
+  currentTerminalOutputs |= d->StdErrTerminalOutput.enabled() ? ctkErrorLogTerminalOutput::StandardError : ctkErrorLogTerminalOutput::None;
+  currentTerminalOutputs |= d->StdOutTerminalOutput.enabled() ? ctkErrorLogTerminalOutput::StandardOutput : ctkErrorLogTerminalOutput::None;
   return currentTerminalOutputs;
 }
 
 //------------------------------------------------------------------------------
 void ctkErrorLogModel::setTerminalOutputs(
-    const ctkErrorLogModel::TerminalOutputs& terminalOutput)
+    const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutput)
 {
   Q_D(ctkErrorLogModel);
-  d->StdErrTerminalOutput.setEnabled(terminalOutput & ctkErrorLogModel::StandardOutput);
-  d->StdOutTerminalOutput.setEnabled(terminalOutput & ctkErrorLogModel::StandardError);
+  d->StdErrTerminalOutput.setEnabled(terminalOutput & ctkErrorLogTerminalOutput::StandardOutput);
+  d->StdOutTerminalOutput.setEnabled(terminalOutput & ctkErrorLogTerminalOutput::StandardError);
 }
 
 //------------------------------------------------------------------------------
@@ -667,131 +531,4 @@ int ctkErrorLogModel::logEntryCount()const
 {
   Q_D(const ctkErrorLogModel);
   return d->StandardItemModel.rowCount();
-}
-
-// --------------------------------------------------------------------------
-// ctkErrorLogAbstractMessageHandlerPrivate
-
-// --------------------------------------------------------------------------
-class ctkErrorLogAbstractMessageHandlerPrivate
-{
-public:
-  ctkErrorLogAbstractMessageHandlerPrivate();
-  ~ctkErrorLogAbstractMessageHandlerPrivate();
-
-  bool                        Enabled;
-  QString                     HandlerPrettyName;
-
-  // Use "int" instead of "ctkErrorLogModel::TerminalOutput" to avoid compilation warning ...
-  // qhash.h:879: warning: passing ‘ctkErrorLogModel::TerminalOutput’ chooses ‘int’ over ‘uint’ [-Wsign-promo]
-  QHash<int, ctkErrorLogTerminalOutput*> TerminalOutputs;
-};
-
-// --------------------------------------------------------------------------
-ctkErrorLogAbstractMessageHandlerPrivate::
-ctkErrorLogAbstractMessageHandlerPrivate()
-  : Enabled(false)
-{
-}
-
-// --------------------------------------------------------------------------
-ctkErrorLogAbstractMessageHandlerPrivate::~ctkErrorLogAbstractMessageHandlerPrivate()
-{
-}
-
-// --------------------------------------------------------------------------
-// ctkErrorLogAbstractMessageHandlerPrivate methods
-
-// --------------------------------------------------------------------------
-ctkErrorLogAbstractMessageHandler::ctkErrorLogAbstractMessageHandler()
-  : Superclass(), d_ptr(new ctkErrorLogAbstractMessageHandlerPrivate)
-{
-}
-
-// --------------------------------------------------------------------------
-ctkErrorLogAbstractMessageHandler::~ctkErrorLogAbstractMessageHandler()
-{
-}
-
-// --------------------------------------------------------------------------
-QString ctkErrorLogAbstractMessageHandler::handlerPrettyName()const
-{
-  Q_D(const ctkErrorLogAbstractMessageHandler);
-  if (d->HandlerPrettyName.isEmpty())
-    {
-    return this->handlerName();
-    }
-  else
-    {
-    return d->HandlerPrettyName;
-    }
-}
-
-// --------------------------------------------------------------------------
-void ctkErrorLogAbstractMessageHandler::setHandlerPrettyName(const QString& newHandlerPrettyName)
-{
-  Q_D(ctkErrorLogAbstractMessageHandler);
-  d->HandlerPrettyName = newHandlerPrettyName;
-}
-
-// --------------------------------------------------------------------------
-bool ctkErrorLogAbstractMessageHandler::enabled()const
-{
-  Q_D(const ctkErrorLogAbstractMessageHandler);
-  return d->Enabled;
-}
-
-// --------------------------------------------------------------------------
-void ctkErrorLogAbstractMessageHandler::setEnabled(bool value)
-{
-  Q_D(ctkErrorLogAbstractMessageHandler);
-  if (value == d->Enabled)
-    {
-    return;
-    }
-  this->setEnabledInternal(value);
-  d->Enabled = value;
-}
-
-// --------------------------------------------------------------------------
-void ctkErrorLogAbstractMessageHandler::handleMessage(const QString& threadId,
-                                                      ctkErrorLogLevel::LogLevel logLevel,
-                                                      const QString& origin, const QString& text)
-{
-  Q_D(ctkErrorLogAbstractMessageHandler);
-  if (logLevel <= ctkErrorLogLevel::Info)
-    {
-    if(d->TerminalOutputs.contains(ctkErrorLogModel::StandardOutput))
-      {
-      d->TerminalOutputs.value(ctkErrorLogModel::StandardOutput)->output(text);
-      }
-    }
-  else
-    {
-    if(d->TerminalOutputs.contains(ctkErrorLogModel::StandardError))
-      {
-      d->TerminalOutputs.value(ctkErrorLogModel::StandardError)->output(text);
-      }
-    }
-  emit this->messageHandled(QDateTime::currentDateTime(), threadId, logLevel, origin, text);
-}
-
-// --------------------------------------------------------------------------
-ctkErrorLogTerminalOutput* ctkErrorLogAbstractMessageHandler::terminalOutput(
-    ctkErrorLogModel::TerminalOutput terminalOutputType)const
-{
-  Q_D(const ctkErrorLogAbstractMessageHandler);
-  if(d->TerminalOutputs.contains(terminalOutputType))
-    {
-    return d->TerminalOutputs.value(terminalOutputType);
-    }
-  return 0;
-}
-
-// --------------------------------------------------------------------------
-void ctkErrorLogAbstractMessageHandler::setTerminalOutput(
-    ctkErrorLogModel::TerminalOutput terminalOutputType, ctkErrorLogTerminalOutput* terminalOutput)
-{
-  Q_D(ctkErrorLogAbstractMessageHandler);
-  d->TerminalOutputs.insert(terminalOutputType, terminalOutput);
 }

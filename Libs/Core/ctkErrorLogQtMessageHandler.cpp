@@ -21,6 +21,7 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QThread>
+#include <QVariant>
 
 // CTK includes
 #include "ctkErrorLogQtMessageHandler.h"
