@@ -1,0 +1,9 @@
+language: cpp
+compiler:
+  - gcc
+
+branches:
+  only:
+    - travis-ci
+
+script: ctest -VV -S ./CMake/ctkTravisDashboardScript.cmake
