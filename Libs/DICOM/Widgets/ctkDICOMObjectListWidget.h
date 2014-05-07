@@ -22,6 +22,7 @@
 #define __ctkDICOMObjectListWidget_h
 
 // Qt includes 
+#include <QItemSelection>
 #include <QWidget>
 
 #include "ctkDICOMWidgetsExport.h"
@@ -51,13 +52,16 @@ private:
   Q_DISABLE_COPY(ctkDICOMObjectListWidget);
 
 Q_SIGNALS:
+  void doubleClicked(const QModelIndex&);
 
 public Q_SLOTS:
   void setCurrentFile(const QString& newFileName);
   void setFileList(const QStringList& fileList);
 
 protected Q_SLOTS:
+  void openLookupUrl(const QModelIndex&);
   void updateWidget();
+  void copyPath();
 };
 
 #endif
