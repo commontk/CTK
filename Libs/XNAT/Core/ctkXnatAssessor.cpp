@@ -28,7 +28,6 @@
 
 #include "ctkXnatAssessorResource.h"
 #include "ctkXnatScanResource.h"
-#include <qDebug>
 
 //----------------------------------------------------------------------------
 class ctkXnatAssessorPrivate : public ctkXnatObjectPrivate
@@ -53,7 +52,6 @@ public:
 ctkXnatAssessor::ctkXnatAssessor(ctkXnatObject* parent, const QString& schemaType)
 : ctkXnatObject(*new ctkXnatAssessorPrivate(), parent, schemaType)
 {
-  qDebug() << " constructing  the assessor";
 }
 
 //----------------------------------------------------------------------------
@@ -85,31 +83,29 @@ void ctkXnatAssessor::fetchImpl()
 
   foreach (ctkXnatObject* assessorResource, assessorResources)
   {
+    QString resource_id = assessorResource->property("xnat_abstractresource_id");
     QString label = assessorResource->property("label");
-    if (!label.isEmpty())
-    {
-      assessorResource->setProperty("ID", label);
-    }
+    
+    if (!resource_id.isEmpty())
+      assessorResource->setProperty("ID", resource_id);
+    
     this->add(assessorResource);
   }
-
+  
   assessorResourcesUri = this->resourceUri() + "/out/resources";
   queryId = session->httpGet(assessorResourcesUri);
 
-  qDebug() << "retrieving assessor resources";
   assessorResources = session->httpResults(queryId,
 					   ctkXnatDefaultSchemaTypes::XSI_ASSESSOR_RESOURCE);
 
   foreach (ctkXnatObject* assessorResource, assessorResources)
   {
+    QString resource_id = assessorResource->property("xnat_abstractresource_id");
     QString label = assessorResource->property("label");
-    if (!label.isEmpty())
-    {
-      assessorResource->setProperty("ID", label);
-      qDebug() << " adding object, is it AssessorResource : " << (typeid(ctkXnatScanResource) == typeid(assessorResource));
-      qDebug() << " adding assessor resource object with properties \n: " << assessorResource->properties();
-      
-    }
+    
+    if (!resource_id.isEmpty())
+      assessorResource->setProperty("ID", resource_id);
+    
     this->add(assessorResource);
   }
   

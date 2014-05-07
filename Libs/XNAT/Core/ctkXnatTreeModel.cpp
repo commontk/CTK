@@ -76,7 +76,7 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
     QString displayData = xnatObject->name();
     if (displayData.isEmpty())
     {
-      displayData = xnatObject->id();
+      displayData = xnatObject->property("label");
     }
     return displayData;
   }

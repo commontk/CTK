@@ -27,8 +27,6 @@
 #include "ctkXnatAssessor.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
-#include <qDebug>
-
 //----------------------------------------------------------------------------
 class ctkXnatAssessorFolderPrivate : public ctkXnatObjectPrivate
 {
@@ -45,13 +43,13 @@ public:
 
 };
 
-
 //----------------------------------------------------------------------------
 ctkXnatAssessorFolder::ctkXnatAssessorFolder(ctkXnatObject* parent)
   : ctkXnatObject(*new ctkXnatAssessorFolderPrivate(), parent, QString::null)
 {
-  qDebug() << " constructing  the assessor folder";  
+  
   this->setProperty("ID", "assessors");
+  this->setProperty("label", "Assessments");
 }
 
 //----------------------------------------------------------------------------
@@ -78,14 +76,12 @@ void ctkXnatAssessorFolder::fetchImpl()
   ctkXnatSession* const session = this->session();
   QUuid queryId = session->httpGet(assessorsUri);
 
-  
-  qDebug() << "retrieving assessors";
   QList<ctkXnatObject*> assessors = session->httpResults(queryId,
                                                      ctkXnatDefaultSchemaTypes::XSI_ASSESSOR);
 
   foreach (ctkXnatObject* assessor, assessors)
   {
-    qDebug() << " adding object, is it Assessor : " << (typeid(ctkXnatAssessor) == typeid(assessor));
+    
     this->add(assessor);
   }
 }

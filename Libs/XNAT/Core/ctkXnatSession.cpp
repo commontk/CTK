@@ -29,13 +29,10 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatProject.h"
 #include "ctkXnatReconstruction.h"
-#include "ctkXnatReconstructionFolder.h"
 #include "ctkXnatReconstructionResource.h"
 #include "ctkXnatScan.h"
-#include "ctkXnatScanFolder.h"
 #include "ctkXnatScanResource.h"
 #include "ctkXnatAssessor.h"
-#include "ctkXnatAssessorFolder.h"
 #include "ctkXnatAssessorResource.h"
 #include "ctkXnatSubject.h"
 #include "ctkXnatDefaultSchemaTypes.h"
@@ -250,16 +247,12 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
     if (!customSchemaType.isEmpty())
     {
       typeId = QMetaType::type(qPrintable(customSchemaType));
-      if (!typeId)
-      {
-        qWarning() << QString("No ctkXnatObject sub-class registered for the schema %1. Falling back to the default class.").arg(customSchemaType);
-      }
     }
 
     // Fall back. Create the default class according to the default schema type
     if (!typeId)
     {
-      qDebug() << "fallback to : " << schemaType << " from custom " << customSchemaType;
+      qWarning() << QString("No ctkXnatObject sub-class registered for the schema %1. Falling back to the default class %2.").arg(customSchemaType).arg(schemaType);
       typeId = QMetaType::type(qPrintable(schemaType));
     }
 
@@ -285,6 +278,8 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
       object->setProperty(it.key().toAscii().data(), it.value());
     }
 
+    qDebug() << "\n\n" << "xnat object found with properties \n" << object->properties() << "\n\n";
+
     results.push_back(object);
   }
   return results;
@@ -306,11 +301,11 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   qRegisterMetaType<ctkXnatScan>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_SCAN));
   qRegisterMetaType<ctkXnatReconstruction>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION));
   qRegisterMetaType<ctkXnatScanResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE));
-  qRegisterMetaType<ctkXnatFile>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_FILE));
   qRegisterMetaType<ctkXnatReconstructionResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE));
   qRegisterMetaType<ctkXnatAssessor>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_ASSESSOR));
   qRegisterMetaType<ctkXnatAssessorResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_ASSESSOR_RESOURCE));
-
+  qRegisterMetaType<ctkXnatFile>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_FILE));
+  
   QString url = d->loginProfile.serverUrl().toString();
   d->xnat->setServerUrl(url);
 

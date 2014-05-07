@@ -25,8 +25,6 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
-#include <qDebug>
-
 //----------------------------------------------------------------------------
 class ctkXnatAssessorResourcePrivate : public ctkXnatObjectPrivate
 {
@@ -47,8 +45,7 @@ public:
 //----------------------------------------------------------------------------
 ctkXnatAssessorResource::ctkXnatAssessorResource(ctkXnatObject* parent, const QString& schemaType)
 : ctkXnatObject(*new ctkXnatAssessorResourcePrivate(), parent, schemaType)
-{
-  qDebug() << " constructing  the assessor resource";
+{  
 }
 
 //----------------------------------------------------------------------------
@@ -58,9 +55,8 @@ ctkXnatAssessorResource::~ctkXnatAssessorResource()
 
 //----------------------------------------------------------------------------
 QString ctkXnatAssessorResource::resourceUri() const
-{
-  
-  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("xnat_abstractresource_id"));
+{  
+  return QString("%1/out/resources/%2").arg(parent()->resourceUri(), this->id());
 }
 
 //----------------------------------------------------------------------------
@@ -72,6 +68,7 @@ void ctkXnatAssessorResource::reset()
 //----------------------------------------------------------------------------
 void ctkXnatAssessorResource::fetchImpl()
 {
+    
   QString assessorResourceFilesUri = this->resourceUri() + "/files";
   ctkXnatSession* const session = this->session();
   QUuid queryId = session->httpGet(assessorResourceFilesUri);
@@ -80,15 +77,12 @@ void ctkXnatAssessorResource::fetchImpl()
   QList<ctkXnatObject*> files = session->httpResults(queryId,
                                                      ctkXnatDefaultSchemaTypes::XSI_FILE);
 
-  qDebug() << " trying to get things from : " << this->resourceUri() << "/files";
   foreach (ctkXnatObject* file, files)
   {
-    QString label = file->property("Name");
-    qDebug() << " got a assessment file called : " << label << ".";
-    qDebug() << " with properties : " << file->properties() << ".";
-    
+    QString label = file->property("Name");    
     if (!label.isEmpty())
     {
+      file->setProperty("label", label);
       file->setProperty("ID", label);
     }
     this->add(file);

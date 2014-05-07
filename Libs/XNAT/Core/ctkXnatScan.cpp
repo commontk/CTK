@@ -28,7 +28,6 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
-
 //----------------------------------------------------------------------------
 class ctkXnatScanPrivate : public ctkXnatObjectPrivate
 {
@@ -85,9 +84,7 @@ void ctkXnatScan::fetchImpl()
   {
     QString label = scanResource->property("label");
     if (!label.isEmpty())
-    {
       scanResource->setProperty("ID", label);
-    }
     this->add(scanResource);
   }
 }

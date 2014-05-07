@@ -26,12 +26,11 @@
 #include "ctkXnatSubject.h"
 #include "ctkXnatScan.h"
 #include "ctkXnatReconstruction.h"
+#include "ctkXnatAssessor.h"
 #include "ctkXnatScanFolder.h"
-#include "ctkXnatAssessorFolder.h"
 #include "ctkXnatReconstructionFolder.h"
+#include "ctkXnatAssessorFolder.h"
 #include "ctkXnatDefaultSchemaTypes.h"
-
-#include <qDebug>
 
 //----------------------------------------------------------------------------
 class ctkXnatExperimentPrivate : public ctkXnatObjectPrivate
@@ -56,8 +55,6 @@ public:
 ctkXnatExperiment::ctkXnatExperiment(ctkXnatObject* parent, const QString& schemaType)
 : ctkXnatObject(*new ctkXnatExperimentPrivate(), parent, schemaType)
 {
-  qDebug() << " constructing  the experiment";  
-  
 }
 
 //----------------------------------------------------------------------------
@@ -109,11 +106,11 @@ void ctkXnatExperiment::fetchImpl()
   QUuid assessorsQueryId = session->httpGet(assessorsUri);
 
   QList<ctkXnatObject*> assessors = session->httpResults(assessorsQueryId,
-                                                               ctkXnatDefaultSchemaTypes::XSI_ASSESSOR);
+							 ctkXnatDefaultSchemaTypes::XSI_ASSESSOR);
 
   if (!assessors.isEmpty())
   {
-    ctkXnatAssessorFolder* assessorFolder = new ctkXnatAssessorFolder();
+    ctkXnatAssessorFolder* assessorFolder = new ctkXnatAssessorFolder(this);
     this->add(assessorFolder);
   }
 }
