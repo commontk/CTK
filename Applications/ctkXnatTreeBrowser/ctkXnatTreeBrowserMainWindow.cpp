@@ -29,8 +29,6 @@
 #include "ctkXnatProject.h"
 #include "ctkXnatFile.h"
 
-#include <qDebug>
-
 ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkXnatTreeBrowserMainWindow),
@@ -60,7 +58,6 @@ ctkXnatTreeBrowserMainWindow::~ctkXnatTreeBrowserMainWindow()
 
 void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
 {
-  qDebug() << "[XNAT-TREE-VIEW] login button pushed";
   if (m_Session)
   {
     delete m_Session;
@@ -69,23 +66,18 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
     ui->loginLabel->setText("Disconnected");
     ui->downloadLabel->hide();
 
-    // nt: download tests... //
-    // m_TreeModel->downloadFile (ui->treeView->selectionModel()->currentIndex(), "/Users/nicolastoussaint/Desktop/test.nii.gz");
   }
   else
   {
     ctkXnatLoginDialog loginDialog;
     if (loginDialog.exec() == QDialog::Accepted)
     {
-      qDebug() << "[XNAT-TREE-VIEW] accepted settings";
       m_Session = loginDialog.session();
       if (m_Session)
       {
-	qDebug() << "[XNAT-TREE-VIEW] session exists";
         ui->loginButton->setText("Logout");
         ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url().toString()));
 
-	qDebug() << "[XNAT-TREE-VIEW] creating model";
         ctkXnatDataModel* dataModel = m_Session->dataModel();
         m_TreeModel->addDataModel(dataModel);
         ui->treeView->reset();
