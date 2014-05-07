@@ -87,6 +87,8 @@ public Q_SLOTS:
   void openQueryDialog();
   void onRemoveAction();
 
+  void onTablesDensityComboBox(QString);
+
   /// Import a directory - this is used when the user selects a directory
   /// from the Import Dialog, but can also be used externally to trigger
   /// an import (i.e. for testing or to support drag-and-drop)

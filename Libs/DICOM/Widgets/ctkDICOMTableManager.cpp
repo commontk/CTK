@@ -78,6 +78,8 @@ void ctkDICOMTableManagerPrivate::init()
   this->seriesTable->setQueryTableName("Series");
   this->seriesTable->setQueryForeignKey("StudyInstanceUID");
 
+  q->setDisplayDensity(ctkDICOMTableManager::Comfortable);
+
   // For propagating patient selection changes
   QObject::connect(this->patientsTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
                    q, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)));
@@ -264,4 +266,55 @@ void ctkDICOMTableManager::resizeEvent(QResizeEvent *e)
 
   //Minimum size = 800 * 1.28 = 1024 => use horizontal layout (otherwise table size would be too small)
   this->setTableOrientation(e->size().width() > 1.28*this->minimumWidth() ? Qt::Horizontal : Qt::Vertical);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableManager::setDisplayDensity(DisplayDensity density)
+{
+  Q_D(ctkDICOMTableManager);
+
+  // Compact density
+  if (density == ctkDICOMTableManager::Compact)
+  {
+    d->patientsTable->setTableSectionSize(15);
+    d->studiesTable->setTableSectionSize(15);
+    d->seriesTable->setTableSectionSize(15);
+  }
+  // Cozy density
+  if (density == ctkDICOMTableManager::Cozy)
+  {
+    d->patientsTable->setTableSectionSize(20);
+    d->studiesTable->setTableSectionSize(20);
+    d->seriesTable->setTableSectionSize(20);
+  }
+  // Comfortable density
+  if (density == ctkDICOMTableManager::Comfortable)
+  {
+    d->patientsTable->setTableSectionSize(30);
+    d->studiesTable->setTableSectionSize(30);
+    d->seriesTable->setTableSectionSize(30);
+  }
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMTableManager::DisplayDensity ctkDICOMTableManager::displayDensity()
+{
+  Q_D(ctkDICOMTableManager);
+  int sectionSize;
+  sectionSize = d->patientsTable->tableSectionSize();
+
+  ctkDICOMTableManager::DisplayDensity density;
+  if (sectionSize == 30)
+  {
+    density = ctkDICOMTableManager::Comfortable;
+  }
+  else if (sectionSize == 20)
+  {
+    density = ctkDICOMTableManager::Cozy;
+  }
+  else if (sectionSize == 15)
+  {
+    density = ctkDICOMTableManager::Compact;
+  }
+   return density;
 }
