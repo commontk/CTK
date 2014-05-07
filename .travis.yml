@@ -6,4 +6,8 @@ branches:
   only:
     - travis-ci
 
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libqt4-dev
+
 script: ctest -VV -S ./CMake/ctkTravisDashboardScript.cmake

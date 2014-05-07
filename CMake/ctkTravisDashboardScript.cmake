@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 2.8)
 #
 set(MY_COMPILER "gcc")
 #set(MY_QT_VERSION "4.6.2")
-#set(QT_QMAKE_EXECUTABLE "$ENV{HOME}/Projects/qtsdk-2010.02/qt/bin/qmake")
+set(QT_QMAKE_EXECUTABLE "/usr/bin/qmake")
 set(CTEST_SITE "travis-ci") # for example: mymachine.kitware, mymachine.dkfz, ...
 set(CTEST_DASHBOARD_ROOT "/tmp")
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
