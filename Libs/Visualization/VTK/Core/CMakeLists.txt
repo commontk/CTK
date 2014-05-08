@@ -76,18 +76,29 @@ endif()
 # Set VTK_LIBRARIES variable
 if(${VTK_VERSION_MAJOR} GREATER 5)
   set(VTK_LIBRARIES
+    # a few of these have to be specified explicitly to workaround
+    # underlinked libraries from the debian VTK package
+    # see Debian bug #747436
     vtkCommonCore
     vtkCommonDataModel
     vtkCommonSystem
     vtkIOImage
+    vtkIOMPIImage
     vtkInteractionStyle
     vtkRenderingAnnotation
     vtkRenderingCore
     vtkRenderingFreeTypeOpenGL
+    vtkRenderingMatplotlib
+    vtkRenderingFreeTypeFontConfig
     vtkRenderingOpenGL
-    vtkTestingRendering
     )
-  if (UNIX AND NOT APPLE)
+  if(TARGET vtkTestingRendering)
+    message("Testing exists")
+    list(APPEND VTK_LIBRARIES
+        vtkTestingRendering
+        )
+  endif()
+  if (TARGET vtkRenderingFreeTypeFontConfig AND UNIX AND NOT APPLE)
     find_package(FontConfig QUIET)
     if (FONTCONFIG_FOUND)
       list(APPEND VTK_LIBRARIES
