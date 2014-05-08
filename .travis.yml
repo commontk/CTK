@@ -8,6 +8,6 @@ branches:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y libqt4-dev libdcmtk2-dev libinsighttoolkit3-dev
+  - sudo apt-get install -y libqt4-dev libdcmtk2-dev libinsighttoolkit3-dev libgdcm2-dev
 
 script: ctest -VV -S ./CMake/ctkTravisDashboardScript.cmake
