@@ -56,9 +56,9 @@ ExternalProject_Add(${proj}
 # This custom external project step forces the build and later
 # steps to run whenever a top level build is done...
 ExternalProject_Add_Step(${proj} forcebuild
-  COMMAND ${CMAKE_COMMAND} -E echo_append ""
+  COMMAND ${CMAKE_COMMAND} -E remove
+    ${CMAKE_CURRENT_BINARY_DIR}/${proj}-prefix/src/${proj}-stamp/${proj}-build
   COMMENT "Forcing build step for '${proj}'"
-  DEPENDEES configure
-  DEPENDERS build
+  DEPENDEES build
   ALWAYS 1
   )
