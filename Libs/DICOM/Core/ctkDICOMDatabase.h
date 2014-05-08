@@ -132,8 +132,12 @@ public:
   Q_INVOKABLE QStringList patients ();
   Q_INVOKABLE QStringList studiesForPatient (const QString patientUID);
   Q_INVOKABLE QStringList seriesForStudy (const QString studyUID);
+  Q_INVOKABLE QString studyForSeries(QString seriesUID);
+  Q_INVOKABLE QString patientForStudy(QString studyUID);
   Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
+  Q_INVOKABLE QHash<QString,QString> descriptionsForFile(QString fileName);
   Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
+  Q_INVOKABLE QString seriesForFile (QString fileName);
   Q_INVOKABLE QString instanceForFile (const QString fileName);
   Q_INVOKABLE QDateTime insertDateTimeForInstance (const QString fileName);
 

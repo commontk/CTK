@@ -45,6 +45,7 @@
      <addaction name="ActionQuery"/>
      <addaction name="ActionSend"/>
      <addaction name="ActionRemove"/>
+     <addaction name="ActionRepair"/>
     </widget>
    </item>
    <item>
@@ -205,6 +206,17 @@
     <string>Remove from database</string>
    </property>
   </action>
+  <action name="ActionRepair">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Repair</string>
+   </property>
+   <property name="toolTip">
+    <string>Check whether all the files associated with images in the local Database are available on the disk.</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -285,6 +297,22 @@
     </hint>
     <hint type="destinationlabel">
      <x>391</x>
+     <y>303</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ActionRepair</sender>
+   <signal>triggered()</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>onRepairAction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
      <y>303</y>
     </hint>
    </hints>

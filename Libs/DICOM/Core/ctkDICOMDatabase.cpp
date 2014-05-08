@@ -593,6 +593,73 @@ QStringList ctkDICOMDatabase::studiesForPatient(QString dbPatientID)
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDatabase::studyForSeries(QString seriesUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT StudyInstanceUID FROM Series WHERE SeriesInstanceUID= ?" );
+  query.bindValue ( 0, seriesUID);
+  query.exec();
+  QString result;
+  if (query.next())
+    {
+    result = query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::patientForStudy(QString studyUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT PatientsUID FROM Studies WHERE StudyInstanceUID= ?" );
+  query.bindValue ( 0, studyUID);
+  query.exec();
+  QString result;
+  if (query.next())
+    {
+    result = query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
+QHash<QString,QString> ctkDICOMDatabase::descriptionsForFile(QString fileName)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QString seriesUID(this->seriesForFile(fileName));
+  QString studyUID(this->studyForSeries(seriesUID));
+  QString patientID(this->patientForStudy(studyUID));
+
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT SeriesDescription FROM Series WHERE SeriesInstanceUID= ?" );
+  query.bindValue ( 0, seriesUID);
+  query.exec();
+  QHash<QString,QString> result;
+  if (query.next())
+  {
+    result["SeriesDescription"] =  query.value(0).toString();
+  }
+  query.prepare ( "SELECT StudyDescription FROM Studies WHERE StudyInstanceUID= ?" );
+  query.bindValue ( 0, studyUID);
+  query.exec();
+  if (query.next())
+  {
+    result["StudyDescription"] =  query.value(0).toString();
+  }
+  query.prepare ( "SELECT PatientsName FROM Patients WHERE UID= ?" );
+  query.bindValue ( 0, patientID);
+  query.exec();
+  if (query.next())
+  {
+    result["PatientsName"] =  query.value(0).toString();
+  }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
 QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
 {
   Q_D(ctkDICOMDatabase);
@@ -631,6 +698,22 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
   QSqlQuery query(d->Database);
   query.prepare ( "SELECT Filename FROM Images WHERE SOPInstanceUID=?");
   query.bindValue ( 0, sopInstanceUID );
+  query.exec();
+  QString result;
+  if (query.next())
+    {
+    result = query.value(0).toString();
+    }
+  return( result );
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::seriesForFile(QString fileName)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT SeriesInstanceUID FROM Images WHERE Filename=?");
+  query.bindValue ( 0, fileName );
   query.exec();
   QString result;
   if (query.next())
