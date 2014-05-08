@@ -33,6 +33,7 @@
 // ctkWidgets includes
 #include "ctkDirectoryButton.h"
 #include "ctkFileDialog.h"
+#include "ctkMessageBox.h"
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -245,6 +246,7 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
   //Initialize import widget
   d->ImportDialog = new ctkFileDialog();
   QCheckBox* importCheckbox = new QCheckBox("Copy on import", d->ImportDialog);
+  importCheckbox->setCheckState(Qt::Checked);
   d->ImportDialog->setBottomWidget(importCheckbox);
   d->ImportDialog->setFileMode(QFileDialog::Directory);
   d->ImportDialog->setLabelText(QFileDialog::Accept,"Import");
@@ -522,14 +524,31 @@ void ctkDICOMBrowser::onInstanceAdded(QString instanceUID)
 void ctkDICOMBrowser::onImportDirectory(QString directory)
 {
   Q_D(ctkDICOMBrowser);
+
   if (QDir(directory).exists())
-    {
-    QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
+  {
     QString targetDirectory;
-    if (copyOnImport->checkState() == Qt::Checked)
-      {
-      targetDirectory = d->DICOMDatabase->databaseDirectory();
-      }
+
+    QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
+
+    ctkMessageBox importTypeDialog;
+    QString message("Do you want to copy the files to the local database directory or just add the links?");
+    importTypeDialog.setText(message);
+    importTypeDialog.setIcon(QMessageBox::Question);
+
+    importTypeDialog.addButton("Copy",QMessageBox::AcceptRole);
+    importTypeDialog.addButton("Add Link",QMessageBox::RejectRole);
+    importTypeDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmRestart" );
+    int selection = importTypeDialog.exec();
+
+    if (selection== QMessageBox::AcceptRole)
+    {
+      copyOnImport->setCheckState(Qt::Checked);
+    }
+    else
+    {
+      copyOnImport->setCheckState(Qt::Unchecked);
+    }
 
     // reset counts
     d->PatientsAddedDuringImport = 0;
@@ -537,20 +556,25 @@ void ctkDICOMBrowser::onImportDirectory(QString directory)
     d->SeriesAddedDuringImport = 0;
     d->InstancesAddedDuringImport = 0;
 
+    if (copyOnImport->checkState() == Qt::Checked)
+    {
+      targetDirectory = d->DICOMDatabase->databaseDirectory();
+    }
+
     // show progress dialog and perform indexing
     d->showIndexerDialog();
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
 
     // display summary result
     if (d->DisplayImportSummary)
-      {
+    {
       QString message = "Directory import completed.\n\n";
       message += QString("%1 New Patients\n").arg(QString::number(d->PatientsAddedDuringImport));
       message += QString("%1 New Studies\n").arg(QString::number(d->StudiesAddedDuringImport));
       message += QString("%1 New Series\n").arg(QString::number(d->SeriesAddedDuringImport));
       message += QString("%1 New Instances\n").arg(QString::number(d->InstancesAddedDuringImport));
       QMessageBox::information(this,"DICOM Directory Import", message);
-      }
+    }
   }
 }
 
