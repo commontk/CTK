@@ -86,6 +86,7 @@ public Q_SLOTS:
   void openExportDialog();
   void openQueryDialog();
   void onRemoveAction();
+  void onRepairAction();
 
   void onTablesDensityComboBox(QString);
 

@@ -23,16 +23,21 @@
 
 // Qt includes
 #include <QAction>
+#include <QApplication>
 #include <QCoreApplication>
 #include <QCheckBox>
 #include <QDebug>
+#include <QFile>
+#include <QListView>
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QSettings>
+#include <QStringListModel>
 
 // ctkWidgets includes
 #include "ctkDirectoryButton.h"
 #include "ctkFileDialog.h"
+#include "ctkMessageBox.h"
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -245,6 +250,7 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
   //Initialize import widget
   d->ImportDialog = new ctkFileDialog();
   QCheckBox* importCheckbox = new QCheckBox("Copy on import", d->ImportDialog);
+  importCheckbox->setCheckState(Qt::Checked);
   d->ImportDialog->setBottomWidget(importCheckbox);
   d->ImportDialog->setFileMode(QFileDialog::Directory);
   d->ImportDialog->setLabelText(QFileDialog::Accept,"Import");
@@ -465,6 +471,74 @@ void ctkDICOMBrowser::onRemoveAction()
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMBrowser::onRepairAction()
+{
+  Q_D(ctkDICOMBrowser);
+
+  QMessageBox* repairMessageBox;
+  repairMessageBox = new QMessageBox;
+  repairMessageBox->setWindowTitle("Database Repair");
+
+  QStringList allFiles(d->DICOMDatabase->allFiles());
+
+  QSet<QString> corruptedSeries;
+
+  QStringList::const_iterator it;
+  for (it = allFiles.constBegin(); it!= allFiles.constEnd();++it)
+  {
+    QString fileName(*it);
+    QFile dicomFile(fileName);
+
+    if(!dicomFile.exists())
+    {
+      QString seriesUid = d->DICOMDatabase->seriesForFile(fileName);
+      corruptedSeries.insert(seriesUid);
+    }
+  }
+
+  if (corruptedSeries.size() == 0)
+  {
+    repairMessageBox->setText("All the files in the local database are available.");
+    repairMessageBox->addButton(QMessageBox::Ok);
+    repairMessageBox->exec();
+  }
+
+  else
+  {
+    QSet<QString>::iterator i;
+    for (i = corruptedSeries.begin(); i != corruptedSeries.end(); ++i)
+      {
+      QStringList fileList (d->DICOMDatabase->filesForSeries(*i));
+      QString unavailableFileNames;
+      QStringList::const_iterator it;
+      for (it= fileList.constBegin(); it!= fileList.constEnd();++it)
+      {
+        unavailableFileNames.append(*it+"\n");
+      }
+
+      QString firstFile (*(fileList.constBegin()));
+      QHash<QString,QString> descriptions (d->DICOMDatabase->descriptionsForFile(firstFile));
+
+      repairMessageBox->setText("The files for the following series are not available on the disk: \nPatient Name: "
+        + descriptions["PatientsName"]+ "\n"+
+        "Study Desciption: " + descriptions["StudyDescription"]+ "\n"+
+        "Series Desciption: " + descriptions["SeriesDescription"]+ "\n"+
+        "Do you want to remove the series from the DICOM database? ");
+
+      repairMessageBox->setDetailedText(unavailableFileNames);
+      repairMessageBox->addButton(QMessageBox::Yes);
+      repairMessageBox->addButton(QMessageBox::No);
+
+      int selection = repairMessageBox->exec();
+      if (selection == QMessageBox::Yes)
+      {
+        d->DICOMDatabase->removeSeries(*i);
+        d->dicomTableManager->updateTableViews();
+      }
+    }
+  }
+}
+//----------------------------------------------------------------------------
 void ctkDICOMBrowser::onTablesDensityComboBox(QString density)
 {
   Q_D(ctkDICOMBrowser);
@@ -522,14 +596,31 @@ void ctkDICOMBrowser::onInstanceAdded(QString instanceUID)
 void ctkDICOMBrowser::onImportDirectory(QString directory)
 {
   Q_D(ctkDICOMBrowser);
+
   if (QDir(directory).exists())
-    {
-    QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
+  {
     QString targetDirectory;
-    if (copyOnImport->checkState() == Qt::Checked)
-      {
-      targetDirectory = d->DICOMDatabase->databaseDirectory();
-      }
+
+    QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
+
+    ctkMessageBox importTypeDialog;
+    QString message("Do you want to copy the files to the local database directory or just add the links?");
+    importTypeDialog.setText(message);
+    importTypeDialog.setIcon(QMessageBox::Question);
+
+    importTypeDialog.addButton("Copy",QMessageBox::AcceptRole);
+    importTypeDialog.addButton("Add Link",QMessageBox::RejectRole);
+    importTypeDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmCopyOnImport" );
+    int selection = importTypeDialog.exec();
+
+    if (selection== QMessageBox::AcceptRole)
+    {
+      copyOnImport->setCheckState(Qt::Checked);
+    }
+    else
+    {
+      copyOnImport->setCheckState(Qt::Unchecked);
+    }
 
     // reset counts
     d->PatientsAddedDuringImport = 0;
@@ -537,20 +628,25 @@ void ctkDICOMBrowser::onImportDirectory(QString directory)
     d->SeriesAddedDuringImport = 0;
     d->InstancesAddedDuringImport = 0;
 
+    if (copyOnImport->checkState() == Qt::Checked)
+    {
+      targetDirectory = d->DICOMDatabase->databaseDirectory();
+    }
+
     // show progress dialog and perform indexing
     d->showIndexerDialog();
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
 
     // display summary result
     if (d->DisplayImportSummary)
-      {
+    {
       QString message = "Directory import completed.\n\n";
       message += QString("%1 New Patients\n").arg(QString::number(d->PatientsAddedDuringImport));
       message += QString("%1 New Studies\n").arg(QString::number(d->StudiesAddedDuringImport));
       message += QString("%1 New Series\n").arg(QString::number(d->SeriesAddedDuringImport));
       message += QString("%1 New Instances\n").arg(QString::number(d->InstancesAddedDuringImport));
       QMessageBox::information(this,"DICOM Directory Import", message);
-      }
+    }
   }
 }
 
