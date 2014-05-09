@@ -25,6 +25,7 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatDataModel.h"
 
+#include <QDateTime>
 #include <QDebug>
 #include <QVariant>
 
@@ -101,6 +102,20 @@ void ctkXnatObject::setDescription(const QString& description)
 QString ctkXnatObject::childDataType() const
 {
   return "Resources";
+}
+
+QDateTime ctkXnatObject::lastModifiedTime() const
+{
+  return this->session()->lastModified(this->resourceUri());
+}
+
+void ctkXnatObject::setLastModifiedTime(const QDateTime &lastModifiedTime)
+{
+  Q_D(ctkXnatObject);
+  if (d->lastModifedTime < lastModifiedTime)
+  {
+    d->lastModifedTime = lastModifiedTime;
+  }
 }
 
 //----------------------------------------------------------------------------

@@ -189,6 +189,8 @@ public:
   void download(ctkXnatScanResource* scanResource, const QString& zipFileName);
   void download(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFileName);
 
+  const QDateTime lastModified(const QString& resourceUri);
+
 //  void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename);
 
 //  void downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename);

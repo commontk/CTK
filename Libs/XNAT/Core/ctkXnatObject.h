@@ -76,6 +76,12 @@ public:
   /// Sets the value of the property with the given name.
   void setProperty(const QString& name, const QVariant& value);
 
+  /// Gets the last modification time from the server
+  QDateTime lastModifiedTime() const;
+
+  /// Sets the last modfication time on the server
+  void setLastModifiedTime(const QDateTime& lastModifiedTime);
+
   /// Gets the properties of the object.
   const QMap<QString, QString>& properties() const;
 

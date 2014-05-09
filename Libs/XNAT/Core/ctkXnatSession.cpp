@@ -37,11 +37,12 @@
 #include "ctkXnatSubject.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
+#include <QDateTime>
 #include <QDebug>
 #include <QScopedPointer>
 #include <QStringBuilder>
 #include <QNetworkCookie>
-#include <QDateTime>
+#include <QNetworkRequest>
 
 #include <ctkXnatAPI_p.h>
 #include <qRestResult.h>
@@ -284,6 +285,14 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
       it.next();
       object->setProperty(it.key().toLatin1().data(), it.value());
     }
+
+    QVariant lastModifiedHeader = restResult->rawHeader("Last-Modified");
+    QDateTime lastModifiedTime;
+    if (lastModifiedHeader.isValid())
+    {
+      lastModifiedTime = lastModifiedHeader.toDateTime();
+    }
+    object->setProperty("Last-Modified", lastModifiedTime);
 
     results.push_back(object);
   }
@@ -549,6 +558,12 @@ void ctkXnatSession::remove(ctkXnatObject* object)
   {
     d->throwXnatException("Error occurred while removing the data.");
   }
+}
+
+const QDateTime ctkXnatSession::lastModified(const QString& resourceUri)
+{
+  Q_D(ctkXnatSession);
+  return d->xnat->head(resourceUri, QNetworkRequest::LastModifiedHeader).toDateTime();
 }
 
 //----------------------------------------------------------------------------
