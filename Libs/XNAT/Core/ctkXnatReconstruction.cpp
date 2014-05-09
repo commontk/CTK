@@ -61,7 +61,7 @@ ctkXnatReconstruction::~ctkXnatReconstruction()
 //----------------------------------------------------------------------------
 QString ctkXnatReconstruction::resourceUri() const
 {
-  return QString("%1/reconstructions/%2").arg(parent()->resourceUri(), this->id());
+  return QString("%1/%2").arg(parent()->resourceUri(), this->id());
 }
 
 //----------------------------------------------------------------------------
@@ -73,16 +73,16 @@ void ctkXnatReconstruction::reset()
 //----------------------------------------------------------------------------
 void ctkXnatReconstruction::fetchImpl()
 {
-  QString reconstructionResourcesUri = this->resourceUri() + "/resources";
+  QString reconstructionResourcesUri = this->resourceUri() + "/files";
   ctkXnatSession* const session = this->session();
   QUuid queryId = session->httpGet(reconstructionResourcesUri);
 
   QList<ctkXnatObject*> reconstructionResources = session->httpResults(queryId,
-                                                                       ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE);
+                                                                       ctkXnatDefaultSchemaTypes::XSI_FILE);
 
   foreach (ctkXnatObject* reconstructionResource, reconstructionResources)
   {
-    QString label = reconstructionResource->property("label");
+    QString label = reconstructionResource->property("Name");
     if (!label.isEmpty())
     {
       reconstructionResource->setProperty("ID", label);
