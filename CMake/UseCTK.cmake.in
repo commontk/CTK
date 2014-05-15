@@ -24,14 +24,18 @@
 # settings to use CTK.
 #
 
-IF(NOT CTK_USE_FILE_INCLUDED)
-  SET(CTK_USE_FILE_INCLUDED 1)
+if(NOT CTK_USE_FILE_INCLUDED)
+  set(CTK_USE_FILE_INCLUDED 1)
 
   # Add include directories needed to use CTK.
-  INCLUDE_DIRECTORIES(${CTK_INCLUDE_DIRS})
+  get_directory_property(includes INCLUDE_DIRECTORIES)
+  list(APPEND includes ${CTK_INCLUDE_DIRS})
+  # But don't add duplicated directories (e.g. VTK or ITK)
+  list(REMOVE_DUPLICATES includes)
+  set_directory_properties(INCLUDE_DIRECTORIES ${includes})
 
   if (NOT DEFINED QT_QMAKE_EXECUTABLE)
     set(QT_QMAKE_EXECUTABLE ${CTK_QT_QMAKE_EXECUTABLE})
   endif()
 
-ENDIF()
+endif()
