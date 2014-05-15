@@ -83,20 +83,20 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkCommonDataModel
     vtkCommonSystem
     vtkIOImage
-    vtkIOMPIImage
     vtkInteractionStyle
     vtkRenderingAnnotation
     vtkRenderingCore
     vtkRenderingFreeTypeOpenGL
-    vtkRenderingMatplotlib
-    vtkRenderingFreeTypeFontConfig
     vtkRenderingOpenGL
     )
+  if(TARGET vtkIOMPIImage)
+    list(APPEND VTK_LIBRARIES vtkIOMPIImage )
+  endif()
+  if(TARGET vtkRenderingMatplotlib)
+    list(APPEND VTK_LIBRARIES vtkRenderingMatplotlib )
+  endif()
   if(TARGET vtkTestingRendering)
-    message("Testing exists")
-    list(APPEND VTK_LIBRARIES
-        vtkTestingRendering
-        )
+    list(APPEND VTK_LIBRARIES vtkTestingRendering )
   endif()
   if (TARGET vtkRenderingFreeTypeFontConfig AND UNIX AND NOT APPLE)
     find_package(FontConfig QUIET)
