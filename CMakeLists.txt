@@ -173,10 +173,9 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
-# Clear CTK_BASE_INCLUDE_DIRS, CTK_BASE_LIBRARIES and CTK_WRAPPED_LIBRARIES_PYTHONQT
+# Clear CTK_BASE_LIBRARIES and CTK_WRAPPED_LIBRARIES_PYTHONQT
 #
 set(CTK_BASE_LIBRARIES CACHE INTERNAL "CTK base libraries" FORCE)
-set(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 set(CTK_WRAPPED_LIBRARIES_PYTHONQT CACHE INTERNAL "CTK libraries wrapped using PythonQt" FORCE)
 
 # Variable use in CTKConfig.cmake.in
@@ -783,6 +782,13 @@ foreach(app ${CTK_APPS})
   list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}^^CTK_APP_${app}")
 endforeach()
 
+# Emulate the use of 'ctk_lib_option' for CTKQtTesting library
+set(CTK_LIB_QtTesting ${CTK_USE_QTTESTING})
+if(CTK_USE_QTTESTING)
+  list(APPEND CTK_LIBS QtTesting)
+  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/QtTesting^^CTK_LIB_QtTesting")
+endif()
+
 #message(STATUS target_directories:${target_directories})
 
 #-----------------------------------------------------------------------------
@@ -893,6 +899,7 @@ set(CTK_DEPENDENCIES
   OpenIGTLink
   XIP
   ITK
+  QtTesting
   )
 
 if(BUILD_TESTING)
@@ -901,10 +908,6 @@ endif()
 
 if(CTK_USE_KWSTYLE)
   list(APPEND CTK_DEPENDENCIES KWStyle)
-endif()
-
-if(CTK_USE_QTTESTING)
-  list(APPEND CTK_DEPENDENCIES QtTesting)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -1063,11 +1066,6 @@ endforeach()
 
 # Add the CommandLineModules root directory for additional processing
 add_subdirectory(Libs/CommandLineModules)
-
-#-----------------------------------------------------------------------------
-if(CTK_USE_QTTESTING)
-  add_subdirectory(Libs/QtTesting)
-endif()
 
 #-----------------------------------------------------------------------------
 # Add CTK plugin subdirectories

@@ -50,12 +50,15 @@ macro(ctkMacroBuildQtPlugin)
   # --------------------------------------------------------------------------
   # Include dirs
   set(my_includes
-    ${CTK_BASE_INCLUDE_DIRS}
     ${QT_QTDESIGNER_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MY_INCLUDE_DIRECTORIES}
     )
+  if(CTK_SOURCE_DIR)
+    # Add the include directories from the library dependencies
+    ctkFunctionGetIncludeDirs(my_includes ${MY_TARGET_LIBRARIES})
+  endif()
   include_directories(
     ${my_includes}
     )

@@ -4,6 +4,7 @@ project(CTKQtTesting)
 # 3rd party dependencies
 #
 find_package(QtTesting REQUIRED)
+set(QtTesting_LIBRARIES QtTesting)
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
@@ -107,11 +108,7 @@ if (CTK_LIB_Widgets)
   set(CTK_ADD_WIDGET_EVENT_TRANSLATORS "${CTK_ADD_WIDGET_EVENT_TRANSLATORS}  this->eventTranslator()->addWidgetEventTranslator(new ctkFileDialogEventTranslator(util));\n")
 endif()
 
-set(KIT_INCLUDE_DIRECTORIES
-  ${QtTesting_INCLUDE_DIRS}
-  ${CTK_SUPERBUILD_BINARY_DIR} # For ctkConfig.h
-  )
-
+set(KIT_INCLUDE_DIRECTORIES)
 foreach(libname ${CTK_ENABLED_LIBNAMES})
   list(APPEND KIT_INCLUDE_DIRECTORIES
     ${${libname}_SOURCE_DIR}
@@ -154,16 +151,19 @@ set(KIT_resources
   Resources/ctkQtTesting.qrc
 )
 
-# dependencie dynamic from all the libraries with Widgets + QtTesting
-set(KIT_target_libraries QtTesting)
+# Set QtTesting_LIBRARIES variable
+set(QtTesting_LIBRARIES QtTesting)
 
+# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
+# The following macro will read the target libraries from the file 'target_libraries.cmake'
+ctkFunctionGetTargetLibraries(KIT_target_libraries)
+
+# List of dependency is dynamically generated based the list enabled libraries.
 foreach(libname ${CTK_ENABLED_LIBNAMES})
   if(${libname} MATCHES "Widgets$")
     list(APPEND KIT_target_libraries ${libname})
   endif()
 endforeach()
-
-#message("${KIT_target_libraries}")
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

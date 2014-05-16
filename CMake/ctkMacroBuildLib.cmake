@@ -72,10 +72,6 @@ macro(ctkMacroBuildLib)
   include_directories(
     ${my_includes}
     )
-  #message(lib_name:${lib_name})
-  #foreach(i ${my_includes})
-  #  message(i:${i})
-  #endforeach()
 
   # Add Qt include dirs and defines
   include(${QT_USE_FILE})
@@ -170,15 +166,8 @@ macro(ctkMacroBuildLib)
   target_link_libraries(${lib_name} ${my_libs})
 
   # Update CTK_BASE_LIBRARIES
-  set(new_ctk_base_libraries ${my_libs} ${lib_name})
-  list(REMOVE_DUPLICATES new_ctk_base_libraries)
-  set(CTK_BASE_LIBRARIES ${new_ctk_base_libraries} CACHE INTERNAL "CTK base libraries" FORCE)
-  set(new_ctk_libraries ${CTK_LIBRARIES} ${lib_name})
-  list(REMOVE_DUPLICATES new_ctk_libraries)
-  set(CTK_LIBRARIES ${new_ctk_libraries} CACHE INTERNAL "CTK libraries" FORCE)
-  set(new_ctk_base_include_dirs ${CTK_BASE_INCLUDE_DIRS} ${my_includes})
-  list(REMOVE_DUPLICATES new_ctk_base_include_dirs)
-  set(CTK_BASE_INCLUDE_DIRS ${new_ctk_base_include_dirs} CACHE INTERNAL "CTK includes" FORCE)
+  set(CTK_BASE_LIBRARIES ${my_libs} ${lib_name} CACHE INTERNAL "CTK base libraries" FORCE)
+  set(CTK_LIBRARIES ${CTK_LIBRARIES} ${lib_name} CACHE INTERNAL "CTK libraries" FORCE)
 
   # Install headers
   file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/*.tpp")
