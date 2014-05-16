@@ -277,7 +277,7 @@ void ctkPluginAbstractTracked<S,T,R>::modified()
 template<class S, class T, class R>
 int ctkPluginAbstractTracked<S,T,R>::getTrackingCount() const
 {
-  return trackingCount;
+  return trackingCount.loadAcquire();
 }
 
 //----------------------------------------------------------------------------

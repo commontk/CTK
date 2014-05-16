@@ -24,7 +24,12 @@
 
 #include "ctkPluginStorage_p.h"
 
-#include <QtSql>
+#include <QLibrary>
+#include <QSqlQuery>
+#include <QDebug>
+#include <QSqlError>
+#include <QPluginLoader>
+#include <QDirIterator>
 
 // CTK class forward declarations
 class ctkPluginFrameworkContext;

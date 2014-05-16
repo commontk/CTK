@@ -19,11 +19,9 @@
 =========================================================================*/
 
 // Qt includes
-#include <QApplication>
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
-#include <QMainWindow>
 #include <QMetaEnum>
 #include <QMetaType>
 #include <QMutexLocker>
@@ -686,7 +684,7 @@ public:
   QString                     HandlerPrettyName;
 
   // Use "int" instead of "ctkErrorLogModel::TerminalOutput" to avoid compilation warning ...
-  // qhash.h:879: warning: passing ‘ctkErrorLogModel::TerminalOutput’ chooses ‘int’ over ‘uint’ [-Wsign-promo]
+  // qhash.h:879: warning: passing 'ctkErrorLogModel::TerminalOutput' chooses 'int' over 'uint' [-Wsign-promo]
   QHash<int, ctkErrorLogTerminalOutput*> TerminalOutputs;
 };
 

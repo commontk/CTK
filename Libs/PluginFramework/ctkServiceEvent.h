@@ -22,22 +22,21 @@
 #ifndef CTKSERVICEEVENT_H
 #define CTKSERVICEEVENT_H
 
-#include <QSharedDataPointer>
-#include <QDebug>
-#include <QMetaType>
-
-#include "ctkPluginFrameworkExport.h"
-
-#include "ctkServiceReference.h"
-
-class ctkServiceEventData;
-
 #ifdef REGISTERED
 #error Try to reorder include files (this one first)\
  or write #undef REGISTERED before including this header.\
  Cause of this problem may be dcmimage.h, which indirectly\
  includes windows.h.
 #endif
+
+#include <QSharedDataPointer>
+#include <QDebug>
+#include <QMetaType>
+
+#include "ctkPluginFrameworkExport.h"
+#include "ctkServiceReference.h"
+
+class ctkServiceEventData;
 
 /**
  * \ingroup PluginFramework
