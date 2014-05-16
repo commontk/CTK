@@ -812,6 +812,11 @@ find_program(DGraph_EXECUTABLE DGraph
   "${CTK_BINARY_DIR}/Utilities/DGraph/Release/")
 mark_as_advanced(DGraph_EXECUTABLE)
 
+# Set optional dependencies not captured in 'target_libraries.cmake' files.
+if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  set(ctkSimplePythonShell_OPTIONAL_DEPENDENCIES CTKVisualizationVTKCore VTK_LIBRARIES)
+endif()
+
 #-----------------------------------------------------------------------------
 # Let's make sure the enabled/disabled libraries, plugins or applications are coherent
 #
