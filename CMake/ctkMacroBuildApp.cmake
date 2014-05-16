@@ -31,6 +31,8 @@ macro(ctkMacroBuildApp)
     ${ARGN}
     )
 
+  # Keep parameter 'INCLUDE_DIRECTORIES' for backward compatiblity
+
   # Sanity checks
   if(NOT DEFINED MY_NAME)
     message(FATAL_ERROR "NAME is mandatory")
@@ -54,7 +56,6 @@ macro(ctkMacroBuildApp)
   set(my_includes
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${MY_INCLUDE_DIRECTORIES}
     )
 
   # Add the include directories from the library dependencies

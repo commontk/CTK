@@ -33,6 +33,8 @@ macro(ctkMacroBuildLib)
     ${ARGN}
     )
 
+  # Keep parameter 'INCLUDE_DIRECTORIES' for backward compatiblity
+
   # Sanity checks
   if(NOT DEFINED MY_NAME)
     message(FATAL_ERROR "NAME is mandatory")
@@ -63,7 +65,6 @@ macro(ctkMacroBuildLib)
     ${CMAKE_CURRENT_BINARY_DIR}
     # with CMake >2.9, use QT4_MAKE_OUTPUT_FILE instead ?
     ${CMAKE_CURRENT_BINARY_DIR}/Resources/UI
-    ${MY_INCLUDE_DIRECTORIES}
     )
 
   # Add the include directories from the library dependencies

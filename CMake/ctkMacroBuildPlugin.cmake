@@ -55,6 +55,8 @@ macro(ctkMacroBuildPlugin)
     ${ARGN}
     )
 
+  # Keep parameter 'INCLUDE_DIRECTORIES' for backward compatiblity
+
   # Sanity checks
   if(NOT DEFINED MY_EXPORT_DIRECTIVE)
     message(FATAL_ERROR "EXPORT_DIRECTIVE is mandatory")
@@ -132,7 +134,6 @@ macro(ctkMacroBuildPlugin)
   list(APPEND my_includes
       ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_BINARY_DIR}
-      ${MY_INCLUDE_DIRECTORIES}
       )
 
   # Add the include directories from the plugin dependencies

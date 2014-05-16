@@ -29,10 +29,6 @@ set(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
-# Additional directories to include - Note that CTK_INCLUDE_LIBRARIES is already included
-set(KIT_include_directories
-)
-
 # Fix this after having discussed include dependencies with Jc
 foreach(_dep ${${PROJECT_NAME}_DEPENDENCIES})
   include_directories(${${_dep}_SOURCE_DIR} ${${_dep}_BINARY_DIR})
@@ -40,7 +36,6 @@ endforeach()
 
 ctkMacroBuildApp(
   NAME ${PROJECT_NAME}
-  INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}

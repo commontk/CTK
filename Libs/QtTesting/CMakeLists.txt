@@ -108,9 +108,8 @@ if (CTK_LIB_Widgets)
   set(CTK_ADD_WIDGET_EVENT_TRANSLATORS "${CTK_ADD_WIDGET_EVENT_TRANSLATORS}  this->eventTranslator()->addWidgetEventTranslator(new ctkFileDialogEventTranslator(util));\n")
 endif()
 
-set(KIT_INCLUDE_DIRECTORIES)
 foreach(libname ${CTK_ENABLED_LIBNAMES})
-  list(APPEND KIT_INCLUDE_DIRECTORIES
+  include_directories(
     ${${libname}_SOURCE_DIR}
     ${${libname}_BINARY_DIR}
     )
@@ -171,7 +170,6 @@ ctkMacroBuildLib(
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
-  INCLUDE_DIRECTORIES ${KIT_INCLUDE_DIRECTORIES}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
