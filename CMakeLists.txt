@@ -823,6 +823,14 @@ if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_
   set(ctkSimplePythonShell_OPTIONAL_DEPENDENCIES CTKVisualizationVTKCore VTK_LIBRARIES)
 endif()
 
+set(CTKQtTesting_OPTIONAL_DEPENDENCIES)
+if(CTK_LIB_Widgets)
+  list(APPEND CTKQtTesting_OPTIONAL_DEPENDENCIES CTKWidgets)
+endif()
+if(CTK_LIB_Visualization/VTK/Widgets)
+  list(APPEND CTKQtTesting_OPTIONAL_DEPENDENCIES CTKVisualizationVTKWidgets)
+endif()
+
 #-----------------------------------------------------------------------------
 # Let's make sure the enabled/disabled libraries, plugins or applications are coherent
 #

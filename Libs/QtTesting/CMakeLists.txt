@@ -108,13 +108,6 @@ if (CTK_LIB_Widgets)
   set(CTK_ADD_WIDGET_EVENT_TRANSLATORS "${CTK_ADD_WIDGET_EVENT_TRANSLATORS}  this->eventTranslator()->addWidgetEventTranslator(new ctkFileDialogEventTranslator(util));\n")
 endif()
 
-foreach(libname ${CTK_ENABLED_LIBNAMES})
-  include_directories(
-    ${${libname}_SOURCE_DIR}
-    ${${libname}_BINARY_DIR}
-    )
-endforeach()
-
 configure_file(
   ctkQtTestingUtility.cpp.in
   ${CMAKE_CURRENT_BINARY_DIR}/ctkQtTestingUtility.cpp
@@ -156,13 +149,6 @@ set(QtTesting_LIBRARIES QtTesting)
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
-
-# List of dependency is dynamically generated based the list enabled libraries.
-foreach(libname ${CTK_ENABLED_LIBNAMES})
-  if(${libname} MATCHES "Widgets$")
-    list(APPEND KIT_target_libraries ${libname})
-  endif()
-endforeach()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
