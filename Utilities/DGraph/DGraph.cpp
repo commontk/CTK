@@ -268,10 +268,16 @@ int main(int argc, char** argv)
       {
       from = getOrGenerateId(vertexIdToLabel, vertexLabelToId, strings[0]);
       to = getOrGenerateId(vertexIdToLabel, vertexLabelToId, strings[1]);
-
       if (verbose)
         {
         std::cout << "Line='" << line << "', line number " << lineNumber << ", from (" << strings[0] << ", " << from << ") to (" << strings[1] << ", " << to << ")"  << std::endl;
+        }
+      }
+    else
+      {
+      if (verbose)
+        {
+        std::cout << "Line='" << line << "', line number " << lineNumber << ", from (" << strings[0] << ", " << from << ") to (<null>, " << to << ")"  << std::endl;
         }
       }
 
@@ -437,6 +443,11 @@ int main(int argc, char** argv)
     // TODO Make sure label is valid
     std::list<int> out;
     int labelId = vertexLabelToId[label];
+    if (labelId < 1)
+      {
+      std::cout << label;
+      return EXIT_SUCCESS;
+      }
     if (mygraph.topologicalSort(out, labelId))
       {
       std::list<int>::iterator outIterator;

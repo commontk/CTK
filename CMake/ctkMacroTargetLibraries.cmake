@@ -151,7 +151,9 @@ function(ctkFunctionCollectTargetLibraryNames target_dir varname)
     endforeach()
   endif()
 
-  list(REMOVE_DUPLICATES target_library_list)
+  if(target_library_list)
+    list(REMOVE_DUPLICATES target_library_list)
+  endif()
   
   # Pass the list of target libraries to the caller
   set(${varname} ${target_library_list} PARENT_SCOPE)

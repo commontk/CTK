@@ -763,6 +763,12 @@ ctk_enable_option_raw(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF
 # Create list of directories corresponding to the enabled targets
 set(target_directories)
 
+# Setup testing environment before Libs are added by simulating
+# the use of 'ctk_lib_option' for CTKTesting library
+set(CTK_LIB_Testing TRUE)
+list(APPEND CTK_LIBS Testing)
+list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/Testing^^CTK_LIB_Testing")
+
 foreach(lib ${CTK_LIBS})
   if(CTK_LIB_${lib})
     ctkMacroAddCtkLibraryOptions(${lib})
@@ -1050,11 +1056,6 @@ set(CMAKE_C_FLAGS ${CTK_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
 # for shared libraries
 #
 set(CTK_EXPORT_HEADER_TEMPLATE "${CTK_SOURCE_DIR}/Libs/ctkExport.h.in")
-
-#-----------------------------------------------------------------------------
-# Setup testing environment before Libs are added
-#
-add_subdirectory(Libs/Testing)
 
 #-----------------------------------------------------------------------------
 # Add CTK library subdirectories
