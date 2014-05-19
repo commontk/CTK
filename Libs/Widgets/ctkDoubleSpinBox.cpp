@@ -286,12 +286,24 @@ void ctkDoubleSpinBoxPrivate::setValue(double value, int dec)
 {
   Q_Q(ctkDoubleSpinBox);
   dec = this->boundDecimals(dec);
-  bool changeDecimals = dec != q->decimals();
+  const bool changeDecimals = dec != q->decimals();
   if (changeDecimals)
     {
+    // don't fire valueChanged signal because we will change the value
+    // right after anyway.
+    const bool blockValueChangedSignal = (this->round(this->SpinBox->value(), dec) != value);
+    bool wasBlocked = false;
+    if (blockValueChangedSignal)
+      {
+      wasBlocked = this->SpinBox->blockSignals(true);
+      }
     // don't fire decimalsChanged signal yet, wait for the value to be
     // up-to-date.
     this->SpinBox->setDecimals(dec);
+    if (blockValueChangedSignal)
+      {
+      this->SpinBox->blockSignals(wasBlocked);
+      }
     }
   this->SpinBox->setValue(value); // re-do the text (calls textFromValue())
   if (changeDecimals)
@@ -876,8 +888,17 @@ void ctkDoubleSpinBox::setValueAlways(double newValue)
     newValueToDisplay = d->Proxy.data()->proxyValueFromValue(newValueToDisplay);
     }
   const int decimals = d->decimalsForValue(newValueToDisplay);
+  // setValueAlways already fires the valueChanged() signal if needed, same
+  // thing for d->setValue() with decimalsChanged(). There is no need to
+  // propagate the valueChanged/decimalsChanged signals from the spinbox.
+  // Alternatively we could also have set a flag that prevents onValueChanged()
+  // to trigger the valueChanged() signal.
+  //bool wasBlocking = d->SpinBox->blockSignals(true);
   d->setValue(newValueToDisplay, decimals);
+  //d->SpinBox->blockSignals(wasBlocking);
   const bool signalsEmitted = (newValue != d->InputValue);
+  // Fire the valueChanged signal only if d->setValue() did not fire it
+  // already..
   if (valueModified && !signalsEmitted)
     {
     emit valueChanged(d->InputValue);
