@@ -80,6 +80,10 @@ set(${QtSOAP_enabling_variable}_LIBRARY_DIRS QtSOAP_LIBRARY_DIRS)
 set(${QtSOAP_enabling_variable}_INCLUDE_DIRS QtSOAP_INCLUDE_DIRS)
 set(${QtSOAP_enabling_variable}_FIND_PACKAGE_CMD QtSOAP)
 
+set(QtTesting_enabling_variable QtTesting_LIBRARIES)
+set(${QtTesting_enabling_variable}_INCLUDE_DIRS QtTesting_INCLUDE_DIRS)
+set(${QtTesting_enabling_variable}_FIND_PACKAGE_CMD QtTesting)
+
 set(qxmlrpc_enabling_variable qxmlrpc_LIBRARY)
 set(${qxmlrpc_enabling_variable}_LIBRARY_DIRS qxmlrpc_LIBRARY_DIRS)
 set(${qxmlrpc_enabling_variable}_INCLUDE_DIRS qxmlrpc_INCLUDE_DIRS)

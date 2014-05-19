@@ -173,10 +173,9 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
-# Clear CTK_BASE_INCLUDE_DIRS, CTK_BASE_LIBRARIES and CTK_WRAPPED_LIBRARIES_PYTHONQT
+# Clear CTK_BASE_LIBRARIES and CTK_WRAPPED_LIBRARIES_PYTHONQT
 #
 set(CTK_BASE_LIBRARIES CACHE INTERNAL "CTK base libraries" FORCE)
-set(CTK_BASE_INCLUDE_DIRS CACHE INTERNAL "CTK includes" FORCE)
 set(CTK_WRAPPED_LIBRARIES_PYTHONQT CACHE INTERNAL "CTK libraries wrapped using PythonQt" FORCE)
 
 # Variable use in CTKConfig.cmake.in
@@ -764,6 +763,12 @@ ctk_enable_option_raw(CTK_BUILD_EXAMPLES "Build examples for CTK components" OFF
 # Create list of directories corresponding to the enabled targets
 set(target_directories)
 
+# Setup testing environment before Libs are added by simulating
+# the use of 'ctk_lib_option' for CTKTesting library
+set(CTK_LIB_Testing TRUE)
+list(APPEND CTK_LIBS Testing)
+list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/Testing^^CTK_LIB_Testing")
+
 foreach(lib ${CTK_LIBS})
   if(CTK_LIB_${lib})
     ctkMacroAddCtkLibraryOptions(${lib})
@@ -782,6 +787,13 @@ endforeach()
 foreach(app ${CTK_APPS})
   list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Applications/${app}^^CTK_APP_${app}")
 endforeach()
+
+# Emulate the use of 'ctk_lib_option' for CTKQtTesting library
+set(CTK_LIB_QtTesting ${CTK_USE_QTTESTING})
+if(CTK_USE_QTTESTING)
+  list(APPEND CTK_LIBS QtTesting)
+  list(APPEND target_directories "${CMAKE_CURRENT_SOURCE_DIR}/Libs/QtTesting^^CTK_LIB_QtTesting")
+endif()
 
 #message(STATUS target_directories:${target_directories})
 
@@ -805,6 +817,19 @@ find_program(DGraph_EXECUTABLE DGraph
   "${CTK_BINARY_DIR}/Utilities/DGraph/Debug/"
   "${CTK_BINARY_DIR}/Utilities/DGraph/Release/")
 mark_as_advanced(DGraph_EXECUTABLE)
+
+# Set optional dependencies not captured in 'target_libraries.cmake' files.
+if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  set(ctkSimplePythonShell_OPTIONAL_DEPENDENCIES CTKVisualizationVTKCore VTK_LIBRARIES)
+endif()
+
+set(CTKQtTesting_OPTIONAL_DEPENDENCIES)
+if(CTK_LIB_Widgets)
+  list(APPEND CTKQtTesting_OPTIONAL_DEPENDENCIES CTKWidgets)
+endif()
+if(CTK_LIB_Visualization/VTK/Widgets)
+  list(APPEND CTKQtTesting_OPTIONAL_DEPENDENCIES CTKVisualizationVTKWidgets)
+endif()
 
 #-----------------------------------------------------------------------------
 # Let's make sure the enabled/disabled libraries, plugins or applications are coherent
@@ -893,6 +918,7 @@ set(CTK_DEPENDENCIES
   OpenIGTLink
   XIP
   ITK
+  QtTesting
   )
 
 if(BUILD_TESTING)
@@ -901,10 +927,6 @@ endif()
 
 if(CTK_USE_KWSTYLE)
   list(APPEND CTK_DEPENDENCIES KWStyle)
-endif()
-
-if(CTK_USE_QTTESTING)
-  list(APPEND CTK_DEPENDENCIES QtTesting)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -1044,11 +1066,6 @@ set(CMAKE_C_FLAGS ${CTK_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
 set(CTK_EXPORT_HEADER_TEMPLATE "${CTK_SOURCE_DIR}/Libs/ctkExport.h.in")
 
 #-----------------------------------------------------------------------------
-# Setup testing environment before Libs are added
-#
-add_subdirectory(Libs/Testing)
-
-#-----------------------------------------------------------------------------
 # Add CTK library subdirectories
 #
 foreach(lib ${CTK_LIBS})
@@ -1063,11 +1080,6 @@ endforeach()
 
 # Add the CommandLineModules root directory for additional processing
 add_subdirectory(Libs/CommandLineModules)
-
-#-----------------------------------------------------------------------------
-if(CTK_USE_QTTESTING)
-  add_subdirectory(Libs/QtTesting)
-endif()
 
 #-----------------------------------------------------------------------------
 # Add CTK plugin subdirectories

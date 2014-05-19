@@ -1,14 +1,6 @@
 project(ctkSimplePythonShell)
 
 #
-# 3rd party dependencies
-#
-if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  find_package(VTK REQUIRED)
-  include(${VTK_USE_FILE})
-endif()
-
-#
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
 
@@ -57,29 +49,12 @@ set(KIT_UI_FORMS
 set(KIT_resources
   )
 
-set(KIT_INCLUDE_DIRECTORIES
-  )
-
 set(VTK_LIBRARIES
   )
-
-if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  list(APPEND KIT_INCLUDE_DIRECTORIES
-    ${CTKVisualizationVTKCore_BINARY_DIR}
-    ${CTKVisualizationVTKCore_SOURCE_DIR}
-    )
-endif()
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
-
-if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  list(APPEND KIT_target_libraries
-    CTKVisualizationVTKCore
-    vtkFiltering
-    )
-endif()
 
 # Configure file will be configured using CTK_WRAP_PYTHONQT_LIGHT and
 # CTK_BUILD_SHARED_LIBS variables
@@ -139,7 +114,6 @@ ctkMacroBuildApp(
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
-  INCLUDE_DIRECTORIES ${KIT_INCLUDE_DIRECTORIES}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   )

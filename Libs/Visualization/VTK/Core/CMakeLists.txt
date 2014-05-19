@@ -64,10 +64,8 @@ if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_
     )
 endif()
 
-set(KIT_INCLUDE_DIRECTORIES )
-
 if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
-  list(APPEND KIT_INCLUDE_DIRECTORIES
+  include(
     ${PYTHON_INCLUDE_DIRS}
     ${PYTHONQT_INCLUDE_DIR}
     )
@@ -143,7 +141,6 @@ ctkMacroBuildLib(
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
-  INCLUDE_DIRECTORIES ${KIT_INCLUDE_DIRECTORIES}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}

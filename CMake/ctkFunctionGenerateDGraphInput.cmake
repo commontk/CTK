@@ -76,6 +76,9 @@ function(ctkFunctionGenerateDGraphInput dir target_directories)
 
       # get dependencies
       ctkFunctionCollectTargetLibraryNames(${target_dir} dependencies)
+      if(${target_project_name}_OPTIONAL_DEPENDENCIES)
+        list(APPEND dependencies ${${target_project_name}_OPTIONAL_DEPENDENCIES})
+      endif()
 
       # Make sure the variable is cleared
       set(ctk_dependencies)
