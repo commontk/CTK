@@ -38,7 +38,6 @@
 # one for installation.  The file tells external projects how to use CTK.
 #
 
-
 message(STATUS "Including CMake built-in module CMakePackageConfigHelpers")
 include(CMakePackageConfigHelpers OPTIONAL)
 if(COMMAND configure_package_config_file)
@@ -145,7 +144,7 @@ set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# The CTK Qt designer plugins directory\n
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_QTDESIGNERPLUGINS_DIR \"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\")\n")
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# CTK library include dirctories\n")
 set(_include_dirs)
-foreach(lib ${CTK_LIBRARIES})
+foreach(lib ${CTK_LIBRARIES} CTKTesting)
   set(${lib}_INCLUDE_DIRS ${${lib}_SOURCE_DIR} ${${lib}_BINARY_DIR})
   ctkFunctionGetIncludeDirs(${lib}_INCLUDE_DIRS ${lib})
   list(APPEND _include_dirs ${${lib}_INCLUDE_DIRS})
@@ -153,7 +152,6 @@ foreach(lib ${CTK_LIBRARIES})
 endforeach()
 list(REMOVE_DUPLICATES _include_dirs)
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}set(CTK_INCLUDE_DIRS \"${_include_dirs}\")\n")
-set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}list(APPEND CTK_INCLUDE_DIRS \"${CTKTesting_INCLUDE_DIRS}\")\n")
 set(CTK_CONFIG_CODE "${CTK_CONFIG_CODE}# CTK library directories that could be used for linking\n")
 foreach(lib ${CTK_LIBRARIES})
   set(${lib}_LIBRARY_DIRS "")
