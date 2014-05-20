@@ -505,6 +505,8 @@ void ctkDICOMBrowser::onRepairAction()
 
   else
   {
+    repairMessageBox->addButton(QMessageBox::Yes);
+    repairMessageBox->addButton(QMessageBox::No);
     QSet<QString>::iterator i;
     for (i = corruptedSeries.begin(); i != corruptedSeries.end(); ++i)
       {
@@ -526,8 +528,6 @@ void ctkDICOMBrowser::onRepairAction()
         "Do you want to remove the series from the DICOM database? ");
 
       repairMessageBox->setDetailedText(unavailableFileNames);
-      repairMessageBox->addButton(QMessageBox::Yes);
-      repairMessageBox->addButton(QMessageBox::No);
 
       int selection = repairMessageBox->exec();
       if (selection == QMessageBox::Yes)
