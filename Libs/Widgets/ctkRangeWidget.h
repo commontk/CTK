@@ -75,8 +75,8 @@ public:
   /// When setting this property, the maximum is adjusted if necessary
   /// to ensure that the range remains valid.
   /// Also the slider's current value is adjusted to be within the new range.
-  double minimum()const;
-  void setMinimum(double minimum);
+  virtual double minimum()const;
+  virtual void setMinimum(double minimum);
 
   ///
   /// This property holds the sliders and spinbox minimum value.
@@ -84,77 +84,77 @@ public:
   /// When setting this property, the maximum is adjusted if necessary
   /// to ensure that the range remains valid.
   /// Also the slider's current value is adjusted to be within the new range.
-  double maximum()const;
-  void setMaximum(double maximum);
+  virtual double maximum()const;
+  virtual void setMaximum(double maximum);
   /// Description
   /// Utility function that set the min/max in once
-  void setRange(double min, double max);
-  void range(double minimumAndMaximum[2])const;
+  virtual void setRange(double min, double max);
+  virtual void range(double minimumAndMaximum[2])const;
 
   ///
   /// This property holds the slider and spinbox minimum value.
   /// ctkRangeWidget forces the value to be within the
   /// legal range: minimum <= minimumValue <= maximumValue <= maximum.
-  double minimumValue()const;
+  virtual double minimumValue()const;
 
   ///
   /// This property holds the slider and spinbox maximum value.
   /// ctkRangeWidget forces the value to be within the
   /// legal range: minimum <= minimumValue <= maximumValue <= maximum.
-  double maximumValue()const;
+  virtual double maximumValue()const;
 
   ///
   /// Utility function that returns both values at the same time
   /// Returns minimumValue and maximumValue
-  void values(double &minValue, double &maxValue)const;
+  virtual void values(double &minValue, double &maxValue)const;
 
   ///
   /// This property holds the single step.
   /// The smaller of two natural steps that the
   /// slider provides and typically corresponds to the
   /// user pressing an arrow key.
-  double singleStep()const;
-  void setSingleStep(double step);
+  virtual double singleStep()const;
+  virtual void setSingleStep(double step);
 
   ///
   /// This property holds the precision of the spin box, in decimals.
-  int decimals()const;
+  virtual int decimals()const;
 
   ///
   /// This property holds the spin box's prefix.
   /// The prefix is prepended to the start of the displayed value.
   /// Typical use is to display a unit of measurement or a currency symbol
-  QString prefix()const;
-  void setPrefix(const QString& prefix);
+  virtual QString prefix()const;
+  virtual void setPrefix(const QString& prefix);
 
   ///
   /// This property holds the spin box's suffix.
   /// The suffix is appended to the end of the displayed value.
   /// Typical use is to display a unit of measurement or a currency symbol
-  QString suffix()const;
-  void setSuffix(const QString& suffix);
+  virtual QString suffix()const;
+  virtual void setSuffix(const QString& suffix);
 
   ///
   /// This property holds the interval between tickmarks.
   /// This is a value interval, not a pixel interval.
   /// If it is 0, the slider will choose between lineStep() and pageStep().
   /// The default value is 0.
-  double tickInterval()const;
-  void setTickInterval(double ti);
+  virtual double tickInterval()const;
+  virtual void setTickInterval(double ti);
 
   ///
   /// This property holds the alignment of the spin boxes.
   /// Possible Values are Qt::AlignTop, Qt::AlignBottom, and Qt::AlignVCenter.
   /// By default, the alignment is Qt::AlignVCenter
-  void setSpinBoxAlignment(Qt::Alignment alignment);
-  Qt::Alignment spinBoxAlignment()const;
+  virtual void setSpinBoxAlignment(Qt::Alignment alignment);
+  virtual Qt::Alignment spinBoxAlignment()const;
 
   ///
   /// This property holds the alignment of the text inside the spin boxes.
   /// Possible Values are Qt::AlignLeft, Qt::AlignRight, and Qt::AlignHCenter.
   /// By default, the alignment is Qt::AlignLeft
-  void setSpinBoxTextAlignment(Qt::Alignment alignment);
-  Qt::Alignment spinBoxTextAlignment()const;
+  virtual void setSpinBoxTextAlignment(Qt::Alignment alignment);
+  virtual Qt::Alignment spinBoxTextAlignment()const;
 
   ///
   /// This property holds whether slider tracking is enabled.
@@ -162,51 +162,51 @@ public:
   /// signal while the slider or spinbox is being dragged. If tracking is
   /// disabled, the widget emits the valueChanged() signal only when the user
   /// releases the slider or spinbox.
-  void setTracking(bool enable);
-  bool hasTracking()const;
+  virtual void setTracking(bool enable);
+  virtual bool hasTracking()const;
 
   ///
   /// Set/Get the auto spinbox width
   /// When the autoSpinBoxWidth property is on, the width of the SpinBox is
   /// set to the same width of the largest QSpinBox of its
   // ctkRangeWidget siblings.
-  bool isAutoSpinBoxWidth()const;
-  void setAutoSpinBoxWidth(bool autoWidth);
+  virtual bool isAutoSpinBoxWidth()const;
+  virtual void setAutoSpinBoxWidth(bool autoWidth);
   
   ///
   /// When symmetricMoves is true, moving a handle will move the other handle
   /// symmetrically, otherwise the handles are independent. False by default
-  bool symmetricMoves()const;
-  void setSymmetricMoves(bool symmetry);
+  virtual bool symmetricMoves()const;
+  virtual void setSymmetricMoves(bool symmetry);
 
   /// Return the slider of the range widget.
   /// \sa minimumSpinBox(), maximumSpinBox()
-  ctkDoubleRangeSlider* slider()const;
+  virtual ctkDoubleRangeSlider* slider()const;
   /// Return the minimum spinbox.
   /// \sa maximumSpinBox(), slider()
-  ctkDoubleSpinBox* minimumSpinBox()const;
+  virtual ctkDoubleSpinBox* minimumSpinBox()const;
   /// Return the maximum spinbox.
   /// \sa minimumSpinBox(), slider()
-  ctkDoubleSpinBox* maximumSpinBox()const;
+  virtual ctkDoubleSpinBox* maximumSpinBox()const;
 
   /// Set/Get the value proxy of the slider and spinboxes.
   /// \sa setValueProxy(), valueProxy()
-  void setValueProxy(ctkValueProxy* proxy);
-  ctkValueProxy* valueProxy() const;
+  virtual void setValueProxy(ctkValueProxy* proxy);
+  virtual ctkValueProxy* valueProxy() const;
 
 public Q_SLOTS:
   ///
   /// Reset the slider and spinbox to zero (value and position)
-  void reset();
-  void setMinimumValue(double value);
-  void setMaximumValue(double value);
+  virtual void reset();
+  virtual void setMinimumValue(double value);
+  virtual void setMaximumValue(double value);
   ///
   /// Utility function that set the min and max values at once
-  void setValues(double minValue, double maxValue);
+  virtual void setValues(double minValue, double maxValue);
 
   /// Sets how many decimals the spinbox will use for displaying and
   /// interpreting doubles.
-  void setDecimals(int decimals);
+  virtual void setDecimals(int decimals);
 
 Q_SIGNALS:
   /// Use with care:
@@ -220,25 +220,25 @@ Q_SIGNALS:
   void rangeChanged(double min, double max);
 
 protected Q_SLOTS:
-  void startChanging();
-  void stopChanging();
-  void changeValues(double newMinValue, double newMaxValue);
-  void changeMinimumValue(double value);
-  void changeMaximumValue(double value);
+  virtual void startChanging();
+  virtual void stopChanging();
+  virtual void changeValues(double newMinValue, double newMaxValue);
+  virtual void changeMinimumValue(double value);
+  virtual void changeMaximumValue(double value);
   /// A spinbox value has been modified, update the slider.
-  void setSliderValues();
-  void setMinimumToMaximumSpinBox(double minimum);
-  void setMaximumToMinimumSpinBox(double maximum);
-  void onSliderRangeChanged(double min, double max);
+  virtual void setSliderValues();
+  virtual void setMinimumToMaximumSpinBox(double minimum);
+  virtual void setMaximumToMinimumSpinBox(double maximum);
+  virtual void onSliderRangeChanged(double min, double max);
 
-  void onValueProxyAboutToBeModified();
-  void onValueProxyModified();
+  virtual void onValueProxyAboutToBeModified();
+  virtual void onValueProxyModified();
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
 
   /// can be used to change the slider by a custom one
-  void setSlider(ctkDoubleRangeSlider* slider);
+  virtual void setSlider(ctkDoubleRangeSlider* slider);
 
 protected:
   QScopedPointer<ctkRangeWidgetPrivate> d_ptr;
@@ -246,7 +246,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkRangeWidget);
   Q_DISABLE_COPY(ctkRangeWidget);
-
 };
 
 #endif
