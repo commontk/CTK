@@ -70,6 +70,7 @@ public:
   bool strictTypeCheck()const;
   /// Set the strictTypeCheck value.
   /// \sa strictTypeCheck, strictTypeCheck()
+  /// \note By default, strict type checking is disabled.
   void setStrictTypeCheck(bool check);
 
   ///
