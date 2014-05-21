@@ -215,7 +215,12 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
+
+#if (VTK_MAJOR_VERSION <= 5)
   lightBoxRendererManager->SetImageData(image);
+#else
+  lightBoxRendererManager->SetImageDataConnection(imagePort);
+#endif
   lightBoxRendererManager->SetRenderWindowLayout(4, 5);
   lightBoxRendererManager->SetHighlighted(2,2,true);
   lightBoxRendererManager->SetColorWindowAndLevel(100, 100);
