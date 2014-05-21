@@ -104,11 +104,6 @@ Q_SIGNALS:
   /// connect(obj1,SIGNAL(signalFunc(A,B,C,D)),obj2,SLOT(slotFunc(A)));
   void emitExecute(vtkObject* caller, void* call_data, unsigned long vtk_event, void* client_data);
 
-  /// The signal is fired when the observed vtk object or the receiving qt 
-  /// object is deleted. It can conveniently connected to the deleteLater 
-  /// slot
-  void isBroke();
-
 protected Q_SLOTS:
   void vtkObjectDeleted();
   void qobjectDeleted();
