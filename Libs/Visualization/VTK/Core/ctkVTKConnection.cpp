@@ -156,13 +156,6 @@ void ctkVTKConnectionPrivate::disconnect()
     this->VTKObject->RemoveObservers(vtkCommand::DeleteEvent, this->Callback);
     }
 
-  if (this->ObserveDeletion && this->QtObject)
-    {
-    //this->VTKObject->AddObserver(vtkCommand::DeleteEvent, this->Callback); has already been removed
-    QObject::disconnect(this->QtObject, SIGNAL(destroyed(QObject*)),
-                        q, SIGNAL(isBroke()));
-    }
-
   this->Connected = false;
 }
 
@@ -450,7 +443,6 @@ void ctkVTKConnection::vtkObjectDeleted()
   Q_D(ctkVTKConnection);
   d->VTKObject = 0;
   d->disconnect();
-  emit isBroke();
 }
 
 //-----------------------------------------------------------------------------
@@ -459,7 +451,6 @@ void ctkVTKConnection::qobjectDeleted()
   Q_D(ctkVTKConnection);
   d->QtObject = 0;
   d->disconnect();
-  emit isBroke();
 }
 
 //-----------------------------------------------------------------------------
