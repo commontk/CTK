@@ -238,7 +238,7 @@ QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection)
   const ctkVTKConnectionPrivate* d = connection.d_func();
   dbg.nospace() << "ctkVTKConnection:" << &connection << endl
                 << "Id:" << d->Id << endl
-                << " VTKObject:" << d->VTKObject->GetClassName()
+                << " VTKObject:" << (d->VTKObject ? d->VTKObject->GetClassName() : "<null>")
                 << "(" << d->VTKObject << ")" << endl
                 << " QtObject:" << d->QtObject << endl
                 << " VTKEvent:" << d->VTKEvent << endl
