@@ -245,9 +245,9 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   imageReader->SetFileName(imageFilename.toLatin1());
   imageReader->Update();
 #if (VTK_MAJOR_VERSION <= 5)
-  vtkSmartPointer<vtkImageData> image = imageReader->GetOutput();
+  vtkImageData* image = imageReader->GetOutput();
 #else
-  vtkSmartPointer<vtkAlgorithmOutput> imagePort = imageReader->GetOutputPort();
+  vtkAlgorithmOutput* imagePort = imageReader->GetOutputPort();
 #endif
 
   // Setup the slice views
