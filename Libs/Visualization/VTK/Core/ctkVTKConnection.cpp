@@ -239,6 +239,13 @@ QObject* ctkVTKConnection::object()const
 }
 
 //-----------------------------------------------------------------------------
+vtkObject* ctkVTKConnection::vtkobject() const
+{
+  Q_D(const ctkVTKConnection);
+  return const_cast<vtkObject*>(d->VTKObject);
+}
+
+//-----------------------------------------------------------------------------
 QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection)
 {
   const ctkVTKConnectionPrivate* d = connection.d_func();
