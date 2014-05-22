@@ -6,6 +6,7 @@ set(KIT ${PROJECT_NAME})
 set(TEST_SOURCES
   ctkVTKColorTransferFunctionTest1.cpp
   ctkVTKConnectionTest1.cpp
+  ctkVTKConnectionTestObjectDelete.cpp
   ctkVTKErrorLogMessageHandlerWithThreadsTest1.cpp
   ctkVTKErrorLogModelTest1.cpp
   ctkVTKHistogramTest1.cpp
@@ -43,7 +44,9 @@ set(KIT_HELPER_SRCS
   )
 
 QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
-
+QT4_GENERATE_MOCS(
+  ctkVTKConnectionTestObjectDelete.cpp
+  )
 #
 # Tests
 #
@@ -66,6 +69,7 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 #
 
 SIMPLE_TEST( ctkVTKColorTransferFunctionTest1 )
+SIMPLE_TEST( ctkVTKConnectionTestObjectDelete )
 SIMPLE_TEST( ctkVTKConnectionTest1 )
 SIMPLE_TEST( ctkVTKErrorLogMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkVTKErrorLogModelTest1 )
