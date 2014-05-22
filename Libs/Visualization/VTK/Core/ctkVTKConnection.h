@@ -110,6 +110,7 @@ protected Q_SLOTS:
 
 protected:
   QScopedPointer<ctkVTKConnectionPrivate> d_ptr;
+  ctkVTKConnection(ctkVTKConnectionPrivate* pimpl, QObject* _parent);
 
   void disconnect();
   virtual void addObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback, float priority=0.0f);

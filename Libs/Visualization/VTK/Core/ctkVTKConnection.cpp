@@ -206,6 +206,13 @@ ctkVTKConnection::ctkVTKConnection(QObject* _parent):
 {
 }
 
+// --------------------------------------------------------------------------
+ctkVTKConnection::ctkVTKConnection(ctkVTKConnectionPrivate* pimpl, QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(pimpl)
+{
+}
+
 //-----------------------------------------------------------------------------
 ctkVTKConnection::~ctkVTKConnection()
 {
