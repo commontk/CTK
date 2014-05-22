@@ -75,17 +75,23 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     PREFIX ${proj}${ep_suffix}
     ${location_args}
     UPDATE_COMMAND ""
-    BUILD_COMMAND ""
+    # INSTALL_COMMAND "" TODO use from build directory
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
+      -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir} # TODO use from build directory
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
+      # -DPythonQt_INSTALL_RUNTIME_DIR:STRING=${CTK_INSTALL_BIN_DIR} TODO
+      # -DPythonQt_INSTALL_LIBRARY_DIR:STRING=${CTK_INSTALL_LIB_DIR} TODO
+      # -DPythonQt_INSTALL_ARCHIVE_DIR:STRING=${CTK_INSTALL_LIB_DIR} TODO
       ${ep_PythonQt_args}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
-  set(PYTHONQT_INSTALL_DIR ${ep_install_dir})
+  set(PYTHONQT_INSTALL_DIR ${ep_install_dir}) # TODO remove when not installed during build
+
+  # ExternalProject_Install_CMake(${proj}) TODO
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
@@ -93,7 +99,7 @@ endif()
 
 mark_as_superbuild(
   VARS
-    PYTHONQT_INSTALL_DIR:PATH
+    PYTHONQT_INSTALL_DIR:PATH # TODO remove when not installed during build
     PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
     PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
     PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined

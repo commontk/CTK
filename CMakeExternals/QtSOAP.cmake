@@ -57,6 +57,8 @@ if(NOT DEFINED QtSOAP_DIR)
     )
   set(QtSOAP_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
 
+  ExternalProject_Install_CMake(${proj})
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

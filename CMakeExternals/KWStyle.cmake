@@ -44,6 +44,7 @@ if(NOT DEFINED KWSTYLE_EXECUTABLE)
     ${location_args}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
+      -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
