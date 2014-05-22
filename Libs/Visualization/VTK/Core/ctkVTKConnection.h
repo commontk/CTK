@@ -62,6 +62,7 @@ public:
   /// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
   /// Of course the slot can contain less parameters, but always the same order
   /// though.
+  /// \sa object(), vtkobject()
   void setup(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.f,
     Qt::ConnectionType connectionType = Qt::AutoConnection);
@@ -86,7 +87,13 @@ public:
   /// 
   /// Return a string uniquely identifying the connection within the current process
   QString  id()const;
+
+  ///
+  /// Return the QObject set using setup() method.
   QObject* object()const;
+
+  /// Return the vtkObject set using setup() method.
+  vtkObject* vtkobject() const;
 
   /// false by default, it is slower to observe vtk object deletion
   void observeDeletion(bool enable);
