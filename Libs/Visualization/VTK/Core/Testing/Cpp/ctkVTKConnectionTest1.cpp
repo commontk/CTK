@@ -22,6 +22,8 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QList>
+#include <QStringList>
+
 
 // CTK includes
 #include <ctkCallback.h>
@@ -123,6 +125,12 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
+  int testCase = -1;
+  if (argc > 1)
+    {
+    testCase = app.arguments().at(1).toInt();
+    }
+
   total_event_count = 0;
   int objects = 1000;
   int events = 100;
@@ -178,38 +186,53 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
 
   // Compute timing for connection1: Callback only
   double time_connection1 = 0;
-  if (!computeConnectionTiming("connection1", events , objects, obj1, time_connection1))
+  if (testCase == -1 || testCase == 1)
     {
-    return EXIT_FAILURE;
+    if (!computeConnectionTiming("connection1", events , objects, obj1, time_connection1))
+      {
+      return EXIT_FAILURE;
+      }
     }
 
   // Compute timing for connection2
   // observeDeletion = 0
   double time_connection2 = 0;
-  if (!computeConnectionTiming("connection2", events , objects, obj2, time_connection2))
+  if (testCase == -1 || testCase == 2)
     {
-    return EXIT_FAILURE;
+    if (!computeConnectionTiming("connection2", events , objects, obj2, time_connection2))
+      {
+      return EXIT_FAILURE;
+      }
     }
 
   // Compute timing for connection3
   // observeDeletion = 1
-  if (!computeConnectionTiming("connection3", events , objects, obj3))
+  if (testCase == -1 || testCase == 3)
     {
-    return EXIT_FAILURE;
+    if (!computeConnectionTiming("connection3", events , objects, obj3))
+      {
+      return EXIT_FAILURE;
+      }
     }
 
   // Compute timing for connection4 - 1-1
   // observeDeletion = 0
-  if (!computeConnectionTiming("connection4", events , objects, obj4))
+  if (testCase == -1 || testCase == 4)
     {
-    return EXIT_FAILURE;
+    if (!computeConnectionTiming("connection4", events , objects, obj4))
+      {
+      return EXIT_FAILURE;
+      }
     }
 
   // Compute timing for connection5 - 1-1
   // observeDeletion = 1
-  if (!computeConnectionTiming("connection5", events , objects, obj4))
+  if (testCase == -1 || testCase == 5)
     {
-    return EXIT_FAILURE;
+    if (!computeConnectionTiming("connection5", events , objects, obj4))
+      {
+      return EXIT_FAILURE;
+      }
     }
 
   obj1->Delete();
