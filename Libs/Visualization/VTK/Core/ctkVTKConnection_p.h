@@ -53,7 +53,8 @@ public:
   ~ctkVTKConnectionPrivate();
 
   void connect();
-  void disconnect();
+  void disconnectSlots();
+  void disconnectVTKObject();
 
   bool IsSameQtSlot(const char* qt_slot)const;
 
