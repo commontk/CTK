@@ -33,9 +33,11 @@ class QObject;
 class vtkObject;
 class vtkCallbackCommand;
 
+#include "ctkVisualizationVTKCoreExport.h"
+
 //-----------------------------------------------------------------------------
 /// \ingroup Visualization_VTK_Core
-class ctkVTKConnectionPrivate
+class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKConnectionPrivate
 {
   Q_DECLARE_PUBLIC(ctkVTKConnection);
 protected:
