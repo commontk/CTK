@@ -119,7 +119,7 @@ void ctkVTKConnectionPrivate::connect()
 }
 
 //-----------------------------------------------------------------------------
-void ctkVTKConnectionPrivate::disconnect()
+void ctkVTKConnectionPrivate::disconnectSlots()
 {
   Q_Q(ctkVTKConnection);
   
@@ -150,13 +150,18 @@ void ctkVTKConnectionPrivate::disconnect()
       }
     }
 
+  this->Connected = false;
+}
+
+//-----------------------------------------------------------------------------
+void ctkVTKConnectionPrivate::disconnectVTKObject()
+{
+  Q_Q(ctkVTKConnection);
   if (this->VTKObject)
     {
     q->removeObserver(this->VTKObject, this->VTKEvent, this->Callback);
     this->VTKObject->RemoveObservers(vtkCommand::DeleteEvent, this->Callback);
     }
-
-  this->Connected = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -207,7 +212,8 @@ ctkVTKConnection::~ctkVTKConnection()
   Q_D(ctkVTKConnection);
   if (d->ObserveDeletion)
     {
-    this->disconnect();
+    d->disconnectSlots();
+    d->disconnectVTKObject();
     }
 }
 
@@ -434,7 +440,8 @@ bool ctkVTKConnection::deletionObserved()const
 void ctkVTKConnection::disconnect()
 {
   Q_D(ctkVTKConnection);
-  d->disconnect();
+  d->disconnectSlots();
+  d->disconnectVTKObject();
 }
 
 //-----------------------------------------------------------------------------
@@ -442,7 +449,8 @@ void ctkVTKConnection::vtkObjectDeleted()
 {
   Q_D(ctkVTKConnection);
   d->VTKObject = 0;
-  d->disconnect();
+  d->disconnectSlots();
+  d->disconnectVTKObject();
 }
 
 //-----------------------------------------------------------------------------
@@ -450,7 +458,8 @@ void ctkVTKConnection::qobjectDeleted()
 {
   Q_D(ctkVTKConnection);
   d->QtObject = 0;
-  d->disconnect();
+  d->disconnectSlots();
+  d->disconnectVTKObject();
 }
 
 //-----------------------------------------------------------------------------
