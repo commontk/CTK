@@ -52,7 +52,6 @@ ctkVTKConnectionPrivate::ctkVTKConnectionPrivate(ctkVTKConnection& object)
   this->Callback    = vtkSmartPointer<vtkCallbackCommand>::New();
   this->Callback->SetCallback(ctkVTKConnectionPrivate::DoCallback);
   this->Callback->SetClientData(this);
-  this->VTKObject   = 0;
   this->QtObject    = 0;
   this->VTKEvent    = vtkCommand::NoEvent;
   this->Priority    = 0.0;
@@ -111,10 +110,12 @@ void ctkVTKConnectionPrivate::connect()
       {
       this->VTKObject->AddObserver(vtkCommand::DeleteEvent, this->Callback);
       }
-    // Remove itself from its parent when vtkObject is deleted
-    QObject::connect(this->QtObject, SIGNAL(destroyed(QObject*)), 
-                     q, SLOT(qobjectDeleted()));
     }
+
+  // When Qt object is destroyed: (1) remove VTK observers and
+  // (2) set QtObject pointer to 0.
+  QObject::connect(this->QtObject, SIGNAL(destroyed(QObject*)),
+                   q, SLOT(qobjectDeleted()));
   this->Connected = true;
 }
 
@@ -160,7 +161,10 @@ void ctkVTKConnectionPrivate::disconnectVTKObject()
   if (this->VTKObject)
     {
     q->removeObserver(this->VTKObject, this->VTKEvent, this->Callback);
-    this->VTKObject->RemoveObservers(vtkCommand::DeleteEvent, this->Callback);
+    if (this->ObserveDeletion)
+      {
+      this->VTKObject->RemoveObservers(vtkCommand::DeleteEvent, this->Callback);
+      }
     }
 }
 
@@ -217,11 +221,7 @@ ctkVTKConnection::ctkVTKConnection(ctkVTKConnectionPrivate* pimpl, QObject* _par
 ctkVTKConnection::~ctkVTKConnection()
 {
   Q_D(ctkVTKConnection);
-  if (d->ObserveDeletion)
-    {
-    d->disconnectSlots();
-    d->disconnectVTKObject();
-    }
+  d->disconnectVTKObject();
 }
 
 //-----------------------------------------------------------------------------
@@ -242,7 +242,7 @@ QObject* ctkVTKConnection::object()const
 vtkObject* ctkVTKConnection::vtkobject() const
 {
   Q_D(const ctkVTKConnection);
-  return const_cast<vtkObject*>(d->VTKObject);
+  return const_cast<vtkObject*>(d->VTKObject.GetPointer());
 }
 
 //-----------------------------------------------------------------------------
@@ -454,7 +454,6 @@ bool ctkVTKConnection::deletionObserved()const
 void ctkVTKConnection::disconnect()
 {
   Q_D(ctkVTKConnection);
-  d->disconnectSlots();
   d->disconnectVTKObject();
 }
 
@@ -462,9 +461,7 @@ void ctkVTKConnection::disconnect()
 void ctkVTKConnection::vtkObjectDeleted()
 {
   Q_D(ctkVTKConnection);
-  d->VTKObject = 0;
   d->disconnectSlots();
-  d->disconnectVTKObject();
 }
 
 //-----------------------------------------------------------------------------
@@ -472,7 +469,6 @@ void ctkVTKConnection::qobjectDeleted()
 {
   Q_D(ctkVTKConnection);
   d->QtObject = 0;
-  d->disconnectSlots();
   d->disconnectVTKObject();
 }
 

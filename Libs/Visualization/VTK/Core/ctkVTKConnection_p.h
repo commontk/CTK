@@ -30,6 +30,7 @@ class QObject;
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 class vtkObject;
 class vtkCallbackCommand;
 
@@ -70,7 +71,7 @@ public:
   void execute(vtkObject* vtk_obj, unsigned long vtk_event, void* client_data, void* call_data);
 
   vtkSmartPointer<vtkCallbackCommand> Callback;
-  vtkObject*                          VTKObject;
+  vtkWeakPointer<vtkObject>           VTKObject;
   const QObject*                      QtObject;
   unsigned long                       VTKEvent;
   QString                             QtSlot;
