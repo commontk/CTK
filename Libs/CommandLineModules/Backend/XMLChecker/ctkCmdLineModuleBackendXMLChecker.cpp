@@ -114,7 +114,7 @@ QByteArray ctkCmdLineModuleBackendXMLChecker::rawXmlDescription(const QUrl& loca
     file.open(QFile::ReadOnly);
     return file.readAll();
   }
-  return d->m_HardCodedXML.toAscii();
+  return d->m_HardCodedXML.toLatin1();
 }
 
 

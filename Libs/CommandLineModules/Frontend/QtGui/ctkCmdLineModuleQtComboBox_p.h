@@ -18,38 +18,34 @@
 
 =============================================================================*/
 
-#include "ctkCmdLineModuleQtUiLoader.h"
+#ifndef CTKCMDLINEMODULEQTCOMBOBOX_P_H
+#define CTKCMDLINEMODULEQTCOMBOBOX_P_H
 
-#include <ctkCmdLineModuleQtComboBox_p.h>
-
-//-----------------------------------------------------------------------------
-ctkCmdLineModuleQtUiLoader::ctkCmdLineModuleQtUiLoader(QObject *parent)
-  : QUiLoader(parent)
-{
-
-}
-
-//-----------------------------------------------------------------------------
-ctkCmdLineModuleQtUiLoader::~ctkCmdLineModuleQtUiLoader()
-{
-
-}
+#include <QComboBox>
 
 
 //-----------------------------------------------------------------------------
-QWidget* ctkCmdLineModuleQtUiLoader::createWidget(const QString& className, QWidget* parent, const QString& name)
+/**
+ * \class ctkCmdLineModuleQtComboBox
+ * \brief Private subclass of QComboBox, providing the currentEnumeration and setCurrentEnumeration methods.
+ * \author m.clarkson@ucl.ac.uk
+ * \ingroup CommandLineModulesFrontendQtGui
+ */
+class ctkCmdLineModuleQtComboBox : public QComboBox
 {
-  QWidget* widget = NULL;
 
-  if (className == "QComboBox")
-  {
-    widget = new ctkCmdLineModuleQtComboBox(parent);
-    widget->setObjectName(name);
-  }
-  else
-  {
-    widget = QUiLoader::createWidget(className, parent, name);
-  }
+  Q_OBJECT
+  Q_PROPERTY(QString currentEnumeration READ currentEnumeration WRITE setCurrentEnumeration)
 
-  return widget;
-}
+public:
+
+  ctkCmdLineModuleQtComboBox(QWidget* parent = 0);
+
+  void setCurrentEnumeration(const QString& text);
+
+  QString currentEnumeration() const;
+
+};
+
+
+#endif // CTKCMDLINEMODULEQTCOMBOBOX_P_H

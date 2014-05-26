@@ -77,6 +77,11 @@ macro(ctkMacroBuildLib)
   #  message(i:${i})
   #endforeach()
 
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    # Add Qt include dirs and defines
+    include(${QT_USE_FILE})
+  endif()
+
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
 
@@ -126,11 +131,9 @@ macro(ctkMacroBuildLib)
     endif()
   else()
     QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
-    # Add Qt include dirs and defines
-    include(${QT_USE_FILE})
   endif()
   if(DEFINED MY_RESOURCES)
-    if(Qt5Core_FOUND)
+    if(CTK_QT_VERSION VERSION_GREATER "4")
       qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
     else()
       QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})

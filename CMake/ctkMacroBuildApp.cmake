@@ -69,6 +69,11 @@ macro(ctkMacroBuildApp)
     ${my_library_dirs}
     )
 
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    # Add Qt include dirs and defines
+    include(${QT_USE_FILE})
+  endif()
+
   # Make sure variable are cleared
   set(MY_UI_CPP)
   set(MY_MOC_CPP)

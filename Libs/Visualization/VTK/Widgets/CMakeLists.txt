@@ -25,15 +25,25 @@ set(KIT_SRCS
   ctkVTKAbstractView.cpp
   ctkVTKAbstractView.h
   ctkVTKAbstractView_p.h
+  ctkVTKColorTransferFunction.cpp
+  ctkVTKColorTransferFunction.h
+  ctkVTKCompositeFunction.cpp
+  ctkVTKCompositeFunction.h
   ctkVTKDataSetModel.cpp
   ctkVTKDataSetModel.h
   ctkVTKDataSetArrayComboBox.cpp
   ctkVTKDataSetArrayComboBox.h
+  ctkVTKHistogram.cpp
+  ctkVTKHistogram.h
+  ctkVTKLookupTable.cpp
+  ctkVTKLookupTable.h
   ctkVTKMagnifyView.cpp
   ctkVTKMagnifyView.h
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
+  ctkVTKPiecewiseFunction.cpp
+  ctkVTKPiecewiseFunction.h
   ctkVTKPropertyWidget.cpp
   ctkVTKPropertyWidget.h
   ctkVTKRenderView.cpp
@@ -63,11 +73,16 @@ set(KIT_MOC_SRCS
   ctkVTKAbstractMatrixWidget_p.h
   ctkVTKAbstractView.h
   ctkVTKAbstractView_p.h
+  ctkVTKColorTransferFunction.h
+  ctkVTKCompositeFunction.h
   ctkVTKDataSetArrayComboBox.h
   ctkVTKDataSetModel.h
+  ctkVTKHistogram.h
+  ctkVTKLookupTable.h
   ctkVTKMagnifyView.h
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.h
+  ctkVTKPiecewiseFunction.h
   ctkVTKPropertyWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h

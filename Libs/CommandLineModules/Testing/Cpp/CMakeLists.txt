@@ -5,8 +5,10 @@ set(_test_srcs)
 set(_test_mocs)
 
 if(CTK_LIB_CommandLineModules/Frontend/QtGui)
-  set(QT_USE_QTUITOOLS 1)
-  include(${QT_USE_FILE})
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    set(QT_USE_QTUITOOLS 1)
+    include(${QT_USE_FILE})
+  endif()
 
   if(CTK_LIB_CommandLineModules/Backend/LocalProcess)
     set(_test_cpp_files
@@ -93,6 +95,10 @@ endif()
 add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${_additional_link_libraries})
 add_dependencies(${KIT}CppTests ctkCmdLineTestModules)
+
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  target_link_libraries(${KIT}CppTests Qt5::Gui Qt5::Test)
+endif()
 
 if(TARGET CTKCommandLineModulesCoreCppTests)
   add_dependencies(${KIT}CppTests CTKCommandLineModulesCoreCppTests)

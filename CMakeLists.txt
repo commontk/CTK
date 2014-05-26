@@ -513,11 +513,14 @@ ctk_lib_option(CommandLineModules/Backend/LocalProcess
 ctk_lib_option(CommandLineModules/Backend/FunctionPointer
                "Build the Command Line Module back-end for function pointers" OFF)
 
+# The qRestAPI build system does not yet support Qt5
+if(CTK_QT_VERSION VERSION_LESS "5")
 ctk_lib_option(XNAT/Core
                "Build the XNAT Core library" OFF)
 
 ctk_lib_option(XNAT/Widgets
                "Build the XNAT Widgets library" OFF)
+endif()
 
 #ctk_lib_option(Visualization/XIP
 #               "Build the XIP library" OFF)
@@ -620,9 +623,11 @@ if(CTK_USE_QTTESTING)
                 CTK_BUILD_EXAMPLES)
 endif()
 
+if(CTK_QT_VERSION VERSION_LESS "5")
 ctk_app_option(ctkXnatTreeBrowser
                "Build the XNAT Tree Browser application" OFF
                CTK_BUILD_EXAMPLES)
+endif()
 
 # Save the set of enabled apps in a cache file
 set(_enabled_apps)

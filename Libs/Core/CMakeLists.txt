@@ -123,7 +123,6 @@ set(KIT_target_libraries)
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  find_package(Qt5Core REQUIRED)
   list(APPEND KIT_target_libraries Qt5::Core)
 endif()
 

@@ -31,6 +31,9 @@ class ctkMetaTypeTestActivator : public QObject,
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
+#if (QT_VERSION >= 0x50000)
+  Q_PLUGIN_METADATA(IID "org_commontk_metatypetest")
+#endif
 
 public:
 

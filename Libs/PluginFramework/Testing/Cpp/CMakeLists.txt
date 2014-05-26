@@ -20,3 +20,6 @@ set(lib_name ${fwtestutil_lib})
 add_library(${lib_name} SHARED ${SRCS} ${MY_MOC_CXX})
 target_link_libraries(${lib_name} ${fw_lib})
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  target_link_libraries(${lib_name} Qt5::Test)
+endif()

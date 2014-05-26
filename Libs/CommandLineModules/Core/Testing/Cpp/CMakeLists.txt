@@ -25,7 +25,7 @@ include_directories(
 set(Tests_MOC_CPP)
 set(Tests_UI_CPP)
 set(Tests_RESOURCES_SRCS)
-if (CTK_QT_VERSION VERSION_GREATER "4")
+if(CTK_QT_VERSION VERSION_GREATER "4")
   QT5_WRAP_CPP(Tests_MOC_CPP ${Tests_MOC_SRCS})
   QT5_GENERATE_MOCS(
     ctkCmdLineModuleManagerTest.cpp
@@ -48,6 +48,10 @@ else()
 endif()
 add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
+
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  target_link_libraries(${KIT}CppTests Qt5::Test)
+endif()
 
 #
 # Add Tests

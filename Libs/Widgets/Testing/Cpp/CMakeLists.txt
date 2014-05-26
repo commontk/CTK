@@ -247,7 +247,6 @@ add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  find_package(Qt5Test REQUIRED)
   target_link_libraries(${KIT}CppTests Qt5::Test)
 endif()
 

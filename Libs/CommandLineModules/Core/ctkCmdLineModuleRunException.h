@@ -26,7 +26,12 @@
 
 #include <ctkException.h>
 
+#if (QT_VERSION < 0x50000)
 #include <QtCore>
+#else
+#include <QtConcurrent>
+#endif
+
 
 /**
  * \class ctkCmdLineModuleRunException

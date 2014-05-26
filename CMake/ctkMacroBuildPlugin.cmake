@@ -59,7 +59,7 @@ macro(ctkMacroBuildPlugin)
   if(NOT DEFINED MY_EXPORT_DIRECTIVE)
     message(FATAL_ERROR "EXPORT_DIRECTIVE is mandatory")
   endif()
-  
+
   # Print a warning if the project name does not match the directory name
   get_filename_component(_dir_name ${CMAKE_CURRENT_SOURCE_DIR} NAME)
   string(REPLACE "." "_" _dir_name_with_ ${_dir_name})
@@ -69,12 +69,12 @@ macro(ctkMacroBuildPlugin)
 
   # Define library name
   set(lib_name ${PROJECT_NAME})
-  
+
   # Plug-in target names must contain at leas one _
   if(NOT lib_name MATCHES _)
     message(FATAL_ERROR "The plug-in project name ${lib_name} must contain at least one '_' character")
   endif()
-  
+
   # Plugin are expected to be shared library
   set(MY_LIBRARY_TYPE "SHARED")
 
@@ -143,8 +143,12 @@ macro(ctkMacroBuildPlugin)
     ${my_includes}
     )
 
-  # Add Qt include dirs and defines
-  include(${QT_USE_FILE})
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    # Add Qt include dirs and defines
+    include(${QT_USE_FILE})
+  else()
+    find_package(Qt5LinguistTools REQUIRED)
+  endif()
 
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
@@ -227,7 +231,11 @@ macro(ctkMacroBuildPlugin)
   if(MY_TRANSLATIONS)
     set_source_files_properties(${MY_TRANSLATIONS}
                                 PROPERTIES OUTPUT_LOCATION ${_translations_dir})
-    QT4_CREATE_TRANSLATION(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+    if(CTK_QT_VERSION VERSION_GREATER "4")
+      qt5_create_translation(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+    else()
+      QT4_CREATE_TRANSLATION(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+    endif()
   endif()
 
   if(_plugin_qm_files)
@@ -281,6 +289,11 @@ macro(ctkMacroBuildPlugin)
     ${_plugin_qm_files}
     )
 
+  if(MY_TEST_PLUGIN AND CTK_QT_VERSION VERSION_GREATER "4")
+    find_package(Qt5Test REQUIRED)
+    target_link_libraries(${lib_name} Qt5::Test)
+  endif()
+
   # Set the output directory for the plugin
   if(MY_OUTPUT_DIR)
     set(output_dir_suffix "/${MY_OUTPUT_DIR}")
@@ -293,7 +306,7 @@ macro(ctkMacroBuildPlugin)
       # Put plug-ins by default into a "plugins" subdirectory
       set(CTK_PLUGIN_${type}_OUTPUT_DIRECTORY "${CMAKE_${type}_OUTPUT_DIRECTORY}/plugins")
     endif()
-    
+
     if(IS_ABSOLUTE "${CTK_PLUGIN_${type}_OUTPUT_DIRECTORY}")
       set(plugin_${type}_output_dir "${CTK_PLUGIN_${type}_OUTPUT_DIRECTORY}${output_dir_suffix}")
     elseif(CMAKE_${type}_OUTPUT_DIRECTORY)

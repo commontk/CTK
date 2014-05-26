@@ -26,7 +26,7 @@
 #include <QScopedPointer>
 
 // CTK includes
-#include <ctkErrorLogModel.h>
+#include <ctkErrorLogAbstractMessageHandler.h>
 #include "ctkImageProcessingITKCoreExport.h"
 
 class ctkITKErrorLogMessageHandlerPrivate;

@@ -335,9 +335,6 @@ set(KIT_resources
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  find_package(Qt5Widgets REQUIRED)
-  find_package(Qt5Xml REQUIRED)
-  find_package(Qt5OpenGL REQUIRED)
   list(APPEND KIT_target_libraries Qt5::Widgets Qt5::Xml Qt5::OpenGL)
 endif()
 

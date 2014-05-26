@@ -18,38 +18,26 @@
 
 =============================================================================*/
 
-#include "ctkCmdLineModuleQtUiLoader.h"
-
-#include <ctkCmdLineModuleQtComboBox_p.h>
+#include "ctkCmdLineModuleQtComboBox_p.h"
 
 //-----------------------------------------------------------------------------
-ctkCmdLineModuleQtUiLoader::ctkCmdLineModuleQtUiLoader(QObject *parent)
-  : QUiLoader(parent)
-{
+ctkCmdLineModuleQtComboBox::ctkCmdLineModuleQtComboBox(QWidget* parent)
+  : QComboBox(parent)
+{}
 
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleQtComboBox::setCurrentEnumeration(const QString& text)
+{
+  int i = findText(text);
+  if (i == -1)
+  {
+    return;
+  }
+  this->setCurrentIndex(i);
 }
 
 //-----------------------------------------------------------------------------
-ctkCmdLineModuleQtUiLoader::~ctkCmdLineModuleQtUiLoader()
+QString ctkCmdLineModuleQtComboBox::currentEnumeration() const
 {
-
-}
-
-
-//-----------------------------------------------------------------------------
-QWidget* ctkCmdLineModuleQtUiLoader::createWidget(const QString& className, QWidget* parent, const QString& name)
-{
-  QWidget* widget = NULL;
-
-  if (className == "QComboBox")
-  {
-    widget = new ctkCmdLineModuleQtComboBox(parent);
-    widget->setObjectName(name);
-  }
-  else
-  {
-    widget = QUiLoader::createWidget(className, parent, name);
-  }
-
-  return widget;
+  return this->currentText();
 }

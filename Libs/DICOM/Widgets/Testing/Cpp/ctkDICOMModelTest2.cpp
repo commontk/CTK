@@ -45,14 +45,14 @@
 int ctkDICOMModelTest2( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   if (argc <= 2)
     {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
     std::cerr << "Usage: qctkDICOMModelTest1 <scratch.db> <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   try
   {
     ctkDICOMDatabase myCTK( argv[1] );
@@ -62,7 +62,7 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
       std::cerr << "Error when initializing the data base: " << argv[2]
           << " error: " << myCTK.lastError().toStdString();
     }
- 
+
     ctkDICOMModel model;
     model.setDatabase(myCTK.database());
 
@@ -72,12 +72,17 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
     layout->addWidget(&viewer);
     topLevel.setLayout(layout);
     viewer.setModel(&model);
-    
+
     QHeaderView* previousHeaderView = viewer.header();
     qDebug() << "previous: " << previousHeaderView->isHidden();
     ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, &viewer);
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     headerView->setClickable(previousHeaderView->isClickable());
     headerView->setMovable(previousHeaderView->isMovable());
+#else
+    headerView->setSectionsClickable(previousHeaderView->sectionsClickable());
+    headerView->setSectionsMovable(previousHeaderView->sectionsMovable());
+#endif
     headerView->setHighlightSections(previousHeaderView->highlightSections());
     headerView->checkableModelHelper()->setPropagateDepth(-1);
     headerView->checkableModelHelper()->setForceCheckability(true);

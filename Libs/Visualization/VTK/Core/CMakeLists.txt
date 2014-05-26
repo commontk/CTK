@@ -18,36 +18,21 @@ set(KIT_export_directive "CTK_VISUALIZATION_VTK_CORE_EXPORT")
 
 # Source files
 set(KIT_SRCS
-  ctkVTKColorTransferFunction.cpp
-  ctkVTKColorTransferFunction.h
-  ctkVTKCompositeFunction.cpp
-  ctkVTKCompositeFunction.h
   ctkVTKConnection.cpp
   ctkVTKConnection.h
   ctkVTKErrorLogMessageHandler.cpp
   ctkVTKErrorLogMessageHandler.h
-  ctkVTKHistogram.cpp
-  ctkVTKHistogram.h
-  ctkVTKLookupTable.cpp
-  ctkVTKLookupTable.h
   ctkVTKObject.h
   ctkVTKObjectEventsObserver.cpp
   ctkVTKObjectEventsObserver.h
-  ctkVTKPiecewiseFunction.cpp
-  ctkVTKPiecewiseFunction.h
   vtkLightBoxRendererManager.cpp
   vtkLightBoxRendererManager.h
   )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
-  ctkVTKColorTransferFunction.h
   ctkVTKConnection.h
-  ctkVTKCompositeFunction.h
-  ctkVTKLookupTable.h
-  ctkVTKHistogram.h
   ctkVTKObjectEventsObserver.h
-  ctkVTKPiecewiseFunction.h
   )
 
 # UI files

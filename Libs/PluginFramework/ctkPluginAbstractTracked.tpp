@@ -277,7 +277,11 @@ void ctkPluginAbstractTracked<S,T,R>::modified()
 template<class S, class T, class R>
 int ctkPluginAbstractTracked<S,T,R>::getTrackingCount() const
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   return trackingCount;
+#else
+  return trackingCount.load();
+#endif
 }
 
 //----------------------------------------------------------------------------
