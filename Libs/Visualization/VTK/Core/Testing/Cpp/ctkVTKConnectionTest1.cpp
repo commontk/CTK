@@ -244,17 +244,5 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
   obj4->Delete();
   obj5->Delete();
 
-  {
-  const char* measurementName = "time_connection2-over-time_connection1";
-  double ratio = time_connection2 / time_connection1;
-  displayDartMeasurement(measurementName, ratio);
-#ifdef QT_NO_DEBUG // In Debug mode, the ratio can be over 2 !
-  // Ideally a ratio ~= 1.
-  if (ratio > 1.2)
-    {
-    return EXIT_FAILURE;
-    }
-#endif
-  }
   return EXIT_SUCCESS;
 }
