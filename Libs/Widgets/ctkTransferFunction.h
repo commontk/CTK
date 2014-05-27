@@ -29,14 +29,14 @@
 
 /// CTK includes
 #include "ctkPimpl.h"
-#include "ctkCoreExport.h"
+#include "ctkWidgetsExport.h"
 
 class ctkTransferFunctionPrivate;
 class ctkTransferFunctionRepresentation;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Core
-struct CTK_CORE_EXPORT ctkPoint
+/// \ingroup Widgets
+struct CTK_WIDGETS_EXPORT ctkPoint
 {
   ctkPoint()
     :X(0),Value(0)
@@ -44,7 +44,7 @@ struct CTK_CORE_EXPORT ctkPoint
   }
   ctkPoint(qreal x, const QVariant& v)
     :X(x),Value(v)
-  {  
+  {
   }
   qreal X;
   // QColor or qreal.
@@ -52,10 +52,10 @@ struct CTK_CORE_EXPORT ctkPoint
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Core
-/// assumes the mapping is linear by default, if not, then subclasses must be 
+/// \ingroup Widgets
+/// assumes the mapping is linear by default, if not, then subclasses must be
 /// used
-struct CTK_CORE_EXPORT ctkControlPoint
+struct CTK_WIDGETS_EXPORT ctkControlPoint
 {
   virtual ~ctkControlPoint();
   inline const qreal& x()const {return this->P.X;}
@@ -64,8 +64,8 @@ struct CTK_CORE_EXPORT ctkControlPoint
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Core
-struct CTK_CORE_EXPORT ctkBezierControlPoint : public ctkControlPoint
+/// \ingroup Widgets
+struct CTK_WIDGETS_EXPORT ctkBezierControlPoint : public ctkControlPoint
 {
   virtual ~ctkBezierControlPoint();
   ctkPoint P1;
@@ -73,26 +73,26 @@ struct CTK_CORE_EXPORT ctkBezierControlPoint : public ctkControlPoint
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Core
-struct CTK_CORE_EXPORT ctkNonLinearControlPoint : public ctkControlPoint
+/// \ingroup Widgets
+struct CTK_WIDGETS_EXPORT ctkNonLinearControlPoint : public ctkControlPoint
 {
   virtual ~ctkNonLinearControlPoint();
   QList<ctkPoint> SubPoints;
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Core
-class CTK_CORE_EXPORT ctkTransferFunction: public QObject
+/// \ingroup Widgets
+class CTK_WIDGETS_EXPORT ctkTransferFunction: public QObject
 {
   Q_OBJECT
 public:
   ctkTransferFunction(QObject* parent = 0);
   virtual ~ctkTransferFunction();
-  
+
   virtual ctkControlPoint* controlPoint(int index)const = 0;
   inline QVariant value(int index)const;
   virtual QVariant value(qreal pos)const = 0;
-  
+
   virtual int count()const = 0;
   virtual bool isDiscrete()const = 0;
   virtual bool isEditable()const = 0;
@@ -108,11 +108,11 @@ public:
 
   virtual void removeControlPoint( qreal pos ) = 0;
 
-  /// 
+  ///
   /// be careful with it, as changing the value might require
   /// more changes to ctkControlPoint.
   virtual void setControlPointPos(int index, qreal pos)=0;
-  /// 
+  ///
   /// be careful with it, as changing the value might require
   /// more changes to ctkControlPoint.
   virtual void setControlPointValue(int index, const QVariant& value)=0;

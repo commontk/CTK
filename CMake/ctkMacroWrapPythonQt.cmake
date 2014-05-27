@@ -164,7 +164,11 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     VERBATIM
     )
 
-  QT4_WRAP_CPP(${TARGET}_MOC_CXX ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_h_filename})
+  if (CTK_QT_VERSION VERSION_EQUAL "4")
+    QT5_WRAP_CPP(${TARGET}_MOC_CXX ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_h_filename})
+  else()
+    QT4_WRAP_CPP(${TARGET}_MOC_CXX ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_h_filename})
+  endif()
 
   # The following files are generated
   set_source_files_properties(

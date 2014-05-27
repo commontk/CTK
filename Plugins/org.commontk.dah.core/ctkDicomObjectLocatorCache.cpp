@@ -215,7 +215,7 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomObjectLocatorCache::getData(con
   foreach(const QUuid& uuid, objectUUIDs)
     {
     ctkDicomAppHosting::ObjectLocator objectLocator;
-    bool found = this->find(uuid, objectLocator);
+    bool found = this->find(uuid.toString(), objectLocator);
     if (!found)
       {
       // Use the empty objectLocator

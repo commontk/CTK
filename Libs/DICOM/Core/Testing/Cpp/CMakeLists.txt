@@ -28,6 +28,10 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 add_executable(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  target_link_libraries(${KIT}CppTests Qt5::Widgets)
+endif()
+
 #
 # Add Tests
 #

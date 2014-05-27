@@ -36,6 +36,9 @@ class ctkActivatorSL1 :
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
+#ifdef HAVE_QT5
+  Q_PLUGIN_METADATA(IID "pluginSL1_test")
+#endif
   Q_PROPERTY(bool serviceAdded READ serviceAdded)
   Q_PROPERTY(bool serviceRemoved READ serviceRemoved)
 

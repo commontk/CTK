@@ -39,4 +39,6 @@ void ctkTestPluginAActivator::stop(ctkPluginContext* context)
   Q_UNUSED(context)
 }
 
-Q_EXPORT_PLUGIN2(pluginA_test, ctkTestPluginAActivator)
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+Q_EXPORT_PLUGIN2(pluginA1_test, ctkTestPluginAActivator)
+#endif

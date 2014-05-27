@@ -109,9 +109,9 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
   QString errorMsg;
 
   ctkErrorLogModel model;
-  ctkErrorLogModel::TerminalOutputs currentTerminalOutputEnabled = model.terminalOutputs();
+  ctkErrorLogTerminalOutput::TerminalOutputs currentTerminalOutputEnabled = model.terminalOutputs();
   errorMsg = checkBoolean(__LINE__, "TerminalOutputEnabled",
-                          currentTerminalOutputEnabled, ctkErrorLogModel::None);
+                          currentTerminalOutputEnabled, ctkErrorLogTerminalOutput::None);
   if (!errorMsg.isEmpty())
     {
     model.disableAllMsgHandler();
@@ -120,11 +120,11 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
     return EXIT_FAILURE;
     }
 
-  model.setTerminalOutputs(ctkErrorLogModel::All);
+  model.setTerminalOutputs(ctkErrorLogTerminalOutput::All);
 
   currentTerminalOutputEnabled = model.terminalOutputs();
   errorMsg = checkBoolean(__LINE__, "TerminalOutputEnabled",
-                          currentTerminalOutputEnabled, ctkErrorLogModel::All);
+                          currentTerminalOutputEnabled, ctkErrorLogTerminalOutput::All);
   if (!errorMsg.isEmpty())
     {
     model.disableAllMsgHandler();

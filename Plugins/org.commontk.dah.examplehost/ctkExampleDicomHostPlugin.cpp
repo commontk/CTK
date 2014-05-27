@@ -36,7 +36,7 @@ ctkExampleDicomHostPlugin::ctkExampleDicomHostPlugin()
 //----------------------------------------------------------------------------
 ctkExampleDicomHostPlugin::~ctkExampleDicomHostPlugin()
 {
-  
+
 }
 
 //----------------------------------------------------------------------------
@@ -64,6 +64,6 @@ ctkPluginContext* ctkExampleDicomHostPlugin::getPluginContext() const
   return this->Context;
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
 Q_EXPORT_PLUGIN2(org_commontk_dah_examplehost, ctkExampleDicomHostPlugin)
-
-
+#endif

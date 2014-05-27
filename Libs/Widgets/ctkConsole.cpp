@@ -54,6 +54,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QClipboard>
 #include <QCompleter>
 #include <QKeyEvent>
+#include <QMimeData>
 #include <QPointer>
 #include <QTextCursor>
 #include <QVBoxLayout>

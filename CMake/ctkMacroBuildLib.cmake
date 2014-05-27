@@ -28,7 +28,7 @@
 #! \ingroup CMakeAPI
 macro(ctkMacroBuildLib)
   ctkMacroParseArguments(MY
-    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
+    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;GENERATE_MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
     "ENABLE_QTTESTING"
     ${ARGN}
     )
@@ -52,7 +52,7 @@ macro(ctkMacroBuildLib)
 
   # Define library name
   set(lib_name ${MY_NAME})
-  
+
   # Library target names must not contain a '_' (reserved for plug-in target names)
   if(lib_name MATCHES _)
     message(FATAL_ERROR "The library name ${lib_name} must not contain a '_' character.")
@@ -74,8 +74,10 @@ macro(ctkMacroBuildLib)
     ${my_includes}
     )
 
-  # Add Qt include dirs and defines
-  include(${QT_USE_FILE})
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    # Add Qt include dirs and defines
+    include(${QT_USE_FILE})
+  endif()
 
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
@@ -105,13 +107,34 @@ macro(ctkMacroBuildLib)
   if(MY_MOC_SRCS)
     # this is a workaround for Visual Studio. The relative include paths in the generated
     # moc files can get very long and can't be resolved by the MSVC compiler.
-    foreach(moc_src ${MY_MOC_SRCS})
-      QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
-    endforeach()
+    if(CTK_QT_VERSION VERSION_GREATER "4")
+      foreach(moc_src ${MY_MOC_SRCS})
+        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
+      endforeach()
+    else()
+      foreach(moc_src ${MY_MOC_SRCS})
+        QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+      endforeach()
+    endif()
   endif()
-  QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+  if(MY_GENERATE_MOC_SRCS)
+    QT4_GENERATE_MOCS(${MY_GENERATE_MOC_SRCS})
+  endif()
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    if(Qt5Widgets_FOUND)
+      qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
+    elseif(MY_UI_FORMS)
+      message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
+    endif()
+  else()
+    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+  endif()
   if(DEFINED MY_RESOURCES)
-    QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    if(CTK_QT_VERSION VERSION_GREATER "4")
+      qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
+    else()
+      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
   endif()
 
   source_group("Resources" FILES

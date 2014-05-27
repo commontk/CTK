@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QProcess>
-#include <QtGui/QVBoxLayout>
+#include <QVBoxLayout>
 
 // CTK includes
 #include "ctkHostAppExampleWidget.h"

@@ -30,7 +30,6 @@
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkServiceException.h"
 
-#include <QApplication>
 #include <QFileInfo>
 #include <QUrl>
 

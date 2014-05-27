@@ -45,12 +45,23 @@
 // DCMTK includes
 #include <dcmimage.h>
 
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
 #include <QDesktopServices>
+#else
+#include <QStandardPaths>
+#endif
+
 //----------------------------------------------------------------------------
-ctkCommandLineModuleAppLogic::ctkCommandLineModuleAppLogic(const QString & modulelocation):
-ctkDicomAbstractApp(ctkCommandLineModuleAppPlugin::getPluginContext()), AppWidget(0),
-ModuleLocation(modulelocation), ModuleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)), 
-ModuleFrontend(0)
+ctkCommandLineModuleAppLogic::ctkCommandLineModuleAppLogic(const QString & modulelocation)
+  : ctkDicomAbstractApp(ctkCommandLineModuleAppPlugin::getPluginContext()),
+    AppWidget(0),
+    ModuleLocation(modulelocation),
+    #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
+    ModuleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)),
+    #else
+    ModuleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QStandardPaths::writableLocation(QStandardPaths::CacheLocation)),
+    #endif
+    ModuleFrontend(0)
 {
   connect(this, SIGNAL(startProgress()), this, SLOT(onStartProgress()), Qt::QueuedConnection);
   connect(this, SIGNAL(resumeProgress()), this, SLOT(onResumeProgress()), Qt::QueuedConnection);
@@ -106,7 +117,7 @@ void ctkCommandLineModuleAppLogic::do_something()
   ui.CLModuleName->setText(ModuleLocation);
 
   ctkCmdLineModuleReference moduleRef = ModuleManager.registerModule(ModuleLocation);
-  
+
   ModuleFrontend = new ctkCmdLineModuleFrontendQtGui(moduleRef);
 
   QObject* guiHandle = ModuleFrontend->guiHandle();
@@ -141,7 +152,7 @@ void ctkCommandLineModuleAppLogic::onStartProgress()
   // we need to create the button before we receive data from
   // the host, which happens immediately after calling
   // getHostInterface()->notifyStateChanged
-  do_something(); 
+  do_something();
 
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
 }
@@ -244,7 +255,7 @@ void ctkCommandLineModuleAppLogic::onLoadDataClicked()
     return;
   const ctkDicomAppHosting::Patient& firstpatient = *data.patients.begin();
   QList<QUuid> uuidlist = ctkDicomAvailableDataHelper::getAllUuids(firstpatient);
-  
+
   QString transfersyntax("1.2.840.10008.1.2.1");
   QList<QString> transfersyntaxlist;
   transfersyntaxlist.append(transfersyntax);
@@ -297,7 +308,7 @@ void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
   if(pixmap!=NULL)
   {
     QString templatefilename = QDir(OutputLocation).absolutePath();
-    if(templatefilename.isEmpty()==false) templatefilename.append('/'); 
+    if(templatefilename.isEmpty()==false) templatefilename.append('/');
     templatefilename.append("ctkdahscXXXXXX.jpg");
     QString inputFileName, outputFileName;
     {
@@ -334,8 +345,8 @@ void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
     qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
 
     ctkDicomAppHosting::AvailableData resultData;
-    ctkDicomAvailableDataHelper::addToAvailableData(resultData, 
-      objectLocatorCache(), 
+    ctkDicomAvailableDataHelper::addToAvailableData(resultData,
+      objectLocatorCache(),
       outputFileName);
 
     bool success = publishData(resultData, true);

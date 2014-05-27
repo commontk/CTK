@@ -20,11 +20,7 @@
 
 // Qt includes
 #include <QCoreApplication>
-#include <QDebug>
 #include <QDir>
-#include <QFileInfo>
-#include <QTreeView>
-#include <QSqlQuery>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -36,7 +32,7 @@
 int ctkDICOMIndexerTest1( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
-  
+
   ctkDICOMDatabase database;
   ctkDICOMIndexer indexer;
 
@@ -50,7 +46,7 @@ int ctkDICOMIndexerTest1( int argc, char * argv [] )
 
   // make sure it doesn't crash
   indexer.refreshDatabase(database, QString());
-  
+
   // make sure it doesn't crash
   indexer.refreshDatabase(database, QDir::tempPath());
 

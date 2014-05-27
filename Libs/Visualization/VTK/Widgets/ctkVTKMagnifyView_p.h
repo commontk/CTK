@@ -22,7 +22,7 @@
 #define __ctkVTKMagnifyView_p_h
 
 // Qt includes
-#include <QObject>
+#include <QPointer>
 class QPointF;
 class QTimerEvent;
 
@@ -67,7 +67,7 @@ protected:
   struct EventHandlerStruct
     {
     PendingEventType EventType;
-    QWeakPointer<QVTKWidget> Widget;
+    QPointer<QVTKWidget> Widget;
     QPointF Position;
     int UpdateInterval;
     int TimerId;

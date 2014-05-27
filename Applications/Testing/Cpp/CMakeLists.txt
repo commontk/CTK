@@ -30,10 +30,14 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   # Add Tests
   #
   add_executable(ctkDICOMApplicationTest1 ctkDICOMApplicationTest1.cpp)
-  target_link_libraries(ctkDICOMApplicationTest1 ${QT_LIBRARIES})
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    target_link_libraries(ctkDICOMApplicationTest1 ${QT_LIBRARIES})
+  else()
+    target_link_libraries(ctkDICOMApplicationTest1 Qt5::Core)
+  endif()
 
-  ADD_TEST( NAME ctkDICOMApplicationTest1 
-            COMMAND 
+  ADD_TEST( NAME ctkDICOMApplicationTest1
+            COMMAND
             $<TARGET_FILE:ctkDICOMApplicationTest1>
                ${DCMTK_DCMQRSCP_EXECUTABLE}
                ${DCMQRSCP_CONFIG}

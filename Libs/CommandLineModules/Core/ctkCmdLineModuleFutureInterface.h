@@ -27,6 +27,13 @@
 #include "ctkCmdLineModuleResult.h"
 
 #include <QFutureInterface>
+#if (QT_VERSION < 0x50000)
+#include <QtCore>
+#else
+#include <QtConcurrent>
+#include <qresultstore.h>
+#endif
+
 
 class ctkCmdLineModuleFuture;
 class ctkCmdLineModuleFutureInterfacePrivate;
@@ -81,10 +88,17 @@ private:
 
   friend struct ctkCmdLineModuleFutureWatcherPrivate;
 
+#if (QT_VERSION < 0x50000)
   QtConcurrent::ResultStore<ctkCmdLineModuleResult> &resultStore()
   { return static_cast<QtConcurrent::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
   const QtConcurrent::ResultStore<ctkCmdLineModuleResult> &resultStore() const
   { return static_cast<const QtConcurrent::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
+#else
+  QtPrivate::ResultStore<ctkCmdLineModuleResult> &resultStore()
+  { return static_cast<QtPrivate::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
+  const QtPrivate::ResultStore<ctkCmdLineModuleResult> &resultStore() const
+  { return static_cast<const QtPrivate::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
+#endif
 
   ctkCmdLineModuleFutureInterfacePrivate* d;
 };
@@ -96,8 +110,11 @@ inline void QFutureInterface<ctkCmdLineModuleResult>::reportResult(const ctkCmdL
         return;
     }
 
+#if (QT_VERSION < 0x50000)
     QtConcurrent::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
-
+#else
+    QtPrivate::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
+#endif
 
     if (store.filterMode()) {
         const int resultCountBefore = store.count();
@@ -121,7 +138,11 @@ inline void QFutureInterface<ctkCmdLineModuleResult>::reportResults(const QVecto
         return;
     }
 
+#if (QT_VERSION < 0x50000)
     QtConcurrent::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
+#else
+    QtPrivate::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
+#endif
 
     if (store.filterMode()) {
         const int resultCountBefore = store.count();
@@ -163,7 +184,11 @@ inline QList<ctkCmdLineModuleResult> QFutureInterface<ctkCmdLineModuleResult>::r
     QList<ctkCmdLineModuleResult> res;
     QMutexLocker lock(mutex());
 
+#if (QT_VERSION <= 0x50000)
     QtConcurrent::ResultIterator<ctkCmdLineModuleResult> it = resultStore().begin();
+#else
+    QtPrivate::ResultIterator<ctkCmdLineModuleResult> it = resultStore().begin();
+#endif
     while (it != resultStore().end()) {
         res.append(it.value());
         ++it;

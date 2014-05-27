@@ -45,4 +45,12 @@ ctkTestPluginSActivator::~ctkTestPluginSActivator()
 
 }
 
+//----------------------------------------------------------------------------
+ctkTestPluginSActivator::ctkTestPluginSActivator()
+{
+
+}
+
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 Q_EXPORT_PLUGIN2(pluginS_test, ctkTestPluginSActivator)
+#endif

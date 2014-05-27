@@ -36,7 +36,7 @@ ctkActivatorSL1::ctkActivatorSL1()
 //----------------------------------------------------------------------------
 ctkActivatorSL1::~ctkActivatorSL1()
 {
-  
+
 }
 
 //----------------------------------------------------------------------------
@@ -95,6 +95,6 @@ void ctkActivatorSL1::removedService(const ctkServiceReference& reference, ctkFo
   qDebug() << "Removing reference =" << reference;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 Q_EXPORT_PLUGIN2(pluginSL1_test, ctkActivatorSL1)
-
-
+#endif

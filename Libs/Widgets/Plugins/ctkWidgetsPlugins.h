@@ -69,12 +69,15 @@
 #include "ctkWorkflowWidgetStepPlugin.h"
 
 /// \class Group the plugins in one library
-class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins : public QObject,
-      public QDesignerCustomWidgetCollectionInterface
+class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins
+  : public QObject
+  , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
-
+  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
+#ifdef HAVE_QT5
+  Q_PLUGIN_METADATA(IID "org.commontk.Widgets")
+#endif
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {

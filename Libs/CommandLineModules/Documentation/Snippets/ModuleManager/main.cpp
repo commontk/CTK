@@ -28,7 +28,11 @@
 #include "ctkCmdLineModuleRunException.h"
 
 #include <QApplication>
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
 #include <QDesktopServices>
+#else
+#include <QStandardPaths>
+#endif
 #include <QWidget>
 #include <QUrl>
 #include <QDebug>
@@ -47,7 +51,11 @@ int main(int argc, char** argv)
         // Use "strict" validation mode, rejecting modules with non-valid XML descriptions.
         ctkCmdLineModuleManager::STRICT_VALIDATION,
         // Use the default cache location for this application
+      #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
         QDesktopServices::storageLocation(QDesktopServices::CacheLocation)
+      #else
+        QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+      #endif
         );
   // [instantiate-mm]
 

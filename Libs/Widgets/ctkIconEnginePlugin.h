@@ -21,14 +21,14 @@
 #ifndef __ctkIconEnginePlugin_h
 #define __ctkIconEnginePlugin_h
 
+#include "ctkWidgetsExport.h"
 // Qt includes
-#include <QIconEngineV2>
-#include <QIconEnginePluginV2>
+# include <QIconEngine>
+# include <QIconEnginePlugin>
 
 // CTK includes
 #include "ctkPimpl.h"
 #include "ctkPixmapIconEngine.h"
-#include "ctkWidgetsExport.h"
 
 class ctkIconEnginePluginPrivate;
 class ctkIconEnginePrivate;
@@ -42,14 +42,16 @@ class ctkIconEnginePrivate;
 /// where the plugin must be located in "MyApp-build/plugins/iconengines"
 /// don't forget to declare in the cpp file:
 ///   Q_EXPORT_PLUGIN2(yourpluginName, ctkIconEnginePlugin)
-class CTK_WIDGETS_EXPORT ctkIconEnginePlugin: public QIconEnginePluginV2
+class CTK_WIDGETS_EXPORT ctkIconEnginePlugin
+  : public QIconEnginePlugin
 {
   Q_OBJECT;
 public:
   ctkIconEnginePlugin(QObject* parent = 0);
   virtual ~ctkIconEnginePlugin();
 
-  virtual QIconEngineV2* create(const QString& filename=QString());
+  virtual QIconEngine* create(const QString& filename);
+
   /// Support all the Qt image formats by default
   virtual QStringList keys()const;
 
@@ -87,7 +89,7 @@ private:
 /// any icon in a different directory:
 /// \code
 ///  ctkIconEngine* autoIconEngine;
-///  autoIconEngine->setSizeDirectories(QStringList() << "Large" << "Small"; 
+///  autoIconEngine->setSizeDirectories(QStringList() << "Large" << "Small";
 ///  QIcon editIcon(autoIconEngine);
 ///  editIcon.addFile(":/Icons/Small/edit.png");
 /// \endcode
@@ -111,10 +113,10 @@ public:
   QStringList sizeDirectories()const;
 
   virtual QString key()const;
- 
+
 protected:
   QScopedPointer<ctkIconEnginePrivate> d_ptr;
- 
+
 private:
   Q_DECLARE_PRIVATE(ctkIconEngine);
   Q_DISABLE_COPY(ctkIconEngine);

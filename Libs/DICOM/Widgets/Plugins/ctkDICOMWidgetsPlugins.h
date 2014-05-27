@@ -36,6 +36,9 @@ class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMWidgetsPlugins
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
+#ifdef HAVE_QT5
+  Q_PLUGIN_METADATA(IID "org.commontk.DICOM")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:

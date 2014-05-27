@@ -21,7 +21,6 @@
 // Qt includes
 #include <QApplication>
 #include <QAbstractItemView>
-#include <QCleanlooksStyle>
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QItemDelegate>

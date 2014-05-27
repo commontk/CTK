@@ -18,7 +18,7 @@
 #
 ###########################################################################
 
-cmake_minimum_required(VERSION 2.8.4)
+cmake_minimum_required(VERSION 2.8.9)
 
 #-----------------------------------------------------------------------------
 # Superbuild
@@ -480,18 +480,23 @@ ctk_lib_option(DICOM/Widgets
 ctk_lib_option(ImageProcessing/ITK/Core
                "Build the ITK Core library" OFF)
 
+if(CTK_QT_VERSION VERSION_LESS "5")
 ctk_lib_option(Scripting/Python/Core
                "Build the Python Core library" OFF
                CTK_ENABLE_Python_Wrapping)
 
 ctk_lib_option(Scripting/Python/Widgets
                "Build the Python Widgets library" OFF)
+endif()
 
+# VTK libraries have not yet been tested with Qt5
+if(CTK_QT_VERSION VERSION_LESS "5")
 ctk_lib_option(Visualization/VTK/Core
                "Build the VTK Core library" OFF)
 
 ctk_lib_option(Visualization/VTK/Widgets
                "Build the VTK Widgets library" OFF)
+endif()
 
 ctk_lib_option(CommandLineModules/Core
                "Build the Command Line Module core library" OFF)
@@ -573,9 +578,11 @@ ctk_app_option(ctkExampleHostedApp
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
 
+if(CTK_QT_VERSION VERSION_LESS "5")
 ctk_app_option(ctkEventBusDemo
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
+endif()
 
 ctk_app_option(ctkCommandLineModuleExplorer
                "Build the Command Line Module Explorer" OFF
@@ -608,11 +615,13 @@ ctk_app_option(ctkDICOMObjectViewer
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
 
+if(CTK_QT_VERSION VERSION_LESS "5")
 ctk_app_option(ctkSimplePythonShell
                "Build the DICOM example application" OFF
                CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
+endif()
 
-if(CTK_USE_QTTESTING)
+if(CTK_USE_QTTESTING AND CTK_QT_VERSION VERSION_LESS "5")
   ctk_app_option(ctkQtTesting
                 "Build the ctkQtTesting example application" OFF
                 CTK_BUILD_EXAMPLES)
@@ -641,9 +650,12 @@ set(plugin_list
   org.commontk.configadmin
   org.commontk.eventadmin
   org.commontk.log
-  org.commontk.log4qt
   org.commontk.metatype
   )
+
+if(CTK_QT_VERSION VERSION_LESS "5")
+  list(APPEND plugin_list org.commontk.log4qt)
+endif()
 
 foreach(_plugin ${plugin_list})
   ctk_plugin_option(${_plugin} "Build the ${_plugin} plugin." OFF)
@@ -675,9 +687,11 @@ ctk_plugin_option(org.commontk.dah.examplehost
                   CTK_APP_ctkExampleHost)
 
 # Plug-ins related to the EventBus demo application
+if(CTK_QT_VERSION VERSION_LESS "5")
 ctk_plugin_option(org.commontk.eventbus
                   "Build the org.commontk.eventbus plugin." OFF
                   CTK_APP_ctkEventBusDemo)
+endif()
 
 # Add the PluginsContrib repo to the build system
 option(CTK_USE_CONTRIBUTED_PLUGINS OFF "Use CTK plug-ins from the PluginsContrib repository")
@@ -724,6 +738,10 @@ ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
 ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
                   CTK_LIB_Scripting/Python/Core)
 mark_as_superbuild(CTK_ENABLE_Python_Wrapping)
+if(CTK_QT_VERSION VERSION_GREATER "4" AND CTK_ENABLE_Python_Wrapping)
+  message(WARNING "Disabling CTK_ENABLE_Python_Wrapping because Qt5 support is still missing")
+  set(CTK_ENABLE_Python_Wrapping OFF CACHE BOOL "Wrap CTK classes using Qt meta-object system into Python language" FORCE)
+endif()
 
 # Build examples
 # Create the logical expression containing the minium set of required options

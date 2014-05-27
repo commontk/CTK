@@ -31,6 +31,10 @@ set(KIT_target_libraries)
 
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND KIT_target_libraries Qt5::Widgets)
+endif()
+
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}

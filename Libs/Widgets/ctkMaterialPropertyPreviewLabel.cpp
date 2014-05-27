@@ -40,15 +40,15 @@ protected:
   ctkMaterialPropertyPreviewLabel* const q_ptr;
 public:
   ctkMaterialPropertyPreviewLabelPrivate(ctkMaterialPropertyPreviewLabel& object);
-  
+
   QColor Color;
   double Opacity;
- 
+
   double Ambient;
   double Diffuse;
   double Specular;
   double SpecularPower;
- 
+
   double GridOpacity;
 };
 
@@ -62,7 +62,7 @@ ctkMaterialPropertyPreviewLabelPrivate::ctkMaterialPropertyPreviewLabelPrivate(c
   this->Diffuse = 1.0;
   this->Specular = 0.0;
   this->SpecularPower = 1;
-  
+
   this->GridOpacity = 0.6;
 }
 
@@ -89,7 +89,7 @@ ctkMaterialPropertyPreviewLabel::ctkMaterialPropertyPreviewLabel(
   d->Ambient = ambient;
   d->Diffuse = diffuse;
   d->Specular = specular;
-  d->SpecularPower = specularPower;  
+  d->SpecularPower = specularPower;
 }
 
 //-----------------------------------------------------------------------------
@@ -221,7 +221,7 @@ void ctkMaterialPropertyPreviewLabel::paintEvent(QPaintEvent* event)
   QRect cr = this->contentsRect();
   QImage image(cr.size(), QImage::Format_ARGB32_Premultiplied);
   this->draw(image);
-  
+
   QPainter widgetPainter(this);
   this->drawFrame(&widgetPainter);
   widgetPainter.drawImage(cr.left(), cr.top(), image);
@@ -239,7 +239,7 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
   qreal specular_power = d->SpecularPower;
 
   int size = qMin(image.width(), image.height());
-  int size8 = qMax(size / 8, 1); 
+  int size8 = qMax(size / 8, 1);
   qreal size2 = 0.5 * size;
   qreal radius2 = size2*size2 - 1;
 
@@ -250,7 +250,7 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
       {
       int iGrid = i / size8;
       int jGrid = j / size8;
-      
+
       if (((iGrid / 2) * 2 == iGrid &&
            (jGrid / 2) * 2 == jGrid) ||
           ((iGrid / 2) * 2 != iGrid &&
@@ -272,7 +272,7 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
         pt.setX( (i-size2) / (size2-1) );
         pt.setY( (j-size2) / (size2-1) );
         pt.setZ( sqrt(qMax(1. - pt.x()*pt.x() - pt.y()*pt.y(), 0.)) );
-        
+
         QVector3D normal = pt;
         normal.normalize();
 
@@ -287,7 +287,7 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
         view.setY(-pt.y());
         view.setZ(5 - pt.z());
         view.normalize();
-        
+
         qreal dot = QVector3D::dotProduct(normal, light);
         QVector3D ref;
         ref.setX( 2.*normal.x()*dot - light.x());
@@ -296,16 +296,16 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
         ref.normalize();
 
         qreal diffuseComp = qMax(diffuse * dot, 0.);
-        
-        qreal specularDot = qMax(QVector3D::dotProduct(ref, view), 0.);
-        
+
+        qreal specularDot = qMax(static_cast<qreal>(QVector3D::dotProduct(ref, view)), static_cast<qreal>(0));
+
         qreal specularComp = specular*pow(specularDot, specular_power);
-        
+
         QVector3D intensity;
         intensity.setX( qMin((ambient + diffuseComp)*d->Color.redF() + specularComp, static_cast<qreal>(1.)));
         intensity.setY( qMin((ambient + diffuseComp)*d->Color.greenF() + specularComp, static_cast<qreal>(1.)));
         intensity.setZ( qMin((ambient + diffuseComp)*d->Color.blueF() + specularComp, static_cast<qreal>(1.)));
-        
+
         if (opacity == 1.)
           {
           rgba = qRgba(static_cast<unsigned char>(255. * intensity.x() * opacity),

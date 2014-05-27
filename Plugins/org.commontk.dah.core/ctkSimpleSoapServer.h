@@ -50,7 +50,11 @@ public Q_SLOTS:
 
 protected:
 
+#if (QT_VERSION < 0x50000)
   virtual void incomingConnection(int socketDescriptor);
+#else
+  virtual void incomingConnection(qintptr socketDescriptor);
+#endif
 
 };
 

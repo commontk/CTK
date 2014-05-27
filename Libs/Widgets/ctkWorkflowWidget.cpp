@@ -21,8 +21,8 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
+#include <QPointer>
 #include <QStyle>
-#include <QWeakPointer>
 
 // CTK includes
 #include "ctkPushButton.h"
@@ -43,7 +43,7 @@ public:
   ctkWorkflowWidgetPrivate();
   ~ctkWorkflowWidgetPrivate();
 
-  QWeakPointer<ctkWorkflow>   Workflow;
+  QPointer<ctkWorkflow> Workflow;
 
   ctkWorkflowGroupBox*        WorkflowGroupBox;
   ctkWorkflowButtonBoxWidget* ButtonBoxWidget;
@@ -129,7 +129,7 @@ void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)
                         this, SLOT(onStepRegistered(ctkWorkflowStep)));
     }
 
-  d->Workflow = QWeakPointer<ctkWorkflow>(newWorkflow);
+  d->Workflow = newWorkflow;
 
   if (!d->Workflow.isNull())
     {

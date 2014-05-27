@@ -76,6 +76,10 @@ include(${CTK_PLUGIN_USE_FILE})
 # CTK external projects variables
 @CTK_SUPERBUILD_EP_VARS_CONFIG@
 
+# Qt configuration
+set(CTK_QT_VERSION "@CTK_QT_VERSION@")
+set(CTK_QT5_COMPONENTS @CTK_QT5_COMPONENTS@)
+
 # Update CMake module path so that calling "find_package(DCMTK)" works as expected 
 # after calling "find_package(CTK)"
 # Ideally projects like DCMTK or PythonQt should provide both "Config" and "Use" files.

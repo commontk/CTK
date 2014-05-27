@@ -32,12 +32,16 @@ set(KIT_resources
   Resources/ctkCmdLineModulesFrontendQtWebKit.qrc
 )
 
-set(QT_USE_QTWEBKIT 1)
-include(${QT_USE_FILE})
-
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
+
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND KIT_target_libraries Qt5::WebKitWidgets)
+else()
+  set(QT_USE_QTWEBKIT 1)
+  include(${QT_USE_FILE})
+endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

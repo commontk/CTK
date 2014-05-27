@@ -66,7 +66,11 @@ void ctkSliderWidgetTester::testUI()
   slider.setValue(26.2110001);
   slider.setPrefix("A: ");
   slider.show();
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&slider);
+#else
   QTest::qWaitForWindowShown(&slider);
+#endif
   QObject::connect(&slider, SIGNAL(valueChanged(double)),
                    &slider, SLOT(setValue(double)), Qt::QueuedConnection);
 
@@ -160,7 +164,11 @@ void ctkSliderWidgetTester::testDecimalsByShortcuts()
   slider.setValue( -2.145195007324205 );
 
   slider.show();
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&slider);
+#else
   QTest::qWaitForWindowShown(&slider);
+#endif
   //qApp->exec();
   //QSignalSpy spy(&slider, SIGNAL(decimalsChanged(int)));
 
@@ -181,7 +189,11 @@ void ctkSliderWidgetTester::testValueChangedWithNoTracking()
   slider.setValue((slider.maximum() + slider.minimum()) / 2);
 
   slider.show();
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&slider);
+#else
   QTest::qWaitForWindowShown(&slider);
+#endif
 
   slider.setTracking(false);
   QSignalSpy spy(&slider, SIGNAL(valueChanged(double)));

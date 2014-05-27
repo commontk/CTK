@@ -35,7 +35,7 @@ public:
 
 //------------------------------------------------------------------------------
 ctkIconEnginePlugin::ctkIconEnginePlugin(QObject* parentObject)
- :QIconEnginePluginV2(parentObject)
+  : QIconEnginePlugin(parentObject)
   , d_ptr(new ctkIconEnginePluginPrivate)
 {
 }
@@ -46,7 +46,7 @@ ctkIconEnginePlugin::~ctkIconEnginePlugin()
 }
 
 //------------------------------------------------------------------------------
-QIconEngineV2* ctkIconEnginePlugin::create(const QString& fileName)
+QIconEngine* ctkIconEnginePlugin::create(const QString& fileName)
 {
   Q_D(ctkIconEnginePlugin);
   Q_UNUSED(fileName);

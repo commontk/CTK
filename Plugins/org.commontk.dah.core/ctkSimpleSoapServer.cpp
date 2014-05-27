@@ -32,7 +32,11 @@ ctkSimpleSoapServer::ctkSimpleSoapServer(QObject *parent) :
 }
 
 //----------------------------------------------------------------------------
+#if (QT_VERSION < 0x50000)
 void ctkSimpleSoapServer::incomingConnection(int socketDescriptor)
+#else
+void ctkSimpleSoapServer::incomingConnection(qintptr socketDescriptor)
+#endif
 {
   qDebug() << "New incoming connection";
   ctkSoapConnectionRunnable* runnable = new ctkSoapConnectionRunnable(socketDescriptor);

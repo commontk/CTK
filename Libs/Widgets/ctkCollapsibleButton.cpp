@@ -20,7 +20,9 @@
 
 // Qt includes
 #include <QApplication>
-#include <QCleanlooksStyle>
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+# include <QCleanlooksStyle>
+#endif
 #include <QDebug>
 #include <QLayout>
 #include <QMouseEvent>
@@ -628,11 +630,13 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
   fopt.init(this);
   // HACK: on some styles, the frame doesn't exactly touch the button.
   // this is because the button has some kind of extra border.
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   if (qobject_cast<QCleanlooksStyle*>(this->style()) != 0)
     {
     fopt.rect.setTop(buttonHeight - 1);
     }
   else
+#endif
     {
     fopt.rect.setTop(buttonHeight);
     }

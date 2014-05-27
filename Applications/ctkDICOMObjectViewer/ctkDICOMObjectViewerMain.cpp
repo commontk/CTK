@@ -34,24 +34,24 @@
 #include <QFileDialog>
 #include <QString>
 
-int main(int argv, char** argc)
+int main(int argc, char** argv)
 {
-  QApplication app(argv, argc);
+  QApplication app(argc, argv);
 
   qApp->setOrganizationName("CTK");
   qApp->setOrganizationDomain("commontk.org");
   qApp->setApplicationName("ctkDICOMObjectViewer");
 
   QString s;
-  if( QApplication::argc() > 1 )
+  if( argc > 1 )
     {
-    s = QApplication::argv()[1];
+    s = argv[1];
     }
   else
     {
     s = QFileDialog::getOpenFileName( 0,
      "Choose an image file", ".",
-     "DCM (*)" 
+     "DCM (*)"
      );
     if( s.size() == 0 )
       {

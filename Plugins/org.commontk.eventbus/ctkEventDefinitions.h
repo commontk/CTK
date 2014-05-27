@@ -42,7 +42,7 @@ class ctkBusEvent;
         ctkBusEvent *properties = new ctkBusEvent(topic, ctkEventBus::ctkEventTypeLocal, ctkEventBus::ctkSignatureTypeSignal, static_cast<QObject*>(sender), signature); \
         bool ok = ctkEventBus::ctkEventBusManager::instance()->addEventProperty(*properties);\
         if(!ok) {\
-            qWarning("%s", tr("Some problem occourred during the signal registration with ID '%1'.").arg(topic).toAscii().data());\
+            qWarning("%s", tr("Some problem occourred during the signal registration with ID '%1'.").arg(topic).toLatin1().data());\
             if(properties) {delete properties; properties = NULL;} \
             }\
     }
@@ -52,7 +52,7 @@ class ctkBusEvent;
         ctkBusEvent *properties = new ctkBusEvent(topic, ctkEventBus::ctkEventTypeRemote, ctkEventBus::ctkSignatureTypeSignal, static_cast<QObject*>(sender), signature); \
         bool ok =  ctkEventBus::ctkEventBusManager::instance()->addEventProperty(*properties);\
         if(!ok) {\
-            qWarning("%s", tr("Some problem occourred during the signal registration with ID '%1'.").arg(topic).toAscii().data());\
+            qWarning("%s", tr("Some problem occourred during the signal registration with ID '%1'.").arg(topic).toLatin1().data());\
             if(properties) {delete properties; properties = NULL;} \
         }\
     }
@@ -62,7 +62,7 @@ class ctkBusEvent;
         ctkBusEvent *properties = new ctkBusEvent(topic, ctkEventBus::ctkEventTypeLocal, ctkEventBus::ctkSignatureTypeCallback, static_cast<QObject*>(observer), signature); \
         bool ok =  ctkEventBus::ctkEventBusManager::instance()->addEventProperty(*properties);\
         if(!ok) {\
-            qWarning("%s", tr("Some problem occourred during the callback registration with ID '%1'.").arg(topic).toAscii().data());\
+            qWarning("%s", tr("Some problem occourred during the callback registration with ID '%1'.").arg(topic).toLatin1().data());\
             if(properties) {delete properties; properties = NULL;} \
         }\
     }
@@ -72,7 +72,7 @@ class ctkBusEvent;
         ctkBusEvent *properties = new ctkBusEvent(topic, ctkEventBus::ctkEventTypeRemote, ctkEventBus::ctkSignatureTypeCallback, static_cast<QObject*>(sender), signature); \
         bool ok =  ctkEventBus::ctkEventBusManager::instance()->addEventProperty(*properties);\
         if(!ok) {\
-            qWarning("%s", tr("Some problem occourred during the callback registration with ID '%1'.").arg(topic).toAscii().data());\
+            qWarning("%s", tr("Some problem occourred during the callback registration with ID '%1'.").arg(topic).toLatin1().data());\
             if(properties) {delete properties; properties = NULL;} \
         }\
     }

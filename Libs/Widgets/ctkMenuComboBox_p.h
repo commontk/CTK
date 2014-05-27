@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QComboBox>
-#include <QWeakPointer>
+#include <QPointer>
 
 // CTK includes
 #include "ctkMenuComboBox.h"
@@ -46,7 +46,7 @@ public:
 Q_SIGNALS:
   void popupShown();
 public:
-  QWeakPointer<QMenu>  Menu;
+  QPointer<QMenu>  Menu;
 };
 
 // -------------------------------------------------------------------------
@@ -86,7 +86,7 @@ protected:
 
   ctkMenuComboBoxInternal*    MenuComboBox;
   ctkCompleter*               SearchCompleter;
-  QWeakPointer<QMenu>         Menu;
+  QPointer<QMenu>             Menu;
   QToolButton*                SearchButton;
 };
 

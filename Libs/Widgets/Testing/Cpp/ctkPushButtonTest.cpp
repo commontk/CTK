@@ -20,12 +20,13 @@
 
 // Qt includes
 #include <QApplication>
-#include <QCleanlooksStyle>
 #include <QHBoxLayout>
-#include <QPlastiqueStyle>
 #include <QSignalSpy>
 #include <QTimer>
-#include <QWindowsStyle>
+
+#if (QT_VERSION < 0x50000)
+#include <QCleanlooksStyle>
+#endif
 
 // CTK includes
 #include "ctkPushButton.h"
@@ -44,7 +45,9 @@ private slots:
 // ----------------------------------------------------------------------------
 void ctkPushButtonTester::testDefaults()
 {
+#if (QT_VERSION < 0x50000)
   QApplication::setStyle( new QCleanlooksStyle );
+#endif
 
   ctkPushButton button("text");
 
@@ -52,7 +55,11 @@ void ctkPushButtonTester::testDefaults()
   QCOMPARE(button.iconAlignment(), Qt::AlignLeft|Qt::AlignVCenter);
 
   button.show();
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&button);
+#else
   QTest::qWaitForWindowShown(&button);
+#endif
   //qApp->exec();
 }
 

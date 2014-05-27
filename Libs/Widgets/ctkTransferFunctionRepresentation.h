@@ -30,14 +30,14 @@
 /// CTK includes
 #include "ctkPimpl.h"
 #include "ctkTransferFunction.h"
-#include "ctkCoreExport.h"
+#include "ctkWidgetsExport.h"
 
 class ctkTransferFunction;
 class ctkTransferFunctionRepresentationPrivate;
 
 //-----------------------------------------------------------------------------
-/// \ingroup Core
-class CTK_CORE_EXPORT ctkTransferFunctionRepresentation: public QObject
+/// \ingroup Widgets
+class CTK_WIDGETS_EXPORT ctkTransferFunctionRepresentation: public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QColor verticalGradientColor READ verticalGradientColor WRITE setVerticalGradientColor)

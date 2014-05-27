@@ -21,7 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QMouseEvent>
-#include <QWeakPointer>
+#include <QPointer>
 
 // CTK includes
 #include "ctkPopupWidget.h"
@@ -29,7 +29,7 @@
 #include "ctkValueProxy.h"
 #include "ui_ctkSliderWidget.h"
 
-// STD includes 
+// STD includes
 #include <cmath>
 
 //-----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ public:
   bool   BlockSetSliderValue;
   ctkSliderWidget::SynchronizeSiblings SynchronizeMode;
   ctkPopupWidget* SliderPopup;
-  QWeakPointer<ctkValueProxy> Proxy;
+  QPointer<ctkValueProxy> Proxy;
 };
 
 // --------------------------------------------------------------------------

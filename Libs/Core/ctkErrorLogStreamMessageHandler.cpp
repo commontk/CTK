@@ -21,6 +21,7 @@
 // Qt includes
 #include <QMutexLocker>
 #include <QThread>
+#include <QHash>
 
 // CTK includes
 #include "ctkErrorLogStreamMessageHandler.h"

@@ -46,9 +46,9 @@
 // STD includes
 #include <cstdlib>
 
-int main(int argv, char** argc)
+int main(int argc, char** argv)
 {
-  QApplication app(argv, argc);
+  QApplication app(argc, argv);
 
   qApp->setOrganizationName("CTK");
   qApp->setOrganizationDomain("commontk.org");
@@ -115,9 +115,9 @@ int main(int argv, char** argc)
   QMainWindow mainWindow;
   Ui::MainWindow ui;
   ui.setupUi(&mainWindow);
-  if ( QApplication::argc() > 1 )
+  if ( argc > 1 )
     {
-    ui.controlWidget->setAppFileName(QApplication::argv()[1]);
+    ui.controlWidget->setAppFileName(argv[1]);
     }
 
 //  mainWindow.addDockWidget(static_cast<Qt::DockWidgetArea>(4),new ctkHostAppExampleWidget());

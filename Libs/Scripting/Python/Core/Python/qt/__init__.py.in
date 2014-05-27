@@ -1,18 +1,7 @@
 """ This module loads all the classes from the wrapped Qt libraries into
 its namespace."""
 
-__kits_to_load = [
-'Core',
-'Gui', 
-'Network', 
-'OpenGL', 
-'Sql',
-'Svg',
-'UiTools',
-'WebKit',
-'Xml', 
-'XmlPatterns'
-]
+__kits_to_load = [ @QT_PYTHON_WRAPPED_LIBRARIES@ ]
 
 # Set to True when debugging
 _CTK_VERBOSE_IMPORT = False
@@ -23,6 +12,6 @@ for kit in __kits_to_load:
    except ImportError as detail:
      if _CTK_VERBOSE_IMPORT:
        print detail
-   
+
 # Removing things the user shouldn't have to see.
 del __kits_to_load, _CTK_VERBOSE_IMPORT

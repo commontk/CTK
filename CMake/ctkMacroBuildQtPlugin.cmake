@@ -49,6 +49,7 @@ macro(ctkMacroBuildQtPlugin)
 
   # --------------------------------------------------------------------------
   # Include dirs
+
   set(my_includes
     ${QT_QTDESIGNER_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -85,11 +86,27 @@ macro(ctkMacroBuildQtPlugin)
   set(MY_QRC_SRCS)
 
   # Wrap
-  QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
-  QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
   set(MY_QRC_SRCS "")
-  if(DEFINED MY_RESOURCES)
-    QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} TARGET ${lib_name} OPTIONS -DHAVE_QT5)
+    if(DEFINED MY_RESOURCES)
+      qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+  else()
+    QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
+    if(DEFINED MY_RESOURCES)
+      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+  endif()
+
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    if(Qt5Widgets_FOUND)
+      qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
+    elseif(MY_UI_FORMS)
+      message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
+    endif()
+  else()
+    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
   endif()
 
   source_group("Resources" FILES
@@ -164,6 +181,10 @@ macro(ctkMacroBuildQtDesignerPlugin)
   ctkMacroBuildQtPlugin(
     PLUGIN_DIR designer
     ${ARGN})
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    find_package(Qt5Designer REQUIRED)
+    target_link_libraries(${lib_name} Qt5::Designer)
+  endif()
 endmacro()
 
 macro(ctkMacroBuildQtIconEnginesPlugin)

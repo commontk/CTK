@@ -84,7 +84,11 @@ void ctkDoubleSpinBoxTester::testUI()
   spinBox.setPrefix("A: ");
   spinBox.setSetMode(ctkDoubleSpinBox::SetAlways);
   spinBox.show();
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&spinBox);
+#else
   QTest::qWaitForWindowShown(&spinBox);
+#endif
   QObject::connect(&spinBox, SIGNAL(valueChanged(double)),
                    &spinBox, SLOT(setValue(double)), Qt::QueuedConnection);
 

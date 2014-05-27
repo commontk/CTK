@@ -23,6 +23,7 @@
 #define CTKPLUGINMANIFEST_P_H
 
 #include <QHash>
+#include <QStringList>
 
 class QIODevice;
 
