@@ -141,6 +141,18 @@ public:
   /// \sa useDepthPeeling
   bool useDepthPeeling()const;
 
+  /// Set multisampling default.
+  /// WARNING: Multisampling should be set *before* creation of the
+  /// OpenGL context (e.g., initializing the rendering window) in order
+  /// to have an effect. Consider using setUseMultisamples before
+  /// instantiating ctkVTKAbstractView objects.
+  /// \sa useMultiSamples
+  static void setUseMultiSamples(bool);
+
+  /// Return the current multisamples default
+  /// \sa setUseMultiSamples()
+  static bool useMultiSamples();
+
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
   virtual bool hasHeightForWidth()const;
