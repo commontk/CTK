@@ -139,8 +139,7 @@ ctkVTKObjectEventsObserverPrivate::ctkVTKObjectEventsObserverPrivate(ctkVTKObjec
 {
   this->StrictTypeCheck = false;
   this->AllBlocked = false;
-  // ObserveDeletion == false  hasn't been that well tested...
-  this->ObserveDeletion = true;
+  this->ObserveDeletion = false;
 }
 
 //-----------------------------------------------------------------------------
