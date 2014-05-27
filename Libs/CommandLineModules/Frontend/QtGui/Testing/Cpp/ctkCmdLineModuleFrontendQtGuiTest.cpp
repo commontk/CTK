@@ -58,7 +58,7 @@ public:
   virtual QString description() const { return "Test Mock-up"; }
   virtual QList<QString> schemes() const { return QList<QString>() << "test"; }
   virtual qint64 timeStamp(const QUrl& /*location*/) const { return 0; }
-  virtual QByteArray rawXmlDescription(const QUrl& location)
+  virtual QByteArray rawXmlDescription(const QUrl& location, int /*timeout*/)
   {
     return UrlToXml[location];
   }

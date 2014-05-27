@@ -150,7 +150,7 @@ public:
 
   virtual qint64 timeStamp(const QUrl &location) const;
 
-  virtual QByteArray rawXmlDescription(const QUrl& location);
+  virtual QByteArray rawXmlDescription(const QUrl& location, int timeout);
 
   QList<QUrl> registeredFunctionPointers() const;
 

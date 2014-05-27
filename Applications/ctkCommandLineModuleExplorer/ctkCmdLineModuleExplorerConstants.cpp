@@ -25,3 +25,4 @@ const QString ctkCmdLineModuleExplorerConstants::KEY_SEARCH_PATHS = "ModuleSearc
 const QString ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES = "RegisteredModules";
 
 const QString ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES = "MaxParallelModules";
+const QString ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS = "XmlTimeoutSeconds";

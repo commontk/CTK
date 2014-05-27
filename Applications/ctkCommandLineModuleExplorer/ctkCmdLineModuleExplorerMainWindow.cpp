@@ -123,8 +123,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   }
 
   // Register persistent modules
-  QFuture<void> future = QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
-                                              ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
+  QFuture<ctkCmdLineModuleReference> future = QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
+                                                                   ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
 
   // Start watching directories
   directoryWatcher.setDebug(true);
@@ -134,7 +134,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
 
   pollPauseTimer.start();
 
-  future.waitForFinished();
+  //ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(future,
+  //                                                            moduleManager.validationMode());
 }
 
 ctkCLModuleExplorerMainWindow::~ctkCLModuleExplorerMainWindow()
@@ -235,7 +236,7 @@ void ctkCLModuleExplorerMainWindow::on_actionOptions_triggered()
     settingsDialog = new ctkSettingsDialog(this);
     settings.restoreState(settingsDialog->objectName(), *settingsDialog);
     settingsDialog->setSettings(&settings);
-    ctkSettingsPanel* generalModulePanel = new ctkCmdLineModuleExplorerGeneralModuleSettings();
+    ctkSettingsPanel* generalModulePanel = new ctkCmdLineModuleExplorerGeneralModuleSettings(&moduleManager);
     settingsDialog->addPanel(generalModulePanel);
     settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings(&directoryWatcher), generalModulePanel);
     settingsDialog->addPanel(new ctkCmdLineModuleExplorerModulesSettings(&moduleManager), generalModulePanel);
@@ -253,7 +254,7 @@ void ctkCLModuleExplorerMainWindow::on_actionLoad_triggered()
   future.waitForFinished();
   this->unsetCursor();
 
-  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(fileNames, future.results(),
+  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(future,
                                                               this->moduleManager.validationMode());
 }
 

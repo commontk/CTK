@@ -22,8 +22,9 @@
 #include "ctkCmdLineModuleConcurrentHelpers.h"
 
 #include "ctkCmdLineModuleManager.h"
-#include "ctkException.h"
+#include "ctkCmdLineModuleRunException.h"
 
+#include <qtconcurrentexception.h>
 #include <QUrl>
 #include <QDebug>
 
@@ -46,13 +47,21 @@ ctkCmdLineModuleReference ctkCmdLineModuleConcurrentRegister::operator()(const Q
   {
     return this->ModuleManager->registerModule(moduleUrl);
   }
+  catch (const QtConcurrent::Exception& e)
+  {
+    if (this->Debug)
+    {
+      qDebug() << e.what();
+    }
+    throw e;
+  }
   catch (const ctkException& e)
   {
     if (this->Debug)
     {
       qDebug() << e;
     }
-    return ctkCmdLineModuleReference();
+    throw ctkCmdLineModuleRunException(moduleUrl, 0, e.what());
   }
   catch (...)
   {
@@ -60,8 +69,9 @@ ctkCmdLineModuleReference ctkCmdLineModuleConcurrentRegister::operator()(const Q
     {
       qDebug() << "Registering module" << moduleUrl << "failed with an unknown exception.";
     }
-    return ctkCmdLineModuleReference();
+    throw ctkCmdLineModuleRunException(moduleUrl, 0, "Unknown exception");
   }
+  return ctkCmdLineModuleReference();
 }
 
 //----------------------------------------------------------------------------

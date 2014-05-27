@@ -30,6 +30,7 @@ struct ctkCmdLineModuleExplorerConstants
   static const QString KEY_REGISTERED_MODULES;
 
   static const QString KEY_MAX_PARALLEL_MODULES;
+  static const QString KEY_XML_TIMEOUT_SECONDS;
 };
 
 #endif // CTKCMDLINEMODULEEXPLORERCONSTANTS_H

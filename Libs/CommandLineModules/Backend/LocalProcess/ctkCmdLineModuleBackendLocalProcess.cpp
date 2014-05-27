@@ -29,6 +29,7 @@
 #include "ctkCmdLineModuleProcessTask.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleRunException.h"
+#include "ctkCmdLineModuleTimeoutException.h"
 
 #include "ctkUtils.h"
 #include <iostream>
@@ -165,16 +166,23 @@ qint64 ctkCmdLineModuleBackendLocalProcess::timeStamp(const QUrl &location) cons
 }
 
 //----------------------------------------------------------------------------
-QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &location)
+QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &location, int timeout)
 {
   QProcess process;
   process.setReadChannel(QProcess::StandardOutput);
   process.start(location.toLocalFile(), QStringList("--xml"));
 
-  if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
-      process.error() != QProcess::UnknownError)
+  if (!process.waitForFinished(timeout))
   {
-    throw ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString());
+    if (process.error() == QProcess::Timedout)
+    {
+      throw ctkCmdLineModuleTimeoutException(location, process.errorString());
+    }
+    else if (process.exitStatus() == QProcess::CrashExit ||
+             process.error() != QProcess::UnknownError)
+    {
+      throw ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString());
+    }
   }
 
   process.waitForReadyRead();

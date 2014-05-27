@@ -20,6 +20,7 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleExplorerUtils.h"
+#include "ctkCmdLineModuleRunException.h"
 
 #include <QPainter>
 #include <QObject>
@@ -39,23 +40,34 @@ QPixmap ctkCmdLineModuleExplorerUtils::createIconOverlay(const QPixmap &base, co
   return result;
 }
 
-void ctkCmdLineModuleExplorerUtils:: messageBoxModuleRegistration(const QStringList& modulePaths,
-                                                                 const QList<ctkCmdLineModuleReference>& moduleRefs,
-                                                                 ctkCmdLineModuleManager::ValidationMode validationMode)
+void ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(const QFuture<ctkCmdLineModuleReference>& moduleRefsFuture,
+                                                                  ctkCmdLineModuleManager::ValidationMode validationMode)
 {
-  Q_ASSERT(modulePaths.size() == moduleRefs.size());
-
   QString errorMsg;
-  for(int i = 0; i < modulePaths.size(); ++i)
+  QFutureIterator<ctkCmdLineModuleReference> futureIter(moduleRefsFuture);
+  while(futureIter.hasNext())
   {
-    if (!moduleRefs.at(i))
+    try
     {
-      errorMsg += QObject::tr("Failed to register ") + modulePaths.at(i) + "\n\n";
-    }
-    else if (!moduleRefs.at(i).xmlValidationErrorString().isEmpty() &&
+      const ctkCmdLineModuleReference& moduleRef = futureIter.next();
+      if (!moduleRef)
+      {
+        errorMsg += QObject::tr("Failed to register ") + moduleRef.location().toString() + "\n\n";
+      }
+      else if (!moduleRef.xmlValidationErrorString().isEmpty() &&
              validationMode == ctkCmdLineModuleManager::STRICT_VALIDATION)
+      {
+        errorMsg += QObject::tr("Failed to register ") + moduleRef.location().toString() + ":\n" + moduleRef.xmlValidationErrorString() + "\n\n";
+      }
+    }
+    catch (const ctkCmdLineModuleRunException& e)
     {
-      errorMsg += QObject::tr("Failed to register ") + modulePaths.at(i) + ":\n" + moduleRefs.at(i).xmlValidationErrorString() + "\n\n";
+      errorMsg += QObject::tr("Failed to register module ") + e.location().toString() + ":\n" + e.message() + "\n\\n";
+    }
+
+    catch (const std::exception& e)
+    {
+      errorMsg += QObject::tr("Failed to register module:\n") + e.what() + "\n\n";
     }
   }
 

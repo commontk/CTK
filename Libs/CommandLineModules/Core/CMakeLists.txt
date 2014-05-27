@@ -40,6 +40,7 @@ set(KIT_SRCS
   ctkCmdLineModuleXmlProgressWatcher.cpp
   ctkCmdLineModuleReference.cpp
   ctkCmdLineModuleRunException.cpp
+  ctkCmdLineModuleTimeoutException.cpp
   ctkCmdLineModuleXmlException.cpp
   ctkCmdLineModuleXmlMsgHandler_p.h
   ctkCmdLineModuleXmlMsgHandler.cpp
