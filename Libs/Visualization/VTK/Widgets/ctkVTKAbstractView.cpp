@@ -37,6 +37,8 @@
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKAbstractView");
 //--------------------------------------------------------------------------
+bool ctkVTKAbstractViewPrivate::UseMultiSamples = false;  // Default for static var
+//--------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
 // ctkVTKAbstractViewPrivate methods
@@ -98,7 +100,9 @@ void ctkVTKAbstractViewPrivate::setupRendering()
 {
   Q_ASSERT(this->RenderWindow);
   this->RenderWindow->SetAlphaBitPlanes(1);
-  this->RenderWindow->SetMultiSamples(0);
+  const int maxSamples = vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples();
+  this->RenderWindow->SetMultiSamples(
+      ctkVTKAbstractView::useMultiSamples() ? maxSamples : 0);
   this->RenderWindow->StereoCapableWindowOn();
 
   this->VTKWidget->SetRenderWindow(this->RenderWindow);
@@ -445,7 +449,7 @@ bool ctkVTKAbstractView::useDepthPeeling()const
 }
 
 //----------------------------------------------------------------------------
-void ctkVTKAbstractView::setUseDepthPeeling(bool use)
+void ctkVTKAbstractView::setUseDepthPeeling(bool useDepthPeeling)
 {
   Q_D(ctkVTKAbstractView);
   vtkRenderer* renderer = d->firstRenderer();
@@ -453,8 +457,21 @@ void ctkVTKAbstractView::setUseDepthPeeling(bool use)
     {
     return;
     }
-  this->renderWindow()->SetAlphaBitPlanes( use ? 1 : 0);
+  this->renderWindow()->SetAlphaBitPlanes( useDepthPeeling ? 1 : 0);
+  const int maxSamples = vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples();
   this->renderWindow()->SetMultiSamples(
-    use ? 0 : vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples());
-  renderer->SetUseDepthPeeling(use ? 1 : 0);
+    (useDepthPeeling || !ctkVTKAbstractView::useMultiSamples()) ? 0 : maxSamples);
+  renderer->SetUseDepthPeeling(useDepthPeeling ? 1 : 0);
+}
+
+//----------------------------------------------------------------------------
+bool ctkVTKAbstractView::useMultiSamples()
+{
+  return ctkVTKAbstractViewPrivate::UseMultiSamples;
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::setUseMultiSamples(bool use)
+{
+  ctkVTKAbstractViewPrivate::UseMultiSamples = use;
 }
