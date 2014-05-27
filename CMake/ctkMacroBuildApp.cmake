@@ -85,7 +85,7 @@ macro(ctkMacroBuildApp)
       # this is a workaround for Visual Studio. The relative include paths in the generated
       # moc files can get very long and can't be resolved by the MSVC compiler.
       foreach(moc_src ${MY_MOC_SRCS})
-        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
       endforeach()
     endif()
     QT5_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})

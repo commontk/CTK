@@ -153,7 +153,7 @@ void ctkXnatSessionPrivate::setDefaultHttpHeaders()
   */
   if (!sessionId.isEmpty())
   {
-    rawHeaders[HEADER_COOKIE] = QString("JSESSIONID=%1").arg(sessionId).toAscii();
+    rawHeaders[HEADER_COOKIE] = QString("JSESSIONID=%1").arg(sessionId).toLatin1();
   }
   xnat->setDefaultRawHeaders(rawHeaders);
 }
@@ -265,7 +265,11 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
       continue;
     }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
     ctkXnatObject* object = reinterpret_cast<ctkXnatObject*>(QMetaType::construct(typeId));
+#else
+    ctkXnatObject* object = reinterpret_cast<ctkXnatObject*>(QMetaType(typeId).create());
+#endif
     if (!customSchemaType.isEmpty())
     {
       // We might have created the default ctkXnatObject sub-class, but can still set
@@ -278,7 +282,7 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
     while (it.hasNext())
     {
       it.next();
-      object->setProperty(it.key().toAscii().data(), it.value());
+      object->setProperty(it.key().toLatin1().data(), it.value());
     }
 
     results.push_back(object);
@@ -327,7 +331,7 @@ void ctkXnatSession::open()
   qRestAPI::RawHeaders headers;
   headers[HEADER_AUTHORIZATION] = "Basic " +
                                   QByteArray(QString("%1:%2").arg(this->userName())
-                                             .arg(this->password()).toAscii()).toBase64();
+                                             .arg(this->password()).toLatin1()).toBase64();
   QUuid uuid = d->xnat->get("/data/JSESSION", qRestAPI::Parameters(), headers);
   QScopedPointer<qRestResult> restResult(d->xnat->takeResult(uuid));
   if (restResult)

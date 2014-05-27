@@ -49,8 +49,10 @@ set(KIT_resources
   resources/ctkCmdLineModuleExplorer.qrc
 )
 
-set(QT_USE_QTUITOOLS 1)
-include(${QT_USE_FILE})
+if(CTK_QT_VERSION VERSION_LESS "5")
+  set(QT_USE_QTUITOOLS 1)
+  include(${QT_USE_FILE})
+endif()
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'

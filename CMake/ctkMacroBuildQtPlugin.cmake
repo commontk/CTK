@@ -85,7 +85,7 @@ macro(ctkMacroBuildQtPlugin)
   # Wrap
   set(MY_QRC_SRCS "")
   if(CTK_QT_VERSION VERSION_GREATER "4")
-    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} TARGET ${lib_name})
+    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} TARGET ${lib_name} OPTIONS -DHAVE_QT5)
     if(DEFINED MY_RESOURCES)
       qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
     endif()

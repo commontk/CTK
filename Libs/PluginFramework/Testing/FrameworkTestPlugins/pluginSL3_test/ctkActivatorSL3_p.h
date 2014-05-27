@@ -37,7 +37,7 @@ class ctkActivatorSL3 :
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
-#if (QT_VERSION >= 0x50000)
+#ifdef HAVE_QT5
   Q_PLUGIN_METADATA(IID "pluginSL3_test")
 #endif
   Q_PROPERTY(bool serviceAdded READ serviceAdded)

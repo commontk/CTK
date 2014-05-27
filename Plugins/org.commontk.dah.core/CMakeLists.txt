@@ -47,6 +47,10 @@ set(PLUGIN_resources
 #Compute the plugin dependencies
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND PLUGIN_target_libraries Qt5::Network Qt5::Widgets)
+endif()
+
 ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}

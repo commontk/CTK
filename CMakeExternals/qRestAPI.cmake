@@ -50,6 +50,7 @@ if(NOT DEFINED ${proj}_DIR)
     INSTALL_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
+      -DqRestAPI_QT_VERSION:STRING=${CTK_QT_VERSION}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     DEPENDS
       ${${proj}_DEPENDENCIES}

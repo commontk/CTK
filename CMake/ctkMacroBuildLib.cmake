@@ -112,7 +112,7 @@ macro(ctkMacroBuildLib)
     # moc files can get very long and can't be resolved by the MSVC compiler.
     if(CTK_QT_VERSION VERSION_GREATER "4")
       foreach(moc_src ${MY_MOC_SRCS})
-        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
       endforeach()
     else()
       foreach(moc_src ${MY_MOC_SRCS})

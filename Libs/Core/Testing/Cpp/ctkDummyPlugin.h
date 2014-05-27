@@ -34,7 +34,7 @@ class CTK_DUMMY_EXPORT ctkDummyPlugin: public QObject//, public ctkDummyInterfac
 {
   Q_OBJECT
 //  Q_INTERFACES(ctkDummyInterface)
-#if QT_VERSION >= 0x50000
+#ifdef HAVE_QT5
   Q_PLUGIN_METADATA(IID "org.commontk.DummyPlugin")
 #endif
 public:

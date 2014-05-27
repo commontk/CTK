@@ -33,7 +33,7 @@ class ctkTestPluginA2Activator : public QObject,
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
-#if (QT_VERSION >= 0x50000)
+#ifdef HAVE_QT5
   Q_PLUGIN_METADATA(IID "pluginA2_test")
 #endif
 

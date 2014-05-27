@@ -24,7 +24,7 @@ endif()
 
 if(NOT DEFINED QtSOAP_DIR)
 
-  set(revision_tag 3e49f7a4a1a684779eb66215bad46140d9153731)
+  set(revision_tag 914c72959412bfcbaaf0ea9836b0f34258145600)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -51,6 +51,7 @@ if(NOT DEFINED QtSOAP_DIR)
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:STRING=${CTK_CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+      -DQtSOAP_QT_VERSION:STRING=${CTK_QT_VERSION}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     DEPENDS
       ${${proj}_DEPENDENCIES}

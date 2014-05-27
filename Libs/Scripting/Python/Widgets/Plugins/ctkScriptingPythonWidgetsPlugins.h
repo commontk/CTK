@@ -34,7 +34,7 @@ class CTK_SCRIPTING_PYTHON_WIDGETS_PLUGINS_EXPORT ctkScriptingPythonWidgetsPlugi
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
-#if QT_VERSION >= 0x50000
+#ifdef HAVE_QT5
   Q_PLUGIN_METADATA(IID "org.commontk.Python")
 #endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);

@@ -75,7 +75,7 @@ class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins
 {
   Q_OBJECT
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
-#if (QT_VERSION >= 0x50000)
+#ifdef HAVE_QT5
   Q_PLUGIN_METADATA(IID "org.commontk.Widgets")
 #endif
 public:

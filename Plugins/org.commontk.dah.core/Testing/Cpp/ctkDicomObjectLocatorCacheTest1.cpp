@@ -45,7 +45,7 @@ int ctkDicomObjectLocatorCacheTest1(int argc, char* argv[])
     }
 
   //----------------------------------------------------------------------------
-  QString objectUuid = QUuid::createUuid();
+  QString objectUuid = QUuid::createUuid().toString();
   ctkDicomAppHosting::ObjectLocator objectLocator;
   objectLocator.length = 64;
   objectLocator.source = "/path/to/source";
@@ -189,7 +189,7 @@ int ctkDicomObjectLocatorCacheTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  QString objectUuid2 = QUuid::createUuid();
+  QString objectUuid2 = QUuid::createUuid().toString();
   ctkDicomAppHosting::ObjectDescriptor objectDescriptor2;
   objectDescriptor2.descriptorUUID = objectUuid2;
   ctkDicomAppHosting::ObjectLocator objectLocator2;

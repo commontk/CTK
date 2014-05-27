@@ -36,7 +36,7 @@
  */
 
 // Qt includes
-#include <QApplication>
+#include <QCoreApplication>
 #include <QTextStream>
 
 // CTK includes
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
   logger.debug ( "Opening database " + QString ( argv[1] ) );
   myCTK.openDatabase ( argv[1] );
   logger.debug ( "Last error: " + myCTK.lastError() );
-  if ( myCTK.database().isOpen() ) 
+  if ( myCTK.database().isOpen() )
     {
     logger.debug ( "Database is open" );
     }
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
     logger.debug ( "Database is not open" );
     }
 
-  
+
 
   ctkDICOMQuery query;
   query.setCallingAETitle ( QString ( argv[2] ) );
