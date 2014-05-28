@@ -105,12 +105,14 @@ QString ctkXnatObject::childDataType() const
   return "Resources";
 }
 
-QDateTime ctkXnatObject::lastModifiedTime() const
+QDateTime ctkXnatObject::lastModifiedTime()
 {
+  Q_D(ctkXnatObject);
   QUuid queryId = this->session()->httpHead(this->resourceUri());
   QMap<QByteArray, QByteArray> header = this->session()->httpHeadSync(queryId);
   QVariant lastModifiedHeader = header.value("Last-Modified");
   QDateTime lastModifiedTime;
+
   if (lastModifiedHeader.isValid())
   {
     QStringList dateformates;
@@ -133,15 +135,18 @@ QDateTime ctkXnatObject::lastModifiedTime() const
         break;
     }
   }
+
+  if (lastModifiedTime.isValid() && d->lastModifiedTime < lastModifiedTime)
+    this->setLastModifiedTime(lastModifiedTime);
   return lastModifiedTime;
 }
 
 void ctkXnatObject::setLastModifiedTime(const QDateTime &lastModifiedTime)
 {
   Q_D(ctkXnatObject);
-  if (d->lastModifedTime < lastModifiedTime)
+  if (d->lastModifiedTime < lastModifiedTime)
   {
-    d->lastModifedTime = lastModifiedTime;
+    d->lastModifiedTime = lastModifiedTime;
   }
 }
 

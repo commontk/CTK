@@ -77,7 +77,7 @@ public:
   void setProperty(const QString& name, const QVariant& value);
 
   /// Gets the last modification time from the server
-  QDateTime lastModifiedTime() const;
+  QDateTime lastModifiedTime();
 
   /// Sets the last modfication time on the server
   void setLastModifiedTime(const QDateTime& lastModifiedTime);

@@ -49,7 +49,7 @@ private:
 
   QList<ctkXnatObject*> children;
 
-  QDateTime lastModifedTime;
+  QDateTime lastModifiedTime;
 
   bool fetched;
 

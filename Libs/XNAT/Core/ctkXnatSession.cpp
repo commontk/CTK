@@ -42,7 +42,6 @@
 #include <QScopedPointer>
 #include <QStringBuilder>
 #include <QNetworkCookie>
-#include <QNetworkRequest>
 
 #include <ctkXnatAPI_p.h>
 #include <qRestResult.h>
@@ -292,7 +291,10 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
     {
       lastModifiedTime = lastModifiedHeader.toDateTime();
     }
-    object->setProperty("Last-Modified", lastModifiedTime);
+    if (lastModifiedTime.isValid())
+    {
+      object->setLastModifiedTime(lastModifiedTime);
+    }
 
     results.push_back(object);
   }
