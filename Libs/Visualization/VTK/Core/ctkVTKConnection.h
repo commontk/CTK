@@ -62,6 +62,7 @@ public:
   /// vtkObject*, void*, unsigned long, void*: sender, callData, eventId, clientData
   /// Of course the slot can contain less parameters, but always the same order
   /// though.
+  /// \sa object(), vtkobject()
   void setup(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot, float priority = 0.f,
     Qt::ConnectionType connectionType = Qt::AutoConnection);
@@ -86,7 +87,13 @@ public:
   /// 
   /// Return a string uniquely identifying the connection within the current process
   QString  id()const;
+
+  ///
+  /// Return the QObject set using setup() method.
   QObject* object()const;
+
+  /// Return the vtkObject set using setup() method.
+  vtkObject* vtkobject() const;
 
   /// false by default, it is slower to observe vtk object deletion
   void observeDeletion(bool enable);
@@ -104,17 +111,13 @@ Q_SIGNALS:
   /// connect(obj1,SIGNAL(signalFunc(A,B,C,D)),obj2,SLOT(slotFunc(A)));
   void emitExecute(vtkObject* caller, void* call_data, unsigned long vtk_event, void* client_data);
 
-  /// The signal is fired when the observed vtk object or the receiving qt 
-  /// object is deleted. It can conveniently connected to the deleteLater 
-  /// slot
-  void isBroke();
-
 protected Q_SLOTS:
   void vtkObjectDeleted();
   void qobjectDeleted();
 
 protected:
   QScopedPointer<ctkVTKConnectionPrivate> d_ptr;
+  ctkVTKConnection(ctkVTKConnectionPrivate* pimpl, QObject* _parent);
 
   void disconnect();
   virtual void addObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback, float priority=0.0f);

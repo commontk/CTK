@@ -5,6 +5,7 @@ set(KIT ${PROJECT_NAME})
 #
 set(TEST_SOURCES
   ctkVTKConnectionTest1.cpp
+  ctkVTKConnectionTestObjectDelete.cpp
   ctkVTKObjectTest1.cpp
   )
 
@@ -36,8 +37,14 @@ set(KIT_HELPER_SRCS
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
   QT5_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
+  QT5_GENERATE_MOCS(
+    ctkVTKConnectionTestObjectDelete.cpp
+    )
 else()
   QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
+  QT4_GENERATE_MOCS(
+    ctkVTKConnectionTestObjectDelete.cpp
+    )
 endif()
 
 #
@@ -62,6 +69,7 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 #
 
 SIMPLE_TEST( ctkVTKConnectionTest1 )
+SIMPLE_TEST( ctkVTKConnectionTestObjectDelete )
 SIMPLE_TEST( ctkVTKObjectTest1 )
 
 #
