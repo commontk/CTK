@@ -32,7 +32,6 @@ set(QT_PYTHON_WRAPPED_LIBRARIES_LIST Core Gui Widgets Network OpenGL Sql Svg UiT
 foreach(qtlib ${QT_PYTHON_WRAPPED_LIBRARIES_LIST})
   string(TOUPPER ${qtlib} qtlib)
   set(CTK_PYTHONQT_WRAP_QT${qtlib} ${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
-  message(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}:${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
 endforeach()
 
 configure_file(
