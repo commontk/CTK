@@ -25,6 +25,7 @@
 #include <PythonQt.h>
 
 // CTK includes
+#include <ctkErrorLogModel.h>
 #include <ctkWorkflowWidgetStep.h>
 
 // NOTE:
@@ -69,12 +70,24 @@ public Q_SLOTS:
     {
     step->setHasShowUserInterfaceCommand(newHasShowUserInterfaceCommand);
     }
+
+  // ctkErrorLogLevel
+
+  QString static_ctkErrorLogLevel_logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)
+    {
+    return ctkErrorLogLevel::logLevelAsString(logLevel);
+    }
 };
 
 //-----------------------------------------------------------------------------
 /// \ingroup Widgets
 void initCTKWidgetsPythonQtDecorators()
 {
+  // HACK: Since the CMake based light wrapping only consider class name matching the
+  //       filename where the class is defined, let's explicitly register ctkErrorLogLevel
+  //       so that the log level QFlags are exposed to python.
+  PythonQt::self()->registerClass(&ctkErrorLogLevel::staticMetaObject, "CTKCore");
+
   PythonQt::self()->addDecorators(new ctkWidgetsPythonQtDecorators);
 }
 
