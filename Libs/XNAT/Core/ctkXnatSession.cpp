@@ -512,6 +512,26 @@ bool ctkXnatSession::exists(const ctkXnatObject* object)
 }
 
 //----------------------------------------------------------------------------
+const QMap<QByteArray, QByteArray> ctkXnatSession::httpHeadSync(const QUuid &uuid)
+{
+  Q_D(ctkXnatSession);
+  QScopedPointer<qRestResult> result (d->xnat->takeResult(uuid));
+  if (result == NULL)
+  {
+    d->throwXnatException("Sending HEAD request failed.");
+  }
+  return result->rawHeaders();
+}
+
+//----------------------------------------------------------------------------
+QUuid ctkXnatSession::httpHead(const QString& resourceUri)
+{
+  Q_D(ctkXnatSession);
+  QUuid queryId = d->xnat->head(resourceUri);
+  return queryId;
+}
+
+//----------------------------------------------------------------------------
 void ctkXnatSession::save(ctkXnatObject* object)
 {
   Q_D(ctkXnatSession);
@@ -558,12 +578,6 @@ void ctkXnatSession::remove(ctkXnatObject* object)
   {
     d->throwXnatException("Error occurred while removing the data.");
   }
-}
-
-const QDateTime ctkXnatSession::lastModified(const QString& resourceUri)
-{
-  Q_D(ctkXnatSession);
-  return d->xnat->head(resourceUri, QNetworkRequest::LastModifiedHeader).toDateTime();
 }
 
 //----------------------------------------------------------------------------

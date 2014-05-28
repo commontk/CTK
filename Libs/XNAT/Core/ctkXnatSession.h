@@ -174,6 +174,15 @@ public:
    */
   QList<QVariantMap> httpSync(const QUuid& uuid);
 
+  /**
+   * @brief Reads the result of a head request
+   * @param uuid the uid of the related query
+   *
+   * @throws ctkXnatInvalidSessionException if the session is closed.
+   * @return a QMap containing the retrieved header information
+   */
+  const QMap<QByteArray, QByteArray> httpHeadSync(const QUuid& uuid);
+
   bool exists(const ctkXnatObject* object);
 
   void save(ctkXnatObject* object);
@@ -189,7 +198,12 @@ public:
   void download(ctkXnatScanResource* scanResource, const QString& zipFileName);
   void download(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFileName);
 
-  const QDateTime lastModified(const QString& resourceUri);
+  /**
+   * @brief Sends a http HEAD request to the xnat instance
+   * @param resourceUri the URL to the server
+   * @return the query uid
+   */
+  QUuid httpHead(const QString& resourceUri);
 
 //  void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename);
 
