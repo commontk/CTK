@@ -23,9 +23,6 @@
 
 #include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
-#include "ctkXnatFile.h"
-#include "ctkXnatDefaultSchemaTypes.h"
-
 
 //----------------------------------------------------------------------------
 class ctkXnatResourcePrivate : public ctkXnatObjectPrivate
@@ -37,12 +34,6 @@ public:
   {
   }
 
-  void reset()
-  {
-//    uri.clear();
-  }
-
-//  QString uri;
 };
 
 
@@ -72,9 +63,9 @@ void ctkXnatResource::reset()
 //----------------------------------------------------------------------------
 void ctkXnatResource::fetchImpl()
 {
-  QString resourceFilesUrinatResource = this->resourceUri() + "/files";
+  QString resourceFilesUri = this->resourceUri() + "/files";
   ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(resourceFilesUrinatResource);
+  QUuid queryId = session->httpGet(resourceFilesUri);
 
   QList<ctkXnatObject*> files = session->httpResults(queryId,
                                                      ctkXnatDefaultSchemaTypes::XSI_FILE);
