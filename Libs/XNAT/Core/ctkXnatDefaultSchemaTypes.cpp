@@ -29,3 +29,4 @@ QString ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE = "xnat:reconstru
 QString ctkXnatDefaultSchemaTypes::XSI_SCAN = "xnat:imageScanData";
 QString ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE = "xnat:scanResource";
 QString ctkXnatDefaultSchemaTypes::XSI_SUBJECT = "xnat:subjectData";
+QString ctkXnatDefaultSchemaTypes::XSI_RESOURCE = "xnat:resource";

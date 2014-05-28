@@ -19,23 +19,20 @@
 
 =============================================================================*/
 
-#include "ctkXnatExperiment.h"
+#include "ctkXnatResource.h"
 
 #include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
-#include "ctkXnatSubject.h"
-#include "ctkXnatScan.h"
-#include "ctkXnatReconstruction.h"
-#include "ctkXnatScanFolder.h"
-#include "ctkXnatReconstructionFolder.h"
+#include "ctkXnatFile.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
+
 //----------------------------------------------------------------------------
-class ctkXnatExperimentPrivate : public ctkXnatObjectPrivate
+class ctkXnatResourcePrivate : public ctkXnatObjectPrivate
 {
 public:
 
-  ctkXnatExperimentPrivate()
+  ctkXnatResourcePrivate()
   : ctkXnatObjectPrivate()
   {
   }
@@ -50,54 +47,51 @@ public:
 
 
 //----------------------------------------------------------------------------
-ctkXnatExperiment::ctkXnatExperiment(ctkXnatObject* parent, const QString& schemaType)
-: ctkXnatObject(*new ctkXnatExperimentPrivate(), parent, schemaType)
+ctkXnatResource::ctkXnatResource(ctkXnatObject* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatResourcePrivate(), parent, schemaType)
 {
 }
 
 //----------------------------------------------------------------------------
-ctkXnatExperiment::~ctkXnatExperiment()
+ctkXnatResource::~ctkXnatResource()
 {
 }
 
 //----------------------------------------------------------------------------
-QString ctkXnatExperiment::resourceUri() const
+QString ctkXnatResource::resourceUri() const
 {
-  return QString("%1/experiments/%2").arg(parent()->resourceUri(), this->id());
+  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("label"));
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatExperiment::reset()
+void ctkXnatResource::reset()
 {
   ctkXnatObject::reset();
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatExperiment::fetchImpl()
+void ctkXnatResource::fetchImpl()
 {
-  QString scansUri = this->resourceUri() + "/scans";
+  QString resourceFilesUrinatResource = this->resourceUri() + "/files";
   ctkXnatSession* const session = this->session();
-  QUuid scansQueryId = session->httpGet(scansUri);
+  QUuid queryId = session->httpGet(resourceFilesUrinatResource);
 
-  QList<ctkXnatObject*> scans = session->httpResults(scansQueryId,
-                                                     ctkXnatDefaultSchemaTypes::XSI_SCAN);
+  QList<ctkXnatObject*> files = session->httpResults(queryId,
+                                                     ctkXnatDefaultSchemaTypes::XSI_FILE);
 
-  if (!scans.isEmpty())
+  foreach (ctkXnatObject* file, files)
   {
-    ctkXnatScanFolder* scanFolder = new ctkXnatScanFolder();
-    this->add(scanFolder);
+    QString label = file->property("Name");
+    if (!label.isEmpty())
+    {
+      file->setProperty("ID", label);
+    }
+    this->add(file);
   }
+}
 
-  QString reconstructionsUri = this->resourceUri() + "/reconstructions";
-  QUuid reconstructionsQueryId = session->httpGet(reconstructionsUri);
-
-  QList<ctkXnatObject*> reconstructions = session->httpResults(reconstructionsQueryId,
-                                                               ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION);
-
-  if (!reconstructions.isEmpty())
-  {
-    ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder();
-    this->add(reconstructionFolder);
-  }
-  this->fetchResources();
+//----------------------------------------------------------------------------
+void ctkXnatResource::download(const QString& filename)
+{
+//  this->session()->download(this, filename);
 }
