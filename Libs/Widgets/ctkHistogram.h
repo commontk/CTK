@@ -30,18 +30,18 @@
 
 /// CTK includes
 #include "ctkTransferFunction.h"
-#include "ctkCoreExport.h"
+#include "ctkWidgetsExport.h"
 
 //-----------------------------------------------------------------------------
-/// \ingroup Core
-struct CTK_CORE_EXPORT ctkHistogramBar : public ctkControlPoint
+/// \ingroup Widgets
+struct CTK_WIDGETS_EXPORT ctkHistogramBar : public ctkControlPoint
 {
   QColor Color;
 };
 
 //-----------------------------------------------------------------------------
-/// \ingroup Core
-class CTK_CORE_EXPORT ctkHistogram: public ctkTransferFunction
+/// \ingroup Widgets
+class CTK_WIDGETS_EXPORT ctkHistogram: public ctkTransferFunction
 {
   Q_OBJECT
 public:

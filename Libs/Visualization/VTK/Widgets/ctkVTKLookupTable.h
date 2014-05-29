@@ -24,17 +24,17 @@
 // CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkPimpl.h"
-#include "ctkVisualizationVTKCoreExport.h"
+#include "ctkVisualizationVTKWidgetsExport.h"
 #include "ctkVTKObject.h"
 
 class vtkLookupTable;
 class ctkVTKLookupTablePrivate;
 
-/// \ingroup Visualization_VTK_Core
+/// \ingroup Visualization_VTK_Widgets
 ///
 /// Transfer function for a vtkColorTransferFunction. 
 /// The value is an RGB QColor (no alpha supported)
-class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKLookupTable: public ctkTransferFunction
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKLookupTable: public ctkTransferFunction
 {
   Q_OBJECT;
   QVTK_OBJECT;
