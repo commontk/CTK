@@ -190,7 +190,20 @@ public Q_SLOTS:
   virtual void reset();
 
   /// Exec the contents of the last console line
+  /// \sa openFile(), runFile(QString)
   virtual void exec(const QString&);
+
+  /// Exec line by line the content of a file.
+  /// \sa openFile(), exec()
+  virtual void runFile(const QString& filePath);
+
+  /// Open a file dialog to select a file and run it.
+  /// Shortcut: CTRL+O
+  /// \sa runFile(QString), exec()
+  virtual void runFile();
+
+  /// Print the console help with shortcuts.
+  virtual void printHelp();
 
 protected:
 

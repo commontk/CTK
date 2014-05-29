@@ -21,6 +21,7 @@ set(TEST_SOURCES
   ctkColorPickerButtonTest1.cpp
   ctkComboBoxTest1.cpp
   ctkCompleterTest1.cpp
+  ctkConsoleTest.cpp
   ctkConsoleTest1.cpp
   ctkCoordinatesWidgetTest.cpp
   ctkCoordinatesWidgetTest1.cpp
@@ -199,6 +200,7 @@ if(CTK_USE_QTTESTING)
 endif()
 
 set(Tests_MOC_CPPS
+  ctkConsoleTest.cpp
   ctkCoordinatesWidgetTest.cpp
   ctkCoordinatesWidgetValueProxyTest.cpp
   ctkDoubleRangeSliderTest.cpp
@@ -274,6 +276,7 @@ SIMPLE_TEST( ctkColorDialogTest2 )
 SIMPLE_TEST( ctkColorPickerButtonTest1 )
 SIMPLE_TEST( ctkComboBoxTest1 )
 SIMPLE_TEST( ctkCompleterTest1 )
+SIMPLE_TEST( ctkConsoleTest )
 SIMPLE_TEST( ctkConsoleTest1 )
 SIMPLE_TEST( ctkCoordinatesWidgetTest )
 SIMPLE_TEST( ctkCoordinatesWidgetTest1 )
