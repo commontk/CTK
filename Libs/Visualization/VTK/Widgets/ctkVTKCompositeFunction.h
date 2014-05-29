@@ -24,18 +24,18 @@
 // CTK includes
 #include "ctkTransferFunction.h"
 #include "ctkPimpl.h"
-#include "ctkVisualizationVTKCoreExport.h"
+#include "ctkVisualizationVTKWidgetsExport.h"
 #include "ctkVTKObject.h"
 
 class vtkPiecewiseFunction;
 class vtkColorTransferFunction;
 class ctkVTKCompositeFunctionPrivate;
 
-/// \ingroup Visualization_VTK_Core
+/// \ingroup Visualization_VTK_Widgets
 ///
 /// Transfer function for a vtkPiecewiseFunction
 
-class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKCompositeFunction: public ctkTransferFunction
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKCompositeFunction: public ctkTransferFunction
 {
   Q_OBJECT;
   QVTK_OBJECT;
