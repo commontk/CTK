@@ -144,6 +144,7 @@ void ctkConsolePrivate::init()
 
   connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)),
           SLOT(onScrollBarValueChanged(int)));
+  connect(this, SIGNAL(textChanged()), SLOT(onTextChanged()));
 }
 
 //-----------------------------------------------------------------------------
@@ -198,7 +199,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       }
 
     // Force the cursor back to the interactive area
-    if(history_area && e->key() != Qt::Key_Control)
+    if(history_area
+       && e->key() != Qt::Key_Control
+       && e->key() != Qt::Key_Meta
+       && e->key() != Qt::Key_Alt
+       )
       {
       text_cursor.setPosition(this->documentEnd());
       this->setTextCursor(text_cursor);
@@ -305,14 +310,21 @@ void ctkConsolePrivate::switchToUserInputTextColor(QTextCursor* textCursorToUpda
     color = this->StdinTextColor;
     }
   QTextCharFormat currentFormat = this->currentCharFormat();
-  currentFormat.setForeground(color);
-  this->setCurrentCharFormat(currentFormat);
+  // Do not trigger a finishEdit for no reason. onTextChanged() would be called.
+  if (currentFormat.foreground() != color)
+    {
+    currentFormat.setForeground(color);
+    this->setCurrentCharFormat(currentFormat);
+    }
 
   if (textCursorToUpdate)
     {
     QTextCharFormat textCursorFormat = textCursorToUpdate->charFormat();
-    textCursorFormat.setForeground(color);
-    textCursorToUpdate->setCharFormat(textCursorFormat);
+    if (textCursorFormat.foreground() != color)
+      {
+      textCursorFormat.setForeground(color);
+      textCursorToUpdate->setCharFormat(textCursorFormat);
+      }
     }
 }
 
@@ -519,8 +531,6 @@ void ctkConsolePrivate::printString(const QString& text)
   this->textCursor().movePosition(QTextCursor::End);
   this->textCursor().insertText(text);
   this->InteractivePosition = this->documentEnd();
-  this->ensureCursorVisible();
-  this->scrollToBottom();
 }
 
 //----------------------------------------------------------------------------
@@ -584,8 +594,6 @@ void ctkConsolePrivate::prompt(const QString& text)
 
   this->textCursor().insertText(text);
   this->InteractivePosition = this->documentEnd();
-  this->ensureCursorVisible();
-  this->scrollToBottom();
 }
 
 //----------------------------------------------------------------------------
@@ -622,6 +630,13 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
 void ctkConsolePrivate::onScrollBarValueChanged(int value)
 {
   this->ScrollbarAtBottom = (this->verticalScrollBar()->maximum() == value);
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::onTextChanged()
+{
+  this->scrollToBottom();
+  this->ensureCursorVisible();
 }
 
 //-----------------------------------------------------------------------------
