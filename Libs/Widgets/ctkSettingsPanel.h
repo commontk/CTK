@@ -115,6 +115,7 @@ public Q_SLOTS:
   ///
   /// This reloads all properties from their respective QSettings instance(s).
   /// The previous values are discarded (as in resetSettings()).
+  /// \sa resetSettings(), restoreDefaultSettings()
   virtual void reloadSettings();
 
 Q_SIGNALS:
