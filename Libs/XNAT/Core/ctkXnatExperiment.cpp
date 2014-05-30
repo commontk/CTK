@@ -99,4 +99,5 @@ void ctkXnatExperiment::fetchImpl()
     ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder();
     this->add(reconstructionFolder);
   }
+  this->fetchResources();
 }

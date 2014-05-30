@@ -31,6 +31,7 @@
 #include "ctkXnatReconstruction.h"
 #include "ctkXnatReconstructionFolder.h"
 #include "ctkXnatReconstructionResource.h"
+#include "ctkXnatResource.h"
 #include "ctkXnatScan.h"
 #include "ctkXnatScanFolder.h"
 #include "ctkXnatScanResource.h"
@@ -319,6 +320,7 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   qRegisterMetaType<ctkXnatScanResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE));
   qRegisterMetaType<ctkXnatFile>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_FILE));
   qRegisterMetaType<ctkXnatReconstructionResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE));
+  qRegisterMetaType<ctkXnatResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RESOURCE));
 
   QString url = d->loginProfile.serverUrl().toString();
   d->xnat->setServerUrl(url);

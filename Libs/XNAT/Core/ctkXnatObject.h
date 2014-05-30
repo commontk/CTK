@@ -126,6 +126,9 @@ public:
   /// Deletes the object on the XNAT server and removes it from its parent.
   void erase();
 
+  /// Fetches the resources of the object
+  virtual void fetchResources();
+
   virtual void download(const QString&);
   virtual void upload(const QString&);
 

@@ -157,4 +157,5 @@ void ctkXnatProject::fetchImpl()
 
     this->add(subject);
   }
+  this->fetchResources();
 }

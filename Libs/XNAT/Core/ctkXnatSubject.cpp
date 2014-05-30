@@ -127,4 +127,5 @@ void ctkXnatSubject::fetchImpl()
 
     this->add(experiment);
   }
+  this->fetchResources();
 }

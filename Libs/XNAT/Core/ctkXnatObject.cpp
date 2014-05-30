@@ -22,8 +22,9 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 
-#include "ctkXnatSession.h"
 #include "ctkXnatDataModel.h"
+#include "ctkXnatSession.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -308,6 +309,27 @@ bool ctkXnatObject::exists() const
 void ctkXnatObject::save()
 {
   this->session()->save(this);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatObject::fetchResources()
+{
+  QString query = this->resourceUri() + "/resources";
+  ctkXnatSession* const session = this->session();
+  QUuid queryId = session->httpGet(query);
+
+  QList<ctkXnatObject*> resources = session->httpResults(queryId,
+                                                           ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
+
+  foreach (ctkXnatObject* resource, resources)
+  {
+    QString label = resource->property("label");
+    if (!label.isEmpty())
+    {
+      resource->setProperty("ID", label);
+    }
+    this->add(resource);
+  }
 }
 
 //----------------------------------------------------------------------------
