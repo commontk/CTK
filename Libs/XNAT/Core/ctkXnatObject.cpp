@@ -126,7 +126,9 @@ QDateTime ctkXnatObject::lastModifiedTime()
     QString dateText = lastModifiedHeader.toString();
     // Remove "GMT" addition at the end of the http timestamp
     if (dateText.indexOf("GMT") != -1)
+    {
       dateText = dateText.left(dateText.length()-4);
+    }
 
     foreach (QString format, dateformates)
     {
