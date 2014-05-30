@@ -25,7 +25,9 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatDataModel.h"
 
+#include <QDateTime>
 #include <QDebug>
+#include <QStringList>
 #include <QVariant>
 
 
@@ -101,6 +103,53 @@ void ctkXnatObject::setDescription(const QString& description)
 QString ctkXnatObject::childDataType() const
 {
   return "Resources";
+}
+
+QDateTime ctkXnatObject::lastModifiedTime()
+{
+  Q_D(ctkXnatObject);
+  QUuid queryId = this->session()->httpHead(this->resourceUri());
+  QMap<QByteArray, QByteArray> header = this->session()->httpHeadSync(queryId);
+  QVariant lastModifiedHeader = header.value("Last-Modified");
+  QDateTime lastModifiedTime;
+
+  if (lastModifiedHeader.isValid())
+  {
+    QStringList dateformates;
+    // In case http date formate RFC 822 ( "Sun, 06 Nov 1994 08:49:37 GMT" )
+    dateformates<<"ddd, dd MMM yyyy HH:mm:ss";
+    // In case http date formate ANSI ( "Sun Nov  6 08:49:37 1994" )
+    dateformates<<"ddd MMM  d HH:mm:ss yyyy";
+    // In case http date formate RFC 850 ( "Sunday, 06-Nov-94 08:49:37 GMT" )
+    dateformates<<"dddd, dd-MMM-yy HH:mm:ss";
+
+    QString dateText = lastModifiedHeader.toString();
+    // Remove "GMT" addition at the end of the http timestamp
+    if (dateText.indexOf("GMT") != -1)
+    {
+      dateText = dateText.left(dateText.length()-4);
+    }
+
+    foreach (QString format, dateformates)
+    {
+      lastModifiedTime = QDateTime::fromString(dateText, format);
+      if (lastModifiedTime.isValid())
+        break;
+    }
+  }
+
+  if (lastModifiedTime.isValid() && d->lastModifiedTime < lastModifiedTime)
+    this->setLastModifiedTime(lastModifiedTime);
+  return lastModifiedTime;
+}
+
+void ctkXnatObject::setLastModifiedTime(const QDateTime &lastModifiedTime)
+{
+  Q_D(ctkXnatObject);
+  if (d->lastModifiedTime < lastModifiedTime)
+  {
+    d->lastModifiedTime = lastModifiedTime;
+  }
 }
 
 //----------------------------------------------------------------------------

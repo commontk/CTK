@@ -22,6 +22,7 @@
 #ifndef CTKXNATOBJECTPRIVATE_H
 #define CTKXNATOBJECTPRIVATE_H
 
+#include <QDateTime>
 #include <QMap>
 #include <QString>
 
@@ -47,6 +48,8 @@ private:
   QMap<QString, QString> properties;
 
   QList<ctkXnatObject*> children;
+
+  QDateTime lastModifiedTime;
 
   bool fetched;
 

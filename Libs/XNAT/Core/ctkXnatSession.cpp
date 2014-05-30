@@ -37,11 +37,11 @@
 #include "ctkXnatSubject.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
+#include <QDateTime>
 #include <QDebug>
 #include <QScopedPointer>
 #include <QStringBuilder>
 #include <QNetworkCookie>
-#include <QDateTime>
 
 #include <ctkXnatAPI_p.h>
 #include <qRestResult.h>
@@ -285,6 +285,17 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
       object->setProperty(it.key().toLatin1().data(), it.value());
     }
 
+    QVariant lastModifiedHeader = restResult->rawHeader("Last-Modified");
+    QDateTime lastModifiedTime;
+    if (lastModifiedHeader.isValid())
+    {
+      lastModifiedTime = lastModifiedHeader.toDateTime();
+    }
+    if (lastModifiedTime.isValid())
+    {
+      object->setLastModifiedTime(lastModifiedTime);
+    }
+
     results.push_back(object);
   }
   return results;
@@ -500,6 +511,26 @@ bool ctkXnatSession::exists(const ctkXnatObject* object)
   bool success = d->xnat->sync(d->xnat->get(query));
 
   return success;
+}
+
+//----------------------------------------------------------------------------
+const QMap<QByteArray, QByteArray> ctkXnatSession::httpHeadSync(const QUuid &uuid)
+{
+  Q_D(ctkXnatSession);
+  QScopedPointer<qRestResult> result (d->xnat->takeResult(uuid));
+  if (result == NULL)
+  {
+    d->throwXnatException("Sending HEAD request failed.");
+  }
+  return result->rawHeaders();
+}
+
+//----------------------------------------------------------------------------
+QUuid ctkXnatSession::httpHead(const QString& resourceUri)
+{
+  Q_D(ctkXnatSession);
+  QUuid queryId = d->xnat->head(resourceUri);
+  return queryId;
 }
 
 //----------------------------------------------------------------------------
