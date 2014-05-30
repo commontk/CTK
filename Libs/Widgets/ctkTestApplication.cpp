@@ -119,10 +119,12 @@ int ctkTestApplication::exec(bool reportErrorsOnExit)
 //-----------------------------------------------------------------------------
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 void ctkTestApplication::messageHandler(QtMsgType type, const QMessageLogContext& /*context*/, const QString& msg)
-#else
-void ctkTestApplication::messageHandler(QtMsgType type, const char *msg)
-#endif
 {
+#else
+void ctkTestApplication::messageHandler(QtMsgType type, const char *msgAsStr)
+{
+  QString msg(msgAsStr);
+#endif
   switch(type)
   {
   case QtDebugMsg:
