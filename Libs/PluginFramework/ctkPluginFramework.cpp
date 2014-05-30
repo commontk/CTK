@@ -38,6 +38,9 @@ ctkPluginFramework::ctkPluginFramework()
   qRegisterMetaType<ctkEvent>("ctkEvent");
   qRegisterMetaType<ctkProperties>("ctkProperties");
   qRegisterMetaType<ctkDictionary>("ctkDictionary");
+  qRegisterMetaType<ctkServiceReference>("ctkServiceReference");
+  qRegisterMetaType<QSharedPointer<ctkPlugin> >("QSharedPointer<ctkPlugin>");
+  //TODO: register all ctk Framework defined MetaType.
 }
 
 //----------------------------------------------------------------------------
