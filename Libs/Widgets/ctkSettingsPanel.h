@@ -123,6 +123,13 @@ public Q_SLOTS:
   /// of the properties when they were registered using registerProperty().
   virtual void restoreDefaultSettings();
 
+  /// Reload all properties from disk.
+  ///
+  /// This reloads all properties from their respective QSettings instance(s).
+  /// The previous values are discarded (as in resetSettings()).
+  /// \sa resetSettings(), restoreDefaultSettings()
+  virtual void reloadSettings();
+
 Q_SIGNALS:
   /// Fired anytime a property is modified.
   void settingChanged(const QString& key, const QVariant& value);
@@ -146,7 +153,6 @@ protected Q_SLOTS:
 protected:
   QScopedPointer<ctkSettingsPanelPrivate> d_ptr;
 
-  virtual void updateProperties();
 private:
   Q_DECLARE_PRIVATE(ctkSettingsPanel);
   Q_DISABLE_COPY(ctkSettingsPanel);

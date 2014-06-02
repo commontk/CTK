@@ -105,7 +105,7 @@ int ctkSettingsDialogTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   settingsDialog.resetSettings();
-  // Reset button should be enabled after settings are reset
+  // Reset button should be disabled after settings are reset
   if (buttonBox->button(QDialogButtonBox::Reset)->isEnabled())
     {
     std::cerr << "Line " << __LINE__ << " - Reset button should be disabled !" << std::endl;
@@ -113,6 +113,11 @@ int ctkSettingsDialogTest1(int argc, char * argv [] )
     }
   boxVal = settings.value("key 1");
   if (!boxVal.isValid() || boxVal.toBool() != false)
+    {
+    std::cerr << "Reset failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (box->isChecked())
     {
     std::cerr << "Reset failed" << std::endl;
     return EXIT_FAILURE;
@@ -140,7 +145,26 @@ int ctkSettingsDialogTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  settings2.setValue("key 1", true);
+  settingsDialog.reloadSettings();
+  if (!box->isChecked())
+    {
+    std::cerr << "Reload failed" << std::endl;
+    return EXIT_FAILURE;
+    }
 
+  settingsDialog.restoreDefaultSettings();
+  boxVal = settings2.value("key 1");
+  if (!boxVal.isValid() || boxVal.toBool() != false)
+    {
+    std::cerr << "Restore to default failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (box->isChecked())
+    {
+    std::cerr << "Restore to default failed" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   settingsDialog.setCurrentPanel("Panel 4");
 
