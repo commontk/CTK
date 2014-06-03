@@ -62,3 +62,5 @@ ExternalProject_Add_Step(${proj} forcebuild
   DEPENDEES build
   ALWAYS 1
   )
+
+ExternalProject_Install_CMake(${proj})

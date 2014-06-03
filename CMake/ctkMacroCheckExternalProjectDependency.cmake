@@ -682,3 +682,21 @@ macro(ExternalProject_Add_Empty project_name)
     DEPENDS ${_sb_DEPENDS}
     )
 endmacro()
+
+#.rst:
+# .. cmake:function:: ExternalProject_Install_CMake
+#
+# Install an external CMake-based project as part of the ``install`` target.
+#
+# .. code-block:: cmake
+#
+#  ExternalProject_Install_CMake(<project_name>)
+#
+# This causes building the main project's ``install`` target to also execute
+# the CMake install script for the specified external project.
+#
+function(ExternalProject_Install_CMake project_name)
+  ExternalProject_Get_Property(${project_name} binary_dir)
+
+  install(SCRIPT ${binary_dir}/cmake_install.cmake)
+endfunction()

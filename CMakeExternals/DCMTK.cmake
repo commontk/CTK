@@ -53,13 +53,14 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     PREFIX ${proj}${ep_suffix}
     ${location_args}
     UPDATE_COMMAND ""
-    BUILD_COMMAND ""
+    # INSTALL_COMMAND "" TODO
     CMAKE_ARGS
       -DDCMTK_INSTALL_BINDIR:STRING=bin/${CMAKE_CFG_INTDIR}
       -DDCMTK_INSTALL_LIBDIR:STRING=lib/${CMAKE_CFG_INTDIR}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       ${ep_project_include_arg}
+      -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir} # TODO use from build directory
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
       -DDCMTK_WITH_ZLIB:BOOL=OFF # see github issue #25
@@ -74,6 +75,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
   set(DCMTK_DIR ${ep_install_dir})
+
+  # ExternalProject_Install_CMake(${proj}) TODO
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
