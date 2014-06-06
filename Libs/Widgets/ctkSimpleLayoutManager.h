@@ -31,6 +31,7 @@ class ctkSimpleLayoutManagerPrivate;
 /// \ingroup Widgets
 struct ctkWidgetInstanciator
 {
+  virtual ~ctkWidgetInstanciator() {}
   virtual void beginSetupLayout(){}
   virtual void endSetupLayout(){}
   virtual QWidget* createWidget() = 0;
