@@ -38,7 +38,7 @@ protected:
 public:
   ctkVTKPropertyWidgetPrivate(ctkVTKPropertyWidget& object);
 
-  virtual void setupUi(QWidget *widget);
+  void setupUi(QWidget *widget);
 
   vtkSmartPointer<vtkProperty> Property;
 };
