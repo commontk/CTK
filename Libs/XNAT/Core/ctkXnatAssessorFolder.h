@@ -19,27 +19,26 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatExperiment_h
-#define ctkXnatExperiment_h
+#ifndef ctkXnatAssessorFolder_h
+#define ctkXnatAssessorFolder_h
 
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
-#include "ctkXnatDefaultSchemaTypes.h"
 
-class ctkXnatExperimentPrivate;
+class ctkXnatAssessorFolderPrivate;
 
 /**
  * @ingroup XNAT_Core
  */
-class CTK_XNAT_CORE_EXPORT ctkXnatExperiment : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatAssessorFolder : public ctkXnatObject
 {
 
 public:
 
-  ctkXnatExperiment(ctkXnatObject* parent = 0, const QString& schemaType = ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT);
+  ctkXnatAssessorFolder(ctkXnatObject* parent = NULL);
 
-  virtual ~ctkXnatExperiment();
+  virtual ~ctkXnatAssessorFolder();
 
   virtual QString resourceUri() const;
 
@@ -47,9 +46,10 @@ public:
 
 private:
 
+  friend class qRestResult;
   virtual void fetchImpl();
 
-  Q_DECLARE_PRIVATE(ctkXnatExperiment)
+  Q_DECLARE_PRIVATE(ctkXnatAssessorFolder)
 };
 
 #endif

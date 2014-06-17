@@ -41,6 +41,7 @@ class ctkXnatDataModel;
 class ctkXnatObject;
 class ctkXnatScanResource;
 class ctkXnatReconstructionResource;
+class ctkXnatAssessorResource;
 
 /**
  * @ingroup XNAT_Core
@@ -197,6 +198,7 @@ public:
 
   void download(ctkXnatScanResource* scanResource, const QString& zipFileName);
   void download(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFileName);
+  void download(ctkXnatAssessorResource* assessorResource, const QString& zipFileName);
 
   /**
    * @brief Sends a http HEAD request to the xnat instance

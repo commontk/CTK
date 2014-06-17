@@ -24,7 +24,6 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatScan.h"
-#include "ctkXnatFile.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
 
@@ -61,7 +60,7 @@ ctkXnatScanResource::~ctkXnatScanResource()
 //----------------------------------------------------------------------------
 QString ctkXnatScanResource::resourceUri() const
 {
-  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("label"));
+  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->id ());
 }
 
 //----------------------------------------------------------------------------
@@ -85,8 +84,10 @@ void ctkXnatScanResource::fetchImpl()
     QString label = file->property("Name");
     if (!label.isEmpty())
     {
+      file->setProperty("label", label);
       file->setProperty("ID", label);
     }
+    
     this->add(file);
   }
 }

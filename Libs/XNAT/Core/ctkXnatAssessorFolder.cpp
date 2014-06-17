@@ -19,72 +19,69 @@
 
 =============================================================================*/
 
-#include "ctkXnatScan.h"
+#include "ctkXnatAssessorFolder.h"
 
 #include "ctkXnatSession.h"
-#include "ctkXnatScanFolder.h"
-#include "ctkXnatScanResource.h"
-#include "ctkXnatObject.h"
+#include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatAssessor.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
 //----------------------------------------------------------------------------
-class ctkXnatScanPrivate : public ctkXnatObjectPrivate
+class ctkXnatAssessorFolderPrivate : public ctkXnatObjectPrivate
 {
 public:
 
-  ctkXnatScanPrivate()
+  ctkXnatAssessorFolderPrivate()
   : ctkXnatObjectPrivate()
   {
   }
 
   void reset()
   {
-    uri.clear();
   }
 
-  QString uri;
 };
 
+//----------------------------------------------------------------------------
+ctkXnatAssessorFolder::ctkXnatAssessorFolder(ctkXnatObject* parent)
+  : ctkXnatObject(*new ctkXnatAssessorFolderPrivate(), parent, QString::null)
+{
+  
+  this->setProperty("ID", "assessors");
+  this->setProperty("label", "Assessments");
+}
 
 //----------------------------------------------------------------------------
-ctkXnatScan::ctkXnatScan(ctkXnatObject* parent, const QString& schemaType)
-: ctkXnatObject(*new ctkXnatScanPrivate(), parent, schemaType)
+ctkXnatAssessorFolder::~ctkXnatAssessorFolder()
 {
 }
 
 //----------------------------------------------------------------------------
-ctkXnatScan::~ctkXnatScan()
-{
-}
-
-//----------------------------------------------------------------------------
-QString ctkXnatScan::resourceUri() const
+QString ctkXnatAssessorFolder::resourceUri() const
 {
   return QString("%1/%2").arg(parent()->resourceUri(), this->id());
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatScan::reset()
+void ctkXnatAssessorFolder::reset()
 {
   ctkXnatObject::reset();
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatScan::fetchImpl()
+void ctkXnatAssessorFolder::fetchImpl()
 {
-  QString scanResourcesUri = this->resourceUri() + "/resources";
+  QString assessorsUri = this->resourceUri();
   ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(scanResourcesUri);
+  QUuid queryId = session->httpGet(assessorsUri);
 
-  QList<ctkXnatObject*> scanResources = session->httpResults(queryId,
-                                                             ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE);
+  QList<ctkXnatObject*> assessors = session->httpResults(queryId,
+                                                     ctkXnatDefaultSchemaTypes::XSI_ASSESSOR);
 
-  foreach (ctkXnatObject* scanResource, scanResources)
+  foreach (ctkXnatObject* assessor, assessors)
   {
-    QString label = scanResource->property("label");
-    if (!label.isEmpty())
-      scanResource->setProperty("ID", label);
-    this->add(scanResource);
+    
+    this->add(assessor);
   }
 }

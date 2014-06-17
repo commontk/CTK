@@ -66,8 +66,6 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
     ui->loginLabel->setText("Disconnected");
     ui->downloadLabel->hide();
 
-    // nt: download tests... //
-    // m_TreeModel->downloadFile (ui->treeView->selectionModel()->currentIndex(), "/Users/nicolastoussaint/Desktop/test.nii.gz");
   }
   else
   {

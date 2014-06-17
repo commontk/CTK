@@ -178,7 +178,7 @@ int ctkBackTracePrivate::trace(void** array, size_t n) const
 #else
 
 // --------------------------------------------------------------------------
-int ctkBackTracePrivate::trace(void** /*array*/, size_t /*n*/) const
+int ctkBackTracePrivate::trace(void** /*array*/, int /*n*/) const
 {
   return 0;
 }

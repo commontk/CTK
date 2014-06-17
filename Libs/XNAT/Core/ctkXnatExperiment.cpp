@@ -26,9 +26,13 @@
 #include "ctkXnatSubject.h"
 #include "ctkXnatScan.h"
 #include "ctkXnatReconstruction.h"
+#include "ctkXnatAssessor.h"
 #include "ctkXnatScanFolder.h"
 #include "ctkXnatReconstructionFolder.h"
+#include "ctkXnatAssessorFolder.h"
 #include "ctkXnatDefaultSchemaTypes.h"
+
+#include <qDebug>
 
 //----------------------------------------------------------------------------
 class ctkXnatExperimentPrivate : public ctkXnatObjectPrivate
@@ -79,8 +83,17 @@ void ctkXnatExperiment::fetchImpl()
   ctkXnatSession* const session = this->session();
   QUuid scansQueryId = session->httpGet(scansUri);
 
-  QList<ctkXnatObject*> scans = session->httpResults(scansQueryId,
-                                                     ctkXnatDefaultSchemaTypes::XSI_SCAN);
+  QList<ctkXnatObject*> scans;
+  
+  try
+  {
+    scans = session->httpResults(scansQueryId,
+				 ctkXnatDefaultSchemaTypes::XSI_SCAN);
+  }
+  catch (const ctkException& e)
+  {
+    qWarning() << QString(e.what());
+  }
 
   if (!scans.isEmpty())
   {
@@ -91,13 +104,44 @@ void ctkXnatExperiment::fetchImpl()
   QString reconstructionsUri = this->resourceUri() + "/reconstructions";
   QUuid reconstructionsQueryId = session->httpGet(reconstructionsUri);
 
-  QList<ctkXnatObject*> reconstructions = session->httpResults(reconstructionsQueryId,
-                                                               ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION);
-
+  QList<ctkXnatObject*> reconstructions;
+  try
+  {
+    reconstructions = session->httpResults(reconstructionsQueryId,
+					   ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION);
+  }
+  catch (const ctkException& e)
+  {
+    qWarning() << QString(e.what());
+  }
+  
   if (!reconstructions.isEmpty())
   {
     ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder();
     this->add(reconstructionFolder);
   }
+
+  QString assessorsUri = this->resourceUri() + "/assessors";
+  QUuid assessorsQueryId = session->httpGet(assessorsUri);
+  
+  QList<ctkXnatObject*> assessors;
+  
+  try
+  {
+    assessors = session->httpResults(assessorsQueryId,
+				     ctkXnatDefaultSchemaTypes::XSI_ASSESSOR);
+  }
+  catch (const ctkException& e)
+  {
+    qWarning() << QString(e.what());
+  }
+
+  if (!assessors.isEmpty())
+  {
+    ctkXnatAssessorFolder* assessorFolder = new ctkXnatAssessorFolder(this);
+    this->add(assessorFolder);
+  }
+
   this->fetchResources();
+
 }
