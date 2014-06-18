@@ -780,7 +780,9 @@ bool ctkDICOMModel::setChildData(const QModelIndex &index, const QVariant &value
 //------------------------------------------------------------------------------
 bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &value, int role)
 {
+#ifdef CHECKABLE_COLUMNS
   Q_D(const ctkDICOMModel);
+#endif
 
   if(!index.isValid()){
     return false;
