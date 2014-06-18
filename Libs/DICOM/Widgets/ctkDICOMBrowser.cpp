@@ -442,7 +442,6 @@ void ctkDICOMBrowser::openQueryDialog()
 //----------------------------------------------------------------------------
 void ctkDICOMBrowser::onQueryRetrieveFinished()
 {
-  Q_D(ctkDICOMBrowser);
   emit this->queryRetrieveFinished();
 }
 

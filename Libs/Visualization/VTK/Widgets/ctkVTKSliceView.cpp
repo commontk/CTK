@@ -234,7 +234,6 @@ void ctkVTKSliceView::setColorWindow(double newColorWindow)
 //----------------------------------------------------------------------------
 bool ctkVTKSliceView::eventFilter(QObject *object, QEvent *event)
 {
-  Q_D(ctkVTKSliceView);
   if (object == this->VTKWidget())
     {
     if (event->type() == QEvent::Resize)
