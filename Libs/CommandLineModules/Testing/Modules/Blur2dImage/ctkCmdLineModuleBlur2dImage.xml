@@ -49,12 +49,20 @@ Blur a 2d image.
     <default>/home</default>
     <channel>output</channel>
     </directory>
-    <geometry fileExtensions=".jpg,.txt">
-    <name>geomVar</name>
-    <index>7</index>
-    <description>Some geom</description>
-    <label>Some geom</label>
+    <geometry fileExtensions=".vtk,.vtp">
+      <name>geomVar</name>
+      <index>7</index>
+      <description>Some geom</description>
+      <label>Some geom</label>
+      <channel>output</channel>
     </geometry>
+    <image fileExtensions=".nii,.nrrd">
+      <name>imageVar</name>
+      <index>8</index>
+      <description>Some image</description>
+      <label>Some image</label>
+      <channel>input</channel>
+    </image>
     <double>
       <name>doubleVariable</name>
       <flag>d</flag>
