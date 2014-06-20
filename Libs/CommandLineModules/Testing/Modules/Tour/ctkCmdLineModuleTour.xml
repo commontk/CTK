@@ -33,28 +33,6 @@
       </description>
       <label>Boolean Parameter</label>
     </boolean>
-    <file>
-    <name>fileVar</name>
-    <index>3</index>
-    <description>Some file</description>
-    <label>Some file</label>
-    <default>bla</default>
-    <channel>input</channel>
-    </file>
-    <directory>
-    <name>dirVar</name>
-    <index>6</index>
-    <description>Some dir</description>
-        <label>Some dir</label>
-    <default>/home</default>
-    <channel>output</channel>
-    </directory>
-    <geometry fileExtensions="*.jpg, *.txt">
-    <name>geomVar</name>
-    <index>7</index>
-    <description>Some geom</description>
-    <label>Some geom</label>
-    </geometry>
     <double>
       <name>doubleVariable</name>
       <flag>d</flag>
@@ -111,5 +89,225 @@
     <default>0.5,-34.2,43</default>
       </point>
   </parameters>
+
+  <parameters advanced="true">
+    <label>Directory I/O Parameters</label>
+    <description>Various Directory I/O parameters.</description>
+    <directory>
+      <name>dirVar</name>
+      <longflag>dirVar</longflag>
+      <description>Some dir</description>
+      <label>Some dir</label>
+      <default>/home</default>
+    </directory>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>File I/O Parameters</label>
+    <description>Various File I/O parameters.</description>
+    <file>
+      <name>inputFileVarNoFileExtensions</name>
+      <longflag>if1</longflag>
+      <description>Input file, with no file extensions specified, so all files selectable.</description>
+      <label>File, no extensions specified.</label>
+      <default>bla</default>
+      <channel>input</channel>
+    </file>
+    <file fileExtensions=".txt,.mat">
+      <name>inputFileVarListCommaSeparated</name>
+      <longflag>if2</longflag>
+      <description>Input file, where a correct comma separated list of .txt and .mat are specified, which should include the first dot, but should not include any asterisks.</description>
+      <label>Some .txt or .mat file.</label>
+      <default>bla.txt</default>
+      <channel>input</channel>
+    </file>
+    <file fileExtensions="*.txt,*.mat">
+      <name>inputFileVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
+      <longflag>if3</longflag>
+      <description>Input file, where the XML has incorrect addition of asterisks.</description>
+      <label>Some .txt or .mat file.</label>
+      <default>bla2.txt</default>
+      <channel>input</channel>
+    </file>
+    <file fileExtensions="txt,mat">
+      <name>inputFileVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
+      <longflag>if4</longflag>
+      <description>Input file, where the XML has incorrectly missed the first dot of the file extensions.</description>
+      <label>Some .txt or .mat file.</label>
+      <default>bla3.txt</default>
+      <channel>input</channel>
+    </file>
+    <file>
+      <name>outputFileVarNoFileExtensions</name>
+      <longflag>of1</longflag>
+      <description>Output file, with no file extensions specified, so all files selectable.</description>
+      <label>Output file, no extensions specified.</label>
+      <default>bla</default>
+      <channel>output</channel>
+    </file>
+    <file fileExtensions=".txt,.mat">
+      <name>outputFileVarListCommaSeparated</name>
+      <longflag>of2</longflag>
+      <description>Output file, where a correct comma separated list of .txt and .mat are specified, which should include the first dot, but should not include any asterisks.</description>
+      <label>Some .txt or .mat file.</label>
+      <default>bla.txt</default>
+      <channel>output</channel>
+    </file>
+    <file fileExtensions="*.txt,*.mat">
+      <name>outputFileVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
+      <longflag>of3</longflag>
+      <description>Output file, where the XML has incorrect addition of asterisks.</description>
+      <label>Some .txt or .mat file.</label>
+      <default>bla2.txt</default>
+      <channel>output</channel>
+    </file>
+    <file fileExtensions="txt,mat">
+      <name>outputFileVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
+      <longflag>of4</longflag>
+      <description>Output file, where the XML has incorrectly missed the first dot of the file extensions.</description>
+      <label>Some .txt or .mat file.</label>
+      <default>bla3.txt</default>
+      <channel>output</channel>
+    </file>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Image I/O Parameters</label>
+    <description>Various Image I/O parameters.</description>
+    <image>
+      <name>inputImageVarNoFileExtensions</name>
+      <longflag>ii1</longflag>
+      <description>Input image, with no file extensions specified, so all files selectable.</description>
+      <label>Image, no extensions specified.</label>
+      <default>bla</default>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions=".nii,.nrrd,.nii.gz">
+      <name>inputImageVarListCommaSeparated</name>
+      <longflag>ii2</longflag>
+      <description>Input image, where a correct comma separated list is specified, which should include the first dot, but should not include any asterisks.</description>
+      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <default>bla.nii</default>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions="*.nii,*.nrrd,*.nii.gz">
+      <name>inputImageVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
+      <longflag>ii3</longflag>
+      <description>Input image, where the XML has incorrect addition of asterisks.</description>
+      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <default>bla2.nii</default>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions="nii,nrrd,nii.gz">
+      <name>inputImageVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
+      <longflag>ii4</longflag>
+      <description>Input file, where the XML has incorrectly missed the first dot of the file extensions.</description>
+      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <default>bla3.nii</default>
+      <channel>input</channel>
+    </image>
+    <image>
+      <name>outputImageVarNoFileExtensions</name>
+      <longflag>oi1</longflag>
+      <description>Output image, with no file extensions specified, so all files selectable.</description>
+      <label>Image, no extensions specified.</label>
+      <default>bla</default>
+      <channel>output</channel>
+    </image>
+    <image fileExtensions=".nii,.nrrd,.nii.gz">
+      <name>outputImageVarListCommaSeparated</name>
+      <longflag>oi2</longflag>
+      <description>Output image, where a correct comma separated is specified, which should include the first dot, but should not include any asterisks.</description>
+      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <default>bla.nii</default>
+      <channel>output</channel>
+    </image>
+    <image fileExtensions="*.nii,*.nrrd,*.nii.gz">
+      <name>outputImageVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
+      <longflag>oi3</longflag>
+      <description>Output image, where the XML has incorrect addition of asterisks.</description>
+      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <default>bla2.nii</default>
+      <channel>output</channel>
+    </image>
+    <image fileExtensions="nii,nrrd,nii.gz">
+      <name>outputImageVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
+      <longflag>oi4</longflag>
+      <description>Output file, where the XML has incorrectly missed the first dot of the file extensions.</description>
+      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <default>bla3.nii</default>
+      <channel>output</channel>
+    </image>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Geometry I/O Parameters</label>
+    <description>Various Geometry I/O parameters, which are for things like vtkPolyData.</description>
+    <geometry>
+      <name>inputGeometryVarNoFileExtensions</name>
+      <longflag>ig1</longflag>
+      <description>Input geometry, with no file extensions specified, so all files selectable.</description>
+      <label>Geometry, no extensions specified.</label>
+      <default>bla</default>
+      <channel>input</channel>
+    </geometry>
+    <geometry fileExtensions=".vtk,.vtp">
+      <name>inputGeometryVarListCommaSeparated</name>
+      <longflag>ig2</longflag>
+      <description>Input geometry, where a correct comma separated list is specified, which should include the first dot, but should not include any asterisks.</description>
+      <label>Some .vtk or .vtp file.</label>
+      <default>bla.vtk</default>
+      <channel>input</channel>
+    </geometry>
+    <geometry fileExtensions="*.vtk,*.vtp">
+      <name>inputGeometryVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
+      <longflag>ig3</longflag>
+      <description>Input geometry, where the XML has incorrect addition of asterisks.</description>
+      <label>Some .vtk or .vtp file.</label>
+      <default>bla2.vtk</default>
+      <channel>input</channel>
+    </geometry>
+    <geometry fileExtensions=".vtk,.vtp">
+      <name>inputGeometryVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
+      <longflag>ig4</longflag>
+      <description>Input geometry, where the XML has incorrectly missed the first dot of the file extensions.</description>
+      <label>Some .vtk or .vtp file.</label>
+      <default>bla3.vtk</default>
+      <channel>input</channel>
+    </geometry>
+    <geometry>
+      <name>outputGeometryVarNoFileExtensions</name>
+      <longflag>og1</longflag>
+      <description>Output geometry, with no file extensions specified, so all files selectable.</description>
+      <label>Geometry, no extensions specified.</label>
+      <default>bla</default>
+      <channel>output</channel>
+    </geometry>
+    <geometry fileExtensions=".vtk,.vtp">
+      <name>outputGeometryVarListCommaSeparated</name>
+      <longflag>og2</longflag>
+      <description>Output geometry, where a correct comma separated list is specified, which should include the first dot, but should not include any asterisks.</description>
+      <label>Some .vtk or .vtp file.</label>
+      <default>bla.vtk</default>
+      <channel>output</channel>
+    </geometry>
+    <geometry fileExtensions="*.vtk,*.vtp">
+      <name>outputGeometryVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
+      <longflag>og3</longflag>
+      <description>Output geometry, where the XML has incorrect addition of asterisks.</description>
+      <label>Some .vtk or .vtp file.</label>
+      <default>bla2.vtk</default>
+      <channel>output</channel>
+    </geometry>
+    <geometry fileExtensions=".vtk,.vtp">
+      <name>outputGeometryVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
+      <longflag>og4</longflag>
+      <description>Output geometry, where the XML has incorrectly missed the first dot of the file extensions.</description>
+      <label>Some .vtk or .vtp file.</label>
+      <default>bla3.vtk</default>
+      <channel>output</channel>
+    </geometry>
+  </parameters>
+
 </executable>
 
