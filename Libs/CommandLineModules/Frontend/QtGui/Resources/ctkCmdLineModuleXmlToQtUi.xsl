@@ -246,7 +246,8 @@
     <property name="nameFilters">
       <stringlist>
       <xsl:for-each select="tokenize(@fileExtensions, ',')">
-        <string><xsl:value-of select="normalize-space(.)"/></string>
+        <!-- Note: We add an asterisk at the start. If the asterisk is missing in the xml, you can't select anything. But if you end up with multiple asterisks, you can still select files. -->
+        <string>*<xsl:value-of select="normalize-space(.)"/></string>
       </xsl:for-each>
       </stringlist>
     </property>
