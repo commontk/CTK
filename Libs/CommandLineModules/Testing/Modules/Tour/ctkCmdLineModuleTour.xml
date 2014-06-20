@@ -117,7 +117,7 @@
       <name>inputFileVarListCommaSeparated</name>
       <longflag>if2</longflag>
       <description>Input file, where a correct comma separated list of .txt and .mat are specified, which should include the first dot, but should not include any asterisks.</description>
-      <label>Some .txt or .mat file.</label>
+      <label>Correctly specified .txt or .mat file.</label>
       <default>bla.txt</default>
       <channel>input</channel>
     </file>
@@ -125,7 +125,7 @@
       <name>inputFileVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
       <longflag>if3</longflag>
       <description>Input file, where the XML has incorrect addition of asterisks.</description>
-      <label>Some .txt or .mat file.</label>
+      <label>Incorrectly specified .txt or .mat file.</label>
       <default>bla2.txt</default>
       <channel>input</channel>
     </file>
@@ -133,7 +133,7 @@
       <name>inputFileVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
       <longflag>if4</longflag>
       <description>Input file, where the XML has incorrectly missed the first dot of the file extensions.</description>
-      <label>Some .txt or .mat file.</label>
+      <label>Incorrectly specified .txt or .mat file.</label>
       <default>bla3.txt</default>
       <channel>input</channel>
     </file>
@@ -149,7 +149,7 @@
       <name>outputFileVarListCommaSeparated</name>
       <longflag>of2</longflag>
       <description>Output file, where a correct comma separated list of .txt and .mat are specified, which should include the first dot, but should not include any asterisks.</description>
-      <label>Some .txt or .mat file.</label>
+      <label>Correctly specified .txt or .mat file.</label>
       <default>bla.txt</default>
       <channel>output</channel>
     </file>
@@ -157,7 +157,7 @@
       <name>outputFileVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
       <longflag>of3</longflag>
       <description>Output file, where the XML has incorrect addition of asterisks.</description>
-      <label>Some .txt or .mat file.</label>
+      <label>Incorrectly specified .txt or .mat file.</label>
       <default>bla2.txt</default>
       <channel>output</channel>
     </file>
@@ -165,7 +165,7 @@
       <name>outputFileVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
       <longflag>of4</longflag>
       <description>Output file, where the XML has incorrectly missed the first dot of the file extensions.</description>
-      <label>Some .txt or .mat file.</label>
+      <label>Incorrectly specified .txt or .mat file.</label>
       <default>bla3.txt</default>
       <channel>output</channel>
     </file>
@@ -186,7 +186,7 @@
       <name>inputImageVarListCommaSeparated</name>
       <longflag>ii2</longflag>
       <description>Input image, where a correct comma separated list is specified, which should include the first dot, but should not include any asterisks.</description>
-      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <label>Correctly specified .nii or .nrrd or .nii.gz image.</label>
       <default>bla.nii</default>
       <channel>input</channel>
     </image>
@@ -194,7 +194,7 @@
       <name>inputImageVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
       <longflag>ii3</longflag>
       <description>Input image, where the XML has incorrect addition of asterisks.</description>
-      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <label>Incorrectly specified .nii or .nrrd or .nii.gz image.</label>
       <default>bla2.nii</default>
       <channel>input</channel>
     </image>
@@ -202,7 +202,7 @@
       <name>inputImageVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
       <longflag>ii4</longflag>
       <description>Input file, where the XML has incorrectly missed the first dot of the file extensions.</description>
-      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <label>Incorrectly specified .nii or .nrrd or .nii.gz image.</label>
       <default>bla3.nii</default>
       <channel>input</channel>
     </image>
@@ -218,7 +218,7 @@
       <name>outputImageVarListCommaSeparated</name>
       <longflag>oi2</longflag>
       <description>Output image, where a correct comma separated is specified, which should include the first dot, but should not include any asterisks.</description>
-      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <label>Correctly specified .nii or .nrrd or .nii.gz image.</label>
       <default>bla.nii</default>
       <channel>output</channel>
     </image>
@@ -226,7 +226,7 @@
       <name>outputImageVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
       <longflag>oi3</longflag>
       <description>Output image, where the XML has incorrect addition of asterisks.</description>
-      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <label>Incorrectly specified .nii or .nrrd or .nii.gz image.</label>
       <default>bla2.nii</default>
       <channel>output</channel>
     </image>
@@ -234,7 +234,7 @@
       <name>outputImageVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
       <longflag>oi4</longflag>
       <description>Output file, where the XML has incorrectly missed the first dot of the file extensions.</description>
-      <label>Some .nii or .nrrd or .nii.gz image.</label>
+      <label>Incorrectly specified .nii or .nrrd or .nii.gz image.</label>
       <default>bla3.nii</default>
       <channel>output</channel>
     </image>
@@ -255,7 +255,7 @@
       <name>inputGeometryVarListCommaSeparated</name>
       <longflag>ig2</longflag>
       <description>Input geometry, where a correct comma separated list is specified, which should include the first dot, but should not include any asterisks.</description>
-      <label>Some .vtk or .vtp file.</label>
+      <label>Correctly specified .vtk or .vtp file.</label>
       <default>bla.vtk</default>
       <channel>input</channel>
     </geometry>
@@ -263,7 +263,7 @@
       <name>inputGeometryVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
       <longflag>ig3</longflag>
       <description>Input geometry, where the XML has incorrect addition of asterisks.</description>
-      <label>Some .vtk or .vtp file.</label>
+      <label>Incorrectly specified .vtk or .vtp file.</label>
       <default>bla2.vtk</default>
       <channel>input</channel>
     </geometry>
@@ -271,7 +271,7 @@
       <name>inputGeometryVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
       <longflag>ig4</longflag>
       <description>Input geometry, where the XML has incorrectly missed the first dot of the file extensions.</description>
-      <label>Some .vtk or .vtp file.</label>
+      <label>Incorrectly specified .vtk or .vtp file.</label>
       <default>bla3.vtk</default>
       <channel>input</channel>
     </geometry>
@@ -287,7 +287,7 @@
       <name>outputGeometryVarListCommaSeparated</name>
       <longflag>og2</longflag>
       <description>Output geometry, where a correct comma separated list is specified, which should include the first dot, but should not include any asterisks.</description>
-      <label>Some .vtk or .vtp file.</label>
+      <label>Correctly specified .vtk or .vtp file.</label>
       <default>bla.vtk</default>
       <channel>output</channel>
     </geometry>
@@ -295,7 +295,7 @@
       <name>outputGeometryVarListCommaSeparatedWithINCORRECTAdditionOfAsterisks</name>
       <longflag>og3</longflag>
       <description>Output geometry, where the XML has incorrect addition of asterisks.</description>
-      <label>Some .vtk or .vtp file.</label>
+      <label>Incorrectly specified .vtk or .vtp file.</label>
       <default>bla2.vtk</default>
       <channel>output</channel>
     </geometry>
@@ -303,7 +303,7 @@
       <name>outputGeometryVarListCommaSeparatedWithINCORRECTMissingFirstDot</name>
       <longflag>og4</longflag>
       <description>Output geometry, where the XML has incorrectly missed the first dot of the file extensions.</description>
-      <label>Some .vtk or .vtp file.</label>
+      <label>Incorrectly specified .vtk or .vtp file.</label>
       <default>bla3.vtk</default>
       <channel>output</channel>
     </geometry>
