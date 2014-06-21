@@ -3,6 +3,19 @@ project(CTKImageProcessingITKCore)
 #
 # 3rd party dependencies
 #
+
+if(ITK_VERSION_MAJOR GREATER 3)
+  #
+  # ITK
+  #
+  set(ITK_FOUND 0) # XXX Ideally every library should 'find_package(ITK ...)" and the
+                   #     top-level call to find_package(ITK ...) should be removed.
+  set(${PROJECT_NAME}_ITK_COMPONENTS
+    ITKCommon
+    )
+  find_package(ITK 4 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1)
+endif()
 include(${ITK_USE_FILE})
 
 #
