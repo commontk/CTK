@@ -207,4 +207,4 @@ void ctkCmdLineModuleFrontend::resultReady(const ctkCmdLineModuleResult &result)
   {}
 }
 
-#include "moc_ctkCmdLineModuleFrontend.h"
+#include "moc_ctkCmdLineModuleFrontend.cpp"

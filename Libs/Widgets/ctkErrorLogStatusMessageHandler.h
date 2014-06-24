@@ -22,8 +22,11 @@
 #define __ctkErrorLogStatusMessageHandler_h
 
 // CTK includes
-#include <ctkErrorLogModel.h>
+#include <ctkErrorLogAbstractMessageHandler.h>
 #include "ctkWidgetsExport.h"
+
+// Qt includes
+#include <QPointer>
 
 class QMainWindow;
 

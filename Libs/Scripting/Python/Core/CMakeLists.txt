@@ -28,9 +28,10 @@ set(KIT_resources
 #
 # Configure file describing which Qt modules are wrapped
 #
-foreach(qtlib CORE GUI NETWORK OPENGL SQL SVG UITOOLS WEBKIT XML XMLPATTERNS)
+set(QT_PYTHON_WRAPPED_LIBRARIES_LIST Core Gui Widgets Network OpenGL Sql Svg UiTools WebKit WebKitWidgets Xml XmlPatterns)
+foreach(qtlib ${QT_PYTHON_WRAPPED_LIBRARIES_LIST})
+  string(TOUPPER ${qtlib} qtlib)
   set(CTK_PYTHONQT_WRAP_QT${qtlib} ${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
-  #message(CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}:${CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QT${qtlib}})
 endforeach()
 
 configure_file(

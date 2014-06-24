@@ -25,15 +25,25 @@ set(KIT_SRCS
   ctkVTKAbstractView.cpp
   ctkVTKAbstractView.h
   ctkVTKAbstractView_p.h
+  ctkVTKColorTransferFunction.cpp
+  ctkVTKColorTransferFunction.h
+  ctkVTKCompositeFunction.cpp
+  ctkVTKCompositeFunction.h
   ctkVTKDataSetModel.cpp
   ctkVTKDataSetModel.h
   ctkVTKDataSetArrayComboBox.cpp
   ctkVTKDataSetArrayComboBox.h
+  ctkVTKHistogram.cpp
+  ctkVTKHistogram.h
+  ctkVTKLookupTable.cpp
+  ctkVTKLookupTable.h
   ctkVTKMagnifyView.cpp
   ctkVTKMagnifyView.h
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
+  ctkVTKPiecewiseFunction.cpp
+  ctkVTKPiecewiseFunction.h
   ctkVTKPropertyWidget.cpp
   ctkVTKPropertyWidget.h
   ctkVTKRenderView.cpp
@@ -63,11 +73,16 @@ set(KIT_MOC_SRCS
   ctkVTKAbstractMatrixWidget_p.h
   ctkVTKAbstractView.h
   ctkVTKAbstractView_p.h
+  ctkVTKColorTransferFunction.h
+  ctkVTKCompositeFunction.h
   ctkVTKDataSetArrayComboBox.h
   ctkVTKDataSetModel.h
+  ctkVTKHistogram.h
+  ctkVTKLookupTable.h
   ctkVTKMagnifyView.h
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.h
+  ctkVTKPiecewiseFunction.h
   ctkVTKPropertyWidget.h
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
@@ -94,9 +109,24 @@ set(KIT_resources
 )
 
 # Set VTK_LIBRARIES variable
-set(VTK_LIBRARIES
-  QVTK
-  )
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_LIBRARIES
+    vtkChartsCore
+    vtkCommonMath
+    vtkFiltersSources
+    vtkImagingGeneral
+    vtkImagingStatistics
+    vtkInteractionWidgets
+    vtkRenderingContext2D
+    vtkViewsContext2D
+    vtkWrappingPythonCore
+    vtkGUISupportQt
+    )
+else()
+  set(VTK_LIBRARIES
+    QVTK
+    )
+endif()
 
 if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(CTK_USE_CHARTS 1)
@@ -123,9 +153,15 @@ IF (${CTK_USE_CHARTS})
       Resources/UI/ctkVTKVolumePropertyWidget.ui
       Resources/UI/ctkVTKScalarsToColorsWidget.ui
       ${KIT_UI_FORMS})
-  set(VTK_LIBRARIES
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    set(VTK_LIBRARIES
+      vtkChartsCore
+      ${VTK_LIBRARIES})
+  else()
+    set(VTK_LIBRARIES
       vtkCharts
       ${VTK_LIBRARIES})
+  endif()
   add_definitions(-DCTK_USE_CHARTS)
 endif()
 
@@ -160,7 +196,7 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

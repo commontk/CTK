@@ -8,7 +8,7 @@
 #ifndef __@MY_EXPORT_HEADER_PREFIX@Export_h
 #define __@MY_EXPORT_HEADER_PREFIX@Export_h
 
-#include <QtCore/qglobal.h>
+#include <QtGlobal>
 
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
 #  if defined(@MY_LIBNAME@_EXPORTS)

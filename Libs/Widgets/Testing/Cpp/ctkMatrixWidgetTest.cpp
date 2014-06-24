@@ -45,7 +45,11 @@ void ctkMatrixWidgetTester::testUI()
   matrix.setMaximum(100.);
 
   matrix.show();
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&matrix);
+#else
   QTest::qWaitForWindowShown(&matrix);
+#endif
   //qApp->exec();
 }
 
@@ -59,7 +63,12 @@ void ctkMatrixWidgetTester::testDecimals()
   matrix.setValue(0, 0, 1.000000001);
 
   matrix.show();
+
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&matrix);
+#else
   QTest::qWaitForWindowShown(&matrix);
+#endif
   //qApp->exec();
 
   QCOMPARE(matrix.value(0, 0), 1.000000001);

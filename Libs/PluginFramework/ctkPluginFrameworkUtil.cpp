@@ -64,7 +64,7 @@ public:
       else
       {
         QChar c = s.at(pos);
-        switch (c.toAscii())
+        switch (c.toLatin1())
         {
         case '"':
           quote = !quote;

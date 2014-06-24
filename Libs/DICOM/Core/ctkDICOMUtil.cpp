@@ -25,12 +25,16 @@
 #include "ctkDICOMUtil.h"
 
 // DCMTK includes
-#include <dcmtk/dcmnet/diutil.h>
+#include <dcmtk/oflog/oflog.h>
 
 //------------------------------------------------------------------------------
 void ctk::setDICOMLogLevel(ctkErrorLogLevel::LogLevel level)
 {
+#ifdef HAVE_DCMTK_LOG4CPLUS_LOGGER
   dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();
+#else
+  log4cplus::Logger log = log4cplus::Logger::getRoot();
+#endif
   switch (level)
     {
     case ctkErrorLogLevel::Trace: log.setLogLevel(OFLogger::TRACE_LOG_LEVEL); break;
@@ -49,7 +53,11 @@ void ctk::setDICOMLogLevel(ctkErrorLogLevel::LogLevel level)
 //------------------------------------------------------------------------------
 ctkErrorLogLevel::LogLevel ctk::dicomLogLevel()
 {
+#ifdef HAVE_DCMTK_LOG4CPLUS_LOGGER
   dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();
+#else
+  log4cplus::Logger log = log4cplus::Logger::getRoot();
+#endif
   switch (log.getLogLevel())
     {
     case OFLogger::TRACE_LOG_LEVEL: return ctkErrorLogLevel::Trace;

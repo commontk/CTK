@@ -28,6 +28,7 @@
 
 // CTK includes
 #include "ctkDirectoryButton.h"
+#include "ctkFileDialog.h"
 
 //-----------------------------------------------------------------------------
 class ctkDirectoryButtonPrivate
@@ -253,22 +254,32 @@ void ctkDirectoryButton::browse()
   class ExcludeReadOnlyFilterProxyModel : public QSortFilterProxyModel
   {
   public:
-    ExcludeReadOnlyFilterProxyModel(QObject *parent):QSortFilterProxyModel(parent)
+    ExcludeReadOnlyFilterProxyModel(QPalette palette, QObject *parent)
+      : QSortFilterProxyModel(parent)
+      , Palette(palette)
     {
     }
-    virtual bool filterAcceptsRow(int source_row, const QModelIndex & source_parent) const
+    virtual Qt::ItemFlags flags(const QModelIndex& index)const
     {
       QString filePath =
-          this->sourceModel()->data(sourceModel()->index(source_row, 0, source_parent),
-          QFileSystemModel::FilePathRole).toString();
-      return QFileInfo(filePath).isWritable();
+        this->sourceModel()->data(this->mapToSource(index),
+                                  QFileSystemModel::FilePathRole).toString();
+      if (!QFileInfo(filePath).isWritable())
+        {
+        // Double clickable (to open) but can't be "choosen".
+        return Qt::ItemIsSelectable;
+        }
+      return this->QSortFilterProxyModel::flags(index);
     }
+    QPalette Palette;
   };
 
   Q_D(ctkDirectoryButton);
-  QScopedPointer<QFileDialog> fileDialog(
-          new QFileDialog(this, d->DialogCaption.isEmpty() ? this->toolTip() :
-          d->DialogCaption, d->Directory.path()));
+  // Use a ctkFileDialog (vs QFileDialog) for the AcceptSave mode so it does not
+  // select non writable folders.
+  QScopedPointer<ctkFileDialog> fileDialog(
+    new ctkFileDialog(this, d->DialogCaption.isEmpty() ? this->toolTip() :
+                      d->DialogCaption, d->Directory.path()));
   #ifdef USE_QFILEDIALOG_OPTIONS
     fileDialog->setOptions(d->DialogOptions);
   #else
@@ -279,10 +290,11 @@ void ctkDirectoryButton::browse()
 
   if (d->AcceptMode == QFileDialog::AcceptSave)
     {
-    // Ideally "Choose" button of QFileDialog should be disabled if a read-only folder
-    // is selected and the acceptMode was AcceptSave.
-    // This is captured in https://github.com/commontk/CTK/issues/365
-    fileDialog->setProxyModel(new ExcludeReadOnlyFilterProxyModel(fileDialog.data()));
+    // Gray out the non-writable folders. They are still openable with double click,
+    // but they can't be selected because they don't have the ItemIsEnabled
+    // flag and because ctkFileDialog would not let it to be selected.
+    fileDialog->setProxyModel(
+      new ExcludeReadOnlyFilterProxyModel(this->palette(), fileDialog.data()));
     }
 
   QString dir;

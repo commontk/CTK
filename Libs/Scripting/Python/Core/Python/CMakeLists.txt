@@ -1,14 +1,22 @@
 
 
-set(KIT_PYTHON_SCRIPTS
-  qt/__init__
+set(KIT_PYTHON_SCRIPTS)
+
+string(REPLACE ";" "', '" QT_PYTHON_WRAPPED_LIBRARIES "${QT_PYTHON_WRAPPED_LIBRARIES_LIST}" )
+set(QT_PYTHON_WRAPPED_LIBRARIES "'${QT_PYTHON_WRAPPED_LIBRARIES}'")
+
+configure_file(
+  qt/__init__.py.in
+  ${CMAKE_CURRENT_BINARY_DIR}/qt/__init__.py
+  @ONLY
   )
+list(APPEND KIT_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/qt/__init__.py)
 
 # If it applies, the variable CTK_PYTHON_WRAPPED_LIBRARIES will contain
 # the comma separated list of package to load
 set(CTK_PYTHON_WRAPPED_LIBRARIES)
 
-if(CTK_WRAP_PYTHONQT_LIGHT OR CTK_WRAP_PYTHONQT_FULL)
+if(CTK_WRAP_PYTHONQT_LIGHT)
 
   foreach(lib_name ${CTK_LIBS})
     if(${CTK_LIB_${lib_name}})
@@ -37,4 +45,4 @@ ctkMacroCompilePythonScript(
   DESTINATION_DIR ${CTK_BINARY_DIR}/bin/Python
   INSTALL_DIR ${CTK_INSTALL_BIN_DIR}
   )
-  
+

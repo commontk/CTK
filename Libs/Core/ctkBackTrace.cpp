@@ -73,7 +73,7 @@ struct ctkBackTracePrivate
 {
   std::vector<void *> Frames;
 
-  int trace(void** addresses, int size) const;
+  int trace(void** addresses, size_t size) const;
   std::string getSymbol(void* address) const;
 };
 
@@ -89,7 +89,7 @@ ctkBackTrace::ctkBackTrace(size_t framesNumber)
   if(framesNumber == 0)
     return;
   d->Frames.resize(framesNumber, 0);
-  int size = d->trace(&d->Frames.front(), framesNumber);
+  size_t size = d->trace(&d->Frames.front(), framesNumber);
   d->Frames.resize(size);
 }
 
@@ -147,25 +147,38 @@ QList<QString> ctkBackTrace::stackTrace() const
 #if defined(CTK_HAVE_EXECINFO)
 
 // --------------------------------------------------------------------------
-int ctkBackTracePrivate::trace(void** array, int n) const
+int ctkBackTracePrivate::trace(void** array, size_t n) const
 {
   return :: backtrace(array,n);
 }
 
 #elif defined(Q_CC_MSVC)
 
+USHORT (WINAPI *s_pfnCaptureStackBackTrace)(ULONG, ULONG, PVOID*, PULONG) = 0;
+
 // --------------------------------------------------------------------------
-int ctkBackTracePrivate::trace(void** array, int n) const
+int ctkBackTracePrivate::trace(void** array, size_t n) const
 {
   if(n>=63)
     n=62;
-  return RtlCaptureStackBackTrace(0, n, array, 0);
+
+  if (s_pfnCaptureStackBackTrace == 0)
+  {
+    const HMODULE hNtDll = ::GetModuleHandleW(L"ntdll.dll");
+    reinterpret_cast<void*&>(s_pfnCaptureStackBackTrace) =
+        ::GetProcAddress(hNtDll, "RtlCaptureStackBackTrace");
+  }
+
+  if (s_pfnCaptureStackBackTrace != 0) {
+    return s_pfnCaptureStackBackTrace(0, n, array, 0);
+  }
+  return 0;
 }
 
 #else
 
 // --------------------------------------------------------------------------
-int ctkBackTracePrivate::trace(void** /*array*/, int /*n*/) const
+int ctkBackTracePrivate::trace(void** /*array*/, size_t /*n*/) const
 {
   return 0;
 }

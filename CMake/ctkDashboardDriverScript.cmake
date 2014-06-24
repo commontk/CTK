@@ -27,10 +27,15 @@
 # \note Any change to the file should also be backported on http://commontk.org/
 #
 
+# XXX This allows to support older scripts having the typo
+if(DEFINED ADDITIONNAL_CMAKECACHE_OPTION)
+  set(ADDITIONAL_CMAKECACHE_OPTION ${ADDITIONNAL_CMAKECACHE_OPTION})
+endif()
+
 #-----------------------------------------------------------------------------
 # The following variable are expected to be define in the top-level script:
 set(expected_variables
-  ADDITIONNAL_CMAKECACHE_OPTION
+  ADDITIONAL_CMAKECACHE_OPTION
   CTEST_NOTES_FILES
   CTEST_SITE
   CTEST_DASHBOARD_ROOT
@@ -63,9 +68,17 @@ foreach(var ${expected_variables})
 endforeach()
 
 # If the dashscript doesn't define a GIT_REPOSITORY variable, let's define it here.
-if (NOT DEFINED GIT_REPOSITORY OR GIT_REPOSITORY STREQUAL "")
+if(NOT DEFINED GIT_REPOSITORY OR GIT_REPOSITORY STREQUAL "")
   set(GIT_REPOSITORY http://github.com/commontk/CTK.git)
 endif()
+
+set(repository ${GIT_REPOSITORY})
+set(git_branch_option "")
+if(NOT "${GIT_TAG}" STREQUAL "")
+  set(git_branch_option "-b ${GIT_TAG}")
+endif()
+message("GIT_REPOSITORY ......: ${GIT_REPOSITORY}")
+message("GIT_TAG .............: ${GIT_TAG}")
 
 # Should binary directory be cleaned?
 set(empty_binary_directory FALSE)
@@ -73,28 +86,26 @@ set(empty_binary_directory FALSE)
 # Attempt to build and test also if 'ctest_update' returned an error
 set(force_build FALSE)
 
+# Ensure SCRIPT_MODE is lowercase
+string(TOLOWER ${SCRIPT_MODE} SCRIPT_MODE)
+
 # Set model options
 set(model "")
-if (SCRIPT_MODE STREQUAL "experimental")
+if(SCRIPT_MODE STREQUAL "experimental")
   set(empty_binary_directory FALSE)
   set(force_build TRUE)
   set(model Experimental)
-elseif (SCRIPT_MODE STREQUAL "continuous")
+elseif(SCRIPT_MODE STREQUAL "continuous")
   set(empty_binary_directory TRUE)
   set(force_build FALSE)
   set(model Continuous)
-elseif (SCRIPT_MODE STREQUAL "nightly")
+elseif(SCRIPT_MODE STREQUAL "nightly")
   set(empty_binary_directory TRUE)
   set(force_build TRUE)
   set(model Nightly)
 else()
   message(FATAL_ERROR "Unknown script mode: '${SCRIPT_MODE}'. Script mode should be either 'experimental', 'continuous' or 'nightly'")
 endif()
-
-#message("script_mode:${SCRIPT_MODE}")
-#message("model:${model}")
-#message("empty_binary_directory:${empty_binary_directory}")
-#message("force_build:${force_build}")
 
 # For more details, see http://www.kitware.com/blog/home/post/11
 set(CTEST_USE_LAUNCHERS 1)
@@ -109,7 +120,7 @@ if(empty_binary_directory)
 endif()
 
 if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
-  set(CTEST_CHECKOUT_COMMAND "${CTEST_GIT_COMMAND} clone ${GIT_REPOSITORY} ${CTEST_SOURCE_DIRECTORY}")
+  set(CTEST_CHECKOUT_COMMAND "${CTEST_GIT_COMMAND} clone ${git_branch_option} ${GIT_REPOSITORY} ${CTEST_SOURCE_DIRECTORY}")
 endif()
 
 set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
@@ -118,7 +129,10 @@ set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
 # run_ctest macro
 #
 macro(run_ctest)
+  message("----------- [ Start ${CTEST_PROJECT_NAME} ] -----------")
   ctest_start(${model})
+
+  message("----------- [ Update ${CTEST_PROJECT_NAME} ] -----------")
   ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" RETURN_VALUE res)
 
   # force a build if this is the first run and the build dir is empty
@@ -129,147 +143,74 @@ macro(run_ctest)
     # Write initial cache.
     file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
 QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-SUPERBUILD_EXCLUDE_CTKBUILD_TARGET:BOOL=TRUE
 WITH_COVERAGE:BOOL=${WITH_COVERAGE}
-#DOCUMENTATION_TARGET_IN_ALL:BOOL=${WITH_DOCUMENTATION}
+DOCUMENTATION_TARGET_IN_ALL:BOOL=${WITH_DOCUMENTATION}
 DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
-${ADDITIONNAL_CMAKECACHE_OPTION}
+${ADDITIONAL_CMAKECACHE_OPTION}
 ")
   endif()
   
-  if (res GREATER 0 OR force_build)
+  if(res GREATER 0 OR force_build)
   
+    #-----------------------------------------------------------------------------
+    # Update
+    #-----------------------------------------------------------------------------
     ctest_submit(PARTS Update)
-      
-    message("Configure SuperBuild")
-    
-    set_property(GLOBAL PROPERTY SubProject SuperBuild)
-    set_property(GLOBAL PROPERTY Label SuperBuild)
-     
+
+    #-----------------------------------------------------------------------------
+    # Configure
+    #-----------------------------------------------------------------------------
+    message("----------- [ Configure ${CTEST_PROJECT_NAME} ] -----------")
+
     ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
     ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
     ctest_submit(PARTS Configure)
-    ctest_submit(FILES "${CTEST_BINARY_DIRECTORY}/Project.xml")
-
-    # Build top level
-    message("----------- [ Build SuperBuild ] -----------")
-    ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
-    ctest_submit(PARTS Build)
-    
-    ctest_test(
-      BUILD "${CTEST_BINARY_DIRECTORY}" 
-      INCLUDE_LABEL "SuperBuild"
-      PARALLEL_LEVEL 8
-      EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
-    # runs only tests that have a LABELS property matching "${subproject}"
-    ctest_submit(PARTS Test)
       
+    #-----------------------------------------------------------------------------
+    # Build top level
+    #-----------------------------------------------------------------------------
+    set(build_errors)
+    message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
+    ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS build_errors APPEND)
+    ctest_submit(PARTS Build)
+
+    #-----------------------------------------------------------------------------
+    # Inner build directory
+    #-----------------------------------------------------------------------------
     set(ctk_build_dir "${CTEST_BINARY_DIRECTORY}/CTK-build")
-    
-    # To get CTEST_PROJECT_SUBPROJECTS definition
-    include("${CTEST_BINARY_DIRECTORY}/CTestConfigSubProject.cmake")
-    
-    set(kit_suffixes
-      CppTests
-      #PythonTests
-      )
 
-    set(kit_widgets_suffixes
-      Plugins
-      )
-    
-   foreach(subproject ${CTEST_PROJECT_SUBPROJECTS})
-     set_property(GLOBAL PROPERTY SubProject ${subproject})
-     set_property(GLOBAL PROPERTY Label ${subproject})
-     message("Build ${subproject}")
-    
-     # Configure target
-     ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
-     ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
-     ctest_submit(PARTS Configure)
-     
-     # Build target
-     set(CTEST_BUILD_TARGET "${subproject}")
-     ctest_build(BUILD "${ctk_build_dir}" APPEND)
-     ctest_submit(PARTS Build)
-     
-     # Loop over kit suffixes and try to build the corresponding target
-     foreach(kit_suffixe ${kit_suffixes})
-       message("----------- [ Build ${subproject}${kit_suffixe} ] -----------")
-       set(CTEST_BUILD_TARGET "${subproject}${kit_suffixe}")
-       ctest_build(BUILD "${ctk_build_dir}" APPEND)
-       ctest_submit(PARTS Build)
-     endforeach()
+    #-----------------------------------------------------------------------------
+    # Test
+    #-----------------------------------------------------------------------------
+    message("----------- [ Test ${CTEST_PROJECT_NAME} ] -----------")
+    ctest_test(
+      BUILD "${ctk_build_dir}"
+      PARALLEL_LEVEL ${CTEST_PARALLEL_LEVEL}
+      EXCLUDE ${TEST_TO_EXCLUDE_REGEX})
+    ctest_submit(PARTS Test)
 
-     if ("${subproject}" MATCHES "Widgets$")
-       # Loop over kit suffixes and try to build the corresponding target
-       foreach(kit_widgets_suffixe ${kit_widgets_suffixes})
-         message("----------- [ Build ${subproject}${kit_widgets_suffixe} ] -----------")
-         set(CTEST_BUILD_TARGET "${subproject}${kit_widgets_suffixe}")
-         ctest_build(BUILD "${ctk_build_dir}" APPEND)
-         ctest_submit(PARTS Build)
-       endforeach()
-     endif()
-    endforeach()
+    #-----------------------------------------------------------------------------
+    # Global coverage ...
+    #-----------------------------------------------------------------------------
+    if(WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
+      # HACK Unfortunately ctest_coverage ignores the build argument, try to force it...
+      file(READ ${ctk_build_dir}/CMakeFiles/TargetDirectories.txt ctk_build_coverage_dirs)
+      file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${ctk_build_coverage_dirs}")
     
-    if (WITH_DOCUMENTATION)
-      message("----------- [ Build Documentation ] -----------")
-      # Build Documentation target
-      set_property(GLOBAL PROPERTY SubProject Documentation)
-      set_property(GLOBAL PROPERTY Label Documentation)
-      set(CTEST_BUILD_TARGET "doc")
-      ctest_build(BUILD "${ctk_build_dir}" APPEND)
-      ctest_submit(PARTS Build)
-    endif()
-    
-    # HACK Unfortunately ctest_coverage ignores the build argument, try to force it...
-    file(READ ${ctk_build_dir}/CMakeFiles/TargetDirectories.txt ctk_build_coverage_dirs)
-    file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${ctk_build_coverage_dirs}")
-    
-    foreach(subproject ${CTEST_PROJECT_SUBPROJECTS})
-      set_property(GLOBAL PROPERTY SubProject ${subproject})
-      set_property(GLOBAL PROPERTY Label ${subproject})
-      message("----------- [ Test ${subproject} ] -----------")
-
-      ctest_test(
-        BUILD "${ctk_build_dir}" 
-        INCLUDE_LABEL "${subproject}"
-        PARALLEL_LEVEL 8
-        EXCLUDE ${test_to_exclude_regex})
-      # runs only tests that have a LABELS property matching "${subproject}"
-      ctest_submit(PARTS Test)
-
-      # Coverage per sub-project (library, application or plugin)
-      if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
-        message("----------- [ Coverage ${subproject} ] -----------")
-        ctest_coverage(BUILD "${ctk_build_dir}" LABELS "${subproject}")
-        ctest_submit(PARTS Coverage)
-      endif ()
-
-      #if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND)
-      #  ctest_memcheck(BUILD "${ctk_build_dir}" INCLUDE_LABEL "${subproject}")
-      #  ctest_submit(PARTS MemCheck)
-      #endif ()
-
-    endforeach()
-    
-    set_property(GLOBAL PROPERTY SubProject SuperBuild)
-    set_property(GLOBAL PROPERTY Label SuperBuild)
-    
-    # Global coverage ... 
-    if (WITH_COVERAGE AND CTEST_COVERAGE_COMMAND)
-      message("----------- [ Global coverage ] -----------")
+      message("----------- [ Coverage ] -----------")
       ctest_coverage(BUILD "${ctk_build_dir}")
       ctest_submit(PARTS Coverage)
-    endif ()
-    
+    endif()
+
+    #-----------------------------------------------------------------------------
     # Global dynamic analysis ...
-    if (WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND)
-        message("----------- [ Global memcheck ] -----------")
-        ctest_memcheck(BUILD "${ctk_build_dir}")
-        ctest_submit(PARTS MemCheck)
-      endif ()
-    
+    #-----------------------------------------------------------------------------
+    if(WITH_MEMCHECK AND CTEST_MEMORYCHECK_COMMAND)
+      message("----------- [ Memcheck ] -----------")
+      ctest_memcheck(BUILD "${ctk_build_dir}")
+      ctest_submit(PARTS MemCheck)
+    endif()
+
     # Note should be at the end
     ctest_submit(PARTS Notes)
   

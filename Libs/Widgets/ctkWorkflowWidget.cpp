@@ -21,8 +21,8 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
+#include <QPointer>
 #include <QStyle>
-#include <QWeakPointer>
 
 // CTK includes
 #include "ctkPushButton.h"
@@ -32,14 +32,9 @@
 #include "ctkWorkflow.h"
 #include "ctkWorkflowButtonBoxWidget.h"
 #include "ctkWorkflowGroupBox.h"
-#include "ctkLogger.h"
 
 // STD includes
 #include <iostream>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowWidget");
-//--------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 class ctkWorkflowWidgetPrivate
@@ -48,7 +43,7 @@ public:
   ctkWorkflowWidgetPrivate();
   ~ctkWorkflowWidgetPrivate();
 
-  QWeakPointer<ctkWorkflow>   Workflow;
+  QPointer<ctkWorkflow> Workflow;
 
   ctkWorkflowGroupBox*        WorkflowGroupBox;
   ctkWorkflowButtonBoxWidget* ButtonBoxWidget;
@@ -122,7 +117,7 @@ void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)
 
   if (!newWorkflow)
     {
-    logger.error(QString("setWorkflow - cannot set workflow to NULL"));
+    qWarning() << "setWorkflow - cannot set workflow to NULL";
     return;
     }
 
@@ -134,7 +129,7 @@ void ctkWorkflowWidget::setWorkflow(ctkWorkflow* newWorkflow)
                         this, SLOT(onStepRegistered(ctkWorkflowStep)));
     }
 
-  d->Workflow = QWeakPointer<ctkWorkflow>(newWorkflow);
+  d->Workflow = newWorkflow;
 
   if (!d->Workflow.isNull())
     {

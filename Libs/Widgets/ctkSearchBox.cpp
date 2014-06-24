@@ -298,6 +298,7 @@ void ctkSearchBox::mousePressEvent(QMouseEvent *e)
   if(d->clearRect().contains(e->pos()))
     {
     this->clear();
+    emit this->textEdited(this->text());
     return;
     }
 

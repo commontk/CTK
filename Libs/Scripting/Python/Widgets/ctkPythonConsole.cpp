@@ -49,7 +49,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =========================================================================*/
 
 // Qt includes
+#include <QAbstractItemView>
 #include <QCoreApplication>
+#include <QIcon>
 #include <QResizeEvent>
 #include <QScrollBar>
 #include <QStringListModel>
@@ -268,7 +270,7 @@ bool ctkPythonConsolePrivate::push(const QString& code)
   PyObject *res = PyObject_CallMethod(this->InteractiveConsole,
                                       const_cast<char*>("push"),
                                       const_cast<char*>("z"),
-                                      buffer.toAscii().data());
+                                      buffer.toLatin1().data());
   if (res)
     {
     int status = 0;
@@ -381,7 +383,7 @@ void ctkPythonConsole::initialize(ctkAbstractPythonManager* newPythonManager)
 //  d->printOutputMessage("\n");
 //  emit this->executing(true);
 ////   d->Interpreter->RunSimpleString(
-////     script.toAscii().data());
+////     script.toLatin1().data());
 //  emit this->executing(false);
 //  d->promptForInput();
 //}
@@ -397,7 +399,7 @@ QString ctkPythonConsole::ps1() const
 //----------------------------------------------------------------------------
 void ctkPythonConsole::setPs1(const QString& newPs1)
 {
-  PySys_SetObject(const_cast<char*>("ps1"), PyString_FromString(newPs1.toAscii().data()));
+  PySys_SetObject(const_cast<char*>("ps1"), PyString_FromString(newPs1.toLatin1().data()));
 }
 
 //----------------------------------------------------------------------------
@@ -411,7 +413,7 @@ QString ctkPythonConsole::ps2() const
 //----------------------------------------------------------------------------
 void ctkPythonConsole::setPs2(const QString& newPs2)
 {
-  PySys_SetObject(const_cast<char*>("ps2"), PyString_FromString(newPs2.toAscii().data()));
+  PySys_SetObject(const_cast<char*>("ps2"), PyString_FromString(newPs2.toLatin1().data()));
 }
 
 //----------------------------------------------------------------------------

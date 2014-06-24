@@ -780,7 +780,9 @@ bool ctkDICOMModel::setChildData(const QModelIndex &index, const QVariant &value
 //------------------------------------------------------------------------------
 bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &value, int role)
 {
+#ifdef CHECKABLE_COLUMNS
   Q_D(const ctkDICOMModel);
+#endif
 
   if(!index.isValid()){
     return false;
@@ -792,6 +794,7 @@ bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &valu
     }
   else
     {
+#ifdef CHECKABLE_COLUMNS
     bool checkedExist = false;
     bool partiallyCheckedExist = false;
     bool uncheckedExist = false;
@@ -813,7 +816,6 @@ bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &valu
         }
       }
 
-#ifdef CHECKABLE_COLUMNS
     if(partiallyCheckedExist || (checkedExist && uncheckedExist))
       {
       node->Data[Qt::CheckStateRole].toUInt() = Qt::PartiallyChecked;

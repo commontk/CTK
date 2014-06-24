@@ -191,11 +191,11 @@ void ctkSettingsPanel::setSettings(QSettings* settings)
     return;
     }
   d->Settings = settings;
-  this->updateProperties();
+  this->reloadSettings();
 }
 
 // --------------------------------------------------------------------------
-void ctkSettingsPanel::updateProperties()
+void ctkSettingsPanel::reloadSettings()
 {
   Q_D(ctkSettingsPanel);
   foreach(const QString& key, d->Properties.keys())
@@ -298,6 +298,16 @@ void ctkSettingsPanel::registerProperty(const QString& key,
     {
     this->updateSetting(key);
     }
+}
+
+// --------------------------------------------------------------------------
+void ctkSettingsPanel::registerProperty(
+  const QString& key, QObject* object, const QString& property,
+  const QByteArray& signal, const QString& label,
+  ctkSettingsPanel::SettingOptions options, QSettings* settings)
+{
+  this->registerProperty(key, object, property, signal.constData(),
+                         label, options, settings);
 }
 
 // --------------------------------------------------------------------------

@@ -37,6 +37,8 @@
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKAbstractView");
 //--------------------------------------------------------------------------
+int ctkVTKAbstractViewPrivate::MultiSamples = 0;  // Default for static var
+//--------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
 // ctkVTKAbstractViewPrivate methods
@@ -98,9 +100,13 @@ void ctkVTKAbstractViewPrivate::setupRendering()
 {
   Q_ASSERT(this->RenderWindow);
   this->RenderWindow->SetAlphaBitPlanes(1);
-  this->RenderWindow->SetMultiSamples(0);
+  int nSamples = ctkVTKAbstractView::multiSamples();
+  if (nSamples < 0)
+    {
+    nSamples = vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples();
+    }
+  this->RenderWindow->SetMultiSamples(nSamples);
   this->RenderWindow->StereoCapableWindowOn();
-
   this->VTKWidget->SetRenderWindow(this->RenderWindow);
 }
 
@@ -445,7 +451,7 @@ bool ctkVTKAbstractView::useDepthPeeling()const
 }
 
 //----------------------------------------------------------------------------
-void ctkVTKAbstractView::setUseDepthPeeling(bool use)
+void ctkVTKAbstractView::setUseDepthPeeling(bool useDepthPeeling)
 {
   Q_D(ctkVTKAbstractView);
   vtkRenderer* renderer = d->firstRenderer();
@@ -453,8 +459,24 @@ void ctkVTKAbstractView::setUseDepthPeeling(bool use)
     {
     return;
     }
-  this->renderWindow()->SetAlphaBitPlanes( use ? 1 : 0);
-  this->renderWindow()->SetMultiSamples(
-    use ? 0 : vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples());
-  renderer->SetUseDepthPeeling(use ? 1 : 0);
+  this->renderWindow()->SetAlphaBitPlanes( useDepthPeeling ? 1 : 0);
+  int nSamples = ctkVTKAbstractView::multiSamples();
+  if (nSamples < 0)
+    {
+    nSamples = vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples();
+    }
+  this->renderWindow()->SetMultiSamples(useDepthPeeling ? 0 : nSamples);
+  renderer->SetUseDepthPeeling(useDepthPeeling ? 1 : 0);
+}
+
+//----------------------------------------------------------------------------
+int ctkVTKAbstractView::multiSamples()
+{
+  return ctkVTKAbstractViewPrivate::MultiSamples;
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::setMultiSamples(int number)
+{
+  ctkVTKAbstractViewPrivate::MultiSamples = number;
 }

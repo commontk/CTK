@@ -267,18 +267,22 @@ void ctkPluginFrameworkLauncher::appendPathEnv(const QString& path)
     LPVOID lpMsgBuf;
     DWORD dw = GetLastError();
 
-    FormatMessage(
+    FormatMessageW(
         FORMAT_MESSAGE_ALLOCATE_BUFFER |
         FORMAT_MESSAGE_FROM_SYSTEM |
         FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,
         dw,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        (LPTSTR) &lpMsgBuf,
+        (LPWSTR) &lpMsgBuf,
         0, NULL );
 
+    // Avoid project configuration conflicts regarding wchar_t considered
+    // a built-in type or not by using QString::fromUtf16 instead of
+    // QString::fromWCharArray
+    // sa http://qt-project.org/wiki/toStdWStringAndBuiltInWchar
     QString msg = QString("Adding '%1' to the PATH environment variable failed: %2")
-      .arg(path).arg(QString((LPCTSTR)lpMsgBuf));
+      .arg(path).arg(QString::fromUtf16(reinterpret_cast<const ushort*>(lpMsgBuf)));
 
     qWarning() << msg;
 

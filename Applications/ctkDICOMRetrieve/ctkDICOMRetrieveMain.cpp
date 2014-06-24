@@ -2,7 +2,7 @@
 
   Library:   CTK
 
-  Copyright (c)  
+  Copyright (c)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,11 +19,12 @@
 =========================================================================*/
 
 // Qt includes
-#include <QApplication>
+#include <QCoreApplication>
 #include <QTextStream>
 
 // CTK includes
 #include <ctkDICOMRetrieve.h>
+#include <ctkDICOMUtil.h>
 #include <ctkDICOMDatabase.h>
 #include "ctkLogger.h"
 
@@ -51,8 +52,7 @@ int main(int argc, char** argv)
   ctkLogger logger ( "org.commontk.dicom.DICOMRetieveApp" );
 
   // Set the DCMTK log level to debug
-  dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
-  rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);
+  ctk::setDICOMLogLevel(ctkErrorLogLevel::Debug);
 
   if (argc < 9)
   {
@@ -65,10 +65,10 @@ int main(int argc, char** argv)
 
   QString StudyUID ( argv[1] );
   QDir OutputDirectory ( argv[2] );
-  QString CallingAETitle ( argv[3] ); 
+  QString CallingAETitle ( argv[3] );
   bool ok;
-  QString CalledAETitle ( argv[4] ); 
-  QString Host ( argv[5] ); 
+  QString CalledAETitle ( argv[4] );
+  QString Host ( argv[5] );
   int CalledPort = QString ( argv[6] ).toInt ( &ok );
   if ( !ok )
     {
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
     print_usage();
     return EXIT_FAILURE;
     }
-  QString MoveDestinationAETitle ( argv[8] ); 
+  QString MoveDestinationAETitle ( argv[8] );
 
   ctkDICOMRetrieve retrieve;
   retrieve.setCallingAETitle ( CallingAETitle );
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
   retrieve.setHost ( Host );
   retrieve.setMoveDestinationAETitle ( MoveDestinationAETitle );
 
-  logger.info ( "StudyUID: " + StudyUID + "\n" 
+  logger.info ( "StudyUID: " + StudyUID + "\n"
                 + "OutputDirectory: " + OutputDirectory.absolutePath() + "\n"
                 + "CallingAETitle: " + CallingAETitle + "\n"
                 + "CalledAEtitle: " + CalledAETitle + "\n"

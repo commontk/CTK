@@ -29,16 +29,12 @@ set(PLUGIN_UI_FORMS
 set(PLUGIN_resources
 )
 
-# Additional directories to include - Note that CTK_INCLUDE_LIBRARIES is already included
-set(PLUGIN_include_directories
-)
 #Compute the plugin dependencies
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${PLUGIN_export_directive}
-  INCLUDE_DIRECTORIES ${PLUGIN_include_directories}
   SRCS ${PLUGIN_SRCS}
   MOC_SRCS ${PLUGIN_MOC_SRCS}
   UI_FORMS ${PLUGIN_UI_FORMS}

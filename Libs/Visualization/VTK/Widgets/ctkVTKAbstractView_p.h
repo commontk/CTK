@@ -65,6 +65,7 @@ public:
   bool                                          FPSVisible;
   QTimer*                                       FPSTimer;
   int                                           FPS;
+  static int                                    MultiSamples;
 
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
 };

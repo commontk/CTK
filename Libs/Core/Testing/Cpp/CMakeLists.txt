@@ -26,18 +26,9 @@ set(KITTests_SRCS
   ctkBackTraceTest.cpp
   ctkBooleanMapperTest.cpp
   ctkCallbackTest1.cpp
-  ctkCheckableModelHelperTest1.cpp
   ctkCommandLineParserTest1.cpp
-  ctkErrorLogModelTest1.cpp
-  ctkErrorLogModelEntryGroupingTest1.cpp
-  ctkErrorLogModelTerminalOutputTest1.cpp
-  ctkErrorLogModelTest4.cpp
-  ctkErrorLogFDMessageHandlerWithThreadsTest1.cpp
-  ctkErrorLogQtMessageHandlerWithThreadsTest1.cpp
-  ctkErrorLogStreamMessageHandlerWithThreadsTest1.cpp
   ctkExceptionTest.cpp
   ctkHighPrecisionTimerTest.cpp
-  ctkHistogramTest1.cpp
   ctkLinearValueProxyTest.cpp
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
@@ -54,9 +45,6 @@ set(KITTests_SRCS
   ctkPimplTest1.cpp
   ctkScopedCurrentDirTest1.cpp
   ctkSingletonTest1.cpp
-  ctkTransferFunctionTest1.cpp
-  ctkTransferFunctionRepresentationTest1.cpp
-  ctkTransferFunctionRepresentationTest2.cpp
   ctkWorkflowTest1.cpp
   ctkWorkflowTest2.cpp
   ctkWorkflowTest3.cpp
@@ -100,13 +88,20 @@ set(Tests_Helpers_MOC_SRCS
   ctkExampleWorkflowStepUsingSignalsAndSlots.h
   )
 
-set(Tests_Helpers_MOC_CPP)
-QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
-QT4_GENERATE_MOCS(
+set(Tests_Helpers_MOC_CPPS
   ctkBooleanMapperTest.cpp
   ctkLinearValueProxyTest.cpp
   ctkUtilsTest.cpp
   )
+
+set(Tests_Helpers_MOC_CPP)
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  qt5_wrap_cpp(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
+  qt5_generate_mocs(${Tests_Helpers_MOC_CPPS})
+else()
+  QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
+  QT4_GENERATE_MOCS(${Tests_Helpers_MOC_CPPS})
+endif()
 
 if(HAVE_BFD)
   add_executable(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
@@ -122,10 +117,13 @@ endif()
 add_executable(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  qt5_use_modules(${KIT}CppTests Test Widgets)
+endif()
+
 if(UNIX AND NOT APPLE)
   target_link_libraries(${KIT}CppTests rt)
 endif()
-
 
 #
 # Add Tests
@@ -142,20 +140,11 @@ if(HAVE_BFD)
 endif()
 SIMPLE_TEST( ctkBooleanMapperTest )
 SIMPLE_TEST( ctkCallbackTest1 )
-SIMPLE_TEST( ctkCheckableModelHelperTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
-SIMPLE_TEST( ctkErrorLogModelTest1 )
-SIMPLE_TEST( ctkErrorLogModelEntryGroupingTest1 )
-SIMPLE_TEST( ctkErrorLogModelTerminalOutputTest1 --test-launcher $<TARGET_FILE:${KIT}CppTests>)
-SIMPLE_TEST( ctkErrorLogModelTest4 )
-SIMPLE_TEST( ctkErrorLogFDMessageHandlerWithThreadsTest1 )
-SIMPLE_TEST( ctkErrorLogQtMessageHandlerWithThreadsTest1 )
-SIMPLE_TEST( ctkErrorLogStreamMessageHandlerWithThreadsTest1 )
 SIMPLE_TEST( ctkExceptionTest )
 SIMPLE_TEST( ctkHighPrecisionTimerTest )
-SIMPLE_TEST( ctkHistogramTest1 )
 SIMPLE_TEST( ctkLinearValueProxyTest )
 SIMPLE_TEST( ctkLoggerTest1 )
 set_property(TEST ctkLoggerTest1 PROPERTY PASS_REGULAR_EXPRESSION "logger.debug\nlogger.info\nlogger.trace\nlogger.warn\nlogger.error\nlogger.fatal")
@@ -164,9 +153,6 @@ SIMPLE_TEST( ctkModelTesterTest2 )
 SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkScopedCurrentDirTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
-SIMPLE_TEST( ctkTransferFunctionTest1 )
-SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
-SIMPLE_TEST( ctkTransferFunctionRepresentationTest2 )
 SIMPLE_TEST( ctkUtilsCopyDirRecursivelyTest1 )
 SIMPLE_TEST( ctkUtilsQtHandleToStringTest1 )
 SIMPLE_TEST( ctkUtilsTest )

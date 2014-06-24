@@ -3,10 +3,10 @@
 set(KIT_PYTHON_SCRIPTS
   ctkSimplePythonShell
   )
-  
+
 set(KIT_PYTHON_RESOURCES
   )
-  
+
 ctkMacroCompilePythonScript(
   TARGET_NAME ${PROJECT_NAME}
   SCRIPTS "${KIT_PYTHON_SCRIPTS}"
@@ -14,4 +14,4 @@ ctkMacroCompilePythonScript(
   DESTINATION_DIR ${CTK_BINARY_DIR}/bin/Python
   INSTALL_DIR ${CTK_INSTALL_BIN_DIR}
   )
-  
+

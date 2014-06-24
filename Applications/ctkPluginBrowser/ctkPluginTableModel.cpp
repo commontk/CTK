@@ -118,7 +118,7 @@ QString ctkPluginTableModel::getStringForState(const ctkPlugin::State state) con
 
 void ctkPluginTableModel::pluginChanged(const ctkPluginEvent& event)
 {
-  QModelIndex topLeftIndex = createIndex(plugins.indexOf(event.getPlugin()), 0, 0);
-  QModelIndex bottomRightIndex = createIndex(topLeftIndex.row(), columnCount()-1, 0);
+  QModelIndex topLeftIndex = createIndex(plugins.indexOf(event.getPlugin()), 0);
+  QModelIndex bottomRightIndex = createIndex(topLeftIndex.row(), columnCount()-1);
   emit dataChanged(topLeftIndex, bottomRightIndex);
 }

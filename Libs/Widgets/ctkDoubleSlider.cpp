@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QHelpEvent>
+#include <QPointer>
 #include <QStyle>
 #include <QStyleOptionSlider>
 #include <QToolTip>
@@ -77,7 +78,7 @@ public:
   double      PageStep;
   double      Value;
   /// Converts input value with displayed value
-  QWeakPointer<ctkValueProxy> Proxy;
+  QPointer<ctkValueProxy> Proxy;
 };
 
 // --------------------------------------------------------------------------
@@ -590,6 +591,13 @@ bool ctkDoubleSlider::eventFilter(QObject* watched, QEvent* event)
       }
     }
   return this->Superclass::eventFilter(watched, event);
+}
+
+// --------------------------------------------------------------------------
+QSlider* ctkDoubleSlider::slider()const
+{
+  Q_D(const ctkDoubleSlider);
+  return d->Slider;
 }
 
 //----------------------------------------------------------------------------

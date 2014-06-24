@@ -54,7 +54,7 @@ endforeach()
 
 set(CTK_EXTERNAL_LIBRARIES)
 
-# Loop over dependencies and append to CTK_EXTERNAL_LIBRARIES 
+# Loop over dependencies and append to CTK_EXTERNAL_LIBRARIES
 # target dependency which are neither CTK or static library
 set(link_type)
 foreach(ctk_target_dependency ${ctk_target_dependencies})
@@ -78,9 +78,6 @@ foreach(ctk_target_dependency ${ctk_target_dependencies})
     endif()
   endif()
 endforeach()
-
-# Clean variable
-list(REMOVE_DUPLICATES CTK_BASE_INCLUDE_DIRS)
 
 #-----------------------------------------------------------------------------
 # Create the CTKConfig.cmake file containing the CTK configuration.

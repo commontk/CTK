@@ -49,13 +49,17 @@ macro(ctkMacroBuildQtPlugin)
 
   # --------------------------------------------------------------------------
   # Include dirs
+
   set(my_includes
-    ${CTK_BASE_INCLUDE_DIRS}
     ${QT_QTDESIGNER_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${MY_INCLUDE_DIRECTORIES}
     )
+  if(CTK_SOURCE_DIR)
+    # Add the include directories from the library dependencies
+    ctkFunctionGetIncludeDirs(my_includes ${MY_TARGET_LIBRARIES})
+  endif()
   include_directories(
     ${my_includes}
     )
@@ -82,11 +86,27 @@ macro(ctkMacroBuildQtPlugin)
   set(MY_QRC_SRCS)
 
   # Wrap
-  QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
-  QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
   set(MY_QRC_SRCS "")
-  if(DEFINED MY_RESOURCES)
-    QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} TARGET ${lib_name} OPTIONS -DHAVE_QT5)
+    if(DEFINED MY_RESOURCES)
+      qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+  else()
+    QT4_WRAP_CPP(MY_MOC_CPP ${MY_MOC_SRCS})
+    if(DEFINED MY_RESOURCES)
+      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+  endif()
+
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    if(Qt5Widgets_FOUND)
+      qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
+    elseif(MY_UI_FORMS)
+      message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
+    endif()
+  else()
+    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
   endif()
 
   source_group("Resources" FILES
@@ -127,9 +147,6 @@ macro(ctkMacroBuildQtPlugin)
   # CTK_INSTALL_QTPLUGIN_DIR:STRING can be passed when configuring CTK
   # By default, it is the same path as CTK_INSTALL_LIB_DIR
   # Plugins are installed in a subdirectory corresponding to their types (e.g. designer, iconengines, imageformats...)
-  if (NOT CTK_INSTALL_QTPLUGIN_DIR)
-    set(CTK_INSTALL_QTPLUGIN_DIR "${CTK_INSTALL_LIB_DIR}")
-  endif()
   install(TARGETS ${lib_name}
     RUNTIME DESTINATION ${CTK_INSTALL_QTPLUGIN_DIR}/${MY_PLUGIN_DIR} COMPONENT RuntimePlugins
     LIBRARY DESTINATION ${CTK_INSTALL_QTPLUGIN_DIR}/${MY_PLUGIN_DIR} COMPONENT RuntimePlugins
@@ -164,6 +181,10 @@ macro(ctkMacroBuildQtDesignerPlugin)
   ctkMacroBuildQtPlugin(
     PLUGIN_DIR designer
     ${ARGN})
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    find_package(Qt5Designer REQUIRED)
+    target_link_libraries(${lib_name} Qt5::Designer)
+  endif()
 endmacro()
 
 macro(ctkMacroBuildQtIconEnginesPlugin)

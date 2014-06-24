@@ -42,6 +42,17 @@ class CTK_WIDGETS_EXPORT ctkSettingsDialog : public QDialog
   /// the dialog at the same time.
   Q_PROPERTY(bool resetButton READ resetButton WRITE setResetButton);
 
+  Q_PROPERTY(QSettings* settings READ settings WRITE setSettings);
+
+  Q_PROPERTY(ctkSettingsPanel* currentPanel READ currentPanel WRITE setCurrentPanel);
+
+  /// Specifies if a restart required to fully apply changes.
+  ///
+  /// This property is \c true if at least one OptionRestartRequired setting is
+  /// changed. It doesn't imply that the user accepted to restart the
+  /// application.
+  Q_PROPERTY(bool restartRequired READ isRestartRequired);
+
 public:
   /// Superclass typedef
   typedef QDialog Superclass;
@@ -58,18 +69,32 @@ public:
   ctkSettingsPanel* panel(const QString& panel)const;
   ctkSettingsPanel* currentPanel()const;
 
-  /// Uses the ctkSettingsPanel::windowTitle property to show in the list
-  void addPanel(ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
-  /// Utility function
-  void addPanel(const QString& label, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
-  void addPanel(const QString& label, const QIcon& icon, ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
+  /// Add settings panel to the dialog.
+  ///
+  /// This adds the specified settings panel to the dialog. The panel's
+  /// QWidget::windowTitle property is used as the panel name as shown in the
+  /// panels list.
+  Q_INVOKABLE void addPanel(ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
+
+  /// \copybrief addPanel
+  ///
+  /// This convenience overload allows the caller to specify the panel name
+  /// that will be used in the panels list.
+  Q_INVOKABLE void addPanel(const QString& label, ctkSettingsPanel* panel,
+                            ctkSettingsPanel* parentPanel = 0);
+
+  /// \copybrief addPanel
+  ///
+  /// This convenience overload allows the caller to specify the panel name
+  /// that will be used in the panels list, as well as an icon for the panel.
+  Q_INVOKABLE void addPanel(const QString& label, const QIcon& icon,
+                            ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
 
   bool resetButton()const;
   void setResetButton(bool show);
 
-  /// True if at least one OptionRestartRequired setting is changed.
-  /// It doesn't mean the user accepted to restart the application
-  /// \sa restartRequired
+  /// \copybrief restartRequired
+  /// \sa restartRequired, restartRequested
   bool isRestartRequired()const;
 
 public Q_SLOTS:
@@ -79,6 +104,14 @@ public Q_SLOTS:
   void applySettings();
   void resetSettings();
   void restoreDefaultSettings();
+
+  /// Reload settings for all registered panels.
+  ///
+  /// This reloads the settings for all panels, effectively throwing out any
+  /// values in the UI or the panels' caches and reverting to the values in the
+  /// associated QSettings. You should call this if you have made changes to
+  /// the QSettings that were not made through ctkSettingsPanel.
+  void reloadSettings();
 
   virtual void accept();
   virtual void reject();

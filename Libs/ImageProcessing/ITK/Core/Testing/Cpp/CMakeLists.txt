@@ -49,8 +49,13 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
+# The tests depend on stuff in the CTKWidgets library,
+# so add it manually here
+include_directories(${CMAKE_SOURCE_DIR}/Libs/Widgets)
+include_directories(${CMAKE_BINARY_DIR}/Libs/Widgets)
+
 add_executable(${KIT}CppTests ${Tests} ${KIT_HELPER_SRCS})
-target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
+target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKWidgets)
 
 #
 # Add Tests

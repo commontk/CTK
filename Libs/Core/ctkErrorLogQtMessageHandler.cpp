@@ -21,6 +21,7 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QThread>
+#include <QVariant>
 
 // CTK includes
 #include "ctkErrorLogQtMessageHandler.h"
@@ -53,6 +54,52 @@ ctkErrorLogQtMessageHandler::ctkErrorLogQtMessageHandler() : Superclass()
 namespace
 {
 //------------------------------------------------------------------------------
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+void ctkErrorLogModelQtMessageOutput(QtMsgType type, const QMessageLogContext& context,
+                                     const QString& msg)
+{
+  //TODO: use context in the log message
+  Q_UNUSED(context)
+  // Warning: To avoid inifinite loop, do not use Q_ASSERT in this function.
+  if (msg.isEmpty())
+    {
+    return;
+    }
+  ctkErrorLogLevel::LogLevel level = ctkErrorLogLevel::Unknown;
+  if (type == QtDebugMsg)
+    {
+    level = ctkErrorLogLevel::Debug;
+    }
+  else if (type == QtWarningMsg)
+    {
+    level = ctkErrorLogLevel::Warning;
+    }
+  else if (type == QtCriticalMsg)
+    {
+    level = ctkErrorLogLevel::Critical;
+    }
+  else if (type == QtFatalMsg)
+    {
+    level = ctkErrorLogLevel::Fatal;
+    }
+
+  QCoreApplication * coreApp = QCoreApplication::instance();
+  QList<QVariant> handlers = coreApp->property("ctkErrorLogQtMessageHandlers").toList();
+  foreach(QVariant v, handlers)
+    {
+    ctkErrorLogQtMessageHandler* handler = v.value<ctkErrorLogQtMessageHandler*>();
+    Q_ASSERT(handler);
+//    //QPointer<ctkErrorLogQtMessageHandler> handler = v.value<QPointer<ctkErrorLogQtMessageHandler> >();
+//    //if(handler.isNull())
+//    //  {
+//    //  continue;
+//    //  }
+    handler->handleMessage(
+          ctk::qtHandleToString(QThread::currentThreadId()),
+          level, handler->handlerPrettyName(), msg);
+    }
+}
+#else
 void ctkErrorLogModelQtMessageOutput(QtMsgType type, const char *msg)
 {
   // Warning: To avoid inifinite loop, do not use Q_ASSERT in this function.
@@ -94,6 +141,7 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const char *msg)
           level, handler->handlerPrettyName(), msg);
     }
 }
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -107,10 +155,18 @@ void ctkErrorLogQtMessageHandler::setEnabledInternal(bool value)
 {
   if (value)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    this->SavedQtMessageHandler = qInstallMessageHandler(ctkErrorLogModelQtMessageOutput);
+#else
     this->SavedQtMessageHandler = qInstallMsgHandler(ctkErrorLogModelQtMessageOutput);
+#endif
     }
   else
     {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    qInstallMessageHandler(this->SavedQtMessageHandler);
+#else
     qInstallMsgHandler(this->SavedQtMessageHandler);
+#endif
     }
 }

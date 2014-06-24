@@ -132,8 +132,12 @@ public:
   Q_INVOKABLE QStringList patients ();
   Q_INVOKABLE QStringList studiesForPatient (const QString patientUID);
   Q_INVOKABLE QStringList seriesForStudy (const QString studyUID);
+  Q_INVOKABLE QString studyForSeries(QString seriesUID);
+  Q_INVOKABLE QString patientForStudy(QString studyUID);
   Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
+  Q_INVOKABLE QHash<QString,QString> descriptionsForFile(QString fileName);
   Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
+  Q_INVOKABLE QString seriesForFile (QString fileName);
   Q_INVOKABLE QString instanceForFile (const QString fileName);
   Q_INVOKABLE QDateTime insertDateTimeForInstance (const QString fileName);
 
@@ -230,6 +234,8 @@ public:
   Q_INVOKABLE QString cachedTag (const QString sopInstanceUID, const QString tag);
   /// Insert an instance tag's value into to the cache
   Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value);
+  /// Insert lists of tags into the cache as a batch query operation
+  Q_INVOKABLE bool cacheTags (const QStringList sopInstanceUIDs, const QStringList tags, const QStringList values);
 
 
 Q_SIGNALS:

@@ -29,8 +29,14 @@ set(KIT_SRCS
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMQueryWidget.cpp
   ctkDICOMQueryWidget.h
+  ctkDICOMObjectListWidget.cpp
+  ctkDICOMObjectListWidget.h
   ctkDICOMServerNodeWidget.cpp
   ctkDICOMServerNodeWidget.h
+  ctkDICOMTableManager.h
+  ctkDICOMTableManager.cpp
+  ctkDICOMTableView.cpp
+  ctkDICOMTableView.h
   ctkDICOMThumbnailGenerator.cpp
   ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.cpp
@@ -45,9 +51,12 @@ set(KIT_MOC_SRCS
   ctkDICOMDirectoryListWidget.h
   ctkDICOMImage.h
   ctkDICOMImportWidget.h
+  ctkDICOMObjectListWidget.h
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMQueryWidget.h
   ctkDICOMServerNodeWidget.h
+  ctkDICOMTableManager.h
+  ctkDICOMTableView.h
   ctkDICOMThumbnailGenerator.h
   ctkDICOMThumbnailListWidget.h
   )
@@ -61,7 +70,10 @@ set(KIT_UI_FORMS
   Resources/UI/ctkDICOMListenerWidget.ui
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMQueryWidget.ui
+  Resources/UI/ctkDICOMObjectListWidget.ui
   Resources/UI/ctkDICOMServerNodeWidget.ui
+  Resources/UI/ctkDICOMTableManager.ui
+  Resources/UI/ctkDICOMTableView.ui
 )
 
 # Resources
@@ -83,7 +95,7 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

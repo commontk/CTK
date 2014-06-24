@@ -4,8 +4,15 @@ set(KIT ${PROJECT_NAME})
 # Tests
 #
 set(TEST_SOURCES
+  ctkVTKColorTransferFunctionTest1.cpp
   ctkVTKDataSetArrayComboBoxTest1.cpp
   ctkVTKDataSetModelTest1.cpp
+  ctkVTKErrorLogMessageHandlerWithThreadsTest1.cpp
+  ctkVTKErrorLogModelTest1.cpp
+  ctkVTKHistogramTest1.cpp
+  ctkVTKHistogramTest2.cpp
+  ctkVTKHistogramTest3.cpp
+  ctkVTKHistogramTest4.cpp
   ctkVTKMatrixWidgetTest1.cpp
   ctkVTKMagnifyViewTest1.cpp
   ctkVTKScalarBarWidgetTest1.cpp
@@ -23,6 +30,7 @@ set(TEST_SOURCES
   ctkVTKSurfaceMaterialPropertyWidgetTest1.cpp
   ctkVTKTextPropertyWidgetTest1.cpp
   ctkVTKThumbnailViewTest1.cpp
+  ctkVTKTransferFunctionRepresentationTest1.cpp
   ctkVTKWidgetsUtilsTestGrabWidget.cpp
   )
 
@@ -94,29 +102,54 @@ if(CTK_USE_QTTESTING)
 endif()
 
 set(TEST_MOC_CPP)
-if(TEST_MOC_SOURCES)
-  QT4_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
-endif()
-QT4_GENERATE_MOCS(
-  ctkVTKPropertyWidgetTest.cpp
-  )
-
 set(TEST_UI_CPP)
-if(TEST_UI_FORMS)
-  QT4_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
-endif()
 set(Tests_RESOURCES_SRCS)
-QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  if(TEST_MOC_SOURCES)
+    QT5_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
+  endif()
+  QT5_GENERATE_MOCS(
+    ctkVTKPropertyWidgetTest.cpp
+    )
+  if(TEST_UI_FORMS)
+    QT5_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
+  endif()
+  QT5_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+else()
+  if(TEST_MOC_SOURCES)
+    QT4_WRAP_CPP(TEST_MOC_CPP ${TEST_MOC_SOURCES})
+  endif()
+  QT4_GENERATE_MOCS(
+    ctkVTKPropertyWidgetTest.cpp
+    )
+  if(TEST_UI_FORMS)
+    QT4_WRAP_UI(TEST_UI_CPP ${TEST_UI_FORMS})
+  endif()
+  QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
+endif()
 
 add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
-target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} vtkCharts ${CTK_BASE_LIBRARIES})
+if(${VTK_VERSION_MAJOR} GREATER 5)
+  set(VTK_CHARTS_LIB vtkChartsCore)
+else()
+  set(VTK_CHARTS_LIB vtkCharts)
+endif()
+
+target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${VTK_CHARTS_LIB} ${CTK_BASE_LIBRARIES})
 
 #
 # Add Tests
 #
 
+SIMPLE_TEST( ctkVTKColorTransferFunctionTest1 )
 SIMPLE_TEST( ctkVTKDataSetArrayComboBoxTest1 )
 SIMPLE_TEST( ctkVTKDataSetModelTest1 )
+SIMPLE_TEST( ctkVTKErrorLogMessageHandlerWithThreadsTest1 )
+SIMPLE_TEST( ctkVTKErrorLogModelTest1 )
+SIMPLE_TEST( ctkVTKHistogramTest1 )
+SIMPLE_TEST( ctkVTKHistogramTest2 )
+SIMPLE_TEST( ctkVTKHistogramTest3 )
+SIMPLE_TEST( ctkVTKHistogramTest4 )
 SIMPLE_TEST( ctkVTKMagnifyViewTest1 )
 SIMPLE_TEST( ctkVTKMatrixWidgetTest1 )
 SIMPLE_TEST( ctkVTKPropertyWidgetTest )
@@ -145,6 +178,7 @@ SIMPLE_TEST( ctkVTKSliceViewTest1 )
 SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetTest1 )
 SIMPLE_TEST( ctkVTKTextPropertyWidgetTest1 )
 SIMPLE_TEST( ctkVTKThumbnailViewTest1 )
+SIMPLE_TEST( ctkVTKTransferFunctionRepresentationTest1 )
 SIMPLE_TEST( ctkVTKWidgetsUtilsTestGrabWidget )
 
 #

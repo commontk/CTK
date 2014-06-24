@@ -29,6 +29,7 @@
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
+#include <ctkDICOMTableManager.h>
 #include <ctkCheckableModelHelper.h>
 #include <ctkLogger.h>
 
@@ -106,13 +107,6 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
   QObject::connect(this->RetrieveButton, SIGNAL(clicked()), q, SLOT(retrieve()));
   QObject::connect(this->CancelButton, SIGNAL(clicked()), q, SLOT(cancel()));
 
-  this->results->setModel(&this->Model);
-  this->results->setSelectionMode(QAbstractItemView::NoSelection);
-  this->results->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-  QObject::connect(this->results->selectionModel(), 
-    SIGNAL(selectionChanged (const QItemSelection &, const QItemSelection &)), 
-    q, SLOT(onSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 
 //----------------------------------------------------------------------------
@@ -239,6 +233,8 @@ void ctkDICOMQueryRetrieveWidget::query()
   if (!progress.wasCanceled())
     {
     d->Model.setDatabase(d->QueryResultDatabase.database());
+    
+    d->dicomTableManager->setDICOMDatabase(&(d->QueryResultDatabase));
     }
   d->RetrieveButton->setEnabled(d->QueriesByStudyUID.keys().size() != 0);
 
@@ -285,8 +281,10 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
 
   // do the rerieval for each selected series
   // that is selected in the tree view
-  foreach( QString studyUID, d->QueriesByStudyUID.keys() )
+  QStringList selectedSeriesUIDs = d->dicomTableManager->currentStudiesSelection();
+  foreach( QString studyUID, selectedSeriesUIDs )
     {
+    std::cout<<studyUID.toUtf8().constData()<<std::endl;
     if(d->UseProgressDialog)
       {
       if (progress.wasCanceled())
@@ -434,22 +432,8 @@ void ctkDICOMQueryRetrieveWidget::updateRetrieveProgress(int value)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryRetrieveWidget::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+ctkDICOMTableManager* ctkDICOMQueryRetrieveWidget::dicomTableManager()
 {
-  Q_UNUSED(selected);
-  Q_UNUSED(deselected);
-  //Q_D(ctkDICOMQueryRetrieveWidget);
-
-  logger.debug("Selection change");
-  // TODO: allow selection of individual studies to retrieve.  Requires
-  // monitoring the selection and mapping to the study list (which is not
-  // straightforward because the dataroles of patient and series don't
-  // map directly to studies).
-  //d->RetrieveButton->setEnabled(d->results->selectionModel()->hasSelection());
-}
-
-QMap<QString,QVariant> ctkDICOMQueryRetrieveWidget::getServerParameters()
-{
-    Q_D(ctkDICOMQueryRetrieveWidget);
-    return d->ServerNodeWidget->parameters();
+  Q_D(ctkDICOMQueryRetrieveWidget);
+    return d->dicomTableManager;
 }

@@ -27,14 +27,9 @@
 #include "ctkWorkflowWidgetStep_p.h"
 #include "ctkWorkflowWidget.h"
 #include "ctkWorkflow.h"
-#include "ctkLogger.h"
 
 // STD includes
 #include <iostream>
-
-//-----------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.libs.widgets.ctkWorkflowWidgetStep");
-//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // ctkWorkflowWidgetStepPrivate methods
@@ -167,7 +162,7 @@ CTK_SET_CPP(ctkWorkflowWidgetStep, ctkWorkflowWidgetStep::ButtonBoxHints,
 //     {
 //     if (!this->workflow())
 //       {
-//       logger.error("buttonBoxWidget - Cannot create buttonBoxWidget without a workflow");
+//       qWarning() << "buttonBoxWidget - Cannot create buttonBoxWidget without a workflow";
 //       return 0;
 //       }
 //     d->buttonBoxWidget = new ctkWorkflowButtonBoxWidget(this->workflow());
@@ -188,7 +183,10 @@ void ctkWorkflowWidgetStep::showUserInterface()
     }
 
   // otherwise we provide an implementation here
-  logger.debug(QString("showUserInterface - showing %1").arg(this->name()));
+  if (this->workflow()->verbose())
+    {
+    qDebug() << QString("showUserInterface - showing %1").arg(this->name());
+    }
 
   // create the user interface if this is the first time we're showing this step
   if (!d->created)

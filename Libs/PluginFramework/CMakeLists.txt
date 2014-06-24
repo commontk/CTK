@@ -129,16 +129,20 @@ set(KIT_UI_FORMS
 set(KIT_resources
 )
 
+# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
+# The following macro will read the target libraries from the file 'target_libraries.cmake'
+ctkFunctionGetTargetLibraries(KIT_target_libraries)
+
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND KIT_target_libraries Qt5::Sql Qt5::Concurrent)
+endif()
+
 # Create a MANIFEST.MF resource for the PluginFramework library,
 # pretending that is is a plugin (the system plugin)
 ctkFunctionGeneratePluginManifest(KIT_SRCS
   SYMBOLIC_NAME "system.plugin"
   VERSION "0.9.9"
   )
-
-# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
-# The following macro will read the target libraries from the file 'target_libraries.cmake'
-ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
@@ -152,7 +156,7 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

@@ -34,7 +34,7 @@ ctkDicomAppHostingCorePlugin::ctkDicomAppHostingCorePlugin()
 //----------------------------------------------------------------------------
 ctkDicomAppHostingCorePlugin::~ctkDicomAppHostingCorePlugin()
 {
-  
+
 }
 
 //----------------------------------------------------------------------------
@@ -62,4 +62,6 @@ ctkPluginContext* ctkDicomAppHostingCorePlugin::getPluginContext() const
   return context;
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
 Q_EXPORT_PLUGIN2(org_commontk_dah_core, ctkDicomAppHostingCorePlugin)
+#endif

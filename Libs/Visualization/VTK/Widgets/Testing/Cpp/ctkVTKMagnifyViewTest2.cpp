@@ -38,6 +38,7 @@
 #include <vtkImageData.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkSmartPointer.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <cstdlib>
@@ -243,14 +244,22 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   // Read image
   imageReader->SetFileName(imageFilename.toLatin1());
   imageReader->Update();
-  vtkSmartPointer<vtkImageData> image = imageReader->GetOutput();
+#if (VTK_MAJOR_VERSION <= 5)
+  vtkImageData* image = imageReader->GetOutput();
+#else
+  vtkAlgorithmOutput* imagePort = imageReader->GetOutputPort();
+#endif
 
   // Setup the slice views
   for (int i = 0; i < numSliceViews; i++)
     {
     allSliceViews[i]->setRenderEnabled(true);
     allSliceViews[i]->setMinimumSize(350,350);
+#if (VTK_MAJOR_VERSION <= 5)
     allSliceViews[i]->setImageData(image);
+#else
+    allSliceViews[i]->setImageDataConnection(imagePort);
+#endif
     allSliceViews[i]->setHighlightedBoxColor(Qt::yellow);
     allSliceViews[i]->scheduleRender();
     }
@@ -373,10 +382,18 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
     }
 
   vtkImageGaussianSmooth * gaussian = vtkImageGaussianSmooth::New();
+#if (VTK_MAJOR_VERSION <= 5)
   gaussian->SetInput(image);
+#else
+  gaussian->SetInputConnection(imagePort);
+#endif
   gaussian->SetRadiusFactors(5,5);
   gaussian->Update();
+#if (VTK_MAJOR_VERSION <= 5)
   allSliceViews[0]->setImageData(gaussian->GetOutput());
+#else
+  allSliceViews[0]->setImageDataConnection(gaussian->GetOutputPort());
+#endif
   allSliceViews[0]->scheduleRender();
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
                        baselineDirectory, testType, "h",
@@ -396,10 +413,18 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   gaussian->SetInput(image);
+#else
+  gaussian->SetInputConnection(imageReader->GetOutputPort());
+#endif
   gaussian->SetRadiusFactors(0,0);
   gaussian->Update();
+#if (VTK_MAJOR_VERSION <= 5)
   allSliceViews[0]->setImageData(gaussian->GetOutput());
+#else
+  allSliceViews[0]->setImageDataConnection(gaussian->GetOutputPort());
+#endif
   allSliceViews[0]->scheduleRender();
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
                        baselineDirectory, testType, "h",
@@ -411,7 +436,11 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   // Test changing the update interval
   magnify->setUpdateInterval(time * 2);
   magnify->setObserveRenderWindowEvents(true);
+#if (VTK_MAJOR_VERSION <= 5)
   allSliceViews[0]->setImageData(image);
+#else
+  allSliceViews[0]->setImageDataConnection(imagePort);
+#endif
   allSliceViews[0]->scheduleRender();
   QCursor::setPos(insideSlice0bottomRightCorner);
   // It should be waiting to update here

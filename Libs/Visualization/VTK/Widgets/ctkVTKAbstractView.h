@@ -141,6 +141,21 @@ public:
   /// \sa useDepthPeeling
   bool useDepthPeeling()const;
 
+  /// Set the default number of multisamples to use. Note that a negative
+  /// value means "auto", which means the renderer will attempt to select
+  /// the maximum number (but is not guaranteed to work).
+  ///
+  /// WARNING: Multisampling should be set *before* creation of the
+  /// OpenGL context (e.g., initializing the rendering window) in order
+  /// to have an effect. Consider using setMultisamples before
+  /// instantiating ctkVTKAbstractView objects.
+  /// \sa multiSamples
+  static void setMultiSamples(int);
+
+  /// Return the current multisamples default
+  /// \sa setMultiSamples()
+  static int multiSamples();
+
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
   virtual bool hasHeightForWidth()const;

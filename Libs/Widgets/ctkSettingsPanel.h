@@ -37,6 +37,9 @@ class CTK_WIDGETS_EXPORT ctkSettingsPanel : public QWidget
   Q_OBJECT
   Q_ENUMS(SettingOption)
   Q_FLAGS(SettingOptions)
+
+  Q_PROPERTY(QSettings* settings READ settings WRITE setSettings);
+
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -83,6 +86,15 @@ public:
                         SettingOptions options = OptionNone,
                         QSettings * settings = 0);
 
+  /// \copybrief registerProperty
+  /// \overload
+  Q_INVOKABLE void registerProperty(const QString& settingKey, QObject* object,
+                                    const QString& objectProperty,
+                                    const QByteArray& propertySignal,
+                                    const QString& settingLabel = QString(),
+                                    SettingOptions options = OptionNone,
+                                    QSettings * settings = 0);
+
   /// Set the setting to the property defined by the key.
   /// The old value can be restored using resetSettings()
   void setSetting(const QString& key, const QVariant& newVal);
@@ -111,6 +123,13 @@ public Q_SLOTS:
   /// of the properties when they were registered using registerProperty().
   virtual void restoreDefaultSettings();
 
+  /// Reload all properties from disk.
+  ///
+  /// This reloads all properties from their respective QSettings instance(s).
+  /// The previous values are discarded (as in resetSettings()).
+  /// \sa resetSettings(), restoreDefaultSettings()
+  virtual void reloadSettings();
+
 Q_SIGNALS:
   /// Fired anytime a property is modified.
   void settingChanged(const QString& key, const QVariant& value);
@@ -134,7 +153,6 @@ protected Q_SLOTS:
 protected:
   QScopedPointer<ctkSettingsPanelPrivate> d_ptr;
 
-  virtual void updateProperties();
 private:
   Q_DECLARE_PRIVATE(ctkSettingsPanel);
   Q_DISABLE_COPY(ctkSettingsPanel);

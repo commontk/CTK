@@ -25,7 +25,6 @@
 #include <PythonQt.h>
 
 // CTK includes
-#include <ctkErrorLogModel.h>
 #include <ctkWorkflowStep.h>
 #include <ctkWorkflowTransitions.h>
 
@@ -161,23 +160,11 @@ public Q_SLOTS:
     {
     delete transition;
     }
-
-  // ctkErrorLogLevel
-
-  QString static_ctkErrorLogLevel_logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)
-    {
-    return ctkErrorLogLevel::logLevelAsString(logLevel);
-    }
 };
 
 //-----------------------------------------------------------------------------
 void initCTKCorePythonQtDecorators()
 {
-  // HACK: Since the CMake based light wrapping only consider class name matching the
-  //       filename where the class is defined, let's explicitly register ctkErrorLogLevel
-  //       so that the log level QFlags are exposed to python.
-  PythonQt::self()->registerClass(&ctkErrorLogLevel::staticMetaObject, "CTKCore");
-
   PythonQt::self()->addDecorators(new ctkCorePythonQtDecorators);
 }
 

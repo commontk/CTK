@@ -32,6 +32,7 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMQuery.h"
+#include "ctkDICOMUtil.h"
 #include "ctkLogger.h"
 
 // DCMTK includes
@@ -237,9 +238,8 @@ QStringList ctkDICOMQuery::studyInstanceUIDQueried()const
 //------------------------------------------------------------------------------
 bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
 {
-  //// turn on logging if needed for debug:
-  //dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();
-  //log.setLogLevel(OFLogger::DEBUG_LOG_LEVEL);
+  // turn on logging if needed for debug:
+  //ctk::setDICOMLogLevel(ctkErrorLogLevel::Debug);
 
   // ctkDICOMDatabase::setDatabase ( database );
   Q_D(ctkDICOMQuery);
@@ -331,19 +331,19 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
       {
       // make the filter a wildcard in dicom style
       d->Query->putAndInsertString( DCM_PatientName,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+        (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
       }
     else if ( key == QString("Study") && !d->Filters[key].toString().isEmpty())
       {
       // make the filter a wildcard in dicom style
       d->Query->putAndInsertString( DCM_StudyDescription,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+        (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
       }
     else if ( key == QString("ID") && !d->Filters[key].toString().isEmpty())
       {
       // make the filter a wildcard in dicom style
       d->Query->putAndInsertString( DCM_PatientID,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toAscii().data());
+        (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
       }
     else if ( key == QString("Modalities") && !d->Filters[key].toString().isEmpty())
       {
@@ -355,7 +355,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
       }
       modalitySearch.chop(1); // remove final backslash
       logger.debug("modalityInStudySearch " + modalitySearch);
-      d->Query->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toAscii().data() );
+      d->Query->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toLatin1().data() );
       }
     // Rememer Series Description for later series query if we go through the keys now
     else if ( key == QString("Series") && !d->Filters[key].toString().isEmpty())
@@ -374,7 +374,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     QString dateRange = d->Filters["StartDate"].toString() +
                         QString("-") +
                         d->Filters["EndDate"].toString();
-    d->Query->putAndInsertString ( DCM_StudyDate, dateRange.toAscii().data() );
+    d->Query->putAndInsertString ( DCM_StudyDate, dateRange.toLatin1().data() );
     logger.debug("Query on study date " + dateRange);
     }
   emit progress(30);

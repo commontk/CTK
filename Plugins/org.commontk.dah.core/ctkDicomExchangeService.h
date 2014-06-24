@@ -29,7 +29,7 @@
 #include <org_commontk_dah_core_Export.h>
 
 class org_commontk_dah_core_EXPORT ctkDicomExchangeService :
-    public ctkSimpleSoapClient, public ctkDicomExchangeInterface
+    public ctkSimpleSoapClient, public virtual ctkDicomExchangeInterface
 {
 
 public:

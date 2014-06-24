@@ -337,6 +337,17 @@ void ctkSettingsDialog::applySettings()
 }
 
 // --------------------------------------------------------------------------
+void ctkSettingsDialog::reloadSettings()
+{
+  Q_D(ctkSettingsDialog);
+  foreach(ctkSettingsPanel* panel, d->Panels.values())
+    {
+    panel->reloadSettings();
+    }
+  d->SettingsButtonBox->button(QDialogButtonBox::Reset)->setEnabled(false);
+}
+
+// --------------------------------------------------------------------------
 void ctkSettingsDialog::resetSettings()
 {
   Q_D(ctkSettingsDialog);

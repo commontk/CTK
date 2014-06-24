@@ -23,7 +23,7 @@
 
 // CTK includes
 #include "ctkDICOMCoreExport.h"
-#include "ctkErrorLogModel.h"
+#include "ctkErrorLogLevel.h"
 
 namespace ctk {
 

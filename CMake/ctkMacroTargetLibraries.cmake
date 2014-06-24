@@ -32,8 +32,10 @@ function(ctkFunctionGetTargetLibraries varname)
   set(expanded_target_library_list)
 
   set(TARGET_DIRECTORY ${ARGV1})
+  set(_target_name )
   if("${TARGET_DIRECTORY}" STREQUAL "")
     set(TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    set(_target_name ${PROJECT_NAME})
   endif()
 
   set(filepath ${TARGET_DIRECTORY}/target_libraries.cmake)
@@ -58,6 +60,10 @@ function(ctkFunctionGetTargetLibraries varname)
     endforeach()
 
     include(${filepath})
+
+    if(_target_name)
+      list(APPEND target_libraries "${${_target_name}_OPTIONAL_DEPENDENCIES}")
+    endif()
 
     # Loop over all target library, if it does *NOT* start with "CTK",
     # let's resolve the variable to access its content
@@ -145,7 +151,9 @@ function(ctkFunctionCollectTargetLibraryNames target_dir varname)
     endforeach()
   endif()
 
-  list(REMOVE_DUPLICATES target_library_list)
+  if(target_library_list)
+    list(REMOVE_DUPLICATES target_library_list)
+  endif()
   
   # Pass the list of target libraries to the caller
   set(${varname} ${target_library_list} PARENT_SCOPE)

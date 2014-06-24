@@ -22,23 +22,23 @@ macro(ctk_option option_prefix name doc default)
   set(_logical_expr ${ARGN})
   if(_logical_expr AND NOT ${option_prefix}_${name})
     if(${ARGN})
-      # Force the option to ON. This is okay since the
-      # logical expression should contain a CTK_ENABLE_*
-      # option value, which requires the current option to be ON.
-      get_property(_doc_string CACHE ${option_prefix}_${name} PROPERTY HELPSTRING)
-      set(${option_prefix}_${name} ON CACHE BOOL ${_doc_string} FORCE)
+      # Set the variable ON.
+      set(${option_prefix}_${name} ON)
       # Generate user-friendly message
       set(enabling_msg)
       ctk_option_logical_expression_to_message(enabling_msg "${ARGN}")
       message(STATUS "Enabling [${option_prefix}_${name}] because of [${enabling_msg}] evaluates to True")
     endif()
   endif()
+  set(${option_prefix}_${name}_SKIPCACHEVALUE 1)
+  mark_as_superbuild(${option_prefix}_${name})
 endmacro()
 
 macro(ctk_lib_option name doc default)
   ctk_option(CTK_LIB ${name} ${doc} ${default} ${ARGN})
   if(CTK_BUILD_ALL_LIBRARIES)
     set(CTK_LIB_${name} 1)
+    message(STATUS "Enabling [CTK_LIB_${name}] because of [CTK_BUILD_ALL_LIBRARIES:${CTK_BUILD_ALL_LIBRARIES}] evaluates to True")
   endif()
 endmacro()
 
@@ -46,6 +46,7 @@ macro(ctk_plugin_option name doc default)
   ctk_option(CTK_PLUGIN ${name} ${doc} ${default} ${ARGN})
   if(CTK_BUILD_ALL_PLUGINS)
     set(CTK_PLUGIN_${name} 1)
+    message(STATUS "Enabling [CTK_PLUGIN_${name}] because of [CTK_BUILD_ALL_PLUGINS:${CTK_BUILD_ALL_PLUGINS}] evaluates to True")
   endif()
 endmacro()
 
@@ -53,6 +54,7 @@ macro(ctk_app_option name doc default)
   ctk_option(CTK_APP ${name} ${doc} ${default} ${ARGN})
   if(CTK_BUILD_ALL_APPS)
     set(CTK_APP_${name} 1)
+    message(STATUS "Enabling [CTK_APP_${name}] because of [CTK_BUILD_ALL_APPS:${CTK_BUILD_ALL_APPS}] evaluates to True")
   endif()
 endmacro()
 

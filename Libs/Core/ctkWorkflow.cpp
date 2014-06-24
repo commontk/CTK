@@ -30,14 +30,9 @@
 #include "ctkWorkflowStep.h"
 #include "ctkWorkflowStep_p.h"
 #include "ctkWorkflowTransitions.h"
-#include "ctkLogger.h"
 
 // STD includes
 #include <iostream>
-
-//--------------------------------------------------------------------------
-static ctkLogger logger("org.commontk.libs.core.ctkWorkflow");
-//--------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
 // ctkWorkflowPrivate methods
@@ -60,6 +55,8 @@ ctkWorkflowPrivate::ctkWorkflowPrivate(ctkWorkflow& object)
   this->GoBackToOriginStepUponSuccess = true;
 
   this->ARTIFICIAL_BRANCH_ID_PREFIX = "ctkWorkflowArtificialBranchId_";
+
+  this->Verbose = false;
 }
 
 // --------------------------------------------------------------------------
@@ -84,7 +81,7 @@ bool ctkWorkflowPrivate::addStep(ctkWorkflowStep* step)
     {
     // Check if steps are not already associated with a different workflow
     QString msg("addStep - step [%1] already associated with a different workfow !");
-    logger.error(msg.arg(step->id()));
+    qWarning() << msg.arg(step->id());
     return false;
     }
   if (!this->RegisteredSteps.contains(step))
@@ -329,7 +326,10 @@ void ctkWorkflowPrivate::validateInternal(ctkWorkflowStep* step)
 {
   Q_ASSERT(step);
 
-  logger.debug(QString("validateInternal - validating input from %1").arg(step->name()));
+  if(this->Verbose)
+    {
+    qDebug() << QString("validateInternal - validating input from %1").arg(step->name());
+    }
 
   if (step->hasValidateCommand())
     {
@@ -349,7 +349,10 @@ void ctkWorkflowPrivate::onEntryInternal(
 {
   Q_ASSERT(step);
 
-  logger.debug(QString("onEntryInternal - entering input from %1").arg(step->name()));
+  if(this->Verbose)
+    {
+    qDebug() << QString("onEntryInternal - entering input from %1").arg(step->name());
+    }
 
   //Ensure we are transitioning between steps or starting the workflow
   Q_ASSERT(transitionType == ctkWorkflowInterstepTransition::TransitionToNextStep
@@ -372,12 +375,15 @@ void ctkWorkflowPrivate::processingAfterOnEntry()
 {
   Q_Q(ctkWorkflow);
 
-  logger.debug("processingAfterOnEntry");
+  if (this->Verbose)
+    {
+    qDebug() << "processingAfterOnEntry";
+    }
 
   if (!this->DestinationStep)
     {
-    logger.error("processingAfterOnEntry - Called processingAfterOnEntry without "
-                 "having set a destination step");
+    qWarning() << "processingAfterOnEntry - Called processingAfterOnEntry without "
+                  "having set a destination step";
     return;
     }
 
@@ -431,7 +437,10 @@ void ctkWorkflowPrivate::onExitInternal(
 {
   Q_ASSERT(step);
 
-  logger.debug(QString("onExitInternal - exiting %1").arg(step->name()));
+  if (this->Verbose)
+    {
+    qDebug() << QString("onExitInternal - exiting %1").arg(step->name());
+    }
 
   // Ensure we are transitioning between steps or starting the workflow
   Q_ASSERT (transitionType == ctkWorkflowInterstepTransition::TransitionToNextStep ||
@@ -577,7 +586,7 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
 
   if (d->StateMachine->isRunning())
     {
-    logger.warn("addTransition - Cannot add a transition while the workflow is started !");
+    qWarning() << "addTransition - Cannot add a transition while the workflow is started !";
     return false;
     }
 
@@ -591,8 +600,8 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
   // adding a transition from a step to itself
   if (origin && destination && (QString::compare(origin->id(), destination->id(), Qt::CaseInsensitive) == 0))
     {
-    logger.error("addTransition - Workflow does not currently support a transition"
-                 " from a step to itself.  Use GoToStep instead !");
+    qWarning() << "addTransition - Workflow does not currently support a transition"
+                  " from a step to itself.  Use GoToStep instead !";
     return false;
     }
 
@@ -627,8 +636,8 @@ bool ctkWorkflow::addTransition(ctkWorkflowStep* origin, ctkWorkflowStep* destin
     // ensure we haven't already added a transition with the same origin, destination and directionality
     if (this->hasTransition(origin, destination, branchId, directionality))
       {
-      logger.warn("addTransition - Cannot create a transition that matches a "
-                  "previously created transition");
+      qWarning() << "addTransition - Cannot create a transition that matches a "
+                    "previously created transition";
       return false;
       }
 
@@ -796,7 +805,7 @@ void ctkWorkflow::start()
   Q_D(ctkWorkflow);
   if (!d->InitialStep)
     {
-    logger.warn("start - Cannot start workflow without an initial step");
+    qWarning() << "start - Cannot start workflow without an initial step";
     return;
     }
 
@@ -845,7 +854,7 @@ void ctkWorkflow::goForward(const QString& desiredBranchId)
 
   if (!this->isRunning())
     {
-    logger.warn("goForward - The workflow is not running !");
+    qWarning() << "goForward - The workflow is not running !";
     return;
     }
 
@@ -855,14 +864,17 @@ void ctkWorkflow::goForward(const QString& desiredBranchId)
     {
     if (!this->canGoForward())
       {
-      logger.warn("goForward - Attempt to goForward from a finish step !");
+      qWarning() << "goForward - Attempt to goForward from a finish step !";
       return;
       }
     }
 
   d->DesiredBranchId = desiredBranchId;
 
-  logger.info("goForward - posting ValidationTransition");
+  if (d->Verbose)
+    {
+    qDebug() << "goForward - posting ValidationTransition";
+    }
   d->StateMachine->postEvent(
       new ctkWorkflowIntrastepTransitionEvent(ctkWorkflowIntrastepTransition::ValidationTransition));
 }
@@ -874,13 +886,13 @@ void ctkWorkflow::goBackward(const QString& desiredBranchId)
 
   if (!this->isRunning())
     {
-    logger.warn("goBackward - The workflow is not running !");
+    qWarning() << "goBackward - The workflow is not running !";
     return;
     }
 
   if (!this->canGoBackward())
     {
-    logger.warn("goBackward - Attempt to goBackward from first step !");
+    qWarning() << "goBackward - Attempt to goBackward from first step !";
     return;
     }
 
@@ -891,7 +903,10 @@ void ctkWorkflow::goBackward(const QString& desiredBranchId)
 
   d->DesiredBranchId = desiredBranchId;
 
-  logger.info("goBackward - posting TransitionToPreviousStep");
+  if (d->Verbose)
+    {
+    qDebug() << "goBackward - posting TransitionToPreviousStep";
+    }
   d->StateMachine->postEvent(
                              new ctkWorkflowInterstepTransitionEvent(ctkWorkflowInterstepTransition::TransitionToPreviousStep, branchId));
 }
@@ -901,20 +916,24 @@ CTK_GET_CPP(ctkWorkflow, bool, goBackToOriginStepUponSuccess, GoBackToOriginStep
 CTK_SET_CPP(ctkWorkflow, bool, setGoBackToOriginStepUponSuccess, GoBackToOriginStepUponSuccess);
 
 // --------------------------------------------------------------------------
+CTK_GET_CPP(ctkWorkflow, bool, verbose, Verbose);
+CTK_SET_CPP(ctkWorkflow, bool, setVerbose, Verbose);
+
+// --------------------------------------------------------------------------
 void ctkWorkflow::goToStep(const QString& targetId)
 {
   Q_D(ctkWorkflow);
 
   if (!this->isRunning())
     {
-    logger.warn("goToStep - The workflow is not running !");
+    qWarning() << "goToStep - The workflow is not running !";
     return;
     }
 
   // TODO currently returns true only if the workflow is running - need logic here
   if (!this->canGoToStep(targetId))
     {
-    logger.warn(QString("goToStep - Cannot goToStep %1 ").arg(targetId));
+    qWarning() << QString("goToStep - Cannot goToStep %1 ").arg(targetId);
     return;
     }
 
@@ -923,11 +942,17 @@ void ctkWorkflow::goToStep(const QString& targetId)
   Q_ASSERT(step);
 #endif
 
-  logger.info(QString("goToStep - Attempting to go to finish step %1").arg(targetId));
+  if (d->Verbose)
+    {
+    qDebug() << QString("goToStep - Attempting to go to finish step %1").arg(targetId);
+    }
 
   // if (step == d->CurrentStep)
   //   {
-  //   qDebug() << "we are already in the desired finish step";
+  //   if (d->Verbose)
+  //     {
+  //     qDebug() << "we are already in the desired finish step";
+  //     }
   //   return;
   //   }
 
@@ -939,9 +964,12 @@ void ctkWorkflow::goToStep(const QString& targetId)
 // --------------------------------------------------------------------------
 void ctkWorkflow::attemptToGoToNextStep()
 {
-  logger.info("attemptToGoToNextStep - Attempting to go to the next step ");
-
   Q_D(ctkWorkflow);
+  if (d->Verbose)
+    {
+    qDebug() << "attemptToGoToNextStep - Attempting to go to the next step ";
+    }
+
   Q_ASSERT(d->CurrentStep);
   //Q_ASSERT(this->canGoForward(d->CurrentStep));
 
@@ -975,8 +1003,11 @@ void ctkWorkflow::evaluateValidationResults(bool validationSucceeded, const QStr
 void ctkWorkflow::goToNextStepAfterSuccessfulValidation(const QString& branchId)
 {
   Q_D(ctkWorkflow);
-  logger.debug("goToNextStepAfterSuccessfulValidation - Calidation succeeded");
-  logger.info("goToNextStepAfterSuccessfulValidation - Posting TransitionToNextStep");
+  if (d->Verbose)
+    {
+    qDebug() << "goToNextStepAfterSuccessfulValidation - Validation succeeded";
+    qDebug() << "goToNextStepAfterSuccessfulValidation - Posting TransitionToNextStep";
+    }
 
   // we may already be in the 'goTo' step - i.e. looping on a finish step
   if (d->GoToStep && d->CurrentStep == d->GoToStep)
@@ -999,9 +1030,9 @@ void ctkWorkflow::goToNextStepAfterSuccessfulValidation(const QString& branchId)
     transitionBranchId = firstForwardBranchId;
     if (numberOfForwardSteps > 1)
       {
-      logger.warn("goToNextStepAfterSuccessfulValidation - ctkWorkflowStep::ValidatComplete() "
-                  "did not provide branchId at a branch in the workflow - will follow first "
-                  "transition that was created");
+      qWarning() << "goToNextStepAfterSuccessfulValidation - ctkWorkflowStep::ValidatComplete() "
+                    "did not provide branchId at a branch in the workflow - will follow first "
+                    "transition that was created";
       }
     }
   // validationComplete() gives us a branchId
@@ -1010,8 +1041,8 @@ void ctkWorkflow::goToNextStepAfterSuccessfulValidation(const QString& branchId)
     if (numberOfForwardSteps == 1 && firstForwardBranchId.contains(d->ARTIFICIAL_BRANCH_ID_PREFIX))
       {
       transitionBranchId = firstForwardBranchId;
-      logger.warn("goToNextStepAfterSuccessfulValidation -  ctkWorkflowStep::ValidationComplete()"
-                  " returns a branchId, but was overridden by the workflow");
+      qWarning() << "goToNextStepAfterSuccessfulValidation -  ctkWorkflowStep::ValidationComplete()"
+                    " returns a branchId, but was overridden by the workflow";
       }
     else
       {
@@ -1032,15 +1063,21 @@ void ctkWorkflow::goToNextStepAfterSuccessfulValidation(const QString& branchId)
 // --------------------------------------------------------------------------
 void ctkWorkflow::goToProcessingStateAfterValidationFailed()
 {
-  logger.debug("goToNextStepAfterSuccessfulValidation - Validation failed");
   Q_D(ctkWorkflow);
+  if (d->Verbose)
+    {
+    qDebug() << "goToNextStepAfterSuccessfulValidation - Validation failed";
+    }
   // Validation failed in the process of attempting to go to the finish step
   if (d->GoToStep)
     {
     this->goToStepFailed();
     }
 
-  logger.info("goToNextStepAfterSuccessfulValidation - Posting ValidationFailedTransition");
+  if (d->Verbose)
+    {
+    qDebug() << "goToNextStepAfterSuccessfulValidation - Posting ValidationFailedTransition";
+    }
   d->StateMachine->postEvent(new ctkWorkflowIntrastepTransitionEvent(ctkWorkflowIntrastepTransition::ValidationFailedTransition));
 }
 
@@ -1048,7 +1085,10 @@ void ctkWorkflow::goToProcessingStateAfterValidationFailed()
 void ctkWorkflow::performTransitionBetweenSteps()
 {
   Q_D(ctkWorkflow);
-  logger.debug("performTransitionBetweenSteps - Performing transition between steps");
+  if (d->Verbose)
+    {
+    qDebug() << "performTransitionBetweenSteps - Performing transition between steps";
+    }
 
   // Alternative: could find the origin and destination step based on
   // d->CurrentStep rather than QObject::sender(), but would require
@@ -1081,7 +1121,10 @@ void ctkWorkflow::goToStepSucceeded()
 {
   Q_D(ctkWorkflow);
 
-  logger.debug("goToStepSucceeded");
+  if (d->Verbose)
+    {
+    qDebug() << "goToStepSucceeded";
+    }
 
   // after success, go back to the step at which we begin looking for
   // the finish step (will exit the current step and enter the starting step)
@@ -1106,7 +1149,10 @@ void ctkWorkflow::goToStepSucceeded()
 void ctkWorkflow::goFromGoToStepToStartingStep()
 {
   Q_D(ctkWorkflow);
-  logger.info("goFromGoToStepToStartingStep - Posting TransitionToPreviousStartingStep");
+  if (d->Verbose)
+    {
+    qDebug() << "goFromGoToStepToStartingStep - Posting TransitionToPreviousStartingStep";
+    }
   d->StateMachine->postEvent(new ctkWorkflowInterstepTransitionEvent(ctkWorkflowInterstepTransition::TransitionToPreviousStartingStepAfterSuccessfulGoToFinishStep));
 }
 

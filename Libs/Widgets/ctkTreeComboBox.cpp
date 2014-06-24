@@ -26,7 +26,9 @@
 #include <QKeyEvent>
 #include <QLayout>
 #include <QScrollBar>
-#include <QInputContext>
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+# include <QInputContext>
+#endif
 #include <QMouseEvent>
 #include <QModelIndex>
 #include <QStack>
@@ -418,7 +420,7 @@ void ctkTreeComboBox::resizePopup()
         listRect.moveBottomLeft(above);
         }
 
-#ifndef QT_NO_IM
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0) && !defined QT_NO_IM
       if (QInputContext *qic = this->inputContext())
         {
         qic->reset();

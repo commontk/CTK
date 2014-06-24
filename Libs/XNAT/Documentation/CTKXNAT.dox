@@ -1,0 +1,10 @@
+/**
+
+\defgroup XNAT_Core XNAT Core
+\ingroup Libs
+
+\defgroup XNAT_Widgets XNAT Widgets
+\ingroup Libs
+\ingroup Project_Widgets
+
+*/

@@ -39,6 +39,10 @@ macro(ctkMacroGeneratePluginResourceFile QRC_SRCS)
 ")
   configure_file("${CTK_CMAKE_DIR}/plugin_resources_cached.qrc.in" "${_qrc_filepath}" @ONLY)
 
-  QT4_ADD_RESOURCES(${QRC_SRCS} ${_qrc_filepath})
+  if (CTK_QT_VERSION VERSION_GREATER "4")
+    QT5_ADD_RESOURCES(${QRC_SRCS} ${_qrc_filepath})
+  else()
+    QT4_ADD_RESOURCES(${QRC_SRCS} ${_qrc_filepath})
+  endif()
 
 endmacro()

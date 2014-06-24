@@ -62,8 +62,12 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
 
   // Read image
   imageReader->SetFileName(imageFilename);
+#if (VTK_MAJOR_VERSION <= 5)
   imageReader->Update();
-  vtkSmartPointer<vtkImageData> image = imageReader->GetOutput();
+  vtkImageData* image = imageReader->GetOutput();
+#else
+  vtkAlgorithmOutput* imagePort = imageReader->GetOutputPort();
+#endif
 
   //----------------------------------------------------------------------------
   // Renderer, RenderWindow and Interactor
@@ -168,10 +172,18 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   lightBoxRendererManager->SetImageData(image);
+#else
+  lightBoxRendererManager->SetImageDataConnection(imagePort);
+#endif
   if (mtime != lightBoxRendererManager->GetMTime())
     {
+#if (VTK_MAJOR_VERSION <= 5)
     std::cerr << "line " << __LINE__ << " - Problem with SetImageData()" << std::endl;
+#else
+    std::cerr << "line " << __LINE__ << " - Problem with SetImageDataConnection()" << std::endl;
+#endif
     return EXIT_FAILURE;
     }
   
@@ -203,7 +215,12 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
+
+#if (VTK_MAJOR_VERSION <= 5)
   lightBoxRendererManager->SetImageData(image);
+#else
+  lightBoxRendererManager->SetImageDataConnection(imagePort);
+#endif
   lightBoxRendererManager->SetRenderWindowLayout(4, 5);
   lightBoxRendererManager->SetHighlighted(2,2,true);
   lightBoxRendererManager->SetColorWindowAndLevel(100, 100);

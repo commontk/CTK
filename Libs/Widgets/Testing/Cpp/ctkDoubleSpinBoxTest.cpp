@@ -66,6 +66,9 @@ private slots:
   void testDecimalsByValue();
   void testDecimalsByValue_data();
 
+  void testDecimalsByValueSignals();
+  void testDecimalsByValueSignals_data();
+
   void testDecimalPointAlwaysVisible();
   void testDecimalPointAlwaysVisible_data();
 };
@@ -81,7 +84,11 @@ void ctkDoubleSpinBoxTester::testUI()
   spinBox.setPrefix("A: ");
   spinBox.setSetMode(ctkDoubleSpinBox::SetAlways);
   spinBox.show();
+#if (QT_VERSION >= 0x50000)
+  QTest::qWaitForWindowActive(&spinBox);
+#else
   QTest::qWaitForWindowShown(&spinBox);
+#endif
   QObject::connect(&spinBox, SIGNAL(valueChanged(double)),
                    &spinBox, SLOT(setValue(double)), Qt::QueuedConnection);
 
@@ -574,6 +581,39 @@ void ctkDoubleSpinBoxTester::testDecimalsByValue_data()
   QTest::newRow("same value") << 1.23 << "1.23" << 1.23 << 2;
   QTest::newRow("same value with less decimals") << 1.234 << "1.234" << 1.234 << 3;
   QTest::newRow("16 decimals") << 0.1234567891013151 << "0.1235" << 0.1234567891013151 << 4;
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testDecimalsByValueSignals()
+{
+  ctkDoubleSpinBox spinBox;
+  spinBox.setDecimalsOption( ctkDoubleSpinBox::DecimalsByValue );
+  // 0 -> 0.1 with 1 decimal
+  spinBox.setValue(0.1);
+
+  QSignalSpy decimalsChangedSpy(&spinBox, SIGNAL(decimalsChanged(int)));
+  QSignalSpy valueChangedSpy(&spinBox, SIGNAL(valueChanged(double)));
+
+  // 0.1 -> 1. with 0 decimal
+  QFETCH(double, newValue);
+  spinBox.setValue(newValue);
+
+  QCOMPARE(spinBox.value(), newValue);
+  QCOMPARE(decimalsChangedSpy.count(), spinBox.decimals() != 1 ? 1 : 0);
+  QCOMPARE(valueChangedSpy.count(), newValue != 0.1 ? 1 : 0);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDoubleSpinBoxTester::testDecimalsByValueSignals_data()
+{
+  QTest::addColumn<double>("newValue");
+  QTest::newRow("0: change value, remove decimal") << 0.;
+  QTest::newRow("0.01: change value, add decimal") << 0.01;
+  QTest::newRow("0.1: same value, same decimal") << 0.1;
+  QTest::newRow("0.11: change value, add decimal") << 0.11;
+  QTest::newRow("0.2: change value, same decimal") << 0.2;
+  QTest::newRow("1: change value, remove decimal") << 1.;
+  QTest::newRow("1.1: change value, same decimal") << 1.1;
 }
 
 // ----------------------------------------------------------------------------

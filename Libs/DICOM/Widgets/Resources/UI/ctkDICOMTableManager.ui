@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ctkDICOMTableManager</class>
+ <widget class="QWidget" name="ctkDICOMTableManager">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>833</width>
+    <height>455</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QSplitter" name="tableSplitter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QSplitter::handle {background-color: rgb(200,200,200);}
+QSplitter::handle:horizontal {width: 2px;}
+QSplitter::handle:vertical {height: 2px;}</string>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
+     <widget class="ctkDICOMTableView" name="patientsTable"/>
+     <widget class="ctkDICOMTableView" name="studiesTable"/>
+     <widget class="ctkDICOMTableView" name="seriesTable"/>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkDICOMTableView</class>
+   <extends>QWidget</extends>
+   <header>ctkDICOMTableView.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>patientsTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>ctkDICOMTableManager</receiver>
+   <slot>onPatientsSelectionChanged(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>studiesTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>ctkDICOMTableManager</receiver>
+   <slot>onStudiesSelectionChanged(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>patientsTable</sender>
+   <signal>queryChanged(QStringList)</signal>
+   <receiver>ctkDICOMTableManager</receiver>
+   <slot>onPatientsQueryChanged(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>studiesTable</sender>
+   <signal>queryChanged(QStringList)</signal>
+   <receiver>ctkDICOMTableManager</receiver>
+   <slot>onStudiesQueryChanged(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>patientsTable</sender>
+   <signal>queryChanged(QStringList)</signal>
+   <receiver>studiesTable</receiver>
+   <slot>onUpdateQuery(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>studiesTable</sender>
+   <signal>queryChanged(QStringList)</signal>
+   <receiver>seriesTable</receiver>
+   <slot>onUpdateQuery(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>550</x>
+     <y>140</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>671</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>patientsTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>studiesTable</receiver>
+   <slot>onUpdateQuery(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>244</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>267</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>studiesTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>seriesTable</receiver>
+   <slot>onUpdateQuery(QStringList)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>502</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>608</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>patientsTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>studiesTable</receiver>
+   <slot>selectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>143</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>studiesTable</sender>
+   <signal>selectionChanged(QStringList)</signal>
+   <receiver>seriesTable</receiver>
+   <slot>selectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>416</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>688</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>seriesSelectionChanged(QStringList)</signal>
+  <signal>seriesSelectionChanged(QItemSelection,QItemSelection)</signal>
+  <signal>studiesSelectionChanged(QStringList)</signal>
+  <signal>studiesSelectionsChanged(QItemSelection,QItemSelection)</signal>
+  <signal>patientsSelectionChanged(QStringList)</signal>
+  <signal>patientsSelectionChanged(QItemSelection,QItemSelection)</signal>
+ </slots>
+</ui>

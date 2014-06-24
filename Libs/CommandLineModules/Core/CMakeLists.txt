@@ -23,6 +23,7 @@ set(KIT_SRCS
   ctkCmdLineModuleDescription_p.h
   ctkCmdLineModuleDirectoryWatcher.cpp
   ctkCmdLineModuleDirectoryWatcher_p.h
+  ctkCmdLineModuleFrontend.h
   ctkCmdLineModuleFrontend.cpp
   ctkCmdLineModuleFrontendFactory.cpp
   ctkCmdLineModuleFuture.cpp
@@ -37,6 +38,7 @@ set(KIT_SRCS
   ctkCmdLineModuleParameterParsers_p.h
   ctkCmdLineModulePathBuilder.cpp
   ctkCmdLineModuleResult.cpp
+  ctkCmdLineModuleXmlProgressWatcher.h
   ctkCmdLineModuleXmlProgressWatcher.cpp
   ctkCmdLineModuleReference.cpp
   ctkCmdLineModuleRunException.cpp
@@ -57,14 +59,10 @@ set(KIT_MOC_SRCS
   ctkCmdLineModuleManager.h
 )
 
-QT4_GENERATE_MOCS(
+set(KIT_GENERATE_MOC_SRCS
   ctkCmdLineModuleFrontend.h
   ctkCmdLineModuleXmlProgressWatcher.h
 )
-
-#list(APPEND KIT_SRCS
-#  ${CMAKE_CURRENT_BINARY_DIR}/moc_ctkCmdLineModuleXmlProgressWatcher.h
-#)
 
 # UI files
 set(KIT_UI_FORMS
@@ -75,19 +73,23 @@ set(KIT_resources
   Resources/ctkCmdLineModules.qrc
 )
 
-set(QT_USE_QTXMLPATTERNS 1)
-include(${QT_USE_FILE})
-
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND KIT_target_libraries Qt5::XmlPatterns Qt5::Gui Qt5::Concurrent)
+else()
+  set(QT_USE_QTXMLPATTERNS 1)
+  include(${QT_USE_FILE})
+endif()
+
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
-  INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
+  GENERATE_MOC_SRCS ${KIT_GENERATE_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
@@ -96,7 +98,7 @@ ctkMacroBuildLib(
 
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

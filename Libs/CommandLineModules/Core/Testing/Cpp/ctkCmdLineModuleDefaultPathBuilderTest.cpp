@@ -22,7 +22,7 @@
 #include <QList>
 #include <QString>
 #include <QDir>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QProcessEnvironment>
 
 // CTK includes
@@ -37,7 +37,7 @@
  */
 int ctkCmdLineModuleDefaultPathBuilderTest(int argc, char* argv[])
 {
-  QApplication myApp(argc, argv);
+  QCoreApplication myApp(argc, argv);
 
   if (argc != 2)
   {

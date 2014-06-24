@@ -121,6 +121,10 @@ public Q_SLOTS:
   /// Update the value of ScrollbarAtBottom given the current position of the scollbar
   void onScrollBarValueChanged(int value);
 
+  /// Ensure the interactive line is visible (even when it is split on 2 lines)
+  /// \sa onScrollBarValueChanged()
+  void onTextChanged();
+
 protected:
   /// Return true if the cursor position is in the history area
   /// false if it is after the InteractivePosition.

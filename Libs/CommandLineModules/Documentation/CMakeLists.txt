@@ -6,7 +6,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SO
 
 if (BUILD_TESTING AND
     CTK_LIB_CommandLineModules/Core AND CTK_LIB_CommandLineModules/Backend/LocalProcess)
-  
+
   # Compile source code snippets
   add_subdirectory(Snippets)
 endif()

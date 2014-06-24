@@ -8,10 +8,17 @@ set(PLUGIN_SRCS
 
 set(lib_name ${PROJECT_NAME})
 
-include(${QT_USE_FILE})
+if(CTK_QT_VERSION VERSION_LESS "5")
+  include(${QT_USE_FILE})
+endif()
 
 add_library(${lib_name} SHARED ${PLUGIN_SRCS})
-target_link_libraries(${lib_name} ${QT_LIBRARIES})
+
+if(CTK_QT_VERSION VERSION_LESS "5")
+  target_link_libraries(${lib_name} ${QT_LIBRARIES})
+else()
+  target_link_libraries(${lib_name} Qt5::Core)
+endif()
 
 # Apply properties to the library target.
 set_target_properties(${lib_name} PROPERTIES

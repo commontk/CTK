@@ -42,6 +42,7 @@ class CTK_CORE_EXPORT ctkWorkflow : public QObject
   Q_ENUMS(TransitionDirectionality)
   Q_PROPERTY(bool isRunning READ isRunning DESIGNABLE false)
   Q_PROPERTY(bool goBackToOriginStepUponSuccess READ goBackToOriginStepUponSuccess WRITE setGoBackToOriginStepUponSuccess)
+  Q_PROPERTY(bool verbose READ verbose WRITE setVerbose)
 
 public:
 
@@ -183,6 +184,10 @@ public:
   /// succeeded.
   bool goBackToOriginStepUponSuccess()const;
   void setGoBackToOriginStepUponSuccess(bool flag);
+
+  /// If set debug messages will be displayed on standard output.
+  bool verbose()const;
+  void setVerbose(bool value);
 
 public Q_SLOTS:
 

@@ -4,6 +4,7 @@ project(CTKQtTesting)
 # 3rd party dependencies
 #
 find_package(QtTesting REQUIRED)
+set(QtTesting_LIBRARIES QtTesting)
 
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
@@ -107,18 +108,6 @@ if (CTK_LIB_Widgets)
   set(CTK_ADD_WIDGET_EVENT_TRANSLATORS "${CTK_ADD_WIDGET_EVENT_TRANSLATORS}  this->eventTranslator()->addWidgetEventTranslator(new ctkFileDialogEventTranslator(util));\n")
 endif()
 
-set(KIT_INCLUDE_DIRECTORIES
-  ${QtTesting_INCLUDE_DIRS}
-  ${CTK_SUPERBUILD_BINARY_DIR} # For ctkConfig.h
-  )
-
-foreach(libname ${CTK_ENABLED_LIBNAMES})
-  list(APPEND KIT_INCLUDE_DIRECTORIES
-    ${${libname}_SOURCE_DIR}
-    ${${libname}_BINARY_DIR}
-    )
-endforeach()
-
 configure_file(
   ctkQtTestingUtility.cpp.in
   ${CMAKE_CURRENT_BINARY_DIR}/ctkQtTestingUtility.cpp
@@ -154,16 +143,12 @@ set(KIT_resources
   Resources/ctkQtTesting.qrc
 )
 
-# dependencie dynamic from all the libraries with Widgets + QtTesting
-set(KIT_target_libraries QtTesting)
+# Set QtTesting_LIBRARIES variable
+set(QtTesting_LIBRARIES QtTesting)
 
-foreach(libname ${CTK_ENABLED_LIBNAMES})
-  if(${libname} MATCHES "Widgets$")
-    list(APPEND KIT_target_libraries ${libname})
-  endif()
-endforeach()
-
-#message("${KIT_target_libraries}")
+# Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
+# The following macro will read the target libraries from the file 'target_libraries.cmake'
+ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
@@ -171,13 +156,12 @@ ctkMacroBuildLib(
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
-  INCLUDE_DIRECTORIES ${KIT_INCLUDE_DIRECTORIES}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

@@ -32,17 +32,20 @@ set(KIT_resources
   Resources/ctkCmdLineModulesFrontendQtWebKit.qrc
 )
 
-set(QT_USE_QTWEBKIT 1)
-include(${QT_USE_FILE})
-
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND KIT_target_libraries Qt5::WebKitWidgets)
+else()
+  set(QT_USE_QTWEBKIT 1)
+  include(${QT_USE_FILE})
+endif()
+
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
-  INCLUDE_DIRECTORIES ${KIT_include_directories}
   SRCS ${KIT_SRCS}
   MOC_SRCS ${KIT_MOC_SRCS}
   UI_FORMS ${KIT_UI_FORMS}
@@ -53,7 +56,7 @@ ctkMacroBuildLib(
 
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

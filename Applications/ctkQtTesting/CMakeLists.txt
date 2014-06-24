@@ -1,16 +1,6 @@
 project(ctkQtTesting)
 
 #
-# 3rd party dependencies
-#
-find_package(QtTesting REQUIRED)
-include_directories(
-  ${QtTesting_INCLUDE_DIRS}
-  ${CTKQtTesting_INCLUDE_DIRS}
-  ${CTK_BASE_INCLUDE_DIRS}
-  )
-
-#
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
 #
 
@@ -37,7 +27,6 @@ set(KIT_resources
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
-list(APPEND KIT_target_libraries CTKQtTesting)
 
 ctkMacroBuildApp(
   NAME ${PROJECT_NAME}

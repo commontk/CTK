@@ -181,3 +181,11 @@ void ctkCmdLineModuleCache::removeCacheEntry(const QUrl& moduleLocation)
     xmlFile.remove();
   }
 }
+
+void ctkCmdLineModuleCache::clearCache()
+{
+  foreach(const QUrl &url, d->LocationToXmlDescription.keys())
+  {
+    removeCacheEntry(url);
+  }
+}

@@ -297,6 +297,7 @@ public:
 
   QString ARTIFICIAL_BRANCH_ID_PREFIX;
 
+  bool Verbose;
 };
 
 #endif

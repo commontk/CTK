@@ -28,6 +28,9 @@ class ctkPushButtonPrivate
 protected:
   ctkPushButton* const q_ptr;
 public:
+
+  virtual ~ctkPushButtonPrivate();
+
   ctkPushButtonPrivate(ctkPushButton& object);
   void init();
 

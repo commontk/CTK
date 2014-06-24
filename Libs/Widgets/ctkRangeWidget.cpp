@@ -21,7 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QMouseEvent>
-#include <QWeakPointer>
+#include <QPointer>
 
 // CTK includes
 #include "ctkRangeWidget.h"
@@ -56,7 +56,7 @@ public:
   double        MaximumValueBeforeChange;
   bool          AutoSpinBoxWidth;
   Qt::Alignment SpinBoxAlignment;
-  QWeakPointer<ctkValueProxy> Proxy;
+  QPointer<ctkValueProxy> Proxy;
 };
 
 // --------------------------------------------------------------------------
@@ -497,9 +497,9 @@ void ctkRangeWidget::startChanging()
     {
     return;
     }
-  d->Changing = true;
   d->MinimumValueBeforeChange = this->minimumValue();
   d->MaximumValueBeforeChange = this->maximumValue();
+  d->Changing = true;
 }
 
 // --------------------------------------------------------------------------

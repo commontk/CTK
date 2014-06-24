@@ -21,7 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QMouseEvent>
-#include <QWeakPointer>
+#include <QPointer>
 
 // CTK includes
 #include "ctkPopupWidget.h"
@@ -29,7 +29,7 @@
 #include "ctkValueProxy.h"
 #include "ui_ctkSliderWidget.h"
 
-// STD includes 
+// STD includes
 #include <cmath>
 
 //-----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ public:
   bool   BlockSetSliderValue;
   ctkSliderWidget::SynchronizeSiblings SynchronizeMode;
   ctkPopupWidget* SliderPopup;
-  QWeakPointer<ctkValueProxy> Proxy;
+  QPointer<ctkValueProxy> Proxy;
 };
 
 // --------------------------------------------------------------------------
@@ -79,8 +79,7 @@ ctkSliderWidgetPrivate::ctkSliderWidgetPrivate(ctkSliderWidget& object)
   this->Changing = false;
   this->ValueBeforeChange = 0.;
   this->BlockSetSliderValue = false;
-  this->SynchronizeMode =
-    ctkSliderWidget::SynchronizeWidth | ctkSliderWidget::SynchronizeDecimals;
+  this->SynchronizeMode = ctkSliderWidget::SynchronizeWidth;
   this->SliderPopup = 0;
 }
 
@@ -321,8 +320,8 @@ void ctkSliderWidget::startChanging()
     {
     return;
     }
-  d->Changing = true;
   d->ValueBeforeChange = this->value();
+  d->Changing = true;
 }
 
 // --------------------------------------------------------------------------

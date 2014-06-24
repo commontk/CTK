@@ -55,11 +55,13 @@ macro(ctkMacroBuildPlugin)
     ${ARGN}
     )
 
+  # Keep parameter 'INCLUDE_DIRECTORIES' for backward compatiblity
+
   # Sanity checks
   if(NOT DEFINED MY_EXPORT_DIRECTIVE)
     message(FATAL_ERROR "EXPORT_DIRECTIVE is mandatory")
   endif()
-  
+
   # Print a warning if the project name does not match the directory name
   get_filename_component(_dir_name ${CMAKE_CURRENT_SOURCE_DIR} NAME)
   string(REPLACE "." "_" _dir_name_with_ ${_dir_name})
@@ -69,12 +71,12 @@ macro(ctkMacroBuildPlugin)
 
   # Define library name
   set(lib_name ${PROJECT_NAME})
-  
+
   # Plug-in target names must contain at leas one _
   if(NOT lib_name MATCHES _)
     message(FATAL_ERROR "The plug-in project name ${lib_name} must contain at least one '_' character")
   endif()
-  
+
   # Plugin are expected to be shared library
   set(MY_LIBRARY_TYPE "SHARED")
 
@@ -132,7 +134,6 @@ macro(ctkMacroBuildPlugin)
   list(APPEND my_includes
       ${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_BINARY_DIR}
-      ${MY_INCLUDE_DIRECTORIES}
       )
 
   # Add the include directories from the plugin dependencies
@@ -143,8 +144,12 @@ macro(ctkMacroBuildPlugin)
     ${my_includes}
     )
 
-  # Add Qt include dirs and defines
-  include(${QT_USE_FILE})
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    # Add Qt include dirs and defines
+    include(${QT_USE_FILE})
+  else()
+    find_package(Qt5LinguistTools REQUIRED)
+  endif()
 
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
@@ -170,18 +175,31 @@ macro(ctkMacroBuildPlugin)
   set(MY_QRC_SRCS)
 
   # Wrap
-  if(MY_MOC_SRCS)
-    # this is a workaround for Visual Studio. The relative include paths in the generated
-    # moc files can get very long and can't be resolved by the MSVC compiler.
-    foreach(moc_src ${MY_MOC_SRCS})
-      QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} ${MY_MOC_OPTIONS})
-    endforeach()
+  if (CTK_QT_VERSION VERSION_GREATER "4")
+    if(MY_MOC_SRCS)
+      # this is a workaround for Visual Studio. The relative include paths in the generated
+      # moc files can get very long and can't be resolved by the MSVC compiler.
+      foreach(moc_src ${MY_MOC_SRCS})
+        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} -DHAVE_QT5)
+      endforeach()
+    endif()
+    QT5_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+    if(DEFINED MY_RESOURCES)
+      QT5_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+  else()
+    if(MY_MOC_SRCS)
+      # this is a workaround for Visual Studio. The relative include paths in the generated
+      # moc files can get very long and can't be resolved by the MSVC compiler.
+      foreach(moc_src ${MY_MOC_SRCS})
+        QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+      endforeach()
+    endif()
+    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+    if(DEFINED MY_RESOURCES)
+      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
   endif()
-  QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
-  if(DEFINED MY_RESOURCES)
-    QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
-  endif()
-
   # Add the generated manifest qrc file
   set(manifest_qrc_src )
   ctkFunctionGeneratePluginManifest(manifest_qrc_src
@@ -214,7 +232,11 @@ macro(ctkMacroBuildPlugin)
   if(MY_TRANSLATIONS)
     set_source_files_properties(${MY_TRANSLATIONS}
                                 PROPERTIES OUTPUT_LOCATION ${_translations_dir})
-    QT4_CREATE_TRANSLATION(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+    if(CTK_QT_VERSION VERSION_GREATER "4")
+      qt5_create_translation(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+    else()
+      QT4_CREATE_TRANSLATION(_plugin_qm_files ${MY_SRCS} ${MY_UI_FORMS} ${MY_TRANSLATIONS})
+    endif()
   endif()
 
   if(_plugin_qm_files)
@@ -268,6 +290,11 @@ macro(ctkMacroBuildPlugin)
     ${_plugin_qm_files}
     )
 
+  if(MY_TEST_PLUGIN AND CTK_QT_VERSION VERSION_GREATER "4")
+    find_package(Qt5Test REQUIRED)
+    target_link_libraries(${lib_name} Qt5::Test)
+  endif()
+
   # Set the output directory for the plugin
   if(MY_OUTPUT_DIR)
     set(output_dir_suffix "/${MY_OUTPUT_DIR}")
@@ -280,7 +307,7 @@ macro(ctkMacroBuildPlugin)
       # Put plug-ins by default into a "plugins" subdirectory
       set(CTK_PLUGIN_${type}_OUTPUT_DIRECTORY "${CMAKE_${type}_OUTPUT_DIRECTORY}/plugins")
     endif()
-    
+
     if(IS_ABSOLUTE "${CTK_PLUGIN_${type}_OUTPUT_DIRECTORY}")
       set(plugin_${type}_output_dir "${CTK_PLUGIN_${type}_OUTPUT_DIRECTORY}${output_dir_suffix}")
     elseif(CMAKE_${type}_OUTPUT_DIRECTORY)
@@ -311,14 +338,13 @@ macro(ctkMacroBuildPlugin)
     PREFIX "lib"
     )
 
-  # Note: The plugin may be installed in some other location ???
-  # Install rules
-# if(MY_LIBRARY_TYPE STREQUAL "SHARED")
-# install(TARGETS ${lib_name}
-# RUNTIME DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT RuntimePlugins
-# LIBRARY DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT RuntimePlugins
-# ARCHIVE DESTINATION ${CTK_INSTALL_LIB_DIR} COMPONENT Development)
-# endif()
+  if(NOT MY_TEST_PLUGIN)
+    # Install rules
+    install(TARGETS ${lib_name} EXPORT CTKExports
+      RUNTIME DESTINATION ${CTK_INSTALL_PLUGIN_DIR} COMPONENT RuntimePlugins
+      LIBRARY DESTINATION ${CTK_INSTALL_PLUGIN_DIR} COMPONENT RuntimePlugins
+      ARCHIVE DESTINATION ${CTK_INSTALL_PLUGIN_DIR} COMPONENT Development)
+  endif()
 
   set(my_libs
     ${MY_TARGET_LIBRARIES}
@@ -334,13 +360,15 @@ macro(ctkMacroBuildPlugin)
     set(${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES} ${lib_name} CACHE INTERNAL "CTK plugins" FORCE)
   endif()
 
-  # Install headers
-  #file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/*.tpp")
-  #install(FILES
-  # ${headers}
-  # ${dynamicHeaders}
-  # DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
-  # )
+  if(NOT MY_TEST_PLUGIN)
+    # Install headers
+    file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/*.tpp")
+    install(FILES
+      ${headers}
+      ${dynamicHeaders}
+      DESTINATION ${CTK_INSTALL_PLUGIN_INCLUDE_DIR}/${Plugin-SymbolicName} COMPONENT Development
+      )
+  endif()
 
 endmacro()
 

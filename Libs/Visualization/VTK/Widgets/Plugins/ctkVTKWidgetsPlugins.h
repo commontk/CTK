@@ -43,11 +43,14 @@
 #include "ctkVTKThresholdWidgetPlugin.h"
 
 /// \class Group the plugins in one library
-class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKWidgetsPlugins :
-  public QObject,
-  public QDesignerCustomWidgetCollectionInterface
+class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKWidgetsPlugins
+  : public QObject
+  , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
+#ifdef HAVE_QT5
+  Q_PLUGIN_METADATA(IID "org.commontk.VTKWidgets")
+#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:

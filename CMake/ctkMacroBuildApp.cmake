@@ -27,9 +27,11 @@
 macro(ctkMacroBuildApp)
   ctkMacroParseArguments(MY
     "NAME;SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    ""
+    "INSTALL"
     ${ARGN}
     )
+
+  # Keep parameter 'INCLUDE_DIRECTORIES' for backward compatiblity
 
   # Sanity checks
   if(NOT DEFINED MY_NAME)
@@ -54,7 +56,6 @@ macro(ctkMacroBuildApp)
   set(my_includes
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${MY_INCLUDE_DIRECTORIES}
     )
 
   # Add the include directories from the library dependencies
@@ -69,22 +70,42 @@ macro(ctkMacroBuildApp)
     ${my_library_dirs}
     )
 
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    # Add Qt include dirs and defines
+    include(${QT_USE_FILE})
+  endif()
+
   # Make sure variable are cleared
   set(MY_UI_CPP)
   set(MY_MOC_CPP)
   set(MY_QRC_SRCS)
 
-  # Wrap
-  if(MY_MOC_SRCS)
-    # this is a workaround for Visual Studio. The relative include paths in the generated
-    # moc files can get very long and can't be resolved by the MSVC compiler.
-    foreach(moc_src ${MY_MOC_SRCS})
-      QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
-    endforeach()
-  endif()
-  QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
-  if(DEFINED MY_RESOURCES)
-    QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+  if (CTK_QT_VERSION VERSION_GREATER "4")
+    # Wrap
+    if(MY_MOC_SRCS)
+      # this is a workaround for Visual Studio. The relative include paths in the generated
+      # moc files can get very long and can't be resolved by the MSVC compiler.
+      foreach(moc_src ${MY_MOC_SRCS})
+        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
+      endforeach()
+    endif()
+    QT5_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+    if(DEFINED MY_RESOURCES)
+      QT5_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
+  else()
+    # Wrap
+    if(MY_MOC_SRCS)
+      # this is a workaround for Visual Studio. The relative include paths in the generated
+      # moc files can get very long and can't be resolved by the MSVC compiler.
+      foreach(moc_src ${MY_MOC_SRCS})
+        QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+      endforeach()
+    endif()
+    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+    if(DEFINED MY_RESOURCES)
+      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+    endif()
   endif()
 
   source_group("Resources" FILES
@@ -120,12 +141,14 @@ macro(ctkMacroBuildApp)
   target_link_libraries(${proj_name} ${my_libs})
 
   # Install headers
-  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  install(FILES
-    ${headers}
-    ${dynamicHeaders}
-    DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
-    )
+  if(MY_INSTALL)
+    file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+    install(FILES
+      ${headers}
+      ${dynamicHeaders}
+      DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
+      )
+  endif()
 
 endmacro()
 

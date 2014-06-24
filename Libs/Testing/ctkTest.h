@@ -34,13 +34,14 @@ int TestObject(int argc, char *argv[]) \
     return QTest::qExec(&tc, argc, argv); \
 }
 
-#ifdef QT_GUI_LIB
+#if (QT_VERSION < 0x50000 && QT_GUI_LIB) || (QT_VERSION >= 0x50000 && QT_WIDGETS_LIB)
 
 //-----------------------------------------------------------------------------
 #define CTK_TEST_MAIN(TestObject) \
   int TestObject(int argc, char *argv[]) \
   { \
     QApplication app(argc, argv); \
+    QTEST_DISABLE_KEYPAD_NAVIGATION \
     TestObject##er tc; \
     return QTest::qExec(&tc, argc, argv); \
   }
@@ -52,7 +53,6 @@ int TestObject(int argc, char *argv[]) \
   int TestObject(int argc, char *argv[]) \
   { \
     QCoreApplication app(argc, argv); \
-    QTEST_DISABLE_KEYPAD_NAVIGATION \
     TestObject##er tc; \
     return QTest::qExec(&tc, argc, argv); \
   }
@@ -61,6 +61,9 @@ int TestObject(int argc, char *argv[]) \
 
 namespace ctkTest
 {
+
+#if (QT_VERSION < 0x50000 && QT_GUI_LIB) || (QT_VERSION >= 0x50000 && QT_WIDGETS_LIB)
+
 // ----------------------------------------------------------------------------
 static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButton button,
                        Qt::KeyboardModifiers stateKey, QPoint pos, int delay=-1)
@@ -94,15 +97,20 @@ static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButt
     static const char *mouseActionNames[] =
         { "MousePress", "MouseRelease", "MouseClick", "MouseDClick", "MouseMove" };
     QString warning = QString::fromLatin1("Mouse event \"%1\" not accepted by receiving widget");
-    QTest::qWarn(warning.arg(QString::fromLatin1(mouseActionNames[static_cast<int>(action)])).toAscii().data());
+    QTest::qWarn(qPrintable(warning.arg(mouseActionNames[static_cast<int>(action)])));
     }
 }
+
+#endif
+
+#if (QT_VERSION < 0x50000 && QT_GUI_LIB) || (QT_VERSION >= 0x50000 && QT_WIDGETS_LIB)
 
 // ----------------------------------------------------------------------------
 inline void mouseMove(QWidget *widget, Qt::MouseButton button, Qt::KeyboardModifiers stateKey = 0,
                       QPoint pos = QPoint(), int delay=-1)
   { ctkTest::mouseEvent(QTest::MouseMove, widget, button, stateKey, pos, delay); }
 
+#endif
 
 // ----------------------------------------------------------------------------
 inline void COMPARE(double v1, double v2)
@@ -129,6 +137,6 @@ inline void COMPARE(double v1, double v2)
     }
 }
 
-}; // end ctkTest namespace
+} // end ctkTest namespace
 
 #endif

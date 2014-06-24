@@ -26,6 +26,7 @@
 
 // CTK Core
 #include <ctkDICOMDatabase.h>
+#include <ctkDICOMUtil.h>
 
 // CTK widget includes
 #include <ctkDICOMQueryRetrieveWidget.h>
@@ -40,8 +41,7 @@
 int main(int argc, char** argv)
 {
   // Set the DCMTK log level to debug
-  dcmtk::log4cplus::Logger rootLogger = dcmtk::log4cplus::Logger::getRoot();
-  rootLogger.setLogLevel(dcmtk::log4cplus::DEBUG_LOG_LEVEL);
+  ctk::setDICOMLogLevel(ctkErrorLogLevel::Debug);
 
   QApplication app(argc, argv);
 

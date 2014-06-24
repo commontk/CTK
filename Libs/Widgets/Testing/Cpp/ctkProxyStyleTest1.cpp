@@ -21,7 +21,6 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
-#include <QPlastiqueStyle>
 #include <QProxyStyle>
 #include <QTimer>
 #include <QVBoxLayout>

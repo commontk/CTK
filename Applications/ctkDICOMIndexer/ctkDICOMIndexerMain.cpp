@@ -19,8 +19,7 @@
 =========================================================================*/
 
 // Qt includes
-#include <QApplication>
-#include <QPushButton>
+#include <QCoreApplication>
 #include <QTextStream>
 
 // CTK includes

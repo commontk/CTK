@@ -15,12 +15,12 @@ set(KIT_MOC_SRCS
 
 # UI files
 set(KIT_UI_FORMS
-  
+
 )
 
 # Resources
 set(KIT_resources
-  
+
 )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake

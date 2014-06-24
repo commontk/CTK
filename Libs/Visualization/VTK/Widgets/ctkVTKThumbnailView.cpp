@@ -37,6 +37,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkVersion.h>
 #include <vtkWeakPointer.h>
 
 //--------------------------------------------------------------------------
@@ -99,7 +100,11 @@ void ctkVTKThumbnailViewPrivate::init()
 
   this->FOVBox = vtkOutlineSource::New();
   this->FOVBoxMapper = vtkPolyDataMapper::New();
+#if VTK_MAJOR_VERSION <= 5
   this->FOVBoxMapper->SetInput( this->FOVBox->GetOutput() );
+#else
+  this->FOVBoxMapper->SetInputConnection( this->FOVBox->GetOutputPort() );
+#endif
   this->FOVBoxActor = vtkFollower::New();
 
   this->FOVBoxMapper->Update();
@@ -215,7 +220,11 @@ void ctkVTKThumbnailViewPrivate::updateBounds()
       // ---new: create new actor, mapper, deep copy, add it.
       newMapper = vtkPolyDataMapper::New();
       newMapper->ShallowCopy (mainActor->GetMapper() );
+#if VTK_MAJOR_VERSION <= 5
       newMapper->SetInput ( vtkPolyData::SafeDownCast(mainActor->GetMapper()->GetInput()) );
+#else
+      newMapper->SetInputData ( vtkPolyData::SafeDownCast(mainActor->GetMapper()->GetInput()) );
+#endif
 
       newActor = vtkActor::New();
       newActor->ShallowCopy (mainActor );

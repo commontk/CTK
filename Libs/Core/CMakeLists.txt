@@ -35,21 +35,23 @@ set(KIT_SRCS
   ctkBooleanMapper.h
   ctkCallback.cpp
   ctkCallback.h
-  ctkCheckableModelHelper.cpp
-  ctkCheckableModelHelper.h
   ctkCommandLineParser.cpp
   ctkCommandLineParser.h
   ctkDependencyGraph.cpp
   ctkDependencyGraph.h
-  ctkErrorLogModel.cpp
-  ctkErrorLogModel.h
+  ctkErrorLogAbstractMessageHandler.cpp
+  ctkErrorLogAbstractMessageHandler.h
   ctkErrorLogFDMessageHandler.cpp
   ctkErrorLogFDMessageHandler.h
   ctkErrorLogFDMessageHandler_p.h
+  ctkErrorLogLevel.cpp
+  ctkErrorLogLevel.h
   ctkErrorLogQtMessageHandler.cpp
   ctkErrorLogQtMessageHandler.h
   ctkErrorLogStreamMessageHandler.cpp
   ctkErrorLogStreamMessageHandler.h
+  ctkErrorLogTerminalOutput.cpp
+  ctkErrorLogTerminalOutput.h
   ctkException.cpp
   ctkException.h
   ctkHighPrecisionTimer.cpp
@@ -57,18 +59,12 @@ set(KIT_SRCS
   ctkLinearValueProxy.h
   ctkLogger.cpp
   ctkLogger.h
-  ctkHistogram.cpp
-  ctkHistogram.h
   ctkModelTester.cpp
   ctkModelTester.h
   ctkPimpl.h
   ctkScopedCurrentDir.cpp
   ctkScopedCurrentDir.h
   ctkSingleton.h
-  ctkTransferFunction.cpp
-  ctkTransferFunction.h
-  ctkTransferFunctionRepresentation.cpp
-  ctkTransferFunctionRepresentation.h
   ctkUtils.cpp
   ctkUtils.h
   ctkValueProxy.cpp
@@ -95,16 +91,16 @@ endif()
 set(KIT_MOC_SRCS
   ctkBooleanMapper.h
   ctkCallback.h
-  ctkCheckableModelHelper.h
   ctkCommandLineParser.h
+  ctkErrorLogAbstractMessageHandler.h
   ctkErrorLogFDMessageHandler_p.h
-  ctkErrorLogModel.h
+  ctkErrorLogLevel.h
+  ctkErrorLogQtMessageHandler.h
+  ctkErrorLogTerminalOutput.h
   ctkLinearValueProxy.h
   ctkLogger.h
-  ctkHistogram.h
   ctkModelTester.h
-  ctkTransferFunction.h
-  ctkTransferFunctionRepresentation.h
+  ctkErrorLogQtMessageHandler.h
   ctkValueProxy.h
   ctkWorkflow.h
   ctkWorkflow_p.h
@@ -126,6 +122,10 @@ set(KIT_target_libraries)
 
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND KIT_target_libraries Qt5::Core)
+endif()
+
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}
@@ -144,7 +144,7 @@ elseif(WIN32 AND NOT MINGW)
   target_link_libraries(${PROJECT_NAME} dbghelp)
 endif()
 
-if(CTK_WRAP_PYTHONQT_FULL OR CTK_WRAP_PYTHONQT_LIGHT)
+if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
     SRCS ${KIT_SRCS}

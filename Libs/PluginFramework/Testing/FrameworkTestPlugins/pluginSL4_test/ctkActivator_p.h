@@ -31,6 +31,9 @@ class ctkActivator :
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator ctkFooService)
+#ifdef HAVE_QT5
+  Q_PLUGIN_METADATA(IID "pluginSL4_test")
+#endif
 
 public:
 

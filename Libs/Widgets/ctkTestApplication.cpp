@@ -54,9 +54,12 @@ int ctkTestApplication::Error = 0;
 //-----------------------------------------------------------------------------
 ctkTestApplication::ctkTestApplication(int _argc, char** _argv)
 {
+#if QT_VERSION > QT_VERSION_CHECK(5,0,0)
+  qInstallMessageHandler(ctkTestApplication::messageHandler);
+#else
   qInstallMsgHandler(ctkTestApplication::messageHandler);
-  
-  // CMake generated driver removes argv[0], 
+#endif
+  // CMake generated driver removes argv[0],
   // so let's put a dummy back in
   this->Argv.append("ctkTestApplication");
   for(int i=0; i<_argc; i++)
@@ -75,7 +78,11 @@ ctkTestApplication::ctkTestApplication(int _argc, char** _argv)
 ctkTestApplication::~ctkTestApplication()
 {
   delete this->App;
+#if QT_VERSION > QT_VERSION_CHECK(5,0,0)
+  qInstallMessageHandler(0);
+#else
   qInstallMsgHandler(0);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -94,10 +101,10 @@ int ctkTestApplication::exec(bool reportErrorsOnExit)
 {
   if(QCoreApplication::arguments().contains("--exit"))
     {
-    QTimer::singleShot(100, QApplication::instance(), 
+    QTimer::singleShot(100, QApplication::instance(),
                        SLOT(quit()));
     }
-    
+
   int ret = QApplication::exec();
   if (reportErrorsOnExit)
     {
@@ -110,23 +117,29 @@ int ctkTestApplication::exec(bool reportErrorsOnExit)
 }
 
 //-----------------------------------------------------------------------------
-void ctkTestApplication::messageHandler(QtMsgType type, const char *msg)
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+void ctkTestApplication::messageHandler(QtMsgType type, const QMessageLogContext& /*context*/, const QString& msg)
 {
+#else
+void ctkTestApplication::messageHandler(QtMsgType type, const char *msgAsStr)
+{
+  QString msg(msgAsStr);
+#endif
   switch(type)
   {
   case QtDebugMsg:
-    std::cerr << "Debug: " << msg << std::endl;
+    std::cerr << "Debug: " << qPrintable(msg) << std::endl;
     break;
   case QtWarningMsg:
-    std::cerr << "Warning: " << msg << std::endl;
+    std::cerr << "Warning: " << qPrintable(msg) << std::endl;
     Error++;
     break;
   case QtCriticalMsg:
-    std::cerr << "Critical: " << msg << std::endl;
+    std::cerr << "Critical: " << qPrintable(msg) << std::endl;
     Error++;
     break;
   case QtFatalMsg:
-    std::cerr << "Fatal: " << msg << std::endl;
+    std::cerr << "Fatal: " << qPrintable(msg) << std::endl;
     abort();
   }
 }
@@ -161,7 +174,7 @@ void ctkTestApplication::keyUp(QWidget* w, Qt::Key key, Qt::KeyboardModifiers mo
     off = 'A';
   if(key >= Qt::Key_A && key <= Qt::Key_Z)
     {
-    text.append(QChar::fromAscii(key - Qt::Key_A + off));
+    text.append(QChar::fromLatin1(key - Qt::Key_A + off));
     }
   QKeyEvent e(QEvent::KeyRelease, key, mod, text);
   if(!simulateEvent(w, &e))
@@ -182,7 +195,7 @@ void ctkTestApplication::keyDown(QWidget* w, Qt::Key key, Qt::KeyboardModifiers 
     off = 'A';
   if(key >= Qt::Key_A && key <= Qt::Key_Z)
     {
-    text.append(QChar::fromAscii(key - Qt::Key_A + off));
+    text.append(QChar::fromLatin1(key - Qt::Key_A + off));
     }
   QKeyEvent e(QEvent::KeyPress, key, mod, text);
   if(!simulateEvent(w, &e))

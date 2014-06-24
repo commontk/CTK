@@ -50,10 +50,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Qt includes
 #include <QAbstractItemView>
+#include <QAction>
 #include <QApplication>
 #include <QClipboard>
 #include <QCompleter>
+#include <QFile>
+#include <QFileDialog>
 #include <QKeyEvent>
+#include <QMimeData>
 #include <QPointer>
 #include <QTextCursor>
 #include <QVBoxLayout>
@@ -124,12 +128,23 @@ void ctkConsolePrivate::init()
   this->CommandHistory.append("");
   this->CommandPosition = 0;
 
+  QAction* runFileAction = new QAction(q->tr("&Run file"),q);
+  runFileAction->setShortcut(q->tr("Ctrl+r"));
+  connect(runFileAction, SIGNAL(triggered()), q, SLOT(runFile()));
+  q->addAction(runFileAction);
+
+  QAction* printHelpAction = new QAction(q->tr("Print &help"),q);
+  printHelpAction->setShortcut(q->tr("Ctrl+h"));
+  connect(printHelpAction, SIGNAL(triggered()), q, SLOT(printHelp()));
+  q->addAction(printHelpAction);
+
   QVBoxLayout * layout = new QVBoxLayout(q);
   layout->setMargin(0);
   layout->addWidget(this);
 
   connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)),
           SLOT(onScrollBarValueChanged(int)));
+  connect(this, SIGNAL(textChanged()), SLOT(onTextChanged()));
 }
 
 //-----------------------------------------------------------------------------
@@ -184,7 +199,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       }
 
     // Force the cursor back to the interactive area
-    if(history_area && e->key() != Qt::Key_Control)
+    if(history_area
+       && e->key() != Qt::Key_Control
+       && e->key() != Qt::Key_Meta
+       && e->key() != Qt::Key_Alt
+       )
       {
       text_cursor.setPosition(this->documentEnd());
       this->setTextCursor(text_cursor);
@@ -291,14 +310,21 @@ void ctkConsolePrivate::switchToUserInputTextColor(QTextCursor* textCursorToUpda
     color = this->StdinTextColor;
     }
   QTextCharFormat currentFormat = this->currentCharFormat();
-  currentFormat.setForeground(color);
-  this->setCurrentCharFormat(currentFormat);
+  // Do not trigger a finishEdit for no reason. onTextChanged() would be called.
+  if (currentFormat.foreground() != color)
+    {
+    currentFormat.setForeground(color);
+    this->setCurrentCharFormat(currentFormat);
+    }
 
   if (textCursorToUpdate)
     {
     QTextCharFormat textCursorFormat = textCursorToUpdate->charFormat();
-    textCursorFormat.setForeground(color);
-    textCursorToUpdate->setCharFormat(textCursorFormat);
+    if (textCursorFormat.foreground() != color)
+      {
+      textCursorFormat.setForeground(color);
+      textCursorToUpdate->setCharFormat(textCursorFormat);
+      }
     }
 }
 
@@ -505,8 +531,6 @@ void ctkConsolePrivate::printString(const QString& text)
   this->textCursor().movePosition(QTextCursor::End);
   this->textCursor().insertText(text);
   this->InteractivePosition = this->documentEnd();
-  this->ensureCursorVisible();
-  this->scrollToBottom();
 }
 
 //----------------------------------------------------------------------------
@@ -570,8 +594,6 @@ void ctkConsolePrivate::prompt(const QString& text)
 
   this->textCursor().insertText(text);
   this->InteractivePosition = this->documentEnd();
-  this->ensureCursorVisible();
-  this->scrollToBottom();
 }
 
 //----------------------------------------------------------------------------
@@ -608,6 +630,13 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
 void ctkConsolePrivate::onScrollBarValueChanged(int value)
 {
   this->ScrollbarAtBottom = (this->verticalScrollBar()->maximum() == value);
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsolePrivate::onTextChanged()
+{
+  this->scrollToBottom();
+  this->ensureCursorVisible();
 }
 
 //-----------------------------------------------------------------------------
@@ -813,6 +842,41 @@ void ctkConsole::exec(const QString& command)
   Q_D(ctkConsole);
   d->replaceCommandBuffer(command);
   d->internalExecuteCommand();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::runFile(const QString& filePath)
+{
+  QFile file(filePath);
+  if (!file.open(QIODevice::ReadOnly))
+    {
+    qWarning() << tr( "File '%1' can't be read.").arg(filePath);
+    return;
+    }
+  for (QTextStream fileStream(&file); !fileStream.atEnd();)
+    {
+    QString line = fileStream.readLine();
+    this->exec(line);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::runFile()
+{
+  QString filePath =
+    QFileDialog::getOpenFileName(this, tr("Select a script file to run"));
+  if (!filePath.isEmpty())
+    {
+    this->runFile(filePath);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::printHelp()
+{
+  this->printMessage("\n", Qt::gray);
+  this->printMessage(tr("CTRL+h: Print this help message\n"), Qt::gray);
+  this->printMessage(tr("CTRL+r: Open a file dialog to select a file to run\n"), Qt::gray);
 }
 
 //-----------------------------------------------------------------------------
