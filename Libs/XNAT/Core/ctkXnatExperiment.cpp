@@ -32,7 +32,7 @@
 #include "ctkXnatAssessorFolder.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
-#include <qDebug>
+#include <QDebug>
 
 //----------------------------------------------------------------------------
 class ctkXnatExperimentPrivate : public ctkXnatObjectPrivate
