@@ -49,6 +49,8 @@ if(NOT DEFINED XIP_DIR)
     )
   set(XIP_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
+  ExternalProject_Install_CMake(${proj})
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

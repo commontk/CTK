@@ -81,6 +81,8 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
   set(VTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
+  ExternalProject_Install_CMake(${proj})
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

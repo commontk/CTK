@@ -57,15 +57,20 @@ if(NOT DEFINED QtTesting_DIR)
     PREFIX ${proj}${ep_suffix}
     ${location_args}
     UPDATE_COMMAND ""
+    # INSTALL_COMMAND "" TODO use from build directory
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
+      -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir} # TODO use from build directory
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      # -DQtTesting_INSTALL_LIB_DIR:STRING=${CTK_INSTALL_LIB_DIR} TODO
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
-  set(QtTesting_INSTALL_DIR ${ep_install_dir})
+  set(QtTesting_INSTALL_DIR ${ep_install_dir}) # TODO remove when not installed during build
   set(QtTesting_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+
+  # ExternalProject_Install_CMake(${proj}) TODO
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
@@ -73,7 +78,7 @@ endif()
 
 mark_as_superbuild(
   VARS
-    QtTesting_INSTALL_DIR:PATH
+    QtTesting_INSTALL_DIR:PATH # TODO remove when not installed during build
     QtTesting_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
