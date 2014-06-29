@@ -1,22 +1,22 @@
 /*=============================================================================
-  
-  Library: CTK
-  
-  Copyright (c) German Cancer Research Center,
-    Division of Medical and Biological Informatics
-    
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-    http://www.apache.org/licenses/LICENSE-2.0
-    
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  
+
+Library: CTK
+
+Copyright (c) German Cancer Research Center,
+Division of Medical and Biological Informatics
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 =============================================================================*/
 
 #include "ctkCmdLineModuleManager.h"
@@ -139,7 +139,7 @@ void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleReference
-ctkCmdLineModuleManager::registerModule(const QUrl &location)
+  ctkCmdLineModuleManager::registerModule(const QUrl &location)
 {
   QByteArray xml;
   ctkCmdLineModuleBackend* backend = NULL;
@@ -191,6 +191,21 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
     xml = backend->rawXmlDescription(location);
   }
 
+  if (xml.isEmpty() && fromCache)
+  {
+    // newly fetch the XML description
+    try
+    {
+      xml = backend->rawXmlDescription(location);
+    }
+    catch (...)
+    {
+      // cache the failed attempt
+      d->ModuleCache->cacheXmlDescription(location, newTimeStamp, QByteArray());
+      throw;
+    }
+  }
+
   if (xml.isEmpty())
   {
     if (!fromCache && d->ModuleCache)
@@ -223,7 +238,7 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
       if (d->ValidationMode == STRICT_VALIDATION)
       {
         throw ctkInvalidArgumentException(QString("Validating module at %1 failed: %2")
-                                          .arg(location.toString()).arg(validator.errorString()));
+          .arg(location.toString()).arg(validator.errorString()));
       }
       else
       {
