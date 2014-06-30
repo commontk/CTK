@@ -177,7 +177,7 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
       }
       catch (const ctkCmdLineModuleTimeoutException& e)
       {
-        qDebug() << "Extracting XML from " << location.toString() << " timed out.";
+        qDebug() << "Extracting XML from " << location.toString() << " timed-out, with message:" << e.what();
         throw;
       }
       catch (...)
