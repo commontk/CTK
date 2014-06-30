@@ -119,6 +119,14 @@ public:
   void registerBackend(ctkCmdLineModuleBackend* backend);
 
   /**
+   * @brief Replaces an existing back-end.
+   * @param backend The new back-end.
+   *
+   * If no backend exists, calls registerBackend.
+   */
+  void replaceBackend(ctkCmdLineModuleBackend* backend);
+
+  /**
    * @brief Registers a module, identified by the given URL.
    * @param location The URL for the new module.
    * @return A module reference.

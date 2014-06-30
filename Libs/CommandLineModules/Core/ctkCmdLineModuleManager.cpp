@@ -140,6 +140,42 @@ void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
   }
 }
 
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleManager::replaceBackend(ctkCmdLineModuleBackend* backend)
+{
+  if (d->SchemeToBackend.size() == 0)
+  {
+    this->registerBackend(backend);
+  }
+
+  // Check if new backend has exactly matching list of schemes to an existing backend.
+  ctkCmdLineModuleBackend* matchingBackend = NULL;
+  QList<QString> supportedSchemes = backend->schemes();
+  QList<ctkCmdLineModuleBackend*> existingBackends = d->SchemeToBackend.values();
+  foreach (ctkCmdLineModuleBackend* existingBackend, existingBackends)
+  {
+    QList<QString> schemes = existingBackend->schemes();
+    if (schemes == supportedSchemes)
+    {
+      matchingBackend = existingBackend;
+    }
+  }
+
+  if (matchingBackend != NULL)
+  {
+    foreach (QString scheme, supportedSchemes)
+    {
+      d->SchemeToBackend[scheme] = backend;
+    }
+  }
+  else
+  {
+    this->registerBackend(backend);
+  }
+}
+
+
 //----------------------------------------------------------------------------
 ctkCmdLineModuleReference
 ctkCmdLineModuleManager::registerModule(const QUrl &location)
