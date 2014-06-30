@@ -39,6 +39,23 @@
 struct ctkCmdLineModuleBackendLocalProcessPrivate
 {
 
+  int m_TimeoutForXMLRetrieval;
+
+  ctkCmdLineModuleBackendLocalProcessPrivate()
+    : m_TimeoutForXMLRetrieval(30000) /* 30000 = default of QProcess */
+  {
+  }
+
+  void setTimeOutForXMLRetrieval(const int& timeOut)
+  {
+    m_TimeoutForXMLRetrieval = timeOut;
+  }
+
+  int timeOutForXMLRetrieval()
+  {
+    return m_TimeoutForXMLRetrieval;
+  }
+
   QString normalizeFlag(const QString& flag) const
   {
     return flag.trimmed().remove(QRegExp("^-*"));
@@ -165,13 +182,25 @@ qint64 ctkCmdLineModuleBackendLocalProcess::timeStamp(const QUrl &location) cons
 }
 
 //----------------------------------------------------------------------------
+void ctkCmdLineModuleBackendLocalProcess::setTimeOutForXMLRetrieval(const int& timeOut)
+{
+  d->setTimeOutForXMLRetrieval(timeOut);
+}
+
+//----------------------------------------------------------------------------
+int ctkCmdLineModuleBackendLocalProcess::timeOutForXMLRetrieval()
+{
+  return d->timeOutForXMLRetrieval();
+}
+
+//----------------------------------------------------------------------------
 QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &location)
 {
   QProcess process;
   process.setReadChannel(QProcess::StandardOutput);
   process.start(location.toLocalFile(), QStringList("--xml"));
 
-  if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
+  if (!process.waitForFinished(d->timeOutForXMLRetrieval()) || process.exitStatus() == QProcess::CrashExit ||
       process.error() != QProcess::UnknownError)
   {
     throw ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString());

@@ -90,6 +90,18 @@ public:
    */
   virtual ctkCmdLineModuleFuture run(ctkCmdLineModuleFrontend *frontend);
 
+  /**
+   * @brief Setter for the number of milliseconds to wait when retrieving xml.
+   * @param timeOut in milliseconds.
+   */
+  void setTimeOutForXMLRetrieval(const int& timeOut);
+
+  /**
+   * @brief returns the number of milliseconds to wait when retrieving xml.
+   * @return int in milliseconds
+   */
+  int timeOutForXMLRetrieval();
+
 private:
 
   QScopedPointer<ctkCmdLineModuleBackendLocalProcessPrivate> d;
