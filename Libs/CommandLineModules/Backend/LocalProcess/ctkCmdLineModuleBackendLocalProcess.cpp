@@ -29,6 +29,7 @@
 #include "ctkCmdLineModuleProcessTask.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleRunException.h"
+#include "ctkCmdLineModuleTimeoutException.h"
 
 #include "ctkUtils.h"
 #include <iostream>
@@ -203,7 +204,15 @@ QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &lo
   if (!process.waitForFinished(d->timeOutForXMLRetrieval()) || process.exitStatus() == QProcess::CrashExit ||
       process.error() != QProcess::UnknownError)
   {
-    throw ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString());
+    if (process.error() == QProcess::Timedout)
+    {
+      QString msg = QString("Process %1 ran for longer than the time-out threshold of %2").arg(location.toString()).arg(d->timeOutForXMLRetrieval());
+      throw ctkCmdLineModuleTimeoutException(msg);
+    }
+    else
+    {
+      throw ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString());
+    }
   }
 
   process.waitForReadyRead();
