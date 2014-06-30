@@ -28,6 +28,8 @@
 #include "ctkCmdLineModuleXmlValidator.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleReference_p.h"
+#include "ctkCmdLineModuleRunException.h"
+#include "ctkCmdLineModuleXmlException.h"
 
 #include <ctkException.h>
 
@@ -39,7 +41,7 @@
 #include <QHash>
 #include <QList>
 #include <QMutex>
-
+#include <QDebug>
 #include <QFuture>
 
 #if (QT_VERSION < QT_VERSION_CHECK(4,7,0))
@@ -188,7 +190,20 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
   }
   else
   {
-    xml = backend->rawXmlDescription(location);
+    try
+    {
+      xml = backend->rawXmlDescription(location);
+    }
+    catch (const ctkCmdLineModuleRunException& e)
+    {
+      qDebug() << "Extracting XML from " << e.location().toString() << " failed with errorCode " << e.errorCode() << " and return string " << e.errorString();
+      throw;
+    }
+    catch (const ctkException& e)
+    {
+      qDebug() << e.what();
+      throw;
+    }
   }
 
   if (xml.isEmpty())
