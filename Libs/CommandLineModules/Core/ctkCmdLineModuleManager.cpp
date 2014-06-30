@@ -30,6 +30,7 @@
 #include "ctkCmdLineModuleReference_p.h"
 #include "ctkCmdLineModuleRunException.h"
 #include "ctkCmdLineModuleXmlException.h"
+#include "ctkCmdLineModuleTimeoutException.h"
 
 #include <ctkException.h>
 
@@ -173,6 +174,11 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
       try
       {
         xml = backend->rawXmlDescription(location);
+      }
+      catch (const ctkCmdLineModuleTimeoutException& e)
+      {
+        qDebug() << "Extracting XML from " << location.toString() << " timed out.";
+        throw;
       }
       catch (...)
       {
