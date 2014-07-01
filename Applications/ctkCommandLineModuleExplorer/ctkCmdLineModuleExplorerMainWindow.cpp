@@ -78,6 +78,11 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   }
   QThreadPool::globalInstance()->setMaxThreadCount(settings.value(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES,
                                                                   QThread::idealThreadCount()).toInt());
+  if (!settings.contains(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS))
+  {
+    settings.setValue(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS, QVariant(30));
+  }
+  moduleManager.setXmlTimeout(settings.value(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS, QVariant(30)).toInt() * 1000);
 
   // Frontends
   moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtGui;
