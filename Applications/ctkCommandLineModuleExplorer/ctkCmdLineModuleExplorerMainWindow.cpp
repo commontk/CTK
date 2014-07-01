@@ -154,8 +154,8 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
 
   pollPauseTimer.start();
 
-  //ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(future,
-  //                                                            moduleManager.validationMode());
+  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(future,
+                                                              moduleManager.validationMode());
 }
 
 
