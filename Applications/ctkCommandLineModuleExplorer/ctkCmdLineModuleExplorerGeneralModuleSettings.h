@@ -26,6 +26,8 @@
 
 #include "ui_ctkCmdLineModuleExplorerGeneralModuleSettings.h"
 
+class ctkCmdLineModuleManager;
+
 class ctkCmdLineModuleExplorerGeneralModuleSettings : public ctkSettingsPanel,
     public Ui::ctkCmdLineModuleExplorerGeneralModuleSettings
 {
@@ -33,10 +35,13 @@ class ctkCmdLineModuleExplorerGeneralModuleSettings : public ctkSettingsPanel,
 
 public:
 
-  ctkCmdLineModuleExplorerGeneralModuleSettings();
+  ctkCmdLineModuleExplorerGeneralModuleSettings(ctkCmdLineModuleManager* cmdLineModuleManager);
 
   void applySettings();
 
+private:
+
+  ctkCmdLineModuleManager* CmdLineModuleManager;
 };
 
 #endif // CTKCMDLINEMODULEEXPLORERGENERALMODULESETTINGS_H

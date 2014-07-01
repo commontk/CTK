@@ -83,14 +83,18 @@ void ctkCmdLineModuleExplorerModulesSettings::applySettings()
   this->setCursor(Qt::BusyCursor);
 
   QFuture<void> future1 = QtConcurrent::mapped(removedModules, ctkCmdLineModuleConcurrentUnRegister(this->ModuleManager));
-  QFuture<ctkCmdLineModuleReference> future2 = QtConcurrent::mapped(addedModules, ctkCmdLineModuleConcurrentRegister(this->ModuleManager));
+  QFuture<ctkCmdLineModuleReference> future2 = QtConcurrent::mapped(addedModules, ctkCmdLineModuleConcurrentRegister(this->ModuleManager, true));
 
   ctkSettingsPanel::applySettings();
 
+  future1.waitForFinished();
+
+  /*
   QFutureSynchronizer<void> sync;
   sync.addFuture(future1);
   sync.addFuture(future2);
   sync.waitForFinished();
+*/
 
   this->ModulesRegistered = true;
   this->pathsAdded(addedModules);
@@ -98,7 +102,7 @@ void ctkCmdLineModuleExplorerModulesSettings::applySettings()
 
   this->unsetCursor();
 
-  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(addedModules, future2.results(),
+  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(future2,
                                                               this->ModuleManager->validationMode());
 
 }

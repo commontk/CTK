@@ -25,14 +25,14 @@
 #include "ctkCmdLineModuleManager.h"
 
 #include <QPixmap>
+#include <QFuture>
 
 struct ctkCmdLineModuleExplorerUtils
 {
 
   static QPixmap createIconOverlay(const QPixmap& base, const QPixmap& overlay);
 
-  static void messageBoxModuleRegistration(const QStringList& modulePaths,
-                                           const QList<ctkCmdLineModuleReference>& moduleRefs,
+  static void messageBoxModuleRegistration(const QFuture<ctkCmdLineModuleReference>& moduleRefsFuture,
                                            ctkCmdLineModuleManager::ValidationMode validationMode);
 
 };

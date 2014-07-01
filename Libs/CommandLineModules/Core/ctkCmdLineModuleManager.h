@@ -111,6 +111,21 @@ public:
   void setValidationMode(const ValidationMode& mode);
 
   /**
+   * @brief Set the timeout for retrieving the XML parameter description from a module.
+   *
+   * The default time-out is 30 seconds.
+   *
+   * @param xmlTimeout The timeout in milli seconds.
+   */
+  void setXmlTimeout(int xmlTimeout);
+
+  /**
+   * @brief Get the timeout for retrieving the XML parameter description from a ´module.
+   * @return The timeout in milli seconds.
+   */
+  int xmlTimeout() const;
+
+  /**
    * @brief Registers a new back-end.
    * @param backend The new back-end.
    * @throws ctkInvalidArgumentException if another back-end was already registered handling
@@ -132,6 +147,9 @@ public:
    * @return A module reference.
    * @throws ctkInvalidArgumentException if no back-end for the given URL scheme was registered
    *         or the XML description for the module is invalid.
+   * @throws ctkCmdLineModuleTimeoutException if a time-out occured when retrieving the
+   *         XML description from the module.
+   * @throws ctkCmdLineModuleRunException if a general error occurred when running the module.
    */
   ctkCmdLineModuleReference registerModule(const QUrl& location);
 

@@ -23,6 +23,7 @@
 
 #include "ctkCmdLineModuleBackend.h"
 #include "ctkCmdLineModuleFrontend.h"
+#include "ctkCmdLineModuleTimeoutException.h"
 #include "ctkCmdLineModuleCache_p.h"
 #include "ctkCmdLineModuleFuture.h"
 #include "ctkCmdLineModuleXmlValidator.h"
@@ -53,7 +54,8 @@ extern int qHash(const QUrl& url);
 struct ctkCmdLineModuleManagerPrivate
 {
   ctkCmdLineModuleManagerPrivate(ctkCmdLineModuleManager::ValidationMode mode, const QString& cacheDir)
-    : ValidationMode(mode)
+    : XmlTimeOut(30000)
+    , ValidationMode(mode)
   {
     QFileInfo fileInfo(cacheDir);
     if (!fileInfo.exists())
@@ -87,6 +89,7 @@ struct ctkCmdLineModuleManagerPrivate
   QHash<QString, ctkCmdLineModuleBackend*> SchemeToBackend;
   QHash<QUrl, ctkCmdLineModuleReference> LocationToRef;
   QScopedPointer<ctkCmdLineModuleCache> ModuleCache;
+  int XmlTimeOut;
 
   ctkCmdLineModuleManager::ValidationMode ValidationMode;
 };
@@ -116,6 +119,17 @@ void ctkCmdLineModuleManager::setValidationMode(const ValidationMode& mode)
 }
 
 
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleManager::setXmlTimeout(int xmlTimeout)
+{
+  d->XmlTimeOut = xmlTimeout;
+}
+
+//----------------------------------------------------------------------------
+int ctkCmdLineModuleManager::xmlTimeout() const
+{
+  return d->XmlTimeOut;
+}
 //----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 {
@@ -209,11 +223,12 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
       // newly fetch the XML description
       try
       {
-        xml = backend->rawXmlDescription(location);
+        xml = backend->rawXmlDescription(location, d->XmlTimeOut);
       }
-      catch (const ctkCmdLineModuleTimeoutException& e)
+      catch (const ctkCmdLineModuleTimeoutException&)
       {
-        qDebug() << "Extracting XML from " << location.toString() << " timed-out, with message:" << e.what();
+        // in case of a time-out, do not cache it as a failed attempt
+        // by recording an empty QByteArray in the cache
         throw;
       }
       catch (...)

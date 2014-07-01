@@ -183,33 +183,20 @@ qint64 ctkCmdLineModuleBackendLocalProcess::timeStamp(const QUrl &location) cons
 }
 
 //----------------------------------------------------------------------------
-void ctkCmdLineModuleBackendLocalProcess::setTimeOutForXMLRetrieval(const int& timeOut)
-{
-  d->setTimeOutForXMLRetrieval(timeOut);
-}
-
-//----------------------------------------------------------------------------
-int ctkCmdLineModuleBackendLocalProcess::timeOutForXMLRetrieval()
-{
-  return d->timeOutForXMLRetrieval();
-}
-
-//----------------------------------------------------------------------------
-QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &location)
+QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &location, int timeout)
 {
   QProcess process;
   process.setReadChannel(QProcess::StandardOutput);
   process.start(location.toLocalFile(), QStringList("--xml"));
 
-  if (!process.waitForFinished(d->timeOutForXMLRetrieval()) || process.exitStatus() == QProcess::CrashExit ||
-      process.error() != QProcess::UnknownError)
+  if (!process.waitForFinished(timeout))
   {
     if (process.error() == QProcess::Timedout)
     {
-      QString msg = QString("Process %1 ran for longer than the time-out threshold of %2").arg(location.toString()).arg(d->timeOutForXMLRetrieval());
-      throw ctkCmdLineModuleTimeoutException(msg);
+      throw ctkCmdLineModuleTimeoutException(location, process.errorString());
     }
-    else
+    else if (process.exitStatus() == QProcess::CrashExit ||
+             process.error() != QProcess::UnknownError)
     {
       throw ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString());
     }

@@ -100,7 +100,7 @@ public:
   };
   Q_DECLARE_FLAGS(ParameterFilters, ParameterFilter)
 
-  ~ctkCmdLineModuleFrontend();
+  virtual ~ctkCmdLineModuleFrontend();
 
   /**
    * @brief Returns the GUI representation.

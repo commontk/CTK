@@ -47,6 +47,17 @@ ctkCmdLineModuleRunException::ctkCmdLineModuleRunException(const ctkCmdLineModul
 }
 
 //----------------------------------------------------------------------------
+ctkCmdLineModuleRunException& ctkCmdLineModuleRunException::operator=(const ctkCmdLineModuleRunException& o)
+{
+  QtConcurrent::Exception::operator=(o);
+  ctkException::operator=(o);
+  this->Location = o.Location;
+  this->ErrorCode = o.ErrorCode;
+  this->ErrorString = o.ErrorString;
+  return *this;
+}
+
+//----------------------------------------------------------------------------
 ctkCmdLineModuleRunException::~ctkCmdLineModuleRunException() throw()
 {
 }
