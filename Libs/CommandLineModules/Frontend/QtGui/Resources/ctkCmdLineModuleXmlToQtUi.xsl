@@ -248,7 +248,6 @@
       <xsl:for-each select="tokenize(@fileExtensions, ',')">
         <string>
         <xsl:choose>
-          <xsl:when test="starts-with(normalize-space(.), '*')"><!-- do nothing --></xsl:when>
           <xsl:when test="starts-with(normalize-space(.), '.')">*</xsl:when>
           <xsl:otherwise>*.</xsl:otherwise>
         </xsl:choose>
