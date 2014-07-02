@@ -435,5 +435,12 @@ void ctkDICOMQueryRetrieveWidget::updateRetrieveProgress(int value)
 ctkDICOMTableManager* ctkDICOMQueryRetrieveWidget::dicomTableManager()
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
-    return d->dicomTableManager;
+  return d->dicomTableManager;
+}
+
+//----------------------------------------------------------------------------
+QMap<QString,QVariant> ctkDICOMQueryRetrieveWidget::getServerParameters()
+{
+  Q_D(ctkDICOMQueryRetrieveWidget);
+  return d->ServerNodeWidget->parameters();
 }
