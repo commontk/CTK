@@ -323,7 +323,23 @@ void ctkCLModuleExplorerMainWindow::on_actionClear_Cache_triggered()
 //-----------------------------------------------------------------------------
 void ctkCLModuleExplorerMainWindow::on_actionReload_Modules_triggered()
 {
-  moduleManager.reloadModules();
+  this->setCursor(Qt::BusyCursor);
+
+  QList<QUrl> urls;
+
+  QList<ctkCmdLineModuleReference> moduleRefs = this->moduleManager.moduleReferences();
+  foreach (ctkCmdLineModuleReference ref, moduleRefs)
+  {
+    urls.push_back(ref.location());
+  }
+
+  QFuture<ctkCmdLineModuleReferenceResult> future = QtConcurrent::mapped(urls, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
+  future.waitForFinished();
+
+  this->unsetCursor();
+
+  ctkCmdLineModuleUtils::messageBoxModuleRegistration(future,
+                                                      this->moduleManager.validationMode());
 }
 
 
