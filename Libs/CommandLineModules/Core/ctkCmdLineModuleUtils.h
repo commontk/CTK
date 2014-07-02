@@ -19,14 +19,20 @@
 
 =============================================================================*/
 
-#ifndef CTKCOMMANDLINEMODULEEXPLORERUTILS_H
-#define CTKCOMMANDLINEMODULEEXPLORERUTILS_H
+#ifndef CTKCOMMANDLINEMODULEUTILS_H
+#define CTKCOMMANDLINEMODULEUTILS_H
 
-#include <QPixmap>
+#include "ctkCommandLineModulesCoreExport.h"
 
-struct ctkCmdLineModuleExplorerUtils
+#include "ctkCmdLineModuleManager.h"
+#include "ctkCmdLineModuleReferenceResult.h"
+
+#include <QFuture>
+
+struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleUtils
 {
-  static QPixmap createIconOverlay(const QPixmap& base, const QPixmap& overlay);
+  static void messageBoxModuleRegistration(const QFuture<ctkCmdLineModuleReferenceResult>& moduleRefsFuture,
+                                           ctkCmdLineModuleManager::ValidationMode validationMode);
 };
 
-#endif // CTKCOMMANDLINEMODULEEXPLORERUTILS_H
+#endif // CTKCOMMANDLINEMODULEUTILS_H

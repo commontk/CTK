@@ -43,6 +43,7 @@ set(KIT_SRCS
   ctkCmdLineModuleReference.cpp
   ctkCmdLineModuleRunException.cpp
   ctkCmdLineModuleTimeoutException.cpp
+  ctkCmdLineModuleUtils.cpp
   ctkCmdLineModuleXmlException.cpp
   ctkCmdLineModuleXmlMsgHandler_p.h
   ctkCmdLineModuleXmlMsgHandler.cpp

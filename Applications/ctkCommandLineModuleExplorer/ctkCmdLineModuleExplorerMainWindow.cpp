@@ -28,7 +28,7 @@
 #include "ctkCmdLineModuleExplorerTabList.h"
 #include "ctkCmdLineModuleExplorerProgressWidget.h"
 #include "ctkCmdLineModuleExplorerConstants.h"
-#include "ctkCmdLineModuleExplorerUtils.h"
+#include "ctkCmdLineModuleUtils.h"
 
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleConcurrentHelpers.h>
@@ -38,6 +38,7 @@
 #include <ctkCmdLineModuleBackendLocalProcess.h>
 #include <ctkCmdLineModuleBackendFunctionPointer.h>
 #include <ctkCmdLineModuleBackendXMLChecker.h>
+#include <ctkCmdLineModuleReferenceResult.h>
 #include <ctkException.h>
 #include <ctkCmdLineModuleXmlException.h>
 
@@ -143,8 +144,12 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   }
 
   // Register persistent modules
-  QFuture<ctkCmdLineModuleReference> future = QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
-                                                                   ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
+  QFuture<ctkCmdLineModuleReferenceResult> future = QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
+                                                                         ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
+  future.waitForFinished();
+
+  ctkCmdLineModuleUtils::messageBoxModuleRegistration(future,
+                                                      moduleManager.validationMode());
 
   // Start watching directories
   directoryWatcher.setDebug(true);
@@ -153,9 +158,6 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   moduleTabActivated(NULL);
 
   pollPauseTimer.start();
-
-  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(future,
-                                                              moduleManager.validationMode());
 }
 
 
@@ -286,12 +288,14 @@ void ctkCLModuleExplorerMainWindow::on_actionLoad_triggered()
   QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Load modules..."));
 
   this->setCursor(Qt::BusyCursor);
-  QFuture<ctkCmdLineModuleReference> future = QtConcurrent::mapped(fileNames, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
+
+  QFuture<ctkCmdLineModuleReferenceResult> future = QtConcurrent::mapped(fileNames, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
   future.waitForFinished();
+
   this->unsetCursor();
 
-  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(future,
-                                                              this->moduleManager.validationMode());
+  ctkCmdLineModuleUtils::messageBoxModuleRegistration(future,
+                                                      this->moduleManager.validationMode());
 }
 
 

@@ -35,17 +35,26 @@ ctkCmdLineModuleConcurrentRegister::ctkCmdLineModuleConcurrentRegister(ctkCmdLin
 {}
 
 //----------------------------------------------------------------------------
-ctkCmdLineModuleReference ctkCmdLineModuleConcurrentRegister::operator()(const QString& moduleLocation)
+ctkCmdLineModuleReferenceResult ctkCmdLineModuleConcurrentRegister::operator()(const QString& moduleLocation)
 {
   return this->operator ()(QUrl::fromLocalFile(moduleLocation));
 }
 
 //----------------------------------------------------------------------------
-ctkCmdLineModuleReference ctkCmdLineModuleConcurrentRegister::operator()(const QUrl& moduleUrl)
+ctkCmdLineModuleReferenceResult ctkCmdLineModuleConcurrentRegister::operator()(const QUrl& moduleUrl)
 {
   try
   {
-    return this->ModuleManager->registerModule(moduleUrl);
+    ctkCmdLineModuleReference reference = this->ModuleManager->registerModule(moduleUrl);
+    return ctkCmdLineModuleReferenceResult(reference);
+  }
+  catch (const ctkException& e)
+  {
+    if (this->Debug)
+    {
+      qDebug() << e.message();
+    }
+    return ctkCmdLineModuleReferenceResult(moduleUrl, e.message());
   }
   catch (const QtConcurrent::Exception& e)
   {
@@ -53,25 +62,18 @@ ctkCmdLineModuleReference ctkCmdLineModuleConcurrentRegister::operator()(const Q
     {
       qDebug() << e.what();
     }
-    throw e;
-  }
-  catch (const ctkException& e)
-  {
-    if (this->Debug)
-    {
-      qDebug() << e;
-    }
-    throw ctkCmdLineModuleRunException(moduleUrl, 0, e.what());
+    return ctkCmdLineModuleReferenceResult(moduleUrl, e.what());
   }
   catch (...)
   {
+    QString errorMessage = QObject::tr("Module %1 failed with an unknown exception.").arg(moduleUrl.toString());
     if (this->Debug)
     {
-      qDebug() << "Registering module" << moduleUrl << "failed with an unknown exception.";
+      qDebug() << errorMessage;
     }
-    throw ctkCmdLineModuleRunException(moduleUrl, 0, "Unknown exception");
+    return ctkCmdLineModuleReferenceResult(moduleUrl, errorMessage);
   }
-  return ctkCmdLineModuleReference();
+  return ctkCmdLineModuleReferenceResult(moduleUrl);
 }
 
 //----------------------------------------------------------------------------

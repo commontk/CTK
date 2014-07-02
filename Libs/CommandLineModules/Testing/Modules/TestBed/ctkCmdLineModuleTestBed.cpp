@@ -92,6 +92,8 @@ int main(int argc, char* argv[])
 
   if (parsedArgs.contains("xml"))
   {
+    sleep_ms(2000);
+
     QFile xmlDescription(":/ctkCmdLineModuleTestBed.xml");
     xmlDescription.open(QIODevice::ReadOnly);
     out << xmlDescription.readAll();

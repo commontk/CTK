@@ -23,7 +23,7 @@
 #include "ctkCmdLineModuleExplorerConstants.h"
 #include "ctkCmdLineModuleExplorerUtils.h"
 #include "ctkCmdLineModuleExplorerShowXmlAction.h"
-#include "ctkCmdLineModuleExplorerUtils.h"
+#include "ctkCmdLineModuleUtils.h"
 
 #include "ui_ctkCmdLineModuleExplorerModulesSettings.h"
 
@@ -83,7 +83,7 @@ void ctkCmdLineModuleExplorerModulesSettings::applySettings()
   this->setCursor(Qt::BusyCursor);
 
   QFuture<void> future1 = QtConcurrent::mapped(removedModules, ctkCmdLineModuleConcurrentUnRegister(this->ModuleManager));
-  QFuture<ctkCmdLineModuleReference> future2 = QtConcurrent::mapped(addedModules, ctkCmdLineModuleConcurrentRegister(this->ModuleManager, true));
+  QFuture<ctkCmdLineModuleReferenceResult> future2 = QtConcurrent::mapped(addedModules, ctkCmdLineModuleConcurrentRegister(this->ModuleManager, true));
 
   ctkSettingsPanel::applySettings();
 
@@ -102,8 +102,9 @@ void ctkCmdLineModuleExplorerModulesSettings::applySettings()
 
   this->unsetCursor();
 
-  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(future2,
-                                                              this->ModuleManager->validationMode());
+  future2.waitForFinished();
+  ctkCmdLineModuleUtils::messageBoxModuleRegistration(future2,
+                                                      this->ModuleManager->validationMode());
 
 }
 

@@ -20,13 +20,8 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleExplorerUtils.h"
-#include "ctkCmdLineModuleRunException.h"
 
 #include <QPainter>
-#include <QObject>
-#include <QWidget>
-#include <QApplication>
-#include <QMessageBox>
 
 QPixmap ctkCmdLineModuleExplorerUtils::createIconOverlay(const QPixmap &base, const QPixmap &overlay)
 {
@@ -38,43 +33,4 @@ QPixmap ctkCmdLineModuleExplorerUtils::createIconOverlay(const QPixmap &base, co
   painter.drawPixmap(base.width()/2, base.height()/2,
                      overlay.scaled(base.width()/2, base.height()/2, Qt::KeepAspectRatio));
   return result;
-}
-
-void ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(const QFuture<ctkCmdLineModuleReference>& moduleRefsFuture,
-                                                                  ctkCmdLineModuleManager::ValidationMode validationMode)
-{
-  QString errorMsg;
-  QFutureIterator<ctkCmdLineModuleReference> futureIter(moduleRefsFuture);
-  while(futureIter.hasNext())
-  {
-    try
-    {
-      const ctkCmdLineModuleReference& moduleRef = futureIter.next();
-      if (!moduleRef)
-      {
-        errorMsg += QObject::tr("Failed to register ") + moduleRef.location().toString() + "\n\n";
-      }
-      else if (!moduleRef.xmlValidationErrorString().isEmpty() &&
-             validationMode == ctkCmdLineModuleManager::STRICT_VALIDATION)
-      {
-        errorMsg += QObject::tr("Failed to register ") + moduleRef.location().toString() + ":\n" + moduleRef.xmlValidationErrorString() + "\n\n";
-      }
-    }
-    catch (const ctkCmdLineModuleRunException& e)
-    {
-      errorMsg += QObject::tr("Failed to register module ") + e.location().toString() + ":\n" + e.message() + "\n\\n";
-    }
-
-    catch (const std::exception& e)
-    {
-      errorMsg += QObject::tr("Failed to register module:\n") + e.what() + "\n\n";
-    }
-  }
-
-  if (!errorMsg.isEmpty())
-  {
-    QWidget* widget = QApplication::activeModalWidget();
-    if (widget == NULL) widget = QApplication::activeWindow();
-    QMessageBox::critical(widget, QObject::tr("Failed to register modules"), errorMsg);
-  }
 }

@@ -26,7 +26,7 @@
 #include <QStringList>
 #include <QFileInfoList>
 
-#include "ctkCmdLineModuleReference.h"
+#include "ctkCmdLineModuleReferenceResult.h"
 #include "ctkCmdLineModuleDirectoryWatcher.h"
 
 class QFileSystemWatcher;
@@ -156,7 +156,7 @@ private:
    *
    * \param executables A list of paths to executable files, denoted by an absolute path.
    */
-  QList<ctkCmdLineModuleReference> loadModules(const QStringList& executables);
+  QList<ctkCmdLineModuleReferenceResult> loadModules(const QStringList& executables);
 
   /**
    * \brief Removes the executables from both the ctkCmdLineModuleManager and this->MapFileNameToReference.
@@ -165,7 +165,7 @@ private:
    */
   void unloadModules(const QStringList& executables);
 
-  QHash<QString, ctkCmdLineModuleReference> MapFileNameToReference;
+  QHash<QString, ctkCmdLineModuleReferenceResult> MapFileNameToReferenceResult;
   ctkCmdLineModuleManager* ModuleManager;
   QFileSystemWatcher* FileSystemWatcher;
   QStringList AdditionalModules;
