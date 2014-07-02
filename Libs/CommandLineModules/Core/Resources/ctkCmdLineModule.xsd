@@ -389,6 +389,28 @@
   
   <!--
   ===================================================================
+    #487: Definition of 'fileExtensions'.
+
+    Before issue #487: 'A comma separated list of allowed file extensions'.
+
+    Slicer uses extensions with dots, but no leading asterisk.
+    i.e. ".nii,.nrrd,.mha"
+
+    In CTK, the leading dot is optional. Any preceding asterisk is forbidden.
+
+  ===================================================================
+  -->
+
+  <xsd:attribute name="fileExtensions">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string">
+        <xsd:pattern value="(?:(?:\.[^,\s]|[^,\.\s\*])[^,\s]*)(?:,\s*(?:\.[^,\s]|[^,\.\s\*])[^,\s]*)*"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:attribute>
+
+  <!--
+  ===================================================================
     GEOMETRY PARAMETER 
       Extends multipleType for geometry parameters (geometry).
   ===================================================================
@@ -396,11 +418,7 @@
   <xsd:complexType name="geometryType">
     <xsd:complexContent>
       <xsd:extension base="multipleType">
-        <xsd:attribute name="fileExtensions" type="xsd:string">
-          <xsd:annotation>
-            <xsd:documentation>A comma separated list of allowed file extensions.</xsd:documentation>
-          </xsd:annotation>
-        </xsd:attribute>
+        <xsd:attribute ref="fileExtensions"/>
         <xsd:attribute name="type">
           <xsd:annotation>
             <xsd:documentation>Optionally specifies the allowed geometry type.</xsd:documentation>
@@ -426,11 +444,7 @@
   <xsd:complexType name="fileType">
     <xsd:complexContent>
       <xsd:extension base="multipleType">
-        <xsd:attribute name="fileExtensions" type="xsd:string">
-          <xsd:annotation>
-            <xsd:documentation>A comma separated list of allowed file extensions (e.g. "nrrd,mhd").</xsd:documentation>
-          </xsd:annotation>
-        </xsd:attribute>
+      <xsd:attribute ref="fileExtensions"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
