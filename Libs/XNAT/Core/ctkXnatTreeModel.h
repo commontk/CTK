@@ -53,6 +53,7 @@ public:
   ctkXnatObject* xnatObject(const QModelIndex& index) const;
 
   void addDataModel(ctkXnatDataModel* dataModel);
+  void removeDataModel(ctkXnatDataModel* dataModel);
 
   bool removeAllRows(const QModelIndex& parent);
 
