@@ -2,9 +2,6 @@ language: cpp
 compiler:
   - gcc
 
-env:
-  - QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt4/plugins
-
 branches:
   only:
     - travis-ci
@@ -15,4 +12,4 @@ before_install:
   - sudo apt-get install -y cmake
   - sudo apt-get install -y libqt4-dev qt4-dev-tools
 
-script: ctest -S ./CMake/ctkTravisDashboardScript.cmake
+script: ldd -r /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu && chrpath -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu && ls -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib && ctest -S ./CMake/ctkTravisDashboardScript.cmake
