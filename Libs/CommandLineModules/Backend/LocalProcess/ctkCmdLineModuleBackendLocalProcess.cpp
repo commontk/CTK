@@ -29,6 +29,7 @@
 #include "ctkCmdLineModuleProcessTask.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleRunException.h"
+#include "ctkCmdLineModuleTimeoutException.h"
 
 #include "ctkUtils.h"
 #include <iostream>
@@ -38,6 +39,13 @@
 //----------------------------------------------------------------------------
 struct ctkCmdLineModuleBackendLocalProcessPrivate
 {
+
+  int m_TimeoutForXMLRetrieval;
+
+  ctkCmdLineModuleBackendLocalProcessPrivate()
+    : m_TimeoutForXMLRetrieval(0) // use the value from the module manager
+  {
+  }
 
   QString normalizeFlag(const QString& flag) const
   {
@@ -165,16 +173,23 @@ qint64 ctkCmdLineModuleBackendLocalProcess::timeStamp(const QUrl &location) cons
 }
 
 //----------------------------------------------------------------------------
-QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &location)
+QByteArray ctkCmdLineModuleBackendLocalProcess::rawXmlDescription(const QUrl &location, int timeout)
 {
   QProcess process;
   process.setReadChannel(QProcess::StandardOutput);
   process.start(location.toLocalFile(), QStringList("--xml"));
 
-  if (!process.waitForFinished() || process.exitStatus() == QProcess::CrashExit ||
-      process.error() != QProcess::UnknownError)
+  if (!process.waitForFinished(timeout))
   {
-    throw ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString());
+    if (process.error() == QProcess::Timedout)
+    {
+      throw ctkCmdLineModuleTimeoutException(location, process.errorString());
+    }
+    else if (process.exitStatus() == QProcess::CrashExit ||
+             process.error() != QProcess::UnknownError)
+    {
+      throw ctkCmdLineModuleRunException(location, process.exitCode(), process.errorString());
+    }
   }
 
   process.waitForReadyRead();
@@ -191,4 +206,16 @@ ctkCmdLineModuleFuture ctkCmdLineModuleBackendLocalProcess::run(ctkCmdLineModule
   ctkCmdLineModuleProcessTask* moduleProcess =
       new ctkCmdLineModuleProcessTask(frontend->location().toLocalFile(), args);
   return moduleProcess->start();
+}
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleBackendLocalProcess::setTimeOutForXMLRetrieval(int timeOut)
+{
+  d->m_TimeoutForXMLRetrieval = timeOut;
+}
+
+//----------------------------------------------------------------------------
+int ctkCmdLineModuleBackendLocalProcess::timeOutForXMLRetrieval() const
+{
+  return d->m_TimeoutForXMLRetrieval;
 }

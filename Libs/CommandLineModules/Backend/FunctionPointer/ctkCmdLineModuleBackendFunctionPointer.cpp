@@ -230,7 +230,7 @@ qint64 ctkCmdLineModuleBackendFunctionPointer::timeStamp(const QUrl &location) c
 }
 
 //----------------------------------------------------------------------------
-QByteArray ctkCmdLineModuleBackendFunctionPointer::rawXmlDescription(const QUrl& location)
+QByteArray ctkCmdLineModuleBackendFunctionPointer::rawXmlDescription(const QUrl& location, int /*timeout*/)
 {
   if (!d->UrlToFpDescription.contains(location)) return QByteArray();
   //qDebug() << d->UrlToFpDescription[location].d->xmlDescription();

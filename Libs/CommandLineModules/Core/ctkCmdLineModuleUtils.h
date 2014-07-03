@@ -19,10 +19,20 @@
 
 =============================================================================*/
 
-#include "ctkCmdLineModuleExplorerConstants.h"
+#ifndef CTKCOMMANDLINEMODULEUTILS_H
+#define CTKCOMMANDLINEMODULEUTILS_H
 
-const QString ctkCmdLineModuleExplorerConstants::KEY_SEARCH_PATHS = "ModuleSearchPaths";
-const QString ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES = "RegisteredModules";
+#include "ctkCommandLineModulesCoreExport.h"
 
-const QString ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES = "MaxParallelModules";
-const QString ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS = "XmlTimeoutSeconds";
+#include "ctkCmdLineModuleManager.h"
+#include "ctkCmdLineModuleReferenceResult.h"
+
+#include <QFuture>
+
+struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleUtils
+{
+  static void messageBoxModuleRegistration(const QFuture<ctkCmdLineModuleReferenceResult>& moduleRefsFuture,
+                                           ctkCmdLineModuleManager::ValidationMode validationMode);
+};
+
+#endif // CTKCOMMANDLINEMODULEUTILS_H

@@ -23,8 +23,6 @@
 
 #include <ctkCommandLineModulesCoreExport.h>
 
-#include "ctkCmdLineModuleReference.h"
-
 #include <QObject>
 #include <QScopedPointer>
 

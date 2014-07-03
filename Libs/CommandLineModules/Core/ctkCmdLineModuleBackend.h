@@ -46,7 +46,7 @@ class QUrl;
 struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
 {
 
-  ~ctkCmdLineModuleBackend();
+  virtual ~ctkCmdLineModuleBackend();
 
   /**
    * @brief Returns the name of the type of the backend, not the name
@@ -77,6 +77,7 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
   /**
    * @brief Get the XML parameter description from the given location.
    * @param location The location URL specifying the module.
+   * @param timeout The time-out for retrieving the XML parameter description
    * @return The raw XML parameter description.
    *
    * This method may be concurrently called by the ctkCmdLineModuleManager and
@@ -84,8 +85,43 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
    * as caching is done by the ctkCmdLineModuleManager itself, checking the
    * return value of timeStamp().
    *
+   * Implementations should also throw either a ctkCmdLineModuleTimeoutException
+   * object if a time-out occured when retrieving the XML parameter description
+   * or a ctkCmdLineModuleRunException for any other error during invocation
+   * of the module.
+   *
+   * @throws ctkCmdLineModuleTimeoutException if a time-out occurred when
+   *         retrieving the XML parameter description.
+   * @throws ctkCmdLineModuleRunException if a runtime error occurred when
+   *         invoking the module to retrieve the XML parameter description.
    */
-  virtual QByteArray rawXmlDescription(const QUrl& location) = 0;
+  virtual QByteArray rawXmlDescription(const QUrl& location, int timeout) = 0;
+
+  /**
+   * @brief Get the XML parameter description from the given location.
+   * @param location The location URL specifying the module.
+   * @return The raw XML parameter description.
+   *
+   * This method calls rawXmlDescription(const QUrl&, int) with a timeout
+   * of 30 seconds.
+   *
+   * @throws ctkCmdLineModuleTimeoutException if a time-out occurred when
+   *         retrieving the XML parameter description.
+   * @throws ctkCmdLineModuleRunException if a runtime error occurred when
+   *         invoking the module to retrieve the XML parameter description.
+   */
+  QByteArray rawXmlDescription(const QUrl& location);
+
+  /**
+   * @brief returns the number of milliseconds to wait when retrieving xml.
+   *
+   * The default implementation returns 0, which signals that the global
+   * timeout value from the ctkCmdLineModuleManager object with which this
+   * backend was registered should be used.
+   *
+   * @return int Time-out in milliseconds.
+   */
+  virtual int timeOutForXmlRetrieval() const;
 
 protected:
 
