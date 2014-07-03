@@ -2,6 +2,8 @@ language: cpp
 compiler:
   - gcc
 
+env:
+  - QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt4/plugins
 branches:
   only:
     - travis-ci
