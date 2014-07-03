@@ -96,7 +96,20 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
    *         invoking the module to retrieve the XML parameter description.
    */
   virtual QByteArray rawXmlDescription(const QUrl& location, int timeout) = 0;
-  
+
+  /**
+   * @brief Get the XML parameter description from the given location.
+   * @param location The location URL specifying the module.
+   * @return The raw XML parameter description.
+   *
+   * This method calls rawXmlDescription(const QUrl&, int) with a timeout
+   * of 30 seconds.
+   *
+   * @throws ctkCmdLineModuleTimeoutException if a time-out occurred when
+   *         retrieving the XML parameter description.
+   * @throws ctkCmdLineModuleRunException if a runtime error occurred when
+   *         invoking the module to retrieve the XML parameter description.
+   */
   QByteArray rawXmlDescription(const QUrl& location);
 
   /**
