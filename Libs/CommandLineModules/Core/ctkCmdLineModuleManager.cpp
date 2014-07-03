@@ -155,41 +155,22 @@ void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
   }
 }
 
-
 //----------------------------------------------------------------------------
-void ctkCmdLineModuleManager::replaceBackend(ctkCmdLineModuleBackend* backend)
+ctkCmdLineModuleBackend*ctkCmdLineModuleManager::backend(const QString& scheme) const
 {
-  if (d->SchemeToBackend.size() == 0)
-  {
-    this->registerBackend(backend);
-  }
-
-  // Check if new backend has exactly matching list of schemes to an existing backend.
-  ctkCmdLineModuleBackend* matchingBackend = NULL;
-  QList<QString> supportedSchemes = backend->schemes();
-  QList<ctkCmdLineModuleBackend*> existingBackends = d->SchemeToBackend.values();
-  foreach (ctkCmdLineModuleBackend* existingBackend, existingBackends)
-  {
-    QList<QString> schemes = existingBackend->schemes();
-    if (schemes == supportedSchemes)
-    {
-      matchingBackend = existingBackend;
-    }
-  }
-
-  if (matchingBackend != NULL)
-  {
-    foreach (QString scheme, supportedSchemes)
-    {
-      d->SchemeToBackend[scheme] = backend;
-    }
-  }
-  else
-  {
-    this->registerBackend(backend);
-  }
+  QHash<QString, ctkCmdLineModuleBackend*>::ConstIterator iter =
+      d->SchemeToBackend.find(scheme);
+  return iter == d->SchemeToBackend.end() ? NULL : iter.value();
 }
 
+//----------------------------------------------------------------------------
+QList<ctkCmdLineModuleBackend*> ctkCmdLineModuleManager::backends() const
+{
+  QList<ctkCmdLineModuleBackend*> result = d->SchemeToBackend.values();
+  qSort(result);
+  result.erase(std::unique(result.begin(), result.end()), result.end());
+  return result;
+}
 
 //----------------------------------------------------------------------------
 ctkCmdLineModuleReference

@@ -134,12 +134,17 @@ public:
   void registerBackend(ctkCmdLineModuleBackend* backend);
 
   /**
-   * @brief Replaces an existing back-end.
-   * @param backend The new back-end.
-   *
-   * If no backend exists, calls registerBackend.
+   * @brief Get the registered backend for a scheme.
+   * @param scheme The scheme the backend was registered with
+   * @return The backend or NULL, if \c scheme is unknown.
    */
-  void replaceBackend(ctkCmdLineModuleBackend* backend);
+  ctkCmdLineModuleBackend* backend(const QString& scheme) const;
+
+  /**
+   * @brief Get a list of all registered backends.
+   * @return A list of currently registered backends.
+   */
+  QList<ctkCmdLineModuleBackend*> backends() const;
 
   /**
    * @brief Registers a module, identified by the given URL.
