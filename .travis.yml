@@ -10,6 +10,6 @@ before_install:
   - sudo add-apt-repository ppa:kalakris/cmake -y
   - sudo apt-get update -qq
   - sudo apt-get install -y cmake
-  - sudo apt-get install -y libqt4-dev libqt4-sql-sqlite libdcmtk2-dev libinsighttoolkit3-dev libgdcm2-dev
+  - sudo apt-get install -y libqt4-dev libqt4-sql-sqlite
 
 script: ctest -VV -S ./CMake/ctkTravisDashboardScript.cmake
