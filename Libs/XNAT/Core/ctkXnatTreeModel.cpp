@@ -239,6 +239,13 @@ void ctkXnatTreeModel::addDataModel(ctkXnatDataModel* dataModel)
 }
 
 //----------------------------------------------------------------------------
+void ctkXnatTreeModel::removeDataModel(ctkXnatDataModel* dataModel)
+{
+  Q_D(ctkXnatTreeModel);
+  d->m_RootItem->remove(dataModel);
+}
+
+//----------------------------------------------------------------------------
 bool ctkXnatTreeModel::removeAllRows(const QModelIndex& parent)
 {
   // do nothing for the root

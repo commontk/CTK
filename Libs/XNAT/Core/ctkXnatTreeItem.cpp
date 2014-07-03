@@ -99,3 +99,18 @@ ctkXnatTreeItem* ctkXnatTreeItem::parent()
 {
   return m_ParentItem;
 }
+
+//----------------------------------------------------------------------------
+void ctkXnatTreeItem::remove(const ctkXnatObject* xnatObject)
+{
+  QList<ctkXnatTreeItem*>::iterator it = m_ChildItems.begin();
+  QList<ctkXnatTreeItem*>::iterator itEnd = m_ChildItems.end();
+  while (it != itEnd && (*it)->xnatObject() != xnatObject)
+  {
+    ++it;
+  }
+  if (it != itEnd)
+  {
+    m_ChildItems.erase(it);
+  }
+}

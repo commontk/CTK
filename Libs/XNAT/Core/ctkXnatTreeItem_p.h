@@ -48,6 +48,8 @@ public:
   int row() const;
   ctkXnatTreeItem* parent();
 
+  void remove(const ctkXnatObject* xnatObject);
+
 private:
 
   ctkXnatObject* m_XnatObject;
