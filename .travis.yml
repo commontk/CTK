@@ -15,4 +15,4 @@ before_install:
   - sudo apt-get install -y cmake
   - sudo apt-get install -y libqt4-dev qt4-dev-tools
 
-script: ctest -VV -S ./CMake/ctkTravisDashboardScript.cmake
+script: ctest -S ./CMake/ctkTravisDashboardScript.cmake
