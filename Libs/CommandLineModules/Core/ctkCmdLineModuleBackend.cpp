@@ -33,3 +33,9 @@ QByteArray ctkCmdLineModuleBackend::rawXmlDescription(const QUrl& location)
 {
   return this->rawXmlDescription(location, 30000);
 }
+
+//----------------------------------------------------------------------------
+int ctkCmdLineModuleBackend::timeOutForXmlRetrieval() const
+{
+  return 0;
+}

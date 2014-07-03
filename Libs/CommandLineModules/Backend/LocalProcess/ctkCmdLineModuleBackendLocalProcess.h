@@ -94,13 +94,13 @@ public:
    * @brief Setter for the number of milliseconds to wait when retrieving xml.
    * @param timeOut in milliseconds.
    */
-  void setTimeOutForXMLRetrieval(const int& timeOut);
+  void setTimeOutForXMLRetrieval(int timeOut);
 
   /**
-   * @brief returns the number of milliseconds to wait when retrieving xml.
-   * @return int in milliseconds
+   * @brief Returns the number of milliseconds to wait when retrieving xml.
+   * @return Time-out in milliseconds.
    */
-  int timeOutForXMLRetrieval();
+  virtual int timeOutForXMLRetrieval() const;
 
 private:
 

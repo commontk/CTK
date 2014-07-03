@@ -43,5 +43,5 @@ void ctkCmdLineModuleExplorerGeneralModuleSettings::applySettings()
   QThreadPool::globalInstance()->setMaxThreadCount(maxParallelModules);
 
   int timeout = this->propertyValue(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS).toInt();
-  this->CmdLineModuleManager->setXmlTimeout(timeout*1000);
+  this->CmdLineModuleManager->setTimeOutForXMLRetrieval(timeout*1000);
 }

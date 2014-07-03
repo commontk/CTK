@@ -1,22 +1,22 @@
 /*=============================================================================
-  
+
   Library: CTK
-  
+
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
-    
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  
+
 =============================================================================*/
 
 #include "ctkCmdLineModuleManager.h"
@@ -120,16 +120,17 @@ void ctkCmdLineModuleManager::setValidationMode(const ValidationMode& mode)
 
 
 //----------------------------------------------------------------------------
-void ctkCmdLineModuleManager::setXmlTimeout(int xmlTimeout)
+void ctkCmdLineModuleManager::setTimeOutForXMLRetrieval(int xmlTimeout)
 {
   d->XmlTimeOut = xmlTimeout;
 }
 
 //----------------------------------------------------------------------------
-int ctkCmdLineModuleManager::xmlTimeout() const
+int ctkCmdLineModuleManager::timeOutForXMLRetrieval() const
 {
   return d->XmlTimeOut;
 }
+
 //----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 {
@@ -213,6 +214,12 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
   bool fromCache = false;
   qint64 newTimeStamp = 0;
   qint64 cacheTimeStamp = 0;
+  int timeout = backend->timeOutForXmlRetrieval();
+  if (timeout == 0)
+  {
+    timeout = d->XmlTimeOut;
+  }
+
   if (d->ModuleCache)
   {
     newTimeStamp = backend->timeStamp(location);
@@ -223,7 +230,7 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
       // newly fetch the XML description
       try
       {
-        xml = backend->rawXmlDescription(location, d->XmlTimeOut);
+        xml = backend->rawXmlDescription(location, timeout);
       }
       catch (const ctkCmdLineModuleTimeoutException&)
       {
@@ -249,7 +256,7 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
   {
     try
     {
-      xml = backend->rawXmlDescription(location);
+      xml = backend->rawXmlDescription(location, timeout);
     }
     catch (const ctkCmdLineModuleRunException& e)
     {

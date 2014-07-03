@@ -43,18 +43,8 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
   int m_TimeoutForXMLRetrieval;
 
   ctkCmdLineModuleBackendLocalProcessPrivate()
-    : m_TimeoutForXMLRetrieval(30000) /* 30000 = default of QProcess */
+    : m_TimeoutForXMLRetrieval(0) // use the value from the module manager
   {
-  }
-
-  void setTimeOutForXMLRetrieval(const int& timeOut)
-  {
-    m_TimeoutForXMLRetrieval = timeOut;
-  }
-
-  int timeOutForXMLRetrieval()
-  {
-    return m_TimeoutForXMLRetrieval;
   }
 
   QString normalizeFlag(const QString& flag) const
@@ -216,4 +206,16 @@ ctkCmdLineModuleFuture ctkCmdLineModuleBackendLocalProcess::run(ctkCmdLineModule
   ctkCmdLineModuleProcessTask* moduleProcess =
       new ctkCmdLineModuleProcessTask(frontend->location().toLocalFile(), args);
   return moduleProcess->start();
+}
+
+//----------------------------------------------------------------------------
+void ctkCmdLineModuleBackendLocalProcess::setTimeOutForXMLRetrieval(int timeOut)
+{
+  d->m_TimeoutForXMLRetrieval = timeOut;
+}
+
+//----------------------------------------------------------------------------
+int ctkCmdLineModuleBackendLocalProcess::timeOutForXMLRetrieval() const
+{
+  return d->m_TimeoutForXMLRetrieval;
 }

@@ -99,6 +99,17 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
   
   QByteArray rawXmlDescription(const QUrl& location);
 
+  /**
+   * @brief returns the number of milliseconds to wait when retrieving xml.
+   *
+   * The default implementation returns 0, which signals that the global
+   * timeout value from the ctkCmdLineModuleManager object with which this
+   * backend was registered should be used.
+   *
+   * @return int Time-out in milliseconds.
+   */
+  virtual int timeOutForXmlRetrieval() const;
+
 protected:
 
   friend class ctkCmdLineModuleManager;

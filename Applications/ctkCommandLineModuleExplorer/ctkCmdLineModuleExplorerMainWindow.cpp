@@ -83,7 +83,9 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   {
     settings.setValue(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS, QVariant(30));
   }
-  moduleManager.setXmlTimeout(settings.value(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS, QVariant(30)).toInt() * 1000);
+  moduleManager.setTimeOutForXMLRetrieval(
+        settings.value(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS, QVariant(30)
+                       ).toInt() * 1000);
 
   // Frontends
   moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtGui;
