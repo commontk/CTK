@@ -384,9 +384,7 @@ endif()
 if(UNIX AND NOT APPLE)
   include(ctkLinkerAsNeededFlagCheck)
   if(CTK_LINKER_NO_AS_NEEDED_FLAG_REQUIRED)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed"
-      CACHE STRING "Flags used by the linker"
-      FORCE)
+    set(CTK_EXE_LINKER_FLAGS "-Wl,--no-as-needed")
   endif()
 endif()
 
@@ -1076,6 +1074,8 @@ set(CTK_CONFIG_H_INCLUDE_DIR ${CTK_BINARY_DIR})
 #
 set(CMAKE_CXX_FLAGS ${CTK_CXX_FLAGS} CACHE STRING "CMake C Flags" FORCE)
 set(CMAKE_C_FLAGS ${CTK_C_FLAGS} CACHE STRING "CMake CXX Flags" FORCE)
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS_INIT} ${CTK_EXE_LINKER_FLAGS}" CACHE STRING "Flags used when linking executables" FORCE)
 
 #-----------------------------------------------------------------------------
 # Set the header template which defines custom export/import macros

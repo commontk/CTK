@@ -85,7 +85,6 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    UPDATE_COMMAND ""
     BUILD_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}

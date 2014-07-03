@@ -53,7 +53,6 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    UPDATE_COMMAND ""
     INSTALL_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
