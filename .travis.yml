@@ -1,6 +1,9 @@
 language: cpp
+
 compiler:
   - gcc
+
+env: DISPLAY=:9
 
 branches:
   only:
@@ -11,5 +14,12 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y cmake chrpath
   - sudo apt-get install -y libqt4-dev qt4-dev-tools
+  - sudo apt-get install -y xpra xserver-xorg-video-dummy
+
+before_script: xpra --xvfb="Xorg +extension GLX -config `pwd`/Applications/Testing/dummy.xorg.conf -logfile ${HOME}/.xpra/xorg.log"  start :9
 
 script: ctest -S ./CMake/ctkTravisDashboardScript.cmake
+
+after_script:
+  - xpra stop :9
+  - cat "~/.xpra/*"
