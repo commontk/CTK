@@ -12,4 +12,6 @@ before_install:
   - sudo apt-get install -y cmake
   - sudo apt-get install -y libqt4-dev qt4-dev-tools
 
-script: ldd -r /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu && chrpath -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu && ls -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib && ctest -S ./CMake/ctkTravisDashboardScript.cmake
+script: ctest -S ./CMake/ctkTravisDashboardScript.cmake
+
+after_script: ldd -r /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu && chrpath -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu && ls -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib && ctest -S ./CMake/ctkTravisDashboardScript.cmake
