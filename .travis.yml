@@ -23,4 +23,5 @@ after_script:
   - ldd -r /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu
   - ls -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
   - chrpath -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu
+  - cat /tmp/CTK-Superbuild-Release-experimental/DCMTK-build/dcmnet/apps/cmake_install.cmake
   - "cat ~/.xpra/*"
