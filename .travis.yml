@@ -3,8 +3,6 @@ language: cpp
 compiler:
   - gcc
 
-env: DISPLAY=:9
-
 branches:
   only:
     - travis-ci
@@ -23,5 +21,6 @@ script: ctest -V -S ./CMake/ctkTravisDashboardScript.cmake
 after_script:
   - xpra stop :9
   - ldd -r /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu
+  - ls -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
   - chrpath -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu
   - "cat ~/.xpra/*"
