@@ -41,7 +41,7 @@
 
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleDirectoryWatcher::ctkCmdLineModuleDirectoryWatcher(ctkCmdLineModuleManager* moduleManager)
-  : d(new ctkCmdLineModuleDirectoryWatcherPrivate(moduleManager))
+  : d(new ctkCmdLineModuleDirectoryWatcherPrivate(this, moduleManager))
 {
   Q_ASSERT(moduleManager);
 }
@@ -101,8 +101,11 @@ QStringList ctkCmdLineModuleDirectoryWatcher::commandLineModules() const
 
 
 //-----------------------------------------------------------------------------
-ctkCmdLineModuleDirectoryWatcherPrivate::ctkCmdLineModuleDirectoryWatcherPrivate(ctkCmdLineModuleManager* moduleManager)
-: ModuleManager(moduleManager)
+ctkCmdLineModuleDirectoryWatcherPrivate::ctkCmdLineModuleDirectoryWatcherPrivate(
+    ctkCmdLineModuleDirectoryWatcher* d,
+    ctkCmdLineModuleManager* moduleManager)
+: q(d)
+, ModuleManager(moduleManager)
 , FileSystemWatcher(NULL)
 , Debug(false)
 {

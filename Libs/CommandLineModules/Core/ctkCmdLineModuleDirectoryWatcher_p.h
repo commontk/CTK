@@ -46,7 +46,8 @@ class ctkCmdLineModuleDirectoryWatcherPrivate : public QObject
 
 public:
 
-  ctkCmdLineModuleDirectoryWatcherPrivate(ctkCmdLineModuleManager* ModuleManager);
+  ctkCmdLineModuleDirectoryWatcherPrivate(ctkCmdLineModuleDirectoryWatcher* d,
+                                          ctkCmdLineModuleManager* ModuleManager);
   virtual ~ctkCmdLineModuleDirectoryWatcherPrivate();
 
   /**
@@ -165,6 +166,7 @@ private:
    */
   void unloadModules(const QStringList& executables);
 
+  ctkCmdLineModuleDirectoryWatcher* q;
   QHash<QString, ctkCmdLineModuleReferenceResult> MapFileNameToReferenceResult;
   ctkCmdLineModuleManager* ModuleManager;
   QFileSystemWatcher* FileSystemWatcher;
