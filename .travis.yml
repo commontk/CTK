@@ -18,8 +18,10 @@ before_install:
 
 before_script: xpra --xvfb="Xorg +extension GLX -config `pwd`/Applications/Testing/dummy.xorg.conf -logfile ${HOME}/.xpra/xorg.log"  start :9
 
-script: ctest -S ./CMake/ctkTravisDashboardScript.cmake
+script: ctest -V -S ./CMake/ctkTravisDashboardScript.cmake
 
 after_script:
   - xpra stop :9
-  - cat "~/.xpra/*"
+  - ldd -r /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu
+  - chrpath -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu
+  - "cat ~/.xpra/*"
