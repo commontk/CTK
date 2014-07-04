@@ -27,16 +27,19 @@
 #include <QUrl>
 #include <QString>
 
-void ctkCmdLineModuleUtils::messageBoxModuleRegistration(const QFuture<ctkCmdLineModuleReferenceResult> &moduleRefsFuture,
-                                                                  ctkCmdLineModuleManager::ValidationMode validationMode)
+//-----------------------------------------------------------------------------
+QString ctkCmdLineModuleUtils::errorMessagesFromModuleRegistration(
+    const QList<ctkCmdLineModuleReferenceResult>& moduleRefs,
+    ctkCmdLineModuleManager::ValidationMode validationMode
+    )
 {
   QString errorMsg;
-  QFutureIterator<ctkCmdLineModuleReferenceResult> futureIter(moduleRefsFuture);
-  while(futureIter.hasNext())
+  QListIterator<ctkCmdLineModuleReferenceResult> listIter(moduleRefs);
+  while(listIter.hasNext())
   {
     try
     {
-      const ctkCmdLineModuleReferenceResult& moduleRefResult = futureIter.next();
+      const ctkCmdLineModuleReferenceResult& moduleRefResult = listIter.next();
       if (!moduleRefResult.m_Reference)
       {
         errorMsg += (QObject::tr("Failed to register module:\n%1\n\ndue to:\n%2\n\n").arg(moduleRefResult.m_Url.toString()).arg(moduleRefResult.m_RuntimeError));
@@ -57,11 +60,49 @@ void ctkCmdLineModuleUtils::messageBoxModuleRegistration(const QFuture<ctkCmdLin
       errorMsg += QObject::tr("Failed to register module:\n\n\ndue to:\n") + e.what() + "\n\n";
     }
   }
+  return errorMsg;
+}
 
+
+//-----------------------------------------------------------------------------
+QString ctkCmdLineModuleUtils::errorMessagesFromModuleRegistration(
+    const QFuture<ctkCmdLineModuleReferenceResult>& moduleRefsFuture,
+    ctkCmdLineModuleManager::ValidationMode validationMode
+    )
+{
+  QList<ctkCmdLineModuleReferenceResult> moduleRefs;
+
+  QFutureIterator<ctkCmdLineModuleReferenceResult> futureIter(moduleRefsFuture);
+  while(futureIter.hasNext())
+  {
+    const ctkCmdLineModuleReferenceResult& moduleRefResult = futureIter.next();
+    moduleRefs << moduleRefResult;
+  }
+
+  QString errorMsg = ctkCmdLineModuleUtils::errorMessagesFromModuleRegistration(moduleRefs, validationMode);
+  return errorMsg;
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleUtils::messageBoxForModuleRegistration(
+    const QString& errorMsg
+    )
+{
   if (!errorMsg.isEmpty())
   {
     QWidget* widget = QApplication::activeModalWidget();
     if (widget == NULL) widget = QApplication::activeWindow();
     QMessageBox::critical(widget, QObject::tr("Failed to register modules"), errorMsg);
   }
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleUtils::messageBoxModuleRegistration(const QFuture<ctkCmdLineModuleReferenceResult> &moduleRefsFuture,
+                                                                  ctkCmdLineModuleManager::ValidationMode validationMode)
+{
+
+  const QString errorMsg = ctkCmdLineModuleUtils::errorMessagesFromModuleRegistration(moduleRefsFuture, validationMode);
+  ctkCmdLineModuleUtils::messageBoxForModuleRegistration(errorMsg);
 }
