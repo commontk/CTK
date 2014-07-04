@@ -107,6 +107,11 @@ public:
    */
   QStringList commandLineModules() const;
 
+  /**
+   * \brief public method to emit the errorDetected signal.
+   */
+  void emitErrorDectectedSignal(const QString&);
+
 Q_SIGNALS:
 
   /**

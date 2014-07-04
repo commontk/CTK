@@ -22,6 +22,7 @@
 #include "ctkCmdLineModuleDirectoryWatcher_p.h"
 #include "ctkCmdLineModuleManager.h"
 #include "ctkCmdLineModuleConcurrentHelpers.h"
+#include "ctkCmdLineModuleUtils.h"
 #include "ctkException.h"
 
 #include <QObject>
@@ -93,6 +94,13 @@ QStringList ctkCmdLineModuleDirectoryWatcher::additionalModules() const
 QStringList ctkCmdLineModuleDirectoryWatcher::commandLineModules() const
 {
   return d->commandLineModules();
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkCmdLineModuleDirectoryWatcher::emitErrorDectectedSignal(const QString& msg)
+{
+  emit errorDetected(msg);
 }
 
 
@@ -417,6 +425,11 @@ QList<ctkCmdLineModuleReferenceResult> ctkCmdLineModuleDirectoryWatcherPrivate::
       this->MapFileNameToReferenceResult[executables[i]] = refResults[i];
     }
   }
+
+  // Broadcast error messages.
+  QString errorMessages = ctkCmdLineModuleUtils::errorMessagesFromModuleRegistration(refResults, this->ModuleManager->validationMode());
+  q->emitErrorDectectedSignal(errorMessages);
+
   return refResults;
 }
 
