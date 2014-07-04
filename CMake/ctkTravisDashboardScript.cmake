@@ -109,7 +109,7 @@ CTK_LIB_DICOM/Core:BOOL=ON
 set(TEST_TO_EXCLUDE_REGEX "")
 
 # set any extra environment variables here
-set(ENV{DISPLAY} ":9")
+#set(ENV{DISPLAY} ":9")
 
 find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
 find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
