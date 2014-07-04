@@ -56,6 +56,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     CMAKE_ARGS
       -DDCMTK_INSTALL_BINDIR:STRING=bin/${CMAKE_CFG_INTDIR}
       -DDCMTK_INSTALL_LIBDIR:STRING=lib/${CMAKE_CFG_INTDIR}
+      -DCMAKE_INSTALL_RPATH:STRING=${ep_install_dir}/lib
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       ${ep_project_include_arg}
