@@ -7,6 +7,8 @@ branches:
   only:
     - travis-ci
 
+env: DISPLAY=:9 LD_LIBRARY_PATH=/tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
+
 before_install:
   - sudo add-apt-repository ppa:kalakris/cmake -y
   - sudo apt-get update -qq
