@@ -34,6 +34,13 @@ endif()
 #-----------------------------------------------------------------------------
 set(proj CTK)
 
+set(additional_cache_args)
+if(PYTHON_INCLUDE_DIR2)
+  list(APPEND additional_cache_args
+       -DPYTHON_INCLUDE_DIR2:PATH=${PYTHON_INCLUDE_DIR2}
+      )
+endif()
+
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   DOWNLOAD_COMMAND ""
@@ -45,6 +52,7 @@ ExternalProject_Add(${proj}
     -DCMAKE_CXX_FLAGS_INIT:STRING=${CMAKE_CXX_FLAGS_INIT}
     -DCMAKE_C_FLAGS_INIT:STRING=${CMAKE_C_FLAGS_INIT}
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+    ${additional_cache_args}
   SOURCE_DIR ${CTK_SOURCE_DIR}
   BINARY_DIR ${CTK_BINARY_DIR}/CTK-build
   INSTALL_COMMAND ""
