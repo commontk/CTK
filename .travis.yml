@@ -15,20 +15,15 @@ before_install:
   - sudo apt-get install -y xpra xserver-xorg-video-dummy
 
 before_script:
-  - wget -P /tmp http://www.cmake.org/files/v2.8/cmake-2.8.9-Linux-i386.tar.gz
-  - tar xz -C /tmp -f /tmp/cmake-2.8.9-Linux-i386.tar.gz
-  - ls -l /tmp
-  - ls -l /tmp/cmake-2.8.9-Linux-i386
-  - ls -l /tmp/cmake-2.8.9-Linux-i386/bin 
+  - wget -P /tmp http://www.cmake.org/files/v2.8/cmake-2.8.9.tar.gz
+  - tar xz -C /tmp -f /tmp/cmake-2.8.9.tar.gz
+  - cd /tmp/cmake-2.8.9 && configure --prefix=/usr/local
+  - cd /tmp/cmake-2.8.9 && make -j4 && make install
   - xpra --xvfb="Xorg +extension GLX -config `pwd`/Applications/Testing/dummy.xorg.conf -logfile ${HOME}/.xpra/xorg.log"  start :9
 
-script: /tmp/cmake-2.8.9-Linux-i386/bin/ctest -V -S ./CMake/ctkTravisDashboardScript.cmake
+script: ctest -V -S ./CMake/ctkTravisDashboardScript.cmake
 
 after_script:
   - xpra stop :9
-  - ldd -r /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu
-  - ls -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
-  - chrpath -l /tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/bin/storescu
-  - cat /tmp/CTK-Superbuild-Release-experimental/DCMTK-build/dcmnet/apps/cmake_install.cmake
   - cat /tmp/CTK-Superbuild-Release-experimental/DCMTK-build/CMakeCache.txt
   - "cat ~/.xpra/*"
