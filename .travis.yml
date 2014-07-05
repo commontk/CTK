@@ -10,15 +10,16 @@ branches:
 env: DISPLAY=:9 LD_LIBRARY_PATH=/tmp/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
 
 before_install:
-  - sudo add-apt-repository ppa:kalakris/cmake -y
   - sudo apt-get update -qq
-  - sudo apt-get install -y cmake chrpath
-  - sudo apt-get install -y libqt4-dev qt4-dev-tools python-dev libvtk5-dev
+  - sudo apt-get install -y chrpath libqt4-dev qt4-dev-tools python-dev libvtk5-dev
   - sudo apt-get install -y xpra xserver-xorg-video-dummy
 
-before_script: xpra --xvfb="Xorg +extension GLX -config `pwd`/Applications/Testing/dummy.xorg.conf -logfile ${HOME}/.xpra/xorg.log"  start :9
+before_script:
+  - wget -P /tmp http://www.cmake.org/files/v2.8/cmake-2.8.9-Linux-i386.tar.gz
+  - tar xz -C /tmp -f /tmp/cmake-2.8.9-Linux-i386.tar.gz 
+  - xpra --xvfb="Xorg +extension GLX -config `pwd`/Applications/Testing/dummy.xorg.conf -logfile ${HOME}/.xpra/xorg.log"  start :9
 
-script: ctest -V -S ./CMake/ctkTravisDashboardScript.cmake
+script: /tmp/cmake-2.8.9-Linux-i386/bin/ctest -V -S ./CMake/ctkTravisDashboardScript.cmake
 
 after_script:
   - xpra stop :9
