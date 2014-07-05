@@ -21,7 +21,7 @@ set(MY_COMPILER "g++4.6.3")
 set(MY_QT_VERSION "4.8.1")
 set(QT_QMAKE_EXECUTABLE "/usr/bin/qmake")
 set(CTEST_SITE "travis-ci") # for example: mymachine.kitware, mymachine.dkfz, ...
-set(CTEST_DASHBOARD_ROOT "/tmp")
+set(CTEST_DASHBOARD_ROOT "$ENV{HOME}/build/commontk")
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 
 #
