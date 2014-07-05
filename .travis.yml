@@ -17,8 +17,8 @@ before_install:
 before_script:
   - wget -P /tmp http://www.cmake.org/files/v2.8/cmake-2.8.9.tar.gz
   - tar xz -C /tmp -f /tmp/cmake-2.8.9.tar.gz
-  - cd /tmp/cmake-2.8.9 && configure --prefix=/usr/local
-  - cd /tmp/cmake-2.8.9 && make -j4 && make install
+  - cd /tmp/cmake-2.8.9 && ./configure --prefix=/usr/local
+  - cd /tmp/cmake-2.8.9 && make -j4 install
   - xpra --xvfb="Xorg +extension GLX -config `pwd`/Applications/Testing/dummy.xorg.conf -logfile ${HOME}/.xpra/xorg.log"  start :9
 
 script: ctest -V -S ./CMake/ctkTravisDashboardScript.cmake
