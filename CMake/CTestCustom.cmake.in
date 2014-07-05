@@ -42,10 +42,6 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "[Kk][Ww][Ss]tyle.*kws.*h"
   "[Kk][Ww][Ss]tyle.*metaCommand.*cxx"
 
-  # Log4Qt suppressions
-  "[Ll]og4[Qq]t.*src.*log4qt"
-  "logobjectptr.*obj : warning"
-
   # vtk suppressions
   "vtkfreetype"
   "Utilities.vtktiff"

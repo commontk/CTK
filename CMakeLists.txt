@@ -925,7 +925,6 @@ endif()
 # CTK dependencies - Projects should be TOPOLOGICALLY ordered
 #-----------------------------------------------------------------------------
 set(CTK_DEPENDENCIES
-  Log4Qt
   VTK
   PythonQt
   DCMTK

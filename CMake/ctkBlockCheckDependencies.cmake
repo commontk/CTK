@@ -63,10 +63,6 @@ set(${ITK_enabling_variable}_LIBRARY_DIRS ITK_LIBRARY_DIRS)
 set(${ITK_enabling_variable}_INCLUDE_DIRS ITK_INCLUDE_DIRS)
 set(${ITK_enabling_variable}_FIND_PACKAGE_CMD ITK)
 
-set(Log4Qt_enabling_variable Log4Qt_LIBRARIES)
-set(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
-set(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
-
 set(OpenIGTLink_enabling_variable OpenIGTLink_LIBRARIES)
 set(${OpenIGTLink_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
 set(${OpenIGTLink_enabling_variable}_INCLUDE_DIRS OpenIGTLink_INCLUDE_DIRS)
