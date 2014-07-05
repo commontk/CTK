@@ -642,7 +642,6 @@ set(plugin_list
   org.commontk.configadmin
   org.commontk.eventadmin
   org.commontk.log
-  org.commontk.log4qt
   org.commontk.metatype
   )
 
@@ -882,7 +881,6 @@ endif()
 # CTK dependencies - Projects should be TOPOLOGICALLY ordered
 #-----------------------------------------------------------------------------
 set(CTK_DEPENDENCIES
-  Log4Qt
   VTK
   PythonQt
   DCMTK
