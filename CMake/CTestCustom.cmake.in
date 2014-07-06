@@ -27,6 +27,8 @@ SET(CTEST_CUSTOM_MEMCHECK_IGNORE
 SET(CTEST_CUSTOM_ERROR_MATCH
   ${CTEST_CUSTOM_ERROR_MATCH}
   "CMake Error[ :]"
+  "make.*No rule to make target"
+
   )
 
 SET(CTEST_CUSTOM_WARNING_MATCH
@@ -36,6 +38,9 @@ SET(CTEST_CUSTOM_WARNING_MATCH
 
 SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
+
+  # external projects
+  "@CTK_BINARY_DIR@/(?!CTK-build/).*"
 
   # kwstyle suppressions
   "[Kk][Ww][Ss]tyle.*kws.*cxx"
