@@ -7,7 +7,7 @@ branches:
   only:
     - travis-ci
 
-env: DISPLAY=:9 #LD_LIBRARY_PATH=${HOME}/build/commontk/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
+env: DISPLAY=:9 LD_LIBRARY_PATH=${HOME}/build/commontk/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
 
 before_install:
   - sudo apt-get update -qq
@@ -21,7 +21,7 @@ before_script:
   - cd /tmp/cmake-2.8.10 && make -j4 && sudo make install
   - xpra --xvfb="Xorg +extension GLX -config ${HOME}/build/commontk/CTK/Applications/Testing/dummy.xorg.conf -logfile ${HOME}/.xpra/xorg.log"  start :9
 
-script: ctest -V -S ${HOME}/build/commontk/CTK/CMake/ctkTravisDashboardScript.cmake
+script: ctest -VV -S ${HOME}/build/commontk/CTK/CMake/ctkTravisDashboardScript.cmake
 
 after_script:
   - xpra stop :9
