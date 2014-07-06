@@ -11,7 +11,7 @@ env: DISPLAY=:9 LD_LIBRARY_PATH=${HOME}/build/commontk/CTK-Superbuild-Release-ex
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y chrpath libqt4-dev qt4-dev-tools libvtk5-dev
+  - sudo apt-get install -y chrpath openssl libssl-dev libqt4-dev qt4-dev-tools libvtk5-dev
   - sudo apt-get install -y xpra xserver-xorg-video-dummy
 
 before_script:
