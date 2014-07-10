@@ -51,7 +51,7 @@ ctkXnatResource::~ctkXnatResource()
 //----------------------------------------------------------------------------
 QString ctkXnatResource::resourceUri() const
 {
-  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("label"));
+  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("xnat_abstractresource_id"));
 }
 
 //----------------------------------------------------------------------------
@@ -73,10 +73,11 @@ void ctkXnatResource::fetchImpl()
   foreach (ctkXnatObject* file, files)
   {
     QString label = file->property("Name");
-    if (!label.isEmpty())
+    if (label.isEmpty())
     {
-      file->setProperty("ID", label);
+      label = "NO NAME";
     }
+    file->setProperty("label", label);
     this->add(file);
   }
 }

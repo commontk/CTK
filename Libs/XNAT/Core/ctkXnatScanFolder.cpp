@@ -52,6 +52,7 @@ ctkXnatScanFolder::ctkXnatScanFolder(ctkXnatObject* parent)
   : ctkXnatObject(*new ctkXnatScanFolderPrivate(), parent, QString::null)
 {
   this->setProperty("ID", "scans");
+  this->setProperty("label", "Scans");
 }
 
 //----------------------------------------------------------------------------
@@ -83,6 +84,11 @@ void ctkXnatScanFolder::fetchImpl()
 
   foreach (ctkXnatObject* scan, scans)
   {
+    QString series_description = scan->property ("series_description");
+    QString label = scan->property ("label");
+    label = label.isEmpty() ? series_description : label;
+    scan->setProperty ("label", label);
+    
     this->add(scan);
   }
 }

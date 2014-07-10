@@ -26,7 +26,6 @@
 #include "ctkXnatExperiment.h"
 #include "ctkXnatScanFolder.h"
 #include "ctkXnatScan.h"
-#include "ctkXnatScanResource.h"
 
 #include <iostream>
 #include <typeinfo>

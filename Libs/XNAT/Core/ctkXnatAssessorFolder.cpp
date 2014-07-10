@@ -19,81 +19,69 @@
 
 =============================================================================*/
 
-#include "ctkXnatReconstructionResource.h"
+#include "ctkXnatAssessorFolder.h"
 
 #include "ctkXnatSession.h"
-#include "ctkXnatFile.h"
+#include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
-#include "ctkXnatReconstruction.h"
+#include "ctkXnatAssessor.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
-
 //----------------------------------------------------------------------------
-class ctkXnatReconstructionResourcePrivate : public ctkXnatObjectPrivate
+class ctkXnatAssessorFolderPrivate : public ctkXnatObjectPrivate
 {
 public:
 
-  ctkXnatReconstructionResourcePrivate()
+  ctkXnatAssessorFolderPrivate()
   : ctkXnatObjectPrivate()
   {
   }
 
   void reset()
   {
-//    uri.clear();
   }
 
-//  QString uri;
 };
 
+//----------------------------------------------------------------------------
+ctkXnatAssessorFolder::ctkXnatAssessorFolder(ctkXnatObject* parent)
+  : ctkXnatObject(*new ctkXnatAssessorFolderPrivate(), parent, QString::null)
+{
+  
+  this->setProperty("ID", "assessors");
+  this->setProperty("label", "Assessments");
+}
 
 //----------------------------------------------------------------------------
-ctkXnatReconstructionResource::ctkXnatReconstructionResource(ctkXnatObject* parent, const QString& schemaType)
-: ctkXnatObject(*new ctkXnatReconstructionResourcePrivate(), parent, schemaType)
+ctkXnatAssessorFolder::~ctkXnatAssessorFolder()
 {
 }
 
 //----------------------------------------------------------------------------
-ctkXnatReconstructionResource::~ctkXnatReconstructionResource()
+QString ctkXnatAssessorFolder::resourceUri() const
 {
+  return QString("%1/%2").arg(parent()->resourceUri(), this->id());
 }
 
 //----------------------------------------------------------------------------
-QString ctkXnatReconstructionResource::resourceUri() const
-{
-  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("label"));
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatReconstructionResource::reset()
+void ctkXnatAssessorFolder::reset()
 {
   ctkXnatObject::reset();
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatReconstructionResource::fetchImpl()
+void ctkXnatAssessorFolder::fetchImpl()
 {
-  QString reconstructionResourceFilesUri = this->resourceUri() + "/files";
+  QString assessorsUri = this->resourceUri();
   ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(reconstructionResourceFilesUri);
+  QUuid queryId = session->httpGet(assessorsUri);
 
-  QList<ctkXnatObject*> files = session->httpResults(queryId,
-                                                     ctkXnatDefaultSchemaTypes::XSI_FILE);
+  QList<ctkXnatObject*> assessors = session->httpResults(queryId,
+                                                     ctkXnatDefaultSchemaTypes::XSI_ASSESSOR);
 
-  foreach (ctkXnatObject* file, files)
+  foreach (ctkXnatObject* assessor, assessors)
   {
-    QString label = file->property("Name");
-    if (label.isEmpty())
-    {
-      file->setProperty("ID", label);
-    }
-
-    this->add(file);
+    
+    this->add(assessor);
   }
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatReconstructionResource::download(const QString& filename)
-{
-  this->session()->download(this, filename);
 }

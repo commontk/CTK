@@ -312,9 +312,9 @@ void ctkXnatObject::save()
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::fetchResources()
+void ctkXnatObject::fetchResources(const QString& path)
 {
-  QString query = this->resourceUri() + "/resources";
+  QString query = this->resourceUri() + path;
   ctkXnatSession* const session = this->session();
   QUuid queryId = session->httpGet(query);
 
@@ -324,10 +324,12 @@ void ctkXnatObject::fetchResources()
   foreach (ctkXnatObject* resource, resources)
   {
     QString label = resource->property("label");
-    if (!label.isEmpty())
+    if (label.isEmpty())
     {
-      resource->setProperty("ID", label);
+      label = "NO NAME";
     }
+
+    resource->setProperty("label", label);
     this->add(resource);
   }
 }
