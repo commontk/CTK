@@ -26,8 +26,6 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
-#include "ctkXnatAssessorResource.h"
-#include "ctkXnatScanResource.h"
 
 //----------------------------------------------------------------------------
 class ctkXnatAssessorPrivate : public ctkXnatObjectPrivate
@@ -74,39 +72,6 @@ void ctkXnatAssessor::reset()
 //----------------------------------------------------------------------------
 void ctkXnatAssessor::fetchImpl()
 {
-  QString assessorResourcesUri = this->resourceUri() + "/resources";
-  ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(assessorResourcesUri);
-
-  QList<ctkXnatObject*> assessorResources = session->httpResults(queryId,
-                                                             ctkXnatDefaultSchemaTypes::XSI_ASSESSOR_RESOURCE);
-
-  foreach (ctkXnatObject* assessorResource, assessorResources)
-  {
-    QString resource_id = assessorResource->property("xnat_abstractresource_id");
-    QString label = assessorResource->property("label");
-    
-    if (!resource_id.isEmpty())
-      assessorResource->setProperty("ID", resource_id);
-    
-    this->add(assessorResource);
-  }
-  
-  assessorResourcesUri = this->resourceUri() + "/out/resources";
-  queryId = session->httpGet(assessorResourcesUri);
-
-  assessorResources = session->httpResults(queryId,
-					   ctkXnatDefaultSchemaTypes::XSI_ASSESSOR_RESOURCE);
-
-  foreach (ctkXnatObject* assessorResource, assessorResources)
-  {
-    QString resource_id = assessorResource->property("xnat_abstractresource_id");
-    QString label = assessorResource->property("label");
-    
-    if (!resource_id.isEmpty())
-      assessorResource->setProperty("ID", resource_id);
-    
-    this->add(assessorResource);
-  }
-  
+  this->fetchResources();
+  this->fetchResources("/out/resources");
 }

@@ -23,7 +23,6 @@
 
 #include "ctkXnatSession.h"
 #include "ctkXnatScanFolder.h"
-#include "ctkXnatScanResource.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatDefaultSchemaTypes.h"
@@ -73,18 +72,5 @@ void ctkXnatScan::reset()
 //----------------------------------------------------------------------------
 void ctkXnatScan::fetchImpl()
 {
-  QString scanResourcesUri = this->resourceUri() + "/resources";
-  ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(scanResourcesUri);
-
-  QList<ctkXnatObject*> scanResources = session->httpResults(queryId,
-                                                             ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE);
-
-  foreach (ctkXnatObject* scanResource, scanResources)
-  {
-    QString label = scanResource->property("label");
-    if (!label.isEmpty())
-      scanResource->setProperty("ID", label);
-    this->add(scanResource);
-  }
+  this->fetchResources();
 }

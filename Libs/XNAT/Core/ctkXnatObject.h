@@ -126,9 +126,6 @@ public:
   /// Deletes the object on the XNAT server and removes it from its parent.
   void erase();
 
-  /// Fetches the resources of the object
-  virtual void fetchResources();
-
   virtual void download(const QString&);
   virtual void upload(const QString&);
 
@@ -160,6 +157,9 @@ protected:
   /// Gets the object that represents the connection to the XNAT server
   /// that stores the current object.
   ctkXnatSession* session() const;
+
+  /// Fetches the resources of the object
+  virtual void fetchResources(const QString &path = "/resources");
 
   /// The private implementation part of the object.
   const QScopedPointer<ctkXnatObjectPrivate> d_ptr;

@@ -29,12 +29,9 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatProject.h"
 #include "ctkXnatReconstruction.h"
-#include "ctkXnatReconstructionResource.h"
 #include "ctkXnatResource.h"
 #include "ctkXnatScan.h"
-#include "ctkXnatScanResource.h"
 #include "ctkXnatAssessor.h"
-#include "ctkXnatAssessorResource.h"
 #include "ctkXnatSubject.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
@@ -253,7 +250,10 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
     // Fall back. Create the default class according to the default schema type
     if (!typeId)
     {
-      qWarning() << QString("No ctkXnatObject sub-class registered for the schema %1. Falling back to the default class %2.").arg(customSchemaType).arg(schemaType);
+      if (!customSchemaType.isEmpty())
+      {
+        qWarning() << QString("No ctkXnatObject sub-class registered for the schema %1. Falling back to the default class %2.").arg(customSchemaType).arg(schemaType);
+      }
       typeId = QMetaType::type(qPrintable(schemaType));
     }
 
@@ -322,11 +322,8 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   qRegisterMetaType<ctkXnatExperiment>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT));
   qRegisterMetaType<ctkXnatScan>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_SCAN));
   qRegisterMetaType<ctkXnatReconstruction>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION));
-  qRegisterMetaType<ctkXnatScanResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE));
-  qRegisterMetaType<ctkXnatReconstructionResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE));
   qRegisterMetaType<ctkXnatResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RESOURCE));
   qRegisterMetaType<ctkXnatAssessor>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_ASSESSOR));
-  qRegisterMetaType<ctkXnatAssessorResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_ASSESSOR_RESOURCE));
   qRegisterMetaType<ctkXnatFile>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_FILE));
   
   QString url = d->loginProfile.serverUrl().toString();
@@ -602,35 +599,11 @@ void ctkXnatSession::download(ctkXnatFile* file, const QString& fileName)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatSession::download(ctkXnatScanResource* scanResource, const QString& fileName)
+void ctkXnatSession::download(ctkXnatResource* resource, const QString& fileName)
 {
   Q_D(ctkXnatSession);
 
-  QString query = scanResource->resourceUri() + "/files";
-  qRestAPI::Parameters parameters;
-  parameters["format"] = "zip";
-  QUuid queryId = d->xnat->download(fileName, query, parameters);
-  d->xnat->sync(queryId);
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatSession::download(ctkXnatAssessorResource* assessorResource, const QString& fileName)
-{
-  Q_D(ctkXnatSession);
-
-  QString query = assessorResource->resourceUri() + "/files";
-  qRestAPI::Parameters parameters;
-  parameters["format"] = "zip";
-  QUuid queryId = d->xnat->download(fileName, query, parameters);
-  d->xnat->sync(queryId);
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatSession::download(ctkXnatReconstructionResource* reconstructionResource, const QString& fileName)
-{
-  Q_D(ctkXnatSession);
-
-  QString query = reconstructionResource->resourceUri() + "/files";
+  QString query = resource->resourceUri() + "/files";
   qRestAPI::Parameters parameters;
   parameters["format"] = "zip";
   QUuid queryId = d->xnat->download(fileName, query, parameters);
