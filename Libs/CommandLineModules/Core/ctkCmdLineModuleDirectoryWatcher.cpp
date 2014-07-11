@@ -22,6 +22,7 @@
 #include "ctkCmdLineModuleDirectoryWatcher_p.h"
 #include "ctkCmdLineModuleManager.h"
 #include "ctkCmdLineModuleConcurrentHelpers.h"
+#include "ctkCmdLineModuleUtils.h"
 #include "ctkException.h"
 
 #include <QObject>
@@ -41,7 +42,7 @@
 
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleDirectoryWatcher::ctkCmdLineModuleDirectoryWatcher(ctkCmdLineModuleManager* moduleManager)
-  : d(new ctkCmdLineModuleDirectoryWatcherPrivate(moduleManager))
+  : d(new ctkCmdLineModuleDirectoryWatcherPrivate(this, moduleManager))
 {
   Q_ASSERT(moduleManager);
 }
@@ -97,12 +98,22 @@ QStringList ctkCmdLineModuleDirectoryWatcher::commandLineModules() const
 
 
 //-----------------------------------------------------------------------------
+void ctkCmdLineModuleDirectoryWatcher::emitErrorDectectedSignal(const QString& msg)
+{
+  emit errorDetected(msg);
+}
+
+
+//-----------------------------------------------------------------------------
 // ctkCmdLineModuleDirectoryWatcherPrivate methods
 
 
 //-----------------------------------------------------------------------------
-ctkCmdLineModuleDirectoryWatcherPrivate::ctkCmdLineModuleDirectoryWatcherPrivate(ctkCmdLineModuleManager* moduleManager)
-: ModuleManager(moduleManager)
+ctkCmdLineModuleDirectoryWatcherPrivate::ctkCmdLineModuleDirectoryWatcherPrivate(
+    ctkCmdLineModuleDirectoryWatcher* d,
+    ctkCmdLineModuleManager* moduleManager)
+: q(d)
+, ModuleManager(moduleManager)
 , FileSystemWatcher(NULL)
 , Debug(false)
 {
@@ -414,6 +425,11 @@ QList<ctkCmdLineModuleReferenceResult> ctkCmdLineModuleDirectoryWatcherPrivate::
       this->MapFileNameToReferenceResult[executables[i]] = refResults[i];
     }
   }
+
+  // Broadcast error messages.
+  QString errorMessages = ctkCmdLineModuleUtils::errorMessagesFromModuleRegistration(refResults, this->ModuleManager->validationMode());
+  q->emitErrorDectectedSignal(errorMessages);
+
   return refResults;
 }
 

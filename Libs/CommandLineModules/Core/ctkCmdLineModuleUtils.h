@@ -28,11 +28,28 @@
 #include "ctkCmdLineModuleReferenceResult.h"
 
 #include <QFuture>
+#include <QString>
 
 struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleUtils
 {
-  static void messageBoxModuleRegistration(const QFuture<ctkCmdLineModuleReferenceResult>& moduleRefsFuture,
-                                           ctkCmdLineModuleManager::ValidationMode validationMode);
+  static QString errorMessagesFromModuleRegistration(
+      const QList<ctkCmdLineModuleReferenceResult>& moduleRefs,
+      ctkCmdLineModuleManager::ValidationMode validationMode
+      );
+
+  static QString errorMessagesFromModuleRegistration(
+      const QFuture<ctkCmdLineModuleReferenceResult>& moduleRefsFuture,
+      ctkCmdLineModuleManager::ValidationMode validationMode
+      );
+
+  static void messageBoxForModuleRegistration(
+      const QString& errorMessages
+      );
+
+  static void messageBoxModuleRegistration(
+      const QFuture<ctkCmdLineModuleReferenceResult>& moduleRefsFuture,
+      ctkCmdLineModuleManager::ValidationMode validationMode
+      );
 };
 
 #endif // CTKCOMMANDLINEMODULEUTILS_H

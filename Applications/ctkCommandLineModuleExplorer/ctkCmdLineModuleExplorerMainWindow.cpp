@@ -335,6 +335,11 @@ void ctkCLModuleExplorerMainWindow::on_actionReload_Modules_triggered()
     urls.push_back(ref.location());
   }
 
+  foreach (ctkCmdLineModuleReference ref, moduleRefs)
+  {
+    this->moduleManager.unregisterModule(ref);
+  }
+
   QFuture<ctkCmdLineModuleReferenceResult> future = QtConcurrent::mapped(urls, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
   future.waitForFinished();
 
