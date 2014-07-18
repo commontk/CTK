@@ -138,7 +138,11 @@ int ctkDoubleRangeSliderPrivate::toInt(double doubleValue)const
   static const double minInt = std::numeric_limits<int>::min();
   static const double maxInt = std::numeric_limits<int>::max();
 #ifndef QT_NO_DEBUG
-  if (tmp < minInt || tmp > maxInt)
+  static const double maxDouble = std::numeric_limits<double>::max();
+  if ( (tmp < minInt || tmp > maxInt) &&
+       // If the value is the min or max double, there is no need
+       // to warn. It is expected that the number is outside of bounds.
+       (doubleValue != -maxDouble && doubleValue != maxDouble) )
     {
     qWarning() << __FUNCTION__ << ": value " << doubleValue
                << " for singleStep " << this->SingleStep
