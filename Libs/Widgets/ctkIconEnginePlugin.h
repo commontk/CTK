@@ -22,7 +22,7 @@
 #define __ctkIconEnginePlugin_h
 
 // Qt includes
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
 # include <QIconEngine>
 # include <QIconEnginePlugin>
 #else
@@ -49,7 +49,7 @@ class ctkIconEnginePrivate;
 ///   Q_EXPORT_PLUGIN2(yourpluginName, ctkIconEnginePlugin)
 class CTK_WIDGETS_EXPORT ctkIconEnginePlugin
 // Can't use QT_VERSION_CHECK macro for Qt 4 moc parsing
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
   : public QIconEnginePlugin
 #else
   : public QIconEnginePluginV2
@@ -60,7 +60,7 @@ public:
   ctkIconEnginePlugin(QObject* parent = 0);
   virtual ~ctkIconEnginePlugin();
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= 0x050000
   virtual QIconEngine* create(const QString& filename=QString());
 #else
   virtual QIconEngineV2* create(const QString& filename=QString());
