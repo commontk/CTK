@@ -106,7 +106,7 @@ qint64 ctkCmdLineModuleBackendXMLChecker::timeStamp(const QUrl & /*location*/) c
 
 
 //----------------------------------------------------------------------------
-QByteArray ctkCmdLineModuleBackendXMLChecker::rawXmlDescription(const QUrl& location)
+QByteArray ctkCmdLineModuleBackendXMLChecker::rawXmlDescription(const QUrl& location, int /*timeout*/)
 {
   if (location.isValid())
   {

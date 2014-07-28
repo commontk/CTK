@@ -24,7 +24,7 @@
 
 #include "ctkCommandLineModulesCoreExport.h"
 
-#include "ctkCmdLineModuleReference.h"
+#include "ctkCmdLineModuleReferenceResult.h"
 
 class ctkCmdLineModuleManager;
 
@@ -38,11 +38,11 @@ class CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleConcurrentRegister
 
 public:
 
-  typedef ctkCmdLineModuleReference result_type;
+  typedef ctkCmdLineModuleReferenceResult result_type;
 
   ctkCmdLineModuleConcurrentRegister(ctkCmdLineModuleManager* manager, bool debug = false);
-  ctkCmdLineModuleReference operator()(const QString& moduleLocation);
-  ctkCmdLineModuleReference operator()(const QUrl& moduleUrl);
+  result_type operator()(const QString& moduleLocation);
+  result_type operator()(const QUrl& moduleUrl);
 
 private:
 

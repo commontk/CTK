@@ -22,10 +22,6 @@
 #include "ctkCmdLineModuleExplorerUtils.h"
 
 #include <QPainter>
-#include <QObject>
-#include <QWidget>
-#include <QApplication>
-#include <QMessageBox>
 
 QPixmap ctkCmdLineModuleExplorerUtils::createIconOverlay(const QPixmap &base, const QPixmap &overlay)
 {
@@ -37,32 +33,4 @@ QPixmap ctkCmdLineModuleExplorerUtils::createIconOverlay(const QPixmap &base, co
   painter.drawPixmap(base.width()/2, base.height()/2,
                      overlay.scaled(base.width()/2, base.height()/2, Qt::KeepAspectRatio));
   return result;
-}
-
-void ctkCmdLineModuleExplorerUtils:: messageBoxModuleRegistration(const QStringList& modulePaths,
-                                                                 const QList<ctkCmdLineModuleReference>& moduleRefs,
-                                                                 ctkCmdLineModuleManager::ValidationMode validationMode)
-{
-  Q_ASSERT(modulePaths.size() == moduleRefs.size());
-
-  QString errorMsg;
-  for(int i = 0; i < modulePaths.size(); ++i)
-  {
-    if (!moduleRefs.at(i))
-    {
-      errorMsg += QObject::tr("Failed to register ") + modulePaths.at(i) + "\n\n";
-    }
-    else if (!moduleRefs.at(i).xmlValidationErrorString().isEmpty() &&
-             validationMode == ctkCmdLineModuleManager::STRICT_VALIDATION)
-    {
-      errorMsg += QObject::tr("Failed to register ") + modulePaths.at(i) + ":\n" + moduleRefs.at(i).xmlValidationErrorString() + "\n\n";
-    }
-  }
-
-  if (!errorMsg.isEmpty())
-  {
-    QWidget* widget = QApplication::activeModalWidget();
-    if (widget == NULL) widget = QApplication::activeWindow();
-    QMessageBox::critical(widget, QObject::tr("Failed to register modules"), errorMsg);
-  }
 }

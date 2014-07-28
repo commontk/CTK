@@ -27,9 +27,7 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
-class ctkXnatConnection;
 class ctkXnatExperimentPrivate;
-class ctkXnatSubject;
 
 /**
  * @ingroup XNAT_Core

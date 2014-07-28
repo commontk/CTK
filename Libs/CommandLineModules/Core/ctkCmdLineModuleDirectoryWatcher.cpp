@@ -22,6 +22,7 @@
 #include "ctkCmdLineModuleDirectoryWatcher_p.h"
 #include "ctkCmdLineModuleManager.h"
 #include "ctkCmdLineModuleConcurrentHelpers.h"
+#include "ctkCmdLineModuleUtils.h"
 #include "ctkException.h"
 
 #include <QObject>
@@ -41,7 +42,7 @@
 
 //-----------------------------------------------------------------------------
 ctkCmdLineModuleDirectoryWatcher::ctkCmdLineModuleDirectoryWatcher(ctkCmdLineModuleManager* moduleManager)
-  : d(new ctkCmdLineModuleDirectoryWatcherPrivate(moduleManager))
+  : d(new ctkCmdLineModuleDirectoryWatcherPrivate(this, moduleManager))
 {
   Q_ASSERT(moduleManager);
 }
@@ -97,12 +98,22 @@ QStringList ctkCmdLineModuleDirectoryWatcher::commandLineModules() const
 
 
 //-----------------------------------------------------------------------------
+void ctkCmdLineModuleDirectoryWatcher::emitErrorDectectedSignal(const QString& msg)
+{
+  emit errorDetected(msg);
+}
+
+
+//-----------------------------------------------------------------------------
 // ctkCmdLineModuleDirectoryWatcherPrivate methods
 
 
 //-----------------------------------------------------------------------------
-ctkCmdLineModuleDirectoryWatcherPrivate::ctkCmdLineModuleDirectoryWatcherPrivate(ctkCmdLineModuleManager* moduleManager)
-: ModuleManager(moduleManager)
+ctkCmdLineModuleDirectoryWatcherPrivate::ctkCmdLineModuleDirectoryWatcherPrivate(
+    ctkCmdLineModuleDirectoryWatcher* d,
+    ctkCmdLineModuleManager* moduleManager)
+: q(d)
+, ModuleManager(moduleManager)
 , FileSystemWatcher(NULL)
 , Debug(false)
 {
@@ -132,7 +143,7 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::setDirectories(const QStringList& 
 {
   QStringList validDirectories = this->filterInvalidDirectories(directories);
   this->setModules(validDirectories);
-  this->updateWatchedPaths(validDirectories, this->MapFileNameToReference.keys());
+  this->updateWatchedPaths(validDirectories, this->MapFileNameToReferenceResult.keys());
 }
 
 
@@ -169,20 +180,20 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::setAdditionalModules(const QString
   QStringList filteredAdditionalModules = this->filterFilesNotInCurrentDirectories(this->AdditionalModules);
 
   this->unloadModules(filteredAdditionalModules);
-  QList<ctkCmdLineModuleReference> refs = this->loadModules(filteredFileNames);
+  QList<ctkCmdLineModuleReferenceResult> refs = this->loadModules(filteredFileNames);
 
   QStringList validFileNames;
 
   for (int i = 0; i < refs.size(); ++i)
   {
-    if (refs[i])
+    if (refs[i].m_Reference)
     {
-      validFileNames << refs[i].location().toLocalFile();
+      validFileNames << refs[i].m_Reference.location().toLocalFile();
     }
   }
 
   this->AdditionalModules = validFileNames;
-  this->updateWatchedPaths(this->directories(), this->MapFileNameToReference.keys());
+  this->updateWatchedPaths(this->directories(), this->MapFileNameToReferenceResult.keys());
 
   if (this->Debug) qDebug() << "ctkCmdLineModuleDirectoryWatcherPrivate::setAdditionalModules watching:" << this->AdditionalModules;
 }
@@ -296,7 +307,7 @@ QStringList ctkCmdLineModuleDirectoryWatcherPrivate::extractCurrentlyWatchedFile
   QDir dir(path);
   if (dir.exists())
   {
-    QList<QString> keys = this->MapFileNameToReference.keys();
+    QList<QString> keys = this->MapFileNameToReferenceResult.keys();
 
     QString fileName;
     foreach(fileName, keys)
@@ -397,24 +408,29 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::updateModules(const QString &direc
     currentlyWatchedDirectories << directory;
   }
   this->setModules(currentlyWatchedDirectories);
-  this->updateWatchedPaths(currentlyWatchedDirectories, this->MapFileNameToReference.keys());
+  this->updateWatchedPaths(currentlyWatchedDirectories, this->MapFileNameToReferenceResult.keys());
 }
 
 
 //-----------------------------------------------------------------------------
-QList<ctkCmdLineModuleReference> ctkCmdLineModuleDirectoryWatcherPrivate::loadModules(const QStringList& executables)
+QList<ctkCmdLineModuleReferenceResult> ctkCmdLineModuleDirectoryWatcherPrivate::loadModules(const QStringList& executables)
 {
-  QList<ctkCmdLineModuleReference> refs = QtConcurrent::blockingMapped(executables,
-                                                                       ctkCmdLineModuleConcurrentRegister(this->ModuleManager, this->Debug));
+  QList<ctkCmdLineModuleReferenceResult> refResults = QtConcurrent::blockingMapped(executables,
+                                                                                   ctkCmdLineModuleConcurrentRegister(this->ModuleManager, this->Debug));
 
   for (int i = 0; i < executables.size(); ++i)
   {
-    if (refs[i])
+    if (refResults[i].m_Reference)
     {
-      this->MapFileNameToReference[executables[i]] = refs[i];
+      this->MapFileNameToReferenceResult[executables[i]] = refResults[i];
     }
   }
-  return refs;
+
+  // Broadcast error messages.
+  QString errorMessages = ctkCmdLineModuleUtils::errorMessagesFromModuleRegistration(refResults, this->ModuleManager->validationMode());
+  q->emitErrorDectectedSignal(errorMessages);
+
+  return refResults;
 }
 
 
@@ -424,7 +440,7 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::unloadModules(const QStringList& e
   QtConcurrent::blockingMapped(executables, ctkCmdLineModuleConcurrentUnRegister(this->ModuleManager));
   foreach(QString executable, executables)
   {
-    this->MapFileNameToReference.remove(executable);
+    this->MapFileNameToReferenceResult.remove(executable);
   }
 }
 
@@ -432,14 +448,14 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::unloadModules(const QStringList& e
 //-----------------------------------------------------------------------------
 void ctkCmdLineModuleDirectoryWatcherPrivate::onFileChanged(const QString& path)
 {
-  ctkCmdLineModuleReference ref = this->loadModules(QStringList() << path).front();
-  if (ref)
+  ctkCmdLineModuleReferenceResult refResult = this->loadModules(QStringList() << path).front();
+  if (refResult.m_Reference)
   {
     if (this->Debug) qDebug() << "Reloaded " << path;
   }
   else
   {
-    if (this->Debug) qDebug() << "ctkCmdLineModuleDirectoryWatcherPrivate::onFileChanged(" << path << "): failed to load module";
+    if (this->Debug) qDebug() << "ctkCmdLineModuleDirectoryWatcherPrivate::onFileChanged(" << path << "): failed to load module due to " << refResult.m_RuntimeError;
   }
 }
 

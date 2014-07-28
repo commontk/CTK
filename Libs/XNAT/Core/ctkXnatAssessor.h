@@ -19,44 +19,37 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatScanResource_h
-#define ctkXnatScanResource_h
+#ifndef ctkXnatAssessor_h
+#define ctkXnatAssessor_h
 
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
-class ctkXnatConnection;
-class ctkXnatScan;
-class ctkXnatScanResourcePrivate;
+class ctkXnatAssessorPrivate;
 
 /**
  * @ingroup XNAT_Core
  */
-class CTK_XNAT_CORE_EXPORT ctkXnatScanResource : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatAssessor : public ctkXnatObject
 {
 
 public:
 
-  ctkXnatScanResource(ctkXnatObject* parent = 0,
-                      const QString& schemaType = ctkXnatDefaultSchemaTypes::XSI_SCAN_RESOURCE);
+  ctkXnatAssessor(ctkXnatObject* parent = 0, const QString& schemaType = ctkXnatDefaultSchemaTypes::XSI_ASSESSOR);
 
-  virtual ~ctkXnatScanResource();
+  virtual ~ctkXnatAssessor();
 
-  QString resourceUri() const;
+  virtual QString resourceUri() const;
 
   void reset();
 
-  void download(const QString& filename);
-
 private:
 
-  friend class qRestResult;
   virtual void fetchImpl();
 
-  Q_DECLARE_PRIVATE(ctkXnatScanResource)
-
+  Q_DECLARE_PRIVATE(ctkXnatAssessor)
 };
 
 #endif

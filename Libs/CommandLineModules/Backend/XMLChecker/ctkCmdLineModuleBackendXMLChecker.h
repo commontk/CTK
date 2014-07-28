@@ -70,7 +70,7 @@ public:
    * This method always calls the executable with a \c &ndash;&ndash;xml argument and returns
    * the complete data emitted on the standard output channel.
    */
-  virtual QByteArray rawXmlDescription(const QUrl& location);
+  virtual QByteArray rawXmlDescription(const QUrl& location, int timeout);
 
   /**
    * @brief Run a front-end for this module in a local process.

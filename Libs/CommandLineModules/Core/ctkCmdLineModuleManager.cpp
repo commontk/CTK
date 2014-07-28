@@ -1,33 +1,37 @@
 /*=============================================================================
-  
+
   Library: CTK
-  
+
   Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
-    
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  
+
 =============================================================================*/
 
 #include "ctkCmdLineModuleManager.h"
 
 #include "ctkCmdLineModuleBackend.h"
 #include "ctkCmdLineModuleFrontend.h"
+#include "ctkCmdLineModuleTimeoutException.h"
 #include "ctkCmdLineModuleCache_p.h"
 #include "ctkCmdLineModuleFuture.h"
 #include "ctkCmdLineModuleXmlValidator.h"
 #include "ctkCmdLineModuleReference.h"
 #include "ctkCmdLineModuleReference_p.h"
+#include "ctkCmdLineModuleRunException.h"
+#include "ctkCmdLineModuleXmlException.h"
+#include "ctkCmdLineModuleTimeoutException.h"
 
 #include <ctkException.h>
 
@@ -39,8 +43,10 @@
 #include <QHash>
 #include <QList>
 #include <QMutex>
-
+#include <QDebug>
 #include <QFuture>
+
+#include <algorithm>
 
 #if (QT_VERSION < QT_VERSION_CHECK(4,7,0))
 extern int qHash(const QUrl& url);
@@ -50,7 +56,8 @@ extern int qHash(const QUrl& url);
 struct ctkCmdLineModuleManagerPrivate
 {
   ctkCmdLineModuleManagerPrivate(ctkCmdLineModuleManager::ValidationMode mode, const QString& cacheDir)
-    : ValidationMode(mode)
+    : XmlTimeOut(30000)
+    , ValidationMode(mode)
   {
     QFileInfo fileInfo(cacheDir);
     if (!fileInfo.exists())
@@ -84,6 +91,7 @@ struct ctkCmdLineModuleManagerPrivate
   QHash<QString, ctkCmdLineModuleBackend*> SchemeToBackend;
   QHash<QUrl, ctkCmdLineModuleReference> LocationToRef;
   QScopedPointer<ctkCmdLineModuleCache> ModuleCache;
+  int XmlTimeOut;
 
   ctkCmdLineModuleManager::ValidationMode ValidationMode;
 };
@@ -114,6 +122,18 @@ void ctkCmdLineModuleManager::setValidationMode(const ValidationMode& mode)
 
 
 //----------------------------------------------------------------------------
+void ctkCmdLineModuleManager::setTimeOutForXMLRetrieval(int xmlTimeout)
+{
+  d->XmlTimeOut = xmlTimeout;
+}
+
+//----------------------------------------------------------------------------
+int ctkCmdLineModuleManager::timeOutForXMLRetrieval() const
+{
+  return d->XmlTimeOut;
+}
+
+//----------------------------------------------------------------------------
 void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 {
   QMutexLocker lock(&d->Mutex);
@@ -135,6 +155,23 @@ void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
   {
     d->SchemeToBackend[scheme] = backend;
   }
+}
+
+//----------------------------------------------------------------------------
+ctkCmdLineModuleBackend*ctkCmdLineModuleManager::backend(const QString& scheme) const
+{
+  QHash<QString, ctkCmdLineModuleBackend*>::ConstIterator iter =
+      d->SchemeToBackend.find(scheme);
+  return iter == d->SchemeToBackend.end() ? NULL : iter.value();
+}
+
+//----------------------------------------------------------------------------
+QList<ctkCmdLineModuleBackend*> ctkCmdLineModuleManager::backends() const
+{
+  QList<ctkCmdLineModuleBackend*> result = d->SchemeToBackend.values();
+  qSort(result);
+  result.erase(std::unique(result.begin(), result.end()), result.end());
+  return result;
 }
 
 //----------------------------------------------------------------------------
@@ -160,6 +197,12 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
   bool fromCache = false;
   qint64 newTimeStamp = 0;
   qint64 cacheTimeStamp = 0;
+  int timeout = backend->timeOutForXmlRetrieval();
+  if (timeout == 0)
+  {
+    timeout = d->XmlTimeOut;
+  }
+
   if (d->ModuleCache)
   {
     newTimeStamp = backend->timeStamp(location);
@@ -170,7 +213,13 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
       // newly fetch the XML description
       try
       {
-        xml = backend->rawXmlDescription(location);
+        xml = backend->rawXmlDescription(location, timeout);
+      }
+      catch (const ctkCmdLineModuleTimeoutException&)
+      {
+        // in case of a time-out, do not cache it as a failed attempt
+        // by recording an empty QByteArray in the cache
+        throw;
       }
       catch (...)
       {
@@ -188,7 +237,20 @@ ctkCmdLineModuleManager::registerModule(const QUrl &location)
   }
   else
   {
-    xml = backend->rawXmlDescription(location);
+    try
+    {
+      xml = backend->rawXmlDescription(location, timeout);
+    }
+    catch (const ctkCmdLineModuleRunException& e)
+    {
+      qDebug() << "Extracting XML from " << e.location().toString() << " failed with errorCode " << e.errorCode() << " and return string " << e.errorString();
+      throw;
+    }
+    catch (const ctkException& e)
+    {
+      qDebug() << e.what();
+      throw;
+    }
   }
 
   if (xml.isEmpty())
@@ -288,18 +350,6 @@ void ctkCmdLineModuleManager::unregisterModule(const ctkCmdLineModuleReference& 
 void ctkCmdLineModuleManager::clearCache()
 {
   d->ModuleCache->clearCache();
-}
-
-
-//----------------------------------------------------------------------------
-void ctkCmdLineModuleManager::reloadModules()
-{
-  foreach(const QUrl &location, d->LocationToRef.keys())
-  {
-    ctkCmdLineModuleReference ref = d->LocationToRef[location];
-    this->unregisterModule(ref);
-    this->registerModule(location);
-  }
 }
 
 

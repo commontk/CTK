@@ -68,9 +68,9 @@ public:
 
 private:
 
-  const QUrl Location;
-  const int ErrorCode;
-  const QString ErrorString;
+  QUrl Location;
+  int ErrorCode;
+  QString ErrorString;
 
 };
 

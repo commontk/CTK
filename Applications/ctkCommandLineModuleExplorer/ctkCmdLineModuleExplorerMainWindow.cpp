@@ -28,7 +28,7 @@
 #include "ctkCmdLineModuleExplorerTabList.h"
 #include "ctkCmdLineModuleExplorerProgressWidget.h"
 #include "ctkCmdLineModuleExplorerConstants.h"
-#include "ctkCmdLineModuleExplorerUtils.h"
+#include "ctkCmdLineModuleUtils.h"
 
 #include <ctkCmdLineModuleManager.h>
 #include <ctkCmdLineModuleConcurrentHelpers.h>
@@ -38,6 +38,7 @@
 #include <ctkCmdLineModuleBackendLocalProcess.h>
 #include <ctkCmdLineModuleBackendFunctionPointer.h>
 #include <ctkCmdLineModuleBackendXMLChecker.h>
+#include <ctkCmdLineModuleReferenceResult.h>
 #include <ctkException.h>
 #include <ctkCmdLineModuleXmlException.h>
 
@@ -78,6 +79,13 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   }
   QThreadPool::globalInstance()->setMaxThreadCount(settings.value(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES,
                                                                   QThread::idealThreadCount()).toInt());
+  if (!settings.contains(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS))
+  {
+    settings.setValue(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS, QVariant(30));
+  }
+  moduleManager.setTimeOutForXMLRetrieval(
+        settings.value(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS, QVariant(30)
+                       ).toInt() * 1000);
 
   // Frontends
   moduleFrontendFactories << new ctkCmdLineModuleFrontendFactoryQtGui;
@@ -138,8 +146,12 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   }
 
   // Register persistent modules
-  QFuture<void> future = QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
-                                              ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
+  QFuture<ctkCmdLineModuleReferenceResult> future = QtConcurrent::mapped(settings.value(ctkCmdLineModuleExplorerConstants::KEY_REGISTERED_MODULES).toStringList(),
+                                                                         ctkCmdLineModuleConcurrentRegister(&moduleManager, true));
+  future.waitForFinished();
+
+  ctkCmdLineModuleUtils::messageBoxModuleRegistration(future,
+                                                      moduleManager.validationMode());
 
   // Start watching directories
   directoryWatcher.setDebug(true);
@@ -148,8 +160,6 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   moduleTabActivated(NULL);
 
   pollPauseTimer.start();
-
-  future.waitForFinished();
 }
 
 
@@ -264,7 +274,7 @@ void ctkCLModuleExplorerMainWindow::on_actionOptions_triggered()
     settingsDialog = new ctkSettingsDialog(this);
     settings.restoreState(settingsDialog->objectName(), *settingsDialog);
     settingsDialog->setSettings(&settings);
-    ctkSettingsPanel* generalModulePanel = new ctkCmdLineModuleExplorerGeneralModuleSettings();
+    ctkSettingsPanel* generalModulePanel = new ctkCmdLineModuleExplorerGeneralModuleSettings(&moduleManager);
     settingsDialog->addPanel(generalModulePanel);
     settingsDialog->addPanel(new ctkCmdLineModuleExplorerDirectorySettings(&directoryWatcher), generalModulePanel);
     settingsDialog->addPanel(new ctkCmdLineModuleExplorerModulesSettings(&moduleManager), generalModulePanel);
@@ -280,12 +290,14 @@ void ctkCLModuleExplorerMainWindow::on_actionLoad_triggered()
   QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Load modules..."));
 
   this->setCursor(Qt::BusyCursor);
-  QFuture<ctkCmdLineModuleReference> future = QtConcurrent::mapped(fileNames, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
+
+  QFuture<ctkCmdLineModuleReferenceResult> future = QtConcurrent::mapped(fileNames, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
   future.waitForFinished();
+
   this->unsetCursor();
 
-  ctkCmdLineModuleExplorerUtils::messageBoxModuleRegistration(fileNames, future.results(),
-                                                              this->moduleManager.validationMode());
+  ctkCmdLineModuleUtils::messageBoxModuleRegistration(future,
+                                                      this->moduleManager.validationMode());
 }
 
 
@@ -313,7 +325,28 @@ void ctkCLModuleExplorerMainWindow::on_actionClear_Cache_triggered()
 //-----------------------------------------------------------------------------
 void ctkCLModuleExplorerMainWindow::on_actionReload_Modules_triggered()
 {
-  moduleManager.reloadModules();
+  this->setCursor(Qt::BusyCursor);
+
+  QList<QUrl> urls;
+
+  QList<ctkCmdLineModuleReference> moduleRefs = this->moduleManager.moduleReferences();
+  foreach (ctkCmdLineModuleReference ref, moduleRefs)
+  {
+    urls.push_back(ref.location());
+  }
+
+  foreach (ctkCmdLineModuleReference ref, moduleRefs)
+  {
+    this->moduleManager.unregisterModule(ref);
+  }
+
+  QFuture<ctkCmdLineModuleReferenceResult> future = QtConcurrent::mapped(urls, ctkCmdLineModuleConcurrentRegister(&this->moduleManager));
+  future.waitForFinished();
+
+  this->unsetCursor();
+
+  ctkCmdLineModuleUtils::messageBoxModuleRegistration(future,
+                                                      this->moduleManager.validationMode());
 }
 
 

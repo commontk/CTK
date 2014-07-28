@@ -76,7 +76,7 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
     QString displayData = xnatObject->name();
     if (displayData.isEmpty())
     {
-      displayData = xnatObject->id();
+      displayData = xnatObject->property("label");
     }
     return displayData;
   }
@@ -236,6 +236,13 @@ void ctkXnatTreeModel::addDataModel(ctkXnatDataModel* dataModel)
 {
   Q_D(ctkXnatTreeModel);
   d->m_RootItem->appendChild(new ctkXnatTreeItem(dataModel, d->m_RootItem.data()));
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatTreeModel::removeDataModel(ctkXnatDataModel* dataModel)
+{
+  Q_D(ctkXnatTreeModel);
+  d->m_RootItem->remove(dataModel);
 }
 
 //----------------------------------------------------------------------------

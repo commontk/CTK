@@ -24,7 +24,6 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatReconstructionFolder.h"
-#include "ctkXnatReconstructionResource.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
 

@@ -246,7 +246,13 @@
     <property name="nameFilters">
       <stringlist>
       <xsl:for-each select="tokenize(@fileExtensions, ',')">
-        <string><xsl:value-of select="normalize-space(.)"/></string>
+        <string>
+        <xsl:choose>
+          <xsl:when test="starts-with(normalize-space(.), '.')">*</xsl:when>
+          <xsl:otherwise>*.</xsl:otherwise>
+        </xsl:choose>
+        <xsl:value-of select="normalize-space(.)"/>
+        </string>
       </xsl:for-each>
       </stringlist>
     </property>

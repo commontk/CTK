@@ -19,80 +19,59 @@
 
 =============================================================================*/
 
-#include "ctkXnatScanResource.h"
+#include "ctkXnatAssessor.h"
 
 #include "ctkXnatSession.h"
+#include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
-#include "ctkXnatScan.h"
-#include "ctkXnatFile.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
 
 //----------------------------------------------------------------------------
-class ctkXnatScanResourcePrivate : public ctkXnatObjectPrivate
+class ctkXnatAssessorPrivate : public ctkXnatObjectPrivate
 {
 public:
 
-  ctkXnatScanResourcePrivate()
+  ctkXnatAssessorPrivate()
   : ctkXnatObjectPrivate()
   {
   }
 
   void reset()
   {
-//    uri.clear();
+    uri.clear();
   }
 
-//  QString uri;
+  QString uri;
 };
 
 
 //----------------------------------------------------------------------------
-ctkXnatScanResource::ctkXnatScanResource(ctkXnatObject* parent, const QString& schemaType)
-: ctkXnatObject(*new ctkXnatScanResourcePrivate(), parent, schemaType)
+ctkXnatAssessor::ctkXnatAssessor(ctkXnatObject* parent, const QString& schemaType)
+: ctkXnatObject(*new ctkXnatAssessorPrivate(), parent, schemaType)
 {
 }
 
 //----------------------------------------------------------------------------
-ctkXnatScanResource::~ctkXnatScanResource()
+ctkXnatAssessor::~ctkXnatAssessor()
 {
 }
 
 //----------------------------------------------------------------------------
-QString ctkXnatScanResource::resourceUri() const
+QString ctkXnatAssessor::resourceUri() const
 {
-  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("label"));
+  return QString("%1/%2").arg(parent()->resourceUri(), this->id());
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatScanResource::reset()
+void ctkXnatAssessor::reset()
 {
   ctkXnatObject::reset();
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatScanResource::fetchImpl()
+void ctkXnatAssessor::fetchImpl()
 {
-  QString scanResourceFilesUri = this->resourceUri() + "/files";
-  ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(scanResourceFilesUri);
-
-  QList<ctkXnatObject*> files = session->httpResults(queryId,
-                                                     ctkXnatDefaultSchemaTypes::XSI_FILE);
-
-  foreach (ctkXnatObject* file, files)
-  {
-    QString label = file->property("Name");
-    if (!label.isEmpty())
-    {
-      file->setProperty("ID", label);
-    }
-    this->add(file);
-  }
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatScanResource::download(const QString& filename)
-{
-  this->session()->download(this, filename);
+  this->fetchResources();
+  this->fetchResources("/out/resources");
 }

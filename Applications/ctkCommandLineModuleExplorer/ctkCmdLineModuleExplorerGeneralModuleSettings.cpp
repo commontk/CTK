@@ -20,21 +20,28 @@
 =============================================================================*/
 
 #include "ctkCmdLineModuleExplorerGeneralModuleSettings.h"
+#include "ctkCmdLineModuleManager.h"
 #include "ctkCmdLineModuleExplorerConstants.h"
 
 #include <QThreadPool>
 #include <QSettings>
 
-ctkCmdLineModuleExplorerGeneralModuleSettings::ctkCmdLineModuleExplorerGeneralModuleSettings()
+ctkCmdLineModuleExplorerGeneralModuleSettings::ctkCmdLineModuleExplorerGeneralModuleSettings(ctkCmdLineModuleManager* cmdLineModuleManager)
+  : CmdLineModuleManager(cmdLineModuleManager)
 {
   this->setupUi(this);
 
   this->registerProperty(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES,
                          this->MaxParallelModules, "value", SIGNAL(valueChanged(int)));
+  this->registerProperty(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS,
+                         this->XmlTimeout, "value", SIGNAL(valueChanged(int)));
 }
 
 void ctkCmdLineModuleExplorerGeneralModuleSettings::applySettings()
 {
   int maxParallelModules = this->propertyValue(ctkCmdLineModuleExplorerConstants::KEY_MAX_PARALLEL_MODULES).toInt();
   QThreadPool::globalInstance()->setMaxThreadCount(maxParallelModules);
+
+  int timeout = this->propertyValue(ctkCmdLineModuleExplorerConstants::KEY_XML_TIMEOUT_SECONDS).toInt();
+  this->CmdLineModuleManager->setTimeOutForXMLRetrieval(timeout*1000);
 }

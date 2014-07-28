@@ -47,7 +47,6 @@ if(NOT DEFINED Log4Qt_DIR)
     PREFIX ${proj}${ep_suffix}
     ${location_args}
     INSTALL_COMMAND ""
-    UPDATE_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}

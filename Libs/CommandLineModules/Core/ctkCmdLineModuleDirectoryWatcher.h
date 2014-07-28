@@ -23,8 +23,6 @@
 
 #include <ctkCommandLineModulesCoreExport.h>
 
-#include "ctkCmdLineModuleReference.h"
-
 #include <QObject>
 #include <QScopedPointer>
 
@@ -74,7 +72,7 @@ public:
 
   /**
    * \brief Set the watcher into debug mode, for more output.
-   * \param debug if true, you get more output, otherwise, less output.
+   * \param debug if true, you get more output on the console, otherwise, less output.
    */
   void setDebug(bool debug);
 
@@ -108,6 +106,18 @@ public:
    * currently being watched.
    */
   QStringList commandLineModules() const;
+
+  /**
+   * \brief public method to emit the errorDetected signal.
+   */
+  void emitErrorDectectedSignal(const QString&);
+
+Q_SIGNALS:
+
+  /**
+   * \brief Signals that an error was detected, and the caller should raise an error to the user.
+   */
+  void errorDetected(const QString&);
 
 private:
 

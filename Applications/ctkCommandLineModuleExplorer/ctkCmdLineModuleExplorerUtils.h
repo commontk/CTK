@@ -22,19 +22,11 @@
 #ifndef CTKCOMMANDLINEMODULEEXPLORERUTILS_H
 #define CTKCOMMANDLINEMODULEEXPLORERUTILS_H
 
-#include "ctkCmdLineModuleManager.h"
-
 #include <QPixmap>
 
 struct ctkCmdLineModuleExplorerUtils
 {
-
   static QPixmap createIconOverlay(const QPixmap& base, const QPixmap& overlay);
-
-  static void messageBoxModuleRegistration(const QStringList& modulePaths,
-                                           const QList<ctkCmdLineModuleReference>& moduleRefs,
-                                           ctkCmdLineModuleManager::ValidationMode validationMode);
-
 };
 
 #endif // CTKCOMMANDLINEMODULEEXPLORERUTILS_H

@@ -19,44 +19,37 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatReconstructionResource_h
-#define ctkXnatReconstructionResource_h
+#ifndef ctkXnatAssessorFolder_h
+#define ctkXnatAssessorFolder_h
 
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
-#include "ctkXnatDefaultSchemaTypes.h"
 
-class ctkXnatConnection;
-class ctkXnatReconstructionResourcePrivate;
-class ctkXnatReconstruction;
+class ctkXnatAssessorFolderPrivate;
 
 /**
  * @ingroup XNAT_Core
  */
-class CTK_XNAT_CORE_EXPORT ctkXnatReconstructionResource : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatAssessorFolder : public ctkXnatObject
 {
 
 public:
 
-  ctkXnatReconstructionResource(ctkXnatObject* parent = 0,
-                                const QString& schemaType = ctkXnatDefaultSchemaTypes::XSI_RECONSTRUCTION_RESOURCE);
+  ctkXnatAssessorFolder(ctkXnatObject* parent = NULL);
 
-  virtual ~ctkXnatReconstructionResource();
+  virtual ~ctkXnatAssessorFolder();
 
   virtual QString resourceUri() const;
 
   void reset();
-
-  void download(const QString& filename);
 
 private:
 
   friend class qRestResult;
   virtual void fetchImpl();
 
-  Q_DECLARE_PRIVATE(ctkXnatReconstructionResource)
-
+  Q_DECLARE_PRIVATE(ctkXnatAssessorFolder)
 };
 
 #endif
