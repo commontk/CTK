@@ -1629,7 +1629,6 @@ bool ctkDICOMDatabase::tagCacheExists()
   // try to open the database if it's not already open
   if ( !(d->TagCacheDatabase.isOpen()) )
     {
-    qDebug() << "TagCacheDatabase not open\n";
     d->TagCacheDatabase = QSqlDatabase::addDatabase("QSQLITE", d->Database.connectionName() + "TagCache");
     d->TagCacheDatabase.setDatabaseName(d->TagCacheDatabaseFilename);
     if ( !(d->TagCacheDatabase.open()) )
@@ -1652,7 +1651,6 @@ bool ctkDICOMDatabase::tagCacheExists()
   bool success = d->loggedExec(cacheExists);
   if (success)
     {
-    qDebug() << "TagCacheDatabase verified!\n";
     d->TagCacheVerified = true;
     return true;
     }
