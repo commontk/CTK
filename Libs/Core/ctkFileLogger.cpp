@@ -42,7 +42,7 @@ public:
 
   bool Enabled;
   QString FilePath;
-//  int NumberOfFilesToKeep;
+  int NumberOfFilesToKeep;
 };
 
 // --------------------------------------------------------------------------
@@ -50,7 +50,7 @@ ctkFileLoggerPrivate::ctkFileLoggerPrivate(ctkFileLogger& object)
   : q_ptr(&object)
 {
   this->Enabled = true;
-//  this->NumberOfFilesToKeep = 10;
+  this->NumberOfFilesToKeep = 10;
 }
 
 // --------------------------------------------------------------------------
@@ -108,19 +108,19 @@ void ctkFileLogger::setFilePath(const QString& filePath)
   d->FilePath = filePath;
 }
 
-//// --------------------------------------------------------------------------
-//int ctkFileLogger::numberOfFilesToKeep()const
-//{
-//  Q_D(const ctkFileLogger);
-//  return d->NumberOfFilesToKeep;
-//}
+// --------------------------------------------------------------------------
+int ctkFileLogger::numberOfFilesToKeep()const
+{
+  Q_D(const ctkFileLogger);
+  return d->NumberOfFilesToKeep;
+}
 
-//// --------------------------------------------------------------------------
-//void ctkFileLogger::setNumberOfFilesToKeep(int value)
-//{
-//  Q_D(ctkFileLogger);
-//  d->NumberOfFilesToKeep = value;
-//}
+// --------------------------------------------------------------------------
+void ctkFileLogger::setNumberOfFilesToKeep(int value)
+{
+  Q_D(ctkFileLogger);
+  d->NumberOfFilesToKeep = value;
+}
 
 // --------------------------------------------------------------------------
 void ctkFileLogger::logMessage(const QString& msg)

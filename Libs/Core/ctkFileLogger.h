@@ -50,8 +50,8 @@ public:
   QString filePath()const;
   void setFilePath(const QString& filePath);
 
-//  int numberOfFilesToKeep()const;
-//  void setNumberOfFilesToKeep(int value);
+  int numberOfFilesToKeep()const;
+  void setNumberOfFilesToKeep(int value);
 
 public Q_SLOTS:
   void logMessage(const QString& msg);

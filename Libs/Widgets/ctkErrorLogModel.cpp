@@ -519,6 +519,20 @@ void ctkErrorLogModel::setFilePath(const QString& filePath)
 }
 
 // --------------------------------------------------------------------------
+int ctkErrorLogModel::numberOfFilesToKeep()const
+{
+  Q_D(const ctkErrorLogModel);
+  return d->FileLogger.numberOfFilesToKeep();
+}
+
+// --------------------------------------------------------------------------
+void ctkErrorLogModel::setNumberOfFilesToKeep(int value)
+{
+  Q_D(ctkErrorLogModel);
+  return d->FileLogger.setNumberOfFilesToKeep(value);
+}
+
+// --------------------------------------------------------------------------
 bool ctkErrorLogModel::fileLoggingEnabled()const
 {
   Q_D(const ctkErrorLogModel);
