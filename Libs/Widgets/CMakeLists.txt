@@ -94,8 +94,12 @@ set(KIT_SRCS
   ctkIconEnginePlugin.h
   ctkLanguageComboBox.cpp
   ctkLanguageComboBox.h
+  ctkLayoutFactory.cpp
+  ctkLayoutFactory.h
   ctkLayoutManager.cpp
   ctkLayoutManager.h
+  ctkLayoutViewFactory.cpp
+  ctkLayoutViewFactory.h
   ctkMaterialPropertyPreviewLabel.cpp
   ctkMaterialPropertyPreviewLabel.h
   ctkMaterialPropertyWidget.cpp
@@ -147,8 +151,6 @@ set(KIT_SRCS
   ctkSettingsPanel.h
   ctkSignalMapper.cpp
   ctkSignalMapper.h
-  ctkSimpleLayoutManager.cpp
-  ctkSimpleLayoutManager.h
   ctkSizeGrip.cpp
   ctkSizeGrip.h
   ctkSliderWidget.cpp
@@ -237,7 +239,9 @@ set(KIT_MOC_SRCS
   ctkFontButton.h
   ctkIconEnginePlugin.h
   ctkLanguageComboBox.h
+  ctkLayoutFactory.h
   ctkLayoutManager.h
+  ctkLayoutViewFactory.h
   ctkMaterialPropertyPreviewLabel.h
   ctkMaterialPropertyWidget.h
   ctkMatrixWidget.h
@@ -262,7 +266,6 @@ set(KIT_MOC_SRCS
   ctkSettingsDialog.h
   ctkSettingsPanel.h
   ctkSignalMapper.h
-  ctkSimpleLayoutManager.h
   ctkSizeGrip.h
   ctkSliderWidget.h
   ctkTestApplication.h
