@@ -130,6 +130,18 @@ QString checkBoolean(int line, const char* valueName, bool current, bool expecte
 }
 
 //-----------------------------------------------------------------------------
+QString checkString(int line, const char* valueName, QString current, QString expected)
+{
+  if (current != expected)
+    {
+    QString errorMsg("Line %1 - Expected %2: %3 - Current %4: %5\n");
+    return errorMsg.arg(line).arg(valueName).
+        arg(static_cast<QString>(expected)).arg(valueName).arg(static_cast<QString>(current));
+    }
+  return QString();
+}
+
+//-----------------------------------------------------------------------------
 void processEvents(int durationInMSecs)
 {
   QTimer timer;

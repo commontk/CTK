@@ -42,6 +42,9 @@ class CTK_WIDGETS_EXPORT ctkErrorLogModel : public QSortFilterProxyModel
   Q_PROPERTY(bool logEntryGrouping READ logEntryGrouping WRITE setLogEntryGrouping)
   Q_PROPERTY(ctkErrorLogTerminalOutput::TerminalOutputs terminalOutputs READ terminalOutputs WRITE setTerminalOutputs)
   Q_PROPERTY(bool asynchronousLogging READ asynchronousLogging WRITE  setAsynchronousLogging)
+  Q_PROPERTY(QString filePath READ filePath WRITE  setFilePath)
+  Q_PROPERTY(bool fileLoggingEnabled READ fileLoggingEnabled WRITE  setFileLoggingEnabled)
+  Q_PROPERTY(QString fileLoggingPattern READ fileLoggingPattern WRITE setFileLoggingPattern)
 public:
   typedef QSortFilterProxyModel Superclass;
   typedef ctkErrorLogModel Self;
@@ -101,6 +104,15 @@ public:
 
   bool asynchronousLogging()const;
   void setAsynchronousLogging(bool value);
+
+  QString filePath()const;
+  void setFilePath(const QString& filePath);
+
+  bool fileLoggingEnabled()const;
+  void setFileLoggingEnabled(bool value);
+
+  QString fileLoggingPattern()const;
+  void setFileLoggingPattern(const QString& value);
 
   /// Return log entry information associated with \a row and \a column.
   /// \internal

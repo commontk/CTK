@@ -28,6 +28,7 @@ set(KITTests_SRCS
   ctkCallbackTest1.cpp
   ctkCommandLineParserTest1.cpp
   ctkExceptionTest.cpp
+  ctkFileLoggerTest.cpp
   ctkHighPrecisionTimerTest.cpp
   ctkLinearValueProxyTest.cpp
   ctkLoggerTest1.cpp
@@ -90,6 +91,7 @@ set(Tests_Helpers_MOC_SRCS
 
 set(Tests_Helpers_MOC_CPPS
   ctkBooleanMapperTest.cpp
+  ctkFileLoggerTest.cpp
   ctkLinearValueProxyTest.cpp
   ctkUtilsTest.cpp
   )
@@ -144,6 +146,7 @@ SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkExceptionTest )
+SIMPLE_TEST( ctkFileLoggerTest )
 SIMPLE_TEST( ctkHighPrecisionTimerTest )
 SIMPLE_TEST( ctkLinearValueProxyTest )
 SIMPLE_TEST( ctkLoggerTest1 )

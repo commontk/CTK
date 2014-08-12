@@ -54,6 +54,8 @@ set(KIT_SRCS
   ctkErrorLogTerminalOutput.h
   ctkException.cpp
   ctkException.h
+  ctkFileLogger.cpp
+  ctkFileLogger.h
   ctkHighPrecisionTimer.cpp
   ctkLinearValueProxy.cpp
   ctkLinearValueProxy.h
@@ -97,6 +99,7 @@ set(KIT_MOC_SRCS
   ctkErrorLogLevel.h
   ctkErrorLogQtMessageHandler.h
   ctkErrorLogTerminalOutput.h
+  ctkFileLogger.h
   ctkLinearValueProxy.h
   ctkLogger.h
   ctkModelTester.h
