@@ -42,7 +42,6 @@ int ctkErrorLogModelFileLoggingTest1(int argc, char * argv [])
   QCoreApplication app(argc, argv);
   Q_UNUSED(app);
   ctkErrorLogModel model;
-  //model.setAsynchronousLogging(false);
 
   // fileLoggingEnabled
   if (!checkBoolean(__LINE__, "FileLoggingEnabled", model.fileLoggingEnabled(), false).isEmpty())
@@ -114,9 +113,11 @@ int ctkErrorLogModelFileLoggingTest1(int argc, char * argv [])
   fdMessage0.append(fdMessage0b);
   fflush(stdout);
 
-  QString fdMessage1("This is a 2nd stdout message");
-  fprintf(stdout, "%s\n", qPrintable(fdMessage1));
-  fflush(stdout);
+  // XXX FD messages from stderr and stdout are not always reported in the same order
+
+  //QString fdMessage1("This is a 2nd stdout message");
+  //fprintf(stdout, "%s\n", qPrintable(fdMessage1));
+  //fflush(stdout);
 
   QString fdMessage2("This is a stderr");
   fprintf(stderr, "%s", qPrintable(fdMessage2));
@@ -125,12 +126,41 @@ int ctkErrorLogModelFileLoggingTest1(int argc, char * argv [])
   fdMessage2.append(fdMessage2b);
   fflush(stderr);
 
-  QString fdMessage3("This is a 2nd stderr message");
-  fprintf(stderr, "%s\n", qPrintable(fdMessage3));
-  fflush(stderr);
+  //QString fdMessage3("This is a 2nd stderr message");
+  //fprintf(stderr, "%s\n", qPrintable(fdMessage3));
+  //fflush(stderr);
 
   // Give enough time to the ErrorLogModel to consider the queued messages.
   processEvents(1000);
+
+  model.disableAllMsgHandler();
+
+  QList<QStringList> expectedLogEntries;
+  expectedLogEntries << (QStringList() << "DEBUG" << "Qt" << qtMessage0);
+  expectedLogEntries << (QStringList() << "WARNING" << "Qt" << qtMessage1);
+  expectedLogEntries << (QStringList() << "CRITICAL" << "Qt" << qtMessage2);
+  expectedLogEntries << (QStringList() << "INFO" << "Stream" << streamMessage0);
+  expectedLogEntries << (QStringList() << "CRITICAL" << "Stream" << streamMessage1);
+  expectedLogEntries << (QStringList() << "INFO" << "FD" << fdMessage0);
+  //expectedLogEntries << (QStringList() << "INFO" << "FD" << fdMessage1);
+  expectedLogEntries << (QStringList() << "CRITICAL" << "FD" << fdMessage2);
+  //expectedLogEntries << (QStringList() << "CRITICAL" << "FD" << fdMessage3);
+
+  QStringList currentLogEntries = readFile(logFilePath);
+
+  QString expectedLogEntryPatternTemplate("^\\[%1\\]\\[%2\\] [0-9\\.\\s\\:]+ \\[\\] \\(unknown\\:0\\) \\- %3$");
+  for(int entryIndex = 0; entryIndex < expectedLogEntries.size(); ++entryIndex)
+    {
+    QStringList entry = expectedLogEntries.at(entryIndex);
+    QRegExp regexp(expectedLogEntryPatternTemplate.arg(entry.at(0)).arg(entry.at(1)).arg(entry.at(2)));
+    if (!regexp.exactMatch(currentLogEntries.at(entryIndex)))
+      {
+      printErrorMessage(
+            QString("Line %1 - Log entry %2 does NOT math expected regular expression.\n\tLogEntry: %3\n\tRegExp: %4").
+                arg(__LINE__).arg(entryIndex).arg(currentLogEntries.at(entryIndex)).arg(regexp.pattern()));
+      return EXIT_FAILURE;
+      }
+    }
 
   return EXIT_SUCCESS;
 }

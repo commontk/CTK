@@ -24,6 +24,7 @@
 #include <QVariant>
 
 // CTK includes
+#include "ctkErrorLogContext.h"
 #include "ctkErrorLogQtMessageHandler.h"
 #include <ctkUtils.h>
 
@@ -138,7 +139,7 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const char *msg)
 //    //  }
     handler->handleMessage(
           ctk::qtHandleToString(QThread::currentThreadId()),
-          level, handler->handlerPrettyName(), msg);
+          level, handler->handlerPrettyName(), ctkErrorLogContext(msg), msg);
     }
 }
 #endif

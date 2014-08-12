@@ -29,10 +29,10 @@
 #include "ctkErrorLogLevel.h"
 #include "ctkErrorLogTerminalOutput.h"
 
-
 //------------------------------------------------------------------------------
 class ctkErrorLogAbstractMessageHandler;
 class ctkErrorLogModelPrivate;
+struct ctkErrorLogContext;
 
 //------------------------------------------------------------------------------
 /// \ingroup Widgets
@@ -135,7 +135,8 @@ public Q_SLOTS:
 
   /// \sa logEntryGrouping(), asynchronousLogging()
   void addEntry(const QDateTime& currentDateTime, const QString& threadId,
-                ctkErrorLogLevel::LogLevel logLevel, const QString& origin, const QString& text);
+                ctkErrorLogLevel::LogLevel logLevel, const QString& origin,
+                const ctkErrorLogContext &context, const QString& text);
 
 Q_SIGNALS:
   void logLevelFilterChanged();

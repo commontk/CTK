@@ -5,6 +5,7 @@ set(KIT ${PROJECT_NAME})
 #
 set(TEST_SOURCES
   ctkITKErrorLogMessageHandlerWithThreadsTest1.cpp
+  ctkITKErrorLogModelFileLoggingTest1.cpp
   ctkITKErrorLogModelTest1.cpp
   )
 
@@ -62,6 +63,7 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKWi
 #
 
 SIMPLE_TEST( ctkITKErrorLogMessageHandlerWithThreadsTest1 )
+SIMPLE_TEST( ctkITKErrorLogModelFileLoggingTest1 )
 SIMPLE_TEST( ctkITKErrorLogModelTest1 )
 
 #

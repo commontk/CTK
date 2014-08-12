@@ -31,6 +31,7 @@
 #include <QThread>
 
 // CTK includes
+#include "ctkErrorLogContext.h"
 #include "ctkErrorLogModel.h"
 #include "ctkErrorLogAbstractMessageHandler.h"
 #include "ctkFileLogger.h"
@@ -79,12 +80,13 @@ public:
 ctkErrorLogModelPrivate::ctkErrorLogModelPrivate(ctkErrorLogModel& object)
   : q_ptr(&object)
 {
+  qRegisterMetaType<ctkErrorLogContext>("ctkErrorLogContext");
   this->StandardItemModel.setColumnCount(ctkErrorLogModel::MaxColumn);
   this->LogEntryGrouping = false;
   this->AsynchronousLogging = true;
   this->AddingEntry = false;
   this->FileLogger.setEnabled(false);
-  this->FileLoggingPattern = "%{level}: %{timestamp}: %{msg}";
+  this->FileLoggingPattern = "[%{level}][%{origin}] %{timestamp} [%{category}] (%{file}:%{line}) - %{msg}";
 }
 
 // --------------------------------------------------------------------------
@@ -121,8 +123,8 @@ void ctkErrorLogModelPrivate::setMessageHandlerConnection(
   msgHandler->disconnect();
 
   QObject::connect(msgHandler,
-        SIGNAL(messageHandled(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,QString)),
-        q, SLOT(addEntry(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,QString)),
+        SIGNAL(messageHandled(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)),
+        q, SLOT(addEntry(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)),
         asynchronous ? Qt::QueuedConnection : Qt::BlockingQueuedConnection);
 }
 
@@ -265,7 +267,7 @@ void ctkErrorLogModel::setTerminalOutputs(
 //------------------------------------------------------------------------------
 void ctkErrorLogModel::addEntry(const QDateTime& currentDateTime, const QString& threadId,
                                 ctkErrorLogLevel::LogLevel logLevel,
-                                const QString& origin, const QString& text)
+                                const QString& origin, const ctkErrorLogContext &context, const QString &text)
 {
   Q_D(ctkErrorLogModel);
 
@@ -363,8 +365,12 @@ void ctkErrorLogModel::addEntry(const QDateTime& currentDateTime, const QString&
   fileLogText.replace("%{origin}", origin);
   fileLogText.replace("%{pid}", QString("%1").arg(QCoreApplication::applicationPid()));
   fileLogText.replace("%{threadid}", threadId);
-  fileLogText.replace("%{msg}", text);
-  d->FileLogger.logMessage(fileLogText);
+  fileLogText.replace("%{function}", context.Function);
+  fileLogText.replace("%{line}", QString("%1").arg(context.Line));
+  fileLogText.replace("%{file}", context.File);
+  fileLogText.replace("%{category}", context.Category);
+  fileLogText.replace("%{msg}", context.Message);
+  d->FileLogger.logMessage(fileLogText.trimmed());
 
   emit this->entryAdded(logLevel);
 }

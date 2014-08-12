@@ -41,6 +41,7 @@ set(KIT_SRCS
   ctkDependencyGraph.h
   ctkErrorLogAbstractMessageHandler.cpp
   ctkErrorLogAbstractMessageHandler.h
+  ctkErrorLogContext.h
   ctkErrorLogFDMessageHandler.cpp
   ctkErrorLogFDMessageHandler.h
   ctkErrorLogFDMessageHandler_p.h

@@ -24,6 +24,7 @@
 #include <QMutexLocker>
 #include <QSharedPointer>
 #include <QStringList>
+#include <QTextStream>
 #include <QTimer>
 #include <QThread>
 
@@ -165,6 +166,24 @@ void appendToFile(const QString& fileName, const QString& text)
   QTextStream s(&f);
   s << QDateTime::currentDateTime().toString() << " - " << text << "\n";
   f.close();
+}
+
+//-----------------------------------------------------------------------------
+QStringList readFile(const QString& filePath)
+{
+  QStringList lines;
+  QFile file(filePath);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+    return lines;
+    }
+   QTextStream in(&file);
+   while(!in.atEnd())
+     {
+     lines << in.readLine();
+     }
+   file.close();
+   return lines;
 }
 
 //-----------------------------------------------------------------------------

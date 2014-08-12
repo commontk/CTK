@@ -62,17 +62,43 @@ int ctkVTKErrorLogModelFileLoggingTest1(int argc, char * argv [])
   vtkNew<vtkObject> object;
 
   // VTK messages
-  //QString vtkMessage0("This is a VTK debug message");
   vtkDebugWithObjectMacro(object.GetPointer(), "This is a VTK debug message");
-
-  //QString vtkMessage1("This is a VTK warning message");
   vtkWarningWithObjectMacro(object.GetPointer(), "This is a VTK warning message");
-
-  //QString vtkMessage2("This is a VTK error message");
   vtkErrorWithObjectMacro(object.GetPointer(), "This is a VTK error message");
 
   // Give enough time to the ErrorLogModel to consider the queued messages.
   processEvents(1000);
+
+  model.disableAllMsgHandler();
+
+  QStringList logLines = readFile(logFilePath);
+
+  QString expectedLogEntryPatternTemplate(
+        "^\\[%1\\]\\[VTK\\] [0-9\\.\\s\\:]+ \\[vtkObject \\(0x[a-zA-B0-9]+\\)\\] "
+        "\\(.+ctkVTKErrorLogModelFileLoggingTest1\\.cpp\\:%2\\) \\- %3$");
+
+  {
+    int entryIndex = 0;
+    QRegExp regexp(expectedLogEntryPatternTemplate.arg("WARNING").arg(66).arg("This is a VTK warning message"));
+    if (!regexp.exactMatch(logLines.at(entryIndex)))
+      {
+      printErrorMessage(
+            QString("Line %1 - Log entry %2 does NOT math expected regular expression.\n\tLogEntry: %3\n\tRegExp: %4").
+                arg(__LINE__).arg(entryIndex).arg(logLines.at(entryIndex)).arg(regexp.pattern()));
+      return EXIT_FAILURE;
+      }
+  }
+  {
+    int entryIndex = 1;
+    QRegExp regexp(expectedLogEntryPatternTemplate.arg("ERROR").arg(67).arg("This is a VTK error message"));
+    if (!regexp.exactMatch(logLines.at(entryIndex)))
+      {
+      printErrorMessage(
+            QString("Line %1 - Log entry %2 does NOT math expected regular expression.\n\tLogEntry: %3\n\tRegExp: %4").
+                arg(__LINE__).arg(entryIndex).arg(logLines.at(entryIndex)).arg(regexp.pattern()));
+      return EXIT_FAILURE;
+      }
+  }
 
   return EXIT_SUCCESS;
 }
