@@ -196,6 +196,7 @@ set(Tests_MOC_SRCS
   )
 
 if(CTK_USE_QTTESTING)
+  include(${CMAKE_SOURCE_DIR}/Libs/QtTesting/CMake/ctkQtTesting.cmake)
   ctkQtTesting(Tests_SRCS Tests_MOC_SRCS Tests_UI_FORMS Tests_RESOURCES)
 endif()
 
