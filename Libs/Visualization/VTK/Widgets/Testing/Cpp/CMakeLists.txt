@@ -98,6 +98,7 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 # If CTK_USE_QTTESTING is ON
 #
 if(CTK_USE_QTTESTING)
+  include(${CMAKE_SOURCE_DIR}/Libs/QtTesting/CMake/ctkQtTesting.cmake)
   ctkQtTesting(Tests TEST_MOC_SOURCES TEST_UI_FORMS Tests_RESOURCES)
 endif()
 

@@ -9,7 +9,6 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${CTK_BASE_LIBRARIES}
   LIBRARY_TYPE "SHARED"
   )
-get_target_property(ctkDummyPluginPATH "CTKDummyPlugin" LOCATION)
 remove_definitions(-DCTKDummyPlugin)
 
 set(KIT ${PROJECT_NAME})
@@ -130,9 +129,9 @@ endif()
 #
 
 SIMPLE_TEST( ctkAbstractFactoryTest1 )
-SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 ${ctkDummyPluginPATH} )
+SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 $<TARGET_FILE:CTKDummyPlugin> )
 SIMPLE_TEST( ctkAbstractObjectFactoryTest1 )
-SIMPLE_TEST( ctkAbstractPluginFactoryTest1 ${ctkDummyPluginPATH} )
+SIMPLE_TEST( ctkAbstractPluginFactoryTest1 $<TARGET_FILE:CTKDummyPlugin> )
 SIMPLE_TEST( ctkAbstractQObjectFactoryTest1 )
 SIMPLE_TEST( ctkBackTraceTest )
 if(HAVE_BFD)
