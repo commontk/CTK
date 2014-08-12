@@ -8,6 +8,7 @@ set(TEST_SOURCES
   ctkVTKDataSetArrayComboBoxTest1.cpp
   ctkVTKDataSetModelTest1.cpp
   ctkVTKErrorLogMessageHandlerWithThreadsTest1.cpp
+  ctkVTKErrorLogModelFileLoggingTest1.cpp
   ctkVTKErrorLogModelTest1.cpp
   ctkVTKHistogramTest1.cpp
   ctkVTKHistogramTest2.cpp
@@ -146,6 +147,7 @@ SIMPLE_TEST( ctkVTKColorTransferFunctionTest1 )
 SIMPLE_TEST( ctkVTKDataSetArrayComboBoxTest1 )
 SIMPLE_TEST( ctkVTKDataSetModelTest1 )
 SIMPLE_TEST( ctkVTKErrorLogMessageHandlerWithThreadsTest1 )
+SIMPLE_TEST( ctkVTKErrorLogModelFileLoggingTest1 )
 SIMPLE_TEST( ctkVTKErrorLogModelTest1 )
 SIMPLE_TEST( ctkVTKHistogramTest1 )
 SIMPLE_TEST( ctkVTKHistogramTest2 )

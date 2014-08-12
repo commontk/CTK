@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QCoreApplication>
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
@@ -27,10 +28,13 @@
 #include <QMutexLocker>
 #include <QPointer>
 #include <QStandardItem>
+#include <QThread>
 
 // CTK includes
+#include "ctkErrorLogContext.h"
 #include "ctkErrorLogModel.h"
 #include "ctkErrorLogAbstractMessageHandler.h"
+#include "ctkFileLogger.h"
 
 
 // --------------------------------------------------------------------------
@@ -47,9 +51,6 @@ public:
   ~ctkErrorLogModelPrivate();
 
   void init();
-
-  /// Convenient method that could be used for debugging purposes.
-  void appendToFile(const QString& fileName, const QString& text);
 
   void setMessageHandlerConnection(ctkErrorLogAbstractMessageHandler * msgHandler, bool asynchronous);
 
@@ -68,7 +69,8 @@ public:
   ctkErrorLogTerminalOutput StdErrTerminalOutput;
   ctkErrorLogTerminalOutput StdOutTerminalOutput;
 
-  QMutex AppendToFileMutex;
+  ctkFileLogger FileLogger;
+  QString FileLoggingPattern;
 };
 
 // --------------------------------------------------------------------------
@@ -78,10 +80,13 @@ public:
 ctkErrorLogModelPrivate::ctkErrorLogModelPrivate(ctkErrorLogModel& object)
   : q_ptr(&object)
 {
+  qRegisterMetaType<ctkErrorLogContext>("ctkErrorLogContext");
   this->StandardItemModel.setColumnCount(ctkErrorLogModel::MaxColumn);
   this->LogEntryGrouping = false;
   this->AsynchronousLogging = true;
   this->AddingEntry = false;
+  this->FileLogger.setEnabled(false);
+  this->FileLoggingPattern = "[%{level}][%{origin}] %{timestamp} [%{category}] (%{file}:%{line}) - %{msg}";
 }
 
 // --------------------------------------------------------------------------
@@ -110,17 +115,6 @@ void ctkErrorLogModelPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-void ctkErrorLogModelPrivate::appendToFile(const QString& fileName, const QString& text)
-{
-  QMutexLocker locker(&this->AppendToFileMutex);
-  QFile f(fileName);
-  f.open(QFile::Append);
-  QTextStream s(&f);
-  s << QDateTime::currentDateTime().toString() << " - " << text << "\n";
-  f.close();
-}
-
-// --------------------------------------------------------------------------
 void ctkErrorLogModelPrivate::setMessageHandlerConnection(
     ctkErrorLogAbstractMessageHandler * msgHandler, bool asynchronous)
 {
@@ -129,8 +123,8 @@ void ctkErrorLogModelPrivate::setMessageHandlerConnection(
   msgHandler->disconnect();
 
   QObject::connect(msgHandler,
-        SIGNAL(messageHandled(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,QString)),
-        q, SLOT(addEntry(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,QString)),
+        SIGNAL(messageHandled(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)),
+        q, SLOT(addEntry(QDateTime,QString,ctkErrorLogLevel::LogLevel,QString,ctkErrorLogContext,QString)),
         asynchronous ? Qt::QueuedConnection : Qt::BlockingQueuedConnection);
 }
 
@@ -273,22 +267,12 @@ void ctkErrorLogModel::setTerminalOutputs(
 //------------------------------------------------------------------------------
 void ctkErrorLogModel::addEntry(const QDateTime& currentDateTime, const QString& threadId,
                                 ctkErrorLogLevel::LogLevel logLevel,
-                                const QString& origin, const QString& text)
+                                const QString& origin, const ctkErrorLogContext &context, const QString &text)
 {
   Q_D(ctkErrorLogModel);
 
-//  d->appendToFile("/tmp/ctkErrorLogModel-appendToFile.txt",
-//                  QString("addEntry: %1").arg(QThread::currentThreadId()));
-
   if (d->AddingEntry)
     {
-//    QString str;
-//    QTextStream s(&str);
-//    s << "----------------------------------\n";
-//    s << "text=>" << text << "\n";
-//    s << "\tlogLevel:" << qPrintable(d->ErrorLogLevel(logLevel)) << "\n";
-//    s << "\torigin:" << qPrintable(origin) << "\n";
-//    d->appendToFile("/tmp/ctkErrorLogModel-AddingEntry-true.txt", str);
     return;
     }
 
@@ -374,6 +358,19 @@ void ctkErrorLogModel::addEntry(const QDateTime& currentDateTime, const QString&
     }
 
   d->AddingEntry = false;
+
+  QString fileLogText = d->FileLoggingPattern;
+  fileLogText.replace("%{level}", d->ErrorLogLevel(logLevel).toUpper());
+  fileLogText.replace("%{timestamp}", currentDateTime.toString(timeFormat));
+  fileLogText.replace("%{origin}", origin);
+  fileLogText.replace("%{pid}", QString("%1").arg(QCoreApplication::applicationPid()));
+  fileLogText.replace("%{threadid}", threadId);
+  fileLogText.replace("%{function}", context.Function);
+  fileLogText.replace("%{line}", QString("%1").arg(context.Line));
+  fileLogText.replace("%{file}", context.File);
+  fileLogText.replace("%{category}", context.Category);
+  fileLogText.replace("%{msg}", context.Message);
+  d->FileLogger.logMessage(fileLogText.trimmed());
 
   emit this->entryAdded(logLevel);
 }
@@ -505,6 +502,62 @@ void ctkErrorLogModel::setAsynchronousLogging(bool value)
     }
 
   d->AsynchronousLogging = value;
+}
+
+// --------------------------------------------------------------------------
+QString ctkErrorLogModel::filePath()const
+{
+  Q_D(const ctkErrorLogModel);
+  return d->FileLogger.filePath();
+}
+
+// --------------------------------------------------------------------------
+void ctkErrorLogModel::setFilePath(const QString& filePath)
+{
+  Q_D(ctkErrorLogModel);
+  return d->FileLogger.setFilePath(filePath);
+}
+
+// --------------------------------------------------------------------------
+int ctkErrorLogModel::numberOfFilesToKeep()const
+{
+  Q_D(const ctkErrorLogModel);
+  return d->FileLogger.numberOfFilesToKeep();
+}
+
+// --------------------------------------------------------------------------
+void ctkErrorLogModel::setNumberOfFilesToKeep(int value)
+{
+  Q_D(ctkErrorLogModel);
+  return d->FileLogger.setNumberOfFilesToKeep(value);
+}
+
+// --------------------------------------------------------------------------
+bool ctkErrorLogModel::fileLoggingEnabled()const
+{
+  Q_D(const ctkErrorLogModel);
+  return d->FileLogger.enabled();
+}
+
+// --------------------------------------------------------------------------
+void ctkErrorLogModel::setFileLoggingEnabled(bool value)
+{
+  Q_D(ctkErrorLogModel);
+  d->FileLogger.setEnabled(value);
+}
+
+// --------------------------------------------------------------------------
+QString ctkErrorLogModel::fileLoggingPattern()const
+{
+  Q_D(const ctkErrorLogModel);
+  return d->FileLoggingPattern;
+}
+
+// --------------------------------------------------------------------------
+void ctkErrorLogModel::setFileLoggingPattern(const QString& value)
+{
+  Q_D(ctkErrorLogModel);
+  d->FileLoggingPattern = value;
 }
 
 // --------------------------------------------------------------------------

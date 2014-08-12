@@ -24,6 +24,7 @@
 #include <QMutexLocker>
 #include <QSharedPointer>
 #include <QStringList>
+#include <QTextStream>
 #include <QTimer>
 #include <QThread>
 
@@ -130,6 +131,18 @@ QString checkBoolean(int line, const char* valueName, bool current, bool expecte
 }
 
 //-----------------------------------------------------------------------------
+QString checkString(int line, const char* valueName, QString current, QString expected)
+{
+  if (current != expected)
+    {
+    QString errorMsg("Line %1 - Expected %2: %3 - Current %4: %5\n");
+    return errorMsg.arg(line).arg(valueName).
+        arg(static_cast<QString>(expected)).arg(valueName).arg(static_cast<QString>(current));
+    }
+  return QString();
+}
+
+//-----------------------------------------------------------------------------
 void processEvents(int durationInMSecs)
 {
   QTimer timer;
@@ -153,6 +166,24 @@ void appendToFile(const QString& fileName, const QString& text)
   QTextStream s(&f);
   s << QDateTime::currentDateTime().toString() << " - " << text << "\n";
   f.close();
+}
+
+//-----------------------------------------------------------------------------
+QStringList readFile(const QString& filePath)
+{
+  QStringList lines;
+  QFile file(filePath);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+    return lines;
+    }
+   QTextStream in(&file);
+   while(!in.atEnd())
+     {
+     lines << in.readLine();
+     }
+   file.close();
+   return lines;
 }
 
 //-----------------------------------------------------------------------------
