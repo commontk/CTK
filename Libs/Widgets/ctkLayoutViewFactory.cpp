@@ -48,7 +48,7 @@ protected:
 //-----------------------------------------------------------------------------
 ctkLayoutViewFactoryPrivate::ctkLayoutViewFactoryPrivate(ctkLayoutViewFactory& object)
   : q_ptr(&object)
-  , UseCachedViews(false)
+  , UseCachedViews(true)
   , NumberOfViewsInCurrentLayout( 0 )
 {
 }
@@ -147,20 +147,47 @@ QWidget* ctkLayoutViewFactory::viewFromXML(QDomElement layoutElement)
     QWidget* view = d->Views[d->NumberOfViewsInCurrentLayout].second;
     return view;
     }
+  return this->createViewFromXML(layoutElement);
+}
+
+//-----------------------------------------------------------------------------
+QWidget* ctkLayoutViewFactory::createViewFromXML(QDomElement layoutElement)
+{
   return 0;
 }
 
 //-----------------------------------------------------------------------------
 QList<QWidget*> ctkLayoutViewFactory::viewsFromXML(QDomElement layoutElement)
 {
+  Q_D(ctkLayoutViewFactory);
   QWidgetList views = this->registeredViews(layoutElement);
-  if (views.isEmpty())
+  if (views.count())
     {
-    QWidget* view = this->viewFromXML(layoutElement);
-    if (view)
+    return views;
+    }
+  // The layout element does not match any existing one, however we can just reuse
+  // one that was registered for a different layout element.
+  if (this->useCachedViews() &&
+      d->NumberOfViewsInCurrentLayout >= 0 && 
+      d->NumberOfViewsInCurrentLayout < d->Views.count())
+    {
+    for (int i = d->NumberOfViewsInCurrentLayout; i < d->Views.count(); ++i)
       {
-      views << view;
+      views << d->Views[i].second;
       }
+    return views;
+    }
+  return this->createViewsFromXML(layoutElement);
+}
+
+//-----------------------------------------------------------------------------
+QList<QWidget*> ctkLayoutViewFactory::createViewsFromXML(QDomElement layoutElement)
+{
+  QWidgetList views;
+  QWidget* view = this->createViewFromXML(layoutElement);
+  if (view)
+    {
+    views << view;
     }
   return views;
 }
@@ -229,7 +256,7 @@ void ctkLayoutViewFactory::unregisterView(QWidget* view)
 {
   Q_D(ctkLayoutViewFactory);
   for (QDomElement viewElement = this->layoutElement(view);
-       viewElement.isNull() ;
+       !viewElement.isNull();
        viewElement = this->layoutElement(view))
     {
     this->unregisterView(viewElement, view);
