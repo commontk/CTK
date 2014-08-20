@@ -32,18 +32,18 @@ class QWidgetItem;
 class ctkLayoutViewFactoryPrivate;
 
 /// \ingroup Widgets
-/// ctkLayoutViewFactory is a factory that creates and setups widgets for a
+/// ctkLayoutViewFactory is an abstract class that creates and setups widgets for a
 /// specific view XML element from ctkLayoutManager.
 /// See ctkTemplateLayoutViewFactory for a factory that can instantiate
 /// any Qt widget.
-/// This class is meant to be derived with at least the method viewFromXML()
+/// This class is meant to be derived with at least the method createViewFromXML()
 /// being overwritten.
-/// \sa ctkLayoutManager, ctkTemplateLayoutViewFactory
+/// \sa ctkLayoutManager, ctkTemplateLayoutViewFactory, createViewFromXML()
 class CTK_WIDGETS_EXPORT ctkLayoutViewFactory: public QObject
 {
   Q_OBJECT
   /// This property controls whether the views are cached and reused
-  /// for a different layout. False by default.
+  /// from a previous layout. True by default.
   /// \sa useCachedViews(), setUseCachedViews()
   Q_PROPERTY(bool useCachedViews READ useCachedViews WRITE setUseCachedViews);
 public:
@@ -87,10 +87,13 @@ public:
   /// \sa viewsFromXML()
   virtual void setupView(QDomElement layoutElement, QWidget* view);
   /// Virtual method that returns a widget from a "view" layout element.
-  /// You are ensured that the tagName of the element is "view".
+  /// You are ensured that the tagName of the element is one of the element
+  /// from the supportedElementNames() list.
   /// The XML element can contain an arbitrary number of XML attributes.
-  /// Create the widget if needed or reuse a compatible registered view.
-  /// \sa viewsFromXML(), setupView()
+  /// Returns previously registered or cached view if any, otherwise create
+  /// a new view using createViewFromXML(). Must be reimplemented.
+  /// \sa viewsFromXML(), setupView(), registeredViews(), useCachedView,
+  /// createViewFromXML()
   virtual QWidget* viewFromXML(QDomElement layoutElement);
   /// Virtual method that returns a list of widgets from a "view" layout
   /// element.
@@ -99,10 +102,9 @@ public:
   /// widget.
   /// The returned widgets will automatically be layout into their parent
   /// layout (e.g. boxlayout).
-  /// 
-  /// This method can be reimplemented. By default, returns the associated
-  /// registered views or viewFromXML() if no view was registered.
-  /// \sa viewFromXML()
+  /// Returns previously registered or cached views if any, otherwise create
+  /// new views using createViewsFromXML().
+  /// \sa viewFromXML(), registeredViews(), 
   virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
 
   /// Return all the widgets that have been registered.
@@ -111,6 +113,14 @@ public:
   QList<QWidget*> registeredViews()const;
 protected:
   QScopedPointer<ctkLayoutViewFactoryPrivate> d_ptr;
+
+  /// Create a new view from a layoutElement. Returns 0 by default
+  /// \sa viewFromXML
+  virtual QWidget* createViewFromXML(QDomElement layoutElement);
+  /// Create new views from a layoutElement. Returns createViewFromXML()
+  /// by default.
+  /// \sa viewsFromXML(), createViewFromXML()
+  virtual QList<QWidget*> createViewsFromXML(QDomElement layoutElement);
 
   /// Return the list of widgets that have already been created by
   /// view(s)FromXML().
@@ -169,13 +179,8 @@ public:
   {
     this->setUseCachedViews(true);
   }
-  virtual QWidget* viewFromXML(QDomElement layoutElement){
-    QWidget* res = this->ctkLayoutViewFactory::viewFromXML(layoutElement);
-    if (!res)
-      {
-      res = new T;
-      }
-    return res;
+  virtual QWidget* createViewFromXML(QDomElement layoutElement){
+    return new T;
     }
 };
 
