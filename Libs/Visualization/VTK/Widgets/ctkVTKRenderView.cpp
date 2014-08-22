@@ -76,11 +76,6 @@ void ctkVTKRenderViewPrivate::setupRendering()
   // Add renderer
   this->RenderWindow->AddRenderer(this->Renderer);
   this->ctkVTKAbstractViewPrivate::setupRendering();
-  // The interactor in RenderWindow exists after the renderwindow is set to
-  // the QVTKWidet
-  this->Orientation->SetInteractor(this->RenderWindow->GetInteractor());
-  this->Orientation->SetEnabled(1);
-  this->Orientation->InteractiveOff();
 }
 
 //----------------------------------------------------------------------------
@@ -205,6 +200,12 @@ ctkVTKRenderView::ctkVTKRenderView(QWidget* parentWidget)
 {
   Q_D(ctkVTKRenderView);
   d->init();
+
+  // The interactor in RenderWindow exists after the renderwindow is set to
+  // the QVTKWidet
+  d->Orientation->SetInteractor(d->RenderWindow->GetInteractor());
+  d->Orientation->SetEnabled(1);
+  d->Orientation->InteractiveOff();
 }
 
 //----------------------------------------------------------------------------
