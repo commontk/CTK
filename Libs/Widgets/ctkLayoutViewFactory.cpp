@@ -153,6 +153,7 @@ QWidget* ctkLayoutViewFactory::viewFromXML(QDomElement layoutElement)
 //-----------------------------------------------------------------------------
 QWidget* ctkLayoutViewFactory::createViewFromXML(QDomElement layoutElement)
 {
+  Q_UNUSED(layoutElement);
   return 0;
 }
 
