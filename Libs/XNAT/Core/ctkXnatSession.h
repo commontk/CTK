@@ -215,6 +215,16 @@ public:
    */
   Q_SIGNAL void sessionRenewed(const QDateTime& expirationDate);
 
+  /**
+   * @brief Signals that the session was just opened.
+   */
+  Q_SIGNAL void sessionOpened();
+
+  /**
+   * @brief Signals that the session is about to be closed.
+   */
+  Q_SIGNAL void sessionAboutToBeClosed();
+
 public slots:
   void processResult(QUuid queryId, QList<QVariantMap> parameters);
   void progress(QUuid queryId, double progress);
