@@ -286,7 +286,7 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
       QString  str = it.key().toLatin1().data();
       QVariant var = it.value();
 
-      object->setProperty(str, var);
+      object->setProperty(str.toLower(), var);
       description.append (str + QString ("\t::\t") + var.toString() + "\n");
     }
 

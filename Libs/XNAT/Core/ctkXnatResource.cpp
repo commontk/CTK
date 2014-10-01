@@ -72,7 +72,7 @@ void ctkXnatResource::fetchImpl()
 
   foreach (ctkXnatObject* file, files)
   {
-    QString label = file->property("Name");
+    QString label = file->property("name");
     if (label.isEmpty())
     {
       label = "NO NAME";

@@ -122,7 +122,7 @@ void ctkXnatSubject::fetchImpl()
     QString label = experiment->property ("label");
     if (!label.isEmpty())
     {
-      experiment->setProperty ("ID", label);
+      experiment->setProperty ("id", label);
     }
 
     this->add(experiment);
