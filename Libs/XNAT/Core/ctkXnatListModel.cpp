@@ -66,19 +66,12 @@ QVariant ctkXnatListModel::data(const QModelIndex& index, int role) const
   if (role == Qt::DisplayRole)
   {
     ctkXnatObject* child = RootObject->children().at(index.row());
-    if (!child)
+    QString displayData = child->name();
+    if (displayData.isEmpty())
     {
-      qWarning() << "child at index" << index << "is NULL!";
+      displayData = child->property("label");
     }
-    else
-    {
-      QString displayData = child->name();
-      if (displayData.isEmpty())
-      {
-        displayData = child->id();
-      }
-      return displayData;
-    }
+    return displayData;
   }
   else if (role == Qt::UserRole)
   {
