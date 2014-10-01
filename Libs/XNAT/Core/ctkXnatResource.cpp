@@ -51,7 +51,7 @@ ctkXnatResource::~ctkXnatResource()
 //----------------------------------------------------------------------------
 QString ctkXnatResource::resourceUri() const
 {
-  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("xnat_abstractresource_id"));
+  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("label"));
 }
 
 //----------------------------------------------------------------------------
