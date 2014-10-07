@@ -98,6 +98,8 @@ set(KIT_SRCS
   ctkHistogram.h
   ctkIconEnginePlugin.cpp
   ctkIconEnginePlugin.h
+  ctkIconEnginePlugin_qt4.h
+  ctkIconEnginePlugin_qt5.h
   ctkLanguageComboBox.cpp
   ctkLanguageComboBox.h
   ctkLayoutFactory.cpp
@@ -250,7 +252,6 @@ set(KIT_MOC_SRCS
   ctkFlowLayout.h
   ctkFontButton.h
   ctkHistogram.h
-  ctkIconEnginePlugin.h
   ctkLanguageComboBox.h
   ctkLayoutFactory.h
   ctkLayoutManager.h
@@ -303,6 +304,12 @@ set(KIT_MOC_SRCS
   ctkWorkflowWidgetStep.h
   ctkWorkflowWidgetStep_p.h
   )
+
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND KIT_MOC_SRCS ctkIconEnginePlugin_qt5.h)
+else()
+  list(APPEND KIT_MOC_SRCS ctkIconEnginePlugin_qt4.h)
+endif()
 
 # Headers that should run through moc without adding
 # the generated cpp file to the source list
