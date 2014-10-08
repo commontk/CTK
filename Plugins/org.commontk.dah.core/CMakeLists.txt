@@ -61,6 +61,10 @@ ctkMacroBuildPlugin(
   TARGET_LIBRARIES ${PLUGIN_target_libraries}
 )
 
+if(CTK_QT_VERSION VERSION_GREATER "4" AND DEFINED WIN32)
+  set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_DEFINITIONS NOMINMAX)
+endif()
+
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()

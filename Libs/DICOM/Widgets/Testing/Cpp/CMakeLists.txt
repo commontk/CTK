@@ -22,6 +22,10 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 add_executable(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
+if(CTK_QT_VERSION VERSION_GREATER "4" AND DEFINED WIN32)
+  set_target_properties(${KIT}CppTests PROPERTIES COMPILE_DEFINITIONS NOMINMAX)
+endif()
+
 #
 # Add Tests
 #

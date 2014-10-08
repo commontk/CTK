@@ -120,6 +120,9 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDu
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
   qt5_use_modules(${KIT}CppTests Test Widgets)
+  if(WIN32)
+    set_target_properties(${KIT}CppTests PROPERTIES COMPILE_DEFINITIONS NOMINMAX)
+  endif()
 endif()
 
 if(UNIX AND NOT APPLE)
