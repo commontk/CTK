@@ -375,7 +375,7 @@ if(MSVC)
   set(msvc_suppressed_warnings
     "/wd4290" # C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
   )
-  set(CTK_CXX_FLAGS "${CTK_CXX_FLAGS} ${msvc_suppressed_warnings}")
+  set(CTK_CXX_FLAGS "${CTK_CXX_FLAGS} ${msvc_suppressed_warnings} -DNOMINMAX")
 endif()
 
 #-----------------------------------------------------------------------------
