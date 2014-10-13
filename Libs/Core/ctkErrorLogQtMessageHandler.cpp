@@ -97,7 +97,7 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const QMessageLogContext& c
 //    //  }
     handler->handleMessage(
           ctk::qtHandleToString(QThread::currentThreadId()),
-          level, handler->handlerPrettyName(), msg);
+          level, handler->handlerPrettyName(), ctkErrorLogContext(msg), msg);
     }
 }
 #else

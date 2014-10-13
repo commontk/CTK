@@ -20,6 +20,11 @@
 
 cmake_minimum_required(VERSION 2.8.9)
 
+if(WIN32)
+    add_definitions(-DNOMINMAX)
+endif(WIN32)
+
+
 #-----------------------------------------------------------------------------
 # Superbuild
 #
