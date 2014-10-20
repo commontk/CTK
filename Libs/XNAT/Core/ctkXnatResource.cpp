@@ -83,7 +83,7 @@ void ctkXnatResource::fetchImpl()
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatResource::download(const QString& /*filename*/)
+void ctkXnatResource::download(const QString& filename)
 {
-//  this->session()->download(this, filename);
+  this->session()->download(this, filename);
 }
