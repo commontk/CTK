@@ -119,9 +119,11 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkInteractionWidgets
     vtkRenderingContext2D
     vtkViewsContext2D
-    vtkWrappingPythonCore
     vtkGUISupportQt
     )
+    if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+      set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkWrappingPythonCore)
+    endif()
 else()
   set(VTK_LIBRARIES
     QVTK
