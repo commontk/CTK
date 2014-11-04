@@ -115,6 +115,11 @@ ctkFileDialog::ctkFileDialog(QWidget *parentWidget,
   , d_ptr(new ctkFileDialogPrivate(*this))
 {
   Q_D(ctkFileDialog);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+  this->setOptions(DontUseNativeDialog);
+#endif
+
   d->init();
 }
 
