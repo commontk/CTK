@@ -35,7 +35,6 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   if (CTK_QT_VERSION VERSION_GREATER "4")
     list(APPEND ep_PythonQt_args
       -DPythonQt_QT_VERSION:STRING=${CTK_QT_VERSION}
-      -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
       )
     set(qtlibs Core Gui Widgets Network OpenGL PrintSupport Sql Svg UiTools WebKit WebKitWidgets Xml)
   else()
