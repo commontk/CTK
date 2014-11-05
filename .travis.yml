@@ -5,9 +5,9 @@ compiler:
 
 branches:
   only:
-    - travis-ci
+    - travis-ci-2
 
-env: DISPLAY=:9 LD_LIBRARY_PATH=${HOME}/build/commontk/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
+env: DISPLAY=:9 # LD_LIBRARY_PATH=${HOME}/build/commontk/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
 
 before_install:
   - sudo apt-get update -qq
