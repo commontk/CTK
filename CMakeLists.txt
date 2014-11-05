@@ -653,10 +653,6 @@ set(plugin_list
   org.commontk.metatype
   )
 
-if(CTK_QT_VERSION VERSION_LESS "5")
-  list(APPEND plugin_list org.commontk.log4qt)
-endif()
-
 foreach(_plugin ${plugin_list})
   ctk_plugin_option(${_plugin} "Build the ${_plugin} plugin." OFF)
 endforeach()
