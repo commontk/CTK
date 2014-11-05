@@ -116,6 +116,9 @@ ctkFileDialog::ctkFileDialog(QWidget *parentWidget,
 {
   Q_D(ctkFileDialog);
 
+// The findChild<QDialogButtonBox*>() call fails on Mac/Qt5 because native
+// dialogs don't publish any internals. No problems on other OS.
+// Can be applied to Qt4 as well, if problems arise there.
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
   this->setOptions(DontUseNativeDialog);
 #endif
