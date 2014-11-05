@@ -82,9 +82,6 @@ class ctkPluginPrivate;
  */
 class CTK_PLUGINFW_EXPORT ctkPlugin {
 
-  Q_DECLARE_PRIVATE(ctkPlugin)
-  Q_DISABLE_COPY(ctkPlugin)
-
 public:
 
   enum State {
@@ -812,6 +809,10 @@ protected:
   ctkPlugin();
   void init(ctkPluginPrivate* dd);
   void init(const QWeakPointer<ctkPlugin>& self, ctkPluginFrameworkContext* fw, QSharedPointer<ctkPluginArchive> ba);
+
+private:
+  Q_DECLARE_PRIVATE(ctkPlugin)
+  Q_DISABLE_COPY(ctkPlugin)
 };
 
 /**
