@@ -13,16 +13,22 @@ cmake_minimum_required(VERSION 2.8)
 # For additional information, see http://www.commontk.org/index.php/Dashboard_setup
 #
 
+set(CTK_QT_VERSION $ENV{CTK_QT_VERSION})
+if(NOT CTK_QT_VERSION)
+  set(CTK_QT_VERSION 4)
+endif()
+
 #
 # Dashboard properties
 #
 set(MY_OPERATING_SYSTEM "Ubuntu-12.04")
 set(MY_COMPILER "g++4.6.3")
-set(MY_QT_VERSION "4.8.1")
-set(QT_QMAKE_EXECUTABLE "/usr/bin/qmake")
 set(CTEST_SITE "travis-ci") # for example: mymachine.kitware, mymachine.dkfz, ...
 set(CTEST_DASHBOARD_ROOT "$ENV{HOME}/build/commontk")
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
+
+find_package(Qt${CTK_QT_VERSION} REQUIRED)
+set(MY_QT_VERSION ${QT${CTK_QT_VERSION}_VERSION})
 
 #
 # Dashboard options
@@ -55,11 +61,12 @@ set(SCRIPT_MODE "experimental") # "experimental", "continuous", "nightly"
 set(CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/CTK")
 set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/CTK-Superbuild-${CTEST_BUILD_CONFIGURATION}-${SCRIPT_MODE}")
 
-# Additionnal CMakeCache options - For example:
+# Additional CMakeCache options - For example:
 # CTK_LIB_Widgets:BOOL=ON
 # CTK_APP_ctkDICOM:BOOL=ON
 
 set(ADDITIONNAL_CMAKECACHE_OPTION "
+CTK_QT_VERSION:STRING=${CTK_QT_VERSION}
 CTK_BUILD_ALL:BOOL=ON
 CTK_BUILD_EXAMPLES:BOOL=ON
 CTK_USE_SYSTEM_VTK:BOOL=ON

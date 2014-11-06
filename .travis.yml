@@ -7,11 +7,18 @@ branches:
   only:
     - travis-ci-2
 
-env: DISPLAY=:9 # LD_LIBRARY_PATH=${HOME}/build/commontk/CTK-Superbuild-Release-experimental/CMakeExternals/Install/lib
+env:
+  global:
+    - DISPLAY=:9
+  matrix:
+    - CTK_QT_VERSION=5
+    - CTK_QT_VERSION=4
 
 before_install:
+  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
   - sudo apt-get update -qq
   - sudo apt-get install -y chrpath libqt4-dev qt4-dev-tools libvtk5-qt4-dev
+  - sudo apt-get install -y libqt5webkit5-dev qttools5-dev-tools libsqlite3-dev
   - sudo apt-get install -y xpra xserver-xorg-video-dummy
 
 before_script:
