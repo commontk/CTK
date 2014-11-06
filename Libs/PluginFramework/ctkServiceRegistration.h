@@ -49,8 +49,6 @@ class ctkServiceRegistrationPrivate;
  */
 class CTK_PLUGINFW_EXPORT ctkServiceRegistration {
 
-  Q_DECLARE_PRIVATE(ctkServiceRegistration)
-
 public:
 
   /**
@@ -167,6 +165,8 @@ protected:
 
   ctkServiceRegistrationPrivate* d_ptr;
 
+private:
+  Q_DECLARE_PRIVATE(ctkServiceRegistration)
 };
 
 /**
