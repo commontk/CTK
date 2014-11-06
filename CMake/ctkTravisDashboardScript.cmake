@@ -28,7 +28,9 @@ set(CTEST_DASHBOARD_ROOT "$ENV{HOME}/build/commontk")
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 
 find_package(Qt${CTK_QT_VERSION} REQUIRED)
-set(MY_QT_VERSION ${QT${CTK_QT_VERSION}_VERSION})
+if(NOT Qt${CTK_QT_VERSION}_FOUND)
+  message(SEND_ERROR "Qt${CTK_QT_VERSION} not found.")
+set(MY_QT_VERSION ${QTVERSION})
 
 #
 # Dashboard options
