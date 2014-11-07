@@ -20,8 +20,11 @@ endif()
 
 if(CTK_QT_VERSION EQUAL "4")
   set(QT_QMAKE_EXECUTABLE "/usr/bin/qmake")
+  set(MY_QT_VERSION 4.8.1)
+else()
+  set(MY_QT_VERSION 5.x)
 endif()
-message("***** QT_QMAKE_EXECUTABLE: ${QT_QMAKE_EXECUTABLE}")
+
 #
 # Dashboard properties
 #
@@ -30,11 +33,6 @@ set(MY_COMPILER "g++4.6.3")
 set(CTEST_SITE "travis-ci") # for example: mymachine.kitware, mymachine.dkfz, ...
 set(CTEST_DASHBOARD_ROOT "$ENV{HOME}/build/commontk")
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
-
-find_package(Qt${CTK_QT_VERSION} REQUIRED)
-if(NOT Qt${CTK_QT_VERSION}_FOUND)
-  message(SEND_ERROR "Qt${CTK_QT_VERSION} not found.")
-set(MY_QT_VERSION ${QTVERSION})
 
 #
 # Dashboard options

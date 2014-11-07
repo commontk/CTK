@@ -11,13 +11,9 @@ env:
   global:
     - DISPLAY=:9
   matrix:
-    # - CTK_QT_VERSION=5
     - CTK_QT_VERSION=4
 
 before_install:
-  - which qmake
-  - qmake -version
-  - ls -l /usr/bin/qmake
   - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
   - sudo apt-get update -qq
   - sudo apt-get install -y chrpath libqt4-dev qt4-dev-tools libvtk5-qt4-dev
