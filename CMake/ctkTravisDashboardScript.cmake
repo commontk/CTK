@@ -18,7 +18,7 @@ if(NOT CTK_QT_VERSION)
   set(CTK_QT_VERSION 4)
 endif()
 
-if(${CTK_QT_VERSION} EQUAL 4)
+if(CTK_QT_VERSION EQUAL "4")
   set(QT_QMAKE_EXECUTABLE "/usr/bin/qmake")
 endif()
 
