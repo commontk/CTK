@@ -1,0 +1,31 @@
+language: cpp
+
+compiler:
+  - gcc
+
+branches:
+  only:
+    - travis-integration
+
+env: DISPLAY=:9 CTK_QT_VERSION=4
+
+before_install:
+  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+  - sudo apt-get update -qq
+  - sudo apt-get install -y chrpath libqt4-dev qt4-dev-tools libvtk5-qt4-dev
+  # - sudo apt-get install -y libqt5webkit5-dev qtcore5-dev qtwidgets5-dev qttools5-dev-tools libsqlite3-dev
+  - sudo apt-get install -y xpra xserver-xorg-video-dummy
+
+before_script:
+  - wget -P /tmp http://www.cmake.org/files/v2.8/cmake-2.8.10.tar.gz
+  - tar xz -C /tmp -f /tmp/cmake-2.8.10.tar.gz
+  - cd /tmp/cmake-2.8.10 && ./configure --prefix=/usr/local -- -DCMAKE_USE_OPENSSL:BOOL=ON
+  - cd /tmp/cmake-2.8.10 && make -j4 && sudo make install
+  - xpra --xvfb="Xorg +extension GLX -config ${HOME}/build/commontk/CTK/Applications/Testing/dummy.xorg.conf -logfile ${HOME}/.xpra/xorg.log"  start :9
+
+script: ctest -V -S ${HOME}/build/commontk/CTK/CMake/ctkTravisDashboardScript.cmake
+
+after_script:
+  - xpra stop :9
+  - cat ${HOME}/build/commontk/CTK-Superbuild-Release-experimental/DCMTK-build/CMakeCache.txt
+  - "cat ~/.xpra/*"
