@@ -21,7 +21,7 @@ endif()
 if(CTK_QT_VERSION EQUAL "4")
   set(QT_QMAKE_EXECUTABLE "/usr/bin/qmake")
 endif()
-
+message("***** QT_QMAKE_EXECUTABLE: ${QT_QMAKE_EXECUTABLE}")
 #
 # Dashboard properties
 #
