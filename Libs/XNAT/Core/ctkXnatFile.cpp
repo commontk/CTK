@@ -58,7 +58,7 @@ ctkXnatFile::~ctkXnatFile()
 //----------------------------------------------------------------------------
 QString ctkXnatFile::resourceUri() const
 {
-  return QString("%1/files/%2").arg(parent()->resourceUri(), this->id());
+  return QString("%1/files/%2").arg(parent()->resourceUri(), this->name());
 }
 
 //----------------------------------------------------------------------------
