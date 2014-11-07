@@ -1,0 +1,30 @@
+version: 0.1.{build}
+
+environment:
+  QTDIR: C:\qt.io\5.3\msvc2012_opengl
+  
+# branches to build
+branches:
+  # whitelist
+  only:
+    - appveyor-ci
+
+# Operating system (build VM template)
+os: unstable
+#os: Windows Server 2012 R2
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf input
+
+# clone directory
+clone_folder: c:\projects\CTK
+
+build:
+  - ctest -S CMake/ctkAppVeyorDashboardScript.cmake
+  
+# scripts to run before build
+before_build:
+  
+# scripts to run after build
+after_build:
