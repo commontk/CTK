@@ -27,6 +27,8 @@
 #include "ctkXnatAssessor.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
+#include <QDebug>
+
 //----------------------------------------------------------------------------
 class ctkXnatAssessorFolderPrivate : public ctkXnatObjectPrivate
 {
@@ -84,4 +86,14 @@ void ctkXnatAssessorFolder::fetchImpl()
     
     this->add(assessor);
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatAssessorFolder::downloadImpl(const QString& filename)
+{
+  qDebug() << "ctkXnatExperiment::downloadImpl(const QString& filename) not yet tested";
+  QString query = this->resourceUri() + "/ALL/resources/files";
+  ctkXnatSession::UrlParameters parameters;
+  parameters["format"] = "zip";
+  this->session()->download(filename, query, parameters);
 }

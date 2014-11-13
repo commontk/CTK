@@ -62,12 +62,6 @@ QString ctkXnatFile::resourceUri() const
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatFile::download(const QString& filename)
-{
-  this->session()->download(this, filename);
-}
-
-//----------------------------------------------------------------------------
 void ctkXnatFile::upload(const QString& /*filename*/)
 {
 }
@@ -81,4 +75,11 @@ void ctkXnatFile::reset()
 //----------------------------------------------------------------------------
 void ctkXnatFile::fetchImpl()
 {
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatFile::downloadImpl(const QString& filename)
+{
+  QString query = this->resourceUri();
+  this->session()->download(filename, query);
 }

@@ -44,7 +44,6 @@ public:
 
   virtual QString resourceUri() const;
 
-  void download(const QString& filename);
   void upload(const QString& filename);
 
   void reset();
@@ -52,6 +51,8 @@ public:
 private:
 
   virtual void fetchImpl();
+
+  virtual void downloadImpl(const QString&);
 
   Q_DECLARE_PRIVATE(ctkXnatFile)
 };

@@ -290,8 +290,9 @@ void ctkXnatObject::setSchemaType(const QString& schemaType)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::download(const QString& /*zipFilename*/)
+void ctkXnatObject::download(const QString& filename)
 {
+  this->downloadImpl(filename);
 }
 
 //----------------------------------------------------------------------------

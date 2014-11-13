@@ -27,6 +27,7 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 
+#include <QDebug>
 
 //----------------------------------------------------------------------------
 class ctkXnatProjectPrivate : public ctkXnatObjectPrivate
@@ -158,4 +159,10 @@ void ctkXnatProject::fetchImpl()
     this->add(subject);
   }
   this->fetchResources();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatProject::downloadImpl(const QString& filename)
+{
+  qDebug() << "ctkXnatProject::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }

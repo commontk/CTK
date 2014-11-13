@@ -83,7 +83,10 @@ void ctkXnatResource::fetchImpl()
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatResource::download(const QString& filename)
+void ctkXnatResource::downloadImpl(const QString& filename)
 {
-  this->session()->download(this, filename);
+  QString query = this->resourceUri() + "/files";
+  ctkXnatSession::UrlParameters parameters;
+  parameters["format"] = "zip";
+  this->session()->download(filename, query, parameters);
 }
