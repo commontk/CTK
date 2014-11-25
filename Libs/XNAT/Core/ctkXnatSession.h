@@ -139,6 +139,14 @@ public:
    */
   QString password() const;
 
+  /**
+   * @brief Get the sessionId for this XNAT session.
+   *
+   * @return The XNAT sessionId.
+   */
+  QString sessionId() const;
+
+
   ctkXnatDataModel* dataModel() const;
 
   /**
