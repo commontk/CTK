@@ -382,7 +382,6 @@ void ctkDICOMTableView::setTableSectionSize(int size)
 {
   Q_D(ctkDICOMTableView);
   d->tblDicomDatabaseView->verticalHeader()->setDefaultSectionSize(size);
-  d->setUpTableView();
 }
 
 //------------------------------------------------------------------------------
