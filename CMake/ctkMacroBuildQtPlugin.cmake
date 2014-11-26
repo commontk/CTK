@@ -165,13 +165,12 @@ macro(ctkMacroBuildQtPlugin)
   # subdirectory (e.g. 'designer') but not deeper (e.g. designer/Debug), let's copy them.
 
   if(NOT CMAKE_CFG_INTDIR STREQUAL ".")
-    get_target_property(FILE_PATH ${lib_name} LOCATION)
     get_target_property(DIR_PATH ${lib_name} LIBRARY_OUTPUT_DIRECTORY)
 
     add_custom_command(
       TARGET ${lib_name}
       POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy ${FILE_PATH} ${DIR_PATH}/../${MY_PLUGIN_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${lib_name}${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE> ${DIR_PATH}/../${MY_PLUGIN_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${lib_name}${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
       )
   endif()
 
