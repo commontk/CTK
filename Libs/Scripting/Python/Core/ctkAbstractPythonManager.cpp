@@ -424,5 +424,5 @@ void ctkAbstractPythonManager::printStdout(const QString& text)
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::printStderr(const QString& text)
 {
-  std::cout << qPrintable(text);
+  std::cerr << qPrintable(text);
 }
