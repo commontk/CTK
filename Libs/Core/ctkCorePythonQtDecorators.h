@@ -25,6 +25,7 @@
 #include <PythonQt.h>
 
 // CTK includes
+#include <ctkErrorLogContext.h>
 #include <ctkWorkflowStep.h>
 #include <ctkWorkflowTransitions.h>
 
@@ -43,6 +44,7 @@ public:
 
   ctkCorePythonQtDecorators()
     {
+    PythonQt::self()->registerCPPClass("ctkErrorLogContext", 0, "CTKCore");
     PythonQt::self()->registerCPPClass("ctkWorkflowStep", 0, "CTKCore");
     PythonQt::self()->registerClass(&ctkWorkflowInterstepTransition::staticMetaObject, "CTKCore");
     }
@@ -160,6 +162,56 @@ public Q_SLOTS:
     {
     delete transition;
     }
+
+  //
+  // ctkErrorLogContext
+  //
+  ctkErrorLogContext* new_ctkErrorLogContext()
+    {
+    return new ctkErrorLogContext();
+    }
+
+  ctkErrorLogContext* new_ctkErrorLogContext(const QString& msg)
+    {
+    return new ctkErrorLogContext(msg);
+    }
+
+  void setCategory(ctkErrorLogContext* context, const QString& category)
+    {
+    context->Category = category;
+    }
+  QString category(ctkErrorLogContext* context)
+    {
+    return context->Category;
+    }
+
+  void setLine(ctkErrorLogContext* context, int line)
+    {
+    context->Line = line;
+    }
+  int line(ctkErrorLogContext* context)
+    {
+    return context->Line;
+    }
+
+  void setFunction(ctkErrorLogContext* context, const QString& function)
+    {
+    context->Function = function;
+    }
+  QString function(ctkErrorLogContext* context)
+    {
+    return context->Function;
+    }
+
+  void setMessage(ctkErrorLogContext* context, const QString& message)
+    {
+    context->Message = message;
+    }
+  QString message(ctkErrorLogContext* context)
+    {
+    return context->Message;
+    }
+
 };
 
 //-----------------------------------------------------------------------------
