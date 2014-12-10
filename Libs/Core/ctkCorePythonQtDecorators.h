@@ -194,6 +194,15 @@ public Q_SLOTS:
     return context->Line;
     }
 
+  void setFile(ctkErrorLogContext* context, const QString& file)
+    {
+    context->File = file;
+    }
+  QString file(ctkErrorLogContext* context)
+    {
+    return context->File;
+    }
+
   void setFunction(ctkErrorLogContext* context, const QString& function)
     {
     context->Function = function;
