@@ -94,6 +94,11 @@ RenderWindowItem::RenderWindowItem(const double rendererBackgroundColor[3],
                                 rendererBackgroundColor[1],
                                 rendererBackgroundColor[2]);
 
+  // Ensure a vtkCamera is created and associated with the renderer
+  // This is particularly important to ensure WorldToView/ViewToWorld
+  // work as expected.
+  this->Renderer->GetActiveCamera();
+
   this->SetupImageMapperActor(colorWindow, colorLevel);
   this->SetupHighlightedBoxActor(highlightedBoxColor);
 }
@@ -668,6 +673,7 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
     {
     return;
     }
+
 
   if (this->Internal->RenderWindowRowCount == rowCount && 
       this->Internal->RenderWindowColumnCount == columnCount)
