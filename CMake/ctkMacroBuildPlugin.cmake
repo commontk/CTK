@@ -140,9 +140,11 @@ macro(ctkMacroBuildPlugin)
   # and external dependencies
   ctkFunctionGetIncludeDirs(my_includes ${lib_name})
 
-  include_directories(
-    ${my_includes}
-    )
+  if(CMAKE_VERSION VERSION_LESS 2.8.12)
+    include_directories(
+      ${my_includes}
+      )
+  endif()
 
   if(CTK_QT_VERSION VERSION_LESS "5")
     # Add Qt include dirs and defines
@@ -180,7 +182,7 @@ macro(ctkMacroBuildPlugin)
       # this is a workaround for Visual Studio. The relative include paths in the generated
       # moc files can get very long and can't be resolved by the MSVC compiler.
       foreach(moc_src ${MY_MOC_SRCS})
-        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} -DHAVE_QT5)
+        QT5_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} -DHAVE_QT5 TARGET ${lib_name})
       endforeach()
     endif()
     QT5_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
@@ -192,7 +194,7 @@ macro(ctkMacroBuildPlugin)
       # this is a workaround for Visual Studio. The relative include paths in the generated
       # moc files can get very long and can't be resolved by the MSVC compiler.
       foreach(moc_src ${MY_MOC_SRCS})
-        QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
+        QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} TARGET ${lib_name})
       endforeach()
     endif()
     QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
@@ -290,9 +292,36 @@ macro(ctkMacroBuildPlugin)
     ${_plugin_qm_files}
     )
 
+  if(NOT CMAKE_VERSION VERSION_LESS 2.8.12)
+    target_include_directories(${lib_name}
+      PUBLIC "$<BUILD_INTERFACE:${my_includes}>"
+             "$<INSTALL_INTERFACE:${CTK_INSTALL_PLUGIN_INCLUDE_DIR}/${Plugin-SymbolicName}>"
+      )
+    if(CTK_QT_VERSION VERSION_LESS "5")
+      # Add Qt include dirs to the target
+      target_include_directories(${lib_name} PUBLIC ${QT_INCLUDE_DIR})
+      foreach(module QT3SUPPORT QTOPENGL QTASSISTANT QTDESIGNER QTMOTIF QTNSPLUGIN
+               QAXSERVER QAXCONTAINER QTDECLARATIVE QTSCRIPT QTSVG QTUITOOLS QTHELP
+               QTWEBKIT PHONON QTSCRIPTTOOLS QTMULTIMEDIA QTXMLPATTERNS QTGUI QTTEST
+               QTDBUS QTXML QTSQL QTNETWORK QTCORE)
+        if (QT_USE_${module} OR QT_USE_${module}_DEPENDS)
+          if (QT_${module}_FOUND)
+            target_include_directories(${lib_name} PUBLIC ${QT_${module}_INCLUDE_DIR})
+          endif ()
+        endif ()
+      endforeach()
+    endif()
+  else()
+    find_package(Qt5LinguistTools REQUIRED)
+  endif()
+
   if(MY_TEST_PLUGIN AND CTK_QT_VERSION VERSION_GREATER "4")
     find_package(Qt5Test REQUIRED)
-    target_link_libraries(${lib_name} Qt5::Test)
+    if(CMAKE_VERSION VERSION_LESS 2.8.12)
+      target_link_libraries(${lib_name} Qt5::Test)
+    else()
+      target_link_libraries(${lib_name} PRIVATE Qt5::Test)
+    endif()
   endif()
 
   # Set the output directory for the plugin
@@ -354,7 +383,11 @@ macro(ctkMacroBuildPlugin)
     list(APPEND my_libs ssp) # add stack smash protection lib
   endif()
 
-  target_link_libraries(${lib_name} ${my_libs})
+  if(CMAKE_VERSION VERSION_LESS 2.8.12)
+    target_link_libraries(${lib_name} ${my_libs})
+  else()
+    target_link_libraries(${lib_name} PUBLIC ${my_libs})
+  endif()
 
   if(NOT MY_TEST_PLUGIN)
     set(${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES} ${lib_name} CACHE INTERNAL "CTK plugins" FORCE)
