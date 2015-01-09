@@ -136,7 +136,7 @@ void ctkFileLogger::logMessage(const QString& msg)
     return;
     }
   QTextStream s(&f);
-  s << msg << "\n";
+  s << msg << endl;
   f.close();
 }
 
