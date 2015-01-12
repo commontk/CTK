@@ -21,8 +21,9 @@
 
 #include "ctkXnatResource.h"
 
-#include "ctkXnatSession.h"
+#include "ctkXnatConstants.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatSession.h"
 
 //----------------------------------------------------------------------------
 class ctkXnatResourcePrivate : public ctkXnatObjectPrivate
@@ -51,7 +52,7 @@ ctkXnatResource::~ctkXnatResource()
 //----------------------------------------------------------------------------
 QString ctkXnatResource::resourceUri() const
 {
-  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("label"));
+  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property(ctkXnatObjectFields::LABEL));
 }
 
 //----------------------------------------------------------------------------
@@ -72,12 +73,12 @@ void ctkXnatResource::fetchImpl()
 
   foreach (ctkXnatObject* file, files)
   {
-    QString label = file->property("name");
+    QString label = file->property(ctkXnatObjectFields::NAME);
     if (label.isEmpty())
     {
       label = "NO NAME";
     }
-    file->setProperty("label", label);
+    file->setProperty(ctkXnatObjectFields::LABEL, label);
     this->add(file);
   }
 }

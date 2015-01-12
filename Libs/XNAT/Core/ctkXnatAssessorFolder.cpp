@@ -21,11 +21,12 @@
 
 #include "ctkXnatAssessorFolder.h"
 
-#include "ctkXnatSession.h"
+#include "ctkXnatAssessor.h"
+#include "ctkXnatConstants.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
-#include "ctkXnatAssessor.h"
-#include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatSession.h"
 
 //----------------------------------------------------------------------------
 class ctkXnatAssessorFolderPrivate : public ctkXnatObjectPrivate
@@ -48,8 +49,8 @@ ctkXnatAssessorFolder::ctkXnatAssessorFolder(ctkXnatObject* parent)
   : ctkXnatObject(*new ctkXnatAssessorFolderPrivate(), parent, QString::null)
 {
   
-  this->setProperty("ID", "assessors");
-  this->setProperty("label", "Assessments");
+  this->setProperty(ctkXnatObjectFields::ID, "assessors");
+  this->setProperty(ctkXnatObjectFields::LABEL, "Assessments");
 }
 
 //----------------------------------------------------------------------------

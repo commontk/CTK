@@ -21,11 +21,12 @@
 
 #include "ctkXnatScanFolder.h"
 
-#include "ctkXnatSession.h"
+#include "ctkXnatConstants.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatScan.h"
-#include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatSession.h"
 
 
 //----------------------------------------------------------------------------
@@ -51,8 +52,8 @@ public:
 ctkXnatScanFolder::ctkXnatScanFolder(ctkXnatObject* parent)
   : ctkXnatObject(*new ctkXnatScanFolderPrivate(), parent, QString::null)
 {
-  this->setProperty("id", "scans");
-  this->setProperty("label", "Scans");
+  this->setProperty(ctkXnatObjectFields::ID, "scans");
+  this->setProperty(ctkXnatObjectFields::LABEL, "Scans");
 }
 
 //----------------------------------------------------------------------------
@@ -84,10 +85,10 @@ void ctkXnatScanFolder::fetchImpl()
 
   foreach (ctkXnatObject* scan, scans)
   {
-    QString series_description = scan->property ("series_description");
-    QString label = scan->property ("label");
+    QString series_description = scan->property (ctkXnatObjectFields::SERIES_DESCRIPTION);
+    QString label = scan->property (ctkXnatObjectFields::LABEL);
     label = label.isEmpty() ? series_description : label;
-    scan->setProperty ("label", label);
+    scan->setProperty (ctkXnatObjectFields::LABEL, label);
     
     this->add(scan);
   }
