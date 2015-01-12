@@ -21,11 +21,12 @@
 
 #include "ctkXnatProject.h"
 
+#include "ctkXnatConstants.h"
 #include "ctkXnatDataModel.h"
+#include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSession.h"
 #include "ctkXnatSubject.h"
-#include "ctkXnatObjectPrivate.h"
-#include "ctkXnatDefaultSchemaTypes.h"
 
 
 //----------------------------------------------------------------------------
