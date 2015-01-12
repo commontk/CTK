@@ -44,6 +44,11 @@ public:
 
   QString resourceUri() const;
 
+  QString id() const;
+
+  QString name() const;
+  QString setName(const QString &name);
+
   void reset();
 
   void download(const QString& filename);
