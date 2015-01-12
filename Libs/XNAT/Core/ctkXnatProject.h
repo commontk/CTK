@@ -55,6 +55,9 @@ public:
   const QString& piLastName() const;
   void setPiLastName(const QString& piLastName);
 
+  QString projectDescription() const;
+  void setProjectDescription(const QString &description);
+
   void reset();
 
 private:

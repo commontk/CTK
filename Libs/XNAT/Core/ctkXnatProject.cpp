@@ -108,6 +108,18 @@ void ctkXnatProject::setPiLastName(const QString& piLastName)
 }
 
 //----------------------------------------------------------------------------
+QString ctkXnatProject::projectDescription() const
+{
+  return property(ctkXnatObjectFields::DESCRIPTION);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatProject::setProjectDescription(const QString& description)
+{
+  setProperty(ctkXnatObjectFields::DESCRIPTION, description);
+}
+
+//----------------------------------------------------------------------------
 //const QString& ctkXnatProject::uri() const
 //{
 //  Q_D(const ctkXnatProject);
