@@ -92,13 +92,15 @@ void ctkXnatObject::setName(const QString& name)
 //----------------------------------------------------------------------------
 QString ctkXnatObject::description() const
 {
-  return property("description");
+  Q_D(const ctkXnatObject);
+  return d->description;
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setDescription(const QString& description)
 {
-  setProperty("description", description);
+  Q_D(ctkXnatObject);
+  d->description = description;
 }
 
 //----------------------------------------------------------------------------

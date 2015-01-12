@@ -49,6 +49,8 @@ private:
 
   QList<ctkXnatObject*> children;
 
+  QString description;
+
   QDateTime lastModifiedTime;
 
   bool fetched;
