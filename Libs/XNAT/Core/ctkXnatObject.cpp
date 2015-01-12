@@ -22,9 +22,10 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 
+#include "ctkXnatConstants.h"
 #include "ctkXnatDataModel.h"
-#include "ctkXnatSession.h"
 #include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatSession.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -79,13 +80,13 @@ void ctkXnatObject::setId(const QString& id)
 //----------------------------------------------------------------------------
 QString ctkXnatObject::name() const
 {
-  return property("name");
+  return property(ctkXnatObjectFields::NAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setName(const QString& name)
 {
-  setProperty("name", name);
+  setProperty(ctkXnatObjectFields::NAME, name);
 }
 
 //----------------------------------------------------------------------------
@@ -261,6 +262,12 @@ QString ctkXnatObject::schemaType() const
 }
 
 //----------------------------------------------------------------------------
+void ctkXnatObject::setSchemaType(const QString& schemaType)
+{
+  this->setProperty("xsiType", schemaType);
+}
+
+//----------------------------------------------------------------------------
 void ctkXnatObject::fetch()
 {
   Q_D(ctkXnatObject);
@@ -281,12 +288,6 @@ ctkXnatSession* ctkXnatObject::session() const
   }
   const ctkXnatDataModel* dataModel = dynamic_cast<const ctkXnatDataModel*>(xnatObject);
   return dataModel ? dataModel->session() : NULL;
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatObject::setSchemaType(const QString& schemaType)
-{
-  this->setProperty("xsiType", schemaType);
 }
 
 //----------------------------------------------------------------------------
@@ -323,13 +324,13 @@ void ctkXnatObject::fetchResources(const QString& path)
 
   foreach (ctkXnatObject* resource, resources)
   {
-    QString label = resource->property("label");
+    QString label = resource->property(ctkXnatObjectFields::LABEL);
     if (label.isEmpty())
     {
       label = "NO NAME";
     }
 
-    resource->setProperty("label", label);
+    resource->setProperty(ctkXnatObjectFields::LABEL, label);
     this->add(resource);
   }
 }
