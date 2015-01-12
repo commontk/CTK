@@ -119,10 +119,10 @@ void ctkXnatSubject::fetchImpl()
 
   foreach (ctkXnatObject* experiment, experiments)
   {
-    QString label = experiment->property ("label");
+    QString label = experiment->property (ctkXnatObjectFields::LABEL);
     if (!label.isEmpty())
     {
-      experiment->setProperty ("id", label);
+      experiment->setProperty (ctkXnatObjectFields::LABEL, label);
     }
 
     this->add(experiment);
