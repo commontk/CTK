@@ -21,8 +21,9 @@
 
 #include "ctkXnatFile.h"
 
-#include "ctkXnatSession.h"
+#include "ctkXnatConstants.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatSession.h"
 
 
 //----------------------------------------------------------------------------
@@ -53,6 +54,39 @@ ctkXnatFile::ctkXnatFile(ctkXnatObject* parent, const QString& schemaType)
 //----------------------------------------------------------------------------
 ctkXnatFile::~ctkXnatFile()
 {
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatFile::setFileFormat(const QString &fileFormat)
+{
+  setProperty(ctkXnatObjectFields::FILE_FORMAT, fileFormat);
+}
+
+QString ctkXnatFile::fileFormat() const
+{
+  return property(ctkXnatObjectFields::FILE_FORMAT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatFile::setFileContent(const QString &fileContent)
+{
+  setProperty(ctkXnatObjectFields::FILE_CONTENT, fileContent);
+}
+
+QString ctkXnatFile::fileContent() const
+{
+  return property(ctkXnatObjectFields::FILE_CONTENT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatFile::setFileTags(const QString &fileTags)
+{
+  setProperty(ctkXnatObjectFields::FILE_TAGS, fileTags);
+}
+
+QString ctkXnatFile::fileTags() const
+{
+  return property(ctkXnatObjectFields::FILE_TAGS);
 }
 
 //----------------------------------------------------------------------------
