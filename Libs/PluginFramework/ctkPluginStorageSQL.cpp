@@ -28,6 +28,7 @@
 #include "ctkPluginStorage_p.h"
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginFrameworkContext_p.h"
+#include "ctkScopedCurrentDir.h"
 #include "ctkServiceException.h"
 
 #include <QFileInfo>
@@ -425,6 +426,7 @@ void ctkPluginStorageSQL::insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa, 
 
   // Load the plugin and cache the resources
 
+  ctkScopedCurrentDir scopedCurrentDir(QFileInfo(pa->getLibLocation()).path());
   QPluginLoader pluginLoader;
   pluginLoader.setLoadHints(getPluginLoadHints());
   pluginLoader.setFileName(pa->getLibLocation());
