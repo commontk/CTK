@@ -44,6 +44,9 @@ public:
 
   virtual QString resourceUri() const;
 
+  void setName(const QString &name);
+  QString name() const;
+
   void setFileFormat(const QString& fileFormat);
   QString fileFormat() const;
 

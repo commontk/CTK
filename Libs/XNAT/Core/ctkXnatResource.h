@@ -44,8 +44,6 @@ public:
 
   QString resourceUri() const;
 
-  QString id() const;
-
   QString name() const;
   void setName(const QString &name);
 

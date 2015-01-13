@@ -39,6 +39,7 @@ QString ctkXnatObjectFields::TYPE = "type";
 
 QString ctkXnatObjectFields::ABSTRACT_RESOURCE_ID = "xnat_abstractresource_id";
 
+QString ctkXnatObjectFields::FILE_NAME = "Name";
 QString ctkXnatObjectFields::FILE_TAGS = "file_tags";
 QString ctkXnatObjectFields::FILE_FORMAT = "file_format";
 QString ctkXnatObjectFields::FILE_CONTENT = "file_content";

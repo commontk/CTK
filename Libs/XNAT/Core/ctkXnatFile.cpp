@@ -57,6 +57,18 @@ ctkXnatFile::~ctkXnatFile()
 }
 
 //----------------------------------------------------------------------------
+void ctkXnatFile::setName(const QString &name)
+{
+  setProperty(ctkXnatObjectFields::FILE_NAME, name);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatFile::name() const
+{
+  return property(ctkXnatObjectFields::FILE_NAME);
+}
+
+//----------------------------------------------------------------------------
 void ctkXnatFile::setFileFormat(const QString &fileFormat)
 {
   setProperty(ctkXnatObjectFields::FILE_FORMAT, fileFormat);

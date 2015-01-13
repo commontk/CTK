@@ -55,6 +55,7 @@ struct CTK_XNAT_CORE_EXPORT ctkXnatObjectFields
   static QString ABSTRACT_RESOURCE_ID;
 
   // XnatFile specific
+  static QString FILE_NAME;
   static QString FILE_TAGS;
   static QString FILE_FORMAT;
   static QString FILE_CONTENT;
