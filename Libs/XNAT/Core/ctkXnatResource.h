@@ -47,7 +47,7 @@ public:
   QString id() const;
 
   QString name() const;
-  QString setName(const QString &name);
+  void setName(const QString &name);
 
   void reset();
 
