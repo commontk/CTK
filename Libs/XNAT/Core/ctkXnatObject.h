@@ -48,10 +48,11 @@ public:
   /// Destructs the ctkXnatObject.
   virtual ~ctkXnatObject();
 
-  /// Gets the ID of the object.
+  /// Gets the global ID of the object.
   QString id() const;
 
   /// Sets the ID of the object.
+  /// @warning You must not change the ID of an existing object
   void setId(const QString& id);
 
   /// Gets the resource URI of the object that can be used to access it through

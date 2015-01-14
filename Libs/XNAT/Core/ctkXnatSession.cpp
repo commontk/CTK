@@ -287,18 +287,7 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
       QString  str = it.key().toLatin1().data();
       QVariant var = it.value();
 
-      // Do not store IDs as properties. IDs are read only and
-      // incase a xnatObject is uploaded, all properties will be uploaded
-      // as well.
-      if (str.compare(ctkXnatObjectFields::ID) == 0 ||
-          str.compare(ctkXnatObjectFields::ABSTRACT_RESOURCE_ID) == 0)
-      {
-        object->setId(var.toString());
-      }
-      else
-      {
-        object->setProperty(str, var);
-      }
+      object->setProperty(str, var);
       description.append (str + QString ("\t::\t") + var.toString() + "\n");
     }
 

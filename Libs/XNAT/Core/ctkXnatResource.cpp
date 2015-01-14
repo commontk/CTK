@@ -56,6 +56,18 @@ QString ctkXnatResource::resourceUri() const
 }
 
 //----------------------------------------------------------------------------
+QString ctkXnatResource::id() const
+{
+  return property(ctkXnatObjectFields::ABSTRACT_RESOURCE_ID);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::setId(const QString &id)
+{
+  setProperty(ctkXnatObjectFields::ABSTRACT_RESOURCE_ID, id);
+}
+
+//----------------------------------------------------------------------------
 QString ctkXnatResource::name() const
 {
   return property(ctkXnatObjectFields::LABEL);

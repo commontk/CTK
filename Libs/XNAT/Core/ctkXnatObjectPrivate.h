@@ -49,7 +49,7 @@ private:
 
   QList<ctkXnatObject*> children;
 
-  QString id;
+  // Description of the object that can be used e.g. as tooltip
   QString description;
 
   QDateTime lastModifiedTime;
