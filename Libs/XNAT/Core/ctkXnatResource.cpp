@@ -34,7 +34,6 @@ public:
   : ctkXnatObjectPrivate()
   {
   }
-
 };
 
 
@@ -70,13 +69,25 @@ void ctkXnatResource::setId(const QString &id)
 //----------------------------------------------------------------------------
 QString ctkXnatResource::name() const
 {
-  return property(ctkXnatObjectFields::LABEL);
+  return this->label();
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatResource::setName(const QString &name)
 {
-  setProperty(ctkXnatObjectFields::LABEL, name);
+  this->setLabel(name);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::label() const
+{
+  return property(ctkXnatObjectFields::LABEL);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::setLabel(const QString &label)
+{
+  setProperty(ctkXnatObjectFields::LABEL, label);
 }
 
 //----------------------------------------------------------------------------
@@ -85,10 +96,12 @@ void ctkXnatResource::reset()
   ctkXnatObject::reset();
 }
 
+#include <QDebug>
 //----------------------------------------------------------------------------
 void ctkXnatResource::fetchImpl()
 {
   QString resourceFilesUri = this->resourceUri() + "/files";
+  qDebug() << __FUNCTION__ << resourceFilesUri;
   ctkXnatSession* const session = this->session();
   QUuid queryId = session->httpGet(resourceFilesUri);
 
