@@ -82,7 +82,7 @@ void ctkXnatReconstruction::fetchImpl()
 
   foreach (ctkXnatObject* reconstructionResource, reconstructionResources)
   {
-    QString label = reconstructionResource->property(ctkXnatObjectFields::NAME);
+    QString label = reconstructionResource->property(ctkXnatObjectFields::FILE_NAME);
     if (!label.isEmpty())
     {
       reconstructionResource->setProperty(ctkXnatObjectFields::ID, label);
