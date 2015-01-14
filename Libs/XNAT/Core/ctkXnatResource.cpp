@@ -113,7 +113,7 @@ void ctkXnatResource::fetchImpl()
     {
       label = "NO NAME";
     }
-    file->setProperty(ctkXnatObjectFields::FILE_NAME, label);
+    file->setName(label);
     this->add(file);
   }
 }
