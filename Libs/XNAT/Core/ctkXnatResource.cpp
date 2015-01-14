@@ -96,12 +96,10 @@ void ctkXnatResource::reset()
   ctkXnatObject::reset();
 }
 
-#include <QDebug>
 //----------------------------------------------------------------------------
 void ctkXnatResource::fetchImpl()
 {
   QString resourceFilesUri = this->resourceUri() + "/files";
-  qDebug() << __FUNCTION__ << resourceFilesUri;
   ctkXnatSession* const session = this->session();
   QUuid queryId = session->httpGet(resourceFilesUri);
 
