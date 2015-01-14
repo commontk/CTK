@@ -21,11 +21,12 @@
 
 #include "ctkXnatProject.h"
 
+#include "ctkXnatConstants.h"
 #include "ctkXnatDataModel.h"
+#include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSession.h"
 #include "ctkXnatSubject.h"
-#include "ctkXnatObjectPrivate.h"
-#include "ctkXnatDefaultSchemaTypes.h"
 
 
 //----------------------------------------------------------------------------
@@ -40,15 +41,9 @@ public:
 
   void reset()
   {
-    secondaryId.clear();
-    piFirstName.clear();
-    piLastName.clear();
 //    uri.clear();
   }
 
-  QString secondaryId;
-  QString piFirstName;
-  QString piLastName;
 //  QString uri;
 };
 
@@ -79,43 +74,49 @@ QString ctkXnatProject::childDataType() const
 //----------------------------------------------------------------------------
 const QString& ctkXnatProject::secondaryId() const
 {
-  Q_D(const ctkXnatProject);
-  return d->secondaryId;
+  return property(ctkXnatObjectFields::SECONDARY_ID);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setSecondaryId(const QString& secondaryId)
 {
-  Q_D(ctkXnatProject);
-  d->secondaryId = secondaryId;
+  setProperty(ctkXnatObjectFields::SECONDARY_ID, secondaryId);
 }
 
 //----------------------------------------------------------------------------
 const QString& ctkXnatProject::piFirstName() const
 {
-  Q_D(const ctkXnatProject);
-  return d->piFirstName;
+  return property(ctkXnatObjectFields::PI_FIRSTNAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setPiFirstName(const QString& piFirstName)
 {
-  Q_D(ctkXnatProject);
-  d->piFirstName = piFirstName;
+  setProperty(ctkXnatObjectFields::PI_FIRSTNAME, piFirstName);
 }
 
 //----------------------------------------------------------------------------
 const QString& ctkXnatProject::piLastName() const
 {
-  Q_D(const ctkXnatProject);
-  return d->piLastName;
+  return property(ctkXnatObjectFields::PI_LASTNAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setPiLastName(const QString& piLastName)
 {
-  Q_D(ctkXnatProject);
-  d->piLastName = piLastName;
+  setProperty(ctkXnatObjectFields::PI_LASTNAME, piLastName);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatProject::projectDescription() const
+{
+  return property(ctkXnatObjectFields::DESCRIPTION);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatProject::setProjectDescription(const QString& description)
+{
+  setProperty(ctkXnatObjectFields::DESCRIPTION, description);
 }
 
 //----------------------------------------------------------------------------
@@ -149,10 +150,10 @@ void ctkXnatProject::fetchImpl()
 
   foreach (ctkXnatObject* subject, subjects)
   {
-    QString label = subject->property("label");
+    QString label = subject->property(ctkXnatObjectFields::LABEL);
     if (!label.isEmpty())
     {
-      subject->setProperty("ID", label);
+      subject->setProperty(ctkXnatObjectFields::ID, label);
     }
 
     this->add(subject);

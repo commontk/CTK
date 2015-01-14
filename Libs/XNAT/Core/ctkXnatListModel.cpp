@@ -20,12 +20,14 @@
 =============================================================================*/
 
 #include "ctkXnatDataModel.h"
+
+#include "ctkXnatConstants.h"
+#include "ctkXnatExperiment.h"
 #include "ctkXnatListModel.h"
 #include "ctkXnatProject.h"
-#include "ctkXnatSubject.h"
-#include "ctkXnatExperiment.h"
-#include "ctkXnatScanFolder.h"
 #include "ctkXnatScan.h"
+#include "ctkXnatScanFolder.h"
+#include "ctkXnatSubject.h"
 
 #include <iostream>
 #include <typeinfo>
@@ -66,19 +68,12 @@ QVariant ctkXnatListModel::data(const QModelIndex& index, int role) const
   if (role == Qt::DisplayRole)
   {
     ctkXnatObject* child = RootObject->children().at(index.row());
-    if (!child)
+    QString displayData = child->name();
+    if (displayData.isEmpty())
     {
-      qWarning() << "child at index" << index << "is NULL!";
+      displayData = child->property(ctkXnatObjectFields::LABEL);
     }
-    else
-    {
-      QString displayData = child->name();
-      if (displayData.isEmpty())
-      {
-        displayData = child->id();
-      }
-      return displayData;
-    }
+    return displayData;
   }
   else if (role == Qt::UserRole)
   {

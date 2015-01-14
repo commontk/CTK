@@ -43,6 +43,15 @@ public:
 
   virtual ~ctkXnatScan();
 
+  void setQuality(const QString& quality);
+  QString quality() const;
+
+  void setSeriesDescription(const QString& seriesDescription);
+  QString seriesDescription() const;
+
+  void setType (const QString& type);
+  QString type () const;
+
   virtual QString resourceUri() const;
 
   void reset();

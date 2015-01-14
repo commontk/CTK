@@ -44,6 +44,18 @@ public:
 
   QString resourceUri() const;
 
+  QString id() const;
+  void setId(const QString &id);
+
+  QString name() const;
+  void setName(const QString &name);
+
+  /// Gets the label of the object.
+  QString label() const;
+
+  /// Sets the label of the object.
+  void setLabel(const QString& label);
+
   void reset();
 
   void download(const QString& filename);

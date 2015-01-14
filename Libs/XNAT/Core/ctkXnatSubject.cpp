@@ -21,13 +21,12 @@
 
 #include "ctkXnatSubject.h"
 
-#include "ctkXnatProject.h"
-
-#include "ctkXnatSession.h"
-#include "ctkXnatObjectPrivate.h"
-#include "ctkXnatExperiment.h"
-#include "ctkXnatProject.h"
+#include "ctkXnatConstants.h"
 #include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatExperiment.h"
+#include "ctkXnatObjectPrivate.h"
+#include "ctkXnatProject.h"
+#include "ctkXnatSession.h"
 
 
 //----------------------------------------------------------------------------
@@ -119,10 +118,10 @@ void ctkXnatSubject::fetchImpl()
 
   foreach (ctkXnatObject* experiment, experiments)
   {
-    QString label = experiment->property ("label");
+    QString label = experiment->property (ctkXnatObjectFields::LABEL);
     if (!label.isEmpty())
     {
-      experiment->setProperty ("ID", label);
+      experiment->setProperty (ctkXnatObjectFields::ID, label);
     }
 
     this->add(experiment);

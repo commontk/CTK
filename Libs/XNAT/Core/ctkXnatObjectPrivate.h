@@ -49,6 +49,9 @@ private:
 
   QList<ctkXnatObject*> children;
 
+  // Description of the object that can be used e.g. as tooltip
+  QString description;
+
   QDateTime lastModifiedTime;
 
   bool fetched;

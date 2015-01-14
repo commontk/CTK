@@ -21,8 +21,9 @@
 
 #include "ctkXnatResource.h"
 
-#include "ctkXnatSession.h"
+#include "ctkXnatConstants.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatSession.h"
 
 //----------------------------------------------------------------------------
 class ctkXnatResourcePrivate : public ctkXnatObjectPrivate
@@ -33,7 +34,6 @@ public:
   : ctkXnatObjectPrivate()
   {
   }
-
 };
 
 
@@ -51,7 +51,43 @@ ctkXnatResource::~ctkXnatResource()
 //----------------------------------------------------------------------------
 QString ctkXnatResource::resourceUri() const
 {
-  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->property("xnat_abstractresource_id"));
+  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->id());
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::id() const
+{
+  return property(ctkXnatObjectFields::ABSTRACT_RESOURCE_ID);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::setId(const QString &id)
+{
+  setProperty(ctkXnatObjectFields::ABSTRACT_RESOURCE_ID, id);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::name() const
+{
+  return this->label();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::setName(const QString &name)
+{
+  this->setLabel(name);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::label() const
+{
+  return property(ctkXnatObjectFields::LABEL);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::setLabel(const QString &label)
+{
+  setProperty(ctkXnatObjectFields::LABEL, label);
 }
 
 //----------------------------------------------------------------------------
@@ -72,12 +108,12 @@ void ctkXnatResource::fetchImpl()
 
   foreach (ctkXnatObject* file, files)
   {
-    QString label = file->property("Name");
+    QString label = file->name();
     if (label.isEmpty())
     {
       label = "NO NAME";
     }
-    file->setProperty("label", label);
+    file->setName(label);
     this->add(file);
   }
 }

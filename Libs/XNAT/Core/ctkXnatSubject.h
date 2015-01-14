@@ -46,9 +46,13 @@ public:
   QList<ctkXnatProject*> getProjects() const;
 
   const QString& insertDate() const;
+
+  /// @warning does not overwrite the insert date on the server, since this is read only
   void setInsertDate(const QString& insertDate);
 
   const QString& insertUser() const;
+
+  /// @warning does not overwrite the insert user on the server, since this is read only
   void setInsertUser(const QString& insertUser);
 
   virtual QString resourceUri() const;
