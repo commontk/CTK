@@ -61,37 +61,37 @@ ctkXnatScan::~ctkXnatScan()
 //----------------------------------------------------------------------------
 void ctkXnatScan::setQuality(const QString &quality)
 {
-  setProperty(ctkXnatObjectFields::QUALITY, quality);
+  this->setProperty(ctkXnatObjectFields::QUALITY, quality);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatScan::quality() const
 {
-  return property(ctkXnatObjectFields::QUALITY);
+  return this->property(ctkXnatObjectFields::QUALITY);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatScan::setSeriesDescription(const QString &seriesDescription)
 {
-  setProperty(ctkXnatObjectFields::SERIES_DESCRIPTION, seriesDescription);
+  this->setProperty(ctkXnatObjectFields::SERIES_DESCRIPTION, seriesDescription);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatScan::seriesDescription() const
 {
-  return property(ctkXnatObjectFields::SERIES_DESCRIPTION);
+  return this->property(ctkXnatObjectFields::SERIES_DESCRIPTION);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatScan::setType(const QString &type)
 {
-  setProperty(ctkXnatObjectFields::TYPE, type);
+  this->setProperty(ctkXnatObjectFields::TYPE, type);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatScan::type() const
 {
-  return property(ctkXnatObjectFields::TYPE);
+  return this->property(ctkXnatObjectFields::TYPE);
 }
 
 //----------------------------------------------------------------------------

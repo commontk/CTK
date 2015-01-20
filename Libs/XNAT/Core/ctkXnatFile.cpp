@@ -59,46 +59,46 @@ ctkXnatFile::~ctkXnatFile()
 //----------------------------------------------------------------------------
 void ctkXnatFile::setName(const QString &name)
 {
-  setProperty(ctkXnatObjectFields::FILE_NAME, name);
+  this->setProperty(ctkXnatObjectFields::FILE_NAME, name);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatFile::name() const
 {
-  return property(ctkXnatObjectFields::FILE_NAME);
+  return this->property(ctkXnatObjectFields::FILE_NAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatFile::setFileFormat(const QString &fileFormat)
 {
-  setProperty(ctkXnatObjectFields::FILE_FORMAT, fileFormat);
+  this->setProperty(ctkXnatObjectFields::FILE_FORMAT, fileFormat);
 }
 
 QString ctkXnatFile::fileFormat() const
 {
-  return property(ctkXnatObjectFields::FILE_FORMAT);
+  return this->property(ctkXnatObjectFields::FILE_FORMAT);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatFile::setFileContent(const QString &fileContent)
 {
-  setProperty(ctkXnatObjectFields::FILE_CONTENT, fileContent);
+  this->setProperty(ctkXnatObjectFields::FILE_CONTENT, fileContent);
 }
 
 QString ctkXnatFile::fileContent() const
 {
-  return property(ctkXnatObjectFields::FILE_CONTENT);
+  return this->property(ctkXnatObjectFields::FILE_CONTENT);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatFile::setFileTags(const QString &fileTags)
 {
-  setProperty(ctkXnatObjectFields::FILE_TAGS, fileTags);
+  this->setProperty(ctkXnatObjectFields::FILE_TAGS, fileTags);
 }
 
 QString ctkXnatFile::fileTags() const
 {
-  return property(ctkXnatObjectFields::FILE_TAGS);
+  return this->property(ctkXnatObjectFields::FILE_TAGS);
 }
 
 //----------------------------------------------------------------------------

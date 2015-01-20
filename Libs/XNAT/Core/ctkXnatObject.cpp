@@ -68,25 +68,25 @@ ctkXnatObject::~ctkXnatObject()
 //----------------------------------------------------------------------------
 QString ctkXnatObject::id() const
 {
-  return property(ctkXnatObjectFields::ID);
+  return this->property(ctkXnatObjectFields::ID);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setId(const QString& id)
 {
-  setProperty(ctkXnatObjectFields::ID, id);
+  this->setProperty(ctkXnatObjectFields::ID, id);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatObject::name() const
 {
-  return property(ctkXnatObjectFields::NAME);
+  return this->property(ctkXnatObjectFields::NAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setName(const QString& name)
 {
-  setProperty(ctkXnatObjectFields::NAME, name);
+  this->setProperty(ctkXnatObjectFields::NAME, name);
 }
 
 //----------------------------------------------------------------------------

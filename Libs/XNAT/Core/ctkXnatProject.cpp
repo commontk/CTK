@@ -74,49 +74,49 @@ QString ctkXnatProject::childDataType() const
 //----------------------------------------------------------------------------
 const QString& ctkXnatProject::secondaryId() const
 {
-  return property(ctkXnatObjectFields::SECONDARY_ID);
+  return this->property(ctkXnatObjectFields::SECONDARY_ID);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setSecondaryId(const QString& secondaryId)
 {
-  setProperty(ctkXnatObjectFields::SECONDARY_ID, secondaryId);
+  this->setProperty(ctkXnatObjectFields::SECONDARY_ID, secondaryId);
 }
 
 //----------------------------------------------------------------------------
 const QString& ctkXnatProject::piFirstName() const
 {
-  return property(ctkXnatObjectFields::PI_FIRSTNAME);
+  return this->property(ctkXnatObjectFields::PI_FIRSTNAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setPiFirstName(const QString& piFirstName)
 {
-  setProperty(ctkXnatObjectFields::PI_FIRSTNAME, piFirstName);
+  this->setProperty(ctkXnatObjectFields::PI_FIRSTNAME, piFirstName);
 }
 
 //----------------------------------------------------------------------------
 const QString& ctkXnatProject::piLastName() const
 {
-  return property(ctkXnatObjectFields::PI_LASTNAME);
+  return this->property(ctkXnatObjectFields::PI_LASTNAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setPiLastName(const QString& piLastName)
 {
-  setProperty(ctkXnatObjectFields::PI_LASTNAME, piLastName);
+  this->setProperty(ctkXnatObjectFields::PI_LASTNAME, piLastName);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatProject::projectDescription() const
 {
-  return property(ctkXnatObjectFields::DESCRIPTION);
+  return this->property(ctkXnatObjectFields::DESCRIPTION);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setProjectDescription(const QString& description)
 {
-  setProperty(ctkXnatObjectFields::DESCRIPTION, description);
+  this->setProperty(ctkXnatObjectFields::DESCRIPTION, description);
 }
 
 //----------------------------------------------------------------------------
