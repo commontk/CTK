@@ -81,10 +81,10 @@ void ctkXnatReconstruction::fetchImpl()
 
   foreach (ctkXnatObject* reconstructionResource, reconstructionResources)
   {
-    QString label = reconstructionResource->property("Name");
+    QString label = reconstructionResource->property("name");
     if (!label.isEmpty())
     {
-      reconstructionResource->setProperty("ID", label);
+      reconstructionResource->setProperty("id", label);
     }
 
     this->add(reconstructionResource);
