@@ -121,7 +121,6 @@ void ctkLayoutViewFactory::endSetupLayout()
 //-----------------------------------------------------------------------------
 void ctkLayoutViewFactory::setupView(QDomElement viewElement, QWidget* view)
 {
-  Q_D(ctkLayoutViewFactory);
   Q_ASSERT(view);
   view->setVisible(true);
   this->registerView(viewElement, view);
@@ -255,7 +254,6 @@ void ctkLayoutViewFactory::unregisterView(QDomElement layoutElement, QWidget* vi
 //-----------------------------------------------------------------------------
 void ctkLayoutViewFactory::unregisterView(QWidget* view)
 {
-  Q_D(ctkLayoutViewFactory);
   for (QDomElement viewElement = this->layoutElement(view);
        !viewElement.isNull();
        viewElement = this->layoutElement(view))
