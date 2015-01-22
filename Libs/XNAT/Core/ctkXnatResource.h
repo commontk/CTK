@@ -44,8 +44,8 @@ public:
 
   QString resourceUri() const;
 
-  QString id() const;
-  void setId(const QString &id);
+  virtual QString id() const;
+  virtual void setId(const QString &id);
 
   QString name() const;
   void setName(const QString &name);
