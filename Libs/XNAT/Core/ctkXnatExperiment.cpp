@@ -71,6 +71,30 @@ QString ctkXnatExperiment::resourceUri() const
 }
 
 //----------------------------------------------------------------------------
+QString ctkXnatExperiment::name() const
+{
+  return this->label();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatExperiment::setName(const QString &name)
+{
+  this->setLabel(name);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatExperiment::label() const
+{
+  return this->property(LABEL);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatExperiment::setLabel(const QString &label)
+{
+  this->setProperty(LABEL, label);
+}
+
+//----------------------------------------------------------------------------
 void ctkXnatExperiment::reset()
 {
   ctkXnatObject::reset();

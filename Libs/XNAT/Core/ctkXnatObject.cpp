@@ -22,7 +22,6 @@
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 
-#include "ctkXnatConstants.h"
 #include "ctkXnatDataModel.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 #include "ctkXnatSession.h"
@@ -32,6 +31,10 @@
 #include <QStringList>
 #include <QVariant>
 
+
+const QString ctkXnatObject::ID = "ID";
+const QString ctkXnatObject::NAME = "name";
+const QString ctkXnatObject::LABEL = "label";
 
 //----------------------------------------------------------------------------
 ctkXnatObject::ctkXnatObject(const ctkXnatObject&)
@@ -68,25 +71,25 @@ ctkXnatObject::~ctkXnatObject()
 //----------------------------------------------------------------------------
 QString ctkXnatObject::id() const
 {
-  return this->property(ctkXnatObjectFields::ID);
+  return this->property(ID);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setId(const QString& id)
 {
-  this->setProperty(ctkXnatObjectFields::ID, id);
+  this->setProperty(ID, id);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatObject::name() const
 {
-  return this->property(ctkXnatObjectFields::NAME);
+  return this->property(NAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setName(const QString& name)
 {
-  this->setProperty(ctkXnatObjectFields::NAME, name);
+  this->setProperty(NAME, name);
 }
 
 //----------------------------------------------------------------------------
@@ -326,13 +329,13 @@ void ctkXnatObject::fetchResources(const QString& path)
 
   foreach (ctkXnatObject* resource, resources)
   {
-    QString label = resource->property(ctkXnatObjectFields::LABEL);
+    QString label = resource->name();
     if (label.isEmpty())
     {
       label = "NO NAME";
     }
 
-    resource->setProperty(ctkXnatObjectFields::LABEL, label);
+    resource->setName(label);
     this->add(resource);
   }
 }

@@ -145,6 +145,10 @@ public:
   // throws ctkXnatTimeoutException
   //bool waitForDownloadFinished(const QString&);
 
+  static const QString ID;
+  static const QString NAME;
+  static const QString LABEL;
+
 protected:
 
   ctkXnatObject(const ctkXnatObject&);

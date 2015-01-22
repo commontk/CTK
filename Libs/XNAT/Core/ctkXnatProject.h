@@ -60,6 +60,11 @@ public:
 
   void reset();
 
+  static const QString SECONDARY_ID;
+  static const QString DESCRIPTION;
+  static const QString PI_FIRSTNAME;
+  static const QString PI_LASTNAME;
+
 private:
 
   virtual void fetchImpl();

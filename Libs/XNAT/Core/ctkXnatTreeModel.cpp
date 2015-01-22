@@ -21,7 +21,6 @@
 
 #include "ctkXnatTreeModel.h"
 
-#include "ctkXnatConstants.h"
 #include "ctkXnatDataModel.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatTreeItem_p.h"
@@ -78,7 +77,7 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
     QString displayData = xnatObject->name();
     if (displayData.isEmpty())
     {
-      displayData = xnatObject->property(ctkXnatObjectFields::LABEL);
+      displayData = xnatObject->property(ctkXnatObject::LABEL);
     }
     return displayData;
   }

@@ -56,6 +56,10 @@ public:
 
   void reset();
 
+  static const QString QUALITY;
+  static const QString SERIES_DESCRIPTION;
+  static const QString TYPE;
+
 private:
 
   friend class qRestResult;

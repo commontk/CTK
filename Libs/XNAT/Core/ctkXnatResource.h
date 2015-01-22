@@ -60,6 +60,8 @@ public:
 
   void download(const QString& filename);
 
+  static const QString ID;
+
 private:
 
   friend class qRestResult;

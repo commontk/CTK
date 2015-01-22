@@ -21,12 +21,15 @@
 
 #include "ctkXnatScan.h"
 
-#include "ctkXnatConstants.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatScanFolder.h"
 #include "ctkXnatSession.h"
+
+const QString ctkXnatScan::QUALITY = "quality";
+const QString ctkXnatScan::SERIES_DESCRIPTION = "series_description";
+const QString ctkXnatScan::TYPE = "type";
 
 //----------------------------------------------------------------------------
 class ctkXnatScanPrivate : public ctkXnatObjectPrivate
@@ -61,37 +64,37 @@ ctkXnatScan::~ctkXnatScan()
 //----------------------------------------------------------------------------
 void ctkXnatScan::setQuality(const QString &quality)
 {
-  this->setProperty(ctkXnatObjectFields::QUALITY, quality);
+  this->setProperty(QUALITY, quality);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatScan::quality() const
 {
-  return this->property(ctkXnatObjectFields::QUALITY);
+  return this->property(QUALITY);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatScan::setSeriesDescription(const QString &seriesDescription)
 {
-  this->setProperty(ctkXnatObjectFields::SERIES_DESCRIPTION, seriesDescription);
+  this->setProperty(SERIES_DESCRIPTION, seriesDescription);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatScan::seriesDescription() const
 {
-  return this->property(ctkXnatObjectFields::SERIES_DESCRIPTION);
+  return this->property(SERIES_DESCRIPTION);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatScan::setType(const QString &type)
 {
-  this->setProperty(ctkXnatObjectFields::TYPE, type);
+  this->setProperty(TYPE, type);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatScan::type() const
 {
-  return this->property(ctkXnatObjectFields::TYPE);
+  return this->property(TYPE);
 }
 
 //----------------------------------------------------------------------------

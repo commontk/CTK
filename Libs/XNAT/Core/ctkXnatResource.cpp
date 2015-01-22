@@ -21,10 +21,10 @@
 
 #include "ctkXnatResource.h"
 
-#include "ctkXnatConstants.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSession.h"
 
+const QString ctkXnatResource::ID = "xnat_abstractresource_id";
 //----------------------------------------------------------------------------
 class ctkXnatResourcePrivate : public ctkXnatObjectPrivate
 {
@@ -57,13 +57,13 @@ QString ctkXnatResource::resourceUri() const
 //----------------------------------------------------------------------------
 QString ctkXnatResource::id() const
 {
-  return this->property(ctkXnatObjectFields::ABSTRACT_RESOURCE_ID);
+  return this->property(ID);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatResource::setId(const QString &id)
 {
-  this->setProperty(ctkXnatObjectFields::ABSTRACT_RESOURCE_ID, id);
+  this->setProperty(ID, id);
 }
 
 //----------------------------------------------------------------------------
@@ -81,13 +81,13 @@ void ctkXnatResource::setName(const QString &name)
 //----------------------------------------------------------------------------
 QString ctkXnatResource::label() const
 {
-  return this->property(ctkXnatObjectFields::LABEL);
+  return this->property(LABEL);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatResource::setLabel(const QString &label)
 {
-  this->setProperty(ctkXnatObjectFields::LABEL, label);
+  this->setProperty(LABEL, label);
 }
 
 //----------------------------------------------------------------------------

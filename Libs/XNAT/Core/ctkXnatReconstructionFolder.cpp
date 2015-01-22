@@ -21,7 +21,6 @@
 
 #include "ctkXnatReconstructionFolder.h"
 
-#include "ctkXnatConstants.h"
 #include "ctkXnatDefaultSchemaTypes.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
@@ -52,7 +51,7 @@ public:
 ctkXnatReconstructionFolder::ctkXnatReconstructionFolder(ctkXnatObject* parent)
   : ctkXnatObject(*new ctkXnatReconstructionFolderPrivate(), parent, QString::null)
 {
-  this->setProperty(ctkXnatObjectFields::ID, "reconstructions");
+  this->setProperty(ID, "reconstructions");
 }
 
 //----------------------------------------------------------------------------

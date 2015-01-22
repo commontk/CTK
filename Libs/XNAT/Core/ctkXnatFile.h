@@ -61,6 +61,11 @@ public:
 
   void reset();
 
+  static const QString FILE_NAME;
+  static const QString FILE_TAGS;
+  static const QString FILE_FORMAT;
+  static const QString FILE_CONTENT;
+
 private:
 
   virtual void fetchImpl();

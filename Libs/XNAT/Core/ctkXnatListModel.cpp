@@ -21,7 +21,6 @@
 
 #include "ctkXnatDataModel.h"
 
-#include "ctkXnatConstants.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatListModel.h"
 #include "ctkXnatProject.h"
@@ -71,7 +70,7 @@ QVariant ctkXnatListModel::data(const QModelIndex& index, int role) const
     QString displayData = child->name();
     if (displayData.isEmpty())
     {
-      displayData = child->property(ctkXnatObjectFields::LABEL);
+      displayData = child->property(ctkXnatObject::LABEL);
     }
     return displayData;
   }
