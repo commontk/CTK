@@ -51,7 +51,7 @@ public:
 
 private:
 
-  QString resourceUri() const;
+  virtual QString resourceUri() const;
 
   virtual void fetchImpl();
 

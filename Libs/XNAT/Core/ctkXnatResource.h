@@ -42,13 +42,13 @@ public:
 
   virtual ~ctkXnatResource();
 
-  QString resourceUri() const;
+  virtual QString resourceUri() const;
 
   virtual QString id() const;
   virtual void setId(const QString &id);
 
-  QString name() const;
-  void setName(const QString &name);
+  virtual QString name() const;
+  virtual void setName(const QString &name);
 
   /// Gets the label of the object.
   QString label() const;
