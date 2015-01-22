@@ -46,16 +46,24 @@ public:
 
   virtual QString childDataType() const;
 
-  const QString& secondaryId() const;
+  const QString secondaryId() const;
   void setSecondaryId(const QString& secondaryId);
 
-  const QString& piFirstName() const;
+  const QString piFirstName() const;
   void setPiFirstName(const QString& piFirstName);
 
-  const QString& piLastName() const;
+  const QString piLastName() const;
   void setPiLastName(const QString& piLastName);
 
+  QString projectDescription() const;
+  void setProjectDescription(const QString &description);
+
   void reset();
+
+  static const QString SECONDARY_ID;
+  static const QString DESCRIPTION;
+  static const QString PI_FIRSTNAME;
+  static const QString PI_LASTNAME;
 
 private:
 

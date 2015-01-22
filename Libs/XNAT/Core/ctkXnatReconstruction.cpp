@@ -21,10 +21,11 @@
 
 #include "ctkXnatReconstruction.h"
 
-#include "ctkXnatSession.h"
+#include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatFile.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatReconstructionFolder.h"
-#include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatSession.h"
 
 
 //----------------------------------------------------------------------------
@@ -81,10 +82,10 @@ void ctkXnatReconstruction::fetchImpl()
 
   foreach (ctkXnatObject* reconstructionResource, reconstructionResources)
   {
-    QString label = reconstructionResource->property("Name");
+    QString label = reconstructionResource->name();
     if (!label.isEmpty())
     {
-      reconstructionResource->setProperty("ID", label);
+      reconstructionResource->setName(label);
     }
 
     this->add(reconstructionResource);

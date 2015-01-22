@@ -44,10 +44,27 @@ public:
 
   virtual QString resourceUri() const;
 
+  virtual void setName(const QString &name);
+  virtual QString name() const;
+
+  void setFileFormat(const QString& fileFormat);
+  QString fileFormat() const;
+
+  void setFileTags(const QString& fileTags);
+  QString fileTags() const;
+
+  void setFileContent(const QString& fileContent);
+  QString fileContent() const;
+
   void download(const QString& filename);
   void upload(const QString& filename);
 
   void reset();
+
+  static const QString FILE_NAME;
+  static const QString FILE_TAGS;
+  static const QString FILE_FORMAT;
+  static const QString FILE_CONTENT;
 
 private:
 

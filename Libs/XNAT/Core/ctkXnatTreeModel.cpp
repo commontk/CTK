@@ -20,9 +20,10 @@
 =============================================================================*/
 
 #include "ctkXnatTreeModel.h"
+
+#include "ctkXnatDataModel.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatTreeItem_p.h"
-#include "ctkXnatDataModel.h"
 
 #include <QList>
 
@@ -76,7 +77,7 @@ QVariant ctkXnatTreeModel::data(const QModelIndex& index, int role) const
     QString displayData = xnatObject->name();
     if (displayData.isEmpty())
     {
-      displayData = xnatObject->property("label");
+      displayData = xnatObject->property(ctkXnatObject::LABEL);
     }
     return displayData;
   }

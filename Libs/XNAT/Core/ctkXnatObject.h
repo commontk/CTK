@@ -48,21 +48,22 @@ public:
   /// Destructs the ctkXnatObject.
   virtual ~ctkXnatObject();
 
-  /// Gets the ID of the object.
-  QString id() const;
+  /// Gets the global ID of the object.
+  virtual QString id() const;
 
   /// Sets the ID of the object.
-  void setId(const QString& id);
+  /// @warning You must not change the ID of an existing object
+  virtual void setId(const QString& id);
 
   /// Gets the resource URI of the object that can be used to access it through
   /// the REST API.
   virtual QString resourceUri() const = 0;
 
   /// Gets the name of the object.
-  QString name() const;
+  virtual QString name() const;
 
   /// Sets the name of the object.
-  void setName(const QString& name);
+  virtual void setName(const QString& name);
 
   /// Gets the description of the object.
   QString description() const;
@@ -143,6 +144,10 @@ public:
   // Add blocking methods
   // throws ctkXnatTimeoutException
   //bool waitForDownloadFinished(const QString&);
+
+  static const QString ID;
+  static const QString NAME;
+  static const QString LABEL;
 
 protected:
 

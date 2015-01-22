@@ -21,9 +21,13 @@
 
 #include "ctkXnatFile.h"
 
-#include "ctkXnatSession.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatSession.h"
 
+const QString ctkXnatFile::FILE_NAME = "Name";
+const QString ctkXnatFile::FILE_TAGS = "file_tags";
+const QString ctkXnatFile::FILE_FORMAT = "file_format";
+const QString ctkXnatFile::FILE_CONTENT = "file_content";
 
 //----------------------------------------------------------------------------
 class ctkXnatFilePrivate : public ctkXnatObjectPrivate
@@ -56,9 +60,54 @@ ctkXnatFile::~ctkXnatFile()
 }
 
 //----------------------------------------------------------------------------
+void ctkXnatFile::setName(const QString &name)
+{
+  this->setProperty(FILE_NAME, name);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatFile::name() const
+{
+  return this->property(FILE_NAME);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatFile::setFileFormat(const QString &fileFormat)
+{
+  this->setProperty(FILE_FORMAT, fileFormat);
+}
+
+QString ctkXnatFile::fileFormat() const
+{
+  return this->property(FILE_FORMAT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatFile::setFileContent(const QString &fileContent)
+{
+  this->setProperty(FILE_CONTENT, fileContent);
+}
+
+QString ctkXnatFile::fileContent() const
+{
+  return this->property(FILE_CONTENT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatFile::setFileTags(const QString &fileTags)
+{
+  this->setProperty(FILE_TAGS, fileTags);
+}
+
+QString ctkXnatFile::fileTags() const
+{
+  return this->property(FILE_TAGS);
+}
+
+//----------------------------------------------------------------------------
 QString ctkXnatFile::resourceUri() const
 {
-  return QString("%1/files/%2").arg(parent()->resourceUri(), this->id());
+  return QString("%1/files/%2").arg(parent()->resourceUri(), this->name());
 }
 
 //----------------------------------------------------------------------------

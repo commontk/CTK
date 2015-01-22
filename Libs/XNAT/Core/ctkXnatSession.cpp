@@ -21,7 +21,9 @@
 
 #include "ctkXnatSession.h"
 
+#include "ctkXnatAssessor.h"
 #include "ctkXnatDataModel.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 #include "ctkXnatException.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatFile.h"
@@ -31,9 +33,7 @@
 #include "ctkXnatReconstruction.h"
 #include "ctkXnatResource.h"
 #include "ctkXnatScan.h"
-#include "ctkXnatAssessor.h"
 #include "ctkXnatSubject.h"
-#include "ctkXnatDefaultSchemaTypes.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -365,7 +365,7 @@ void ctkXnatSession::open()
   }
 
   d->dataModel.reset(new ctkXnatDataModel(this));
-  d->dataModel->setProperty("label", this->url().toString());
+  d->dataModel->setProperty(ctkXnatObject::LABEL, this->url().toString());
   emit sessionOpened();
 }
 
@@ -568,7 +568,7 @@ void ctkXnatSession::save(ctkXnatObject* object)
   const QList<QVariantMap>& maps = result->results();
   if (maps.size() == 1 && maps[0].size() == 1)
   {
-    QVariant id = maps[0]["ID"];
+    QVariant id = maps[0][ctkXnatObject::ID];
     if (!id.isNull())
     {
       object->setId(id.toString());

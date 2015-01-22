@@ -21,11 +21,15 @@
 
 #include "ctkXnatScan.h"
 
-#include "ctkXnatSession.h"
-#include "ctkXnatScanFolder.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 #include "ctkXnatObject.h"
 #include "ctkXnatObjectPrivate.h"
-#include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatScanFolder.h"
+#include "ctkXnatSession.h"
+
+const QString ctkXnatScan::QUALITY = "quality";
+const QString ctkXnatScan::SERIES_DESCRIPTION = "series_description";
+const QString ctkXnatScan::TYPE = "type";
 
 //----------------------------------------------------------------------------
 class ctkXnatScanPrivate : public ctkXnatObjectPrivate
@@ -55,6 +59,42 @@ ctkXnatScan::ctkXnatScan(ctkXnatObject* parent, const QString& schemaType)
 //----------------------------------------------------------------------------
 ctkXnatScan::~ctkXnatScan()
 {
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatScan::setQuality(const QString &quality)
+{
+  this->setProperty(QUALITY, quality);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatScan::quality() const
+{
+  return this->property(QUALITY);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatScan::setSeriesDescription(const QString &seriesDescription)
+{
+  this->setProperty(SERIES_DESCRIPTION, seriesDescription);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatScan::seriesDescription() const
+{
+  return this->property(SERIES_DESCRIPTION);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatScan::setType(const QString &type)
+{
+  this->setProperty(TYPE, type);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatScan::type() const
+{
+  return this->property(TYPE);
 }
 
 //----------------------------------------------------------------------------
