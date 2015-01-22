@@ -127,7 +127,7 @@ public:
   /// Deletes the object on the XNAT server and removes it from its parent.
   void erase();
 
-  virtual void download(const QString&);
+  void download(const QString&);
   virtual void upload(const QString&);
 
   //QObject* asyncObject() const;
@@ -177,6 +177,9 @@ private:
 
   /// The implementation of the fetch mechanism, called by the fetch() function.
   virtual void fetchImpl() = 0;
+
+  /// The implementation of the download mechanism, called by the download(const QString&) function.
+  virtual void downloadImpl(const QString&) = 0;
 
   Q_DECLARE_PRIVATE(ctkXnatObject)
 };

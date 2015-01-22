@@ -27,6 +27,8 @@
 #include "ctkXnatSession.h"
 #include "ctkXnatSubject.h"
 
+#include <QDebug>
+
 const QString ctkXnatProject::SECONDARY_ID = "secondary_ID";
 const QString ctkXnatProject::DESCRIPTION = "description";
 const QString ctkXnatProject::PI_FIRSTNAME = "pi_firstname";
@@ -162,4 +164,10 @@ void ctkXnatProject::fetchImpl()
     this->add(subject);
   }
   this->fetchResources();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatProject::downloadImpl(const QString& filename)
+{
+  qDebug() << "ctkXnatProject::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }

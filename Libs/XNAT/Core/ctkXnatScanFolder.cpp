@@ -27,6 +27,8 @@
 #include "ctkXnatScan.h"
 #include "ctkXnatSession.h"
 
+#include <QDebug>
+
 //----------------------------------------------------------------------------
 class ctkXnatScanFolderPrivate : public ctkXnatObjectPrivate
 {
@@ -90,4 +92,13 @@ void ctkXnatScanFolder::fetchImpl()
     
     this->add(scan);
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatScanFolder::downloadImpl(const QString& filename)
+{
+  QString query = this->resourceUri() + "/ALL/files";
+  ctkXnatSession::UrlParameters parameters;
+  parameters["format"] = "zip";
+  this->session()->download(filename, query, parameters);
 }

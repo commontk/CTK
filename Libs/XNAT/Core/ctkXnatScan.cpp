@@ -31,6 +31,8 @@ const QString ctkXnatScan::QUALITY = "quality";
 const QString ctkXnatScan::SERIES_DESCRIPTION = "series_description";
 const QString ctkXnatScan::TYPE = "type";
 
+#include <QDebug>
+
 //----------------------------------------------------------------------------
 class ctkXnatScanPrivate : public ctkXnatObjectPrivate
 {
@@ -113,4 +115,13 @@ void ctkXnatScan::reset()
 void ctkXnatScan::fetchImpl()
 {
   this->fetchResources();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatScan::downloadImpl(const QString& filename)
+{
+  QString query = this->resourceUri() + "/files";
+  ctkXnatSession::UrlParameters parameters;
+  parameters["format"] = "zip";
+  this->session()->download(filename, query, parameters);
 }

@@ -591,24 +591,14 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatSession::download(ctkXnatFile* file, const QString& fileName)
-{
-  Q_D(ctkXnatSession);
-  QString query = file->resourceUri();
-
-  QUuid queryId = d->xnat->download(fileName, query);
-  d->xnat->sync(queryId);
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatSession::download(ctkXnatResource* resource, const QString& fileName)
+void ctkXnatSession::download(const QString& fileName,
+    const QString& resource,
+    const UrlParameters& parameters,
+    const HttpRawHeaders& rawHeaders)
 {
   Q_D(ctkXnatSession);
 
-  QString query = resource->resourceUri() + "/files";
-  qRestAPI::Parameters parameters;
-  parameters["format"] = "zip";
-  QUuid queryId = d->xnat->download(fileName, query, parameters);
+  QUuid queryId = d->xnat->download(fileName, resource, parameters, rawHeaders);
   d->xnat->sync(queryId);
 }
 

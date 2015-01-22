@@ -27,6 +27,8 @@
 #include "ctkXnatProject.h"
 #include "ctkXnatSession.h"
 
+#include <QDebug>
+
 const QString ctkXnatSubject::INSERT_DATE = "insert_date";
 const QString ctkXnatSubject::INSERT_USER = "insert_user";
 
@@ -152,4 +154,10 @@ void ctkXnatSubject::fetchImpl()
     this->add(experiment);
   }
   this->fetchResources();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::downloadImpl(const QString& filename)
+{
+  qDebug() << "ctkXnatSubject::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }

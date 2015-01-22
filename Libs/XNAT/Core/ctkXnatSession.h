@@ -187,14 +187,25 @@ public:
   void save(ctkXnatObject* object);
   void remove(ctkXnatObject* object);
 
-  void download(ctkXnatFile* file, const QString& fileName);
+  /// Downloads a file from the web service.
+  /// \a fileName is the name of the output file.
+  /// The \a resource and \parameters are used to compose the URL.
+  /// \a rawHeaders can be used to set the raw headers of the request to send.
+  /// These headers will be set additionally to those defined by the
+  /// \a defaultRawHeaders property.
+  void download(const QString& fileName,
+    const QString& resource,
+    const UrlParameters& parameters = UrlParameters(),
+    const HttpRawHeaders& rawHeaders = HttpRawHeaders());
+
+  //ivo void download(ctkXnatFile* file, const QString& fileName);
 
 //  void downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
 //  void downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
 
 //  void download(ctkXnatScan* scan, const QString& zipFileName);
 
-  void download(ctkXnatResource* resource, const QString& zipFileName);
+//  void download(ctkXnatResource* resource, const QString& zipFileName);
 
   /**
    * @brief Sends a http HEAD request to the xnat instance

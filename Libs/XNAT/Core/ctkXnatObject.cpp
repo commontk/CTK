@@ -296,8 +296,9 @@ ctkXnatSession* ctkXnatObject::session() const
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::download(const QString& /*zipFilename*/)
+void ctkXnatObject::download(const QString& filename)
 {
+  this->downloadImpl(filename);
 }
 
 //----------------------------------------------------------------------------
