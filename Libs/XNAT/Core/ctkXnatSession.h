@@ -198,27 +198,12 @@ public:
     const UrlParameters& parameters = UrlParameters(),
     const HttpRawHeaders& rawHeaders = HttpRawHeaders());
 
-  //ivo void download(ctkXnatFile* file, const QString& fileName);
-
-//  void downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
-//  void downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
-
-//  void download(ctkXnatScan* scan, const QString& zipFileName);
-
-//  void download(ctkXnatResource* resource, const QString& zipFileName);
-
   /**
    * @brief Sends a http HEAD request to the xnat instance
    * @param resourceUri the URL to the server
    * @return the query uid
    */
   QUuid httpHead(const QString& resourceUri);
-
-//  void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename);
-
-//  void downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename);
-
-//  void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFileName);
 
   /**
    * @brief Signals that the session was re-newed.
