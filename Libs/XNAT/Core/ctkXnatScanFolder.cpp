@@ -27,8 +27,6 @@
 #include "ctkXnatScan.h"
 #include "ctkXnatSession.h"
 
-#include <QDebug>
-
 //----------------------------------------------------------------------------
 class ctkXnatScanFolderPrivate : public ctkXnatObjectPrivate
 {

@@ -31,8 +31,6 @@ const QString ctkXnatScan::QUALITY = "quality";
 const QString ctkXnatScan::SERIES_DESCRIPTION = "series_description";
 const QString ctkXnatScan::TYPE = "type";
 
-#include <QDebug>
-
 //----------------------------------------------------------------------------
 class ctkXnatScanPrivate : public ctkXnatObjectPrivate
 {
