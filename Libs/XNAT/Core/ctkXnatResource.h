@@ -48,6 +48,8 @@ public:
 
   void download(const QString& filename);
 
+  void createFolder();
+
 private:
 
   friend class qRestResult;

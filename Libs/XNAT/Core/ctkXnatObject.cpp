@@ -106,7 +106,7 @@ QString ctkXnatObject::childDataType() const
   return "Resources";
 }
 
-QDateTime ctkXnatObject::lastModifiedTime()
+QDateTime ctkXnatObject::lastModifiedTimeOnServer()
 {
   Q_D(ctkXnatObject);
   QUuid queryId = this->session()->httpHead(this->resourceUri());
@@ -138,9 +138,6 @@ QDateTime ctkXnatObject::lastModifiedTime()
         break;
     }
   }
-
-  if (lastModifiedTime.isValid() && d->lastModifiedTime < lastModifiedTime)
-    this->setLastModifiedTime(lastModifiedTime);
   return lastModifiedTime;
 }
 
@@ -306,9 +303,46 @@ bool ctkXnatObject::exists() const
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::save()
+void ctkXnatObject::commit ()
 {
-  this->session()->save(this);
+  Q_D(ctkXnatObject);
+  QString query = this->resourceUri();
+  QDateTime remoteModTime = this->lastModifiedTimeOnServer();
+  // If the object has been modified on the server, perform an update
+  if (d->lastModifiedTime < remoteModTime)
+  {
+    qDebug()<<"Object maybe overwritten on server!";
+    // TODO update from server, since modification time is not really supported
+    // by xnat right now this is not of high priority
+    // something like this->updateImpl
+  }
+
+  // Creating the update query
+  query.append(QString("?%1=%2").arg("xsi:type", this->schemaType()));
+  const QMap<QString, QString>& properties = this->properties();
+  QMapIterator<QString, QString> itProperties(properties);
+  while (itProperties.hasNext())
+  {
+    itProperties.next();
+    if (itProperties.key() == "ID")
+      continue;
+    query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
+  }
+
+  // Execute the update
+  QUuid queryID = this->session()->httpPut(query);
+  const QList<QVariantMap> results = this->session()->httpSync(queryID);
+
+  // If this xnat object did not exist before on the server set the ID returned by Xnat
+  QVariant id = results[0]["ID"];
+  if (id.isValid())
+  {
+    this->setProperty("ID", id.toString());
+  }
+
+  // Finally update the modification time on the server
+  remoteModTime = this->lastModifiedTimeOnServer();
+  d->lastModifiedTime = remoteModTime;
 }
 
 //----------------------------------------------------------------------------
