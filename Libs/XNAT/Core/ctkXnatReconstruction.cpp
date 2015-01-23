@@ -27,6 +27,7 @@
 #include "ctkXnatReconstructionFolder.h"
 #include "ctkXnatSession.h"
 
+#include <QDebug>
 
 //----------------------------------------------------------------------------
 class ctkXnatReconstructionPrivate : public ctkXnatObjectPrivate
@@ -90,4 +91,14 @@ void ctkXnatReconstruction::fetchImpl()
 
     this->add(reconstructionResource);
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatReconstruction::downloadImpl(const QString& filename)
+{
+  qDebug() << "ctkXnatReconstruction::downloadImpl(const QString& filename) not yet tested";
+  QString query = this->resourceUri() + "/files";
+  ctkXnatSession::UrlParameters parameters;
+  parameters["format"] = "zip";
+  this->session()->download(filename, query, parameters);
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>377</width>
+    <width>409</width>
     <height>325</height>
    </rect>
   </property>
@@ -72,7 +72,7 @@
 font: 75 10pt &quot;Lucida Grande&quot;;</string>
         </property>
         <property name="text">
-         <string>Select a xnat file to download...</string>
+         <string>Select a xnat file, resource, scan, or scan folder to download...</string>
         </property>
        </widget>
       </item>
@@ -85,8 +85,8 @@ font: 75 10pt &quot;Lucida Grande&quot;;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>377</width>
-     <height>22</height>
+     <width>409</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">

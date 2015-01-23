@@ -55,6 +55,8 @@ private:
 
   virtual void fetchImpl();
 
+  virtual void downloadImpl(const QString&);
+
   Q_DECLARE_PRIVATE(ctkXnatDataModel)
 };
 
