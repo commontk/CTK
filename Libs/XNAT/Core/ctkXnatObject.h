@@ -128,6 +128,7 @@ public:
   void erase();
 
   void download(const QString&);
+
   /// Sends the object to the XNAT server
   /// Subclasses of ctkXnatObject can overwrite this function if needed
   virtual void commit();

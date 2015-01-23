@@ -56,8 +56,6 @@ public:
   void setFileContent(const QString& fileContent);
   QString fileContent() const;
 
-  void download(const QString& filename);
-
   void upload(const QString& filename);
 
   void reset();
