@@ -60,6 +60,8 @@ public:
 
   void download(const QString& filename);
 
+  void createFolder();
+
   static const QString ID;
 
 private:

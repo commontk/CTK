@@ -126,3 +126,12 @@ void ctkXnatResource::downloadImpl(const QString& filename)
   parameters["format"] = "zip";
   this->session()->download(filename, query, parameters);
 }
+
+void ctkXnatResource::createFolder()
+{
+  if (!this->session()->exists(this))
+  {
+    QUuid queryId = this->session()->httpPut(this->resourceUri());
+    session()->httpResults(queryId, ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
+  }
+}

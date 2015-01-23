@@ -167,6 +167,18 @@ public:
   /**
    * @brief TODO
    * @param uuid
+   * @param parameters
+   *
+   * @throws ctkXnatInvalidSessionException if the session is closed.
+   * @return
+   */
+   QUuid httpPut(const QString& resource,
+                const UrlParameters& parameters = UrlParameters(),
+                const HttpRawHeaders& rawHeaders = HttpRawHeaders());
+
+  /**
+   * @brief TODO
+   * @param uuid
    *
    * @throws ctkXnatInvalidSessionException if the session is closed.
    * @return
@@ -184,7 +196,6 @@ public:
 
   bool exists(const ctkXnatObject* object);
 
-  void save(ctkXnatObject* object);
   void remove(ctkXnatObject* object);
 
   /// Downloads a file from the web service.
@@ -197,6 +208,8 @@ public:
     const QString& resource,
     const UrlParameters& parameters = UrlParameters(),
     const HttpRawHeaders& rawHeaders = HttpRawHeaders());
+
+  void upload(ctkXnatFile* file);
 
   /**
    * @brief Sends a http HEAD request to the xnat instance
@@ -221,9 +234,13 @@ public:
    */
   Q_SIGNAL void sessionAboutToBeClosed();
 
+  Q_SIGNAL void uploadFinished();
+
+  Q_SIGNAL void progress(QUuid, double);
+
 public slots:
   void processResult(QUuid queryId, QList<QVariantMap> parameters);
-  void progress(QUuid queryId, double progress);
+  void onProgress(QUuid queryId, double onProgress);
 
 protected:
   QScopedPointer<ctkXnatSessionPrivate> d_ptr;

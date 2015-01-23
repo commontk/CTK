@@ -78,7 +78,7 @@ public:
   void setProperty(const QString& name, const QVariant& value);
 
   /// Gets the last modification time from the server
-  QDateTime lastModifiedTime();
+  QDateTime lastModifiedTimeOnServer();
 
   /// Sets the last modfication time on the server
   void setLastModifiedTime(const QDateTime& lastModifiedTime);
@@ -128,6 +128,10 @@ public:
   void erase();
 
   void download(const QString&);
+  /// Sends the object to the XNAT server
+  /// Subclasses of ctkXnatObject can overwrite this function if needed
+  virtual void commit();
+
   virtual void upload(const QString&);
 
   //QObject* asyncObject() const;
