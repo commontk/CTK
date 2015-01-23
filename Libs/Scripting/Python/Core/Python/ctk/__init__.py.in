@@ -6,9 +6,11 @@ __kits_to_load = [ @CTK_PYTHON_WRAPPED_LIBRARIES@ ]
 # Set to True when debugging
 _CTK_VERBOSE_IMPORT = False
 
+kits = []
 for kit in __kits_to_load:
   try:
     exec "from CTK%sPythonQt import *" % (kit)
+    kits.append(kit)
   except ImportError as detail:
     if _CTK_VERBOSE_IMPORT:
       print detail
@@ -88,11 +90,11 @@ def decorates_ctkWorkflowWidgetStep_initialize_method():
 # Decorators
 #
 
-_lib = next((_lib for _lib in __kits_to_load if _lib == 'Core'), None)
+_lib = next((_lib for _lib in kits if _lib == 'Core'), None)
 if _lib == 'Core':
   add_methodclass_to_ctkWorkflowStep_or_ctkWorkflowWidgetStep(ctkWorkflowStep)
 
-_lib = next((_lib for _lib in __kits_to_load if _lib == 'Widgets'), None)
+_lib = next((_lib for _lib in kits if _lib == 'Widgets'), None)
 if _lib == 'Widgets':
   add_methodclass_to_ctkWorkflowStep_or_ctkWorkflowWidgetStep(ctkWorkflowWidgetStep)
   add_methodclass_to_ctkWorkflowWidgetStep()
