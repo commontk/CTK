@@ -191,7 +191,7 @@ foreach(lib
 
   # Find Debug libraries
   find_library(DCMTK_${lib}_LIBRARY_DEBUG
-    ${lib}
+    ${lib}${DCMTK_CMAKE_DEBUG_POSTFIX}
     PATHS
     ${DCMTK_DIR}/${lib}/libsrc
     ${DCMTK_DIR}/${lib}/libsrc/Debug

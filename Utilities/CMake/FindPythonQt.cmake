@@ -11,11 +11,20 @@ endif()
 
 find_path(PYTHONQT_INSTALL_DIR include/PythonQt/PythonQt.h DOC "Directory where PythonQt was installed.")
 find_path(PYTHONQT_INCLUDE_DIR PythonQt.h "${PYTHONQT_INSTALL_DIR}/include/PythonQt" DOC "Path to the PythonQt include directory")
-find_library(PYTHONQT_LIBRARY PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
+find_library(PYTHONQT_LIBRARY_RELEASE PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
+find_library(PYTHONQT_LIBRARY_DEBUG NAMES PythonQt${CTK_CMAKE_DEBUG_POSTFIX} PythonQt${CMAKE_DEBUG_POSTFIX} PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
+set(PYTHONQT_LIBRARY)
+if(PYTHONQT_LIBRARY_RELEASE)
+  list(APPEND PYTHONQT_LIBRARY optimized ${PYTHONQT_LIBRARY_RELEASE})
+endif()
+if(PYTHONQT_LIBRARY_DEBUG)
+  list(APPEND PYTHONQT_LIBRARY debug ${PYTHONQT_LIBRARY_DEBUG})
+endif()
 
 mark_as_advanced(PYTHONQT_INSTALL_DIR)
 mark_as_advanced(PYTHONQT_INCLUDE_DIR)
-mark_as_advanced(PYTHONQT_LIBRARY)
+mark_as_advanced(PYTHONQT_LIBRARY_RELEASE)
+mark_as_advanced(PYTHONQT_LIBRARY_DEBUG)
 
 # On linux, also find libutil
 if(UNIX AND NOT APPLE)

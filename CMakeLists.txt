@@ -79,7 +79,12 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
   mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
 endif()
 
-mark_as_superbuild(CMAKE_PREFIX_PATH)
+mark_as_superbuild(
+  VARS
+    CMAKE_PREFIX_PATH:STRING
+    CMAKE_DEBUG_POSTFIX:STRING
+  ALL_PROJECTS
+  )
 
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
