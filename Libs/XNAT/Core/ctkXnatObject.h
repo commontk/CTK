@@ -100,7 +100,7 @@ public:
   /// Adds an object to the children of the current one.
   void add(ctkXnatObject* child);
 
-  /// Removes the object from the children of the current object and removes it from the XNAT server.
+  /// Removes the object from the children of the current object.
   void remove(ctkXnatObject* child);
 
   /// Tells if the children and the properties of the objects have been fetched.
