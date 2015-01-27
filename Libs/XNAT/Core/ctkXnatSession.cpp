@@ -37,6 +37,7 @@
 
 #include <QDateTime>
 #include <QDebug>
+#include <QDir>
 #include <QScopedPointer>
 #include <QStringBuilder>
 #include <QNetworkCookie>
@@ -61,6 +62,7 @@ public:
   QScopedPointer<ctkXnatAPI> xnat;
   QScopedPointer<ctkXnatDataModel> dataModel;
   QString sessionId;
+  QString defaultFilePath;
 
   QMap<QString, QString> sessionProperties;
 
@@ -87,6 +89,7 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
                                              ctkXnatSession* q)
   : loginProfile(loginProfile)
   , xnat(new ctkXnatAPI())
+  , defaultFilePath("")
   , q(q)
 {
   // TODO This is a workaround for connecting to sites with self-signed
@@ -464,6 +467,30 @@ QString ctkXnatSession::password() const
 {
   Q_D(const ctkXnatSession);
   return d->loginProfile.password();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSession::setDefaultFilePath(const QString &path)
+{
+  Q_D(ctkXnatSession);
+
+  QDir directory(path);
+  if (directory.exists())
+  {
+    d->defaultFilePath = path;
+  }
+  else
+  {
+    d->defaultFilePath = QDir::currentPath();
+    qWarning() << "Specified directory: ["<<path<<"] does not exists! Setting default filepath to :"<<d->defaultFilePath;
+  }
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSession::defaultFilePath() const
+{
+  Q_D(const ctkXnatSession);
+  return d->defaultFilePath;
 }
 
 //----------------------------------------------------------------------------

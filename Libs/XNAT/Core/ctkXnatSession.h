@@ -139,6 +139,25 @@ public:
    */
   QString password() const;
 
+  /**
+    * @brief Sets the default location where files will be save after being downloaded
+    *
+    * Sets the default directory into which file downloads will be saved.
+    * By default this value is empty and files will be stored into the directory
+    * of the executable.
+    * If the path does not exists a warning will be printed and the path will be
+    * set to the current working directory
+    *
+    * @param path the path to the download location
+    */
+  void setDefaultFilePath(const QString& path);
+
+  /**
+    * @brief returns the default download location
+    * @return the default download directory as string
+    */
+  QString defaultFilePath() const;
+
   ctkXnatDataModel* dataModel() const;
 
   /**
