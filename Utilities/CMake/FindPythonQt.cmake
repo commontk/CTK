@@ -32,11 +32,14 @@ if(UNIX AND NOT APPLE)
   mark_as_advanced(PYTHONQT_LIBUTIL)
 endif()
 
+# All upper case _FOUND variable is maintained for backwards compatibility.
 set(PYTHONQT_FOUND 0)
+set(PythonQt_FOUND 0)
 if(PYTHONQT_INCLUDE_DIR AND PYTHONQT_LIBRARY)
   # Currently CMake'ified PythonQt only supports building against a python Release build. 
   # This applies independently of CTK build type (Release, Debug, ...)
   add_definitions(-DPYTHONQT_USE_RELEASE_PYTHON_FALLBACK)
   set(PYTHONQT_FOUND 1)
+  set(PythonQt_FOUND ${PYTHONQT_FOUND})
   set(PYTHONQT_LIBRARIES ${PYTHONQT_LIBRARY} ${PYTHONQT_LIBUTIL})
 endif()

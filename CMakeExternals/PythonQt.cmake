@@ -100,11 +100,17 @@ else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
+set(PythonQt_DIR ${PYTHONQT_INSTALL_DIR})
+
 mark_as_superbuild(
   VARS
     PYTHONQT_INSTALL_DIR:PATH
     PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
     PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
     PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+  LABELS "FIND_PACKAGE_VARS"
+  )
+mark_as_superbuild(
+  VARS PythonQt_DIR:PATH
   LABELS "FIND_PACKAGE"
   )

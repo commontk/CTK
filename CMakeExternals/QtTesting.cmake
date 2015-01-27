@@ -71,8 +71,10 @@ else()
 endif()
 
 mark_as_superbuild(
-  VARS
-    QtTesting_INSTALL_DIR:PATH
-    QtTesting_DIR:PATH
+  VARS QtTesting_INSTALL_DIR:PATH
+  LABELS "FIND_PACKAGE_VARS"
+  )
+mark_as_superbuild(
+  VARS QtTesting_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
