@@ -24,6 +24,7 @@
 
 #include "ctkXnatDataModel.h"
 #include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatResourceFolder.h"
 #include "ctkXnatSession.h"
 
 #include <QDateTime>
@@ -355,24 +356,8 @@ void ctkXnatObject::commit ()
 //----------------------------------------------------------------------------
 void ctkXnatObject::fetchResources(const QString& path)
 {
-  QString query = this->resourceUri() + path;
-  ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(query);
-
-  QList<ctkXnatObject*> resources = session->httpResults(queryId,
-                                                           ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
-
-  foreach (ctkXnatObject* resource, resources)
-  {
-    QString label = resource->name();
-    if (label.isEmpty())
-    {
-      label = "NO NAME";
-    }
-
-    resource->setName(label);
-    this->add(resource);
-  }
+  ctkXnatResourceFolder* resFolder = new ctkXnatResourceFolder();
+  this->add(resFolder);
 }
 
 //----------------------------------------------------------------------------
