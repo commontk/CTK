@@ -83,3 +83,10 @@ mark_as_superbuild(
   LABELS "FIND_PACKAGE"
   )
 
+# If an external DCMTK was provided via DCMTK_DIR and the external DCMTK
+# build/install used a CMAKE_DEBUG_POSTFIX value for distinguishing debug
+# and release libraries in the same build/install tree, the same debug
+# postfix needs to be passed to the CTK configure step. The FindDCMTK
+# script then takes the DCMTK_CMAKE_DEBUG_POSTFIX variable into account
+# when looking for DCMTK debug libraries.
+mark_as_superbuild(DCMTK_CMAKE_DEBUG_POSTFIX:STRING)

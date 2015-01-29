@@ -8,6 +8,10 @@
 
 @PACKAGE_INIT@
 
+# Help finding external projects which might have been
+# installed with CTK in the same install location
+list(APPEND CMAKE_PREFIX_PATH ${PACKAGE_PREFIX_DIR})
+
 # CMake extension module directory
 set_and_check(CTK_CMAKE_DIR "@PACKAGE_CTK_CMAKE_DIR_CONFIG@")
 set_and_check(CTK_CMAKE_UTILITIES_DIR "@PACKAGE_CTK_CMAKE_UTILITIES_DIR_CONFIG@")
@@ -30,6 +34,9 @@ set_and_check(CTK_EXPORT_HEADER_TEMPLATE "@PACKAGE_CTK_EXPORT_HEADER_TEMPLATE_DI
 # Set CTK library directory
 set_and_check(CTK_LIBRARY_DIR "@PACKAGE_CTK_LIBRARY_DIR_CONFIG@")
 set(CTK_LIBRARY_DIRS ${CTK_LIBRARY_DIR})
+
+# CTK specific variables
+set(CTK_CMAKE_DEBUG_POSTFIX "@CMAKE_DEBUG_POSTFIX@")
 
 # Import CTK targets
 if(NOT TARGET CTKCore)
@@ -64,6 +71,12 @@ include("${CTK_CMAKE_DIR}/ctkFunctionGetPluginDependencies.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroSetupPlugins.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroGenerateMocs.cmake")
 
+if(CMAKE_VERSION VERSION_LESS 3)
+  include("${CTK_CMAKE_DIR}/CMakeFindDependencyMacro.cmake")
+else()
+  include(CMakeFindDependencyMacro)
+endif()
+
 # List all libraries
 SET(CTK_LIBRARIES @CTK_LIBRARIES@)
 
@@ -72,9 +85,6 @@ SET(CTK_WRAPPED_LIBRARIES_PYTHONQT @CTK_WRAPPED_LIBRARIES_PYTHONQT@)
 
 # Include CTK Plugin specific variables
 include(${CTK_PLUGIN_USE_FILE})
-
-# CTK external projects variables
-@CTK_SUPERBUILD_EP_VARS_CONFIG@
 
 # Qt configuration
 set(CTK_QT_VERSION "@CTK_QT_VERSION@")
@@ -109,3 +119,6 @@ set(CTK_INSTALL_QTPLUGIN_DIR "@CTK_INSTALL_QTPLUGIN_DIR@")
 # that build tree (only one will ever be set).
 SET(CTK_CONFIGURATION_TYPES @CTK_CONFIGURATION_TYPES_CONFIG@)
 SET(CTK_BUILD_TYPE @CTK_BUILD_TYPE_CONFIG@)
+
+# CTK external projects variables
+@CTK_SUPERBUILD_EP_VARS_CONFIG@

@@ -79,7 +79,12 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
   mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
 endif()
 
-mark_as_superbuild(CMAKE_PREFIX_PATH)
+mark_as_superbuild(
+  VARS
+    CMAKE_PREFIX_PATH:STRING
+    CMAKE_DEBUG_POSTFIX:STRING
+  ALL_PROJECTS
+  )
 
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
@@ -238,6 +243,7 @@ foreach(file
   Libs/ctkExport.h.in
   CMake/ctkLinkerAsNeededFlagCheck.cmake
   CMake/ctk_compile_python_scripts.cmake.in
+  CMake/CMakeFindDependencyMacro.cmake
   )
   install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
 endforeach()

@@ -71,14 +71,6 @@ else()
   set(CTK_PLUGIN_LIBRARIES_DIR_CONFIG "${CMAKE_${_plugin_output_type}_OUTPUT_DIRECTORY}/plugins")
 endif()
 
-# CTK external projects variables
-set(CTK_SUPERBUILD_EP_VARS_CONFIG)
-foreach(varname ${CTK_EP_LABEL_FIND_PACKAGE})
-  set(CTK_SUPERBUILD_EP_VARS_CONFIG
-   "${CTK_SUPERBUILD_EP_VARS_CONFIG}
-set(CTK_${varname} \"${${varname}}\")")
-endforeach()
-
 # CMake extension module directory.
 set(CTK_CMAKE_DIR_CONFIG ${CTK_CMAKE_DIR})
 set(CTK_CMAKE_UTILITIES_DIR_CONFIG ${CTK_CMAKE_UTILITIES_DIR})
@@ -127,6 +119,20 @@ install(EXPORT CTKExports DESTINATION ${CTK_INSTALL_CMAKE_DIR})
 
 #-----------------------------------------------------------------------------
 # Configure 'CTKConfig.cmake' for a build tree
+
+# CTK external projects variables
+set(CTK_SUPERBUILD_EP_VARS_CONFIG)
+foreach(varname ${CTK_EP_LABEL_FIND_PACKAGE_VARS} ${CTK_EP_LABEL_FIND_PACKAGE})
+  set(CTK_SUPERBUILD_EP_VARS_CONFIG
+   "${CTK_SUPERBUILD_EP_VARS_CONFIG}
+set(${varname} \"${${varname}}\")")
+endforeach()
+foreach(varname ${CTK_EP_LABEL_FIND_PACKAGE})
+  string(REPLACE "_DIR" "" package_name "${varname}")
+  set(CTK_SUPERBUILD_EP_VARS_CONFIG
+   "${CTK_SUPERBUILD_EP_VARS_CONFIG}
+find_dependency(${package_name})")
+endforeach()
 
 set(CTK_CONFIG_DIR_CONFIG ${CTK_SUPERBUILD_BINARY_DIR})
 set(CTK_CMAKE_DIR_CONFIG ${CTK_CMAKE_DIR})
@@ -186,6 +192,18 @@ configure_package_config_file(
 
 #-----------------------------------------------------------------------------
 # Configure 'CTKConfig.cmake' for an install tree
+
+# CTK external projects. We rely on externally set
+# _DIR variables or a proper CMAKE_PREFIX_PATH such
+# that find_dependency/find_package can successfully
+# find the external project. 
+set(CTK_SUPERBUILD_EP_VARS_CONFIG)
+foreach(varname ${CTK_EP_LABEL_FIND_PACKAGE})
+  string(REPLACE "_DIR" "" package_name "${varname}")
+  set(CTK_SUPERBUILD_EP_VARS_CONFIG
+   "${CTK_SUPERBUILD_EP_VARS_CONFIG}
+find_dependency(${package_name})")
+endforeach()
 
 set(CTK_CONFIG_DIR_CONFIG ${CTK_INSTALL_CMAKE_DIR})
 set(CTK_CMAKE_DIR_CONFIG ${CTK_INSTALL_CMAKE_DIR})
