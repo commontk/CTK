@@ -475,7 +475,7 @@ void ctkXnatSession::setDefaultFilePath(const QString &path)
   Q_D(ctkXnatSession);
 
   QDir directory(path);
-  if (directory.exists())
+  if (directory.exists() && path.size() != 0)
   {
     d->defaultFilePath = path;
   }
