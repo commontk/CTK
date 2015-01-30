@@ -38,6 +38,10 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKHistogram: public ctkHistogram
 {
   Q_OBJECT;
   QVTK_OBJECT;
+  Q_PROPERTY(int component READ component WRITE setComponent)
+  Q_PROPERTY(QVariant maxValue READ maxValue)
+  Q_PROPERTY(QVariant minValue READ minValue)
+  Q_PROPERTY(int numberOfBins READ numberOfBins WRITE setNumberOfBins)
 public:
   ctkVTKHistogram(QObject* parent = 0);
   ctkVTKHistogram(vtkDataArray* dataArray, QObject* parent = 0);
@@ -53,12 +57,13 @@ public:
   virtual QVariant minValue()const;
   virtual QVariant maxValue()const;
 
-  void setDataArray(vtkDataArray* dataArray);
-  vtkDataArray* dataArray()const;
+  Q_INVOKABLE void setDataArray(vtkDataArray* dataArray);
+  Q_INVOKABLE vtkDataArray* dataArray()const;
 
   void setComponent(int component);
   int component()const;
 
+  int numberOfBins()const;
   void setNumberOfBins(int number);
 
   virtual void removeControlPoint( qreal pos );

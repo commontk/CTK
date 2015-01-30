@@ -232,6 +232,13 @@ int ctkVTKHistogram::component()const
 }
 
 //-----------------------------------------------------------------------------
+int ctkVTKHistogram::numberOfBins()const
+{
+  Q_D(const ctkVTKHistogram);
+  return d->UserNumberOfBins;
+}
+
+//-----------------------------------------------------------------------------
 void ctkVTKHistogram::setNumberOfBins(int number)
 {
   Q_D(ctkVTKHistogram);
