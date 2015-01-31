@@ -24,6 +24,8 @@
 
 #include "ctkXnatDataModel.h"
 #include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatException.h"
+#include "ctkXnatResource.h"
 #include "ctkXnatResourceFolder.h"
 #include "ctkXnatSession.h"
 
@@ -306,6 +308,41 @@ void ctkXnatObject::save()
 }
 
 //----------------------------------------------------------------------------
+void ctkXnatObject::addResource(QString foldername, QString format,
+                                   QString content, QString tags)
+{
+  if (foldername.size() == 0)
+  {
+    throw ctkXnatException("Error creating resource! Foldername must not be empty!");
+  }
+
+  ctkXnatResourceFolder* resFolder;
+  QList<ctkXnatObject*> children = this->children();
+  for (unsigned int i = 0; i < children.size(); ++i)
+  {
+    resFolder = dynamic_cast<ctkXnatResourceFolder*>(children.at(i));
+    if (resFolder)
+    {
+      break;
+    }
+    else if (i == children.size()-1)
+    {
+      resFolder = new ctkXnatResourceFolder();
+      this->add(resFolder);
+    }
+  }
+
+  ctkXnatResource* resource = new ctkXnatResource();
+  resource->setName(foldername);
+  if (format.size() != 0)
+    resource->setFormat(format);
+  if (content.size() != 0)
+    resource->setContent(content);
+  if (tags.size() != 0)
+    resource->setTags(tags);
+
+  resFolder->add(resource);
+  resource->save();
 }
 
 //----------------------------------------------------------------------------

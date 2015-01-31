@@ -129,6 +129,9 @@ public:
 
   void download(const QString&);
 
+  /// Creates the object on the XNAT server and sets the new ID.
+  virtual void addResource(QString foldername,
+                           QString format = "", QString content = "", QString tags = "");
 
   //QObject* asyncObject() const;
 

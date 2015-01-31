@@ -24,6 +24,10 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSession.h"
 
+const QString ctkXnatResource::TAGS = "tags";
+const QString ctkXnatResource::FORMAT = "format";
+const QString ctkXnatResource::CONTENT = "content";
+
 const QString ctkXnatResource::ID = "xnat_abstractresource_id";
 //----------------------------------------------------------------------------
 class ctkXnatResourcePrivate : public ctkXnatObjectPrivate
@@ -90,6 +94,41 @@ void ctkXnatResource::setLabel(const QString &label)
   this->setProperty(LABEL, label);
 }
 
+//----------------------------------------------------------------------------
+void ctkXnatResource::setFormat(const QString &fileFormat)
+{
+  this->setProperty(FORMAT, fileFormat);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::format() const
+{
+  return this->property(FORMAT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::setContent(const QString &fileContent)
+{
+  this->setProperty(CONTENT, fileContent);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::content() const
+{
+  return this->property(CONTENT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::setTags(const QString &fileTags)
+{
+  this->setProperty(TAGS, fileTags);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::tags() const
+{
+  return this->property(TAGS);
+}
 //----------------------------------------------------------------------------
 void ctkXnatResource::reset()
 {
