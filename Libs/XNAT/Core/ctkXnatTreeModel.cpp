@@ -296,17 +296,3 @@ void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zip
 
   return;
 }
-
-//----------------------------------------------------------------------------
-void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFileName)
-{
-  if (!index.isValid())
-  {
-    return;
-  }
-
-  ctkXnatObject* xnatObject = this->xnatObject(index);
-  ctkXnatObject* child = xnatObject->children()[index.row()];
-
-  child->upload(zipFileName);
-}

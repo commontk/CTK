@@ -57,7 +57,6 @@ public:
 
   bool removeAllRows(const QModelIndex& parent);
 
-  void uploadFile(const QModelIndex& index, const QString& zipFilename);
   void downloadFile (const QModelIndex& index, const QString& zipFilename);
 
 private:
