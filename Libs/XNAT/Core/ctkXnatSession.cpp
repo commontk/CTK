@@ -607,16 +607,14 @@ void ctkXnatSession::download(const QString& fileName,
   d->xnat->sync(queryId);
 }
 
-void ctkXnatSession::upload(ctkXnatFile *file)
+//----------------------------------------------------------------------------
+void ctkXnatSession::upload(const QString &fileName,
+                            const QString &resource,
+                            const UrlParameters &parameters,
+                            const HttpRawHeaders &rawHeaders)
 {
   Q_D(ctkXnatSession);
-
-  QString query = file->resourceUri();
-  QString filename = file->property("filename");
-  qRestAPI::Parameters parameters;
-  parameters["inbody"] = "true";
-  parameters["tags"] = file->property("tags");
-  QUuid queryId = d->xnat->upload(filename, query, parameters);
+  QUuid queryId = d->xnat->upload(fileName, resource, parameters);
   d->xnat->sync(queryId);
 }
 

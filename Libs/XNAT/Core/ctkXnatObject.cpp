@@ -300,8 +300,12 @@ void ctkXnatObject::download(const QString& filename)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::upload(const QString& /*zipFilename*/)
+void ctkXnatObject::save()
 {
+  this->saveImpl();
+}
+
+//----------------------------------------------------------------------------
 }
 
 //----------------------------------------------------------------------------
@@ -311,18 +315,26 @@ bool ctkXnatObject::exists() const
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::commit ()
+void ctkXnatObject::saveImpl()
 {
   Q_D(ctkXnatObject);
   QString query = this->resourceUri();
-  QDateTime remoteModTime = this->lastModifiedTimeOnServer();
-  // If the object has been modified on the server, perform an update
-  if (d->lastModifiedTime < remoteModTime)
+
+  // If there is already a valid last-modification-time, otherwise the
+  // object is not yet on the server!
+  QDateTime remoteModTime;
+  if (d->lastModifiedTime.isValid())
   {
-    qDebug()<<"Object maybe overwritten on server!";
-    // TODO update from server, since modification time is not really supported
-    // by xnat right now this is not of high priority
-    // something like this->updateImpl
+    // TODO Overwrite this for e.g. project and subject which already support modification time!
+    remoteModTime = this->lastModifiedTimeOnServer();
+    // If the object has been modified on the server, perform an update
+    if (d->lastModifiedTime < remoteModTime)
+    {
+      qDebug()<<"Object maybe overwritten on server!";
+      // TODO update from server, since modification time is not really supported
+      // by xnat right now this is not of high priority
+      // something like this->updateImpl + setLastModifiedTime()
+    }
   }
 
   // Creating the update query
@@ -342,10 +354,13 @@ void ctkXnatObject::commit ()
   const QList<QVariantMap> results = this->session()->httpSync(queryID);
 
   // If this xnat object did not exist before on the server set the ID returned by Xnat
-  QVariant id = results[0]["ID"];
-  if (id.isValid())
+  if (results.size() == 1 && results[0].size() == 1)
   {
-    this->setProperty("ID", id.toString());
+    QVariant id = results[0][ID];
+    if (!id.isNull())
+    {
+      this->setId(id.toString());
+    }
   }
 
   // Finally update the modification time on the server

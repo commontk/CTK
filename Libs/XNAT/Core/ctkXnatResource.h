@@ -58,7 +58,7 @@ public:
 
   void reset();
 
-  void createFolder();
+  void saveImpl();
 
   static const QString ID;
 

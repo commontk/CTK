@@ -51,7 +51,7 @@ ctkXnatResource::~ctkXnatResource()
 //----------------------------------------------------------------------------
 QString ctkXnatResource::resourceUri() const
 {
-  return QString("%1/%2").arg(parent()->resourceUri(), this->id());
+  return QString("%1/%2").arg(parent()->resourceUri(), this->name());
 }
 
 //----------------------------------------------------------------------------
@@ -127,11 +127,30 @@ void ctkXnatResource::downloadImpl(const QString& filename)
   this->session()->download(filename, query, parameters);
 }
 
-void ctkXnatResource::createFolder()
+//----------------------------------------------------------------------------
+void ctkXnatResource::saveImpl()
 {
   if (!this->session()->exists(this))
   {
+    QString query = this->resourceUri();
+    query.append("/");
+    query.append(this->name());
+
+    query.append(QString("?%1=%2").arg("xsi:type", this->schemaType()));
+    const QMap<QString, QString>& properties = this->properties();
+    QMapIterator<QString, QString> itProperties(properties);
+    while (itProperties.hasNext())
+    {
+      itProperties.next();
+      if (itProperties.key() == "ID")
+        continue;
+      query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
+    }
     QUuid queryId = this->session()->httpPut(this->resourceUri());
     session()->httpResults(queryId, ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
+  }
+  else
+  {
+    // TODO Update resource
   }
 }

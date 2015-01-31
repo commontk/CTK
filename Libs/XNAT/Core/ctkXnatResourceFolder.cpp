@@ -99,3 +99,10 @@ void ctkXnatResourceFolder::downloadImpl(const QString& filename)
   parameters["format"] = "zip";
   this->session()->download(filename, query, parameters);
 }
+
+//----------------------------------------------------------------------------
+void ctkXnatResourceFolder::saveImpl()
+{
+  // Not implemented since a resource folder is automatically created when
+  // a resource is uploaded
+}

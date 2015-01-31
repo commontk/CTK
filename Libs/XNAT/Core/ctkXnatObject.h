@@ -129,11 +129,6 @@ public:
 
   void download(const QString&);
 
-  /// Sends the object to the XNAT server
-  /// Subclasses of ctkXnatObject can overwrite this function if needed
-  virtual void commit();
-
-  virtual void upload(const QString&);
 
   //QObject* asyncObject() const;
 
@@ -185,6 +180,10 @@ private:
 
   /// The implementation of the download mechanism, called by the download(const QString&) function.
   virtual void downloadImpl(const QString&) = 0;
+
+  /// The implementation of the upload mechanism, called by the upload() function.
+  /// Subclasses of ctkXnatObject can overwrite this function if needed
+  virtual void saveImpl();
 
   Q_DECLARE_PRIVATE(ctkXnatObject)
 };

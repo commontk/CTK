@@ -228,7 +228,16 @@ public:
     const UrlParameters& parameters = UrlParameters(),
     const HttpRawHeaders& rawHeaders = HttpRawHeaders());
 
-  void upload(ctkXnatFile* file);
+  /// Uploads a file to the web service.
+  /// \a fileName is the name of the file.
+  /// The \a resource and \parameters are used to compose the URL.
+  /// \a rawHeaders can be used to set the raw headers of the request to send.
+  /// These headers will be set additionally to those defined by the
+  /// \a defaultRawHeaders property.
+  void upload(const QString& fileName,
+    const QString& resource,
+    const UrlParameters& parameters = UrlParameters(),
+    const HttpRawHeaders& rawHeaders = HttpRawHeaders());
 
   /**
    * @brief Sends a http HEAD request to the xnat instance
