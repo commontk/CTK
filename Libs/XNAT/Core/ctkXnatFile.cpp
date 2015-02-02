@@ -181,6 +181,10 @@ void ctkXnatFile::saveImpl()
   query.append(QString("&%1=%2").arg("format", this->fileFormat()));
   query.append(QString("&%1=%2").arg("content", this->fileContent()));
   query.append(QString("&%1=%2").arg("tags", this->fileTags()));
+
+  if (this->exists())
+    query.append(QString("&%1=%2").arg("overwrite", true));
+
   query.append(QString("&%1=%2").arg("inbody", "true"));
 
   this->session()->upload(filename, query);
