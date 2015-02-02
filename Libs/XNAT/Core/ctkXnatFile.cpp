@@ -188,4 +188,18 @@ void ctkXnatFile::saveImpl()
   query.append(QString("&%1=%2").arg("inbody", "true"));
 
   this->session()->upload(filename, query);
+  qint64 localFileSize = file.size();
+  QUuid queryId = this->session()->httpHead(this->resourceUri());
+  QMap<QByteArray, QByteArray> header = this->session()->httpHeadSync(queryId);
+  QVariant sizeOnServer = header.value("Content-Length");
+  qint64 remoteFileSize = sizeOnServer.toLongLong();
+
+  // Retrieving the md5 checksum on the server is not always possible
+  // At least we can check whether the file size is the same
+  if (remoteFileSize != localFileSize)
+  {
+    // Remove corrupted file from server
+    this->erase();
+    throw ctkXnatException("Upload failed! An error occurred during file upload.");
+  }
 }
