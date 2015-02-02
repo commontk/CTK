@@ -175,7 +175,11 @@ QString ctkXnatObject::property(const QString& name) const
 void ctkXnatObject::setProperty(const QString& name, const QVariant& value)
 {
   Q_D(ctkXnatObject);
-  d->properties.insert(name, value.toString());
+  if (d->properties[name] != value)
+  {
+    d->properties.insert(name, value.toString());
+    d->modified = true; //TODO some internal method for e.g. setting the ID for the first time
+  }
 }
 
 //----------------------------------------------------------------------------

@@ -56,6 +56,10 @@ private:
 
   bool fetched;
 
+  // Indicates whether a xnatObject is locally modified and not yet
+  // synchronized with its instance on the server
+  bool modified;
+
   ctkXnatObject* parent;
 };
 
