@@ -308,7 +308,9 @@ void ctkXnatObject::download(const QString& filename)
 //----------------------------------------------------------------------------
 void ctkXnatObject::save()
 {
+  Q_D(ctkXnatObject);
   this->saveImpl();
+  d->modified = false;
 }
 
 //----------------------------------------------------------------------------
