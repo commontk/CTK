@@ -119,11 +119,11 @@ void ctkXnatTreeBrowserMainWindow::itemSelected(const QModelIndex &index)
   downloadable |= dynamic_cast<ctkXnatReconstructionFolder*>(xnatObject)!=NULL;
   ui->downloadButton->setEnabled(downloadable);
   ui->downloadLabel->setVisible(!downloadable);
-  bool canHaveFolder = false;
-  canHaveFolder |= dynamic_cast<ctkXnatProject*>(xnatObject) != NULL;
-  canHaveFolder |=  dynamic_cast<ctkXnatSubject*>(xnatObject) != NULL;
-  canHaveFolder |=  dynamic_cast<ctkXnatExperiment*>(xnatObject) != NULL;
-  ui->addResourceButton->setEnabled(canHaveFolder);
+  bool canHaveResource = false;
+  canHaveResource |= dynamic_cast<ctkXnatProject*>(xnatObject) != NULL;
+  canHaveResource |=  dynamic_cast<ctkXnatSubject*>(xnatObject) != NULL;
+  canHaveResource |=  dynamic_cast<ctkXnatExperiment*>(xnatObject) != NULL;
+  ui->addResourceButton->setEnabled(canHaveResource);
   bool uploadFilePossible = false;
   uploadFilePossible |= dynamic_cast<ctkXnatResource*>(xnatObject) != NULL;
   uploadFilePossible |=  dynamic_cast<ctkXnatScan*>(xnatObject) != NULL;

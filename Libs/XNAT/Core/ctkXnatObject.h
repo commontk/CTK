@@ -184,7 +184,7 @@ private:
   /// The implementation of the download mechanism, called by the download(const QString&) function.
   virtual void downloadImpl(const QString&) = 0;
 
-  /// The implementation of the upload mechanism, called by the upload() function.
+  /// The implementation of the upload mechanism, called by the save() function.
   /// Subclasses of ctkXnatObject can overwrite this function if needed
   virtual void saveImpl();
 

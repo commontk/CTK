@@ -65,9 +65,6 @@ public:
   void setContent(const QString& content);
   QString content() const;
 
-  void setLocalFilePath(const QString& filepath);
-  QString localFilePath() const;
-
   void reset();
 
   void saveImpl();
