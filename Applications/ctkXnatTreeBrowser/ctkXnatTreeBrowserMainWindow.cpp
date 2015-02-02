@@ -42,6 +42,7 @@
 
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QFileInfo>
 
 ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -146,7 +147,7 @@ void ctkXnatTreeBrowserMainWindow::addResourceClicked()
 {
   const QModelIndex index = ui->treeView->selectionModel()->currentIndex();
   ctkXnatObject* parentObject = m_TreeModel->xnatObject(index);
-  parentObject->addResource("data", "xml", "clinical parameters", "heart, liver");
+  parentObject->addResource("data", "ctk format", "custom content", "tag1, tag2");
 }
 
 void ctkXnatTreeBrowserMainWindow::uploadFileClicked()
@@ -158,10 +159,11 @@ void ctkXnatTreeBrowserMainWindow::uploadFileClicked()
   {
     ctkXnatFile* file = new ctkXnatFile();
     file->setLocalFilePath(filename);
-    file->setName("lset.nrrd");
-    file->setFileFormat("xml");
-    file->setFileContent("clinical parameters");
-    file->setFileTags("testproj, onto");
+    QFileInfo fileInfo (filename);
+    file->setName(fileInfo.fileName());
+    file->setFileFormat("some format");
+    file->setFileContent("some content");
+    file->setFileTags("some, tags");
     resource->add(file);
     try
     {
