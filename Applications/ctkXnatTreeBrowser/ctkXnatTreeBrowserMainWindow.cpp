@@ -157,7 +157,7 @@ void ctkXnatTreeBrowserMainWindow::uploadFileClicked()
   if (resource)
   {
     ctkXnatFile* file = new ctkXnatFile();
-    file->setLocalFilePath(/*filename*/"");
+    file->setLocalFilePath(filename);
     file->setName("lset.nrrd");
     file->setFileFormat("xml");
     file->setFileContent("clinical parameters");

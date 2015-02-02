@@ -172,8 +172,6 @@ void ctkXnatResource::saveImpl()
   if (!this->session()->exists(this))
   {
     QString query = this->resourceUri();
-    query.append("/");
-    query.append(this->name());
 
     query.append(QString("?%1=%2").arg("xsi:type", this->schemaType()));
     const QMap<QString, QString>& properties = this->properties();
@@ -181,11 +179,11 @@ void ctkXnatResource::saveImpl()
     while (itProperties.hasNext())
     {
       itProperties.next();
-      if (itProperties.key() == "ID")
+      if (itProperties.key() == ID || itProperties.key() == "xsiType")
         continue;
       query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
     }
-    QUuid queryId = this->session()->httpPut(this->resourceUri());
+    QUuid queryId = this->session()->httpPut(query);
     session()->httpResults(queryId, ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
   }
   else

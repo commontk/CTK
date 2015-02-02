@@ -316,7 +316,7 @@ void ctkXnatObject::addResource(QString foldername, QString format,
     throw ctkXnatException("Error creating resource! Foldername must not be empty!");
   }
 
-  ctkXnatResourceFolder* resFolder;
+  ctkXnatResourceFolder* resFolder = 0;
   QList<ctkXnatObject*> children = this->children();
   for (unsigned int i = 0; i < children.size(); ++i)
   {
@@ -325,11 +325,12 @@ void ctkXnatObject::addResource(QString foldername, QString format,
     {
       break;
     }
-    else if (i == children.size()-1)
-    {
-      resFolder = new ctkXnatResourceFolder();
-      this->add(resFolder);
-    }
+  }
+
+  if (!resFolder)
+  {
+    resFolder = new ctkXnatResourceFolder();
+    this->add(resFolder);
   }
 
   ctkXnatResource* resource = new ctkXnatResource();
