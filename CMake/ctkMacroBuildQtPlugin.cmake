@@ -27,7 +27,7 @@
 macro(ctkMacroBuildQtPlugin)
   cmake_parse_arguments(MY
     "" # no options
-    "NAME;EXPORT_DIRECTIVE;PLUGIN_DIR" # one value args
+    "NAME;EXPORT_DIRECTIVE;FOLDER;PLUGIN_DIR" # one value args
     "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
     ${ARGN}
     )
@@ -142,6 +142,10 @@ macro(ctkMacroBuildQtPlugin)
     ${QT_QTDESIGNER_LIBRARY}
     )
   target_link_libraries(${lib_name} ${my_libs})
+
+  if(NOT "${MY_FOLDER}" STREQUAL "")
+    set_target_properties(${lib_name} PROPERTIES FOLDER ${MY_FOLDER})
+  endif()
 
   # Install the library
   # CTK_INSTALL_QTPLUGIN_DIR:STRING can be passed when configuring CTK
