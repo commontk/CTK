@@ -494,14 +494,12 @@ ctk_lib_option(DICOM/Widgets
 ctk_lib_option(ImageProcessing/ITK/Core
                "Build the ITK Core library" OFF)
 
-if(CTK_QT_VERSION VERSION_LESS "5")
 ctk_lib_option(Scripting/Python/Core
                "Build the Python Core library" OFF
                CTK_ENABLE_Python_Wrapping)
 
 ctk_lib_option(Scripting/Python/Widgets
                "Build the Python Widgets library" OFF)
-endif()
 
 # VTK libraries have not yet been tested with Qt5
 if(CTK_QT_VERSION VERSION_LESS "5")
@@ -629,11 +627,9 @@ ctk_app_option(ctkDICOMObjectViewer
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
 
-if(CTK_QT_VERSION VERSION_LESS "5")
 ctk_app_option(ctkSimplePythonShell
                "Build the DICOM example application" OFF
                CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
-endif()
 
 if(CTK_USE_QTTESTING AND CTK_QT_VERSION VERSION_LESS "5")
   ctk_app_option(ctkQtTesting
@@ -752,10 +748,6 @@ ctk_enable_option(PluginFramework "Enable Plugin Framework" OFF
 ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system into Python language" OFF
                   CTK_LIB_Scripting/Python/Core)
 mark_as_superbuild(CTK_ENABLE_Python_Wrapping)
-if(CTK_QT_VERSION VERSION_GREATER "4" AND CTK_ENABLE_Python_Wrapping)
-  message(WARNING "Disabling CTK_ENABLE_Python_Wrapping because Qt5 support is still missing")
-  set(CTK_ENABLE_Python_Wrapping OFF CACHE BOOL "Wrap CTK classes using Qt meta-object system into Python language" FORCE)
-endif()
 
 # Build examples
 # Create the logical expression containing the minium set of required options
