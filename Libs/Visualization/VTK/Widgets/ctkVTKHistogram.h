@@ -66,9 +66,9 @@ public:
   int numberOfBins()const;
   void setNumberOfBins(int number);
 
-  virtual void removeControlPoint( qreal pos );
+  Q_INVOKABLE virtual void removeControlPoint( qreal pos );
 
-  virtual void build();
+  Q_INVOKABLE virtual void build();
 protected:
   qreal indexToPos(int index)const;
   int posToIndex(qreal pos)const;
