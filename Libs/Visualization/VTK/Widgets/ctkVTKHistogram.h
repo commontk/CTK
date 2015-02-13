@@ -32,7 +32,7 @@ class ctkVTKHistogramPrivate;
 
 /// \ingroup Visualization_VTK_Widgets
 ///
-/// Transfer function for a vtkColorTransferFunction. 
+/// Transfer function for a vtkColorTransferFunction.
 /// The value is an RGB QColor (no alpha supported)
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKHistogram: public ctkHistogram
 {
@@ -46,7 +46,7 @@ public:
   ctkVTKHistogram(QObject* parent = 0);
   ctkVTKHistogram(vtkDataArray* dataArray, QObject* parent = 0);
   virtual ~ctkVTKHistogram();
-  
+
   virtual ctkControlPoint* controlPoint(int index)const;
   virtual QVariant value(qreal pos)const;
   /// Returns the number of bins. Returns 0 until build() is called.
@@ -60,11 +60,11 @@ public:
   Q_INVOKABLE void setDataArray(vtkDataArray* dataArray);
   Q_INVOKABLE vtkDataArray* dataArray()const;
 
-  Q_INVOKABLE void setComponent(int component);
+  void setComponent(int component);
   int component()const;
 
   int numberOfBins()const;
-  Q_INVOKABLE void setNumberOfBins(int number);
+  void setNumberOfBins(int number);
 
   Q_INVOKABLE virtual void removeControlPoint( qreal pos );
 
