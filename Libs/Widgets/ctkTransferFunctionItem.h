@@ -38,16 +38,18 @@ class ctkTransferFunctionItemPrivate;
 class CTK_WIDGETS_EXPORT ctkTransferFunctionItem: public QGraphicsObject
 {
   Q_OBJECT
+  Q_PROPERTY(QRectF rect READ rect WRITE setRect)
 public:
   ctkTransferFunctionItem(QGraphicsItem* parent = 0);
   ctkTransferFunctionItem(ctkTransferFunction* transferFunction, 
                                   QGraphicsItem* parent = 0);
   virtual ~ctkTransferFunctionItem();
 
-  void setTransferFunction(ctkTransferFunction* transferFunction);
+  Q_INVOKABLE void setTransferFunction(ctkTransferFunction* transferFunction);
   ctkTransferFunction* transferFunction()const;
 
   inline void setRect(qreal x, qreal y, qreal width, qreal height);
+
   void setRect(const QRectF& rectangle);
   QRectF rect()const;
 /*
