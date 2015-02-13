@@ -44,11 +44,11 @@ public:
                                   QGraphicsItem* parent = 0);
   virtual ~ctkTransferFunctionItem();
 
-  void setTransferFunction(ctkTransferFunction* transferFunction);
+  Q_INVOKABLE void setTransferFunction(ctkTransferFunction* transferFunction);
   ctkTransferFunction* transferFunction()const;
 
   inline void setRect(qreal x, qreal y, qreal width, qreal height);
-  void setRect(const QRectF& rectangle);
+  Q_INVOKABLE void setRect(const QRectF& rectangle);
   QRectF rect()const;
 /*
   qreal rangeXDiff();
