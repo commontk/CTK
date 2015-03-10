@@ -43,8 +43,10 @@ public:
   vtkTypeMacro(ctkVTKOutputWindow,vtkOutputWindow);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  ctkVTKOutputWindow():MessageHandler(0),
-    ContextRegExp("[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\(0x[a-fA-F0-9]+\\))\\:\\s(.*)"){}
+  ctkVTKOutputWindow()
+    : MessageHandler(0)
+    , ContextRegExp("[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\((?:0x)?[a-fA-F0-9]+\\))\\:\\s(.*)")
+  {}
   ~ctkVTKOutputWindow(){}
 
   virtual void DisplayText(const char*);
@@ -77,10 +79,14 @@ void ctkVTKOutputWindow::PrintSelf(ostream& os, vtkIndent indent)
 void ctkVTKOutputWindow::DisplayText(const char* text)
 {
   Q_ASSERT(this->MessageHandler);
+
+  ctkErrorLogContext context;
+  QString textOnly = this->parseText(text, context);
+
   this->MessageHandler->handleMessage(
         ctk::qtHandleToString(QThread::currentThreadId()),
         ctkErrorLogLevel::Info,
-        this->MessageHandler->handlerPrettyName(), ctkErrorLogContext(), text);
+        this->MessageHandler->handlerPrettyName(), context, textOnly);
 }
 
 //----------------------------------------------------------------------------
