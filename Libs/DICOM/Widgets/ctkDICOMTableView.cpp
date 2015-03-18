@@ -91,7 +91,7 @@ void ctkDICOMTableViewPrivate::init()
 
   if (this->dicomDatabase != 0)
     {
-      this->setUpTableView();
+      q->setDicomDataBase(this->dicomDatabase);
     }
 }
 
@@ -217,7 +217,13 @@ ctkDICOMTableView::~ctkDICOMTableView()
 void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 {
   Q_D(ctkDICOMTableView);
+
+  //Do nothing if no database is set
+  if (!dicomDatabase)
+    return;
+
   d->dicomDatabase = dicomDatabase;
+  d->setUpTableView();
   //Create connections for new database
   QObject::connect(d->dicomDatabase, SIGNAL(instanceAdded(const QString&)),
                    this, SLOT(onInstanceAdded()));
