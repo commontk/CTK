@@ -461,6 +461,13 @@ QString ctkXnatSession::password() const
 }
 
 //----------------------------------------------------------------------------
+QString ctkXnatSession::sessionId() const
+{
+  Q_D(const ctkXnatSession);
+  return d->sessionId;
+}
+
+//----------------------------------------------------------------------------
 ctkXnatDataModel* ctkXnatSession::dataModel() const
 {
   Q_D(const ctkXnatSession);
