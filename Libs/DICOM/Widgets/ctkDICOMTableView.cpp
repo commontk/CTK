@@ -112,6 +112,8 @@ void ctkDICOMTableViewPrivate::setUpTableView()
       this->tblDicomDatabaseView->setModel(this->dicomSQLFilterModel);
       this->tblDicomDatabaseView->setColumnHidden(0, true);
       this->tblDicomDatabaseView->setSortingEnabled(true);
+      // ensure that the current selection isn't cleared by clicking outside the existing rows of this tableView
+      this->tblDicomDatabaseView->setSelectionMode(QAbstractItemView::MultiSelection);
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
       this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
 #else
