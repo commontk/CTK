@@ -150,6 +150,9 @@ protected Q_SLOTS:
 
   void selectAll();
 
+protected:
+  virtual bool eventFilter(QObject *obj, QEvent *event);
+
 Q_SIGNALS:
   /**
    * @brief Is emitted when the selection in the tableview has changed

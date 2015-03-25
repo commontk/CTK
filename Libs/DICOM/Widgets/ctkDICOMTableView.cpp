@@ -23,6 +23,7 @@
 #include "ui_ctkDICOMTableView.h"
 
 // Qt includes
+#include <QMouseEvent>
 #include <QSortFilterProxyModel>
 #include <QSqlQueryModel>
 
@@ -81,6 +82,7 @@ ctkDICOMTableViewPrivate::~ctkDICOMTableViewPrivate()
 {
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMTableViewPrivate::init()
 {
   Q_Q(ctkDICOMTableView);
@@ -93,6 +95,8 @@ void ctkDICOMTableViewPrivate::init()
     {
       q->setDicomDataBase(this->dicomDatabase);
     }
+
+  this->tblDicomDatabaseView->viewport()->installEventFilter(q);
 }
 
 //------------------------------------------------------------------------------
@@ -301,6 +305,26 @@ void ctkDICOMTableView::selectAll()
 {
   Q_D(ctkDICOMTableView);
   d->tblDicomDatabaseView->selectAll();
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::eventFilter(QObject *obj, QEvent *event)
+{
+  Q_D(ctkDICOMTableView);
+  if (obj == d->tblDicomDatabaseView->viewport())
+    {
+      if (event->type() == QEvent::MouseButtonPress ||
+          event->type() == QEvent::MouseButtonDblClick)
+        {
+          QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+          QPoint pos = mouseEvent->pos();
+          if (!d->tblDicomDatabaseView->indexAt(pos).isValid())
+            {
+              return true;
+            }
+        }
+    }
+  return QObject::eventFilter(obj, event);
 }
 
 //------------------------------------------------------------------------------
