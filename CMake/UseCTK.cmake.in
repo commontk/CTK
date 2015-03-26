@@ -30,7 +30,9 @@ if(NOT CTK_USE_FILE_INCLUDED)
   # Add include directories needed to use CTK.
   get_directory_property(existing_include_directories INCLUDE_DIRECTORIES)
   set(new_include_directories ${CTK_INCLUDE_DIRS})
-  list(REMOVE_ITEM new_include_directories ${existing_include_directories})
+  if(existing_include_directories)
+    list(REMOVE_ITEM new_include_directories ${existing_include_directories})
+  endif()
   include_directories(${new_include_directories})
 
   if (NOT DEFINED QT_QMAKE_EXECUTABLE)
