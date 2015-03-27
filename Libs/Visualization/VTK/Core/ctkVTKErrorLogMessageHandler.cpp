@@ -45,7 +45,6 @@ public:
 
   ctkVTKOutputWindow()
     : MessageHandler(0)
-    , ContextRegExp("[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\((?:0x)?[a-fA-F0-9]+\\))\\:\\s(.*)")
   {}
   ~ctkVTKOutputWindow(){}
 
@@ -59,8 +58,6 @@ public:
   QString parseText(const QString &text, ctkErrorLogContext &context);
 
   ctkErrorLogAbstractMessageHandler * MessageHandler;
-
-  QRegExp ContextRegExp;
 };
 
 // --------------------------------------------------------------------------
@@ -141,12 +138,13 @@ void ctkVTKOutputWindow::DisplayDebugText(const char* text)
 QString ctkVTKOutputWindow::parseText(const QString& text, ctkErrorLogContext& context)
 {
   context.Message = text;
-  if (this->ContextRegExp.exactMatch(text))
+  QRegExp contextRegExp("[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\((?:0x)?[a-fA-F0-9]+\\))\\:\\s(.*)");
+  if (contextRegExp.exactMatch(text))
     {
-    context.File = this->ContextRegExp.cap(1);
-    context.Category = this->ContextRegExp.cap(3);
-    context.Line = this->ContextRegExp.cap(2).toInt();
-    context.Message = this->ContextRegExp.cap(4);
+    context.File = contextRegExp.cap(1);
+    context.Category = contextRegExp.cap(3);
+    context.Line = contextRegExp.cap(2).toInt();
+    context.Message = contextRegExp.cap(4);
     }
   return context.Message;
 }

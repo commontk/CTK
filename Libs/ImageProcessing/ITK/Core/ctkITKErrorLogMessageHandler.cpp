@@ -59,8 +59,8 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(ctkITKOutputWindow, OutputWindow);
 
-  ctkITKOutputWindow():MessageHandler(0),
-    ContextRegExp("[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\(0x[a-fA-F0-9]+\\))\\:\\s(.*)"){}
+  ctkITKOutputWindow():MessageHandler(0)
+  {}
   ~ctkITKOutputWindow(){}
 
   virtual void DisplayText(const char*);
@@ -74,7 +74,6 @@ public:
 
   ctkErrorLogAbstractMessageHandler * MessageHandler;
 
-  QRegExp ContextRegExp;
 };
 
 // --------------------------------------------------------------------------
@@ -142,12 +141,14 @@ void ctkITKOutputWindow::DisplayDebugText(const char* text)
 QString ctkITKOutputWindow::parseText(const QString& text, ctkErrorLogContext& context)
 {
   context.Message = text;
-  if (this->ContextRegExp.exactMatch(text))
+
+  QRegExp contextRegExp("[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\(0x[a-fA-F0-9]+\\))\\:\\s(.*)");
+  if (contextRegExp.exactMatch(text))
     {
-    context.File = this->ContextRegExp.cap(1);
-    context.Category = this->ContextRegExp.cap(3);
-    context.Line = this->ContextRegExp.cap(2).toInt();
-    context.Message = this->ContextRegExp.cap(4);
+    context.File = contextRegExp.cap(1);
+    context.Category = contextRegExp.cap(3);
+    context.Line = contextRegExp.cap(2).toInt();
+    context.Message = contextRegExp.cap(4);
     }
   return context.Message;
 }
