@@ -198,7 +198,6 @@ ctkDICOMTableView::ctkDICOMTableView(QString queryTableName, QWidget *parent)
   Q_D(ctkDICOMTableView);
   d->init();
   this->setQueryTableName(queryTableName);
-  d->lblTableName->setText(queryTableName);
 }
 
 //------------------------------------------------------------------------------
@@ -208,8 +207,8 @@ ctkDICOMTableView::ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QString q
 {
   this->setDicomDataBase(dicomDataBase);
   Q_D(ctkDICOMTableView);
-  this->setQueryTableName(queryTableName);
   d->init();
+  this->setQueryTableName(queryTableName);
 }
 
 //------------------------------------------------------------------------------
