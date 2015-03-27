@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QAtomicInt>
 #include <QCoreApplication>
 #include <QThread>
 #include <QVariant>
@@ -30,6 +31,10 @@
 
 // STD includes
 #include <iostream>
+
+// Handling log messages may generate log messages, which would cause infinite loop.
+// We stop handling log messages if the maximum recursion depth is reached.
+static QAtomicInt ctkErrorLogQtMessageHandler_CurrentRecursionDepth;
 
 //------------------------------------------------------------------------------
 QString ctkErrorLogQtMessageHandler::HandlerName = QLatin1String("Qt");
@@ -59,11 +64,21 @@ namespace
 void ctkErrorLogModelQtMessageOutput(QtMsgType type, const QMessageLogContext& context,
                                      const QString& msg)
 {
+  ctkErrorLogQtMessageHandler_CurrentRecursionDepth.ref();
+  // Allow a couple of recursion levels to get a hint about where and why recursion occurs,
+  // so we stop processing the message if recursion depth is over 10.
+  if (ctkErrorLogQtMessageHandler_CurrentRecursionDepth > 10)
+    {
+    ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
+    return;
+    }
+
   //TODO: use context in the log message
   Q_UNUSED(context)
   // Warning: To avoid inifinite loop, do not use Q_ASSERT in this function.
   if (msg.isEmpty())
     {
+    ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
     return;
     }
   ctkErrorLogLevel::LogLevel level = ctkErrorLogLevel::Unknown;
@@ -99,13 +114,24 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const QMessageLogContext& c
           ctk::qtHandleToString(QThread::currentThreadId()),
           level, handler->handlerPrettyName(), ctkErrorLogContext(msg), msg);
     }
+  ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
 }
 #else
 void ctkErrorLogModelQtMessageOutput(QtMsgType type, const char *msg)
 {
+  ctkErrorLogQtMessageHandler_CurrentRecursionDepth.ref();
+  // Allow a couple of recursion levels to get a hint about where and why recursion occurs,
+  // so we stop processing the message if recursion depth is over 10.
+  if (ctkErrorLogQtMessageHandler_CurrentRecursionDepth > 10)
+    {
+    ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
+    return;
+    }
+
   // Warning: To avoid inifinite loop, do not use Q_ASSERT in this function.
   if (QString(msg).isEmpty())
     {
+    ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
     return;
     }
   ctkErrorLogLevel::LogLevel level = ctkErrorLogLevel::Unknown;
@@ -141,6 +167,7 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const char *msg)
           ctk::qtHandleToString(QThread::currentThreadId()),
           level, handler->handlerPrettyName(), ctkErrorLogContext(msg), msg);
     }
+  ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
 }
 #endif
 }
