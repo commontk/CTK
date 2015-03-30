@@ -69,6 +69,10 @@ void ctkButtonGroup::onButtonClicked(int buttonId)
   clickedButton->setChecked(false);
   this->addButton(clickedButton, oldId);
   d->IsLastButtonPressedChecked = false;
+#if QT_VERSION >= 0x050200
+  emit buttonToggled(oldId, false);
+  emit buttonToggled(clickedButton, false);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -79,5 +83,3 @@ void ctkButtonGroup::onButtonPressed(int buttonId)
   Q_ASSERT(pressedButton);
   d->IsLastButtonPressedChecked = pressedButton->isChecked();
 }
-
-
