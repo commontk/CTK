@@ -64,9 +64,10 @@ void ctkButtonGroup::onButtonClicked(int buttonId)
   // here the button is clicked and we click it again... so we want to
   // uncheck, a behavior not supported by QButtonGroup.
   // The only way to uncheck the button is to remove it from the group, and put it back
+  const int oldId = this->id(clickedButton);
   this->removeButton(clickedButton);
   clickedButton->setChecked(false);
-  this->addButton(clickedButton);
+  this->addButton(clickedButton, oldId);
   d->IsLastButtonPressedChecked = false;
 }
 
