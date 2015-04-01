@@ -186,6 +186,8 @@ ${pythonqtWrappers}
 //
 
 #include <PythonQt.h>
+// XXX Avoid  warning: "HAVE_STAT" redefined
+#undef HAVE_STAT
 #include "${namespace}_${target}.h"
 
 void PythonQt_init_${namespace}_${target}(PyObject* module)
