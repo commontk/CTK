@@ -303,18 +303,16 @@ ctkDICOMTableManager::DisplayDensity ctkDICOMTableManager::displayDensity()
   int sectionSize;
   sectionSize = d->patientsTable->tableSectionSize();
 
-  ctkDICOMTableManager::DisplayDensity density;
   if (sectionSize == 30)
   {
-    density = ctkDICOMTableManager::Comfortable;
+    return ctkDICOMTableManager::Comfortable;
   }
   else if (sectionSize == 20)
   {
-    density = ctkDICOMTableManager::Cozy;
+    return ctkDICOMTableManager::Cozy;
   }
-  else if (sectionSize == 15)
+  else /* if (sectionSize == 15) */
   {
-    density = ctkDICOMTableManager::Compact;
+    return ctkDICOMTableManager::Compact;
   }
-   return density;
 }
