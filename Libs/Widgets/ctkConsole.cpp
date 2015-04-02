@@ -268,8 +268,19 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
         break;
 
       case Qt::Key_Home:
+        // Need to override the default behavior because we want to jump to right after the prompt and
+        // not to the first character in the line (beginning of the prompt).
         e->accept();
-        text_cursor.setPosition(this->InteractivePosition);
+        if (e->modifiers() & Qt::ShiftModifier)
+          {
+          // Shift+Home - SelectStartOfLine: select from the first character to the current position
+          text_cursor.setPosition(this->InteractivePosition, QTextCursor::KeepAnchor);
+          }
+        else
+          {
+          // Home - MoveToStartOfLine: jump to first character
+          text_cursor.setPosition(this->InteractivePosition);
+          }
         this->setTextCursor(text_cursor);
         break;
 
