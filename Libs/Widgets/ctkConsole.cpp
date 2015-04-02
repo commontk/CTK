@@ -175,7 +175,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     const bool history_area = this->isCursorInHistoryArea();
 
     // Allow copying anywhere in the console ...
-    if(e->key() == Qt::Key_C && e->modifiers() == Qt::ControlModifier)
+    if(e == QKeySequence::Copy)
       {
       if(selection)
         {
@@ -187,7 +187,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       }
 
     // Allow cut only if the selection is limited to the interactive area ...
-    if(e->key() == Qt::Key_X && e->modifiers() == Qt::ControlModifier)
+    if(e == QKeySequence::Cut)
       {
       if(selection && !history_area)
         {
@@ -198,11 +198,60 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       return;
       }
 
-    // Force the cursor back to the interactive area
+    // Paste to the end of document if in the history area
+    if(e == QKeySequence::Paste)
+      {
+      if(history_area)
+        {
+        text_cursor.setPosition(this->documentEnd());
+        this->setTextCursor(text_cursor);  
+        }
+      this->paste();
+      e->accept();
+      return;
+      }
+
+    // Start of line should be the start of interactive area
+    if(e == QKeySequence::MoveToPreviousChar || e == QKeySequence::SelectPreviousChar
+      || e == QKeySequence::MoveToPreviousWord || e == QKeySequence::SelectPreviousWord
+      || e == QKeySequence::MoveToStartOfLine || e == QKeySequence::SelectStartOfLine)
+      {
+      QTextCursor::MoveMode mode = QTextCursor::MoveAnchor;
+      if (e == QKeySequence::SelectPreviousChar
+        || e == QKeySequence::SelectPreviousWord
+        || e == QKeySequence::SelectStartOfLine)
+        {
+        mode = QTextCursor::KeepAnchor;
+        }
+      QTextCursor::MoveOperation op = QTextCursor::Left;
+      if (e == QKeySequence::MoveToPreviousWord || e == QKeySequence::SelectPreviousWord)
+        {
+        op = QTextCursor::WordLeft;
+        }
+      else if (e == QKeySequence::MoveToStartOfLine || e == QKeySequence::SelectStartOfLine)
+        {
+        op = QTextCursor::StartOfLine;
+        }
+      text_cursor.movePosition(op, mode);
+      if (text_cursor.position() > this->InteractivePosition)
+        {
+        this->Superclass::keyPressEvent(e);
+        }
+      else
+        {
+        text_cursor.setPosition(this->InteractivePosition, mode);
+        this->setTextCursor(text_cursor);
+        e->accept();
+        }
+      return;
+      }
+
+    // Force the cursor back to the interactive area if a letter key is pressed
     if(history_area
        && e->key() != Qt::Key_Control
        && e->key() != Qt::Key_Meta
        && e->key() != Qt::Key_Alt
+       && e->key() != Qt::Key_Shift
        )
       {
       text_cursor.setPosition(this->documentEnd());
@@ -233,18 +282,6 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
           this->replaceCommandBuffer("");
           }
         break;
-
-      case Qt::Key_Left:
-        if (text_cursor.position() > this->InteractivePosition)
-          {
-          this->Superclass::keyPressEvent(e);
-          }
-        else
-          {
-          e->accept();
-          }
-        break;
-
       case Qt::Key_Delete:
         e->accept();
         this->Superclass::keyPressEvent(e);
@@ -265,23 +302,6 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
         e->accept();
         this->updateCompleter();
         this->selectCompletion();
-        break;
-
-      case Qt::Key_Home:
-        // Need to override the default behavior because we want to jump to right after the prompt and
-        // not to the first character in the line (beginning of the prompt).
-        e->accept();
-        if (e->modifiers() & Qt::ShiftModifier)
-          {
-          // Shift+Home - SelectStartOfLine: select from the first character to the current position
-          text_cursor.setPosition(this->InteractivePosition, QTextCursor::KeepAnchor);
-          }
-        else
-          {
-          // Home - MoveToStartOfLine: jump to first character
-          text_cursor.setPosition(this->InteractivePosition);
-          }
-        this->setTextCursor(text_cursor);
         break;
 
       case Qt::Key_Return:
