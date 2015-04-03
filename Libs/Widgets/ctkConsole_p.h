@@ -44,6 +44,8 @@ public:
 
   void init();
 
+  static bool isMoveLeftWithinLine(QKeyEvent* e, QTextCursor::MoveOperation &moveOperation, QTextCursor::MoveMode &moveMode);
+
   virtual void keyPressEvent(QKeyEvent* e);
 
   void switchToUserInputTextColor(QTextCursor* textCursorToUpdate = 0);
