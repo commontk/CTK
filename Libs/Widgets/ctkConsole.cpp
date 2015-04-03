@@ -148,6 +148,51 @@ void ctkConsolePrivate::init()
 }
 
 //-----------------------------------------------------------------------------
+bool ctkConsolePrivate::isMoveLeftWithinLine(QKeyEvent* e, QTextCursor::MoveOperation &moveOperation, QTextCursor::MoveMode &moveMode)
+{
+  if (e == QKeySequence::MoveToPreviousChar)
+    {
+    moveOperation = QTextCursor::Left;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectPreviousChar)
+    {
+    moveOperation = QTextCursor::Left;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::MoveToPreviousWord)
+    {
+    moveOperation = QTextCursor::WordLeft;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectPreviousWord)
+    {
+    moveOperation = QTextCursor::WordLeft;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::MoveToStartOfLine)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectStartOfLine)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+//-----------------------------------------------------------------------------
 void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
 {
   if (this->Completer && this->Completer->popup()->isVisible())
@@ -167,169 +212,177 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       }
     }
 
-    QTextCursor text_cursor = this->textCursor();
+  QTextCursor text_cursor = this->textCursor();
 
-    // Set to true if there's a current selection
-    const bool selection = text_cursor.anchor() != text_cursor.position();
-    // Set to true if the cursor overlaps the history area
-    const bool history_area = this->isCursorInHistoryArea();
+  // Set to true if there's a current selection
+  const bool selection = text_cursor.anchor() != text_cursor.position();
+  // Set to true if the cursor overlaps the history area
+  const bool history_area = this->isCursorInHistoryArea();
 
-    // Allow copying anywhere in the console ...
-    if(e == QKeySequence::Copy)
+  // Allow copying anywhere in the console ...
+  if(e == QKeySequence::Copy)
+    {
+    if(selection)
       {
-      if(selection)
-        {
-        this->copy();
-        }
-
-      e->accept();
-      return;
+      this->copy();
       }
+    e->accept();
+    return;
+    }
 
-    // Allow cut only if the selection is limited to the interactive area ...
-    if(e == QKeySequence::Cut)
+  // Allow cut only if the selection is limited to the interactive area ...
+  if(e == QKeySequence::Cut)
+    {
+    if(selection && !history_area)
       {
-      if(selection && !history_area)
-        {
-        this->cut();
-        }
-
-      e->accept();
-      return;
+      this->cut();
       }
+    e->accept();
+    return;
+    }
 
-    // Paste to the end of document if in the history area
-    if(e == QKeySequence::Paste)
-      {
-      if(history_area)
-        {
-        text_cursor.setPosition(this->documentEnd());
-        this->setTextCursor(text_cursor);  
-        }
-      this->paste();
-      e->accept();
-      return;
-      }
-
-    // Start of line should be the start of interactive area
-    if(e == QKeySequence::MoveToPreviousChar || e == QKeySequence::SelectPreviousChar
-      || e == QKeySequence::MoveToPreviousWord || e == QKeySequence::SelectPreviousWord
-      || e == QKeySequence::MoveToStartOfLine || e == QKeySequence::SelectStartOfLine)
-      {
-      QTextCursor::MoveMode mode = QTextCursor::MoveAnchor;
-      if (e == QKeySequence::SelectPreviousChar
-        || e == QKeySequence::SelectPreviousWord
-        || e == QKeySequence::SelectStartOfLine)
-        {
-        mode = QTextCursor::KeepAnchor;
-        }
-      QTextCursor::MoveOperation op = QTextCursor::Left;
-      if (e == QKeySequence::MoveToPreviousWord || e == QKeySequence::SelectPreviousWord)
-        {
-        op = QTextCursor::WordLeft;
-        }
-      else if (e == QKeySequence::MoveToStartOfLine || e == QKeySequence::SelectStartOfLine)
-        {
-        op = QTextCursor::StartOfLine;
-        }
-      text_cursor.movePosition(op, mode);
-      if (text_cursor.position() > this->InteractivePosition)
-        {
-        this->Superclass::keyPressEvent(e);
-        }
-      else
-        {
-        text_cursor.setPosition(this->InteractivePosition, mode);
-        this->setTextCursor(text_cursor);
-        e->accept();
-        }
-      return;
-      }
-
-    // Force the cursor back to the interactive area if a letter key is pressed
-    if(history_area
-       && e->key() != Qt::Key_Control
-       && e->key() != Qt::Key_Meta
-       && e->key() != Qt::Key_Alt
-       && e->key() != Qt::Key_Shift
-       )
+  // Paste to the end of document if in the history area
+  if(e == QKeySequence::Paste)
+    {
+    if(history_area)
       {
       text_cursor.setPosition(this->documentEnd());
       this->setTextCursor(text_cursor);
       }
+    this->paste();
+    e->accept();
+    return;
+    }
 
-    switch(e->key())
+  // Allow vertical scrolling using page up/down
+  if (e == QKeySequence::MoveToPreviousPage || e == QKeySequence::SelectPreviousPage
+    || e == QKeySequence::MoveToNextPage || e == QKeySequence::SelectNextPage)
+    {
+    if (e == QKeySequence::SelectPreviousPage || e == QKeySequence::SelectNextPage)
       {
-      case Qt::Key_Up:
-        e->accept();
+      // ignore
+      e->accept();
+      }
+    else
+      {
+      this->Superclass::keyPressEvent(e);
+      this->updateCommandBuffer();
+      }
+    return;
+    }
 
-        if (this->CommandPosition > 0)
-          {
-          this->replaceCommandBuffer(this->CommandHistory[--this->CommandPosition]);
-          }
-        break;
+  // Force the cursor back to the interactive area if anything else than copy/paste or page up/down is done
+  if(history_area)
+    {
+    text_cursor.setPosition(this->documentEnd());
+    this->setTextCursor(text_cursor);
+    }
 
-      case Qt::Key_Down:
-        e->accept();
+  // Start of line should be the start of interactive area
+  QTextCursor::MoveOperation moveOperation = QTextCursor::NoMove;
+  QTextCursor::MoveMode moveMode = QTextCursor::MoveAnchor;
+  if(isMoveLeftWithinLine(e, moveOperation, moveMode))
+    {
+    text_cursor.movePosition(moveOperation, moveMode);
+    if (text_cursor.position() > this->InteractivePosition)
+      {
+      this->Superclass::keyPressEvent(e);
+      }
+    else
+      {
+      text_cursor.setPosition(this->InteractivePosition, moveMode);
+      this->setTextCursor(text_cursor);
+      e->accept();
+      }
+    return;
+    }
 
-        if (this->CommandPosition < this->CommandHistory.size() - 2)
-          {
-          this->replaceCommandBuffer(this->CommandHistory[++this->CommandPosition]);
-          }
-        else
-          {
-          this->CommandPosition = this->CommandHistory.size()-1;
-          this->replaceCommandBuffer("");
-          }
-        break;
-      case Qt::Key_Delete:
-        e->accept();
-        this->Superclass::keyPressEvent(e);
-        this->updateCommandBuffer();
-        break;
+  if (e == QKeySequence::Delete)
+    {
+    e->accept();
+    this->Superclass::keyPressEvent(e);
+    this->updateCommandBuffer();
+    return;
+    }
 
-      case Qt::Key_Backspace:
-        e->accept();
-        if(text_cursor.position() > this->InteractivePosition)
-          {
-          this->Superclass::keyPressEvent(e);
-          this->updateCommandBuffer();
-          this->updateCompleterIfVisible();
-          }
-        break;
+  if (e == QKeySequence::Back)
+    {
+    e->accept();
+    if(text_cursor.position() > this->InteractivePosition)
+      {
+      this->Superclass::keyPressEvent(e);
+      this->updateCommandBuffer();
+      this->updateCompleterIfVisible();
+      }
+    return;
+    }
 
-      case Qt::Key_Tab:
-        e->accept();
-        this->updateCompleter();
-        this->selectCompletion();
-        break;
-
-      case Qt::Key_Return:
-      case Qt::Key_Enter:
-        e->accept();
-
-        text_cursor.setPosition(this->documentEnd());
-        this->setTextCursor(text_cursor);
-
-        if (this->InputEventLoop.isNull())
-          {
-          this->internalExecuteCommand();
-          }
-        else
-          {
-          this->processInput();
-          }
-        break;
-
-      default:
-        e->accept();
-        this->switchToUserInputTextColor();
-
+  if (e == QKeySequence::DeleteStartOfWord)
+      {
+      e->accept();
+      if(text_cursor.position() > this->InteractivePosition)
+        {
         this->Superclass::keyPressEvent(e);
         this->updateCommandBuffer();
         this->updateCompleterIfVisible();
-        break;
+        }
+      return;
       }
+
+  if (e == QKeySequence::MoveToPreviousLine || e == QKeySequence::SelectPreviousLine)
+    {
+    e->accept();
+    if (this->CommandPosition > 0)
+      {
+      this->replaceCommandBuffer(this->CommandHistory[--this->CommandPosition]);
+      }
+    return;
+    }
+
+  if (e == QKeySequence::MoveToNextLine || e == QKeySequence::SelectNextLine)
+    {
+    e->accept();
+    if (this->CommandPosition < this->CommandHistory.size() - 2)
+      {
+      this->replaceCommandBuffer(this->CommandHistory[++this->CommandPosition]);
+      }
+    else
+      {
+      this->CommandPosition = this->CommandHistory.size()-1;
+      this->replaceCommandBuffer("");
+      }
+    return;
+    }
+
+  if (e == QKeySequence::InsertParagraphSeparator)
+    {
+    e->accept();
+    text_cursor.setPosition(this->documentEnd());
+    this->setTextCursor(text_cursor);
+    if (this->InputEventLoop.isNull())
+      {
+      this->internalExecuteCommand();
+      }
+    else
+      {
+      this->processInput();
+      }
+    return;
+    }
+
+  if (e->key() == Qt::Key_Tab)
+    {
+    e->accept();
+    this->updateCompleter();
+    this->selectCompletion();
+    return;
+    }
+
+  e->accept();
+  this->switchToUserInputTextColor();
+  this->Superclass::keyPressEvent(e);
+  this->updateCommandBuffer();
+  this->updateCompleterIfVisible();
 }
 
 //-----------------------------------------------------------------------------
