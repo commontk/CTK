@@ -33,6 +33,10 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
 
   # Enable Qt libraries PythonQt wrapping if required
   if (CTK_QT_VERSION VERSION_GREATER "4")
+    message(FATAL_ERROR "To build CTK with Qt >= 5 and wrapping enabled, you "
+                        "are currently required to provide your own PythonQt "
+                        "by re-configuring CTK with option "
+                        "-DPYTHONQT_INSTALL_DIR:PATH=/path/to/PythonQt-30-install")
     list(APPEND ep_PythonQt_args
       -DPythonQt_QT_VERSION:STRING=${CTK_QT_VERSION}
       )
