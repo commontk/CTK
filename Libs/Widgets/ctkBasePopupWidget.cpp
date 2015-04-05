@@ -437,10 +437,12 @@ void ctkBasePopupWidgetPrivate::hideAll()
   // Before hiding, transfer the active window flag to its parent, this will
   // prevent the application to send a ApplicationDeactivate signal that
   // doesn't need to be done.
+#ifndef Q_OS_MAC // See Slicer issue #3850
   if (q->isActiveWindow() && !this->BaseWidget.isNull())
     {
     qApp->setActiveWindow(this->BaseWidget->window());
     }
+#endif
 
   q->hide();
   this->PopupPixmapWidget->hide();
