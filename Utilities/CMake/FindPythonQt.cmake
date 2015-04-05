@@ -12,7 +12,15 @@ endif()
 if(NOT EXISTS "${PYTHONQT_INSTALL_DIR}")
   find_path(PYTHONQT_INSTALL_DIR include/PythonQt/PythonQt.h DOC "Directory where PythonQt was installed.")
 endif()
-find_path(PYTHONQT_INCLUDE_DIR PythonQt.h "${PYTHONQT_INSTALL_DIR}/include/PythonQt" DOC "Path to the PythonQt include directory")
+# XXX Since PythonQt 3.0 is not yet cmakeified, depending
+#     on how PythonQt is built, headers will not always be
+#     installed in "include/PythonQt". That is why "src"
+#     is added as an option. See [1] for more details.
+#     [1] https://github.com/commontk/CTK/pull/538#issuecomment-86106367
+find_path(PYTHONQT_INCLUDE_DIR PythonQt.h
+  PATHS "${PYTHONQT_INSTALL_DIR}/include/PythonQt"
+        "${PYTHONQT_INSTALL_DIR}/src"
+  DOC "Path to the PythonQt include directory")
 find_library(PYTHONQT_LIBRARY_RELEASE PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
 find_library(PYTHONQT_LIBRARY_DEBUG NAMES PythonQt${CTK_CMAKE_DEBUG_POSTFIX} PythonQt${CMAKE_DEBUG_POSTFIX} PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
 set(PYTHONQT_LIBRARY)
