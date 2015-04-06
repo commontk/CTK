@@ -186,6 +186,30 @@ bool ctkConsolePrivate::isMoveLeftWithinLine(QKeyEvent* e, QTextCursor::MoveOper
     moveMode = QTextCursor::KeepAnchor;
     return true;
     }
+  else if (e == QKeySequence::MoveToStartOfBlock)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectStartOfBlock)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::MoveToStartOfDocument)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectStartOfDocument)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
   else
     {
     return false;
