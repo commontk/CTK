@@ -186,6 +186,30 @@ bool ctkConsolePrivate::isMoveLeftWithinLine(QKeyEvent* e, QTextCursor::MoveOper
     moveMode = QTextCursor::KeepAnchor;
     return true;
     }
+  else if (e == QKeySequence::MoveToStartOfBlock)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectStartOfBlock)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::MoveToStartOfDocument)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectStartOfDocument)
+    {
+    moveOperation = QTextCursor::StartOfLine;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
   else
     {
     return false;
@@ -305,7 +329,9 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     return;
     }
 
-  if (e == QKeySequence::Back)
+  // There seems to be no QKeySequence for backspace, therefore the key 
+  // has to be recognized directly (the same way as it is done in the parent class)
+  if (e->key() == Qt::Key_Backspace && !(e->modifiers() & ~Qt::ShiftModifier))
     {
     e->accept();
     if(text_cursor.position() > this->InteractivePosition)
