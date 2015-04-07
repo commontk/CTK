@@ -97,7 +97,6 @@ class ctkPluginContextPrivate;
  */
 class CTK_PLUGINFW_EXPORT ctkPluginContext
 {
-  Q_DECLARE_PRIVATE(ctkPluginContext)
 
 public:
 
@@ -733,6 +732,9 @@ protected:
   ctkPluginContext(ctkPluginPrivate* plugin);
 
   ctkPluginContextPrivate * const d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(ctkPluginContext)
 };
 
 

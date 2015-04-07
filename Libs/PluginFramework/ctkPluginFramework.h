@@ -45,9 +45,6 @@ class ctkPluginFrameworkPrivate;
 class CTK_PLUGINFW_EXPORT ctkPluginFramework : public ctkPlugin
 {
 
-  Q_DECLARE_PRIVATE(ctkPluginFramework)
-  Q_DISABLE_COPY(ctkPluginFramework)
-
 public:
 
   /**
@@ -199,6 +196,9 @@ protected:
 
   ctkPluginFramework();
 
+private:
+  Q_DECLARE_PRIVATE(ctkPluginFramework)
+  Q_DISABLE_COPY(ctkPluginFramework)
 };
 
 

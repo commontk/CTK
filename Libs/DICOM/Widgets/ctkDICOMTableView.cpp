@@ -23,6 +23,7 @@
 #include "ui_ctkDICOMTableView.h"
 
 // Qt includes
+#include <QMouseEvent>
 #include <QSortFilterProxyModel>
 #include <QSqlQueryModel>
 
@@ -81,6 +82,7 @@ ctkDICOMTableViewPrivate::~ctkDICOMTableViewPrivate()
 {
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMTableViewPrivate::init()
 {
   Q_Q(ctkDICOMTableView);
@@ -91,8 +93,10 @@ void ctkDICOMTableViewPrivate::init()
 
   if (this->dicomDatabase != 0)
     {
-      this->setUpTableView();
+      q->setDicomDataBase(this->dicomDatabase);
     }
+
+  this->tblDicomDatabaseView->viewport()->installEventFilter(q);
 }
 
 //------------------------------------------------------------------------------
@@ -194,7 +198,6 @@ ctkDICOMTableView::ctkDICOMTableView(QString queryTableName, QWidget *parent)
   Q_D(ctkDICOMTableView);
   d->init();
   this->setQueryTableName(queryTableName);
-  d->lblTableName->setText(queryTableName);
 }
 
 //------------------------------------------------------------------------------
@@ -204,8 +207,8 @@ ctkDICOMTableView::ctkDICOMTableView (ctkDICOMDatabase* dicomDataBase, QString q
 {
   this->setDicomDataBase(dicomDataBase);
   Q_D(ctkDICOMTableView);
-  this->setQueryTableName(queryTableName);
   d->init();
+  this->setQueryTableName(queryTableName);
 }
 
 //------------------------------------------------------------------------------
@@ -217,7 +220,13 @@ ctkDICOMTableView::~ctkDICOMTableView()
 void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 {
   Q_D(ctkDICOMTableView);
+
+  //Do nothing if no database is set
+  if (!dicomDatabase)
+    return;
+
   d->dicomDatabase = dicomDatabase;
+  d->setUpTableView();
   //Create connections for new database
   QObject::connect(d->dicomDatabase, SIGNAL(instanceAdded(const QString&)),
                    this, SLOT(onInstanceAdded()));
@@ -295,6 +304,26 @@ void ctkDICOMTableView::selectAll()
 {
   Q_D(ctkDICOMTableView);
   d->tblDicomDatabaseView->selectAll();
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::eventFilter(QObject *obj, QEvent *event)
+{
+  Q_D(ctkDICOMTableView);
+  if (obj == d->tblDicomDatabaseView->viewport())
+    {
+      if (event->type() == QEvent::MouseButtonPress ||
+          event->type() == QEvent::MouseButtonDblClick)
+        {
+          QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+          QPoint pos = mouseEvent->pos();
+          if (!d->tblDicomDatabaseView->indexAt(pos).isValid())
+            {
+              return true;
+            }
+        }
+    }
+  return QObject::eventFilter(obj, event);
 }
 
 //------------------------------------------------------------------------------
@@ -382,7 +411,6 @@ void ctkDICOMTableView::setTableSectionSize(int size)
 {
   Q_D(ctkDICOMTableView);
   d->tblDicomDatabaseView->verticalHeader()->setDefaultSectionSize(size);
-  d->setUpTableView();
 }
 
 //------------------------------------------------------------------------------

@@ -27,7 +27,7 @@
 macro(ctkMacroBuildQtPlugin)
   cmake_parse_arguments(MY
     "" # no options
-    "NAME;EXPORT_DIRECTIVE;PLUGIN_DIR" # one value args
+    "NAME;EXPORT_DIRECTIVE;FOLDER;PLUGIN_DIR" # one value args
     "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
     ${ARGN}
     )
@@ -143,6 +143,10 @@ macro(ctkMacroBuildQtPlugin)
     )
   target_link_libraries(${lib_name} ${my_libs})
 
+  if(NOT "${MY_FOLDER}" STREQUAL "")
+    set_target_properties(${lib_name} PROPERTIES FOLDER ${MY_FOLDER})
+  endif()
+
   # Install the library
   # CTK_INSTALL_QTPLUGIN_DIR:STRING can be passed when configuring CTK
   # By default, it is the same path as CTK_INSTALL_LIB_DIR
@@ -165,13 +169,12 @@ macro(ctkMacroBuildQtPlugin)
   # subdirectory (e.g. 'designer') but not deeper (e.g. designer/Debug), let's copy them.
 
   if(NOT CMAKE_CFG_INTDIR STREQUAL ".")
-    get_target_property(FILE_PATH ${lib_name} LOCATION)
     get_target_property(DIR_PATH ${lib_name} LIBRARY_OUTPUT_DIRECTORY)
 
     add_custom_command(
       TARGET ${lib_name}
       POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy ${FILE_PATH} ${DIR_PATH}/../${MY_PLUGIN_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${lib_name}${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${lib_name}> ${DIR_PATH}/../${MY_PLUGIN_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${lib_name}${CMAKE_BUILD_TYPE}${CMAKE_SHARED_LIBRARY_SUFFIX}
       )
   endif()
 

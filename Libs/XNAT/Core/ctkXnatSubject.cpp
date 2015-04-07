@@ -21,14 +21,16 @@
 
 #include "ctkXnatSubject.h"
 
-#include "ctkXnatProject.h"
-
-#include "ctkXnatSession.h"
-#include "ctkXnatObjectPrivate.h"
-#include "ctkXnatExperiment.h"
-#include "ctkXnatProject.h"
 #include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatExperiment.h"
+#include "ctkXnatObjectPrivate.h"
+#include "ctkXnatProject.h"
+#include "ctkXnatSession.h"
 
+#include <QDebug>
+
+const QString ctkXnatSubject::INSERT_DATE = "insert_date";
+const QString ctkXnatSubject::INSERT_USER = "insert_user";
 
 //----------------------------------------------------------------------------
 class ctkXnatSubjectPrivate : public ctkXnatObjectPrivate
@@ -65,6 +67,30 @@ ctkXnatSubject::ctkXnatSubject(ctkXnatObject* parent, const QString& schemaType)
 //----------------------------------------------------------------------------
 ctkXnatSubject::~ctkXnatSubject()
 {
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSubject::name() const
+{
+  return this->label();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::setName(const QString &name)
+{
+  this->setLabel(name);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSubject::label() const
+{
+  return this->property(LABEL);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::setLabel(const QString &label)
+{
+  this->setProperty(LABEL, label);
 }
 
 //----------------------------------------------------------------------------
@@ -119,13 +145,19 @@ void ctkXnatSubject::fetchImpl()
 
   foreach (ctkXnatObject* experiment, experiments)
   {
-    QString label = experiment->property ("label");
+    QString label = experiment->name();
     if (!label.isEmpty())
     {
-      experiment->setProperty ("ID", label);
+      experiment->setId(label);
     }
 
     this->add(experiment);
   }
   this->fetchResources();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::downloadImpl(const QString& filename)
+{
+  qDebug() << "ctkXnatSubject::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }

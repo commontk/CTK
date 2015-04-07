@@ -248,7 +248,7 @@ void ctkMenuComboBoxPrivate::addActionToCompleter(QAction *action)
     this->SearchCompleter->sourceModel());
   Q_ASSERT(model);
   QModelIndex start = model->index(0,0);
-  QModelIndexList indexList = model->match(start, 0, action->text());
+  QModelIndexList indexList = model->match(start, 0, action->text(), 1, Qt::MatchFixedString|Qt::MatchWrap);
   if (indexList.count())
     {
     return;

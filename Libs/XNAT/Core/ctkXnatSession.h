@@ -139,6 +139,14 @@ public:
    */
   QString password() const;
 
+  /**
+   * @brief Get the sessionId for this XNAT session.
+   *
+   * @return The XNAT sessionId.
+   */
+  QString sessionId() const;
+
+
   ctkXnatDataModel* dataModel() const;
 
   /**
@@ -187,14 +195,16 @@ public:
   void save(ctkXnatObject* object);
   void remove(ctkXnatObject* object);
 
-  void download(ctkXnatFile* file, const QString& fileName);
-
-//  void downloadScanFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
-//  void downloadReconstructionFiles(ctkXnatExperiment* experiment, const QString& zipFileName);
-
-//  void download(ctkXnatScan* scan, const QString& zipFileName);
-
-  void download(ctkXnatResource* resource, const QString& zipFileName);
+  /// Downloads a file from the web service.
+  /// \a fileName is the name of the output file.
+  /// The \a resource and \parameters are used to compose the URL.
+  /// \a rawHeaders can be used to set the raw headers of the request to send.
+  /// These headers will be set additionally to those defined by the
+  /// \a defaultRawHeaders property.
+  void download(const QString& fileName,
+    const QString& resource,
+    const UrlParameters& parameters = UrlParameters(),
+    const HttpRawHeaders& rawHeaders = HttpRawHeaders());
 
   /**
    * @brief Sends a http HEAD request to the xnat instance
@@ -203,17 +213,21 @@ public:
    */
   QUuid httpHead(const QString& resourceUri);
 
-//  void downloadReconstruction(ctkXnatReconstruction* reconstruction, const QString& zipFilename);
-
-//  void downloadReconstructionResourceFiles(ctkXnatReconstructionResource* reconstructionResource, const QString& zipFilename);
-
-//  void download(ctkXnatReconstructionResourceFile* reconstructionResourceFile, const QString& zipFileName);
-
   /**
    * @brief Signals that the session was re-newed.
    * @param expirationDate The new session expiration date.
    */
   Q_SIGNAL void sessionRenewed(const QDateTime& expirationDate);
+
+  /**
+   * @brief Signals that the session was just opened.
+   */
+  Q_SIGNAL void sessionOpened();
+
+  /**
+   * @brief Signals that the session is about to be closed.
+   */
+  Q_SIGNAL void sessionAboutToBeClosed();
 
 public slots:
   void processResult(QUuid queryId, QList<QVariantMap> parameters);

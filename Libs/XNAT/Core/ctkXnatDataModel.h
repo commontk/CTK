@@ -51,9 +51,11 @@ public:
 
 private:
 
-  QString resourceUri() const;
+  virtual QString resourceUri() const;
 
   virtual void fetchImpl();
+
+  virtual void downloadImpl(const QString&);
 
   Q_DECLARE_PRIVATE(ctkXnatDataModel)
 };

@@ -26,6 +26,9 @@
 
 // CTK includes
 #include <ctkErrorLogModel.h>
+#include <ctkTransferFunctionBarsItem.h>
+#include <ctkTransferFunctionControlPointsItem.h>
+#include <ctkTransferFunctionGradientItem.h>
 #include <ctkWorkflowWidgetStep.h>
 
 // NOTE:
@@ -48,6 +51,8 @@ public:
     }
 
 public Q_SLOTS:
+
+  // ctkWorkflowWidgetStep
 
   bool hasCreateUserInterfaceCommand(ctkWorkflowWidgetStep* step)const
     {
@@ -77,6 +82,66 @@ public Q_SLOTS:
     {
     return ctkErrorLogLevel::logLevelAsString(logLevel);
     }
+
+  // ctkTransferFunctionBarsItem
+
+  ctkTransferFunctionBarsItem* new_ctkTransferFunctionBarsItem(QGraphicsItem* parent = 0)
+    {
+    return new ctkTransferFunctionBarsItem(parent);
+    }
+
+  ctkTransferFunctionBarsItem* new_ctkTransferFunctionBarsItem(
+      ctkTransferFunction* transferFunc,
+      QGraphicsItem* parent = 0)
+    {
+    return new ctkTransferFunctionBarsItem(transferFunc, parent);
+    }
+
+  void delete_ctkTransferFunctionBarsItem(ctkTransferFunctionBarsItem* obj)
+    {
+    delete obj;
+    }
+
+  // ctkTransferFunctionControlPointsItem
+
+  ctkTransferFunctionControlPointsItem* new_ctkTransferFunctionControlPointsItem(
+      QGraphicsItem* parent = 0)
+    {
+    return new ctkTransferFunctionControlPointsItem(parent);
+    }
+
+  ctkTransferFunctionControlPointsItem* new_ctkTransferFunctionControlPointsItem(
+      ctkTransferFunction* transferFunc,
+      QGraphicsItem* parent = 0)
+    {
+    return new ctkTransferFunctionControlPointsItem(transferFunc, parent);
+    }
+
+  void delete_ctkTransferFunctionControlPointsItem(ctkTransferFunctionControlPointsItem* obj)
+    {
+    delete obj;
+    }
+
+  // ctkTransferFunctionGradientItem
+
+  ctkTransferFunctionGradientItem* new_ctkTransferFunctionGradientItem(
+      QGraphicsItem* parent = 0)
+    {
+    return new ctkTransferFunctionGradientItem(parent);
+    }
+
+  ctkTransferFunctionGradientItem* new_ctkTransferFunctionGradientItem(
+      ctkTransferFunction* transferFunc,
+      QGraphicsItem* parent = 0)
+    {
+    return new ctkTransferFunctionGradientItem(transferFunc, parent);
+    }
+
+  void delete_ctkTransferFunctionGradientItem(ctkTransferFunctionGradientItem* obj)
+    {
+    delete obj;
+    }
+
 };
 
 //-----------------------------------------------------------------------------
@@ -87,6 +152,10 @@ void initCTKWidgetsPythonQtDecorators()
   //       filename where the class is defined, let's explicitly register ctkErrorLogLevel
   //       so that the log level QFlags are exposed to python.
   PythonQt::self()->registerClass(&ctkErrorLogLevel::staticMetaObject, "CTKCore");
+
+  PythonQt::self()->registerClass(&ctkTransferFunctionBarsItem::staticMetaObject, "CTKWidgets");
+  PythonQt::self()->registerClass(&ctkTransferFunctionControlPointsItem::staticMetaObject, "CTKWidgets");
+  PythonQt::self()->registerClass(&ctkTransferFunctionGradientItem::staticMetaObject, "CTKWidgets");
 
   PythonQt::self()->addDecorators(new ctkWidgetsPythonQtDecorators);
 }

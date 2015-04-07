@@ -82,6 +82,13 @@ QString ctkXnatDataModel::childDataType() const
 }
 
 // --------------------------------------------------------------------------
+ctkXnatSession* ctkXnatDataModel::session() const
+{
+  Q_D(const ctkXnatDataModel);
+  return d->session;
+}
+
+// --------------------------------------------------------------------------
 void ctkXnatDataModel::fetchImpl()
 {
   Q_D(ctkXnatDataModel);
@@ -100,9 +107,8 @@ void ctkXnatDataModel::fetchImpl()
   }
 }
 
-// --------------------------------------------------------------------------
-ctkXnatSession* ctkXnatDataModel::session() const
+//----------------------------------------------------------------------------
+void ctkXnatDataModel::downloadImpl(const QString& filename)
 {
-  Q_D(const ctkXnatDataModel);
-  return d->session;
+  qDebug() << "ctkXnatDataModel::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }

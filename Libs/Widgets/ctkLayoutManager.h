@@ -30,13 +30,52 @@ class QWidgetItem;
 // CTK includes
 #include "ctkWidgetsExport.h"
 class ctkLayoutManagerPrivate;
+class ctkLayoutViewFactory;
 
 /// \ingroup Widgets
-/// ctkLayoutManager is
+/// ctkLayoutManager is a layout manager that populates a widget (viewport)
+/// with widgets described into an XML document.
+/// To be used, ctkLayoutManager class must be derived and a subset of virtual
+/// methods must be reimplemented to support custom views.
+/// See below an example of layout XML document:
+/// \code
+/// <layout type=\"tab\">
+///  <item>
+///   <layout type=\"horizontal\">
+///    <item><view/></item>
+///    <item>
+///     <layout type=\"vertical\">
+///      <item><view/></item>
+///      <item><view/></item>
+///      <item>
+///       <layout type=\"grid\">
+///        <item row=\"0\" column=\"1\"><view/></item>
+///        <item row=\"1\" column=\"0\"><view/></item>
+///       </layout>
+///      </item>
+///     </layout>
+///    </item>
+///    <item><view/></item>
+///   </layout>
+///  </item>
+///  <item><view name=\"tab2\"/></item>
+///  <item><view name=\"tab3\"/></item>
+/// </layout>
+/// \endcode
+/// The layout elements describe widget containers that embed one or mulitple
+/// items.
+/// The item elements describe widgets or layouts that are children of
+/// layouts.
+/// The view elements can be any type of QWidget. viewFromXML() must be
+/// reimplemented to return the type(s) of QWidget(s) to use wherever the view
+/// element is listed in the layout. The XML element can contain any XML
+/// attribute to be parsed by viewFromXML() method.
+/// \sa ctkSimpleLayoutManager, ctkLayoutViewFactory
 class CTK_WIDGETS_EXPORT ctkLayoutManager: public QObject
 {
   Q_OBJECT
-  /// Spacing between the widgets in a layout
+  /// Spacing between the widgets in all the layouts.
+  /// \sa spacing(), setSpacing()
   Q_PROPERTY(int spacing READ spacing WRITE setSpacing)
 public:
   /// Constructor
@@ -49,7 +88,11 @@ public:
   void setViewport(QWidget* widget);
   Q_INVOKABLE QWidget* viewport()const;
 
+  /// Return the spacing property value.
+  /// \sa spacing
   int spacing()const;
+  /// Set the spacing property value.
+  /// \sa spacing
   void setSpacing(int spacing);
 
   void refresh();
@@ -70,15 +113,49 @@ protected:
   virtual void setLayout(const QDomDocument& newLayout);
   const QDomDocument layout()const;
 
+  /// Create the QLayoutItem for an XML element (e.g. "layout", "view"...)
+  /// and its nested elements.
+  /// \sa processLayoutElement()
   virtual QLayoutItem* processElement(QDomElement element);
+  /// Create the QLayoutItem for a "layout" XML element and its nested elements.
+  /// \sa processElement(), layoutFromXML(), processItemElement(), addChildItemToLayout()
   virtual QLayoutItem* processLayoutElement(QDomElement layoutElement);
+  /// Create the QLayoutItem for a "layout" XML element.
+  /// \sa processLayoutElement()
   virtual QLayoutItem* layoutFromXML(QDomElement layoutElement);
+  /// Create the QLayoutItem(s) of the "item" XML element.
+  /// \sa processItemElement()
   void                 processItemElement(QDomElement layoutElement, QLayoutItem* layoutItem);
+  /// Insert a child item into a layout.
+  /// \sa processLayoutElement()
   virtual void         addChildItemToLayout(QDomElement itemElement, QLayoutItem* childItem, QLayoutItem* layoutItem);
+  /// Utility method that creates, setups and wraps into a QWidgetItem the widget
+  /// of a view XML element.
+  /// \sa widgetsItemsFromXML(), viewFromXML()
   QWidgetItem*         widgetItemFromXML(QDomElement layoutElement);
+  /// Method is called each time a view is made visible into a layout.
+  /// This method can be reimplemented. Sets the widget visibility to true
+  /// by default.
+  /// \sa viewsFromXML()
   virtual void         setupView(QDomElement layoutElement, QWidget* view);
+  /// Create, setup and wrap into QWidgetItems the widgets of a view XML
+  /// element.
   QList<QLayoutItem*>  widgetItemsFromXML(QDomElement layoutElement);
-  virtual QWidget*     viewFromXML(QDomElement layoutElement);
+  /// Virtual method that returns a widget from a "view" layout element.
+  /// You are ensured that the tagName of the element is "view".
+  /// The XML element can contain an arbitrary number of XML attributes.
+  /// Create the widget if needed or reuse it from a previous call.
+  /// \sa viewsFromXML(), setupView()
+  virtual QWidget*     viewFromXML(QDomElement layoutElement) = 0;
+  /// Virtual method that returns a list of widgets from a "view" layout
+  /// element.
+  /// If the parent "item" element has a "multiple=true" XML attribute,
+  /// the "view" layout element can describe many widgets instead of just one
+  /// widget.
+  /// The returned widgets will automatically be layout into their parent
+  /// layout (e.g. boxlayout).
+  /// This method can be reimplemented. Returns viewFromXML() by default.
+  /// \sa viewFromXML(), 
   virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
 
 private:

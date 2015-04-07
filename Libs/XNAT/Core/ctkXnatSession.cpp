@@ -21,7 +21,9 @@
 
 #include "ctkXnatSession.h"
 
+#include "ctkXnatAssessor.h"
 #include "ctkXnatDataModel.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 #include "ctkXnatException.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatFile.h"
@@ -31,9 +33,7 @@
 #include "ctkXnatReconstruction.h"
 #include "ctkXnatResource.h"
 #include "ctkXnatScan.h"
-#include "ctkXnatAssessor.h"
 #include "ctkXnatSubject.h"
-#include "ctkXnatDefaultSchemaTypes.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -365,7 +365,8 @@ void ctkXnatSession::open()
   }
 
   d->dataModel.reset(new ctkXnatDataModel(this));
-  d->dataModel->setProperty("label", this->url().toString());
+  d->dataModel->setProperty(ctkXnatObject::LABEL, this->url().toString());
+  emit sessionOpened();
 }
 
 //----------------------------------------------------------------------------
@@ -375,6 +376,7 @@ void ctkXnatSession::close()
 
   if (!this->isOpen()) return;
 
+  emit sessionAboutToBeClosed();
   d->close();
 }
 
@@ -456,6 +458,13 @@ QString ctkXnatSession::password() const
 {
   Q_D(const ctkXnatSession);
   return d->loginProfile.password();
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSession::sessionId() const
+{
+  Q_D(const ctkXnatSession);
+  return d->sessionId;
 }
 
 //----------------------------------------------------------------------------
@@ -566,7 +575,7 @@ void ctkXnatSession::save(ctkXnatObject* object)
   const QList<QVariantMap>& maps = result->results();
   if (maps.size() == 1 && maps[0].size() == 1)
   {
-    QVariant id = maps[0]["ID"];
+    QVariant id = maps[0][ctkXnatObject::ID];
     if (!id.isNull())
     {
       object->setId(id.toString());
@@ -589,24 +598,14 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatSession::download(ctkXnatFile* file, const QString& fileName)
-{
-  Q_D(ctkXnatSession);
-  QString query = file->resourceUri();
-
-  QUuid queryId = d->xnat->download(fileName, query);
-  d->xnat->sync(queryId);
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatSession::download(ctkXnatResource* resource, const QString& fileName)
+void ctkXnatSession::download(const QString& fileName,
+    const QString& resource,
+    const UrlParameters& parameters,
+    const HttpRawHeaders& rawHeaders)
 {
   Q_D(ctkXnatSession);
 
-  QString query = resource->resourceUri() + "/files";
-  qRestAPI::Parameters parameters;
-  parameters["format"] = "zip";
-  QUuid queryId = d->xnat->download(fileName, query, parameters);
+  QUuid queryId = d->xnat->download(fileName, resource, parameters, rawHeaders);
   d->xnat->sync(queryId);
 }
 

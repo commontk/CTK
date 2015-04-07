@@ -30,7 +30,7 @@ int ctkHighPrecisionTimerTest(int /*argc*/, char* /*argv*/[])
 {
   ctkHighPrecisionTimer timer;
   timer.start();
-  QTest::qSleep(200);
+  QTest::qSleep(250);
   qint64 millis = timer.elapsedMilli();
   qint64 micros = timer.elapsedMicro();
   if (millis < 200 || millis > 300 ||

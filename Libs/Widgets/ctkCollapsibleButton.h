@@ -51,6 +51,12 @@ class CTK_WIDGETS_EXPORT ctkCollapsibleButton : public QAbstractButton
   /// 14 pixels by default (same as ctkCollapsibleGroupBox)
   Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight)
 
+  /// This property holds whether the button border is raised.
+  /// This property's default is false. If this property is set, most styles will not pain the button
+  /// background unless the button is being pressed.
+  /// \sa isFlat(), setFlat(), QPushButton::flat
+  Q_PROPERTY(bool flat READ isFlat WRITE setFlat)
+
   Q_PROPERTY(QFrame::Shape contentsFrameShape READ contentsFrameShape WRITE setContentsFrameShape)
   Q_PROPERTY(QFrame::Shadow contentsFrameShadow READ contentsFrameShadow WRITE setContentsFrameShadow)
   Q_PROPERTY(int contentsLineWidth READ contentsLineWidth WRITE setContentsLineWidth)
@@ -75,6 +81,14 @@ public:
   /// \todo resize the widget when setting the new height
   void setCollapsedHeight(int heightInPixels);
   int collapsedHeight()const;
+
+  /// Set the flat property value.
+  /// \sa flat, isFlat()
+  void setFlat(bool flat);
+
+  /// Return the flat property value.
+  /// \sa flat, setFlat()
+  bool isFlat()const;
 
   /// 
   /// Set the frame shape of the contents

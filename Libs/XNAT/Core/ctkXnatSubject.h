@@ -45,21 +45,38 @@ public:
   ctkXnatProject* getPrimaryProject() const;
   QList<ctkXnatProject*> getProjects() const;
 
+  /// Sets the name, i.e. the label of the subject
+  virtual void setName(const QString &name);
+  /// Returns the name, i.e. the label of the subject
+  virtual QString name() const;
+
+  void setLabel(const QString &label);
+  QString label() const;
+
   const QString& insertDate() const;
+
+  /// @warning does not overwrite the insert date on the server, since this is read only
   void setInsertDate(const QString& insertDate);
 
   const QString& insertUser() const;
+
+  /// @warning does not overwrite the insert user on the server, since this is read only
   void setInsertUser(const QString& insertUser);
 
   virtual QString resourceUri() const;
 
   void reset();
 
+  static const QString INSERT_DATE;
+  static const QString INSERT_USER;
+
 private:
 
   friend class qRestResult;
 
   virtual void fetchImpl();
+
+  virtual void downloadImpl(const QString&);
 
   Q_DECLARE_PRIVATE(ctkXnatSubject)
 };

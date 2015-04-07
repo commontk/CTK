@@ -22,11 +22,17 @@
 #include "ctkXnatProject.h"
 
 #include "ctkXnatDataModel.h"
+#include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSession.h"
 #include "ctkXnatSubject.h"
-#include "ctkXnatObjectPrivate.h"
-#include "ctkXnatDefaultSchemaTypes.h"
 
+#include <QDebug>
+
+const QString ctkXnatProject::SECONDARY_ID = "secondary_ID";
+const QString ctkXnatProject::DESCRIPTION = "description";
+const QString ctkXnatProject::PI_FIRSTNAME = "pi_firstname";
+const QString ctkXnatProject::PI_LASTNAME = "pi_lastname";
 
 //----------------------------------------------------------------------------
 class ctkXnatProjectPrivate : public ctkXnatObjectPrivate
@@ -40,15 +46,9 @@ public:
 
   void reset()
   {
-    secondaryId.clear();
-    piFirstName.clear();
-    piLastName.clear();
 //    uri.clear();
   }
 
-  QString secondaryId;
-  QString piFirstName;
-  QString piLastName;
 //  QString uri;
 };
 
@@ -77,45 +77,51 @@ QString ctkXnatProject::childDataType() const
 }
 
 //----------------------------------------------------------------------------
-const QString& ctkXnatProject::secondaryId() const
+const QString ctkXnatProject::secondaryId() const
 {
-  Q_D(const ctkXnatProject);
-  return d->secondaryId;
+  return this->property(SECONDARY_ID);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setSecondaryId(const QString& secondaryId)
 {
-  Q_D(ctkXnatProject);
-  d->secondaryId = secondaryId;
+  this->setProperty(SECONDARY_ID, secondaryId);
 }
 
 //----------------------------------------------------------------------------
-const QString& ctkXnatProject::piFirstName() const
+const QString ctkXnatProject::piFirstName() const
 {
-  Q_D(const ctkXnatProject);
-  return d->piFirstName;
+  return this->property(PI_FIRSTNAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setPiFirstName(const QString& piFirstName)
 {
-  Q_D(ctkXnatProject);
-  d->piFirstName = piFirstName;
+  this->setProperty(PI_FIRSTNAME, piFirstName);
 }
 
 //----------------------------------------------------------------------------
-const QString& ctkXnatProject::piLastName() const
+const QString ctkXnatProject::piLastName() const
 {
-  Q_D(const ctkXnatProject);
-  return d->piLastName;
+  return this->property(PI_LASTNAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatProject::setPiLastName(const QString& piLastName)
 {
-  Q_D(ctkXnatProject);
-  d->piLastName = piLastName;
+  this->setProperty(PI_LASTNAME, piLastName);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatProject::projectDescription() const
+{
+  return this->property(DESCRIPTION);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatProject::setProjectDescription(const QString& description)
+{
+  this->setProperty(DESCRIPTION, description);
 }
 
 //----------------------------------------------------------------------------
@@ -149,13 +155,19 @@ void ctkXnatProject::fetchImpl()
 
   foreach (ctkXnatObject* subject, subjects)
   {
-    QString label = subject->property("label");
+    QString label = subject->name();
     if (!label.isEmpty())
     {
-      subject->setProperty("ID", label);
+      subject->setId(label);
     }
 
     this->add(subject);
   }
   this->fetchResources();
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatProject::downloadImpl(const QString& filename)
+{
+  qDebug() << "ctkXnatProject::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }

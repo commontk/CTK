@@ -67,8 +67,6 @@ class ctkServiceEvent;
  */
 class CTK_PLUGINFW_EXPORT ctkServiceReference {
 
-  Q_DECLARE_PRIVATE(ctkServiceReference)
-
 public:
 
   /**
@@ -213,6 +211,8 @@ protected:
 
   ctkServiceReferencePrivate * d_ptr;
 
+private:
+  Q_DECLARE_PRIVATE(ctkServiceReference)
 };
 
 /**

@@ -9,7 +9,6 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${CTK_BASE_LIBRARIES}
   LIBRARY_TYPE "SHARED"
   )
-get_target_property(ctkDummyPluginPATH "CTKDummyPlugin" LOCATION)
 remove_definitions(-DCTKDummyPlugin)
 
 set(KIT ${PROJECT_NAME})
@@ -28,6 +27,7 @@ set(KITTests_SRCS
   ctkCallbackTest1.cpp
   ctkCommandLineParserTest1.cpp
   ctkExceptionTest.cpp
+  ctkFileLoggerTest.cpp
   ctkHighPrecisionTimerTest.cpp
   ctkLinearValueProxyTest.cpp
   ctkLoggerTest1.cpp
@@ -90,6 +90,7 @@ set(Tests_Helpers_MOC_SRCS
 
 set(Tests_Helpers_MOC_CPPS
   ctkBooleanMapperTest.cpp
+  ctkFileLoggerTest.cpp
   ctkLinearValueProxyTest.cpp
   ctkUtilsTest.cpp
   )
@@ -130,9 +131,9 @@ endif()
 #
 
 SIMPLE_TEST( ctkAbstractFactoryTest1 )
-SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 ${ctkDummyPluginPATH} )
+SIMPLE_TEST( ctkAbstractLibraryFactoryTest1 $<TARGET_FILE:CTKDummyPlugin> )
 SIMPLE_TEST( ctkAbstractObjectFactoryTest1 )
-SIMPLE_TEST( ctkAbstractPluginFactoryTest1 ${ctkDummyPluginPATH} )
+SIMPLE_TEST( ctkAbstractPluginFactoryTest1 $<TARGET_FILE:CTKDummyPlugin> )
 SIMPLE_TEST( ctkAbstractQObjectFactoryTest1 )
 SIMPLE_TEST( ctkBackTraceTest )
 if(HAVE_BFD)
@@ -144,6 +145,7 @@ SIMPLE_TEST( ctkCommandLineParserTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkExceptionTest )
+SIMPLE_TEST( ctkFileLoggerTest )
 SIMPLE_TEST( ctkHighPrecisionTimerTest )
 SIMPLE_TEST( ctkLinearValueProxyTest )
 SIMPLE_TEST( ctkLoggerTest1 )

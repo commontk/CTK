@@ -28,6 +28,13 @@
 #include "ctkXnatDataModel.h"
 #include "ctkXnatProject.h"
 #include "ctkXnatFile.h"
+#include "ctkXnatResource.h"
+#include "ctkXnatScan.h"
+#include "ctkXnatScanFolder.h"
+#include "ctkXnatAssessor.h"
+#include "ctkXnatAssessorFolder.h"
+#include "ctkXnatReconstruction.h"
+#include "ctkXnatReconstructionFolder.h"
 
 ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -92,9 +99,17 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
 void ctkXnatTreeBrowserMainWindow::itemSelected(const QModelIndex &index)
 {
   ctkXnatObject* xnatObject = m_TreeModel->xnatObject(index);
-  ctkXnatFile* xnatFile = dynamic_cast<ctkXnatFile*>(xnatObject);
-  ui->downloadButton->setEnabled(xnatFile != 0);
-  ui->downloadLabel->setVisible(!(xnatFile != 0));
+  bool downloadable = false;
+  downloadable |= dynamic_cast<ctkXnatFile*>(xnatObject)!=NULL;
+  downloadable |= dynamic_cast<ctkXnatScan*>(xnatObject)!=NULL;
+  downloadable |= dynamic_cast<ctkXnatScanFolder*>(xnatObject)!=NULL;
+  downloadable |= dynamic_cast<ctkXnatAssessor*>(xnatObject)!=NULL;
+  downloadable |= dynamic_cast<ctkXnatAssessorFolder*>(xnatObject)!=NULL;
+  downloadable |= dynamic_cast<ctkXnatResource*>(xnatObject)!=NULL;
+  downloadable |= dynamic_cast<ctkXnatReconstruction*>(xnatObject)!=NULL;
+  downloadable |= dynamic_cast<ctkXnatReconstructionFolder*>(xnatObject)!=NULL;
+  ui->downloadButton->setEnabled(downloadable);
+  ui->downloadLabel->setVisible(!downloadable);
 }
 
 void ctkXnatTreeBrowserMainWindow::downloadButtonClicked()

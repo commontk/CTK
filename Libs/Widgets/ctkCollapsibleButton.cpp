@@ -45,7 +45,7 @@ public:
   ctkCollapsibleButtonPrivate(ctkCollapsibleButton& object);
   void init();
   void setChildVisibility(QWidget* childWidget);
-  
+
   bool     Collapsed;
 
   // Contents frame
@@ -55,6 +55,7 @@ public:
   int            ContentsMidLineWidth;
 
   int      CollapsedHeight;
+  bool     Flat;
   bool     ExclusiveMouseOver;
   bool     LookOffWhenChecked;
 
@@ -79,6 +80,7 @@ public:
 ctkCollapsibleButtonPrivate::ctkCollapsibleButtonPrivate(ctkCollapsibleButton& object)
   :q_ptr(&object)
 {
+  this->Flat = false;
   this->ForcingVisibility = false;
   this->IsStateCreated = false;
 }
@@ -184,6 +186,10 @@ void ctkCollapsibleButton::initStyleOption(QStyleOptionButton* option)const
     {
     option->state |= QStyle::State_Raised;
     }
+  if (d->Flat)
+    {
+    option->features |= QStyleOptionButton::Flat;
+    }
 
   option->text = this->text();
   option->icon = this->icon();
@@ -249,6 +255,21 @@ int ctkCollapsibleButton::collapsedHeight()const
 {
   Q_D(const ctkCollapsibleButton);
   return d->CollapsedHeight;
+}
+
+//-----------------------------------------------------------------------------
+void ctkCollapsibleButton::setFlat(bool flat)
+{
+  Q_D(ctkCollapsibleButton);
+  d->Flat = flat;
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+bool ctkCollapsibleButton::isFlat()const
+{
+  Q_D(const ctkCollapsibleButton);
+  return d->Flat;
 }
 
 //-----------------------------------------------------------------------------

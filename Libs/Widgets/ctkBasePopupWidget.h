@@ -32,7 +32,13 @@
 class ctkBasePopupWidgetPrivate;
 
 /// \ingroup Widgets
-/// Description:
+/// ctkBasePopupWidget is a popup that opens under, above or on the side of
+/// another widget (baseWidget() or its parent widget by default).
+/// The children (widgets and layout) of the popup define of the content
+/// of the popup. Different effects can be applied during the opening or
+/// closing of the popup.
+/// See ctkPopupWidget for an automatic control of its opening and closing.
+/// \sa baseWidget(), animationEffect, ctkPopupWidget
 class CTK_WIDGETS_EXPORT ctkBasePopupWidget : public QFrame
 {
   Q_OBJECT
@@ -40,19 +46,30 @@ class CTK_WIDGETS_EXPORT ctkBasePopupWidget : public QFrame
   Q_ENUMS(AnimationEffect)
   Q_ENUMS(VerticalDirection)
 
-  /// ScrollEffect by default
+  /// This property controls the effect to apply when the popup is being
+  /// opened or closed. The total duration and the easing curve of the effect
+  /// are controlled by \a effectDuration and \easingCurve respectively.
+  /// ScrollEffect by default.
+  /// \sa AnimationEffect, animationEffect(), setAnimationEffect(),
+  /// effectDuration, easingCurve
   Q_PROPERTY( AnimationEffect animationEffect READ animationEffect WRITE setAnimationEffect)
 
-  /// Effect duration in ms
+  /// The property controls the \a animationEffect duration in ms.
+  /// If the popup state (open or close) is being changed during the animation,
+  /// the active animation is stopped and a new animation is being created from
+  /// the current state (geometry, transparency...) to the new final state.
   /// Default to 333ms
+  /// \sa effectDuration(), setEffectDuration(), animationEffect, easingCurve
   Q_PROPERTY( int effectDuration READ effectDuration WRITE setEffectDuration);
 
-  /// Opening/Closing curve
+  /// The property controls the behavior of the opening or closing curve of the
+  /// animation effect.
   /// QEasingCurve::InOutQuad by default
+  /// \sa easingCurve(), setEasingCurve(), animationEffect, effectDuration
   Q_PROPERTY( QEasingCurve::Type easingCurve READ easingCurve WRITE setEasingCurve);
 
   /// Where is the popup in relation to the BaseWidget
-  /// To vertically justify, use Qt::AlignTop | Qt::AlignBottom
+  /// To vertically justify, use Qt::AlignTop | Qt::AlignBottom.
   /// Qt::AlignJustify | Qt::AlignBottom by default
   Q_PROPERTY( Qt::Alignment alignment READ alignment WRITE setAlignment);
   
@@ -85,6 +102,7 @@ public:
   /// and if the ctkBasePopupWidget sizepolicy contains the growFlag/shrinkFlag,
   /// it tries to resize itself to fit the same width of \a baseWidget.
   /// By default, baseWidget is the parent widget.
+  /// \sa setBaseWidget()
   QWidget* baseWidget()const;
 
   enum AnimationEffect
@@ -94,30 +112,58 @@ public:
     FadeEffect
   };
 
+  /// Return the animationEffect property value.
+  /// \sa animationEffect
   AnimationEffect animationEffect()const;
+  /// Set the animationEffect property value.
+  /// \sa animationEffect
   void setAnimationEffect(AnimationEffect effect);
 
+  /// Return the effectDuration property value.
+  /// \sa effectDuration
   int effectDuration()const;
+  /// Set the effectDuration property value.
+  /// \sa effectDuration
   void setEffectDuration(int duration);
 
+  /// Return the easingCurve property value.
+  /// \sa easingCurve
   QEasingCurve::Type easingCurve()const;
+  /// Set the easingCurve property value.
+  /// \sa easingCurve
   void setEasingCurve(QEasingCurve::Type easingCurve);
 
+  /// Return the alignment property value.
+  /// \sa alignment
   Qt::Alignment alignment()const;
+  /// Set the alignment property value.
+  /// \sa alignment
   void setAlignment(Qt::Alignment alignment);
-  
+
+  /// Return the orientation property value.
+  /// \sa orientation
   Qt::Orientations orientation()const;
+  /// Set the orientation property value.
+  /// \sa orientation
   void setOrientation(Qt::Orientations orientation);
   
   enum VerticalDirection{
     TopToBottom = 1,
     BottomToTop = 2
   };
-  
+
+  /// Return the verticalDirection property value.
+  /// \sa verticalDirection
   VerticalDirection verticalDirection()const;
+  /// Set the verticalDirection property value.
+  /// \sa verticalDirection
   void setVerticalDirection(VerticalDirection direction);
-  
+
+  /// Return the horizontalDirection property value.
+  /// \sa horizontalDirection
   Qt::LayoutDirection horizontalDirection()const;
+  /// Set the horizontalDirection property value.
+  /// \sa horizontalDirection
   void setHorizontalDirection(Qt::LayoutDirection direction);
 
 public Q_SLOTS:
@@ -132,6 +178,8 @@ public Q_SLOTS:
   inline void showPopup(bool show);
 
 Q_SIGNALS:
+  /// Fired when the popup finished its animation: opening (true) or closing (false).
+  /// \sa showPopup(), hidePopup()
   void popupOpened(bool open);
 
 protected:
@@ -144,7 +192,6 @@ protected:
   QRect effectGeometry()const;
 
   virtual void setBaseWidget(QWidget* baseWidget);
-
   virtual bool event(QEvent* event);
   virtual void paintEvent(QPaintEvent*);
 

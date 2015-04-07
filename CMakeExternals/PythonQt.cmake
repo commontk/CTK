@@ -33,9 +33,12 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
 
   # Enable Qt libraries PythonQt wrapping if required
   if (CTK_QT_VERSION VERSION_GREATER "4")
+    message(FATAL_ERROR "To build CTK with Qt >= 5 and wrapping enabled, you "
+                        "are currently required to provide your own PythonQt "
+                        "by re-configuring CTK with option "
+                        "-DPYTHONQT_INSTALL_DIR:PATH=/path/to/PythonQt-30-install")
     list(APPEND ep_PythonQt_args
       -DPythonQt_QT_VERSION:STRING=${CTK_QT_VERSION}
-      -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
       )
     set(qtlibs Core Gui Widgets Network OpenGL PrintSupport Sql Svg UiTools WebKit WebKitWidgets Xml)
   else()
@@ -90,6 +93,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
       ${ep_common_cache_args}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
+      -DPYTHON_INCLUDE_DIR2:PATH=${PYTHON_INCLUDE_DIR2}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       ${ep_PythonQt_args}
     DEPENDS
@@ -101,11 +105,18 @@ else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
+set(PythonQt_DIR ${PYTHONQT_INSTALL_DIR})
+
 mark_as_superbuild(
   VARS
     PYTHONQT_INSTALL_DIR:PATH
     PYTHON_EXECUTABLE:FILEPATH # FindPythonInterp expects PYTHON_EXECUTABLE variable to be defined
     PYTHON_INCLUDE_DIR:PATH # FindPythonQt expects PYTHON_INCLUDE_DIR variable to be defined
+    PYTHON_INCLUDE_DIR2:PATH
     PYTHON_LIBRARY:FILEPATH # FindPythonQt expects PYTHON_LIBRARY variable to be defined
+  LABELS "FIND_PACKAGE_VARS"
+  )
+mark_as_superbuild(
+  VARS PythonQt_DIR:PATH
   LABELS "FIND_PACKAGE"
   )

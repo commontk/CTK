@@ -23,6 +23,7 @@
 #include <QFile>
 
 // CTK includes
+#include "ctkErrorLogContext.h"
 #include "ctkErrorLogFDMessageHandler.h"
 #include "ctkErrorLogFDMessageHandler_p.h"
 #include "ctkUtils.h"
@@ -208,6 +209,7 @@ void ctkFDHandler::run()
       ctk::qtHandleToString(QThread::currentThreadId()),
       this->LogLevel,
       this->MessageHandler->handlerPrettyName(),
+      ctkErrorLogContext(line),
       line);
     }
 }

@@ -27,7 +27,19 @@
 class ctkPopupWidgetPrivate;
 
 /// \ingroup Widgets
-/// Description:
+/// ctkPopupWidget is a specialization of ctkBasePopupWidget that handles
+/// the opening and closing of the popup.
+/// Below is an example of a popup slider that opens and closes next to a
+/// button
+/// \code
+/// ctkPopupWidget* popup = new ctkPopupWidget(pushButton);
+/// popup->setAlignment(Qt::AlignRight | Qt::AlignTop | Qt::AlignBottom);
+/// popup->setOrientation(Qt::Horizontal);
+/// QHBoxLayout* popupLayout = new QHBoxLayout(popup);
+/// QSlider* popupSlider = new QSlider(popup);
+/// popupLayout->addWidget(popupSlider);
+/// \endcode
+/// \sa ctkBasePopupWidget
 class CTK_WIDGETS_EXPORT ctkPopupWidget : public ctkBasePopupWidget
 {
   Q_OBJECT
@@ -39,26 +51,33 @@ class CTK_WIDGETS_EXPORT ctkPopupWidget : public ctkBasePopupWidget
   /// Consider also removing its windowFlags (Qt::ToolTip |
   /// Qt::FramelessWindowHint) and removing the baseWidget.
   /// True by default
+  /// \sa isActive(), setActive()
   Q_PROPERTY( bool active READ isActive WRITE setActive)
 
   /// Control wether the popup automatically opens when the mouse
   /// enter the widget. True by default
+  /// \sa autoShow(), setAutoShow()
   Q_PROPERTY( bool autoShow READ autoShow WRITE setAutoShow)
 
   /// Time in ms to wait before opening the popup if autoShow is set.
   /// 20ms by default
+  /// \sa showDelay(), setShowDelay()
   Q_PROPERTY( int showDelay READ showDelay WRITE setShowDelay)
 
   /// Control wether the popup automatically closes when the mouse
-  /// leaves the widget. True by default
+  /// leaves the widget. True by default.
+  /// \sa autoHide(), setAutoHide()
   Q_PROPERTY( bool autoHide READ autoHide WRITE setAutoHide)
 
   /// Time in ms to wait before closing the popup if autoHide is set.
   /// 200ms by default
+  /// \sa hideDelay(), setHideDelay()
   Q_PROPERTY( int hideDelay READ hideDelay WRITE setHideDelay)
 
 public:
   typedef ctkBasePopupWidget Superclass;
+  /// By default, the parent is the \a baseWidget.
+  /// \sa baseWidget()
   explicit ctkPopupWidget(QWidget* parent = 0);
   virtual ~ctkPopupWidget();
 

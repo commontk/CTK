@@ -32,8 +32,6 @@ macro(ctkMacroSetupQt)
 
   if(CTK_QT_VERSION VERSION_GREATER "4")
     cmake_minimum_required(VERSION 2.8.12)
-    set(QT5_INSTALL_PREFIX "" CACHE PATH "The install location of Qt5")
-    set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${QT5_INSTALL_PREFIX})
     set(CTK_QT5_COMPONENTS Core Xml XmlPatterns Concurrent Sql Test)
     if(CTK_LIB_Widgets OR CTK_LIB_CommandLineModules/Frontend/QtGui OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
       list(APPEND CTK_QT5_COMPONENTS Widgets OpenGL UiTools)
@@ -81,6 +79,5 @@ macro(ctkMacroSetupQt)
 
   mark_as_superbuild(CTK_QT_VERSION)
   mark_as_superbuild(QT_QMAKE_EXECUTABLE) # Qt 4
-  mark_as_superbuild(QT5_INSTALL_PREFIX)  # Qt 5
 
 endmacro()

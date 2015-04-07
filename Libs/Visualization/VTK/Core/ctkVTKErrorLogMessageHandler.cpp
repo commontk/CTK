@@ -22,6 +22,7 @@
 #include <QThread>
 
 // CTK includes
+#include "ctkErrorLogContext.h"
 #include "ctkVTKErrorLogMessageHandler.h"
 #include "ctkUtils.h"
 
@@ -42,7 +43,9 @@ public:
   vtkTypeMacro(ctkVTKOutputWindow,vtkOutputWindow);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  ctkVTKOutputWindow():MessageHandler(0){}
+  ctkVTKOutputWindow()
+    : MessageHandler(0)
+  {}
   ~ctkVTKOutputWindow(){}
 
   virtual void DisplayText(const char*);
@@ -51,6 +54,8 @@ public:
   virtual void DisplayGenericWarningText(const char*);
 
   virtual void DisplayDebugText(const char*);
+
+  QString parseText(const QString &text, ctkErrorLogContext &context);
 
   ctkErrorLogAbstractMessageHandler * MessageHandler;
 };
@@ -71,30 +76,42 @@ void ctkVTKOutputWindow::PrintSelf(ostream& os, vtkIndent indent)
 void ctkVTKOutputWindow::DisplayText(const char* text)
 {
   Q_ASSERT(this->MessageHandler);
+
+  ctkErrorLogContext context;
+  QString textOnly = this->parseText(text, context);
+
   this->MessageHandler->handleMessage(
         ctk::qtHandleToString(QThread::currentThreadId()),
         ctkErrorLogLevel::Info,
-        this->MessageHandler->handlerPrettyName(), text);
+        this->MessageHandler->handlerPrettyName(), context, textOnly);
 }
 
 //----------------------------------------------------------------------------
 void ctkVTKOutputWindow::DisplayErrorText(const char* text)
 {
   Q_ASSERT(this->MessageHandler);
+
+  ctkErrorLogContext context;
+  QString textOnly = this->parseText(text, context);
+
   this->MessageHandler->handleMessage(
         ctk::qtHandleToString(QThread::currentThreadId()),
         ctkErrorLogLevel::Error,
-        this->MessageHandler->handlerPrettyName(), text);
+        this->MessageHandler->handlerPrettyName(), context, textOnly);
 }
 
 //----------------------------------------------------------------------------
 void ctkVTKOutputWindow::DisplayWarningText(const char* text)
 {
   Q_ASSERT(this->MessageHandler);
+
+  ctkErrorLogContext context;
+  this->parseText(text, context);
+
   this->MessageHandler->handleMessage(
         ctk::qtHandleToString(QThread::currentThreadId()),
         ctkErrorLogLevel::Warning,
-        this->MessageHandler->handlerPrettyName(), text);
+        this->MessageHandler->handlerPrettyName(), context, text);
 }
 
 //----------------------------------------------------------------------------
@@ -107,10 +124,29 @@ void ctkVTKOutputWindow::DisplayGenericWarningText(const char* text)
 void ctkVTKOutputWindow::DisplayDebugText(const char* text)
 {
   Q_ASSERT(this->MessageHandler);
+
+  ctkErrorLogContext context;
+  this->parseText(text, context);
+
   this->MessageHandler->handleMessage(
         ctk::qtHandleToString(QThread::currentThreadId()),
         ctkErrorLogLevel::Debug,
-        this->MessageHandler->handlerPrettyName(), text);
+        this->MessageHandler->handlerPrettyName(), context, text);
+}
+
+//----------------------------------------------------------------------------
+QString ctkVTKOutputWindow::parseText(const QString& text, ctkErrorLogContext& context)
+{
+  context.Message = text;
+  QRegExp contextRegExp("[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\((?:0x)?[a-fA-F0-9]+\\))\\:\\s(.*)");
+  if (contextRegExp.exactMatch(text))
+    {
+    context.File = contextRegExp.cap(1);
+    context.Category = contextRegExp.cap(3);
+    context.Line = contextRegExp.cap(2).toInt();
+    context.Message = contextRegExp.cap(4);
+    }
+  return context.Message;
 }
 
 } // End of anonymous namespace
@@ -197,4 +233,3 @@ void ctkVTKErrorLogMessageHandler::setEnabledInternal(bool value)
     d->SavedVTKOutputWindow = 0;
     }
 }
-

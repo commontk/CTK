@@ -95,7 +95,7 @@ void ctkPluginFrameworkContext::init()
     foreach(QString preloadLib, preloadLibs)
     {
       QLibrary lib;
-      QStringList nameAndVersion = preloadLib.split(":");
+      QStringList nameAndVersion = preloadLib.split("$");
 
       QString libraryName;
       if (nameAndVersion.count() == 1)
@@ -110,7 +110,7 @@ void ctkPluginFrameworkContext::init()
       }
       else
       {
-        qWarning() << "Wrong syntax in" << preloadLib << ". Use <lib-name>[:version]. Skipping.";
+        qWarning() << "Wrong syntax in" << preloadLib << ". Use <lib-name>[$version]. Skipping.";
         continue;
       }
 

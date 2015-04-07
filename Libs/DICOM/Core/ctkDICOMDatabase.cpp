@@ -182,7 +182,6 @@ void ctkDICOMDatabasePrivate::init(QString databaseFilename)
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::registerCompressionLibraries(){
-  logger.debug("Register compression libraries");
   // Register the JPEG libraries in case we need them
   //   (registration only happens once, so it's okay to call repeatedly)
   // register global JPEG decompression codecs
@@ -1212,14 +1211,14 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
   // this is the method that all other insert signatures end up calling
   // after they have pre-parsed their arguments
- 
+
   // Check to see if the file has already been loaded
   // TODO:
   // It could make sense to actually remove the dataset and re-add it. This needs the remove
   // method we still have to write.
   //
   //
-  
+
   QString sopInstanceUID ( ctkDataset.GetElementAsString(DCM_SOPInstanceUID) );
 
   QSqlQuery fileExistsQuery ( Database );
@@ -1630,7 +1629,6 @@ bool ctkDICOMDatabase::tagCacheExists()
   // try to open the database if it's not already open
   if ( !(d->TagCacheDatabase.isOpen()) )
     {
-    qDebug() << "TagCacheDatabase not open\n";
     d->TagCacheDatabase = QSqlDatabase::addDatabase("QSQLITE", d->Database.connectionName() + "TagCache");
     d->TagCacheDatabase.setDatabaseName(d->TagCacheDatabaseFilename);
     if ( !(d->TagCacheDatabase.open()) )
@@ -1653,7 +1651,6 @@ bool ctkDICOMDatabase::tagCacheExists()
   bool success = d->loggedExec(cacheExists);
   if (success)
     {
-    qDebug() << "TagCacheDatabase verified!\n";
     d->TagCacheVerified = true;
     return true;
     }

@@ -71,9 +71,13 @@ set_source_files_properties(
 #     added to be able to build against DCMTK 3.6.0 available by default on linux
 #     distribution. Let's skip it in the case of multi configuration system and
 #     assume DCMTK provides 'dcmtk::log4cplus::Logger'.
+#     We also skip this test if DCMTK_CMAKE_DEBUG_POSTFIX is set, because then the
+#     DCMTK_LIBRARIES variable will have a value similar to "debug <lib1> ..." which
+#     will not link the DCMTK debug libraries in the try_compile call because
+#     BUILD_TYPE cannot be set for the generated CMakeLists.txt file.
 # TODO When build as external project, the config of the parent project could be passed to CTK
 #      and used as a hint. We need to define what would be the convention for such hint.
-if(CMAKE_CONFIGURATION_TYPES AND NOT DEFINED HAVE_DCMTK_LOG4CPLUS_LOGGER)
+if(DCMTK_CMAKE_DEBUG_POSTFIX OR (CMAKE_CONFIGURATION_TYPES AND NOT DEFINED HAVE_DCMTK_LOG4CPLUS_LOGGER))
   set(HAVE_DCMTK_LOG4CPLUS_LOGGER 1 CACHE INTERNAL "Test HAVE_DCMTK_LOG4CPLUS_LOGGER")
 endif()
 # Check if DCMTK provides 'dcmtk::log4cplus::Logger', if not fallback to 'log4cplus::Logger'.

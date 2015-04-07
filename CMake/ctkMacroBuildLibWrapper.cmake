@@ -102,7 +102,7 @@ macro(ctkMacroBuildLibWrapper)
   add_library(${lib_name}PythonQt ${MY_WRAPPER_LIBRARY_TYPE} ${KIT_PYTHONQT_SRCS})
   target_link_libraries(${lib_name}PythonQt ${lib_name} ${my_EXTRA_PYTHON_LIBRARIES})
   if(MY_WRAPPER_LIBRARY_TYPE STREQUAL "STATIC")
-    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
       set_target_properties(${lib_name}PythonQt PROPERTIES COMPILE_FLAGS "-fPIC")
     endif()
   endif()

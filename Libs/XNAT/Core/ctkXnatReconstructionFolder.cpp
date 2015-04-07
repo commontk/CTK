@@ -21,12 +21,13 @@
 
 #include "ctkXnatReconstructionFolder.h"
 
-#include "ctkXnatSession.h"
+#include "ctkXnatDefaultSchemaTypes.h"
 #include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatReconstruction.h"
-#include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatSession.h"
 
+#include <QDebug>
 
 //----------------------------------------------------------------------------
 class ctkXnatReconstructionFolderPrivate : public ctkXnatObjectPrivate
@@ -51,7 +52,7 @@ public:
 ctkXnatReconstructionFolder::ctkXnatReconstructionFolder(ctkXnatObject* parent)
   : ctkXnatObject(*new ctkXnatReconstructionFolderPrivate(), parent, QString::null)
 {
-  this->setProperty("ID", "reconstructions");
+  this->setProperty(ID, "reconstructions");
 }
 
 //----------------------------------------------------------------------------
@@ -86,4 +87,14 @@ void ctkXnatReconstructionFolder::fetchImpl()
     this->add(reconstruction);
   }
 
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatReconstructionFolder::downloadImpl(const QString& filename)
+{
+  qDebug() << "ctkXnatReconstructionFolder::downloadImpl(const QString& filename) not yet tested";
+  QString query = this->resourceUri() + "/ALL/resources/files";
+  ctkXnatSession::UrlParameters parameters;
+  parameters["format"] = "zip";
+  this->session()->download(filename, query, parameters);
 }

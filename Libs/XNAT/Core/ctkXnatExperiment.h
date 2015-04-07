@@ -43,11 +43,22 @@ public:
 
   virtual QString resourceUri() const;
 
+  /// Sets the name, i.e. the label of the subject
+  virtual void setName(const QString &name);
+  /// Returns the name, i.e. the label of the subject
+  virtual QString name() const;
+
+  void setLabel(const QString &label);
+  QString label() const;
+
+
   void reset();
 
 private:
 
   virtual void fetchImpl();
+
+  virtual void downloadImpl(const QString&);
 
   Q_DECLARE_PRIVATE(ctkXnatExperiment)
 };

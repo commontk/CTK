@@ -49,10 +49,18 @@ public:
   void clearLayout(QLayout* layout);
   void clearWidget(QWidget* widget, QLayout* parentLayout = 0);
 
+  /// The widget where the layout is populated into.
   QWidget*       Viewport;
+  /// The XML description of the current layout.
   QDomDocument   Layout;
+  /// All the QWidgets in the Viewports. The list contains the
+  /// LayoutWidgets as well as the "items" of the layout.
   QSet<QWidget*> Views;
+  /// All the widgets created by ctkLayoutManager.
+  /// Those widgets are "layout" widgets in a sense that they are simple
+  /// containers or spacers to layout the "views" of the layout.
   QSet<QWidget*> LayoutWidgets;
+  /// Unique spacing used by all the inner layouts.
   int            Spacing;
 };
 

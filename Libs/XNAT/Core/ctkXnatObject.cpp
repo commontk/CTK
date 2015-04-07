@@ -23,14 +23,18 @@
 #include "ctkXnatObjectPrivate.h"
 
 #include "ctkXnatDataModel.h"
-#include "ctkXnatSession.h"
 #include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatSession.h"
 
 #include <QDateTime>
 #include <QDebug>
 #include <QStringList>
 #include <QVariant>
 
+
+const QString ctkXnatObject::ID = "ID";
+const QString ctkXnatObject::NAME = "name";
+const QString ctkXnatObject::LABEL = "label";
 
 //----------------------------------------------------------------------------
 ctkXnatObject::ctkXnatObject(const ctkXnatObject&)
@@ -67,37 +71,39 @@ ctkXnatObject::~ctkXnatObject()
 //----------------------------------------------------------------------------
 QString ctkXnatObject::id() const
 {
-  return property("ID");
+  return this->property(ID);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setId(const QString& id)
 {
-  setProperty("ID", id);
+  this->setProperty(ID, id);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatObject::name() const
 {
-  return property("name");
+  return this->property(NAME);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setName(const QString& name)
 {
-  setProperty("name", name);
+  this->setProperty(NAME, name);
 }
 
 //----------------------------------------------------------------------------
 QString ctkXnatObject::description() const
 {
-  return property("description");
+  Q_D(const ctkXnatObject);
+  return d->description;
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setDescription(const QString& description)
 {
-  setProperty("description", description);
+  Q_D(ctkXnatObject);
+  d->description = description;
 }
 
 //----------------------------------------------------------------------------
@@ -261,6 +267,12 @@ QString ctkXnatObject::schemaType() const
 }
 
 //----------------------------------------------------------------------------
+void ctkXnatObject::setSchemaType(const QString& schemaType)
+{
+  this->setProperty("xsiType", schemaType);
+}
+
+//----------------------------------------------------------------------------
 void ctkXnatObject::fetch()
 {
   Q_D(ctkXnatObject);
@@ -284,14 +296,9 @@ ctkXnatSession* ctkXnatObject::session() const
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::setSchemaType(const QString& schemaType)
+void ctkXnatObject::download(const QString& filename)
 {
-  this->setProperty("xsiType", schemaType);
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatObject::download(const QString& /*zipFilename*/)
-{
+  this->downloadImpl(filename);
 }
 
 //----------------------------------------------------------------------------
@@ -323,13 +330,13 @@ void ctkXnatObject::fetchResources(const QString& path)
 
   foreach (ctkXnatObject* resource, resources)
   {
-    QString label = resource->property("label");
+    QString label = resource->name();
     if (label.isEmpty())
     {
       label = "NO NAME";
     }
 
-    resource->setProperty("label", label);
+    resource->setName(label);
     this->add(resource);
   }
 }

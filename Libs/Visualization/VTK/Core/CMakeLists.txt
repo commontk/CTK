@@ -4,6 +4,9 @@ project(CTKVisualizationVTKCore)
 # 3rd party dependencies
 #
 include(${VTK_USE_FILE})
+if(NOT DEFINED VTK_RENDERING_BACKEND)
+  set(VTK_RENDERING_BACKEND "OpenGL")
+endif()
 
 if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
   find_package(PythonQt REQUIRED)
@@ -69,8 +72,8 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkInteractionStyle
     vtkRenderingAnnotation
     vtkRenderingCore
-    vtkRenderingFreeTypeOpenGL
-    vtkRenderingOpenGL
+    vtkRenderingFreeType${VTK_RENDERING_BACKEND}
+    vtkRendering${VTK_RENDERING_BACKEND}
     )
   if(TARGET vtkIOMPIImage)
     list(APPEND VTK_LIBRARIES vtkIOMPIImage )

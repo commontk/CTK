@@ -21,11 +21,13 @@
 
 #include "ctkXnatAssessorFolder.h"
 
-#include "ctkXnatSession.h"
-#include "ctkXnatExperiment.h"
-#include "ctkXnatObjectPrivate.h"
 #include "ctkXnatAssessor.h"
 #include "ctkXnatDefaultSchemaTypes.h"
+#include "ctkXnatExperiment.h"
+#include "ctkXnatObjectPrivate.h"
+#include "ctkXnatSession.h"
+
+#include <QDebug>
 
 //----------------------------------------------------------------------------
 class ctkXnatAssessorFolderPrivate : public ctkXnatObjectPrivate
@@ -48,8 +50,8 @@ ctkXnatAssessorFolder::ctkXnatAssessorFolder(ctkXnatObject* parent)
   : ctkXnatObject(*new ctkXnatAssessorFolderPrivate(), parent, QString::null)
 {
   
-  this->setProperty("ID", "assessors");
-  this->setProperty("label", "Assessments");
+  this->setProperty(ID, "assessors");
+  this->setProperty(LABEL, "Assessments");
 }
 
 //----------------------------------------------------------------------------
@@ -84,4 +86,14 @@ void ctkXnatAssessorFolder::fetchImpl()
     
     this->add(assessor);
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatAssessorFolder::downloadImpl(const QString& filename)
+{
+  qDebug() << "ctkXnatExperiment::downloadImpl(const QString& filename) not yet tested";
+  QString query = this->resourceUri() + "/ALL/resources/files";
+  ctkXnatSession::UrlParameters parameters;
+  parameters["format"] = "zip";
+  this->session()->download(filename, query, parameters);
 }

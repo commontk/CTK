@@ -59,5 +59,4 @@ endif()
 
 mark_as_superbuild(
   VARS CTKData_DIR:PATH
-  LABELS "FIND_PACKAGE"
   )

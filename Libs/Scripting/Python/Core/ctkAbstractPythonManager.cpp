@@ -28,7 +28,10 @@
 
 // PythonQT includes
 #include <PythonQt.h>
-#include <PythonQt_QtBindings.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+  #include <PythonQt_QtBindings.h>
+#endif
 
 // STD includes
 #include <csignal>
@@ -152,7 +155,9 @@ void ctkAbstractPythonManager::initPythonQt(int flags)
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
                 SLOT(printStderr(QString)));
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   PythonQt_init_QtBindings();
+#endif
 
   QStringList initCode;
 
@@ -424,5 +429,5 @@ void ctkAbstractPythonManager::printStdout(const QString& text)
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::printStderr(const QString& text)
 {
-  std::cout << qPrintable(text);
+  std::cerr << qPrintable(text);
 }

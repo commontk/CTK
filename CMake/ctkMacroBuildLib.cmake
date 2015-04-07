@@ -167,7 +167,7 @@ macro(ctkMacroBuildLib)
 
   # Library properties specific to STATIC build
   if(MY_LIBRARY_TYPE STREQUAL "STATIC")
-    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
       set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "-fPIC")
     endif()
   endif()

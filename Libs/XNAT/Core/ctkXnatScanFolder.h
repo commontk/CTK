@@ -50,6 +50,7 @@ private:
 
   friend class qRestResult;
   virtual void fetchImpl();
+  virtual void downloadImpl(const QString&);
 
   Q_DECLARE_PRIVATE(ctkXnatScanFolder)
 };

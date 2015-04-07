@@ -31,6 +31,7 @@
 // CTK includes
 #include "ctkLayoutManager.h"
 #include "ctkLayoutManager_p.h"
+#include "ctkLayoutViewFactory.h"
 
 //-----------------------------------------------------------------------------
 ctkLayoutManagerPrivate::ctkLayoutManagerPrivate(ctkLayoutManager& object)
@@ -302,11 +303,11 @@ QLayoutItem* ctkLayoutManager::processElement(QDomElement element)
     {
     return this->processLayoutElement(element);
     }
-  else if (element.tagName() == "view")
+  else //if (element.tagName() == "view")
     {
     return this->widgetItemFromXML(element);
     }
-  Q_ASSERT(element.tagName() != "layout" && element.tagName() != "view");
+  //Q_ASSERT(element.tagName() != "layout" && element.tagName() != "view");
   return 0;
 }
 
@@ -449,7 +450,7 @@ void ctkLayoutManager::addChildItemToLayout(QDomElement itemElement, QLayoutItem
 //-----------------------------------------------------------------------------
 QWidgetItem* ctkLayoutManager::widgetItemFromXML(QDomElement viewElement)
 {
-  Q_ASSERT(viewElement.tagName() == "view");
+  //Q_ASSERT(viewElement.tagName() == "view");
   QWidget* view = this->viewFromXML(viewElement);
   this->setupView(viewElement, view);
   return new QWidgetItem(view);
@@ -468,7 +469,7 @@ void ctkLayoutManager::setupView(QDomElement viewElement, QWidget* view)
 //-----------------------------------------------------------------------------
 QList<QLayoutItem*> ctkLayoutManager::widgetItemsFromXML(QDomElement viewElement)
 {
-  Q_ASSERT(viewElement.tagName() == "view");
+  ///Q_ASSERT(viewElement.tagName() == "view");
   QList<QLayoutItem*> res;
   QList<QWidget*> views = this->viewsFromXML(viewElement);
   Q_ASSERT(views.count());
@@ -478,14 +479,6 @@ QList<QLayoutItem*> ctkLayoutManager::widgetItemsFromXML(QDomElement viewElement
     res << new QWidgetItem(view);
     }
   return res;
-}
-
-//-----------------------------------------------------------------------------
-QWidget* ctkLayoutManager::viewFromXML(QDomElement viewElement)
-{
-  Q_UNUSED(viewElement);
-  // default, for testing purpose. Must be reimplemented
-  return new QWidget(0);
 }
 
 //-----------------------------------------------------------------------------
