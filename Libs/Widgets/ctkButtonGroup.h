@@ -53,6 +53,10 @@ public:
   explicit ctkButtonGroup(QObject *_parent = 0);
   virtual ~ctkButtonGroup();
 
+public Q_SLOTS:
+  /// Check or uncheck the button.
+  void setChecked(QAbstractButton* button, bool checked = true);
+
 protected Q_SLOTS:
   void onButtonClicked(int button);
   void onButtonPressed(int button);
