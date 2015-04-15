@@ -67,7 +67,7 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const QMessageLogContext& c
   ctkErrorLogQtMessageHandler_CurrentRecursionDepth.ref();
   // Allow a couple of recursion levels to get a hint about where and why recursion occurs,
   // so we stop processing the message if recursion depth is over 10.
-  if (ctkErrorLogQtMessageHandler_CurrentRecursionDepth > 10)
+  if (ctkErrorLogQtMessageHandler_CurrentRecursionDepth.load() > 10)
     {
     ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
     return;
