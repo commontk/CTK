@@ -39,10 +39,9 @@ public:
   ctkDICOMTableViewPrivate(ctkDICOMTableView& obj);
   ctkDICOMTableViewPrivate(ctkDICOMTableView& obj, ctkDICOMDatabase* db);
   ~ctkDICOMTableViewPrivate();
-  // Initialize UI
+  // Initialize UI and tableview with tablemodel
   void init();
-  // Setup tableview with tablemodel if database is available
-  void setUpTableView();
+
   //Temporay solution to hide UID columns
   void hideUIDColumns();
 
@@ -91,54 +90,36 @@ void ctkDICOMTableViewPrivate::init()
   this->leSearchBox->setAlwaysShowClearIcon(true);
   this->leSearchBox->setShowSearchIcon(true);
 
-  if (this->dicomDatabase != 0)
-    {
-      q->setDicomDataBase(this->dicomDatabase);
-    }
-
   this->tblDicomDatabaseView->viewport()->installEventFilter(q);
-}
 
-//------------------------------------------------------------------------------
-void ctkDICOMTableViewPrivate::setUpTableView()
-{
-  Q_Q(ctkDICOMTableView);
-  if (this->dicomDatabase != 0)
-    {
-      q->setQuery();
-      this->dicomSQLFilterModel->setSourceModel(&this->dicomSQLModel);
-      this->dicomSQLFilterModel->setFilterKeyColumn(-1);
-      this->dicomSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-      this->tblDicomDatabaseView->setModel(this->dicomSQLFilterModel);
-      this->tblDicomDatabaseView->setColumnHidden(0, true);
-      this->tblDicomDatabaseView->setSortingEnabled(true);
+  this->dicomSQLFilterModel->setSourceModel(&this->dicomSQLModel);
+  this->dicomSQLFilterModel->setFilterKeyColumn(-1);
+  this->dicomSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+  this->tblDicomDatabaseView->setModel(this->dicomSQLFilterModel);
+  this->tblDicomDatabaseView->setColumnHidden(0, true);
+  this->tblDicomDatabaseView->setSortingEnabled(true);
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-      this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
 #else
-      this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+  this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 #endif
-      this->hideUIDColumns();
+  this->hideUIDColumns();
 
-      QObject::connect(this->tblDicomDatabaseView->selectionModel(),
-                       SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
-                       q, SLOT(onSelectionChanged()));
+  QObject::connect(this->tblDicomDatabaseView->selectionModel(),
+                   SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+                   q, SLOT(onSelectionChanged()));
 
-      QObject::connect(this->tblDicomDatabaseView->selectionModel(),
-                       SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
-                       q, SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)));
+  QObject::connect(this->tblDicomDatabaseView->selectionModel(),
+                   SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+                   q, SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)));
 
-      QObject::connect(this->tblDicomDatabaseView, SIGNAL(doubleClicked(const QModelIndex&)),
-                       q, SIGNAL(doubleClicked(const QModelIndex&)));
+  QObject::connect(this->tblDicomDatabaseView, SIGNAL(doubleClicked(const QModelIndex&)),
+                   q, SIGNAL(doubleClicked(const QModelIndex&)));
 
-      QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)),
-                       this->dicomSQLFilterModel, SLOT(setFilterWildcard(QString)));
+  QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)),
+                   this->dicomSQLFilterModel, SLOT(setFilterWildcard(QString)));
 
-      QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
-
-      QObject::connect(this->dicomDatabase, SIGNAL(databaseChanged()), q, SLOT(onDatabaseChanged()));
-      QObject::connect(this->dicomDatabase, SIGNAL(instanceAdded(QString)),
-                       q, SLOT(onInstanceAdded()));
-    }
+  QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
 }
 
 //------------------------------------------------------------------------------
@@ -226,11 +207,11 @@ void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
     return;
 
   d->dicomDatabase = dicomDatabase;
-  d->setUpTableView();
   //Create connections for new database
   QObject::connect(d->dicomDatabase, SIGNAL(instanceAdded(const QString&)),
                    this, SLOT(onInstanceAdded()));
   QObject::connect(d->dicomDatabase, SIGNAL(databaseChanged()), this, SLOT(onDatabaseChanged()));
+
   this->setQuery();
   d->hideUIDColumns();
 }
