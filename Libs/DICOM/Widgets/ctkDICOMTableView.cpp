@@ -103,7 +103,6 @@ void ctkDICOMTableViewPrivate::init()
 #else
   this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 #endif
-  this->hideUIDColumns();
 
   QObject::connect(this->tblDicomDatabaseView->selectionModel(),
                    SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
