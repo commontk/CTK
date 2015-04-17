@@ -47,6 +47,25 @@ ctkButtonGroup::ctkButtonGroup(QObject* _parent)
 }
 
 //------------------------------------------------------------------------------
+void ctkButtonGroup::setChecked(QAbstractButton* button, bool checked)
+{
+  if (!button)
+    {
+    return;
+    }
+  bool wasExclusive = this->exclusive();
+  if (!checked)
+    {
+    this->setExclusive(false);
+    }
+  button->setChecked(checked);
+  if (!checked)
+    {
+    this->setExclusive(wasExclusive);
+    }
+}
+
+//------------------------------------------------------------------------------
 ctkButtonGroup::~ctkButtonGroup()
 {
 }
