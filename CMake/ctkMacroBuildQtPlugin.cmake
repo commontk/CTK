@@ -88,7 +88,12 @@ macro(ctkMacroBuildQtPlugin)
   # Wrap
   set(MY_QRC_SRCS "")
   if(CTK_QT_VERSION VERSION_GREATER "4")
-    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} TARGET ${lib_name} OPTIONS -DHAVE_QT5)
+    set(target)
+    if(Qt5Core_VERSION VERSION_GREATER "5.2.0")
+      set(target TARGET ${MY_LIBNAME})
+    endif()
+    qt5_wrap_cpp(MY_MOC_CPP ${MY_MOC_SRCS} OPTIONS -DHAVE_QT5 ${target})
+
     if(DEFINED MY_RESOURCES)
       qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
     endif()
@@ -181,12 +186,22 @@ macro(ctkMacroBuildQtPlugin)
 endmacro()
 
 macro(ctkMacroBuildQtDesignerPlugin)
+  if(CTK_QT_VERSION VERSION_GREATER "4")
+    find_package(Qt5Designer REQUIRED)
+    add_definitions(${Qt5Designer_DEFINITIONS})
+    include_directories(${Qt5Designer_INCLUDE_DIRS})
+  endif()
   ctkMacroBuildQtPlugin(
     PLUGIN_DIR designer
     ${ARGN})
   if(CTK_QT_VERSION VERSION_GREATER "4")
-    find_package(Qt5Designer REQUIRED)
-    target_link_libraries(${lib_name} Qt5::Designer)
+    cmake_parse_arguments(MY
+      "" # no options
+      "NAME;EXPORT_DIRECTIVE;FOLDER;PLUGIN_DIR" # one value args
+      "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
+      ${ARGN}
+      )
+    target_link_libraries(${MY_NAME} Qt5::Designer)
   endif()
 endmacro()
 
