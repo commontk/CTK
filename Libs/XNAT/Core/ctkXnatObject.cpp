@@ -228,13 +228,21 @@ void ctkXnatObject::add(ctkXnatObject* child)
   {
     child->d_func()->parent = this;
   }
-  if (!d->children.contains(child))
+
+  bool childExists (false);
+  foreach (ctkXnatObject* existingChild, d->children)
+  {
+    if ((existingChild->id().length() != 0 && existingChild->id() == child->id()) ||
+        (existingChild->id().length() == 0 && existingChild->name() == child->name()))
+    {
+      d->children.replace(d->children.indexOf(existingChild), child);
+      childExists = true;
+      qWarning() << "ctkXnatObject::add(): Child already exists -> Replaced child!";
+    }
+  }
+  if (!childExists)
   {
     d->children.push_back(child);
-  }
-  else
-  {
-    qWarning() << "ctkXnatObject::add(): Child already exists";
   }
 }
 
