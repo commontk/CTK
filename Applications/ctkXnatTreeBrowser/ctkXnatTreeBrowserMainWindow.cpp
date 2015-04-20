@@ -176,7 +176,6 @@ void ctkXnatTreeBrowserMainWindow::uploadFileClicked()
       msgbox.setIcon(QMessageBox::Critical);
       msgbox.exec();
     }
-
+    m_TreeModel->addChildNode(index, file);
   }
-
 }

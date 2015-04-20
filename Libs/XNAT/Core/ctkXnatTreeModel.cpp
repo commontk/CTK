@@ -296,3 +296,14 @@ void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zip
 
   return;
 }
+
+//----------------------------------------------------------------------------
+void ctkXnatTreeModel::addChildNode(const QModelIndex &index, ctkXnatObject* child)
+{
+  Q_D(ctkXnatTreeModel);
+  ctkXnatTreeItem* item = d->itemAt(index);
+
+  beginInsertRows(index, 0, 1);
+  item->appendChild(new ctkXnatTreeItem(child, item));
+  endInsertRows();
+}

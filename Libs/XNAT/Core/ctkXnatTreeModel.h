@@ -59,6 +59,8 @@ public:
 
   void downloadFile (const QModelIndex& index, const QString& zipFilename);
 
+  void addChildNode(const QModelIndex& index, ctkXnatObject *child);
+
 private:
 
   const QScopedPointer<ctkXnatTreeModelPrivate> d_ptr;
