@@ -21,13 +21,20 @@
 
 // ctkXnatAPI includes
 #include "ctkXnatAPI_p.h"
+
+#include "ctkXnatResourceCatalogXmlParser.h"
+
 #include "qRestResult.h"
+
 #include <QNetworkReply>
 #include <QRegExp>
 #include <QUrl>
 #if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
 #include <QUrlQuery>
 #endif
+#include <QXmlDefaultHandler>
+#include <QXmlInputSource>
+#include <QXmlSimpleReader>
 
 // --------------------------------------------------------------------------
 // ctkXnatAPI methods
@@ -108,9 +115,21 @@ void ctkXnatAPI::parseResponse(qRestResult* restResult, const QByteArray& respon
 }
 
 // --------------------------------------------------------------------------
-QList<QVariantMap> ctkXnatAPI::parseXmlResponse(qRestResult* /*restResult*/, const QByteArray& /*response*/)
+QList<QVariantMap> ctkXnatAPI::parseXmlResponse(qRestResult* /*restResult*/, const QByteArray& response)
 {
+  QXmlInputSource xmlInput;
+  xmlInput.setData(response);
+  QXmlSimpleReader xmlReader;
+
   QList<QVariantMap> result;
+  // In this case a resource catalog xml was requested
+  if (response.contains("<cat:Catalog"))
+  {
+    ctkXnatResourceCatalogXmlParser parser;
+    xmlReader.setContentHandler(&parser);
+    xmlReader.parse(&xmlInput, true);
+    result = parser.md5Hashes();
+  }
   return result;
 }
 
