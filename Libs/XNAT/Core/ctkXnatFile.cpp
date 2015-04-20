@@ -207,7 +207,7 @@ void ctkXnatFile::saveImpl()
   // and hence at the end of the result list. So iterating backwards
   // is for performance reasons.
   QList<QVariantMap>::const_iterator it = result.constEnd()-1;
-  while (it != result.constBegin())
+  while (it != result.constBegin()-1)
   {
     QVariantMap::const_iterator it2 = (*it).find(this->name());
     if (it2 != (*it).constEnd())
@@ -226,7 +226,7 @@ void ctkXnatFile::saveImpl()
     hash.addData(file.readAll());
     QString md5ChecksumLocal(hash.result().toHex());
     // Retrieving the md5 checksum on the server and comparing
-    // if with the local file md5 sum
+    // it with the local file md5 sum
     if (md5ChecksumLocal != md5ChecksumRemote)
     {
       // Remove corrupted file from server
