@@ -56,4 +56,7 @@ int main(int argc, char** argv)
   ctkPluginFrameworkLauncher::setFrameworkProperties(fwProps);
   ctkPluginFrameworkLauncher::addSearchPath(pluginDir);
   ctkPluginFrameworkLauncher::run();
+
+  Q_ASSERT_X(QCoreApplication::instance()->property("app_test.success").toBool(), "MyAppContainer", "App did not run");
+  qDebug() << "App run successful";
 }

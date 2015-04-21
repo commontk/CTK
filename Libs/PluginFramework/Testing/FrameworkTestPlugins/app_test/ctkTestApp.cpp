@@ -23,7 +23,6 @@
 #include "ctkTestApp_p.h"
 
 #include <ctkPluginContext.h>
-#include <service/application/ctkApplicationLauncher.h>
 #include <service/application/ctkApplicationException.h>
 
 #include <QDebug>
@@ -123,6 +122,7 @@ void MyAppHandle::destroy()
 QVariant MyAppHandle::run(const QVariant& /*context*/)
 {
   Q_ASSERT_X(QThread::currentThread() == QCoreApplication::instance()->thread(), "MyAppHandle::run", "Not running in main thread");
+  QCoreApplication::instance()->setProperty("app_test.success", true);
   return QVariant();
 }
 
