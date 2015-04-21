@@ -22,44 +22,37 @@
 
 #include "ctkPluginFrameworkDebug_p.h"
 
-QString ctkPluginFrameworkDebug::ERRORS_PROP = "org.commontk.pluginfw.debug.errors";
-QString ctkPluginFrameworkDebug::FRAMEWORK_PROP = "org.commontk.pluginfw.debug.pluginfw";
-QString ctkPluginFrameworkDebug::HOOKS_PROP = "org.commontk.pluginfw.debug.hooks";
-QString ctkPluginFrameworkDebug::LAZY_ACTIVATION_PROP = "org.commontk.pluginfw.debug.lazy_activation";
-QString ctkPluginFrameworkDebug::LDAP_PROP = "org.commontk.pluginfw.debug.ldap";
-QString ctkPluginFrameworkDebug::SERVICE_REFERENCE_PROP = "org.commontk.pluginfw.debug.service_reference";
-QString ctkPluginFrameworkDebug::STARTLEVEL_PROP = "org.commontk.pluginfw.debug.startlevel";
-QString ctkPluginFrameworkDebug::URL_PROP = "org.commontk.pluginfw.debug.url";
-QString ctkPluginFrameworkDebug::RESOLVE_PROP = "org.commontk.pluginfw.debug.resolve";
+#include "ctkPluginFrameworkDebugOptions_p.h"
+#include "ctkPluginFrameworkProperties_p.h"
+
+static QString CTK_OSGI = "org.commontk.pluginfw";
+
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_GENERAL = CTK_OSGI + "/debug";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_FRAMEWORK = CTK_OSGI + "/debug/framework";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_ERRORS = CTK_OSGI + "/debug/errors";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_HOOKS = CTK_OSGI + "/debug/hooks";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_LAZY_ACTIVATION = CTK_OSGI + "/debug/lazy_activation";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_LDAP = CTK_OSGI + "/debug/ldap";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_SERVICE_REFERENCE = CTK_OSGI + "/debug/service_reference";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_STARTLEVEL = CTK_OSGI + "/debug/startlevel";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_URL = CTK_OSGI + "/debug/url";
+QString ctkPluginFrameworkDebug::OPTION_DEBUG_RESOLVE = CTK_OSGI + "/debug/resolve";
 
 //----------------------------------------------------------------------------
-ctkPluginFrameworkDebug::ctkPluginFrameworkDebug(ctkProperties& props)
+ctkPluginFrameworkDebug::ctkPluginFrameworkDebug()
 {
-  setPropertyIfNotSet(props, ERRORS_PROP, false);
-  setPropertyIfNotSet(props, FRAMEWORK_PROP, false);
-  setPropertyIfNotSet(props, HOOKS_PROP, false);
-  setPropertyIfNotSet(props, LAZY_ACTIVATION_PROP, false);
-  setPropertyIfNotSet(props, LDAP_PROP, false);
-  setPropertyIfNotSet(props, SERVICE_REFERENCE_PROP, false);
-  setPropertyIfNotSet(props, STARTLEVEL_PROP, false);
-  setPropertyIfNotSet(props, URL_PROP, false);
-  setPropertyIfNotSet(props, RESOLVE_PROP, false);
-  errors = props.value(ERRORS_PROP).toBool();
-  framework = props.value(FRAMEWORK_PROP).toBool();
-  hooks = props.value(HOOKS_PROP).toBool();
-  lazy_activation = props.value(LAZY_ACTIVATION_PROP).toBool();
-  ldap = props.value(LDAP_PROP).toBool();
-  service_reference = props.value(SERVICE_REFERENCE_PROP).toBool();
-  startlevel = props.value(STARTLEVEL_PROP).toBool();
-  url = props.value(URL_PROP).toBool();
-  resolve = props.value(RESOLVE_PROP).toBool();
-}
-
-//----------------------------------------------------------------------------
-void ctkPluginFrameworkDebug::setPropertyIfNotSet(ctkProperties& props, const QString& key, const QVariant& val)
-{
-  if (!props.contains(key))
+  ctkPluginFrameworkDebugOptions* dbgOptions = ctkPluginFrameworkDebugOptions::getDefault();
+  if (dbgOptions != NULL)
   {
-    props.insert(key, val);
+    enabled = dbgOptions->isDebugEnabled();
+    errors = dbgOptions->getBooleanOption(OPTION_DEBUG_ERRORS, false);
+    framework = dbgOptions->getBooleanOption(OPTION_DEBUG_FRAMEWORK, false);
+    hooks = dbgOptions->getBooleanOption(OPTION_DEBUG_HOOKS, false);
+    lazy_activation = dbgOptions->getBooleanOption(OPTION_DEBUG_LAZY_ACTIVATION, false);
+    ldap = dbgOptions->getBooleanOption(OPTION_DEBUG_LDAP, false);
+    service_reference = dbgOptions->getBooleanOption(OPTION_DEBUG_SERVICE_REFERENCE, false);
+    startlevel = dbgOptions->getBooleanOption(OPTION_DEBUG_STARTLEVEL, false);
+    url = dbgOptions->getBooleanOption(OPTION_DEBUG_URL, false);
+    resolve = dbgOptions->getBooleanOption(OPTION_DEBUG_RESOLVE, false);
   }
 }

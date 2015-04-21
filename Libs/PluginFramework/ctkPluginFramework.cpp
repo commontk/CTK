@@ -120,6 +120,8 @@ void ctkPluginFramework::start(const ctkPlugin::StartOptions& options)
     pluginsToStart = d->fwCtx->storage->getStartOnLaunchPlugins();
   }
 
+  d->activate(d->pluginContext.data());
+
   // Start plugins according to their autostart setting.
   QStringListIterator i(pluginsToStart);
   while (i.hasNext())

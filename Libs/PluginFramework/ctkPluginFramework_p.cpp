@@ -23,9 +23,15 @@
 #include "ctkPluginContext.h"
 #include "ctkPluginContext_p.h"
 #include "ctkPluginFramework.h"
+#include "ctkPluginFrameworkLauncher.h"
+
+#include "ctkLocationManager_p.h"
 #include "ctkPluginFramework_p.h"
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginFrameworkUtil_p.h"
+#include "ctkPluginFrameworkDebugOptions_p.h"
+
+#include "ctkBasicLocation_p.h"
 
 #include <QtConcurrentRun>
 
@@ -53,6 +59,63 @@ void ctkPluginFrameworkPrivate::init()
 void ctkPluginFrameworkPrivate::initSystemPlugin()
 {
   this->pluginContext.reset(new ctkPluginContext(this));
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkPrivate::activate(ctkPluginContext* context)
+{
+  ctkProperties locationProperties;
+  ctkBasicLocation* location = ctkLocationManager::getUserLocation();
+  if (location != NULL)
+  {
+    locationProperties["type"] =  ctkPluginFrameworkLauncher::PROP_USER_AREA;
+    registrations.push_back(context->registerService<ctkLocation>(location, locationProperties));
+  }
+  location = ctkLocationManager::getInstanceLocation();
+  if (location != NULL)
+  {
+    locationProperties["type"] = ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA;
+    registrations.push_back(context->registerService<ctkLocation>(location, locationProperties));
+  }
+  location = ctkLocationManager::getConfigurationLocation();
+  if (location != NULL)
+  {
+    locationProperties["type"] = ctkPluginFrameworkLauncher::PROP_CONFIG_AREA;
+    registrations.push_back(context->registerService<ctkLocation>(location, locationProperties));
+  }
+  location = ctkLocationManager::getInstallLocation();
+  if (location != NULL)
+  {
+    locationProperties["type"] = ctkPluginFrameworkLauncher::PROP_INSTALL_AREA;
+    registrations.push_back(context->registerService<ctkLocation>(location, locationProperties));
+  }
+
+  location = ctkLocationManager::getCTKHomeLocation();
+  if (location != NULL)
+  {
+    locationProperties["type"] = ctkPluginFrameworkLauncher::PROP_HOME_LOCATION_AREA;
+    registrations.push_back(context->registerService<ctkLocation>(location, locationProperties));
+  }
+
+  ctkPluginFrameworkDebugOptions* dbgOptions = ctkPluginFrameworkDebugOptions::getDefault();
+  dbgOptions->start(context);
+  context->registerService<ctkDebugOptions>(dbgOptions);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkPrivate::deactivate(ctkPluginContext* /*context*/)
+{
+  foreach(ctkServiceRegistration registration, registrations)
+  {
+    if (registration)
+    {
+      try
+      {
+        registration.unregister();
+      }
+      catch (const ctkIllegalStateException&) {}
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -117,6 +180,7 @@ void ctkPluginFrameworkPrivate::shutdown0(bool restart, bool wasActive)
     if (wasActive)
     {
       stopAllPlugins();
+      deactivate(this->pluginContext.data());
     }
 
     {

@@ -9,10 +9,17 @@ set(KIT_export_directive "CTK_PLUGINFW_EXPORT")
 
 # Source files
 set(KIT_SRCS
+  ctkApplicationRunnable.cpp
+  ctkBasicLocation_p.h
+  ctkBasicLocation.cpp
+  ctkDefaultApplicationLauncher_p.h
+  ctkDefaultApplicationLauncher.cpp
   ctkDictionary.h
   ctkLDAPExpr.cpp
   ctkLDAPExpr_p.h
   ctkLDAPSearchFilter.cpp
+  ctkLocationManager_p.h
+  ctkLocationManager.cpp
   ctkPlugin.cpp
   ctkPluginAbstractTracked_p.h
   ctkPluginAbstractTracked.tpp
@@ -34,7 +41,11 @@ set(KIT_SRCS
   ctkPluginFrameworkContext_p.h
   ctkPluginFrameworkDebug.cpp
   ctkPluginFrameworkDebug_p.h
+  ctkPluginFrameworkDebugOptions.cpp
+  ctkPluginFrameworkDebugOptions_p.h
   ctkPluginFrameworkEvent.cpp
+  ctkPluginFrameworkProperties.cpp
+  ctkPluginFrameworkProperties_p.h
   ctkPluginFrameworkLauncher.cpp
   ctkPluginFrameworkListeners.cpp
   ctkPluginFrameworkListeners_p.h
@@ -87,6 +98,11 @@ set(KIT_SRCS
   ctkVersionRange_p.h
 
   # Services
+  service/application/ctkApplicationDescriptor.cpp
+  service/application/ctkApplicationException.cpp
+  service/application/ctkApplicationHandle.cpp
+  service/application/ctkApplicationLauncher.h
+
   service/cm/ctkConfiguration.cpp
   service/cm/ctkConfigurationAdmin.cpp
   service/cm/ctkConfigurationEvent.cpp
@@ -95,6 +111,11 @@ set(KIT_SRCS
   service/cm/ctkConfigurationPlugin.cpp
   service/cm/ctkManagedService.h
   service/cm/ctkManagedServiceFactory.h
+
+  service/datalocation/ctkLocation.cpp
+
+  service/debug/ctkDebugOptions.cpp
+  service/debug/ctkDebugOptionsListener.h
 
   service/event/ctkEvent.cpp
   service/event/ctkEventAdmin.h
@@ -116,6 +137,9 @@ set(KIT_SRCS
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
+  ctkBasicLocation_p.h
+  ctkDefaultApplicationLauncher_p.h
+  ctkPluginFrameworkDebugOptions_p.h
   ctkPluginFrameworkListeners_p.h
   ctkTrackedPluginListener_p.h
   ctkTrackedServiceListener_p.h

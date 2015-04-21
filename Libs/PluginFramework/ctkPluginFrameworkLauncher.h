@@ -32,6 +32,8 @@
 class ctkPluginFramework;
 class ctkPluginFrameworkLauncherPrivate;
 
+class QRunnable;
+
 /**
  * \ingroup PluginFramework
  *
@@ -43,6 +45,43 @@ class ctkPluginFrameworkLauncherPrivate;
 class CTK_PLUGINFW_EXPORT ctkPluginFrameworkLauncher
 {
 public:
+
+  // System properties
+  static const QString PROP_USER_HOME; // = "user.home";
+  static const QString PROP_USER_DIR; // = "user.dir";
+
+  // Framework properties
+  static const QString PROP_PLUGINS; // = "ctk.plugins";
+  static const QString PROP_DEBUG; // = "ctk.debug";
+  static const QString PROP_DEV; // = "ctk.dev";
+  static const QString PROP_CONSOLE; // = "ctk.console";
+  static const QString PROP_OS; // = "ctk.os";
+  static const QString PROP_ARCH; // = "ctk.arch";
+
+  static const QString PROP_NOSHUTDOWN; // = "ctk.noShutdown";
+  static const QString PROP_IGNOREAPP; // = "ctk.ignoreApp";
+
+  static const QString PROP_INSTALL_AREA; // = "ctk.install.area";
+  static const QString PROP_CONFIG_AREA; // = "ctk.configuration.area";
+  static const QString PROP_SHARED_CONFIG_AREA; // = "ctk.sharedConfiguration.area";
+  static const QString PROP_INSTANCE_AREA; // = "ctk.instance.area";
+  static const QString PROP_USER_AREA; // = "ctk.user.area";
+  static const QString PROP_HOME_LOCATION_AREA; // = "ctk.home.location";
+
+
+  static const QString PROP_CONFIG_AREA_DEFAULT; // = "ctk.configuration.area.default";
+  static const QString PROP_INSTANCE_AREA_DEFAULT; // = "ctk.instance.area.default";
+  static const QString PROP_USER_AREA_DEFAULT; // = "ctk.user.area.default";
+
+  static const QString PROP_EXITCODE; // = "ctk.exitcode";
+  static const QString PROP_EXITDATA; // = "ctk.exitdata";
+  static const QString PROP_CONSOLE_LOG; // = "ctk.consoleLog";
+
+  static const QString PROP_ALLOW_APPRELAUNCH; // = "ctk.allowAppRelaunch";
+  static const QString PROP_APPLICATION_LAUNCHDEFAULT; // = "ctk.application.launchDefault";
+
+  static const QString PROP_OSGI_RELAUNCH; // = "ctk.pluginfw.relaunch";
+
 
   /**
    * Specify the set of framework properties to be used when
@@ -57,6 +96,69 @@ public:
    * \param props The initial Plugin Framework properties.
    */
   static void setFrameworkProperties(const ctkProperties& props);
+
+  /**
+   * Launches the platform and runs a single application. The application is either identified
+   * in the given arguments (e.g., -application &lt;app id&gt;) or in the <code>eclipse.application</code>
+   * System property.  This convenience method starts
+   * up the platform, runs the indicated application, and then shuts down the
+   * platform. The platform must not be running already.
+   *
+   * @param endSplashHandler the block of code to run to tear down the splash
+   * 	screen or <code>null</code> if no tear down is required
+   * @return the result of running the application
+   * @throws Exception if anything goes wrong
+   */
+  static QVariant run(QRunnable* endSplashHandler = NULL);
+
+  /**
+   * Runs the application for which the platform was started. The platform
+   * must be running.
+   * <p>
+   * The given argument is passed to the application being run.  If it is <code>null</code>
+   * then the command line arguments used in starting the platform, and not consumed
+   * by the platform code, are passed to the application as a <code>String[]</code>.
+   * </p>
+   * @param argument the argument passed to the application. May be <code>null</code>
+   * @return the result of running the application
+   * @throws std::exception if anything goes wrong
+   */
+  static QVariant run(const QVariant& argument);
+
+
+  /**
+   * Starts the platform and sets it up to run a single application. The application is either identified
+   * in the given arguments (e.g., -application &lt;app id&gt;) or in the <code>eclipse.application</code>
+   * System property.  The platform must not be running already.
+   * <p>
+   * The given runnable (if not <code>null</code>) is used to tear down the splash screen if required.
+   * </p>
+   * @param args the arguments passed to the application
+   * @return BundleContext the context of the system bundle
+   * @throws Exception if anything goes wrong
+   */
+  static ctkPluginContext* startup(QRunnable* endSplashHandler);
+
+
+  /**
+   * Shuts down the Platform. The state of the Platform is not automatically
+   * saved before shutting down.
+   * <p>
+   * On return, the Platform will no longer be running (but could be re-launched
+   * with another call to startup). If relaunching, care must be taken to reinitialize
+   * any System properties which the platform uses (e.g., osgi.instance.area) as
+   * some policies in the platform do not allow resetting of such properties on
+   * subsequent runs.
+   * </p><p>
+   * Any objects handed out by running Platform,
+   * including Platform runnables obtained via getRunnable, will be
+   * permanently invalid. The effects of attempting to invoke methods
+   * on invalid objects is undefined.
+   * </p>
+   * @throws std::exception if anything goes wrong
+   */
+  static void shutdown();
+
 
   /**
    * Install the plugin with the given symbolic name using the provided

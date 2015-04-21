@@ -26,6 +26,8 @@
 #include <QCoreApplication>
 
 #include <ctkException.h>
+#include <ctkLocationManager_p.h>
+#include <ctkBasicLocation_p.h>
 
 
 /**
@@ -314,30 +316,14 @@ QList<QMap<QString, QStringList> > ctkPluginFrameworkUtil::parseEntries(const QS
 }
 
 //----------------------------------------------------------------------------
-QString ctkPluginFrameworkUtil::getFrameworkDir(ctkPluginFrameworkContext* ctx)
+QString ctkPluginFrameworkUtil::getFrameworkDir(ctkPluginFrameworkContext* /*ctx*/)
 {
-  QString s = ctx->props[ctkPluginConstants::FRAMEWORK_STORAGE].toString();
-  if (s.isEmpty())
+  ctkLocation* location = ctkLocationManager::getConfigurationLocation();
+  if (location)
   {
-    s = QCoreApplication::applicationDirPath();
-    if (s.lastIndexOf("/") != s.length() -1)
-    {
-      s.append("/");
-    }
-    QString appName = QCoreApplication::applicationName();
-    appName.replace(" ", "");
-    if (!appName.isEmpty())
-    {
-      s.append(appName + "_ctkpluginfw");
-    }
-    else
-    {
-      s.append("ctkpluginfw");
-      qWarning() << "Warning: Using generic plugin framework storage directory:" << s;
-      qWarning() << "You should set an application name via QCoreApplication::setApplicationName()";
-    }
+    return location->getUrl().toLocalFile();
   }
-  return s;
+  return QString();
 }
 
 //----------------------------------------------------------------------------

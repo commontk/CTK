@@ -26,6 +26,7 @@
 
 #include "ctkPlugin_p.h"
 #include "ctkPluginFramework.h"
+#include "ctkServiceRegistration.h"
 
 class ctkPluginFrameworkContext;
 
@@ -71,6 +72,9 @@ public:
 
   void initSystemPlugin();
 
+  void activate(ctkPluginContext* context);
+  void deactivate(ctkPluginContext* context);
+
   void uninitSystemPlugin();
 
   /**
@@ -95,6 +99,8 @@ public:
   QHash<QString, QString> systemHeaders;
 
 private:
+
+  QList<ctkServiceRegistration> registrations;
 
   /**
    * Stop this FrameworkContext, suspending all started contexts.

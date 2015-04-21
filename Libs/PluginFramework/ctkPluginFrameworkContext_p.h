@@ -96,7 +96,7 @@ public:
    */
   static int globalId;
 
-  ctkProperties props;
+  ctkProperties& props;
 
   /**
    * Debug handle.
@@ -107,7 +107,7 @@ public:
    * Contruct a framework context
    *
    */
-  ctkPluginFrameworkContext(const ctkProperties& initProps);
+  ctkPluginFrameworkContext();
 
   ~ctkPluginFrameworkContext();
 

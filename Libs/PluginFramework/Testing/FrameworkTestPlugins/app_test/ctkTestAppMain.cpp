@@ -2,7 +2,7 @@
 
   Library: CTK
 
-  Copyright (c) 2010 German Cancer Research Center,
+  Copyright (c) German Cancer Research Center,
     Division of Medical and Biological Informatics
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,23 +19,23 @@
 
 =============================================================================*/
 
-#include <QCoreApplication>
-
-
 #include <ctkPluginConstants.h>
 
-#include "ctkPluginFrameworkTestRunner.h"
+#include <ctkPluginFrameworkLauncher.h>
 
+#include "ctkTestApp_p.h"
+
+#include <QCoreApplication>
+#include <QTest>
 
 int main(int argc, char** argv)
 {
   QCoreApplication app(argc, argv);
 
-  ctkPluginFrameworkTestRunner testRunner;
-
   app.setOrganizationName("CTK");
   app.setOrganizationDomain("commontk.org");
   app.setApplicationName("ctkPluginFrameworkCppTests");
+
 
   QString pluginDir;
 #ifdef CMAKE_INTDIR
@@ -44,19 +44,16 @@ int main(int argc, char** argv)
   pluginDir = qApp->applicationDirPath() + "/test_plugins/";
 #endif
 
-  testRunner.addPluginPath(pluginDir, false);
-  testRunner.addPlugin(pluginDir, "org_commontk_pluginfwtest");
-  testRunner.startPluginOnRun("org.commontk.pluginfwtest");
-
   ctkProperties fwProps;
   fwProps.insert(ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN, ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
-  fwProps.insert("pluginfw.testDir", pluginDir);
+  fwProps.insert(ctkPluginFrameworkLauncher::PROP_PLUGINS, "app_test");
   fwProps.insert("org.commontk.pluginfw.debug.pluginfw", true);
 
 #if defined(Q_CC_GNU) && ((__GNUC__ < 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ < 5)))
   fwProps.insert(ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS, QVariant::fromValue<QLibrary::LoadHints>(QLibrary::ExportExternalSymbolsHint));
 #endif
 
-  testRunner.init(fwProps);
-  return testRunner.run(argc, argv);
+  ctkPluginFrameworkLauncher::setFrameworkProperties(fwProps);
+  ctkPluginFrameworkLauncher::addSearchPath(pluginDir);
+  ctkPluginFrameworkLauncher::run();
 }

@@ -19,33 +19,43 @@
 
 =============================================================================*/
 
-#include "ctkPluginFrameworkFactory.h"
 
-#include "ctkPluginFrameworkContext_p.h"
-#include "ctkPluginFrameworkProperties_p.h"
-#include "ctkLocationManager_p.h"
+#include "ctkTestAppActivator_p.h"
+#include "ctkTestApp_p.h"
+
+#include "ctkTestApp_p.h"
+
+#include <ctkPluginContext.h>
+
+#include <QtPlugin>
+#include <QDebug>
 
 //----------------------------------------------------------------------------
-ctkPluginFrameworkFactory::ctkPluginFrameworkFactory(const ctkProperties& initProps)
-  : fwCtx(NULL)
+ctkTestAppActivator::ctkTestAppActivator()
 {
-  ctkPluginFrameworkProperties::setProperties(initProps);
-  ctkPluginFrameworkProperties::initializeProperties();
-
-  ctkLocationManager::initializeLocations();
-
-  fwCtx = new ctkPluginFrameworkContext();
 }
 
 //----------------------------------------------------------------------------
-ctkPluginFrameworkFactory::~ctkPluginFrameworkFactory()
+ctkTestAppActivator::~ctkTestAppActivator()
 {
-  fwCtx->uninit();
-  delete fwCtx;
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkPluginFramework> ctkPluginFrameworkFactory::getFramework()
+void ctkTestAppActivator::start(ctkPluginContext* context)
 {
-  return fwCtx->systemPlugin;
+  qDebug() << "[app_test] ctkTestAppActivator::start()";
+
+  appContainer.reset(new MyAppContainer(context));
+  appContainer->start();
 }
+
+//----------------------------------------------------------------------------
+void ctkTestAppActivator::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context)
+  appContainer->stop();
+}
+
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+Q_EXPORT_PLUGIN2(app_test, ctkTestAppActivator)
+#endif

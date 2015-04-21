@@ -32,36 +32,39 @@ class ctkPluginFrameworkDebug
 {
 
 public:
-  ctkPluginFrameworkDebug(ctkProperties& props);
+  ctkPluginFrameworkDebug();
+
+  static QString OPTION_DEBUG_GENERAL;
+  bool enabled;
 
   /**
    * Report error handling events.
    */
-  static QString ERRORS_PROP; // = "org.commontk.pluginfw.debug.errors";
+  static QString OPTION_DEBUG_ERRORS;
   bool errors;
 
   /**
    * Report pluginfw create, init, start, stop
    */
-  static QString FRAMEWORK_PROP; // = "org.commontk.pluginfw.debug.pluginfw";
+  static QString OPTION_DEBUG_FRAMEWORK;
   bool framework;
 
   /**
    * Report hooks handling
    */
-  static QString HOOKS_PROP; // = "org.commontk.pluginfw.debug.hooks";
+  static QString OPTION_DEBUG_HOOKS;
   bool hooks;
 
   /**
    * Report triggering of lazy activation
    */
-  static QString LAZY_ACTIVATION_PROP; // = "org.commontk.pluginfw.debug.lazy_activation";
+  static QString OPTION_DEBUG_LAZY_ACTIVATION;
   bool lazy_activation;
 
   /**
    * Report LDAP handling
    */
-  static QString LDAP_PROP; // = "org.commontk.pluginfw.debug.ldap";
+  static QString OPTION_DEBUG_LDAP;
   bool ldap;
 
   /**
@@ -69,30 +72,27 @@ public:
    * and rejections due to missing permissions
    * for calling plug-ins.
    */
-  static QString SERVICE_REFERENCE_PROP; // = "org.commontk.pluginfw.debug.service_reference";
+  static QString OPTION_DEBUG_SERVICE_REFERENCE;
   bool service_reference;
 
   /**
    * Report startlevel.
    */
-  static QString STARTLEVEL_PROP; // = "org.commontk.pluginfw.debug.startlevel";
+  static QString OPTION_DEBUG_STARTLEVEL;
   bool startlevel;
 
   /**
    * Report url
    */
-  static QString URL_PROP; // = "org.commontk.pluginfw.debug.url";
+  static QString OPTION_DEBUG_URL;
   bool url;
 
   /**
    * Report plug-in resolve progress
    */
-  static QString RESOLVE_PROP; // = "org.commontk.pluginfw.debug.resolve";
+  static QString OPTION_DEBUG_RESOLVE;
   bool resolve;
 
-private:
-
-  void setPropertyIfNotSet(ctkProperties& props, const QString& key, const QVariant& val);
 };
 
 #endif // CTKPLUGINFRAMEWORKDEBUG_P_H
