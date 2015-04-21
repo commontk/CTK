@@ -57,6 +57,8 @@ public:
 
 private:
 
+  Q_DISABLE_COPY(MyAppContainer)
+
   virtual ctkApplicationLauncher* addingService(const ctkServiceReference& reference);
   virtual void modifiedService(const ctkServiceReference& reference, ctkApplicationLauncher* service);
   virtual void removedService(const ctkServiceReference& reference, ctkApplicationLauncher* service);

@@ -24,7 +24,7 @@
 
 #include <QtPlugin>
 
-class ctkDebugOptions;
+struct ctkDebugOptions;
 
 /**
  * A debug options listener is notified whenever one of its plug-in option-path entries is

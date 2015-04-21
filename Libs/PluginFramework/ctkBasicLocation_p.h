@@ -74,7 +74,7 @@ public:
 private:
 
   struct MockLocker;
-  struct FileLocker;
+  class FileLocker;
 
   bool m_isReadOnly;
   QUrl m_location;
