@@ -293,6 +293,20 @@ public:
     foreach(const QString& installEntry, installEntries)
     {
       QUrl pluginUrl(installEntry);
+      if (pluginUrl.isValid() && pluginUrl.scheme().isEmpty())
+      {
+        // try a local file path
+        QFileInfo installFileInfo(installEntry);
+        if (installFileInfo.exists())
+        {
+          pluginUrl = QUrl::fromLocalFile(installFileInfo.absoluteFilePath());
+        }
+        else
+        {
+          pluginUrl.clear();
+        }
+      }
+
       if (pluginUrl.isValid())
       {
         QSharedPointer<ctkPlugin> plugin = install(pluginUrl, context);
