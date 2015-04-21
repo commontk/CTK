@@ -21,8 +21,9 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
-#include <QVBoxLayout>
+#include <QPalette>
 #include <QTimer>
+#include <QVBoxLayout>
 
 // CTK includes
 #include "ctkSearchBox.h"
@@ -36,8 +37,13 @@ int ctkSearchBoxTest1(int argc, char* argv[])
 {
   QApplication app(argc, argv);
 
+  QPalette p;
+  p.setColor(QPalette::ColorRole::Window, Qt::gray);
+  p.setColor(QPalette::ColorRole::Base, Qt::gray);
+
   ctkSearchBox search;
   search.setShowSearchIcon(true);
+  search.setPalette(p);
   search.show();
 
   QWidget topLevel;
