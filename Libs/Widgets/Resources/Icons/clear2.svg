@@ -51,6 +51,9 @@
        y2="609"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0,-0.5462895,0.5462895,0,-604.7214,629.48684)" />
+    <filter id="white-border_blur">
+      <feGaussianBlur stdDeviation="0.2" in="SourceGraphic"/>
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -82,6 +85,10 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
+  <g display="inline" id="layer1">
+    <title>Background</title>
+    <path filter="url(#white-border_blur)" stroke-linejoin="round" stroke-width="1" stroke="#ffffff" fill="none" stroke-miterlimit="4" id="white-border" d="m6.11337,7.32074l4.74588,4.74585l-4.72882,4.74591l1.10965,1.092529l4.72882,-4.728819l4.72882,4.728819l1.09259,-1.092529l-4.72882,-4.72882l4.762969,-4.76294l-1.109678,-1.10968l-4.745881,4.763l-4.76297,-4.763l-1.09256,1.10968z"/>
+  </g>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
