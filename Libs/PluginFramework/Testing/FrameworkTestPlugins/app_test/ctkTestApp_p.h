@@ -30,13 +30,14 @@
 #include <ctkApplicationRunnable.h>
 #include <ctkServiceRegistration.h>
 
+#include <service/application/ctkApplicationLauncher.h>
+
 #include <ctkServiceTracker.h>
 #include <ctkServiceTrackerCustomizer.h>
 
 #include <QObject>
 
 class ctkPluginContext;
-class ctkApplicationLauncher;
 
 class MyAppHandle;
 class MyAppDescriptor;
