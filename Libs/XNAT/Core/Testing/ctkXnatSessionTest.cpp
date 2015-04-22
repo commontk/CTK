@@ -223,7 +223,7 @@ void ctkXnatSessionTestCase::testCreateProject()
   bool exists = d->Session->exists(project);
   QVERIFY(!exists);
 
-  d->Session->save(project);
+  project->save();
 
   exists = d->Session->exists(project);
   QVERIFY(exists);

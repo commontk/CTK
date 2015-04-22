@@ -146,6 +146,24 @@ public:
    */
   QString sessionId() const;
 
+  /**
+    * @brief Sets the default location where files will be save after being downloaded
+    *
+    * Sets the default directory into which file downloads will be saved.
+    * By default this value is empty and files will be stored into the directory
+    * of the executable.
+    * If the path does not exists a warning will be printed and the path will be
+    * set to the current working directory
+    *
+    * @param path the path to the download location
+    */
+  void setDefaultFilePath(const QString& path);
+
+  /**
+    * @brief returns the default download location
+    * @return the default download directory as string
+    */
+  QString defaultFilePath() const;
 
   ctkXnatDataModel* dataModel() const;
 
@@ -175,6 +193,18 @@ public:
   /**
    * @brief TODO
    * @param uuid
+   * @param parameters
+   *
+   * @throws ctkXnatInvalidSessionException if the session is closed.
+   * @return
+   */
+   QUuid httpPut(const QString& resource,
+                const UrlParameters& parameters = UrlParameters(),
+                const HttpRawHeaders& rawHeaders = HttpRawHeaders());
+
+  /**
+   * @brief TODO
+   * @param uuid
    *
    * @throws ctkXnatInvalidSessionException if the session is closed.
    * @return
@@ -192,7 +222,6 @@ public:
 
   bool exists(const ctkXnatObject* object);
 
-  void save(ctkXnatObject* object);
   void remove(ctkXnatObject* object);
 
   /// Downloads a file from the web service.
@@ -202,6 +231,17 @@ public:
   /// These headers will be set additionally to those defined by the
   /// \a defaultRawHeaders property.
   void download(const QString& fileName,
+    const QString& resource,
+    const UrlParameters& parameters = UrlParameters(),
+    const HttpRawHeaders& rawHeaders = HttpRawHeaders());
+
+  /// Uploads a file to the web service.
+  /// \a fileName is the name of the file.
+  /// The \a resource and \parameters are used to compose the URL.
+  /// \a rawHeaders can be used to set the raw headers of the request to send.
+  /// These headers will be set additionally to those defined by the
+  /// \a defaultRawHeaders property.
+  void upload(const QString& fileName,
     const QString& resource,
     const UrlParameters& parameters = UrlParameters(),
     const HttpRawHeaders& rawHeaders = HttpRawHeaders());
@@ -229,9 +269,13 @@ public:
    */
   Q_SIGNAL void sessionAboutToBeClosed();
 
+  Q_SIGNAL void uploadFinished();
+
+  Q_SIGNAL void progress(QUuid, double);
+
 public slots:
   void processResult(QUuid queryId, QList<QVariantMap> parameters);
-  void progress(QUuid queryId, double progress);
+  void onProgress(QUuid queryId, double onProgress);
 
 protected:
   QScopedPointer<ctkXnatSessionPrivate> d_ptr;

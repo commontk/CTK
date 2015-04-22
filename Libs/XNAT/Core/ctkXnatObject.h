@@ -78,7 +78,7 @@ public:
   void setProperty(const QString& name, const QVariant& value);
 
   /// Gets the last modification time from the server
-  QDateTime lastModifiedTime();
+  virtual QDateTime lastModifiedTimeOnServer();
 
   /// Sets the last modfication time on the server
   void setLastModifiedTime(const QDateTime& lastModifiedTime);
@@ -100,7 +100,7 @@ public:
   /// Adds an object to the children of the current one.
   void add(ctkXnatObject* child);
 
-  /// Removes the object from the children of the current object and removes it from the XNAT server.
+  /// Removes the object from the children of the current object.
   void remove(ctkXnatObject* child);
 
   /// Tells if the children and the properties of the objects have been fetched.
@@ -128,7 +128,10 @@ public:
   void erase();
 
   void download(const QString&);
-  virtual void upload(const QString&);
+
+  /// Creates the object on the XNAT server and sets the new ID.
+  virtual void addResource(QString foldername,
+                           QString format = "", QString content = "", QString tags = "");
 
   //QObject* asyncObject() const;
 
@@ -180,6 +183,10 @@ private:
 
   /// The implementation of the download mechanism, called by the download(const QString&) function.
   virtual void downloadImpl(const QString&) = 0;
+
+  /// The implementation of the upload mechanism, called by the save() function.
+  /// Subclasses of ctkXnatObject can overwrite this function if needed
+  virtual void saveImpl();
 
   Q_DECLARE_PRIVATE(ctkXnatObject)
 };

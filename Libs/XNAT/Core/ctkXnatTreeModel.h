@@ -57,8 +57,9 @@ public:
 
   bool removeAllRows(const QModelIndex& parent);
 
-  void uploadFile(const QModelIndex& index, const QString& zipFilename);
   void downloadFile (const QModelIndex& index, const QString& zipFilename);
+
+  void addChildNode(const QModelIndex& index, ctkXnatObject *child);
 
 private:
 

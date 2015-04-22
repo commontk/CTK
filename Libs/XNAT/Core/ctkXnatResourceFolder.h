@@ -19,71 +19,39 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatResource_h
-#define ctkXnatResource_h
+#ifndef ctkXnatResourceFolder_h
+#define ctkXnatResourceFolder_h
 
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
-#include "ctkXnatDefaultSchemaTypes.h"
 
-class ctkXnatResourcePrivate;
+class ctkXnatResourceFolderPrivate;
 
 /**
  * @ingroup XNAT_Core
  */
-class CTK_XNAT_CORE_EXPORT ctkXnatResource : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatResourceFolder : public ctkXnatObject
 {
 
 public:
 
-  ctkXnatResource(ctkXnatObject* parent = 0,
-                      const QString& schemaType = ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
+  ctkXnatResourceFolder(ctkXnatObject* parent = NULL);
 
-  virtual ~ctkXnatResource();
+  virtual ~ctkXnatResourceFolder();
 
   virtual QString resourceUri() const;
 
-  virtual QString id() const;
-  virtual void setId(const QString &id);
-
-  virtual QString name() const;
-  virtual void setName(const QString &name);
-
-  /// Gets the label of the object.
-  QString label() const;
-
-  /// Sets the label of the object.
-  void setLabel(const QString& label);
-
-  void setFormat(const QString& format);
-  QString format() const;
-
-  void setTags(const QString& tags);
-  QString tags() const;
-
-  void setContent(const QString& content);
-  QString content() const;
-
   void reset();
-
-  void saveImpl();
-
-  static const QString ID;
-  static const QString TAGS;
-  static const QString FORMAT;
-  static const QString CONTENT;
 
 private:
 
   friend class qRestResult;
-
   virtual void fetchImpl();
-
   virtual void downloadImpl(const QString&);
+  virtual void saveImpl();
 
-  Q_DECLARE_PRIVATE(ctkXnatResource)
-
+  Q_DECLARE_PRIVATE(ctkXnatResourceFolder)
 };
 
 #endif

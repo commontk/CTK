@@ -21,10 +21,12 @@ set(KIT_SRCS
   ctkXnatReconstruction.cpp
   ctkXnatReconstructionFolder.cpp
   ctkXnatResource.cpp
+  ctkXnatResourceCatalogXmlParser.cpp
   ctkXnatScan.cpp
   ctkXnatScanFolder.cpp
   ctkXnatAssessor.cpp
   ctkXnatAssessorFolder.cpp
+  ctkXnatResourceFolder.cpp
   ctkXnatSession.cpp
   ctkXnatSettings.cpp
   ctkXnatSubject.cpp

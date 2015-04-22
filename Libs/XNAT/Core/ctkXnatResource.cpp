@@ -24,6 +24,10 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSession.h"
 
+const QString ctkXnatResource::TAGS = "tags";
+const QString ctkXnatResource::FORMAT = "format";
+const QString ctkXnatResource::CONTENT = "content";
+
 const QString ctkXnatResource::ID = "xnat_abstractresource_id";
 //----------------------------------------------------------------------------
 class ctkXnatResourcePrivate : public ctkXnatObjectPrivate
@@ -51,7 +55,7 @@ ctkXnatResource::~ctkXnatResource()
 //----------------------------------------------------------------------------
 QString ctkXnatResource::resourceUri() const
 {
-  return QString("%1/resources/%2").arg(parent()->resourceUri(), this->id());
+  return QString("%1/%2").arg(parent()->resourceUri(), this->name());
 }
 
 //----------------------------------------------------------------------------
@@ -91,6 +95,41 @@ void ctkXnatResource::setLabel(const QString &label)
 }
 
 //----------------------------------------------------------------------------
+void ctkXnatResource::setFormat(const QString &fileFormat)
+{
+  this->setProperty(FORMAT, fileFormat);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::format() const
+{
+  return this->property(FORMAT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::setContent(const QString &fileContent)
+{
+  this->setProperty(CONTENT, fileContent);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::content() const
+{
+  return this->property(CONTENT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::setTags(const QString &fileTags)
+{
+  this->setProperty(TAGS, fileTags);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResource::tags() const
+{
+  return this->property(TAGS);
+}
+//----------------------------------------------------------------------------
 void ctkXnatResource::reset()
 {
   ctkXnatObject::reset();
@@ -125,4 +164,23 @@ void ctkXnatResource::downloadImpl(const QString& filename)
   ctkXnatSession::UrlParameters parameters;
   parameters["format"] = "zip";
   this->session()->download(filename, query, parameters);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResource::saveImpl()
+{
+  QString query = this->resourceUri();
+
+  query.append(QString("?%1=%2").arg("xsi:type", this->schemaType()));
+  const QMap<QString, QString>& properties = this->properties();
+  QMapIterator<QString, QString> itProperties(properties);
+  while (itProperties.hasNext())
+  {
+    itProperties.next();
+    if (itProperties.key() == ID || itProperties.key() == "xsiType")
+      continue;
+    query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
+  }
+  QUuid queryId = this->session()->httpPut(query);
+  session()->httpResults(queryId, ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
 }
