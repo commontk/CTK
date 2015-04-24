@@ -296,7 +296,13 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     }
 
   // Force the cursor back to the interactive area if anything else than copy/paste or page up/down is done
-  if(history_area)
+  // but only when a "real" key is pressed, not just a modifier (otherwise we could not press Control-c in the
+  // history area because the cursor would jump to the interactive area immediately when Control is pressed)
+  if(history_area
+       && e->key() != Qt::Key_Control
+       && e->key() != Qt::Key_Meta
+       && e->key() != Qt::Key_Alt
+       && e->key() != Qt::Key_Shift)
     {
     text_cursor.setPosition(this->documentEnd());
     this->setTextCursor(text_cursor);
