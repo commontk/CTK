@@ -322,7 +322,7 @@ void ctkXnatObject::save()
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::addResource(QString foldername, QString format,
+ctkXnatResource* ctkXnatObject::addResourceFolder(QString foldername, QString format,
                                    QString content, QString tags)
 {
   if (foldername.size() == 0)
@@ -358,6 +358,8 @@ void ctkXnatObject::addResource(QString foldername, QString format,
 
   resFolder->add(resource);
   resource->save();
+
+  return resource;
 }
 
 //----------------------------------------------------------------------------

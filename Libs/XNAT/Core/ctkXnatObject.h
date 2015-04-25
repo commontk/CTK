@@ -31,6 +31,7 @@
 #include <QString>
 #include <QMetaType>
 
+class ctkXnatResource;
 class ctkXnatSession;
 class ctkXnatObjectPrivate;
 
@@ -130,7 +131,7 @@ public:
   void download(const QString&);
 
   /// Creates the object on the XNAT server and sets the new ID.
-  virtual void addResource(QString foldername,
+  virtual ctkXnatResource* addResourceFolder(QString foldername,
                            QString format = "", QString content = "", QString tags = "");
 
   //QObject* asyncObject() const;
