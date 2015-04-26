@@ -167,7 +167,7 @@ void ctkXnatResource::downloadImpl(const QString& filename)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatResource::saveImpl()
+void ctkXnatResource::saveImpl(bool /*overwrite*/)
 {
   QString query = this->resourceUri();
 

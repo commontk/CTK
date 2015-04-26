@@ -314,10 +314,10 @@ void ctkXnatObject::download(const QString& filename)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::save()
+void ctkXnatObject::save(bool overwrite)
 {
   Q_D(ctkXnatObject);
-  this->saveImpl();
+  this->saveImpl(overwrite);
   d->modified = false;
 }
 
@@ -369,7 +369,7 @@ bool ctkXnatObject::exists() const
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::saveImpl()
+void ctkXnatObject::saveImpl(bool /*overwrite*/)
 {
   Q_D(ctkXnatObject);
   QString query = this->resourceUri();

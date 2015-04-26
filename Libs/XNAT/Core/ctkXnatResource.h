@@ -67,7 +67,7 @@ public:
 
   void reset();
 
-  void saveImpl();
+  void saveImpl(bool overwrite);
 
   static const QString ID;
   static const QString TAGS;

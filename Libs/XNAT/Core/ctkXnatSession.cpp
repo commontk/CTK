@@ -35,6 +35,7 @@
 #include "ctkXnatScan.h"
 #include "ctkXnatSubject.h"
 
+#include <QCryptographicHash>
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
@@ -615,14 +616,61 @@ void ctkXnatSession::download(const QString& fileName,
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatSession::upload(const QString &fileName,
-                            const QString &resource,
+void ctkXnatSession::upload(ctkXnatFile *file,
                             const UrlParameters &parameters,
-                            const HttpRawHeaders &rawHeaders)
+                            const HttpRawHeaders &/*rawHeaders*/)
 {
   Q_D(ctkXnatSession);
-  QUuid queryId = d->xnat->upload(fileName, resource, parameters);
+  QUuid queryId = d->xnat->upload(file->localFilePath(), file->resourceUri(), parameters);
   d->xnat->sync(queryId);
+
+  // TODO this into session!!!
+  // Validating the file upload by requesting the catalog XML
+  // of the parent resource. Unfortunately for XNAT versions <= 1.6.4
+  // this is the only way to get the file's MD5 hash form the server.
+  QString md5Query = file->parent()->resourceUri();
+  QUuid md5ID = this->httpGet(md5Query);
+  QList<QVariantMap> result = this->httpSync(md5ID);
+
+  QString md5ChecksumRemote ("0");
+  // Newly added files are usually at the end of the catalog
+  // and hence at the end of the result list. So iterating backwards
+  // is for performance reasons.
+  QList<QVariantMap>::const_iterator it = result.constEnd()-1;
+  while (it != result.constBegin()-1)
+  {
+    QVariantMap::const_iterator it2 = (*it).find(file->name());
+    if (it2 != (*it).constEnd())
+    {
+      md5ChecksumRemote = it2.value().toString();
+      break;
+    }
+    --it;
+  }
+
+  QFile localFile(file->localFilePath());
+  if (localFile.open(QFile::ReadOnly) && md5ChecksumRemote != "0")
+  {
+    QCryptographicHash hash(QCryptographicHash::Md5);
+    // TODO Do this in case of Qt5
+    //if (hash.addData(&file))
+    hash.addData(localFile.readAll());
+    QString md5ChecksumLocal(hash.result().toHex());
+    // Retrieving the md5 checksum on the server and comparing
+    // it with the local file md5 sum
+    if (md5ChecksumLocal != md5ChecksumRemote)
+    {
+      // Remove corrupted file from server
+      file->erase();
+      // TODO qError! Exception im Pythonwrapping nicht auswertbar?
+      throw ctkXnatException("Upload failed! An error occurred during file upload.");
+    }
+  }
+  else
+  {
+    qWarning()<<"Could not validate file upload! Remote MD5: "<<md5ChecksumRemote;
+  }
+  // End file validation
 }
 
 //----------------------------------------------------------------------------

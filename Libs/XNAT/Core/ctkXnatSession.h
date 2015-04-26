@@ -241,8 +241,7 @@ public:
   /// \a rawHeaders can be used to set the raw headers of the request to send.
   /// These headers will be set additionally to those defined by the
   /// \a defaultRawHeaders property.
-  void upload(const QString& fileName,
-    const QString& resource,
+  void upload(ctkXnatFile *,
     const UrlParameters& parameters = UrlParameters(),
     const HttpRawHeaders& rawHeaders = HttpRawHeaders());
 

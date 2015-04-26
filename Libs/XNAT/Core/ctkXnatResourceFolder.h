@@ -49,7 +49,7 @@ private:
   friend class qRestResult;
   virtual void fetchImpl();
   virtual void downloadImpl(const QString&);
-  virtual void saveImpl();
+  virtual void saveImpl(bool overwrite);
 
   Q_DECLARE_PRIVATE(ctkXnatResourceFolder)
 };

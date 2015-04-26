@@ -101,7 +101,7 @@ void ctkXnatResourceFolder::downloadImpl(const QString& filename)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatResourceFolder::saveImpl()
+void ctkXnatResourceFolder::saveImpl(bool /*overwrite*/)
 {
   // Not implemented since a resource folder is automatically created when
   // a resource is uploaded

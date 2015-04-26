@@ -123,7 +123,9 @@ public:
   bool exists() const;
 
   /// Creates the object on the XNAT server and sets the new ID.
-  void save();
+  /// @param overwrite, if true and the object already exists on the server
+  ///                   it will be overwritten by the changes
+  void save(bool overwrite = true);
 
   /// Deletes the object on the XNAT server and removes it from its parent.
   void erase();
@@ -187,7 +189,9 @@ private:
 
   /// The implementation of the upload mechanism, called by the save() function.
   /// Subclasses of ctkXnatObject can overwrite this function if needed
-  virtual void saveImpl();
+  /// @param overwrite, if true and the object already exists on the server
+  ///                   it will be overwritten by the changes
+  virtual void saveImpl(bool overwrite = true);
 
   Q_DECLARE_PRIVATE(ctkXnatObject)
 };

@@ -151,9 +151,13 @@ void ctkXnatFile::downloadImpl(const QString& filename)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatFile::saveImpl()
+void ctkXnatFile::saveImpl(bool overwrite)
 {
   Q_D(ctkXnatFile);
+
+  QMap<QString, QString> urlParams;
+  urlParams["xsi:type"] = this->schemaType();
+  urlParams["inbody"] = "true";
   QString query = this->resourceUri();
   QString filename = this->localFilePath();
 
@@ -180,64 +184,24 @@ void ctkXnatFile::saveImpl()
         itProperties.key() == FILE_CONTENT)
       continue;
 
+    urlParams[itProperties.key()] = itProperties.value();
     query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
   }
-  query.append(QString("&%1=%2").arg("format", this->fileFormat()));
-  query.append(QString("&%1=%2").arg("content", this->fileContent()));
-  query.append(QString("&%1=%2").arg("tags", this->fileTags()));
+  if (!this->fileFormat().isNull())
+    urlParams["format"] = this->fileFormat();
+  if (!this->fileContent().isNull())
+    urlParams["content"] = this->fileContent();
+  if (!this->fileContent().isNull())
+    urlParams["tags"] = this->fileTags();
 
-  // TODO May be flag for setting overwrite and not doing this automatically
-  if (this->exists())
-    query.append(QString("&%1=%2").arg("overwrite", true));
+  if (this->exists() && overwrite)
+    urlParams["overwrite"] = "true";
 
   // Flag needed for file upload
   query.append(QString("&%1=%2").arg("inbody", "true"));
 
-  this->session()->upload(filename, query);
+  this->session()->upload(this, urlParams);
 
-  // Validating the file upload by requesting the catalog XML
-  // of the parent resource. Unfortunately for XNAT versions <= 1.6.4
-  // this is the only way to get the file's MD5 hash form the server.
-  QString md5Query = this->parent()->resourceUri();
-  QUuid md5ID = this->session()->httpGet(md5Query);
-  QList<QVariantMap> result = this->session()->httpSync(md5ID);
-
-  QString md5ChecksumRemote ("0");
-  // Newly added files are usually at the end of the catalog
-  // and hence at the end of the result list. So iterating backwards
-  // is for performance reasons.
-  QList<QVariantMap>::const_iterator it = result.constEnd()-1;
-  while (it != result.constBegin()-1)
-  {
-    QVariantMap::const_iterator it2 = (*it).find(this->name());
-    if (it2 != (*it).constEnd())
-    {
-      md5ChecksumRemote = it2.value().toString();
-      break;
-    }
-    --it;
-  }
-
-  if (file.open(QFile::ReadOnly) && md5ChecksumRemote != "0")
-  {
-    QCryptographicHash hash(QCryptographicHash::Md5);
-    // TODO Do this in case of Qt5
-    //if (hash.addData(&file))
-    hash.addData(file.readAll());
-    QString md5ChecksumLocal(hash.result().toHex());
-    // Retrieving the md5 checksum on the server and comparing
-    // it with the local file md5 sum
-    if (md5ChecksumLocal != md5ChecksumRemote)
-    {
-      // Remove corrupted file from server
-      this->erase();
-      throw ctkXnatException("Upload failed! An error occurred during file upload.");
-    }
-  }
-  else
-  {
-    qWarning()<<"Could not validate file upload!";
-  }
-  // End file validation
-
+//  d->setIsModified();
+//  this->parent()->fetch();
 }

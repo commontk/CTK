@@ -75,9 +75,8 @@ private:
   /**
     * @brief Uploads the file to the server
     * Before calling save() the localFilePath has to be set
-    * @throws ctkXnatException it the specified file does not exists
     */
-  virtual void saveImpl();
+  virtual void saveImpl(bool overwrite);
 
   Q_DECLARE_PRIVATE(ctkXnatFile)
 };
