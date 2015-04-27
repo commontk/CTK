@@ -12,6 +12,6 @@
         <event widget="fileDialog1/checkBox1" command="set_boolean" arguments="true"/>
         <event widget="fileDialog1/checkBox1" command="set_boolean" arguments="false"/>
         <event widget="fileDialog1/checkBox1" command="set_boolean" arguments="true"/>
-        <event widget="fileDialog1" command="newFile" arguments="/home/benjaminlong/Documents/ctk-QtTesting-renderView/ctkVTKRenderViewEventTranslatorPlayerTest1Screenshot.png#/home/benjaminlong/Documents/ctk-QtTesting-renderView/ctkVTKRenderViewEventTranslatorPlayerTest1ScreenshotTest.png"/>
+        <event widget="fileDialog1" command="newFile" arguments="${CTK_SOURCE_DIR}/ctkLogo.png#${CTK_SOURCE_DIR}/ctkLogo-small.png"/>
     </events>
 </QtTesting>

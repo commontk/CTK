@@ -14,6 +14,6 @@
         <event widget="fileDialog2/checkBox2" command="set_boolean" arguments="true"/>
         <event widget="fileDialog2/checkBox2" command="set_boolean" arguments="false"/>
         <event widget="fileDialog2/checkBox2" command="set_boolean" arguments="true"/>
-        <event widget="fileDialog2" command="newFile" arguments="/home/benjaminlong/GroupBox.png"/>
+        <event widget="fileDialog2" command="newFile" arguments="${CTK_SOURCE_DIR}/ctkLogo.png"/>
     </events>
 </QtTesting>
