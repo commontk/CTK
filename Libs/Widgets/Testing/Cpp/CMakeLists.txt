@@ -250,7 +250,11 @@ add_executable(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  target_link_libraries(${KIT}CppTests Qt5::Test)
+  list(APPEND KIT_target_libraries Qt5::Test)
+  if(CTK_USE_QTTESTING)
+    list(APPEND KIT_target_libraries Qt5::Xml Qt5::XmlPatterns)
+  endif()
+  target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 endif()
 
 #

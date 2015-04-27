@@ -106,12 +106,20 @@ int ctkCheckableHeaderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
 
   QHeaderView* previousHeaderView = table.horizontalHeader();
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   bool oldClickable = previousHeaderView->isClickable();
-
+#else
+  bool oldClickable = previousHeaderView->sectionsClickable();
+#endif
   ctkCheckableHeaderView* headerView =
     new ctkCheckableHeaderView(Qt::Horizontal, &table);
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   headerView->setClickable(oldClickable);
   headerView->setMovable(previousHeaderView->isMovable());
+#else
+  headerView->setSectionsClickable(oldClickable);
+  headerView->setSectionsMovable(previousHeaderView->sectionsMovable());
+#endif
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   // propagatetoitems is true by default
   //headerView->setPropagateToItems(true);
@@ -131,7 +139,7 @@ int ctkCheckableHeaderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
                         &checkFinalWidgetState);
 
   // ------------------------
-  if (!app.arguments().contains("-I"))
+  if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
     }

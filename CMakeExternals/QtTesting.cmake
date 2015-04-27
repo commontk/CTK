@@ -24,7 +24,7 @@ endif()
 
 if(NOT DEFINED QtTesting_DIR)
 
-  set(revision_tag 7dbef1003157941e7315220f53cf4e17d78b5e28)
+  set(revision_tag a5c52c52516d419802ee1e4b1800ee3aabc5cdd2)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -49,6 +49,17 @@ if(NOT DEFINED QtTesting_DIR)
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
+  set(proj_qt_args
+	  -DQtTesting_QT_VERSION:STRING=${CTK_QT_VERSION})
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    list(APPEND proj_qt_args
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+    )
+  else()
+    list(APPEND proj_qt_args
+      -DCMAKE_PREFIX_PATH:FILEPATH=${CMAKE_PREFIX_PATH}
+    )
+  endif()
   message(STATUS "Adding project:${proj}")
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
@@ -58,8 +69,8 @@ if(NOT DEFINED QtTesting_DIR)
     ${location_args}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
+	  ${proj_qt_args}
       -DBUILD_SHARED_LIBS:BOOL=ON
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )

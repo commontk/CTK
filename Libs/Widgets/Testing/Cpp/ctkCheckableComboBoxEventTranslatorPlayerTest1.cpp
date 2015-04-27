@@ -116,7 +116,7 @@ int ctkCheckableComboBoxEventTranslatorPlayerTest1(int argc, char * argv [])
                         &checkFinalWidgetState2);
 
   // ------------------------
-  if (!app.arguments().contains("-I"))
+  if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
     }
