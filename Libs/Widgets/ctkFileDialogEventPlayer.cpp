@@ -28,6 +28,9 @@
 #include "ctkFileDialog.h"
 #include "ctkFileDialogEventPlayer.h"
 
+// QtTesting includes
+#include <pqTestUtility.h>
+
 // ----------------------------------------------------------------------------
 ctkFileDialogEventPlayer::ctkFileDialogEventPlayer(pqTestUtility* util, QObject *parent)
   : pqNativeFileDialogEventPlayer(util, parent)
@@ -36,39 +39,42 @@ ctkFileDialogEventPlayer::ctkFileDialogEventPlayer(pqTestUtility* util, QObject 
 }
 
 // ----------------------------------------------------------------------------
-bool ctkFileDialogEventPlayer::playEvent(QObject *Object,
-                                                const QString &Command,
-                                                const QString &Arguments,
-                                                bool &Error)
+bool ctkFileDialogEventPlayer::playEvent(QObject *object,
+                                         const QString &command,
+                                         const QString &arguments,
+                                         bool &error)
 {
-  if (Command == "FileOpen" || Command == "DirOpen" ||
-      Command == "FileSave" || Command == "FilesOpen")
+  if (command == "FileOpen" || command == "DirOpen" ||
+      command == "FileSave" || command == "FilesOpen")
     {
-    return this->Superclass::playEvent(Object, Command, Arguments, Error);
+    return this->Superclass::playEvent(object, command, arguments, error);
     }
 
-  if (Command != "newFile" &&
-      Command != "rejected" &&
-      Command != "fileSave")
+  if (command != "newFile" &&
+      command != "rejected" &&
+      command != "fileSave")
     {
     return false;
     }
 
-  if(ctkFileDialog* const object =
-       qobject_cast<ctkFileDialog*>(Object))
+  if(ctkFileDialog* const fileDialog = qobject_cast<ctkFileDialog*>(object))
     {
-    if (Command == "newFile")
+    if (command == "newFile")
       {
       // set the directory
-      QStringList files = Arguments.split("#");
+      QStringList files;
+	  foreach(const QString& file, arguments.split("#"))
+	  {
+        files.append(mUtil->convertFromDataDirectory(file));
+	  }
       QFileInfo infoFile(files.at(0));
       if(!infoFile.exists())
         {
-        qWarning() << "The File doesn't exist, or wasn't finded.";
+        qWarning() << "File does not exist or can't be found.";
         return false;
         }
-      object->setDirectory(infoFile.absoluteDir().absolutePath());
-      if(object->directory() != infoFile.absoluteDir())
+	  fileDialog->setDirectory(infoFile.absoluteDir().absolutePath());
+	  if (fileDialog->directory() != infoFile.absoluteDir())
         {
         qWarning() << "The Directory wasn't selected.";
         }
@@ -108,15 +114,15 @@ bool ctkFileDialogEventPlayer::playEvent(QObject *Object,
         }
       return true;
       }
-    if (Command == "rejected")
+    if (command == "rejected")
       {
-      object->close();
+      fileDialog->close();
       return true;
       }
     }
 
-  qCritical() << "calling newFile/rejected on unhandled type " << Object;
-  Error = true;
+  qCritical() << "calling newFile/rejected on unhandled type " << object;
+  error = true;
   return true;
 }
 

@@ -47,31 +47,21 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkFileDialog* widget = reinterpret_cast<ctkFileDialog*>(data);
-  QStringList listActual =  widget->selectedFiles();
-  QStringList listExpected;
-  listExpected << "/home/benjaminlong/Documents/ctk-QtTesting-renderView/ctkVTKRenderViewEventTranslatorPlayerTest1Screenshot.png";
-  listExpected << "/home/benjaminlong/Documents/ctk-QtTesting-renderView/ctkVTKRenderViewEventTranslatorPlayerTest1ScreenshotTest.png";
+  QStringList expectedSelectedFiles;
+  expectedSelectedFiles << CTK_SOURCE_DIR"/ctkLogo.png";
+  expectedSelectedFiles << CTK_SOURCE_DIR"/ctkLogo-small.png";
 
-  if( listActual.count() == listExpected.count())
-    {
-    for(int i = 0 ; i < listActual.count() ; i++)
-      {
-      CTKCOMPARE(listExpected[i], listActual[i]);
-      }
-    }
-  else
-    {
-    QApplication::exit(EXIT_FAILURE);
-    }
-  }
+  CTKCOMPARE(widget->selectedFiles(), expectedSelectedFiles);
+}
+
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   ctkFileDialog* widget = reinterpret_cast<ctkFileDialog*>(data);
   QStringList actual =  widget->selectedFiles();
-  QString expected = "/home/benjaminlong/GroupBox.png";
+  QString expected = CTK_SOURCE_DIR"/ctkLogo.png";
 
   if( actual.count() == 1)
     {
@@ -81,13 +71,13 @@ void checkFinalWidgetState2(void* data)
     {
     QApplication::exit(EXIT_FAILURE);
     }
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState3(void* data)
-  {
+{
   ctkFileDialog* widget = reinterpret_cast<ctkFileDialog*>(data);
   CTKCOMPARE(widget->isHidden(), true);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -100,6 +90,7 @@ int ctkFileDialogEventTranslatorPlayerTest1(int argc, char * argv [] )
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
   pqTestUtility* testUtility = new pqTestUtility(&etpWidget);
+  testUtility->addDataDirectory("CTK_SOURCE_DIR", QDir(CTK_SOURCE_DIR));
   etpWidget.setTestUtility(testUtility);
   etpWidget.addWidgetEventPlayer(new ctkFileDialogEventPlayer(etpWidget.testUtility()));
   etpWidget.addWidgetEventTranslator(new ctkFileDialogEventTranslator(etpWidget.testUtility()));
@@ -148,7 +139,7 @@ int ctkFileDialogEventTranslatorPlayerTest1(int argc, char * argv [] )
                         &checkFinalWidgetState3);
 
   // ------------------------
-  if (!app.arguments().contains("-I"))
+  if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
     }
