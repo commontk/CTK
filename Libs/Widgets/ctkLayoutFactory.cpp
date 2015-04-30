@@ -160,8 +160,12 @@ void ctkLayoutFactory::setupView(QDomElement viewElement, QWidget* view)
   if (factory)
     {
     factory->setupView(viewElement, view);
+    d->Views.insert(view);
     }
-  this->ctkLayoutManager::setupView(viewElement, view);
+  else
+    {
+    this->ctkLayoutManager::setupView(viewElement, view);
+    }
 }
 
 //-----------------------------------------------------------------------------
