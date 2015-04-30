@@ -510,7 +510,8 @@ void ctkPluginFrameworkLauncher::shutdown()
   //appLauncher = null;
   //splashStreamRegistration = null;
   //defaultMonitorRegistration = null;
-  d->fwFactory.reset();
+  //d->fwFactory.reset();
+  stop();
   d->running = false;
 }
 
