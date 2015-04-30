@@ -19,30 +19,79 @@
 
 =============================================================================*/
 
+#include "ctkPluginFrameworkLauncher.h"
+#include "ctkPluginFrameworkFactory.h"
+#include "ctkPluginFrameworkProperties_p.h"
+#include "ctkPluginFramework.h"
+#include "ctkPluginContext.h"
+#include "ctkPluginException.h"
+#include "ctkDefaultApplicationLauncher_p.h"
+#include "ctkLocationManager_p.h"
+#include "ctkBasicLocation_p.h"
+
+#include <ctkConfig.h>
+
 #include <QStringList>
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QDebug>
-
-#include "ctkPluginFrameworkLauncher.h"
-#include "ctkPluginFrameworkFactory.h"
-#include "ctkPluginFramework.h"
-#include "ctkPluginContext.h"
-#include "ctkPluginException.h"
+#include <QRunnable>
+#include <QSettings>
+#include <QProcessEnvironment>
 
 #ifdef _WIN32
 #include <windows.h>
 #include <cstdlib>
 #endif // _WIN32
 
-#include <ctkConfig.h>
+
+const QString ctkPluginFrameworkLauncher::PROP_USER_HOME = "user.home";
+const QString ctkPluginFrameworkLauncher::PROP_USER_DIR = "user.dir";
+
+// Framework properties
+const QString ctkPluginFrameworkLauncher::PROP_PLUGINS = "ctk.plugins";
+const QString ctkPluginFrameworkLauncher::PROP_DEBUG = "ctk.debug";
+const QString ctkPluginFrameworkLauncher::PROP_DEV = "ctk.dev";
+const QString ctkPluginFrameworkLauncher::PROP_CONSOLE = "ctk.console";
+const QString ctkPluginFrameworkLauncher::PROP_OS = "ctk.os";
+const QString ctkPluginFrameworkLauncher::PROP_ARCH = "ctk.arch";
+
+const QString ctkPluginFrameworkLauncher::PROP_NOSHUTDOWN = "ctk.noShutdown";
+const QString ctkPluginFrameworkLauncher::PROP_IGNOREAPP = "ctk.ignoreApp";
+
+const QString ctkPluginFrameworkLauncher::PROP_INSTALL_AREA = "ctk.install.area";
+const QString ctkPluginFrameworkLauncher::PROP_CONFIG_AREA = "ctk.configuration.area";
+const QString ctkPluginFrameworkLauncher::PROP_SHARED_CONFIG_AREA = "ctk.sharedConfiguration.area";
+const QString ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA = "ctk.instance.area";
+const QString ctkPluginFrameworkLauncher::PROP_USER_AREA = "ctk.user.area";
+const QString ctkPluginFrameworkLauncher::PROP_HOME_LOCATION_AREA = "ctk.home.location";
+
+
+const QString ctkPluginFrameworkLauncher::PROP_CONFIG_AREA_DEFAULT = "ctk.configuration.area.default";
+const QString ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA_DEFAULT = "ctk.instance.area.default";
+const QString ctkPluginFrameworkLauncher::PROP_USER_AREA_DEFAULT = "ctk.user.area.default";
+
+const QString ctkPluginFrameworkLauncher::PROP_EXITCODE = "ctk.exitcode";
+const QString ctkPluginFrameworkLauncher::PROP_EXITDATA = "ctk.exitdata";
+const QString ctkPluginFrameworkLauncher::PROP_CONSOLE_LOG = "ctk.consoleLog";
+
+const QString ctkPluginFrameworkLauncher::PROP_ALLOW_APPRELAUNCH = "ctk.allowAppRelaunch";
+const QString ctkPluginFrameworkLauncher::PROP_APPLICATION_LAUNCHDEFAULT = "ctk.application.launchDefault";
+
+const QString ctkPluginFrameworkLauncher::PROP_OSGI_RELAUNCH = "ctk.pluginfw.relaunch";
+
+static const QString PROP_FORCED_RESTART = "ctk.forcedRestart";
 
 class ctkPluginFrameworkLauncherPrivate
 {
 public:
 
+  //----------------------------------------------------------------------------
   ctkPluginFrameworkLauncherPrivate()
     : fwFactory(0)
+    , running(false)
+    , endSplashHandler(NULL)
+    , processEnv(QProcessEnvironment::systemEnvironment())
   {
 #ifdef CMAKE_INTDIR
     QString pluginPath = CTK_PLUGIN_DIR CMAKE_INTDIR "/";
@@ -55,12 +104,249 @@ public:
     pluginLibFilter << "*.dll" << "*.so" << "*.dylib";
   }
 
+  //----------------------------------------------------------------------------
+  bool isForcedRestart() const
+  {
+    return ctkPluginFrameworkProperties::getProperty(PROP_FORCED_RESTART).toBool();
+  }
+
+  //----------------------------------------------------------------------------
+  void loadConfigurationInfo()
+  {
+    ctkBasicLocation* configArea = ctkLocationManager::getConfigurationLocation();
+    if (configArea == NULL)
+    {
+      return;
+    }
+
+    QUrl location(configArea->getUrl().toString() + ctkLocationManager::CONFIG_FILE);
+    mergeProperties(ctkPluginFrameworkProperties::getProperties(), loadProperties(location));
+  }
+
+  //----------------------------------------------------------------------------
+  void mergeProperties(ctkProperties& destination, const ctkProperties& source)
+  {
+      for (ctkProperties::const_iterator iter = source.begin(); iter != source.end(); ++iter)
+      {
+        if (!destination.contains(iter.key()))
+        {
+          destination.insert(iter.key(), iter.value());
+        }
+      }
+  }
+
+  //----------------------------------------------------------------------------
+  ctkProperties loadProperties(const QUrl& location)
+  {
+    ctkProperties result;
+    if (!location.isValid() || !QFileInfo(location.toLocalFile()).exists())
+    {
+      return result;
+    }
+    QSettings iniProps(location.toLocalFile(), QSettings::IniFormat);
+    foreach (const QString& key, iniProps.allKeys())
+    {
+      result.insert(key, iniProps.value(key));
+    }
+
+    return substituteVars(result);
+  }
+
+  //----------------------------------------------------------------------------
+  ctkProperties& substituteVars(ctkProperties& result)
+  {
+    for (ctkProperties::iterator iter = result.begin(); iter != result.end(); ++iter)
+    {
+      if (iter.value().type() == QVariant::String)
+      {
+        iter.value() = substituteVars(iter.value().toString());
+      }
+    }
+    return result;
+  }
+
+  //----------------------------------------------------------------------------
+  QString substituteVars(const QString& path)
+  {
+    QString buf;
+    bool varStarted = false; // indicates we are processing a var subtitute
+    QString var; // the current var key
+    for (QString::const_iterator iter = path.begin(); iter != path.end(); ++iter)
+    {
+      QChar tok = *iter;
+      if (tok == '$')
+      {
+        if (!varStarted)
+        {
+          varStarted = true; // we found the start of a var
+          var.clear();
+        }
+        else
+        {
+          // we have found the end of a var
+          QVariant prop;
+          // get the value of the var from system properties
+          if (!var.isEmpty())
+          {
+            prop = ctkPluginFrameworkProperties::getProperty(var);
+          }
+          if (prop.isNull() && processEnv.contains(var))
+          {
+            prop = processEnv.value(var);
+          }
+          if (!prop.isNull())
+          {
+            // found a value; use it
+            buf.append(prop.toString());
+          }
+          else
+          {
+            // could not find a value append the var name w/o delims
+            buf.append(var);
+          }
+          varStarted = false;
+          var.clear();
+        }
+      }
+      else
+      {
+        if (!varStarted)
+        {
+          buf.append(tok); // the token is not part of a var
+        }
+        else
+        {
+          var.append(tok); // the token is part of the var key; save the key to process when we find the end token
+        }
+      }
+    }
+
+    if (!var.isEmpty())
+    {
+      // found a case of $var at the end of the path with no trailing $; just append it as is.
+      buf.append('$').append(var);
+    }
+    return buf;
+  }
+
+  //----------------------------------------------------------------------------
+  QSharedPointer<ctkPlugin> install(const QUrl& pluginPath, ctkPluginContext* context)
+  {
+    try
+    {
+      return context->installPlugin(pluginPath);
+    }
+    catch (const ctkPluginException& exc)
+    {
+      qWarning() << "Failed to install plugin " << pluginPath << ":" << exc.printStackTrace();
+      return QSharedPointer<ctkPlugin>();
+    }
+  }
+
+  //----------------------------------------------------------------------------
+  QSharedPointer<ctkPlugin> install(const QString& symbolicName, ctkPluginContext* context)
+  {
+    QString pluginPath = ctkPluginFrameworkLauncher::getPluginPath(symbolicName);
+    if (pluginPath.isEmpty()) return QSharedPointer<ctkPlugin>();
+
+    ctkPluginContext* pc = context;
+
+    if (pc == 0 && fwFactory == 0)
+    {
+      fwFactory.reset(new ctkPluginFrameworkFactory(fwProps));
+      try
+      {
+        fwFactory->getFramework()->init();
+        pc = fwFactory->getFramework()->getPluginContext();
+      }
+      catch (const ctkPluginException& exc)
+      {
+        qCritical() << "Failed to initialize the plug-in framework:" << exc;
+        fwFactory.reset();
+        return QSharedPointer<ctkPlugin>();
+      }
+    }
+
+    return install(QUrl::fromLocalFile(pluginPath), pc);
+  }
+
+  /*
+   * Ensure all basic plugins are installed, resolved and scheduled to start. Returns a list containing
+   * all basic bundles that are marked to start.
+   */
+  //----------------------------------------------------------------------------
+  void loadBasicPlugins()
+  {
+    QVariant pluginsProp = ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS);
+    QStringList installEntries;
+    if (pluginsProp.type() == QVariant::StringList)
+    {
+      installEntries = pluginsProp.toStringList();
+    }
+    else
+    {
+      installEntries = pluginsProp.toString().split(',');
+    }
+
+    QList<QSharedPointer<ctkPlugin> > startEntries;
+    ctkPluginContext* context = fwFactory->getFramework()->getPluginContext();
+    foreach(const QString& installEntry, installEntries)
+    {
+      QUrl pluginUrl(installEntry);
+      if (pluginUrl.isValid() && pluginUrl.scheme().isEmpty())
+      {
+        // try a local file path
+        QFileInfo installFileInfo(installEntry);
+        if (installFileInfo.exists())
+        {
+          pluginUrl = QUrl::fromLocalFile(installFileInfo.absoluteFilePath());
+        }
+        else
+        {
+          pluginUrl.clear();
+        }
+      }
+
+      if (pluginUrl.isValid())
+      {
+        QSharedPointer<ctkPlugin> plugin = install(pluginUrl, context);
+        if (plugin)
+        {
+          startEntries.push_back(plugin);
+        }
+      }
+      else
+      {
+        QSharedPointer<ctkPlugin> plugin = install(installEntry, context);
+        if (plugin)
+        {
+          // schedule all basic bundles to be started
+          startEntries.push_back(plugin);
+        }
+      }
+    }
+
+    foreach(QSharedPointer<ctkPlugin> plugin, startEntries)
+    {
+      plugin->start();
+    }
+  }
+
+
   QStringList pluginSearchPaths;
   QStringList pluginLibFilter;
 
   ctkProperties fwProps;
 
-  ctkPluginFrameworkFactory* fwFactory;
+  QScopedPointer<ctkPluginFrameworkFactory> fwFactory;
+
+  bool running;
+  QRunnable* endSplashHandler;
+
+  QScopedPointer<ctkDefaultApplicationLauncher> appLauncher;
+  ctkServiceRegistration appLauncherRegistration;
+
+  QProcessEnvironment processEnv;
 };
 
 const QScopedPointer<ctkPluginFrameworkLauncherPrivate> ctkPluginFrameworkLauncher::d(
@@ -69,43 +355,172 @@ const QScopedPointer<ctkPluginFrameworkLauncherPrivate> ctkPluginFrameworkLaunch
 //----------------------------------------------------------------------------
 void ctkPluginFrameworkLauncher::setFrameworkProperties(const ctkProperties& props)
 {
-  d->fwProps = props;
+  ctkPluginFrameworkProperties::setProperties(props);
+}
+
+//----------------------------------------------------------------------------
+QVariant ctkPluginFrameworkLauncher::run(QRunnable* endSplashHandler)
+{
+  if (d->running)
+  {
+    throw ctkIllegalStateException("Framework already running");
+  }
+  {
+    struct Finalize {
+      ~Finalize()
+      {
+        try
+        {
+          // The application typically sets the exit code however the framework can request that
+          // it be re-started. We need to check for this and potentially override the exit code.
+          if (d->isForcedRestart())
+          {
+            ctkPluginFrameworkProperties::setProperty(PROP_EXITCODE, "23");
+          }
+          if (!ctkPluginFrameworkProperties::getProperty(PROP_NOSHUTDOWN).toBool())
+          {
+            shutdown();
+          }
+        }
+        catch (const std::exception& e)
+        {
+          qWarning() << "Shutdown error:" << e.what();
+        }
+      }
+    };
+    Finalize finalizer;
+    Q_UNUSED(finalizer)
+    try
+    {
+      startup(d->endSplashHandler);
+      if (ctkPluginFrameworkProperties::getProperty(PROP_IGNOREAPP).toBool() || d->isForcedRestart())
+      {
+        return QVariant();
+      }
+      return run(QVariant());
+    }
+    catch (const std::exception& e)
+    {
+      // ensure the splash screen is down
+      if (endSplashHandler != NULL)
+      {
+        endSplashHandler->run();
+      }
+      // may use startupFailed to understand where the error happened
+      if (const ctkException* ce = dynamic_cast<const ctkException*>(&e))
+      {
+        qWarning() << "Startup error:" << ce->printStackTrace();
+      }
+      else
+      {
+        qWarning() << "Startup error:" << e.what();
+      }
+    }
+  }
+
+  // we only get here if an error happened
+  if (ctkPluginFrameworkProperties::getProperty(PROP_EXITCODE).isNull())
+  {
+    ctkPluginFrameworkProperties::setProperty(PROP_EXITCODE, "13");
+    ctkPluginFrameworkProperties::setProperty(PROP_EXITDATA, QString("An error has occured. See the console output and log file for details."));
+  }
+  return QVariant();
+}
+
+//----------------------------------------------------------------------------
+QVariant ctkPluginFrameworkLauncher::run(const QVariant& argument)
+{
+  if (!d->running)
+  {
+    throw ctkIllegalStateException("Framework not running.");
+  }
+  // if we are just initializing, do not run the application just return.
+  /*
+  if (d->initialize)
+  {
+    return 0;
+  }
+  */
+  try
+  {
+    if (!d->appLauncher)
+    {
+      bool launchDefault = ctkPluginFrameworkProperties::getProperty(PROP_APPLICATION_LAUNCHDEFAULT, true).toBool();
+      // create the ApplicationLauncher and register it as a service
+      d->appLauncher.reset(new ctkDefaultApplicationLauncher(d->fwFactory->getFramework()->getPluginContext(),
+                                                             ctkPluginFrameworkProperties::getProperty(PROP_ALLOW_APPRELAUNCH).toBool(),
+                                                             launchDefault));
+      d->appLauncherRegistration = d->fwFactory->getFramework()->getPluginContext()->
+                                   registerService<ctkApplicationLauncher>(d->appLauncher.data());
+
+      // must start the launcher AFTER service registration because this method
+      // blocks and runs the application on the current thread.  This method
+      // will return only after the application has stopped.
+      return d->appLauncher->start(argument);
+    }
+    return d->appLauncher->reStart(argument);
+  }
+  catch (const std::exception& e)
+  {
+    qWarning() << "Application launch failed:" << e.what();
+    throw e;
+  }
+}
+
+//----------------------------------------------------------------------------
+ctkPluginContext* ctkPluginFrameworkLauncher::startup(QRunnable* /*endSplashHandler*/)
+{
+  if (d->running)
+  {
+    throw ctkIllegalStateException("Framework already running.");
+  }
+  ctkPluginFrameworkProperties::initializeProperties();
+  //processCommandLine(args);
+  ctkLocationManager::initializeLocations();
+  d->loadConfigurationInfo();
+  //finalizeProperties();
+  d->fwFactory.reset(new ctkPluginFrameworkFactory(ctkPluginFrameworkProperties::getProperties()));
+  //d->context = framework.getBundle(0).getBundleContext();
+  //registerFrameworkShutdownHandlers();
+  //publishSplashScreen(endSplashHandler);
+  //consoleMgr = ConsoleManager.startConsole(framework);
+  d->fwFactory->getFramework()->start();
+  d->loadBasicPlugins();
+
+  d->running = true;
+  return d->fwFactory->getFramework()->getPluginContext();
+}
+
+void ctkPluginFrameworkLauncher::shutdown()
+{
+  if (!d->running || d->fwFactory == NULL)
+    return;
+
+  //if (appLauncherRegistration != null)
+  //  appLauncherRegistration.unregister();
+  //if (splashStreamRegistration != null)
+  //  splashStreamRegistration.unregister();
+  //if (defaultMonitorRegistration != null)
+  //  defaultMonitorRegistration.unregister();
+  if (d->appLauncher)
+  {
+    d->appLauncher->shutdown();
+  }
+  //appLauncherRegistration = null;
+  //appLauncher = null;
+  //splashStreamRegistration = null;
+  //defaultMonitorRegistration = null;
+  //d->fwFactory.reset();
+  stop();
+  d->running = false;
 }
 
 //----------------------------------------------------------------------------
 long ctkPluginFrameworkLauncher::install(const QString& symbolicName, ctkPluginContext* context)
 {
-  QString pluginPath = getPluginPath(symbolicName);
-  if (pluginPath.isEmpty()) return -1;
-
-  ctkPluginContext* pc = context;
-
-  if (pc == 0 && d->fwFactory == 0) {
-    d->fwFactory = new ctkPluginFrameworkFactory(d->fwProps);
-    try
-    {
-      d->fwFactory->getFramework()->init();
-      pc = getPluginContext();
-    }
-    catch (const ctkPluginException& exc)
-    {
-      qCritical() << "Failed to initialize the plug-in framework:" << exc;
-      delete d->fwFactory;
-      d->fwFactory = 0;
-      return -1;
-    }
-  }
-
-  try
-  {
-    return pc->installPlugin(QUrl::fromLocalFile(pluginPath))->getPluginId();
-  }
-  catch (const ctkPluginException& exc)
-  {
-    qWarning() << "Failed to install plugin:" << exc;
-    return -1;
-  }
-
+  QSharedPointer<ctkPlugin> plugin = d->install(symbolicName, context);
+  if (plugin) return plugin->getPluginId();
+  return -1;
 }
 
 //----------------------------------------------------------------------------
@@ -114,7 +529,7 @@ bool ctkPluginFrameworkLauncher::start(const QString& symbolicName, ctkPlugin::S
 {
   // instantiate and start the framework
   if (context == 0 && d->fwFactory == 0) {
-    d->fwFactory = new ctkPluginFrameworkFactory(d->fwProps);
+    d->fwFactory.reset(new ctkPluginFrameworkFactory(d->fwProps));
     try
     {
       d->fwFactory->getFramework()->start();
@@ -122,8 +537,7 @@ bool ctkPluginFrameworkLauncher::start(const QString& symbolicName, ctkPlugin::S
     catch (const ctkPluginException& exc)
     {
       qCritical() << "Failed to start the plug-in framework:" << exc;
-      delete d->fwFactory;
-      d->fwFactory = 0;
+      d->fwFactory.reset();
       return false;
     }
   }
@@ -136,8 +550,7 @@ bool ctkPluginFrameworkLauncher::start(const QString& symbolicName, ctkPlugin::S
     catch (const ctkPluginException& exc)
     {
       qCritical() << "Failed to start the plug-in framework:" << exc;
-      delete d->fwFactory;
-      d->fwFactory = 0;
+      d->fwFactory.reset();
       return false;
     }
   }

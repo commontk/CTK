@@ -22,9 +22,14 @@
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginFramework_p.h"
+#include "ctkPluginFrameworkProperties_p.h"
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginStorageSQL_p.h"
 #include "ctkPluginConstants.h"
+
+#include "ctkLocationManager_p.h"
+#include "ctkBasicLocation_p.h"
+
 #include "ctkServices_p.h"
 #include "ctkUtils.h"
 
@@ -33,13 +38,11 @@ QMutex ctkPluginFrameworkContext::globalFwLock;
 int ctkPluginFrameworkContext::globalId = 1;
 
 //----------------------------------------------------------------------------
-ctkPluginFrameworkContext::ctkPluginFrameworkContext(
-    const ctkProperties& initProps)
+ctkPluginFrameworkContext::ctkPluginFrameworkContext()
   : plugins(0), listeners(this), services(0), systemPlugin(new ctkPluginFramework()),
-    storage(0), firstInit(true), props(initProps), debug(props),
+    storage(0), firstInit(true), props(ctkPluginFrameworkProperties::getProperties()),
     initialized(false)
 {
-
   {
     QMutexLocker lock(&globalFwLock);
     id = globalId++;
@@ -70,6 +73,35 @@ void ctkPluginFrameworkContext::initProperties()
 void ctkPluginFrameworkContext::init()
 {
   log() << "initializing";
+
+  if (debug.framework)
+  {
+    ctkBasicLocation* location = ctkLocationManager::getConfigurationLocation();
+    if (location)
+    {
+      log() << "Configuration location:" << location->getUrl().toString();
+    }
+    location = ctkLocationManager::getInstallLocation();
+    if (location)
+    {
+      log() << "Install location:" << location->getUrl().toString();
+    }
+    location = ctkLocationManager::getCTKHomeLocation();
+    if (location)
+    {
+      log() << "CTK Home location:" << location->getUrl().toString();
+    }
+    location= ctkLocationManager::getUserLocation();
+    if (location)
+    {
+      log() << "User location:" << location->getUrl().toString();
+    }
+    location = ctkLocationManager::getInstanceLocation();
+    if (location)
+    {
+      log() << "Instance location" << location->getUrl().toString();
+    }
+  }
 
   if (firstInit && ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT
       == props[ctkPluginConstants::FRAMEWORK_STORAGE_CLEAN])

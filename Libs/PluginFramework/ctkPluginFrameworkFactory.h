@@ -74,7 +74,7 @@ public:
 
 private:
 
-  ctkPluginFrameworkContext * const fwCtx;
+  ctkPluginFrameworkContext* fwCtx;
 
 };
 

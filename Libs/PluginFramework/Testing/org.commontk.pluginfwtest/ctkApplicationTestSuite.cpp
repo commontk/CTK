@@ -19,33 +19,48 @@
 
 =============================================================================*/
 
-#include "ctkPluginFrameworkFactory.h"
 
-#include "ctkPluginFrameworkContext_p.h"
-#include "ctkPluginFrameworkProperties_p.h"
-#include "ctkLocationManager_p.h"
+#include "ctkApplicationTestSuite_p.h"
+
+#include <ctkPlugin.h>
+#include <ctkPluginContext.h>
+
+#include <ctkPluginFrameworkLauncher.h>
+
+#include <ctkPluginFrameworkTestUtil.h>
+
+#include <QTest>
 
 //----------------------------------------------------------------------------
-ctkPluginFrameworkFactory::ctkPluginFrameworkFactory(const ctkProperties& initProps)
-  : fwCtx(NULL)
+ctkApplicationTestSuite::ctkApplicationTestSuite(ctkPluginContext* pc)
+  : pc(pc), p(pc->getPlugin())
 {
-  ctkPluginFrameworkProperties::setProperties(initProps);
-  ctkPluginFrameworkProperties::initializeProperties();
-
-  ctkLocationManager::initializeLocations();
-
-  fwCtx = new ctkPluginFrameworkContext();
 }
 
 //----------------------------------------------------------------------------
-ctkPluginFrameworkFactory::~ctkPluginFrameworkFactory()
+void ctkApplicationTestSuite::initTestCase()
 {
-  fwCtx->uninit();
-  delete fwCtx;
+  pS = ctkPluginFrameworkTestUtil::installPlugin(pc, "app_test");
+  QVERIFY(pS);
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkPluginFramework> ctkPluginFrameworkFactory::getFramework()
+void ctkApplicationTestSuite::cleanupTestCase()
 {
-  return fwCtx->systemPlugin;
+  pS->uninstall();
+}
+
+//----------------------------------------------------------------------------
+void ctkApplicationTestSuite::runTest()
+{
+  try
+  {
+    pS->start();
+    qDebug() << "started app plugin";
+  }
+  catch (const ctkPluginException& pexcS)
+  {
+    QString msg = QString("Test plugin: ") + pexcS.what();
+    QFAIL(msg.toLatin1());
+  }
 }

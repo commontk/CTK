@@ -43,6 +43,8 @@
  */
 struct CTK_PLUGINFW_EXPORT ctkMetaTypeService
 {
+ virtual ~ctkMetaTypeService() {}
+
  /**
   * Return the MetaType information for the specified plugin.
   *
