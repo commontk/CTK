@@ -168,7 +168,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
 #ifndef __${namespace}_${target}_h
 #define __${namespace}_${target}_h
 
-#include <QWidget>
+#include <QObject>
 ${includes}
 ${pythonqtWrappers}
 #endif
