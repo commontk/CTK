@@ -71,9 +71,9 @@ static bool isInitialized = false;
 //----------------------------------------------------------------------------
 static QUrl BuildUrl(const QString& location, bool trailingSlash)
 {
-  QUrl result(location);
+  QUrl result(location,QUrl::StrictMode);
 
-  if (!result.isValid() || result.scheme().isEmpty())
+  if (!result.isValid() || result.scheme().compare("file", Qt::CaseInsensitive) != 0)
   {
     result = QUrl::fromLocalFile(location);
   }
