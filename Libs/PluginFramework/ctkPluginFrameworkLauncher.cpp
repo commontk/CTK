@@ -460,10 +460,15 @@ QVariant ctkPluginFrameworkLauncher::run(const QVariant& argument)
     }
     return d->appLauncher->reStart(argument);
   }
+  catch (const ctkException& e)
+  {
+    qWarning() << "Application launch failed:" << e.printStackTrace();
+    throw;
+  }
   catch (const std::exception& e)
   {
     qWarning() << "Application launch failed:" << e.what();
-    throw e;
+    throw;
   }
 }
 
