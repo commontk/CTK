@@ -88,7 +88,7 @@ QVariant ctkDefaultApplicationLauncher::start(const QVariant& defaultContext)
     {
       if (!relaunch || (context->getPlugin()->getState() != ctkPlugin::ACTIVE))
       {
-        throw e;
+        throw;
       }
       qWarning() << "Application error:" << e.what();
     }
