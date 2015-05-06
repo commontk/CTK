@@ -50,6 +50,7 @@ const QString ctkPluginFrameworkLauncher::PROP_USER_DIR = "user.dir";
 
 // Framework properties
 const QString ctkPluginFrameworkLauncher::PROP_PLUGINS = "ctk.plugins";
+const QString ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS = "ctk.plugins.startOptions";
 const QString ctkPluginFrameworkLauncher::PROP_DEBUG = "ctk.debug";
 const QString ctkPluginFrameworkLauncher::PROP_DEV = "ctk.dev";
 const QString ctkPluginFrameworkLauncher::PROP_CONSOLE = "ctk.console";
@@ -278,6 +279,19 @@ public:
   void loadBasicPlugins()
   {
     QVariant pluginsProp = ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS);
+
+    QVariant startOptionsProp = ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS);
+    ctkPlugin::StartOptions startOptions = ctkPlugin::START_ACTIVATION_POLICY;
+    if (startOptionsProp.isValid())
+    {
+      bool okay = false;
+      int startOptionsInt = startOptionsProp.toInt(&okay);
+      if (okay)
+      {
+        startOptions = ctkPlugin::StartOptions(startOptionsInt);
+      }
+    }
+
     QStringList installEntries;
     if (pluginsProp.type() == QVariant::StringList)
     {
@@ -328,7 +342,7 @@ public:
 
     foreach(QSharedPointer<ctkPlugin> plugin, startEntries)
     {
-      plugin->start();
+      plugin->start(startOptions);
     }
   }
 
