@@ -52,6 +52,7 @@ public:
 
   // Framework properties
   static const QString PROP_PLUGINS; // = "ctk.plugins";
+  static const QString PROP_PLUGINS_START_OPTIONS; // = "ctk.plugins.startOptions";
   static const QString PROP_DEBUG; // = "ctk.debug";
   static const QString PROP_DEV; // = "ctk.dev";
   static const QString PROP_CONSOLE; // = "ctk.console";
