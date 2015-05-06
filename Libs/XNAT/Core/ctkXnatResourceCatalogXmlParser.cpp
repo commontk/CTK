@@ -22,6 +22,7 @@
 #include "ctkXnatResourceCatalogXmlParser.h"
 
 #include <QDebug>
+#include <QXmlStreamReader>
 
 //----------------------------------------------------------------------------
 class ctkXnatResourceCatalogXmlParserPrivate
@@ -33,6 +34,7 @@ public:
   }
 
   QList<QVariantMap> result;
+  QXmlStreamReader xmlReader;
 };
 
 ctkXnatResourceCatalogXmlParser::ctkXnatResourceCatalogXmlParser()
@@ -44,39 +46,39 @@ ctkXnatResourceCatalogXmlParser::~ctkXnatResourceCatalogXmlParser()
   delete d_ptr;
 }
 
-bool ctkXnatResourceCatalogXmlParser::startElement(const QString &/*namespaceURI*/, const QString &localName,
-                                                   const QString &qName, const QXmlAttributes &atts)
+void ctkXnatResourceCatalogXmlParser::setData(const QByteArray &xmlInput)
 {
   Q_D(ctkXnatResourceCatalogXmlParser);
-  if (qName == "cat:entry")
-  {
-    QString name("");
-    QString md5("");
-    QVariantMap map;
-    for( int i=0; i<atts.count(); i++ )
-    {
-      // TODO ID would be better
-      if( atts.localName(i) == "name")
-        name = atts.value(i);
+  d->xmlReader.addData(xmlInput);
+}
 
-      if( atts.localName( i ) == "digest" )
+void ctkXnatResourceCatalogXmlParser::parseXml(QList<QVariantMap>& result)
+{
+  Q_D(ctkXnatResourceCatalogXmlParser);
+
+  while (!d->xmlReader.atEnd())
+  {
+    if (d->xmlReader.name().compare("entry") == 0)
+    {
+      QVariantMap map;
+      QXmlStreamAttributes attributes = d->xmlReader.attributes();
+
+      if( attributes.hasAttribute("name") && attributes.hasAttribute("digest"))
       {
-        md5 = atts.value(i);
+        QString name("");
+        name += attributes.value("name");
+        QString md5("");
+        md5 += attributes.value("digest");
+        map[name] = md5;
+        result.append(map);
       }
     }
-
-    if (name.length() == 0 || md5.length() == 0)
-    {
-      qWarning()<<"Error parsing XNAT resource catalog xml!";
-      return false;
-    }
-    else
-    {
-      map[name] = QVariant(md5);
-      d->result.append(map);
-    }
+    d->xmlReader.readNext();
   }
-  return true;
+  if (d->xmlReader.hasError())
+  {
+    qWarning()<<"Error parsing XNAT resource catalog xml!";
+  }
 }
 
 const QList<QVariantMap>& ctkXnatResourceCatalogXmlParser::md5Hashes()

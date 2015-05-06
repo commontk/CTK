@@ -24,7 +24,8 @@
 
 #include "ctkXNATCoreExport.h"
 
-#include <QXmlDefaultHandler>
+#include <QList>
+#include <QVariantMap>
 
 class ctkXnatResourceCatalogXmlParserPrivate;
 
@@ -40,7 +41,7 @@ class ctkXnatResourceCatalogXmlParserPrivate;
  *
  * @ingroup XNAT_Core
  */
-class CTK_XNAT_CORE_EXPORT ctkXnatResourceCatalogXmlParser : public QXmlDefaultHandler
+class CTK_XNAT_CORE_EXPORT ctkXnatResourceCatalogXmlParser
 {
 
 public:
@@ -48,10 +49,10 @@ public:
   ~ctkXnatResourceCatalogXmlParser();
 
   /**
-   * Overwrites QXmlDefaultHandler::startElement()
+   * @brief Set the xml input for the parser
+   * @param xmlInput as QByteArray
    */
-  bool startElement(const QString &namespaceURI, const QString &localName,
-                    const QString &qName, const QXmlAttributes &atts);
+  void setData(const QByteArray& xmlInput);
 
   /**
    * @brief Returns the md5 hashes of the resource files
@@ -59,6 +60,11 @@ public:
    */
   const QList<QVariantMap>& md5Hashes();
 
+  /**
+   * @brief Parses the xml input and extracts the md5 hashes of the resource catalog
+   * @param result the QList in which the md5 hashes will be stored
+   */
+  void parseXml(QList<QVariantMap> &result);
 private:
 
   ctkXnatResourceCatalogXmlParser(const ctkXnatResourceCatalogXmlParser& );
