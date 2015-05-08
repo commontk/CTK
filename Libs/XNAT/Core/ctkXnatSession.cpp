@@ -652,9 +652,13 @@ void ctkXnatSession::upload(ctkXnatFile *file,
   if (localFile.open(QFile::ReadOnly) && md5ChecksumRemote != "0")
   {
     QCryptographicHash hash(QCryptographicHash::Md5);
-    // TODO Do this in case of Qt5
-    //if (hash.addData(&file))
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    hash.addData(&localFile);
+#else
     hash.addData(localFile.readAll());
+#endif
+
     QString md5ChecksumLocal(hash.result().toHex());
     // Retrieving the md5 checksum on the server and comparing
     // it with the local file md5 sum
@@ -662,7 +666,6 @@ void ctkXnatSession::upload(ctkXnatFile *file,
     {
       // Remove corrupted file from server
       file->erase();
-      // TODO qError! Exception im Pythonwrapping nicht auswertbar?
       throw ctkXnatException("Upload failed! An error occurred during file upload.");
     }
   }
