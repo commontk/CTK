@@ -42,7 +42,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   endif()
 
   # Set desired qt version for PythonQt
-  list(APPEND ep_PythonQt_args -DDESIRED_QT_VERSION:STRING=${CTK_QT_VERSION})
+  list(APPEND ep_PythonQt_args -DPythonQt_QT_VERSION:STRING=${CTK_QT_VERSION})
 
   foreach(qtlib All ${qtlibs})
     string(TOUPPER ${qtlib} qtlib_uppercase)
