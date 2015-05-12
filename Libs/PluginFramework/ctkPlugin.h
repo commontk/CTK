@@ -796,6 +796,7 @@ public:
 protected:
 
   friend class ctkPluginFramework;
+  friend class ctkPluginFrameworkLauncherPrivate;
   friend class ctkPluginFrameworkPrivate;
   friend class ctkPluginFrameworkContext;
   friend class ctkPlugins;

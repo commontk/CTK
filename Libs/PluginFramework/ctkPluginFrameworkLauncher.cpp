@@ -25,6 +25,7 @@
 #include "ctkPluginFramework.h"
 #include "ctkPluginContext.h"
 #include "ctkPluginException.h"
+#include "ctkPlugin_p.h"
 #include "ctkDefaultApplicationLauncher_p.h"
 #include "ctkLocationManager_p.h"
 #include "ctkBasicLocation_p.h"
@@ -271,6 +272,15 @@ public:
     return install(QUrl::fromLocalFile(pluginPath), pc);
   }
 
+  //----------------------------------------------------------------------------
+  void resolvePlugin(const QSharedPointer<ctkPlugin>& plugin)
+  {
+    if (plugin)
+    {
+      plugin->d_func()->getUpdatedState();
+    }
+  }
+
   /*
    * Ensure all basic plugins are installed, resolved and scheduled to start. Returns a list containing
    * all basic bundles that are marked to start.
@@ -338,6 +348,11 @@ public:
           startEntries.push_back(plugin);
         }
       }
+    }
+
+    foreach(QSharedPointer<ctkPlugin> plugin, startEntries)
+    {
+      this->resolvePlugin(plugin);
     }
 
     foreach(QSharedPointer<ctkPlugin> plugin, startEntries)
@@ -654,6 +669,22 @@ bool ctkPluginFrameworkLauncher::stop(const QString& symbolicName,
     }
 
     return true;
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkLauncher::resolve(const QSharedPointer<ctkPlugin>& plugin)
+{
+  d->resolvePlugin(plugin);
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginFrameworkLauncher::resolve()
+{
+  QList<QSharedPointer<ctkPlugin> > plugins = getPluginFramework()->getPluginContext()->getPlugins();
+  foreach(const QSharedPointer<ctkPlugin>& plugin, plugins)
+  {
+    resolve(plugin);
   }
 }
 

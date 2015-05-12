@@ -231,6 +231,24 @@ public:
                     ctkPlugin::StopOptions options = 0, ctkPluginContext* context = 0);
 
   /**
+   * Resolve the given plug-in.
+   *
+   * This method tries to resolv the given plug-in. In case of an error,
+   * a framework event of type ctkPluginFrameworkEvent::PLUGIN_ERROR is send.
+   *
+   * @param plugin The plug-in to be resolved.
+   */
+  static void resolve(const QSharedPointer<ctkPlugin>& plugin);
+
+  /**
+   * Resolve all currently installed plug-ins.
+   *
+   * In case of an error, a framework event of type
+   * ctkPluginFrameworkEvent::PLUGIN_ERROR is send.
+   */
+  static void resolve();
+
+  /**
    * Get the plugin context for the Plugin Framework.
    *
    * \return The context associated to the Plugin Framework, or <code>null</code>
