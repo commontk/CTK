@@ -149,13 +149,15 @@ void ctkXnatProject::fetchImpl()
 {
   QString subjectsUri = this->resourceUri() + "/subjects";
   ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(subjectsUri);
+  QMap<QString, QString> paramMap;
+  paramMap.insert("columns", "ID,project,label,insert_date,insert_user,URI,dob,gender,handedness,weight,height");
+  QUuid queryId = session->httpGet(subjectsUri, paramMap);
   QList<ctkXnatObject*> subjects = session->httpResults(queryId,
                                                         ctkXnatDefaultSchemaTypes::XSI_SUBJECT);
 
   foreach (ctkXnatObject* subject, subjects)
   {
-    QString label = subject->name();
+    QString label = subject->property("ID");
     if (!label.isEmpty())
     {
       subject->setId(label);
