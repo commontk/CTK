@@ -71,7 +71,7 @@ void ctkXnatSessionTestCase::initTestCase()
   d->LoginProfile.setName("ctk");
   d->LoginProfile.setServerUrl(QString("https://central.xnat.org"));
   d->LoginProfile.setUserName("ctk");
-  d->LoginProfile.setPassword("ctk-xnat");
+  d->LoginProfile.setPassword("ctk-xnat2015");
 }
 
 void ctkXnatSessionTestCase::init()
