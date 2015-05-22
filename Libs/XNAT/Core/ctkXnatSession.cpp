@@ -63,7 +63,7 @@ public:
   QScopedPointer<ctkXnatAPI> xnat;
   QScopedPointer<ctkXnatDataModel> dataModel;
   QString sessionId;
-  QString defaultFilePath;
+  QString defaultDownloadDir;
 
   QMap<QString, QString> sessionProperties;
 
@@ -90,7 +90,7 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
                                              ctkXnatSession* q)
   : loginProfile(loginProfile)
   , xnat(new ctkXnatAPI())
-  , defaultFilePath("")
+  , defaultDownloadDir("")
   , q(q)
 {
   // TODO This is a workaround for connecting to sites with self-signed
@@ -478,27 +478,27 @@ QString ctkXnatSession::sessionId() const
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatSession::setDefaultFilePath(const QString &path)
+void ctkXnatSession::setDefaultDownloadDir(const QString &path)
 {
   Q_D(ctkXnatSession);
 
   QDir directory(path);
   if (directory.exists() && path.size() != 0)
   {
-    d->defaultFilePath = path;
+    d->defaultDownloadDir = path;
   }
   else
   {
-    d->defaultFilePath = QDir::currentPath();
-    qWarning() << "Specified directory: ["<<path<<"] does not exists! Setting default filepath to :"<<d->defaultFilePath;
+    d->defaultDownloadDir = QDir::currentPath();
+    qWarning() << "Specified directory: ["<<path<<"] does not exists! Setting default filepath to :"<<d->defaultDownloadDir;
   }
 }
 
 //----------------------------------------------------------------------------
-QString ctkXnatSession::defaultFilePath() const
+QString ctkXnatSession::defaultDownloadDir() const
 {
   Q_D(const ctkXnatSession);
-  return d->defaultFilePath;
+  return d->defaultDownloadDir;
 }
 
 //----------------------------------------------------------------------------
@@ -639,13 +639,13 @@ void ctkXnatSession::upload(ctkXnatFile *xnatFile,
   // of the parent resource. Unfortunately for XNAT versions <= 1.6.4
   // this is the only way to get the file's MD5 hash form the server.
   QString md5Query = xnatFile->parent()->resourceUri();
-  QUuid md5ID = this->httpGet(md5Query);
-  QList<QVariantMap> result = this->httpSync(md5ID);
+  QUuid md5QueryID = this->httpGet(md5Query);
+  QList<QVariantMap> result = this->httpSync(md5QueryID);
 
   QString md5ChecksumRemote ("0");
   // Newly added files are usually at the end of the catalog
-  // and hence at the end of the result list. So iterating backwards
-  // is for performance reasons.
+  // and hence at the end of the result list.
+  // So iterating backward is for performance reasons.
   QList<QVariantMap>::const_iterator it = result.constEnd()-1;
   while (it != result.constBegin()-1)
   {
@@ -683,7 +683,6 @@ void ctkXnatSession::upload(ctkXnatFile *xnatFile,
   {
     qWarning()<<"Could not validate file upload! Remote MD5: "<<md5ChecksumRemote;
   }
-  // End file validation
 }
 
 //----------------------------------------------------------------------------

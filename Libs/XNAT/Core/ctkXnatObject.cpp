@@ -236,7 +236,6 @@ void ctkXnatObject::add(ctkXnatObject* child)
     {
       d->children.replace(d->children.indexOf(existingChild), child);
       childExists = true;
-      qWarning() << "ctkXnatObject::add(): Child already exists -> Replaced child!";
     }
   }
   if (!childExists)
@@ -383,7 +382,7 @@ void ctkXnatObject::saveImpl(bool /*overwrite*/)
     // If the object has been modified on the server, perform an update
     if (d->lastModifiedTime < remoteModTime)
     {
-      qDebug()<<"Object maybe overwritten on server!";
+      qWarning()<<"Uploaded object maybe overwritten on server!";
       // TODO update from server, since modification time is not really supported
       // by xnat right now this is not of high priority
       // something like this->updateImpl + setLastModifiedTime()

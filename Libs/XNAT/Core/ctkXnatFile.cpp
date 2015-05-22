@@ -21,11 +21,8 @@
 
 #include "ctkXnatFile.h"
 
-#include "ctkXnatException.h"
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSession.h"
-
-#include <QDebug>
 
 const QString ctkXnatFile::FILE_NAME = "Name";
 const QString ctkXnatFile::FILE_TAGS = "file_tags";

@@ -147,23 +147,23 @@ public:
   QString sessionId() const;
 
   /**
-    * @brief Sets the default location where files will be save after being downloaded
+    * @brief Sets the default location where files will be saved after being downloaded
     *
     * Sets the default directory into which file downloads will be saved.
-    * By default this value is empty and files will be stored into the directory
-    * of the executable.
+    * By default this value is empty and files will be stored into the current
+    * working directory.
     * If the path does not exists a warning will be printed and the path will be
-    * set to the current working directory
+    * set to the current working directory.
     *
     * @param path the path to the download location
     */
-  void setDefaultFilePath(const QString& path);
+  void setDefaultDownloadDir(const QString& path);
 
   /**
     * @brief returns the default download location
     * @return the default download directory as string
     */
-  QString defaultFilePath() const;
+  QString defaultDownloadDir() const;
 
   ctkXnatDataModel* dataModel() const;
 
@@ -268,7 +268,7 @@ public:
    */
   Q_SIGNAL void sessionAboutToBeClosed();
 
-  Q_SIGNAL void uploadFinished();
+//  Q_SIGNAL void uploadFinished();
 
   Q_SIGNAL void progress(QUuid, double);
 

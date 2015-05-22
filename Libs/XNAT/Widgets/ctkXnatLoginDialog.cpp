@@ -212,7 +212,7 @@ void ctkXnatLoginDialog::accept()
     return;
     }
   d->Session = session.take();
-  d->Session->setDefaultFilePath(ui->edtDownloadDir->text());
+  d->Session->setDefaultDownloadDir(ui->edtDownloadDir->text());
 
   QDialog::accept();
 }

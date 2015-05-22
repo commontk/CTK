@@ -27,8 +27,8 @@
 const QString ctkXnatResource::TAGS = "tags";
 const QString ctkXnatResource::FORMAT = "format";
 const QString ctkXnatResource::CONTENT = "content";
-
 const QString ctkXnatResource::ID = "xnat_abstractresource_id";
+
 //----------------------------------------------------------------------------
 class ctkXnatResourcePrivate : public ctkXnatObjectPrivate
 {
