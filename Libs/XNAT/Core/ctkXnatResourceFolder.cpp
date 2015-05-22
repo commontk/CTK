@@ -63,6 +63,18 @@ QString ctkXnatResourceFolder::resourceUri() const
 }
 
 //----------------------------------------------------------------------------
+QString ctkXnatResourceFolder::name() const
+{
+  return this->label();
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatResourceFolder::label() const
+{
+  return this->property(LABEL);
+}
+
+//----------------------------------------------------------------------------
 void ctkXnatResourceFolder::reset()
 {
   ctkXnatObject::reset();
