@@ -169,9 +169,9 @@ void ctkXnatResource::downloadImpl(const QString& filename)
 //----------------------------------------------------------------------------
 void ctkXnatResource::saveImpl(bool /*overwrite*/)
 {
-  QString query = this->resourceUri();
+  ctkXnatSession::UrlParameters urlParams;
+  urlParams["xsi:type"] = this->schemaType();
 
-  query.append(QString("?%1=%2").arg("xsi:type", this->schemaType()));
   const QMap<QString, QString>& properties = this->properties();
   QMapIterator<QString, QString> itProperties(properties);
   while (itProperties.hasNext())
@@ -179,8 +179,9 @@ void ctkXnatResource::saveImpl(bool /*overwrite*/)
     itProperties.next();
     if (itProperties.key() == ID || itProperties.key() == "xsiType")
       continue;
-    query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
+
+    urlParams[itProperties.key()] = itProperties.value();
   }
-  QUuid queryId = this->session()->httpPut(query);
+  QUuid queryId = this->session()->httpPut(this->resourceUri(), urlParams);
   session()->httpResults(queryId, ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
 }

@@ -333,7 +333,7 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   QString url = d->loginProfile.serverUrl().toString();
   d->xnat->setServerUrl(url);
 
-  QObject::connect(d->xnat.data(), SIGNAL(uploadFinished()), this, SIGNAL(uploadFinished()));
+//  QObject::connect(d->xnat.data(), SIGNAL(uploadFinished()), this, SIGNAL(uploadFinished()));
   QObject::connect(d->xnat.data(), SIGNAL(progress(QUuid,double)),
           this, SIGNAL(progress(QUuid,double)));
 //  QObject::connect(d->xnat.data(), SIGNAL(progress(QUuid,double)),
@@ -531,7 +531,8 @@ QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QStri
   return d->results(restResult.data(), schemaType);
 }
 
-QUuid ctkXnatSession::httpPut(const QString& resource, const ctkXnatSession::UrlParameters& parameters, const ctkXnatSession::HttpRawHeaders& rawHeaders)
+QUuid ctkXnatSession::httpPut(const QString& resource, const ctkXnatSession::UrlParameters& /*parameters*/,
+                              const ctkXnatSession::HttpRawHeaders& /*rawHeaders*/)
 {
   Q_D(ctkXnatSession);
   d->checkSession();
@@ -616,19 +617,28 @@ void ctkXnatSession::download(const QString& fileName,
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatSession::upload(ctkXnatFile *file,
+void ctkXnatSession::upload(ctkXnatFile *xnatFile,
                             const UrlParameters &parameters,
                             const HttpRawHeaders &/*rawHeaders*/)
 {
   Q_D(ctkXnatSession);
-  QUuid queryId = d->xnat->upload(file->localFilePath(), file->resourceUri(), parameters);
+
+  QFile file(xnatFile->localFilePath());
+
+  if (!file.exists())
+  {
+    QString msg = "Error uploading file! ";
+    msg.append(QString("File \"%1\" does not exist!").arg(xnatFile->localFilePath()));
+    throw ctkXnatException(msg);
+  }
+
+  QUuid queryId = d->xnat->upload(xnatFile->localFilePath(), xnatFile->resourceUri(), parameters);
   d->xnat->sync(queryId);
 
-  // TODO this into session!!!
   // Validating the file upload by requesting the catalog XML
   // of the parent resource. Unfortunately for XNAT versions <= 1.6.4
   // this is the only way to get the file's MD5 hash form the server.
-  QString md5Query = file->parent()->resourceUri();
+  QString md5Query = xnatFile->parent()->resourceUri();
   QUuid md5ID = this->httpGet(md5Query);
   QList<QVariantMap> result = this->httpSync(md5ID);
 
@@ -639,7 +649,7 @@ void ctkXnatSession::upload(ctkXnatFile *file,
   QList<QVariantMap>::const_iterator it = result.constEnd()-1;
   while (it != result.constBegin()-1)
   {
-    QVariantMap::const_iterator it2 = (*it).find(file->name());
+    QVariantMap::const_iterator it2 = (*it).find(xnatFile->name());
     if (it2 != (*it).constEnd())
     {
       md5ChecksumRemote = it2.value().toString();
@@ -648,7 +658,7 @@ void ctkXnatSession::upload(ctkXnatFile *file,
     --it;
   }
 
-  QFile localFile(file->localFilePath());
+  QFile localFile(xnatFile->localFilePath());
   if (localFile.open(QFile::ReadOnly) && md5ChecksumRemote != "0")
   {
     QCryptographicHash hash(QCryptographicHash::Md5);
@@ -665,7 +675,7 @@ void ctkXnatSession::upload(ctkXnatFile *file,
     if (md5ChecksumLocal != md5ChecksumRemote)
     {
       // Remove corrupted file from server
-      file->erase();
+      xnatFile->erase();
       throw ctkXnatException("Upload failed! An error occurred during file upload.");
     }
   }

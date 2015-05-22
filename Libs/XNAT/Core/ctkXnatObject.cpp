@@ -372,10 +372,11 @@ bool ctkXnatObject::exists() const
 void ctkXnatObject::saveImpl(bool /*overwrite*/)
 {
   Q_D(ctkXnatObject);
-  QString query = this->resourceUri();
+  ctkXnatSession::UrlParameters urlParams;
+  urlParams["xsi:type"] = this->schemaType();
 
-  // If there is already a valid last-modification-time, otherwise the
-  // object is not yet on the server!
+  // Just do this if there is already a valid last-modification-time,
+  // otherwise the object is not yet on the server!
   QDateTime remoteModTime;
   if (d->lastModifiedTime.isValid())
   {
@@ -391,8 +392,6 @@ void ctkXnatObject::saveImpl(bool /*overwrite*/)
     }
   }
 
-  // Creating the update query
-  query.append(QString("?%1=%2").arg("xsi:type", this->schemaType()));
   const QMap<QString, QString>& properties = this->properties();
   QMapIterator<QString, QString> itProperties(properties);
   while (itProperties.hasNext())
@@ -400,11 +399,12 @@ void ctkXnatObject::saveImpl(bool /*overwrite*/)
     itProperties.next();
     if (itProperties.key() == "ID")
       continue;
-    query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
+
+    urlParams[itProperties.key()] = itProperties.value();
   }
 
   // Execute the update
-  QUuid queryID = this->session()->httpPut(query);
+  QUuid queryID = this->session()->httpPut(this->resourceUri(), urlParams);
   const QList<QVariantMap> results = this->session()->httpSync(queryID);
 
   // If this xnat object did not exist before on the server set the ID returned by Xnat

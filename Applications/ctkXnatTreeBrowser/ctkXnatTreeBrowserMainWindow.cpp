@@ -147,7 +147,7 @@ void ctkXnatTreeBrowserMainWindow::addResourceClicked()
 {
   const QModelIndex index = ui->treeView->selectionModel()->currentIndex();
   ctkXnatObject* parentObject = m_TreeModel->xnatObject(index);
-  parentObject->addResource("data", "ctk format", "custom content", "tag1, tag2");
+  parentObject->addResourceFolder("data", "ctk format", "custom content", "tag1, tag2");
 }
 
 void ctkXnatTreeBrowserMainWindow::uploadFileClicked()

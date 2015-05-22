@@ -25,9 +25,7 @@
 #include "ctkXnatObjectPrivate.h"
 #include "ctkXnatSession.h"
 
-#include <QCryptographicHash>
 #include <QDebug>
-#include <QFile>
 
 const QString ctkXnatFile::FILE_NAME = "Name";
 const QString ctkXnatFile::FILE_TAGS = "file_tags";
@@ -155,23 +153,12 @@ void ctkXnatFile::saveImpl(bool overwrite)
 {
   Q_D(ctkXnatFile);
 
-  QMap<QString, QString> urlParams;
+  ctkXnatSession::UrlParameters urlParams;
   urlParams["xsi:type"] = this->schemaType();
+  // Flag needed for file upload
   urlParams["inbody"] = "true";
-  QString query = this->resourceUri();
-  QString filename = this->localFilePath();
-
-  QFile file(filename);
-
-  if (!file.exists())
-  {
-    QString msg = "Error uploading file! ";
-    msg.append(QString("File \"%1\" does not exist!").arg(filename));
-    throw ctkXnatException(msg);
-  }
 
   // Creating the update query
-  query.append(QString("?%1=%2").arg("xsi:type", this->schemaType()));
   const QMap<QString, QString>& properties = this->properties();
   QMapIterator<QString, QString> itProperties(properties);
   while (itProperties.hasNext())
@@ -185,8 +172,8 @@ void ctkXnatFile::saveImpl(bool overwrite)
       continue;
 
     urlParams[itProperties.key()] = itProperties.value();
-    query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
   }
+
   if (!this->fileFormat().isNull())
     urlParams["format"] = this->fileFormat();
   if (!this->fileContent().isNull())
@@ -197,11 +184,5 @@ void ctkXnatFile::saveImpl(bool overwrite)
   if (this->exists() && overwrite)
     urlParams["overwrite"] = "true";
 
-  // Flag needed for file upload
-  query.append(QString("&%1=%2").arg("inbody", "true"));
-
   this->session()->upload(this, urlParams);
-
-//  d->setIsModified();
-//  this->parent()->fetch();
 }

@@ -33,7 +33,6 @@ public:
   {
   }
 
-  QList<QVariantMap> result;
   QXmlStreamReader xmlReader;
 };
 
@@ -79,10 +78,4 @@ void ctkXnatResourceCatalogXmlParser::parseXml(QList<QVariantMap>& result)
   {
     qWarning()<<"Error parsing XNAT resource catalog xml!";
   }
-}
-
-const QList<QVariantMap>& ctkXnatResourceCatalogXmlParser::md5Hashes()
-{
-  Q_D(ctkXnatResourceCatalogXmlParser);
-  return d->result;
 }

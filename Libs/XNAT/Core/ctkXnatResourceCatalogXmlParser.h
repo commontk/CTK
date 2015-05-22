@@ -55,12 +55,6 @@ public:
   void setData(const QByteArray& xmlInput);
 
   /**
-   * @brief Returns the md5 hashes of the resource files
-   * @return A list of QVariantMaps, which contain the md5 hashes
-   */
-  const QList<QVariantMap>& md5Hashes();
-
-  /**
    * @brief Parses the xml input and extracts the md5 hashes of the resource catalog
    * @param result the QList in which the md5 hashes will be stored
    */

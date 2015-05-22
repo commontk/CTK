@@ -132,7 +132,13 @@ public:
 
   void download(const QString&);
 
-  /// Creates the object on the XNAT server and sets the new ID.
+  /// Creates a new resource folder with the given foldername, format, content and tags
+  /// for this ctkXnatObject on the server.
+  /// @param foldername the name of the resource folder on the server (mandatory)
+  /// @param format the text of the format field of a resource (optional)
+  /// @param content the text of the content field of a resource (optional)
+  /// @param tags the content of the tags field of a resource (optional)
+  /// @returns ctkXnatResource the created resource
   virtual ctkXnatResource* addResourceFolder(QString foldername,
                            QString format = "", QString content = "", QString tags = "");
 
