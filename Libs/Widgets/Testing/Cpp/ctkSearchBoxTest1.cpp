@@ -38,8 +38,8 @@ int ctkSearchBoxTest1(int argc, char* argv[])
   QApplication app(argc, argv);
 
   QPalette p;
-  p.setColor(QPalette::ColorRole::Window, Qt::gray);
-  p.setColor(QPalette::ColorRole::Base, Qt::gray);
+  p.setColor(QPalette::Window, Qt::gray);
+  p.setColor(QPalette::Base, Qt::gray);
 
   ctkSearchBox search;
   search.setShowSearchIcon(true);
