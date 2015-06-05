@@ -139,7 +139,9 @@ void ctkXnatSubject::fetchImpl()
 {
   QString experimentsUri = this->resourceUri() + "/experiments";
   ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(experimentsUri);
+  QMap<QString, QString> paramMap;
+  paramMap.insert("columns", "xnat:subjectassessordata/id,session_ID,ID,project,xsiType,label,insert_date,URI,date,time,scanner,modality");
+  QUuid queryId = session->httpGet(experimentsUri, paramMap);
   QList<ctkXnatObject*> experiments = session->httpResults(queryId,
                                                            ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT);
 
