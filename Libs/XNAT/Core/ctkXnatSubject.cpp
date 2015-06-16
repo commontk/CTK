@@ -124,6 +124,10 @@ void ctkXnatSubject::setInsertUser(const QString& insertUser)
 //----------------------------------------------------------------------------
 QString ctkXnatSubject::resourceUri() const
 {
+  if (this->id().isEmpty())
+  {
+    return QString("%1/subjects/%2").arg(parent()->resourceUri(), this->label());
+  }
   return QString("%1/subjects/%2").arg(parent()->resourceUri(), this->id());
 }
 
