@@ -483,7 +483,7 @@ void ctkXnatSession::setDefaultDownloadDir(const QString &path)
   Q_D(ctkXnatSession);
 
   QDir directory(path);
-  if (directory.exists() && path.size() != 0)
+  if (directory.exists())
   {
     d->defaultDownloadDir = path;
   }
