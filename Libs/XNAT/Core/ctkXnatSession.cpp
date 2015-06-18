@@ -90,7 +90,7 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
                                              ctkXnatSession* q)
   : loginProfile(loginProfile)
   , xnat(new ctkXnatAPI())
-  , defaultDownloadDir("")
+  , defaultDownloadDir(".")
   , q(q)
 {
   // TODO This is a workaround for connecting to sites with self-signed
