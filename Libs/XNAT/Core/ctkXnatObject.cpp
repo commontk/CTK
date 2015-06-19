@@ -357,7 +357,11 @@ ctkXnatResource* ctkXnatObject::addResourceFolder(QString foldername, QString fo
     resource->setTags(tags);
 
   resFolder->add(resource);
-  resource->save();
+
+  if (!resource->exists())
+    resource->save();
+  else
+    qDebug()<<"Not adding resource folder. Folder already exists!";
 
   return resource;
 }
