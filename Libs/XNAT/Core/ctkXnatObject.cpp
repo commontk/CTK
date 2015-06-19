@@ -229,15 +229,18 @@ void ctkXnatObject::add(ctkXnatObject* child)
   }
 
   bool childExists (false);
-  foreach (ctkXnatObject* existingChild, d->children)
+
+  QList<ctkXnatObject*>::iterator iter;
+  for (iter = d->children.begin(); iter != d->children.end(); ++iter)
   {
-    if ((existingChild->id().length() != 0 && existingChild->id() == child->id()) ||
-        (existingChild->id().length() == 0 && existingChild->name() == child->name()))
+    if (((*iter)->id().length() != 0 && (*iter)->id() == child->id()) ||
+        ((*iter)->id().length() == 0 && (*iter)->name() == child->name()))
     {
-      d->children.replace(d->children.indexOf(existingChild), child);
+      *iter = child;
       childExists = true;
     }
   }
+
   if (!childExists)
   {
     d->children.push_back(child);
