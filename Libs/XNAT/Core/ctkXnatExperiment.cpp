@@ -34,6 +34,11 @@
 
 #include <QDebug>
 
+const QString ctkXnatExperiment::DATE_OF_ACQUISITION = "date";
+const QString ctkXnatExperiment::TIME_OF_ACQUISITION = "time";
+const QString ctkXnatExperiment::SCANNER_TYPE = "scanner";
+const QString ctkXnatExperiment::IMAGE_MODALITY = "modality";
+
 //----------------------------------------------------------------------------
 class ctkXnatExperimentPrivate : public ctkXnatObjectPrivate
 {
@@ -92,6 +97,54 @@ QString ctkXnatExperiment::label() const
 void ctkXnatExperiment::setLabel(const QString &label)
 {
   this->setProperty(LABEL, label);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatExperiment::dateOfAcquisition() const
+{
+  return this->property(DATE_OF_ACQUISITION);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatExperiment::setDateOfAcquisition(const QString &dateOfAcquisition)
+{
+  this->setProperty(DATE_OF_ACQUISITION, dateOfAcquisition);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatExperiment::timeOfAcquisition() const
+{
+  return this->property(TIME_OF_ACQUISITION);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatExperiment::setTimeOfAcquisition(const QString &timeOfAcquisition)
+{
+  this->setProperty(TIME_OF_ACQUISITION, timeOfAcquisition);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatExperiment::scannerType() const
+{
+  return this->property(SCANNER_TYPE);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatExperiment::setScannerType(const QString &scannerType)
+{
+  this->setProperty(SCANNER_TYPE, scannerType);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatExperiment::imageModality() const
+{
+  return this->property(IMAGE_MODALITY);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatExperiment::setImageModality(const QString &imageModality)
+{
+  this->setProperty(IMAGE_MODALITY, imageModality);
 }
 
 //----------------------------------------------------------------------------
