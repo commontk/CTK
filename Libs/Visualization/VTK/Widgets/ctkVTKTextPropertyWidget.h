@@ -40,6 +40,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKTextPropertyWidget : public QWi
   Q_PROPERTY(bool showText READ isTextVisible WRITE setTextVisible);
   Q_PROPERTY(QString text READ text WRITE setText);
   Q_PROPERTY(QString textLabel READ textLabel WRITE setTextLabel);
+  Q_PROPERTY(bool showSize READ isSizeVisible WRITE setSizeVisible);
 
 public:
   /// Constructors
@@ -51,6 +52,9 @@ public:
 
   void setTextVisible(bool visible);
   bool isTextVisible()const;
+
+  void setSizeVisible(bool visible);
+  bool isSizeVisible()const;
 
   QString text()const;
   QString textLabel()const;
@@ -67,6 +71,8 @@ public:
   bool isItalic()const;
   /// Has the text shadows
   bool hasShadow()const;
+  /// Size of vtkTextProperty
+  double size()const;
 
 public Q_SLOTS:
   void setTextProperty(vtkTextProperty* textProperty);
@@ -79,6 +85,7 @@ public Q_SLOTS:
   void setBold(bool enable);
   void setItalic(bool enable);
   void setShadow(bool enable);
+  void setSize(double size);
 
 Q_SIGNALS:
   void textChanged(const QString& text);
@@ -88,6 +95,7 @@ Q_SIGNALS:
   void boldChanged(bool enable);
   void italicChanged(bool enable);
   void shadowChanged(bool enable);
+  void sizeChanged(double size);
 
 protected Q_SLOTS:
   void updateFromTextProperty();
