@@ -236,39 +236,63 @@ void ctkXnatTreeModel::refresh(const QModelIndex& parent)
   Q_D(const ctkXnatTreeModel);
 
   ctkXnatTreeItem* item = d->itemAt(parent);
-  int numChildren = rowCount(parent);
 
   ctkXnatObject* xnatObject = item->xnatObject();
 
+  // Do this just for xnatObjects that are already fetched.
+  // Otherwise we would retrieve all data from XNAT
   if (xnatObject->isFetched())
   {
+    // Force a fetch for current object (it might has changed on the server)
     xnatObject->fetch(true);
 
     QList<ctkXnatObject*> children = xnatObject->children();
+    int numChildren = rowCount(parent);
 
-    bool exists (false);
+    bool addToTreeView (true);
 
+    // For all children, check if they are already in the treeview,
+    // if not -> add them
+    // For all items of the treeview, check if they are still on the server
+    // if not -> remove them
     foreach (ctkXnatObject* child, children)
     {
       for (int i = 0; i < numChildren; ++i)
       {
         ctkXnatObject* treeItem = item->child(i)->xnatObject();
 
+        // If the item was deleted from the server in the meantime
+        // -> remove it from the treeview
+        if (!treeItem->exists())
+        {
+          beginRemoveRows(parent, item->child(i)->row(), item->child(i)->row());
+          item->remove(treeItem);
+          xnatObject->remove(child);
+          children.removeOne(child);
+          endRemoveRows();
+          --numChildren;
+          addToTreeView = false;
+          break;
+        }
+
         if ((treeItem->id().length() != 0 && treeItem->id() == child->id()) ||
             (treeItem->id().length() == 0 && treeItem->name() == child->name()))
         {
-          exists = true;
+          addToTreeView = false;
           break;
         }
       }
-      if (!exists)
+
+      // If the current xnatObject was created on the server in the meantime
+      // -> add it to the treeview
+      if (addToTreeView)
       {
         beginInsertRows(parent, 0, numChildren - 1);
         item->appendChild(new ctkXnatTreeItem(child, item));
         endInsertRows();
         ++numChildren;
       }
-      exists = false;
+      addToTreeView = true;
     }
 
     for (int i=0; i<numChildren; i++)
