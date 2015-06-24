@@ -182,7 +182,7 @@ bool ctkXnatTreeModel::hasChildren(const QModelIndex& index) const
   }
 
   ctkXnatTreeItem* item = d->itemAt(index);
-  return !item->xnatObject()->isFetched() || !item->xnatObject()->children().isEmpty();
+  return item->xnatObject() || !item->xnatObject()->isFetched() || !item->xnatObject()->children().isEmpty();
 }
 
 //----------------------------------------------------------------------------
