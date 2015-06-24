@@ -286,10 +286,10 @@ void ctkXnatObject::setSchemaType(const QString& schemaType)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatObject::fetch()
+void ctkXnatObject::fetch(bool forceFetch)
 {
   Q_D(ctkXnatObject);
-  if (!d->fetched)
+  if (!d->fetched || forceFetch)
   {
     this->fetchImpl();
     d->fetched = true;

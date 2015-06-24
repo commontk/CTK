@@ -117,7 +117,7 @@ public:
   virtual void reset();
 
   /// Fetches the children and the properties of the object.
-  void fetch();
+  void fetch(bool forceFetch = false);
 
   /// Checks if the object exists on the XNAT server.
   bool exists() const;

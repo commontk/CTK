@@ -147,6 +147,8 @@ void ctkXnatTreeBrowserMainWindow::addResourceClicked()
 {
   const QModelIndex index = ui->treeView->selectionModel()->currentIndex();
   ctkXnatObject* parentObject = m_TreeModel->xnatObject(index);
+  parentObject->addResourceFolder("data");
+  m_TreeModel->refresh(index);
 }
 
 void ctkXnatTreeBrowserMainWindow::uploadFileClicked()

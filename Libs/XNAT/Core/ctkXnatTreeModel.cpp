@@ -226,6 +226,59 @@ void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
 }
 
 //----------------------------------------------------------------------------
+void ctkXnatTreeModel::refresh(const QModelIndex& parent)
+{
+  if (!parent.isValid())
+  {
+    return;
+  }
+
+  Q_D(const ctkXnatTreeModel);
+
+  ctkXnatTreeItem* item = d->itemAt(parent);
+  int numChildren = rowCount(parent);
+
+  ctkXnatObject* xnatObject = item->xnatObject();
+
+  if (xnatObject->isFetched())
+  {
+    xnatObject->fetch(true);
+
+    QList<ctkXnatObject*> children = xnatObject->children();
+
+    bool exists (false);
+
+    foreach (ctkXnatObject* child, children)
+    {
+      for (int i = 0; i < numChildren; ++i)
+      {
+        ctkXnatObject* treeItem = item->child(i)->xnatObject();
+
+        if ((treeItem->id().length() != 0 && treeItem->id() == child->id()) ||
+            (treeItem->id().length() == 0 && treeItem->name() == child->name()))
+        {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists)
+      {
+        beginInsertRows(parent, 0, numChildren - 1);
+        item->appendChild(new ctkXnatTreeItem(child, item));
+        endInsertRows();
+        ++numChildren;
+      }
+      exists = false;
+    }
+
+    for (int i=0; i<numChildren; i++)
+    {
+      refresh(index(i,0,parent));
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
 ctkXnatObject* ctkXnatTreeModel::xnatObject(const QModelIndex& index) const
 {
   Q_D(const ctkXnatTreeModel);
