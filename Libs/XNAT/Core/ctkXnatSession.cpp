@@ -576,7 +576,7 @@ void ctkXnatSession::save(ctkXnatObject* object)
   if (maps.size() == 1 && maps[0].size() == 1)
   {
     QVariant id = maps[0][ctkXnatObject::ID];
-    if (!id.isNull())
+    if (id.isNull())
     {
       object->setId(id.toString());
     }
