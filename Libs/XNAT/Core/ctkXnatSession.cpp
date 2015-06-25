@@ -573,7 +573,7 @@ void ctkXnatSession::save(ctkXnatObject* object)
   }
 
   const QList<QVariantMap>& maps = result->results();
-  if (maps.size() == 1 && maps[0].size() == 1)
+  if (maps.size() == 1 && maps[0].size() == 2)
   {
     QVariant id = maps[0][ctkXnatObject::ID];
     if (!id.isNull())
