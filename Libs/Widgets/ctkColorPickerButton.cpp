@@ -78,10 +78,12 @@ void ctkColorPickerButtonPrivate::computeIcon()
   Q_Q(ctkColorPickerButton);
   int _iconSize = q->style()->pixelMetric(QStyle::PM_SmallIconSize);
   QPixmap pix(_iconSize, _iconSize);
-  pix.fill(q->palette().button().color());
+  pix.fill(this->Color.isValid() ?
+    q->palette().button().color() : Qt::transparent);
   QPainter p(&pix);
   p.setPen(QPen(Qt::gray));
-  p.setBrush(this->Color);
+  p.setBrush(this->Color.isValid() ?
+    pixmapColor : QBrush(Qt::BrushStyle::NoBrush));
   p.drawRect(2, 2, pix.width() - 5, pix.height() - 5);
 
   this->Icon = QIcon(pix);
