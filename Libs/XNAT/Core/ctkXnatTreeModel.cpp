@@ -246,7 +246,6 @@ void ctkXnatTreeModel::refresh(const QModelIndex& parent)
     // Force a fetch for current object (it might has changed on the server)
     xnatObject->fetch(true);
 
-    QList<ctkXnatObject*> children = xnatObject->children();
     int numChildren = rowCount(parent);
 
     bool addToTreeView (true);
@@ -255,28 +254,33 @@ void ctkXnatTreeModel::refresh(const QModelIndex& parent)
     // if not -> add them
     // For all items of the treeview, check if they are still on the server
     // if not -> remove them
-    foreach (ctkXnatObject* child, children)
+    QList<ctkXnatObject*> children = xnatObject->children();
+    QMutableListIterator<ctkXnatObject*> iter (children);
+
+    while (iter.hasNext())
     {
+      ctkXnatObject* child = iter.next();
       for (int i = 0; i < numChildren; ++i)
       {
-        ctkXnatObject* treeItem = item->child(i)->xnatObject();
+        ctkXnatObject* childItemObject = item->child(i)->xnatObject();
 
         // If the item was deleted from the server in the meantime
         // -> remove it from the treeview
-        if (!treeItem->exists())
+        if (!childItemObject->exists())
         {
           beginRemoveRows(parent, item->child(i)->row(), item->child(i)->row());
-          item->remove(treeItem);
+          item->remove(childItemObject);
           xnatObject->remove(child);
-          children.removeOne(child);
+          iter.remove();
           endRemoveRows();
           --numChildren;
+          --i;
           addToTreeView = false;
           break;
         }
 
-        if ((treeItem->id().length() != 0 && treeItem->id() == child->id()) ||
-            (treeItem->id().length() == 0 && treeItem->name() == child->name()))
+        if ((childItemObject->id().length() != 0 && childItemObject->id() == child->id()) ||
+            (childItemObject->id().length() == 0 && childItemObject->name() == child->name()))
         {
           addToTreeView = false;
           break;
@@ -295,6 +299,7 @@ void ctkXnatTreeModel::refresh(const QModelIndex& parent)
       addToTreeView = true;
     }
 
+    numChildren = rowCount(parent);
     for (int i=0; i<numChildren; i++)
     {
       refresh(index(i,0,parent));
