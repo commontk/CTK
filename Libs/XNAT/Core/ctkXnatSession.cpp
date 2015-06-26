@@ -531,12 +531,12 @@ QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QStri
   return d->results(restResult.data(), schemaType);
 }
 
-QUuid ctkXnatSession::httpPut(const QString& resource, const ctkXnatSession::UrlParameters& /*parameters*/,
+QUuid ctkXnatSession::httpPut(const QString& resource, const ctkXnatSession::UrlParameters& parameters,
                               const ctkXnatSession::HttpRawHeaders& /*rawHeaders*/)
 {
   Q_D(ctkXnatSession);
   d->checkSession();
-  return d->xnat->put(resource);
+  return d->xnat->put(resource, parameters);
 }
 
 //----------------------------------------------------------------------------
