@@ -46,6 +46,8 @@ private Q_SLOTS:
   void loginButtonPushed();
   void itemSelected(const QModelIndex&);
   void downloadButtonClicked();
+  void sessionTimedOutMsg();
+  void sessionTimesOutSoonMsg();
 
 private:
   Ui::ctkXnatTreeBrowserMainWindow* ui;
