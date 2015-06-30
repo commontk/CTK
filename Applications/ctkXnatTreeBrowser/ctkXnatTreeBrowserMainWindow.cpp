@@ -22,19 +22,27 @@
 #include "ctkXnatTreeBrowserMainWindow.h"
 #include "ui_ctkXnatTreeBrowserMainWindow.h"
 
-#include "ctkXnatLoginDialog.h"
-#include "ctkXnatTreeModel.h"
-#include "ctkXnatSession.h"
-#include "ctkXnatDataModel.h"
-#include "ctkXnatProject.h"
-#include "ctkXnatFile.h"
-#include "ctkXnatResource.h"
-#include "ctkXnatScan.h"
-#include "ctkXnatScanFolder.h"
 #include "ctkXnatAssessor.h"
 #include "ctkXnatAssessorFolder.h"
+#include "ctkXnatDataModel.h"
+#include "ctkXnatException.h"
+#include "ctkXnatExperiment.h"
+#include "ctkXnatFile.h"
+#include "ctkXnatLoginDialog.h"
+#include "ctkXnatProject.h"
 #include "ctkXnatReconstruction.h"
 #include "ctkXnatReconstructionFolder.h"
+#include "ctkXnatResource.h"
+#include "ctkXnatResourceFolder.h"
+#include "ctkXnatScan.h"
+#include "ctkXnatScanFolder.h"
+#include "ctkXnatSession.h"
+#include "ctkXnatSubject.h"
+#include "ctkXnatTreeModel.h"
+
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QFileInfo>
 
 ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -50,6 +58,8 @@ ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   this->connect(ui->loginButton, SIGNAL(clicked()), SLOT(loginButtonPushed()));
   this->connect(ui->treeView, SIGNAL(clicked(const QModelIndex&)), SLOT(itemSelected(const QModelIndex&)));
   this->connect(ui->downloadButton, SIGNAL(clicked()), SLOT(downloadButtonClicked()));
+  this->connect(ui->addResourceButton, SIGNAL(clicked()), SLOT(addResourceClicked()));
+  this->connect(ui->uploadFileButton, SIGNAL(clicked()), SLOT(uploadFileClicked()));
 }
 
 ctkXnatTreeBrowserMainWindow::~ctkXnatTreeBrowserMainWindow()
@@ -110,6 +120,16 @@ void ctkXnatTreeBrowserMainWindow::itemSelected(const QModelIndex &index)
   downloadable |= dynamic_cast<ctkXnatReconstructionFolder*>(xnatObject)!=NULL;
   ui->downloadButton->setEnabled(downloadable);
   ui->downloadLabel->setVisible(!downloadable);
+  bool canHaveResource = false;
+  canHaveResource |= dynamic_cast<ctkXnatProject*>(xnatObject) != NULL;
+  canHaveResource |=  dynamic_cast<ctkXnatSubject*>(xnatObject) != NULL;
+  canHaveResource |=  dynamic_cast<ctkXnatExperiment*>(xnatObject) != NULL;
+  ui->addResourceButton->setEnabled(canHaveResource);
+  bool uploadFilePossible = false;
+  uploadFilePossible |= dynamic_cast<ctkXnatResource*>(xnatObject) != NULL;
+  uploadFilePossible |=  dynamic_cast<ctkXnatScan*>(xnatObject) != NULL;
+  uploadFilePossible |=  dynamic_cast<ctkXnatAssessor*>(xnatObject) != NULL;
+  ui->uploadFileButton->setEnabled(uploadFilePossible);
 }
 
 void ctkXnatTreeBrowserMainWindow::downloadButtonClicked()
@@ -120,5 +140,40 @@ void ctkXnatTreeBrowserMainWindow::downloadButtonClicked()
   if ( fileName.length() != 0 )
   {
     m_TreeModel->downloadFile(index, fileName);
+  }
+}
+
+void ctkXnatTreeBrowserMainWindow::addResourceClicked()
+{
+  const QModelIndex index = ui->treeView->selectionModel()->currentIndex();
+  ctkXnatObject* parentObject = m_TreeModel->xnatObject(index);
+  parentObject->addResourceFolder("data");
+  m_TreeModel->refresh(index);
+}
+
+void ctkXnatTreeBrowserMainWindow::uploadFileClicked()
+{
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), QDir::homePath());
+  const QModelIndex index = ui->treeView->selectionModel()->currentIndex();
+  ctkXnatResource* resource = dynamic_cast<ctkXnatResource*>(m_TreeModel->xnatObject(index));
+  if (resource)
+  {
+    ctkXnatFile* file = new ctkXnatFile();
+    file->setLocalFilePath(filename);
+    QFileInfo fileInfo (filename);
+    file->setName(fileInfo.fileName());
+    resource->add(file);
+    try
+    {
+      file->save();
+    }
+    catch (ctkXnatException &e)
+    {
+      QMessageBox msgbox;
+      msgbox.setText(e.what());
+      msgbox.setIcon(QMessageBox::Critical);
+      msgbox.exec();
+    }
+    m_TreeModel->addChildNode(index, file);
   }
 }

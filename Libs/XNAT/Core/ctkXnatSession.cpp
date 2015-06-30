@@ -35,8 +35,10 @@
 #include "ctkXnatScan.h"
 #include "ctkXnatSubject.h"
 
+#include <QCryptographicHash>
 #include <QDateTime>
 #include <QDebug>
+#include <QDir>
 #include <QScopedPointer>
 #include <QStringBuilder>
 #include <QNetworkCookie>
@@ -61,6 +63,7 @@ public:
   QScopedPointer<ctkXnatAPI> xnat;
   QScopedPointer<ctkXnatDataModel> dataModel;
   QString sessionId;
+  QString defaultDownloadDir;
 
   QMap<QString, QString> sessionProperties;
 
@@ -87,6 +90,7 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
                                              ctkXnatSession* q)
   : loginProfile(loginProfile)
   , xnat(new ctkXnatAPI())
+  , defaultDownloadDir(".")
   , q(q)
 {
   // TODO This is a workaround for connecting to sites with self-signed
@@ -329,6 +333,12 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   QString url = d->loginProfile.serverUrl().toString();
   d->xnat->setServerUrl(url);
 
+//  QObject::connect(d->xnat.data(), SIGNAL(uploadFinished()), this, SIGNAL(uploadFinished()));
+  QObject::connect(d->xnat.data(), SIGNAL(progress(QUuid,double)),
+          this, SIGNAL(progress(QUuid,double)));
+//  QObject::connect(d->xnat.data(), SIGNAL(progress(QUuid,double)),
+//          this, SLOT(onProgress(QUuid,double)));
+
   d->setDefaultHttpHeaders();
 }
 
@@ -432,7 +442,7 @@ ctkXnatLoginProfile ctkXnatSession::loginProfile() const
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatSession::progress(QUuid /*queryId*/, double /*progress*/)
+void ctkXnatSession::onProgress(QUuid /*queryId*/, double /*progress*/)
 {
 //  qDebug() << "ctkXnatSession::progress(QUuid queryId, double progress)";
 //  qDebug() << "query id:" << queryId;
@@ -468,6 +478,30 @@ QString ctkXnatSession::sessionId() const
 }
 
 //----------------------------------------------------------------------------
+void ctkXnatSession::setDefaultDownloadDir(const QString &path)
+{
+  Q_D(ctkXnatSession);
+
+  QDir directory(path);
+  if (directory.exists())
+  {
+    d->defaultDownloadDir = path;
+  }
+  else
+  {
+    d->defaultDownloadDir = QDir::currentPath();
+    qWarning() << "Specified directory: ["<<path<<"] does not exists! Setting default filepath to :"<<d->defaultDownloadDir;
+  }
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSession::defaultDownloadDir() const
+{
+  Q_D(const ctkXnatSession);
+  return d->defaultDownloadDir;
+}
+
+//----------------------------------------------------------------------------
 ctkXnatDataModel* ctkXnatSession::dataModel() const
 {
   Q_D(const ctkXnatSession);
@@ -497,6 +531,14 @@ QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QStri
   return d->results(restResult.data(), schemaType);
 }
 
+QUuid ctkXnatSession::httpPut(const QString& resource, const ctkXnatSession::UrlParameters& parameters,
+                              const ctkXnatSession::HttpRawHeaders& /*rawHeaders*/)
+{
+  Q_D(ctkXnatSession);
+  d->checkSession();
+  return d->xnat->put(resource, parameters);
+}
+
 //----------------------------------------------------------------------------
 QList<QVariantMap> ctkXnatSession::httpSync(const QUuid& uuid)
 {
@@ -515,17 +557,6 @@ QList<QVariantMap> ctkXnatSession::httpSync(const QUuid& uuid)
     result = restResult->results();
   }
   return result;
-}
-
-//----------------------------------------------------------------------------
-bool ctkXnatSession::exists(const ctkXnatObject* object)
-{
-  Q_D(ctkXnatSession);
-
-  QString query = object->resourceUri();
-  bool success = d->xnat->sync(d->xnat->get(query));
-
-  return success;
 }
 
 //----------------------------------------------------------------------------
@@ -549,38 +580,14 @@ QUuid ctkXnatSession::httpHead(const QString& resourceUri)
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatSession::save(ctkXnatObject* object)
+bool ctkXnatSession::exists(const ctkXnatObject* object)
 {
   Q_D(ctkXnatSession);
 
   QString query = object->resourceUri();
-  query.append(QString("?%1=%2").arg("xsi:type", object->schemaType()));
-  const QMap<QString, QString>& properties = object->properties();
-  QMapIterator<QString, QString> itProperties(properties);
-  while (itProperties.hasNext())
-  {
-    itProperties.next();
-    query.append(QString("&%1=%2").arg(itProperties.key(), itProperties.value()));
-  }
+  bool success = d->xnat->sync(d->xnat->get(query));
 
-  qDebug() << "ctkXnatSession::save() query:" << query;
-  QUuid queryId = d->xnat->put(query);
-  qRestResult* result = d->xnat->takeResult(queryId);
-
-  if (!result || !result->error().isNull())
-  {
-    d->throwXnatException("Error occurred while creating the data.");
-  }
-
-  const QList<QVariantMap>& maps = result->results();
-  if (maps.size() == 1 && maps[0].size() == 1)
-  {
-    QVariant id = maps[0][ctkXnatObject::ID];
-    if (!id.isNull())
-    {
-      object->setId(id.toString());
-    }
-  }
+  return success;
 }
 
 //----------------------------------------------------------------------------
@@ -607,6 +614,75 @@ void ctkXnatSession::download(const QString& fileName,
 
   QUuid queryId = d->xnat->download(fileName, resource, parameters, rawHeaders);
   d->xnat->sync(queryId);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSession::upload(ctkXnatFile *xnatFile,
+                            const UrlParameters &parameters,
+                            const HttpRawHeaders &/*rawHeaders*/)
+{
+  Q_D(ctkXnatSession);
+
+  QFile file(xnatFile->localFilePath());
+
+  if (!file.exists())
+  {
+    QString msg = "Error uploading file! ";
+    msg.append(QString("File \"%1\" does not exist!").arg(xnatFile->localFilePath()));
+    throw ctkXnatException(msg);
+  }
+
+  QUuid queryId = d->xnat->upload(xnatFile->localFilePath(), xnatFile->resourceUri(), parameters);
+  d->xnat->sync(queryId);
+
+  // Validating the file upload by requesting the catalog XML
+  // of the parent resource. Unfortunately for XNAT versions <= 1.6.4
+  // this is the only way to get the file's MD5 hash form the server.
+  QString md5Query = xnatFile->parent()->resourceUri();
+  QUuid md5QueryID = this->httpGet(md5Query);
+  QList<QVariantMap> result = this->httpSync(md5QueryID);
+
+  QString md5ChecksumRemote ("0");
+  // Newly added files are usually at the end of the catalog
+  // and hence at the end of the result list.
+  // So iterating backward is for performance reasons.
+  QList<QVariantMap>::const_iterator it = result.constEnd()-1;
+  while (it != result.constBegin()-1)
+  {
+    QVariantMap::const_iterator it2 = (*it).find(xnatFile->name());
+    if (it2 != (*it).constEnd())
+    {
+      md5ChecksumRemote = it2.value().toString();
+      break;
+    }
+    --it;
+  }
+
+  QFile localFile(xnatFile->localFilePath());
+  if (localFile.open(QFile::ReadOnly) && md5ChecksumRemote != "0")
+  {
+    QCryptographicHash hash(QCryptographicHash::Md5);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    hash.addData(&localFile);
+#else
+    hash.addData(localFile.readAll());
+#endif
+
+    QString md5ChecksumLocal(hash.result().toHex());
+    // Retrieving the md5 checksum on the server and comparing
+    // it with the local file md5 sum
+    if (md5ChecksumLocal != md5ChecksumRemote)
+    {
+      // Remove corrupted file from server
+      xnatFile->erase();
+      throw ctkXnatException("Upload failed! An error occurred during file upload.");
+    }
+  }
+  else
+  {
+    qWarning()<<"Could not validate file upload! Remote MD5: "<<md5ChecksumRemote;
+  }
 }
 
 //----------------------------------------------------------------------------

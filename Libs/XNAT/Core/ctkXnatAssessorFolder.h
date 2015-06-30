@@ -42,6 +42,9 @@ public:
 
   virtual QString resourceUri() const;
 
+  virtual QString name() const;
+  virtual QString label()const;
+
   void reset();
 
 private:

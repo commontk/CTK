@@ -50,6 +50,12 @@ public:
   virtual bool canFetchMore(const QModelIndex& parent) const;
   virtual void fetchMore(const QModelIndex& parent);
 
+  /**
+   * @brief Convenience method for refreshing an entry of the tree model
+   * @param The parent item, whose children will be refreshed
+   */
+  virtual void refresh(const QModelIndex& parent = QModelIndex());
+
   ctkXnatObject* xnatObject(const QModelIndex& index) const;
 
   void addDataModel(ctkXnatDataModel* dataModel);
@@ -57,8 +63,9 @@ public:
 
   bool removeAllRows(const QModelIndex& parent);
 
-  void uploadFile(const QModelIndex& index, const QString& zipFilename);
   void downloadFile (const QModelIndex& index, const QString& zipFilename);
+
+  void addChildNode(const QModelIndex& index, ctkXnatObject *child);
 
 private:
 

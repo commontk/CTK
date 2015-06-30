@@ -53,6 +53,7 @@ ctkXnatReconstructionFolder::ctkXnatReconstructionFolder(ctkXnatObject* parent)
   : ctkXnatObject(*new ctkXnatReconstructionFolderPrivate(), parent, QString::null)
 {
   this->setProperty(ID, "reconstructions");
+  this->setProperty(LABEL, "Reconstructions");
 }
 
 //----------------------------------------------------------------------------
@@ -64,6 +65,18 @@ ctkXnatReconstructionFolder::~ctkXnatReconstructionFolder()
 QString ctkXnatReconstructionFolder::resourceUri() const
 {
   return QString("%1/%2").arg(parent()->resourceUri(), this->id());
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatReconstructionFolder::name() const
+{
+  return this->label();
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatReconstructionFolder::label() const
+{
+  return this->property(LABEL);
 }
 
 //----------------------------------------------------------------------------

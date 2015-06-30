@@ -56,11 +56,23 @@ public:
   /// Sets the label of the object.
   void setLabel(const QString& label);
 
+  void setFormat(const QString& format);
+  QString format() const;
+
+  void setTags(const QString& tags);
+  QString tags() const;
+
+  void setContent(const QString& content);
+  QString content() const;
+
   void reset();
 
-  void download(const QString& filename);
+  void saveImpl(bool overwrite);
 
   static const QString ID;
+  static const QString TAGS;
+  static const QString FORMAT;
+  static const QString CONTENT;
 
 private:
 

@@ -19,28 +19,26 @@
 
 =============================================================================*/
 
-#ifndef ctkXnatReconstructionFolder_h
-#define ctkXnatReconstructionFolder_h
+#ifndef ctkXnatResourceFolder_h
+#define ctkXnatResourceFolder_h
 
 #include "ctkXNATCoreExport.h"
 
 #include "ctkXnatObject.h"
 
-class ctkXnatConnection;
-class ctkXnatExperiment;
-class ctkXnatReconstructionFolderPrivate;
+class ctkXnatResourceFolderPrivate;
 
 /**
  * @ingroup XNAT_Core
  */
-class CTK_XNAT_CORE_EXPORT ctkXnatReconstructionFolder : public ctkXnatObject
+class CTK_XNAT_CORE_EXPORT ctkXnatResourceFolder : public ctkXnatObject
 {
 
 public:
 
-  ctkXnatReconstructionFolder(ctkXnatObject* parent = NULL);
+  ctkXnatResourceFolder(ctkXnatObject* parent = NULL);
 
-  virtual ~ctkXnatReconstructionFolder();
+  virtual ~ctkXnatResourceFolder();
 
   virtual QString resourceUri() const;
 
@@ -51,11 +49,12 @@ public:
 
 private:
 
+  friend class qRestResult;
   virtual void fetchImpl();
-
   virtual void downloadImpl(const QString&);
+  virtual void saveImpl(bool overwrite);
 
-  Q_DECLARE_PRIVATE(ctkXnatReconstructionFolder)
+  Q_DECLARE_PRIVATE(ctkXnatResourceFolder)
 };
 
 #endif

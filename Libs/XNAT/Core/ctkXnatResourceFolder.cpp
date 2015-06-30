@@ -19,22 +19,19 @@
 
 =============================================================================*/
 
-#include "ctkXnatAssessorFolder.h"
+#include "ctkXnatResourceFolder.h"
 
-#include "ctkXnatAssessor.h"
 #include "ctkXnatDefaultSchemaTypes.h"
-#include "ctkXnatExperiment.h"
 #include "ctkXnatObjectPrivate.h"
+#include "ctkXnatResource.h"
 #include "ctkXnatSession.h"
 
-#include <QDebug>
-
 //----------------------------------------------------------------------------
-class ctkXnatAssessorFolderPrivate : public ctkXnatObjectPrivate
+class ctkXnatResourceFolderPrivate : public ctkXnatObjectPrivate
 {
 public:
 
-  ctkXnatAssessorFolderPrivate()
+  ctkXnatResourceFolderPrivate()
   : ctkXnatObjectPrivate()
   {
   }
@@ -45,67 +42,79 @@ public:
 
 };
 
+
 //----------------------------------------------------------------------------
-ctkXnatAssessorFolder::ctkXnatAssessorFolder(ctkXnatObject* parent)
-  : ctkXnatObject(*new ctkXnatAssessorFolderPrivate(), parent, QString::null)
+ctkXnatResourceFolder::ctkXnatResourceFolder(ctkXnatObject* parent)
+  : ctkXnatObject(*new ctkXnatResourceFolderPrivate(), parent, QString::null)
 {
-  
-  this->setProperty(ID, "assessors");
-  this->setProperty(LABEL, "Assessments");
+  this->setId("resources");
+  this->setProperty(LABEL, "Resources");
 }
 
 //----------------------------------------------------------------------------
-ctkXnatAssessorFolder::~ctkXnatAssessorFolder()
+ctkXnatResourceFolder::~ctkXnatResourceFolder()
 {
 }
 
 //----------------------------------------------------------------------------
-QString ctkXnatAssessorFolder::resourceUri() const
+QString ctkXnatResourceFolder::resourceUri() const
 {
   return QString("%1/%2").arg(parent()->resourceUri(), this->id());
 }
 
 //----------------------------------------------------------------------------
-QString ctkXnatAssessorFolder::name() const
+QString ctkXnatResourceFolder::name() const
 {
   return this->label();
 }
 
 //----------------------------------------------------------------------------
-QString ctkXnatAssessorFolder::label() const
+QString ctkXnatResourceFolder::label() const
 {
   return this->property(LABEL);
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatAssessorFolder::reset()
+void ctkXnatResourceFolder::reset()
 {
   ctkXnatObject::reset();
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatAssessorFolder::fetchImpl()
+void ctkXnatResourceFolder::fetchImpl()
 {
-  QString assessorsUri = this->resourceUri();
+  QString query = this->resourceUri();
   ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(assessorsUri);
+  QUuid queryId = session->httpGet(query);
 
-  QList<ctkXnatObject*> assessors = session->httpResults(queryId,
-                                                     ctkXnatDefaultSchemaTypes::XSI_ASSESSOR);
+  QList<ctkXnatObject*> resources = session->httpResults(queryId,
+                                                           ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
 
-  foreach (ctkXnatObject* assessor, assessors)
+  foreach (ctkXnatObject* resource, resources)
   {
-    
-    this->add(assessor);
+    QString label = resource->name();
+    if (label.isEmpty())
+    {
+      label = "NO NAME";
+    }
+
+    resource->setName(label);
+    this->add(resource);
   }
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatAssessorFolder::downloadImpl(const QString& filename)
+void ctkXnatResourceFolder::downloadImpl(const QString& filename)
 {
-  qDebug() << "ctkXnatExperiment::downloadImpl(const QString& filename) not yet tested";
-  QString query = this->resourceUri() + "/ALL/resources/files";
+  QString query = this->resourceUri() + "/ALL/files";
   ctkXnatSession::UrlParameters parameters;
   parameters["format"] = "zip";
   this->session()->download(filename, query, parameters);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatResourceFolder::saveImpl(bool /*overwrite*/)
+{
+  // Not implemented since a resource folder is automatically created when
+  // a resource is uploaded
 }

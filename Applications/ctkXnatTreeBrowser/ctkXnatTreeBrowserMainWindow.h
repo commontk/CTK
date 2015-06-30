@@ -46,6 +46,8 @@ private Q_SLOTS:
   void loginButtonPushed();
   void itemSelected(const QModelIndex&);
   void downloadButtonClicked();
+  void addResourceClicked();
+  void uploadFileClicked();
 
 private:
   Ui::ctkXnatTreeBrowserMainWindow* ui;

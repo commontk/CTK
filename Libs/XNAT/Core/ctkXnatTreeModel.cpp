@@ -182,7 +182,7 @@ bool ctkXnatTreeModel::hasChildren(const QModelIndex& index) const
   }
 
   ctkXnatTreeItem* item = d->itemAt(index);
-  return !item->xnatObject()->isFetched() || !item->xnatObject()->children().isEmpty();
+  return item->xnatObject() || !item->xnatObject()->isFetched() || !item->xnatObject()->children().isEmpty();
 }
 
 //----------------------------------------------------------------------------
@@ -222,6 +222,88 @@ void ctkXnatTreeModel::fetchMore(const QModelIndex& index)
       item->appendChild(new ctkXnatTreeItem(child, item));
     }
     endInsertRows();
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatTreeModel::refresh(const QModelIndex& parent)
+{
+  if (!parent.isValid())
+  {
+    return;
+  }
+
+  Q_D(const ctkXnatTreeModel);
+
+  ctkXnatTreeItem* item = d->itemAt(parent);
+
+  ctkXnatObject* xnatObject = item->xnatObject();
+
+  // Do this just for xnatObjects that are already fetched.
+  // Otherwise we would retrieve all data from XNAT
+  if (xnatObject->isFetched())
+  {
+    // Force a fetch for current object (it might has changed on the server)
+    xnatObject->fetch(true);
+
+    int numChildren = rowCount(parent);
+
+    bool addToTreeView (true);
+
+    // For all children, check if they are already in the treeview,
+    // if not -> add them
+    // For all items of the treeview, check if they are still on the server
+    // if not -> remove them
+    QList<ctkXnatObject*> children = xnatObject->children();
+    QMutableListIterator<ctkXnatObject*> iter (children);
+
+    while (iter.hasNext())
+    {
+      ctkXnatObject* child = iter.next();
+      for (int i = 0; i < numChildren; ++i)
+      {
+        ctkXnatObject* childItemObject = item->child(i)->xnatObject();
+
+        // If the item was deleted from the server in the meantime
+        // -> remove it from the treeview
+        if (!childItemObject->exists())
+        {
+          beginRemoveRows(parent, item->child(i)->row(), item->child(i)->row());
+          item->remove(childItemObject);
+          xnatObject->remove(child);
+          iter.remove();
+          endRemoveRows();
+          --numChildren;
+          --i;
+          addToTreeView = false;
+          break;
+        }
+
+        if ((childItemObject->id().length() != 0 && childItemObject->id() == child->id()) ||
+            (childItemObject->id().length() == 0 && childItemObject->name() == child->name()))
+        {
+          addToTreeView = false;
+          break;
+        }
+      }
+
+      // If the current xnatObject was created on the server in the meantime
+      // -> add it to the treeview
+      if (addToTreeView)
+      {
+        beginInsertRows(parent, 0, numChildren - 1);
+        item->appendChild(new ctkXnatTreeItem(child, item));
+        endInsertRows();
+        ++numChildren;
+      }
+      addToTreeView = true;
+    }
+
+    numChildren = rowCount(parent);
+    for (int i=0; i<numChildren; i++)
+    {
+      refresh(index(i,0,parent));
+    }
   }
 }
 
@@ -298,15 +380,12 @@ void ctkXnatTreeModel::downloadFile(const QModelIndex& index, const QString& zip
 }
 
 //----------------------------------------------------------------------------
-void ctkXnatTreeModel::uploadFile(const QModelIndex& index, const QString& zipFileName)
+void ctkXnatTreeModel::addChildNode(const QModelIndex &index, ctkXnatObject* child)
 {
-  if (!index.isValid())
-  {
-    return;
-  }
+  Q_D(ctkXnatTreeModel);
+  ctkXnatTreeItem* item = d->itemAt(index);
 
-  ctkXnatObject* xnatObject = this->xnatObject(index);
-  ctkXnatObject* child = xnatObject->children()[index.row()];
-
-  child->upload(zipFileName);
+  beginInsertRows(index, 0, 1);
+  item->appendChild(new ctkXnatTreeItem(child, item));
+  endInsertRows();
 }

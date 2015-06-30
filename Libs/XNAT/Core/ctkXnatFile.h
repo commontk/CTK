@@ -56,7 +56,8 @@ public:
   void setFileContent(const QString& fileContent);
   QString fileContent() const;
 
-  void upload(const QString& filename);
+  void setLocalFilePath(const QString& filepath);
+  QString localFilePath() const;
 
   void reset();
 
@@ -70,6 +71,12 @@ private:
   virtual void fetchImpl();
 
   virtual void downloadImpl(const QString&);
+
+  /**
+    * @brief Uploads the file to the server
+    * Before calling save() the localFilePath has to be set
+    */
+  virtual void saveImpl(bool overwrite);
 
   Q_DECLARE_PRIVATE(ctkXnatFile)
 };

@@ -21,7 +21,11 @@
 
 // ctkXnatAPI includes
 #include "ctkXnatAPI_p.h"
+
+#include "ctkXnatResourceCatalogXmlParser.h"
+
 #include "qRestResult.h"
+
 #include <QNetworkReply>
 #include <QRegExp>
 #include <QUrl>
@@ -108,9 +112,16 @@ void ctkXnatAPI::parseResponse(qRestResult* restResult, const QByteArray& respon
 }
 
 // --------------------------------------------------------------------------
-QList<QVariantMap> ctkXnatAPI::parseXmlResponse(qRestResult* /*restResult*/, const QByteArray& /*response*/)
+QList<QVariantMap> ctkXnatAPI::parseXmlResponse(qRestResult* /*restResult*/, const QByteArray& response)
 {
   QList<QVariantMap> result;
+  // In this case a resource catalog xml was requested
+  if (response.contains("<cat:Catalog"))
+  {
+    ctkXnatResourceCatalogXmlParser parser;
+    parser.setData(response);
+    parser.parseXml(result);
+  }
   return result;
 }
 

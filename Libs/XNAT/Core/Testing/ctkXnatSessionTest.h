@@ -60,6 +60,10 @@ private slots:
 
   void testCreateSubject();
 
+  void testAddResourceFolder();
+
+  void testUploadAndDownloadFile();
+
 private:
   QScopedPointer<ctkXnatSessionTestCasePrivate> d_ptr;
 

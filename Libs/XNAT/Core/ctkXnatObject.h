@@ -31,6 +31,7 @@
 #include <QString>
 #include <QMetaType>
 
+class ctkXnatResource;
 class ctkXnatSession;
 class ctkXnatObjectPrivate;
 
@@ -78,7 +79,7 @@ public:
   void setProperty(const QString& name, const QVariant& value);
 
   /// Gets the last modification time from the server
-  QDateTime lastModifiedTime();
+  virtual QDateTime lastModifiedTimeOnServer();
 
   /// Sets the last modfication time on the server
   void setLastModifiedTime(const QDateTime& lastModifiedTime);
@@ -100,7 +101,7 @@ public:
   /// Adds an object to the children of the current one.
   void add(ctkXnatObject* child);
 
-  /// Removes the object from the children of the current object and removes it from the XNAT server.
+  /// Removes the object from the children of the current object.
   void remove(ctkXnatObject* child);
 
   /// Tells if the children and the properties of the objects have been fetched.
@@ -116,19 +117,30 @@ public:
   virtual void reset();
 
   /// Fetches the children and the properties of the object.
-  void fetch();
+  void fetch(bool forceFetch = false);
 
   /// Checks if the object exists on the XNAT server.
   bool exists() const;
 
   /// Creates the object on the XNAT server and sets the new ID.
-  void save();
+  /// @param overwrite, if true and the object already exists on the server
+  ///                   it will be overwritten by the changes
+  void save(bool overwrite = true);
 
   /// Deletes the object on the XNAT server and removes it from its parent.
   void erase();
 
   void download(const QString&);
-  virtual void upload(const QString&);
+
+  /// Creates a new resource folder with the given foldername, format, content and tags
+  /// for this ctkXnatObject on the server.
+  /// @param foldername the name of the resource folder on the server (mandatory)
+  /// @param format the text of the format field of a resource (optional)
+  /// @param content the text of the content field of a resource (optional)
+  /// @param tags the content of the tags field of a resource (optional)
+  /// @returns ctkXnatResource the created resource
+  virtual ctkXnatResource* addResourceFolder(QString foldername,
+                           QString format = "", QString content = "", QString tags = "");
 
   //QObject* asyncObject() const;
 
@@ -180,6 +192,12 @@ private:
 
   /// The implementation of the download mechanism, called by the download(const QString&) function.
   virtual void downloadImpl(const QString&) = 0;
+
+  /// The implementation of the upload mechanism, called by the save() function.
+  /// Subclasses of ctkXnatObject can overwrite this function if needed
+  /// @param overwrite, if true and the object already exists on the server
+  ///                   it will be overwritten by the changes
+  virtual void saveImpl(bool overwrite = true);
 
   Q_DECLARE_PRIVATE(ctkXnatObject)
 };
