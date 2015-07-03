@@ -377,7 +377,7 @@ void ctkXnatObject::saveImpl(bool /*overwrite*/)
 {
   Q_D(ctkXnatObject);
   ctkXnatSession::UrlParameters urlParams;
-  urlParams["xsi:type"] = this->schemaType();
+  urlParams["xsiType"] = this->schemaType();
 
   // Just do this if there is already a valid last-modification-time,
   // otherwise the object is not yet on the server!
@@ -401,7 +401,7 @@ void ctkXnatObject::saveImpl(bool /*overwrite*/)
   while (itProperties.hasNext())
   {
     itProperties.next();
-    if (itProperties.key() == "ID")
+    if (itProperties.key() == "ID" || itProperties.key() == "xsiType")
       continue;
 
     urlParams[itProperties.key()] = itProperties.value();

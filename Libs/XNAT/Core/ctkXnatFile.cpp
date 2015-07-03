@@ -151,7 +151,7 @@ void ctkXnatFile::saveImpl(bool overwrite)
   Q_D(ctkXnatFile);
 
   ctkXnatSession::UrlParameters urlParams;
-  urlParams["xsi:type"] = this->schemaType();
+  urlParams["xsiType"] = this->schemaType();
   // Flag needed for file upload
   urlParams["inbody"] = "true";
 
@@ -165,7 +165,7 @@ void ctkXnatFile::saveImpl(bool overwrite)
     // Do not append these file specific properties since they require a slightly
     // different key for uploading a file (e.g. instead of "file_format" only "format")
     if (itProperties.key() == FILE_TAGS || itProperties.key() == FILE_FORMAT ||
-        itProperties.key() == FILE_CONTENT)
+        itProperties.key() == FILE_CONTENT || itProperties.key() == "xsiType")
       continue;
 
     urlParams[itProperties.key()] = itProperties.value();
