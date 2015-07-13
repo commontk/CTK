@@ -70,10 +70,10 @@ public:
   QTimer* timer;
 
   // The time in milliseconds untill the signal sessionAboutToBeTimedOut gets emitted
-  int timeToSessionTimesOutSoon = 840000;
+  int timeToSessionTimesOutSoon;
 
   // The time in milliseconds untill the signal sessionTimedOut gets emitted
-  int timeToSessionTimedOut = 60000;
+  int timeToSessionTimedOut;
 
   ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q);
   ~ctkXnatSessionPrivate();
@@ -218,6 +218,8 @@ QDateTime ctkXnatSessionPrivate::updateExpirationDate(qRestResult* restResult)
           }
           QByteArray timeSpan = expirationCookie[1];
           timeSpan.chop(1);
+          this->timeToSessionTimesOutSoon = timeSpan.toInt() / 15 * 14;
+          this->timeToSessionTimedOut = timeSpan.toInt() / 15;
           expirationDate = expirationDate.addMSecs(timeSpan.toLong());
           sessionProperties[SESSION_EXPIRATION_DATE] = expirationDate.toString(Qt::ISODate);
           this->timer->start(this->timeToSessionTimesOutSoon);
