@@ -24,8 +24,10 @@
 
 #include <ctkCommandLineModulesCoreExport.h>
 
-#include <QStringList>
+#include <QObject>
+#include <QScopedPointer>
 #include <QString>
+#include <QStringList>
 #include "ctkCmdLineModuleReference.h"
 
 struct ctkCmdLineModuleBackend;
