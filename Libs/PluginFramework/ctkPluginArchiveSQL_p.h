@@ -22,10 +22,11 @@
 #ifndef CTKPLUGINARCHIVESQL_P_H
 #define CTKPLUGINARCHIVESQL_P_H
 
-#include <QString>
-#include <QHash>
-#include <QUrl>
 #include <QDateTime>
+#include <QHash>
+#include <QSharedPointer>
+#include <QString>
+#include <QUrl>
 
 #include "ctkPluginArchive_p.h"
 #include "ctkPluginManifest_p.h"
