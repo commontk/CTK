@@ -601,6 +601,11 @@ ctkDoubleSpinBox::ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* newP
 }
 
 //-----------------------------------------------------------------------------
+ctkDoubleSpinBox::~ctkDoubleSpinBox()
+{
+}
+
+//-----------------------------------------------------------------------------
 double ctkDoubleSpinBox::value() const
 {
   Q_D(const ctkDoubleSpinBox);

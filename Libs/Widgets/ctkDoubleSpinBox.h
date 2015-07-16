@@ -161,8 +161,9 @@ public:
 
   /// Constructor, creates a ctkDoubleSpinBox. The look and feel
   /// are the same as of a QDoubleSpinBox
-  ctkDoubleSpinBox(QWidget* parent = 0);
-  ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* parent = 0);
+  explicit ctkDoubleSpinBox(QWidget* parent = 0);
+  explicit ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* parent = 0);
+  virtual ~ctkDoubleSpinBox();
 
   /// Get the spinbox current value
   /// \sa setValue(), cleanText()
@@ -319,7 +320,7 @@ Q_SIGNALS:
   void decimalsChanged(int);
 
 protected:
-  ctkDoubleSpinBoxPrivate* const d_ptr;
+  QScopedPointer<ctkDoubleSpinBoxPrivate> d_ptr;
 
   /// Reimplemented to support shortcuts.
   virtual void keyPressEvent(QKeyEvent* event);
