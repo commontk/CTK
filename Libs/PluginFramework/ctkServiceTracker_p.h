@@ -72,7 +72,7 @@ public:
   QList<ctkServiceReference> getServiceReferences_unlocked(ctkTrackedService<S,T>* t) const;
 
   /* set this to true to compile in debug messages */
-  static const bool	DEBUG; //	= false;
+  static const bool	DEBUG_FLAG; //	= false;
 
   /**
    * The Plugin Context used by this <code>ctkServiceTracker</code>.

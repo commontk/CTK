@@ -42,7 +42,7 @@ struct ctkDebugOptions;
  * <pre>
  * class Activator : ctkPluginActivator, ctkDebugOptionsListener
  * {
- *   static bool DEBUG = false;
+ *   static bool DEBUG_FLAG = false;
  *
  *   void start(ctkPluginContext* context)
  *   {
@@ -53,12 +53,12 @@ struct ctkDebugOptions;
  *
  *   void optionsChanged(const ctkDebugOptions& options)
  *   {
- *     DEBUG = options->getBooleanOption("com.mycompany.mybundle/debug", false);
+ *     DEBUG_FLAG = options->getBooleanOption("com.mycompany.mybundle/debug", false);
  *   }
  *
  *   void doSomeWork()
  *   {
- *     if (DEBUG) BERRY_INFO << "foo";
+ *     if (DEBUG_FLAG) BERRY_INFO << "foo";
  *   }
  *   ...
  * }

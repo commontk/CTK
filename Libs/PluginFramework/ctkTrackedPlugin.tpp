@@ -43,7 +43,7 @@ void ctkTrackedPlugin<T>::pluginChanged(const ctkPluginEvent& event)
 
   QSharedPointer<ctkPlugin> plugin = event.getPlugin();
   ctkPlugin::State state = plugin->getState();
-  if (pluginTracker->d_func()->DEBUG)
+  if (pluginTracker->d_func()->DEBUG_FLAG)
   {
     qDebug() << "ctkTrackedPlugin<T>::pluginChanged[" << state << "]: " << *plugin;
   }

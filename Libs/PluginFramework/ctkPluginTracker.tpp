@@ -55,7 +55,7 @@ void ctkPluginTracker<T>::open()
       return;
     }
 
-    if (d->DEBUG)
+    if (d->DEBUG_FLAG)
     {
       qDebug() << "ctkPluginTracker<T>::open";
     }
@@ -100,7 +100,7 @@ void ctkPluginTracker<T>::close()
       return;
     }
 
-    if (d->DEBUG)
+    if (d->DEBUG_FLAG)
     {
       qDebug() << "ctkPluginTracker<T>::close";
     }

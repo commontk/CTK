@@ -51,7 +51,7 @@ public:
   QSharedPointer<ctkTrackedPlugin<T> > tracked() const;
 
   /* set this to true to compile in debug messages */
-  static const bool DEBUG; //	= false;
+  static const bool DEBUG_FLAG; //	= false;
 
   /**
    * The Bundle Context used by this <code>ctkPluginTracker</code>.

@@ -26,7 +26,7 @@
 
 //----------------------------------------------------------------------------
 template<class S, class T, class R>
-const bool ctkPluginAbstractTracked<S,T,R>::DEBUG = false;
+const bool ctkPluginAbstractTracked<S,T,R>::DEBUG_FLAG = false;
 
 //----------------------------------------------------------------------------
 template<class S, class T, class R>
@@ -62,7 +62,7 @@ void ctkPluginAbstractTracked<S,T,R>::setInitial(const QList<S>& list)
 {
   foreach (S item, list)
   {
-    if (DEBUG)
+    if (DEBUG_FLAG)
     {
       qDebug() << "ctkPluginAbstractTracked::setInitial:" << item;
     }
@@ -94,7 +94,7 @@ void ctkPluginAbstractTracked<S,T,R>::trackInitial()
       if (tracked.value(item))
       {
         /* if we are already tracking this item */
-        if (DEBUG)
+        if (DEBUG_FLAG)
         {
           qDebug() << "ctkPluginAbstractTracked::trackInitial[already tracked]: " << item;
         }
@@ -105,7 +105,7 @@ void ctkPluginAbstractTracked<S,T,R>::trackInitial()
         /*
          * if this item is already in the process of being added.
          */
-        if (DEBUG)
+        if (DEBUG_FLAG)
         {
           qDebug() << "ctkPluginAbstractTracked::trackInitial[already adding]: " << item;
         }
@@ -113,7 +113,7 @@ void ctkPluginAbstractTracked<S,T,R>::trackInitial()
       }
       adding.push_back(item);
     }
-    if (DEBUG)
+    if (DEBUG_FLAG)
     {
       qDebug() << "ctkPluginAbstractTracked::trackInitial: " << item;
     }
@@ -150,7 +150,7 @@ void ctkPluginAbstractTracked<S,T,R>::track(S item, R related)
       if (adding.contains(item))
       {
         /* if this item is already in the process of being added. */
-        if (DEBUG)
+        if (DEBUG_FLAG)
         {
           qDebug() << "ctkPluginAbstractTracked::track[already adding]: " << item;
         }
@@ -160,7 +160,7 @@ void ctkPluginAbstractTracked<S,T,R>::track(S item, R related)
     }
     else
     { /* we are currently tracking this item */
-      if (DEBUG)
+      if (DEBUG_FLAG)
       {
         qDebug() << "ctkPluginAbstractTracked::track[modified]: " << item;
       }
@@ -194,7 +194,7 @@ void ctkPluginAbstractTracked<S,T,R>::untrack(S item, R related)
     { /* if this item is already in the list
        * of initial references to process
        */
-      if (DEBUG)
+      if (DEBUG_FLAG)
       {
         qDebug() << "ctkPluginAbstractTracked::untrack[removed from initial]: " << item;
       }
@@ -207,7 +207,7 @@ void ctkPluginAbstractTracked<S,T,R>::untrack(S item, R related)
     { /* if the item is in the process of
        * being added
        */
-      if (DEBUG)
+      if (DEBUG_FLAG)
       {
         qDebug() << "ctkPluginAbstractTracked::untrack[being added]: " << item;
       }
@@ -226,7 +226,7 @@ void ctkPluginAbstractTracked<S,T,R>::untrack(S item, R related)
     }
     modified(); /* increment modification count */
   }
-  if (DEBUG)
+  if (DEBUG_FLAG)
   {
     qDebug() << "ctkPluginAbstractTracked::untrack[removed]: " << item;
   }
@@ -326,7 +326,7 @@ bool ctkPluginAbstractTracked<S,T,R>::customizerAddingFinal(S item, const T& cus
 template<class S, class T, class R>
 void ctkPluginAbstractTracked<S,T,R>::trackAdding(S item, R related)
 {
-  if (DEBUG)
+  if (DEBUG_FLAG)
   {
     qDebug() << "ctkPluginAbstractTracked::trackAdding:" << item;
   }
@@ -353,7 +353,7 @@ void ctkPluginAbstractTracked<S,T,R>::trackAdding(S item, R related)
    */
   if (becameUntracked && object)
   {
-    if (DEBUG)
+    if (DEBUG_FLAG)
     {
       qDebug() << "ctkPluginAbstractTracked::trackAdding[removed]: " << item;
     }

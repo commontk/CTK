@@ -28,7 +28,7 @@
 
 //----------------------------------------------------------------------------
 template<class S, class T>
-const bool ctkServiceTrackerPrivate<S,T>::DEBUG = false;
+const bool ctkServiceTrackerPrivate<S,T>::DEBUG_FLAG = false;
 
 //----------------------------------------------------------------------------
 template<class S, class T>
@@ -142,7 +142,7 @@ void ctkServiceTrackerPrivate<S,T>::modified()
 {
   cachedReference = 0; /* clear cached value */
   cachedService = 0; /* clear cached value */
-  if (DEBUG)
+  if (DEBUG_FLAG)
   {
     qDebug() << "ctkServiceTracker::modified:" << filter;
   }
