@@ -44,7 +44,7 @@ void ctkTrackedService<S,T>::serviceChanged(const ctkServiceEvent& event)
   }
 
   ctkServiceReference reference = event.getServiceReference();
-  if (serviceTracker->d_func()->DEBUG)
+  if (serviceTracker->d_func()->DEBUG_FLAG)
   {
     qDebug() << "ctkTrackedService::serviceChanged["
         << event.getType() << "]: " << reference;

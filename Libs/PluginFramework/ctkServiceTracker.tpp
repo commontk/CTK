@@ -85,7 +85,7 @@ void ctkServiceTracker<S,T>::open()
       return;
     }
 
-    if (d->DEBUG)
+    if (d->DEBUG_FLAG)
     {
       qDebug() << "ctkServiceTracker<S,T>::open: " << d->filter;
     }
@@ -141,7 +141,7 @@ void ctkServiceTracker<S,T>::close()
     {
       return;
     }
-    if (d->DEBUG)
+    if (d->DEBUG_FLAG)
     {
       qDebug() << "ctkServiceTracker<S,T>::close:" << d->filter;
     }
@@ -167,7 +167,7 @@ void ctkServiceTracker<S,T>::close()
     outgoing->untrack(ref, ctkServiceEvent());
   }
 
-  if (d->DEBUG)
+  if (d->DEBUG_FLAG)
   {
     QMutexLocker lock(&d->mutex);
     if ((d->cachedReference.getPlugin().isNull()) && (d->cachedService == 0))
@@ -235,14 +235,14 @@ ctkServiceReference ctkServiceTracker<S,T>::getServiceReference() const
   }
   if (!reference.getPlugin().isNull())
   {
-    if (d->DEBUG)
+    if (d->DEBUG_FLAG)
     {
       qDebug() << "ctkServiceTracker<S,T>::getServiceReference[cached]:"
                    << d->filter;
     }
     return reference;
   }
-  if (d->DEBUG)
+  if (d->DEBUG_FLAG)
   {
     qDebug() << "ctkServiceTracker<S,T>::getServiceReference:" << d->filter;
   }
@@ -351,14 +351,14 @@ T ctkServiceTracker<S,T>::getService() const
   T service = d->cachedService;
   if (service != 0)
   {
-    if (d->DEBUG)
+    if (d->DEBUG_FLAG)
     {
       qDebug() << "ctkServiceTracker<S,T>::getService[cached]:"
                << d->filter;
     }
     return service;
   }
-  if (d->DEBUG)
+  if (d->DEBUG_FLAG)
   {
     qDebug() << "ctkServiceTracker<S,T>::getService:" << d->filter;
   }
