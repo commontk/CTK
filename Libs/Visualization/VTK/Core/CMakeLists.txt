@@ -72,9 +72,13 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkInteractionStyle
     vtkRenderingAnnotation
     vtkRenderingCore
-    vtkRenderingFreeType${VTK_RENDERING_BACKEND}
-    vtkRendering${VTK_RENDERING_BACKEND}
     )
+  if(TARGET vtkRenderingFreeType${VTK_RENDERING_BACKEND})
+    list(APPEND VTK_LIBRARIES vtkRenderingFreeType${VTK_RENDERING_BACKEND})
+  endif()
+  if(TARGET vtkRendering${VTK_RENDERING_BACKEND})
+    list(APPEND VTK_LIBRARIES vtkRendering${VTK_RENDERING_BACKEND})
+  endif()
   if(TARGET vtkIOMPIImage)
     list(APPEND VTK_LIBRARIES vtkIOMPIImage )
   endif()
