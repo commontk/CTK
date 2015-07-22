@@ -73,9 +73,6 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkRenderingAnnotation
     vtkRenderingCore
     )
-  if(TARGET vtkRenderingFreeType${VTK_RENDERING_BACKEND})
-    list(APPEND VTK_LIBRARIES vtkRenderingFreeType${VTK_RENDERING_BACKEND})
-  endif()
   if(TARGET vtkRendering${VTK_RENDERING_BACKEND})
     list(APPEND VTK_LIBRARIES vtkRendering${VTK_RENDERING_BACKEND})
   endif()
@@ -91,6 +88,10 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
   if (TARGET vtkRenderingFreeTypeFontConfig AND UNIX AND NOT APPLE)
     find_package(FontConfig QUIET)
     if (FONTCONFIG_FOUND)
+      # With VTK > 6.2.0 (commit 4f7460a5), vtkRenderingFreeTypeOpenGL has been removed.
+      if(TARGET vtkRenderingFreeTypeOpenGL)
+        list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
+      endif()
       list(APPEND VTK_LIBRARIES
         vtkRenderingFreeTypeFontConfig
         )
