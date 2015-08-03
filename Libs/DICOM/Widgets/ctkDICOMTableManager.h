@@ -116,6 +116,13 @@ Q_SIGNALS:
 
   void seriesDoubleClicked(const QModelIndex&);
 
+  // signals to propagate the context menu requests from
+  // the individual tables
+  void patientsRightClicked(const QPoint&);
+  void studiesRightClicked(const QPoint&);
+  void seriesRightClicked(const QPoint&);
+
+
 protected:
 
   virtual void resizeEvent(QResizeEvent *);

@@ -29,6 +29,7 @@
 
 class ctkDICOMBrowserPrivate;
 class ctkThumbnailLabel;
+class QMenu;
 class QModelIndex;
 class ctkDICOMDatabase;
 class ctkDICOMTableManager;
@@ -112,8 +113,21 @@ Q_SIGNALS:
 
 protected:
     QScopedPointer<ctkDICOMBrowserPrivate> d_ptr;
+
+    /// Add labels to the context menu giving information about the selected UIDs
+    void addSelectionLabelsToContextMenu(QStringList uids, QMenu *menu);
+
 protected Q_SLOTS:
     void onModelSelected(const QItemSelection&, const QItemSelection&);
+
+    /// Called when a right mouse click is made in the patients table
+    void onPatientsRightClicked(const QPoint &point);
+
+    /// Called when a right mouse click is made in the studies table
+    void onStudiesRightClicked(const QPoint &point);
+
+    /// Called when a right mouse click is made in the series table
+    void onSeriesRightClicked(const QPoint &point);
 
     /// To be called when dialog finishes
     void onQueryRetrieveFinished();

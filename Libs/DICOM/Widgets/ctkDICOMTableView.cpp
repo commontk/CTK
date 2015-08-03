@@ -115,6 +115,13 @@ void ctkDICOMTableViewPrivate::init()
   QObject::connect(this->tblDicomDatabaseView, SIGNAL(doubleClicked(const QModelIndex&)),
                    q, SIGNAL(doubleClicked(const QModelIndex&)));
 
+  // enable right click menu, with mapping to global position (for use within the DICOM
+  // table manager)
+  this->tblDicomDatabaseView->setContextMenuPolicy(Qt::CustomContextMenu);
+  QObject::connect(this->tblDicomDatabaseView,
+                   SIGNAL(customContextMenuRequested(const QPoint&)),
+                   q, SLOT(onCustomContextMenuRequested(const QPoint&)));
+
   QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)),
                    this->dicomSQLFilterModel, SLOT(setFilterWildcard(QString)));
 
@@ -398,4 +405,15 @@ int ctkDICOMTableView::tableSectionSize()
 {
   Q_D(ctkDICOMTableView);
   return d->tblDicomDatabaseView->verticalHeader()->defaultSectionSize();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::onCustomContextMenuRequested(const QPoint &point)
+{
+  Q_D(ctkDICOMTableView);
+
+  // translate the local point to a global
+  QPoint globalPosition = d->tblDicomDatabaseView->mapToGlobal(point);
+
+  emit customContextMenuRequested(globalPosition);
 }
