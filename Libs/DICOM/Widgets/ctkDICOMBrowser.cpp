@@ -29,10 +29,12 @@
 #include <QDebug>
 #include <QFile>
 #include <QListView>
+#include <QMenu>
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QSettings>
 #include <QStringListModel>
+#include <QWidgetAction>
 
 // ctkWidgets includes
 #include "ctkDirectoryButton.h"
@@ -244,6 +246,14 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
           this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
   connect(d->dicomTableManager, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)),
           this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
+
+  // set up context menus for working on selected patients, studies, series
+  connect(d->dicomTableManager, SIGNAL(patientsRightClicked(const QPoint&)),
+          this, SLOT(onPatientsRightClicked(const QPoint&)));
+  connect(d->dicomTableManager, SIGNAL(studiesRightClicked(const QPoint&)),
+          this, SLOT(onStudiesRightClicked(const QPoint&)));
+  connect(d->dicomTableManager, SIGNAL(seriesRightClicked(const QPoint&)),
+          this, SLOT(onSeriesRightClicked(const QPoint&)));
 
   connect(d->DirectoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(setDatabaseDirectory(QString)));
 
@@ -656,4 +666,178 @@ void ctkDICOMBrowser::onModelSelected(const QItemSelection &item1, const QItemSe
   Q_UNUSED(item2);
   Q_D(ctkDICOMBrowser);
   d->ActionRemove->setEnabled(true);
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMBrowser::confirmDeleteSelectedIUDs(QStringList uids)
+{
+  Q_D(ctkDICOMBrowser);
+
+  if (uids.isEmpty())
+    {
+    return false;
+    }
+
+  ctkMessageBox confirmDeleteDialog;
+  QString message("Do you want to delete the following selected items?");
+
+  // add the information about the selected UIDs
+  int numUIDs = uids.size();
+  for (int i = 0; i < numUIDs; ++i)
+    {
+    QString uid = uids.at(i);
+
+    // try using the given UID to find a descriptive string
+    QString patientName = d->DICOMDatabase->nameForPatient(uid);
+    QString studyDescription = d->DICOMDatabase->descriptionForStudy(uid);
+    QString seriesDescription = d->DICOMDatabase->descriptionForSeries(uid);
+
+    if (!patientName.isEmpty())
+      {
+      message += QString("\n") + patientName;
+      }
+    else if (!studyDescription.isEmpty())
+      {
+      message += QString("\n") + studyDescription;
+      }
+    else if (!seriesDescription.isEmpty())
+      {
+      message += QString("\n") + seriesDescription;
+      }
+    else
+      {
+      // if all other descriptors are empty, use the UID
+      message += QString("\n") + uid;
+      }
+
+    }
+  confirmDeleteDialog.setText(message);
+  confirmDeleteDialog.setIcon(QMessageBox::Question);
+
+  confirmDeleteDialog.addButton("Delete", QMessageBox::AcceptRole);
+  confirmDeleteDialog.addButton("Cancel", QMessageBox::RejectRole);
+  confirmDeleteDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmDeleteSelected");
+
+  int response = confirmDeleteDialog.exec();
+
+  if (response == QMessageBox::AcceptRole)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onPatientsRightClicked(const QPoint &point)
+{
+  Q_D(ctkDICOMBrowser);
+
+  // get the list of patients that are selected
+  QStringList selectedPatientsUIDs = d->dicomTableManager->currentPatientsSelection();
+  int numPatients = selectedPatientsUIDs.size();
+  if (numPatients == 0)
+    {
+    qDebug() << "No patients selected!";
+    return;
+    }
+
+  QMenu *patientsMenu = new QMenu(d->dicomTableManager);
+
+  QString deleteString = QString("Delete ")
+    + QString::number(numPatients)
+    + QString(" selected patients");
+  QAction *deleteAction = new QAction(deleteString, patientsMenu);
+
+  patientsMenu->addAction(deleteAction);
+
+  // the table took care of mapping it to a global position so that the
+  // menu will pop up at the correct place over this table.
+  QAction *selectedAction = patientsMenu->exec(point);
+
+  if (selectedAction == deleteAction
+      && this->confirmDeleteSelectedIUDs(selectedPatientsUIDs))
+    {
+    qDebug() << "Deleting " << numPatients << " patients";
+    foreach (const QString& uid, selectedPatientsUIDs)
+      {
+      d->DICOMDatabase->removePatient(uid);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onStudiesRightClicked(const QPoint &point)
+{
+  Q_D(ctkDICOMBrowser);
+
+  // get the list of studies that are selected
+  QStringList selectedStudiesUIDs = d->dicomTableManager->currentStudiesSelection();
+  int numStudies = selectedStudiesUIDs.size();
+  if (numStudies == 0)
+    {
+    qDebug() << "No studies selected!";
+    return;
+    }
+
+  QMenu *studiesMenu = new QMenu(d->dicomTableManager);
+
+  QString deleteString = QString("Delete ")
+    + QString::number(numStudies)
+    + QString(" selected studies");
+  QAction *deleteAction = new QAction(deleteString, studiesMenu);
+
+  studiesMenu->addAction(deleteAction);
+
+  // the table took care of mapping it to a global position so that the
+  // menu will pop up at the correct place over this table.
+  QAction *selectedAction = studiesMenu->exec(point);
+
+  if (selectedAction == deleteAction
+      && this->confirmDeleteSelectedIUDs(selectedStudiesUIDs))
+    {
+    foreach (const QString& uid, selectedStudiesUIDs)
+      {
+      d->DICOMDatabase->removeStudy(uid);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
+{
+  Q_D(ctkDICOMBrowser);
+
+  // get the list of series that are selected
+  QStringList selectedSeriesUIDs = d->dicomTableManager->currentSeriesSelection();
+  int numSeries = selectedSeriesUIDs.size();
+  if (numSeries == 0)
+    {
+    qDebug() << "No series selected!";
+    return;
+    }
+
+  QMenu *seriesMenu = new QMenu(d->dicomTableManager);
+
+  QString deleteString = QString("Delete ")
+    + QString::number(numSeries)
+    + QString(" selected series");
+  QAction *deleteAction = new QAction(deleteString, seriesMenu);
+
+  seriesMenu->addAction(deleteAction);
+
+  // the table took care of mapping it to a global position so that the
+  // menu will pop up at the correct place over this table.
+  QAction *selectedAction = seriesMenu->exec(point);
+
+  if (selectedAction == deleteAction
+      && this->confirmDeleteSelectedIUDs(selectedSeriesUIDs))
+    {
+    foreach (const QString& uid, selectedSeriesUIDs)
+      {
+      d->DICOMDatabase->removeSeries(uid);
+      }
+    }
 }

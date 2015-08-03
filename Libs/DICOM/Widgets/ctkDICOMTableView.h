@@ -132,6 +132,13 @@ public Q_SLOTS:
    */
   void onUpdateQuery(const QStringList &uids);
 
+  /**
+   * @brief Translates the local point to a global one
+   * @param point the local point to translate to global
+   * Emits customContextMenuRequested with the global point
+   */
+  void onCustomContextMenuRequested(const QPoint &point);
+
 protected Q_SLOTS:
   /**
    * @brief Called when the underlying database changes

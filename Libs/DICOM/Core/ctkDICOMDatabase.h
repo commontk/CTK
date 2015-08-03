@@ -136,6 +136,9 @@ public:
   Q_INVOKABLE QString patientForStudy(QString studyUID);
   Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
   Q_INVOKABLE QHash<QString,QString> descriptionsForFile(QString fileName);
+  Q_INVOKABLE QString descriptionForSeries(const QString seriesUID);
+  Q_INVOKABLE QString descriptionForStudy(const QString studyUID);
+  Q_INVOKABLE QString nameForPatient(const QString patientUID);
   Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
   Q_INVOKABLE QString seriesForFile (QString fileName);
   Q_INVOKABLE QString instanceForFile (const QString fileName);

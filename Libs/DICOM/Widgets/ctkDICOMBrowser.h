@@ -29,6 +29,7 @@
 
 class ctkDICOMBrowserPrivate;
 class ctkThumbnailLabel;
+class QMenu;
 class QModelIndex;
 class ctkDICOMDatabase;
 class ctkDICOMTableManager;
@@ -112,8 +113,26 @@ Q_SIGNALS:
 
 protected:
     QScopedPointer<ctkDICOMBrowserPrivate> d_ptr;
+
+    /// Confirm with the user that they wish to delete the selected uids.
+    /// Add information about the selected UIDs to a message box, checks
+    /// for patient name, series description, study description, if all
+    /// empty, uses the UID.
+    /// Returns true if the user confirms the delete, false otherwise.
+    /// Remembers if the user doesn't want to show the confirmation again.
+    bool confirmDeleteSelectedIUDs(QStringList uids);
+
 protected Q_SLOTS:
     void onModelSelected(const QItemSelection&, const QItemSelection&);
+
+    /// Called when a right mouse click is made in the patients table
+    void onPatientsRightClicked(const QPoint &point);
+
+    /// Called when a right mouse click is made in the studies table
+    void onStudiesRightClicked(const QPoint &point);
+
+    /// Called when a right mouse click is made in the series table
+    void onSeriesRightClicked(const QPoint &point);
 
     /// To be called when dialog finishes
     void onQueryRetrieveFinished();

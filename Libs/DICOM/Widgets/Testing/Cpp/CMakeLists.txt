@@ -2,6 +2,7 @@ set(KIT ${PROJECT_NAME})
 
 create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMAppWidgetTest1.cpp
+  ctkDICOMBrowserTest1.cpp
   ctkDICOMItemViewTest1.cpp
   ctkDICOMDirectoryListWidgetTest1.cpp
   ctkDICOMImageTest1.cpp
@@ -27,6 +28,7 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 #
 
 SIMPLE_TEST(ctkDICOMAppWidgetTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD)
+SIMPLE_TEST(ctkDICOMBrowserTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD)
 SIMPLE_TEST(ctkDICOMItemViewTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMDirectoryListWidgetTest1)
 SIMPLE_TEST(ctkDICOMImageTest1 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)

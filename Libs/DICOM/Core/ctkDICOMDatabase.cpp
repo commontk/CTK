@@ -659,6 +659,63 @@ QHash<QString,QString> ctkDICOMDatabase::descriptionsForFile(QString fileName)
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDatabase::descriptionForSeries(const QString seriesUID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QString result;
+
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT SeriesDescription FROM Series WHERE SeriesInstanceUID= ?" );
+  query.bindValue ( 0, seriesUID);
+  query.exec();
+  if (query.next())
+    {
+    result = query.value(0).toString();
+    }
+
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::descriptionForStudy(const QString studyUID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QString result;
+
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT StudyDescription FROM Studies WHERE StudyInstanceUID= ?" );
+  query.bindValue ( 0, studyUID);
+  query.exec();
+  if (query.next())
+    {
+    result =  query.value(0).toString();
+    }
+
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::nameForPatient(const QString patientUID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QString result;
+
+  QSqlQuery query(d->Database);
+  query.prepare ( "SELECT PatientsName FROM Patients WHERE UID= ?" );
+  query.bindValue ( 0, patientUID);
+  query.exec();
+  if (query.next())
+    {
+    result =  query.value(0).toString();
+    }
+
+  return result;
+}
+
+//------------------------------------------------------------------------------
 QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
 {
   Q_D(ctkDICOMDatabase);

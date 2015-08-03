@@ -100,6 +100,15 @@ void ctkDICOMTableManagerPrivate::init()
 
   QObject::connect(this->seriesTable, SIGNAL(doubleClicked(const QModelIndex&)),
                    q, SIGNAL(seriesDoubleClicked(const QModelIndex&)));
+
+  // For propagating right clicks, the table takes care of translating to a global position
+  QObject::connect(this->patientsTable, SIGNAL(customContextMenuRequested(const QPoint&)),
+                   q, SIGNAL(patientsRightClicked(const QPoint&)));
+  QObject::connect(this->studiesTable, SIGNAL(customContextMenuRequested(const QPoint&)),
+                   q, SIGNAL(studiesRightClicked(const QPoint&)));
+
+  QObject::connect(this->seriesTable, SIGNAL(customContextMenuRequested(const QPoint&)),
+                   q, SIGNAL(seriesRightClicked(const QPoint&)));
 }
 
 //------------------------------------------------------------------------------
