@@ -26,6 +26,7 @@
 #include <ctkPluginContext.h>
 #include <service/log/ctkLogService.h>
 
+#include <QDataStream>
 #include <QDateTime>
 
 const QString ctkConfigurationStore::STORE_DIR = "store";
