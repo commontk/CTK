@@ -50,14 +50,19 @@ private Q_SLOTS:
   // Check default values of ctkMessageBox
   void testDefaults();
 
-  // Ensure the "dont's show again" checkbox works correctly with 1 button (Ok)
+  // Ensure the "don't show again" checkbox works correctly with 1 button (Ok)
   void testDontShowAgain();
   void testDontShowAgain_data();
 
-  // Ensure the "dont's show again" checkbox works correctly with 2 buttons
+  // Ensure the "don't show again" checkbox works correctly with 2 buttons
   // Ok and Cancel
   void testOkCancel();
   void testOkCancel_data();
+
+  // Ensure the "don't show again" checkbox works correctly with 2 buttons
+  /// with custom text
+  void testDontShowAgainCustomText();
+  void testDontShowAgainCustomText_data();
 
   // Test Settings key with 1 button (Ok)
   void testDontShowAgainSettingsKey();
@@ -229,6 +234,52 @@ void ctkMessageBoxDontShowAgainTester::testOkCancel_data()
   QTest::newRow("visible show click cancel") << true << false << int(QMessageBox::Cancel) << int(QMessageBox::Cancel) << QMessageBox::RejectRole;
   QTest::newRow("invisible show reject") << false << false << int(QMessageBox::RejectRole) << int(QMessageBox::Rejected) << QMessageBox::InvalidRole;
   QTest::newRow("visible show click cancel") << true << false << int(QMessageBox::RejectRole) << int(QMessageBox::Rejected) << QMessageBox::InvalidRole;
+}
+
+// ----------------------------------------------------------------------------
+void ctkMessageBoxDontShowAgainTester::testDontShowAgainCustomText()
+{
+  ctkMessageBox messageBox;
+
+  messageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
+  QAbstractButton *okButton = messageBox.button(QMessageBox::Ok);
+  okButton->setText("SaveData");
+  QAbstractButton *cancelButton = messageBox.button(QMessageBox::Cancel);
+  cancelButton->setText("Discard Data");
+
+  QFETCH(bool, visible);
+  messageBox.setDontShowAgainVisible(visible);
+
+  QFETCH(bool, dontShowAgain);
+  messageBox.setDontShowAgain(dontShowAgain);
+
+  this->testExecMessageBox(messageBox);
+
+  // check that the don't show again text has been updated
+  QCheckBox *checkBox = messageBox.findChild<QCheckBox*>("ctk_msgbox_dontshowcheckbox");
+  QString dontShowAgainText = checkBox->text();
+
+  if (visible)
+    {
+    // the custom text was set from the Ok box as it has the accept role
+    QString expectedString = QString("Don't show this message again and always ")
+      + okButton->text();
+    QCOMPARE(dontShowAgainText, expectedString);
+    }
+  else
+    {
+    // the custom text was not added to the end of the standard message
+    QString expectedString = QString("Don't show this message again");
+    QCOMPARE(dontShowAgainText, expectedString);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkMessageBoxDontShowAgainTester::testDontShowAgainCustomText_data()
+{
+  // use the basic test set up
+  this->testDontShowAgain_data();
 }
 
 // ----------------------------------------------------------------------------
