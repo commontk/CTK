@@ -202,15 +202,12 @@ void ctkMessageBox::setDontShowAgainVisible(bool visible)
   d->DontShowAgainCheckBox->setVisible(true);
   // update the text from the button with the accept role
   QAbstractButton *acceptButton = d->button(QMessageBox::AcceptRole);
-  if (acceptButton)
+  if (acceptButton && !acceptButton->text().isEmpty())
     {
-    QString acceptText = acceptButton->text();
-    if (acceptText.length() > 0)
-      {
-      QString dontShowAgainText = this->tr("Don't show this message again and always ")
-        + acceptText;
-      d->DontShowAgainCheckBox->setText(dontShowAgainText);
-      }
+    QString dontShowAgainText =
+      this->tr("Don't show this message again and always %1").arg(acceptButton->text());
+
+    d->DontShowAgainCheckBox->setText(dontShowAgainText);
     }
   grid->addWidget(d->DontShowAgainCheckBox, 1, 1, 1, 1);
 }
