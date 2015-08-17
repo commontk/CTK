@@ -336,6 +336,66 @@ int ctkVTKDataSetModelTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  dataSetModel.setAttributeTypes(ctkVTKDataSetModel::NoAttribute | ctkVTKDataSetModel::ScalarsAttribute);
+  vtkNew<vtkIntArray> intsLaterAdded;
+  {
+    intsLaterAdded->SetName("IntsLaterAdded");
+    int added = dataSet->GetPointData()->AddArray(intsLaterAdded.GetPointer());
+    locations[intsLaterAdded.GetPointer()] = vtkAssignAttribute::POINT_DATA;
+    if (added == -1)
+      {
+      std::cerr << "Line " << __LINE__ << " - Failed to add intsLaterAdded array";
+      return EXIT_FAILURE;
+      }
+  }
+  if (!checkItems(__LINE__, QList<vtkAbstractArray*>() << notAttributeArrays << intsLaterAdded.GetPointer(),
+                  &dataSetModel, locations))
+    {
+    return EXIT_FAILURE;
+    }
+
+  QList<QStandardItem*> items = dataSetModel.findItems("");
+  if(items.count() != 0)
+    {
+    std::cerr << "Line " << __LINE__ << " - Expected 0 NULL item\n"
+                  "\tCurrent count: " << items.count() << "\n";
+    return EXIT_FAILURE;
+    }
+
+  dataSetModel.setIncludeNullItem(true);
+  items = dataSetModel.findItems("");
+  if(items.count() != 1)
+    {
+    std::cerr << "Line " << __LINE__ << " - Expected 1 NULL item\n"
+                  "\tCurrent count: " << items.count() << "\n";
+    return EXIT_FAILURE;
+    }
+  vtkAbstractArray * currentDataArray = dataSetModel.arrayFromItem(items.at(0));
+  if (currentDataArray != 0)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with model - Incorrect array associated with NULL item:\n"
+                  "\tExpected: 0\n"
+                  "\tCurrent: " << currentDataArray << "\n";
+    return EXIT_FAILURE;
+    }
+  int loc = dataSetModel.locationFromItem(items.at(0));
+  if (loc != dataSetModel.nullItemLocation())
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with model - Incorrect location associated with NULL item:\n"
+                  "\tExpected: " << dataSetModel.nullItemLocation() << "\n"
+                  "\tCurrent: " << loc << "\n";
+    return EXIT_FAILURE;
+    }
+
+  dataSetModel.setIncludeNullItem(false);
+  items = dataSetModel.findItems("");
+  if(items.count() != 0)
+    {
+    std::cerr << "Line " << __LINE__ << " - Expected 0 NULL item\n"
+                  "\tCurrent count: " << items.count() << "\n";
+    return EXIT_FAILURE;
+    }
+
   dataSetModel.setAttributeTypes(ctkVTKDataSetModel::AllAttribute);
   if (!checkItems(__LINE__, QList<vtkAbstractArray*>() << notAttributeArrays
                   << scalars.GetPointer() << vectors.GetPointer()

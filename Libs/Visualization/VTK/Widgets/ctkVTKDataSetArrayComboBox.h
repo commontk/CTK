@@ -40,6 +40,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDataSetArrayComboBox
 {
   Q_OBJECT
   Q_PROPERTY(ctkVTKDataSetModel::AttributeTypes attributeTypes READ attributeTypes WRITE setAttributeTypes)
+  Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
 
 public:
   /// Superclass typedef
@@ -60,6 +61,15 @@ public:
 
   ctkVTKDataSetModel::AttributeTypes attributeTypes()const;
   void setAttributeTypes(const ctkVTKDataSetModel::AttributeTypes& attributeTypes);
+
+  /// Set/Get NoneEnabled flags
+  /// An additional empty item is added into the list, where the user can select.
+  /// It is recommended to enable this if the combobox is used to select active scalar of the
+  /// observed VTK data set, because if there is no None option is available then the combobox selects
+  /// the first array automatically if an array becomes available, causing unintended change of the VTK data set
+  /// (and often infinite loop of widget/MRML node updates).
+  void setNoneEnabled(bool enable);
+  bool noneEnabled()const; 
 
   /// Return a pointer to the model used to populate the combobox.
   /// \sa dataSet()

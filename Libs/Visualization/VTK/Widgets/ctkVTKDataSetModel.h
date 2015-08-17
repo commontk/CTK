@@ -53,10 +53,17 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDataSetModel
   QVTK_OBJECT
   Q_FLAGS(AttributeType AttributeTypes)
 
-  /// This property holds the type of attribute that should be listed in the model.s
+  /// This property holds the type of attribute that should be listed in the model.
   /// By default all attributes are considered.
   /// \sa ctkVTKDataSetModel::AllAttribute
   Q_PROPERTY(AttributeTypes attributeTypes READ attributeTypes WRITE setAttributeTypes)
+
+  /// This property allows adding a 'Null' item to the model, which is useful when
+  /// it is necessary to offer the user an option to not select any of the items
+  /// (for example, in a combo box there is always a selected item and it may be
+  /// necessary to allow the user to not select any of the attributes).
+  /// By default no 'Null' item is included.
+  Q_PROPERTY(bool includeNullItem READ includeNullItem WRITE setIncludeNullItem)
 
 public:
   typedef ctkVTKDataSetModel Self;
@@ -85,6 +92,10 @@ public:
   AttributeTypes attributeTypes()const;
   void setAttributeTypes(const AttributeTypes& attributeTypes);
 
+  bool includeNullItem()const;
+  void setIncludeNullItem(bool includeNullItem);
+  int nullItemLocation()const;
+
   /// Return the vtkAbstractArray associated to the index.
   /// 0 if the index doesn't contain a vtkAbstractArray
   inline vtkAbstractArray* arrayFromIndex(const QModelIndex& arrayIndex)const;
@@ -107,6 +118,8 @@ public:
 
 protected Q_SLOTS:
   void onDataSetModified(vtkObject* dataSet);
+  void onDataSetPointDataModified(vtkObject* dataSetPointData);
+  void onDataSetCellDataModified(vtkObject* dataSetCellData);
   void onArrayModified(vtkObject* array);
   void onItemChanged(QStandardItem * item);
 
@@ -120,9 +133,12 @@ protected:
   virtual void updateArrayFromItem(vtkAbstractArray* array, QStandardItem* item);
   virtual void updateDataSet();
   virtual void populateDataSet();
+  virtual void insertNullItem();
+  virtual void removeNullItem();
 
 protected:
   QScopedPointer<ctkVTKDataSetModelPrivate> d_ptr;
+  int NullItemLocation;
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKDataSetModel);
