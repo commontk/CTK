@@ -22,6 +22,7 @@
 #ifndef CTKPLUGINARCHIVESQL_P_H
 #define CTKPLUGINARCHIVESQL_P_H
 
+#include <QObject>
 #include <QDateTime>
 #include <QHash>
 #include <QSharedPointer>
