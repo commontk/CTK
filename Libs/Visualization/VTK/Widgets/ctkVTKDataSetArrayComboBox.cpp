@@ -168,6 +168,20 @@ void ctkVTKDataSetArrayComboBox::setAttributeTypes(const ctkVTKDataSetModel::Att
   this->dataSetModel()->setAttributeTypes(attributeTypes);
 }
 
+// ----------------------------------------------------------------------------
+bool ctkVTKDataSetArrayComboBox::noneEnabled()const
+{
+  Q_D(const ctkVTKDataSetArrayComboBox);
+  return this->dataSetModel()->includeNullItem();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDataSetArrayComboBox::setNoneEnabled(bool noneEnabled)
+{
+  Q_D(ctkVTKDataSetArrayComboBox);
+  return this->dataSetModel()->setIncludeNullItem(noneEnabled);
+}
+
 // --------------------------------------------------------------------------
 ctkVTKDataSetModel* ctkVTKDataSetArrayComboBox::dataSetModel()const
 {
