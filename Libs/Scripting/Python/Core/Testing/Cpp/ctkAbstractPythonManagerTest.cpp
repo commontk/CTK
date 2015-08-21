@@ -178,6 +178,17 @@ void ctkAbstractPythonManagerTester::testExecuteString_data()
                      << static_cast<int>(ctkAbstractPythonManager::EvalInput)
                      << false
                      << QVariant(7) << QString("b") << QVariant();
+
+  QTest::newRow("4") << QString("sys.getrecursionlimit()")
+                     << static_cast<int>(ctkAbstractPythonManager::FileInput)
+                     << false
+                     << QVariant() << QString() << QVariant();
+
+  // This assume the default 'recursionlimit' has not been changed
+  QTest::newRow("5") << QString("sys.getrecursionlimit()")
+                     << static_cast<int>(ctkAbstractPythonManager::EvalInput)
+                     << false
+                     << QVariant(1000) << QString() << QVariant();
 }
 
 // ----------------------------------------------------------------------------
