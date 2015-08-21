@@ -131,6 +131,7 @@ void ctkAbstractPythonManagerTester::testExecuteString()
 {
   QFETCH(QString, stringToExecute);
   QFETCH(int, executeStringMode);
+  QFETCH(bool, errorOccured);
   QFETCH(QVariant, expectedReturnValue);
   QFETCH(QString, expectedVariableName);
   QFETCH(QVariant, expectedVariableValue);
@@ -139,6 +140,11 @@ void ctkAbstractPythonManagerTester::testExecuteString()
         stringToExecute,
         static_cast<ctkAbstractPythonManager::ExecuteStringMode>(executeStringMode));
 
+  QCOMPARE(this->PythonManager.pythonErrorOccured(), errorOccured);
+  if (errorOccured)
+    {
+    return;
+    }
   QCOMPARE(returnValue, expectedReturnValue);
   QCOMPARE(this->PythonManager.getVariable(expectedVariableName), expectedVariableValue);
 }
@@ -148,24 +154,29 @@ void ctkAbstractPythonManagerTester::testExecuteString_data()
 {
   QTest::addColumn<QString>("stringToExecute");
   QTest::addColumn<int>("executeStringMode");
+  QTest::addColumn<bool>("errorOccured");
   QTest::addColumn<QVariant>("expectedReturnValue");
   QTest::addColumn<QString>("expectedVariableName");
   QTest::addColumn<QVariant>("expectedVariableValue");
 
   QTest::newRow("0") << QString("a = 6542")
                      << static_cast<int>(ctkAbstractPythonManager::FileInput)
+                     << false
                      << QVariant() << QString("a") << QVariant(6542);
 
   QTest::newRow("1") << QString("6543")
                      << static_cast<int>(ctkAbstractPythonManager::FileInput)
+                     << false
                      << QVariant() << QString("a") << QVariant(6542);
 
   QTest::newRow("2") << QString("b = 6544")
                      << static_cast<int>(ctkAbstractPythonManager::EvalInput)
+                     << true
                      << QVariant() << QString("b") << QVariant();
 
   QTest::newRow("3") << QString("7")
                      << static_cast<int>(ctkAbstractPythonManager::EvalInput)
+                     << false
                      << QVariant(7) << QString("b") << QVariant();
 }
 
