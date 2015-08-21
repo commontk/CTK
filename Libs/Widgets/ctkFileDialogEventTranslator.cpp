@@ -40,29 +40,19 @@ bool ctkFileDialogEventTranslator::translateEvent(QObject *Object,
                                                    bool &Error)
 {
   Q_UNUSED(Error);
-  ctkFileDialog* object = NULL;
-  for(QObject* test = Object; object == NULL && test != NULL; test = test->parent())
+  ctkFileDialog* fileDialog = NULL;
+  for(QObject* test = Object; fileDialog == NULL && test != NULL; test = test->parent())
     {
-    object = qobject_cast<ctkFileDialog*>(test);
+    fileDialog = qobject_cast<ctkFileDialog*>(test);
     }
 
-  if(!object)
+  if(!fileDialog)
     {
     return this->Superclass::translateEvent(Object, Event, Error);
     }
 
-  // If we find an action on the bottom widget, we return false.
-  QWidget* bottomWidget = NULL;
-  for(QObject* testWidget = Object; bottomWidget == NULL && testWidget!= NULL; testWidget = testWidget->parent())
-    {
-    if(object->bottomWidget() == qobject_cast<QWidget*>(testWidget))
-      {
-      return false;
-      }
-    }
-
   if((Event->type() == QEvent::Enter || Event->type() == QEvent::ShowToParent) &&
-     Object == object)
+     Object == fileDialog)
     {
     if(this->CurrentObject != Object)
       {
@@ -72,15 +62,34 @@ bool ctkFileDialogEventTranslator::translateEvent(QObject *Object,
         }
       this->CurrentObject = Object;
 
-      connect(object, SIGNAL(filesSelected(const QStringList&)),
+      connect(fileDialog, SIGNAL(filesSelected(const QStringList&)),
               this, SLOT(onFileSelectionChanged(const QStringList&)));
-      connect(object, SIGNAL(rejected()), this, SLOT(onRejected()));
-      connect(object, SIGNAL(destroyed(QObject*)),
+      connect(fileDialog, SIGNAL(rejected()), this, SLOT(onRejected()));
+      connect(fileDialog, SIGNAL(destroyed(QObject*)),
               this, SLOT(onDestroyed(QObject*)));
       }
     }
 
-  return true;
+  // All events performed in the dialog widgets are swallowed (e.g. scrollbar
+  // events)...
+  bool acceptEvent = true;
+  // ...except for the events on the bottom widget (if any).
+  QWidget* bottomWidget = fileDialog->bottomWidget();
+  if (bottomWidget)
+    {
+    for(QObject* eventAncestor = Object; eventAncestor != NULL; eventAncestor = eventAncestor->parent())
+      {
+      if (bottomWidget == eventAncestor)
+        {
+        // The event originated from a widget of the bottom widget, let the
+        // other translators record it.
+        acceptEvent = false;
+        break;
+        }
+      }
+    }
+
+  return acceptEvent;
 }
 
 // ----------------------------------------------------------------------------

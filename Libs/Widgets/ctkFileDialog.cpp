@@ -171,7 +171,7 @@ void ctkFileDialog::setBottomWidget(QWidget* widget, const QString& label)
 QWidget* ctkFileDialog::bottomWidget()const
 {
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(this->layout());
-  QLayoutItem* item = gridLayout->itemAtPosition(4,1);
+  QLayoutItem* item = gridLayout ? gridLayout->itemAtPosition(4,1) : NULL;
   return item ? item->widget() : 0;
 }
 
