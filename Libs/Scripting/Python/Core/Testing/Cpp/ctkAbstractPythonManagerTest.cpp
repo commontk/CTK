@@ -112,7 +112,7 @@ void ctkAbstractPythonManagerTester::testPythonErrorOccured_data()
 
   QTest::newRow("0") << QString("2 + 2") << false;
 
-  QTest::newRow("1") << QString("raise Exception('This is exception is expected')") << true;
+  QTest::newRow("1") << QString("raise Exception('This exception is expected')") << true;
 }
 
 // ----------------------------------------------------------------------------
