@@ -671,13 +671,15 @@ void ctkDICOMBrowser::onModelSelected(const QItemSelection &item1, const QItemSe
 //----------------------------------------------------------------------------
 void ctkDICOMBrowser::addSelectionLabelsToContextMenu(QStringList uids, QMenu *menu)
 {
+  Q_D(ctkDICOMBrowser);
+
   if (!menu || uids.isEmpty())
     {
     return;
     }
 
   // add non clickable labels to the menu
-  QLabel *headerLabel = new QLabel(tr("Selected UIDs:"), menu);
+  QLabel *headerLabel = new QLabel(tr("Selected:"), menu);
   QWidgetAction *headerAction = new QWidgetAction(menu);
   headerAction->setDefaultWidget(headerLabel);
   menu->addAction(headerAction);
@@ -685,10 +687,32 @@ void ctkDICOMBrowser::addSelectionLabelsToContextMenu(QStringList uids, QMenu *m
   int numUIDs = uids.size();
   for (int i = 0; i < numUIDs; ++i)
     {
-    QLabel *uidLabel = new QLabel(uids.at(i));
-    QWidgetAction *uidAction = new QWidgetAction(menu);
-    uidAction->setDefaultWidget(uidLabel);
-    menu->addAction(uidAction);
+    QString uid = uids.at(i);
+
+    // try using the given UID to find a descriptive string
+    QString patientName = d->DICOMDatabase->nameForPatient(uid);
+    QString studyDescription = d->DICOMDatabase->descriptionForStudy(uid);
+    QString seriesDescription = d->DICOMDatabase->descriptionForSeries(uid);
+
+    QLabel *selectionLabel;
+    if (!patientName.isEmpty())
+      {
+      selectionLabel = new QLabel(patientName);
+      }
+    else if (!studyDescription.isEmpty())
+      {
+      selectionLabel = new QLabel(studyDescription);
+      }
+    else if (!seriesDescription.isEmpty())
+      {
+      selectionLabel = new QLabel(seriesDescription);
+      }
+    if (!selectionLabel->text().isEmpty())
+      {
+      QWidgetAction *selectionAction = new QWidgetAction(menu);
+      selectionAction->setDefaultWidget(selectionLabel);
+      menu->addAction(selectionAction);
+      }
     }
 
   menu->addSeparator();
