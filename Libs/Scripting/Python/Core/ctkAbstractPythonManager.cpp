@@ -86,11 +86,12 @@ ctkAbstractPythonManager::ctkAbstractPythonManager(QObject* _parent) : Superclas
 //-----------------------------------------------------------------------------
 ctkAbstractPythonManager::~ctkAbstractPythonManager()
 {
+  PythonQt::cleanup();
+
   if (Py_IsInitialized())
     {
     Py_Finalize();
     }
-  PythonQt::cleanup();
 }
 
 //-----------------------------------------------------------------------------
