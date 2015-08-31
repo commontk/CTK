@@ -85,13 +85,13 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
   if(TARGET vtkTestingRendering)
     list(APPEND VTK_LIBRARIES vtkTestingRendering )
   endif()
+  # With VTK > 6.2.0 (commit 4f7460a5), vtkRenderingFreeTypeOpenGL has been removed.
+  if(TARGET vtkRenderingFreeTypeOpenGL)
+    list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
+  endif()
   if (TARGET vtkRenderingFreeTypeFontConfig AND UNIX AND NOT APPLE)
     find_package(FontConfig QUIET)
     if (FONTCONFIG_FOUND)
-      # With VTK > 6.2.0 (commit 4f7460a5), vtkRenderingFreeTypeOpenGL has been removed.
-      if(TARGET vtkRenderingFreeTypeOpenGL)
-        list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
-      endif()
       list(APPEND VTK_LIBRARIES
         vtkRenderingFreeTypeFontConfig
         )
