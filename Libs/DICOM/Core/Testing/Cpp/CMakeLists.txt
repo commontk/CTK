@@ -7,6 +7,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMDatabaseTest3.cpp
   ctkDICOMDatabaseTest4.cpp
   ctkDICOMDatabaseTest5.cpp
+  ctkDICOMDatabaseTest6.cpp
   ctkDICOMItemTest1.cpp
   ctkDICOMIndexerTest1.cpp
   ctkDICOMModelTest1.cpp
@@ -44,6 +45,7 @@ SIMPLE_TEST(ctkDICOMDatabaseTest3
   )
 SIMPLE_TEST(ctkDICOMDatabaseTest4 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMDatabaseTest5 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
+SIMPLE_TEST(ctkDICOMDatabaseTest6 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMItemTest1)
 SIMPLE_TEST(ctkDICOMIndexerTest1 )
 
