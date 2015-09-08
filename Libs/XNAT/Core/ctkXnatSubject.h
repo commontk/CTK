@@ -100,6 +100,9 @@ private:
 
   virtual void fetchImpl();
 
+  QList<ctkXnatObject*> fetchImageSessionData();
+  QList<ctkXnatObject*> fetchSubjectVariablesData();
+
   virtual void downloadImpl(const QString&);
 
   Q_DECLARE_PRIVATE(ctkXnatSubject)
