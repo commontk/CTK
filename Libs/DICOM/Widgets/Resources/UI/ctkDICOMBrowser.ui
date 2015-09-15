@@ -203,7 +203,7 @@
     <string>Remove</string>
    </property>
    <property name="toolTip">
-    <string>Remove from database</string>
+    <string>Remove selected series, studies, patients from database</string>
    </property>
   </action>
   <action name="ActionRepair">
