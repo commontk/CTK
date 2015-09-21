@@ -107,10 +107,11 @@ public:
    *
    * @param endSplashHandler the block of code to run to tear down the splash
    * 	screen or <code>null</code> if no tear down is required
+   * @param argument the argument passed to the application. Default is QVariant().
    * @return the result of running the application
    * @throws Exception if anything goes wrong
    */
-  static QVariant run(QRunnable* endSplashHandler = NULL);
+  static QVariant run(QRunnable* endSplashHandler = NULL, const QVariant& argument = QVariant());
 
   /**
    * Runs the application for which the platform was started. The platform
