@@ -81,7 +81,9 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_ENUMS(Qt::ScrollBarPolicy)
   Q_PROPERTY(Qt::ScrollBarPolicy scrollBarPolicy READ scrollBarPolicy WRITE setScrollBarPolicy)
   Q_PROPERTY(QList<QKeySequence> completerShortcuts READ completerShortcuts WRITE setCompleterShortcuts)
-
+  Q_FLAGS(RunFileOption RunFileOptions)
+  Q_PROPERTY(RunFileOptions runFileOptions READ runFileOptions WRITE setRunFileOptions)
+  
 public:
 
   enum EditorHint
@@ -92,6 +94,14 @@ public:
     SplitCopiedTextByLine = 0x4  /*!< Copied text is split by lines and each one is executed (expected the last one) */
   };
   Q_DECLARE_FLAGS(EditorHints, EditorHint)
+
+  enum RunFileOption
+  {
+    NoRunFileUserInterface = 0x00,
+    RunFileButton = 0x01,   /*!< Show a button at the bottom of the console to run a file */
+    RunFileShortcut = 0x02, /*!< Add the shortcut CTRL+r to run a file */
+  };
+  Q_DECLARE_FLAGS(RunFileOptions, RunFileOption)
 
   ctkConsole(QWidget* parentObject = 0);
   typedef QWidget Superclass;
@@ -189,6 +199,13 @@ public:
   /// show the completion options.
   /// \sa completerShortcuts(), setCompleterShortcuts()
   void addCompleterShortcut(const QKeySequence& key);
+
+  RunFileOptions runFileOptions()const;
+
+  /// Set which options to run file are enabled.
+  /// Default is RunFileShortcut.
+  /// \sa runFileOptions()
+  void setRunFileOptions(const RunFileOptions& newOptions);
 
 Q_SIGNALS:
 

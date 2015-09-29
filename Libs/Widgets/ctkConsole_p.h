@@ -30,6 +30,8 @@
 #include "ctkConsole.h"
 #include "ctkWidgetsExport.h"
 
+class QPushButton;
+
 /// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkConsolePrivate : public QTextEdit
 {
@@ -187,6 +189,11 @@ public:
   QPointer<QEventLoop> InputEventLoop;
 
   QList<QKeySequence> CompleterShortcuts;
+
+  ctkConsole::RunFileOptions RunFileOptions;
+
+  QPushButton* RunFileButton;
+  QAction* RunFileAction;
 };
 
 
