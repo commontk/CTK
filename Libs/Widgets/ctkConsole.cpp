@@ -59,6 +59,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QKeyEvent>
 #include <QMimeData>
 #include <QPointer>
+#include <QPushButton>
 #include <QTextCursor>
 #include <QVBoxLayout>
 #include <QScrollBar>
@@ -94,7 +95,10 @@ ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
   InteractivePosition(documentEnd()),
   MultilineStatement(false), Ps1("$ "), Ps2("> "),
   EditorHints(ctkConsole::AutomaticIndentation | ctkConsole::RemoveTrailingSpaces),
-  ScrollbarAtBottom(false)
+  ScrollbarAtBottom(false),
+  RunFileOptions(ctkConsole::RunFileButton | ctkConsole::RunFileShortcut),
+  RunFileButton(NULL),
+  RunFileAction(NULL)
 {
 }
 
@@ -128,23 +132,29 @@ void ctkConsolePrivate::init()
   this->CommandHistory.append("");
   this->CommandPosition = 0;
 
-  QAction* runFileAction = new QAction(q->tr("&Run file"),q);
-  runFileAction->setShortcut(q->tr("Ctrl+r"));
-  connect(runFileAction, SIGNAL(triggered()), q, SLOT(runFile()));
-  q->addAction(runFileAction);
+  this->RunFileAction = new QAction(q->tr("&Run file"), q);
+  this->RunFileAction->setShortcut(q->tr("Ctrl+r"));
+  connect(this->RunFileAction, SIGNAL(triggered()), q, SLOT(runFile()));
+  q->addAction(this->RunFileAction);
 
   QAction* printHelpAction = new QAction(q->tr("Print &help"),q);
   printHelpAction->setShortcut(q->tr("Ctrl+h"));
   connect(printHelpAction, SIGNAL(triggered()), q, SLOT(printHelp()));
   q->addAction(printHelpAction);
 
+  this->RunFileButton = new QPushButton(q);
+  this->RunFileButton->setText(q->tr("&Run script from file"));
+
   QVBoxLayout * layout = new QVBoxLayout(q);
   layout->setMargin(0);
+  layout->setSpacing(0);
   layout->addWidget(this);
+  layout->addWidget(this->RunFileButton);
 
   connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)),
           SLOT(onScrollBarValueChanged(int)));
   connect(this, SIGNAL(textChanged()), SLOT(onTextChanged()));
+  connect(this->RunFileButton, SIGNAL(clicked()), q, SLOT(runFile()));
 }
 
 //-----------------------------------------------------------------------------
@@ -950,6 +960,17 @@ void ctkConsole::setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolic
 {
   Q_D(ctkConsole);
   d->setVerticalScrollBarPolicy(newScrollBarPolicy);
+}
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, ctkConsole::RunFileOptions, runFileOptions, RunFileOptions);
+
+//-----------------------------------------------------------------------------
+void ctkConsole::setRunFileOptions(const RunFileOptions& newOptions)
+{
+  Q_D(ctkConsole);
+  d->RunFileButton->setVisible(newOptions.testFlag(ctkConsole::RunFileButton));
+  d->RunFileAction->setEnabled(newOptions.testFlag(ctkConsole::RunFileShortcut));
 }
 
 //-----------------------------------------------------------------------------
