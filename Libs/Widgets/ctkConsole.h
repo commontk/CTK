@@ -187,8 +187,8 @@ public:
 
   RunFileOptions runFileOptions()const;
 
-  /// Set what options are visible to the user to run a file.
-  /// Default is RunFileButton | RunFileShortcut.
+  /// Set which options to run file are enabled.
+  /// Default is RunFileShortcut.
   /// \sa runFileOptions()
   void setRunFileOptions(const RunFileOptions& newOptions);
 

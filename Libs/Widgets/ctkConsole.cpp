@@ -96,7 +96,7 @@ ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
   MultilineStatement(false), Ps1("$ "), Ps2("> "),
   EditorHints(ctkConsole::AutomaticIndentation | ctkConsole::RemoveTrailingSpaces),
   ScrollbarAtBottom(false),
-  RunFileOptions(ctkConsole::RunFileButton | ctkConsole::RunFileShortcut),
+  RunFileOptions(ctkConsole::RunFileShortcut),
   RunFileButton(NULL),
   RunFileAction(NULL)
 {
@@ -144,6 +144,7 @@ void ctkConsolePrivate::init()
 
   this->RunFileButton = new QPushButton(q);
   this->RunFileButton->setText(q->tr("&Run script from file"));
+  this->RunFileButton->setVisible(false);
 
   QVBoxLayout * layout = new QVBoxLayout(q);
   layout->setMargin(0);
