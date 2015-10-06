@@ -26,6 +26,7 @@
 // CTK includes
 #include "ctkPythonConsole.h"
 #include "ctkAbstractPythonManager.h"
+#include "ctkCompleter.h"
 
 // STD includes
 #include <cstdlib>
@@ -41,6 +42,12 @@ int ctkPythonConsoleTest1(int argc, char * argv [] )
   ctkPythonConsole pythonConsole;
   ctkAbstractPythonManager pythonManager;
   pythonConsole.initialize(&pythonManager);
+
+  QList<QKeySequence> otherShortcuts;
+  otherShortcuts << QKeySequence(Qt::CTRL + Qt::Key_Space);
+  otherShortcuts << Qt::Key_F1;
+  pythonConsole.setCompleterShortcuts(otherShortcuts);
+  pythonConsole.addCompleterShortcut(Qt::Key_Tab);
 
   QObject::connect(&button, SIGNAL(clicked()), &pythonConsole, SLOT(show()));
 
