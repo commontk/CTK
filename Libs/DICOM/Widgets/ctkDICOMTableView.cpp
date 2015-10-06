@@ -338,8 +338,10 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
           ++i;
         }
     }
-  if (d->dicomDatabase != 0)
+  if (d->dicomDatabase != 0 && d->dicomDatabase->isOpen())
+    {
     d->dicomSQLModel.setQuery(query.arg(d->queryTableName()), d->dicomDatabase->database());
+    }
 }
 
 void ctkDICOMTableView::addSqlWhereCondition(const std::pair<QString, QStringList> &condition)
