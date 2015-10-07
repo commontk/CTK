@@ -40,6 +40,7 @@ if(CTK_QT_VERSION VERSION_GREATER "4")
   QT5_GENERATE_MOCS(
     ctkVTKConnectionTestObjectDelete.cpp
     )
+  include_directories(${Qt5Widgets_INCLUDE_DIRS})
 else()
   QT4_WRAP_CPP(KIT_HELPER_SRCS ctkVTKObjectTestHelper.h)
   QT4_GENERATE_MOCS(
