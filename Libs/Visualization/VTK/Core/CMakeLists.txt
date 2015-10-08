@@ -90,12 +90,9 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
   endif()
   if (TARGET vtkRenderingFreeTypeFontConfig AND UNIX AND NOT APPLE)
-    find_package(FontConfig QUIET)
-    if (FONTCONFIG_FOUND)
       list(APPEND VTK_LIBRARIES
         vtkRenderingFreeTypeFontConfig
         )
-    endif()
   endif()
 else()
   set(VTK_LIBRARIES
