@@ -967,13 +967,13 @@ void ctkDICOMBrowser::exportSelectedSeries(QString dirPath, QStringList uids)
         {
         QString errorString =
           QString("Unable to create export destination directory:\n\n")
-          + destinationDir;
+          + destinationDir
+          + QString("\n\nHalting export.");
         ctkMessageBox createDirectoryErrorMessageBox;
         createDirectoryErrorMessageBox.setText(errorString);
         createDirectoryErrorMessageBox.setIcon(QMessageBox::Warning);
         createDirectoryErrorMessageBox.exec();
-        // go on the the next series if present
-        continue;
+        return;
         }
       }
 
@@ -1012,7 +1012,7 @@ void ctkDICOMBrowser::exportSelectedSeries(QString dirPath, QStringList uids)
         d->ExportProgress->setValue(numFiles);
         QString errorString = QString("Export source file not found:\n\n")
           + filePath
-          + QString("\n\nHalting export.");
+          + QString("\n\nHalting export.\n\nError may be fixed via Repair.");
         ctkMessageBox copyErrorMessageBox;
         copyErrorMessageBox.setText(errorString);
         copyErrorMessageBox.setIcon(QMessageBox::Warning);
