@@ -67,6 +67,10 @@ ctkXnatExperiment::~ctkXnatExperiment()
 //----------------------------------------------------------------------------
 QString ctkXnatExperiment::resourceUri() const
 {
+  if (this->id().isEmpty())
+  {
+    return QString("%1/experiments/%2").arg(parent()->resourceUri(), this->label());
+  }
   return QString("%1/experiments/%2").arg(parent()->resourceUri(), this->id());
 }
 
