@@ -94,7 +94,8 @@ ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
   InteractivePosition(documentEnd()),
   MultilineStatement(false), Ps1("$ "), Ps2("> "),
   EditorHints(ctkConsole::AutomaticIndentation | ctkConsole::RemoveTrailingSpaces),
-  ScrollbarAtBottom(false)
+  ScrollbarAtBottom(false),
+  CompleterShortcuts(QList<QKeySequence>() << Qt::Key_Tab)
 {
 }
 
@@ -402,7 +403,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     return;
     }
 
-  if (e->key() == Qt::Key_Tab)
+  if (this->CompleterShortcuts.contains(e->key() + e->modifiers()))
     {
     e->accept();
     this->updateCompleter();
@@ -950,6 +951,26 @@ void ctkConsole::setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolic
 {
   Q_D(ctkConsole);
   d->setVerticalScrollBarPolicy(newScrollBarPolicy);
+}
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(ctkConsole, QList<QKeySequence>, completerShortcuts, CompleterShortcuts);
+
+//-----------------------------------------------------------------------------
+void ctkConsole::setCompleterShortcuts(const QList<QKeySequence>& keys)
+{
+  Q_D(ctkConsole);
+  d->CompleterShortcuts = keys;
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::addCompleterShortcut(const QKeySequence& key)
+{
+  Q_D(ctkConsole);
+  if (!d->CompleterShortcuts.contains(key))
+    {
+    d->CompleterShortcuts.append(key);
+    }
 }
 
 //-----------------------------------------------------------------------------

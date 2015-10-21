@@ -185,6 +185,8 @@ public:
   bool ScrollbarAtBottom;
 
   QPointer<QEventLoop> InputEventLoop;
+
+  QList<QKeySequence> CompleterShortcuts;
 };
 
 
