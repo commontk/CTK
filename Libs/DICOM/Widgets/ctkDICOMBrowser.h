@@ -120,7 +120,7 @@ protected:
     /// empty, uses the UID.
     /// Returns true if the user confirms the delete, false otherwise.
     /// Remembers if the user doesn't want to show the confirmation again.
-    bool confirmDeleteSelectedIUDs(QStringList uids);
+    bool confirmDeleteSelectedUIDs(QStringList uids);
 
 protected Q_SLOTS:
     void onModelSelected(const QItemSelection&, const QItemSelection&);
@@ -133,6 +133,16 @@ protected Q_SLOTS:
 
     /// Called when a right mouse click is made in the series table
     void onSeriesRightClicked(const QPoint &point);
+
+    /// Called to export the series associated with the selected UIDs
+    /// \sa exportSelectedStudies, exportSelectedPatients
+    void exportSelectedSeries(QString dirPath, QStringList uids);
+    /// Called to export the studies associated with the selected UIDs
+    /// \sa exportSelectedSeries, exportSelectedPatients
+    void exportSelectedStudies(QString dirPath, QStringList uids);
+    /// Called to export the patients associated with the selected UIDs
+    /// \sa exportSelectedStudies, exportSelectedSeries
+    void exportSelectedPatients(QString dirPath, QStringList uids);
 
     /// To be called when dialog finishes
     void onQueryRetrieveFinished();
