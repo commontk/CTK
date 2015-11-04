@@ -412,7 +412,7 @@ void ctkXnatObject::saveImpl(bool /*overwrite*/)
   const QList<QVariantMap> results = this->session()->httpSync(queryID);
 
   // If this xnat object did not exist before on the server set the ID returned by Xnat
-  if (results.size() == 1 && results[0].size() == 1)
+  if (results.size() == 1 && results[0].size() == 2)
   {
     QVariant id = results[0][ID];
     if (!id.isNull())

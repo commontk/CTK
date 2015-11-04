@@ -271,7 +271,6 @@ void ctkXnatSessionTestCase::testCreateSubject()
   ctkXnatSubject* subject = new ctkXnatSubject(project);
 
   QString subjectName = QString("CTK_S") + QUuid::createUuid().toString().mid(1, 8);
-  subject->setId(subjectName);
   subject->setName(subjectName);
 
   subject->save();
