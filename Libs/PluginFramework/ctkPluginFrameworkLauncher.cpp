@@ -388,7 +388,7 @@ void ctkPluginFrameworkLauncher::setFrameworkProperties(const ctkProperties& pro
 }
 
 //----------------------------------------------------------------------------
-QVariant ctkPluginFrameworkLauncher::run(QRunnable* endSplashHandler)
+QVariant ctkPluginFrameworkLauncher::run(QRunnable* endSplashHandler, const QVariant& argument)
 {
   if (d->running)
   {
@@ -424,9 +424,9 @@ QVariant ctkPluginFrameworkLauncher::run(QRunnable* endSplashHandler)
       startup(d->endSplashHandler);
       if (ctkPluginFrameworkProperties::getProperty(PROP_IGNOREAPP).toBool() || d->isForcedRestart())
       {
-        return QVariant();
+        return argument;
       }
-      return run(QVariant());
+      return run(argument);
     }
     catch (const std::exception& e)
     {
