@@ -37,6 +37,7 @@
 
 #include <QCryptographicHash>
 #include <QDateTime>
+#include <QTimer>
 #include <QDebug>
 #include <QDir>
 #include <QScopedPointer>
@@ -69,6 +70,14 @@ public:
 
   ctkXnatSession* q;
 
+  QTimer* timer;
+
+  // The time in milliseconds untill the signal sessionAboutToBeTimedOut gets emitted
+  int timeToSessionTimeOutWarning;
+
+  // The time in milliseconds untill the signal sessionTimedOut gets emitted
+  int timeToSessionTimedOut = 60000;
+
   ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q);
   ~ctkXnatSessionPrivate();
 
@@ -92,6 +101,7 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
   , xnat(new ctkXnatAPI())
   , defaultDownloadDir(".")
   , q(q)
+  , timer(new QTimer(q))
 {
   // TODO This is a workaround for connecting to sites with self-signed
   // certificate. Should be replaced with something more clever.
@@ -212,8 +222,10 @@ QDateTime ctkXnatSessionPrivate::updateExpirationDate(qRestResult* restResult)
           }
           QByteArray timeSpan = expirationCookie[1];
           timeSpan.chop(1);
+          this->timeToSessionTimeOutWarning = timeSpan.toLong() - this->timeToSessionTimedOut;
           expirationDate = expirationDate.addMSecs(timeSpan.toLong());
           sessionProperties[SESSION_EXPIRATION_DATE] = expirationDate.toString(Qt::ISODate);
+          this->timer->start(this->timeToSessionTimeOutWarning);
           emit q->sessionRenewed(expirationDate);
         }
       }
@@ -363,6 +375,8 @@ void ctkXnatSession::open()
   QScopedPointer<qRestResult> restResult(d->xnat->takeResult(uuid));
   if (restResult)
   {
+    QObject::connect(d->timer, SIGNAL(timeout()), this, SLOT(emitSessionTimeOut()));
+
     QString sessionId = restResult->result()["content"].toString();
     d->sessionId = sessionId;
     d->setDefaultHttpHeaders();
@@ -514,6 +528,7 @@ QUuid ctkXnatSession::httpGet(const QString& resource, const ctkXnatSession::Url
 {
   Q_D(ctkXnatSession);
   d->checkSession();
+  d->timer->start(d->timeToSessionTimeOutWarning);
   return d->xnat->get(resource, parameters, rawHeaders);
 }
 
@@ -528,6 +543,7 @@ QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QStri
   {
     d->throwXnatException("Http request failed.");
   }
+  d->timer->start(d->timeToSessionTimeOutWarning);
   return d->results(restResult.data(), schemaType);
 }
 
@@ -564,6 +580,7 @@ const QMap<QByteArray, QByteArray> ctkXnatSession::httpHeadSync(const QUuid &uui
 {
   Q_D(ctkXnatSession);
   QScopedPointer<qRestResult> result (d->xnat->takeResult(uuid));
+  d->timer->start(d->timeToSessionTimeOutWarning);
   if (result == NULL)
   {
     d->throwXnatException("Sending HEAD request failed.");
@@ -576,6 +593,7 @@ QUuid ctkXnatSession::httpHead(const QString& resourceUri)
 {
   Q_D(ctkXnatSession);
   QUuid queryId = d->xnat->head(resourceUri);
+  d->timer->start(d->timeToSessionTimeOutWarning);
   return queryId;
 }
 
@@ -597,6 +615,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 
   QString query = object->resourceUri();
   bool success = d->xnat->sync(d->xnat->del(query));
+  d->timer->start(d->timeToSessionTimeOutWarning);
 
   if (!success)
   {
@@ -614,6 +633,7 @@ void ctkXnatSession::download(const QString& fileName,
 
   QUuid queryId = d->xnat->download(fileName, resource, parameters, rawHeaders);
   d->xnat->sync(queryId);
+  d->timer->start(d->timeToSessionTimeOutWarning);
 }
 
 //----------------------------------------------------------------------------
@@ -690,4 +710,21 @@ void ctkXnatSession::processResult(QUuid queryId, QList<QVariantMap> parameters)
 {
   Q_UNUSED(queryId)
   Q_UNUSED(parameters)
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSession::emitSessionTimeOut()
+{
+  Q_D(ctkXnatSession);
+
+  if (d->timer->interval() == d->timeToSessionTimeOutWarning)
+  {
+    d->timer->start(d->timeToSessionTimedOut);
+    emit sessionAboutToBeTimedOut();
+  }
+  else if (d->timer->interval() == d->timeToSessionTimedOut)
+  {
+    d->timer->stop();
+    emit sessionTimedOut();
+  }
 }
