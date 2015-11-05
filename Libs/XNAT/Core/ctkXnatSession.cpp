@@ -76,6 +76,8 @@ public:
   int timeToSessionTimeOutWarning;
 
   // The time in milliseconds untill the signal sessionTimedOut gets emitted
+  // Default XNAT session timeout setting. This value will be updated after
+  // "updateExpirationDate" is called the first time.
   int timeToSessionTimedOut = 60000;
 
   ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q);
@@ -552,6 +554,7 @@ QUuid ctkXnatSession::httpPut(const QString& resource, const ctkXnatSession::Url
 {
   Q_D(ctkXnatSession);
   d->checkSession();
+  d->timer->start(d->timeToSessionTimeOutWarning);
   return d->xnat->put(resource, parameters);
 }
 
@@ -569,7 +572,7 @@ QList<QVariantMap> ctkXnatSession::httpSync(const QUuid& uuid)
   }
   else
   {
-    d->updateExpirationDate(restResult);
+    d->updateExpirationDate(restResult); // restarts session timer as well
     result = restResult->results();
   }
   return result;
@@ -604,6 +607,7 @@ bool ctkXnatSession::exists(const ctkXnatObject* object)
 
   QString query = object->resourceUri();
   bool success = d->xnat->sync(d->xnat->get(query));
+  d->timer->start(d->timeToSessionTimeOutWarning);
 
   return success;
 }
@@ -662,6 +666,8 @@ void ctkXnatSession::upload(ctkXnatFile *xnatFile,
   QUuid md5QueryID = this->httpGet(md5Query);
   QList<QVariantMap> result = this->httpSync(md5QueryID);
 
+  d->timer->start(d->timeToSessionTimeOutWarning);
+
   QString md5ChecksumRemote ("0");
   // Newly added files are usually at the end of the catalog
   // and hence at the end of the result list.
@@ -696,6 +702,7 @@ void ctkXnatSession::upload(ctkXnatFile *xnatFile,
     {
       // Remove corrupted file from server
       xnatFile->erase();
+      d->timer->start(d->timeToSessionTimeOutWarning);
       throw ctkXnatException("Upload failed! An error occurred during file upload.");
     }
   }
