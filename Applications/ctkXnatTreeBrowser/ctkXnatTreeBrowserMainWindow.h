@@ -49,7 +49,7 @@ private Q_SLOTS:
   void addResourceClicked();
   void uploadFileClicked();
   void sessionTimedOutMsg();
-  void sessionTimesOutSoonMsg();
+  void sessionAboutToTimeOutMsg();
 
 private:
   Ui::ctkXnatTreeBrowserMainWindow* ui;

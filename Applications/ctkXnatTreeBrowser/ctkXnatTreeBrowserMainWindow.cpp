@@ -101,8 +101,8 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
       {
         ui->loginButton->setText("Logout");
         ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url().toString()));
-        this->connect(m_Session, SIGNAL(sessionTimedOut()), this, SLOT(sessionTimedOutMsg()));
-        this->connect(m_Session, SIGNAL(sessionAboutToBeTimedOut()), this, SLOT(sessionTimesOutSoonMsg()));
+        this->connect(m_Session, SIGNAL(timedOut()), this, SLOT(sessionTimedOutMsg()));
+        this->connect(m_Session, SIGNAL(aboutToTimeOut()), this, SLOT(sessionAboutToTimeOutMsg()));
 
         ctkXnatDataModel* dataModel = m_Session->dataModel();
         m_TreeModel->addDataModel(dataModel);
@@ -198,7 +198,7 @@ void ctkXnatTreeBrowserMainWindow::sessionTimedOutMsg()
   QMessageBox::warning(this, "Session Timeout", "The session timed out.");
 }
 
-void ctkXnatTreeBrowserMainWindow::sessionTimesOutSoonMsg()
+void ctkXnatTreeBrowserMainWindow::sessionAboutToTimeOutMsg()
 {
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Warning);
