@@ -168,7 +168,8 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
   rangeY[1] = this->maxValue();
 
   // test piecewise
-  Q_ASSERT(valuesPWF[0] >= rangePWF[0] && valuesPWF[0] <= rangePWF [1] &&  // X
+#ifndef QT_NO_DEBUG
+  Q_ASSERT(valuesPWF[0] >= rangePWF[0] && valuesPWF[0] <= rangePWF[1] &&  // X
     valuesPWF[1] >= rangeY[0].toDouble() && valuesPWF[1] <= rangeY[1].toDouble()  &&  // Y
     valuesPWF[2] >= 0. && valuesPWF[2] <= 1. &&                // Midpoint
     valuesPWF[3] >= 0. && valuesPWF[3] <= 1. );                // Sharpness
@@ -181,7 +182,7 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
     valuesCTF[3] >= 0. && valuesCTF[3] <= 1. &&  // Blue
     valuesCTF[4] >= 0. && valuesCTF[4] <= 1. &&  // MidPoint
     valuesCTF[5] >= 0. && valuesCTF[5] <= 1.);   // Sharpness
-
+#endif
   // if only 2 points -> linear
   if (index + 1 >= this->count())
     {
@@ -204,6 +205,7 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
   d->PiecewiseFunction->GetNodeValue(index + 1, nextValuesPWF);
   d->ColorTransferFunction->GetNodeValue(index + 1, nextValuesCTF);
 
+#ifndef QT_NO_DEBUG
   Q_ASSERT(nextValuesPWF[0] >= rangePWF[0] && nextValuesPWF[0] <= rangePWF[1]  &&  // X
     nextValuesPWF[1] >= rangeY[0].toDouble() && nextValuesPWF[1] <= rangeY[1].toDouble()  &&  // Y
     nextValuesPWF[2] >= 0. && nextValuesPWF[2] <= 1. &&                // Midpoint
@@ -216,7 +218,7 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
     nextValuesCTF[3] >= 0. && nextValuesCTF[3] <= 1. &&  // Blue
     nextValuesCTF[4] >= 0. && nextValuesCTF[4] <= 1. &&  // MidPoint
     nextValuesCTF[5] >= 0. && nextValuesCTF[5] <= 1.);   // Sharpness
-
+#endif
   // Optimization: don't use subPoints if the ramp is linear (sharpness == 0)
   if (valuesPWF[3] == 0. && valuesCTF[5] == 0.)
     {
@@ -324,7 +326,9 @@ int ctkVTKCompositeFunction::insertControlPoint(qreal pos)
       d->PiecewiseFunction->AddPoint( pos, 0);
 
   // check index
+#ifndef QT_NO_DEBUG
   Q_ASSERT(indexColor == indexPiecewise);
+#endif
 
   index = indexColor;
 
