@@ -149,12 +149,12 @@ ctkControlPoint* ctkVTKPiecewiseFunction::controlPoint(int index)const
   rangeY[1] = this->maxValue();
   //    rangeYDiff /= rangeY[1].toReal() - rangeY[0].toReal();
 
-
+#ifndef QT_NO_DEBUG
   Q_ASSERT(values[0] >= range[0] && values[0] <= range [1] &&  // X
            values[1] >= rangeY[0].toDouble() && values[1] <= rangeY[1].toDouble()  &&  // Y
            values[2] >= 0. && values[2] <= 1. &&                // Midpoint
            values[3] >= 0. && values[3] <= 1. );                // Sharpness
-
+#endif
   if (index + 1 >= this->count())
     {
     ctkControlPoint* cp = new ctkControlPoint();
@@ -173,10 +173,12 @@ ctkControlPoint* ctkVTKPiecewiseFunction::controlPoint(int index)const
   double nextValues[4];
   d->PiecewiseFunction->GetNodeValue(index + 1, nextValues);
 
-  Q_ASSERT(nextValues[0] >= range[0] && nextValues[0] <= range[1]  &&  // X
+#ifndef QT_NO_DEBUG
+  Q_ASSERT(nextValues[0] >= range[0] && nextValues[0] <= range[1] &&  // X
            nextValues[1] >= rangeY[0].toDouble() && nextValues[1] <= rangeY[1].toDouble()  &&  // Y
            nextValues[2] >= 0. && nextValues[2] <= 1. &&                // Midpoint
            nextValues[3] >= 0. && nextValues[3] <= 1. );                // Sharpness
+#endif
   // Optimization: Don't use Subpoints if sharpness == 0
   if (values[3] == 0.)
     {
