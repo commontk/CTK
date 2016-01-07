@@ -149,7 +149,7 @@ void ctkDICOMIndexer::addListOfFiles(ctkDICOMDatabase& ctkDICOMDatabase,
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexer::addDicomdir(ctkDICOMDatabase& ctkDICOMDatabase,
+bool ctkDICOMIndexer::addDicomdir(ctkDICOMDatabase& ctkDICOMDatabase,
                  const QString& directoryName,
                  const QString& destinationDirectoryName
                  )
@@ -175,30 +175,52 @@ void ctkDICOMIndexer::addDicomdir(ctkDICOMDatabase& ctkDICOMDatabase,
   /*Iterate over all records in dicomdir and setup path to the dataset of the filerecord
   then insert. the filerecord into the database.
   If any UID is missing the record and all of it's subelements won't be added to the database*/
+  bool success = true;
   if(rootRecord != NULL)
   {
-    while (((patientRecord = rootRecord->nextSub(patientRecord)) != NULL)
-      &&(patientRecord->findAndGetOFString(DCM_PatientName, patientsName).good()))
+    while ((patientRecord = rootRecord->nextSub(patientRecord)) != NULL)
     {
-      logger.debug( "Reading new Patients:" );
-      logger.debug( "Patient's Name: " + QString(patientsName.c_str()) );
-
-      while (((studyRecord = patientRecord->nextSub(studyRecord)) != NULL)
-        && (studyRecord->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID).good()))
+      logger.debug( "Reading new Patient:" );
+      if (patientRecord->findAndGetOFString(DCM_PatientName, patientsName).bad())
       {
-        logger.debug( "Reading new Studys:" );
-        logger.debug( "Studies Name: " + QString(studyInstanceUID.c_str()) );
+        logger.warn( "DICOMDIR file at "+directoryName+" is invalid: patient name not found. All records belonging to this patient will be ignored.");
+        success = false;
+        continue;
+      }
+      logger.debug( "Patient's Name: " + QString(patientsName.c_str()) );
+      while ((studyRecord = patientRecord->nextSub(studyRecord)) != NULL)
+      {
+        logger.debug( "Reading new Study:" );
+        if (studyRecord->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID).bad())
+        {
+          logger.warn( "DICOMDIR file at "+directoryName+" is invalid: study instance UID not found for patient "+ QString(patientsName.c_str())+". All records belonging to this study will be ignored.");
+          success = false;
+          continue;
+        }
+        logger.debug( "Study instance UID: " + QString(studyInstanceUID.c_str()) );
 
-        while (((seriesRecord = studyRecord->nextSub(seriesRecord)) != NULL)
-          &&(seriesRecord->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID).good()))
+        while ((seriesRecord = studyRecord->nextSub(seriesRecord)) != NULL)
         {
           logger.debug( "Reading new Series:" );
-          logger.debug( "Series Instance Name: " + QString(seriesInstanceUID.c_str()) );
-
-          while (((fileRecord = seriesRecord->nextSub(fileRecord)) != NULL)
-            &&(fileRecord->findAndGetOFStringArray(DCM_ReferencedSOPInstanceUIDInFile, sopInstanceUID).good())
-            &&(fileRecord->findAndGetOFStringArray(DCM_ReferencedFileID,referencedFileName).good()))
+          if (seriesRecord->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID).bad())
           {
+            logger.warn( "DICOMDIR file at "+directoryName+" is invalid: series instance UID not found for patient "+ QString(patientsName.c_str())+", study "+ QString(studyInstanceUID.c_str())+". All records belonging to this series will be ignored.");
+            success = false;
+            continue;
+          }
+          logger.debug( "Series instance UID: " + QString(seriesInstanceUID.c_str()) );
+
+          while ((fileRecord = seriesRecord->nextSub(fileRecord)) != NULL)
+          {
+            if (fileRecord->findAndGetOFStringArray(DCM_ReferencedSOPInstanceUIDInFile, sopInstanceUID).bad()
+              || fileRecord->findAndGetOFStringArray(DCM_ReferencedFileID,referencedFileName).bad())
+            {
+              logger.warn( "DICOMDIR file at "+directoryName+" is invalid: referenced SOP instance UID or file name is invalid for patient "
+                + QString(patientsName.c_str())+", study "+ QString(studyInstanceUID.c_str())+", series "+ QString(seriesInstanceUID.c_str())+
+                ". This file will be ignored.");
+              success = false;
+              continue;
+            }
 
             //Get the filepath of the instance and insert it into a list
             instanceFilePath = directoryName;
@@ -213,6 +235,7 @@ void ctkDICOMIndexer::addDicomdir(ctkDICOMDatabase& ctkDICOMDatabase,
     emit foundFilesToIndex(listOfInstances.count());
     addListOfFiles(ctkDICOMDatabase,listOfInstances,destinationDirectoryName);
   }
+  return success;
 }
 
 //------------------------------------------------------------------------------

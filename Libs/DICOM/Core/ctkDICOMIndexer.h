@@ -56,8 +56,9 @@ public:
   /// destinationDirectory.
   /// Scan the directory using Dcmtk and populate the database with all the
   /// DICOM images accordingly.
+  /// \return Returns false if there was an error while processing the DICOMDIR file.
   ///
-  Q_INVOKABLE void addDicomdir(ctkDICOMDatabase& database, const QString& directoryName,
+  Q_INVOKABLE bool addDicomdir(ctkDICOMDatabase& database, const QString& directoryName,
                     const QString& destinationDirectoryName = "");
 
   ///
