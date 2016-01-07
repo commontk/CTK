@@ -153,6 +153,8 @@
         <xsd:element name="point" type="pointType"/>
         <xsd:element name="region" type="pointType"/>
         
+        <xsd:element name="pointfile" type="pointFileType"/>
+
         <xsd:element name="file" type="fileType"/>
         <xsd:element name="image" type="imageType"/>
         <xsd:element name="geometry" type="geometryType"/>
@@ -353,6 +355,32 @@
 
   <!--
   ===================================================================
+    Definition of 'coordinateSystem'.
+  ===================================================================
+  -->
+  <xsd:attribute name="coordinateSystem">
+    <xsd:annotation>
+      <xsd:documentation>Specifies the coordinate system. If unspecified, the executing module is free to interpret the
+      coordinates in the most appropriate way. For more information about the different systems, see
+      &lt;a href="http://www.slicer.org/slicerWiki/index.php/Coordinate_systems"&gt;Coordinate Systems&lt;/a&gt;.
+      &lt;ul&gt;
+      &lt;li&gt;&lt;b&gt;ras&lt;/b&gt; (Right, Anterior, Superior) coordinate system.&lt;/li&gt;
+      &lt;li&gt;&lt;b&gt;ijk&lt;/b&gt; image coordinate system.&lt;/li&gt;
+      &lt;li&gt;&lt;b&gt;lps&lt;/b&gt; (Left, Posterior, Superior) coordinate system.&lt;/li&gt;
+      &lt;/ul&gt;
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="ras"/>
+        <xsd:enumeration value="ijk"/>
+        <xsd:enumeration value="lps"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:attribute>
+
+  <!--
+  ===================================================================
     POINT PARAMETER 
       Extends multipleType for parameters with point-like values (point and region).
   ===================================================================
@@ -363,26 +391,7 @@
     </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="multipleType">
-        <xsd:attribute name="coordinateSystem">
-          <xsd:annotation>
-            <xsd:documentation>Specifies the coordinate system. If unspecified, the executing module is free to interpret the
-            coordinates in the most appropriate way. For more information about the different systems, see
-            &lt;a href="http://www.slicer.org/slicerWiki/index.php/Coordinate_systems"&gt;Coordinate Systems&lt;/a&gt;.
-            &lt;ul&gt;
-            &lt;li&gt;&lt;b&gt;ras&lt;/b&gt; (Right, Anterior, Superior) coordinate system.&lt;/li&gt;
-            &lt;li&gt;&lt;b&gt;ijk&lt;/b&gt; image coordinate system.&lt;/li&gt;
-            &lt;li&gt;&lt;b&gt;lps&lt;/b&gt; (Left, Posterior, Superior) coordinate system.&lt;/li&gt;
-            &lt;/ul&gt;
-            </xsd:documentation>
-          </xsd:annotation>
-          <xsd:simpleType>
-            <xsd:restriction base="xsd:string">
-              <xsd:enumeration value="ras"/>
-              <xsd:enumeration value="ijk"/>
-              <xsd:enumeration value="lps"/>
-            </xsd:restriction>
-          </xsd:simpleType>
-        </xsd:attribute>
+        <xsd:attribute ref="coordinateSystem"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -445,6 +454,21 @@
     <xsd:complexContent>
       <xsd:extension base="multipleType">
       <xsd:attribute ref="fileExtensions"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <!--
+  ===================================================================
+    POINTFILE PARAMETER
+      Extends fileType for parameters with coordinate system
+      information.
+  ===================================================================
+  -->
+  <xsd:complexType name="pointFileType">
+    <xsd:complexContent>
+      <xsd:extension base="fileType">
+      <xsd:attribute ref="coordinateSystem"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
