@@ -114,6 +114,8 @@ Q_SIGNALS:
   void studiesSelectionChanged(const QStringList &uids);
   void seriesSelectionChanged(const QStringList &uids);
 
+  void patientsDoubleClicked( const QModelIndex&);
+  void studiesDoubleClicked( const QModelIndex&);
   void seriesDoubleClicked(const QModelIndex&);
 
   // signals to propagate the context menu requests from

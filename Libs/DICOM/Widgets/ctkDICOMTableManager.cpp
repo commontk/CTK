@@ -98,6 +98,10 @@ void ctkDICOMTableManagerPrivate::init()
   QObject::connect(this->seriesTable, SIGNAL(selectionChanged(const QStringList&)),
                    q, SIGNAL(seriesSelectionChanged(const QStringList&)));
 
+  QObject::connect( this->patientsTable, SIGNAL( doubleClicked( const QModelIndex& ) ),
+                    q, SIGNAL( patientsDoubleClicked( const QModelIndex& ) ) );
+  QObject::connect( this->studiesTable, SIGNAL( doubleClicked( const QModelIndex& ) ),
+                    q, SIGNAL( studiesDoubleClicked( const QModelIndex& ) ) );
   QObject::connect(this->seriesTable, SIGNAL(doubleClicked(const QModelIndex&)),
                    q, SIGNAL(seriesDoubleClicked(const QModelIndex&)));
 
