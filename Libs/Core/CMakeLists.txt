@@ -142,7 +142,10 @@ ctkMacroBuildLib(
   )
 
 # Needed for ctkBackTrace
-if(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+if(UNIX)
+  # FreeBSD: The same functionality that is in linux's libdl is provided in FreeBSD's libc
+  find_library(HAVE_LIBDL dl)
+  if(HAVE_LIBDL)
   target_link_libraries(${PROJECT_NAME} dl)
 elseif(WIN32 AND NOT MINGW)
   target_link_libraries(${PROJECT_NAME} dbghelp)
