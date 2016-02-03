@@ -532,9 +532,6 @@ ctk_lib_option(XNAT/Core
 ctk_lib_option(XNAT/Widgets
                "Build the XNAT Widgets library" OFF)
 
-#ctk_lib_option(Visualization/XIP
-#               "Build the XIP library" OFF)
-
 # Save the set of enabled libs in a cache file
 set(_enabled_libs)
 foreach(_lib ${CTK_LIBS})
@@ -938,7 +935,6 @@ set(CTK_DEPENDENCIES
   qxmlrpc
   qRestAPI
   OpenIGTLink
-  XIP
   ITK
   QtTesting
   )
