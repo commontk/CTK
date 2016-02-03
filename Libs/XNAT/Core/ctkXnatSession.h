@@ -272,6 +272,16 @@ public:
 
   Q_SIGNAL void progress(QUuid, double);
 
+  /**
+   * @brief Signals that the session has timed out.
+   */
+  Q_SIGNAL void timedOut();
+
+  /**
+   * @brief Signals that the session will time out in one minute.
+   */
+  Q_SIGNAL void aboutToTimeOut();
+
 public slots:
   void processResult(QUuid queryId, QList<QVariantMap> parameters);
   void onProgress(QUuid queryId, double onProgress);
@@ -282,6 +292,7 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkXnatSession)
   Q_DISABLE_COPY(ctkXnatSession)
+  Q_SLOT void emitTimeOut();
 };
 
 #endif

@@ -44,6 +44,10 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
+#include <QMessageBox>
+#include <QDateTime>
+#include <QTimer>
+
 ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkXnatTreeBrowserMainWindow),
@@ -54,6 +58,7 @@ ctkXnatTreeBrowserMainWindow::ctkXnatTreeBrowserMainWindow(QWidget *parent) :
 
   ui->treeView->setModel(m_TreeModel);
   ui->downloadLabel->hide();
+  ui->treeView->setHeaderHidden(true);
 
   this->connect(ui->loginButton, SIGNAL(clicked()), SLOT(loginButtonPushed()));
   this->connect(ui->treeView, SIGNAL(clicked(const QModelIndex&)), SLOT(itemSelected(const QModelIndex&)));
@@ -96,6 +101,8 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
       {
         ui->loginButton->setText("Logout");
         ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url().toString()));
+        this->connect(m_Session, SIGNAL(timedOut()), this, SLOT(sessionTimedOutMsg()));
+        this->connect(m_Session, SIGNAL(aboutToTimeOut()), this, SLOT(sessionAboutToTimeOutMsg()));
 
         ctkXnatDataModel* dataModel = m_Session->dataModel();
         m_TreeModel->addDataModel(dataModel);
@@ -176,4 +183,36 @@ void ctkXnatTreeBrowserMainWindow::uploadFileClicked()
     }
     m_TreeModel->addChildNode(index, file);
   }
+}
+
+void ctkXnatTreeBrowserMainWindow::sessionTimedOutMsg()
+{
+  ctkXnatDataModel* dataModel = m_Session->dataModel();
+  m_TreeModel->removeDataModel(dataModel);
+  ui->treeView->reset();
+  delete m_Session;
+  m_Session = 0;
+  ui->loginButton->setText("Login");
+  ui->loginLabel->setText("Disconnected");
+  ui->downloadLabel->hide();
+  QMessageBox::warning(this, "Session Timeout", "The session timed out.");
+}
+
+void ctkXnatTreeBrowserMainWindow::sessionAboutToTimeOutMsg()
+{
+  QMessageBox msgBox;
+  msgBox.setIcon(QMessageBox::Warning);
+  msgBox.setWindowTitle("Session Timeout Soon");
+  msgBox.setText("The session will time out in 1 minute.\nDo you want to renew the session?");
+  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  msgBox.setDefaultButton(QMessageBox::No);
+  msgBox.show();
+  QTimer* timer = new QTimer(this);
+  timer->start(60000);
+  this->connect(timer, SIGNAL(timeout()), &msgBox, SLOT(reject()));
+  if (msgBox.exec() == QMessageBox::Yes)
+  {
+    m_Session->renew();
+  }
+  timer->stop();
 }

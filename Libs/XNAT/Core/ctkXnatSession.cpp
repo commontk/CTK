@@ -37,6 +37,7 @@
 
 #include <QCryptographicHash>
 #include <QDateTime>
+#include <QTimer>
 #include <QDebug>
 #include <QDir>
 #include <QScopedPointer>
@@ -69,6 +70,16 @@ public:
 
   ctkXnatSession* q;
 
+  QTimer* timer;
+
+  // The time in milliseconds until the signal aboutToTimeOut gets emitted
+  int timeOutWarningPeriod;
+
+  // The time in milliseconds until the signal timedOut gets emitted
+  // Default XNAT session timeout setting. This value will be updated after
+  // "updateExpirationDate" is called the first time.
+  int timeOutPeriod = 60000;
+
   ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q);
   ~ctkXnatSessionPrivate();
 
@@ -92,6 +103,7 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
   , xnat(new ctkXnatAPI())
   , defaultDownloadDir(".")
   , q(q)
+  , timer(new QTimer(q))
 {
   // TODO This is a workaround for connecting to sites with self-signed
   // certificate. Should be replaced with something more clever.
@@ -212,8 +224,10 @@ QDateTime ctkXnatSessionPrivate::updateExpirationDate(qRestResult* restResult)
           }
           QByteArray timeSpan = expirationCookie[1];
           timeSpan.chop(1);
+          this->timeOutWarningPeriod = timeSpan.toLong() - this->timeOutPeriod;
           expirationDate = expirationDate.addMSecs(timeSpan.toLong());
           sessionProperties[SESSION_EXPIRATION_DATE] = expirationDate.toString(Qt::ISODate);
+          this->timer->start(this->timeOutWarningPeriod);
           emit q->sessionRenewed(expirationDate);
         }
       }
@@ -363,6 +377,8 @@ void ctkXnatSession::open()
   QScopedPointer<qRestResult> restResult(d->xnat->takeResult(uuid));
   if (restResult)
   {
+    QObject::connect(d->timer, SIGNAL(timeout()), this, SLOT(emitTimeOut()));
+
     QString sessionId = restResult->result()["content"].toString();
     d->sessionId = sessionId;
     d->setDefaultHttpHeaders();
@@ -514,6 +530,7 @@ QUuid ctkXnatSession::httpGet(const QString& resource, const ctkXnatSession::Url
 {
   Q_D(ctkXnatSession);
   d->checkSession();
+  d->timer->start(d->timeOutWarningPeriod);
   return d->xnat->get(resource, parameters, rawHeaders);
 }
 
@@ -528,6 +545,7 @@ QList<ctkXnatObject*> ctkXnatSession::httpResults(const QUuid& uuid, const QStri
   {
     d->throwXnatException("Http request failed.");
   }
+  d->timer->start(d->timeOutWarningPeriod);
   return d->results(restResult.data(), schemaType);
 }
 
@@ -536,6 +554,7 @@ QUuid ctkXnatSession::httpPut(const QString& resource, const ctkXnatSession::Url
 {
   Q_D(ctkXnatSession);
   d->checkSession();
+  d->timer->start(d->timeOutWarningPeriod);
   return d->xnat->put(resource, parameters);
 }
 
@@ -553,7 +572,7 @@ QList<QVariantMap> ctkXnatSession::httpSync(const QUuid& uuid)
   }
   else
   {
-    d->updateExpirationDate(restResult);
+    d->updateExpirationDate(restResult); // restarts session timer as well
     result = restResult->results();
   }
   return result;
@@ -564,6 +583,7 @@ const QMap<QByteArray, QByteArray> ctkXnatSession::httpHeadSync(const QUuid &uui
 {
   Q_D(ctkXnatSession);
   QScopedPointer<qRestResult> result (d->xnat->takeResult(uuid));
+  d->timer->start(d->timeOutWarningPeriod);
   if (result == NULL)
   {
     d->throwXnatException("Sending HEAD request failed.");
@@ -576,6 +596,7 @@ QUuid ctkXnatSession::httpHead(const QString& resourceUri)
 {
   Q_D(ctkXnatSession);
   QUuid queryId = d->xnat->head(resourceUri);
+  d->timer->start(d->timeOutWarningPeriod);
   return queryId;
 }
 
@@ -586,6 +607,7 @@ bool ctkXnatSession::exists(const ctkXnatObject* object)
 
   QString query = object->resourceUri();
   bool success = d->xnat->sync(d->xnat->get(query));
+  d->timer->start(d->timeOutWarningPeriod);
 
   return success;
 }
@@ -597,6 +619,7 @@ void ctkXnatSession::remove(ctkXnatObject* object)
 
   QString query = object->resourceUri();
   bool success = d->xnat->sync(d->xnat->del(query));
+  d->timer->start(d->timeOutWarningPeriod);
 
   if (!success)
   {
@@ -614,6 +637,7 @@ void ctkXnatSession::download(const QString& fileName,
 
   QUuid queryId = d->xnat->download(fileName, resource, parameters, rawHeaders);
   d->xnat->sync(queryId);
+  d->timer->start(d->timeOutWarningPeriod);
 }
 
 //----------------------------------------------------------------------------
@@ -641,6 +665,8 @@ void ctkXnatSession::upload(ctkXnatFile *xnatFile,
   QString md5Query = xnatFile->parent()->resourceUri();
   QUuid md5QueryID = this->httpGet(md5Query);
   QList<QVariantMap> result = this->httpSync(md5QueryID);
+
+  d->timer->start(d->timeOutWarningPeriod);
 
   QString md5ChecksumRemote ("0");
   // Newly added files are usually at the end of the catalog
@@ -676,6 +702,7 @@ void ctkXnatSession::upload(ctkXnatFile *xnatFile,
     {
       // Remove corrupted file from server
       xnatFile->erase();
+      d->timer->start(d->timeOutWarningPeriod);
       throw ctkXnatException("Upload failed! An error occurred during file upload.");
     }
   }
@@ -690,4 +717,21 @@ void ctkXnatSession::processResult(QUuid queryId, QList<QVariantMap> parameters)
 {
   Q_UNUSED(queryId)
   Q_UNUSED(parameters)
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSession::emitTimeOut()
+{
+  Q_D(ctkXnatSession);
+
+  if (d->timer->interval() == d->timeOutWarningPeriod)
+  {
+    d->timer->start(d->timeOutPeriod);
+    emit aboutToTimeOut();
+  }
+  else if (d->timer->interval() == d->timeOutPeriod)
+  {
+    d->timer->stop();
+    emit timedOut();
+  }
 }
