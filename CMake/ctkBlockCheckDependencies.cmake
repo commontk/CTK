@@ -100,11 +100,6 @@ set(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
 set(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
 set(${VTK_enabling_variable}_FIND_PACKAGE_CMD VTK)
 
-set(XIP_enabling_variable XIP_LIBRARIES)
-set(${XIP_enabling_variable}_LIBRARY_DIRS XIP_LIBRARY_DIRS)
-set(${XIP_enabling_variable}_INCLUDE_DIRS XIP_INCLUDE_DIRS)
-set(${XIP_enabling_variable}_FIND_PACKAGE_CMD XIP)
-
 set(ZMQ_enabling_variable ZMQ_LIBRARIES)
 set(${ZMQ_enabling_variable}_LIBRARY_DIRS ZMQ_LIBRARY_DIRS)
 set(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
