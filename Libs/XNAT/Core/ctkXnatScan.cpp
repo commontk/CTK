@@ -100,7 +100,7 @@ QString ctkXnatScan::type() const
 //----------------------------------------------------------------------------
 QString ctkXnatScan::resourceUri() const
 {
-  return QString("%1/%2").arg(parent()->resourceUri(), this->id());
+  return QString("%1/%2/resources").arg(parent()->resourceUri(), this->id());
 }
 
 //----------------------------------------------------------------------------
@@ -112,7 +112,24 @@ void ctkXnatScan::reset()
 //----------------------------------------------------------------------------
 void ctkXnatScan::fetchImpl()
 {
-  this->fetchResources();
+  QString query = this->resourceUri();
+  ctkXnatSession* const session = this->session();
+  QUuid queryId = session->httpGet(query);
+
+  QList<ctkXnatObject*> resources = session->httpResults(queryId,
+                                                           ctkXnatDefaultSchemaTypes::XSI_RESOURCE);
+
+  foreach (ctkXnatObject* resource, resources)
+  {
+    QString label = resource->name();
+    if (label.isEmpty())
+    {
+      label = "NO NAME";
+    }
+
+    resource->setName(label);
+    this->add(resource);
+  }
 }
 
 //----------------------------------------------------------------------------
