@@ -44,7 +44,6 @@
 #include <QStringBuilder>
 #include <QNetworkCookie>
 
-
 #include <ctkXnatAPI_p.h>
 #include <qRestResult.h>
 
