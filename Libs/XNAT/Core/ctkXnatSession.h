@@ -32,6 +32,7 @@
 #include <QUuid>
 
 class QDateTime;
+class QNetworkProxy;
 
 class ctkXnatSessionPrivate;
 
@@ -158,6 +159,15 @@ public:
     * @param path the path to the download location
     */
   void setDefaultDownloadDir(const QString& path);
+
+  /**
+    * @brief Sets a network proxy that will be used to connect with XNAT
+    *
+    * Tells the qRestAPI to use a network proxy for the connection to XNAT
+    *
+    * @param proxy the network proxy that will be set
+    */
+  void setHttpNetworkProxy(const QNetworkProxy& proxy);
 
   /**
     * @brief returns the default download location
