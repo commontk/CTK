@@ -53,7 +53,7 @@ public:
   virtual void addPlot(vtkPlot* plot);
 
   vtkPlot* addLookupTable(vtkLookupTable* lut);
-  vtkPlot* addColorTransferFunction(vtkColorTransferFunction* colorTF, bool editable = true);
+  Q_INVOKABLE vtkPlot* addColorTransferFunction(vtkColorTransferFunction* colorTF, bool editable = true);
   vtkPlot* addOpacityFunction(vtkPiecewiseFunction* opacityTF, bool editable = true);
   vtkPlot* addCompositeFunction(vtkColorTransferFunction* colorTF,
                                 vtkPiecewiseFunction* opacityTF,
