@@ -173,6 +173,7 @@ void ctkXnatResource::downloadImpl(const QString& filename)
 void ctkXnatResource::saveImpl(bool /*overwrite*/)
 {
   ctkXnatSession::UrlParameters urlParams;
+  urlParams["xsi:type"] = this->schemaType();
 
   const QMap<QString, QString>& properties = this->properties();
   QMapIterator<QString, QString> itProperties(properties);
