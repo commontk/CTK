@@ -63,10 +63,34 @@ public:
   /// @warning does not overwrite the insert user on the server, since this is read only
   void setInsertUser(const QString& insertUser);
 
+  QString projectID() const;
+  void setProjectID(const QString& projectID);
+
+  QString dateOfBirth() const;
+  void setDateOfBirth(const QString& dateOfBirth);
+
+  QString gender() const;
+  void setGender(const QString& gender);
+
+  QString handedness() const;
+  void setHandedness(const QString& handedness);
+
+  QString weight() const;
+  void setWeight(const QString& weight);
+
+  QString height() const;
+  void setHeight(const QString& height);
+
   virtual QString resourceUri() const;
 
   void reset();
 
+  static const QString PROJECT_ID;
+  static const QString DATE_OF_BIRTH;
+  static const QString GENDER;
+  static const QString HANDEDNESS;
+  static const QString WEIGHT;
+  static const QString HEIGHT;
   static const QString INSERT_DATE;
   static const QString INSERT_USER;
 
@@ -75,6 +99,9 @@ private:
   friend class qRestResult;
 
   virtual void fetchImpl();
+
+  QList<ctkXnatObject*> fetchImageSessionData();
+  QList<ctkXnatObject*> fetchSubjectVariablesData();
 
   virtual void downloadImpl(const QString&);
 

@@ -29,6 +29,12 @@
 
 #include <QDebug>
 
+const QString ctkXnatSubject::PROJECT_ID = "project";
+const QString ctkXnatSubject::DATE_OF_BIRTH = "dob";
+const QString ctkXnatSubject::GENDER = "gender";
+const QString ctkXnatSubject::HANDEDNESS = "handedness";
+const QString ctkXnatSubject::WEIGHT = "weight";
+const QString ctkXnatSubject::HEIGHT = "height";
 const QString ctkXnatSubject::INSERT_DATE = "insert_date";
 const QString ctkXnatSubject::INSERT_USER = "insert_user";
 
@@ -122,6 +128,78 @@ void ctkXnatSubject::setInsertUser(const QString& insertUser)
 }
 
 //----------------------------------------------------------------------------
+QString ctkXnatSubject::projectID() const
+{
+  return this->property(PROJECT_ID);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::setProjectID(const QString &projectID)
+{
+  this->setProperty(PROJECT_ID, projectID);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSubject::dateOfBirth() const
+{
+  return this->property(DATE_OF_BIRTH);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::setDateOfBirth(const QString &dateOfBirth)
+{
+  this->setProperty(DATE_OF_BIRTH, dateOfBirth);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSubject::gender() const
+{
+  return this->property(GENDER);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::setGender(const QString &gender)
+{
+  this->setProperty(GENDER, gender);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSubject::handedness() const
+{
+  return this->property(HANDEDNESS);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::setHandedness(const QString &handedness)
+{
+  this->setProperty(HANDEDNESS, handedness);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSubject::height() const
+{
+  return this->property(HEIGHT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::setHeight(const QString &height)
+{
+  this->setProperty(HEIGHT, height);
+}
+
+//----------------------------------------------------------------------------
+QString ctkXnatSubject::weight() const
+{
+  return this->property(WEIGHT);
+}
+
+//----------------------------------------------------------------------------
+void ctkXnatSubject::setWeight(const QString &weight)
+{
+  this->setProperty(WEIGHT, weight);
+}
+
+//----------------------------------------------------------------------------
 QString ctkXnatSubject::resourceUri() const
 {
   if (this->id().isEmpty())
@@ -141,11 +219,9 @@ void ctkXnatSubject::reset()
 //----------------------------------------------------------------------------
 void ctkXnatSubject::fetchImpl()
 {
-  QString experimentsUri = this->resourceUri() + "/experiments";
-  ctkXnatSession* const session = this->session();
-  QUuid queryId = session->httpGet(experimentsUri);
-  QList<ctkXnatObject*> experiments = session->httpResults(queryId,
-                                                           ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT);
+  QList<ctkXnatObject*> experiments;
+  experiments.append(this->fetchImageSessionData());
+  experiments.append(this->fetchSubjectVariablesData());
 
   foreach (ctkXnatObject* experiment, experiments)
   {
@@ -158,6 +234,48 @@ void ctkXnatSubject::fetchImpl()
     this->add(experiment);
   }
   this->fetchResources();
+}
+
+//----------------------------------------------------------------------------
+QList<ctkXnatObject*> ctkXnatSubject::fetchImageSessionData()
+{
+  QString experimentsUri = this->resourceUri() + "/experiments";
+  ctkXnatSession* const session = this->session();
+  QMap<QString, QString> paramMap;
+  QString arglist = QString("%1,%2,%3,%4,%5,%6,%7,%8,%9,%10")
+    .arg(ctkXnatObject::ID)
+    .arg(ctkXnatObject::LABEL)
+    .arg(ctkXnatObject::XSI_SCHEMA_TYPE)
+    .arg(INSERT_DATE)
+    .arg(INSERT_USER)
+    .arg(ctkXnatObject::URI)
+    .arg(ctkXnatExperiment::DATE_OF_ACQUISITION)
+    .arg(ctkXnatExperiment::TIME_OF_ACQUISITION)
+    .arg(ctkXnatExperiment::SCANNER_TYPE)
+    .arg(ctkXnatExperiment::IMAGE_MODALITY);
+  paramMap.insert("columns", arglist);
+  paramMap.insert(ctkXnatObject::XSI_SCHEMA_TYPE, ctkXnatDefaultSchemaTypes::XSI_IMAGE_SESSION_DATA);
+  QUuid queryId = session->httpGet(experimentsUri, paramMap);
+  return session->httpResults(queryId, ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT);
+}
+
+//----------------------------------------------------------------------------
+QList<ctkXnatObject*> ctkXnatSubject::fetchSubjectVariablesData()
+{
+  QString experimentsUri = this->resourceUri() + "/experiments";
+  ctkXnatSession* const session = this->session();
+  QMap<QString, QString> paramMap;
+  QString arglist = QString("%1,%2,%3,%4,%5,%6")
+    .arg(ctkXnatObject::ID)
+    .arg(ctkXnatObject::LABEL)
+    .arg(ctkXnatObject::XSI_SCHEMA_TYPE)
+    .arg(INSERT_DATE)
+    .arg(INSERT_USER)
+    .arg(ctkXnatObject::URI);
+  paramMap.insert("columns", arglist);
+  paramMap.insert(ctkXnatObject::XSI_SCHEMA_TYPE, ctkXnatDefaultSchemaTypes::XSI_SUBJECT_VARIABLE_DATA);
+  QUuid queryId = session->httpGet(experimentsUri, paramMap);
+  return session->httpResults(queryId, ctkXnatDefaultSchemaTypes::XSI_EXPERIMENT);
 }
 
 //----------------------------------------------------------------------------

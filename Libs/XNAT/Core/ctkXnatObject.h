@@ -160,6 +160,8 @@ public:
   static const QString ID;
   static const QString NAME;
   static const QString LABEL;
+  static const QString URI;
+  static const QString XSI_SCHEMA_TYPE;
 
 protected:
 

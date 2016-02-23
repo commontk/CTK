@@ -38,6 +38,8 @@
 const QString ctkXnatObject::ID = "ID";
 const QString ctkXnatObject::NAME = "name";
 const QString ctkXnatObject::LABEL = "label";
+const QString ctkXnatObject::URI = "URI";
+const QString ctkXnatObject::XSI_SCHEMA_TYPE = "xsiType";
 
 //----------------------------------------------------------------------------
 ctkXnatObject::ctkXnatObject(const ctkXnatObject&)
@@ -276,13 +278,13 @@ bool ctkXnatObject::isFetched() const
 //----------------------------------------------------------------------------
 QString ctkXnatObject::schemaType() const
 {
-  return this->property("xsiType");
+  return this->property(XSI_SCHEMA_TYPE);
 }
 
 //----------------------------------------------------------------------------
 void ctkXnatObject::setSchemaType(const QString& schemaType)
 {
-  this->setProperty("xsiType", schemaType);
+  this->setProperty(XSI_SCHEMA_TYPE, schemaType);
 }
 
 //----------------------------------------------------------------------------

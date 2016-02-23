@@ -51,8 +51,24 @@ public:
   void setLabel(const QString &label);
   QString label() const;
 
+  QString dateOfAcquisition() const;
+  void setDateOfAcquisition(const QString &dateOfAcquisition);
+
+  QString timeOfAcquisition() const;
+  void setTimeOfAcquisition(const QString &timeOfAcquisition);
+
+  QString scannerType() const;
+  void setScannerType(const QString &scannerType);
+
+  QString imageModality() const;
+  void setImageModality(const QString &imageModality);
 
   void reset();
+
+  static const QString DATE_OF_ACQUISITION;
+  static const QString TIME_OF_ACQUISITION;
+  static const QString SCANNER_TYPE;
+  static const QString IMAGE_MODALITY;
 
 private:
 
