@@ -80,12 +80,17 @@ macro(ctkMacroBuildLibWrapper)
   string(REGEX REPLACE "^CTK" "ctk" lib_name_lc_ctk ${lib_name})
   set(DECORATOR_HEADER ${lib_name_lc_ctk}PythonQtDecorators.h)
   set(HAS_DECORATOR FALSE)
+
+  set(_msg "Looking for decorator header ${DECORATOR_HEADER}")
+  message(STATUS "${_msg}")
+  set(_status "Not found")
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${DECORATOR_HEADER})
     set(HAS_DECORATOR TRUE)
     set(DECORATOR_HEADER ${DECORATOR_HEADER})
     set_source_files_properties(${DECORATOR_HEADER} WRAP_EXCLUDE)
+    set(_status "Found")
   endif()
-  #message("HAS_DECORATOR:${HAS_DECORATOR}")
+  message(STATUS "${_msg} - ${_status}")
   #message("path/to/DECORATOR_HEADER:${CMAKE_CURRENT_SOURCE_DIR}/${DECORATOR_HEADER}")
 
   set(KIT_PYTHONQT_SRCS) # Clear variable
