@@ -73,12 +73,14 @@ public:
   QTimer* timer;
 
   // The time in milliseconds until the signal aboutToTimeOut gets emitted
+  // XNAT sessions time out after 15 minutes (=900000 ms) by default
+  // i.e. by default this signal will be emitted after 840000 ms
   int timeOutWarningPeriod;
 
   // The time in milliseconds until the signal timedOut gets emitted
   // Default XNAT session timeout setting. This value will be updated after
   // "updateExpirationDate" is called the first time.
-  int timeOutPeriod = 60000;
+  int timeOutPeriod;
 
   ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginProfile, ctkXnatSession* q);
   ~ctkXnatSessionPrivate();
@@ -104,6 +106,8 @@ ctkXnatSessionPrivate::ctkXnatSessionPrivate(const ctkXnatLoginProfile& loginPro
   , defaultDownloadDir(".")
   , q(q)
   , timer(new QTimer(q))
+  , timeOutWarningPeriod (840000)
+  , timeOutPeriod(60000)
 {
   // TODO This is a workaround for connecting to sites with self-signed
   // certificate. Should be replaced with something more clever.
