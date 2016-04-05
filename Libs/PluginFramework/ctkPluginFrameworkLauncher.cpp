@@ -92,7 +92,6 @@ public:
   ctkPluginFrameworkLauncherPrivate()
     : fwFactory(0)
     , running(false)
-    , endSplashHandler(NULL)
     , processEnv(QProcessEnvironment::systemEnvironment())
   {
 #ifdef CMAKE_INTDIR
@@ -370,7 +369,6 @@ public:
   QScopedPointer<ctkPluginFrameworkFactory> fwFactory;
 
   bool running;
-  QRunnable* endSplashHandler;
 
   QScopedPointer<ctkDefaultApplicationLauncher> appLauncher;
   ctkServiceRegistration appLauncherRegistration;
@@ -421,7 +419,7 @@ QVariant ctkPluginFrameworkLauncher::run(QRunnable* endSplashHandler, const QVar
     Q_UNUSED(finalizer)
     try
     {
-      startup(d->endSplashHandler);
+      startup(endSplashHandler);
       if (ctkPluginFrameworkProperties::getProperty(PROP_IGNOREAPP).toBool() || d->isForcedRestart())
       {
         return argument;
@@ -502,7 +500,7 @@ QVariant ctkPluginFrameworkLauncher::run(const QVariant& argument)
 }
 
 //----------------------------------------------------------------------------
-ctkPluginContext* ctkPluginFrameworkLauncher::startup(QRunnable* /*endSplashHandler*/)
+ctkPluginContext* ctkPluginFrameworkLauncher::startup(QRunnable* endSplashHandler)
 {
   if (d->running)
   {
@@ -522,6 +520,12 @@ ctkPluginContext* ctkPluginFrameworkLauncher::startup(QRunnable* /*endSplashHand
   d->loadBasicPlugins();
 
   d->running = true;
+  
+  if (endSplashHandler != NULL)
+  {
+    endSplashHandler->run();
+  }
+  
   return d->fwFactory->getFramework()->getPluginContext();
 }
 
