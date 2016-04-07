@@ -92,7 +92,7 @@ ctkTransferFunctionBarsItem::~ctkTransferFunctionBarsItem()
 void ctkTransferFunctionBarsItem::setBarWidth(qreal newBarWidthRatio)
 {
   Q_D(ctkTransferFunctionBarsItem);
-  newBarWidthRatio = qBound(0., newBarWidthRatio, 1.);
+  newBarWidthRatio = qBound(static_cast<qreal>(0.), newBarWidthRatio, static_cast<qreal>(1.));
   if (d->BarWidthRatio == newBarWidthRatio)
     {
     return;
