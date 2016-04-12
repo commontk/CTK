@@ -30,7 +30,7 @@
 
 class ctkDICOMTableManagerPrivate;
 class ctkDICOMDatabase;
-
+class ctkDICOMTableView;
 class QItemSelection;
 class QModelIndex;
 
@@ -49,6 +49,13 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
     * window size between vertical and horizontal layout
     */
   Q_PROPERTY(bool dynamicTableLayout READ dynamicTableLayout WRITE setDynamicTableLayout)
+
+  /**
+  * Properties for the different table views (patients, studies, series). 
+  */
+  Q_PROPERTY( ctkDICOMTableView* patientsTable READ patientsTable )
+  Q_PROPERTY( ctkDICOMTableView* studiesTable READ studiesTable )
+  Q_PROPERTY( ctkDICOMTableView* seriesTable READ seriesTable )
 
   Q_ENUMS(DisplayDensity)
   /**
@@ -96,6 +103,11 @@ public:
 
   DisplayDensity displayDensity();
   void setDisplayDensity(DisplayDensity density);
+
+  ctkDICOMTableView* patientsTable();
+  ctkDICOMTableView* studiesTable();
+  ctkDICOMTableView* seriesTable();
+
 
 public Q_SLOTS:
 

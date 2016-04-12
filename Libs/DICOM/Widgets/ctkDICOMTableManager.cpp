@@ -325,3 +325,22 @@ ctkDICOMTableManager::DisplayDensity ctkDICOMTableManager::displayDensity()
     return ctkDICOMTableManager::Compact;
   }
 }
+
+//------------------------------------------------------------------------------
+ctkDICOMTableView* ctkDICOMTableManager::patientsTable()
+{
+  Q_D( ctkDICOMTableManager );
+  return(d->patientsTable);
+}
+//------------------------------------------------------------------------------
+ctkDICOMTableView* ctkDICOMTableManager::studiesTable()
+{
+  Q_D( ctkDICOMTableManager );
+  return(d->studiesTable);
+}
+//------------------------------------------------------------------------------
+ctkDICOMTableView* ctkDICOMTableManager::seriesTable()
+{
+  Q_D( ctkDICOMTableManager );
+  return(d->seriesTable);
+}
