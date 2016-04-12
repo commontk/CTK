@@ -419,3 +419,10 @@ void ctkDICOMTableView::onCustomContextMenuRequested(const QPoint &point)
 
   emit customContextMenuRequested(globalPosition);
 }
+
+//------------------------------------------------------------------------------
+QTableView* ctkDICOMTableView::tableView()
+{
+  Q_D( ctkDICOMTableView );
+  return(d->tblDicomDatabaseView);
+}
