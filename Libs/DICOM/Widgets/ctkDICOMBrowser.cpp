@@ -777,6 +777,7 @@ void ctkDICOMBrowser::onPatientsRightClicked(const QPoint &point)
     foreach (const QString& uid, selectedPatientsUIDs)
       {
       d->DICOMDatabase->removePatient(uid);
+      d->dicomTableManager->updateTableViews();
       }
     }
   else if (selectedAction == exportAction)
@@ -836,6 +837,7 @@ void ctkDICOMBrowser::onStudiesRightClicked(const QPoint &point)
     foreach (const QString& uid, selectedStudiesUIDs)
       {
       d->DICOMDatabase->removeStudy(uid);
+      d->dicomTableManager->updateTableViews();
       }
     }
   else if (selectedAction == exportAction)
@@ -894,6 +896,7 @@ void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
     foreach (const QString& uid, selectedSeriesUIDs)
       {
       d->DICOMDatabase->removeSeries(uid);
+      d->dicomTableManager->updateTableViews();
       }
     }
   else if (selectedAction == exportAction)
