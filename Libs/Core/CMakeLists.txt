@@ -37,6 +37,9 @@ set(KIT_SRCS
   ctkCallback.h
   ctkCommandLineParser.cpp
   ctkCommandLineParser.h
+  ctkCoreTestingUtilities.cpp
+  ctkCoreTestingUtilities.tpp
+  ctkCoreTestingUtilities.h
   ctkDependencyGraph.cpp
   ctkDependencyGraph.h
   ctkErrorLogAbstractMessageHandler.cpp
