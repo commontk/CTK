@@ -30,6 +30,7 @@ bool TestCheckNull();
 bool TestCheckPointer();
 bool TestCheckString();
 bool TestCheckStringList();
+bool TestCheckVariant();
 
 //----------------------------------------------------------------------------
 int ctkCoreTestingUtilitiesTest(int , char * [])
@@ -41,6 +42,7 @@ int ctkCoreTestingUtilitiesTest(int , char * [])
   res = res && TestCheckPointer();
   res = res && TestCheckString();
   res = res && TestCheckStringList();
+  res = res && TestCheckVariant();
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
@@ -124,6 +126,21 @@ bool TestCheckStringList()
       || CheckStringList(__LINE__, "TestCheckStringList Expected Failure", abc, abcd))
     {
     qWarning() << "Line " << __LINE__ << " - TestCheckString failed";
+    return false;
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool TestCheckVariant()
+{
+  QVariant foo = QVariant(4);
+  QVariant bar = QVariant(2);
+  if (!CheckVariant(__LINE__, "TestCheckVariant", QVariant(), QVariant())
+      ||!CheckVariant(__LINE__, "TestCheckVariant", foo, foo)
+      || CheckVariant(__LINE__, "TestCheckVariant Expected Failure", foo, bar))
+    {
+    qWarning() << "Line " << __LINE__ << " - TestCheckVariant failed";
     return false;
     }
   return true;

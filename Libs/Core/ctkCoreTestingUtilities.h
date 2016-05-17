@@ -27,6 +27,7 @@
 // Qt includes
 #include <QString>
 #include <QStringList>
+#include <QVariant>
 
 /// This module provides functions to facilitate writing tests.
 ///
@@ -73,6 +74,10 @@ bool CheckString(int line, const QString& description,
 CTK_CORE_EXPORT
 bool CheckStringList(int line, const QString& description,
                      const QStringList& current, const QStringList& expected);
+
+CTK_CORE_EXPORT
+bool CheckVariant(int line, const QString& description,
+                  const QVariant& current, const QVariant& expected);
 
 } // namespace ctkCoreTestingUtilities
 
