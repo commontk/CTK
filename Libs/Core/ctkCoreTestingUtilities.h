@@ -43,6 +43,8 @@
 ///   }
 /// \endcode
 ///
+/// Usually these test methods are used by single-line convenience macros
+/// defined in ctkCoreTestingMacros.h.
 
 namespace ctkCoreTestingUtilities
 {
