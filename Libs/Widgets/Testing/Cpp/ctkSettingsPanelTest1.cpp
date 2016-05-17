@@ -28,6 +28,7 @@
 
 // CTK includes
 #include "ctkBooleanMapper.h"
+#include "ctkCoreTestingMacros.h"
 #include "ctkSettingsPanel.h"
 
 // STD includes
@@ -67,6 +68,9 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   ctkSettingsPanelForTest settingsPanel;
   settingsPanel.setSettings(&settings);
 
+  //
+  // QCheckBox
+  //
   QCheckBox* box = new QCheckBox(&settingsPanel);
 
   settingsPanel.registerProperty("key 1", box, "checked",
@@ -74,170 +78,79 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   
   // Check settings value after a property is registered
   QVariant boxVal = settings.value("key 1");
-  if (!boxVal.isValid() || boxVal.toBool() != false)
-    {
-    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPreviousPropertyValue("key 1").toBool() != false)
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPropertyValue("key 1").toBool() != false)
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_BOOL(boxVal.toBool(), false);
+  CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key 1").toBool(), false);
+  CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), false);
+
   // Update value using the object/widget API
   box->setChecked(true);
 
   // Check settings value after it has been updated using object/widget API
   boxVal = settings.value("key 1");
-  if (!boxVal.isValid() || boxVal.toBool() != true)
-    {
-    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPreviousPropertyValue("key 1").toBool() != false)
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPropertyValue("key 1").toBool() != true)
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_BOOL(boxVal.toBool(), true);
+  CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key 1").toBool(), false);
+  CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), true);
 
-
+  //
+  // QLineEdit
+  //
   QLineEdit* lineEdit = new QLineEdit("default", &settingsPanel);
   settingsPanel.registerProperty("key 2", lineEdit, "text",
                                   SIGNAL(textChanged(QString)));
 
   // Check value after a property is registered
   QVariant lineEditVal = settings.value("key 2");
-  if (!lineEditVal.isValid() || lineEditVal.toString() != "default")
-    {
-    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPreviousPropertyValue("key 2").toString() != "default")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myDefaultPropertyValue("key 2").toString() != "default")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPropertyValue("key 2").toString() != "default")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QSTRING(lineEditVal.toString(), QString("default"));
+  CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("default"));
+  CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
+  CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("default"));
 
   // Update value using the object/widget API
   lineEdit->setText("first edit");
 
   // Check settings value after it has been updated using object/widget API
   lineEditVal = settings.value("key 2");
-  if (!lineEditVal.isValid() || lineEditVal.toString() != "first edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPreviousPropertyValue("key 2").toString() != "default")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myDefaultPropertyValue("key 2").toString() != "default")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPropertyValue("key 2").toString() != "first edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QSTRING(lineEditVal.toString(), QString("first edit"));
+  CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("default"));
+  CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
+  CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("first edit"));
 
   // Check settings value after applySettings() has been called
   settingsPanel.applySettings();
   lineEditVal = settings.value("key 2");
-  if (!lineEditVal.isValid() || lineEditVal.toString() != "first edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPreviousPropertyValue("key 2").toString() != "first edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myDefaultPropertyValue("key 2").toString() != "default")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPropertyValue("key 2").toString() != "first edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QSTRING(lineEditVal.toString(), QString("first edit"));
+  CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("first edit"));
+  CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
+  CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("first edit"));
 
   // Update value using the object/widget API
   lineEdit->setText("second edit");
 
   // Check settings value after it has been updated using object/widget API
   lineEditVal = settings.value("key 2");
-  if (!lineEditVal.isValid() || lineEditVal.toString() != "second edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPreviousPropertyValue("key 2").toString() != "first edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myDefaultPropertyValue("key 2").toString() != "default")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPropertyValue("key 2").toString() != "second edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QSTRING(lineEditVal.toString(), QString("second edit"));
+  CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("first edit"));
+  CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
+  CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("second edit"));
 
   // Check settings value after applySettings() has been called
   settingsPanel.applySettings();
   lineEditVal = settings.value("key 2");
-  if (!lineEditVal.isValid() || lineEditVal.toString() != "second edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPreviousPropertyValue("key 2").toString() != "second edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myDefaultPropertyValue("key 2").toString() != "default")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPropertyValue("key 2").toString() != "second edit")
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QSTRING(lineEditVal.toString(), QString("second edit"));
+  CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("second edit"));
+  CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
+  CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("second edit"));
 
+  //
+  // QCheckBox + ctkBooleanMapper
+  //
   box->setChecked(false);
   settingsPanel.registerProperty("key complement",
                                  new ctkBooleanMapper(box, "checked", SIGNAL(toggled(bool))),
@@ -246,41 +159,20 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
 
   // Check settings value after a property is registered
   boxVal = settings.value("key complement");
-  if (!boxVal.isValid() || boxVal.toBool() != true)
-    {
-    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPreviousPropertyValue("key complement").toBool() != true)
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPropertyValue("key complement").toBool() != true)
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_BOOL(boxVal.toBool(), true);
+  CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), true);
+  CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), true);
+
   // Update value using the object/widget API
   box->setChecked(true);
 
   // Check settings value after it has been updated using object/widget API
   boxVal = settings.value("key complement");
-  if (!boxVal.isValid() || boxVal.toBool() != false)
-    {
-    std::cerr << "Line " << __LINE__ << " - Saving to settings failed" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPreviousPropertyValue("key complement").toBool() != true)
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with previousPropertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
-  if (settingsPanel.myPropertyValue("key complement").toBool() != false)
-    {
-    std::cerr << "Line " << __LINE__ << " - Problem with propertyValue()!" << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_BOOL(boxVal.toBool(), false);
+  CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), true);
+  CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), false);
 
   settingsPanel.show();
 

@@ -26,6 +26,8 @@ set(KITTests_SRCS
   ctkBooleanMapperTest.cpp
   ctkCallbackTest1.cpp
   ctkCommandLineParserTest1.cpp
+  ctkCoreTestingMacrosTest.cpp
+  ctkCoreTestingUtilitiesTest.cpp
   ctkExceptionTest.cpp
   ctkFileLoggerTest.cpp
   ctkHighPrecisionTimerTest.cpp
@@ -142,6 +144,8 @@ endif()
 SIMPLE_TEST( ctkBooleanMapperTest )
 SIMPLE_TEST( ctkCallbackTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
+SIMPLE_TEST( ctkCoreTestingMacrosTest )
+SIMPLE_TEST( ctkCoreTestingUtilitiesTest )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
 SIMPLE_TEST( ctkDependencyGraphTest2 )
 SIMPLE_TEST( ctkExceptionTest )
