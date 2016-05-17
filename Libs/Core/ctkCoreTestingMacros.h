@@ -183,5 +183,16 @@
     } \
   }
 
+/// Verifies if actual QStringList is the same as expected.
+#define CHECK_QSTRINGLIST(actual, expected) \
+  { \
+  QStringList a = (actual); \
+  QStringList e = (expected); \
+  if (!ctkCoreTestingUtilities::CheckStringList(__LINE__,#actual " != " #expected, a, e)) \
+    { \
+    return EXIT_FAILURE; \
+    } \
+  }
+
 #endif
 

@@ -71,5 +71,12 @@ bool CheckString(int line, const QString& description,
   return true;
 }
 
+//----------------------------------------------------------------------------
+bool CheckStringList(int line, const QString& description,
+                     const QStringList& current, const QStringList& expected)
+{
+  return CheckList<QString>(line, description, current, expected, "CheckStringList");
+}
+
 } // namespace ctkCoreTestingUtilities
 

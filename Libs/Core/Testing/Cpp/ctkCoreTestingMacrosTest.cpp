@@ -60,6 +60,9 @@ int TestCheckStdStringDifferentFailure();
 int TestCheckQStringDifferentSuccess();
 int TestCheckQStringDifferentFailure();
 
+int TestCheckQStringListSuccess();
+int TestCheckQStringListFailure();
+
 //----------------------------------------------------------------------------
 #define TestMacro(MACRO_NAME) \
   if (Test##MACRO_NAME##Success() != EXIT_SUCCESS) \
@@ -86,6 +89,7 @@ int ctkCoreTestingMacrosTest(int , char * [])
   TestMacro(CheckQString)
   TestMacro(CheckStdStringDifferent)
   TestMacro(CheckQStringDifferent)
+  TestMacro(CheckQStringList)
   return EXIT_SUCCESS;
 }
 
@@ -332,6 +336,27 @@ int TestCheckQStringDifferentFailure()
   QString actual = "string";
   QString expected = "string";
   CHECK_QSTRING_DIFFERENT(actual, expected);
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+// Test CHECK_QSTRINGLIST
+
+//----------------------------------------------------------------------------
+int TestCheckQStringListSuccess()
+{
+  QStringList actual = QStringList() << "a" << "b" << "c";
+  QStringList expected = actual;
+  CHECK_QSTRINGLIST(actual, expected);
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int TestCheckQStringListFailure()
+{
+  QStringList actual = QStringList() << "a" << "b" << "c";
+  QStringList expected = QStringList() << "a" << "x" << "c";
+  CHECK_QSTRINGLIST(actual, expected);
   return EXIT_SUCCESS;
 }
 

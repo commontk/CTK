@@ -29,6 +29,7 @@ bool TestCheckNotNull();
 bool TestCheckNull();
 bool TestCheckPointer();
 bool TestCheckString();
+bool TestCheckStringList();
 
 //----------------------------------------------------------------------------
 int ctkCoreTestingUtilitiesTest(int , char * [])
@@ -39,6 +40,7 @@ int ctkCoreTestingUtilitiesTest(int , char * [])
   res = res && TestCheckNull();
   res = res && TestCheckPointer();
   res = res && TestCheckString();
+  res = res && TestCheckStringList();
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
@@ -103,6 +105,23 @@ bool TestCheckString()
       ||!CheckString(__LINE__, "TestCheckString", foo, foo)
       || CheckString(__LINE__, "TestCheckString Expected Failure", foo, bar)
       || CheckString(__LINE__, "TestCheckString Expected Failure", foo, 0))
+    {
+    qWarning() << "Line " << __LINE__ << " - TestCheckString failed";
+    return false;
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool TestCheckStringList()
+{
+  QStringList abc = QStringList() << "a" << "b" << "c";
+  QStringList axc = QStringList() << "a" << "x" << "c";
+  QStringList abcd = QStringList() << "a" << "b" << "c" << "d";
+  if (!CheckStringList(__LINE__, "TestCheckStringList", QStringList(), QStringList())
+      ||!CheckStringList(__LINE__, "TestCheckStringList", abc, abc)
+      || CheckStringList(__LINE__, "TestCheckStringList Expected Failure", abc, axc)
+      || CheckStringList(__LINE__, "TestCheckStringList Expected Failure", abc, abcd))
     {
     qWarning() << "Line " << __LINE__ << " - TestCheckString failed";
     return false;
