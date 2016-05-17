@@ -83,6 +83,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_BOOL(boxVal.toBool(), false);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key 1").toBool(), false);
   CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), false);
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
   // Update value using the object/widget API
   box->setChecked(true);
@@ -93,6 +94,17 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_BOOL(boxVal.toBool(), true);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key 1").toBool(), false);
   CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), true);
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key 1");
+
+  // Check settings value after applySettings() has been called
+  settingsPanel.applySettings();
+  boxVal = settings.value("key 1");
+  CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_BOOL(boxVal.toBool(), true);
+  CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key 1").toBool(), true);
+  CHECK_BOOL(settingsPanel.myDefaultPropertyValue("key 1").toBool(), false);
+  CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), true);
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
   //
   // QLineEdit
@@ -108,6 +120,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("default"));
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
   // Update value using the object/widget API
   lineEdit->setText("first edit");
@@ -119,6 +132,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("first edit"));
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key 2");
 
   // Check settings value after applySettings() has been called
   settingsPanel.applySettings();
@@ -128,6 +142,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("first edit"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("first edit"));
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
   // Update value using the object/widget API
   lineEdit->setText("second edit");
@@ -139,6 +154,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("first edit"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("second edit"));
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key 2");
 
   // Check settings value after applySettings() has been called
   settingsPanel.applySettings();
@@ -148,11 +164,13 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("second edit"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("second edit"));
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
   //
   // QCheckBox + ctkBooleanMapper
   //
-  box->setChecked(false);
+  box = new QCheckBox(&settingsPanel);
+
   settingsPanel.registerProperty("key complement",
                                  new ctkBooleanMapper(box, "checked", SIGNAL(toggled(bool))),
                                  "complement",
@@ -164,6 +182,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_BOOL(boxVal.toBool(), true);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), true);
   CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), true);
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
   // Update value using the object/widget API
   box->setChecked(true);
@@ -174,6 +193,17 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_BOOL(boxVal.toBool(), false);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), true);
   CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), false);
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key complement");
+
+  // Check settings value after applySettings() has been called
+  settingsPanel.applySettings();
+  boxVal = settings.value("key complement");
+  CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_BOOL(boxVal.toBool(), false);
+  CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), false);
+  CHECK_BOOL(settingsPanel.myDefaultPropertyValue("key complement").toBool(), true);
+  CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), false);
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
   //
   // ctkSettingsPanelTest2Helper: Test QStringList property
