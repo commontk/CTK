@@ -30,6 +30,7 @@
 #include "ctkBooleanMapper.h"
 #include "ctkCoreTestingMacros.h"
 #include "ctkSettingsPanel.h"
+#include "ctkSettingsPanelTest2Helper.h"
 
 // STD includes
 #include <cstdlib>
@@ -173,6 +174,88 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_BOOL(boxVal.toBool(), false);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), true);
   CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), false);
+
+  //
+  // ctkSettingsPanelTest2Helper: Test QStringList property
+  //
+  ctkSettingsPanelTest2Helper* list = new ctkSettingsPanelTest2Helper(&settingsPanel);
+  settingsPanel.registerProperty("key list", list, "list",
+                                 SIGNAL(listChanged()));
+
+  // Check value after a property is registered
+  QVariant listVal = settings.value("key list");
+  CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QSTRINGLIST(listVal.toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+
+  // Update value using the object/widget API: Add one item
+  list->setList(QStringList() << "first item");
+
+  // Check settings value after it has been updated using object/widget API
+  listVal = settings.value("key list");
+  CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QSTRINGLIST(listVal.toStringList(), QStringList() << "first item");
+  CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item");
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key list");
+
+  // Check settings value after applySettings() has been called
+  settingsPanel.applySettings();
+  listVal = settings.value("key list");
+  CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QSTRINGLIST(listVal.toStringList(), QStringList() << "first item");
+  CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList() << "first item");
+  CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item");
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+
+  // Update value using the object/widget API: Add one other item
+  list->setList(QStringList() << "first item" << "second item");
+
+  // Check settings value after it has been updated using object/widget API
+  listVal = settings.value("key list");
+  CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QSTRINGLIST(listVal.toStringList(), QStringList() << "first item" << "second item");
+  CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList() << "first item");
+  CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item" << "second item");
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key list");
+
+  // Check settings value after applySettings() has been called
+  settingsPanel.applySettings();
+  listVal = settings.value("key list");
+  CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QSTRINGLIST(listVal.toStringList(), QStringList() << "first item" << "second item");
+  CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList() << "first item" << "second item");
+  CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item" << "second item");
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+
+  // Update value using the object/widget API: Remove items
+  list->setList(QStringList());
+
+  // Check settings value after it has been updated using object/widget API
+  listVal = settings.value("key list");
+  CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QSTRINGLIST(listVal.toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList() << "first item" << "second item");
+  CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key list");
+
+  // Check settings value after applySettings() has been called
+  settingsPanel.applySettings();
+  listVal = settings.value("key list");
+  CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QSTRINGLIST(listVal.toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
   settingsPanel.show();
 
