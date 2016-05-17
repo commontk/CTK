@@ -80,6 +80,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check settings value after a property is registered
   QVariant boxVal = settings.value("key 1");
   CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_QVARIANT(boxVal, QVariant(false));
   CHECK_BOOL(boxVal.toBool(), false);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key 1").toBool(), false);
   CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), false);
@@ -91,6 +92,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check settings value after it has been updated using object/widget API
   boxVal = settings.value("key 1");
   CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_QVARIANT(boxVal, QVariant(true));
   CHECK_BOOL(boxVal.toBool(), true);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key 1").toBool(), false);
   CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), true);
@@ -100,6 +102,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   settingsPanel.applySettings();
   boxVal = settings.value("key 1");
   CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_QVARIANT(boxVal, QVariant(true));
   CHECK_BOOL(boxVal.toBool(), true);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key 1").toBool(), true);
   CHECK_BOOL(settingsPanel.myDefaultPropertyValue("key 1").toBool(), false);
@@ -116,6 +119,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check value after a property is registered
   QVariant lineEditVal = settings.value("key 2");
   CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QVARIANT(lineEditVal, QVariant("default"));
   CHECK_QSTRING(lineEditVal.toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
@@ -128,6 +132,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check settings value after it has been updated using object/widget API
   lineEditVal = settings.value("key 2");
   CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QVARIANT(lineEditVal, QVariant("first edit"));
   CHECK_QSTRING(lineEditVal.toString(), QString("first edit"));
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("default"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
@@ -138,6 +143,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   settingsPanel.applySettings();
   lineEditVal = settings.value("key 2");
   CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QVARIANT(lineEditVal, QVariant("first edit"));
   CHECK_QSTRING(lineEditVal.toString(), QString("first edit"));
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("first edit"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
@@ -150,6 +156,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check settings value after it has been updated using object/widget API
   lineEditVal = settings.value("key 2");
   CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QVARIANT(lineEditVal, QVariant("second edit"));
   CHECK_QSTRING(lineEditVal.toString(), QString("second edit"));
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("first edit"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
@@ -160,6 +167,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   settingsPanel.applySettings();
   lineEditVal = settings.value("key 2");
   CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QVARIANT(lineEditVal, QVariant("second edit"));
   CHECK_QSTRING(lineEditVal.toString(), QString("second edit"));
   CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("second edit"));
   CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
@@ -179,6 +187,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check settings value after a property is registered
   boxVal = settings.value("key complement");
   CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_QVARIANT(boxVal, QVariant(true));
   CHECK_BOOL(boxVal.toBool(), true);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), true);
   CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), true);
@@ -190,6 +199,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check settings value after it has been updated using object/widget API
   boxVal = settings.value("key complement");
   CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_QVARIANT(boxVal, QVariant(false));
   CHECK_BOOL(boxVal.toBool(), false);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), true);
   CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), false);
@@ -199,6 +209,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   settingsPanel.applySettings();
   boxVal = settings.value("key complement");
   CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_QVARIANT(boxVal, QVariant(false));
   CHECK_BOOL(boxVal.toBool(), false);
   CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), false);
   CHECK_BOOL(settingsPanel.myDefaultPropertyValue("key complement").toBool(), true);
@@ -215,6 +226,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check value after a property is registered
   QVariant listVal = settings.value("key list");
   CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QVARIANT(listVal, QVariant(QStringList()));
   CHECK_QSTRINGLIST(listVal.toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
@@ -227,6 +239,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check settings value after it has been updated using object/widget API
   listVal = settings.value("key list");
   CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QVARIANT(listVal, QVariant(QStringList() << "first item"));
   CHECK_QSTRINGLIST(listVal.toStringList(), QStringList() << "first item");
   CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
@@ -237,6 +250,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   settingsPanel.applySettings();
   listVal = settings.value("key list");
   CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QVARIANT(listVal, QVariant(QStringList() << "first item"));
   CHECK_QSTRINGLIST(listVal.toStringList(), QStringList() << "first item");
   CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList() << "first item");
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
@@ -249,6 +263,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check settings value after it has been updated using object/widget API
   listVal = settings.value("key list");
   CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QVARIANT(listVal, QVariant(QStringList() << "first item" << "second item"));
   CHECK_QSTRINGLIST(listVal.toStringList(), QStringList() << "first item" << "second item");
   CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList() << "first item");
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
@@ -259,6 +274,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   settingsPanel.applySettings();
   listVal = settings.value("key list");
   CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QVARIANT(listVal, QVariant(QStringList() << "first item" << "second item"));
   CHECK_QSTRINGLIST(listVal.toStringList(), QStringList() << "first item" << "second item");
   CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList() << "first item" << "second item");
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
@@ -271,6 +287,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   // Check settings value after it has been updated using object/widget API
   listVal = settings.value("key list");
   CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QVARIANT(listVal, QVariant(QStringList()));
   CHECK_QSTRINGLIST(listVal.toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList() << "first item" << "second item");
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
@@ -281,6 +298,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   settingsPanel.applySettings();
   listVal = settings.value("key list");
   CHECK_BOOL(listVal.isValid(), true);
+  CHECK_QVARIANT(listVal, QVariant(QStringList()));
   CHECK_QSTRINGLIST(listVal.toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
