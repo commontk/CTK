@@ -60,30 +60,27 @@ public:
 
 
 //-----------------------------------------------------------------------------
-int TestBoolean(QSettings& settings,
-                ctkSettingsPanelForTest& settingsPanel);
-int TestString(QSettings& settings,
-               ctkSettingsPanelForTest& settingsPanel);
-int TestBooleanMapper(QSettings& settings,
-                      ctkSettingsPanelForTest& settingsPanel);
-int TestStringList(QSettings& settings,
-                   ctkSettingsPanelForTest& settingsPanel);
+int TestBoolean(ctkSettingsPanelForTest& settingsPanel);
+int TestString(ctkSettingsPanelForTest& settingsPanel);
+int TestBooleanMapper(ctkSettingsPanelForTest& settingsPanel);
+int TestStringList(ctkSettingsPanelForTest& settingsPanel);
 
 //-----------------------------------------------------------------------------
 int ctkSettingsPanelTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
-  settings.clear();
+  {
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+    settings.clear();
+  }
 
   ctkSettingsPanelForTest settingsPanel;
-  settingsPanel.setSettings(&settings);
 
-  CHECK_EXIT_SUCCESS(TestBoolean(settings, settingsPanel));
-  CHECK_EXIT_SUCCESS(TestString(settings, settingsPanel));
-  CHECK_EXIT_SUCCESS(TestBooleanMapper(settings, settingsPanel));
-  CHECK_EXIT_SUCCESS(TestStringList(settings, settingsPanel));
+  CHECK_EXIT_SUCCESS(TestBoolean(settingsPanel));
+  CHECK_EXIT_SUCCESS(TestString(settingsPanel));
+  CHECK_EXIT_SUCCESS(TestBooleanMapper(settingsPanel));
+  CHECK_EXIT_SUCCESS(TestStringList(settingsPanel));
 
   settingsPanel.show();
 
@@ -96,9 +93,11 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
 }
 
 //-----------------------------------------------------------------------------
-int TestBoolean(QSettings& settings,
-                ctkSettingsPanelForTest& settingsPanel)
+int TestBoolean(ctkSettingsPanelForTest& settingsPanel)
 {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settingsPanel.setSettings(&settings);
+
   QCheckBox* box = new QCheckBox(&settingsPanel);
 
   settingsPanel.registerProperty("key 1", box, "checked",
@@ -136,13 +135,29 @@ int TestBoolean(QSettings& settings,
   CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), true);
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
+  // Check settings value after saving settings to disk
+  settings.sync();
+  QSettings settings2(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settingsPanel.setSettings(&settings2);
+
+  boxVal = settings2.value("key 1");
+  CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_QVARIANT(boxVal, QVariant(true));
+  CHECK_BOOL(boxVal.toBool(), true);
+  CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key 1").toBool(), true);
+  CHECK_BOOL(settingsPanel.myDefaultPropertyValue("key 1").toBool(), false);
+  CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), true);
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+
   return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
-int TestString(QSettings& settings,
-               ctkSettingsPanelForTest& settingsPanel)
+int TestString(ctkSettingsPanelForTest& settingsPanel)
 {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settingsPanel.setSettings(&settings);
+
   QLineEdit* lineEdit = new QLineEdit("default", &settingsPanel);
   settingsPanel.registerProperty("key 2", lineEdit, "text",
                                   SIGNAL(textChanged(QString)));
@@ -205,13 +220,29 @@ int TestString(QSettings& settings,
   CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("second edit"));
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
+  // Check settings value after saving settings to disk
+  settings.sync();
+  QSettings settings2(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settingsPanel.setSettings(&settings2);
+
+  lineEditVal = settings2.value("key 2");
+  CHECK_BOOL(lineEditVal.isValid(), true);
+  CHECK_QVARIANT(lineEditVal, QVariant("second edit"));
+  CHECK_QSTRING(lineEditVal.toString(), QString("second edit"));
+  CHECK_QSTRING(settingsPanel.myPreviousPropertyValue("key 2").toString(), QString("second edit"));
+  CHECK_QSTRING(settingsPanel.myDefaultPropertyValue("key 2").toString(), QString("default"));
+  CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("second edit"));
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+
   return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
-int TestBooleanMapper(QSettings& settings,
-                      ctkSettingsPanelForTest& settingsPanel)
+int TestBooleanMapper(ctkSettingsPanelForTest& settingsPanel)
 {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settingsPanel.setSettings(&settings);
+
   QCheckBox* box = new QCheckBox(&settingsPanel);
 
   settingsPanel.registerProperty("key complement",
@@ -251,13 +282,29 @@ int TestBooleanMapper(QSettings& settings,
   CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), false);
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
+  // Check settings value after saving settings to disk
+  settings.sync();
+  QSettings settings2(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settingsPanel.setSettings(&settings2);
+
+  boxVal = settings2.value("key complement");
+  CHECK_BOOL(boxVal.isValid(), true);
+  CHECK_QVARIANT(boxVal, QVariant(false));
+  CHECK_BOOL(boxVal.toBool(), false);
+  CHECK_BOOL(settingsPanel.myPreviousPropertyValue("key complement").toBool(), false);
+  CHECK_BOOL(settingsPanel.myDefaultPropertyValue("key complement").toBool(), true);
+  CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), false);
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+
   return EXIT_SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
-int TestStringList(QSettings& settings,
-                   ctkSettingsPanelForTest& settingsPanel)
+int TestStringList(ctkSettingsPanelForTest& settingsPanel)
 {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settingsPanel.setSettings(&settings);
+
   ctkSettingsPanelTest2Helper* list = new ctkSettingsPanelTest2Helper(&settingsPanel);
   settingsPanel.registerProperty("key list", list, "list",
                                  SIGNAL(listChanged()));
@@ -343,6 +390,20 @@ int TestStringList(QSettings& settings,
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+
+  // Check settings value after saving settings to disk
+  settings.sync();
+  QSettings settings2(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
+  settingsPanel.setSettings(&settings2);
+
+  listVal = settings2.value("key list");
+  //CHECK_BOOL(listVal.isValid(), true); // Issue #646
+  //CHECK_QVARIANT(listVal, QVariant(QStringList())); // Issue #646
+  CHECK_QSTRINGLIST(listVal.toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
+  CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
+  //CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList()); // Issue #646
 
   return EXIT_SUCCESS;
 }
