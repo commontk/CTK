@@ -58,25 +58,52 @@ public:
 
 } // end of anonymous namespace
 
+
+//-----------------------------------------------------------------------------
+int TestBoolean(QSettings& settings,
+                ctkSettingsPanelForTest& settingsPanel);
+int TestString(QSettings& settings,
+               ctkSettingsPanelForTest& settingsPanel);
+int TestBooleanMapper(QSettings& settings,
+                      ctkSettingsPanelForTest& settingsPanel);
+int TestStringList(QSettings& settings,
+                   ctkSettingsPanelForTest& settingsPanel);
+
 //-----------------------------------------------------------------------------
 int ctkSettingsPanelTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
   settings.clear();
 
   ctkSettingsPanelForTest settingsPanel;
   settingsPanel.setSettings(&settings);
 
-  //
-  // QCheckBox
-  //
+  CHECK_EXIT_SUCCESS(TestBoolean(settings, settingsPanel));
+  CHECK_EXIT_SUCCESS(TestString(settings, settingsPanel));
+  CHECK_EXIT_SUCCESS(TestBooleanMapper(settings, settingsPanel));
+  CHECK_EXIT_SUCCESS(TestStringList(settings, settingsPanel));
+
+  settingsPanel.show();
+
+  if (argc < 2 || QString(argv[1]) != "-I" )
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
+
+  return app.exec();
+}
+
+//-----------------------------------------------------------------------------
+int TestBoolean(QSettings& settings,
+                ctkSettingsPanelForTest& settingsPanel)
+{
   QCheckBox* box = new QCheckBox(&settingsPanel);
 
   settingsPanel.registerProperty("key 1", box, "checked",
                                   SIGNAL(toggled(bool)));
-  
+
   // Check settings value after a property is registered
   QVariant boxVal = settings.value("key 1");
   CHECK_BOOL(boxVal.isValid(), true);
@@ -109,9 +136,13 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_BOOL(settingsPanel.myPropertyValue("key 1").toBool(), true);
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
-  //
-  // QLineEdit
-  //
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+int TestString(QSettings& settings,
+               ctkSettingsPanelForTest& settingsPanel)
+{
   QLineEdit* lineEdit = new QLineEdit("default", &settingsPanel);
   settingsPanel.registerProperty("key 2", lineEdit, "text",
                                   SIGNAL(textChanged(QString)));
@@ -174,10 +205,14 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_QSTRING(settingsPanel.myPropertyValue("key 2").toString(), QString("second edit"));
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
-  //
-  // QCheckBox + ctkBooleanMapper
-  //
-  box = new QCheckBox(&settingsPanel);
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+int TestBooleanMapper(QSettings& settings,
+                      ctkSettingsPanelForTest& settingsPanel)
+{
+  QCheckBox* box = new QCheckBox(&settingsPanel);
 
   settingsPanel.registerProperty("key complement",
                                  new ctkBooleanMapper(box, "checked", SIGNAL(toggled(bool))),
@@ -185,7 +220,7 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
                                   SIGNAL(complementChanged(bool)));
 
   // Check settings value after a property is registered
-  boxVal = settings.value("key complement");
+  QVariant boxVal = settings.value("key complement");
   CHECK_BOOL(boxVal.isValid(), true);
   CHECK_QVARIANT(boxVal, QVariant(true));
   CHECK_BOOL(boxVal.toBool(), true);
@@ -216,9 +251,13 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_BOOL(settingsPanel.myPropertyValue("key complement").toBool(), false);
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
-  //
-  // ctkSettingsPanelTest2Helper: Test QStringList property
-  //
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+int TestStringList(QSettings& settings,
+                   ctkSettingsPanelForTest& settingsPanel)
+{
   ctkSettingsPanelTest2Helper* list = new ctkSettingsPanelTest2Helper(&settingsPanel);
   settingsPanel.registerProperty("key list", list, "list",
                                  SIGNAL(listChanged()));
@@ -305,13 +344,6 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
 
-  settingsPanel.show();
-
-  if (argc < 2 || QString(argv[1]) != "-I" )
-    {
-    QTimer::singleShot(200, &app, SLOT(quit()));
-    }
-
-  return app.exec();
+  return EXIT_SUCCESS;
 }
 
