@@ -183,5 +183,27 @@
     } \
   }
 
+/// Verifies if actual QStringList is the same as expected.
+#define CHECK_QSTRINGLIST(actual, expected) \
+  { \
+  QStringList a = (actual); \
+  QStringList e = (expected); \
+  if (!ctkCoreTestingUtilities::CheckStringList(__LINE__,#actual " != " #expected, a, e)) \
+    { \
+    return EXIT_FAILURE; \
+    } \
+  }
+
+/// Verifies if actual QVariant is the same as expected.
+#define CHECK_QVARIANT(actual, expected) \
+  { \
+  QVariant a = (actual); \
+  QVariant e = (expected); \
+  if (!ctkCoreTestingUtilities::CheckVariant(__LINE__,#actual " != " #expected, a, e)) \
+    { \
+    return EXIT_FAILURE; \
+    } \
+  }
+
 #endif
 

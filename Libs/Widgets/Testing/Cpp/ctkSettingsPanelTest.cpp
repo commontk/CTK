@@ -219,6 +219,28 @@ void ctkSettingsPanelTester::testChangeProperty_data()
   QTest::newRow("label RequireRestart unchanged panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << true << 0 << QStringList();
 }
 
+namespace
+{
+//-----------------------------------------------------------------------------
+class ctkSettingsPanelForTest : public ctkSettingsPanel
+{
+public:
+  QVariant myDefaultPropertyValue(const QString& key) const
+    {
+    return this->defaultPropertyValue(key);
+    }
+  QVariant myPreviousPropertyValue(const QString& key) const
+    {
+    return this->previousPropertyValue(key);
+    }
+  QVariant myPropertyValue(const QString& key) const
+    {
+    return this->propertyValue(key);
+    }
+};
+
+} // end of anonymous namespace
+
 //-----------------------------------------------------------------------------
 void ctkSettingsPanelTester::testEmptyQStringList()
 {
@@ -230,12 +252,21 @@ void ctkSettingsPanelTester::testEmptyQStringList()
   }
 
   // Regression: Reading empty QStringList property from settings should be handled properly
+  // See issue #646
 
-  ctkSettingsPanel settingsPanel;
+  ctkSettingsPanelForTest settingsPanel;
   ctkSettingsPanelTest2Helper * list = new ctkSettingsPanelTest2Helper(&settingsPanel);
   settingsPanel.registerProperty("list", list, "list", SIGNAL(listChanged()));
   QSettings settings2(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
   settingsPanel.setSettings(&settings2);
+
+  QVariant listVal = settings2.value("list");
+  QCOMPARE(listVal.isValid(), false); // See issue #646
+  QCOMPARE(listVal, QVariant()); // See issue #646
+  QCOMPARE(listVal.toStringList(), QStringList());
+  QCOMPARE(settingsPanel.myPreviousPropertyValue("list").toStringList(), QStringList());
+  QCOMPARE(settingsPanel.myDefaultPropertyValue("list").toStringList(), QStringList());
+  QCOMPARE(settingsPanel.myPropertyValue("list").toStringList(), QStringList());
 }
 
 //-----------------------------------------------------------------------------
