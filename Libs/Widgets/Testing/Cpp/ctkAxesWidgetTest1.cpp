@@ -22,9 +22,11 @@
 #include <QApplication>
 #include <QSignalSpy>
 #include <QTimer>
+#include <QStringList>
 
 // CTK includes
 #include "ctkAxesWidget.h"
+#include "ctkCoreTestingMacros.h"
 
 // STD includes
 #include <cstdlib>
@@ -84,6 +86,12 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
             << spy[0].at(0).toInt() << " " << spy[1].at(0).toInt() << std::endl;
     return EXIT_FAILURE;
     }
+
+
+  QStringList axesLabels = QStringList() << "W" << "E" << "S" << "N" << "Z" << "z";
+  CHECK_BOOL(axes.setAxesLabels(axesLabels), true)
+  CHECK_QSTRINGLIST(axesLabels, axes.axesLabels());
+
   axes.setAutoReset(false);
   axes.setAutoReset(true);
   axes.setWindowTitle("AutoReset=On");

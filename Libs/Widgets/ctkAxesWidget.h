@@ -37,6 +37,7 @@ class CTK_WIDGETS_EXPORT ctkAxesWidget : public QWidget
   Q_ENUMS(Axis)
   Q_PROPERTY(Axis currentAxis READ currentAxis WRITE setCurrentAxis NOTIFY currentAxisChanged)
   Q_PROPERTY(bool autoReset READ autoReset WRITE setAutoReset)
+  Q_PROPERTY(QStringList axesLabels READ axesLabels WRITE setAxesLabels)
 public : 
 
   enum Axis
@@ -80,6 +81,12 @@ public slots :
   ///
   /// Set the autoReset property to None anytime the currentAxis is changed.
   void setAutoReset(bool reset);
+
+  /// Set the AxesLabels
+  bool setAxesLabels(const QStringList& labels);
+
+  /// Get the AxesLabels
+  QStringList axesLabels() const;
 
   /// Size hints
   virtual QSize minimumSizeHint()const;
