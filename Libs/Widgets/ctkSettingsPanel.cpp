@@ -274,6 +274,8 @@ void ctkSettingsPanel::setSetting(const QString& key, const QVariant& newVal)
     return;
     }
   QVariant oldVal = settings->value(key);
+  oldVal = PropertyType::fixEmptyStringListVariant(
+        oldVal, d->Properties[key].metaProperty().typeName());
   settings->setValue(key, newVal);
   d->Properties[key].setValue(newVal);
   if (settings->status() != QSettings::NoError)

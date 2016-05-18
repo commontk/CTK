@@ -23,6 +23,7 @@
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QSettings>
+#include <QSignalSpy>
 #include <QTimer>
 #include <QVariant>
 
@@ -302,6 +303,9 @@ int TestBooleanMapper(ctkSettingsPanelForTest& settingsPanel)
 //-----------------------------------------------------------------------------
 int TestStringList(ctkSettingsPanelForTest& settingsPanel)
 {
+  qRegisterMetaType<QVariant>("QVariant");
+  QSignalSpy spy(&settingsPanel, SIGNAL(settingChanged(QString,QVariant)));
+
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
   settingsPanel.setSettings(&settings);
 
@@ -318,6 +322,10 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+  CHECK_INT(spy.count(), 0);
+
+  // Reset spy
+  spy.clear();
 
   // Update value using the object/widget API: Add one item
   list->setList(QStringList() << "first item");
@@ -331,6 +339,10 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item");
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key list");
+  CHECK_INT(spy.count(), 1);
+
+  // Reset spy
+  spy.clear();
 
   // Check settings value after applySettings() has been called
   settingsPanel.applySettings();
@@ -342,6 +354,10 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item");
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+  CHECK_INT(spy.count(), 0);
+
+  // Reset spy
+  spy.clear();
 
   // Update value using the object/widget API: Add one other item
   list->setList(QStringList() << "first item" << "second item");
@@ -355,6 +371,10 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item" << "second item");
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key list");
+  CHECK_INT(spy.count(), 1);
+
+  // Reset spy
+  spy.clear();
 
   // Check settings value after applySettings() has been called
   settingsPanel.applySettings();
@@ -366,6 +386,10 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item" << "second item");
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+  CHECK_INT(spy.count(), 0);
+
+  // Reset spy
+  spy.clear();
 
   // Update value using the object/widget API: Remove items
   list->setList(QStringList());
@@ -379,6 +403,10 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList() << "key list");
+  CHECK_INT(spy.count(), 1);
+
+  // Reset spy
+  spy.clear();
 
   // Check settings value after applySettings() has been called
   settingsPanel.applySettings();
@@ -390,6 +418,10 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
+  CHECK_INT(spy.count(), 0);
+
+  // Reset spy
+  spy.clear();
 
   // Check settings value after saving settings to disk
   settings.sync();
@@ -404,6 +436,7 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList()); // Issue #646
+  CHECK_INT(spy.count(), 0);
 
   return EXIT_SUCCESS;
 }
