@@ -261,8 +261,8 @@ void ctkSettingsPanelTester::testEmptyQStringList()
   settingsPanel.setSettings(&settings2);
 
   QVariant listVal = settings2.value("list");
-//  QCOMPARE(listVal.isValid(), true); // See issue #646
-//  QCOMPARE(listVal, QVariant(QStringList())); // See issue #646
+  QCOMPARE(listVal.isValid(), false); // See issue #646
+  QCOMPARE(listVal, QVariant()); // See issue #646
   QCOMPARE(listVal.toStringList(), QStringList());
   QCOMPARE(settingsPanel.myPreviousPropertyValue("list").toStringList(), QStringList());
   QCOMPARE(settingsPanel.myDefaultPropertyValue("list").toStringList(), QStringList());

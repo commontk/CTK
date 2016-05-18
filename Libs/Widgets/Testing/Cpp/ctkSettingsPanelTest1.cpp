@@ -397,13 +397,13 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   settingsPanel.setSettings(&settings2);
 
   listVal = settings2.value("key list");
-  //CHECK_BOOL(listVal.isValid(), true); // Issue #646
-  //CHECK_QVARIANT(listVal, QVariant(QStringList())); // Issue #646
+  CHECK_BOOL(listVal.isValid(), false); // Issue #646
+  CHECK_QVARIANT(listVal, QVariant()); // Issue #646
   CHECK_QSTRINGLIST(listVal.toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPreviousPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
-  //CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList()); // Issue #646
+  CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList()); // Issue #646
 
   return EXIT_SUCCESS;
 }

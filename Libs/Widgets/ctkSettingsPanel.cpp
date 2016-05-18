@@ -36,6 +36,7 @@ namespace
 // --------------------------------------------------------------------------
 struct PropertyType
 {
+  typedef PropertyType Self;
   PropertyType();
   QObject* Object;
   QString  Property;
@@ -52,7 +53,11 @@ struct PropertyType
 
   QMetaProperty metaProperty();
 
+  /// Workaround https://bugreports.qt.io/browse/QTBUG-19823
+  static QVariant fixEmptyStringListVariant(const QVariant& value, const char* _typename);
+
 private:
+
   QVariant PreviousValue;
 };
 
@@ -83,11 +88,8 @@ bool PropertyType::setValue(const QVariant& val)
     return false;
     }
   QVariant value(val);
-  // HACK - See http://bugreports.qt.nokia.com/browse/QTBUG-19823
-  if (qstrcmp(this->metaProperty().typeName(), "QStringList") == 0 && !value.isValid())
-    {
-    value = QVariant(QStringList());
-    }
+  value = Self::fixEmptyStringListVariant(value,
+                                          this->metaProperty().typeName());
   bool success = true;
   if (this->Object->property(this->Property.toLatin1()) != value)
     {
@@ -106,7 +108,21 @@ QVariant PropertyType::previousValue()const
 // --------------------------------------------------------------------------
 void PropertyType::setPreviousValue(const QVariant& val)
 {
-  this->PreviousValue = val;
+  this->PreviousValue =
+      Self::fixEmptyStringListVariant(val, this->metaProperty().typeName());
+}
+
+// --------------------------------------------------------------------------
+QVariant PropertyType::fixEmptyStringListVariant(const QVariant& value,
+                                                 const char* _typename)
+{
+  QVariant fixedValue = value;
+  // HACK - See https://bugreports.qt.io/browse/QTBUG-19823
+  if (qstrcmp(_typename, "QStringList") == 0 && !value.isValid())
+    {
+    fixedValue = QVariant(QStringList());
+    }
+  return fixedValue;
 }
 
 // --------------------------------------------------------------------------
