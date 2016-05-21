@@ -63,7 +63,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
   endif()
 
-  set(revision_tag cbf890f8eda122b8dca8e67d2bf75e85640ab297)
+  set(revision_tag 1afe4f8906345063b25047652e8962f641010a55)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()

@@ -191,12 +191,22 @@ bool ctkAbstractPythonManager::isPythonInitialized()const
 //-----------------------------------------------------------------------------
 bool ctkAbstractPythonManager::pythonErrorOccured()const
 {
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return false;
+    }
   return PythonQt::self()->hadError();
 }
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::resetErrorFlag()
 {
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return;
+    }
   PythonQt::self()->clearError();
 }
 
@@ -219,30 +229,55 @@ void ctkAbstractPythonManager::executeInitializationScripts()
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::registerPythonQtDecorator(QObject* decorator)
 {
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return;
+    }
   PythonQt::self()->addDecorators(decorator);
 }
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::registerClassForPythonQt(const QMetaObject* metaobject)
 {
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return;
+    }
   PythonQt::self()->registerClass(metaobject);
 }
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::registerCPPClassForPythonQt(const char* name)
 {
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return;
+    }
   PythonQt::self()->registerCPPClass(name);
 }
 
 //-----------------------------------------------------------------------------
 bool ctkAbstractPythonManager::systemExitExceptionHandlerEnabled()const
 {
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return false;
+    }
   return PythonQt::self()->systemExitExceptionHandlerEnabled();
 }
 
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::setSystemExitExceptionHandlerEnabled(bool value)
 {
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return;
+    }
   PythonQt::self()->setSystemExitExceptionHandlerEnabled(value);
 }
 
@@ -406,6 +441,11 @@ void ctkAbstractPythonManager::addObjectToPythonMain(const QString& name, QObjec
 //-----------------------------------------------------------------------------
 void ctkAbstractPythonManager::addWrapperFactory(PythonQtForeignWrapperFactory* factory)
 {
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return;
+    }
   PythonQt::self()->addWrapperFactory(factory);
 }
 
