@@ -28,9 +28,13 @@ private:
 
 private Q_SLOTS:
 
+  void testDefaults();
+
   void testIsPythonInitialized();
 
   void testSetInitializationFlags();
+
+  void testSetSystemExitExceptionHandlerEnabled();
 
   void testPythonErrorOccured();
   void testPythonErrorOccured_data();
@@ -52,6 +56,18 @@ private Q_SLOTS:
 
   //void testPythonAttributes(); // TODO
 };
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testDefaults()
+{
+  QCOMPARE(this->PythonManager.pythonErrorOccured(), false);
+
+  this->PythonManager.resetErrorFlag();
+  this->PythonManager.registerPythonQtDecorator(0);
+  this->PythonManager.registerClassForPythonQt(0);
+  this->PythonManager.registerCPPClassForPythonQt(0);
+  this->PythonManager.addWrapperFactory(0);
+}
 
 // ----------------------------------------------------------------------------
 void ctkAbstractPythonManagerTester::testIsPythonInitialized()
@@ -82,15 +98,27 @@ void ctkAbstractPythonManagerTester::testSetInitializationFlags()
 }
 
 // ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testSetSystemExitExceptionHandlerEnabled()
+{
+  QCOMPARE(this->PythonManager.systemExitExceptionHandlerEnabled(), false);
+  this->PythonManager.setSystemExitExceptionHandlerEnabled(true);
+  QCOMPARE(this->PythonManager.systemExitExceptionHandlerEnabled(), true);
+}
+
+// ----------------------------------------------------------------------------
 void ctkAbstractPythonManagerTester::testInitialize()
 {
   QVERIFY(this->PythonManager.initialize());
+
+  this->testDefaults();
 }
 
 // ----------------------------------------------------------------------------
 void ctkAbstractPythonManagerTester::testMainContext()
 {
   QVERIFY(this->PythonManager.mainContext());
+
+  this->testDefaults();
 }
 
 // ----------------------------------------------------------------------------
@@ -102,6 +130,11 @@ void ctkAbstractPythonManagerTester::testPythonErrorOccured()
   this->PythonManager.executeString(pythonCode);
 
   QCOMPARE(this->PythonManager.pythonErrorOccured(), errorOccured);
+
+  if(errorOccured)
+    {
+    this->PythonManager.resetErrorFlag();
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -123,6 +156,7 @@ void ctkAbstractPythonManagerTester::testAddObjectToPythonMain()
   this->PythonManager.addObjectToPythonMain("testAddObjectToPythonMain", object);
   QVariant returnValue = this->PythonManager.executeString("testAddObjectToPythonMain.happy",
                                                            ctkAbstractPythonManager::EvalInput);
+  this->PythonManager.resetErrorFlag();
   QCOMPARE(returnValue, QVariant(true));
 }
 
@@ -143,6 +177,7 @@ void ctkAbstractPythonManagerTester::testExecuteString()
   QCOMPARE(this->PythonManager.pythonErrorOccured(), errorOccured);
   if (errorOccured)
     {
+    this->PythonManager.resetErrorFlag();
     return;
     }
   QCOMPARE(returnValue, expectedReturnValue);
