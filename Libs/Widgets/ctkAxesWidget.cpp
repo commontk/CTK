@@ -293,6 +293,27 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
 }
 
 // ----------------------------------------------------------------------------------
+bool ctkAxesWidget::setAxesLabels(const QStringList& labels)
+{
+  Q_D(ctkAxesWidget);
+  if (labels.size() != 6)
+    {
+    qWarning("ctkAxesWidget::setAxesLabels() failed: Exactly 6 labels are expected.");
+    return false;
+    }
+
+  d->AxesLabels = labels;
+  return true;
+}
+
+// ----------------------------------------------------------------------------------
+QStringList ctkAxesWidget::axesLabels() const
+{
+  Q_D(const ctkAxesWidget);
+  return d->AxesLabels;
+}
+
+// ----------------------------------------------------------------------------------
 void ctkAxesWidget::mousePressEvent(QMouseEvent *mouseEvent)
 {
   Q_D(ctkAxesWidget);
