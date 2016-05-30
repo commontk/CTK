@@ -73,27 +73,7 @@ int ctkVTKHistogramPrivate::computeNumberOfBins()const
     {
     return -1;
     }
-  
-  if (this->DataArray->GetDataType() == VTK_CHAR ||
-      this->DataArray->GetDataType() == VTK_SIGNED_CHAR ||
-      this->DataArray->GetDataType() == VTK_UNSIGNED_CHAR)
-    {
-    this->Range[0] = this->DataArray->GetDataTypeMin();
-    this->Range[1] = this->DataArray->GetDataTypeMax();
-    }
-  else
-    {
-    this->DataArray->GetRange(this->Range, this->Component);
-    if (this->DataArray->GetDataType() == VTK_FLOAT ||
-        this->DataArray->GetDataType() == VTK_DOUBLE)
-      {
-      this->Range[1] += 0.01;
-      }
-    //else
-    //  {
-    //  this->Range[1] += 1;
-    //  }
-    }
+
   if (this->UserNumberOfBins > 0)
     {
     return this->UserNumberOfBins;
@@ -131,6 +111,36 @@ int ctkVTKHistogram::count()const
 }
 
 //-----------------------------------------------------------------------------
+void ctkVTKHistogram::setRange(qreal minRange, qreal maxRange)
+{
+  Q_D(const ctkVTKHistogram);
+  if (d->DataArray.GetPointer() == 0)
+    {
+    //Q_ASSERT(d->DataArray.GetPointer());
+    logger.warn("no data array. range will be reset when setting array.");
+    minRange = 1.; // set incorrect values
+    maxRange = 0.;
+    return;
+    }
+  if (minRange >= maxRange)
+    {
+    //Q_ASSERT(d->DataArray.GetPointer());
+    logger.warn("minRange >= maxRange");
+    qreal pivot = minRange;
+    minRange = maxRange;
+    maxRange = pivot;
+    }
+
+  int numberOfBinsBefore = d->computeNumberOfBins();
+  d->Range[0] = minRange;
+  d->Range[1] = maxRange;
+  if (d->computeNumberOfBins() != numberOfBinsBefore)
+    {
+    this->build();
+    }
+}
+
+//-----------------------------------------------------------------------------
 void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
 {
   Q_D(const ctkVTKHistogram);
@@ -142,15 +152,44 @@ void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
     maxRange = 0.;
     return;
     }
-  if (d->Range[0] == d->Range[1])
-    {
-    minRange = d->DataArray->GetDataTypeMin();
-    maxRange = d->DataArray->GetDataTypeMax();
-    return;
-    }
   minRange = d->Range[0];
   maxRange = d->Range[1];
-} 
+}
+
+//-----------------------------------------------------------------------------
+void ctkVTKHistogram::resetRange()
+{
+  Q_D(ctkVTKHistogram);
+  if (d->DataArray.GetPointer() == 0)
+    {
+    //Q_ASSERT(d->DataArray.GetPointer());
+    logger.warn("no dataArray");
+    d->Range[0] = 1.; // set incorrect values
+    d->Range[1] = 0.;
+    return;
+    }
+
+  if (d->DataArray->GetDataType() == VTK_CHAR ||
+      d->DataArray->GetDataType() == VTK_SIGNED_CHAR ||
+      d->DataArray->GetDataType() == VTK_UNSIGNED_CHAR)
+    {
+    d->Range[0] = d->DataArray->GetDataTypeMin();
+    d->Range[1] = d->DataArray->GetDataTypeMax();
+    }
+  else
+    {
+    d->DataArray->GetRange(d->Range, d->Component);
+    if (d->DataArray->GetDataType() == VTK_FLOAT ||
+        d->DataArray->GetDataType() == VTK_DOUBLE)
+      {
+      d->Range[1] += 0.01;
+      }
+    //else
+    //  {
+    //  this->Range[1] += 1;
+    //  }
+    }
+}
 
 //-----------------------------------------------------------------------------
 QVariant ctkVTKHistogram::minValue()const
@@ -203,7 +242,13 @@ int ctkVTKHistogram::posToIndex(qreal pos)const
 void ctkVTKHistogram::setDataArray(vtkDataArray* newDataArray)
 {
   Q_D(ctkVTKHistogram);
+  if (newDataArray == d->DataArray)
+    {
+    return;
+    }
+
   d->DataArray = newDataArray;
+  this->resetRange();
   this->qvtkReconnect(d->DataArray,vtkCommand::ModifiedEvent,
                       this, SIGNAL(changed()));
   emit changed();

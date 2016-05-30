@@ -32,6 +32,9 @@ int ctkVTKHistogramTest2( int argc, char * argv [])
   rgbDataArray->InsertNextTuple3(1000, 143, -1412);
   rgbDataArray->InsertNextTuple3(-543, 210,   151);
   rgbDataArray->InsertNextTuple3(  -1, 210,    10);
+
+  // Generate histogram on the Green values
+  rgbHistogram.setComponent(1);
   rgbHistogram.setDataArray(rgbDataArray);
   if (rgbHistogram.dataArray() != rgbDataArray)
     {
@@ -41,8 +44,15 @@ int ctkVTKHistogramTest2( int argc, char * argv [])
     return EXIT_FAILURE;
     }
 
-  // Generate histogram on the Green values
-  rgbHistogram.setComponent(1);
+  double range[2], expectedRange[2] = {50.0, 211.0};
+  rgbHistogram.range(range[0], range[1]);
+  if (range[0] != expectedRange[0] && range[1] != expectedRange[1])
+    {
+    std::cerr << "Bad range: " << range[0] << " " << range[1] << std::endl
+              << " expected: " << expectedRange[0] << " " << expectedRange[1]
+              << std::endl;
+    return EXIT_FAILURE;
+    }
 
   //------Test build---------------------------------
   rgbHistogram.build();
