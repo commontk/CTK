@@ -110,7 +110,7 @@ if(HAVE_BFD)
   add_executable(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
 endif()
 
-if(WIN32)
+if(MSVC)
   add_definitions( /D _CRT_SECURE_NO_WARNINGS)
 endif()
 
