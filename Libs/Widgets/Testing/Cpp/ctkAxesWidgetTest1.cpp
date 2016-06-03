@@ -21,10 +21,12 @@
 // Qt includes
 #include <QApplication>
 #include <QSignalSpy>
+#include <QStringList>
 #include <QTimer>
 
 // CTK includes
 #include "ctkAxesWidget.h"
+#include "ctkCoreTestingMacros.h"
 
 // STD includes
 #include <cstdlib>
@@ -84,6 +86,26 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
             << spy[0].at(0).toInt() << " " << spy[1].at(0).toInt() << std::endl;
     return EXIT_FAILURE;
     }
+
+
+  // Test axesLabels/setAxesLabels
+  CHECK_BOOL(axes.setAxesLabels(QStringList()), false);
+
+  QStringList emptyAxesLabels =
+      QStringList() << "" << "" << "" << "" << "" << "";
+  CHECK_BOOL(axes.setAxesLabels(emptyAxesLabels), true);
+  CHECK_QSTRINGLIST(axes.axesLabels(), emptyAxesLabels);
+
+  QStringList singleLetterAxesLabels =
+      QStringList() << "W" << "E" << "S" << "N" << "Z" << "z";
+  CHECK_BOOL(axes.setAxesLabels(singleLetterAxesLabels), true);
+  CHECK_QSTRINGLIST(axes.axesLabels(), singleLetterAxesLabels);
+
+  QStringList additionalAxesLabels = singleLetterAxesLabels;
+  additionalAxesLabels.append("X");
+  CHECK_BOOL(axes.setAxesLabels(additionalAxesLabels), true);
+  CHECK_QSTRINGLIST(axes.axesLabels(), singleLetterAxesLabels);
+
   axes.setAutoReset(false);
   axes.setAutoReset(true);
   axes.setWindowTitle("AutoReset=On");
