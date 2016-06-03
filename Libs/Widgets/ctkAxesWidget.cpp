@@ -227,8 +227,6 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
   int length = qMin(this->width(), this->height());
   int diameter = length / goldenRatio;
   int radius = diameter / 2;
-
-  QStringList axesLabels;
   
   QList<QPoint> positions = d->extremities(center, radius);
   
@@ -290,6 +288,33 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
   painter.setBrush(QBrush(rg));
   painter.setPen(QPen(Qt::NoPen));
   painter.drawEllipse(QPointF(center), sphereRadius.width(), sphereRadius.height());
+}
+
+// ----------------------------------------------------------------------------------
+bool ctkAxesWidget::setAxesLabels(const QStringList& labels)
+{
+  Q_D(ctkAxesWidget);
+  if (labels.size() < 6)
+    {
+    qWarning("ctkAxesWidget::setAxesLabels() failed: At least 6 labels are expected.");
+    return false;
+    }
+
+  if (labels == d->AxesLabels)
+    {
+    return true;
+    }
+
+  d->AxesLabels = labels.mid(0, 6);
+  this->repaint();
+  return true;
+}
+
+// ----------------------------------------------------------------------------------
+QStringList ctkAxesWidget::axesLabels() const
+{
+  Q_D(const ctkAxesWidget);
+  return d->AxesLabels;
 }
 
 // ----------------------------------------------------------------------------------
