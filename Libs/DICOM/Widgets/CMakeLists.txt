@@ -13,6 +13,8 @@ set(KIT_SRCS
   ctkDICOMAppWidget.h
   ctkDICOMBrowser.cpp
   ctkDICOMBrowser.h
+  ctkDICOMObjectModel.cpp
+  ctkDICOMObjectModel.h
   ctkDICOMDirectoryListWidget.cpp
   ctkDICOMDirectoryListWidget.h
   ctkDICOMImage.cpp
@@ -52,6 +54,7 @@ set(KIT_MOC_SRCS
   ctkDICOMImage.h
   ctkDICOMImportWidget.h
   ctkDICOMObjectListWidget.h
+  ctkDICOMObjectModel.h
   ctkDICOMQueryRetrieveWidget.h
   ctkDICOMQueryWidget.h
   ctkDICOMServerNodeWidget.h

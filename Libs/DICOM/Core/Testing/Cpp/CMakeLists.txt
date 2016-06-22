@@ -11,7 +11,6 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMItemTest1.cpp
   ctkDICOMIndexerTest1.cpp
   ctkDICOMModelTest1.cpp
-  ctkDICOMObjectModelTest1.cpp
   ctkDICOMPersonNameTest1.cpp
   ctkDICOMQueryTest1.cpp
   ctkDICOMQueryTest2.cpp
@@ -28,10 +27,6 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 
 add_executable(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
-
-if(CTK_QT_VERSION VERSION_GREATER "4")
-  target_link_libraries(${KIT}CppTests Qt5::Widgets)
-endif()
 
 #
 # Add Tests

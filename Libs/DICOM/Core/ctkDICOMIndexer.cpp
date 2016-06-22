@@ -30,7 +30,6 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QDebug>
-#include <QPixmap>
 
 // ctkDICOM includes
 #include "ctkLogger.h"

@@ -38,8 +38,6 @@ set(KIT_SRCS
   ctkDICOMItem.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
-  ctkDICOMObjectModel.cpp
-  ctkDICOMObjectModel.h
   ctkDICOMPersonName.cpp
   ctkDICOMPersonName.h
   ctkDICOMQuery.cpp
@@ -105,7 +103,6 @@ set(KIT_MOC_SRCS
   ctkDICOMIndexer_p.h
   ctkDICOMFilterProxyModel.h
   ctkDICOMModel.h
-  ctkDICOMObjectModel.h
   ctkDICOMQuery.h
   ctkDICOMRetrieve.h
   ctkDICOMTester.h
@@ -125,7 +122,7 @@ set(KIT_resources
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_target_libraries Qt5::Sql Qt5::Gui)
+  list(APPEND KIT_target_libraries Qt5::Sql)
 endif()
 
 # create a dcm query/retrieve service config file that points to the build dir

@@ -9,6 +9,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMImportWidgetTest1.cpp
   ctkDICOMListenerWidgetTest1.cpp
   ctkDICOMModelTest2.cpp
+  ctkDICOMObjectModelTest1.cpp
   ctkDICOMQueryResultsTabWidgetTest1.cpp
   ctkDICOMQueryRetrieveWidgetTest1.cpp
   ctkDICOMServerNodeWidgetTest1.cpp
