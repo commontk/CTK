@@ -52,8 +52,15 @@ public:
   /// Returns the number of bins. Returns 0 until build() is called.
   virtual int count()const;
 
-  /// Please note that range only works if you have at least set an array.
+  // Set/Get the range of the histogram.
+  // Please note that after an array is set, the range will be reset.
+  // \sa resetRange()
+  virtual void setRange(qreal minRang, qreal maxRange);
   virtual void range(qreal& minRange, qreal& maxRange)const;
+
+  // Reset the range to the array's range.
+  virtual void resetRange();
+
   virtual QVariant minValue()const;
   virtual QVariant maxValue()const;
 
@@ -63,6 +70,8 @@ public:
   void setComponent(int component);
   int component()const;
 
+  // Set the number of bins to use in the histogram. If this is set,
+  // the range will be ignored.
   int numberOfBins()const;
   void setNumberOfBins(int number);
 
