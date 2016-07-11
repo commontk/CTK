@@ -364,7 +364,7 @@ set(CTK_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${VISIBILITY_CXX_FLAGS} ${COVERAGE_CX
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(cflags "-Wall -Wextra -Wpointer-arith -Winvalid-pch -Wcast-align -Wwrite-strings")
   if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    set(cflags "${cflags} -D_FORTIFY_SOURCE=2")
+    set(cflags "${cflags} -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2")
   endif()
 
   ctkFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
