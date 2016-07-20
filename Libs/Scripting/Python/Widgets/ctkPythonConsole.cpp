@@ -143,7 +143,8 @@ int ctkPythonConsoleCompleter::cursorOffset(const QString& completion)
       }
     else if (this->isInUserDefinedClass(currentCompletionText))
       {
-      parameterCount = this->parameterCountUserDefinedClassFunction(QStringList(userDefinedFunctionPath+lineSplit).join("."));
+      // "self" parameter can be ignored
+      parameterCount = this->parameterCountUserDefinedClassFunction(QStringList(userDefinedFunctionPath+lineSplit).join(".")) - 1;
       }
     else
       {
