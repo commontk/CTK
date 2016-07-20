@@ -267,6 +267,10 @@ public:
   /// the line.
   virtual void updateCompletionModel(const QString& str) = 0;
 
+  /// Given the current completion, returns the number by which the
+  /// cursor should be shifted to the left.
+  virtual int cursorOffset(const QString& completion) = 0;
+
   /// Returns the autocomplete preference list
   QStringList autocompletePreferenceList();
 

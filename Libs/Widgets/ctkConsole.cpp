@@ -737,6 +737,7 @@ void ctkConsolePrivate::printWelcomeMessage()
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::insertCompletion(const QString& completion)
 {
+  Q_Q(ctkConsole);
   QTextCursor tc = this->textCursor();
   tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
   if (tc.selectedText()==".")
@@ -751,6 +752,15 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
     tc.insertText(completion);
     this->setTextCursor(tc);
     }
+  tc.movePosition(QTextCursor::StartOfBlock);
+  tc.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+  QString shellLine = tc.selectedText();
+  shellLine.replace(q->ps1(), "");
+  tc.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor);
+  this->setTextCursor(tc);
+  int cursorOffset = this->Completer->cursorOffset(shellLine);
+  tc.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
+  this->setTextCursor(tc);
   this->updateCommandBuffer();
 }
 
