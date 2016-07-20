@@ -113,7 +113,21 @@ int ctkPythonConsoleCompleter::cursorOffset(const QString& completion)
   if (allTextFromShell.contains("()"))
     {
     allTextFromShell.replace("()", "");
-    QStringList lineSplit = allTextFromShell.split(".", QString::KeepEmptyParts);
+    // Search backward through the string for usable characters
+    QString currentCompletionText;
+    for (int i = allTextFromShell.length()-1; i >= 0; --i)
+      {
+      QChar c = allTextFromShell.at(i);
+      if (c.isLetterOrNumber() || c == '.' || c == '_')
+        {
+        currentCompletionText.prepend(c);
+        }
+      else
+        {
+        break;
+        }
+      }
+    QStringList lineSplit = currentCompletionText.split(".", QString::KeepEmptyParts);
     QString functionName = lineSplit.at(lineSplit.length()-1);
     QStringList builtinFunctionPath = QStringList() << "__main__" << "__builtins__";
     QStringList userDefinedFunctionPath = QStringList() << "__main__";
@@ -156,7 +170,6 @@ bool ctkPythonConsoleCompleter::isBuiltInFunction(const QString &pythonFunctionN
 int ctkPythonConsoleCompleter::parameterCountBuiltInFunction(const QString& pythonFunctionName)
 {
   int parameterCount = 0;
-  qDebug() << "In parameterCountBuiltInFunction";
   PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
   if (pFunction && PyObject_HasAttrString(pFunction, "__doc__"))
     {

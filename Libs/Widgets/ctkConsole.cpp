@@ -756,6 +756,7 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
   tc.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
   QString shellLine = tc.selectedText();
   shellLine.replace(q->ps1(), "");
+  shellLine.replace(q->ps2(), "");
   tc.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor);
   this->setTextCursor(tc);
   int cursorOffset = this->Completer->cursorOffset(shellLine);
