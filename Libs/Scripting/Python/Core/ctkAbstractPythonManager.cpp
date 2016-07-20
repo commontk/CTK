@@ -347,7 +347,8 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
   PyObject* dict = PyImport_GetModuleDict();
 
   // Split module by '.' and retrieve the object associated if the last module
-  PyObject* object = 0;
+  QString precedingModule = module;
+  PyObject* object = ctkAbstractPythonManager::pythonModule(precedingModule);
   PyObject* prevObject = 0;
   QStringList moduleList = module.split(".", QString::SkipEmptyParts);
   foreach(const QString& module, moduleList)
@@ -426,6 +427,105 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
     Py_DECREF(object);
     }
   return results;
+}
+
+//-----------------------------------------------------------------------------
+PyObject* ctkAbstractPythonManager::pythonObject(const QString& variableNameAndFunction)
+{
+  QStringList variableNameAndFunctionList = variableNameAndFunction.split(".");
+  QString compareFunction = variableNameAndFunctionList.last();
+  variableNameAndFunctionList.removeLast();
+  QString pythonVariableName = variableNameAndFunctionList.last();
+  variableNameAndFunctionList.removeLast();
+  QString precedingModules = variableNameAndFunctionList.join(".");
+
+  Q_ASSERT(PyThreadState_GET()->interp);
+  PyObject* object = ctkAbstractPythonManager::pythonModule(precedingModules);
+  if (!object)
+    {
+    return NULL;
+    }
+  if (!pythonVariableName.isEmpty())
+    {
+    QStringList tmpNames = pythonVariableName.split('.');
+    for (int i = 0; i < tmpNames.size() && object; ++i)
+      {
+      QByteArray tmpName = tmpNames.at(i).toLatin1();
+      PyObject* prevObj = object;
+      if (PyDict_Check(object))
+        {
+        object = PyDict_GetItemString(object, tmpName.data());
+        Py_XINCREF(object);
+        }
+      else
+        {
+        object = PyObject_GetAttrString(object, tmpName.data());
+        }
+        Py_DECREF(prevObj);
+      }
+    }
+  PyObject* finalPythonObject = NULL;
+  if (object)
+    {
+    PyObject* keys = PyObject_Dir(object);
+    if (keys)
+      {
+      PyObject* key;
+      PyObject* value;
+      int nKeys = PyList_Size(keys);
+      for (int i = 0; i < nKeys; ++i)
+        {
+        key = PyList_GetItem(keys, i);
+        value = PyObject_GetAttr(object, key);
+        if (!value)
+          {
+          continue;
+          }
+        QString keyStr = PyString_AsString(key);
+        if (keyStr.operator ==(compareFunction))
+          {
+          finalPythonObject = value;
+          break;
+          }
+        Py_DECREF(value);
+        }
+      Py_DECREF(keys);
+      }
+    Py_DECREF(object);
+    }
+  return finalPythonObject;
+}
+
+//-----------------------------------------------------------------------------
+PyObject* ctkAbstractPythonManager::pythonModule(const QString& module)
+{
+  PyObject* dict = PyImport_GetModuleDict();
+  PyObject* object = 0;
+  PyObject* prevObject = 0;
+  QStringList moduleList = module.split(".", QString::KeepEmptyParts);
+  if (!dict)
+    {
+    return object;
+    }
+  foreach(const QString& module, moduleList)
+    {
+    object = PyDict_GetItemString(dict, module.toAscii().data());
+    if (prevObject)
+      {
+      Py_DECREF(prevObject);
+      }
+    if (!object)
+      {
+      break;
+      }
+    Py_INCREF(object); // This is required, otherwise python destroys object.
+    if (PyObject_HasAttrString(object, "__dict__"))
+      {
+      dict = PyObject_GetAttrString(object, "__dict__");
+      }\
+    prevObject = object;
+    }
+  return object;
 }
 
 //-----------------------------------------------------------------------------
