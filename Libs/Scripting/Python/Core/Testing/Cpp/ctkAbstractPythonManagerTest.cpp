@@ -55,7 +55,15 @@ private Q_SLOTS:
   void testExecuteFile_data();
 
   //void testPythonAttributes(); // TODO
+
+  void testPythonModule();
+  void testPythonModule_data();
+
+  void testPythonObject();
+  void testPythonObject_data();
 };
+
+Q_DECLARE_METATYPE(PyObject*)
 
 // ----------------------------------------------------------------------------
 void ctkAbstractPythonManagerTester::testDefaults()
@@ -260,6 +268,98 @@ void ctkAbstractPythonManagerTester::testExecuteFile_data()
 
   QTest::newRow("3-check __file__ attribute") << QString("print 'This file is: %s' % __file__")
                      << false;
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonModule()
+{
+  QFETCH(QString, pythonCode);
+  QFETCH(QString, inputModuleList);
+  QFETCH(QString, expectedReturnedString);
+
+  this->PythonManager.executeString(pythonCode);
+  PyObject* returnedPyObject = this->PythonManager.pythonModule(inputModuleList);
+  PyObject* returnedPyString;
+  if(returnedPyObject)
+    {
+    returnedPyString = PyObject_GetAttrString(returnedPyObject, "__name__");
+    }
+  else
+    {
+    returnedPyString = PyString_FromString("");
+    }
+  QString returnedString = PyString_AsString(returnedPyString);
+  QCOMPARE(returnedString, expectedReturnedString);
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonModule_data()
+{
+  QTest::addColumn<QString>("pythonCode");
+  QTest::addColumn<QString>("inputModuleList");
+  QTest::addColumn<QString>("expectedReturnedString");
+
+  QTest::newRow("0") << ""
+                     << "__main__"
+                     << "__main__";
+
+  QTest::newRow("1") << ""
+                     << "__main__.__builtins__"
+                     << "__builtin__";
+
+  QTest::newRow("2") << "class foo: pass"
+                     << "__main__.foo"
+                     << "foo";
+
+  QTest::newRow("3") << ""
+                     << "__main__.NOT_A_MODULE"
+                     << "";
+}
+
+//-----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonObject()
+{
+  QFETCH(QString, pythonCode);
+  QFETCH(QString, inputPythonVariableNameAndFunction);
+  QFETCH(QString, expectedReturnedString);
+
+  this->PythonManager.executeString(pythonCode);
+  PyObject* returnedPyObject = this->PythonManager.pythonObject(inputPythonVariableNameAndFunction);
+  PyObject* returnedPyObjectString;
+  if (returnedPyObject)
+    {
+    returnedPyObjectString = PyObject_GetAttrString(returnedPyObject, "__name__");
+    }
+  else
+    {
+    returnedPyObjectString = PyString_FromString("");
+    }
+  QString returnedString = PyString_AsString(returnedPyObjectString);
+  QCOMPARE(returnedString, expectedReturnedString);
+}
+
+//-----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonObject_data()
+{
+  QTest::addColumn<QString>("pythonCode");
+  QTest::addColumn<QString>("inputPythonVariableNameAndFunction");
+  QTest::addColumn<QString>("expectedReturnedString");
+
+  QTest::newRow("0") << "foo = []"
+                     << "__main__.foo.append"
+                     << "append";
+
+  QTest::newRow("1") << ""
+                     << "__main__.__builtins__.dir"
+                     << "dir";
+
+  QTest::newRow("2") << "class foo: bar = []"
+                     << "__main__.foo.bar.reverse"
+                     << "reverse";
+
+  QTest::newRow("3") << ""
+                     << "__main__.__builtins__.NOT_A_FUNCTION"
+                     << "";
 }
 
 // ----------------------------------------------------------------------------
