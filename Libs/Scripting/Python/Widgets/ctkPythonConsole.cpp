@@ -88,8 +88,10 @@ public:
   virtual void updateCompletionModel(const QString& completion);
 
 protected:
+  bool isInUserDefinedClass(const QString &pythonFunctionPath);
   bool isUserDefinedFunction(const QString &pythonFunctionName);
   bool isBuiltInFunction(const QString &pythonFunctionName);
+  int parameterCountUserDefinedClassFunction(const QString &pythonFunctionName);
   int parameterCountBuiltInFunction(const QString& pythonFunctionName);
   int parameterCountUserDefinedFunction(const QString& pythonFunctionName);
   int parameterCountFromDocumentation(const QString& pythonFunctionPath);
@@ -139,6 +141,10 @@ int ctkPythonConsoleCompleter::cursorOffset(const QString& completion)
       {
       parameterCount = this->parameterCountUserDefinedFunction(QStringList(userDefinedFunctionPath+lineSplit).join("."));
       }
+    else if (this->isInUserDefinedClass(currentCompletionText))
+      {
+      parameterCount = this->parameterCountUserDefinedClassFunction(QStringList(userDefinedFunctionPath+lineSplit).join("."));
+      }
     else
       {
       QStringList variableNameAndFunctionList = userDefinedFunctionPath + lineSplit;
@@ -153,6 +159,12 @@ int ctkPythonConsoleCompleter::cursorOffset(const QString& completion)
   return cursorOffset;
 }
 
+
+//---------------------------------------------------------------------------
+bool ctkPythonConsoleCompleter::isInUserDefinedClass(const QString &pythonFunctionPath)
+{
+  return this->PythonManager.pythonAttributes(pythonFunctionPath).contains("__func__");
+}
 
 //---------------------------------------------------------------------------
 bool ctkPythonConsoleCompleter::isUserDefinedFunction(const QString &pythonFunctionName)
@@ -202,6 +214,28 @@ int ctkPythonConsoleCompleter::parameterCountUserDefinedFunction(const QString& 
         }
       Py_DECREF(fc);
        }
+    }
+  return parameterCount;
+}
+
+//----------------------------------------------------------------------------
+int ctkPythonConsoleCompleter::parameterCountUserDefinedClassFunction(const QString& pythonFunctionName)
+{
+  int parameterCount = 0;
+  PyObject* pFunction = this->PythonManager.pythonObject(pythonFunctionName);
+  if (PyCallable_Check(pFunction))
+    {
+    PyObject* fc = PyObject_GetAttrString(pFunction, "func_code");
+    if (fc)
+      {
+      PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
+      if (ac)
+        {
+        parameterCount = PyInt_AsLong(ac);
+        Py_DECREF(ac);
+        }
+      Py_DECREF(fc);
+      }
     }
   return parameterCount;
 }
