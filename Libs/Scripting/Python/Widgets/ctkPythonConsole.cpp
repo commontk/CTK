@@ -275,13 +275,29 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
     return;
     }
 
+  bool appendParenthesis = true;
+
+  int numeberOfParenthesisClosed = 0;
   // Search backward through the string for usable characters
   QString textToComplete;
   for (int i = completion.length()-1; i >= 0; --i)
     {
     QChar c = completion.at(i);
-    if (c.isLetterOrNumber() || c == '.' || c == '_')
+    if (c.isLetterOrNumber() || c == '.' || c == '_' || c == '(' || c == ')' || c.isSymbol() || c.isPunct() || c.isSpace())
       {
+      if (c == '(')
+        {
+        if (numeberOfParenthesisClosed>0)
+          {
+          numeberOfParenthesisClosed--;
+          }
+        else
+          break; // stop to prepend
+        }
+      if (c == ')')
+        {
+        numeberOfParenthesisClosed++;
+        }
       textToComplete.prepend(c);
       }
     else
@@ -300,16 +316,23 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
     compareText = compareText.mid(dot+1);
     }
 
+  QString module = "__main__";
+  //qDebug() << "module" << module;
+  //qDebug() << "lookup" << lookup;
+  //qDebug() << "compareText" << compareText;
+
   // Lookup python names
   QStringList attrs;
   if (!lookup.isEmpty() || !compareText.isEmpty())
     {
-    bool appendParenthesis = true;
-    attrs = this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__"), appendParenthesis);
-    attrs << this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__.__builtins__"),
+    attrs = this->PythonManager.pythonAttributes(lookup, module.toLatin1(), appendParenthesis);
+    module = "__main__.__builtins__";
+    attrs << this->PythonManager.pythonAttributes(lookup, module.toLatin1(),
                                                   appendParenthesis);
     attrs.removeDuplicates();
     }
+
+  //qDebug() << "attrs" << attrs;
 
   // Initialize the completion model
   if (!attrs.isEmpty())
@@ -319,7 +342,6 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
     this->setCaseSensitivity(Qt::CaseInsensitive);
     this->setCompletionPrefix(compareText.toLower());
 
-    //qDebug() << "completion" << completion;
     // If a dot as been entered and if an item of possible
     // choices matches one of the preference list, it will be selected.
     QModelIndex preferredIndex = this->completionModel()->index(0, 0);
