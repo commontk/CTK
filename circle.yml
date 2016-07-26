@@ -1,0 +1,12 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker pull commontk/ctk-test
+
+test:
+  override:
+    - docker run -v ~/CTK:/usr/src/CTK -v ~/CTK-build:/usr/src/CTK-build commontk/ctk-test /usr/src/CTK/CMake/CircleCI/test.sh
