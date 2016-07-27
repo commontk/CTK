@@ -18,5 +18,5 @@ cmake \
 
 make -j3 || die "examples build failed"
 
-cd CTK-build
+cd /usr/src/CTK-build/CTK-build || die "Could not cd into the build directory"
 ctest -VV -D Experimental || die "ctest failed"

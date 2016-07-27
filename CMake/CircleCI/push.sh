@@ -5,4 +5,4 @@ die() {
   exit 1;
 }
 
-docker push commontk/ctk-test
+docker push commontk/ctk-test:opengl
