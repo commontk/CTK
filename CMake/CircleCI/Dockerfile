@@ -1,12 +1,8 @@
-FROM debian:8
+FROM thewtex/opengl:v0.1.0
 MAINTAINER Insight Software Consortium <community@itk.org>
 
 RUN apt-get update && apt-get install -y \
-  build-essential \
-  cmake \
-  git \
-  qt4-dev-tools
+  qt4-dev-tools \
+  cmake
 
-
-
-WORKDIR /usr/src
+ENV APP "sudo chown -R user.user /usr/src/ && /usr/src/CTK/CMake/CircleCI/test.sh"
