@@ -12,8 +12,9 @@ mkdir /usr/src/CTK-build
 cd /usr/src/CTK-build || die "Could not cd into the build directory"
 
 cmake \
-  -DCMAKE_BUILD_TYPE:STRING=Release \
+  -DCMAKE_BUILD_TYPE:STRING=Debug \
   -DBUILD_TESTING:BOOL=ON \
+  -DCTK_BUILD_EXAMPLES:BOOL=ON \
     /usr/src/CTK || die "CMake configuration failed"
 
 make -j3 || die "examples build failed"
