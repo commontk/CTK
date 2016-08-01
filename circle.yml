@@ -1,0 +1,12 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker pull commontk/ctk-test:opengl
+
+test:
+  override:
+    - ~/CTK/CMake/CircleCI/run.sh $CIRCLE_SHA1 $CIRCLE_BRANCH $SITE_BUILD_TYPE
