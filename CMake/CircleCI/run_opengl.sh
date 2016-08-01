@@ -114,7 +114,7 @@ if [ -z "$quiet" ]; then
 	fi
 fi
 
-pwd_dir="$(pwd)"
+pwd_dir="`cd $(dirname $0)/../..; pwd`"
 mount_local=""
 if [ "${os}" = "Linux" ] || [ "${os}" = "Darwin" ]; then
 	mount_local=" -v ${pwd_dir}:/usr/src/CTK "
@@ -144,7 +144,7 @@ print_app_output() {
 trap "docker stop $container >/dev/null && print_app_output" SIGINT SIGTERM
 
 docker wait $container >/dev/null
-echo "avant"
+
 print_app_output
-echo "apres"
+
 # vim: noexpandtab shiftwidth=4 tabstop=4 softtabstop=0
