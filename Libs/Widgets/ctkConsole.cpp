@@ -749,6 +749,11 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
     }
   else
     {
+    //can't more autocomplete when there is "()"
+    tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
+    if (tc.selectedText()=="()")
+      return;
+
     tc = this->textCursor();
     tc.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
     tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
