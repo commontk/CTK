@@ -9,4 +9,4 @@ dependencies:
 
 test:
   override:
-    - ~/CTK/CMake/CircleCI/run.sh
+    - ~/CTK/CMake/CircleCI/run.sh $CIRCLE_SHA1 $CIRCLE_BRANCH $SITE_BUILD_TYPE
