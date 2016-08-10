@@ -540,6 +540,7 @@ void ctkConsolePrivate::updateCompleter()
     QTextCursor text_cursor = this->textCursor();
     text_cursor.setPosition(this->InteractivePosition, QTextCursor::KeepAnchor);
     QString commandText = text_cursor.selectedText();
+    commandText.remove("()");
 
     // Call the completer to update the completion model
     this->Completer->updateCompletionModel(commandText);
@@ -737,7 +738,10 @@ void ctkConsolePrivate::printWelcomeMessage()
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::insertCompletion(const QString& completion)
 {
+  Q_Q(ctkConsole);
   QTextCursor tc = this->textCursor();
+  QTextCursor endOfCompletion = this->textCursor();
+  endOfCompletion.setPosition(tc.position());
   tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
   if (tc.selectedText()==".")
     {
@@ -745,12 +749,28 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
     }
   else
     {
+    //can't more autocomplete when there is "()"
+    tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
+    if (tc.selectedText()=="()")
+      return;
+
     tc = this->textCursor();
+    tc.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
     tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
     tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
     tc.insertText(completion);
+    endOfCompletion.setPosition(tc.position());
     this->setTextCursor(tc);
     }
+  tc.movePosition(QTextCursor::StartOfBlock,QTextCursor::KeepAnchor);
+  QString shellLine = tc.selectedText();
+  shellLine.replace(q->ps1(), "");
+  shellLine.replace(q->ps2(), "");
+  tc.setPosition(endOfCompletion.position());
+  this->setTextCursor(tc);
+  int cursorOffset = this->Completer->cursorOffset(shellLine);
+  tc.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
+  this->setTextCursor(tc);
   this->updateCommandBuffer();
 }
 
