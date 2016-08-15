@@ -82,117 +82,291 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkPythonConsoleCompleter : public ctkConsoleCompleter
 {
 public:
-  ctkPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager)
-    : PythonManager(pythonManager)
+  ctkPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager);
+
+  virtual int cursorOffset(const QString& completion);
+  virtual void updateCompletionModel(const QString& completion);
+
+protected:
+  bool isInUserDefinedClass(const QString &pythonFunctionPath);
+  bool isUserDefinedFunction(const QString &pythonFunctionName);
+  bool isBuiltInFunction(const QString &pythonFunctionName);
+  int parameterCountUserDefinedClassFunction(const QString &pythonFunctionName);
+  int parameterCountBuiltInFunction(const QString& pythonFunctionName);
+  int parameterCountUserDefinedFunction(const QString& pythonFunctionName);
+  int parameterCountFromDocumentation(const QString& pythonFunctionPath);
+
+  ctkAbstractPythonManager& PythonManager;
+};
+
+//----------------------------------------------------------------------------
+ctkPythonConsoleCompleter::ctkPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager)
+  : PythonManager(pythonManager)
+  {
+  this->setParent(&pythonManager);
+  }
+
+//----------------------------------------------------------------------------
+int ctkPythonConsoleCompleter::cursorOffset(const QString& completion)
+{
+  QString allTextFromShell = completion;
+  int parameterCount = 0;
+  int cursorOffset = 0;
+  if (allTextFromShell.contains("()"))
     {
-    this->setParent(&pythonManager);
-    }
-
-  virtual void updateCompletionModel(const QString& completion)
-    {
-    // Start by clearing the model
-    this->setModel(0);
-
-    // Don't try to complete the empty string
-    if (completion.isEmpty())
-      {
-      return;
-      }
-
+    allTextFromShell.replace("()", "");
     // Search backward through the string for usable characters
-    QString textToComplete;
-    for (int i = completion.length()-1; i >= 0; --i)
+    QString currentCompletionText;
+    for (int i = allTextFromShell.length()-1; i >= 0; --i)
       {
-      QChar c = completion.at(i);
+      QChar c = allTextFromShell.at(i);
       if (c.isLetterOrNumber() || c == '.' || c == '_')
         {
-        textToComplete.prepend(c);
+        currentCompletionText.prepend(c);
         }
       else
         {
         break;
         }
       }
-
-    // Split the string at the last dot, if one exists
-    QString lookup;
-    QString compareText = textToComplete;
-    int dot = compareText.lastIndexOf('.');
-    if (dot != -1)
+    QStringList lineSplit = currentCompletionText.split(".", QString::KeepEmptyParts);
+    QString functionName = lineSplit.at(lineSplit.length()-1);
+    QStringList builtinFunctionPath = QStringList() << "__main__" << "__builtins__";
+    QStringList userDefinedFunctionPath = QStringList() << "__main__";
+    if (this->isBuiltInFunction(functionName))
       {
-      lookup = compareText.mid(0, dot);
-      compareText = compareText.mid(dot+1);
+      parameterCount = this->parameterCountBuiltInFunction(QStringList(builtinFunctionPath+lineSplit).join("."));
       }
-
-    // Lookup python names
-    QStringList attrs;
-    if (!lookup.isEmpty() || !compareText.isEmpty())
+    else if (this->isUserDefinedFunction(functionName))
       {
-      bool appendParenthesis = true;
-      attrs = this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__"), appendParenthesis);
-      attrs << this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__.__builtins__"),
-                                                    appendParenthesis);
-      attrs.removeDuplicates();
+      parameterCount = this->parameterCountUserDefinedFunction(QStringList(userDefinedFunctionPath+lineSplit).join("."));
       }
-
-    // Initialize the completion model
-    if (!attrs.isEmpty())
+    else if (this->isInUserDefinedClass(currentCompletionText))
       {
-      this->setCompletionMode(QCompleter::PopupCompletion);
-      this->setModel(new QStringListModel(attrs, this));
-      this->setCaseSensitivity(Qt::CaseInsensitive);
-      this->setCompletionPrefix(compareText.toLower());
-      
-      //qDebug() << "completion" << completion;
-      // If a dot as been entered and if an item of possible
-      // choices matches one of the preference list, it will be selected.
-      QModelIndex preferredIndex = this->completionModel()->index(0, 0);
-      int dotCount = completion.count('.');
-      if (dotCount == 0 || completion.at(completion.count() - 1) == '.')
-        {
-        foreach(const QString& pref, this->AutocompletePreferenceList)
-          {
-          //qDebug() << "pref" << pref;
-          int dotPref = pref.count('.');
-          // Skip if there are dots in pref and if the completion has already more dots 
-          // than the pref
-          if ((dotPref != 0) && (dotCount > dotPref))
-            {
-            continue;
-            }
-          // Extract string before the last dot
-          int lastDot = pref.lastIndexOf('.');
-          QString prefBeforeLastDot;
-          if (lastDot != -1)
-            {
-            prefBeforeLastDot = pref.left(lastDot);
-            }
-          //qDebug() << "prefBeforeLastDot" << prefBeforeLastDot;
-          if (!prefBeforeLastDot.isEmpty() && QString::compare(prefBeforeLastDot, lookup) != 0)
-            {
-            continue;
-            }
-          QString prefAfterLastDot = pref;
-          if (lastDot != -1 )
-            {
-            prefAfterLastDot = pref.right(pref.size() - lastDot - 1);
-            }
-          //qDebug() << "prefAfterLastDot" << prefAfterLastDot;
-          QModelIndexList list = this->completionModel()->match(
-                this->completionModel()->index(0, 0), Qt::DisplayRole, QVariant(prefAfterLastDot));
-          if (list.count() > 0)
-            {
-            preferredIndex = list.first();
-            break;
-            }
-          }
-        }
-
-      this->popup()->setCurrentIndex(preferredIndex);
+      // "self" parameter can be ignored
+      parameterCount = this->parameterCountUserDefinedClassFunction(QStringList(userDefinedFunctionPath+lineSplit).join(".")) - 1;
+      }
+    else
+      {
+      QStringList variableNameAndFunctionList = userDefinedFunctionPath + lineSplit;
+      QString variableNameAndFunction = variableNameAndFunctionList.join(".");
+      parameterCount = this->parameterCountFromDocumentation(variableNameAndFunction);
       }
     }
-  ctkAbstractPythonManager& PythonManager;
-};
+  if (parameterCount > 0)
+    {
+    cursorOffset = 1;
+    }
+  return cursorOffset;
+}
+
+
+//---------------------------------------------------------------------------
+bool ctkPythonConsoleCompleter::isInUserDefinedClass(const QString &pythonFunctionPath)
+{
+  return this->PythonManager.pythonAttributes(pythonFunctionPath).contains("__func__");
+}
+
+//---------------------------------------------------------------------------
+bool ctkPythonConsoleCompleter::isUserDefinedFunction(const QString &pythonFunctionName)
+{
+  return this->PythonManager.pythonAttributes(pythonFunctionName).contains("__call__");
+}
+
+//---------------------------------------------------------------------------
+bool ctkPythonConsoleCompleter::isBuiltInFunction(const QString &pythonFunctionName)
+{
+  return this->PythonManager.pythonAttributes(pythonFunctionName, QLatin1String("__main__.__builtins__")).contains("__call__");
+}
+
+//---------------------------------------------------------------------------
+int ctkPythonConsoleCompleter::parameterCountBuiltInFunction(const QString& pythonFunctionName)
+{
+  int parameterCount = 0;
+  PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
+  if (pFunction && PyObject_HasAttrString(pFunction, "__doc__"))
+    {
+    PyObject* pDoc = PyObject_GetAttrString(pFunction, "__doc__");
+    QString docString = PyString_AsString(pDoc);
+    QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
+    QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
+    parameterCount = arguments.count();
+    Py_DECREF(pDoc);
+    Py_DECREF(pFunction);
+    }
+  return parameterCount;
+}
+
+//----------------------------------------------------------------------------
+int ctkPythonConsoleCompleter::parameterCountUserDefinedFunction(const QString& pythonFunctionName)
+{
+  int parameterCount = 0;
+  PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
+  if (PyCallable_Check(pFunction))
+    {
+    PyObject* fc = PyObject_GetAttrString(pFunction, "func_code");
+    if (fc)
+       {
+      PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
+      if (ac)
+        {
+        parameterCount = PyInt_AsLong(ac);
+        Py_DECREF(ac);
+        }
+      Py_DECREF(fc);
+       }
+    }
+  return parameterCount;
+}
+
+//----------------------------------------------------------------------------
+int ctkPythonConsoleCompleter::parameterCountUserDefinedClassFunction(const QString& pythonFunctionName)
+{
+  int parameterCount = 0;
+  PyObject* pFunction = this->PythonManager.pythonObject(pythonFunctionName);
+  if (PyCallable_Check(pFunction))
+    {
+    PyObject* fc = PyObject_GetAttrString(pFunction, "func_code");
+    if (fc)
+      {
+      PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
+      if (ac)
+        {
+        parameterCount = PyInt_AsLong(ac);
+        Py_DECREF(ac);
+        }
+      Py_DECREF(fc);
+      }
+    }
+  return parameterCount;
+}
+
+//----------------------------------------------------------------------------
+int ctkPythonConsoleCompleter::parameterCountFromDocumentation(const QString& pythonFunctionPath)
+{
+  int parameterCount = 0;
+  PyObject* pFunction = this->PythonManager.pythonObject(pythonFunctionPath);
+  if (pFunction)
+    {
+    if (PyObject_HasAttrString(pFunction, "__call__"))
+      {
+      PyObject* pDoc = PyObject_GetAttrString(pFunction, "__doc__");
+      if (PyString_Check(pDoc))
+        {
+        QString docString = PyString_AsString(pDoc);
+        QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
+        QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
+        parameterCount = arguments.count();
+        }
+      }
+    Py_DECREF(pFunction);
+    }
+  return parameterCount;
+}
+
+void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
+{
+  // Start by clearing the model
+  this->setModel(0);
+
+  // Don't try to complete the empty string
+  if (completion.isEmpty())
+    {
+    return;
+    }
+
+  // Search backward through the string for usable characters
+  QString textToComplete;
+  for (int i = completion.length()-1; i >= 0; --i)
+    {
+    QChar c = completion.at(i);
+    if (c.isLetterOrNumber() || c == '.' || c == '_')
+      {
+      textToComplete.prepend(c);
+      }
+    else
+      {
+      break;
+      }
+   }
+
+  // Split the string at the last dot, if one exists
+  QString lookup;
+  QString compareText = textToComplete;
+  int dot = compareText.lastIndexOf('.');
+  if (dot != -1)
+    {
+    lookup = compareText.mid(0, dot);
+    compareText = compareText.mid(dot+1);
+    }
+
+  // Lookup python names
+  QStringList attrs;
+  if (!lookup.isEmpty() || !compareText.isEmpty())
+    {
+    bool appendParenthesis = true;
+    attrs = this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__"), appendParenthesis);
+    attrs << this->PythonManager.pythonAttributes(lookup, QLatin1String("__main__.__builtins__"),
+                                                  appendParenthesis);
+    attrs.removeDuplicates();
+    }
+
+  // Initialize the completion model
+  if (!attrs.isEmpty())
+    {
+    this->setCompletionMode(QCompleter::PopupCompletion);
+    this->setModel(new QStringListModel(attrs, this));
+    this->setCaseSensitivity(Qt::CaseInsensitive);
+    this->setCompletionPrefix(compareText.toLower());
+
+    //qDebug() << "completion" << completion;
+    // If a dot as been entered and if an item of possible
+    // choices matches one of the preference list, it will be selected.
+    QModelIndex preferredIndex = this->completionModel()->index(0, 0);
+    int dotCount = completion.count('.');
+    if (dotCount == 0 || completion.at(completion.count() - 1) == '.')
+      {
+      foreach(const QString& pref, this->AutocompletePreferenceList)
+        {
+        //qDebug() << "pref" << pref;
+        int dotPref = pref.count('.');
+        // Skip if there are dots in pref and if the completion has already more dots
+        // than the pref
+        if ((dotPref != 0) && (dotCount > dotPref))
+          {
+          continue;
+          }
+        // Extract string before the last dot
+        int lastDot = pref.lastIndexOf('.');
+        QString prefBeforeLastDot;
+        if (lastDot != -1)
+          {
+          prefBeforeLastDot = pref.left(lastDot);
+          }
+        //qDebug() << "prefBeforeLastDot" << prefBeforeLastDot;
+        if (!prefBeforeLastDot.isEmpty() && QString::compare(prefBeforeLastDot, lookup) != 0)
+          {
+          continue;
+          }
+        QString prefAfterLastDot = pref;
+        if (lastDot != -1 )
+          {
+          prefAfterLastDot = pref.right(pref.size() - lastDot - 1);
+          }
+        //qDebug() << "prefAfterLastDot" << prefAfterLastDot;
+        QModelIndexList list = this->completionModel()->match(
+              this->completionModel()->index(0, 0), Qt::DisplayRole, QVariant(prefAfterLastDot));
+        if (list.count() > 0)
+          {
+          preferredIndex = list.first();
+          break;
+          }
+        }
+      }
+
+    this->popup()->setCurrentIndex(preferredIndex);
+    }
+}
 
 //----------------------------------------------------------------------------
 // ctkPythonConsolePrivate
