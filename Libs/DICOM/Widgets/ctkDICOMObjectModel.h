@@ -30,14 +30,14 @@
 #include <QStandardItemModel>
 #include <QString>
 
-#include "ctkDICOMCoreExport.h"
+#include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMObjectModelPrivate;
-/// \ingroup DICOM_Core
+/// \ingroup DICOM_Widgets
 ///
 /// \brief Provides a Qt MVC-compatible wrapper around a ctkDICOMItem.
 ///
-class CTK_DICOM_CORE_EXPORT ctkDICOMObjectModel
+class CTK_DICOM_WIDGETS_EXPORT ctkDICOMObjectModel
   : public QStandardItemModel
 {
   Q_OBJECT
