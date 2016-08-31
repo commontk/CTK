@@ -117,6 +117,7 @@ int main(int argc, char** argv)
     console.completer()->setAutocompletePreferenceList(list);
 
     pythonManager.addObjectToPythonMain("_ctkPythonConsoleInstance", &console);
+    pythonManager.addObjectToPythonMain("_ctkPythonManagerInstance", &pythonManager);
 
     ctkTestWrappedQProperty testWrappedQProperty;
     pythonManager.addObjectToPythonMain("_testWrappedQPropertyInstance", &testWrappedQProperty);
