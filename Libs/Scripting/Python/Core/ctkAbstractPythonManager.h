@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QList>
 #include <QStringList>
+#include <QVariant>
 
 // PythonQt includes
 #include <PythonQtPythonInclude.h> // For PyObject
@@ -90,14 +91,14 @@ public:
 
   /// Execute a python of python code (can be multiple lines separated with newline)
   /// and return the result as a QVariant.
-  QVariant executeString(const QString& code, ExecuteStringMode mode = FileInput);
+  Q_INVOKABLE QVariant executeString(const QString& code, ExecuteStringMode mode = FileInput);
 
   /// Gets the value of the variable looking in the __main__ module.
   /// If the variable is not found returns a default initialized QVariant.
   QVariant getVariable(const QString& varName);
 
   /// Execute a python script with the given filename.
-  void executeFile(const QString& filename);
+  Q_INVOKABLE void executeFile(const QString& filename);
 
   /// Set function that is initialized after preInitialization and before executeInitializationScripts
   /// \sa preInitialization executeInitializationScripts
