@@ -291,7 +291,8 @@ void ctkXnatTreeModel::refresh(const QModelIndex& parent)
       // -> add it to the treeview
       if (addToTreeView)
       {
-        beginInsertRows(parent, 0, numChildren - 1);
+        int last = qMax(0, numChildren - 1);
+        beginInsertRows(parent, 0, last);
         item->appendChild(new ctkXnatTreeItem(child, item));
         endInsertRows();
         ++numChildren;
