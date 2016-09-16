@@ -97,7 +97,7 @@ void ctkVTKRenderViewPrivate::zoom(double zoomFactor)
 }
 
 //---------------------------------------------------------------------------
-void ctkVTKRenderViewPrivate::pitch(int rotateDegrees,
+void ctkVTKRenderViewPrivate::pitch(double rotateDegrees,
                                     ctkVTKRenderView::RotateDirection pitchDirection)
 {
   Q_ASSERT(this->Renderer->IsActiveCameraCreated());
@@ -109,7 +109,7 @@ void ctkVTKRenderViewPrivate::pitch(int rotateDegrees,
 }
 
 //---------------------------------------------------------------------------
-void ctkVTKRenderViewPrivate::roll(int rotateDegrees,
+void ctkVTKRenderViewPrivate::roll(double rotateDegrees,
                                     ctkVTKRenderView::RotateDirection rollDirection)
 {
   Q_ASSERT(this->Renderer->IsActiveCameraCreated());
@@ -122,7 +122,7 @@ void ctkVTKRenderViewPrivate::roll(int rotateDegrees,
 }
 
 //---------------------------------------------------------------------------
-void ctkVTKRenderViewPrivate::yaw(int rotateDegrees,
+void ctkVTKRenderViewPrivate::yaw(double rotateDegrees,
                                     ctkVTKRenderView::RotateDirection yawDirection)
 {
   Q_ASSERT(this->Renderer->IsActiveCameraCreated());
@@ -177,7 +177,7 @@ void ctkVTKRenderViewPrivate::doRock()
 
   double frac = static_cast<double>(this->RockIncrement) / static_cast<double>(this->RockLength);
   double az = 1.5 * cos (2.0 * 3.1415926 * (frac - floor(frac)));
-  this->RockIncrement = 1 + this->RockIncrement;
+  this->RockIncrement++;
   this->RockIncrement = this->RockIncrement % this->RockLength;
 
   // Move the camera
@@ -259,10 +259,10 @@ void ctkVTKRenderView::resetCamera()
 CTK_GET_CPP(ctkVTKRenderView, vtkRenderer*, renderer, Renderer);
 
 //----------------------------------------------------------------------------
-CTK_GET_CPP(ctkVTKRenderView, int, pitchRollYawIncrement, PitchRollYawIncrement);
+CTK_GET_CPP(ctkVTKRenderView, double, pitchRollYawIncrement, PitchRollYawIncrement);
 
 //----------------------------------------------------------------------------
-void ctkVTKRenderView::setPitchRollYawIncrement(int newPitchRollYawIncrement)
+void ctkVTKRenderView::setPitchRollYawIncrement(double newPitchRollYawIncrement)
 {
   Q_D(ctkVTKRenderView);
   d->PitchRollYawIncrement = qAbs(newPitchRollYawIncrement);
@@ -368,14 +368,14 @@ void ctkVTKRenderView::setSpinEnabled(bool enabled)
 CTK_GET_CPP(ctkVTKRenderView, bool, spinEnabled, SpinEnabled);
 
 //----------------------------------------------------------------------------
-void ctkVTKRenderView::setSpinIncrement(int newSpinIncrement)
+void ctkVTKRenderView::setSpinIncrement(double newSpinIncrement)
 {
   Q_D(ctkVTKRenderView);
   d->SpinIncrement = qAbs(newSpinIncrement);
 }
 
 //----------------------------------------------------------------------------
-CTK_GET_CPP(ctkVTKRenderView, int, spinIncrement, SpinIncrement);
+CTK_GET_CPP(ctkVTKRenderView, double, spinIncrement, SpinIncrement);
 
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setAnimationIntervalMs(int newAnimationIntervalMs)
@@ -457,7 +457,7 @@ void ctkVTKRenderView::zoomOut()
 }
 
 //----------------------------------------------------------------------------
-void ctkVTKRenderView::setFocalPoint(int x, int y, int z)
+void ctkVTKRenderView::setFocalPoint(double x, double y, double z)
 {
   Q_D(ctkVTKRenderView);
   if (!d->Renderer->IsActiveCameraCreated())

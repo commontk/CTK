@@ -58,9 +58,9 @@ public:
 
   void zoom(double zoomFactor);
 
-  void pitch(int rotateDegrees, ctkVTKRenderView::RotateDirection pitchDirection);
-  void roll(int rotateDegrees, ctkVTKRenderView::RotateDirection rollDirection);
-  void yaw(int rotateDegrees, ctkVTKRenderView::RotateDirection yawDirection);
+  void pitch(double rotateDegrees, ctkVTKRenderView::RotateDirection pitchDirection);
+  void roll(double rotateDegrees, ctkVTKRenderView::RotateDirection rollDirection);
+  void yaw(double rotateDegrees, ctkVTKRenderView::RotateDirection yawDirection);
 
 public Q_SLOTS:
   void doSpin();
@@ -74,14 +74,14 @@ public:
   vtkSmartPointer<vtkOrientationMarkerWidget>   Orientation;
 
   double                                        ZoomFactor;
-  int                                           PitchRollYawIncrement;
+  double                                        PitchRollYawIncrement;
   ctkVTKRenderView::RotateDirection             PitchDirection;
   ctkVTKRenderView::RotateDirection             RollDirection;
   ctkVTKRenderView::RotateDirection             YawDirection;
   ctkVTKRenderView::RotateDirection             SpinDirection;
   bool                                          SpinEnabled;
   int                                           AnimationIntervalMs;
-  int                                           SpinIncrement;
+  double                                        SpinIncrement;
   bool                                          RockEnabled;
   int                                           RockIncrement;
   int                                           RockLength;
