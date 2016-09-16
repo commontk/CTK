@@ -36,14 +36,14 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderView : public ctkVTKAbstr
   Q_PROPERTY(bool orientationWidgetVisible READ orientationWidgetVisible
              WRITE setOrientationWidgetVisible)
   Q_PROPERTY(double zoomFactor READ zoomFactor WRITE setZoomFactor)
-  Q_PROPERTY(int pitchRollYawIncrement READ pitchRollYawIncrement WRITE setPitchRollYawIncrement)
+  Q_PROPERTY(double pitchRollYawIncrement READ pitchRollYawIncrement WRITE setPitchRollYawIncrement)
   Q_ENUMS(RotateDirection)
   Q_PROPERTY(RotateDirection pitchDirection READ pitchDirection WRITE setPitchDirection)
   Q_PROPERTY(RotateDirection rollDirection READ rollDirection WRITE setRollDirection)
   Q_PROPERTY(RotateDirection yawDirection READ yawDirection WRITE setYawDirection)
   Q_PROPERTY(RotateDirection spinDirection READ spinDirection WRITE setSpinDirection)
   Q_PROPERTY(bool spinEnabled READ spinEnabled WRITE setSpinEnabled)
-  Q_PROPERTY(int spinIncrement READ spinIncrement WRITE setSpinIncrement)
+  Q_PROPERTY(double spinIncrement READ spinIncrement WRITE setSpinIncrement)
   Q_PROPERTY(int animationIntervalMs READ animationIntervalMs WRITE setAnimationIntervalMs)
   Q_PROPERTY(bool rockEnabled READ rockEnabled WRITE setRockEnabled)
   Q_PROPERTY(int rockLength READ rockLength WRITE setRockLength)
@@ -63,7 +63,7 @@ public Q_SLOTS:
   /// Set absolute amount degrees the view should be either pitched, rolled or yawed with.
   /// \sa pitch setPitchDirection roll setRollDirection yaw setYawDirection
   /// \note The default is 5 degrees
-  void setPitchRollYawIncrement(int newPitchRollYawIncrement);
+  void setPitchRollYawIncrement(double newPitchRollYawIncrement);
 
   /// Pitch view of X degrees. X been set using setPitchRollYawIncrement
   /// \sa setPitchRollYawIncrement setPitchDirection
@@ -82,7 +82,7 @@ public Q_SLOTS:
 
   /// Set number of degrees in spin increment
   /// \sa setSpinDirection setSpinIntervalMs
-  void setSpinIncrement(int newSpinIncrement);
+  void setSpinIncrement(double newSpinIncrement);
 
   /// Amount of wait time between spin or rock increments
   /// \sa setSpinIncrement setRockIncrement
@@ -91,10 +91,11 @@ public Q_SLOTS:
   /// Enable or Disbled the animated rock of the view
   void setRockEnabled(bool enabled);
 
-  /// Set length of the rock animation
+  /// Set length of a complete rock period (in number of animation steps)
   void setRockLength(int newRockLength);
 
-  /// Set increment of animated rock
+  /// Set current rocking position
+  /// Rocking will be centered around the position where increment is set to 0.
   void setRockIncrement(int newRockIncrement);
 
   /// \brief Set zoom factor
@@ -111,7 +112,7 @@ public Q_SLOTS:
   void zoomOut();
 
   /// Set the focal point
-  void setFocalPoint(int x, int y, int z);
+  void setFocalPoint(double x, double y, double z);
 
   /// \brief Reset focal point
   /// The visible scene bbox is computed, then the camera is recentered around its centroid.
@@ -142,14 +143,14 @@ public:
   virtual void setInteractor(vtkRenderWindowInteractor* interactor);
 
   /// Return pitch, roll or yaw increment (in degree)
-  int pitchRollYawIncrement()const;
+  double pitchRollYawIncrement()const;
 
   /// Return if animated spin is enabled
   bool spinEnabled() const;
 
   /// Return spin increment (in degrees)
   /// \sa setSpinIncrement
-  int spinIncrement()const;
+  double spinIncrement()const;
 
   /// Amount of waiting time between spin or rock increment
   /// \sa setAnimationIntervalMs
@@ -161,7 +162,8 @@ public:
   /// Return length of the rock animation
   int rockLength() const;
 
-  /// Return increment of animated rock
+  /// Return current increment value of animated rock.
+  /// Rocking will be centered around the position where increment is set to 0.
   int rockIncrement() const;
 
   RotateDirection pitchDirection()const;
