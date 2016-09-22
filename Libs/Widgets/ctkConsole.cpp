@@ -60,6 +60,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMimeData>
 #include <QPointer>
 #include <QPushButton>
+#include <QTextBlock>
 #include <QTextCursor>
 #include <QVBoxLayout>
 #include <QScrollBar>
@@ -157,6 +158,8 @@ void ctkConsolePrivate::init()
           SLOT(onScrollBarValueChanged(int)));
   connect(this, SIGNAL(textChanged()), SLOT(onTextChanged()));
   connect(this->RunFileButton, SIGNAL(clicked()), q, SLOT(runFile()));
+  connect(this, SIGNAL(cursorPositionChanged()),
+          q, SIGNAL(cursorPositionChanged()));
 }
 
 //-----------------------------------------------------------------------------
@@ -960,6 +963,38 @@ CTK_SET_CPP(ctkConsole, const QString&, setPs2, Ps2);
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(ctkConsole, ctkConsole::EditorHints, editorHints, EditorHints);
 CTK_SET_CPP(ctkConsole, const ctkConsole::EditorHints&, setEditorHints, EditorHints);
+
+//-----------------------------------------------------------------------------
+int ctkConsole::cursorPosition() const
+{
+  Q_D(const ctkConsole);
+  return d->textCursor().position();
+}
+
+//-----------------------------------------------------------------------------
+int ctkConsole::cursorColumn() const
+{
+  Q_D(const ctkConsole);
+  QTextCursor cursor = d->textCursor();
+  cursor.movePosition(QTextCursor::StartOfLine);
+  return d->textCursor().position() - cursor.position();
+}
+
+//-----------------------------------------------------------------------------
+int ctkConsole::cursorLine() const
+{
+  Q_D(const ctkConsole);
+  QTextCursor cursor = d->textCursor();
+  cursor.movePosition(QTextCursor::StartOfLine);
+  int lines = 1;
+  QTextBlock block = cursor.block().previous();
+  while(block.isValid())
+    {
+    lines += block.lineCount();
+    block = block.previous();
+    }
+  return lines;
+}
 
 //-----------------------------------------------------------------------------
 Qt::ScrollBarPolicy ctkConsole::scrollBarPolicy()const
