@@ -72,8 +72,10 @@ public:
 
   void updateCompleter();
   
-  /// Update the contents of the command buffer from the contents of the widget
-  void updateCommandBuffer();
+  /// Update the contents of the command buffer from the contents of the widget.
+  /// If \a commandLength is specified, buffer is updated limiting the content
+  /// of the widget.
+  void updateCommandBuffer(int commandLength = -1);
   
   /// Replace the contents of the command buffer, updating the display
   void replaceCommandBuffer(const QString& text);
