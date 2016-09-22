@@ -544,8 +544,21 @@ void ctkConsolePrivate::updateCompleter()
     text_cursor.setPosition(this->InteractivePosition, QTextCursor::KeepAnchor);
     QString commandText = text_cursor.selectedText();
 
+    // Save current positions: Since some implementation of
+    // updateCompletionModel (e.g python) can display messages
+    // while building the completion model, it is important to save
+    // and restore the positions.
+    int savedInteractivePosition = this->InteractivePosition;
+    int savedCursorPosition = this->textCursor().position();
+
     // Call the completer to update the completion model
     this->Completer->updateCompletionModel(commandText);
+
+    // Restore positions
+    this->InteractivePosition = savedInteractivePosition;
+    QTextCursor textCursor = this->textCursor();
+    textCursor.setPosition(savedCursorPosition);
+    this->setTextCursor(textCursor);
 
     // Place and show the completer if there are available completions
     if (this->Completer->completionCount())
