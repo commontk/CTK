@@ -76,6 +76,9 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
   Q_PROPERTY(QString ps1 READ ps1 WRITE setPs1)
   Q_PROPERTY(QString ps2 READ ps2 WRITE setPs2)
+  Q_PROPERTY(int cursorPosition READ cursorPosition)
+  Q_PROPERTY(int cursorColumn READ cursorColumn)
+  Q_PROPERTY(int cursorLine READ cursorLine)
   Q_FLAGS(EditorHint EditorHints)
   Q_PROPERTY(EditorHints editorHints READ editorHints WRITE setEditorHints)
   Q_ENUMS(Qt::ScrollBarPolicy)
@@ -184,6 +187,18 @@ public:
   /// Set the string used as secondary prompt
   virtual void setPs2(const QString& newPs2);
 
+  /// Returns the absolute position of the cursor within the console.
+  /// \sa cursorPositionChanged(int)
+  int cursorPosition() const;
+
+  /// Returns the column of the cursor within the console.
+  /// \sa cursorPositionChanged(int)
+  int cursorColumn() const;
+
+  /// Returns the line of the cursor within the console.
+  /// \sa cursorPositionChanged(int)
+  int cursorLine() const;
+
   static QString stdInRedirectCallBack(void * callData);
 
   /// Get the list of shortcuts that trigger the completion options.
@@ -212,6 +227,10 @@ Q_SIGNALS:
   /// This signal emitted before and after a command is executed
   void aboutToExecute(const QString&);
   void executed(const QString&);
+
+  /// This signal is emitted whenever the position of the cursor changed.
+  /// \sa cursorPosition()
+  void cursorPositionChanged();
 
 public Q_SLOTS:
 
