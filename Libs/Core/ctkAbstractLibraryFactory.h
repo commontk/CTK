@@ -56,13 +56,16 @@ public:
   /// Set list of required symbols
   void setSymbols(const QStringList& symbols);
 
-  /// 
+  /// Set lookup hints for symbol resolution. See QLibrary documentation.
+  void setLoadHints(QLibrary::LoadHints hints);
+
+  ///
   /// \brief Resolve symbols
   /// \note The function will return False if it fails to resolve one
   /// of the required symbols set using setSymbols(const QStringList&)
   bool resolve();
-  
-  /// 
+
+  ///
   /// Get symbol address
   SymbolAddressType symbolAddress(const QString& symbol)const;
 

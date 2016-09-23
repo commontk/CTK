@@ -65,6 +65,14 @@ void ctkFactoryLibraryItem<BaseClassType>::setSymbols(const QStringList& symbols
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType>
+void ctkFactoryLibraryItem<BaseClassType>
+::setLoadHints(QLibrary::LoadHints hints)
+{
+  this->Library.setLoadHints(hints);
+}
+
+//-----------------------------------------------------------------------------
+template<typename BaseClassType>
 bool ctkFactoryLibraryItem<BaseClassType>::resolve()
 {
   foreach(const QString& symbol, this->Symbols)
@@ -129,8 +137,8 @@ bool ctkAbstractLibraryFactory<BaseClassType>
 
 //-----------------------------------------------------------------------------
 template<typename BaseClassType>
-void ctkAbstractLibraryFactory<BaseClassType>::
-initItem(ctkAbstractFactoryItem<BaseClassType>* item)
+void ctkAbstractLibraryFactory<BaseClassType>
+::initItem(ctkAbstractFactoryItem<BaseClassType>* item)
 {
   this->ctkAbstractFileBasedFactory<BaseClassType>::initItem(item);
   dynamic_cast<ctkFactoryLibraryItem<BaseClassType>*>(item)->setSymbols(this->Symbols);
