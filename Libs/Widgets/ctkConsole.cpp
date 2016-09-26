@@ -327,6 +327,10 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   const bool selection = text_cursor.anchor() != text_cursor.position();
   // Set to true if the cursor overlaps the history area
   const bool history_area = this->isCursorInHistoryArea();
+  // The message output area is defined just under the command line
+  // and it can display all messages catch during we autocomplete, etc.
+  // Set to true if the cursor overlaps the message output area
+  const bool message_output_area = this->isCursorInMessageOutputArea();
 
   // Allow copying anywhere in the console ...
   if(e == QKeySequence::Copy)
@@ -342,7 +346,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   // Allow cut only if the selection is limited to the interactive area ...
   if(e == QKeySequence::Cut)
     {
-    if(selection && !history_area)
+    if(selection && !history_area && !message_output_area)
       {
       this->cut();
       }
@@ -350,12 +354,12 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     return;
     }
 
-  // Paste to the end of document if in the history area
+  // Paste to the end of commandLine if in the history area or in message output area
   if(e == QKeySequence::Paste)
     {
-    if(history_area)
+    if(history_area || message_output_area)
       {
-      text_cursor.setPosition(this->documentEnd());
+      text_cursor.setPosition(this->commandEnd());
       this->setTextCursor(text_cursor);
       }
     this->paste();
@@ -383,13 +387,15 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   // Force the cursor back to the interactive area if anything else than copy/paste or page up/down is done
   // but only when a "real" key is pressed, not just a modifier (otherwise we could not press Control-c in the
   // history area because the cursor would jump to the interactive area immediately when Control is pressed)
-  if(history_area
+  // Update: message_output_area is like the history_area: we can't modify it
+  if( (history_area
+       || message_output_area)
        && e->key() != Qt::Key_Control
        && e->key() != Qt::Key_Meta
        && e->key() != Qt::Key_Alt
        && e->key() != Qt::Key_Shift)
     {
-    text_cursor.setPosition(this->documentEnd());
+    text_cursor.setPosition(this->commandEnd());
     this->setTextCursor(text_cursor);
     }
 
@@ -436,8 +442,15 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   if (e == QKeySequence::Delete)
     {
     e->accept();
-    this->Superclass::keyPressEvent(e);
-    this->updateCommandBuffer();
+    // Can delete only if we are not at the end of the command line.
+    // There is an exception if something is selected because it will erase the text selected instead.
+    if (text_cursor.position() < this->commandEnd()
+        || (text_cursor.position() <= this->commandEnd()
+             && selection))
+      {
+      this->Superclass::keyPressEvent(e);
+      this->updateCommandBuffer();
+      }
     return;
     }
 
