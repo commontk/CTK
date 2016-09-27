@@ -908,6 +908,10 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
 {
   Q_Q(ctkConsole);
   QTextCursor tc = this->textCursor();
+  // save the initial cursor position
+  QTextCursor endOfCompletion = this->textCursor();
+  endOfCompletion.setPosition(tc.position());
+  // Select the previous charactere
   tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
   if (tc.selectedText()==".")
     {
@@ -915,18 +919,28 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
     }
   else
     {
-    tc = this->textCursor();
+    //can't more autocomplete when cursor right after '(' or ')'
+    if (tc.selectedText()==")" || tc.selectedText()=="(")
+      {
+      return;
+      }
+    tc.clearSelection();
     tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
     tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
     tc.insertText(completion);
+    endOfCompletion.setPosition(tc.position());
     this->setTextCursor(tc);
     }
-  tc.movePosition(QTextCursor::StartOfBlock);
-  tc.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+
+  // Get back the whole command line to apply a cursor offset
+  // (moving cursor between parenthsesis if the completion is
+  // a callable object with more than the self argument)
+  // StartOfBlock don't catch the whole command line if multi-line statement
+  tc.movePosition(QTextCursor::StartOfBlock,QTextCursor::KeepAnchor);
   QString shellLine = tc.selectedText();
   shellLine.replace(q->ps1(), "");
   shellLine.replace(q->ps2(), "");
-  tc.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor);
+  tc.setPosition(endOfCompletion.position());
   this->setTextCursor(tc);
   int cursorOffset = this->Completer->cursorOffset(shellLine);
   tc.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
