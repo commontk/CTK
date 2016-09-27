@@ -94,6 +94,7 @@ ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
   Superclass(0),
   q_ptr(&object),
   InteractivePosition(documentEnd()),
+  MessageOutputSize(0),
   MultilineStatement(false), Ps1("$ "), Ps2("> "),
   EditorHints(ctkConsole::AutomaticIndentation | ctkConsole::RemoveTrailingSpaces),
   ScrollbarAtBottom(false),
@@ -116,6 +117,7 @@ void ctkConsolePrivate::init()
 
   this->PromptColor = QColor(0, 0, 0);    // Black
   this->OutputTextColor = QColor(0, 150, 0);  // Green
+  this->MessageOutputColor = QColor(Qt::gray);  // Gray
   this->ErrorTextColor = QColor(255, 0, 0);   // Red
   this->StdinTextColor = QColor(Qt::darkGray);
   this->CommandTextColor = QColor(0, 0, 150); // Blue
@@ -468,6 +470,14 @@ int ctkConsolePrivate::documentEnd() const
 }
 
 //-----------------------------------------------------------------------------
+int ctkConsolePrivate::commandEnd() const
+{
+  QTextCursor c(this->document());
+  c.setPosition(this->documentEnd()-this->MessageOutputSize);
+  return c.position();
+}
+
+//-----------------------------------------------------------------------------
 void ctkConsolePrivate::focusOutEvent(QFocusEvent *e)
 {
   this->Superclass::focusOutEvent(e);
@@ -551,14 +561,30 @@ void ctkConsolePrivate::updateCompleter()
     int savedInteractivePosition = this->InteractivePosition;
     int savedCursorPosition = this->textCursor().position();
 
+    //move the cursor at the end in case of a message displayed
+    QTextCursor tc = this->textCursor();
+    tc.setPosition(this->documentEnd());
+    this->setTextCursor(tc);
+    // Save color of displayed message
+    QColor savedOutputTextColor = this->OutputTextColor;
+    QColor savedErrorTextColor = this->ErrorTextColor;
+    // Change color of displayed message in message_output_area
+    this->OutputTextColor = this->MessageOutputColor;
+    this->ErrorTextColor = this->MessageOutputColor;
+
     // Call the completer to update the completion model
     this->Completer->updateCompletionModel(commandText);
+
+    // Restore Color
+    this->OutputTextColor = savedOutputTextColor;
+    this->ErrorTextColor = savedErrorTextColor;
 
     // Restore positions
     this->InteractivePosition = savedInteractivePosition;
     QTextCursor textCursor = this->textCursor();
     textCursor.setPosition(savedCursorPosition);
     this->setTextCursor(textCursor);
+
 
     // Place and show the completer if there are available completions
     if (this->Completer->completionCount())
@@ -583,6 +609,11 @@ void ctkConsolePrivate::updateCompleter()
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::updateCommandBuffer(int commandLength)
 {
+  if (commandLength == -1)
+    {
+    commandLength =
+        this->commandEnd() - this->InteractivePosition;
+    }
   this->commandBuffer() =
       this->toPlainText().mid(this->InteractivePosition, commandLength);
 }
@@ -596,6 +627,8 @@ void ctkConsolePrivate::replaceCommandBuffer(const QString& text)
   c.setPosition(this->InteractivePosition);
   c.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
   c.removeSelectedText();
+  // all text removed, we need then to re-init our tracker on the message output area
+  this->MessageOutputSize = 0;
   this->switchToUserInputTextColor(&c);
   c.insertText(text);
 }
@@ -648,6 +681,7 @@ void ctkConsolePrivate::internalExecuteCommand()
       }
     }
   this->promptForInput(indent);
+  this->MessageOutputSize = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -682,16 +716,26 @@ void ctkConsolePrivate::printString(const QString& text)
 void ctkConsolePrivate::printOutputMessage(const QString& text)
 {
   Q_Q(ctkConsole);
-
-  q->printMessage(text, q->outputTextColor());
+  QString textToPrint = text;
+  if (this->MessageOutputSize == 0)
+    {
+    textToPrint.prepend("\n");
+    }
+  this->MessageOutputSize += textToPrint.size();
+  q->printMessage(textToPrint, q->outputTextColor());
 }
 
 //----------------------------------------------------------------------------
 void ctkConsolePrivate::printErrorMessage(const QString& text)
 {
   Q_Q(ctkConsole);
-
-  q->printMessage(text, q->errorTextColor());
+  QString textToPrint = text;
+  if (this->MessageOutputSize == 0)
+    {
+    textToPrint.prepend("\n");
+    }
+  this->MessageOutputSize += textToPrint.size();
+  q->printMessage(textToPrint, q->errorTextColor());
 }
 
 //-----------------------------------------------------------------------------
@@ -713,6 +757,7 @@ void ctkConsolePrivate::promptForInput(const QString& indent)
   if(!this->MultilineStatement)
     {
     this->prompt(q->ps1());
+    this->MessageOutputSize=0;
     }
   else
     {
@@ -779,7 +824,7 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
   int cursorOffset = this->Completer->cursorOffset(shellLine);
   tc.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
   this->setTextCursor(tc);
-  this->updateCommandBuffer(completion.length());
+  this->updateCommandBuffer();
 }
 
 //-----------------------------------------------------------------------------
@@ -800,6 +845,13 @@ bool ctkConsolePrivate::isCursorInHistoryArea()const
 {
   return this->textCursor().anchor() < this->InteractivePosition
     || this->textCursor().position() < this->InteractivePosition;
+}
+
+//-----------------------------------------------------------------------------
+bool ctkConsolePrivate::isCursorInMessageOutputArea()const
+{
+  return this->textCursor().anchor() > this->commandEnd()
+    || this->textCursor().position() > this->commandEnd();
 }
 
 //-----------------------------------------------------------------------------
