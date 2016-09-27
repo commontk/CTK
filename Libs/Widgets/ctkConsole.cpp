@@ -117,6 +117,7 @@ void ctkConsolePrivate::init()
 
   this->PromptColor = QColor(0, 0, 0);    // Black
   this->OutputTextColor = QColor(0, 150, 0);  // Green
+  this->MessageOutputColor = QColor(Qt::gray);  // Gray
   this->ErrorTextColor = QColor(255, 0, 0);   // Red
   this->StdinTextColor = QColor(Qt::darkGray);
   this->CommandTextColor = QColor(0, 0, 150); // Blue
@@ -671,14 +672,26 @@ void ctkConsolePrivate::updateCompleter()
     QTextCursor tc = this->textCursor();
     tc.setPosition(this->documentEnd());
     this->setTextCursor(tc);
+    // Save color of displayed message
+    QColor savedOutputTextColor = this->OutputTextColor;
+    QColor savedErrorTextColor = this->ErrorTextColor;
+    // Change color of displayed message in message_output_area
+    this->OutputTextColor = this->MessageOutputColor;
+    this->ErrorTextColor = this->MessageOutputColor;
+
     // Call the completer to update the completion model
     this->Completer->updateCompletionModel(commandText);
+
+    // Restore Color
+    this->OutputTextColor = savedOutputTextColor;
+    this->ErrorTextColor = savedErrorTextColor;
 
     // Restore positions
     this->InteractivePosition = savedInteractivePosition;
     QTextCursor textCursor = this->textCursor();
     textCursor.setPosition(savedCursorPosition);
     this->setTextCursor(textCursor);
+
 
     // Place and show the completer if there are available completions
     if (this->Completer->completionCount())

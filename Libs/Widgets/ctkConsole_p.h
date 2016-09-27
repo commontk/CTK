@@ -179,6 +179,9 @@ public:
   /// Output text color
   QColor OutputTextColor;
 
+  /// Message Output text color (every message displayed during autocompletion)
+  QColor MessageOutputColor;
+
   /// Error text color
   QColor ErrorTextColor;
 
