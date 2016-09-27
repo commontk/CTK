@@ -55,6 +55,9 @@ public:
   /// Returns the end of the document
   int documentEnd() const;
 
+  /// Returns the end of the commandLine
+  int commandEnd() const;
+
   virtual void focusOutEvent(QFocusEvent *e);
 
   virtual void resizeEvent(QResizeEvent * e);
@@ -136,6 +139,10 @@ protected:
   /// false if it is after the InteractivePosition.
   bool isCursorInHistoryArea()const;
 
+  /// Return true if the cursor position is in the message output area
+  /// false if it is before the end of the commandLine.
+  bool isCursorInMessageOutputArea()const;
+
   /// Reimplemented to make sure there is no text added into the
   /// history logs.
   virtual void insertFromMimeData(const QMimeData* source);
@@ -150,6 +157,10 @@ public:
   /// Stores the beginning of the area of interactive input, outside which
   /// changes can't be made to the text edit contents
   int InteractivePosition;
+
+  /// Stores the size of the message output area from the end of document
+  /// until the end of the command
+  int MessageOutputSize;
 
   /// Indicates if the last statement processes was incomplete.
   bool MultilineStatement;
