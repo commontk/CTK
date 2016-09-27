@@ -430,9 +430,9 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
       line_code.append(".");
 
       QByteArray tmpName = tmpNames.at(i).toLatin1();
-      if (tmpName.contains("()")) // TODO: Make it work for arguments
+      if (tmpName.contains('(') && tmpName.contains(')'))
         {
-        tmpNames[i].remove("()");
+        tmpNames[i] = tmpNames[i].left(tmpName.indexOf('('));
         tmpName = tmpNames.at(i).toLatin1();
 
         // Attempt to instantiate the associated python class
