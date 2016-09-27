@@ -406,7 +406,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   if(isMoveLeftWithinLine(e, moveOperation, moveMode))
     {
     text_cursor.movePosition(moveOperation, moveMode);
-    if (text_cursor.position() > this->InteractivePosition)
+    if (text_cursor.position() >= this->InteractivePosition)
       {
       this->Superclass::keyPressEvent(e);
       }
