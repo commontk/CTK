@@ -338,6 +338,43 @@ void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
   d->InitFunction = initFunction;
 }
 
+//-----------------------------------------------------------------------------
+QStringList ctkAbstractPythonManager::dir_object(PyObject* object,
+                                                 bool appendParenthesis)
+{
+  QStringList results;
+  if (!object)
+    {
+    return results;
+    }
+  PyObject* keys = PyObject_Dir(object);
+  if (keys)
+    {
+    PyObject* key;
+    PyObject* value;
+    int nKeys = PyList_Size(keys);
+    for (int i = 0; i < nKeys; ++i)
+      {
+      key = PyList_GetItem(keys, i);
+      value = PyObject_GetAttr(object, key);
+      if (!value)
+        {
+        continue;
+        }
+      QString key_str(PyString_AsString(key));
+      // Append "()" if the associated object is a function
+      if (appendParenthesis && PyCallable_Check(value))
+        {
+        key_str.append("()");
+        }
+      results << key_str;
+      Py_DECREF(value);
+      }
+    Py_DECREF(keys);
+    }
+  return results;
+}
+
 //----------------------------------------------------------------------------
 QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVariableName,
                                                        const QString& module,
