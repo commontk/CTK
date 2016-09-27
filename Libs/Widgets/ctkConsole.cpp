@@ -476,7 +476,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   if (e == QKeySequence::DeleteStartOfWord)
       {
       e->accept();
-      if(text_cursor.position() > this->InteractivePosition)
+      if (text_cursor.position() > this->InteractivePosition)
         {
         this->Superclass::keyPressEvent(e);
         this->updateCommandBuffer();
