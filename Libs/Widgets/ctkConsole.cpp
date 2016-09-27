@@ -459,7 +459,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   if (e->key() == Qt::Key_Backspace && !(e->modifiers() & ~Qt::ShiftModifier))
     {
     e->accept();
-    if(text_cursor.position() > this->InteractivePosition)
+    // Can delete with backspace only if the cursor is after the InteractivePosition.
+    // There is an exception if something is selected, because it will erase the text selected instead.
+    if (text_cursor.position() > this->InteractivePosition
+        || (text_cursor.position() >= this->InteractivePosition
+             && selection))
       {
       this->Superclass::keyPressEvent(e);
       this->updateCommandBuffer();
