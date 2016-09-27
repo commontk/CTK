@@ -104,7 +104,14 @@ public:
   /// \sa preInitialization executeInitializationScripts
   void setInitializationFunction(void (*initFunction)());
 
-  /// Given a python variable name, lookup its attributes and return them in a string list.
+  /// Given a python object, lookup its attributes and return them in a string list.
+  /// If the argument \c appendParenthesis is set to True, "()" will be appended to attributes
+  /// being Python callable.
+  static QStringList dir_object(PyObject* object,
+                                bool appendParenthesis = false);
+
+  /// Given a python variable name, if it can be called, try to call the method or instantiate the class,
+  /// lookup its attributes and return them in a string list.
   /// By default the attributes are looked up from \c __main__.
   /// If the argument \c appendParenthesis is set to True, "()" will be appended to attributes
   /// being Python callable.
