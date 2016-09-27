@@ -409,6 +409,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       this->setTextCursor(text_cursor);
       e->accept();
       }
+    this->updateCompleterIfVisible();
     return;
     }
 
