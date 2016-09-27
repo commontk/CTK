@@ -375,6 +375,56 @@ QStringList ctkAbstractPythonManager::dir_object(PyObject* object,
   return results;
 }
 
+QStringList ctkAbstractPythonManager::splitByDotOutsideParenthesis(const QString& pythonVariableName)
+{
+  QStringList tmpNames;
+  int last_pos_dot = pythonVariableName.length();
+  int numberOfParenthesisClosed = 0;
+  bool betweenSingleQuotes = false;
+  bool betweenDoubleQuotes = false;
+  for (int i = pythonVariableName.length()-1; i >= 0; --i)
+    {
+    QChar c = pythonVariableName.at(i);
+    if (c == '\'' && !betweenDoubleQuotes)
+      {
+      betweenSingleQuotes = !betweenSingleQuotes;
+      }
+    if (c == '"' && !betweenSingleQuotes)
+      {
+      betweenDoubleQuotes = !betweenDoubleQuotes;
+      }
+    // note that we must not count parenthesis if they are between quote...
+    if (!betweenSingleQuotes && !betweenDoubleQuotes)
+      {
+      if (c == '(')
+        {
+        if (numberOfParenthesisClosed>0)
+          {
+          numberOfParenthesisClosed--;
+          }
+        }
+      if (c == ')')
+        {
+        numberOfParenthesisClosed++;
+        }
+      }
+    // if we are outside parenthesis and we find a dot, then split
+    if ((c == '.' && numberOfParenthesisClosed<=0)
+        || i == 0)
+      {
+      if (i == 0) {i--;} // last case where we have to split the begging this time
+      QString textToSplit = pythonVariableName.mid(i+1,last_pos_dot-(i+1));
+      if (!textToSplit.isEmpty())
+        {
+        tmpNames.push_front(textToSplit);
+        }
+      last_pos_dot =i;
+      }
+    }
+  return tmpNames;
+}
+
+
 //----------------------------------------------------------------------------
 QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVariableName,
                                                        const QString& module,
@@ -420,7 +470,11 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
 
   if (!pythonVariableName.isEmpty())
     {
-    QStringList tmpNames = pythonVariableName.split('.');
+    // Split the pythonVariableName at every dot
+    // /!\ // CAREFUL to don't take dot which are between parenthesis
+    // To avoid the problem: split by dots in a smarter way!
+    QStringList tmpNames = splitByDotOutsideParenthesis(pythonVariableName);
+
     for (int i = 0; i < tmpNames.size() && object; ++i)
       {
       // fill the line step by step
@@ -430,9 +484,9 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
       line_code.append(".");
 
       QByteArray tmpName = tmpNames.at(i).toLatin1();
-      if (tmpName.contains("()")) // TODO: Make it work for arguments
+      if (tmpName.contains('(') && tmpName.contains(')'))
         {
-        tmpNames[i].remove("()");
+        tmpNames[i] = tmpNames[i].left(tmpName.indexOf('('));
         tmpName = tmpNames.at(i).toLatin1();
 
         // Attempt to instantiate the associated python class

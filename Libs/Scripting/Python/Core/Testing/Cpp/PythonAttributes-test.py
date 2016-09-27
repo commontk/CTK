@@ -3,12 +3,17 @@ class Maths(object):
 
   MATHS_CLASS_MEMBER=0.1
 
-  def __init__(self,num):
-    self.math_instance_member = num
+  def __init__(self, num):
+    self.maths_instance_member = num
 
   def maths_instance_method(self):
     print("Hello from instance method")
 
+class MultipleArg(object):
+  def __init__(self, num, str, other = 0):
+    self.multipleArg_instance_member_num = num + other
+    self.multipleArg_instance_member_str = str
+    self.multipleArg_instance_member_other = other
 
 class Bar(object):
 
@@ -20,13 +25,12 @@ class Bar(object):
   def bar_instance_method(self):
     print("Hello from instance method")
 
-  def bar_maths(self,num):
+  def bar_maths(self, num = 0):
     return Maths(num)
 
   @staticmethod
   def bar_class_method():
     print("Hello from class method")
-
 
 class Foo(object):
 

@@ -316,6 +316,27 @@ void ctkAbstractPythonManagerTester::testPythonAttributes_data()
                          << "bar_instance_member"
                          << "bar_instance_method");
 
+  QTest::newRow("d.foo_class().instantiate_bar().bar_maths(5)")
+                     << "d.foo_class().instantiate_bar().bar_maths(5)"
+                     << (QStringList()
+                         << "MATHS_CLASS_MEMBER"
+                         << "maths_instance_member" // TODO: verify result is 5
+                         << "maths_instance_method");
+
+  QTest::newRow("MultipleArg( 5 + 5 , '(')")
+                     << "MultipleArg( 5 + 5 , '(')"
+                     << (QStringList()
+                         << "multipleArg_instance_member_num" // TODO: verify result is 10
+                         << "multipleArg_instance_member_str" // TODO: verify result is '('
+                         << "multipleArg_instance_member_other"); // TODO: verify result is 0
+
+  QTest::newRow("MultipleArg( 5 % 5 + 1, '\"', 0.1)")
+                     << "MultipleArg( 5 + 5 , '\"', 0.1)"
+                     << (QStringList()
+                         << "multipleArg_instance_member_num" // TODO: verify result is 1.1
+                         << "multipleArg_instance_member_str" // TODO: verify result is '"'
+                         << "multipleArg_instance_member_other"); // TODO: verify result is 0.1
+
 }
 
 // ----------------------------------------------------------------------------
