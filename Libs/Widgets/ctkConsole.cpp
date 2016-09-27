@@ -234,6 +234,75 @@ bool ctkConsolePrivate::isMoveLeftWithinLine(QKeyEvent* e, QTextCursor::MoveOper
 }
 
 //-----------------------------------------------------------------------------
+bool ctkConsolePrivate::isMoveRighttWithinLine(QKeyEvent* e, QTextCursor::MoveOperation &moveOperation, QTextCursor::MoveMode &moveMode)
+{
+  if (e == QKeySequence::MoveToNextChar)
+    {
+    moveOperation = QTextCursor::Right;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectNextChar)
+    {
+    moveOperation = QTextCursor::Right;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::MoveToNextWord)
+    {
+    moveOperation = QTextCursor::WordRight;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectNextWord)
+    {
+    moveOperation = QTextCursor::WordRight;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::MoveToEndOfLine)
+    {
+    moveOperation = QTextCursor::EndOfLine;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectEndOfLine)
+    {
+    moveOperation = QTextCursor::EndOfLine;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::MoveToEndOfBlock)
+    {
+    moveOperation = QTextCursor::EndOfLine;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectEndOfBlock)
+    {
+    moveOperation = QTextCursor::EndOfLine;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::MoveToEndOfDocument)
+    {
+    moveOperation = QTextCursor::EndOfLine;
+    moveMode = QTextCursor::MoveAnchor;
+    return true;
+    }
+  else if (e == QKeySequence::SelectEndOfDocument)
+    {
+    moveOperation = QTextCursor::EndOfLine;
+    moveMode = QTextCursor::KeepAnchor;
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+//-----------------------------------------------------------------------------
 void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
 {
   if (this->Completer && this->Completer->popup()->isVisible())
@@ -341,6 +410,26 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       this->setTextCursor(text_cursor);
       e->accept();
       }
+    return;
+    }
+
+  // End of line should be the end of interactive area
+  moveOperation = QTextCursor::NoMove;
+  moveMode = QTextCursor::MoveAnchor;
+  if(isMoveRighttWithinLine(e, moveOperation, moveMode))
+    {
+    text_cursor.movePosition(moveOperation, moveMode);
+    if (text_cursor.position() <= this->commandEnd())
+      {
+      this->Superclass::keyPressEvent(e);
+      }
+    else
+      {
+      text_cursor.setPosition(this->commandEnd(), moveMode);
+      this->setTextCursor(text_cursor);
+      e->accept();
+      }
+    this->updateCompleterIfVisible();
     return;
     }
 
