@@ -86,6 +86,8 @@ public:
 
   virtual int cursorOffset(const QString& completion);
   virtual void updateCompletionModel(const QString& completion);
+  static QString searchUsableCharForCompletion(const QString& completion);
+
 
 protected:
   bool isInUserDefinedClass(const QString &pythonFunctionPath);
@@ -264,21 +266,12 @@ int ctkPythonConsoleCompleter::parameterCountFromDocumentation(const QString& py
   return parameterCount;
 }
 
-void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
+//----------------------------------------------------------------------------
+QString ctkPythonConsoleCompleter::searchUsableCharForCompletion(const QString& completion)
 {
-  // Start by clearing the model
-  this->setModel(0);
-
-  // Don't try to complete the empty string
-  if (completion.isEmpty())
-    {
-    return;
-    }
-
-  bool appendParenthesis = true;
   bool betweenSingleQuotes = false;
   bool betweenDoubleQuotes = false;
-  int numeberOfParenthesisClosed = 0;
+  int numberOfParenthesisClosed = 0;
   // Search backward through the string for usable characters
   QString textToComplete;
   for (int i = completion.length()-1; i >= 0; --i)
@@ -294,7 +287,7 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
       }
     // Stop the completion if c is not a letter,number,.,_,(,) and outside parenthesis
     if (c.isLetterOrNumber() || c == '.' || c == '_' || c == '(' || c == ')'
-        || numeberOfParenthesisClosed)
+        || numberOfParenthesisClosed)
       {
       // Keep adding caractere to the completion if
       // the number of '(' is always <= to the number of ')'
@@ -303,16 +296,16 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
         {
         if (c == '(')
           {
-          if (numeberOfParenthesisClosed>0)
+          if (numberOfParenthesisClosed>0)
             {
-            numeberOfParenthesisClosed--;
+            numberOfParenthesisClosed--;
             }
           else
             break; // stop to prepend
           }
         if (c == ')')
           {
-          numeberOfParenthesisClosed++;
+          numberOfParenthesisClosed++;
           }
         }
       textToComplete.prepend(c);
@@ -321,7 +314,25 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
       {
       break;
       }
-   }
+    }
+  return textToComplete;
+}
+
+//----------------------------------------------------------------------------
+void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
+{
+  // Start by clearing the model
+  this->setModel(0);
+
+  // Don't try to complete the empty string
+  if (completion.isEmpty())
+    {
+    return;
+    }
+
+  bool appendParenthesis = true;
+  // Search backward through the string for usable characters
+  QString textToComplete = searchUsableCharForCompletion(completion);
 
   // Split the string at the last dot, if one exists
   QString lookup;
