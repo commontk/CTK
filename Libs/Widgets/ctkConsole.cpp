@@ -658,8 +658,60 @@ void ctkConsolePrivate::updateCompleter()
     // Get the text between the current cursor position
     // and the start of the line
     QTextCursor text_cursor = this->textCursor();
-    text_cursor.setPosition(this->InteractivePosition, QTextCursor::KeepAnchor);
+    while (!text_cursor.selectedText().contains(q_ptr->ps1()))
+      {
+      text_cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
+      }
+
+    // search through the text the multiline statement symbol "... " + 1 char (go to the line char)
     QString commandText = text_cursor.selectedText();
+    int pos_Ps2 = commandText.indexOf(q_ptr->ps2())-1;
+    while (pos_Ps2 > -1)
+      {
+      // remove the multiline symbol + the previous character due to "enter"
+      int number_deleted_char=q_ptr->ps2().size()+1;
+      // remove the line continuation character '\' if it's here
+      if (commandText.at(pos_Ps2-1) == QChar('\\') )
+        {
+        pos_Ps2--;
+        number_deleted_char++;
+        }
+      commandText.remove(pos_Ps2,number_deleted_char);
+      pos_Ps2 = commandText.indexOf(q_ptr->ps2())-1;
+      }
+    commandText.remove(q_ptr->ps1());
+    commandText.remove('\r'); // not recongnize by python
+    //commandText.replace(QRegExp("\\s*$"), ""); // Remove trailing spaces ---- DOESN'T WORK ----
+
+    // Remove useless spaces
+    bool betweenSingleQuotes = false;
+    bool betweenDoubleQuotes = false;
+    if (commandText.contains(" "))
+      {
+      // For each char
+      for (int i=0; i<commandText.size();i++)
+        {
+        // Verify if you are between betweenDoubleQuotes:" " or betweenSingleQuotes:' '
+        QChar c = commandText.at(i);
+        if (c == '\'' && !betweenDoubleQuotes)
+          {
+          betweenSingleQuotes = !betweenSingleQuotes;
+          }
+        if (c == '"' && !betweenSingleQuotes)
+          {
+          betweenDoubleQuotes = !betweenDoubleQuotes;
+          }
+        // If we are not between quote: Erase spaces
+        if (!betweenSingleQuotes && !betweenDoubleQuotes)
+          {
+          if (c == ' ')
+            {
+            commandText.remove(i,1);
+            i--; // because we removed a char
+            }
+          }
+        }
+      }
 
     // Save current positions: Since some implementation of
     // updateCompletionModel (e.g python) can display messages
