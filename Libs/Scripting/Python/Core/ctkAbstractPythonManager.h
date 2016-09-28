@@ -110,6 +110,11 @@ public:
   static QStringList dir_object(PyObject* object,
                                 bool appendParenthesis = false);
 
+  /// Given a python variable name, it returns the string list splited
+  /// at every dots which will be outside parenthesis
+  /// (It also takes care about the possibility that quotes can include parenthesis)
+  static QStringList splitByDotOutsideParenthesis(const QString& pythonVariableName);
+
   /// Given a python variable name, if it can be called, try to call the method or instantiate the class,
   /// lookup its attributes and return them in a string list.
   /// By default the attributes are looked up from \c __main__.
