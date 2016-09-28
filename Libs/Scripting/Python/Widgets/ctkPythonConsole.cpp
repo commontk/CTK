@@ -276,27 +276,44 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
     }
 
   bool appendParenthesis = true;
-
+  bool betweenSingleQuotes = false;
+  bool betweenDoubleQuotes = false;
   int numeberOfParenthesisClosed = 0;
   // Search backward through the string for usable characters
   QString textToComplete;
   for (int i = completion.length()-1; i >= 0; --i)
     {
     QChar c = completion.at(i);
-    if (c.isLetterOrNumber() || c == '.' || c == '_' || c == '(' || c == ')' || c.isSymbol() || c.isPunct() || c.isSpace())
+    if (c == '\'' && !betweenDoubleQuotes)
       {
-      if (c == '(')
+      betweenSingleQuotes = !betweenSingleQuotes;
+      }
+    if (c == '"' && !betweenSingleQuotes)
+      {
+      betweenDoubleQuotes = !betweenDoubleQuotes;
+      }
+    // Stop the completion if c is not a letter,number,.,_,(,) and outside parenthesis
+    if (c.isLetterOrNumber() || c == '.' || c == '_' || c == '(' || c == ')'
+        || numeberOfParenthesisClosed)
+      {
+      // Keep adding caractere to the completion if
+      // the number of '(' is always <= to the number of ')'
+      // note that we must not count parenthesis if they are between quote...
+      if (!betweenSingleQuotes && !betweenDoubleQuotes)
         {
-        if (numeberOfParenthesisClosed>0)
+        if (c == '(')
           {
-          numeberOfParenthesisClosed--;
+          if (numeberOfParenthesisClosed>0)
+            {
+            numeberOfParenthesisClosed--;
+            }
+          else
+            break; // stop to prepend
           }
-        else
-          break; // stop to prepend
-        }
-      if (c == ')')
-        {
-        numeberOfParenthesisClosed++;
+        if (c == ')')
+          {
+          numeberOfParenthesisClosed++;
+          }
         }
       textToComplete.prepend(c);
       }
