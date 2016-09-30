@@ -1067,6 +1067,11 @@ void ctkConsolePrivate::pasteText(const QString& text)
       this->updateCommandBuffer();
       if (i < lines.count() - 1)
         {
+        // be sure to go to the end of document
+        // warn about wrong paste if there is something in the message_output_area
+        textCursor.setPosition(this->documentEnd());
+        this->setTextCursor(textCursor);
+
         this->internalExecuteCommand();
         }
       }
