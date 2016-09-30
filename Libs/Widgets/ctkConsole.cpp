@@ -444,10 +444,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     {
     e->accept();
     // Can delete only if we are not at the end of the command line.
-    // There is an exception if something is selected because it will erase the text selected instead.
+    // There is an exception if something (in the interactive area only) is selected,
+    // because it will erase the text selected instead.
     if (text_cursor.position() < this->commandEnd()
         || (text_cursor.position() <= this->commandEnd()
-             && selection))
+             && selection && !message_output_area && !history_area))
       {
       this->Superclass::keyPressEvent(e);
       this->updateCommandBuffer();
@@ -461,10 +462,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     {
     e->accept();
     // Can delete with backspace only if the cursor is after the InteractivePosition.
-    // There is an exception if something is selected, because it will erase the text selected instead.
+    // There is an exception if something (in the interactive area only) is selected,
+    // because it will erase the text selected instead.
     if (text_cursor.position() > this->InteractivePosition
         || (text_cursor.position() >= this->InteractivePosition
-             && selection))
+             && selection  && !message_output_area && !history_area))
       {
       this->Superclass::keyPressEvent(e);
       this->updateCommandBuffer();
