@@ -1057,6 +1057,12 @@ void ctkConsolePrivate::pasteText(const QString& text)
     return;
     }
   QTextCursor textCursor = this->textCursor();
+
+  // if there is anything else after the cursor position
+  // we have to remove it and paste it in the last line
+  textCursor.setPosition(this->commandEnd(), QTextCursor::KeepAnchor);
+  QString endOfCommand = textCursor.selectedText();
+  textCursor.removeSelectedText();
   if (this->EditorHints & ctkConsole::SplitCopiedTextByLine)
     {
     QStringList lines = text.split(QRegExp("(?:\r\n|\r|\n)"));
@@ -1065,6 +1071,7 @@ void ctkConsolePrivate::pasteText(const QString& text)
       this->switchToUserInputTextColor(&textCursor);
       textCursor.insertText(lines.at(i));
       this->updateCommandBuffer();
+      // if it's not the last line to paste
       if (i < lines.count() - 1)
         {
         // be sure to go to the end of document
@@ -1073,6 +1080,10 @@ void ctkConsolePrivate::pasteText(const QString& text)
         this->setTextCursor(textCursor);
 
         this->internalExecuteCommand();
+        }
+      else
+        {
+        textCursor.insertText(endOfCommand);
         }
       }
     }
