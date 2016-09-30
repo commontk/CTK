@@ -537,7 +537,11 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     }
 
   e->accept();
-  this->switchToUserInputTextColor();
+  //Don't change the color of text outside the interactive area
+  if (!message_output_area && !history_area)
+    {
+    this->switchToUserInputTextColor();
+    }
   this->Superclass::keyPressEvent(e);
   this->updateCommandBuffer();
   this->updateCompleterIfVisible();
