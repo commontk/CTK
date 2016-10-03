@@ -116,9 +116,11 @@ public:
 
 public Q_SLOTS:
 
-  /// Inserts the given completion string at the cursor.  This will replace
-  /// the current word that the cursor is touching with the given text.
-  /// Determines the word using QTextCursor::StartOfWord, EndOfWord.
+  /// Inserts the given completion string at the cursor.
+  /// 2 Different ways of completion are established by \sa ctkConsolePrivate::insertCompletionMethod:
+  ///  TRUE  - Replace the current word that the cursor is touching with the given text.
+  ///          Determines the word using QTextCursor::StartOfWord, EndOfWord.
+  ///  FALSE - Just insert the word replacing only the text from the current position until StartOfWord
   void insertCompletion(const QString& text);
 
   /// Print a message
@@ -199,6 +201,11 @@ public:
 
   /// Secondary prompt
   QString Ps2;
+
+  /// Method to insert the completion word:
+  ///   TRUE  - Replace the whole word under the cursor
+  ///   FALSE - Insert the word and replace only from the cursor until the StartOfWord
+  bool insertCompletionMethod;
 
   ctkConsole::EditorHints EditorHints;
 

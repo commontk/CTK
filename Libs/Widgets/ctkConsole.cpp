@@ -96,6 +96,7 @@ ctkConsolePrivate::ctkConsolePrivate(ctkConsole& object) :
   InteractivePosition(documentEnd()),
   MessageOutputSize(0),
   MultilineStatement(false), Ps1("$ "), Ps2("> "),
+  insertCompletionMethod(true),
   EditorHints(ctkConsole::AutomaticIndentation | ctkConsole::RemoveTrailingSpaces),
   ScrollbarAtBottom(false),
   CompleterShortcuts(QList<QKeySequence>() << Qt::Key_Tab),
@@ -984,7 +985,14 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
       }
     tc.clearSelection();
     tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
-    tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+    if (insertCompletionMethod)
+      {
+      tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+      }
+    else
+      {
+      tc.setPosition(endOfCompletion.position(), QTextCursor::KeepAnchor);
+      }
     tc.insertText(completion);
     endOfCompletion.setPosition(tc.position());
     this->setTextCursor(tc);
