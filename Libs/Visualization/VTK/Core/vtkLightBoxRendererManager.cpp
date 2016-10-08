@@ -415,16 +415,14 @@ void vtkLightBoxRendererManager::vtkInternal
 #else
   item->ImageMapper->SetInputConnection(this->ImageDataConnection);
   bool hasViewProp = item->Renderer->HasViewProp(item->ImageActor);
-  if (!this->ImageDataConnection && hasViewProp)
+  if (!hasViewProp)
     {
-    item->Renderer->RemoveViewProp(item->ImageActor);
-    item->Renderer->RemoveViewProp(item->HighlightedBoxActor);
-    }
-  else if (this->ImageDataConnection && !hasViewProp)
-    {
+    item->ImageActor->SetVisibility(false);
+    item->HighlightedBoxActor->SetVisibility(false);
     item->Renderer->AddActor2D(item->ImageActor);
     item->Renderer->AddActor2D(item->HighlightedBoxActor);
     }
+  item->ImageActor->SetVisibility(this->ImageDataConnection != NULL);
 #endif
 }
 
