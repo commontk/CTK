@@ -42,24 +42,24 @@ public:
   virtual ~ctkCheckableComboBox();
   
   /// Use setCheckableModel instead of setModel()
-  QAbstractItemModel* checkableModel()const;
-  void setCheckableModel(QAbstractItemModel *model);
+  Q_INVOKABLE QAbstractItemModel* checkableModel()const;
+  Q_INVOKABLE void setCheckableModel(QAbstractItemModel *model);
   
   /// Returns an up-to-date list of all the checked indexes.
-  QModelIndexList checkedIndexes()const;
+  Q_INVOKABLE QModelIndexList checkedIndexes()const;
   /// Returns true if all the indexes are checked, false otherwise 
-  bool allChecked()const;
+  Q_INVOKABLE bool allChecked()const;
   /// Returns true if none of the indexes is checked, false otherwise
-  bool noneChecked()const;
+  Q_INVOKABLE bool noneChecked()const;
 
   /// Utility function to conveniently check the state of an index
-  void setCheckState(const QModelIndex& index, Qt::CheckState check);
+  Q_INVOKABLE void setCheckState(const QModelIndex& index, Qt::CheckState check);
   /// Utility function to return the check state of a model index
-  Qt::CheckState checkState(const QModelIndex& index)const;
+  Q_INVOKABLE Qt::CheckState checkState(const QModelIndex& index)const;
 
   /// Returns a pointer to the checkable model helper to give a direct access
   /// to the check manager.
-  ctkCheckableModelHelper* checkableModelHelper()const;
+  Q_INVOKABLE ctkCheckableModelHelper* checkableModelHelper()const;
   
   /// Reimplemented for internal reasons
   bool eventFilter(QObject *o, QEvent *e);
