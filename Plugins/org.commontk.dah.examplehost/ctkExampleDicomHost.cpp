@@ -35,7 +35,7 @@
 #include <iostream>
 
 // DCMTK includes
-#include <dcuid.h>
+#include <dcmtk/dcmdata/dcuid.h>
 
 //----------------------------------------------------------------------------
 ctkExampleDicomHost::ctkExampleDicomHost(ctkHostedAppPlaceholderWidget* placeholderWidget, int hostPort, int appPort) :

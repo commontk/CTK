@@ -25,7 +25,7 @@
 
 #include "ctkDICOMPersonName.h"
 
-#include <dcdatset.h> // DCMTK DcmDataset
+#include <dcmtk/dcmdata/dcdatset.h> // DCMTK DcmDataset
 
 #include <QtCore>
 

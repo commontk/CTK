@@ -21,7 +21,7 @@
 // std includes
 #include <iostream>
 
-#include <dcmimage.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
 
 // Qt includes
 #include <QAction>
