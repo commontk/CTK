@@ -39,7 +39,7 @@
 #include "ctkDicomAvailableDataHelper.h"
 
 // DCMTK includes
-#include <dcmimage.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
 
 //----------------------------------------------------------------------------
 ctkExampleDicomAppLogic::ctkExampleDicomAppLogic():

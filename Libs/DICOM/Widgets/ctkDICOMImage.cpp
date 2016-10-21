@@ -28,8 +28,8 @@
 #include "ctkLogger.h"
 
 // DCMTK includes
-#include <dcmimage.h>
-#include <ofbmanip.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
+#include <dcmtk/ofstd/ofbmanip.h>
 
 static ctkLogger logger ( "org.commontk.dicom.DICOMImage" );
 struct Node;

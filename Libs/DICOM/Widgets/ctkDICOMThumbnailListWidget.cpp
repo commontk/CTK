@@ -51,7 +51,7 @@
 #include <iostream>
 
 // DCMTK includes
-#include <dcmimage.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMThumbnailListWidget");
 

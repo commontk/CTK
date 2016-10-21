@@ -28,7 +28,7 @@
 #include "ctkDICOMImage.h"
 
 // DCMTK includes
-#include <dcmimage.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
 
 // STD includes
 #include <iostream>

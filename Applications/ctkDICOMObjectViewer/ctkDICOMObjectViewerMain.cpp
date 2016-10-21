@@ -26,7 +26,7 @@
 #include "ctkDICOMItemView.h"
 
 // DCMTK includes
-#include <dcmimage.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
 
 
 // Qt includes

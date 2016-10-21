@@ -27,7 +27,7 @@
 #include <QImage>
 
 // DCMTK includes
-#include "dcmimage.h"
+#include "dcmtk/dcmimgle/dcmimage.h"
 
 static ctkLogger logger ( "org.commontk.dicom.DICOMThumbnailGenerator" );
 struct Node;

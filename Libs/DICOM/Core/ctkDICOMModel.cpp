@@ -30,7 +30,7 @@
 #include <QDebug>
 
 // dcmtk includes
-#include "dcvrpn.h"
+#include "dcmtk/dcmdata/dcvrpn.h"
 
 // ctkDICOMCore includes
 #include "ctkDICOMModel.h"
