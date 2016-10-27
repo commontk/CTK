@@ -49,7 +49,7 @@
 #include <dcmtk/ofstd/ofstring.h>
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
-#include <dcmimage.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
 
 #include <dcmtk/dcmjpeg/djdecode.h>  /* for dcmjpeg decoders */
 #include <dcmtk/dcmjpeg/djencode.h>  /* for dcmjpeg encoders */
