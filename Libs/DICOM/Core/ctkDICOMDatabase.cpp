@@ -732,7 +732,7 @@ QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::sopsForSeries(const QString seriesUID)
+QStringList ctkDICOMDatabase::instancesForSeries(const QString seriesUID)
 {
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
