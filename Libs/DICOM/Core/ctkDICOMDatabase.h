@@ -132,6 +132,7 @@ public:
   Q_INVOKABLE QStringList patients ();
   Q_INVOKABLE QStringList studiesForPatient (const QString patientUID);
   Q_INVOKABLE QStringList seriesForStudy (const QString studyUID);
+  Q_INVOKABLE QStringList instancesForSeries(const QString seriesUID);
   Q_INVOKABLE QString studyForSeries(QString seriesUID);
   Q_INVOKABLE QString patientForStudy(QString studyUID);
   Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);

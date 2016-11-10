@@ -732,6 +732,23 @@ QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
 }
 
 //------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::instancesForSeries(const QString seriesUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT SOPInstanceUID FROM Images WHERE SeriesInstanceUID= ?");
+  query.bindValue(0, seriesUID);
+  query.exec();
+  QStringList result;
+  if (query.next())
+  {
+    result << query.value(0).toString();
+  }
+
+  return result;
+}
+
+//------------------------------------------------------------------------------
 QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
 {
   Q_D(ctkDICOMDatabase);
