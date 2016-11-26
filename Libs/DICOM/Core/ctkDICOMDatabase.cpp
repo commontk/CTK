@@ -411,28 +411,42 @@ bool ctkDICOMDatabasePrivate::executeScript(const QString script) {
       return false;
     }
 
-  QString sqlCommands( QTextStream(&scriptFile).readAll() );
-  sqlCommands.replace( '\n', ' ' );
-  sqlCommands.remove( '\r' );
-  sqlCommands.replace("; ", ";\n");
-
-  QStringList sqlCommandsLines = sqlCommands.split('\n');
-
-  QSqlQuery query(Database);
-
-  for (QStringList::iterator it = sqlCommandsLines.begin(); it != sqlCommandsLines.end()-1; ++it)
+    QList<QByteArray> fileLines( scriptFile.readAll().split('\n') );
+    QString delimiter = ';';
+    QString sqlQuery;
+    foreach(QByteArray line,fileLines)
     {
-      if (! (*it).startsWith("--") )
+        QString trimedLine = QString(line).trimmed();
+        if(trimedLine.toLower().startsWith("delimiter"))
         {
-          qDebug() << *it << "\n";
-          query.exec(*it);
-          if (query.lastError().type())
+            delimiter = trimedLine.mid(9).trimmed();
+        }
+        else if(!trimedLine.startsWith("--"))
+        {
+            if(trimedLine.endsWith(delimiter))
             {
-              qDebug() << "There was an error during execution of the statement: " << (*it);
-              qDebug() << "Error message: " << query.lastError().text();
-              return false;
+                trimedLine.chop(delimiter.length());
+                sqlQuery.append(trimedLine+"\n");
+            }
+            else
+            {
+                sqlQuery.append(trimedLine+" ");
             }
         }
+    }
+	QStringList sqlCommandsLines = sqlQuery.split('\n',QString::SkipEmptyParts);
+  QSqlQuery query(Database);
+
+  for (QStringList::iterator it = sqlCommandsLines.begin(); it != sqlCommandsLines.end(); ++it)
+    {
+	  qDebug() << *it << "\n";
+	  query.exec(*it);
+	  if (query.lastError().type())
+		{
+		  qDebug() << "There was an error during execution of the statement: " << (*it);
+		  qDebug() << "Error message: " << query.lastError().text();
+		  return false;
+		}
     }
   return true;
 }
