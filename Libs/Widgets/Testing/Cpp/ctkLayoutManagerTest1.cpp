@@ -49,6 +49,10 @@ QString tabLayout(
 " <item><view name=\"tab2\"/></item>"
 " <item><view name=\"tab3\"/></item>"
 "</layout>");
+QString tabMultipleLayout(
+  "<layout type=\"tab\">"
+  " <item multiple=\"true\"><view name=\"tab1\"/></item>"
+  "</layout>");
 QString nestedLayout(
 "<layout type=\"tab\">"
 " <item>"
@@ -107,6 +111,9 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   Q_ASSERT(res);
   QDomDocument tabLayoutDoc("tablayout");
   res = tabLayoutDoc.setContent(tabLayout);
+  Q_ASSERT(res);
+  QDomDocument tabMultipleLayoutDoc("tabMultiplelayout");
+  res = tabMultipleLayoutDoc.setContent(tabMultipleLayout);
   Q_ASSERT(res);
   QDomDocument nestedLayoutDoc("nestedlayout");
   res = nestedLayoutDoc.setContent(nestedLayout);
@@ -254,6 +261,30 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  // Switch back to nested layout
+  nestedToTabLayoutManager.setLayout(nestedLayoutDoc);
+  QTimer::singleShot(200, &app, SLOT(quit()));
+  app.exec();
+
+  // Test that multiple="true" makes all cached views shown,
+  // even if cached views are disabled.
+  nestedToTabInstanciator->setUseCachedViews(false);
+  nestedToTabLayoutManager.setLayout(tabMultipleLayoutDoc);
+  if (nestedToTabInstanciator->registeredViews().count() != 2 * 4 ||
+    nestedToTabInstanciator->registeredViews()[0]->isHidden() ||
+    !nestedToTabInstanciator->registeredViews()[1]->isHidden() ||
+    !nestedToTabInstanciator->registeredViews()[2]->isHidden())
+    {
+    std::cout << __LINE__ << " tabMultiple: "
+      << "ctkLayoutManager::setupLayout() failed to show/hide widgets "
+      << nestedToTabInstanciator->registeredViews().count();
+    for (int i = 0; i < nestedToTabInstanciator->registeredViews().count(); i++)
+      {
+      std::cout << " " << nestedToTabInstanciator->registeredViews()[i]->isHidden();
+      }
+    std::cout << std::endl;
+    return EXIT_FAILURE;
+    }
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
