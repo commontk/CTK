@@ -170,7 +170,7 @@ int ctkBackTracePrivate::trace(void** array, size_t n) const
   }
 
   if (s_pfnCaptureStackBackTrace != 0) {
-    return s_pfnCaptureStackBackTrace(0, n, array, 0);
+    return s_pfnCaptureStackBackTrace(0, static_cast<ULONG>(n), array, 0);
   }
   return 0;
 }
