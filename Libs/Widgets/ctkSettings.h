@@ -97,21 +97,21 @@ public:
   ctkSettings(QObject* parent = 0);
 
   /// Saves the position, size and layout of the QMainWindow
-  void saveState(const QMainWindow& window, const QString& key);
+  Q_INVOKABLE void saveState(const QMainWindow& window, const QString& key);
 
   /// Saves the position and size of the QDialog
-  void saveState(const QDialog& dialog, const QString& key);
+  Q_INVOKABLE void saveState(const QDialog& dialog, const QString& key);
 
   /// Restore the position, size and layout of the QMainWindow
   /// for a given key
-  void restoreState(const QString& key, QMainWindow& window);
+  Q_INVOKABLE void restoreState(const QString& key, QMainWindow& window);
   
   /// Saves the position, size and layout of the QMainWindow
   /// for a given key
-  void restoreState(const QString& key, QDialog& dialog);
+  Q_INVOKABLE void restoreState(const QString& key, QDialog& dialog);
 
   /// Calling this method will cause the modified signal to be emited.
-  void alertSettingsModified();
+  Q_INVOKABLE void alertSettingsModified();
 
 Q_SIGNALS:
   void modified();
