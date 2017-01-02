@@ -89,6 +89,9 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
   if(TARGET vtkRenderingFreeTypeOpenGL)
     list(APPEND VTK_LIBRARIES vtkRenderingFreeTypeOpenGL)
   endif()
+  if(TARGET vtkRenderingFreeType )
+    list(APPEND VTK_LIBRARIES vtkRenderingFreeType)
+  endif()
   if (TARGET vtkRenderingFreeTypeFontConfig AND UNIX AND NOT APPLE)
       list(APPEND VTK_LIBRARIES
         vtkRenderingFreeTypeFontConfig
