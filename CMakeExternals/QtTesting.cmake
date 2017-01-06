@@ -24,7 +24,7 @@ endif()
 
 if(NOT DEFINED QtTesting_DIR)
 
-  set(revision_tag a5c52c52516d419802ee1e4b1800ee3aabc5cdd2)
+  set(revision_tag 9951bc69b007812dd5172218dd219a4e98e0fcf8)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()

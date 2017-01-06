@@ -142,8 +142,9 @@ void ctkXMLEventObserver::setStream(QTextStream* stream)
 
 //-----------------------------------------------------------------------------
 void ctkXMLEventObserver::onRecordEvent(const QString& widget,
-                                     const QString& command,
-                                     const QString& arguments)
+                                        const QString& command,
+                                        const QString& arguments,
+                                        const int& eventType)
 {
   if(this->XMLStream)
     {
@@ -151,6 +152,7 @@ void ctkXMLEventObserver::onRecordEvent(const QString& widget,
     this->XMLStream->writeAttribute("widget", widget);
     this->XMLStream->writeAttribute("command", command);
     this->XMLStream->writeAttribute("arguments", arguments);
+    this->XMLStream->writeAttribute("eventType", QString::number(eventType));
     this->XMLStream->writeEndElement();
     if (this->Stream)
       {
