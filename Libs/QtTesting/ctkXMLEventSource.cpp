@@ -25,8 +25,8 @@
 #include <QFile>
 #include <QMap>
 #include <QMessageBox>
-#include <QXmlSchema>
-#include <QXmlSchemaValidator>
+#include <QtXmlPatterns/QXmlSchema>
+#include <QtXmlPatterns/QXmlSchemaValidator>
 #include <QVariant>
 
 // CTKQtTesting includes
@@ -110,7 +110,8 @@ void ctkXMLEventSource::setContent(const QString& xmlfilename)
 }
 
 //-----------------------------------------------------------------------------
-int ctkXMLEventSource::getNextEvent(QString& widget, QString& command, QString&arguments)
+int ctkXMLEventSource::getNextEvent(QString& widget, QString& command,
+  QString& arguments, int& eventType)
 {
   if (!this->XMLStream)
     {
@@ -135,9 +136,13 @@ int ctkXMLEventSource::getNextEvent(QString& widget, QString& command, QString&a
     {
     return DONE;
     }
-  widget = this->XMLStream->attributes().value("widget").toString();
-  command = this->XMLStream->attributes().value("command").toString();
-  arguments = this->XMLStream->attributes().value("arguments").toString();
+  const QXmlStreamAttributes attributes = this->XMLStream->attributes();
+  widget = attributes.value("widget").toString();
+  command = attributes.value("command").toString();
+  arguments = attributes.value("arguments").toString();
+  eventType = attributes.hasAttribute("eventType") ?
+    this->XMLStream->attributes().value("eventType").toInt() :
+    pqEventTypes::ACTION_EVENT;
   return SUCCESS;
 }
 

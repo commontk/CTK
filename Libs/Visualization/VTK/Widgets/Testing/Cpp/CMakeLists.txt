@@ -95,9 +95,6 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
-#
-# If CTK_USE_QTTESTING is ON
-#
 if(CTK_USE_QTTESTING)
   include(${CMAKE_SOURCE_DIR}/Libs/QtTesting/CMake/ctkQtTesting.cmake)
   ctkQtTesting(Tests TEST_MOC_SOURCES TEST_UI_FORMS Tests_RESOURCES)
@@ -139,10 +136,13 @@ endif()
 
 
 
-target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${VTK_CHARTS_LIB} ${CTK_BASE_LIBRARIES})
+target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${VTK_CHARTS_LIB} ${CTK_BASE_LIBRARIES} CTKQtTesting)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-    target_link_libraries(${KIT}CppTests ${Qt5Test_LIBRARIES})
+  target_link_libraries(${KIT}CppTests ${Qt5Test_LIBRARIES})
+endif()
+if(CTK_USE_QTTESTING)
+  target_link_libraries(${KIT}CppTests CTKQtTesting)
 endif()
 
 #

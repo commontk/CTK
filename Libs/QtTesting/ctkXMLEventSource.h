@@ -48,7 +48,7 @@ public:
   ~ctkXMLEventSource();
 
   virtual void setContent(const QString& xmlfilename);
-  int getNextEvent(QString& widget, QString& command, QString&arguments);
+  int getNextEvent(QString& widget, QString& command, QString&arguments, int& eventType);
 
   void setRestoreSettingsAuto(bool value);
   bool restoreSettingsAuto() const;

@@ -50,9 +50,11 @@ public:
   ~ctkXMLEventObserver();
 
   virtual void setStream(QTextStream* stream);
+
   virtual void onRecordEvent(const QString& widget,
                              const QString& command,
-                             const QString& arguments);
+                             const QString& arguments,
+                             const int& eventType);
 
   void recordApplicationSettings();
   void recordApplicationSetting(const QString& startElement,
