@@ -141,7 +141,11 @@ int ctkXMLEventSource::getNextEvent(QString& widget, QString& command,
   command = attributes.value("command").toString();
   arguments = attributes.value("arguments").toString();
   eventType = attributes.hasAttribute("eventType") ?
+#if QT_VERSION < 0x50101
+    this->XMLStream->attributes().value("eventType").toString().toInt() :
+#else
     this->XMLStream->attributes().value("eventType").toInt() :
+#endif
     pqEventTypes::ACTION_EVENT;
   return SUCCESS;
 }
