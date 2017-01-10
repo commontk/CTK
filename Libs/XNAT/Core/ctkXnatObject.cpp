@@ -431,6 +431,7 @@ void ctkXnatObject::saveImpl(bool /*overwrite*/)
 //----------------------------------------------------------------------------
 void ctkXnatObject::fetchResources(const QString& path)
 {
+  Q_UNUSED(path);
   ctkXnatResourceFolder* resFolder = new ctkXnatResourceFolder();
   this->add(resFolder);
 }
