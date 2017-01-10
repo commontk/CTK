@@ -334,7 +334,7 @@ ctkXnatResource* ctkXnatObject::addResourceFolder(QString foldername, QString fo
 
   ctkXnatResourceFolder* resFolder = 0;
   QList<ctkXnatObject*> children = this->children();
-  for (unsigned int i = 0; i < children.size(); ++i)
+  for (int i = 0; i < children.size(); ++i)
   {
     resFolder = dynamic_cast<ctkXnatResourceFolder*>(children.at(i));
     if (resFolder)
