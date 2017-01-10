@@ -146,7 +146,6 @@ void ctkDICOMThumbnailListWidgetPrivate
 void ctkDICOMThumbnailListWidgetPrivate
 ::addSeriesThumbnails(const QModelIndex &index)
 {
-  QModelIndex studyIndex = index.parent();
   QModelIndex seriesIndex = index;
 
   ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
