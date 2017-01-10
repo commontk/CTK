@@ -21,8 +21,8 @@
 #
 ##############################################################################
 
-if( NOT "${CTK_QT_VERSION}" MATCHES "4" )
-  message( FATAL_ERROR "CTK_QT_VERSION should be set to 4" )
+if( NOT "${CTK_QT_VERSION}" MATCHES "4|5" )
+  message( FATAL_ERROR "CTK_QT_VERSION should be set to either 4 or 5" )
 endif()
 
 set( CTK_SOURCE_DIR "/usr/src/CTK" )
@@ -58,7 +58,7 @@ set( SITE_BUILD_NAME_SUFFIX _${commit}_${what} )
 
 set( SITE_BUILD_NAME "CircleCI-${SITE_PLATFORM}-${SITE_BUILD_TYPE}${SITE_BUILD_NAME_SUFFIX}" )
 
-set( CTEST_BUILD_NAME "${SITE_BUILD_NAME}-BuildTest-${SITE_CTEST_MODE}" )
+set( CTEST_BUILD_NAME "${SITE_BUILD_NAME}-BuildTest-Qt${CTK_QT_VERSION}-${SITE_CTEST_MODE}" )
 
 ###################
 
@@ -73,8 +73,11 @@ set( CTK_BUILD_EXAMPLES OFF )
 
 ctest_start( "${SITE_CTEST_MODE}" )
 
-ctest_configure( BUILD "${CTK_BINARY_DIR}"
-    SOURCE "${CTK_SOURCE_DIR}" )
+ctest_configure(
+  BUILD "${CTK_BINARY_DIR}"
+  SOURCE "${CTK_SOURCE_DIR}"
+  OPTIONS -DCTK_QT_VERSION:STRING=${CTK_QT_VERSION}
+  )
 
 ctest_build( BUILD ${CTK_BINARY_DIR} )
 
