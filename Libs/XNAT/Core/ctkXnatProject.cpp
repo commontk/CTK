@@ -183,5 +183,6 @@ void ctkXnatProject::fetchImpl()
 //----------------------------------------------------------------------------
 void ctkXnatProject::downloadImpl(const QString& filename)
 {
+  Q_UNUSED(filename);
   qDebug() << "ctkXnatProject::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }

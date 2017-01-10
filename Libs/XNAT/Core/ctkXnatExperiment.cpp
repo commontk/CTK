@@ -229,5 +229,6 @@ void ctkXnatExperiment::fetchImpl()
 //----------------------------------------------------------------------------
 void ctkXnatExperiment::downloadImpl(const QString& filename)
 {
+  Q_UNUSED(filename);
   qDebug() << "ctkXnatExperiment::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }

@@ -110,5 +110,6 @@ void ctkXnatDataModel::fetchImpl()
 //----------------------------------------------------------------------------
 void ctkXnatDataModel::downloadImpl(const QString& filename)
 {
+  Q_UNUSED(filename);
   qDebug() << "ctkXnatDataModel::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }
