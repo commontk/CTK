@@ -21,6 +21,9 @@
 #
 ##############################################################################
 
+if( NOT "${CTK_QT_VERSION}" MATCHES "4" )
+  message( FATAL_ERROR "CTK_QT_VERSION should be set to 4" )
+endif()
 
 set( CTK_SOURCE_DIR "/usr/src/CTK" )
 set( CTK_BINARY_DIR "/usr/src/CTK-build" )
@@ -46,7 +49,7 @@ set( SITE_PLATFORM "Ubuntu-64" )
 set( SITE_BUILD_TYPE "$ENV{SITE_BUILD_TYPE}" )
 if( NOT( (SITE_BUILD_TYPE MATCHES "Debug") OR (SITE_BUILD_TYPE MATCHES "Release") ) )
   set( SITE_BUILD_TYPE "Debug" ) # Release, Debug
-endif( NOT( (SITE_BUILD_TYPE MATCHES "Debug") OR (SITE_BUILD_TYPE MATCHES "Release") ) )
+endif()
 
 # Named SITE_BUILD_NAME
 string( SUBSTRING $ENV{CIRCLE_SHA1} 0 7 commit )
