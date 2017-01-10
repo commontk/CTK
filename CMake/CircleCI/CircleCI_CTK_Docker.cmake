@@ -21,6 +21,9 @@
 #
 ##############################################################################
 
+if( NOT "${CTK_QT_VERSION}" MATCHES "4|5" )
+  message( FATAL_ERROR "CTK_QT_VERSION should be set to either 4 or 5" )
+endif()
 
 set( CTK_SOURCE_DIR "/usr/src/CTK" )
 set( CTK_BINARY_DIR "/usr/src/CTK-build" )
@@ -46,7 +49,7 @@ set( SITE_PLATFORM "Ubuntu-64" )
 set( SITE_BUILD_TYPE "$ENV{SITE_BUILD_TYPE}" )
 if( NOT( (SITE_BUILD_TYPE MATCHES "Debug") OR (SITE_BUILD_TYPE MATCHES "Release") ) )
   set( SITE_BUILD_TYPE "Debug" ) # Release, Debug
-endif( NOT( (SITE_BUILD_TYPE MATCHES "Debug") OR (SITE_BUILD_TYPE MATCHES "Release") ) )
+endif()
 
 # Named SITE_BUILD_NAME
 string( SUBSTRING $ENV{CIRCLE_SHA1} 0 7 commit )
@@ -55,7 +58,7 @@ set( SITE_BUILD_NAME_SUFFIX _${commit}_${what} )
 
 set( SITE_BUILD_NAME "CircleCI-${SITE_PLATFORM}-${SITE_BUILD_TYPE}${SITE_BUILD_NAME_SUFFIX}" )
 
-set( CTEST_BUILD_NAME "${SITE_BUILD_NAME}-BuildTest-${SITE_CTEST_MODE}" )
+set( CTEST_BUILD_NAME "${SITE_BUILD_NAME}-BuildTest-Qt${CTK_QT_VERSION}-${SITE_CTEST_MODE}" )
 
 ###################
 
@@ -70,8 +73,11 @@ set( CTK_BUILD_EXAMPLES OFF )
 
 ctest_start( "${SITE_CTEST_MODE}" )
 
-ctest_configure( BUILD "${CTK_BINARY_DIR}"
-    SOURCE "${CTK_SOURCE_DIR}" )
+ctest_configure(
+  BUILD "${CTK_BINARY_DIR}"
+  SOURCE "${CTK_SOURCE_DIR}"
+  OPTIONS -DCTK_QT_VERSION:STRING=${CTK_QT_VERSION}
+  )
 
 ctest_build( BUILD ${CTK_BINARY_DIR} )
 

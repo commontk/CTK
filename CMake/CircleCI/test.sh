@@ -15,5 +15,6 @@ mkdir /usr/src/CTK-build/CTK-build
 cd /usr/src/CTK-build/CTK-build || die "Could not cd into the build directory"
 
 ctest \
+  $1 \
   -S /usr/src/CTK/CMake/CircleCI/CircleCI_CTK_Docker.cmake \
   -VV || die "ctest failed"
