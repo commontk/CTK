@@ -37,6 +37,12 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     list(APPEND ep_PythonQt_args
       -DQt5_DIR:PATH=${Qt5_DIR}
       )
+    # XXX Backward compatible way
+    if(DEFINED CMAKE_PREFIX_PATH)
+      list(APPEND ep_PythonQt_args
+        -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
+        )
+    endif()
   else()
     list(APPEND ep_PythonQt_args
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
