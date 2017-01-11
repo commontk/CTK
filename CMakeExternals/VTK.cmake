@@ -66,6 +66,12 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDESIRED_QT_VERSION:STRING=5
       -DQt5_DIR:PATH=${Qt5_DIR}
       )
+    # XXX Backward compatible way
+    if(DEFINED CMAKE_PREFIX_PATH)
+      list(APPEND additional_vtk_cmakevars
+        -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
+        )
+    endif()
   endif()
 
   ExternalProject_Add(${proj}

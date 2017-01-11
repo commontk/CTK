@@ -50,6 +50,12 @@ macro(ctkMacroSetupQt)
     find_package(Qt5 COMPONENTS ${CTK_QT5_COMPONENTS} REQUIRED)
 
     mark_as_superbuild(Qt5_DIR) # Qt 5
+
+    # XXX Backward compatible way
+    if(DEFINED CMAKE_PREFIX_PATH)
+      mark_as_superbuild(CMAKE_PREFIX_PATH) # Qt 5
+    endif()
+
   else()
     set(minimum_required_qt_version "4.6")
 

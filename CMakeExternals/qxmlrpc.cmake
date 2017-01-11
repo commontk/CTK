@@ -51,6 +51,12 @@ if(NOT DEFINED qxmlrpc_DIR)
     list(APPEND ep_cache_args
       -DQt5_DIR:PATH=${Qt5_DIR}
       )
+    # XXX Backward compatible way
+    if(DEFINED CMAKE_PREFIX_PATH)
+      list(APPEND ep_cache_args
+        -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
+        )
+    endif()
   endif()
 
   ExternalProject_Add(${proj}
