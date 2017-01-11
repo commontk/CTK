@@ -35,8 +35,18 @@ if(NOT CTK_USE_FILE_INCLUDED)
   endif()
   include_directories(${new_include_directories})
 
-  if (NOT DEFINED QT_QMAKE_EXECUTABLE)
+  if(NOT DEFINED QT_QMAKE_EXECUTABLE AND CTK_QT_VERSION STREQUAL "4")
     set(QT_QMAKE_EXECUTABLE ${CTK_QT_QMAKE_EXECUTABLE})
+  endif()
+
+  if(CTK_QT_VERSION STREQUAL "5")
+    if(NOT DEFINED Qt5_DIR AND DEFINED CTK_Qt5_DIR)
+      # Setting "Qt5_DIR" is the preferred approach
+      set(Qt5_DIR ${CTK_Qt5_DIR})
+    elseif(NOT DEFINED CMAKE_PREFIX_PATH AND DEFINED CTK_CMAKE_PREFIX_PATH)
+      # Support for "CMAKE_PREFIX_PATH" is here for backward compatibility
+      set(CMAKE_PREFIX_PATH ${CTK_CMAKE_PREFIX_PATH})
+    endif()
   endif()
 
 endif()
