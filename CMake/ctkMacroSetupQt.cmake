@@ -43,6 +43,8 @@ macro(ctkMacroSetupQt)
       list(APPEND CTK_QT5_COMPONENTS Script)
     endif()
     find_package(Qt5 COMPONENTS ${CTK_QT5_COMPONENTS} REQUIRED)
+
+    mark_as_superbuild(Qt5_DIR) # Qt 5
   else()
     set(minimum_required_qt_version "4.6")
 
@@ -69,12 +71,11 @@ macro(ctkMacroSetupQt)
         get_filename_component(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
       endif()
 
+      mark_as_superbuild(QT_QMAKE_EXECUTABLE) # Qt 4
     else()
       message(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
     endif()
   endif()
 
   mark_as_superbuild(CTK_QT_VERSION)
-  mark_as_superbuild(QT_QMAKE_EXECUTABLE) # Qt 4
-
 endmacro()

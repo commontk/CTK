@@ -150,7 +150,7 @@ macro(ctkMacroBuildPlugin)
     # Add Qt include dirs and defines
     include(${QT_USE_FILE})
   else()
-    find_package(Qt5LinguistTools REQUIRED)
+    find_package(Qt5 COMPONENTS LinguistTools REQUIRED)
   endif()
 
   # Add the library directories from the external project
