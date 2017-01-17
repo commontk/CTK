@@ -31,9 +31,10 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     list(APPEND proj_DEPENDENCIES VTK)
   endif()
 
+  set(qtlibs core gui network opengl sql svg uitools xml)
+
   # Enable Qt libraries PythonQt wrapping if required
-  if (CTK_QT_VERSION VERSION_GREATER "4")
-    set(qtlibs Core Gui Widgets Network OpenGL PrintSupport Sql Svg UiTools WebKit WebKitWidgets Xml)
+  if(CTK_QT_VERSION VERSION_GREATER "4")
     list(APPEND ep_PythonQt_args
       -DQt5_DIR:PATH=${Qt5_DIR}
       )
@@ -43,11 +44,15 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
         -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
         )
     endif()
+    list(APPEND qtlibs qml quick)
+    if(CTK_QT_VERSION VERSION_LESS "5.6.0")
+      list(APPEND qtlibs webkit)
+    endif()
   else()
     list(APPEND ep_PythonQt_args
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       )
-    set(qtlibs core gui network opengl sql svg uitools webkit xml)
+    list(APPEND qtlibs webkit)
   endif()
 
   # Set desired qt version for PythonQt
@@ -72,7 +77,12 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
   endif()
 
-  set(revision_tag 1afe4f8906345063b25047652e8962f641010a55)
+  if (CTK_QT_VERSION VERSION_GREATER "4")
+    set(revision_tag 154cbd4a9b50e87e666997b8ba5a96a7cfaeb124) # patched-7
+  else()
+    set(revision_tag 1afe4f8906345063b25047652e8962f641010a55) # patched-5
+  endif()
+
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
