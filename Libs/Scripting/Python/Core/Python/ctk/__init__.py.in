@@ -15,6 +15,9 @@ for kit in __kits_to_load:
     if _CTK_VERBOSE_IMPORT:
       print detail
 
+# Associate methods available in the ctk *module* with the ctk *package*
+grabWidget = ctk.grabWidget
+
 def add_methodclass_to_ctkWorkflowStep_or_ctkWorkflowWidgetStep(workflowstep_class):
 
   def validate(self, validationSucceed, desiredBranchId):
