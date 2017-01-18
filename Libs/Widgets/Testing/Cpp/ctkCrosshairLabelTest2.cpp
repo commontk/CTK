@@ -28,6 +28,7 @@
 // CTK includes
 #include "ctkCrosshairLabel.h"
 #include "ctkCommandLineParser.h"
+#include "ctkWidgetsUtils.h"
 
 // STD includes
 #include <cstdlib>
@@ -37,7 +38,7 @@
 bool imageCompare(ctkCrosshairLabel& crosshair, QString baselineDirectory,
                   QString baselineFilename)
 {
-  QImage output = QPixmap::grabWidget(&crosshair).toImage();
+  QImage output = ctk::grabWidget(&crosshair);
   QImage baseline(baselineDirectory + "/" + baselineFilename);
   return output == baseline;
 }
@@ -47,7 +48,7 @@ bool imageCompare(ctkCrosshairLabel& crosshair, QString baselineDirectory,
 void imageSave(ctkCrosshairLabel& crosshair, QString baselineDirectory,
                QString baselineFilename)
 {
-  QImage output = QPixmap::grabWidget(&crosshair).toImage();
+  QImage output = ctk::grabWidget(&crosshair);
   output.save(baselineDirectory + "/" + baselineFilename);
 }
 

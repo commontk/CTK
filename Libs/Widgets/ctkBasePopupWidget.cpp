@@ -36,6 +36,7 @@
 
 // CTK includes
 #include "ctkBasePopupWidget_p.h"
+#include "ctkWidgetsUtils.h"
 
 // -------------------------------------------------------------------------
 QGradient* duplicateGradient(const QGradient* gradient)
@@ -238,7 +239,11 @@ void ctkBasePopupWidgetPrivate::setupPopupPixmapWidget()
     }
   else
     {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     pixmap = QPixmap::grabWidget(q, QRect(QPoint(0,0), q->geometry().size()));
+#else
+    pixmap = q->grab(QRect(QPoint(0,0), q->geometry().size()));
+#endif
     }
   this->PopupPixmapWidget->setPixmap(pixmap);
   this->PopupPixmapWidget->setAttribute(
