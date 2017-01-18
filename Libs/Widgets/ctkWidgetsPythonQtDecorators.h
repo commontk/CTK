@@ -29,6 +29,7 @@
 #include <ctkTransferFunctionBarsItem.h>
 #include <ctkTransferFunctionControlPointsItem.h>
 #include <ctkTransferFunctionGradientItem.h>
+#include <ctkWidgetsUtils.h>
 #include <ctkWorkflowWidgetStep.h>
 
 // NOTE:
@@ -140,6 +141,13 @@ public Q_SLOTS:
   void delete_ctkTransferFunctionGradientItem(ctkTransferFunctionGradientItem* obj)
     {
     delete obj;
+    }
+
+  // ctkWidgetsUtils
+
+  QImage static_ctk_grabWidget(QWidget* widget, QRect rectangle)
+    {
+    return ctk::grabWidget(widget, rectangle);
     }
 
 };
