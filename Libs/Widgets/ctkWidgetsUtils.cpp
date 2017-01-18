@@ -50,7 +50,11 @@ QImage ctk::grabWidget(QWidget* widget, QRect rectangle)
     {
     rectangle = QRect(0,0,widget->width(),widget->height());
     }
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   QPixmap widgetPixmap = QPixmap::grabWidget(widget, rectangle);
+#else
+  QPixmap widgetPixmap = widget->grab(rectangle);
+#endif
   QImage widgetImage = widgetPixmap.toImage();
   QPainter painter;
   painter.begin(&widgetImage);

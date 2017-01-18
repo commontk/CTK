@@ -38,7 +38,7 @@ namespace ctk {
 /// \ingroup Visualization_VTK_Widgets
 /// Grab the contents of a QWidget and all its children.
 /// Handle correctly the case of QVTKWidget.
-/// \sa ctk::grabWidget QWidget::grabWidget
+/// \sa ctk::grabWidget QWidget::grab
 QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT grabVTKWidget(QWidget* widget, QRect rectangle = QRect());
 
 ///
