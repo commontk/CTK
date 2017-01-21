@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QScrollBar>
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
 
@@ -56,7 +57,13 @@ int ctkFittedTextBrowser::heightForWidth(int _width) const
   // Fudge factor. This is the difference between the frame and the 
   // viewport.
   int fudge = 2 * this->frameWidth();
-  
+
+  int horizontalScrollbarHeight = 0;
+  if (this->horizontalScrollBar()->isVisible())
+  {
+    horizontalScrollbarHeight = this->horizontalScrollBar()->height() + fudge;
+  }
+
   // Do the calculation assuming no scrollbars
   doc->setTextWidth(_width - fudge);
   int noScrollbarHeight =
@@ -69,7 +76,7 @@ int ctkFittedTextBrowser::heightForWidth(int _width) const
   
   // Get minimum height (even if string is empty): one line of text
   int _minimumHeight = QFontMetrics(doc->defaultFont()).lineSpacing() + fudge;
-  int ret = qMax(noScrollbarHeight, _minimumHeight);
+  int ret = qMax(noScrollbarHeight, _minimumHeight) + horizontalScrollbarHeight;
 
   doc->setTextWidth(savedWidth);
   return ret;
