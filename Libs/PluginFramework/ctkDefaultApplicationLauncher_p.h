@@ -22,7 +22,7 @@
 #ifndef CTKDEFAULTAPPLICATIONLAUNCHER_H
 #define CTKDEFAULTAPPLICATIONLAUNCHER_H
 
-#include <service/application/ctkApplicationLauncher.h>
+#include "service/application/ctkApplicationLauncher.h"
 
 #include <QSemaphore>
 #include <QVariant>
