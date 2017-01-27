@@ -22,7 +22,7 @@
 #ifndef CTKPLUGINFRAMEWORKDEBUGOPTIONS_H
 #define CTKPLUGINFRAMEWORKDEBUGOPTIONS_H
 
-#include <service/debug/ctkDebugOptions.h>
+#include "service/debug/ctkDebugOptions.h"
 #include <service/debug/ctkDebugOptionsListener.h>
 
 #include <ctkServiceTracker.h>
