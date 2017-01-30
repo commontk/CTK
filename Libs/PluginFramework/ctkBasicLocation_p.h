@@ -22,7 +22,7 @@
 #ifndef CTKBASICLOCATION_H
 #define CTKBASICLOCATION_H
 
-#include "service\datalocation\ctkLocation.h"
+#include "service/datalocation/ctkLocation.h"
 
 #include <QUrl>
 #include <QString>
