@@ -20,6 +20,9 @@
 
 // Qt includes
 #include <QApplication>
+#include <QPushButton>
+#include <QTimer>
+#include <QVBoxLayout>
 
 // CTK includes
 #include "ctkFittedTextBrowser.h"
@@ -32,9 +35,34 @@ int ctkFittedTextBrowserTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  ctkFittedTextBrowser ctkObject;
+  QWidget widget;
+  QVBoxLayout* layout = new QVBoxLayout;
+  widget.setLayout(layout);
 
+  ctkFittedTextBrowser textBrowserWidget(&widget);
+  textBrowserWidget.setText(
+    "<pre>"
+    "This is a short line.\n"
+    "This is a very very, very very very, very very, very very very, very very, very very very long line\n"
+    "Some more lines 1."
+    "Some more lines 2."
+    "Some more, some more."
+    "</pre>");
+  layout->addWidget(&textBrowserWidget);
 
-  return EXIT_SUCCESS;
+  QPushButton expandingButton(&widget);
+  QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  sizePolicy.setHorizontalStretch(1);
+  sizePolicy.setVerticalStretch(1);
+  expandingButton.setSizePolicy(sizePolicy);
+  layout->addWidget(&expandingButton);
+
+  widget.show();
+
+  if (argc < 2 || QString(argv[1]) != "-I")
+  {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+  }
+
+  return app.exec();
 }
-

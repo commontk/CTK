@@ -31,8 +31,8 @@ namespace {
 
 static bool parseBooleanAttribute(const QStringRef& attrValue)
 {
-  if (attrValue.compare("true", Qt::CaseInsensitive) == 0 ||
-      attrValue.compare("1") == 0)
+  if (attrValue.compare(QLatin1String("true"), Qt::CaseInsensitive) == 0 ||
+      attrValue.compare(QLatin1String("1")) == 0)
   {
     return true;
   }
@@ -79,23 +79,23 @@ protected:
 
     QStringRef name = xmlReader.name();
 
-    if (name.compare("name", Qt::CaseInsensitive) == 0)
+    if (name.compare(QLatin1String("name"), Qt::CaseInsensitive) == 0)
     {
       moduleParamPrivate->Name = xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("description", Qt::CaseInsensitive) == 0)
+    else if (name.compare(QLatin1String("description"), Qt::CaseInsensitive) == 0)
     {
       moduleParamPrivate->Description = xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("label", Qt::CaseInsensitive) == 0)
+    else if (name.compare(QLatin1String("label"), Qt::CaseInsensitive) == 0)
     {
       moduleParamPrivate->Label = xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("default", Qt::CaseInsensitive) == 0)
+    else if (name.compare(QLatin1String("default"), Qt::CaseInsensitive) == 0)
     {
       moduleParamPrivate->Default = xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("flag", Qt::CaseInsensitive) == 0)
+    else if (name.compare(QLatin1String("flag"), Qt::CaseInsensitive) == 0)
     {
       QString flag = xmlReader.readElementText().trimmed();
       if (flag.startsWith('-')) flag = flag.remove(0, 1);
@@ -103,7 +103,7 @@ protected:
       moduleParamPrivate->FlagAliasesAsString = xmlReader.attributes().value("alias").toString();
       moduleParamPrivate->DeprecatedFlagAliasesAsString = xmlReader.attributes().value("deprecatedalias").toString();
     }
-    else if (name.compare("longflag", Qt::CaseInsensitive) == 0)
+    else if (name.compare(QLatin1String("longflag"), Qt::CaseInsensitive) == 0)
     {
       QString longFlag = xmlReader.readElementText().trimmed();
       if (longFlag.startsWith('-')) longFlag = longFlag.remove(0, 1);
@@ -111,11 +111,11 @@ protected:
       moduleParamPrivate->LongFlagAliasesAsString = xmlReader.attributes().value("alias").toString();
       moduleParamPrivate->DeprecatedLongFlagAliasesAsString = xmlReader.attributes().value("deprecatedalias").toString();
     }
-    else if (name.compare("index", Qt::CaseInsensitive) == 0)
+    else if (name.compare(QLatin1String("index"), Qt::CaseInsensitive) == 0)
     {
       moduleParamPrivate->Index = xmlReader.readElementText().toInt();
     }
-    else if (name.compare("channel", Qt::CaseInsensitive) == 0)
+    else if (name.compare(QLatin1String("channel"), Qt::CaseInsensitive) == 0)
     {
       moduleParamPrivate->Channel = xmlReader.readElementText().trimmed();
     }
@@ -134,15 +134,15 @@ protected:
     while(xmlReader.readNextStartElement())
     {
       QStringRef constraintElem = xmlReader.name();
-      if (constraintElem.compare("minimum", Qt::CaseInsensitive) == 0)
+      if (constraintElem.compare(QLatin1String("minimum"), Qt::CaseInsensitive) == 0)
       {
         moduleParamPrivate->Minimum = xmlReader.readElementText().trimmed();
       }
-      else if (constraintElem.compare("maximum", Qt::CaseInsensitive) == 0)
+      else if (constraintElem.compare(QLatin1String("maximum"), Qt::CaseInsensitive) == 0)
       {
         moduleParamPrivate->Maximum = xmlReader.readElementText().trimmed();
       }
-      else if (constraintElem.compare("step", Qt::CaseInsensitive) == 0)
+      else if (constraintElem.compare(QLatin1String("step"), Qt::CaseInsensitive) == 0)
       {
         moduleParamPrivate->Step = xmlReader.readElementText().trimmed();
       }
@@ -177,7 +177,7 @@ protected:
   {
     QStringRef name = xmlReader.name();
 
-    if (name.compare("constraints", Qt::CaseInsensitive) == 0)
+    if (name.compare(QLatin1String("constraints"), Qt::CaseInsensitive) == 0)
     {
       return handleConstraintsElement(moduleParamPrivate, xmlReader);
     }
@@ -197,7 +197,7 @@ protected:
   {
     QStringRef name = xmlReader.name();
 
-    if (name.compare("constraints", Qt::CaseInsensitive) == 0)
+    if (name.compare(QLatin1String("constraints"), Qt::CaseInsensitive) == 0)
     {
       return handleConstraintsElement(moduleParamPrivate, xmlReader);
     }
@@ -217,7 +217,7 @@ protected:
   {
     QStringRef name = xmlReader.name();
 
-    if (name.compare("element", Qt::CaseInsensitive) == 0)
+    if (name.compare(QLatin1String("element"), Qt::CaseInsensitive) == 0)
     {
       moduleParamPrivate->Elements.push_back(xmlReader.readElementText().trimmed());
       return true;
