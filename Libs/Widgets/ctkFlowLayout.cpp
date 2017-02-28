@@ -126,6 +126,7 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
   int spaceX = q->horizontalSpacing();
   int spaceY = q->verticalSpacing();
   int space = this->Orientation == Qt::Horizontal ? spaceX : spaceY;
+  QLayoutItem* previousItem = NULL;
   foreach (QLayoutItem* item, this->ItemList)
     {
     QWidget *wid = item->widget();
@@ -146,6 +147,18 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
     if (this->Orientation == Qt::Horizontal &&
         (next.x() - space > max) && length > 0)
       {
+      // If justified alignment is requested then expand the last item in the row
+      // to fill the available space. If the width of items were highly varying then
+      // expanding width of all items proportionally could provide visually more
+      // apealing results, but expanding only the last item was much simpler to implement,
+      // and works very well most of the cases.
+      if (!testOnly && q->alignment() == Qt::AlignJustify && previousItem)
+        {
+        QRect geometry = previousItem->geometry();
+        geometry.adjust(0, 0, max + space - pos.x(), 0);
+        previousItem->setGeometry(geometry);
+        maxX = qMax(maxX, geometry.right() + right);
+        }
       pos = QPoint(effectiveRect.x(), pos.y() + length + space);
       next = pos + QPoint(itemSize.width() + space, 0);
       length = 0;
@@ -168,6 +181,7 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
     pos = next;
     length = qMax(length, this->Orientation == Qt::Horizontal ?
       itemSize.height() : itemSize.width());
+    previousItem = item;
     }
   return this->Orientation == Qt::Horizontal ? maxY : maxX;
 }

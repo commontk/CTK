@@ -54,7 +54,27 @@ int ctkFlowLayoutTest1(int argc, char * argv [] )
  
   widget1.setLayout(flowLayout1);
   widget1.show();
-  
+
+  QWidget widget1justified(0);
+  widget1justified.setWindowTitle("1) Horizontal, justified");
+  ctkFlowLayout* flowLayout1justified = new ctkFlowLayout(&widget1justified);
+  flowLayout1justified->setAlignItems(false);
+  flowLayout1justified->setAlignment(Qt::AlignJustify);
+
+  flowLayout1justified->addWidget(new QPushButton("1 text text text text"));
+  flowLayout1justified->addWidget(new QPushButton("2 text text text text text text text text"));
+  flowLayout1justified->addWidget(new QPushButton("3 text"));
+  flowLayout1justified->addWidget(new QPushButton("4 text text text text text text"));
+  flowLayout1justified->addWidget(new QPushButton("5 text text"));
+  flowLayout1justified->addWidget(new QPushButton("6 text text text text"));
+  flowLayout1justified->addWidget(new QPushButton("7 text text text text text text text"));
+  flowLayout1justified->addWidget(new QPushButton("8 text text text"));
+  flowLayout1justified->addWidget(new QPushButton("9"));
+  flowLayout1justified->addWidget(new QPushButton("10 text text text text text text text text text"));
+
+  widget1justified.setLayout(flowLayout1justified);
+  widget1justified.show();
+
   QWidget widget2(0);
   widget2.setWindowTitle("2) Horizontal");
   ctkFlowLayout* flowLayout2 = new ctkFlowLayout;
@@ -103,7 +123,7 @@ int ctkFlowLayoutTest1(int argc, char * argv [] )
   flowLayout4->setOrientation(Qt::Vertical);
   flowLayout4->setVerticalSpacing(0);
   flowLayout4->setHorizontalSpacing(0);
-  
+
   if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
