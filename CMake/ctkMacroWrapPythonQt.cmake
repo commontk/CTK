@@ -112,7 +112,7 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     if(NOT skip_wrapping)
 
       # compute the input filename
-      if(IS_ABSOLUTE FILE)
+      if(IS_ABSOLUTE ${FILE})
         set(TMP_INPUT ${FILE})
       else()
         set(TMP_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${FILE})
