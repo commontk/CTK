@@ -376,6 +376,18 @@ bool ctk::copyDirRecursively(const QString &srcPath, const QString &dstPath)
         return false;
         }
       }
+    else if (info.isSymLink() )
+     //For broken symbolic links. We take care of them only after. If the symlink points to a file or a directory,
+     //we prefer to let the system handle it as a file or a directory and not as a symlink. This should allow backward compatibility
+      {
+      QFileInfo fi( info.absoluteFilePath() ) ;
+      QString target = fi.symLinkTarget() ;
+      QString relativePath = info.absoluteDir().relativeFilePath( target ) ;
+      //We set the value of the link we want to create to the relative path we just got
+      QFile currentFile( relativePath ) ;
+      //We create the link in the destination folder
+      currentFile.link( dstItemPath ) ;
+      }
     else
       {
       qWarning() << "ctk::copyDirRecursively: Unhandled item" << info.filePath();
