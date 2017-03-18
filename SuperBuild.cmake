@@ -34,6 +34,13 @@ endif()
 #-----------------------------------------------------------------------------
 set(proj CTK)
 
+if(DEFINED CMAKE_TRY_COMPILE_CONFIGURATION)
+  list(APPEND ${proj}_EP_ARGS
+    CMAKE_CACHE_ARGS
+      -DCMAKE_TRY_COMPILE_CONFIGURATION:STRING=${CMAKE_TRY_COMPILE_CONFIGURATION}
+    )
+endif()
+
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   DOWNLOAD_COMMAND ""
