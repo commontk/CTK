@@ -50,6 +50,45 @@ int ctkFittedTextBrowserTest1(int argc, char * argv [] )
     "</pre>");
   layout->addWidget(&textBrowserWidget);
 
+  ctkFittedTextBrowser textBrowserWidgetCollapsibleText(&widget);
+  textBrowserWidgetCollapsibleText.setCollapsible(true);
+  textBrowserWidgetCollapsibleText.setText(
+    "This is the teaser for auto-text.\n More details are here.\n"
+    "This is a very very, very very very, very very, very very very, very very, very very very long line\n"
+    "Some more lines 1.\n"
+    "Some more lines 2.\n"
+    "Some more, some more.");
+  textBrowserWidgetCollapsibleText.setShowMoreText("&gt;&gt;&gt;");
+  textBrowserWidgetCollapsibleText.setShowLessText("&lt;&lt;&lt;");
+  layout->addWidget(&textBrowserWidgetCollapsibleText);
+
+  ctkFittedTextBrowser textBrowserWidgetCollapsibleHtml(&widget);
+  textBrowserWidgetCollapsibleHtml.setHtml(
+    "This is the teaser for html.<br>"
+    "More details are here."
+    "This is a very very, very very very, very very, very very very, very very, very very very long line\n"
+    "Some more lines 1."
+    "Some more lines 2."
+    "Some more, some more.");
+  textBrowserWidgetCollapsibleHtml.setCollapsible(true);
+  layout->addWidget(&textBrowserWidgetCollapsibleHtml);
+
+  ctkFittedTextBrowser textBrowserWidgetCollapsibleComplexHtml(&widget);
+  textBrowserWidgetCollapsibleComplexHtml.setCollapsible(true);
+  textBrowserWidgetCollapsibleComplexHtml.setHtml(
+    "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html>"
+    "<head><meta name=\"qrichtext\" content=\"1\" /> <style type=\"text/css\"> p, li { white-space: pre-wrap; } </style></head>"
+    "<body style=\" font-family:'MS Shell Dlg 2'; font-size:12.25pt; font-weight:400; font-style:normal;\">"
+    "<p>This is the teaser for complex html.<br></p>"
+    "<p>More details are here.</p>"
+    "<p>This is a very very, very very very, very very, very very very, very very, very very very long line</p>"
+    "<p>Some more lines 1."
+    "Some more lines 2."
+    "Some more, some more.</p>"
+    "</body></html>");
+  layout->addWidget(&textBrowserWidgetCollapsibleComplexHtml);
+  textBrowserWidgetCollapsibleHtml.setCollapsed(false);
+
   QPushButton expandingButton(&widget);
   QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   sizePolicy.setHorizontalStretch(1);
