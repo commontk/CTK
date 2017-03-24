@@ -1,22 +1,22 @@
 /*=========================================================================
 
-  Library:   CTK
+Library:   CTK
 
-  Copyright (c) Kitware Inc.
+Copyright (c) Kitware Inc.
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0.txt
+http://www.apache.org/licenses/LICENSE-2.0.txt
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
-  =========================================================================*/
+=========================================================================*/
 
 #ifndef __ctkFittedTextBrowser_p_h
 #define __ctkFittedTextBrowser_p_h
@@ -37,27 +37,26 @@ public:
   ctkFittedTextBrowserPrivate(ctkFittedTextBrowser& object);
   virtual ~ctkFittedTextBrowserPrivate();
 
-  // Get collapsed/expanded text in html format.
-  // Calls collapsiblePlainText or collapsibleHtml.
-  QString collapsibleText();
+  // Update collapsed/expanded text in the widget.
+  void updateCollapsedText();
+
   // Get collapsed/expanded text in html format from plain text.
-  QString collapsiblePlainText();
+  QString collapsedTextFromPlainText() const;
   // Get collapsed/expanded text in html format from html.
-  QString collapsibleHtml();
+  QString collapsedTextFromHtml() const;
 
   // Get more/less link in html format
-  QString collapseLinkText();
+  QString collapseLinkText() const;
 
-  bool Collapsible;
   bool Collapsed;
 
-  QString ShowMoreText;
-  QString ShowLessText;
+  QString ShowDetailsText;
+  QString HideDetailsText;
 
   // Stores the text that the user originally set.
-  QString FullText;
-  
-  enum FullTextSetMethod
+  QString CollapsibleText;
+
+  enum CollapsibleTextSetMethod
   {
     Text,
     PlainText,
@@ -65,7 +64,7 @@ public:
   };
 
   // Stores what method the user called to set text
-  FullTextSetMethod FullTextSetter;
+  CollapsibleTextSetMethod CollapsibleTextSetter;
 };
 
 #endif

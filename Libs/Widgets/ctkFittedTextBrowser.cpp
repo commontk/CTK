@@ -28,19 +28,18 @@
 #include "ctkFittedTextBrowser.h"
 #include "ctkFittedTextBrowser_p.h"
 
-static const char moreAnchor[] = "more";
-static const char lessAnchor[] = "less";
+static const char moreAnchor[] = "show_details";
+static const char lessAnchor[] = "hide_details";
 
 //-----------------------------------------------------------------------------
 ctkFittedTextBrowserPrivate::ctkFittedTextBrowserPrivate(ctkFittedTextBrowser& object)
   :q_ptr(&object)
 {
-  this->Collapsible = false;
   this->Collapsed = true;
-  this->FullTextSetter = ctkFittedTextBrowserPrivate::Text;
-  this->ShowMoreText = object.tr("More...");
-  this->ShowLessText = object.tr("Hide details.");
-  QString ShowLessText;
+  this->CollapsibleTextSetter = ctkFittedTextBrowserPrivate::Text;
+  this->ShowDetailsText = object.tr("Show details...");
+  this->HideDetailsText = object.tr("Hide details.");
+  QString HideDetailsText;
 }
 
 //-----------------------------------------------------------------------------
@@ -49,46 +48,32 @@ ctkFittedTextBrowserPrivate::~ctkFittedTextBrowserPrivate()
 }
 
 //-----------------------------------------------------------------------------
-QString ctkFittedTextBrowserPrivate::collapsibleText()
+void ctkFittedTextBrowserPrivate::updateCollapsedText()
 {
   Q_Q(ctkFittedTextBrowser);
-  bool html = (this->FullTextSetter == ctkFittedTextBrowserPrivate::Html || this->FullText.indexOf("<html>") >= 0);
+  bool html = (this->CollapsibleTextSetter == ctkFittedTextBrowserPrivate::Html || this->CollapsibleText.indexOf("<html>") >= 0);
   if (html)
   {
-    return this->collapsibleHtml();
+    q->setHtml(this->collapsedTextFromHtml());
   }
   else
   {
-    return this->collapsiblePlainText();
+    q->setHtml(this->collapsedTextFromPlainText());
   }
 }
 
 //-----------------------------------------------------------------------------
-QString ctkFittedTextBrowserPrivate::collapseLinkText()
+QString ctkFittedTextBrowserPrivate::collapsedTextFromPlainText() const
 {
-  Q_Q(ctkFittedTextBrowser);
-  if (this->Collapsed)
-  {
-    return QString(" <a href=\"#") + moreAnchor + "\">" + this->ShowMoreText + "</a>";
-  }
-  else
-  {
-    return QString(" <a href=\"#") + lessAnchor + "\">" + this->ShowLessText + "</a>";
-  }
-}
-
-//-----------------------------------------------------------------------------
-QString ctkFittedTextBrowserPrivate::collapsiblePlainText()
-{
-  Q_Q(ctkFittedTextBrowser);
-  int teaserEndPosition = this->FullText.indexOf("\n");
+  Q_Q(const ctkFittedTextBrowser);
+  int teaserEndPosition = this->CollapsibleText.indexOf("\n");
   if (teaserEndPosition < 0)
   {
-    return this->FullText;
+    return this->CollapsibleText;
   }
   QString finalText;
   finalText.append("<html>");
-  finalText.append(this->Collapsed ? this->FullText.left(teaserEndPosition) : this->FullText);
+  finalText.append(this->Collapsed ? this->CollapsibleText.left(teaserEndPosition) : this->CollapsibleText);
   finalText.append(this->collapseLinkText());
   finalText.append("</html>");
   // Remove line break to allow continuation of line.
@@ -100,17 +85,17 @@ QString ctkFittedTextBrowserPrivate::collapsiblePlainText()
 }
 
 //-----------------------------------------------------------------------------
-QString ctkFittedTextBrowserPrivate::collapsibleHtml()
+QString ctkFittedTextBrowserPrivate::collapsedTextFromHtml() const
 {
-  Q_Q(ctkFittedTextBrowser);
+  Q_Q(const ctkFittedTextBrowser);
   const QString lineBreak("<br>");
-  int teaserEndPosition = this->FullText.indexOf(lineBreak);
+  int teaserEndPosition = this->CollapsibleText.indexOf(lineBreak);
   if (teaserEndPosition < 0)
   {
-    return this->FullText;
+    return this->CollapsibleText;
   }
 
-  QString finalText = this->FullText;
+  QString finalText = this->CollapsibleText;
   if (this->Collapsed)
   {
     finalText = finalText.left(teaserEndPosition) + this->collapseLinkText();
@@ -141,6 +126,20 @@ QString ctkFittedTextBrowserPrivate::collapsibleHtml()
     }
   }
   return finalText;
+}
+
+//-----------------------------------------------------------------------------
+QString ctkFittedTextBrowserPrivate::collapseLinkText() const
+{
+  Q_Q(const ctkFittedTextBrowser);
+  if (this->Collapsed)
+  {
+    return QString(" <a href=\"#") + moreAnchor + "\">" + this->ShowDetailsText + "</a>";
+  }
+  else
+  {
+    return QString(" <a href=\"#") + lessAnchor + "\">" + this->HideDetailsText + "</a>";
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -228,53 +227,38 @@ void ctkFittedTextBrowser::resizeEvent(QResizeEvent* e)
 }
 
 //-----------------------------------------------------------------------------
-void ctkFittedTextBrowser::setText(const QString &text)
+void ctkFittedTextBrowser::setCollapsibleText(const QString &text)
 {
   Q_D(ctkFittedTextBrowser);
-  d->FullTextSetter = ctkFittedTextBrowserPrivate::Text;
-  if (d->Collapsible)
-    {
-    d->FullText = text;
-    QTextBrowser::setHtml(d->collapsibleText());
-    }
-  else
-    {
-    QTextBrowser::setText(text);
-    }
+  d->CollapsibleTextSetter = ctkFittedTextBrowserPrivate::Text;
+  d->CollapsibleText = text;
+  d->updateCollapsedText();
 }
 
 //-----------------------------------------------------------------------------
-void ctkFittedTextBrowser::setPlainText(const QString &text)
+QString ctkFittedTextBrowser::collapsibleText() const
+{
+  Q_D(const ctkFittedTextBrowser);
+  return d->CollapsibleText;
+}
+
+
+//-----------------------------------------------------------------------------
+void ctkFittedTextBrowser::setCollapsiblePlainText(const QString &text)
 {
   Q_D(ctkFittedTextBrowser);
-  d->FullTextSetter = ctkFittedTextBrowserPrivate::PlainText;
-  if (d->Collapsible)
-  {
-    d->FullText = text;
-    QTextBrowser::setHtml(d->collapsibleText());
-  }
-  else
-  {
-    QTextBrowser::setPlainText(text);
-  }
+  d->CollapsibleTextSetter = ctkFittedTextBrowserPrivate::PlainText;
+  d->CollapsibleText = text;
+  d->updateCollapsedText();
 }
 
 //-----------------------------------------------------------------------------
-void ctkFittedTextBrowser::setHtml(const QString &text)
+void ctkFittedTextBrowser::setCollapsibleHtml(const QString &text)
 {
   Q_D(ctkFittedTextBrowser);
-  d->FullTextSetter = ctkFittedTextBrowserPrivate::Html;
-  // always save the original text as well because use may make the widget
-  // collapsible at any time
-  d->FullText = text;
-  if (d->Collapsible)
-  {
-    QTextBrowser::setHtml(d->collapsibleText());
-  }
-  else
-  {
-    QTextBrowser::setHtml(text);
-  }
+  d->CollapsibleTextSetter = ctkFittedTextBrowserPrivate::Html;
+  d->CollapsibleText = text;
+  d->updateCollapsedText();
 }
 
 //-----------------------------------------------------------------------------
@@ -304,10 +288,7 @@ void ctkFittedTextBrowser::setCollapsed(bool collapsed)
     return;
   }
   d->Collapsed = collapsed;
-  if (d->Collapsible)
-  {
-    QTextBrowser::setHtml(d->collapsibleText());
-  }
+  d->updateCollapsedText();
 }
 
 //-----------------------------------------------------------------------------
@@ -318,80 +299,41 @@ bool ctkFittedTextBrowser::collapsed() const
 }
 
 //-----------------------------------------------------------------------------
-void ctkFittedTextBrowser::setCollapsible(bool collapsible)
+void ctkFittedTextBrowser::setShowDetailsText(const QString &text)
 {
   Q_D(ctkFittedTextBrowser);
-  if (d->Collapsible == collapsible)
+  if (d->ShowDetailsText == text)
   {
     // no change
     return;
   }
-  d->Collapsible = collapsible;
-  if (collapsible)
-  {
-    QTextBrowser::setHtml(d->collapsibleText());
-  }
-  else
-  {
-    switch (d->FullTextSetter)
-    {
-    case ctkFittedTextBrowserPrivate::Text: QTextBrowser::setText(d->FullText); break;
-    case ctkFittedTextBrowserPrivate::PlainText: QTextBrowser::setPlainText(d->FullText); break;
-    case ctkFittedTextBrowserPrivate::Html: QTextBrowser::setHtml(d->FullText); break;
-    default: QTextBrowser::setText(d->FullText); break;
-    }
-  }
+  d->ShowDetailsText = text;
+  d->updateCollapsedText();
 }
 
 //-----------------------------------------------------------------------------
-bool ctkFittedTextBrowser::collapsible() const
+QString ctkFittedTextBrowser::showDetailsText() const
 {
   Q_D(const ctkFittedTextBrowser);
-  return d->Collapsible;
+  return d->ShowDetailsText;
 }
 
 //-----------------------------------------------------------------------------
-void ctkFittedTextBrowser::setShowMoreText(const QString &text)
+void ctkFittedTextBrowser::setHideDetailsText(const QString &text)
 {
   Q_D(ctkFittedTextBrowser);
-  if (d->ShowMoreText == text)
+  if (d->HideDetailsText == text)
   {
     // no change
     return;
   }
-  d->ShowMoreText = text;
-  if (d->Collapsible)
-  {
-    QTextBrowser::setHtml(d->collapsibleText());
-  }
+  d->HideDetailsText = text;
+  d->updateCollapsedText();
 }
 
 //-----------------------------------------------------------------------------
-QString ctkFittedTextBrowser::showMoreText() const
+QString ctkFittedTextBrowser::hideDetailsText() const
 {
   Q_D(const ctkFittedTextBrowser);
-  return d->ShowMoreText;
-}
-
-//-----------------------------------------------------------------------------
-void ctkFittedTextBrowser::setShowLessText(const QString &text)
-{
-  Q_D(ctkFittedTextBrowser);
-  if (d->ShowLessText == text)
-  {
-    // no change
-    return;
-  }
-  d->ShowLessText = text;
-  if (d->Collapsible)
-  {
-    QTextBrowser::setHtml(d->collapsibleText());
-  }
-}
-
-//-----------------------------------------------------------------------------
-QString ctkFittedTextBrowser::showLessText() const
-{
-  Q_D(const ctkFittedTextBrowser);
-  return d->ShowLessText;
+  return d->HideDetailsText;
 }
