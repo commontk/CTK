@@ -51,31 +51,28 @@ int ctkFittedTextBrowserTest1(int argc, char * argv [] )
   layout->addWidget(&textBrowserWidget);
 
   ctkFittedTextBrowser textBrowserWidgetCollapsibleText(&widget);
-  textBrowserWidgetCollapsibleText.setCollapsible(true);
-  textBrowserWidgetCollapsibleText.setText(
+  textBrowserWidgetCollapsibleText.setCollapsibleText(
     "This is the teaser for auto-text.\n More details are here.\n"
     "This is a very very, very very very, very very, very very very, very very, very very very long line\n"
     "Some more lines 1.\n"
     "Some more lines 2.\n"
     "Some more, some more.");
-  textBrowserWidgetCollapsibleText.setShowMoreText("&gt;&gt;&gt;");
-  textBrowserWidgetCollapsibleText.setShowLessText("&lt;&lt;&lt;");
+  textBrowserWidgetCollapsibleText.setShowDetailsText("&gt;&gt;&gt;");
+  textBrowserWidgetCollapsibleText.setHideDetailsText("&lt;&lt;&lt;");
   layout->addWidget(&textBrowserWidgetCollapsibleText);
 
   ctkFittedTextBrowser textBrowserWidgetCollapsibleHtml(&widget);
-  textBrowserWidgetCollapsibleHtml.setHtml(
+  textBrowserWidgetCollapsibleHtml.setCollapsibleHtml(
     "This is the teaser for html.<br>"
     "More details are here."
     "This is a very very, very very very, very very, very very very, very very, very very very long line\n"
     "Some more lines 1."
     "Some more lines 2."
     "Some more, some more.");
-  textBrowserWidgetCollapsibleHtml.setCollapsible(true);
   layout->addWidget(&textBrowserWidgetCollapsibleHtml);
 
   ctkFittedTextBrowser textBrowserWidgetCollapsibleComplexHtml(&widget);
-  textBrowserWidgetCollapsibleComplexHtml.setCollapsible(true);
-  textBrowserWidgetCollapsibleComplexHtml.setHtml(
+  textBrowserWidgetCollapsibleComplexHtml.setCollapsibleHtml(
     "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\"><html>"
     "<head><meta name=\"qrichtext\" content=\"1\" /> <style type=\"text/css\"> p, li { white-space: pre-wrap; } </style></head>"
     "<body style=\" font-family:'MS Shell Dlg 2'; font-size:12.25pt; font-weight:400; font-style:normal;\">"

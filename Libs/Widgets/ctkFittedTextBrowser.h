@@ -42,25 +42,14 @@ class ctkFittedTextBrowserPrivate;
 class CTK_WIDGETS_EXPORT ctkFittedTextBrowser : public QTextBrowser
 {
   Q_OBJECT
-  Q_PROPERTY(bool collapsible READ collapsible WRITE setCollapsible)
   Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed)
-  Q_PROPERTY(QString showMoreText READ showMoreText WRITE setShowMoreText)
-  Q_PROPERTY(QString showLessText READ showLessText WRITE setShowLessText)
+  Q_PROPERTY(QString showDetailsText READ showDetailsText WRITE setShowDetailsText)
+  Q_PROPERTY(QString hideDetailsText READ hideDetailsText WRITE setHideDetailsText)
+
 
 public:
   ctkFittedTextBrowser(QWidget* parent = 0);
   virtual ~ctkFittedTextBrowser();
-
-  /// Show only first line with "More..." link to save space.
-  /// When the user clicks on the link then the full text is displayed
-  /// (and a "Less..." link).
-  /// The teaser is the beginning of the text up to the first newline character
-  /// (for plain text) or <br> tag (for html). The separator is removed when
-  /// the text is expanded so that the full text can continue on the same line
-  /// as the teaser.
-  void setCollapsible(bool collapsible);
-  /// Show only first line with "More..." link to save space.
-  bool collapsible() const;
 
   /// Show only first line/the full text.
   /// Only has effect if collapsible = true.
@@ -68,23 +57,20 @@ public:
   /// Show only first line/the full text.
   bool collapsed() const;
 
-  void setPlainText(const QString &text);
-#ifndef QT_NO_TEXTHTMLPARSER
-  void setHtml(const QString &text);
-#endif
-  void setText(const QString &text);
-
   /// Text that is displayed at the end of collapsed text.
   /// Clicking on the text expands the widget.
-  void setShowMoreText(const QString &text);
+  void setShowDetailsText(const QString &text);
   /// Text that is displayed at the end of collapsed text.
-  QString showMoreText()const;
+  QString showDetailsText()const;
 
   /// Text that is displayed at the end of non-collapsed text.
   /// Clicking on the text collapses the widget.
-  void setShowLessText(const QString &text);
+  void setHideDetailsText(const QString &text);
   /// Text that is displayed at the end of non-collapsed text.
-  QString showLessText()const;
+  QString hideDetailsText()const;
+
+  /// Return text set by setCollapsibleText.
+  Q_INVOKABLE QString collapsibleText() const;
 
   /// Reimplemented for internal reasons
   virtual QSize sizeHint() const;
@@ -92,6 +78,31 @@ public:
   virtual QSize minimumSizeHint() const;
   /// Reimplemented for internal reasons
   virtual int heightForWidth(int width) const;
+
+public Q_SLOTS:
+
+  /// Set text that can be displayed in a shortened form (collapsed) for saving space,
+  /// by only showing first line with "More..." link appended.
+  /// When the user clicks on the link then the full text is displayed
+  /// (and a "Less..." link).
+  /// The teaser is the beginning of the text up to the first newline character
+  /// (for plain text) or <br> tag (for html). The separator is removed when
+  /// the text is expanded so that the full text can continue on the same line
+  /// as the teaser.
+  /// 
+  /// The text can be plain text or HTML and the the right format will be guessed.
+  /// Use setCollapsedHtml() or setCollapsedPlainText() directly to avoid guessing.
+  void setCollapsibleText(const QString &text);
+
+#ifndef QT_NO_TEXTHTMLPARSER
+  /// Set text that can be displayed in a shortened form (collapsed) for saving space.
+  /// \sa setCollapsibleText
+  void setCollapsibleHtml(const QString &text);
+#endif
+
+  /// Set text that can be displayed in a shortened form (collapsed) for saving space.
+  /// \sa setCollapsibleText
+  void setCollapsiblePlainText(const QString &text);
 
 protected Q_SLOTS:
   void heightForWidthMayHaveChanged();
