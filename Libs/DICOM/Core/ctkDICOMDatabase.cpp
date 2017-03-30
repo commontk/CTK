@@ -994,11 +994,18 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
   ctkDICOMItem dataset;
   dataset.InitializeFromFile(fileName);
 
-  DcmTagKey tagKey(group, element);
+  if (dataset.IsInitialized())
+    {
+    DcmTagKey tagKey(group, element);
+    value = dataset.GetAllElementValuesAsString(tagKey);
+    }
+  else
+    {
+    value = TagNotInInstance;
+    }
 
-  value = dataset.GetAllElementValuesAsString(tagKey);
   this->cacheTag(sopInstanceUID, tag, value);
-  return( value );
+  return value;
 }
 
 //------------------------------------------------------------------------------
