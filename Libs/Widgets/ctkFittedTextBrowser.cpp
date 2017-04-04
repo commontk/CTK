@@ -77,7 +77,7 @@ QString ctkFittedTextBrowserPrivate::collapsedTextFromPlainText() const
   finalText.append(this->collapseLinkText());
   finalText.append("</html>");
   // Remove line break to allow continuation of line.
-  finalText.replace(finalText.indexOf('\n'), 1, ' ');
+  finalText.replace(finalText.indexOf('\n'), 1, "");
   // In plain text line breaks were indicated by newline, but we now use html,
   // so line breaks must use <br>
   finalText.replace("\n", "<br>");
@@ -110,7 +110,7 @@ QString ctkFittedTextBrowserPrivate::collapsedTextFromHtml() const
   {
     // Remove <br> to allow continuation of line and avoid extra space
     // when <p> element is used as well.
-    finalText.replace(finalText.indexOf(lineBreak), lineBreak.size(), " ");
+    finalText.replace(finalText.indexOf(lineBreak), lineBreak.size(), "");
     // Add link text before closing </body> or </html> tag
     if (finalText.contains("</body>"))
     {
@@ -134,7 +134,7 @@ QString ctkFittedTextBrowserPrivate::collapseLinkText() const
   Q_Q(const ctkFittedTextBrowser);
   if (this->Collapsed)
   {
-    return QString(" <a href=\"#") + moreAnchor + "\">" + this->ShowDetailsText + "</a>";
+    return QString("&hellip; <a href=\"#") + moreAnchor + "\">" + this->ShowDetailsText + "</a>";
   }
   else
   {
