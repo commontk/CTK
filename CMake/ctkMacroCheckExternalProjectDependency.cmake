@@ -202,9 +202,16 @@ function(_sb_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var has_cfg_i
   _sb_extract_varname_and_vartype(${cmake_varname_and_type} _varname _vartype)
 
   set(_var_value "${${_varname}}")
-  get_property(_value_set_in_cache CACHE ${_varname} PROPERTY VALUE SET)
-  if(_value_set_in_cache)
-    get_property(_var_value CACHE ${_varname} PROPERTY VALUE)
+
+  set(_consider_cache_value 1)
+  if(DEFINED ${_varname}_SKIPCACHEVALUE AND ${_varname}_SKIPCACHEVALUE)
+    set(_consider_cache_value 0)
+  endif()
+  if(_consider_cache_value)
+    get_property(_value_set_in_cache CACHE ${_varname} PROPERTY VALUE SET)
+    if(_value_set_in_cache)
+      get_property(_var_value CACHE ${_varname} PROPERTY VALUE)
+    endif()
   endif()
 
   set(_has_cfg_intdir FALSE)
