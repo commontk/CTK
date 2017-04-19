@@ -30,6 +30,9 @@
 // PythonQt includes
 #include <PythonQtPythonInclude.h> // For PyObject
 
+// PythonQt includes
+#include <PythonQtPythonInclude.h> // For PyObject
+
 // CTK includes
 #include "ctkScriptingPythonCoreExport.h"
 
