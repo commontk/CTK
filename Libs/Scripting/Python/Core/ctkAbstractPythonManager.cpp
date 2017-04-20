@@ -338,6 +338,44 @@ void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
   d->InitFunction = initFunction;
 }
 
+namespace
+{
+QStringList dir_object(PyObject* object, bool appendParenthesis = false)
+{
+  QStringList results;
+  if (!object)
+    {
+    return results;
+    }
+  PyObject* keys = PyObject_Dir(object);
+  if (keys)
+    {
+    PyObject* key;
+    PyObject* value;
+    int nKeys = PyList_Size(keys);
+    for (int i = 0; i < nKeys; ++i)
+      {
+      key = PyList_GetItem(keys, i);
+      value = PyObject_GetAttr(object, key);
+      if (!value)
+        {
+        continue;
+        }
+      QString key_str(PyString_AsString(key));
+      // Append "()" if the associated object is a function
+      if (appendParenthesis && PyCallable_Check(value))
+        {
+        key_str.append("()");
+        }
+      results << key_str;
+      Py_DECREF(value);
+      }
+    Py_DECREF(keys);
+    }
+  return results;
+}
+}
+
 //----------------------------------------------------------------------------
 QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVariableName,
                                                        const QString& module,
@@ -347,16 +385,17 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
   PyObject* dict = PyImport_GetModuleDict();
 
   // Split module by '.' and retrieve the object associated if the last module
-  QString precedingModule = module;
-  PyObject* object = ctkAbstractPythonManager::pythonModule(precedingModule);
+  PyObject* object = 0; //= ctkAbstractPythonManager::pythonModule(precedingModule);
   PyObject* prevObject = 0;
   QStringList moduleList = module.split(".", QString::SkipEmptyParts);
+
   foreach(const QString& module, moduleList)
     {
     object = PyDict_GetItemString(dict, module.toLatin1().data());
     if (prevObject) { Py_DECREF(prevObject); }
     if (!object)
       {
+      qDebug() << "object is NULL";
       break;
       }
     Py_INCREF(object);
@@ -365,6 +404,7 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
     }
   if (!object)
     {
+    qDebug() << "module not an object";
     return QStringList();
     }
 
@@ -375,57 +415,94 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
 //    }
 //  Py_INCREF(object);
 
+  PyObject* main_object = object;
+  QString instantiated_class_name = "_ctkAbstractPythonManager_autocomplete_tmp";
+  QStringList results;
+  QString line_code="";
+
+  if(pythonVariableName.isEmpty())
+    results = dir_object(object,appendParenthesis);
+
+  //qDebug() << "\n*********************\n";
   if (!pythonVariableName.isEmpty())
     {
     QStringList tmpNames = pythonVariableName.split('.');
     for (int i = 0; i < tmpNames.size() && object; ++i)
       {
+      line_code.append(tmpNames[i]); // fill the line
+      line_code.append(".");
+
       QByteArray tmpName = tmpNames.at(i).toLatin1();
-      PyObject* prevObj = object;
-      if (PyDict_Check(object))
+      //qDebug() << "tmpNames[" << i << "]" << tmpName.data();
+
+      if (tmpName.contains("()"))
         {
-        object = PyDict_GetItemString(object, tmpName.data());
-        Py_XINCREF(object);
+        tmpNames[i].remove("()");
+        tmpName = tmpNames.at(i).toLatin1();
+        //qDebug() << "inside tmpNames ["<<i<<"]" << tmpName.data();
+
+        // Attempt to instantiate the associated python class
+        //qDebug() << dict << "-- IS DICT? --" << PyDict_Check(dict);
+        PyObject* classToInstantiate;
+        if (PyDict_Check(dict))
+          classToInstantiate = PyDict_GetItemString(dict, tmpName.data());
+        else
+          classToInstantiate = PyObject_GetAttrString(object, tmpName.data());
+        //qDebug() << "classToInstantiate" << classToInstantiate;
+
+        if (classToInstantiate)
+          {
+          QString code = " = ";
+          code.prepend(instantiated_class_name);
+          line_code.remove(line_code.lastIndexOf('.'),1);
+          code.append(line_code);
+
+          PyRun_SimpleString(code.toLatin1().data());
+          line_code.append('.');
+          object = PyObject_GetAttrString(main_object,instantiated_class_name.toLatin1().data());
+
+          dict = object;
+          results = dir_object(object,appendParenthesis);
+          }
         }
       else
         {
-        object = PyObject_GetAttrString(object, tmpName.data());
+        PyObject* prevObj = object;
+        if (PyDict_Check(object))
+          {
+          //qDebug() << "PyDict_Check object" << object;
+          object = PyDict_GetItemString(object, tmpName.data());
+          Py_XINCREF(object);
+          }
+        else
+          {
+          //qDebug() << "else object" << object;
+          object = PyObject_GetAttrString(object, tmpName.data());
+          dict = object;
+          //qDebug() << "--> object" << object << "--> name" << tmpName.data();
+          }
+        Py_DECREF(prevObj);
+
+        if (object)
+          {
+          results = dir_object(object,appendParenthesis);
+          }
         }
-      Py_DECREF(prevObj);
+
       }
     PyErr_Clear();
     }
 
-  QStringList results;
   if (object)
     {
-    PyObject* keys = PyObject_Dir(object);
-    if (keys)
-      {
-      PyObject* key;
-      PyObject* value;
-      int nKeys = PyList_Size(keys);
-      for (int i = 0; i < nKeys; ++i)
-        {
-        key = PyList_GetItem(keys, i);
-        value = PyObject_GetAttr(object, key);
-        if (!value)
-          {
-          continue;
-          }
-        QString key_str(PyString_AsString(key));
-        // Append "()" if the associated object is a function
-        if (appendParenthesis && PyCallable_Check(value))
-          {
-          key_str.append("()");
-          }
-        results << key_str;
-        Py_DECREF(value);
-        }
-      Py_DECREF(keys);
-      }
     Py_DECREF(object);
     }
+
+  if (PyObject_HasAttrString(main_object,instantiated_class_name.toLatin1().data()))
+    {
+    PyObject_DelAttrString(main_object,instantiated_class_name.toLatin1().data());
+    }
+
   return results;
 }
 

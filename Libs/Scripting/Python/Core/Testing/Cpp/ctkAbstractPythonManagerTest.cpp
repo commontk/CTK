@@ -54,7 +54,8 @@ private Q_SLOTS:
   void testExecuteFile();
   void testExecuteFile_data();
 
-  //void testPythonAttributes(); // TODO
+  void testPythonAttributes();
+  void testPythonAttributes_data();
 
   void testPythonModule();
   void testPythonModule_data();
@@ -268,6 +269,53 @@ void ctkAbstractPythonManagerTester::testExecuteFile_data()
 
   QTest::newRow("3-check __file__ attribute") << QString("print 'This file is: %s' % __file__")
                      << false;
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonAttributes()
+{
+  QFETCH(QString, pythonVariableName);
+  QFETCH(QStringList, expectedAttributeList);
+
+  QString path_4236_test;
+  path_4236_test.append(__FILE__);
+  path_4236_test.lastIndexOf("/");
+  path_4236_test.replace(path_4236_test.lastIndexOf("/"),
+                         path_4236_test.size() - path_4236_test.lastIndexOf("/"),
+                         "/4236-test.py");
+  this->PythonManager.executeFile(path_4236_test);
+
+  QStringList AttributeList = this->PythonManager.pythonAttributes(pythonVariableName, QString("__main__").toLatin1(), false);
+
+  foreach (const QString& expectedAttribute, expectedAttributeList)
+    {
+    QVERIFY(AttributeList.contains(expectedAttribute));
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonAttributes_data()
+{
+  QTest::addColumn<QString>("pythonVariableName");
+  QTest::addColumn<QStringList>("expectedAttributeList");
+
+  QTest::newRow("d.foo_class()")
+                     << "d.foo_class()"
+                     << (QStringList()
+                     << "FOO_CLASS_MEMBER"
+                     << "foo_class_method"
+                     << "foo_instance_member"
+                     << "foo_instance_method"
+                     << "instantiate_bar");
+
+  QTest::newRow("d.foo_class().instantiate_bar()")
+                     << "d.foo_class().instantiate_bar()"
+                     << (QStringList()
+                     << "BAR_CLASS_MEMBER"
+                     << "bar_class_method"
+                     << "bar_instance_member"
+                     << "bar_instance_method");
+
 }
 
 // ----------------------------------------------------------------------------
