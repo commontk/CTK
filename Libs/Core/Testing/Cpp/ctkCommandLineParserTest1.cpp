@@ -92,9 +92,9 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments3 << "ctkCommandLineParserTest1";
   arguments3 << "--test-string" << "TestingIsGood";
   arguments3 << "--test-string2"<< "CTKSuperRocks";
-  arguments3 << "--test-integer"<< "-3";
 //  arguments3 << "--test-double"<< "-3.14";
   arguments3 << "--test-stringlist"<< "item1" << "item2" << "item3";
+  arguments3 << "--test-integer"<< "-3"; // test if argument is recognized after multi-value argument
   ctkCommandLineParser parser3;
   parser3.addArgument("--test-string", "", QVariant::String, "This is a test string");
   parser3.addArgument("--test-string2", "", QVariant::String, "This is a test string2", "CTKGood");
