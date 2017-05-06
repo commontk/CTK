@@ -115,10 +115,11 @@ void ctkFDHandler::setEnabled(bool value)
     {
     // Print one character to "unblock" the read function associated with the polling thread
 #ifdef Q_OS_WIN32
-    _write(_fileno(this->terminalOutputFile()), "\n", 1);
+    int unused = _write(_fileno(this->terminalOutputFile()), "\n", 1);
 #else
-    write(fileno(this->terminalOutputFile()), "\n", 1);
+    ssize_t unused = write(fileno(this->terminalOutputFile()), "\n", 1);
 #endif
+    Q_UNUSED(unused);
 
     // Flush stdout or stderr so that any buffered messages are delivered
     fflush(this->terminalOutputFile());
@@ -131,10 +132,11 @@ void ctkFDHandler::setEnabled(bool value)
 
     QString newline("\n");
 #ifdef Q_OS_WIN32
-    _write(_fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
+    unused = _write(_fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
 #else
-    write(fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
+    unused = write(fileno(this->terminalOutputFile()), qPrintable(newline), newline.size());
 #endif
+    Q_UNUSED(unused);
 
     // Wait the polling thread graciously terminates
     this->wait();
