@@ -37,9 +37,11 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderViewEventTranslator :
   Q_OBJECT
 
 public:
+  typedef pqWidgetEventTranslator Superclass;
   ctkVTKRenderViewEventTranslator(const QByteArray& Classname, QObject* Parent=0);
   ~ctkVTKRenderViewEventTranslator();
 
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 protected:

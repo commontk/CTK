@@ -32,8 +32,10 @@ class CTK_WIDGETS_EXPORT ctkConsoleEventPlayer : public pqWidgetEventPlayer
   Q_OBJECT
 
 public:
+  typedef pqWidgetEventPlayer Superclass;
   ctkConsoleEventPlayer(QObject* parent = 0);
 
+  using Superclass::playEvent;
   bool playEvent(QObject *Object, const QString &Command,
                  const QString &Arguments, bool &Error);
 

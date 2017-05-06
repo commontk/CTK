@@ -40,8 +40,10 @@ class CTK_WIDGETS_EXPORT ctkMenuComboBoxEventTranslator :
   Q_OBJECT
 
 public:
+  typedef pqWidgetEventTranslator Superclass;
   ctkMenuComboBoxEventTranslator(QObject* parent = 0);
 
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:

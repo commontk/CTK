@@ -34,8 +34,10 @@ class CTK_WIDGETS_EXPORT ctkAxesWidgetEventTranslator :
   Q_OBJECT
 
 public:
+  typedef pqWidgetEventTranslator Superclass;
   ctkAxesWidgetEventTranslator(QObject* parent = 0);
 
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:

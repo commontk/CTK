@@ -42,6 +42,7 @@ public:
   typedef pqNativeFileDialogEventTranslator Superclass;
   ctkFileDialogEventTranslator(pqTestUtility* util, QObject* parent = 0);
 
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:
