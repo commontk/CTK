@@ -37,7 +37,10 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderViewEventPlayer :
   Q_OBJECT
 
 public:
+  typedef pqWidgetEventPlayer Superclass;
   ctkVTKRenderViewEventPlayer(const QByteArray& classname, QObject* parent = 0);
+
+  using Superclass::playEvent;
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 protected:

@@ -35,8 +35,10 @@ class CTK_WIDGETS_EXPORT ctkConsoleEventTranslator :public pqWidgetEventTranslat
   Q_OBJECT
 
 public:
+  typedef pqWidgetEventTranslator Superclass;
   ctkConsoleEventTranslator(QObject* = 0);
 
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:

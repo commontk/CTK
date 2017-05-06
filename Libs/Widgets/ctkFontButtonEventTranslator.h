@@ -38,8 +38,10 @@ class CTK_WIDGETS_EXPORT ctkFontButtonEventTranslator :
   Q_OBJECT
 
 public:
+  typedef pqWidgetEventTranslator Superclass;
   ctkFontButtonEventTranslator(QObject* parent = 0);
 
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
 
 private:

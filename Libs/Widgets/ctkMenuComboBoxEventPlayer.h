@@ -37,8 +37,10 @@ class CTK_WIDGETS_EXPORT ctkMenuComboBoxEventPlayer :
   Q_OBJECT
 
 public:
+  typedef pqWidgetEventPlayer Superclass;
   ctkMenuComboBoxEventPlayer(QObject* parent = 0);
 
+  using Superclass::playEvent;
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:

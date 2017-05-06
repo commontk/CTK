@@ -37,8 +37,10 @@ class CTK_WIDGETS_EXPORT ctkPathLineEditEventPlayer :
   Q_OBJECT
 
 public:
+  typedef pqWidgetEventPlayer Superclass;
   ctkPathLineEditEventPlayer(QObject* parent = 0);
 
+  using Superclass::playEvent;
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:
