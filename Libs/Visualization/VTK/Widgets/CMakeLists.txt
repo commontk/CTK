@@ -3,7 +3,7 @@ project(CTKVisualizationVTKWidgets)
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
-
+include(${VTK_USE_FILE})
 set(KIT_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_EXPORT")
 
 #
@@ -158,6 +158,9 @@ IF (${CTK_USE_CHARTS})
   if(${VTK_VERSION_MAJOR} GREATER 5)
     set(VTK_LIBRARIES
       vtkChartsCore
+      vtkRenderingContextOpenGL
+      vtkRenderingVolume
+      vtkRenderingVolumeOpenGL
       ${VTK_LIBRARIES})
   else()
     set(VTK_LIBRARIES
