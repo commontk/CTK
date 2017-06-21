@@ -70,6 +70,13 @@ void ctkVTKSliceViewPrivate::setupRendering()
   // Setup overlay renderer
   this->OverlayRenderer->SetLayer(1);
   this->RenderWindow->AddRenderer(this->OverlayRenderer);
+  // Parallel projection is needed to prevent actors from warping/tilting
+  // when they are near the edge of the window.
+  vtkCamera* camera = this->OverlayRenderer->GetActiveCamera();
+  if (camera)
+    {
+    camera->ParallelProjectionOn();
+    }
 
   // Create cornerAnnotation and set its default property
   this->OverlayCornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
