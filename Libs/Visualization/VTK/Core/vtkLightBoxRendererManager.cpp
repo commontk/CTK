@@ -373,6 +373,14 @@ void vtkLightBoxRendererManager::vtkInternal::setupRendering()
       // Add to RenderWindow
       this->RenderWindow->AddRenderer(item->Renderer);
 
+      // Parallel projection is needed to prevent actors from warping/tilting
+      // when they are near the edge of the window.
+      vtkCamera* camera = item->Renderer->GetActiveCamera();
+      if (camera)
+        {
+        camera->ParallelProjectionOn();
+        }
+
       xMin += viewportWidth;
       }
     }
