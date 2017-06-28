@@ -46,6 +46,7 @@
 #include <dcmtk/dcmdata/dcdatset.h>
 #include <dcmtk/ofstd/ofcond.h>
 #include <dcmtk/ofstd/ofstring.h>
+#include <dcmtk/ofstd/oflist.h>
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
 
@@ -412,7 +413,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   emit progress(50);
   if (d->Canceled) {return false;}
 
-  for ( OFIterator<QRResponse*> it = responses.begin(); it != responses.end(); it++ )
+  for ( OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++ )
     {
     DcmDataset *dataset = (*it)->m_dataset;
     if ( dataset != NULL ) // the last response is always empty
@@ -463,7 +464,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     status = d->SCU.sendFINDRequest ( presentationContext, d->Query, &responses );
     if ( status.good() )
       {
-      for ( OFIterator<QRResponse*> it = responses.begin(); it != responses.end(); it++ )
+      for ( OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++ )
         {
         DcmDataset *dataset = (*it)->m_dataset;
         if ( dataset != NULL )
