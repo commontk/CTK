@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // Qt includes
+#include <QByteArray>
 #include <QDir>
 #include <QDebug>
 
@@ -482,7 +483,7 @@ PyObject* ctkAbstractPythonManager::pythonObject(const QString& variableNameAndF
           continue;
           }
         QString keyStr = PyString_AsString(key);
-        if (keyStr.operator ==(compareFunction))
+        if (keyStr == compareFunction)
           {
           finalPythonObject = value;
           break;
@@ -509,7 +510,7 @@ PyObject* ctkAbstractPythonManager::pythonModule(const QString& module)
     }
   foreach(const QString& module, moduleList)
     {
-    object = PyDict_GetItemString(dict, module.toAscii().data());
+    object = PyDict_GetItemString(dict, module.toLatin1().data());
     if (prevObject)
       {
       Py_DECREF(prevObject);
