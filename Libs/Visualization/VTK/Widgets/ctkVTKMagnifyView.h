@@ -29,7 +29,11 @@
 #include "ctkVisualizationVTKWidgetsExport.h"
 
 // VTK includes
+#if CTK_USE_QVTKOPENGLWIDGET
+class QVTKOpenGLWidget;
+#else
 class QVTKWidget;
+#endif
 
 class ctkVTKMagnifyViewPrivate;
 
@@ -75,25 +79,45 @@ public:
   /// Add a QVTKWidget to observe mouse events on.  You can call this function
   /// multiple times to observe multiple QVTKWidgets.
   /// \sa observe
+#if CTK_USE_QVTKOPENGLWIDGET
+  void observe(QVTKOpenGLWidget * widget);
+#else
   void observe(QVTKWidget * widget);
+#endif
 
   /// Add multiple QVTKWidgets at once to observe mouse events on.  You can
   /// call this function multiple times to observe multiple QVTKWidgets.
   /// \sa observe
+#if CTK_USE_QVTKOPENGLWIDGET
+  void observe(QList<QVTKOpenGLWidget *> widgets);
+#else
   void observe(QList<QVTKWidget *> widgets);
+#endif
 
   /// Remove a QVTKWidget to observe mouse events on.  You can call this
   /// function multiple times to remove multiple QVTKWidgets.
   /// \sa remove
+#if CTK_USE_QVTKOPENGLWIDGET
+  void remove(QVTKOpenGLWidget * widget);
+#else
   void remove(QVTKWidget * widget);
+#endif
 
   /// Remove multiple QVTKWidgets at once to observe mouse events on.  You can
   /// call this function multiple times to remove multiple QVTKWidgets.
   /// \sa unobserve
+#if CTK_USE_QVTKOPENGLWIDGET
+  void remove(QList<QVTKOpenGLWidget *> widgets);
+#else
   void remove(QList<QVTKWidget *> widgets);
+#endif
 
   /// Returns whether a QVTKWidget is observed
+#if CTK_USE_QVTKOPENGLWIDGET
+  bool isObserved(QVTKOpenGLWidget * widget) const;
+#else
   bool isObserved(QVTKWidget * widget) const;
+#endif
 
   /// Returns the number of observed QVTKWidgets
   int numberObserved()const;
@@ -109,8 +133,13 @@ protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
 
 Q_SIGNALS:
+#if CTK_USE_QVTKOPENGLWIDGET
+  void enteredObservedWidget(QVTKOpenGLWidget * widget);
+  void leftObservedWidget(QVTKOpenGLWidget * widget);
+#else
   void enteredObservedWidget(QVTKWidget * widget);
   void leftObservedWidget(QVTKWidget * widget);
+#endif
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKMagnifyView)

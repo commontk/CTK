@@ -27,21 +27,33 @@
 class ctkVTKChartViewPrivate;
 
 // VTK includes
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#else
 #include <QVTKWidget.h>
+#endif
 
 class vtkChartXY;
 class vtkContextScene;
 class vtkPlot;
 
 /// \ingroup Visualization_VTK_Widgets
+#if CTK_USE_QVTKOPENGLWIDGET
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public QVTKOpenGLWidget
+#else
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public QVTKWidget
+#endif
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(QString title READ title WRITE setTitle)
 
 public:
+#if CTK_USE_QVTKOPENGLWIDGET
+  typedef QVTKOpenGLWidget Superclass;
+#else
   typedef QVTKWidget Superclass;
+#endif
   ctkVTKChartView(QWidget* parent = 0);
   virtual ~ctkVTKChartView();
 

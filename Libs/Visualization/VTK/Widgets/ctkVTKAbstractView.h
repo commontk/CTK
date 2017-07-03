@@ -25,7 +25,11 @@
 #include <QWidget>
 
 // VTK includes
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#else
 #include <QVTKWidget.h>
+#endif
 
 // CTK includes
 #include "ctkVTKObject.h"
@@ -117,7 +121,11 @@ public:
   Q_INVOKABLE vtkCornerAnnotation* cornerAnnotation()const;
 
   /// Get the underlying QVTKWidget
+#if CTK_USE_QVTKOPENGLWIDGET
+  Q_INVOKABLE QVTKOpenGLWidget * VTKWidget() const;
+#else
   Q_INVOKABLE QVTKWidget * VTKWidget() const;
+#endif
 
   /// Get background color
   virtual QColor backgroundColor() const;

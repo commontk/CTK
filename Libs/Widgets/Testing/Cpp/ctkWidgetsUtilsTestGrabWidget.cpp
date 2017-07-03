@@ -22,7 +22,11 @@
 #include <QApplication>
 #include <QDialog>
 #include <QFrame>
+#if QT_VERSION < QT_VERSION_CHECK(5,4,0)
 #include <QGLWidget>
+#else
+#include <QOpenGLWidget>
+#endif
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -42,7 +46,11 @@ int ctkWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
   parentWidget.setFrameStyle(QFrame::Panel | QFrame::Raised);
   parentWidget.setLineWidth(2);
 
+#if QT_VERSION < QT_VERSION_CHECK(5,4,0)
   QGLWidget glWidget(&parentWidget);
+#else
+  QOpenGLWidget glWidget(&parentWidget);
+#endif
   QVBoxLayout* layout = new QVBoxLayout(&parentWidget);
   layout->addWidget(&glWidget);
   parentWidget.setLayout(layout);

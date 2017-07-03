@@ -194,6 +194,16 @@ if(CTK_USE_QTTESTING)
   list(APPEND KIT_target_libraries QtTesting)
 endif()
 
+# Prefer QVTKOpenGLWidget to QVTKWidget when using Qt5
+set(_use_qvtkopenglwidget 1)
+if(CTK_QT_VERSION VERSION_LESS "5"
+  OR VTK_VERSION VERSION_LESS "8"
+  OR (NOT VTK_RENDERING_BACKEND STREQUAL "OpenGL2"))
+  set(_use_qvtkopenglwidget 0)
+endif()
+if(_use_qvtkopenglwidget)
+  add_definitions(-DCTK_USE_QVTKOPENGLWIDGET)
+endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}

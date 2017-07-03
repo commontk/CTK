@@ -27,7 +27,6 @@
 class ctkVTKScalarsToColorsViewPrivate;
 
 // VTK includes
-#include <QVTKWidget.h>
 #include <vtkChartXY.h>
 
 class vtkColorTransferFunction;

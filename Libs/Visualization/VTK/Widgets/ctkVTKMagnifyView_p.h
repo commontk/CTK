@@ -30,9 +30,6 @@ class QTimerEvent;
 #include "ctkVTKMagnifyView.h"
 #include <ctkVTKObject.h>
 
-// VTK includes
-class QVTKWidget;
-
 /// \ingroup Visualization_VTK_Widgets
 class ctkVTKMagnifyViewPrivate : public QObject
 {
@@ -46,10 +43,17 @@ public:
   virtual ~ctkVTKMagnifyViewPrivate();
 
   void init();
+#if CTK_USE_QVTKOPENGLWIDGET
+  void observe(QVTKOpenGLWidget * widget);
+  void remove(QVTKOpenGLWidget * widget);
+  void connectRenderWindow(QVTKOpenGLWidget * widget);
+  void disconnectRenderWindow(QVTKOpenGLWidget * widget);
+#else
   void observe(QVTKWidget * widget);
   void remove(QVTKWidget * widget);
   void connectRenderWindow(QVTKWidget * widget);
   void disconnectRenderWindow(QVTKWidget * widget);
+#endif
 
 protected:
   void updatePixmap();
@@ -67,7 +71,11 @@ protected:
   struct EventHandlerStruct
     {
     PendingEventType EventType;
+#if CTK_USE_QVTKOPENGLWIDGET
+    QPointer<QVTKOpenGLWidget> Widget;
+#else
     QPointer<QVTKWidget> Widget;
+#endif
     QPointF Position;
     int UpdateInterval;
     int TimerId;
@@ -79,7 +87,11 @@ public Q_SLOTS:
   void pushRemovePixmapEvent();
 
 public:
+#if CTK_USE_QVTKOPENGLWIDGET
+  QList<QVTKOpenGLWidget *> ObservedQVTKWidgets;
+#else
   QList<QVTKWidget *> ObservedQVTKWidgets;
+#endif
   double Magnification;
   bool ObserveRenderWindowEvents;
   EventHandlerStruct EventHandler;
