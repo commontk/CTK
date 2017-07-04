@@ -114,7 +114,11 @@ QFutureInterface<ctkCmdLineModuleResult>::~QFutureInterface()
     resultStore().clear();
 #else
   if (!derefT())
+#  if QT_VERSION >= QT_VERSION_CHECK(5,8,0)
+    resultStore().clear<ctkCmdLineModuleResult>();
+#  else
     resultStore().clear();
+#  endif
 #endif
 
   if (!d->RefCount.deref())
@@ -139,7 +143,12 @@ QFutureInterface<ctkCmdLineModuleResult>::operator=(const QFutureInterface& othe
   other.refT();
   if (!derefT())
 #endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,8,0)
+    resultStore().clear<ctkCmdLineModuleResult>();
+#else
     resultStore().clear();
+#endif
 
   QFutureInterfaceBase::operator=(other);
 

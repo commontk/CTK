@@ -93,6 +93,11 @@ private:
   { return static_cast<QtConcurrent::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
   const QtConcurrent::ResultStore<ctkCmdLineModuleResult> &resultStore() const
   { return static_cast<const QtConcurrent::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
+#elif (QT_VERSION >= 0x50800)
+  QtPrivate::ResultStoreBase &resultStore()
+  { return static_cast<QtPrivate::ResultStoreBase &>(resultStoreBase()); }
+  const QtPrivate::ResultStoreBase &resultStore() const
+  { return static_cast<const QtPrivate::ResultStoreBase &>(resultStoreBase()); }
 #else
   QtPrivate::ResultStore<ctkCmdLineModuleResult> &resultStore()
   { return static_cast<QtPrivate::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
@@ -112,6 +117,8 @@ inline void QFutureInterface<ctkCmdLineModuleResult>::reportResult(const ctkCmdL
 
 #if (QT_VERSION < 0x50000)
     QtConcurrent::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
+#elif (QT_VERSION >= 0x50800)
+    QtPrivate::ResultStoreBase &store = resultStore();
 #else
     QtPrivate::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
 #endif
@@ -140,6 +147,8 @@ inline void QFutureInterface<ctkCmdLineModuleResult>::reportResults(const QVecto
 
 #if (QT_VERSION < 0x50000)
     QtConcurrent::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
+#elif (QT_VERSION >= 0x50800)
+    QtPrivate::ResultStoreBase &store = resultStore();
 #else
     QtPrivate::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
 #endif
@@ -164,13 +173,23 @@ inline void QFutureInterface<ctkCmdLineModuleResult>::reportFinished(const ctkCm
 inline const ctkCmdLineModuleResult &QFutureInterface<ctkCmdLineModuleResult>::resultReference(int index) const
 {
     QMutexLocker lock(mutex());
+
+#if (QT_VERSION >= 0x50800)
+    return resultStore().resultAt(index).value<ctkCmdLineModuleResult>();
+#else
     return resultStore().resultAt(index).value();
+#endif
 }
 
 inline const ctkCmdLineModuleResult *QFutureInterface<ctkCmdLineModuleResult>::resultPointer(int index) const
 {
     QMutexLocker lock(mutex());
+
+#if (QT_VERSION >= 0x50800)
+    return resultStore().resultAt(index).pointer<ctkCmdLineModuleResult>();
+#else
     return resultStore().resultAt(index).pointer();
+#endif
 }
 
 inline QList<ctkCmdLineModuleResult> QFutureInterface<ctkCmdLineModuleResult>::results()
@@ -186,11 +205,18 @@ inline QList<ctkCmdLineModuleResult> QFutureInterface<ctkCmdLineModuleResult>::r
 
 #if (QT_VERSION <= 0x50000)
     QtConcurrent::ResultIterator<ctkCmdLineModuleResult> it = resultStore().begin();
+#elif (QT_VERSION >= 0x50800)
+    QtPrivate::ResultIteratorBase it = resultStore().begin();
 #else
     QtPrivate::ResultIterator<ctkCmdLineModuleResult> it = resultStore().begin();
 #endif
+
     while (it != resultStore().end()) {
+#if (QT_VERSION >= 0x50800)
+        res.append(it.value<ctkCmdLineModuleResult>());
+#else
         res.append(it.value());
+#endif
         ++it;
     }
 
