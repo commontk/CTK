@@ -32,17 +32,30 @@ macro(ctkMacroSetupQt)
 
   if(CTK_QT_VERSION VERSION_GREATER "4")
     cmake_minimum_required(VERSION 2.8.12)
+    find_package(Qt5 COMPONENTS Core)
     set(CTK_QT5_COMPONENTS Core Xml XmlPatterns Concurrent Sql Test)
     if(CTK_LIB_Widgets OR CTK_LIB_CommandLineModules/Frontend/QtGui OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
       list(APPEND CTK_QT5_COMPONENTS Widgets OpenGL UiTools)
     endif()
     if(CTK_LIB_CommandLineModules/Frontend/QtWebKit OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
-      list(APPEND CTK_QT5_COMPONENTS WebKitWidgets)
+      if(TARGET Qt5::WebKitWidgets)
+        list(APPEND CTK_QT5_COMPONENTS WebKitWidgets)
+      else()
+        list(APPEND CTK_QT5_COMPONENTS WebEngineWidgets)
+      endif()
     endif()
     if(CTK_LIB_XNAT/Core OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
       list(APPEND CTK_QT5_COMPONENTS Script)
     endif()
     find_package(Qt5 COMPONENTS ${CTK_QT5_COMPONENTS} REQUIRED)
+
+    mark_as_superbuild(Qt5_DIR) # Qt 5
+
+    # XXX Backward compatible way
+    if(DEFINED CMAKE_PREFIX_PATH)
+      mark_as_superbuild(CMAKE_PREFIX_PATH) # Qt 5
+    endif()
+
   else()
     set(minimum_required_qt_version "4.6")
 
@@ -69,12 +82,11 @@ macro(ctkMacroSetupQt)
         get_filename_component(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
       endif()
 
+      mark_as_superbuild(QT_QMAKE_EXECUTABLE) # Qt 4
     else()
       message(FATAL_ERROR "error: Qt4 was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable")
     endif()
   endif()
 
   mark_as_superbuild(CTK_QT_VERSION)
-  mark_as_superbuild(QT_QMAKE_EXECUTABLE) # Qt 4
-
 endmacro()

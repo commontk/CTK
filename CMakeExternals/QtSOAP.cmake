@@ -40,6 +40,23 @@ if(NOT DEFINED QtSOAP_DIR)
                       GIT_TAG ${revision_tag})
   endif()
 
+  set(ep_cache_args)
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    list(APPEND ep_cache_args
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      )
+  else()
+    list(APPEND ep_cache_args
+      -DQt5_DIR:PATH=${Qt5_DIR}
+      )
+    # XXX Backward compatible way
+    if(DEFINED CMAKE_PREFIX_PATH)
+      list(APPEND ep_cache_args
+        -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
+        )
+    endif()
+  endif()
+
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -51,7 +68,7 @@ if(NOT DEFINED QtSOAP_DIR)
       ${ep_common_cache_args}
       -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:STRING=${CTK_CMAKE_RUNTIME_OUTPUT_DIRECTORY}
       -DQtSOAP_QT_VERSION:STRING=${CTK_QT_VERSION}
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+      ${ep_cache_args}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )

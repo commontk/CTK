@@ -24,7 +24,12 @@
 
 #include "ctkCmdLineModuleFrontend.h"
 
+#include <QtGlobal>
+#if QT_VERSION < QT_VERSION_CHECK(5,6,0)
 class QWebView;
+#else
+class QWebEngineView;
+#endif
 
 /**
  * \class ctkCmdLineModuleFrontendQtWebKit
@@ -48,8 +53,11 @@ public:
   //virtual QList<QString> parameterNames() const;
 
 private:
-
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   mutable QWebView* WebView;
+#else
+  mutable QWebEngineView* WebView;
+#endif
 };
 
 #endif // CTKCMDLINEMODULEFRONTENDQTWEBKIT_H
