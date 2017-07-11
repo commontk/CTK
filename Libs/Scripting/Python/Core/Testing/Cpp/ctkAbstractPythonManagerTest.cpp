@@ -57,6 +57,9 @@ private Q_SLOTS:
   void testPythonAttributes();
   void testPythonAttributes_data();
 
+  void testPythonAttributeValues();
+  void testPythonAttributeValues_data();
+
   void testPythonModule();
   void testPythonModule_data();
 
@@ -278,7 +281,6 @@ void ctkAbstractPythonManagerTester::testPythonAttributes()
   QFETCH(QStringList, expectedAttributeList);
 
   QString test_path = __FILE__; // return the local path of this source file
-  // replace "ctkAbstractPythonManagerTest.py" by "PythonAttributes-test.py"
   test_path.lastIndexOf("/");
   test_path.replace(test_path.lastIndexOf("/"),
                          test_path.size() - test_path.lastIndexOf("/"),
@@ -337,6 +339,66 @@ void ctkAbstractPythonManagerTester::testPythonAttributes_data()
                          << "multipleArg_instance_member_str" // TODO: verify result is '"'
                          << "multipleArg_instance_member_other"); // TODO: verify result is 0.1
 
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonAttributeValues()
+{
+  QFETCH(QString, variableName);
+  QFETCH(QVariant, expectedVariableValue);
+
+  QString test_path = __FILE__; // return the local path of this source file
+  test_path.lastIndexOf("/");
+  test_path.replace(test_path.lastIndexOf("/"),
+                         test_path.size() - test_path.lastIndexOf("/"),
+                         "/PythonAttributes-test.py");
+  this->PythonManager.executeFile(test_path);
+
+  QCOMPARE(
+        expectedVariableValue,
+        this->PythonManager.getVariable(variableName));
+}
+
+// ----------------------------------------------------------------------------
+void ctkAbstractPythonManagerTester::testPythonAttributeValues_data()
+{
+  QTest::addColumn<QString>("variableName");
+  QTest::addColumn<QVariant>("expectedVariableValue");
+
+  // d.foo_class().instantiate_bar().bar_maths(5)
+  QTest::newRow("")
+      << "d.foo_class().instantiate_bar().bar_maths(5).MATHS_CLASS_MEMBER"
+      << QVariant(0.1);
+
+  QTest::newRow("")
+      << "d.foo_class().instantiate_bar().bar_maths(5).maths_instance_member"
+      << QVariant(5);
+
+  // MultipleArg( 5 + 5 , '(')
+  QTest::newRow("")
+      << "MultipleArg( 5 + 5 , '(').multipleArg_instance_member_num"
+      << QVariant(10);
+
+  QTest::newRow("")
+      << "MultipleArg( 5 + 5 , '(').multipleArg_instance_member_str"
+      << QVariant("(");
+
+  QTest::newRow("")
+      << "MultipleArg( 5 + 5 , '(').multipleArg_instance_member_other"
+      << QVariant(0);
+
+  // MultipleArg( 5 + 5 , '\"', 0.1)
+  QTest::newRow("")
+      << "MultipleArg( 5 + 5 , '\"', 0.1).multipleArg_instance_member_num"
+      << QVariant(0);
+
+  QTest::newRow("")
+      << "MultipleArg( 5 + 5 , '\"', 0.1).multipleArg_instance_member_str"
+      << QVariant('"');
+
+  QTest::newRow("")
+      << "MultipleArg( 5 + 5 , '\"', 0.1).multipleArg_instance_member_other"
+      << QVariant(0.1);
 }
 
 // ----------------------------------------------------------------------------
