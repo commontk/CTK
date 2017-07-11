@@ -338,6 +338,93 @@ void ctkAbstractPythonManager::setInitializationFunction(void (*initFunction)())
   d->InitFunction = initFunction;
 }
 
+//-----------------------------------------------------------------------------
+QStringList ctkAbstractPythonManager::dir_object(PyObject* object,
+                                                 bool appendParenthesis)
+{
+  QStringList results;
+  if (!object)
+    {
+    return results;
+    }
+  PyObject* keys = PyObject_Dir(object);
+  if (keys)
+    {
+    PyObject* key;
+    PyObject* value;
+    int nKeys = PyList_Size(keys);
+    for (int i = 0; i < nKeys; ++i)
+      {
+      key = PyList_GetItem(keys, i);
+      value = PyObject_GetAttr(object, key);
+      if (!value)
+        {
+        continue;
+        }
+      QString key_str(PyString_AsString(key));
+      // Append "()" if the associated object is a function
+      if (appendParenthesis && PyCallable_Check(value))
+        {
+        key_str.append("()");
+        }
+      results << key_str;
+      Py_DECREF(value);
+      }
+    Py_DECREF(keys);
+    }
+  return results;
+}
+
+QStringList ctkAbstractPythonManager::splitByDotOutsideParenthesis(const QString& pythonVariableName)
+{
+  QStringList tmpNames;
+  int last_pos_dot = pythonVariableName.length();
+  int numberOfParenthesisClosed = 0;
+  bool betweenSingleQuotes = false;
+  bool betweenDoubleQuotes = false;
+  for (int i = pythonVariableName.length()-1; i >= 0; --i)
+    {
+    QChar c = pythonVariableName.at(i);
+    if (c == '\'' && !betweenDoubleQuotes)
+      {
+      betweenSingleQuotes = !betweenSingleQuotes;
+      }
+    if (c == '"' && !betweenSingleQuotes)
+      {
+      betweenDoubleQuotes = !betweenDoubleQuotes;
+      }
+    // note that we must not count parenthesis if they are between quote...
+    if (!betweenSingleQuotes && !betweenDoubleQuotes)
+      {
+      if (c == '(')
+        {
+        if (numberOfParenthesisClosed>0)
+          {
+          numberOfParenthesisClosed--;
+          }
+        }
+      if (c == ')')
+        {
+        numberOfParenthesisClosed++;
+        }
+      }
+    // if we are outside parenthesis and we find a dot, then split
+    if ((c == '.' && numberOfParenthesisClosed<=0)
+        || i == 0)
+      {
+      if (i == 0) {i--;} // last case where we have to split the begging this time
+      QString textToSplit = pythonVariableName.mid(i+1,last_pos_dot-(i+1));
+      if (!textToSplit.isEmpty())
+        {
+        tmpNames.push_front(textToSplit);
+        }
+      last_pos_dot =i;
+      }
+    }
+  return tmpNames;
+}
+
+
 //----------------------------------------------------------------------------
 QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVariableName,
                                                        const QString& module,
@@ -351,6 +438,7 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
   PyObject* object = ctkAbstractPythonManager::pythonModule(precedingModule);
   PyObject* prevObject = 0;
   QStringList moduleList = module.split(".", QString::SkipEmptyParts);
+
   foreach(const QString& module, moduleList)
     {
     object = PyDict_GetItemString(dict, module.toLatin1().data());
@@ -375,57 +463,95 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
 //    }
 //  Py_INCREF(object);
 
+  PyObject* main_object = object; // save the modue object (usually __main__ or __main__.__builtins__)
+  QString instantiated_class_name = "_ctkAbstractPythonManager_autocomplete_tmp";
+  QStringList results; // the list of attributes to return
+  QString line_code="";
+
   if (!pythonVariableName.isEmpty())
     {
-    QStringList tmpNames = pythonVariableName.split('.');
+    // Split the pythonVariableName at every dot
+    // /!\ // CAREFUL to don't take dot which are between parenthesis
+    // To avoid the problem: split by dots in a smarter way!
+    QStringList tmpNames = splitByDotOutsideParenthesis(pythonVariableName);
+
     for (int i = 0; i < tmpNames.size() && object; ++i)
       {
+      // fill the line step by step
+      // For example: pythonVariableName = d.foo_class().instantiate_bar().
+      // line_code will be filled first by 'd.' and then, line_code = 'd.foo_class().', etc
+      line_code.append(tmpNames[i]);
+      line_code.append(".");
+
       QByteArray tmpName = tmpNames.at(i).toLatin1();
-      PyObject* prevObj = object;
-      if (PyDict_Check(object))
+      if (tmpName.contains('(') && tmpName.contains(')'))
         {
-        object = PyDict_GetItemString(object, tmpName.data());
-        Py_XINCREF(object);
+        tmpNames[i] = tmpNames[i].left(tmpName.indexOf('('));
+        tmpName = tmpNames.at(i).toLatin1();
+
+        // Attempt to instantiate the associated python class
+        PyObject* classToInstantiate;
+        if (PyDict_Check(dict))
+          classToInstantiate = PyDict_GetItemString(dict, tmpName.data());
+        else
+          classToInstantiate = PyObject_GetAttrString(object, tmpName.data());
+
+        if (classToInstantiate)
+          {
+          QString code = " = ";
+          code.prepend(instantiated_class_name);
+          line_code.remove(line_code.size()-1,1); // remove the last char which is a dot
+          code.append(line_code);
+          // create a temporary attribute which will instantiate the class
+          // For example: code = '_ctkAbstractPythonManager_autocomplete_tmp = d.foo_class()'
+          PyRun_SimpleString(code.toLatin1().data());
+          line_code.append('.'); // add the point again in case we need to continue to fill line_code
+          object = PyObject_GetAttrString(main_object,instantiated_class_name.toLatin1().data());
+
+          dict = object;
+          results = ctkAbstractPythonManager::dir_object(object,appendParenthesis);
+          }
         }
       else
         {
-        object = PyObject_GetAttrString(object, tmpName.data());
+        PyObject* prevObj = object;
+        if (PyDict_Check(object))
+          {
+          object = PyDict_GetItemString(object, tmpName.data());
+          Py_XINCREF(object);
+          }
+        else
+          {
+          object = PyObject_GetAttrString(object, tmpName.data());
+          dict = object;
+          }
+        Py_DECREF(prevObj);
+
+        if (object)
+          {
+          results = ctkAbstractPythonManager::dir_object(object,appendParenthesis);
+          }
         }
-      Py_DECREF(prevObj);
       }
     PyErr_Clear();
     }
+  // By default if pythonVariable is empty, return the attributes of the module
+  else
+    {
+    results = ctkAbstractPythonManager::dir_object(object,appendParenthesis);
+    }
 
-  QStringList results;
   if (object)
     {
-    PyObject* keys = PyObject_Dir(object);
-    if (keys)
-      {
-      PyObject* key;
-      PyObject* value;
-      int nKeys = PyList_Size(keys);
-      for (int i = 0; i < nKeys; ++i)
-        {
-        key = PyList_GetItem(keys, i);
-        value = PyObject_GetAttr(object, key);
-        if (!value)
-          {
-          continue;
-          }
-        QString key_str(PyString_AsString(key));
-        // Append "()" if the associated object is a function
-        if (appendParenthesis && PyCallable_Check(value))
-          {
-          key_str.append("()");
-          }
-        results << key_str;
-        Py_DECREF(value);
-        }
-      Py_DECREF(keys);
-      }
     Py_DECREF(object);
     }
+
+  // remove the temporary attribute (created to instantiate a class) from the module object
+  if (PyObject_HasAttrString(main_object,instantiated_class_name.toLatin1().data()))
+    {
+    PyObject_DelAttrString(main_object,instantiated_class_name.toLatin1().data());
+    }
+
   return results;
 }
 
