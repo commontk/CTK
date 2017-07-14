@@ -30,6 +30,9 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkSmartPointer.h>
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // STD includes
 #include <iostream>
@@ -37,6 +40,11 @@
 //-----------------------------------------------------------------------------
 int ctkVTKScalarsToColorsViewTest3(int argc, char * argv [] )
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   // Transfer Function

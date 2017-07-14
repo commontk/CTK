@@ -39,6 +39,9 @@
 #include <vtkInteractorStyleImage.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkLightBoxRendererManager.h>
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // STD includes
 #include <iostream>
@@ -46,6 +49,11 @@
 //-----------------------------------------------------------------------------
 int ctkVTKSliceViewTest2(int argc, char * argv [] )
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   // Test arguments

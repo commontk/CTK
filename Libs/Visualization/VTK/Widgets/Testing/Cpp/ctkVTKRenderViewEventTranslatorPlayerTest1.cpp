@@ -34,6 +34,9 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
@@ -98,6 +101,11 @@ void screenshotAvailable(void* data)
 //-----------------------------------------------------------------------------
 int ctkVTKRenderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
 //  QString xmlDirectory = CTK_SOURCE_DIR "/Libs/Visualization/VTK/Widgets/Testing/Cpp/";
@@ -147,7 +155,11 @@ int ctkVTKRenderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   Callback2 = &callback2;
 
   etpWidget.addTestCase(widget,
+#if CTK_USE_QVTKOPENGLWIDGET
+                        xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1_QVTKOpenGLWidget.xml",
+#else
                         xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1.xml",
+#endif
                         &checkFinalWidgetState);
 
   // ------------------------
