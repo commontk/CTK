@@ -29,6 +29,7 @@
 #include <ctkTransferFunctionBarsItem.h>
 #include <ctkTransferFunctionControlPointsItem.h>
 #include <ctkTransferFunctionGradientItem.h>
+#include <ctkWidgetsUtils.h>
 #include <ctkWorkflowWidgetStep.h>
 
 // NOTE:
@@ -145,6 +146,18 @@ public Q_SLOTS:
 };
 
 //-----------------------------------------------------------------------------
+class PythonQtWrapper_CTKWidgets : public QObject
+{
+  Q_OBJECT
+
+public Q_SLOTS:
+  QImage static_ctkWidgetsUtils_grabWidget(QWidget* widget, QRect rectangle = QRect())
+    {
+      return ctk::grabWidget(widget, rectangle);
+    }
+};
+
+//-----------------------------------------------------------------------------
 /// \ingroup Widgets
 void initCTKWidgetsPythonQtDecorators()
 {
@@ -158,6 +171,12 @@ void initCTKWidgetsPythonQtDecorators()
   PythonQt::self()->registerClass(&ctkTransferFunctionGradientItem::staticMetaObject, "CTKWidgets");
 
   PythonQt::self()->addDecorators(new ctkWidgetsPythonQtDecorators);
+
+  // NOTE: This exposes ctk.ctkWidgetsUtils.grabWidget(), for example. PythonQt
+  // doesn't support wrapping a static function and adding it to the top-level
+  // ctk module. Note that PythonQtWrapper_CTKDICOMCore installs itself as ctk.ctk,
+  // but using that same module here would replace  PythonQtWrapper_CTKDICOMCore.
+  PythonQt::self()->registerCPPClass("ctkWidgetsUtils", "", "CTKWidgets", PythonQtCreateObject<PythonQtWrapper_CTKWidgets>);
 }
 
 #endif
