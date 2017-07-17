@@ -1,5 +1,7 @@
 project(CTKVisualizationVTKWidgets)
 
+include(${VTK_USE_FILE})
+
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
@@ -121,6 +123,12 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkViewsContext2D
     vtkGUISupportQt
     )
+  if(TARGET vtkRenderingContext${VTK_RENDERING_BACKEND})
+    list(APPEND VTK_LIBRARIES vtkRenderingContext${VTK_RENDERING_BACKEND})
+  endif()
+  if(TARGET vtkRenderingGL2PS${VTK_RENDERING_BACKEND})
+    list(APPEND VTK_LIBRARIES vtkRenderingGL2PS${VTK_RENDERING_BACKEND})
+  endif()
     if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
       set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkWrappingPythonCore)
     endif()
