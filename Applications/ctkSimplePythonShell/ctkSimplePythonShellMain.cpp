@@ -20,6 +20,9 @@
 
 // Qt includes
 #include <QApplication>
+#include <QLabel>
+#include <QMainWindow>
+#include <QStatusBar>
 #include <QTextStream>
 #include <QTimer>
 
@@ -57,6 +60,19 @@ void executeScripts(void * data)
       QApplication::exit(EXIT_FAILURE);
       }
     }
+}
+
+//-----------------------------------------------------------------------------
+void onCursorPositionChanged(void *data)
+{
+  ctkPythonConsole* pythonConsole = reinterpret_cast<ctkPythonConsole*>(data);
+  QMainWindow* mainWindow = qobject_cast<QMainWindow*>(
+        pythonConsole->parentWidget());
+  QLabel * label = mainWindow->statusBar()->findChild<QLabel*>();
+  label->setText(QString("Position %1, Column %2, Line %3")
+                 .arg(pythonConsole->cursorPosition())
+                 .arg(pythonConsole->cursorColumn())
+                 .arg(pythonConsole->cursorLine()));
 }
 
 } // end of anonymous namespace
@@ -106,9 +122,20 @@ int main(int argc, char** argv)
 
     ctkPythonConsole console;
     console.initialize(&pythonManager);
-    console.setAttribute(Qt::WA_QuitOnClose, true);
-    console.resize(600, 280);
-    console.show();
+
+    QMainWindow mainWindow;
+    mainWindow.setCentralWidget(&console);
+    mainWindow.resize(600, 280);
+    mainWindow.show();
+
+    QLabel cursorPositionLabel;
+    mainWindow.statusBar()->addWidget(&cursorPositionLabel);
+
+    ctkCallback cursorPositionChangedCallback;
+    cursorPositionChangedCallback.setCallbackData(&console);
+    cursorPositionChangedCallback.setCallback(onCursorPositionChanged);
+    QObject::connect(&console, SIGNAL(cursorPositionChanged()),
+                     &cursorPositionChangedCallback, SLOT(invoke()));
 
     console.setProperty("isInteractive", parsedArgs.contains("interactive"));
 
