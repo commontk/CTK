@@ -44,6 +44,9 @@ public:
   QString currentFile();
   QStringList fileList();
 
+  /// Get metadata tree as plain text
+  QString metadataAsText();
+
 protected:
   QScopedPointer<ctkDICOMObjectListWidgetPrivate> d_ptr;
 
@@ -62,6 +65,7 @@ protected Q_SLOTS:
   void openLookupUrl(const QModelIndex&);
   void updateWidget();
   void copyPath();
+  void copyMetadata();
 };
 
 #endif

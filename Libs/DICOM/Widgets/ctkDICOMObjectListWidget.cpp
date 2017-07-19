@@ -43,6 +43,7 @@ public:
   ~ctkDICOMObjectListWidgetPrivate();
   void populateDICOMObjectTreeView(const QString& fileName);
   void setPathLabel(const QString& currentFile);
+  QString dicomObjectModelAsString(QModelIndex parent = QModelIndex(), int indent = 0);
 
   QString currentFile;
   QStringList fileList;
@@ -76,6 +77,44 @@ void ctkDICOMObjectListWidgetPrivate::setPathLabel(const QString& currentFile)
   currentPathLabel->setText(currentFile);
 }
 
+// --------------------------------------------------------------------------
+QString ctkDICOMObjectListWidgetPrivate::dicomObjectModelAsString(QModelIndex parent /*=QModelIndex()*/, int indent /*=0*/)
+{
+  QString dump;
+  QString indentString;
+  for (int i = 0; i < indent; ++i)
+    {
+    indentString += "\t";
+    }
+#ifdef WIN32
+  QString newLine = "\r\n";
+#else
+  QString newLine = "\n";
+#endif
+  for (int r = 0; r < this->dicomObjectModel->rowCount(parent); ++r)
+    {
+    dump += indentString;
+    for (int c = 0; c < this->dicomObjectModel->columnCount(); ++c)
+      {
+      QModelIndex index = this->dicomObjectModel->index(r, c, parent);
+      QVariant name = this->dicomObjectModel->data(index);
+      if (c > 0)
+        {
+        dump += "\t";
+        }
+      dump += name.toString();
+      }
+    dump += newLine;
+    // here is your applicable code
+    QModelIndex index0 = this->dicomObjectModel->index(r, 0, parent);
+    if (this->dicomObjectModel->hasChildren(index0))
+      {
+      dump += dicomObjectModelAsString(index0, indent+1);
+      }
+    }
+  return dump;
+}
+
 //----------------------------------------------------------------------------
 // ctkDICOMObjectListWidget methods
 
@@ -95,6 +134,7 @@ ctkDICOMObjectListWidget::ctkDICOMObjectListWidget(QWidget* _parent):Superclass(
   connect(d->dcmObjectTreeView, SIGNAL(doubleClicked(const QModelIndex&))
                                ,this, SLOT(openLookupUrl(const QModelIndex&)));
   connect(d->copyPathPushButton , SIGNAL(clicked(bool)),this, SLOT(copyPath()));
+  connect(d->copyMetadataPushButton, SIGNAL(clicked(bool)), this, SLOT(copyMetadata()));
 }
 
 //----------------------------------------------------------------------------
@@ -116,11 +156,10 @@ void ctkDICOMObjectListWidget::setFileList(const QStringList& fileList)
 {
   Q_D(ctkDICOMObjectListWidget);
   d->fileList = fileList;
-  if (d-> fileList.size()> 0)
+  if (d->fileList.size() > 0)
     {
     d->currentFile = d->fileList[0];
     d->setPathLabel(d->currentFile );
-    d->currentPathLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
     d->populateDICOMObjectTreeView(d->currentFile );
     d->fileSliderWidget->setMaximum(fileList.size()-1);
     }
@@ -166,4 +205,21 @@ void ctkDICOMObjectListWidget::copyPath()
   Q_D(ctkDICOMObjectListWidget);
   QClipboard *clipboard = QApplication::clipboard();
   clipboard->setText(d->currentFile);
+}
+
+// --------------------------------------------------------------------------
+
+QString ctkDICOMObjectListWidget::metadataAsText()
+{
+  Q_D(ctkDICOMObjectListWidget);
+  return d->dicomObjectModelAsString();
+}
+
+// --------------------------------------------------------------------------
+
+void ctkDICOMObjectListWidget::copyMetadata()
+{
+  Q_D(ctkDICOMObjectListWidget);
+  QClipboard *clipboard = QApplication::clipboard();
+  clipboard->setText(metadataAsText());
 }

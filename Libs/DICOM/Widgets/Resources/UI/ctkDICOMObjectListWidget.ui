@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>312</width>
-    <height>206</height>
+    <width>486</width>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,18 +20,6 @@
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLabel" name="label">
-         <property name="minimumSize">
-          <size>
-           <width>70</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>70</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="text">
           <string>File Path:</string>
          </property>
@@ -39,6 +27,12 @@
        </item>
        <item>
         <widget class="QLabel" name="currentPathLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -46,23 +40,18 @@
        </item>
        <item>
         <widget class="QPushButton" name="copyPathPushButton">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="toolTip">
           <string>Copy the file full path to the clipboard.</string>
          </property>
          <property name="text">
           <string>Copy Path</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="copyMetadataPushButton">
+         <property name="text">
+          <string>Copy Metadata</string>
          </property>
         </widget>
        </item>
@@ -79,7 +68,11 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
      </item>
      <item>
-      <widget class="QTreeView" name="dcmObjectTreeView"/>
+      <widget class="QTreeView" name="dcmObjectTreeView">
+       <property name="toolTip">
+        <string>Double-click Tag to show its definition.</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
