@@ -216,6 +216,14 @@ ctkMacroBuildLib(
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
 
+if(_use_qvtkopenglwidget)
+  target_compile_definitions(
+    ${PROJECT_NAME}
+    INTERFACE
+      CTK_USE_QVTKOPENGLWIDGET
+    )
+endif()
+
 if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(
     TARGET ${PROJECT_NAME}
