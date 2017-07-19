@@ -81,11 +81,7 @@ void ctkDICOMObjectListWidgetPrivate::setPathLabel(const QString& currentFile)
 QString ctkDICOMObjectListWidgetPrivate::dicomObjectModelAsString(QModelIndex parent /*=QModelIndex()*/, int indent /*=0*/)
 {
   QString dump;
-  QString indentString;
-  for (int i = 0; i < indent; ++i)
-    {
-    indentString += "\t";
-    }
+  QString indentString(indent, '\t'); // add tab characters, (indent) number of times
 #ifdef WIN32
   QString newLine = "\r\n";
 #else
@@ -97,12 +93,21 @@ QString ctkDICOMObjectListWidgetPrivate::dicomObjectModelAsString(QModelIndex pa
     for (int c = 0; c < this->dicomObjectModel->columnCount(); ++c)
       {
       QModelIndex index = this->dicomObjectModel->index(r, c, parent);
-      QVariant name = this->dicomObjectModel->data(index);
-      if (c > 0)
+      QString name = this->dicomObjectModel->data(index).toString();
+      if (c == 0)
         {
-        dump += "\t";
+        // Replace round brackets by square brackets.
+        // If the text is copied into Excel, Excel would recognize tag (0008,0012)
+        // as a negative number (-80,012). Instead, [0008,0012] is displayed fine.
+        name.replace('(', '[');
+        name.replace(')', ']');
+        dump += name;
         }
-      dump += name.toString();
+      else
+        {
+        dump += "\t" + name;
+        }
+      
       }
     dump += newLine;
     // here is your applicable code
