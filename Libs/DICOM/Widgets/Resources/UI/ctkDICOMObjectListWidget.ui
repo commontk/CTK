@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>486</width>
-    <height>297</height>
+    <width>883</width>
+    <height>516</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>File Path:</string>
+          <string>File path:</string>
          </property>
         </widget>
        </item>
@@ -44,14 +44,7 @@
           <string>Copy the file full path to the clipboard.</string>
          </property>
          <property name="text">
-          <string>Copy Path</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="copyMetadataPushButton">
-         <property name="text">
-          <string>Copy Metadata</string>
+          <string>Copy path</string>
          </property>
         </widget>
        </item>
@@ -65,12 +58,56 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="topMargin">
+        <number>8</number>
+       </property>
+       <item>
+        <widget class="ctkSearchBox" name="metadataSearchBox"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="expandAllPushButton">
+         <property name="text">
+          <string>Expand all</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="collapseAllPushButton">
+         <property name="text">
+          <string>Collapse all</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="copyMetadataPushButton">
+         <property name="toolTip">
+          <string>Copy to clipboard metadata of this file</string>
+         </property>
+         <property name="text">
+          <string>Copy metadata</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="copyAllFilesMetadataPushButton">
+         <property name="toolTip">
+          <string>Copy to clipboard metadata of all files in the series</string>
+         </property>
+         <property name="text">
+          <string>Copy all files metadata</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2"/>
      </item>
      <item>
       <widget class="QTreeView" name="dcmObjectTreeView">
        <property name="toolTip">
-        <string>Double-click Tag to show its definition.</string>
+        <string>Double-click to show DICOM tag definition.</string>
        </property>
       </widget>
      </item>
@@ -79,6 +116,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>ctkSearchBox.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>

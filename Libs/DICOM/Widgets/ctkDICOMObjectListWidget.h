@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMObjectListWidget_h
 #define __ctkDICOMObjectListWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QItemSelection>
 #include <QWidget>
 
@@ -45,7 +45,10 @@ public:
   QStringList fileList();
 
   /// Get metadata tree as plain text
-  QString metadataAsText();
+  QString metadataAsText(bool allFiles = false);
+
+  /// Open DICOM tag definition in a web browser
+  void openLookupUrl(QString tag);
 
 protected:
   QScopedPointer<ctkDICOMObjectListWidgetPrivate> d_ptr;
@@ -62,10 +65,12 @@ public Q_SLOTS:
   void setFileList(const QStringList& fileList);
 
 protected Q_SLOTS:
-  void openLookupUrl(const QModelIndex&);
+  void itemDoubleClicked(const QModelIndex&);
+  void onFilterChanged();
   void updateWidget();
   void copyPath();
   void copyMetadata();
+  void copyAllFilesMetadata();
 };
 
 #endif
