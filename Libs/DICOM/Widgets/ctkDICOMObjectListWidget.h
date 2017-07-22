@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMObjectListWidget_h
 #define __ctkDICOMObjectListWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QItemSelection>
 #include <QWidget>
 
@@ -35,6 +35,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMObjectListWidget : public QWidget
   Q_OBJECT
   Q_PROPERTY(QString currentFile READ currentFile WRITE setCurrentFile)
   Q_PROPERTY(QStringList fileList READ fileList WRITE setFileList)
+  Q_PROPERTY(QString filterExpression READ filterExpression WRITE setFilterExpression)
 
 public:
   typedef QWidget Superclass;
@@ -44,8 +45,18 @@ public:
   QString currentFile();
   QStringList fileList();
 
+  /// Filter displayed metadata based on content in Tag, Attribute, and Value columns.
+  /// Simple search : enter any text to show only those items that contains the text.
+  /// Use ? and * wildcards to represent any single character or sequence of characters.
+  /// Regular expression search: Enter regexp: followed by a regular expression.
+  /// For example, show 3 specific tags, enter : regexp : 0010, 0010 | 0010, 0020 | 0010, 0030
+  QString filterExpression();
+
   /// Get metadata tree as plain text
-  QString metadataAsText();
+  QString metadataAsText(bool allFiles = false);
+
+  /// Open DICOM tag definition in a web browser
+  void openLookupUrl(QString tag);
 
 protected:
   QScopedPointer<ctkDICOMObjectListWidgetPrivate> d_ptr;
@@ -60,12 +71,15 @@ Q_SIGNALS:
 public Q_SLOTS:
   void setCurrentFile(const QString& newFileName);
   void setFileList(const QStringList& fileList);
+  void setFilterExpression(const QString& expr);
 
 protected Q_SLOTS:
-  void openLookupUrl(const QModelIndex&);
+  void itemDoubleClicked(const QModelIndex&);
+  void onFilterChanged();
   void updateWidget();
   void copyPath();
   void copyMetadata();
+  void copyAllFilesMetadata();
 };
 
 #endif

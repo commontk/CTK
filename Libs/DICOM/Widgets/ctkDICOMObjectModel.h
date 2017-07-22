@@ -43,12 +43,22 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMObjectModel
   Q_OBJECT
   typedef QStandardItemModel Superclass;
   //Q_PROPERTY(setFile);
+  Q_ENUMS(ColumnIndex)
 
 public:
 
   explicit ctkDICOMObjectModel(QObject* parent = 0);
   virtual ~ctkDICOMObjectModel();
   Q_INVOKABLE void setFile (const QString& fileName);
+
+  enum ColumnIndex
+    {
+    TagColumn = 0,
+    AttributeColumn = 1,
+    ValueColumn = 2,
+    VRColumn = 3,
+    LengthColumn = 4
+    };
 
 protected:
   QScopedPointer<ctkDICOMObjectModelPrivate> d_ptr;

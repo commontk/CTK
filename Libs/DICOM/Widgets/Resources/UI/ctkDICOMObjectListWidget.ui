@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>486</width>
-    <height>297</height>
+    <width>883</width>
+    <height>516</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>File Path:</string>
+          <string>File path:</string>
          </property>
         </widget>
        </item>
@@ -44,14 +44,7 @@
           <string>Copy the file full path to the clipboard.</string>
          </property>
          <property name="text">
-          <string>Copy Path</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="copyMetadataPushButton">
-         <property name="text">
-          <string>Copy Metadata</string>
+          <string>Copy path</string>
          </property>
         </widget>
        </item>
@@ -65,12 +58,60 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="topMargin">
+        <number>8</number>
+       </property>
+       <item>
+        <widget class="ctkSearchBox" name="metadataSearchBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Filter displayed metadata based on content in Tag, Attribute, and Value columns.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Simple search: &lt;/span&gt;enter any text to show only those items that contains the text. Use ? and * wildcards to represent &lt;span style=&quot; font-style:italic;&quot;&gt;any &lt;/span&gt;single character or sequence of characters.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Regular expression search (for advanced users):&lt;/span&gt; Enter &lt;span style=&quot; font-style:italic;&quot;&gt;regexp:&lt;/span&gt; followed by a regular expression. For example, show 3 specific tags, enter: &lt;span style=&quot; font-style:italic;&quot;&gt;regexp:0010,0010|0010,0020|0010,0030&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="expandAllPushButton">
+         <property name="text">
+          <string>Expand all</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="collapseAllPushButton">
+         <property name="text">
+          <string>Collapse all</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="copyMetadataPushButton">
+         <property name="toolTip">
+          <string>Copy to clipboard metadata of this file</string>
+         </property>
+         <property name="text">
+          <string>Copy metadata</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="copyAllFilesMetadataPushButton">
+         <property name="toolTip">
+          <string>Copy to clipboard metadata of all files in the series</string>
+         </property>
+         <property name="text">
+          <string>Copy all files metadata</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2"/>
      </item>
      <item>
       <widget class="QTreeView" name="dcmObjectTreeView">
        <property name="toolTip">
-        <string>Double-click Tag to show its definition.</string>
+        <string>Double-click to show DICOM tag definition.</string>
        </property>
       </widget>
      </item>
@@ -79,6 +120,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>ctkSearchBox.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
