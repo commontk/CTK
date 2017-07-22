@@ -93,6 +93,7 @@ public:
   void populateDICOMObjectTreeView(const QString& fileName);
   void setPathLabel(const QString& currentFile);
   QString dicomObjectModelAsString(QAbstractItemModel* dicomObjectModel, QModelIndex parent = QModelIndex(), int indent = 0, QString rowPrefix = QString());
+  void setFilterExpressionInModel(qRecursiveTreeProxyFilter* filterModel, const QString& expr);
 
   QString endOfLine;
   QString currentFile;
@@ -119,6 +120,21 @@ ctkDICOMObjectListWidgetPrivate::ctkDICOMObjectListWidgetPrivate()
 //----------------------------------------------------------------------------
 ctkDICOMObjectListWidgetPrivate::~ctkDICOMObjectListWidgetPrivate()
 {
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMObjectListWidgetPrivate::setFilterExpressionInModel(qRecursiveTreeProxyFilter* filterModel, const QString& expr)
+{
+  const QString regexpPrefix("regexp:");
+  if (expr.startsWith(regexpPrefix))
+    {
+    filterModel->setFilterRegExp(expr.right(expr.length() - regexpPrefix.length()));
+    }
+  else
+    {
+    filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    filterModel->setFilterWildcard(expr);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -189,7 +205,6 @@ ctkDICOMObjectListWidget::ctkDICOMObjectListWidget(QWidget* _parent):Superclass(
   d->dicomObjectModel = new ctkDICOMObjectModel(this);
   d->filterModel = new qRecursiveTreeProxyFilter(this);
   d->filterModel->setSourceModel(d->dicomObjectModel);
-  d->filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
 
   d->fileSliderWidget->setMaximum(1);
   d->fileSliderWidget->setMinimum(1);
@@ -206,8 +221,7 @@ ctkDICOMObjectListWidget::ctkDICOMObjectListWidget(QWidget* _parent):Superclass(
   connect(d->copyMetadataPushButton, SIGNAL(clicked(bool)), this, SLOT(copyMetadata()));
   connect(d->copyAllFilesMetadataPushButton, SIGNAL(clicked(bool)), this, SLOT(copyAllFilesMetadata()));
 
-  QObject::connect(d->metadataSearchBox, SIGNAL(textChanged(QString)),
-    d->filterModel, SLOT(setFilterWildcard(QString)));
+  QObject::connect(d->metadataSearchBox, SIGNAL(textChanged(QString)), this, SLOT(setFilterExpression(QString)));
   QObject::connect(d->metadataSearchBox, SIGNAL(textChanged(QString)), this, SLOT(onFilterChanged()));
 }
 
@@ -317,8 +331,7 @@ QString ctkDICOMObjectListWidget::metadataAsText(bool allFiles /*=false*/)
 
       qRecursiveTreeProxyFilter* afilterModel = new qRecursiveTreeProxyFilter();
       afilterModel->setSourceModel(aDicomObjectModel);
-      afilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-      afilterModel->setFilterWildcard(d->metadataSearchBox->text());
+      d->setFilterExpressionInModel(afilterModel, d->metadataSearchBox->text());
 
       QString thisFileMetadata = d->dicomObjectModelAsString(afilterModel, QModelIndex(), 0, fileName + "\t");
 
@@ -380,4 +393,11 @@ void ctkDICOMObjectListWidget::onFilterChanged()
     palette.setColor(QPalette::Base, Qt::white);
     }
   d->metadataSearchBox->setPalette(palette);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMObjectListWidget::setFilterExpression(const QString& expr)
+{
+  Q_D(ctkDICOMObjectListWidget);
+  d->setFilterExpressionInModel(d->filterModel, expr);
 }

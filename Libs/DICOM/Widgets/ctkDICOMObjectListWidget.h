@@ -66,6 +66,7 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
   void itemDoubleClicked(const QModelIndex&);
+  void setFilterExpression(const QString& expr);
   void onFilterChanged();
   void updateWidget();
   void copyPath();
