@@ -100,6 +100,7 @@ public:
   QStringList fileList;
   ctkDICOMObjectModel* dicomObjectModel;
   qRecursiveTreeProxyFilter* filterModel;
+  QString filterExpression;
 };
 
 //----------------------------------------------------------------------------
@@ -331,7 +332,7 @@ QString ctkDICOMObjectListWidget::metadataAsText(bool allFiles /*=false*/)
 
       qRecursiveTreeProxyFilter* afilterModel = new qRecursiveTreeProxyFilter();
       afilterModel->setSourceModel(aDicomObjectModel);
-      d->setFilterExpressionInModel(afilterModel, d->metadataSearchBox->text());
+      d->setFilterExpressionInModel(afilterModel, d->filterExpression);
 
       QString thisFileMetadata = d->dicomObjectModelAsString(afilterModel, QModelIndex(), 0, fileName + "\t");
 
@@ -399,5 +400,13 @@ void ctkDICOMObjectListWidget::onFilterChanged()
 void ctkDICOMObjectListWidget::setFilterExpression(const QString& expr)
 {
   Q_D(ctkDICOMObjectListWidget);
+  d->filterExpression = expr;
   d->setFilterExpressionInModel(d->filterModel, expr);
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMObjectListWidget::filterExpression()
+{
+  Q_D(ctkDICOMObjectListWidget);
+  return d->filterExpression;
 }
