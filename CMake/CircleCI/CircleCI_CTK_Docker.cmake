@@ -85,6 +85,13 @@ ctest_configure(
 
 ctest_build( BUILD ${CTK_BINARY_DIR} )
 
-ctest_test( BUILD ${CTEST_BINARY_DIRECTORY} )
+ctest_test(
+  BUILD ${CTEST_BINARY_DIRECTORY}
+  RETURN_VALUE result
+  )
 
 ctest_submit()
+
+if(result)
+  message(FATAL_ERROR "ERROR: Tests failed")
+endif()
