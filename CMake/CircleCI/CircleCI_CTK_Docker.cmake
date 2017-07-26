@@ -70,13 +70,17 @@ set( CTK_BUILD_EXAMPLES OFF )
 
 ###################
 
+set(ctk_configure_options
+  -DCTK_QT_VERSION:STRING=${CTK_QT_VERSION}
+  -DCTK_ENABLE_Widgets:BOOL=ON
+  )
 
 ctest_start( "${SITE_CTEST_MODE}" )
 
 ctest_configure(
   BUILD "${CTK_BINARY_DIR}"
   SOURCE "${CTK_SOURCE_DIR}"
-  OPTIONS -DCTK_QT_VERSION:STRING=${CTK_QT_VERSION}
+  OPTIONS "${ctk_configure_options}"
   )
 
 ctest_build( BUILD ${CTK_BINARY_DIR} )
