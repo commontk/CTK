@@ -103,6 +103,7 @@ void ctkMenuComboBoxPrivate::init()
   this->MenuComboBox->setMinimumContentsLength(12);
   layout->addWidget(this->MenuComboBox);
   this->MenuComboBox->installEventFilter(q);
+  this->MenuComboBox->setInsertPolicy(QComboBox::NoInsert);
   this->MenuComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
   this->MenuComboBox->addItem(this->DefaultIcon, this->DefaultText);
   q->connect(this->MenuComboBox, SIGNAL(popupShown()),
@@ -113,7 +114,7 @@ void ctkMenuComboBoxPrivate::init()
   this->SearchCompleter->setCaseSensitivity(Qt::CaseInsensitive);
   this->SearchCompleter->setModelFiltering(ctkCompleter::FilterWordStartsWith);
   q->connect(this->SearchCompleter, SIGNAL(activated(QString)),
-             q, SLOT(onEditingFinished()));
+             this, SLOT(onCompletion(QString)));
 
   // Automatically set the minimumSizeHint of the layout to the widget
   layout->setSizeConstraint(QLayout::SetMinimumSize);
@@ -203,6 +204,25 @@ void ctkMenuComboBoxPrivate::setComboBoxEditable(bool edit)
     }
 
   this->MenuComboBox->setEditable(edit);
+}
+
+// -------------------------------------------------------------------------
+void ctkMenuComboBoxPrivate::onCompletion(const QString& text)
+{
+  Q_Q(ctkMenuComboBox);
+
+  // In Qt5, when QCompleter sends its activated() signal, QComboBox sets
+  // its current index to the activated item, if found. Work around that behavior
+  // by re-selecting the original item.
+  this->MenuComboBox->setCurrentIndex(0);
+
+  // Set text to the completed string
+  if (this->MenuComboBox->lineEdit())
+    {
+    this->MenuComboBox->lineEdit()->setText(text);
+    }
+
+  q->onEditingFinished();
 }
 
 // -------------------------------------------------------------------------
