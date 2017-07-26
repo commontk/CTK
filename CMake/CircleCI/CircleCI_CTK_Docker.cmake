@@ -67,6 +67,8 @@ set( CMAKE_BUILD_TYPE "${SITE_BUILD_TYPE}")
 set( BUILD_TESTING ON )
 set( CTK_BUILD_EXAMPLES OFF )
 
+# Disable MIT_SHM X11 extension
+set( ENV{QT_X11_NO_MITSHM} 1 )
 
 ###################
 
