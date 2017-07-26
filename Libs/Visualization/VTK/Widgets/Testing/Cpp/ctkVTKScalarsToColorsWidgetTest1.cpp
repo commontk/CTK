@@ -44,6 +44,7 @@ int ctkVTKScalarsToColorsWidgetTest1(int argc, char * argv [] )
 {
 #if CTK_USE_QVTKOPENGLWIDGET
     QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    format.setSamples(0);
     QSurfaceFormat::setDefaultFormat(format);
 #endif
 
