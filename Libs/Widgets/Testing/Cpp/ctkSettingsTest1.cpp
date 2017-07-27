@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDesktopWidget>
 #include <QDialog>
 #include <QMainWindow>
 #include <QTimer>
@@ -49,23 +50,27 @@ int ctkSettingsTest1(int argc, char * argv [] )
   QMainWindow mainWindow(0);
   mainWindow.show();
   
-  mainWindow.move(123, 123);
+  QDesktopWidget desktop;
+  QRect desktopRect = desktop.availableGeometry(&mainWindow);
+  const QPoint origin = desktopRect.topLeft();
+
+  mainWindow.move(origin);
   mainWindow.resize(640, 470);
   
   settings.saveState(mainWindow,"");
-  mainWindow.move(100, 100);
+  mainWindow.move(origin + QPoint(30, 20));
   mainWindow.resize(300, 200);
   settings.saveState(mainWindow, "key");
   
   settings.restoreState("", mainWindow);
-  if (mainWindow.pos() != QPoint(123,123) ||
+  if (mainWindow.pos() != origin ||
       mainWindow.size() != QSize(640, 470))
     {
     std::cerr << "ctkSettings::restoreState failed" << std::endl;
     return EXIT_FAILURE;
     }
   settings.restoreState("key", mainWindow);
-  if (mainWindow.pos() != QPoint(100,100) ||
+  if (mainWindow.pos() != (origin + QPoint(30, 20)) ||
       mainWindow.size() != QSize(300, 200))
     {
     std::cerr << "ctkSettings::restoreState failed" << std::endl;
