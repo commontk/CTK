@@ -42,7 +42,7 @@ int ctkScreenshotDialogTest1(int argc, char * argv [] )
   // Check default values
   if (screenshotDialog.widgetToGrab() != 0 ||
       screenshotDialog.baseFileName() != "Untitled" ||
-      screenshotDialog.directory() != "." ||
+      !screenshotDialog.directory().isEmpty() ||
       screenshotDialog.delay() != 0)
     {
     std::cerr << "ctkScreenshotDialog, bad default values: "
