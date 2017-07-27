@@ -92,7 +92,7 @@ void ctkLanguageComboBoxTester::testSetDefaultLanguage_data()
   QTest::newRow("en_GB") << QString("en_GB") << QString("en_GB") << QString("en_GB");
   QTest::newRow("fr") << QString("fr") << QString("fr_FR") << QString("fr_FR");
   QTest::newRow("de_CH") << QString("de_CH") << QString("de_CH") << QString("de_CH");
-  QTest::newRow("de_ch") << QString("de_ch") << QString("de_DE") << QString("de_DE");
+  QTest::newRow("de_DE") << QString("de_DE") << QString("de_DE") << QString("de_DE");
   QTest::newRow("xx") << QString("xx") << QString() << QString();
   QTest::newRow("xx_yy") << QString("xx_yy") << QString() << QString();
   QTest::newRow("_en") << QString("_en") << QString() << QString();

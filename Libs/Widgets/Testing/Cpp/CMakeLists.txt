@@ -56,6 +56,7 @@ set(TEST_SOURCES
   ctkFlowLayoutTest1.cpp
   ctkFontButtonTest.cpp
   ctkHistogramTest1.cpp
+  ctkLanguageComboBoxTest.cpp
   ctkLayoutManagerTest1.cpp
   ctkMaterialPropertyPreviewLabelTest1.cpp
   ctkMaterialPropertyWidgetTest1.cpp
@@ -144,7 +145,6 @@ if(CTK_USE_QTTESTING)
     ctkExpandButtonEventTranslatorPlayerTest1.cpp
     ctkFileDialogEventTranslatorPlayerTest1.cpp
     ctkFontButtonEventTranslatorPlayerTest1.cpp
-    ctkLanguageComboBoxTest.cpp
     ctkMaterialPropertyWidgetEventTranslatorPlayerTest1.cpp
     ctkMatrixWidgetEventTranslatorPlayerTest1.cpp
     ctkMenuButtonEventTranslatorPlayerTest1.cpp
