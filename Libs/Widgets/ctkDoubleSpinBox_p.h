@@ -59,7 +59,7 @@ public:
   /// Expose publicly QAbstractSpinBox::initStyleOption()
   void initStyleOptionSpinBox(QStyleOptionSpinBox* option);
 protected:
-  ctkDoubleSpinBoxPrivate* const d_ptr;
+  QScopedPointer<ctkDoubleSpinBoxPrivate> d_ptr;
 
   /// If the invertedControls property is false (by default) then this function
   /// behavesLike QDoubleSpinBox::stepEnabled(). If the property is true then
