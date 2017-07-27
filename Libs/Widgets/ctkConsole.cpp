@@ -828,7 +828,6 @@ void ctkConsolePrivate::internalExecuteCommand()
 
   QTextCursor c(this->document());
   c.movePosition(QTextCursor::End);
-  c.insertText("\n");
 
   this->InteractivePosition = this->documentEnd();
 
@@ -875,7 +874,6 @@ void ctkConsolePrivate::printString(const QString& text)
 {
   this->textCursor().movePosition(QTextCursor::End);
   this->textCursor().insertText(text);
-  this->InteractivePosition = this->documentEnd();
 }
 
 //----------------------------------------------------------------------------
@@ -970,7 +968,7 @@ void ctkConsolePrivate::insertCompletion(const QString& completion)
   // save the initial cursor position
   QTextCursor endOfCompletion = this->textCursor();
   endOfCompletion.setPosition(tc.position());
-  // Select the previous charactere
+  // Select the previous character
   tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
   if (tc.selectedText()==".")
     {
