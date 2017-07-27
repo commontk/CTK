@@ -109,10 +109,10 @@ int ctkAbstractFactoryTest1(int argc, char * argv [] )
     }
   factory.registerItems();
   if (factory.itemKeys().count() != 2 ||
-      factory.itemKeys()[0] != "item1" ||
-      factory.itemKeys()[1] != "item2")
+      !factory.itemKeys().contains("item1") ||
+      !factory.itemKeys().contains("item2"))
     {
-    std::cerr<< "ctkAbstractFactory::keys() failed" << std::endl;
+    std::cerr<< "ctkAbstractFactory::itemKeys() failed" << std::endl;
     return EXIT_FAILURE;
     }
   item1 = factory.instantiate("item1");
