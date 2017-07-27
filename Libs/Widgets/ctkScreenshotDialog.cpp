@@ -26,6 +26,7 @@
 // CTK includes
 #include "ctkScreenshotDialog.h"
 #include "ctkScreenshotDialog_p.h"
+#include "ctkWidgetsUtils.h"
 
 //-----------------------------------------------------------------------------
 // ctkScreenshotDialogPrivate methods
@@ -229,8 +230,8 @@ void ctkScreenshotDialog::enforceResolution(QSize size)
 QSize ctkScreenshotDialog::widgetSize()
 {
   Q_D(ctkScreenshotDialog);
-  QPixmap viewportPixmap = QPixmap::grabWidget(d->WidgetToGrab.data());
-  return viewportPixmap.size();
+  QImage viewportImage = ctk::grabWidget(d->WidgetToGrab.data());
+  return viewportImage.size();
 }
 
 //-----------------------------------------------------------------------------
@@ -359,7 +360,8 @@ void ctkScreenshotDialog::instantScreenshot()
     return;
     }
 
-  QPixmap viewportPixmap = QPixmap::grabWidget(d->WidgetToGrab.data());
+  QPixmap viewportPixmap = QPixmap::fromImage(
+    ctk::grabWidget(d->WidgetToGrab.data()));
 
   if (d->isWaitingForScreenshot() && d->DelaySpinBox->value() != 0)
     {

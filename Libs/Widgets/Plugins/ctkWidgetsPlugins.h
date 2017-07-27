@@ -22,7 +22,12 @@
 #define __ctkWidgetsPlugins_h
 
 // Qt includes
+#include <QtGlobal>
+#ifndef HAVE_QT5
 #include <QDesignerCustomWidgetCollectionInterface>
+#else
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+#endif
 
 // CTK includes
 #include "ctkWidgetsPluginsExport.h"

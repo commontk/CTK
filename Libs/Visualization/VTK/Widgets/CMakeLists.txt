@@ -134,7 +134,7 @@ if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(CTK_USE_CHARTS 1)
 endif()
 
-IF (${CTK_USE_CHARTS})
+if(${CTK_USE_CHARTS})
   set(KIT_SRCS
       ctkVTKChartView.cpp
       ctkVTKChartView.h

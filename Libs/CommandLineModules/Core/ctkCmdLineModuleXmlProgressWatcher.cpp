@@ -129,7 +129,7 @@ public:
         QString parent;
         if (!stack.empty()) parent = stack.back();
 
-        if (name.compare("module-root") != 0 && name.compare("module-snippet") != 0)
+        if (name.compare(QStringLiteral("module-root")) != 0 && name.compare(QStringLiteral("module-snippet")) != 0)
         {
           stack.push_back(name.toString());
         }
@@ -177,7 +177,7 @@ public:
           if (!stack.empty()) parent = stack.back();
         }
 
-        if (parent.isEmpty() && name.compare("module-snippet") != 0)
+        if (parent.isEmpty() && name.compare(QStringLiteral("module-snippet")) != 0)
         {
           if (name.compare(FILTER_START, Qt::CaseInsensitive) == 0)
           {

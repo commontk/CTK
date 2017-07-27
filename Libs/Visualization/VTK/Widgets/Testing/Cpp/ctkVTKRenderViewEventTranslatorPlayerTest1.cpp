@@ -47,6 +47,7 @@
 #include "ctkVTKRenderViewEventPlayer.h"
 #include "ctkVTKRenderViewEventTranslator.h"
 #include "ctkEventTranslatorPlayerWidget.h"
+#include "ctkWidgetsUtils.h"
 
 #include <pqTestUtility.h>
 #include <pqEventTranslator.h>
@@ -71,9 +72,9 @@ void checkFinalWidgetState(void* data)
   {
   ctkVTKRenderView* widget = reinterpret_cast<ctkVTKRenderView*>(data);
 
-  QPixmap actualImage = QPixmap::grabWidget(widget, widget->rect());
+  QImage actualImage = ctk::grabWidget(widget, widget->rect());
   actualImage.save(xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1ScreenshotTest.png");
-  CTKCOMPARE(actualImage.toImage(),
+  CTKCOMPARE(actualImage,
              QImage(xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1Screenshot.png"));
   }
 //-----------------------------------------------------------------------------
@@ -82,7 +83,7 @@ void screenshot(void* data)
   if (save)
     {
     ctkVTKRenderView* widget = reinterpret_cast<ctkVTKRenderView*>(data);
-    QPixmap expectedImage = QPixmap::grabWidget(widget, widget->rect());
+    QImage expectedImage = ctk::grabWidget(widget, widget->rect());
     expectedImage.save(xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1Screenshot.png");
     save = false;
     }
