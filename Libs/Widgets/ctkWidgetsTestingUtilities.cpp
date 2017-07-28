@@ -10,8 +10,8 @@
 namespace ctkWidgetsTestingUtilities
 {
 //---------------------------------------------------------------------------- */
-bool CompareImages(const QImage& current, const QImage& expected,
-                   float percentThreshold)
+bool CheckImagesEqual(const QImage& current, const QImage& expected,
+                      float percentThreshold)
 {
   if (current.width() != expected.width() ||
       current.height() != expected.height() ||
@@ -22,7 +22,7 @@ bool CompareImages(const QImage& current, const QImage& expected,
 
   if (current.format() != QImage::Format_RGB32)
     {
-    std::cerr << "ERROR: CompareImages: Unsupported QImage::Format: "
+    std::cerr << "ERROR: CheckImagesEqual: Unsupported QImage::Format: "
               << static_cast<int>(current.format()) << std::endl;
     return false;
     }

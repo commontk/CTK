@@ -31,11 +31,11 @@ class QImage;
 namespace ctkWidgetsTestingUtilities
 {
 
-/// Compare two images for pixel-level similarity. Allow for the specified
-/// percentage of pixels to be different.
+/// Check that two images are equal. Allow for the specified percentage of
+/// pixels to be different.
 CTK_WIDGETS_EXPORT
-bool CompareImages(const QImage& current, const QImage& expected,
-                   float percentThreshold=0.f);
+bool CheckImagesEqual(const QImage& current, const QImage& expected,
+                      float percentThreshold=0.f);
 
 } // namespace ctkWidgetsTestingUtilities
 

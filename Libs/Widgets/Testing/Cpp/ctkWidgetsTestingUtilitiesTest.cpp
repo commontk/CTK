@@ -31,26 +31,26 @@
 using namespace ctkWidgetsTestingUtilities;
 
 //----------------------------------------------------------------------------
-bool TestCheckCompareImages();
+bool TestCheckImagesEqual();
 
 //----------------------------------------------------------------------------
 int ctkWidgetsTestingUtilitiesTest(int , char * [])
 {
   bool res = true;
-  res = res && TestCheckCompareImages();
+  res = res && TestCheckImagesEqual();
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 //----------------------------------------------------------------------------
-bool TestCheckCompareImages()
+bool TestCheckImagesEqual()
 {
   {
     // Invalid format
     QImage a(1, 1, QImage::Format_Invalid);
     QImage b(1, 1, QImage::Format_Invalid);
-    if (CompareImages(a, b))
+    if (CheckImagesEqual(a, b))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
   }
@@ -59,9 +59,9 @@ bool TestCheckCompareImages()
     // Unsupported format
     QImage a(1, 1, QImage::Format_ARGB32);
     QImage b(1, 1, QImage::Format_ARGB32);
-    if (CompareImages(a, b))
+    if (CheckImagesEqual(a, b))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
   }
@@ -70,17 +70,17 @@ bool TestCheckCompareImages()
     // One image in unsupported format
     QImage a(1, 1, QImage::Format_RGB32);
     QImage b(1, 1, QImage::Format_ARGB32);
-    if (CompareImages(a, b))
+    if (CheckImagesEqual(a, b))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
 
     QImage c(1, 1, QImage::Format_ARGB32);
     QImage d(1, 1, QImage::Format_RGB32);
-    if (CompareImages(c, d))
+    if (CheckImagesEqual(c, d))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
   }
@@ -89,17 +89,17 @@ bool TestCheckCompareImages()
     // Images of different size
     QImage a(1, 1, QImage::Format_RGB32);
     QImage b(2, 1, QImage::Format_RGB32);
-    if (CompareImages(a, b))
+    if (CheckImagesEqual(a, b))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
 
     QImage c(1, 2, QImage::Format_ARGB32);
     QImage d(1, 1, QImage::Format_RGB32);
-    if (CompareImages(c, d))
+    if (CheckImagesEqual(c, d))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
   }
@@ -110,63 +110,63 @@ bool TestCheckCompareImages()
     a.fill(Qt::green);
     QImage b(10, 10, QImage::Format_RGB32);
     b.fill(Qt::green);
-    if (!CompareImages(a, b, 0.0f))
+    if (!CheckImagesEqual(a, b, 0.0f))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
 
     // Change one pixel in first image
     a.setPixel(2, 3, qRgb(255, 0, 0));
-    if (CompareImages(a, b, 0.f))
+    if (CheckImagesEqual(a, b, 0.f))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
 
-    // Compare with percent threshold not met
-    if (CompareImages(a, b, 0.5f))
+    // Percent threshold not met
+    if (CheckImagesEqual(a, b, 0.5f))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
 
-    // Compare with percent threshold met
-    if (!CompareImages(a, b, 1.f))
+    // Percent threshold met
+    if (!CheckImagesEqual(a, b, 1.f))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
 
     // Change one pixel in other image
-    // Compare with percent threshold not met
+    // Percent threshold not met
     b.setPixel(4, 5, qRgb(255, 255, 0));
-    if (CompareImages(a, b, 1.f))
+    if (CheckImagesEqual(a, b, 1.f))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
 
-    // Compare with percent threshold met
-    if (!CompareImages(a, b, 2.f))
+    // Percent threshold met
+    if (!CheckImagesEqual(a, b, 2.f))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
 
     // Change one pixel in first image to match second image
     a.setPixel(4, 5, qRgb(255, 255, 0));
-    if (!CompareImages(a, b, 1.f))
+    if (!CheckImagesEqual(a, b, 1.f))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
 
     // Identical images
     b.setPixel(2, 3, qRgb(255, 0, 0));
-    if (!CompareImages(a, b, 0.f))
+    if (!CheckImagesEqual(a, b, 0.f))
       {
-      std::cerr << "Line " << __LINE__ << " - CompareImages failed" << std::endl;
+      std::cerr << "Line " << __LINE__ << " - CheckImagesEqual failed" << std::endl;
       return false;
       }
   }

@@ -41,7 +41,7 @@ bool imageCompare(ctkCrosshairLabel& crosshair, QString baselineDirectory,
   QImage output = QPixmap::grabWidget(&crosshair).toImage();
   QImage baseline(baselineDirectory + "/" + baselineFilename);
   const float percentThreshold = 1.5f;
-  return ctkWidgetsTestingUtilities::CompareImages(output, baseline, percentThreshold);
+  return ctkWidgetsTestingUtilities::CheckImagesEqual(output, baseline, percentThreshold);
 }
 
 //-----------------------------------------------------------------------------
