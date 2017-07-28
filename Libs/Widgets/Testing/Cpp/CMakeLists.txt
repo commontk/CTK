@@ -102,6 +102,7 @@ set(TEST_SOURCES
   ctkTransferFunctionRepresentationTest1.cpp
   ctkTransferFunctionRepresentationTest2.cpp
   ctkTreeComboBoxTest1.cpp
+  ctkWidgetsTestingUtilitiesTest.cpp
   ctkWidgetsUtilsTest1.cpp
   ctkWidgetsUtilsTestGrabWidget.cpp
   ctkWorkflowWidgetTest1.cpp
@@ -364,6 +365,7 @@ SIMPLE_TEST( ctkTransferFunctionTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest2 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )
+SIMPLE_TEST( ctkWidgetsTestingUtilitiesTest )
 SIMPLE_TEST( ctkWidgetsUtilsTest1 )
 SIMPLE_TEST( ctkWidgetsUtilsTestGrabWidget )
 SIMPLE_TEST( ctkWorkflowWidgetTest1 )
