@@ -63,13 +63,15 @@ int ctkWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
   dialog.move(parentWidget.pos());
   dialog.show();
 
+  QApplication::processEvents();
+
   QImage screenshot =
     ctk::grabWidget(&parentWidget);
 
   if (QColor(screenshot.pixel(100, 100)) != QColor(Qt::black))
     {
     std::cout << "Failed to grab QGLWidget, pixel at (100,100)="
-              << screenshot.pixel(100, 100) << " " << QColor(Qt::black).rgb() << std::endl;
+              << std::hex << screenshot.pixel(100, 100) << " " << QColor(Qt::black).rgb() << std::endl;
     return EXIT_FAILURE;
     }
 
