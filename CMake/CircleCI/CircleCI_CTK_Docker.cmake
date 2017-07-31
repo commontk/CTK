@@ -67,20 +67,33 @@ set( CMAKE_BUILD_TYPE "${SITE_BUILD_TYPE}")
 set( BUILD_TESTING ON )
 set( CTK_BUILD_EXAMPLES OFF )
 
+# Disable MIT_SHM X11 extension
+set( ENV{QT_X11_NO_MITSHM} 1 )
 
 ###################
 
+set(ctk_configure_options
+  -DCTK_QT_VERSION:STRING=${CTK_QT_VERSION}
+  -DCTK_ENABLE_Widgets:BOOL=ON
+  )
 
 ctest_start( "${SITE_CTEST_MODE}" )
 
 ctest_configure(
   BUILD "${CTK_BINARY_DIR}"
   SOURCE "${CTK_SOURCE_DIR}"
-  OPTIONS -DCTK_QT_VERSION:STRING=${CTK_QT_VERSION}
+  OPTIONS "${ctk_configure_options}"
   )
 
 ctest_build( BUILD ${CTK_BINARY_DIR} )
 
-ctest_test( BUILD ${CTEST_BINARY_DIRECTORY} )
+ctest_test(
+  BUILD ${CTEST_BINARY_DIRECTORY}
+  RETURN_VALUE result
+  )
 
 ctest_submit()
+
+if(result)
+  message(FATAL_ERROR "ERROR: Tests failed")
+endif()

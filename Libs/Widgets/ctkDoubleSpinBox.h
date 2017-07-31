@@ -320,7 +320,7 @@ Q_SIGNALS:
   void decimalsChanged(int);
 
 protected:
-  QScopedPointer<ctkDoubleSpinBoxPrivate> d_ptr;
+  ctkDoubleSpinBoxPrivate* const d_ptr;
 
   /// Reimplemented to support shortcuts.
   virtual void keyPressEvent(QKeyEvent* event);

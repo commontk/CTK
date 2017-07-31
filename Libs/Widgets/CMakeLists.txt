@@ -197,6 +197,8 @@ set(KIT_SRCS
   ctkTransferFunctionView.h
   ctkTreeComboBox.cpp
   ctkTreeComboBox.h
+  ctkWidgetsTestingUtilities.cpp
+  ctkWidgetsTestingUtilities.h
   ctkWidgetsUtils.cpp
   ctkWidgetsUtils.h
   ctkWorkflowAbstractPagedWidget.cpp

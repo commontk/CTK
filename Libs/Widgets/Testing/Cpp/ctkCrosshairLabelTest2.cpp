@@ -28,6 +28,7 @@
 // CTK includes
 #include "ctkCrosshairLabel.h"
 #include "ctkCommandLineParser.h"
+#include "ctkWidgetsTestingUtilities.h"
 
 // STD includes
 #include <cstdlib>
@@ -39,7 +40,8 @@ bool imageCompare(ctkCrosshairLabel& crosshair, QString baselineDirectory,
 {
   QImage output = QPixmap::grabWidget(&crosshair).toImage();
   QImage baseline(baselineDirectory + "/" + baselineFilename);
-  return output == baseline;
+  const float percentThreshold = 1.5f;
+  return ctkWidgetsTestingUtilities::CheckImagesEqual(output, baseline, percentThreshold);
 }
 
 //-----------------------------------------------------------------------------
@@ -116,7 +118,6 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
   // Odd widget size
   crosshair.setMinimumSize(baseSize);
   crosshair.setPixmap(pixmap.scaled(baseSize));
-  crosshair.show();
 
   // Test bullsEyeWidth and line width with odd widget size
   crosshair.setCrosshairType(ctkCrosshairLabel::BullsEyeCrosshair);

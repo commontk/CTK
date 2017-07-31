@@ -56,6 +56,7 @@ set(TEST_SOURCES
   ctkFlowLayoutTest1.cpp
   ctkFontButtonTest.cpp
   ctkHistogramTest1.cpp
+  ctkLanguageComboBoxTest.cpp
   ctkLayoutManagerTest1.cpp
   ctkMaterialPropertyPreviewLabelTest1.cpp
   ctkMaterialPropertyWidgetTest1.cpp
@@ -101,6 +102,7 @@ set(TEST_SOURCES
   ctkTransferFunctionRepresentationTest1.cpp
   ctkTransferFunctionRepresentationTest2.cpp
   ctkTreeComboBoxTest1.cpp
+  ctkWidgetsTestingUtilitiesTest.cpp
   ctkWidgetsUtilsTest1.cpp
   ctkWidgetsUtilsTestGrabWidget.cpp
   ctkWorkflowWidgetTest1.cpp
@@ -144,7 +146,6 @@ if(CTK_USE_QTTESTING)
     ctkExpandButtonEventTranslatorPlayerTest1.cpp
     ctkFileDialogEventTranslatorPlayerTest1.cpp
     ctkFontButtonEventTranslatorPlayerTest1.cpp
-    ctkLanguageComboBoxTest.cpp
     ctkMaterialPropertyWidgetEventTranslatorPlayerTest1.cpp
     ctkMatrixWidgetEventTranslatorPlayerTest1.cpp
     ctkMenuButtonEventTranslatorPlayerTest1.cpp
@@ -364,6 +365,7 @@ SIMPLE_TEST( ctkTransferFunctionTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest1 )
 SIMPLE_TEST( ctkTransferFunctionRepresentationTest2 )
 SIMPLE_TEST( ctkTreeComboBoxTest1 )
+SIMPLE_TEST( ctkWidgetsTestingUtilitiesTest )
 SIMPLE_TEST( ctkWidgetsUtilsTest1 )
 SIMPLE_TEST( ctkWidgetsUtilsTestGrabWidget )
 SIMPLE_TEST( ctkWorkflowWidgetTest1 )

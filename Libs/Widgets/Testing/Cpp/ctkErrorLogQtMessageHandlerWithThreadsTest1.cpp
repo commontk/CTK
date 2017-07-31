@@ -74,7 +74,7 @@ int ctkErrorLogQtMessageHandlerWithThreadsTest1(int argc, char * argv [])
     model.registerMsgHandler(new ctkErrorLogQtMessageHandler);
     model.setMsgHandlerEnabled(ctkErrorLogQtMessageHandler::HandlerName, true);
 
-    int threadCount = 15;
+    int threadCount = 10;
     int maxIteration = 5;
     int messagesPerIteration = 3;
     startLogMessageThreads<LogQtMessageThread>(threadCount, maxIteration);
