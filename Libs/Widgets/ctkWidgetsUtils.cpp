@@ -48,7 +48,8 @@ QImage ctk::grabWidget(QWidget* widget, QRect rectangle)
     }
   if (!rectangle.isValid())
     {
-    rectangle = QRect(0,0,widget->width(),widget->height());
+    // Let Qt trigger layout mechanism and compute widget size.
+    rectangle = QRect(0,0,-1,-1);
     }
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   QPixmap widgetPixmap = QPixmap::grabWidget(widget, rectangle);
