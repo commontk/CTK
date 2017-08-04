@@ -85,6 +85,8 @@ ctkColorDialog::ctkColorDialog(QWidget* parent)
   , d_ptr(new ctkColorDialogPrivate(*this))
 {
   Q_D(ctkColorDialog);
+  // Force using Qt's standard color dialog to support adding new widgets
+  setOption(QColorDialog::DontUseNativeDialog);
   d->init();
 }
 
@@ -94,6 +96,8 @@ ctkColorDialog::ctkColorDialog(const QColor& initial, QWidget* parent)
   , d_ptr(new ctkColorDialogPrivate(*this))
 {
   Q_D(ctkColorDialog);
+  // Force using Qt's standard color dialog to support adding new widgets
+  setOption(QColorDialog::DontUseNativeDialog);
   d->init();
 }
 
