@@ -86,6 +86,12 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const QMessageLogContext& c
     {
     level = ctkErrorLogLevel::Debug;
     }
+#if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
+  else if (type == QtInfoMsg)
+    {
+    level = ctkErrorLogLevel::Info;
+    }
+#endif
   else if (type == QtWarningMsg)
     {
     level = ctkErrorLogLevel::Warning;
