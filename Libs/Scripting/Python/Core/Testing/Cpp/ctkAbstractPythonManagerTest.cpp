@@ -322,82 +322,91 @@ void ctkAbstractPythonManagerTester::testPythonAttributes_data()
                      << "d.foo_class().instantiate_bar().bar_maths(5)"
                      << (QStringList()
                          << "MATHS_CLASS_MEMBER"
-                         << "maths_instance_member" // TODO: verify result is 5
+                         << "maths_instance_member"
                          << "maths_instance_method");
 
   QTest::newRow("MultipleArg( 5 + 5 , '(')")
                      << "MultipleArg( 5 + 5 , '(')"
                      << (QStringList()
-                         << "multipleArg_instance_member_num" // TODO: verify result is 10
-                         << "multipleArg_instance_member_str" // TODO: verify result is '('
-                         << "multipleArg_instance_member_other"); // TODO: verify result is 0
+                         << "multipleArg_instance_member_num"
+                         << "multipleArg_instance_member_str"
+                         << "multipleArg_instance_member_other");
 
   QTest::newRow("MultipleArg( 5 % 5 + 1, '\"', 0.1)")
-                     << "MultipleArg( 5 + 5 , '\"', 0.1)"
+                     << "MultipleArg( 5 % 5 + 1, '\"', 0.1)"
                      << (QStringList()
-                         << "multipleArg_instance_member_num" // TODO: verify result is 1.1
-                         << "multipleArg_instance_member_str" // TODO: verify result is '"'
-                         << "multipleArg_instance_member_other"); // TODO: verify result is 0.1
+                         << "multipleArg_instance_member_num"
+                         << "multipleArg_instance_member_str"
+                         << "multipleArg_instance_member_other");
 
 }
 
 // ----------------------------------------------------------------------------
 void ctkAbstractPythonManagerTester::testPythonAttributeValues()
 {
-  QFETCH(QString, variableName);
-  QFETCH(QVariant, expectedVariableValue);
+  QFETCH(QString, code);
+  QFETCH(QVariant, expectedValue);
 
   QString test_path = __FILE__; // return the local path of this source file
   test_path.lastIndexOf("/");
   test_path.replace(test_path.lastIndexOf("/"),
                          test_path.size() - test_path.lastIndexOf("/"),
                          "/PythonAttributes-test.py");
+
   this->PythonManager.executeFile(test_path);
+  this->PythonManager.executeString(QString("value=%1").arg(code));
 
   QCOMPARE(
-        expectedVariableValue,
-        this->PythonManager.getVariable(variableName));
+        this->PythonManager.getVariable("value"),
+        expectedValue);
 }
 
 // ----------------------------------------------------------------------------
 void ctkAbstractPythonManagerTester::testPythonAttributeValues_data()
 {
-  QTest::addColumn<QString>("variableName");
-  QTest::addColumn<QVariant>("expectedVariableValue");
+  QTest::addColumn<QString>("code");
+  QTest::addColumn<QVariant>("expectedValue");
 
-  // d.foo_class().instantiate_bar().bar_maths(5)
-  QTest::newRow("")
-      << "d.foo_class().instantiate_bar().bar_maths(5).MATHS_CLASS_MEMBER"
+  QString code;
+
+  code = "d.foo_class().instantiate_bar().bar_maths(5).MATHS_CLASS_MEMBER";
+  QTest::newRow(code.toLatin1())
+      << code
       << QVariant(0.1);
 
-  QTest::newRow("")
-      << "d.foo_class().instantiate_bar().bar_maths(5).maths_instance_member"
+  code = "d.foo_class().instantiate_bar().bar_maths(5).maths_instance_member";
+  QTest::newRow(code.toLatin1())
+      << code
       << QVariant(5);
 
-  // MultipleArg( 5 + 5 , '(')
-  QTest::newRow("")
-      << "MultipleArg( 5 + 5 , '(').multipleArg_instance_member_num"
+  code = "MultipleArg( 5 + 5 , '(').multipleArg_instance_member_num";
+  QTest::newRow(code.toLatin1())
+      << code
       << QVariant(10);
 
-  QTest::newRow("")
-      << "MultipleArg( 5 + 5 , '(').multipleArg_instance_member_str"
+  code = "MultipleArg( 5 + 5 , '(').multipleArg_instance_member_str";
+  QTest::newRow(code.toLatin1())
+      << code
       << QVariant("(");
 
-  QTest::newRow("")
-      << "MultipleArg( 5 + 5 , '(').multipleArg_instance_member_other"
+  code = "MultipleArg( 5 + 5 , '(').multipleArg_instance_member_other";
+  QTest::newRow(code.toLatin1())
+      << code
       << QVariant(0);
 
-  // MultipleArg( 5 + 5 , '\"', 0.1)
-  QTest::newRow("")
-      << "MultipleArg( 5 + 5 , '\"', 0.1).multipleArg_instance_member_num"
-      << QVariant(0);
+  code = "MultipleArg( 5 % 5 + 1, '\"', 0.1).multipleArg_instance_member_num";
+  QTest::newRow(code.toLatin1())
+      << code
+      << QVariant(1.1);
 
-  QTest::newRow("")
-      << "MultipleArg( 5 + 5 , '\"', 0.1).multipleArg_instance_member_str"
-      << QVariant('"');
+  code = "MultipleArg( 5 % 5 + 1, '\"', 0.1).multipleArg_instance_member_str";
+  QTest::newRow(code.toLatin1())
+      << code
+      << QVariant("\"");
 
-  QTest::newRow("")
-      << "MultipleArg( 5 + 5 , '\"', 0.1).multipleArg_instance_member_other"
+  code = "MultipleArg( 5 % 5 + 1, '\"', 0.1).multipleArg_instance_member_other";
+  QTest::newRow(code.toLatin1())
+      << code
       << QVariant(0.1);
 }
 
