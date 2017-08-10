@@ -118,6 +118,7 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   QDomDocument nestedLayoutDoc("nestedlayout");
   res = nestedLayoutDoc.setContent(nestedLayout);
   Q_ASSERT(res);
+  Q_UNUSED(res);
 
   layoutManager.setLayout(simpleLayoutDoc);
   if (layoutManager.layout() != simpleLayoutDoc)
