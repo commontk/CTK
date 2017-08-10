@@ -58,13 +58,20 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     list(APPEND additional_vtk_cmakevars
       -DVTK_QT_VERSION:STRING=4
       -DDESIRED_QT_VERSION:STRING=4
+      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       )
   else()
     list(APPEND additional_vtk_cmakevars
       -DVTK_QT_VERSION:STRING=5
       -DDESIRED_QT_VERSION:STRING=5
-      -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
+      -DQt5_DIR:PATH=${Qt5_DIR}
       )
+    # XXX Backward compatible way
+    if(DEFINED CMAKE_PREFIX_PATH)
+      list(APPEND additional_vtk_cmakevars
+        -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
+        )
+    endif()
   endif()
 
   ExternalProject_Add(${proj}
@@ -87,7 +94,6 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DVTK_USE_QT:BOOL=ON # VTK 5
       -DVTK_Group_Qt:BOOL=ON # VTK 6
       -DVTK_LEGACY_REMOVE:BOOL=ON
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )

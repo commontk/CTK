@@ -48,6 +48,7 @@ public:
 public Q_SLOTS:
 
   // ctkVTKChartView
+#ifdef CTK_USE_CHARTS
   
   QList<double> chartExtent(ctkVTKChartView* view)const
   {
@@ -118,6 +119,7 @@ public Q_SLOTS:
       }
     view->setValidBounds(_bounds);
   }
+#endif
 
 };
 

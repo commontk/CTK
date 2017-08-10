@@ -39,7 +39,7 @@ QString CTK_WIDGETS_EXPORT base64HTMLImageTagSrc(const QImage& image);
 /// \ingroup Widgets
 /// Grab the contents of a QWidget and all its children.
 /// Handle correctly the case of QGLWidgets.
-/// \sa QWidget::grabWidget
+/// \sa QWidget::grab
 QImage CTK_WIDGETS_EXPORT grabWidget(QWidget* widget, QRect rectangle = QRect());
 
 ///

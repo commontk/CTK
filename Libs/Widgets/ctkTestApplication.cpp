@@ -130,6 +130,11 @@ void ctkTestApplication::messageHandler(QtMsgType type, const char *msgAsStr)
   case QtDebugMsg:
     std::cerr << "Debug: " << qPrintable(msg) << std::endl;
     break;
+#if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
+  case QtInfoMsg:
+    std::cerr << "Info: " << qPrintable(msg) << std::endl;
+    break;
+#endif
   case QtWarningMsg:
     std::cerr << "Warning: " << qPrintable(msg) << std::endl;
     Error++;

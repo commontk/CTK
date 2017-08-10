@@ -29,6 +29,9 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderer.h>
 #include <vtkSphereSource.h>
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // CTK includes
 #include "ctkVTKRenderView.h"
@@ -40,6 +43,12 @@
 //-----------------------------------------------------------------------------
 int ctkVTKRenderViewTest1(int argc, char * argv [] )
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    format.setSamples(0);
+    QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   // Command line parser

@@ -49,16 +49,22 @@ if(NOT DEFINED QtTesting_DIR)
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
-  set(proj_qt_args
-	  -DQtTesting_QT_VERSION:STRING=${CTK_QT_VERSION})
+  set(ep_cache_args
+    -DQtTesting_QT_VERSION:STRING=${CTK_QT_VERSION})
   if(CTK_QT_VERSION VERSION_LESS "5")
-    list(APPEND proj_qt_args
+    list(APPEND ep_cache_args
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-    )
+      )
   else()
-    list(APPEND proj_qt_args
-      -DCMAKE_PREFIX_PATH:FILEPATH=${CMAKE_PREFIX_PATH}
-    )
+    list(APPEND ep_cache_args
+      -DQt5_DIR:PATH=${Qt5_DIR}
+      )
+    # XXX Backward compatible way
+    if(DEFINED CMAKE_PREFIX_PATH)
+      list(APPEND ep_cache_args
+        -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
+        )
+    endif()
   endif()
   message(STATUS "Adding project:${proj}")
   ExternalProject_Add(${proj}
@@ -69,7 +75,7 @@ if(NOT DEFINED QtTesting_DIR)
     ${location_args}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
-	  ${proj_qt_args}
+      ${ep_cache_args}
       -DBUILD_SHARED_LIBS:BOOL=ON
     DEPENDS
       ${${proj}_DEPENDENCIES}

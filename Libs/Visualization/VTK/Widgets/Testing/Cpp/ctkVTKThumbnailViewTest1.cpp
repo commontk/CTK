@@ -27,6 +27,9 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 #include <vtkActor.h>
 #include <vtkCubeSource.h>
@@ -42,6 +45,12 @@
 
 int ctkVTKThumbnailViewTest1(int argc, char * argv [] )
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    format.setSamples(0);
+    QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
   
   ctkVTKThumbnailView thumbnailView;

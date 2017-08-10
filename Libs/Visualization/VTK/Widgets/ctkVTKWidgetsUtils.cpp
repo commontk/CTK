@@ -28,7 +28,11 @@
 #include "ctkWidgetsUtils.h"
 
 // VTK includes
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#else
 #include <QVTKWidget.h>
+#endif
 #include <vtkImageData.h>
 #include <vtkVersion.h>
 
@@ -46,7 +50,11 @@ QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
   QImage widgetImage = ctk::grabWidget(widget, rectangle);
   QPainter painter;
   painter.begin(&widgetImage);
+#if CTK_USE_QVTKOPENGLWIDGET
+  foreach(QVTKOpenGLWidget* vtkWidget, widget->findChildren<QVTKOpenGLWidget*>())
+#else
   foreach(QVTKWidget* vtkWidget, widget->findChildren<QVTKWidget*>())
+#endif
     {
     if (!vtkWidget->isVisible())
       {
@@ -57,9 +65,13 @@ QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
       {
       continue;
       }
+#if CTK_USE_QVTKOPENGLWIDGET
+    QImage subImage = vtkWidget->grabFramebuffer();
+#else
     vtkImageData* imageData = vtkWidget->cachedImage();
     /// \todo retrieve just the rectangle.intersected(
     QImage subImage = ctk::vtkImageDataToQImage(imageData);
+#endif
     painter.drawImage(subWidgetRect, subImage);
     }
   painter.end();

@@ -187,7 +187,7 @@ endmacro()
 
 macro(ctkMacroBuildQtDesignerPlugin)
   if(CTK_QT_VERSION VERSION_GREATER "4")
-    find_package(Qt5Designer REQUIRED)
+    find_package(Qt5 COMPONENTS Designer REQUIRED)
     add_definitions(${Qt5Designer_DEFINITIONS})
     include_directories(${Qt5Designer_INCLUDE_DIRS})
   endif()

@@ -307,6 +307,11 @@ void ctkAbstractFactory<BaseClassType>::displayStatusMessage(
       case QtWarningMsg:
         qWarning("%s", qPrintable(msg));
         break;
+#if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
+      case QtInfoMsg:
+        qInfo("%s", qPrintable(msg));
+        break;
+#endif
       case QtDebugMsg:
         qDebug("%s", qPrintable(msg));
         break;

@@ -30,8 +30,8 @@ class QTimer;
 #include "ctkVTKAbstractView.h"
 
 // VTK includes
-#include <QVTKWidget.h>
 #include <vtkCornerAnnotation.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
@@ -57,8 +57,13 @@ public:
   QList<vtkRenderer*> renderers()const;
   vtkRenderer* firstRenderer()const;
 
+#if CTK_USE_QVTKOPENGLWIDGET
+  QVTKOpenGLWidget*                             VTKWidget;
+  vtkSmartPointer<vtkGenericOpenGLRenderWindow> RenderWindow;
+#else
   QVTKWidget*                                   VTKWidget;
   vtkSmartPointer<vtkRenderWindow>              RenderWindow;
+#endif
   QTimer*                                       RequestTimer;
   QTime                                         RequestTime;
   bool                                          RenderEnabled;

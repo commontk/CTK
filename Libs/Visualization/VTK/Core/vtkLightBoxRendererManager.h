@@ -37,7 +37,7 @@ class vtkAlgorithmOutput;
 class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkObject
 {
   vtkTypeMacro(vtkLightBoxRendererManager,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
   static vtkLightBoxRendererManager *New();
 
   void Initialize(vtkRenderWindow* renderWindow);

@@ -31,6 +31,11 @@
 #include "ctkVTKWidgetsUtils.h"
 #include "ctkWidgetsUtils.h"
 
+// VTK includes
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
+
 // STD includes
 #include <cstdlib>
 #include <iostream>
@@ -38,6 +43,12 @@
 //-----------------------------------------------------------------------------
 int ctkVTKWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    format.setSamples(0);
+    QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   QFrame parentWidget;

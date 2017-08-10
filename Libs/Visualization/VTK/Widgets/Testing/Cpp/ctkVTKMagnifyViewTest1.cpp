@@ -27,7 +27,14 @@
 #include "ctkVTKMagnifyView.h"
 
 // VTK includes
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#include <vtkGenericOpenGLRenderWindow.h>
+typedef QVTKOpenGLWidget QVTKOpenGLWidgetType;
+#else
 #include <QVTKWidget.h>
+typedef QVTKWidget QVTKOpenGLWidgetType;
+#endif
 #include <vtkNew.h>
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
@@ -40,6 +47,12 @@
 //-----------------------------------------------------------------------------
 int ctkVTKMagnifyViewTest1(int argc, char * argv [] )
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    format.setSamples(0);
+    QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   ctkVTKMagnifyView magnify;
@@ -101,14 +114,20 @@ int ctkVTKMagnifyViewTest1(int argc, char * argv [] )
 
   // Adding / removing observed QVTKWidgets
   QObject widgetParent;
-  QList<QVTKWidget* > allVTKWidgets;
-  QList<QSharedPointer<QVTKWidget> > widgetsToDelete;
+  QList<QVTKOpenGLWidgetType* > allVTKWidgets;
+  QList<QSharedPointer<QVTKOpenGLWidgetType> > widgetsToDelete;
   int numVTKWidgets = 3;
   for (int i = 0; i < numVTKWidgets; i++)
     {
-    QVTKWidget* widget = new QVTKWidget();
+    QVTKOpenGLWidgetType* widget = new QVTKOpenGLWidgetType();
     allVTKWidgets.append(widget);
-    widgetsToDelete.append(QSharedPointer<QVTKWidget>(widget));
+    widgetsToDelete.append(QSharedPointer<QVTKOpenGLWidgetType>(widget));
+
+#if CTK_USE_QVTKOPENGLWIDGET
+      vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow =
+          vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+      widget->SetRenderWindow(renderWindow);
+#endif
 
     vtkNew<vtkRenderer> renderer;
     widget->GetRenderWindow()->AddRenderer(renderer.GetPointer());

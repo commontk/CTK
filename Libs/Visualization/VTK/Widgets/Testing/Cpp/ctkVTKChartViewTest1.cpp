@@ -32,6 +32,9 @@
 #include <vtkPlotBar.h>
 #include <vtkTable.h>
 #include <vtkVersion.h>
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 // STD includes
 #include <iostream>
@@ -45,6 +48,12 @@ static int data_2010[] = {9058, 10941, 9979, 10270, 8900, 11228, 14688, 12231, 1
 //-----------------------------------------------------------------------------
 int ctkVTKChartViewTest1(int argc, char * argv [] )
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    format.setSamples(0);
+    QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
   ctkVTKChartView view(0);

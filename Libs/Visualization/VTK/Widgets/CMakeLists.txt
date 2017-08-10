@@ -1,5 +1,7 @@
 project(CTKVisualizationVTKWidgets)
 
+include(${VTK_USE_FILE})
+
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
@@ -121,6 +123,12 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkViewsContext2D
     vtkGUISupportQt
     )
+  if(TARGET vtkRenderingContext${VTK_RENDERING_BACKEND})
+    list(APPEND VTK_LIBRARIES vtkRenderingContext${VTK_RENDERING_BACKEND})
+  endif()
+  if(TARGET vtkRenderingGL2PS${VTK_RENDERING_BACKEND})
+    list(APPEND VTK_LIBRARIES vtkRenderingGL2PS${VTK_RENDERING_BACKEND})
+  endif()
     if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
       set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkWrappingPythonCore)
     endif()
@@ -134,7 +142,7 @@ if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
   set(CTK_USE_CHARTS 1)
 endif()
 
-IF (${CTK_USE_CHARTS})
+if(${CTK_USE_CHARTS})
   set(KIT_SRCS
       ctkVTKChartView.cpp
       ctkVTKChartView.h
@@ -186,6 +194,16 @@ if(CTK_USE_QTTESTING)
   list(APPEND KIT_target_libraries QtTesting)
 endif()
 
+# Prefer QVTKOpenGLWidget to QVTKWidget when using Qt5
+set(_use_qvtkopenglwidget 1)
+if(CTK_QT_VERSION VERSION_LESS "5"
+  OR VTK_VERSION VERSION_LESS "8"
+  OR (NOT VTK_RENDERING_BACKEND STREQUAL "OpenGL2"))
+  set(_use_qvtkopenglwidget 0)
+endif()
+if(_use_qvtkopenglwidget)
+  add_definitions(-DCTK_USE_QVTKOPENGLWIDGET)
+endif()
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
@@ -197,6 +215,14 @@ ctkMacroBuildLib(
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
   )
+
+if(_use_qvtkopenglwidget)
+  target_compile_definitions(
+    ${PROJECT_NAME}
+    INTERFACE
+      CTK_USE_QVTKOPENGLWIDGET
+    )
+endif()
 
 if(CTK_WRAP_PYTHONQT_LIGHT)
   ctkMacroBuildLibWrapper(

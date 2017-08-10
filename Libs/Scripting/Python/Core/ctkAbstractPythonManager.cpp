@@ -29,9 +29,7 @@
 // PythonQT includes
 #include <PythonQt.h>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-  #include <PythonQt_QtBindings.h>
-#endif
+#include <PythonQt_QtBindings.h>
 
 // STD includes
 #include <csignal>
@@ -155,9 +153,7 @@ void ctkAbstractPythonManager::initPythonQt(int flags)
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
                 SLOT(printStderr(QString)));
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   PythonQt_init_QtBindings();
-#endif
 
   QStringList initCode;
 
@@ -608,7 +604,7 @@ PyObject* ctkAbstractPythonManager::pythonObject(const QString& variableNameAndF
           continue;
           }
         QString keyStr = PyString_AsString(key);
-        if (keyStr.operator ==(compareFunction))
+        if (keyStr.operator ==(compareFunction.toLatin1()))
           {
           finalPythonObject = value;
           break;
@@ -635,7 +631,7 @@ PyObject* ctkAbstractPythonManager::pythonModule(const QString& module)
     }
   foreach(const QString& module, moduleList)
     {
-    object = PyDict_GetItemString(dict, module.toAscii().data());
+    object = PyDict_GetItemString(dict, module.toLatin1().data());
     if (prevObject)
       {
       Py_DECREF(prevObject);

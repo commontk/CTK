@@ -30,7 +30,11 @@
 #include "ctkLogger.h"
 
 // VTK includes
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#else
 #include <QVTKWidget.h>
+#endif
 #include <vtkMath.h>
 #include <vtkRenderWindow.h>
 #include <vtkUnsignedCharArray.h>
@@ -49,7 +53,11 @@ static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKMagnifyVie
 ctkVTKMagnifyViewPrivate::ctkVTKMagnifyViewPrivate(ctkVTKMagnifyView& object)
   : QObject(&object), q_ptr(&object)
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+  this->ObservedQVTKWidgets = QList<QVTKOpenGLWidget *>();
+#else
   this->ObservedQVTKWidgets = QList<QVTKWidget *>();
+#endif
   this->Magnification = 1.0;
   this->ObserveRenderWindowEvents = true;
 
@@ -169,7 +177,11 @@ void ctkVTKMagnifyViewPrivate::pushRemovePixmapEvent()
 }
 
 // --------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+void ctkVTKMagnifyViewPrivate::connectRenderWindow(QVTKOpenGLWidget * widget)
+#else
 void ctkVTKMagnifyViewPrivate::connectRenderWindow(QVTKWidget * widget)
+#endif
 {
   Q_ASSERT(widget);
   Q_ASSERT(this->ObserveRenderWindowEvents);
@@ -183,7 +195,11 @@ void ctkVTKMagnifyViewPrivate::connectRenderWindow(QVTKWidget * widget)
 }
 
 // --------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+void ctkVTKMagnifyViewPrivate::disconnectRenderWindow(QVTKOpenGLWidget * widget)
+#else
 void ctkVTKMagnifyViewPrivate::disconnectRenderWindow(QVTKWidget * widget)
+#endif
 {
   Q_ASSERT(widget);
 
@@ -196,7 +212,11 @@ void ctkVTKMagnifyViewPrivate::disconnectRenderWindow(QVTKWidget * widget)
 }
 
 // --------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+void ctkVTKMagnifyViewPrivate::observe(QVTKOpenGLWidget * widget)
+#else
 void ctkVTKMagnifyViewPrivate::observe(QVTKWidget * widget)
+#endif
 {
   Q_ASSERT(widget);
 
@@ -215,7 +235,11 @@ void ctkVTKMagnifyViewPrivate::observe(QVTKWidget * widget)
 }
 
 // --------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+void ctkVTKMagnifyViewPrivate::remove(QVTKOpenGLWidget * widget)
+#else
 void ctkVTKMagnifyViewPrivate::remove(QVTKWidget * widget)
+#endif
 {
   Q_ASSERT(widget);
 
@@ -490,7 +514,11 @@ void ctkVTKMagnifyView::setObserveRenderWindowEvents(bool newObserve)
   // Connect/disconnect observations on vtkRenderWindow EndEvents, depending
   // on whether we are switching from not-observing to observing or from
   // observing to not-observing
+#if CTK_USE_QVTKOPENGLWIDGET
+  QList<QVTKOpenGLWidget *>::iterator it = d->ObservedQVTKWidgets.begin();
+#else
   QList<QVTKWidget *>::iterator it = d->ObservedQVTKWidgets.begin();
+#endif
   while (it != d->ObservedQVTKWidgets.end())
     {
     if (newObserve)
@@ -526,7 +554,11 @@ void ctkVTKMagnifyView::setUpdateInterval(int newInterval)
 }
 
 // --------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+void ctkVTKMagnifyView::observe(QVTKOpenGLWidget * widget)
+#else
 void ctkVTKMagnifyView::observe(QVTKWidget * widget)
+#endif
 {
   Q_D(ctkVTKMagnifyView);
   if (widget)
@@ -536,16 +568,28 @@ void ctkVTKMagnifyView::observe(QVTKWidget * widget)
 }
 
 // --------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+void ctkVTKMagnifyView::observe(QList<QVTKOpenGLWidget *> widgets)
+#else
 void ctkVTKMagnifyView::observe(QList<QVTKWidget *> widgets)
+#endif
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+  foreach(QVTKOpenGLWidget * widget, widgets)
+#else
   foreach(QVTKWidget * widget, widgets)
+#endif
     {
     this->observe(widget);
     }
 }
 
 // --------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+bool ctkVTKMagnifyView::isObserved(QVTKOpenGLWidget * widget) const
+#else
 bool ctkVTKMagnifyView::isObserved(QVTKWidget * widget) const
+#endif
 {
   if (!widget)
     {
@@ -568,7 +612,11 @@ bool ctkVTKMagnifyView::hasCursorInObservedWidget()const
   Q_D(const ctkVTKMagnifyView);
   // checking underMouse is faster than 
   // QApplication::widgetAt(QCursor::pos())
+#if CTK_USE_QVTKOPENGLWIDGET
+  foreach(const QVTKOpenGLWidget* widget, d->ObservedQVTKWidgets)
+#else
   foreach(const QVTKWidget* widget, d->ObservedQVTKWidgets)
+#endif
     {
     if (widget->underMouse())
       {
@@ -579,7 +627,11 @@ bool ctkVTKMagnifyView::hasCursorInObservedWidget()const
 }
 
 // --------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+void ctkVTKMagnifyView::remove(QVTKOpenGLWidget * widget)
+#else
 void ctkVTKMagnifyView::remove(QVTKWidget * widget)
+#endif
 {
   Q_D(ctkVTKMagnifyView);
   if (widget)
@@ -589,9 +641,17 @@ void ctkVTKMagnifyView::remove(QVTKWidget * widget)
 }
 
 // --------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+void ctkVTKMagnifyView::remove(QList<QVTKOpenGLWidget *> widgets)
+#else
 void ctkVTKMagnifyView::remove(QList<QVTKWidget *> widgets)
+#endif
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+  foreach(QVTKOpenGLWidget * widget, widgets)
+#else
   foreach(QVTKWidget * widget, widgets)
+#endif
     {
     this->remove(widget);
     }
@@ -600,8 +660,13 @@ void ctkVTKMagnifyView::remove(QList<QVTKWidget *> widgets)
 // --------------------------------------------------------------------------
 bool ctkVTKMagnifyView::eventFilter(QObject * obj, QEvent * event)
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+  // The given object should be a QVTKWidget in our list
+  QVTKOpenGLWidget * widget = static_cast<QVTKOpenGLWidget *>(obj);
+#else
   // The given object should be a QVTKWidget in our list
   QVTKWidget * widget = static_cast<QVTKWidget *>(obj);
+#endif
   Q_ASSERT(widget);
   Q_D(ctkVTKMagnifyView);
   Q_ASSERT(d->ObservedQVTKWidgets.contains(widget));

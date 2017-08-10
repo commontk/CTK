@@ -34,6 +34,9 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#endif
 
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
@@ -47,6 +50,7 @@
 #include "ctkVTKRenderViewEventPlayer.h"
 #include "ctkVTKRenderViewEventTranslator.h"
 #include "ctkEventTranslatorPlayerWidget.h"
+#include "ctkWidgetsUtils.h"
 
 #include <pqTestUtility.h>
 #include <pqEventTranslator.h>
@@ -71,9 +75,9 @@ void checkFinalWidgetState(void* data)
   {
   ctkVTKRenderView* widget = reinterpret_cast<ctkVTKRenderView*>(data);
 
-  QPixmap actualImage = QPixmap::grabWidget(widget, widget->rect());
+  QImage actualImage = ctk::grabWidget(widget, widget->rect());
   actualImage.save(xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1ScreenshotTest.png");
-  CTKCOMPARE(actualImage.toImage(),
+  CTKCOMPARE(actualImage,
              QImage(xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1Screenshot.png"));
   }
 //-----------------------------------------------------------------------------
@@ -82,7 +86,7 @@ void screenshot(void* data)
   if (save)
     {
     ctkVTKRenderView* widget = reinterpret_cast<ctkVTKRenderView*>(data);
-    QPixmap expectedImage = QPixmap::grabWidget(widget, widget->rect());
+    QImage expectedImage = ctk::grabWidget(widget, widget->rect());
     expectedImage.save(xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1Screenshot.png");
     save = false;
     }
@@ -97,6 +101,12 @@ void screenshotAvailable(void* data)
 //-----------------------------------------------------------------------------
 int ctkVTKRenderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    format.setSamples(0);
+    QSurfaceFormat::setDefaultFormat(format);
+#endif
+
   QApplication app(argc, argv);
 
 //  QString xmlDirectory = CTK_SOURCE_DIR "/Libs/Visualization/VTK/Widgets/Testing/Cpp/";
@@ -146,7 +156,11 @@ int ctkVTKRenderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   Callback2 = &callback2;
 
   etpWidget.addTestCase(widget,
+#if CTK_USE_QVTKOPENGLWIDGET
+                        xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1_QVTKOpenGLWidget.xml",
+#else
                         xmlDirectory + "ctkVTKRenderViewEventTranslatorPlayerTest1.xml",
+#endif
                         &checkFinalWidgetState);
 
   // ------------------------

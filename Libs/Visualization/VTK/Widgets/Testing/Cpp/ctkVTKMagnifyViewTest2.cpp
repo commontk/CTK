@@ -31,6 +31,7 @@
 #include "ctkVTKMagnifyView.h"
 #include "ctkCommandLineParser.h"
 #include "ctkVTKSliceView.h"
+#include "ctkWidgetsUtils.h"
 
 // VTK includes
 #include <vtkImageReader2Factory.h>
@@ -48,7 +49,7 @@
 bool imageCompare(ctkVTKMagnifyView * magnify, QString baselineDirectory,
                   QString baselineFilename)
   {
-  QImage output = QPixmap::grabWidget(magnify).toImage();
+  QImage output = ctk::grabWidget(magnify);
   QImage baseline(baselineDirectory + "/" + baselineFilename);
   return output == baseline;
   }
@@ -58,7 +59,7 @@ bool imageCompare(ctkVTKMagnifyView * magnify, QString baselineDirectory,
 void imageSave(ctkVTKMagnifyView * magnify, QString baselineDirectory,
                QString baselineFilename)
   {
-  QImage output = QPixmap::grabWidget(magnify).toImage();
+  QImage output = ctk::grabWidget(magnify);
   output.save(baselineDirectory + "/" + baselineFilename);
   }
 

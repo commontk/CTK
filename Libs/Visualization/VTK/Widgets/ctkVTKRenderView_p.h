@@ -31,7 +31,6 @@
 #include "ctkVTKRenderView.h"
 
 // VTK includes
-#include <QVTKWidget.h>
 #include <vtkAxesActor.h>
 #include <vtkCornerAnnotation.h>
 #include <vtkOrientationMarkerWidget.h>

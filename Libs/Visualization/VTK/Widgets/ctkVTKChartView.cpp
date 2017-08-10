@@ -33,6 +33,7 @@
 #include <vtkContextMouseEvent.h>
 #include <vtkContextScene.h>
 #include <vtkContextView.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkOpenGLContextDevice2D.h>
 #include <vtkPlot.h>
 #include <vtkRenderWindow.h>
@@ -51,6 +52,9 @@ public:
   void init();
   void chartBounds(double* bounds)const;
 
+#if CTK_USE_QVTKOPENGLWIDGET
+  vtkSmartPointer<vtkGenericOpenGLRenderWindow> RenderWindow;
+#endif
   vtkSmartPointer<vtkContextView> ContextView;
   vtkSmartPointer<vtkChartXY> Chart;
   double UserBounds[8];
@@ -65,6 +69,9 @@ ctkVTKChartViewPrivate::ctkVTKChartViewPrivate(ctkVTKChartView& object)
   :q_ptr(&object)
 {
   this->ContextView = vtkSmartPointer<vtkContextView>::New();
+#if CTK_USE_QVTKOPENGLWIDGET
+  this->RenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+#endif
   this->Chart = vtkSmartPointer<vtkChartXY>::New();
   this->ContextView->GetScene()->AddItem(this->Chart);
   this->UserBounds[0] = this->UserBounds[2] = this->UserBounds[4] = this->UserBounds[6] = 0.;
@@ -77,6 +84,10 @@ ctkVTKChartViewPrivate::ctkVTKChartViewPrivate(ctkVTKChartView& object)
 void ctkVTKChartViewPrivate::init()
 {
   Q_Q(ctkVTKChartView);
+#if CTK_USE_QVTKOPENGLWIDGET
+  q->SetRenderWindow(this->RenderWindow);
+  this->ContextView->SetRenderWindow(this->RenderWindow);
+#endif
   this->ContextView->SetInteractor(q->GetInteractor());
   q->SetRenderWindow(this->ContextView->GetRenderWindow());
   // low def for now (faster)

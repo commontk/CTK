@@ -29,6 +29,7 @@
 #include "ctkLogger.h"
 
 // VTK includes
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkOpenGLRenderWindow.h>
 #include <vtkRendererCollection.h>
 #include <vtkRenderWindowInteractor.h>
@@ -47,7 +48,11 @@ int ctkVTKAbstractViewPrivate::MultiSamples = 0;  // Default for static var
 ctkVTKAbstractViewPrivate::ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object)
   : q_ptr(&object)
 {
+#if CTK_USE_QVTKOPENGLWIDGET
+  this->RenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+#else
   this->RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+#endif
   this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->RequestTimer = 0;
   this->RenderEnabled = true;
@@ -63,7 +68,14 @@ void ctkVTKAbstractViewPrivate::init()
 
   this->setParent(q);
 
+#if CTK_USE_QVTKOPENGLWIDGET
+  this->VTKWidget = new QVTKOpenGLWidget;
+  this->VTKWidget->setEnableHiDPI(true);
+  QObject::connect(this->VTKWidget, SIGNAL(resized()),
+                   q, SLOT(forceRender()));
+#else
   this->VTKWidget = new QVTKWidget;
+#endif
   q->setLayout(new QVBoxLayout);
   q->layout()->setMargin(0);
   q->layout()->setSpacing(0);
@@ -287,7 +299,11 @@ vtkCornerAnnotation* ctkVTKAbstractView::cornerAnnotation() const
 }
 
 //----------------------------------------------------------------------------
+#if CTK_USE_QVTKOPENGLWIDGET
+QVTKOpenGLWidget * ctkVTKAbstractView::VTKWidget() const
+#else
 QVTKWidget * ctkVTKAbstractView::VTKWidget() const
+#endif
 {
   Q_D(const ctkVTKAbstractView);
   return d->VTKWidget;

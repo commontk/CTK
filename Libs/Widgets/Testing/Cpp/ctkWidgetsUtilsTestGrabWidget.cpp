@@ -22,7 +22,11 @@
 #include <QApplication>
 #include <QDialog>
 #include <QFrame>
+#if QT_VERSION < QT_VERSION_CHECK(5,4,0)
 #include <QGLWidget>
+#else
+#include <QOpenGLWidget>
+#endif
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -42,7 +46,11 @@ int ctkWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
   parentWidget.setFrameStyle(QFrame::Panel | QFrame::Raised);
   parentWidget.setLineWidth(2);
 
+#if QT_VERSION < QT_VERSION_CHECK(5,4,0)
   QGLWidget glWidget(&parentWidget);
+#else
+  QOpenGLWidget glWidget(&parentWidget);
+#endif
   QVBoxLayout* layout = new QVBoxLayout(&parentWidget);
   layout->addWidget(&glWidget);
   parentWidget.setLayout(layout);
@@ -55,13 +63,15 @@ int ctkWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
   dialog.move(parentWidget.pos());
   dialog.show();
 
+  QApplication::processEvents();
+
   QImage screenshot =
     ctk::grabWidget(&parentWidget);
 
   if (QColor(screenshot.pixel(100, 100)) != QColor(Qt::black))
     {
     std::cout << "Failed to grab QGLWidget, pixel at (100,100)="
-              << screenshot.pixel(100, 100) << " " << QColor(Qt::black).rgb() << std::endl;
+              << std::hex << screenshot.pixel(100, 100) << " " << QColor(Qt::black).rgb() << std::endl;
     return EXIT_FAILURE;
     }
 
