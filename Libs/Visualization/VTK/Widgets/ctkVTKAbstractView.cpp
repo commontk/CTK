@@ -71,6 +71,8 @@ void ctkVTKAbstractViewPrivate::init()
 #if CTK_USE_QVTKOPENGLWIDGET
   this->VTKWidget = new QVTKOpenGLWidget;
   this->VTKWidget->setEnableHiDPI(true);
+  QObject::connect(this->VTKWidget, SIGNAL(resized()),
+                   q, SLOT(forceRender()));
 #else
   this->VTKWidget = new QVTKWidget;
 #endif
