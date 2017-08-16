@@ -194,11 +194,12 @@ void ctkMessageBox::setDontShowAgainVisible(bool visible)
   Q_D(ctkMessageBox);
   if (!visible)
     {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
     this->layout()->removeWidget(d->DontShowAgainCheckBox);
+#endif
     d->DontShowAgainCheckBox->hide();
     return;
     }
-  QGridLayout *grid = static_cast<QGridLayout *>(this->layout());
   d->DontShowAgainCheckBox->setVisible(true);
   // update the text from the button with the accept role
   QAbstractButton *acceptButton = d->button(QMessageBox::AcceptRole);
@@ -209,7 +210,12 @@ void ctkMessageBox::setDontShowAgainVisible(bool visible)
 
     d->DontShowAgainCheckBox->setText(dontShowAgainText);
     }
+#if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
+  QGridLayout *grid = static_cast<QGridLayout *>(this->layout());
   grid->addWidget(d->DontShowAgainCheckBox, 1, 1, 1, 1);
+#else
+  this->setCheckBox(d->DontShowAgainCheckBox);
+#endif
 }
 
 //-----------------------------------------------------------------------------
