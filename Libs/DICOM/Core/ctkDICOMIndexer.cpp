@@ -130,6 +130,8 @@ void ctkDICOMIndexer::addListOfFiles(ctkDICOMDatabase& ctkDICOMDatabase,
                                      const QString& destinationDirectoryName)
 {
   Q_D(ctkDICOMIndexer);
+  QTime timeProbe;
+  timeProbe.start();
   d->Canceled = false;
   int CurrentFileIndex = 0;
   foreach(QString filePath, listOfFiles)
@@ -144,6 +146,11 @@ void ctkDICOMIndexer::addListOfFiles(ctkDICOMDatabase& ctkDICOMDatabase,
       break;
       }
   }
+  float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
+  qDebug()
+      << QString("DICOM indexer has successfully processed %1 files [%2s]")
+         .arg(CurrentFileIndex)
+         .arg(QString::number(elapsedTimeInSeconds,'f', 2));
   emit this->indexingComplete();
 }
 
@@ -170,6 +177,9 @@ bool ctkDICOMIndexer::addDicomdir(ctkDICOMDatabase& ctkDICOMDatabase,
   DcmDirectoryRecord* studyRecord = NULL;
   DcmDirectoryRecord* seriesRecord = NULL;
   DcmDirectoryRecord* fileRecord = NULL;
+
+  QTime timeProbe;
+  timeProbe.start();
 
   /*Iterate over all records in dicomdir and setup path to the dataset of the filerecord
   then insert. the filerecord into the database.
@@ -231,6 +241,11 @@ bool ctkDICOMIndexer::addDicomdir(ctkDICOMDatabase& ctkDICOMDatabase,
         }
       }
     }
+    float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
+    qDebug()
+        << QString("DICOM indexer has successfully processed DICOMDIR in %1 [%2s]")
+           .arg(directoryName)
+           .arg(QString::number(elapsedTimeInSeconds,'f', 2));
     emit foundFilesToIndex(listOfInstances.count());
     addListOfFiles(ctkDICOMDatabase,listOfInstances,destinationDirectoryName);
   }
