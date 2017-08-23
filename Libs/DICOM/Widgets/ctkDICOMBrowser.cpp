@@ -423,11 +423,7 @@ ctkDICOMTableManager* ctkDICOMBrowser::dicomTableManager()
 //----------------------------------------------------------------------------
 void ctkDICOMBrowser::onFileIndexed(const QString& filePath)
 {
-  // Update the progress dialog when the file name changes
-  // - also allows for cancel button
-  QCoreApplication::instance()->processEvents();
   qDebug() << "Indexing \n\n\n\n" << filePath <<"\n\n\n";
-  
 }
 
 //----------------------------------------------------------------------------
