@@ -141,6 +141,7 @@ public:
   QSqlDatabase TagCacheDatabase;
   QString TagCacheDatabaseFilename;
   QStringList TagsToPrecache;
+  bool openTagCacheDatabase();
   void precacheTags( const QString sopInstanceUID );
 
   int insertPatient(const ctkDICOMItem& ctkDataset);
@@ -331,8 +332,6 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
     this->initializeTagCache();
     }
 }
-
-
 
 //------------------------------------------------------------------------------
 // ctkDICOMDatabase methods
@@ -1259,6 +1258,32 @@ const QStringList ctkDICOMDatabase::tagsToPrecache()
 }
 
 //------------------------------------------------------------------------------
+bool ctkDICOMDatabasePrivate::openTagCacheDatabase()
+{
+  // try to open the database if it's not already open
+  if ( this->TagCacheDatabase.isOpen() )
+    {
+    return true;
+    }
+  this->TagCacheDatabase = QSqlDatabase::addDatabase(
+        "QSQLITE", this->Database.connectionName() + "TagCache");
+  this->TagCacheDatabase.setDatabaseName(this->TagCacheDatabaseFilename);
+  if ( !this->TagCacheDatabase.open() )
+    {
+    qDebug() << "TagCacheDatabase would not open!\n";
+    qDebug() << "TagCacheDatabaseFilename is: " << this->TagCacheDatabaseFilename << "\n";
+    return false;
+    }
+
+  // Disable synchronous writing to make modifications faster
+  QSqlQuery pragmaSyncQuery(this->TagCacheDatabase);
+  pragmaSyncQuery.exec("PRAGMA synchronous = OFF");
+  pragmaSyncQuery.finish();
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
 {
   Q_Q(ctkDICOMDatabase);
@@ -1707,23 +1732,14 @@ bool ctkDICOMDatabase::tagCacheExists()
     return true;
     }
 
-  // try to open the database if it's not already open
-  if ( !(d->TagCacheDatabase.isOpen()) )
+  if (!d->openTagCacheDatabase())
     {
-    d->TagCacheDatabase = QSqlDatabase::addDatabase("QSQLITE", d->Database.connectionName() + "TagCache");
-    d->TagCacheDatabase.setDatabaseName(d->TagCacheDatabaseFilename);
-    if ( !(d->TagCacheDatabase.open()) )
-      {
-      qDebug() << "TagCacheDatabase would not open!\n";
-      qDebug() << "TagCacheDatabaseFilename is: " << d->TagCacheDatabaseFilename << "\n";
-      return false;
-      }
+    return false;
+    }
 
-    //Disable synchronous writing to make modifications faster
-    QSqlQuery pragmaSyncQuery(d->TagCacheDatabase);
-    pragmaSyncQuery.exec("PRAGMA synchronous = OFF");
-    pragmaSyncQuery.finish();
-
+  if (d->TagCacheDatabase.tables().count() == 0)
+    {
+    return false;
     }
 
   // check that the table exists
@@ -1759,12 +1775,13 @@ bool ctkDICOMDatabase::initializeTagCache()
   createCacheTable.prepare(
     "CREATE TABLE TagCache (SOPInstanceUID, Tag, Value, PRIMARY KEY (SOPInstanceUID, Tag))" );
   bool success = d->loggedExec(createCacheTable);
-  if (success)
+  if (!success)
     {
-    d->TagCacheVerified = true;
-    return true;
+    return false;
     }
-  return false;
+
+  d->TagCacheVerified = true;
+  return true;
 }
 
 //------------------------------------------------------------------------------
