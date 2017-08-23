@@ -45,7 +45,7 @@ ctkBooleanMapperPrivate::ctkBooleanMapperPrivate()
 
 // --------------------------------------------------------------------------
 ctkBooleanMapper::ctkBooleanMapper(
-  QObject* targetObject, const QByteArray& property, const char* signal)
+  QObject* targetObject, const QByteArray& property, const QByteArray& signal)
   : QObject(targetObject)
   , d_ptr(new ctkBooleanMapperPrivate)
 {
@@ -53,7 +53,7 @@ ctkBooleanMapper::ctkBooleanMapper(
   Q_ASSERT(targetObject != 0);
   Q_D(ctkBooleanMapper);
   d->PropertyName = property;
-  if (signal)
+  if (!signal.isEmpty())
     {
     connect(targetObject, signal, this, SLOT(emitValueChanged()));
     }
@@ -187,4 +187,3 @@ void ctkBooleanMapper::emitValueAsChanged()
   emit valueAsIntChanged(this->valueAsInt());
   emit valueAsStringChanged(this->valueAsString());
 }
-

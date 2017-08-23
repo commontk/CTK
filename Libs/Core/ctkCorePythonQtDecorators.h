@@ -25,6 +25,7 @@
 #include <PythonQt.h>
 
 // CTK includes
+#include <ctkBooleanMapper.h>
 #include <ctkErrorLogContext.h>
 #include <ctkWorkflowStep.h>
 #include <ctkWorkflowTransitions.h>
@@ -44,12 +45,22 @@ public:
 
   ctkCorePythonQtDecorators()
     {
+    PythonQt::self()->registerClass(&ctkBooleanMapper::staticMetaObject, "CTKCore");
     PythonQt::self()->registerCPPClass("ctkErrorLogContext", 0, "CTKCore");
     PythonQt::self()->registerCPPClass("ctkWorkflowStep", 0, "CTKCore");
     PythonQt::self()->registerClass(&ctkWorkflowInterstepTransition::staticMetaObject, "CTKCore");
     }
 
 public Q_SLOTS:
+
+  //
+  // ctkBooleanMapper
+  //
+
+  ctkBooleanMapper* new_ctkBooleanMapper(QObject* targetObject, const QByteArray& propertyName, const QByteArray& signal)
+    {
+    return new ctkBooleanMapper(targetObject, propertyName, signal);
+    }
 
   //
   // ctkWorkflowStep
