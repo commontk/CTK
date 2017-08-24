@@ -54,6 +54,13 @@ project(CTK)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# Set defaults
+#
+if(NOT DEFINED CMAKE_MACOSX_RPATH)
+  set(CMAKE_MACOSX_RPATH 1)
+endif()
+
+#-----------------------------------------------------------------------------
 # Library mode: SHARED (default) or STATIC
 #
 set(CTK_LIBRARY_MODE "SHARED")
