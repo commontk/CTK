@@ -1043,12 +1043,13 @@ void ctkDICOMDatabase::insert( DcmItem *item, bool storeFile, bool generateThumb
   ctkDataset.InitializeFromItem(item, false /* do not take ownership */);
   this->insert(ctkDataset,storeFile,generateThumbnail);
 }
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabase::insert( const ctkDICOMItem& ctkDataset, bool storeFile, bool generateThumbnail)
 {
   Q_D(ctkDICOMDatabase);
   d->insert(ctkDataset, QString(), storeFile, generateThumbnail);
 }
-
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabase::insert ( const QString& filePath, bool storeFile, bool generateThumbnail, bool createHierarchy, const QString& destinationDirectoryName)
@@ -1066,9 +1067,6 @@ void ctkDICOMDatabase::insert ( const QString& filePath, bool storeFile, bool ge
 
   logger.debug( "Processing " + filePath );
 
-  std::string filename = filePath.toStdString();
-
-  DcmFileFormat fileformat;
   ctkDICOMItem ctkDataset;
 
   ctkDataset.InitializeFromFile(filePath);
@@ -1443,8 +1441,7 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
       if ( LastPatientID != patientID
            || LastPatientsBirthDate != patientsBirthDate
            || LastPatientsName != patientsName )
-        {  QString seriesInstanceUID(ctkDataset.GetElementAsString(DCM_SeriesInstanceUID) );
-
+        {
           qDebug() << "This looks like a different patient from last insert: " << patientID;
           // Ok, something is different from last insert, let's insert him if he's not
           // already in the db.
