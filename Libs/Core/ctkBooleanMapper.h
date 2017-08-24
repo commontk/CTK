@@ -31,13 +31,23 @@ class ctkBooleanMapperPrivate;
 
 //---------------------------------------------------------------------------
 /// \ingroup Core
-/// QCheckBox* checkBox = new QCheckBox;
-/// ctkBooleanMapper* inverter =
-///   new ctkBooleanMapper("checked", SIGNAL("toggled(bool)"), checkBox);
-/// inverter->setComplementValue(true);
-/// // -> checkBox->checked() == false
-/// inverter->setValue(false);
-/// // -> checkBox->checked() == false
+///
+/// Example:
+///   QCheckBox* checkBox = new QCheckBox;
+///   ctkBooleanMapper* inverter =
+///     new ctkBooleanMapper("checked", SIGNAL("toggled(bool)"), checkBox);
+///   inverter->setComplementValue(true);
+///   // -> checkBox->checked() == false
+///   inverter->setValue(false);
+///   // -> checkBox->checked() == false
+///
+/// Python example:
+///   boolMapper = ctk.ctkBooleanMapper(checkBox, "checked", "toggled(bool)")
+///   boolMapper.trueValue = qt.QMessageBox.Yes
+///   boolMapper.falseValue = qt.QMessageBox.InvalidRole
+///   parent.registerProperty(
+///     "settingsPropertyName", boolMapper, "valueAsInt", qt.SIGNAL("valueAsIntChanged(int)"))
+///
 class CTK_CORE_EXPORT ctkBooleanMapper : public QObject
 {
   Q_OBJECT
@@ -66,7 +76,7 @@ public:
   /// \a object is destructed.
   /// property and object must be valid and non empty. If signal is 0,
   /// \a valueChanged(bool) and \a complementChanged(bool) won't be fired.
-  ctkBooleanMapper(QObject* targetObject, const QByteArray& propertyName, const char* signal);
+  ctkBooleanMapper(QObject* targetObject, const QByteArray& propertyName, const QByteArray& signal);
   virtual ~ctkBooleanMapper();
 
   QByteArray propertyName()const;

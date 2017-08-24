@@ -52,10 +52,12 @@ class CTK_WIDGETS_EXPORT ctkComboBox : public QComboBox
   /// ScrollOn by default.
   /// /sa scrollWheelEffect, setScrollWheelEffect
   Q_PROPERTY(ScrollEffect scrollWheelEffect READ scrollWheelEffect WRITE setScrollWheelEffect)
+  /// Current item's user data as string (Qt::UserRole role)
+  Q_PROPERTY(QString currentUserDataAsString READ currentUserDataAsString WRITE setCurrentUserDataAsString)
 
   Q_ENUMS(ScrollEffect);
 public:
-  /// Constructor, build a ctkComboBox that behave like QComboBox.
+  /// Constructor, build a ctkComboBox that behaves like QComboBox.
   explicit ctkComboBox(QWidget* parent = 0);
   virtual ~ctkComboBox();
 
@@ -87,7 +89,7 @@ public:
     /// Scrolling is only possible if the combobox has the focus.
     /// The focus policy is automatically set to Qt::StrongFocus
     ScrollWithFocus,
-    /// Scrolling is not possible when the combobox is inside a scrollarea with
+    /// Scrolling is not possible when the combobox is inside a scroll area with
     /// a visible vertical scrollbar.
     ScrollWithNoVScrollBar
   };
@@ -102,6 +104,13 @@ public:
   virtual QSize minimumSizeHint()const;
   /// Reimplemented for internal reasons
   virtual QSize sizeHint()const;
+
+  /// Get current item's user data as string
+  QString currentUserDataAsString()const;
+
+public slots:
+  /// Set current item based on user data
+  void setCurrentUserDataAsString(QString userData);
 
 protected:
   /// Reimplemented for internal reasons

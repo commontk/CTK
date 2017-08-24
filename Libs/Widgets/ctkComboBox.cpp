@@ -366,3 +366,25 @@ void ctkComboBox::wheelEvent(QWheelEvent* event)
     event->ignore();
     }
 }
+
+// -------------------------------------------------------------------------
+QString ctkComboBox::currentUserDataAsString()const
+{
+  return this->itemData(this->currentIndex()).toString();
+}
+
+// -------------------------------------------------------------------------
+void ctkComboBox::setCurrentUserDataAsString(QString userData)
+{
+  for (int index=0; index<this->count(); ++index)
+    {
+    QString currentItemUserData = this->itemData(index).toString();
+    if (!userData.compare(currentItemUserData))
+      {
+      this->setCurrentIndex(index);
+      return;
+      }
+    }
+
+  qWarning() << Q_FUNC_INFO << ": No item found with user data string " << userData;
+}
