@@ -1337,19 +1337,18 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
       logger.error("SQLITE ERROR: " + fileExistsQuery.lastError().driverText());
       return;
     }
-  fileExistsQuery.next();
-
-  QString databaseFilename(fileExistsQuery.value(1).toString());
-  QDateTime fileLastModified(QFileInfo(databaseFilename).lastModified());
-  QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExistsQuery.value(0).toString(),Qt::ISODate));
-
+  bool found = fileExistsQuery.next();
   qDebug() << "inserting filePath: " << filePath;
-  if (databaseFilename == "")
+  if (!found)
     {
       qDebug() << "database filename for " << sopInstanceUID << " is empty - we should insert on top of it";
     }
   else
     {
+      QString databaseFilename(fileExistsQuery.value(1).toString());
+      QDateTime fileLastModified(QFileInfo(databaseFilename).lastModified());
+      QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExistsQuery.value(0).toString(),Qt::ISODate));
+
       if ( databaseFilename == filePath && fileLastModified < databaseInsertTimestamp )
         {
           logger.debug ( "File " + databaseFilename + " already added" );
