@@ -1303,9 +1303,15 @@ void ctkDICOMDatabasePrivate::precacheTags( const QString sopInstanceUID )
     values << value;
     }
 
-  this->beginTransaction();
+  QSqlQuery transaction( this->TagCacheDatabase );
+  transaction.prepare( "BEGIN TRANSACTION" );
+  transaction.exec();
+
   q->cacheTags(sopInstanceUIDs, tags, values);
-  this->endTransaction();
+
+  transaction = QSqlQuery( this->TagCacheDatabase );
+  transaction.prepare( "END TRANSACTION" );
+  transaction.exec();
 }
 
 //------------------------------------------------------------------------------
