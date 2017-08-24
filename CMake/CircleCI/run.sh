@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+set -e
+set -o pipefail
 
 script_dir="`cd $(dirname $0); pwd`"
 

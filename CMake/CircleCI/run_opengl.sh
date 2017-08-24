@@ -92,7 +92,18 @@ url="http://${ip}:$port"
 
 cleanup() {
 	docker stop $container >/dev/null
-	docker rm $container >/dev/null
+
+    # Attempt to delete container
+    rm_output=$(docker rm -f $container 2>&1)
+    rm_exit_code=$?
+    if [[ $rm_exit_code != 0 ]]; then
+      if [[ "$CIRCLECI" == "true" ]] && [[ $rm_output == *"Driver btrfs failed to remove"* ]]; then
+        : # Ignore error because of https://circleci.com/docs/docker-btrfs-error/
+      else
+        echo "$rm_output"
+        return $rm_exit_code
+      fi
+    fi
 }
 
 running=$(docker ps -a -q --filter "name=${container}")

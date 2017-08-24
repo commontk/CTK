@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -o pipefail
+
 # This is a script to build the modules and run the test suite in the base
 # Docker container.
 
