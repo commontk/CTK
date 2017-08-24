@@ -52,6 +52,7 @@ if(CTK_SUPERBUILD)
       -DCMAKE_INSTALL_PREFIX:PATH=${ep_install_dir}
       -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
       -DBUILD_TESTING:BOOL=OFF
+      -DCMAKE_MACOSX_RPATH:BOOL=${CMAKE_MACOSX_RPATH}
       ${ep_cxx_standard_arg}
      )
 endif()
