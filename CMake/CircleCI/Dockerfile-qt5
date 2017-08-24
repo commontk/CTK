@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y \
   wget && \
   rm -rf /var/lib/apt/lists/*
 
+# Allow code written for more recent Qt version to compile
+RUN cp -r  /usr/include/x86_64-linux-gnu/qt5/QtDesigner/ /usr/include/x86_64-linux-gnu/qt5/QtUiPlugin
+
 RUN wget https://cmake.org/files/v3.7/cmake-3.7.1-Linux-x86_64.tar.gz && \
   tar -xzf cmake-3.7.1-Linux-x86_64.tar.gz && \
   rsync -avz cmake-3.7.1-Linux-x86_64/ /usr/local
