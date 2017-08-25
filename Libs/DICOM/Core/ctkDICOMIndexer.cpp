@@ -134,10 +134,15 @@ void ctkDICOMIndexer::addListOfFiles(ctkDICOMDatabase& ctkDICOMDatabase,
   timeProbe.start();
   d->Canceled = false;
   int CurrentFileIndex = 0;
+  int progressValue = 0;
+
   foreach(QString filePath, listOfFiles)
   {
     int percent = ( 100 * CurrentFileIndex ) / listOfFiles.size();
-    emit this->progress(percent);
+    if (percent != progressValue) {
+      progressValue = percent;
+      emit this->progress(percent);
+    }
     this->addFile(ctkDICOMDatabase, filePath, destinationDirectoryName);
     CurrentFileIndex++;
 
