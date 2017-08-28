@@ -1065,7 +1065,10 @@ void ctkDICOMDatabase::insert ( const QString& filePath, bool storeFile, bool ge
       return;
     }
 
-  logger.debug( "Processing " + filePath );
+  if (d->LoggedExecVerbose)
+    {
+    logger.debug( "Processing " + filePath );
+    }
 
   ctkDICOMItem ctkDataset;
 
@@ -1188,7 +1191,10 @@ void ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMItem& ctkDataset, QStri
   QSqlQuery checkSeriesExistsQuery (Database);
   checkSeriesExistsQuery.prepare ( "SELECT * FROM Series WHERE SeriesInstanceUID = ?" );
   checkSeriesExistsQuery.bindValue ( 0, seriesInstanceUID );
-  logger.warn ( "Statement: " + checkSeriesExistsQuery.lastQuery() );
+  if (this->LoggedExecVerbose)
+    {
+    logger.warn ( "Statement: " + checkSeriesExistsQuery.lastQuery() );
+    }
   checkSeriesExistsQuery.exec();
   if(!checkSeriesExistsQuery.next())
     {
@@ -1342,10 +1348,16 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
       return;
     }
   bool found = fileExistsQuery.next();
-  qDebug() << "inserting filePath: " << filePath;
+  if (this->LoggedExecVerbose)
+    {
+    qDebug() << "inserting filePath: " << filePath;
+    }
   if (!found)
     {
+    if (this->LoggedExecVerbose)
+      {
       qDebug() << "database filename for " << sopInstanceUID << " is empty - we should insert on top of it";
+      }
     }
   else
     {
@@ -1415,7 +1427,10 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
       if(filePath.isEmpty())
         {
-          logger.debug ( "Saving file: " + filename );
+          if (this->LoggedExecVerbose)
+            {
+            logger.debug ( "Saving file: " + filename );
+            }
 
           if ( !ctkDataset.SaveToFile( filename) )
             {
@@ -1429,8 +1444,10 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
           QFile currentFile( filePath );
           currentFile.copy(filename);
-          logger.debug( "Copy file from: " + filePath );
-          logger.debug( "Copy file to  : " + filename );
+          if (this->LoggedExecVerbose)
+            {
+            logger.debug("Copy file from: " + filePath + " to: " + filename);
+            }
         }
     }
 
@@ -1448,7 +1465,10 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
            || LastPatientsBirthDate != patientsBirthDate
            || LastPatientsName != patientsName )
         {
-          qDebug() << "This looks like a different patient from last insert: " << patientID;
+          if (this->LoggedExecVerbose)
+            {
+            qDebug() << "This looks like a different patient from last insert: " << patientID;
+            }
           // Ok, something is different from last insert, let's insert him if he's not
           // already in the db.
 
@@ -1464,7 +1484,10 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
           LastPatientsName = patientsName;
         }
 
-      qDebug() << "Going to insert this instance with dbPatientID: " << dbPatientID;
+      if (this->LoggedExecVerbose)
+        {
+        qDebug() << "Going to insert this instance with dbPatientID: " << dbPatientID;
+        }
 
       // Patient is in now. Let's continue with the study
 
@@ -1494,7 +1517,10 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
           checkImageExistsQuery.prepare ( "SELECT * FROM Images WHERE Filename = ?" );
           checkImageExistsQuery.bindValue ( 0, filename );
           checkImageExistsQuery.exec();
-          qDebug() << "Maybe add Instance";
+          if (this->LoggedExecVerbose)
+            {
+            qDebug() << "Maybe add Instance";
+            }
           if(!checkImageExistsQuery.next())
             {
               QSqlQuery insertImageStatement ( Database );
@@ -1510,7 +1536,10 @@ void ctkDICOMDatabasePrivate::insert( const ctkDICOMItem& ctkDataset, const QStr
 
               // let users of this class track when things happen
               emit q->instanceAdded(sopInstanceUID);
-              qDebug() << "Instance Added";
+              if (this->LoggedExecVerbose)
+                {
+                qDebug() << "Instance Added";
+                }
             }
         }
 
@@ -1631,20 +1660,24 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID)
             }
           if (QFile( dbFilePath ).remove())
             {
-              logger.debug("Removed file " + dbFilePath );
+              if (d->LoggedExecVerbose)
+                {
+                logger.debug("Removed file " + dbFilePath );
+                }
             }
           else
             {
               logger.warn("Failed to remove file " + dbFilePath );
             }
         }
-      if (QFile( thumbnailToRemove ).remove())
+      // Remove thumbnail (if exists)
+      QFile thumbnailFile(thumbnailToRemove);
+      if (thumbnailFile.exists())
         {
-          logger.debug("Removed thumbnail " + thumbnailToRemove);
-        }
-      else
-        {
+        if (!thumbnailFile.remove())
+          {
           logger.warn("Failed to remove thumbnail " + thumbnailToRemove);
+          }
         }
     }
 

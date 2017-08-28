@@ -423,7 +423,6 @@ ctkDICOMTableManager* ctkDICOMBrowser::dicomTableManager()
 //----------------------------------------------------------------------------
 void ctkDICOMBrowser::onFileIndexed(const QString& filePath)
 {
-  qDebug() << "Indexing \n\n\n\n" << filePath <<"\n\n\n";
 }
 
 //----------------------------------------------------------------------------
