@@ -101,10 +101,13 @@ public:
   ///        stored to. If specified with ":memory:", the database is not
   ///        written to disk at all but instead only kept in memory (and
   ///        thus expires after destruction of this object).
-  /// @param connectionName The database connection name.
+  /// @param connectionName The database connection name. If not specified
+  ///        then a random name is generated (reusing a connection name
+  ///        must be avoided as it breaks previously created database object
+  ///        that used the same connection name).
   /// @param update the schema if it is found to be out of date
   Q_INVOKABLE virtual void openDatabase(const QString databaseFile,
-                                        const QString& connectionName = "DICOM-DB");
+                                        const QString& connectionName = "");
 
   ///
   /// close the database. It must not be used afterwards.

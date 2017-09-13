@@ -31,6 +31,7 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QStringList>
+#include <QUuid>
 #include <QVariant>
 
 // ctkDICOM includes
@@ -293,7 +294,12 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
 {
   Q_D(ctkDICOMDatabase);
   d->DatabaseFileName = databaseFile;
-  d->Database = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+  QString verifiedConnectionName = connectionName;
+  if (verifiedConnectionName.isEmpty())
+    {
+    verifiedConnectionName = QUuid::createUuid().toString();
+    }
+  d->Database = QSqlDatabase::addDatabase("QSQLITE", verifiedConnectionName);
   d->Database.setDatabaseName(databaseFile);
   if ( ! (d->Database.open()) )
     {
