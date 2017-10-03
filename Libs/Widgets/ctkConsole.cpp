@@ -25,7 +25,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -457,7 +457,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     return;
     }
 
-  // There seems to be no QKeySequence for backspace, therefore the key 
+  // There seems to be no QKeySequence for backspace, therefore the key
   // has to be recognized directly (the same way as it is done in the parent class)
   if (e->key() == Qt::Key_Backspace && !(e->modifiers() & ~Qt::ShiftModifier))
     {
@@ -689,36 +689,6 @@ void ctkConsolePrivate::updateCompleter()
     commandText.remove(q_ptr->ps1());
     commandText.remove('\r'); // not recongnize by python
     //commandText.replace(QRegExp("\\s*$"), ""); // Remove trailing spaces ---- DOESN'T WORK ----
-
-    // Remove useless spaces
-    bool betweenSingleQuotes = false;
-    bool betweenDoubleQuotes = false;
-    if (commandText.contains(" "))
-      {
-      // For each char
-      for (int i=0; i<commandText.size();i++)
-        {
-        // Verify if you are between betweenDoubleQuotes:" " or betweenSingleQuotes:' '
-        QChar c = commandText.at(i);
-        if (c == '\'' && !betweenDoubleQuotes)
-          {
-          betweenSingleQuotes = !betweenSingleQuotes;
-          }
-        if (c == '"' && !betweenSingleQuotes)
-          {
-          betweenDoubleQuotes = !betweenDoubleQuotes;
-          }
-        // If we are not between quote: Erase spaces
-        if (!betweenSingleQuotes && !betweenDoubleQuotes)
-          {
-          if (c == ' ')
-            {
-            commandText.remove(i,1);
-            i--; // because we removed a char
-            }
-          }
-        }
-      }
 
     // Save current positions: Since some implementation of
     // updateCompletionModel (e.g python) can display messages
