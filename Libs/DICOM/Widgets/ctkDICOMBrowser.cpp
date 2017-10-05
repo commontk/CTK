@@ -26,12 +26,16 @@
 #include <QApplication>
 #include <QCoreApplication>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDebug>
+#include <QDialogButtonBox>
 #include <QFile>
+#include <QFormLayout>
 #include <QListView>
 #include <QMenu>
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QPushButton>
 #include <QSettings>
 #include <QStringListModel>
 #include <QWidgetAction>
@@ -68,7 +72,18 @@ public:
   ctkDICOMBrowserPrivate(ctkDICOMBrowser* );
   ~ctkDICOMBrowserPrivate();
 
+  /// \brief Popup dialog asking user to confirm the directory import.
+  ///
+  /// If user check the "do not show again" checkbox, its choice is saved
+  /// in the settings using the key `DICOM/DontConfirmImportDirectory`.
+  bool confirmDirectoryImport();
+
+  void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode);
+
+  void importOldSettings();
+
   ctkFileDialog* ImportDialog;
+
   ctkDICOMQueryRetrieveWidget* QueryRetrieveWidget;
 
   QSharedPointer<ctkDICOMDatabase> DICOMDatabase;
@@ -93,9 +108,42 @@ public:
 };
 
 //----------------------------------------------------------------------------
+class ctkDICOMImportStats
+{
+public:
+  ctkDICOMImportStats(ctkDICOMBrowserPrivate* dicomBrowserPrivate) :
+    DICOMBrowserPrivate(dicomBrowserPrivate)
+  {
+    // reset counts
+    ctkDICOMBrowserPrivate* d = this->DICOMBrowserPrivate;
+    d->PatientsAddedDuringImport = 0;
+    d->StudiesAddedDuringImport = 0;
+    d->SeriesAddedDuringImport = 0;
+    d->InstancesAddedDuringImport = 0;
+  }
+
+  QString summary()
+  {
+    ctkDICOMBrowserPrivate* d = this->DICOMBrowserPrivate;
+    QString message = "Directory import completed.\n\n";
+    message += QString("%1 New Patients\n").arg(QString::number(d->PatientsAddedDuringImport));
+    message += QString("%1 New Studies\n").arg(QString::number(d->StudiesAddedDuringImport));
+    message += QString("%1 New Series\n").arg(QString::number(d->SeriesAddedDuringImport));
+    message += QString("%1 New Instances\n").arg(QString::number(d->InstancesAddedDuringImport));
+    return message;
+  }
+
+  ctkDICOMBrowserPrivate* DICOMBrowserPrivate;
+};
+
+//----------------------------------------------------------------------------
 // ctkDICOMBrowserPrivate methods
 
-ctkDICOMBrowserPrivate::ctkDICOMBrowserPrivate(ctkDICOMBrowser* parent): q_ptr(parent){
+//----------------------------------------------------------------------------
+ctkDICOMBrowserPrivate::ctkDICOMBrowserPrivate(ctkDICOMBrowser* parent): q_ptr(parent)
+{
+  ImportDialog = 0;
+  QueryRetrieveWidget = 0;
   DICOMDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
   DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
   IndexerProgress = 0;
@@ -108,6 +156,7 @@ ctkDICOMBrowserPrivate::ctkDICOMBrowserPrivate(ctkDICOMBrowser* parent): q_ptr(p
   InstancesAddedDuringImport = 0;
 }
 
+//----------------------------------------------------------------------------
 ctkDICOMBrowserPrivate::~ctkDICOMBrowserPrivate()
 {
   if ( IndexerProgress )
@@ -124,6 +173,21 @@ ctkDICOMBrowserPrivate::~ctkDICOMBrowserPrivate()
     }
 }
 
+//----------------------------------------------------------------------------
+bool ctkDICOMBrowserPrivate::confirmDirectoryImport()
+{
+  Q_Q(ctkDICOMBrowser);
+  ctkMessageBox dialog(q);
+  QString message = q->tr("Are you sure you want to import files ?");
+  dialog.setText(message);
+  dialog.setIcon(QMessageBox::Question);
+  dialog.addButton(new QPushButton("Import"), QMessageBox::AcceptRole);
+  dialog.addButton(QMessageBox::Cancel);
+  dialog.setDontShowAgainSettingsKey("DICOM/DontConfirmImportDirectory");
+  return dialog.exec() == QMessageBox::AcceptRole;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMBrowserPrivate::showUpdateSchemaDialog()
 {
   Q_Q(ctkDICOMBrowser);
@@ -158,6 +222,7 @@ void ctkDICOMBrowserPrivate::showUpdateSchemaDialog()
   UpdateSchemaProgress->show();
 }
 
+//----------------------------------------------------------------------------
 void ctkDICOMBrowserPrivate::showIndexerDialog()
 {
   Q_Q(ctkDICOMBrowser);
@@ -263,11 +328,29 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
 
   connect(d->DirectoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(setDatabaseDirectory(QString)));
 
+  // Initialize directoryMode widget
+  QFormLayout *layout = new QFormLayout;
+  QComboBox* importDirectoryModeComboBox = new QComboBox();
+  importDirectoryModeComboBox->addItem("Add Link", ctkDICOMBrowser::ImportDirectoryAddLink);
+  importDirectoryModeComboBox->addItem("Copy", ctkDICOMBrowser::ImportDirectoryCopy);
+  importDirectoryModeComboBox->setToolTip(
+        tr("Indicate if the files should be copied to the local database"
+           " directory or if only links should be created ?"));
+  layout->addRow(new QLabel("Import Directory Mode:"), importDirectoryModeComboBox);
+  QCheckBox* skipConfirmImportDirectoryCheckBox = new QCheckBox();
+  layout->addRow(new QLabel("Skip Import Directory Confirmation:"), skipConfirmImportDirectoryCheckBox);
+  layout->setContentsMargins(0, 0, 0, 0);
+  QWidget* importDirectoryBottomWidget = new QWidget();
+  importDirectoryBottomWidget->setLayout(layout);
+
+  // Default values
+  importDirectoryModeComboBox->setCurrentIndex(
+        importDirectoryModeComboBox->findData(this->importDirectoryMode()));
+  skipConfirmImportDirectoryCheckBox->setChecked(this->skipConfirmImportDirectory());
+
   //Initialize import widget
   d->ImportDialog = new ctkFileDialog();
-  QCheckBox* importCheckbox = new QCheckBox("Copy on import", d->ImportDialog);
-  importCheckbox->setCheckState(Qt::Checked);
-  d->ImportDialog->setBottomWidget(importCheckbox);
+  d->ImportDialog->setBottomWidget(importDirectoryBottomWidget);
   d->ImportDialog->setFileMode(QFileDialog::Directory);
   // XXX Method setSelectionMode must be called after setFileMode
   d->ImportDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -277,7 +360,13 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
 
   //connect signal and slots
   connect(d->ImportDialog, SIGNAL(filesSelected(QStringList)),
-          this,SLOT(onImportDirectories(QStringList)));
+          this,SLOT(onImportDirectoriesSelected(QStringList)));
+
+  connect(importDirectoryModeComboBox, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(onImportDirectoryComboBoxCurrentIndexChanged(int)));
+
+  connect(skipConfirmImportDirectoryCheckBox, SIGNAL(toggled(bool)),
+          this, SLOT(setSkipConfirmImportDirectory(bool)));
 
   connect(d->QueryRetrieveWidget, SIGNAL(canceled()), d->QueryRetrieveWidget, SLOT(hide()) );
   connect(d->QueryRetrieveWidget, SIGNAL(canceled()), this, SLOT(onQueryRetrieveFinished()) );
@@ -407,8 +496,6 @@ const QStringList ctkDICOMBrowser::tagsToPrecache()
   Q_D(ctkDICOMBrowser);
   return d->DICOMDatabase->tagsToPrecache();
 }
-
-
 
 //----------------------------------------------------------------------------
 ctkDICOMDatabase* ctkDICOMBrowser::database(){
@@ -607,70 +694,151 @@ void ctkDICOMBrowser::onInstanceAdded(QString instanceUID)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onImportDirectories(QStringList directories)
+void ctkDICOMBrowser::onImportDirectoriesSelected(QStringList directories)
 {
+  Q_D(ctkDICOMBrowser);
+  if (!d->confirmDirectoryImport())
+    {
+    return;
+    }
+  this->onImportDirectories(directories, this->importDirectoryMode(), /* confirm= */ false);
+
+  // Clear selection
+  d->ImportDialog->clearSelection();
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onImportDirectoryComboBoxCurrentIndexChanged(int index)
+{
+  Q_D(ctkDICOMBrowser);
+  Q_UNUSED(index);
+  this->setImportDirectoryMode(this->importDirectoryMode());
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onImportDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
+{
+  Q_D(ctkDICOMBrowser);
+  if(confirm && !d->confirmDirectoryImport())
+    {
+    return;
+    }
+  ctkDICOMImportStats stats(d);
   foreach (const QString& directory, directories)
     {
-    this->onImportDirectory(directory);
+    d->importDirectory(directory, mode);
+    }
+
+  if (d->DisplayImportSummary)
+    {
+    QMessageBox::information(this,"DICOM Directory Import", stats.summary());
     }
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onImportDirectory(QString directory)
+void ctkDICOMBrowser::onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
+{
+  Q_D(ctkDICOMBrowser);
+  if(confirm && !d->confirmDirectoryImport())
+    {
+    return;
+    }
+  ctkDICOMImportStats stats(d);
+  d->importDirectory(directory, mode);
+  if (d->DisplayImportSummary)
+    {
+    QMessageBox::information(this,"DICOM Directory Import", stats.summary());
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowserPrivate::importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode)
+{
+  if (!QDir(directory).exists())
+    {
+    return;
+    }
+
+  QString targetDirectory;
+  if (mode == ctkDICOMBrowser::ImportDirectoryCopy)
+    {
+    targetDirectory = this->DICOMDatabase->databaseDirectory();
+    }
+
+  // show progress dialog and perform indexing
+  this->showIndexerDialog();
+  this->DICOMIndexer->addDirectory(*this->DICOMDatabase, directory, targetDirectory);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowserPrivate::importOldSettings()
+{
+  Q_Q(ctkDICOMBrowser);
+  // Backward compatibility
+  QSettings settings;
+  int dontConfirmCopyOnImport = settings.value("MainWindow/DontConfirmCopyOnImport", static_cast<int>(QMessageBox::InvalidRole)).toInt();
+  if (dontConfirmCopyOnImport == QMessageBox::AcceptRole)
+    {
+    q->setSkipConfirmImportDirectory(true);
+    // settings.setValue("DICOM/DontConfirmImportDirectory", QMessageBox::AcceptRole);
+    settings.setValue("DICOM/ImportDirectoryMode", static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy));
+    settings.remove("MainWindow/DontConfirmCopyOnImport");
+    }
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMBrowser::skipConfirmImportDirectory()const
+{
+  Q_D(const ctkDICOMBrowser);
+  ctkDICOMBrowserPrivate* mutable_d =
+    const_cast<ctkDICOMBrowserPrivate*>(d);
+  mutable_d->importOldSettings();
+  QSettings settings;
+  return settings.value(
+        "DICOM/DontConfirmImportDirectory",
+        static_cast<int>(QMessageBox::InvalidRole)).toInt() == QMessageBox::AcceptRole;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::setSkipConfirmImportDirectory(bool value)
 {
   Q_D(ctkDICOMBrowser);
 
-  if (QDir(directory).exists())
-  {
-    QString targetDirectory;
-
-    QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
-
-    ctkMessageBox importTypeDialog;
-    QString message("Do you want to copy the files to the local database directory or just add the links?");
-    importTypeDialog.setText(message);
-    importTypeDialog.setIcon(QMessageBox::Question);
-
-    importTypeDialog.addButton("Copy",QMessageBox::AcceptRole);
-    importTypeDialog.addButton("Add Link",QMessageBox::RejectRole);
-    importTypeDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmCopyOnImport" );
-    int selection = importTypeDialog.exec();
-
-    if (selection== QMessageBox::AcceptRole)
+  QSettings settings;
+  settings.setValue("DICOM/DontConfirmImportDirectory", value ? QMessageBox::AcceptRole : QMessageBox::RejectRole);
+  if (!d->ImportDialog)
     {
-      copyOnImport->setCheckState(Qt::Checked);
+    return;
     }
-    else
+  QCheckBox* checkBox = d->ImportDialog->bottomWidget()->findChild<QCheckBox*>();
+  checkBox->setChecked(value);
+}
+
+//----------------------------------------------------------------------------
+ctkDICOMBrowser::ImportDirectoryMode ctkDICOMBrowser::importDirectoryMode()const
+{
+  Q_D(const ctkDICOMBrowser);
+  ctkDICOMBrowserPrivate* mutable_d =
+    const_cast<ctkDICOMBrowserPrivate*>(d);
+  mutable_d->importOldSettings();
+  QSettings settings;
+  return static_cast<ctkDICOMBrowser::ImportDirectoryMode>(settings.value(
+        "DICOM/ImportDirectoryMode", static_cast<int>(ctkDICOMBrowser::ImportDirectoryAddLink)).toInt());
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode mode)
+{
+  Q_D(ctkDICOMBrowser);
+
+  QSettings settings;
+  settings.setValue("DICOM/ImportDirectoryMode", static_cast<int>(mode));
+  if (!d->ImportDialog)
     {
-      copyOnImport->setCheckState(Qt::Unchecked);
+    return;
     }
-
-    // reset counts
-    d->PatientsAddedDuringImport = 0;
-    d->StudiesAddedDuringImport = 0;
-    d->SeriesAddedDuringImport = 0;
-    d->InstancesAddedDuringImport = 0;
-
-    if (copyOnImport->checkState() == Qt::Checked)
-    {
-      targetDirectory = d->DICOMDatabase->databaseDirectory();
-    }
-
-    // show progress dialog and perform indexing
-    d->showIndexerDialog();
-    d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
-
-    // display summary result
-    if (d->DisplayImportSummary)
-    {
-      QString message = "Directory import completed.\n\n";
-      message += QString("%1 New Patients\n").arg(QString::number(d->PatientsAddedDuringImport));
-      message += QString("%1 New Studies\n").arg(QString::number(d->StudiesAddedDuringImport));
-      message += QString("%1 New Series\n").arg(QString::number(d->SeriesAddedDuringImport));
-      message += QString("%1 New Instances\n").arg(QString::number(d->InstancesAddedDuringImport));
-      QMessageBox::information(this,"DICOM Directory Import", message);
-    }
-  }
+  QComboBox* comboBox = d->ImportDialog->bottomWidget()->findChild<QComboBox*>();
+  comboBox->setCurrentIndex(comboBox->findData(mode));
 }
 
 //----------------------------------------------------------------------------

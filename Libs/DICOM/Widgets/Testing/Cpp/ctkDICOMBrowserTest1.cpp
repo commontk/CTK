@@ -69,7 +69,10 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   // make sure copy/link dialog doesn't pop up, always copy on import
   QSettings settings;
   QString settingsString = settings.value("MainWindow/DontConfirmCopyOnImport").toString();
-  settings.setValue("MainWindow/DontConfirmCopyOnImport", QString("0"));
+  settings.setValue("MainWindow/DontConfirmCopyOnImport", QString("0")); // QMessageBox::AcceptRole
+
+  CHECK_INT(browser.importDirectoryMode(), static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy));
+  CHECK_BOOL(browser.skipConfirmImportDirectory(), true);
 
   browser.onImportDirectories(QStringList() << argv[1]);
 
@@ -87,8 +90,6 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
-
-
 
   return app.exec();
 }
