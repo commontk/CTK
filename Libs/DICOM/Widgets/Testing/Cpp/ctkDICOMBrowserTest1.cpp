@@ -24,6 +24,7 @@
 #include <QTimer>
 
 // ctk includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkUtils.h"
 
 // ctkDICOMCore includes
@@ -75,14 +76,10 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   // reset to the original copy/import setting
   settings.setValue("MainWindow/DontConfirmCopyOnImport", settingsString);
 
-  if (browser.patientsAddedDuringImport() != 1
-    || browser.studiesAddedDuringImport() != 1
-    || browser.seriesAddedDuringImport() != 1
-    || browser.instancesAddedDuringImport() != 100)
-    {
-    qDebug() << "\n\nDirectory did not import as expected!\n\n";
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(browser.patientsAddedDuringImport(), 1);
+  CHECK_INT(browser.studiesAddedDuringImport(), 1);
+  CHECK_INT(browser.seriesAddedDuringImport(), 1);
+  CHECK_INT(browser.instancesAddedDuringImport(), 100);
 
   qDebug() << "\n\nAdded to database directory: " << dbDir;
 
