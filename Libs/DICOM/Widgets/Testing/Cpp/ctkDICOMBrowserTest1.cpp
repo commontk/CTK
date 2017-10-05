@@ -71,7 +71,7 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   QString settingsString = settings.value("MainWindow/DontConfirmCopyOnImport").toString();
   settings.setValue("MainWindow/DontConfirmCopyOnImport", QString("0"));
 
-  browser.onImportDirectory(argv[1]);
+  browser.onImportDirectories(QStringList() << argv[1]);
 
   // reset to the original copy/import setting
   settings.setValue("MainWindow/DontConfirmCopyOnImport", settingsString);

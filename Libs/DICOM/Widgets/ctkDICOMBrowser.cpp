@@ -269,12 +269,15 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
   importCheckbox->setCheckState(Qt::Checked);
   d->ImportDialog->setBottomWidget(importCheckbox);
   d->ImportDialog->setFileMode(QFileDialog::Directory);
+  // XXX Method setSelectionMode must be called after setFileMode
+  d->ImportDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
   d->ImportDialog->setLabelText(QFileDialog::Accept,"Import");
   d->ImportDialog->setWindowTitle("Import DICOM files from directory ...");
   d->ImportDialog->setWindowModality(Qt::ApplicationModal);
 
   //connect signal and slots
-  connect(d->ImportDialog, SIGNAL(fileSelected(QString)),this,SLOT(onImportDirectory(QString)));
+  connect(d->ImportDialog, SIGNAL(filesSelected(QStringList)),
+          this,SLOT(onImportDirectories(QStringList)));
 
   connect(d->QueryRetrieveWidget, SIGNAL(canceled()), d->QueryRetrieveWidget, SLOT(hide()) );
   connect(d->QueryRetrieveWidget, SIGNAL(canceled()), this, SLOT(onQueryRetrieveFinished()) );
@@ -423,6 +426,7 @@ ctkDICOMTableManager* ctkDICOMBrowser::dicomTableManager()
 //----------------------------------------------------------------------------
 void ctkDICOMBrowser::onFileIndexed(const QString& filePath)
 {
+  Q_UNUSED(filePath);
 }
 
 //----------------------------------------------------------------------------
@@ -600,6 +604,15 @@ void ctkDICOMBrowser::onInstanceAdded(QString instanceUID)
   Q_D(ctkDICOMBrowser);
   Q_UNUSED(instanceUID);
   ++d->InstancesAddedDuringImport;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onImportDirectories(QStringList directories)
+{
+  foreach (const QString& directory, directories)
+    {
+    this->onImportDirectory(directory);
+    }
 }
 
 //----------------------------------------------------------------------------

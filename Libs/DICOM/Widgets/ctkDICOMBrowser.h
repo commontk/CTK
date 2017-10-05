@@ -91,8 +91,18 @@ public Q_SLOTS:
 
   void onTablesDensityComboBox(QString);
 
-  /// Import a directory - this is used when the user selects a directory
-  /// from the Import Dialog, but can also be used externally to trigger
+  /// \brief Import directories
+  ///
+  /// This is used when user selected one or multiple
+  /// directories from the Import Dialog, but can used externally to trigger
+  /// an import (i.e. for testing or to support drag-and-drop)
+  ///
+  /// \sa onImportDirectory(QString directory)
+  void onImportDirectories(QStringList directories);
+
+  /// \brief Import a directory
+  ///
+  /// This can also be used externally to trigger
   /// an import (i.e. for testing or to support drag-and-drop)
   void onImportDirectory(QString directory);
 
