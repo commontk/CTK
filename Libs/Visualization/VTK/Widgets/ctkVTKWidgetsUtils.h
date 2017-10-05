@@ -31,6 +31,7 @@ class QWidget;
 
 // VTK includes
 class vtkImageData;
+class vtkScalarsToColors;
 
 namespace ctk {
 
@@ -45,6 +46,13 @@ QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT grabVTKWidget(QWidget* widget, QRect
 /// \ingroup Visualization_VTK_Widgets
 /// Convert a vtkImageData into a QImage
 QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT vtkImageDataToQImage(vtkImageData* imageData);
+
+///
+/// \ingroup Visualization_VTK_Widgets
+/// Convert a vtkScalarsToColors into a QImage
+/// If size is empty, it will use the large icon size of the application style
+QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT scalarsToColorsImage(
+  vtkScalarsToColors* scalarsToColors, const QSize& size = QSize());
 
 }
 

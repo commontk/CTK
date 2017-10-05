@@ -28,6 +28,8 @@ set(KIT_SRCS
   ctkVTKObject.h
   ctkVTKObjectEventsObserver.cpp
   ctkVTKObjectEventsObserver.h
+  ctkVTKScalarsToColorsUtils.cpp
+  ctkVTKScalarsToColorsUtils.h
   vtkLightBoxRendererManager.cpp
   vtkLightBoxRendererManager.h
   )
@@ -104,6 +106,41 @@ else()
     vtkRendering
     vtkHybrid
     )
+endif()
+
+if(CTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS)
+  set(CTK_USE_CHARTS 1)
+endif()
+
+if(${CTK_USE_CHARTS})
+  set(KIT_SRCS
+    vtkDiscretizableColorTransferChart.cpp
+    vtkDiscretizableColorTransferChart.h
+    vtkDiscretizableColorTransferControlPointsItem.cpp
+    vtkDiscretizableColorTransferControlPointsItem.h
+    vtkScalarsToColorsContextItem.cpp
+    vtkScalarsToColorsContextItem.h
+    vtkScalarsToColorsHistogramChart.cpp
+    vtkScalarsToColorsHistogramChart.h
+    vtkScalarsToColorsPreviewChart.cpp
+    vtkScalarsToColorsPreviewChart.h
+    ${KIT_SRCS})
+  if(${VTK_VERSION_MAJOR} GREATER 5)
+    set(VTK_LIBRARIES
+      vtkChartsCore
+      ${VTK_LIBRARIES})
+  else()
+    set(VTK_LIBRARIES
+      vtkCharts
+      ${VTK_LIBRARIES})
+  endif()
+  add_definitions(-DCTK_USE_CHARTS)
+  set(VTK_LIBRARIES
+    vtkViewsContext2D
+	${VTK_LIBRARIES})
+  if(TARGET vtkRenderingContext${VTK_RENDERING_BACKEND})
+    list(APPEND VTK_LIBRARIES vtkRenderingContext${VTK_RENDERING_BACKEND})
+  endif()
 endif()
 
 if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)

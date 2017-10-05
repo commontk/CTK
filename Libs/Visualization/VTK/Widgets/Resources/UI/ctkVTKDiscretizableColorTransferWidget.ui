@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ctkVTKDiscretizableColorTransferWidget</class>
+ <widget class="QWidget" name="ctkVTKDiscretizableColorTransferWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>447</width>
+    <height>232</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Color Transfer Function</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="9" column="1">
+    <widget class="QLabel" name="minOpacityLabel">
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="3">
+    <widget class="QToolButton" name="optionButton">
+     <property name="contextMenuPolicy">
+      <enum>Qt::DefaultContextMenu</enum>
+     </property>
+     <property name="toolTip">
+      <string>Other options</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1" colspan="3">
+    <widget class="ctkRangeWidget" name="rangeSlider"/>
+   </item>
+   <item row="7" column="3">
+    <widget class="QToolButton" name="invertColorTransferFunctionButton">
+     <property name="toolTip">
+      <string>Invert color map</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../ctkVTKWidgets.qrc">
+       <normaloff>:/Icons/invert.png</normaloff>:/Icons/invert.png</iconset>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::DelayedPopup</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" rowspan="7">
+    <widget class="QVTKWidget" name="scalarsToColorsView" native="true"/>
+   </item>
+   <item row="3" column="3">
+    <widget class="QToolButton" name="resetRangeButton">
+     <property name="toolTip">
+      <string>Reset to data range</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../ctkVTKWidgets.qrc">
+       <normaloff>:/Icons/resetRange.png</normaloff>:/Icons/resetRange.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" rowspan="5">
+    <widget class="ctkDoubleSlider" name="opacitySlider">
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>0.200000000000000</double>
+     </property>
+     <property name="minimum">
+      <double>0.000001000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="maxOpacityLabel">
+     <property name="text">
+      <string>1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="3">
+    <widget class="QToolButton" name="centerRangeButton">
+     <property name="toolTip">
+      <string>Center current range on median</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../ctkVTKWidgets.qrc">
+       <normaloff>:/Icons/resetRangeCustom.png</normaloff>:/Icons/resetRangeCustom.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="3">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="8" column="3">
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="1" colspan="3">
+    <widget class="ctkVTKScalarsToColorsComboBox" name="scalarsToColorsSelector"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkDoubleSlider</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSlider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkRangeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkVTKScalarsToColorsComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ctkVTKScalarsToColorsComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QVTKWidget</class>
+   <extends>QWidget</extends>
+   <header>QVTKWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../ctkVTKWidgets.qrc"/>
+ </resources>
+ <connections/>
+</ui>

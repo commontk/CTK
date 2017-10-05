@@ -19,8 +19,10 @@
 =========================================================================*/
 
 // Qt includes
+#include <QApplication>
 #include <QImage>
 #include <QPainter>
+#include <QStyle>
 #include <QWidget>
 
 // ctkWidgets includes
@@ -34,6 +36,8 @@
 #include <QVTKWidget.h>
 #endif
 #include <vtkImageData.h>
+#include <vtkPiecewiseFunction.h>
+#include <vtkScalarsToColors.h>
 #include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
@@ -108,4 +112,50 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
     rgbPtr -= width * 2;
     }
   return image;
+}
+
+//----------------------------------------------------------------------------
+QImage ctk::scalarsToColorsImage(vtkScalarsToColors* scalarsToColors,
+  const QSize& size)
+{
+  if (!scalarsToColors ||
+    scalarsToColors->GetNumberOfAvailableColors() <= 0)
+  {
+    return QImage();
+  }
+  int width = size.width();
+  int height = size.height();
+  if (size.isEmpty())
+  {
+    width = height = qApp->style()->pixelMetric(QStyle::PM_LargeIconSize);
+  }
+
+  double* values = new double[width];
+  const double* range = scalarsToColors->GetRange();
+  for (int i = 0; i < width; ++i)
+  {
+    values[i] = range[0] + i * (range[1] - range[0]) / (width - 1);
+  }
+
+  QImage transferFunctionImage(width, height, QImage::Format_RGB32);
+  unsigned char* colors = transferFunctionImage.bits();
+  // Map the first line
+  scalarsToColors->MapScalarsThroughTable2(
+    values, colors, VTK_DOUBLE, width, 1, VTK_RGBA);
+  delete[] values;
+  // Pixels are not correctly ordered, reorder them correctly
+  unsigned char* colorsPtr = colors;
+  QRgb* rgbPtr = reinterpret_cast<QRgb*>(colors);
+  for (int i = 0; i < width; ++i)
+  {
+    *(rgbPtr++) = QColor(colorsPtr[0], colorsPtr[1], colorsPtr[2]).rgb();
+    colorsPtr += 4;
+  }
+  // Fill the other lines
+  for (int i = 1; i < height; ++i)
+  {
+    memcpy(colors + i*VTK_RGBA*width, colors, VTK_RGBA*width);
+  }
+
+  return transferFunctionImage;
 }
