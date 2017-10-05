@@ -22,6 +22,7 @@
 #define __ctkFileDialog_h
 
 // Qt includes
+#include <QAbstractItemView>
 #include <QFileDialog>
 
 // CTK includes
@@ -41,6 +42,7 @@ class ctkFileDialogPrivate;
 class CTK_WIDGETS_EXPORT ctkFileDialog : public QFileDialog
 {
   Q_OBJECT
+  Q_PROPERTY(QAbstractItemView::SelectionMode SelectionMode READ selectionMode WRITE setSelectionMode)
 
 public:
   // Superclass typedef
@@ -62,6 +64,21 @@ public:
   /// Return the extra widget if any
   Q_INVOKABLE QWidget* bottomWidget()const;
 
+  /// Set the selection mode the views operate in.
+  ///
+  /// \warning The selection mode must explicitly be set each time
+  /// QFileDialog::setFileMode(FileMode mode) is invoked. This is required
+  /// because the QFileDialog::setFileMode(FileMode mode) method is not virtual
+  /// and it internally resets the selection mode.
+  ///
+  /// \sa clearSelection()
+  void setSelectionMode(QAbstractItemView::SelectionMode mode);
+
+  /// Get the selection mode of the views.
+  ///
+  /// \sa setSelectionMode(QAbstractItemView::SelectionMode)
+  QAbstractItemView::SelectionMode selectionMode() const;
+
   /// Internally used
   bool eventFilter(QObject *obj, QEvent *event);
 
@@ -70,6 +87,9 @@ public Q_SLOTS:
   /// a slot that can be connected to assure that the user doesn't accept the
   /// dialog if a value is not set in the extra bottom widget.
   void setAcceptButtonEnable(bool enable);
+
+  /// Deselect all selected directories or files.
+  void clearSelection();
 
 Q_SIGNALS:
   /// Signals QFileDialog::file[s]Selected() are fired only when the Ok button

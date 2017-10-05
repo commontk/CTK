@@ -23,11 +23,44 @@
 #include <QCheckBox>
 
 // CTK includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkFileDialog.h"
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
+
+//-----------------------------------------------------------------------------
+int testSelectionMode(ctkFileDialog* fileDialog)
+{
+  fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::ExtendedSelection));
+
+  // Due to limitation of QFileDialog API, calling setFileMode resets
+  // the selection mode.
+
+  fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  fileDialog->setFileMode(QFileDialog::Directory);
+  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
+
+  fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  fileDialog->setFileMode(QFileDialog::DirectoryOnly);
+  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
+
+  fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  fileDialog->setFileMode(QFileDialog::ExistingFile);
+  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
+
+  fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  fileDialog->setFileMode(QFileDialog::ExistingFiles);
+  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::ExtendedSelection));
+
+  fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  fileDialog->setFileMode(QFileDialog::AnyFile);
+  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
+
+  return EXIT_SUCCESS;
+}
 
 //-----------------------------------------------------------------------------
 int ctkFileDialogTest1(int argc, char * argv [] )
@@ -44,6 +77,9 @@ int ctkFileDialogTest1(int argc, char * argv [] )
     {
     return EXIT_FAILURE;
     }
+
+  CHECK_EXIT_SUCCESS(testSelectionMode(&fileDialog));
+
   // the following is only in interactive mode
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
@@ -56,6 +92,7 @@ int ctkFileDialogTest1(int argc, char * argv [] )
     {
     return EXIT_FAILURE;
     }
+
   return EXIT_SUCCESS;
 
 }

@@ -28,6 +28,7 @@
 #include <QLineEdit>
 #include <QListView>
 #include <QPushButton>
+#include <QTreeView>
 
 // CTK includes
 #include "ctkFileDialog.h"
@@ -45,6 +46,7 @@ public:
 
   QPushButton* acceptButton()const;
   QListView* listView()const;
+  QTreeView* treeView()const;
 
   bool AcceptButtonEnable;
   bool AcceptButtonState;
@@ -90,6 +92,15 @@ QListView* ctkFileDialogPrivate::listView()const
   QListView* listView= q->findChild<QListView*>("listView");
   Q_ASSERT(listView);
   return listView;
+}
+
+//------------------------------------------------------------------------------
+QTreeView* ctkFileDialogPrivate::treeView()const
+{
+  Q_Q(const ctkFileDialog);
+  QTreeView* treeView = q->findChild<QTreeView*>();
+  Q_ASSERT(treeView);
+  return treeView;
 }
 
 //------------------------------------------------------------------------------
@@ -173,6 +184,39 @@ QWidget* ctkFileDialog::bottomWidget()const
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(this->layout());
   QLayoutItem* item = gridLayout ? gridLayout->itemAtPosition(4,1) : NULL;
   return item ? item->widget() : 0;
+}
+
+//------------------------------------------------------------------------------
+void ctkFileDialog::setSelectionMode(QAbstractItemView::SelectionMode mode)
+{
+  Q_D(ctkFileDialog);
+  foreach(QAbstractItemView* view, QList<QAbstractItemView*>()
+          << d->listView()
+          << d->treeView()
+          )
+    {
+    view->setSelectionMode(mode);
+    }
+}
+
+//------------------------------------------------------------------------------
+QAbstractItemView::SelectionMode ctkFileDialog::selectionMode() const
+{
+  Q_D(const ctkFileDialog);
+  return d->listView()->selectionMode();
+}
+
+//------------------------------------------------------------------------------
+void ctkFileDialog::clearSelection()
+{
+  Q_D(ctkFileDialog);
+  foreach(QAbstractItemView* view, QList<QAbstractItemView*>()
+          << d->listView()
+          << d->treeView()
+          )
+    {
+    view->clearSelection();
+    }
 }
 
 //------------------------------------------------------------------------------
