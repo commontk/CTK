@@ -23,6 +23,7 @@
 #include <QTest>
 
 // CTK includes
+#include "ctkDICOMDatabase.h"
 #include "ctkDICOMBrowser.h"
 #include "ctkScopedCurrentDir.h"
 #include "ctkTest.h"
@@ -34,17 +35,59 @@ class ctkDICOMBrowserTester: public QObject
   Q_OBJECT
 private slots:
 
+  void initTestCase();
+  void init();
+
   void testDefaults();
+
+  void testDatabaseDirectory();
+
+  void testOnImportDirectories();
+  void testOnImportDirectories_data();
+
+  void testOnImportDirectory();
+  void testOnImportDirectory_data();
+
+private:
+  void _testImportCommon(ctkDICOMBrowser& browser);
+
+  QString TemporaryDatabaseDirectoryName;
+
+  QDir DICOMDir;
 };
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::initTestCase()
+{
+  // Get data directory from environment
+  QDir dataDir = QDir(
+        QProcessEnvironment::systemEnvironment().value("CTKData_DIR", ""));
+  QVERIFY(dataDir.exists());
+
+  this->DICOMDir = dataDir.filePath("Data/DICOM");
+  QVERIFY(this->DICOMDir.exists());
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::init()
+{
+  // If any, remove default ./ctkDICOM-Database directory
+  {
+  ctkScopedCurrentDir scopedCurrentDir(QDir::tempPath());
+  ctk::removeDirRecursively("./ctkDICOM-Database");
+  QCOMPARE(QFileInfo("./ctkDICOM-Database").isDir(), false);
+  }
+
+  // Generate a new database directory name
+  this->TemporaryDatabaseDirectoryName =
+      QString("ctkDICOMBrowserTest.%1.DICOM-Database").arg(QTime::currentTime().toString("hhmmsszzz"));
+}
 
 // ----------------------------------------------------------------------------
 void ctkDICOMBrowserTester::testDefaults()
 {
-  ctkScopedCurrentDir scopedCurrentDir(QDir::tempPath());
-
-  // If any, remove ./ctkDICOM-Database directory
-  ctk::removeDirRecursively("./ctkDICOM-Database");
-  QCOMPARE(QFileInfo("./ctkDICOM-Database").isDir(), false);
+  // Clear left over settings
+  QSettings().remove(ctkDICOMBrowser::databaseDirectorySettingsKey());
 
   ctkDICOMBrowser browser;
 
@@ -69,6 +112,134 @@ void ctkDICOMBrowserTester::testDefaults()
 
   QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryAddLink);
   QCOMPARE(browser.skipConfirmImportDirectory(), false);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::testDatabaseDirectory()
+{
+  // Check that value from setting is picked up
+  {
+  QSettings().setValue(ctkDICOMBrowser::databaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+  QCOMPARE(QFileInfo(this->TemporaryDatabaseDirectoryName).isDir(), false);
+
+  ctkDICOMBrowser browser;
+
+  QCOMPARE(QFileInfo(browser.databaseDirectory()).absoluteFilePath(),
+           QFileInfo(this->TemporaryDatabaseDirectoryName).absoluteFilePath());
+  QVERIFY(QDir(browser.databaseDirectory()).exists());
+  }
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::testOnImportDirectories()
+{
+  QFETCH(QStringList, directories);
+  QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
+
+  QSettings().setValue(ctkDICOMBrowser::databaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+
+  ctkDICOMBrowser browser;
+
+  browser.setDisplayImportSummary(false);
+  browser.onImportDirectories(directories, /* mode= */ importDirectoryMode, /* confirm= */ false);
+
+  this->_testImportCommon(browser);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::_testImportCommon(ctkDICOMBrowser& browser)
+{
+  QFETCH(int, expectedImporedPatients);
+  QFETCH(int, expectedImporedStudies);
+  QFETCH(int, expectedImporedSeries);
+  QFETCH(int, expectedImporedInstances);
+
+  QCOMPARE(browser.patientsAddedDuringImport(), expectedImporedPatients);
+  QCOMPARE(browser.studiesAddedDuringImport(), expectedImporedStudies);
+  QCOMPARE(browser.seriesAddedDuringImport(), expectedImporedSeries);
+  QCOMPARE(browser.instancesAddedDuringImport(), expectedImporedInstances);
+
+  QFETCH(int, expectedTotalPatients);
+  QFETCH(int, expectedTotalStudies);
+  QFETCH(int, expectedTotalSeries);
+  QFETCH(int, expectedTotalInstances);
+
+  int currentPatientCount = 0;
+  int currentStudyCount = 0;
+  int currentSerieCount = 0;
+  int currentInstanceCount = 0;
+
+  QStringList patients =  browser.database()->patients();
+  currentPatientCount += patients.count();
+  foreach(const QString& patient, patients)
+    {
+    QStringList studies = browser.database()->studiesForPatient(patient);
+    currentStudyCount += studies.count();
+    foreach(const QString& study, studies)
+      {
+      QStringList series = browser.database()->seriesForStudy(study);
+      currentSerieCount += series.count();
+      foreach(const QString& serie, series)
+        {
+        QStringList instances = browser.database()->instancesForSeries(serie);
+        currentInstanceCount += instances.count();
+        }
+      }
+    }
+
+  QCOMPARE(currentPatientCount, expectedTotalPatients);
+  QCOMPARE(currentStudyCount, expectedTotalStudies);
+  QCOMPARE(currentSerieCount, expectedTotalSeries);
+  QCOMPARE(currentInstanceCount, expectedTotalInstances);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::testOnImportDirectories_data()
+{
+  this->testOnImportDirectory_data();
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::testOnImportDirectory()
+{
+  QFETCH(QStringList, directories);
+  QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
+
+  QSettings().setValue(ctkDICOMBrowser::databaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+
+  ctkDICOMBrowser browser;
+
+  browser.setDisplayImportSummary(false);
+  browser.onImportDirectory(directories[0], /* mode= */ importDirectoryMode, /* confirm= */ false);
+
+  this->_testImportCommon(browser);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::testOnImportDirectory_data()
+{
+  QTest::addColumn<QStringList>("directories");
+  QTest::addColumn<ctkDICOMBrowser::ImportDirectoryMode>("importDirectoryMode");
+  QTest::addColumn<int>("expectedImporedPatients");
+  QTest::addColumn<int>("expectedImporedStudies");
+  QTest::addColumn<int>("expectedImporedSeries");
+  QTest::addColumn<int>("expectedImporedInstances");
+  QTest::addColumn<int>("expectedTotalPatients");
+  QTest::addColumn<int>("expectedTotalStudies");
+  QTest::addColumn<int>("expectedTotalSeries");
+  QTest::addColumn<int>("expectedTotalInstances");
+
+  QTest::newRow("1-MRHEAD")
+      << /* directories */ (QStringList() << this->DICOMDir.filePath("MRHEAD"))
+      << /* importDirectoryMode */ ctkDICOMBrowser::ImportDirectoryAddLink
+      << /* expectedImporedPatients */ 1
+      << /* expectedImporedStudies */ 1
+      << /* expectedImporedSeries */ 1
+      << /* expectedImporedInstances */ 100
+      << /* expectedTotalPatients */ 1
+      << /* expectedTotalStudies */ 1
+      << /* expectedTotalSeries */ 1
+      << /* expectedTotalInstances */ 100;
 }
 
 // ----------------------------------------------------------------------------

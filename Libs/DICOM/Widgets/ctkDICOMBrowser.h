@@ -246,4 +246,6 @@ private:
   Q_DISABLE_COPY(ctkDICOMBrowser);
 };
 
+Q_DECLARE_METATYPE(ctkDICOMBrowser::ImportDirectoryMode)
+
 #endif

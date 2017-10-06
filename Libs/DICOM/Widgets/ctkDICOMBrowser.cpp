@@ -277,6 +277,8 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
 {
   Q_D(ctkDICOMBrowser);
 
+  qRegisterMetaType<ctkDICOMBrowser::ImportDirectoryMode>("ctkDICOMBrowser::ImportDirectoryMode");
+
   d->setupUi(this);
 
   // signals related to tracking inserts
