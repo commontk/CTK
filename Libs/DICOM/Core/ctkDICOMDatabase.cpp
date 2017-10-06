@@ -745,7 +745,7 @@ QStringList ctkDICOMDatabase::instancesForSeries(const QString seriesUID)
   query.bindValue(0, seriesUID);
   query.exec();
   QStringList result;
-  if (query.next())
+  while (query.next())
   {
     result << query.value(0).toString();
   }
