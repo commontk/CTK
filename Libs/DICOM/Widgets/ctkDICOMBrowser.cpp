@@ -713,7 +713,7 @@ void ctkDICOMBrowser::onImportDirectoriesSelected(QStringList directories)
     {
     return;
     }
-  this->onImportDirectories(directories, this->importDirectoryMode(), /* confirm= */ false);
+  this->importDirectories(directories, this->importDirectoryMode(), /* confirm= */ false);
 
   // Clear selection
   d->ImportDialog->clearSelection();
@@ -728,7 +728,7 @@ void ctkDICOMBrowser::onImportDirectoryComboBoxCurrentIndexChanged(int index)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onImportDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
+void ctkDICOMBrowser::importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
 {
   Q_D(ctkDICOMBrowser);
   if(confirm && !d->confirmDirectoryImport())
@@ -748,7 +748,7 @@ void ctkDICOMBrowser::onImportDirectories(QStringList directories, ctkDICOMBrows
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
+void ctkDICOMBrowser::importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
 {
   Q_D(ctkDICOMBrowser);
   if(confirm && !d->confirmDirectoryImport())
@@ -761,6 +761,12 @@ void ctkDICOMBrowser::onImportDirectory(QString directory, ctkDICOMBrowser::Impo
     {
     QMessageBox::information(this,"DICOM Directory Import", stats.summary());
     }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
+{
+  this->importDirectory(directory, mode, confirm);
 }
 
 //----------------------------------------------------------------------------

@@ -42,9 +42,13 @@ private slots:
 
   void testDatabaseDirectory();
 
-  void testOnImportDirectories();
-  void testOnImportDirectories_data();
+  void testImportDirectories();
+  void testImportDirectories_data();
 
+  void testImportDirectory();
+  void testImportDirectory_data();
+
+  // Deprecated
   void testOnImportDirectory();
   void testOnImportDirectory_data();
 
@@ -131,7 +135,7 @@ void ctkDICOMBrowserTester::testDatabaseDirectory()
 }
 
 // ----------------------------------------------------------------------------
-void ctkDICOMBrowserTester::testOnImportDirectories()
+void ctkDICOMBrowserTester::testImportDirectories()
 {
   QFETCH(QStringList, directories);
   QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
@@ -141,7 +145,7 @@ void ctkDICOMBrowserTester::testOnImportDirectories()
   ctkDICOMBrowser browser;
 
   browser.setDisplayImportSummary(false);
-  browser.onImportDirectories(directories, /* mode= */ importDirectoryMode, /* confirm= */ false);
+  browser.importDirectories(directories, /* mode= */ importDirectoryMode, /* confirm= */ false);
 
   this->_testImportCommon(browser);
 }
@@ -194,13 +198,13 @@ void ctkDICOMBrowserTester::_testImportCommon(ctkDICOMBrowser& browser)
 }
 
 // ----------------------------------------------------------------------------
-void ctkDICOMBrowserTester::testOnImportDirectories_data()
+void ctkDICOMBrowserTester::testImportDirectories_data()
 {
-  this->testOnImportDirectory_data();
+  this->testImportDirectory_data();
 }
 
 // ----------------------------------------------------------------------------
-void ctkDICOMBrowserTester::testOnImportDirectory()
+void ctkDICOMBrowserTester::testImportDirectory()
 {
   QFETCH(QStringList, directories);
   QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
@@ -210,13 +214,13 @@ void ctkDICOMBrowserTester::testOnImportDirectory()
   ctkDICOMBrowser browser;
 
   browser.setDisplayImportSummary(false);
-  browser.onImportDirectory(directories[0], /* mode= */ importDirectoryMode, /* confirm= */ false);
+  browser.importDirectory(directories[0], /* mode= */ importDirectoryMode, /* confirm= */ false);
 
   this->_testImportCommon(browser);
 }
 
 // ----------------------------------------------------------------------------
-void ctkDICOMBrowserTester::testOnImportDirectory_data()
+void ctkDICOMBrowserTester::testImportDirectory_data()
 {
   QTest::addColumn<QStringList>("directories");
   QTest::addColumn<ctkDICOMBrowser::ImportDirectoryMode>("importDirectoryMode");
@@ -240,6 +244,28 @@ void ctkDICOMBrowserTester::testOnImportDirectory_data()
       << /* expectedTotalStudies */ 1
       << /* expectedTotalSeries */ 1
       << /* expectedTotalInstances */ 100;
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::testOnImportDirectory()
+{
+  QFETCH(QStringList, directories);
+  QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
+
+  QSettings().setValue(ctkDICOMBrowser::databaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+
+  ctkDICOMBrowser browser;
+
+  browser.setDisplayImportSummary(false);
+  browser.onImportDirectory(directories[0], /* mode= */ importDirectoryMode, /* confirm= */ false);
+
+  this->_testImportCommon(browser);
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::testOnImportDirectory_data()
+{
+  this->testImportDirectory_data();
 }
 
 // ----------------------------------------------------------------------------

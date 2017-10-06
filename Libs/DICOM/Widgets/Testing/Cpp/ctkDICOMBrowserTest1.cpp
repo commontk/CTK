@@ -74,7 +74,7 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   CHECK_INT(browser.importDirectoryMode(), static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy));
   CHECK_BOOL(browser.skipConfirmImportDirectory(), true);
 
-  browser.onImportDirectories(QStringList() << argv[1]);
+  browser.importDirectories(QStringList() << argv[1]);
 
   // reset to the original copy/import setting
   settings.setValue("MainWindow/DontConfirmCopyOnImport", settingsString);

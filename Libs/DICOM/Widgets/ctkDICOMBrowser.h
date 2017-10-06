@@ -167,8 +167,8 @@ public Q_SLOTS:
   ///
   /// Setting \a confirm to false will skip the confirmation dialog.
   ///
-  /// \sa onImportDirectory(QString directory, int mode)
-  void onImportDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink, bool confirm = true);
+  /// \sa importDirectory(QString directory, int mode)
+  void importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink, bool confirm = true);
 
   /// \brief Import a directory
   ///
@@ -177,6 +177,9 @@ public Q_SLOTS:
   /// By default, \a mode is ImportDirectoryMode::ImportDirectoryCopy and \a confirm is true.
   ///
   /// Setting \a confirm to false will skip the confirmation dialog.
+  void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink, bool confirm = true);
+
+  /// \deprecated importDirectory() should be used
   void onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink, bool confirm = true);
 
   /// slots to capture status updates from the database during an
@@ -212,7 +215,7 @@ protected Q_SLOTS:
     /// This is used when user selected one or multiple
     /// directories from the Import Dialog.
     ///
-    /// \sa onImportDirectories(QString directory, int mode)
+    /// \sa importDirectories(QString directory, int mode)
     void onImportDirectoriesSelected(QStringList directories);
 
     void onImportDirectoryComboBoxCurrentIndexChanged(int index);
