@@ -115,7 +115,6 @@ void ctkDICOMBrowserTester::testDefaults()
   QCOMPARE(browser.instancesAddedDuringImport(), 0);
 
   QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryAddLink);
-  QCOMPARE(browser.skipConfirmImportDirectory(), false);
 }
 
 // ----------------------------------------------------------------------------
@@ -145,7 +144,7 @@ void ctkDICOMBrowserTester::testImportDirectories()
   ctkDICOMBrowser browser;
 
   browser.setDisplayImportSummary(false);
-  browser.importDirectories(directories, /* mode= */ importDirectoryMode, /* confirm= */ false);
+  browser.importDirectories(directories, /* mode= */ importDirectoryMode);
 
   this->_testImportCommon(browser);
 }
@@ -214,7 +213,7 @@ void ctkDICOMBrowserTester::testImportDirectory()
   ctkDICOMBrowser browser;
 
   browser.setDisplayImportSummary(false);
-  browser.importDirectory(directories[0], /* mode= */ importDirectoryMode, /* confirm= */ false);
+  browser.importDirectory(directories[0], /* mode= */ importDirectoryMode);
 
   this->_testImportCommon(browser);
 }
@@ -257,7 +256,7 @@ void ctkDICOMBrowserTester::testOnImportDirectory()
   ctkDICOMBrowser browser;
 
   browser.setDisplayImportSummary(false);
-  browser.onImportDirectory(directories[0], /* mode= */ importDirectoryMode, /* confirm= */ false);
+  browser.onImportDirectory(directories[0], /* mode= */ importDirectoryMode);
 
   this->_testImportCommon(browser);
 }

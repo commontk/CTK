@@ -72,12 +72,6 @@ public:
   ctkDICOMBrowserPrivate(ctkDICOMBrowser* );
   ~ctkDICOMBrowserPrivate();
 
-  /// \brief Popup dialog asking user to confirm the directory import.
-  ///
-  /// If user check the "do not show again" checkbox, its choice is saved
-  /// in the settings using the key `DICOM/DontConfirmImportDirectory`.
-  bool confirmDirectoryImport();
-
   void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode);
 
   void importOldSettings();
@@ -171,20 +165,6 @@ ctkDICOMBrowserPrivate::~ctkDICOMBrowserPrivate()
     {
     delete ExportProgress;
     }
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMBrowserPrivate::confirmDirectoryImport()
-{
-  Q_Q(ctkDICOMBrowser);
-  ctkMessageBox dialog(q);
-  QString message = q->tr("Are you sure you want to import files ?");
-  dialog.setText(message);
-  dialog.setIcon(QMessageBox::Question);
-  dialog.addButton(new QPushButton("Import"), QMessageBox::AcceptRole);
-  dialog.addButton(QMessageBox::Cancel);
-  dialog.setDontShowAgainSettingsKey("DICOM/DontConfirmImportDirectory");
-  return dialog.exec() == QMessageBox::AcceptRole;
 }
 
 //----------------------------------------------------------------------------
@@ -338,8 +318,6 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
         tr("Indicate if the files should be copied to the local database"
            " directory or if only links should be created ?"));
   layout->addRow(new QLabel("Import Directory Mode:"), importDirectoryModeComboBox);
-  QCheckBox* skipConfirmImportDirectoryCheckBox = new QCheckBox();
-  layout->addRow(new QLabel("Skip Import Directory Confirmation:"), skipConfirmImportDirectoryCheckBox);
   layout->setContentsMargins(0, 0, 0, 0);
   QWidget* importDirectoryBottomWidget = new QWidget();
   importDirectoryBottomWidget->setLayout(layout);
@@ -347,7 +325,6 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
   // Default values
   importDirectoryModeComboBox->setCurrentIndex(
         importDirectoryModeComboBox->findData(this->importDirectoryMode()));
-  skipConfirmImportDirectoryCheckBox->setChecked(this->skipConfirmImportDirectory());
 
   //Initialize import widget
   d->ImportDialog = new ctkFileDialog();
@@ -365,9 +342,6 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
 
   connect(importDirectoryModeComboBox, SIGNAL(currentIndexChanged(int)),
           this, SLOT(onImportDirectoryComboBoxCurrentIndexChanged(int)));
-
-  connect(skipConfirmImportDirectoryCheckBox, SIGNAL(toggled(bool)),
-          this, SLOT(setSkipConfirmImportDirectory(bool)));
 
   connect(d->QueryRetrieveWidget, SIGNAL(canceled()), d->QueryRetrieveWidget, SLOT(hide()) );
   connect(d->QueryRetrieveWidget, SIGNAL(canceled()), this, SLOT(onQueryRetrieveFinished()) );
@@ -709,11 +683,7 @@ void ctkDICOMBrowser::onInstanceAdded(QString instanceUID)
 void ctkDICOMBrowser::onImportDirectoriesSelected(QStringList directories)
 {
   Q_D(ctkDICOMBrowser);
-  if (!d->confirmDirectoryImport())
-    {
-    return;
-    }
-  this->importDirectories(directories, this->importDirectoryMode(), /* confirm= */ false);
+  this->importDirectories(directories, this->importDirectoryMode());
 
   // Clear selection
   d->ImportDialog->clearSelection();
@@ -728,13 +698,9 @@ void ctkDICOMBrowser::onImportDirectoryComboBoxCurrentIndexChanged(int index)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
+void ctkDICOMBrowser::importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMBrowser);
-  if(confirm && !d->confirmDirectoryImport())
-    {
-    return;
-    }
   ctkDICOMImportStats stats(d);
   foreach (const QString& directory, directories)
     {
@@ -748,13 +714,9 @@ void ctkDICOMBrowser::importDirectories(QStringList directories, ctkDICOMBrowser
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
+void ctkDICOMBrowser::importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMBrowser);
-  if(confirm && !d->confirmDirectoryImport())
-    {
-    return;
-    }
   ctkDICOMImportStats stats(d);
   d->importDirectory(directory, mode);
   if (d->DisplayImportSummary)
@@ -764,9 +726,9 @@ void ctkDICOMBrowser::importDirectory(QString directory, ctkDICOMBrowser::Import
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode, bool confirm)
+void ctkDICOMBrowser::onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode)
 {
-  this->importDirectory(directory, mode, confirm);
+  this->importDirectory(directory, mode);
 }
 
 //----------------------------------------------------------------------------
@@ -797,39 +759,9 @@ void ctkDICOMBrowserPrivate::importOldSettings()
   int dontConfirmCopyOnImport = settings.value("MainWindow/DontConfirmCopyOnImport", static_cast<int>(QMessageBox::InvalidRole)).toInt();
   if (dontConfirmCopyOnImport == QMessageBox::AcceptRole)
     {
-    q->setSkipConfirmImportDirectory(true);
-    // settings.setValue("DICOM/DontConfirmImportDirectory", QMessageBox::AcceptRole);
     settings.setValue("DICOM/ImportDirectoryMode", static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy));
-    settings.remove("MainWindow/DontConfirmCopyOnImport");
     }
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMBrowser::skipConfirmImportDirectory()const
-{
-  Q_D(const ctkDICOMBrowser);
-  ctkDICOMBrowserPrivate* mutable_d =
-    const_cast<ctkDICOMBrowserPrivate*>(d);
-  mutable_d->importOldSettings();
-  QSettings settings;
-  return settings.value(
-        "DICOM/DontConfirmImportDirectory",
-        static_cast<int>(QMessageBox::InvalidRole)).toInt() == QMessageBox::AcceptRole;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMBrowser::setSkipConfirmImportDirectory(bool value)
-{
-  Q_D(ctkDICOMBrowser);
-
-  QSettings settings;
-  settings.setValue("DICOM/DontConfirmImportDirectory", value ? QMessageBox::AcceptRole : QMessageBox::RejectRole);
-  if (!d->ImportDialog)
-    {
-    return;
-    }
-  QCheckBox* checkBox = d->ImportDialog->bottomWidget()->findChild<QCheckBox*>();
-  checkBox->setChecked(value);
+  settings.remove("MainWindow/DontConfirmCopyOnImport");
 }
 
 //----------------------------------------------------------------------------

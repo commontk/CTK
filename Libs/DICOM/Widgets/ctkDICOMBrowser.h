@@ -61,7 +61,6 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
   Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
   Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager)
   Q_PROPERTY(ctkDICOMBrowser::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
-  Q_PROPERTY(bool SkipConfirmImportDirectory READ skipConfirmImportDirectory WRITE setSkipConfirmImportDirectory)
 
 public:
   typedef ctkDICOMBrowser Self;
@@ -114,11 +113,6 @@ public:
   /// \sa setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode)
   ctkDICOMBrowser::ImportDirectoryMode importDirectoryMode()const;
 
-  /// \brief Get SkipConfirmImportDirectory.
-  ///
-  /// \sa setSkipConfirmImportDirectory(bool)
-  bool skipConfirmImportDirectory()const;
-
 public Q_SLOTS:
 
   /// \brief Set value of ImportDirectoryMode settings.
@@ -128,14 +122,6 @@ public Q_SLOTS:
   ///
   /// \sa importDirectoryMode()
   void setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode mode);
-
-  /// \brief Set SkipConfirmImportDirectory.
-  ///
-  /// Setting the value will update the checkbox found at the bottom
-  /// of the import dialog.
-  ///
-  /// \sa skipConfirmImportDirectory()
-  void setSkipConfirmImportDirectory(bool value);
 
   void setDatabaseDirectory(const QString& directory);
   void onFileIndexed(const QString& filePath);
@@ -147,9 +133,6 @@ public Q_SLOTS:
   ///
   /// * **ImportDirectoryMode** combox: Allow user to select "Add Link" or "Copy" mode.
   ///   Associated settings is stored using key `DICOM/ImportDirectoryMode`.
-  ///
-  /// * **ConfirmImportDirectory** checkbox: Allow user to skip import directory confirmation dialog.
-  ///   Associated settings is stored using key `DICOM/DontConfirmImportDirectory`.
   void openImportDialog();
 
   void openExportDialog();
@@ -163,24 +146,20 @@ public Q_SLOTS:
   ///
   /// This can be used to externally trigger an import (i.e. for testing or to support drag-and-drop)
   ///
-  /// By default, \a mode is ImportDirectoryMode::ImportDirectoryCopy and \a confirm is true.
-  ///
-  /// Setting \a confirm to false will skip the confirmation dialog.
+  /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
   ///
   /// \sa importDirectory(QString directory, int mode)
-  void importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink, bool confirm = true);
+  void importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
   /// \brief Import a directory
   ///
   /// This can be used to externally trigger an import (i.e. for testing or to support drag-and-drop)
   ///
-  /// By default, \a mode is ImportDirectoryMode::ImportDirectoryCopy and \a confirm is true.
-  ///
-  /// Setting \a confirm to false will skip the confirmation dialog.
-  void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink, bool confirm = true);
+  /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
+  void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
   /// \deprecated importDirectory() should be used
-  void onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink, bool confirm = true);
+  void onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
   /// slots to capture status updates from the database during an
   /// import operation
