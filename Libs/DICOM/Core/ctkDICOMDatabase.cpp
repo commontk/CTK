@@ -429,7 +429,10 @@ bool ctkDICOMDatabasePrivate::executeScript(const QString script) {
     {
       if (! (*it).startsWith("--") )
         {
-          qDebug() << *it << "\n";
+          if (LoggedExecVerbose)
+            {
+            qDebug() << *it << "\n";
+            }
           query.exec(*it);
           if (query.lastError().type())
             {
