@@ -429,7 +429,10 @@ bool ctkDICOMDatabasePrivate::executeScript(const QString script) {
     {
       if (! (*it).startsWith("--") )
         {
-          qDebug() << *it << "\n";
+          if (LoggedExecVerbose)
+            {
+            qDebug() << *it << "\n";
+            }
           query.exec(*it);
           if (query.lastError().type())
             {
@@ -745,7 +748,7 @@ QStringList ctkDICOMDatabase::instancesForSeries(const QString seriesUID)
   query.bindValue(0, seriesUID);
   query.exec();
   QStringList result;
-  if (query.next())
+  while (query.next())
   {
     result << query.value(0).toString();
   }

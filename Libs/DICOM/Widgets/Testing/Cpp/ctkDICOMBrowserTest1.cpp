@@ -24,6 +24,7 @@
 #include <QTimer>
 
 // ctk includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkUtils.h"
 
 // ctkDICOMCore includes
@@ -65,24 +66,25 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   browser.setDisplayImportSummary(false);
   qDebug() << "Importing directory " << argv[1];
 
+  // [Deprecated]
   // make sure copy/link dialog doesn't pop up, always copy on import
   QSettings settings;
   QString settingsString = settings.value("MainWindow/DontConfirmCopyOnImport").toString();
-  settings.setValue("MainWindow/DontConfirmCopyOnImport", QString("0"));
+  settings.setValue("MainWindow/DontConfirmCopyOnImport", QString("0")); // QMessageBox::AcceptRole
+  CHECK_INT(browser.importDirectoryMode(), static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy));
+  // [/Deprecated]
 
-  browser.onImportDirectory(argv[1]);
+  browser.importDirectories(QStringList() << argv[1]);
 
+  // [Deprecated]
   // reset to the original copy/import setting
   settings.setValue("MainWindow/DontConfirmCopyOnImport", settingsString);
+  // [/Deprecated]
 
-  if (browser.patientsAddedDuringImport() != 1
-    || browser.studiesAddedDuringImport() != 1
-    || browser.seriesAddedDuringImport() != 1
-    || browser.instancesAddedDuringImport() != 100)
-    {
-    qDebug() << "\n\nDirectory did not import as expected!\n\n";
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(browser.patientsAddedDuringImport(), 1);
+  CHECK_INT(browser.studiesAddedDuringImport(), 1);
+  CHECK_INT(browser.seriesAddedDuringImport(), 1);
+  CHECK_INT(browser.instancesAddedDuringImport(), 100);
 
   qDebug() << "\n\nAdded to database directory: " << dbDir;
 
@@ -90,8 +92,6 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
-
-
 
   return app.exec();
 }

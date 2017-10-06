@@ -21,36 +21,60 @@
 #ifndef __ctkDICOMBrowser_h
 #define __ctkDICOMBrowser_h
 
-// Qt includes 
+// Qt includes
 #include <QItemSelection>
 #include <QWidget>
 
 #include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMBrowserPrivate;
+class ctkDICOMDatabase;
+class ctkDICOMTableManager;
+class ctkFileDialog;
 class ctkThumbnailLabel;
 class QMenu;
 class QModelIndex;
-class ctkDICOMDatabase;
-class ctkDICOMTableManager;
 
 /// \ingroup DICOM_Widgets
+///
+/// \brief The DICOM browser widget provides an interface to organize DICOM
+/// data stored in a local ctkDICOMDatabase.
+///
+/// Using a local database avoids redundant calculations and speed up subsequent
+/// access.
+///
+/// Supported operations are:
+///
+/// * Import
+/// * Export
+/// * Send
+/// * Query
+/// * Remove
+/// * Repair
+///
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
 {
   Q_OBJECT
+  Q_ENUMS(ImportDirectoryMode)
   Q_PROPERTY(ctkDICOMDatabase* database READ database)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
   Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
   Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager)
+  Q_PROPERTY(ctkDICOMBrowser::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
 
 public:
+  typedef ctkDICOMBrowser Self;
+
   typedef QWidget Superclass;
   explicit ctkDICOMBrowser(QWidget* parent=0);
   virtual ~ctkDICOMBrowser();
 
   /// Directory being used to store the dicom database
   QString databaseDirectory() const;
+
+  /// Return settings key used to store the directory.
+  static QString databaseDirectorySettingsKey();
 
   /// See ctkDICOMDatabase for description - these accessors
   /// delegate to the corresponding routines of the internal
@@ -79,11 +103,44 @@ public:
   int seriesAddedDuringImport();
   int instancesAddedDuringImport();
 
+  enum ImportDirectoryMode
+  {
+    ImportDirectoryCopy = 0,
+    ImportDirectoryAddLink
+  };
+
+  /// \brief Get value of ImportDirectoryMode settings.
+  ///
+  /// \sa setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode)
+  ctkDICOMBrowser::ImportDirectoryMode importDirectoryMode()const;
+
+  /// \brief Return instance of import dialog.
+  ///
+  /// \internal
+  Q_INVOKABLE ctkFileDialog* importDialog()const;
+
 public Q_SLOTS:
+
+  /// \brief Set value of ImportDirectoryMode settings.
+  ///
+  /// Setting the value will update the comboBox found at the bottom
+  /// of the import dialog.
+  ///
+  /// \sa importDirectoryMode()
+  void setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode mode);
+
   void setDatabaseDirectory(const QString& directory);
   void onFileIndexed(const QString& filePath);
 
+  /// \brief Pop-up file dialog allowing to select and import one or multiple
+  /// DICOM directories.
+  ///
+  /// The dialog is extented with two additional controls:
+  ///
+  /// * **ImportDirectoryMode** combox: Allow user to select "Add Link" or "Copy" mode.
+  ///   Associated settings is stored using key `DICOM/ImportDirectoryMode`.
   void openImportDialog();
+
   void openExportDialog();
   void openQueryDialog();
   void onRemoveAction();
@@ -91,12 +148,26 @@ public Q_SLOTS:
 
   void onTablesDensityComboBox(QString);
 
-  /// Import a directory - this is used when the user selects a directory
-  /// from the Import Dialog, but can also be used externally to trigger
-  /// an import (i.e. for testing or to support drag-and-drop)
-  void onImportDirectory(QString directory);
+  /// \brief Import directories
+  ///
+  /// This can be used to externally trigger an import (i.e. for testing or to support drag-and-drop)
+  ///
+  /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
+  ///
+  /// \sa importDirectory(QString directory, int mode)
+  void importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
-  /// slots to capture status updates from the database during an 
+  /// \brief Import a directory
+  ///
+  /// This can be used to externally trigger an import (i.e. for testing or to support drag-and-drop)
+  ///
+  /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
+  void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
+
+  /// \deprecated importDirectory() should be used
+  void onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
+
+  /// slots to capture status updates from the database during an
   /// import operation
   void onPatientAdded(int, QString, QString, QString);
   void onStudyAdded(QString);
@@ -123,6 +194,17 @@ protected:
     bool confirmDeleteSelectedUIDs(QStringList uids);
 
 protected Q_SLOTS:
+
+    /// \brief Import directories
+    ///
+    /// This is used when user selected one or multiple
+    /// directories from the Import Dialog.
+    ///
+    /// \sa importDirectories(QString directory, int mode)
+    void onImportDirectoriesSelected(QStringList directories);
+
+    void onImportDirectoryComboBoxCurrentIndexChanged(int index);
+
     void onModelSelected(const QItemSelection&, const QItemSelection&);
 
     /// Called when a right mouse click is made in the patients table
@@ -151,5 +233,7 @@ private:
   Q_DECLARE_PRIVATE(ctkDICOMBrowser);
   Q_DISABLE_COPY(ctkDICOMBrowser);
 };
+
+Q_DECLARE_METATYPE(ctkDICOMBrowser::ImportDirectoryMode)
 
 #endif

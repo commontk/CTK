@@ -52,8 +52,12 @@ void checkFinalWidgetState(void* data)
   QStringList expectedSelectedFiles;
   expectedSelectedFiles << CTK_SOURCE_DIR"/ctkLogo.png";
   expectedSelectedFiles << CTK_SOURCE_DIR"/ctkLogo-small.png";
+  expectedSelectedFiles.sort();
 
-  CTKCOMPARE(widget->selectedFiles(), expectedSelectedFiles);
+  QStringList selectedFiles = widget->selectedFiles();
+  selectedFiles.sort();
+
+  CTKCOMPARE(selectedFiles, expectedSelectedFiles);
 }
 
 //-----------------------------------------------------------------------------
