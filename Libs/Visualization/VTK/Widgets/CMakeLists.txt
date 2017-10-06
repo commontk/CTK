@@ -5,6 +5,10 @@ include(${VTK_USE_FILE})
 #
 # See CTK/CMake/ctkMacroBuildLib.cmake for details
 #
+include(${VTK_USE_FILE})
+if(NOT DEFINED VTK_RENDERING_BACKEND)
+  set(VTK_RENDERING_BACKEND "OpenGL")
+endif()
 
 set(KIT_export_directive "CTK_VISUALIZATION_VTK_WIDGETS_EXPORT")
 
@@ -167,6 +171,12 @@ if(${CTK_USE_CHARTS})
     set(VTK_LIBRARIES
       vtkChartsCore
       ${VTK_LIBRARIES})
+    if(TARGET vtkRenderingContext${VTK_RENDERING_BACKEND})
+      list(APPEND VTK_LIBRARIES vtkRenderingContext${VTK_RENDERING_BACKEND})
+    endif()
+    if(TARGET vtkRenderingVolume${VTK_RENDERING_BACKEND})
+      list(APPEND VTK_LIBRARIES vtkRenderingVolume${VTK_RENDERING_BACKEND})
+    endif()
   else()
     set(VTK_LIBRARIES
       vtkCharts
