@@ -28,11 +28,12 @@
 #include "ctkDICOMWidgetsExport.h"
 
 class ctkDICOMBrowserPrivate;
+class ctkDICOMDatabase;
+class ctkDICOMTableManager;
+class ctkFileDialog;
 class ctkThumbnailLabel;
 class QMenu;
 class QModelIndex;
-class ctkDICOMDatabase;
-class ctkDICOMTableManager;
 
 /// \ingroup DICOM_Widgets
 ///
@@ -112,6 +113,11 @@ public:
   ///
   /// \sa setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode)
   ctkDICOMBrowser::ImportDirectoryMode importDirectoryMode()const;
+
+  /// \brief Return instance of import dialog.
+  ///
+  /// \internal
+  Q_INVOKABLE ctkFileDialog* importDialog()const;
 
 public Q_SLOTS:
 

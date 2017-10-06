@@ -20,11 +20,13 @@
 
 // Qt includes
 #include <QApplication>
+#include <QComboBox>
 #include <QTest>
 
 // CTK includes
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMBrowser.h"
+#include "ctkFileDialog.h"
 #include "ctkScopedCurrentDir.h"
 #include "ctkTest.h"
 #include "ctkUtils.h"
@@ -41,6 +43,8 @@ private slots:
   void testDefaults();
 
   void testDatabaseDirectory();
+
+  void testImportDirectoryMode();
 
   void testImportDirectories();
   void testImportDirectories_data();
@@ -131,6 +135,28 @@ void ctkDICOMBrowserTester::testDatabaseDirectory()
            QFileInfo(this->TemporaryDatabaseDirectoryName).absoluteFilePath());
   QVERIFY(QDir(browser.databaseDirectory()).exists());
   }
+}
+
+// ----------------------------------------------------------------------------
+void ctkDICOMBrowserTester::testImportDirectoryMode()
+{
+  QSettings().setValue(ctkDICOMBrowser::databaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+
+  ctkDICOMBrowser browser;
+
+  browser.setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryCopy);
+  QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryCopy);
+
+  browser.setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryAddLink);
+  QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryAddLink);
+
+  QComboBox* comboBox = browser.importDialog()->bottomWidget()->findChild<QComboBox*>();
+
+  comboBox->setCurrentIndex(comboBox->findData(ctkDICOMBrowser::ImportDirectoryCopy));
+  QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryCopy);
+
+  comboBox->setCurrentIndex(comboBox->findData(ctkDICOMBrowser::ImportDirectoryAddLink));
+  QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryAddLink);
 }
 
 // ----------------------------------------------------------------------------

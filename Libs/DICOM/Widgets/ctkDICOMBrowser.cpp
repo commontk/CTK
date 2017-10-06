@@ -765,6 +765,13 @@ void ctkDICOMBrowserPrivate::importOldSettings()
 }
 
 //----------------------------------------------------------------------------
+ctkFileDialog* ctkDICOMBrowser::importDialog() const
+{
+  Q_D(const ctkDICOMBrowser);
+  return d->ImportDialog;
+}
+
+//----------------------------------------------------------------------------
 ctkDICOMBrowser::ImportDirectoryMode ctkDICOMBrowser::importDirectoryMode()const
 {
   Q_D(const ctkDICOMBrowser);
