@@ -298,13 +298,12 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
 
   //initialize directory from settings, then listen for changes
   QSettings settings;
-  if ( settings.value("DatabaseDirectory", "") == "" )
+  if ( settings.value(Self::databaseDirectorySettingsKey(), "") == "" )
     {
-    QString directory = QString("./ctkDICOM-Database");
-    settings.setValue("DatabaseDirectory", directory);
+    settings.setValue(Self::databaseDirectorySettingsKey(), QString("./ctkDICOM-Database"));
     settings.sync();
     }
-  QString databaseDirectory = settings.value("DatabaseDirectory").toString();
+  QString databaseDirectory = this->databaseDirectory();
   this->setDatabaseDirectory(databaseDirectory);
   d->DirectoryButton->setDirectory(databaseDirectory);
 
@@ -451,7 +450,7 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
     }
 
   QSettings settings;
-  settings.setValue("DatabaseDirectory", directory);
+  settings.setValue(Self::databaseDirectorySettingsKey(), directory);
   settings.sync();
 
   //close the active DICOM database
@@ -485,8 +484,13 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
 //----------------------------------------------------------------------------
 QString ctkDICOMBrowser::databaseDirectory() const
 {
-  QSettings settings;
-  return settings.value("DatabaseDirectory").toString();
+  return QSettings().value(Self::databaseDirectorySettingsKey()).toString();
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMBrowser::databaseDirectorySettingsKey()
+{
+  return QLatin1String("DatabaseDirectory");
 }
 
 //------------------------------------------------------------------------------

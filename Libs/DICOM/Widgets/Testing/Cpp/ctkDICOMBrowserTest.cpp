@@ -52,6 +52,8 @@ void ctkDICOMBrowserTester::testDefaults()
   QVERIFY(QFileInfo("./ctkDICOM-Database/ctkDICOM.sql").isFile());
   QVERIFY(QFileInfo("./ctkDICOM-Database/ctkDICOMTagCache.sql").isFile());
 
+  QCOMPARE(ctkDICOMBrowser::databaseDirectorySettingsKey(), QString("DatabaseDirectory"));
+
   QCOMPARE(browser.databaseDirectory(), QString("./ctkDICOM-Database"));
   QVERIFY(browser.database() != 0);
 

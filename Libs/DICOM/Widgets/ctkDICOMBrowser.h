@@ -64,12 +64,17 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
   Q_PROPERTY(bool SkipConfirmImportDirectory READ skipConfirmImportDirectory WRITE setSkipConfirmImportDirectory)
 
 public:
+  typedef ctkDICOMBrowser Self;
+
   typedef QWidget Superclass;
   explicit ctkDICOMBrowser(QWidget* parent=0);
   virtual ~ctkDICOMBrowser();
 
   /// Directory being used to store the dicom database
   QString databaseDirectory() const;
+
+  /// Return settings key used to store the directory.
+  static QString databaseDirectorySettingsKey();
 
   /// See ctkDICOMDatabase for description - these accessors
   /// delegate to the corresponding routines of the internal
