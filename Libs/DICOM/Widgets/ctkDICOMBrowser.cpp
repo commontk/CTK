@@ -694,7 +694,10 @@ void ctkDICOMBrowser::onImportDirectoryComboBoxCurrentIndexChanged(int index)
 {
   Q_D(ctkDICOMBrowser);
   Q_UNUSED(index);
-  this->setImportDirectoryMode(this->importDirectoryMode());
+  QComboBox* comboBox = d->ImportDialog->bottomWidget()->findChild<QComboBox*>();
+  ctkDICOMBrowser::ImportDirectoryMode mode =
+      static_cast<ctkDICOMBrowser::ImportDirectoryMode>(comboBox->itemData(index).toInt());
+  this->setImportDirectoryMode(mode);
 }
 
 //----------------------------------------------------------------------------
