@@ -444,6 +444,12 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
 {
   Q_D(ctkDICOMBrowser);
 
+  // If needed, create database directory
+  if (!QDir(directory).exists())
+    {
+    QDir().mkdir(directory);
+    }
+
   QSettings settings;
   settings.setValue("DatabaseDirectory", directory);
   settings.sync();
