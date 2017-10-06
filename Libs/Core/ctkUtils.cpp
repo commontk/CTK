@@ -308,7 +308,7 @@ bool ctk::removeDirRecursively(const QString & dirName)
   bool result = false;
   QDir dir(dirName);
 
-  if (dir.exists(dirName))
+  if (dir.exists())
     {
     foreach (QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst))
       {
@@ -326,7 +326,8 @@ bool ctk::removeDirRecursively(const QString & dirName)
         return result;
         }
       }
-    result = dir.rmdir(dirName);
+    QDir parentDir(QFileInfo(dirName).absolutePath());
+    result = parentDir.rmdir(dirName);
     }
 
   return result;
