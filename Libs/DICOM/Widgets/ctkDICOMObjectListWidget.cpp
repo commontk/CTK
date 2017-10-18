@@ -129,6 +129,7 @@ void ctkDICOMObjectListWidgetPrivate::setFilterExpressionInModel(qRecursiveTreeP
   const QString regexpPrefix("regexp:");
   if (expr.startsWith(regexpPrefix))
     {
+    filterModel->setFilterCaseSensitivity(Qt::CaseSensitive);
     filterModel->setFilterRegExp(expr.right(expr.length() - regexpPrefix.length()));
     }
   else
