@@ -18,22 +18,28 @@
 
 =========================================================================*/
 
-#ifndef __ctkVTKScalarsToColorsUtils_h
-#define __ctkVTKScalarsToColorsUtils_h
+#ifndef __vtkScalarsToColorsPreviewChart_h
+#define __vtkScalarsToColorsPreviewChart_h
 
-// CTK includes
-#include "ctkVisualizationVTKWidgetsExport.h"
+#include "ctkVisualizationVTKCoreExport.h"
 
-// VTK includes
-class vtkScalarsToColors;
+#include <vtkChartXY.h>
+#include <vtkSmartPointer.h>
 
-namespace ctk {
-///
-/// \ingroup Visualization_VTK_Widgets
-/// Convert a vtkScalarsToColors into a QImage
-/// If size is empty, it will use the large icon size of the application style
-QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT scalarsToColorsImage(vtkScalarsToColors* scalarsToColors, const QSize& size = QSize());
+class vtkColorTransferFunction;
 
-}
+class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkScalarsToColorsPreviewChart
+  : public vtkChartXY
+{
+public:
+  vtkTypeMacro(vtkScalarsToColorsPreviewChart, vtkChartXY)
+  static vtkScalarsToColorsPreviewChart* New();
 
-#endif
+  void SetColorTransferFunction(vtkColorTransferFunction* colorTransfer);
+
+protected:
+  vtkScalarsToColorsPreviewChart();
+  virtual ~vtkScalarsToColorsPreviewChart();
+};
+
+#endif /* __vtkScalarsToColorsPreviewChart_h */

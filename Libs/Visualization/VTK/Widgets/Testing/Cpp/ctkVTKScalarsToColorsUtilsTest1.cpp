@@ -26,7 +26,7 @@
 
 // CTK includes
 #include "ctkWidgetsUtils.h"
-#include "ctkVTKScalarsToColorsUtils.h"
+#include "ctkVTKWidgetsUtils.h"
 
 // VTK includes
 #include <vtkColorTransferFunction.h>

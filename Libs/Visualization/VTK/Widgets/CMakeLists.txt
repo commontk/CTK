@@ -53,8 +53,8 @@ set(KIT_SRCS
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.cpp
   ctkVTKScalarBarWidget.h
-  ctkVTKScalarsToColorsUtils.cpp
-  ctkVTKScalarsToColorsUtils.h
+  ctkVTKScalarsToColorsComboBox.cpp
+  ctkVTKScalarsToColorsComboBox.h
   ctkVTKSliceView.cpp
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
@@ -89,6 +89,7 @@ set(KIT_MOC_SRCS
   ctkVTKRenderView.h
   ctkVTKRenderView_p.h
   ctkVTKScalarBarWidget.h
+  ctkVTKScalarsToColorsComboBox.h
   ctkVTKSliceView.h
   ctkVTKSliceView_p.h
   ctkVTKSurfaceMaterialPropertyWidget.h
@@ -99,6 +100,7 @@ set(KIT_MOC_SRCS
 
 # UI files
 set(KIT_UI_FORMS
+  Resources/UI/ctkVTKDiscretizableColorTransferWidget.ui
   Resources/UI/ctkVTKScalarBarWidget.ui
   Resources/UI/ctkVTKTextPropertyWidget.ui
   Resources/UI/ctkVTKPropertyWidget.ui
@@ -146,6 +148,8 @@ if(${CTK_USE_CHARTS})
   set(KIT_SRCS
       ctkVTKChartView.cpp
       ctkVTKChartView.h
+	  ctkVTKDiscretizableColorTransferWidget.h
+	  ctkVTKDiscretizableColorTransferWidget.cpp
       ctkVTKVolumePropertyWidget.cpp
       ctkVTKVolumePropertyWidget.h
       ctkVTKScalarsToColorsView.cpp
@@ -155,6 +159,7 @@ if(${CTK_USE_CHARTS})
       ${KIT_SRCS})
   set(KIT_MOC_SRCS
       ctkVTKChartView.h
+	  ctkVTKDiscretizableColorTransferWidget.h
       ctkVTKVolumePropertyWidget.h
       ctkVTKScalarsToColorsView.h
       ctkVTKScalarsToColorsWidget.h

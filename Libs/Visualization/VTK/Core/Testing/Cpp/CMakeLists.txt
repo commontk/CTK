@@ -9,6 +9,11 @@ set(TEST_SOURCES
   ctkVTKObjectTest1.cpp
   )
 
+if(CTK_USE_CHARTS)
+  set(TEST_SOURCES
+    vtkScalarsToColorsPreviewChartTest1.cpp
+    ${TEST_SOURCES})
+endif()
 #
 # Tests expecting CTKData to be set
 #
@@ -59,6 +64,7 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
 
 SET (TestsToRun ${Tests})
 REMOVE (TestsToRun ${KIT}CppTests.cpp)
+
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
