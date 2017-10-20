@@ -724,7 +724,7 @@ void ctkDICOMBrowser::importDirectory(QString directory, ctkDICOMBrowser::Import
   d->importDirectory(directory, mode);
   if (d->DisplayImportSummary)
     {
-    QMessageBox::information(this,"DICOM Directory Import", stats.summary());
+    QMessageBox::information(d->ImportDialog,"DICOM Directory Import", stats.summary());
     }
 }
 
