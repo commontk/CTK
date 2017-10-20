@@ -78,6 +78,12 @@ public:
   /// Center the color tranfer function around \center
   void CenterRange(double center);
 
+  /// Return the range including both the transfer function and data extents
+  double* GetLimitRange();
+
+  /// Update charts range to match data and color transfer function ranges
+  void RecalculateChartsRange();
+
   /// Weight opacity control points by \opacity 
   void SetGlobalOpacity(double opacity);
 
@@ -102,6 +108,9 @@ private:
 
   /// Cached geometry of the scene
   vtkVector2i LastSceneSize;
+
+  /// Widest possible range for charts
+  double LimitRange[2];
 
   /// Internal event forwarder
   class EventForwarder;

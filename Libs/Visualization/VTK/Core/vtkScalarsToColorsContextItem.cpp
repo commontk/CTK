@@ -70,6 +70,9 @@ vtkScalarsToColorsContextItem::vtkScalarsToColorsContextItem()
 
   this->LastSceneSize = vtkVector2i(0, 0);
 
+  this->LimitRange[0] = VTK_DOUBLE_MIN;
+  this->LimitRange[1] = VTK_DOUBLE_MAX;
+
   vtkSmartPointer<vtkBrush> b = vtkSmartPointer<vtkBrush>::New();
   b->SetOpacityF(0);
 
@@ -167,13 +170,7 @@ void vtkScalarsToColorsContextItem::SetDiscretizableColorTransferFunction(
     this->PrivateEventForwarder, &EventForwarder::ForwardEvent);
 
   /// Set the preview chart range to the color transfer function range
-  if (this->ColorTransferFunction == CTK_NULLPTR)
-  {
-    this->PreviewChart->GetAxis(vtkAxis::BOTTOM)->SetRange(0, 0);
-    return;
-  }
-  this->PreviewChart->GetAxis(vtkAxis::BOTTOM)->SetRange(
-    this->ColorTransferFunction->GetRange());
+  this->RecalculateChartsRange();
 }
 
 // ----------------------------------------------------------------------------
@@ -201,6 +198,7 @@ void vtkScalarsToColorsContextItem::SetHistogramTable(vtkTable* table,
 void vtkScalarsToColorsContextItem::SetDataRange(double min, double max)
 {
   this->EditorChart->SetDataRange(min, max);
+  this->RecalculateChartsRange();
 }
 
 // ----------------------------------------------------------------------------
@@ -225,6 +223,38 @@ double* vtkScalarsToColorsContextItem::GetCurrentRange()
 void vtkScalarsToColorsContextItem::CenterRange(double center)
 {
   this->EditorChart->CenterRange(center);
+}
+
+// ----------------------------------------------------------------------------
+double* vtkScalarsToColorsContextItem::GetLimitRange()
+{
+  return LimitRange;
+}
+
+// ----------------------------------------------------------------------------
+void vtkScalarsToColorsContextItem::RecalculateChartsRange()
+{
+  if (this->GetDiscretizableColorTransferFunction() == nullptr)
+  {
+    return;
+  }
+
+  /// Recalculate limit range
+  double* ctfRange = this->GetDiscretizableColorTransferFunction()->GetRange();
+  this->LimitRange[0] = std::min(ctfRange[0], this->GetDataRange()[0]);
+  this->LimitRange[1] = std::max(ctfRange[1], this->GetDataRange()[1]);
+
+  this->EditorChart->GetAxis(vtkAxis::BOTTOM)->SetUnscaledRange(
+    this->LimitRange);
+  this->EditorChart->RecalculateBounds();
+
+  this->HistogramChart->GetAxis(vtkAxis::BOTTOM)->SetUnscaledRange(
+    this->LimitRange);
+  this->HistogramChart->RecalculateBounds();
+
+  this->PreviewChart->GetAxis(vtkAxis::BOTTOM)->SetUnscaledRange(
+    this->LimitRange);
+  this->PreviewChart->RecalculateBounds();
 }
 
 // ----------------------------------------------------------------------------
@@ -279,6 +309,14 @@ bool vtkScalarsToColorsContextItem::Paint(vtkContext2D* painter)
     this->PreviewChart->SetSize(colorTransferFunctionChartSize);
     this->PreviewChart->SetHiddenAxisBorder(0);
     this->PreviewChart->RecalculateBounds();
+
+    vtkRectf editorChartSize(0.0, 0.0, sceneWidth,
+      sceneHeight);
+    this->EditorChart->SetSize(editorChartSize);
+    this->EditorChart->RecalculateBounds();
+
+    this->HistogramChart->SetSize(editorChartSize);
+    this->HistogramChart->RecalculateBounds();
   }
 
   return this->Superclass::Paint(painter);
