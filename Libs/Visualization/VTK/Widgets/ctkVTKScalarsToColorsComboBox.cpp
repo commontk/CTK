@@ -100,7 +100,7 @@ int ctkVTKScalarsToColorsComboBox::addScalarsToColors(
   }
   else
   {
-    img = QImage(this->iconSize(), QImage::Format::Format_ARGB32);
+    img = QImage(this->iconSize(), QImage::Format_ARGB32);
     img.fill(Qt::transparent);
   }
 
