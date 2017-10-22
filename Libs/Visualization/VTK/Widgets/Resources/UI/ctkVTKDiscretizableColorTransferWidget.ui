@@ -60,9 +60,11 @@
      </property>
     </widget>
    </item>
+   <!--
    <item row="3" column="2" rowspan="7">
     <widget class="QVTKWidget" name="scalarsToColorsView" native="true"/>
    </item>
+   -->
    <item row="3" column="3">
     <widget class="QToolButton" name="resetRangeButton">
      <property name="toolTip">
@@ -174,12 +176,14 @@
    <extends>QComboBox</extends>
    <header>ctkVTKScalarsToColorsComboBox.h</header>
   </customwidget>
+  <!--
   <customwidget>
    <class>QVTKWidget</class>
    <extends>QWidget</extends>
    <header>QVTKWidget.h</header>
    <container>1</container>
   </customwidget>
+  -->
  </customwidgets>
  <resources>
   <include location="../ctkVTKWidgets.qrc"/>

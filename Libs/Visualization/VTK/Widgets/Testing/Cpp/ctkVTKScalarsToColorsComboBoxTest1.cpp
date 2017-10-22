@@ -24,6 +24,7 @@
 #include <QTimer>
 
 // CTK includes
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkVTKScalarsToColorsComboBox.h"
 
 // VTK includes
@@ -66,7 +67,7 @@ int ctkVTKScalarsToColorsComboBoxTest1(int argc, char * argv [] )
       "\tCurrent count: " << scalarsToColorsComboBox.count() << "\n";
     return EXIT_FAILURE;
   }
-  scalarsToColorsComboBox.addScalarsToColors(nullptr, "(none)");
+  scalarsToColorsComboBox.addScalarsToColors(CTK_NULLPTR, "(none)");
 
   scalarsToColorsComboBox.show();
 

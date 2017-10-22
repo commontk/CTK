@@ -22,6 +22,7 @@
 #define __ctkVTKDiscretizableColorTransferWidget_h
 
 // CTK includes
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkVisualizationVTKWidgetsExport.h"
 class ctkVTKDiscretizableColorTransferWidgetPrivate;
 class ctkVTKScalarsToColorsComboBox;
@@ -48,7 +49,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDiscretizableColorTransferWidge
   /// \accessors viewBackgroundColor() setViewBackgroundColor()
   Q_PROPERTY(QColor viewBackgroundColor READ viewBackgroundColor WRITE setViewBackgroundColor)
 public:
-  explicit ctkVTKDiscretizableColorTransferWidget(QWidget* parent_ = nullptr);
+  explicit ctkVTKDiscretizableColorTransferWidget(QWidget* parent_ = CTK_NULLPTR);
   virtual ~ctkVTKDiscretizableColorTransferWidget();
 
   void setColorTransferFunction(vtkScalarsToColors* ctf);

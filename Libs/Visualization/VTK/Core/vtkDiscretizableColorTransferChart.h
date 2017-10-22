@@ -91,9 +91,11 @@ protected:
   vtkSmartPointer<vtkHistogramMarker> MinMarker;
   vtkSmartPointer<vtkHistogramMarker> MaxMarker;
 
-  enum class RangeMoving {
-    NONE, MIN, MAX
-  } rangeMoving = RangeMoving::NONE;
+  enum RangeMoving {
+    RangeMoving_NONE, RangeMoving_MIN, RangeMoving_MAX
+  };
+  RangeMoving rangeMoving = RangeMoving_NONE;
+
   double DataRange[2];
   double CurrentRange[2];
   double OriginalRange[2];

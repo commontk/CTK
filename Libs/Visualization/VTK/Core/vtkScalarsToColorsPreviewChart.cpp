@@ -20,6 +20,9 @@
 
 #include "vtkScalarsToColorsPreviewChart.h"
 
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
+
+// VTK includes
 #include <vtkAxis.h>
 #include <vtkColorTransferFunctionItem.h>
 #include <vtkColorTransferFunction.h>
@@ -69,7 +72,7 @@ void vtkScalarsToColorsPreviewChart::SetColorTransferFunction(
   compositeVisibleItem->SetInteractive(false);
   compositeVisibleItem->SetOpacity(1);
   compositeVisibleItem->SelectableOff();
-  if (function == nullptr)
+  if (function == CTK_NULLPTR)
   {
     vtkSmartPointer<vtkColorTransferFunction> ctf =
       vtkSmartPointer<vtkColorTransferFunction>::New();

@@ -20,6 +20,7 @@
 #include "vtkDiscretizableColorTransferChart.h"
 
 #include "ctkVTKScalarsToColorsUtils.h"
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "vtkDiscretizableColorTransferControlPointsItem.h"
 
 #include <vtkAxis.h>
@@ -127,15 +128,15 @@ vtkDiscretizableColorTransferChart::vtkDiscretizableColorTransferChart()
     this->GetAxis(i)->SetTitle("");
   }
 
-  this->CompositeHiddenItem = nullptr;
-  this->ControlPoints = nullptr;
+  this->CompositeHiddenItem = CTK_NULLPTR;
+  this->ControlPoints = CTK_NULLPTR;
 }
 
 // ----------------------------------------------------------------------------
 void vtkDiscretizableColorTransferChart::SetColorTransferFunction(
   vtkDiscretizableColorTransferFunction* function)
 {
-  if (function == nullptr)
+  if (function == CTK_NULLPTR)
   {
     vtkSmartPointer<vtkDiscretizableColorTransferFunction> emptyCtf =
       vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
@@ -229,7 +230,7 @@ void vtkDiscretizableColorTransferChart::UpdateMarkerPosition(
   this->Transform->InverseTransformPoints(m.GetScenePos().GetData(),
     pos.GetData(), 1);
 
-  if (rangeMoving == RangeMoving::MIN)
+  if (rangeMoving == RangeMoving_MIN)
   {
     double newValue = static_cast<double>(pos.GetX());
     if (newValue < this->OriginalRange[0])
@@ -241,7 +242,7 @@ void vtkDiscretizableColorTransferChart::UpdateMarkerPosition(
       this->CurrentRange[0] = newValue;
     }
     this->MinMarker->SetPosition(this->CurrentRange[0]);
-    if (this->ColorTransferFunction != nullptr)
+    if (this->ColorTransferFunction != CTK_NULLPTR)
     {
       this->ControlPoints->StartProcessing();
       ctk::remapColorScale(this->ColorTransferFunction, this->CurrentRange[0],
@@ -249,7 +250,7 @@ void vtkDiscretizableColorTransferChart::UpdateMarkerPosition(
       this->ControlPoints->EndProcessing();
     }
   }
-  else if (rangeMoving == RangeMoving::MAX)
+  else if (rangeMoving == RangeMoving_MAX)
   {
     double newValue = static_cast<double>(pos.GetX());
     if (newValue > this->OriginalRange[1])
@@ -276,7 +277,7 @@ bool vtkDiscretizableColorTransferChart::MouseMoveEvent(
   const vtkContextMouseEvent &mouse)
 {
   if (mouse.GetButton() == vtkContextMouseEvent::LEFT_BUTTON &&
-    rangeMoving != RangeMoving::NONE)
+    rangeMoving != RangeMoving_NONE)
   {
     this->UpdateMarkerPosition(mouse);
   }
@@ -297,7 +298,7 @@ bool vtkDiscretizableColorTransferChart::MouseButtonPressEvent(
 {
   if (mouse.GetButton() == vtkContextMouseEvent::LEFT_BUTTON)
   {
-    if (rangeMoving == RangeMoving::NONE)
+    if (rangeMoving == RangeMoving_NONE)
     {
       this->CalculateUnscaledPlotTransform(
         this->CompositeHiddenItem->GetXAxis(),
@@ -317,12 +318,12 @@ bool vtkDiscretizableColorTransferChart::MouseButtonPressEvent(
       if (IsInRange(pixelMin[0] - catchWidth,
         pixelMin[0] + catchWidth, mouse.GetPos().GetX()))
       {
-        rangeMoving = RangeMoving::MIN;
+        rangeMoving = RangeMoving_MIN;
       }
       else if (IsInRange( pixelMax[0] - catchWidth, pixelMax[0] + catchWidth,
         mouse.GetPos().GetX()))
       {
-        rangeMoving = RangeMoving::MAX;
+        rangeMoving = RangeMoving_MAX;
       }
     }
   }
@@ -333,7 +334,7 @@ bool vtkDiscretizableColorTransferChart::MouseButtonPressEvent(
 bool vtkDiscretizableColorTransferChart::MouseButtonReleaseEvent(
   const vtkContextMouseEvent &mouse)
 {
-  rangeMoving = RangeMoving::NONE;
+  rangeMoving = RangeMoving_NONE;
   return this->Superclass::MouseButtonReleaseEvent(mouse);
 }
 
@@ -418,7 +419,7 @@ void vtkDiscretizableColorTransferChart::SetCurrentRange(
     this->MaxMarker->SetPosition(this->CurrentRange[1]);
   }
 
-  if (this->ColorTransferFunction != nullptr)
+  if (this->ColorTransferFunction != CTK_NULLPTR)
   {
     this->ControlPoints->StartProcessing();
     ctk::remapColorScale(this->ColorTransferFunction,

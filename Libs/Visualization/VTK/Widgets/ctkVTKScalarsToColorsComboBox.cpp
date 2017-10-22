@@ -22,6 +22,7 @@
 #include <QPainter>
 
 // CTK includes
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkVTKScalarsToColorsComboBox.h"
 #include "ctkVTKWidgetsUtils.h"
 
@@ -92,14 +93,14 @@ int ctkVTKScalarsToColorsComboBox::addScalarsToColors(
   vtkScalarsToColors* scFunction, const QString& name)
 {
   QImage img;
-  if (scFunction != nullptr)
+  if (scFunction != CTK_NULLPTR)
   {
-    scFunction->Register(nullptr);
+    scFunction->Register(CTK_NULLPTR);
     img = ctk::scalarsToColorsImage(scFunction, this->iconSize());
   }
   else
   {
-    img = QImage(this->iconSize(), QImage::Format::Format_ARGB32);
+    img = QImage(this->iconSize(), QImage::Format_ARGB32);
     img.fill(Qt::transparent);
   }
 
@@ -115,7 +116,7 @@ vtkScalarsToColors* ctkVTKScalarsToColorsComboBox::getScalarsToColors(
   QVariant data = itemData(index);
   if (!data.isValid())
   {
-    return nullptr;
+    return CTK_NULLPTR;
   }
 
   vtkScalarsToColors* ctf =
@@ -167,7 +168,7 @@ void ctkVTKScalarsToColorsComboBox::onRowsAboutToBeRemoved(
   {
     vtkScalarsToColors* scFunction = reinterpret_cast<vtkScalarsToColors*>(
       model()->data(model()->index(i, 0, parent)).value<void*>());
-    if (scFunction != nullptr)
+    if (scFunction != CTK_NULLPTR)
     {
       scFunction->Delete();
     }

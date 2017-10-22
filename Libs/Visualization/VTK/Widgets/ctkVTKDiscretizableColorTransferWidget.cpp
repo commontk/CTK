@@ -22,6 +22,7 @@
 
 // CTK includes
 #include "ctkColorPickerButton.h"
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkDoubleSlider.h"
 #include "ctkVTKScalarsToColorsComboBox.h"
 #include "ctkVTKScalarsToColorsUtils.h"
@@ -45,7 +46,11 @@
 #include <QWidgetAction>
 
 // VTK includes
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#else
 #include <QVTKWidget.h>
+#endif
 #include <vtkCallbackCommand.h>
 #include <vtkContextScene.h>
 #include <vtkContextView.h>
@@ -62,6 +67,8 @@
 #include <vtkScalarsToColors.h>
 #include <vtkTable.h>
 
+
+
 // ----------------------------------------------------------------------------
 class ctkVTKDiscretizableColorTransferWidgetPrivate :
   public Ui_ctkVTKDiscretizableColorTransferWidget
@@ -75,6 +82,12 @@ public:
     ctkVTKDiscretizableColorTransferWidget& object);
 
   void setupUi(QWidget* widget);
+
+#if CTK_USE_QVTKOPENGLWIDGET
+  QVTKOpenGLWidget* ScalarsToColorsView;
+#else
+  QVTKWidget* ScalarsToColorsView;
+#endif
 
   vtkSmartPointer<vtkScalarsToColorsContextItem> scalarsToColorsContextItem;
   vtkSmartPointer<vtkContextView> scalarsToColorsContextView;
@@ -103,12 +116,12 @@ ctkVTKDiscretizableColorTransferWidgetPrivate
   ctkVTKDiscretizableColorTransferWidget& object)
   : q_ptr(&object)
 {
-  this->scalarsToColorsSelector = nullptr;
+  this->scalarsToColorsSelector = CTK_NULLPTR;
 
   // Option menu
-  this->nanButton = nullptr;
-  this->discretizeCheckBox = nullptr;
-  this->nbOfDiscreteValuesSpinBox = nullptr;
+  this->nanButton = CTK_NULLPTR;
+  this->discretizeCheckBox = CTK_NULLPTR;
+  this->nbOfDiscreteValuesSpinBox = CTK_NULLPTR;
 
   this->dataRange[0] = VTK_DOUBLE_MAX;
   this->dataRange[1] = VTK_DOUBLE_MIN;
@@ -130,6 +143,13 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 
   this->Ui_ctkVTKDiscretizableColorTransferWidget::setupUi(widget);
 
+#if CTK_USE_QVTKOPENGLWIDGET
+  this->ScalarsToColorsView = new QVTKOpenGLWidget;
+#else
+  this->ScalarsToColorsView = new QVTKWidget;
+#endif
+  this->gridLayout->addWidget(this->ScalarsToColorsView, 3, 2, 7, 1);
+
   this->scalarsToColorsContextItem =
     vtkSmartPointer<vtkScalarsToColorsContextItem>::New();
   this->scalarsToColorsContextView = vtkSmartPointer<vtkContextView> ::New();
@@ -137,15 +157,15 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
   this->scalarsToColorsContextView->GetScene()->AddItem(
     this->scalarsToColorsContextItem.Get());
   this->scalarsToColorsContextView->SetInteractor(
-    this->scalarsToColorsView->GetInteractor());
-  this->scalarsToColorsView->SetRenderWindow(
+    this->ScalarsToColorsView->GetInteractor());
+  this->ScalarsToColorsView->SetRenderWindow(
     this->scalarsToColorsContextView->GetRenderWindow());
 
   q->setViewBackgroundColor(QColor(49, 54, 59));
 
   this->previousOpacityValue = opacitySlider->value();
 
-  this->scalarsToColorsSelector->addScalarsToColors(nullptr, q->tr("Reset"));
+  this->scalarsToColorsSelector->addScalarsToColors(CTK_NULLPTR, q->tr("Reset"));
   this->scalarsToColorsSelector->setCurrentIndex(-1);
 
   this->eventLink = vtkSmartPointer<vtkEventQtSlotConnect>::New();
@@ -185,7 +205,7 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
   discretizeLayout->setContentsMargins(0, 0, 0, 0);
 
   optionButton->setIcon(q->style()->standardIcon(
-    QStyle::SP_FileDialogDetailedView, nullptr, optionButton));
+    QStyle::SP_FileDialogDetailedView, CTK_NULLPTR, optionButton));
 
   QLabel* nanLabel = new QLabel(q->tr("NaN values"));
   nanButton = new ctkColorPickerButton;
@@ -242,7 +262,7 @@ ctkVTKDiscretizableColorTransferWidgetPrivate::colorTransferFunctionModifiedCall
   vtkSmartPointer<vtkDiscretizableColorTransferFunction> dctf =
     self->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction();
 
-  if (dctf == nullptr)
+  if (dctf == CTK_NULLPTR)
   {
     return;
   }
@@ -273,7 +293,7 @@ ctkVTKDiscretizableColorTransferWidgetPrivate::colorTransferFunctionModifiedCall
   QColor selected = QColor::fromRgbF(r, g, b);
   self->nanButton->setColor(selected);
 
-  self->scalarsToColorsView->GetInteractor()->Render();
+  self->ScalarsToColorsView->GetInteractor()->Render();
 }
 
 // ----------------------------------------------------------------------------
@@ -299,7 +319,7 @@ void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunction(
 
   vtkScalarsToColors* oldCtf =
     d->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction();
-  if (oldCtf != nullptr)
+  if (oldCtf != CTK_NULLPTR)
   {
     oldCtf->RemoveObserver(d->colorTransferFunctionModified);
   }
@@ -311,7 +331,7 @@ void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunction(
   ctf = d->scalarsToColorsContextItem->GetColorTransferFunction();
   emit(currentScalarsToColorsChanged(ctf));
 
-  if (ctf == nullptr)
+  if (ctf == CTK_NULLPTR)
   {
     d->rangeSlider->setRange(0., 255.);
     d->rangeSlider->setValues(0., 1.);
@@ -397,7 +417,7 @@ void ctkVTKDiscretizableColorTransferWidget::setHistogram(
 
   d->scalarsToColorsContextItem->SetDataRange(d->dataRange[0], d->dataRange[1]);
 
-  d->scalarsToColorsView->GetInteractor()->Render();
+  d->ScalarsToColorsView->GetInteractor()->Render();
 }
 
 // ----------------------------------------------------------------------------
@@ -406,7 +426,7 @@ void ctkVTKDiscretizableColorTransferWidget::onPaletteIndexChanged(
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
 
-  if (ctf == nullptr)
+  if (ctf == CTK_NULLPTR)
   {
     this->setColorTransferFunction(ctf);
     return;
