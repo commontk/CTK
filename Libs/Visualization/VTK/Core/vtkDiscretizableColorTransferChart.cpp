@@ -20,6 +20,7 @@
 #include "vtkDiscretizableColorTransferChart.h"
 
 #include "ctkVTKScalarsToColorsUtils.h"
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "vtkDiscretizableColorTransferControlPointsItem.h"
 
 #include <vtkAxis.h>
@@ -127,15 +128,15 @@ vtkDiscretizableColorTransferChart::vtkDiscretizableColorTransferChart()
     this->GetAxis(i)->SetTitle("");
   }
 
-  this->CompositeHiddenItem = nullptr;
-  this->ControlPoints = nullptr;
+  this->CompositeHiddenItem = CTK_NULLPTR;
+  this->ControlPoints = CTK_NULLPTR;
 }
 
 // ----------------------------------------------------------------------------
 void vtkDiscretizableColorTransferChart::SetColorTransferFunction(
   vtkDiscretizableColorTransferFunction* function)
 {
-  if (function == nullptr)
+  if (function == CTK_NULLPTR)
   {
     vtkSmartPointer<vtkDiscretizableColorTransferFunction> emptyCtf =
       vtkSmartPointer<vtkDiscretizableColorTransferFunction>::New();
@@ -241,7 +242,7 @@ void vtkDiscretizableColorTransferChart::UpdateMarkerPosition(
       this->CurrentRange[0] = newValue;
     }
     this->MinMarker->SetPosition(this->CurrentRange[0]);
-    if (this->ColorTransferFunction != nullptr)
+    if (this->ColorTransferFunction != CTK_NULLPTR)
     {
       this->ControlPoints->StartProcessing();
       ctk::remapColorScale(this->ColorTransferFunction, this->CurrentRange[0],
@@ -418,7 +419,7 @@ void vtkDiscretizableColorTransferChart::SetCurrentRange(
     this->MaxMarker->SetPosition(this->CurrentRange[1]);
   }
 
-  if (this->ColorTransferFunction != nullptr)
+  if (this->ColorTransferFunction != CTK_NULLPTR)
   {
     this->ControlPoints->StartProcessing();
     ctk::remapColorScale(this->ColorTransferFunction,

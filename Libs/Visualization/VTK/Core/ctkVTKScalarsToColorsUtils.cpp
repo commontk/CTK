@@ -18,6 +18,7 @@
 
 =========================================================================*/
 // CTK includes
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkLogger.h"
 #include "ctkVTKScalarsToColorsUtils.h"
 
@@ -55,7 +56,7 @@ void ctk::remapColorScale(
   }
 
   /// Opacity
-  if (rescaledColorTransferFunction->GetScalarOpacityFunction() != nullptr)
+  if (rescaledColorTransferFunction->GetScalarOpacityFunction() != CTK_NULLPTR)
   {
     rescaledColorTransferFunction->GetScalarOpacityFunction()->
       RemoveAllPoints();
@@ -67,7 +68,7 @@ void ctk::remapColorScale(
     rescaledColorTransferFunction->SetScalarOpacityFunction(opacityFunction);
   }
 
-  if (colorTransferFunction->GetScalarOpacityFunction() == nullptr)
+  if (colorTransferFunction->GetScalarOpacityFunction() == CTK_NULLPTR)
   {
     rescaledColorTransferFunction->Build();
     return;
@@ -101,7 +102,7 @@ void ctk::remapColorScale(
 // ----------------------------------------------------------------------------
 void ctk::reverseColorMap(vtkDiscretizableColorTransferFunction* ctf)
 {
-  if (ctf == nullptr)
+  if (ctf == CTK_NULLPTR)
   {
     return;
   }
@@ -127,7 +128,7 @@ void ctk::reverseColorMap(vtkDiscretizableColorTransferFunction* ctf)
 void ctk::setTransparency(vtkDiscretizableColorTransferFunction* ctf,
   double transparency)
 {
-  if (ctf == nullptr)
+  if (ctf == CTK_NULLPTR)
   {
     return;
   }

@@ -22,6 +22,7 @@
 
 // CTK includes
 #include "ctkColorPickerButton.h"
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkDoubleSlider.h"
 #include "ctkVTKScalarsToColorsComboBox.h"
 #include "ctkVTKScalarsToColorsUtils.h"
@@ -65,6 +66,8 @@
 #include <vtkRenderWindow.h>
 #include <vtkScalarsToColors.h>
 #include <vtkTable.h>
+
+
 
 // ----------------------------------------------------------------------------
 class ctkVTKDiscretizableColorTransferWidgetPrivate :
@@ -113,12 +116,12 @@ ctkVTKDiscretizableColorTransferWidgetPrivate
   ctkVTKDiscretizableColorTransferWidget& object)
   : q_ptr(&object)
 {
-  this->scalarsToColorsSelector = nullptr;
+  this->scalarsToColorsSelector = CTK_NULLPTR;
 
   // Option menu
-  this->nanButton = nullptr;
-  this->discretizeCheckBox = nullptr;
-  this->nbOfDiscreteValuesSpinBox = nullptr;
+  this->nanButton = CTK_NULLPTR;
+  this->discretizeCheckBox = CTK_NULLPTR;
+  this->nbOfDiscreteValuesSpinBox = CTK_NULLPTR;
 
   this->dataRange[0] = VTK_DOUBLE_MAX;
   this->dataRange[1] = VTK_DOUBLE_MIN;
@@ -162,7 +165,7 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 
   this->previousOpacityValue = opacitySlider->value();
 
-  this->scalarsToColorsSelector->addScalarsToColors(nullptr, q->tr("Reset"));
+  this->scalarsToColorsSelector->addScalarsToColors(CTK_NULLPTR, q->tr("Reset"));
   this->scalarsToColorsSelector->setCurrentIndex(-1);
 
   this->eventLink = vtkSmartPointer<vtkEventQtSlotConnect>::New();
@@ -202,7 +205,7 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
   discretizeLayout->setContentsMargins(0, 0, 0, 0);
 
   optionButton->setIcon(q->style()->standardIcon(
-    QStyle::SP_FileDialogDetailedView, nullptr, optionButton));
+    QStyle::SP_FileDialogDetailedView, CTK_NULLPTR, optionButton));
 
   QLabel* nanLabel = new QLabel(q->tr("NaN values"));
   nanButton = new ctkColorPickerButton;
@@ -259,7 +262,7 @@ ctkVTKDiscretizableColorTransferWidgetPrivate::colorTransferFunctionModifiedCall
   vtkSmartPointer<vtkDiscretizableColorTransferFunction> dctf =
     self->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction();
 
-  if (dctf == nullptr)
+  if (dctf == CTK_NULLPTR)
   {
     return;
   }
@@ -316,7 +319,7 @@ void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunction(
 
   vtkScalarsToColors* oldCtf =
     d->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction();
-  if (oldCtf != nullptr)
+  if (oldCtf != CTK_NULLPTR)
   {
     oldCtf->RemoveObserver(d->colorTransferFunctionModified);
   }
@@ -328,7 +331,7 @@ void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunction(
   ctf = d->scalarsToColorsContextItem->GetColorTransferFunction();
   emit(currentScalarsToColorsChanged(ctf));
 
-  if (ctf == nullptr)
+  if (ctf == CTK_NULLPTR)
   {
     d->rangeSlider->setRange(0., 255.);
     d->rangeSlider->setValues(0., 1.);
@@ -423,7 +426,7 @@ void ctkVTKDiscretizableColorTransferWidget::onPaletteIndexChanged(
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
 
-  if (ctf == nullptr)
+  if (ctf == CTK_NULLPTR)
   {
     this->setColorTransferFunction(ctf);
     return;

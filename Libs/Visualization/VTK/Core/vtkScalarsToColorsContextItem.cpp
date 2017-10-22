@@ -21,6 +21,7 @@
 
 // CTK includes
 #include "ctkVTKScalarsToColorsUtils.h"
+#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "vtkDiscretizableColorTransferChart.h"
 #include "vtkScalarsToColorsHistogramChart.h"
 #include "vtkScalarsToColorsPreviewChart.h"
@@ -90,7 +91,7 @@ vtkScalarsToColorsContextItem::vtkScalarsToColorsContextItem()
     vtkSmartPointer<vtkScalarsToColorsPreviewChart>::New();
   AddItem(this->PreviewChart.GetPointer());
 
-  this->SetColorTransferFunction(nullptr);
+  this->SetColorTransferFunction(CTK_NULLPTR);
 }
 
 // ----------------------------------------------------------------------------
@@ -105,9 +106,9 @@ vtkScalarsToColorsContextItem::~vtkScalarsToColorsContextItem()
 void vtkScalarsToColorsContextItem::SetColorTransferFunction(
   vtkScalarsToColors* ctf)
 {
-  if (ctf == nullptr)
+  if (ctf == CTK_NULLPTR)
   {
-    this->SetDiscretizableColorTransferFunction(nullptr);
+    this->SetDiscretizableColorTransferFunction(CTK_NULLPTR);
     return;
   }
 
@@ -143,7 +144,7 @@ void vtkScalarsToColorsContextItem::SetDiscretizableColorTransferFunction(
   vtkSmartPointer<vtkCompositeControlPointsItem> oldControlPoints =
     this->EditorChart->GetControlPointsItem();
 
-  if (oldControlPoints != nullptr)
+  if (oldControlPoints != CTK_NULLPTR)
   {
     oldControlPoints->RemoveObservers(vtkCommand::EndEvent);
     oldControlPoints->RemoveObservers(
@@ -167,7 +168,7 @@ void vtkScalarsToColorsContextItem::SetDiscretizableColorTransferFunction(
     this->PrivateEventForwarder, &EventForwarder::ForwardEvent);
 
   /// Set the preview chart range to the color transfer function range
-  if (this->ColorTransferFunction == nullptr)
+  if (this->ColorTransferFunction == CTK_NULLPTR)
   {
     this->PreviewChart->GetAxis(vtkAxis::BOTTOM)->SetRange(0, 0);
     return;
