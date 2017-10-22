@@ -45,7 +45,11 @@
 #include <QWidgetAction>
 
 // VTK includes
+#if CTK_USE_QVTKOPENGLWIDGET
+#include <QVTKOpenGLWidget.h>
+#else
 #include <QVTKWidget.h>
+#endif
 #include <vtkCallbackCommand.h>
 #include <vtkContextScene.h>
 #include <vtkContextView.h>
@@ -75,6 +79,12 @@ public:
     ctkVTKDiscretizableColorTransferWidget& object);
 
   void setupUi(QWidget* widget);
+
+#if CTK_USE_QVTKOPENGLWIDGET
+  QVTKOpenGLWidget* ScalarsToColorsView;
+#else
+  QVTKWidget* ScalarsToColorsView;
+#endif
 
   vtkSmartPointer<vtkScalarsToColorsContextItem> scalarsToColorsContextItem;
   vtkSmartPointer<vtkContextView> scalarsToColorsContextView;
@@ -130,6 +140,13 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 
   this->Ui_ctkVTKDiscretizableColorTransferWidget::setupUi(widget);
 
+#if CTK_USE_QVTKOPENGLWIDGET
+  this->ScalarsToColorsView = new QVTKOpenGLWidget;
+#else
+  this->ScalarsToColorsView = new QVTKWidget;
+#endif
+  this->gridLayout->addWidget(this->ScalarsToColorsView, 3, 2, 7, 1);
+
   this->scalarsToColorsContextItem =
     vtkSmartPointer<vtkScalarsToColorsContextItem>::New();
   this->scalarsToColorsContextView = vtkSmartPointer<vtkContextView> ::New();
@@ -137,8 +154,8 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
   this->scalarsToColorsContextView->GetScene()->AddItem(
     this->scalarsToColorsContextItem.Get());
   this->scalarsToColorsContextView->SetInteractor(
-    this->scalarsToColorsView->GetInteractor());
-  this->scalarsToColorsView->SetRenderWindow(
+    this->ScalarsToColorsView->GetInteractor());
+  this->ScalarsToColorsView->SetRenderWindow(
     this->scalarsToColorsContextView->GetRenderWindow());
 
   q->setViewBackgroundColor(QColor(49, 54, 59));
@@ -273,7 +290,7 @@ ctkVTKDiscretizableColorTransferWidgetPrivate::colorTransferFunctionModifiedCall
   QColor selected = QColor::fromRgbF(r, g, b);
   self->nanButton->setColor(selected);
 
-  self->scalarsToColorsView->GetInteractor()->Render();
+  self->ScalarsToColorsView->GetInteractor()->Render();
 }
 
 // ----------------------------------------------------------------------------
@@ -397,7 +414,7 @@ void ctkVTKDiscretizableColorTransferWidget::setHistogram(
 
   d->scalarsToColorsContextItem->SetDataRange(d->dataRange[0], d->dataRange[1]);
 
-  d->scalarsToColorsView->GetInteractor()->Render();
+  d->ScalarsToColorsView->GetInteractor()->Render();
 }
 
 // ----------------------------------------------------------------------------
