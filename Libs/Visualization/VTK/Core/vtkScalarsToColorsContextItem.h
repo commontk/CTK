@@ -61,7 +61,7 @@ public:
     const char* xAxisColumn, const char* yAxisColumn);
 
   /// Paint event.
-  bool Paint(vtkContext2D* painter) override;
+  bool Paint(vtkContext2D* painter) VTK_OVERRIDE;
 
   /// Get/Set the color of the current control point.
   void SetCurrentControlPointColor(const double rgb[3]);
@@ -98,7 +98,7 @@ protected:
 
 private:
   vtkScalarsToColorsContextItem();
-  ~vtkScalarsToColorsContextItem() override;
+  ~vtkScalarsToColorsContextItem() VTK_OVERRIDE;
 
   /// Cached geometry of the scene
   vtkVector2i LastSceneSize;
