@@ -94,7 +94,7 @@ protected:
   enum RangeMoving {
     RangeMoving_NONE, RangeMoving_MIN, RangeMoving_MAX
   };
-  RangeMoving rangeMoving = RangeMoving_NONE;
+  RangeMoving rangeMoving;
 
   double DataRange[2];
   double CurrentRange[2];
