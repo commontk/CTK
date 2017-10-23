@@ -20,8 +20,6 @@
 
 #include "vtkScalarsToColorsPreviewChart.h"
 
-#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
-
 // VTK includes
 #include <vtkAxis.h>
 #include <vtkColorTransferFunctionItem.h>

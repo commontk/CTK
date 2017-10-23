@@ -22,7 +22,6 @@
 
 // CTK includes
 #include "ctkColorPickerButton.h"
-#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkDoubleSlider.h"
 #include "ctkVTKScalarsToColorsComboBox.h"
 #include "ctkVTKScalarsToColorsUtils.h"

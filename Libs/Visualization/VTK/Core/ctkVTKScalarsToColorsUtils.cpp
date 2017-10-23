@@ -18,7 +18,6 @@
 
 =========================================================================*/
 // CTK includes
-#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkLogger.h"
 #include "ctkVTKScalarsToColorsUtils.h"
 

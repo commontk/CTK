@@ -22,7 +22,6 @@
 #define __ctkVTKDiscretizableColorTransferWidget_h
 
 // CTK includes
-#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkVisualizationVTKWidgetsExport.h"
 class ctkVTKDiscretizableColorTransferWidgetPrivate;
 class ctkVTKScalarsToColorsComboBox;

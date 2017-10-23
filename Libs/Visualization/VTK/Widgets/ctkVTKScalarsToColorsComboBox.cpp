@@ -22,7 +22,6 @@
 #include <QPainter>
 
 // CTK includes
-#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "ctkVTKScalarsToColorsComboBox.h"
 #include "ctkVTKWidgetsUtils.h"
 

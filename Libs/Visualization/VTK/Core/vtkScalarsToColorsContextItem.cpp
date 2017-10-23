@@ -21,7 +21,6 @@
 
 // CTK includes
 #include "ctkVTKScalarsToColorsUtils.h"
-#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "vtkDiscretizableColorTransferChart.h"
 #include "vtkScalarsToColorsHistogramChart.h"
 #include "vtkScalarsToColorsPreviewChart.h"
