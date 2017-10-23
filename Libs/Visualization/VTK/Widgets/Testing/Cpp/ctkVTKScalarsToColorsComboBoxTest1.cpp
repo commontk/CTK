@@ -50,7 +50,7 @@ int ctkVTKScalarsToColorsComboBoxTest1(int argc, char * argv [] )
   vtkNew<vtkPiecewiseFunction> piecewiseFunction;
   piecewiseFunction->AddPoint(0.0, 0);
   piecewiseFunction->AddPoint(255.0, 1.0);
-  discretizableCTF->SetScalarOpacityFunction(piecewiseFunction);
+  discretizableCTF->SetScalarOpacityFunction(piecewiseFunction.GetPointer());
   discretizableCTF->EnableOpacityMappingOn();
   vtkSmartPointer<vtkColorTransferFunction> colorTransferFunction =
     vtkSmartPointer<vtkColorTransferFunction>::New();
