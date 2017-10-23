@@ -88,7 +88,7 @@ public:
   virtual void setMaximum(double maximum);
   /// Description
   /// Utility function that set the min/max in once
-  virtual void setRange(double min, double max);
+  Q_INVOKABLE virtual void setRange(double min, double max);
   virtual void range(double minimumAndMaximum[2])const;
 
   ///
