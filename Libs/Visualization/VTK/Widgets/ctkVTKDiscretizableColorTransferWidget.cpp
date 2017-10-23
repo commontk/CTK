@@ -57,12 +57,12 @@
 #include <vtkDiscretizableColorTransferFunction.h>
 #include <vtkDoubleArray.h>
 #include <vtkEventQtSlotConnect.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkIntArray.h>
 #include <vtkImageAccumulate.h>
 #include <vtkImageData.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
 #include <vtkScalarsToColors.h>
 #include <vtkTable.h>
 
@@ -153,12 +153,18 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
     vtkSmartPointer<vtkScalarsToColorsContextItem>::New();
   this->scalarsToColorsContextView = vtkSmartPointer<vtkContextView> ::New();
 
-  this->scalarsToColorsContextView->GetScene()->AddItem(
-    this->scalarsToColorsContextItem.Get());
+#if CTK_USE_QVTKOPENGLWIDGET
+  vtkSmartPointer<vtkGenericOpenGLRenderWindow> renwin =
+    vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+  this->ScalarsToColorsView->SetRenderWindow(renwin);
+#endif
+
+  this->scalarsToColorsContextView->SetRenderWindow(
+    this->ScalarsToColorsView->GetRenderWindow());
   this->scalarsToColorsContextView->SetInteractor(
     this->ScalarsToColorsView->GetInteractor());
-  this->ScalarsToColorsView->SetRenderWindow(
-    this->scalarsToColorsContextView->GetRenderWindow());
+  this->scalarsToColorsContextView->GetScene()->AddItem(
+    this->scalarsToColorsContextItem.Get());
 
   q->setViewBackgroundColor(QColor(49, 54, 59));
 
