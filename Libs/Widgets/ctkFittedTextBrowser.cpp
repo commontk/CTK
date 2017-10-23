@@ -65,7 +65,6 @@ void ctkFittedTextBrowserPrivate::updateCollapsedText()
 //-----------------------------------------------------------------------------
 QString ctkFittedTextBrowserPrivate::collapsedTextFromPlainText() const
 {
-  Q_Q(const ctkFittedTextBrowser);
   int teaserEndPosition = this->CollapsibleText.indexOf("\n");
   if (teaserEndPosition < 0)
   {
@@ -87,7 +86,6 @@ QString ctkFittedTextBrowserPrivate::collapsedTextFromPlainText() const
 //-----------------------------------------------------------------------------
 QString ctkFittedTextBrowserPrivate::collapsedTextFromHtml() const
 {
-  Q_Q(const ctkFittedTextBrowser);
   const QString lineBreak("<br>");
   int teaserEndPosition = this->CollapsibleText.indexOf(lineBreak);
   if (teaserEndPosition < 0)
@@ -131,7 +129,6 @@ QString ctkFittedTextBrowserPrivate::collapsedTextFromHtml() const
 //-----------------------------------------------------------------------------
 QString ctkFittedTextBrowserPrivate::collapseLinkText() const
 {
-  Q_Q(const ctkFittedTextBrowser);
   if (this->Collapsed)
   {
     return QString("&hellip; <a href=\"#") + moreAnchor + "\">" + this->ShowDetailsText + "</a>";
@@ -264,7 +261,6 @@ void ctkFittedTextBrowser::setCollapsibleHtml(const QString &text)
 //-----------------------------------------------------------------------------
 void ctkFittedTextBrowser::anchorClicked(const QUrl &url)
 {
-  Q_D(ctkFittedTextBrowser);
   if (url.path().isEmpty())
   {
     if (url.fragment() == moreAnchor)
