@@ -130,6 +130,8 @@ vtkDiscretizableColorTransferChart::vtkDiscretizableColorTransferChart()
 
   this->CompositeHiddenItem = CTK_NULLPTR;
   this->ControlPoints = CTK_NULLPTR;
+
+  this->rangeMoving = RangeMoving_NONE;
 }
 
 // ----------------------------------------------------------------------------
