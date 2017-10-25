@@ -27,7 +27,6 @@ limitations under the License.
 #include "ctkVTKScalarsToColorsComboBox.h"
 
 // VTK includes
-#include <QVTKWidget.h>
 #include <vtkDiscretizableColorTransferFunction.h>
 #include <vtkNew.h>
 #include <vtkPiecewiseFunction.h>

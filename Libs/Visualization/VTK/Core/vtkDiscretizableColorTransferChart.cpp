@@ -113,10 +113,9 @@ vtkDiscretizableColorTransferChart::vtkDiscretizableColorTransferChart()
   this->MinMarker = vtkSmartPointer<vtkHistogramMarker>::New();
   this->MaxMarker = vtkSmartPointer<vtkHistogramMarker>::New();
 
-  this->ForceAxesToBoundsOn();
   this->SetAutoAxes(false);
-  this->SetLayoutStrategy(vtkChart::FILL_SCENE);
   this->SetRenderEmpty(true);
+  this->SetLayoutStrategy(vtkChart::FILL_RECT);
   this->ZoomWithMouseWheelOff();
 
   for (int i = 0; i < 4; ++i)
@@ -124,14 +123,24 @@ vtkDiscretizableColorTransferChart::vtkDiscretizableColorTransferChart()
     this->GetAxis(i)->SetVisible(true);
     this->GetAxis(i)->SetNumberOfTicks(0);
     this->GetAxis(i)->SetLabelsVisible(false);
-    this->GetAxis(i)->SetMargins(0, 0);
     this->GetAxis(i)->SetTitle("");
   }
+  this->GetAxis(vtkAxis::LEFT)->SetMargins(20, 0);
+  this->GetAxis(vtkAxis::RIGHT)->SetMargins(20, 0);
+
+  this->GetAxis(vtkAxis::BOTTOM)->SetBehavior(vtkAxis::FIXED);
+
+  ///Disable actions
+  this->SetActionToButton(ZOOM, -1);/// We don't want to zoom
+  this->SetActionToButton(PAN, -1);/// Axes are not forced to bounds, disable panning
 
   this->CompositeHiddenItem = CTK_NULLPTR;
   this->ControlPoints = CTK_NULLPTR;
 
   this->rangeMoving = RangeMoving_NONE;
+
+  this->DataRange[0] = VTK_DOUBLE_MAX;
+  this->DataRange[1] = VTK_DOUBLE_MIN;
 }
 
 // ----------------------------------------------------------------------------
@@ -214,9 +223,6 @@ void vtkDiscretizableColorTransferChart::SetColorTransferFunction(
 
   this->AddPlot(this->CompositeHiddenItem);
   this->AddPlot(this->ControlPoints);
-
-  ///Disable zooming
-  this->SetActionToButton(ZOOM, -1);
 }
 
 // ----------------------------------------------------------------------------
@@ -232,12 +238,16 @@ void vtkDiscretizableColorTransferChart::UpdateMarkerPosition(
   this->Transform->InverseTransformPoints(m.GetScenePos().GetData(),
     pos.GetData(), 1);
 
+  double limitRange[2];
+  limitRange[0] = std::min(this->OriginalRange[0], this->DataRange[0]);
+  limitRange[1] = std::max(this->OriginalRange[1], this->DataRange[1]);
+
   if (rangeMoving == RangeMoving_MIN)
   {
     double newValue = static_cast<double>(pos.GetX());
-    if (newValue < this->OriginalRange[0])
+    if (newValue < limitRange[0])
     {
-      this->CurrentRange[0] = this->OriginalRange[0];
+      this->CurrentRange[0] = limitRange[0];
     }
     else if (newValue < this->CurrentRange[1])
     {
@@ -255,9 +265,9 @@ void vtkDiscretizableColorTransferChart::UpdateMarkerPosition(
   else if (rangeMoving == RangeMoving_MAX)
   {
     double newValue = static_cast<double>(pos.GetX());
-    if (newValue > this->OriginalRange[1])
+    if (newValue > limitRange[1])
     {
-      this->CurrentRange[1] = this->OriginalRange[1];
+      this->CurrentRange[1] = limitRange[1];
     }
     else if (newValue > this->CurrentRange[0])
     {
@@ -408,15 +418,19 @@ double* vtkDiscretizableColorTransferChart::GetDataRange()
 void vtkDiscretizableColorTransferChart::SetCurrentRange(
   double min, double max)
 {
+  double limitRange[2];
+  limitRange[0] = std::min(this->OriginalRange[0], this->DataRange[0]);
+  limitRange[1] = std::max(this->OriginalRange[1], this->DataRange[1]);
+
   ///check if min < max;
-  min = vtkMath::ClampValue(min, this->OriginalRange[0], this->OriginalRange[1]);
-  max = vtkMath::ClampValue(max, this->OriginalRange[0], this->OriginalRange[1]);
+  min = vtkMath::ClampValue(min, limitRange[0], limitRange[1]);
+  max = vtkMath::ClampValue(max, limitRange[0], limitRange[1]);
   if (min < max)
   {
     this->CurrentRange[0] = 
-      min < this->OriginalRange[0] ? this->OriginalRange[0] : min;
+      min < limitRange[0] ? limitRange[0] : min;
     this->CurrentRange[1] =
-      max > this->OriginalRange[1] ? this->OriginalRange[1] : max;
+      max > limitRange[1] ? limitRange[1] : max;
     this->MinMarker->SetPosition(this->CurrentRange[0]);
     this->MaxMarker->SetPosition(this->CurrentRange[1]);
   }
@@ -440,10 +454,6 @@ double* vtkDiscretizableColorTransferChart::GetCurrentRange()
 void vtkDiscretizableColorTransferChart::CenterRange(double center)
 {
   double width = this->CurrentRange[1] - this->CurrentRange[0];
-  double minCenter = this->OriginalRange[0] + width / 2.0;
-  double maxCenter = this->OriginalRange[1] - width / 2.0;
-
-  center = vtkMath::ClampValue(center, minCenter, maxCenter);
   double newMin = center - width / 2;
   double newMax = newMin + width;
 

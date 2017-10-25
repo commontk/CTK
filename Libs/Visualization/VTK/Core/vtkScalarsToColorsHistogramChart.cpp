@@ -32,17 +32,22 @@ vtkStandardNewMacro(vtkScalarsToColorsHistogramChart)
 // ----------------------------------------------------------------------------
 vtkScalarsToColorsHistogramChart::vtkScalarsToColorsHistogramChart()
 {
-  this->ForceAxesToBoundsOn();
-  this->SetLayoutStrategy(vtkChart::FILL_SCENE);
+  this->SetAutoAxes(false);
+  this->SetRenderEmpty(true);
+  this->SetLayoutStrategy(vtkChart::FILL_RECT);
+  this->ZoomWithMouseWheelOff();
 
   for (int i = 0; i < 4; ++i)
   {
     this->GetAxis(i)->SetVisible(true);
     this->GetAxis(i)->SetNumberOfTicks(0);
     this->GetAxis(i)->SetLabelsVisible(false);
-    this->GetAxis(i)->SetMargins(0, 0);
     this->GetAxis(i)->SetTitle("");
   }
+  this->GetAxis(vtkAxis::LEFT)->SetMargins(20, 0);
+  this->GetAxis(vtkAxis::RIGHT)->SetMargins(20, 0);
+
+  this->GetAxis(vtkAxis::BOTTOM)->SetBehavior(vtkAxis::FIXED);
 
   this->SetBarWidthFraction(1.0);
 

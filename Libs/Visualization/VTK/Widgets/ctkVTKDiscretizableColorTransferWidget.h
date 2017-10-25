@@ -28,7 +28,7 @@ class ctkVTKScalarsToColorsComboBox;
 
 // VTK includes
 #include <vtkSmartPointer.h>
-class QVTKWidget;
+class vtkDiscretizableColorTransferFunction;
 class vtkImageAccumulate;
 class vtkPiecewiseFunction;
 class vtkScalarsToColors;
@@ -53,6 +53,7 @@ public:
 
   void setColorTransferFunction(vtkScalarsToColors* ctf);
   vtkScalarsToColors* colorTransferFunction() const;
+  vtkDiscretizableColorTransferFunction* discretizableColorTransferFunction() const;
 
   void setHistogram(vtkImageAccumulate* hist);
 

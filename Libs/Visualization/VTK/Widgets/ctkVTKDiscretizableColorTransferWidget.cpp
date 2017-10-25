@@ -57,12 +57,12 @@
 #include <vtkDiscretizableColorTransferFunction.h>
 #include <vtkDoubleArray.h>
 #include <vtkEventQtSlotConnect.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkIntArray.h>
 #include <vtkImageAccumulate.h>
 #include <vtkImageData.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
 #include <vtkScalarsToColors.h>
 #include <vtkTable.h>
 
@@ -153,12 +153,18 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
     vtkSmartPointer<vtkScalarsToColorsContextItem>::New();
   this->scalarsToColorsContextView = vtkSmartPointer<vtkContextView> ::New();
 
-  this->scalarsToColorsContextView->GetScene()->AddItem(
-    this->scalarsToColorsContextItem.Get());
+#if CTK_USE_QVTKOPENGLWIDGET
+  vtkSmartPointer<vtkGenericOpenGLRenderWindow> renwin =
+    vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+  this->ScalarsToColorsView->SetRenderWindow(renwin);
+#endif
+
+  this->scalarsToColorsContextView->SetRenderWindow(
+    this->ScalarsToColorsView->GetRenderWindow());
   this->scalarsToColorsContextView->SetInteractor(
     this->ScalarsToColorsView->GetInteractor());
-  this->ScalarsToColorsView->SetRenderWindow(
-    this->scalarsToColorsContextView->GetRenderWindow());
+  this->scalarsToColorsContextView->GetScene()->AddItem(
+    this->scalarsToColorsContextItem.Get());
 
   q->setViewBackgroundColor(QColor(49, 54, 59));
 
@@ -353,13 +359,14 @@ void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunction(
   d->centerRangeButton->setEnabled(true);
   d->invertColorTransferFunctionButton->setEnabled(true);
 
-  double* newRange = d->scalarsToColorsContextItem->
-    GetDiscretizableColorTransferFunction()->GetRange();
-
-  d->rangeSlider->setRange(newRange[0], newRange[1]);
-
   d->previousOpacityValue = 1.0;
   d->opacitySlider->setValue(d->previousOpacityValue);
+
+  double* crng = d->scalarsToColorsContextItem->
+    GetDiscretizableColorTransferFunction()->GetRange();
+  double* limitRange = d->scalarsToColorsContextItem->GetLimitRange();
+  d->rangeSlider->setRange(limitRange[0], limitRange[1]);
+  d->rangeSlider->setValues(crng[0], crng[1]);
 
   ctf->AddObserver(
     vtkCommand::ModifiedEvent, d->colorTransferFunctionModified);
@@ -373,6 +380,15 @@ ctkVTKDiscretizableColorTransferWidget::colorTransferFunction() const
 {
   Q_D(const ctkVTKDiscretizableColorTransferWidget);
   return d->scalarsToColorsContextItem->GetColorTransferFunction();
+}
+
+// ----------------------------------------------------------------------------
+vtkDiscretizableColorTransferFunction*
+ctkVTKDiscretizableColorTransferWidget::discretizableColorTransferFunction()
+const
+{
+  Q_D(const ctkVTKDiscretizableColorTransferWidget);
+  return d->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction();
 }
 
 // ----------------------------------------------------------------------------
@@ -416,7 +432,13 @@ void ctkVTKDiscretizableColorTransferWidget::setHistogram(
 
   d->scalarsToColorsContextItem->SetDataRange(d->dataRange[0], d->dataRange[1]);
 
-  d->ScalarsToColorsView->GetInteractor()->Render();
+  if (this->discretizableColorTransferFunction() == nullptr)
+  {
+    return;
+  }
+
+  double* limitRange = d->scalarsToColorsContextItem->GetLimitRange();
+  d->rangeSlider->setRange(limitRange[0], limitRange[1]);
 }
 
 // ----------------------------------------------------------------------------
