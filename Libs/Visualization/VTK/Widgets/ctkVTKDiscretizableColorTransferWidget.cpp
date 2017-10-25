@@ -260,6 +260,9 @@ void
 ctkVTKDiscretizableColorTransferWidgetPrivate::colorTransferFunctionModifiedCallback(
   vtkObject *caller, unsigned long eid, void *clientdata, void *calldata)
 {
+  Q_UNUSED(caller);
+  Q_UNUSED(eid);
+  Q_UNUSED(calldata);
   ctkVTKDiscretizableColorTransferWidgetPrivate* self =
     reinterpret_cast<ctkVTKDiscretizableColorTransferWidgetPrivate*>(
       clientdata);
@@ -514,7 +517,11 @@ void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunctionRange(
   double minValue, double maxValue)
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
-
+  if (minValue == d->scalarsToColorsContextItem->GetCurrentRange()[0] &&
+      maxValue == d->scalarsToColorsContextItem->GetCurrentRange()[1])
+  {
+    return;
+  }
   d->scalarsToColorsContextItem->SetCurrentRange(minValue, maxValue);
 }
 
@@ -544,8 +551,7 @@ void ctkVTKDiscretizableColorTransferWidget::resetColorTransferFunctionRange()
   Q_D(ctkVTKDiscretizableColorTransferWidget);
   if (d->dataRange[0] <= d->dataRange[1])
   {
-    d->scalarsToColorsContextItem->SetCurrentRange(
-      d->dataRange[0], d->dataRange[1]);
+    setColorTransferFunctionRange(d->dataRange[0], d->dataRange[1]);
   }
 }
 
