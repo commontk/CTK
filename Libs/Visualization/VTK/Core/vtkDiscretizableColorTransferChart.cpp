@@ -454,6 +454,13 @@ double* vtkDiscretizableColorTransferChart::GetCurrentRange()
 void vtkDiscretizableColorTransferChart::CenterRange(double center)
 {
   double width = this->CurrentRange[1] - this->CurrentRange[0];
+  double limitRange[2];
+  limitRange[0] = std::min(this->OriginalRange[0], this->DataRange[0]);
+  limitRange[1] = std::max(this->OriginalRange[1], this->DataRange[1]);
+  double limitWidth = 2.0 * std::min(center - limitRange[0], limitRange[1] - center);
+
+  width = width < limitWidth ? width : limitWidth;
+
   double newMin = center - width / 2;
   double newMax = newMin + width;
 
