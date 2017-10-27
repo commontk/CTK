@@ -625,12 +625,16 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
   //
   if (this->isMinimumSliderDown())
     {
+    painter.setClipRect(ur);
     d->drawMaximumSlider( &painter );
+    painter.setClipRect(lr);
     d->drawMinimumSlider( &painter );
     }
   else
     {
+    painter.setClipRect(lr);
     d->drawMinimumSlider( &painter );
+    painter.setClipRect(ur);
     d->drawMaximumSlider( &painter );
     }
 }
