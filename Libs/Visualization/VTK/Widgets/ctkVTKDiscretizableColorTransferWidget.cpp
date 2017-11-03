@@ -435,7 +435,7 @@ void ctkVTKDiscretizableColorTransferWidget::setHistogram(
 
   d->scalarsToColorsContextItem->SetDataRange(d->dataRange[0], d->dataRange[1]);
 
-  if (this->discretizableColorTransferFunction() == nullptr)
+  if (this->discretizableColorTransferFunction() == CTK_NULLPTR)
   {
     return;
   }

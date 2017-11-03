@@ -234,7 +234,7 @@ double* vtkScalarsToColorsContextItem::GetLimitRange()
 // ----------------------------------------------------------------------------
 void vtkScalarsToColorsContextItem::RecalculateChartsRange()
 {
-  if (this->GetDiscretizableColorTransferFunction() == nullptr)
+  if (this->GetDiscretizableColorTransferFunction() == CTK_NULLPTR)
   {
     return;
   }
