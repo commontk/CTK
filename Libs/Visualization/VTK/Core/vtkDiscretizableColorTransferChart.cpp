@@ -20,7 +20,6 @@
 #include "vtkDiscretizableColorTransferChart.h"
 
 #include "ctkVTKScalarsToColorsUtils.h"
-#include "ctkCompilerDetections_p.h" // For CTK_NULLPTR
 #include "vtkDiscretizableColorTransferControlPointsItem.h"
 
 #include <vtkAxis.h>
