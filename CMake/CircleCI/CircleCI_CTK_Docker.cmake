@@ -89,6 +89,7 @@ ctest_build( BUILD ${CTK_BINARY_DIR} )
 
 ctest_test(
   BUILD ${CTEST_BINARY_DIRECTORY}
+  EXCLUDE "ctkWidgetsUtilsTestGrabWidget" # See https://github.com/commontk/CTK/issues/764
   RETURN_VALUE result
   )
 
