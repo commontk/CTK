@@ -501,12 +501,18 @@ void ctkVTKVolumePropertyWidget::spreadAllPoints(double factor,
                                                  bool dontSpreadFirstAndLast)
 {
   Q_D(ctkVTKVolumePropertyWidget);
-  d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
+  if (d->VolumeProperty)
+    {
+    d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
+    }
   d->ScalarOpacityWidget->view()
     ->spreadAllPoints(factor, dontSpreadFirstAndLast);
   d->ScalarColorWidget->view()
     ->spreadAllPoints(factor, dontSpreadFirstAndLast);
   d->GradientWidget->view()
     ->spreadAllPoints(factor, dontSpreadFirstAndLast);
-  d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
+  if (d->VolumeProperty)
+    {
+    d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
+    }
 }
