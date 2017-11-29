@@ -59,5 +59,4 @@ ExternalProject_Add(${proj}
     ${CTK_DEPENDENCIES}
   )
 
-include(ctkExternalProjectAlwaysConfigure)
 ExternalProject_AlwaysConfigure(${proj})
