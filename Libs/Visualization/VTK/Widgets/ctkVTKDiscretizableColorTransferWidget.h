@@ -28,6 +28,7 @@ class ctkVTKScalarsToColorsComboBox;
 
 // VTK includes
 #include <vtkSmartPointer.h>
+class vtkAlgorithmOutput;
 class vtkDiscretizableColorTransferFunction;
 class vtkImageAccumulate;
 class vtkPiecewiseFunction;
@@ -51,20 +52,37 @@ public:
   explicit ctkVTKDiscretizableColorTransferWidget(QWidget* parent_ = CTK_NULLPTR);
   virtual ~ctkVTKDiscretizableColorTransferWidget();
 
-  void setColorTransferFunction(vtkScalarsToColors* ctf);
-  vtkScalarsToColors* colorTransferFunction() const;
+  enum ResetVisibleRange
+  {
+    UNION_DATA_AND_CTF,
+    UNION_DATA_AND_VISIBLE,
+    ONLY_DATA,
+    ONLY_CTF
+  };
+
+  enum ResetCTFRange
+  {
+    CTF,
+    DATA,
+    VISIBLE
+  };
+
+  void copyColorTransferFunction(vtkScalarsToColors* ctf, bool useCtfRange = false);
   vtkDiscretizableColorTransferFunction* discretizableColorTransferFunction() const;
 
-  void setHistogram(vtkImageAccumulate* hist);
+  void setHistogramInputConnection(vtkAlgorithmOutput* input, bool useInputDataRange = true);
 
   void setViewBackgroundColor(const QColor& i_color);
   QColor viewBackgroundColor() const;
 
   ctkVTKScalarsToColorsComboBox* scalarsToColorsSelector() const;
 
+  void resetVisibleRange(ResetVisibleRange resetMode);
+  void resetColorTransferFunctionRange(ResetCTFRange resetMode);
+
 signals:
   void currentScalarsToColorsModified();
-  void currentScalarsToColorsChanged(vtkScalarsToColors* ctf);
+  void currentScalarsToColorsChanged(vtkDiscretizableColorTransferFunction* ctf);
 
 public slots:
   void onCurrentPointEdit();
@@ -72,6 +90,8 @@ public slots:
 
   void setGlobalOpacity(double opacity);
 
+  void resetVisibleRangeToCTF();
+  void resetVisibleRangeToData();
   void resetColorTransferFunctionRange();
   void centerColorTransferFunctionRange();
   void invertColorTransferFunction();
@@ -79,10 +99,21 @@ public slots:
   void setNaNColor();
   void setDiscretize(bool checked);
   void setNumberOfDiscreteValues(int value);
-  void setColorTransferFunctionRange(double minValue, double maxValue);
+  void setColorTransferFunctionRange(double min, double max);
+  void setVisibleRange(double min, double max);
+  void setDataRange(double min, double max);
 
 protected:
   QScopedPointer<ctkVTKDiscretizableColorTransferWidgetPrivate> d_ptr;
+
+  double* getColorTransferFunctionRange();
+  double* getVisibleRange();
+  double* getDataRange();
+  void updateCtfWidgets();
+  void disableCtfWidgets();
+  void enableCtfWidgets();
+  void initializeHistogramAndDataRange(vtkAlgorithmOutput* input);
+  void updateHistogram();
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKDiscretizableColorTransferWidget);

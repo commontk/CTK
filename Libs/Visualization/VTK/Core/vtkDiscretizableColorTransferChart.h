@@ -54,13 +54,16 @@ public:
 
   ///Set/Get the data range
   void SetDataRange(double min, double max);
-  double* GetDataRange();
 
   /// Set/Get the current range
   ///
   /// Set will clamp values into the current dataRange
   void SetCurrentRange(double min, double max);
   double* GetCurrentRange();
+  void RemapColorTransferFunction();
+
+  ///Set/Get the original range
+  void SetOriginalRange(double min, double max);
 
   /// Center the current position to the given point
   void CenterRange(double center);

@@ -46,15 +46,11 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkScalarsToColorsContextItem
 public:
   static vtkScalarsToColorsContextItem* New();
 
-  /// Set/Get the color transfer function as a vtkScalarsToColors
-  void SetColorTransferFunction(vtkScalarsToColors* ctf);
-  vtkScalarsToColors* GetColorTransferFunction();
-
-  /// Set/Get the color transfer function as a
-  /// vtkDiscretizableColorTransferFunction
-  void SetDiscretizableColorTransferFunction(
-    vtkDiscretizableColorTransferFunction* dctf);
+  /// Copy the color transfer function as a vtkDiscretizableColorTransferFunction
+  void CopyColorTransferFunction(vtkScalarsToColors* ctf);
   vtkDiscretizableColorTransferFunction* GetDiscretizableColorTransferFunction();
+  void ResetColorTransferFunction();
+  void BuildColorTransferFunction();
 
   /// Set the table used by the histogram chart
   void SetHistogramTable(vtkTable* table,
@@ -75,11 +71,12 @@ public:
   void SetCurrentRange(double min, double max);
   double* GetCurrentRange();
 
+  /// Get/Set the range displayed in the widget
+  void SetVisibleRange(double min, double max);
+  double* GetVisibleRange();
+
   /// Center the color tranfer function around \center
   void CenterRange(double center);
-
-  /// Return the range including both the transfer function and data extents
-  double* GetLimitRange();
 
   /// Update charts range to match data and color transfer function ranges
   void RecalculateChartsRange();
@@ -96,6 +93,7 @@ public:
   bool IsProcessingColorTransferFunction() const;
 
 protected:
+
   vtkSmartPointer<vtkDiscretizableColorTransferChart> EditorChart;
   vtkSmartPointer<vtkScalarsToColorsPreviewChart> PreviewChart;
   vtkSmartPointer<vtkScalarsToColorsHistogramChart> HistogramChart;
@@ -109,8 +107,8 @@ private:
   /// Cached geometry of the scene
   vtkVector2i LastSceneSize;
 
-  /// Widest possible range for charts
-  double LimitRange[2];
+  double DataRange[2];
+  double VisibleRange[2];
 
   /// Internal event forwarder
   class EventForwarder;
