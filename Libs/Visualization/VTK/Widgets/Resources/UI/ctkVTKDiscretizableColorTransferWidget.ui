@@ -14,16 +14,7 @@
    <string>Color Transfer Function</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item row="9" column="1">
@@ -33,42 +24,13 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="3">
-    <widget class="QToolButton" name="optionButton">
-     <property name="contextMenuPolicy">
-      <enum>Qt::DefaultContextMenu</enum>
-     </property>
-     <property name="toolTip">
-      <string>Other options</string>
-     </property>
-    </widget>
-   </item>
    <item row="10" column="1" colspan="3">
-    <widget class="ctkRangeWidget" name="rangeSlider"/>
+    <widget class="ctkRangeWidget" name="rangeSlider" native="true"/>
    </item>
-   <item row="7" column="3">
-    <widget class="QToolButton" name="invertColorTransferFunctionButton">
-     <property name="toolTip">
-      <string>Invert color map</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../ctkVTKWidgets.qrc">
-       <normaloff>:/Icons/invert.png</normaloff>:/Icons/invert.png</iconset>
-     </property>
-     <property name="popupMode">
-      <enum>QToolButton::DelayedPopup</enum>
-     </property>
-    </widget>
-   </item>
-   <!--
-   <item row="3" column="2" rowspan="7">
-    <widget class="QVTKWidget" name="scalarsToColorsView" native="true"/>
-   </item>
-   -->
-   <item row="3" column="3">
+   <item row="1" column="3">
     <widget class="QToolButton" name="resetRangeButton">
      <property name="toolTip">
-      <string>Reset to data range</string>
+      <string>Reset current range to visible range</string>
      </property>
      <property name="icon">
       <iconset resource="../ctkVTKWidgets.qrc">
@@ -76,36 +38,18 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1" rowspan="5">
-    <widget class="ctkDoubleSlider" name="opacitySlider">
-     <property name="value">
-      <double>1.000000000000000</double>
+   <item row="2" column="3">
+    <widget class="QToolButton" name="centerRangeButton">
+     <property name="toolTip">
+      <string>Center current range on median</string>
      </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="pageStep">
-      <double>0.200000000000000</double>
-     </property>
-     <property name="minimum">
-      <double>0.000001000000000</double>
-     </property>
-     <property name="maximum">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+     <property name="icon">
+      <iconset resource="../ctkVTKWidgets.qrc">
+       <normaloff>:/Icons/resetRangeCustom.png</normaloff>:/Icons/resetRangeCustom.png</iconset>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="maxOpacityLabel">
-     <property name="text">
-      <string>1</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="3">
+   <item row="3" column="3">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -118,14 +62,25 @@
      </property>
     </spacer>
    </item>
-   <item row="5" column="3">
-    <widget class="QToolButton" name="centerRangeButton">
+   <item row="4" column="3">
+    <widget class="QToolButton" name="zoomInButton">
      <property name="toolTip">
-      <string>Center current range on median</string>
+      <string>Zoom in</string>
      </property>
      <property name="icon">
       <iconset resource="../ctkVTKWidgets.qrc">
-       <normaloff>:/Icons/resetRangeCustom.png</normaloff>:/Icons/resetRangeCustom.png</iconset>
+       <normaloff>:/Icons/plus.png</normaloff>:/Icons/plus.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="3">
+    <widget class="QToolButton" name="zoomOutButton">
+     <property name="toolTip">
+      <string>Zoom out</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../ctkVTKWidgets.qrc">
+       <normaloff>:/Icons/minus.png</normaloff>:/Icons/minus.png</iconset>
      </property>
     </widget>
    </item>
@@ -142,6 +97,20 @@
      </property>
     </spacer>
    </item>
+   <item row="7" column="3">
+    <widget class="QToolButton" name="invertColorTransferFunctionButton">
+     <property name="toolTip">
+      <string>Invert color map</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../ctkVTKWidgets.qrc">
+       <normaloff>:/Icons/invert.png</normaloff>:/Icons/invert.png</iconset>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::DelayedPopup</enum>
+     </property>
+    </widget>
+   </item>
    <item row="8" column="3">
     <spacer name="verticalSpacer_3">
      <property name="orientation">
@@ -155,8 +124,44 @@
      </property>
     </spacer>
    </item>
-   <item row="2" column="1" colspan="3">
+   <item row="9" column="3">
+    <widget class="QToolButton" name="optionButton">
+     <property name="contextMenuPolicy">
+      <enum>Qt::DefaultContextMenu</enum>
+     </property>
+     <property name="toolTip">
+      <string>Other options</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
     <widget class="ctkVTKScalarsToColorsComboBox" name="scalarsToColorsSelector"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="maxOpacityLabel">
+     <property name="text">
+      <string>1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" rowspan="6">
+    <widget class="ctkDoubleSlider" name="opacitySlider" native="true">
+     <property name="value" stdset="0">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="singleStep" stdset="0">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep" stdset="0">
+      <double>0.200000000000000</double>
+     </property>
+     <property name="minimum" stdset="0">
+      <double>0.000001000000000</double>
+     </property>
+     <property name="maximum" stdset="0">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -176,14 +181,6 @@
    <extends>QComboBox</extends>
    <header>ctkVTKScalarsToColorsComboBox.h</header>
   </customwidget>
-  <!--
-  <customwidget>
-   <class>QVTKWidget</class>
-   <extends>QWidget</extends>
-   <header>QVTKWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  -->
  </customwidgets>
  <resources>
   <include location="../ctkVTKWidgets.qrc"/>

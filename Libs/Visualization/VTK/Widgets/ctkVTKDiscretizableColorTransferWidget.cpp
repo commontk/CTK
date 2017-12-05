@@ -66,6 +66,7 @@
 #include <vtkScalarsToColors.h>
 #include <vtkTable.h>
 
+//#define DEBUG_RANGE
 
 
 // ----------------------------------------------------------------------------
@@ -91,6 +92,7 @@ public:
   vtkSmartPointer<vtkScalarsToColorsContextItem> scalarsToColorsContextItem;
   vtkSmartPointer<vtkContextView> scalarsToColorsContextView;
   vtkSmartPointer<vtkEventQtSlotConnect> eventLink;
+  vtkSmartPointer<vtkImageAccumulate> histogramFilter;
 
   ///Option part
   ctkColorPickerButton* nanButton;
@@ -147,10 +149,12 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 #else
   this->ScalarsToColorsView = new QVTKWidget;
 #endif
-  this->gridLayout->addWidget(this->ScalarsToColorsView, 3, 2, 7, 1);
+  this->gridLayout->addWidget(this->ScalarsToColorsView, 2, 2, 8, 1);
 
-  this->scalarsToColorsContextItem =
-    vtkSmartPointer<vtkScalarsToColorsContextItem>::New();
+  this->scalarsToColorsContextItem = vtkSmartPointer<vtkScalarsToColorsContextItem>::New();
+  vtkDiscretizableColorTransferFunction* ctf = this->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction();
+  ctf->AddObserver(vtkCommand::ModifiedEvent, this->colorTransferFunctionModified);
+
   this->scalarsToColorsContextView = vtkSmartPointer<vtkContextView> ::New();
 
 #if CTK_USE_QVTKOPENGLWIDGET
@@ -187,6 +191,12 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 
   QObject::connect(opacitySlider, SIGNAL(valueChanged(double)),
     q, SLOT(setGlobalOpacity(double)));
+
+  QObject::connect(zoomOutButton, SIGNAL(clicked()),
+    q, SLOT(resetVisibleRangeToData()));
+
+  QObject::connect(zoomInButton, SIGNAL(clicked()),
+    q, SLOT(resetVisibleRangeToCTF()));
 
   QObject::connect(resetRangeButton, SIGNAL(clicked()),
     q, SLOT(resetColorTransferFunctionRange()));
@@ -320,69 +330,51 @@ ctkVTKDiscretizableColorTransferWidget::~ctkVTKDiscretizableColorTransferWidget(
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunction(
-  vtkScalarsToColors* ctf)
+void ctkVTKDiscretizableColorTransferWidget::copyColorTransferFunction(
+  vtkScalarsToColors* ctf, bool useCtfRange)
 {
+#ifdef DEBUG_RANGE
+  if (ctf)
+  {
+    std::cout << "DEBUG_RANGE ctf input range = " << ctf->GetRange()[0]
+              << " " << ctf->GetRange()[1] << std::endl;
+  }
+#endif
+
   Q_D(ctkVTKDiscretizableColorTransferWidget);
 
-  vtkScalarsToColors* oldCtf =
-    d->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction();
-  if (oldCtf != CTK_NULLPTR)
+  if (useCtfRange)
   {
-    oldCtf->RemoveObserver(d->colorTransferFunctionModified);
+    // set cft, current range and visible range
+    d->scalarsToColorsContextItem->CopyColorTransferFunction(ctf);
+    emit(currentScalarsToColorsChanged(d->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction()));
+  }
+  else
+  {
+    // save old ranges
+    double ctfRange[2];
+    ctfRange[0] = this->getColorTransferFunctionRange()[0];
+    ctfRange[1] = this->getColorTransferFunctionRange()[1];
+    double visibleRange[2];
+    visibleRange[0] = this->getVisibleRange()[0];
+    visibleRange[1] = this->getVisibleRange()[1];
+
+    // set cft, current range and visible range
+    d->scalarsToColorsContextItem->CopyColorTransferFunction(ctf);
+    emit(currentScalarsToColorsChanged(d->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction()));
+
+    // set old ranges back
+    if (visibleRange[0] <= visibleRange[0])
+    {
+      this->setVisibleRange(visibleRange[0], visibleRange[1]);
+      this->setColorTransferFunctionRange(ctfRange[0], ctfRange[1]);
+    }
   }
 
-  ///Setting the transfer function to the scalarsToColorsContextItem convert
-  /// it to a vtkDiscretizableTransferFunction
-  d->scalarsToColorsContextItem->SetColorTransferFunction(ctf);
+  // todo should be replaced by callback when visible range changes
+  this->updateCtfWidgets();
 
-  ctf = d->scalarsToColorsContextItem->GetColorTransferFunction();
-  emit(currentScalarsToColorsChanged(ctf));
-
-  if (ctf == CTK_NULLPTR)
-  {
-    d->rangeSlider->setRange(0., 255.);
-    d->rangeSlider->setValues(0., 1.);
-    d->rangeSlider->setEnabled(false);
-    d->previousOpacityValue = 0.0;
-    d->opacitySlider->setValue(d->previousOpacityValue);
-    d->opacitySlider->setEnabled(false);
-    d->optionButton->setEnabled(false);
-    d->resetRangeButton->setEnabled(false);
-    d->centerRangeButton->setEnabled(false);
-    d->invertColorTransferFunctionButton->setEnabled(false);
-    return;
-  }
-
-  // Set sliders values depending on the new color transfer function
-  d->rangeSlider->setEnabled(true);
-  d->opacitySlider->setEnabled(true);
-  d->optionButton->setEnabled(true);
-  d->resetRangeButton->setEnabled(true);
-  d->centerRangeButton->setEnabled(true);
-  d->invertColorTransferFunctionButton->setEnabled(true);
-
-  d->previousOpacityValue = 1.0;
-  d->opacitySlider->setValue(d->previousOpacityValue);
-
-  double* crng = d->scalarsToColorsContextItem->
-    GetDiscretizableColorTransferFunction()->GetRange();
-  double* limitRange = d->scalarsToColorsContextItem->GetLimitRange();
-  d->rangeSlider->setRange(limitRange[0], limitRange[1]);
-  d->rangeSlider->setValues(crng[0], crng[1]);
-
-  ctf->AddObserver(
-    vtkCommand::ModifiedEvent, d->colorTransferFunctionModified);
-  d->colorTransferFunctionModified->Execute(ctf, vtkCommand::ModifiedEvent,
-    this);
-}
-
-// ----------------------------------------------------------------------------
-vtkScalarsToColors*
-ctkVTKDiscretizableColorTransferWidget::colorTransferFunction() const
-{
-  Q_D(const ctkVTKDiscretizableColorTransferWidget);
-  return d->scalarsToColorsContextItem->GetColorTransferFunction();
+  d->colorTransferFunctionModified->Execute(ctf, vtkCommand::ModifiedEvent, this);
 }
 
 // ----------------------------------------------------------------------------
@@ -395,53 +387,288 @@ const
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKDiscretizableColorTransferWidget::setHistogram(
-  vtkImageAccumulate* histogram)
+void ctkVTKDiscretizableColorTransferWidget::setHistogramInputConnection(
+  vtkAlgorithmOutput* input, bool useInputDataRange)
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
-  histogram->Update();
-  d->dataRange[0] = histogram->GetMin()[0];
-  d->dataRange[1] = histogram->GetMax()[0];
-  d->dataMean = histogram->GetMean()[0];
 
-  int* output = static_cast<int*>(histogram->GetOutput()->GetScalarPointer());
-  double spacing = histogram->GetComponentSpacing()[0];
-  double bin = histogram->GetComponentOrigin()[0];
+  this->initializeHistogramAndDataRange(input);
+  if (useInputDataRange)
+  {
+    // update visible range, which updates histogram
+    this->resetVisibleRange(ResetVisibleRange::UNION_DATA_AND_CTF);
+  }
+  else
+  {
+    this->updateHistogram();
+  }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::resetColorTransferFunctionRange(
+    ResetCTFRange resetMode)
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  double newRange[2];
+  switch (resetMode)
+  {
+    case DATA:
+    {
+      double* dataRange = this->getDataRange();
+      newRange[0] = dataRange[0];
+      newRange[1] = dataRange[1];
+      break;
+    }
+    case VISIBLE:
+    {
+      double* visibleRange = this->getVisibleRange();
+      newRange[0] = visibleRange[0];
+      newRange[1] = visibleRange[1];
+      break;
+    }
+    default:
+      return;
+  }
+
+  this->setColorTransferFunctionRange(newRange[0], newRange[1]);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::resetVisibleRange(
+    ResetVisibleRange resetMode)
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  double newRange[2];
+  switch (resetMode)
+  {
+    case UNION_DATA_AND_CTF:
+    {
+      double* ctfRange = this->getColorTransferFunctionRange();
+      double* dataRange = this->getDataRange();
+      newRange[0] = std::min(dataRange[0], ctfRange[0]);
+      newRange[1] = std::max(dataRange[1], ctfRange[1]);
+      break;
+    }
+    case UNION_DATA_AND_VISIBLE:
+    {
+      double* visibleRange = this->getVisibleRange();
+      double* dataRange = this->getDataRange();
+      newRange[0] = std::min(dataRange[0], visibleRange[0]);
+      newRange[1] = std::max(dataRange[1], visibleRange[1]);
+      break;
+    }
+    case ONLY_DATA:
+    {
+      double* dataRange = this->getDataRange();
+      newRange[0] = dataRange[0];
+      newRange[1] = dataRange[1];
+      break;
+    }
+    case ONLY_CTF:
+    {
+      double* ctfRange = this->getColorTransferFunctionRange();
+      newRange[0] = ctfRange[0];
+      newRange[1] = ctfRange[1];
+      break;
+    }
+    default:
+      return;
+  }
+
+  this->setVisibleRange(newRange[0], newRange[1]);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::updateCtfWidgets()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  if (this->discretizableColorTransferFunction() == CTK_NULLPTR)
+  {
+    this->disableCtfWidgets();
+  }
+  else
+  {
+    this->enableCtfWidgets();
+  }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::disableCtfWidgets()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  d->rangeSlider->setRange(0., 255.);
+  d->rangeSlider->setValues(0., 1.);
+  d->rangeSlider->setEnabled(false);
+  d->previousOpacityValue = 0.0;
+  d->opacitySlider->setValue(d->previousOpacityValue);
+  d->opacitySlider->setEnabled(false);
+  d->optionButton->setEnabled(false);
+  d->resetRangeButton->setEnabled(false);
+  d->zoomInButton->setEnabled(false);
+  d->zoomOutButton->setEnabled(false);
+  d->centerRangeButton->setEnabled(false);
+  d->invertColorTransferFunctionButton->setEnabled(false);
+
+#ifdef DEBUG_RANGE
+  std::cout << "DEBUG_RANGE slider range = " << 0
+            << " " << 255 << std::endl;
+  std::cout << "DEBUG_RANGE slider value = " << 0
+            << " " << 1 << std::endl;
+#endif
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::enableCtfWidgets()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  d->rangeSlider->setEnabled(true);
+  d->opacitySlider->setEnabled(true);
+  d->optionButton->setEnabled(true);
+  d->resetRangeButton->setEnabled(true);
+  d->zoomInButton->setEnabled(true);
+  d->zoomOutButton->setEnabled(true);
+  d->centerRangeButton->setEnabled(true);
+  d->invertColorTransferFunctionButton->setEnabled(true);
+
+  d->previousOpacityValue = 1.0;
+  d->opacitySlider->setValue(d->previousOpacityValue);
+
+  double* visibleRange = this->getVisibleRange();
+  double* ctfRange = this->getColorTransferFunctionRange();
+  d->rangeSlider->setRange(visibleRange[0], visibleRange[1]);
+  d->rangeSlider->setValues(ctfRange[0], ctfRange[1]);
+
+#ifdef DEBUG_RANGE
+  std::cout << "DEBUG_RANGE slider range = " << visibleRange[0]
+            << " " << visibleRange[1] << std::endl;
+  std::cout << "DEBUG_RANGE slider value = " << ctfRange[0]
+            << " " << ctfRange[1] << std::endl;
+#endif
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::initializeHistogramAndDataRange(
+    vtkAlgorithmOutput* input)
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  if (!input)
+  {
+    d->histogramFilter = nullptr;
+    d->dataMean = 0.;
+    this->setDataRange(VTK_DOUBLE_MAX, VTK_DOUBLE_MIN);
+    return;
+  }
+
+  d->histogramFilter = vtkSmartPointer<vtkImageAccumulate>::New();
+  d->histogramFilter->SetInputConnection(input);
+
+  // use histogram filter to compute min max values
+  d->histogramFilter->Update();
+  d->dataMean = d->histogramFilter->GetMean()[0];
+  this->setDataRange(d->histogramFilter->GetMin()[0], d->histogramFilter->GetMax()[0]);
+
+#ifdef DEBUG_RANGE
+  std::cout << "DEBUG_RANGE histo real range = " << *d->histogramFilter->GetMin()
+            << " " << *d->histogramFilter->GetMax() << std::endl;
+  vtkImageData* histogram = d->histogramFilter->GetOutput();
+  int dims[3];
+  histogram->GetDimensions(dims);
+  std::cout << "DEBUG_RANGE histo = ";
+  for(vtkIdType i = 0; i < dims[0]; ++i)
+  {
+      std::cout << *(static_cast<int*>(histogram->GetScalarPointer(i, 0, 0))) << " ";
+  }
+  std::cout << std::endl;
+#endif
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::updateHistogram()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  // convert histogram data into table
+
+  std::string binsName = "image_extents";
+  std::string frequenciesName = "Frequency";
 
   vtkSmartPointer<vtkDoubleArray> bins =
     vtkSmartPointer<vtkDoubleArray>::New();
   bins->SetNumberOfComponents(1);
-  bins->SetNumberOfTuples(255);
-  bins->SetName("image_extents");
+  bins->SetName(binsName.c_str());
+
   vtkSmartPointer<vtkIntArray> frequencies =
     vtkSmartPointer<vtkIntArray>::New();
   frequencies->SetNumberOfComponents(1);
-  frequencies->SetNumberOfTuples(255);
-  frequencies->SetName("Frequency");
-
-  for (unsigned int j = 0; j < 255; ++j)
-  {
-    bins->SetTuple1(j, bin);
-    bin += spacing;
-    frequencies->SetTuple1(j, *output++);
-  }
+  frequencies->SetName(frequenciesName.c_str());
 
   vtkNew<vtkTable> table;
   table->AddColumn(bins);
   table->AddColumn(frequencies);
 
-  d->scalarsToColorsContextItem->SetHistogramTable(table.Get(),
-    "image_extents", "Frequency");
+  // fill bins and frequencies
 
-  d->scalarsToColorsContextItem->SetDataRange(d->dataRange[0], d->dataRange[1]);
-
-  if (this->discretizableColorTransferFunction() == CTK_NULLPTR)
+  if (d->histogramFilter == nullptr)
   {
-    return;
+    bins->SetNumberOfTuples(1);
+    bins->SetTuple1(0, 0);
+
+    frequencies->SetNumberOfTuples(1);
+    frequencies->SetTuple1(0, 0);
+  }
+  else
+  {
+
+    double* visibleRange = d->scalarsToColorsContextItem->GetVisibleRange();
+
+    int extent = d->histogramFilter->GetComponentExtent()[1];
+    double origin = visibleRange[0] - std::numeric_limits<double>::epsilon();
+    double spacing = (visibleRange[1] - visibleRange[0] + 2 * std::numeric_limits<double>::epsilon())
+        / static_cast<double>(extent + 1);
+
+    // recompute histogram in data range
+    d->histogramFilter->SetComponentOrigin(origin, 0, 0);
+    d->histogramFilter->SetComponentSpacing(spacing, 0, 0);
+    d->histogramFilter->Update();
+
+    vtkImageData* histogram = d->histogramFilter->GetOutput();
+    int* output = static_cast<int*>(histogram->GetScalarPointer());
+
+#ifdef DEBUG_RANGE
+    std::cout << "DEBUG_RANGE histo input range = " << origin
+              << " " << origin + extent + 1 * spacing << std::endl;
+    std::cout << "DEBUG_RANGE histo real range = " << *d->histogramFilter->GetMin()
+              << " " << *d->histogramFilter->GetMax() << std::endl;
+    int dims[3];
+    histogram->GetDimensions(dims);
+    std::cout << "DEBUG_RANGE histo = ";
+    for(vtkIdType i = 0; i < dims[0]; ++i)
+    {
+        std::cout << *(static_cast<int*>(histogram->GetScalarPointer(i, 0, 0))) << " ";
+    }
+    std::cout << std::endl;
+#endif
+
+    bins->SetNumberOfTuples(extent + 1);
+    frequencies->SetNumberOfTuples(extent + 1);
+
+    double bin = origin;
+    for (int j = 0; j < extent + 1; ++j)
+    {
+      bins->SetTuple1(j, bin);
+      bin += spacing;
+      frequencies->SetTuple1(j, *output++);
+    }
   }
 
-  double* limitRange = d->scalarsToColorsContextItem->GetLimitRange();
-  d->rangeSlider->setRange(limitRange[0], limitRange[1]);
+  d->scalarsToColorsContextItem->SetHistogramTable(table.Get(),
+    binsName.c_str(), frequenciesName.c_str());
 }
 
 // ----------------------------------------------------------------------------
@@ -450,28 +677,8 @@ void ctkVTKDiscretizableColorTransferWidget::onPaletteIndexChanged(
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
 
-  if (ctf == CTK_NULLPTR)
-  {
-    this->setColorTransferFunction(ctf);
-    return;
-  }
-
-  if (ctf->IsA("vtkDiscretizableColorTransferFunction"))
-  {
-    vtkNew<vtkDiscretizableColorTransferFunction> newCtf;
-    vtkNew<vtkPiecewiseFunction> newPf;
-    newCtf->DeepCopy(vtkDiscretizableColorTransferFunction::SafeDownCast(ctf));
-    newPf->DeepCopy(vtkDiscretizableColorTransferFunction::SafeDownCast(ctf)->GetScalarOpacityFunction());
-    newCtf->SetScalarOpacityFunction(newPf.Get());
-    newCtf->EnableOpacityMappingOn();
-    this->setColorTransferFunction(newCtf.Get());
-  }
-  else if (ctf->IsA("vtkColorTransferFunction"))
-  {
-    vtkNew<vtkColorTransferFunction> newCtf;
-    newCtf->DeepCopy(vtkColorTransferFunction::SafeDownCast(ctf));
-    this->setColorTransferFunction(newCtf.Get());
-  }
+  this->copyColorTransferFunction(ctf);
+  d->ScalarsToColorsView->GetInteractor()->Render();
 }
 
 // ----------------------------------------------------------------------------
@@ -513,16 +720,83 @@ void ctkVTKDiscretizableColorTransferWidget::setNumberOfDiscreteValues(
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunctionRange(
-  double minValue, double maxValue)
+double* ctkVTKDiscretizableColorTransferWidget::getColorTransferFunctionRange()
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
-  if (minValue == d->scalarsToColorsContextItem->GetCurrentRange()[0] &&
-      maxValue == d->scalarsToColorsContextItem->GetCurrentRange()[1])
+  return d->scalarsToColorsContextItem->GetCurrentRange();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunctionRange(
+  double min, double max)
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  if (min == this->getColorTransferFunctionRange()[0]
+   && max == this->getColorTransferFunctionRange()[1])
   {
     return;
   }
-  d->scalarsToColorsContextItem->SetCurrentRange(minValue, maxValue);
+
+  if (max < min)
+  {
+    return;
+  }
+
+  d->scalarsToColorsContextItem->SetCurrentRange(min, max);
+}
+
+// ----------------------------------------------------------------------------
+double* ctkVTKDiscretizableColorTransferWidget::getVisibleRange()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+  return d->scalarsToColorsContextItem->GetVisibleRange();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::setVisibleRange(
+    double min, double max)
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  if (min == this->getVisibleRange()[0]
+   && max == this->getVisibleRange()[1])
+  {
+    return;
+  }
+
+  if (max < min)
+  {
+    return;
+  }
+
+  d->scalarsToColorsContextItem->SetVisibleRange(min, max);
+
+  // todo should be replaced by callback when visible range changes
+  this->updateHistogram();
+  this->updateCtfWidgets();
+}
+
+// ----------------------------------------------------------------------------
+double* ctkVTKDiscretizableColorTransferWidget::getDataRange()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+  return d->scalarsToColorsContextItem->GetDataRange();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::setDataRange(
+    double min, double max)
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  if (min == this->getDataRange()[0]
+   && max == this->getDataRange()[1])
+  {
+    return;
+  }
+
+  d->scalarsToColorsContextItem->SetDataRange(min, max);
 }
 
 // ----------------------------------------------------------------------------
@@ -546,13 +820,24 @@ void ctkVTKDiscretizableColorTransferWidget::onCurrentPointEdit()
 }
 
 // ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::resetVisibleRangeToData()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+  this->resetVisibleRange(ResetVisibleRange::ONLY_DATA);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::resetVisibleRangeToCTF()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+  this->resetVisibleRange(ResetVisibleRange::ONLY_CTF);
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKDiscretizableColorTransferWidget::resetColorTransferFunctionRange()
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
-  if (d->dataRange[0] <= d->dataRange[1])
-  {
-    setColorTransferFunctionRange(d->dataRange[0], d->dataRange[1]);
-  }
+  this->resetColorTransferFunctionRange(ResetCTFRange::VISIBLE);
 }
 
 // ----------------------------------------------------------------------------
