@@ -501,18 +501,6 @@ bool ctkPythonConsolePrivate::push(const QString& code)
   return ret_value;
 }
 
-////----------------------------------------------------------------------------
-//void ctkPythonConsolePrivate::resetInputBuffer()
-//{
-//  if (this->InteractiveConsole)
-//    {
-//    //this->MakeCurrent();
-//    const char* code = "__ctkConsole.resetbuffer()\n";
-//    PyRun_SimpleString(code);
-//    //this->ReleaseControl();
-//    }
-//}
-
 //----------------------------------------------------------------------------
 void ctkPythonConsolePrivate::printWelcomeMessage()
 {
@@ -592,20 +580,6 @@ void ctkPythonConsole::initialize(ctkAbstractPythonManager* newPythonManager)
   this->setDisabled(false);
 }
 
-////----------------------------------------------------------------------------
-//void ctkPythonConsole::executeScript(const QString& script)
-//{
-//  Q_D(ctkPythonConsole);
-//  Q_UNUSED(script);
-
-//  d->printOutputMessage("\n");
-//  emit this->executing(true);
-////   d->Interpreter->RunSimpleString(
-////     script.toLatin1().data());
-//  emit this->executing(false);
-//  d->promptForInput();
-//}
-
 //----------------------------------------------------------------------------
 QString ctkPythonConsole::ps1() const
 {
@@ -650,4 +624,3 @@ void ctkPythonConsole::reset()
 
   this->Superclass::reset();
 }
-
