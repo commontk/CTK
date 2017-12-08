@@ -70,11 +70,6 @@ vtkScalarsToColorsContextItem::vtkScalarsToColorsContextItem()
 
   this->LastSceneSize = vtkVector2i(0, 0);
 
-  this->DataRange[0] = VTK_DOUBLE_MAX;
-  this->DataRange[1] = VTK_DOUBLE_MIN;
-  this->VisibleRange[0] = VTK_DOUBLE_MAX;
-  this->VisibleRange[1] = VTK_DOUBLE_MIN;
-
   vtkSmartPointer<vtkBrush> b = vtkSmartPointer<vtkBrush>::New();
   b->SetOpacityF(0);
 
@@ -175,6 +170,9 @@ void vtkScalarsToColorsContextItem::BuildColorTransferFunction()
     this->PrivateEventForwarder, &EventForwarder::ForwardEvent);
   controlPoints->AddObserver(vtkControlPointsItem::CurrentPointEditEvent,
     this->PrivateEventForwarder, &EventForwarder::ForwardEvent);
+
+  // todo could be replaced by event when OriginalRange changes
+  this->RecalculateChartsRange();
 }
 
 // ----------------------------------------------------------------------------
@@ -195,21 +193,13 @@ void vtkScalarsToColorsContextItem::SetHistogramTable(vtkTable* table,
 // ----------------------------------------------------------------------------
 void vtkScalarsToColorsContextItem::SetDataRange(double min, double max)
 {
-  if (min == this->DataRange[0]
-   && max == this->DataRange[1])
-  {
-    return;
-  }
-
-  this->DataRange[0] = min;
-  this->DataRange[1] = max;
   this->EditorChart->SetDataRange(min, max);
 }
 
 // ----------------------------------------------------------------------------
 double* vtkScalarsToColorsContextItem::GetDataRange()
 {
-  return this->DataRange;
+  return this->EditorChart->GetDataRange();
 }
 
 // ----------------------------------------------------------------------------
@@ -233,14 +223,12 @@ double* vtkScalarsToColorsContextItem::GetCurrentRange()
 // ----------------------------------------------------------------------------
 void vtkScalarsToColorsContextItem::SetVisibleRange(double min, double max)
 {
-  if (min == this->VisibleRange[0]
-   && max == this->VisibleRange[1])
+  if (min == this->GetVisibleRange()[0]
+   && max == this->GetVisibleRange()[1])
   {
     return;
   }
 
-  this->VisibleRange[0] = min;
-  this->VisibleRange[1] = max;
   this->EditorChart->SetOriginalRange(min, max);
   this->RecalculateChartsRange();
 }
@@ -248,7 +236,7 @@ void vtkScalarsToColorsContextItem::SetVisibleRange(double min, double max)
 // ----------------------------------------------------------------------------
 double* vtkScalarsToColorsContextItem::GetVisibleRange()
 {
-  return this->VisibleRange;
+  return this->EditorChart->GetOriginalRange();
 }
 
 // ----------------------------------------------------------------------------
@@ -261,15 +249,15 @@ void vtkScalarsToColorsContextItem::CenterRange(double center)
 void vtkScalarsToColorsContextItem::RecalculateChartsRange()
 {
   this->EditorChart->GetAxis(vtkAxis::BOTTOM)->SetUnscaledRange(
-    this->VisibleRange);
+    this->GetVisibleRange());
   this->EditorChart->RecalculateBounds();
 
   this->HistogramChart->GetAxis(vtkAxis::BOTTOM)->SetUnscaledRange(
-    this->VisibleRange);
+    this->GetVisibleRange());
   this->HistogramChart->RecalculateBounds();
 
   this->PreviewChart->GetAxis(vtkAxis::BOTTOM)->SetUnscaledRange(
-    this->VisibleRange);
+    this->GetVisibleRange());
   this->PreviewChart->RecalculateBounds();
 }
 
