@@ -70,7 +70,8 @@ public:
   void copyColorTransferFunction(vtkScalarsToColors* ctf, bool useCtfRange = false);
   vtkDiscretizableColorTransferFunction* discretizableColorTransferFunction() const;
 
-  void setHistogramInputConnection(vtkAlgorithmOutput* input, bool useInputDataRange = true);
+  void setHistogramConnection(vtkAlgorithmOutput* input);
+  void updateHistogram(bool updateDataRange);
 
   void setViewBackgroundColor(const QColor& i_color);
   QColor viewBackgroundColor() const;
@@ -112,7 +113,6 @@ protected:
   void updateCtfWidgets();
   void disableCtfWidgets();
   void enableCtfWidgets();
-  void initializeHistogramAndDataRange(vtkAlgorithmOutput* input);
   void updateHistogram();
 
 private:

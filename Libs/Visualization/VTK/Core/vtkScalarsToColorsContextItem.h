@@ -107,9 +107,6 @@ private:
   /// Cached geometry of the scene
   vtkVector2i LastSceneSize;
 
-  double DataRange[2];
-  double VisibleRange[2];
-
   /// Internal event forwarder
   class EventForwarder;
   EventForwarder* PrivateEventForwarder;

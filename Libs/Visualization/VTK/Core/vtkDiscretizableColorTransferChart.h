@@ -54,6 +54,7 @@ public:
 
   ///Set/Get the data range
   void SetDataRange(double min, double max);
+  double* GetDataRange();
 
   /// Set/Get the current range
   ///
@@ -64,6 +65,7 @@ public:
 
   ///Set/Get the original range
   void SetOriginalRange(double min, double max);
+  double* GetOriginalRange();
 
   /// Center the current position to the given point
   void CenterRange(double center);
