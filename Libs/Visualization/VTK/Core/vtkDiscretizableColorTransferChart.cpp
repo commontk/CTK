@@ -33,6 +33,9 @@
 #include <vtkTable.h>
 #include <vtkTransform2D.h>
 
+// Qt includes
+#include <QDebug>
+
 //#define DEBUG_RANGE
 
 // ----------------------------------------------------------------------------
@@ -148,12 +151,12 @@ vtkDiscretizableColorTransferChart::vtkDiscretizableColorTransferChart()
   this->OriginalRange[1] = VTK_DOUBLE_MIN;
 
 #ifdef DEBUG_RANGE
-  std::cout << "DEBUG_RANGE chart data range = " << this->DataRange[0]
-            << " " << this->DataRange[1] << std::endl;
-  std::cout << "DEBUG_RANGE current range = " << this->CurrentRange[0]
-            << " " << this->CurrentRange[1] << std::endl;
-  std::cout << "DEBUG_RANGE original range = " << this->OriginalRange[0]
-            << " " << this->OriginalRange[1] << std::endl;
+  qDebug() << "DEBUG_RANGE data range = " << this->DataRange[0]
+           << " " << this->DataRange[1];
+  qDebug() << "DEBUG_RANGE current range = " << this->CurrentRange[0]
+           << " " << this->CurrentRange[1];
+  qDebug() << "DEBUG_RANGE original range = " << this->OriginalRange[0]
+           << " " << this->OriginalRange[1];
 #endif
 }
 
@@ -178,29 +181,24 @@ void vtkDiscretizableColorTransferChart::SetColorTransferFunction(
   this->ColorTransferFunction = function;
   this->ClearPlots();
 
-  this->OriginalRange[0] = rangeMin;
-  this->OriginalRange[1] = rangeMax;
-
-  this->CurrentRange[0] = rangeMin;
-  this->CurrentRange[1] = rangeMax;
+  this->SetOriginalRange(rangeMin, rangeMax);
+  this->SetCurrentRange(rangeMin, rangeMax);
 
 #ifdef DEBUG_RANGE
-  std::cout << "DEBUG_RANGE original range = " << this->OriginalRange[0]
-            << " " << this->OriginalRange[1] << std::endl;
-  std::cout << "DEBUG_RANGE current range = " << this->CurrentRange[0]
-            << " " << this->CurrentRange[1] << std::endl;
+  qDebug() << "DEBUG_RANGE original range = " << this->OriginalRange[0]
+           << " " << this->OriginalRange[1];
+  qDebug() << "DEBUG_RANGE current range = " << this->CurrentRange[0]
+           << " " << this->CurrentRange[1];
 #endif
 
   if (function == CTK_NULLPTR)
   {
     this->CompositeHiddenItem = CTK_NULLPTR;
     this->ControlPoints = CTK_NULLPTR;
-    this->DataRange[0] = VTK_DOUBLE_MAX;
-    this->DataRange[1] = VTK_DOUBLE_MIN;
 
 #ifdef DEBUG_RANGE
-  std::cout << "DEBUG_RANGE original range = " << this->DataRange[0]
-            << " " << this->DataRange[1] << std::endl;
+  qDebug() << "DEBUG_RANGE data range = " << this->DataRange[0]
+           << " " << this->DataRange[1];
 #endif
 
     return;
@@ -272,8 +270,8 @@ void vtkDiscretizableColorTransferChart::UpdateMarkerPosition(
     pos.GetData(), 1);
 
   double limitRange[2];
-  limitRange[0] = this->OriginalRange[0]; //std::min(this->OriginalRange[0], this->DataRange[0]);
-  limitRange[1] = this->OriginalRange[1]; //std::max(this->OriginalRange[1], this->DataRange[1]);
+  limitRange[0] = this->OriginalRange[0];
+  limitRange[1] = this->OriginalRange[1];
 
   if (rangeMoving == RangeMoving_MIN)
   {
@@ -435,9 +433,15 @@ void vtkDiscretizableColorTransferChart::SetDataRange(double min, double max)
   this->DataRange[1] = max;
 
 #ifdef DEBUG_RANGE
-  std::cout << "DEBUG_RANGE chart data range = " << this->DataRange[0]
-            << " " << this->DataRange[1] << std::endl;
+  qDebug() << "DEBUG_RANGE data range = " << this->DataRange[0]
+           << " " << this->DataRange[1];
 #endif
+}
+
+// ----------------------------------------------------------------------------
+double* vtkDiscretizableColorTransferChart::GetDataRange()
+{
+  return this->DataRange;
 }
 
 // ----------------------------------------------------------------------------
@@ -450,7 +454,7 @@ void vtkDiscretizableColorTransferChart::SetCurrentRange(
     return;
   }
 
-  if (this->OriginalRange[0] < this->OriginalRange[1])
+  if (this->OriginalRange[0] <= this->OriginalRange[1])
   {
     min = vtkMath::ClampValue(min, this->OriginalRange[0], this->OriginalRange[1]);
     max = vtkMath::ClampValue(max, this->OriginalRange[0], this->OriginalRange[1]);
@@ -465,8 +469,8 @@ void vtkDiscretizableColorTransferChart::SetCurrentRange(
     this->RemapColorTransferFunction();
 
 #ifdef DEBUG_RANGE
-    std::cout << "DEBUG_RANGE current range = " << this->CurrentRange[0]
-              << " " << this->CurrentRange[1] << std::endl;
+    qDebug() << "DEBUG_RANGE current range = " << this->CurrentRange[0]
+             << " " << this->CurrentRange[1];
 #endif
   }
 }
@@ -474,7 +478,8 @@ void vtkDiscretizableColorTransferChart::SetCurrentRange(
 // ----------------------------------------------------------------------------
 void vtkDiscretizableColorTransferChart::RemapColorTransferFunction()
 {
-  if (this->ColorTransferFunction == CTK_NULLPTR)
+  if (this->ColorTransferFunction == CTK_NULLPTR
+   || this->ControlPoints == CTK_NULLPTR)
   {
     return;
   }
@@ -485,7 +490,7 @@ void vtkDiscretizableColorTransferChart::RemapColorTransferFunction()
 
   if (newRange[0] == newRange[1])
   {
-    newRange[1] += std::numeric_limits<double>::epsilon();
+    newRange[1] += 0.000001;
   }
   else if (this->CurrentRange[0] > this->CurrentRange[1])
   {
@@ -524,17 +529,31 @@ void vtkDiscretizableColorTransferChart::SetOriginalRange(double min, double max
   this->OriginalRange[1] = max;
 
 #ifdef DEBUG_RANGE
-  std::cout << "DEBUG_RANGE original range = " << this->OriginalRange[0]
-            << " " << this->OriginalRange[1] << std::endl;
+  qDebug() << "DEBUG_RANGE original range = " << this->OriginalRange[0]
+           << " " << this->OriginalRange[1];
 #endif
 
   if (this->OriginalRange[0] <= this->OriginalRange[1])
   {
     double currentRange[2];
-    currentRange[0] = vtkMath::ClampValue(this->CurrentRange[0], this->OriginalRange[0], this->OriginalRange[1]);
-    currentRange[1] = vtkMath::ClampValue(this->CurrentRange[1], this->OriginalRange[0], this->OriginalRange[1]);
+    if (this->CurrentRange[0] > this->CurrentRange[1])
+    {
+      currentRange[0] = this->OriginalRange[0];
+      currentRange[1] = this->OriginalRange[1];
+    }
+    else
+    {
+      currentRange[0] = vtkMath::ClampValue(this->CurrentRange[0], this->OriginalRange[0], this->OriginalRange[1]);
+      currentRange[1] = vtkMath::ClampValue(this->CurrentRange[1], this->OriginalRange[0], this->OriginalRange[1]);
+    }
     this->SetCurrentRange(currentRange[0], currentRange[1]);
   }
+}
+
+// ----------------------------------------------------------------------------
+double* vtkDiscretizableColorTransferChart::GetOriginalRange()
+{
+  return this->OriginalRange;
 }
 
 // ----------------------------------------------------------------------------
