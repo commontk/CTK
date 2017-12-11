@@ -31,6 +31,7 @@
 // Qt includes
 #include <QColorDialog>
 #include <QCheckBox>
+#include <QDebug>
 #include <QDoubleValidator>
 #include <QHBoxLayout>
 #include <QIcon>
@@ -67,7 +68,6 @@
 #include <vtkTable.h>
 
 //#define DEBUG_RANGE
-
 
 // ----------------------------------------------------------------------------
 class ctkVTKDiscretizableColorTransferWidgetPrivate :
@@ -336,8 +336,8 @@ void ctkVTKDiscretizableColorTransferWidget::copyColorTransferFunction(
 #ifdef DEBUG_RANGE
   if (ctf)
   {
-    std::cout << "DEBUG_RANGE ctf input range = " << ctf->GetRange()[0]
-              << " " << ctf->GetRange()[1] << std::endl;
+    qDebug() << "DEBUG_RANGE ctf input range = " << ctf->GetRange()[0]
+             << " " << ctf->GetRange()[1];
   }
 #endif
 
@@ -364,7 +364,7 @@ void ctkVTKDiscretizableColorTransferWidget::copyColorTransferFunction(
     emit(currentScalarsToColorsChanged(d->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction()));
 
     // set old ranges back
-    if (visibleRange[0] <= visibleRange[0])
+    if (visibleRange[0] < visibleRange[1])
     {
       this->setVisibleRange(visibleRange[0], visibleRange[1]);
       this->setColorTransferFunctionRange(ctfRange[0], ctfRange[1]);
@@ -387,20 +387,39 @@ const
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKDiscretizableColorTransferWidget::setHistogramInputConnection(
-  vtkAlgorithmOutput* input, bool useInputDataRange)
+void ctkVTKDiscretizableColorTransferWidget::setHistogramConnection(
+  vtkAlgorithmOutput* input)
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
 
-  this->initializeHistogramAndDataRange(input);
-  if (useInputDataRange)
+  if (!input)
   {
-    // update visible range, which updates histogram
-    this->resetVisibleRange(ResetVisibleRange::UNION_DATA_AND_CTF);
+    d->histogramFilter = CTK_NULLPTR;
+    d->dataMean = 0.;
+    this->setDataRange(VTK_DOUBLE_MAX, VTK_DOUBLE_MIN);
+    return;
   }
-  else
+
+  d->histogramFilter = vtkSmartPointer<vtkImageAccumulate>::New();
+  d->histogramFilter->SetInputConnection(input);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::updateHistogram(
+  bool updateDataRange)
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  this->updateHistogram();
+
+  if (updateDataRange
+   && d->histogramFilter
+   && d->histogramFilter->GetInputConnection(0, 0))
   {
-    this->updateHistogram();
+    // get min max values from histogram
+    d->dataMean = d->histogramFilter->GetMean()[0];
+    this->setDataRange(d->histogramFilter->GetMin()[0],
+                       d->histogramFilter->GetMax()[0]);
   }
 }
 
@@ -514,10 +533,10 @@ void ctkVTKDiscretizableColorTransferWidget::disableCtfWidgets()
   d->invertColorTransferFunctionButton->setEnabled(false);
 
 #ifdef DEBUG_RANGE
-  std::cout << "DEBUG_RANGE slider range = " << 0
-            << " " << 255 << std::endl;
-  std::cout << "DEBUG_RANGE slider value = " << 0
-            << " " << 1 << std::endl;
+  qDebug() << "DEBUG_RANGE slider range = " << 0
+           << " " << 255;
+  qDebug() << "DEBUG_RANGE slider value = " << 0
+           << " " << 1;
 #endif
 }
 
@@ -544,47 +563,10 @@ void ctkVTKDiscretizableColorTransferWidget::enableCtfWidgets()
   d->rangeSlider->setValues(ctfRange[0], ctfRange[1]);
 
 #ifdef DEBUG_RANGE
-  std::cout << "DEBUG_RANGE slider range = " << visibleRange[0]
-            << " " << visibleRange[1] << std::endl;
-  std::cout << "DEBUG_RANGE slider value = " << ctfRange[0]
-            << " " << ctfRange[1] << std::endl;
-#endif
-}
-
-// ----------------------------------------------------------------------------
-void ctkVTKDiscretizableColorTransferWidget::initializeHistogramAndDataRange(
-    vtkAlgorithmOutput* input)
-{
-  Q_D(ctkVTKDiscretizableColorTransferWidget);
-
-  if (!input)
-  {
-    d->histogramFilter = nullptr;
-    d->dataMean = 0.;
-    this->setDataRange(VTK_DOUBLE_MAX, VTK_DOUBLE_MIN);
-    return;
-  }
-
-  d->histogramFilter = vtkSmartPointer<vtkImageAccumulate>::New();
-  d->histogramFilter->SetInputConnection(input);
-
-  // use histogram filter to compute min max values
-  d->histogramFilter->Update();
-  d->dataMean = d->histogramFilter->GetMean()[0];
-  this->setDataRange(d->histogramFilter->GetMin()[0], d->histogramFilter->GetMax()[0]);
-
-#ifdef DEBUG_RANGE
-  std::cout << "DEBUG_RANGE histo real range = " << *d->histogramFilter->GetMin()
-            << " " << *d->histogramFilter->GetMax() << std::endl;
-  vtkImageData* histogram = d->histogramFilter->GetOutput();
-  int dims[3];
-  histogram->GetDimensions(dims);
-  std::cout << "DEBUG_RANGE histo = ";
-  for(vtkIdType i = 0; i < dims[0]; ++i)
-  {
-      std::cout << *(static_cast<int*>(histogram->GetScalarPointer(i, 0, 0))) << " ";
-  }
-  std::cout << std::endl;
+  qDebug() << "DEBUG_RANGE slider range = " << visibleRange[0]
+           << " " << visibleRange[1];
+  qDebug() << "DEBUG_RANGE slider value = " << ctfRange[0]
+           << " " << ctfRange[1];
 #endif
 }
 
@@ -614,7 +596,8 @@ void ctkVTKDiscretizableColorTransferWidget::updateHistogram()
 
   // fill bins and frequencies
 
-  if (d->histogramFilter == nullptr)
+  if (d->histogramFilter == CTK_NULLPTR
+   || d->histogramFilter->GetInputConnection(0, 0) == CTK_NULLPTR)
   {
     bins->SetNumberOfTuples(1);
     bins->SetTuple1(0, 0);
@@ -624,7 +607,6 @@ void ctkVTKDiscretizableColorTransferWidget::updateHistogram()
   }
   else
   {
-
     double* visibleRange = d->scalarsToColorsContextItem->GetVisibleRange();
 
     int extent = d->histogramFilter->GetComponentExtent()[1];
@@ -640,19 +622,27 @@ void ctkVTKDiscretizableColorTransferWidget::updateHistogram()
     vtkImageData* histogram = d->histogramFilter->GetOutput();
     int* output = static_cast<int*>(histogram->GetScalarPointer());
 
+    // set min and max of the slider widget
+    vtkDataObject* input = d->histogramFilter->GetInputAlgorithm()->GetOutputDataObject(0);
+    vtkImageData* inputImage = vtkImageData::SafeDownCast(input);
+
+    d->rangeSlider->setCustomSpinBoxesLimits(inputImage->GetScalarTypeMin(),
+                                             inputImage->GetScalarTypeMax());
+
+
 #ifdef DEBUG_RANGE
-    std::cout << "DEBUG_RANGE histo input range = " << origin
-              << " " << origin + extent + 1 * spacing << std::endl;
-    std::cout << "DEBUG_RANGE histo real range = " << *d->histogramFilter->GetMin()
-              << " " << *d->histogramFilter->GetMax() << std::endl;
+    qDebug() << "DEBUG_RANGE histo input range = " << origin
+             << " " << origin + (extent + 1) * spacing;
+    qDebug() << "DEBUG_RANGE histo real range = " << *d->histogramFilter->GetMin()
+             << " " << *d->histogramFilter->GetMax();
     int dims[3];
     histogram->GetDimensions(dims);
-    std::cout << "DEBUG_RANGE histo = ";
+    QDebug deb = qDebug();
+    deb << "DEBUG_RANGE histo = ";
     for(vtkIdType i = 0; i < dims[0]; ++i)
     {
-        std::cout << *(static_cast<int*>(histogram->GetScalarPointer(i, 0, 0))) << " ";
+        deb << *(static_cast<int*>(histogram->GetScalarPointer(i, 0, 0))) << " ";
     }
-    std::cout << std::endl;
 #endif
 
     bins->SetNumberOfTuples(extent + 1);
@@ -741,6 +731,22 @@ void ctkVTKDiscretizableColorTransferWidget::setColorTransferFunctionRange(
   if (max < min)
   {
     return;
+  }
+
+  double* visibleRange = this->getVisibleRange();
+  if (min < visibleRange[0]
+   || max > visibleRange[1])
+  {
+    double newRange[2] = { visibleRange[0], visibleRange[1] };
+    if (min < visibleRange[0])
+    {
+      newRange[0] = min;
+    }
+    if (max > visibleRange[1])
+    {
+      newRange[1] = max;
+    }
+    this->setVisibleRange(newRange[0], newRange[1]);
   }
 
   d->scalarsToColorsContextItem->SetCurrentRange(min, max);

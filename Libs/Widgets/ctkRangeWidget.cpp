@@ -47,6 +47,8 @@ public:
   void synchronizeSiblingSpinBox(int newWidth);
   bool equal(double v1, double v2)const;
   void relayout();
+  bool useCustomSpinBoxesLimits()const;
+  double clamp(double v, double min, double max);
 
   bool          Tracking;
   bool          Changing;
@@ -55,6 +57,8 @@ public:
   double        MinimumValueBeforeChange;
   double        MaximumValueBeforeChange;
   bool          AutoSpinBoxWidth;
+  double        CustomSpinBoxesLimitsMin;
+  double        CustomSpinBoxesLimitsMax;
   Qt::Alignment SpinBoxAlignment;
   QPointer<ctkValueProxy> Proxy;
 };
@@ -84,6 +88,8 @@ ctkRangeWidgetPrivate::ctkRangeWidgetPrivate(ctkRangeWidget& object)
   this->MinimumValueBeforeChange = 0.;
   this->MaximumValueBeforeChange = 0.;
   this->AutoSpinBoxWidth = true;
+  this->CustomSpinBoxesLimitsMin = std::numeric_limits<double>::max();
+  this->CustomSpinBoxesLimitsMax = std::numeric_limits<double>::min();
   this->SpinBoxAlignment = Qt::AlignVCenter;
 }
 
@@ -212,6 +218,26 @@ void ctkRangeWidgetPrivate::relayout()
 }
 
 // --------------------------------------------------------------------------
+bool ctkRangeWidgetPrivate::useCustomSpinBoxesLimits()const
+{
+  return this->CustomSpinBoxesLimitsMin <= this->CustomSpinBoxesLimitsMax;
+}
+
+// --------------------------------------------------------------------------
+double ctkRangeWidgetPrivate::clamp(double v, double min, double max)
+{
+  if (v < min)
+  {
+    v = min;
+  }
+  if (v > max)
+  {
+    v = max;
+  }
+  return v;
+}
+
+// --------------------------------------------------------------------------
 ctkRangeWidget::ctkRangeWidget(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new ctkRangeWidgetPrivate(*this))
 {
@@ -219,8 +245,16 @@ ctkRangeWidget::ctkRangeWidget(QWidget* _parent) : Superclass(_parent)
   
   d->setupUi(this);
 
-  d->MinimumSpinBox->setRange(d->Slider->minimum(), d->Slider->maximum());
-  d->MaximumSpinBox->setRange(d->Slider->minimum(), d->Slider->maximum());
+  if (d->useCustomSpinBoxesLimits())
+    {
+    d->MinimumSpinBox->setRange(d->CustomSpinBoxesLimitsMin, d->Slider->maximum());
+    d->MaximumSpinBox->setRange(d->Slider->minimum(), d->CustomSpinBoxesLimitsMax);
+    }
+  else
+    {
+    d->MinimumSpinBox->setRange(d->Slider->minimum(), d->Slider->maximum());
+    d->MaximumSpinBox->setRange(d->Slider->minimum(), d->Slider->maximum());
+    }
   d->MinimumSpinBox->setValue(d->Slider->minimumValue());
   d->MaximumSpinBox->setValue(d->Slider->maximumValue());
   
@@ -239,7 +273,10 @@ ctkRangeWidget::~ctkRangeWidget()
 double ctkRangeWidget::minimum()const
 {
   Q_D(const ctkRangeWidget);
-  Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(),d->Slider->minimum()));
+  if (!d->useCustomSpinBoxesLimits())
+    {
+    Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(),d->Slider->minimum()));
+    }
   return d->Slider->minimum();
 }
 
@@ -247,7 +284,10 @@ double ctkRangeWidget::minimum()const
 double ctkRangeWidget::maximum()const
 {
   Q_D(const ctkRangeWidget);
-  Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
+  if (!d->useCustomSpinBoxesLimits())
+    {
+    Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
+    }
   return d->Slider->maximum();
 }
 
@@ -257,16 +297,26 @@ void ctkRangeWidget::setMinimum(double min)
   Q_D(ctkRangeWidget);
   bool blocked = d->MinimumSpinBox->blockSignals(true);
   blocked = d->MaximumSpinBox->blockSignals(true);
-  d->MinimumSpinBox->setMinimum(min);
+  if (d->useCustomSpinBoxesLimits())
+    {
+    d->MinimumSpinBox->setMinimum(d->CustomSpinBoxesLimitsMin);
+    }
+  else
+    {
+    d->MinimumSpinBox->setMinimum(min);
+    }
   d->MaximumSpinBox->setMinimum(min);
   d->MinimumSpinBox->blockSignals(blocked);
   d->MaximumSpinBox->blockSignals(blocked);
   // SpinBox can truncate min (depending on decimals).
   // use Spinbox's min to set Slider's min
   d->SettingSliderRange = true;
-  d->Slider->setMinimum(d->MinimumSpinBox->minimum());
+  d->Slider->setMinimum(d->MaximumSpinBox->minimum());
   d->SettingSliderRange = false;
-  Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(),d->Slider->minimum()));
+  if (!d->useCustomSpinBoxesLimits())
+    {
+    Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(),d->Slider->minimum()));
+    }
   d->updateSpinBoxWidth();
 }
 
@@ -276,16 +326,26 @@ void ctkRangeWidget::setMaximum(double max)
   Q_D(ctkRangeWidget);
   bool blocked = d->MinimumSpinBox->blockSignals(true);
   blocked = d->MaximumSpinBox->blockSignals(true);
+  if (d->useCustomSpinBoxesLimits())
+    {
+    d->MaximumSpinBox->setMaximum(d->CustomSpinBoxesLimitsMax);
+    }
+  else
+    {
+    d->MaximumSpinBox->setMaximum(max);
+    }
   d->MinimumSpinBox->setMaximum(max);
-  d->MaximumSpinBox->setMaximum(max);
   d->MinimumSpinBox->blockSignals(blocked);
   d->MaximumSpinBox->blockSignals(blocked);
   // SpinBox can truncate max (depending on decimals).
   // use Spinbox's max to set Slider's max
   d->SettingSliderRange = true;
-  d->Slider->setMaximum(d->MaximumSpinBox->maximum());
+  d->Slider->setMaximum(d->MinimumSpinBox->maximum());
   d->SettingSliderRange = false;
-  Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
+  if (!d->useCustomSpinBoxesLimits())
+    {
+    Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
+    }
   d->updateSpinBoxWidth();
 }
 
@@ -294,28 +354,56 @@ void ctkRangeWidget::setRange(double min, double max)
 {
   Q_D(ctkRangeWidget);
 
+  if (d->useCustomSpinBoxesLimits())
+    {
+    min = d->clamp(min, d->CustomSpinBoxesLimitsMin,
+                        d->CustomSpinBoxesLimitsMax);
+    max = d->clamp(max, d->CustomSpinBoxesLimitsMin,
+                        d->CustomSpinBoxesLimitsMax);
+    }
+
   double oldMin = d->MinimumSpinBox->minimum();
   double oldMax = d->MaximumSpinBox->maximum();
   bool blocked = d->MinimumSpinBox->blockSignals(true);
-  d->MinimumSpinBox->setRange(qMin(min,max), qMax(min,max));
+  if (d->useCustomSpinBoxesLimits())
+    {
+    d->MinimumSpinBox->setRange(d->CustomSpinBoxesLimitsMin, qMax(min,max));
+    }
+  else
+    {
+    d->MinimumSpinBox->setRange(qMin(min,max), qMax(min,max));
+    }
   d->MinimumSpinBox->blockSignals(blocked);
   blocked = d->MaximumSpinBox->blockSignals(true);
-  d->MaximumSpinBox->setRange(qMin(min,max), qMax(min,max));
+  if (d->useCustomSpinBoxesLimits())
+    {
+    d->MaximumSpinBox->setRange(qMin(min,max), d->CustomSpinBoxesLimitsMax);
+    }
+  else
+    {
+    d->MaximumSpinBox->setRange(qMin(min,max), qMax(min,max));
+    }
   d->MaximumSpinBox->blockSignals(blocked);
   // SpinBox can truncate the range (depending on decimals).
   // use Spinbox's range to set Slider's range
   d->SettingSliderRange = true;
-  d->Slider->setRange(d->MinimumSpinBox->minimum(), d->MaximumSpinBox->maximum());
+  d->Slider->setRange(d->MaximumSpinBox->minimum(), d->MinimumSpinBox->maximum());
   d->SettingSliderRange = false;
-  Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(), d->Slider->minimum()));
-  Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
-  Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
-  Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
-  d->updateSpinBoxWidth();
-  if (oldMin != d->MinimumSpinBox->minimum() ||
-      oldMax != d->MaximumSpinBox->maximum())
+  if (!d->useCustomSpinBoxesLimits())
     {
-    emit rangeChanged(d->MinimumSpinBox->minimum(), d->MaximumSpinBox->maximum());
+    Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(), d->Slider->minimum()));
+    Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
+    Q_ASSERT(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value()));
+    Q_ASSERT(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value()));
+    }
+  d->updateSpinBoxWidth();
+  if (!d->useCustomSpinBoxesLimits())
+    {
+    if (oldMin != d->MinimumSpinBox->minimum() ||
+        oldMax != d->MaximumSpinBox->maximum())
+      {
+      emit rangeChanged(d->MinimumSpinBox->minimum(), d->MaximumSpinBox->maximum());
+      }
     }
 }
 
@@ -323,8 +411,11 @@ void ctkRangeWidget::setRange(double min, double max)
 void ctkRangeWidget::range(double range[2])const
 {
   Q_D(const ctkRangeWidget);
-  Q_ASSERT(d->equal(d->MinimumSpinBox->maximum(), d->Slider->minimum()));
-  Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
+  if (!d->useCustomSpinBoxesLimits())
+    {
+    Q_ASSERT(d->equal(d->MinimumSpinBox->minimum(), d->Slider->minimum()));
+    Q_ASSERT(d->equal(d->MaximumSpinBox->maximum(), d->Slider->maximum()));
+    }
   range[0] = d->Slider->minimum();
   range[1] = d->Slider->maximum();
 }
@@ -464,6 +555,17 @@ void ctkRangeWidget::setSliderValues()
     {
     return;
     }
+  if (d->useCustomSpinBoxesLimits())
+    {
+    if (d->MinimumSpinBox->value() < d->Slider->minimum())
+      {
+      d->Slider->setMinimum(d->MinimumSpinBox->value());
+      }
+    if (d->MaximumSpinBox->value() > d->Slider->maximum())
+      {
+      d->Slider->setMaximum(d->MaximumSpinBox->value());
+      }
+    }
   d->Slider->setValues(d->MinimumSpinBox->value(), d->MaximumSpinBox->value());
 }
 
@@ -475,7 +577,14 @@ void ctkRangeWidget::setMinimumToMaximumSpinBox(double minimum)
     {
     return;
     }
-  d->MaximumSpinBox->setRange(minimum, d->Slider->maximum());
+  if (d->useCustomSpinBoxesLimits())
+    {
+    d->MaximumSpinBox->setRange(minimum, d->CustomSpinBoxesLimitsMax);
+    }
+  else
+    {
+    d->MaximumSpinBox->setRange(minimum, d->Slider->maximum());
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -486,7 +595,14 @@ void ctkRangeWidget::setMaximumToMinimumSpinBox(double maximum)
     {
     return;
     }
-  d->MinimumSpinBox->setRange(d->Slider->minimum(), maximum);
+  if (d->useCustomSpinBoxesLimits())
+    {
+    d->MinimumSpinBox->setRange(d->CustomSpinBoxesLimitsMin, maximum);
+    }
+  else
+    {
+    d->MinimumSpinBox->setRange(d->Slider->minimum(), maximum);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -643,7 +759,10 @@ void ctkRangeWidget::setDecimals(int newDecimals)
   // i.e. 50.55 with 2 decimals -> 51 with 0 decimals
   // As the SpinBox range change doesn't fire signals, 
   // we have to do the synchronization manually here
-  d->Slider->setRange(d->MinimumSpinBox->minimum(), d->MaximumSpinBox->maximum());
+  if (!d->useCustomSpinBoxesLimits())
+    {
+    d->Slider->setRange(d->MinimumSpinBox->minimum(), d->MaximumSpinBox->maximum());
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -774,6 +893,35 @@ void ctkRangeWidget::setSymmetricMoves(bool symmetry)
 {
   Q_D(ctkRangeWidget);
   d->Slider->setSymmetricMoves(symmetry);
+}
+
+// --------------------------------------------------------------------------
+void ctkRangeWidget::setCustomSpinBoxesLimits(double min, double max)
+{
+  Q_D(ctkRangeWidget);
+
+  if (max < min)
+    {
+    return;
+    }
+
+  d->CustomSpinBoxesLimitsMin = min;
+  d->CustomSpinBoxesLimitsMax = max;
+  this->setRange(d->Slider->minimum(), d->Slider->maximum());
+}
+
+// --------------------------------------------------------------------------
+double ctkRangeWidget::customSpinBoxesLimitsMin()const
+{
+  Q_D(const ctkRangeWidget);
+  return d->CustomSpinBoxesLimitsMin;
+}
+
+// --------------------------------------------------------------------------
+double ctkRangeWidget::customSpinBoxesLimitsMax()const
+{
+  Q_D(const ctkRangeWidget);
+  return d->CustomSpinBoxesLimitsMax;
 }
 
 // -------------------------------------------------------------------------
