@@ -371,6 +371,7 @@ QStringList ctkAbstractPythonManager::dir_object(PyObject* object,
   return results;
 }
 
+//----------------------------------------------------------------------------
 QStringList ctkAbstractPythonManager::splitByDotOutsideParenthesis(const QString& pythonVariableName)
 {
   QStringList tmpNames;
@@ -420,7 +421,6 @@ QStringList ctkAbstractPythonManager::splitByDotOutsideParenthesis(const QString
   return tmpNames;
 }
 
-
 //----------------------------------------------------------------------------
 QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVariableName,
                                                        const QString& module,
@@ -459,7 +459,7 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
 //    }
 //  Py_INCREF(object);
 
-  PyObject* main_object = object; // save the modue object (usually __main__ or __main__.__builtins__)
+  PyObject* main_object = object; // save the module object (usually __main__ or __main__.__builtins__)
   QString instantiated_class_name = "_ctkAbstractPythonManager_autocomplete_tmp";
   QStringList results; // the list of attributes to return
   QString line_code="";

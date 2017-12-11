@@ -1071,8 +1071,8 @@ void ctkConsolePrivate::pasteText(const QString& text)
     {
     this->switchToUserInputTextColor(&textCursor);
     textCursor.insertText(text);
-    this->updateCommandBuffer();
     }
+  this->updateCommandBuffer();
 }
 
 //-----------------------------------------------------------------------------
