@@ -829,21 +829,21 @@ void ctkVTKDiscretizableColorTransferWidget::onCurrentPointEdit()
 void ctkVTKDiscretizableColorTransferWidget::resetVisibleRangeToData()
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
-  this->resetVisibleRange(ResetVisibleRange::ONLY_DATA);
+  this->resetVisibleRange(ctkVTKDiscretizableColorTransferWidget::ONLY_DATA);
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKDiscretizableColorTransferWidget::resetVisibleRangeToCTF()
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
-  this->resetVisibleRange(ResetVisibleRange::ONLY_CTF);
+  this->resetVisibleRange(ctkVTKDiscretizableColorTransferWidget::ONLY_CTF);
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKDiscretizableColorTransferWidget::resetColorTransferFunctionRange()
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
-  this->resetColorTransferFunctionRange(ResetCTFRange::VISIBLE);
+  this->resetColorTransferFunctionRange(ctkVTKDiscretizableColorTransferWidget::VISIBLE);
 }
 
 // ----------------------------------------------------------------------------
