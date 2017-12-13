@@ -72,8 +72,6 @@ vtkScalarsToColorsHistogramChart::~vtkScalarsToColorsHistogramChart()
 // ----------------------------------------------------------------------------
 void vtkScalarsToColorsHistogramChart::SetLeftAxisMode(int mode)
 {
-  this->LeftAxisMode = mode;
-
   switch (mode)
   {
     case vtkScalarsToColorsHistogramChart::VTK_AUTO:
@@ -84,8 +82,10 @@ void vtkScalarsToColorsHistogramChart::SetLeftAxisMode(int mode)
       this->GetAxis(vtkAxis::LEFT)->SetBehavior(vtkAxis::FIXED);
       break;
     default:
-      break;
+      return;
   }
+
+  this->LeftAxisMode = mode;
 }
 
 // ----------------------------------------------------------------------------
