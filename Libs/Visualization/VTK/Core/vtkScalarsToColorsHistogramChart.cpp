@@ -89,6 +89,12 @@ void vtkScalarsToColorsHistogramChart::SetLeftAxisMode(int mode)
 }
 
 // ----------------------------------------------------------------------------
+void vtkScalarsToColorsHistogramChart::GetLeftAxisMode()
+{
+  return this->LeftAxisMode;
+}
+
+// ----------------------------------------------------------------------------
 void vtkScalarsToColorsHistogramChart::SetHistogramInputData(vtkTable* table,
     const char* xAxisColumn, const char* yAxisColumn)
 {

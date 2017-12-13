@@ -46,7 +46,10 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkScalarsToColorsContextItem
 public:
   static vtkScalarsToColorsContextItem* New();
 
+  /// Set/Get the left axis mode, which controls the axis range computation.
+  /// See vtkScalarsToColorsHistogramChart for more details.
   void SetLeftAxisMode(int mode);
+  int GetLeftAxisMode();
 
   /// Copy the color transfer function as a vtkDiscretizableColorTransferFunction
   void CopyColorTransferFunction(vtkScalarsToColors* ctf);

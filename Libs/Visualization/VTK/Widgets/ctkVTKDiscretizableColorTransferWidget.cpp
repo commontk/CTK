@@ -395,6 +395,14 @@ void ctkVTKDiscretizableColorTransferWidget::setLeftAxisMode(int mode)
 }
 
 // ----------------------------------------------------------------------------
+int ctkVTKDiscretizableColorTransferWidget::getLeftAxisMode()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  return d->scalarsToColorsContextItem->GetLeftAxisMode();
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKDiscretizableColorTransferWidget::setHistogramConnection(
   vtkAlgorithmOutput* input)
 {
