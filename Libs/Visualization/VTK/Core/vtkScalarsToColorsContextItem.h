@@ -46,6 +46,8 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkScalarsToColorsContextItem
 public:
   static vtkScalarsToColorsContextItem* New();
 
+  void SetLeftAxisMode(int mode);
+
   /// Copy the color transfer function as a vtkDiscretizableColorTransferFunction
   void CopyColorTransferFunction(vtkScalarsToColors* ctf);
   vtkDiscretizableColorTransferFunction* GetDiscretizableColorTransferFunction();

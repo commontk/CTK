@@ -70,6 +70,7 @@ if(${VTK_VERSION_MAJOR} GREATER 5)
     vtkCommonCore
     vtkCommonDataModel
     vtkCommonSystem
+    vtkFiltersStatistics
     vtkIOImage
     vtkInteractionStyle
     vtkRenderingAnnotation

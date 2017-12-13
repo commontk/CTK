@@ -70,6 +70,8 @@ public:
   void copyColorTransferFunction(vtkScalarsToColors* ctf, bool useCtfRange = false);
   vtkDiscretizableColorTransferFunction* discretizableColorTransferFunction() const;
 
+  void setLeftAxisMode(int mode);
+
   void setHistogramConnection(vtkAlgorithmOutput* input);
   void updateHistogram(bool updateDataRange);
 
