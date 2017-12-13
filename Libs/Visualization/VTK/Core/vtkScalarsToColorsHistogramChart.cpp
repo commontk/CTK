@@ -89,7 +89,7 @@ void vtkScalarsToColorsHistogramChart::SetLeftAxisMode(int mode)
 }
 
 // ----------------------------------------------------------------------------
-void vtkScalarsToColorsHistogramChart::GetLeftAxisMode()
+int vtkScalarsToColorsHistogramChart::GetLeftAxisMode()
 {
   return this->LeftAxisMode;
 }
