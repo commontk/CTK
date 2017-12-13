@@ -40,7 +40,7 @@ if(CTK_USE_CHARTS)
   set(TEST_SOURCES
       ctkVTKChartViewTest1.cpp
       ctkVTKVolumePropertyWidgetTest1.cpp
-	  ctkVTKDiscretizableColorTransferWidgetTest1.cpp
+      ctkVTKDiscretizableColorTransferWidgetTest1.cpp
       ctkVTKScalarsToColorsViewTest1.cpp
       ctkVTKScalarsToColorsViewTest2.cpp
       ctkVTKScalarsToColorsViewTest3.cpp
@@ -176,6 +176,7 @@ SIMPLE_TEST( ctkTransferFunctionViewTest5 )
 if(CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKChartViewTest1 )
   SIMPLE_TEST( ctkVTKVolumePropertyWidgetTest1 )
+  SIMPLE_TEST( ctkVTKDiscretizableColorTransferWidgetTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest1 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest2 )
   SIMPLE_TEST( ctkVTKScalarsToColorsViewTest3 )
@@ -185,6 +186,7 @@ if(CTK_USE_CHARTS)
   SIMPLE_TEST( ctkVTKScalarsToColorsWidgetTest3 )
 endif()
 SIMPLE_TEST( ctkVTKRenderViewTest1 )
+SIMPLE_TEST( ctkVTKScalarsToColorsComboBoxTest1 )
 SIMPLE_TEST( ctkVTKSliceViewTest1 )
 SIMPLE_TEST( ctkVTKSurfaceMaterialPropertyWidgetTest1 )
 SIMPLE_TEST( ctkVTKTextPropertyWidgetTest1 )

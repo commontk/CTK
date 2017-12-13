@@ -395,7 +395,7 @@ void ctkVTKDiscretizableColorTransferWidget::setLeftAxisMode(int mode)
 }
 
 // ----------------------------------------------------------------------------
-int ctkVTKDiscretizableColorTransferWidget::getLeftAxisMode()
+int ctkVTKDiscretizableColorTransferWidget::leftAxisMode()
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
 

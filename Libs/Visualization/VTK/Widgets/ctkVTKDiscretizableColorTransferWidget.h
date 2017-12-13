@@ -70,10 +70,11 @@ public:
   void copyColorTransferFunction(vtkScalarsToColors* ctf, bool useCtfRange = false);
   vtkDiscretizableColorTransferFunction* discretizableColorTransferFunction() const;
 
-  /// Set/Get the left axis mode, which controls the axis range computation.
-  /// See vtkScalarsToColorsHistogramChart for more details.
+  /// Set/Get the left axis mode.
+  /// This controls the axis range computation.
+  /// \see vtkScalarsToColorsHistogramChart::SetLeftAxisMode
   void setLeftAxisMode(int mode);
-  int getLeftAxisMode();
+  int leftAxisMode();
 
   void setHistogramConnection(vtkAlgorithmOutput* input);
   void updateHistogram(bool updateDataRange);
