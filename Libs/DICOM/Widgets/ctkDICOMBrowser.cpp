@@ -756,7 +756,6 @@ void ctkDICOMBrowserPrivate::importDirectory(QString directory, ctkDICOMBrowser:
 //----------------------------------------------------------------------------
 void ctkDICOMBrowserPrivate::importOldSettings()
 {
-  Q_Q(ctkDICOMBrowser);
   // Backward compatibility
   QSettings settings;
   int dontConfirmCopyOnImport = settings.value("MainWindow/DontConfirmCopyOnImport", static_cast<int>(QMessageBox::InvalidRole)).toInt();

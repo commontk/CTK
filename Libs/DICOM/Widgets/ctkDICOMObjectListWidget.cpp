@@ -361,7 +361,6 @@ QString ctkDICOMObjectListWidget::metadataAsText(bool allFiles /*=false*/)
 // --------------------------------------------------------------------------
 void ctkDICOMObjectListWidget::copyMetadata()
 {
-  Q_D(ctkDICOMObjectListWidget);
   QClipboard *clipboard = QApplication::clipboard();
   clipboard->setText(metadataAsText());
 }
@@ -369,7 +368,6 @@ void ctkDICOMObjectListWidget::copyMetadata()
 // --------------------------------------------------------------------------
 void ctkDICOMObjectListWidget::copyAllFilesMetadata()
 {
-  Q_D(ctkDICOMObjectListWidget);
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   QClipboard *clipboard = QApplication::clipboard();
   clipboard->setText(metadataAsText(true));
