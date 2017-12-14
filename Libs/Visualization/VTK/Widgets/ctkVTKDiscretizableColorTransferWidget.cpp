@@ -433,7 +433,6 @@ void ctkVTKDiscretizableColorTransferWidget::updateHistogram(
    && d->histogramFilter->GetInputConnection(0, 0))
   {
     // get min max values from histogram
-    d->dataMean = d->histogramFilter->GetMean()[0];
     this->setDataRange(d->histogramFilter->GetMin()[0],
                        d->histogramFilter->GetMax()[0]);
   }
@@ -634,6 +633,9 @@ void ctkVTKDiscretizableColorTransferWidget::updateHistogram()
     d->histogramFilter->SetComponentOrigin(origin, 0, 0);
     d->histogramFilter->SetComponentSpacing(spacing, 0, 0);
     d->histogramFilter->Update();
+
+    // update data mean
+    d->dataMean = d->histogramFilter->GetMean()[0];
 
     vtkImageData* histogram = d->histogramFilter->GetOutput();
     vtkIdType* output = static_cast<vtkIdType*>(histogram->GetScalarPointer());
