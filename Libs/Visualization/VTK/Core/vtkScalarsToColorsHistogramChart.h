@@ -37,6 +37,21 @@ public:
   vtkTypeMacro(vtkScalarsToColorsHistogramChart, vtkChartXY)
   static vtkScalarsToColorsHistogramChart* New();
 
+  enum
+  {
+    VTK_AUTO, // VTK auto scaling: scale the axis to view all data that is visible.
+    MAXIMUM, // Scale the axis to the maximum value of histogram.
+    MEAN_PLUS_THREE_SIGMA // Scale the axis to "mean + 3 * sigma".
+  };
+
+  /// Set/Get the left axis mode, which controls the axis range computation.
+  ///   VTK_AUTO: VTK auto scaling. Scale the axis to view all data that is visible.
+  ///   MAXIMUM: Scale the axis to the maximum value of histogram.
+  ///   MEAN_PLUS_THREE_SIGMA: Scale the axis to "mean + 3 * sigma".
+  /// Default mode is VTK_AUTO.
+  void SetLeftAxisMode(int mode);
+  int GetLeftAxisMode();
+
   /// Set input for histogram
   virtual void SetHistogramInputData(vtkTable* table, const char* xAxisColumn,
     const char* yAxisColumn);
@@ -52,6 +67,7 @@ public:
 
 protected:
   vtkNew<vtkPlotBar> HistogramPlotBar;
+  int LeftAxisMode;
 
 private:
   vtkScalarsToColorsHistogramChart();

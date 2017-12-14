@@ -110,6 +110,18 @@ vtkScalarsToColorsContextItem::~vtkScalarsToColorsContextItem()
 }
 
 // ----------------------------------------------------------------------------
+void vtkScalarsToColorsContextItem::SetLeftAxisMode(int mode)
+{
+  this->HistogramChart->SetLeftAxisMode(mode);
+}
+
+// ----------------------------------------------------------------------------
+int vtkScalarsToColorsContextItem::GetLeftAxisMode()
+{
+  return this->HistogramChart->GetLeftAxisMode();
+}
+
+// ----------------------------------------------------------------------------
 void vtkScalarsToColorsContextItem::CopyColorTransferFunction(
   vtkScalarsToColors* ctf)
 {

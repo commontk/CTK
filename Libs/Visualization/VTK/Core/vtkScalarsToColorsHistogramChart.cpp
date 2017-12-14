@@ -20,6 +20,9 @@
 #include "vtkScalarsToColorsHistogramChart.h"
 
 #include <vtkAxis.h>
+#include <vtkDescriptiveStatistics.h>
+#include <vtkMultiBlockDataSet.h>
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPen.h>
 #include <vtkPlotBar.h>
@@ -49,6 +52,8 @@ vtkScalarsToColorsHistogramChart::vtkScalarsToColorsHistogramChart()
 
   this->GetAxis(vtkAxis::BOTTOM)->SetBehavior(vtkAxis::FIXED);
 
+  this->LeftAxisMode = VTK_AUTO;
+
   this->SetBarWidthFraction(1.0);
 
   // Set up the plot bar
@@ -65,9 +70,61 @@ vtkScalarsToColorsHistogramChart::~vtkScalarsToColorsHistogramChart()
 }
 
 // ----------------------------------------------------------------------------
+void vtkScalarsToColorsHistogramChart::SetLeftAxisMode(int mode)
+{
+  switch (mode)
+  {
+    case vtkScalarsToColorsHistogramChart::VTK_AUTO:
+      this->GetAxis(vtkAxis::LEFT)->SetBehavior(vtkAxis::AUTO);
+      break;
+    case vtkScalarsToColorsHistogramChart::MAXIMUM:
+    case vtkScalarsToColorsHistogramChart::MEAN_PLUS_THREE_SIGMA:
+      this->GetAxis(vtkAxis::LEFT)->SetBehavior(vtkAxis::FIXED);
+      break;
+    default:
+      return;
+  }
+
+  this->LeftAxisMode = mode;
+}
+
+// ----------------------------------------------------------------------------
+int vtkScalarsToColorsHistogramChart::GetLeftAxisMode()
+{
+  return this->LeftAxisMode;
+}
+
+// ----------------------------------------------------------------------------
 void vtkScalarsToColorsHistogramChart::SetHistogramInputData(vtkTable* table,
     const char* xAxisColumn, const char* yAxisColumn)
 {
+  if (this->LeftAxisMode == MAXIMUM
+   || this->LeftAxisMode == MEAN_PLUS_THREE_SIGMA)
+  {
+    // compute histogram mean and standard deviation
+    vtkNew<vtkDescriptiveStatistics> statisticsFilter;
+    statisticsFilter->SetInputData(table);
+    statisticsFilter->AddColumn(yAxisColumn);
+    statisticsFilter->Update();
+    vtkMultiBlockDataSet* stats = vtkMultiBlockDataSet::SafeDownCast(
+      statisticsFilter->GetOutputDataObject(vtkStatisticsAlgorithm::OUTPUT_MODEL));
+    vtkTable* statsPrimary = vtkTable::SafeDownCast(stats->GetBlock(0));
+    vtkTable* statsDerived = vtkTable::SafeDownCast(stats->GetBlock(1));
+
+    // update axis
+    if (this->LeftAxisMode == MAXIMUM)
+    {
+      double max = statsPrimary->GetValueByName(0, "Maximum").ToDouble();
+      this->GetAxis(vtkAxis::LEFT)->SetUnscaledRange(0, max);
+    }
+    else if (this->LeftAxisMode == MEAN_PLUS_THREE_SIGMA)
+    {
+      double mean = statsPrimary->GetValueByName(0, "Mean").ToDouble();
+      double sigma = statsDerived->GetValueByName(0, "Standard Deviation").ToDouble();
+      this->GetAxis(vtkAxis::LEFT)->SetUnscaledRange(0, mean + 3 * sigma);
+    }
+  }
+
   this->HistogramPlotBar->SetInputData(table, xAxisColumn, yAxisColumn);
   this->SelectColorArray(xAxisColumn);
   this->RecalculateBounds();

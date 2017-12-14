@@ -387,6 +387,22 @@ const
 }
 
 // ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::setLeftAxisMode(int mode)
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  d->scalarsToColorsContextItem->SetLeftAxisMode(mode);
+}
+
+// ----------------------------------------------------------------------------
+int ctkVTKDiscretizableColorTransferWidget::leftAxisMode()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  return d->scalarsToColorsContextItem->GetLeftAxisMode();
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKDiscretizableColorTransferWidget::setHistogramConnection(
   vtkAlgorithmOutput* input)
 {
@@ -620,15 +636,13 @@ void ctkVTKDiscretizableColorTransferWidget::updateHistogram()
     d->histogramFilter->Update();
 
     vtkImageData* histogram = d->histogramFilter->GetOutput();
-    int* output = static_cast<int*>(histogram->GetScalarPointer());
+    vtkIdType* output = static_cast<vtkIdType*>(histogram->GetScalarPointer());
 
     // set min and max of the slider widget
     vtkDataObject* input = d->histogramFilter->GetInputAlgorithm()->GetOutputDataObject(0);
     vtkImageData* inputImage = vtkImageData::SafeDownCast(input);
-
     d->rangeSlider->setCustomSpinBoxesLimits(inputImage->GetScalarTypeMin(),
                                              inputImage->GetScalarTypeMax());
-
 
 #ifdef DEBUG_RANGE
     qDebug() << "DEBUG_RANGE histo input range = " << origin
@@ -641,7 +655,7 @@ void ctkVTKDiscretizableColorTransferWidget::updateHistogram()
     deb << "DEBUG_RANGE histo = ";
     for(vtkIdType i = 0; i < dims[0]; ++i)
     {
-        deb << *(static_cast<int*>(histogram->GetScalarPointer(i, 0, 0))) << " ";
+        deb << *(static_cast<vtkIdType*>(histogram->GetScalarPointer(i, 0, 0))) << " ";
     }
 #endif
 

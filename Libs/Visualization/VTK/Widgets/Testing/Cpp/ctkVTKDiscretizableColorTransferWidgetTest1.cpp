@@ -25,11 +25,13 @@ limitations under the License.
 // CTK includes
 #include "ctkVTKDiscretizableColorTransferWidget.h"
 #include "ctkVTKScalarsToColorsComboBox.h"
+#include "vtkScalarsToColorsHistogramChart.h"
 
 // VTK includes
 #include <vtkDiscretizableColorTransferFunction.h>
 #include <vtkNew.h>
 #include <vtkPiecewiseFunction.h>
+#include <vtkRTAnalyticSource.h>
 
 //-----------------------------------------------------------------------------
 int ctkVTKDiscretizableColorTransferWidgetTest1(int argc, char * argv[])
@@ -59,9 +61,18 @@ int ctkVTKDiscretizableColorTransferWidgetTest1(int argc, char * argv[])
   ctf0->AddRGBPoint(0.0, 1.0, 0.0, 1.0);
   ctf0->AddRGBPoint(255.0, 0.0, 1.0, 0.0);
 
+  /// Create an image to test the widget histogram
+  vtkNew<vtkRTAnalyticSource> imageSource;
+  imageSource->SetWholeExtent(0, 9,
+                              0, 9,
+                              0, 9);
+
   /// Discretizable transfer function widget
   ctkVTKDiscretizableColorTransferWidget mWidget;
-  mWidget.setColorTransferFunction(dctf0.Get());
+  mWidget.copyColorTransferFunction(dctf0.Get());
+  mWidget.setHistogramConnection(imageSource->GetOutputPort());
+  mWidget.setLeftAxisMode(vtkScalarsToColorsHistogramChart::MAXIMUM);
+  mWidget.updateHistogram(true);
   mWidget.show();
 
   /// Add presets to the widget selector

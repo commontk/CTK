@@ -48,7 +48,6 @@ public:
   bool equal(double v1, double v2)const;
   void relayout();
   bool useCustomSpinBoxesLimits()const;
-  double clamp(double v, double min, double max);
 
   bool          Tracking;
   bool          Changing;
@@ -224,20 +223,6 @@ bool ctkRangeWidgetPrivate::useCustomSpinBoxesLimits()const
 }
 
 // --------------------------------------------------------------------------
-double ctkRangeWidgetPrivate::clamp(double v, double min, double max)
-{
-  if (v < min)
-  {
-    v = min;
-  }
-  if (v > max)
-  {
-    v = max;
-  }
-  return v;
-}
-
-// --------------------------------------------------------------------------
 ctkRangeWidget::ctkRangeWidget(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new ctkRangeWidgetPrivate(*this))
 {
@@ -356,10 +341,8 @@ void ctkRangeWidget::setRange(double min, double max)
 
   if (d->useCustomSpinBoxesLimits())
     {
-    min = d->clamp(min, d->CustomSpinBoxesLimitsMin,
-                        d->CustomSpinBoxesLimitsMax);
-    max = d->clamp(max, d->CustomSpinBoxesLimitsMin,
-                        d->CustomSpinBoxesLimitsMax);
+    min = qBound(d->CustomSpinBoxesLimitsMin, min, d->CustomSpinBoxesLimitsMax);
+    max = qBound(d->CustomSpinBoxesLimitsMin, max, d->CustomSpinBoxesLimitsMax);
     }
 
   double oldMin = d->MinimumSpinBox->minimum();

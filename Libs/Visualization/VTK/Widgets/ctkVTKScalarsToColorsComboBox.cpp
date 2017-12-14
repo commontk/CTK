@@ -85,6 +85,7 @@ ctkVTKScalarsToColorsComboBox::ctkVTKScalarsToColorsComboBox(QWidget* _parent)
 // --------------------------------------------------------------------------
 ctkVTKScalarsToColorsComboBox::~ctkVTKScalarsToColorsComboBox()
 {
+  this->clear();
 }
 
 // --------------------------------------------------------------------------
@@ -161,12 +162,11 @@ void ctkVTKScalarsToColorsComboBox::onCurrentIndexChanged(int index)
 
 // --------------------------------------------------------------------------
 void ctkVTKScalarsToColorsComboBox::onRowsAboutToBeRemoved(
-  const QModelIndex& parent, int first, int last)
+  const QModelIndex&, int first, int last)
 {
   for (int i = first; i <= last; ++i)
   {
-    vtkScalarsToColors* scFunction = reinterpret_cast<vtkScalarsToColors*>(
-      model()->data(model()->index(i, 0, parent)).value<void*>());
+    vtkScalarsToColors* scFunction = this->getScalarsToColors(i);
     if (scFunction != CTK_NULLPTR)
     {
       scFunction->Delete();
