@@ -40,7 +40,7 @@
 #include <QMenu>
 #include <QPushButton>
 #include <QSpinBox>
-#include <QTimer>
+#include <QTime>
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <QWidgetAction>
@@ -81,7 +81,16 @@ public:
   ctkVTKDiscretizableColorTransferWidgetPrivate(
     ctkVTKDiscretizableColorTransferWidget& object);
 
+  struct Ranges
+  {
+    double CurrentRange[2];
+    double VisibleRange[2];
+  };
+
   void setupUi(QWidget* widget);
+  void addRangesInHistory(double* currentRange, double* visibleRange);
+  bool popRangesFromHistory(double* currentRange, double* visibleRange);
+  void clearUndoHistory();
 
 #if CTK_USE_QVTKOPENGLWIDGET
   QVTKOpenGLWidget* ScalarsToColorsView;
@@ -105,6 +114,10 @@ public:
   double dataMean;
 
   double previousOpacityValue;
+
+  /// History of ranges for undo feature
+  QList<Ranges> rangesHistory;
+  QTime historyUpdateTime;
 
   vtkSmartPointer<vtkCallbackCommand> colorTransferFunctionModified;
   static void colorTransferFunctionModifiedCallback(vtkObject *caller,
@@ -130,6 +143,8 @@ ctkVTKDiscretizableColorTransferWidgetPrivate
 
   this->previousOpacityValue = 0.;
 
+  this->historyUpdateTime = QTime::currentTime();
+
   this->colorTransferFunctionModified =
     vtkSmartPointer<vtkCallbackCommand>::New();
   this->colorTransferFunctionModified->SetClientData(this);
@@ -149,7 +164,7 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 #else
   this->ScalarsToColorsView = new QVTKWidget;
 #endif
-  this->gridLayout->addWidget(this->ScalarsToColorsView, 2, 2, 8, 1);
+  this->gridLayout->addWidget(this->ScalarsToColorsView, 2, 2, 5, 1);
 
   this->scalarsToColorsContextItem = vtkSmartPointer<vtkScalarsToColorsContextItem>::New();
   vtkDiscretizableColorTransferFunction* ctf = this->scalarsToColorsContextItem->GetDiscretizableColorTransferFunction();
@@ -192,23 +207,23 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
   QObject::connect(opacitySlider, SIGNAL(valueChanged(double)),
     q, SLOT(setGlobalOpacity(double)));
 
-  QObject::connect(zoomOutButton, SIGNAL(clicked()),
-    q, SLOT(resetVisibleRangeToData()));
-
-  QObject::connect(zoomInButton, SIGNAL(clicked()),
-    q, SLOT(resetVisibleRangeToCTF()));
+  QObject::connect(undoButton, SIGNAL(clicked()),
+    q, SLOT(onUndoButtonClick()));
 
   QObject::connect(resetRangeButton, SIGNAL(clicked()),
-    q, SLOT(resetColorTransferFunctionRange()));
+    q, SLOT(onResetRangesButtonClick()));
 
-  QObject::connect(centerRangeButton, SIGNAL(clicked()),
-    q, SLOT(centerColorTransferFunctionRange()));
+  QObject::connect(shrinkRangeButton, SIGNAL(clicked()),
+    q, SLOT(onShrinkRangeButtonClick()));
+
+  QObject::connect(expandRangeButton, SIGNAL(clicked()),
+    q, SLOT(onExpandRangeButtonClick()));
 
   QObject::connect(invertColorTransferFunctionButton, SIGNAL(clicked()),
     q, SLOT(invertColorTransferFunction()));
 
   QObject::connect(rangeSlider, SIGNAL(valuesChanged(double, double)),
-    q, SLOT(setColorTransferFunctionRange(double, double)));
+    q, SLOT(onRangeSliderValueChange(double, double)));
 
   /// Option panel menu
   QWidget* nanColorWidget = new QWidget(optionButton);
@@ -263,6 +278,55 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
   ///Enable nbOfValuesSpinBox only if we use discretize
   QObject::connect(discretizeCheckBox, SIGNAL(toggled(bool)),
     nbOfDiscreteValuesSpinBox, SLOT(setEnabled(bool)));
+}
+
+//-----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidgetPrivate::addRangesInHistory(
+    double* currentRange, double* visibleRange)
+{
+  Q_Q(ctkVTKDiscretizableColorTransferWidget);
+
+  if (this->historyUpdateTime.msecsTo(QTime::currentTime()) < 500)
+  {
+    return;
+  }
+
+  Ranges ranges;
+  ranges.CurrentRange[0] = currentRange[0];
+  ranges.CurrentRange[1] = currentRange[1];
+  ranges.VisibleRange[0] = visibleRange[0];
+  ranges.VisibleRange[1] = visibleRange[1];
+  this->rangesHistory.push_back(ranges);
+  this->historyUpdateTime = QTime::currentTime();
+}
+
+//-----------------------------------------------------------------------------
+bool ctkVTKDiscretizableColorTransferWidgetPrivate::popRangesFromHistory(
+    double* currentRange, double* visibleRange)
+{
+  Q_Q(ctkVTKDiscretizableColorTransferWidget);
+
+  if (this->rangesHistory.empty())
+  {
+    return false;
+  }
+
+  Ranges ranges = this->rangesHistory.back();
+  currentRange[0] = ranges.CurrentRange[0];
+  currentRange[1] = ranges.CurrentRange[1];
+  visibleRange[0] = ranges.VisibleRange[0];
+  visibleRange[1] = ranges.VisibleRange[1];
+
+  this->rangesHistory.pop_back();
+  this->historyUpdateTime = QTime::currentTime();
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidgetPrivate::clearUndoHistory()
+{
+  this->rangesHistory.clear();
 }
 
 // ----------------------------------------------------------------------------
@@ -412,7 +476,6 @@ void ctkVTKDiscretizableColorTransferWidget::setHistogramConnection(
   {
     d->histogramFilter = CTK_NULLPTR;
     d->dataMean = 0.;
-    this->setDataRange(VTK_DOUBLE_MAX, VTK_DOUBLE_MIN);
     return;
   }
 
@@ -428,13 +491,19 @@ void ctkVTKDiscretizableColorTransferWidget::updateHistogram(
 
   this->updateHistogram();
 
-  if (updateDataRange
-   && d->histogramFilter
-   && d->histogramFilter->GetInputConnection(0, 0))
+  if (updateDataRange)
   {
-    // get min max values from histogram
-    this->setDataRange(d->histogramFilter->GetMin()[0],
-                       d->histogramFilter->GetMax()[0]);
+    if (d->histogramFilter
+     && d->histogramFilter->GetInputConnection(0, 0))
+    {
+      // get min max values from histogram
+      this->setDataRange(d->histogramFilter->GetMin()[0],
+                         d->histogramFilter->GetMax()[0]);
+    }
+    else
+    {
+      this->setDataRange(VTK_DOUBLE_MAX, VTK_DOUBLE_MIN);
+    }
   }
 }
 
@@ -541,10 +610,10 @@ void ctkVTKDiscretizableColorTransferWidget::disableCtfWidgets()
   d->opacitySlider->setValue(d->previousOpacityValue);
   d->opacitySlider->setEnabled(false);
   d->optionButton->setEnabled(false);
+  d->undoButton->setEnabled(false);
   d->resetRangeButton->setEnabled(false);
-  d->zoomInButton->setEnabled(false);
-  d->zoomOutButton->setEnabled(false);
-  d->centerRangeButton->setEnabled(false);
+  d->shrinkRangeButton->setEnabled(false);
+  d->expandRangeButton->setEnabled(false);
   d->invertColorTransferFunctionButton->setEnabled(false);
 
 #ifdef DEBUG_RANGE
@@ -563,10 +632,10 @@ void ctkVTKDiscretizableColorTransferWidget::enableCtfWidgets()
   d->rangeSlider->setEnabled(true);
   d->opacitySlider->setEnabled(true);
   d->optionButton->setEnabled(true);
+  d->undoButton->setEnabled(true);
   d->resetRangeButton->setEnabled(true);
-  d->zoomInButton->setEnabled(true);
-  d->zoomOutButton->setEnabled(true);
-  d->centerRangeButton->setEnabled(true);
+  d->shrinkRangeButton->setEnabled(true);
+  d->expandRangeButton->setEnabled(true);
   d->invertColorTransferFunctionButton->setEnabled(true);
 
   d->previousOpacityValue = 1.0;
@@ -682,9 +751,55 @@ void ctkVTKDiscretizableColorTransferWidget::onPaletteIndexChanged(
   vtkScalarsToColors* ctf)
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
-
+  d->addRangesInHistory(this->getColorTransferFunctionRange(), this->getVisibleRange());
   this->copyColorTransferFunction(ctf);
   d->ScalarsToColorsView->GetInteractor()->Render();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::onResetRangesButtonClick()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+  d->addRangesInHistory(this->getColorTransferFunctionRange(), this->getVisibleRange());
+  this->resetRangesToData();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::onShrinkRangeButtonClick()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+  d->addRangesInHistory(this->getColorTransferFunctionRange(), this->getVisibleRange());
+  this->resetVisibleRangeToCTF();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::onExpandRangeButtonClick()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+  d->addRangesInHistory(this->getColorTransferFunctionRange(), this->getVisibleRange());
+  this->resetCTFRangeToVisible();
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::onUndoButtonClick()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+
+  double currentRange[2], visibleRange[2];
+  if (d->popRangesFromHistory(currentRange, visibleRange))
+  {
+    this->setVisibleRange(visibleRange[0], visibleRange[1]);
+    this->setColorTransferFunctionRange(currentRange[0], currentRange[1]);
+  }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::onRangeSliderValueChange(
+    double min, double max)
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+  d->addRangesInHistory(this->getColorTransferFunctionRange(), this->getVisibleRange());
+  this->setColorTransferFunctionRange(min, max);
 }
 
 // ----------------------------------------------------------------------------
@@ -842,10 +957,18 @@ void ctkVTKDiscretizableColorTransferWidget::onCurrentPointEdit()
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKDiscretizableColorTransferWidget::resetVisibleRangeToData()
+void ctkVTKDiscretizableColorTransferWidget::resetRangesToData()
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
   this->resetVisibleRange(ctkVTKDiscretizableColorTransferWidget::ONLY_DATA);
+  this->resetColorTransferFunctionRange(ctkVTKDiscretizableColorTransferWidget::VISIBLE);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKDiscretizableColorTransferWidget::clearUndoHistory()
+{
+  Q_D(ctkVTKDiscretizableColorTransferWidget);
+  d->clearUndoHistory();
 }
 
 // ----------------------------------------------------------------------------
@@ -856,7 +979,7 @@ void ctkVTKDiscretizableColorTransferWidget::resetVisibleRangeToCTF()
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKDiscretizableColorTransferWidget::resetColorTransferFunctionRange()
+void ctkVTKDiscretizableColorTransferWidget::resetCTFRangeToVisible()
 {
   Q_D(ctkVTKDiscretizableColorTransferWidget);
   this->resetColorTransferFunctionRange(ctkVTKDiscretizableColorTransferWidget::VISIBLE);

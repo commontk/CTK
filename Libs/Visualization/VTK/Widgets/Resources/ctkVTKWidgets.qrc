@@ -1,8 +1,11 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
+    <file>Icons/expand.png</file>
     <file>Icons/invert.png</file>
     <file>Icons/resetRange.png</file>
     <file>Icons/resetRangeCustom.png</file>
+    <file>Icons/shrink.png</file>
     <file>Icons/threshold.png</file>
+    <file>Icons/undo.png</file>
   </qresource>
 </RCC>
