@@ -84,8 +84,19 @@ public:
 
   ctkVTKScalarsToColorsComboBox* scalarsToColorsSelector() const;
 
+  void setVisibleRange(double min, double max);
   void resetVisibleRange(ResetVisibleRange resetMode);
+  void resetVisibleRangeToCTF();
+
+  void setColorTransferFunctionRange(double min, double max);
   void resetColorTransferFunctionRange(ResetCTFRange resetMode);
+  void resetCTFRangeToVisible();
+  void centerColorTransferFunctionRange();
+
+  void setDataRange(double min, double max);
+  void resetRangesToData();
+
+  void clearUndoHistory();
 
 signals:
   void currentScalarsToColorsModified();
@@ -94,21 +105,17 @@ signals:
 public slots:
   void onCurrentPointEdit();
   void onPaletteIndexChanged(vtkScalarsToColors* ctf);
+  void onResetRangesButtonClick();
+  void onShrinkRangeButtonClick();
+  void onExpandRangeButtonClick();
+  void onUndoButtonClick();
+  void onRangeSliderValueChange(double min, double max);
 
-  void setGlobalOpacity(double opacity);
-
-  void resetVisibleRangeToCTF();
-  void resetVisibleRangeToData();
-  void resetColorTransferFunctionRange();
-  void centerColorTransferFunctionRange();
   void invertColorTransferFunction();
-
+  void setGlobalOpacity(double opacity);
   void setNaNColor();
   void setDiscretize(bool checked);
   void setNumberOfDiscreteValues(int value);
-  void setColorTransferFunctionRange(double min, double max);
-  void setVisibleRange(double min, double max);
-  void setDataRange(double min, double max);
 
 protected:
   QScopedPointer<ctkVTKDiscretizableColorTransferWidgetPrivate> d_ptr;
