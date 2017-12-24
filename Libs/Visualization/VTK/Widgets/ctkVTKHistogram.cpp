@@ -311,11 +311,17 @@ void populateBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
   T* ptr = static_cast<T*>(scalars->WriteVoidPointer(0, tupleNumber));
   T* endPtr = ptr + tupleNumber * componentNumber;
   ptr += component;
+  vtkIdType histogramSize = bins->GetNumberOfTuples();
   for (; ptr < endPtr; ptr += componentNumber)
     {
-    Q_ASSERT( (static_cast<long long>(*ptr) - offset) == 
-              (static_cast<int>(*ptr) - offset));
-    binsPtr[static_cast<int>(*ptr - offset)]++;
+    int index = static_cast<int>(*ptr - offset);
+    if (index < 0 || index >= histogramSize)
+      {
+      // This happens when scalar range is not computed correctly
+      // (scalar range may be read from file, so VTK does not have full control over it)
+      continue;
+      }
+    binsPtr[index]++;
     }
 }
 
@@ -340,12 +346,13 @@ void populateIrregularBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
   double binWidth = 1.;
   if (range[1] != range[0])
     {
-    binWidth = static_cast<double>(bins->GetNumberOfTuples()) / (range[1] - range[0]);
+    binWidth = static_cast<double>(bins->GetNumberOfTuples()-1) / (range[1] - range[0]);
     }
 
   T* ptr = static_cast<T*>(scalars->WriteVoidPointer(0, tupleNumber));
   T* endPtr = ptr + tupleNumber * componentNumber;
   ptr += component;
+  vtkIdType histogramSize = bins->GetNumberOfTuples();
   for (; ptr < endPtr; ptr += componentNumber)
     {
     if ((std::numeric_limits<T>::has_quiet_NaN &&
@@ -353,7 +360,14 @@ void populateIrregularBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
       {
       continue;
       }
-    binsPtr[vtkMath::Floor((static_cast<double>(*ptr) - offset) * binWidth)]++;
+    int index = vtkMath::Floor((static_cast<double>(*ptr) - offset) * binWidth);
+    if (index < 0 || index >= histogramSize)
+      {
+      // This happens when scalar range is not computed correctly
+      // (scalar range may be read from file, so VTK does not have full control over it)
+      continue;
+      }
+    binsPtr[index]++;
     }
 }
 
