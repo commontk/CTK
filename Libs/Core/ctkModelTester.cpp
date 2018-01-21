@@ -258,7 +258,7 @@ void ctkModelTester::testData(const QModelIndex& index)const
     {
     this->test(index.data(Qt::DisplayRole).isValid(), 
                QString("A valid index can't have invalid data: %1, %2, %3")
-               .arg(index.row()).arg(index.column()).arg(long(index.internalPointer())));
+               .arg(index.row()).arg(index.column()).arg(ptrdiff_t(index.internalPointer())));
     }
 }
 
