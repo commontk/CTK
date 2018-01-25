@@ -57,7 +57,7 @@ void ctkXnatResourceCatalogXmlParser::parseXml(QList<QVariantMap>& result)
 
   while (!d->xmlReader.atEnd())
   {
-    if (d->xmlReader.name().compare("entry") == 0)
+    if (d->xmlReader.name().compare(QLatin1String("entry")) == 0)
     {
       QVariantMap map;
       QXmlStreamAttributes attributes = d->xmlReader.attributes();
