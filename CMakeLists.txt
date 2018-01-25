@@ -511,7 +511,6 @@ ctk_lib_option(Scripting/Python/Core
 ctk_lib_option(Scripting/Python/Widgets
                "Build the Python Widgets library" OFF)
 
-# VTK libraries have not yet been tested with Qt5
 ctk_lib_option(Visualization/VTK/Core
                "Build the VTK Core library" OFF)
 
@@ -542,7 +541,8 @@ ctk_lib_option(XNAT/Core
 ctk_lib_option(XNAT/Widgets
                "Build the XNAT Widgets library" OFF)
 
-# Save the set of enabled libs in a cache file
+# Save enabled CTK libraries in the cache to ensure expected player and translator
+# are enabled in "Libs/QtTesting".
 set(_enabled_libs)
 foreach(_lib ${CTK_LIBS})
   if(CTK_LIB_${_lib})
@@ -550,6 +550,7 @@ foreach(_lib ${CTK_LIBS})
   endif()
 endforeach()
 set(CTK_ENABLED_LIBS ${_enabled_libs} CACHE INTERNAL "" FORCE)
+
 #-----------------------------------------------------------------------------
 # CTK Applications - Use ON or OFF to indicate if the application should be built by default
 #
