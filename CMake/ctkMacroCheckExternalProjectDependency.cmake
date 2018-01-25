@@ -1,6 +1,10 @@
 #.rst:
 # ExternalProjectDependency
 # -------------------------
+#
+# .. only:: html
+#
+#    .. contents::
 
 ###########################################################################
 #
@@ -29,18 +33,40 @@ if(NOT DEFINED EP_LIST_SEPARATOR)
 endif()
 
 #.rst:
+# Global Variables
+# ^^^^^^^^^^^^^^^^
+
+#.rst:
 # .. cmake:variable:: EXTERNAL_PROJECT_DIR
+#
+# This variable describes the directory in which external project files
+# matching ``<EXTERNAL_PROJECT_FILE_PREFIX><projectname>.cmake`` expression are globbed.
 #
 if(NOT EXISTS "${EXTERNAL_PROJECT_DIR}")
   set(EXTERNAL_PROJECT_DIR ${CMAKE_SOURCE_DIR}/SuperBuild)
 endif()
 
 #.rst:
+# .. cmake:variable:: EXTERNAL_PROJECT_ADDITIONAL_DIR
+#
+# If set, this variable represents an other directory in which external project files
+# are searched for if not already found in ``EXTERNAL_PROJECT_DIR``.
+
+#.rst:
 # .. cmake:variable:: EXTERNAL_PROJECT_FILE_PREFIX
+#
+# This variable describes the prefix of the external project files looked up in
+# ``EXTERNAL_PROJECT_DIR``. It defaults to ``External_``.
 #
 if(NOT DEFINED EXTERNAL_PROJECT_FILE_PREFIX)
   set(EXTERNAL_PROJECT_FILE_PREFIX "External_")
 endif()
+
+#.rst:
+# .. cmake:variable:: SUPERBUILD_TOPLEVEL_PROJECT
+#
+# This variable can be set to explicitly identify the name of the top-level project.
+# If not set, it default to the value of ``CMAKE_PROJECT_NAME``.
 
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
@@ -50,6 +76,10 @@ else()
 endif()
 set(EP_CMAKE_GENERATOR_PLATFORM "${CMAKE_GENERATOR_PLATFORM}")
 set(EP_CMAKE_GENERATOR_TOOLSET "${CMAKE_GENERATOR_TOOLSET}")
+
+#.rst:
+# Functions
+# ^^^^^^^^^
 
 #.rst:
 # .. cmake:function:: mark_as_superbuild
@@ -202,16 +232,9 @@ function(_sb_cmakevar_to_cmakearg cmake_varname_and_type cmake_arg_var has_cfg_i
   _sb_extract_varname_and_vartype(${cmake_varname_and_type} _varname _vartype)
 
   set(_var_value "${${_varname}}")
-
-  set(_consider_cache_value 1)
-  if(DEFINED ${_varname}_SKIPCACHEVALUE AND ${_varname}_SKIPCACHEVALUE)
-    set(_consider_cache_value 0)
-  endif()
-  if(_consider_cache_value)
-    get_property(_value_set_in_cache CACHE ${_varname} PROPERTY VALUE SET)
-    if(_value_set_in_cache)
-      get_property(_var_value CACHE ${_varname} PROPERTY VALUE)
-    endif()
+  get_property(_value_set_in_cache CACHE ${_varname} PROPERTY VALUE SET)
+  if(_value_set_in_cache)
+    get_property(_var_value CACHE ${_varname} PROPERTY VALUE)
   endif()
 
   set(_has_cfg_intdir FALSE)
@@ -243,7 +266,7 @@ set(_ALL_PROJECT_IDENTIFIER "ALLALLALL")
 
 #
 #  _sb_append_to_cmake_args(
-#      VARS <varname1>:<vartype1> [<varname2>:<vartype2> [...]]
+#      [VARS <varname1>:<vartype1> [<varname2>:<vartype2> [...]]]
 #      [PROJECTS <projectname> [<projectname> [...]] | ALL_PROJECTS]
 #      [LABELS <label1> [<label2> [...]]]
 #    )
@@ -301,6 +324,47 @@ function(_sb_append_to_cmake_args)
   endforeach()
 endfunction()
 
+#.rst:
+# .. cmake:function:: ExternalProject_DeclareLabels
+#
+# .. code-block:: cmake
+#
+#  ExternalProject_DeclareLabels(
+#      [PROJECTS <projectname> [<projectname> [...]] | ALL_PROJECTS]
+#      LABELS <label1> [<label2> [...]]
+#    )
+#
+# .. code-block:: cmake
+#
+#  PROJECTS corresponds to a list of <projectname> that will be added using 'ExternalProject_Add' function.
+#           If not specified and called within a project file, it defaults to the value of 'SUPERBUILD_TOPLEVEL_PROJECT'
+#           Otherwise, it defaults to 'CMAKE_PROJECT_NAME'.
+#           If instead 'ALL_PROJECTS' is specified, the variables and labels will be passed to all projects.
+#
+#  LABELS is a list of label to pass to the <projectname> as CMake CACHE args of the
+#           form -D<projectname>_EP_LABEL_<label>= unless specific variables
+#           have been associated with the labels using mark_as_superbuild.
+#
+function(ExternalProject_DeclareLabels)
+  set(options ALL_PROJECTS)
+  set(oneValueArgs)
+  set(multiValueArgs PROJECTS LABELS)
+  cmake_parse_arguments(_sb "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if(_sb_PROJECTS AND _sb_ALL_PROJECTS)
+    message(FATAL_ERROR "Arguments 'PROJECTS' and 'ALL_PROJECTS' are mutually exclusive !")
+  endif()
+
+  if(_sb_ALL_PROJECTS)
+    set(optional_arg_ALL_PROJECTS "ALL_PROJECTS")
+  else()
+    set(optional_arg_ALL_PROJECTS PROJECTS ${_sb_PROJECTS})
+  endif()
+
+  _sb_append_to_cmake_args(
+    LABELS ${_sb_LABELS} ${optional_arg_ALL_PROJECTS})
+endfunction()
+
 function(_sb_get_external_project_arguments proj varname)
 
   mark_as_superbuild(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_SYSTEM_${proj}:BOOL)
@@ -312,7 +376,9 @@ function(_sb_get_external_project_arguments proj varname)
       list(REMOVE_DUPLICATES _labels)
       foreach(label ${_labels})
         get_property(${proj}_EP_LABEL_${label} GLOBAL PROPERTY ${proj}_EP_LABEL_${label})
-        list(REMOVE_DUPLICATES ${proj}_EP_LABEL_${label})
+        if(${proj}_EP_LABEL_${label})
+          list(REMOVE_DUPLICATES ${proj}_EP_LABEL_${label})
+        endif()
         _sb_append_to_cmake_args(PROJECTS ${proj}
           VARS ${proj}_EP_LABEL_${label}:STRING)
       endforeach()
@@ -334,6 +400,18 @@ function(_sb_get_external_project_arguments proj varname)
   _sb_collect_args(${_ALL_PROJECT_IDENTIFIER})
 
   set(_ep_arguments "")
+
+  # Automatically propagate CMake options
+  foreach(_cmake_option IN ITEMS
+    CMAKE_EXPORT_COMPILE_COMMANDS
+    )
+    if(DEFINED ${_cmake_option})
+      list(APPEND _ep_arguments CMAKE_CACHE_ARGS
+        -D${_cmake_option}:BOOL=${${_cmake_option}}
+        )
+    endif()
+  endforeach()
+
   foreach(property CMAKE_ARGS CMAKE_CACHE_ARGS)
     get_property(${proj}_EP_PROPERTY_${property} GLOBAL PROPERTY ${proj}_EP_PROPERTY_${property})
     get_property(${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property} GLOBAL PROPERTY ${_ALL_PROJECT_IDENTIFIER}_EP_PROPERTY_${property})
@@ -475,6 +553,33 @@ endfunction()
 #      [CMAKE_GENERATOR_PLATFORM <cmake_generator_platform>]
 #      [CMAKE_GENERATOR_TOOLSET <cmake_generator_toolset>]
 #    )
+#
+#
+# .. code-block:: cmake
+#
+#  PROJECT_VAR Name of the variable containing the name of the included project.
+#              By default, it is `proj` and it is set to `<project_name>`.
+#
+#  EP_ARGS_VAR Name of the variable listing arguments to pass to ExternalProject.
+#              If not specified, variable name default to `<project_name>_EP_ARGS`.
+#
+#  DEPENDS_VAR Name of the variable containing the dependency of the included project.
+#              By default, it is `<project_name>_DEPENDS`.
+#
+#
+#  USE_SYSTEM_VAR Name of the variable indicating if the system version of <project_name>
+#                 should be looked up. Lookup of the project is left to the developer implementing
+#                 the external project file.
+#                 By default, it is `<SUPERBUILD_TOPLEVEL_PROJECT>_USE_SYSTEM_<project_name>`.
+#
+#  SUPERBUILD_VAR Name of the variable indicating if the top-level or inner project is being built.
+#                 By default, it is `<SUPERBUILD_TOPLEVEL_PROJECT>_SUPERBUILD`.
+#
+#
+#  CMAKE_GENERATOR
+#  CMAKE_GENERATOR_PLATFORM
+#  CMAKE_GENERATOR_TOOLSET These three options allow to overwrite the values set in the top-level project that
+#                          would otherwise automatically be propagated to dependent projects.
 #
 macro(ExternalProject_Include_Dependencies project_name)
   set(options)
