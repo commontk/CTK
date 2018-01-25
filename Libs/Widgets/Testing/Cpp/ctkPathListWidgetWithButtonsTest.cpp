@@ -68,7 +68,8 @@ void ctkPathListWidgetWithButtonsTester::testButtons()
 
   topLevel.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&topLevel);
+  bool result = QTest::qWaitForWindowActive(&topLevel);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&topLevel);
 #endif

@@ -67,7 +67,8 @@ void ctkSliderWidgetTester::testUI()
   slider.setPrefix("A: ");
   slider.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&slider);
+  bool result = QTest::qWaitForWindowActive(&slider);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&slider);
 #endif
@@ -165,7 +166,8 @@ void ctkSliderWidgetTester::testDecimalsByShortcuts()
 
   slider.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&slider);
+  bool result = QTest::qWaitForWindowActive(&slider);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&slider);
 #endif
@@ -190,7 +192,8 @@ void ctkSliderWidgetTester::testValueChangedWithNoTracking()
 
   slider.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&slider);
+  bool result = QTest::qWaitForWindowActive(&slider);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&slider);
 #endif

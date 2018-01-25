@@ -42,7 +42,8 @@ void ctkSearchBoxTester::testSignals()
   ctkSearchBox searchBox;
   searchBox.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&searchBox);
+  bool result = QTest::qWaitForWindowActive(&searchBox);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&searchBox);
 #endif

@@ -46,7 +46,8 @@ void ctkMatrixWidgetTester::testUI()
 
   matrix.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&matrix);
+  bool result = QTest::qWaitForWindowActive(&matrix);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&matrix);
 #endif
@@ -65,7 +66,8 @@ void ctkMatrixWidgetTester::testDecimals()
   matrix.show();
 
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&matrix);
+  bool result = QTest::qWaitForWindowActive(&matrix);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&matrix);
 #endif

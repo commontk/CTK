@@ -85,7 +85,8 @@ void ctkDoubleSpinBoxTester::testUI()
   spinBox.setSetMode(ctkDoubleSpinBox::SetAlways);
   spinBox.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&spinBox);
+  bool result = QTest::qWaitForWindowActive(&spinBox);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&spinBox);
 #endif

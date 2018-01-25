@@ -56,7 +56,8 @@ void ctkPushButtonTester::testDefaults()
 
   button.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&button);
+  bool result = QTest::qWaitForWindowActive(&button);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&button);
 #endif
