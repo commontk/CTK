@@ -103,39 +103,39 @@ void ctkCmdLineModuleXmlParser::handleExecutableElement()
   {
     QStringRef name = _xmlReader.name();
 
-    if (name.compare("category", Qt::CaseInsensitive) == 0)
+    if (compare(name, "category", Qt::CaseInsensitive) == 0)
     {
       _md->d->Category = _xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("title", Qt::CaseInsensitive) == 0)
+    else if (compare(name, "title", Qt::CaseInsensitive) == 0)
     {
       _md->d->Title = _xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("version", Qt::CaseInsensitive) == 0)
+    else if (compare(name, "version", Qt::CaseInsensitive) == 0)
     {
       _md->d->Version = _xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("documentation-url", Qt::CaseInsensitive) == 0)
+    else if (compare(name, "documentation-url", Qt::CaseInsensitive) == 0)
     {
       _md->d->DocumentationURL = _xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("license", Qt::CaseInsensitive) == 0)
+    else if (compare(name, "license", Qt::CaseInsensitive) == 0)
     {
       _md->d->License = _xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("acknowledgements", Qt::CaseInsensitive) == 0)
+    else if (compare(name, "acknowledgements", Qt::CaseInsensitive) == 0)
     {
       _md->d->Acknowledgements = _xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("contributor", Qt::CaseInsensitive) == 0)
+    else if (compare(name, "contributor", Qt::CaseInsensitive) == 0)
     {
       _md->d->Contributor = _xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("description", Qt::CaseInsensitive) == 0)
+    else if (compare(name, "description", Qt::CaseInsensitive) == 0)
     {
       _md->d->Description = _xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("parameters", Qt::CaseInsensitive) == 0)
+    else if (compare(name, "parameters", Qt::CaseInsensitive) == 0)
     {
       this->handleParametersElement();
     }
@@ -159,11 +159,11 @@ void ctkCmdLineModuleXmlParser::handleParametersElement()
   {
     QStringRef name = _xmlReader.name();
 
-    if (name.compare("label", Qt::CaseInsensitive) == 0)
+    if (compare(name, "label", Qt::CaseInsensitive) == 0)
     {
       group.d->Label = _xmlReader.readElementText().trimmed();
     }
-    else if (name.compare("description", Qt::CaseInsensitive) == 0)
+    else if (compare(name, "description", Qt::CaseInsensitive) == 0)
     {
       group.d->Description = _xmlReader.readElementText().trimmed();
     }
