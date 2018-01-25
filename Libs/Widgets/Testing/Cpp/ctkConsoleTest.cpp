@@ -45,7 +45,8 @@ void ctkConsoleTester::testShow()
   ctkConsole console;
   console.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&console);
+  bool result = QTest::qWaitForWindowActive(&console);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&console);
 #endif

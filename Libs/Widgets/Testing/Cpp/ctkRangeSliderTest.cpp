@@ -164,7 +164,8 @@ void ctkRangeSliderTester::testHandleMouseEvents()
 
   rangeSlider.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&rangeSlider);
+  bool result = QTest::qWaitForWindowActive(&rangeSlider);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&rangeSlider);
 #endif

@@ -59,7 +59,8 @@ void ctkRangeWidgetTester::testUI()
   ctkRangeWidget rangeWidget;
   rangeWidget.show();
 #if (QT_VERSION >= 0x50000)
-  QTest::qWaitForWindowActive(&rangeWidget);
+  bool result = QTest::qWaitForWindowActive(&rangeWidget);
+  Q_UNUSED(result);
 #else
   QTest::qWaitForWindowShown(&rangeWidget);
 #endif
