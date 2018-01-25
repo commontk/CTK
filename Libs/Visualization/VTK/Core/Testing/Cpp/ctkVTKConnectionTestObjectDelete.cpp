@@ -41,8 +41,6 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "moc_ctkVTKConnectionTestObjectDelete.cpp"
-
 namespace
 {
 
