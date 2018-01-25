@@ -27,7 +27,7 @@
 #include "ctkCmdLineModuleResult.h"
 
 #include <QFutureInterface>
-#if (QT_VERSION < 0x50000)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 #include <QtCore>
 #else
 #include <QtConcurrent>
@@ -88,16 +88,21 @@ private:
 
   friend struct ctkCmdLineModuleFutureWatcherPrivate;
 
-#if (QT_VERSION < 0x50000)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   QtConcurrent::ResultStore<ctkCmdLineModuleResult> &resultStore()
   { return static_cast<QtConcurrent::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
   const QtConcurrent::ResultStore<ctkCmdLineModuleResult> &resultStore() const
   { return static_cast<const QtConcurrent::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
-#else
+#elif (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
   QtPrivate::ResultStore<ctkCmdLineModuleResult> &resultStore()
   { return static_cast<QtPrivate::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
   const QtPrivate::ResultStore<ctkCmdLineModuleResult> &resultStore() const
   { return static_cast<const QtPrivate::ResultStore<ctkCmdLineModuleResult> &>(resultStoreBase()); }
+#else
+  QtPrivate::ResultStoreBase &resultStore()
+  { return static_cast<QtPrivate::ResultStoreBase &>(resultStoreBase()); }
+  const QtPrivate::ResultStoreBase &resultStore() const
+  { return static_cast<const QtPrivate::ResultStoreBase &>(resultStoreBase()); }
 #endif
 
   ctkCmdLineModuleFutureInterfacePrivate* d;
@@ -110,10 +115,12 @@ inline void QFutureInterface<ctkCmdLineModuleResult>::reportResult(const ctkCmdL
         return;
     }
 
-#if (QT_VERSION < 0x50000)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     QtConcurrent::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
-#else
+#elif (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
     QtPrivate::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
+#else
+    QtPrivate::ResultStoreBase &store = resultStore();
 #endif
 
     if (store.filterMode()) {
@@ -138,10 +145,12 @@ inline void QFutureInterface<ctkCmdLineModuleResult>::reportResults(const QVecto
         return;
     }
 
-#if (QT_VERSION < 0x50000)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     QtConcurrent::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
-#else
+#elif (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
     QtPrivate::ResultStore<ctkCmdLineModuleResult> &store = resultStore();
+#else
+    QtPrivate::ResultStoreBase &store = resultStore();
 #endif
 
     if (store.filterMode()) {
@@ -164,13 +173,21 @@ inline void QFutureInterface<ctkCmdLineModuleResult>::reportFinished(const ctkCm
 inline const ctkCmdLineModuleResult &QFutureInterface<ctkCmdLineModuleResult>::resultReference(int index) const
 {
     QMutexLocker lock(mutex());
+#if (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
     return resultStore().resultAt(index).value();
+#else
+    return resultStore().resultAt(index).value<ctkCmdLineModuleResult>();
+#endif
 }
 
 inline const ctkCmdLineModuleResult *QFutureInterface<ctkCmdLineModuleResult>::resultPointer(int index) const
 {
     QMutexLocker lock(mutex());
+#if (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
     return resultStore().resultAt(index).pointer();
+#else
+    return resultStore().resultAt(index).pointer<ctkCmdLineModuleResult>();
+#endif
 }
 
 inline QList<ctkCmdLineModuleResult> QFutureInterface<ctkCmdLineModuleResult>::results()
@@ -184,13 +201,19 @@ inline QList<ctkCmdLineModuleResult> QFutureInterface<ctkCmdLineModuleResult>::r
     QList<ctkCmdLineModuleResult> res;
     QMutexLocker lock(mutex());
 
-#if (QT_VERSION <= 0x50000)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
     QtConcurrent::ResultIterator<ctkCmdLineModuleResult> it = resultStore().begin();
-#else
+#elif (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
     QtPrivate::ResultIterator<ctkCmdLineModuleResult> it = resultStore().begin();
+#else
+    QtPrivate::ResultIteratorBase it = resultStore().begin();
 #endif
     while (it != resultStore().end()) {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
         res.append(it.value());
+#else
+        res.append(it.value<ctkCmdLineModuleResult>());
+#endif
         ++it;
     }
 
