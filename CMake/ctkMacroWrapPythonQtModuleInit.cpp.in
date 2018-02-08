@@ -48,14 +48,32 @@ void copyAttributes(PyObject* orig_module, PyObject* dest_module)
     }
 }
 } // end of anonymous namespace
+//-----------------------------------------------------------------------------
+#if PY_MAJOR_VERSION >= 3
 
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "@TARGET_CONFIG@PythonQt",                 /* m_name */
+    "The @TARGET_CONFIG@PythonQt module",      /* m_doc */
+    -1,                                        /* m_size */
+    Py@TARGET_CONFIG@PythonQt_ClassMethods,    /* m_methods */
+    NULL,                                      /* m_reload */
+    NULL,                                      /* m_traverse */
+    NULL,                                      /* m_clear */
+    NULL,                                      /* m_free */
+  };
+
+#endif
 //-----------------------------------------------------------------------------
 void init@TARGET_CONFIG@PythonQt()
 {
   static const char modulename[] = "@TARGET_CONFIG@PythonQt";
   PyObject *m;
-
-  m = Py_InitModule((char*)modulename, Py@TARGET_CONFIG@PythonQt_ClassMethods);
+  #if PY_MAJOR_VERSION >= 3
+    m = PyModule_Create(&moduledef);
+  #else
+    m = Py_InitModule((char*)modulename, Py@TARGET_CONFIG@PythonQt_ClassMethods);
+  #endif
   extern void PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET_CONFIG@(PyObject*);
   PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET_CONFIG@(m);
 

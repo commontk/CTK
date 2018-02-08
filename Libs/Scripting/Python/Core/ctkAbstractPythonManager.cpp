@@ -306,6 +306,11 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
   if (main)
     {
     QString path = QFileInfo(filename).absolutePath();
+    #if PY_MAJOR_VERSION >= 3
+      QString raiseWithTraceback("      raise(_ctk_executeFile_exc_info[1](None)).with_traceback()");
+    #else
+      QString raiseWithTraceback("      raise _ctk_executeFile_exc_info[1], None, _ctk_executeFile_exc_info[2]");
+    #endif
     // See http://nedbatchelder.com/blog/200711/rethrowing_exceptions_in_python.html
     QStringList code = QStringList()
         << "import sys"
@@ -315,13 +320,13 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
         << "_ctk_executeFile_exc_info = None"
         << "try:"
         << QString("    execfile('%1', _updated_globals)").arg(filename)
-        << "except Exception, e:"
+        << "except Exception as e:"
         << "    _ctk_executeFile_exc_info = sys.exc_info()"
         << "finally:"
         << "    del _updated_globals"
         << QString("    if sys.path[0] == '%1': sys.path.pop(0)").arg(path)
         << "    if _ctk_executeFile_exc_info:"
-        << "        raise _ctk_executeFile_exc_info[1], None, _ctk_executeFile_exc_info[2]";
+        << raiseWithTraceback;
     this->executeString(code.join("\n"));
     //PythonQt::self()->handleError(); // Clear errorOccured flag
     }

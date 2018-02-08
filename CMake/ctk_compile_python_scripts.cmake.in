@@ -55,16 +55,16 @@ def ctk_compile_file(fullname, ddir=None, force=0, rx=None, quiet=0):
                 except IOError:
                     pass
             if not quiet:
-                print 'Compiling', fullname, '...'
+                print('Compiling', fullname, '...')
             try:
                 ok = py_compile.compile(fullname, None, dfile, True)
-            except py_compile.PyCompileError,err:
+            except py_compile.PyCompileError as err:
                 if quiet:
-                    print 'Compiling', fullname, '...'
-                print err.msg
+                    print('Compiling', fullname, '...')
+                print(err.msg)
                 success = 0
-            except IOError, e:
-                print 'Sorry', e
+            except IOError as e:
+                print('Sorry', e)
                 success = 0
             else:
                 if ok == 0:

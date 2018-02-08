@@ -12,7 +12,7 @@ pythonManager.executeString("variableInPythonConsole=523")
 try:
   print("variableInPythonConsole was successfully set to {0}".format(variableInPythonConsole))
 except:
-  print "PythonManager.executeString failed"
+  print("PythonManager.executeString failed")
   qt.QApplication.exit(1)
 
 if not _ctkPythonConsoleInstance.isInteractive:
