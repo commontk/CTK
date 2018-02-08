@@ -78,7 +78,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   endif()
 
   if (CTK_QT_VERSION VERSION_GREATER "4")
-    set(revision_tag 8462a54a3281aff550730530c999cee4eb453bea) # patched-8
+    set(revision_tag 30d788f4543b87f2e9fcade063d9007447c0e95d) # patched-8
   else()
     set(revision_tag 1afe4f8906345063b25047652e8962f641010a55) # patched-5
   endif()
