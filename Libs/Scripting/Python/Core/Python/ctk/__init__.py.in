@@ -13,7 +13,7 @@ for kit in __kits_to_load:
     kits.append(kit)
   except ImportError as detail:
     if _CTK_VERBOSE_IMPORT:
-      print detail
+      print(detail)
 
 def add_methodclass_to_ctkWorkflowStep_or_ctkWorkflowWidgetStep(workflowstep_class):
 
