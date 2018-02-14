@@ -483,6 +483,9 @@ void ctkVTKAbstractView::setUseDepthPeeling(bool useDepthPeeling)
     }
   this->renderWindow()->SetMultiSamples(useDepthPeeling ? 0 : nSamples);
   renderer->SetUseDepthPeeling(useDepthPeeling ? 1 : 0);
+#if CTK_USE_QVTKOPENGLWIDGET
+  renderer->SetUseDepthPeelingForVolumes(useDepthPeeling);
+#endif
 }
 
 //----------------------------------------------------------------------------
