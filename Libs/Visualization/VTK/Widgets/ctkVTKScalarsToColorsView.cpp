@@ -139,7 +139,6 @@ void ctkVTKScalarsToColorsView::addPlot(vtkPlot* plot)
 void ctkVTKScalarsToColorsView::onBoundsChanged()
 {
   this->boundAxesToChartBounds();
-  this->setAxesToChartBounds();
   this->Superclass::onChartUpdated();
 }
 

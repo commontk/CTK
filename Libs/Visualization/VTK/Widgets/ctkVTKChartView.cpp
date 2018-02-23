@@ -110,6 +110,10 @@ void ctkVTKChartViewPrivate::init()
 // ----------------------------------------------------------------------------
 void ctkVTKChartViewPrivate::chartBounds(double* bounds)const
 {
+  if (!bounds)
+    {
+    return;
+    }
   Q_Q(const ctkVTKChartView);
   bounds[0] = bounds[2] = bounds[4] = bounds[6] = VTK_DOUBLE_MAX;
   bounds[1] = bounds[3] = bounds[5] = bounds[7] = VTK_DOUBLE_MIN;
@@ -127,54 +131,38 @@ void ctkVTKChartViewPrivate::chartBounds(double* bounds)const
       // bottom left
       case 0:
         // x
-        bounds[2] = bounds[2] > plotBounds[0] ?
-          plotBounds[0] : bounds[2];
-        bounds[3] = bounds[3] < plotBounds[1] ?
-          plotBounds[1] : bounds[3];
+        bounds[2] = bounds[2] > plotBounds[0] ? plotBounds[0] : bounds[2];
+        bounds[3] = bounds[3] < plotBounds[1] ? plotBounds[1] : bounds[3];
         // y
-        bounds[0] = bounds[0] > plotBounds[2] ?
-          plotBounds[2] : bounds[0];
-        bounds[1] = bounds[1] < plotBounds[3] ?
-          plotBounds[3] : bounds[1];
+        bounds[0] = bounds[0] > plotBounds[2] ? plotBounds[2] : bounds[0];
+        bounds[1] = bounds[1] < plotBounds[3] ? plotBounds[3] : bounds[1];
         break;
       // bottom right
       case 1:
         // x
-        bounds[2] = bounds[2] > plotBounds[0] ?
-          plotBounds[0] : bounds[2];
-        bounds[3] = bounds[3] < plotBounds[1] ?
-          plotBounds[1] : bounds[3];
+        bounds[2] = bounds[2] > plotBounds[0] ? plotBounds[0] : bounds[2];
+        bounds[3] = bounds[3] < plotBounds[1] ? plotBounds[1] : bounds[3];
         // y
-        bounds[4] = bounds[4] > plotBounds[2] ?
-          plotBounds[2] : bounds[4];
-        bounds[5] = bounds[5] < plotBounds[3] ?
-          plotBounds[3] : bounds[5];
+        bounds[4] = bounds[4] > plotBounds[2] ? plotBounds[2] : bounds[4];
+        bounds[5] = bounds[5] < plotBounds[3] ? plotBounds[3] : bounds[5];
         break;
       // top right
       case 2:
         // x
-        bounds[6] = bounds[6] > plotBounds[0] ?
-          plotBounds[0] : bounds[6];
-        bounds[7] = bounds[7] < plotBounds[1] ?
-          plotBounds[1] : bounds[7];
+        bounds[6] = bounds[6] > plotBounds[0] ? plotBounds[0] : bounds[6];
+        bounds[7] = bounds[7] < plotBounds[1] ? plotBounds[1] : bounds[7];
         // y
-        bounds[4] = bounds[4] > plotBounds[2] ?
-          plotBounds[2] : bounds[4];
-        bounds[5] = bounds[5] < plotBounds[3] ?
-          plotBounds[3] : bounds[5];
+        bounds[4] = bounds[4] > plotBounds[2] ? plotBounds[2] : bounds[4];
+        bounds[5] = bounds[5] < plotBounds[3] ? plotBounds[3] : bounds[5];
         break;
       // top left
       case 3:
         // x
-        bounds[6] = bounds[6] > plotBounds[0] ?
-          plotBounds[0] : bounds[6];
-        bounds[7] = bounds[7] < plotBounds[1] ?
-          plotBounds[1] : bounds[7];
+        bounds[6] = bounds[6] > plotBounds[0] ? plotBounds[0] : bounds[6];
+        bounds[7] = bounds[7] < plotBounds[1] ? plotBounds[1] : bounds[7];
         // y
-        bounds[0] = bounds[0] > plotBounds[2] ?
-          plotBounds[2] : bounds[1];
-        bounds[1] = bounds[0] < plotBounds[3] ?
-          plotBounds[3] : bounds[1];
+        bounds[0] = bounds[0] > plotBounds[2] ? plotBounds[2] : bounds[1];
+        bounds[1] = bounds[0] < plotBounds[3] ? plotBounds[3] : bounds[1];
         break;
       }
     }
@@ -295,10 +283,13 @@ void ctkVTKChartView::onChartUpdated()
     }
 }
 
-
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::chartExtent(double* extent)const
 {
+  if (!extent)
+    {
+    return;
+    }
   extent[0] = extent[2] = extent[4] = extent[6] = VTK_DOUBLE_MAX;
   extent[1] = extent[3] = extent[5] = extent[7] = VTK_DOUBLE_MIN;
   vtkChartXY* chart = this->chart();
@@ -314,6 +305,25 @@ void ctkVTKChartView::chartExtent(double* extent)const
   axis = chart->GetAxis(vtkAxis::RIGHT);
   extent[6] = qMin(axis->GetMinimum(), extent[6]);
   extent[7] = qMax(axis->GetMaximum(), extent[7]);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::setChartUserExtent(double* userExtent)
+{
+  if (!userExtent)
+    {
+    qCritical() << Q_FUNC_INFO << ": Invalid user extent";
+    return;
+    }
+  vtkChartXY* chart = this->chart();
+  vtkAxis* axis = chart->GetAxis(vtkAxis::BOTTOM);
+  axis->SetRange(userExtent[0], userExtent[1]);
+  axis = chart->GetAxis(vtkAxis::LEFT);
+  axis->SetRange(userExtent[2], userExtent[3]);
+  axis = chart->GetAxis(vtkAxis::TOP);
+  axis->SetRange(userExtent[4], userExtent[5]);
+  axis = chart->GetAxis(vtkAxis::RIGHT);
+  axis->SetRange(userExtent[6], userExtent[7]);
 }
 
 // ----------------------------------------------------------------------------

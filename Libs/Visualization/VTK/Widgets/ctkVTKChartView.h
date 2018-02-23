@@ -83,6 +83,7 @@ public:
   /// The current extent is the visible area on the chart.
   /// it is equivalent to the Minimum/Maximum of the axes
   void chartExtent(double bounds[8])const;
+  void setChartUserExtent(double* userExtent);
 
   /// Return the chart bounds for the 4 chart axes.
   /// bounds must be an array of 8 doubles.
