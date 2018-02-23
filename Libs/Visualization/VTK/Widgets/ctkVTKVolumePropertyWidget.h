@@ -39,7 +39,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKVolumePropertyWidget
   Q_OBJECT
   QVTK_OBJECT
   ///
-  /// Control wether a range slider widget is used to edit the opacity
+  /// Control whether a range slider widget is used to edit the opacity
   /// function instead of a chart editor. False by default
   Q_PROPERTY(bool thresholdEnabled READ isThresholdEnabled WRITE setThresholdEnabled NOTIFY thresholdEnabledChanged)
 
@@ -60,7 +60,9 @@ public:
   void setThresholdToggleVisible(bool showToggle);
 
   void chartsBounds(double bounds[4])const;
+  Q_INVOKABLE QList<double> chartsBounds()const;
   void chartsExtent(double extent[4])const;
+  Q_INVOKABLE QList<double> chartsExtent()const;
 
 public Q_SLOTS:
   void setVolumeProperty(vtkVolumeProperty* volumeProperty);
@@ -80,6 +82,10 @@ public Q_SLOTS:
                        bool dontSpreadFirstAndLast = false);
 
   void setThresholdEnabled(bool enable);
+
+  /// Set chart extent
+  void setChartsExtent(double extent[2]);
+  void setChartsExtent(double min, double max);
 
 Q_SIGNALS:
   void thresholdEnabledChanged(bool enable);

@@ -260,16 +260,11 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
     {
     d->InterpolationComboBox->setCurrentIndex(
       d->VolumeProperty->GetInterpolationType() == VTK_NEAREST_INTERPOLATION ? 0 : 1);
-    d->ShadeCheckBox->setChecked(
-      d->VolumeProperty->GetShade(d->CurrentComponent));
-    d->MaterialPropertyWidget->setAmbient(
-      d->VolumeProperty->GetAmbient(d->CurrentComponent));
-    d->MaterialPropertyWidget->setDiffuse(
-      d->VolumeProperty->GetDiffuse(d->CurrentComponent));
-    d->MaterialPropertyWidget->setSpecular(
-      d->VolumeProperty->GetSpecular(d->CurrentComponent));
-    d->MaterialPropertyWidget->setSpecularPower(
-      d->VolumeProperty->GetSpecularPower(d->CurrentComponent));
+    d->ShadeCheckBox->setChecked(d->VolumeProperty->GetShade(d->CurrentComponent));
+    d->MaterialPropertyWidget->setAmbient(d->VolumeProperty->GetAmbient(d->CurrentComponent));
+    d->MaterialPropertyWidget->setDiffuse(d->VolumeProperty->GetDiffuse(d->CurrentComponent));
+    d->MaterialPropertyWidget->setSpecular(d->VolumeProperty->GetSpecular(d->CurrentComponent));
+    d->MaterialPropertyWidget->setSpecularPower(d->VolumeProperty->GetSpecularPower(d->CurrentComponent));
     }
   this->updateRange();
 }
@@ -279,11 +274,13 @@ void ctkVTKVolumePropertyWidget::updateRange()
 {
   Q_D(ctkVTKVolumePropertyWidget);
 
-  double range[2];
+  double range[2] = {0.0};
   d->computeRange(range);
   d->ScalarOpacityThresholdWidget->setRange(range[0], range[1]);
 
-  double chartBounds[8];
+  // Elements: {leftMin, leftMax, bottomMin, bottomMax, rightMin, rightMax, topMin, topMax}
+  // (probably according to vtkAxis::Location)
+  double chartBounds[8] = {0.0};
   d->ScalarOpacityWidget->view()->chartBounds(chartBounds);
   chartBounds[2] = range[0];
   chartBounds[3] = range[1];
@@ -307,38 +304,97 @@ void ctkVTKVolumePropertyWidget::updateRange()
 void ctkVTKVolumePropertyWidget::chartsBounds(double bounds[4])const
 {
   Q_D(const ctkVTKVolumePropertyWidget);
-  double chartBounds[4];
+
+  double chartBounds[8] = {0.0};
   d->ScalarOpacityWidget->view()->chartBounds(chartBounds);
   memcpy(bounds, chartBounds, 4*sizeof(double));
+
   d->ScalarColorWidget->view()->chartBounds(chartBounds);
   bounds[0] = qMin(bounds[0], chartBounds[0]);
   bounds[1] = qMax(bounds[1], chartBounds[1]);
   bounds[2] = qMin(bounds[2], chartBounds[2]);
   bounds[3] = qMax(bounds[3], chartBounds[3]);
-  //d->GradientWidget->view()->chartBounds(chartBounds);
-  //bounds[0] = qMin(bounds[0], chartBounds[0]);
-  //bounds[1] = qMax(bounds[1], chartBounds[1]);
-  //bounds[2] = qMin(bounds[2], chartBounds[2]);
-  //bounds[3] = qMax(bounds[3], chartBounds[3]);
+
+  d->GradientWidget->view()->chartBounds(chartBounds);
+  bounds[0] = qMin(bounds[0], chartBounds[0]);
+  bounds[1] = qMax(bounds[1], chartBounds[1]);
+  bounds[2] = qMin(bounds[2], chartBounds[2]);
+  bounds[3] = qMax(bounds[3], chartBounds[3]);
+}
+
+// ----------------------------------------------------------------------------
+QList<double> ctkVTKVolumePropertyWidget::chartsBounds()const
+{
+  double boundsArray[4] = {0.0};
+  this->chartsBounds(boundsArray);
+
+  QList<double> bounds;
+  bounds << boundsArray[0] << boundsArray[1] << boundsArray[2] << boundsArray[3];
+  return bounds;
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setChartsExtent(double extent[2])
+{
+  this->setChartsExtent(extent[0], extent[1]);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setChartsExtent(double min, double max)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+
+  double chartExtent[8] = {0.0};
+  d->ScalarOpacityWidget->view()->chartExtent(chartExtent);
+  chartExtent[0] = min;
+  chartExtent[1] = max;
+  d->ScalarOpacityWidget->view()->setChartUserExtent(chartExtent);
+  d->ScalarOpacityWidget->view()->update();
+
+  d->ScalarColorWidget->view()->chartExtent(chartExtent);
+  chartExtent[0] = min;
+  chartExtent[1] = max;
+  d->ScalarColorWidget->view()->setChartUserExtent(chartExtent);
+  d->ScalarColorWidget->view()->update();
+
+  d->GradientWidget->view()->chartExtent(chartExtent);
+  chartExtent[0] = min;
+  chartExtent[1] = max;
+  d->GradientWidget->view()->setChartUserExtent(chartExtent);
+  d->GradientWidget->view()->update();
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKVolumePropertyWidget::chartsExtent(double extent[4])const
 {
   Q_D(const ctkVTKVolumePropertyWidget);
-  double chartExtent[8];
+
+  double chartExtent[8] = {0.0};
   d->ScalarOpacityWidget->view()->chartExtent(chartExtent);
   memcpy(extent, chartExtent, 4*sizeof(double));
+
   d->ScalarColorWidget->view()->chartExtent(chartExtent);
   extent[0] = qMin(extent[0], chartExtent[0]);
   extent[1] = qMax(extent[1], chartExtent[1]);
   extent[2] = qMin(extent[2], chartExtent[2]);
   extent[3] = qMax(extent[3], chartExtent[3]);
-  //d->GradientWidget->view()->chartExtent(chartExtent);
-  //extent[0] = qMin(extent[0], chartExtent[0]);
-  //extent[1] = qMin(extent[1], chartExtent[1]);
-  //extent[2] = qMin(extent[2], chartExtent[2]);
-  //extent[3] = qMin(extent[3], chartExtent[3]);
+
+  d->GradientWidget->view()->chartExtent(chartExtent);
+  extent[0] = qMin(extent[0], chartExtent[0]);
+  extent[1] = qMax(extent[1], chartExtent[1]);
+  extent[2] = qMin(extent[2], chartExtent[2]);
+  extent[3] = qMax(extent[3], chartExtent[3]);
+}
+
+// ----------------------------------------------------------------------------
+QList<double> ctkVTKVolumePropertyWidget::chartsExtent()const
+{
+  double extentArray[4] = {0.0};
+  this->chartsExtent(extentArray);
+
+  QList<double> extent;
+  extent << extentArray[0] << extentArray[1] << extentArray[2] << extentArray[3];
+  return extent;
 }
 
 // ----------------------------------------------------------------------------
