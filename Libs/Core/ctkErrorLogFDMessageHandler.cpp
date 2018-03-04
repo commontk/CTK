@@ -51,6 +51,8 @@ ctkFDHandler::ctkFDHandler(ctkErrorLogFDMessageHandler* messageHandler,
   this->LogLevel = logLevel;
   this->TerminalOutput = terminalOutput;
   this->SavedFDNumber = 0;
+  this->Pipe[0] = -1;
+  this->Pipe[1] = -1;
   this->Enabled = false;
 }
 
