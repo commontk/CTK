@@ -1,0 +1,18 @@
+{
+   fsetpos when used in ctkFDHandler
+   Memcheck:Param
+   lseek(offset)
+   obj:/lib/x86_64-linux-gnu/libc-2.21.so
+   fun:_IO_file_seekoff@@GLIBC_2.2.5
+   fun:fsetpos@@GLIBC_2.2.5
+   fun:_ZN12ctkFDHandler10setEnabledEb
+   fun:_ZN27ctkErrorLogFDMessageHandler18setEnabledInternalEb
+   fun:_ZN33ctkErrorLogAbstractMessageHandler10setEnabledEb
+   fun:_ZN23ctkErrorLogModelPrivateD1Ev
+   fun:_ZN16ctkErrorLogModelD1Ev
+   fun:_ZN16ctkErrorLogModelD0Ev
+   fun:_ZN25qSlicerApplicationPrivateD1Ev
+   fun:_ZN25qSlicerApplicationPrivateD0Ev
+   fun:_ZN22qSlicerCoreApplicationD1Ev
+}
+
