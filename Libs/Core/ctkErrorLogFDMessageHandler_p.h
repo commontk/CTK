@@ -75,8 +75,6 @@ private:
 
   int          Pipe[2]; // 0: Read, 1: Write
 
-  bool Initialized;
-
   mutable QMutex EnableMutex;
   bool Enabled;
 };
