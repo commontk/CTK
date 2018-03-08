@@ -31,6 +31,31 @@
 #! static library providing a initialization function that will allow to load
 #! both (1) and (2).
 
+# Function copied from https://github.com/scikit-build/scikit-build/pull/299
+# XXX Update this CMake module to use function from scikit-build to build the wrapper
+function(_ctk_set_python_extension_symbol_visibility _target)
+  if(PYTHON_VERSION_MAJOR VERSION_GREATER 2)
+    set(_modinit_prefix "PyInit_")
+  else()
+    set(_modinit_prefix "init")
+  endif()
+  if("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+    set_target_properties(${_target} PROPERTIES LINK_FLAGS
+        "/EXPORT:${_modinit_prefix}${_target}"
+    )
+  elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    set(_script_path
+      ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${_target}-version-script.map
+    )
+    file(WRITE ${_script_path}
+               "{global: ${_modinit_prefix}${_target}; local: *; };"
+    )
+    set_property(TARGET ${_target} APPEND_STRING PROPERTY LINK_FLAGS
+        " -Wl,--version-script=${_script_path}"
+    )
+  endif()
+endfunction()
+
 #! \ingroup CMakeAPI
 macro(ctkMacroBuildLibWrapper)
   ctkMacroParseArguments(MY
@@ -122,6 +147,7 @@ macro(ctkMacroBuildLibWrapper)
       set_target_properties(${lib_name}PythonQt PROPERTIES SUFFIX ".pyd")
     endif()
   endif()
+  _ctk_set_python_extension_symbol_visibility(${lib_name}PythonQt)
   set_target_properties(${lib_name}PythonQt PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${MY_RUNTIME_OUTPUT_DIRECTORY}"
     LIBRARY_OUTPUT_DIRECTORY "${MY_LIBRARY_OUTPUT_DIRECTORY}"
