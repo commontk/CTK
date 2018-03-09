@@ -33,6 +33,7 @@ endforeach()
 # Superbuild
 #
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
+set(SUPERBUILD_TOPLEVEL_PROJECT "CTK")
 set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/CMakeExternals)
 set(EXTERNAL_PROJECT_FILE_PREFIX "")
 include(ExternalProject)
@@ -455,14 +456,6 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Other options
-
-# Git protocol option
-option(CTK_USE_GIT_PROTOCOL "If behind a firewall turn this OFF to use https instead." ON)
-mark_as_advanced(CTK_USE_GIT_PROTOCOL)
-set(git_protocol "git")
-if(NOT CTK_USE_GIT_PROTOCOL)
-  set(git_protocol "https")
-endif()
 
 # Let's mark as advanced some default properties
 mark_as_advanced(CMAKE_INSTALL_PREFIX)
