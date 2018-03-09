@@ -397,7 +397,14 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
        && e->key() != Qt::Key_Alt
        && e->key() != Qt::Key_Shift)
     {
-    text_cursor.setPosition(this->commandEnd());
+    if (!message_output_area)
+      {
+      text_cursor.setPosition(this->commandEnd());
+      }
+    else
+      {
+      text_cursor.setPosition(this->documentEnd());
+      }
     this->setTextCursor(text_cursor);
     }
 
@@ -544,7 +551,14 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     this->switchToUserInputTextColor();
     }
   this->Superclass::keyPressEvent(e);
-  this->updateCommandBuffer();
+  if (!message_output_area)
+    {
+    this->updateCommandBuffer();
+    }
+  else
+    {
+    this->commandBuffer() = this->toPlainText().mid(this->commandEnd() + this->MessageOutputSize - 1);
+    }
   this->updateCompleterIfVisible();
 }
 
