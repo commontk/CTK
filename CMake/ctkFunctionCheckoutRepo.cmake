@@ -14,7 +14,7 @@ function(ctkFunctionCheckoutRepo)
   endforeach()
   
   if(NOT _GIT_PROTOCOL)
-    set(_GIT_PROTOCOL ${git_protocol})
+    set(_GIT_PROTOCOL ${EP_GIT_PROTOCOL})
   endif()
   if(NOT _CHECKOUT_DIR)
     set(_CHECKOUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
