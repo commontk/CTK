@@ -43,7 +43,7 @@ public:
   virtual ~ctkErrorLogWidget();
 
   ctkErrorLogModel* errorLogModel()const;
-  void setErrorLogModel(ctkErrorLogModel * newErrorLogModel);
+  Q_INVOKABLE void setErrorLogModel(ctkErrorLogModel * newErrorLogModel);
 
   /// Hide table column identified by /a columnId.
   /// \sa ctkErrorLogModel::ColumnsIds
