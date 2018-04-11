@@ -117,6 +117,16 @@ void ctkCheckableHeaderViewPrivate::init()
 }
 
 //----------------------------------------------------------------------------
+ctkCheckableHeaderView::ctkCheckableHeaderView()
+	: QHeaderView(Qt::Horizontal, NULL)
+	, d_ptr(new ctkCheckableHeaderViewPrivate(*this))
+{
+	Q_D(ctkCheckableHeaderView);
+	d->init();
+}
+
+
+//----------------------------------------------------------------------------
 ctkCheckableHeaderView::ctkCheckableHeaderView(
   Qt::Orientation orient, QWidget *widgetParent)
   : QHeaderView(orient, widgetParent)

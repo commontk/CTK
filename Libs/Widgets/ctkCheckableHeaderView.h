@@ -75,6 +75,7 @@ class CTK_WIDGETS_EXPORT ctkCheckableHeaderView : public QHeaderView
 {
   Q_OBJECT;
 public:
+  ctkCheckableHeaderView();
   ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent=0);
   virtual ~ctkCheckableHeaderView();
 
@@ -103,21 +104,23 @@ public:
   /// Utility function that returns the checkState of the section. 
   /// One can access the same value through the model:
   /// model->headerData(orientation, section, Qt::CheckStateRole)
-  Qt::CheckState checkState(int section)const;
+  Q_INVOKABLE Qt::CheckState checkState(int section)const;
 
   ///
   /// Utility function that returns the checkState of the section. 
   /// One can access the same value through the model:
   /// model->headerData(orientation, section, Qt::CheckStateRole)
-  bool checkState(int section,Qt::CheckState& checkState )const;
+  Q_INVOKABLE bool checkState(int section, Qt::CheckState& checkState)const;
   
-  ctkCheckableModelHelper* checkableModelHelper()const;
+  /// Returns a pointer to the checkable model helper to give a direct access
+  /// to the check manager.
+  Q_INVOKABLE ctkCheckableModelHelper* checkableModelHelper()const;
 
 public Q_SLOTS:
   ///
   /// Warning, setting the check state automatically set the 
   /// header section checkable
-  void setCheckState(int section, Qt::CheckState checkState);
+  Q_INVOKABLE void setCheckState(int section, Qt::CheckState checkState);
 
 private Q_SLOTS:
   void onHeaderDataChanged(Qt::Orientation orient, int first, int last);
