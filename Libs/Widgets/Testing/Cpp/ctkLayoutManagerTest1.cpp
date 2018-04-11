@@ -25,7 +25,7 @@
 #include <QTimer>
 
 // CTK includes
-#include "ctkSliderWidget.h"
+#include "ctkPushButton.h"
 #include "ctkLayoutFactory.h"
 #include "ctkLayoutViewFactory.h"
 
@@ -38,8 +38,8 @@ QString gridLayout(
 "<layout type=\"grid\">"
 " <item><view/></item>"
 " <item column=\"1\"><view/></item>"
-" <item row=\"1\"><view/></item>"
-" <item row=\"1\" column=\"1\"><view/></item>"
+" <item row=\"1\"><view horizontalStretch=\"1\"/></item>"
+" <item row=\"1\" column=\"1\"><view horizontalStretch=\"2\"/></item>"
 " <item row=\"2\" colspan=\"2\"><view/></item>"
 " <item row=\"3\" rowspan=\"2\"><view/></item>"
 "</layout>");
@@ -56,9 +56,9 @@ QString tabMultipleLayout(
 QString nestedLayout(
 "<layout type=\"tab\">"
 " <item>"
-"  <layout type=\"horizontal\">"
-"   <item><view/></item>"
-"   <item>"
+"  <layout type=\"horizontal\" split=\"true\">"
+"   <item splitSize=\"400\"><view/></item>"
+"   <item splitSize=\"100\">"
 "    <layout type=\"vertical\">"
 "     <item><view/></item>"
 "     <item><view/></item>"
@@ -70,7 +70,7 @@ QString nestedLayout(
 "     </item>"
 "    </layout>"
 "   </item>"
-"   <item><view/></item>"
+"   <item splitSize=\"100\"><view/></item>"
 "  </layout>"
 " </item>"
 " <item><view name=\"tab2\"/></item>"
@@ -164,8 +164,8 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   // TabToGrid
   QWidget tabToGrid;
   tabToGrid.setWindowTitle("Tab to Grid Layout");
-  ctkTemplateLayoutViewFactory<ctkSliderWidget>* tabToGridInstanciator =
-    new ctkTemplateLayoutViewFactory<ctkSliderWidget>(&viewport);
+  ctkTemplateLayoutViewFactory<ctkPushButton>* tabToGridInstanciator =
+    new ctkTemplateLayoutViewFactory<ctkPushButton>(&viewport);
   ctkLayoutFactory tabToGridLayoutManager;
   tabToGridLayoutManager.registerViewFactory(tabToGridInstanciator);
   tabToGridLayoutManager.setLayout(tabLayoutDoc);
@@ -199,8 +199,8 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   // TabToSimple
   QWidget tabToSimple;
   tabToSimple.setWindowTitle("Tab to Simple Layout");
-  ctkTemplateLayoutViewFactory<ctkSliderWidget>* tabToSimpleInstanciator =
-    new ctkTemplateLayoutViewFactory<ctkSliderWidget>(&viewport);
+  ctkTemplateLayoutViewFactory<ctkPushButton>* tabToSimpleInstanciator =
+    new ctkTemplateLayoutViewFactory<ctkPushButton>(&viewport);
   ctkLayoutFactory tabToSimpleLayoutManager;
   tabToSimpleLayoutManager.registerViewFactory(tabToSimpleInstanciator);
   //tabToSimpleLayoutManager.setLayout(gridLayoutDoc);
@@ -232,8 +232,8 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   // NestedToTab
   QWidget nestedToTab;
   nestedToTab.setWindowTitle("Nested to Tab Layout");
-  ctkTemplateLayoutViewFactory<ctkSliderWidget>* nestedToTabInstanciator =
-    new ctkTemplateLayoutViewFactory<ctkSliderWidget>(&viewport);
+  ctkTemplateLayoutViewFactory<ctkPushButton>* nestedToTabInstanciator =
+    new ctkTemplateLayoutViewFactory<ctkPushButton>(&viewport);
   ctkLayoutFactory nestedToTabLayoutManager;
   nestedToTabLayoutManager.registerViewFactory(nestedToTabInstanciator);
   nestedToTabLayoutManager.setLayout(nestedLayoutDoc);

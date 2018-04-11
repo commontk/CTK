@@ -332,6 +332,7 @@ QLayoutItem* ctkLayoutManager::processLayoutElement(QDomElement layoutElement)
     // deleted when the layout is cleared.
     d->LayoutWidgets << widget;
     }
+  QList<int> splitSizes;
   for(QDomNode child = layoutElement.firstChild();
       !child.isNull();
       child = child.nextSibling())
@@ -341,8 +342,30 @@ QLayoutItem* ctkLayoutManager::processLayoutElement(QDomElement layoutElement)
       {
       continue;
       }
+    int splitSize = child.toElement().attribute("splitSize", QString::number(0)).toInt();
+    splitSizes << splitSize;
     this->processItemElement(child.toElement(), layoutItem);
     }
+
+  // Set child item split sizes (initial position of the splitter)
+  QSplitter* splitter = qobject_cast<QSplitter*>(widget);
+  if (splitter)
+    {
+    bool splitSizeSpecified = false;
+    foreach(int i, splitSizes)
+      {
+      if (i > 0)
+        {
+        splitSizeSpecified = true;
+        break;
+        }
+      }
+    if (splitSizeSpecified)
+      {
+      splitter->setSizes(splitSizes);
+      }
+    }
+
   return layoutItem;
 }
 
