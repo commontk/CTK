@@ -123,6 +123,21 @@ void ctkLayoutViewFactory::setupView(QDomElement viewElement, QWidget* view)
 {
   Q_ASSERT(view);
   view->setVisible(true);
+
+  // Allow tuning of relative view sizes
+  int horizontalStretch = viewElement.attribute("horizontalStretch", QString::number(-1)).toInt();
+  int verticalStretch = viewElement.attribute("verticalStretch", QString::number(-1)).toInt();
+  QSizePolicy sizePolicy = view->sizePolicy();
+  if (horizontalStretch >= 0)
+    {
+    sizePolicy.setHorizontalStretch(horizontalStretch);
+    }
+  if (verticalStretch >= 0)
+    {
+    sizePolicy.setVerticalStretch(verticalStretch);
+    }
+  view->setSizePolicy(sizePolicy);
+
   this->registerView(viewElement, view);
 }
 

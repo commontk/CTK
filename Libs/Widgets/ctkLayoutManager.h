@@ -41,35 +41,44 @@ class ctkLayoutViewFactory;
 /// \code
 /// <layout type=\"tab\">
 ///  <item>
-///   <layout type=\"horizontal\">
-///    <item><view/></item>
-///    <item>
+///   <layout type=\"horizontal\" split=\"true\">
+///    <item splitSize=\"500\"><view/></item>
+///    <item splitSize=\"250\">
 ///     <layout type=\"vertical\">
-///      <item><view/></item>
-///      <item><view/></item>
+///      <item><view verticalStretch=\"1\"/></item>
+///      <item><view verticalStretch=\"2\"/></item>
 ///      <item>
 ///       <layout type=\"grid\">
-///        <item row=\"0\" column=\"1\"><view/></item>
-///        <item row=\"1\" column=\"0\"><view/></item>
+///        <item row=\"0\" column=\"1\"><view verticalStretch=\"1\"/></item>
+///        <item row=\"1\" column=\"0\"><view verticalStretch=\"1\"/></item>
 ///       </layout>
 ///      </item>
 ///     </layout>
 ///    </item>
-///    <item><view/></item>
+///    <item splitSize=\"250\"><view/></item>
 ///   </layout>
 ///  </item>
 ///  <item><view name=\"tab2\"/></item>
 ///  <item><view name=\"tab3\"/></item>
 /// </layout>
 /// \endcode
-/// The layout elements describe widget containers that embed one or mulitple
-/// items.
+/// The layout elements describe widget containers that embed one or multiple
+/// items. Arrangement of items are specified by type attribute of the layout element;
+/// supported values: vertical, horizontal, grid, tab.
 /// The item elements describe widgets or layouts that are children of
 /// layouts.
 /// The view elements can be any type of QWidget. viewFromXML() must be
 /// reimplemented to return the type(s) of QWidget(s) to use wherever the view
 /// element is listed in the layout. The XML element can contain any XML
 /// attribute to be parsed by viewFromXML() method.
+///
+/// For horizontal and vertical layouts, setting split attribute to "true" makes the
+/// views resizeable. Default size can be set using splitSize attribute of child items.
+///
+/// Relative size of views can be adjusted by specifying stretch factors in
+/// horizontalStretch and verticalStretch attributes. The stretch factor must be an
+/// integer in the range of [0,255].
+///
 /// \sa ctkSimpleLayoutManager, ctkLayoutViewFactory
 class CTK_WIDGETS_EXPORT ctkLayoutManager: public QObject
 {
@@ -155,7 +164,7 @@ protected:
   /// The returned widgets will automatically be layout into their parent
   /// layout (e.g. boxlayout).
   /// This method can be reimplemented. Returns viewFromXML() by default.
-  /// \sa viewFromXML(), 
+  /// \sa viewFromXML(),
   virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
 
 private:
