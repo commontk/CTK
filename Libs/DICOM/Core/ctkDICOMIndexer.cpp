@@ -103,7 +103,8 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& database,
 //------------------------------------------------------------------------------
 void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
                                    const QString& directoryName,
-                                   const QString& destinationDirectoryName)
+                                   const QString& destinationDirectoryName,
+                                   bool includeHidden/*=true*/)
 {
   QStringList listOfFiles;
   QDir directory(directoryName);
@@ -114,7 +115,12 @@ void ctkDICOMIndexer::addDirectory(ctkDICOMDatabase& ctkDICOMDatabase,
   }
   else
   {
-    QDirIterator it(directoryName,QDir::Files,QDirIterator::Subdirectories);
+    QDir::Filters filters = QDir::Files;
+    if (includeHidden)
+    {
+      filters |= QDir::Hidden;
+    }
+    QDirIterator it(directoryName, filters, QDirIterator::Subdirectories);
     while(it.hasNext())
     {
       listOfFiles << it.next();

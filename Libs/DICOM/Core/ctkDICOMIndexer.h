@@ -48,8 +48,12 @@ public:
   /// Scan the directory using Dcmtk and populate the database with all the
   /// DICOM images accordingly.
   ///
+  /// If includeHidden is set to false then hidden files and folders are not added.
+  /// DICOM folders may be created based on series or study name, which sometimes start
+  /// with a . character, therefore it is advisable to include hidden files and folders.
+  ///
   Q_INVOKABLE void addDirectory(ctkDICOMDatabase& database, const QString& directoryName,
-                    const QString& destinationDirectoryName = "");
+                    const QString& destinationDirectoryName = "", bool includeHidden = true);
 
   ///
   /// \brief Adds directory to database by using DICOMDIR and optionally copies files to
