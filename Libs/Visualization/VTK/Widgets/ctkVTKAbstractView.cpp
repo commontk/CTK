@@ -185,7 +185,7 @@ void ctkVTKAbstractView::scheduleRender()
     return;
     }
 
-  double msecsBeforeRender = 100. / d->RenderWindow->GetDesiredUpdateRate();
+  double msecsBeforeRender = 1000. / d->RenderWindow->GetDesiredUpdateRate();
   if(d->VTKWidget->testAttribute(Qt::WA_WState_InPaintEvent))
     {
     // If the request comes from the system (widget exposed, resized...), the
