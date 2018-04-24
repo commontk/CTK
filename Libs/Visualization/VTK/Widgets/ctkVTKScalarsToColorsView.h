@@ -93,6 +93,12 @@ public:
   /// Reimplemented to set the bounds to the plots as well
   virtual void boundAxesToChartBounds();
 
+Q_SIGNALS:
+  /// Emitted when a new function is set to the view
+  /// \sa setLookuptTableToPlots, \sa setColorTransferFunctionToPlots,
+  /// \sa setOpacityFunctionToPlots, \sa setPiecewiseFunctionToPlots
+  void functionChanged();
+
 public Q_SLOTS:
   void editPoint(vtkObject* plot, void * pointId);
 

@@ -106,7 +106,7 @@ public Q_SLOTS:
 Q_SIGNALS:
   void plotAdded(vtkPlot* plot);
   void plotRemoved(vtkPlot* plot);
-  /// Fired anytime the bound of a plot modifies the overal bounds
+  /// Fired anytime the bound of a plot modifies the overall bounds
   void boundsChanged();
   /// Fired anytime an axis is modified.
   void extentChanged();

@@ -86,6 +86,8 @@ void ctkVTKScalarsToColorsWidgetPrivate::setupUi(QWidget* widget)
                    q, SLOT(onPlotAdded(vtkPlot*)));
   QObject::connect(this->View, SIGNAL(boundsChanged()),
                    q, SLOT(onBoundsChanged()));
+  QObject::connect(this->View, SIGNAL(functionChanged()),
+                   q, SLOT(resetRange()));
 
   this->PointIdSpinBox->setSpecialValueText("None");
   QObject::connect(this->PointIdSpinBox, SIGNAL(valueChanged(int)),
@@ -385,8 +387,19 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
     return;
     }
 
-  double point[4];
+  double point[4] = {0.0};
   d->CurrentControlPointsItem->GetControlPoint(pointId, point);
+
+  vtkAxis* xAxis = d->CurrentControlPointsItem ?
+    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
+  Q_ASSERT(xAxis);
+  if (xAxis && xAxis->GetMinimumLimit() > point[0] || xAxis->GetMaximumLimit() < point[0])
+    {
+    xAxis->SetMinimumLimit(qMin(xAxis->GetMinimumLimit(), point[0]));
+    xAxis->SetMaximumLimit(qMax(xAxis->GetMaximumLimit(), point[0]));
+    d->View->boundAxesToChartBounds();
+    this->onAxesModified();
+    }
 
   bool oldBlock = d->blockSignals(true);
   d->XSpinBox->setValue(point[0]);
@@ -546,6 +559,25 @@ void ctkVTKScalarsToColorsWidget::setYRange(double min, double max)
     yAxis->SetRange(min, max);
     // Repaint the scene
     d->View->scene()->SetDirty(true);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::resetRange()
+{
+  Q_D(ctkVTKScalarsToColorsWidget);
+  vtkAxis* xAxis = d->CurrentControlPointsItem ?
+    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
+  if (xAxis)
+    {
+    this->setXRange(xAxis->GetMinimumLimit(), xAxis->GetMaximumLimit());
+    }
+
+  vtkAxis* yAxis = d->CurrentControlPointsItem ?
+    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
+  if (yAxis)
+    {
+    this->setYRange(yAxis->GetMinimumLimit(), yAxis->GetMaximumLimit());
     }
 }
 

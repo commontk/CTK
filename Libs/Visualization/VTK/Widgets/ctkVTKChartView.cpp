@@ -374,7 +374,6 @@ void ctkVTKChartView::setAxesToChartBounds()
     if (bounds[2*i] != VTK_DOUBLE_MAX)
       {
       chart->GetAxis(i)->SetRange(bounds[2*i], bounds[2*i+1]);
-      //chart->GetAxis(i)->SetBehavior(2);
       }
     }
 }
