@@ -75,6 +75,7 @@ public Q_SLOTS:
   void setCurrentPoint(int pointId);
   void setXRange(double min, double max);
   void setYRange(double min, double max);
+  void resetRange();
 
 Q_SIGNALS:
   /// Be carefull, axesModified() can be fired inside the Render() function

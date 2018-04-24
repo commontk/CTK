@@ -442,6 +442,7 @@ void ctkVTKScalarsToColorsView::setLookuptTableToPlots(vtkLookupTable* lut)
     plot->SetLookupTable(lut);
     }
   this->onChartUpdated();
+  emit functionChanged();
 }
 
 // ----------------------------------------------------------------------------
@@ -459,6 +460,7 @@ void ctkVTKScalarsToColorsView
     plot->SetColorTransferFunction(colorTF);
     }
   this->onChartUpdated();
+  emit functionChanged();
 }
 
 // ----------------------------------------------------------------------------
@@ -477,6 +479,7 @@ void ctkVTKScalarsToColorsView
     plot->SetOpacityFunction(opacityTF);
     }
   this->onChartUpdated();
+  emit functionChanged();
 }
 
 // ----------------------------------------------------------------------------
@@ -494,6 +497,7 @@ void ctkVTKScalarsToColorsView
     plot->SetPiecewiseFunction(piecewiseTF);
     }
   this->onChartUpdated();
+  emit functionChanged();
 }
 
 // ----------------------------------------------------------------------------
