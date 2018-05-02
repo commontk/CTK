@@ -226,15 +226,11 @@ void ctkSearchBox::paintEvent(QPaintEvent * event)
   QRect cRect = d->clearRect();
   QRect sRect = d->showSearchIcon ? d->searchRect() : QRect();
 
-#if QT_VERSION >= 0x040700
+#if QT_VERSION < 0x040700
   QRect r = rect();
   QPalette pal = palette();
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   QStyleOptionFrameV2 panel;
-#else
-  QStyleOptionFrame panel;
-#endif
   initStyleOption(&panel);
   r = this->style()->subElementRect(QStyle::SE_LineEditContents, &panel, this);
   r.setX(r.x() + this->textMargins().left());
