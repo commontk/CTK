@@ -67,6 +67,7 @@ public:
   QTimer*                                       RequestTimer;
   QTime                                         RequestTime;
   bool                                          RenderEnabled;
+  double                                        MaximumUpdateRate;
   bool                                          FPSVisible;
   QTimer*                                       FPSTimer;
   int                                           FPS;

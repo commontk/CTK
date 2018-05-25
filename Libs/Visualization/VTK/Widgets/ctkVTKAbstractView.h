@@ -59,6 +59,9 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKAbstractView : public QWidget
   /// not.
   /// false by default.
   Q_PROPERTY(bool useDepthPeeling READ useDepthPeeling WRITE setUseDepthPeeling)
+  /// Set a maximum rate (in frames per second) for rendering.
+  Q_PROPERTY(double maximumUpdateRate READ maximumUpdateRate WRITE setMaximumUpdateRate)
+
 public:
 
   typedef QWidget Superclass;
@@ -67,15 +70,40 @@ public:
 
 public Q_SLOTS:
   /// Notify QVTKWidget that the view needs to be rendered.
-  /// scheduleRender() respects the desired framerate of the render window,
-  /// it won't render the window more than what the current render window
-  /// framerate is.
+  /// scheduleRender() respects the maximum update rate of the view,
+  /// it won't render the window more frequently than what the maximum
+  /// update rate is.
+  /// \sa setMaximumUpdateRate
   virtual void scheduleRender();
 
   /// Force a render even if a render is already ocurring
   /// Be careful when calling forceRender() as it can slow down your
   /// application. It is preferable to use scheduleRender() instead.
+  /// \sa scheduleRender
   virtual void forceRender();
+
+  /// Set maximum rate for rendering (in frames per second).
+  /// If rendering is requested more frequently than this rate using scheduleRender,
+  /// actual rendering will happen at this rate.
+  /// This mechanism prevents repeated rendering caused by cluster of rendering requests.
+  ///
+  /// If maximum update rate is set to 0 then it indicates that rendering is done next time
+  /// the application is idle, i.e., pending timer events are processed. This option should be used
+  /// with caution, as policy of timer event processing may differ between operating systems.
+  /// Specifically, on macOS, timer events may be indefinitely delayed if user interface continuously
+  /// generates events.
+  ///
+  /// RenderWindow's DesiredUpdateRate property is intended for determining rendering quality settings,
+  /// and is not suitable to be used as maximum update rate. The main reason is that VTK usually makes the
+  /// rendering much faster and lower quality than DesiredUpdateRate would dictate, and so it would
+  /// unnecessarily decrease the actual refresh rate.
+  ///
+  /// By default maximum update rate is set to 60FPS, which allows smooth updates, while effectively
+  /// suppressing repeated update requests (after a rendering has been completed,
+  /// repeated rendering requests will be ignored for 17 milliseconds).
+  ///
+  /// \sa scheduleRender
+  void setMaximumUpdateRate(double fps);
 
   /// Set the background color of the rendering screen.
   virtual void setBackgroundColor(const QColor& newBackgroundColor);
@@ -84,7 +112,7 @@ public Q_SLOTS:
   /// backgrounds.
   virtual void setBackgroundColor2(const QColor& newBackgroundColor);
 
-  /// Set/Get whether this view should have a gradient background using the
+  /// Set whether this view should have a gradient background using the
   /// Background (top) and Background2 (bottom) colors. Default is off.
   virtual void setGradientBackground(bool enable);
 
@@ -145,8 +173,12 @@ public:
   /// Return the current FPS
   double fps()const;
 
-  /// Return the useDepthPeeling property value.
-  /// \sa useDepthPeeling
+  /// Returns maximum rate for rendering (in frames per second).
+  /// \\sa setMaximumUpdateRate
+  double maximumUpdateRate()const;
+
+  /// Returns true if depth peeling is enabled.
+  /// \sa setUseDepthPeeling
   bool useDepthPeeling()const;
 
   /// Set the default number of multisamples to use. Note that a negative
