@@ -56,6 +56,7 @@ ctkVTKAbstractViewPrivate::ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object)
   this->CornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
   this->RequestTimer = 0;
   this->RenderEnabled = true;
+  this->MaximumUpdateRate = 60.0;
   this->FPSVisible = false;
   this->FPSTimer = 0;
   this->FPS = 0;
@@ -185,7 +186,13 @@ void ctkVTKAbstractView::scheduleRender()
     return;
     }
 
-  double msecsBeforeRender = 1000. / d->RenderWindow->GetDesiredUpdateRate();
+  double msecsBeforeRender = 0;
+  // If the MaximumUpdateRate is set to 0 then it indicates that rendering is done next time
+  // the application is idle.
+  if (d->MaximumUpdateRate > 0.0)
+    {
+    msecsBeforeRender = 1000. / d->MaximumUpdateRate;
+    }
   if(d->VTKWidget->testAttribute(Qt::WA_WState_InPaintEvent))
     {
     // If the request comes from the system (widget exposed, resized...), the
@@ -194,16 +201,6 @@ void ctkVTKAbstractView::scheduleRender()
     }
   else if (!d->RequestTime.isValid())
     {
-    // If the DesiredUpdateRate is in "still mode", the requested framerate
-    // is fake, it is just a way to allocate as much time as possible for the
-    // rendering, it doesn't really mean that rendering must occur only once
-    // every couple seconds. It just means it should be done when there is
-    // time to do it. A timer of 0, kind of mean a rendering is done next time
-    // it is idle.
-    if (msecsBeforeRender > 10000)
-      {
-      msecsBeforeRender = 0;
-      }
     d->RequestTime.start();
     d->RequestTimer->start(static_cast<int>(msecsBeforeRender));
     }
@@ -498,4 +495,18 @@ int ctkVTKAbstractView::multiSamples()
 void ctkVTKAbstractView::setMultiSamples(int number)
 {
   ctkVTKAbstractViewPrivate::MultiSamples = number;
+}
+
+//----------------------------------------------------------------------------
+double ctkVTKAbstractView::maximumUpdateRate()const
+{
+  Q_D(const ctkVTKAbstractView);
+  return d->MaximumUpdateRate;
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::setMaximumUpdateRate(double fps)
+{
+  Q_D(ctkVTKAbstractView);
+  d->MaximumUpdateRate = fps;
 }
