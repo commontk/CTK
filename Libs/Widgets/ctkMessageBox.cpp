@@ -302,10 +302,15 @@ void ctkMessageBox::setVisible(bool visible)
 bool ctkMessageBox
 ::confirmExit(const QString& dontShowAgainKey, QWidget* parentWidget)
 {
-  ctkMessageBox dialog(parentWidget);
-  dialog.setText(tr("Are you sure you want to exit?"));
-  dialog.setIcon(QMessageBox::Question);
-  dialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-  dialog.setDontShowAgainSettingsKey(dontShowAgainKey);
-  return dialog.exec() == QMessageBox::Ok;
+  ctkMessageBox* dialog = new ctkMessageBox(parentWidget);
+
+  // this will take care of destroying the window
+  // regardless the parent widget is null or non-null.
+  dialog->setAttribute(Qt::WA_DeleteOnClose);
+
+  dialog->setText(tr("Are you sure you want to exit?"));
+  dialog->setIcon(QMessageBox::Question);
+  dialog->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+  dialog->setDontShowAgainSettingsKey(dontShowAgainKey);
+  return dialog->exec() == QMessageBox::Ok;
 }
