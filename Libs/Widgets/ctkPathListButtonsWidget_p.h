@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QObject>
+#include <QItemSelection>
 
 // CTK includes
 #include "ui_ctkPathListButtonsWidget.h"
