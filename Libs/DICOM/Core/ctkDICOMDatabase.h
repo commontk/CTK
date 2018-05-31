@@ -54,8 +54,10 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
 
   Q_OBJECT
   Q_PROPERTY(bool isOpen READ isOpen)
+  Q_PROPERTY(bool isInMemory READ isInMemory)
   Q_PROPERTY(QString lastError READ lastError)
   Q_PROPERTY(QString databaseFilename READ databaseFilename)
+  Q_PROPERTY(QString databaseDirectory READ databaseDirectory)
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
 
 public:
@@ -87,10 +89,10 @@ public:
 
   ///
   /// set thumbnail generator object
-  void setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator* generator);
+  Q_INVOKABLE void setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator* generator);
   ///
   /// get thumbnail genrator object
-  ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator();
+  Q_INVOKABLE ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator();
 
   ///
   /// open the SQLite database in @param databaseFile . If the file does not
@@ -197,15 +199,27 @@ public:
                             bool createHierarchy = true,
                             const QString& destinationDirectoryName = QString() );
 
+  /// Reset cached item IDs to make sure previous
+  /// inserts do not interfere with upcoming insert operations.
+  /// Typically, it should be call just before a batch of files
+  /// insertion is started.
+  ///
+  /// This has to be called before an insert() call if there is a chance
+  /// that items have been deleted from the database since the
+  /// the last insert() call. If there has been not been any insert() calls since
+  /// connected to the database, then it should be called before the first
+  /// insert().
+  Q_INVOKABLE void prepareInsert();
+
   /// Check if file is already in database and up-to-date
-  bool fileExistsAndUpToDate(const QString& filePath);
+  Q_INVOKABLE bool fileExistsAndUpToDate(const QString& filePath);
 
   /// remove the series from the database, including images and
   /// thumbnails
   Q_INVOKABLE bool removeSeries(const QString& seriesInstanceUID);
   Q_INVOKABLE bool removeStudy(const QString& studyInstanceUID);
   Q_INVOKABLE bool removePatient(const QString& patientID);
-  bool cleanup();
+  Q_INVOKABLE bool cleanup();
 
   ///
   /// \brief access element values for given instance

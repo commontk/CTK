@@ -42,6 +42,15 @@ public:
 public:
   ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator;
   bool                    Canceled;
+
+  // Incremented each time startIndexing is called
+  // and decremented when endIndexing is called.
+  // This makes sure that when a batch of indexing
+  // operations are performed, at any level
+  // (file, folder, or set of folders) then
+  // batch processing initialization and finalization
+  // are performed exactly once.
+  int                     StartedIndexing;
 };
 
 

@@ -705,6 +705,16 @@ void ctkDICOMBrowser::importDirectories(QStringList directories, ctkDICOMBrowser
 {
   Q_D(ctkDICOMBrowser);
   ctkDICOMImportStats stats(d);
+
+  if (!d->DICOMDatabase || !d->DICOMIndexer)
+    {
+    qWarning() << Q_FUNC_INFO << " failed: database or indexer is invalid";
+    return;
+    }
+
+  // Only emit one indexingComplete event, when all imports have been completed
+  ctkDICOMIndexer::ScopedIndexing indexingBatch(*d->DICOMIndexer, *d->DICOMDatabase);
+
   foreach (const QString& directory, directories)
     {
     d->importDirectory(directory, mode);

@@ -1039,6 +1039,19 @@ QString ctkDICOMDatabase::groupElementToTag(const unsigned short& group, const u
 //
 
 //------------------------------------------------------------------------------
+void ctkDICOMDatabase::prepareInsert()
+{
+  Q_D(ctkDICOMDatabase);
+  // Although resetLastInsertedValues is called when items are deleted through
+  // this database connection, there may be concurrent database modifications
+  // (even in the same application) through other connections.
+  // Therefore, we cannot be sure that the last added patient, study, series,
+  // items are still in the database. We clear cached Last... IDs to make sure
+  // the patient, study, series items are created.
+  d->resetLastInsertedValues();
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMDatabase::insert( DcmItem *item, bool storeFile, bool generateThumbnail)
 {
   if (!item)

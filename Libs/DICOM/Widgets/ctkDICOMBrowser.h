@@ -56,11 +56,13 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
 {
   Q_OBJECT
   Q_ENUMS(ImportDirectoryMode)
-  Q_PROPERTY(ctkDICOMDatabase* database READ database)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
+  Q_PROPERTY(int patientsAddedDuringImport READ patientsAddedDuringImport)
+  Q_PROPERTY(int studiesAddedDuringImport READ studiesAddedDuringImport)
+  Q_PROPERTY(int seriesAddedDuringImport READ seriesAddedDuringImport)
+  Q_PROPERTY(int instancesAddedDuringImport READ instancesAddedDuringImport)
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
   Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
-  Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager)
   Q_PROPERTY(ctkDICOMBrowser::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
 
 public:
@@ -74,7 +76,7 @@ public:
   QString databaseDirectory() const;
 
   /// Return settings key used to store the directory.
-  static QString databaseDirectorySettingsKey();
+  Q_INVOKABLE static QString databaseDirectorySettingsKey();
 
   /// See ctkDICOMDatabase for description - these accessors
   /// delegate to the corresponding routines of the internal
@@ -86,11 +88,11 @@ public:
   /// Updates schema of loaded database to match the one
   /// coded by the current version of ctkDICOMDatabase.
   /// Also provides a dialog box for progress
-  void updateDatabaseSchemaIfNeeded();
+  Q_INVOKABLE void updateDatabaseSchemaIfNeeded();
 
-  ctkDICOMDatabase* database();
+  Q_INVOKABLE ctkDICOMDatabase* database();
 
-  ctkDICOMTableManager* dicomTableManager();
+  Q_INVOKABLE ctkDICOMTableManager* dicomTableManager();
 
   /// Option to show or not import summary dialog.
   /// Since the summary dialog is modal, we give the option
