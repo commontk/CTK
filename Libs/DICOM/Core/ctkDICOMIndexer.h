@@ -95,6 +95,49 @@ public:
   ///
   Q_INVOKABLE void waitForImportFinished();
 
+  /// Call this before performing multiple add...() calls in one batch
+  /// to slightly increase indexing performance and to make only a single
+  /// indexingComplete() signal emitted for multiple add...() operations.
+  /// 
+  /// If startIndexing() is called before a batch of insertions, then
+  /// endIndexing() method must be called after the insertions are completed.
+  ///
+  /// It is recommended to use ScopedIndexing helper class to call startIndexing
+  /// and endIndexing automatically.
+  Q_INVOKABLE void startIndexing(ctkDICOMDatabase& database);
+
+  /// Call this method after batch insertion is completed, and only if startIndexing()
+  /// was called before batch insertion was started.
+  Q_INVOKABLE void endIndexing();
+
+  /// Helper class to automatically call startIndexing and endIndexing.
+  /// Its constructor calls startIndexing and its destructor calls endIndexing.
+  ///
+  /// Example:
+  ///   ...
+  ///   {
+  ///     ctkDICOMIndexer::ScopedIndexing indexingBatch(indexer, database); // this calls startIndexing
+  ///     indexer.addDirectory(database, dir1);
+  ///     indexer.addDirectory(database, dir2);
+  ///     indexer.addDirectory(database, dir3);
+  ///   } // endIndexing is called when indexingBatch goes out of scope
+  ///
+  class ScopedIndexing
+  {
+    public:
+    ScopedIndexing(ctkDICOMIndexer& indexer, ctkDICOMDatabase& database)
+    {
+      this->Indexer = &indexer;
+      this->Indexer->startIndexing(database);
+    }
+    ~ScopedIndexing()
+    {
+      this->Indexer->endIndexing();
+    }
+    private:
+    ctkDICOMIndexer* Indexer;
+  };
+
 Q_SIGNALS:
   void foundFilesToIndex(int);
   void indexingFileNumber(int);

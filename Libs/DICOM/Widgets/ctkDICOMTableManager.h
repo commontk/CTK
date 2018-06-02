@@ -50,12 +50,6 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
     */
   Q_PROPERTY(bool dynamicTableLayout READ dynamicTableLayout WRITE setDynamicTableLayout)
 
-  /**
-  * Properties for the different table views (patients, studies, series). 
-  */
-  Q_PROPERTY( ctkDICOMTableView* patientsTable READ patientsTable )
-  Q_PROPERTY( ctkDICOMTableView* studiesTable READ studiesTable )
-  Q_PROPERTY( ctkDICOMTableView* seriesTable READ seriesTable )
 
   Q_ENUMS(DisplayDensity)
   /**
@@ -76,7 +70,7 @@ public:
    * @brief Set the ctkDICOMDatabase
    * @param db the dicom database which should be used
    */
-  void setDICOMDatabase(ctkDICOMDatabase* db);
+  Q_INVOKABLE void setDICOMDatabase(ctkDICOMDatabase* db);
 
   void setTableOrientation(const Qt::Orientation&) const;
   Qt::Orientation tableOrientation();
@@ -85,14 +79,14 @@ public:
    * @brief Get the current selection of the dicomTableViews
    * @return a list with the uids of the selected items
    */
-  QStringList currentPatientsSelection();
-  QStringList currentStudiesSelection();
-  QStringList currentSeriesSelection();
+  Q_INVOKABLE QStringList currentPatientsSelection();
+  Q_INVOKABLE QStringList currentStudiesSelection();
+  Q_INVOKABLE QStringList currentSeriesSelection();
 
   void setDynamicTableLayout(bool);
   bool dynamicTableLayout() const;
 
-  void updateTableViews();
+  Q_INVOKABLE void updateTableViews();
 
   enum DisplayDensity
   {
@@ -104,9 +98,9 @@ public:
   DisplayDensity displayDensity();
   void setDisplayDensity(DisplayDensity density);
 
-  ctkDICOMTableView* patientsTable();
-  ctkDICOMTableView* studiesTable();
-  ctkDICOMTableView* seriesTable();
+  Q_INVOKABLE ctkDICOMTableView* patientsTable();
+  Q_INVOKABLE ctkDICOMTableView* studiesTable();
+  Q_INVOKABLE ctkDICOMTableView* seriesTable();
 
 
 public Q_SLOTS:
