@@ -10,7 +10,7 @@ set(MY_MOC_CXX )
 
 set(test_executable ${PROJECT_NAME}CppTests)
 
-set(${test_executable}_DEPENDENCIES ${fw_lib} ${fwtestutil_lib})
+set(${test_executable}_DEPENDENCIES ${fw_lib} ${fwtestutil_lib} CTKCore)
 
 set(my_includes)
 ctkFunctionGetIncludeDirs(my_includes ${test_executable})
