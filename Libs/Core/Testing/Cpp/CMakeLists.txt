@@ -121,7 +121,8 @@ add_executable(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  qt5_use_modules(${KIT}CppTests Test Widgets)
+  find_package(Qt5 COMPONENTS Test Widgets REQUIRED)
+  target_link_libraries(${KIT}CppTests Qt5::Test Qt5::Widgets)
 endif()
 
 if(UNIX AND NOT APPLE)
