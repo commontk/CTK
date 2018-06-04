@@ -1,0 +1,124 @@
+version: 2
+jobs:
+  build-qt4:
+    working_directory: /usr/src/CTK
+    docker:
+      - image: slicer/buildenv-qt4-centos5:latest
+    steps:
+      - checkout
+      - run:
+          name: Configure and build
+          command: |
+            mkdir /usr/src/CTK-build
+            cd /usr/src/CTK-build
+            cmake \
+              -DCTK_QT_VERSION:STRING=4 \
+              -DCTK_ENABLE_Widgets:BOOL=ON \
+            ../CTK
+            make -j4
+      - save_cache:
+          key: ctk-src-{{ .Revision }}
+          paths: /usr/src/CTK
+      - save_cache:
+          key: ctk-build-qt4-{{ .Revision }}
+          paths: /usr/src/CTK-build
+      - save_cache:
+          key: ctk-qt4-libraries-{{ .Revision }}
+          paths: /usr/src/qt-install
+
+  test-qt4:
+    docker:
+      - image: thewtex/opengl:debian
+    steps:
+      - restore_cache:
+          keys:
+            - ctk-src-{{ .Revision }}
+      - restore_cache:
+          keys:
+            - ctk-build-qt4-{{ .Revision }}
+      - restore_cache:
+          keys:
+            - ctk-qt4-libraries-{{ .Revision }}
+      - run:
+         name: Workaround the difference between cmake install path in 'slicer/buildenv-*' and 'thewtex/opengl:debian' images
+         command: |
+           mkdir -p /usr/src/cmake-3.11.0/bin
+           ln -s $(which cmake) /usr/src/cmake-3.11.0/bin/cmake
+           ln -s $(which cpack) /usr/src/cmake-3.11.0/bin/cpack
+           ln -s $(which ctest) /usr/src/cmake-3.11.0/bin/ctest
+      - run:
+         command: |
+           export APP="sudo chown -R user.user /usr/src/CTK-build && cd /usr/src/CTK-build/CTK-build && ctest -VV"
+           /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+           [ "$(cat /tmp/graphical-app.return_code)" = 0 ]
+         environment:
+           QT_X11_NO_MITSHM: "1"
+           XDG_RUNTIME_DIR: "/tmp/runtime-user"
+
+  build-qt5:
+    working_directory: /usr/src/CTK
+    docker:
+      - image: slicer/buildenv-qt5-centos7:latest
+    steps:
+      - checkout
+      - run:
+          name: Configure and build
+          command: |
+            mkdir /usr/src/CTK-build
+            cd /usr/src/CTK-build
+            cmake \
+              -DCTK_QT_VERSION:STRING=5 \
+              -DCTK_ENABLE_Widgets:BOOL=ON \
+            ../CTK
+            make -j4
+      - save_cache:
+          key: ctk-src-{{ .Revision }}
+          paths: /usr/src/CTK
+      - save_cache:
+          key: ctk-build-qt5-{{ .Revision }}
+          paths: /usr/src/CTK-build
+      - save_cache:
+          key: ctk-qt5-libraries-{{ .Revision }}
+          paths: /opt/qt
+
+  test-qt5:
+    docker:
+      - image: thewtex/opengl:debian
+    steps:
+      - restore_cache:
+          keys:
+            - ctk-src-{{ .Revision }}
+      - restore_cache:
+          keys:
+            - ctk-build-qt5-{{ .Revision }}
+      - restore_cache:
+          keys:
+            - ctk-qt5-libraries-{{ .Revision }}
+      - run:
+         name: Workaround the difference between cmake install path in 'slicer/buildenv-*' and 'thewtex/opengl:debian' images
+         command: |
+           mkdir -p /usr/src/cmake-3.11.0-Linux-x86_64/bin
+           ln -s $(which cmake) /usr/src/cmake-3.11.0-Linux-x86_64/bin/cmake
+           ln -s $(which cpack) /usr/src/cmake-3.11.0-Linux-x86_64/bin/cpack
+           ln -s $(which ctest) /usr/src/cmake-3.11.0-Linux-x86_64/bin/ctest
+      - run:
+         command: |
+           export APP="sudo chown -R user.user /usr/src/CTK-build && cd /usr/src/CTK-build/CTK-build && ctest -VV"
+           /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+           [ "$(cat /tmp/graphical-app.return_code)" = 0 ]
+         environment:
+           QT_X11_NO_MITSHM: "1"
+           XDG_RUNTIME_DIR: "/tmp/runtime-user"
+
+workflows:
+  version: 2
+  build-test:
+    jobs:
+      - build-qt4
+      - test-qt4:
+          requires:
+            - build-qt4
+      - build-qt5
+      - test-qt5:
+          requires:
+            - build-qt5

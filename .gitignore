@@ -1,12 +1,6 @@
-# Ignore all dotfiles...
-.*
-
 # Ignore all back-up files...
 *~
 *.bak
-
-# except for .gitignore
-!.gitignore
 
 # Exclude Kdevelop4 files ...
 .kdev*
