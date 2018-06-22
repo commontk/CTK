@@ -129,17 +129,17 @@ int ctkDICOMServerNodeWidget::addServerNode(const QMap<QString, QVariant>& node)
   const int row = this->addServerNode();
   
   QTableWidgetItem *newItem;
-  newItem = new QTableWidgetItem( node["Name"].toString() );
+  newItem = new QTableWidgetItem( node[QApplication::translate("ctkDICOMServerNodeWidget", "Name", 0)].toString() );
   newItem->setCheckState( Qt::CheckState(node["CheckState"].toInt()) );
   d->NodeTable->setItem(row, NameColumn, newItem);
-  newItem = new QTableWidgetItem( node["AETitle"].toString() );
+  newItem = new QTableWidgetItem( node[QApplication::translate("ctkDICOMServerNodeWidget", "AETitle", 0)].toString() );
   d->NodeTable->setItem(row, AETitleColumn, newItem);
-  newItem = new QTableWidgetItem( node["Address"].toString() );
+  newItem = new QTableWidgetItem( node[QApplication::translate("ctkDICOMServerNodeWidget", "Address", 0)].toString() );
   d->NodeTable->setItem(row, AddressColumn, newItem);
-  newItem = new QTableWidgetItem( node["Port"].toString() );
+  newItem = new QTableWidgetItem( node[QApplication::translate("ctkDICOMServerNodeWidget", "Port", 0)].toString() );
   d->NodeTable->setItem(row, PortColumn, newItem);
   newItem = new QTableWidgetItem( QString("") );
-  newItem->setCheckState( Qt::CheckState(node["CGET"].toInt()) );
+  newItem->setCheckState( Qt::CheckState(node[QApplication::translate("ctkDICOMServerNodeWidget", "CGET", 0)].toInt()) );
   d->NodeTable->setItem(row, CGETColumn, newItem);
   return row;
 }
@@ -201,22 +201,22 @@ void ctkDICOMServerNodeWidget::readSettings()
 
     // a dummy example
     QMap<QString, QVariant> defaultServerNode;
-    defaultServerNode["Name"] = QString("ExampleHost");
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "Name", 0)] = QString("ExampleHost");
     defaultServerNode["CheckState"] = static_cast<int>(Qt::Unchecked);
-    defaultServerNode["AETitle"] = QString("AETITLE");
-    defaultServerNode["Address"] = QString("dicom.example.com");
-    defaultServerNode["Port"] = QString("11112");
-    defaultServerNode["CGET"] = static_cast<int>(Qt::Unchecked);
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "AETitle", 0)] = QString("AETITLE");
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "Address", 0)] = QString("dicom.example.com");
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "Port", 0)] = QString("11112");
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "CGET", 0)] = static_cast<int>(Qt::Unchecked);
     this->addServerNode(defaultServerNode);
 
     // the uk example - see http://www.dicomserver.co.uk/ 
     // and http://www.medicalconnections.co.uk/
-    defaultServerNode["Name"] = QString("MedicalConnections");
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "Name", 0)] = QString("MedicalConnections");
     defaultServerNode["CheckState"] = static_cast<int>(Qt::Unchecked);
-    defaultServerNode["AETitle"] = QString("ANYAE");
-    defaultServerNode["Address"] = QString("dicomserver.co.uk");
-    defaultServerNode["Port"] = QString("11112");
-    defaultServerNode["CGET"] = static_cast<int>(Qt::Checked);
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "AETitle", 0)] = QString("ANYAE");
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "Address", 0)] = QString("dicomserver.co.uk");
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "Port", 0)] = QString("11112");
+    defaultServerNode[QApplication::translate("ctkDICOMServerNodeWidget", "CGET", 0)] = static_cast<int>(Qt::Checked);
     this->addServerNode(defaultServerNode);
 
     return;
@@ -352,7 +352,7 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget::serverNodeParameters(int row)c
   node["CheckState"] = d->NodeTable->item(row, NameColumn) ?
     d->NodeTable->item(row,NameColumn)->checkState() :
     static_cast<int>(Qt::Unchecked);
-  node["CGET"] = d->NodeTable->item(row, CGETColumn) ?
+  node[QApplication::translate("ctkDICOMServerNodeWidget", "CGET", 0)] = d->NodeTable->item(row, CGETColumn) ?
     d->NodeTable->item(row,CGETColumn)->checkState() :
     static_cast<int>(Qt::Unchecked);
   return node;

@@ -190,10 +190,10 @@ void ctkDICOMQueryRetrieveWidget::query()
     ctkDICOMQuery* query = new ctkDICOMQuery;
     d->CurrentQuery = query;
     query->setCallingAETitle(d->ServerNodeWidget->callingAETitle());
-    query->setCalledAETitle(parameters["AETitle"].toString());
-    query->setHost(parameters["Address"].toString());
-    query->setPort(parameters["Port"].toInt());
-    query->setPreferCGET(parameters["CGET"].toBool());
+    query->setCalledAETitle(parameters[QApplication::translate("ctkDICOMServerNodeWidget", "AETitle", 0)].toString());
+    query->setHost(parameters[QApplication::translate("ctkDICOMServerNodeWidget", "Address", 0)].toString());
+    query->setPort(parameters[QApplication::translate("ctkDICOMServerNodeWidget", "Port", 0)].toInt());
+    query->setPreferCGET(parameters[QApplication::translate("ctkDICOMServerNodeWidget", "CGET", 0)].toBool());
 
     // populate the query with the current search options
     query->setFilters( d->QueryWidget->parameters() );
