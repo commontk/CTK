@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
+<context>
+    <name>ctkDICOMQueryRetrieveWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>查询PACS</translation>
+    </message>
+    <message>
+        <source>Data Sources</source>
+        <translation>数据源</translation>
+    </message>
+    <message>
+        <source>Query</source>
+        <translation>查询</translation>
+    </message>
+    <message>
+        <source>Retrieve</source>
+        <translation>获取</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Search Options</source>
+        <translation>查询条件</translation>
+    </message>
+</context>
+<context>
+    <name>ctkDICOMQueryWidget</name>
+    <message>
+        <source>Name</source>
+        <translation>姓名</translation>
+    </message>
+    <message>
+        <source>Study</source>
+        <translation>检查描述</translation>
+    </message>
+    <message>
+        <source>Series</source>
+        <translation>序列描述</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>患者ID</translation>
+    </message>
+</context>
+<context>
+    <name>ctkDICOMServerNodeWidget</name>
+    <message>
+        <source>Calling AETitle</source>
+        <translation>本机AETitle</translation>
+    </message>
+    <message>
+        <source>Servers</source>
+        <translation>服务器列表</translation>
+    </message>
+    <message>
+        <source>Add Server</source>
+        <translation>添加服务器</translation>
+    </message>
+    <message>
+        <source>Remove Server</source>
+        <translation>删除服务器</translation>
+    </message>
+    <message>
+        <source>Storage AETitle</source>
+        <translation>归档服务AETitle</translation>
+    </message>
+    <message>
+        <source>Storage Port</source>
+        <translation>归档服务端口</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <source>AETitle</source>
+        <translation>AETitle</translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation>IP地址</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>端口</translation>
+    </message>
+    <message>
+        <source>CGET</source>
+        <translation>使用C-GET</translation>
+    </message>
+</context>
+<context>
+    <name>ctkDICOMTableView</name>
+    <message>
+        <source>Patients</source>
+        <translation>患者列表</translation>
+    </message>
+    <message>
+        <source>Studies</source>
+        <translation>检查列表</translation>
+    </message>
+    <message>
+        <source>Series</source>
+        <translation>序列列表</translation>
+    </message>
+    <message>
+        <source>PatientsName</source>
+        <translation>患者姓名</translation>
+    </message>
+    <message>
+        <source>PatientID</source>
+        <translation>患者ID</translation>
+    </message>
+    <message>
+        <source>PatientsBirthDate</source>
+        <translation>出生日期</translation>
+    </message>
+    <message>
+        <source>PatientsBirthTime</source>
+        <translation>出生时间</translation>
+    </message>
+    <message>
+        <source>PatientsSex</source>
+        <translation>性别</translation>
+    </message>
+    <message>
+        <source>PatientsAge</source>
+        <translation>年龄</translation>
+    </message>
+    <message>
+        <source>PatientsComments</source>
+        <translation>患者备注</translation>
+    </message>
+    <message>
+        <source>StudyID</source>
+        <translation>检查ID</translation>
+    </message>
+    <message>
+        <source>StudyDate</source>
+        <translation>检查日期</translation>
+    </message>
+    <message>
+        <source>StudyTime</source>
+        <translation>检查时间</translation>
+    </message>
+    <message>
+        <source>AccessionNumber</source>
+        <translation>登记号码</translation>
+    </message>
+    <message>
+        <source>ModalitiesInStudy</source>
+        <translation>检查设备类型</translation>
+    </message>
+    <message>
+        <source>InstitutionName</source>
+        <translation>机构名称</translation>
+    </message>
+    <message>
+        <source>ReferringPhysician</source>
+        <translation>参考医生</translation>
+    </message>
+    <message>
+        <source>PerformingPhysiciansName</source>
+        <translation>操作医生</translation>
+    </message>
+    <message>
+        <source>StudyDescription</source>
+        <translation>检查描述</translation>
+    </message>
+    <message>
+        <source>SeriesNumber</source>
+        <translation>序列号</translation>
+    </message>
+    <message>
+        <source>SeriesDate</source>
+        <translation>序列日期</translation>
+    </message>
+    <message>
+        <source>SeriesTime</source>
+        <translation>序列时间</translation>
+    </message>
+    <message>
+        <source>SeriesDescription</source>
+        <translation>序列描述</translation>
+    </message>
+    <message>
+        <source>Modality</source>
+        <translation>序列设备类型</translation>
+    </message>
+    <message>
+        <source>BodyPartExamined</source>
+        <translation>检查部位</translation>
+    </message>
+    <message>
+        <source>AcquisitionNumber</source>
+        <translation>采集次数</translation>
+    </message>
+    <message>
+        <source>ContrastAgent</source>
+        <translation>造影剂</translation>
+    </message>
+    <message>
+        <source>ScanningSequence</source>
+        <translation>扫描顺序</translation>
+    </message>
+    <message>
+        <source>EchoNumber</source>
+        <translation>回波次数</translation>
+    </message>
+    <message>
+        <source>TemporalPosition</source>
+        <translation>时间位置</translation>
+    </message>
+</context>
+<context>
+    <name>ctkDateRangeWidget</name>
+    <message>
+        <source>Any Date</source>
+        <translation>任何日期</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>今天</translation>
+    </message>
+    <message>
+        <source>Yesterday</source>
+        <translation>昨天</translation>
+    </message>
+    <message>
+        <source>Last Week</source>
+        <translation>上周</translation>
+    </message>
+    <message>
+        <source>Last Month</source>
+        <translation>上月</translation>
+    </message>
+    <message>
+        <source>Select Range</source>
+        <translation>选择时间段</translation>
+    </message>
+</context>
+<context>
+    <name>ctkModalityWidget</name>
+    <message>
+        <source>Any</source>
+        <translation>任何设备</translation>
+    </message>
+</context>
+</TS>

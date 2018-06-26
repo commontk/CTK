@@ -49,6 +49,13 @@ int main(int argc, char** argv)
   app.setOrganizationDomain("commontk.org");
   app.setApplicationName("ctkDICOMQueryRetrieve");
 
+  //install the chinese translator to change the ctkTableView's language to chinese
+  //if you want to use other language please modify the "ctk_zh_cn.ts" file located in "./Resources/i18n/CTKLanguagePackage" 
+  //if you just want to use english, remove the three lines below 
+  QTranslator translator;
+  translator.load(":/ctk_zh_cn.qm");
+  app.installTranslator(&translator);
+
   QSettings settings;
   QString databaseDirectory;
 

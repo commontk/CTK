@@ -26,6 +26,7 @@
 #include <QMouseEvent>
 #include <QSortFilterProxyModel>
 #include <QSqlQueryModel>
+#include <QObject> 
 
 //------------------------------------------------------------------------------
 class ctkDICOMTableViewPrivate : public Ui_ctkDICOMTableView
@@ -60,7 +61,7 @@ public:
   //Key = QString for columns, Values = QStringList
   QHash<QString, QStringList> sqlWhereConditions;
 private:
-  QLabel lblqueryTableName;
+  QLabel labelQueryTableName;
   QStringList headerTextList;
   bool isHeaderTextApplied;
 };
@@ -155,8 +156,7 @@ void ctkDICOMTableViewPrivate::hideUIDColumns()
 //----------------------------------------------------------------------------
 QString ctkDICOMTableViewPrivate::queryTableName() const
 {
-  //return this->lblTableName->text();
-  return this->lblqueryTableName.text();
+  return this->labelQueryTableName.text();
 }
 
 void ctkDICOMTableViewPrivate::applyHeaderTextList()
@@ -164,13 +164,13 @@ void ctkDICOMTableViewPrivate::applyHeaderTextList()
   if (isHeaderTextApplied) return;
 
   for(int i = 0; i < dicomSQLModel.columnCount(); i++)
-  {
-	QVariant fieldName = dicomSQLModel.headerData(i, Qt::Horizontal, Qt::DisplayRole);
-    QString headerText = QApplication::translate("ctkDICOMTableView", fieldName.toString().toStdString().c_str(), 0);
-	dicomSQLModel.setHeaderData(i, Qt::Horizontal, headerText, Qt::DisplayRole);
-  }
+	{
+	  QVariant fieldName = dicomSQLModel.headerData(i, Qt::Horizontal, Qt::DisplayRole);
+      QString headerText = QApplication::translate("ctkDICOMTableView", fieldName.toString().toStdString().c_str(), 0);
+	  dicomSQLModel.setHeaderData(i, Qt::Horizontal, headerText, Qt::DisplayRole);
 
-  isHeaderTextApplied = true;
+	  isHeaderTextApplied = true;
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -250,15 +250,14 @@ void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 void ctkDICOMTableView::setQueryTableName(const QString &tableName)
 {
   Q_D(ctkDICOMTableView);
-  //d->lblTableName->setText(tableName);
-  d->lblqueryTableName.setText(tableName);
+  d->labelQueryTableName.setText(tableName);
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMTableView::setDisplayText(const QString &displayText)
 {
   Q_D(ctkDICOMTableView);
-  d->lblTableName->setText(displayText);
+  d->labelTableName->setText(displayText);
 }
 
 //------------------------------------------------------------------------------

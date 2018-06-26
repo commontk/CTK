@@ -19,6 +19,7 @@ set(KIT_UI_FORMS
 
 # Resources
 set(KIT_resources
+ ./resources/i18n/CTKLanguagePackage/ctkdicom.qrc
 )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake
