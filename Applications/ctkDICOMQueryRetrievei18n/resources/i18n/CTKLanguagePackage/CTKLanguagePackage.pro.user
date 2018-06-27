@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.0.2, 2018-06-26T11:30:18. -->
+<!-- Written by QtCreator 4.0.2, 2018-06-27T11:44:40. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -285,8 +285,8 @@
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">CTKLanguagePackage</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">CTKLanguagePackage2</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:E:/SourceCode/GitHub/CTK/CTK-Source/CTK/Applications/ctkDICOM2/resources/i18n/CTKLanguagePackage/CTKLanguagePackage.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:E:/SourceCode/GitHub/CTK/CTK-Source/CTK/Applications/ctkDICOM2Withi18n/resources/i18n/CTKLanguagePackage/CTKLanguagePackage.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments"></value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">CTKLanguagePackage.pro</value>

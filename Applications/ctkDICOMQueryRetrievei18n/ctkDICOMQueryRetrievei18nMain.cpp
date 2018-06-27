@@ -23,31 +23,38 @@
 #include <QTreeView>
 #include <QSettings>
 #include <QDir>
-#include <QResource>
+
+// CTK Core
+#include <ctkDICOMDatabase.h>
+#include <ctkDICOMUtil.h>
 
 // CTK widget includes
-#include <ctkDICOMBrowser.h>
-
-// ctkDICOMCore includes
-#include "ctkDICOMDatabase.h"
-#include "ctkDICOMModel.h"
+#include <ctkDICOMQueryRetrieveWidget.h>
 
 // Logger
 #include "ctkLogger.h"
+#include "dcmtk/oflog/oflog.h"
 
 // STD includes
 #include <iostream>
 
 int main(int argc, char** argv)
 {
+  // Set the DCMTK log level to debug
+  ctk::setDICOMLogLevel(ctkErrorLogLevel::Debug);
+
   QApplication app(argc, argv);
 
   app.setOrganizationName("commontk");
   app.setOrganizationDomain("commontk.org");
-  app.setApplicationName("ctkDICOM");
+  app.setApplicationName("ctkDICOMQueryRetrieve");
 
-  // set up Qt resource files
-  QResource::registerResource("./Resources/ctkDICOM.qrc");
+  //install the chinese translator to change the ctkTableView's language to chinese
+  //if you want to use other language please modify the "ctk_zh_cn.ts" file located in "./Resources/i18n/CTKLanguagePackage" 
+  //if you just want to use english, remove the three lines below 
+  QTranslator translator;
+  translator.load(":/ctk_zh_cn.qm");
+  app.installTranslator(&translator);
 
   QSettings settings;
   QString databaseDirectory;
@@ -79,10 +86,17 @@ int main(int argc, char** argv)
     }
   }
 
-  ctkDICOMBrowser DICOMApp;
 
-  DICOMApp.setDatabaseDirectory(databaseDirectory);
-  DICOMApp.show();
+  QString databaseFileName = databaseDirectory + QString("/ctkDICOM.sql");
 
+  QSharedPointer<ctkDICOMDatabase> dicomDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
+  dicomDatabase->openDatabase(databaseFileName);
+
+  ctkDICOMQueryRetrieveWidget queryRetrieve;
+
+  queryRetrieve.setRetrieveDatabase(dicomDatabase);
+
+  queryRetrieve.show();
+  queryRetrieve.raise();
   return app.exec();
 }

@@ -1,4 +1,4 @@
-project(ctkDICOMQueryRetrieve)
+project(ctkDICOMQueryRetrievei18n)
 
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
@@ -6,7 +6,7 @@ project(ctkDICOMQueryRetrieve)
 
 # Source files
 set(KIT_SRCS
-  ctkDICOMQueryRetrieveMain.cpp
+  ctkDICOMQueryRetrievei18nMain.cpp
   )
 
 # Headers that should run through moc
@@ -19,6 +19,7 @@ set(KIT_UI_FORMS
 
 # Resources
 set(KIT_resources
+  ./resources/i18n/CTKLanguagePackage/ctkdicom.qrc
 )
 
 # Target libraries - See CMake/ctkFunctionGetTargetLibraries.cmake

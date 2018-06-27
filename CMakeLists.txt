@@ -552,9 +552,12 @@ ctk_app_option(ctkDICOM
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
 
-
 ctk_app_option(ctkDICOM2
                "Build the new DICOM example application (experimental)" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+
+ctk_app_option(ctkDICOM2i18n
+               "Build the new DICOM example application (internationalization)" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
 
 ctk_app_option(ctkDICOMIndexer
@@ -574,6 +577,10 @@ ctk_app_option(ctkDICOMRetrieve
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
 
 ctk_app_option(ctkDICOMQueryRetrieve
+               "Build the DICOM example application" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+
+ctk_app_option(ctkDICOMQueryRetrievei18n
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
 
