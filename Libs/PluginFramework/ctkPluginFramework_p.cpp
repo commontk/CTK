@@ -146,7 +146,7 @@ void ctkPluginFrameworkPrivate::shutdown(bool restart)
       {
         const bool wa = wasActive;
         shuttingDown.fetchAndStoreOrdered(1);
-        QtConcurrent::run(this, &ctkPluginFrameworkPrivate::shutdown0, restart, wa);
+        shutdown0(restart, wa);
       }
       catch (const ctkException& e)
       {
@@ -168,7 +168,6 @@ void ctkPluginFrameworkPrivate::shutdown0(bool restart, bool wasActive)
   try
   {
     {
-      Locker sync(&lock);
       waitOnOperation(&lock, QString("Framework::") + (restart ? "update" : "stop"), true);
       operation = DEACTIVATING;
       state = ctkPlugin::STOPPING;
@@ -184,7 +183,6 @@ void ctkPluginFrameworkPrivate::shutdown0(bool restart, bool wasActive)
     }
 
     {
-      Locker sync(&lock);
       fwCtx->uninit();
       shuttingDown.fetchAndStoreOrdered(0);
       shutdownDone_unlocked(restart);
