@@ -418,6 +418,7 @@ void ctkSettingsPanel::applySettings()
     {
     PropertyType& prop = d->Properties[key];
     prop.setPreviousValue(prop.value());
+    emit settingChanged(key, prop.value());
     }
 }
 
