@@ -64,6 +64,7 @@
 #include <vtkImageData.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkScalarsToColors.h>
 #include <vtkTable.h>
 
