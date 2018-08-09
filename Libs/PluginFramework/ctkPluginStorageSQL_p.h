@@ -31,6 +31,7 @@
 #include <QSqlError>
 #include <QPluginLoader>
 #include <QDirIterator>
+#include <QThreadStorage>
 
 // CTK class forward declarations
 class ctkPluginFrameworkContext;
@@ -117,7 +118,8 @@ public:
    *
    * @throws ctkPluginDatabaseException
    */
-  void close();
+  void close(); // Satisfy abstract interface
+  void close() const;
 
   // -------------------------------------------------------------
   // end ctkPluginStorage interface
@@ -263,11 +265,20 @@ private:
   bool checkTables() const;
 
   /**
-   * Checks the database connection.
+   * Creates or returns an existing, thread-local database connection.
    *
+   * @param open Create and open connection.
+   * @return Database connection.
    * @throws ctkPluginDatabaseException
    */
-  void checkConnection() const;
+  QSqlDatabase getConnection(bool create = true) const;
+
+  /**
+   * Creates a thread-unique database connection name.
+   *
+   * @return Database connection name.
+   */
+  QString getConnectionName() const;
 
   /**
    * Compares the persisted plugin modification time with the
@@ -330,8 +341,7 @@ private:
 
 
   QString m_databasePath;
-  QString m_connectionName;
-  bool m_isDatabaseOpen;
+  mutable QThreadStorage<QString> m_connectionNames;
 
   QMutex m_archivesLock;
 
