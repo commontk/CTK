@@ -53,7 +53,6 @@ enum TBindIndexes
 //----------------------------------------------------------------------------
 ctkPluginStorageSQL::ctkPluginStorageSQL(ctkPluginFrameworkContext *framework)
   : m_isDatabaseOpen(false)
-  , m_inTransaction(false)
   , m_framework(framework)
   , m_nextFreeId(-1)
 {

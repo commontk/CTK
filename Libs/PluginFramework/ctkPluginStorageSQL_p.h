@@ -332,7 +332,6 @@ private:
   QString m_databasePath;
   QString m_connectionName;
   bool m_isDatabaseOpen;
-  bool m_inTransaction;
 
   QMutex m_archivesLock;
 
