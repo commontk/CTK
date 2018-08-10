@@ -57,7 +57,7 @@ ctkPluginStorageSQL::ctkPluginStorageSQL(ctkPluginFrameworkContext *framework)
   , m_nextFreeId(-1)
 {
   // See if we have a storage database
-  m_databasePath = ctkPluginFrameworkUtil::getFileStorage(framework, "").absoluteFilePath("plugins.db");
+  setDatabasePath(ctkPluginFrameworkUtil::getFileStorage(framework, "").absoluteFilePath("plugins.db"));
 
   this->open();
   restorePluginArchives();
