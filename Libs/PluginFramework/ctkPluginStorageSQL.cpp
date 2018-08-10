@@ -114,25 +114,26 @@ QString ctkPluginStorageSQL::getConnectionName() const
 }
 
 //----------------------------------------------------------------------------
-void ctkPluginStorageSQL::open()
+void ctkPluginStorageSQL::createDatabaseDirectory() const
 {
-  QString path;
+  QString path = getDatabasePath();
 
-  //Create full path to database
-  if(m_databasePath.isEmpty ())
-    m_databasePath = getDatabasePath();
-
-  path = m_databasePath;
-  QFileInfo dbFileInfo(path);
-  if (!dbFileInfo.dir().exists())
+  QFileInfo fileInfo(path);
+  if (!fileInfo.dir().exists())
   {
-    if(!QDir::root().mkpath(dbFileInfo.path()))
+    if (!QDir::root().mkpath(fileInfo.path()))
     {
       close();
-      QString errorText("Could not create database directory: %1");
-      throw ctkPluginDatabaseException(errorText.arg(dbFileInfo.path()), ctkPluginDatabaseException::DB_CREATE_DIR_ERROR);
+      throw ctkPluginDatabaseException(QString("Could not create database directory: %1").arg(fileInfo.path()),
+                                    ctkPluginDatabaseException::DB_CREATE_DIR_ERROR);
     }
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginStorageSQL::open()
+{
+  createDatabaseDirectory();
 
   QSqlDatabase database = getConnection();
 

@@ -281,6 +281,13 @@ private:
   QString getConnectionName() const;
 
   /**
+   * Creates the directory for the database.
+   *
+   * @throws ctkPluginDatabaseException
+   */
+  void createDatabaseDirectory() const;
+
+  /**
    * Compares the persisted plugin modification time with the
    * file system modification time and updates the database
    * if the persisted data is outdated.
