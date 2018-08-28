@@ -57,7 +57,7 @@ macro(ctkMacroSetupQt)
     endif()
 
   else()
-    set(minimum_required_qt_version "4.6")
+    set(minimum_required_qt_version "4.7")
 
     find_package(Qt4)
 
