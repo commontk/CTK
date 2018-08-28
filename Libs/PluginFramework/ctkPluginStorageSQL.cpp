@@ -32,6 +32,7 @@
 
 #include <QFileInfo>
 #include <QUrl>
+#include <QThread>
 
 //database table names
 #define PLUGINS_TABLE "Plugins"
@@ -52,13 +53,11 @@ enum TBindIndexes
 
 //----------------------------------------------------------------------------
 ctkPluginStorageSQL::ctkPluginStorageSQL(ctkPluginFrameworkContext *framework)
-  : m_isDatabaseOpen(false)
-  , m_inTransaction(false)
-  , m_framework(framework)
+  : m_framework(framework)
   , m_nextFreeId(-1)
 {
   // See if we have a storage database
-  m_databasePath = ctkPluginFrameworkUtil::getFileStorage(framework, "").absoluteFilePath("plugins.db");
+  setDatabasePath(ctkPluginFrameworkUtil::getFileStorage(framework, "").absoluteFilePath("plugins.db"));
 
   this->open();
   restorePluginArchives();
@@ -71,59 +70,72 @@ ctkPluginStorageSQL::~ctkPluginStorageSQL()
 }
 
 //----------------------------------------------------------------------------
-void ctkPluginStorageSQL::open()
+QSqlDatabase ctkPluginStorageSQL::getConnection(bool create) const
 {
-  if (m_isDatabaseOpen)
-    return;
-
-  QString path;
-
-  //Create full path to database
-  if(m_databasePath.isEmpty ())
-    m_databasePath = getDatabasePath();
-
-  path = m_databasePath;
-  QFileInfo dbFileInfo(path);
-  if (!dbFileInfo.dir().exists())
+  if (m_connectionNames.hasLocalData() && QSqlDatabase::contains(m_connectionNames.localData()))
   {
-    if(!QDir::root().mkpath(dbFileInfo.path()))
-    {
-      close();
-      QString errorText("Could not create database directory: %1");
-      throw ctkPluginDatabaseException(errorText.arg(dbFileInfo.path()), ctkPluginDatabaseException::DB_CREATE_DIR_ERROR);
-    }
+    return QSqlDatabase::database(m_connectionNames.localData());
   }
 
-  m_connectionName = dbFileInfo.completeBaseName();
-  QSqlDatabase database;
-  if (QSqlDatabase::contains(m_connectionName))
+  if (!create)
   {
-    database = QSqlDatabase::database(m_connectionName);
+    throw ctkPluginDatabaseException(QString("No database connection."),
+      ctkPluginDatabaseException::DB_NOT_OPEN_ERROR);
   }
-  else
-  {
-    database = QSqlDatabase::addDatabase("QSQLITE", m_connectionName);
-    database.setDatabaseName(path);
-  }
+
+  m_connectionNames.setLocalData(getConnectionName());
+
+  QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", m_connectionNames.localData());
+  database.setDatabaseName(getDatabasePath());
 
   if (!database.isValid())
   {
     close();
-    throw ctkPluginDatabaseException(QString("Invalid database connection: %1").arg(m_connectionName),
-                                  ctkPluginDatabaseException::DB_CONNECTION_INVALID);
+    throw ctkPluginDatabaseException(QString("Invalid database connection: %1").arg(m_connectionNames.localData()),
+      ctkPluginDatabaseException::DB_CONNECTION_INVALID);
   }
 
-  //Create or open database
-  if (!database.isOpen())
+  if (!database.open())
   {
-    if (!database.open())
+    close();
+    throw ctkPluginDatabaseException(QString("Could not open database connection: %1 (%2)").arg(m_connectionNames.localData()).arg(database.lastError().text()),
+      ctkPluginDatabaseException::DB_SQL_ERROR);
+  }
+
+  return database;
+}
+
+//----------------------------------------------------------------------------
+QString ctkPluginStorageSQL::getConnectionName() const
+{
+  QString connectionName = QFileInfo(getDatabasePath()).completeBaseName();
+  connectionName += QString("_0x%1").arg(reinterpret_cast<quintptr>(QThread::currentThread()), 2 * QT_POINTER_SIZE, 16, QLatin1Char('0'));
+  return connectionName;
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginStorageSQL::createDatabaseDirectory() const
+{
+  QString path = getDatabasePath();
+
+  QFileInfo fileInfo(path);
+  if (!fileInfo.dir().exists())
+  {
+    if (!QDir::root().mkpath(fileInfo.path()))
     {
       close();
-      throw ctkPluginDatabaseException(QString("Could not open database. ") + database.lastError().text(),
-                                    ctkPluginDatabaseException::DB_SQL_ERROR);
+      throw ctkPluginDatabaseException(QString("Could not create database directory: %1").arg(fileInfo.path()),
+                                    ctkPluginDatabaseException::DB_CREATE_DIR_ERROR);
     }
   }
-  m_isDatabaseOpen = true;
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginStorageSQL::open()
+{
+  createDatabaseDirectory();
+
+  QSqlDatabase database = getConnection();
 
   //Check if the sqlite version supports foreign key constraints
   QSqlQuery query(database);
@@ -182,9 +194,7 @@ void ctkPluginStorageSQL::open()
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::initNextFreeIds()
 {
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   QString statement = "SELECT ID,MAX(Generation) FROM " PLUGINS_TABLE " GROUP BY ID";
@@ -215,9 +225,7 @@ void ctkPluginStorageSQL::initNextFreeIds()
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::cleanupDB()
 {
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   beginTransaction(&query, Write);
@@ -244,9 +252,7 @@ void ctkPluginStorageSQL::cleanupDB()
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::updateDB()
 {
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   beginTransaction(&query, Write);
@@ -388,9 +394,7 @@ QSharedPointer<ctkPluginArchive> ctkPluginStorageSQL::insertPlugin(const QUrl& l
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::insertArchive(QSharedPointer<ctkPluginArchiveSQL> pa)
 {
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   beginTransaction(&query, Write);
@@ -516,9 +520,7 @@ void ctkPluginStorageSQL::replacePluginArchive(QSharedPointer<ctkPluginArchive> 
     throw ctkRuntimeException(QString("replacePluginArchive: Old plugin archive not found, pos=").append(pos));
   }
 
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   beginTransaction(&query, Write);
@@ -547,9 +549,7 @@ void ctkPluginStorageSQL::replacePluginArchive(QSharedPointer<ctkPluginArchive> 
 //----------------------------------------------------------------------------
 bool ctkPluginStorageSQL::removeArchive(ctkPluginArchiveSQL* pa)
 {
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   beginTransaction(&query, Write);
@@ -618,9 +618,7 @@ QList<QString> ctkPluginStorageSQL::getStartOnLaunchPlugins() const
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::setStartLevel(int key, int startLevel)
 {
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   QString statement = "UPDATE " PLUGINS_TABLE " SET StartLevel=? WHERE K=?";
@@ -634,9 +632,7 @@ void ctkPluginStorageSQL::setStartLevel(int key, int startLevel)
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::setLastModified(int key, const QDateTime& lastModified)
 {
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   QString statement = "UPDATE " PLUGINS_TABLE " SET LastModified=? WHERE K=?";
@@ -650,9 +646,7 @@ void ctkPluginStorageSQL::setLastModified(int key, const QDateTime& lastModified
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::setAutostartSetting(int key, int autostart)
 {
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   QString statement = "UPDATE " PLUGINS_TABLE " SET AutoStart=? WHERE K=?";
@@ -666,7 +660,8 @@ void ctkPluginStorageSQL::setAutostartSetting(int key, int autostart)
 //----------------------------------------------------------------------------
 QStringList ctkPluginStorageSQL::findResourcesPath(int archiveKey, const QString& path) const
 {
-  checkConnection();
+  QSqlDatabase database = getConnection();
+  QSqlQuery query(database);
 
   QString statement = "SELECT SUBSTR(ResourcePath,?) FROM PluginResources WHERE K=? AND SUBSTR(ResourcePath,1,?)=?";
 
@@ -679,9 +674,6 @@ QStringList ctkPluginStorageSQL::findResourcesPath(int archiveKey, const QString
   bindValues.append(archiveKey);
   bindValues.append(resourcePath.size());
   bindValues.append(resourcePath);
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
-  QSqlQuery query(database);
 
   executeQuery(&query, statement, bindValues);
 
@@ -766,21 +758,26 @@ void ctkPluginStorageSQL::executeQuery(QSqlQuery *query, const QString &statemen
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::close()
 {
-  if (m_isDatabaseOpen)
+  const_cast<const ctkPluginStorageSQL*>(this)->close();
+}
+
+//----------------------------------------------------------------------------
+void ctkPluginStorageSQL::close() const
+{
+  if (isOpen())
   {
-    QSqlDatabase database = QSqlDatabase::database(m_connectionName, false);
+    QSqlDatabase database = getConnection(false);
     if (database.isValid())
     {
       if(database.isOpen())
       {
         database.close();
-        m_isDatabaseOpen = false;
         return;
       }
     }
     else
     {
-      throw ctkPluginDatabaseException(QString("Problem closing database: Invalid connection %1").arg(m_connectionName));
+      throw ctkPluginDatabaseException(QString("Problem closing database: Invalid connection %1").arg(m_connectionNames.localData()));
     }
   }
 }
@@ -809,9 +806,7 @@ QString ctkPluginStorageSQL::getDatabasePath() const
 //----------------------------------------------------------------------------
 QByteArray ctkPluginStorageSQL::getPluginResource(int key, const QString& res) const
 {
-  checkConnection();
-
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
 
   QString statement = "SELECT Resource FROM PluginResources WHERE K=? AND ResourcePath=?";
@@ -834,7 +829,7 @@ QByteArray ctkPluginStorageSQL::getPluginResource(int key, const QString& res) c
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::createTables()
 {
-    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+    QSqlDatabase database = getConnection();
     QSqlQuery query(database);
 
     //Begin Transaction
@@ -892,8 +887,10 @@ void ctkPluginStorageSQL::createTables()
 //----------------------------------------------------------------------------
 bool ctkPluginStorageSQL::checkTables() const
 {
+  QSqlDatabase database = getConnection();
+
   bool bTables(false);
-  QStringList tables = QSqlDatabase::database(m_connectionName).tables();
+  QStringList tables = database.tables();
   if (tables.contains(PLUGINS_TABLE) &&
       tables.contains(PLUGIN_RESOURCES_TABLE))
   {
@@ -906,7 +903,7 @@ bool ctkPluginStorageSQL::checkTables() const
 bool ctkPluginStorageSQL::dropTables()
 {
   //Execute transaction for deleting the database tables
-  QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+  QSqlDatabase database = getConnection();
   QSqlQuery query(database);
   QStringList expectedTables;
   expectedTables << PLUGINS_TABLE << PLUGIN_RESOURCES_TABLE;
@@ -947,7 +944,16 @@ bool ctkPluginStorageSQL::dropTables()
 //----------------------------------------------------------------------------
 bool ctkPluginStorageSQL::isOpen() const
 {
-  return m_isDatabaseOpen;
+  try
+  {
+    getConnection(false);
+  }
+  catch (const ctkPluginDatabaseException&)
+  {
+    return false;
+  }
+
+  return true;
 }
 
 int ctkPluginStorageSQL::find(long id) const
@@ -987,21 +993,6 @@ int ctkPluginStorageSQL::find(ctkPluginArchive *pa) const
     if (m_archives[i].data() == pa) return i;
   }
   return -1;
-}
-
-//----------------------------------------------------------------------------
-void ctkPluginStorageSQL::checkConnection() const
-{
-  if(!m_isDatabaseOpen)
-  {
-    throw ctkPluginDatabaseException("Database not open.", ctkPluginDatabaseException::DB_NOT_OPEN_ERROR);
-  }
-
-  if (!QSqlDatabase::database(m_connectionName).isValid())
-  {
-    throw ctkPluginDatabaseException(QString("Database connection invalid: %1").arg(m_connectionName),
-                                  ctkPluginDatabaseException::DB_CONNECTION_INVALID);
-  }
 }
 
 //----------------------------------------------------------------------------
@@ -1062,9 +1053,8 @@ void ctkPluginStorageSQL::rollbackTransaction(QSqlQuery *query)
 //----------------------------------------------------------------------------
 void ctkPluginStorageSQL::restorePluginArchives()
 {
-  checkConnection();
-
-  QSqlQuery query(QSqlDatabase::database(m_connectionName));
+  QSqlDatabase database = getConnection();
+  QSqlQuery query(database);
   QString statement = "SELECT ID, Location, LocalPath, StartLevel, LastModified, AutoStart, K, MAX(Generation)"
                       " FROM " PLUGINS_TABLE " WHERE StartLevel != -2 GROUP BY ID"
                       " ORDER BY ID";
