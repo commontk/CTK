@@ -31,10 +31,6 @@
 #include "ctkWidgetsExport.h"
 class ctkDirectoryButtonPrivate;
 
-// QFileDialog::Options can be used since Qt 4.7.0 (QT_VERSION >= 0x040700)
-// it is disabled to support older Qt versions
-//#define USE_QFILEDIALOG_OPTIONS 1
-
 /// \ingroup Widgets
 /// ctkDirectoryButton is a QPushButton to select a directory path.
 /// The absolute path is displayed on the button. When clicked, a
@@ -64,29 +60,9 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
   /// public API. We need to create a custom property that will be used when
   /// instanciating a QFileDialog in ctkDirectoryButton::browse()
-#ifdef USE_QFILEDIALOG_OPTIONS
   Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
-#else
-  Q_PROPERTY(Options options READ options WRITE setOptions)
-  Q_FLAGS(Option Options);
-#endif
 
 public:
-#ifndef USE_QFILEDIALOG_OPTIONS
-  // Same options than QFileDialog::Options
-  enum Option
-  {
-    ShowDirsOnly          = 0x00000001,
-    DontResolveSymlinks   = 0x00000002,
-    DontConfirmOverwrite  = 0x00000004,
-    DontUseSheet          = 0x00000008,
-    DontUseNativeDialog   = 0x00000010,
-    ReadOnly              = 0x00000020,
-    HideNameFilterDetails = 0x00000040
-  };
-  Q_DECLARE_FLAGS(Options, Option)
-#endif
-
   /// Constructor
   /// Creates a default ctkDirectoryButton that points to the application
   /// current directory.
@@ -128,13 +104,8 @@ public:
 
   /// Options of the file dialog pop up.
   /// \sa QFileDialog::getExistingDirectory
-#ifdef USE_QFILEDIALOG_OPTIONS
   void setOptions(const QFileDialog::Options& options);
   const QFileDialog::Options& options()const;
-#else
-  void setOptions(const Options& options);
-  const Options& options()const;
-#endif
 
   /// \sa setAcceptMode QFileDialog::AcceptMode
   QFileDialog::AcceptMode acceptMode() const;
@@ -168,9 +139,5 @@ private:
   Q_DECLARE_PRIVATE(ctkDirectoryButton);
   Q_DISABLE_COPY(ctkDirectoryButton);
 };
-
-#ifndef USE_QFILEDIALOG_OPTIONS
-Q_DECLARE_OPERATORS_FOR_FLAGS(ctkDirectoryButton::Options);
-#endif
 
 #endif
