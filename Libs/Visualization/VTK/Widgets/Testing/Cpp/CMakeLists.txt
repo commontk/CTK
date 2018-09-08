@@ -4,6 +4,7 @@ set(KIT ${PROJECT_NAME})
 # Tests
 #
 set(TEST_SOURCES
+  ctkVTKAbstractViewTest1.cpp
   ctkVTKColorTransferFunctionTest1.cpp
   ctkVTKDataSetArrayComboBoxTest1.cpp
   ctkVTKDataSetModelTest1.cpp
@@ -151,6 +152,7 @@ endif()
 # Add Tests
 #
 
+SIMPLE_TEST( ctkVTKAbstractViewTest1 )
 SIMPLE_TEST( ctkVTKColorTransferFunctionTest1 )
 SIMPLE_TEST( ctkVTKDataSetArrayComboBoxTest1 )
 SIMPLE_TEST( ctkVTKDataSetModelTest1 )

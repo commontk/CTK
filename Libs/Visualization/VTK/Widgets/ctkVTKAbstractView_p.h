@@ -71,6 +71,7 @@ public:
   QTimer*                                       FPSTimer;
   int                                           FPS;
   static int                                    MultiSamples;
+  int                                           PauseRenderCount;
 
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
 };
