@@ -60,6 +60,7 @@ ctkVTKAbstractViewPrivate::ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object)
   this->FPSVisible = false;
   this->FPSTimer = 0;
   this->FPS = 0;
+  this->PauseRenderCount = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -85,7 +86,7 @@ void ctkVTKAbstractViewPrivate::init()
   this->RequestTimer = new QTimer(q);
   this->RequestTimer->setSingleShot(true);
   QObject::connect(this->RequestTimer, SIGNAL(timeout()),
-                   q, SLOT(forceRender()));
+                   q, SLOT(requestRender()));
 
   this->FPSTimer = new QTimer(q);
   this->FPSTimer->setInterval(1000);
@@ -197,7 +198,7 @@ void ctkVTKAbstractView::scheduleRender()
     {
     // If the request comes from the system (widget exposed, resized...), the
     // render must be done immediately.
-    this->forceRender();
+    this->requestRender();
     }
   else if (!d->RequestTime.isValid())
     {
@@ -210,8 +211,20 @@ void ctkVTKAbstractView::scheduleRender()
     // have already been elapsed, it is likely that RequestTimer has already
     // timed out, but the event queue hasn't been processed yet, rendering is
     // done now to ensure the desired framerate is respected.
-    this->forceRender();
+    this->requestRender();
     }
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKAbstractView::requestRender()
+{
+  Q_D(const ctkVTKAbstractView);
+
+  if (this->isRenderPaused())
+    {
+    return;
+    }
+  this->forceRender();
 }
 
 //----------------------------------------------------------------------------
@@ -240,6 +253,58 @@ void ctkVTKAbstractView::forceRender()
     return;
     }
   d->RenderWindow->Render();
+}
+
+//----------------------------------------------------------------------------
+bool ctkVTKAbstractView::isRenderPaused()const
+{
+  Q_D(const ctkVTKAbstractView);
+  return d->PauseRenderCount > 0;
+}
+
+//----------------------------------------------------------------------------
+int ctkVTKAbstractView::pauseRender()
+{
+  Q_D(ctkVTKAbstractView);
+  ++d->PauseRenderCount;
+  return d->PauseRenderCount;
+}
+
+//----------------------------------------------------------------------------
+int ctkVTKAbstractView::resumeRender()
+{
+  Q_D(ctkVTKAbstractView);
+  if (d->PauseRenderCount > 0)
+    {
+    --d->PauseRenderCount;
+    }
+  else
+    {
+    qWarning() << Q_FUNC_INFO << "Cannot resume rendering, pause render count is already 0!";
+    }
+
+  // If the rendering is not paused and has been scheduled, call scheduleRender
+  if (!this->isRenderPaused() && d->RequestTimer && d->RequestTime.isValid())
+    {
+    this->scheduleRender();
+    }
+  return d->PauseRenderCount;
+}
+
+//----------------------------------------------------------------------------
+int ctkVTKAbstractView::setRenderPaused(bool pause)
+{
+  Q_D(const ctkVTKAbstractView);
+
+  if (pause)
+    {
+    this->pauseRender();
+    }
+  else
+    {
+    this->resumeRender();
+    }
+  return d->PauseRenderCount;
 }
 
 //----------------------------------------------------------------------------
