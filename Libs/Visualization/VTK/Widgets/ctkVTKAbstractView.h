@@ -24,18 +24,8 @@
 // Qt includes
 #include <QWidget>
 
-// VTK includes
-#ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-#  include <QVTKOpenGLNativeWidget.h>
-# else
-#  include <QVTKOpenGLWidget.h>
-# endif
-#else
-#include <QVTKWidget.h>
-#endif
-
 // CTK includes
+#include "ctkVTKOpenGLNativeWidget.h"
 #include "ctkVTKObject.h"
 #include "ctkVisualizationVTKWidgetsExport.h"
 class ctkVTKAbstractViewPrivate;
@@ -153,15 +143,7 @@ public:
   Q_INVOKABLE vtkCornerAnnotation* cornerAnnotation()const;
 
   /// Get the underlying QVTKWidget
-#ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-  Q_INVOKABLE QVTKOpenGLNativeWidget * VTKWidget() const;
-# else
-  Q_INVOKABLE QVTKOpenGLWidget * VTKWidget() const;
-# endif
-#else
-  Q_INVOKABLE QVTKWidget * VTKWidget() const;
-#endif
+  Q_INVOKABLE ctkVTKOpenGLNativeWidget * VTKWidget() const;
 
   /// Get background color
   virtual QColor backgroundColor() const;

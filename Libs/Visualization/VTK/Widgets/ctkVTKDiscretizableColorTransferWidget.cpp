@@ -23,6 +23,7 @@
 // CTK includes
 #include "ctkColorPickerButton.h"
 #include "ctkDoubleSlider.h"
+#include "ctkVTKOpenGLNativeWidget.h"
 #include "ctkVTKScalarsToColorsComboBox.h"
 #include "ctkVTKScalarsToColorsUtils.h"
 #include "ui_ctkVTKDiscretizableColorTransferWidget.h"
@@ -46,15 +47,6 @@
 #include <QWidgetAction>
 
 // VTK includes
-#ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-#  include <QVTKOpenGLNativeWidget.h>
-# else
-#  include <QVTKOpenGLWidget.h>
-# endif
-#else
-#include <QVTKWidget.h>
-#endif
 #include <vtkCallbackCommand.h>
 #include <vtkContextScene.h>
 #include <vtkContextView.h>
@@ -97,15 +89,8 @@ public:
   bool popRangesFromHistory(double* currentRange, double* visibleRange);
   void clearUndoHistory();
 
-#ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-  QVTKOpenGLNativeWidget* ScalarsToColorsView;
-# else
-  QVTKOpenGLWidget* ScalarsToColorsView;
-# endif
-#else
-  QVTKWidget* ScalarsToColorsView;
-#endif
+
+  ctkVTKOpenGLNativeWidget* ScalarsToColorsView;
 
   vtkSmartPointer<vtkScalarsToColorsContextItem> scalarsToColorsContextItem;
   vtkSmartPointer<vtkContextView> scalarsToColorsContextView;
@@ -168,15 +153,7 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 
   this->Ui_ctkVTKDiscretizableColorTransferWidget::setupUi(widget);
 
-#ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-  this->ScalarsToColorsView = new QVTKOpenGLNativeWidget;
-# else
-  this->ScalarsToColorsView = new QVTKOpenGLWidget;
-# endif
-#else
-  this->ScalarsToColorsView = new QVTKWidget;
-#endif
+  this->ScalarsToColorsView = new ctkVTKOpenGLNativeWidget;
   this->gridLayout->addWidget(this->ScalarsToColorsView, 2, 2, 5, 1);
 
   this->scalarsToColorsContextItem = vtkSmartPointer<vtkScalarsToColorsContextItem>::New();

@@ -68,18 +68,11 @@ void ctkVTKAbstractViewPrivate::init()
   Q_Q(ctkVTKAbstractView);
 
   this->setParent(q);
-
+  this->VTKWidget = new ctkVTKOpenGLNativeWidget;
 #ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-  this->VTKWidget = new QVTKOpenGLNativeWidget;
-# else
-  this->VTKWidget = new QVTKOpenGLWidget;
-# endif
   this->VTKWidget->setEnableHiDPI(true);
   QObject::connect(this->VTKWidget, SIGNAL(resized()),
                    q, SLOT(forceRender()));
-#else
-  this->VTKWidget = new QVTKWidget;
 #endif
   q->setLayout(new QVBoxLayout);
   q->layout()->setMargin(0);
@@ -300,15 +293,7 @@ vtkCornerAnnotation* ctkVTKAbstractView::cornerAnnotation() const
 }
 
 //----------------------------------------------------------------------------
-#ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-QVTKOpenGLNativeWidget * ctkVTKAbstractView::VTKWidget() const
-# else
-QVTKOpenGLWidget * ctkVTKAbstractView::VTKWidget() const
-# endif
-#else
-QVTKWidget * ctkVTKAbstractView::VTKWidget() const
-#endif
+ctkVTKOpenGLNativeWidget * ctkVTKAbstractView::VTKWidget() const
 {
   Q_D(const ctkVTKAbstractView);
   return d->VTKWidget;
