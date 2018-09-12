@@ -207,8 +207,13 @@ if(CTK_QT_VERSION VERSION_LESS "5"
   set(_use_qvtkopenglwidget 0)
 endif()
 
+# Setting the moc options is required to ensure the correct classname
+# is associated with the wrapped method.
+set(moc_options -DctkVTKOpenGLNativeWidget=QVTKWidget)
+
 if(_use_qvtkopenglwidget)
   add_definitions(-DCTK_USE_QVTKOPENGLWIDGET)
+  set(moc_options -DctkVTKOpenGLNativeWidget=QVTKOpenGLWidget)
 endif()
 
 # Detect if QVTKOpenGLNativeWidget.h is available
@@ -231,7 +236,9 @@ endif()
 
 if(_has_QVTKOpenGLNativeWidget_h)
   add_definitions(-DCTK_HAS_QVTKOPENGLNATIVEWIDGET_H)
+  set(moc_options -DctkVTKOpenGLNativeWidget=QVTKOpenGLNativeWidget)
 endif()
+
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
@@ -242,6 +249,7 @@ ctkMacroBuildLib(
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
   LIBRARY_TYPE ${CTK_LIBRARY_MODE}
+  MOC_OPTIONS ${moc_options}
   )
 
 if(_use_qvtkopenglwidget)

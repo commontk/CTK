@@ -28,7 +28,7 @@
 #! \ingroup CMakeAPI
 macro(ctkMacroBuildLib)
   ctkMacroParseArguments(MY
-    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;GENERATE_MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE"
+    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;GENERATE_MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES;LIBRARY_TYPE;MOC_OPTIONS"
     "ENABLE_QTTESTING"
     ${ARGN}
     )
@@ -109,7 +109,7 @@ macro(ctkMacroBuildLib)
     # moc files can get very long and can't be resolved by the MSVC compiler.
     if(CTK_QT_VERSION VERSION_GREATER "4")
       foreach(moc_src ${MY_MOC_SRCS})
-        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
+        qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5 ${MY_MOC_OPTIONS})
       endforeach()
     else()
       foreach(moc_src ${MY_MOC_SRCS})
