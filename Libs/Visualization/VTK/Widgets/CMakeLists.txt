@@ -44,6 +44,7 @@ set(KIT_SRCS
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.cpp
   ctkVTKMatrixWidget.h
+  ctkVTKOpenGLNativeWidget.h
   ctkVTKPiecewiseFunction.cpp
   ctkVTKPiecewiseFunction.h
   ctkVTKPropertyWidget.cpp
@@ -84,6 +85,7 @@ set(KIT_MOC_SRCS
   ctkVTKMagnifyView.h
   ctkVTKMagnifyView_p.h
   ctkVTKMatrixWidget.h
+  ctkVTKOpenGLNativeWidget.h
   ctkVTKPiecewiseFunction.h
   ctkVTKPropertyWidget.h
   ctkVTKRenderView.h

@@ -23,49 +23,24 @@
 
 // CTK includes
 #include <ctkVTKObject.h>
+#include <ctkVTKOpenGLNativeWidget.h>
 #include "ctkVisualizationVTKWidgetsExport.h"
 class ctkVTKChartViewPrivate;
 
 // VTK includes
-#ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-#  include <QVTKOpenGLNativeWidget.h>
-# else
-#  include <QVTKOpenGLWidget.h>
-# endif
-#else
-#include <QVTKWidget.h>
-#endif
-
 class vtkChartXY;
 class vtkContextScene;
 class vtkPlot;
 
 /// \ingroup Visualization_VTK_Widgets
-#ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public QVTKOpenGLNativeWidget
-# else
-class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public QVTKOpenGLWidget
-# endif
-#else
-class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public QVTKWidget
-#endif
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public ctkVTKOpenGLNativeWidget
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(QString title READ title WRITE setTitle)
 
 public:
-#ifdef CTK_USE_QVTKOPENGLWIDGET
-# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-  typedef QVTKOpenGLNativeWidget Superclass;
-# else
-  typedef QVTKOpenGLWidget Superclass;
-# endif
-#else
-  typedef QVTKWidget Superclass;
-#endif
+  typedef ctkVTKOpenGLNativeWidget Superclass;
   ctkVTKChartView(QWidget* parent = 0);
   virtual ~ctkVTKChartView();
 
