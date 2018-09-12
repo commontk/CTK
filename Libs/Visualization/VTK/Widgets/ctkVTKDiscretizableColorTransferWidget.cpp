@@ -46,8 +46,12 @@
 #include <QWidgetAction>
 
 // VTK includes
-#if CTK_USE_QVTKOPENGLWIDGET
-#include <QVTKOpenGLWidget.h>
+#ifdef CTK_USE_QVTKOPENGLWIDGET
+# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+#  include <QVTKOpenGLNativeWidget.h>
+# else
+#  include <QVTKOpenGLWidget.h>
+# endif
 #else
 #include <QVTKWidget.h>
 #endif
@@ -93,8 +97,12 @@ public:
   bool popRangesFromHistory(double* currentRange, double* visibleRange);
   void clearUndoHistory();
 
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
+# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+  QVTKOpenGLNativeWidget* ScalarsToColorsView;
+# else
   QVTKOpenGLWidget* ScalarsToColorsView;
+# endif
 #else
   QVTKWidget* ScalarsToColorsView;
 #endif
@@ -160,8 +168,12 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 
   this->Ui_ctkVTKDiscretizableColorTransferWidget::setupUi(widget);
 
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
+# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+  this->ScalarsToColorsView = new QVTKOpenGLNativeWidget;
+# else
   this->ScalarsToColorsView = new QVTKOpenGLWidget;
+# endif
 #else
   this->ScalarsToColorsView = new QVTKWidget;
 #endif
@@ -173,7 +185,7 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 
   this->scalarsToColorsContextView = vtkSmartPointer<vtkContextView> ::New();
 
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> renwin =
     vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
   this->ScalarsToColorsView->SetRenderWindow(renwin);

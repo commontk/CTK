@@ -52,7 +52,7 @@ public:
   void init();
   void chartBounds(double* bounds)const;
 
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> RenderWindow;
 #endif
   vtkSmartPointer<vtkContextView> ContextView;
@@ -69,7 +69,7 @@ ctkVTKChartViewPrivate::ctkVTKChartViewPrivate(ctkVTKChartView& object)
   :q_ptr(&object)
 {
   this->ContextView = vtkSmartPointer<vtkContextView>::New();
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
   this->RenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
 #endif
   this->Chart = vtkSmartPointer<vtkChartXY>::New();
@@ -84,7 +84,7 @@ ctkVTKChartViewPrivate::ctkVTKChartViewPrivate(ctkVTKChartView& object)
 void ctkVTKChartViewPrivate::init()
 {
   Q_Q(ctkVTKChartView);
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
   q->SetRenderWindow(this->RenderWindow);
   this->ContextView->SetRenderWindow(this->RenderWindow);
 #endif

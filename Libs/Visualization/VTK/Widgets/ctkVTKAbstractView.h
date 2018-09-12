@@ -25,8 +25,12 @@
 #include <QWidget>
 
 // VTK includes
-#if CTK_USE_QVTKOPENGLWIDGET
-#include <QVTKOpenGLWidget.h>
+#ifdef CTK_USE_QVTKOPENGLWIDGET
+# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+#  include <QVTKOpenGLNativeWidget.h>
+# else
+#  include <QVTKOpenGLWidget.h>
+# endif
 #else
 #include <QVTKWidget.h>
 #endif
@@ -149,8 +153,12 @@ public:
   Q_INVOKABLE vtkCornerAnnotation* cornerAnnotation()const;
 
   /// Get the underlying QVTKWidget
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
+# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+  Q_INVOKABLE QVTKOpenGLNativeWidget * VTKWidget() const;
+# else
   Q_INVOKABLE QVTKOpenGLWidget * VTKWidget() const;
+# endif
 #else
   Q_INVOKABLE QVTKWidget * VTKWidget() const;
 #endif

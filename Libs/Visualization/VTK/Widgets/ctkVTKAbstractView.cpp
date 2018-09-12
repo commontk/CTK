@@ -48,7 +48,7 @@ int ctkVTKAbstractViewPrivate::MultiSamples = 0;  // Default for static var
 ctkVTKAbstractViewPrivate::ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object)
   : q_ptr(&object)
 {
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
   this->RenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
 #else
   this->RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -69,8 +69,12 @@ void ctkVTKAbstractViewPrivate::init()
 
   this->setParent(q);
 
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
+# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+  this->VTKWidget = new QVTKOpenGLNativeWidget;
+# else
   this->VTKWidget = new QVTKOpenGLWidget;
+# endif
   this->VTKWidget->setEnableHiDPI(true);
   QObject::connect(this->VTKWidget, SIGNAL(resized()),
                    q, SLOT(forceRender()));
@@ -296,8 +300,12 @@ vtkCornerAnnotation* ctkVTKAbstractView::cornerAnnotation() const
 }
 
 //----------------------------------------------------------------------------
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
+# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+QVTKOpenGLNativeWidget * ctkVTKAbstractView::VTKWidget() const
+# else
 QVTKOpenGLWidget * ctkVTKAbstractView::VTKWidget() const
+# endif
 #else
 QVTKWidget * ctkVTKAbstractView::VTKWidget() const
 #endif
@@ -480,7 +488,7 @@ void ctkVTKAbstractView::setUseDepthPeeling(bool useDepthPeeling)
     }
   this->renderWindow()->SetMultiSamples(useDepthPeeling ? 0 : nSamples);
   renderer->SetUseDepthPeeling(useDepthPeeling ? 1 : 0);
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
   renderer->SetUseDepthPeelingForVolumes(useDepthPeeling);
 #endif
 }
