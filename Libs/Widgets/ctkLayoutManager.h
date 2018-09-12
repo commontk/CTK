@@ -94,7 +94,7 @@ public:
   /// Destructor
   virtual ~ctkLayoutManager();
 
-  void setViewport(QWidget* widget);
+  Q_INVOKABLE void setViewport(QWidget* widget);
   Q_INVOKABLE QWidget* viewport()const;
 
   /// Return the spacing property value.
