@@ -33,12 +33,13 @@
 
 #if CTK_USE_QVTKOPENGLWIDGET
 # if CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-typedef QVTKOpenGLNativeWidget ctkVTKOpenGLNativeWidget;
+#  define ctkVTKOpenGLNativeWidget QVTKOpenGLNativeWidget
 # else
-typedef QVTKOpenGLWidget ctkVTKOpenGLNativeWidget;
+#  define ctkVTKOpenGLNativeWidget QVTKOpenGLWidget
 # endif
 #else
-typedef QVTKWidget ctkVTKOpenGLNativeWidget;
+# define ctkVTKOpenGLNativeWidget QVTKWidget
 #endif
+
 
 #endif
