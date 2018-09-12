@@ -206,8 +206,31 @@ if(CTK_QT_VERSION VERSION_LESS "5"
   OR (NOT VTK_RENDERING_BACKEND STREQUAL "OpenGL2"))
   set(_use_qvtkopenglwidget 0)
 endif()
+
 if(_use_qvtkopenglwidget)
   add_definitions(-DCTK_USE_QVTKOPENGLWIDGET)
+endif()
+
+# Detect if QVTKOpenGLNativeWidget.h is available
+set(_has_QVTKOpenGLNativeWidget_h 0)
+if(_use_qvtkopenglwidget)
+  set(_msg "Checking if QVTKOpenGLNativeWidget.h exists")
+  message(STATUS "${_msg}")
+  foreach(include_dir IN ITEMS ${vtkGUISupportQt_INCLUDE_DIRS})
+    if(EXISTS "${include_dir}/QVTKOpenGLNativeWidget.h")
+      set(_has_QVTKOpenGLNativeWidget_h 1)
+      break()
+    endif()
+  endforeach()
+  if(_has_QVTKOpenGLNativeWidget_h)
+    message(STATUS "${_msg} - found")
+  else()
+    message(STATUS "${_msg} - not found")
+  endif()
+endif()
+
+if(_has_QVTKOpenGLNativeWidget_h)
+  add_definitions(-DCTK_HAS_QVTKOPENGLNATIVEWIDGET_H)
 endif()
 
 ctkMacroBuildLib(
@@ -226,6 +249,14 @@ if(_use_qvtkopenglwidget)
     ${PROJECT_NAME}
     INTERFACE
       CTK_USE_QVTKOPENGLWIDGET
+    )
+endif()
+
+if(_has_QVTKOpenGLNativeWidget_h)
+  target_compile_definitions(
+    ${PROJECT_NAME}
+    INTERFACE
+      CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
     )
 endif()
 

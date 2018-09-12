@@ -57,8 +57,12 @@ public:
   QList<vtkRenderer*> renderers()const;
   vtkRenderer* firstRenderer()const;
 
-#if CTK_USE_QVTKOPENGLWIDGET
+#ifdef CTK_USE_QVTKOPENGLWIDGET
+# ifdef CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+  QVTKOpenGLNativeWidget*                       VTKWidget;
+# else
   QVTKOpenGLWidget*                             VTKWidget;
+# endif
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> RenderWindow;
 #else
   QVTKWidget*                                   VTKWidget;
