@@ -30,6 +30,7 @@
 #include <QVariant>
 
 // CTKQtTesting includes
+#include "ctkQtTestingUtility.h"
 #include "ctkXMLEventSource.h"
 
 //-----------------------------------------------------------------------------
@@ -140,12 +141,8 @@ int ctkXMLEventSource::getNextEvent(QString& widget, QString& command,
   widget = attributes.value("widget").toString();
   command = attributes.value("command").toString();
   arguments = attributes.value("arguments").toString();
-  eventType = attributes.hasAttribute("eventType") ?
-#if QT_VERSION < 0x50101
-    this->XMLStream->attributes().value("eventType").toString().toInt() :
-#else
-    this->XMLStream->attributes().value("eventType").toInt() :
-#endif
+  eventType = attributes.hasAttribute("type") ?
+    ctkQtTestingUtility::eventTypeFromString(this->XMLStream->attributes().value("type").toString()) :
     pqEventTypes::ACTION_EVENT;
   return SUCCESS;
 }
