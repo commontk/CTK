@@ -1,8 +1,9 @@
 // Qt includes
 #include <QDebug>
 
-// CTKTesting inlcudes
+// CTKTesting includes
 #include "ctkQtTestingUtility.h"
+#include <pqEventSource.h>  // for pqEventTypes
 
 @CTK_ADD_HEADER_EVENT_PLAYERS@
 
@@ -66,5 +67,37 @@ void ctkQtTestingUtility::addPlayer(pqWidgetEventPlayer* player)
   if(player)
     {
     this->eventPlayer()->addWidgetEventPlayer(player);
+    }
+}
+
+//-----------------------------------------------------------------------------
+QString ctkQtTestingUtility::eventTypeToString(int eventType)
+{
+  switch (eventType)
+    {
+    case pqEventTypes::ACTION_EVENT:
+      return QString("action");
+    case pqEventTypes::CHECK_EVENT:
+      return QString("check");
+    default:
+      return QString("unknown");
+    }
+}
+
+//-----------------------------------------------------------------------------
+int ctkQtTestingUtility::eventTypeFromString(const QString& eventTypeStr)
+{
+  if (!eventTypeStr.compare("action", Qt::CaseInsensitive))
+    {
+    return pqEventTypes::ACTION_EVENT;
+    }
+  else if (!eventTypeStr.compare("check", Qt::CaseInsensitive))
+    {
+    return pqEventTypes::CHECK_EVENT;
+    }
+  else
+    {
+    // unknown event type name
+    return -1;
     }
 }

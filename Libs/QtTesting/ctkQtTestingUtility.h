@@ -47,6 +47,15 @@ public:
 
   void addTranslator(pqWidgetEventTranslator* translator);
   void addPlayer(pqWidgetEventPlayer* player);
+
+  /// Convert pqEventTypes enum to string.
+  /// Returns "unknown" if the event type value is invalid.
+  static QString eventTypeToString(int eventType);
+
+  /// Get pqEventTypes enum from string.
+  /// Returns -1 if the type is not recognized.
+  /// String comparison is case insensitive.
+  static int eventTypeFromString(const QString& eventTypeStr);
 };
 
 #endif

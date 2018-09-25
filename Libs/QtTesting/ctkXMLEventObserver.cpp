@@ -27,6 +27,7 @@
 #include <QVariant>
 
 // CTKQtTesting includes
+#include "ctkQtTestingUtility.h"
 #include "ctkXMLEventObserver.h"
 
 //-----------------------------------------------------------------------------
@@ -152,7 +153,7 @@ void ctkXMLEventObserver::onRecordEvent(const QString& widget,
     this->XMLStream->writeAttribute("widget", widget);
     this->XMLStream->writeAttribute("command", command);
     this->XMLStream->writeAttribute("arguments", arguments);
-    this->XMLStream->writeAttribute("eventType", QString::number(eventType));
+    this->XMLStream->writeAttribute("type", ctkQtTestingUtility::eventTypeToString(eventType));
     this->XMLStream->writeEndElement();
     if (this->Stream)
       {

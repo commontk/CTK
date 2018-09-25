@@ -19,7 +19,14 @@
                     <xsd:attribute name="widget" type="xsd:string" />
                     <xsd:attribute name="command" type="xsd:string" />
                     <xsd:attribute name="arguments" type="xsd:string" />
-                    <xsd:attribute name="eventType" type="xsd:string" />
+                    <xsd:attribute name="type">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="action" />
+                                <xsd:enumeration value="check" />
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
         </xsd:sequence>
