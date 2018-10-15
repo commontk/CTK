@@ -1065,6 +1065,7 @@ QSize ctkDoubleSpinBox::sizeHint() const
   QStyleOptionSpinBox opt;
   d->SpinBox->initStyleOptionSpinBox(&opt);
 
+#if QT_VERSION < QT_VERSION_CHECK(5,1,0)
   QSize extraSize(35, 6);
   opt.rect.setSize(newSizeHint + extraSize);
   extraSize += newSizeHint - this->style()->subControlRect(
@@ -1076,6 +1077,7 @@ QSize ctkDoubleSpinBox::sizeHint() const
     QStyle::CC_SpinBox, &opt,
     QStyle::SC_SpinBoxEditField, this).size();
   newSizeHint += extraSize;
+#endif
 
   opt.rect = this->rect();
   d->CachedSizeHint = this->style()->sizeFromContents(
@@ -1114,6 +1116,7 @@ QSize ctkDoubleSpinBox::minimumSizeHint() const
   QStyleOptionSpinBox opt;
   d->SpinBox->initStyleOptionSpinBox(&opt);
 
+#if QT_VERSION < QT_VERSION_CHECK(5,1,0)
   QSize extraSize(35, 6);
   opt.rect.setSize(newSizeHint + extraSize);
   extraSize += newSizeHint - this->style()->subControlRect(
@@ -1125,6 +1128,7 @@ QSize ctkDoubleSpinBox::minimumSizeHint() const
     QStyle::CC_SpinBox, &opt,
     QStyle::SC_SpinBoxEditField, this).size();
   newSizeHint += extraSize;
+#endif
 
   opt.rect = this->rect();
   d->CachedMinimumSizeHint = this->style()->sizeFromContents(
