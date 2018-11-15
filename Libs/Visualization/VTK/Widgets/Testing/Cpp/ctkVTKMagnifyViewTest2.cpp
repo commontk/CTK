@@ -221,7 +221,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
       magnify->isObserved(allSliceViews[2]->VTKWidget()) ||
       magnify->numberObserved() != 2)
     {
-    std::cerr << "ctkVTKMagnifyView:observe(QVTKWidget*) failed. "
+    std::cerr << "ctkVTKMagnifyView:observe(ctkVTKOpenGLNativeWidget*) failed. "
               << "Number observed = " << magnify->numberObserved() << std::endl;
     return EXIT_FAILURE;
     }
@@ -293,7 +293,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   parentWidget.hide();
 
   // Make sure the magnify widget magnifies right away when shown with the crosshair inside
-  // an observed QVTKWidget
+  // an observed ctkVTKOpenGLNativeWidget
   QCursor::setPos(insideSlice0);
   parentWidget.show();
   if (!runBaselineTest(time, app, magnify, allSliceViews[0], true,
@@ -305,7 +305,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   parentWidget.hide();
 
   // Make sure the magnify widget shows blank right away when shown with the crosshair
-  // outside the observed QVTKWidgets
+  // outside the observed ctkVTKOpenGLNativeWidget(s)
   QCursor::setPos(outside);
   parentWidget.show();
   if (!runBaselineTest(time, app, magnify, &parentWidget, false,

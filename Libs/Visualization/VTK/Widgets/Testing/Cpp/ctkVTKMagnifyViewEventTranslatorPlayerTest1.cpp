@@ -31,13 +31,11 @@
 #include "ctkCallback.h"
 #include "ctkConfig.h"
 #include "ctkVTKMagnifyView.h"
+#include "ctkVTKOpenGLNativeWidget.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 
 // QtTesting includes
 #include "pqTestUtility.h"
-
-// VTK includes
-#include <QVTKWidget.h>
 
 // STD includes
 #include <cstdlib>
@@ -74,11 +72,11 @@ int ctkVTKMagnifyViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   // Test case 1
   ctkVTKMagnifyView* widget = new ctkVTKMagnifyView();
 
-  QList<QVTKWidget *> allVTKWidgets;
+  QList<ctkVTKOpenGLNativeWidget *> allVTKWidgets;
   int numVTKWidgets = 3;
   for (int i = 0; i < numVTKWidgets; i++)
     {
-    allVTKWidgets.append(new QVTKWidget());
+    allVTKWidgets.append(new ctkVTKOpenGLNativeWidget());
     }
   widget->observe(allVTKWidgets[0]);
 

@@ -27,14 +27,10 @@
 #include <QVBoxLayout>
 
 // CTK includes
+#include "ctkVTKOpenGLNativeWidget.h"
 #include "ctkVTKRenderView.h"
 #include "ctkVTKWidgetsUtils.h"
 #include "ctkWidgetsUtils.h"
-
-// VTK includes
-#if CTK_USE_QVTKOPENGLWIDGET
-#include <QVTKOpenGLWidget.h>
-#endif
 
 // STD includes
 #include <cstdlib>
@@ -44,7 +40,7 @@
 int ctkVTKWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
 {
 #if CTK_USE_QVTKOPENGLWIDGET
-    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+    QSurfaceFormat format = ctkVTKOpenGLNativeWidget::defaultFormat();
     format.setSamples(0);
     QSurfaceFormat::setDefaultFormat(format);
 #endif
@@ -73,7 +69,7 @@ int ctkVTKWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
 
   if (QColor(screenshot.pixel(100, 100)) != QColor(Qt::black))
     {
-    std::cout << "Failed to grab QVTKWidget, pixel at (100,100)="
+    std::cout << "Failed to grab ctkVTKOpenGLNativeWidget, pixel at (100,100)="
               << screenshot.pixel(100, 100) << " " << QColor(Qt::black).rgb() << std::endl;
     return EXIT_FAILURE;
     }
