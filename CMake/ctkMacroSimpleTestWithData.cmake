@@ -18,6 +18,9 @@
 #!
 #! The macro also associates a label to the test based on the current value of KIT.
 #!
+#! By default, the name of the test to execute is expected to match <testname>, setting
+#! variable <testname>_TEST allows to change that.
+#!
 #! The following parameter will be passed to the test:
 #! <ul>
 #!   <li>-D <CTKData_DIR>/Data</li>
@@ -45,8 +48,12 @@ macro(SIMPLE_TEST_WITH_DATA testname baseline_relative_location)
   if(NOT EXISTS "${CTKData_DIR}/Baseline/${baseline_relative_location}")
     message(FATAL_ERROR "error: <CTKData_DIR>/Baseline/<baseline_relative_location> corresponds to an non-existing file or directory. [<CTKData_DIR>/Baseline/<baseline_relative_location>: ${CTKData_DIR}/Baseline/${baseline_relative_location}]")
   endif()
+
+  if(NOT DEFINED ${testname}_TEST)
+    set(${testname}_TEST ${testname})
+  endif()
   
-  add_test(NAME ${testname} COMMAND $<TARGET_FILE:${KIT}CppTests> ${testname}
+  add_test(NAME ${testname} COMMAND $<TARGET_FILE:${KIT}CppTests> ${${testname}_TEST}
             -D "${CTKData_DIR}/Data"
             -V "${CTKData_DIR}/Baseline/${baseline_relative_location}"
             -T "${PROJECT_BINARY_DIR}/Testing/Temporary"

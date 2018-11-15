@@ -203,6 +203,7 @@ if(EXISTS "${CTKData_DIR}")
   set(baseline_relative_location Libs/Visualization/VTK/Widgets)
 
   macro(MAGNIFY_WIDGET_TEST TESTNAME TESTTYPE SIZE MAGNIFICATION)
+    set(${TESTNAME}${TESTTYPE}_TEST ${TESTNAME})
     SIMPLE_TEST_WITH_DATA(${TESTNAME}${TESTTYPE} ${baseline_relative_location}
       -T "${TESTTYPE}"
       -S "${SIZE}"
