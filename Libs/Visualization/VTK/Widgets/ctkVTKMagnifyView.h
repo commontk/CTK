@@ -27,15 +27,8 @@
 // CTK includes
 #include "ctkCrosshairLabel.h"
 #include "ctkVisualizationVTKWidgetsExport.h"
-
-// VTK includes
-#if CTK_USE_QVTKOPENGLWIDGET
-class QVTKOpenGLWidget;
-#else
-class QVTKWidget;
-#endif
-
 class ctkVTKMagnifyViewPrivate;
+class ctkVTKOpenGLNativeWidget;
 
 /// \ingroup Visualization_VTK_Widgets
 /// Gives a magnified view of a QVTKWidget around the mouse position, with
@@ -79,45 +72,25 @@ public:
   /// Add a QVTKWidget to observe mouse events on.  You can call this function
   /// multiple times to observe multiple QVTKWidgets.
   /// \sa observe
-#if CTK_USE_QVTKOPENGLWIDGET
-  void observe(QVTKOpenGLWidget * widget);
-#else
-  void observe(QVTKWidget * widget);
-#endif
+  void observe(ctkVTKOpenGLNativeWidget * widget);
 
   /// Add multiple QVTKWidgets at once to observe mouse events on.  You can
   /// call this function multiple times to observe multiple QVTKWidgets.
   /// \sa observe
-#if CTK_USE_QVTKOPENGLWIDGET
-  void observe(QList<QVTKOpenGLWidget *> widgets);
-#else
-  void observe(QList<QVTKWidget *> widgets);
-#endif
+  void observe(QList<ctkVTKOpenGLNativeWidget *> widgets);
 
   /// Remove a QVTKWidget to observe mouse events on.  You can call this
   /// function multiple times to remove multiple QVTKWidgets.
   /// \sa remove
-#if CTK_USE_QVTKOPENGLWIDGET
-  void remove(QVTKOpenGLWidget * widget);
-#else
-  void remove(QVTKWidget * widget);
-#endif
+  void remove(ctkVTKOpenGLNativeWidget * widget);
 
   /// Remove multiple QVTKWidgets at once to observe mouse events on.  You can
   /// call this function multiple times to remove multiple QVTKWidgets.
   /// \sa unobserve
-#if CTK_USE_QVTKOPENGLWIDGET
-  void remove(QList<QVTKOpenGLWidget *> widgets);
-#else
-  void remove(QList<QVTKWidget *> widgets);
-#endif
+  void remove(QList<ctkVTKOpenGLNativeWidget *> widgets);
 
   /// Returns whether a QVTKWidget is observed
-#if CTK_USE_QVTKOPENGLWIDGET
-  bool isObserved(QVTKOpenGLWidget * widget) const;
-#else
-  bool isObserved(QVTKWidget * widget) const;
-#endif
+  bool isObserved(ctkVTKOpenGLNativeWidget * widget) const;
 
   /// Returns the number of observed QVTKWidgets
   int numberObserved()const;
@@ -133,13 +106,8 @@ protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
 
 Q_SIGNALS:
-#if CTK_USE_QVTKOPENGLWIDGET
-  void enteredObservedWidget(QVTKOpenGLWidget * widget);
-  void leftObservedWidget(QVTKOpenGLWidget * widget);
-#else
-  void enteredObservedWidget(QVTKWidget * widget);
-  void leftObservedWidget(QVTKWidget * widget);
-#endif
+  void enteredObservedWidget(ctkVTKOpenGLNativeWidget * widget);
+  void leftObservedWidget(ctkVTKOpenGLNativeWidget * widget);
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKMagnifyView)

@@ -36,10 +36,28 @@
 #include <vtkRenderWindow.h>
 #include <vtkCallbackCommand.h>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#else
+#include <time.h>
+#endif
+
+void sleep_ms(int ms)
+{
+#ifdef Q_OS_WIN
+  Sleep(ms);
+#else
+  struct timespec nanostep;
+  nanostep.tv_sec = static_cast<time_t>(ms / 1000);
+  nanostep.tv_nsec = ((ms % 1000) * 1000.0 * 1000.0);
+  nanosleep(&nanostep, NULL);
+#endif
+}
+
 unsigned int RenderCount = 0;
 
 //-----------------------------------------------------------------------------
-void onRenderEvent(vtkObject *caller, unsigned long vtkNotUsed(eid), void *clientData, void *vtkNotUsed(callData))
+void onRenderEvent(vtkObject *vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void *vtkNotUsed(clientData), void *vtkNotUsed(callData))
 {
   ++RenderCount;
 }
@@ -49,7 +67,7 @@ bool function2(ctkVTKAbstractView* view)
 {
   view->pauseRender();
   view->scheduleRender();
-  Sleep(100);
+  sleep_ms(100);
   view->scheduleRender();
   view->resumeRender();
   if (RenderCount != 0)
@@ -101,11 +119,11 @@ int ctkVTKAbstractViewTest1(int argc, char * argv [] )
   vtkNew<vtkCallbackCommand> renderEventCallback;
   renderEventCallback->SetCallback(onRenderEvent);
   sliceView.renderWindow()->AddObserver(vtkCommand::RenderEvent, renderEventCallback);
-  sliceView.setMaximumUpdateRate(INFINITE);
+  sliceView.setMaximumUpdateRate(VTK_DOUBLE_MAX);
   sliceView.show();
 
   sliceView.scheduleRender();
-  Sleep(100);
+  sleep_ms(100);
   sliceView.scheduleRender();
 
   // We expect that the rendering has been triggered at least once
@@ -114,7 +132,7 @@ int ctkVTKAbstractViewTest1(int argc, char * argv [] )
   bool sliceViewWasPaused = sliceView.pauseRender();
   RenderCount = 0;
   sliceView.scheduleRender();
-  Sleep(100);
+  sleep_ms(100);
   sliceView.scheduleRender();
 
   // We expect that the rendering has not been triggered
