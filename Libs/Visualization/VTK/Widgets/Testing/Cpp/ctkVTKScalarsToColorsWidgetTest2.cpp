@@ -24,6 +24,7 @@
 #include <QTimer>
 
 // CTK includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkVTKScalarsToColorsView.h"
 #include "ctkVTKScalarsToColorsWidget.h"
 
@@ -71,10 +72,18 @@ int ctkVTKScalarsToColorsWidgetTest2(int argc, char * argv [] )
   opacityFunction->AddPoint(0.8, 0.45);
 
   ctkVTKScalarsToColorsWidget widget(0);
+
+  // check default values
+  CHECK_BOOL(widget.editColors(), true)
+  CHECK_BOOL(widget.areTopWidgetsVisible(), true)
+  CHECK_NULL(widget.currentControlPointsItem())
+
   // add transfer function item
   widget.view()->addCompositeFunction(ctf, opacityFunction);
   widget.view()->setAxesToChartBounds();
   widget.show();
+
+  CHECK_NOT_NULL(widget.currentControlPointsItem())
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {

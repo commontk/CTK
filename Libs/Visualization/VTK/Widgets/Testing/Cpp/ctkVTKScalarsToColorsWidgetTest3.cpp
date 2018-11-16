@@ -24,6 +24,7 @@
 #include <QTimer>
 
 // CTK includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkVTKScalarsToColorsView.h"
 #include "ctkVTKScalarsToColorsWidget.h"
 
@@ -63,10 +64,18 @@ int ctkVTKScalarsToColorsWidgetTest3(int argc, char * argv [] )
   ctf->AddRGBPoint(1.,  183./255., 7./255., 140./255.);
 
   ctkVTKScalarsToColorsWidget widget(0);
+
+  // check default values
+  CHECK_BOOL(widget.editColors(), true)
+  CHECK_BOOL(widget.areTopWidgetsVisible(), true)
+  CHECK_NULL(widget.currentControlPointsItem())
+
   // add transfer function item
   widget.view()->addColorTransferFunction(ctf);
   widget.view()->setAxesToChartBounds();
   widget.show();
+
+  CHECK_NOT_NULL(widget.currentControlPointsItem())
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {
