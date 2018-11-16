@@ -35,6 +35,23 @@ class vtkControlPointsItem;
 class vtkPlot;
 
 /// \ingroup Visualization_VTK_Widgets
+///
+/// This widget includes a ctkVTKScalarsToColorsView and a "top widget" to display and update its properties.
+///
+/// Features are:
+/// * vertical and horizontal scrollbars (visible by default)
+/// * a "top widget" including selected point index, its coordinate and color. An expand button allows to access
+///   advanced properties like mid point and sharpness.
+/// * if a piecewise or composite function are added to the view, the opacity is available in the "top widget" advanced properties.
+/// * color associated with points can be updated in place (editable by default).
+/// * support customization of widget shown in the top-left corner. See addExtraWidget().
+///
+/// Observing vtkControlPointsItem allows to be notified of point selection or
+/// point update:
+/// * event vtkControlPointsItem::CurrentPointChangedEvent is invoked each time a point is selected. Associated
+///   call data is the point index.
+/// * event vtkCommand::ModifiedEvent is invoked each time a point is updated.
+///
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsWidget : public QWidget
 {
   Q_OBJECT
@@ -61,13 +78,16 @@ public:
   void xRange(double* range)const;
   void yRange(double* range)const;
 
-  ///
   /// Return the top-left corner widget if any.
+  ///
+  /// \sa addExtraWidget()
   QWidgetList extraWidgets()const;
 
-  ///
   /// Add a widget in the top-left corner.
-  /// ctkVTKScalarsToColorsWidget takes ownership of the widget
+  ///
+  /// ctkVTKScalarsToColorsWidget takes ownership of the widget.
+  ///
+  /// \sa extraWidgets()
   void addExtraWidget(QWidget* extraWidget);
 
 public Q_SLOTS:
