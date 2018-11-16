@@ -395,7 +395,7 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
-  if (xAxis && xAxis->GetMinimumLimit() > point[0] || xAxis->GetMaximumLimit() < point[0])
+  if (xAxis && (xAxis->GetMinimumLimit() > point[0] || xAxis->GetMaximumLimit() < point[0]))
     {
     xAxis->SetMinimumLimit(qMin(xAxis->GetMinimumLimit(), point[0]));
     xAxis->SetMaximumLimit(qMax(xAxis->GetMaximumLimit(), point[0]));
