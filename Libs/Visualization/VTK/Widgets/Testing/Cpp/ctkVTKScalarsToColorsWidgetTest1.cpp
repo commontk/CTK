@@ -63,6 +63,9 @@ int ctkVTKScalarsToColorsWidgetTest1(int argc, char * argv [] )
 
   ctkVTKScalarsToColorsWidget widget(0);
 
+  // check default values
+  CHECK_BOOL(widget.editColors(), true)
+  CHECK_BOOL(widget.areTopWidgetsVisible(), true)
   CHECK_NULL(widget.currentControlPointsItem())
 
   // add transfer function item

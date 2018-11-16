@@ -63,6 +63,7 @@ public:
 
   vtkControlPointsItem* CurrentControlPointsItem;
   bool EditColors;
+  bool TopWidgetsVisible;
 };
 
 // ----------------------------------------------------------------------------
@@ -75,6 +76,7 @@ ctkVTKScalarsToColorsWidgetPrivate::ctkVTKScalarsToColorsWidgetPrivate(
 {
   this->CurrentControlPointsItem = 0;
   this->EditColors = true;
+  this->TopWidgetsVisible = true;
 }
 
 // ----------------------------------------------------------------------------
@@ -249,6 +251,29 @@ void ctkVTKScalarsToColorsWidget::setEditColors(bool edit)
 }
 
 // ----------------------------------------------------------------------------
+bool ctkVTKScalarsToColorsWidget::areTopWidgetsVisible()const
+{
+  Q_D(const ctkVTKScalarsToColorsWidget);
+  return d->TopWidgetsVisible;
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKScalarsToColorsWidget::setTopWidgetsVisible(bool visible)
+{
+  Q_D(ctkVTKScalarsToColorsWidget);
+  d->ExpandButton->setVisible(visible);
+  d->PointIdLabel->setVisible(visible);
+  d->PointIdSpinBox->setVisible(visible);
+  foreach(QWidget* widget, this->extraWidgets())
+  {
+    widget->setVisible(visible);
+  }
+  d->TopSpacer->changeSize(visible ? 40 : 0, visible ? 20 : 0);
+  d->TopSpacer->invalidate();
+  d->TopWidgetsVisible = visible;
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsWidget::onPlotAdded(vtkPlot* plot)
 {
   vtkControlPointsItem* controlPoints = vtkControlPointsItem::SafeDownCast(plot);
@@ -321,15 +346,17 @@ void ctkVTKScalarsToColorsWidget::setCurrentControlPointsItem(vtkControlPointsIt
   d->CurrentControlPointsItem = item;
   if (item)
     {
-    d->ColorPickerButton->setVisible( d->EditColors &&
+    d->ColorPickerButton->setVisible( d->EditColors && d->TopWidgetsVisible &&
       (vtkColorTransferControlPointsItem::SafeDownCast(item) != 0 ||
        vtkCompositeControlPointsItem::SafeDownCast(item) != 0));
-    d->XLabel->setVisible(true);
-    d->XSpinBox->setVisible(true);
-    d->OpacityLabel->setVisible(vtkPiecewiseControlPointsItem::SafeDownCast(item) != 0 ||
-                                vtkCompositeControlPointsItem::SafeDownCast(item) != 0);
-    d->OpacitySpinBox->setVisible(vtkPiecewiseControlPointsItem::SafeDownCast(item) != 0 ||
-                                  vtkCompositeControlPointsItem::SafeDownCast(item) != 0);
+    d->XLabel->setVisible(d->TopWidgetsVisible);
+    d->XSpinBox->setVisible(d->TopWidgetsVisible);
+    d->OpacityLabel->setVisible(d->TopWidgetsVisible &&
+      (vtkPiecewiseControlPointsItem::SafeDownCast(item) != 0 ||
+       vtkCompositeControlPointsItem::SafeDownCast(item) != 0));
+    d->OpacitySpinBox->setVisible(d->TopWidgetsVisible &&
+      (vtkPiecewiseControlPointsItem::SafeDownCast(item) != 0 ||
+       vtkCompositeControlPointsItem::SafeDownCast(item) != 0));
     this->onAxesModified();
     }
   d->PointIdSpinBox->setEnabled(item != 0);
@@ -648,4 +675,8 @@ void ctkVTKScalarsToColorsWidget::addExtraWidget(QWidget* extraWidget)
 {
   Q_D(const ctkVTKScalarsToColorsWidget);
   d->TopLayout->insertWidget(this->extraWidgets().count(), extraWidget);
+  if (!d->TopWidgetsVisible)
+    {
+    extraWidget->setVisible(d->TopWidgetsVisible);
+    }
 }
