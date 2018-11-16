@@ -251,8 +251,10 @@ void ctkVTKScalarsToColorsWidget::setEditColors(bool edit)
 // ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsWidget::onPlotAdded(vtkPlot* plot)
 {
-  if (vtkControlPointsItem::SafeDownCast(plot))
+  vtkControlPointsItem* controlPoints = vtkControlPointsItem::SafeDownCast(plot);
+  if (controlPoints)
     {
+    this->setCurrentControlPointsItem(controlPoints);
     this->qvtkConnect(plot, vtkControlPointsItem::CurrentPointChangedEvent,
                       this, SLOT(setCurrentPoint(vtkObject*,void*)));
     }

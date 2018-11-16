@@ -24,6 +24,7 @@
 #include <QTimer>
 
 // CTK includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkVTKScalarsToColorsView.h"
 #include "ctkVTKScalarsToColorsWidget.h"
 
@@ -61,11 +62,16 @@ int ctkVTKScalarsToColorsWidgetTest1(int argc, char * argv [] )
   opacityFunction->AddPoint(1.,0.8, 0.5, 0.5);
 
   ctkVTKScalarsToColorsWidget widget(0);
+
+  CHECK_NULL(widget.currentControlPointsItem())
+
   // add transfer function item
   vtkPlot* plot = widget.view()->addOpacityFunction(opacityFunction);
   plot->SetColor(0, 67,  247, 255);
   widget.view()->setAxesToChartBounds();
   widget.show();
+
+  CHECK_NOT_NULL(widget.currentControlPointsItem())
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {
