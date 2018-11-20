@@ -93,14 +93,10 @@ void ctkDICOMIndexer::addFile(ctkDICOMDatabase& database,
                                    const QString& destinationDirectoryName)
 {
   ctkDICOMIndexer::ScopedIndexing indexingBatch(*this, database);
-  if (!destinationDirectoryName.isEmpty())
-  {
-    logger.warn("Ignoring destinationDirectoryName parameter, just taking it as indication we should copy!");
-  }
-
   emit indexingFilePath(filePath);
-
-  database.insert(filePath, !destinationDirectoryName.isEmpty(), true);
+  // Ignoring destinationDirectoryName parameter, just taking it as indication we should copy
+  bool copyFileToDatabase = !destinationDirectoryName.isEmpty();
+  database.insert(filePath, copyFileToDatabase, true);
 }
 
 //------------------------------------------------------------------------------
