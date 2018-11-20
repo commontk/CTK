@@ -77,7 +77,10 @@ public:
 
   ///
   /// \brief Adds a file to database and optionally copies the file to
-  /// destinationDirectory.
+  /// the database folder.
+  /// If destinationDirectory is non-empty string then the file is copied
+  /// to the database folder (exact value of destinationDirectoryName does not matter,
+  /// only if the string is empty or not).
   ///
   /// Scan the file using Dcmtk and populate the database with all the
   /// DICOM fields accordingly.
