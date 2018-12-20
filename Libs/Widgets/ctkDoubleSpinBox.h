@@ -51,6 +51,7 @@ class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
 
   Q_PROPERTY(Qt::Alignment alignment READ alignment WRITE setAlignment)
   Q_PROPERTY(bool frame READ hasFrame WRITE setFrame)
+  Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly)
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix)
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix)
   Q_PROPERTY(QString cleanText READ cleanText)
@@ -196,6 +197,12 @@ public:
   void setFrame(bool frame);
   bool hasFrame() const;
 
+  /// Returns true if the widget is read-only. Read-only widgets only display values,
+  /// the values cannot be modified using the graphical user interface, and
+  /// spinbox is not displayed.
+  /// \sa setReadOnly
+  bool isReadOnly() const;
+
   /// Add/Get a prefix to the displayed value. For example, one might want to
   /// add the $ sign.
   /// \sa suffix(), text()
@@ -305,6 +312,12 @@ public Q_SLOTS:
   /// Set the decimals property value.
   /// \sa decimals
   void setDecimals(int decimal);
+
+  /// Set the widget to be read-only. Read-only widgets only display values,
+  /// the values cannot be modified using the graphical user interface, and
+  /// spinbox is not displayed.
+  /// \sa isReadOnly
+  void setReadOnly(bool readOnly);
 
 Q_SIGNALS:
   /// Emitted everytime the spinbox value is modified

@@ -680,6 +680,21 @@ bool ctkDoubleSpinBox::hasFrame() const
 }
 
 //-----------------------------------------------------------------------------
+void ctkDoubleSpinBox::setReadOnly(bool readOnly)
+{
+  Q_D(const ctkDoubleSpinBox);
+  d->SpinBox->setReadOnly(readOnly);
+  d->SpinBox->setButtonSymbols(readOnly ? QAbstractSpinBox::NoButtons : QAbstractSpinBox::UpDownArrows);
+}
+
+//-----------------------------------------------------------------------------
+bool ctkDoubleSpinBox::isReadOnly() const
+{
+  Q_D(const ctkDoubleSpinBox);
+  return d->SpinBox->isReadOnly();
+}
+
+//-----------------------------------------------------------------------------
 QString ctkDoubleSpinBox::prefix() const
 {
   Q_D(const ctkDoubleSpinBox);

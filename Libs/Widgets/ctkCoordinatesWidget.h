@@ -71,6 +71,11 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   /// \sa ctkDoubleSpinBox::SizeHintPolicy
   Q_PROPERTY(ctkDoubleSpinBox::SizeHintPolicy sizeHintPolicy READ sizeHintPolicy WRITE setSizeHintPolicy)
 
+  Q_PROPERTY(bool frame READ hasFrame WRITE setFrame)
+
+  /// This property controls if values can be modified using the graphical user interface.
+  Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly)
+
 public:
   explicit ctkCoordinatesWidget(QWidget* parent = 0);
   virtual ~ctkCoordinatesWidget();
@@ -141,6 +146,16 @@ public:
   /// \sa sizeHintPolicy
   ctkDoubleSpinBox::SizeHintPolicy sizeHintPolicy()const;
 
+  /// Set/Get the frame
+  void setFrame(bool frame);
+  bool hasFrame() const;
+
+  /// Returns true if the widget is read-only. Read-only widgets only display values,
+  /// the values cannot be modified using the graphical user interface, and
+  /// spinbox is not displayed.
+  /// \sa setReadOnly
+  bool isReadOnly() const;
+
   /// Set/Get the value proxy of the spinboxes used to display the coordinates.
   /// \sa setValueProxy(), valueProxy()
   void setValueProxy(ctkValueProxy* proxy);
@@ -153,6 +168,12 @@ public Q_SLOTS:
 
   /// Set the number of decimals of each coordinate spin box.
   void setDecimals(int decimals);
+
+  /// Set the widget to be read-only. Read-only widgets only display values,
+  /// the values cannot be modified using the graphical user interface, and
+  /// spinbox is not displayed.
+  /// \sa isReadOnly
+  void setReadOnly(bool readOnly);
 
 Q_SIGNALS:
   ///

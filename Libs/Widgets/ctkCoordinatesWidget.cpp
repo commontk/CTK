@@ -40,6 +40,8 @@ ctkCoordinatesWidgetPrivate
   :q_ptr(&object)
 {
   this->Decimals = 3;
+  this->Frame = true;
+  this->ReadOnly = false;
   ctkDoubleSpinBox temp;
   this->DecimalsOption = temp.decimalsOption();
   this->SingleStep = 1.;
@@ -82,6 +84,7 @@ void ctkCoordinatesWidgetPrivate::addSpinBox()
   spinBox->setMaximum(this->Maximum);
   spinBox->setSizeHintPolicy(this->SizeHintPolicy);
   spinBox->setValueProxy(this->Proxy.data());
+  spinBox->setReadOnly(this->ReadOnly);
   connect( spinBox, SIGNAL(valueChanged(double)),
            q, SLOT(updateCoordinate(double)));
   // Same number of decimals within the spinboxes.
@@ -773,4 +776,50 @@ ctkValueProxy* ctkCoordinatesWidget::valueProxy() const
 {
   Q_D(const ctkCoordinatesWidget);
   return d->Proxy.data();
+}
+
+//----------------------------------------------------------------------------
+void ctkCoordinatesWidget::setReadOnly(bool readOnly)
+{
+  Q_D(ctkCoordinatesWidget);
+  if (d->ReadOnly == readOnly)
+    {
+    return;
+    }
+
+  d->ReadOnly = readOnly;
+  for (int i = 0; i < d->Dimension; ++i)
+    {
+    this->spinBox(i)->setReadOnly(d->ReadOnly);
+    }
+}
+
+//------------------------------------------------------------------------------
+bool ctkCoordinatesWidget::isReadOnly() const
+{
+  Q_D(const ctkCoordinatesWidget);
+  return d->ReadOnly;
+}
+
+//-----------------------------------------------------------------------------
+void ctkCoordinatesWidget::setFrame(bool frame)
+{
+  Q_D(ctkCoordinatesWidget);
+  if (d->Frame == frame)
+    {
+    return;
+    }
+
+  d->Frame = frame;
+  for (int i = 0; i < d->Dimension; ++i)
+    {
+    this->spinBox(i)->setFrame(d->Frame);
+    }
+}
+
+//-----------------------------------------------------------------------------
+bool ctkCoordinatesWidget::hasFrame() const
+{
+  Q_D(const ctkCoordinatesWidget);
+  return d->Frame;
 }

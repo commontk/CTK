@@ -68,6 +68,8 @@ public:
   bool    Normalized;
   int     Dimension;
   ctkDoubleSpinBox::SizeHintPolicy SizeHintPolicy;
+  bool    Frame;
+  bool    ReadOnly;
 
   double* Coordinates;
   QList<int> LastUserEditedCoordinates;
