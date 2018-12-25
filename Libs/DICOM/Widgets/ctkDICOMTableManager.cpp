@@ -78,6 +78,11 @@ void ctkDICOMTableManagerPrivate::init()
   this->seriesTable->setQueryTableName("Series");
   this->seriesTable->setQueryForeignKey("StudyInstanceUID");
 
+  //set the display text on the ui form
+  this->patientsTable->setDisplayText(QApplication::translate("ctkDICOMTableView", "Patients", 0));
+  this->studiesTable->setDisplayText(QApplication::translate("ctkDICOMTableView", "Studies", 0));
+  this->seriesTable->setDisplayText(QApplication::translate("ctkDICOMTableView", "Series", 0));
+
   q->setDisplayDensity(ctkDICOMTableManager::Comfortable);
 
   // For propagating patient selection changes

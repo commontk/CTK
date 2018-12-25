@@ -26,6 +26,7 @@
 #include <QMouseEvent>
 #include <QSortFilterProxyModel>
 #include <QSqlQueryModel>
+#include <QObject> 
 
 //------------------------------------------------------------------------------
 class ctkDICOMTableViewPrivate : public Ui_ctkDICOMTableView
@@ -47,6 +48,8 @@ public:
 
   void showFilterActiveWarning(bool);
 
+  void applyHeaderTextList();
+
   QString queryTableName() const;
 
   ctkDICOMDatabase* dicomDatabase;
@@ -57,7 +60,10 @@ public:
   QStringList currentSelection;
   //Key = QString for columns, Values = QStringList
   QHash<QString, QStringList> sqlWhereConditions;
-
+private:
+  QLabel labelQueryTableName;
+  QStringList headerTextList;
+  bool isHeaderTextApplied;
 };
 
 //------------------------------------------------------------------------------
@@ -66,6 +72,8 @@ ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj)
 {
   this->dicomSQLFilterModel = new QSortFilterProxyModel(&obj);
   this->dicomDatabase = new ctkDICOMDatabase(&obj);
+
+  isHeaderTextApplied = false;
 }
 
 //------------------------------------------------------------------------------
@@ -74,6 +82,8 @@ ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj, ctkDI
   , dicomDatabase(db)
 {
   this->dicomSQLFilterModel = new QSortFilterProxyModel(&obj);
+
+  isHeaderTextApplied = false;
 }
 
 //------------------------------------------------------------------------------
@@ -146,7 +156,21 @@ void ctkDICOMTableViewPrivate::hideUIDColumns()
 //----------------------------------------------------------------------------
 QString ctkDICOMTableViewPrivate::queryTableName() const
 {
-  return this->lblTableName->text();
+  return this->labelQueryTableName.text();
+}
+
+void ctkDICOMTableViewPrivate::applyHeaderTextList()
+{
+  if (isHeaderTextApplied) return;
+
+  for(int i = 0; i < dicomSQLModel.columnCount(); i++)
+	{
+	  QVariant fieldName = dicomSQLModel.headerData(i, Qt::Horizontal, Qt::DisplayRole);
+      QString headerText = QApplication::translate("ctkDICOMTableView", fieldName.toString().toStdString().c_str(), 0);
+	  dicomSQLModel.setHeaderData(i, Qt::Horizontal, headerText, Qt::DisplayRole);
+
+	  isHeaderTextApplied = true;
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -226,7 +250,14 @@ void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 void ctkDICOMTableView::setQueryTableName(const QString &tableName)
 {
   Q_D(ctkDICOMTableView);
-  d->lblTableName->setText(tableName);
+  d->labelQueryTableName.setText(tableName);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::setDisplayText(const QString &displayText)
+{
+  Q_D(ctkDICOMTableView);
+  d->labelTableName->setText(displayText);
 }
 
 //------------------------------------------------------------------------------
@@ -342,6 +373,8 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
     {
     d->dicomSQLModel.setQuery(query.arg(d->queryTableName()), d->dicomDatabase->database());
     }
+
+  d->applyHeaderTextList();
 }
 
 void ctkDICOMTableView::addSqlWhereCondition(const std::pair<QString, QStringList> &condition)

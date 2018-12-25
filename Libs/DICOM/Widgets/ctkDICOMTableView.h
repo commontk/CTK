@@ -84,6 +84,12 @@ public:
   void setQueryTableName(const QString &tableName);
 
   /**
+   * Setting the display text which show in the ui form
+   * @param displayText the text showing in the ui form
+   */
+  void setDisplayText(const QString &displayText);
+
+  /**
    * Setting the foreign key for the database query. This is usefull if e.g. you
    * want to select the studies for a certain patient
    * @param foreignKey the foreign key which will be used for the query

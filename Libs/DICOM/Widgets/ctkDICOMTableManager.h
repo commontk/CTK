@@ -50,6 +50,12 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
     */
   Q_PROPERTY(bool dynamicTableLayout READ dynamicTableLayout WRITE setDynamicTableLayout)
 
+  /**
+  * Properties for the different table views (patients, studies, series). 
+  */
+  Q_PROPERTY( ctkDICOMTableView* patientsTable READ patientsTable )
+  Q_PROPERTY( ctkDICOMTableView* studiesTable READ studiesTable )
+  Q_PROPERTY( ctkDICOMTableView* seriesTable READ seriesTable )
 
   Q_ENUMS(DisplayDensity)
   /**
