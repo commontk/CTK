@@ -79,7 +79,9 @@ public:
   void chartBounds(double bounds[8])const;
   void setChartUserBounds(double* bounds);
   void chartUserBounds(double* bounds)const;
-  
+
+  /// Get underlying RenderWindow
+  Q_INVOKABLE vtkRenderWindow* renderWindow()const;
 
 public Q_SLOTS:
 

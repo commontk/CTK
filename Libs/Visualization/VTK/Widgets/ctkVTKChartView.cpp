@@ -37,6 +37,7 @@
 #include <vtkOpenGLContextDevice2D.h>
 #include <vtkPlot.h>
 #include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
 
 //----------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKChartView");
@@ -170,6 +171,8 @@ void ctkVTKChartViewPrivate::chartBounds(double* bounds)const
 
 // ----------------------------------------------------------------------------
 // ctkVTKChartView methods
+
+CTK_GET_CPP(ctkVTKChartView, vtkRenderWindow*, renderWindow, RenderWindow);
 
 // ----------------------------------------------------------------------------
 ctkVTKChartView::ctkVTKChartView(QWidget* parentWidget)
