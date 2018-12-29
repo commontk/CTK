@@ -257,7 +257,9 @@ if(CTK_QT_VERSION VERSION_GREATER "4")
   endif()
   target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 endif()
-
+if(CTK_USE_QTTESTING)
+  target_link_libraries(${KIT}CppTests CTKQtTesting)
+endif()
 #
 # Add Tests
 #
