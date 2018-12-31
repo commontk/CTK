@@ -21,6 +21,7 @@
 
 #include "ctkDICOMItem.h"
 
+#include <dcmtk/dcmdata/dcuid.h>
 #include <dcmtk/dcmdata/dctk.h>
 #include <dcmtk/dcmdata/dcostrmb.h>
 #include <dcmtk/dcmdata/dcistrmb.h>
@@ -950,7 +951,11 @@ QString ctkDICOMItem::TagDescription( const DcmTag& tag )
   {
     returnName = entry->getTagName();
   }
+#if OFFIS_DCMTK_VERSION_NUMBER < 364
   dcmDataDict.unlock();
+#else
+  dcmDataDict.rdunlock();
+#endif
   return returnName;
 }
 
@@ -964,7 +969,11 @@ QString ctkDICOMItem::TagVR( const DcmTag& tag )
   {
     returnVR = entry->getVR().getVRName();
   }
+#if OFFIS_DCMTK_VERSION_NUMBER < 364
   dcmDataDict.unlock();
+#else
+  dcmDataDict.rdunlock();
+#endif
   return returnVR;
 }
 
