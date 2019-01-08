@@ -49,49 +49,49 @@ public:
   ctkVTKScalarsToColorsView(QWidget* parent = 0);
   virtual ~ctkVTKScalarsToColorsView();
 
-  virtual void addPlot(vtkPlot* plot);
+  Q_INVOKABLE virtual void addPlot(vtkPlot* plot);
 
-  vtkPlot* addLookupTable(vtkLookupTable* lut);
+  Q_INVOKABLE vtkPlot* addLookupTable(vtkLookupTable* lut);
   Q_INVOKABLE vtkPlot* addColorTransferFunction(vtkColorTransferFunction* colorTF, bool editable = true);
-  vtkPlot* addOpacityFunction(vtkPiecewiseFunction* opacityTF, bool editable = true);
-  vtkPlot* addCompositeFunction(vtkColorTransferFunction* colorTF,
+  Q_INVOKABLE vtkPlot* addOpacityFunction(vtkPiecewiseFunction* opacityTF, bool editable = true);
+  Q_INVOKABLE vtkPlot* addCompositeFunction(vtkColorTransferFunction* colorTF,
                                 vtkPiecewiseFunction* opacityTF,
                                 bool colorTFEditable = true,
                                 bool opacityTFEditable = true);
-  vtkPlot* addPiecewiseFunction(vtkPiecewiseFunction* piecewiseTF, bool editable = true);
+  Q_INVOKABLE vtkPlot* addPiecewiseFunction(vtkPiecewiseFunction* piecewiseTF, bool editable = true);
 
-  vtkPlot* addColorTransferFunctionControlPoints(vtkColorTransferFunction* colorTF);
-  vtkPlot* addOpacityFunctionControlPoints(vtkPiecewiseFunction* opacityTF);
-  vtkPlot* addCompositeFunctionControlPoints(vtkColorTransferFunction* colorTF,
+  Q_INVOKABLE vtkPlot* addColorTransferFunctionControlPoints(vtkColorTransferFunction* colorTF);
+  Q_INVOKABLE vtkPlot* addOpacityFunctionControlPoints(vtkPiecewiseFunction* opacityTF);
+  Q_INVOKABLE vtkPlot* addCompositeFunctionControlPoints(vtkColorTransferFunction* colorTF,
                                              vtkPiecewiseFunction* opacityTF);
-  vtkPlot* addPiecewiseFunctionControlPoints(vtkPiecewiseFunction* piecewiseTF);
+  Q_INVOKABLE vtkPlot* addPiecewiseFunctionControlPoints(vtkPiecewiseFunction* piecewiseTF);
 
-  QList<vtkPlot*> plots()const;
+  Q_INVOKABLE QList<vtkPlot*> plots()const;
   template<class T>
   QList<T*> plots()const;
-  QList<vtkControlPointsItem*> controlPointsItems()const;
-  QList<vtkPlot*> lookupTablePlots()const;
-  QList<vtkPlot*> lookupTablePlots(vtkLookupTable* lut)const;
-  QList<vtkPlot*> colorTransferFunctionPlots()const;
-  QList<vtkPlot*> colorTransferFunctionPlots(vtkColorTransferFunction* colorTF)const;
-  QList<vtkPlot*> opacityFunctionPlots()const;
-  QList<vtkPlot*> opacityFunctionPlots(vtkPiecewiseFunction* opacityTF)const;
+  Q_INVOKABLE QList<vtkControlPointsItem*> controlPointsItems()const;
+  Q_INVOKABLE QList<vtkPlot*> lookupTablePlots()const;
+  Q_INVOKABLE QList<vtkPlot*> lookupTablePlots(vtkLookupTable* lut)const;
+  Q_INVOKABLE QList<vtkPlot*> colorTransferFunctionPlots()const;
+  Q_INVOKABLE QList<vtkPlot*> colorTransferFunctionPlots(vtkColorTransferFunction* colorTF)const;
+  Q_INVOKABLE QList<vtkPlot*> opacityFunctionPlots()const;
+  Q_INVOKABLE QList<vtkPlot*> opacityFunctionPlots(vtkPiecewiseFunction* opacityTF)const;
 
-  void setLookuptTableToPlots(vtkLookupTable* lut);
-  void setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF);
-  void setOpacityFunctionToPlots(vtkPiecewiseFunction* opacityTF);
-  void setPiecewiseFunctionToPlots(vtkPiecewiseFunction* piecewiseTF);
+  Q_INVOKABLE void setLookuptTableToPlots(vtkLookupTable* lut);
+  Q_INVOKABLE void setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF);
+  Q_INVOKABLE void setOpacityFunctionToPlots(vtkPiecewiseFunction* opacityTF);
+  Q_INVOKABLE void setPiecewiseFunctionToPlots(vtkPiecewiseFunction* piecewiseTF);
 
   bool areBordersVisible()const;
   void setBordersVisible(bool show);
 
-  void validBounds(double bounds[4])const;
-  void setValidBounds(double bounds[4]);
+  Q_INVOKABLE void validBounds(double bounds[4])const;
+  Q_INVOKABLE void setValidBounds(double bounds[4]);
 
-  void setPlotsUserBounds(double* bounds);
+  Q_INVOKABLE void setPlotsUserBounds(double* bounds);
 
   /// Reimplemented to set the bounds to the plots as well
-  virtual void boundAxesToChartBounds();
+  Q_INVOKABLE virtual void boundAxesToChartBounds();
 
 Q_SIGNALS:
   /// Emitted when a new function is set to the view

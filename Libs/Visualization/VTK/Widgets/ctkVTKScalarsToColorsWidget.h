@@ -65,8 +65,8 @@ public:
   ctkVTKScalarsToColorsWidget(QWidget* parent = 0);
   virtual ~ctkVTKScalarsToColorsWidget();
 
-  ctkVTKScalarsToColorsView* view()const;
-  vtkControlPointsItem* currentControlPointsItem()const;
+  Q_INVOKABLE ctkVTKScalarsToColorsView* view()const;
+  Q_INVOKABLE vtkControlPointsItem* currentControlPointsItem()const;
 
   bool isHorizontalSliderVisible()const;
   void setHorizontalSliderVisible(bool visible);
@@ -77,8 +77,8 @@ public:
   bool editColors()const;
   void setEditColors(bool edit);
   
-  void xRange(double* range)const;
-  void yRange(double* range)const;
+  Q_INVOKABLE void xRange(double* range)const;
+  Q_INVOKABLE void yRange(double* range)const;
 
   /// Hide all widgets displayed above the color view.
   ///
@@ -93,14 +93,14 @@ public:
   /// Return the top-left corner widget if any.
   ///
   /// \sa addExtraWidget()
-  QWidgetList extraWidgets()const;
+  Q_INVOKABLE QWidgetList extraWidgets()const;
 
   /// Add a widget in the top-left corner.
   ///
   /// ctkVTKScalarsToColorsWidget takes ownership of the widget.
   ///
   /// \sa extraWidgets()
-  void addExtraWidget(QWidget* extraWidget);
+  Q_INVOKABLE void addExtraWidget(QWidget* extraWidget);
 
 public Q_SLOTS:
   void setCurrentControlPointsItem(vtkControlPointsItem* item);
