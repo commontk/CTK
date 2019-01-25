@@ -24,11 +24,26 @@
 // Qt includes
 #include <QStringList>
 #include <QDateTime>
+#include <QDebug>
 
 // STD includes
 #include <vector>
 
 #include "ctkCoreExport.h"
+
+/// This macro can be used instead of Q_ASSERT to warn developers
+/// when some assumption fails. CTK_SOFT_ASSERT behavior differs
+/// in two key aspects: (1) it only logs a warning (instead of terminating
+/// the application) and (2) the message is always logged (instead of
+/// ignoring the check in release builds).
+#define CTK_SOFT_ASSERT(condition) do \
+  { \
+    if (! (condition) ) \
+    { \
+      qWarning() << "Assertion `" #condition "` failed in " << __FILE__ \
+                 << " line " << __LINE__; \
+    } \
+  } while (false)
 
 namespace ctk {
 ///
