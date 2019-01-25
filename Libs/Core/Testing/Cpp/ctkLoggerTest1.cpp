@@ -23,6 +23,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <ctkUtils.h>
 
 // STL includes
 #include <cstdlib>
@@ -42,6 +43,12 @@ int ctkLoggerTest1(int argc, char * argv [] )
   logger.warn("logger.warn");
   logger.error("logger.error");
   logger.fatal("logger.fatal");
+
+  // This should log a warning "Assertion `5 == 6` failed ..."
+  CTK_SOFT_ASSERT(5 == 6);
+
+  // This should not log anything
+  CTK_SOFT_ASSERT(8 == 8);
 
   return EXIT_SUCCESS;
 }
