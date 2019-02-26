@@ -88,7 +88,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
             #    my_class(QObject* newParent ...)
             #    my_class(QWidget* newParent ...)
             # Constructor with either QWidget or QObject as first parameter
-            regex = r"[^~]%s[\s\n]*\([\s\n]*((QObject|QWidget)[\s\n]*\*[\s\n]*\w+[\s\n]*(\=[\s\n]*(0|NULL)|,.*\=.*\)|\)|\)))" % className
+            regex = r"[^~]%s[\s\n]*\([\s\n]*((QObject|QWidget)[\s\n]*\*[\s\n]*\w+[\s\n]*(\=[\s\n]*(0|NULL))?([\s\n]*,[\s\n]*.*\=.*)*)?[\s\n]*\)" % className
             res = re.search(regex, content, re.MULTILINE)
             if res is None:
                 if extra_verbose:
