@@ -48,21 +48,21 @@ public:
   virtual ~ctkWorkflowAbstractPagedWidget();
 
   /// Optionally specify the label to be displayed on the page shown for the given step.
-  virtual void associateStepWithLabel(ctkWorkflowStep* step, QString label);
+  Q_INVOKABLE virtual void associateStepWithLabel(ctkWorkflowStep* step, QString label);
 
   /// Dictate that a step be displayed on a particular page index, to override the default setting
   /// to display each encountered step on a new page.  A label can also be provided for the step's
   /// page.
-  virtual void associateStepWithPage(ctkWorkflowStep* step, int index);
-  virtual void associateStepWithPage(ctkWorkflowStep* step, int index, QString label);
+  Q_INVOKABLE virtual void associateStepWithPage(ctkWorkflowStep* step, int index);
+  Q_INVOKABLE virtual void associateStepWithPage(ctkWorkflowStep* step, int index, QString label);
 
   /// Get the workflow group box associated with a particular step
   using ctkWorkflowWidget::workflowGroupBox;
-  virtual ctkWorkflowGroupBox* workflowGroupBox(ctkWorkflowStep* step)const;
+  Q_INVOKABLE virtual ctkWorkflowGroupBox* workflowGroupBox(ctkWorkflowStep* step)const;
 
 protected:
 
-  // Triggers updates of the workflowGroupBox on the current page, when the workflow step hyas
+  // Triggers updates of the workflowGroupBox on the current page, when the workflow step has
   // changed.
   virtual void updateStepUI(ctkWorkflowStep* currentStep);
 
