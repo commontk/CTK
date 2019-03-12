@@ -88,7 +88,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
             #    my_class(QObject* newParent ...)
             #    my_class(QWidget* newParent ...)
             # Constructor with either QWidget or QObject as first parameter
-            regex = r"[^~]%s[\s\n]*\([\s\n]*((QObject|QWidget)[\s\n]*\*[\s\n]*\w+[\s\n]*(\=[\s\n]*(0|NULL)|,.*\=.*\)|\)|\)))" % className
+            regex = r"[^~]%s[\s\n]*\([\s\n]*((QObject|QWidget)[\s\n]*\*[\s\n]*\w+[\s\n]*(\=[\s\n]*(0|NULL|nullptr)|,.*\=.*\)|\)|\)))" % className
             res = re.search(regex, content, re.MULTILINE)
             if res is None:
                 if extra_verbose:
@@ -97,7 +97,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
      
             # Skip wrapping if object has a virtual pure method
             # "x3b" is the unicode for semicolon
-            regex = r"virtual[\w\n\s\*\(\)]+\=[\s\n]*(0|NULL)[\s\n]*\x3b"
+            regex = r"virtual[\w\n\s\*\(\)]+\=[\s\n]*(0|NULL|nullptr)[\s\n]*\x3b"
             res = re.search(regex, content, re.MULTILINE)
             if res is not None:
                 if extra_verbose:
@@ -116,7 +116,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
 
             if parentClassName is None:
                 # Does constructor signature is of the form: myclass(QObject * parent ...)
-                regex = r"%s[\s\n]*\([\s\n]*QObject[\s\n]*\*[\s\n]*\w+[\s\n]*(\=[\s\n]*(0|NULL)|,.*\=.*\)|\))" % className
+                regex = r"%s[\s\n]*\([\s\n]*QObject[\s\n]*\*[\s\n]*\w+[\s\n]*(\=[\s\n]*(0|NULL|nullptr)|,.*\=.*\)|\))" % className
                 res = re.search(regex, content, re.MULTILINE)
                 if res is not None:
                     parentClassName = "QObject"
@@ -125,7 +125,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
 
             if parentClassName is None:
                 # Does constructor signature is of the form: myclass(QWidget * parent ...)
-                regex = r"%s[\s\n]*\([\s\n]*QWidget[\s\n]*\*[\s\n]*\w+[\s\n]*(\=[\s\n]*(0|NULL)|,.*\=.*\)|\))" % className
+                regex = r"%s[\s\n]*\([\s\n]*QWidget[\s\n]*\*[\s\n]*\w+[\s\n]*(\=[\s\n]*(0|NULL|nullptr)|,.*\=.*\)|\))" % className
                 res = re.search(regex, content, re.MULTILINE)
                 if res is not None:
                     parentClassName = "QWidget"
