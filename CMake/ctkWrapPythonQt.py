@@ -1,3 +1,17 @@
+""" ctkWrapPythonQt
+
+CLI allowing to generate PythonQt decorator for constructor and destructor of classes.
+
+The CLI expects one class per header file with a class name matching the filename.
+
+It generates the files `<namespace>_<target>.h` and `<namespace>_<target>_init.cpp`
+
+where:
+
+* `<namespace>` is a string like `org_commontk`
+
+* `<target>` is a string like `CTKWidgets`
+"""
 
 import errno
 import os
