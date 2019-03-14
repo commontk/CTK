@@ -41,19 +41,19 @@ class ctkVTKOutputWindow : public vtkOutputWindow
 public:
   static ctkVTKOutputWindow *New();
   vtkTypeMacro(ctkVTKOutputWindow,vtkOutputWindow);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ctkVTKOutputWindow()
     : MessageHandler(0)
   {}
   ~ctkVTKOutputWindow(){}
 
-  virtual void DisplayText(const char*) VTK_OVERRIDE;
-  virtual void DisplayErrorText(const char*) VTK_OVERRIDE;
-  virtual void DisplayWarningText(const char*) VTK_OVERRIDE;
-  virtual void DisplayGenericWarningText(const char*) VTK_OVERRIDE;
+  virtual void DisplayText(const char*) override;
+  virtual void DisplayErrorText(const char*) override;
+  virtual void DisplayWarningText(const char*) override;
+  virtual void DisplayGenericWarningText(const char*) override;
 
-  virtual void DisplayDebugText(const char*) VTK_OVERRIDE;
+  virtual void DisplayDebugText(const char*) override;
 
   QString parseText(const QString &text, ctkErrorLogContext &context);
 

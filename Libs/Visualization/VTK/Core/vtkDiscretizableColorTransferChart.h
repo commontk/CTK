@@ -74,9 +74,9 @@ public:
 
   bool IsProcessingColorTransferFunction() const;
 
-  bool MouseMoveEvent(const vtkContextMouseEvent &mouse) VTK_OVERRIDE;
-  bool MouseButtonPressEvent(const vtkContextMouseEvent& mouse) VTK_OVERRIDE;
-  bool MouseButtonReleaseEvent(const vtkContextMouseEvent &mouse) VTK_OVERRIDE;
+  bool MouseMoveEvent(const vtkContextMouseEvent &mouse) override;
+  bool MouseButtonPressEvent(const vtkContextMouseEvent& mouse) override;
+  bool MouseButtonReleaseEvent(const vtkContextMouseEvent &mouse) override;
 
 protected:
 
