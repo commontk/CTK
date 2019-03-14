@@ -41,30 +41,30 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKColorTransferFunction: public c
 public:
   /// Please note that ctkVTKColorTransferFunction methods only work only if
   /// colorTransferFunction is set.
-  ctkVTKColorTransferFunction(QObject* parent = 0);
+  ctkVTKColorTransferFunction(QObject* parent = nullptr);
   ctkVTKColorTransferFunction(vtkColorTransferFunction* colorTransferFunction, 
-                              QObject* parent = 0);
-  virtual ~ctkVTKColorTransferFunction();
+                              QObject* parent = nullptr);
+  ~ctkVTKColorTransferFunction() override;
   
   /// Please note that controlPoint methods only works if you have at least one
   /// ControlPoint.
-  virtual ctkControlPoint* controlPoint(int index)const;
-  virtual QVariant value(qreal pos)const;
-  virtual int count()const;
-  virtual bool isDiscrete()const;
-  virtual bool isEditable()const;
+  ctkControlPoint* controlPoint(int index)const override;
+  QVariant value(qreal pos)const override;
+  int count()const override;
+  bool isDiscrete()const override;
+  bool isEditable()const override;
 
-  virtual void range(qreal& minRange, qreal& maxRange)const;
-  virtual QVariant minValue()const;
-  virtual QVariant maxValue()const;
+  void range(qreal& minRange, qreal& maxRange)const override;
+  QVariant minValue()const override;
+  QVariant maxValue()const override;
 
-  virtual int insertControlPoint(const ctkControlPoint& cp);
-  virtual int insertControlPoint(qreal pos);
+  int insertControlPoint(const ctkControlPoint& cp) override;
+  int insertControlPoint(qreal pos) override;
 
-  virtual void setControlPointPos(int index, qreal pos);
-  virtual void setControlPointValue(int index, const QVariant& value);
+  void setControlPointPos(int index, qreal pos) override;
+  void setControlPointValue(int index, const QVariant& value) override;
 
-  virtual void removeControlPoint( qreal pos );
+  void removeControlPoint( qreal pos ) override;
 
   void setColorTransferFunction(vtkColorTransferFunction* colorTransferFunction);
   vtkColorTransferFunction* colorTransferFunction()const;

@@ -88,8 +88,8 @@ public:
   typedef QWidget Superclass;
 
   ///
-  ctkMenuComboBox(QWidget* parent = 0);
-  virtual ~ctkMenuComboBox();
+  ctkMenuComboBox(QWidget* parent = nullptr);
+  ~ctkMenuComboBox() override;
 
   /// Add a menu to the QcomboBox and set a QCompleter
   void setMenu(QMenu* menu);
@@ -123,7 +123,7 @@ public:
   ctkCompleter* searchCompleter() const;
 
 protected:
-  virtual bool eventFilter(QObject* target, QEvent* event);
+  bool eventFilter(QObject* target, QEvent* event) override;
 
 public Q_SLOTS:
   void clearActiveAction();

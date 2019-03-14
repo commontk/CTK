@@ -39,9 +39,9 @@ class CTK_WIDGETS_EXPORT ctkLayoutFactory: public ctkLayoutManager
 {
   Q_OBJECT
 public:
-  ctkLayoutFactory(QObject* parent = 0);
+  ctkLayoutFactory(QObject* parent = nullptr);
   explicit ctkLayoutFactory(QWidget* viewport, QObject* parent);
-  virtual ~ctkLayoutFactory();
+  ~ctkLayoutFactory() override;
 
   using ctkLayoutManager::setLayout;
   using ctkLayoutManager::layout;
@@ -65,16 +65,16 @@ public:
 protected:
   /// Call beginSetupLayout() and endSetupLayout() on all the registeredfactories.
   /// \sa setupView()
-  virtual void setupLayout();
+  void setupLayout() override;
   /// Find the layoutElement factory and call viewFromXML() on it.
   /// \sa viewsFromXML(), setupView()
-  virtual QWidget* viewFromXML(QDomElement layoutElement);
+  QWidget* viewFromXML(QDomElement layoutElement) override;
   /// Find the layoutElement factory and call viewsFromXML() on it.
   /// \sa viewFromXML(), setupView()
-  virtual QList<QWidget*> viewsFromXML(QDomElement layoutElement);
+  QList<QWidget*> viewsFromXML(QDomElement layoutElement) override;
   /// Find the layoutElement factory and setupView() on it.
   /// \sa viewFromXML(), viewsFromXML()
-  virtual void setupView(QDomElement layoutElement, QWidget* view);
+  void setupView(QDomElement layoutElement, QWidget* view) override;
 
   /// Return all the registered factories that can handle the layoutElement.
   QList<ctkLayoutViewFactory*> viewFactories(QDomElement viewElement)const;

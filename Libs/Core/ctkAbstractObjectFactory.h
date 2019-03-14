@@ -46,9 +46,9 @@ class ctkFactoryObjectItem : public ctkAbstractFactoryItem<BaseClassType>
 protected:
   typedef BaseClassType *(*InstantiateObjectFunc)();
 public:
-  virtual bool load();
+  bool load() override;
 protected:
-  virtual BaseClassType* instanciator();
+  BaseClassType* instanciator() override;
 private:
   InstantiateObjectFunc instantiateObjectFunc;
 };

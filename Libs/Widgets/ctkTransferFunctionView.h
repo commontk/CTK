@@ -37,10 +37,10 @@ class CTK_WIDGETS_EXPORT ctkTransferFunctionView: public QGraphicsView
 {
   Q_OBJECT;
 public:
-  ctkTransferFunctionView(QWidget* parent = 0);
-  virtual ~ctkTransferFunctionView();
+  ctkTransferFunctionView(QWidget* parent = nullptr);
+  ~ctkTransferFunctionView() override;
 protected:
-  virtual void resizeEvent(QResizeEvent * event);
+  void resizeEvent(QResizeEvent * event) override;
   /*
   virtual void dragEnterEvent ( QDragEnterEvent * event );
   virtual void mousePressEvent ( QMouseEvent * event );

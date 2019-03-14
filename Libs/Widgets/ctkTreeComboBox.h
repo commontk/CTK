@@ -55,15 +55,15 @@ class CTK_WIDGETS_EXPORT ctkTreeComboBox : public QComboBox
   Q_PROPERTY(int visibleModelColumn READ visibleModelColumn WRITE setVisibleModelColumn)
 public:
   typedef QComboBox Superclass;
-  explicit ctkTreeComboBox(QWidget* parent = 0);
-  virtual ~ctkTreeComboBox();
+  explicit ctkTreeComboBox(QWidget* parent = nullptr);
+  ~ctkTreeComboBox() override;
 
   int visibleModelColumn()const;
   void setVisibleModelColumn(int index);
 
-  virtual bool eventFilter(QObject* object, QEvent* event);
-  virtual void showPopup();
-  virtual void hidePopup();
+  bool eventFilter(QObject* object, QEvent* event) override;
+  void showPopup() override;
+  void hidePopup() override;
   
   /// ctkTreeComboBox uses a QTreeView for its model view. treeView() is a
   /// utility function that cast QComboBox::view() into a QTreeView.
@@ -71,7 +71,7 @@ public:
   QTreeView* treeView()const;
 
 protected:
-  virtual void paintEvent(QPaintEvent*);
+  void paintEvent(QPaintEvent*) override;
   
 protected Q_SLOTS:
   void resizePopup();

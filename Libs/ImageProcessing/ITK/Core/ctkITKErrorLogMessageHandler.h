@@ -39,13 +39,13 @@ public:
   typedef ctkErrorLogAbstractMessageHandler Superclass;
 
   ctkITKErrorLogMessageHandler();
-  virtual ~ctkITKErrorLogMessageHandler();
+  ~ctkITKErrorLogMessageHandler() override;
 
   static QString HandlerName;
 
-  virtual QString handlerName()const;
+  QString handlerName()const override;
 
-  virtual void setEnabledInternal(bool value);
+  void setEnabledInternal(bool value) override;
 
 protected:
   QScopedPointer<ctkITKErrorLogMessageHandlerPrivate> d_ptr;

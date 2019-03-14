@@ -74,10 +74,10 @@ class CTK_WIDGETS_EXPORT ctkFlowLayout : public QLayout
 
 public:
   typedef QLayout Superclass;
-  explicit ctkFlowLayout(Qt::Orientation orientation, QWidget* parent = 0);
+  explicit ctkFlowLayout(Qt::Orientation orientation, QWidget* parent = nullptr);
   explicit ctkFlowLayout(QWidget* parent);
   explicit ctkFlowLayout();
-  virtual ~ctkFlowLayout();
+  ~ctkFlowLayout() override ;
 
   void setOrientation(Qt::Orientation orientation);
   Qt::Orientation orientation()const;
@@ -112,16 +112,16 @@ public:
   virtual int widthForHeight(int) const;
 
   /// Reimplemented for internal reasons
-  virtual void addItem(QLayoutItem *item);
-  virtual Qt::Orientations expandingDirections() const;
-  virtual bool hasHeightForWidth() const;
-  virtual int heightForWidth(int) const;
-  virtual int count() const;
-  virtual QLayoutItem *itemAt(int index) const;
-  virtual QSize minimumSize() const;
-  virtual void setGeometry(const QRect &rect);
-  virtual QSize sizeHint() const;
-  virtual QLayoutItem *takeAt(int index);
+  void addItem(QLayoutItem *item) override ;
+  Qt::Orientations expandingDirections() const override ;
+  bool hasHeightForWidth() const override ;
+  int heightForWidth(int) const override ;
+  int count() const override ;
+  QLayoutItem *itemAt(int index) const override;
+  QSize minimumSize() const override;
+  void setGeometry(const QRect &rect) override;
+  QSize sizeHint() const override;
+  QLayoutItem *takeAt(int index) override;
   
 protected:
   QScopedPointer<ctkFlowLayoutPrivate> d_ptr;

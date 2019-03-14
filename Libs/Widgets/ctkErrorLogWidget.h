@@ -39,8 +39,8 @@ class CTK_WIDGETS_EXPORT ctkErrorLogWidget : public QWidget
   Q_OBJECT
 public:
   typedef QWidget Superclass;
-  explicit ctkErrorLogWidget(QWidget* parentWidget = 0);
-  virtual ~ctkErrorLogWidget();
+  explicit ctkErrorLogWidget(QWidget* parentWidget = nullptr);
+  ~ctkErrorLogWidget() override;
 
   ctkErrorLogModel* errorLogModel()const;
   Q_INVOKABLE void setErrorLogModel(ctkErrorLogModel * newErrorLogModel);

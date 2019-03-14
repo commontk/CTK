@@ -142,7 +142,7 @@ BaseClassType* ctkAbstractFactoryItem<BaseClassType>::instantiate()
 template<typename BaseClassType>
 bool ctkAbstractFactoryItem<BaseClassType>::isInstantiated()const
 {
-  return (this->Instance != 0);
+  return (this->Instance != nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -163,7 +163,7 @@ void ctkAbstractFactoryItem<BaseClassType>::uninstantiate()
   delete this->Instance;
   // Make sure the pointer is set to 0. Doing so, Will prevent attempt to
   // delete unextising object if uninstantiate() methods is called multiple times.
-  this->Instance = 0; 
+  this->Instance = nullptr; 
 }
 
 //----------------------------------------------------------------------------
@@ -210,7 +210,7 @@ template<typename BaseClassType>
 BaseClassType* ctkAbstractFactory<BaseClassType>::instantiate(const QString& itemKey)
 {
   ctkAbstractFactoryItem<BaseClassType>* _item = this->item(itemKey);
-  BaseClassType* instance = 0;
+  BaseClassType* instance = nullptr;
   bool wasInstantiated = false;
   if (_item)
     {
@@ -249,7 +249,7 @@ template<typename BaseClassType>
 BaseClassType* ctkAbstractFactory<BaseClassType>::instance(const QString& itemKey)
 {
   ctkAbstractFactoryItem<BaseClassType>* factoryItem = this->item(itemKey);
-  return factoryItem ? factoryItem->instance() : 0;
+  return factoryItem ? factoryItem->instance() : nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -385,7 +385,7 @@ ctkAbstractFactoryItem<BaseClassType> * ctkAbstractFactory<BaseClassType>::item(
   ConstIterator iter = this->RegisteredItemMap.find(itemKey);
   if ( iter == this->RegisteredItemMap.constEnd())
     {
-    return 0;
+    return nullptr;
     }
   return iter.value().data();
 }
@@ -396,12 +396,12 @@ ctkAbstractFactoryItem<BaseClassType> * ctkAbstractFactory<BaseClassType>::share
 {
   if(this->SharedRegisteredItemMap.isNull())
     {
-    return 0;
+    return nullptr;
     }
   ConstIterator iter = this->SharedRegisteredItemMap.data()->find(itemKey);
   if ( iter == this->SharedRegisteredItemMap.data()->constEnd())
     {
-    return 0;
+    return nullptr;
     }
   return iter.value().data();
 }

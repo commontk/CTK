@@ -43,14 +43,14 @@ public:
 
   /// Constructors
   ctkVTKAbstractMatrixWidget(QWidget* parent);
-  virtual ~ctkVTKAbstractMatrixWidget();
+  ~ctkVTKAbstractMatrixWidget() override;
   vtkMatrix4x4* matrix()const;
 
 protected:
   void setMatrixInternal(vtkMatrix4x4* matrix);
 
-  virtual void setColumnCount(int newColumnCount);
-  virtual void setRowCount(int newRowCount);
+  void setColumnCount(int newColumnCount) override;
+  void setRowCount(int newRowCount) override;
 
 protected:
   QScopedPointer<ctkVTKAbstractMatrixWidgetPrivate> d_ptr;

@@ -50,7 +50,7 @@ protected:
 public:
   //explicit ctkFactoryLibraryItem(const QString& path);
  
-  virtual bool load();
+  bool load() override;
 
   ///
   /// Set list of required symbols
@@ -86,8 +86,8 @@ public:
   void setSymbols(const QStringList& symbols);
 
 protected:
-  virtual bool isValidFile(const QFileInfo& file)const;
-  virtual void initItem(ctkAbstractFactoryItem<BaseClassType>* item);
+  bool isValidFile(const QFileInfo& file)const override;
+  void initItem(ctkAbstractFactoryItem<BaseClassType>* item) override;
 
 private:
   QStringList Symbols;

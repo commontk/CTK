@@ -66,9 +66,9 @@ class CTK_WIDGETS_EXPORT ctkCollapsibleButton : public QAbstractButton
   Q_PROPERTY(Qt::Alignment indicatorAlignment READ indicatorAlignment WRITE setIndicatorAlignment)
 
 public:
-  ctkCollapsibleButton(QWidget *parent = 0);
-  ctkCollapsibleButton(const QString& text, QWidget *parent = 0);
-  virtual ~ctkCollapsibleButton();
+  ctkCollapsibleButton(QWidget *parent = nullptr);
+  ctkCollapsibleButton(const QString& text, QWidget *parent = nullptr);
+  ~ctkCollapsibleButton() override ;
 
   /// 
   /// Property that describes if the widget is collapsed or not.
@@ -126,24 +126,24 @@ public:
 
   /// 
   /// Reimplemented for internal reasons
-  virtual QSize minimumSizeHint()const;
+  QSize minimumSizeHint()const override;
 
   /// 
   /// Reimplemented for internal reasons
-  virtual QSize sizeHint()const;
+  QSize sizeHint()const override;
 
   /// Reimplemented to update the size of the button in case of font/style
   /// change
-  virtual bool event(QEvent* event);
+  bool event(QEvent* event) override;
 
   /// Reimplemented for internal reasons
   /// Catch when a child widget's visibility is externally changed
-  virtual bool eventFilter(QObject* child, QEvent* e);
+  bool eventFilter(QObject* child, QEvent* e) override;
   
   /// Reimplemented for internal reasons
   /// Don't process Show/Hide events of children when it is
   /// ctkCollapsibleButton that generate them.
-  virtual void setVisible(bool);
+  void setVisible(bool) override;
 Q_SIGNALS:
   /// 
   /// Signal emitted when the widget is collapsed or expanded.
@@ -157,12 +157,12 @@ protected Q_SLOTS:
   virtual void onToggled(bool clicked = false);
 
 protected:
-  virtual void paintEvent(QPaintEvent*);
+  void paintEvent(QPaintEvent*) override;
   //virtual void mousePressEvent(QMouseEvent* event);
   //virtual void mouseReleaseEvent(QMouseEvent* event);
-  virtual void childEvent(QChildEvent* c);
+  void childEvent(QChildEvent* c) override;
 
-  virtual bool hitButton(const QPoint & pos) const;
+  bool hitButton(const QPoint & pos) const override;
   /// Compute the size hint of the head button only. The sizehint depends on the text.
   virtual QSize buttonSizeHint() const;
 

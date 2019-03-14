@@ -50,11 +50,11 @@ public:
   /// Constructor
   /// By default, behaves like a QFileDialog
   /// \sa QFileDialog()
-  explicit ctkFileDialog(QWidget *parent = 0,
+  explicit ctkFileDialog(QWidget *parent = nullptr,
               const QString &caption = QString(),
               const QString &directory = QString(),
               const QString &filter = QString());
-  virtual ~ctkFileDialog();
+  ~ctkFileDialog() override ;
   
   /// Add an extra widget under the file format combobox. If a label is
   /// given, it will appear in the first column.
@@ -80,7 +80,7 @@ public:
   QAbstractItemView::SelectionMode selectionMode() const;
 
   /// Internally used
-  bool eventFilter(QObject *obj, QEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event) override ;
 
 public Q_SLOTS:
   /// Can be used to prevent the accept button to be enabled. It's typically
@@ -104,7 +104,7 @@ protected:
   QScopedPointer<ctkFileDialogPrivate> d_ptr;
 
   /// Reimplemented to override the return key behavior
-  virtual void accept();
+  void accept() override ;
 
 private:
   Q_DECLARE_PRIVATE(ctkFileDialog);

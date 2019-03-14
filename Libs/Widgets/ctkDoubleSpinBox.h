@@ -162,9 +162,9 @@ public:
 
   /// Constructor, creates a ctkDoubleSpinBox. The look and feel
   /// are the same as of a QDoubleSpinBox
-  explicit ctkDoubleSpinBox(QWidget* parent = 0);
-  explicit ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* parent = 0);
-  virtual ~ctkDoubleSpinBox();
+  explicit ctkDoubleSpinBox(QWidget* parent = nullptr);
+  explicit ctkDoubleSpinBox(ctkDoubleSpinBox::SetMode mode, QWidget* parent = nullptr);
+  ~ctkDoubleSpinBox() override;
 
   /// Get the spinbox current value
   /// \sa setValue(), cleanText()
@@ -286,10 +286,10 @@ public:
 
   /// Reimplemented to respect the sizeHintPolicy property value.
   /// \sa sizeHintPolicy
-  virtual QSize sizeHint()const;
+  QSize sizeHint()const override;
   /// Reimplemented to respect the sizeHintPolicy property value.
   /// \sa sizeHintPolicy
-  virtual QSize minimumSizeHint()const;
+  QSize minimumSizeHint()const override;
 
 public Q_SLOTS:
   /// Set the value of the spinbox following the current mode.
@@ -336,9 +336,9 @@ protected:
   ctkDoubleSpinBoxPrivate* const d_ptr;
 
   /// Reimplemented to support shortcuts.
-  virtual void keyPressEvent(QKeyEvent* event);
+  void keyPressEvent(QKeyEvent* event) override;
   /// Reimplemented to support shortcuts on the double spinbox.
-  virtual bool eventFilter(QObject *obj, QEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event) override;
 
   friend class ctkCoordinatesWidgetPrivate;
 private:

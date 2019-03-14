@@ -50,8 +50,8 @@ class CTK_WIDGETS_EXPORT ctkButtonGroup : public QButtonGroup
 {
   Q_OBJECT
 public:
-  explicit ctkButtonGroup(QObject *_parent = 0);
-  virtual ~ctkButtonGroup();
+  explicit ctkButtonGroup(QObject *_parent = nullptr);
+  ~ctkButtonGroup() override ;
 
 public Q_SLOTS:
   /// Check or uncheck the button.

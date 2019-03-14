@@ -44,8 +44,8 @@ class CTK_SCRIPTING_PYTHON_CORE_EXPORT ctkAbstractPythonManager : public QObject
 
 public:
   typedef QObject Superclass;
-  ctkAbstractPythonManager(QObject* _parent=NULL);
-  virtual ~ctkAbstractPythonManager();
+  ctkAbstractPythonManager(QObject* _parent=nullptr);
+  ~ctkAbstractPythonManager() override;
 
   /// Calling this function after mainContext() has been called at least once is a no-op.
   /// If not overridden calling this function, the default initialization flags are

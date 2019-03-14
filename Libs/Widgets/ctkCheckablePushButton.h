@@ -56,9 +56,9 @@ class CTK_WIDGETS_EXPORT ctkCheckablePushButton : public ctkPushButton
   Q_PROPERTY(bool checkBoxUserCheckable READ isCheckBoxUserCheckable WRITE setCheckBoxUserCheckable)
 
 public:
-  ctkCheckablePushButton(QWidget *parent = 0);
-  ctkCheckablePushButton(const QString& text, QWidget *parent = 0);
-  virtual ~ctkCheckablePushButton();
+  ctkCheckablePushButton(QWidget *parent = nullptr);
+  ctkCheckablePushButton(const QString& text, QWidget *parent = nullptr);
+  ~ctkCheckablePushButton() override;
 
   /// Set the alignment of the indicator (arrow) on the button,
   /// Qt::AlignLeft|Qt::AlignVCenter by default.
@@ -82,9 +82,9 @@ Q_SIGNALS:
 
 protected:
   /// Reimplemented for internal reasons
-  virtual void mousePressEvent(QMouseEvent* event);
+  void mousePressEvent(QMouseEvent* event) override;
   /// Reimplemented for internal reasons
-  virtual bool hitButton(const QPoint & pos) const;
+  bool hitButton(const QPoint & pos) const override;
 
 private:
   Q_DECLARE_PRIVATE(ctkCheckablePushButton);

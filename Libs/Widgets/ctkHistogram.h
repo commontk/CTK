@@ -45,24 +45,24 @@ class CTK_WIDGETS_EXPORT ctkHistogram: public ctkTransferFunction
 {
   Q_OBJECT
 public:
-  ctkHistogram(QObject* parent = 0);
-  virtual ~ctkHistogram();
+  ctkHistogram(QObject* parent = nullptr);
+  ~ctkHistogram() override;
   
-  virtual bool isDiscrete()const;
-  virtual bool isEditable()const;
+  bool isDiscrete()const override;
+  bool isEditable()const override;
 
   ///
-  virtual int insertControlPoint(const ctkControlPoint& cp);
-  virtual int insertControlPoint(qreal pos);
+  int insertControlPoint(const ctkControlPoint& cp) override;
+  int insertControlPoint(qreal pos) override;
 
   /// 
   /// be careful with it, as changing the value might require
   /// more changes to ctkControlPoint.
-  virtual void setControlPointPos(int index, qreal pos);
+  void setControlPointPos(int index, qreal pos) override;
   /// 
   /// be careful with it, as changing the value might require
   /// more changes to ctkControlPoint.
-  virtual void setControlPointValue(int index, const QVariant& value);
+  void setControlPointValue(int index, const QVariant& value) override;
   virtual void build()=0;
 protected:
   

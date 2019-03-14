@@ -41,8 +41,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public ctkVTKOpenGL
 
 public:
   typedef ctkVTKOpenGLNativeWidget Superclass;
-  ctkVTKChartView(QWidget* parent = 0);
-  virtual ~ctkVTKChartView();
+  ctkVTKChartView(QWidget* parent = nullptr);
+  ~ctkVTKChartView() override;
 
   /// Generic function to add a custom plot. \a plot is added into the chart
   /// Emit the plotAdded(vtkPlot*) signal.
@@ -103,7 +103,7 @@ Q_SIGNALS:
 protected:
   QScopedPointer<ctkVTKChartViewPrivate> d_ptr;
 
-  virtual void mouseDoubleClickEvent(QMouseEvent* event);
+  void mouseDoubleClickEvent(QMouseEvent* event) override;
   virtual void onChartUpdated();
   void chartBoundsToPlotBounds(double bounds[8], double plotBounds[4])const;
 

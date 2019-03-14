@@ -40,10 +40,10 @@ class CTK_WIDGETS_EXPORT ctkTransferFunctionItem: public QGraphicsObject
   Q_OBJECT
   Q_PROPERTY(QRectF rect READ rect WRITE setRect)
 public:
-  ctkTransferFunctionItem(QGraphicsItem* parent = 0);
+  ctkTransferFunctionItem(QGraphicsItem* parent = nullptr);
   ctkTransferFunctionItem(ctkTransferFunction* transferFunction, 
-                                  QGraphicsItem* parent = 0);
-  virtual ~ctkTransferFunctionItem();
+                                  QGraphicsItem* parent = nullptr);
+  ~ctkTransferFunctionItem() override;
 
   Q_INVOKABLE void setTransferFunction(ctkTransferFunction* transferFunction);
   ctkTransferFunction* transferFunction()const;
@@ -62,7 +62,7 @@ public:
   QPointF transferFunction2ScreenCoordinates( qreal x, qreal y);
   QPointF screen2TransferFunctionCoordinates( qreal x, qreal y);
 */
-  virtual QRectF boundingRect()const;
+  QRectF boundingRect()const override;
 protected:
   //qreal y(const QVariant& value)const;
   //inline qreal y(const ctkPoint& point)const;
@@ -72,7 +72,7 @@ protected:
 
   //QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end)const;
   //QList<ctkPoint> nonLinearPoints(ctkControlPoint* start, ctkControlPoint* end)const;
-  virtual QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant& value);
+  QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant& value) override;
 protected:
   QScopedPointer<ctkTransferFunctionItemPrivate> d_ptr;
 

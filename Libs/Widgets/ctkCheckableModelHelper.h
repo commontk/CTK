@@ -73,8 +73,8 @@ class CTK_WIDGETS_EXPORT ctkCheckableModelHelper : public QObject
   Q_PROPERTY(Qt::CheckState defaultCheckState READ defaultCheckState WRITE setDefaultCheckState);
 
 public:
-  ctkCheckableModelHelper(Qt::Orientation orientation, QObject *parent=0);
-  virtual ~ctkCheckableModelHelper();
+  ctkCheckableModelHelper(Qt::Orientation orientation, QObject *parent=nullptr);
+  ~ctkCheckableModelHelper() override ;
 
   Qt::Orientation orientation()const;
 

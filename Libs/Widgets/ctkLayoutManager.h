@@ -88,11 +88,11 @@ class CTK_WIDGETS_EXPORT ctkLayoutManager: public QObject
   Q_PROPERTY(int spacing READ spacing WRITE setSpacing)
 public:
   /// Constructor
-  ctkLayoutManager(QObject* parent = 0);
+  ctkLayoutManager(QObject* parent = nullptr);
   explicit ctkLayoutManager(QWidget* viewport, QObject* parent);
 
   /// Destructor
-  virtual ~ctkLayoutManager();
+  ~ctkLayoutManager() override;
 
   Q_INVOKABLE void setViewport(QWidget* widget);
   Q_INVOKABLE QWidget* viewport()const;

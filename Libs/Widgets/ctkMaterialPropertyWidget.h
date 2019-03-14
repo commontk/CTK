@@ -74,10 +74,10 @@ public:
   typedef QWidget Superclass;
 
   /// Constructor
-  explicit ctkMaterialPropertyWidget(QWidget* parent = 0);
+  explicit ctkMaterialPropertyWidget(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~ctkMaterialPropertyWidget();
+  ~ctkMaterialPropertyWidget() override;
 
   QColor color()const;
   double opacity()const;
@@ -144,7 +144,7 @@ protected Q_SLOTS:
 protected:
   QScopedPointer<ctkMaterialPropertyWidgetPrivate> d_ptr;
 
-  virtual void resizeEvent(QResizeEvent* resize);
+  void resizeEvent(QResizeEvent* resize) override;
 private:
   Q_DECLARE_PRIVATE(ctkMaterialPropertyWidget);
   Q_DISABLE_COPY(ctkMaterialPropertyWidget);

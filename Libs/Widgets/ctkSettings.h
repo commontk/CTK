@@ -77,24 +77,24 @@ public:
   ctkSettings(
     const QString& organization,
     const QString& application,
-    QObject* parent = 0);
+    QObject* parent = nullptr);
   /// \see QSettings::QSettings(QSettings::Scope ,const QString& ,const QString& , QObject* )
   ctkSettings(
     QSettings::Scope scope,
     const QString& organization,
     const QString& application = QString(),
-    QObject* parent = 0);
+    QObject* parent = nullptr);
   /// \see QSettings::QSettings(QSettings::Format ,QSettings::Scope ,const QString& ,const QString& , QObject* )
   ctkSettings(
     QSettings::Format format,
     QSettings::Scope scope,
     const QString& organization,
     const QString& application = QString(),
-    QObject* parent = 0);
+    QObject* parent = nullptr);
   /// \see QSettings::QSettings(const QString& , QSettings::Format , QObject* )
-  ctkSettings(const QString& fileName, QSettings::Format format, QObject* parent = 0);
+  ctkSettings(const QString& fileName, QSettings::Format format, QObject* parent = nullptr);
   /// \see QSettings::QSettings(QObject*)
-  ctkSettings(QObject* parent = 0);
+  ctkSettings(QObject* parent = nullptr);
 
   /// Saves the position, size and layout of the QMainWindow
   Q_INVOKABLE void saveState(const QMainWindow& window, const QString& key);

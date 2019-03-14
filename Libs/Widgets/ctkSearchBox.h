@@ -67,8 +67,8 @@ public:
   /// Superclass typedef
   typedef QLineEdit Superclass;
 
-  ctkSearchBox(QWidget *parent = 0);
-  virtual ~ctkSearchBox();
+  ctkSearchBox(QWidget *parent = nullptr);
+  ~ctkSearchBox() override ;
 
 #if QT_VERSION < 0x040700
   QString placeholderText()const;
@@ -97,10 +97,10 @@ protected Q_SLOTS:
   void updateClearButtonState();
 
 protected:
-  virtual void paintEvent(QPaintEvent*);
-  virtual void mousePressEvent(QMouseEvent* event);
-  virtual void mouseMoveEvent(QMouseEvent *event);
-  virtual void resizeEvent(QResizeEvent * event);
+  void paintEvent(QPaintEvent*) override ;
+  void mousePressEvent(QMouseEvent* event) override ;
+  void mouseMoveEvent(QMouseEvent *event) override ;
+  void resizeEvent(QResizeEvent * event) override ;
 
   QScopedPointer<ctkSearchBoxPrivate> d_ptr;
 

@@ -36,7 +36,7 @@ public:
 
   /// Constructor/Desctructor
   explicit ctkAbstractQObjectFactory();
-  virtual ~ctkAbstractQObjectFactory();
+  ~ctkAbstractQObjectFactory() override ;
 
   /// \brief Return a name allowing to uniquely identify the QObject
   /// By default, it return \a objectName obtained using staticMetaObject.className()

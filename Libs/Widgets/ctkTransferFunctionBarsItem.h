@@ -40,10 +40,10 @@ class CTK_WIDGETS_EXPORT ctkTransferFunctionBarsItem: public ctkTransferFunction
   Q_PROPERTY(qreal barWidth READ barWidth WRITE setBarWidth)
   Q_PROPERTY(QColor barColor READ barColor WRITE setBarColor)
 public:
-  ctkTransferFunctionBarsItem(QGraphicsItem* parent = 0);
+  ctkTransferFunctionBarsItem(QGraphicsItem* parent = nullptr);
   ctkTransferFunctionBarsItem(ctkTransferFunction* transferFunc,
-                              QGraphicsItem* parent = 0);
-  virtual ~ctkTransferFunctionBarsItem();
+                              QGraphicsItem* parent = nullptr);
+  ~ctkTransferFunctionBarsItem() override;
 
   void setBarWidth(qreal newBarWidth);
   qreal barWidth()const;
@@ -57,7 +57,7 @@ public:
     UseLog = 1,
     AutoLog =2
   };
-  virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+  void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = nullptr) override;
 protected:
   QScopedPointer<ctkTransferFunctionBarsItemPrivate> d_ptr;
 

@@ -176,7 +176,7 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
 protected:
 
   vtkLightBoxRendererManager();
-  ~vtkLightBoxRendererManager();
+  ~vtkLightBoxRendererManager() override;
   
 private:
   vtkLightBoxRendererManager(const vtkLightBoxRendererManager&); // Not implemented.

@@ -72,7 +72,7 @@ public:
 
   /// Construct a ctkVTKPropertyWidget with the given vtkProperty.
   ctkVTKPropertyWidget(vtkProperty* property, QWidget* parentWidget);
-  virtual ~ctkVTKPropertyWidget();
+  ~ctkVTKPropertyWidget() override;
 
   vtkProperty* property()const;
 

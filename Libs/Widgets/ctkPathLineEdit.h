@@ -166,7 +166,7 @@ public:
 
   /** Default constructor
   */
-  ctkPathLineEdit(QWidget *parent = 0);
+  ctkPathLineEdit(QWidget *parent = nullptr);
 
   /** Constructor
    *  /param label        Used in file dialogs
@@ -177,8 +177,8 @@ public:
   ctkPathLineEdit( const QString& label,
                    const QStringList& nameFilters,
                    Filters filters = ctkPathLineEdit::AllEntries,
-                   QWidget *parent=0 );
-  virtual ~ctkPathLineEdit();
+                   QWidget *parent=nullptr );
+  ~ctkPathLineEdit() override;
   QString currentPath()const;
 
   void setLabel(const QString &label);
@@ -231,11 +231,11 @@ public:
 
   /// The width returned, in pixels, is the length of the file name (with no
   /// path) if any. Otherwise, it's enough for 15 to 20 characters.
-  virtual QSize minimumSizeHint()const;
+  QSize minimumSizeHint()const override;
 
   /// The width returned, in pixels, is the entire length of the current path
   /// if any. Otherwise, it's enough for 15 to 20 characters.
-  virtual QSize sizeHint()const;
+  QSize sizeHint()const override;
 
 Q_SIGNALS:
   /** the signal is emit when the state of hasValidInput changed

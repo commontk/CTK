@@ -39,8 +39,8 @@ public:
   typedef ctkVTKRenderView Superclass;
   
   /// Constructors
-  explicit ctkVTKThumbnailView(QWidget* parent = 0);
-  virtual ~ctkVTKThumbnailView();
+  explicit ctkVTKThumbnailView(QWidget* parent = nullptr);
+  ~ctkVTKThumbnailView() override;
 
   void setRendererToListen(vtkRenderer* renderer);
 

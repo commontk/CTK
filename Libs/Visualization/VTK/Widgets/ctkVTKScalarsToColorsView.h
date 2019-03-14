@@ -46,10 +46,10 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsView
 
 public:
   typedef ctkVTKChartView Superclass;
-  ctkVTKScalarsToColorsView(QWidget* parent = 0);
-  virtual ~ctkVTKScalarsToColorsView();
+  ctkVTKScalarsToColorsView(QWidget* parent = nullptr);
+  ~ctkVTKScalarsToColorsView() override;
 
-  Q_INVOKABLE virtual void addPlot(vtkPlot* plot);
+  Q_INVOKABLE void addPlot(vtkPlot* plot) override;
 
   Q_INVOKABLE vtkPlot* addLookupTable(vtkLookupTable* lut);
   Q_INVOKABLE vtkPlot* addColorTransferFunction(vtkColorTransferFunction* colorTF, bool editable = true);
@@ -91,7 +91,7 @@ public:
   Q_INVOKABLE void setPlotsUserBounds(double* bounds);
 
   /// Reimplemented to set the bounds to the plots as well
-  Q_INVOKABLE virtual void boundAxesToChartBounds();
+  Q_INVOKABLE void boundAxesToChartBounds() override;
 
 Q_SIGNALS:
   /// Emitted when a new function is set to the view

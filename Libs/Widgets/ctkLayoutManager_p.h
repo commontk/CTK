@@ -47,7 +47,7 @@ public:
 
   virtual void init();
   void clearLayout(QLayout* layout);
-  void clearWidget(QWidget* widget, QLayout* parentLayout = 0);
+  void clearWidget(QWidget* widget, QLayout* parentLayout = nullptr);
 
   /// The widget where the layout is populated into.
   QWidget*       Viewport;

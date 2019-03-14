@@ -34,9 +34,9 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKPythonQtWrapperFactory : public Py
 public:
   typedef PythonQtForeignWrapperFactory Superclass;
   ctkVTKPythonQtWrapperFactory();
-  virtual ~ctkVTKPythonQtWrapperFactory();
-  virtual PyObject* wrap(const QByteArray& classname, void *ptr);
-  virtual void* unwrap(const QByteArray& classname, PyObject* object);
+  ~ctkVTKPythonQtWrapperFactory() override;
+  PyObject* wrap(const QByteArray& classname, void *ptr) override;
+  void* unwrap(const QByteArray& classname, PyObject* object) override;
 };
 
 #endif

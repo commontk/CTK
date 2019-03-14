@@ -52,9 +52,9 @@ class CTK_CORE_EXPORT ctkCallback : public QObject
   Q_OBJECT
 public:
 
-  ctkCallback(QObject * parentObject = 0);
-  ctkCallback(void (*callback)(void * data), QObject * parentObject = 0);
-  virtual ~ctkCallback();
+  ctkCallback(QObject * parentObject = nullptr);
+  ctkCallback(void (*callback)(void * data), QObject * parentObject = nullptr);
+  ~ctkCallback() override ;
 
   /// Returns the current pointer function
   void (*callback()const)(void*);

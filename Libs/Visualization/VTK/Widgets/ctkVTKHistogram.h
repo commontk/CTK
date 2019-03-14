@@ -43,26 +43,26 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKHistogram: public ctkHistogram
   Q_PROPERTY(QVariant minValue READ minValue)
   Q_PROPERTY(int numberOfBins READ numberOfBins WRITE setNumberOfBins)
 public:
-  ctkVTKHistogram(QObject* parent = 0);
-  ctkVTKHistogram(vtkDataArray* dataArray, QObject* parent = 0);
-  virtual ~ctkVTKHistogram();
+  ctkVTKHistogram(QObject* parent = nullptr);
+  ctkVTKHistogram(vtkDataArray* dataArray, QObject* parent = nullptr);
+  ~ctkVTKHistogram() override;
   
-  virtual ctkControlPoint* controlPoint(int index)const;
-  virtual QVariant value(qreal pos)const;
+  ctkControlPoint* controlPoint(int index)const override;
+  QVariant value(qreal pos)const override;
   /// Returns the number of bins. Returns 0 until build() is called.
-  virtual int count()const;
+  int count()const override;
 
   // Set/Get the range of the histogram.
   // Please note that after an array is set, the range will be reset.
   // \sa resetRange()
   virtual void setRange(qreal minRang, qreal maxRange);
-  virtual void range(qreal& minRange, qreal& maxRange)const;
+  void range(qreal& minRange, qreal& maxRange)const override;
 
   // Reset the range to the array's range.
   virtual void resetRange();
 
-  virtual QVariant minValue()const;
-  virtual QVariant maxValue()const;
+  QVariant minValue()const override;
+  QVariant maxValue()const override;
 
   Q_INVOKABLE void setDataArray(vtkDataArray* dataArray);
   Q_INVOKABLE vtkDataArray* dataArray()const;
@@ -75,9 +75,9 @@ public:
   int numberOfBins()const;
   void setNumberOfBins(int number);
 
-  Q_INVOKABLE virtual void removeControlPoint( qreal pos );
+  Q_INVOKABLE void removeControlPoint( qreal pos ) override;
 
-  Q_INVOKABLE virtual void build();
+  Q_INVOKABLE void build() override;
 protected:
   qreal indexToPos(int index)const;
   int posToIndex(qreal pos)const;

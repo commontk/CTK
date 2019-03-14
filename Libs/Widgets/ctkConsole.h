@@ -106,9 +106,9 @@ public:
   };
   Q_DECLARE_FLAGS(RunFileOptions, RunFileOption)
 
-  ctkConsole(QWidget* parentObject = 0);
+  ctkConsole(QWidget* parentObject = nullptr);
   typedef QWidget Superclass;
-  virtual ~ctkConsole();
+  ~ctkConsole() override;
 
   /// Returns the current formatting that will be used by printMessage()
   QTextCharFormat getFormat() const;

@@ -43,22 +43,22 @@ class CTK_WIDGETS_EXPORT ctkMenuButton : public QPushButton
   Q_OBJECT
 
 public:
-  ctkMenuButton(QWidget *parent = 0);
-  ctkMenuButton(const QString& text, QWidget *parent = 0);
-  virtual ~ctkMenuButton();
+  ctkMenuButton(QWidget *parent = nullptr);
+  ctkMenuButton(const QString& text, QWidget *parent = nullptr);
+  ~ctkMenuButton() override;
 
   /// Reimplemented for internal reasons
-  virtual QSize minimumSizeHint()const;
+  QSize minimumSizeHint()const override;
   /// Reimplemented for internal reasons
-  virtual QSize sizeHint()const;
+  QSize sizeHint()const override;
 
 protected:
   /// Reimplemented for internal reasons
-  virtual void paintEvent(QPaintEvent*);
+  void paintEvent(QPaintEvent*) override;
   /// Reimplemented for internal reasons
-  virtual void mousePressEvent(QMouseEvent* event);
+  void mousePressEvent(QMouseEvent* event) override;
   /// Reimplemented for internal reasons
-  virtual bool hitButton(const QPoint & pos) const;
+  bool hitButton(const QPoint & pos) const override;
   /// Reimplemented for internal reasons
   virtual void initStyleOption ( QStyleOptionButton * option ) const;
 protected:

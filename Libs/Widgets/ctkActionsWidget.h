@@ -57,8 +57,8 @@ class CTK_WIDGETS_EXPORT ctkActionsWidget : public QWidget
   /// \sa sortColumn(), setSortColumn()
   Q_PROPERTY(int sortColumn READ sortColumn WRITE setSortColumn)
 public:
-  explicit ctkActionsWidget(QWidget* parent = 0);
-  virtual ~ctkActionsWidget();
+  explicit ctkActionsWidget(QWidget* parent = nullptr);
+  ~ctkActionsWidget() override;
 
   /// Add an action into a specified group (or at top level if group is empty)
   /// An action can be added multiple times (in a different group). Once added,
@@ -125,8 +125,8 @@ class ctkSortFilterActionsProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT
 public:
-  explicit ctkSortFilterActionsProxyModel(QObject* parent=0);
-  virtual ~ctkSortFilterActionsProxyModel();
+  explicit ctkSortFilterActionsProxyModel(QObject* parent=nullptr);
+  ~ctkSortFilterActionsProxyModel() override;
 
   void setActionsWithNoShortcutVisible(bool);
   bool areActionsWithNoShortcutVisible()const;
@@ -135,7 +135,7 @@ public:
   bool areMenuActionsVisible()const;
 
 protected:
-  bool filterAcceptsRow(int source_row, const QModelIndex & source_parent) const;
+  bool filterAcceptsRow(int source_row, const QModelIndex & source_parent) const override;
   QScopedPointer<ctkSortFilterActionsProxyModelPrivate> d_ptr;
 
 private:
@@ -151,10 +151,10 @@ class ctkRichTextItemDelegate : public QStyledItemDelegate
 {
   Q_OBJECT
 protected:
-  virtual void paint(QPainter * painter, const QStyleOptionViewItem & option,
-             const QModelIndex & index) const;
-  virtual QSize sizeHint(const QStyleOptionViewItem & option,
-                         const QModelIndex & index)const;
+  void paint(QPainter * painter, const QStyleOptionViewItem & option,
+             const QModelIndex & index) const override;
+  QSize sizeHint(const QStyleOptionViewItem & option,
+                         const QModelIndex & index)const override;
 };
 
 #endif

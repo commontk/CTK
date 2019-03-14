@@ -48,8 +48,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceView : public ctkVTKAbstra
 public:
   /// Constructors
   typedef ctkVTKAbstractView Superclass;
-  explicit ctkVTKSliceView(QWidget* parent = 0);
-  virtual ~ctkVTKSliceView();
+  explicit ctkVTKSliceView(QWidget* parent = nullptr);
+  ~ctkVTKSliceView() override;
 
   /// The layout type determines how the image slices should be displayed
   /// within the different render view items.
@@ -71,11 +71,11 @@ public:
 
   /// Set background color
   /// \sa vtkLightBoxRendererManager::SetBackgroundColor
-  virtual void setBackgroundColor(const QColor& newBackgroundColor);
+  void setBackgroundColor(const QColor& newBackgroundColor) override;
 
   /// Get background color
   /// \sa setBackgroundColor();
-  virtual QColor backgroundColor()const;
+  QColor backgroundColor()const override;
 
   /// Get highlightedBox color
   /// \sa setHighlightedBoxColor();
@@ -137,7 +137,7 @@ Q_SIGNALS:
   void resized(const QSize& size);
 
 protected:
-  virtual bool eventFilter(QObject *object, QEvent *event);
+  bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKSliceView);

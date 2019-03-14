@@ -47,10 +47,10 @@ class CTK_WIDGETS_EXPORT ctkPushButton : public QPushButton
   Q_PROPERTY(Qt::Alignment iconAlignment READ iconAlignment WRITE setIconAlignment)
 
 public:
-  ctkPushButton(QWidget *parent = 0);
-  ctkPushButton(const QString& text, QWidget *parent = 0);
-  ctkPushButton(const QIcon& icon, const QString& text, QWidget *parent = 0);
-  virtual ~ctkPushButton();
+  ctkPushButton(QWidget *parent = nullptr);
+  ctkPushButton(const QString& text, QWidget *parent = nullptr);
+  ctkPushButton(const QIcon& icon, const QString& text, QWidget *parent = nullptr);
+  ~ctkPushButton() override;
 
   /// Set the buttonTextAlignment property value.
   /// \sa buttonTextAlignment
@@ -66,16 +66,16 @@ public:
   /// \sa iconAlignment
   Qt::Alignment iconAlignment()const;
 
-  virtual QSize minimumSizeHint()const;
-  virtual QSize sizeHint()const;
+  QSize minimumSizeHint()const override;
+  QSize sizeHint()const override;
 
 protected:
   /// Reimplemented for internal reasons
-  virtual void paintEvent(QPaintEvent*);
+  void paintEvent(QPaintEvent*) override;
 
 protected:
   QScopedPointer<ctkPushButtonPrivate> d_ptr;
-  ctkPushButton(ctkPushButtonPrivate*, QWidget* parent = 0);
+  ctkPushButton(ctkPushButtonPrivate*, QWidget* parent = nullptr);
 
 private:
   Q_DECLARE_PRIVATE(ctkPushButton);

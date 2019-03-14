@@ -43,7 +43,7 @@ public:
   typedef QObject Superclass;
   /// Disabled by default.
   ctkErrorLogAbstractMessageHandler();
-  virtual ~ctkErrorLogAbstractMessageHandler();
+  ~ctkErrorLogAbstractMessageHandler() override;
 
   virtual QString handlerName()const = 0;
 

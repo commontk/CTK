@@ -61,8 +61,8 @@ class CTK_WIDGETS_EXPORT ctkThumbnailLabel : public QWidget
   Q_PROPERTY(QColor selectedColor READ selectedColor WRITE setSelectedColor)
 public:
   typedef QWidget Superclass;
-  explicit ctkThumbnailLabel(QWidget* parent=0);
-  virtual ~ctkThumbnailLabel();
+  explicit ctkThumbnailLabel(QWidget* parent=nullptr);
+  ~ctkThumbnailLabel() override;
 
   void setText(const QString& text);
   QString text()const;
@@ -82,18 +82,18 @@ public:
   void setSelectedColor(const QColor& color);
   QColor selectedColor()const;
 
-  virtual QSize minimumSizeHint()const;
-  virtual QSize sizeHint()const;
-  virtual int heightForWidth(int width)const;
+  QSize minimumSizeHint()const override;
+  QSize sizeHint()const override;
+  int heightForWidth(int width)const override;
 
 protected:
   QScopedPointer<ctkThumbnailLabelPrivate> d_ptr;
 
-  virtual void paintEvent(QPaintEvent* event);
-  virtual void mousePressEvent(QMouseEvent* event);
-  virtual void mouseDoubleClickEvent(QMouseEvent* event);
+  void paintEvent(QPaintEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseDoubleClickEvent(QMouseEvent* event) override;
 
-  virtual void resizeEvent(QResizeEvent* event);
+  void resizeEvent(QResizeEvent* event) override;
 
 private:
   Q_DECLARE_PRIVATE(ctkThumbnailLabel);

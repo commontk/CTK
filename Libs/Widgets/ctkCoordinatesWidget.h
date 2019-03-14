@@ -77,8 +77,8 @@ class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget
   Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly)
 
 public:
-  explicit ctkCoordinatesWidget(QWidget* parent = 0);
-  virtual ~ctkCoordinatesWidget();
+  explicit ctkCoordinatesWidget(QWidget* parent = nullptr);
+  ~ctkCoordinatesWidget() override;
 
   /// Set/Get the dimension of the point
   /// The default dimension is 3

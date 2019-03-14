@@ -34,11 +34,11 @@ template<typename BaseClassType>
 class ctkFactoryPluginItem : public ctkAbstractFactoryFileBasedItem<BaseClassType>
 {
 public:
-  virtual bool load();
+  bool load() override;
   virtual QString loadErrorString()const;
 
 protected:
-  virtual BaseClassType* instanciator();
+  BaseClassType* instanciator() override;
 
 private:
   QPluginLoader    Loader;
@@ -50,8 +50,8 @@ template<typename BaseClassType>
 class ctkAbstractPluginFactory : public ctkAbstractFileBasedFactory<BaseClassType>
 {
 protected:
-  virtual bool isValidFile(const QFileInfo& file)const;
-  virtual ctkAbstractFactoryItem<BaseClassType>* createFactoryFileBasedItem();
+  bool isValidFile(const QFileInfo& file)const override;
+  ctkAbstractFactoryItem<BaseClassType>* createFactoryFileBasedItem() override;
 };
 
 #include "ctkAbstractPluginFactory.tpp"

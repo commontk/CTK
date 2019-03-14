@@ -45,10 +45,10 @@ public:
   typedef QWidget Superclass;
 
   /// Constructor
-  explicit ctkSettingsPanel(QWidget* parent = 0);
+  explicit ctkSettingsPanel(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~ctkSettingsPanel();
+  ~ctkSettingsPanel() override ;
 
   QSettings* settings()const;
   void setSettings(QSettings* settings);
@@ -84,7 +84,7 @@ public:
                         const char* propertySignal,
                         const QString& settingLabel = QString(),
                         SettingOptions options = OptionNone,
-                        QSettings * settings = 0);
+                        QSettings * settings = nullptr);
 
   /// \copybrief registerProperty
   /// \overload
@@ -93,7 +93,7 @@ public:
                                     const QByteArray& propertySignal,
                                     const QString& settingLabel = QString(),
                                     SettingOptions options = OptionNone,
-                                    QSettings * settings = 0);
+                                    QSettings * settings = nullptr);
 
   /// Set the setting to the property defined by the key.
   /// The old value can be restored using resetSettings()

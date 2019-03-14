@@ -62,8 +62,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarsToColorsWidget : public 
   Q_PROPERTY(bool editColors READ editColors WRITE setEditColors)
   Q_PROPERTY(bool areTopWidgetsVisible READ areTopWidgetsVisible WRITE setTopWidgetsVisible)
 public:
-  ctkVTKScalarsToColorsWidget(QWidget* parent = 0);
-  virtual ~ctkVTKScalarsToColorsWidget();
+  ctkVTKScalarsToColorsWidget(QWidget* parent = nullptr);
+  ~ctkVTKScalarsToColorsWidget() override;
 
   Q_INVOKABLE ctkVTKScalarsToColorsView* view()const;
   Q_INVOKABLE vtkControlPointsItem* currentControlPointsItem()const;

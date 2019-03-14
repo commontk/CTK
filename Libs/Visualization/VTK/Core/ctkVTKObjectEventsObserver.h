@@ -60,8 +60,8 @@ Q_OBJECT
   Q_PROPERTY(bool strictTypeCheck READ strictTypeCheck WRITE setStrictTypeCheck)
 public:
   typedef QObject Superclass;
-  explicit ctkVTKObjectEventsObserver(QObject* parent = 0);
-  virtual ~ctkVTKObjectEventsObserver();
+  explicit ctkVTKObjectEventsObserver(QObject* parent = nullptr);
+  ~ctkVTKObjectEventsObserver() override;
 
   virtual void printAdditionalInfo();
 
@@ -127,7 +127,7 @@ public:
   /// \sa addConnection(), reconnection(), removeAllConnections(),
   /// containsConnection()
   int removeConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
-                       const QObject* qt_obj = 0, const char* qt_slot = 0);
+                       const QObject* qt_obj = nullptr, const char* qt_slot = nullptr);
 
   ///
   /// Remove all the connections
@@ -159,7 +159,7 @@ public:
   /// \sa addConnection(), reconnection(), removeConnection(),
   /// removeAllConnections()
   bool containsConnection(vtkObject* vtk_obj, unsigned long vtk_event = vtkCommand::NoEvent,
-                          const QObject* qt_obj =0, const char* qt_slot =0)const;
+                          const QObject* qt_obj =nullptr, const char* qt_slot =nullptr)const;
 
 protected:
   QScopedPointer<ctkVTKObjectEventsObserverPrivate> d_ptr;

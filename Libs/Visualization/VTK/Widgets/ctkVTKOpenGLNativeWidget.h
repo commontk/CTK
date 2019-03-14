@@ -41,8 +41,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKOpenGLNativeWidget : public QVT
   Q_OBJECT
 public:
   typedef QVTKOpenGLNativeWidget Superclass;
-  explicit ctkVTKOpenGLNativeWidget(QWidget* parent = 0) : Superclass(parent){}
-  virtual ~ctkVTKOpenGLNativeWidget(){}
+  explicit ctkVTKOpenGLNativeWidget(QWidget* parent = nullptr) : Superclass(parent){}
+  ~ctkVTKOpenGLNativeWidget() override {}
 private:
   Q_DISABLE_COPY(ctkVTKOpenGLNativeWidget);
 };

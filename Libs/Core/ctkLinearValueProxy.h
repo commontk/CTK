@@ -45,12 +45,12 @@ class CTK_CORE_EXPORT ctkLinearValueProxy : public ctkValueProxy
 
 public:
   typedef ctkValueProxy Superclass;
-  explicit ctkLinearValueProxy(QObject* parent = 0);
-  virtual ~ctkLinearValueProxy();
+  explicit ctkLinearValueProxy(QObject* parent = nullptr);
+  ~ctkLinearValueProxy() override;
 
-  virtual double proxyValueFromValue(double value) const;
+  double proxyValueFromValue(double value) const override;
 
-  virtual double valueFromProxyValue(double proxyValue) const;
+  double valueFromProxyValue(double proxyValue) const override;
 
   virtual double coefficient() const;
   virtual double offset() const;

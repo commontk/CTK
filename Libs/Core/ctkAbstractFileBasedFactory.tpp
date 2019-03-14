@@ -147,7 +147,7 @@ template<typename BaseClassType>
 ctkAbstractFactoryItem<BaseClassType>* ctkAbstractFileBasedFactory<BaseClassType>
 ::createFactoryFileBasedItem()
 {
-  return 0;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

@@ -67,7 +67,7 @@ struct CTK_WIDGETS_EXPORT ctkControlPoint
 /// \ingroup Widgets
 struct CTK_WIDGETS_EXPORT ctkBezierControlPoint : public ctkControlPoint
 {
-  virtual ~ctkBezierControlPoint();
+  ~ctkBezierControlPoint() override;
   ctkPoint P1;
   ctkPoint P2;
 };
@@ -76,7 +76,7 @@ struct CTK_WIDGETS_EXPORT ctkBezierControlPoint : public ctkControlPoint
 /// \ingroup Widgets
 struct CTK_WIDGETS_EXPORT ctkNonLinearControlPoint : public ctkControlPoint
 {
-  virtual ~ctkNonLinearControlPoint();
+  ~ctkNonLinearControlPoint() override;
   QList<ctkPoint> SubPoints;
 };
 
@@ -86,8 +86,8 @@ class CTK_WIDGETS_EXPORT ctkTransferFunction: public QObject
 {
   Q_OBJECT
 public:
-  ctkTransferFunction(QObject* parent = 0);
-  virtual ~ctkTransferFunction();
+  ctkTransferFunction(QObject* parent = nullptr);
+  ~ctkTransferFunction() override;
 
   virtual ctkControlPoint* controlPoint(int index)const = 0;
   inline QVariant value(int index)const;

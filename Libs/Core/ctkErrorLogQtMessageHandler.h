@@ -43,8 +43,8 @@ public:
 
   static QString HandlerName;
 
-  virtual QString handlerName()const;
-  virtual void setEnabledInternal(bool value);
+  QString handlerName()const override;
+  void setEnabledInternal(bool value) override;
 
 #if QT_VERSION >= 0x50000
   QtMessageHandler SavedQtMessageHandler;

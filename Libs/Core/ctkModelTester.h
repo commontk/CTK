@@ -53,7 +53,7 @@ public:
   /// Constructor
   /// No model is set by default. To be tested, a model must be set using 
   /// setModel(...)
-  explicit ctkModelTester(QObject *parent = 0);
+  explicit ctkModelTester(QObject *parent = nullptr);
 
   ///
   /// Constructor that set the model to test.
@@ -62,11 +62,11 @@ public:
   ///             nestedInsert is false,
   ///             testDataEnabled is true,
   ///             verbose is true.
-  ctkModelTester(QAbstractItemModel *model, QObject *parent = 0);
+  ctkModelTester(QAbstractItemModel *model, QObject *parent = nullptr);
 
   ///
   /// Destructor
-  virtual ~ctkModelTester();
+  ~ctkModelTester() override ;
 
   ///
   /// Set the model to be tested, the model must remain valid during 

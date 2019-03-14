@@ -68,8 +68,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDataSetModel
 public:
   typedef ctkVTKDataSetModel Self;
   typedef QStandardItemModel Superclass;
-  ctkVTKDataSetModel(QObject *parent=0);
-  virtual ~ctkVTKDataSetModel();
+  ctkVTKDataSetModel(QObject *parent=nullptr);
+  ~ctkVTKDataSetModel() override;
 
   enum AttributeType
     {
@@ -125,7 +125,7 @@ protected Q_SLOTS:
 
 protected:
 
-  ctkVTKDataSetModel(ctkVTKDataSetModelPrivate* pimpl, QObject *parent=0);
+  ctkVTKDataSetModel(ctkVTKDataSetModelPrivate* pimpl, QObject *parent=nullptr);
 
   virtual void insertArray(vtkAbstractArray* array, int location);
   virtual void insertArray(vtkAbstractArray* array, int location, int row);

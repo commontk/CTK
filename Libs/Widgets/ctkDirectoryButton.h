@@ -90,14 +90,14 @@ public:
   /// Constructor
   /// Creates a default ctkDirectoryButton that points to the application
   /// current directory.
-  ctkDirectoryButton(QWidget * parent = 0);
+  ctkDirectoryButton(QWidget * parent = nullptr);
   /// Constructor
   /// Creates a ctkDirectoryButton that points to the given directory path
-  ctkDirectoryButton(const QString& directory, QWidget * parent = 0);
-  ctkDirectoryButton(const QIcon& icon, const QString& directory, QWidget * parent = 0);
+  ctkDirectoryButton(const QString& directory, QWidget * parent = nullptr);
+  ctkDirectoryButton(const QIcon& icon, const QString& directory, QWidget * parent = nullptr);
 
   /// Destructor
-  virtual ~ctkDirectoryButton();
+  ~ctkDirectoryButton() override ;
 
   /// Set/get the current directory
   /// If path is empty, the program's working directory, ("."), is used.

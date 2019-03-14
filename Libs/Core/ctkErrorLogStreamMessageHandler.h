@@ -36,12 +36,12 @@ public:
   typedef ctkErrorLogAbstractMessageHandler Superclass;
 
   ctkErrorLogStreamMessageHandler();
-  virtual ~ctkErrorLogStreamMessageHandler();
+  ~ctkErrorLogStreamMessageHandler() override;
 
   static QString HandlerName;
 
-  virtual QString handlerName()const;
-  virtual void setEnabledInternal(bool value);
+  QString handlerName()const override;
+  void setEnabledInternal(bool value) override;
 
 protected:
   QScopedPointer<ctkErrorLogStreamMessageHandlerPrivate> d_ptr;

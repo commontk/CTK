@@ -39,8 +39,8 @@ class CTK_QTTESTING_EXPORT ctkQtTestingUtility : public pqTestUtility
 public:
   typedef pqTestUtility Superclass;
 
-  ctkQtTestingUtility(QObject* parent=0);
-  ~ctkQtTestingUtility();
+  ctkQtTestingUtility(QObject* parent=nullptr);
+  ~ctkQtTestingUtility() override;
 
   void addDefaultCTKWidgetEventTranslatorsToTranslator(pqTestUtility* util);
   void addDefaultCTKWidgetEventPlayersToPlayer(pqTestUtility* util);

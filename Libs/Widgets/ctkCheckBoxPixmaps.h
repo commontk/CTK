@@ -76,8 +76,8 @@ public:
   ///
   /// The widget is used to retrieve the style of the checkboxes
   /// If the widget is 0 (not recommended) use the QApplication style.
-  ctkCheckBoxPixmaps(QWidget* parent = 0);
-  virtual ~ctkCheckBoxPixmaps();
+  ctkCheckBoxPixmaps(QWidget* parent = nullptr);
+  ~ctkCheckBoxPixmaps() override;
 
   ///
   /// Returns a pixmap for the given state .

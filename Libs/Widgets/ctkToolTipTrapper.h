@@ -75,11 +75,11 @@ class CTK_WIDGETS_EXPORT ctkToolTipTrapper : public QObject
 public:
   typedef QObject Superclass;
   /// Constructs a ToolTip trapper which is a child of objectParent
-  explicit ctkToolTipTrapper(QObject* objectParent = 0);
+  explicit ctkToolTipTrapper(QObject* objectParent = nullptr);
   explicit ctkToolTipTrapper(bool toolTipsTrapped,
                              bool toolTipsWordWordWrapped,
-                             QObject* objectParent = 0);
-  virtual ~ctkToolTipTrapper();
+                             QObject* objectParent = nullptr);
+  ~ctkToolTipTrapper() override;
 
   /// Returns true if the tooltips are trapped to prevent them from appearing.
   bool toolTipsTrapped()const;
@@ -89,7 +89,7 @@ public:
 
   /// Automatically called when the tooltips are trapped or word wrapped.
   /// You shouldn't have to call it manually.
-  bool eventFilter(QObject* watched, QEvent* event);
+  bool eventFilter(QObject* watched, QEvent* event) override;
 
 public Q_SLOTS:
   /// If true, installs the eventFilter on the application if it isn't already

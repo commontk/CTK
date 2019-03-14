@@ -48,12 +48,12 @@ Q_OBJECT
 public:
   typedef QObject Superclass;
   explicit ctkVTKConnection(QObject* parent);
-  virtual ~ctkVTKConnection();
+  ~ctkVTKConnection() override ;
 
   ///
   QString shortDescription();
   static QString shortDescription(vtkObject* vtk_obj, unsigned long vtk_event,
-    const QObject* qt_obj, const char* qt_slot = 0);
+    const QObject* qt_obj, const char* qt_slot = nullptr);
 
   /// 
   /// Warning the slot must have its signature order:

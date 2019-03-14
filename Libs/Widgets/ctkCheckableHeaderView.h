@@ -75,8 +75,8 @@ class CTK_WIDGETS_EXPORT ctkCheckableHeaderView : public QHeaderView
 {
   Q_OBJECT;
 public:
-  ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent=0);
-  virtual ~ctkCheckableHeaderView();
+  ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent=nullptr);
+  ~ctkCheckableHeaderView() override ;
 
   ///
   /// When setting the model, if PropagateToItems is true (by default), the check
@@ -85,10 +85,10 @@ public:
   /// (done by myView.setHeader(myCheckableHeaderView)), you can call
   /// myModel.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole)
   /// or myCheckableHeaderView->setCheckState(0, Qt::Checked)
-  virtual void setModel(QAbstractItemModel *model);
+  void setModel(QAbstractItemModel *model) override ;
 
   /// Reimplemented for internal reasons
-  virtual void setRootIndex(const QModelIndex &index);
+  void setRootIndex(const QModelIndex &index) override ;
 
   ///
   ///  Used to listen for focus in/out events.
@@ -96,7 +96,7 @@ public:
   /// \param e Event specific data.
   /// \return
   ///   True if the event should be filtered out.
-  virtual bool eventFilter(QObject *object, QEvent *e);
+  bool eventFilter(QObject *object, QEvent *e) override ;
   
   
   ///
@@ -127,8 +127,8 @@ private Q_SLOTS:
 protected:
   virtual void updateHeaderPixmaps(int first, int last);
   virtual void initStyleSectionOption(QStyleOptionHeader *option, int section, QRect rect)const;
-  virtual void mousePressEvent(QMouseEvent *e);
-  virtual void mouseReleaseEvent(QMouseEvent *e);
+  void mousePressEvent(QMouseEvent *e) override ;
+  void mouseReleaseEvent(QMouseEvent *e) override ;
   bool isPointInCheckBox(int section, QPoint pos)const;
 
 protected:

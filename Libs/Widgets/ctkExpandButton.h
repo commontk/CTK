@@ -50,8 +50,8 @@ public:
   /// Superclass typedef
   typedef QToolButton Superclass;
 
-  explicit ctkExpandButton(QWidget *_parent = 0);
-  virtual ~ctkExpandButton();
+  explicit ctkExpandButton(QWidget *_parent = nullptr);
+  ~ctkExpandButton() override ;
 
   void setMirrorOnExpand(bool newBehavior);
   bool mirrorOnExpand() const;
@@ -59,13 +59,13 @@ public:
   void setOrientation(Qt::Orientation newOrientation);
   Qt::Orientation orientation() const;
 
-  virtual QSize sizeHint() const;
+  QSize sizeHint() const override ;
 
 private Q_SLOTS:
   void updateIcon(Qt::LayoutDirection newDirection);
 
 protected:
-  virtual void nextCheckState();
+  void nextCheckState() override ;
 
 protected:
   QScopedPointer<ctkExpandButtonPrivate> d_ptr;

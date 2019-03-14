@@ -64,12 +64,12 @@ public:
 
   /// Constructors, builds a slider whose default values are the same as
   /// QSlider (vertical by default).
-  explicit ctkDoubleSlider(QWidget* parent = 0);
+  explicit ctkDoubleSlider(QWidget* parent = nullptr);
   /// Constructors, builds a slider whose default values are the same as
   /// QSlider (vertical by default).
-  explicit ctkDoubleSlider(Qt::Orientation orient, QWidget* parent = 0);
+  explicit ctkDoubleSlider(Qt::Orientation orient, QWidget* parent = nullptr);
   /// Destructor
-  virtual ~ctkDoubleSlider();
+  ~ctkDoubleSlider() override ;
 
   /// 
   /// This property holds the sliders's minimum value.
@@ -196,7 +196,7 @@ public:
   void setHandleToolTip(const QString& toolTip);
 
   /// Reimplemented for internal reasons (handle tooltip).
-  virtual bool eventFilter(QObject*, QEvent*);
+  bool eventFilter(QObject*, QEvent*) override ;
 
   /// Return a pointer to the QSlider used internally.
   /// Use with caution.

@@ -62,24 +62,24 @@ class CTK_WIDGETS_EXPORT ctkPixmapIconEngine
 public:
     ctkPixmapIconEngine();
     ctkPixmapIconEngine(const ctkPixmapIconEngine &);
-    ~ctkPixmapIconEngine();
-    void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state);
-    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state);
+    ~ctkPixmapIconEngine() override ;
+    void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) override ;
+    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) override ;
     ctkPixmapIconEngineEntry *bestMatch(const QSize &size, QIcon::Mode mode, QIcon::State state, bool sizeOnly);
-    QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state);
-    void addPixmap(const QPixmap &pixmap, QIcon::Mode mode, QIcon::State state);
-    void addFile(const QString &fileName, const QSize &size, QIcon::Mode mode, QIcon::State state);
+    QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state) override ;
+    void addPixmap(const QPixmap &pixmap, QIcon::Mode mode, QIcon::State state) override ;
+    void addFile(const QString &fileName, const QSize &size, QIcon::Mode mode, QIcon::State state) override ;
 
     // v2 functions
-    QString key() const;
+    QString key() const override ;
 #if QT_VERSION >= 0x050000
-    QIconEngine *clone() const;
+    QIconEngine *clone() const override ;
 #else
     QIconEngineV2 *clone() const;
 #endif
-    bool read(QDataStream &in);
-    bool write(QDataStream &out) const;
-    void virtual_hook(int id, void *data);
+    bool read(QDataStream &in) override ;
+    bool write(QDataStream &out) const override ;
+    void virtual_hook(int id, void *data) override ;
 
 private:
     ctkPixmapIconEngineEntry *tryMatch(const QSize &size, QIcon::Mode mode, QIcon::State state);

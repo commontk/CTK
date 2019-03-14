@@ -38,8 +38,8 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer : public QObject
 {
   Q_OBJECT
 public:
-  explicit ctkDICOMIndexer(QObject *parent = 0);
-  virtual ~ctkDICOMIndexer();
+  explicit ctkDICOMIndexer(QObject *parent = nullptr);
+  ~ctkDICOMIndexer() override;
 
   ///
   /// \brief Adds directory to database and optionally copies files to

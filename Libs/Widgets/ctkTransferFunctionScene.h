@@ -41,8 +41,8 @@ class CTK_WIDGETS_EXPORT ctkTransferFunctionScene: public QGraphicsScene
   Q_OBJECT
 
 public:
-  ctkTransferFunctionScene(QObject* parent = 0);
-  virtual ~ctkTransferFunctionScene();
+  ctkTransferFunctionScene(QObject* parent = nullptr);
+  ~ctkTransferFunctionScene() override;
 
 protected:
   QScopedPointer<ctkTransferFunctionScenePrivate> d_ptr;

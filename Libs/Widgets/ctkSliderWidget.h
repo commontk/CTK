@@ -93,8 +93,8 @@ public:
   typedef QWidget Superclass;
 
   /// Constructors
-  explicit ctkSliderWidget(QWidget* parent = 0);
-  virtual ~ctkSliderWidget();
+  explicit ctkSliderWidget(QWidget* parent = nullptr);
+  ~ctkSliderWidget() override ;
 
   /// 
   /// This property holds the sliders and spinbox minimum value.
@@ -304,7 +304,7 @@ protected Q_SLOTS:
   virtual void onValueProxyModified();
 
 protected:
-  virtual bool eventFilter(QObject *obj, QEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event) override;
   
 protected:
   QScopedPointer<ctkSliderWidgetPrivate> d_ptr;

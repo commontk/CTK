@@ -42,8 +42,8 @@ class CTK_WIDGETS_EXPORT ctkDynamicSpacer : public QWidget
   Q_PROPERTY(bool active READ isActive WRITE setActive);
 public:
   /// Constructor, builds a ctkDynamicSpacer, inactive by default
-  ctkDynamicSpacer(QWidget *parent = 0);
-  virtual ~ctkDynamicSpacer();
+  ctkDynamicSpacer(QWidget *parent = nullptr);
+  ~ctkDynamicSpacer() override;
 
   /// The active size policy of the spacer. By default the same as QWidget
   QSizePolicy activeSizePolicy() const;

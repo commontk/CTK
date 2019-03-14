@@ -58,10 +58,10 @@ public:
   typedef QDialog Superclass;
 
   /// Constructor
-  explicit ctkSettingsDialog(QWidget* parent = 0);
+  explicit ctkSettingsDialog(QWidget* parent = nullptr);
 
   /// Destructor
-  virtual ~ctkSettingsDialog();
+  ~ctkSettingsDialog() override;
 
   QSettings* settings()const;
   void setSettings(QSettings* settings);
@@ -74,21 +74,21 @@ public:
   /// This adds the specified settings panel to the dialog. The panel's
   /// QWidget::windowTitle property is used as the panel name as shown in the
   /// panels list.
-  Q_INVOKABLE void addPanel(ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
+  Q_INVOKABLE void addPanel(ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = nullptr);
 
   /// \copybrief addPanel
   ///
   /// This convenience overload allows the caller to specify the panel name
   /// that will be used in the panels list.
   Q_INVOKABLE void addPanel(const QString& label, ctkSettingsPanel* panel,
-                            ctkSettingsPanel* parentPanel = 0);
+                            ctkSettingsPanel* parentPanel = nullptr);
 
   /// \copybrief addPanel
   ///
   /// This convenience overload allows the caller to specify the panel name
   /// that will be used in the panels list, as well as an icon for the panel.
   Q_INVOKABLE void addPanel(const QString& label, const QIcon& icon,
-                            ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = 0);
+                            ctkSettingsPanel* panel, ctkSettingsPanel* parentPanel = nullptr);
 
   bool resetButton()const;
   void setResetButton(bool show);
@@ -113,8 +113,8 @@ public Q_SLOTS:
   /// the QSettings that were not made through ctkSettingsPanel.
   void reloadSettings();
 
-  virtual void accept();
-  virtual void reject();
+  void accept() override;
+  void reject() override;
 
   /// Resize the left panel based on the panels titles.
   void adjustTreeWidgetToContents();
@@ -132,7 +132,7 @@ protected Q_SLOTS:
   void onDialogButtonClicked(QAbstractButton* button);
 
 protected:
-  virtual bool event(QEvent *);
+  bool event(QEvent *) override;
 
 protected:
   QScopedPointer<ctkSettingsDialogPrivate> d_ptr;

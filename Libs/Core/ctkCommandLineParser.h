@@ -81,7 +81,7 @@ public:
    *
    * @param newParent The QObject parent.
    */
-  ctkCommandLineParser(QObject* newParent = 0);
+  ctkCommandLineParser(QObject* newParent = nullptr);
 
   /**
    * Constructs a parser instance.
@@ -98,9 +98,9 @@ public:
    *
    *
    */
-  ctkCommandLineParser(QSettings* settings, QObject* newParent = 0);
+  ctkCommandLineParser(QSettings* settings, QObject* newParent = nullptr);
 
-  ~ctkCommandLineParser();
+  ~ctkCommandLineParser() override;
   
   /**
    * Parse a given list of command line arguments.
@@ -122,13 +122,13 @@ public:
    * @return A QHash object mapping the long argument (if empty, the short one)
    *         to a QVariant containing the value.
    */
-  QHash<QString, QVariant> parseArguments(const QStringList &arguments, bool* ok = 0);
+  QHash<QString, QVariant> parseArguments(const QStringList &arguments, bool* ok = nullptr);
 
   /**
     * Convenient method allowing to parse a given list of command line arguments.
     * @see parseArguments(const QStringList &, bool*)
     */
-  QHash<QString, QVariant> parseArguments(int argc, char** argv, bool* ok = 0);
+  QHash<QString, QVariant> parseArguments(int argc, char** argv, bool* ok = nullptr);
 
   /**
    * Returns a detailed error description if a call to <code>parseArguments()</code>

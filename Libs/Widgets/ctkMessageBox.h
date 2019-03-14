@@ -66,10 +66,10 @@ class CTK_WIDGETS_EXPORT ctkMessageBox : public QMessageBox
 
 public:
   typedef QMessageBox Superclass;
-  ctkMessageBox(QWidget* newParent = 0);
+  ctkMessageBox(QWidget* newParent = nullptr);
   ctkMessageBox(Icon icon, const QString & title, const QString & text, StandardButtons buttons = NoButton,
-                QWidget * parent = 0, Qt::WindowFlags f = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint );
-  virtual ~ctkMessageBox();
+                QWidget * parent = nullptr, Qt::WindowFlags f = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint );
+  ~ctkMessageBox() override ;
 
   bool dontShowAgain()const;
 
@@ -83,13 +83,13 @@ public:
   /// If \a dontShowAgainKey is empty, the dontShowAgain checkbox is hidden
   /// and the message box is always open for the user to confirm exit.
   static bool confirmExit(const QString& dontShowAgainKey = QString(),
-                          QWidget* parentWidget = 0);
+                          QWidget* parentWidget = nullptr);
 
   /// Reimplemented for internal reasons
-  virtual void setVisible(bool visible);
+  void setVisible(bool visible) override ;
 
   /// Reimplemented for internal reasons
-  virtual void done(int resultCode);
+  void done(int resultCode) override ;
 
 public Q_SLOTS:
   /// Change the checkbox and the settings if any

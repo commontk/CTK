@@ -59,14 +59,14 @@ public:
   
   /// Constructor, builds a ctkDoubleRangeSlider whose default values are the same
   /// as ctkRangeSlider.
-  ctkDoubleRangeSlider( Qt::Orientation o, QWidget* par= 0 );
+  ctkDoubleRangeSlider( Qt::Orientation o, QWidget* par= nullptr );
 
   /// Constructor, builds a ctkDoubleRangeSlider whose default values are the same
   /// as ctkRangeSlider.
-  ctkDoubleRangeSlider( QWidget* par = 0 );
+  ctkDoubleRangeSlider( QWidget* par = nullptr );
   
   /// Destructor
-  virtual ~ctkDoubleRangeSlider();
+  ~ctkDoubleRangeSlider() override ;
   
   /// 
   /// This property holds the single step.

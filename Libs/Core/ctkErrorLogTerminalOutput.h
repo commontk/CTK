@@ -40,7 +40,7 @@ class CTK_CORE_EXPORT ctkErrorLogTerminalOutput : public QObject
 
 public:
   ctkErrorLogTerminalOutput();
-  virtual ~ctkErrorLogTerminalOutput();
+  ~ctkErrorLogTerminalOutput() override;
 
   enum TerminalOutput
     {

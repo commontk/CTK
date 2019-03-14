@@ -49,8 +49,8 @@ class CTK_WIDGETS_EXPORT ctkErrorLogModel : public QSortFilterProxyModel
 public:
   typedef QSortFilterProxyModel Superclass;
   typedef ctkErrorLogModel Self;
-  explicit ctkErrorLogModel(QObject* parentObject = 0);
-  virtual ~ctkErrorLogModel();
+  explicit ctkErrorLogModel(QObject* parentObject = nullptr);
+  ~ctkErrorLogModel() override;
 
   enum ColumnsIds
     {

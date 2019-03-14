@@ -77,7 +77,7 @@ public:
   /// property and object must be valid and non empty. If signal is 0,
   /// \a valueChanged(bool) and \a complementChanged(bool) won't be fired.
   ctkBooleanMapper(QObject* targetObject, const QByteArray& propertyName, const QByteArray& signal);
-  virtual ~ctkBooleanMapper();
+  ~ctkBooleanMapper() override;
 
   QByteArray propertyName()const;
 

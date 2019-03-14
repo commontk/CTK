@@ -40,9 +40,9 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKScalarBarWidget : public QWidge
 
 public:
   /// Constructors
-  ctkVTKScalarBarWidget(QWidget* parentWidget = 0);
-  ctkVTKScalarBarWidget(vtkScalarBarWidget* scalarBar, QWidget* parentWidget = 0);
-  virtual ~ctkVTKScalarBarWidget();
+  ctkVTKScalarBarWidget(QWidget* parentWidget = nullptr);
+  ctkVTKScalarBarWidget(vtkScalarBarWidget* scalarBar, QWidget* parentWidget = nullptr);
+  ~ctkVTKScalarBarWidget() override;
 
   vtkScalarBarWidget* scalarBarWidget()const;
 

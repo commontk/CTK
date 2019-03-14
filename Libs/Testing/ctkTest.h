@@ -106,7 +106,7 @@ static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButt
 #if (QT_VERSION < 0x50000 && QT_GUI_LIB) || (QT_VERSION >= 0x50000 && QT_WIDGETS_LIB)
 
 // ----------------------------------------------------------------------------
-inline void mouseMove(QWidget *widget, Qt::MouseButton button, Qt::KeyboardModifiers stateKey = 0,
+inline void mouseMove(QWidget *widget, Qt::MouseButton button, Qt::KeyboardModifiers stateKey = nullptr,
                       QPoint pos = QPoint(), int delay=-1)
   { ctkTest::mouseEvent(QTest::MouseMove, widget, button, stateKey, pos, delay); }
 

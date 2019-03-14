@@ -61,9 +61,9 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
 
 public:
-  explicit ctkDICOMDatabase(QObject *parent = 0);
+  explicit ctkDICOMDatabase(QObject *parent = nullptr);
   explicit ctkDICOMDatabase(QString databaseFile);
-  virtual ~ctkDICOMDatabase();
+  ~ctkDICOMDatabase() override;
 
   const QSqlDatabase& database() const;
   const QString lastError() const;

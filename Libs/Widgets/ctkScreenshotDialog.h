@@ -52,8 +52,8 @@ class CTK_WIDGETS_EXPORT ctkScreenshotDialog : public QDialog
 
 public:
   typedef QDialog Superclass;
-  ctkScreenshotDialog(QWidget* parent = 0);
-  virtual ~ctkScreenshotDialog();
+  ctkScreenshotDialog(QWidget* parent = nullptr);
+  ~ctkScreenshotDialog() override;
 
   /// Get widget to grab content from. If no widget is set, no screenshot will
   /// be taken.

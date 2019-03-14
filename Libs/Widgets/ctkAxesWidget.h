@@ -51,8 +51,8 @@ public :
     Posterior,
     };
   
-  ctkAxesWidget(QWidget *parent = 0);
-  virtual ~ctkAxesWidget();
+  ctkAxesWidget(QWidget *parent = nullptr);
+  ~ctkAxesWidget() override ;
 
   ///
   /// Current selected axis. None by default. 
@@ -97,16 +97,16 @@ public slots :
   QStringList axesLabels() const;
 
   /// Size hints
-  virtual QSize minimumSizeHint()const;
-  virtual QSize sizeHint()const;
-  virtual bool hasHeightForWidth()const;
-  virtual int heightForWidth(int width)const;
+  QSize minimumSizeHint()const override;
+  QSize sizeHint()const override;
+  bool hasHeightForWidth()const override;
+  int heightForWidth(int width)const override;
 
 protected: 
-  void paintEvent(QPaintEvent *);
-  void mousePressEvent(QMouseEvent *mouseEvent);
-  void mouseMoveEvent(QMouseEvent *mouseEvent);
-  void mouseReleaseEvent(QMouseEvent *mouseEvent);
+  void paintEvent(QPaintEvent *) override;
+  void mousePressEvent(QMouseEvent *mouseEvent) override;
+  void mouseMoveEvent(QMouseEvent *mouseEvent) override;
+  void mouseReleaseEvent(QMouseEvent *mouseEvent) override;
 
   QScopedPointer<ctkAxesWidgetPrivate> d_ptr;
 private :

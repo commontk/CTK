@@ -48,10 +48,10 @@ class CTK_WIDGETS_EXPORT ctkLayoutViewFactory: public QObject
   Q_PROPERTY(bool useCachedViews READ useCachedViews WRITE setUseCachedViews);
 public:
   /// Constructor
-  ctkLayoutViewFactory(QObject* parent = 0);
+  ctkLayoutViewFactory(QObject* parent = nullptr);
 
   /// Destructor
-  virtual ~ctkLayoutViewFactory();
+  ~ctkLayoutViewFactory() override ;
 
   /// Returns the list of element names supported by the factory (e.g. "view",
   /// "myview"...). Returns ["view"] by default.
@@ -174,12 +174,12 @@ template<class T>
 class ctkTemplateLayoutViewFactory: public ctkLayoutViewFactory
 {
 public:
-  ctkTemplateLayoutViewFactory(QObject* parent = 0)
+  ctkTemplateLayoutViewFactory(QObject* parent = nullptr)
     : ctkLayoutViewFactory(parent)
   {
     this->setUseCachedViews(true);
   }
-  virtual QWidget* createViewFromXML(QDomElement layoutElement){
+  QWidget* createViewFromXML(QDomElement layoutElement) override {
     Q_UNUSED(layoutElement);
     return new T;
     }

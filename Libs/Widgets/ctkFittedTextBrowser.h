@@ -48,8 +48,8 @@ class CTK_WIDGETS_EXPORT ctkFittedTextBrowser : public QTextBrowser
 
 
 public:
-  ctkFittedTextBrowser(QWidget* parent = 0);
-  virtual ~ctkFittedTextBrowser();
+  ctkFittedTextBrowser(QWidget* parent = nullptr);
+  ~ctkFittedTextBrowser() override ;
 
   /// Show only first line/the full text.
   /// Only has effect if collapsible = true.
@@ -73,11 +73,11 @@ public:
   Q_INVOKABLE QString collapsibleText() const;
 
   /// Reimplemented for internal reasons
-  virtual QSize sizeHint() const;
+  QSize sizeHint() const override ;
   /// Reimplemented for internal reasons
-  virtual QSize minimumSizeHint() const;
+  QSize minimumSizeHint() const override;
   /// Reimplemented for internal reasons
-  virtual int heightForWidth(int width) const;
+  int heightForWidth(int width) const override;
 
 public Q_SLOTS:
 
@@ -111,7 +111,7 @@ protected Q_SLOTS:
 protected:
   QScopedPointer<ctkFittedTextBrowserPrivate> d_ptr;
 
-  virtual void resizeEvent(QResizeEvent* e);
+  void resizeEvent(QResizeEvent* e) override;
 
 private:
   Q_DECLARE_PRIVATE(ctkFittedTextBrowser);

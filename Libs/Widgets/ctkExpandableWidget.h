@@ -70,8 +70,8 @@ class CTK_WIDGETS_EXPORT ctkExpandableWidget: public QFrame
 public:
   typedef QFrame Superclass;
 
-  ctkExpandableWidget(QWidget *parent=0);
-  virtual ~ctkExpandableWidget();
+  ctkExpandableWidget(QWidget *parent=nullptr);
+  ~ctkExpandableWidget() override;
 
   void setOrientations(Qt::Orientations orientations);
   Qt::Orientations orientations()const;
@@ -82,8 +82,8 @@ public:
   void setSizeGripMargins(QSize margins);
   QSize sizeGripMargins()const;
 
-  virtual QSize minimumSizeHint()const;
-  virtual QSize sizeHint()const;
+  QSize minimumSizeHint()const override;
+  QSize sizeHint()const override;
 
 public Q_SLOTS:
   /// Recompute the size hint of the widget and resize with regard to the
@@ -93,8 +93,8 @@ public Q_SLOTS:
 protected:
   QScopedPointer<ctkExpandableWidgetPrivate> d_ptr;
 
-  virtual void resizeEvent(QResizeEvent* event);
-  virtual bool event(QEvent* event);
+  void resizeEvent(QResizeEvent* event) override;
+  bool event(QEvent* event) override;
 
 private:
   Q_DECLARE_PRIVATE(ctkExpandableWidget);

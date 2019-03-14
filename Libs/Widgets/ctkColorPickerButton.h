@@ -66,19 +66,19 @@ public:
   Q_DECLARE_FLAGS(ColorDialogOptions, ColorDialogOption)
 
   /// By default, the color is black
-  explicit ctkColorPickerButton(QWidget* parent = 0);
+  explicit ctkColorPickerButton(QWidget* parent = nullptr);
 
   /// By default, the color is black. The text will be shown on the button if
   /// displayColorName is false, otherwise the color name is shown.
   /// \sa QPushButton::setText
-  explicit ctkColorPickerButton(const QString& text, QWidget* parent = 0 );
+  explicit ctkColorPickerButton(const QString& text, QWidget* parent = nullptr );
 
   /// The text will be shown on the button if
   /// displayColorName is false, otherwise the color name is shown.
   /// \sa setColor, QPushButton::setText
-  explicit ctkColorPickerButton(const QColor& color, const QString & text, QWidget* parent = 0 );
+  explicit ctkColorPickerButton(const QColor& color, const QString & text, QWidget* parent = nullptr );
 
-  virtual ~ctkColorPickerButton();
+  ~ctkColorPickerButton() override ;
 
   /// Current selected color
   QColor color()const;
@@ -107,7 +107,7 @@ public:
   ///
   /// Reimplemented to return a toolbutton sizehint when no text is displayed
   /// in the button.
-  virtual QSize sizeHint()const;
+  QSize sizeHint()const override;
 
 public Q_SLOTS:
   ///
@@ -137,7 +137,7 @@ protected Q_SLOTS:
   void onToggled(bool change = true);
 
 protected:
-  virtual void paintEvent(QPaintEvent* event);
+  void paintEvent(QPaintEvent* event) override;
 
   QScopedPointer<ctkColorPickerButtonPrivate> d_ptr;
 private :

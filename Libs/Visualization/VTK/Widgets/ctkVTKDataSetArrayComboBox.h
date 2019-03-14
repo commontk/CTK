@@ -47,8 +47,8 @@ public:
   typedef QComboBox Superclass;
 
   /// Constructors
-  explicit ctkVTKDataSetArrayComboBox(QWidget* parent = 0);
-  virtual ~ctkVTKDataSetArrayComboBox();
+  explicit ctkVTKDataSetArrayComboBox(QWidget* parent = nullptr);
+  ~ctkVTKDataSetArrayComboBox() override;
 
   vtkAbstractArray* currentArray()const;
   QString currentArrayName()const;

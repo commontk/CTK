@@ -66,10 +66,10 @@ public:
   /// Constructor
   /// If \li parent is null, ctkRangeWidget will be a top-leve widget
   /// \note The \li parent can be set later using QWidget::setParent()
-  explicit ctkRangeWidget(QWidget* parent = 0);
+  explicit ctkRangeWidget(QWidget* parent = nullptr);
   
   /// Destructor
-  virtual ~ctkRangeWidget();
+  ~ctkRangeWidget() override ;
 
   ///
   /// This property holds the sliders and spinbox minimum value.
@@ -243,7 +243,7 @@ protected Q_SLOTS:
   virtual void onValueProxyModified();
 
 protected:
-  virtual bool eventFilter(QObject *obj, QEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event) override ;
 
   /// can be used to change the slider by a custom one
   virtual void setSlider(ctkDoubleRangeSlider* slider);

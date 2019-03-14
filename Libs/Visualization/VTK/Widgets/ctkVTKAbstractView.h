@@ -59,8 +59,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKAbstractView : public QWidget
 public:
 
   typedef QWidget Superclass;
-  explicit ctkVTKAbstractView(QWidget* parent = 0);
-  virtual ~ctkVTKAbstractView();
+  explicit ctkVTKAbstractView(QWidget* parent = nullptr);
+  ~ctkVTKAbstractView() override;
 
 public Q_SLOTS:
   /// Notify QVTKWidget that the view needs to be rendered.
@@ -217,10 +217,10 @@ public:
   /// \sa setMultiSamples()
   static int multiSamples();
 
-  virtual QSize minimumSizeHint()const;
-  virtual QSize sizeHint()const;
-  virtual bool hasHeightForWidth()const;
-  virtual int heightForWidth(int width)const;
+  QSize minimumSizeHint()const override;
+  QSize sizeHint()const override;
+  bool hasHeightForWidth()const override;
+  int heightForWidth(int width)const override;
 
 protected Q_SLOTS:
   void onRender();

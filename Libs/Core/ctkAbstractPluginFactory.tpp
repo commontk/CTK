@@ -73,7 +73,7 @@ BaseClassType* ctkFactoryPluginItem<BaseClassType>::instanciator()
       {
       this->appendLoadErrorString(QString("Failed to instantiate plugin: %1").arg(this->path()));
       }
-    return 0;
+    return nullptr;
     }
   BaseClassType* castedObject = qobject_cast<BaseClassType*>(object);
   if (!castedObject)
@@ -87,7 +87,7 @@ BaseClassType* ctkFactoryPluginItem<BaseClassType>::instanciator()
             .arg(object->metaObject()->className()));
       }
     delete object; // Clean memory
-    return 0;
+    return nullptr;
     }
   return castedObject;
 }

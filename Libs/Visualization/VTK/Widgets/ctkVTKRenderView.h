@@ -53,8 +53,8 @@ public:
   enum RotateDirection { PitchUp, PitchDown, RollLeft, RollRight, YawLeft, YawRight };
 
   typedef ctkVTKAbstractView Superclass;
-  explicit ctkVTKRenderView(QWidget* parent = 0);
-  virtual ~ctkVTKRenderView();
+  explicit ctkVTKRenderView(QWidget* parent = nullptr);
+  ~ctkVTKRenderView() override;
 
 public Q_SLOTS:
   /// Show/Hide Orientation widget
@@ -140,7 +140,7 @@ public:
 
   /// Set window interactor
   /// Reimplemented to propagate interaction to Orientation widget
-  virtual void setInteractor(vtkRenderWindowInteractor* interactor);
+  void setInteractor(vtkRenderWindowInteractor* interactor) override;
 
   /// Return pitch, roll or yaw increment (in degree)
   double pitchRollYawIncrement()const;

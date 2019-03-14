@@ -45,10 +45,10 @@ public:
   typedef pqEventSource Superclass;
 
   ctkXMLEventSource(QObject* testUtility);
-  ~ctkXMLEventSource();
+  ~ctkXMLEventSource() override;
 
-  virtual void setContent(const QString& xmlfilename);
-  int getNextEvent(QString& widget, QString& command, QString&arguments, int& eventType);
+  void setContent(const QString& xmlfilename) override;
+  int getNextEvent(QString& widget, QString& command, QString&arguments, int& eventType) override;
 
   void setRestoreSettingsAuto(bool value);
   bool restoreSettingsAuto() const;

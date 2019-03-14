@@ -69,11 +69,11 @@ class CTK_WIDGETS_EXPORT ctkLanguageComboBox : public QComboBox
 public:
   typedef QComboBox Superclass;
   /// Constructor of ctkLanguageComboBox
-  ctkLanguageComboBox(QWidget *parent = 0);
+  ctkLanguageComboBox(QWidget *parent = nullptr);
   /// Constructor that specifies a default language.
   /// \sa defaultLanguage
-  ctkLanguageComboBox(const QString& defaultLanguage, QWidget *parent = 0);
-  virtual ~ctkLanguageComboBox();
+  ctkLanguageComboBox(const QString& defaultLanguage, QWidget *parent = nullptr);
+  ~ctkLanguageComboBox() override;
 
   /// Return the default language.
   /// \sa defaultLanguage, setDefaultLanguage()

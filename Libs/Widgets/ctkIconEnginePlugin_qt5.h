@@ -47,10 +47,10 @@ class CTK_WIDGETS_EXPORT ctkIconEnginePlugin
 {
   Q_OBJECT;
 public:
-  ctkIconEnginePlugin(QObject* parent = 0);
-  virtual ~ctkIconEnginePlugin();
+  ctkIconEnginePlugin(QObject* parent = nullptr);
+  ~ctkIconEnginePlugin() override ;
 
-  virtual QIconEngine* create(const QString& filename=QString());
+  QIconEngine* create(const QString& filename=QString()) override ;
 
   /// Support all the Qt image formats by default
   virtual QStringList keys()const;
@@ -103,9 +103,9 @@ class CTK_WIDGETS_EXPORT ctkIconEngine: public ctkPixmapIconEngine
 public:
   typedef ctkPixmapIconEngine Superclass;
   ctkIconEngine();
-  virtual ~ctkIconEngine();
-  virtual void addFile(const QString& fileName, const QSize& size,
-                       QIcon::Mode mode, QIcon::State state);
+  ~ctkIconEngine() override ;
+  void addFile(const QString& fileName, const QSize& size,
+                       QIcon::Mode mode, QIcon::State state) override ;
   /// Subdirectories where the icons should be searched, typically:
   /// "Small", "Medium", "Large", "XLarge" or
   /// "16x16", "32x32", "64x64", "128x128" or
@@ -113,7 +113,7 @@ public:
   void setSizeDirectories(const QStringList& sizeDirectories);
   QStringList sizeDirectories()const;
 
-  virtual QString key()const;
+  QString key()const override ;
 
 protected:
   QScopedPointer<ctkIconEnginePrivate> d_ptr;

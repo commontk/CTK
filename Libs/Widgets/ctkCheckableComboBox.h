@@ -38,8 +38,8 @@ class CTK_WIDGETS_EXPORT ctkCheckableComboBox : public QComboBox
   Q_OBJECT
 
 public:
-  ctkCheckableComboBox(QWidget *parent = 0);
-  virtual ~ctkCheckableComboBox();
+  ctkCheckableComboBox(QWidget *parent = nullptr);
+  ~ctkCheckableComboBox() override ;
   
   /// Use setCheckableModel instead of setModel()
   Q_INVOKABLE QAbstractItemModel* checkableModel()const;
@@ -62,7 +62,7 @@ public:
   Q_INVOKABLE ctkCheckableModelHelper* checkableModelHelper()const;
   
   /// Reimplemented for internal reasons
-  bool eventFilter(QObject *o, QEvent *e);
+  bool eventFilter(QObject *o, QEvent *e) override ;
   
 Q_SIGNALS:
   void checkedIndexesChanged();
@@ -72,7 +72,7 @@ protected Q_SLOTS:
 
 protected:
   /// Reimplemented for internal reasons
-  virtual void paintEvent(QPaintEvent*);
+  void paintEvent(QPaintEvent*) override ;
 
 protected:
   QScopedPointer<ctkCheckableComboBoxPrivate> d_ptr;

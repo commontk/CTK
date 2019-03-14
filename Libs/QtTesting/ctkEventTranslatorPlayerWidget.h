@@ -56,7 +56,7 @@ class CTK_QTTESTING_EXPORT ctkEventTranslatorPlayerWidget
 public:
   typedef QMainWindow Superclass;
   ctkEventTranslatorPlayerWidget();
-  ~ctkEventTranslatorPlayerWidget();
+  ~ctkEventTranslatorPlayerWidget() override;
 
   void addTestCase(QWidget* widget, QString fileName, void(*newCallback)(void* data));
   void addTestCase(QDialog* dialog, QString fileName, void(*newCallback)(void* data));

@@ -41,9 +41,9 @@ public:
   /// Constructor
   /// By default, behaves like a QColorDialog
   /// \sa QColorDialog()
-  explicit ctkColorDialog(QWidget* parent = 0);
-  explicit ctkColorDialog(const QColor& initial, QWidget* parent = 0);
-  virtual ~ctkColorDialog();
+  explicit ctkColorDialog(QWidget* parent = nullptr);
+  explicit ctkColorDialog(const QColor& initial, QWidget* parent = nullptr);
+  ~ctkColorDialog() override ;
 
   /// Add an extra widget under the file format combobox. If a label is
   /// given, it will appear in the first column.
@@ -89,7 +89,7 @@ public:
   /// The \a options argument allows you to customize the dialog;
   /// QColorDialog::DontUseNativeDialog is forced
   Q_INVOKABLE static QColor getColor(const QColor &initial, QWidget *parent,
-                         const QString &title, ColorDialogOptions options = 0);
+                         const QString &title, ColorDialogOptions options = nullptr);
   /// Return the last selected color name if any. getColorName() call is only
   /// valid after a getColor() call.
   /// \sa getColor
@@ -100,14 +100,14 @@ public:
   /// the widget whenever a QColor is changed, typically: SIGNAL(currentColorChanged(QColor)). It
   /// is internally connected to set the current color of the dialog
   Q_INVOKABLE static inline void addDefaultTab(QWidget* widget, const QString& label,
-                                   const char* colorSignal = 0,
-                                   const char* nameSignal = 0);
+                                   const char* colorSignal = nullptr,
+                                   const char* nameSignal = nullptr);
   /// Same as addDefaultTab, in addition, \a tabIndex control the tab index of the widget.
   /// If index is -1, the tab is appended (same as addDefaultTab). The last
   /// tab added with an index of 0 will be the first tab open
   Q_INVOKABLE static void insertDefaultTab(int tabIndex, QWidget* widget, const QString& label,
-                               const char* colorSignal = 0,
-                               const char* nameSignal = 0);
+                               const char* colorSignal = nullptr,
+                               const char* nameSignal = nullptr);
   /// Index of the tab to make default (active when getColor is called).
   /// -1 for the "Basic Colors", it's the default behavior
   Q_INVOKABLE static void setDefaultTab(int index);

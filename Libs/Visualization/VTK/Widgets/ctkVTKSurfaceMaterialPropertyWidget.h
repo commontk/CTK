@@ -41,7 +41,7 @@ public:
   /// Constructors
   ctkVTKSurfaceMaterialPropertyWidget(QWidget* parentWidget);
   ctkVTKSurfaceMaterialPropertyWidget(vtkProperty* property, QWidget* parentWidget);
-  virtual ~ctkVTKSurfaceMaterialPropertyWidget();
+  ~ctkVTKSurfaceMaterialPropertyWidget() override;
 
   vtkProperty* property()const;
 
@@ -54,13 +54,13 @@ protected Q_SLOTS:
 protected:
   QScopedPointer<ctkVTKSurfaceMaterialPropertyWidgetPrivate> d_ptr;
 
-  virtual void onColorChanged(const QColor& newColor);
-  virtual void onOpacityChanged(double newOpacity);
-  virtual void onAmbientChanged(double newAmbient);
-  virtual void onDiffuseChanged(double newDiffuse);
-  virtual void onSpecularChanged(double newSpecular);
-  virtual void onSpecularPowerChanged(double newSpecularPower);
-  virtual void onBackfaceCullingChanged(bool newBackfaceCulling);
+  void onColorChanged(const QColor& newColor) override;
+  void onOpacityChanged(double newOpacity) override;
+  void onAmbientChanged(double newAmbient) override;
+  void onDiffuseChanged(double newDiffuse) override;
+  void onSpecularChanged(double newSpecular) override;
+  void onSpecularPowerChanged(double newSpecularPower) override;
+  void onBackfaceCullingChanged(bool newBackfaceCulling) override;
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKSurfaceMaterialPropertyWidget);

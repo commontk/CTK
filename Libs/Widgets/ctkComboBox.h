@@ -58,8 +58,8 @@ class CTK_WIDGETS_EXPORT ctkComboBox : public QComboBox
   Q_ENUMS(ScrollEffect);
 public:
   /// Constructor, build a ctkComboBox that behaves like QComboBox.
-  explicit ctkComboBox(QWidget* parent = 0);
-  virtual ~ctkComboBox();
+  explicit ctkComboBox(QWidget* parent = nullptr);
+  ~ctkComboBox() override ;
 
   /// Empty by default (same behavior as QComboBox)
   void setDefaultText(const QString&);
@@ -101,9 +101,9 @@ public:
   void setScrollWheelEffect(ScrollEffect scroll);
 
   /// Reimplemented for internal reasons
-  virtual QSize minimumSizeHint()const;
+  QSize minimumSizeHint()const override ;
   /// Reimplemented for internal reasons
-  virtual QSize sizeHint()const;
+  QSize sizeHint()const override;
 
   /// Get current item's user data as string
   QString currentUserDataAsString()const;
@@ -114,9 +114,9 @@ public slots:
 
 protected:
   /// Reimplemented for internal reasons
-  virtual void paintEvent(QPaintEvent* event);
-  virtual void changeEvent(QEvent* event);
-  virtual void wheelEvent(QWheelEvent* event);
+  void paintEvent(QPaintEvent* event) override;
+  void changeEvent(QEvent* event) override;
+  void wheelEvent(QWheelEvent* event) override;
 
 protected:
   QScopedPointer<ctkComboBoxPrivate> d_ptr;

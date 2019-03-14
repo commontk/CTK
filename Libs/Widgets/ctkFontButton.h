@@ -61,14 +61,14 @@ class CTK_WIDGETS_EXPORT ctkFontButton: public QPushButton
 public:
   /// Constructor
   /// Creates a default ctkFontButton initialized with QApplication font
-  ctkFontButton(QWidget * parent = 0);
+  ctkFontButton(QWidget * parent = nullptr);
 
   /// Constructor
   /// Creates a ctkFontButton with a given font
-  ctkFontButton(const QFont& currentFont, QWidget * parent = 0);
+  ctkFontButton(const QFont& currentFont, QWidget * parent = nullptr);
   
   /// Destructor
-  virtual ~ctkFontButton();
+  ~ctkFontButton() override;
 
   /// Set/get the current font
   void setCurrentFont(const QFont& newFont);

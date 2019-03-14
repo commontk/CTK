@@ -95,8 +95,8 @@ public:
   /// even if a parent is passed, the popup will display outside the possible
   /// parent layout.
   /// \sa baseWidget().
-  explicit ctkBasePopupWidget(QWidget* parent = 0);
-  virtual ~ctkBasePopupWidget();
+  explicit ctkBasePopupWidget(QWidget* parent = nullptr);
+  ~ctkBasePopupWidget() override ;
 
   /// Widget the popup is attached to. It opens right under \a baseWidget
   /// and if the ctkBasePopupWidget sizepolicy contains the growFlag/shrinkFlag,
@@ -183,7 +183,7 @@ Q_SIGNALS:
   void popupOpened(bool open);
 
 protected:
-  explicit ctkBasePopupWidget(ctkBasePopupWidgetPrivate* pimpl, QWidget* parent = 0);
+  explicit ctkBasePopupWidget(ctkBasePopupWidgetPrivate* pimpl, QWidget* parent = nullptr);
   QScopedPointer<ctkBasePopupWidgetPrivate> d_ptr;
   Q_PROPERTY(double effectAlpha READ effectAlpha WRITE setEffectAlpha DESIGNABLE false)
   Q_PROPERTY(QRect effectGeometry READ effectGeometry WRITE setEffectGeometry DESIGNABLE false)
@@ -192,8 +192,8 @@ protected:
   QRect effectGeometry()const;
 
   virtual void setBaseWidget(QWidget* baseWidget);
-  virtual bool event(QEvent* event);
-  virtual void paintEvent(QPaintEvent*);
+  bool event(QEvent* event) override;
+  void paintEvent(QPaintEvent*) override;
 
 protected Q_SLOTS:
   virtual void onEffectFinished();

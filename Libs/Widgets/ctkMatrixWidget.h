@@ -58,10 +58,10 @@ public:
   typedef QWidget Superclass;
 
   /// Constructor, builds a 4x4 identity matrix
-  explicit ctkMatrixWidget(QWidget* parent = 0);
+  explicit ctkMatrixWidget(QWidget* parent = nullptr);
   /// Constructor, builds a custom rowsXcolumns matrix
-  explicit ctkMatrixWidget(int rows, int columns, QWidget* parent = 0);
-  virtual ~ctkMatrixWidget();
+  explicit ctkMatrixWidget(int rows, int columns, QWidget* parent = nullptr);
+  ~ctkMatrixWidget() override;
 
   /// Set the number of columns of the matrix
   /// \sa rowCount, setRowCount
@@ -139,8 +139,8 @@ public:
 
   ///
   /// Reimplemented from QAbstractScrollArea
-  virtual QSize minimumSizeHint () const;
-  virtual QSize sizeHint () const;
+  QSize minimumSizeHint () const override;
+  QSize sizeHint () const override;
 
 public Q_SLOTS:
 
@@ -161,11 +161,11 @@ Q_SIGNALS:
   void decimalsChanged(int);
 
 protected:
-  virtual void resizeEvent(QResizeEvent* event);
+  void resizeEvent(QResizeEvent* event) override;
 
   ///
   /// protected constructor to derive private implementations
-  ctkMatrixWidget(ctkMatrixWidgetPrivate& pvt, QWidget* parent=0);
+  ctkMatrixWidget(ctkMatrixWidgetPrivate& pvt, QWidget* parent=nullptr);
 private:
   QScopedPointer<ctkMatrixWidgetPrivate> d_ptr;
   Q_DECLARE_PRIVATE(ctkMatrixWidget);

@@ -61,8 +61,8 @@ class CTK_CORE_EXPORT ctkValueProxy : public QObject
 
 public:
   typedef QObject Superclass;
-  explicit ctkValueProxy(QObject* parent = 0);
-  virtual ~ctkValueProxy();
+  explicit ctkValueProxy(QObject* parent = nullptr);
+  ~ctkValueProxy() override;
 
   virtual double proxyValueFromValue(double value) const = 0;
   virtual double valueFromProxyValue(double proxyValue) const = 0;

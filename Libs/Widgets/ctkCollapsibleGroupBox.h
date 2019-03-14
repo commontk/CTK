@@ -45,9 +45,9 @@ class CTK_WIDGETS_EXPORT ctkCollapsibleGroupBox : public QGroupBox
   Q_PROPERTY(int collapsedHeight READ collapsedHeight WRITE setCollapsedHeight)
 
 public:
-  ctkCollapsibleGroupBox(QWidget* parent = 0);
-  ctkCollapsibleGroupBox(const QString& title, QWidget* parent = 0);
-  virtual ~ctkCollapsibleGroupBox();
+  ctkCollapsibleGroupBox(QWidget* parent = nullptr);
+  ctkCollapsibleGroupBox(const QString& title, QWidget* parent = nullptr);
+  ~ctkCollapsibleGroupBox() override ;
   
   /// Utility function to collapse the groupbox
   /// Collapse(close) the group box if collapse is true, expand(open)
@@ -65,10 +65,10 @@ public:
 
   /// Reimplemented for internal reasons
   /// Catch when a child widget's visibility is externally changed
-  virtual bool eventFilter(QObject* child, QEvent* e);
+  bool eventFilter(QObject* child, QEvent* e) override;
 
   /// Reimplemented for internal reasons
-  virtual void setVisible(bool show);
+  void setVisible(bool show) override;
 protected Q_SLOTS:
   /// called when the arrow indicator is clicked
   /// users can call it programatically by calling setChecked(bool)
@@ -77,7 +77,7 @@ protected Q_SLOTS:
 protected:
   QScopedPointer<ctkCollapsibleGroupBoxPrivate> d_ptr;
   /// reimplemented for internal reasons
-  virtual void childEvent(QChildEvent*);
+  void childEvent(QChildEvent*) override;
 
 #if QT_VERSION < 0x040600
   virtual void paintEvent(QPaintEvent*);

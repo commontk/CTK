@@ -47,14 +47,14 @@ class CTK_QTTESTING_EXPORT ctkXMLEventObserver : public pqEventObserver
 
 public:
   ctkXMLEventObserver(QObject* testUtility);
-  ~ctkXMLEventObserver();
+  ~ctkXMLEventObserver() override;
 
-  virtual void setStream(QTextStream* stream);
+  void setStream(QTextStream* stream) override;
 
-  virtual void onRecordEvent(const QString& widget,
+  void onRecordEvent(const QString& widget,
                              const QString& command,
                              const QString& arguments,
-                             const int& eventType);
+                             const int& eventType) override;
 
   void recordApplicationSettings();
   void recordApplicationSetting(const QString& startElement,

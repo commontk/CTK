@@ -57,7 +57,7 @@ public:
   QString registerFileItem(const QFileInfo& file);
 
   /// Get path associated with the library identified by \a key
-  virtual QString path(const QString& key);
+  QString path(const QString& key) override;
 
 protected:
   void registerAllFileItems(const QStringList& directories);

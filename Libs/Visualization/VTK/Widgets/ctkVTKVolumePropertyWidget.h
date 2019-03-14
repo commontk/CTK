@@ -49,8 +49,8 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKVolumePropertyWidget
   Q_PROPERTY(bool thresholdToggleVisibility READ isThresholdToggleVisible WRITE setThresholdToggleVisible)
 
 public:
-  ctkVTKVolumePropertyWidget(QWidget* parent = 0);
-  virtual ~ctkVTKVolumePropertyWidget();
+  ctkVTKVolumePropertyWidget(QWidget* parent = nullptr);
+  ~ctkVTKVolumePropertyWidget() override;
 
   vtkVolumeProperty* volumeProperty()const;
 

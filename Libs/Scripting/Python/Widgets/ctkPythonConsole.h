@@ -72,33 +72,33 @@ class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonConsole : public ctkConsole
   
 public:
   typedef ctkConsole Superclass;
-  ctkPythonConsole(QWidget* parentObject = 0);
-  virtual ~ctkPythonConsole();
+  ctkPythonConsole(QWidget* parentObject = nullptr);
+  ~ctkPythonConsole() override;
 
   /// Initialize
   void initialize(ctkAbstractPythonManager* newPythonManager);
 
   /// Returns the string used as primary prompt
-  virtual QString ps1() const;
+  QString ps1() const override;
 
   /// Set the string used as primary prompt
-  virtual void setPs1(const QString& newPs1);
+  void setPs1(const QString& newPs1) override;
 
   /// Returns the string used as secondary prompt
-  virtual QString ps2() const;
+  QString ps2() const override;
 
   /// Set the string used as secondary prompt
-  virtual void setPs2(const QString& newPs2);
+  void setPs2(const QString& newPs2) override;
 
 public Q_SLOTS:
 
 //  void executeScript(const QString&);
 
   /// Reset ps1 and ps2, clear the console and print the welcome message
-  virtual void reset();
+  void reset() override;
 
 protected:
-  virtual void executeCommand(const QString& command);
+  void executeCommand(const QString& command) override;
 
 private:
   Q_DECLARE_PRIVATE(ctkPythonConsole);
