@@ -63,12 +63,12 @@ public:
   {}
   ~ctkITKOutputWindow(){}
 
-  virtual void DisplayText(const char*) ITK_OVERRIDE;
-  virtual void DisplayErrorText(const char*) ITK_OVERRIDE;
-  virtual void DisplayWarningText(const char*) ITK_OVERRIDE;
+  virtual void DisplayText(const char*) override;
+  virtual void DisplayErrorText(const char*) override;
+  virtual void DisplayWarningText(const char*) override;
   virtual void DisplayGenericWarningText(const char*);
 
-  virtual void DisplayDebugText(const char*) ITK_OVERRIDE;
+  virtual void DisplayDebugText(const char*) override;
 
   QString parseText(const QString &text, ctkErrorLogContext &context);
 
