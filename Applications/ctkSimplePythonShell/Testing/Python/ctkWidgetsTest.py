@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 from ctk import *
 from qt import QTimer
