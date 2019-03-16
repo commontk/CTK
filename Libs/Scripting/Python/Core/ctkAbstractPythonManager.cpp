@@ -319,7 +319,11 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
         << QString("_updated_globals['__file__'] = '%1'").arg(filename)
         << "_ctk_executeFile_exc_info = None"
         << "try:"
+    #if PY_MAJOR_VERSION >= 3
+        << QString("    exec(open('%1').read(), _updated_globals)").arg(filename)
+    #else
         << QString("    execfile('%1', _updated_globals)").arg(filename)
+    #endif
         << "except Exception as e:"
         << "    _ctk_executeFile_exc_info = sys.exc_info()"
         << "finally:"

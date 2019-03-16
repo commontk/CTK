@@ -264,13 +264,13 @@ void ctkAbstractPythonManagerTester::testExecuteFile_data()
   QTest::newRow("0-emptyfile") << QString("")
                      << false;
 
-  QTest::newRow("1-helloworld") << QString("print 'Hello world'")
+  QTest::newRow("1-helloworld") << QString("print('Hello world')")
                      << false;
 
   QTest::newRow("2-syntaxerror") << QString("print '") // SyntaxError
                      << true;
 
-  QTest::newRow("3-check __file__ attribute") << QString("print 'This file is: %s' % __file__")
+  QTest::newRow("3-check __file__ attribute") << QString("print('This file is: %s' % __file__)")
                      << false;
 }
 
@@ -445,7 +445,11 @@ void ctkAbstractPythonManagerTester::testPythonModule_data()
 
   QTest::newRow("1") << ""
                      << "__main__.__builtins__"
+#if PY_MAJOR_VERSION < 3
                      << "__builtin__";
+#else
+                     << "builtins";
+#endif
 
   QTest::newRow("2") << "class foo: pass"
                      << "__main__.foo"

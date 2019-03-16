@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """ This module loads all the classes from the wrapped Qt libraries into
 its namespace."""
 
@@ -8,7 +10,7 @@ _CTK_VERBOSE_IMPORT = False
 
 for kit in __kits_to_load:
    try:
-     exec "from PythonQt.Qt%s import *" % (kit)
+     exec("from PythonQt.Qt%s import *" % kit)
    except ImportError as detail:
      if _CTK_VERBOSE_IMPORT:
        print(detail)
