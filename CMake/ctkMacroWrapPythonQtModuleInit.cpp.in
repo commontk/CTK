@@ -3,6 +3,8 @@
 #include <PythonQt.h>
 #include <Python.h>
 
+#include <QCoreApplication>
+
 //-----------------------------------------------------------------------------
 static PyMethodDef Py@TARGET_CONFIG@PythonQt_ClassMethods[] = {
 {NULL, NULL, 0, NULL}};
@@ -67,6 +69,12 @@ static struct PyModuleDef moduledef = {
 //-----------------------------------------------------------------------------
 void init@TARGET_CONFIG@PythonQt()
 {
+
+  if (!QCoreApplication::instance())
+    {
+    PythonQt::init(PythonQt::PythonAlreadyInitialized);
+    }
+
   static const char modulename[] = "@TARGET_CONFIG@PythonQt";
   PyObject *m;
   #if PY_MAJOR_VERSION >= 3
