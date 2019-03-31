@@ -123,13 +123,13 @@ int main(int argc, char** argv)
     ctkPythonConsole console;
     console.initialize(&pythonManager);
 
-    QMainWindow mainWindow;
-    mainWindow.setCentralWidget(&console);
-    mainWindow.resize(600, 280);
-    mainWindow.show();
+    QMainWindow * mainWindow = new QMainWindow();
+    mainWindow->setCentralWidget(&console);
+    mainWindow->resize(600, 280);
+    mainWindow->show();
 
     QLabel cursorPositionLabel;
-    mainWindow.statusBar()->addWidget(&cursorPositionLabel);
+    mainWindow->statusBar()->addWidget(&cursorPositionLabel);
 
     ctkCallback cursorPositionChangedCallback;
     cursorPositionChangedCallback.setCallbackData(&console);
