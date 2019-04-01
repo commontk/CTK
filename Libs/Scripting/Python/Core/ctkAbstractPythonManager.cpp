@@ -306,31 +306,27 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
   if (main)
     {
     QString path = QFileInfo(filename).absolutePath();
-    #if PY_MAJOR_VERSION >= 3
-      QString raiseWithTraceback("      raise(_ctk_executeFile_exc_info[1](None)).with_traceback()");
-    #else
-      QString raiseWithTraceback("      raise _ctk_executeFile_exc_info[1], None, _ctk_executeFile_exc_info[2]");
-    #endif
     // See http://nedbatchelder.com/blog/200711/rethrowing_exceptions_in_python.html
+    // Re-throwing is only needed in Python 2.7
     QStringList code = QStringList()
         << "import sys"
         << QString("sys.path.insert(0, '%1')").arg(path)
         << "_updated_globals = globals()"
         << QString("_updated_globals['__file__'] = '%1'").arg(filename)
+#if PY_MAJOR_VERSION >= 3
+        << QString("exec(open('%1').read(), _updated_globals)").arg(filename);
+#else
         << "_ctk_executeFile_exc_info = None"
         << "try:"
-    #if PY_MAJOR_VERSION >= 3
-        << QString("    exec(open('%1').read(), _updated_globals)").arg(filename)
-    #else
         << QString("    execfile('%1', _updated_globals)").arg(filename)
-    #endif
         << "except Exception as e:"
         << "    _ctk_executeFile_exc_info = sys.exc_info()"
         << "finally:"
         << "    del _updated_globals"
         << QString("    if sys.path[0] == '%1': sys.path.pop(0)").arg(path)
         << "    if _ctk_executeFile_exc_info:"
-        << raiseWithTraceback;
+        << "        raise _ctk_executeFile_exc_info[1], None, _ctk_executeFile_exc_info[2]";
+#endif
     this->executeString(code.join("\n"));
     //PythonQt::self()->handleError(); // Clear errorOccured flag
     }
