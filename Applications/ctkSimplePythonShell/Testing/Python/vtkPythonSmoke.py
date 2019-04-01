@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 #
 # Copied from VTK/Common/Testing/Python/PythonSmoke.py
@@ -43,7 +44,7 @@ except:
 try:
   b = vtk.vtkObject()
   d = b.SafeDownCast(o)
-  print(b, d)
+  print((b, d))
 except:
   print("Cannot downcast")
   qt.QApplication.exit(1)

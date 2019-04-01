@@ -12,6 +12,7 @@ where:
 
 * `<target>` is a string like `CTKWidgets`
 """
+from __future__ import print_function
 
 import errno
 import os
