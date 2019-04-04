@@ -100,7 +100,7 @@ void init@TARGET_CONFIG@PythonQt()
     {
     PyErr_SetString(PyExc_ImportError, (char*)"Failed to import PythonQt.@TARGET_CONFIG@");
 #if PY_MAJOR_VERSION >= 3
-    Py_RETURN_NONE;
+    return NULL;
 #else
     return;
 #endif
