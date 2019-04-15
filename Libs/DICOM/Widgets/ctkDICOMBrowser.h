@@ -64,6 +64,8 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
   Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
   Q_PROPERTY(ctkDICOMBrowser::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
+  Q_PROPERTY(SchemaUpdateOption schemaUpdateOption READ schemaUpdateOption WRITE setSchemaUpdateOption)
+  Q_PROPERTY(bool confirmRemove READ confirmRemove WRITE setConfirmRemove)
 
 public:
   typedef ctkDICOMBrowser Self;
@@ -85,20 +87,23 @@ public:
   void setTagsToPrecache(const QStringList tags);
   const QStringList tagsToPrecache();
 
-  /// Updates schema of loaded database to match the one
-  /// coded by the current version of ctkDICOMDatabase.
-  /// Also provides a dialog box for progress
-  Q_INVOKABLE void updateDatabaseSchemaIfNeeded();
+  /// If the schema version of the loaded database does not match the one supported, then
+  /// based on \sa schemaUpdateOption update the database, don't update, or ask the user.
+  /// Provides a dialog box for progress if updating.
+  /// \return Flag determining whether new database has been set. In that case prevent circular calls.
+  Q_INVOKABLE bool updateDatabaseSchemaIfNeeded();
 
   Q_INVOKABLE ctkDICOMDatabase* database();
 
   Q_INVOKABLE ctkDICOMTableManager* dicomTableManager();
 
   /// Option to show or not import summary dialog.
-  /// Since the summary dialog is modal, we give the option
-  /// of disabling it for batch modes or testing.
+  /// Since the summary dialog is modal, we give the option of disabling it for batch modes or testing.
   void setDisplayImportSummary(bool);
   bool displayImportSummary();
+  /// Option to show dialog to confirm removal from the database (Remove action).
+  void setConfirmRemove(bool);
+  bool confirmRemove();
   /// Accessors to status of last directory import operation
   int patientsAddedDuringImport();
   int studiesAddedDuringImport();
@@ -116,6 +121,22 @@ public:
   /// \sa setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode)
   ctkDICOMBrowser::ImportDirectoryMode importDirectoryMode()const;
 
+  /// Schema update behavior: what to do when the supported schema version is different from that of the loaded database
+  enum SchemaUpdateOption
+  {
+    AlwaysUpdate = 0,
+    NeverUpdate,
+    AskUser
+  };
+  /// Get \sa SchemaUpdateOption enum from string
+  static ctkDICOMBrowser::SchemaUpdateOption schemaUpdateOptionFromString(QString option);
+  /// Get string from \sa SchemaUpdateOption enum
+  static QString schemaUpdateOptionToString(ctkDICOMBrowser::SchemaUpdateOption option);
+
+  /// Get schema update option (whether to update automatically). Default is always update
+  /// \sa setSchemaUpdateOption
+  ctkDICOMBrowser::SchemaUpdateOption schemaUpdateOption()const;
+  
   /// \brief Return instance of import dialog.
   ///
   /// \internal
@@ -131,13 +152,17 @@ public Q_SLOTS:
   /// \sa importDirectoryMode()
   void setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode mode);
 
+  /// Set schema update option (whether to update automatically). Default is always update
+  /// \sa schemaUpdateOption
+  void setSchemaUpdateOption(ctkDICOMBrowser::SchemaUpdateOption option);
+
   void setDatabaseDirectory(const QString& directory);
   void onFileIndexed(const QString& filePath);
 
   /// \brief Pop-up file dialog allowing to select and import one or multiple
   /// DICOM directories.
   ///
-  /// The dialog is extented with two additional controls:
+  /// The dialog is extended with two additional controls:
   ///
   /// * **ImportDirectoryMode** combox: Allow user to select "Add Link" or "Copy" mode.
   ///   Associated settings is stored using key `DICOM/ImportDirectoryMode`.
@@ -176,12 +201,15 @@ public Q_SLOTS:
   void onSeriesAdded(QString);
   void onInstanceAdded(QString);
 
+  /// Show progress dialog for update displayed fields
+  void showUpdateDisplayedFieldsDialog();
+
 Q_SIGNALS:
-  /// Emited when directory is changed
+  /// Emitted when directory is changed
   void databaseDirectoryChanged(const QString&);
-  /// Emited when query/retrieve operation has happened
+  /// Emitted when query/retrieve operation has happened
   void queryRetrieveFinished();
-  /// Emited when the directory import operation has completed
+  /// Emitted when the directory import operation has completed
   void directoryImported();
 
 protected:

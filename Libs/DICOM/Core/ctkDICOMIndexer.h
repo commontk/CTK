@@ -148,6 +148,9 @@ Q_SIGNALS:
   void progress(int);
   void indexingComplete();
 
+  /// Trigger showing progress dialog for displayed fields update
+  void displayedFieldsUpdateStarted();
+
 public Q_SLOTS:
   void cancel();
 

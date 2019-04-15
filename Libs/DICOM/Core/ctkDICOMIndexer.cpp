@@ -140,31 +140,34 @@ void ctkDICOMIndexer::addListOfFiles(ctkDICOMDatabase& database,
   QTime timeProbe;
   timeProbe.start();
   d->Canceled = false;
-  int CurrentFileIndex = 0;
+  int currentFileIndex = 0;
   int lastReportedPercent = 0;
   foreach(QString filePath, listOfFiles)
   {
-    int percent = ( 100 * CurrentFileIndex ) / listOfFiles.size();
+    int percent = ( 100 * currentFileIndex ) / listOfFiles.size();
     if (lastReportedPercent / 10 < percent / 10)
-      {
+    {
       // Reporting progress has a huge overhead (pending events are processed,
       // database is updated), therefore only report progress at every 10% increase
       emit this->progress(percent);
       lastReportedPercent = percent;
-      }
+    }
     this->addFile(database, filePath, destinationDirectoryName);
-    CurrentFileIndex++;
+    currentFileIndex++;
 
-    if( d->Canceled )
-      {
+    if (d->Canceled)
+    {
       break;
-      }
+    }
   }
+
+  // Update displayed fields according to inserted DICOM datasets
+  emit displayedFieldsUpdateStarted();
+  database.updateDisplayedFields();
+
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-  qDebug()
-      << QString("DICOM indexer has successfully processed %1 files [%2s]")
-         .arg(CurrentFileIndex)
-         .arg(QString::number(elapsedTimeInSeconds,'f', 2));
+  qDebug() << QString("DICOM indexer has successfully processed %1 files [%2s]")
+    .arg(currentFileIndex).arg(QString::number(elapsedTimeInSeconds,'f', 2));
 }
 
 //------------------------------------------------------------------------------

@@ -13,6 +13,8 @@ set(KIT_SRCS
   ctkDICOMDatabase.cpp
   ctkDICOMDatabase.h
   ctkDICOMItem.h
+  ctkDICOMDisplayedFieldGenerator.cpp
+  ctkDICOMDisplayedFieldGenerator.h
   ctkDICOMFilterProxyModel.cpp
   ctkDICOMFilterProxyModel.h
   ctkDICOMIndexer.cpp
@@ -32,11 +34,17 @@ set(KIT_SRCS
   ctkDICOMTester.h
   ctkDICOMUtil.cpp
   ctkDICOMUtil.h
+  ctkDICOMDisplayedFieldGeneratorAbstractRule.h
+  ctkDICOMDisplayedFieldGeneratorDefaultRule.h
+  ctkDICOMDisplayedFieldGeneratorDefaultRule.cpp
+  ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule.h
+  ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule.cpp
 )
 
 # Abstract class should not be wrapped !
 set_source_files_properties(
   ctkDICOMAbstractThumbnailGenerator.h
+  ctkDICOMDisplayedFieldGeneratorAbstractRule.h
   WRAP_EXCLUDE
   )
 
@@ -44,6 +52,8 @@ set_source_files_properties(
 set(KIT_MOC_SRCS
   ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDatabase.h
+  ctkDICOMDisplayedFieldGenerator.h
+  ctkDICOMDisplayedFieldGenerator_p.h
   ctkDICOMIndexer.h
   ctkDICOMIndexer_p.h
   ctkDICOMFilterProxyModel.h

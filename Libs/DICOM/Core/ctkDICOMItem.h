@@ -223,6 +223,9 @@ public:
     /// \brief Nicely formatted (group,element) version of a tag
     ///
     static QString TagKey( const DcmTag& tag );
+    /// \brief Formatted group,element version of a tag.
+    /// The difference from \sa TagKey is the lack of parentheses
+    static QString TagKeyStripped( const DcmTag& tag );
 
     ///
     /// \brief Description (name) of the tag
