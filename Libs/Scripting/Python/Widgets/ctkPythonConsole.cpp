@@ -186,14 +186,20 @@ int ctkPythonConsoleCompleter::parameterCountBuiltInFunction(const QString& pyth
 {
   int parameterCount = 0;
   PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
-  if (pFunction && PyObject_HasAttrString(pFunction, "__doc__"))
+  if (pFunction)
     {
-    PyObject* pDoc = PyObject_GetAttrString(pFunction, "__doc__");
-    QString docString = PyString_AsString(pDoc);
-    QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
-    QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
-    parameterCount = arguments.count();
-    Py_DECREF(pDoc);
+    if (PyObject_HasAttrString(pFunction, "__doc__"))
+      {
+      PyObject* pDoc = PyObject_GetAttrString(pFunction, "__doc__");
+      if (PyString_Check(pDoc))
+        {
+        QString docString = PyString_AsString(pDoc);
+        QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
+        QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
+        parameterCount = arguments.count();
+        }
+      Py_DECREF(pDoc);
+      }
     Py_DECREF(pFunction);
     }
   return parameterCount;
@@ -206,7 +212,11 @@ int ctkPythonConsoleCompleter::parameterCountUserDefinedFunction(const QString& 
   PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
   if (PyCallable_Check(pFunction))
     {
+#if PY_MAJOR_VERSION >= 3
+    PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
+#else
     PyObject* fc = PyObject_GetAttrString(pFunction, "func_code");
+#endif
     if (fc)
        {
       PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
@@ -228,7 +238,11 @@ int ctkPythonConsoleCompleter::parameterCountUserDefinedClassFunction(const QStr
   PyObject* pFunction = this->PythonManager.pythonObject(pythonFunctionName);
   if (PyCallable_Check(pFunction))
     {
+#if PY_MAJOR_VERSION >= 3
+    PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
+#else
     PyObject* fc = PyObject_GetAttrString(pFunction, "func_code");
+#endif
     if (fc)
       {
       PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
@@ -260,6 +274,7 @@ int ctkPythonConsoleCompleter::parameterCountFromDocumentation(const QString& py
         QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
         parameterCount = arguments.count();
         }
+      Py_DECREF(pDoc);
       }
     Py_DECREF(pFunction);
     }
