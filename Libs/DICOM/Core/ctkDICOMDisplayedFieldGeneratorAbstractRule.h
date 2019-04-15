@@ -42,6 +42,8 @@ class ctkDICOMDatabase;
 class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorAbstractRule
 {
 public:
+  virtual ~ctkDICOMDisplayedFieldGeneratorAbstractRule(){}
+
   /// Generate displayed fields for a certain instance based on its cached tags
   /// Each rule plugin has the chance to fill any field in the series, study, and patient fields.
   /// The way these generated fields will be used is defined by \sa mergeDisplayedFieldsForInstance
