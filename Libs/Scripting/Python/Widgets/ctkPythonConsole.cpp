@@ -186,14 +186,20 @@ int ctkPythonConsoleCompleter::parameterCountBuiltInFunction(const QString& pyth
 {
   int parameterCount = 0;
   PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
-  if (pFunction && PyObject_HasAttrString(pFunction, "__doc__"))
+  if (pFunction)
     {
-    PyObject* pDoc = PyObject_GetAttrString(pFunction, "__doc__");
-    QString docString = PyString_AsString(pDoc);
-    QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
-    QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
-    parameterCount = arguments.count();
-    Py_DECREF(pDoc);
+    if (PyObject_HasAttrString(pFunction, "__doc__"))
+      {
+      PyObject* pDoc = PyObject_GetAttrString(pFunction, "__doc__");
+      if (PyString_Check(pDoc))
+        {
+        QString docString = PyString_AsString(pDoc);
+        QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
+        QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
+        parameterCount = arguments.count();
+        }
+      Py_DECREF(pDoc);
+      }
     Py_DECREF(pFunction);
     }
   return parameterCount;
@@ -268,6 +274,7 @@ int ctkPythonConsoleCompleter::parameterCountFromDocumentation(const QString& py
         QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
         parameterCount = arguments.count();
         }
+      Py_DECREF(pDoc);
       }
     Py_DECREF(pFunction);
     }
