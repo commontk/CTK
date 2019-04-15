@@ -42,6 +42,8 @@ class ctkDICOMDatabase;
 class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorAbstractRule
 {
 public:
+  virtual ~ctkDICOMDisplayedFieldGeneratorAbstractRule(){}
+
   /// Generate displayed fields for a certain instance based on its cached tags
   /// Each rule plugin has the chance to fill any field in the series, study, and patient fields.
   /// The way these generated fields will be used is defined by \sa mergeDisplayedFieldsForInstance
@@ -63,7 +65,7 @@ public:
   virtual QStringList getRequiredDICOMTags()=0;
 
   /// Utility function to convert a DICOM tag enum to string
-  static QString dicomTagToString(DcmTagKey& tag)
+  static QString dicomTagToString(const DcmTagKey& tag)
   {    
     return QString("%1,%2").arg(tag.getGroup(),4,16,QLatin1Char('0')).arg(tag.getElement(),4,16,QLatin1Char('0'));
   }  

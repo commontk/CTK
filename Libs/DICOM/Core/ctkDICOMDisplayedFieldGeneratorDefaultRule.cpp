@@ -72,6 +72,9 @@ void ctkDICOMDisplayedFieldGeneratorDefaultRule::registerEmptyFieldNames(
   QMap<QString, QString> emptyFieldsDisplayStudies,
   QMap<QString, QString> emptyFieldsDisplayPatients )
 {
+  Q_UNUSED(emptyFieldsDisplaySeries);
+  Q_UNUSED(emptyFieldsDisplayStudies);
+  Q_UNUSED(emptyFieldsDisplayPatients);
   emptyFieldsDisplaySeries.insertMulti("SeriesDescription", EMPTY_SERIES_DESCRIPTION);
 }
 

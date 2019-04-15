@@ -126,5 +126,13 @@ void ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::mergeDisp
   const QMap<QString, QString> &emptyFieldsSeries, const QMap<QString, QString> &emptyFieldsStudy, const QMap<QString, QString> &emptyFieldsPatient
   )
 {
+  Q_UNUSED(initialFieldsStudy);
+  Q_UNUSED(initialFieldsPatient);
+  Q_UNUSED(newFieldsStudy);
+  Q_UNUSED(newFieldsPatient);
+  Q_UNUSED(mergedFieldsStudy);
+  Q_UNUSED(mergedFieldsPatient);
+  Q_UNUSED(emptyFieldsStudy);
+  Q_UNUSED(emptyFieldsPatient);
   mergeConcatenate("SeriesDescription", initialFieldsSeries, newFieldsSeries, mergedFieldsSeries, emptyFieldsSeries);
 }
