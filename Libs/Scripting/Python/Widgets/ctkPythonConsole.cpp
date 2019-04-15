@@ -206,7 +206,11 @@ int ctkPythonConsoleCompleter::parameterCountUserDefinedFunction(const QString& 
   PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
   if (PyCallable_Check(pFunction))
     {
+#if PY_MAJOR_VERSION >= 3
+    PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
+#else
     PyObject* fc = PyObject_GetAttrString(pFunction, "func_code");
+#endif
     if (fc)
        {
       PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
@@ -228,7 +232,11 @@ int ctkPythonConsoleCompleter::parameterCountUserDefinedClassFunction(const QStr
   PyObject* pFunction = this->PythonManager.pythonObject(pythonFunctionName);
   if (PyCallable_Check(pFunction))
     {
+#if PY_MAJOR_VERSION >= 3
+    PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
+#else
     PyObject* fc = PyObject_GetAttrString(pFunction, "func_code");
+#endif
     if (fc)
       {
       PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
