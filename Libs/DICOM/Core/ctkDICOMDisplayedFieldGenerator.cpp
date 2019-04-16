@@ -109,19 +109,18 @@ void ctkDICOMDisplayedFieldGenerator::updateDisplayedFieldsForInstance( QString 
   QMap<QString, QString> newFieldsPatient;
   foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
   {
-    rule->getDisplayedFieldsForInstance(cachedTagsForInstance, newFieldsSeries, newFieldsStudy, newFieldsPatient);   
-  }
-  QMap<QString, QString> initialFieldsSeries=displayedFieldsForCurrentSeries;
-  QMap<QString, QString> initialFieldsStudy=displayedFieldsForCurrentStudy;
-  QMap<QString, QString> initialFieldsPatient=displayedFieldsForCurrentPatient;   
-  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
-  {
+    QMap<QString, QString> initialFieldsSeries = displayedFieldsForCurrentSeries;
+    QMap<QString, QString> initialFieldsStudy = displayedFieldsForCurrentStudy;
+    QMap<QString, QString> initialFieldsPatient = displayedFieldsForCurrentPatient;
+
+    rule->getDisplayedFieldsForInstance(cachedTagsForInstance, newFieldsSeries, newFieldsStudy, newFieldsPatient);
+
     rule->mergeDisplayedFieldsForInstance(
       initialFieldsSeries, initialFieldsStudy, initialFieldsPatient, // original DB contents
       newFieldsSeries, newFieldsStudy, newFieldsPatient, // new value
       displayedFieldsForCurrentSeries, displayedFieldsForCurrentStudy, displayedFieldsForCurrentPatient, // new DB contents
       d->EmptyFieldNamesSeries, d->EmptyFieldNamesStudies, d->EmptyFieldNamesPatients // empty field names defined by all the rules
-      );   
+    );
   }
 }
 
