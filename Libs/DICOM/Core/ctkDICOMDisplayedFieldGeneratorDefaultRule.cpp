@@ -99,7 +99,7 @@ void ctkDICOMDisplayedFieldGeneratorDefaultRule::getDisplayedFieldsForInstance(
   displayedFieldsForCurrentSeries["StudyInstanceUID"] = cachedTagsForInstance[dicomTagToString(DCM_StudyInstanceUID)];
   displayedFieldsForCurrentSeries["SeriesNumber"] = cachedTagsForInstance[dicomTagToString(DCM_SeriesNumber)];
   displayedFieldsForCurrentSeries["Modality"] = cachedTagsForInstance[dicomTagToString(DCM_Modality)];
-  displayedFieldsForCurrentPatient["SeriesDescription"] = cachedTagsForInstance[dicomTagToString(DCM_SeriesDescription)];
+  displayedFieldsForCurrentSeries["SeriesDescription"] = cachedTagsForInstance[dicomTagToString(DCM_SeriesDescription)];
   if ( cachedTagsForInstance.contains(dicomTagToString(DCM_Rows)) && !cachedTagsForInstance[dicomTagToString(DCM_Rows)].isEmpty()
     && cachedTagsForInstance.contains(dicomTagToString(DCM_Columns)) && !cachedTagsForInstance[dicomTagToString(DCM_Columns)].isEmpty() )
   {
