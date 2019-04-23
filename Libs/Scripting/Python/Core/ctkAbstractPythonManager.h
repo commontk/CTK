@@ -41,6 +41,7 @@ class PythonQtObjectPtr;
 class CTK_SCRIPTING_PYTHON_CORE_EXPORT ctkAbstractPythonManager : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(bool systemExitExceptionHandlerEnabled READ systemExitExceptionHandlerEnabled WRITE setSystemExitExceptionHandlerEnabled)
 
 public:
   typedef QObject Superclass;
