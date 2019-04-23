@@ -278,6 +278,28 @@ void ctkAbstractPythonManager::setSystemExitExceptionHandlerEnabled(bool value)
 }
 
 //-----------------------------------------------------------------------------
+bool ctkAbstractPythonManager::redirectStdOutCallbackEnabled()const
+{
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return false;
+    }
+  return PythonQt::self()->redirectStdOutCallbackEnabled();
+}
+
+//-----------------------------------------------------------------------------
+void ctkAbstractPythonManager::setRedirectStdOutCallbackEnabled(bool value)
+{
+  if (!PythonQt::self())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: PythonQt is not initialized";
+    return;
+    }
+  PythonQt::self()->setRedirectStdOutCallbackEnabled(value);
+}
+
+//-----------------------------------------------------------------------------
 QVariant ctkAbstractPythonManager::executeString(const QString& code,
                                                  ctkAbstractPythonManager::ExecuteStringMode mode)
 {
