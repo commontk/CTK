@@ -27,7 +27,7 @@
 // CTK includes
 #include "ctkWidgetsExport.h"
 
-class ctkErrorLogModel;
+class ctkErrorLogAbstractModel;
 class ctkErrorLogWidgetPrivate;
 class QAbstractButton;
 class QItemSelection;
@@ -42,8 +42,8 @@ public:
   explicit ctkErrorLogWidget(QWidget* parentWidget = 0);
   virtual ~ctkErrorLogWidget();
 
-  ctkErrorLogModel* errorLogModel()const;
-  Q_INVOKABLE void setErrorLogModel(ctkErrorLogModel * newErrorLogModel);
+  ctkErrorLogAbstractModel* errorLogModel()const;
+  Q_INVOKABLE void setErrorLogModel(ctkErrorLogAbstractModel * newErrorLogModel);
 
   /// Hide table column identified by /a columnId.
   /// \sa ctkErrorLogModel::ColumnsIds
