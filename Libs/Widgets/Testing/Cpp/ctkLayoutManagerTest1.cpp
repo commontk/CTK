@@ -77,6 +77,22 @@ QString nestedLayout(
 " <item><view name=\"tab3\"/></item>"
 "</layout>");
 
+namespace
+{
+class ctkNullViewFactory: public ctkLayoutViewFactory
+{
+public:
+  ctkNullViewFactory(QObject* parent = 0) : ctkLayoutViewFactory(parent)
+  {
+    this->setUseCachedViews(true);
+  }
+  virtual QWidget* createViewFromXML(QDomElement layoutElement){
+    Q_UNUSED(layoutElement);
+    return 0;
+    }
+};
+}
+
 /// \ingroup Widgets
 
 //-----------------------------------------------------------------------------
@@ -286,6 +302,19 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
     std::cout << std::endl;
     return EXIT_FAILURE;
     }
+
+  // Test that factories failing to instantiate view do not lead to a "crash"
+  ctkNullViewFactory* nullViewInstanciator = new ctkNullViewFactory(&viewport);
+  QWidget nullView;
+  nullView.setWindowTitle("Layout with Invalid View");
+  ctkLayoutFactory nullViewLayoutManager;
+  nullViewLayoutManager.registerViewFactory(nullViewInstanciator);
+  nullViewLayoutManager.setLayout(simpleLayoutDoc);
+  nullViewLayoutManager.setViewport(&nullView);
+  nestedToTab.show();
+
+  QTimer::singleShot(200, &app, SLOT(quit()));
+  app.exec();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
