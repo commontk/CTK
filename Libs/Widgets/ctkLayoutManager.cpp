@@ -415,7 +415,11 @@ void ctkLayoutManager::processItemElement(QDomElement itemElement, QLayoutItem* 
     }
   else
     {
-    childrenItem << this->processElement(itemElement.firstChild().toElement());
+    QLayoutItem* layoutItem = this->processElement(itemElement.firstChild().toElement());
+    if (layoutItem)
+      {
+      childrenItem << layoutItem;
+      }
     }
   foreach(QLayoutItem* item, childrenItem)
     {
@@ -475,6 +479,10 @@ QWidgetItem* ctkLayoutManager::widgetItemFromXML(QDomElement viewElement)
 {
   //Q_ASSERT(viewElement.tagName() == "view");
   QWidget* view = this->viewFromXML(viewElement);
+  if (!view)
+    {
+    return 0;
+    }
   this->setupView(viewElement, view);
   return new QWidgetItem(view);
 }
@@ -484,7 +492,10 @@ void ctkLayoutManager::setupView(QDomElement viewElement, QWidget* view)
 {
   Q_UNUSED(viewElement);
   Q_D(ctkLayoutManager);
-  Q_ASSERT(view);
+  if (!view)
+    {
+    return;
+    }
   view->setVisible(true);
   d->Views.insert(view);
 }
