@@ -87,7 +87,7 @@ protected:
 
   ctkMenuComboBoxInternal*    MenuComboBox;
   ctkCompleter*               SearchCompleter;
-  QPointer<QMenu>             Menu;
+  QPointer<QMenu>             CompleterMenu;
   QToolButton*                SearchButton;
 };
 

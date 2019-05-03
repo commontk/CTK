@@ -47,7 +47,7 @@ ctkMenuComboBoxInternal::~ctkMenuComboBoxInternal()
 // -------------------------------------------------------------------------
 void ctkMenuComboBoxInternal::showPopup()
 {
-  QMenu* menu = this->Menu.data();
+  QMenu* menu = this->Menu;
   if (!menu)
     {
     return;
@@ -294,7 +294,7 @@ void ctkMenuComboBoxPrivate::removeActionFromCompleter(QAction *action)
   // Maybe the action is present multiple times in different submenus
   // Don't remove its entry from the completer model if there are still some action instances
   // in the menus.
-  if (this->actionByTitle(action->text(), this->Menu.data()))
+  if (this->actionByTitle(action->text(), this->CompleterMenu))
     {
     return;
     }
@@ -327,26 +327,26 @@ ctkMenuComboBox::~ctkMenuComboBox()
 void ctkMenuComboBox::setMenu(QMenu* menu)
 {
   Q_D(ctkMenuComboBox);
-  if (d->Menu.data() == menu)
+  if (d->CompleterMenu == menu)
     {
     return;
     }
 
-  if (d->Menu)
+  if (d->CompleterMenu)
     {
-    this->removeAction(d->Menu.data()->menuAction());
-    QObject::disconnect(d->Menu.data(),SIGNAL(triggered(QAction*)),
+    this->removeAction(d->CompleterMenu->menuAction());
+    QObject::disconnect(d->CompleterMenu,SIGNAL(triggered(QAction*)),
                         this,SLOT(onActionSelected(QAction*)));
     }
 
-  d->Menu = menu;
+  d->CompleterMenu = menu;
   d->MenuComboBox->Menu = menu;
   d->addMenuToCompleter(menu);
 
-  if (d->Menu)
+  if (d->CompleterMenu)
     {
-    this->addAction(d->Menu.data()->menuAction());
-    QObject::connect(d->Menu.data(),SIGNAL(triggered(QAction*)),
+    this->addAction(d->CompleterMenu->menuAction());
+    QObject::connect(d->CompleterMenu,SIGNAL(triggered(QAction*)),
                      this,SLOT(onActionSelected(QAction*)), Qt::UniqueConnection);
     }
 }
@@ -355,7 +355,7 @@ void ctkMenuComboBox::setMenu(QMenu* menu)
 QMenu* ctkMenuComboBox::menu()const
 {
   Q_D(const ctkMenuComboBox);
-  return d->Menu.data();
+  return d->MenuComboBox->Menu;
 }
 
 // -------------------------------------------------------------------------
@@ -536,7 +536,7 @@ void ctkMenuComboBox::onEditingFinished()
     {
     return;
     }
-  QAction* action = d->actionByTitle(d->MenuComboBox->lineEdit()->text(), d->Menu.data());
+  QAction* action = d->actionByTitle(d->MenuComboBox->lineEdit()->text(), d->CompleterMenu);
   if (!action)
     {
     return;
