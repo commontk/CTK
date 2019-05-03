@@ -281,7 +281,7 @@ void ctkMenuComboBoxPrivate::addActionToCompleter(QAction *action)
 }
 
 //  ------------------------------------------------------------------------
-void ctkMenuComboBoxPrivate::removeActionToCompleter(QAction *action)
+void ctkMenuComboBoxPrivate::removeActionFromCompleter(QAction *action)
 {
   QStringListModel* model = qobject_cast<QStringListModel* >(
     this->SearchCompleter->sourceModel());
@@ -580,7 +580,7 @@ bool ctkMenuComboBox::eventFilter(QObject* target, QEvent* event)
   else if (event->type() == QEvent::ActionRemoved)
     {
     QActionEvent* actionEvent = static_cast<QActionEvent *>(event);
-    d->removeActionToCompleter(actionEvent->action());
+    d->removeActionFromCompleter(actionEvent->action());
     }
   return this->Superclass::eventFilter(target, event);
 }

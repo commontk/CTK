@@ -71,7 +71,7 @@ public:
   void addMenuToCompleter(QMenu* menu);
   void addActionToCompleter(QAction* action);
 
-  void removeActionToCompleter(QAction* action);
+  void removeActionFromCompleter(QAction* action);
 
 public Q_SLOTS:
   void setComboBoxEditable(bool editable = true);
