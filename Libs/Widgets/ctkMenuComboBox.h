@@ -91,9 +91,18 @@ public:
   ctkMenuComboBox(QWidget* parent = 0);
   virtual ~ctkMenuComboBox();
 
-  /// Add a menu to the QcomboBox and set a QCompleter
+  /// Set menu to both the QComboBox and the associated ctkCompleter.
+  /// \sa setCompleterMenu(), searchCompleter()
   void setMenu(QMenu* menu);
   QMenu* menu()const;
+
+  /// Set a specific menu to the ctkCompleter.
+  ///
+  /// This is useful when the menu displayed with the combobox is only a subset
+  /// of the action that can be searched for.
+  /// \sa setMenu(), searchCompleter()
+  void setCompleterMenu(QMenu* menu);
+  QMenu* completerMenu()const;
 
   void setDefaultText(const QString&);
   QString defaultText()const;

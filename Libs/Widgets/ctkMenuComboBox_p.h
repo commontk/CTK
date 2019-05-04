@@ -71,6 +71,8 @@ public:
   void addMenuToCompleter(QMenu* menu);
   void addActionToCompleter(QAction* action);
 
+  void removeAction(QAction* action);
+  void removeMenuFromCompleter(QMenu* menu);
   void removeActionFromCompleter(QAction* action);
 
 public Q_SLOTS:

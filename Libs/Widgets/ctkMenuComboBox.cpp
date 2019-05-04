@@ -239,9 +239,23 @@ void ctkMenuComboBoxPrivate::addAction(QAction *action)
 }
 
 // -------------------------------------------------------------------------
+void ctkMenuComboBoxPrivate::removeAction(QAction *action)
+{
+  if (action->menu())
+    {
+    this->removeMenuFromCompleter(action->menu());
+    }
+  else
+    {
+    this->removeActionFromCompleter(action);
+    }
+}
+
+// -------------------------------------------------------------------------
 void ctkMenuComboBoxPrivate::addMenuToCompleter(QMenu* menu)
 {
   Q_Q(ctkMenuComboBox);
+
   menu->installEventFilter(q);
 
   // Bug QT : see this link for more details
@@ -258,6 +272,19 @@ void ctkMenuComboBoxPrivate::addMenuToCompleter(QMenu* menu)
   foreach (QAction* action, menu->actions())
     {
     this->addAction(action);
+    }
+}
+
+// -------------------------------------------------------------------------
+void ctkMenuComboBoxPrivate::removeMenuFromCompleter(QMenu* menu)
+{
+  Q_Q(ctkMenuComboBox);
+
+  menu->removeEventFilter(q);
+
+  foreach (QAction* action, menu->actions())
+    {
+    this->removeAction(action);
     }
 }
 
@@ -291,14 +318,6 @@ void ctkMenuComboBoxPrivate::removeActionFromCompleter(QAction *action)
     return;
     }
 
-  // Maybe the action is present multiple times in different submenus
-  // Don't remove its entry from the completer model if there are still some action instances
-  // in the menus.
-  if (this->actionByTitle(action->text(), this->CompleterMenu))
-    {
-    return;
-    }
-
   QModelIndex start = model->index(0,0);
   QModelIndexList indexList = model->match(start, 0, action->text());
   Q_ASSERT(indexList.count() == 1);
@@ -327,28 +346,12 @@ ctkMenuComboBox::~ctkMenuComboBox()
 void ctkMenuComboBox::setMenu(QMenu* menu)
 {
   Q_D(ctkMenuComboBox);
-  if (d->CompleterMenu == menu)
+  if (d->MenuComboBox->Menu == menu)
     {
     return;
     }
-
-  if (d->CompleterMenu)
-    {
-    this->removeAction(d->CompleterMenu->menuAction());
-    QObject::disconnect(d->CompleterMenu,SIGNAL(triggered(QAction*)),
-                        this,SLOT(onActionSelected(QAction*)));
-    }
-
-  d->CompleterMenu = menu;
   d->MenuComboBox->Menu = menu;
-  d->addMenuToCompleter(menu);
-
-  if (d->CompleterMenu)
-    {
-    this->addAction(d->CompleterMenu->menuAction());
-    QObject::connect(d->CompleterMenu,SIGNAL(triggered(QAction*)),
-                     this,SLOT(onActionSelected(QAction*)), Qt::UniqueConnection);
-    }
+  this->setCompleterMenu(menu);
 }
 
 // -------------------------------------------------------------------------
@@ -356,6 +359,42 @@ QMenu* ctkMenuComboBox::menu()const
 {
   Q_D(const ctkMenuComboBox);
   return d->MenuComboBox->Menu;
+}
+
+// -------------------------------------------------------------------------
+void ctkMenuComboBox::setCompleterMenu(QMenu* menu)
+{
+  Q_D(ctkMenuComboBox);
+
+  if (d->CompleterMenu == menu)
+    {
+    return;
+    }
+
+  if (d->CompleterMenu)
+    {
+    QObject::disconnect(d->CompleterMenu,SIGNAL(triggered(QAction*)),
+                        this,SLOT(onActionSelected(QAction*)));
+    this->removeAction(d->CompleterMenu->menuAction());
+    d->removeMenuFromCompleter(d->CompleterMenu);
+    }
+
+  d->CompleterMenu = menu;
+
+  if (d->CompleterMenu)
+    {
+    d->addMenuToCompleter(d->CompleterMenu);
+    this->addAction(d->CompleterMenu->menuAction());
+    QObject::connect(d->CompleterMenu,SIGNAL(triggered(QAction*)),
+                     this,SLOT(onActionSelected(QAction*)), Qt::UniqueConnection);
+    }
+}
+
+// -------------------------------------------------------------------------
+QMenu* ctkMenuComboBox::completerMenu()const
+{
+  Q_D(const ctkMenuComboBox);
+  return d->CompleterMenu;
 }
 
 // -------------------------------------------------------------------------
@@ -580,7 +619,14 @@ bool ctkMenuComboBox::eventFilter(QObject* target, QEvent* event)
   else if (event->type() == QEvent::ActionRemoved)
     {
     QActionEvent* actionEvent = static_cast<QActionEvent *>(event);
-    d->removeActionFromCompleter(actionEvent->action());
+    QAction* action = actionEvent->action();
+    // Maybe the action is present multiple times in different submenus
+    // Don't remove its entry from the completer model if there are still some action instances
+    // in the menus.
+    if (!d->actionByTitle(action->text(), this->menu()))
+      {
+      d->removeActionFromCompleter(action);
+      }
     }
   return this->Superclass::eventFilter(target, event);
 }
