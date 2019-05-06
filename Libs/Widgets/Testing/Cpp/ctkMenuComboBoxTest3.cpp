@@ -27,6 +27,7 @@
 #include <QTimer>
 
 // CTK includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkMenuComboBox.h"
 
 // STD includes
@@ -38,37 +39,20 @@ int ctkMenuComboBoxTest3(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   ctkMenuComboBox menu;
-  if (menu.menu())
-    {
-    qDebug()  << "Line : " << __LINE__
-              << " ctkMenuComboBox::ctkmenuComboBox failed"
-              << menu.menu();
-    return EXIT_FAILURE;
-    }
+  CHECK_NULL(menu.menu());
 
   menu.setEditableBehavior(ctkMenuComboBox::Editable);
   QList<QComboBox* > comboBox = menu.findChildren<QComboBox *>();
-  if (!comboBox[0]->isEditable())
-    {
-    qDebug()  << "Line : " << __LINE__
-              << "ctkMenuComboBox::setEditableBehavior failed";
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(comboBox[0]->isEditable(), true); // Check default value
+
   menu.setEditableBehavior(ctkMenuComboBox::EditableOnFocus);
-  if (comboBox[0]->isEditable())
-    {
-    qDebug()  << "Line : " << __LINE__
-              << "ctkMenuComboBox::setEditableBehavior failed";
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(comboBox[0]->isEditable(), false);
+
   menu.setEditableBehavior(ctkMenuComboBox::Editable);
+  CHECK_BOOL(comboBox[0]->isEditable(), true);
+
   menu.setEditableBehavior(ctkMenuComboBox::NotEditable);
-  if (comboBox[0]->isEditable())
-    {
-    qDebug()  << "Line : " << __LINE__
-              << "ctkMenuComboBox::setEditableBehavior failed";
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(comboBox[0]->isEditable(), false);
 
   menu.show();
   if (argc < 2 || QString(argv[1]) != "-I" )

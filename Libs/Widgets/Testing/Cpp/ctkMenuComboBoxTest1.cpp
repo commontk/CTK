@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 
 // CTK includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkMenuComboBox.h"
 
 // STD includes
@@ -54,37 +55,22 @@ int ctkMenuComboBoxTest1(int argc, char * argv [] )
   menuComboBox->setDefaultText("Search");
   menuComboBox->setAutoFillBackground(true);
   menuComboBox->setMinimumContentsLength(25);
-  if (menuComboBox->isSearchIconVisible() != true)
-    {
-    std::cerr << "Wrong default isSearchIconVisible: "
-              << menuComboBox->isSearchIconVisible()
-              << std::endl;
-    return EXIT_FAILURE;
-    }
+
+  // isSearchIconVisible
+  CHECK_BOOL(menuComboBox->isSearchIconVisible(), true); // Check default value
+
   menuComboBox->setSearchIconVisible(true);
-  if (menuComboBox->isSearchIconVisible() != true)
-    {
-    std::cerr << "Failed to set searchIconVisible: "
-              << menuComboBox->isSearchIconVisible()
-              << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(menuComboBox->isSearchIconVisible(), true);
+
   menuComboBox->setSearchIconVisible(false);
-  if (menuComboBox->toolButtonStyle() != Qt::ToolButtonIconOnly)
-    {
-    std::cerr << "Wrong default toolButtonStyle: "
-              << static_cast<unsigned int>(menuComboBox->toolButtonStyle())
-              << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(menuComboBox->isSearchIconVisible(), false);
+
+  // toolButtonStyle
+  CHECK_INT(menuComboBox->toolButtonStyle(), Qt::ToolButtonIconOnly); // Check default value
+
   menuComboBox->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-  if (menuComboBox->toolButtonStyle() != Qt::ToolButtonTextUnderIcon)
-    {
-    std::cerr << "Failed to set toolButtonStyle: "
-              << static_cast<unsigned int>(menuComboBox->toolButtonStyle())
-              << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_INT(menuComboBox->toolButtonStyle(), Qt::ToolButtonTextUnderIcon);
+
   menuComboBox->setSearchIconVisible(true);
   menuComboBox->setEditableBehavior(ctkMenuComboBox::EditableOnPopup);
 
