@@ -56,6 +56,8 @@ int ctkMenuComboBoxTest2(int argc, char * argv [] )
   QMenu* file = new QMenu("File");
   file->addAction("first");
   menu->setMenu(file);
+  // File [Menu]
+  //  |-- first [Action]
   QList<QCompleter* > completer = menu->findChildren<QCompleter *>();
   if(menu->menu()->isEmpty()
     && completer[0]->model()->rowCount() != 1)
@@ -76,6 +78,11 @@ int ctkMenuComboBoxTest2(int argc, char * argv [] )
   QMenu* informatics = new QMenu("Informatics");
   QAction* titi = informatics->addAction("titi");
   file->addMenu(informatics);
+  // File [Menu]
+  //  |-- first [Action]
+  //  |
+  //  |-- Informatics [Menu]
+  //        |-- titi [Action]
   if(menu->menu()->isEmpty()
     && completer[0]->model()->rowCount() != 2)
     {
@@ -86,6 +93,10 @@ int ctkMenuComboBoxTest2(int argc, char * argv [] )
 
   /// ------- Test removeAction -------
   informatics->removeAction(titi);
+  // File [Menu]
+  //  |-- first [Action]
+  //  |
+  //  |-- Informatics [Menu]
   if(completer[0]->model()->rowCount() != 1)
     {
     qDebug() << "Line : " << __LINE__
@@ -96,6 +107,12 @@ int ctkMenuComboBoxTest2(int argc, char * argv [] )
   /// ------- Test add 2 same actions -> only 1 add on the completer --------
   informatics->addAction(titi);
   file->addAction(titi);
+  // File [Menu]
+  //  |-- first [Action]
+  //  |-- titi [Action]
+  //  |
+  //  |-- Informatics [Menu]
+  //        |-- titi [Action]
   if (completer[0]->model()->rowCount() != 2)
     {
     qDebug() << "Line : " << __LINE__
@@ -106,6 +123,12 @@ int ctkMenuComboBoxTest2(int argc, char * argv [] )
   /// ------- Test remove one of the two --------
   informatics->removeAction(titi);
   //file->removeAction(first);
+
+  // File [Menu]
+  //  |-- first [Action]
+  //  |-- titi [Action]
+  //  |
+  //  |-- Informatics [Menu]
   if (completer[0]->model()->rowCount() != 2)
     {
     qDebug() << "Line : " << __LINE__
@@ -116,6 +139,10 @@ int ctkMenuComboBoxTest2(int argc, char * argv [] )
 
   /// ------- Test remove the second one -------
   file->removeAction(titi);
+  // File [Menu]
+  //  |-- first [Action]
+  //  |
+  //  |-- Informatics [Menu]
   if (completer[0]->model()->rowCount() != 1)
     {
     qDebug() << "Line : " << __LINE__
