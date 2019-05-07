@@ -32,6 +32,7 @@
 #include <QVBoxLayout>
 
 // CTK includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkMenuComboBox.h"
 
 // STD includes
@@ -46,24 +47,16 @@ int ctkMenuComboBoxTest2(int argc, char * argv [] )
 
   /// ------ Test setMenu ------
   menu->setMenu(new QMenu(0));
-  if(!menu->menu()->isEmpty())
-    {
-    qDebug() << "Line : " << __LINE__
-        << "ctkMenuComboBox::setMenu failed";
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(menu->menu()->isEmpty(), true);
 
   QMenu* file = new QMenu("File");
   file->addAction("first");
   menu->setMenu(file);
+  // File [Menu]
+  //  |-- first [Action]
   QList<QCompleter* > completer = menu->findChildren<QCompleter *>();
-  if(menu->menu()->isEmpty()
-    && completer[0]->model()->rowCount() != 1)
-    {
-    qDebug() << "Line : " << __LINE__
-        << "ctkMenuComboBox::setMenu failed";
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(menu->menu()->isEmpty(), false);
+  CHECK_INT(completer[0]->model()->rowCount(), 1);
 
   /// ------- Test delete Menu -----
   //delete menu->menu();
@@ -76,53 +69,55 @@ int ctkMenuComboBoxTest2(int argc, char * argv [] )
   QMenu* informatics = new QMenu("Informatics");
   QAction* titi = informatics->addAction("titi");
   file->addMenu(informatics);
-  if(menu->menu()->isEmpty()
-    && completer[0]->model()->rowCount() != 2)
-    {
-    qDebug() << "Line : " << __LINE__
-        << "ctkMenuComboBox::addAction failed";
-    return EXIT_FAILURE;
-    }
+  // File [Menu]
+  //  |-- first [Action]
+  //  |
+  //  |-- Informatics [Menu]
+  //        |-- titi [Action]
+  CHECK_BOOL(menu->menu()->isEmpty(), false);
+  CHECK_INT(completer[0]->model()->rowCount(), 2);
 
   /// ------- Test removeAction -------
   informatics->removeAction(titi);
-  if(completer[0]->model()->rowCount() != 1)
-    {
-    qDebug() << "Line : " << __LINE__
-        << "ctkMenuComboBox::removeAction failed";
-    return EXIT_FAILURE;
-    }
+  // File [Menu]
+  //  |-- first [Action]
+  //  |
+  //  |-- Informatics [Menu]
+  CHECK_BOOL(menu->menu()->isEmpty(), false);
+  CHECK_INT(completer[0]->model()->rowCount(), 1);
 
   /// ------- Test add 2 same actions -> only 1 add on the completer --------
   informatics->addAction(titi);
   file->addAction(titi);
-  if (completer[0]->model()->rowCount() != 2)
-    {
-    qDebug() << "Line : " << __LINE__
-        << "ctkMenuComboBox::addAction failed";
-    return EXIT_FAILURE;
-    }
+  // File [Menu]
+  //  |-- first [Action]
+  //  |-- titi [Action]
+  //  |
+  //  |-- Informatics [Menu]
+  //        |-- titi [Action]
+  CHECK_BOOL(menu->menu()->isEmpty(), false);
+  CHECK_INT(completer[0]->model()->rowCount(), 2);
 
   /// ------- Test remove one of the two --------
   informatics->removeAction(titi);
   //file->removeAction(first);
-  if (completer[0]->model()->rowCount() != 2)
-    {
-    qDebug() << "Line : " << __LINE__
-        << "ctkMenuComboBox::addAction failed"
-        << completer[0]->model()->rowCount();
-    return EXIT_FAILURE;
-    }
+
+  // File [Menu]
+  //  |-- first [Action]
+  //  |-- titi [Action]
+  //  |
+  //  |-- Informatics [Menu]
+  CHECK_BOOL(menu->menu()->isEmpty(), false);
+  CHECK_INT(completer[0]->model()->rowCount(), 2);
 
   /// ------- Test remove the second one -------
   file->removeAction(titi);
-  if (completer[0]->model()->rowCount() != 1)
-    {
-    qDebug() << "Line : " << __LINE__
-        << "ctkMenuComboBox::addAction failed"
-        << completer[0]->model()->rowCount();
-    return EXIT_FAILURE;
-    }
+  // File [Menu]
+  //  |-- first [Action]
+  //  |
+  //  |-- Informatics [Menu]
+  CHECK_BOOL(menu->menu()->isEmpty(), false);
+  CHECK_INT(completer[0]->model()->rowCount(), 1);
 
   menu->show();
   if (argc < 2 || QString(argv[1]) != "-I" )
