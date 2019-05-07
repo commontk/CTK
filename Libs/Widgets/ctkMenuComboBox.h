@@ -93,16 +93,16 @@ public:
 
   /// Set menu to both the QComboBox and the associated ctkCompleter.
   /// \sa setCompleterMenu(), searchCompleter()
-  void setMenu(QMenu* menu);
-  QMenu* menu()const;
+  Q_INVOKABLE void setMenu(QMenu* menu);
+  Q_INVOKABLE QMenu* menu()const;
 
   /// Set a specific menu to the ctkCompleter.
   ///
   /// This is useful when the menu displayed with the combobox is only a subset
   /// of the action that can be searched for.
   /// \sa setMenu(), searchCompleter()
-  void setCompleterMenu(QMenu* menu);
-  QMenu* completerMenu()const;
+  Q_INVOKABLE void setCompleterMenu(QMenu* menu);
+  Q_INVOKABLE QMenu* completerMenu()const;
 
   void setDefaultText(const QString&);
   QString defaultText()const;
