@@ -506,3 +506,11 @@ void ctkMatrixWidget::setValues(const QVector<double> & vector)
     this->emit matrixChanged();
     }
 }
+
+// --------------------------------------------------------------------------
+QTableWidgetItem* ctkMatrixWidget::widgetItem(int i, int j)
+{
+  Q_D(ctkMatrixWidget);
+  QTableWidgetItem* item = d->Table->item(i, j);
+  return item;
+}
