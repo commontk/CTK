@@ -31,6 +31,7 @@
 #include "ctkWidgetsExport.h"
 
 class ctkMatrixWidgetPrivate;
+class QTableWidgetItem;
 
 /// \ingroup Widgets
 ///
@@ -82,6 +83,12 @@ public:
   /// that is less than the minimum or greater than the maximum.
   Q_INVOKABLE double value(int i, int j)const;
   Q_INVOKABLE void setValue(int i, int j, double value);
+
+  ///
+  /// Provides low-level access to widget item of each matrix element.
+  /// This may be used for customizing display or behavior of specific
+  /// matrix elements.
+  Q_INVOKABLE QTableWidgetItem* widgetItem(int i, int j);
 
   ///
   /// Utility function to set/get all the values of the matrix at once.
