@@ -503,7 +503,11 @@ bool ctkPythonConsolePrivate::push(const QString& code)
   PyObject *res = PyObject_CallMethod(this->InteractiveConsole,
                                       const_cast<char*>("push"),
                                       const_cast<char*>("z"),
+#if PY_MAJOR_VERSION >= 3
+                                      buffer.toUtf8().data());
+#else
                                       buffer.toLatin1().data());
+#endif
   if (res)
     {
     int status = 0;
