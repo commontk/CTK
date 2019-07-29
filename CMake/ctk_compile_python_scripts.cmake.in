@@ -19,7 +19,13 @@ import os
 import sys
 import py_compile
 import struct
-import imp
+magic = None
+if sys.version_info.major>= 3:
+    import importlib
+    magic = importlib.util.MAGIC_NUMBER
+else:
+    import imp
+    magic = imp.get_magic()
 
 def ctk_compile_file(fullname, ddir=None, force=0, rx=None, quiet=0):
     \"\"\"Byte-compile one file.
@@ -48,7 +54,7 @@ def ctk_compile_file(fullname, ddir=None, force=0, rx=None, quiet=0):
             if not force:
                 try:
                     mtime = int(os.stat(fullname).st_mtime)
-                    expect = struct.pack('<4sl', imp.get_magic(), mtime)
+                    expect = struct.pack('<4sl', magic, mtime)
                     cfile = fullname + (__debug__ and 'c' or 'o')
                     with open(cfile, 'rb') as chandle:
                         actual = chandle.read(8)
