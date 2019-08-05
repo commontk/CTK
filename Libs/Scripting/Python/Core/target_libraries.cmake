@@ -5,7 +5,7 @@
 #
 
 set(target_libraries
-  PYTHON_LIBRARIES
+  PYTHON_LIBRARY
   PYTHONQT_LIBRARIES
   CTKCore
   )

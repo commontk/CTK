@@ -62,9 +62,11 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
   # TODO: this find package seems not to work when called form a superbuild, but the call is needed
   # in general to find the python interpreter.  In CTK, the toplevel CMakeLists.txt does the find
   # package so this is a no-op.  Other uses of this file may need to have this call so it is still enabled.
-  find_package(PythonInterp)
   if(NOT PYTHONINTERP_FOUND)
-    message(FATAL_ERROR "PYTHON_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
+    find_package(PythonInterp)
+    if(NOT PYTHONINTERP_FOUND)
+      message(FATAL_ERROR "PYTHON_EXECUTABLE not specified or inexistent when calling ctkMacroWrapPythonQt")
+    endif()
   endif()
 
   set(SOURCES_TO_WRAP)

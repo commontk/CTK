@@ -148,11 +148,16 @@ function(_ctk_add_compile_python_directories_target target)
       set(_compileall_code "${_compileall_code}\nctk_compile_file('${tgt}', force=1)")
     endforeach()
 
-    find_package(PythonInterp REQUIRED)
-    find_package(PythonLibs REQUIRED)
+    if(NOT PYTHONINTERP_FOUND)
+      find_package(PythonInterp REQUIRED)
+    endif()
+    if(NOT PYTHONLIBS_FOUND)
+      find_package(PythonLibs REQUIRED)
+    endif()
 
     # Extract python lib path
-    get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARY} PATH)
+    ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
+    get_filename_component(PYTHON_LIBRARY_PATH "${PYTHON_LIBRARY}" PATH)
 
     # Configure cmake script associated with the custom command
     # required to properly update the library path with PYTHON_LIBRARY_PATH

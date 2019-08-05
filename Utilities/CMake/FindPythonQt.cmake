@@ -4,9 +4,11 @@
 #
 
 # Python is required
-find_package(PythonLibs)
 if(NOT PYTHONLIBS_FOUND)
-  message(FATAL_ERROR "error: Python is required to build PythonQt")
+  find_package(PythonLibs)
+  if(NOT PYTHONLIBS_FOUND)
+    message(FATAL_ERROR "error: Python is required to build PythonQt")
+  endif()
 endif()
 
 if(NOT EXISTS "${PYTHONQT_INSTALL_DIR}")
