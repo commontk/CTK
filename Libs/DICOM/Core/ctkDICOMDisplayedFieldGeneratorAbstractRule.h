@@ -150,8 +150,7 @@ public:
       }
       return;
     }
-    QStringList initialValueSplit=initialFields[fieldName].split(",");
-    if (initialValueSplit.contains(newFields[fieldName]))
+    if (initialFields[fieldName].contains(newFields[fieldName]))
     {
       // the field is already contained in the list, so no need to add it
       mergedFields[fieldName]=initialFields[fieldName];
@@ -160,7 +159,7 @@ public:
     // need to concatenate the new value to the initial
     mergedFields[fieldName]=initialFields[fieldName]+", "+newFields[fieldName];
   }
-   
+
 };
 
 #endif
