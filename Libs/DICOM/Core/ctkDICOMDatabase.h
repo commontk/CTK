@@ -69,33 +69,29 @@ public:
   const QString lastError() const;
   const QString databaseFilename() const;
 
-  ///
-  /// Returns the absolute path of the database directory
-  /// (where the database file resides in) in OS-prefered path format.
+  static const char* defaultSchemaFile() { return ":/dicom/dicom-schema.sql"; };
+
+  /// Return the absolute path of the database directory
+  /// (where the database file resides in) in OS-preferred path format.
   /// @return Absolute path to database directory
   const QString databaseDirectory() const;
 
-  ///
   /// Should be checked after trying to open the database
   /// @Returns true if database is open
   bool isOpen() const;
 
-  ///
-  /// Returns whether the database only resides in memory, i.e. the
+  /// Return whether the database only resides in memory, i.e. the
   /// SQLITE DB is not written to stored to disk and DICOM objects are not
   /// stored to the file system.
   /// @return True if in memory mode, false otherwise.
   bool isInMemory() const;
 
-  ///
-  /// set thumbnail generator object
+  /// Set thumbnail generator object
   Q_INVOKABLE void setThumbnailGenerator(ctkDICOMAbstractThumbnailGenerator* generator);
-  ///
-  /// get thumbnail genrator object
+  /// Get thumbnail generator object
   Q_INVOKABLE ctkDICOMAbstractThumbnailGenerator* thumbnailGenerator();
 
-  ///
-  /// open the SQLite database in @param databaseFile . If the file does not
+  /// Open the SQLite database in @param databaseFile . If the file does not
   /// exist, a new database is created and initialized with the
   /// default schema
   ///
@@ -111,28 +107,41 @@ public:
   Q_INVOKABLE virtual void openDatabase(const QString databaseFile,
                                         const QString& connectionName = "");
 
-  ///
-  /// close the database. It must not be used afterwards.
+  /// Close the database. It must not be used afterwards.
   Q_INVOKABLE void closeDatabase();
-  ///
-  /// delete all data and (re-)initialize the database.
-  Q_INVOKABLE bool initializeDatabase(const char* schemaFile = ":/dicom/dicom-schema.sql");
 
-  /// updates the database schema and reinserts all existing files
-  Q_INVOKABLE bool updateSchema(const char* schemaFile = ":/dicom/dicom-schema.sql");
+  /// Delete all data and (re-)initialize the database.
+  Q_INVOKABLE bool initializeDatabase(const char* schemaFile = ctkDICOMDatabase::defaultSchemaFile());
 
-  /// updates the database schema only if the versions don't match
-  /// Returns true if schema was updated
-  Q_INVOKABLE bool updateSchemaIfNeeded(const char* schemaFile = ":/dicom/dicom-schema.sql");
+  /// Update the database schema and reinserts all existing files
+  /// \param schemaFile SQL file containing schema definition
+  /// \param newDatabaseDir Path of new database directory for the updated database.
+  ///        Null by default, meaning directory will remain the same
+  ///        Note: Need to switch database folders "on the fly", so that copying the
+  ///        database can be done simply via createBackupFileList and the following insertions
+  /// \return true if schema was updated
+  Q_INVOKABLE bool updateSchema(
+    const char* schemaFile = ctkDICOMDatabase::defaultSchemaFile(),
+    const char* newDatabaseDir = nullptr);
 
-  /// returns the schema version needed by the current version of this code
+  /// Update the database schema only if the versions don't match
+  /// \param schemaFile SQL file containing schema definition
+  /// \param newDatabaseDir Path of new database directory for the updated database.
+  ///        Null by default, meaning directory will remain the same
+  ///        Note: Need to switch database folders "on the fly", so that copying the
+  ///        database can be done simply via createBackupFileList and the following insertions
+  /// \return true if schema was updated
+  Q_INVOKABLE bool updateSchemaIfNeeded(
+    const char* schemaFile = ctkDICOMDatabase::defaultSchemaFile(),
+    const char* newDatabaseDir = nullptr);
+
+  /// Return the schema version needed by the current version of this code
   Q_INVOKABLE QString schemaVersion();
 
-  /// returns the schema version for the currently open database
+  /// Return the schema version for the currently open database
   /// in order to support schema updating
   Q_INVOKABLE QString schemaVersionLoaded();
 
-  ///
   /// \brief database accessors
   Q_INVOKABLE QStringList patients ();
   Q_INVOKABLE QStringList studiesForPatient (const QString patientUID);
@@ -151,8 +160,7 @@ public:
   Q_INVOKABLE QDateTime insertDateTimeForInstance (const QString fileName);
 
   Q_INVOKABLE QStringList allFiles ();
-  ///
-  /// \brief load the header from a file and allow access to elements
+  /// \brief Load the header from a file and allow access to elements
   /// @param sopInstanceUID A string with the uid for a given instance
   ///                       (corresponding file will be found via database)
   /// @param fileName Full path to a dicom file to load.
@@ -162,8 +170,7 @@ public:
   Q_INVOKABLE QStringList headerKeys ();
   Q_INVOKABLE QString headerValue (const QString key);
 
-  ///
-  /// \brief application-defined tags of interest
+  /// \brief Application-defined tags of interest
   /// This list of tags is added to the internal tag cache during import
   /// operations.  The list should be prepared by the application as
   /// a hint to the database that these tags are likely to be accessed
@@ -221,15 +228,13 @@ public:
   /// Check if file is already in database and up-to-date
   Q_INVOKABLE bool fileExistsAndUpToDate(const QString& filePath);
 
-  /// remove the series from the database, including images and
-  /// thumbnails
+  /// Remove the series from the database, including images and thumbnails
   Q_INVOKABLE bool removeSeries(const QString& seriesInstanceUID);
   Q_INVOKABLE bool removeStudy(const QString& studyInstanceUID);
   Q_INVOKABLE bool removePatient(const QString& patientID);
   Q_INVOKABLE bool cleanup();
 
-  ///
-  /// \brief access element values for given instance
+  /// \brief Access element values for given instance
   /// @param sopInstanceUID A string with the uid for a given instance
   ///                       (corresponding file will be found via database)
   /// @param fileName Full path to a dicom file to load.
@@ -244,8 +249,7 @@ public:
   Q_INVOKABLE bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
   Q_INVOKABLE QString groupElementToTag (const unsigned short& group, const unsigned short& element);
 
-  ///
-  /// \brief store values of previously requested instance elements
+  /// \brief Store values of previously requested instance elements
   /// These are meant to be internal methods used by the instanceValue and fileValue
   /// methods, but they can be used by calling classes to populate or access
   /// instance tag values as needed.

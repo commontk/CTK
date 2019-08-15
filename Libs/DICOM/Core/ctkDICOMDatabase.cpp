@@ -99,10 +99,7 @@ public:
   void insert ( const ctkDICOMItem& ctkDataset, const QString& filePath, bool storeFile = true, bool generateThumbnail = true);
 
   /// Copy the complete list of files to an extra table
-  void createBackupFileList();
-
-  /// Remove the extra table containing the backup
-  void removeBackupFileList();
+  QStringList allFilesInDatabase();
 
   /// Update database tables from the displayed fields determined by the plugin roles
   /// \return Success flag
@@ -207,7 +204,6 @@ void ctkDICOMDatabasePrivate::init(QString databaseFilename)
   Q_Q(ctkDICOMDatabase);
 
   q->openDatabase(databaseFilename);
-
 }
 
 //------------------------------------------------------------------------------
@@ -301,22 +297,23 @@ void ctkDICOMDatabasePrivate::endTransaction()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabasePrivate::createBackupFileList()
+QStringList ctkDICOMDatabasePrivate::allFilesInDatabase()
 {
-  QSqlQuery query(this->Database);
-  loggedExec(query, "CREATE TABLE IF NOT EXISTS main.Filenames_backup (Filename TEXT PRIMARY KEY NOT NULL )" );
-  loggedExec(query, "INSERT INTO Filenames_backup SELECT Filename FROM Images;" );
+  // Get all filenames from the database
+  QSqlQuery allFilesQuery(this->Database);
+  QStringList allFileNames;
+  loggedExec(allFilesQuery,QString("SELECT Filename from Images;"));
+
+  while (allFilesQuery.next())
+  {
+    allFileNames << allFilesQuery.value(0).toString();
+  }
+  return allFileNames;
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabasePrivate::removeBackupFileList()
+bool ctkDICOMDatabasePrivate::executeScript(const QString script)
 {
-  QSqlQuery query(this->Database);
-  loggedExec(query, "DROP TABLE main.Filenames_backup; " );
-}
-
-//------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::executeScript(const QString script) {
   QFile scriptFile(script);
   scriptFile.open(QIODevice::ReadOnly);
   if  ( !scriptFile.isOpen() )
@@ -1357,7 +1354,9 @@ QString ctkDICOMDatabase::schemaVersion()
 };
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::updateSchemaIfNeeded(const char* schemaFile/* = ":/dicom/dicom-schema.sql" */)
+bool ctkDICOMDatabase::updateSchemaIfNeeded(
+  const char* schemaFile/* = ":/dicom/dicom-schema.sql" */,
+  const char* newDatabaseDir/* = nullptr*/)
 {
   if ( schemaVersionLoaded() != schemaVersion() )
   {
@@ -1372,19 +1371,45 @@ bool ctkDICOMDatabase::updateSchemaIfNeeded(const char* schemaFile/* = ":/dicom/
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabase::updateSchema(const char* schemaFile/* = ":/dicom/dicom-schema.sql" */)
+bool ctkDICOMDatabase::updateSchema(
+  const char* schemaFile/* = ":/dicom/dicom-schema.sql" */,
+  const char* newDatabaseDir/* = nullptr*/)
 {
   // backup filelist
   // reinit with the new schema
   // reinsert everything
 
   Q_D(ctkDICOMDatabase);
-  d->createBackupFileList();
+  QStringList allFiles = d->allFilesInDatabase();
+
+  if (newDatabaseDir && strlen(newDatabaseDir) > 0)
+  {
+    // If needed, create database directory
+    if (!QDir(newDatabaseDir).exists())
+    {
+      QDir().mkdir(newDatabaseDir);
+    }
+
+    // Close the active DICOM database
+    this->closeDatabase();
+
+    // Open new database so that the re-insertions can be done there
+    try
+    {
+      QString databaseFileName = newDatabaseDir + QString("/ctkDICOM.sql");
+      this->openDatabase(databaseFileName);
+    }
+    catch (std::exception e)
+    {
+      std::cerr << "Database error: " << qPrintable(this->lastError()) << "\n";
+      this->closeDatabase();
+      return false;
+    }
+  }
 
   d->resetLastInsertedValues();
   this->initializeDatabase(schemaFile);
 
-  QStringList allFiles = d->filenames("Filenames_backup");
   emit schemaUpdateStarted(allFiles.length());
 
   int progressValue = 0;
@@ -1404,7 +1429,6 @@ bool ctkDICOMDatabase::updateSchema(const char* schemaFile/* = ":/dicom/dicom-sc
   this->updateDisplayedFields();
 
   // TODO: check better that everything is ok
-  d->removeBackupFileList();
   emit schemaUpdated();
   return true;
 }

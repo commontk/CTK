@@ -26,6 +26,7 @@
 
 // CTK includes
 
+#include <ctkDICOMBrowser.h>
 // NOTE:
 //
 // For decorators it is assumed that the methods will never be called
@@ -41,13 +42,19 @@ public:
 
   ctkDICOMWidgetsPythonQtDecorators()
     {
+    PythonQt::self()->registerClass(&ctkDICOMBrowser::staticMetaObject, "CTKDICOMWidgets");
     }
 
 public Q_SLOTS:
 
   //
-  // None yet - refer to other libs for examples
+  // ctkDICOMBrowser
   //
+
+  ctkDICOMBrowser* new_ctkDICOMBrowser(QWidget* parent=0, QString databaseDirectorySettingsKey=QString())
+    {
+    return new ctkDICOMBrowser(parent, databaseDirectorySettingsKey);
+    }
 
 };
 
