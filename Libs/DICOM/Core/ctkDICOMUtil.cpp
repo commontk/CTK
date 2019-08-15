@@ -27,6 +27,12 @@
 // DCMTK includes
 #include <dcmtk/oflog/oflog.h>
 
+/// Settings key for DICOM database folder (for example a version-specific settings file)
+/// This is useful if the user wants to use the old database with the older version application.
+/// Note: This is a static variable instead of a property, because it is needed at the time of construction,
+///       and additional constructors are apparently not Python-wrapped.
+static QString DICOMDabataseSettingsKey = "DatabaseDirectory";
+
 //------------------------------------------------------------------------------
 void ctk::setDICOMLogLevel(ctkErrorLogLevel::LogLevel level)
 {
@@ -66,4 +72,16 @@ ctkErrorLogLevel::LogLevel ctk::dicomLogLevel()
 QString ctk::dicomLogLevelAsString()
 {
   return ctkErrorLogLevel::logLevelAsString(ctk::dicomLogLevel());
+}
+
+//------------------------------------------------------------------------------
+void ctk::setDICOMDabataseSettingsKey(QString key)
+{
+  DICOMDabataseSettingsKey = key;
+}
+
+//------------------------------------------------------------------------------
+QString ctk::dicomDabataseSettingsKey()
+{
+  return DICOMDabataseSettingsKey;
 }

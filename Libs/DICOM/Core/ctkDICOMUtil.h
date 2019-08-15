@@ -33,6 +33,10 @@ ctkErrorLogLevel::LogLevel CTK_DICOM_CORE_EXPORT dicomLogLevel();
 
 QString CTK_DICOM_CORE_EXPORT dicomLogLevelAsString();
 
+void CTK_DICOM_CORE_EXPORT setDICOMDabataseSettingsKey(QString key);
+
+QString CTK_DICOM_CORE_EXPORT dicomDabataseSettingsKey();
+
 } // end of ctk namespace
 
 #endif

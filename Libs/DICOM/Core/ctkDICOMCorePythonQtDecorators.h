@@ -72,6 +72,16 @@ public Q_SLOTS:
     {
     return ctk::dicomLogLevelAsString();
     }
+
+  QString static_ctk_dicomDabataseSettingsKey()
+    {
+    return ctk::dicomDabataseSettingsKey();
+    }
+
+  void static_ctk_setDICOMDabataseSettingsKey(QString key)
+    {
+    ctk::setDICOMDabataseSettingsKey(key);
+    }
 };
 
 //-----------------------------------------------------------------------------

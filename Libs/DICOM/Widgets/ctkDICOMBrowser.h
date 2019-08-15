@@ -65,6 +65,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
   Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
   Q_PROPERTY(ctkDICOMBrowser::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
   Q_PROPERTY(SchemaUpdateOption schemaUpdateOption READ schemaUpdateOption WRITE setSchemaUpdateOption)
+  Q_PROPERTY(bool schemaUpdateAutoCreateDirectory READ schemaUpdateAutoCreateDirectory WRITE setShemaUpdateAutoCreateDirectory)
   Q_PROPERTY(bool confirmRemove READ confirmRemove WRITE setConfirmRemove)
 
 public:
@@ -90,8 +91,10 @@ public:
   /// If the schema version of the loaded database does not match the one supported, then
   /// based on \sa schemaUpdateOption update the database, don't update, or ask the user.
   /// Provides a dialog box for progress if updating.
-  /// \return Flag determining whether new database has been set. In that case prevent circular calls.
-  Q_INVOKABLE bool updateDatabaseSchemaIfNeeded();
+  /// Setting the updated database happens in \sa setDatabaseDirectory
+  /// \return Directory path of the updated folder (it might be a different folder).
+  ///         Empty string if new database has not been set.
+  Q_INVOKABLE QString updateDatabaseSchemaIfNeeded();
 
   Q_INVOKABLE ctkDICOMDatabase* database();
 
@@ -101,9 +104,14 @@ public:
   /// Since the summary dialog is modal, we give the option of disabling it for batch modes or testing.
   void setDisplayImportSummary(bool);
   bool displayImportSummary();
-  /// Option to show dialog to confirm removal from the database (Remove action).
+  /// Option to show dialog to confirm removal from the database (Remove action). Off by default.
   void setConfirmRemove(bool);
   bool confirmRemove();
+  /// Option to determine whether the new database folder is automatically created or set by the user in a popup.
+  /// Automatically created folder will be ../[CurrentDatabaseFolderName]-[NewSchemaVersion]. Off by default.
+  void setShemaUpdateAutoCreateDirectory(bool);
+  bool schemaUpdateAutoCreateDirectory();
+
   /// Accessors to status of last directory import operation
   int patientsAddedDuringImport();
   int studiesAddedDuringImport();
@@ -136,7 +144,7 @@ public:
   /// Get schema update option (whether to update automatically). Default is always update
   /// \sa setSchemaUpdateOption
   ctkDICOMBrowser::SchemaUpdateOption schemaUpdateOption()const;
-  
+
   /// \brief Return instance of import dialog.
   ///
   /// \internal
@@ -224,7 +232,6 @@ protected:
     bool confirmDeleteSelectedUIDs(QStringList uids);
 
 protected Q_SLOTS:
-
     /// \brief Import directories
     ///
     /// This is used when user selected one or multiple
