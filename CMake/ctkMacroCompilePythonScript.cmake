@@ -152,7 +152,7 @@ function(_ctk_add_compile_python_directories_target target)
     find_package(PythonLibs REQUIRED)
 
     # Extract python lib path
-    get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARY} PATH)
+    get_filename_component(PYTHON_LIBRARY_PATH "${PYTHON_LIBRARY}" PATH)
 
     # Configure cmake script associated with the custom command
     # required to properly update the library path with PYTHON_LIBRARY_PATH
