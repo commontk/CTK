@@ -72,10 +72,14 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   endif()
 
   # Python is required
-  find_package(PythonLibs)
   if(NOT PYTHONLIBS_FOUND)
-    message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
+    find_package(PythonLibs)
+    if(NOT PYTHONLIBS_FOUND)
+      message(FATAL_ERROR "error: Python is required to build ${PROJECT_NAME}")
+    endif()
   endif()
+
+  ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
 
   if (CTK_QT_VERSION VERSION_GREATER "4")
     set(revision_tag fae2301264529b4c8c85ee6e285f9605176471f0) # patched-8

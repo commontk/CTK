@@ -222,6 +222,7 @@ foreach(file
   CMake/ctkMacroListFilter.cmake
   CMake/ctkMacroOptionUtils.cmake
   CMake/ctkMacroBuildLib.cmake
+  CMake/ctkFunctionExtractOptimizedLibrary.cmake
   CMake/ctkMacroBuildLibWrapper.cmake
   CMake/ctkMacroBuildPlugin.cmake
   CMake/ctkMacroBuildApp.cmake
@@ -885,13 +886,17 @@ endif()
 
 # Check if dependencies are satisfied
 if(CTK_LIB_Scripting/Python/Core)
-  find_package(PythonInterp)
   if(NOT PYTHONINTERP_FOUND)
-    message(FATAL_ERROR "PYTHON_EXECUTABLE variable should be set to build CTK_LIB_Scripting/Python")
+    find_package(PythonInterp)
+    if(NOT PYTHONINTERP_FOUND)
+      message(FATAL_ERROR "PYTHON_EXECUTABLE variable should be set to build CTK_LIB_Scripting/Python")
+    endif()
   endif()
-  find_package(PythonLibs)
   if(NOT PYTHONLIBS_FOUND)
-    message(FATAL_ERROR "PYTHON_LIBRARIES and PYTHON_INCLUDE_DIRS should be set to build CTK_LIB_Scripting/Python")
+    find_package(PythonLibs)
+    if(NOT PYTHONLIBS_FOUND)
+      message(FATAL_ERROR "PYTHON_LIBRARIES and PYTHON_INCLUDE_DIRS should be set to build CTK_LIB_Scripting/Python")
+    endif()
   endif()
 endif()
 

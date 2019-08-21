@@ -6,8 +6,8 @@
 #
 
 #
-# By globally defining the variable CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME to a 
-# non-empty string or by specifying the macro option 'GLOBAL_TARGET', 
+# By globally defining the variable CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME to a
+# non-empty string or by specifying the macro option 'GLOBAL_TARGET',
 # the following targets will be defined for the whole build system:
 #  - Copy<GLOBAL_TARGET_NAME>PythonResourceFiles
 #  - Copy<GLOBAL_TARGET_NAME>PythonScriptFiles
@@ -28,7 +28,7 @@ macro(ctkMacroCompilePythonScript)
     "NO_INSTALL_SUBDIR;GLOBAL_TARGET"
     ${ARGN}
     )
-  
+
   # Sanity checks
   foreach(varname TARGET_NAME SCRIPTS DESTINATION_DIR INSTALL_DIR)
     if(NOT DEFINED MY_${varname})
@@ -39,7 +39,7 @@ macro(ctkMacroCompilePythonScript)
   if(NOT DEFINED MY_SOURCE_DIR)
     set(MY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
-  
+
   if("${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME}" STREQUAL "")
     set(target ${MY_TARGET_NAME})
   else()
@@ -73,7 +73,7 @@ macro(ctkMacroCompilePythonScript)
     set_property(GLOBAL APPEND PROPERTY
       _CTK_${target}_PYTHON_SCRIPTS "${src}|${tgt_file}|${MY_DESTINATION_DIR}")
   endforeach()
-      
+
   if(DEFINED MY_RESOURCES)
     set(resource_input_files)
     foreach(file ${MY_RESOURCES})
@@ -96,7 +96,7 @@ macro(ctkMacroCompilePythonScript)
   install(DIRECTORY "${MY_DIRECTORY_TO_INSTALL}"
     DESTINATION "${MY_INSTALL_DIR}" COMPONENT RuntimeLibraries
     USE_SOURCE_PERMISSIONS)
-  
+
   if(NOT MY_GLOBAL_TARGET)
     ctkFunctionAddCompilePythonScriptTargets(${target})
   endif()
@@ -133,7 +133,7 @@ endfunction()
 
 function(_ctk_add_compile_python_directories_target target)
   set(target_name Compile${target}PythonFiles)
-  if(NOT TARGET ${target_name}) 
+  if(NOT TARGET ${target_name})
     # Byte compile the Python files.
     set(compile_all_script "${CMAKE_CURRENT_BINARY_DIR}/compile_${target}_python_scripts.py")
 
@@ -148,11 +148,16 @@ function(_ctk_add_compile_python_directories_target target)
       set(_compileall_code "${_compileall_code}\nctk_compile_file('${tgt}', force=1)")
     endforeach()
 
-    find_package(PythonInterp REQUIRED)
-    find_package(PythonLibs REQUIRED)
+    if(NOT PYTHONINTERP_FOUND)
+      find_package(PythonInterp REQUIRED)
+    endif()
+    if(NOT PYTHONLIBS_FOUND)
+      find_package(PythonLibs REQUIRED)
+    endif()
 
     # Extract python lib path
-    get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARY} PATH)
+    ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
+    get_filename_component(PYTHON_LIBRARY_PATH "${PYTHON_LIBRARY}" PATH)
 
     # Configure cmake script associated with the custom command
     # required to properly update the library path with PYTHON_LIBRARY_PATH
@@ -171,7 +176,7 @@ function(_ctk_add_compile_python_directories_target target)
       )
 
     add_custom_target(${target_name} ALL
-      DEPENDS 
+      DEPENDS
         ${CMAKE_CURRENT_BINARY_DIR}/python_compile_${target}_complete
         )
   endif()

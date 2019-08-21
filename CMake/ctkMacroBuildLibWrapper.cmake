@@ -99,6 +99,7 @@ macro(ctkMacroBuildLibWrapper)
   # Since the PythonQt decorator depends on PythonQt, Python and VTK, let's link against
   # these ones to avoid complaints of MSVC
   # Note: "LINK_DIRECTORIES" has to be invoked before "ADD_LIBRARY"
+  ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
   set(my_EXTRA_PYTHON_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
 
   # Does a header having the expected filename exists ?

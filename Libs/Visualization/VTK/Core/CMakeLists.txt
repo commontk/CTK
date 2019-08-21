@@ -145,6 +145,7 @@ if(${CTK_USE_CHARTS})
 endif()
 
 if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+  ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
   list(APPEND VTK_LIBRARIES ${PYTHON_LIBRARY} ${PYTHONQT_LIBRARIES})
   if(${VTK_VERSION_MAJOR} GREATER 5)
     list(APPEND VTK_LIBRARIES vtkWrappingPythonCore)
