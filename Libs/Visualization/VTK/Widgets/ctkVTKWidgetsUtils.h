@@ -44,8 +44,17 @@ QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT grabVTKWidget(QWidget* widget, QRect
 
 ///
 /// \ingroup Visualization_VTK_Widgets
-/// Convert a vtkImageData into a QImage
+/// Convert a vtkImageData into a QImage with alpha channel (RGBA).
+/// Creates a deep copy of the input image.
 QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT vtkImageDataToQImage(vtkImageData* imageData);
+
+///
+/// \ingroup Visualization_VTK_Widgets
+/// Convert a QImage into a vtkImageData.
+/// Creates a deep copy of the input image.
+/// \param forceAlphaChannel If set to true then the VTK image data will always contain alpha channel.
+///   If set to false then VTK image will be RGBA if QImage had alpha channel, RGB otherwise.
+bool CTK_VISUALIZATION_VTK_WIDGETS_EXPORT qImageToVTKImageData(const QImage& image, vtkImageData* imageData, bool forceAlphaChannel=true);
 
 ///
 /// \ingroup Visualization_VTK_Widgets
