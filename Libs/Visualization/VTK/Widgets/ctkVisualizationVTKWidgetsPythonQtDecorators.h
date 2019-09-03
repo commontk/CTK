@@ -27,6 +27,9 @@
 // CTK includes
 #include <ctkVTKChartView.h>
 #include <ctkVTKScalarsToColorsView.h>
+#include <ctkVTKWidgetsUtils.h>
+
+class vtkImageData;
 
 // NOTE:
 //
@@ -124,10 +127,42 @@ public Q_SLOTS:
 };
 
 //-----------------------------------------------------------------------------
+class PythonQtWrapper_CTKVisualizationVTKWidgets : public QObject
+{
+  Q_OBJECT
+  QVTK_OBJECT
+
+public Q_SLOTS:
+
+  QImage static_ctkVTKWidgetsUtils_grabVTKWidget(QWidget* widget, QRect rectangle = QRect())
+  {
+    return ctk::grabVTKWidget(widget, rectangle);
+  }
+
+  QImage static_ctkVTKWidgetsUtils_vtkImageDataToQImage(vtkImageData* imageData)
+  {
+    return ctk::vtkImageDataToQImage(imageData);
+  }
+
+
+  bool static_ctkVTKWidgetsUtils_qImageToVTKImageData(const QImage& image, vtkImageData* imageData)
+  {
+    return ctk::qImageToVTKImageData(image, imageData);
+  }
+
+};
+
+
+//-----------------------------------------------------------------------------
 /// \ingroup Widgets
 void initCTKVisualizationVTKWidgetsPythonQtDecorators()
 {
   PythonQt::self()->addDecorators(new ctkVisualizationVTKWidgetsPythonQtDecorators);
+
+  // PythonQt doesn't support wrapping a static function and adding it to the top-level
+  // ctk module.  This exposes static functions in ctk.ctkVTKWidgetsUtils, for example
+  // ctk.ctkVTKWidgetsUtils.qImageToVTKImageData.
+  PythonQt::self()->registerCPPClass("ctkVTKWidgetsUtils", "", "CTKVisualizationVTKWidgets", PythonQtCreateObject<PythonQtWrapper_CTKVisualizationVTKWidgets>);
 }
 
 #endif

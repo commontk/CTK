@@ -102,6 +102,7 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
   /// changes when the content changes.
   /// The default value is AdjustToContentsOnFirstShow.
   Q_PROPERTY(SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
+  Q_ENUMS(SizeAdjustPolicy)
 
   /// This property holds the minimum number of characters that should fit into
   /// the path line edit.
