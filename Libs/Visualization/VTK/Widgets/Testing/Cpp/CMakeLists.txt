@@ -35,6 +35,7 @@ set(TEST_SOURCES
   ctkVTKThumbnailViewTest1.cpp
   ctkVTKTransferFunctionRepresentationTest1.cpp
   ctkVTKWidgetsUtilsTestGrabWidget.cpp
+  ctkVTKWidgetsUtilsTestImageConversion.cpp
   )
 
 if(CTK_USE_CHARTS)
@@ -195,6 +196,7 @@ SIMPLE_TEST( ctkVTKTextPropertyWidgetTest1 )
 SIMPLE_TEST( ctkVTKThumbnailViewTest1 )
 SIMPLE_TEST( ctkVTKTransferFunctionRepresentationTest1 )
 SIMPLE_TEST( ctkVTKWidgetsUtilsTestGrabWidget )
+SIMPLE_TEST( ctkVTKWidgetsUtilsTestImageConversion )
 
 #
 # Add Tests expecting CTKData to be set

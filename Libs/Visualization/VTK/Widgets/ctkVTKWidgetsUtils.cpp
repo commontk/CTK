@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDebug>
 #include <QImage>
 #include <QPainter>
 #include <QStyle>
@@ -35,8 +36,10 @@
 #else
 #include <QVTKWidget.h>
 #endif
+#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkPiecewiseFunction.h>
+#include <vtkPointData.h>
 #include <vtkScalarsToColors.h>
 #include <vtkVersion.h>
 
@@ -85,33 +88,85 @@ QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
 //----------------------------------------------------------------------------
 QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
 {
-  if (!imageData)
-    {
+  if (!imageData
+    || !imageData->GetPointData()
+    || !imageData->GetPointData()->GetScalars()
+    || imageData->GetScalarType() != VTK_UNSIGNED_CHAR)
+  {
     return QImage();
-    }
-#if VTK_MAJOR_VERSION <= 5
-  imageData->Update();
-#endif
+  }
   /// \todo retrieve just the UpdateExtent
   int width = imageData->GetDimensions()[0];
   int height = imageData->GetDimensions()[1];
-  QImage image(width, height, QImage::Format_RGB32);
-  QRgb* rgbPtr = reinterpret_cast<QRgb*>(image.bits()) +
-    width * (height-1);
-  unsigned char* colorsPtr = reinterpret_cast<unsigned char*>(
-    imageData->GetScalarPointer());
-  // mirror vertically
-  for(int row = 0; row < height; ++row)
-    {
-    for (int col = 0; col < width; ++col)
-      {
-      // Swap rgb
-      *(rgbPtr++) = QColor(colorsPtr[0], colorsPtr[1], colorsPtr[2]).rgb();
-      colorsPtr +=  3;
-      }
-    rgbPtr -= width * 2;
-    }
-  return image;
+  vtkIdType numberOfScalarComponents = imageData->GetNumberOfScalarComponents();
+  QImage image;
+  if (numberOfScalarComponents == 3)
+  {
+    image = QImage(width, height, QImage::Format_RGB888);
+  }
+  else if (numberOfScalarComponents == 4)
+  {
+    image = QImage(width, height, QImage::Format_RGBA8888);
+  }
+#if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
+  else if (numberOfScalarComponents == 1)
+  {
+    image = QImage(width, height, QImage::Format_Grayscale8);
+  }
+#endif  
+  else
+  {
+    // unsupported pixel format
+    return QImage();
+  }
+
+  const unsigned char* qtImageBuffer = image.bits();
+  memcpy(imageData->GetPointData()->GetScalars()->GetVoidPointer(0),
+    qtImageBuffer, numberOfScalarComponents * width * height);
+
+  // Qt image is upside-down compared to VTK, so return mirrored image
+  return image.mirrored();
+}
+
+//----------------------------------------------------------------------------
+bool ctk::qImageToVTKImageData(const QImage& inputQImage, vtkImageData* outputVTKImageData, bool forceAlphaChannel/*=true*/)
+{
+  if (!outputVTKImageData)
+  {
+    qWarning() << Q_FUNC_INFO << " failed: outputVTKImageData is invalid";
+    return false;
+  }
+
+  QSize size = inputQImage.size();
+  vtkIdType width = size.width();
+  vtkIdType height = size.height();
+  if (width < 1 || height < 1)
+  {
+    qWarning() << Q_FUNC_INFO << " failed: input image is invalid";
+    return false;
+  }
+
+  QImage normalizedQtImage;
+  vtkIdType numberOfScalarComponents = 0;
+  if (inputQImage.hasAlphaChannel() || forceAlphaChannel)
+  {
+    normalizedQtImage = inputQImage.convertToFormat(QImage::Format_RGBA8888).mirrored();
+    numberOfScalarComponents = 4;
+  }
+  else
+  {
+    normalizedQtImage = inputQImage.convertToFormat(QImage::Format_RGB888).mirrored();
+    numberOfScalarComponents = 3;
+  }
+
+  const unsigned char* normalizedQtImageBuffer = normalizedQtImage.bits();
+  outputVTKImageData->SetExtent(0, width-1, 0, height-1, 0, 0);
+  outputVTKImageData->AllocateScalars(VTK_UNSIGNED_CHAR, numberOfScalarComponents);
+  memcpy(outputVTKImageData->GetPointData()->GetScalars()->GetVoidPointer(0),
+    normalizedQtImageBuffer, numberOfScalarComponents * width * height);
+  outputVTKImageData->GetPointData()->GetScalars()->Modified();
+
+  return true;
 }
 
 //----------------------------------------------------------------------------
