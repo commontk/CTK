@@ -44,6 +44,7 @@
 #include "ctkFileDialog.h"
 
 // ctkDICOMCore includes
+#include "ctkDICOMBrowser.h"
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMFilterProxyModel.h"
 #include "ctkDICOMIndexer.h"
@@ -277,13 +278,13 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   //initialize directory from settings, then listen for changes
   QSettings settings;
-  if ( settings.value("DatabaseDirectory", "") == "" )
+  if ( settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), "") == "" )
     {
     QString directory = QString("./ctkDICOM-Database");
-    settings.setValue("DatabaseDirectory", directory);
+    settings.setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), directory);
     settings.sync();
     }
-  QString databaseDirectory = settings.value("DatabaseDirectory").toString();
+  QString databaseDirectory = settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey()).toString();
   this->setDatabaseDirectory(databaseDirectory);
   d->DirectoryButton->setDirectory(databaseDirectory);
 
@@ -392,7 +393,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   Q_D(ctkDICOMAppWidget);
 
   QSettings settings;
-  settings.setValue("DatabaseDirectory", directory);
+  settings.setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), directory);
   settings.sync();
 
   //close the active DICOM database
@@ -433,7 +434,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
 QString ctkDICOMAppWidget::databaseDirectory() const
 {
   QSettings settings;
-  return settings.value("DatabaseDirectory").toString();
+  return settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey()).toString();
 }
 
 //----------------------------------------------------------------------------
