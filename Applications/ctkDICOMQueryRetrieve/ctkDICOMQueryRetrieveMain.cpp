@@ -56,17 +56,17 @@ int main(int argc, char** argv)
   if (argc > 1)
   {
     QString directory(argv[1]);
-    settings.setValue("DatabaseDirectory", directory);
+    settings.setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), directory);
     settings.sync();
   }
 
-  if ( settings.value("DatabaseDirectory", "") == "" )
+  if ( settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), "") == "" )
   {
     databaseDirectory = QString("./ctkDICOM-Database");
     std::cerr << "No DatabaseDirectory on command line or in settings.  Using \"" << databaseDirectory.toLatin1().data() << "\".\n";
   } else
   {
-    databaseDirectory = settings.value("DatabaseDirectory", "").toString();
+    databaseDirectory = settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), "").toString();
   }
 
   QDir qdir(databaseDirectory);

@@ -83,6 +83,8 @@ public:
   /// Return settings key used to store the directory.
   Q_INVOKABLE QString databaseDirectorySettingsKey() const;
 
+  Q_INVOKABLE static QString defaultDatabaseDirectorySettingsKey() { return QString("DatabaseDirectory"); };
+
   /// See ctkDICOMDatabase for description - these accessors
   /// delegate to the corresponding routines of the internal
   /// instance of the database.

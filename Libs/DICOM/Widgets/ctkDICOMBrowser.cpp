@@ -166,7 +166,7 @@ ctkDICOMBrowserPrivate::ctkDICOMBrowserPrivate(ctkDICOMBrowser* parent, QString 
 {
   if (this->DatabaseDirectorySettingsKey.isEmpty())
   {
-    this->DatabaseDirectorySettingsKey = "DatabaseDirectory";
+    this->DatabaseDirectorySettingsKey = ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey();
   }
 }
 
@@ -592,14 +592,14 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
   }
 
   // update the database schema if needed and provide progress
-  QString udpatedDatabaseDirectory = this->updateDatabaseSchemaIfNeeded();
-  if (!udpatedDatabaseDirectory.isEmpty())
+  QString updatedDatabaseDirectory = this->updateDatabaseSchemaIfNeeded();
+  if (!updatedDatabaseDirectory.isEmpty())
   {
     // close the active DICOM database, which needed to be updated
     d->DICOMDatabase->closeDatabase();
 
     // open DICOM database on the directory
-    QString updatedDatabaseFileName = udpatedDatabaseDirectory + QString("/ctkDICOM.sql");
+    QString updatedDatabaseFileName = updatedDatabaseDirectory + QString("/ctkDICOM.sql");
     try
     {
       d->DICOMDatabase->openDatabase( updatedDatabaseFileName );
@@ -612,7 +612,7 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
     }
   }
 
-  QString currentDatabaseDirectory(!udpatedDatabaseDirectory.isEmpty() ? udpatedDatabaseDirectory : directory);
+  QString currentDatabaseDirectory(!updatedDatabaseDirectory.isEmpty() ? updatedDatabaseDirectory : directory);
 
   // Save new database directory in settings.
   QSettings settings;
