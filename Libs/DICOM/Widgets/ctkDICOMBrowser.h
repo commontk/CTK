@@ -107,14 +107,14 @@ public:
   /// Option to show or not import summary dialog.
   /// Since the summary dialog is modal, we give the option of disabling it for batch modes or testing.
   void setDisplayImportSummary(bool);
-  bool displayImportSummary();
+  bool displayImportSummary()const;
   /// Option to show dialog to confirm removal from the database (Remove action). Off by default.
   void setConfirmRemove(bool);
-  bool confirmRemove();
+  bool confirmRemove()const;
   /// Option to determine whether the new database folder is automatically created or set by the user in a popup.
-  /// Automatically created folder will be ../[CurrentDatabaseFolderName]-[NewSchemaVersion]. Off by default.
+  /// Automatically created folder will be ../[CurrentDatabaseFolderName]-[NewSchemaVersion]. On by default.
   void setShemaUpdateAutoCreateDirectory(bool);
-  bool schemaUpdateAutoCreateDirectory();
+  bool schemaUpdateAutoCreateDirectory()const;
 
   /// Accessors to status of last directory import operation
   int patientsAddedDuringImport();

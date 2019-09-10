@@ -95,7 +95,6 @@ public:
 
   bool DisplayImportSummary;
   bool ConfirmRemove;
-  bool ShemaUpdateAutoCreateDirectory;
 
   // local count variables to keep track of the number of items
   // added to the database during an import operation
@@ -156,7 +155,6 @@ ctkDICOMBrowserPrivate::ctkDICOMBrowserPrivate(ctkDICOMBrowser* parent, QString 
   , ExportProgress(0)
   , DisplayImportSummary(true)
   , ConfirmRemove(false)
-  , ShemaUpdateAutoCreateDirectory(false)
   , PatientsAddedDuringImport(0)
   , StudiesAddedDuringImport(0)
   , SeriesAddedDuringImport(0)
@@ -381,9 +379,9 @@ ctkDICOMBrowser::~ctkDICOMBrowser()
 }
 
 //----------------------------------------------------------------------------
-bool ctkDICOMBrowser::displayImportSummary()
+bool ctkDICOMBrowser::displayImportSummary()const
 {
-  Q_D(ctkDICOMBrowser);
+  Q_D(const ctkDICOMBrowser);
 
   return d->DisplayImportSummary;
 }
@@ -397,9 +395,9 @@ void ctkDICOMBrowser::setDisplayImportSummary(bool onOff)
 }
 
 //----------------------------------------------------------------------------
-bool ctkDICOMBrowser::confirmRemove()
+bool ctkDICOMBrowser::confirmRemove()const
 {
-  Q_D(ctkDICOMBrowser);
+  Q_D(const ctkDICOMBrowser);
 
   return d->ConfirmRemove;
 }
@@ -413,19 +411,17 @@ void ctkDICOMBrowser::setConfirmRemove(bool onOff)
 }
 
 //----------------------------------------------------------------------------
-bool ctkDICOMBrowser::schemaUpdateAutoCreateDirectory()
+bool ctkDICOMBrowser::schemaUpdateAutoCreateDirectory()const
 {
-  Q_D(ctkDICOMBrowser);
-
-  return d->ShemaUpdateAutoCreateDirectory;
+  QSettings settings;
+  return settings.value("DICOM/ShemaUpdateAutoCreateDirectory", true).toBool();
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMBrowser::setShemaUpdateAutoCreateDirectory(bool onOff)
 {
-  Q_D(ctkDICOMBrowser);
-
-  d->ShemaUpdateAutoCreateDirectory = onOff;
+  QSettings settings;
+  settings.setValue("DICOM/ShemaUpdateAutoCreateDirectory", onOff);
 }
 
 //----------------------------------------------------------------------------
@@ -492,7 +488,7 @@ QString ctkDICOMBrowser::updateDatabaseSchemaIfNeeded()
   }
 
   QString dir;
-  if (d->ShemaUpdateAutoCreateDirectory)
+  if (this->schemaUpdateAutoCreateDirectory())
   {
     // Auto-generate new database folder name
     QString newDatabaseDirPath = this->databaseDirectory();
@@ -992,7 +988,6 @@ void ctkDICOMBrowser::setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMod
 //----------------------------------------------------------------------------
 ctkDICOMBrowser::SchemaUpdateOption ctkDICOMBrowser::schemaUpdateOption()const
 {
-  Q_D(const ctkDICOMBrowser);
   QSettings settings;
   return ctkDICOMBrowser::schemaUpdateOptionFromString(
     settings.value("DICOM/SchemaUpdateOption", ctkDICOMBrowser::schemaUpdateOptionToString(ctkDICOMBrowser::AlwaysUpdate)).toString() );
@@ -1001,8 +996,6 @@ ctkDICOMBrowser::SchemaUpdateOption ctkDICOMBrowser::schemaUpdateOption()const
 //----------------------------------------------------------------------------
 void ctkDICOMBrowser::setSchemaUpdateOption(ctkDICOMBrowser::SchemaUpdateOption option)
 {
-  Q_D(ctkDICOMBrowser);
-
   QSettings settings;
   settings.setValue("DICOM/SchemaUpdateOption", ctkDICOMBrowser::schemaUpdateOptionToString(option));
 }
