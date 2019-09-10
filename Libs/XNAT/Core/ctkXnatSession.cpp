@@ -52,7 +52,6 @@ static const char* HEADER_AUTHORIZATION = "Authorization";
 static const char* HEADER_USER_AGENT = "User-Agent";
 static const char* HEADER_COOKIE = "Cookie";
 
-static QString SERVER_VERSION = "version";
 static QString SESSION_EXPIRATION_DATE = "expires";
 
 //----------------------------------------------------------------------------
@@ -90,7 +89,6 @@ public:
   void createConnections();
   void setDefaultHttpHeaders();
   void checkSession() const;
-  void setSessionProperties();
   QDateTime updateExpirationDate(qRestResult* restResult);
 
   void close();
@@ -182,27 +180,6 @@ void ctkXnatSessionPrivate::checkSession() const
   if (sessionId.isEmpty())
   {
     throw ctkXnatInvalidSessionException("Session closed.");
-  }
-}
-
-//----------------------------------------------------------------------------
-void ctkXnatSessionPrivate::setSessionProperties()
-{
-  sessionProperties.clear();
-  QUuid uuid = xnat->get("/data/version");
-  QScopedPointer<qRestResult> restResult(xnat->takeResult(uuid));
-  if (restResult)
-  {
-    QString version = restResult->result()["content"].toString();
-    if (version.isEmpty())
-    {
-      throw ctkXnatProtocolFailureException("No version information available.");
-    }
-    sessionProperties[SERVER_VERSION] = version;
-  }
-  else
-  {
-    this->throwXnatException("Retrieving session properties failed.");
   }
 }
 
@@ -386,7 +363,6 @@ void ctkXnatSession::open()
     QString sessionId = restResult->result()["content"].toString();
     d->sessionId = sessionId;
     d->setDefaultHttpHeaders();
-    d->setSessionProperties();
     d->updateExpirationDate(restResult.data());
   }
   else
@@ -417,19 +393,6 @@ bool ctkXnatSession::isOpen() const
   return !d->sessionId.isEmpty();
 }
 
-//----------------------------------------------------------------------------
-QString ctkXnatSession::version() const
-{
-  Q_D(const ctkXnatSession);
-  if (d->sessionProperties.contains(SERVER_VERSION))
-  {
-    return d->sessionProperties[SERVER_VERSION];
-  }
-  else
-  {
-    return QString::null;
-  }
-}
 
 //----------------------------------------------------------------------------
 QDateTime ctkXnatSession::expirationDate() const
