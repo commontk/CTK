@@ -23,6 +23,7 @@
 #include "ui_ctkDICOMTableView.h"
 
 // Qt includes
+#include <QJsonObject>
 #include <QMouseEvent>
 #include <QSortFilterProxyModel>
 #include <QSqlQueryModel>
@@ -164,6 +165,7 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
   int columnCount = this->dicomSQLModel.columnCount();
   QList<int> columnWeights;
   QMap<int,int> visualIndexToColumnIndexMap;
+  bool stretchedColumnFound = false;
   for (int col=0; col<columnCount; ++col)
   {
     QString columnName = this->dicomSQLModel.headerData(col, Qt::Horizontal).toString();
@@ -184,16 +186,64 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
     this->dicomSQLModel.setHeaderData(col, Qt::Horizontal, displayedName, Qt::DisplayRole);
 
     // Apply visibility
-    bool visbility = this->dicomDatabase->visibilityForField(this->queryTableName(), columnName);
-    this->tblDicomDatabaseView->setColumnHidden(col, !visbility);
+    bool visibility = this->dicomDatabase->visibilityForField(this->queryTableName(), columnName);
+    this->tblDicomDatabaseView->setColumnHidden(col, !visibility);
 
     // Save weight to apply later
     int weight = this->dicomDatabase->weightForField(this->queryTableName(), columnName);
     columnWeights << weight;
 
-    QString format = this->dicomDatabase->formatForField(this->queryTableName(), columnName);
-    //TODO: Apply format
+    QString fieldFormat = this->dicomDatabase->formatForField(this->queryTableName(), columnName);
+    QHeaderView::ResizeMode columnResizeMode = QHeaderView::Interactive;
+    if (!fieldFormat.isEmpty())
+    {
+      QJsonDocument fieldFormatDoc = QJsonDocument::fromJson(fieldFormat.toUtf8());
+      QJsonObject fieldFormatObj;
+      if (!fieldFormatDoc.isNull())
+      {
+        if (fieldFormatDoc.isObject())
+        {
+          fieldFormatObj = fieldFormatDoc.object();
+        }
+      }
+      if (!fieldFormatObj.isEmpty())
+      {
+        // format string successfully decoded from json
+        QString resizeModeStr = fieldFormatObj.value(QString("resizeMode")).toString("interactive");
+        if (resizeModeStr == "interactive")
+        {
+          columnResizeMode = QHeaderView::Interactive;
+        }
+        else if (resizeModeStr == "stretch")
+        {
+          columnResizeMode = QHeaderView::Stretch;
+        }
+        else if (resizeModeStr == "resizeToContents")
+        {
+          columnResizeMode = QHeaderView::ResizeToContents;
+        }
+        else
+        {
+          qWarning() << "Invalid ColumnDisplayProperties Format string for column " << columnName << ": resizeMode must be interactive, stretch, or resizeToContents";
+        }
+
+      }
+      else
+      {
+        // format string is specified but failed to be decoded from json
+        qWarning() << "Invalid ColumnDisplayProperties Format string for column " << columnName << ": " << fieldFormat;
+      }
+    }
+    this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(col, columnResizeMode);
+    if (columnResizeMode == QHeaderView::Stretch && visibility)
+    {
+      stretchedColumnFound = true;
+    }
+
   }
+
+  // If no stretched column is shown then stretch the last column to make the table look nicely aligned
+  this->tblDicomDatabaseView->horizontalHeader()->setStretchLastSection(!stretchedColumnFound);
 
   // First restore original order of the columns so that it can be sorted by weights (use bubble sort).
   // This extra complexity is needed because the only mechanism for column order is by moving or swapping

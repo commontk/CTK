@@ -286,6 +286,8 @@ public:
   /// Weight specifies the order of the field columns in the table. Smaller values are positioned towards the left ("heaviest sinks down")
   Q_INVOKABLE void setWeightForField(QString table, QString field, int weight);
   /// Get format of a given field
+  /// It contains a json document with the following fields:
+  /// - resizeMode: column resize mode. Accepted values are: "interactive" (default), "stretch", or "resizeToContents".
   Q_INVOKABLE QString formatForField(QString table, QString field) const;
   /// Set format of a given field
   Q_INVOKABLE void setFormatForField(QString table, QString field, QString format);
