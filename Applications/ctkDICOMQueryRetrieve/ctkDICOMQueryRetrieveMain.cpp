@@ -25,6 +25,7 @@
 #include <QDir>
 
 // CTK Core
+#include <ctkDICOMBrowser.h>
 #include <ctkDICOMDatabase.h>
 #include <ctkDICOMUtil.h>
 
