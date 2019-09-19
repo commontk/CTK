@@ -185,8 +185,6 @@ public Q_SLOTS:
   void onRemoveAction();
   void onRepairAction();
 
-  void onTablesDensityComboBox(QString);
-
   /// \brief Import directories
   ///
   /// This can be used to externally trigger an import (i.e. for testing or to support drag-and-drop)

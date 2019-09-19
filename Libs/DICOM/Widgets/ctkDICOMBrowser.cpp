@@ -273,9 +273,6 @@ void ctkDICOMBrowserPrivate::init()
   q->connect(this->DICOMDatabase.data(), SIGNAL(seriesAdded(QString)), q, SLOT(onSeriesAdded(QString)));
   q->connect(this->DICOMDatabase.data(), SIGNAL(instanceAdded(QString)), q, SLOT(onInstanceAdded(QString)));
 
-  q->connect(this->tableDensityComboBox ,SIGNAL(currentIndexChanged (const QString&)),
-     q, SLOT(onTablesDensityComboBox(QString)));
-
   q->connect(this->DirectoryButton, SIGNAL(directoryChanged(QString)), q, SLOT(setDatabaseDirectory(QString)));
 
   // Signal for displayed fields update
@@ -803,24 +800,6 @@ void ctkDICOMBrowser::onRepairAction()
         d->dicomTableManager->updateTableViews();
       }
     }
-  }
-}
-//----------------------------------------------------------------------------
-void ctkDICOMBrowser::onTablesDensityComboBox(QString density)
-{
-  Q_D(ctkDICOMBrowser);
-
-  if ( density == "Comfortable")
-  {
-    d->dicomTableManager->setDisplayDensity(ctkDICOMTableManager::Comfortable);
-  }
-  else if ( density == "Cozy")
-  {
-    d->dicomTableManager->setDisplayDensity(ctkDICOMTableManager::Cozy);
-  }
-  else if ( density == "Compact")
-  {
-    d->dicomTableManager->setDisplayDensity(ctkDICOMTableManager::Compact);
   }
 }
 

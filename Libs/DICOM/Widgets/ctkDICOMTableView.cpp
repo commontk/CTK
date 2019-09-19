@@ -100,9 +100,12 @@ void ctkDICOMTableViewPrivate::init()
   this->tblDicomDatabaseView->setSortingEnabled(true);
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  this->tblDicomDatabaseView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 #else
   this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+  this->tblDicomDatabaseView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 #endif
+  this->tblDicomDatabaseView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
 
   QObject::connect(this->tblDicomDatabaseView->selectionModel(),
                    SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
@@ -480,20 +483,6 @@ bool ctkDICOMTableView::filterActive()
 {
   Q_D(ctkDICOMTableView);
   return (d->leSearchBox->text().length() != 0);
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMTableView::setTableSectionSize(int size)
-{
-  Q_D(ctkDICOMTableView);
-  d->tblDicomDatabaseView->verticalHeader()->setDefaultSectionSize(size);
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMTableView::tableSectionSize()
-{
-  Q_D(ctkDICOMTableView);
-  return d->tblDicomDatabaseView->verticalHeader()->defaultSectionSize();
 }
 
 //------------------------------------------------------------------------------

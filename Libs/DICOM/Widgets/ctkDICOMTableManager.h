@@ -50,14 +50,6 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableManager : public QWidget
     */
   Q_PROPERTY(bool dynamicTableLayout READ dynamicTableLayout WRITE setDynamicTableLayout)
 
-
-  Q_ENUMS(DisplayDensity)
-  /**
-  * This property holds the density of tables in the table Manager. There are three density
-  * levels: Comfortable (least dense), Cozy and Compact (most dense).
-   */
-  Q_PROPERTY(ctkDICOMTableManager::DisplayDensity displayDensity READ displayDensity WRITE setDisplayDensity);
-
   /**
     * Property for automatic selection of series when a study is selected. On by default
     */
@@ -103,16 +95,6 @@ public:
   int selectionMode() const;
 
   Q_INVOKABLE void updateTableViews();
-
-  enum DisplayDensity
-  {
-    Compact = 0,
-    Cozy = 1,
-    Comfortable = 2
-  };
-
-  DisplayDensity displayDensity();
-  void setDisplayDensity(DisplayDensity density);
 
   Q_INVOKABLE ctkDICOMTableView* patientsTable();
   Q_INVOKABLE ctkDICOMTableView* studiesTable();

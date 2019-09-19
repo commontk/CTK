@@ -117,9 +117,6 @@ public:
 
   bool filterActive();
 
-  void setTableSectionSize(int);
-  int tableSectionSize();
-
   /**
   * @brief Get the actual QTableView, for specific view settings
   * @return a pointer to QTableView* tblDicomDatabaseView
