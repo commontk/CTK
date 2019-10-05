@@ -113,16 +113,17 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
   {
     image = QImage(width, height, QImage::Format_Grayscale8);
   }
-#endif  
+#endif
   else
   {
     // unsupported pixel format
     return QImage();
   }
 
-  const unsigned char* qtImageBuffer = image.bits();
-  memcpy(imageData->GetPointData()->GetScalars()->GetVoidPointer(0),
-    qtImageBuffer, numberOfScalarComponents * width * height);
+  unsigned char* qtImageBuffer = image.bits();
+  memcpy( qtImageBuffer,
+    imageData->GetPointData()->GetScalars()->GetVoidPointer(0),
+    numberOfScalarComponents * width * height);
 
   // Qt image is upside-down compared to VTK, so return mirrored image
   return image.mirrored();
