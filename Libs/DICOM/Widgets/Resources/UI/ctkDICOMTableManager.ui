@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>833</width>
-    <height>455</height>
+    <width>806</width>
+    <height>473</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,10 +26,124 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="headerWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>3</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="lblPatients">
+        <property name="text">
+         <string>Patients:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkSearchBox" name="patientsSearchBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lblStudies">
+        <property name="text">
+         <string>Studies:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkSearchBox" name="studiesSearchBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lblSeries">
+        <property name="text">
+         <string>Series:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkSearchBox" name="seriesSearchBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item>
     <widget class="QSplitter" name="tableSplitter">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -42,12 +156,15 @@ QSplitter::handle:vertical {height: 2px;}</string>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="handleWidth">
+      <number>0</number>
+     </property>
      <property name="childrenCollapsible">
       <bool>false</bool>
      </property>
-     <widget class="ctkDICOMTableView" name="patientsTable"/>
-     <widget class="ctkDICOMTableView" name="studiesTable"/>
-     <widget class="ctkDICOMTableView" name="seriesTable"/>
+     <widget class="ctkDICOMTableView" name="patientsTable" native="true"/>
+     <widget class="ctkDICOMTableView" name="studiesTable" native="true"/>
+     <widget class="ctkDICOMTableView" name="seriesTable" native="true"/>
     </widget>
    </item>
   </layout>
@@ -57,6 +174,11 @@ QSplitter::handle:vertical {height: 2px;}</string>
    <class>ctkDICOMTableView</class>
    <extends>QWidget</extends>
    <header>ctkDICOMTableView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>ctkSearchBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>802</width>
-    <height>607</height>
+    <width>583</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>12</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="QToolBar" name="ToolBar">
@@ -49,57 +49,50 @@
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="VerticalLayout">
-     <property name="spacing">
-      <number>12</number>
+    <widget class="QFrame" name="DatabaseDirectoryProblemFrame">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(245, 245, 170);</string>
      </property>
-     <item>
-      <layout class="QHBoxLayout" name="TopLayout">
-       <property name="leftMargin">
-        <number>12</number>
-       </property>
-       <property name="rightMargin">
-        <number>12</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="DatabaseNameLabel">
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>LocalDatabase:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="ctkDirectoryButton" name="DirectoryButton">
-         <property name="minimumSize">
-          <size>
-           <width>200</width>
-           <height>20</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="HorizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-    </layout>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="DatabaseDirectoryProblemLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Warning</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="UpdateDatabaseButton">
+        <property name="text">
+         <string>Update database</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="CreateNewDatabaseButton">
+        <property name="text">
+         <string>Create new database</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="SelectDatabaseDirectoryButton">
+        <property name="text">
+         <string>Select database folder</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="QueryLayout" stretch="0">
@@ -113,8 +106,14 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="ctkDICOMTableManager" name="dicomTableManager">
-       <property name="dynamicTableLayout">
+      <widget class="ctkDICOMTableManager" name="dicomTableManager" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="dynamicTableLayout" stdset="0">
         <bool>true</bool>
        </property>
        <property name="m_DynamicLayout" stdset="0">
@@ -123,6 +122,96 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="InformationMessageFrame">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="InformationMessageLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Information</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="InformationMessageDismissButton">
+        <property name="text">
+         <string>OK</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="ProgressFrame">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="1">
+       <widget class="QProgressBar" name="ProgressBar">
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="ProgressCancelButton">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="ProgressLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Progress</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3">
+       <widget class="QLineEdit" name="ProgressDetailLineEdit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="maxLength">
+         <number>300</number>
+        </property>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkDirectoryButton" name="DirectoryButton" native="true"/>
    </item>
   </layout>
   <action name="ActionImport">
@@ -141,7 +230,7 @@
     <string>Export</string>
    </property>
    <property name="toolTip">
-    <string>Export selected study/series to a DICOM folder (not yet available)</string>
+    <string>Export selected series to a DICOM folder</string>
    </property>
   </action>
   <action name="ActionQuery">
@@ -149,7 +238,7 @@
     <string>Query</string>
    </property>
    <property name="toolTip">
-    <string>Query and Retrieve DICOM studies from a DICOM node</string>
+    <string>Query and retrieve studies from a DICOM server</string>
    </property>
   </action>
   <action name="ActionSend">
@@ -160,7 +249,7 @@
     <string>Send</string>
    </property>
    <property name="toolTip">
-    <string>Send DICOM Studies to a DICOM node (not yet available)</string>
+    <string>Send selected series to DICOM server</string>
    </property>
   </action>
   <action name="ActionRemove">
@@ -171,7 +260,7 @@
     <string>Remove</string>
    </property>
    <property name="toolTip">
-    <string>Remove selected series, studies, patients from database</string>
+    <string>Remove selected series from database</string>
    </property>
   </action>
   <action name="ActionRepair">
@@ -285,11 +374,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>ActionSend</sender>
+   <signal>triggered()</signal>
+   <receiver>ctkDICOMBrowser</receiver>
+   <slot>openSendDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>222</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openImportDialog()</slot>
   <slot>openExportDialog()</slot>
   <slot>openQueryDialog()</slot>
+  <slot>openSendDialog()</slot>
   <slot>onDatabaseDirectoryChaged(QString)</slot>
   <slot>onNextImage()</slot>
   <slot>onPreviousImage()</slot>

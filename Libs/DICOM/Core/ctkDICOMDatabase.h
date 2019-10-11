@@ -61,6 +61,14 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
 
 public:
+  struct IndexingResult
+  {
+    QString filePath;
+    QSharedPointer<ctkDICOMItem> dataset;
+    bool copyFile;
+    bool overwriteExistingDataset;
+  };
+
   explicit ctkDICOMDatabase(QObject *parent = 0);
   explicit ctkDICOMDatabase(QString databaseFile);
   virtual ~ctkDICOMDatabase();
@@ -159,7 +167,15 @@ public:
   Q_INVOKABLE QString instanceForFile (const QString fileName);
   Q_INVOKABLE QDateTime insertDateTimeForInstance (const QString fileName);
 
+  Q_INVOKABLE int patientsCount();
+  Q_INVOKABLE int studiesCount();
+  Q_INVOKABLE int seriesCount();
+  Q_INVOKABLE int imagesCount();
+
   Q_INVOKABLE QStringList allFiles ();
+
+  bool allFilesModifiedTimes(QMap<QString, QDateTime>& modifiedTimeForFilepath);
+
   /// \brief Load the header from a file and allow access to elements
   /// @param sopInstanceUID A string with the uid for a given instance
   ///                       (corresponding file will be found via database)
@@ -206,6 +222,11 @@ public:
                             bool createHierarchy = true,
                             const QString& destinationDirectoryName = QString() );
 
+  Q_INVOKABLE void insert(const QString& filePath, const ctkDICOMItem& ctkDataset,
+    bool storeFile = true, bool generateThumbnail = true);
+
+  Q_INVOKABLE void insert(const QList<ctkDICOMDatabase::IndexingResult>& indexingResults);
+
   /// Update the fields in the database that are used for displaying information
   /// from information stored in the tag-cache.
   /// Displayed fields are useful if the raw DICOM tags are not human readable, or
@@ -229,10 +250,18 @@ public:
   Q_INVOKABLE bool fileExistsAndUpToDate(const QString& filePath);
 
   /// Remove the series from the database, including images and thumbnails
-  Q_INVOKABLE bool removeSeries(const QString& seriesInstanceUID);
+  /// If clearCachedTags is set to true then cached tags associated with the series are deleted,
+  /// if set to False the they are left in the database unchanced.
+  /// By default clearCachedTags is disabled because it significantly increases deletion time
+  /// on large databases.
+  Q_INVOKABLE bool removeSeries(const QString& seriesInstanceUID, bool clearCachedTags=false);
   Q_INVOKABLE bool removeStudy(const QString& studyInstanceUID);
   Q_INVOKABLE bool removePatient(const QString& patientID);
-  Q_INVOKABLE bool cleanup();
+  /// Remove all patients, studies, series, which do not have associated images.
+  /// If vacuum is set to true then the whole database content is attempted to
+  /// cleaned from remnants of all previously deleted data from the file.
+  /// Vacuuming may fail if there are multiple connections to the database.
+  Q_INVOKABLE bool cleanup(bool vacuum=false);
 
   /// \brief Access element values for given instance
   /// @param sopInstanceUID A string with the uid for a given instance
@@ -270,6 +299,8 @@ public:
   Q_INVOKABLE bool cacheTag (const QString sopInstanceUID, const QString tag, const QString value);
   /// Insert lists of tags into the cache as a batch query operation
   Q_INVOKABLE bool cacheTags (const QStringList sopInstanceUIDs, const QStringList tags, const QStringList values);
+  /// Remove all tags corresponding to a SOP instance UID
+  void removeCachedTags(const QString sopInstanceUID);
 
   /// Get displayed name of a given field
   Q_INVOKABLE QString displayedNameForField(QString table, QString field) const;
@@ -288,11 +319,14 @@ public:
   /// Get format of a given field
   /// It contains a json document with the following fields:
   /// - resizeMode: column resize mode. Accepted values are: "interactive" (default), "stretch", or "resizeToContents".
+  /// - sort: default sort order. Accepted values are: empty (default), "ascending" or "descending".
+  ///   Only one column (or none) should have non-empty sort order in each table.
   Q_INVOKABLE QString formatForField(QString table, QString field) const;
   /// Set format of a given field
   Q_INVOKABLE void setFormatForField(QString table, QString field, QString format);
 
 Q_SIGNALS:
+
   /// Things inserted to database.
   /// patientAdded arguments:
   ///  - int: database index of patient (unique) within CTK database
@@ -311,8 +345,17 @@ Q_SIGNALS:
   ///  - instanceUID (unique)
   void instanceAdded(QString);
 
+  /// This signal is emitted when the database has been opened.
+  void opened();
+
+  /// This signal is emitted when the database has been closed.
+  void closed();
+
   /// Indicate that an in-memory database has been updated
   void databaseChanged();
+
+  /// Indicate that tagsToPreCache list changed
+  void tagsToPrecacheChanged();
 
   /// Indicate that the schema is about to be updated and how many files will be processed
   void schemaUpdateStarted(int);

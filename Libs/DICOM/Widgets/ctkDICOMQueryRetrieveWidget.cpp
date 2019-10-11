@@ -153,15 +153,28 @@ void ctkDICOMQueryRetrieveWidget::query()
   Q_D(ctkDICOMQueryRetrieveWidget);
 
   d->RetrieveButton->setEnabled(false);
-  
-  // create a database in memory to hold query results
-  try { d->QueryResultDatabase.openDatabase( ":memory:", "QUERY-DB" ); }
-  catch (std::exception e)
+
+  if (!d->QueryResultDatabase.isOpen())
   {
-    logger.error ( "Database error: " + d->QueryResultDatabase.lastError() );
-    d->QueryResultDatabase.closeDatabase();
-    return;
+    // create a database in memory to hold query results
+    try
+    {
+      d->QueryResultDatabase.openDatabase(":memory:");
+    }
+    catch (std::exception e)
+    {
+      logger.error("Database error: " + d->QueryResultDatabase.lastError());
+      d->QueryResultDatabase.closeDatabase();
+      return;
+    }
   }
+
+  // Clear the database and set schema.
+  // Use a special schema that works well with fields received in query results
+  // and does not rely on displayed field setting.
+  // (Current limitation is that displayed fields cannot be computed if files
+  // are not inserted into the database).
+  d->QueryResultDatabase.initializeDatabase(":/dicom/dicom-qr-schema.sql");
 
   d->QueriesByStudyUID.clear();
   // for each of the selected server nodes, send the query
@@ -207,7 +220,9 @@ void ctkDICOMQueryRetrieveWidget::query()
               this, SLOT(onQueryProgressChanged(int)));
 
       // run the query against the selected server and put results in database
+      bool wasBatchUpdate = d->dicomTableManager->setBatchUpdate(true);
       query->query ( d->QueryResultDatabase );
+      d->dicomTableManager->setBatchUpdate(wasBatchUpdate);
 
       disconnect(query, SIGNAL(progress(QString)),
                  progressLabel, SLOT(setText(QString)));
@@ -237,6 +252,12 @@ void ctkDICOMQueryRetrieveWidget::query()
     d->dicomTableManager->setDICOMDatabase(&(d->QueryResultDatabase));
     }
   d->RetrieveButton->setEnabled(d->QueriesByStudyUID.keys().size() != 0);
+
+  // We would need to call database.updateDisplayedFields() now, but currently
+  // updateDisplayedFields requires entries in the Image table and tag cache
+  // and they are not set when inserting query results.
+  // Therefore, for now we do not compute displayed fields and use a schema
+  // that only shows raw DICOM values.
 
   progress.setValue(progress.maximum());
   d->ProgressDialog = 0;
@@ -355,6 +376,8 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
       }
     logger.info ( "Retrieve success" );
     }
+
+  retrieve->database()->updateDisplayedFields();
 
   if(d->UseProgressDialog)
     {

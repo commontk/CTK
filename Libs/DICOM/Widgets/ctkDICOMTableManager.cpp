@@ -43,6 +43,8 @@ public:
 
   void init();
   void setDICOMDatabase(ctkDICOMDatabase *db);
+  void collapseTopHeader(bool collapse);
+  void showFilterActiveWarning(ctkSearchBox* searchBox, bool showWarning);
 
   ctkDICOMDatabase* dicomDatabase;
 
@@ -83,6 +85,33 @@ void ctkDICOMTableManagerPrivate::init()
   this->seriesTable->setQueryTableName("Series");
   this->seriesTable->setQueryForeignKey("StudyInstanceUID");
 
+  this->patientsSearchBox->setAlwaysShowClearIcon(true);
+  this->patientsSearchBox->setShowSearchIcon(true);
+  QObject::connect(this->patientsSearchBox, SIGNAL(textChanged(QString)),
+    this->patientsTable, SLOT(setFilterText(QString)));
+  QObject::connect(this->patientsTable, SIGNAL(filterTextChanged(QString)),
+    this->patientsSearchBox, SLOT(setText(QString)));
+  QObject::connect(this->patientsTable, SIGNAL(showFilterActiveWarning(bool)),
+    q, SLOT(showPatientsFilterActiveWarning(bool)));
+
+  this->studiesSearchBox->setAlwaysShowClearIcon(true);
+  this->studiesSearchBox->setShowSearchIcon(true);
+  QObject::connect(this->studiesSearchBox, SIGNAL(textChanged(QString)),
+    this->studiesTable, SLOT(setFilterText(QString)));
+  QObject::connect(this->studiesTable, SIGNAL(filterTextChanged(QString)),
+    this->studiesSearchBox, SLOT(setText(QString)));
+  QObject::connect(this->studiesTable, SIGNAL(showFilterActiveWarning(bool)),
+    q, SLOT(showStudiesFilterActiveWarning(bool)));
+
+  this->seriesSearchBox->setAlwaysShowClearIcon(true);
+  this->seriesSearchBox->setShowSearchIcon(true);
+  QObject::connect(this->seriesSearchBox, SIGNAL(textChanged(QString)),
+    this->seriesTable, SLOT(setFilterText(QString)));
+  QObject::connect(this->seriesTable, SIGNAL(filterTextChanged(QString)),
+    this->seriesSearchBox, SLOT(setText(QString)));
+  QObject::connect(this->seriesTable, SIGNAL(showFilterActiveWarning(bool)),
+    q, SLOT(showSeriesFilterActiveWarning(bool)));
+
   // For propagating patient selection changes
   QObject::connect(this->patientsTable, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
                    q, SIGNAL(patientsSelectionChanged(const QItemSelection&, const QItemSelection&)));
@@ -116,16 +145,42 @@ void ctkDICOMTableManagerPrivate::init()
 
   QObject::connect(this->seriesTable, SIGNAL(customContextMenuRequested(const QPoint&)),
                    q, SIGNAL(seriesRightClicked(const QPoint&)));
+
+  q->setTableOrientation(this->tableSplitter->orientation());
 }
 
 //------------------------------------------------------------------------------
-
 void ctkDICOMTableManagerPrivate::setDICOMDatabase(ctkDICOMDatabase* db)
 {
   this->patientsTable->setDicomDataBase(db);
   this->studiesTable->setDicomDataBase(db);
   this->seriesTable->setDicomDataBase(db);
   this->dicomDatabase = db;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableManagerPrivate::collapseTopHeader(bool collapse)
+{
+  Q_Q(ctkDICOMTableManager);
+  this->patientsTable->setHeaderVisible(!collapse);
+  this->studiesTable->setHeaderVisible(!collapse);
+  this->seriesTable->setHeaderVisible(!collapse);
+  this->headerWidget->setVisible(collapse);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableManagerPrivate::showFilterActiveWarning(ctkSearchBox* searchBox, bool showWarning)
+{
+  QPalette palette;
+  if (showWarning)
+  {
+    palette.setColor(QPalette::Base, Qt::yellow);
+  }
+  else
+  {
+    palette.setColor(QPalette::Base, Qt::white);
+  }
+  searchBox->setPalette(palette);
 }
 
 //----------------------------------------------------------------------------
@@ -164,10 +219,11 @@ void ctkDICOMTableManager::setDICOMDatabase(ctkDICOMDatabase* db)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableManager::setTableOrientation(const Qt::Orientation &o) const
+void ctkDICOMTableManager::setTableOrientation(const Qt::Orientation &o)
 {
-  Q_D(const ctkDICOMTableManager);
+  Q_D(ctkDICOMTableManager);
   d->tableSplitter->setOrientation(o);
+  d->collapseTopHeader(o == Qt::Vertical);
 }
 
 //------------------------------------------------------------------------------
@@ -379,8 +435,8 @@ void ctkDICOMTableManager::resizeEvent(QResizeEvent *e)
   if (!d->m_DynamicTableLayout)
     return;
 
-  //Minimum size = 800 * 1.28 = 1024 => use horizontal layout (otherwise table size would be too small)
-  this->setTableOrientation(e->size().width() > 1.28*this->minimumWidth() ? Qt::Horizontal : Qt::Vertical);
+  // If the table is 2x wider than tall then use horizontal layout
+  this->setTableOrientation(e->size().width() > 2 * e->size().height() ? Qt::Horizontal : Qt::Vertical);
 }
 
 //------------------------------------------------------------------------------
@@ -400,4 +456,45 @@ ctkDICOMTableView* ctkDICOMTableManager::seriesTable()
 {
   Q_D( ctkDICOMTableManager );
   return(d->seriesTable);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableManager::isBatchUpdate()const
+{
+  Q_D(const ctkDICOMTableManager);
+  return d->patientsTable->isBatchUpdate();
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableManager::setBatchUpdate(bool enable)
+{
+  Q_D(ctkDICOMTableManager);
+  if (enable == this->isBatchUpdate())
+  {
+    return enable;
+  }
+  d->patientsTable->setBatchUpdate(enable);
+  d->studiesTable->setBatchUpdate(enable);
+  d->seriesTable->setBatchUpdate(enable);
+  return !enable;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMTableManager::showPatientsFilterActiveWarning(bool showWarning)
+{
+  Q_D(ctkDICOMTableManager);
+  d->showFilterActiveWarning(d->patientsSearchBox, showWarning);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMTableManager::showStudiesFilterActiveWarning(bool showWarning)
+{
+  Q_D(ctkDICOMTableManager);
+  d->showFilterActiveWarning(d->studiesSearchBox, showWarning);
+}
+//----------------------------------------------------------------------------
+void ctkDICOMTableManager::showSeriesFilterActiveWarning(bool showWarning)
+{
+  Q_D(ctkDICOMTableManager);
+  d->showFilterActiveWarning(d->seriesSearchBox, showWarning);
 }

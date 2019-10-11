@@ -61,7 +61,8 @@ public:
   Q_INVOKABLE QStringList getRequiredTags();
 
   /// Update displayed fields for an instance, invoking all registered rules
-  Q_INVOKABLE void updateDisplayedFieldsForInstance(QString sopInstanceUID,
+  Q_INVOKABLE void updateDisplayedFieldsForInstance(const QString& sopInstanceUID,
+                                                    const QMap<QString, QString> &cachedTags,
                                                     QMap<QString, QString> &displayedFieldsForCurrentSeries,
                                                     QMap<QString, QString> &displayedFieldsForCurrentStudy,
                                                     QMap<QString, QString> &displayedFieldsForCurrentPatient);

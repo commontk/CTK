@@ -27,6 +27,8 @@
 
 #include "ctkDICOMWidgetsExport.h"
 
+#include "ctkDICOMModel.h"
+
 class ctkDICOMBrowserPrivate;
 class ctkDICOMDatabase;
 class ctkDICOMTableManager;
@@ -45,18 +47,20 @@ class QModelIndex;
 ///
 /// Supported operations are:
 ///
-/// * Import
+/// * Import from file system
 /// * Export
-/// * Send
 /// * Query
-/// * Remove
+/// * Send (emits signal only, requires external implementation)
 /// * Repair
+/// * Remove
+/// * Metadata
 ///
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
 {
   Q_OBJECT
   Q_ENUMS(ImportDirectoryMode)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
+  Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey)
   Q_PROPERTY(int patientsAddedDuringImport READ patientsAddedDuringImport)
   Q_PROPERTY(int studiesAddedDuringImport READ studiesAddedDuringImport)
   Q_PROPERTY(int seriesAddedDuringImport READ seriesAddedDuringImport)
@@ -64,26 +68,29 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
   Q_PROPERTY(bool displayImportSummary READ displayImportSummary WRITE setDisplayImportSummary)
   Q_PROPERTY(ctkDICOMBrowser::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
-  Q_PROPERTY(SchemaUpdateOption schemaUpdateOption READ schemaUpdateOption WRITE setSchemaUpdateOption)
-  Q_PROPERTY(bool schemaUpdateAutoCreateDirectory READ schemaUpdateAutoCreateDirectory WRITE setShemaUpdateAutoCreateDirectory)
   Q_PROPERTY(bool confirmRemove READ confirmRemove WRITE setConfirmRemove)
+  Q_PROPERTY(bool toolbarVisible READ isToolbarVisible WRITE setToolbarVisible)
+  Q_PROPERTY(bool databaseDirectorySelectorVisible READ isDatabaseDirectorySelectorVisible WRITE setDatabaseDirectorySelectorVisible)
+  Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible)
 
 public:
   typedef ctkDICOMBrowser Self;
 
   typedef QWidget Superclass;
-  /// databaseDirectorySettingsKey allows getting/setting different database folder from a custom settings key
-  /// This is useful if the user wants to use the old database with the older version application.
-  explicit ctkDICOMBrowser(QWidget* parent=0, QString databaseDirectorySettingsKey=QString());
+  explicit ctkDICOMBrowser(QWidget* parent=0);
+  explicit ctkDICOMBrowser(QSharedPointer<ctkDICOMDatabase> sharedDatabase, QWidget* parent=0);
   virtual ~ctkDICOMBrowser();
 
   /// Directory being used to store the dicom database
   QString databaseDirectory() const;
 
-  /// Return settings key used to store the directory.
-  Q_INVOKABLE QString databaseDirectorySettingsKey() const;
+  /// Get settings key used to store DatabaseDirectory in application settings.
+  QString databaseDirectorySettingsKey() const;
 
-  Q_INVOKABLE static QString defaultDatabaseDirectorySettingsKey() { return QString("DatabaseDirectory"); };
+  /// Set settings key that stores DatabaseDirectory in application settings.
+  /// Calling this method sets DatabaseDirectory from current value stored in the settings
+  /// (overwriting current value of DatabaseDirectory).
+  void setDatabaseDirectorySettingsKey(const QString& settingsKey);
 
   /// See ctkDICOMDatabase for description - these accessors
   /// delegate to the corresponding routines of the internal
@@ -91,14 +98,6 @@ public:
   /// @see ctkDICOMDatabase
   void setTagsToPrecache(const QStringList tags);
   const QStringList tagsToPrecache();
-
-  /// If the schema version of the loaded database does not match the one supported, then
-  /// based on \sa schemaUpdateOption update the database, don't update, or ask the user.
-  /// Provides a dialog box for progress if updating.
-  /// Setting the updated database happens in \sa setDatabaseDirectory
-  /// \return Directory path of the updated folder (it might be a different folder).
-  ///         Empty string if new database has not been set.
-  Q_INVOKABLE QString updateDatabaseSchemaIfNeeded();
 
   Q_INVOKABLE ctkDICOMDatabase* database();
 
@@ -111,10 +110,6 @@ public:
   /// Option to show dialog to confirm removal from the database (Remove action). Off by default.
   void setConfirmRemove(bool);
   bool confirmRemove();
-  /// Option to determine whether the new database folder is automatically created or set by the user in a popup.
-  /// Automatically created folder will be ../[CurrentDatabaseFolderName]-[NewSchemaVersion]. Off by default.
-  void setShemaUpdateAutoCreateDirectory(bool);
-  bool schemaUpdateAutoCreateDirectory();
 
   /// Accessors to status of last directory import operation
   int patientsAddedDuringImport();
@@ -133,26 +128,19 @@ public:
   /// \sa setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode)
   ctkDICOMBrowser::ImportDirectoryMode importDirectoryMode()const;
 
-  /// Schema update behavior: what to do when the supported schema version is different from that of the loaded database
-  enum SchemaUpdateOption
-  {
-    AlwaysUpdate = 0,
-    NeverUpdate,
-    AskUser
-  };
-  /// Get \sa SchemaUpdateOption enum from string
-  static ctkDICOMBrowser::SchemaUpdateOption schemaUpdateOptionFromString(QString option);
-  /// Get string from \sa SchemaUpdateOption enum
-  static QString schemaUpdateOptionToString(ctkDICOMBrowser::SchemaUpdateOption option);
-
-  /// Get schema update option (whether to update automatically). Default is always update
-  /// \sa setSchemaUpdateOption
-  ctkDICOMBrowser::SchemaUpdateOption schemaUpdateOption()const;
-
   /// \brief Return instance of import dialog.
   ///
   /// \internal
   Q_INVOKABLE ctkFileDialog* importDialog()const;
+
+  void setToolbarVisible(bool state);
+  bool isToolbarVisible() const;
+
+  void setDatabaseDirectorySelectorVisible(bool visible);
+  bool isDatabaseDirectorySelectorVisible() const;
+
+  void setSendActionVisible(bool visible);
+  bool isSendActionVisible() const;
 
 public Q_SLOTS:
 
@@ -164,12 +152,7 @@ public Q_SLOTS:
   /// \sa importDirectoryMode()
   void setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode mode);
 
-  /// Set schema update option (whether to update automatically). Default is always update
-  /// \sa schemaUpdateOption
-  void setSchemaUpdateOption(ctkDICOMBrowser::SchemaUpdateOption option);
-
   void setDatabaseDirectory(const QString& directory);
-  void onFileIndexed(const QString& filePath);
 
   /// \brief Pop-up file dialog allowing to select and import one or multiple
   /// DICOM directories.
@@ -181,6 +164,7 @@ public Q_SLOTS:
   void openImportDialog();
 
   void openExportDialog();
+  void openSendDialog();
   void openQueryDialog();
   void onRemoveAction();
   void onRepairAction();
@@ -201,6 +185,9 @@ public Q_SLOTS:
   /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
   void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
+  /// Wait for all import operations to complete
+  void waitForImportFinished();
+
   /// \deprecated importDirectory() should be used
   void onImportDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
@@ -211,8 +198,31 @@ public Q_SLOTS:
   void onSeriesAdded(QString);
   void onInstanceAdded(QString);
 
+  void onIndexingProgress(int);
+  void onIndexingProgressStep(const QString&);
+  void onIndexingProgressDetail(const QString&);
+  void onIndexingUpdatingDatabase(bool updating);
+  void onIndexingComplete(int patientsAdded, int studiesAdded, int seriesAdded, int imagesAdded);
+
+  /// Show pop-up window for the user to select database directory
+  void selectDatabaseDirectory();
+
+  /// Create new database directory.
+  /// Current database directory used as a basis.
+  void createNewDatabaseDirectory();
+
+  /// Update database in-place to required schema version
+  void updateDatabase();
+
   /// Show progress dialog for update displayed fields
   void showUpdateDisplayedFieldsDialog();
+
+  QStringList fileListForCurrentSelection(ctkDICOMModel::IndexType level);
+
+  /// Show window that displays DICOM fields of all selected items
+  void showMetadata(const QStringList& fileList);
+
+  void removeSelectedItems(ctkDICOMModel::IndexType level);
 
 Q_SIGNALS:
   /// Emitted when directory is changed
@@ -221,6 +231,8 @@ Q_SIGNALS:
   void queryRetrieveFinished();
   /// Emitted when the directory import operation has completed
   void directoryImported();
+  /// Emitted when user requested network send. String list contains list of files to be exported.
+  void sendRequested(const QStringList&);
 
 protected:
     QScopedPointer<ctkDICOMBrowserPrivate> d_ptr;
@@ -257,13 +269,11 @@ protected Q_SLOTS:
 
     /// Called to export the series associated with the selected UIDs
     /// \sa exportSelectedStudies, exportSelectedPatients
-    void exportSelectedSeries(QString dirPath, QStringList uids);
+    void exportSeries(QString dirPath, QStringList uids);
+
     /// Called to export the studies associated with the selected UIDs
     /// \sa exportSelectedSeries, exportSelectedPatients
-    void exportSelectedStudies(QString dirPath, QStringList uids);
-    /// Called to export the patients associated with the selected UIDs
-    /// \sa exportSelectedStudies, exportSelectedSeries
-    void exportSelectedPatients(QString dirPath, QStringList uids);
+    void exportSelectedItems(ctkDICOMModel::IndexType level);
 
     /// To be called when dialog finishes
     void onQueryRetrieveFinished();

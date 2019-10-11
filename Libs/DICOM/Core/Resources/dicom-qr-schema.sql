@@ -1,5 +1,5 @@
 --
--- A simple SQLITE3 database schema for modelling locally stored DICOM files
+-- A simple SQLITE3 database schema for temporary storage of query responses
 --
 -- Note: the semicolon at the end is necessary for the simple parser to separate
 --       the statements since the SQlite driver does not handle multiple
@@ -101,16 +101,16 @@ CREATE TABLE 'ColumnDisplayProperties' (
   PRIMARY KEY ('TableName', 'FieldName') );
 
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'UID',                             '',                     0, 0, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsName',                    'Patient name',         0, 0, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientID',                       'Patient ID',           1, 2, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsBirthDate',               'Birth date',           1, 3, '{"resizeMode":"resizeToContents"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsName',                    'Patient name',         1, 0, '{"sort": "ascending", "resizeMode":"stretch"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientID',                       'Patient ID',           1, 1, '');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsBirthDate',               'Birth date',           1, 2, '{"resizeMode":"resizeToContents"}');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsBirthTime',               'Birth time',           0, 0, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsSex',                     'Sex',                  1, 4, '{"resizeMode":"resizeToContents"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsSex',                     'Sex',                  1, 3, '{"resizeMode":"resizeToContents"}');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsAge',                     'Age',                  0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsComments',                'Comments',             0, 0, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'InsertTimestamp',                 'Date added',           1, 6, '{"sort": "descending"}');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedPatientsName',           'Patient name',         1, 1, '{"resizeMode":"stretch"}');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedNumberOfStudies',        'Studies',              1, 5, '{"resizeMode":"resizeToContents"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'InsertTimestamp',                 'Date added',           0, 0, '');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedPatientsName',           'Patient name',         0, 0, '');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedNumberOfStudies',        'Studies',              0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedFieldsUpdatedTimestamp', '',                     0, 0, '');
 
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'StudyInstanceUID',                '',                     0, 0, '');
@@ -124,17 +124,17 @@ INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'ModalitiesInStudy',   
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'InstitutionName',                 'Institution',          0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'ReferringPhysician',              'Referring physician',  0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'PerformingPhysiciansName',        'Performing physician', 0, 0, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'InsertTimestamp',                 'Date added',           1, 5, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'DisplayedNumberOfSeries',         'Series',               1, 4, '{"resizeMode":"resizeToContents"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'InsertTimestamp',                 'Date added',           0, 5, '');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'DisplayedNumberOfSeries',         'Series',               0, 4, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'DisplayedFieldsUpdatedTimestamp', '',                     0, 0, '');
 
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'SeriesInstanceUID',               '',                     0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'StudyInstanceUID',                '',                     0, 0, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'SeriesNumber',                    'Series #',             1, 1, '{"resizeMode":"resizeToContents", "sort": "ascending"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'SeriesNumber',                    'Series #',             1, 0, '{"resizeMode":"resizeToContents", "sort": "ascending"}');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'SeriesDate',                      'Series date',          0, 0, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'SeriesTime',                      'Series time',          0, 0, '');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'SeriesTime',                      'Series time',          1, 3, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'SeriesDescription',               'Series description',   1, 2, '{"resizeMode":"stretch"}');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'Modality',                        'Modality',             1, 3, '{"resizeMode":"resizeToContents"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'Modality',                        'Modality',             1, 1, '{"resizeMode":"resizeToContents"}');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'BodyPartExamined',                'Body part',            0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'FrameOfReferenceUID',             '',                     0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'AcquisitionNumber',               'Acquisition #',        0, 0, '');
@@ -142,8 +142,8 @@ INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'ContrastAgent',       
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'ScanningSequence',                'Scanning sequence',    0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'EchoNumber',                      'Echo #',               0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'TemporalPosition',                'Temporal position',    0, 0, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'InsertTimestamp',                 'Date added',           1, 6, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedSize',                   'Size',                 1, 4, '{"resizeMode":"resizeToContents"}');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedCount',                  'Count',                1, 5, '{"resizeMode":"resizeToContents"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'InsertTimestamp',                 'Date added',           0, 6, '');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedSize',                   'Size',                 0, 4, '');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedCount',                  'Count',                0, 5, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedNumberOfFrames',         'Number of frames',     0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedFieldsUpdatedTimestamp', '',                     0, 0, '');

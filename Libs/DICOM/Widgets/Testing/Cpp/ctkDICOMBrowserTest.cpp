@@ -95,15 +95,13 @@ void ctkDICOMBrowserTester::init()
 void ctkDICOMBrowserTester::testDefaults()
 {
   // Clear left over settings
-  QSettings().remove(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey());
+  QSettings().remove("DatabaseDirectory");
 
   ctkDICOMBrowser browser;
 
   QVERIFY(QFileInfo("./ctkDICOM-Database").isDir());
   QVERIFY(QFileInfo("./ctkDICOM-Database/ctkDICOM.sql").isFile());
   QVERIFY(QFileInfo("./ctkDICOM-Database/ctkDICOMTagCache.sql").isFile());
-
-  QCOMPARE(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), QString("DatabaseDirectory"));
 
   QCOMPARE(browser.databaseDirectory(), QString("./ctkDICOM-Database"));
   QVERIFY(browser.database() != 0);
@@ -126,7 +124,7 @@ void ctkDICOMBrowserTester::testDatabaseDirectory()
 {
   // Check that value from setting is picked up
   {
-  QSettings().setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
   QCOMPARE(QFileInfo(this->TemporaryDatabaseDirectoryName).isDir(), false);
 
   ctkDICOMBrowser browser;
@@ -140,7 +138,7 @@ void ctkDICOMBrowserTester::testDatabaseDirectory()
 // ----------------------------------------------------------------------------
 void ctkDICOMBrowserTester::testImportDirectoryMode()
 {
-  QSettings().setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
 
   ctkDICOMBrowser browser;
 
@@ -165,7 +163,7 @@ void ctkDICOMBrowserTester::testImportDirectories()
   QFETCH(QStringList, directories);
   QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
 
-  QSettings().setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
 
   ctkDICOMBrowser browser;
 
@@ -234,7 +232,7 @@ void ctkDICOMBrowserTester::testImportDirectory()
   QFETCH(QStringList, directories);
   QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
 
-  QSettings().setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
 
   ctkDICOMBrowser browser;
 
@@ -277,7 +275,7 @@ void ctkDICOMBrowserTester::testOnImportDirectory()
   QFETCH(QStringList, directories);
   QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
 
-  QSettings().setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), this->TemporaryDatabaseDirectoryName);
+  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
 
   ctkDICOMBrowser browser;
 

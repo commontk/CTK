@@ -49,39 +49,14 @@ int main(int argc, char** argv)
   // set up Qt resource files
   QResource::registerResource("./Resources/ctkDICOM.qrc");
 
-  QSettings settings;
-  QString databaseDirectory;
-
+  ctkDICOMBrowser DICOMApp;
+  DICOMApp.setDatabaseDirectorySettingsKey("DatabaseDirectory");
   // set up the database
   if (argc > 1)
   {
-    QString directory(argv[1]);
-    settings.setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), directory);
-    settings.sync();
+    DICOMApp.setDatabaseDirectory(argv[1]);
   }
-
-  if ( settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), "") == "" )
-  {
-    databaseDirectory = QString("./ctkDICOM-Database");
-    std::cerr << "No DatabaseDirectory on command line or in settings.  Using \"" << databaseDirectory.toLatin1().data() << "\".\n";
-  } else
-  {
-    databaseDirectory = settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), "").toString();
-  }
-
-  QDir qdir(databaseDirectory);
-  if ( !qdir.exists(databaseDirectory) )
-  {
-    if ( !qdir.mkpath(databaseDirectory) )
-    {
-      std::cerr << "Could not create database directory \"" << databaseDirectory.toLatin1().data() << "\".\n";
-      return EXIT_FAILURE;
-    }
-  }
-
-  ctkDICOMBrowser DICOMApp;
-
-  DICOMApp.setDatabaseDirectory(databaseDirectory);
+  
   DICOMApp.show();
 
   return app.exec();
