@@ -61,9 +61,9 @@ int main(int argc, char** argv)
   QCoreApplication app(argc, argv);
   QTextStream out(stdout);
 
-  ctkDICOMIndexer idx;
   ctkDICOMDatabase myCTK;
-
+  ctkDICOMIndexer idx;
+  idx.setDatabase(&myCTK);
 
   try
   {
@@ -73,11 +73,11 @@ int main(int argc, char** argv)
         myCTK.openDatabase( argv[2] );
         if (argc > 4)
         {
-          idx.addDirectory(myCTK,argv[3],argv[4]);
+          idx.addDirectory(argv[3],argv[4]);
         }
         else
         {
-          idx.addDirectory(myCTK,argv[3]);
+          idx.addDirectory(argv[3]);
         }
       }
     }

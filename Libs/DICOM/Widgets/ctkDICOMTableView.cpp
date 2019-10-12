@@ -23,6 +23,7 @@
 #include "ui_ctkDICOMTableView.h"
 
 // Qt includes
+#include <QJsonObject>
 #include <QMouseEvent>
 #include <QSortFilterProxyModel>
 #include <QSqlQueryModel>
@@ -56,6 +57,11 @@ public:
 
   QStringList currentSelection;
 
+  bool batchUpdate;
+  /// Set to true if database modification is notified while in batch update mode
+  bool batchUpdateModificationPending;
+  bool batchUpdateInstanceAddedPending;
+
   /// Key = QString for columns, Values = QStringList
   QHash<QString, QStringList> sqlWhereConditions;
 
@@ -67,6 +73,9 @@ ctkDICOMTableViewPrivate::ctkDICOMTableViewPrivate(ctkDICOMTableView &obj)
 {
   this->dicomSQLFilterModel = new QSortFilterProxyModel(&obj);
   this->dicomDatabase = new ctkDICOMDatabase(&obj);
+  this->batchUpdate = false;
+  this->batchUpdateModificationPending = false;
+  this->batchUpdateInstanceAddedPending = false;
 }
 
 //------------------------------------------------------------------------------
@@ -100,9 +109,12 @@ void ctkDICOMTableViewPrivate::init()
   this->tblDicomDatabaseView->setSortingEnabled(true);
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  this->tblDicomDatabaseView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 #else
   this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+  this->tblDicomDatabaseView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 #endif
+  this->tblDicomDatabaseView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
 
   QObject::connect(this->tblDicomDatabaseView->selectionModel(),
                    SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
@@ -121,10 +133,7 @@ void ctkDICOMTableViewPrivate::init()
                    SIGNAL(customContextMenuRequested(const QPoint&)),
                    q, SLOT(onCustomContextMenuRequested(const QPoint&)));
 
-  QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)),
-                   this->dicomSQLFilterModel, SLOT(setFilterWildcard(QString)));
-
-  QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged()));
+  QObject::connect(this->leSearchBox, SIGNAL(textChanged(QString)), q, SLOT(onFilterChanged(QString)));
 }
 
 //----------------------------------------------------------------------------
@@ -153,9 +162,12 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
 {
   if (!this->dicomDatabase || !this->dicomDatabase->isOpen())
   {
-    qCritical() << Q_FUNC_INFO << ": Database not accessible";
     return;
   }
+
+  bool stretchedColumnFound = false;
+  int defaultSortByColumn = -1;
+  Qt::SortOrder defaultSortOrder = Qt::AscendingOrder;
 
   QHeaderView* header = this->tblDicomDatabaseView->horizontalHeader();
   int columnCount = this->dicomSQLModel.columnCount();
@@ -181,15 +193,89 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
     this->dicomSQLModel.setHeaderData(col, Qt::Horizontal, displayedName, Qt::DisplayRole);
 
     // Apply visibility
-    bool visbility = this->dicomDatabase->visibilityForField(this->queryTableName(), columnName);
-    this->tblDicomDatabaseView->setColumnHidden(col, !visbility);
+    bool visibility = this->dicomDatabase->visibilityForField(this->queryTableName(), columnName);
+    this->tblDicomDatabaseView->setColumnHidden(col, !visibility);
 
     // Save weight to apply later
     int weight = this->dicomDatabase->weightForField(this->queryTableName(), columnName);
     columnWeights << weight;
 
-    QString format = this->dicomDatabase->formatForField(this->queryTableName(), columnName);
-    //TODO: Apply format
+    QString fieldFormat = this->dicomDatabase->formatForField(this->queryTableName(), columnName);
+    QHeaderView::ResizeMode columnResizeMode = QHeaderView::Interactive;
+    if (!fieldFormat.isEmpty())
+    {
+      QJsonDocument fieldFormatDoc = QJsonDocument::fromJson(fieldFormat.toUtf8());
+      QJsonObject fieldFormatObj;
+      if (!fieldFormatDoc.isNull())
+      {
+        if (fieldFormatDoc.isObject())
+        {
+          fieldFormatObj = fieldFormatDoc.object();
+        }
+      }
+      if (!fieldFormatObj.isEmpty())
+      {
+        // format string successfully decoded from json
+
+        // resize mode
+        QString resizeModeStr = fieldFormatObj.value(QString("resizeMode")).toString("interactive");
+        if (resizeModeStr == "interactive")
+        {
+          columnResizeMode = QHeaderView::Interactive;
+        }
+        else if (resizeModeStr == "stretch")
+        {
+          columnResizeMode = QHeaderView::Stretch;
+        }
+        else if (resizeModeStr == "resizeToContents")
+        {
+          columnResizeMode = QHeaderView::ResizeToContents;
+        }
+        else
+        {
+          qWarning() << "Invalid ColumnDisplayProperties Format string for column " << columnName << ": resizeMode must be interactive, stretch, or resizeToContents";
+        }
+
+        // default sort order
+        QString sortStr = fieldFormatObj.value(QString("sort")).toString();
+        if (!sortStr.isEmpty())
+        {
+          defaultSortByColumn = col;
+          if (sortStr == "ascending")
+          {
+            defaultSortOrder = Qt::AscendingOrder;
+          }
+          else if (sortStr == "descending")
+          {
+            defaultSortOrder = Qt::DescendingOrder;
+          }
+          else
+          {
+            qWarning() << "Invalid ColumnDisplayProperties Format string for column " << columnName << ": sort must be ascending or descending";
+          }
+        }
+
+      }
+      else
+      {
+        // format string is specified but failed to be decoded from json
+        qWarning() << "Invalid ColumnDisplayProperties Format string for column " << columnName << ": " << fieldFormat;
+      }
+    }
+    this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(col, columnResizeMode);
+    if (columnResizeMode == QHeaderView::Stretch && visibility)
+    {
+      stretchedColumnFound = true;
+    }
+
+  }
+
+  // If no stretched column is shown then stretch the last column to make the table look nicely aligned
+  this->tblDicomDatabaseView->horizontalHeader()->setStretchLastSection(!stretchedColumnFound);
+
+  if (defaultSortByColumn >= 0)
+  {
+    this->tblDicomDatabaseView->sortByColumn(defaultSortByColumn, defaultSortOrder);
   }
 
   // First restore original order of the columns so that it can be sorted by weights (use bubble sort).
@@ -198,10 +284,11 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
   if (!visualIndexToColumnIndexMap.isEmpty())
   {
     QList<int> columnIndicesByVisualIndex = visualIndexToColumnIndexMap.values();
-    for (int i=0; i<columnCount-1; ++i)
+    int columnIndicesCount = columnIndicesByVisualIndex.size();
+    for (int i=0; i<columnIndicesCount-1; ++i)
     {
       // Last i elements are already in place    
-      for (int j=0; j<columnCount-i-1; ++j)
+      for (int j=0; j<columnIndicesCount -i-1; ++j)
       {
         if (columnIndicesByVisualIndex[j] > columnIndicesByVisualIndex[j+1])
         {
@@ -272,21 +359,36 @@ void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 {
   Q_D(ctkDICOMTableView);
 
-  //Do nothing if no database is set
-  if (!dicomDatabase)
+  if (d->dicomDatabase == dicomDatabase)
   {
+    // no change
     return;
   }
 
-  d->dicomDatabase = dicomDatabase;
+  if (d->dicomDatabase)
+  {
+    QObject::disconnect(d->dicomDatabase, SIGNAL(instanceAdded(const QString&)), this, SLOT(onInstanceAdded()));
+    QObject::disconnect(d->dicomDatabase, SIGNAL(databaseChanged()), this, SLOT(onDatabaseChanged()));
+    QObject::disconnect(d->dicomDatabase, SIGNAL(opened()), this, SLOT(onDatabaseOpened()));
+    QObject::disconnect(d->dicomDatabase, SIGNAL(closed()), this, SLOT(onDatabaseClosed()));
+    QObject::disconnect(d->dicomDatabase, SIGNAL(schemaUpdated()), this, SLOT(onDatabaseSchemaUpdated()));
+  }
 
-  //Create connections for new database
-  QObject::connect(d->dicomDatabase, SIGNAL(instanceAdded(const QString&)), this, SLOT(onInstanceAdded()));
-  QObject::connect(d->dicomDatabase, SIGNAL(databaseChanged()), this, SLOT(onDatabaseChanged()));
+  d->dicomDatabase = dicomDatabase;
+  if (d->dicomDatabase)
+  {
+    //Create connections for new database
+    QObject::connect(d->dicomDatabase, SIGNAL(instanceAdded(const QString&)), this, SLOT(onInstanceAdded()));
+    QObject::connect(d->dicomDatabase, SIGNAL(databaseChanged()), this, SLOT(onDatabaseChanged()));
+    QObject::connect(d->dicomDatabase, SIGNAL(opened()), this, SLOT(onDatabaseOpened()));
+    QObject::connect(d->dicomDatabase, SIGNAL(closed()), this, SLOT(onDatabaseClosed()));
+    QObject::connect(d->dicomDatabase, SIGNAL(schemaUpdated()), this, SLOT(onDatabaseSchemaUpdated()));
+  }
 
   this->setQuery();
-
   d->applyColumnProperties();
+
+  this->setEnabled(d->dicomDatabase && d->dicomDatabase->isOpen());
 }
 
 //------------------------------------------------------------------------------
@@ -310,13 +412,40 @@ void ctkDICOMTableView::onSelectionChanged()
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMTableView::onDatabaseOpened()
+{
+  Q_D(ctkDICOMTableView);
+  this->setQuery();
+  d->applyColumnProperties();
+  this->setEnabled(true);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::onDatabaseClosed()
+{
+  Q_D(ctkDICOMTableView);
+  this->setQuery();
+  this->setEnabled(false);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::onDatabaseSchemaUpdated()
+{
+  Q_D(ctkDICOMTableView);
+  this->setQuery();
+  d->applyColumnProperties();
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMTableView::onDatabaseChanged()
 {
   Q_D(ctkDICOMTableView);
-
+  if (d->batchUpdate)
+  {
+    d->batchUpdateModificationPending = true;
+    return;
+  }
   this->setQuery();
-
-  d->applyColumnProperties();
 }
 
 //------------------------------------------------------------------------------
@@ -326,31 +455,50 @@ void ctkDICOMTableView::onUpdateQuery(const QStringList& uids)
 
   this->setQuery(uids);
 
-  d->showFilterActiveWarning( d->dicomSQLFilterModel->rowCount() == 0 &&
-                              d->leSearchBox->text().length() != 0 );
+  bool showWarning = d->dicomSQLFilterModel->rowCount() == 0 &&
+    d->leSearchBox->text().length() != 0;
+  d->showFilterActiveWarning(showWarning);
+  emit showFilterActiveWarning(showWarning);
 
   const QStringList& newUIDS = this->uidsForAllRows();
   emit queryChanged(newUIDS);
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableView::onFilterChanged()
+void ctkDICOMTableView::setFilterText(const QString& filterText)
+{
+  Q_D(ctkDICOMTableView);
+  d->leSearchBox->setText(filterText);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::onFilterChanged(const QString& filterText)
 {
   Q_D(ctkDICOMTableView);
 
+  d->dicomSQLFilterModel->setFilterWildcard(filterText);
+
   const QStringList uids = this->uidsForAllRows();
 
-  d->showFilterActiveWarning( d->dicomSQLFilterModel->rowCount() == 0 &&
-                              d->dicomSQLModel.rowCount() != 0);
+  bool showWarning = d->dicomSQLFilterModel->rowCount() == 0 &&
+    d->dicomSQLModel.rowCount() != 0;
+  d->showFilterActiveWarning(showWarning);
+  emit showFilterActiveWarning(showWarning);
 
   d->tblDicomDatabaseView->clearSelection();
   emit queryChanged(uids);
+  emit filterTextChanged(filterText);
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMTableView::onInstanceAdded()
 {
   Q_D(ctkDICOMTableView);
+  if (d->batchUpdate)
+  {
+    d->batchUpdateInstanceAddedPending = true;
+    return;
+  }
   d->sqlWhereConditions.clear();
   d->tblDicomDatabaseView->clearSelection();
   d->leSearchBox->clear();
@@ -429,6 +577,10 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
   {
     d->dicomSQLModel.setQuery(query.arg(d->queryTableName()), d->dicomDatabase->database());
   }
+  else
+  {
+    d->dicomSQLModel.clear();
+  }
 }
 
 void ctkDICOMTableView::addSqlWhereCondition(const std::pair<QString, QStringList> &condition)
@@ -483,20 +635,6 @@ bool ctkDICOMTableView::filterActive()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableView::setTableSectionSize(int size)
-{
-  Q_D(ctkDICOMTableView);
-  d->tblDicomDatabaseView->verticalHeader()->setDefaultSectionSize(size);
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMTableView::tableSectionSize()
-{
-  Q_D(ctkDICOMTableView);
-  return d->tblDicomDatabaseView->verticalHeader()->defaultSectionSize();
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMTableView::onCustomContextMenuRequested(const QPoint &point)
 {
   Q_D(ctkDICOMTableView);
@@ -511,5 +649,52 @@ void ctkDICOMTableView::onCustomContextMenuRequested(const QPoint &point)
 QTableView* ctkDICOMTableView::tableView()
 {
   Q_D( ctkDICOMTableView );
-  return(d->tblDicomDatabaseView);
+  return d->tblDicomDatabaseView;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::isBatchUpdate()const
+{
+  Q_D(const ctkDICOMTableView);
+  return d->batchUpdate;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::setBatchUpdate(bool enable)
+{
+  Q_D(ctkDICOMTableView);
+  if (enable == d->batchUpdate)
+  {
+    return d->batchUpdate;
+  }
+  d->batchUpdate = enable;
+  if (!d->batchUpdate)
+  {
+    // Process pending modification events
+    if (d->batchUpdateModificationPending)
+    {
+      this->onDatabaseChanged();
+    }
+    if (d->batchUpdateInstanceAddedPending)
+    {
+      this->onInstanceAdded();
+    }
+  }  
+  d->batchUpdateModificationPending = false;
+  d->batchUpdateInstanceAddedPending = false;
+  return !d->batchUpdate;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::isHeaderVisible()const
+{
+  Q_D(const ctkDICOMTableView);
+  return d->headerWidget->isVisible();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::setHeaderVisible(bool visible)
+{
+  Q_D(ctkDICOMTableView);
+  return d->headerWidget->setVisible(visible);
 }

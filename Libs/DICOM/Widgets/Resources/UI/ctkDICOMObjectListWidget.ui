@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>883</width>
-    <height>516</height>
+    <width>442</width>
+    <height>311</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,8 +51,8 @@
       </layout>
      </item>
      <item>
-      <widget class="ctkSliderWidget" name="fileSliderWidget">
-       <property name="decimals">
+      <widget class="ctkSliderWidget" name="fileSliderWidget" native="true">
+       <property name="decimals" stdset="0">
         <number>0</number>
        </property>
       </widget>

@@ -114,6 +114,7 @@ ctkDICOMAppWidgetPrivate::ctkDICOMAppWidgetPrivate(ctkDICOMAppWidget* parent): q
   ThumbnailGenerator = QSharedPointer <ctkDICOMThumbnailGenerator> (new ctkDICOMThumbnailGenerator);
   DICOMDatabase->setThumbnailGenerator(ThumbnailGenerator.data());
   DICOMIndexer = QSharedPointer<ctkDICOMIndexer> (new ctkDICOMIndexer);
+  DICOMIndexer->setDatabase(DICOMDatabase.data());
   IndexerProgress = 0;
   UpdateSchemaProgress = 0;
   DisplayImportSummary = true;
@@ -278,13 +279,13 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   //initialize directory from settings, then listen for changes
   QSettings settings;
-  if ( settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), "") == "" )
+  if ( settings.value("DatabaseDirectory", "") == "" )
     {
     QString directory = QString("./ctkDICOM-Database");
-    settings.setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), directory);
+    settings.setValue("DatabaseDirectory", directory);
     settings.sync();
     }
-  QString databaseDirectory = settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey()).toString();
+  QString databaseDirectory = settings.value("DatabaseDirectory").toString();
   this->setDatabaseDirectory(databaseDirectory);
   d->DirectoryButton->setDirectory(databaseDirectory);
 
@@ -393,7 +394,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
   Q_D(ctkDICOMAppWidget);
 
   QSettings settings;
-  settings.setValue(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey(), directory);
+  settings.setValue("DatabaseDirectory", directory);
   settings.sync();
 
   //close the active DICOM database
@@ -434,7 +435,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
 QString ctkDICOMAppWidget::databaseDirectory() const
 {
   QSettings settings;
-  return settings.value(ctkDICOMBrowser::defaultDatabaseDirectorySettingsKey()).toString();
+  return settings.value("DatabaseDirectory").toString();
 }
 
 //----------------------------------------------------------------------------
@@ -670,10 +671,7 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
     {
     QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
     QString targetDirectory;
-    if (copyOnImport->checkState() == Qt::Checked)
-      {
-      targetDirectory = d->DICOMDatabase->databaseDirectory();
-      }
+    bool copyFiles = (copyOnImport->checkState() == Qt::Checked);
 
     // reset counts
     d->PatientsAddedDuringImport = 0;
@@ -683,7 +681,7 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
 
     // show progress dialog and perform indexing
     d->showIndexerDialog();
-    d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
+    d->DICOMIndexer->addDirectory(directory, copyFiles);
 
     // display summary result
     if (d->DisplayImportSummary)
