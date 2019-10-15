@@ -52,6 +52,11 @@
 
 //------------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.dicom.DICOMIndexer" );
+
+/// How many files to parse before inserting results into the database.
+/// Increasing cache size increases maximum memory usage, very low cache size
+/// slows down database insertion.
+static int REQUEST_RESULTS_CACHE_MAXIMUM_SIZE = 5000;
 //------------------------------------------------------------------------------
 
 
@@ -64,9 +69,7 @@ ctkDICOMIndexerPrivateWorker::ctkDICOMIndexerPrivateWorker(DICOMIndexingQueue* q
 : RequestQueue(queue)
 , RemainingRequestCount(0)
 , CompletedRequestCount(0)
-, TimePercentageIndexing(80.0)
-, TimePercentageDatabaseInsert(15.0)
-, TimePercentageDatabaseDisplayFieldsUpdate(5.0)
+, TimePercentageIndexing(95.0)
 {
 }
 
@@ -79,37 +82,73 @@ ctkDICOMIndexerPrivateWorker::~ctkDICOMIndexerPrivateWorker()
 //------------------------------------------------------------------------------
 void ctkDICOMIndexerPrivateWorker::start()
 {
-  // Make a local copy to avoid the need of frequent locking
-  this->RequestQueue->modifiedTimeForFilepath(this->ModifiedTimeForFilepath);
-  this->CompletedRequestCount = 0;
-  do 
+  emit updatingDatabase(true);
+  ctkDICOMDatabase database;
+  database.openDatabase(this->RequestQueue->databaseFilename());
+  database.setTagsToPrecache(this->RequestQueue->tagsToPrecache());
+  database.setTagsToExcludeFromStorage(this->RequestQueue->tagsToExcludeFromStorage());
+
+  int patientsCountBefore = database.patientsCount();
+  int studiesCountBefore = database.studiesCount();
+  int seriesCountBefore = database.seriesCount();
+  int imagesCountBefore = database.imagesCount();
+  int patientsCountAfter = patientsCountBefore;
+  int studiesCountAfter = studiesCountBefore;
+  int seriesCountAfter = seriesCountBefore;
+  int imagesCountAfter = imagesCountBefore;
+
+  do
   {
-    if (this->RequestQueue->isStopRequested())
+    emit progressStep("Parsing DICOM files");
+    emit progress(0);
+    // Make a local copy to avoid the need of frequent locking
+    this->RequestQueue->modifiedTimeForFilepath(this->ModifiedTimeForFilepath);
+    this->CompletedRequestCount = 0;
+    do
     {
-      this->RequestQueue->removeAllIndexingRequests();
-      this->RequestQueue->setStopRequested(false);
-    }
-    DICOMIndexingQueue::IndexingRequest indexingRequest;
-    this->RemainingRequestCount = this->RequestQueue->popIndexingRequest(indexingRequest);
-    if (this->RemainingRequestCount < 0)
-    {
-      // finished
-      this->writeIndexingResultsToDatabase();
-      // check if we got any new requests while we were writing results to database
-      this->RemainingRequestCount = this->RequestQueue->popIndexingRequest(indexingRequest);
-      if (this->RemainingRequestCount < 0)
+      if (this->RequestQueue->isStopRequested())
       {
-        this->RequestQueue->setIndexing(false);
-        return;
+        this->RequestQueue->clear();
+        this->RequestQueue->setStopRequested(false);
       }
-    }
-    this->processIndexingRequest(indexingRequest);
-    this->CompletedRequestCount++;
-  } while (true);
+      DICOMIndexingQueue::IndexingRequest indexingRequest;
+      this->RemainingRequestCount = this->RequestQueue->popIndexingRequest(indexingRequest);
+      this->processIndexingRequest(indexingRequest, database);
+      this->CompletedRequestCount++;
+    } while (!this->RequestQueue->isEmpty());
+
+    QTime timeProbe;
+    timeProbe.start();
+
+    // Update displayed fields according to inserted DICOM datasets
+    emit progressStep("Updating database displayed fields");
+    emit progress(this->TimePercentageIndexing);
+
+    database.updateDisplayedFields();
+    patientsCountAfter = database.patientsCount();
+    studiesCountAfter = database.studiesCount();
+    seriesCountAfter = database.seriesCount();
+    imagesCountAfter = database.imagesCount();
+
+    double elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
+    qDebug() << QString("DICOM indexer has updated display fields for %1 files [%2s]")
+      .arg(imagesCountAfter-imagesCountBefore).arg(QString::number(elapsedTimeInSeconds, 'f', 2));
+
+  // restart if new requests has been queued during displayed fields update
+  } while (!this->RequestQueue->isEmpty());
+
+  database.closeDatabase();
+  emit updatingDatabase(false);
+
+  this->RequestQueue->setIndexing(false);
+  emit progress(100);
+  emit progressStep("Indexing complete");
+  emit indexingComplete(patientsCountAfter - patientsCountBefore, studiesCountAfter-studiesCountBefore,
+    seriesCountAfter-seriesCountBefore, imagesCountAfter - imagesCountBefore);
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::IndexingRequest& indexingRequest)
+void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::IndexingRequest& indexingRequest, ctkDICOMDatabase& database)
 {
   if (!indexingRequest.inputFolderPath.isEmpty())
   {
@@ -130,6 +169,8 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
 
   int currentFileIndex = 0;
   int lastReportedPercent = 0;
+  int alreadyAddedFileCount = 0;
+  QStringList alreadyAddedFiles;
   foreach(const QString& filePath, indexingRequest.inputFilesPath)
   {
     int percent = int(this->TimePercentageIndexing * (this->CompletedRequestCount + double(currentFileIndex++) / double(indexingRequest.inputFilesPath.size()))
@@ -141,7 +182,11 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
     bool datasetAlreadyInDatabase = this->ModifiedTimeForFilepath.contains(filePath);
     if (datasetAlreadyInDatabase && this->ModifiedTimeForFilepath[filePath] >= fileModifiedTime)
     {
-      logger.debug("File " + filePath + " already added.");
+      alreadyAddedFileCount++;
+      if (alreadyAddedFileCount < 10)
+      {
+        alreadyAddedFiles << filePath;
+      }
       continue;
     }
     this->ModifiedTimeForFilepath[filePath] = fileModifiedTime;
@@ -154,7 +199,13 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
       indexingResult.filePath = filePath;
       indexingResult.copyFile = indexingRequest.copyFile;
       indexingResult.overwriteExistingDataset = datasetAlreadyInDatabase;
-      this->RequestQueue->pushIndexingResult(indexingResult);
+      int resultsCount = this->RequestQueue->pushIndexingResult(indexingResult);
+      if (resultsCount >= REQUEST_RESULTS_CACHE_MAXIMUM_SIZE)
+      {
+        emit progressStep("Updating database fields");
+        this->writeIndexingResultsToDatabase(database);
+        emit progressStep("Parsing DICOM files");
+      }
     }
     else
     {
@@ -167,6 +218,19 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
     }
   }
 
+  if (alreadyAddedFileCount > 0)
+  {
+    logger.debug(QString("Skipped %1 files that were already in the database: %2...").arg(
+      alreadyAddedFileCount).arg(alreadyAddedFiles.join(", ")));
+  }
+
+  if (this->RequestQueue->isIndexingRequestsEmpty())
+  {
+    emit progressStep("Updating database fields");
+    this->writeIndexingResultsToDatabase(database);
+    emit progressStep("Parsing DICOM files");
+  }
+
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
   qDebug() << QString("DICOM indexer has successfully processed %1 files [%2s]")
     .arg(currentFileIndex).arg(QString::number(elapsedTimeInSeconds, 'f', 2));
@@ -174,94 +238,28 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
 
 
 //------------------------------------------------------------------------------
-void ctkDICOMIndexerPrivateWorker::writeIndexingResultsToDatabase()
+void ctkDICOMIndexerPrivateWorker::writeIndexingResultsToDatabase(ctkDICOMDatabase& database)
 {
-  QDir::Filters filters = QDir::Files;
   QList<ctkDICOMDatabase::IndexingResult> indexingResults;
   this->RequestQueue->popAllIndexingResults(indexingResults);
-
-  int patientsAdded = 0;
-  int studiesAdded = 0;
-  int seriesAdded = 0;
-  int imagesAdded = 0;
-
-  ctkDICOMDatabase database;
-  QObject::connect(&database, SIGNAL(instanceAdded(QString)), this, SLOT(databaseFileInstanceAdded()));
-  QObject::connect(&database, SIGNAL(displayedFieldsUpdateProgress(int)), this, SLOT(databaseDisplayFieldUpdateProgress(int)));
-
-  if (!indexingResults.isEmpty())
-  {
-    emit progressDetail("");
-    emit progressStep("Updating database fields");
-
-    // Activate batch update
-    emit progress(this->TimePercentageDatabaseInsert);
-    emit updatingDatabase(true);
-
-    QTime timeProbe;
-    timeProbe.start();
-
-    database.openDatabase(this->RequestQueue->databaseFilename());
-    database.setTagsToPrecache(this->RequestQueue->tagsToPrecache());
-
-    int patientsCount = database.patientsCount();
-    int studiesCount = database.studiesCount();
-    int seriesCount = database.seriesCount();
-    int imagesCount = database.imagesCount();
-
-    this->NumberOfInstancesToInsert = indexingResults.size();
-    this->NumberOfInstancesInserted = 0;
-    database.insert(indexingResults);
-    this->NumberOfInstancesToInsert = 0;
-    this->NumberOfInstancesInserted = 0;
-
-    patientsAdded = database.patientsCount() - patientsCount;
-    studiesAdded = database.studiesCount() - studiesCount;
-    seriesAdded = database.seriesCount() - seriesCount;
-    imagesAdded = database.imagesCount() - imagesCount;
-
-    float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-    qDebug() << QString("DICOM indexer has successfully inserted %1 files [%2s]")
-      .arg(indexingResults.count()).arg(QString::number(elapsedTimeInSeconds, 'f', 2));
-
-    // Update displayed fields according to inserted DICOM datasets
-    emit progress(this->TimePercentageIndexing+this->TimePercentageDatabaseInsert);
-    emit progressStep("Updating database displayed fields");
-
-    timeProbe.start();
-
-    database.updateDisplayedFields();
-
-    elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-    qDebug() << QString("DICOM indexer has updated display fields for %1 files [%2s]")
-      .arg(indexingResults.count()).arg(QString::number(elapsedTimeInSeconds, 'f', 2));
-
-    emit updatingDatabase(false);
-  }
-
-  QObject::disconnect(&database, SIGNAL(tagsToPrecacheChanged()), this, SLOT(databaseFileInstanceAdded()));
-  QObject::disconnect(&database, SIGNAL(displayedFieldsUpdateProgress(int)), this, SLOT(databaseDisplayFieldUpdateProgress(int)));
-
-  emit indexingComplete(patientsAdded, studiesAdded, seriesAdded, imagesAdded);
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMIndexerPrivateWorker::databaseFileInstanceAdded()
-{
-  if (this->NumberOfInstancesToInsert < 1)
+  if (indexingResults.isEmpty())
   {
     return;
   }
-  this->NumberOfInstancesInserted++;
-  emit progress(int(this->TimePercentageIndexing
-    + this->TimePercentageDatabaseInsert * double(this->NumberOfInstancesInserted) / double(this->NumberOfInstancesToInsert)));
-}
 
-//------------------------------------------------------------------------------
-void ctkDICOMIndexerPrivateWorker::databaseDisplayFieldUpdateProgress(int progressValue)
-{
-  emit progress(int(this->TimePercentageIndexing + this->TimePercentageDatabaseInsert
-    + this->TimePercentageDatabaseDisplayFieldsUpdate * double(progressValue) / 5.0));
+  QTime timeProbe;
+  timeProbe.start();
+
+  this->NumberOfInstancesToInsert = indexingResults.size();
+  this->NumberOfInstancesInserted = 0;
+  database.insert(indexingResults);
+  this->NumberOfInstancesToInsert = 0;
+  this->NumberOfInstancesInserted = 0;
+
+  float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
+  qDebug() << QString("DICOM indexer has successfully inserted %1 files [%2s]")
+    .arg(indexingResults.count()).arg(QString::number(elapsedTimeInSeconds, 'f', 2));
+
 }
 
 //------------------------------------------------------------------------------
@@ -303,7 +301,6 @@ ctkDICOMIndexerPrivate::~ctkDICOMIndexerPrivate()
 void ctkDICOMIndexerPrivate::pushIndexingRequest(const DICOMIndexingQueue::IndexingRequest& request)
 {
   Q_Q(ctkDICOMIndexer);
-  emit q->progressStep("Parsing DICOM files");
   this->RequestQueue.pushIndexingRequest(request);
   if (!this->RequestQueue.isIndexing())
   {
@@ -347,19 +344,23 @@ void ctkDICOMIndexer::setDatabase(ctkDICOMDatabase* database)
   {
     QObject::disconnect(d->Database, SIGNAL(opened()), this, SLOT(databaseFilenameChanged()));
     QObject::disconnect(d->Database, SIGNAL(tagsToPrecacheChanged()), this, SLOT(tagsToPrecacheChanged()));
+    QObject::disconnect(d->Database, SIGNAL(tagsToExcludeFromStorageChanged()), this, SLOT(tagsToExcludeFromStorageChanged()));
   }
   d->Database = database;
   if (d->Database)
   {
     QObject::connect(d->Database, SIGNAL(opened()), this, SLOT(databaseFilenameChanged()));
     QObject::connect(d->Database, SIGNAL(tagsToPrecacheChanged()), this, SLOT(tagsToPrecacheChanged()));
+    QObject::connect(d->Database, SIGNAL(tagsToExcludeFromStorageChanged()), this, SLOT(tagsToExcludeFromStorageChanged()));
     d->RequestQueue.setDatabaseFilename(d->Database->databaseFilename());
     d->RequestQueue.setTagsToPrecache(d->Database->tagsToPrecache());
+    d->RequestQueue.setTagsToExcludeFromStorage(d->Database->tagsToExcludeFromStorage());
   }
   else
   {
     d->RequestQueue.setDatabaseFilename(QString());
     d->RequestQueue.setTagsToPrecache(QStringList());
+    d->RequestQueue.setTagsToExcludeFromStorage(QStringList());
   }
 }
 
@@ -395,6 +396,20 @@ ctkDICOMDatabase* ctkDICOMIndexer::database()
    else
    {
      d->RequestQueue.setTagsToPrecache(QStringList());
+   }
+ }
+
+ //------------------------------------------------------------------------------
+ void ctkDICOMIndexer::tagsToExcludeFromStorageChanged()
+ {
+   Q_D(ctkDICOMIndexer);
+   if (d->Database)
+   {
+     d->RequestQueue.setTagsToExcludeFromStorage(d->Database->tagsToExcludeFromStorage());
+   }
+   else
+   {
+     d->RequestQueue.setTagsToExcludeFromStorage(QStringList());
    }
  }
 

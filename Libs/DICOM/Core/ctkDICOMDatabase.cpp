@@ -67,6 +67,8 @@ static ctkLogger logger("org.commontk.dicom.DICOMDatabase" );
 static QString TagNotInInstance("__TAG_NOT_IN_INSTANCE__");
 /// Flag for tag cache indicating that the value really is the empty string
 static QString ValueIsEmptyString("__VALUE_IS_EMPTY_STRING__");
+/// Tag exists in the instance and non-empty but its value is not stored (e.g., because it is too long)
+static QString ValueIsNotStored("__VALUE_IS_NOT_STORED__");
 /// Separator character for table and field names to be used in display rules manager
 static QString TableFieldSeparator(":");
 
@@ -189,6 +191,7 @@ public:
   QSqlDatabase TagCacheDatabase;
   QString TagCacheDatabaseFilename;
   QStringList TagsToPrecache;
+  QStringList TagsToExcludeFromStorage;
   bool openTagCacheDatabase();
   void precacheTags(const ctkDICOMItem& dataset, const QString sopInstanceUID);
 
@@ -422,12 +425,15 @@ bool ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& dataset, int& db
   {
     // we found him
     dbPatientID = checkPatientExistsQuery.value(checkPatientExistsQuery.record().indexOf("UID")).toInt();
-    qDebug() << "Found patient in the database as UId: " << dbPatientID;
-    foreach(QString key, this->InsertedPatientsCompositeIDCache.keys())
+    if (this->LoggedExecVerbose)
     {
-      qDebug() << "Patient ID cache item: " << key<< "->" << this->InsertedPatientsCompositeIDCache[key];
+      qDebug() << "Found patient in the database as UId: " << dbPatientID;
+      foreach(QString key, this->InsertedPatientsCompositeIDCache.keys())
+      {
+        qDebug() << "Patient ID cache item: " << key<< "->" << this->InsertedPatientsCompositeIDCache[key];
+      }
+      qDebug() << "New patient ID cache item: " << compositeID << "->" << dbPatientID;
     }
-    qDebug() << "New patient ID cache item: " << compositeID << "->" << dbPatientID;
     this->InsertedPatientsCompositeIDCache[compositeID] = dbPatientID;
     return false;
   }
@@ -457,7 +463,10 @@ bool ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& dataset, int& db
     loggedExec(insertPatientStatement);
     dbPatientID = insertPatientStatement.lastInsertId().toInt();
     this->InsertedPatientsCompositeIDCache[compositeID] = dbPatientID;
-    logger.debug("New patient inserted: database item ID = " + QString().setNum(dbPatientID));
+    if (this->LoggedExecVerbose)
+    {
+      logger.debug("New patient inserted: database item ID = " + QString().setNum(dbPatientID));
+    }
     return true;
   }
 }
@@ -472,7 +481,10 @@ bool ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMItem& dataset, int dbPat
   checkStudyExistsQuery.exec();
   if (!checkStudyExistsQuery.next())
   {
-    qDebug() << "Need to insert new study: " << studyInstanceUID;
+    if (this->LoggedExecVerbose)
+    {
+      qDebug() << "Need to insert new study: " << studyInstanceUID;
+    }
 
     QString studyID(dataset.GetElementAsString(DCM_StudyID) );
     QString studyDate(dataset.GetElementAsString(DCM_StudyDate) );
@@ -514,7 +526,10 @@ bool ctkDICOMDatabasePrivate::insertStudy(const ctkDICOMItem& dataset, int dbPat
   }
   else
   {
-    qDebug() << "Used existing study: " << studyInstanceUID;
+    if (this->LoggedExecVerbose)
+    {
+      qDebug() << "Used existing study: " << studyInstanceUID;
+    }
     this->InsertedStudyUIDsCache.insert(studyInstanceUID);
     return false;
   }
@@ -534,7 +549,10 @@ bool ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMItem& dataset, QString 
   checkSeriesExistsQuery.exec();
   if (!checkSeriesExistsQuery.next())
   {
-    qDebug() << "Need to insert new series: " << seriesInstanceUID;
+    if (this->LoggedExecVerbose)
+    {
+      qDebug() << "Need to insert new series: " << seriesInstanceUID;
+    }
 
     QString seriesDate(dataset.GetElementAsString(DCM_SeriesDate) );
     QString seriesTime(dataset.GetElementAsString(DCM_SeriesTime) );
@@ -584,7 +602,10 @@ bool ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMItem& dataset, QString 
   }
   else
   {
-    qDebug() << "Used existing series: " << seriesInstanceUID;
+    if (this->LoggedExecVerbose)
+    {
+      qDebug() << "Used existing series: " << seriesInstanceUID;
+    }
     this->InsertedSeriesUIDsCache.insert(seriesInstanceUID);
     return false;
   }
@@ -627,7 +648,22 @@ void ctkDICOMDatabasePrivate::precacheTags(const ctkDICOMItem& dataset, const QS
     unsigned short group, element;
     q->tagToGroupElement(tag, group, element);
     DcmTagKey tagKey(group, element);
-    QString value = dataset.GetAllElementValuesAsString(tagKey);
+    QString value;
+    if (this->TagsToExcludeFromStorage.contains(tag))
+    {
+      if (dataset.TagExists(tagKey))
+      {
+        value = ValueIsNotStored;
+      }
+      else
+      {
+        value = TagNotInInstance;
+      }
+    }
+    else
+    {
+      value = dataset.GetAllElementValuesAsString(tagKey);
+    }
     sopInstanceUIDs << sopInstanceUID;
     tags << tag;
     values << value;
@@ -786,7 +822,10 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
   {
     if (this->insertStudy(dataset, dbPatientID))
     {
-      qDebug() << "Study Added";
+      if (this->LoggedExecVerbose)
+      {
+        qDebug() << "Study Added";
+      }
       databaseWasChanged = true;
       // let users of this class track when things happen
       emit q->studyAdded(studyInstanceUID);
@@ -798,7 +837,10 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
   {
     if (this->insertSeries(dataset, studyInstanceUID))
     {
-      qDebug() << "Series Added";
+      if (this->LoggedExecVerbose)
+      {
+        qDebug() << "Series Added";
+      }
       databaseWasChanged = true;
       emit q->seriesAdded(seriesInstanceUID);
     }
@@ -991,17 +1033,36 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
     QString filePath = indexingResult.filePath;
     bool generateThumbnail = false;
     bool storeFile = indexingResult.copyFile;
-    //this->BackgroundIndexingDatabase->insert(indexingResult.filePath, *indexingResult.dataset.data(), indexingResult.storeFile, false);
 
     // Check to see if the file has already been loaded
-    // TODO:
-    // It could make sense to actually remove the dataset and re-add it. This needs the remove
-    // method we still have to write.
-
     QString sopInstanceUID(dataset.GetElementAsString(DCM_SOPInstanceUID));
-
+    bool datasetInDatabase = false;
+    bool datasetUpToDate = false;
     if (indexingResult.overwriteExistingDataset)
     {
+      // overwrite was requested based on exact file match
+      datasetInDatabase = true;
+      datasetUpToDate = false;
+    }
+    else
+    {
+      // there is no exact file match, but there may be still a different file in the database
+      // for the same SOP instance UID
+      QString databaseFilename;
+      if (!d->indexingStatusForFile(filePath, sopInstanceUID, datasetInDatabase, datasetUpToDate, databaseFilename))
+      {
+        // error occurred, message is already logged
+        continue;
+      }
+    }
+
+    if (datasetInDatabase)
+    {
+      if (datasetUpToDate)
+      {
+        continue;
+      }
+      // File is updated, delete record and re-index
       if (!d->removeImage(sopInstanceUID))
       {
         logger.error("Failed to insert file into database (cannot update pre-existing item): " + filePath);
@@ -1043,7 +1104,22 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
         unsigned short group, element;
         this->tagToGroupElement(tag, group, element);
         DcmTagKey tagKey(group, element);
-        QString value = dataset.GetAllElementValuesAsString(tagKey);
+        QString value;
+        if (d->TagsToExcludeFromStorage.contains(tag))
+        {
+          if (dataset.TagExists(tagKey))
+          {
+            value = ValueIsNotStored;
+          }
+          else
+          {
+            value = TagNotInInstance;
+          }
+        }
+        else
+        {
+          value = dataset.GetAllElementValuesAsString(tagKey);
+        }
         insertTags.bindValue(1, tag);
         if (value.isEmpty())
         {
@@ -1068,8 +1144,8 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
       if (d->LoggedExecVerbose)
       {
         qDebug() << "Instance Added";
-        databaseWasChanged = true;
       }
+      databaseWasChanged = true;
 
       if (generateThumbnail)
       {
@@ -1458,6 +1534,7 @@ ctkDICOMDatabase::ctkDICOMDatabase(QString databaseFile)
   : d_ptr(new ctkDICOMDatabasePrivate(*this))
 {
   Q_D(ctkDICOMDatabase);
+  d->TagsToExcludeFromStorage << groupElementToTag(0x7fe0,0x0010); // pixel data
   d->registerCompressionLibraries();
   d->init(databaseFile);
 }
@@ -1467,6 +1544,7 @@ ctkDICOMDatabase::ctkDICOMDatabase(QObject* parent)
 {
   Q_UNUSED(parent);
   Q_D(ctkDICOMDatabase);
+  d->TagsToExcludeFromStorage << groupElementToTag(0x7fe0, 0x0010); // pixel data
   d->registerCompressionLibraries();
 }
 
@@ -2099,11 +2177,11 @@ QString ctkDICOMDatabase::headerValue (QString key)
 QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
 {
   QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString)
+  if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
   {
     return "";
   }
-  if (value != "")
+  if (!value.isEmpty())
   {
     return value;
   }
@@ -2117,16 +2195,16 @@ QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsi
 {
   QString tag = this->groupElementToTag(group,element);
   QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString)
+  if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
   {
     return "";
   }
-  if (value != "")
+  if (!value.isEmpty())
   {
     return value;
   }
   QString filePath = this->fileForInstance(sopInstanceUID);
-  if (filePath != "" )
+  if (!filePath.isEmpty())
   {
     value = this->fileValue(filePath, group, element);
     return( value );
@@ -2137,7 +2215,6 @@ QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsi
   }
 }
 
-
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
 {
@@ -2145,11 +2222,11 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   this->tagToGroupElement(tag, group, element);
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString)
+  if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
   {
     return "";
   }
-  if (value != "")
+  if (!value.isEmpty())
   {
     return value;
   }
@@ -2159,6 +2236,124 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short group, const unsigned short element)
 {
+  Q_D(ctkDICOMDatabase);
+  // here is where the real lookup happens
+  // - first we check the tagCache to see if the value exists for this instance tag
+  // If not,
+  // - for now we create a ctkDICOMItem and extract the value from there
+  // - then we convert to the appropriate type of string
+  //
+  //As an optimization we could consider
+  // - check if we are currently looking at the dataset for this fileName
+  // - if so, are we looking for a group/element that is past the last one
+  //   accessed
+  //   -- if so, keep looking for the requested group/element
+  //   -- if not, start again from the beginning
+
+  QString tag = this->groupElementToTag(group, element);
+  QString sopInstanceUID = this->instanceForFile(fileName);
+  QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
+  {
+    return "";
+  }
+  if (!value.isEmpty())
+  {
+    return value;
+  }
+
+  ctkDICOMItem dataset;
+  dataset.InitializeFromFile(fileName);
+  if (!dataset.IsInitialized())
+  {
+    logger.error( "File " + fileName + " could not be initialized.");
+    return "";
+  }
+
+  DcmTagKey tagKey(group, element);
+  if (d->TagsToExcludeFromStorage.contains(tag))
+  {
+    if (dataset.TagExists(tagKey))
+    {
+      value = ValueIsNotStored;
+    }
+    else
+    {
+      value = TagNotInInstance;
+    }
+  }
+  else
+  {
+    value = dataset.GetAllElementValuesAsString(tagKey);
+  }
+  this->cacheTag(sopInstanceUID, tag, value);
+  return value;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const QString tag)
+{
+  QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance || value == ValueIsEmptyString)
+  {
+    return false;
+  }
+  if (value == ValueIsNotStored || !value.isEmpty())
+  {
+    return true;
+  }
+  unsigned short group, element;
+  this->tagToGroupElement(tag, group, element);
+  return(this->instanceValueExists(sopInstanceUID, group, element));
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const unsigned short group, const unsigned short element)
+{
+  QString tag = this->groupElementToTag(group, element);
+  QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance || value == ValueIsEmptyString)
+  {
+    return false;
+  }
+  if (value == ValueIsNotStored || !value.isEmpty())
+  {
+    return true;
+  }
+  QString filePath = this->fileForInstance(sopInstanceUID);
+  if (!filePath.isEmpty())
+  {
+    return this->fileValueExists(filePath, group, element);
+  }
+  else
+  {
+    return false;
+  }
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::fileValueExists(const QString fileName, QString tag)
+{
+  unsigned short group, element;
+  this->tagToGroupElement(tag, group, element);
+  QString sopInstanceUID = this->instanceForFile(fileName);
+  QString value = this->cachedTag(sopInstanceUID, tag);
+  if (value == TagNotInInstance || value == ValueIsEmptyString)
+  {
+    return false;
+  }
+  if (value == ValueIsNotStored)
+  {
+    return true;
+  }
+  return(this->fileValueExists(fileName, group, element));
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::fileValueExists(const QString fileName, const unsigned short group, const unsigned short element)
+{
+  Q_D(ctkDICOMDatabase);
+
   // here is where the real lookup happens
   // - first we check the tagCache to see if the value exists for this instance tag
   // If not,
@@ -2177,26 +2372,42 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
   QString value = this->cachedTag(sopInstanceUID, tag);
   if (value == TagNotInInstance || value == ValueIsEmptyString)
   {
-    return "";
+    return false;
   }
-  if (value != "")
+  if (value == ValueIsNotStored)
   {
-    return value;
+    return true;
   }
 
   ctkDICOMItem dataset;
   dataset.InitializeFromFile(fileName);
   if (!dataset.IsInitialized())
   {
-    logger.error( "File " + fileName + " could not be initialized.");
-    return "";
+    logger.error("File " + fileName + " could not be initialized.");
+    return false;
   }
 
   DcmTagKey tagKey(group, element);
-  value = dataset.GetAllElementValuesAsString(tagKey);
+  if (d->TagsToExcludeFromStorage.contains(tag))
+  {
+    if (dataset.TagExists(tagKey))
+    {
+      value = ValueIsNotStored;
+    }
+    else
+    {
+      value = TagNotInInstance;
+    }
+  }
+  else
+  {
+    value = dataset.GetAllElementValuesAsString(tagKey);
+  }
   this->cacheTag(sopInstanceUID, tag, value);
-  return value;
+  
+  return (value != TagNotInInstance && value != ValueIsEmptyString);
 }
+
 
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabase::tagToGroupElement(const QString tag, unsigned short& group, unsigned short& element)
@@ -2312,6 +2523,25 @@ const QStringList ctkDICOMDatabase::tagsToPrecache()
 {
   Q_D(ctkDICOMDatabase);
   return d->TagsToPrecache;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDatabase::setTagsToExcludeFromStorage(const QStringList tags)
+{
+  Q_D(ctkDICOMDatabase);
+  if (d->TagsToExcludeFromStorage == tags)
+  {
+    return;
+  }
+  d->TagsToExcludeFromStorage = tags;
+  emit tagsToExcludeFromStorageChanged();
+}
+
+//------------------------------------------------------------------------------
+const QStringList ctkDICOMDatabase::tagsToExcludeFromStorage()
+{
+  Q_D(ctkDICOMDatabase);
+  return d->TagsToExcludeFromStorage;
 }
 
 //------------------------------------------------------------------------------
@@ -2670,7 +2900,7 @@ void ctkDICOMDatabase::getCachedTags(const QString sopInstanceUID, QMap<QString,
   {
     tag = selectValue.value(0).toString();
     value = selectValue.value(1).toString();
-    if (value == TagNotInInstance || value == ValueIsEmptyString)
+    if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
     {
       value = QString("");
     }

@@ -261,6 +261,13 @@ OFCondition ctkDICOMItem::findAndGetOFString(const DcmTag& tag, OFString& value,
   return GetDcmItem().findAndGetOFString(tag, value, pos, searchIntoSub);
 }
 
+bool ctkDICOMItem::TagExists(const DcmTag& tag) const
+{
+  EnsureDcmDataSetIsInitialized();
+  // this one const_cast allows us to declare quite a lot of methods nicely with const
+  return GetDcmItem().tagExists(tag, true);
+}
+
 bool ctkDICOMItem::CheckCondition(const OFCondition& condition)
 {
   if ( condition.bad() )

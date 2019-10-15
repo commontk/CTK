@@ -80,10 +80,23 @@ public:
     this->TagsToPrecache = tags;
   }
 
-  void removeAllIndexingRequests()
+  QStringList tagsToExcludeFromStorage()
+  {
+    QMutexLocker locker(&this->Mutex);
+    return this->TagsToExcludeFromStorage;
+  }
+
+  void setTagsToExcludeFromStorage(const QStringList& tags)
+  {
+    QMutexLocker locker(&this->Mutex);
+    this->TagsToExcludeFromStorage = tags;
+  }
+
+  void clear()
   {
     QMutexLocker locker(&this->Mutex);
     this->IndexingRequests.clear();
+    this->IndexingResults.clear();
   }
 
   int popIndexingRequest(IndexingRequest& indexingRequest)
@@ -103,6 +116,12 @@ public:
     this->IndexingRequests.push_back(indexingRequest);
   }
 
+  int indexingResultsCount()
+  {
+    QMutexLocker locker(&this->Mutex);
+    return this->IndexingResults.size();
+  }
+
   void popAllIndexingResults(QList<ctkDICOMDatabase::IndexingResult>& indexingResults)
   {
     QMutexLocker locker(&this->Mutex);
@@ -110,10 +129,11 @@ public:
     this->IndexingResults.clear();
   }
 
-  void pushIndexingResult(const ctkDICOMDatabase::IndexingResult& indexingResult)
+  int pushIndexingResult(const ctkDICOMDatabase::IndexingResult& indexingResult)
   {
     QMutexLocker locker(&this->Mutex);
     this->IndexingResults.push_back(indexingResult);
+    return this->IndexingResults.size();
   }
 
   void modifiedTimeForFilepath(QMap<QString, QDateTime>& timesForPaths)
@@ -140,6 +160,18 @@ public:
     return this->IsIndexing;
   }
 
+  bool isEmpty()
+  {
+    QMutexLocker locker(&this->Mutex);
+    return (this->IndexingRequests.isEmpty() && this->IndexingResults.isEmpty());
+  }
+
+  bool isIndexingRequestsEmpty()
+  {
+    QMutexLocker locker(&this->Mutex);
+    return this->IndexingRequests.isEmpty();
+  }
+
   bool isStopRequested()
   {
     return this->StopRequested;
@@ -159,6 +191,7 @@ protected:
 
   QString DatabaseFilename;
   QStringList TagsToPrecache;
+  QStringList TagsToExcludeFromStorage;
 
   bool IsIndexing;
   bool StopRequested;
@@ -177,8 +210,6 @@ public:
 
 public Q_SLOTS:
   void start();
-  void databaseFileInstanceAdded();
-  void databaseDisplayFieldUpdateProgress(int);
 
 Q_SIGNALS:
   void progress(int);
@@ -189,16 +220,14 @@ Q_SIGNALS:
 
 private:
 
-  void processIndexingRequest(DICOMIndexingQueue::IndexingRequest& request);
-  void writeIndexingResultsToDatabase();
+  void processIndexingRequest(DICOMIndexingQueue::IndexingRequest& request, ctkDICOMDatabase& database);
+  void writeIndexingResultsToDatabase(ctkDICOMDatabase& database);
 
   DICOMIndexingQueue* RequestQueue;
   int NumberOfInstancesToInsert;
   int NumberOfInstancesInserted;
 
   double TimePercentageIndexing;
-  double TimePercentageDatabaseInsert;
-  double TimePercentageDatabaseDisplayFieldsUpdate;
 
   int RemainingRequestCount; // the current request in progress is not included
   int CompletedRequestCount; // the current request in progress is not included
