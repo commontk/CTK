@@ -59,6 +59,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(QString databaseFilename READ databaseFilename)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory)
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
+  Q_PROPERTY(QStringList tagsToExcludeFromStorage READ tagsToExcludeFromStorage WRITE setTagsToExcludeFromStorage)
 
 public:
   struct IndexingResult
@@ -178,7 +179,7 @@ public:
 
   /// \brief Load the header from a file and allow access to elements
   /// @param sopInstanceUID A string with the uid for a given instance
-  ///                       (corresponding file will be found via database)
+  ///                       (corresponding file will be found via the database)
   /// @param fileName Full path to a dicom file to load.
   /// @param key A group,element tag in zero-filled hex
   Q_INVOKABLE void loadInstanceHeader (const QString sopInstanceUID);
@@ -197,6 +198,14 @@ public:
   ///  like "0008,0008" as in the instanceValue and fileValue calls
   void setTagsToPrecache(const QStringList tags);
   const QStringList tagsToPrecache();
+
+  /// \brief Tags that must not be stored in the tag cache.
+  /// Tag may be excluded from storage if it is not suitable for storage in the database (e.g., binary data)
+  /// or if content of this field is usually very large.
+  /// Presence of non-empty tag can still be checked using instanceValueExists or fileValueExists.
+  /// By default, only PixelData tag is excluded from storage.
+  void setTagsToExcludeFromStorage(const QStringList tags);
+  const QStringList tagsToExcludeFromStorage();
 
   /// Insert into the database if not already existing.
   /// @param dataset The dataset to store into the database. Usually, this is
@@ -265,12 +274,11 @@ public:
 
   /// \brief Access element values for given instance
   /// @param sopInstanceUID A string with the uid for a given instance
-  ///                       (corresponding file will be found via database)
+  ///                       (corresponding file will be found via the database)
   /// @param fileName Full path to a dicom file to load.
-  /// @param key A group,element tag in zero-filled hex
   /// @param group The group portion of the tag as an integer
   /// @param element The element portion of the tag as an integer
-  /// @Returns empty string if element is missing
+  /// @Returns empty string if element is missing or excluded from storage.
   Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const QString tag);
   Q_INVOKABLE QString instanceValue (const QString sopInstanceUID, const unsigned short group, const unsigned short element);
   Q_INVOKABLE QString fileValue (const QString fileName, const QString tag);
@@ -278,12 +286,24 @@ public:
   Q_INVOKABLE bool tagToGroupElement (const QString tag, unsigned short& group, unsigned short& element);
   Q_INVOKABLE QString groupElementToTag (const unsigned short& group, const unsigned short& element);
 
+  /// \brief Check if an element with the given attribute tag exists in the dataset and has a non-empty value.
+  /// @param sopInstanceUID A string with the uid for a given instance
+  ///                       (corresponding file will be found via the database)
+  /// @param fileName Full path to a dicom file to load.
+  /// @param group The group portion of the tag as an integer
+  /// @param element The element portion of the tag as an integer
+  /// @Returns true if tag exists and has non-empty value. Returns true even if the value is excluded from storage in the database.
+  Q_INVOKABLE bool instanceValueExists(const QString sopInstanceUID, const QString tag);
+  Q_INVOKABLE bool instanceValueExists(const QString sopInstanceUID, const unsigned short group, const unsigned short element);
+  Q_INVOKABLE bool fileValueExists(const QString fileName, const QString tag);
+  Q_INVOKABLE bool fileValueExists(const QString fileName, const unsigned short group, const unsigned short element);
+
   /// \brief Store values of previously requested instance elements
   /// These are meant to be internal methods used by the instanceValue and fileValue
   /// methods, but they can be used by calling classes to populate or access
   /// instance tag values as needed.
   /// @param sopInstanceUID A string with the uid for a given instance
-  ///                       (corresponding file will be found via database)
+  ///                       (corresponding file will be found via the database)
   /// @param key A group,element tag in zero-filled hex
   /// @Returns empty string if element for uid is missing from cache
   ///
@@ -354,8 +374,11 @@ Q_SIGNALS:
   /// Indicate that an in-memory database has been updated
   void databaseChanged();
 
-  /// Indicate that tagsToPreCache list changed
+  /// Indicate that tagsToPrecache list changed
   void tagsToPrecacheChanged();
+
+  /// Indicate that tagsToExcludeFromStorage list changed
+  void tagsToExcludeFromStorageChanged();
 
   /// Indicate that the schema is about to be updated and how many files will be processed
   void schemaUpdateStarted(int);

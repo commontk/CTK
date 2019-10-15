@@ -554,7 +554,7 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
   Q_D(ctkDICOMTableView);
   QString query = ("select distinct %1.* from Patients, Series, Studies where "
                    "Patients.UID = Studies.PatientsUID and Studies.StudyInstanceUID = Series.StudyInstanceUID");
-
+  int columnCountBefore = d->dicomSQLModel.columnCount();
   if (!uids.empty() && d->queryForeignKey.length() != 0)
   {
     query += " and %1."+d->queryForeignKey+" in ( '";
@@ -573,9 +573,15 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
       ++i;
     }
   }
-  if (d->dicomDatabase != 0 && d->dicomDatabase->isOpen())
+  if (d->dicomDatabase != 0 && d->dicomDatabase->isOpen()
+    && (d->queryForeignKey.isEmpty() || !uids.empty()) )
   {
     d->dicomSQLModel.setQuery(query.arg(d->queryTableName()), d->dicomDatabase->database());
+    if (columnCountBefore==0)
+    {
+      // columns have not been initialized yet
+      d->applyColumnProperties();
+    }
   }
   else
   {
