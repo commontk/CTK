@@ -35,6 +35,12 @@ public:
   vtkSmartPointer<vtkPiecewiseFunction> PiecewiseFunction;
 };
 
+ctkVTKPiecewiseFunction::ctkVTKPiecewiseFunction(QObject* parentObject)
+  :ctkTransferFunction(parentObject)
+  , d_ptr(new ctkVTKPiecewiseFunctionPrivate)
+{
+}
+
 //-----------------------------------------------------------------------------
 ctkVTKPiecewiseFunction::ctkVTKPiecewiseFunction(vtkPiecewiseFunction* piecewiseFunction,
                                                          QObject* parentObject)

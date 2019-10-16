@@ -117,7 +117,7 @@ public:
   /// more changes to ctkControlPoint.
   virtual void setControlPointValue(int index, const QVariant& value)=0;
 
-  ctkTransferFunctionRepresentation* representation()const;
+  Q_INVOKABLE ctkTransferFunctionRepresentation* representation()const;
 Q_SIGNALS:
   void changed();
 protected:

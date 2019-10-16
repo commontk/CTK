@@ -38,6 +38,11 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKColorTransferFunction: public c
 {
   Q_OBJECT;
   QVTK_OBJECT;
+  Q_PROPERTY(int count READ count)
+  Q_PROPERTY(bool editable READ isEditable)
+  Q_PROPERTY(bool discrete READ isDiscrete)
+  Q_PROPERTY(QVariant minValue READ minValue)
+  Q_PROPERTY(QVariant maxValue READ maxValue)
 public:
   /// Please note that ctkVTKColorTransferFunction methods only work only if
   /// colorTransferFunction is set.
@@ -48,26 +53,26 @@ public:
   
   /// Please note that controlPoint methods only works if you have at least one
   /// ControlPoint.
-  virtual ctkControlPoint* controlPoint(int index)const;
-  virtual QVariant value(qreal pos)const;
+  Q_INVOKABLE virtual ctkControlPoint* controlPoint(int index)const;
+  Q_INVOKABLE virtual QVariant value(qreal pos)const;
   virtual int count()const;
   virtual bool isDiscrete()const;
   virtual bool isEditable()const;
 
-  virtual void range(qreal& minRange, qreal& maxRange)const;
+  Q_INVOKABLE virtual void range(qreal& minRange, qreal& maxRange)const;
   virtual QVariant minValue()const;
   virtual QVariant maxValue()const;
 
-  virtual int insertControlPoint(const ctkControlPoint& cp);
-  virtual int insertControlPoint(qreal pos);
+  Q_INVOKABLE virtual int insertControlPoint(const ctkControlPoint& cp);
+  Q_INVOKABLE virtual int insertControlPoint(qreal pos);
 
-  virtual void setControlPointPos(int index, qreal pos);
-  virtual void setControlPointValue(int index, const QVariant& value);
+  Q_INVOKABLE virtual void setControlPointPos(int index, qreal pos);
+  Q_INVOKABLE virtual void setControlPointValue(int index, const QVariant& value);
 
-  virtual void removeControlPoint( qreal pos );
+  Q_INVOKABLE virtual void removeControlPoint( qreal pos );
 
-  void setColorTransferFunction(vtkColorTransferFunction* colorTransferFunction);
-  vtkColorTransferFunction* colorTransferFunction()const;
+  Q_INVOKABLE void setColorTransferFunction(vtkColorTransferFunction* colorTransferFunction);
+  Q_INVOKABLE vtkColorTransferFunction* colorTransferFunction()const;
 protected:
   QScopedPointer<ctkVTKColorTransferFunctionPrivate> d_ptr;
 
