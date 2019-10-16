@@ -123,6 +123,20 @@ QColor ctkTransferFunctionBarsItem::barColor()const
 }
 
 //-----------------------------------------------------------------------------
+ctkTransferFunctionBarsItem::LogMode ctkTransferFunctionBarsItem::logMode() const
+{
+  Q_D(const ctkTransferFunctionBarsItem);
+  return d->LogMode;
+}
+
+//-----------------------------------------------------------------------------
+void ctkTransferFunctionBarsItem::setLogMode(const LogMode logMode)
+{
+  Q_D(ctkTransferFunctionBarsItem);
+  d->LogMode = logMode;
+}
+
+//-----------------------------------------------------------------------------
 void ctkTransferFunctionBarsItem::paint(
   QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {

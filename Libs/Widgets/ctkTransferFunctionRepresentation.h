@@ -67,10 +67,10 @@ public:
   QPointF mapPointToScene(const ctkControlPoint* cp)const;
   QPointF mapPointToScene(const ctkPoint& point)const;
 
-  qreal mapXToScene(qreal posX)const;
-  qreal mapYToScene(qreal posY)const;
-  qreal mapXFromScene(qreal ScenePosX)const;
-  qreal mapYFromScene(qreal ScenePosY)const;
+  Q_INVOKABLE qreal mapXToScene(qreal posX)const;
+  Q_INVOKABLE qreal mapYToScene(qreal posY)const;
+  Q_INVOKABLE qreal mapXFromScene(qreal ScenePosX)const;
+  Q_INVOKABLE qreal mapYFromScene(qreal ScenePosY)const;
   inline QPointF mapPointFromScene(const QPointF& point)const;
 
   QList<ctkPoint> bezierParams(ctkControlPoint* start, ctkControlPoint* end) const;

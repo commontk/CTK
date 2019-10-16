@@ -46,7 +46,7 @@ public:
   virtual ~ctkTransferFunctionItem();
 
   Q_INVOKABLE void setTransferFunction(ctkTransferFunction* transferFunction);
-  ctkTransferFunction* transferFunction()const;
+  Q_INVOKABLE ctkTransferFunction* transferFunction()const;
 
   inline void setRect(qreal x, qreal y, qreal width, qreal height);
 
