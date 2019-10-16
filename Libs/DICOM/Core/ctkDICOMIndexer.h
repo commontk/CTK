@@ -132,6 +132,7 @@ public Q_SLOTS:
 protected Q_SLOTS:
   void databaseFilenameChanged();
   void tagsToPrecacheChanged();
+  void tagsToExcludeFromStorageChanged();
 
 protected:
   QScopedPointer<ctkDICOMIndexerPrivate> d_ptr;
