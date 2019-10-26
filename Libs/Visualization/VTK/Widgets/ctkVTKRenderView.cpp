@@ -494,32 +494,32 @@ void ctkVTKRenderView::lookFromAxis(const ctkAxesWidget::Axis& axis, double fov)
     }
   vtkCamera * camera = d->Renderer->GetActiveCamera();
   Q_ASSERT(camera);
-  double widefov = fov*3;
+  double cameraDistance = camera->GetDistance();
   double* focalPoint = camera->GetFocalPoint();
   switch (axis)
     {
     case ctkAxesWidget::Right:
-      camera->SetPosition(focalPoint[0]+widefov, focalPoint[1], focalPoint[2]);
+      camera->SetPosition(focalPoint[0]+cameraDistance, focalPoint[1], focalPoint[2]);
       camera->SetViewUp(0, 0, 1);
       break;
     case ctkAxesWidget::Left:
-      camera->SetPosition(focalPoint[0]-widefov, focalPoint[1], focalPoint[2]);
+      camera->SetPosition(focalPoint[0]-cameraDistance, focalPoint[1], focalPoint[2]);
       camera->SetViewUp(0, 0, 1);
       break;
     case ctkAxesWidget::Anterior:
-      camera->SetPosition(focalPoint[0], focalPoint[1]+widefov, focalPoint[2]);
+      camera->SetPosition(focalPoint[0], focalPoint[1]+cameraDistance, focalPoint[2]);
       camera->SetViewUp(0, 0, 1);
       break;
     case ctkAxesWidget::Posterior:
-      camera->SetPosition(focalPoint[0], focalPoint[1]-widefov, focalPoint[2]);
+      camera->SetPosition(focalPoint[0], focalPoint[1]-cameraDistance, focalPoint[2]);
       camera->SetViewUp(0, 0, 1);
       break;
     case ctkAxesWidget::Superior:
-      camera->SetPosition(focalPoint[0], focalPoint[1], focalPoint[2]+widefov);
+      camera->SetPosition(focalPoint[0], focalPoint[1], focalPoint[2]+cameraDistance);
       camera->SetViewUp(0, 1, 0);
       break;
     case ctkAxesWidget::Inferior:
-      camera->SetPosition(focalPoint[0], focalPoint[1], focalPoint[2]-widefov);
+      camera->SetPosition(focalPoint[0], focalPoint[1], focalPoint[2]-cameraDistance);
       camera->SetViewUp(0, 1, 0);
       break;
     case ctkAxesWidget::None:
