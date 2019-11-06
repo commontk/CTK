@@ -797,7 +797,7 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
   if (dbPatientIDit != this->InsertedPatientsCompositeIDCache.end())
   {
     // already in database
-    int dbPatientID = *dbPatientIDit;
+    dbPatientID = *dbPatientIDit;
   }
   else
   {
