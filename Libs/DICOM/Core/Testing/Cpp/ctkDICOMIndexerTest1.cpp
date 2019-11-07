@@ -40,19 +40,12 @@ int ctkDICOMIndexerTest1( int argc, char * argv [] )
   // just check if it doesn't crash
   // Create block to test batch indexing using indexingBatch helper class.
   {
-    ctkDICOMIndexer::ScopedIndexing indexingBatch(indexer, database);
-    indexer.addDirectory(database, QString());
+    indexer.addDirectory(&database, QString());
     // might work (if there are some DCM images in temp
-    indexer.addDirectory(database, QDir::tempPath());
+    indexer.addDirectory(&database, QDir::tempPath());
     // give an invalid destination name
-    indexer.addDirectory(database, QDir::tempPath(), QDir::tempPath() + "/@#$%^&*{}[]");
+    indexer.addDirectory(&database, QDir::tempPath(), true);
   }
-
-  // make sure it doesn't crash
-  indexer.refreshDatabase(database, QString());
-
-  // make sure it doesn't crash
-  indexer.refreshDatabase(database, QDir::tempPath());
 
   // ensure all concurrent inserts are complete
   indexer.waitForImportFinished();
