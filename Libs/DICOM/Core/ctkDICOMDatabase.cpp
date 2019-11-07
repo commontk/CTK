@@ -161,6 +161,7 @@ public:
   QString LastError;
   QSqlDatabase Database;
   QMap<QString, QString> LoadedHeader;
+  bool DisplayedFieldsTableAvailable;
 
   ctkDICOMAbstractThumbnailGenerator* ThumbnailGenerator;
 
@@ -211,6 +212,7 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
   this->ThumbnailGenerator = NULL;
   this->LoggedExecVerbose = false;
   this->TagCacheVerified = false;
+  this->DisplayedFieldsTableAvailable = false;
   this->resetLastInsertedValues();
 }
 
@@ -1526,6 +1528,9 @@ void ctkDICOMDatabasePrivate::setNumberOfStudiesToPatientDisplayedFields(QMap<QS
 }
 
 //------------------------------------------------------------------------------
+CTK_GET_CPP(ctkDICOMDatabase, bool, isDisplayedFieldsTableAvailable, DisplayedFieldsTableAvailable);
+
+//------------------------------------------------------------------------------
 // ctkDICOMDatabase methods
 //------------------------------------------------------------------------------
 
@@ -1594,6 +1599,8 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
     }
   }
   d->resetLastInsertedValues();
+
+  d->DisplayedFieldsTableAvailable = d->Database.tables().contains("ColumnDisplayProperties");
 
   if (!isInMemory())
   {

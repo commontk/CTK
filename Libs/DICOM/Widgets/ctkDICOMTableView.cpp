@@ -160,7 +160,8 @@ void ctkDICOMTableViewPrivate::showFilterActiveWarning(bool showWarning)
 //----------------------------------------------------------------------------
 void ctkDICOMTableViewPrivate::applyColumnProperties()
 {
-  if (!this->dicomDatabase || !this->dicomDatabase->isOpen())
+  if (!this->dicomDatabase || !this->dicomDatabase->isOpen()
+    || !this->dicomDatabase->isDisplayedFieldsTableAvailable())
   {
     return;
   }
@@ -416,6 +417,12 @@ void ctkDICOMTableView::onDatabaseOpened()
 {
   Q_D(ctkDICOMTableView);
   this->setQuery();
+  if (!d->dicomDatabase || !d->dicomDatabase->isDisplayedFieldsTableAvailable())
+  {
+    // invalid or outdated database schema
+    this->setEnabled(false);
+    return;
+  }
   d->applyColumnProperties();
   this->setEnabled(true);
 }

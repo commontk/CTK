@@ -243,6 +243,10 @@ public:
   /// number of studies in a patient).
   Q_INVOKABLE void updateDisplayedFields();
 
+  /// Get if displayed fields are defined. It returns false for databases that were created with an old schema
+  /// that did not contain ColumnDisplayProperties table.
+  Q_INVOKABLE bool isDisplayedFieldsTableAvailable() const;
+
   /// Reset cached item IDs to make sure previous
   /// inserts do not interfere with upcoming insert operations.
   /// Typically, it should be call just before a batch of files
