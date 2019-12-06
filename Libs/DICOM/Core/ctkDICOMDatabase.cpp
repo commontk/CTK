@@ -1678,9 +1678,9 @@ bool ctkDICOMDatabase::initializeDatabase(const char* sqlFileName/* = ":/dicom/d
   // old schema should be loaded for testing.
   QSqlQuery dropSchemaInfo(d->Database);
   d->loggedExec( dropSchemaInfo, QString("DROP TABLE IF EXISTS 'SchemaInfo';") );
-  return d->executeScript(sqlFileName);
-
+  const bool r = d->executeScript(sqlFileName);
   emit databaseChanged();
+  return r;
 }
 
 //------------------------------------------------------------------------------
