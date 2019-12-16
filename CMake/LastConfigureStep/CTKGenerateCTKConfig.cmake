@@ -115,7 +115,9 @@ endif()
 # as an external library
 export(TARGETS ${CTK_TARGETS_TO_EXPORT} FILE ${CTK_SUPERBUILD_BINARY_DIR}/CTKExports.cmake)
 
-install(EXPORT CTKExports DESTINATION ${CTK_INSTALL_CMAKE_DIR})
+if(MY_LIBRARY_TYPE STREQUAL "SHARED")
+  install(EXPORT CTKExports DESTINATION ${CTK_INSTALL_CMAKE_DIR})
+endif()
 
 #-----------------------------------------------------------------------------
 # Configure 'CTKConfig.cmake' for a build tree
