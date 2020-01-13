@@ -163,7 +163,7 @@ public:
 
   /// Return the spinbox identitfied by id
   ctkDoubleSpinBox* spinBox(int id);
-public Q_SLOTS:
+public slots:
   void normalize();
 
   /// Set the number of decimals of each coordinate spin box.
@@ -175,14 +175,14 @@ public Q_SLOTS:
   /// \sa isReadOnly
   void setReadOnly(bool readOnly);
 
-Q_SIGNALS:
+signals:
   ///
   /// valueChanged is fired anytime a coordinate is modified, the returned
   /// value is the point coordinates
   /// TODO: Don't fire the signal if the new values are not changed 
   void coordinatesChanged(double* pos);
 
-protected Q_SLOTS:
+protected slots:
   void updateCoordinates();
   void updateCoordinate(double coordinate);
 

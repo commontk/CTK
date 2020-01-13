@@ -149,7 +149,7 @@ public:
   virtual QSize minimumSizeHint () const;
   virtual QSize sizeHint () const;
 
-public Q_SLOTS:
+public slots:
 
   ///
   /// Reset the matrix to identity
