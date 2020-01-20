@@ -108,3 +108,16 @@ mark_as_superbuild(
   VARS VTK_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
+
+if(VTK_PYTHON_VERSION VERSION_GREATER "2.7")
+  # Propagate variables expected when VTK searches for python
+  mark_as_superbuild(
+    VARS
+      Python3_INCLUDE_DIR:PATH
+      Python3_ROOT_DIR:PATH
+      Python3_LIBRARY:FILEPATH
+      Python3_LIBRARY_DEBUG:FILEPATH
+      Python3_LIBRARY_RELEASE:FILEPATH
+      Python3_EXECUTABLE:FILEPATH
+    )
+endif()

@@ -165,13 +165,24 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 #ifdef CTK_USE_QVTKOPENGLWIDGET
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> renwin =
     vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+# if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  this->ScalarsToColorsView->setRenderWindow(renwin);
+# else
   this->ScalarsToColorsView->SetRenderWindow(renwin);
+# endif
 #endif
 
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  this->scalarsToColorsContextView->SetRenderWindow(
+    this->ScalarsToColorsView->renderWindow());
+  this->scalarsToColorsContextView->SetInteractor(
+    this->ScalarsToColorsView->interactor());
+#else
   this->scalarsToColorsContextView->SetRenderWindow(
     this->ScalarsToColorsView->GetRenderWindow());
   this->scalarsToColorsContextView->SetInteractor(
     this->ScalarsToColorsView->GetInteractor());
+#endif
   this->scalarsToColorsContextView->GetScene()->AddItem(
     this->scalarsToColorsContextItem.Get());
 
@@ -365,7 +376,11 @@ ctkVTKDiscretizableColorTransferWidgetPrivate::colorTransferFunctionModifiedCall
   QColor selected = QColor::fromRgbF(r, g, b);
   self->nanButton->setColor(selected);
 
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  self->ScalarsToColorsView->interactor()->Render();
+#else
   self->ScalarsToColorsView->GetInteractor()->Render();
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -743,7 +758,11 @@ void ctkVTKDiscretizableColorTransferWidget::onPaletteIndexChanged(
   Q_D(ctkVTKDiscretizableColorTransferWidget);
   d->addRangesInHistory(this->getColorTransferFunctionRange(), this->getVisibleRange());
   this->copyColorTransferFunction(ctf);
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  d->ScalarsToColorsView->interactor()->Render();
+#else
   d->ScalarsToColorsView->GetInteractor()->Render();
+#endif
 }
 
 // ----------------------------------------------------------------------------

@@ -27,15 +27,11 @@
 #include <QWidget>
 
 // ctkWidgets includes
+#include "ctkVTKOpenGLNativeWidget.h"
 #include "ctkVTKWidgetsUtils.h"
 #include "ctkWidgetsUtils.h"
 
 // VTK includes
-#if CTK_USE_QVTKOPENGLWIDGET
-#include <QVTKOpenGLWidget.h>
-#else
-#include <QVTKWidget.h>
-#endif
 #include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkPiecewiseFunction.h>
@@ -58,7 +54,11 @@ QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
   QPainter painter;
   painter.begin(&widgetImage);
 #if CTK_USE_QVTKOPENGLWIDGET
+# if CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+  foreach(QVTKOpenGLNativeWidget* vtkWidget, widget->findChildren<QVTKOpenGLNativeWidget*>())
+# else
   foreach(QVTKOpenGLWidget* vtkWidget, widget->findChildren<QVTKOpenGLWidget*>())
+# endif
 #else
   foreach(QVTKWidget* vtkWidget, widget->findChildren<QVTKWidget*>())
 #endif
