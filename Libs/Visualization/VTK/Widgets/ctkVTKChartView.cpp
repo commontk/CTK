@@ -85,18 +85,34 @@ ctkVTKChartViewPrivate::ctkVTKChartViewPrivate(ctkVTKChartView& object)
 void ctkVTKChartViewPrivate::init()
 {
   Q_Q(ctkVTKChartView);
+
 #ifdef CTK_USE_QVTKOPENGLWIDGET
+# if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  q->setRenderWindow(this->RenderWindow);
+# else
   q->SetRenderWindow(this->RenderWindow);
+# endif
   this->ContextView->SetRenderWindow(this->RenderWindow);
 #endif
+
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  this->ContextView->SetInteractor(q->interactor());
+  q->setRenderWindow(this->ContextView->GetRenderWindow());
+#else
   this->ContextView->SetInteractor(q->GetInteractor());
   q->SetRenderWindow(this->ContextView->GetRenderWindow());
+#endif
+
   // low def for now (faster)
   //q->GetRenderWindow()->SetMultiSamples(0);
   //vtkOpenGLContextDevice2D::SafeDownCast(this->ContextView->GetContext()->GetDevice())
   //                                       ->SetStringRendererToQt();
 #ifndef Q_WS_X11
+# if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  q->renderWindow()->SetLineSmoothing(true);
+# else
   q->GetRenderWindow()->SetLineSmoothing(true);
+# endif
 #endif
   this->Chart->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
   this->Chart->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::RIGHT_BUTTON);

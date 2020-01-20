@@ -29,5 +29,7 @@
 //#  endif
 #endif
 
+@CTK_EXPORT_CUSTOM_CONTENT@
+
 #endif
 
