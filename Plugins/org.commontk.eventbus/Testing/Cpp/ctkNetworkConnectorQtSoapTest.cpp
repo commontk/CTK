@@ -161,7 +161,7 @@ void ctkNetworkConnectorQtSoapTest::ctkNetworkConnectorQtSoapCommunictionPassing
     // compare results
     QtSoapType *soapTypeResult = m_NetWorkConnectorQtSoap->response();
     if(soapTypeResult)
-    qDebug("%s", soapTypeResult->toString().toLatin1().constData());
+    qDebug("%s", soapTypeResult->toString().toUtf8().constData());
 }
 
 void ctkNetworkConnectorQtSoapTest::ctkNetworkConnectorQtSoapCommunictionPassingStringOnAxisServiceTest() {
@@ -205,7 +205,7 @@ void ctkNetworkConnectorQtSoapTest::ctkNetworkConnectorQtSoapCommunictionPassing
     // compare results
     QtSoapType *soapTypeResult = m_NetWorkConnectorQtSoap->response();
     if(soapTypeResult)
-    qDebug("%s", soapTypeResult->toString().toLatin1().constData());
+    qDebug("%s", soapTypeResult->toString().toUtf8().constData());
 }
 
 void ctkNetworkConnectorQtSoapTest::ctkNetworkConnectorQtSoapCommunictionPassingStringArrayTest() {
@@ -255,7 +255,7 @@ void ctkNetworkConnectorQtSoapTest::ctkNetworkConnectorQtSoapCommunictionPassing
     // compare results
     QtSoapType *soapTypeResult = m_NetWorkConnectorQtSoap->response();
     if(soapTypeResult)
-    qDebug("%s", soapTypeResult->toString().toLatin1().constData());
+    qDebug("%s", soapTypeResult->toString().toUtf8().constData());
 }
 
 void ctkNetworkConnectorQtSoapTest::ctkNetworkConnectorQtSoapCommunictionWithGSOAPServiceTest() {
@@ -288,7 +288,7 @@ void ctkNetworkConnectorQtSoapTest::ctkNetworkConnectorQtSoapCommunictionWithGSO
     // compare results
     QtSoapType *soapTypeResult = m_NetWorkConnectorQtSoap->response();
     if(soapTypeResult)
-    qDebug("%s", soapTypeResult->toString().toLatin1().constData());
+    qDebug("%s", soapTypeResult->toString().toUtf8().constData());
 }
 
 CTK_REGISTER_TEST(ctkNetworkConnectorQtSoapTest);

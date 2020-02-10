@@ -11,7 +11,7 @@ function(ctkFunctionCreateCmdLineModule name)
     qt5_add_resources(_src_files ctkCmdLineModule${name}.qrc)
   endif()
 
-  add_executable(ctkCmdLineModule${name} ${_src_files})
+  ctk_add_executable_utf8(ctkCmdLineModule${name} ${_src_files})
   if(CTK_QT_VERSION VERSION_LESS "5")
     target_link_libraries(ctkCmdLineModule${name} CTKCore ${QT_LIBRARIES})
   else()

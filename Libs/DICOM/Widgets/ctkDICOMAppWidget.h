@@ -97,12 +97,8 @@ public Q_SLOTS:
   /// an import (i.e. for testing or to support drag-and-drop)
   void onImportDirectory(QString directory);
 
-  /// slots to capture status updates from the database during an 
-  /// import operation
-  void onPatientAdded(int, QString, QString, QString);
-  void onStudyAdded(QString);
-  void onSeriesAdded(QString);
-  void onInstanceAdded(QString);
+  /// Save number of added patients, studies, series, images
+  void setIndexingResult(int, int, int, int);
 
 Q_SIGNALS:
   /// Emited when directory is changed

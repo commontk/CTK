@@ -53,7 +53,7 @@ set(MY_MOC_CXX )
 
 set(test_executable ${fw_lib}CppTests)
 
-add_executable(${test_executable} ${SRCS} ${MY_MOC_CXX})
+ctk_add_executable_utf8(${test_executable} ${SRCS} ${MY_MOC_CXX})
 target_link_libraries(${test_executable}
   ${fw_lib}
   ${fwtestutil_lib}

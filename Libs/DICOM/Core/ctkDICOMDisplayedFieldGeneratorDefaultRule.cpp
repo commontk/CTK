@@ -143,7 +143,7 @@ void ctkDICOMDisplayedFieldGeneratorDefaultRule::mergeDisplayedFieldsForInstance
 //------------------------------------------------------------------------------
 QString ctkDICOMDisplayedFieldGeneratorDefaultRule::humanReadablePatientName(QString dicomPatientName)
 {
-  OFString dicomName(dicomPatientName.toLatin1().constData());
+  OFString dicomName(dicomPatientName.toUtf8().constData());
   OFString formattedName;
   OFString lastName, firstName, middleName, namePrefix, nameSuffix;
   OFCondition l_error = DcmPersonName::getNameComponentsFromString(

@@ -18,7 +18,7 @@ else()
   qt5_wrap_cpp(KITTests_MOC_CPP ${KITTests_MOC_SRCS})
 endif()
 
-add_executable(${KIT}CppTests ${Tests} ${KITTests_SRCS} ${KITTests_MOC_SRCS} ${KITTests_MOC_CPP})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${KITTests_SRCS} ${KITTests_MOC_SRCS} ${KITTests_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 if(CTK_QT_VERSION VERSION_GREATER "4")

@@ -16,7 +16,7 @@ set(my_includes)
 ctkFunctionGetIncludeDirs(my_includes ${test_executable})
 include_directories(${my_includes})
 
-add_executable(${test_executable} ${SRCS} ${MY_MOC_CXX})
+ctk_add_executable_utf8(${test_executable} ${SRCS} ${MY_MOC_CXX})
 target_link_libraries(${test_executable}
   ${${test_executable}_DEPENDENCIES}
 )

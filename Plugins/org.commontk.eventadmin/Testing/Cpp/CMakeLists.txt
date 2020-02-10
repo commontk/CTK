@@ -18,7 +18,7 @@ set(my_includes)
 ctkFunctionGetIncludeDirs(my_includes ${test_executable})
 include_directories(${my_includes})
 
-add_executable(${test_executable} ctkEventAdminImplTestMain.cpp)
+ctk_add_executable_utf8(${test_executable} ctkEventAdminImplTestMain.cpp)
 target_link_libraries(${test_executable}
   ${${test_executable}_DEPENDENCIES}
 )
@@ -38,7 +38,7 @@ set(${test_executable}_DEPENDENCIES ${fw_lib} ${fwtestutil_lib})
 #ctkFunctionGetIncludeDirs(my_includes ${test_executable})
 #include_directories(${my_includes})
 
-add_executable(${test_executable} ctkEventAdminImplPerfTestMain.cpp)
+ctk_add_executable_utf8(${test_executable} ctkEventAdminImplPerfTestMain.cpp)
 target_link_libraries(${test_executable}
   ${${test_executable}_DEPENDENCIES}
 )

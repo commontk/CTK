@@ -234,7 +234,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
 
   // Instanciate an image reader
   vtkSmartPointer<vtkImageReader2> imageReader;
-  imageReader.TakeReference(imageFactory->CreateImageReader2(imageFilename.toLatin1()));
+  imageReader.TakeReference(imageFactory->CreateImageReader2(imageFilename.toUtf8()));
   if (!imageReader)
     {
     std::cerr << "Failed to instanciate image reader using: "
@@ -243,7 +243,7 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
     }
 
   // Read image
-  imageReader->SetFileName(imageFilename.toLatin1());
+  imageReader->SetFileName(imageFilename.toUtf8());
   imageReader->Update();
 #if (VTK_MAJOR_VERSION <= 5)
   vtkImageData* image = imageReader->GetOutput();

@@ -176,7 +176,7 @@ bool ctkBinaryFileDescriptor::load()
   Q_D(ctkBinaryFileDescriptor);
   
   bfd_init();
-  bfd * abfd = bfd_openr(d->FileName.toLatin1(), NULL);
+  bfd * abfd = bfd_openr(d->FileName.toUtf8(), NULL);
   if (!abfd)
     {
     return false;

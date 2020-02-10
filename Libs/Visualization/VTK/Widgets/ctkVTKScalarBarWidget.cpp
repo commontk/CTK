@@ -248,7 +248,7 @@ void ctkVTKScalarBarWidget::setTitle(const QString& title)
     {
     return;
     }
-  actor->SetTitle(title.toLatin1());
+  actor->SetTitle(title.toUtf8());
 }
 
 //-----------------------------------------------------------------------------
@@ -268,7 +268,7 @@ void ctkVTKScalarBarWidget::setLabelsFormat(const QString& format)
     {
     return;
     }
-  actor->SetLabelFormat(format.toLatin1());
+  actor->SetLabelFormat(format.toUtf8());
 }
 
 //-----------------------------------------------------------------------------

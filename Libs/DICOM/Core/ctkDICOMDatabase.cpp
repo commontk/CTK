@@ -872,7 +872,7 @@ bool ctkDICOMDatabasePrivate::storeThumbnailFile(const QString& originalFilePath
     return true;
   }
   QDir(q->databaseDirectory() + "/thumbs/").mkpath(studySeriesDirectory);
-  DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toLatin1());
+  DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toUtf8());
   return this->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
 }
 
@@ -1033,7 +1033,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
   {
     const ctkDICOMItem& dataset = *indexingResult.dataset.data();
     QString filePath = indexingResult.filePath;
-    bool generateThumbnail = false;
+    bool generateThumbnail = false; // thumbnail will be generated when needed, don't slow down import with that
     bool storeFile = indexingResult.copyFile;
 
     // Check to see if the file has already been loaded
@@ -2142,7 +2142,7 @@ void ctkDICOMDatabase::loadFileHeader (QString fileName)
   Q_D(ctkDICOMDatabase);
   d->LoadedHeader.clear();
   DcmFileFormat fileFormat;
-  OFCondition status = fileFormat.loadFile(fileName.toLatin1().data());
+  OFCondition status = fileFormat.loadFile(fileName.toUtf8().data());
   if (status.good())
   {
     DcmDataset *dataset = fileFormat.getDataset();

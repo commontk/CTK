@@ -136,7 +136,7 @@ int main(int argc, char** argv)
   if ( settings.value("DatabaseDirectory", "") == "" )
   {
     databaseDirectory = QString("./ctkDICOM-Database");
-    std::cerr << "No DatabaseDirectory on command line or in settings.  Using \"" << databaseDirectory.toLatin1().data() << "\".\n";
+    std::cerr << "No DatabaseDirectory on command line or in settings.  Using \"" << qPrintable(databaseDirectory) << "\".\n";
   } else
   {
     databaseDirectory = settings.value("DatabaseDirectory", "").toString();
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
   {
     if ( !qdir.mkpath(databaseDirectory) )
     {
-      std::cerr << "Could not create database directory \"" << databaseDirectory.toLatin1().data() << "\".\n";
+      std::cerr << "Could not create database directory \"" << qPrintable(databaseDirectory) << "\".\n";
       return EXIT_FAILURE;
     }
   }

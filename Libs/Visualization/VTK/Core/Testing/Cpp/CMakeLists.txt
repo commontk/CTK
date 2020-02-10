@@ -62,7 +62,7 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
 
-add_executable(${KIT}CppTests ${Tests} ${KIT_HELPER_SRCS})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${KIT_HELPER_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 #
@@ -80,4 +80,3 @@ if(EXISTS "${CTKData_DIR}")
   set(baseline_relative_location "Libs/Visualization/VTK/Core")
   SIMPLE_TEST_WITH_DATA( vtkLightBoxRendererManagerTest1 ${baseline_relative_location}/vtkLightBoxRendererManagerTest1.png)
 endif()
-

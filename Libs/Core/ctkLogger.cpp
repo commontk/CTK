@@ -62,7 +62,7 @@ void ctkLogger::debug(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->debug(s);
-  qDebug().nospace() << qPrintable(s);
+  qDebug().nospace() << qUtf8Printable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ void ctkLogger::info(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->info(s);
-  qDebug().nospace() << qPrintable(s);
+  qDebug().nospace() << qUtf8Printable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ void ctkLogger::trace(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->trace(s);
-  qDebug().nospace() << qPrintable(s);
+  qDebug().nospace() << qUtf8Printable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ void ctkLogger::warn(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->warn(s);
-  qWarning().nospace() << qPrintable(s);
+  qWarning().nospace() << qUtf8Printable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void ctkLogger::error(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->error(s);
-  qCritical().nospace() << qPrintable(s);
+  qCritical().nospace() << qUtf8Printable(s);
 }
 
 //-----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ void ctkLogger::fatal(const QString& s)
 {
   //Q_D(ctkLogger);
   //d->Logger->fatal(s);
-  qCritical().nospace() << qPrintable(s);
+  qCritical().nospace() << qUtf8Printable(s);
 }
 
 ////-----------------------------------------------------------------------------

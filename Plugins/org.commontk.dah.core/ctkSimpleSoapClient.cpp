@@ -132,7 +132,7 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
   if (response.isFault())
     {
     qCritical() << "ctkSimpleSoapClient: server error (response.IsFault())";
-    CTK_SOAP_LOG_LOWLEVEL( << response.faultString().toString().toLatin1().constData() << endl );
+    CTK_SOAP_LOG_LOWLEVEL( << qPrintable(response.faultString().toString()) << endl );
     CTK_SOAP_LOG_LOWLEVEL( << response.toXmlString() );
     return response.returnValue();
     //    throw ctkRuntimeException("ctkSimpleSoapClient: server error (response.IsFault())");

@@ -263,7 +263,7 @@ void ctkDICOMObjectModel::setFile(const QString &fileName)
 {
   Q_D(ctkDICOMObjectModel);
 
-  OFCondition status = d->fileFormat.loadFile( fileName.toLatin1().data());
+  OFCondition status = d->fileFormat.loadFile( fileName.toUtf8().data());
   if( !status.good() )
     {
     // TODO: Through an error message.

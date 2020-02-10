@@ -155,18 +155,18 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
     fprintf(stdout, "%s\n", qPrintable(fdMessage0));
     fflush(stdout);
 
-    qDebug().nospace() << qPrintable(qtMessage0);
+    qDebug().nospace() << qUtf8Printable(qtMessage0);
 
     std::cerr << qPrintable(stdMessage0) << std::endl;
 
-    qWarning().nospace() << qPrintable(qtMessage1);
+    qWarning().nospace() << qUtf8Printable(qtMessage1);
 
     fprintf(stderr, "%s\n", qPrintable(fdMessage1));
     fflush(stderr);
 
     std::cout << qPrintable(stdMessage1) << std::endl;
 
-    qCritical().nospace() << qPrintable(qtMessage2);
+    qCritical().nospace() << qUtf8Printable(qtMessage2);
 
     // Give enough time to the ErrorLogModel to consider the queued messages.
     processEvents(1000);

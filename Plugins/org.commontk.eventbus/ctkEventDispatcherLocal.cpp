@@ -92,7 +92,7 @@ void ctkEventDispatcherLocal::notifyEvent(ctkBusEvent &event_dictionary, ctkEven
                              argList->at(5), argList->at(6), argList->at(7), argList->at(8), argList->at(9));
                             break;
                         default:
-                            qWarning("%s", tr("Number of arguments not supported. Max 10 arguments").toLatin1().data());
+                            qWarning("%s", tr("Number of arguments not supported. Max 10 arguments").toUtf8().data());
                     } //switch
                  } else { //use return value
                     switch (argList->count()) {
@@ -144,7 +144,7 @@ void ctkEventDispatcherLocal::notifyEvent(ctkBusEvent &event_dictionary, ctkEven
                              argList->at(5), argList->at(6), argList->at(7), argList->at(8), argList->at(9));
                             break;
                         default:
-                            qWarning("%s", tr("Number of arguments not supported. Max 10 arguments").toLatin1().data());
+                            qWarning("%s", tr("Number of arguments not supported. Max 10 arguments").toUtf8().data());
                     } //switch
                  }
             } else {

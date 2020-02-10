@@ -29,7 +29,7 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   #
   # Add Tests
   #
-  add_executable(ctkDICOMApplicationTest1 ctkDICOMApplicationTest1.cpp)
+  ctk_add_executable_utf8(ctkDICOMApplicationTest1 ctkDICOMApplicationTest1.cpp)
   if(CTK_QT_VERSION VERSION_LESS "5")
     target_link_libraries(ctkDICOMApplicationTest1 ${QT_LIBRARIES})
   else()
@@ -50,4 +50,3 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
                ${ctkDICOMRetrieve_STORE_DIR}
                )
 endif()
-

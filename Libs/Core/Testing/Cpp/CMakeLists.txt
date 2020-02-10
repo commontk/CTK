@@ -35,6 +35,7 @@ set(KITTests_SRCS
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
   ctkModelTesterTest2.cpp
+  ctkUtf8Test1.cpp
   ctkUtilsCopyDirRecursivelyTest1.cpp
   ctkUtilsQtHandleToStringTest1.cpp
   ctkUtilsTest.cpp
@@ -107,7 +108,7 @@ else()
 endif()
 
 if(HAVE_BFD)
-  add_executable(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
+  ctk_add_executable_utf8(ctkBinaryFileDescriptorTestHelper ctkBinaryFileDescriptorTestHelper.cpp)
 endif()
 
 if(MSVC)
@@ -117,7 +118,7 @@ endif()
 #
 # Test executable
 #
-add_executable(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
