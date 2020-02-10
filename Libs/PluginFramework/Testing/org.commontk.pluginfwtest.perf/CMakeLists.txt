@@ -46,7 +46,7 @@ set(SRCS
 
 set(test_executable ${PROJECT_NAME}CppTests)
 
-add_executable(${test_executable} ${SRCS})
+ctk_add_executable_utf8(${test_executable} ${SRCS})
 target_link_libraries(${test_executable}
   ${fw_lib}
   ${fwtestutil_lib}

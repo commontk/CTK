@@ -203,16 +203,16 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
 
     q->connect(DICOMIndexer.data(), SIGNAL(progress(int)),
             IndexerProgress, SLOT(setValue(int)));
-    q->connect(DICOMIndexer.data(), SIGNAL(indexingFilePath(QString)),
+    q->connect(DICOMIndexer.data(), SIGNAL(progressDetail(QString)),
             progressLabel, SLOT(setText(QString)));
-    q->connect(DICOMIndexer.data(), SIGNAL(indexingFilePath(QString)),
+    q->connect(DICOMIndexer.data(), SIGNAL(progressDetail(QString)),
             q, SLOT(onFileIndexed(QString)));
 
     // close the dialog
-    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete()),
-            IndexerProgress, SLOT(close()));
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int,int,int,int)),
+            q, SLOT(setIndexingResult(int,int,int,int)));
     // reset the database to show new data
-    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete()),
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int, int, int, int)),
             &DICOMModel, SLOT(reset()));
     // stop indexing and reset the database if canceled
     q->connect(IndexerProgress, SIGNAL(canceled()), 
@@ -223,7 +223,7 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
     // allow users of this widget to know that the process has finished
     q->connect(IndexerProgress, SIGNAL(canceled()), 
             q, SIGNAL(directoryImported()));
-    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete()),
+    q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int, int, int, int)),
             q, SIGNAL(directoryImported()));
     }
   IndexerProgress->show();
@@ -258,13 +258,6 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   d->ThumbnailsWidget->setThumbnailSize(
     QSize(d->ThumbnailWidthSlider->value(), d->ThumbnailWidthSlider->value()));
-
-  // signals related to tracking inserts
-  connect(d->DICOMDatabase.data(), SIGNAL(patientAdded(int,QString,QString,QString)), this,
-                              SLOT(onPatientAdded(int,QString,QString,QString)));
-  connect(d->DICOMDatabase.data(), SIGNAL(studyAdded(QString)), this, SLOT(onStudyAdded(QString)));
-  connect(d->DICOMDatabase.data(), SIGNAL(seriesAdded(QString)), this, SLOT(onSeriesAdded(QString)));
-  connect(d->DICOMDatabase.data(), SIGNAL(instanceAdded(QString)), this, SLOT(onInstanceAdded(QString)));
 
   // Treeview signals
   connect(d->TreeView, SIGNAL(collapsed(QModelIndex)), this, SLOT(onTreeCollapsed(QModelIndex)));
@@ -629,38 +622,13 @@ void ctkDICOMAppWidget::onThumbnailDoubleClicked(const ctkThumbnailLabel& widget
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onPatientAdded(int databaseID, QString patientID, QString patientName, QString patientBirthDate )
+void ctkDICOMAppWidget::setIndexingResult(int patientsAdded, int studiesAdded, int seriesAdded, int imagesAdded)
 {
   Q_D(ctkDICOMAppWidget);
-  Q_UNUSED(databaseID);
-  Q_UNUSED(patientID);
-  Q_UNUSED(patientName);
-  Q_UNUSED(patientBirthDate);
-  ++d->PatientsAddedDuringImport;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onStudyAdded(QString studyUID)
-{
-  Q_D(ctkDICOMAppWidget);
-  Q_UNUSED(studyUID);
-  ++d->StudiesAddedDuringImport;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onSeriesAdded(QString seriesUID)
-{
-  Q_D(ctkDICOMAppWidget);
-  Q_UNUSED(seriesUID);
-  ++d->SeriesAddedDuringImport;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMAppWidget::onInstanceAdded(QString instanceUID)
-{
-  Q_D(ctkDICOMAppWidget);
-  Q_UNUSED(instanceUID);
-  ++d->InstancesAddedDuringImport;
+  d->PatientsAddedDuringImport = patientsAdded;
+  d->StudiesAddedDuringImport = studiesAdded;
+  d->SeriesAddedDuringImport = seriesAdded;
+  d->InstancesAddedDuringImport = imagesAdded;
 }
 
 //----------------------------------------------------------------------------
@@ -681,6 +649,7 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
 
     // show progress dialog and perform indexing
     d->showIndexerDialog();
+
     d->DICOMIndexer->addDirectory(directory, copyFiles);
 
     // display summary result

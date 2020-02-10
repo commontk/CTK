@@ -52,5 +52,3 @@ add_executable(${PROJECT_NAME}
   DGraph.cpp
   ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.h
   ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.cpp)
-
-

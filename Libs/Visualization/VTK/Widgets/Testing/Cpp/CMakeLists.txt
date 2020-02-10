@@ -131,7 +131,7 @@ else()
   QT4_ADD_RESOURCES(Tests_RESOURCES_SRCS ${Tests_RESOURCES})
 endif()
 
-add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${TEST_MOC_CPP} ${TEST_UI_CPP} ${Tests_RESOURCES_SRCS})
 if(${VTK_VERSION_MAJOR} GREATER 5)
   set(VTK_CHARTS_LIB vtkChartsCore)
 else()

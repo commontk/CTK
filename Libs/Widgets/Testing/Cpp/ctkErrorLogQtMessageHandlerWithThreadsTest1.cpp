@@ -46,9 +46,9 @@ public:
     QString msg = QString("counterIdx:%1 - %2 - Message from thread: %3\n")
         .arg(counterIdx).arg(dateTime.toString()).arg(threadId);
 
-    qDebug().nospace() << qPrintable(msg);
-    qWarning().nospace() << qPrintable(msg);
-    qCritical().nospace() << qPrintable(msg);
+    qDebug().nospace() << qUtf8Printable(msg);
+    qWarning().nospace() << qUtf8Printable(msg);
+    qCritical().nospace() << qUtf8Printable(msg);
   }
 };
 

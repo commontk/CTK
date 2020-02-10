@@ -1319,7 +1319,9 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
     destinationDir += sep;
 
     // make sure only ascii characters are in the directory path
-    destinationDir = destinationDir.toLatin1();
+    // (while special characters may be used on an internal hard disk, it may not be possible
+    // to use special characters on file systems of an external drive or network storage)
+    destinationDir = QString::fromLatin1(destinationDir.toLatin1());
     // replace any question marks that were used as replacements for non ascii
     // characters with underscore
     destinationDir.replace("?", "_");
@@ -1367,6 +1369,8 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
 
       // replace non ASCII characters
       destinationFileName = destinationFileName.toLatin1();
+      // (it is safer to avoid special characters in case the files are
+      // to be more compatible with exported to external drive or network storage)
       // replace any question marks that were used as replacements for non ascii
       // characters with underscore
       destinationFileName.replace("?", "_");

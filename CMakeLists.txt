@@ -222,6 +222,7 @@ foreach(file
   CMake/ctkMacroListFilter.cmake
   CMake/ctkMacroOptionUtils.cmake
   CMake/ctkMacroBuildLib.cmake
+  CMake/ctkFunctionAddExecutableUtf8.cmake
   CMake/ctkFunctionExtractOptimizedLibrary.cmake
   CMake/ctkMacroBuildLibWrapper.cmake
   CMake/ctkMacroBuildPlugin.cmake

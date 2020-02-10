@@ -114,15 +114,15 @@ void ctkNetworkConnectorQtSoap::createClient(const QString hostName, const unsig
 
 void ctkNetworkConnectorQtSoap::createServer(const unsigned int port) {
     Q_UNUSED(port);
-    qDebug() << tr("QtSoap doesn't support server side implementation.").toLatin1();
+    qDebug() << tr("QtSoap doesn't support server side implementation.").toUtf8();
 }
 
 void ctkNetworkConnectorQtSoap::stopServer() {
-    qDebug() << tr("QtSoap doesn't support server side implementation.").toLatin1();
+    qDebug() << tr("QtSoap doesn't support server side implementation.").toUtf8();
 }
 
 void ctkNetworkConnectorQtSoap::startListen() {
-    qDebug() << tr("QtSoap doesn't support server side implementation.").toLatin1();
+    qDebug() << tr("QtSoap doesn't support server side implementation.").toUtf8();
 }
 
 QtSoapType *ctkNetworkConnectorQtSoap::marshall(const QString name, const QVariant &parameter) {
@@ -244,7 +244,7 @@ void ctkNetworkConnectorQtSoap::retrieveRemoteResponse()
     qDebug() << message.toXmlString();
     // Check if the response is a SOAP Fault message
     if (message.isFault()) {
-        qDebug("Error: %s", message.faultString().value().toString().toLatin1().constData());
+        qDebug("Error: %s", message.faultString().value().toString().toUtf8().constData());
         m_Response = NULL;
     }
     else {
@@ -258,13 +258,13 @@ void ctkNetworkConnectorQtSoap::retrieveRemoteResponse()
 void ctkNetworkConnectorQtSoap::processReturnValue( int requestId, QVariant value ) {
     Q_UNUSED( requestId );
     Q_ASSERT( value.canConvert( QVariant::String ) );
-    qDebug("%s", value.toString().toLatin1().data());
+    qDebug("%s", value.toString().toUtf8().data());
     ctkEventBusManager::instance()->notifyEvent("ctk/local/eventBus/remoteCommunicationDone", ctkEventTypeLocal);
 }
 
 void ctkNetworkConnectorQtSoap::processFault( int requestId, int errorCode, QString errorString ) {
     // Log the error.
-    qDebug("%s", tr("Process Fault for requestID %1 with error %2 - %3").arg(QString::number(requestId), QString::number(errorCode), errorString).toLatin1().data());
+    qDebug("%s", tr("Process Fault for requestID %1 with error %2 - %3").arg(QString::number(requestId), QString::number(errorCode), errorString).toUtf8().data());
     ctkEventBusManager::instance()->notifyEvent("ctk/local/eventBus/remoteCommunicationFailed", ctkEventTypeLocal);
 }
 

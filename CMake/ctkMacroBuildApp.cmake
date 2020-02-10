@@ -120,7 +120,7 @@ macro(ctkMacroBuildApp)
     )
 
   # Create executable
-  add_executable(${proj_name}
+  ctk_add_executable_utf8(${proj_name}
     ${MY_SRCS}
     ${MY_MOC_CPP}
     ${MY_UI_CPP}
@@ -151,5 +151,3 @@ macro(ctkMacroBuildApp)
   endif()
 
 endmacro()
-
-

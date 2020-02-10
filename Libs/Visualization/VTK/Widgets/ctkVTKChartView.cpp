@@ -193,7 +193,7 @@ ctkVTKChartView::~ctkVTKChartView()
 void ctkVTKChartView::setTitle(const QString& newTitle)
 {
   Q_D(ctkVTKChartView);
-  d->Chart->SetTitle(newTitle.toLatin1().data());
+  d->Chart->SetTitle(newTitle.toUtf8().data());
 }
 
 // ----------------------------------------------------------------------------

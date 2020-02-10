@@ -303,9 +303,9 @@ bool ctkEventDispatcher::registerSignal(ctkBusEvent &props) {
         // Only one signal for a given id can be registered!!
         QObject *obj = props[OBJECT].value<QObject *>();
         if(obj != NULL) {
-            qWarning("%s", tr("Object %1 is trying to register a signal with Topic '%2' that has been already registered!!").arg(obj->metaObject()->className(), topic).toLatin1().data());
+            qWarning("%s", tr("Object %1 is trying to register a signal with Topic '%2' that has been already registered!!").arg(obj->metaObject()->className(), topic).toUtf8().data());
         } else {
-            qWarning("%s", tr("NULL is trying to register a signal with Topic '%2' that has been already registered!!").arg(topic).toLatin1().data());
+            qWarning("%s", tr("NULL is trying to register a signal with Topic '%2' that has been already registered!!").arg(topic).toUtf8().data());
         }
         return false;
     }

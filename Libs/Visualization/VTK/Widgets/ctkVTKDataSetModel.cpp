@@ -453,7 +453,7 @@ void ctkVTKDataSetModel::updateArrayFromItem(vtkAbstractArray* array, QStandardI
 {
   if (item->column() == 0)
     {
-    array->SetName(item->text().toLatin1());
+    array->SetName(item->text().toUtf8());
     }
 }
 

@@ -73,7 +73,7 @@ int ctkSliderWidgetTest1(int argc, char * argv [] )
       !qFuzzyCompare(sliderSpinBox.value(), 80.5678))
     {
     std::cerr << "ctkSliderWidget::setPrefix failed."
-              << sliderSpinBox.prefix().toLatin1().data() << " "
+              << qPrintable(sliderSpinBox.prefix()) << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
     }
@@ -84,7 +84,7 @@ int ctkSliderWidgetTest1(int argc, char * argv [] )
       !qFuzzyCompare(sliderSpinBox.value(), 80.5678))
     {
     std::cerr << "ctkSliderWidget::setSuffix failed."
-              << sliderSpinBox.suffix().toLatin1().data() << " "
+              << qPrintable(sliderSpinBox.suffix()) << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
     }

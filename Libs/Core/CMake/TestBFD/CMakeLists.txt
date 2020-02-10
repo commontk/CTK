@@ -10,5 +10,5 @@ endif()
 unset(BFD_LIBRARY CACHE)
 find_library(BFD_LIBRARY ${BFD_LIBRARY_NAME})
 
-add_executable(TestBFD TestBFD.cpp)
+ctk_add_executable_utf8(TestBFD TestBFD.cpp)
 target_link_libraries(TestBFD ${BFD_LIBRARY})

@@ -116,7 +116,7 @@ void ctkDICOMItem::InitializeFromFile(const QString& filename,
   DcmDataset *dataset;
 
   DcmFileFormat fileformat;
-  OFCondition status = fileformat.loadFile(filename.toLatin1().data(), readXfer, groupLength, maxReadLength, readMode);
+  OFCondition status = fileformat.loadFile(filename.toUtf8().data(), readXfer, groupLength, maxReadLength, readMode);
   dataset = fileformat.getAndRemoveDataset();
 
   if (!status.good())
@@ -1006,12 +1006,12 @@ bool ctkDICOMItem::SaveToFile(const QString& filePath) const
 {
   Q_D(const ctkDICOMItem);
 
-  if (! dynamic_cast<DcmDataset*>(d->m_DcmItem) )
+  if (!dynamic_cast<DcmDataset*>(d->m_DcmItem))
   {
     return false;
   }
-  DcmFileFormat* fileformat = new DcmFileFormat ( dynamic_cast<DcmDataset*>(d->m_DcmItem) );
-  OFCondition status = fileformat->saveFile ( qPrintable(QDir::toNativeSeparators( filePath)) );
+  DcmFileFormat* fileformat = new DcmFileFormat(dynamic_cast<DcmDataset*>(d->m_DcmItem));
+  OFCondition status = fileformat->saveFile(QDir::toNativeSeparators(filePath).toUtf8().data());
   delete fileformat;
   return status.good();
 }

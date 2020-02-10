@@ -21,6 +21,8 @@
 
 #include <ctkCmdLineModuleFuture.h>
 
+#include <QStyle>
+
 #include "ctkCmdLineModuleExplorerProgressWidget.h"
 #include "ui_ctkCmdLineModuleExplorerProgressWidget.h"
 

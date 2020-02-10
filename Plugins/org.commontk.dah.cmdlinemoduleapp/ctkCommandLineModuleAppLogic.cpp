@@ -276,7 +276,7 @@ void ctkCommandLineModuleAppLogic::onLoadDataClicked()
     if(QFileInfo(filename).exists())
     {
       try {
-        DicomImage dcmtkImage(filename.toLatin1().data());
+        DicomImage dcmtkImage(filename.toUtf8().data());
         ctkDICOMImage ctkImage(&dcmtkImage);
 
         QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);

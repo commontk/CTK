@@ -74,7 +74,7 @@ set(test_executable ${PROJECT_NAME}CppTests)
 
 ctkMacroInitproject(1)
 
-add_executable(${test_executable} ${PROJECT_SRCS})
+ctk_add_executable_utf8(${test_executable} ${PROJECT_SRCS})
 target_link_libraries(${test_executable} ${PROJECT_LIBS})
 
 add_test(${PROJECT_NAME}Tests ${CPP_TEST_PATH}/${test_executable})

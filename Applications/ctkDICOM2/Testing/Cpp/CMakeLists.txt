@@ -11,7 +11,7 @@ REMOVE (TestsToRun ${KIT}CppTests.cpp)
 # The following macro will read the target libraries from the file '<KIT_SOURCE_DIR>/target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries ${${KIT}_SOURCE_DIR})
 
-add_executable(${KIT}CppTests ${Tests})
+ctk_add_executable_utf8(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${KIT_target_libraries})
 
 #

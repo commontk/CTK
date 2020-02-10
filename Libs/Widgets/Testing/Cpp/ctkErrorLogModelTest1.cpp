@@ -87,13 +87,13 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
         }
 
       QString qtMessage0("This is a qDebug message");
-      qDebug().nospace() << qPrintable(qtMessage0);
+      qDebug().nospace() << qUtf8Printable(qtMessage0);
 
       QString qtMessage1("This is a qWarning message");
-      qWarning().nospace() << qPrintable(qtMessage1);
+      qWarning().nospace() << qUtf8Printable(qtMessage1);
 
       QString qtMessage2("This is a qCritical message");
-      qCritical().nospace() << qPrintable(qtMessage2);
+      qCritical().nospace() << qUtf8Printable(qtMessage2);
 
       // Give enough time to the ErrorLogModel to consider the queued messages.
       processEvents(1000);
