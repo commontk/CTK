@@ -52,7 +52,7 @@ RTL_OSVERSIONINFOW GetRealOSVersion()
 }
 #endif
 
-int ctkUtf8Test1(int argc, char* argv[])
+int ctkUtf8Test1(int, char*[])
 {
 
 #ifdef _WIN32
@@ -110,7 +110,7 @@ int ctkUtf8Test1(int argc, char* argv[])
 #if _WIN32
   _wunlink(filenameW.c_str());
 #else
-  unlink(utf8_str.c_str());
+  unlink(filenameUtf8.c_str());
 #endif
 
   return 0;
