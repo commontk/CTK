@@ -802,7 +802,10 @@ void ctkDICOMBrowser::onRepairAction()
   {
     repairMessageBox->addButton(QMessageBox::Yes);
     repairMessageBox->addButton(QMessageBox::No);
+    repairMessageBox->addButton(QMessageBox::YesToAll);
+    repairMessageBox->addButton(QMessageBox::Cancel);
     QSet<QString>::iterator i;
+    bool yesToAll = false;
     for (i = corruptedSeries.begin(); i != corruptedSeries.end(); ++i)
     {
       QStringList fileList (d->DICOMDatabase->filesForSeries(*i));
@@ -816,26 +819,41 @@ void ctkDICOMBrowser::onRepairAction()
       QString firstFile (*(fileList.constBegin()));
       QHash<QString,QString> descriptions (d->DICOMDatabase->descriptionsForFile(firstFile));
 
-      repairMessageBox->setText("The files for the following series are not available on the disk: \nPatient Name: "
-        + descriptions["PatientsName"]+ "\n"+
-        "Study Desciption: " + descriptions["StudyDescription"]+ "\n"+
-        "Series Desciption: " + descriptions["SeriesDescription"]+ "\n"+
-        "Do you want to remove the series from the DICOM database? ");
-
-      repairMessageBox->setDetailedText(unavailableFileNames);
-
-      int selection = repairMessageBox->exec();
-      if (selection == QMessageBox::Yes)
+      if (!yesToAll)
       {
-        d->DICOMDatabase->removeSeries(*i);
-        d->dicomTableManager->updateTableViews();
+        repairMessageBox->setText("The files for the following series are not available on the disk: \nPatient Name: "
+          + descriptions["PatientsName"] + "\n" +
+          "Study Desciption: " + descriptions["StudyDescription"] + "\n" +
+          "Series Desciption: " + descriptions["SeriesDescription"] + "\n" +
+          "Do you want to remove the series from the DICOM database? ");
+
+        repairMessageBox->setDetailedText(unavailableFileNames);
+
+        int selection = repairMessageBox->exec();
+        if (selection == QMessageBox::No)
+        {
+          continue;
+        }
+        else if (selection == QMessageBox::YesToAll)
+        {
+          yesToAll = true;
+        }
+        else if (selection == QMessageBox::Cancel)
+        {
+          break;
+        }
       }
+
+      d->DICOMDatabase->removeSeries(*i);
+      d->dicomTableManager->updateTableViews();
     }
 
     bool wasBatchUpdate = d->dicomTableManager->setBatchUpdate(true);
     d->DICOMDatabase->updateDisplayedFields();
     d->dicomTableManager->setBatchUpdate(wasBatchUpdate);
   }
+
+  repairMessageBox->deleteLater();
 
   // Force refresh of table views
   d->DICOMDatabase->databaseChanged();
