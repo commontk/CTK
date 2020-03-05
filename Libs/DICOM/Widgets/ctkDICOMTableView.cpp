@@ -46,13 +46,12 @@ public:
 
   void showFilterActiveWarning(bool);
 
-  QString queryTableName() const;
-
   void applyColumnProperties();
 
   ctkDICOMDatabase* dicomDatabase;
   QSqlQueryModel dicomSQLModel;
   QSortFilterProxyModel* dicomSQLFilterModel;
+  QString queryTableName;
   QString queryForeignKey;
 
   QStringList currentSelection;
@@ -137,12 +136,6 @@ void ctkDICOMTableViewPrivate::init()
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMTableViewPrivate::queryTableName() const
-{
-  return this->lblTableName->text();
-}
-
-//----------------------------------------------------------------------------
 void ctkDICOMTableViewPrivate::showFilterActiveWarning(bool showWarning)
 {
   QPalette palette;
@@ -190,18 +183,18 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
     }
 
     // Apply displayed name
-    QString displayedName = this->dicomDatabase->displayedNameForField(this->queryTableName(), columnName);
+    QString displayedName = this->dicomDatabase->displayedNameForField(this->queryTableName, columnName);
     this->dicomSQLModel.setHeaderData(col, Qt::Horizontal, displayedName, Qt::DisplayRole);
 
     // Apply visibility
-    bool visibility = this->dicomDatabase->visibilityForField(this->queryTableName(), columnName);
+    bool visibility = this->dicomDatabase->visibilityForField(this->queryTableName, columnName);
     this->tblDicomDatabaseView->setColumnHidden(col, !visibility);
 
     // Save weight to apply later
-    int weight = this->dicomDatabase->weightForField(this->queryTableName(), columnName);
+    int weight = this->dicomDatabase->weightForField(this->queryTableName, columnName);
     columnWeights << weight;
 
-    QString fieldFormat = this->dicomDatabase->formatForField(this->queryTableName(), columnName);
+    QString fieldFormat = this->dicomDatabase->formatForField(this->queryTableName, columnName);
     QHeaderView::ResizeMode columnResizeMode = QHeaderView::Interactive;
     if (!fieldFormat.isEmpty())
     {
@@ -396,7 +389,15 @@ void ctkDICOMTableView::setDicomDataBase(ctkDICOMDatabase *dicomDatabase)
 void ctkDICOMTableView::setQueryTableName(const QString &tableName)
 {
   Q_D(ctkDICOMTableView);
-  d->lblTableName->setText(tableName);
+  d->queryTableName = tableName;
+  d->lblTableName->setText(d->queryTableName);
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMTableView::queryTableName() const
+{
+  Q_D(const ctkDICOMTableView);
+  return d->queryTableName;
 }
 
 //------------------------------------------------------------------------------
@@ -404,6 +405,13 @@ void ctkDICOMTableView::setQueryForeignKey(const QString &foreignKey)
 {
   Q_D(ctkDICOMTableView);
   d->queryForeignKey = foreignKey;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMTableView::queryForeignKey() const
+{
+  Q_D(const ctkDICOMTableView);
+  return d->queryForeignKey;
 }
 
 //------------------------------------------------------------------------------
@@ -583,7 +591,7 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
   if (d->dicomDatabase != 0 && d->dicomDatabase->isOpen()
     && (d->queryForeignKey.isEmpty() || !uids.empty()) )
   {
-    d->dicomSQLModel.setQuery(query.arg(d->queryTableName()), d->dicomDatabase->database());
+    d->dicomSQLModel.setQuery(query.arg(d->queryTableName), d->dicomDatabase->database());
     if (columnCountBefore==0)
     {
       // columns have not been initialized yet
@@ -596,10 +604,18 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
   }
 }
 
+//------------------------------------------------------------------------------
 void ctkDICOMTableView::addSqlWhereCondition(const std::pair<QString, QStringList> &condition)
 {
   Q_D(ctkDICOMTableView);
   d->sqlWhereConditions.insert(condition.first, condition.second);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::addSqlWhereCondition(const QString column, const QStringList& values)
+{
+  Q_D(ctkDICOMTableView);
+  d->sqlWhereConditions.insert(column, values);
 }
 
 //------------------------------------------------------------------------------

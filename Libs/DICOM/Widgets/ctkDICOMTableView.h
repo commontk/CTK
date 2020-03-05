@@ -44,8 +44,12 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMTableView : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool filterActive READ filterActive)
-  Q_PROPERTY( QTableView* tblDicomDatabaseView READ tableView )
+  Q_PROPERTY(bool batchUpdate READ isBatchUpdate WRITE setBatchUpdate)
   Q_PROPERTY(bool headerVisible READ isHeaderVisible WRITE setHeaderVisible)
+  Q_PROPERTY(QTableView* tblDicomDatabaseView READ tableView)
+  Q_PROPERTY(QString queryTableName READ queryTableName WRITE setQueryTableName)
+  Q_PROPERTY(QString queryForeignKey READ queryForeignKey WRITE setQueryForeignKey)
+  Q_PROPERTY(QStringList currentSelection READ currentSelection)
 
 public:
   typedef QWidget Superclass;
@@ -76,20 +80,29 @@ public:
    * @brief Setting the ctkDICOMDatabase which shall be queried
    * @param dicomDataBase the underlying database
    */
-  void setDicomDataBase(ctkDICOMDatabase* dicomDatabase);
+  Q_INVOKABLE void setDicomDataBase(ctkDICOMDatabase* dicomDatabase);
 
   /**
-   * Setting the table name which shall be used for the database query
+   * Set the table name which shall be used for the database query
    * @param tableName the name of the database table
    */
   void setQueryTableName(const QString &tableName);
+  /**
+   * Get the table name which shall be used for the database query
+   */
+   QString queryTableName() const;
 
   /**
-   * Setting the foreign key for the database query. This is useful if e.g. you
+   * Set the foreign key for the database query. This is useful if e.g. you
    * want to select the studies for a certain patient
    * @param foreignKey the foreign key which will be used for the query
    */
   void setQueryForeignKey(const QString &foreignKey);
+  /**
+   * Get the foreign key for the database query. This is useful if e.g. you
+   * want to select the studies for a certain patient
+   */
+  QString queryForeignKey() const;
 
   /**
    * Set the query for the underlying database. If the uid list is not empty just the
@@ -102,7 +115,13 @@ public:
    * @brief Add a where condition to the usual select statement
    * @param condition std::pair with column name and a value list
    */
-  void addSqlWhereCondition(const std::pair<QString, QStringList>& condition);
+  Q_INVOKABLE void addSqlWhereCondition(const std::pair<QString, QStringList>& condition);
+
+  /**
+   * @brief Add a where condition to the usual select statement
+   * @param condition std::pair with column name and a value list
+   */
+  Q_INVOKABLE void addSqlWhereCondition(const QString column, const QStringList& values);
 
   /**
    * @brief Returns the uids of the current selected rows
