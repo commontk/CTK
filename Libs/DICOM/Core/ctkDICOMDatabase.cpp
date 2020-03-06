@@ -1906,7 +1906,7 @@ QHash<QString,QString> ctkDICOMDatabase::descriptionsForFile(QString fileName)
   query.exec();
   if (query.next())
   {
-    result["PatientsName"] =  query.value(0).toString();
+    result["PatientsName"] = query.value(0).toString();
   }
   return( result );
 }
@@ -1943,7 +1943,7 @@ QString ctkDICOMDatabase::descriptionForStudy(const QString studyUID)
   query.exec();
   if (query.next())
   {
-    result =  query.value(0).toString();
+    result = query.value(0).toString();
   }
 
   return result;
@@ -1962,10 +1962,140 @@ QString ctkDICOMDatabase::nameForPatient(const QString patientUID)
   query.exec();
   if (query.next())
   {
-    result =  query.value(0).toString();
+    result = query.value(0).toString();
   }
 
   return result;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::displayedNameForPatient(const QString patientUID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QString result;
+
+  QSqlQuery query(d->Database);
+  query.prepare( "SELECT DisplayedPatientsName FROM Patients WHERE UID= ?" );
+  query.addBindValue( patientUID );
+  query.exec();
+  if (query.next())
+  {
+    result = query.value(0).toString();
+  }
+
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::fieldForPatient(const QString field, const QString patientUID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QString result;
+
+  QSqlQuery query(d->Database);
+  QString queryStr = QString("SELECT %1 FROM Patients WHERE UID= ?" ).arg(field);
+  query.prepare(queryStr);
+  query.addBindValue( patientUID );
+  query.exec();
+  if (query.next())
+  {
+    result = query.value(0).toString();
+  }
+
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::fieldForStudy(const QString field, const QString studyInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QString result;
+
+  QSqlQuery query(d->Database);
+  QString queryStr = QString("SELECT %1 FROM Studies WHERE StudyInstanceUID= ?" ).arg(field);
+  query.prepare(queryStr);
+  query.addBindValue( studyInstanceUID );
+  query.exec();
+  if (query.next())
+  {
+    result = query.value(0).toString();
+  }
+
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::fieldForSeries(const QString field, const QString seriesInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+
+  QString result;
+
+  QSqlQuery query(d->Database);
+  QString queryStr = QString("SELECT %1 FROM Series WHERE SeriesInstanceUID= ?" ).arg(field);
+  query.prepare(queryStr);
+  query.addBindValue( seriesInstanceUID );
+  query.exec();
+  if (query.next())
+  {
+    result = query.value(0).toString();
+  }
+
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::patientFieldNames() const
+{
+  Q_D(const ctkDICOMDatabase);
+
+  QStringList fieldNames;
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT name FROM PRAGMA_TABLE_INFO('Patients')");
+  query.exec();
+  while (query.next())
+  {
+    fieldNames << query.value(0).toString();
+  }
+
+  return fieldNames;
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::studyFieldNames() const
+{
+  Q_D(const ctkDICOMDatabase);
+
+  QStringList fieldNames;
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT name FROM PRAGMA_TABLE_INFO('Studies')");
+  query.exec();
+  while (query.next())
+  {
+    fieldNames << query.value(0).toString();
+  }
+
+  return fieldNames;
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::seriesFieldNames() const
+{
+  Q_D(const ctkDICOMDatabase);
+
+  QStringList fieldNames;
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT name FROM PRAGMA_TABLE_INFO('Series')");
+  query.exec();
+  while (query.next())
+  {
+    fieldNames << query.value(0).toString();
+  }
+
+  return fieldNames;
 }
 
 //------------------------------------------------------------------------------

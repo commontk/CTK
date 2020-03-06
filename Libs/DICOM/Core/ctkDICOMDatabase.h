@@ -60,6 +60,9 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory)
   Q_PROPERTY(QStringList tagsToPrecache READ tagsToPrecache WRITE setTagsToPrecache)
   Q_PROPERTY(QStringList tagsToExcludeFromStorage READ tagsToExcludeFromStorage WRITE setTagsToExcludeFromStorage)
+  Q_PROPERTY(QStringList patientFieldNames READ patientFieldNames)
+  Q_PROPERTY(QStringList studyFieldNames READ studyFieldNames)
+  Q_PROPERTY(QStringList seriesFieldNames READ seriesFieldNames)
 
 public:
   struct IndexingResult
@@ -152,28 +155,38 @@ public:
   Q_INVOKABLE QString schemaVersionLoaded();
 
   /// \brief database accessors
-  Q_INVOKABLE QStringList patients ();
-  Q_INVOKABLE QStringList studiesForPatient (const QString patientUID);
-  Q_INVOKABLE QStringList seriesForStudy (const QString studyUID);
+  Q_INVOKABLE QStringList patients();
+  Q_INVOKABLE QStringList studiesForPatient(const QString patientUID);
+  Q_INVOKABLE QStringList seriesForStudy(const QString studyUID);
   Q_INVOKABLE QStringList instancesForSeries(const QString seriesUID);
   Q_INVOKABLE QString studyForSeries(QString seriesUID);
   Q_INVOKABLE QString patientForStudy(QString studyUID);
-  Q_INVOKABLE QStringList filesForSeries (const QString seriesUID);
+  Q_INVOKABLE QStringList filesForSeries(const QString seriesUID);
+
   Q_INVOKABLE QHash<QString,QString> descriptionsForFile(QString fileName);
   Q_INVOKABLE QString descriptionForSeries(const QString seriesUID);
   Q_INVOKABLE QString descriptionForStudy(const QString studyUID);
   Q_INVOKABLE QString nameForPatient(const QString patientUID);
-  Q_INVOKABLE QString fileForInstance (const QString sopInstanceUID);
-  Q_INVOKABLE QString seriesForFile (QString fileName);
-  Q_INVOKABLE QString instanceForFile (const QString fileName);
-  Q_INVOKABLE QDateTime insertDateTimeForInstance (const QString fileName);
+  Q_INVOKABLE QString displayedNameForPatient(const QString patientUID);
+  Q_INVOKABLE QString fieldForPatient(const QString field, const QString patientUID);
+  Q_INVOKABLE QString fieldForStudy(const QString field, const QString studyInstanceUID);
+  Q_INVOKABLE QString fieldForSeries(const QString field, const QString seriesInstanceUID);
+
+  QStringList patientFieldNames() const;
+  QStringList studyFieldNames() const;
+  QStringList seriesFieldNames() const;
+
+  Q_INVOKABLE QString fileForInstance(const QString sopInstanceUID);
+  Q_INVOKABLE QString seriesForFile(QString fileName);
+  Q_INVOKABLE QString instanceForFile(const QString fileName);
+  Q_INVOKABLE QDateTime insertDateTimeForInstance(const QString fileName);
 
   Q_INVOKABLE int patientsCount();
   Q_INVOKABLE int studiesCount();
   Q_INVOKABLE int seriesCount();
   Q_INVOKABLE int imagesCount();
 
-  Q_INVOKABLE QStringList allFiles ();
+  Q_INVOKABLE QStringList allFiles();
 
   bool allFilesModifiedTimes(QMap<QString, QDateTime>& modifiedTimeForFilepath);
 
@@ -182,10 +195,10 @@ public:
   ///                       (corresponding file will be found via the database)
   /// @param fileName Full path to a dicom file to load.
   /// @param key A group,element tag in zero-filled hex
-  Q_INVOKABLE void loadInstanceHeader (const QString sopInstanceUID);
-  Q_INVOKABLE void loadFileHeader (const QString fileName);
-  Q_INVOKABLE QStringList headerKeys ();
-  Q_INVOKABLE QString headerValue (const QString key);
+  Q_INVOKABLE void loadInstanceHeader(const QString sopInstanceUID);
+  Q_INVOKABLE void loadFileHeader(const QString fileName);
+  Q_INVOKABLE QStringList headerKeys();
+  Q_INVOKABLE QString headerValue(const QString key);
 
   /// \brief Application-defined tags of interest
   /// This list of tags is added to the internal tag cache during import
@@ -264,7 +277,7 @@ public:
 
   /// Remove the series from the database, including images and thumbnails
   /// If clearCachedTags is set to true then cached tags associated with the series are deleted,
-  /// if set to False the they are left in the database unchanced.
+  /// if set to False the they are left in the database unchanged.
   /// By default clearCachedTags is disabled because it significantly increases deletion time
   /// on large databases.
   Q_INVOKABLE bool removeSeries(const QString& seriesInstanceUID, bool clearCachedTags=false);
