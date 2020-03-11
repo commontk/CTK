@@ -67,9 +67,9 @@ static int REQUEST_RESULTS_CACHE_MAXIMUM_SIZE = 5000;
 //------------------------------------------------------------------------------
 ctkDICOMIndexerPrivateWorker::ctkDICOMIndexerPrivateWorker(DICOMIndexingQueue* queue)
 : RequestQueue(queue)
+, TimePercentageIndexing(95.0)
 , RemainingRequestCount(0)
 , CompletedRequestCount(0)
-, TimePercentageIndexing(95.0)
 {
 }
 

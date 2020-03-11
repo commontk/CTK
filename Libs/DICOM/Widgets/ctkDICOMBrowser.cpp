@@ -186,12 +186,12 @@ ctkDICOMBrowserPrivate::ctkDICOMBrowserPrivate(ctkDICOMBrowser* parent, QSharedP
   , DisplayImportSummary(true)
   , ConfirmRemove(false)
   , ShemaUpdateAutoCreateDirectory(false)
+  , SendActionVisible(false)
   , PatientsAddedDuringImport(0)
   , StudiesAddedDuringImport(0)
   , SeriesAddedDuringImport(0)
   , InstancesAddedDuringImport(0)
   , DefaultDatabaseDirectory("./ctkDICOM-Database")
-  , SendActionVisible(false)
   , BatchUpdateBeforeIndexingUpdate(false)
 {
   if (this->DICOMDatabase.isNull())
