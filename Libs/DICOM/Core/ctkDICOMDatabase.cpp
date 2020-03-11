@@ -3325,7 +3325,7 @@ void ctkDICOMDatabase::setVisibilityForField(QString table, QString field, bool 
 
   QSqlQuery query(d->Database);
   query.prepare("UPDATE ColumnDisplayProperties SET Visibility = ? WHERE TableName = ? AND FieldName = ? ;");
-  query.addBindValue((int)visibility);
+  query.addBindValue(static_cast<int>(visibility));
   query.addBindValue(table);
   query.addBindValue(field);
   if (!d->loggedExec(query))
