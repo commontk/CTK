@@ -1720,6 +1720,7 @@ bool ctkDICOMDatabase::updateSchemaIfNeeded(
   const char* schemaFile/* = ":/dicom/dicom-schema.sql" */,
   const char* newDatabaseDir/* = nullptr*/)
 {
+  Q_UNUSED(newDatabaseDir);
   if ( schemaVersionLoaded() != schemaVersion() )
   {
     return this->updateSchema(schemaFile);
