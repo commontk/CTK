@@ -104,6 +104,7 @@ void ctkDICOMDisplayedFieldGenerator::updateDisplayedFieldsForInstance(
   QMap<QString, QString> &displayedFieldsForCurrentPatient )
 {
   Q_D(ctkDICOMDisplayedFieldGenerator);
+  Q_UNUSED(sopInstanceUID);
 
   QMap<QString, QString> newFieldsSeries;
   QMap<QString, QString> newFieldsStudy;

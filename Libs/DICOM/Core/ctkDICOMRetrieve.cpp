@@ -608,6 +608,7 @@ QString ctkDICOMRetrieve::moveDestinationAETitle()const
 
 static void skipDelete(QObject* obj)
 {
+  Q_UNUSED(obj);
   // this deleter does not delete the object from memory
   // useful if the pointer is not owned by the smart pointer
 }
