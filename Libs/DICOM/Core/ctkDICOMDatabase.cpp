@@ -153,6 +153,9 @@ public:
   /// Calculate number of studies for each patient in the displayed fields container
   /// \param displayedFieldsVectorPatient (Internal_ID -> (DisplayField -> Value) )
   void setNumberOfStudiesToPatientDisplayedFields(QMap<QString, QMap<QString, QString> >& displayedFieldsMapPatient);
+  /// Determine last study date for each patient in the displayed fields container
+  /// \param displayedFieldsVectorPatient (Internal_ID -> (DisplayField -> Value) )
+  void setLastStudyDateToPatientDisplayedFields(QMap<QString, QMap<QString, QString> >& displayedFieldsMapPatient);
 
   int rowCount(const QString& tableName);
 
@@ -1528,6 +1531,30 @@ void ctkDICOMDatabasePrivate::setNumberOfStudiesToPatientDisplayedFields(QMap<QS
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMDatabasePrivate::setLastStudyDateToPatientDisplayedFields(QMap<QString, QMap<QString, QString> >& displayedFieldsMapPatient)
+{
+  foreach(QString compositeID, displayedFieldsMapPatient.keys())
+  {
+    QMap<QString, QString> displayedFieldsForCurrentPatient = displayedFieldsMapPatient[compositeID];
+    int patientUID = displayedFieldsForCurrentPatient["UID"].toInt();
+    QSqlQuery numberOfStudiesQuery(this->Database);
+    numberOfStudiesQuery.prepare("SELECT MAX(StudyDate) FROM Studies WHERE PatientsUID = ? ;");
+    numberOfStudiesQuery.addBindValue(patientUID);
+    if (!numberOfStudiesQuery.exec())
+    {
+      logger.error("SQLITE ERROR: " + numberOfStudiesQuery.lastError().driverText());
+      continue;
+    }
+
+    numberOfStudiesQuery.first();
+    QDate lastStudyDate = numberOfStudiesQuery.value(0).toDate();
+
+    displayedFieldsForCurrentPatient["DisplayedLastStudyDate"] = lastStudyDate.toString();
+    displayedFieldsMapPatient[compositeID] = displayedFieldsForCurrentPatient;
+  }
+}
+
+//------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMDatabase, bool, isDisplayedFieldsTableAvailable, DisplayedFieldsTableAvailable);
 
 //------------------------------------------------------------------------------
@@ -1712,7 +1739,7 @@ QString ctkDICOMDatabase::schemaVersion()
   //   so that the ctkDICOMDatabasePrivate::filenames method
   //   still works.
   //
-  return QString("0.6.2");
+  return QString("0.6.3");
 };
 
 //------------------------------------------------------------------------------
@@ -3220,6 +3247,8 @@ void ctkDICOMDatabase::updateDisplayedFields()
   d->setNumberOfSeriesToStudyDisplayedFields(displayedFieldsMapStudy);
   // Calculate number of studies in each updated patient
   d->setNumberOfStudiesToPatientDisplayedFields(displayedFieldsMapPatient);
+  // Determine lat study date in each updated patient
+  d->setLastStudyDateToPatientDisplayedFields(displayedFieldsMapPatient);
 
   emit displayedFieldsUpdateProgress(++progressValue);
 

@@ -22,7 +22,7 @@ DROP INDEX IF EXISTS 'SeriesStudyIndex' ;
 DROP INDEX IF EXISTS 'StudiesPatientIndex' ;
 
 CREATE TABLE 'SchemaInfo' ( 'Version' VARCHAR(1024) NOT NULL );
-INSERT INTO 'SchemaInfo' VALUES('0.6.2');
+INSERT INTO 'SchemaInfo' VALUES('0.6.3');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
@@ -43,6 +43,7 @@ CREATE TABLE 'Patients' (
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
   'DisplayedPatientsName' VARCHAR(255) NULL ,
   'DisplayedNumberOfStudies' INT NULL ,
+  'DisplayedLastStudyDate' DATE NULL ,
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL );
 CREATE TABLE 'Studies' (
   'StudyInstanceUID' VARCHAR(64) NOT NULL ,
@@ -108,9 +109,10 @@ INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsBirthTime',   
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsSex',                     'Sex',                  1, 4, '{"resizeMode":"resizeToContents"}');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsAge',                     'Age',                  0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsComments',                'Comments',             0, 0, '');
-INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'InsertTimestamp',                 'Date added',           1, 6, '{"sort": "descending"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'InsertTimestamp',                 'Date added',           1, 7, '{"sort": "descending"}');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedPatientsName',           'Patient name',         1, 1, '{"resizeMode":"stretch"}');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedNumberOfStudies',        'Studies',              1, 5, '{"resizeMode":"resizeToContents"}');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedLastStudyDate',          'Last study date',      1, 6, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedFieldsUpdatedTimestamp', '',                     0, 0, '');
 
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'StudyInstanceUID',                '',                     0, 0, '');
