@@ -49,8 +49,11 @@ public:
   virtual QStyleOptionButton drawIcon(QPainter* p);
 
   // Tuning of the button look&feel
-  Qt::ItemFlags CheckBoxFlags;
   Qt::CheckState CheckState;
+
+  bool CheckBoxControlsButton;
+  bool CheckBoxUserCheckable;
+  bool CheckBoxControlsButtonToggleState;
 };
 
 //-----------------------------------------------------------------------------
@@ -58,8 +61,10 @@ ctkCheckablePushButtonPrivate::ctkCheckablePushButtonPrivate(ctkCheckablePushBut
   : ctkPushButtonPrivate(object)
   , q_ptr(&object)
 {
-  this->CheckBoxFlags = Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
+  this->CheckBoxControlsButton = true;
+  this->CheckBoxUserCheckable = true;
   this->CheckState = Qt::Unchecked;
+  this->CheckBoxControlsButtonToggleState = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -84,7 +89,7 @@ QStyleOptionButton ctkCheckablePushButtonPrivate::drawIcon(QPainter* p)
   QStyleOptionButton indicatorOpt;
 
   indicatorOpt.init(q);
-  if (!(this->CheckBoxFlags & Qt::ItemIsUserCheckable))
+  if (!this->CheckBoxUserCheckable)
     {
     indicatorOpt.state &= ~QStyle::State_Enabled;
     }
@@ -158,17 +163,22 @@ void ctkCheckablePushButton::setCheckState(Qt::CheckState checkState)
     return;
     }
   d->CheckState = checkState;
-  bool emitToggled = false;
-  if (d->CheckBoxFlags & Qt::ItemIsEnabled)
+  if (d->CheckBoxControlsButton)
     {
     bool wasChecked = this->isChecked();
-    // QCheckBox::setCheckable() doesn't emit toggled signal
     this->setCheckable(checkState == Qt::Checked);
-    emitToggled = (wasChecked != this->isChecked());
-    }
-  if (emitToggled)
-    {
-    emit toggled(this->isChecked());
+    // QCheckBox::setCheckable() doesn't emit toggled signal
+    if (wasChecked != this->isChecked())
+      {
+      emit toggled(this->isChecked());
+      }
+    if (d->CheckBoxControlsButtonToggleState)
+      {
+      if (this->isChecked() != (checkState == Qt::Checked))
+        {
+        this->setChecked(checkState == Qt::Checked);
+        }
+      }
     }
   emit checkStateChanged(d->CheckState);
   emit checkBoxToggled(d->CheckState == Qt::Checked);
@@ -186,16 +196,12 @@ Qt::CheckState ctkCheckablePushButton::checkState()const
 void ctkCheckablePushButton::setCheckBoxControlsButton(bool b)
 {
   Q_D(ctkCheckablePushButton);
+  d->CheckBoxControlsButton = b;
   if (b)
     {
-    d->CheckBoxFlags |= Qt::ItemIsEnabled;
     // synchronize checkstate with the checkable property.
     this->setCheckState(
       this->isCheckable() ? Qt::Checked : Qt::Unchecked);
-    }
-  else
-    {
-    d->CheckBoxFlags &= ~Qt::ItemIsEnabled;
     }
   this->update();
 }
@@ -204,21 +210,42 @@ void ctkCheckablePushButton::setCheckBoxControlsButton(bool b)
 bool ctkCheckablePushButton::checkBoxControlsButton()const
 {
   Q_D(const ctkCheckablePushButton);
-  return d->CheckBoxFlags & Qt::ItemIsEnabled;
+  return d->CheckBoxControlsButton;
+}
+
+//-----------------------------------------------------------------------------
+void ctkCheckablePushButton::setCheckBoxControlsButtonToggleState(bool b)
+{
+  Q_D(ctkCheckablePushButton);
+  if (d->CheckBoxControlsButtonToggleState == b)
+    {
+    return;
+    }
+  d->CheckBoxControlsButtonToggleState = b;
+  if (d->CheckBoxControlsButtonToggleState)
+    {
+    // We have just enabled sync between toggle state and checkbox.
+    // If checkbox is enabled then make the button toggled.
+    if (this->checkState() && !this->isChecked())
+      {
+      this->setChecked(true);
+      }
+    }
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+bool ctkCheckablePushButton::checkBoxControlsButtonToggleState()const
+{
+  Q_D(const ctkCheckablePushButton);
+  return d->CheckBoxControlsButtonToggleState;
 }
 
 //-----------------------------------------------------------------------------
 void ctkCheckablePushButton::setCheckBoxUserCheckable(bool b)
 {
   Q_D(ctkCheckablePushButton);
-  if (b)
-    {
-    d->CheckBoxFlags |= Qt::ItemIsUserCheckable;
-    }
-  else
-    {
-    d->CheckBoxFlags &= ~Qt::ItemIsUserCheckable;
-    }
+  d->CheckBoxUserCheckable = b;
   this->update();
 }
 
@@ -226,7 +253,7 @@ void ctkCheckablePushButton::setCheckBoxUserCheckable(bool b)
 bool ctkCheckablePushButton::isCheckBoxUserCheckable()const
 {
   Q_D(const ctkCheckablePushButton);
-  return d->CheckBoxFlags & Qt::ItemIsUserCheckable;
+  return d->CheckBoxUserCheckable;
 }
 
 //-----------------------------------------------------------------------------
@@ -247,7 +274,7 @@ void ctkCheckablePushButton::mousePressEvent(QMouseEvent *e)
     return;
     }
   if (d->iconRect().contains(e->pos()) &&
-      (d->CheckBoxFlags & Qt::ItemIsUserCheckable))
+      (d->CheckBoxUserCheckable))
     {
     Qt::CheckState newCheckState;
     switch (d->CheckState)
@@ -263,5 +290,35 @@ void ctkCheckablePushButton::mousePressEvent(QMouseEvent *e)
       }
     this->setCheckState(newCheckState);
     e->accept();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkCheckablePushButton::checkStateSet()
+{
+  Q_D(ctkCheckablePushButton);
+  this->ctkPushButton::checkStateSet();
+  if (d->CheckBoxControlsButtonToggleState)
+    {
+    // Uncheck the checkbox if button is untoggled
+    if (!this->isChecked() && this->checkState())
+      {
+      this->setCheckState(Qt::Unchecked);
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void ctkCheckablePushButton::nextCheckState()
+{
+  Q_D(ctkCheckablePushButton);
+  this->ctkPushButton::nextCheckState();
+  if (d->CheckBoxControlsButtonToggleState)
+    {
+    // Uncheck the checkbox if button is untoggled
+    if (!this->isChecked() && this->checkState() == Qt::Checked)
+      {
+      this->setCheckState(Qt::Unchecked);
+      }
     }
 }
