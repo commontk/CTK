@@ -127,7 +127,7 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button13.setCheckBoxUserCheckable(true);
   button13.setCheckable(true);
 
-  // Checkbox controlls button toggle state
+  // Checkbox control button toggle state
   button16.setCheckable(true);
   button16.setCheckBoxUserCheckable(true);
   button16.setCheckBoxControlsButton(true);
