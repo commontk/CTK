@@ -36,13 +36,32 @@ class DicomImage;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailGenerator : public ctkDICOMAbstractThumbnailGenerator
 {
   Q_OBJECT
+  Q_PROPERTY(int width READ width WRITE setWidth)
+  Q_PROPERTY(int height READ height WRITE setHeight)
+  Q_PROPERTY(bool smoothResize READ smoothResize WRITE setSmoothResize)
+
 public:
   ///  \brief Construct a ctkDICOMThumbnailGenerator object
-  ///
   explicit ctkDICOMThumbnailGenerator(QObject* parent = 0);
   virtual ~ctkDICOMThumbnailGenerator();
 
-  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path );
+  virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path);
+
+  Q_INVOKABLE bool generateThumbnail(const QString dcmImagePath, const QString& thumbnailPath);
+
+  /// Set thumbnail width
+  void setWidth(int width);
+  /// Get thumbnail width
+  int width() const;
+  /// Set thumbnail height
+  void setHeight(int height);
+  /// Get thumbnail height
+  int height() const;
+  /// Set thumbnail resize method
+  /// \param on Smooth resize if true, fast if false. False by default
+  void setSmoothResize(bool on);
+  /// Get thumbnail height
+  bool smoothResize() const;
 
 protected:
   QScopedPointer<ctkDICOMThumbnailGeneratorPrivate> d_ptr;
