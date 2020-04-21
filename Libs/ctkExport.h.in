@@ -8,6 +8,7 @@
 #ifndef __@MY_EXPORT_HEADER_PREFIX@Export_h
 #define __@MY_EXPORT_HEADER_PREFIX@Export_h
 
+#include "ctkCompatibility_p.h"
 #include "ctkCompilerDetections_p.h"
 
 #include <QtGlobal>

@@ -35,7 +35,6 @@ set(KITTests_SRCS
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
   ctkModelTesterTest2.cpp
-  ctkUtf8Test1.cpp
   ctkUtilsCopyDirRecursivelyTest1.cpp
   ctkUtilsQtHandleToStringTest1.cpp
   ctkUtilsTest.cpp
@@ -52,7 +51,11 @@ set(KITTests_SRCS
   ctkWorkflowTest2.cpp
   ctkWorkflowTest3.cpp
   )
-
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND KITTests_SRCS
+    ctkUtf8Test1.cpp
+    )
+endif()
 if(HAVE_BFD)
   list(APPEND KITTests_SRCS
     ctkBinaryFileDescriptorTest1.cpp
