@@ -24,13 +24,14 @@
 #include "ctkLogger.h"
 
 // Qt includes
+#include <QDebug>
+#include <QDir>
 #include <QImage>
 
 // DCMTK includes
 #include "dcmtk/dcmimgle/dcmimage.h"
 
 static ctkLogger logger ( "org.commontk.dicom.DICOMThumbnailGenerator" );
-struct Node;
 
 //------------------------------------------------------------------------------
 class ctkDICOMThumbnailGeneratorPrivate
@@ -44,20 +45,26 @@ public:
 protected:
   ctkDICOMThumbnailGenerator* const q_ptr;
 
+  int Width;
+  int Height;
+  bool SmoothResize;
+
 private:
   Q_DISABLE_COPY( ctkDICOMThumbnailGeneratorPrivate );
 };
 
 //------------------------------------------------------------------------------
-ctkDICOMThumbnailGeneratorPrivate::ctkDICOMThumbnailGeneratorPrivate(ctkDICOMThumbnailGenerator& o):q_ptr(&o)
+ctkDICOMThumbnailGeneratorPrivate::ctkDICOMThumbnailGeneratorPrivate(ctkDICOMThumbnailGenerator& o)
+  : q_ptr(&o)
+  , Width(256)
+  , Height(256)
+  , SmoothResize(false)
 {
-
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMThumbnailGeneratorPrivate::~ctkDICOMThumbnailGeneratorPrivate()
 {
-
 }
 
 
@@ -74,64 +81,117 @@ ctkDICOMThumbnailGenerator::~ctkDICOMThumbnailGenerator()
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &path){
-    QImage image;
-    // Check whether we have a valid image
-    EI_Status result = dcmImage->getStatus();
-    if (result != EIS_Normal)
-    {
-      logger.error(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
-      return false;
-    }
-    // Select first window defined in image. If none, compute min/max window as best guess.
-    // Only relevant for monochrome.
-    if (dcmImage->isMonochrome())
-    {
-        if (dcmImage->getWindowCount() > 0)
-        {
-          dcmImage->setWindow(0);
-        }
-        else
-        {
-          dcmImage->setMinMaxWindow(OFTrue /* ignore extreme values */);
-        }
-    }
-    /* get image extension and prepare image header */
-    const unsigned long width = dcmImage->getWidth();
-    const unsigned long height = dcmImage->getHeight();
-    unsigned long offset = 0;
-    unsigned long length = 0;
-    QString header;
+int ctkDICOMThumbnailGenerator::width()const
+{
+  Q_D(const ctkDICOMThumbnailGenerator);
+  return d->Width;
+}
 
-    if (dcmImage->isMonochrome())
+//------------------------------------------------------------------------------
+void ctkDICOMThumbnailGenerator::setWidth(int width)
+{
+  Q_D(ctkDICOMThumbnailGenerator);
+  d->Width = width;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMThumbnailGenerator::height()const
+{
+  Q_D(const ctkDICOMThumbnailGenerator);
+  return d->Height;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMThumbnailGenerator::setHeight(int height)
+{
+  Q_D(ctkDICOMThumbnailGenerator);
+  d->Height = height;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMThumbnailGenerator::smoothResize()const
+{
+  Q_D(const ctkDICOMThumbnailGenerator);
+  return d->SmoothResize;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMThumbnailGenerator::setSmoothResize(bool on)
+{
+  Q_D(ctkDICOMThumbnailGenerator);
+  d->SmoothResize = on;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &path)
+{
+  Q_D(ctkDICOMThumbnailGenerator);
+
+  QImage image;
+  // Check whether we have a valid image
+  EI_Status result = dcmImage->getStatus();
+  if (result != EIS_Normal)
+  {
+    qCritical() << Q_FUNC_INFO << QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result);
+    return false;
+  }
+  // Select first window defined in image. If none, compute min/max window as best guess.
+  // Only relevant for monochrome.
+  if (dcmImage->isMonochrome())
+  {
+    if (dcmImage->getWindowCount() > 0)
     {
-      // write PGM header (binary monochrome image format)
-      header = QString("P5 %1 %2 255\n").arg(width).arg(height);
-      offset = header.length();
-      length = width * height + offset;
+      dcmImage->setWindow(0);
     }
     else
     {
-      // write PPM header (binary color image format)
-      header = QString("P6 %1 %2 255\n").arg(width).arg(height);
-      offset = header.length();
-      length = width * height * 3 /* RGB */ + offset;
+      dcmImage->setMinMaxWindow(OFTrue /* ignore extreme values */);
     }
-    /* create output buffer for DicomImage class */
-    QByteArray buffer;
-    /* copy header to output buffer and resize it for pixel data */
-    buffer.append(header);
-    buffer.resize(length);
+  }
+  /* get image extension and prepare image header */
+  const unsigned long width = dcmImage->getWidth();
+  const unsigned long height = dcmImage->getHeight();
+  unsigned long offset = 0;
+  unsigned long length = 0;
+  QString header;
 
-    /* render pixel data to buffer */
-    if (dcmImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
-    {  
-      if (!image.loadFromData( buffer ))
-        {
-            logger.error("QImage couldn't created");
-            return false;
-        }
+  if (dcmImage->isMonochrome())
+  {
+    // write PGM header (binary monochrome image format)
+    header = QString("P5 %1 %2 255\n").arg(width).arg(height);
+    offset = header.length();
+    length = width * height + offset;
+  }
+  else
+  {
+    // write PPM header (binary color image format)
+    header = QString("P6 %1 %2 255\n").arg(width).arg(height);
+    offset = header.length();
+    length = width * height * 3 /* RGB */ + offset;
+  }
+  /* create output buffer for DicomImage class */
+  QByteArray buffer;
+  /* copy header to output buffer and resize it for pixel data */
+  buffer.append(header);
+  buffer.resize(length);
+
+  /* render pixel data to buffer */
+  if (dcmImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
+  {  
+    if (!image.loadFromData( buffer ))
+    {
+      qCritical() << Q_FUNC_INFO << "QImage couldn't created";
+      return false;
     }
-    image.scaled(128,128,Qt::KeepAspectRatio).save(path,"PNG");
-    return true;
+  }
+  image.scaled( d->Width, d->Height, Qt::KeepAspectRatio,
+    (d->SmoothResize ? Qt::SmoothTransformation : Qt::FastTransformation) ).save(path,"PNG");
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, const QString& thumbnailPath)
+{
+  DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
+  return this->generateThumbnail(&dcmImage, thumbnailPath); 
 }
