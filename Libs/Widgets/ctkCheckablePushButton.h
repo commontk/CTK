@@ -30,19 +30,8 @@ class ctkCheckablePushButtonPrivate;
 
 /// \ingroup Widgets
 /// Description
-/// ctkCheckablePushButton is a QPushButton with a checkbox. By default
-/// the checkbox is connected to the checkable property of the push button.
-/// You can change this behaviour by clearing the "checkBoxControlsButton"
-/// property.
-/// The checkBoxUserCheckable property determines if the state of the
-/// checkbox can be changed interactively by the user by clicking on the
-/// checkbox.
-/// \note In checkBoxControlsButton mode, calling setCheckable instead of
-/// setCheckState may not refresh the button automatically. Use setCheckState
-/// instead.
-/// \note You can automatically check the button when the user checks the
-/// checkbox by connecting the checkBoxToggled(bool) signal with the
-/// setChecked(bool) slot.
+/// ctkCheckablePushButton is a QPushButton with a checkbox.
+///
 /// \warning The checkbox is drawn in place of the pushbuton icon, any icon
 /// will then be ignored.
 class CTK_WIDGETS_EXPORT ctkCheckablePushButton : public ctkPushButton
@@ -53,6 +42,7 @@ class CTK_WIDGETS_EXPORT ctkCheckablePushButton : public ctkPushButton
   Q_PROPERTY(Qt::Alignment indicatorAlignment READ indicatorAlignment WRITE setIndicatorAlignment)
   Q_PROPERTY(Qt::CheckState checkState READ checkState WRITE setCheckState NOTIFY checkStateChanged)
   Q_PROPERTY(bool checkBoxControlsButton READ checkBoxControlsButton WRITE setCheckBoxControlsButton)
+  Q_PROPERTY(bool checkBoxControlsButtonToggleState READ checkBoxControlsButtonToggleState WRITE setCheckBoxControlsButtonToggleState)
   Q_PROPERTY(bool checkBoxUserCheckable READ isCheckBoxUserCheckable WRITE setCheckBoxUserCheckable)
 
 public:
@@ -65,12 +55,33 @@ public:
   void setIndicatorAlignment(Qt::Alignment indicatorAlignment);
   Qt::Alignment indicatorAlignment()const;
 
+  /// Get checked state of the checkbox on the button.
   virtual Qt::CheckState checkState()const;
+  /// Set checked state of the checkbox on the button.
   virtual void setCheckState(Qt::CheckState checkState);
 
+  /// By default the checkbox is connected to the checkable property of the push button.
+  /// You can change this behaviour by clearing the "checkBoxControlsButton"
+  /// property.
+  /// \note In checkBoxControlsButton mode, calling setCheckable() instead of
+  /// setCheckState() may not refresh the button automatically. Use setCheckState()
+  /// instead.
+  /// \note You can automatically check the button when the user checks the
+  /// checkbox by connecting the checkBoxToggled(bool) signal with the
+  /// setChecked(bool) slot or by enabling "checkBoxControlsButtonToggleState" property.
   virtual bool checkBoxControlsButton()const;
   virtual void setCheckBoxControlsButton(bool b);
 
+  /// If both checkBoxControlsButton and checkBoxControlsButtonToggleState
+  /// are enabled then check state is synchronized with pushed state of the button
+  /// (checking the checkbox also pushes down the button and releasing the button
+  /// unchecks the checkbox).
+  virtual bool checkBoxControlsButtonToggleState()const;
+  virtual void setCheckBoxControlsButtonToggleState(bool b);
+
+  /// The checkBoxUserCheckable property determines if the state of the
+  /// checkbox can be changed interactively by the user by clicking on the
+  /// checkbox.
   virtual bool isCheckBoxUserCheckable()const;
   virtual void setCheckBoxUserCheckable(bool b);
 
@@ -85,7 +96,10 @@ protected:
   virtual void mousePressEvent(QMouseEvent* event);
   /// Reimplemented for internal reasons
   virtual bool hitButton(const QPoint & pos) const;
-
+  /// Reimplemented for internal reasons
+  void checkStateSet() override;
+  /// Reimplemented for internal reasons
+  void nextCheckState() override;
 private:
   Q_DECLARE_PRIVATE(ctkCheckablePushButton);
   Q_DISABLE_COPY(ctkCheckablePushButton);

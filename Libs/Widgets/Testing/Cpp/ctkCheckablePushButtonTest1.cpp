@@ -54,6 +54,7 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   ctkCheckablePushButton button13(QObject::tr("Checkbox and Button User Checkable"));
   ctkCheckablePushButton button14(QObject::tr("Checkable PushButton with menu"));
   ctkCheckablePushButton button15(QObject::tr("Checkable PushButton with icon"));
+  ctkCheckablePushButton button16(QObject::tr("Check box controls button toggle state"));
 
   QVBoxLayout *layout= new QVBoxLayout;
   layout->addWidget(&button1);
@@ -71,6 +72,7 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   layout->addWidget(&button13);
   layout->addWidget(&button14);
   layout->addWidget(&button15);
+  layout->addWidget(&button16);
   topLevel.setLayout(layout);
 
   topLevel.show();
@@ -95,17 +97,17 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button3.setButtonTextAlignment(Qt::AlignCenter);
   button3.setIndicatorAlignment(Qt::AlignCenter);
   button3.setCheckable(true);
-  
+
   button4.setCheckable(true);
   button4.toggle();
-  
+
   button5.setButtonTextAlignment(Qt::AlignCenter);
   button5.setIndicatorAlignment(Qt::AlignRight);
-  
+
   button6.setIndicatorAlignment(Qt::AlignTop);
   button7.setButtonTextAlignment(Qt::AlignCenter);
   button7.setIndicatorAlignment(Qt::AlignLeft);
-  
+
   // Connected to button, not user checkable:
   button8.setCheckBoxUserCheckable(false);
   button8.setCheckState(Qt::Checked);
@@ -124,6 +126,12 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button13.setCheckBoxControlsButton(false);
   button13.setCheckBoxUserCheckable(true);
   button13.setCheckable(true);
+
+  // Checkbox control button toggle state
+  button16.setCheckable(true);
+  button16.setCheckBoxUserCheckable(true);
+  button16.setCheckBoxControlsButton(true);
+  button16.setCheckBoxControlsButtonToggleState(true);
 
   QMenu menu(&button14);
   menu.addAction("menu action");
