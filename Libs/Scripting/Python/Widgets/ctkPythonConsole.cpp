@@ -578,9 +578,9 @@ void ctkPythonConsole::initialize(ctkAbstractPythonManager* newPythonManager)
   d->initializeInteractiveConsole();
 
   this->connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)),
-                d, SLOT(printOutputMessage(QString)));
+                this, SLOT(printOutputMessage(QString)));
   this->connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
-                d, SLOT(printErrorMessage(QString)));
+                this, SLOT(printErrorMessage(QString)));
 
   PythonQt::self()->setRedirectStdInCallback(
         ctkConsole::stdInRedirectCallBack, reinterpret_cast<void*>(this));
