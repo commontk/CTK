@@ -123,14 +123,6 @@ public Q_SLOTS:
   ///  FALSE - Just insert the word replacing only the text from the current position until StartOfWord
   void insertCompletion(const QString& text);
 
-  /// Print a message
-  /// \sa ctkConsole::outputTextColor
-  void printOutputMessage(const QString& text);
-
-  /// Print a message
-  /// \sa ctkConsole::errorTextColor
-  void printErrorMessage(const QString& text);
-
   /// Update the value of ScrollbarAtBottom given the current position of the scollbar
   void onScrollBarValueChanged(int value);
 

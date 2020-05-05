@@ -846,32 +846,6 @@ void ctkConsolePrivate::printString(const QString& text)
   this->textCursor().insertText(text);
 }
 
-//----------------------------------------------------------------------------
-void ctkConsolePrivate::printOutputMessage(const QString& text)
-{
-  Q_Q(ctkConsole);
-  QString textToPrint = text;
-  if (this->MessageOutputSize == 0)
-    {
-    textToPrint.prepend("\n");
-    }
-  this->MessageOutputSize += textToPrint.size();
-  q->printMessage(textToPrint, q->outputTextColor());
-}
-
-//----------------------------------------------------------------------------
-void ctkConsolePrivate::printErrorMessage(const QString& text)
-{
-  Q_Q(ctkConsole);
-  QString textToPrint = text;
-  if (this->MessageOutputSize == 0)
-    {
-    textToPrint.prepend("\n");
-    }
-  this->MessageOutputSize += textToPrint.size();
-  q->printMessage(textToPrint, q->errorTextColor());
-}
-
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::printCommand(const QString& cmd)
 {
@@ -1337,6 +1311,32 @@ void ctkConsole::printMessage(const QString& message, const QColor& color)
   format.setForeground(color);
   this->setFormat(format);
   d->printString(message);
+}
+
+//----------------------------------------------------------------------------
+void ctkConsole::printOutputMessage(const QString& text)
+{
+  Q_D(ctkConsole);
+  QString textToPrint = text;
+  if (d->MessageOutputSize == 0)
+    {
+    textToPrint.prepend("\n");
+    }
+  d->MessageOutputSize += textToPrint.size();
+  this->printMessage(textToPrint, this->outputTextColor());
+}
+
+//----------------------------------------------------------------------------
+void ctkConsole::printErrorMessage(const QString& text)
+{
+  Q_D(ctkConsole);
+  QString textToPrint = text;
+  if (d->MessageOutputSize == 0)
+    {
+    textToPrint.prepend("\n");
+    }
+  d->MessageOutputSize += textToPrint.size();
+  this->printMessage(textToPrint, this->errorTextColor());
 }
 
 //-----------------------------------------------------------------------------

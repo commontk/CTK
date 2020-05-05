@@ -172,9 +172,6 @@ public:
   /// \sa scrollBarPolicy()
   void setScrollBarPolicy(const Qt::ScrollBarPolicy& newScrollBarPolicy);
 
-  /// Prints text on the console
-  void printMessage(const QString& message, const QColor& color);
-
   /// Returns the string used as primary prompt
   virtual QString ps1() const;
 
@@ -255,6 +252,17 @@ public Q_SLOTS:
 
   /// Print the console help with shortcuts.
   virtual void printHelp();
+
+  /// Prints text on the console
+  void printMessage(const QString& message, const QColor& color);
+
+  /// Print a message
+  /// \sa ctkConsole::outputTextColor
+  void printOutputMessage(const QString& text);
+
+  /// Print a message
+  /// \sa ctkConsole::errorTextColor
+  void printErrorMessage(const QString& text);
 
 protected:
 
