@@ -4,7 +4,7 @@ CTK Command Line Modules   {#CommandLineModules_Page}
 \brief Overview about the Command Line Modules support in CTK.
 
 \internal This page is best viewed in its [Doxygen processed]
-(http://www.commontk.org/docs/html/CommandLineModules_Page.html) form. \endinternal
+(http://commontk.org/docs/html/CommandLineModules_Page.html) form. \endinternal
 
 [TOC]
 
@@ -63,7 +63,7 @@ executable modules (e.g. command line programs), the XML description is usually 
 the executable itself when it is called with a *--xml* command line argument.
 
 The valid XML structure for the parameter description is defined in the corresponding [schema documentation](ctkCmdLineModule.xsd)
-([absolute link](http://www.commontk.org/docs/html/ctkCmdLineModule.xsd)).
+([absolute link](http://commontk.org/docs/html/ctkCmdLineModule.xsd)).
 
 Please note that running a module may fail due to an invalid XML description. The strictness of validation is specific to the
 application you are using to run the module. However, making sure the XML validates agains the given schema (raw schema file
@@ -85,7 +85,7 @@ For example a progress report containing a progress value and text would look li
     <filter-end/>
 
 Here is the XML [progress and result schema documentation](ctkCmdLineModuleProcess.xsd)
-([absolute link](http://www.commontk.org/docs/html/ctkCmdLineModuleProcess.xsd)) describing the valid XML fragments. The raw
+([absolute link](http://commontk.org/docs/html/ctkCmdLineModuleProcess.xsd)) describing the valid XML fragments. The raw
 schema file is available [here](https://raw.github.com/commontk/CTK/master/Libs/CommandLineModules/Backend/LocalProcess/Resources/ctkCmdLineModuleProcess.xsd).
 
 

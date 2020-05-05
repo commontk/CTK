@@ -2,7 +2,7 @@ Local Process    {#CommandLineModulesBackendLocalProcess_Page}
 =============
 
 \internal This page is best viewed in its [Doxygen processed]
-(http://www.commontk.org/docs/html/CommandLineModulesBackendLocalProcess_Page.html) form. \endinternal
+(http://commontk.org/docs/html/CommandLineModulesBackendLocalProcess_Page.html) form. \endinternal
 
 The Local Process back-end is a fully featured back-end implementation for handling executable
 modules. When registered with a ctkCmdLineModuleManager instance, it will handle the registration

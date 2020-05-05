@@ -2,7 +2,7 @@ Function Pointer (experimental)    {#CommandLineModulesBackendFunctionPointer_Pa
 ===============================
 
 \internal This page is best viewed in its [Doxygen processed]
-(http://www.commontk.org/docs/html/CommandLineModulesBackendFunctionPointer_Page.html) form. \endinternal
+(http://commontk.org/docs/html/CommandLineModulesBackendFunctionPointer_Page.html) form. \endinternal
 
 The Function Pointer back-end is an experimental *proof-of-concept* (however, it is used in
 some unit tests as a light-weight back-end).

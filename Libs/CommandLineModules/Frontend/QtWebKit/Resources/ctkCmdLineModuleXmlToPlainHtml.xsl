@@ -5,7 +5,7 @@
   xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
   xmlns:err="http://www.w3.org/2005/xqt-errors"
-  xmlns:ctk="http://www.commontk.org"
+  xmlns:ctk="http://commontk.org"
   exclude-result-prefixes="xs xdt err fn">
 
   <xsl:output method="xhtml" indent="yes"/>

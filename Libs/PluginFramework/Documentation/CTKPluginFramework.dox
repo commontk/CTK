@@ -6,7 +6,7 @@
 
 The CTK Plugin Framework is an OSGi like modularization framework for building
 cross-platform, dynamic, and modular applications. See
-<a href="http://www.commontk.org/index.php/Documentation/Plugin_Framework">
+<a href="http://commontk.org/index.php/Documentation/Plugin_Framework">
 Introduction to the CTK Plugin Framework</a> for an overview.
 
 \defgroup ConfigAdmin Configuration Admin
@@ -32,7 +32,7 @@ for C++. It is directly based on the <a href="http://www.osgi.org">OSGi</a>
 specifications, hence any material explaining OSGi also applies to the CTK Plugin
 Framework (without the Java specifics, of course).
 
-Please see the <a href="http://www.commontk.org/index.php/Documentation/Plugin_Framework">
+Please see the <a href="http://commontk.org/index.php/Documentation/Plugin_Framework">
 the wiki page</a> for more information.
 
 Related pages about implemented OSGi specifications:

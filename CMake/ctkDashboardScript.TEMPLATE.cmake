@@ -15,7 +15,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
 #
-# For additional information, see http://www.commontk.org/index.php/Dashboard_setup
+# For additional information, see http://commontk.org/index.php/Dashboard_setup
 #
 
 #-----------------------------------------------------------------------------

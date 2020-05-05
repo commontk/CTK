@@ -5,7 +5,7 @@
             xmlns:xs3p="http://titanium.dstc.edu.au/xml/xs3p">
 
   <xsd:annotation>
-    <xsd:appinfo source="http://www.commontk.org/docs/html/CommandLineModules_Page.html">
+    <xsd:appinfo source="http://commontk.org/docs/html/CommandLineModules_Page.html">
       <xs3p:title>CTK XML schema for progress and result reporting in command line modules.</xs3p:title>
       <xs3p:printGlossary>false</xs3p:printGlossary>
       <xs3p:printLegend>false</xs3p:printLegend>

@@ -9,7 +9,7 @@
 
   The CTK build system is based on CMake. A more detailed description of the
   build system itself can be found on the corresponding
-  <a href="http://www.commontk.org/index.php/Documentation/BuildSystem_Description">wiki page</a>.
+  <a href="http://commontk.org/index.php/Documentation/BuildSystem_Description">wiki page</a>.
 
   \defgroup CMakeMacrosAndFuncs CMake Macros & Functions
   This module groups all CMake macros and functions available in the CTK build system.

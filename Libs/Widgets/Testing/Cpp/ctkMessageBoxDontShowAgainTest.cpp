@@ -96,7 +96,7 @@ void ctkMessageBoxDontShowAgainTester::initTestCase()
 {
   // Setup QApplication for settings
   qApp->setOrganizationName("CommonToolKit");
-  qApp->setOrganizationDomain("www.commontk.org");
+  qApp->setOrganizationDomain("commontk.org");
   qApp->setApplicationName("CTK");
 }
 

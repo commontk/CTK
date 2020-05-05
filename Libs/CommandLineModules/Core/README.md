@@ -2,7 +2,7 @@ Core    {#CommandLineModulesCore_Page}
 ====
 
 \internal This page is best viewed in its [Doxygen processed]
-(http://www.commontk.org/docs/html/CommandLineModulesCore_Page.html) form. \endinternal
+(http://commontk.org/docs/html/CommandLineModulesCore_Page.html) form. \endinternal
 
 The Command Line Modules Core library provides high-level classes to manage command line modules.
 

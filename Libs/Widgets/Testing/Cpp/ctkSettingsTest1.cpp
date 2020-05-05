@@ -37,7 +37,7 @@ int ctkSettingsTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   app.setOrganizationName("CommonToolkit");
-  app.setOrganizationDomain("www.commontk.org");
+  app.setOrganizationDomain("commontk.org");
   app.setApplicationName("CTK");
   QSettings::setDefaultFormat(QSettings::IniFormat);
   // Test all the settings constructors

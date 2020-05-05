@@ -134,10 +134,10 @@ void ctkPluginFrameworkTestSuite::frame005a()
   QCOMPARE(QString("CommonTK"), headers.value(k));
 
   k = "Plugin-DocURL";
-  QCOMPARE(QString("http://www.commontk.org"), headers.value(k));
+  QCOMPARE(QString("http://commontk.org"), headers.value(k));
 
   k = "Plugin-ContactAddress";
-  QCOMPARE(QString("http://www.commontk.org"), headers.value(k));
+  QCOMPARE(QString("http://commontk.org"), headers.value(k));
 
   k = "Plugin-Category";
   QCOMPARE(QString("test"), headers.value(k));
