@@ -103,8 +103,7 @@ public:
 
   Q_INVOKABLE ctkDICOMTableManager* dicomTableManager();
 
-  /// Option to show or not import summary dialog.
-  /// Since the summary dialog is modal, we give the option of disabling it for batch modes or testing.
+  /// Option to show or not import summary.
   void setDisplayImportSummary(bool);
   bool displayImportSummary();
   /// Option to show dialog to confirm removal from the database (Remove action). Off by default.
@@ -116,6 +115,9 @@ public:
   int studiesAddedDuringImport();
   int seriesAddedDuringImport();
   int instancesAddedDuringImport();
+
+  /// Set counters of imported patients, studies, series, instances to zero.
+  void resetItemsAddedDuringImportCounters();
 
   enum ImportDirectoryMode
   {
@@ -192,7 +194,10 @@ public Q_SLOTS:
   /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
   void importFiles(const QStringList& files, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
-  /// Wait for all import operations to complete
+  /// Wait for all import operations to complete.
+  /// Number of imported patients, studies, series, images since the last resetItemsAddedDuringImportCounters
+  /// can be retrieved by calling patientsAddedDuringImport(), studiesAddedDuringImport(), seriesAddedDuringImport(),
+  ///  instancesAddedDuringImport() methods.
   void waitForImportFinished();
 
   /// \deprecated importDirectory() should be used
@@ -200,11 +205,6 @@ public Q_SLOTS:
 
   /// slots to capture status updates from the database during an
   /// import operation
-  void onPatientAdded(int, QString, QString, QString);
-  void onStudyAdded(QString);
-  void onSeriesAdded(QString);
-  void onInstanceAdded(QString);
-
   void onIndexingProgress(int);
   void onIndexingProgressStep(const QString&);
   void onIndexingProgressDetail(const QString&);

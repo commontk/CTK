@@ -1583,6 +1583,7 @@ ctkDICOMDatabase::ctkDICOMDatabase(QObject* parent)
 //------------------------------------------------------------------------------
 ctkDICOMDatabase::~ctkDICOMDatabase()
 {
+  this->closeDatabase();
 }
 
 //------------------------------------------------------------------------------
@@ -2891,6 +2892,7 @@ bool ctkDICOMDatabase::cleanup(bool vacuum/*=false*/)
     QSqlQuery tagcacheCleanup(d->TagCacheDatabase);
     seriesCleanup.exec("VACUUM;");
   }
+  d->resetLastInsertedValues();
   return true;
 }
 
