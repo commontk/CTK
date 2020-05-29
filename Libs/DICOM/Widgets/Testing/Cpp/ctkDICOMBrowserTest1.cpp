@@ -68,17 +68,45 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
 
   // [Deprecated]
   // make sure copy/link dialog doesn't pop up, always copy on import
+  /*
   QSettings settings;
   QString settingsString = settings.value("MainWindow/DontConfirmCopyOnImport").toString();
   settings.setValue("MainWindow/DontConfirmCopyOnImport", QString("0")); // QMessageBox::AcceptRole
   CHECK_INT(browser.importDirectoryMode(), static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy));
+  */
   // [/Deprecated]
 
+  // Test import of a few specific files
+  QDirIterator it(argv[1], QStringList() << "*.IMA", QDir::Files, QDirIterator::Subdirectories);
+  // Skip a few files
+  it.next();
+  it.next();
+  // Add 3 files
+  QStringList files;
+  files << it.next();
+  files << it.next();
+  files << it.next();
+  browser.importFiles(files);
+  browser.waitForImportFinished();
+
+  qDebug() << browser.patientsAddedDuringImport()
+    << " " << browser.studiesAddedDuringImport()
+    << " " << browser.seriesAddedDuringImport()
+    << " " << browser.instancesAddedDuringImport();
+
+  CHECK_INT(browser.patientsAddedDuringImport(), 1);
+  CHECK_INT(browser.studiesAddedDuringImport(), 1);
+  CHECK_INT(browser.seriesAddedDuringImport(), 1);
+  CHECK_INT(browser.instancesAddedDuringImport(), 3);
+
   browser.importDirectories(QStringList() << argv[1]);
+  browser.waitForImportFinished();
+
+  qDebug() << "\n\nAdded to database directory: " << files;
 
   // [Deprecated]
   // reset to the original copy/import setting
-  settings.setValue("MainWindow/DontConfirmCopyOnImport", settingsString);
+  //settings.setValue("MainWindow/DontConfirmCopyOnImport", settingsString);
   // [/Deprecated]
 
   CHECK_INT(browser.patientsAddedDuringImport(), 1);
