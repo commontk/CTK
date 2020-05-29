@@ -33,18 +33,25 @@ int ctkDICOMIndexerTest1( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
+  // Get data directory from environment
+  QDir dataDir = QDir(QProcessEnvironment::systemEnvironment().value("CTKData_DIR", ""));
+  QString dicomDir = dataDir.filePath("Data/DICOM");
+  if (!QDir(dicomDir).exists())
+    {
+    std::cerr << "Directory does not exist: " << qPrintable(dicomDir) << std::endl;
+    std::cerr << "Make sure CTKData_DIR environment variable is set correctly" << std::endl;
+    }
+
   ctkDICOMDatabase database;
+  database.openDatabase(":memory:");
   ctkDICOMIndexer indexer;
 
   // Test ctkDICOMIndexer::addDirectory()
   // just check if it doesn't crash
   // Create block to test batch indexing using indexingBatch helper class.
   {
-    indexer.addDirectory(&database, QString());
-    // might work (if there are some DCM images in temp
-    indexer.addDirectory(&database, QDir::tempPath());
-    // give an invalid destination name
-    indexer.addDirectory(&database, QDir::tempPath(), true);
+    indexer.addDirectory(&database, dicomDir, false);
+    indexer.addDirectory(&database, dicomDir, true);
   }
 
   // ensure all concurrent inserts are complete

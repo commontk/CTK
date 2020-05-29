@@ -59,6 +59,7 @@ private slots:
 private:
   void _testImportCommon(ctkDICOMBrowser& browser);
 
+  QString DatabaseDirectoryName;
   QString TemporaryDatabaseDirectoryName;
 
   QDir DICOMDir;
@@ -67,46 +68,45 @@ private:
 // ----------------------------------------------------------------------------
 void ctkDICOMBrowserTester::initTestCase()
 {
+  QApplication::instance()->setOrganizationName("commontk");
+  QApplication::instance()->setOrganizationDomain("commontk.org");
+  QApplication::instance()->setApplicationName("ctkDICOM");
+
   // Get data directory from environment
-  QDir dataDir = QDir(
-        QProcessEnvironment::systemEnvironment().value("CTKData_DIR", ""));
+  QDir dataDir = QDir(QProcessEnvironment::systemEnvironment().value("CTKData_DIR", ""));
   QVERIFY(dataDir.exists());
 
   this->DICOMDir = dataDir.filePath("Data/DICOM");
   QVERIFY(this->DICOMDir.exists());
+
+  this->DatabaseDirectoryName = QDir::tempPath() + "/ctkDICOMBrowserTest-Database";
+  this->TemporaryDatabaseDirectoryName =
+    QString("ctkDICOMBrowserTest.%1.DICOM-Database").arg(QTime::currentTime().toString("hhmmsszzz"));
 }
 
 // ----------------------------------------------------------------------------
 void ctkDICOMBrowserTester::init()
 {
-  // If any, remove default ./ctkDICOM-Database directory
-  {
-  ctkScopedCurrentDir scopedCurrentDir(QDir::tempPath());
-  ctk::removeDirRecursively("./ctkDICOM-Database");
-  QCOMPARE(QFileInfo("./ctkDICOM-Database").isDir(), false);
-  }
-
-  // Generate a new database directory name
-  this->TemporaryDatabaseDirectoryName =
-      QString("ctkDICOMBrowserTest.%1.DICOM-Database").arg(QTime::currentTime().toString("hhmmsszzz"));
+  // If any, remove default database directory
+  ctk::removeDirRecursively(this->DatabaseDirectoryName);
+  QCOMPARE(QFileInfo(this->DatabaseDirectoryName).isDir(), false);
 }
 
 // ----------------------------------------------------------------------------
 void ctkDICOMBrowserTester::testDefaults()
 {
   // Clear left over settings
-  QSettings().remove("DatabaseDirectory");
 
   ctkDICOMBrowser browser;
+  browser.setDatabaseDirectory(this->DatabaseDirectoryName);
+  browser.createNewDatabaseDirectory();
 
-  QVERIFY(QFileInfo("./ctkDICOM-Database").isDir());
-  QVERIFY(QFileInfo("./ctkDICOM-Database/ctkDICOM.sql").isFile());
-  QVERIFY(QFileInfo("./ctkDICOM-Database/ctkDICOMTagCache.sql").isFile());
+  QVERIFY(QFileInfo(this->DatabaseDirectoryName).isDir());
+  QVERIFY(QFileInfo(this->DatabaseDirectoryName+"/ctkDICOM.sql").isFile());
+  QVERIFY(QFileInfo(this->DatabaseDirectoryName+"/ctkDICOMTagCache.sql").isFile());
 
-  QCOMPARE(browser.databaseDirectory(), QString("./ctkDICOM-Database"));
+  QCOMPARE(browser.databaseDirectory(), this->DatabaseDirectoryName);
   QVERIFY(browser.database() != 0);
-
-  QCOMPARE(browser.tagsToPrecache(), QStringList());
 
   QVERIFY(browser.dicomTableManager() != 0);
 
@@ -124,10 +124,12 @@ void ctkDICOMBrowserTester::testDatabaseDirectory()
 {
   // Check that value from setting is picked up
   {
-  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
+  QSettings().setValue("TempDatabaseDirectory", this->TemporaryDatabaseDirectoryName);
   QCOMPARE(QFileInfo(this->TemporaryDatabaseDirectoryName).isDir(), false);
 
   ctkDICOMBrowser browser;
+  browser.setDatabaseDirectorySettingsKey("TempDatabaseDirectory");
+  browser.createNewDatabaseDirectory();
 
   QCOMPARE(QFileInfo(browser.databaseDirectory()).absoluteFilePath(),
            QFileInfo(this->TemporaryDatabaseDirectoryName).absoluteFilePath());
@@ -138,9 +140,8 @@ void ctkDICOMBrowserTester::testDatabaseDirectory()
 // ----------------------------------------------------------------------------
 void ctkDICOMBrowserTester::testImportDirectoryMode()
 {
-  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
-
   ctkDICOMBrowser browser;
+  browser.setDatabaseDirectory(this->TemporaryDatabaseDirectoryName);
 
   browser.setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryCopy);
   QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryCopy);
@@ -163,11 +164,14 @@ void ctkDICOMBrowserTester::testImportDirectories()
   QFETCH(QStringList, directories);
   QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
 
-  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
-
   ctkDICOMBrowser browser;
+  browser.setDatabaseDirectory(this->TemporaryDatabaseDirectoryName);
 
-  browser.setDisplayImportSummary(false);
+  // clear database because if an image is already imported
+  // then it is not imported again
+  browser.database()->initializeDatabase();
+
+  //browser.setDisplayImportSummary(false);
   browser.importDirectories(directories, /* mode= */ importDirectoryMode);
 
   this->_testImportCommon(browser);
@@ -176,6 +180,8 @@ void ctkDICOMBrowserTester::testImportDirectories()
 // ----------------------------------------------------------------------------
 void ctkDICOMBrowserTester::_testImportCommon(ctkDICOMBrowser& browser)
 {
+  browser.waitForImportFinished();
+
   QFETCH(int, expectedImporedPatients);
   QFETCH(int, expectedImporedStudies);
   QFETCH(int, expectedImporedSeries);
@@ -232,11 +238,14 @@ void ctkDICOMBrowserTester::testImportDirectory()
   QFETCH(QStringList, directories);
   QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
 
-  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
-
   ctkDICOMBrowser browser;
+  browser.setDatabaseDirectory(this->TemporaryDatabaseDirectoryName);
 
-  browser.setDisplayImportSummary(false);
+  // clear database because if an image is already imported
+  // then it is not imported again
+  browser.database()->initializeDatabase();
+
+  //browser.setDisplayImportSummary(false);
   browser.importDirectory(directories[0], /* mode= */ importDirectoryMode);
 
   this->_testImportCommon(browser);
@@ -275,11 +284,14 @@ void ctkDICOMBrowserTester::testOnImportDirectory()
   QFETCH(QStringList, directories);
   QFETCH(ctkDICOMBrowser::ImportDirectoryMode, importDirectoryMode);
 
-  QSettings().setValue("DatabaseDirectory", this->TemporaryDatabaseDirectoryName);
-
   ctkDICOMBrowser browser;
+  browser.setDatabaseDirectory(this->TemporaryDatabaseDirectoryName);
 
-  browser.setDisplayImportSummary(false);
+  // clear database because if an image is already imported
+  // then it is not imported again
+  browser.database()->initializeDatabase();
+
+  //browser.setDisplayImportSummary(false);
   browser.onImportDirectory(directories[0], /* mode= */ importDirectoryMode);
 
   this->_testImportCommon(browser);
