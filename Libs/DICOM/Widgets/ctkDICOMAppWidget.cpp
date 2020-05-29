@@ -156,7 +156,7 @@ void ctkDICOMAppWidgetPrivate::showUpdateSchemaDialog()
     UpdateSchemaProgress->setMinimumDuration(0);
     UpdateSchemaProgress->setValue(0);
 
-    //q->connect(UpdateSchemaProgress, SIGNAL(canceled()), 
+    //q->connect(UpdateSchemaProgress, SIGNAL(canceled()),
      //       DICOMIndexer.data(), SLOT(cancel()));
 
     q->connect(DICOMDatabase.data(), SIGNAL(schemaUpdateStarted(int)),
@@ -173,7 +173,7 @@ void ctkDICOMAppWidgetPrivate::showUpdateSchemaDialog()
     q->connect(DICOMDatabase.data(), SIGNAL(schemaUpdated()),
             &DICOMModel, SLOT(reset()));
     // reset the database if canceled
-    q->connect(UpdateSchemaProgress, SIGNAL(canceled()), 
+    q->connect(UpdateSchemaProgress, SIGNAL(canceled()),
             &DICOMModel, SLOT(reset()));
     }
   UpdateSchemaProgress->show();
@@ -198,11 +198,17 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
     IndexerProgress->setMinimumDuration(0);
     IndexerProgress->setValue(0);
 
-    q->connect(IndexerProgress, SIGNAL(canceled()), 
+    q->connect(IndexerProgress, SIGNAL(canceled()),
                  DICOMIndexer.data(), SLOT(cancel()));
 
-    q->connect(DICOMIndexer.data(), SIGNAL(progress(int)),
-            IndexerProgress, SLOT(setValue(int)));
+    // QProgressDialog requires a rate limiter when used from another thread,
+    // otherwise it crashes with stack overflow
+    // (see https://bugreports.qt.io/browse/QTBUG-83265).
+    // Since this feature is obsolete anyway (since ctkDICOMBrowser can now
+    // has built-in progress reporting of background data import), we just disable it.
+    // q->connect(DICOMIndexer.data(), SIGNAL(progress(int)),
+    //        IndexerProgress, SLOT(setValue(int)));
+
     q->connect(DICOMIndexer.data(), SIGNAL(progressDetail(QString)),
             progressLabel, SLOT(setText(QString)));
     q->connect(DICOMIndexer.data(), SIGNAL(progressDetail(QString)),
@@ -215,13 +221,13 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
     q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int, int, int, int)),
             &DICOMModel, SLOT(reset()));
     // stop indexing and reset the database if canceled
-    q->connect(IndexerProgress, SIGNAL(canceled()), 
+    q->connect(IndexerProgress, SIGNAL(canceled()),
             DICOMIndexer.data(), SLOT(cancel()));
-    q->connect(IndexerProgress, SIGNAL(canceled()), 
+    q->connect(IndexerProgress, SIGNAL(canceled()),
             &DICOMModel, SLOT(reset()));
 
     // allow users of this widget to know that the process has finished
-    q->connect(IndexerProgress, SIGNAL(canceled()), 
+    q->connect(IndexerProgress, SIGNAL(canceled()),
             q, SIGNAL(directoryImported()));
     q->connect(DICOMIndexer.data(), SIGNAL(indexingComplete(int, int, int, int)),
             q, SIGNAL(directoryImported()));
@@ -490,9 +496,15 @@ void ctkDICOMAppWidget::onFileIndexed(const QString& filePath)
 {
   // Update the progress dialog when the file name changes
   // - also allows for cancel button
-  QCoreApplication::instance()->processEvents();
+
+  // QProgressDialog requires a rate limiter when used from another thread,
+  // otherwise it crashes with stack overflow
+  // (see https://bugreports.qt.io/browse/QTBUG-83265).
+  // Since this feature is obsolete anyway (since ctkDICOMBrowser can now
+  // has built-in progress reporting of background data import), we just disable it.
+  //QCoreApplication::instance()->processEvents();
+
   qDebug() << "Indexing \n\n\n\n" << filePath <<"\n\n\n";
-  
 }
 
 //----------------------------------------------------------------------------

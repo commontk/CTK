@@ -275,10 +275,6 @@ void ctkDICOMBrowserPrivate::init()
   q->connect(DICOMIndexer.data(), SIGNAL(updatingDatabase(bool)), q, SLOT(onIndexingUpdatingDatabase(bool)));
 
   // Signals related to tracking inserts
-  q->connect(this->DICOMDatabase.data(), SIGNAL(patientAdded(int,QString,QString,QString)), q, SLOT(onPatientAdded(int,QString,QString,QString)));
-  q->connect(this->DICOMDatabase.data(), SIGNAL(studyAdded(QString)), q, SLOT(onStudyAdded(QString)));
-  q->connect(this->DICOMDatabase.data(), SIGNAL(seriesAdded(QString)), q, SLOT(onSeriesAdded(QString)));
-  q->connect(this->DICOMDatabase.data(), SIGNAL(instanceAdded(QString)), q, SLOT(onInstanceAdded(QString)));
 
   q->connect(this->DirectoryButton, SIGNAL(directoryChanged(QString)), q, SLOT(setDatabaseDirectory(QString)));
 
@@ -428,6 +424,16 @@ void ctkDICOMBrowser::setConfirmRemove(bool onOff)
   Q_D(ctkDICOMBrowser);
 
   d->ConfirmRemove = onOff;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::resetItemsAddedDuringImportCounters()
+{
+  Q_D(ctkDICOMBrowser);
+  d->PatientsAddedDuringImport = 0;
+  d->StudiesAddedDuringImport = 0;
+  d->SeriesAddedDuringImport = 0;
+  d->InstancesAddedDuringImport = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -859,41 +865,6 @@ void ctkDICOMBrowser::onRepairAction()
 
   // Force refresh of table views
   d->DICOMDatabase->databaseChanged();
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMBrowser::onPatientAdded(int databaseID, QString patientID, QString patientName, QString patientBirthDate )
-{
-  Q_D(ctkDICOMBrowser);
-  Q_UNUSED(databaseID);
-  Q_UNUSED(patientID);
-  Q_UNUSED(patientName);
-  Q_UNUSED(patientBirthDate);
-  ++d->PatientsAddedDuringImport;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMBrowser::onStudyAdded(QString studyUID)
-{
-  Q_D(ctkDICOMBrowser);
-  Q_UNUSED(studyUID);
-  ++d->StudiesAddedDuringImport;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMBrowser::onSeriesAdded(QString seriesUID)
-{
-  Q_D(ctkDICOMBrowser);
-  Q_UNUSED(seriesUID);
-  ++d->SeriesAddedDuringImport;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMBrowser::onInstanceAdded(QString instanceUID)
-{
-  Q_D(ctkDICOMBrowser);
-  Q_UNUSED(instanceUID);
-  ++d->InstancesAddedDuringImport;
 }
 
 //----------------------------------------------------------------------------
@@ -1729,7 +1700,13 @@ void ctkDICOMBrowser::onIndexingUpdatingDatabase(bool updating)
 //----------------------------------------------------------------------------
 void ctkDICOMBrowser::onIndexingComplete(int patientsAdded, int studiesAdded, int seriesAdded, int imagesAdded)
 {
-  Q_D(const ctkDICOMBrowser);
+  Q_D(ctkDICOMBrowser);
+
+  d->PatientsAddedDuringImport += patientsAdded;
+  d->StudiesAddedDuringImport += studiesAdded;
+  d->SeriesAddedDuringImport += seriesAdded;
+  d->InstancesAddedDuringImport += imagesAdded;
+
   d->ProgressFrame->hide();
   d->ProgressDetailLineEdit->hide();
 
