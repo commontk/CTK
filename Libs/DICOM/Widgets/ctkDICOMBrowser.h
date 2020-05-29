@@ -185,6 +185,13 @@ public Q_SLOTS:
   /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
   void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
+  /// \brief Import a list of files
+  ///
+  /// This can be used to externally trigger an import (i.e. for testing or to support drag-and-drop)
+  ///
+  /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
+  void importFiles(const QStringList& files, ctkDICOMBrowser::ImportDirectoryMode mode = ImportDirectoryAddLink);
+
   /// Wait for all import operations to complete
   void waitForImportFinished();
 

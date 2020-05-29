@@ -130,6 +130,8 @@ public:
 
   void importDirectory(QString directory, ctkDICOMBrowser::ImportDirectoryMode mode);
 
+  void importFiles(const QStringList& files, ctkDICOMBrowser::ImportDirectoryMode mode);
+
   void importOldSettings();
 
   ctkFileDialog* ImportDialog;
@@ -916,6 +918,18 @@ void ctkDICOMBrowser::onImportDirectoryComboBoxCurrentIndexChanged(int index)
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMBrowser::importFiles(const QStringList& files, ctkDICOMBrowser::ImportDirectoryMode mode)
+{
+  Q_D(ctkDICOMBrowser);
+  if (!d->DICOMDatabase || !d->DICOMIndexer)
+  {
+    qWarning() << Q_FUNC_INFO << " failed: database or indexer is invalid";
+    return;
+  }
+  d->importFiles(files, mode);
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMBrowser::importDirectories(QStringList directories, ctkDICOMBrowser::ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMBrowser);
@@ -957,15 +971,15 @@ void ctkDICOMBrowserPrivate::importDirectory(QString directory, ctkDICOMBrowser:
   {
     return;
   }
-
-  QString targetDirectory;
-  if (mode == ctkDICOMBrowser::ImportDirectoryCopy)
-  {
-    targetDirectory = this->DICOMDatabase->databaseDirectory();
-  }
-
   // Start background indexing
   this->DICOMIndexer->addDirectory(directory, mode == ctkDICOMBrowser::ImportDirectoryCopy);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowserPrivate::importFiles(const QStringList& files, ctkDICOMBrowser::ImportDirectoryMode mode)
+{
+  // Start background indexing
+  this->DICOMIndexer->addListOfFiles(files, mode == ctkDICOMBrowser::ImportDirectoryCopy);
 }
 
 //----------------------------------------------------------------------------
