@@ -152,13 +152,17 @@ void ctkActionsWidget::addAction(QAction* action, const QString& group)
   for (int i = 0; i < 4; ++i)
     {
     QStandardItem* item = new QStandardItem;
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    item->setData(QVariant::fromValue(qobject_cast<QObject*>(action)));
+    #else
     item->setData(qVariantFromValue(qobject_cast<QObject*>(action)));
+    #endif
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     actionItems << item;
     }
 
   d->updateItems(actionItems, action);
-  
+
   bool expandGroupItem = (actionGroupItem->rowCount() == 0);
   actionGroupItem->appendRow(actionItems);
   // if the group didn't exist yet or was empty, then open/expand it
@@ -273,9 +277,14 @@ void ctkActionsWidget::updateAction()
   Q_D(ctkActionsWidget);
   QAction* action = qobject_cast<QAction*>(this->sender());
   Q_ASSERT(action);
+  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+  QVariant variant = QVariant::fromValue(qobject_cast<QObject*>(action));
+  #else
+  QVariant variant = qVariantFromValue(qobject_cast<QObject*>(action));
+  #endif
   QModelIndexList foundActions =
     d->ActionsModel->match(d->ActionsModel->index(0,0),
-    Qt::UserRole + 1, qVariantFromValue(qobject_cast<QObject*>(action)),
+    Qt::UserRole + 1, variant,
     -1, Qt::MatchExactly | Qt::MatchRecursive);
   Q_ASSERT(foundActions.size());
   foreach (QModelIndex actionIndex, foundActions)
