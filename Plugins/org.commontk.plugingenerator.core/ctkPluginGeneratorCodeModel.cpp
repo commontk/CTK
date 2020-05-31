@@ -167,7 +167,11 @@ void ctkPluginGeneratorCodeModel::addTemplate(ctkPluginGeneratorAbstractTemplate
   else
   {
     ctkPluginGeneratorAbstractTemplate* parentTemplate = 0;
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QStringList paths = path.split("/", Qt::SkipEmptyParts);
+    #else
     QStringList paths = path.split("/", QString::SkipEmptyParts);
+    #endif
     QStringListIterator it(paths);
     if (it.hasNext())
     {
@@ -233,7 +237,11 @@ ctkPluginGeneratorAbstractTemplate* ctkPluginGeneratorCodeModel::getTemplate(con
     return 0;
   }
 
+  #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList paths = path.split("/", Qt::SkipEmptyParts);
+  #else
   QStringList paths = path.split("/", QString::SkipEmptyParts);
+  #endif
   if (paths.empty()) return 0;
 
   QObject* currChild = d->rootTemplates[paths.front()];

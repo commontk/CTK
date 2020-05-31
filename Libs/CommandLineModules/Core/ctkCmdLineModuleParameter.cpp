@@ -33,7 +33,11 @@ ctkCmdLineModuleParameterPrivate::ctkCmdLineModuleParameterPrivate()
 //----------------------------------------------------------------------------
 QStringList ctkCmdLineModuleParameterPrivate::splitAndTrim(const QString& str, const QString& separator)
 {
+  #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList l = str.split(separator, Qt::SkipEmptyParts);
+  #else
   QStringList l = str.split(separator, QString::SkipEmptyParts);
+  #endif
   l.removeDuplicates();
   // trim the strings
   QMutableStringListIterator i(l);

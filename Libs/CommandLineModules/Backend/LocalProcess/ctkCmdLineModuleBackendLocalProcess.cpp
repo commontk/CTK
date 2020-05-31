@@ -91,7 +91,11 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
           QStringList args;
           if (parameter.multiple())
           {
+            #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+            args = valuesIter.value().toString().split(',', Qt::SkipEmptyParts);
+            #else
             args = valuesIter.value().toString().split(',', QString::SkipEmptyParts);
+            #endif
           }
           else
           {

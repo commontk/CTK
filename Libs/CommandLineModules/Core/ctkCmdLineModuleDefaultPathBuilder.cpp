@@ -146,7 +146,11 @@ void ctkCmdLineModuleDefaultPathBuilderPrivate::addCtkModuleLoadPath()
     QString pathSeparator(":");
 #endif
 
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QStringList splitPath = paths.split(pathSeparator, Qt::SkipEmptyParts);
+    #else
     QStringList splitPath = paths.split(pathSeparator, QString::SkipEmptyParts);
+    #endif
 
     foreach (QString path, splitPath)
     {
