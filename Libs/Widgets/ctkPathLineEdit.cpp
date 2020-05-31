@@ -24,8 +24,8 @@
 #include <QComboBox>
 #include <QCompleter>
 #include <QDebug>
-#include <QDirModel>
 #include <QFileDialog>
+#include <QFileSystemModel>
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QRegExp>
@@ -255,10 +255,10 @@ void ctkPathLineEditPrivate::updateFilter()
   Q_Q(ctkPathLineEdit);
   // help completion for the QComboBox::QLineEdit
   QCompleter *newCompleter = new QCompleter(q);
-  newCompleter->setModel(new QDirModel(
-                           ctk::nameFiltersToExtensions(this->NameFilters),
-                           this->Filters | QDir::NoDotAndDotDot | QDir::AllDirs,
-                           QDir::Name|QDir::DirsLast, newCompleter));
+  QFileSystemModel *newmodel = new QFileSystemModel();
+  newmodel->setNameFilters(ctk::nameFiltersToExtensions(this->NameFilters));
+  newmodel->setFilter(this->Filters | QDir::NoDotAndDotDot | QDir::AllDirs);
+  newCompleter->setModel(newmodel);
   this->LineEdit->setCompleter(newCompleter);
 
   QObject::connect(this->LineEdit->completer()->completionModel(), SIGNAL(layoutChanged()),
