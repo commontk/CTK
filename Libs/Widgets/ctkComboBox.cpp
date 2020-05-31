@@ -109,16 +109,6 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
             }
           }
         break;
-      case QComboBox::AdjustToMinimumContentsLength:
-        if ((count == 0 || this->ForceDefault) && !this->DefaultIcon.isNull())
-          {
-          hasIcon = true;
-          }
-        for (int i = 0; i < count && !hasIcon; ++i)
-          {
-          hasIcon = !q->itemIcon(i).isNull();
-          }
-        break;
       case QComboBox::AdjustToMinimumContentsLengthWithIcon:
         hasIcon = true;
         break;
