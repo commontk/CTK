@@ -131,7 +131,11 @@ int ctkPythonConsoleCompleter::cursorOffset(const QString& completion)
         break;
         }
       }
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QStringList lineSplit = currentCompletionText.split(".", Qt::KeepEmptyParts);
+    #else
     QStringList lineSplit = currentCompletionText.split(".", QString::KeepEmptyParts);
+    #endif
     QString functionName = lineSplit.at(lineSplit.length()-1);
     QStringList builtinFunctionPath = QStringList() << "__main__" << "__builtins__";
     QStringList userDefinedFunctionPath = QStringList() << "__main__";
