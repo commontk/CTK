@@ -65,6 +65,13 @@ void ctkDateRangeWidgetPrivate::autoselectRadioButton()
   Q_Q(ctkDateRangeWidget);
   QDate startDate = q->startDateTime().date();
   QDate endDate = q->endDateTime().date();
+  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+  QDateTime startOfDay = q->startDateTime().date().startOfDay();
+  QDateTime endOfDay = q->startDateTime().date().endOfDay();
+  #else
+  QDateTime startOfDay = QDateTime(q->startDateTime().date());
+  QDateTime endOfDay = QDateTime(q->endDateTime().date());
+  #endif
   if (this->ForceSelectRange)
     {
     this->SelectRangeRadioButton->setChecked(true);
@@ -73,8 +80,8 @@ void ctkDateRangeWidgetPrivate::autoselectRadioButton()
     {
     this->AnyDateRadioButton->setChecked(true);
     }
-  else if (q->startDateTime() != QDateTime(q->startDateTime().date()) ||
-           q->endDateTime() != QDateTime(q->endDateTime().date()))
+  else if (q->startDateTime() != startOfDay ||
+           q->endDateTime() != endOfDay)
     {
     this->SelectRangeRadioButton->setChecked(true);
     }
@@ -109,14 +116,14 @@ ctkDateRangeWidget::ctkDateRangeWidget(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new ctkDateRangeWidgetPrivate(*this))
 {
   Q_D(ctkDateRangeWidget);
-  
+
   d->setupUi(this);
 
   d->DateRangeWidget->setVisible(d->SelectRangeRadioButton->isChecked());
 
   this->setDisplayTime(false);
   this->setDateTimeRange(QDateTime(), QDateTime());
-  
+
   // Note that we connect on the clicked() signal and not the toggled.
   // The clicked() signal is fired only when the USER clicks the radio button
   // and not when the button is checked programatically (except using click()).
@@ -192,7 +199,11 @@ void ctkDateRangeWidget::setDateTimeRange(QDateTime startDateTime, QDateTime end
 // --------------------------------------------------------------------------
 void ctkDateRangeWidget::setDateRange(QDate startDate, QDate endDate)
 {
+  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+  this->setDateTimeRange(startDate.startOfDay(), endDate.endOfDay());
+  #else
   this->setDateTimeRange(QDateTime(startDate), QDateTime(endDate));
+  #endif
 }
 
 // --------------------------------------------------------------------------
@@ -264,8 +275,8 @@ void ctkDateRangeWidget::setDisplayTime(bool displayTime)
     {
     d->StartDate->setDisplayFormat( QString( "MMM dd, yyyy HH:mm:ss") );
     d->EndDate->setDisplayFormat( QString( "MMM dd, yyyy HH:mm:ss") );
-    } 
-  else 
+    }
+  else
     {
     d->StartDate->setDisplayFormat( QString( "MMM dd, yyyy") );
     d->EndDate->setDisplayFormat( QString( "MMM dd, yyyy") );
