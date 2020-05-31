@@ -212,14 +212,14 @@ bool ctkBasicLocation::isReadOnly() const
 //----------------------------------------------------------------------------
 bool ctkBasicLocation::set_unlocked(const QUrl& value, bool lock)
 {
-  return this->set_unlocked(value, lock, QString::null);
+  return this->set_unlocked(value, lock, QString());
 }
 
 //----------------------------------------------------------------------------
 bool ctkBasicLocation::set(const QUrl& value, bool lock)
 {
   QWriteLocker l(&this->m_sync);
-  return this->set_unlocked(value, lock, QString::null);
+  return this->set_unlocked(value, lock, QString());
 }
 
 //----------------------------------------------------------------------------
@@ -312,7 +312,7 @@ bool ctkBasicLocation::isLocked() const
 ctkLocation* ctkBasicLocation::createLocation(ctkLocation* parent, const QUrl& defaultValue, bool readOnly)
 {
   QWriteLocker l(&this->m_sync);
-  ctkBasicLocation* result = new ctkBasicLocation(QString::null, defaultValue, readOnly, this->m_dataAreaPrefix);
+  ctkBasicLocation* result = new ctkBasicLocation(QString(), defaultValue, readOnly, this->m_dataAreaPrefix);
   result->m_parent.reset(parent);
   return result;
 }

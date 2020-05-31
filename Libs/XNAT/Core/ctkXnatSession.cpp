@@ -427,7 +427,7 @@ QString ctkXnatSession::version() const
   }
   else
   {
-    return QString::null;
+    return QString();
   }
 }
 

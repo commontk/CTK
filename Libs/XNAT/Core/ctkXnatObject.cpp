@@ -170,7 +170,7 @@ QString ctkXnatObject::property(const QString& name) const
   {
     return iter.value();
   }
-  return QString::null;
+  return QString();
 }
 
 //----------------------------------------------------------------------------

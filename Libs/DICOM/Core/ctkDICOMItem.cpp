@@ -447,7 +447,7 @@ QString ctkDICOMItem::GetAllElementValuesAsString( const DcmTag& tag ) const
 
   DcmElement* element(NULL);
   findAndGetElement(tag, element);
-  if (!element) return QString::null;
+  if (!element) return QString();
 
   const unsigned long count = element->getVM(); // value multiplicity
   for (unsigned long i = 0; i < count; ++i)
@@ -474,7 +474,7 @@ QString ctkDICOMItem::GetElementAsString( const DcmTag& tag, unsigned long pos )
   }
   else
   {
-    return QString::null;
+    return QString();
   }
 }
 
@@ -852,7 +852,7 @@ QString ctkDICOMItem::TranslateDefinedTermPatientPosition( const QString& dt )
   else
   {
     std::cerr << "Invalid enum for patient position" << std::endl;
-    return QString::null;
+    return QString();
   }
 }
 
@@ -938,7 +938,7 @@ QString ctkDICOMItem::TranslateDefinedTermModality( const QString& dt )
   else
   {
     std::cerr << "Invalid enum for patient position" << std::endl;
-    return QString::null;
+    return QString();
   }
 }
 

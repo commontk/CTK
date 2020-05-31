@@ -306,7 +306,7 @@ QString ctkPluginFrameworkDebugOptions::getSymbolicName(const QString& option) c
   int firstSlashIndex = option.indexOf("/");
   if (firstSlashIndex > 0)
     return option.left(firstSlashIndex);
-  return QString::null;
+  return QString();
 }
 
 //----------------------------------------------------------------------------

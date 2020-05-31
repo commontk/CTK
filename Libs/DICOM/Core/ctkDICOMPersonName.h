@@ -40,11 +40,11 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMPersonName
 {
 public:
 
-  ctkDICOMPersonName(const QString& lastName = QString::null,
-              const QString& firstName = QString::null,
-              const QString& middleName = QString::null,
-              const QString& namePrefix = QString::null,
-              const QString& nameSuffix = QString::null);
+  ctkDICOMPersonName(const QString& lastName = QString(),
+              const QString& firstName = QString(),
+              const QString& middleName = QString(),
+              const QString& namePrefix = QString(),
+              const QString& nameSuffix = QString());
 
   ctkDICOMPersonName(const ctkDICOMPersonName& other);
   ctkDICOMPersonName& operator=(const ctkDICOMPersonName& other);

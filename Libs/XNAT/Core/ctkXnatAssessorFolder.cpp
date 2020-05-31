@@ -47,7 +47,7 @@ public:
 
 //----------------------------------------------------------------------------
 ctkXnatAssessorFolder::ctkXnatAssessorFolder(ctkXnatObject* parent)
-  : ctkXnatObject(*new ctkXnatAssessorFolderPrivate(), parent, QString::null)
+  : ctkXnatObject(*new ctkXnatAssessorFolderPrivate(), parent, QString())
 {
   
   this->setProperty(ID, "assessors");
