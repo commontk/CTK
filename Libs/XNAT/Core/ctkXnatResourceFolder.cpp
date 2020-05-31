@@ -45,7 +45,7 @@ public:
 
 //----------------------------------------------------------------------------
 ctkXnatResourceFolder::ctkXnatResourceFolder(ctkXnatObject* parent)
-  : ctkXnatObject(*new ctkXnatResourceFolderPrivate(), parent, QString::null)
+  : ctkXnatObject(*new ctkXnatResourceFolderPrivate(), parent, QString())
 {
   this->setId("resources");
   this->setProperty(LABEL, "Resources");

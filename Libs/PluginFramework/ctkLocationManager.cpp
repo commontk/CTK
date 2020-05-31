@@ -275,7 +275,7 @@ static QString ComputeDefaultUserAreaLocation(const QString& pathAppendage)
   QUrl installURL = BuildUrl(installProperty, true);
   if (!installURL.isValid())
   {
-    return QString::null;
+    return QString();
   }
   QFileInfo installDir(installURL.toLocalFile());
   QString installDirHash = GetInstallDirHash();
@@ -354,17 +354,17 @@ void ctkLocationManager::initializeLocations()
   }
   // do install location initialization first since others may depend on it
   // assumes that the property is already set
-  installLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTALL_AREA, QUrl(), "", true, false, QString::null));
+  installLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTALL_AREA, QUrl(), "", true, false, QString()));
 
   // TODO not sure what the data area prefix should be here for the user area
   QScopedPointer<ctkBasicLocation> temp(BuildLocation(ctkPluginFrameworkLauncher::PROP_USER_AREA_DEFAULT,
-                                                      QUrl(), "", false, false, QString::null));
+                                                      QUrl(), "", false, false, QString()));
   QUrl defaultLocation = temp ? temp->getUrl() : QUrl();
   if (!defaultLocation.isValid())
   {
     defaultLocation = BuildUrl(QFileInfo(QDir(ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_USER_HOME).toString()), "user").absoluteFilePath(), true);
   }
-  userLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_USER_AREA, defaultLocation, "", false, false, QString::null));
+  userLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_USER_AREA, defaultLocation, "", false, false, QString()));
 
   temp.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_INSTANCE_AREA_DEFAULT, QUrl(), "", false, false, INSTANCE_DATA_AREA_PREFIX));
   defaultLocation = temp ? temp->getUrl() : QUrl();
@@ -377,21 +377,21 @@ void ctkLocationManager::initializeLocations()
   //mungeConfigurationLocation();
 
   // compute a default but it is very unlikely to be used since main will have computed everything
-  temp.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_CONFIG_AREA_DEFAULT, QUrl(), "", false, false, QString::null));
+  temp.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_CONFIG_AREA_DEFAULT, QUrl(), "", false, false, QString()));
   defaultLocation = temp ? temp->getUrl() : QUrl();
   if (!defaultLocation.isValid() && ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_CONFIG_AREA).isNull())
   {
     // only compute the default if the configuration area property is not set
     defaultLocation = BuildUrl(ComputeDefaultConfigurationLocation(), true);
   }
-  configurationLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_CONFIG_AREA, defaultLocation, "", false, false, QString::null));
+  configurationLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_CONFIG_AREA, defaultLocation, "", false, false, QString()));
   // get the parent location based on the system property. This will have been set on the
   // way in either by the caller/user or by main.  There will be no parent location if we are not
   // cascaded.
   QUrl parentLocation = ComputeSharedConfigurationLocation();
   if (parentLocation.isValid() && parentLocation != configurationLocation->getUrl())
   {
-    ctkBasicLocation* parent = new ctkBasicLocation(QString::null, parentLocation, true, QString::null);
+    ctkBasicLocation* parent = new ctkBasicLocation(QString(), parentLocation, true, QString());
     configurationLocation->setParent(parent);
   }
   //initializeDerivedConfigurationLocations();
@@ -411,7 +411,7 @@ void ctkLocationManager::initializeLocations()
     ctkPluginFrameworkProperties::setProperty(ctkPluginFrameworkLauncher::PROP_HOME_LOCATION_AREA,
                                               ctkPluginFrameworkProperties::getProperty(ctkPluginFrameworkLauncher::PROP_INSTALL_AREA));
   }
-  ctkHomeLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_HOME_LOCATION_AREA, QUrl(), "", true, true, QString::null));
+  ctkHomeLocation.reset(BuildLocation(ctkPluginFrameworkLauncher::PROP_HOME_LOCATION_AREA, QUrl(), "", true, true, QString()));
 
   isInitialized = true;
 }

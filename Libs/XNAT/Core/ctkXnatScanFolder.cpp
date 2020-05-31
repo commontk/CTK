@@ -48,7 +48,7 @@ public:
 
 //----------------------------------------------------------------------------
 ctkXnatScanFolder::ctkXnatScanFolder(ctkXnatObject* parent)
-  : ctkXnatObject(*new ctkXnatScanFolderPrivate(), parent, QString::null)
+  : ctkXnatObject(*new ctkXnatScanFolderPrivate(), parent, QString())
 {
   this->setId("scans");
   this->setProperty(LABEL, "Scans");
