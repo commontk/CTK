@@ -1075,7 +1075,12 @@ QSize ctkDoubleSpinBox::sizeHint() const
 
   this->ensurePolished(); // ensure we are using the right font
   const QFontMetrics fm(this->fontMetrics());
-  newSizeHint.setWidth(fm.width(s + extraString) + extraWidth);
+  #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
+  int width_in_pixels = fm.horizontalAdvance(s + extraString);
+  #else
+  int width_in_pixels = fm.width(s + extraString);
+  #endif
+  newSizeHint.setWidth(width_in_pixels + extraWidth);
 
   QStyleOptionSpinBox opt;
   d->SpinBox->initStyleOptionSpinBox(&opt);
@@ -1126,7 +1131,12 @@ QSize ctkDoubleSpinBox::minimumSizeHint() const
 
   this->ensurePolished(); // ensure we are using the right font
   const QFontMetrics fm(this->fontMetrics());
-  newSizeHint.setWidth(fm.width(s + extraString) + extraWidth);
+  #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
+  int width_in_pixels = fm.horizontalAdvance(s + extraString);
+  #else
+  int width_in_pixels = fm.width(s + extraString);
+  #endif
+  newSizeHint.setWidth(width_in_pixels + extraWidth);
 
   QStyleOptionSpinBox opt;
   d->SpinBox->initStyleOptionSpinBox(&opt);

@@ -214,7 +214,12 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
         case ctkPathLineEdit::AdjustToContentsOnFirstShow:
           if (this->LineEdit->text().isEmpty())
             {
-            textWidth = 7 * this->LineEdit->fontMetrics().width(QLatin1Char('x'));
+            #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
+            int character_pixel_width = this->LineEdit->fontMetrics().horizontalAdvance(QLatin1Char('x'));
+            #else
+            int character_pixel_width = this->LineEdit->fontMetrics().width(QLatin1Char('x'));
+            #endif
+            textWidth = 7 * character_pixel_width;
             }
           else
             {
@@ -229,7 +234,12 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
 
     if (this->MinimumContentsLength > 0)
       {
-      textWidth = qMax(textWidth, this->MinimumContentsLength * this->LineEdit->fontMetrics().width(QLatin1Char('X')));
+      #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
+      int character_pixel_width = this->LineEdit->fontMetrics().horizontalAdvance(QLatin1Char('X'));
+      #else
+      int character_pixel_width = this->LineEdit->fontMetrics().width(QLatin1Char('X'));
+      #endif
+      textWidth = qMax(textWidth, this->MinimumContentsLength * character_pixel_width);
       }
 
     int height = (this->ComboBox ? this->ComboBox->minimumSizeHint() :
