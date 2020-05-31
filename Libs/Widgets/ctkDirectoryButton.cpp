@@ -286,7 +286,8 @@ void ctkDirectoryButton::browse()
     fileDialog->setOptions(QFlags<QFileDialog::Option>(int(d->DialogOptions)));
   #endif
     fileDialog->setAcceptMode(d->AcceptMode);
-    fileDialog->setFileMode(QFileDialog::DirectoryOnly);
+    fileDialog->setFileMode(QFileDialog::Directory);
+    fileDialog->setOption(QFileDialog::ShowDirsOnly, true);
 
   if (d->AcceptMode == QFileDialog::AcceptSave)
     {

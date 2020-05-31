@@ -171,7 +171,7 @@ void ctkFileDialog::setBottomWidget(QWidget* widget, const QString& label)
     gridLayout->addWidget(widget,4, 0,1, 2);
     }
   // The dialog button box is no longer spanned on 2 rows but on 3 rows if
-  // there is a "bottom widget" 
+  // there is a "bottom widget"
   QDialogButtonBox* buttonBox = this->findChild<QDialogButtonBox*>();
   Q_ASSERT(buttonBox);
   gridLayout->removeWidget(buttonBox);
@@ -276,7 +276,7 @@ void ctkFileDialog::accept()
       }
     }
   // Don't accept read-only directories if we are in AcceptSave mode.
-  if ((this->fileMode() == Directory || this->fileMode() == DirectoryOnly) &&
+  if ((this->fileMode() == Directory) &&
       this->acceptMode() == AcceptSave)
     {
     QStringList files = this->selectedFiles();
