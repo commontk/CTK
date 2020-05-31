@@ -581,7 +581,14 @@ void ctkCoordinatesWidget::updateCoordinate(double coordinate)
     {
     if (d->LastUserEditedCoordinates[i] == element)
       {
+      #if (QT_VERSION >= QT_VERSION_CHECK(5,13,0))
+        if (i >= 0 && i-1 >= 0 && d->LastUserEditedCoordinates.size() > i && d->LastUserEditedCoordinates.size() > i-1)
+          {
+          d->LastUserEditedCoordinates.swapItemsAt(i,i-1);
+          }
+      #else
       d->LastUserEditedCoordinates.swap(i,i-1);
+      #endif
       }
     }
   // What is the oldest coordinate to be edited
