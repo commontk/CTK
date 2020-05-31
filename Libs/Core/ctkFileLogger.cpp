@@ -136,7 +136,11 @@ void ctkFileLogger::logMessage(const QString& msg)
     return;
     }
   QTextStream s(&f);
+  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+  s << msg << Qt::endl;
+  #else
   s << msg << endl;
+  #endif
   f.close();
 }
 

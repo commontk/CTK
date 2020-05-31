@@ -279,10 +279,17 @@ bool ctkEventTranslatorPlayerWidget::compare(const double &actual,
 {
   if (actual != expected)
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QTextStream(stderr, QIODevice::WriteOnly)
+        << "Line " << line << " - Problem with function " << function << "\n"
+        << "\tActual value : '" << actualName << "' = " << actual << " \n"
+        << "\tExpected value : '" << expectedName << "' = " << expected << Qt::endl;
+    #else
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected << endl;
+    #endif
     QApplication::exit(EXIT_FAILURE);
     return false;
     }
@@ -298,10 +305,17 @@ bool ctkEventTranslatorPlayerWidget::compare(const int &actual,
 {
   if (actual != expected)
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QTextStream(stderr, QIODevice::WriteOnly)
+        << "Line " << line << " - Problem with function " << function << "\n"
+        << "\tActual value : '" << actualName << "' = " << actual << " \n"
+        << "\tExpected value : '" << expectedName << "' = " << expected << Qt::endl;
+    #else
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected << endl;
+    #endif
     QApplication::exit(EXIT_FAILURE);
     return false;
     }
@@ -318,10 +332,17 @@ bool ctkEventTranslatorPlayerWidget::compare(const QString& actual,
 {
   if (actual != expected)
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QTextStream(stderr, QIODevice::WriteOnly)
+        << "Line " << line << " - Problem with function " << function << "\n"
+        << "\tActual value : '" << actualName << "' = " << actual << " \n"
+        << "\tExpected value : '" << expectedName << "' = " << expected << Qt::endl;
+    #else
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected << endl;
+    #endif
     QApplication::exit(EXIT_FAILURE);
     return false;
     }
@@ -338,10 +359,17 @@ bool ctkEventTranslatorPlayerWidget::compare(const QStringList& actual,
 {
   if (actual != expected)
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QTextStream(stderr, QIODevice::WriteOnly)
+        << "Line " << line << " - Problem with function " << function << "\n"
+        << "\tActual value : '" << actualName << "' = " << actual.join(" ") << " \n"
+        << "\tExpected value : '" << expectedName << "' = " << expected.join(" ") << Qt::endl;
+    #else
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual.join(" ") << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected.join(" ") << endl;
+    #endif
     QApplication::exit(EXIT_FAILURE);
     return false;
     }
@@ -358,10 +386,17 @@ bool ctkEventTranslatorPlayerWidget::compare(const QDateTime& actual,
 {
   if (actual != expected)
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QTextStream(stderr, QIODevice::WriteOnly)
+        << "Line " << line << " - Problem with function " << function << "\n"
+        << "\tActual value : '" << actualName << "' = " << actual.date().toString() << " \n"
+        << "\tExpected value : '" << expectedName << "' = " << expected.date().toString() << Qt::endl;
+    #else
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual.date().toString() << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected.date().toString() << endl;
+    #endif
     QApplication::exit(EXIT_FAILURE);
     return false;
     }
@@ -378,10 +413,17 @@ bool ctkEventTranslatorPlayerWidget::compare(const QColor& actual,
 {
   if (actual != expected)
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QTextStream(stderr, QIODevice::WriteOnly)
+        << "Line " << line << " - Problem with function " << function << "\n"
+        << "\tActual value : '" << actualName << "' = R:" << actual.red() << " G:"<< actual.green() << " B:" << actual.blue() << "\n"
+        << "\tExpected value : '" << expectedName << "' = R:" << expected.red() << " G:"<< expected.green() << " B:" << expected.blue()<< Qt::endl;
+    #else
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = R:" << actual.red() << " G:"<< actual.green() << " B:" << actual.blue() << "\n"
         << "\tExpected value : '" << expectedName << "' = R:" << expected.red() << " G:"<< expected.green() << " B:" << expected.blue()<< endl;
+    #endif
     QApplication::exit(EXIT_FAILURE);
     return false;
     }
@@ -406,18 +448,30 @@ bool ctkEventTranslatorPlayerWidget::compare(const QImage& actual,
   // images are not the same if one images contains a null image
   if (actual.isNull() || expected.isNull())
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QTextStream(stderr, QIODevice::WriteOnly)
+        << "Line " << line << " - 1 image is Null " << function << "\n" << Qt::endl;
+    #else
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - 1 image is Null " << function << "\n" << endl;
+    #endif
     QApplication::exit(EXIT_FAILURE);
     return false;
     }
   // images do not have the same size
   if (actual.size() != expected.size())
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QTextStream(stderr, QIODevice::WriteOnly)
+        << "Line " << line << " - The 2 Images don't have the same size " << function << "\n"
+        << "\tActual value : '" << actualName << "' = W:" << actual.width() << " H:"<< actual.height() << "\n"
+        << "\tExpected value : '" << expectedName << "' = W:" << expected.width() << " H:"<< expected.height() << Qt::endl;
+    #else
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - The 2 Images don't have the same size " << function << "\n"
         << "\tActual value : '" << actualName << "' = W:" << actual.width() << " H:"<< actual.height() << "\n"
         << "\tExpected value : '" << expectedName << "' = W:" << expected.width() << " H:"<< expected.height() << endl;
+    #endif
     QApplication::exit(EXIT_FAILURE);
     return false;
     }
@@ -444,9 +498,15 @@ bool ctkEventTranslatorPlayerWidget::compare(const QImage& actual,
   totaldiff = (totaldiff * 100)  / (a.width() * a.height());
   if (totaldiff >= 0.01)
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    QTextStream(stderr, QIODevice::WriteOnly)
+        << "Line " << line << " - The 2 Images have "
+        << totaldiff << "% differencies \n" << Qt::endl;
+    #else
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - The 2 Images have "
         << totaldiff << "% differencies \n" << endl;
+    #endif
     QApplication::exit(EXIT_FAILURE);
     return false;
     }
