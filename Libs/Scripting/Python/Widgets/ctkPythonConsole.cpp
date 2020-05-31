@@ -195,7 +195,11 @@ int ctkPythonConsoleCompleter::parameterCountBuiltInFunction(const QString& pyth
         {
         QString docString = PyString_AsString(pDoc);
         QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        QStringList arguments = argumentExtract.split(",", Qt::SkipEmptyParts);
+        #else
         QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
+        #endif
         parameterCount = arguments.count();
         }
       Py_DECREF(pDoc);
@@ -271,7 +275,11 @@ int ctkPythonConsoleCompleter::parameterCountFromDocumentation(const QString& py
         {
         QString docString = PyString_AsString(pDoc);
         QString argumentExtract = docString.mid(docString.indexOf("(")+1, docString.indexOf(")") - docString.indexOf("(")-1);
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        QStringList arguments = argumentExtract.split(",", Qt::SkipEmptyParts);
+        #else
         QStringList arguments = argumentExtract.split(",", QString::SkipEmptyParts);
+        #endif
         parameterCount = arguments.count();
         }
       Py_DECREF(pDoc);

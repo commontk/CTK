@@ -131,7 +131,11 @@ int ctkCmdLineModuleDefaultPathBuilderTest(int argc, char* argv[])
   if (env.contains("CTK_MODULE_LOAD_PATH"))
   {
     QString loadPath = env.value("CTK_MODULE_LOAD_PATH");
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QStringList loadPaths = loadPath.split(pathSeparator, Qt::SkipEmptyParts);
+    #else
     QStringList loadPaths = loadPath.split(pathSeparator, QString::SkipEmptyParts);
+    #endif
 
     foreach (QString path, loadPaths)
     {

@@ -681,7 +681,11 @@ QStringList ctkPluginStorageSQL::findResourcesPath(int archiveKey, const QString
   while (query.next())
   {
     QString currPath = query.value(EBindIndex).toString();
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QStringList components = currPath.split('/', Qt::SkipEmptyParts);
+    #else
     QStringList components = currPath.split('/', QString::SkipEmptyParts);
+    #endif
     if (components.size() == 1)
     {
       paths << components.front();

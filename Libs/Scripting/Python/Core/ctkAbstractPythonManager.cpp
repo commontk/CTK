@@ -460,7 +460,11 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
   QString precedingModule = module;
   PyObject* object = ctkAbstractPythonManager::pythonModule(precedingModule);
   PyObject* prevObject = 0;
+  #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList moduleList = module.split(".", Qt::SkipEmptyParts);
+  #else
   QStringList moduleList = module.split(".", QString::SkipEmptyParts);
+  #endif
 
   foreach(const QString& module, moduleList)
     {

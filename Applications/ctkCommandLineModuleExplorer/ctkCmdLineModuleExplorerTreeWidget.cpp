@@ -134,7 +134,12 @@ void ctkCmdLineModuleExplorerTreeWidget::addModuleItem(const ctkCmdLineModuleRef
 
   QString currentCategories;
   QStandardItem* oldRootItem = NULL;
-  foreach (const QString& category, categories.split('.', QString::SkipEmptyParts))
+  #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList categoryList = categories.split('.', Qt::SkipEmptyParts);
+  #else
+  QStringList categoryList = categories.split('.', QString::SkipEmptyParts);
+  #endif
+  foreach (const QString& category, categoryList)
   {
     currentCategories += (currentCategories.isEmpty() ? QString() : QString(".")) + category;
     QStandardItem* rootItem = TreeWidgetCategories[currentCategories];
@@ -179,7 +184,11 @@ void ctkCmdLineModuleExplorerTreeWidget::removeModuleItem(const ctkCmdLineModule
     categories = CATEGORY_UNKNOWN;
   }
 
+  #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList categoryList = categories.split('.', Qt::SkipEmptyParts);
+  #else
   QStringList categoryList = categories.split('.', QString::SkipEmptyParts);
+  #endif
   while (!categoryList.isEmpty())
   {
     QStandardItem* rootItem = TreeWidgetCategories[categoryList.join(".")];

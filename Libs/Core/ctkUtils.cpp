@@ -100,7 +100,11 @@ QStringList ctk::nameFilterToExtensions(const QString& nameFilter)
     return QStringList();
     }
   QString f = regexp.cap(2);
+  #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  return f.split(QLatin1Char(' '), Qt::SkipEmptyParts);
+  #else
   return f.split(QLatin1Char(' '), QString::SkipEmptyParts);
+  #endif
 }
 
 //-----------------------------------------------------------------------------
