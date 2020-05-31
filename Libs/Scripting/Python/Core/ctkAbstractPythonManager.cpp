@@ -655,7 +655,11 @@ PyObject* ctkAbstractPythonManager::pythonModule(const QString& module)
   PyObject* dict = PyImport_GetModuleDict();
   PyObject* object = 0;
   PyObject* prevObject = 0;
+  #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList moduleList = module.split(".", Qt::KeepEmptyParts);
+  #else
   QStringList moduleList = module.split(".", QString::KeepEmptyParts);
+  #endif
   if (!dict)
     {
     return object;
