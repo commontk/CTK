@@ -82,8 +82,13 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
       case QComboBox::AdjustToContentsOnFirstShow:
         if (count == 0 || this->ForceDefault)
           {
+          #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
+          int character_pixel_width = fm.horizontalAdvance(QLatin1Char('x'));
+          #else
+          int character_pixel_width = fm.width(QLatin1Char('x'));
+          #endif
           sh.rwidth() = this->DefaultText.isEmpty() ?
-            7 * fm.width(QLatin1Char('x')) :
+            7 * character_pixel_width :
             fm.boundingRect(this->DefaultText).width();
           if (!this->DefaultIcon.isNull())
             {
@@ -135,8 +140,13 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
     }
   if (q->minimumContentsLength() > 0)
     {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
+    int character_pixel_width = fm.horizontalAdvance(QLatin1Char('x'));
+    #else
+    int character_pixel_width = fm.width(QLatin1Char('x'));
+    #endif
     sh.setWidth(qMax(sh.width(),
-                     q->minimumContentsLength() * fm.width(QLatin1Char('X'))
+                     q->minimumContentsLength() * character_pixel_width
                      + (hasIcon ? iconSize.width() + 4 : 0)));
     }
 

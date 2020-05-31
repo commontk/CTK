@@ -425,9 +425,14 @@ void ctkSettingsDialog::adjustTreeWidgetToContents()
   Q_D(const ctkSettingsDialog);
 
   d->SettingsTreeWidget->resizeColumnToContents(0);
+  #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
+  int character_pixel_width = d->SettingsTreeWidget->fontMetrics().horizontalAdvance('*');
+  #else
+  int character_pixel_width = d->SettingsTreeWidget->fontMetrics().width('*');
+  #endif
   d->SettingsTreeWidget->setFixedWidth(
       qobject_cast<QAbstractItemView*>(d->SettingsTreeWidget)->sizeHintForColumn(0) +
-      d->SettingsTreeWidget->fontMetrics().width('*') +
+      character_pixel_width +
       d->SettingsTreeWidget->indentation() / 2+
       2 * d->SettingsTreeWidget->frameWidth());
 }
