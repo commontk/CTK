@@ -150,6 +150,16 @@ ctkAddRemoveComboBox::~ctkAddRemoveComboBox()
 void ctkAddRemoveComboBox::printAdditionalInfo()
 {
   Q_D(ctkAddRemoveComboBox);
+  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+    qDebug() << "ctkAddRemoveComboBox:" << this << Qt::endl
+           << " EmptyText:" << d->EmptyText << Qt::endl
+           << " AddingEmptyItem:" << d->AddingEmptyItem << Qt::endl
+           << " RemovingEmptyItem:" << d->RemovingEmptyItem << Qt::endl
+           << " AddEnabled:" << d->AddEnabled << Qt::endl
+           << " RemoveEnabled:" << d->RemoveEnabled << Qt::endl
+           << " EditEnabled:" << d->EditEnabled << Qt::endl
+           << " HasEmptyItem:" << d->HasEmptyItem;
+  #else
   qDebug() << "ctkAddRemoveComboBox:" << this << endl
            << " EmptyText:" << d->EmptyText << endl
            << " AddingEmptyItem:" << d->AddingEmptyItem << endl
@@ -158,6 +168,7 @@ void ctkAddRemoveComboBox::printAdditionalInfo()
            << " RemoveEnabled:" << d->RemoveEnabled << endl
            << " EditEnabled:" << d->EditEnabled << endl
            << " HasEmptyItem:" << d->HasEmptyItem;
+  #endif
 }
 
 // --------------------------------------------------------------------------

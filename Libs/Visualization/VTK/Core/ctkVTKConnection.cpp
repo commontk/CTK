@@ -249,6 +249,19 @@ vtkObject* ctkVTKConnection::vtkobject() const
 QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection)
 {
   const ctkVTKConnectionPrivate* d = connection.d_func();
+  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+  dbg.nospace() << "ctkVTKConnection:" << &connection << Qt::endl
+                << "Id:" << d->Id << Qt::endl
+                << " VTKObject:" << (d->VTKObject ? d->VTKObject->GetClassName() : "<null>")
+                << "(" << d->VTKObject << ")" << Qt::endl
+                << " QtObject:" << d->QtObject << Qt::endl
+                << " VTKEvent:" << d->VTKEvent << Qt::endl
+                << " QtSlot:" << d->QtSlot << Qt::endl
+                << " SlotType:" << d->SlotType << Qt::endl
+                << " Priority:" << d->Priority << Qt::endl
+                << " Connected:" << d->Connected << Qt::endl
+                << " Blocked:" << d->Blocked;
+  #else
   dbg.nospace() << "ctkVTKConnection:" << &connection << endl
                 << "Id:" << d->Id << endl
                 << " VTKObject:" << (d->VTKObject ? d->VTKObject->GetClassName() : "<null>")
@@ -260,6 +273,7 @@ QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection)
                 << " Priority:" << d->Priority << endl
                 << " Connected:" << d->Connected << endl
                 << " Blocked:" << d->Blocked;
+  #endif
   return dbg.space();
 }
 
