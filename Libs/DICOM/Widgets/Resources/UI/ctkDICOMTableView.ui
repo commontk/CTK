@@ -88,9 +88,6 @@
    </item>
    <item>
     <widget class="QTableView" name="tblDicomDatabaseView">
-     <property name="styleSheet">
-      <string notr="true">font: 75 10pt &quot;Lucida Grande&quot;;</string>
-     </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>

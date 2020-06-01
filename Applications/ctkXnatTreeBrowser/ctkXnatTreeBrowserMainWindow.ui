@@ -90,10 +90,6 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QLabel" name="downloadLabel">
-        <property name="styleSheet">
-         <string notr="true">color: rgb(64, 64, 64);
-font: 75 10pt &quot;Lucida Grande&quot;;</string>
-        </property>
         <property name="text">
          <string>Select a xnat file, resource, scan, or scan folder to download...</string>
         </property>
