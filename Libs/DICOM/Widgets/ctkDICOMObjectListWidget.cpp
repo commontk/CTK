@@ -387,10 +387,7 @@ void ctkDICOMObjectListWidget::onFilterChanged()
   if (showWarning)
     {
     palette.setColor(QPalette::Base, Qt::yellow);
-    }
-  else
-    {
-    palette.setColor(QPalette::Base, Qt::white);
+    palette.setColor(QPalette::Text, Qt::black);
     }
   d->metadataSearchBox->setPalette(palette);
 }

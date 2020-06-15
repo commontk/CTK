@@ -51,7 +51,7 @@
    <item>
     <widget class="QFrame" name="DatabaseDirectoryProblemFrame">
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(245, 245, 170);</string>
+      <string notr="true">color: rgb(0, 0, 0);background-color: rgb(245, 245, 170);</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>

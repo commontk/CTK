@@ -142,10 +142,7 @@ void ctkDICOMTableViewPrivate::showFilterActiveWarning(bool showWarning)
   if (showWarning)
   {
     palette.setColor(QPalette::Base,Qt::yellow);
-  }
-  else
-  {
-    palette.setColor(QPalette::Base,Qt::white);
+    palette.setColor(QPalette::Text, Qt::black);
   }
   this->leSearchBox->setPalette(palette);
 }

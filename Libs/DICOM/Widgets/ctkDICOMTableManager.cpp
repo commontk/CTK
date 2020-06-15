@@ -175,10 +175,7 @@ void ctkDICOMTableManagerPrivate::showFilterActiveWarning(ctkSearchBox* searchBo
   if (showWarning)
   {
     palette.setColor(QPalette::Base, Qt::yellow);
-  }
-  else
-  {
-    palette.setColor(QPalette::Base, Qt::white);
+    palette.setColor(QPalette::Text, Qt::black);
   }
   searchBox->setPalette(palette);
 }
