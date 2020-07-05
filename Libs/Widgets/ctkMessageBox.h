@@ -95,6 +95,8 @@ public Q_SLOTS:
   /// Change the checkbox and the settings if any
   void setDontShowAgain(bool dontShow);
 
+  void onFinished(int resultCode);
+
 protected:
   QScopedPointer<ctkMessageBoxPrivate> d_ptr;
 
