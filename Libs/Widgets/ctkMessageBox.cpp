@@ -80,6 +80,13 @@ void ctkMessageBoxPrivate::init()
   this->DontShowAgainCheckBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   this->DontShowAgainCheckBox->setChecked(false);
   this->DontShowAgainCheckBox->hide();
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5,12,0))
+  // QMessageBox::done(int) is not called after Qt-5.12
+  // (see https://bugreports.qt.io/browse/QTBUG-74699),
+  // but onFinished(int) signal can be used instead.
+  QObject::connect(q, SIGNAL(finished(int)), q, SLOT(onFinished(int)));
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -266,6 +273,22 @@ void ctkMessageBox::setDontShowAgain(bool dontShow)
 
 //-----------------------------------------------------------------------------
 void ctkMessageBox::done(int resultCode)
+{
+  Q_D(ctkMessageBox);
+
+#if (QT_VERSION < QT_VERSION_CHECK(5,12,0))
+  // QMessageBox::done(int) is not called after Qt-5.12
+  // (see https://bugreports.qt.io/browse/QTBUG-74699),
+  // but we keep the previous implementation if earlier
+  // Qt version is used (just to avoid any potential regressions).
+  this->onFinished(resultCode);
+#endif
+
+  this->Superclass::done(resultCode);
+}
+
+//-----------------------------------------------------------------------------
+void ctkMessageBox::onFinished(int resultCode)
 {
   Q_D(ctkMessageBox);
   // Don't save if the button is not an accepting button
