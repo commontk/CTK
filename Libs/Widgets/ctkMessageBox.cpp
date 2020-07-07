@@ -297,8 +297,6 @@ void ctkMessageBox::onFinished(int resultCode)
     {
     d->writeSettings(resultCode);
     }
-
-  this->Superclass::done(resultCode);
 }
 
 //-----------------------------------------------------------------------------
