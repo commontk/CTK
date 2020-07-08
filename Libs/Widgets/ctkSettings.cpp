@@ -59,7 +59,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ctkSettings::ctkSettings(const QString& organization,
                          const QString& application,
                          QObject* parentObject)
-  : QSettings(organization, application, parentObject)
+  : ctkCoreSettings(organization, application, parentObject)
 {
 }
 
@@ -68,7 +68,7 @@ ctkSettings::ctkSettings(QSettings::Scope scope,
                          const QString& organization,
                          const QString& application,
                          QObject* parentObject)
-  : QSettings(scope, organization,application, parentObject)
+  : ctkCoreSettings(scope, organization,application, parentObject)
 {
 }
 
@@ -78,19 +78,19 @@ ctkSettings::ctkSettings(QSettings::Format format,
                          const QString& organization,
                          const QString& application,
                          QObject* parentObject)
-  : QSettings(format, scope, organization, application, parentObject)
+  : ctkCoreSettings(format, scope, organization, application, parentObject)
 {
 }
 
 //-----------------------------------------------------------------------------
 ctkSettings::ctkSettings(const QString& fileName, QSettings::Format format, QObject* parentObject)
-  : QSettings(fileName, format, parentObject)
+  : ctkCoreSettings(fileName, format, parentObject)
 {
 }
 
 //-----------------------------------------------------------------------------
 ctkSettings::ctkSettings(QObject* parentObject)
-  : QSettings(parentObject)
+  : ctkCoreSettings(parentObject)
 {
 }
 

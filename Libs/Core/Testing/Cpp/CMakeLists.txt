@@ -26,6 +26,7 @@ set(KITTests_SRCS
   ctkBooleanMapperTest.cpp
   ctkCallbackTest1.cpp
   ctkCommandLineParserTest1.cpp
+  ctkCoreSettingsTest.cpp
   ctkCoreTestingMacrosTest.cpp
   ctkCoreTestingUtilitiesTest.cpp
   ctkExceptionTest.cpp
@@ -96,6 +97,7 @@ set(Tests_Helpers_MOC_SRCS
 
 set(Tests_Helpers_MOC_CPPS
   ctkBooleanMapperTest.cpp
+  ctkCoreSettingsTest.cpp
   ctkFileLoggerTest.cpp
   ctkLinearValueProxyTest.cpp
   ctkUtilsTest.cpp
@@ -151,6 +153,7 @@ endif()
 SIMPLE_TEST( ctkBooleanMapperTest )
 SIMPLE_TEST( ctkCallbackTest1 )
 SIMPLE_TEST( ctkCommandLineParserTest1 )
+SIMPLE_TEST( ctkCoreSettingsTest )
 SIMPLE_TEST( ctkCoreTestingMacrosTest )
 SIMPLE_TEST( ctkCoreTestingUtilitiesTest )
 SIMPLE_TEST( ctkDependencyGraphTest1 )
