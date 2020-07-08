@@ -56,11 +56,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef __ctkSettings_h
 #define __ctkSettings_h
 
-// Qt includes
-#include <QSettings>
-
 // CTK includes
 #include "ctkWidgetsExport.h"
+#include "ctkCoreSettings.h"
 
 class QDialog;
 class QMainWindow;
@@ -68,7 +66,7 @@ class QMainWindow;
 /// \ingroup Widgets
 /// ctkSettings is a QSettings that additionally can save and restore the 
 /// state (position/size) of QMainWindow and QDialogs.
-class CTK_WIDGETS_EXPORT ctkSettings : public QSettings
+class CTK_WIDGETS_EXPORT ctkSettings : public ctkCoreSettings
 {
   Q_OBJECT
 
