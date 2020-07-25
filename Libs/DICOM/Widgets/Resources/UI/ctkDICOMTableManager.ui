@@ -142,11 +142,6 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">QSplitter::handle {background-color: rgb(200,200,200);}
-QSplitter::handle:horizontal {width: 2px;}
-QSplitter::handle:vertical {height: 2px;}</string>
-     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -156,9 +151,9 @@ QSplitter::handle:vertical {height: 2px;}</string>
      <property name="childrenCollapsible">
       <bool>false</bool>
      </property>
-     <widget class="ctkDICOMTableView" name="patientsTable" native="true"/>
-     <widget class="ctkDICOMTableView" name="studiesTable" native="true"/>
-     <widget class="ctkDICOMTableView" name="seriesTable" native="true"/>
+     <widget class="ctkDICOMTableView" name="patientsTable"/>
+     <widget class="ctkDICOMTableView" name="studiesTable"/>
+     <widget class="ctkDICOMTableView" name="seriesTable"/>
     </widget>
    </item>
   </layout>
