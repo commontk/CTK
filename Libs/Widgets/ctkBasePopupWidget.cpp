@@ -80,8 +80,8 @@ QGradient* duplicateGradient(const QGradient* gradient)
 ctkBasePopupWidgetPrivate::ctkBasePopupWidgetPrivate(ctkBasePopupWidget& object)
   :q_ptr(&object)
 {
-  this->Effect = ctkBasePopupWidget::ScrollEffect;
-  this->EffectDuration = 333; // in ms
+  this->Effect = ctkBasePopupWidget::FadeEffect;
+  this->EffectDuration = 30; // in ms
   this->EffectAlpha = 1.;
   this->AlphaAnimation = 0;
   this->ForcedTranslucent = false;
