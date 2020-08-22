@@ -1413,3 +1413,25 @@ QString ctkConsole::readInputLine()
   return d->commandBuffer();
 }
 
+//-----------------------------------------------------------------------------
+int ctkConsole::maxVisibleCompleterItems() const
+{
+  Q_D(const ctkConsole);
+  if (!this->completer())
+    {
+    return 0;
+    }
+  return this->completer()->maxVisibleItems();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::setMaxVisibleCompleterItems(int count)
+{
+  Q_D(ctkConsole);
+  if (!this->completer())
+    {
+    qWarning() << Q_FUNC_INFO << " failed: invalid completer";
+    return;
+    }
+  this->completer()->setMaxVisibleItems(count);
+}
