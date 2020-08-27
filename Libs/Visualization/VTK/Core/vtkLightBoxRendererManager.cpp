@@ -106,11 +106,7 @@ RenderWindowItem::RenderWindowItem(const double rendererBackgroundColor[3],
 //-----------------------------------------------------------------------------
 RenderWindowItem::~RenderWindowItem()
 {
-#if (VTK_MAJOR_VERSION <= 5)
-  this->ImageMapper->SetInput(0);
-#else
   this->ImageMapper->SetInputConnection(0);
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -136,11 +132,6 @@ void RenderWindowItem::SetupImageMapperActor(double colorWindow, double colorLev
   this->ImageActor = vtkSmartPointer<vtkActor2D>::New();
   this->ImageActor->SetMapper(this->ImageMapper);
   this->ImageActor->GetProperty()->SetDisplayLocationToBackground();
-
-  // .. and add it to the renderer
-#if VTK_MAJOR_VERSION <= 5
-  this->Renderer->AddActor2D(this->ImageActor.GetPointer());
-#endif
 }
 
 //---------------------------------------------------------------------------
@@ -201,15 +192,9 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   coordinate->SetViewport(this->Renderer);
 
   vtkNew<vtkPolyDataMapper2D> polyDataMapper;
-#if VTK_MAJOR_VERSION <= 5
-  polyDataMapper->SetInput(poly.GetPointer());
-#else
   polyDataMapper->SetInputData(poly.GetPointer());
-#endif
   polyDataMapper->SetTransformCoordinate(coordinate.GetPointer());
-  #if ! (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION == 8)
-    polyDataMapper->SetTransformCoordinateUseDouble(true);
-  #endif
+  polyDataMapper->SetTransformCoordinateUseDouble(true);
 
   this->HighlightedBoxActor = vtkSmartPointer<vtkActor2D>::New();
   this->HighlightedBoxActor->SetMapper(polyDataMapper.GetPointer());
@@ -219,10 +204,6 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   this->HighlightedBoxActor->GetProperty()->SetDisplayLocationToForeground();
   this->HighlightedBoxActor->GetProperty()->SetLineWidth(1.0f);
   this->HighlightedBoxActor->SetVisibility(visible);
-
-#if VTK_MAJOR_VERSION <= 5
-  this->Renderer->AddActor2D(this->HighlightedBoxActor);
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -257,12 +238,7 @@ public:
   vtkWeakPointer<vtkRenderWindowInteractor>     CurrentInteractor;
   vtkSmartPointer<vtkCornerAnnotation>          CornerAnnotation;
   std::string                                   CornerAnnotationText;
-
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkWeakPointer<vtkImageData>                  ImageData;
-#else
   vtkWeakPointer<vtkAlgorithmOutput>            ImageDataConnection;
-#endif
   double                                        ColorWindow;
   double                                        ColorLevel;
   double                                        RendererBackgroundColor[3];
@@ -418,9 +394,6 @@ void vtkLightBoxRendererManager::vtkInternal::updateRenderWindowItemsZIndex(int 
 void vtkLightBoxRendererManager::vtkInternal
 ::SetItemInput(RenderWindowItem* item)
 {
-#if (VTK_MAJOR_VERSION <= 5)
-  item->ImageMapper->SetInput(this->ImageData);
-#else
   item->ImageMapper->SetInputConnection(this->ImageDataConnection);
   bool hasViewProp = item->Renderer->HasViewProp(item->ImageActor);
   if (!hasViewProp)
@@ -431,7 +404,6 @@ void vtkLightBoxRendererManager::vtkInternal
     item->Renderer->AddActor2D(item->HighlightedBoxActor);
     }
   item->ImageActor->SetVisibility(this->ImageDataConnection != NULL);
-#endif
 }
 
 //---------------------------------------------------------------------------
@@ -506,27 +478,15 @@ bool vtkLightBoxRendererManager::IsInitialized()
 }
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkLightBoxRendererManager::SetImageData(vtkImageData* newImageData)
-#else
 void vtkLightBoxRendererManager::SetImageDataConnection(vtkAlgorithmOutput* newImageDataConnection)
-#endif
 {
   if (!this->IsInitialized())
     {
-#if (VTK_MAJOR_VERSION <= 5)
-    vtkErrorMacro(<< "SetImageData failed - vtkLightBoxRendererManager is NOT initialized");
-#else
     vtkErrorMacro(<< "SetImageDataConnection failed - vtkLightBoxRendererManager is NOT initialized");
-#endif
     return;
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  this->Internal->ImageData = newImageData;
-#else
   this->Internal->ImageDataConnection = newImageDataConnection;
-#endif
 
   vtkInternal::RenderWindowItemListIt it;
   for(it = this->Internal->RenderWindowItemList.begin();
@@ -536,11 +496,7 @@ void vtkLightBoxRendererManager::SetImageDataConnection(vtkAlgorithmOutput* newI
     this->Internal->SetItemInput(*it);
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  if (newImageData)
-#else
   if (newImageDataConnection)
-#endif
     {
     this->Internal->updateRenderWindowItemsZIndex(this->Internal->RenderWindowLayoutType);
     }
@@ -643,11 +599,7 @@ void vtkLightBoxRendererManager::SetRenderWindowLayoutType(int layoutType)
     return;
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  if (this->Internal->ImageData)
-#else
   if (this->Internal->ImageDataConnection)
-#endif
     {
     this->Internal->updateRenderWindowItemsZIndex(layoutType);
     }
@@ -722,11 +674,7 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
   this->Internal->setupRendering();
   this->Internal->SetupCornerAnnotation();
 
-#if (VTK_MAJOR_VERSION <= 5)
-  if (this->Internal->ImageData)
-#else
   if (this->Internal->ImageDataConnection)
-#endif
     {
     this->Internal->updateRenderWindowItemsZIndex(this->Internal->RenderWindowLayoutType);
     }

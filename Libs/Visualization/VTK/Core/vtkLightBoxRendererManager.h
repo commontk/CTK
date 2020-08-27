@@ -53,11 +53,7 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
   vtkRenderWindow* GetRenderWindow();
 
   /// Set image data
-#if (VTK_MAJOR_VERSION <= 5)
-  void SetImageData(vtkImageData* newImageData);
-#else
   void SetImageDataConnection(vtkAlgorithmOutput* newImageDataConnection);
-#endif
 
   /// Get active camera
   /// Note that the same camera is used with all the renderWindowItem

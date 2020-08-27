@@ -132,19 +132,11 @@ void ctkVTKSliceView::resetCamera()
 }
 
 //----------------------------------------------------------------------------
-#if (VTK_MAJOR_VERSION <= 5)
-void ctkVTKSliceView::setImageData(vtkImageData* newImageData)
-{
-  Q_D(ctkVTKSliceView);
-  d->LightBoxRendererManager->SetImageData(newImageData);
-}
-#else
 void ctkVTKSliceView::setImageDataConnection(vtkAlgorithmOutput* newImageDataPort)
 {
   Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetImageDataConnection(newImageDataPort);
 }
-#endif
 
 //----------------------------------------------------------------------------
 vtkCornerAnnotation * ctkVTKSliceView::overlayCornerAnnotation()const

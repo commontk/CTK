@@ -88,31 +88,19 @@ int ctkVTKChartViewTest1(int argc, char * argv [] )
 
   // Add multiple line plots, setting the colors etc
   vtkPlotBar* bar = vtkPlotBar::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  bar->SetInput(table.GetPointer(), 0, 1);
-#else
   bar->SetInputData(table.GetPointer(), 0, 1);
-#endif
   bar->SetColor(0, 255, 0, 255);
   view.addPlot(bar);
   bar->Delete();
 
   bar = vtkPlotBar::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  bar->SetInput(table.GetPointer(), 0, 2);
-#else
   bar->SetInputData(table.GetPointer(), 0, 2);
-#endif
   bar->SetColor(255, 0, 0, 255);
   view.addPlot(bar);
   bar->Delete();
 
   bar = vtkPlotBar::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  bar->SetInput(table.GetPointer(), 0, 3);
-#else
   bar->SetInputData(table.GetPointer(), 0, 3);
-#endif
   bar->SetColor(0, 0, 255, 255);
   view.addPlot(bar);
   bar->Delete();
