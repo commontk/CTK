@@ -93,13 +93,8 @@ int ctkVTKSliceViewTest2(int argc, char * argv [] )
 
   // Read image
   imageReader->SetFileName(imageFilename.toUtf8());
-#if (VTK_MAJOR_VERSION <= 5)
-  imageReader->Update();
-  vtkImageData* image = imageReader->GetOutput();
-#else
   imageReader->Update(); // XXX This shouldn't be needed. See issue #467
   vtkAlgorithmOutput* imagePort = imageReader->GetOutputPort();
-#endif
 
   // Top level widget
   QWidget widget;
@@ -132,11 +127,7 @@ int ctkVTKSliceViewTest2(int argc, char * argv [] )
   ctkVTKSliceView * sliceView = new ctkVTKSliceView;
   sliceView->setRenderEnabled(true);
   sliceView->setMinimumSize(600, 600);
-#if (VTK_MAJOR_VERSION <= 5)
-  sliceView->setImageData(image);
-#else
   sliceView->setImageDataConnection(imagePort);
-#endif
   sliceView->setHighlightedBoxColor(QColor(Qt::yellow));
   sliceView->lightBoxRendererManager()->SetRenderWindowLayout(defaultRowCount, defaultColumnCount);
   sliceView->lightBoxRendererManager()->SetHighlighted(0, 0, true);

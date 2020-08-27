@@ -100,12 +100,8 @@ public Q_SLOTS:
   void resetCamera();
 
   /// Set image data
-  /// \sa vtkLightBoxRendererManager::SetImageData
-#if (VTK_MAJOR_VERSION <= 5)
-  void setImageData(vtkImageData* newImageData);
-#else
+  /// \sa vtkLightBoxRendererManager::SetImageDataConnection
   void setImageDataConnection(vtkAlgorithmOutput* newImageDataPort);
-#endif
 
   /// Set highlightedBox color
   /// \sa vtkLightBoxRendererManager::SetHighlightedBoxColor
