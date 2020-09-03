@@ -25,7 +25,7 @@
 #include <QIcon>
 #include <QImage>
 #include <QLabel>
-#include <QPixmap.h>
+#include <QPixmap>
 #include <QStyle>
 #include <QTimer>
 #include <QVBoxLayout>
