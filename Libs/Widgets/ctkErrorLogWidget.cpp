@@ -316,10 +316,28 @@ void ctkErrorLogWidget::onSelectionChanged(const QItemSelection & selected,
 
   foreach(const QModelIndex& index, selectedRows)
     {
-    descriptions << index.data(ctkErrorLogModel::DescriptionTextRole).toString();
+    QString logLevelString = index.sibling(index.row(), 2).data().toString();
+    QString color;
+    if (logLevelString == "Error" || logLevelString == "Critical")
+    {
+      QPalette pal = this->palette();
+      color = pal.color(QPalette::BrightText).name();
+    }
+    else if (logLevelString == "Warning")
+    {
+      color = "orange";
+    }
+    QString descriptionString = index.data(ctkErrorLogModel::DescriptionTextRole).toString();
+    descriptionString = descriptionString.replace("&", "&amp;");
+    descriptionString = descriptionString.replace("<", "&lt;");
+    descriptionString = descriptionString.replace(">", "&gt;");
+    descriptionString = descriptionString.replace("\r", "<br />");
+    descriptionString = descriptionString.replace("\n", "<br />");
+    QString htmlString = "<span style=\"color:" + color + ";\">" + descriptionString + "</span>";
+    descriptions << htmlString;
     }
 
-  d->ErrorLogDescription->setText(descriptions.join("\n"));
+  d->ErrorLogDescription->setText(descriptions.join("<br />"));
 
   // fprintf(stdout, "onSelectionChanged: %d\n", start.msecsTo(QTime::currentTime()));
 }
