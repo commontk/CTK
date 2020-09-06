@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QAbstractItemModel>
 #include <QStandardItemModel>
+#include <QAbstractScrollArea>
 
 // CTK includes
 #include "ctkErrorLogWidget.h"
@@ -64,10 +65,14 @@ void ctkErrorLogWidgetPrivate::init()
   Q_Q(ctkErrorLogWidget);
 
   // this->ShowAllEntryButton->setIcon();
+  this->ConsoleModeButton->setIcon(q->style()->standardIcon(QStyle::SP_FileDialogDetailedView));
   this->ShowErrorEntryButton->setIcon(q->style()->standardIcon(QStyle::SP_MessageBoxCritical));
   this->ShowWarningEntryButton->setIcon(q->style()->standardIcon(QStyle::SP_MessageBoxWarning));
   this->ShowInfoEntryButton->setIcon(q->style()->standardIcon(QStyle::SP_MessageBoxInformation));
   this->ClearButton->setIcon(q->style()->standardIcon(QStyle::SP_DialogDiscardButton));
+
+  QObject::connect(this->ConsoleModeButton, SIGNAL(clicked(bool)),
+                   q, SLOT(setConsoleModeEnabled(bool)));
 
   QObject::connect(this->ShowAllEntryButton, SIGNAL(clicked()),
                    q, SLOT(setAllEntriesVisible()));
@@ -83,6 +88,10 @@ void ctkErrorLogWidgetPrivate::init()
 
   QObject::connect(this->ClearButton, SIGNAL(clicked()),
                    q, SLOT(removeEntries()));
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
+  this->ErrorLogDescription->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -187,6 +196,22 @@ void ctkErrorLogWidget::setColumnHidden(int columnId, bool hidden) const
 }
 
 // --------------------------------------------------------------------------
+void ctkErrorLogWidget::setConsoleModeEnabled(bool enabled)
+{
+  Q_D(const ctkErrorLogWidget);
+  d->ErrorLogTableView->setHidden(enabled);
+  if (enabled)
+    {
+    d->ErrorLogTableView->selectAll();
+    }
+  else
+    {
+    d->ErrorLogTableView->clearSelection();
+    }
+
+}
+
+// --------------------------------------------------------------------------
 void ctkErrorLogWidget::setAllEntriesVisible(bool visibility)
 {
   this->setErrorEntriesVisible(visibility);
@@ -247,6 +272,10 @@ void ctkErrorLogWidget::onRowsInserted(const QModelIndex &/*parent*/, int /*firs
     {
     // For performance reason, resize first column only when first entry is added
     d->ErrorLogTableView->resizeColumnToContents(ctkErrorLogModel::TimeColumn);
+    }
+  if (d->ConsoleModeButton->isChecked())
+    {
+    d->ErrorLogTableView->selectAll();
     }
 }
 

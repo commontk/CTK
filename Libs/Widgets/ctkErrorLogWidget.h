@@ -50,6 +50,8 @@ public:
   Q_INVOKABLE void setColumnHidden(int columnId, bool hidden) const;
 
 public Q_SLOTS:
+  void setConsoleModeEnabled(bool enabled);
+
   void setAllEntriesVisible(bool visibility = true);
 
   void setErrorEntriesVisible(bool visibility);
@@ -57,7 +59,7 @@ public Q_SLOTS:
   void setWarningEntriesVisible(bool visibility);
 
   void setInfoEntriesVisible(bool visibility);
-  
+
   void setUnknownEntriesVisible(bool visibility);
 
 protected Q_SLOTS:
