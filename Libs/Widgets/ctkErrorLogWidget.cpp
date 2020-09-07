@@ -23,6 +23,7 @@
 #include <QAbstractItemModel>
 #include <QStandardItemModel>
 #include <QAbstractScrollArea>
+#include <QScrollBar>
 
 // CTK includes
 #include "ctkErrorLogWidget.h"
@@ -203,6 +204,7 @@ void ctkErrorLogWidget::setConsoleModeEnabled(bool enabled)
   if (enabled)
     {
     d->ErrorLogTableView->selectAll();
+    d->ErrorLogDescription->verticalScrollBar()->setValue(d->ErrorLogDescription->verticalScrollBar()->maximum());
     }
   else
     {
@@ -276,6 +278,7 @@ void ctkErrorLogWidget::onRowsInserted(const QModelIndex &/*parent*/, int /*firs
   if (d->ConsoleModeButton->isChecked())
     {
     d->ErrorLogTableView->selectAll();
+    d->ErrorLogDescription->verticalScrollBar()->setValue(d->ErrorLogDescription->verticalScrollBar()->maximum());
     }
 }
 
