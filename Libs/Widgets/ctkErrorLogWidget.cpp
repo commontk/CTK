@@ -93,6 +93,8 @@ void ctkErrorLogWidgetPrivate::init()
 #if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
   this->ErrorLogDescription->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 #endif
+
+  this->ShowAllEntryButton->setVisible(false);  // minimize the default width of the widget
 }
 
 // --------------------------------------------------------------------------
