@@ -266,6 +266,90 @@ void ctkErrorLogWidget::setUnknownEntriesVisible(bool visibility)
       /* disableFilter= */ !visibility);
 }
 
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setConsoleModeButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ConsoleModeButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isConsoleModeButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ConsoleModeButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setAllEntryButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ShowAllEntryButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isAllEntryButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ShowAllEntryButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setErrorEntryButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ShowErrorEntryButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isErrorEntryButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ShowErrorEntryButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setWarningEntryButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ShowWarningEntryButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isWarningEntryButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ShowWarningEntryButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setInfoEntryButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ShowInfoEntryButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isInfoEntryButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ShowInfoEntryButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setClearButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ClearButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isClearButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ClearButton->isVisible();
+}
+
 // --------------------------------------------------------------------------
 void ctkErrorLogWidget::onRowsInserted(const QModelIndex &/*parent*/, int /*first*/, int /*last*/)
 {

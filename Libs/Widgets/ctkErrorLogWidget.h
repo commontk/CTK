@@ -37,6 +37,12 @@ class QModelIndex;
 class CTK_WIDGETS_EXPORT ctkErrorLogWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool consoleModeButtonVisible READ isConsoleModeButtonVisible WRITE setConsoleModeButtonVisible)
+  Q_PROPERTY(bool allEntryButtonVisible READ isAllEntryButtonVisible WRITE setAllEntryButtonVisible)
+  Q_PROPERTY(bool errorEntryButtonVisible READ isErrorEntryButtonVisible WRITE setErrorEntryButtonVisible)
+  Q_PROPERTY(bool warningEntryButtonVisible READ isWarningEntryButtonVisible WRITE setWarningEntryButtonVisible)
+  Q_PROPERTY(bool infoEntryButtonVisible READ isInfoEntryButtonVisible WRITE setInfoEntryButtonVisible)
+  Q_PROPERTY(bool clearButtonVisible READ isClearButtonVisible WRITE setClearButtonVisible)
 public:
   typedef QWidget Superclass;
   explicit ctkErrorLogWidget(QWidget* parentWidget = 0);
@@ -61,6 +67,36 @@ public Q_SLOTS:
   void setInfoEntriesVisible(bool visibility);
 
   void setUnknownEntriesVisible(bool visibility);
+
+  ///
+  /// This property holds whether the Console Mode button is visible.
+  void setConsoleModeButtonVisible(bool enable);
+  bool isConsoleModeButtonVisible();
+
+  ///
+  /// This property holds whether the All entry button is visible.
+  void setAllEntryButtonVisible(bool enable);
+  bool isAllEntryButtonVisible();
+
+  ///
+  /// This property holds whether the Error entry button is visible.
+  void setErrorEntryButtonVisible(bool enable);
+  bool isErrorEntryButtonVisible();
+
+  ///
+  /// This property holds whether the Warning entry button is visible.
+  void setWarningEntryButtonVisible(bool enable);
+  bool isWarningEntryButtonVisible();
+
+  ///
+  /// This property holds whether the Info entry button is visible.
+  void setInfoEntryButtonVisible(bool enable);
+  bool isInfoEntryButtonVisible();
+
+  ///
+  /// This property holds whether the Clear button is visible.
+  void setClearButtonVisible(bool enable);
+  bool isClearButtonVisible();
 
 protected Q_SLOTS:
   void onRowsInserted(const QModelIndex &parent, int first, int last);
