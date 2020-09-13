@@ -620,7 +620,7 @@ QString ctkLDAPExpr::ParseState::getAttributeName()
     }
   }
   if (n == -1) {
-    return QString()( );
+    return QString();
   }
   return m_str.mid(start, n);
 }
