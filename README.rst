@@ -9,14 +9,15 @@ surgical navigation, and related projects.
 
 See http://commontk.org
 
-
-
 Build Instructions
 ==================
 
-Note when trying to build with Microsoft Visual Studio 2019. It seems due to a bug either in Qt5 or MSVC2019 Platform Toolset the compilation of the PluginFramework triggers an error. After having the intuition to change the toolset version to a lower version it compiled without any errors. The rest of your generated VS solution can use the default Platform Toolset set to MSVC 2019, only the PluginFramework has to be set to a lower version.
+Configure the project using CMake.
 
-The temporary issue/solution at the moment is discussed at the following places:
+For Qt5, specify the followings:
+- `CTK_QT_VERSION`: 5
+- `QT5_DIR`: C:\Qt\5.15.0\msvc2019_64\lib\cmake\Qt5 (or something similar, depending on operating system)
+- `VTK_MODULE_ENABLE_VTK_GUISupportQt`: YES (for enabling VTK widgets)
+- `VTK_MODULE_ENABLE_VTK_ViewsQt`: YES (for enabling VTK view widgets)
 
-https://github.com/commontk/CTK/issues/929
-https://forum.qt.io/topic/117230/qlinkedlist-undefined-external-symbol
+Note: make sure your built toolchain version is compatible with the chosen Qt version. For example if trying to build with Qt-5.12 and Microsoft Visual Studio 2019, then build will fail with the error `error LNK2019: unresolved external symbol "__declspec(dllimport) public: __cdecl QLinkedListData::QLinkedListData(void)"`. The solution is to either change the toolset version to an earlier one (e.g., Visual Studio 2017) or upgrade Qt (e.g., to Qt-5.15.0).
