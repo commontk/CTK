@@ -300,7 +300,7 @@ ctkPathLineEditPrivate::ctkPathLineEditPrivate(ctkPathLineEdit& object)
   , MinimumContentsLength(0)
   , SizeAdjustPolicy(ctkPathLineEdit::AdjustToContentsOnFirstShow)
   , Filters(QDir::AllEntries | QDir::NoDotAndDotDot
-      | QDir::Readable | QDir::Writable | QDir::Executable)
+      | QDir::Readable | QDir::Executable)
   , HasValidInput(false)
 {
 }
