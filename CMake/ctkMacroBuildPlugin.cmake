@@ -371,7 +371,7 @@ macro(ctkMacroBuildPlugin)
     PREFIX "lib"
     )
 
-  if(NOT MY_TEST_PLUGIN AND NOT MY_NO_INSTALL)
+  if(NOT MY_TEST_PLUGIN AND NOT MY_NO_INSTALL AND MY_LIBRARY_TYPE STREQUAL "SHARED")
     # Install rules
     install(TARGETS ${lib_name} EXPORT CTKExports
       RUNTIME DESTINATION ${CTK_INSTALL_PLUGIN_DIR} COMPONENT RuntimePlugins
