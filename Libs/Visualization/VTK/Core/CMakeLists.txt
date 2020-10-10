@@ -15,7 +15,6 @@ else()
     list(APPEND _test_components
       TestingRendering
       CommonSystem
-      ImagingGeneral
       )
   endif()
 
