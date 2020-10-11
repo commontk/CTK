@@ -63,6 +63,11 @@ bool CTK_VISUALIZATION_VTK_WIDGETS_EXPORT qImageToVTKImageData(const QImage& ima
 QImage CTK_VISUALIZATION_VTK_WIDGETS_EXPORT scalarsToColorsImage(
   vtkScalarsToColors* scalarsToColors, const QSize& size = QSize());
 
+///
+/// \ingroup Visualization_VTK_Widgets
+/// Sets the default format for QSurfaceFormat depending on the VTK OpenGL widget implementation.
+void CTK_VISUALIZATION_VTK_WIDGETS_EXPORT vtkSetSurfaceDefaultFormat(void);
+
 }
 
 #endif
