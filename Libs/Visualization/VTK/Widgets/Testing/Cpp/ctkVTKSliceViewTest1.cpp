@@ -26,15 +26,7 @@
 #include "ctkCommandLineParser.h"
 #include "ctkVTKObjectEventsObserver.h"
 #include "ctkVTKSliceView.h"
-
-// VKT includes
-#if CTK_USE_QVTKOPENGLWIDGET
-# if CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-#  include <QVTKOpenGLNativeWidget.h>
-# else
-#  include <QVTKOpenGLWidget.h>
-# endif
-#endif
+#include "ctkVTKWidgetsUtils.h"
 
 // STD includes
 #include <iostream>
@@ -42,15 +34,7 @@
 //-----------------------------------------------------------------------------
 int ctkVTKSliceViewTest1(int argc, char * argv [] )
 {
-#if CTK_USE_QVTKOPENGLWIDGET
-# if CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
-    QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
-# else
-    QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
-# endif
-    format.setSamples(0);
-    QSurfaceFormat::setDefaultFormat(format);
-#endif
+  ctk::vtkSetSurfaceDefaultFormat();
 
   QApplication app(argc, argv);
 

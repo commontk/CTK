@@ -215,3 +215,13 @@ QImage ctk::scalarsToColorsImage(vtkScalarsToColors* scalarsToColors,
 
   return transferFunctionImage;
 }
+
+//----------------------------------------------------------------------------
+void ctk::vtkSetSurfaceDefaultFormat(void)
+{
+#if CTK_USE_QVTKOPENGLWIDGET
+  QSurfaceFormat format = ctkVTKOpenGLNativeWidget::defaultFormat();
+  format.setSamples(0);
+  QSurfaceFormat::setDefaultFormat(format);
+#endif
+}
