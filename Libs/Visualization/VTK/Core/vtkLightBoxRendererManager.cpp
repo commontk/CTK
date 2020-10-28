@@ -131,7 +131,13 @@ void RenderWindowItem::SetupImageMapperActor(double colorWindow, double colorLev
   // .. and its corresponding 2D actor
   this->ImageActor = vtkSmartPointer<vtkActor2D>::New();
   this->ImageActor->SetMapper(this->ImageMapper);
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  // Waiting issue Slicer/Slicer#5220 is resolved, accept that other actors like corner
+  // annotations and crosshairs are occluded and ensure image data is displayed.
+  // See https://github.com/Slicer/Slicer/issues/5220
+#else
   this->ImageActor->GetProperty()->SetDisplayLocationToBackground();
+#endif
 }
 
 //---------------------------------------------------------------------------
