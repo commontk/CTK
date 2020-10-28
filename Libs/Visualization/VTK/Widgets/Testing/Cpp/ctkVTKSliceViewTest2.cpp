@@ -40,7 +40,11 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkLightBoxRendererManager.h>
 #if CTK_USE_QVTKOPENGLWIDGET
-#include <QVTKOpenGLWidget.h>
+# if CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+#  include <QVTKOpenGLNativeWidget.h>
+# else
+#  include <QVTKOpenGLWidget.h>
+# endif
 #endif
 
 // STD includes
@@ -50,7 +54,11 @@
 int ctkVTKSliceViewTest2(int argc, char * argv [] )
 {
 #if CTK_USE_QVTKOPENGLWIDGET
+# if CTK_HAS_QVTKOPENGLNATIVEWIDGET_H
+    QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
+# else
     QSurfaceFormat format = QVTKOpenGLWidget::defaultFormat();
+# endif
     format.setSamples(0);
     QSurfaceFormat::setDefaultFormat(format);
 #endif
