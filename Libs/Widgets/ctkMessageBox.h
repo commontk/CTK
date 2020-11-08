@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QMessageBox>
+#include <QList>
 
 // CTK includes
 #include "ctkWidgetsExport.h"
@@ -46,6 +47,13 @@ class CTK_WIDGETS_EXPORT ctkMessageBox : public QMessageBox
   /// the value of the key.
   /// By default, dontShowAgain is false.
   Q_PROPERTY(bool dontShowAgain READ dontShowAgain WRITE setDontShowAgain)
+  /// This list contains button roles that are saved in dontShowAgain settings
+  /// if dontShowAgain flag is set. By default the choice is only saved if the
+  /// role of the pushed button is QMessageBox::AcceptRole.
+  /// For example, if a message box has Yes, No, and Cancel buttons then it
+  /// QMessageBox::YesRole and QMessageBox::YesRole roles have to be added to the list
+  /// to allow saving yes/no selection in settings.
+  Q_PROPERTY(QList<QMessageBox::ButtonRole> dontShowAgainButtonRoles READ dontShowAgainButtonRoles WRITE setDontShowAgainButtonRoles)
 
   /// This property holds the settings key that is used to synchronize the state
   /// of the checkbox "Don't show this message again"
@@ -78,6 +86,21 @@ public:
 
   void setDontShowAgainVisible(bool visible);
   bool isDontShowAgainVisible()const;
+
+  /// Get the list of button roles that can be saved in settings when
+  /// "Don't show again" checkbox is checked.
+  /// \sa setDontShowAgainButtonRoles(), addDontShowAgainButtonRole()
+  QList<QMessageBox::ButtonRole> dontShowAgainButtonRoles()const;
+
+  /// Set the list of button roles that can be saved in settings when
+  /// "Don't show again" checkbox is checked.
+  /// \sa dontShowAgainButtonRoles(), addDontShowAgainButtonRole()
+  void setDontShowAgainButtonRoles(const QList<QMessageBox::ButtonRole>& roles);
+
+  /// Add one role to the list of button roles that can be saved in settings when
+  /// "Don't show again" checkbox is checked.
+  /// \sa dontShowAgainButtonRoles(), setDontShowAgainButtonRoles()
+  Q_INVOKABLE void addDontShowAgainButtonRole(QMessageBox::ButtonRole role);
 
   /// Utility function that opens a dialog to confirm exit.
   /// If \a dontShowAgainKey is empty, the dontShowAgain checkbox is hidden

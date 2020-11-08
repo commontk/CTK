@@ -28,6 +28,7 @@
 
 // CTK includes
 #include "ctkMessageBox.h"
+#include "ctkPimpl.h"
 
 //-----------------------------------------------------------------------------
 // ctkMessageBoxPrivate methods
@@ -51,7 +52,7 @@ public:
 public:
   QString        DontShowAgainSettingsKey;
   QCheckBox*     DontShowAgainCheckBox;
-  bool           SaveDontShowAgainSettingsOnAcceptOnly;
+  QList<QMessageBox::ButtonRole> DontShowAgainButtonRoles;
 };
 
 //-----------------------------------------------------------------------------
@@ -60,7 +61,7 @@ ctkMessageBoxPrivate::ctkMessageBoxPrivate(ctkMessageBox& object)
 {
   this->DontShowAgainSettingsKey = QString();
   this->DontShowAgainCheckBox = 0;
-  this->SaveDontShowAgainSettingsOnAcceptOnly = true;
+  this->DontShowAgainButtonRoles.append(QMessageBox::AcceptRole);
 }
 
 //-----------------------------------------------------------------------------
@@ -170,6 +171,9 @@ void ctkMessageBoxPrivate::writeSettings(int button)
 
 //-----------------------------------------------------------------------------
 // ctkMessageBox methods
+
+CTK_GET_CPP(ctkMessageBox, QList<QMessageBox::ButtonRole>, dontShowAgainButtonRoles, DontShowAgainButtonRoles;);
+CTK_SET_CPP(ctkMessageBox, const QList<QMessageBox::ButtonRole>&, setDontShowAgainButtonRoles, DontShowAgainButtonRoles);
 
 //-----------------------------------------------------------------------------
 ctkMessageBox::ctkMessageBox(QWidget* newParent)
@@ -292,8 +296,7 @@ void ctkMessageBox::onFinished(int resultCode)
 {
   Q_D(ctkMessageBox);
   // Don't save if the button is not an accepting button
-  if (!d->SaveDontShowAgainSettingsOnAcceptOnly ||
-      this->buttonRole( this->clickedButton() ) == QMessageBox::AcceptRole )
+  if (d->DontShowAgainButtonRoles.contains(this->buttonRole( this->clickedButton())))
     {
     d->writeSettings(resultCode);
     }
@@ -334,4 +337,16 @@ bool ctkMessageBox
   dialog->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
   dialog->setDontShowAgainSettingsKey(dontShowAgainKey);
   return dialog->exec() == QMessageBox::Ok;
+}
+
+//-----------------------------------------------------------------------------
+void ctkMessageBox::addDontShowAgainButtonRole(QMessageBox::ButtonRole role)
+{
+  Q_D(ctkMessageBox);
+  if (d->DontShowAgainButtonRoles.contains(role))
+  {
+    // already added
+    return;
+  }
+  d->DontShowAgainButtonRoles.append(role);
 }

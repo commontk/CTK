@@ -475,7 +475,10 @@ void ctkMessageBoxDontShowAgainTester::testDontShowAgainSettingsKeySetDontShowAg
 void ctkMessageBoxDontShowAgainTester::testDontShowAgainSettingsKeyClickDontShowAgain()
 {
   ctkMessageBox messageBox;
-  messageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+  messageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+  messageBox.addDontShowAgainButtonRole(QMessageBox::YesRole);
+  messageBox.addDontShowAgainButtonRole(QMessageBox::NoRole);
 
   QFETCH(QString, key);
   messageBox.setDontShowAgainSettingsKey(key);
@@ -507,6 +510,10 @@ void ctkMessageBoxDontShowAgainTester::testDontShowAgainSettingsKeyClickDontShow
     << "NonExistingKey" << true << int(QMessageBox::Ok)
     << int(QMessageBox::Ok) << QMessageBox::AcceptRole
     << int(QMessageBox::Ok);
+  QTest::newRow("NonExistingKey dont show again no")
+    << "NonExistingKey" << true << int(QMessageBox::No)
+    << int(QMessageBox::No) << QMessageBox::NoRole
+    << int(QMessageBox::No);
   QTest::newRow("NonExistingKey dont show again cancel")
     << "NonExistingKey" << true << int(QMessageBox::Cancel)
     << int(QMessageBox::Cancel) << QMessageBox::RejectRole
@@ -516,6 +523,10 @@ void ctkMessageBoxDontShowAgainTester::testDontShowAgainSettingsKeyClickDontShow
     << "Show" << true << int(QMessageBox::Ok)
     << int(QMessageBox::Ok) << QMessageBox::AcceptRole
     << int(QMessageBox::Ok);
+  QTest::newRow("Show dont show again no")
+    << "Show" << true << int(QMessageBox::No)
+    << int(QMessageBox::No) << QMessageBox::NoRole
+    << int(QMessageBox::No);
   QTest::newRow("Show dont show again cancel")
     << "Show" << true << int(QMessageBox::Cancel)
     << int(QMessageBox::Cancel) << QMessageBox::RejectRole
@@ -525,6 +536,10 @@ void ctkMessageBoxDontShowAgainTester::testDontShowAgainSettingsKeyClickDontShow
     << "NonExistingKey" << false << int(QMessageBox::Ok)
     << int(QMessageBox::Ok) << QMessageBox::AcceptRole
     << int(QMessageBox::InvalidRole);
+  QTest::newRow("NonExistingKey show again no")
+    << "NonExistingKey" << false << int(QMessageBox::No)
+    << int(QMessageBox::No) << QMessageBox::NoRole
+    << int(QMessageBox::InvalidRole);
   QTest::newRow("NonExistingKey show again reject")
     << "NonExistingKey" << false << int(QMessageBox::Cancel)
     << int(QMessageBox::Cancel) << QMessageBox::RejectRole
@@ -533,6 +548,10 @@ void ctkMessageBoxDontShowAgainTester::testDontShowAgainSettingsKeyClickDontShow
   QTest::newRow("Show show again accept")
     << "Show" << false << int(QMessageBox::Ok)
     << int(QMessageBox::Ok) << QMessageBox::AcceptRole
+    << int(QMessageBox::InvalidRole);
+  QTest::newRow("Show show again no")
+    << "Show" << false << int(QMessageBox::No)
+    << int(QMessageBox::No) << QMessageBox::NoRole
     << int(QMessageBox::InvalidRole);
   QTest::newRow("Show dont show reject")
     << "Show" << false << int(QMessageBox::Cancel)
