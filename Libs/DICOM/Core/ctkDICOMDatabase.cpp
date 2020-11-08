@@ -166,6 +166,8 @@ public:
   QMap<QString, QString> LoadedHeader;
   bool DisplayedFieldsTableAvailable;
 
+  bool UseShortStoragePath;
+
   ctkDICOMAbstractThumbnailGenerator* ThumbnailGenerator;
 
   ctkDICOMDisplayedFieldGenerator DisplayedFieldGenerator;
@@ -216,6 +218,7 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
   this->LoggedExecVerbose = false;
   this->TagCacheVerified = false;
   this->DisplayedFieldsTableAvailable = false;
+  this->UseShortStoragePath = true;
   this->resetLastInsertedValues();
 }
 
@@ -706,15 +709,34 @@ bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, cons
     return false;
   }
 
-  QString destinationDirectoryName = q->databaseDirectory() + "/dicom/";
-  QDir destinationDir(destinationDirectoryName);
-  storedFilePath = destinationDirectoryName +
-    studyInstanceUID + "/" +
-    seriesInstanceUID + "/" +
-    sopInstanceUID;
+  QString studyComponent;
+  QString seriesComponent;
+  QString instanceComponent;
+  if (this->UseShortStoragePath)
+  {
+    // MD5 hash is chosen because it is short (its hex digest is 16 characters) and we do not need cryptographically strong hash.
+    // It is not a problem if clash occurs in study or series folders (it would just mean that multiple studies or series would be stored in a folder),
+    // therefore we just use the first 8 characters of the digest.
+    // Since in a series there are typically a few hundred, maybe a few thousand files, the chances that there are two different SOP instance UIDs
+    // with the same hash is practically impossible. 
+    studyComponent = QString(QCryptographicHash::hash(studyInstanceUID.toUtf8(), QCryptographicHash::Md5).toHex()).left(8);
+    seriesComponent = QString(QCryptographicHash::hash(seriesInstanceUID.toUtf8(), QCryptographicHash::Md5).toHex()).left(8);
+    instanceComponent = QString(QCryptographicHash::hash(sopInstanceUID.toUtf8(), QCryptographicHash::Md5).toHex());
+  }
+  else
+  {
+    // Use original IDs (each may be 40-60 characters)
+    studyComponent = studyInstanceUID;
+    seriesComponent = seriesInstanceUID;
+    instanceComponent = sopInstanceUID;
+  }
 
-  destinationDir.mkpath(studyInstanceUID + "/" +
-    seriesInstanceUID);
+  QString destinationDirectoryName = q->databaseDirectory() + "/dicom/";
+
+  QDir destinationDir(destinationDirectoryName);
+  destinationDir.mkpath(studyComponent + "/" + seriesComponent);
+
+  storedFilePath = destinationDirectoryName + studyComponent + "/" + seriesComponent + "/" + instanceComponent + ".dcm";
 
   if (originalFilePath.isEmpty())
   {
@@ -1556,6 +1578,9 @@ void ctkDICOMDatabasePrivate::setLastStudyDateToPatientDisplayedFields(QMap<QStr
 
 //------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMDatabase, bool, isDisplayedFieldsTableAvailable, DisplayedFieldsTableAvailable);
+CTK_GET_CPP(ctkDICOMDatabase, bool, useShortStoragePath, UseShortStoragePath);
+CTK_SET_CPP(ctkDICOMDatabase, bool, setUseShortStoragePath, UseShortStoragePath);
+
 
 //------------------------------------------------------------------------------
 // ctkDICOMDatabase methods

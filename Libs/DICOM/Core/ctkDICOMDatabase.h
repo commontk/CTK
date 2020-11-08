@@ -63,6 +63,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDatabase : public QObject
   Q_PROPERTY(QStringList patientFieldNames READ patientFieldNames)
   Q_PROPERTY(QStringList studyFieldNames READ studyFieldNames)
   Q_PROPERTY(QStringList seriesFieldNames READ seriesFieldNames)
+  Q_PROPERTY(bool useShortStoragePath READ useShortStoragePath WRITE setUseShortStoragePath)
 
 public:
   struct IndexingResult
@@ -248,6 +249,17 @@ public:
     bool storeFile = true, bool generateThumbnail = true);
 
   Q_INVOKABLE void insert(const QList<ctkDICOMDatabase::IndexingResult>& indexingResults);
+
+  /// When a DICOM file is stored in the database (insert is called with storeFile=true) then
+  /// path is constructed from study, series, and SOP instance UID.
+  /// If useShortStoragePath is false then the full UIDs are used as subfolder and file name.
+  /// If useShortStoragePath is true (this is the default) then the path is shortened 
+  /// to approximately 40 characters, by replacing UIDs with hashes generated from them.
+  /// UIDs can be 40-60 characters long each, therefore the the total path (including database folder base path)
+  /// can exceed maximum path length on some file systems. It is recommended to enable useShortStoragePath
+  /// for better compatibility, unless it can be guaranteed that the file system can store full UIDs.
+  void setUseShortStoragePath(bool useShort);
+  bool useShortStoragePath()const;
 
   /// Update the fields in the database that are used for displaying information
   /// from information stored in the tag-cache.
