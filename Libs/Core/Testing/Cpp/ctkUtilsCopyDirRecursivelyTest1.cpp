@@ -145,6 +145,27 @@ int ctkUtilsCopyDirRecursivelyTest1(int argc, char * argv [] )
   CHECK_BOOL(QDir(destPath).exists(".hidden/.hidden.txt"), true);
   }
 
+
+  {
+  QString srcPath(tmp.path() + "/foo");
+  QString destPath(tmp.path() + "/dest-without-hidden");
+  if (!ctk::copyDirRecursively(srcPath, destPath, /* includeHiddenFiles= */ false))
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with ctk::copyDirRecursively()"
+              << " - Failed to copy directory: " << qPrintable(srcPath)
+              << "into" << qPrintable(destPath) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Check content of destination directory
+  CHECK_BOOL(QDir(destPath).exists("a.txt"), true);
+  CHECK_BOOL(QDir(destPath).exists("bar/b.txt"), true);
+  CHECK_BOOL(QDir(destPath).exists("zoo/c.txt"), true);
+  CHECK_BOOL(QDir(destPath).exists("zoo/.hidden.txt"), false);
+  CHECK_BOOL(QDir(destPath).exists(".hidden/c.txt"), false);
+  CHECK_BOOL(QDir(destPath).exists(".hidden/.hidden.txt"), false);
+  }
+
   {
   // Atempt to copy a directory into itself
   QString srcPath(tmp.path());
