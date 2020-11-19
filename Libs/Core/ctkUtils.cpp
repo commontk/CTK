@@ -338,7 +338,7 @@ bool ctk::removeDirRecursively(const QString & dirName)
 }
 
 //-----------------------------------------------------------------------------
-bool ctk::copyDirRecursively(const QString &srcPath, const QString &dstPath)
+bool ctk::copyDirRecursively(const QString &srcPath, const QString &dstPath, bool includeHiddenFiles)
 {
   // See http://stackoverflow.com/questions/2536524/copy-directory-using-qt
   if (!QFile::exists(srcPath))
@@ -362,13 +362,19 @@ bool ctk::copyDirRecursively(const QString &srcPath, const QString &dstPath)
     return false;
     }
 
-  foreach(const QFileInfo &info, srcDir.entryInfoList(QDir::Dirs | QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot))
+  QDir::Filter hiddenFilter;
+  if(includeHiddenFiles)
+    {
+    hiddenFilter = QDir::Hidden;
+    }
+
+  foreach(const QFileInfo &info, srcDir.entryInfoList(QDir::Dirs | QDir::Files | hiddenFilter | QDir::NoDotAndDotDot))
     {
     QString srcItemPath = srcPath + "/" + info.fileName();
     QString dstItemPath = dstPath + "/" + info.fileName();
     if (info.isDir())
       {
-      if (!ctk::copyDirRecursively(srcItemPath, dstItemPath))
+      if (!ctk::copyDirRecursively(srcItemPath, dstItemPath, includeHiddenFiles))
         {
         qCritical() << "ctk::copyDirRecursively: Failed to copy files from " << srcItemPath << " into " << dstItemPath;
         return false;
