@@ -112,6 +112,18 @@ int ctkUtilsCopyDirRecursivelyTest1(int argc, char * argv [] )
     {
     return EXIT_FAILURE;
     }
+  if (!createFile(__LINE__, tmp, "foo/zoo", ".hidden.txt"))
+    {
+    return EXIT_FAILURE;
+    }
+  if (!createFile(__LINE__, tmp, "foo/.hidden", "c.txt"))
+    {
+    return EXIT_FAILURE;
+    }
+  if (!createFile(__LINE__, tmp, "foo/.hidden", ".hidden.txt"))
+    {
+    return EXIT_FAILURE;
+    }
 
   {
   QString srcPath(tmp.path() + "/foo");
@@ -128,6 +140,9 @@ int ctkUtilsCopyDirRecursivelyTest1(int argc, char * argv [] )
   CHECK_BOOL(QDir(destPath).exists("a.txt"), true);
   CHECK_BOOL(QDir(destPath).exists("bar/b.txt"), true);
   CHECK_BOOL(QDir(destPath).exists("zoo/c.txt"), true);
+  CHECK_BOOL(QDir(destPath).exists("zoo/.hidden.txt"), true);
+  CHECK_BOOL(QDir(destPath).exists(".hidden/c.txt"), true);
+  CHECK_BOOL(QDir(destPath).exists(".hidden/.hidden.txt"), true);
   }
 
   {

@@ -362,7 +362,7 @@ bool ctk::copyDirRecursively(const QString &srcPath, const QString &dstPath)
     return false;
     }
 
-  foreach(const QFileInfo &info, srcDir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
+  foreach(const QFileInfo &info, srcDir.entryInfoList(QDir::Dirs | QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot))
     {
     QString srcItemPath = srcPath + "/" + info.fileName();
     QString dstItemPath = dstPath + "/" + info.fileName();
