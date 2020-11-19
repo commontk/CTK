@@ -25,6 +25,7 @@
 #include <QTime>
 
 // CTK includes
+#include "ctkCoreTestingMacros.h"
 #include "ctkUtils.h"
 
 // STD includes
@@ -122,6 +123,11 @@ int ctkUtilsCopyDirRecursivelyTest1(int argc, char * argv [] )
               << "into" << qPrintable(destPath) << std::endl;
     return EXIT_FAILURE;
     }
+
+  // Check content of destination directory
+  CHECK_BOOL(QDir(destPath).exists("a.txt"), true);
+  CHECK_BOOL(QDir(destPath).exists("bar/b.txt"), true);
+  CHECK_BOOL(QDir(destPath).exists("zoo/c.txt"), true);
   }
 
   {
