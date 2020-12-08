@@ -420,15 +420,6 @@ void ctkVTKConnectionPrivate::execute(vtkObject* vtk_obj, unsigned long vtk_even
         if (this->VTKEvent == vtk_event)
           {
           callDataAsVtkObject = reinterpret_cast<vtkObject*>( call_data );
-          if (!callDataAsVtkObject)
-            {
-            qCritical() << "The VTKEvent(" << this->VTKEvent<< ") triggered by vtkObject("
-              << this->VTKObject->GetClassName() << ") "
-              << "doesn't return data of type vtkObject." << endl
-              << "The slot (" << this->QtSlot <<  ") owned by "
-              << "QObject(" << this->QtObject->objectName() << ")"
-              << " may be incorrect.";
-            }
           emit q->emitExecute(vtk_obj, callDataAsVtkObject);
           }
         break;
