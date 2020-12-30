@@ -87,6 +87,8 @@ class CTK_WIDGETS_EXPORT ctkConsole : public QWidget
   Q_FLAGS(RunFileOption RunFileOptions)
   Q_PROPERTY(RunFileOptions runFileOptions READ runFileOptions WRITE setRunFileOptions)
   Q_PROPERTY(int maxVisibleCompleterItems READ maxVisibleCompleterItems WRITE setMaxVisibleCompleterItems)
+  Q_PROPERTY(QString commandBuffer READ commandBuffer WRITE setCommandBuffer)
+  Q_PROPERTY(QStringList commandHistory READ commandHistory WRITE setCommandHistory)
 
 public:
 
@@ -226,6 +228,15 @@ public:
   /// \sa runFileOptions()
   void setRunFileOptions(const RunFileOptions& newOptions);
 
+  /// Get the current command buffer (text on current input line, not yet executed)
+  /// \sa setCommandBuffer()
+  virtual const QString& commandBuffer();
+
+  /// Get the command history list (previously executed commands)
+  /// \sa commandBuffer()
+  /// \sa setCommandBuffer()
+  virtual const QStringList& commandHistory();
+
 Q_SIGNALS:
 
   /// This signal emitted before and after a command is executed
@@ -243,6 +254,14 @@ public Q_SLOTS:
 
   /// Clears the contents of the console and display welcome message
   virtual void reset();
+
+  /// Set the the command buffer (pending command for user)
+  /// \sa commandBuffer()
+  virtual void setCommandBuffer(const QString&);
+
+  /// Set the command history (e.g. if restored from file)
+  /// \sa commandHistory()
+  virtual void setCommandHistory(const QStringList&);
 
   /// Exec the contents of the last console line
   /// \sa openFile(), runFile(QString)
