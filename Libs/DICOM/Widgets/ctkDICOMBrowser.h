@@ -61,6 +61,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMBrowser : public QWidget
   Q_ENUMS(ImportDirectoryMode)
   Q_PROPERTY(QString databaseDirectory READ databaseDirectory WRITE setDatabaseDirectory)
   Q_PROPERTY(QString databaseDirectorySettingsKey READ databaseDirectorySettingsKey WRITE setDatabaseDirectorySettingsKey)
+  Q_PROPERTY(QString databaseDirectoryBase READ databaseDirectoryBase WRITE setDatabaseDirectoryBase)
   Q_PROPERTY(int patientsAddedDuringImport READ patientsAddedDuringImport)
   Q_PROPERTY(int studiesAddedDuringImport READ studiesAddedDuringImport)
   Q_PROPERTY(int seriesAddedDuringImport READ seriesAddedDuringImport)
@@ -91,6 +92,15 @@ public:
   /// Calling this method sets DatabaseDirectory from current value stored in the settings
   /// (overwriting current value of DatabaseDirectory).
   void setDatabaseDirectorySettingsKey(const QString& settingsKey);
+
+  /// Get the directory that will be used as a basis if databaseDirectory is specified with a relative path.
+  /// @see setDatabaseDirectoryBase, setDatabaseDirectory
+  QString databaseDirectoryBase() const;
+
+  /// Set the directory that will be used as a basis if databaseDirectory is specified with a relative path.
+  /// If DatabaseDirectoryBase is empty (by default it is) then the current working directory is used as a basis.
+/// @see databaseDirectoryBase, setDatabaseDirectory
+  void setDatabaseDirectoryBase(const QString& base);
 
   /// See ctkDICOMDatabase for description - these accessors
   /// delegate to the corresponding routines of the internal

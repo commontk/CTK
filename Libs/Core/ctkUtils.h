@@ -168,6 +168,17 @@ QString CTK_CORE_EXPORT qtHandleToString(Qt::HANDLE handle);
 /// bumping the minimum required Qt version for CTK.
 qint64 CTK_CORE_EXPORT msecsTo(const QDateTime& t1, const QDateTime& t2);
 
+/// Get absolute path from an "internal" path. If internal path is already an absolute path
+/// then that is returned unchanged. If internal path is relative path then basePath is used
+/// as a basis (prepended to internalPath).
+QString CTK_CORE_EXPORT absolutePathFromInternal(const QString& internalPath, const QString& basePath);
+
+/// Get "internal" path from an absolute path. internalPath will be a relative path if
+/// absolutePath is within the basePath, otherwise interalPath will be the same as absolutePath.
+/// This is useful for paths/directories relative to a base folder, to make the data or application relocatable.
+/// Absolute path can be retrieved from an internal path using absolutePathFromInternal function.
+QString CTK_CORE_EXPORT internalPathFromAbsolute(const QString& absolutePath, const QString& basePath);
+
 }
 
 #endif

@@ -40,6 +40,7 @@
 #include "ctkDICOMItem.h"
 
 #include "ctkLogger.h"
+#include "ctkUtils.h"
 
 #include "ctkDICOMDisplayedFieldGenerator.h"
 
@@ -98,6 +99,11 @@ public:
   /// If the original file is available then that will be inserted. If not then a file is created from the dataset object.
   bool storeDatasetFile(const ctkDICOMItem& dataset, const QString& originalFilePath,
     const QString& studyInstanceUID, const QString& seriesInstanceUID, const QString& sopInstanceUID, QString& storedFilePath);
+
+  /// Helper function that generates folders for storing an instance in the database.
+  /// Folders are based on UIDs, but may be shortened.
+  QString internalStoragePath(const QString& studyInstanceUID,
+    const QString& seriesInstanceUID, const QString& sopInstanceUID);
 
   /// Returns false in case of an error
   bool indexingStatusForFile(const QString& filePath, const QString& sopInstanceUID, bool& datasetInDatabase, bool& datasetUpToDate, QString& databaseFilename);
@@ -158,6 +164,11 @@ public:
   void setLastStudyDateToPatientDisplayedFields(QMap<QString, QMap<QString, QString> >& displayedFieldsMapPatient);
 
   int rowCount(const QString& tableName);
+
+  /// Convert an internal path (absolute or relative to database folder) to an absolute path.
+  QString absolutePathFromInternal(const QString& filename);
+  /// Convert an absolute path to an internal path (absolute if outside database folder, relative if inside database folder).
+  QString internalPathFromAbsolute(const QString& filename);
 
   /// Name of the database file (i.e. for SQLITE the sqlite file)
   QString DatabaseFileName;
@@ -341,7 +352,7 @@ QStringList ctkDICOMDatabasePrivate::allFilesInDatabase()
 
   while (allFilesQuery.next())
   {
-    allFileNames << allFilesQuery.value(0).toString();
+    allFileNames << this->absolutePathFromInternal(allFilesQuery.value(0).toString());
   }
   return allFileNames;
 }
@@ -396,7 +407,7 @@ QStringList ctkDICOMDatabasePrivate::filenames(QString table)
 
   while (allFilesQuery.next())
   {
-    allFileNames << allFilesQuery.value(0).toString();
+    allFileNames << this->absolutePathFromInternal(allFilesQuery.value(0).toString());
   }
   return allFileNames;
 }
@@ -698,17 +709,9 @@ bool ctkDICOMDatabasePrivate::removeImage(const QString& sopInstanceUID)
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, const QString& originalFilePath,
-  const QString& studyInstanceUID, const QString& seriesInstanceUID, const QString& sopInstanceUID,
-  QString& storedFilePath)
+QString ctkDICOMDatabasePrivate::internalStoragePath(const QString& studyInstanceUID,
+  const QString& seriesInstanceUID, const QString& sopInstanceUID)
 {
-  Q_Q(ctkDICOMDatabase);
-
-  if (sopInstanceUID.isEmpty())
-  {
-    return false;
-  }
-
   QString studyComponent;
   QString seriesComponent;
   QString instanceComponent;
@@ -730,13 +733,31 @@ bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, cons
     seriesComponent = seriesInstanceUID;
     instanceComponent = sopInstanceUID;
   }
+  QString path = studyComponent + "/" + seriesComponent + "/" + instanceComponent;
+  return path;
+}
 
-  QString destinationDirectoryName = q->databaseDirectory() + "/dicom/";
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabasePrivate::storeDatasetFile(const ctkDICOMItem& dataset, const QString& originalFilePath,
+  const QString& studyInstanceUID, const QString& seriesInstanceUID, const QString& sopInstanceUID,
+  QString& storedFilePath)
+{
+  Q_Q(ctkDICOMDatabase);
 
-  QDir destinationDir(destinationDirectoryName);
-  destinationDir.mkpath(studyComponent + "/" + seriesComponent);
+  if (sopInstanceUID.isEmpty())
+  {
+    storedFilePath.clear();
+    return false;
+  }
 
-  storedFilePath = destinationDirectoryName + studyComponent + "/" + seriesComponent + "/" + instanceComponent + ".dcm";
+  storedFilePath = q->databaseDirectory() + "/dicom/"
+    + this->internalStoragePath(studyInstanceUID, seriesInstanceUID, sopInstanceUID) + ".dcm";
+
+  QDir destinationDir(QFileInfo(storedFilePath).dir());
+  if (!destinationDir.exists())
+  {
+    destinationDir.mkpath(".");
+  }
 
   if (originalFilePath.isEmpty())
   {
@@ -771,6 +792,7 @@ bool ctkDICOMDatabasePrivate::indexingStatusForFile(const QString& filePath, con
   Q_Q(ctkDICOMDatabase);
   datasetInDatabase = false;
   datasetUpToDate = false;
+  databaseFilename.clear();
 
   QSqlQuery fileExistsQuery(Database);
   fileExistsQuery.prepare("SELECT InsertTimestamp,Filename FROM Images WHERE SOPInstanceUID == :sopInstanceUID");
@@ -793,14 +815,20 @@ bool ctkDICOMDatabasePrivate::indexingStatusForFile(const QString& filePath, con
   // The SOP instance UID exists in the database. In theory, new SOP instance UID must be generated if
   // a file is modified, but some software may not respect this, so check if the file was modified.
   databaseFilename = fileExistsQuery.value(1).toString();
-  QDateTime fileLastModified(QFileInfo(databaseFilename).lastModified());
-  QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExistsQuery.value(0).toString(), Qt::ISODate));
-  // Compare QFileInfo objects instead of path strings to ensure equivalent file names
-  // (such as same file name in uppercase/lowercase on Windows) are considered as equal.
-  if (QFileInfo(databaseFilename) == QFileInfo(filePath) && fileLastModified < databaseInsertTimestamp)
+  QFileInfo databaseFileInfo(databaseFilename);
+  if (!databaseFileInfo.isRelative())
   {
-    // this file is already added and database is up-to-date
-    datasetUpToDate = true;
+    // database stores a link to an external file, if it is the same filename and the file has not changed
+    // since insertion date then it means that the dataset is up-to-date
+    QDateTime fileLastModified(databaseFileInfo.lastModified());
+    QDateTime databaseInsertTimestamp(QDateTime::fromString(fileExistsQuery.value(0).toString(), Qt::ISODate));
+    // Compare QFileInfo objects instead of path strings to ensure equivalent file names
+    // (such as same file name in uppercase/lowercase on Windows) are considered as equal.
+    if (databaseFileInfo == QFileInfo(filePath) && fileLastModified < databaseInsertTimestamp)
+    {
+      // this file is already added and database is up-to-date
+      datasetUpToDate = true;
+    }
   }
 
   return true;
@@ -885,18 +913,20 @@ bool ctkDICOMDatabasePrivate::storeThumbnailFile(const QString& originalFilePath
   {
     return false;
   }
-  QString studySeriesDirectory = studyInstanceUID + "/" + seriesInstanceUID;
   // Create thumbnail here
   QString thumbnailPath = q->databaseDirectory() +
-    "/thumbs/" + studyInstanceUID + "/" + seriesInstanceUID
-    + "/" + sopInstanceUID + ".png";
+    "/thumbs/" + this->internalStoragePath(studyInstanceUID, seriesInstanceUID, sopInstanceUID) + ".png";
   QFileInfo thumbnailInfo(thumbnailPath);
   if (thumbnailInfo.exists() && (thumbnailInfo.lastModified() > QFileInfo(originalFilePath).lastModified()))
   {
     // thumbnail already exists and up-to-date
     return true;
   }
-  QDir(q->databaseDirectory() + "/thumbs/").mkpath(studySeriesDirectory);
+  QDir destinationDir(thumbnailInfo.dir());
+  if (!destinationDir.exists())
+  {
+    destinationDir.mkpath(".");
+  }
   DicomImage dcmImage(QDir::toNativeSeparators(originalFilePath).toUtf8());
   return this->ThumbnailGenerator->generateThumbnail(&dcmImage, thumbnailPath);
 }
@@ -1005,20 +1035,39 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
 
   if (!storedFilePath.isEmpty() && !seriesInstanceUID.isEmpty())
   {
-    QSqlQuery checkImageExistsQuery(Database);
-    checkImageExistsQuery.prepare("SELECT * FROM Images WHERE Filename = ?");
-    checkImageExistsQuery.addBindValue(storedFilePath);
-    checkImageExistsQuery.exec();
     if (this->LoggedExecVerbose)
     {
       qDebug() << "Maybe add Instance";
     }
-    if (!checkImageExistsQuery.next())
+    bool alreadyInserted = false;
+    if (!storeFile)
     {
+      // file is linked, maybe it is already inserted
+      QSqlQuery checkImageExistsQuery(Database);
+      checkImageExistsQuery.prepare("SELECT * FROM Images WHERE Filename = ?");
+      checkImageExistsQuery.addBindValue(storedFilePath);
+      checkImageExistsQuery.exec();
+      alreadyInserted = checkImageExistsQuery.next();
+    }
+    if (!alreadyInserted)
+    {
+      // Get filename that will be stored in the database.
+      // Use relative path if a copy is stored in the database to make the database relocatable.
+      QString storedFilePathInDatabase;
+      if (storeFile)
+      {
+        QDir databaseDirectory(q->databaseDirectory());
+        storedFilePathInDatabase = databaseDirectory.relativeFilePath(storedFilePath);
+      }
+      else
+      {
+        storedFilePathInDatabase = storedFilePath;
+      }
+
       QSqlQuery insertImageStatement(Database);
       insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ? )");
       insertImageStatement.addBindValue(sopInstanceUID);
-      insertImageStatement.addBindValue(storedFilePath);
+      insertImageStatement.addBindValue(storedFilePathInDatabase);
       insertImageStatement.addBindValue(seriesInstanceUID);
       insertImageStatement.addBindValue(QDateTime::currentDateTime());
       insertImageStatement.exec();
@@ -1054,6 +1103,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
   d->TagCacheDatabase.transaction();
   d->Database.transaction();
 
+  QDir databaseDirectory(this->databaseDirectory());
   foreach(const ctkDICOMDatabase::IndexingResult & indexingResult, indexingResults)
   {
     const ctkDICOMItem& dataset = *indexingResult.dataset.data();
@@ -1159,11 +1209,23 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
         insertTags.exec();
       }
 
+      // Get filename that will be stored in the database.
+      // Use relative path if a copy is stored in the database to make the database relocatable.
+      QString storedFilePathInDatabase;
+      if (storeFile)
+      {
+        storedFilePathInDatabase = QDir(this->databaseDirectory()).relativeFilePath(storedFilePath);
+      }
+      else
+      {
+        storedFilePathInDatabase = storedFilePath;
+      }
+
       // Insert image files
       QSqlQuery insertImageStatement(d->Database);
       insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ? )");
       insertImageStatement.addBindValue(sopInstanceUID);
-      insertImageStatement.addBindValue(storedFilePath);
+      insertImageStatement.addBindValue(storedFilePathInDatabase);
       insertImageStatement.addBindValue(seriesInstanceUID);
       insertImageStatement.addBindValue(QDateTime::currentDateTime());
       insertImageStatement.exec();
@@ -1577,6 +1639,21 @@ void ctkDICOMDatabasePrivate::setLastStudyDateToPatientDisplayedFields(QMap<QStr
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDatabasePrivate::absolutePathFromInternal(const QString& filename)
+{
+  Q_Q(ctkDICOMDatabase);
+  return ctk::absolutePathFromInternal(filename, q->databaseDirectory());
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabasePrivate::internalPathFromAbsolute(const QString& filename)
+{
+  Q_Q(ctkDICOMDatabase);
+  // Make it a relative path if it is within the database folder
+  return ctk::internalPathFromAbsolute(filename, q->databaseDirectory());
+}
+
+//------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMDatabase, bool, isDisplayedFieldsTableAvailable, DisplayedFieldsTableAvailable);
 CTK_GET_CPP(ctkDICOMDatabase, bool, useShortStoragePath, UseShortStoragePath);
 CTK_SET_CPP(ctkDICOMDatabase, bool, setUseShortStoragePath, UseShortStoragePath);
@@ -1699,7 +1776,7 @@ const QString ctkDICOMDatabase::databaseDirectory() const {
   {
     databaseFile.prepend(QDir::currentPath() + "/");
   }
-  return QFileInfo ( databaseFile ).absoluteDir().path();
+  return QFileInfo(databaseFile).absoluteDir().path();
 }
 
 //------------------------------------------------------------------------------
@@ -2190,15 +2267,15 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
 {
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
-  query.prepare( "SELECT Filename FROM Images WHERE SeriesInstanceUID=?");
-  query.addBindValue( seriesUID );
+  query.prepare("SELECT Filename FROM Images WHERE SeriesInstanceUID=?");
+  query.addBindValue(seriesUID);
   query.exec();
-  QStringList result;
+  QStringList allFileNames;
   while (query.next())
   {
-    result << query.value(0).toString();
+    allFileNames << d->absolutePathFromInternal(query.value(0).toString());
   }
-  return( result );
+  return allFileNames;
 }
 
 //------------------------------------------------------------------------------
@@ -2206,15 +2283,15 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
-  query.prepare( "SELECT Filename FROM Images WHERE SOPInstanceUID=?");
-  query.addBindValue( sopInstanceUID );
+  query.prepare("SELECT Filename FROM Images WHERE SOPInstanceUID=?");
+  query.addBindValue(sopInstanceUID);
   query.exec();
   QString result;
   if (query.next())
   {
-    result = query.value(0).toString();
+    result = d->absolutePathFromInternal(query.value(0).toString());
   }
-  return( result );
+  return result;
 }
 
 //------------------------------------------------------------------------------
@@ -2223,14 +2300,14 @@ QString ctkDICOMDatabase::seriesForFile(QString fileName)
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
   query.prepare( "SELECT SeriesInstanceUID FROM Images WHERE Filename=?");
-  query.addBindValue( fileName );
+  query.addBindValue(d->internalPathFromAbsolute(fileName));
   query.exec();
   QString result;
   if (query.next())
   {
     result = query.value(0).toString();
   }
-  return( result );
+  return result;
 }
 
 //------------------------------------------------------------------------------
@@ -2239,14 +2316,14 @@ QString ctkDICOMDatabase::instanceForFile(QString fileName)
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
   query.prepare( "SELECT SOPInstanceUID FROM Images WHERE Filename=?");
-  query.addBindValue( fileName );
+  query.addBindValue(d->internalPathFromAbsolute(fileName));
   query.exec();
   QString result;
   if (query.next())
   {
     result = query.value(0).toString();
   }
-  return( result );
+  return result;
 }
 
 //------------------------------------------------------------------------------
@@ -2254,15 +2331,15 @@ QDateTime ctkDICOMDatabase::insertDateTimeForInstance(QString sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
-  query.prepare( "SELECT InsertTimestamp FROM Images WHERE SOPInstanceUID=?");
-  query.addBindValue( sopInstanceUID );
+  query.prepare("SELECT InsertTimestamp FROM Images WHERE SOPInstanceUID=?");
+  query.addBindValue(sopInstanceUID);
   query.exec();
   QDateTime result;
   if (query.next())
   {
     result = QDateTime::fromString(query.value(0).toString(), Qt::ISODate);
   }
-  return( result );
+  return result;
 }
 
 //------------------------------------------------------------------------------
@@ -2305,23 +2382,22 @@ QStringList ctkDICOMDatabase::allFiles()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::loadInstanceHeader (QString sopInstanceUID)
+void ctkDICOMDatabase::loadInstanceHeader(QString sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
-  query.prepare( "SELECT Filename FROM Images WHERE SOPInstanceUID=?");
-  query.addBindValue( sopInstanceUID );
+  query.prepare("SELECT Filename FROM Images WHERE SOPInstanceUID=?");
+  query.addBindValue(sopInstanceUID);
   query.exec();
   if (query.next())
   {
-    QString fileName = query.value(0).toString();
+    QString fileName = d->absolutePathFromInternal(query.value(0).toString());
     this->loadFileHeader(fileName);
   }
-  return;
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::loadFileHeader (QString fileName)
+void ctkDICOMDatabase::loadFileHeader(QString fileName)
 {
   Q_D(ctkDICOMDatabase);
   d->LoadedHeader.clear();
@@ -2743,7 +2819,7 @@ bool ctkDICOMDatabase::fileExistsAndUpToDate(const QString& filePath)
 
   QSqlQuery check_filename_query(database());
   check_filename_query.prepare("SELECT InsertTimestamp FROM Images WHERE Filename == ?");
-  check_filename_query.bindValue(0,filePath);
+  check_filename_query.bindValue(0, d->internalPathFromAbsolute(filePath));
   d->loggedExec(check_filename_query);
   if ( check_filename_query.next() &&
        QFileInfo(filePath).lastModified() < QDateTime::fromString(check_filename_query.value(0).toString(), Qt::ISODate) )
@@ -2763,7 +2839,7 @@ bool ctkDICOMDatabase::allFilesModifiedTimes(QMap<QString, QDateTime>& modifiedT
   bool success = d->loggedExec(allFilesModifiedQuery);
   while (allFilesModifiedQuery.next())
   {
-    QString filename = allFilesModifiedQuery.value(0).toString();
+    QString filename = d->absolutePathFromInternal(allFilesModifiedQuery.value(0).toString());
     QDateTime modifiedTime = QDateTime::fromString(allFilesModifiedQuery.value(1).toString(), Qt::ISODate);
     if (modifiedTimeForFilepath.contains(filename) && modifiedTimeForFilepath[filename] <= modifiedTime)
     {
@@ -2810,10 +2886,10 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
   while (fileExistsQuery.next())
   {
     QString dbFilePath = fileExistsQuery.value(fileExistsQuery.record().indexOf("Filename")).toString();
-    QString sopInstanceUID = fileExistsQuery.value(fileExistsQuery.record().indexOf("SOPInstanceUID")).toString();
     QString studyInstanceUID = fileExistsQuery.value(fileExistsQuery.record().indexOf("StudyInstanceUID")).toString();
-    QString internalFilePath = studyInstanceUID + "/" + seriesInstanceUID + "/" + sopInstanceUID;
-    removeList << qMakePair(dbFilePath, internalFilePath);
+    QString sopInstanceUID = fileExistsQuery.value(fileExistsQuery.record().indexOf("SOPInstanceUID")).toString();
+    QString thumbnailPath = "thumbs/" + d->internalStoragePath(studyInstanceUID, seriesInstanceUID, sopInstanceUID) + ".png";
+    removeList << qMakePair(dbFilePath, thumbnailPath);
     if (clearCachedTags)
     {
       removeTagCacheSOPInstanceUIDs << sopInstanceUID;
@@ -2847,23 +2923,19 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
   foreach (fileToRemove, removeList)
   {
     QString dbFilePath = fileToRemove.first;
-    QString thumbnailToRemove = databaseDirectory() + "/thumbs/" + fileToRemove.second + ".png";
+    QString thumbnailPath = fileToRemove.second;
 
     // check that the file is below our internal storage
-    if (dbFilePath.startsWith( databaseDirectory() + "/dicom/"))
+    if (QFileInfo(dbFilePath).isRelative())
     {
-      if (!dbFilePath.endsWith(fileToRemove.second))
-      {
-        logger.error("Database inconsistency detected during delete (stored file found ouside database folder)");
-        continue;
-      }
-      if (QFile( dbFilePath ).remove())
+      QString absPath = d->absolutePathFromInternal(dbFilePath);
+      if (QFile(absPath).remove())
       {
         if (d->LoggedExecVerbose)
         {
-          logger.debug("Removed file " + dbFilePath );
+          logger.debug("Removed file " + absPath);
         }
-        QString fileFolder = QFileInfo(dbFilePath).absoluteDir().path();
+        QString fileFolder = QFileInfo(absPath).absoluteDir().path();
         if (foldersToRemove.isEmpty() || foldersToRemove.last() != fileFolder)
         {
           foldersToRemove << fileFolder;
@@ -2871,16 +2943,16 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
       }
       else
       {
-        logger.warn("Failed to remove file " + dbFilePath );
+        logger.warn("Failed to remove file " + absPath);
       }
     }
     // Remove thumbnail (if exists)
-    QFile thumbnailFile(thumbnailToRemove);
+    QFile thumbnailFile(d->absolutePathFromInternal(thumbnailPath));
     if (thumbnailFile.exists())
     {
       if (!thumbnailFile.remove())
       {
-      logger.warn("Failed to remove thumbnail " + thumbnailToRemove);
+      logger.warn("Failed to remove thumbnail " + thumbnailFile.fileName());
       }
       QString fileFolder = QFileInfo(thumbnailFile).absoluteDir().path();
       if (foldersToRemove.isEmpty() || foldersToRemove.last() != fileFolder)
@@ -2891,6 +2963,7 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
   }
 
   // Delete all empty folders that are left after removing DICOM files
+  // (folders that still contain files are not removed)
   foreach (QString folderToRemove, foldersToRemove)
   {
     QDir().rmpath(folderToRemove);

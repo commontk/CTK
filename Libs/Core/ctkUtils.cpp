@@ -413,3 +413,53 @@ qint64 ctk::msecsTo(const QDateTime& t1, const QDateTime& t2)
   return static_cast<qint64>(utcT1.daysTo(utcT2)) * static_cast<qint64>(1000*3600*24)
       + static_cast<qint64>(utcT1.time().msecsTo(utcT2.time()));
 }
+
+//------------------------------------------------------------------------------
+QString ctk::absolutePathFromInternal(const QString& internalPath, const QString& basePath)
+{
+  if (internalPath.isEmpty())
+  {
+    return internalPath;
+  }
+  if (QFileInfo(internalPath).isRelative())
+  {
+    QDir baseDirectory(basePath);
+    return QDir::cleanPath(baseDirectory.filePath(internalPath));
+  }
+  else
+  {
+    return internalPath;
+  }
+}
+
+//------------------------------------------------------------------------------
+QString ctk::internalPathFromAbsolute(const QString& absolutePath, const QString& basePath)
+{
+  if (absolutePath.isEmpty())
+  {
+    return absolutePath;
+  }
+  // Make it a relative path if it is within the base folder
+  if (QFileInfo(absolutePath).isRelative())
+  {
+    // already relative path, return it as is
+    return absolutePath;
+  }
+  QString baseFolderClean = QDir::cleanPath(QDir::fromNativeSeparators(basePath));
+  QString absolutePathClean = QDir::cleanPath(QDir::fromNativeSeparators(absolutePath));
+#ifdef Q_OS_WIN32
+  Qt::CaseSensitivity sensitivity = Qt::CaseInsensitive;
+#else
+  Qt::CaseSensitivity sensitivity = Qt::CaseSensitive;
+#endif
+  if (absolutePathClean.startsWith(baseFolderClean, sensitivity))
+  {
+    // file is in the base folder, make it a relative path
+    // (remove size+1 to remove the leading forward slash)
+    return absolutePathClean.remove(0, baseFolderClean.size() + 1);
+  }
+  else
+  {
+    return absolutePath;
+  }
+}
