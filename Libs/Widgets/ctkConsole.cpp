@@ -1253,6 +1253,36 @@ void ctkConsole::setRunFileOptions(const RunFileOptions& newOptions)
 }
 
 //-----------------------------------------------------------------------------
+const QString& ctkConsole::commandBuffer()
+{
+  Q_D(ctkConsole);
+  return d->commandBuffer();
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::setCommandBuffer(const QString& command)
+{
+  Q_D(ctkConsole);
+  d->replaceCommandBuffer(command);
+}
+
+//-----------------------------------------------------------------------------
+const QStringList& ctkConsole::commandHistory()
+{
+  Q_D(ctkConsole);
+  return d->CommandHistory;
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::setCommandHistory(const QStringList& commandHistory)
+{
+  Q_D(ctkConsole);
+  d->CommandHistory = commandHistory;
+  d->CommandHistory.append("");
+  d->CommandPosition = d->CommandHistory.size()-1;
+}
+
+//-----------------------------------------------------------------------------
 void ctkConsole::exec(const QString& command)
 {
   Q_D(ctkConsole);
