@@ -36,10 +36,13 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QPushButton>
-#include <QSettings>
 #include <QStringListModel>
+#include <QSettings>
 #include <QTableView>
 #include <QWidgetAction>
+
+// crtkCore includes
+#include "ctkUtils.h"
 
 // ctkWidgets includes
 #include "ctkDirectoryButton.h"
@@ -162,6 +165,9 @@ public:
   // Settings key that stores database directory
   QString DatabaseDirectorySettingsKey;
 
+  // If database directory is specified with relative path then this directory will be used as a base
+  QString DatabaseDirectoryBase;
+
   // Default database path to use if there is nothing in settings
   QString DefaultDatabaseDirectory;
   QString DatabaseDirectory;
@@ -170,6 +176,8 @@ public:
 };
 
 CTK_GET_CPP(ctkDICOMBrowser, bool, isSendActionVisible, SendActionVisible);
+CTK_GET_CPP(ctkDICOMBrowser, QString, databaseDirectoryBase, DatabaseDirectoryBase);
+CTK_SET_CPP(ctkDICOMBrowser, const QString&, setDatabaseDirectoryBase, DatabaseDirectoryBase);
 
 //----------------------------------------------------------------------------
 // ctkDICOMBrowserPrivate methods
@@ -485,7 +493,7 @@ void ctkDICOMBrowser::createNewDatabaseDirectory()
     // a valid database
     if (!QDir(baseFolder).isEmpty())
     {
-      QString databaseFileName = baseFolder + QString("/ctkDICOM.sql");
+      QString databaseFileName = QDir(baseFolder).filePath("ctkDICOM.sql");
       if (!QFile(databaseFileName).exists())
       {
         // current folder is a non-empty and not a DICOM database folder
@@ -556,7 +564,7 @@ void ctkDICOMBrowser::updateDatabase()
   d->showUpdateSchemaDialog();
   QString dir = this->databaseDirectory();
   // open DICOM database on the directory
-  QString databaseFileName = dir + QString("/ctkDICOM.sql");
+  QString databaseFileName = QDir(dir).filePath("ctkDICOM.sql");
   try
   {
     d->DICOMDatabase->openDatabase(databaseFileName);
@@ -578,18 +586,18 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
   Q_D(ctkDICOMBrowser);
   d->InformationMessageFrame->hide();
 
-  QString absDirectory = QDir(directory).absolutePath();
+  QString absDirectory = ctk::absolutePathFromInternal(directory, d->DatabaseDirectoryBase);
 
   // close the active DICOM database
   d->DICOMDatabase->closeDatabase();
 
   // open DICOM database on the directory
-  QString databaseFileName = directory + QString("/ctkDICOM.sql");
+  QString databaseFileName = QDir(absDirectory).filePath("ctkDICOM.sql");
 
   bool success = true;
 
-  if (!QDir(directory).exists()
-    || (!QDir(directory).isEmpty() && !QFile(databaseFileName).exists()))
+  if (!QDir(absDirectory).exists()
+    || (!QDir(absDirectory).isEmpty() && !QFile(databaseFileName).exists()))
   {
     std::cerr << "Database folder does not contain ctkDICOM.sql file: " << qPrintable(absDirectory) << "\n";
     d->DatabaseDirectoryProblemFrame->show();
@@ -649,11 +657,11 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
   }
 
   // Save new database directory in this object and in application settings.
-  d->DatabaseDirectory = directory;
-  QSettings settings;
+  d->DatabaseDirectory = absDirectory;
   if (!d->DatabaseDirectorySettingsKey.isEmpty())
   {
-    settings.setValue(d->DatabaseDirectorySettingsKey, directory);
+    QSettings settings;
+    settings.setValue(d->DatabaseDirectorySettingsKey, ctk::internalPathFromAbsolute(absDirectory, d->DatabaseDirectoryBase));
     settings.sync();
   }
 
@@ -662,12 +670,12 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
 
   // update the button and let any connected slots know about the change
   bool wasBlocked = d->DirectoryButton->blockSignals(true);
-  d->DirectoryButton->setDirectory(directory);
+  d->DirectoryButton->setDirectory(absDirectory);
   d->DirectoryButton->blockSignals(wasBlocked);
 
   d->dicomTableManager->updateTableViews();
 
-  emit databaseDirectoryChanged(directory);
+  emit databaseDirectoryChanged(absDirectory);
 }
 
 //----------------------------------------------------------------------------
@@ -693,7 +701,7 @@ void ctkDICOMBrowser::setDatabaseDirectorySettingsKey(const QString& key)
   d->DatabaseDirectorySettingsKey = key;
 
   QSettings settings;
-  QString databaseDirectory = settings.value(d->DatabaseDirectorySettingsKey, "").toString();
+  QString databaseDirectory = ctk::absolutePathFromInternal(settings.value(d->DatabaseDirectorySettingsKey, "").toString(), d->DatabaseDirectoryBase);
   this->setDatabaseDirectory(databaseDirectory);
 }
 
@@ -782,6 +790,7 @@ void ctkDICOMBrowser::onRepairAction()
   QStringList allFiles(d->DICOMDatabase->allFiles());
 
   QSet<QString> corruptedSeries;
+  QHash<QString, QHash<QString, QString> > corruptedSeriesDescriptions;
 
   QStringList::const_iterator it;
   for (it = allFiles.constBegin(); it!= allFiles.constEnd();++it)
@@ -792,7 +801,11 @@ void ctkDICOMBrowser::onRepairAction()
     if(!dicomFile.exists())
     {
       QString seriesUid = d->DICOMDatabase->seriesForFile(fileName);
-      corruptedSeries.insert(seriesUid);
+      if (!corruptedSeries.contains(seriesUid))
+      {
+        corruptedSeries.insert(seriesUid);
+        corruptedSeriesDescriptions[seriesUid] = d->DICOMDatabase->descriptionsForFile(fileName);
+      }
     }
   }
 
@@ -819,13 +832,11 @@ void ctkDICOMBrowser::onRepairAction()
       QStringList fileList (d->DICOMDatabase->filesForSeries(*i));
       QString unavailableFileNames;
       QStringList::const_iterator it;
-      for (it= fileList.constBegin(); it!= fileList.constEnd();++it)
+      QHash<QString, QString> descriptions = corruptedSeriesDescriptions[*i];
+      for (it = fileList.constBegin(); it!= fileList.constEnd();++it)
       {
         unavailableFileNames.append(*it+"\n");
       }
-
-      QString firstFile (*(fileList.constBegin()));
-      QHash<QString,QString> descriptions (d->DICOMDatabase->descriptionsForFile(firstFile));
 
       if (!yesToAll)
       {

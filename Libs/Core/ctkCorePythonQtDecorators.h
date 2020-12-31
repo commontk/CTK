@@ -26,6 +26,7 @@
 
 // CTK includes
 #include <ctkBooleanMapper.h>
+#include <ctkUtils.h>
 #include <ctkErrorLogContext.h>
 #include <ctkWorkflowStep.h>
 #include <ctkWorkflowTransitions.h>
@@ -235,9 +236,31 @@ public Q_SLOTS:
 };
 
 //-----------------------------------------------------------------------------
+class PythonQtWrapper_CTKCore : public QObject
+{
+  Q_OBJECT
+
+public Q_SLOTS:
+  QString static_ctkCoreUtils_absolutePathFromInternal(const QString& internalPath, const QString& basePath)
+    {
+    return ctk::absolutePathFromInternal(internalPath, basePath);
+    }
+
+  QString static_ctkCoreUtils_internalPathFromAbsolute(const QString& absolutePath, const QString& basePath)
+    {
+    return ctk::internalPathFromAbsolute(absolutePath, basePath);
+    }
+};
+
+//-----------------------------------------------------------------------------
 void initCTKCorePythonQtDecorators()
 {
   PythonQt::self()->addDecorators(new ctkCorePythonQtDecorators);
+
+  // PythonQt doesn't support wrapping a static function and adding it to the top-level
+  // ctk module. This exposes static functions from ctkCoreUtils as ctk.ctkCoreUtils.absolutePathFromInternal(), etc.
+  // Note that PythonQtWrapper_CTKCore installs itself as ctk.ctk but using that same module here would replace PythonQtWrapper_CTKCore.
+  PythonQt::self()->registerCPPClass("ctkCoreUtils", "", "CTKCore", PythonQtCreateObject<PythonQtWrapper_CTKCore>);
 }
 
 #endif
