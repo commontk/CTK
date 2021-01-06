@@ -161,7 +161,7 @@ void ctkAbstractPythonManager::initPythonQt(int flags)
   initCode << "import sys";
   foreach (const QString& path, this->pythonPaths())
     {
-    initCode << QString("sys.path.append('%1')").arg(QDir::fromNativeSeparators(path));
+    initCode << QString("sys.path.append(%1)").arg(QDir::fromNativeSeparators(path));
     }
 
   PythonQtObjectPtr _mainContext = PythonQt::self()->getMainModule();
@@ -332,20 +332,20 @@ void ctkAbstractPythonManager::executeFile(const QString& filename)
     // Re-throwing is only needed in Python 2.7
     QStringList code = QStringList()
         << "import sys"
-        << QString("sys.path.insert(0, '%1')").arg(path)
+        << QString("sys.path.insert(0, %1)").arg(ctkAbstractPythonManager::toPythonStringLiteral(path))
         << "_updated_globals = globals()"
-        << QString("_updated_globals['__file__'] = '%1'").arg(filename)
+        << QString("_updated_globals['__file__'] = %1").arg(ctkAbstractPythonManager::toPythonStringLiteral(filename))
 #if PY_MAJOR_VERSION >= 3
-        << QString("exec(open('%1').read(), _updated_globals)").arg(filename);
+        << QString("exec(open(%1).read(), _updated_globals)").arg(ctkAbstractPythonManager::toPythonStringLiteral(filename));
 #else
         << "_ctk_executeFile_exc_info = None"
         << "try:"
-        << QString("    execfile('%1', _updated_globals)").arg(filename)
+        << QString("    execfile(%1, _updated_globals)").arg(ctkAbstractPythonManager::toPythonStringLiteral(filename))
         << "except Exception as e:"
         << "    _ctk_executeFile_exc_info = sys.exc_info()"
         << "finally:"
         << "    del _updated_globals"
-        << QString("    if sys.path[0] == '%1': sys.path.pop(0)").arg(path)
+        << QString("    if sys.path[0] == %1: sys.path.pop(0)").arg(ctkAbstractPythonManager::toPythonStringLiteral(path))
         << "    if _ctk_executeFile_exc_info:"
         << "        raise _ctk_executeFile_exc_info[1], None, _ctk_executeFile_exc_info[2]";
 #endif
@@ -727,4 +727,13 @@ void ctkAbstractPythonManager::printStdout(const QString& text)
 void ctkAbstractPythonManager::printStderr(const QString& text)
 {
   std::cerr << qPrintable(text);
+}
+
+//-----------------------------------------------------------------------------
+QString ctkAbstractPythonManager::toPythonStringLiteral(QString path)
+{
+  path = path.replace("\\", "\\\\");
+  path = path.replace("'", "\\'");
+  // since we enclose string in single quotes, double-quotes do not require escaping
+  return "'" + path + "'";
 }

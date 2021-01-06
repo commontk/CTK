@@ -151,6 +151,17 @@ public:
   /// \sa PythonQt::clearError()
   void resetErrorFlag();
 
+  /// Convert a string to a safe python string literal.
+  /// Backslash, single-quote characters are escaped
+  /// and the string is enclosed between single quotes.
+  ///
+  /// Examples:
+  ///   some simple string   => 'some simple string'
+  ///   some " string        => 'some " string'
+  ///   some other ' string  => 'some other \' string'
+  ///   some backslash \ str => 'some backslash \\ str'
+  Q_INVOKABLE static QString toPythonStringLiteral(QString path);
+
 Q_SIGNALS:
 
   /// This signal is emitted after python is pre-initialized. Observers can listen
