@@ -40,10 +40,12 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
-  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCallingAETitle);
+  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle);
   Q_PROPERTY(QString host READ host WRITE setHost);
   Q_PROPERTY(int port READ port WRITE setPort);
   Q_PROPERTY(bool preferCGET READ preferCGET WRITE setPreferCGET);
+  Q_PROPERTY(QStringList studyInstanceUIDQueried READ studyInstanceUIDQueried);
+  Q_PROPERTY(QMap<QString, QVariant> filters READ filters WRITE setFilters);
 
 public:
   explicit ctkDICOMQuery(QObject* parent = 0);
@@ -71,7 +73,7 @@ public:
 
   /// Query a remote DICOM Image Store SCP
   /// You must at least set the host and port before calling query()
-  bool query(ctkDICOMDatabase& database);
+  Q_INVOKABLE bool query(ctkDICOMDatabase& database);
 
   /// Access the list of study instance UIDs from the last query
   QStringList studyInstanceUIDQueried()const;
