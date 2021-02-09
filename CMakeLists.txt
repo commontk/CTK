@@ -463,11 +463,6 @@ endif()
 mark_as_advanced(CMAKE_INSTALL_PREFIX)
 mark_as_advanced(DART_TESTING_TIMEOUT)
 
-# KWStyle
-option(CTK_USE_KWSTYLE     "Enable sourcecode-based style tests." OFF)
-mark_as_advanced(CTK_USE_KWSTYLE)
-mark_as_superbuild(CTK_USE_KWSTYLE)
-
 # Qt Designer Plugins
 option(CTK_BUILD_QTDESIGNER_PLUGINS "Build Qt Designer plugins" ON)
 mark_as_advanced(CTK_BUILD_QTDESIGNER_PLUGINS)
@@ -953,10 +948,6 @@ if(BUILD_TESTING)
   list(APPEND CTK_DEPENDENCIES CTKData)
 endif()
 
-if(CTK_USE_KWSTYLE)
-  list(APPEND CTK_DEPENDENCIES KWStyle)
-endif()
-
 #-----------------------------------------------------------------------------
 # Check out the ExternalProjectsContrib repository
 if(CTK_USE_CONTRIBUTED_PLUGINS)
@@ -1143,12 +1134,6 @@ endif()
 #
 #add_subdirectory(Testing)
 #add_subdirectory(Examples)
-
-
-#-----------------------------------------------------------------------------
-# Style Checking configuration
-#
-include(Utilities/KWStyle/KWStyle.cmake)
 
 #---------------------------------------------------------------------------
 # Documentation
