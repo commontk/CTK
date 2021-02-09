@@ -935,7 +935,6 @@ set(CTK_DEPENDENCIES
   VTK
   PythonQt
   DCMTK
-  ZMQ
   QtSOAP
   qxmlrpc
   qRestAPI
