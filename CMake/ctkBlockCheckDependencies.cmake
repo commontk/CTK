@@ -102,11 +102,6 @@ set(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
 set(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
 set(${VTK_enabling_variable}_FIND_PACKAGE_CMD VTK)
 
-set(ZMQ_enabling_variable ZMQ_LIBRARIES)
-set(${ZMQ_enabling_variable}_LIBRARY_DIRS ZMQ_LIBRARY_DIRS)
-set(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
-set(${ZMQ_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
-
 macro(superbuild_is_external_project_includable possible_proj output_var)
   if(DEFINED ${possible_proj}_enabling_variable)
     ctkMacroShouldAddExternalProject(${${possible_proj}_enabling_variable} ${output_var})
