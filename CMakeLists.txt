@@ -939,7 +939,6 @@ set(CTK_DEPENDENCIES
   QtSOAP
   qxmlrpc
   qRestAPI
-  OpenIGTLink
   ITK
   QtTesting
   )
