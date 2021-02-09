@@ -29,7 +29,7 @@ endif()
 
 if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(revision_tag "v3.20.1")
+  set(revision_tag "v5.1.2")
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -41,7 +41,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
                       GIT_TAG ${revision_tag})
   else()
-    set(location_args GIT_REPOSITORY "${EP_GIT_PROTOCOL}://itk.org/ITK.git"
+    set(location_args GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/InsightSoftwareConsortium/ITK"
                       GIT_TAG ${revision_tag})
   endif()
 
@@ -56,12 +56,6 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${ep_common_cache_args}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=ON
-      -DITK_USE_REVIEW:BOOL=ON
-      -DITK_USE_REVIEW_STATISTICS:BOOL=ON
-      -DITK_USE_OPTIMIZED_REGISTRATION_METHODS:BOOL=ON
-      -DITK_USE_PORTABLE_ROUND:BOOL=ON
-      -DITK_USE_CENTERED_PIXEL_COORDINATES_CONSISTENTLY:BOOL=ON
-      -DITK_USE_TRANSFORM_IO_FACTORIES:BOOL=ON
       -DITK_LEGACY_REMOVE:BOOL=ON
     DEPENDS
       ${${proj}_DEPENDENCIES}
