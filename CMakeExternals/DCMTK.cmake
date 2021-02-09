@@ -28,7 +28,7 @@ if(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
 endif()
 
 if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  set(revision_tag "DCMTK-3.6.1_20161102")
+  set(revision_tag "DCMTK-3.6.5")
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -44,6 +44,29 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
                       GIT_TAG ${revision_tag})
   endif()
 
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+
+  if(UNIX)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
+      -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
+      )
+  endif()
+
+  set(ep_cxx_standard_args)
+  # XXX: On MSVC disable building DCMTK with C++11. DCMTK checks C++11.
+  # compiler compatibility by inspecting __cplusplus, but MSVC doesn't set __cplusplus.
+  # See https://blogs.msdn.microsoft.com/vcblog/2016/06/07/standards-version-switches-in-the-compiler/.
+  # Microsoft: "We won’t update __cplusplus until the compiler fully conforms to
+  # the standard. Until then, you can check the value of _MSVC_LANG."
+  if(CMAKE_CXX_STANDARD AND UNIX)
+    list(APPEND ep_cxx_standard_args
+      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
+      -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
+      -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
+      -DDCMTK_ENABLE_CXX11:BOOL=ON
+      )
+  endif()
 
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
@@ -57,6 +80,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_INSTALL_LIBDIR:STRING=lib/${CMAKE_CFG_INTDIR}
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
+      ${ep_cxx_standard_args}
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
       -DDCMTK_WITH_ZLIB:BOOL=OFF # see github issue #25
@@ -65,8 +89,11 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DDCMTK_WITH_TIFF:BOOL=OFF  # see github issue #25
       -DDCMTK_WITH_XML:BOOL=OFF  # see github issue #25
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see github issue #178
-      -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
+      -DDCMTK_WITH_SNDFILE:BOOL=OFF # see DCMQI github issue #395
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
+      -DDCMTK_ENABLE_BUILTIN_DICTIONARY:BOOL=ON
+      -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
+      ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
