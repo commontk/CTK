@@ -32,12 +32,6 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(location_args SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink")
   endif()
 
-  set(ep_project_include_arg)
-  if(CTEST_USE_LAUNCHERS)
-    set(ep_project_include_arg
-      "-DCMAKE_PROJECT_OpenIGTLink_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
-  endif()
-
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
@@ -47,7 +41,6 @@ if(NOT DEFINED OpenIGTLink_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     INSTALL_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
-      ${ep_project_include_arg}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
