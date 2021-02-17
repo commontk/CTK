@@ -150,6 +150,31 @@ public:
 
   void showUpdateSchemaDialog();
 
+  // Return a sanitized version of the string that is safe to be used
+  // as a filename component.
+  // All non-ASCII characters are replaced, becase they may be used on an internal hard disk,
+  // but it may not be possible to use them on file systems of an external drive or network storage.
+  QString filenameSafeString(const QString& str)
+  {
+    QString safeStr;
+    const QString illegalChars("/\\<>:\"|?*");
+    foreach (const QChar& c, str)
+    {
+      int asciiCode = c.toLatin1();
+      if (asciiCode >= 32 && asciiCode <= 127 && !illegalChars.contains(c))
+      {
+        safeStr.append(c);
+      }
+      else
+      {
+        safeStr.append("_");
+      }
+    }
+    // remove leading/trailing whitespaces
+    return safeStr.trimmed();
+  }
+
+
   bool DisplayImportSummary;
   bool ConfirmRemove;
   bool ShemaUpdateAutoCreateDirectory;
@@ -1315,30 +1340,23 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
 
     QString sep = "/";
     QString nameSep = "-";
-    QString destinationDir = dirPath + sep + patientID;
+    QString destinationDir = dirPath + sep + d->filenameSafeString(patientID);
     if (!patientName.isEmpty())
     {
-      destinationDir += nameSep + patientName;
+      destinationDir += nameSep + d->filenameSafeString(patientName);
     }
-    destinationDir += sep + studyDate;
+    destinationDir += sep + d->filenameSafeString(studyDate);
     if (!studyDescription.isEmpty())
     {
-      destinationDir += nameSep + studyDescription;
+      destinationDir += nameSep + d->filenameSafeString(studyDescription);
     }
-    destinationDir += sep + seriesNumber;
+    destinationDir += sep + d->filenameSafeString(seriesNumber);
     if (!seriesDescription.isEmpty())
     {
-      destinationDir += nameSep + seriesDescription;
+      destinationDir += nameSep + d->filenameSafeString(seriesDescription);
     }
     destinationDir += sep;
 
-    // make sure only ascii characters are in the directory path
-    // (while special characters may be used on an internal hard disk, it may not be possible
-    // to use special characters on file systems of an external drive or network storage)
-    destinationDir = QString::fromLatin1(destinationDir.toLatin1());
-    // replace any question marks that were used as replacements for non ascii
-    // characters with underscore
-    destinationDir.replace("?", "_");
 
     // create the destination directory if necessary
     if (!QDir().exists(destinationDir))
@@ -1373,21 +1391,8 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
     d->ExportProgress->setMaximum(numFiles);
     foreach (const QString& filePath, filesForSeries)
     {
-      QString destinationFileName = destinationDir;
-
-      QString fileNumberString;
-      // sequentially number the files
-      fileNumberString.sprintf("%06d", fileNumber);
-
-      destinationFileName += fileNumberString + QString(".dcm");
-
-      // replace non ASCII characters
-      destinationFileName = destinationFileName.toLatin1();
-      // (it is safer to avoid special characters in case the files are
-      // to be more compatible with exported to external drive or network storage)
-      // replace any question marks that were used as replacements for non ascii
-      // characters with underscore
-      destinationFileName.replace("?", "_");
+      // File name example: my/destination/folder/000001.dcm
+      QString destinationFileName = QStringLiteral("%1%2.dcm").arg(destinationDir).arg(fileNumber, 6, 10, QLatin1Char('0'));
 
       if (!QFile::exists(filePath))
       {
