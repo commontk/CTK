@@ -109,33 +109,57 @@ public:
    * entries with the according uids are selected
    * @param uids a list of uids which should be selected
    */
-  void setQuery(const QStringList &uids = QStringList());
+  Q_INVOKABLE void setQuery(const QStringList &uids = QStringList());
 
   /**
    * @brief Add a where condition to the usual select statement
-   * @param condition std::pair with column name and a value list
+   * @param condition std::pair with column name and a value list in
+   *        which the column needs to have one of the values in the list
    */
   Q_INVOKABLE void addSqlWhereCondition(const std::pair<QString, QStringList>& condition);
 
   /**
    * @brief Add a where condition to the usual select statement
-   * @param condition std::pair with column name and a value list
+   * @param column Column name that needs to have one of the values in the values list
+   * @param values List of values that are accepted for the given column
    */
   Q_INVOKABLE void addSqlWhereCondition(const QString column, const QStringList& values);
 
   /**
+   * @brief Remove a where condition. \sa addSqlWhereCondition
+   * @param column Name of filtered column
+   */
+  Q_INVOKABLE void removeSqlWhereCondition(const QString column);
+
+  /**
+   * @brief Add a custom where condition. \sa removeCustomSqlWhereCondition
+   * @param whereCondition SQL where condition (without ' and ')
+   *        Example: 'Series.SeriesDate > "2020-01-01"'
+   */
+  Q_INVOKABLE void addCustomSqlWhereCondition(const QString whereCondition);
+
+  /**
+   * @brief Remove a custom where condition. \sa addSqlWhereCondition
+   * @param whereCondition Condition to remove. Must match exactly to what has been added.
+   */
+  Q_INVOKABLE void removeCustomSqlWhereCondition(const QString whereCondition);
+ 
+  /**
    * @brief Returns the uids of the current selected rows
    * @return a list containing all the uids of the selected rows
    */
-  QStringList currentSelection() const;
+  Q_INVOKABLE QStringList currentSelection() const;
 
   /**
    * @brief Getting the UIDs for all rows
    * @return a QStringList with the uids for all rows
    */
-  QStringList uidsForAllRows() const;
+  Q_INVOKABLE QStringList uidsForAllRows() const;
 
-  bool filterActive();
+  /**
+   * @brief Return whether text filter has been applied
+   */
+  Q_INVOKABLE bool filterActive();
 
   /**
   * @brief Get the actual QTableView, for specific view settings
@@ -155,7 +179,7 @@ public:
   * When batch update is disabled then pending notifications are be processed.
   * @return previous value of batch update
   */
-  bool setBatchUpdate(bool);
+  Q_INVOKABLE bool setBatchUpdate(bool);
 
   /**
   * @brief Show/hide table header
@@ -163,6 +187,11 @@ public:
   */
   void setHeaderVisible(bool state);
   bool isHeaderVisible() const;
+
+  /**
+  * @brief Get current SQL query string. Useful for debugging.
+  */
+  Q_INVOKABLE QString queryString();
 
 public Q_SLOTS:
   /**

@@ -26,6 +26,7 @@
 #include <QJsonObject>
 #include <QMouseEvent>
 #include <QSortFilterProxyModel>
+#include <QSqlQuery>
 #include <QSqlQueryModel>
 
 //------------------------------------------------------------------------------
@@ -62,8 +63,12 @@ public:
   bool batchUpdateInstanceAddedPending;
 
   /// Key = QString for columns, Values = QStringList
+  /// Specified columns need to have one of the given values
   QHash<QString, QStringList> sqlWhereConditions;
 
+  /// Custom SQL where condition that can filter on anything
+  /// Example: 'Series.SeriesDate > "2020-01-01"'
+  QStringList customSqlWhereConditions;
 };
 
 //------------------------------------------------------------------------------
@@ -512,6 +517,7 @@ void ctkDICOMTableView::onInstanceAdded()
     return;
   }
   d->sqlWhereConditions.clear();
+  d->customSqlWhereConditions.clear();
   d->tblDicomDatabaseView->clearSelection();
   d->leSearchBox->clear();
   this->setQuery();
@@ -569,7 +575,7 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
   int columnCountBefore = d->dicomSQLModel.columnCount();
   if (!uids.empty() && d->queryForeignKey.length() != 0)
   {
-    query += " and %1."+d->queryForeignKey+" in ( '";
+    query += " and %1." + d->queryForeignKey + " in ( '";
     query.append(uids.join("','")).append("')");
   }
   if (!d->sqlWhereConditions.empty())
@@ -579,12 +585,19 @@ void ctkDICOMTableView::setQuery(const QStringList &uids)
     {
       if (!i.value().empty())
       {
-        query += " and "+i.key()+" in ( '";
+        query += " and " + i.key() + " in ( '";
         query.append(i.value().join("','")).append("')");
       }
       ++i;
     }
   }
+  if (!d->customSqlWhereConditions.empty())
+    {
+    foreach (QString whereCondition, d->customSqlWhereConditions)
+      {
+      query += " and " + whereCondition;
+      }
+    }
   if (d->dicomDatabase != 0 && d->dicomDatabase->isOpen()
     && (d->queryForeignKey.isEmpty() || !uids.empty()) )
   {
@@ -613,6 +626,27 @@ void ctkDICOMTableView::addSqlWhereCondition(const QString column, const QString
 {
   Q_D(ctkDICOMTableView);
   d->sqlWhereConditions.insert(column, values);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::removeSqlWhereCondition(const QString column)
+{
+  Q_D(ctkDICOMTableView);
+  d->sqlWhereConditions.remove(column);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::addCustomSqlWhereCondition(const QString whereCondition)
+{
+  Q_D(ctkDICOMTableView);
+  d->customSqlWhereConditions << whereCondition;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::removeCustomSqlWhereCondition(const QString whereCondition)
+{
+  Q_D(ctkDICOMTableView);
+  d->customSqlWhereConditions.removeAll(whereCondition);
 }
 
 //------------------------------------------------------------------------------
@@ -723,4 +757,11 @@ void ctkDICOMTableView::setHeaderVisible(bool visible)
 {
   Q_D(ctkDICOMTableView);
   return d->headerWidget->setVisible(visible);
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMTableView::queryString()
+{
+  Q_D(ctkDICOMTableView);
+  return d->dicomSQLModel.query().lastQuery();
 }
