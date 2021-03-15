@@ -266,7 +266,7 @@ public:
   /// Displayed fields are useful if the raw DICOM tags are not human readable, or
   /// when we want to show a derived piece of information (such as image size or
   /// number of studies in a patient).
-  Q_INVOKABLE void updateDisplayedFields();
+  Q_INVOKABLE virtual void updateDisplayedFields();
 
   /// Get if displayed fields are defined. It returns false for databases that were created with an old schema
   /// that did not contain ColumnDisplayProperties table.

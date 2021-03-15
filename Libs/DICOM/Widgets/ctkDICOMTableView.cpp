@@ -26,6 +26,8 @@
 #include <QJsonObject>
 #include <QMouseEvent>
 #include <QSortFilterProxyModel>
+#include <QSqlError>
+#include <QSqlQuery>
 #include <QSqlQueryModel>
 
 //------------------------------------------------------------------------------
@@ -62,8 +64,20 @@ public:
   bool batchUpdateInstanceAddedPending;
 
   /// Key = QString for columns, Values = QStringList
+  /// Specified columns need to have one of the given values
   QHash<QString, QStringList> sqlWhereConditions;
 
+  /// Greater than SQL where conditions
+  QMap<QString, QVariant> sqlGreaterWhereConditions;
+
+  /// Less than SQL where conditions
+  QMap<QString, QVariant> sqlLessWhereConditions;
+
+  /// Greater than or equal to SQL where conditions
+  QMap<QString, QVariant> sqlGreaterEqualWhereConditions;
+
+  /// Less than or equal to SQL where conditions
+  QMap<QString, QVariant> sqlLessEqualWhereConditions;
 };
 
 //------------------------------------------------------------------------------
@@ -512,6 +526,10 @@ void ctkDICOMTableView::onInstanceAdded()
     return;
   }
   d->sqlWhereConditions.clear();
+  d->sqlGreaterWhereConditions.clear();
+  d->sqlLessWhereConditions.clear();
+  d->sqlGreaterEqualWhereConditions.clear();
+  d->sqlLessEqualWhereConditions.clear();
   d->tblDicomDatabaseView->clearSelection();
   d->leSearchBox->clear();
   this->setQuery();
@@ -564,32 +582,74 @@ bool ctkDICOMTableView::eventFilter(QObject *obj, QEvent *event)
 void ctkDICOMTableView::setQuery(const QStringList &uids)
 {
   Q_D(ctkDICOMTableView);
-  QString query = ("select distinct %1.* from Patients, Series, Studies where "
-                   "Patients.UID = Studies.PatientsUID and Studies.StudyInstanceUID = Series.StudyInstanceUID");
+
+  QString queryString = ("SELECT DISTINCT %1.* FROM Patients, Series, Studies WHERE "
+                   "Patients.UID = Studies.PatientsUID AND Studies.StudyInstanceUID = Series.StudyInstanceUID");
+  QList<QVariant> boundValues;
   int columnCountBefore = d->dicomSQLModel.columnCount();
+
   if (!uids.empty() && d->queryForeignKey.length() != 0)
   {
-    query += " and %1."+d->queryForeignKey+" in ( '";
-    query.append(uids.join("','")).append("')");
-  }
-  if (!d->sqlWhereConditions.empty())
-  {
-    QHash<QString, QStringList>::const_iterator i = d->sqlWhereConditions.begin();
-    while (i != d->sqlWhereConditions.end())
+    queryString += " AND %1." + d->queryForeignKey + " IN (";
+    for (int i=0; i<uids.count(); ++i)
     {
-      if (!i.value().empty())
-      {
-        query += " and "+i.key()+" in ( '";
-        query.append(i.value().join("','")).append("')");
-      }
-      ++i;
+      queryString += (i == uids.count()-1 ? "?)" : "?,");
+      boundValues << uids[i];
     }
   }
+
+  // Add where statements
+  QHash<QString, QStringList>::const_iterator filterIt = d->sqlWhereConditions.begin();
+  while (filterIt != d->sqlWhereConditions.end())
+  {
+    if (!filterIt.value().empty())
+    {
+      queryString += " AND " + filterIt.key() + " IN (";
+      for (int i=0; i<filterIt.value().count(); ++i)
+      {
+        queryString += (i == filterIt.value().count()-1 ? "?)" : "?,");
+        boundValues << filterIt.value()[i];
+      }
+    }
+    ++filterIt;
+  }
+  foreach (const QString& column, d->sqlGreaterWhereConditions.keys())
+  {
+    queryString += " AND " + column + " > ?" ;
+    boundValues << d->sqlGreaterWhereConditions[column];
+  }
+  foreach (const QString& column, d->sqlLessWhereConditions.keys())
+  {
+    queryString += " AND " + column + " < ?" ;
+    boundValues << d->sqlLessWhereConditions[column];
+  }
+  foreach (const QString& column, d->sqlGreaterEqualWhereConditions.keys())
+  {
+    queryString += " AND " + column + " >= ?" ;
+    boundValues << d->sqlGreaterEqualWhereConditions[column];
+  }
+  foreach (const QString& column, d->sqlLessEqualWhereConditions.keys())
+  {
+    queryString += " AND " + column + " <= ?" ;
+    boundValues << d->sqlLessEqualWhereConditions[column];
+  }
+
   if (d->dicomDatabase != 0 && d->dicomDatabase->isOpen()
     && (d->queryForeignKey.isEmpty() || !uids.empty()) )
   {
-    d->dicomSQLModel.setQuery(query.arg(d->queryTableName), d->dicomDatabase->database());
-    if (columnCountBefore==0)
+    QSqlQuery query(d->dicomDatabase->database());
+    query.prepare(queryString.arg(d->queryTableName));
+    foreach (QVariant value, boundValues)
+    {
+      query.addBindValue(value);
+    }
+    if (!query.exec())
+    {
+      qCritical() << Q_FUNC_INFO << "failed: Failed to execute query " << query.lastQuery() << " : " << query.lastError().text();
+    }
+
+    d->dicomSQLModel.setQuery(query);
+    if (columnCountBefore == 0)
     {
       // columns have not been initialized yet
       d->applyColumnProperties();
@@ -609,10 +669,96 @@ void ctkDICOMTableView::addSqlWhereCondition(const std::pair<QString, QStringLis
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMTableView::addSqlWhereCondition(const QString column, const QStringList& values)
+void ctkDICOMTableView::addSqlWhereCondition(const QString& column, const QStringList& values)
 {
   Q_D(ctkDICOMTableView);
   d->sqlWhereConditions.insert(column, values);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::removeSqlWhereCondition(const QString& column)
+{
+  Q_D(ctkDICOMTableView);
+  return d->sqlWhereConditions.remove(column) > 0;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::addSqlEqualWhereCondition(const QString& column, const QStringList& values)
+{
+  this->addSqlWhereCondition(column, values);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::removeSqlEqualWhereCondition(const QString& column)
+{
+  return this->removeSqlWhereCondition(column);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::addSqlGreaterWhereCondition(const QString& column, const QVariant value)
+{
+  Q_D(ctkDICOMTableView);
+  d->sqlGreaterWhereConditions[column] = value;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::removeSqlGreaterWhereCondition(const QString& column)
+{
+  Q_D(ctkDICOMTableView);
+  return d->sqlGreaterWhereConditions.remove(column) > 0;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::addSqlLessWhereCondition(const QString& column, const QVariant value)
+{
+  Q_D(ctkDICOMTableView);
+  d->sqlLessWhereConditions[column] = value;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::removeSqlLessWhereCondition(const QString& column)
+{
+  Q_D(ctkDICOMTableView);
+  return d->sqlLessWhereConditions.remove(column) > 0;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::addSqlGreaterEqualWhereCondition(const QString& column, const QVariant value)
+{
+  Q_D(ctkDICOMTableView);
+  d->sqlGreaterEqualWhereConditions[column] = value;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::removeSqlGreaterEqualWhereCondition(const QString& column)
+{
+  Q_D(ctkDICOMTableView);
+  return d->sqlGreaterEqualWhereConditions.remove(column) > 0;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::addSqlLessEqualWhereCondition(const QString& column, const QVariant value)
+{
+  Q_D(ctkDICOMTableView);
+  d->sqlLessEqualWhereConditions[column] = value;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMTableView::removeSqlLessEqualWhereCondition(const QString& column)
+{
+  Q_D(ctkDICOMTableView);
+  return d->sqlLessEqualWhereConditions.remove(column) > 0;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableView::clearSqlWhereConditions()
+{
+  Q_D(ctkDICOMTableView);
+  d->sqlWhereConditions.clear();
+  d->sqlGreaterWhereConditions.clear();
+  d->sqlLessWhereConditions.clear();
+  d->sqlGreaterEqualWhereConditions.clear();
+  d->sqlLessEqualWhereConditions.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -723,4 +869,11 @@ void ctkDICOMTableView::setHeaderVisible(bool visible)
 {
   Q_D(ctkDICOMTableView);
   return d->headerWidget->setVisible(visible);
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMTableView::queryString()
+{
+  Q_D(ctkDICOMTableView);
+  return d->dicomSQLModel.query().executedQuery();
 }
