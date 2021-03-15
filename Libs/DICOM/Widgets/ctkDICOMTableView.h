@@ -109,33 +109,126 @@ public:
    * entries with the according uids are selected
    * @param uids a list of uids which should be selected
    */
-  void setQuery(const QStringList &uids = QStringList());
+  Q_INVOKABLE void setQuery(const QStringList &uids = QStringList());
 
   /**
-   * @brief Add a where condition to the usual select statement
-   * @param condition std::pair with column name and a value list
+   * @brief Add a WHERE condition to the SELECT statement that filters for matching values
+   * @param condition std::pair with column name and a value list in
+   *        which the column needs to have one of the values in the list
    */
   Q_INVOKABLE void addSqlWhereCondition(const std::pair<QString, QStringList>& condition);
 
   /**
-   * @brief Add a where condition to the usual select statement
-   * @param condition std::pair with column name and a value list
+   * @brief Add a WHERE condition to the SELECT statement that filters for matching values.
+   * @param column Column name that needs to have one of the values in the values list
+   * @param values List of values that are accepted for the given column
+   * 
+   * Same as \sa addSqlEqualWhereCondition
+   * Combines with the rest of the WHERE conditions (\sa addSqlGreaterWhereCondition, \sa addSqlLessWhereCondition,
+   * \sa addSqlGreaterEqualWhereCondition, \sa addSqlLessEqualWhereCondition) using 'and',
+   * e.g. "column1 in ('value11','value12') and column2 in ('value21','value22') and column3 > value3 and column4 <= value4"
    */
-  Q_INVOKABLE void addSqlWhereCondition(const QString column, const QStringList& values);
+  Q_INVOKABLE void addSqlWhereCondition(const QString& column, const QStringList& values);
+
+  /**
+   * @brief Remove all 'equal' WHERE conditions from a given column. \sa addSqlWhereCondition
+   * @param column Name of filtered column
+   */
+  Q_INVOKABLE bool removeSqlWhereCondition(const QString& column);
+
+  /**
+   * @brief Add a WHERE condition to the SELECT statement that filters for matching values. 
+   * @param column Column name that needs to have one of the values in the values list
+   * @param values List of values that are accepted for the given column
+   * 
+   * Same as \sa addSqlWhereCondition
+   * Combines with the rest of the WHERE conditions (\sa addSqlGreaterWhereCondition, \sa addSqlLessWhereCondition,
+   * \sa addSqlGreaterEqualWhereCondition, \sa addSqlLessEqualWhereCondition) using 'and',
+   * e.g. "column1 in ('value11','value12') and column2 in ('value21','value22') and column3 > value3 and column4 <= value4"
+   */
+  Q_INVOKABLE void addSqlEqualWhereCondition(const QString& column, const QStringList& values);
+
+  /**
+   * @brief Remove all 'equal' WHERE conditions from a given column. \sa removeSqlEqualWhereCondition
+   * @param column Name of filtered column
+   */
+  Q_INVOKABLE bool removeSqlEqualWhereCondition(const QString& column);
+
+  /**
+   * @brief Add a WHERE condition that filters values using the greater ('>') operator
+   * @param column Name of the column which is filtered using the operator
+   * @param value Value that the filtered values must be greater than
+   */
+  Q_INVOKABLE void addSqlGreaterWhereCondition(const QString& column, const QVariant value);
+
+  /**
+   * @brief Remove all 'greater' WHERE conditions from a given column. \sa removeSqlGreaterWhereCondition
+   * @param column Name of filtered column
+   */
+  Q_INVOKABLE bool removeSqlGreaterWhereCondition(const QString& column);
+
+  /**
+   * @brief Add a WHERE condition that filters values using the less ('<') operator
+   * @param column Name of the column which is filtered using the operator
+   * @param value Value that the filtered values must be less than
+   */
+  Q_INVOKABLE void addSqlLessWhereCondition(const QString& column, const QVariant value);
+
+  /**
+   * @brief Remove all 'less' WHERE conditions from a given column. \sa removeSqlLessWhereCondition
+   * @param column Name of filtered column
+   */
+  Q_INVOKABLE bool removeSqlLessWhereCondition(const QString& column);
+
+  /**
+   * @brief Add a WHERE condition that filters values using the greater or equal ('>=') operator
+   * @param column Name of the column which is filtered using the operator
+   * @param value Value that the filtered values must be greater than or equal to
+   */
+  Q_INVOKABLE void addSqlGreaterEqualWhereCondition(const QString& column, const QVariant value);
+
+  /**
+   * @brief Remove all 'greater or equal' WHERE conditions from a given column. \sa removeSqlGreaterEqualWhereCondition
+   * @param column Name of filtered column
+   */
+  Q_INVOKABLE bool removeSqlGreaterEqualWhereCondition(const QString& column);
+
+  /**
+   * @brief Add a WHERE condition that filters values using the less or equal ('<=') operator
+   * @param column Name of the column which is filtered using the operator
+   * @param value Value that the filtered values must be less than or equal to
+   */
+  Q_INVOKABLE void addSqlLessEqualWhereCondition(const QString& column, const QVariant value);
+
+  /**
+   * @brief Remove all 'less or equal' WHERE conditions from a given column. \sa removeSqlLessEqualWhereCondition
+   * @param column Name of filtered column
+   */
+  Q_INVOKABLE bool removeSqlLessEqualWhereCondition(const QString& column);
+
+  /**
+   * @brief Remove all WHERE conditions
+   * \sa addSqlWhereCondition, \sa addSqlGreaterWhereCondition, \sa addSqlLessWhereCondition
+   * \sa addSqlGreaterEqualWhereCondition, \sa addSqlLessEqualWhereCondition
+   */
+  Q_INVOKABLE void clearSqlWhereConditions();
 
   /**
    * @brief Returns the uids of the current selected rows
    * @return a list containing all the uids of the selected rows
    */
-  QStringList currentSelection() const;
+  Q_INVOKABLE QStringList currentSelection() const;
 
   /**
    * @brief Getting the UIDs for all rows
    * @return a QStringList with the uids for all rows
    */
-  QStringList uidsForAllRows() const;
+  Q_INVOKABLE QStringList uidsForAllRows() const;
 
-  bool filterActive();
+  /**
+   * @brief Return whether text filter has been applied
+   */
+  Q_INVOKABLE bool filterActive();
 
   /**
   * @brief Get the actual QTableView, for specific view settings
@@ -155,7 +248,7 @@ public:
   * When batch update is disabled then pending notifications are be processed.
   * @return previous value of batch update
   */
-  bool setBatchUpdate(bool);
+  Q_INVOKABLE bool setBatchUpdate(bool);
 
   /**
   * @brief Show/hide table header
@@ -163,6 +256,11 @@ public:
   */
   void setHeaderVisible(bool state);
   bool isHeaderVisible() const;
+
+  /**
+  * @brief Get current SQL query string. Useful for debugging.
+  */
+  Q_INVOKABLE QString queryString();
 
 public Q_SLOTS:
   /**
