@@ -60,6 +60,9 @@ void ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::registerE
   QMap<QString, QString> emptyFieldsDisplayStudies,
   QMap<QString, QString> emptyFieldsDisplayPatients )
 {
+  Q_UNUSED(emptyFieldsDisplayStudies);
+  Q_UNUSED(emptyFieldsDisplayPatients);
+
   emptyFieldsDisplaySeries.insertMulti("SeriesDescription", this->EmptySeriesDescriptionRtPlan);
   emptyFieldsDisplaySeries.insertMulti("SeriesDescription", this->EmptySeriesDescriptionRtStruct);
   emptyFieldsDisplaySeries.insertMulti("SeriesDescription", this->EmptySeriesDescriptionRtImage);

@@ -33,6 +33,7 @@ class QDateTime;
 class ctkDICOMDatabasePrivate;
 class DcmDataset;
 class ctkDICOMAbstractThumbnailGenerator;
+class ctkDICOMDisplayedFieldGenerator;
 
 /// \ingroup DICOM_Core
 ///
@@ -155,6 +156,9 @@ public:
   /// in order to support schema updating
   Q_INVOKABLE QString schemaVersionLoaded();
 
+  /// Set custom schema version externally in case a non-standard schema is used
+  Q_INVOKABLE void setCustomSchemaVersion(QString customSchemaVersion);
+
   /// \brief database accessors
   Q_INVOKABLE QStringList patients();
   Q_INVOKABLE QStringList studiesForPatient(const QString patientUID);
@@ -271,6 +275,8 @@ public:
   /// Get if displayed fields are defined. It returns false for databases that were created with an old schema
   /// that did not contain ColumnDisplayProperties table.
   Q_INVOKABLE bool isDisplayedFieldsTableAvailable() const;
+  /// Get displayed field generator in order to be able to set new rules externally
+  ctkDICOMDisplayedFieldGenerator* displayedFieldGenerator() const;
 
   /// Reset cached item IDs to make sure previous
   /// inserts do not interfere with upcoming insert operations.

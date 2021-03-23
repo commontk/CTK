@@ -12,6 +12,7 @@ set(KIT_SRCS
   ctkDICOMAbstractThumbnailGenerator.h
   ctkDICOMDatabase.cpp
   ctkDICOMDatabase.h
+  ctkDICOMDatabase_p.h
   ctkDICOMItem.h
   ctkDICOMDisplayedFieldGenerator.cpp
   ctkDICOMDisplayedFieldGenerator.h

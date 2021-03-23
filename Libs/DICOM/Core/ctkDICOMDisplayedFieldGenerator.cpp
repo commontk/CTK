@@ -41,7 +41,7 @@ static ctkLogger logger("org.commontk.dicom.DICOMDisplayedFieldGenerator" );
 //------------------------------------------------------------------------------
 ctkDICOMDisplayedFieldGeneratorPrivate::ctkDICOMDisplayedFieldGeneratorPrivate(ctkDICOMDisplayedFieldGenerator& o)
   : q_ptr(&o)
-  , Database(NULL)
+  , Database(nullptr)
 {
   // register commonly used rules
   this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorDefaultRule);
@@ -127,10 +127,43 @@ void ctkDICOMDisplayedFieldGenerator::updateDisplayedFieldsForInstance(
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMDisplayedFieldGenerator::startUpdate()
+{
+  Q_D(ctkDICOMDisplayedFieldGenerator);
+  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
+  {
+    rule->startUpdate();
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDisplayedFieldGenerator::endUpdate(QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
+                                                QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
+                                                QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient)
+{
+  Q_D(ctkDICOMDisplayedFieldGenerator);
+  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
+  {
+    rule->endUpdate(displayedFieldsMapSeries, displayedFieldsMapStudy, displayedFieldsMapPatient);
+  }
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMDisplayedFieldGenerator::setDatabase(ctkDICOMDatabase* database)
 {
   Q_D(ctkDICOMDisplayedFieldGenerator);
-  d->Database=database;
+
+  if (d->Database == database)
+  {
+    return;
+  }
+
+  d->Database = database;
+
+  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
+  {
+    rule->setDatabase(database);
+  }
 }
 
 //------------------------------------------------------------------------------

@@ -18,8 +18,6 @@
 
 =========================================================================*/
 
-#include <stdexcept>
-
 // Qt includes
 #include <QDate>
 #include <QDebug>
@@ -35,14 +33,12 @@
 #include <QVariant>
 
 // ctkDICOM includes
-#include "ctkDICOMDatabase.h"
+#include "ctkDICOMDatabase_p.h"
 #include "ctkDICOMAbstractThumbnailGenerator.h"
 #include "ctkDICOMItem.h"
 
 #include "ctkLogger.h"
 #include "ctkUtils.h"
-
-#include "ctkDICOMDisplayedFieldGenerator.h"
 
 // DCMTK includes
 #include <dcmtk/dcmdata/dcfilefo.h>
@@ -74,163 +70,19 @@ static QString ValueIsNotStored("__VALUE_IS_NOT_STORED__");
 static QString TableFieldSeparator(":");
 
 //------------------------------------------------------------------------------
-class ctkDICOMDatabasePrivate
-{
-  Q_DECLARE_PUBLIC(ctkDICOMDatabase);
-protected:
-  ctkDICOMDatabase* const q_ptr;
-
-public:
-  ctkDICOMDatabasePrivate(ctkDICOMDatabase&);
-  ~ctkDICOMDatabasePrivate();
-  void init(QString databaseFile);
-  void registerCompressionLibraries();
-  bool executeScript(const QString script);
-
-  /// Run a query and prints debug output of status
-  bool loggedExec(QSqlQuery& query);
-  bool loggedExec(QSqlQuery& query, const QString& queryString);
-  bool loggedExecBatch(QSqlQuery& query);
-  bool LoggedExecVerbose;
-
-  bool removeImage(const QString& sopInstanceUID);
-
-  /// Store copy of the dataset in database folder.
-  /// If the original file is available then that will be inserted. If not then a file is created from the dataset object.
-  bool storeDatasetFile(const ctkDICOMItem& dataset, const QString& originalFilePath,
-    const QString& studyInstanceUID, const QString& seriesInstanceUID, const QString& sopInstanceUID, QString& storedFilePath);
-
-  /// Helper function that generates folders for storing an instance in the database.
-  /// Folders are based on UIDs, but may be shortened.
-  QString internalStoragePath(const QString& studyInstanceUID,
-    const QString& seriesInstanceUID, const QString& sopInstanceUID);
-
-  /// Returns false in case of an error
-  bool indexingStatusForFile(const QString& filePath, const QString& sopInstanceUID, bool& datasetInDatabase, bool& datasetUpToDate, QString& databaseFilename);
-
-  /// Retrieve thumbnail from file and store in database folder.
-  bool storeThumbnailFile(const QString& originalFilePath,
-    const QString& studyInstanceUID, const QString& seriesInstanceUID, const QString& sopInstanceUID);
-
-  /// Get basic UIDs for a data set, return true if the data set has all the required tags
-  bool uidsForDataSet(const ctkDICOMItem& dataset, QString& patientsName, QString& patientID, QString& studyInstanceUID, QString& seriesInstanceUID);
-  bool uidsForDataSet(QString& patientsName, QString& patientID, QString& studyInstanceUID);
-
-  /// Dataset must be set always
-  /// \param filePath It has to be set if this is an import of an actual file
-  void insert ( const ctkDICOMItem& dataset, const QString& filePath, bool storeFile = true, bool generateThumbnail = true);
-
-  /// Copy the complete list of files to an extra table
-  QStringList allFilesInDatabase();
-
-  /// Update database tables from the displayed fields determined by the plugin roles
-  /// \return Success flag
-  bool applyDisplayedFieldsChanges( QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
-                                    QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
-                                    QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient );
-
-  /// Find patient by composite patient ID and return its index and insert it in the given fields map
-  /// \param displayedFieldsMapPatient Map of patient field maps (name, value pairs) to which the found patient
-  ///   is inserted on success. Also contains the generated patient index
-  /// \return The composite patient ID if successfully gound, empty string otherwise
-  QString getDisplayPatientFieldsKey(const QString& patientID, const QString& patientsName, const QString& patientsBirthDate,
-    QMap<QString, QMap<QString, QString> >& displayedFieldsMapPatient);
-
-  /// Find study by instance UID and insert it in the given fields map
-  /// \param displayedFieldsMapStudy Map of study field maps (name, value pairs) to which the found study has been inserted on success
-  /// \return The study instance UID if successfully found, empty string otherwise
-  QString getDisplayStudyFieldsKey(QString studyInstanceUID, QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy);
-
-  /// Find series by instance UID and insert it in the given fields map
-  /// \param displayedFieldsMapSeries Map of series field maps (name, value pairs) to which the found series has been inserted on success
-  /// \return The series instance UID if successfully found, empty string otherwise
-  QString getDisplaySeriesFieldsKey(QString seriesInstanceUID, QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries);
-
-  /// Get all Filename values from table
-  QStringList filenames(QString table);
-
-  QVector<QMap<QString /*DisplayField*/, QString /*Value*/> > displayedFieldsVectorPatient; // The index in the vector is the internal patient UID
-  /// Calculate count (number of objects in interest) for each series in the displayed fields container
-  /// \param displayedFieldsMapSeries (SeriesInstanceUID -> (DisplayField -> Value) )
-  void setCountToSeriesDisplayedFields(QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries);
-  /// Calculate number of series for each study in the displayed fields container
-  /// \param displayedFieldsMapStudy (StudyInstanceUID -> (DisplayField -> Value) )
-  void setNumberOfSeriesToStudyDisplayedFields(QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy);
-  /// Calculate number of studies for each patient in the displayed fields container
-  /// \param displayedFieldsVectorPatient (Internal_ID -> (DisplayField -> Value) )
-  void setNumberOfStudiesToPatientDisplayedFields(QMap<QString, QMap<QString, QString> >& displayedFieldsMapPatient);
-  /// Determine last study date for each patient in the displayed fields container
-  /// \param displayedFieldsVectorPatient (Internal_ID -> (DisplayField -> Value) )
-  void setLastStudyDateToPatientDisplayedFields(QMap<QString, QMap<QString, QString> >& displayedFieldsMapPatient);
-
-  int rowCount(const QString& tableName);
-
-  /// Convert an internal path (absolute or relative to database folder) to an absolute path.
-  QString absolutePathFromInternal(const QString& filename);
-  /// Convert an absolute path to an internal path (absolute if outside database folder, relative if inside database folder).
-  QString internalPathFromAbsolute(const QString& filename);
-
-  /// Name of the database file (i.e. for SQLITE the sqlite file)
-  QString DatabaseFileName;
-  QString LastError;
-  QSqlDatabase Database;
-  QMap<QString, QString> LoadedHeader;
-  bool DisplayedFieldsTableAvailable;
-
-  bool UseShortStoragePath;
-
-  ctkDICOMAbstractThumbnailGenerator* ThumbnailGenerator;
-
-  ctkDICOMDisplayedFieldGenerator DisplayedFieldGenerator;
-
-  /// These are for optimizing the import of image sequences
-  /// since most information are identical for all slices.
-  /// It would be very expensive to check in the database
-  /// presence of all these records on each slice insertion,
-  /// therefore we cache recently added entries in memory.
-  QMap<QString, int> InsertedPatientsCompositeIDCache; // map from composite patient ID to database ID
-  QSet<QString> InsertedStudyUIDsCache;
-  QSet<QString> InsertedSeriesUIDsCache;
-
-  /// There is no unique patient ID. We use this composite ID in InsertedPatientsCompositeIDCache.
-  /// It is not a problem that is somewhat more strict than the criteria that is used to decide if a study should be insert
-  /// under the same patient.
-  QString compositePatientID(const QString& patientID, const QString& patientsName, const QString& patientsBirthDate);
-
-  /// resets the variables to new inserts won't be fooled by leftover values
-  void resetLastInsertedValues();
-
-  /// tagCache table has been checked to exist
-  bool TagCacheVerified;
-  /// tag cache has independent database to avoid locking issue
-  /// with other access to the database which need to be
-  /// reading while the tag cache is writing
-  QSqlDatabase TagCacheDatabase;
-  QString TagCacheDatabaseFilename;
-  QStringList TagsToPrecache;
-  QStringList TagsToExcludeFromStorage;
-  bool openTagCacheDatabase();
-  void precacheTags(const ctkDICOMItem& dataset, const QString sopInstanceUID);
-
-  // Return true if a new item is inserted
-  bool insertPatientStudySeries(const ctkDICOMItem& dataset, const QString& patientID, const QString& patientsName);
-  bool insertPatient(const ctkDICOMItem& dataset, int& databasePatientID);
-  bool insertStudy(const ctkDICOMItem& dataset, int dbPatientID);
-  bool insertSeries( const ctkDICOMItem& dataset, QString studyInstanceUID);
-};
-
-//------------------------------------------------------------------------------
 // ctkDICOMDatabasePrivate methods
 
 //------------------------------------------------------------------------------
-ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o): q_ptr(&o)
+ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o)
+  : q_ptr(&o)
+  , ThumbnailGenerator(nullptr)
+  , LoggedExecVerbose(false)
+  , TagCacheVerified(false)
+  , DisplayedFieldsTableAvailable(false)
+  , UseShortStoragePath(true)
 {
-  this->ThumbnailGenerator = NULL;
-  this->LoggedExecVerbose = false;
-  this->TagCacheVerified = false;
-  this->DisplayedFieldsTableAvailable = false;
-  this->UseShortStoragePath = true;
   this->resetLastInsertedValues();
+  this->DisplayedFieldGenerator = new ctkDICOMDisplayedFieldGenerator(q_ptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1252,7 +1104,6 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
   }
 }
 
-
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabasePrivate::getDisplayPatientFieldsKey(const QString& patientID,
   const QString& patientsName, const QString& patientsBirthDate,
@@ -1750,7 +1601,7 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
   // Add displayed field generator's required tags to the pre-cached list to make
   // displayed field updates fast.
   QStringList tags = this->tagsToPrecache();
-  tags << d->DisplayedFieldGenerator.getRequiredTags();
+  tags << d->DisplayedFieldGenerator->getRequiredTags();
   tags.removeDuplicates();
   this->setTagsToPrecache(tags);
 
@@ -1833,6 +1684,13 @@ QString ctkDICOMDatabase::schemaVersionLoaded()
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMDatabase::setCustomSchemaVersion(QString customSchemaVersion)
+{
+  Q_D(ctkDICOMDatabase);
+  d->CustomSchemaVersion = customSchemaVersion;
+}
+
+//------------------------------------------------------------------------------
 QString ctkDICOMDatabase::schemaVersion()
 {
   // When changing schema version:
@@ -1842,7 +1700,18 @@ QString ctkDICOMDatabase::schemaVersion()
   //   so that the ctkDICOMDatabasePrivate::filenames method
   //   still works.
   //
-  return QString("0.6.3");
+  // Return custom schema version if specified.
+  // Custom schema version is a way to use a custom schema without
+  // subclassing the DICOM database
+  Q_D(ctkDICOMDatabase);
+  if (d->CustomSchemaVersion.isEmpty())
+  {
+    return QString("0.6.3");
+  }
+  else
+  {
+    return d->CustomSchemaVersion;
+  }
 };
 
 //------------------------------------------------------------------------------
@@ -1900,7 +1769,6 @@ bool ctkDICOMDatabase::updateSchema(
     }
   }
 
-  d->resetLastInsertedValues();
   this->initializeDatabase(schemaFile);
 
   emit schemaUpdateStarted(allFiles.length());
@@ -1926,6 +1794,12 @@ bool ctkDICOMDatabase::updateSchema(
   return true;
 }
 
+//------------------------------------------------------------------------------
+ctkDICOMDisplayedFieldGenerator* ctkDICOMDatabase::displayedFieldGenerator() const
+{
+  Q_D(const ctkDICOMDatabase);
+  return d->DisplayedFieldGenerator;
+}
 
 //------------------------------------------------------------------------------
 void ctkDICOMDatabase::closeDatabase()
@@ -3271,10 +3145,13 @@ void ctkDICOMDatabase::updateDisplayedFields()
   QMap<QString /*StudyInstanceUID*/, QMap<QString /*DisplayField*/, QString /*Value*/> > displayedFieldsMapStudy;
   QMap<QString /*CompositePatientID*/, QMap<QString /*DisplayField*/, QString /*Value*/> > displayedFieldsMapPatient;
 
-  d->DisplayedFieldGenerator.setDatabase(this);
+  d->DisplayedFieldGenerator->setDatabase(this);
 
   int progressValue = 0;
   emit displayedFieldsUpdateProgress(++progressValue);
+
+  // Initialize roles for starting the update
+  d->DisplayedFieldGenerator->startUpdate();
 
   // Get display names for newly added files and add them into the display tables
   while (newFilesQuery.next())
@@ -3290,7 +3167,7 @@ void ctkDICOMDatabase::updateDisplayedFields()
     QString studyInstanceUID = cachedTags[ctkDICOMItem::TagKeyStripped(DCM_StudyInstanceUID)];
     if (!d->uidsForDataSet(patientsName, patientID, studyInstanceUID))
     {
-      // error occurred, message is already logged
+      // UIDs not valid, message is already logged
       continue;
     }
     QString patientsBirthDate = cachedTags[ctkDICOMItem::TagKeyStripped(DCM_PatientBirthDate)];
@@ -3305,8 +3182,7 @@ void ctkDICOMDatabase::updateDisplayedFields()
 
     // Study
     QString displayedFieldsKeyForCurrentStudy = d->getDisplayStudyFieldsKey(
-      cachedTags[ctkDICOMItem::TagKeyStripped(DCM_StudyInstanceUID)],
-      displayedFieldsMapStudy );
+      cachedTags[ctkDICOMItem::TagKeyStripped(DCM_StudyInstanceUID)], displayedFieldsMapStudy );
     if (displayedFieldsKeyForCurrentStudy.isEmpty())
     {
       logger.error("Failed to find study for SOP Instance UID = " + sopInstanceUID);
@@ -3316,9 +3192,7 @@ void ctkDICOMDatabase::updateDisplayedFields()
     displayedFieldsForCurrentStudy["PatientCompositeID"] = compositeId;
 
     // Series
-    QString displayedFieldsKeyForCurrentSeries = d->getDisplaySeriesFieldsKey(
-      seriesInstanceUID,
-      displayedFieldsMapSeries );
+    QString displayedFieldsKeyForCurrentSeries = d->getDisplaySeriesFieldsKey(seriesInstanceUID, displayedFieldsMapSeries);
     if (displayedFieldsKeyForCurrentSeries.isEmpty())
     {
       logger.error("Failed to find series for SOP Instance UID = " + sopInstanceUID);
@@ -3327,7 +3201,7 @@ void ctkDICOMDatabase::updateDisplayedFields()
     QMap<QString, QString> displayedFieldsForCurrentSeries = displayedFieldsMapSeries[ displayedFieldsKeyForCurrentSeries ];
 
     // Do the update of the displayed fields using the roles
-    d->DisplayedFieldGenerator.updateDisplayedFieldsForInstance(sopInstanceUID, cachedTags,
+    d->DisplayedFieldGenerator->updateDisplayedFieldsForInstance(sopInstanceUID, cachedTags,
       displayedFieldsForCurrentSeries, displayedFieldsForCurrentStudy, displayedFieldsForCurrentPatient);
 
     // Set updated fields to the series / study / patient displayed fields maps
@@ -3335,6 +3209,11 @@ void ctkDICOMDatabase::updateDisplayedFields()
     displayedFieldsMapStudy[ displayedFieldsKeyForCurrentStudy ] = displayedFieldsForCurrentStudy;
     displayedFieldsMapPatient[ compositeId ] = displayedFieldsForCurrentPatient;
   } // For each instance
+
+  emit displayedFieldsUpdateProgress(++progressValue);
+
+  // Finalize update by giving the roles the chance to write the final results in the maps
+  d->DisplayedFieldGenerator->endUpdate(displayedFieldsMapSeries, displayedFieldsMapStudy, displayedFieldsMapPatient);
 
   emit displayedFieldsUpdateProgress(++progressValue);
 
