@@ -181,7 +181,7 @@ public:
   bool insertSeries( const ctkDICOMItem& dataset, QString studyInstanceUID);
 
   /// Facilitate using custom schema with the database without subclassing
-  QString CustomSchemaVersion;
+  QString SchemaVersion;
 };
 
 #endif

@@ -156,8 +156,8 @@ public:
   /// in order to support schema updating
   Q_INVOKABLE QString schemaVersionLoaded();
 
-  /// Set custom schema version externally in case a non-standard schema is used
-  Q_INVOKABLE void setCustomSchemaVersion(QString customSchemaVersion);
+  /// Set schema version externally in case a non-standard schema is used
+  Q_INVOKABLE void setSchemaVersion(QString schemaVersion);
 
   /// \brief database accessors
   Q_INVOKABLE QStringList patients();

@@ -80,6 +80,7 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o)
   , TagCacheVerified(false)
   , DisplayedFieldsTableAvailable(false)
   , UseShortStoragePath(true)
+  , SchemaVersion("0.6.3")
 {
   this->resetLastInsertedValues();
   this->DisplayedFieldGenerator = new ctkDICOMDisplayedFieldGenerator(q_ptr);
@@ -1684,10 +1685,10 @@ QString ctkDICOMDatabase::schemaVersionLoaded()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabase::setCustomSchemaVersion(QString customSchemaVersion)
+void ctkDICOMDatabase::setSchemaVersion(QString schemaVersion)
 {
   Q_D(ctkDICOMDatabase);
-  d->CustomSchemaVersion = customSchemaVersion;
+  d->SchemaVersion = schemaVersion;
 }
 
 //------------------------------------------------------------------------------
@@ -1699,19 +1700,8 @@ QString ctkDICOMDatabase::schemaVersion()
   // * make sure the 'Images' contains a 'Filename' column
   //   so that the ctkDICOMDatabasePrivate::filenames method
   //   still works.
-  //
-  // Return custom schema version if specified.
-  // Custom schema version is a way to use a custom schema without
-  // subclassing the DICOM database
   Q_D(ctkDICOMDatabase);
-  if (d->CustomSchemaVersion.isEmpty())
-  {
-    return QString("0.6.3");
-  }
-  else
-  {
-    return d->CustomSchemaVersion;
-  }
+  return d->SchemaVersion;
 };
 
 //------------------------------------------------------------------------------
