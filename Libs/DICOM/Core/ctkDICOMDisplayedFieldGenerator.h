@@ -67,6 +67,18 @@ public:
                                                     QMap<QString, QString> &displayedFieldsForCurrentStudy,
                                                     QMap<QString, QString> &displayedFieldsForCurrentPatient);
 
+  /// Start updating displayed fields (reset counters, etc.).
+  /// Calls function with same name of all registered rules.
+  Q_INVOKABLE void startUpdate();
+
+  /// End updating displayed fields (accumulate stored variables, compute final result, etc.).
+  /// Has a chance to update any field in the series, study, or patient field maps, based on
+  /// the maps themselves or the database.
+  /// Calls function with same name of all registered rules.
+  Q_INVOKABLE void endUpdate(QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
+                             QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
+                             QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient);
+
   /// Register new displayed field generator rule
   void registerDisplayedFieldGeneratorRule(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule);
 

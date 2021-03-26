@@ -28,7 +28,7 @@
 
 /// \ingroup DICOM_Core
 ///
-/// Default rule for generating displayed fields from DICOM fields
+/// Special rule for generating series description displayed fields for different RT modalities
 class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule : public ctkDICOMDisplayedFieldGeneratorAbstractRule
 {
 public:

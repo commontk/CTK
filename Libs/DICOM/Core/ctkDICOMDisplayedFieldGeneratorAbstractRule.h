@@ -64,6 +64,16 @@ public:
   /// Specify list of DICOM tags required by the rule. These tags will be included in the tag cache
   virtual QStringList getRequiredDICOMTags()=0;
 
+  /// Start updating displayed fields (reset counters, etc.). No-op by default.
+  virtual void startUpdate() { };
+
+  /// End updating displayed fields (accumulate stored variables, compute final result, etc.). No-op by default.
+  /// Has a chance to update any field in the series, study, or patient field maps, based on
+  /// the maps themselves or the database.
+  virtual void endUpdate(QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
+                         QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
+                         QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient) { };
+
   /// Utility function to convert a DICOM tag enum to string
   static QString dicomTagToString(const DcmTagKey& tag)
   {    
@@ -76,6 +86,11 @@ public:
   virtual void registerEmptyFieldNames(
     QMap<QString, QString> emptyFieldsSeries, QMap<QString, QString> emptyFieldsStudies, QMap<QString, QString> emptyFieldsPatients)=0;
 
+  /// Set DICOM database to the rule in case it needs to use it e.g. in \sa end().
+  void setDatabase(ctkDICOMDatabase* database) { this->DICOMDatabase = database; }
+
+// Static utility functions
+public:
   /// Utility function determining whether a given field is considered empty
   static bool isFieldEmpty(const QString &fieldName, const QMap<QString, QString> &fields, const QMap<QString, QString> &emptyValuesForEachField)
   {
@@ -160,6 +175,8 @@ public:
     mergedFields[fieldName]=initialFields[fieldName]+", "+newFields[fieldName];
   }
 
+protected:
+  ctkDICOMDatabase* DICOMDatabase;
 };
 
 #endif
