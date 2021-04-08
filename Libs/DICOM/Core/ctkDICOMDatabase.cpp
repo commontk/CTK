@@ -1062,23 +1062,11 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
         insertTags.exec();
       }
 
-      // Get filename that will be stored in the database.
-      // Use relative path if a copy is stored in the database to make the database relocatable.
-      QString storedFilePathInDatabase;
-      if (storeFile)
-      {
-        storedFilePathInDatabase = QDir(this->databaseDirectory()).relativeFilePath(storedFilePath);
-      }
-      else
-      {
-        storedFilePathInDatabase = storedFilePath;
-      }
-
       // Insert image files
       QSqlQuery insertImageStatement(d->Database);
       insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ? )");
       insertImageStatement.addBindValue(sopInstanceUID);
-      insertImageStatement.addBindValue(storedFilePathInDatabase);
+      insertImageStatement.addBindValue(d->internalPathFromAbsolute(storedFilePath));
       insertImageStatement.addBindValue(seriesInstanceUID);
       insertImageStatement.addBindValue(QDateTime::currentDateTime());
       insertImageStatement.exec();
