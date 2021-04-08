@@ -163,10 +163,18 @@ public:
   Q_INVOKABLE QStringList patients();
   Q_INVOKABLE QStringList studiesForPatient(const QString patientUID);
   Q_INVOKABLE QStringList seriesForStudy(const QString studyUID);
-  Q_INVOKABLE QStringList instancesForSeries(const QString seriesUID);
+  /// Since a series may consists of many hundreds of instances, this method may be slow.
+  /// If hits > 0 is specified then returned instances will be limited to that number.
+  /// This is useful for retrieving first file, for example for getting access to fields within that file
+  /// using instanceValue() method.
+  Q_INVOKABLE QStringList instancesForSeries(const QString seriesUID, int hits = -1);
   Q_INVOKABLE QString studyForSeries(QString seriesUID);
   Q_INVOKABLE QString patientForStudy(QString studyUID);
-  Q_INVOKABLE QStringList filesForSeries(const QString seriesUID);
+  /// Since a series may consists of many hundreds of files, this method may be slow.
+  /// If hits > 0 is specified then returned filenames will be limited to that number.
+  /// This is useful for retrieving first file, for example for getting access to fields within that file
+  /// using fileValue() method.
+  Q_INVOKABLE QStringList filesForSeries(const QString seriesUID, int hits=-1);
 
   Q_INVOKABLE QHash<QString,QString> descriptionsForFile(QString fileName);
   Q_INVOKABLE QString descriptionForSeries(const QString seriesUID);

@@ -57,6 +57,9 @@ public:
 
   bool removeImage(const QString& sopInstanceUID);
 
+  /// Read DICOM tag value from file and store it in the tag cache
+  QString readValueFromFile(const QString& fileName, const QString& sopInstanceUID, const QString& tag);
+
   /// Store copy of the dataset in database folder.
   /// If the original file is available then that will be inserted. If not then a file is created from the dataset object.
   bool storeDatasetFile(const ctkDICOMItem& dataset, const QString& originalFilePath,
@@ -134,6 +137,12 @@ public:
 
   /// Name of the database file (i.e. for SQLITE the sqlite file)
   QString DatabaseFileName;
+
+  /// Name of the database folder (empty if in-memory database).
+  /// Cached because it needs to be accessed each time a filename is converted
+  /// between absolute and relative path.
+  QString DatabaseDirectory;
+
   QString LastError;
   QSqlDatabase Database;
   QMap<QString, QString> LoadedHeader;

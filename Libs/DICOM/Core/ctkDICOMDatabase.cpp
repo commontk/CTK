@@ -211,6 +211,56 @@ QStringList ctkDICOMDatabasePrivate::allFilesInDatabase()
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDatabasePrivate::readValueFromFile(const QString& fileName, const QString& sopInstanceUID, const QString& tag)
+{
+  Q_Q(ctkDICOMDatabase);
+
+  // Here is where the real lookup happens
+  // - we create a ctkDICOMItem and extract the value from there
+  // - then we convert to the appropriate type of string
+  //
+  // An optimization we could consider
+  // - check if we are currently looking at the dataset for this fileName
+  // - if so, are we looking for a group/element that is past the last one
+  //   accessed
+  //   -- if so, keep looking for the requested group/element
+  //   -- if not, start again from the beginning
+
+  ctkDICOMItem dataset;
+  dataset.InitializeFromFile(fileName);
+  if (!dataset.IsInitialized())
+  {
+    logger.error("File " + fileName + " could not be initialized.");
+    return "";
+  }
+
+  QString value;
+  unsigned short group, element;
+  q->tagToGroupElement(tag, group, element);
+  DcmTagKey tagKey(group, element);
+  if (this->TagsToExcludeFromStorage.contains(tag))
+  {
+    if (dataset.TagExists(tagKey))
+    {
+      value = ValueIsNotStored;
+    }
+    else
+    {
+      value = TagNotInInstance;
+    }
+  }
+  else
+  {
+    value = dataset.GetAllElementValuesAsString(tagKey);
+  }
+
+  // Store result in cache
+  q->cacheTag(sopInstanceUID, tag, value);
+
+  return value;
+}
+
+//------------------------------------------------------------------------------
 bool ctkDICOMDatabasePrivate::executeScript(const QString script)
 {
   QFile scriptFile(script);
@@ -574,7 +624,7 @@ QString ctkDICOMDatabasePrivate::internalStoragePath(const QString& studyInstanc
     // It is not a problem if clash occurs in study or series folders (it would just mean that multiple studies or series would be stored in a folder),
     // therefore we just use the first 8 characters of the digest.
     // Since in a series there are typically a few hundred, maybe a few thousand files, the chances that there are two different SOP instance UIDs
-    // with the same hash is practically impossible. 
+    // with the same hash is practically impossible.
     studyComponent = QString(QCryptographicHash::hash(studyInstanceUID.toUtf8(), QCryptographicHash::Md5).toHex()).left(8);
     seriesComponent = QString(QCryptographicHash::hash(seriesInstanceUID.toUtf8(), QCryptographicHash::Md5).toHex()).left(8);
     instanceComponent = QString(QCryptographicHash::hash(sopInstanceUID.toUtf8(), QCryptographicHash::Md5).toHex());
@@ -1534,6 +1584,21 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
   Q_D(ctkDICOMDatabase);
   bool wasOpen = this->isOpen();
   d->DatabaseFileName = databaseFile;
+
+  if (this->isInMemory())
+  {
+    d->DatabaseDirectory.clear();
+  }
+  else
+  {
+    QString databaseFileAbsolute = d->DatabaseFileName;
+    if (!QFileInfo(databaseFileAbsolute).isAbsolute())
+    {
+      databaseFileAbsolute.prepend(QDir::currentPath() + "/");
+    }
+    d->DatabaseDirectory = QFileInfo(databaseFileAbsolute).absoluteDir().path();
+  }
+
   QString verifiedConnectionName = connectionName;
   if (verifiedConnectionName.isEmpty())
   {
@@ -1611,12 +1676,8 @@ const QString ctkDICOMDatabase::databaseFilename() const {
 
 //------------------------------------------------------------------------------
 const QString ctkDICOMDatabase::databaseDirectory() const {
-  QString databaseFile = databaseFilename();
-  if (!QFileInfo(databaseFile).isAbsolute())
-  {
-    databaseFile.prepend(QDir::currentPath() + "/");
-  }
-  return QFileInfo(databaseFile).absoluteDir().path();
+  Q_D(const ctkDICOMDatabase);
+  return d->DatabaseDirectory;
 }
 
 //------------------------------------------------------------------------------
@@ -2098,7 +2159,7 @@ QStringList ctkDICOMDatabase::seriesForStudy(QString studyUID)
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::instancesForSeries(const QString seriesUID)
+QStringList ctkDICOMDatabase::instancesForSeries(const QString seriesUID, int hits/*=-1*/)
 {
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
@@ -2109,13 +2170,18 @@ QStringList ctkDICOMDatabase::instancesForSeries(const QString seriesUID)
   while (query.next())
   {
     result << query.value(0).toString();
+    if (hits > 0 && result.size() >= hits)
+    {
+      // reached the number of requested instances
+      break;
+    }
   }
 
   return result;
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
+QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID, int hits/*=-1*/)
 {
   Q_D(ctkDICOMDatabase);
   QSqlQuery query(d->Database);
@@ -2126,6 +2192,11 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID)
   while (query.next())
   {
     allFileNames << d->absolutePathFromInternal(query.value(0).toString());
+    if (hits > 0 && allFileNames.size() >= hits)
+    {
+      // reached the number of requested files
+      break;
+    }
   }
   return allFileNames;
 }
@@ -2295,6 +2366,8 @@ QString ctkDICOMDatabase::headerValue (QString key)
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
 {
+  Q_D(ctkDICOMDatabase);
+  // Read from cache, if available
   QString value = this->cachedTag(sopInstanceUID, tag);
   if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
   {
@@ -2304,41 +2377,30 @@ QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
   {
     return value;
   }
-  unsigned short group, element;
-  this->tagToGroupElement(tag, group, element);
-  return( this->instanceValue(sopInstanceUID, group, element) );
+
+  // Read value from file
+  QString filePath = this->fileForInstance(sopInstanceUID);
+  if (filePath.isEmpty())
+  {
+    return "";
+  }
+  value = d->readValueFromFile(filePath, sopInstanceUID, tag);
+  return value;
 }
 
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::instanceValue(const QString sopInstanceUID, const unsigned short group, const unsigned short element)
 {
   QString tag = this->groupElementToTag(group,element);
-  QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
-  {
-    return "";
-  }
-  if (!value.isEmpty())
-  {
-    return value;
-  }
-  QString filePath = this->fileForInstance(sopInstanceUID);
-  if (!filePath.isEmpty())
-  {
-    value = this->fileValue(filePath, group, element);
-    return( value );
-  }
-  else
-  {
-    return ("");
-  }
+  return instanceValue(sopInstanceUID, tag);
 }
 
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
 {
-  unsigned short group, element;
-  this->tagToGroupElement(tag, group, element);
+  Q_D(ctkDICOMDatabase);
+
+  // Read from cache, if available
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
   if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
@@ -2349,69 +2411,24 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   {
     return value;
   }
-  return( this->fileValue(fileName, group, element) );
+
+  // Read value from file
+  value = d->readValueFromFile(fileName, sopInstanceUID, tag);
+  return value;
 }
 
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short group, const unsigned short element)
 {
   Q_D(ctkDICOMDatabase);
-  // here is where the real lookup happens
-  // - first we check the tagCache to see if the value exists for this instance tag
-  // If not,
-  // - for now we create a ctkDICOMItem and extract the value from there
-  // - then we convert to the appropriate type of string
-  //
-  //As an optimization we could consider
-  // - check if we are currently looking at the dataset for this fileName
-  // - if so, are we looking for a group/element that is past the last one
-  //   accessed
-  //   -- if so, keep looking for the requested group/element
-  //   -- if not, start again from the beginning
-
   QString tag = this->groupElementToTag(group, element);
-  QString sopInstanceUID = this->instanceForFile(fileName);
-  QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
-  {
-    return "";
-  }
-  if (!value.isEmpty())
-  {
-    return value;
-  }
-
-  ctkDICOMItem dataset;
-  dataset.InitializeFromFile(fileName);
-  if (!dataset.IsInitialized())
-  {
-    logger.error( "File " + fileName + " could not be initialized.");
-    return "";
-  }
-
-  DcmTagKey tagKey(group, element);
-  if (d->TagsToExcludeFromStorage.contains(tag))
-  {
-    if (dataset.TagExists(tagKey))
-    {
-      value = ValueIsNotStored;
-    }
-    else
-    {
-      value = TagNotInInstance;
-    }
-  }
-  else
-  {
-    value = dataset.GetAllElementValuesAsString(tagKey);
-  }
-  this->cacheTag(sopInstanceUID, tag, value);
-  return value;
+  return this->fileValue(fileName, tag);
 }
 
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const QString tag)
 {
+  Q_D(ctkDICOMDatabase);
   QString value = this->cachedTag(sopInstanceUID, tag);
   if (value == TagNotInInstance || value == ValueIsEmptyString)
   {
@@ -2421,15 +2438,29 @@ bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const Q
   {
     return true;
   }
-  unsigned short group, element;
-  this->tagToGroupElement(tag, group, element);
-  return(this->instanceValueExists(sopInstanceUID, group, element));
+
+  // Read value from file
+  QString filePath = this->fileForInstance(sopInstanceUID);
+  if (filePath.isEmpty())
+  {
+    return false;
+  }
+  value = d->readValueFromFile(filePath, sopInstanceUID, tag);
+  return (value != TagNotInInstance && value != ValueIsEmptyString);
 }
 
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const unsigned short group, const unsigned short element)
 {
   QString tag = this->groupElementToTag(group, element);
+  return this->instanceValueExists(sopInstanceUID, tag);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMDatabase::fileValueExists(const QString fileName, QString tag)
+{
+  Q_D(ctkDICOMDatabase);
+  QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
   if (value == TagNotInInstance || value == ValueIsEmptyString)
   {
@@ -2439,94 +2470,19 @@ bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const u
   {
     return true;
   }
-  QString filePath = this->fileForInstance(sopInstanceUID);
-  if (!filePath.isEmpty())
-  {
-    return this->fileValueExists(filePath, group, element);
-  }
-  else
-  {
-    return false;
-  }
-}
 
-//------------------------------------------------------------------------------
-bool ctkDICOMDatabase::fileValueExists(const QString fileName, QString tag)
-{
-  unsigned short group, element;
-  this->tagToGroupElement(tag, group, element);
-  QString sopInstanceUID = this->instanceForFile(fileName);
-  QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString)
-  {
-    return false;
-  }
-  if (value == ValueIsNotStored)
-  {
-    return true;
-  }
-  return(this->fileValueExists(fileName, group, element));
+  // Read value from file
+  value = d->readValueFromFile(fileName, sopInstanceUID, tag);
+  return (value != TagNotInInstance && value != ValueIsEmptyString);
 }
 
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabase::fileValueExists(const QString fileName, const unsigned short group, const unsigned short element)
 {
   Q_D(ctkDICOMDatabase);
-
-  // here is where the real lookup happens
-  // - first we check the tagCache to see if the value exists for this instance tag
-  // If not,
-  // - for now we create a ctkDICOMItem and extract the value from there
-  // - then we convert to the appropriate type of string
-  //
-  //As an optimization we could consider
-  // - check if we are currently looking at the dataset for this fileName
-  // - if so, are we looking for a group/element that is past the last one
-  //   accessed
-  //   -- if so, keep looking for the requested group/element
-  //   -- if not, start again from the beginning
-
   QString tag = this->groupElementToTag(group, element);
-  QString sopInstanceUID = this->instanceForFile(fileName);
-  QString value = this->cachedTag(sopInstanceUID, tag);
-  if (value == TagNotInInstance || value == ValueIsEmptyString)
-  {
-    return false;
-  }
-  if (value == ValueIsNotStored)
-  {
-    return true;
-  }
-
-  ctkDICOMItem dataset;
-  dataset.InitializeFromFile(fileName);
-  if (!dataset.IsInitialized())
-  {
-    logger.error("File " + fileName + " could not be initialized.");
-    return false;
-  }
-
-  DcmTagKey tagKey(group, element);
-  if (d->TagsToExcludeFromStorage.contains(tag))
-  {
-    if (dataset.TagExists(tagKey))
-    {
-      value = ValueIsNotStored;
-    }
-    else
-    {
-      value = TagNotInInstance;
-    }
-  }
-  else
-  {
-    value = dataset.GetAllElementValuesAsString(tagKey);
-  }
-  this->cacheTag(sopInstanceUID, tag, value);
-  
-  return (value != TagNotInInstance && value != ValueIsEmptyString);
+  return this->fileValueExists(fileName, tag);
 }
-
 
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabase::tagToGroupElement(const QString tag, unsigned short& group, unsigned short& element)
