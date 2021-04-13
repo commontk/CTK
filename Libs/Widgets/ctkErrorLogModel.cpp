@@ -19,6 +19,8 @@
 =========================================================================*/
 
 // Qt includes
+#include <QApplication>
+#include <QPalette>
 #include <QStandardItem>
 
 // CTK includes
@@ -100,8 +102,18 @@ void ctkErrorLogModel::addModelEntry(const QString& currentDateTime, const QStri
   // Description item
   QStandardItem * descriptionItem = new QStandardItem();
   QString descriptionText(text);
+  if (logLevel == "Error" || logLevel == "Critical")
+  {
+    QPalette palette = QApplication::palette();
+    descriptionItem->setForeground(palette.color(QPalette::BrightText));
+  }
+  else if (logLevel == "Warning")
+  {
+    descriptionItem->setForeground(QColor(255, 165, 0));
+  }
   descriptionItem->setData(descriptionText.left(160).append((descriptionText.size() > 160) ? "..." : ""), Qt::DisplayRole);
   descriptionItem->setData(descriptionText, ctkErrorLogModel::DescriptionTextRole);
+
   descriptionItem->setEditable(false);
   itemList << descriptionItem;
 
