@@ -30,6 +30,9 @@
 // VTK includes
 #include <vtkPiecewiseFunction.h>
 
+// STD includes
+#include <cmath> // for pow
+
 //----------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKThresholdWidget");
 //----------------------------------------------------------------------------
