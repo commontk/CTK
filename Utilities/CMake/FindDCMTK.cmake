@@ -117,6 +117,11 @@
 
 set(_dcmtk_dir_description "The directory of DCMTK build or install tree.")
 
+if (DCMTK_FOUND AND NOT (DCMTK_DIR STREQUAL "/usr/include/dcmtk"))
+  message(STATUS "DCMTK already found: DCMTK_DIR=${DCMTK_DIR}")
+  return()
+endif()
+
 # Ensure that DCMTK_DIR is set to a reasonable default value
 # so that DCMTK libraries can be found on a standard Unix distribution.
 # It also overwrite the value of DCMTK_DIR after this one has been
