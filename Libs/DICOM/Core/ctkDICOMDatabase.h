@@ -388,6 +388,12 @@ public:
   /// Set format of a given field
   Q_INVOKABLE void setFormatForField(QString table, QString field, QString format);
 
+  /// There is no patient UID in DICOM, so we need to use use this composite ID to uniquely identify a patient with a string.
+  /// Used when inserting a patient (InsertedPatientsCompositeIDCache) and in the display field update process.
+  /// Note: It is not a problem that is somewhat more strict than the criteria that is used to decide if a study should be
+  /// inserted under the same patient.
+  Q_INVOKABLE static QString compositePatientID(const QString& patientID, const QString& patientsName, const QString& patientsBirthDate);
+
 Q_SIGNALS:
 
   /// Things inserted to database.

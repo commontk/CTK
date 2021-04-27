@@ -88,7 +88,7 @@ public:
   /// Copy the complete list of files to an extra table
   QStringList allFilesInDatabase();
 
-  /// Update database tables from the displayed fields determined by the plugin roles
+  /// Update database tables from the displayed fields determined by the plugin rules
   /// \return Success flag
   bool applyDisplayedFieldsChanges( QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
                                     QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
@@ -113,20 +113,6 @@ public:
 
   /// Get all Filename values from table
   QStringList filenames(QString table);
-
-  QVector<QMap<QString /*DisplayField*/, QString /*Value*/> > displayedFieldsVectorPatient; // The index in the vector is the internal patient UID
-  /// Calculate count (number of objects in interest) for each series in the displayed fields container
-  /// \param displayedFieldsMapSeries (SeriesInstanceUID -> (DisplayField -> Value) )
-  void setCountToSeriesDisplayedFields(QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries);
-  /// Calculate number of series for each study in the displayed fields container
-  /// \param displayedFieldsMapStudy (StudyInstanceUID -> (DisplayField -> Value) )
-  void setNumberOfSeriesToStudyDisplayedFields(QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy);
-  /// Calculate number of studies for each patient in the displayed fields container
-  /// \param displayedFieldsVectorPatient (Internal_ID -> (DisplayField -> Value) )
-  void setNumberOfStudiesToPatientDisplayedFields(QMap<QString, QMap<QString, QString> >& displayedFieldsMapPatient);
-  /// Determine last study date for each patient in the displayed fields container
-  /// \param displayedFieldsVectorPatient (Internal_ID -> (DisplayField -> Value) )
-  void setLastStudyDateToPatientDisplayedFields(QMap<QString, QMap<QString, QString> >& displayedFieldsMapPatient);
 
   int rowCount(const QString& tableName);
 
@@ -162,11 +148,6 @@ public:
   QMap<QString, int> InsertedPatientsCompositeIDCache; // map from composite patient ID to database ID
   QSet<QString> InsertedStudyUIDsCache;
   QSet<QString> InsertedSeriesUIDsCache;
-
-  /// There is no unique patient ID. We use this composite ID in InsertedPatientsCompositeIDCache.
-  /// It is not a problem that is somewhat more strict than the criteria that is used to decide if a study should be insert
-  /// under the same patient.
-  QString compositePatientID(const QString& patientID, const QString& patientsName, const QString& patientsBirthDate);
 
   /// resets the variables to new inserts won't be fooled by leftover values
   void resetLastInsertedValues();

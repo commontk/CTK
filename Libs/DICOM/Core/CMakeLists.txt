@@ -40,6 +40,14 @@ set(KIT_SRCS
   ctkDICOMDisplayedFieldGeneratorDefaultRule.cpp
   ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule.h
   ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule.cpp
+  ctkDICOMDisplayedFieldGeneratorLastStudyDateRule.h
+  ctkDICOMDisplayedFieldGeneratorLastStudyDateRule.cpp
+  ctkDICOMDisplayedFieldGeneratorSeriesImageCount.h
+  ctkDICOMDisplayedFieldGeneratorSeriesImageCount.cpp
+  ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries.h
+  ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries.cpp
+  ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudies.h
+  ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudies.cpp
 )
 
 # Abstract class should not be wrapped !
