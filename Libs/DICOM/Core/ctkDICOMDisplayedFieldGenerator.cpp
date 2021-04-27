@@ -29,6 +29,10 @@
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMDisplayedFieldGeneratorDefaultRule.h"
 #include "ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule.h"
+#include "ctkDICOMDisplayedFieldGeneratorLastStudyDateRule.h"
+#include "ctkDICOMDisplayedFieldGeneratorSeriesImageCount.h"
+#include "ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries.h"
+#include "ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudies.h"
 
 //------------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.dicom.DICOMDisplayedFieldGenerator" );
@@ -46,6 +50,10 @@ ctkDICOMDisplayedFieldGeneratorPrivate::ctkDICOMDisplayedFieldGeneratorPrivate(c
   // register commonly used rules
   this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorDefaultRule);
   this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule);
+  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorLastStudyDateRule);
+  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorSeriesImageCount);
+  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries);
+  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudies);
 
   foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, this->AllRules)
   {
