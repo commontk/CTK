@@ -56,7 +56,7 @@ protected:
 public:
   ctkVTKVolumePropertyWidgetPrivate(ctkVTKVolumePropertyWidget& object);
   void setupUi(QWidget* widget);
-  void computeRange(double* range);
+  void computeIntensityRange(double* range);
   void updateThresholdSlider(vtkPiecewiseFunction* opacityFunction);
   void setThreshold(double min, double max, double opacity);
 
@@ -87,7 +87,10 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
   double validBounds[4] = {VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, 0., 1.};
   this->ScalarOpacityWidget->view()->setValidBounds(validBounds);
   this->ScalarColorWidget->view()->setValidBounds(validBounds);
-  this->GradientWidget->view()->setValidBounds(validBounds);
+
+  // Gradient magnitude is always positive
+  double validPositiveBounds[4] = { 0, VTK_DOUBLE_MAX, 0., 1. };
+  this->GradientWidget->view()->setValidBounds(validPositiveBounds);
 
   QObject::connect(this->ScalarOpacityWidget->view(), SIGNAL(extentChanged()),
                    q, SIGNAL(chartsExtentChanged()));
@@ -141,7 +144,7 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
 }
 
 // ----------------------------------------------------------------------------
-void ctkVTKVolumePropertyWidgetPrivate::computeRange(double* range)
+void ctkVTKVolumePropertyWidgetPrivate::computeIntensityRange(double* range)
 {
   if (!this->VolumeProperty)
     {
@@ -165,11 +168,6 @@ void ctkVTKVolumePropertyWidgetPrivate::computeRange(double* range)
   this->VolumeProperty->GetScalarOpacity(this->CurrentComponent)->GetRange(opacityRange);
   range[0] = qMin(range[0], opacityRange[0]);
   range[1] = qMax(range[1], opacityRange[1]);
-  
-  double gradientRange[2] = {0., 1.};
-  this->VolumeProperty->GetGradientOpacity(this->CurrentComponent)->GetRange(gradientRange);
-  range[0] = qMin(range[0], gradientRange[0]);
-  range[1] = qMax(range[1], gradientRange[1]);
 }
 
 // ----------------------------------------------------------------------------
@@ -275,7 +273,7 @@ void ctkVTKVolumePropertyWidget::updateRange()
   Q_D(ctkVTKVolumePropertyWidget);
 
   double range[2] = {0.0};
-  d->computeRange(range);
+  d->computeIntensityRange(range);
   d->ScalarOpacityThresholdWidget->setRange(range[0], range[1]);
 
   // Elements: {leftMin, leftMax, bottomMin, bottomMax, rightMin, rightMax, topMin, topMax}
@@ -292,12 +290,6 @@ void ctkVTKVolumePropertyWidget::updateRange()
   chartBounds[3] = range[1];
   d->ScalarColorWidget->view()->setChartUserBounds(chartBounds);
   d->ScalarColorWidget->view()->update();
-
-  d->GradientWidget->view()->chartBounds(chartBounds);
-  chartBounds[2] = range[0];
-  chartBounds[3] = range[1];
-  d->GradientWidget->view()->setChartUserBounds(chartBounds);
-  d->GradientWidget->view()->update();
 }
 
 // ----------------------------------------------------------------------------
@@ -314,12 +306,15 @@ void ctkVTKVolumePropertyWidget::chartsBounds(double bounds[4])const
   bounds[1] = qMax(bounds[1], chartBounds[1]);
   bounds[2] = qMin(bounds[2], chartBounds[2]);
   bounds[3] = qMax(bounds[3], chartBounds[3]);
+}
 
+void ctkVTKVolumePropertyWidget::chartsGradientBounds(double bounds[4])const
+{
+  Q_D(const ctkVTKVolumePropertyWidget);
+
+  double chartBounds[8] = { 0.0 };
   d->GradientWidget->view()->chartBounds(chartBounds);
-  bounds[0] = qMin(bounds[0], chartBounds[0]);
-  bounds[1] = qMax(bounds[1], chartBounds[1]);
-  bounds[2] = qMin(bounds[2], chartBounds[2]);
-  bounds[3] = qMax(bounds[3], chartBounds[3]);
+  memcpy(bounds, chartBounds, 4 * sizeof(double));
 }
 
 // ----------------------------------------------------------------------------
@@ -334,9 +329,26 @@ QList<double> ctkVTKVolumePropertyWidget::chartsBounds()const
 }
 
 // ----------------------------------------------------------------------------
+QList<double> ctkVTKVolumePropertyWidget::chartsGradientBounds()const
+{
+  double boundsArray[4] = { 0.0 };
+  this->chartsGradientBounds(boundsArray);
+
+  QList<double> bounds;
+  bounds << boundsArray[0] << boundsArray[1] << boundsArray[2] << boundsArray[3];
+  return bounds;
+}
+
+// ----------------------------------------------------------------------------
 void ctkVTKVolumePropertyWidget::setChartsExtent(double extent[2])
 {
   this->setChartsExtent(extent[0], extent[1]);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setChartsGradientExtent(double extent[2])
+{
+  this->setChartsGradientExtent(extent[0], extent[1]);
 }
 
 // ----------------------------------------------------------------------------
@@ -356,7 +368,14 @@ void ctkVTKVolumePropertyWidget::setChartsExtent(double min, double max)
   chartExtent[1] = max;
   d->ScalarColorWidget->view()->setChartUserExtent(chartExtent);
   d->ScalarColorWidget->view()->update();
+}
 
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::setChartsGradientExtent(double min, double max)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+
+  double chartExtent[8] = { 0.0 };
   d->GradientWidget->view()->chartExtent(chartExtent);
   chartExtent[0] = min;
   chartExtent[1] = max;
@@ -378,12 +397,15 @@ void ctkVTKVolumePropertyWidget::chartsExtent(double extent[4])const
   extent[1] = qMax(extent[1], chartExtent[1]);
   extent[2] = qMin(extent[2], chartExtent[2]);
   extent[3] = qMax(extent[3], chartExtent[3]);
+}
 
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::chartsGradientExtent(double extent[4])const
+{
+  Q_D(const ctkVTKVolumePropertyWidget);
+  double chartExtent[8] = { 0.0 };
   d->GradientWidget->view()->chartExtent(chartExtent);
-  extent[0] = qMin(extent[0], chartExtent[0]);
-  extent[1] = qMax(extent[1], chartExtent[1]);
-  extent[2] = qMin(extent[2], chartExtent[2]);
-  extent[3] = qMax(extent[3], chartExtent[3]);
+  memcpy(extent, chartExtent, 4 * sizeof(double));
 }
 
 // ----------------------------------------------------------------------------
@@ -391,6 +413,17 @@ QList<double> ctkVTKVolumePropertyWidget::chartsExtent()const
 {
   double extentArray[4] = {0.0};
   this->chartsExtent(extentArray);
+
+  QList<double> extent;
+  extent << extentArray[0] << extentArray[1] << extentArray[2] << extentArray[3];
+  return extent;
+}
+
+// ----------------------------------------------------------------------------
+QList<double> ctkVTKVolumePropertyWidget::chartsGradientExtent()const
+{
+  double extentArray[4] = { 0.0 };
+  this->chartsGradientExtent(extentArray);
 
   QList<double> extent;
   extent << extentArray[0] << extentArray[1] << extentArray[2] << extentArray[3];
@@ -544,6 +577,21 @@ void ctkVTKVolumePropertyWidget::moveAllPoints(double xOffset, double yOffset,
     ->moveAllPoints(xOffset, yOffset, dontMoveFirstAndLast);
   d->ScalarColorWidget->view()
     ->moveAllPoints(xOffset, yOffset, dontMoveFirstAndLast);
+  if (d->VolumeProperty)
+    {
+    d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::moveAllGradientPoints(double xOffset, double yOffset,
+                                               bool dontMoveFirstAndLast)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  if (d->VolumeProperty)
+    {
+    d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
+    }
   d->GradientWidget->view()
     ->moveAllPoints(xOffset, yOffset, dontMoveFirstAndLast);
   if (d->VolumeProperty)
@@ -565,6 +613,21 @@ void ctkVTKVolumePropertyWidget::spreadAllPoints(double factor,
     ->spreadAllPoints(factor, dontSpreadFirstAndLast);
   d->ScalarColorWidget->view()
     ->spreadAllPoints(factor, dontSpreadFirstAndLast);
+  if (d->VolumeProperty)
+    {
+    d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKVolumePropertyWidget::spreadAllGradientPoints(double factor,
+                                                 bool dontSpreadFirstAndLast)
+{
+  Q_D(ctkVTKVolumePropertyWidget);
+  if (d->VolumeProperty)
+    {
+    d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
+    }
   d->GradientWidget->view()
     ->spreadAllPoints(factor, dontSpreadFirstAndLast);
   if (d->VolumeProperty)
