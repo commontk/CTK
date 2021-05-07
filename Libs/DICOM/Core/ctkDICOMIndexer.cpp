@@ -124,7 +124,6 @@ void ctkDICOMIndexerPrivateWorker::start()
     emit progressStep("Updating database displayed fields");
     emit progress(this->TimePercentageIndexing);
 
-    database.updateDisplayedFields();
     patientsCountAfter = database.patientsCount();
     studiesCountAfter = database.studiesCount();
     seriesCountAfter = database.seriesCount();
@@ -283,6 +282,9 @@ ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate(ctkDICOMIndexer& o)
   connect(worker, &ctkDICOMIndexerPrivateWorker::updatingDatabase, q_ptr, &ctkDICOMIndexer::updatingDatabase);
   connect(worker, &ctkDICOMIndexerPrivateWorker::indexingComplete, q_ptr, &ctkDICOMIndexer::indexingComplete);
 
+  // Update displayed fields after each indexing run
+  connect(q_ptr, SIGNAL(indexingComplete(int,int,int,int)), this, SLOT(onIndexingComplete(int,int,int,int)));
+
   this->WorkerThread.start();
 }
 
@@ -309,6 +311,20 @@ void ctkDICOMIndexerPrivate::pushIndexingRequest(const DICOMIndexingQueue::Index
     this->Database->allFilesModifiedTimes(modifiedTimeForFilepath);
     this->RequestQueue.setModifiedTimeForFilepath(modifiedTimeForFilepath);
     emit startWorker();
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMIndexerPrivate::onIndexingComplete(int patientsAdded, int studiesAdded, int seriesAdded, int imagesAdded)
+{
+  Q_UNUSED(patientsAdded);
+  Q_UNUSED(studiesAdded);
+  Q_UNUSED(seriesAdded);
+  Q_UNUSED(imagesAdded);
+
+  if (this->Database)
+  {
+    this->Database->updateDisplayedFields();
   }
 }
 

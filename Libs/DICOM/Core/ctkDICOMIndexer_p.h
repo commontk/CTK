@@ -257,7 +257,8 @@ public:
 Q_SIGNALS:
   void startWorker();
 
-//public Q_SLOTS:
+public Q_SLOTS:
+  void onIndexingComplete(int patientsAdded, int studiesAdded, int seriesAdded, int imagesAdded);
 
 public:
   DICOMIndexingQueue RequestQueue;
