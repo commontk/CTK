@@ -378,11 +378,11 @@ QString ctkDICOMItem::Decode( const DcmTag& tag, const OFString& raw ) const
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 148", "ISO-8859-9");
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 179", "ISO-8859-13");
       qtEncodingNamesForDICOMEncodingNames.insert("ISO_IR 192", "UTF-8");
-      // japanese
+      // Japanese
       qtEncodingNamesForDICOMEncodingNames.insert("ISO 2022 IR 13", "ISO 2022-JP"); // Single byte charset, JIS X 0201: Katakana, Romaji
       qtEncodingNamesForDICOMEncodingNames.insert("ISO 2022 IR 87", "ISO 2022-JP"); // Multi byte charset, JIS X 0208: Kanji, Kanji set
       qtEncodingNamesForDICOMEncodingNames.insert("ISO 2022 IR 159", "ISO 2022-JP");
-      // korean
+      // Korean
       qtEncodingNamesForDICOMEncodingNames.insert("ISO 2022 IR 149", "EUC-KR"); // Multi byte charset, KS X 1001: Hangul, Hanja
 
       // use all names that Qt knows by itself
@@ -424,7 +424,22 @@ QString ctkDICOMItem::Decode( const DcmTag& tag, const OFString& raw ) const
     }
     else
     {
-      std::cerr << "DICOM dataset contains some encoding that we never thought we would see(" << d->m_SpecificCharacterSet.toStdString() << "). Using default encoding." << std::endl;
+      std::cerr << "DICOM dataset contains some encoding that we never thought we would see (" << d->m_SpecificCharacterSet.toStdString() << "). Using ASCII encoding." << std::endl;
+      // Replace non-ASCII characters by "?" to avoid decoding errors and random special characters appearing in strings.
+      QString asciiString;
+      for (int i = 0; i < raw.length(); i++)
+      {
+        int ch = raw[i];
+        if (32 <= raw[i] && raw[i] < 128)
+        {
+          asciiString += raw[i];
+        }
+        else
+        {
+          asciiString += "?";
+        }
+      }
+      return asciiString;
     }
   }
 
