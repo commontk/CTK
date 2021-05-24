@@ -25,6 +25,7 @@
 #include <PythonQt.h>
 
 // CTK includes
+#include <ctkDICOMDisplayedFieldGeneratorRuleFactory.h>
 #include <ctkDICOMUtil.h>
 
 // NOTE:
@@ -44,12 +45,29 @@ public:
     {
     }
 
-public Q_SLOTS:
+public slots:
 
-  //
-  // None yet - refer to other libs for examples
-  //
+  //----------------------------------------------------------------------------
+  // ctkDICOMDisplayedFieldGeneratorRuleFactory
 
+  //----------------------------------------------------------------------------
+  // static methods
+
+  //----------------------------------------------------------------------------
+  ctkDICOMDisplayedFieldGeneratorRuleFactory* static_ctkDICOMDisplayedFieldGeneratorRuleFactory_instance()
+    {
+    return ctkDICOMDisplayedFieldGeneratorRuleFactory::instance();
+    }
+
+  //----------------------------------------------------------------------------
+  // instance methods
+
+  //----------------------------------------------------------------------------
+  bool registerDisplayedFieldGeneratorRule(ctkDICOMDisplayedFieldGeneratorRuleFactory* factory,
+                      PythonQtPassOwnershipToCPP<ctkDICOMDisplayedFieldGeneratorAbstractRule*> plugin)
+    {
+    return factory->registerDisplayedFieldGeneratorRule(plugin);
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -57,7 +75,7 @@ class PythonQtWrapper_CTKDICOMCore : public QObject
 {
   Q_OBJECT
 
-public Q_SLOTS:
+public slots:
   ctkErrorLogLevel::LogLevel static_ctk_dicomLogLevel()
     {
     return ctk::dicomLogLevel();

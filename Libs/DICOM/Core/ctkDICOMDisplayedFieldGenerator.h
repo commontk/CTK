@@ -51,7 +51,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGenerator : public QObject
 {
   Q_OBJECT
 public:
-  explicit ctkDICOMDisplayedFieldGenerator(QObject *parent = 0);
+  explicit ctkDICOMDisplayedFieldGenerator(QObject* parent);
   virtual ~ctkDICOMDisplayedFieldGenerator();
 
   /// Set DICOM database
@@ -78,9 +78,6 @@ public:
   Q_INVOKABLE void endUpdate(QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
                              QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
                              QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient);
-
-  /// Register new displayed field generator rule
-  void registerDisplayedFieldGeneratorRule(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule);
 
 protected:
   QScopedPointer<ctkDICOMDisplayedFieldGeneratorPrivate> d_ptr;

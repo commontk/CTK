@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS 'Patients' ;
 DROP TABLE IF EXISTS 'Series' ;
 DROP TABLE IF EXISTS 'Studies' ;
 DROP TABLE IF EXISTS 'ColumnDisplayProperties' ;
+DROP TABLE IF EXISTS 'DisplayedFieldGeneratorRules' ;
 DROP TABLE IF EXISTS 'Directories' ;
 
 DROP INDEX IF EXISTS 'ImagesFilenameIndex' ;
@@ -22,7 +23,7 @@ DROP INDEX IF EXISTS 'SeriesStudyIndex' ;
 DROP INDEX IF EXISTS 'StudiesPatientIndex' ;
 
 CREATE TABLE 'SchemaInfo' ( 'Version' VARCHAR(1024) NOT NULL );
-INSERT INTO 'SchemaInfo' VALUES('0.6.3');
+INSERT INTO 'SchemaInfo' VALUES('0.7.0');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
@@ -149,3 +150,9 @@ INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedSize',       
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedCount',                  'Count',                1, 5, '{"resizeMode":"resizeToContents"}');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedNumberOfFrames',         'Number of frames',     0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Series',   'DisplayedFieldsUpdatedTimestamp', '',                     0, 0, '');
+
+CREATE TABLE 'DisplayedFieldGeneratorRules' (
+  'Name' VARCHAR(64) NOT NULL,
+  'Enabled' INT NULL DEFAULT 1 ,
+  'Options' VARCHAR(255) NULL ,
+  PRIMARY KEY ('Name') );

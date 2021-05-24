@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMDisplayedFieldGeneratorSeriesImageCount_h
-#define __ctkDICOMDisplayedFieldGeneratorSeriesImageCount_h
+#ifndef __ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule_h
+#define __ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule_h
 
 // Qt includes
 #include <QSet>
@@ -30,11 +30,17 @@
 /// \ingroup DICOM_Core
 ///
 /// Rule for generating number of images in the series that belong to the newly added instances
-class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorSeriesImageCount : public ctkDICOMDisplayedFieldGeneratorAbstractRule
+class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule : public ctkDICOMDisplayedFieldGeneratorAbstractRule
 {
 public:
   /// Constructor
-  explicit ctkDICOMDisplayedFieldGeneratorSeriesImageCount();
+  explicit ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule();
+
+  /// Get name of rule
+  QString name()const override;
+
+  /// Clone displayed field generator rule. Override to return a new instance of the rule sub-class
+  ctkDICOMDisplayedFieldGeneratorAbstractRule* clone() override;
 
   /// Specify list of DICOM tags required by the rule. These tags will be included in the tag cache
   QStringList getRequiredDICOMTags() override;

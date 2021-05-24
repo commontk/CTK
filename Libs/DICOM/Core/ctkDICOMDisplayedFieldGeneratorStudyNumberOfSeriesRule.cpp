@@ -18,7 +18,7 @@
 
 =========================================================================*/
 
-#include "ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries.h"
+#include "ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule.h"
 
 // ctkDICOM includes
 #include "ctkDICOMDatabase.h"
@@ -29,12 +29,24 @@
 #include <QSqlQuery>
 
 //------------------------------------------------------------------------------
-ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries::ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries()
+ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule::ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule()
 {
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries::getRequiredDICOMTags()
+QString ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule::name()const
+{
+  return "StudyNumberOfSeries";
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMDisplayedFieldGeneratorAbstractRule* ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule::clone()
+{
+  return new ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule();
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule::getRequiredDICOMTags()
 {
   QStringList requiredTags;
 
@@ -44,7 +56,7 @@ QStringList ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries::getRequiredDICOM
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries::getDisplayedFieldsForInstance(
+void ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule::getDisplayedFieldsForInstance(
   const QMap<QString, QString> &cachedTagsForInstance, QMap<QString, QString> &displayedFieldsForCurrentSeries,
   QMap<QString, QString> &displayedFieldsForCurrentStudy, QMap<QString, QString> &displayedFieldsForCurrentPatient )
 {
@@ -53,13 +65,13 @@ void ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries::getDisplayedFieldsForIn
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries::startUpdate()
+void ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule::startUpdate()
 {
   this->UpdatedStudyInstanceUIDs.clear();
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries::endUpdate(
+void ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule::endUpdate(
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient)

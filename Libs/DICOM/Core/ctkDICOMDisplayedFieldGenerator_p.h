@@ -45,8 +45,18 @@ public:
   ctkDICOMDisplayedFieldGeneratorPrivate(ctkDICOMDisplayedFieldGenerator&);
   ~ctkDICOMDisplayedFieldGeneratorPrivate();
 
+  /// Instantiate and setup displayed field generator rules that are enabled according to the database.
+  /// Populates \sa GeneratorRules list when update starts (\sa ctkDICOMDisplayedFieldGenerator::startUpdate).
+  void setupEnabledDisplayedFieldGeneratorRules();
+
+  /// Clear list of displayed field generator rules when update ends (\sa ctkDICOMDisplayedFieldGenerator::endUpdate).
+  void clearDisplayedFieldGeneratorRules();
+
 public:
-  QList<ctkDICOMDisplayedFieldGeneratorAbstractRule*> AllRules;
+  /// List of enabled generator rules.
+  /// Populated on \sa ctkDICOMDisplayedFieldGenerator::startUpdate and cleared on \sa ctkDICOMDisplayedFieldGenerator::endUpdate
+  QList<ctkDICOMDisplayedFieldGeneratorAbstractRule*> GeneratorRules;
+
   ctkDICOMDatabase* Database;
 
   QMap<QString, QString> EmptyFieldNamesPatients;
