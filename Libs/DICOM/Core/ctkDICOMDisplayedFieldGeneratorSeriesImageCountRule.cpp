@@ -18,7 +18,7 @@
 
 =========================================================================*/
 
-#include "ctkDICOMDisplayedFieldGeneratorSeriesImageCount.h"
+#include "ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule.h"
 
 // ctkDICOM includes
 #include "ctkDICOMDatabase.h"
@@ -29,12 +29,24 @@
 #include <QSqlQuery>
 
 //------------------------------------------------------------------------------
-ctkDICOMDisplayedFieldGeneratorSeriesImageCount::ctkDICOMDisplayedFieldGeneratorSeriesImageCount()
+ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule::ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule()
 {
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDisplayedFieldGeneratorSeriesImageCount::getRequiredDICOMTags()
+QString ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule::name()const
+{
+  return "SeriesImageCount";
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMDisplayedFieldGeneratorAbstractRule* ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule::clone()
+{
+  return new ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule();
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule::getRequiredDICOMTags()
 {
   QStringList requiredTags;
 
@@ -44,7 +56,7 @@ QStringList ctkDICOMDisplayedFieldGeneratorSeriesImageCount::getRequiredDICOMTag
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDisplayedFieldGeneratorSeriesImageCount::getDisplayedFieldsForInstance(
+void ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule::getDisplayedFieldsForInstance(
   const QMap<QString, QString> &cachedTagsForInstance, QMap<QString, QString> &displayedFieldsForCurrentSeries,
   QMap<QString, QString> &displayedFieldsForCurrentStudy, QMap<QString, QString> &displayedFieldsForCurrentPatient )
 {
@@ -53,13 +65,13 @@ void ctkDICOMDisplayedFieldGeneratorSeriesImageCount::getDisplayedFieldsForInsta
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDisplayedFieldGeneratorSeriesImageCount::startUpdate()
+void ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule::startUpdate()
 {
   this->UpdatedSeriesInstanceUIDs.clear();
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDisplayedFieldGeneratorSeriesImageCount::endUpdate(
+void ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule::endUpdate(
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient)

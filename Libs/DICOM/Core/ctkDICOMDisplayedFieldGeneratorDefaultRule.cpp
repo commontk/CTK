@@ -24,6 +24,18 @@
 #include "dcmtk/dcmdata/dcvrpn.h"
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDisplayedFieldGeneratorDefaultRule::name()const
+{
+  return "Default";
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMDisplayedFieldGeneratorAbstractRule* ctkDICOMDisplayedFieldGeneratorDefaultRule::clone()
+{
+  return new ctkDICOMDisplayedFieldGeneratorDefaultRule();
+}
+
+//------------------------------------------------------------------------------
 QStringList ctkDICOMDisplayedFieldGeneratorDefaultRule::getRequiredDICOMTags()
 {
   QStringList requiredTags;

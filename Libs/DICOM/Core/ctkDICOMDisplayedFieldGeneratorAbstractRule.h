@@ -44,6 +44,12 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorAbstractRule
 public:
   virtual ~ctkDICOMDisplayedFieldGeneratorAbstractRule(){}
 
+  /// Get name of rule
+  virtual QString name()const = 0;
+
+  /// Clone displayed field generator rule. Override to return a new instance of the rule sub-class
+  virtual ctkDICOMDisplayedFieldGeneratorAbstractRule* clone() = 0; 
+
   /// Generate displayed fields for a certain instance based on its cached tags
   /// Each rule plugin has the chance to fill any field in the series, study, and patient fields.
   /// The way these generated fields will be used is defined by \sa mergeDisplayedFieldsForInstance

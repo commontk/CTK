@@ -34,6 +34,12 @@
 class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorDefaultRule : public ctkDICOMDisplayedFieldGeneratorAbstractRule
 {
 public:
+  /// Get name of rule
+  QString name()const override;
+
+  /// Clone displayed field generator rule. Override to return a new instance of the rule sub-class
+  ctkDICOMDisplayedFieldGeneratorAbstractRule* clone() override;
+
   /// Specify list of DICOM tags required by the rule. These tags will be included in the tag cache
   QStringList getRequiredDICOMTags() override;
 

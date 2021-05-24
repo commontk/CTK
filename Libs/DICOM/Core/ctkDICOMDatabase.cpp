@@ -80,7 +80,7 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o)
   , TagCacheVerified(false)
   , DisplayedFieldsTableAvailable(false)
   , UseShortStoragePath(true)
-  , SchemaVersion("0.6.3")
+  , SchemaVersion("0.7.0")
 {
   this->resetLastInsertedValues();
   this->DisplayedFieldGenerator = new ctkDICOMDisplayedFieldGenerator(q_ptr);
@@ -103,7 +103,8 @@ void ctkDICOMDatabasePrivate::init(QString databaseFilename)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMDatabasePrivate::registerCompressionLibraries(){
+void ctkDICOMDatabasePrivate::registerCompressionLibraries()
+{
   // Register the JPEG libraries in case we need them
   //   (registration only happens once, so it's okay to call repeatedly)
   // register global JPEG decompression codecs
@@ -1555,6 +1556,7 @@ void ctkDICOMDatabase::openDatabase(const QString databaseFile, const QString& c
   // Add displayed field generator's required tags to the pre-cached list to make
   // displayed field updates fast.
   QStringList tags = this->tagsToPrecache();
+  d->DisplayedFieldGenerator->setDatabase(this);
   tags << d->DisplayedFieldGenerator->getRequiredTags();
   tags.removeDuplicates();
   this->setTagsToPrecache(tags);
@@ -2979,8 +2981,6 @@ void ctkDICOMDatabase::updateDisplayedFields()
   QMap<QString /*SeriesInstanceUID*/, QMap<QString /*DisplayField*/, QString /*Value*/> > displayedFieldsMapSeries;
   QMap<QString /*StudyInstanceUID*/, QMap<QString /*DisplayField*/, QString /*Value*/> > displayedFieldsMapStudy;
   QMap<QString /*CompositePatientID*/, QMap<QString /*DisplayField*/, QString /*Value*/> > displayedFieldsMapPatient;
-
-  d->DisplayedFieldGenerator->setDatabase(this);
 
   int progressValue = 0;
   emit displayedFieldsUpdateProgress(++progressValue);

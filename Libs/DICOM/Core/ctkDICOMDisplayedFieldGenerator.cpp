@@ -23,16 +23,11 @@
 
 // ctkDICOM includes
 #include "ctkLogger.h"
+#include "ctkDICOMDatabase.h"
 #include "ctkDICOMDisplayedFieldGenerator.h"
 #include "ctkDICOMDisplayedFieldGenerator_p.h"
-
-#include "ctkDICOMDatabase.h"
-#include "ctkDICOMDisplayedFieldGeneratorDefaultRule.h"
-#include "ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule.h"
-#include "ctkDICOMDisplayedFieldGeneratorLastStudyDateRule.h"
-#include "ctkDICOMDisplayedFieldGeneratorSeriesImageCount.h"
-#include "ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries.h"
-#include "ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudies.h"
+#include "ctkDICOMDisplayedFieldGeneratorAbstractRule.h"
+#include "ctkDICOMDisplayedFieldGeneratorRuleFactory.h"
 
 //------------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.dicom.DICOMDisplayedFieldGenerator" );
@@ -47,30 +42,59 @@ ctkDICOMDisplayedFieldGeneratorPrivate::ctkDICOMDisplayedFieldGeneratorPrivate(c
   : q_ptr(&o)
   , Database(nullptr)
 {
-  // register commonly used rules
-  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorDefaultRule);
-  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule);
-  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorLastStudyDateRule);
-  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorSeriesImageCount);
-  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries);
-  this->AllRules.append(new ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudies);
-
-  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, this->AllRules)
-  {
-    rule->registerEmptyFieldNames(
-      this->EmptyFieldNamesSeries, this->EmptyFieldNamesStudies, this->EmptyFieldNamesPatients );
-  }
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMDisplayedFieldGeneratorPrivate::~ctkDICOMDisplayedFieldGeneratorPrivate()
+ctkDICOMDisplayedFieldGeneratorPrivate::~ctkDICOMDisplayedFieldGeneratorPrivate() = default;
+
+//------------------------------------------------------------------------------
+void ctkDICOMDisplayedFieldGeneratorPrivate::setupEnabledDisplayedFieldGeneratorRules()
 {
-  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, this->AllRules)
+  if (!this->Database)
+  {
+    qCritical() << Q_FUNC_INFO << " failed: DICOM database needs to be set";
+    return;
+  }
+  if (!this->GeneratorRules.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << " : Generator rules have not been cleared before new update session";
+
+    this->clearDisplayedFieldGeneratorRules();
+  }
+
+  // Instantiate enabled rules registered in factory
+  this->GeneratorRules =
+    ctkDICOMDisplayedFieldGeneratorRuleFactory::instance()->copyEnabledDisplayedFieldGeneratorRules(this->Database);
+
+  // Setup generator rules used in this update session
+  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, this->GeneratorRules)
+  {
+    // Set database
+    rule->setDatabase(this->Database);
+    // Register empty field names
+    rule->registerEmptyFieldNames(
+      this->EmptyFieldNamesSeries, this->EmptyFieldNamesStudies, this->EmptyFieldNamesPatients );
+  }
+
+  //TODO: Process Options field in DisplayedFieldGeneratorRules table when has a concrete use.
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMDisplayedFieldGeneratorPrivate::clearDisplayedFieldGeneratorRules()
+{
+  // Delete generator rules and clear container
+  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, this->GeneratorRules)
   {
     delete rule;
   }
-  this->AllRules.clear();
+  this->GeneratorRules.clear();
+
+  // Clear empty field names registered previously by the rules
+  this->EmptyFieldNamesSeries.clear();
+  this->EmptyFieldNamesStudies.clear();
+  this->EmptyFieldNamesPatients.clear();
 }
+
 
 //------------------------------------------------------------------------------
 
@@ -78,7 +102,8 @@ ctkDICOMDisplayedFieldGeneratorPrivate::~ctkDICOMDisplayedFieldGeneratorPrivate(
 // ctkDICOMDisplayedFieldGenerator methods
 
 //------------------------------------------------------------------------------
-ctkDICOMDisplayedFieldGenerator::ctkDICOMDisplayedFieldGenerator(QObject *parent):d_ptr(new ctkDICOMDisplayedFieldGeneratorPrivate(*this))
+ctkDICOMDisplayedFieldGenerator::ctkDICOMDisplayedFieldGenerator(QObject *parent)
+  : d_ptr(new ctkDICOMDisplayedFieldGeneratorPrivate(*this))
 {
   Q_UNUSED(parent);
 }
@@ -86,6 +111,8 @@ ctkDICOMDisplayedFieldGenerator::ctkDICOMDisplayedFieldGenerator(QObject *parent
 //------------------------------------------------------------------------------
 ctkDICOMDisplayedFieldGenerator::~ctkDICOMDisplayedFieldGenerator()
 {
+  Q_D(ctkDICOMDisplayedFieldGenerator);
+  d->clearDisplayedFieldGeneratorRules();
 }
 
 //------------------------------------------------------------------------------
@@ -94,13 +121,12 @@ QStringList ctkDICOMDisplayedFieldGenerator::getRequiredTags()
   Q_D(ctkDICOMDisplayedFieldGenerator);
 
   QStringList requiredTags;
-  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
+  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->GeneratorRules)
   {
     requiredTags << rule->getRequiredDICOMTags();
   }
   requiredTags.removeDuplicates();
 
-  // TODO: remove duplicates from requiredTags (maybe also sort)
   return requiredTags;
 }
 
@@ -117,7 +143,7 @@ void ctkDICOMDisplayedFieldGenerator::updateDisplayedFieldsForInstance(
   QMap<QString, QString> newFieldsSeries;
   QMap<QString, QString> newFieldsStudy;
   QMap<QString, QString> newFieldsPatient;
-  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
+  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->GeneratorRules)
   {
     QMap<QString, QString> initialFieldsSeries = displayedFieldsForCurrentSeries;
     QMap<QString, QString> initialFieldsStudy = displayedFieldsForCurrentStudy;
@@ -138,7 +164,12 @@ void ctkDICOMDisplayedFieldGenerator::updateDisplayedFieldsForInstance(
 void ctkDICOMDisplayedFieldGenerator::startUpdate()
 {
   Q_D(ctkDICOMDisplayedFieldGenerator);
-  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
+
+  // Re-initialize generator rules in case new ones have been registered or the rule options changed in the database
+  d->clearDisplayedFieldGeneratorRules();
+  d->setupEnabledDisplayedFieldGeneratorRules();
+
+  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->GeneratorRules)
   {
     rule->startUpdate();
   }
@@ -150,7 +181,8 @@ void ctkDICOMDisplayedFieldGenerator::endUpdate(QMap<QString, QMap<QString, QStr
                                                 QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient)
 {
   Q_D(ctkDICOMDisplayedFieldGenerator);
-  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
+
+  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->GeneratorRules)
   {
     rule->endUpdate(displayedFieldsMapSeries, displayedFieldsMapStudy, displayedFieldsMapPatient);
   }
@@ -168,15 +200,5 @@ void ctkDICOMDisplayedFieldGenerator::setDatabase(ctkDICOMDatabase* database)
 
   d->Database = database;
 
-  foreach(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule, d->AllRules)
-  {
-    rule->setDatabase(database);
-  }
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMDisplayedFieldGenerator::registerDisplayedFieldGeneratorRule(ctkDICOMDisplayedFieldGeneratorAbstractRule* rule)
-{
-  Q_D(ctkDICOMDisplayedFieldGenerator);
-  d->AllRules.append(rule);
+  d->setupEnabledDisplayedFieldGeneratorRules();
 }

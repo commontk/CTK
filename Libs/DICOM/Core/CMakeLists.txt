@@ -35,6 +35,8 @@ set(KIT_SRCS
   ctkDICOMTester.h
   ctkDICOMUtil.cpp
   ctkDICOMUtil.h
+  ctkDICOMDisplayedFieldGeneratorRuleFactory.h
+  ctkDICOMDisplayedFieldGeneratorRuleFactory.cpp
   ctkDICOMDisplayedFieldGeneratorAbstractRule.h
   ctkDICOMDisplayedFieldGeneratorDefaultRule.h
   ctkDICOMDisplayedFieldGeneratorDefaultRule.cpp
@@ -42,12 +44,12 @@ set(KIT_SRCS
   ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule.cpp
   ctkDICOMDisplayedFieldGeneratorLastStudyDateRule.h
   ctkDICOMDisplayedFieldGeneratorLastStudyDateRule.cpp
-  ctkDICOMDisplayedFieldGeneratorSeriesImageCount.h
-  ctkDICOMDisplayedFieldGeneratorSeriesImageCount.cpp
-  ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries.h
-  ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries.cpp
-  ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudies.h
-  ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudies.cpp
+  ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule.h
+  ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule.cpp
+  ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule.h
+  ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule.cpp
+  ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule.h
+  ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule.cpp
 )
 
 # Abstract class should not be wrapped !
@@ -63,6 +65,7 @@ set(KIT_MOC_SRCS
   ctkDICOMDatabase.h
   ctkDICOMDisplayedFieldGenerator.h
   ctkDICOMDisplayedFieldGenerator_p.h
+  ctkDICOMDisplayedFieldGeneratorRuleFactory.h
   ctkDICOMIndexer.h
   ctkDICOMIndexer_p.h
   ctkDICOMFilterProxyModel.h

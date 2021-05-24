@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries_h
-#define __ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries_h
+#ifndef __ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule_h
+#define __ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule_h
 
 // Qt includes
 #include <QSet>
@@ -29,12 +29,18 @@
 
 /// \ingroup DICOM_Core
 ///
-/// Rule for generating number of series in the studies that belong to the newly added instances
-class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries : public ctkDICOMDisplayedFieldGeneratorAbstractRule
+/// Rule for generating number of studies in the patients that belong to the newly added instances
+class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule : public ctkDICOMDisplayedFieldGeneratorAbstractRule
 {
 public:
   /// Constructor
-  explicit ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeries();
+  explicit ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule();
+
+  /// Get name of rule
+  QString name()const override;
+
+  /// Clone displayed field generator rule. Override to return a new instance of the rule sub-class
+  ctkDICOMDisplayedFieldGeneratorAbstractRule* clone() override;
 
   /// Specify list of DICOM tags required by the rule. These tags will be included in the tag cache
   QStringList getRequiredDICOMTags() override;
@@ -56,8 +62,8 @@ public:
                  QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient) override;
 
 protected:
-  /// Identifier of studies that contain instances of which displayed fields are updated in this run.
-  QSet<QString> UpdatedStudyInstanceUIDs;
+  /// Composite IDs (containing PatientID, PatientName, PatientBirthDate) of patients that contain instances of which displayed fields are updated in this run.
+  QSet<QString> UpdatedPatientCompositeIDs;
 };
 
 #endif

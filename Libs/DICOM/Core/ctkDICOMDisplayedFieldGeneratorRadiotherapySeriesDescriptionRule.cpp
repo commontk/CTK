@@ -29,6 +29,18 @@ ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::ctkDICOMDispla
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::name()const
+{
+  return "RadiotherapySeriesDescription";
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMDisplayedFieldGeneratorAbstractRule* ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::clone()
+{
+  return new ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule();
+}
+
+//------------------------------------------------------------------------------
 QStringList ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::getRequiredDICOMTags()
 {
   QStringList requiredTags;

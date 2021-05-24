@@ -34,6 +34,18 @@ ctkDICOMDisplayedFieldGeneratorLastStudyDateRule::ctkDICOMDisplayedFieldGenerato
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDisplayedFieldGeneratorLastStudyDateRule::name()const
+{
+  return "LastStudyDate";
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMDisplayedFieldGeneratorAbstractRule* ctkDICOMDisplayedFieldGeneratorLastStudyDateRule::clone()
+{
+  return new ctkDICOMDisplayedFieldGeneratorLastStudyDateRule();
+}
+
+//------------------------------------------------------------------------------
 QStringList ctkDICOMDisplayedFieldGeneratorLastStudyDateRule::getRequiredDICOMTags()
 {
   QStringList requiredTags;
