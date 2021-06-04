@@ -67,17 +67,24 @@ void ctkFileDialogPrivate::init()
 {
   Q_Q(ctkFileDialog);
 
-  this->observeAcceptButton();
+  if (!(q->options() & QFileDialog::DontUseNativeDialog))
+  {
+    this->observeAcceptButton();
 
-  QObject::connect(this->listView()->selectionModel(),
+    QObject::connect(this->listView()->selectionModel(),
                    SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
                    q, SLOT(onSelectionChanged()));
+  }
 }
 
 //------------------------------------------------------------------------------
 QPushButton* ctkFileDialogPrivate::acceptButton()const
 {
   Q_Q(const ctkFileDialog);
+  if (!(q->options() & QFileDialog::DontUseNativeDialog))
+  {
+    return NULL;  // Native dialog does not supporting modifying or getting widget elements.
+  }
   QDialogButtonBox* buttonBox = q->findChild<QDialogButtonBox*>();
   Q_ASSERT(buttonBox);
   QDialogButtonBox::StandardButton button =
@@ -127,13 +134,6 @@ ctkFileDialog::ctkFileDialog(QWidget *parentWidget,
 {
   Q_D(ctkFileDialog);
 
-// The findChild<QDialogButtonBox*>() call fails on Mac/Qt5 because native
-// dialogs don't publish any internals. No problems on other OS.
-// Can be applied to Qt4 as well, if problems arise there.
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-  this->setOptions(DontUseNativeDialog);
-#endif
-
   d->init();
 }
 
@@ -145,6 +145,10 @@ ctkFileDialog::~ctkFileDialog()
 //------------------------------------------------------------------------------
 void ctkFileDialog::setBottomWidget(QWidget* widget, const QString& label)
 {
+  if (!(this->options() & QFileDialog::DontUseNativeDialog))
+  {
+    return;  // Native dialog does not supporting modifying or getting widget elements.
+  }
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(this->layout());
   QWidget* oldBottomWidget = this->bottomWidget();
   // remove the old widget from the layout if any
