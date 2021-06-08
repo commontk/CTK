@@ -1420,7 +1420,7 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
         return;
       }
 
-      bool copyResult = QFile::copy(filePath, destinationFileName);
+      bool copyResult = ctk::copyFile(filePath, destinationFileName);
       if (!copyResult)
       {
         d->ExportProgress->setValue(numFiles);

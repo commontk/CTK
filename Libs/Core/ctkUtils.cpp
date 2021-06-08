@@ -29,6 +29,7 @@
 
 // STD includes
 #include <algorithm>
+#include <fstream>
 #include <limits>
 
 #ifdef _MSC_VER
@@ -393,6 +394,22 @@ bool ctk::copyDirRecursively(const QString &srcPath, const QString &dstPath, boo
       }
     }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool ctk::copyFile(const QString& srcPath, const QString& dstPath)
+{
+    std::ifstream src(srcPath.toStdString(), std::ios::binary);
+    if (!src.good())
+        return false;
+
+    std::ofstream dest(dstPath.toStdString(), std::ios::binary);
+    if (!dest.good())
+        return false;
+
+    dest << src.rdbuf();
+
+    return dest.good();
 }
 
 //-----------------------------------------------------------------------------
