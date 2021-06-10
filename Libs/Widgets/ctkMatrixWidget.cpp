@@ -239,7 +239,6 @@ void ctkMatrixWidgetPrivate::updateGeometries()
     bool lastColumn = (j==(ccount-1));
     int newWidth = lastColumn ? lastColWidth : colWidth;
     this->Table->setColumnWidth(j, newWidth);
-    CTK_SOFT_ASSERT(this->Table->columnWidth(j) == newWidth);
     }
   // rows
   const int rcount = q->rowCount();
@@ -250,7 +249,6 @@ void ctkMatrixWidgetPrivate::updateGeometries()
     bool lastRow = (i==(rcount-1));
     int newHeight = lastRow ? lastRowHeight : rowHeight;
     this->Table->setRowHeight(i, newHeight);
-    CTK_SOFT_ASSERT(this->Table->rowHeight(i) == newHeight);
     }
   this->Table->updateGeometry();
 }
