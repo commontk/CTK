@@ -51,6 +51,7 @@ public:
   bool AcceptButtonEnable;
   bool AcceptButtonState;
   bool IgnoreEvent;
+  bool UsingNativeDialog;
 };
 
 //------------------------------------------------------------------------------
@@ -60,20 +61,21 @@ ctkFileDialogPrivate::ctkFileDialogPrivate(ctkFileDialog& object)
   this->IgnoreEvent = false;
   this->AcceptButtonEnable = true;
   this->AcceptButtonState = true;
+  this->UsingNativeDialog = true;
 }
 
 //------------------------------------------------------------------------------
 void ctkFileDialogPrivate::init()
 {
   Q_Q(ctkFileDialog);
-
-  if (!(q->options() & QFileDialog::DontUseNativeDialog))
+  this->UsingNativeDialog = !(q->options() & QFileDialog::DontUseNativeDialog);
+  if (!(this->UsingNativeDialog))
   {
     this->observeAcceptButton();
 
     QObject::connect(this->listView()->selectionModel(),
-                   SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-                   q, SLOT(onSelectionChanged()));
+                    SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+                    q, SLOT(onSelectionChanged()));
   }
 }
 
@@ -81,7 +83,7 @@ void ctkFileDialogPrivate::init()
 QPushButton* ctkFileDialogPrivate::acceptButton()const
 {
   Q_Q(const ctkFileDialog);
-  if (!(q->options() & QFileDialog::DontUseNativeDialog))
+  if (this->UsingNativeDialog)
   {
     return NULL;  // Native dialog does not supporting modifying or getting widget elements.
   }
@@ -145,7 +147,8 @@ ctkFileDialog::~ctkFileDialog()
 //------------------------------------------------------------------------------
 void ctkFileDialog::setBottomWidget(QWidget* widget, const QString& label)
 {
-  if (!(this->options() & QFileDialog::DontUseNativeDialog))
+  Q_D(ctkFileDialog);
+  if (d->UsingNativeDialog)
   {
     return;  // Native dialog does not supporting modifying or getting widget elements.
   }
