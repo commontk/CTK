@@ -69,7 +69,7 @@ void ctkFileDialogPrivate::init()
 {
   Q_Q(ctkFileDialog);
   this->UsingNativeDialog = !(q->options() & QFileDialog::DontUseNativeDialog);
-  if (!(this->UsingNativeDialog))
+  if (!this->UsingNativeDialog)
   {
     this->observeAcceptButton();
 
