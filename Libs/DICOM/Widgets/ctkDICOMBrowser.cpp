@@ -327,7 +327,7 @@ void ctkDICOMBrowserPrivate::init()
   this->QueryRetrieveWidget = new ctkDICOMQueryRetrieveWidget();
   this->QueryRetrieveWidget->setWindowModality ( Qt::ApplicationModal );
   this->QueryRetrieveWidget->useProgressDialog(true);
-  
+
   this->dicomTableManager->setDICOMDatabase(this->DICOMDatabase.data());
 
   // TableView signals
@@ -529,7 +529,7 @@ void ctkDICOMBrowser::createNewDatabaseDirectory()
         if (defaultSubfolderName.isEmpty())
         {
           defaultSubfolderName = defaultFolderInfo.dir().dirName();
-        }          
+        }
         baseFolder += "/" + defaultSubfolderName;
       }
     }
@@ -918,6 +918,10 @@ void ctkDICOMBrowser::onImportDirectoryComboBoxCurrentIndexChanged(int index)
 {
   Q_D(ctkDICOMBrowser);
   Q_UNUSED(index);
+  if (!(d->ImportDialog->options() & QFileDialog::DontUseNativeDialog))
+  {
+    return;  // Native dialog does not support modifying or getting widget elements.
+  }
   QComboBox* comboBox = d->ImportDialog->bottomWidget()->findChild<QComboBox*>();
   ctkDICOMBrowser::ImportDirectoryMode mode =
       static_cast<ctkDICOMBrowser::ImportDirectoryMode>(comboBox->itemData(index).toInt());
@@ -1030,6 +1034,10 @@ void ctkDICOMBrowser::setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMod
   if (!d->ImportDialog)
   {
     return;
+  }
+  if (!(d->ImportDialog->options() & QFileDialog::DontUseNativeDialog))
+  {
+    return;  // Native dialog does not support modifying or getting widget elements.
   }
   QComboBox* comboBox = d->ImportDialog->bottomWidget()->findChild<QComboBox*>();
   comboBox->setCurrentIndex(comboBox->findData(mode));
@@ -1565,7 +1573,6 @@ void ctkDICOMBrowser::exportSelectedItems(ctkDICOMModel::IndexType level)
 {
   Q_D(const ctkDICOMBrowser);
   ctkFileDialog* directoryDialog = new ctkFileDialog();
-  directoryDialog->setOption(QFileDialog::DontUseNativeDialog);
   directoryDialog->setOption(QFileDialog::ShowDirsOnly);
   directoryDialog->setFileMode(QFileDialog::DirectoryOnly);
   bool res = directoryDialog->exec();
