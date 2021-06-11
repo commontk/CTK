@@ -197,6 +197,10 @@ QWidget* ctkFileDialog::bottomWidget()const
 void ctkFileDialog::setSelectionMode(QAbstractItemView::SelectionMode mode)
 {
   Q_D(ctkFileDialog);
+  if (d->UsingNativeDialog)
+  {
+    return;  // Native dialog does not support modifying or getting widget elements.
+  }
   foreach(QAbstractItemView* view, QList<QAbstractItemView*>()
           << d->listView()
           << d->treeView()
