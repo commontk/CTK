@@ -1324,6 +1324,7 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
   foreach (const QString& uid, uids)
   {
     QStringList filesForSeries = d->DICOMDatabase->filesForSeries(uid);
+    filesForSeries.sort();
 
     // Use the first file to get the overall series information
     QString firstFilePath = filesForSeries[0];
@@ -1419,7 +1420,7 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
         return;
       }
 
-      bool copyResult = QFile::copy(filePath, destinationFileName);
+      bool copyResult = ctk::copyFile(filePath, destinationFileName);
       if (!copyResult)
       {
         d->ExportProgress->setValue(numFiles);

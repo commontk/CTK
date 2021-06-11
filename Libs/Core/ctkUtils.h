@@ -151,6 +151,16 @@ bool CTK_CORE_EXPORT copyDirRecursively(const QString &srcPath, const QString &d
 
 ///
 /// \ingroup Core
+/// \brief Copy a file using standard library functions. It does not create temporary files unlike QFile::copy.
+///
+/// \param srcPath The path of the input file to copy.
+/// \param dstPath The path to the output file.
+/// \return <code>true</code> on success, <code>false</code> otherwise.
+/// \sa QFile::copy
+bool CTK_CORE_EXPORT copyFile(const QString& srcPath, const QString& dstPath);
+
+///
+/// \ingroup Core
 /// Convert Qt::HANDLE to string
 /// \sa Qt::HANDLE
 QString CTK_CORE_EXPORT qtHandleToString(Qt::HANDLE handle);
