@@ -85,7 +85,7 @@ QPushButton* ctkFileDialogPrivate::acceptButton()const
   Q_Q(const ctkFileDialog);
   if (this->UsingNativeDialog)
   {
-    return NULL;  // Native dialog does not supporting modifying or getting widget elements.
+    return NULL;  // Native dialog does not support modifying or getting widget elements.
   }
   QDialogButtonBox* buttonBox = q->findChild<QDialogButtonBox*>();
   Q_ASSERT(buttonBox);
@@ -150,7 +150,7 @@ void ctkFileDialog::setBottomWidget(QWidget* widget, const QString& label)
   Q_D(ctkFileDialog);
   if (d->UsingNativeDialog)
   {
-    return;  // Native dialog does not supporting modifying or getting widget elements.
+    return;  // Native dialog does not support modifying or getting widget elements.
   }
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(this->layout());
   QWidget* oldBottomWidget = this->bottomWidget();
