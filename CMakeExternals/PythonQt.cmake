@@ -82,7 +82,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
 
   if (CTK_QT_VERSION VERSION_GREATER "4")
-    set(revision_tag dafdb7255b82163329672edebba4f267958c7376) # patched-10
+    set(revision_tag c306140442feb6e76d4bae672c48cd7f11d9b0cd) # patched-9
   else()
     set(revision_tag 90c08fb0d523622d2de9e7a91f4ef116a66a8801) # patched-5
   endif()
