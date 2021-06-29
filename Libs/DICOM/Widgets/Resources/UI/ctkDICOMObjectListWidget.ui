@@ -115,6 +115,16 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QLabel" name="dcmPixelData">
+       <property name="toolTip">
+        <string>Pixel data.</string>
+       </property>
+       <property name="text">
+        <string>PixelData</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

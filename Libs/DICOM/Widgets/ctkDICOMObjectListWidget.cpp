@@ -20,12 +20,14 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMObjectListWidget.h"
+#include "ctkDICOMThumbnailGenerator.h"
 #include "ui_ctkDICOMObjectListWidget.h"
 
 // Qt includes
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>
+#include <QImage>
 #include <QSortFilterProxyModel>
 #include <QString>
 #include <QStringList>
@@ -250,10 +252,9 @@ void ctkDICOMObjectListWidget::setFileList(const QStringList& fileList)
   if (d->fileList.size() > 0)
     {
     d->currentFile = d->fileList[0];
-    
-    d->populateDICOMObjectTreeView(d->currentFile);
     d->fileSliderWidget->setMaximum(fileList.size());
     d->fileSliderWidget->setSuffix(QString(" / %1").arg(fileList.size()));
+    this->updateWidget();
     for (int columnIndex = 0; columnIndex < d->dicomObjectModel->columnCount(); ++columnIndex)
       {
       d->dcmObjectTreeView->resizeColumnToContents(columnIndex);
@@ -307,6 +308,12 @@ void ctkDICOMObjectListWidget::updateWidget()
   d->currentFile = d->fileList[static_cast<int>(d->fileSliderWidget->value())-1];
   d->setPathLabel(d->currentFile);
   d->populateDICOMObjectTreeView(d->currentFile);
+  ctkDICOMThumbnailGenerator thumbnailGenerator;
+  QImage thumbnailImage;
+  thumbnailGenerator.generateThumbnail(d->currentFile, thumbnailImage);
+  QPixmap thumbnailPixmap;
+  thumbnailPixmap.convertFromImage(thumbnailImage);
+  d->dcmPixelData->setPixmap(thumbnailPixmap);
  }
 
 // --------------------------------------------------------------------------
