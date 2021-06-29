@@ -123,11 +123,10 @@ void ctkDICOMThumbnailGenerator::setSmoothResize(bool on)
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &path)
+bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage& image)
 {
   Q_D(ctkDICOMThumbnailGenerator);
 
-  QImage image;
   // Check whether we have a valid image
   EI_Status result = dcmImage->getStatus();
   if (result != EIS_Normal)
@@ -184,9 +183,27 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const Q
       return false;
     }
   }
-  image.scaled( d->Width, d->Height, Qt::KeepAspectRatio,
-    (d->SmoothResize ? Qt::SmoothTransformation : Qt::FastTransformation) ).save(path,"PNG");
+  image = image.scaled( d->Width, d->Height, Qt::KeepAspectRatio,
+    (d->SmoothResize ? Qt::SmoothTransformation : Qt::FastTransformation) );
   return true;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const QString &path)
+{
+  QImage image;
+  if (this->generateThumbnail(dcmImage, image))
+  {
+    return image.save(path,"PNG");
+  }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, QImage& image)
+{
+  DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
+  return this->generateThumbnail(&dcmImage, image); 
 }
 
 //------------------------------------------------------------------------------
@@ -194,4 +211,15 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, c
 {
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
   return this->generateThumbnail(&dcmImage, thumbnailPath); 
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image)
+{
+  Q_D(ctkDICOMThumbnailGenerator);
+  if (image.width() != d->Width || image.height() != d->Height)
+    {
+    image = QImage(d->Width, d->Height, QImage::Format_RGB32);
+    }
+  image.fill(Qt::darkGray);
 }

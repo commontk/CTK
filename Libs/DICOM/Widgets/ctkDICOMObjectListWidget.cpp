@@ -20,12 +20,14 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMObjectListWidget.h"
+#include "ctkDICOMThumbnailGenerator.h"
 #include "ui_ctkDICOMObjectListWidget.h"
 
 // Qt includes
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>
+#include <QImage>
 #include <QSortFilterProxyModel>
 #include <QString>
 #include <QStringList>
@@ -101,6 +103,7 @@ public:
   ctkDICOMObjectModel* dicomObjectModel;
   qRecursiveTreeProxyFilter* filterModel;
   QString filterExpression;
+  bool thumbnailVisible{true};
 };
 
 //----------------------------------------------------------------------------
@@ -212,6 +215,9 @@ ctkDICOMObjectListWidget::ctkDICOMObjectListWidget(QWidget* _parent):Superclass(
   d->fileSliderWidget->setMinimum(1);
   d->fileSliderWidget->setPageStep(1);
 
+  d->showThumbnailButton->setChecked(d->thumbnailVisible);
+  d->thumbnailLabel->setVisible(d->thumbnailVisible);
+
   d->currentPathLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
   connect(d->fileSliderWidget, SIGNAL(valueChanged(double)), this, SLOT(updateWidget()));
   connect(d->dcmObjectTreeView, SIGNAL(doubleClicked(const QModelIndex&)),
@@ -225,6 +231,8 @@ ctkDICOMObjectListWidget::ctkDICOMObjectListWidget(QWidget* _parent):Superclass(
 
   QObject::connect(d->metadataSearchBox, SIGNAL(textChanged(QString)), this, SLOT(setFilterExpression(QString)));
   QObject::connect(d->metadataSearchBox, SIGNAL(textChanged(QString)), this, SLOT(onFilterChanged()));
+
+  QObject::connect(d->showThumbnailButton, SIGNAL(toggled(bool)), this, SLOT(setThumbnailVisible(bool)));
 }
 
 //----------------------------------------------------------------------------
@@ -250,10 +258,9 @@ void ctkDICOMObjectListWidget::setFileList(const QStringList& fileList)
   if (d->fileList.size() > 0)
     {
     d->currentFile = d->fileList[0];
-    
-    d->populateDICOMObjectTreeView(d->currentFile);
     d->fileSliderWidget->setMaximum(fileList.size());
     d->fileSliderWidget->setSuffix(QString(" / %1").arg(fileList.size()));
+    this->updateWidget();
     for (int columnIndex = 0; columnIndex < d->dicomObjectModel->columnCount(); ++columnIndex)
       {
       d->dcmObjectTreeView->resizeColumnToContents(columnIndex);
@@ -307,7 +314,19 @@ void ctkDICOMObjectListWidget::updateWidget()
   d->currentFile = d->fileList[static_cast<int>(d->fileSliderWidget->value())-1];
   d->setPathLabel(d->currentFile);
   d->populateDICOMObjectTreeView(d->currentFile);
- }
+
+  if (this->isThumbnailVisible())
+  {
+    // only update the thumbnail if visible for better update performance
+    ctkDICOMThumbnailGenerator thumbnailGenerator;
+    QImage thumbnailImage;
+    if (!thumbnailGenerator.generateThumbnail(d->currentFile, thumbnailImage))
+    {
+      thumbnailGenerator.generateBlankThumbnail(thumbnailImage);
+    }
+    d->thumbnailLabel->setPixmap(QPixmap::fromImage(thumbnailImage));
+  }
+}
 
 // --------------------------------------------------------------------------
 void ctkDICOMObjectListWidget::copyPath()
@@ -405,4 +424,33 @@ QString ctkDICOMObjectListWidget::filterExpression()
 {
   Q_D(ctkDICOMObjectListWidget);
   return d->filterExpression;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMObjectListWidget::setThumbnailVisible(bool visible)
+{
+  Q_D(ctkDICOMObjectListWidget);
+  if (visible == d->thumbnailVisible)
+    {
+    // no change
+    return;
+    }
+  d->thumbnailVisible = visible;
+
+  QSignalBlocker blocker(d->showThumbnailButton);
+  d->showThumbnailButton->setChecked(visible);
+
+  d->thumbnailLabel->setVisible(visible);
+  if (visible)
+    {
+    // Previously the thumbnail was not visible, so it was not updated. Update it now.
+    this->updateWidget();
+    }
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMObjectListWidget::isThumbnailVisible()const
+{
+  Q_D(const ctkDICOMObjectListWidget);
+  return d->thumbnailVisible;
 }
