@@ -36,6 +36,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMObjectListWidget : public QWidget
   Q_PROPERTY(QString currentFile READ currentFile WRITE setCurrentFile)
   Q_PROPERTY(QStringList fileList READ fileList WRITE setFileList)
   Q_PROPERTY(QString filterExpression READ filterExpression WRITE setFilterExpression)
+  Q_PROPERTY(bool thumbnailVisible READ isThumbnailVisible WRITE setThumbnailVisible)
 
 public:
   typedef QWidget Superclass;
@@ -58,6 +59,8 @@ public:
   /// Open DICOM tag definition in a web browser
   void openLookupUrl(QString tag);
 
+  bool isThumbnailVisible()const;
+
 protected:
   QScopedPointer<ctkDICOMObjectListWidgetPrivate> d_ptr;
 
@@ -72,6 +75,7 @@ public Q_SLOTS:
   void setCurrentFile(const QString& newFileName);
   void setFileList(const QStringList& fileList);
   void setFilterExpression(const QString& expr);
+  void setThumbnailVisible(bool visible);
 
 protected Q_SLOTS:
   void itemDoubleClicked(const QModelIndex&);
