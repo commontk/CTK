@@ -47,6 +47,8 @@ public:
 
   virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path);
 
+  Q_INVOKABLE bool generateThumbnail(DicomImage *dcmImage, QImage& image);
+  Q_INVOKABLE bool generateThumbnail(const QString dcmImagePath, QImage& image);
   Q_INVOKABLE bool generateThumbnail(const QString dcmImagePath, const QString& thumbnailPath);
 
   /// Set thumbnail width
