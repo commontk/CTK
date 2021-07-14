@@ -98,6 +98,10 @@ QPushButton* ctkFileDialogPrivate::acceptButton()const
 QListView* ctkFileDialogPrivate::listView()const
 {
   Q_Q(const ctkFileDialog);
+  if (this->UsingNativeDialog)
+  {
+    return NULL;  // Native dialog does not support modifying or getting widget elements.
+  }
   QListView* listView= q->findChild<QListView*>("listView");
   Q_ASSERT(listView);
   return listView;
@@ -107,6 +111,10 @@ QListView* ctkFileDialogPrivate::listView()const
 QTreeView* ctkFileDialogPrivate::treeView()const
 {
   Q_Q(const ctkFileDialog);
+  if (this->UsingNativeDialog)
+  {
+    return NULL;  // Native dialog does not support modifying or getting widget elements.
+  }
   QTreeView* treeView = q->findChild<QTreeView*>();
   Q_ASSERT(treeView);
   return treeView;
@@ -221,6 +229,10 @@ QAbstractItemView::SelectionMode ctkFileDialog::selectionMode() const
 void ctkFileDialog::clearSelection()
 {
   Q_D(ctkFileDialog);
+  if (d->UsingNativeDialog)
+  {
+    return;  // Native dialog does not support modifying or getting widget elements.
+  }
   foreach(QAbstractItemView* view, QList<QAbstractItemView*>()
           << d->listView()
           << d->treeView()
@@ -234,6 +246,10 @@ void ctkFileDialog::clearSelection()
 void ctkFileDialog::setAcceptButtonEnable(bool enable)
 {
   Q_D(ctkFileDialog);
+  if (d->UsingNativeDialog)
+  {
+    return;  // Native dialog does not support modifying or getting widget elements.
+  }
   d->AcceptButtonEnable = enable;
   d->IgnoreEvent = true;
   d->acceptButton()->setEnabled(d->AcceptButtonEnable && d->AcceptButtonState);
@@ -244,6 +260,10 @@ void ctkFileDialog::setAcceptButtonEnable(bool enable)
 bool ctkFileDialog::eventFilter(QObject *obj, QEvent *event)
 {
   Q_D(ctkFileDialog);
+  if (d->UsingNativeDialog)
+  {
+    return true;  // Native dialog does not support modifying or getting widget elements.
+  }
   QPushButton* button = d->acceptButton();
   QDialogButtonBox* dialogButtonBox = qobject_cast<QDialogButtonBox*>(obj);
   if (obj == button && event->type() == QEvent::EnabledChange &&
