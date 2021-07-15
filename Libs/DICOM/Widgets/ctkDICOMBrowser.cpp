@@ -763,8 +763,9 @@ void ctkDICOMBrowser::openImportDialog()
 {
   Q_D(ctkDICOMBrowser);
 
-  d->ImportDialog->show();
-  d->ImportDialog->raise();
+  //d->ImportDialog->show();
+  //d->ImportDialog->raise();
+  d->ImportDialog->exec();
 }
 
 //----------------------------------------------------------------------------
