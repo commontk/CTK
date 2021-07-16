@@ -785,6 +785,7 @@ void ctkDICOMBrowser::openQueryDialog()
 {
   Q_D(ctkDICOMBrowser);
 
+  // QueryRetrieveWidget is a QWidget not a QDialog, so use this instead of exec
   d->QueryRetrieveWidget->show();
   d->QueryRetrieveWidget->raise();
 }
