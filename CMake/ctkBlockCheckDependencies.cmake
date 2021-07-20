@@ -74,11 +74,6 @@ set(Log4Qt_enabling_variable Log4Qt_LIBRARIES)
 set(${Log4Qt_enabling_variable}_INCLUDE_DIRS Log4Qt_INCLUDE_DIRS)
 set(${Log4Qt_enabling_variable}_FIND_PACKAGE_CMD Log4Qt)
 
-set(OpenIGTLink_enabling_variable OpenIGTLink_LIBRARIES)
-set(${OpenIGTLink_enabling_variable}_LIBRARY_DIRS OpenIGTLink_LIBRARY_DIRS)
-set(${OpenIGTLink_enabling_variable}_INCLUDE_DIRS OpenIGTLink_INCLUDE_DIRS)
-set(${OpenIGTLink_enabling_variable}_FIND_PACKAGE_CMD OpenIGTLink)
-
 set(PythonQt_enabling_variable PYTHONQT_LIBRARIES)
 set(${PythonQt_enabling_variable}_INCLUDE_DIRS PYTHONQT_INCLUDE_DIR PYTHON_INCLUDE_DIRS)
 set(${PythonQt_enabling_variable}_FIND_PACKAGE_CMD PythonQt)
@@ -106,11 +101,6 @@ set(VTK_enabling_variable VTK_LIBRARIES)
 set(${VTK_enabling_variable}_LIBRARY_DIRS VTK_LIBRARY_DIRS)
 set(${VTK_enabling_variable}_INCLUDE_DIRS VTK_INCLUDE_DIRS)
 set(${VTK_enabling_variable}_FIND_PACKAGE_CMD VTK)
-
-set(ZMQ_enabling_variable ZMQ_LIBRARIES)
-set(${ZMQ_enabling_variable}_LIBRARY_DIRS ZMQ_LIBRARY_DIRS)
-set(${ZMQ_enabling_variable}_INCLUDE_DIRS ZMQ_INCLUDE_DIRS)
-set(${ZMQ_enabling_variable}_FIND_PACKAGE_CMD ZMQ)
 
 macro(superbuild_is_external_project_includable possible_proj output_var)
   if(DEFINED ${possible_proj}_enabling_variable)
