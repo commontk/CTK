@@ -218,6 +218,7 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
   vtkColorTransferFunction* colorTransferFunction = 0;
   vtkPiecewiseFunction* opacityFunction = 0;
   vtkPiecewiseFunction* gradientFunction = 0;
+  bool scalarColorMapping = true;
   if (d->VolumeProperty)
     {
     colorTransferFunction =
@@ -229,6 +230,7 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
     gradientFunction =
       d->VolumeProperty->GetGradientOpacity()->GetSize() ?
       d->VolumeProperty->GetGradientOpacity() : 0;
+    scalarColorMapping = d->VolumeProperty->GetIndependentComponents();
     }
 
   d->ScalarOpacityThresholdWidget->setPiecewiseFunction(
@@ -253,6 +255,10 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
   d->ScalarOpacityWidget->view()->setColorTransferFunctionToPlots(colorTransferFunction);
   d->ScalarColorWidget->view()->setColorTransferFunctionToPlots(colorTransferFunction);
   d->GradientWidget->view()->setPiecewiseFunctionToPlots(gradientFunction);
+
+  // If color is specified by dependent components (RGBA volume) then do not show scalar color transfer
+  // function, because that function has no effect.
+  d->ScalarColorGroupBox->setVisible(scalarColorMapping);
 
   if (d->VolumeProperty)
     {
