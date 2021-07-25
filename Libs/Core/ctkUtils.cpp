@@ -417,7 +417,7 @@ qint64 ctk::msecsTo(const QDateTime& t1, const QDateTime& t2)
 //------------------------------------------------------------------------------
 QString ctk::absolutePathFromInternal(const QString& internalPath, const QString& basePath)
 {
-  if (internalPath.isEmpty())
+  if (internalPath.isEmpty() || basePath.isEmpty())
   {
     return internalPath;
   }
@@ -435,7 +435,7 @@ QString ctk::absolutePathFromInternal(const QString& internalPath, const QString
 //------------------------------------------------------------------------------
 QString ctk::internalPathFromAbsolute(const QString& absolutePath, const QString& basePath)
 {
-  if (absolutePath.isEmpty())
+  if (absolutePath.isEmpty() || basePath.isEmpty())
   {
     return absolutePath;
   }
