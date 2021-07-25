@@ -103,15 +103,15 @@ public:
   /// Utility function that returns the checkState of the section. 
   /// One can access the same value through the model:
   /// model->headerData(orientation, section, Qt::CheckStateRole)
-  Qt::CheckState checkState(int section)const;
+  Q_INVOKABLE Qt::CheckState checkState(int section)const;
 
   ///
   /// Utility function that returns the checkState of the section. 
   /// One can access the same value through the model:
   /// model->headerData(orientation, section, Qt::CheckStateRole)
-  bool checkState(int section,Qt::CheckState& checkState )const;
+  Q_INVOKABLE bool checkState(int section,Qt::CheckState& checkState )const;
   
-  ctkCheckableModelHelper* checkableModelHelper()const;
+  Q_INVOKABLE ctkCheckableModelHelper* checkableModelHelper()const;
 
 public Q_SLOTS:
   ///

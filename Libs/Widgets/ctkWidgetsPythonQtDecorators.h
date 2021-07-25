@@ -31,6 +31,7 @@
 #include <ctkTransferFunctionGradientItem.h>
 #include <ctkWidgetsUtils.h>
 #include <ctkWorkflowWidgetStep.h>
+#include <ctkCheckableHeaderView.h>
 
 // NOTE:
 //
@@ -143,6 +144,13 @@ public Q_SLOTS:
     delete obj;
     }
 
+  // ctkCheckableHeaderView
+
+  ctkCheckableHeaderView *new_ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent = 0) 
+    {
+    return new ctkCheckableHeaderView(orient, parent);
+    }
+
 };
 
 //-----------------------------------------------------------------------------
@@ -169,6 +177,7 @@ void initCTKWidgetsPythonQtDecorators()
   PythonQt::self()->registerClass(&ctkTransferFunctionBarsItem::staticMetaObject, "CTKWidgets");
   PythonQt::self()->registerClass(&ctkTransferFunctionControlPointsItem::staticMetaObject, "CTKWidgets");
   PythonQt::self()->registerClass(&ctkTransferFunctionGradientItem::staticMetaObject, "CTKWidgets");
+  PythonQt::self()->registerClass(&ctkCheckableHeaderView::staticMetaObject, "CTKWidgets");
 
   PythonQt::self()->addDecorators(new ctkWidgetsPythonQtDecorators);
 
