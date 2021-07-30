@@ -346,6 +346,12 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
       d->Query->putAndInsertString( DCM_PatientID,
         (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
       }
+    else if (key == QString("AccessionNumber") && !d->Filters[key].toString().isEmpty())
+      {
+        // make the filter a wildcard in dicom style
+        d->Query->putAndInsertString(DCM_AccessionNumber,
+            (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
+      }
     else if ( key == QString("Modalities") && !d->Filters[key].toString().isEmpty())
       {
       // make the filter be an "OR" of modalities using backslash (dicom-style)
