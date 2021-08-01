@@ -39,7 +39,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
-  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCallingAETitle);
+  Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle);
   Q_PROPERTY(QString host READ host WRITE setHost);
   Q_PROPERTY(int port READ port WRITE setPort);
   Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle);
