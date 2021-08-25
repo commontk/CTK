@@ -377,7 +377,10 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     logger.info ( "Retrieve success" );
     }
 
-  retrieve->database()->updateDisplayedFields();
+  if (retrieve->database())
+    {
+    retrieve->database()->updateDisplayedFields();
+    }
 
   if(d->UseProgressDialog)
     {
