@@ -19,16 +19,17 @@
 =========================================================================*/
 
 // Qt includes
+#include <QDebug>
+#include <QDate>
+#include <QDirIterator>
+#include <QFile>
+#include <QFileInfo>
+#include <QPair>
+#include <QSet>
 #include <QSqlQuery>
 #include <QSqlRecord>
-#include <QVariant>
-#include <QDate>
 #include <QStringList>
-#include <QSet>
-#include <QFile>
-#include <QDirIterator>
-#include <QFileInfo>
-#include <QDebug>
+#include <QVariant>
 
 // ctkDICOMCore includes
 #include "ctkDICOMQuery.h"
@@ -88,6 +89,8 @@ public:
 
   /// Add a StudyInstanceUID to be queried
   void addStudyInstanceUIDAndDataset(const QString& StudyInstanceUID, DcmDataset* dataset );
+  /// Add StudyInstanceUID and SeriesInstanceUID that may be further retrieved
+  void addStudyAndSeriesInstanceUID( const QString& StudyInstanceUID, const QString& SeriesInstanceUID );
 
   QString                 CallingAETitle;
   QString                 CalledAETitle;
@@ -97,6 +100,7 @@ public:
   QMap<QString,QVariant>  Filters;
   ctkDICOMQuerySCUPrivate SCU;
   DcmDataset*             Query;
+  QList<QPair<QString,QString>>             StudyAndSeriesInstanceUIDPairList;
   QStringList             StudyInstanceUIDList;
   QList<DcmDataset*>      StudyDatasetList;
   bool                    Canceled;
@@ -121,9 +125,15 @@ ctkDICOMQueryPrivate::~ctkDICOMQueryPrivate()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQueryPrivate::addStudyInstanceUIDAndDataset( const QString& s, DcmDataset* dataset )
+void ctkDICOMQueryPrivate::addStudyAndSeriesInstanceUID( const QString& study, const QString& series )
 {
-  this->StudyInstanceUIDList.append ( s );
+  this->StudyAndSeriesInstanceUIDPairList.push_back (qMakePair( study, series ) );
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMQueryPrivate::addStudyInstanceUIDAndDataset( const QString& study, DcmDataset* dataset )
+{
+  this->StudyInstanceUIDList.append ( study );
   this->StudyDatasetList.append ( dataset );
 }
 
@@ -230,10 +240,10 @@ QMap<QString,QVariant> ctkDICOMQuery::filters()const
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMQuery::studyInstanceUIDQueried()const
+QList<QPair<QString,QString>> ctkDICOMQuery::studyAndSeriesInstanceUIDQueried()const
 {
   Q_D(const ctkDICOMQuery);
-  return d->StudyInstanceUIDList;
+  return d->StudyAndSeriesInstanceUIDPairList;
 }
 
 //------------------------------------------------------------------------------
@@ -260,6 +270,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   emit progress(0);
   if (d->Canceled) {return false;}
 
+  d->StudyAndSeriesInstanceUIDPairList.clear();
   d->StudyInstanceUIDList.clear();
   d->SCU.setAETitle ( OFString(this->callingAETitle().toStdString().c_str()) );
   d->SCU.setPeerAETitle ( OFString(this->calledAETitle().toStdString().c_str()) );
@@ -453,7 +464,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   int i = 0; 
 
   QListIterator<DcmDataset*> datasetIterator(d->StudyDatasetList);
-  foreach ( QString StudyInstanceUID, d->StudyInstanceUIDList )
+  for (const auto & StudyInstanceUID : d->StudyInstanceUIDList )
     {
     DcmDataset *studyDataset = datasetIterator.next();
     DcmElement *patientName, *patientID;
@@ -475,6 +486,9 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
         DcmDataset *dataset = (*it)->m_dataset;
         if ( dataset != NULL )
           {
+          OFString SeriesInstanceUID;
+          dataset->findAndGetOFString ( DCM_SeriesInstanceUID, SeriesInstanceUID );
+          d->addStudyAndSeriesInstanceUID ( StudyInstanceUID.toStdString().c_str(), SeriesInstanceUID.c_str() );
           // add the patient elements not provided for the series level query
           dataset->insert( patientName, true );
           dataset->insert( patientID, true );
