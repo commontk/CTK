@@ -19,6 +19,7 @@
 =========================================================================*/
 
 //Qt includes
+#include <QButtonGroup>
 #include <QDebug>
 #include <QLabel>
 #include <QMessageBox>
@@ -61,6 +62,7 @@ public:
 
   QMap<QString, ctkDICOMQuery*>     QueriesByServer;
   QMap<QString, ctkDICOMQuery*>     QueriesByStudyUID;
+  std::list<std::pair<QString,QString>>             StudyAndSeriesInstanceUIDPairList;
   QMap<QString, ctkDICOMRetrieve*>  RetrievalsByStudyUID;
   ctkDICOMDatabase                  QueryResultDatabase;
   QSharedPointer<ctkDICOMDatabase>  RetrieveDatabase;
@@ -103,10 +105,11 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
   this->setupUi(q);
 
   QObject::connect(this->QueryWidget, SIGNAL(returnPressed()), q, SLOT(query()));
+  QObject::connect(this->QueryCollapsibleButton, SIGNAL(toggled(bool)), q, SLOT(onQuerySectionToggled(bool)));
   QObject::connect(this->QueryButton, SIGNAL(clicked()), q, SLOT(query()));
+  QObject::connect(this->RetrieveCollapsibleButton, SIGNAL(toggled(bool)), q, SLOT(onRetrieveSectionToggled(bool)));
   QObject::connect(this->RetrieveButton, SIGNAL(clicked()), q, SLOT(retrieve()));
   QObject::connect(this->CancelButton, SIGNAL(clicked()), q, SLOT(cancel()));
-
 }
 
 //----------------------------------------------------------------------------
@@ -148,10 +151,32 @@ void ctkDICOMQueryRetrieveWidget::useProgressDialog(bool enable)
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMQueryRetrieveWidget::onQuerySectionToggled(bool toggled)
+{
+  Q_D(ctkDICOMQueryRetrieveWidget);
+  if (toggled)
+    {
+    d->RetrieveCollapsibleButton->setCollapsed(true);
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQueryRetrieveWidget::onRetrieveSectionToggled(bool toggled)
+{
+  Q_D(ctkDICOMQueryRetrieveWidget);
+  if (toggled)
+    {
+    d->QueryCollapsibleButton->setCollapsed(true);
+    }
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMQueryRetrieveWidget::query()
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
 
+  d->QueryCollapsibleButton->setCollapsed(true);
+  d->RetrieveCollapsibleButton->setCollapsed(false);
   d->RetrieveButton->setEnabled(false);
 
   if (!d->QueryResultDatabase.isOpen())
@@ -238,10 +263,11 @@ void ctkDICOMQueryRetrieveWidget::query()
       }
 
     d->QueriesByServer[d->CurrentServer] = query;
-    
-    foreach( QString studyUID, query->studyInstanceUIDQueried() )
+
+    for (const auto & StudyAndSeriesInstanceUIDPair : query->studyAndSeriesInstanceUIDQueried() )
       {
-      d->QueriesByStudyUID[studyUID] = query;
+      d->QueriesByStudyUID[StudyAndSeriesInstanceUIDPair.first] = query;
+      d->StudyAndSeriesInstanceUIDPairList.push_back(std::make_pair( StudyAndSeriesInstanceUIDPair.first, StudyAndSeriesInstanceUIDPair.second ));
       }
     }
   
@@ -302,22 +328,28 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
 
   // do the rerieval for each selected series
   // that is selected in the tree view
-  QStringList selectedSeriesUIDs = d->dicomTableManager->currentStudiesSelection();
-  foreach( QString studyUID, selectedSeriesUIDs )
+  QStringList selectedSeriesUIDs = d->dicomTableManager->currentSeriesSelection();
+
+  foreach( QString seriesUID, selectedSeriesUIDs )
     {
-    std::cout<<studyUID.toUtf8().constData()<<std::endl;
     if(d->UseProgressDialog)
       {
       if (progress.wasCanceled())
         {
         break;
         }
-      progressLabel->setText(QString(tr("Retrieving:\n%1")).arg(studyUID));
+      progressLabel->setText(QString(tr("Retrieving:\n%1")).arg(seriesUID));
       this->updateRetrieveProgress(0);
       }
 
+    // Get the study UID of the current series to be retrieved
+    auto currentStudyAndSeriesUIDPair = std::find_if( d->StudyAndSeriesInstanceUIDPairList.begin(), d->StudyAndSeriesInstanceUIDPairList.end(),
+        [&seriesUID]( const std::pair<QString, QString>& element ) { return element.second == seriesUID; } );
+
+    QString studyUID = currentStudyAndSeriesUIDPair->first;
+
     // Get information which server we want to get the study from and prepare request accordingly
-    ctkDICOMQuery *query = d->QueriesByStudyUID[studyUID];
+    ctkDICOMQuery *query = d->QueriesByStudyUID[ studyUID ];
     retrieve->setDatabase( d->RetrieveDatabase );
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );
@@ -325,7 +357,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     retrieve->setHost( query->host() );
     // TODO: check the model item to see if it is checked
     // for now, assume all studies queried and shown to the user will be retrieved
-    logger.debug("About to retrieve " + studyUID + " from " + d->QueriesByStudyUID[studyUID]->host());
+    logger.debug("About to retrieve " + seriesUID + " from " + d->QueriesByStudyUID[ studyUID ]->host());
     logger.info ( "Starting to retrieve" );
 
     if(d->UseProgressDialog)
@@ -341,11 +373,11 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
       // perform the retrieve
       if ( query->preferCGET() )
         {
-        retrieve->getStudy ( studyUID );
+        retrieve->getSeries ( studyUID, seriesUID );
         }
       else
         {
-        retrieve->moveStudy ( studyUID );
+        retrieve->moveSeries ( studyUID, seriesUID );
         }
       }
     catch (std::exception e)

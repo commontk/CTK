@@ -69,6 +69,8 @@ Q_SIGNALS:
   void canceled();
 
 protected Q_SLOTS:
+  void onQuerySectionToggled(bool);
+  void onRetrieveSectionToggled(bool);
   void onQueryProgressChanged(int value);
   void updateRetrieveProgress(int value);
 

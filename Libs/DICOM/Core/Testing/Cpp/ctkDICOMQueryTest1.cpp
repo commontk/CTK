@@ -43,7 +43,7 @@ int ctkDICOMQueryTest1( int argc, char * argv [] )
       !query.host().isEmpty() ||
       query.port() != 0 ||
       !query.filters().isEmpty() ||
-      !query.studyInstanceUIDQueried().isEmpty())
+      !query.studyAndSeriesInstanceUIDQueried().isEmpty())
     {
     std::cerr << "ctkDICOMQuery::ctkDICOMQuery() failed: "
               << qPrintable(query.callingAETitle()) << " "
@@ -102,10 +102,10 @@ int ctkDICOMQueryTest1( int argc, char * argv [] )
   query.query(database);
   
   // Queried studies should be empty because we use an empty database.
-  if (!query.studyInstanceUIDQueried().isEmpty())
+  if (!query.studyAndSeriesInstanceUIDQueried().isEmpty())
     {
     std::cerr << "ctkDICOMDatabase::query() failed: "
-              << query.studyInstanceUIDQueried().count() << std::endl;
+              << query.studyAndSeriesInstanceUIDQueried().count() << std::endl;
     return EXIT_FAILURE;
     }
   return EXIT_SUCCESS;

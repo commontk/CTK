@@ -6,29 +6,38 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>843</width>
-    <height>815</height>
+    <width>840</width>
+    <height>501</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <weight>50</weight>
+    <bold>false</bold>
+   </font>
   </property>
   <property name="windowTitle">
    <string>DICOM Query/Retrieve</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QFrame" name="frame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+    <widget class="ctkCollapsibleButton" name="QueryCollapsibleButton">
+     <property name="text">
+      <string>Query</string>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+     <property name="collapsed">
+      <bool>false</bool>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
-      <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>Data Sources</string>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QFrame" name="frame_2">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="ctkDICOMServerNodeWidget" name="ServerNodeWidget" native="true">
            <property name="minimumSize">
@@ -39,82 +48,80 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Search Options</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="ctkDICOMQueryWidget" name="QueryWidget" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox_2">
-        <property name="title">
-         <string>Search Options</string>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="QueryButton">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <widget class="ctkDICOMQueryWidget" name="QueryWidget" native="true"/>
-         </item>
-        </layout>
+        <property name="text">
+         <string>Query</string>
+        </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="commandFrame" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <widget class="ctkCollapsibleButton" name="RetrieveCollapsibleButton">
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Retrieve</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>90</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="QueryButton">
-        <property name="text">
-         <string>Query</string>
-        </property>
-       </widget>
+       <widget class="ctkDICOMTableManager" name="dicomTableManager"/>
       </item>
       <item>
        <widget class="QPushButton" name="RetrieveButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Retrieve</string>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QPushButton" name="CancelButton">
-        <property name="text">
-         <string>Close</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>90</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="ctkDICOMTableManager" name="dicomTableManager"/>
+    <widget class="QPushButton" name="CancelButton">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -123,6 +130,12 @@
    <class>ctkDICOMTableManager</class>
    <extends>QWidget</extends>
    <header>ctkDICOMTableManager.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

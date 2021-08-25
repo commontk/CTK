@@ -69,7 +69,7 @@ int ctkDICOMQueryTest2( int argc, char * argv [] )
     std::cout << "ctkDICOMQuery::query() failed" << std::endl;
     return EXIT_FAILURE;
     }
-  if (query.studyInstanceUIDQueried().count() == 0)
+  if (query.studyAndSeriesInstanceUIDQueried().count() == 0)
     {
     std::cout << "ctkDICOMQuery::query() failed."
               << "No study instance retrieved" << std::endl;

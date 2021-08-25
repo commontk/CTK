@@ -21,6 +21,8 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDebug>
+#include <QPair>
+#include <QString>
 #include <QStringList>
 #include <QVariant>
 
@@ -74,7 +76,7 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
     std::cout << "ctkDICOMQuery::query() failed" << std::endl;
     return EXIT_FAILURE;
     }
-  if (query.studyInstanceUIDQueried().count() == 0)
+  if (query.studyAndSeriesInstanceUIDQueried().count() == 0)
     {
     std::cout << "ctkDICOMQuery::query() failed."
               << "No study instance retrieved" << std::endl;
@@ -95,14 +97,14 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   retrieve.setDatabase(retrieveDatabase);
 
   std::cerr << "ctkDICOMRetrieveTest2: Retrieving\n";
-  foreach(const QString& study, query.studyInstanceUIDQueried())
+  foreach(auto studyAndSeriesInstanceUID, query.studyAndSeriesInstanceUIDQueried())
     {
-    std::cerr << "ctkDICOMRetrieveTest2: Retrieving " << study.toStdString() << "\n";
-    bool res = retrieve.moveStudy(study);
+    std::cerr << "ctkDICOMRetrieveTest2: Retrieving " << studyAndSeriesInstanceUID.first.toStdString() << "\n";
+    bool res = retrieve.moveStudy(studyAndSeriesInstanceUID.first);
     if (!res)
       {
       std::cout << "ctkDICOMRetrieve::retrieveStudy() failed. "
-                << "Study " << qPrintable(study) << " can't be retrieved"
+                << "Study " << qPrintable(studyAndSeriesInstanceUID.first) << " can't be retrieved"
                 << std::endl;
       return EXIT_FAILURE;
       }
