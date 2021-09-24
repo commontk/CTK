@@ -31,7 +31,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     list(APPEND proj_DEPENDENCIES VTK)
   endif()
 
-  set(qtlibs core gui network opengl sql svg uitools xml)
+  set(qtlibs core gui multimedia network opengl sql svg uitools xml)
 
   # Enable Qt libraries PythonQt wrapping if required
   if(CTK_QT_VERSION VERSION_GREATER "4")
@@ -82,7 +82,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
 
   if (CTK_QT_VERSION VERSION_GREATER "4")
-    set(revision_tag c306140442feb6e76d4bae672c48cd7f11d9b0cd) # patched-9
+    set(revision_tag c4a5a155b2942d4b003862c3317105b4a1ea6755) # patched-9
   else()
     set(revision_tag 90c08fb0d523622d2de9e7a91f4ef116a66a8801) # patched-5
   endif()
