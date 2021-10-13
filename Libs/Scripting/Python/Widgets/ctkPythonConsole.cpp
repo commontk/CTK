@@ -88,6 +88,12 @@ public:
   virtual void updateCompletionModel(const QString& completion);
   static QString searchUsableCharForCompletion(const QString& completion);
 
+  /// Sort Python attributes in the following groups (with case insensitive sorting within each group):
+  /// - Python and Qt attributes and methods (starts with lowercase letter)
+  /// - VTK methods + static classes and types (starts with uppercase letter, ends with parenthesis)
+  /// - constants (starts with uppercase letter, does not end with parenthesis)
+  /// - private attributes (starts with underscore)
+  static bool PythonAttributeLessThan(const QString& s1, const QString& s2);
 
 protected:
   bool isInUserDefinedClass(const QString &pythonFunctionPath);
@@ -346,6 +352,48 @@ QString ctkPythonConsoleCompleter::searchUsableCharForCompletion(const QString& 
 }
 
 //----------------------------------------------------------------------------
+bool ctkPythonConsoleCompleter::PythonAttributeLessThan(const QString& s1, const QString& s2)
+{
+  if (!s1.isEmpty() || !s2.isEmpty())
+    {
+    // Move Python private attributes to the back (start with underscore)
+    if (s1[0] == "_" && s2[0] != "_")
+      {
+      return false;
+      }
+    if (s1[0] != "_" && s2[0] == "_")
+      {
+      return true;
+      }
+    // Move Python and Qt attributes and methods to the front (start with lowercase)
+    if (s1[0].isLower() && !s2[0].isLower())
+      {
+      return true;
+      }
+    if (!s1[0].isLower() && s2[0].isLower())
+      {
+      return false;
+      }
+    // Move VTK methods and internal classes (start with uppercase and end with parentheses)
+    // above constants  (start with uppercase and does not end with parentheses)
+    if (s1[0].isUpper() && s2[0].isUpper())
+      {
+      if (s1.endsWith("()") && !s2.endsWith("()"))
+        {
+        return true;
+        }
+      if (!s1.endsWith("()") && s2.endsWith("()"))
+        {
+        return false;
+        }
+      }
+    }
+
+  // use case insensitive sorting
+  return s1.toLower() < s2.toLower();
+}
+
+//----------------------------------------------------------------------------
 void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
 {
   // Start by clearing the model
@@ -381,6 +429,7 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
     attrs << this->PythonManager.pythonAttributes(lookup, module.toLatin1(),
                                                   appendParenthesis);
     attrs.removeDuplicates();
+    std::sort(attrs.begin(), attrs.end(), ctkPythonConsoleCompleter::PythonAttributeLessThan);
     }
 
   // Initialize the completion model
