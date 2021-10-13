@@ -558,6 +558,11 @@ QStringList ctkAbstractPythonManager::pythonAttributes(const QString& pythonVari
           {
           results = ctkAbstractPythonManager::dir_object(object,appendParenthesis);
           }
+        else
+          {
+          // not a valid attribute, no completions are available
+          results.clear();
+          }
         }
       }
     PyErr_Clear();
