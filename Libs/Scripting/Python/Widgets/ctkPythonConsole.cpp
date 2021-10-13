@@ -511,7 +511,7 @@ bool ctkPythonConsolePrivate::push(const QString& code)
   // The embedded python interpreter cannot handle DOS line-endings, see
   // http://sourceforge.net/tracker/?group_id=5470&atid=105470&func=detail&aid=1167922
   buffer.remove('\r');
-
+  PyErr_Clear(); // make sure we are not in an error state before we execute the command
   PyObject *res = PyObject_CallMethod(this->InteractiveConsole,
                                       const_cast<char*>("push"),
                                       const_cast<char*>("z"),
@@ -528,6 +528,11 @@ bool ctkPythonConsolePrivate::push(const QString& code)
       ret_value = (status > 0);
       }
     Py_DECREF(res);
+    }
+  else
+    {
+    // error occurred
+    PyErr_Clear();
     }
   return ret_value;
 }
