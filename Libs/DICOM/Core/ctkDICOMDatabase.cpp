@@ -75,11 +75,11 @@ static QString TableFieldSeparator(":");
 //------------------------------------------------------------------------------
 ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o)
   : q_ptr(&o)
-  , ThumbnailGenerator(nullptr)
   , LoggedExecVerbose(false)
-  , TagCacheVerified(false)
   , DisplayedFieldsTableAvailable(false)
   , UseShortStoragePath(true)
+  , ThumbnailGenerator(nullptr)
+  , TagCacheVerified(false)
   , SchemaVersion("0.7.0")
 {
   this->resetLastInsertedValues();
