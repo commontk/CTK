@@ -427,9 +427,8 @@ QString ctkDICOMItem::Decode( const DcmTag& tag, const OFString& raw ) const
       std::cerr << "DICOM dataset contains some encoding that we never thought we would see (" << d->m_SpecificCharacterSet.toStdString() << "). Using ASCII encoding." << std::endl;
       // Replace non-ASCII characters by "?" to avoid decoding errors and random special characters appearing in strings.
       QString asciiString;
-      for (int i = 0; i < raw.length(); i++)
+      for (size_t i = 0; i < raw.length(); i++)
       {
-        int ch = raw[i];
         if (32 <= raw[i] && raw[i] < 128)
         {
           asciiString += raw[i];
