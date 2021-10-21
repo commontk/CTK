@@ -60,6 +60,9 @@ void ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule::getDisplayedFieldsForI
   const QMap<QString, QString> &cachedTagsForInstance, QMap<QString, QString> &displayedFieldsForCurrentSeries,
   QMap<QString, QString> &displayedFieldsForCurrentStudy, QMap<QString, QString> &displayedFieldsForCurrentPatient )
 {
+  Q_UNUSED(displayedFieldsForCurrentSeries);
+  Q_UNUSED(displayedFieldsForCurrentStudy);
+  Q_UNUSED(displayedFieldsForCurrentPatient);
   // Store series identifiers for the instances that of which displayed fields are updated in this run.
   this->UpdatedSeriesInstanceUIDs.insert(cachedTagsForInstance[dicomTagToString(DCM_SeriesInstanceUID)]);
 }
@@ -76,6 +79,8 @@ void ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule::endUpdate(
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient)
 {
+  Q_UNUSED(displayedFieldsMapStudy);
+  Q_UNUSED(displayedFieldsMapPatient);
   // Update image count for each updated series
   foreach (QString currentSeriesInstanceUid, this->UpdatedSeriesInstanceUIDs)
   {

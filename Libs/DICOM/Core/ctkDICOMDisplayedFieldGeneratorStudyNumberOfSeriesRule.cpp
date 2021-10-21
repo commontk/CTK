@@ -60,6 +60,9 @@ void ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule::getDisplayedFieldsF
   const QMap<QString, QString> &cachedTagsForInstance, QMap<QString, QString> &displayedFieldsForCurrentSeries,
   QMap<QString, QString> &displayedFieldsForCurrentStudy, QMap<QString, QString> &displayedFieldsForCurrentPatient )
 {
+  Q_UNUSED(displayedFieldsForCurrentSeries);
+  Q_UNUSED(displayedFieldsForCurrentStudy);
+  Q_UNUSED(displayedFieldsForCurrentPatient);
   // Store study identifiers for the instances that of which displayed fields are updated in this run.
   this->UpdatedStudyInstanceUIDs.insert(cachedTagsForInstance[dicomTagToString(DCM_StudyInstanceUID)]);
 }
@@ -76,6 +79,8 @@ void ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule::endUpdate(
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient)
 {
+  Q_UNUSED(displayedFieldsMapSeries);
+  Q_UNUSED(displayedFieldsMapPatient);
   // Update number of series for each updated study
   foreach (QString currentStudyInstanceUid, this->UpdatedStudyInstanceUIDs)
   {

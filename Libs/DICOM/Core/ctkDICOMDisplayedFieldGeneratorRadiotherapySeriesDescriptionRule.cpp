@@ -85,6 +85,8 @@ void ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::getDispla
   const QMap<QString, QString> &cachedTagsForInstance, QMap<QString, QString> &displayedFieldsForCurrentSeries,
   QMap<QString, QString> &displayedFieldsForCurrentStudy, QMap<QString, QString> &displayedFieldsForCurrentPatient )
 {
+  Q_UNUSED(displayedFieldsForCurrentStudy);
+  Q_UNUSED(displayedFieldsForCurrentPatient);
   QString modality = cachedTagsForInstance[dicomTagToString(DCM_Modality)];
   if (!modality.compare("RTPLAN"))
   {
