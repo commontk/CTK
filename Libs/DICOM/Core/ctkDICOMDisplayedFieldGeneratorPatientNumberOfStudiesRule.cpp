@@ -66,6 +66,9 @@ void ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule::getDisplayedFiel
   const QMap<QString, QString> &cachedTagsForInstance, QMap<QString, QString> &displayedFieldsForCurrentSeries,
   QMap<QString, QString> &displayedFieldsForCurrentStudy, QMap<QString, QString> &displayedFieldsForCurrentPatient )
 {
+  Q_UNUSED(displayedFieldsForCurrentSeries);
+  Q_UNUSED(displayedFieldsForCurrentStudy);
+  Q_UNUSED(displayedFieldsForCurrentPatient);
   // Store patient information for the instances that of which displayed fields are updated in this run.
   QString patientID = cachedTagsForInstance[ctkDICOMItem::TagKeyStripped(DCM_PatientID)];
   QString patientsBirthDate = cachedTagsForInstance[ctkDICOMItem::TagKeyStripped(DCM_PatientBirthDate)];
@@ -81,10 +84,12 @@ void ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule::startUpdate()
 
 //------------------------------------------------------------------------------
 void ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule::endUpdate(
-  QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
+  QMap<QString, QMap<QString, QString> > &,
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
   QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient)
 {
+  Q_UNUSED(displayedFieldsMapStudy);
+  Q_UNUSED(displayedFieldsMapPatient);
   // Update number of studies date for each updated patient
   foreach (QString compositeID, this->UpdatedPatientCompositeIDs)
   {
