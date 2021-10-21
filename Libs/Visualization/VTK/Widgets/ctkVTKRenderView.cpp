@@ -491,6 +491,7 @@ void ctkVTKRenderView::resetFocalPoint()
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::lookFromAxis(const ctkAxesWidget::Axis& axis, double fov)
 {
+  Q_UNUSED(fov);
   Q_D(ctkVTKRenderView);
   Q_ASSERT(d->Renderer);
   if (!d->Renderer->IsActiveCameraCreated())
