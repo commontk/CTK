@@ -84,7 +84,7 @@ static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButt
       pos = widget->rect().center();
 
   QTEST_ASSERT(button == Qt::NoButton || button & Qt::MouseButtonMask);
-  QTEST_ASSERT(stateKey == 0 || stateKey & Qt::KeyboardModifierMask);
+  QTEST_ASSERT(stateKey == Qt::KeyboardModifiers() || stateKey & Qt::KeyboardModifierMask);
 
   stateKey &= static_cast<unsigned int>(Qt::KeyboardModifierMask);
 
@@ -106,7 +106,7 @@ static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButt
 #if (QT_VERSION < 0x50000 && QT_GUI_LIB) || (QT_VERSION >= 0x50000 && QT_WIDGETS_LIB)
 
 // ----------------------------------------------------------------------------
-inline void mouseMove(QWidget *widget, Qt::MouseButton button, Qt::KeyboardModifiers stateKey = 0,
+inline void mouseMove(QWidget *widget, Qt::MouseButton button, Qt::KeyboardModifiers stateKey = Qt::KeyboardModifiers(),
                       QPoint pos = QPoint(), int delay=-1)
   { ctkTest::mouseEvent(QTest::MouseMove, widget, button, stateKey, pos, delay); }
 
