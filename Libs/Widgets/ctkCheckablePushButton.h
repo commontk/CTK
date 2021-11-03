@@ -93,9 +93,9 @@ Q_SIGNALS:
 
 protected:
   /// Reimplemented for internal reasons
-  virtual void mousePressEvent(QMouseEvent* event);
+  void mousePressEvent(QMouseEvent* event) override;
   /// Reimplemented for internal reasons
-  virtual bool hitButton(const QPoint & pos) const;
+  bool hitButton(const QPoint & pos) const override;
   /// Reimplemented for internal reasons
   void checkStateSet() override;
   /// Reimplemented for internal reasons
