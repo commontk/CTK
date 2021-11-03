@@ -64,6 +64,14 @@ void CTK_CORE_EXPORT stlVectorToQList(const std::vector<std::string>& vector, QS
 
 ///
 /// \ingroup Core
+/// \brief Convert a QStringList to a set.
+///
+/// This method was added so that the same code compiles without deprecation warnings
+/// pre and post Qt 5.14.
+QSet<QString> CTK_CORE_EXPORT qStringListToQSet(const QStringList& list);
+
+///
+/// \ingroup Core
 /// Convert a nameFilter to a list of file extensions:
 /// "Images (*.png *.jpg *.tiff)" -> "*.png", "*.jpg", "*.tiff"
 /// Note: the nameFilter can be a simple wildcard "*.jpg" in that case, it

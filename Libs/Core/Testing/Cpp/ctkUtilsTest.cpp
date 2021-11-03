@@ -41,6 +41,9 @@ private slots:
 
   void testSignificantDecimals();
   void testSignificantDecimals_data();
+
+  void testQStringListToQSet();
+  void testQStringListToQSet_data();
 };
 
 // ----------------------------------------------------------------------------
@@ -250,7 +253,31 @@ void ctkUtilsTester::testSignificantDecimals_data()
 }
 
 // ----------------------------------------------------------------------------
+void ctkUtilsTester::testQStringListToQSet()
+{
+  QFETCH(QStringList, input);
+  QFETCH(QSet<QString>, output);
+
+  QCOMPARE(ctk::qStringListToQSet(input), output);
+}
+
+// ----------------------------------------------------------------------------
+void ctkUtilsTester::testQStringListToQSet_data()
+{
+  QTest::addColumn<QStringList>("input");
+  QTest::addColumn< QSet<QString> >("output");
+
+  QTest::newRow("0")
+      << (QStringList() << "foo" << "bar" << "foo")
+      << (QSet<QString>() << "foo" << "bar");
+}
+
+// ----------------------------------------------------------------------------
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+Q_DECLARE_METATYPE (QSet<QString>)
+#endif
+
+// ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkUtilsTest)
 #include "moc_ctkUtilsTest.cpp"
-
 
