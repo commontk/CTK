@@ -89,6 +89,16 @@ QSet<QString> ctk::qStringListToQSet(const QStringList& list)
 #endif
 }
 
+//------------------------------------------------------------------------------
+QStringList ctk::qSetToQStringList(const QSet<QString>& set)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  return QList<QString>(set.begin(), set.end());
+#else
+  return QStringList::fromSet(set);
+#endif
+}
+
 //-----------------------------------------------------------------------------
 const char *ctkNameFilterRegExp =
   "^(.*)\\(([a-zA-Z0-9_.*? +;#\\-\\[\\]@\\{\\}/!<>\\$%&=^~:\\|]*)\\)$";
