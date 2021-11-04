@@ -1450,7 +1450,11 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
     foreach (const QString& filePath, filesForSeries)
     {
       // File name example: my/destination/folder/000001.dcm
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
       QString destinationFileName = QStringLiteral("%1%2.dcm").arg(destinationDir).arg(fileNumber, 6, 10, QLatin1Char('0'));
+#else
+      QString destinationFileName = QString("%1%2.dcm").arg(destinationDir).arg(fileNumber, 6, 10, QLatin1Char('0'));
+#endif
 
       if (!QFile::exists(filePath))
       {
