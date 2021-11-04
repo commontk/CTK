@@ -37,29 +37,29 @@ public:
   explicit ctkDICOMDisplayedFieldGeneratorSeriesImageCountRule();
 
   /// Get name of rule
-  QString name()const override;
+  QString name()const CTK_OVERRIDE;
 
   /// Clone displayed field generator rule. Override to return a new instance of the rule sub-class
-  ctkDICOMDisplayedFieldGeneratorAbstractRule* clone() override;
+  ctkDICOMDisplayedFieldGeneratorAbstractRule* clone() CTK_OVERRIDE;
 
   /// Specify list of DICOM tags required by the rule. These tags will be included in the tag cache
-  QStringList getRequiredDICOMTags() override;
+  QStringList getRequiredDICOMTags() CTK_OVERRIDE;
 
   /// Generate displayed fields for a certain instance based on its cached tags
   /// The way these generated fields will be used is defined by \sa mergeDisplayedFieldsForInstance
   void getDisplayedFieldsForInstance(
     const QMap<QString, QString> &cachedTagsForInstance, QMap<QString, QString> &displayedFieldsForCurrentSeries,
-    QMap<QString, QString> &displayedFieldsForCurrentStudy, QMap<QString, QString> &displayedFieldsForCurrentPatient ) override;
+    QMap<QString, QString> &displayedFieldsForCurrentStudy, QMap<QString, QString> &displayedFieldsForCurrentPatient ) CTK_OVERRIDE;
 
   /// Start updating displayed fields (reset counters, etc.). No-op by default.
-  void startUpdate() override;
+  void startUpdate() CTK_OVERRIDE;
 
   /// End updating displayed fields (accumulate stored variables, compute final result, etc.). No-op by default.
   /// Has a chance to update any field in the series, study, or patient field maps, based on
   /// the maps themselves or the database.
   void endUpdate(QMap<QString, QMap<QString, QString> > &displayedFieldsMapSeries,
                  QMap<QString, QMap<QString, QString> > &displayedFieldsMapStudy,
-                 QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient) override;
+                 QMap<QString, QMap<QString, QString> > &displayedFieldsMapPatient) CTK_OVERRIDE;
 
 protected:
   /// Identifiers of the series that contain instances of which displayed fields are updated in this run.
