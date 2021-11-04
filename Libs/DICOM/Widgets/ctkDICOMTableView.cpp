@@ -908,8 +908,13 @@ void ctkDICOMTableView::setCurrentSelection(const QStringList& uids)
       continue;
     }
     QItemSelectionModel::QItemSelectionModel::SelectionFlags flags = QFlags<QItemSelectionModel::SelectionFlag>();
+#if QT_VERSION >= QT_VERSION_CHECK(5,7,0)
     flags.setFlag(needToSelect ? QItemSelectionModel::Select : QItemSelectionModel::Deselect);
     flags.setFlag(QItemSelectionModel::Rows);
+#else
+    flags = flags | (needToSelect ? QItemSelectionModel::Select : QItemSelectionModel::Deselect);
+    flags = flags | QItemSelectionModel::Rows;
+#endif
     d->tblDicomDatabaseView->selectionModel()->select(index, flags);
   }
 }
