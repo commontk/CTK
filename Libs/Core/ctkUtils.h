@@ -25,6 +25,7 @@
 #include <QAbstractItemModel>
 #include <QDateTime>
 #include <QDebug>
+#include <QDir>
 #include <QModelIndex>
 #include <QStringList>
 
@@ -167,6 +168,16 @@ CTK_CORE_EXPORT bool removeDirRecursively(const QString & dirName);
 /// \return <code>true</code> on success, <code>false</code> otherwise.
 /// \sa QFile::copy
 CTK_CORE_EXPORT bool copyDirRecursively(const QString &srcPath, const QString &dstPath, bool includeHiddenFiles=true);
+
+
+///
+/// \ingroup Core
+/// \brief Returns whether the directory is empty.
+///
+/// This function provides an equivalent to ensure that the same code compiles across
+/// different versions of Qt, after its introduction in Qt 5.9 as QDir::isEmpty().
+CTK_CORE_EXPORT bool isDirEmpty(const QDir& directory);
+
 
 ///
 /// \ingroup Core

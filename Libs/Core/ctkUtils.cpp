@@ -416,6 +416,16 @@ bool ctk::copyDirRecursively(const QString &srcPath, const QString &dstPath, boo
 }
 
 //-----------------------------------------------------------------------------
+bool ctk::isDirEmpty(const QDir& directory)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
+    return directory.isEmpty();
+#else
+    return directory.entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries).isEmpty();
+#endif
+}
+
+//-----------------------------------------------------------------------------
 QString ctk::qtHandleToString(Qt::HANDLE handle)
 {
   QString str;
