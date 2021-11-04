@@ -196,6 +196,24 @@ CTK_CORE_EXPORT QString absolutePathFromInternal(const QString& internalPath, co
 /// Absolute path can be retrieved from an internal path using absolutePathFromInternal function.
 CTK_CORE_EXPORT QString internalPathFromAbsolute(const QString& absolutePath, const QString& basePath);
 
+
+/// \ingroup Core
+/// \brief Calls QTextStream::flush() on \a stream and returns \a stream.
+///
+/// This method was added so that the same code compiles without deprecation warnings
+/// pre and post Qt 5.14.
+///
+/// For Qt >= 5.14, it is equivalent to using \a Qt::flush;
+CTK_CORE_EXPORT QTextStream &flush(QTextStream &stream);
+
+/// \ingroup Core
+/// \brief Writes '\n' to the stream and flushes the stream.
+///
+/// This method was added so that the same code compiles without deprecation warnings
+/// pre and post Qt 5.14.
+///
+/// For Qt >= 5.14, it is equivalent to \a Qt::endl;
+CTK_CORE_EXPORT QTextStream & endl(QTextStream &stream);
 }
 
 #endif

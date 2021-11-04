@@ -483,3 +483,24 @@ QString ctk::internalPathFromAbsolute(const QString& absolutePath, const QString
     return absolutePath;
   }
 }
+
+//------------------------------------------------------------------------------
+QTextStream& ctk::flush(QTextStream &stream)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  return Qt::flush(stream);
+#else
+  stream.flush();
+  return stream;
+#endif
+}
+
+//------------------------------------------------------------------------------
+QTextStream& ctk::endl(QTextStream &stream)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  return Qt::endl(stream);
+#else
+  return stream << QLatin1Char('\n') << ctk::flush;
+#endif
+}
