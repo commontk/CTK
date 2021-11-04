@@ -37,6 +37,7 @@ set(KITTests_SRCS
   ctkModelTesterTest1.cpp
   ctkModelTesterTest2.cpp
   ctkUtilsCopyDirRecursivelyTest1.cpp
+  ctkUtilsIsDirEmptyTest1.cpp
   ctkUtilsQtHandleToStringTest1.cpp
   ctkUtilsTest.cpp
   ctkUtilsTest1.cpp
@@ -170,6 +171,7 @@ SIMPLE_TEST( ctkPimplTest1 )
 SIMPLE_TEST( ctkScopedCurrentDirTest1 )
 SIMPLE_TEST( ctkSingletonTest1 )
 SIMPLE_TEST( ctkUtilsCopyDirRecursivelyTest1 )
+SIMPLE_TEST( ctkUtilsIsDirEmptyTest1 )
 SIMPLE_TEST( ctkUtilsQtHandleToStringTest1 )
 SIMPLE_TEST( ctkUtilsTest )
 SIMPLE_TEST( ctkUtilsTest1 )
