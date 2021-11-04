@@ -464,7 +464,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   int i = 0; 
 
   QListIterator<DcmDataset*> datasetIterator(d->StudyDatasetList);
-  for (const auto & StudyInstanceUID : d->StudyInstanceUIDList )
+  Q_FOREACH(const QString & StudyInstanceUID, d->StudyInstanceUIDList )
     {
     DcmDataset *studyDataset = datasetIterator.next();
     DcmElement *patientName, *patientID;

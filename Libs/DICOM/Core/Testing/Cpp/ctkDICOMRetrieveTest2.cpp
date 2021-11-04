@@ -97,7 +97,8 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   retrieve.setDatabase(retrieveDatabase);
 
   std::cerr << "ctkDICOMRetrieveTest2: Retrieving\n";
-  foreach(auto studyAndSeriesInstanceUID, query.studyAndSeriesInstanceUIDQueried())
+  typedef QPair<QString,QString> StudyAndSeriesInstanceUIDPair;
+  Q_FOREACH(const StudyAndSeriesInstanceUIDPair& studyAndSeriesInstanceUID, query.studyAndSeriesInstanceUIDQueried())
     {
     std::cerr << "ctkDICOMRetrieveTest2: Retrieving " << studyAndSeriesInstanceUID.first.toStdString() << "\n";
     bool res = retrieve.moveStudy(studyAndSeriesInstanceUID.first);
