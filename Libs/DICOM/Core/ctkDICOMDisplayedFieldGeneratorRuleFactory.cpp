@@ -34,7 +34,7 @@
 #include <QSqlQuery>
 
 //----------------------------------------------------------------------------
-ctkDICOMDisplayedFieldGeneratorRuleFactory *ctkDICOMDisplayedFieldGeneratorRuleFactory::Instance = nullptr;
+ctkDICOMDisplayedFieldGeneratorRuleFactory *ctkDICOMDisplayedFieldGeneratorRuleFactory::Instance = CTK_NULLPTR;
 
 //----------------------------------------------------------------------------
 class ctkDICOMDisplayedFieldGeneratorRuleFactoryCleanup
@@ -88,7 +88,7 @@ void ctkDICOMDisplayedFieldGeneratorRuleFactory::cleanup()
   if (ctkDICOMDisplayedFieldGeneratorRuleFactory::Instance)
   {
     delete ctkDICOMDisplayedFieldGeneratorRuleFactory::Instance;
-    ctkDICOMDisplayedFieldGeneratorRuleFactory::Instance = nullptr;
+    ctkDICOMDisplayedFieldGeneratorRuleFactory::Instance = CTK_NULLPTR;
   }
 }
 
