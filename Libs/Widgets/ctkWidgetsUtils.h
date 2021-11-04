@@ -33,20 +33,20 @@ namespace ctk {
 /// \ingroup Widgets
 /// Create a base 64 image tag. Can be used that way:
 /// QString("<img src=\"%1\">").arg(base64HTMLImageTagSrc(myImage);
-QString CTK_WIDGETS_EXPORT base64HTMLImageTagSrc(const QImage& image);
+CTK_WIDGETS_EXPORT QString base64HTMLImageTagSrc(const QImage& image);
 
 ///
 /// \ingroup Widgets
 /// Grab the contents of a QWidget and all its children.
 /// Handle correctly the case of QGLWidgets.
 /// \sa QWidget::grab
-QImage CTK_WIDGETS_EXPORT grabWidget(QWidget* widget, QRect rectangle = QRect());
+CTK_WIDGETS_EXPORT QImage grabWidget(QWidget* widget, QRect rectangle = QRect());
 
 ///
 /// \ingroup Widgets
 /// Convert an KWidget encoded image into a QImage
 /// The data can be base64 encoded and/or zlib compressed.
-QImage CTK_WIDGETS_EXPORT kwIconToQImage(const unsigned char *data, int width, int height, int pixelSize, unsigned int bufferLength, int options = 0);
+CTK_WIDGETS_EXPORT QImage kwIconToQImage(const unsigned char *data, int width, int height, int pixelSize, unsigned int bufferLength, int options = 0);
 
 }
 

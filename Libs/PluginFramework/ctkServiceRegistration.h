@@ -156,7 +156,7 @@ protected:
   friend class ctkServices;
   friend class ctkServiceReferencePrivate;
 
-  friend uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceRegistration&);
+  friend CTK_PLUGINFW_EXPORT uint qHash(const ctkServiceRegistration&);
 
   ctkServiceRegistration(ctkServiceRegistrationPrivate* registrationPrivate);
 
@@ -172,6 +172,6 @@ private:
 /**
  * \ingroup PluginFramework
  */
-uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceRegistration& serviceRef);
+CTK_PLUGINFW_EXPORT uint qHash(const ctkServiceRegistration& serviceRef);
 
 #endif // CTKSERVICEREGISTRATION_H

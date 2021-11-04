@@ -205,7 +205,7 @@ protected:
   template<class S, class T> friend class ctkServiceTrackerPrivate;
   template<class S, class R, class T> friend class ctkPluginAbstractTracked;
 
-  friend uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceReference&);
+  friend CTK_PLUGINFW_EXPORT uint qHash(const ctkServiceReference&);
 
   ctkServiceReference(ctkServiceRegistrationPrivate* reg);
 
@@ -219,8 +219,8 @@ private:
  * \ingroup PluginFramework
  * @{
  */
-uint CTK_PLUGINFW_EXPORT qHash(const ctkServiceReference& serviceRef);
-QDebug CTK_PLUGINFW_EXPORT operator<<(QDebug dbg, const ctkServiceReference& serviceRef);
+CTK_PLUGINFW_EXPORT uint qHash(const ctkServiceReference& serviceRef);
+CTK_PLUGINFW_EXPORT QDebug operator<<(QDebug dbg, const ctkServiceReference& serviceRef);
 /** @}*/
 
 Q_DECLARE_METATYPE(ctkServiceReference)

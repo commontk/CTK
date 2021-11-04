@@ -243,9 +243,9 @@ typedef QSharedPointer<ctkConfiguration> ctkConfigurationPtr;
  * @param configuration The configuration object for which to compute the hash value.
  * @return hash code for this ctkConfiguration object
  */
-uint CTK_PLUGINFW_EXPORT qHash(ctkConfigurationPtr configuration);
+CTK_PLUGINFW_EXPORT uint qHash(ctkConfigurationPtr configuration);
 
-bool CTK_PLUGINFW_EXPORT operator==(const ctkConfigurationPtr& c1, const ctkConfigurationPtr c2);
+CTK_PLUGINFW_EXPORT bool operator==(const ctkConfigurationPtr& c1, const ctkConfigurationPtr c2);
 
 /** @}*/
 

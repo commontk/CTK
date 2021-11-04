@@ -50,17 +50,17 @@ namespace ctk {
 /// \ingroup Core
 /// Convert a QStringList to Vector of char*
 /// Caller will be responsible to delete the content of the vector
-void CTK_CORE_EXPORT qListToSTLVector(const QStringList& list, std::vector<char*>& vector);
+CTK_CORE_EXPORT void qListToSTLVector(const QStringList& list, std::vector<char*>& vector);
 
 ///
 /// \ingroup Core
 /// Convert a QStringList to a Vector of string
-void CTK_CORE_EXPORT qListToSTLVector(const QStringList& list, std::vector<std::string>& vector);
+CTK_CORE_EXPORT void qListToSTLVector(const QStringList& list, std::vector<std::string>& vector);
 
 ///
 /// \ingroup Core
 /// Convert a Vector of string to QStringList
-void CTK_CORE_EXPORT stlVectorToQList(const std::vector<std::string>& vector, QStringList& list);
+CTK_CORE_EXPORT void stlVectorToQList(const std::vector<std::string>& vector, QStringList& list);
 
 ///
 /// \ingroup Core
@@ -68,7 +68,7 @@ void CTK_CORE_EXPORT stlVectorToQList(const std::vector<std::string>& vector, QS
 ///
 /// This method was added so that the same code compiles without deprecation warnings
 /// pre and post Qt 5.14.
-QSet<QString> CTK_CORE_EXPORT qStringListToQSet(const QStringList& list);
+CTK_CORE_EXPORT QSet<QString> qStringListToQSet(const QStringList& list);
 
 ///
 /// \ingroup Core
@@ -76,7 +76,7 @@ QSet<QString> CTK_CORE_EXPORT qStringListToQSet(const QStringList& list);
 ///
 /// This method was added so that the same code compiles without deprecation warnings
 /// pre and post Qt 5.14.
-QStringList CTK_CORE_EXPORT qSetToQStringList(const QSet<QString>& set);
+CTK_CORE_EXPORT QStringList qSetToQStringList(const QSet<QString>& set);
 
 
 ///
@@ -86,26 +86,26 @@ QStringList CTK_CORE_EXPORT qSetToQStringList(const QSet<QString>& set);
 /// Note: the nameFilter can be a simple wildcard "*.jpg" in that case, it
 /// will simply return it.
 /// \sa nameFiltersToExtensions
-QStringList CTK_CORE_EXPORT nameFilterToExtensions(const QString& nameFilter);
+CTK_CORE_EXPORT QStringList nameFilterToExtensions(const QString& nameFilter);
 
 ///
 /// \ingroup Core
 /// Convert a nameFilter to a list of file extensions:
 /// "Images (*.png *.jpg *.tiff)", "Text (*.txt)" -> "*.png", "*.jpg", "*.tiff", "*.txt"
-QStringList CTK_CORE_EXPORT nameFiltersToExtensions(const QStringList& nameFilters);
+CTK_CORE_EXPORT QStringList nameFiltersToExtensions(const QStringList& nameFilters);
 
 ///
 /// \ingroup Core
 /// Convert a wildcar extension filter ("*.jpg") into a regular expression string
 /// "*.jpg" -> ".*\\.jpg?$"
-QString CTK_CORE_EXPORT extensionToRegExp(const QString& extension);
+CTK_CORE_EXPORT QString extensionToRegExp(const QString& extension);
 
 ///
 /// \ingroup Core
 /// Convert a list of wildcar extension filters ("*.jpg")
 /// into a regular expression string
 /// "*.jpg", "*.txt" -> "(.*\\.jpg?$|.*\\.txt?$)"
-QRegExp CTK_CORE_EXPORT nameFiltersToRegExp(const QStringList& nameFilters);
+CTK_CORE_EXPORT QRegExp nameFiltersToRegExp(const QStringList& nameFilters);
 
 ///
 /// \ingroup Core
@@ -118,7 +118,7 @@ QRegExp CTK_CORE_EXPORT nameFiltersToRegExp(const QStringList& nameFilters);
 ///      significantDecimals(123456.26999999999999996) returns 2
 ///      significantDecimals(123456.12345678901234567, 3) return 3
 /// See more cases in the test ctkUtilsSignificantDecimalsTest1
-int CTK_CORE_EXPORT significantDecimals(double value, int defaultDecimals = -1);
+CTK_CORE_EXPORT int significantDecimals(double value, int defaultDecimals = -1);
 
 ///
 /// \ingroup Core
@@ -132,7 +132,7 @@ int CTK_CORE_EXPORT significantDecimals(double value, int defaultDecimals = -1);
 ///       orderOfMagnitude(0.15) returns -1
 ///       orderOfMagnitude(0.) returns NaN
 /// See more cases in the test ctkUtilsOrderOfMagnitudeTest1
-int CTK_CORE_EXPORT orderOfMagnitude(double value);
+CTK_CORE_EXPORT int orderOfMagnitude(double value);
 
 ///
 /// \ingroup Core
@@ -143,7 +143,7 @@ int CTK_CORE_EXPORT orderOfMagnitude(double value);
 ///       closestPowerOfTen(0.012) returns 0.010
 ///       closestPowerOfTen(0.)  returns 0
 /// See more cases in the test ctkUtilsClosestPowerOfTenTest1
-double CTK_CORE_EXPORT closestPowerOfTen(double value);
+CTK_CORE_EXPORT double closestPowerOfTen(double value);
 
 ///
 /// \ingroup Core
@@ -151,7 +151,7 @@ double CTK_CORE_EXPORT closestPowerOfTen(double value);
 /// \param dirName The directory to remove
 /// \return <code>true</code> on success, <code>false</code> otherwise.
 /// \sa QDir::rmdir
-bool CTK_CORE_EXPORT removeDirRecursively(const QString & dirName);
+CTK_CORE_EXPORT bool removeDirRecursively(const QString & dirName);
 
 
 ///
@@ -164,13 +164,13 @@ bool CTK_CORE_EXPORT removeDirRecursively(const QString & dirName);
 /// \param dstPath The directory where the file should be copied
 /// \return <code>true</code> on success, <code>false</code> otherwise.
 /// \sa QFile::copy
-bool CTK_CORE_EXPORT copyDirRecursively(const QString &srcPath, const QString &dstPath, bool includeHiddenFiles=true);
+CTK_CORE_EXPORT bool copyDirRecursively(const QString &srcPath, const QString &dstPath, bool includeHiddenFiles=true);
 
 ///
 /// \ingroup Core
 /// Convert Qt::HANDLE to string
 /// \sa Qt::HANDLE
-QString CTK_CORE_EXPORT qtHandleToString(Qt::HANDLE handle);
+CTK_CORE_EXPORT QString qtHandleToString(Qt::HANDLE handle);
 
 
 ///
@@ -183,18 +183,18 @@ QString CTK_CORE_EXPORT qtHandleToString(Qt::HANDLE handle);
 /// back-wards compatibility with Qt 4.6. Since Qt 4.7 there exists
 /// a QDateTime::msecsTo() method which should be used instead, after
 /// bumping the minimum required Qt version for CTK.
-qint64 CTK_CORE_EXPORT msecsTo(const QDateTime& t1, const QDateTime& t2);
+CTK_CORE_EXPORT qint64 msecsTo(const QDateTime& t1, const QDateTime& t2);
 
 /// Get absolute path from an "internal" path. If internal path is already an absolute path
 /// then that is returned unchanged. If internal path is relative path then basePath is used
 /// as a basis (prepended to internalPath).
-QString CTK_CORE_EXPORT absolutePathFromInternal(const QString& internalPath, const QString& basePath);
+CTK_CORE_EXPORT QString absolutePathFromInternal(const QString& internalPath, const QString& basePath);
 
 /// Get "internal" path from an absolute path. internalPath will be a relative path if
 /// absolutePath is within the basePath, otherwise interalPath will be the same as absolutePath.
 /// This is useful for paths/directories relative to a base folder, to make the data or application relocatable.
 /// Absolute path can be retrieved from an internal path using absolutePathFromInternal function.
-QString CTK_CORE_EXPORT internalPathFromAbsolute(const QString& absolutePath, const QString& basePath);
+CTK_CORE_EXPORT QString internalPathFromAbsolute(const QString& absolutePath, const QString& basePath);
 
 }
 
