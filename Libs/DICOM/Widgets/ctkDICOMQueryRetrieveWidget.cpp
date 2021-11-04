@@ -62,7 +62,7 @@ public:
 
   QMap<QString, ctkDICOMQuery*>     QueriesByServer;
   QMap<QString, ctkDICOMQuery*>     QueriesByStudyUID;
-  std::list<std::pair<QString,QString>>             StudyAndSeriesInstanceUIDPairList;
+  std::list< std::pair<QString,QString> >             StudyAndSeriesInstanceUIDPairList;
   QMap<QString, ctkDICOMRetrieve*>  RetrievalsByStudyUID;
   ctkDICOMDatabase                  QueryResultDatabase;
   QSharedPointer<ctkDICOMDatabase>  RetrieveDatabase;
