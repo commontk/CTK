@@ -26,6 +26,7 @@
 #include <QTextStream>
 
 // CTK includes
+#include "ctkUtils.h"
 #include "ctkVTKConnection.h"
 #include "ctkVTKConnection_p.h"
 
@@ -249,31 +250,17 @@ vtkObject* ctkVTKConnection::vtkobject() const
 QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection)
 {
   const ctkVTKConnectionPrivate* d = connection.d_func();
-  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
-  dbg.nospace() << "ctkVTKConnection:" << &connection << Qt::endl
-                << "Id:" << d->Id << Qt::endl
+  dbg.nospace() << "ctkVTKConnection:" << &connection << ctk::endl
+                << "Id:" << d->Id << ctk::endl
                 << " VTKObject:" << (d->VTKObject ? d->VTKObject->GetClassName() : "<null>")
-                << "(" << d->VTKObject << ")" << Qt::endl
-                << " QtObject:" << d->QtObject << Qt::endl
-                << " VTKEvent:" << d->VTKEvent << Qt::endl
-                << " QtSlot:" << d->QtSlot << Qt::endl
-                << " SlotType:" << d->SlotType << Qt::endl
-                << " Priority:" << d->Priority << Qt::endl
-                << " Connected:" << d->Connected << Qt::endl
+                << "(" << d->VTKObject << ")" << ctk::endl
+                << " QtObject:" << d->QtObject << ctk::endl
+                << " VTKEvent:" << d->VTKEvent << ctk::endl
+                << " QtSlot:" << d->QtSlot << ctk::endl
+                << " SlotType:" << d->SlotType << ctk::endl
+                << " Priority:" << d->Priority << ctk::endl
+                << " Connected:" << d->Connected << ctk::endl
                 << " Blocked:" << d->Blocked;
-  #else
-  dbg.nospace() << "ctkVTKConnection:" << &connection << endl
-                << "Id:" << d->Id << endl
-                << " VTKObject:" << (d->VTKObject ? d->VTKObject->GetClassName() : "<null>")
-                << "(" << d->VTKObject << ")" << endl
-                << " QtObject:" << d->QtObject << endl
-                << " VTKEvent:" << d->VTKEvent << endl
-                << " QtSlot:" << d->QtSlot << endl
-                << " SlotType:" << d->SlotType << endl
-                << " Priority:" << d->Priority << endl
-                << " Connected:" << d->Connected << endl
-                << " Blocked:" << d->Blocked;
-  #endif
   return dbg.space();
 }
 

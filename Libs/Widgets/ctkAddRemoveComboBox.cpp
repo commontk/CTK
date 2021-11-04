@@ -24,6 +24,7 @@
 // CTK includes
 #include <ctkPimpl.h>
 #include "ctkAddRemoveComboBox.h"
+#include "ctkUtils.h"
 #include "ui_ctkAddRemoveComboBox.h"
 
 //-----------------------------------------------------------------------------
@@ -150,25 +151,14 @@ ctkAddRemoveComboBox::~ctkAddRemoveComboBox()
 void ctkAddRemoveComboBox::printAdditionalInfo()
 {
   Q_D(ctkAddRemoveComboBox);
-  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
-    qDebug() << "ctkAddRemoveComboBox:" << this << Qt::endl
-           << " EmptyText:" << d->EmptyText << Qt::endl
-           << " AddingEmptyItem:" << d->AddingEmptyItem << Qt::endl
-           << " RemovingEmptyItem:" << d->RemovingEmptyItem << Qt::endl
-           << " AddEnabled:" << d->AddEnabled << Qt::endl
-           << " RemoveEnabled:" << d->RemoveEnabled << Qt::endl
-           << " EditEnabled:" << d->EditEnabled << Qt::endl
+  qDebug() << "ctkAddRemoveComboBox:" << this << ctk::endl
+           << " EmptyText:" << d->EmptyText << ctk::endl
+           << " AddingEmptyItem:" << d->AddingEmptyItem << ctk::endl
+           << " RemovingEmptyItem:" << d->RemovingEmptyItem << ctk::endl
+           << " AddEnabled:" << d->AddEnabled << ctk::endl
+           << " RemoveEnabled:" << d->RemoveEnabled << ctk::endl
+           << " EditEnabled:" << d->EditEnabled << ctk::endl
            << " HasEmptyItem:" << d->HasEmptyItem;
-  #else
-  qDebug() << "ctkAddRemoveComboBox:" << this << endl
-           << " EmptyText:" << d->EmptyText << endl
-           << " AddingEmptyItem:" << d->AddingEmptyItem << endl
-           << " RemovingEmptyItem:" << d->RemovingEmptyItem << endl
-           << " AddEnabled:" << d->AddEnabled << endl
-           << " RemoveEnabled:" << d->RemoveEnabled << endl
-           << " EditEnabled:" << d->EditEnabled << endl
-           << " HasEmptyItem:" << d->HasEmptyItem;
-  #endif
 }
 
 // --------------------------------------------------------------------------
