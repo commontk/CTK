@@ -38,4 +38,10 @@
 # define CTK_NULLPTR NULL
 #endif
 
+#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && _MSC_VER >= 1700 )
+# define CTK_OVERRIDE override
+#else
+# define CTK_OVERRIDE
+#endif
+
 #endif
