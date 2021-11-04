@@ -69,7 +69,7 @@ private:
   static void cleanup();
 
 private:
-  ctkDICOMDisplayedFieldGeneratorRuleFactory(QObject* parent=nullptr);
+  ctkDICOMDisplayedFieldGeneratorRuleFactory(QObject* parent=CTK_NULLPTR);
   ~ctkDICOMDisplayedFieldGeneratorRuleFactory() CTK_OVERRIDE;
 
   Q_DISABLE_COPY(ctkDICOMDisplayedFieldGeneratorRuleFactory);
