@@ -93,13 +93,13 @@ Q_SIGNALS:
 
 protected:
   /// Reimplemented for internal reasons
-  void mousePressEvent(QMouseEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) CTK_OVERRIDE;
   /// Reimplemented for internal reasons
-  bool hitButton(const QPoint & pos) const override;
+  bool hitButton(const QPoint & pos) const CTK_OVERRIDE;
   /// Reimplemented for internal reasons
-  void checkStateSet() override;
+  void checkStateSet() CTK_OVERRIDE;
   /// Reimplemented for internal reasons
-  void nextCheckState() override;
+  void nextCheckState() CTK_OVERRIDE;
 private:
   Q_DECLARE_PRIVATE(ctkCheckablePushButton);
   Q_DISABLE_COPY(ctkCheckablePushButton);

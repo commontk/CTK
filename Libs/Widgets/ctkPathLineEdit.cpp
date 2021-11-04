@@ -93,7 +93,7 @@ public:
   ctkFileCompleter(QObject* o, bool showFiles);
 
   // Ensure auto-completed file always uses forward-slash as separator
-  QString pathFromIndex(const QModelIndex& idx) const override;
+  QString pathFromIndex(const QModelIndex& idx) const CTK_OVERRIDE;
 
   // Helper function for getting the current model casted to QFileSystemModel
   QFileSystemModel* fileSystemModel() const;
