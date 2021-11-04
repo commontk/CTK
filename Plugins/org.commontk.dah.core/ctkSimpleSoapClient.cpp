@@ -22,6 +22,7 @@
 #include "ctkSimpleSoapClient.h"
 #include "ctkDicomAppHostingTypes.h"
 #include "ctkSoapLog.h"
+#include "ctkUtils.h"
 
 #include <QApplication>
 #include <QCursor>
@@ -132,7 +133,7 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
   if (response.isFault())
     {
     qCritical() << "ctkSimpleSoapClient: server error (response.IsFault())";
-    CTK_SOAP_LOG_LOWLEVEL( << qPrintable(response.faultString().toString()) << endl );
+    CTK_SOAP_LOG_LOWLEVEL( << qPrintable(response.faultString().toString()) << ctk::endl );
     CTK_SOAP_LOG_LOWLEVEL( << response.toXmlString() );
     return response.returnValue();
     //    throw ctkRuntimeException("ctkSimpleSoapClient: server error (response.IsFault())");

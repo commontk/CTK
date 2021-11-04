@@ -32,6 +32,7 @@
 #include <QUrl>
 #include <QUuid>
 
+#include <ctkUtils.h>
 #include <ctkXnatDataModel.h>
 #include <ctkXnatException.h>
 #include <ctkXnatFile.h>
@@ -365,7 +366,7 @@ void ctkXnatSessionTestCase::testUploadAndDownloadFile()
     if (uploadedFile.open(QFile::ReadWrite))
     {
       QTextStream stream( &uploadedFile );
-      stream << "Hi, I am a CTK test file! ;-)" << endl;
+      stream << "Hi, I am a CTK test file! ;-)" << ctk::endl;
 
       QFileInfo fileInfo;
       fileInfo.setFile(uploadFileName);

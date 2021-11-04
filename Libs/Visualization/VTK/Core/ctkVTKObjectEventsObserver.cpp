@@ -27,6 +27,7 @@
 #include <QMultiMap>
 
 // CTK includes
+#include "ctkUtils.h"
 #include "ctkVTKObjectEventsObserver.h"
 #include "ctkVTKConnection.h"
 
@@ -253,17 +254,10 @@ void ctkVTKObjectEventsObserver::printAdditionalInfo()
 {
   this->Superclass::dumpObjectInfo();
   Q_D(ctkVTKObjectEventsObserver);
-  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
-  qDebug() << "ctkVTKObjectEventsObserver:" << this << Qt::endl
-           << " AllBlocked:" << d->AllBlocked << Qt::endl
-           << " Parent:" << (this->parent()?this->parent()->objectName():"NULL") << Qt::endl
+  qDebug() << "ctkVTKObjectEventsObserver:" << this << ctk::endl
+           << " AllBlocked:" << d->AllBlocked << ctk::endl
+           << " Parent:" << (this->parent()?this->parent()->objectName():"NULL") << ctk::endl
            << " Connection count:" << d->connections().count();
-  #else
-  qDebug() << "ctkVTKObjectEventsObserver:" << this << endl
-           << " AllBlocked:" << d->AllBlocked << endl
-           << " Parent:" << (this->parent()?this->parent()->objectName():"NULL") << endl
-           << " Connection count:" << d->connections().count();
-  #endif
 
   // Loop through all connection
   foreach (const ctkVTKConnection* connection, d->connections())

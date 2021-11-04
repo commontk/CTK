@@ -20,6 +20,7 @@
 =============================================================================*/
 
 #include <ctkCommandLineParser.h>
+#include <ctkUtils.h>
 
 #include <QCoreApplication>
 #include <QTextStream>
@@ -76,7 +77,7 @@ int main(int argc, char* argv[])
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(QCoreApplication::arguments(), &ok);
   if (!ok)
   {
-    err << "Error parsing arguments:" << parser.errorString() << endl;
+    err << "Error parsing arguments:" << parser.errorString() << ctk::endl;
     return EXIT_FAILURE;
   }
 
@@ -86,7 +87,7 @@ int main(int argc, char* argv[])
     out << parser.helpText();
     out.setFieldWidth(parser.fieldWidth());
     out.setFieldAlignment(QTextStream::AlignLeft);
-    out << "  <output-path>" << "Path to the output image" << endl;
+    out << "  <output-path>" << "Path to the output image" << ctk::endl;
     return EXIT_SUCCESS;
   }
 
@@ -102,7 +103,7 @@ int main(int argc, char* argv[])
 
   if (parser.unparsedArguments().isEmpty())
   {
-    err << "Error parsing arguments: <output-path> argument missing" << endl;
+    err << "Error parsing arguments: <output-path> argument missing" << ctk::endl;
     return EXIT_FAILURE;
   }
 
@@ -118,7 +119,7 @@ int main(int argc, char* argv[])
 
   QString imageOutput = parser.unparsedArguments().at(0);
 
-  err << "A superficial error message." << endl;
+  err << "A superficial error message." << ctk::endl;
 
   // sleep 500ms to give the "errorReady" signal a chance
   sleep_ms(500);
@@ -137,7 +138,7 @@ int main(int argc, char* argv[])
   out << "<filter-start>\n";
   out << "<filter-name>Test Filter</filter-name>\n";
   out << "<filter-comment>Does nothing useful</filter-comment>\n";
-  out << "</filter-start>" << endl;
+  out << "</filter-start>" << ctk::endl;
 
   if (outputs.empty())
   {
@@ -169,13 +170,13 @@ int main(int argc, char* argv[])
     // print the first output
     if (output != "dummy")
     {
-      out << output << endl;
+      out << output << ctk::endl;
 
       // report progress
       out << QString("<filter-progress-text progress=\"%1\">").arg((i+1)*progressStep)
-          << "Calculating output " << (i+2) << "...</filter-progress-text>" << endl;
+          << "Calculating output " << (i+2) << "...</filter-progress-text>" << ctk::endl;
       // report the current output number as a result
-      out << "<filter-result name=\"resultNumberOutput\">" << (i+1) << "</filter-result>" << endl;
+      out << "<filter-result name=\"resultNumberOutput\">" << (i+1) << "</filter-result>" << ctk::endl;
     }
   }
 
@@ -185,27 +186,27 @@ int main(int argc, char* argv[])
   if (!errorText.isEmpty())
   {
     err << errorText;
-    out << "<filter-result name=\"errorMsgOutput\">" << errorText << "</filter-result>" << endl;
+    out << "<filter-result name=\"errorMsgOutput\">" << errorText << "</filter-result>" << ctk::endl;
   }
   else
   {
-    out << "<filter-result name=\"imageOutput\">" << imageOutput << "</filter-result>" << endl;
+    out << "<filter-result name=\"imageOutput\">" << imageOutput << "</filter-result>" << ctk::endl;
   }
 
   out << "<filter-result name=\"exitStatusOutput\">";
   if (exitCrash)
   {
-    out << "Crashed</filter-result>" << endl;
+    out << "Crashed</filter-result>" << ctk::endl;
     int* crash = 0;
     *crash = 5;
   }
   else
   {
-    out << "Normal exit</filter-result>" << endl;
+    out << "Normal exit</filter-result>" << ctk::endl;
     sleep_ms(100);
-    out << "<filter-progress>1</filter-progress>" << endl;
+    out << "<filter-progress>1</filter-progress>" << ctk::endl;
     sleep_ms(100);
-    out << "<filter-end><filter-comment>Finished successfully.</filter-comment></filter-end>" << endl;
+    out << "<filter-end><filter-comment>Finished successfully.</filter-comment></filter-end>" << ctk::endl;
     sleep_ms(100);
   }
 
