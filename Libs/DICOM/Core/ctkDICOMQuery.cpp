@@ -100,7 +100,7 @@ public:
   QMap<QString,QVariant>  Filters;
   ctkDICOMQuerySCUPrivate SCU;
   DcmDataset*             Query;
-  QList<QPair<QString,QString>>             StudyAndSeriesInstanceUIDPairList;
+  QList< QPair<QString,QString> >             StudyAndSeriesInstanceUIDPairList;
   QStringList             StudyInstanceUIDList;
   QList<DcmDataset*>      StudyDatasetList;
   bool                    Canceled;
@@ -240,7 +240,7 @@ QMap<QString,QVariant> ctkDICOMQuery::filters()const
 }
 
 //------------------------------------------------------------------------------
-QList<QPair<QString,QString>> ctkDICOMQuery::studyAndSeriesInstanceUIDQueried()const
+QList< QPair<QString,QString> > ctkDICOMQuery::studyAndSeriesInstanceUIDQueried()const
 {
   Q_D(const ctkDICOMQuery);
   return d->StudyAndSeriesInstanceUIDPairList;
