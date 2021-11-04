@@ -85,6 +85,13 @@ public:
   Q_INVOKABLE QStringList currentStudiesSelection();
   Q_INVOKABLE QStringList currentSeriesSelection();
 
+  /**
+   * @brief Set the current selection of the dicomTableViews
+   */
+  Q_INVOKABLE void setCurrentPatientsSelection(const QStringList& uids);
+  Q_INVOKABLE void setCurrentStudiesSelection(const QStringList& uids);
+  Q_INVOKABLE void setCurrentSeriesSelection(const QStringList& uids);
+
   void setDynamicTableLayout(bool);
   bool dynamicTableLayout() const;
 

@@ -292,7 +292,7 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
     int columnIndicesCount = columnIndicesByVisualIndex.size();
     for (int i=0; i<columnIndicesCount-1; ++i)
     {
-      // Last i elements are already in place    
+      // Last i elements are already in place
       for (int j=0; j<columnIndicesCount -i-1; ++j)
       {
         if (columnIndicesByVisualIndex[j] > columnIndicesByVisualIndex[j+1])
@@ -306,7 +306,7 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
   // Change column order according to weights (use bubble sort)
   for (int i=0; i<columnCount-1; ++i)
   {
-    // Last i elements are already in place    
+    // Last i elements are already in place
     for (int j=0; j<columnCount-i-1; ++j)
     {
       if (columnWeights[j] > columnWeights[j+1])
@@ -800,6 +800,30 @@ QStringList ctkDICOMTableView::currentSelection() const
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMTableView::setCurrentSelection(const QStringList& uids)
+{
+  Q_D(const ctkDICOMTableView);
+
+  QAbstractItemModel* tableModel = d->tblDicomDatabaseView->model();
+  int numberOfRows = tableModel->rowCount();
+  for (int row = 0; row < numberOfRows; ++row)
+  {
+    QModelIndex index = tableModel->index(row, 0);
+    QString uid = index.data().toString();
+    bool needToSelect = uids.contains(uid);
+    if (d->tblDicomDatabaseView->selectionModel()->isSelected(index) == needToSelect)
+    {
+      // selection state is already correct
+      continue;
+    }
+    QItemSelectionModel::QItemSelectionModel::SelectionFlags flags = QFlags<QItemSelectionModel::SelectionFlag>();
+    flags.setFlag(needToSelect ? QItemSelectionModel::Select : QItemSelectionModel::Deselect);
+    flags.setFlag(QItemSelectionModel::Rows);
+    d->tblDicomDatabaseView->selectionModel()->select(index, flags);
+  }
+}
+
+//------------------------------------------------------------------------------
 bool ctkDICOMTableView::filterActive()
 {
   Q_D(ctkDICOMTableView);
@@ -851,7 +875,7 @@ bool ctkDICOMTableView::setBatchUpdate(bool enable)
     {
       this->onInstanceAdded();
     }
-  }  
+  }
   d->batchUpdateModificationPending = false;
   d->batchUpdateInstanceAddedPending = false;
   return !d->batchUpdate;

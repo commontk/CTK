@@ -241,6 +241,11 @@ public Q_SLOTS:
 
   void removeSelectedItems(ctkDICOMModel::IndexType level);
 
+  /// Select items in a browser table.
+  /// Selection is also updated at levels higher than the specified level
+  /// (otherwise items would not be available at the current level).
+  void setSelectedItems(ctkDICOMModel::IndexType level, QStringList uids);
+
 Q_SIGNALS:
   /// Emitted when directory is changed
   void databaseDirectoryChanged(const QString&);

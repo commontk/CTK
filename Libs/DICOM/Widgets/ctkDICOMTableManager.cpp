@@ -252,6 +252,27 @@ QStringList ctkDICOMTableManager::currentSeriesSelection()
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMTableManager::setCurrentPatientsSelection(const QStringList& uids)
+{
+  Q_D(ctkDICOMTableManager);
+  d->patientsTable->setCurrentSelection(uids);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableManager::setCurrentStudiesSelection(const QStringList& uids)
+{
+  Q_D(ctkDICOMTableManager);
+  d->studiesTable->setCurrentSelection(uids);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableManager::setCurrentSeriesSelection(const QStringList& uids)
+{
+  Q_D(ctkDICOMTableManager);
+  d->seriesTable->setCurrentSelection(uids);
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMTableManager::onPatientsQueryChanged(const QStringList &uids)
 {
   Q_D(ctkDICOMTableManager);

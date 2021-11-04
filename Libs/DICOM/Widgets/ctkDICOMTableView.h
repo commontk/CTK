@@ -220,6 +220,11 @@ public:
   Q_INVOKABLE QStringList currentSelection() const;
 
   /**
+   * @brief Select rows corresponding to the provided uids.
+   */
+  Q_INVOKABLE void setCurrentSelection(const QStringList& uids);
+
+  /**
    * @brief Getting the UIDs for all rows
    * @return a QStringList with the uids for all rows
    */

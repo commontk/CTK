@@ -1749,3 +1749,52 @@ void ctkDICOMBrowser::onIndexingComplete(int patientsAdded, int studiesAdded, in
   // allow users of this widget to know that the process has finished
   emit directoryImported();
 }
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::setSelectedItems(ctkDICOMModel::IndexType level, QStringList uids)
+{
+  Q_D(ctkDICOMBrowser);
+  if (level == ctkDICOMModel::PatientType)
+  {
+    d->dicomTableManager->setCurrentPatientsSelection(uids);
+  }
+  else if (level == ctkDICOMModel::StudyType)
+  {
+    // Select parent patient to make sure the requested studies
+    // are listed in the study table
+    QStringList patientUids;
+    for (const QString& uid : uids)
+    {
+      QString patientUid = d->DICOMDatabase->patientForStudy(uid);
+      if (!patientUids.contains(patientUid))
+      {
+        patientUids.append(patientUid);
+      }
+    }
+    this->setSelectedItems(ctkDICOMModel::PatientType, patientUids);
+
+    d->dicomTableManager->setCurrentStudiesSelection(uids);
+  }
+  else if (level == ctkDICOMModel::SeriesType)
+  {
+    // Select parent patients and studies to make sure the requested series
+    // are listed in the series table
+    QStringList studyUids;
+    for (const QString& uid : uids)
+    {
+      QString studyUid = d->DICOMDatabase->studyForSeries(uid);
+      if (!studyUids.contains(studyUid))
+      {
+        studyUids.append(studyUid);
+      }
+    }
+    // selecting the study will select the patients as well
+    this->setSelectedItems(ctkDICOMModel::StudyType, studyUids);
+
+    d->dicomTableManager->setCurrentSeriesSelection(uids);
+  }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << " failed: invalid level";
+  }
+}
