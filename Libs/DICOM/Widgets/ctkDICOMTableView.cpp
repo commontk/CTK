@@ -320,7 +320,12 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
         qWarning() << "Invalid ColumnDisplayProperties Format string for column " << columnName << ": " << fieldFormat;
       }
     }
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+    this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(col, columnResizeMode);
+#else
     this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(col, columnResizeMode);
+#endif
+
     if (columnResizeMode == QHeaderView::Stretch && visibility)
     {
       stretchedColumnFound = true;
