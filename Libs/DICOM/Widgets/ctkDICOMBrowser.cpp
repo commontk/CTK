@@ -1820,7 +1820,7 @@ void ctkDICOMBrowser::setSelectedItems(ctkDICOMModel::IndexType level, QStringLi
     // Select parent patient to make sure the requested studies
     // are listed in the study table
     QStringList patientUids;
-    for (const QString& uid : uids)
+    Q_FOREACH (const QString& uid, uids)
     {
       QString patientUid = d->DICOMDatabase->patientForStudy(uid);
       if (!patientUids.contains(patientUid))
@@ -1837,7 +1837,7 @@ void ctkDICOMBrowser::setSelectedItems(ctkDICOMModel::IndexType level, QStringLi
     // Select parent patients and studies to make sure the requested series
     // are listed in the series table
     QStringList studyUids;
-    for (const QString& uid : uids)
+    Q_FOREACH (const QString& uid, uids)
     {
       QString studyUid = d->DICOMDatabase->studyForSeries(uid);
       if (!studyUids.contains(studyUid))
