@@ -30,6 +30,11 @@
 
 #include <QTest>
 #include <QDebug>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#include <QElapsedTimer>
+#else
+#include <QTime>
+#endif
 
 
 //----------------------------------------------------------------------------
@@ -151,7 +156,11 @@ void ctkEventAdminPerfTestSuite::initTestCase()
 //----------------------------------------------------------------------------
 void ctkEventAdminPerfTestSuite::testSendEvents()
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QElapsedTimer t;
+#else
   QTime t;
+#endif
   t.start();
   sendEvents();
   int ms = t.elapsed();
@@ -163,7 +172,11 @@ void ctkEventAdminPerfTestSuite::testSendEvents()
 //----------------------------------------------------------------------------
 void ctkEventAdminPerfTestSuite::testPostEvents()
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QElapsedTimer t;
+#else
   QTime t;
+#endif
   t.start();
   postEvents();
   int ms = t.elapsed();

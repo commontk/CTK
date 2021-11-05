@@ -26,7 +26,11 @@
 #include <QTextStream>
 #include <QFile>
 #include <QDebug>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#include <QElapsedTimer>
+#else
 #include <QTime>
+#endif
 
 #include <cstdlib>
 
@@ -132,7 +136,11 @@ int main(int argc, char* argv[])
 
   float stepTime = outputs.size() ? runtime / static_cast<float>(outputs.size()) : runtime;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QElapsedTimer time;
+#else
   QTime time;
+#endif
   time.start();
 
   out << "<filter-start>\n";
