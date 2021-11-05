@@ -30,6 +30,9 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QDebug>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#include <QElapsedTimer>
+#endif
 
 // ctkDICOM includes
 #include "ctkLogger.h"
@@ -117,7 +120,11 @@ void ctkDICOMIndexerPrivateWorker::start()
       this->CompletedRequestCount++;
     } while (!this->RequestQueue->isEmpty());
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    QElapsedTimer timeProbe;
+#else
     QTime timeProbe;
+#endif
     timeProbe.start();
 
     // Update displayed fields according to inserted DICOM datasets
@@ -164,7 +171,11 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
     }
   }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QElapsedTimer timeProbe;
+#else
   QTime timeProbe;
+#endif
   timeProbe.start();
 
   int currentFileIndex = 0;
@@ -246,7 +257,11 @@ void ctkDICOMIndexerPrivateWorker::writeIndexingResultsToDatabase(ctkDICOMDataba
     return;
   }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QElapsedTimer timeProbe;
+#else
   QTime timeProbe;
+#endif
   timeProbe.start();
 
   this->NumberOfInstancesToInsert = indexingResults.size();
@@ -516,7 +531,11 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
   DcmDirectoryRecord* seriesRecord = NULL;
   DcmDirectoryRecord* fileRecord = NULL;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QElapsedTimer timeProbe;
+#else
   QTime timeProbe;
+#endif
   timeProbe.start();
 
   /*Iterate over all records in dicomdir and setup path to the dataset of the filerecord

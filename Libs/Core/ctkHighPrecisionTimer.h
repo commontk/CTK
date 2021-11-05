@@ -44,7 +44,11 @@
 
 #ifdef _ctk_use_high_precision_timer_fallback
 #warning ctkHighPrecisionTimer is using the slower QTime fallback
-#include <QTime>
+# if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#  include <QElapsedTimer>
+# else
+#  include <QTime>
+# endif
 #endif
 
 
@@ -76,7 +80,12 @@ private:
   static double timeConvert;
 
 #ifdef _ctk_use_high_precision_timer_fallback
+# if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QElapsedTimer startTime;
+# else
   QTime startTime;
+# endif
+
 #elif defined(Q_OS_MAC)
   quint64 startTime;
 #elif defined(Q_OS_UNIX)
