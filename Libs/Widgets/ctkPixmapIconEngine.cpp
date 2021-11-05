@@ -184,9 +184,9 @@ QPixmap ctkPixmapIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::
 
 
     if (mode == QIcon::Active) {
-        if (QPixmapCache::find(key + QString::number(static_cast<int>(mode)), pm))
+        if (QPixmapCache::find(key + QString::number(static_cast<int>(mode)), &pm))
             return pm; // horray
-        if (QPixmapCache::find(key + QString::number(static_cast<int>(QIcon::Normal)), pm)) {
+        if (QPixmapCache::find(key + QString::number(static_cast<int>(QIcon::Normal)), &pm)) {
             QStyleOption opt(0);
             opt.palette = QApplication::palette();
             QPixmap active = QApplication::style()->generatedIconPixmap(QIcon::Active, pm, &opt);
@@ -195,7 +195,7 @@ QPixmap ctkPixmapIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::
         }
     }
 
-    if (!QPixmapCache::find(key + QString::number(static_cast<int>(mode)), pm)) {
+    if (!QPixmapCache::find(key + QString::number(static_cast<int>(mode)), &pm)) {
         if (pm.size() != actualSize)
             pm = pm.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         if (pe->mode != mode && mode != QIcon::Normal) {
