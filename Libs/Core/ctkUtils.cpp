@@ -504,3 +504,18 @@ QTextStream& ctk::endl(QTextStream &stream)
   return stream << QLatin1Char('\n') << ctk::flush;
 #endif
 }
+
+//------------------------------------------------------------------------------
+QModelIndex ctk::modelChildIndex(QAbstractItemModel* item, const QModelIndex &parent, int row, int colum)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 8, 0))
+  if (!item)
+    {
+    return QModelIndex();
+    }
+  return item->index(row, colum, parent);
+#else
+  Q_UNUSED(item);
+  return parent.child(row, colum);
+#endif
+}

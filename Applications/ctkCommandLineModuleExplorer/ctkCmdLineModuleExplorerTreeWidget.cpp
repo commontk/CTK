@@ -22,6 +22,7 @@
 #include "ctkCmdLineModuleExplorerTreeWidget.h"
 #include "ctkCmdLineModuleExplorerShowXmlAction.h"
 
+#include <ctkUtils.h>
 #include <ctkCmdLineModuleFrontend.h>
 #include <ctkCmdLineModuleBackend.h>
 #include <ctkCmdLineModuleFrontendFactory.h>
@@ -277,8 +278,7 @@ ctkCmdLineModuleFrontend* ctkCmdLineModuleExplorerTreeWidget::createFrontend(con
 bool ModuleSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
   QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
-
-  QModelIndex childIndex = index.child(0, 0);
+  QModelIndex childIndex = ctk::modelChildIndex(sourceModel(), index, 0, 0);
   if (childIndex.isValid())
   {
     int i = 0;
@@ -288,7 +288,7 @@ bool ModuleSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInd
       accept = this->filterAcceptsRow(childIndex.row(), index);
       if (accept) return true;
 
-      childIndex = index.child(++i, 0);
+      childIndex = ctk::modelChildIndex(sourceModel(), index, ++i, 0);
     }
     return false;
   }
