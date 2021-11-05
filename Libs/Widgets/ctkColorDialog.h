@@ -89,7 +89,7 @@ public:
   /// The \a options argument allows you to customize the dialog;
   /// QColorDialog::DontUseNativeDialog is forced
   Q_INVOKABLE static QColor getColor(const QColor &initial, QWidget *parent,
-                         const QString &title, ColorDialogOptions options = 0);
+                         const QString &title, ColorDialogOptions options = ColorDialogOptions());
   /// Return the last selected color name if any. getColorName() call is only
   /// valid after a getColor() call.
   /// \sa getColor
