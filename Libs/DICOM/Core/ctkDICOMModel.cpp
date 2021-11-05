@@ -32,6 +32,9 @@
 // dcmtk includes
 #include "dcmtk/dcmdata/dcvrpn.h"
 
+// ctkCore includes
+#include "ctkUtils.h"
+
 // ctkDICOMCore includes
 #include "ctkDICOMModel.h"
 #include "ctkLogger.h"
@@ -742,7 +745,7 @@ bool ctkDICOMModel::setData(const QModelIndex &index, const QVariant &value, int
 
   for(int i=0; i<node->Children.count(); i++)
     {
-      this->setChildData(index.child(i,0), value, role);
+    this->setChildData(ctk::modelChildIndex(this, index, i, 0), value, role);
     }
 
   if(index.parent().isValid())
@@ -771,7 +774,7 @@ bool ctkDICOMModel::setChildData(const QModelIndex &index, const QVariant &value
 
   for(int i=0; i<node->Children.count(); i++)
     {
-      this->setData(index.child(i,0), value, role);
+    this->setData(ctk::modelChildIndex(this, index, i, 0), value, role);
     }
 
   return true;
@@ -801,7 +804,8 @@ bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &valu
 
     for(int i=0; i<index.model()->rowCount(index); i++)
       {
-      Node* childNode = d->nodeFromIndex(index.child(i,0));
+      QModelIndex childIndex = ctk::modelChildIndex(this, index, i, 0);
+      Node* childNode = d->nodeFromIndex(childIndex);
       if(childNode->Data[Qt::CheckStateRole].toUInt() == Qt::Checked)
         {
         checkedExist = true;

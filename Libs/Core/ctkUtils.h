@@ -22,9 +22,11 @@
 #define __ctkUtils_h
 
 // Qt includes
-#include <QStringList>
+#include <QAbstractItemModel>
 #include <QDateTime>
 #include <QDebug>
+#include <QModelIndex>
+#include <QStringList>
 
 // STD includes
 #include <vector>
@@ -214,6 +216,14 @@ CTK_CORE_EXPORT QTextStream &flush(QTextStream &stream);
 ///
 /// For Qt >= 5.14, it is equivalent to \a Qt::endl;
 CTK_CORE_EXPORT QTextStream & endl(QTextStream &stream);
+
+
+/// \ingroup Core
+/// \brief Returns the child of the model index that is stored in the given row and column.
+///
+/// This method was added so that the same code compiles without deprecation warnings
+/// pre and post Qt 5.8.
+CTK_CORE_EXPORT QModelIndex modelChildIndex(QAbstractItemModel* item, const QModelIndex &parent, int row, int colum);
 }
 
 #endif

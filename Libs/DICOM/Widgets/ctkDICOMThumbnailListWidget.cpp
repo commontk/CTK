@@ -32,6 +32,7 @@
 
 // ctk includes
 #include "ctkLogger.h"
+#include "ctkUtils.h"
 
 // ctkWidgets includes
 #include "ctkFlowLayout.h"
@@ -106,11 +107,11 @@ void ctkDICOMThumbnailListWidgetPrivate
 
     for(int i=0; i<studyCount; i++)
       {
-      QModelIndex studyIndex = patientIndex.child(i, 0);
-      QModelIndex seriesIndex = studyIndex.child(0, 0);
+      QModelIndex studyIndex = ctk::modelChildIndex(model, patientIndex, i, 0);
+      QModelIndex seriesIndex = ctk::modelChildIndex(model, studyIndex, 0, 0);
       model->fetchMore(seriesIndex);
       const int imageCount = model->rowCount(seriesIndex);
-      QModelIndex imageIndex = seriesIndex.child(imageCount/2, 0);
+      QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, imageCount/2, 0);
       QString study = model->data(studyIndex, Qt::DisplayRole).toString();
       this->addThumbnailWidget(imageIndex, studyIndex, study);
       }
@@ -134,10 +135,10 @@ void ctkDICOMThumbnailListWidgetPrivate
 
   for(int i=0; i<seriesCount; i++)
     {
-    QModelIndex seriesIndex = studyIndex.child(i, 0);
+    QModelIndex seriesIndex = ctk::modelChildIndex(model, studyIndex, i, 0);
     model->fetchMore(seriesIndex);
     int imageCount = model->rowCount(seriesIndex);
-    QModelIndex imageIndex = seriesIndex.child(imageCount/2, 0);
+    QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, imageCount/2, 0);
     this->addThumbnailWidget(imageIndex, seriesIndex, model->data(seriesIndex, Qt::DisplayRole).toString());
     }
 }
@@ -160,7 +161,7 @@ void ctkDICOMThumbnailListWidgetPrivate
   logger.debug(QString("Thumbs: %1").arg(imageCount));
   for (int i = 0 ; i < imageCount ; i++ )
     {
-    QModelIndex imageIndex = seriesIndex.child(i,0);
+    QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, i, 0);
 
     this->addThumbnailWidget(imageIndex, imageIndex, QString("Image %1").arg(i));
     }

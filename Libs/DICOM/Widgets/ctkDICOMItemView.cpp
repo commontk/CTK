@@ -27,6 +27,7 @@
 // CTK includes
 #include "ctkLogger.h"
 #include "ctkQImageView.h"
+#include "ctkUtils.h"
 
 // ctkDICOMCore includes
 #include "ctkDICOMFilterProxyModel.h"
@@ -148,12 +149,12 @@ void ctkDICOMItemViewPrivate::onPatientModelSelected(const QModelIndex &index){
     if(model){
         QModelIndex patientIndex = index;
         model->fetchMore(patientIndex);
-        QModelIndex studyIndex = patientIndex.child(0,0);
+        QModelIndex studyIndex = ctk::modelChildIndex(model, patientIndex, 0, 0);
         model->fetchMore(studyIndex);
-        QModelIndex seriesIndex = studyIndex.child(0,0);
+        QModelIndex seriesIndex = ctk::modelChildIndex(model, studyIndex, 0, 0);
         model->fetchMore(seriesIndex);
         int imageCount = model->rowCount(seriesIndex);
-        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
+        QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, imageCount/2, 0);
 
         this->setImage(imageIndex);
     }else{
@@ -170,10 +171,10 @@ void ctkDICOMItemViewPrivate::onStudyModelSelected(const QModelIndex &index){
     if(model){
         QModelIndex studyIndex = index;
         model->fetchMore(studyIndex);
-        QModelIndex seriesIndex = studyIndex.child(0,0);
+        QModelIndex seriesIndex = ctk::modelChildIndex(model, studyIndex, 0, 0);
         model->fetchMore(seriesIndex);
         int imageCount = model->rowCount(seriesIndex);
-        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
+        QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, imageCount/2, 0);
 
         this->setImage(imageIndex);
     }else{
@@ -191,7 +192,7 @@ void ctkDICOMItemViewPrivate::onSeriesModelSelected(const QModelIndex &index){
         QModelIndex seriesIndex = index;
         model->fetchMore(seriesIndex);
         int imageCount = model->rowCount(seriesIndex);
-        QModelIndex imageIndex = seriesIndex.child(imageCount/2,0);
+        QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, imageCount/2, 0);
 
         this->setImage(imageIndex);
     }else{
