@@ -210,6 +210,16 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
     ${dynamicHeaders}
     DESTINATION ${CTK_INSTALL_INCLUDE_DIR} COMPONENT Development
     )
+  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" # source directory
+    DESTINATION ${CTK_INSTALL_INCLUDE_DIR} # target directory
+    FILES_MATCHING # install only matched files
+    PATTERN "*.h" # select header files
+    )
+  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" # source directory
+    DESTINATION ${CTK_INSTALL_INCLUDE_DIR} # target directory
+    FILES_MATCHING # install only matched files
+    PATTERN "*.tpp" # select header files
+    )
 
 endmacro()
 
