@@ -519,3 +519,9 @@ QModelIndex ctk::modelChildIndex(QAbstractItemModel* item, const QModelIndex &pa
   return parent.child(row, column);
 #endif
 }
+
+//------------------------------------------------------------------------------
+QModelIndex ctk::modelChildIndex(const QAbstractItemModel* item, const QModelIndex &parent, int row, int column)
+{
+  return ctk::modelChildIndex(const_cast<QAbstractItemModel*>(item), parent, row, column);
+}
