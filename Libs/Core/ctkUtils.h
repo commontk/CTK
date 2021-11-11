@@ -223,7 +223,7 @@ CTK_CORE_EXPORT QTextStream & endl(QTextStream &stream);
 ///
 /// This method was added so that the same code compiles without deprecation warnings
 /// pre and post Qt 5.8.
-CTK_CORE_EXPORT QModelIndex modelChildIndex(QAbstractItemModel* item, const QModelIndex &parent, int row, int colum);
+CTK_CORE_EXPORT QModelIndex modelChildIndex(QAbstractItemModel* item, const QModelIndex &parent, int row, int column);
 }
 
 #endif
