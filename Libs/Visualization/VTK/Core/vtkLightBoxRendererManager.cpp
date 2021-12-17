@@ -24,7 +24,11 @@
 #include <vtkAlgorithmOutput.h>
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
-#include <vtkConfigure.h>
+// Include vtkConfigure.h only if vtk version is < 9.1
+// since it has been deprecated.
+#if !(VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 1)
+  #include <vtkConfigure.h>
+#endif
 #include <vtkCornerAnnotation.h>
 #include <vtkImageData.h>
 #include <vtkImageMapper.h>
