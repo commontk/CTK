@@ -61,6 +61,10 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   /// This property holds the icon displayed on the button. QStyle::SP_DirIcon
   /// by default.
   Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
+  /// This property controls how to display long paths.
+  /// By default elide mode is Qt::ElideMiddle (long paths are displayed
+  /// by replacing the center of by ellipses).
+  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
   /// public API. We need to create a custom property that will be used when
   /// instanciating a QFileDialog in ctkDirectoryButton::browse()
@@ -141,6 +145,14 @@ public:
 
   /// \sa acceptMode QFileDialog::AcceptMode
   void setAcceptMode(QFileDialog::AcceptMode mode);
+
+  /// setElideMode can elide the text displayed on the button.
+  /// Qt::ElideNone by default (sam as for a regular push button).
+  /// To prevent long paths forcing the button to take a lot of horizontal space,
+  /// set horizontal policy to QSizePolicy::Ignored and set elideMode to
+  /// Qt::ElideMiddle (or anything else than Qt::ElideNone).
+  void setElideMode(Qt::TextElideMode newMode);
+  Qt::TextElideMode elideMode()const; 
 
 public Q_SLOTS:
   /// browse() opens a pop up where the user can select a new directory for the

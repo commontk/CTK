@@ -22,13 +22,13 @@
 #include <QDebug>
 #include <QFileSystemModel>
 #include <QHBoxLayout>
-#include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QStyle>
 
 // CTK includes
 #include "ctkDirectoryButton.h"
 #include "ctkFileDialog.h"
+#include "ctkPushButton.h"
 
 //-----------------------------------------------------------------------------
 class ctkDirectoryButtonPrivate
@@ -44,7 +44,7 @@ public:
   void updateDisplayText();
 
   QDir         Directory;
-  QPushButton* PushButton;
+  ctkPushButton* PushButton;
   QString      DialogCaption;
   QString      DisplayText;
 #ifdef USE_QFILEDIALOG_OPTIONS
@@ -74,7 +74,8 @@ ctkDirectoryButtonPrivate::ctkDirectoryButtonPrivate(ctkDirectoryButton& object)
 void ctkDirectoryButtonPrivate::init()
 {
   Q_Q(ctkDirectoryButton);
-  this->PushButton = new QPushButton(q);
+  this->PushButton = new ctkPushButton(q);
+  this->PushButton->setElideMode(Qt::ElideMiddle);  // truncate the middle of the path if does not fit
   QObject::connect(this->PushButton, SIGNAL(clicked()), q, SLOT(browse()));
   QHBoxLayout* l = new QHBoxLayout(q);
   l->addWidget(this->PushButton);
@@ -309,4 +310,23 @@ void ctkDirectoryButton::browse()
     return;
     }
   this->setDirectory(dir);
+}
+
+//-----------------------------------------------------------------------------
+void ctkDirectoryButton::setElideMode(Qt::TextElideMode newElideMode)
+{
+  Q_D(ctkDirectoryButton);
+  if (d->PushButton->elideMode() == newElideMode)
+  {
+    return;
+  }
+  d->PushButton->setElideMode(newElideMode);
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+Qt::TextElideMode ctkDirectoryButton::elideMode()const
+{
+  Q_D(const ctkDirectoryButton);
+  return d->PushButton->elideMode();
 }
