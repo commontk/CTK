@@ -45,6 +45,7 @@ class CTK_WIDGETS_EXPORT ctkPushButton : public QPushButton
   /// Qt::AlignLeft|Qt::AlignVCenter by default.
   /// \sa iconAlignment(), setIconAlignment(), textAlignment
   Q_PROPERTY(Qt::Alignment iconAlignment READ iconAlignment WRITE setIconAlignment)
+  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
 
 public:
   ctkPushButton(QWidget *parent = 0);
@@ -68,6 +69,11 @@ public:
 
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
+
+  /// setElideMode can shorten the text displayed on the button.
+  /// Qt::ElideNone by default (same as for a regular push button).
+  void setElideMode(Qt::TextElideMode newMode);
+  Qt::TextElideMode elideMode()const;
 
 protected:
   /// Reimplemented for internal reasons

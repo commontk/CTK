@@ -36,6 +36,7 @@ ctkPushButtonPrivate::ctkPushButtonPrivate(ctkPushButton& object)
   this->ButtonTextAlignment = Qt::AlignHCenter | Qt::AlignVCenter;
   this->IconAlignment = Qt::AlignLeft | Qt::AlignVCenter;
   this->IconSpacing = 4;
+  this->ElideMode = Qt::ElideNone;
 }
 
 //-----------------------------------------------------------------------------
@@ -242,6 +243,25 @@ Qt::Alignment ctkPushButton::iconAlignment()const
 }
 
 //-----------------------------------------------------------------------------
+void ctkPushButton::setElideMode(Qt::TextElideMode newElideMode)
+{
+  Q_D(ctkPushButton);
+  if (d->ElideMode == newElideMode)
+  {
+    return;
+  }
+  d->ElideMode = newElideMode;
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+Qt::TextElideMode ctkPushButton::elideMode()const
+{
+  Q_D(const ctkPushButton);
+  return d->ElideMode;
+}
+
+//-----------------------------------------------------------------------------
 QSize ctkPushButton::minimumSizeHint()const
 {
   Q_D(const ctkPushButton);
@@ -331,6 +351,7 @@ void ctkPushButton::paintEvent(QPaintEvent * _event)
   // all the computations have been made infering the text would be left oriented
   tf &= ~Qt::AlignHCenter & ~Qt::AlignRight;
   tf |= Qt::AlignLeft;
+  QString elidedText = opt.fontMetrics.elidedText(opt.text, d->ElideMode, opt.rect.width());
   this->style()->drawItemText(&p, opt.rect, tf, opt.palette, (opt.state & QStyle::State_Enabled),
-                              opt.text, QPalette::ButtonText);
+                              elidedText, QPalette::ButtonText);
 }

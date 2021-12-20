@@ -49,7 +49,8 @@ void ctkPushButtonTester::testDefaults()
   QApplication::setStyle( new QCleanlooksStyle );
 #endif
 
-  ctkPushButton button("text");
+  ctkPushButton button("this is a long text so that elide mode of the button can be tested");
+  button.setElideMode(Qt::ElideMiddle);
 
   QCOMPARE(button.buttonTextAlignment(), Qt::AlignHCenter|Qt::AlignVCenter);
   QCOMPARE(button.iconAlignment(), Qt::AlignLeft|Qt::AlignVCenter);

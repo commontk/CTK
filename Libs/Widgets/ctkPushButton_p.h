@@ -42,4 +42,5 @@ public:
   Qt::Alignment ButtonTextAlignment;
   Qt::Alignment IconAlignment;
   int IconSpacing;
+  Qt::TextElideMode ElideMode;
 };
