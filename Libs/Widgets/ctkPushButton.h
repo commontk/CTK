@@ -33,18 +33,25 @@ class ctkPushButtonPrivate;
 
 /// \ingroup Widgets
 /// Description
-/// ctkPushButton is an advanced QPushButton. It can control the alignment of text and icons.
+/// ctkPushButton is for displaying a QPushButton with an icon and optionally elided text.
+/// Alignment of the text and the icon is highly customizable.
 class CTK_WIDGETS_EXPORT ctkPushButton : public QPushButton
 {
   Q_OBJECT
+
   /// Set the alignment of the text on the button,
   /// Qt::AlignHCenter|Qt::AlignVCenter by default.
   /// \sa textAlignment(), setTextAlignment(), iconAlignment
   Q_PROPERTY(Qt::Alignment buttonTextAlignment READ buttonTextAlignment WRITE setButtonTextAlignment)
+
   /// Set the alignment of the icon with regard to the text.
   /// Qt::AlignLeft|Qt::AlignVCenter by default.
   /// \sa iconAlignment(), setIconAlignment(), textAlignment
   Q_PROPERTY(Qt::Alignment iconAlignment READ iconAlignment WRITE setIconAlignment)
+
+  /// Set the shortening of the button text by eliding.
+  /// Qt::ElideNone by default.
+  /// \sa elideMode(), setElideMode()
   Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
 
 public:

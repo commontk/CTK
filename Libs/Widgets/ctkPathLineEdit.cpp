@@ -298,7 +298,7 @@ ctkPathLineEditPrivate::ctkPathLineEditPrivate(ctkPathLineEdit& object)
   , ComboBox(0)
   , BrowseButton(0)
   , MinimumContentsLength(0)
-  , SizeAdjustPolicy(ctkPathLineEdit::AdjustToContentsOnFirstShow)
+  , SizeAdjustPolicy(ctkPathLineEdit::AdjustToMinimumContentsLength)
   , Filters(QDir::AllEntries | QDir::NoDotAndDotDot
       | QDir::Readable | QDir::Executable)
   , HasValidInput(false)

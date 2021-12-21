@@ -76,12 +76,13 @@ void ctkDirectoryButtonPrivate::init()
   Q_Q(ctkDirectoryButton);
   this->PushButton = new ctkPushButton(q);
   this->PushButton->setElideMode(Qt::ElideMiddle);  // truncate the middle of the path if does not fit
+  this->PushButton->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed, QSizePolicy::PushButton));
   QObject::connect(this->PushButton, SIGNAL(clicked()), q, SLOT(browse()));
   QHBoxLayout* l = new QHBoxLayout(q);
   l->addWidget(this->PushButton);
   l->setContentsMargins(0,0,0,0);
   q->setLayout(l);
-  q->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed, QSizePolicy::ButtonBox));
+  q->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed, QSizePolicy::ButtonBox));
 }
 
 //-----------------------------------------------------------------------------
@@ -316,12 +317,26 @@ void ctkDirectoryButton::browse()
 void ctkDirectoryButton::setElideMode(Qt::TextElideMode newElideMode)
 {
   Q_D(ctkDirectoryButton);
-  if (d->PushButton->elideMode() == newElideMode)
-  {
-    return;
-  }
   d->PushButton->setElideMode(newElideMode);
+
+  // Allow horizontal shrinking of the button if and only if elide is enabled.
+  // The internal pushbutton is not accessible from outside, therefore we must
+  // adjust the size policy internally.
+
+  QSizePolicy sizePolicy = d->PushButton->sizePolicy();
+  if (newElideMode == Qt::ElideNone)
+    {
+    sizePolicy.setHorizontalPolicy(QSizePolicy::Policy(sizePolicy.horizontalPolicy() & ~QSizePolicy::ShrinkFlag));
+    }
+  else
+    {
+    sizePolicy.setHorizontalPolicy(QSizePolicy::Policy(sizePolicy.horizontalPolicy() | QSizePolicy::ShrinkFlag));
+    }
+
+  d->PushButton->setSizePolicy(sizePolicy);
+
   this->update();
+  this->updateGeometry();
 }
 
 //-----------------------------------------------------------------------------

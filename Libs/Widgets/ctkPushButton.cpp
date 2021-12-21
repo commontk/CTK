@@ -59,6 +59,7 @@ QRect ctkPushButtonPrivate::iconRect()const
 
   QSize iconSize = q->iconSize();
   int buttonHeight = opt.rect.height();
+  int buttonWidth = opt.rect.width();
   uint tf = this->ButtonTextAlignment;
   if (q->style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, q))
     {
@@ -68,40 +69,45 @@ QRect ctkPushButtonPrivate::iconRect()const
     {
     tf |= Qt::TextHideMnemonic;
     }
-  int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, opt.text).width();
-  int iconSpacing = this->IconSpacing;
-  int buttonMargin = q->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, q);
+
+  int iconSpacing = this->IconSpacing; // whitespace between icon and text
+  int buttonMargin = q->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, q); // whitespace between label and the frame
   if (this->IconAlignment & Qt::AlignLeft)
     {
-    rect = QRect((buttonHeight - iconSize.width()) / 2,
+    rect = QRect(opt.rect.x() + buttonMargin,
                  (buttonHeight - iconSize.height()) / 2,
                  iconSize.width(), iconSize.height());
     }
   else if (this->IconAlignment & Qt::AlignHCenter)
     {
     int w = iconSize.width();
-    if (!opt.text.isEmpty() && (this->ButtonTextAlignment & Qt::AlignHCenter))
+
+    QString text = opt.text;
+    if (this->ElideMode != Qt::ElideNone)
+      {
+      text = opt.fontMetrics.elidedText(text, this->ElideMode, opt.rect.width() /*  - 2 * buttonMargin */ - iconSize.width() - iconSpacing - buttonMargin);
+      }
+    int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, text).width();
+
+    if (!text.isEmpty() && (this->ButtonTextAlignment & Qt::AlignHCenter))
       {
       w += textWidth + iconSpacing;
       }
-    rect = QRect(opt.rect.x()+ opt.rect.width() /2 - w / 2,
+    rect = QRect(opt.rect.x() + opt.rect.width() /2 - w / 2,
                  (buttonHeight - iconSize.height()) / 2,
                  iconSize.width(), iconSize.height());
-    if (this->ButtonTextAlignment & Qt::AlignLeft &&
-        rect.left() < opt.rect.x() + buttonMargin + textWidth)
+    if (this->ButtonTextAlignment & Qt::AlignLeft)
       {
       rect.moveLeft(opt.rect.x() + buttonMargin + textWidth);
       }
-    else if (this->ButtonTextAlignment & Qt::AlignRight &&
-             rect.right() > opt.rect.right() - buttonMargin - textWidth)
+    else if (this->ButtonTextAlignment & Qt::AlignRight)
       {
-      rect.moveRight(opt.rect.right() - buttonMargin - textWidth);
+      rect.moveRight(opt.rect.right() - buttonMargin - textWidth - iconSpacing);
       }
     }
   else if (this->IconAlignment & Qt::AlignRight)
     {
-    rect = QRect(opt.rect.width() - (buttonHeight - iconSize.width()) / 2
-                                  - iconSize.width(),
+    rect = QRect(opt.rect.right() - iconSize.width() - iconSpacing,
                  (buttonHeight - iconSize.height()) / 2,
                  iconSize.width(), iconSize.height());
     }
@@ -109,7 +115,7 @@ QRect ctkPushButtonPrivate::iconRect()const
 }
 
 //-----------------------------------------------------------------------------
-QSize ctkPushButtonPrivate::buttonSizeHint()const
+QSize ctkPushButtonPrivate::buttonSizeHint(bool computeMinimum)const
 {
   Q_Q(const ctkPushButton);
   int w = 0, h = 0;
@@ -127,7 +133,12 @@ QSize ctkPushButtonPrivate::buttonSizeHint()const
   // text
   QString string(q->text());
   bool empty = string.isEmpty();
-  if (empty)
+  if (computeMinimum && this->ElideMode != Qt::ElideNone)
+    {
+    // String to use for computing minimum size when eliding is enabled
+    string = QString::fromLatin1("...");
+    }
+  else if (empty)
     {
     string = QString::fromLatin1("XXXX");
     }
@@ -246,12 +257,9 @@ Qt::Alignment ctkPushButton::iconAlignment()const
 void ctkPushButton::setElideMode(Qt::TextElideMode newElideMode)
 {
   Q_D(ctkPushButton);
-  if (d->ElideMode == newElideMode)
-  {
-    return;
-  }
   d->ElideMode = newElideMode;
   this->update();
+  this->updateGeometry();
 }
 
 //-----------------------------------------------------------------------------
@@ -265,13 +273,14 @@ Qt::TextElideMode ctkPushButton::elideMode()const
 QSize ctkPushButton::minimumSizeHint()const
 {
   Q_D(const ctkPushButton);
-  return d->buttonSizeHint();
+  return d->buttonSizeHint(/*computeMinimum=*/true);
 }
 
 //-----------------------------------------------------------------------------
 QSize ctkPushButton::sizeHint()const
 {
-  return this->minimumSizeHint();
+  Q_D(const ctkPushButton);
+  return d->buttonSizeHint(/*computeMinimum=*/false);
 }
 
 //-----------------------------------------------------------------------------
@@ -303,12 +312,20 @@ void ctkPushButton::paintEvent(QPaintEvent * _event)
     {
     tf |= Qt::TextHideMnemonic;
     }
-  int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, opt.text).width();
+
   int buttonMargin = this->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, this);
+
+  int iconSpacing = d->IconSpacing;
+
+  QString text = opt.text;
+  if (d->ElideMode != Qt::ElideNone)
+    {
+    text = opt.fontMetrics.elidedText(text, d->ElideMode, opt.rect.width() /* - 2 * buttonMargin */ - iconSize.width() - iconSpacing - buttonMargin);
+    }
+  int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, text).width();
+
   // Draw Icon
   QStyleOptionButton iconOpt = d->drawIcon(&p);
-  // Spacing between the text and the checkbox
-  int iconSpacing = d->IconSpacing;
 
   // Draw Text
   if (d->ButtonTextAlignment & Qt::AlignLeft)
@@ -330,7 +347,7 @@ void ctkPushButton::paintEvent(QPaintEvent * _event)
       }
     else
       {
-      opt.rect.setLeft(opt.rect.x() + opt.rect.width() / 2 - textWidth / 2);
+      opt.rect.setLeft(opt.rect.x() + opt.rect.width() / 2 - textWidth / 2 - buttonMargin - iconSpacing);
       if (d->IconAlignment & Qt::AlignLeft)
         {
         opt.rect.setLeft( qMax(iconOpt.rect.right() + iconSpacing, opt.rect.left()) );
@@ -351,7 +368,6 @@ void ctkPushButton::paintEvent(QPaintEvent * _event)
   // all the computations have been made infering the text would be left oriented
   tf &= ~Qt::AlignHCenter & ~Qt::AlignRight;
   tf |= Qt::AlignLeft;
-  QString elidedText = opt.fontMetrics.elidedText(opt.text, d->ElideMode, opt.rect.width());
   this->style()->drawItemText(&p, opt.rect, tf, opt.palette, (opt.state & QStyle::State_Enabled),
-                              elidedText, QPalette::ButtonText);
+                              text, QPalette::ButtonText);
 }
