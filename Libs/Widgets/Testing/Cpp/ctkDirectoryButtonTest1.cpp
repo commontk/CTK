@@ -37,17 +37,23 @@
 int ctkDirectoryButtonTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
+  Qt::TextElideMode elideMode = Qt::ElideRight; // Qt::ElideNone
+
   QWidget topLevel;
   ctkDirectoryButton button;
-  
+  button.setElideMode(elideMode);
+
   QIcon defaultIcon = button.style()->standardIcon(QStyle::SP_DirIcon);
   QIcon icon = button.style()->standardIcon(QStyle::SP_MessageBoxQuestion);
   QIcon icon2 = button.style()->standardIcon(QStyle::SP_DesktopIcon);
 
   ctkDirectoryButton button2(".");
+  button2.setElideMode(elideMode);
   ctkDirectoryButton button3(icon, "..");
+  button3.setElideMode(elideMode);
   ctkDirectoryButton button4;
+  button4.setElideMode(elideMode);
   button4.setAcceptMode(QFileDialog::AcceptSave);
   button4.setOptions(button4.options() | ctkDirectoryButton::DontUseNativeDialog);
 
@@ -58,7 +64,7 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
   layout->addRow("Top (..) directory with icon:", &button3);
   layout->addRow("Writable directory only:", &button4);
   topLevel.setLayout(layout);
-  
+
   button.setCaption("Select a directory");
   if (button.caption() != "Select a directory")
     {
@@ -94,7 +100,7 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
     std::cerr << "ctkDirectoryButton::setIcon() failed." << std::endl;
     return EXIT_FAILURE;
     }
-  
+
 #ifdef USE_QFILEDIALOG_OPTIONS
   button.setOptions(QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
   if (button.options() != (QFileDialog::ShowDirsOnly |
@@ -102,7 +108,7 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
 #else
   button.setOptions(ctkDirectoryButton::ShowDirsOnly |
                     ctkDirectoryButton::ReadOnly);
-  
+
   if (button.options() != (ctkDirectoryButton::ShowDirsOnly |
                            ctkDirectoryButton::ReadOnly))
 #endif
@@ -116,7 +122,7 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
 
   button.setDirectory(QDir::home().absolutePath());
   if ( QDir(button.directory()) != QDir::home() ||
-       spyDirectoryChanged.count() != 1 || 
+       spyDirectoryChanged.count() != 1 ||
        spyDirectorySelected.count() != 1)
     {
     std::cerr<< "ctkDirectoryButton::setDirectory failed" << button.directory().toStdString() << std::endl;
@@ -129,7 +135,7 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
   button.setDirectory(QDir::home().absolutePath());
 
   if ( QDir(button.directory()) != QDir::home() ||
-       spyDirectoryChanged.count() != 0 || 
+       spyDirectoryChanged.count() != 0 ||
        spyDirectorySelected.count() != 1)
     {
     std::cerr<< "ctkDirectoryButton::setDirectory failed" << button.directory().toStdString() << std::endl;

@@ -61,11 +61,14 @@ class ctkPathLineEditPrivate;
 class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
 {
   Q_OBJECT
-  Q_FLAGS(Filters)
-  Q_PROPERTY ( QString label READ label WRITE setLabel )
 
-  Q_PROPERTY ( Filters filters READ filters WRITE setFilters)
-  Q_PROPERTY ( QString currentPath READ currentPath WRITE setCurrentPath USER true )
+  Q_PROPERTY(QString label READ label WRITE setLabel)
+
+  Q_PROPERTY(Filters filters READ filters WRITE setFilters)
+  Q_FLAGS(Filters)
+
+  Q_PROPERTY(QString currentPath READ currentPath WRITE setCurrentPath USER true)
+
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
   /// public API. We need to create a custom property that will be used when
   /// instanciating a QFileDialog in ctkPathLineEdit::browse()
@@ -100,7 +103,8 @@ class CTK_WIDGETS_EXPORT ctkPathLineEdit: public QWidget
 
   /// This property holds the policy describing how the size of the path line edit widget
   /// changes when the content changes.
-  /// The default value is AdjustToContentsOnFirstShow.
+  /// The default value is AdjustToMinimumContentsLength to prevent displaying
+  /// of a long path making the layout too wide.
   Q_PROPERTY(SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
   Q_ENUMS(SizeAdjustPolicy)
 
@@ -228,7 +232,7 @@ public:
   void setMinimumContentsLength(int lenght);
 
   /// Return the combo box internally used by the path line edit
-  QComboBox* comboBox() const;
+  Q_INVOKABLE QComboBox* comboBox() const;
 
   /// The width returned, in pixels, is the length of the file name (with no
   /// path) if any. Otherwise, it's enough for 15 to 20 characters.

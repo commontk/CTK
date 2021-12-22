@@ -43,6 +43,7 @@ class ctkDirectoryButtonPrivate;
 class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
 {
   Q_OBJECT
+
   /// This property holds the accept mode of the dialog.
   /// The action mode defines whether the dialog is for opening or saving files.
   /// By default, this property is set to AcceptOpen.
@@ -51,16 +52,28 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
   /// in a readonly one won't be selectable.
   /// AcceptOpen by default.
   Q_PROPERTY(QFileDialog::AcceptMode acceptMode READ acceptMode WRITE setAcceptMode)
+
+  /// This property stores the selected directory.
   Q_PROPERTY(QString directory READ directory WRITE setDirectory NOTIFY directoryChanged USER true)
+
   /// This property holds the title of the file dialog used to select a new directory
   /// If caption is not set, internally use QWidget::tooltip()
   Q_PROPERTY(QString caption READ caption WRITE setCaption)
+
   /// This property holds the text to display on the button. If null (by
   /// default), the current directory path is displayed instead.
   Q_PROPERTY(QString text READ text WRITE setText)
+
   /// This property holds the icon displayed on the button. QStyle::SP_DirIcon
   /// by default.
   Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
+
+  /// This property controls how to display long paths.
+  /// By default elide mode is Qt::ElideMiddle (long paths are displayed
+  /// by replacing the center of by ellipses) to avoid displaying a long path
+  /// requiring lot of horizontal space.
+  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
+
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
   /// public API. We need to create a custom property that will be used when
   /// instanciating a QFileDialog in ctkDirectoryButton::browse()
@@ -141,6 +154,14 @@ public:
 
   /// \sa acceptMode QFileDialog::AcceptMode
   void setAcceptMode(QFileDialog::AcceptMode mode);
+
+  /// setElideMode can elide the text displayed on the button.
+  /// Qt::ElideNone by default (sam as for a regular push button).
+  /// To prevent long paths forcing the button to take a lot of horizontal space,
+  /// set horizontal policy to QSizePolicy::Ignored and set elideMode to
+  /// Qt::ElideMiddle (or anything else than Qt::ElideNone).
+  void setElideMode(Qt::TextElideMode newMode);
+  Qt::TextElideMode elideMode()const; 
 
 public Q_SLOTS:
   /// browse() opens a pop up where the user can select a new directory for the

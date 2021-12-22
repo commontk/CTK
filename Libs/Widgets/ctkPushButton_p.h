@@ -35,11 +35,13 @@ public:
   void init();
 
   virtual QRect iconRect() const;
-  virtual QSize buttonSizeHint()const;
+  virtual QSize buttonSizeHint(bool computeMinimum)const;
   virtual QStyleOptionButton drawIcon(QPainter* p);
 
   // Tuning of the button look&feel
   Qt::Alignment ButtonTextAlignment;
   Qt::Alignment IconAlignment;
+  /// Whitespace between the text and the icon
   int IconSpacing;
+  Qt::TextElideMode ElideMode;
 };
