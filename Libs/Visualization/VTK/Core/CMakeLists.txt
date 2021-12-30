@@ -18,6 +18,13 @@ else()
       )
   endif()
 
+  set(_python_components)
+  if(CTK_LIB_Scripting/Python/Core AND CTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK)
+    list(APPEND _python_components
+      WrappingPythonCore
+      )
+  endif()
+
   find_package(VTK
     COMPONENTS
       ChartsCore
@@ -39,8 +46,8 @@ else()
       RenderingOpenGL2
       ViewsCore
       ViewsInfovis
-      WrappingPythonCore
       ViewsContext2D
+      ${_python_components}
       ${_test_components}
     )
 endif()
