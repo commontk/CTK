@@ -31,6 +31,7 @@
 
 class ctkVTKTextPropertyWidgetPrivate;
 class vtkTextProperty;
+class QLineEdit;
 
 /// \ingroup Visualization_VTK_Widgets
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKTextPropertyWidget : public QWidget
@@ -58,7 +59,12 @@ public:
 
   QString text()const;
   QString textLabel()const;
-  
+
+  /// Returns the widget that edits the text field.
+  /// This can be used for customizing properties of the widget, for example
+  /// setting a tooltip.
+  QLineEdit* textEditWidget() const;
+
   /// Color of vtkTextProperty
   QColor color()const;
   /// Opacity of vtkTextProperty

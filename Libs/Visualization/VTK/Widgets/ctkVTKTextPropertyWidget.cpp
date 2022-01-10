@@ -331,6 +331,7 @@ void ctkVTKTextPropertyWidget::setSize(double size)
 void ctkVTKTextPropertyWidget::setSizeVisible(bool visible)
 {
   Q_D(ctkVTKTextPropertyWidget);
+  d->SizeLabel->setVisible(visible);
   d->SizeSlider->setVisible(visible);
 }
 
@@ -339,4 +340,11 @@ bool ctkVTKTextPropertyWidget::isSizeVisible()const
 {
   Q_D(const ctkVTKTextPropertyWidget);
   return d->SizeSlider->isVisibleTo(const_cast<ctkVTKTextPropertyWidget*>(this));
+}
+
+//-----------------------------------------------------------------------------
+QLineEdit* ctkVTKTextPropertyWidget::textEditWidget() const
+{
+  Q_D(const ctkVTKTextPropertyWidget);
+  return d->TextLineEdit;
 }
