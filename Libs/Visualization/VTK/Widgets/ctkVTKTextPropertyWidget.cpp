@@ -340,3 +340,10 @@ bool ctkVTKTextPropertyWidget::isSizeVisible()const
   Q_D(const ctkVTKTextPropertyWidget);
   return d->SizeSlider->isVisibleTo(const_cast<ctkVTKTextPropertyWidget*>(this));
 }
+
+//-----------------------------------------------------------------------------
+QLineEdit* ctkVTKTextPropertyWidget::textEditWidget() const
+{
+  Q_D(const ctkVTKTextPropertyWidget);
+  return d->TextLineEdit;
+}
