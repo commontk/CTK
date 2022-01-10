@@ -331,6 +331,7 @@ void ctkVTKTextPropertyWidget::setSize(double size)
 void ctkVTKTextPropertyWidget::setSizeVisible(bool visible)
 {
   Q_D(ctkVTKTextPropertyWidget);
+  d->SizeLabel->setVisible(visible);
   d->SizeSlider->setVisible(visible);
 }
 
