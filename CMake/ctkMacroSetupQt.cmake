@@ -20,7 +20,7 @@
 
 #! \ingroup CMakeUtilities
 macro(ctkMacroSetupQt)
-  set(CTK_QT_VERSION "4" CACHE STRING "Expected Qt version")
+  set(CTK_QT_VERSION "5" CACHE STRING "Expected Qt version")
   mark_as_advanced(CTK_QT_VERSION)
 
   set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 4 5)
@@ -32,6 +32,7 @@ macro(ctkMacroSetupQt)
 
   if(CTK_QT_VERSION VERSION_GREATER "4")
     cmake_minimum_required(VERSION 2.8.12)
+    cmake_policy(SET CMP0053 NEW)
     find_package(Qt5 COMPONENTS Core)
     set(CTK_QT5_COMPONENTS Core Xml XmlPatterns Concurrent Sql Test Multimedia)
     if(CTK_ENABLE_Widgets OR CTK_LIB_Widgets OR CTK_LIB_CommandLineModules/Frontend/QtGui OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
