@@ -57,14 +57,24 @@ class CTK_WIDGETS_EXPORT ctkLanguageComboBox : public QComboBox
   Q_PROPERTY(QString defaultLanguage READ defaultLanguage WRITE setDefaultLanguage)
 
   /// This property controls the directory where the translation files are
-  /// located.
+  /// located. Setting it removes all other directories. When multiple directories
+  /// are set then it returns the first directory.
   /// \sa directory(), setDirectory()
   Q_PROPERTY(QString directory READ directory WRITE setDirectory)
+
+  /// This property controls the directories where the translation files are
+  /// located.
+  /// \sa directories(), setDirectories()
+  Q_PROPERTY(QStringList directories READ directories WRITE setDirectories)
 
   /// This property controls the current language of the combobox.
   /// The \a defaultLanguage by default.
   /// \sa currentLanguage(), setCurrentLanguage()
   Q_PROPERTY(QString currentLanguage READ currentLanguage WRITE setCurrentLanguage NOTIFY currentLanguageNameChanged USER true)
+
+  /// Controls visibility of country flags. It is enabled by default.
+  /// \sa countryFlagsVisible(), setCountryFlagsVisible()
+  Q_PROPERTY(bool countryFlagsVisible READ countryFlagsVisible WRITE setCountryFlagsVisible)
 
 public:
   typedef QComboBox Superclass;
@@ -92,9 +102,27 @@ public:
   QString directory()const;
   void setDirectory(const QString& dir);
 
+  /// Set the \a directories that may contain translation files.
+  /// The list of available languages will be populated based on
+  /// the discovered translation files.
+  /// The default language will still be the first item in the menu.
+  /// Empty by default.
+  QStringList directories()const;
+  void setDirectories(const QStringList& dir);
+
   /// Return the currently selected language of the combobox.
   /// \sa currentLanguage, setCurrentLanguage()
   QString currentLanguage()const;
+
+  /// Controls visibility of country flags.
+  /// If enabled then a country's flag and the language name are be displayed.
+  /// If disabled then language name is displayed along with the country's name (if there are multiple translations
+  /// for the language).
+  /// Recommended to be disabled when working with languages that are associated with many countries, such as Spanish:
+  /// displaying flag of Spain would not be appropriate for a generic Spanish translation;
+  /// Latin-America (for es-419 locale, https://en.wikipedia.org/wiki/Language_code) does not have a flag.
+  bool countryFlagsVisible()const;
+  void setCountryFlagsVisible(bool visible);
 
 public Q_SLOTS:
   /// Set the current language

@@ -24,6 +24,7 @@
 
 // CTK includes
 #include "ctkLanguageComboBox.h"
+#include <ctkPimpl.h>
 
 // ----------------------------------------------------------------------------
 class ctkLanguageComboBoxPrivate
@@ -34,19 +35,19 @@ protected:
 public:
   ctkLanguageComboBoxPrivate(ctkLanguageComboBox& object);
   void init();
-  void addLanguageFiles(const QStringList& fileNames);
-  bool addLanguage(const QString& language);
-  bool insertLanguage(int index, const QString& language);
-  bool languageItem(const QString& language,
-                    QIcon& icon, QString& text,QVariant& data);
+  void updateLanguageItems();
+  bool languageItem(const QString& localeCode,
+                    QIcon& icon, QString& text,QVariant& data, bool showCountry);
 
   QString DefaultLanguage;
-  QString LanguageDirectory;
+  QStringList LanguageDirectories;
+  bool CountryFlagsVisible;
 };
 
 // ----------------------------------------------------------------------------
 ctkLanguageComboBoxPrivate::ctkLanguageComboBoxPrivate(ctkLanguageComboBox &object)
   : q_ptr(&object)
+  , CountryFlagsVisible(true)
 {
 }
 
@@ -58,60 +59,94 @@ void ctkLanguageComboBoxPrivate::init()
   QObject::connect(q, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onLanguageChanged(int)));
 
-  /// Add default language if any
-  if (this->DefaultLanguage.isEmpty())
-    {
-    this->addLanguage(this->DefaultLanguage);
-    }
+  // Add default language if any
+  this->updateLanguageItems();
 }
 
 // ----------------------------------------------------------------------------
-void ctkLanguageComboBoxPrivate::addLanguageFiles(const QStringList& fileNames)
+void ctkLanguageComboBoxPrivate::updateLanguageItems()
 {
-  foreach(QString fileName, fileNames)
+  Q_Q(ctkLanguageComboBox);
+
+  // Save selection
+  QString selectedLocaleCode = q->itemData(q->currentIndex()).toString();
+
+  // Add default locale
+  QStringList localeCodes;
+  if (!this->DefaultLanguage.isEmpty())
+  {
+    localeCodes.append(this->DefaultLanguage);
+  }
+
+  // Get locale codes from translation files from all the specified directories
+  foreach(const QString& languageDirectory, this->LanguageDirectories)
+  {
+    QDir translationDir = QDir(languageDirectory);
+    QStringList fileNames = translationDir.entryList(QStringList("*.qm"));
+    foreach(const QString & fileName, fileNames)
     {
-    QFileInfo file(fileName);
-    if (!file.exists())
+      QFileInfo file(translationDir.filePath(fileName));
+      if (!file.exists())
       {
-      qWarning() << "File " << file.absoluteFilePath() << " doesn't exist.";
+        qWarning() << "File " << file.absoluteFilePath() << " doesn't exist.";
       }
-    // language is "de_ch" for a file named "/abc/def_de_ch.qm"
-    QString language = file.completeBaseName();
-    language.remove(0,language.indexOf('_') + 1);
-    this->addLanguage(language);
+      // localeCode is "de_ch" for a file named "/abc/def_de_ch.qm"
+      QString localeCode = file.completeBaseName();
+      localeCode.remove(0, localeCode.indexOf('_') + 1);
+      localeCodes.append(localeCode);
     }
-}
+  }
 
-// ----------------------------------------------------------------------------
-bool ctkLanguageComboBoxPrivate::addLanguage(const QString& language)
-{
-  Q_Q(ctkLanguageComboBox);
-  return this->insertLanguage(q->count(), language);
-}
+  localeCodes.removeDuplicates();
 
-// ----------------------------------------------------------------------------
-bool ctkLanguageComboBoxPrivate::insertLanguage(int index, const QString& language)
-{
-  Q_Q(ctkLanguageComboBox);
-  QIcon icon;
-  QString text;
-  QVariant data;
-  bool res =this->languageItem(language, icon, text, data);
-  if (res)
+  // Determine which languages have multiple locales
+  QSet< QLocale::Language > languagesFound;
+  QSet< QLocale::Language > languagesWithMultipleLocalesFound;
+  foreach(QString localeCode, localeCodes)
+  {
+    QLocale locale(localeCode);
+    if (languagesFound.contains(locale.language()))
     {
-    q->insertItem(index, icon, text, data);
+      // already found this language in another locale
+      languagesWithMultipleLocalesFound.insert(locale.language());
     }
-  return res;
+    else
+    {
+      languagesFound.insert(locale.language());
+		}
+	}
+
+	// Set language items in combobox
+  q->clear();
+	foreach(QString localeCode, localeCodes)
+	{
+		QLocale locale(localeCode);
+		bool showCountry = languagesWithMultipleLocalesFound.contains(locale.language());
+    QIcon icon;
+    QString text;
+    QVariant data;
+    bool res = this->languageItem(localeCode, icon, text, data, showCountry);
+    if (res)
+    {
+      q->insertItem(q->count(), icon, text, data);
+    }
+	}
+
+  // Restore selection
+  q->setCurrentIndex(q->findData(selectedLocaleCode));
+
+  q->update();
 }
 
 // ----------------------------------------------------------------------------
-bool ctkLanguageComboBoxPrivate::languageItem(const QString& language,
+bool ctkLanguageComboBoxPrivate::languageItem(const QString& localeCode,
                                               QIcon& icon,
                                               QString& text,
-                                              QVariant& data)
+                                              QVariant& data,
+                                              bool showCountry)
 {
-  QLocale locale(language);
-  if (language.isEmpty() ||
+  QLocale locale(localeCode);
+  if (localeCode.isEmpty() ||
       locale.name() == "C")
     {
     icon = QIcon();
@@ -119,14 +154,39 @@ bool ctkLanguageComboBoxPrivate::languageItem(const QString& language,
     data = QVariant();
     return false;
     }
-  QString countryFlag = locale.name();
-  countryFlag.remove(0, countryFlag.lastIndexOf('_') + 1);
-  countryFlag = countryFlag.toLower();
-  icon = QIcon(QString(":Icons/Languages/%1.png").arg(countryFlag));
-  text = QLocale::languageToString(locale.language());
+
+  if (this->CountryFlagsVisible)
+  {
+    QString countryFlag = locale.name();
+    countryFlag.remove(0, countryFlag.lastIndexOf('_') + 1);
+    countryFlag = countryFlag.toLower();
+    icon = QIcon(QString(":Icons/Languages/%1.png").arg(countryFlag));
+    text = QLocale::languageToString(locale.language());
+  }
+  else
+  {
+    icon = QIcon();
+    if (showCountry)
+    {
+      // There are multiple countries for the locale's language therefore include the country name.
+      text = QString("%1 (%2)")
+        .arg(QLocale::languageToString(locale.language()))
+        .arg(QLocale::countryToString(locale.country()));
+    }
+    else
+    {
+      // There is only one occurrence of the language, therefore omit the country name
+      // (e.g., instead of "Hungarian (Hungary)" just show "Hungarian").
+      text = QLocale::languageToString(locale.language());
+    }
+    
+  }
   data = locale.name();
+
   return true;
 }
+
+CTK_GET_CPP(ctkLanguageComboBox, bool, countryFlagsVisible, CountryFlagsVisible);
 
 // ----------------------------------------------------------------------------
 ctkLanguageComboBox::ctkLanguageComboBox(QWidget* _parent)
@@ -161,33 +221,11 @@ QString ctkLanguageComboBox::defaultLanguage() const
 }
 
 // ----------------------------------------------------------------------------
-void ctkLanguageComboBox::setDefaultLanguage(const QString& language)
+void ctkLanguageComboBox::setDefaultLanguage(const QString& localeCode)
 {
-  Q_D(ctkLanguageComboBox);
-  bool isValid = false;
-  if (!d->DefaultLanguage.isEmpty())
-    {
-    QIcon icon;
-    QString text;
-    QVariant data;
-    isValid = d->languageItem(language, icon, text, data);
-    if (isValid)
-      {
-      // Replace the default language
-      this->setItemIcon(0, icon);
-      this->setItemText(0, text);
-      this->setItemData(0, data);
-      }
-    else
-      {
-      this->removeItem(0);
-      }
-    }
-  else
-    {
-    isValid = d->insertLanguage(0, language);
-    }
-  d->DefaultLanguage = isValid ? this->itemData(0).toString() : QString();
+	Q_D(ctkLanguageComboBox);
+  d->DefaultLanguage = localeCode;
+  d->updateLanguageItems();
 }
 
 // ----------------------------------------------------------------------------
@@ -207,29 +245,32 @@ void ctkLanguageComboBox::setCurrentLanguage(const QString &language)
 QString ctkLanguageComboBox::directory() const
 {
   Q_D(const ctkLanguageComboBox);
-  return d->LanguageDirectory;
+  if (d->LanguageDirectories.isEmpty())
+  {
+    return QString();
+  }
+  return d->LanguageDirectories.at(0);
 }
 
 // ----------------------------------------------------------------------------
 void ctkLanguageComboBox::setDirectory(const QString& dir)
 {
+  this->setDirectories(QStringList() << dir);
+}
+
+// ----------------------------------------------------------------------------
+QStringList ctkLanguageComboBox::directories() const
+{
+  Q_D(const ctkLanguageComboBox);
+  return d->LanguageDirectories;
+}
+
+// ----------------------------------------------------------------------------
+void ctkLanguageComboBox::setDirectories(const QStringList& dir)
+{
   Q_D(ctkLanguageComboBox);
-
-  d->LanguageDirectory = dir;
-
-  /// Recover all the translation file from the directory Translations
-  QDir translationDir = QDir(d->LanguageDirectory);
-  QStringList files;
-  QStringList fileNames = translationDir.entryList(QStringList("*.qm"));
-  foreach(const QString& fileName, fileNames)
-    {
-    files << translationDir.filePath(fileName);
-    }
-
-  /// Add all the languages availables
-  d->addLanguageFiles(files);
-
-  this->update();
+  d->LanguageDirectories = dir;
+  d->updateLanguageItems();
 }
 
 // ----------------------------------------------------------------------------
@@ -238,4 +279,16 @@ void ctkLanguageComboBox::onLanguageChanged(int index)
   Q_UNUSED(index);
   QString currentLanguage = this->currentLanguage();
   emit currentLanguageNameChanged(currentLanguage);
+}
+
+// ----------------------------------------------------------------------------
+void ctkLanguageComboBox::setCountryFlagsVisible(bool visible)
+{
+  Q_D(ctkLanguageComboBox);
+  if (d->CountryFlagsVisible == visible)
+  {
+    return;
+  }
+  d->CountryFlagsVisible = visible;
+  d->updateLanguageItems();
 }
