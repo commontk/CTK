@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>248</width>
-    <height>212</height>
+    <width>301</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,16 @@
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::ExpandingFieldsGrow</enum>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -70,14 +79,14 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="AmbientLabel">
      <property name="text">
       <string>Ambient:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="ctkSliderWidget" name="AmbientSliderSpinBox">
      <property name="singleStep">
       <double>0.010000000000000</double>
@@ -87,14 +96,14 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="DiffuseLabel">
      <property name="text">
       <string>Diffuse:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="ctkSliderWidget" name="DiffuseSliderSpinBox">
      <property name="singleStep">
       <double>0.010000000000000</double>
@@ -107,14 +116,14 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="SpecularLabel">
      <property name="text">
       <string>Specular:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="ctkSliderWidget" name="SpecularSliderSpinBox">
      <property name="singleStep">
       <double>0.010000000000000</double>
@@ -124,7 +133,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="SpecularPowerLabel">
      <property name="toolTip">
       <string>Specular power</string>
@@ -134,7 +143,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <widget class="ctkSliderWidget" name="SpecularPowerSliderSpinBox">
      <property name="decimals">
       <number>1</number>
@@ -150,28 +159,28 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="9" column="0">
     <widget class="QLabel" name="BackfaceCullingLabel">
      <property name="text">
       <string>Backface Culling:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="9" column="1">
     <widget class="QCheckBox" name="BackfaceCullingCheckBox">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
+   <item row="10" column="0">
     <widget class="QLabel" name="PreviewLabel">
      <property name="text">
       <string>Preview:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="10" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="ctkMaterialPropertyPreviewLabel" name="MaterialPropertyPreviewLabel">
@@ -245,6 +254,77 @@
      </item>
     </layout>
    </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="MetallicLabel">
+     <property name="text">
+      <string>Metallic:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="RoughnessLabel">
+     <property name="text">
+      <string>Roughness:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="ctkSliderWidget" name="MetallicSliderSpinBox">
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="ctkSliderWidget" name="RoughnessSliderSpinBox">
+     <property name="singleStep">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="InterpolationModeLabel">
+     <property name="text">
+      <string>Mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QComboBox" name="InterpolationModeComboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Flat</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Gouraud</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Phong</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PBR</string>
+      </property>
+     </item>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -273,12 +353,12 @@
    <slot>setAmbient(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>168</x>
-     <y>67</y>
+     <x>257</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
-     <x>116</x>
-     <y>209</y>
+     <x>119</x>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -289,12 +369,12 @@
    <slot>setDiffuse(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>202</x>
-     <y>100</y>
+     <x>291</x>
+     <y>121</y>
     </hint>
     <hint type="destinationlabel">
-     <x>116</x>
-     <y>209</y>
+     <x>119</x>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -305,12 +385,12 @@
    <slot>setSpecular(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>222</x>
-     <y>126</y>
+     <x>300</x>
+     <y>146</y>
     </hint>
     <hint type="destinationlabel">
-     <x>116</x>
-     <y>209</y>
+     <x>119</x>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -321,12 +401,12 @@
    <slot>setSpecularPower(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>234</x>
-     <y>152</y>
+     <x>300</x>
+     <y>171</y>
     </hint>
     <hint type="destinationlabel">
-     <x>116</x>
-     <y>209</y>
+     <x>119</x>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -341,8 +421,8 @@
      <y>14</y>
     </hint>
     <hint type="destinationlabel">
-     <x>103</x>
-     <y>191</y>
+     <x>119</x>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -353,12 +433,44 @@
    <slot>setOpacity(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>105</x>
-     <y>24</y>
+     <x>194</x>
+     <y>46</y>
     </hint>
     <hint type="destinationlabel">
-     <x>103</x>
+     <x>119</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MetallicSliderSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MaterialPropertyPreviewLabel</receiver>
+   <slot>setMetallic(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
      <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>109</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RoughnessSliderSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MaterialPropertyPreviewLabel</receiver>
+   <slot>setRoughness(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>213</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>104</x>
+     <y>258</y>
     </hint>
    </hints>
   </connection>

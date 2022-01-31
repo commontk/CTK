@@ -39,29 +39,41 @@ class CTK_WIDGETS_EXPORT ctkMaterialPropertyPreviewLabel : public QFrame
   Q_PROPERTY(double specular READ specular WRITE setSpecular)
   Q_PROPERTY(double specularPower READ specularPower WRITE setSpecularPower)
 
+  Q_PROPERTY(double metallic READ metallic WRITE setMetallic)
+  Q_PROPERTY(double roughness READ roughness WRITE setRoughness)
+
   Q_PROPERTY(QColor color READ color WRITE setColor)
+  Q_PROPERTY(bool interpolationPBR READ interpolationPBR WRITE setInterpolationPBR)
   Q_PROPERTY(double opacity READ opacity WRITE setOpacity)
   Q_PROPERTY(double gridOpacity READ gridOpacity WRITE setGridOpacity)
-public : 
+public :
 
   ctkMaterialPropertyPreviewLabel(QWidget *parent = 0);
+  /// Non-PBR interpolation
   ctkMaterialPropertyPreviewLabel(const QColor& color, double opacity,
     double ambient, double diffuse, double specular, double specularPower,
     QWidget *parent = 0);
+  /// PBR interpolation
+  ctkMaterialPropertyPreviewLabel(const QColor& color, double opacity,
+    double diffuse, double metallic, double roughness,
+    QWidget* parent = 0);
   virtual ~ctkMaterialPropertyPreviewLabel();
-  
+
   double ambient()const;
   double diffuse()const;
   double specular()const;
   double specularPower()const;
-  
+  double metallic()const;
+  double roughness()const;
+
   QColor color()const;
+  bool interpolationPBR()const;
   double opacity()const;
   double gridOpacity()const;
 
   /// Reimplemented to make it square
   virtual int heightForWidth(int w)const;
-  
+
   virtual QSize sizeHint()const;
 public Q_SLOTS:
   /// Valid range: [0,1]
@@ -72,13 +84,18 @@ public Q_SLOTS:
   void setSpecular(double newSpecular);
   /// Valid range: [1,inf[
   void setSpecularPower(double newSpecularPower);
-  
+  /// Valid range: [0,1]
+  void setMetallic(double newMetallic);
+  /// Valid range: [0,1]
+  void setRoughness(double newRoughness);
+
   void setColor(const QColor& newColor);
+  void setInterpolationPBR(bool pbr);
   /// Valid range: [0, 1]
   void setOpacity(double newOpacity);
   void setGridOpacity(double newGridOpacity);
 
-protected: 
+protected:
   void paintEvent(QPaintEvent *);
   void draw(QImage& image);
 
@@ -89,4 +106,3 @@ private :
 };
 
 #endif
-

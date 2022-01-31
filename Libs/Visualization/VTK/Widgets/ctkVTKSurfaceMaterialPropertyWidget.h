@@ -56,10 +56,13 @@ protected:
 
   virtual void onColorChanged(const QColor& newColor);
   virtual void onOpacityChanged(double newOpacity);
+  virtual void onInterpolationModeChanged(ctkMaterialPropertyWidget::InterpolationMode newMode);
   virtual void onAmbientChanged(double newAmbient);
   virtual void onDiffuseChanged(double newDiffuse);
   virtual void onSpecularChanged(double newSpecular);
   virtual void onSpecularPowerChanged(double newSpecularPower);
+  virtual void onMetallicChanged(double newMetallic);
+  virtual void onRoughnessChanged(double newRoughness);
   virtual void onBackfaceCullingChanged(bool newBackfaceCulling);
 
 private:

@@ -38,6 +38,10 @@ public:
   ctkVTKSurfaceMaterialPropertyWidgetPrivate(ctkVTKSurfaceMaterialPropertyWidget& object);
   vtkSmartPointer<vtkProperty> Property;
   double                       SettingColor;
+
+  // Flag that indicates that the GUI is being updated from the VTK property,
+  // therefore GUI changes should not trigger VTK property update.
+  bool IsUpdatingGUI;
 };
 
 //-----------------------------------------------------------------------------
@@ -45,6 +49,7 @@ ctkVTKSurfaceMaterialPropertyWidgetPrivate::ctkVTKSurfaceMaterialPropertyWidgetP
   :q_ptr(&object)
 {
   this->SettingColor = false;
+  this->IsUpdatingGUI = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -98,13 +103,32 @@ void ctkVTKSurfaceMaterialPropertyWidget::updateFromProperty()
     {
     return;
     }
+  if (d->IsUpdatingGUI)
+    {
+    // Update is already in progress
+    return;
+    }
+  d->IsUpdatingGUI = true;
   double* c = d->Property->GetColor();
   this->setColor(QColor::fromRgbF(qMin(c[0],1.), qMin(c[1], 1.), qMin(c[2],1.)));
   this->setOpacity(d->Property->GetOpacity());
+
+  switch (d->Property->GetInterpolation())
+    {
+    case VTK_FLAT: this->setInterpolationMode(InterpolationFlat); break;
+    case VTK_GOURAUD: this->setInterpolationMode(InterpolationGouraud); break;
+    case VTK_PHONG: this->setInterpolationMode(InterpolationPhong); break;
+    case VTK_PBR: this->setInterpolationMode(InterpolationPBR); break;
+    }
+
   this->setAmbient(d->Property->GetAmbient());
   this->setDiffuse(d->Property->GetDiffuse());
   this->setSpecular(d->Property->GetSpecular());
   this->setSpecularPower(d->Property->GetSpecularPower());
+
+  this->setMetallic(d->Property->GetMetallic());
+  this->setRoughness(d->Property->GetRoughness());
+  d->IsUpdatingGUI = false;
 }
 
 // --------------------------------------------------------------------------
@@ -141,6 +165,26 @@ void ctkVTKSurfaceMaterialPropertyWidget::onOpacityChanged(double newOpacity)
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetOpacity(this->opacity());
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkVTKSurfaceMaterialPropertyWidget::onInterpolationModeChanged(
+  ctkMaterialPropertyWidget::InterpolationMode newInterpolationMode)
+{
+  Q_D(ctkVTKSurfaceMaterialPropertyWidget);
+  this->Superclass::onInterpolationModeChanged(newInterpolationMode);
+  if (d->Property.GetPointer() != 0)
+    {
+    // the value might have changed since we fired the signal, use the current
+    // up-to-date value then.
+    switch (this->interpolationMode())
+      {
+      case InterpolationFlat: d->Property->SetInterpolationToFlat(); break;
+      case InterpolationGouraud: d->Property->SetInterpolationToGouraud(); break;
+      case InterpolationPhong: d->Property->SetInterpolationToPhong(); break;
+      case InterpolationPBR: d->Property->SetInterpolationToPBR(); break;
+      }
     }
 }
 
@@ -193,6 +237,32 @@ void ctkVTKSurfaceMaterialPropertyWidget::onSpecularPowerChanged(double newSpecu
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetSpecularPower(this->specularPower());
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkVTKSurfaceMaterialPropertyWidget::onMetallicChanged(double newMetallic)
+{
+  Q_D(ctkVTKSurfaceMaterialPropertyWidget);
+  this->Superclass::onMetallicChanged(newMetallic);
+  if (d->Property.GetPointer() != 0)
+    {
+    // the value might have changed since we fired the signal, use the current
+    // up-to-date value then.
+    d->Property->SetMetallic(this->metallic());
+    }
+}
+
+// --------------------------------------------------------------------------
+void ctkVTKSurfaceMaterialPropertyWidget::onRoughnessChanged(double newRoughness)
+{
+  Q_D(ctkVTKSurfaceMaterialPropertyWidget);
+  this->Superclass::onRoughnessChanged(newRoughness);
+  if (d->Property.GetPointer() != 0)
+    {
+    // the value might have changed since we fired the signal, use the current
+    // up-to-date value then.
+    d->Property->SetRoughness(this->roughness());
     }
 }
 
