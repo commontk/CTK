@@ -42,12 +42,15 @@ public:
   ctkMaterialPropertyPreviewLabelPrivate(ctkMaterialPropertyPreviewLabel& object);
 
   QColor Color;
+  bool InterpolationPBR;
   double Opacity;
 
   double Ambient;
   double Diffuse;
   double Specular;
   double SpecularPower;
+  double Metallic;
+  double Roughness;
 
   double GridOpacity;
 };
@@ -57,11 +60,14 @@ ctkMaterialPropertyPreviewLabelPrivate::ctkMaterialPropertyPreviewLabelPrivate(c
   :q_ptr(&object)
 {
   this->Color = Qt::white;
+  this->InterpolationPBR = false;
   this->Opacity = 1.;
   this->Ambient = 0.0;
   this->Diffuse = 1.0;
   this->Specular = 0.0;
   this->SpecularPower = 1;
+  this->Metallic = 0.0;
+  this->Roughness = 0.5;
 
   this->GridOpacity = 0.6;
 }
@@ -84,12 +90,30 @@ ctkMaterialPropertyPreviewLabel::ctkMaterialPropertyPreviewLabel(
   , d_ptr(new ctkMaterialPropertyPreviewLabelPrivate(*this))
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
+  d->InterpolationPBR = false;
   d->Color = color;
   d->Opacity = opacity;
   d->Ambient = ambient;
   d->Diffuse = diffuse;
   d->Specular = specular;
   d->SpecularPower = specularPower;
+}
+
+//-----------------------------------------------------------------------------
+ctkMaterialPropertyPreviewLabel::ctkMaterialPropertyPreviewLabel(
+  const QColor& color, double opacity,
+  double diffuse, double metallic, double roughness,
+  QWidget *newParent)
+  : QFrame(newParent)
+  , d_ptr(new ctkMaterialPropertyPreviewLabelPrivate(*this))
+{
+  Q_D(ctkMaterialPropertyPreviewLabel);
+  d->InterpolationPBR = true;
+  d->Color = color;
+  d->Opacity = opacity;
+  d->Diffuse = diffuse;
+  d->Metallic = metallic;
+  d->Roughness = roughness;
 }
 
 //-----------------------------------------------------------------------------
@@ -158,6 +182,36 @@ double ctkMaterialPropertyPreviewLabel::specularPower()const
 }
 
 //-----------------------------------------------------------------------------
+void ctkMaterialPropertyPreviewLabel::setMetallic(double newMetallic)
+{
+  Q_D(ctkMaterialPropertyPreviewLabel);
+  d->Metallic = newMetallic;
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+double ctkMaterialPropertyPreviewLabel::metallic()const
+{
+  Q_D(const ctkMaterialPropertyPreviewLabel);
+  return d->Metallic;
+}
+
+//-----------------------------------------------------------------------------
+void ctkMaterialPropertyPreviewLabel::setRoughness(double newRoughness)
+{
+  Q_D(ctkMaterialPropertyPreviewLabel);
+  d->Roughness = newRoughness;
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+double ctkMaterialPropertyPreviewLabel::roughness()const
+{
+  Q_D(const ctkMaterialPropertyPreviewLabel);
+  return d->Roughness;
+}
+
+//-----------------------------------------------------------------------------
 void ctkMaterialPropertyPreviewLabel::setColor(const QColor& newColor)
 {
   Q_D(ctkMaterialPropertyPreviewLabel);
@@ -170,6 +224,21 @@ QColor ctkMaterialPropertyPreviewLabel::color()const
 {
   Q_D(const ctkMaterialPropertyPreviewLabel);
   return d->Color;
+}
+
+//-----------------------------------------------------------------------------
+void ctkMaterialPropertyPreviewLabel::setInterpolationPBR(bool pbr)
+{
+  Q_D(ctkMaterialPropertyPreviewLabel);
+  d->InterpolationPBR = pbr;
+  this->update();
+}
+
+//-----------------------------------------------------------------------------
+bool ctkMaterialPropertyPreviewLabel::interpolationPBR()const
+{
+  Q_D(const ctkMaterialPropertyPreviewLabel);
+  return d->InterpolationPBR;
 }
 
 //-----------------------------------------------------------------------------
@@ -237,6 +306,24 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
   qreal diffuse = d->Diffuse;
   qreal specular = d->Specular;
   qreal specular_power = d->SpecularPower;
+
+  if (d->InterpolationPBR)
+    {
+    // Try to approximate PBR with Phong rendering.
+    // This is a very rough approximation, but instead of trying to make it
+    // more accurate, it would be better to accept an externally-rendered
+    // bitmap (as the appearance could be very complex, especially when
+    // textures and more sophisticated lighting is used).
+    diffuse = (1.0 - d->Metallic) * (0.75 + 0.25 * d->Roughness);
+    specular = d->Diffuse * (0.75 * (1.0 - d->Roughness));
+    specular_power = 20.0 + 30.0 * (1.0 - d->Roughness);
+    // Use ambient to make sure overall brightness (original diffuse lighting) is preserved
+    ambient = d->Diffuse - specular - diffuse;
+    if (ambient < 0)
+      {
+      ambient = 0;
+      }
+    }
 
   int size = qMin(image.width(), image.height());
   int size8 = qMax(size / 8, 1);
