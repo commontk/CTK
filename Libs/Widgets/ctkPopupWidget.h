@@ -113,7 +113,11 @@ public:
 
 protected:
   virtual void leaveEvent(QEvent* event);
+#if QT_VERSION >= 0x060000
+  virtual void enterEvent(QEnterEvent* event);
+#else
   virtual void enterEvent(QEvent* event);
+#endif
   virtual bool eventFilter(QObject* obj, QEvent* event);
 
   /// Widget the popup is attached to. It opens right under \a baseWidget

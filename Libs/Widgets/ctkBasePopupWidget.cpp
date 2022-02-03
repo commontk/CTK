@@ -21,7 +21,9 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
+#if QT_VERSION < 0x060000
 #include <QDesktopWidget>
+#endif
 #include <QDir>
 #include <QEvent>
 #include <QLabel>

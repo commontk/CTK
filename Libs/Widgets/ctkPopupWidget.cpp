@@ -20,7 +20,9 @@
 
 // Qt includes
 #include <QApplication>
+#if QT_VERSION < 0x060000
 #include <QDesktopWidget>
+#endif
 #include <QDialog>
 #include <QDir>
 #include <QEvent>
@@ -416,7 +418,11 @@ void ctkPopupWidget::leaveEvent(QEvent* event)
 }
 
 // --------------------------------------------------------------------------
+#if QT_VERSION >= 0x060000
+void ctkPopupWidget::enterEvent(QEnterEvent* event)
+#else
 void ctkPopupWidget::enterEvent(QEvent* event)
+#endif
 {
   Q_D(ctkPopupWidget);
   QTimer::singleShot(d->ShowDelay, this, SLOT(updatePopup()));
