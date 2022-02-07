@@ -113,15 +113,15 @@ void ctkLanguageComboBoxPrivate::updateLanguageItems()
     else
     {
       languagesFound.insert(locale.language());
-		}
-	}
+    }
+  }
 
-	// Set language items in combobox
+  // Set language items in combobox
   q->clear();
-	foreach(QString localeCode, localeCodes)
-	{
-		QLocale locale(localeCode);
-		bool showCountry = languagesWithMultipleLocalesFound.contains(locale.language());
+  foreach(QString localeCode, localeCodes)
+  {
+    QLocale locale(localeCode);
+    bool showCountry = languagesWithMultipleLocalesFound.contains(locale.language());
     QIcon icon;
     QString text;
     QVariant data;
@@ -130,7 +130,12 @@ void ctkLanguageComboBoxPrivate::updateLanguageItems()
     {
       q->insertItem(q->count(), icon, text, data);
     }
-	}
+  }
+
+  // Items are inserted based on order in file folders (usually locale name,
+  // so Spanish - "es" would be displayed above Finnish "fi"). To fix that
+  // we now sort based on the displayed text.
+  q->model()->sort(0, Qt::AscendingOrder);
 
   // Restore selection
   q->setCurrentIndex(q->findData(selectedLocaleCode));
@@ -223,7 +228,7 @@ QString ctkLanguageComboBox::defaultLanguage() const
 // ----------------------------------------------------------------------------
 void ctkLanguageComboBox::setDefaultLanguage(const QString& localeCode)
 {
-	Q_D(ctkLanguageComboBox);
+  Q_D(ctkLanguageComboBox);
   d->DefaultLanguage = localeCode;
   d->updateLanguageItems();
 }
