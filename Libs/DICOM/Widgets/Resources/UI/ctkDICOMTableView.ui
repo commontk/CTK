@@ -88,6 +88,9 @@
    </item>
    <item>
     <widget class="QTableView" name="tblDicomDatabaseView">
+     <property name="tabKeyNavigation">
+      <bool>false</bool>
+     </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
