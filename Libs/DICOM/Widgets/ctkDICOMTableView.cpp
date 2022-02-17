@@ -114,6 +114,7 @@ void ctkDICOMTableViewPrivate::init()
   this->leSearchBox->setShowSearchIcon(true);
 
   this->tblDicomDatabaseView->viewport()->installEventFilter(q);
+  this->tblDicomDatabaseView->installEventFilter(q);
 
   this->dicomSQLFilterModel->setSourceModel(&this->dicomSQLModel);
   this->dicomSQLFilterModel->setFilterKeyColumn(-1);
@@ -572,6 +573,31 @@ bool ctkDICOMTableView::eventFilter(QObject *obj, QEvent *event)
       if (!d->tblDicomDatabaseView->indexAt(pos).isValid())
       {
         return true;
+      }
+    }
+  }
+  else if (obj == d->tblDicomDatabaseView)
+  {
+    if (event->type() == QEvent::KeyPress)
+    {
+      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+      QAbstractItemModel* itemModel = d->tblDicomDatabaseView->model();
+      if (keyEvent != nullptr && itemModel->rowCount() > 0)
+      {
+        if (keyEvent->key() == Qt::Key_Home)
+        {
+          //d->tblDicomDatabaseView->setCurrentIndex(itemModel->index(0, 0));
+          d->tblDicomDatabaseView->selectRow(0);
+          d->tblDicomDatabaseView->scrollToTop();
+          return true;
+        }
+        else if (keyEvent->key() == Qt::Key_End)
+        {
+          //d->tblDicomDatabaseView->setCurrentIndex(itemModel->index(itemModel->rowCount() - 1, 0));
+          d->tblDicomDatabaseView->selectRow(itemModel->rowCount() - 1);
+          d->tblDicomDatabaseView->scrollToBottom();
+          return true;
+        }
       }
     }
   }
