@@ -335,6 +335,8 @@ void ctkPathLineEditPrivate::init()
   q->setSizePolicy(QSizePolicy(
                      QSizePolicy::Expanding, QSizePolicy::Fixed,
                      QSizePolicy::LineEdit));
+
+  q->setFocusProxy(this->LineEdit);
 }
 
 //------------------------------------------------------------------------------
