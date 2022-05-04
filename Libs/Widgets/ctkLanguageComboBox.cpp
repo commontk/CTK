@@ -42,12 +42,14 @@ public:
   QString DefaultLanguage;
   QStringList LanguageDirectories;
   bool CountryFlagsVisible;
+  bool UpdatingLanguageItems; // set to true while in UpdateLanguageItems()
 };
 
 // ----------------------------------------------------------------------------
 ctkLanguageComboBoxPrivate::ctkLanguageComboBoxPrivate(ctkLanguageComboBox &object)
   : q_ptr(&object)
   , CountryFlagsVisible(true)
+  , UpdatingLanguageItems(false)
 {
 }
 
@@ -67,6 +69,13 @@ void ctkLanguageComboBoxPrivate::init()
 void ctkLanguageComboBoxPrivate::updateLanguageItems()
 {
   Q_Q(ctkLanguageComboBox);
+
+  if (this->UpdatingLanguageItems)
+    {
+    return;
+    }
+  this->UpdatingLanguageItems = true;
+  QString languageBeforeUpdate = q->currentLanguage();
 
   // Save selection
   QString selectedLocaleCode = q->itemData(q->currentIndex()).toString();
@@ -141,6 +150,16 @@ void ctkLanguageComboBoxPrivate::updateLanguageItems()
   q->setCurrentIndex(q->findData(selectedLocaleCode));
 
   q->update();
+
+  QString languageAfterUpdate = q->currentLanguage();
+  this->UpdatingLanguageItems = false;
+
+  // While this->UpdatingLanguageItems was set to true, current index changes were
+  // ignored, therefore we need to emit the language name changed signal now.
+  if (languageBeforeUpdate != languageAfterUpdate)
+  {
+    emit q->currentLanguageNameChanged(languageAfterUpdate);
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -279,9 +298,22 @@ void ctkLanguageComboBox::setDirectories(const QStringList& dir)
 }
 
 // ----------------------------------------------------------------------------
+void ctkLanguageComboBox::refreshFromDirectories()
+{
+  Q_D(ctkLanguageComboBox);
+  d->updateLanguageItems();
+}
+
+// ----------------------------------------------------------------------------
 void ctkLanguageComboBox::onLanguageChanged(int index)
 {
   Q_UNUSED(index);
+  Q_D(ctkLanguageComboBox);
+  if (d->UpdatingLanguageItems)
+    {
+    // do not emit event during transient changes in UpdateLanguageItems()
+    return;
+    }
   QString currentLanguage = this->currentLanguage();
   emit currentLanguageNameChanged(currentLanguage);
 }

@@ -80,12 +80,6 @@ set(PLUGIN_SRCS
   ctkRangeSliderPlugin.h
   ctkRangeWidgetPlugin.cpp
   ctkRangeWidgetPlugin.h
-  ctkThumbnailLabelPlugin.cpp
-  ctkThumbnailLabelPlugin.h
-  ctkTransferFunctionViewPlugin.cpp
-  ctkTransferFunctionViewPlugin.h
-  ctkTreeComboBoxPlugin.cpp
-  ctkTreeComboBoxPlugin.h
   ctkSearchBoxPlugin.cpp
   ctkSearchBoxPlugin.h
   ctkSettingsPanelPlugin.cpp
@@ -94,6 +88,12 @@ set(PLUGIN_SRCS
   ctkSettingsDialogPlugin.h
   ctkSliderWidgetPlugin.cpp
   ctkSliderWidgetPlugin.h
+  ctkThumbnailLabelPlugin.cpp
+  ctkThumbnailLabelPlugin.h
+  ctkTransferFunctionViewPlugin.cpp
+  ctkTransferFunctionViewPlugin.h
+  ctkTreeComboBoxPlugin.cpp
+  ctkTreeComboBoxPlugin.h
   ctkWorkflowButtonBoxWidgetPlugin.cpp
   ctkWorkflowButtonBoxWidgetPlugin.h
   ctkWorkflowWidgetStepPlugin.cpp

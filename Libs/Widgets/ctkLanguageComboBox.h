@@ -95,10 +95,7 @@ public:
   void setDefaultLanguage(const QString& language);
 
   /// Set the \a directory with all the translation files.
-  /// The list of available languages will be populated based on
-  /// the discovered translation files.
-  /// The default language will still be the first item in the menu.
-  /// Empty by default.
+  /// \sa setDirectories
   QString directory()const;
   void setDirectory(const QString& dir);
 
@@ -107,6 +104,8 @@ public:
   /// the discovered translation files.
   /// The default language will still be the first item in the menu.
   /// Empty by default.
+  /// If translation files are added/removed from the directories then
+  /// refreshFromDirectories() slot can be used to update the displayed list.
   QStringList directories()const;
   void setDirectories(const QStringList& dir);
 
@@ -128,6 +127,10 @@ public Q_SLOTS:
   /// Set the current language
   /// \sa currentLanguage, currentLanguage()
   void setCurrentLanguage(const QString& language);
+
+  /// Refresh the list of languages from the currently set directories.
+  /// \sa setDirectories()
+  void refreshFromDirectories();
 
 protected slots:
   void onLanguageChanged(int index);
