@@ -16,7 +16,7 @@
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0.txt
+#      https://www.apache.org/licenses/LICENSE-2.0.txt
 #
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,6 +47,13 @@ endif()
 #
 # If set, this variable represents an other directory in which external project files
 # are searched for if not already found in ``EXTERNAL_PROJECT_DIR``.
+
+#.rst:
+# .. cmake:variable:: EXTERNAL_PROJECT_ADDITIONAL_DIRS
+#
+# If set, this variable represents additional directories in which external project files
+# are searched for if not already found in ``EXTERNAL_PROJECT_DIR`` and
+# ``EXTERNAL_PROJECT_ADDITIONAL_DIR``.
 
 #.rst:
 # .. cmake:variable:: EXTERNAL_PROJECT_FILE_PREFIX
@@ -85,12 +92,17 @@ endif()
 #.rst:
 # .. cmake:variable:: EP_GIT_PROTOCOL
 #
-# The value of this variable is controled by the option ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL``
-# automatically defined by including this CMake module. Setting this option allows to update the value of
-# ``EP_GIT_PROTOCOL`` variable.
+# The value of this variable is always set to ``https``.
 #
-# If enabled, the variable ``EP_GIT_PROTOCOL`` is set to ``git``. Otherwise, it is set to ``https``.
-# The option is enabled by default.
+# Following the removal of git protocol by GitHub, the option
+# ``<SUPERBUILD_TOPLEVEL_PROJECT>_USE_GIT_PROTOCOL`` is obsolete.
+# It allowed to toggle between ``git`` and ``https``.
+# If this option is enabled, a warning is reported and the option is forced to ``OFF``.
+#
+# Similarly, if the variable ``EP_GIT_PROTOCOL`` is already set to ``git``, a warning is reported
+# and the value is forced to ``https``.
+#
+# See details at https://github.blog/2021-09-01-improving-git-protocol-security-github
 #
 # The variable ``EP_GIT_PROTOCOL`` can be used when adding external project. For example:
 #
@@ -102,9 +114,22 @@ endif()
 #     [...]
 #     )
 #
-option(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use https instead." ON)
-set(EP_GIT_PROTOCOL "git")
-if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
+if(DEFINED ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL AND ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL)
+  message(WARNING "Forcing ${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL to OFF (Already set to ON in current scope)")
+  set(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_GIT_PROTOCOL OFF CACHE BOOL "" FORCE)
+endif()
+if(DEFINED EP_GIT_PROTOCOL)
+  if("${EP_GIT_PROTOCOL}" STREQUAL "git")
+    get_property(_value_set_in_cache CACHE EP_GIT_PROTOCOL PROPERTY VALUE SET)
+    if(_value_set_in_cache)
+      message(WARNING "Forcing EP_GIT_PROTOCOL cache variable to 'https' (Already set to '${EP_GIT_PROTOCOL}' in current scope)")
+      set(EP_GIT_PROTOCOL "https" CACHE STRING "" FORCE)
+    else()
+      message(WARNING "Forcing EP_GIT_PROTOCOL variable to 'https' (Already set to '${EP_GIT_PROTOCOL}' in current scope)")
+      set(EP_GIT_PROTOCOL "https")
+    endif()
+  endif()
+else()
   set(EP_GIT_PROTOCOL "https")
 endif()
 
@@ -440,16 +465,37 @@ function(_sb_get_external_project_arguments proj varname)
 
   set(_ep_arguments "")
 
-  # Automatically propagate CMake options
-  foreach(_cmake_option IN ITEMS
-    CMAKE_EXPORT_COMPILE_COMMANDS
-    CMAKE_JOB_POOL_COMPILE
-    CMAKE_JOB_POOL_LINK
-    CMAKE_JOB_POOLS
+  # Option CMAKE_FIND_USE_PACKAGE_REGISTRY was introduced in CMake 3.16
+  if(NOT CMAKE_VERSION VERSION_LESS "3.16")
+    if(NOT DEFINED CMAKE_FIND_USE_PACKAGE_REGISTRY)
+      set(CMAKE_FIND_USE_PACKAGE_REGISTRY OFF)
+    endif()
+  else()
+    if(NOT DEFINED CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY)
+      set(CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY ON)
+    endif()
+  endif()
+
+  # Set list of CMake options to propagate
+  set(_options
+    CMAKE_EXPORT_COMPILE_COMMANDS:BOOL
+    CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY:BOOL
+    CMAKE_JOB_POOL_COMPILE:STRING
+    CMAKE_JOB_POOL_LINK:STRING
+    CMAKE_JOB_POOLS:STRING
     )
+  if(NOT CMAKE_VERSION VERSION_LESS "3.16")
+    list(APPEND _options
+      CMAKE_FIND_USE_PACKAGE_REGISTRY:BOOL
+      )
+  endif()
+
+  # Automatically propagate CMake options
+  foreach(_cmake_option_and_type IN LISTS _options)
+    _sb_extract_varname_and_vartype(${_cmake_option_and_type} _cmake_option _cmake_option_type)
     if(DEFINED ${_cmake_option})
       list(APPEND _ep_arguments CMAKE_CACHE_ARGS
-        -D${_cmake_option}:BOOL=${${_cmake_option}}
+        -D${_cmake_option}:${_cmake_option_type}=${${_cmake_option}}
         )
     endif()
   endforeach()
@@ -580,6 +626,41 @@ function(_sb_is_optional proj output_var)
   endif()
   set(${output_var} ${optional} PARENT_SCOPE)
 endfunction()
+
+#.rst:
+# .. cmake:function:: ExternalProject_Add_Dependencies
+#
+# .. code-block:: cmake
+#
+#  ExternalProject_Add_Dependencies(<project_name>
+#      DEPENDS <dep1> [<dep2> [...]]
+#    )
+#
+#
+# .. code-block:: cmake
+#
+#  DEPENDS  List of additional dependencies to associat with `<project_name>`.
+#
+macro(ExternalProject_Add_Dependencies project_name)
+  set(options)
+  set(oneValueArgs)
+  set(multiValueArgs DEPENDS)
+  cmake_parse_arguments(_epad "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  # Sanity checks
+  if(x${project_name} STREQUAL xDEPENDS)
+    message(FATAL_ERROR "Argument <project_name> is missing !")
+  endif()
+  if(_epad_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Invalid arguments: ${_epad_UNPARSED_ARGUMENTS}")
+  endif()
+
+  if(NOT _epad_DEPENDS)
+    message(FATAL_ERROR "Argument DEPENDS is missing")
+  endif()
+
+  set_property(GLOBAL PROPERTY SB_${project_name}_ADDITIONAL_DEPENDS ${_epad_DEPENDS})
+endmacro()
 
 #.rst:
 # .. cmake:function:: ExternalProject_Include_Dependencies
@@ -716,6 +797,11 @@ macro(ExternalProject_Include_Dependencies project_name)
     #message("[${project_name}] Setting _sb_SB_VAR with default value '${_sb_SB_VAR}'")
   endif()
 
+  # Try to detect if superbuild variable was improperly passed
+  if("${_sb_SB_VAR}" STREQUAL "_SUPERBUILD")
+    message(FATAL_ERROR "SUPERBUILD_VAR value is incorrectly set to '_SUPERBUILD'")
+  endif()
+
   # Set local variables
   set(_sb_DEPENDS ${${_sb_DEPENDS_VAR}})
   set(_sb_USE_SYSTEM ${${_sb_USE_SYSTEM_VAR}})
@@ -735,6 +821,12 @@ macro(ExternalProject_Include_Dependencies project_name)
   if(${_sb_proj} STREQUAL ${SUPERBUILD_TOPLEVEL_PROJECT} AND NOT DEFINED SB_FIRST_PASS)
     message(STATUS "SuperBuild - First pass")
     set(SB_FIRST_PASS TRUE)
+  endif()
+
+  # Extra dependencies specified using "ExternalProject_Add_Dependencies"
+  get_property(_sb_ADDITIONAL_DEPENDS GLOBAL PROPERTY SB_${_sb_proj}_ADDITIONAL_DEPENDS)
+  if(NOT "x${_sb_ADDITIONAL_DEPENDS}" STREQUAL "x")
+    list(APPEND _sb_DEPENDS ${_sb_ADDITIONAL_DEPENDS})
   endif()
 
   set(_sb_REQUIRED_DEPENDS)
@@ -790,15 +882,25 @@ macro(ExternalProject_Include_Dependencies project_name)
   foreach(dep ${_sb_DEPENDS})
     get_property(_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
     if(NOT _included)
-      # XXX - Refactor - Add a single variable named 'EXTERNAL_PROJECT_DIRS'
       if(EXISTS "${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
         include(${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
       elseif(EXISTS "${${dep}_FILEPATH}")
+        # Originally implemented to support CTK buildsystem
         include(${${dep}_FILEPATH})
       elseif(EXISTS "${EXTERNAL_PROJECT_ADDITIONAL_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
         include(${EXTERNAL_PROJECT_ADDITIONAL_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
       else()
-        message(FATAL_ERROR "Can't find ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+        set(_found_ep_cmake FALSE)
+        foreach(_external_project_additional_dir ${EXTERNAL_PROJECT_ADDITIONAL_DIRS})
+          if(EXISTS "${_external_project_additional_dir}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+            include(${_external_project_additional_dir}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
+            set(_found_ep_cmake TRUE)
+            break()
+          endif()
+        endforeach()
+        if(NOT _found_ep_cmake)
+          message(FATAL_ERROR "Can't find ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+        endif()
       endif()
       set_property(GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED 1)
     endif()
@@ -959,13 +1061,16 @@ endfunction()
 #
 #  ExternalProject_SetIfNotDefined(<var> <defaultvalue> [OBFUSCATE] [QUIET])
 #
-# The default value is set with:
-#  (1) if set, the value environment variable <var>.
-#  (2) if set, the value of local variable variable <var>.
-#  (3) if none of the above, the value passed as a parameter.
+# If *NOT* already defined, the variable <var> is set with:
+#  (1) the value of the environment variable <var>, if defined.
+#  (2) the value of the local variable variable <var>, if defined.
+#  (3) if none of the above is defined, the <defaultvalue> passed as a parameter.
 #
-# Setting the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
-# Setting the optional parameter 'QUIET' will not display any message.
+# Passing the optional parameter 'OBFUSCATE' will display 'OBFUSCATED' instead of the real value.
+# Passing the optional parameter 'QUIET' will not display any message.
+#
+# For convenience, the value of the cache variable named <var> will
+# be displayed if it was set and if QUIET has not been passed.
 macro(ExternalProject_SetIfNotDefined var defaultvalue)
   set(_obfuscate FALSE)
   set(_quiet FALSE)
@@ -996,6 +1101,14 @@ macro(ExternalProject_SetIfNotDefined var defaultvalue)
       message(STATUS "Setting '${var}' variable with default value '${_value}'")
     endif()
     set(${var} "${defaultvalue}")
+  endif()
+  get_property(_is_set CACHE ${var} PROPERTY VALUE SET)
+  if(_is_set AND NOT _quiet)
+    set(_value "${${var}}")
+    if(_obfuscate)
+      set(_value "OBFUSCATED")
+    endif()
+    message(STATUS "Cache variable '${var}' set to '${_value}'")
   endif()
 endmacro()
 
