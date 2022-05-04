@@ -51,6 +51,7 @@
 #include "ctkExpandableWidgetPlugin.h"
 #include "ctkFittedTextBrowserPlugin.h"
 #include "ctkFontButtonPlugin.h"
+#include "ctkLanguageComboBoxPlugin.h"
 #include "ctkMaterialPropertyPreviewLabelPlugin.h"
 #include "ctkMaterialPropertyWidgetPlugin.h"
 #include "ctkMatrixWidgetPlugin.h"
@@ -107,6 +108,7 @@ public:
             << new ctkExpandableWidgetPlugin
             << new ctkFittedTextBrowserPlugin
             << new ctkFontButtonPlugin
+            << new ctkLanguageComboBoxPlugin
             << new ctkMaterialPropertyPreviewLabelPlugin
             << new ctkMaterialPropertyWidgetPlugin
             << new ctkMatrixWidgetPlugin
