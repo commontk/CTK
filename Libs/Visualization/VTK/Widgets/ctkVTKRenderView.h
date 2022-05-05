@@ -120,8 +120,12 @@ public Q_SLOTS:
 
   /// \brief Change camera to look from a given axis to the focal point
   /// Translate/Rotate the camera to look from a given axis
-  /// The Field of View (fov) controls how far from the focal point the
-  /// camera must be (final_pos = focal_point + 3*fov).
+  void lookFromAxis(const ctkAxesWidget::Axis& axis);
+
+  /// \deprecated
+  /// \brief Change camera to look from a given axis to the focal point
+  /// Translate/Rotate the camera to look from a given axis
+  /// \sa lookFromAxis(const ctkAxesWidget::Axis&)
   void lookFromAxis(const ctkAxesWidget::Axis& axis, double fov = 10.);
 
 public:
