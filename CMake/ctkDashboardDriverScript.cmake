@@ -69,7 +69,7 @@ endforeach()
 
 # If the dashscript doesn't define a GIT_REPOSITORY variable, let's define it here.
 if(NOT DEFINED GIT_REPOSITORY OR GIT_REPOSITORY STREQUAL "")
-  set(GIT_REPOSITORY http://github.com/commontk/CTK.git)
+  set(GIT_REPOSITORY https://github.com/commontk/CTK.git)
 endif()
 
 set(repository ${GIT_REPOSITORY})
