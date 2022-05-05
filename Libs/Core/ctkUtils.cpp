@@ -21,7 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDir>
-#if QT_VERSION >= 0x060000
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 #include <QRegularExpression>
 #else
 #include <QRegExp>
@@ -113,7 +113,7 @@ const char *ctkValidWildCard =
 QStringList ctk::nameFilterToExtensions(const QString& nameFilter)
 {
   QRegExp regexp(QString::fromLatin1(ctkNameFilterRegExp));
-#if QT_VERSION >= 0x060000
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   int i = nameFilter.indexOf(regexp);
 #else
   int i = regexp.indexIn(nameFilter);
@@ -121,7 +121,7 @@ QStringList ctk::nameFilterToExtensions(const QString& nameFilter)
   if (i < 0)
     {
     QRegExp isWildCard(QString::fromLatin1(ctkValidWildCard));
-#if QT_VERSION >= 0x060000
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
     if (nameFilter.indexOf(isWildCard) >= 0)
 #else
     if (isWildCard.indexIn(nameFilter) >= 0)
@@ -131,9 +131,9 @@ QStringList ctk::nameFilterToExtensions(const QString& nameFilter)
       }
     return QStringList();
     }
-#if QT_VERSION >= 0x060000
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   QStringList captured = regexp.namedCaptureGroups();
-  QString f = captured[2];
+  QString f = captured.size() >= 3 ? captured[2] : "";
 #else
   QString f = regexp.cap(2);
 #endif
@@ -160,7 +160,7 @@ QString ctk::extensionToRegExp(const QString& extension)
 {
   // typically *.jpg
   QRegExp extensionExtractor("\\*\\.(\\w+)");
-#if QT_VERSION >= 0x060000
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   int pos = extension.indexOf(extensionExtractor);
 #else
   int pos = extensionExtractor.indexIn(extension);
@@ -169,9 +169,9 @@ QString ctk::extensionToRegExp(const QString& extension)
     {
     return QString();
     }
-#if QT_VERSION >= 0x060000
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
   QStringList captured = extensionExtractor.namedCaptureGroups();
-  QString cap = captured[1];
+  QString cap = captured.size() >= 2 ? captured[1] : "";
 #else
   QString cap = extensionExtractor.cap(1);
 #endif

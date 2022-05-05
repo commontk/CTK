@@ -20,7 +20,7 @@
 
 // Qt includes
 #include <QApplication>
-#if QT_VERSION < 0x060000
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #include <QDesktopWidget>
 #endif
 #include <QDialog>
@@ -418,7 +418,7 @@ void ctkPopupWidget::leaveEvent(QEvent* event)
 }
 
 // --------------------------------------------------------------------------
-#if QT_VERSION >= 0x060000
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 void ctkPopupWidget::enterEvent(QEnterEvent* event)
 #else
 void ctkPopupWidget::enterEvent(QEvent* event)
