@@ -82,12 +82,12 @@ int ctkVTKRenderViewTest2(int argc, char * argv [] )
   renderView.renderer()->AddActor(sphereActor.GetPointer());
 
   renderView.lookFromAxis(ctkAxesWidget::Right);
-  renderView.lookFromAxis(ctkAxesWidget::Left, 10);
-  renderView.lookFromAxis(ctkAxesWidget::Anterior, 1.);
-  renderView.lookFromAxis(ctkAxesWidget::Posterior, 1.);
-  renderView.lookFromAxis(ctkAxesWidget::Superior, 0.333333);
-  renderView.lookFromAxis(ctkAxesWidget::Inferior, 0.333333);
-  renderView.lookFromAxis(ctkAxesWidget::None, 100.);
+  renderView.lookFromAxis(ctkAxesWidget::Left);
+  renderView.lookFromAxis(ctkAxesWidget::Anterior);
+  renderView.lookFromAxis(ctkAxesWidget::Posterior);
+  renderView.lookFromAxis(ctkAxesWidget::Superior);
+  renderView.lookFromAxis(ctkAxesWidget::Inferior);
+  renderView.lookFromAxis(ctkAxesWidget::None);
 
   if (!interactive)
     {

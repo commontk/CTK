@@ -492,6 +492,16 @@ void ctkVTKRenderView::resetFocalPoint()
 void ctkVTKRenderView::lookFromAxis(const ctkAxesWidget::Axis& axis, double fov)
 {
   Q_UNUSED(fov);
+  // The FOV parameter is not used anymore. It was not a good idea to force changing
+  // the camera distance from the focal point when the user only requested a view direction
+  // change.
+  qWarning() << "This function is deprecated. Use lookFromAxis(const ctkAxesWidget::Axis& axis) instead";
+  this->lookFromAxis(axis);
+}
+
+//----------------------------------------------------------------------------
+void ctkVTKRenderView::lookFromAxis(const ctkAxesWidget::Axis& axis)
+{
   Q_D(ctkVTKRenderView);
   Q_ASSERT(d->Renderer);
   if (!d->Renderer->IsActiveCameraCreated())
