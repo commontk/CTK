@@ -105,6 +105,7 @@ void ctkVTKRenderViewPrivate::pitch(double rotateDegrees,
   vtkCamera *cam = this->Renderer->GetActiveCamera();
   cam->Elevation(pitchDirection == ctkVTKRenderView::PitchDown ? rotateDegrees : -rotateDegrees);
   cam->OrthogonalizeViewUp();
+  this->Renderer->ResetCameraClippingRange();
   this->Renderer->UpdateLightsGeometryToFollowCamera();
 }
 
@@ -118,6 +119,7 @@ void ctkVTKRenderViewPrivate::roll(double rotateDegrees,
   vtkCamera *cam = this->Renderer->GetActiveCamera();
   cam->Roll(rollDirection == ctkVTKRenderView::RollLeft ? rotateDegrees : -rotateDegrees);
   cam->OrthogonalizeViewUp();
+  this->Renderer->ResetCameraClippingRange();
   this->Renderer->UpdateLightsGeometryToFollowCamera();
 }
 
@@ -130,6 +132,7 @@ void ctkVTKRenderViewPrivate::yaw(double rotateDegrees,
   vtkCamera *cam = this->Renderer->GetActiveCamera();
   cam->Azimuth(yawDirection == ctkVTKRenderView::YawLeft ? rotateDegrees : -rotateDegrees);
   cam->OrthogonalizeViewUp();
+  this->Renderer->ResetCameraClippingRange();
   this->Renderer->UpdateLightsGeometryToFollowCamera();
 }
 
@@ -183,6 +186,7 @@ void ctkVTKRenderViewPrivate::doRock()
   // Move the camera
   camera->Azimuth(az);
   camera->OrthogonalizeViewUp();
+  this->Renderer->ResetCameraClippingRange();
 
   //Make the lighting follow the camera to avoid illumination changes
   this->Renderer->UpdateLightsGeometryToFollowCamera();
@@ -468,6 +472,7 @@ void ctkVTKRenderView::setFocalPoint(double x, double y, double z)
   camera->SetFocalPoint(x, y, z);
   camera->ComputeViewPlaneNormal();
   camera->OrthogonalizeViewUp();
+  d->Renderer->ResetCameraClippingRange();
   d->Renderer->UpdateLightsGeometryToFollowCamera();
 }
 
