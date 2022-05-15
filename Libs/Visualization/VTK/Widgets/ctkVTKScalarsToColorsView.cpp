@@ -447,18 +447,20 @@ void ctkVTKScalarsToColorsView::setLookuptTableToPlots(vtkLookupTable* lut)
 
 // ----------------------------------------------------------------------------
 void ctkVTKScalarsToColorsView
-::setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF)
+::setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF, bool editable)
 {
   foreach(vtkColorTransferFunctionItem* plot,
           this->plots<vtkColorTransferFunctionItem>())
     {
     plot->SetColorTransferFunction(colorTF);
     }
+
   foreach(vtkColorTransferControlPointsItem* plot,
           this->plots<vtkColorTransferControlPointsItem>())
     {
-    plot->SetColorTransferFunction(colorTF);
+    plot->SetColorTransferFunction(editable ? colorTF : nullptr);
     }
+  
   this->onChartUpdated();
   emit functionChanged();
 }
