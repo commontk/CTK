@@ -78,7 +78,7 @@ public:
   Q_INVOKABLE QList<vtkPlot*> opacityFunctionPlots(vtkPiecewiseFunction* opacityTF)const;
 
   Q_INVOKABLE void setLookuptTableToPlots(vtkLookupTable* lut);
-  Q_INVOKABLE void setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF);
+  Q_INVOKABLE void setColorTransferFunctionToPlots(vtkColorTransferFunction* colorTF, bool editable = true);
   Q_INVOKABLE void setOpacityFunctionToPlots(vtkPiecewiseFunction* opacityTF);
   Q_INVOKABLE void setPiecewiseFunctionToPlots(vtkPiecewiseFunction* piecewiseTF);
 
