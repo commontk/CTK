@@ -7,7 +7,7 @@
 #! \endcode
 #!
 #! This macro add a test using the complete add_test signature specifying target using 
-#! $<TARGET_FILE:...> generator expression. Optionnal test argument(s) can be passed
+#! $<TARGET_FILE:...> generator expression. Optional test argument(s) can be passed
 #! after specifying the <testname>.
 #!
 #! Variable named KIT is expected to be defined in the current scope. KIT variable usually 

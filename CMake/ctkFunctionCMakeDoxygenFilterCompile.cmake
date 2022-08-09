@@ -80,7 +80,7 @@ function(ctkFunctionCMakeDoxygenFilterCompile)
              )
 
   if(NOT result_var)
-    message(FATAL_ERROR "error: Faild to compile ${cmake_doxygen_filter_src} (result: ${result_var})\n${compile_output}")
+    message(FATAL_ERROR "error: Failed to compile ${cmake_doxygen_filter_src} (result: ${result_var})\n${compile_output}")
   endif()
 
   set(CMakeDoxygenFilter_EXECUTABLE "${copy_file}" PARENT_SCOPE)

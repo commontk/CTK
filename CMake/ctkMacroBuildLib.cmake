@@ -33,7 +33,7 @@ macro(ctkMacroBuildLib)
     ${ARGN}
     )
 
-  # Keep parameter 'INCLUDE_DIRECTORIES' for backward compatiblity
+  # Keep parameter 'INCLUDE_DIRECTORIES' for backward compatibility
 
   # Sanity checks
   if(NOT DEFINED MY_NAME)
