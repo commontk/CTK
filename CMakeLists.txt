@@ -751,7 +751,7 @@ ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system 
 mark_as_superbuild(CTK_ENABLE_Python_Wrapping)
 
 # Build examples
-# Create the logical expression containing the minium set of required options
+# Create the logical expression containing the minimum set of required options
 # for the CTK_BUILD_EXAMPLES option to be ON
 set(_build_examples_logical_expr)
 foreach(_app ${CTK_ENABLED_APPS})

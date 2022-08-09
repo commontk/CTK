@@ -1,7 +1,7 @@
 /*! \namespace CMake
     \brief A pseudo-namespace used to group CMake macros and functions.
 
-    This is not a regular C++ namespace. It is juse used to group the CMake
+    This is not a regular C++ namespace. It is just used to group the CMake
     macros and function of the CTK build system.
 */
 

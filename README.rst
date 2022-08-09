@@ -14,7 +14,7 @@ Build Instructions
 
 Configure the project using CMake.
 
-For Qt5, specify the followings:
+For Qt5, specify the following:
   - ``CTK_QT_VERSION``: 5
   - ``QT5_DIR``: C:\Qt\5.15.0\msvc2019_64\lib\cmake\Qt5 (or something similar, depending on operating system)
   - ``VTK_MODULE_ENABLE_VTK_GUISupportQt``: YES (for enabling VTK widgets)

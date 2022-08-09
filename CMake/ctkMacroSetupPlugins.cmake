@@ -45,11 +45,11 @@ endmacro()
 #!        plug-in. Defaults to "BUILD_".
 #! \param APPS (optional) A list of directories with build option names containing
 #!        CTK-style applications. This can be used to automatically enable plug-ins
-#!        required by the application. The application directoy must contain a CMakeLists.txt
+#!        required by the application. The application directory must contain a CMakeLists.txt
 #!        file containing a "project(...)" command and a target_libraries.cmake file
 #!        containing a list of required plug-in targets, e.g. "set(target_libraries org_myproject_example)".
 #!        An item of the list may look like "Apps/MyExampleApp^^BUILD_APP_MyExampleApp" where
-#!        Apps/MyExampleApp is the directory containing the applicatios CMakeLists.txt file
+#!        Apps/MyExampleApp is the directory containing the applications CMakeLists.txt file
 #!        and BUILD_APP_MyExampleApp is the build option used to conditionally build the app.
 #! \param BUILD_ALL (optional) If the build_all_flag is true, all entries in the plugins list
 #!        will be enabled (but their build option will not be forced to change). Default is OFF
@@ -186,7 +186,7 @@ macro(ctkMacroSetupPlugins )
   get_property(previous_plugin_dirswithoption GLOBAL PROPERTY ctkMacroSetupExternalPlugins_dirswithoption)
   
   # Fill the CTK_EXTERNAL_PLUGIN_LIBRARIES variable with external plug-in target names.
-  # It will be used in ctkMacroValidateBuildOptions to be able to validate agains plug-ins
+  # It will be used in ctkMacroValidateBuildOptions to be able to validate against plug-ins
   # from external projects.
   ctkFunctionGetAllPluginTargets(CTK_EXTERNAL_PLUGIN_LIBRARIES)
 

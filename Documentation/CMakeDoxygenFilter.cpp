@@ -27,7 +27,7 @@
 #include <assert.h>
 
 //--------------------------------------
-// Utilitiy classes and functions
+// Utility classes and functions
 //--------------------------------------
 
 struct ci_char_traits : public std::char_traits<char>

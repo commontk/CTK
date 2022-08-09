@@ -13,7 +13,7 @@ ExternalProject_Include_Dependencies(${proj}
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
   )
 
-# Let the user to chose wheather to use libs installed in the system
+# Let the user to chose whether to use libs installed in the system
 option(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} "Use installed ${proj} library in the system" OFF)
 mark_as_advanced(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 

@@ -6,7 +6,7 @@
 #! \ingroup CMakeUtilities
 function(ctkFunctionExtractOptionNameAndValue my_opt var_opt_name var_opt_value)
 
- # Make sure option is correctly formated
+ # Make sure option is correctly formatted
   if(NOT "${my_opt}" MATCHES "^[- :/A-Za-z0-9._]+:(ON|OFF)$")
     message(FATAL_ERROR "Option ${my_opt} is incorrect. Options should be specified using the following format OPT1:[ON|OFF]. For example OPT1:OFF or OPT2:ON")
   endif()

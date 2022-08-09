@@ -55,7 +55,7 @@ macro(ctkMacroBuildPlugin)
     ${ARGN}
     )
 
-  # Keep parameter 'INCLUDE_DIRECTORIES' for backward compatiblity
+  # Keep parameter 'INCLUDE_DIRECTORIES' for backward compatibility
 
   # Sanity checks
   if(NOT DEFINED MY_EXPORT_DIRECTIVE)
@@ -72,7 +72,7 @@ macro(ctkMacroBuildPlugin)
   # Define library name
   set(lib_name ${PROJECT_NAME})
 
-  # Plug-in target names must contain at leas one _
+  # Plug-in target names must contain at least one _
   if(NOT lib_name MATCHES _)
     message(FATAL_ERROR "The plug-in project name ${lib_name} must contain at least one '_' character")
   endif()
