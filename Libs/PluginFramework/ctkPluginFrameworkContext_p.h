@@ -104,7 +104,7 @@ public:
   ctkPluginFrameworkDebug debug;
 
   /**
-   * Contruct a framework context
+   * Construct a framework context
    *
    */
   ctkPluginFrameworkContext();

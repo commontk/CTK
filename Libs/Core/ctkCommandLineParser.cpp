@@ -431,7 +431,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
       else if (numberOfParametersToProcess > 0)
         {
         QString missingParameterError =
-            "Argument %1 has %2 value(s) associated whereas exacly %3 are expected.";
+            "Argument %1 has %2 value(s) associated whereas exactly %3 are expected.";
         for(int j=1; j <= numberOfParametersToProcess; ++j)
           {
           if (i + j >= arguments.size())
@@ -475,7 +475,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
         {
         if (this->Internal->Debug)
           {
-          qDebug() << "  Proccessing StringList ...";
+          qDebug() << "  Processing StringList ...";
           }
         int j = 1;
         while(j + i < arguments.size())

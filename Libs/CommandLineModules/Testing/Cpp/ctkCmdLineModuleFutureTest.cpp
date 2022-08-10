@@ -458,7 +458,7 @@ void ctkCmdLineModuleFutureTester::testError()
 {
   frontend->setValue("fileVar", "output1");
   frontend->setValue("exitCodeVar", 24);
-  frontend->setValue("errorTextVar", "Some error occured\n");
+  frontend->setValue("errorTextVar", "Some error occurred\n");
 
   ctkCmdLineModuleFuture future = manager.run(frontend);
 
@@ -470,7 +470,7 @@ void ctkCmdLineModuleFutureTester::testError()
   catch (const ctkCmdLineModuleRunException& e)
   {
     QVERIFY2(e.errorCode() == 24, "Test matching error code");
-    QCOMPARE(future.readAllErrorData().data(), "A superficial error message.\nSome error occured\n");
+    QCOMPARE(future.readAllErrorData().data(), "A superficial error message.\nSome error occurred\n");
   }
 }
 

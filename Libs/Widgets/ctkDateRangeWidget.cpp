@@ -44,7 +44,7 @@ public:
 
   /// ForceSelectRange is set to true when the user expressively requested
   /// to have "Select Range" option active. This property is set only if
-  /// the user clicks on the option or if setSelectRange() is programatically
+  /// the user clicks on the option or if setSelectRange() is programmatically
   /// called
   bool          ForceSelectRange;
   /// DisplayTime is true if the time is displayed in the range widget
@@ -126,7 +126,7 @@ ctkDateRangeWidget::ctkDateRangeWidget(QWidget* _parent) : Superclass(_parent)
 
   // Note that we connect on the clicked() signal and not the toggled.
   // The clicked() signal is fired only when the USER clicks the radio button
-  // and not when the button is checked programatically (except using click()).
+  // and not when the button is checked programmatically (except using click()).
   QObject::connect(d->AnyDateRadioButton, SIGNAL(clicked()),
                    this, SLOT(setAnyDate()));
   QObject::connect(d->TodayRadioButton, SIGNAL(clicked()),

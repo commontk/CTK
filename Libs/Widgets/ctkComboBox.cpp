@@ -116,7 +116,7 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
         break;
       }
     }
-  else // minimumsizehint is computing and minimumcontentslenght is > 0
+  else // minimumsizehint is computing and minimumcontentslength is > 0
     {
     if ((count == 0 || this->ForceDefault) && !this->DefaultIcon.isNull())
       {

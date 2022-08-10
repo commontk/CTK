@@ -81,7 +81,7 @@ public:
   /// Gets the last modification time from the server
   virtual QDateTime lastModifiedTimeOnServer();
 
-  /// Sets the last modfication time on the server
+  /// Sets the last modification time on the server
   void setLastModifiedTime(const QDateTime& lastModifiedTime);
 
   /// Gets the properties of the object.

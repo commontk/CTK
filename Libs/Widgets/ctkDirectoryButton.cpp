@@ -268,7 +268,7 @@ void ctkDirectoryButton::browse()
                                   QFileSystemModel::FilePathRole).toString();
       if (!QFileInfo(filePath).isWritable())
         {
-        // Double clickable (to open) but can't be "choosen".
+        // Double clickable (to open) but can't be "chosen".
         return Qt::ItemIsSelectable;
         }
       return this->QSortFilterProxyModel::flags(index);

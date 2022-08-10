@@ -39,7 +39,7 @@ class ctkDoubleSpinBoxPrivate;
 class ctkValueProxy;
 
 /// \brief Custom SpinBox
-/// The ctkDoubleSpinBox internaly uses a QDoubleSpinBox while it retain controls
+/// The ctkDoubleSpinBox internally uses a QDoubleSpinBox while it retain controls
 /// over it.
 /// \sa ctkDoubleSlider, ctkSliderWidget, ctkRangeSlider
 class CTK_WIDGETS_EXPORT ctkDoubleSpinBox : public QWidget
@@ -97,7 +97,7 @@ public:
   /// No check is made and the given parameters is directly set
   /// on the internal QDoubleSpinBox.
   /// SetIfDifferent:
-  /// Default mode, the given parameter is checked agains the
+  /// Default mode, the given parameter is checked against the
   /// current internal value and only set if they are different.
   /// For double, the comparison is based on the input parameters rounded
   /// with the current number of decimals (see round()).
@@ -189,7 +189,7 @@ public:
   /// \sa value()
   QString cleanText() const;
 
-  /// Set/Get the spinbox alignement
+  /// Set/Get the spinbox alignment
   Qt::Alignment alignment () const;
   void setAlignment (Qt::Alignment flag);
 
@@ -277,7 +277,7 @@ public:
   /// displayed value from the value retrieved by the value property.
   /// For example, the value proxy can allow one to display celsius in the
   /// spinbox while the value retrieved from the value property and signals
-  /// are in farenheit.
+  /// are in fahrenheit.
   /// To remove the proxy, simply install a new empty proxy. The proxy
   /// installation/removal is silent.
   /// \sa installValueProxy(), valueProxy()
@@ -296,7 +296,7 @@ public Q_SLOTS:
   /// \sa setMode(), value(), setValueIfDifferent(), setValueAlways()
   void setValue(double value);
 
-  /// Set the value of the spinbox followin the SetIfDifferent mode.
+  /// Set the value of the spinbox following the SetIfDifferent mode.
   /// \sa value(), setValue(), setMode(), setValueAlways()
   void setValueIfDifferent(double value);
 

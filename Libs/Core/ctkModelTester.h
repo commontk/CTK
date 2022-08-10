@@ -81,7 +81,7 @@ public:
   bool throwOnError()const;
  
   ///
-  /// nestedInserts controls wether the model is allowed to make 
+  /// nestedInserts controls whether the model is allowed to make 
   /// nested row/column insertions ( an insertion signal is fired when an 
   /// insertion a previous insertion was not finished). A row insertion 
   /// consists of 2  signals: rowsAboutToBeInserted and rowsInserted

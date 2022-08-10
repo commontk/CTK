@@ -101,11 +101,11 @@ public Q_SLOTS:
   void setIndexingResult(int, int, int, int);
 
 Q_SIGNALS:
-  /// Emited when directory is changed
+  /// Emitted when directory is changed
   void databaseDirectoryChanged(const QString&);
-  /// Emited when query/retrieve operation has happened
+  /// Emitted when query/retrieve operation has happened
   void queryRetrieveFinished();
-  /// Emited when the directory import operation has completed
+  /// Emitted when the directory import operation has completed
   void directoryImported();
 
 protected:

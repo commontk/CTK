@@ -61,7 +61,7 @@ Register the signal using a specific topic (emitting the signal will always send
 \snippet EventAdmin-Intro/ctkSnippetReportManager.h Register signal
 
 Emitting the signal will automatically create a <code>ctkEvent</code> object, sending
-it synchronuously or asynchronuously, depending on the Qt::ConnectionType used when
+it synchronously or asynchronously, depending on the Qt::ConnectionType used when
 publishing the signal.
 
 \snippet EventAdmin-Intro/ctkSnippetReportManager.h Emit signal

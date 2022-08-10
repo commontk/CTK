@@ -76,7 +76,7 @@ protected:
   void appendLoadWarningString(const QString& msg);
   void clearLoadWarningStrings();
 
-  /// Must be reimplemented in subclasses to instanciate a BaseClassType*
+  /// Must be reimplemented in subclasses to instantiate a BaseClassType*
   virtual BaseClassType* instanciator() = 0;
   BaseClassType* Instance;
 
@@ -93,7 +93,7 @@ private:
 /// \brief ctkAbstractFactory is the base class of all the factory where items need
 /// to be registered before being instantiated.
 /// <p> ctkAbstractFactory contains a collection of ctkAbstractFactoryItems that
-/// are uniquely identifyed by a key. Subclasses of ctkAbstractFactory are
+/// are uniquely identified by a key. Subclasses of ctkAbstractFactory are
 /// responsible for populating the list of ctkAbstractFactoryItems.
 /// BaseClassType could be any type (most probably a QObject)
 template<typename BaseClassType>
@@ -103,7 +103,7 @@ public:
 
   typedef QHash<QString, QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > > HashType;
 
-  /// Constructor/Desctructor
+  /// Constructor/Destructor
   ctkAbstractFactory();
   virtual ~ctkAbstractFactory();
   virtual void printAdditionalInfo();
@@ -116,7 +116,7 @@ public:
   /// return 0.
   virtual BaseClassType * instance(const QString& itemKey);
 
-  /// \brief Uninstanciate the object.
+  /// \brief Uninstantiate the object.
   /// Do nothing if the item given by the key has not be instantiated nor registered.
   void uninstantiate(const QString& itemKey);
 
@@ -145,7 +145,7 @@ protected:
                             const QString& status, bool display);
 
   /// \brief Call the load method associated with the item.
-  /// If succesfully loaded, add it to the internal map.
+  /// If successfully loaded, add it to the internal map.
   bool registerItem(const QString& key, const QSharedPointer<ctkAbstractFactoryItem<BaseClassType> > & item);
 
   /// Get a Factory item given its itemKey. Return 0 if any.

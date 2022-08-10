@@ -34,7 +34,7 @@ class ctkAbstractQObjectFactory : public ctkAbstractObjectFactory<BaseClassType>
 {
 public:
 
-  /// Constructor/Desctructor
+  /// Constructor/Destructor
   explicit ctkAbstractQObjectFactory();
   virtual ~ctkAbstractQObjectFactory();
 

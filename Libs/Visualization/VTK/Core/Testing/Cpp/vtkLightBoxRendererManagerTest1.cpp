@@ -48,15 +48,15 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   //----------------------------------------------------------------------------
   // Read Image
   //----------------------------------------------------------------------------
-  // Instanciate the reader factory
+  // Instantiate the reader factory
   vtkNew<vtkImageReader2Factory> imageFactory;
 
-  // Instanciate an image reader
+  // Instantiate an image reader
   vtkSmartPointer<vtkImageReader2> imageReader;
   imageReader.TakeReference(imageFactory->CreateImageReader2(imageFilename));
   if (!imageReader)
     {
-    std::cerr << "Failed to instanciate image reader using: " << imageFilename << std::endl;
+    std::cerr << "Failed to instantiate image reader using: " << imageFilename << std::endl;
     return EXIT_FAILURE;
     }
 

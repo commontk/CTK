@@ -134,7 +134,7 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
   Q_D(ctkTransferFunctionControlPointsItem);
   ctkTransferFunctionView* view = qobject_cast<ctkTransferFunctionView*>(e->widget()->parentWidget());
   Q_ASSERT(view);
-  // e->pos() is ok, pointArea should be in the world coordiate
+  // e->pos() is ok, pointArea should be in the world coordinate
   QRect pointViewArea(QPoint(-d->PointSize.width() / 2, -d->PointSize.height() / 2), d->PointSize);
   QPolygonF pointItemArea = this->mapFromScene(view->mapToScene(pointViewArea));
   d->SelectedPoint = -1;

@@ -79,7 +79,7 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const QMessageLogContext& c
 
   //TODO: use context in the log message
   Q_UNUSED(context)
-  // Warning: To avoid inifinite loop, do not use Q_ASSERT in this function.
+  // Warning: To avoid infinite loop, do not use Q_ASSERT in this function.
   if (msg.isEmpty())
     {
     ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
@@ -138,7 +138,7 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const char *msg)
     return;
     }
 
-  // Warning: To avoid inifinite loop, do not use Q_ASSERT in this function.
+  // Warning: To avoid infinite loop, do not use Q_ASSERT in this function.
   if (QString(msg).isEmpty())
     {
     ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();

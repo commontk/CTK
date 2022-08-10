@@ -76,7 +76,7 @@ class CTK_WIDGETS_EXPORT ctkDirectoryButton: public QWidget
 
   /// Qt versions prior to 4.7.0 didn't expose QFileDialog::Options in the
   /// public API. We need to create a custom property that will be used when
-  /// instanciating a QFileDialog in ctkDirectoryButton::browse()
+  /// instantiating a QFileDialog in ctkDirectoryButton::browse()
 #ifdef USE_QFILEDIALOG_OPTIONS
   Q_PROPERTY(QFileDialog::Options options READ options WRITE setOptions)
 #else
@@ -170,7 +170,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   /// directoryChanged is emitted when the current directory changes.
-  /// Programatically or by the user via the file dialog that pop up when
+  /// Programmatically or by the user via the file dialog that pop up when
   /// clicking on the button.
   /// \sa directorySelected
   void directoryChanged(const QString&);

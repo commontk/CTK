@@ -53,7 +53,7 @@ endif()
 
 # Define the C++ code for the file ctkQtTestingUtility
 # Define the headers
-# Define the methode addWidgetEventTranslator/Player()
+# Define the method addWidgetEventTranslator/Player()
 set(CTK_ADD_HEADER_EVENT_PLAYERS "// Event player includes\n")
 #set(CTK_ADD_WIDGET_EVENT_PLAYERS)
 foreach(CTK_HEADER_EVENT_PLAYERS ${CTK_HEADERS_EVENT_PLAYERS})

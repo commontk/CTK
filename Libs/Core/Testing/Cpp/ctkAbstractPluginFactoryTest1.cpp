@@ -106,7 +106,7 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
   // ctkDummyPlugin is not a QPushButton, it should fail then.
   ctkAbstractPluginFactory< QTimer > buttonPluginFactory;
   buttonPluginFactory.setVerbose(true);
-  // it should register but fail while instanciating
+  // it should register but fail while instantiating
   itemKey = buttonPluginFactory.registerFileItem(file);
   if (itemKey.isEmpty() || buttonPluginFactory.itemKeys().count() != 1)
     {

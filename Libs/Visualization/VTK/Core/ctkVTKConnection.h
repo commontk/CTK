@@ -74,7 +74,7 @@ public:
     const QObject* qt_obj, const char* qt_slot);
 
   /// 
-  /// Temporarilly block any signals/slots. If the event is fired, the slot
+  /// Temporarily block any signals/slots. If the event is fired, the slot
   /// won't be called. You can restore the connection by calling SetBlocked
   /// with block = false.
   void setBlocked(bool block);
@@ -101,8 +101,8 @@ public:
   
 Q_SIGNALS:
   /// 
-  /// The qt signal emited by the VTK Callback
-  /// The signal corresponding to the slot will be emited
+  /// The qt signal emitted by the VTK Callback
+  /// The signal corresponding to the slot will be emitted
   void emitExecute(vtkObject* caller, vtkObject* call_data);
 
   /// Note: even if the signal has a signature with 4 args, you can

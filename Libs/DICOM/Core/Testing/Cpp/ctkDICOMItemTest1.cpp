@@ -63,7 +63,7 @@ int ctkDICOMItemTest1( int argc, char * argv [] )
     }
 
   // deactivating the lower part since it (correctly) causes
-  // execptions since it calls methods on an uninitialized object
+  // exceptions since it calls methods on an uninitialized object
   return EXIT_SUCCESS;
 
   dataset.CopyElement(0, DcmTagKey(), 0);

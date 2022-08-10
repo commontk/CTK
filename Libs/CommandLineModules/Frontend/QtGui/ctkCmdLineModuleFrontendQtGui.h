@@ -191,7 +191,7 @@ protected:
   virtual QUiLoader* uiLoader() const;
 
   /**
-   * @brief Get XSL transform used to transfrom the module XML description to a Qt .ui file.
+   * @brief Get XSL transform used to transform the module XML description to a Qt .ui file.
    * @return The XSL transform.
    *
    * Override this method to either customize the default transformation or completely provide

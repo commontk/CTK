@@ -334,7 +334,7 @@ QDir ctkPluginFrameworkUtil::getFileStorage(ctkPluginFrameworkContext* ctx,
   QString fwdir = getFrameworkDir(ctx);
   if (fwdir.isEmpty())
   {
-    throw ctkRuntimeException("The framework storge directory is empty");
+    throw ctkRuntimeException("The framework storage directory is empty");
   }
   QDir dir(fwdir + "/" + name);
   if (dir.exists())

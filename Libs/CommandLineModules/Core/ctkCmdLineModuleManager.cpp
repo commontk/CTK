@@ -140,7 +140,7 @@ void ctkCmdLineModuleManager::registerBackend(ctkCmdLineModuleBackend *backend)
 
   QList<QString> supportedSchemes = backend->schemes();
 
-  // Check if there is already a backend registerd for any of the
+  // Check if there is already a backend registered for any of the
   // supported schemes. We only supported one backend per scheme.
   foreach (QString scheme, supportedSchemes)
   {

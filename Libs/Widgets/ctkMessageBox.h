@@ -36,9 +36,9 @@ class ctkMessageBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkMessageBox : public QMessageBox
 {
   Q_OBJECT
-  /// This property holds wether the dialog should be shown next time exec()
+  /// This property holds whether the dialog should be shown next time exec()
   /// is called.
-  /// \a dontShowAgain can be changed programatically by calling
+  /// \a dontShowAgain can be changed programmatically by calling
   ///  setDontShowAgain or when the user checks the "Dont show again"
   /// checkbox and the dialog is accepted.
   /// If the checkbox is checked by the user but the dialog is rejected (click

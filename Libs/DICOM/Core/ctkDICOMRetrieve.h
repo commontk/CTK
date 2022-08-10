@@ -55,7 +55,7 @@ public:
   /// recognize your request
   Q_INVOKABLE void setCallingAETitle( const QString& callingAETitle );
   Q_INVOKABLE QString callingAETitle() const;
-  /// CTK_AE - the AE of the serice of peer host that you are calling
+  /// CTK_AE - the AE of the service of peer host that you are calling
   /// which tells the host what you are requesting
   Q_INVOKABLE void setCalledAETitle( const QString& calledAETitle );
   Q_INVOKABLE QString calledAETitle() const;
@@ -79,7 +79,7 @@ public:
   Q_INVOKABLE void setWasCanceled(const bool wasCanceled);
   Q_INVOKABLE bool wasCanceled();
   /// where to insert new data sets obtained via get (must be set for
-  /// get to succee
+  /// get to succeed)
   Q_INVOKABLE void setDatabase(ctkDICOMDatabase& dicomDatabase);
   void setDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
   Q_INVOKABLE QSharedPointer<ctkDICOMDatabase> database()const;

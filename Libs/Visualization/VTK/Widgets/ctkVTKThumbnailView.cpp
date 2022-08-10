@@ -340,7 +340,7 @@ void ctkVTKThumbnailViewPrivate::resetCamera()
   
   if (!ren || !cam)
     {
-    logger.error("Trying to reset non-existant camera");
+    logger.error("Trying to reset non-existent camera");
     return;
     }
   

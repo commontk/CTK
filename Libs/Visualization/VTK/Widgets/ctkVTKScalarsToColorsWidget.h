@@ -110,7 +110,7 @@ public Q_SLOTS:
   void resetRange();
 
 Q_SIGNALS:
-  /// Be carefull, axesModified() can be fired inside the Render() function
+  /// Be careful, axesModified() can be fired inside the Render() function
   /// of the view. You might want to connect the slot using Qt::QueuedConnection
   void axesModified();
 

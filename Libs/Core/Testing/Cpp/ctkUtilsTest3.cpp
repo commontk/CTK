@@ -52,7 +52,7 @@ int ctkUtilsTest3(int argc, char * argv [] )
     qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed: ";
     return EXIT_FAILURE;
     }
-  //add test if it take all the extension, test with exemples
+  //add test if it take all the extension, test with examples
   if (!dummyRegExp.exactMatch("c:/foo.jpg"))
     {
     qWarning() << "Line" << __LINE__ << "ctk::nameFiltersToRegExp() failed: ";

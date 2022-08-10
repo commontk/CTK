@@ -44,8 +44,8 @@ class vtkObject;
 class CTK_VISUALIZATION_VTK_CORE_EXPORT ctkVTKObjectEventsObserver : public QObject
 {
 Q_OBJECT
-  /// This property controls wether or not you can replace a
-  /// connection by a connection from an object of a different VTK class tha
+  /// This property controls whether or not you can replace a
+  /// connection by a connection from an object of a different VTK class than
   /// the first.
   /// For example, if strictTypeCheck is on, the following will generate an error
   /// \code
@@ -135,7 +135,7 @@ public:
   int removeAllConnections();
 
   ///
-  /// Temporarilly block all the connection
+  /// Temporarily block all the connection
   /// Returns the previous value of connectionsBlocked()
   bool blockAllConnections(bool block);
 

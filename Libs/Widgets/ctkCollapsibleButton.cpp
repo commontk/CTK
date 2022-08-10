@@ -59,7 +59,7 @@ public:
   bool     ExclusiveMouseOver;
   bool     LookOffWhenChecked;
 
-  /// We change the visibility of the chidren in setChildrenVisibility
+  /// We change the visibility of the children in setChildrenVisibility
   /// and we track when the visibility is changed to force it back to possibly
   /// force the child to be hidden. To prevent infinite loop we need to know
   /// who is changing children's visibility.
@@ -138,7 +138,7 @@ void ctkCollapsibleButtonPrivate::setChildVisibility(QWidget* childWidget)
   this->ForcingVisibility = true;
 
   bool visible= !this->Collapsed;
-  // if the widget has been explicity hidden, then hide it.
+  // if the widget has been explicitly hidden, then hide it.
   if (childWidget->property("visibilityToParent").isValid()
       && !childWidget->property("visibilityToParent").toBool())
     {
@@ -640,7 +640,7 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
       opt.rect.setLeft(opt.rect.right() - buttonMargin - textWidth);
       }
     }
-  // all the computations have been made infering the text would be left oriented
+  // all the computations have been made inferring the text would be left oriented
   tf &= ~Qt::AlignHCenter & ~Qt::AlignRight;
   tf |= Qt::AlignLeft;
   style()->drawItemText(&p, opt.rect, tf, opt.palette, (opt.state & QStyle::State_Enabled),

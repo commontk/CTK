@@ -97,7 +97,7 @@ private:
 /// where the large version of the icon is automatically added.
 /// It is mostly useful when using the designer, where only 1 icon file can
 /// be specified. It must be used with ctkIconEnginePlugin
-/// TODO: support more than just files in ressources.
+/// TODO: support more than just files in resources.
 class CTK_WIDGETS_EXPORT ctkIconEngine: public ctkPixmapIconEngine
 {
 public:

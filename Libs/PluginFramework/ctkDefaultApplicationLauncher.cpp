@@ -106,7 +106,7 @@ void ctkDefaultApplicationLauncher::launch(ctkApplicationRunnable* app, const QV
   waitForAppLock.tryAcquire(); // clear out any pending apps notifications
   if (!runningLock.tryAcquire()) // check to see if an application is currently running
   {
-    throw ctkIllegalStateException("An application is aready running.");
+    throw ctkIllegalStateException("An application is already running.");
   }
   this->runnable = app;
   this->appContext = applicationContext;
@@ -117,7 +117,7 @@ void ctkDefaultApplicationLauncher::launch(ctkApplicationRunnable* app, const QV
 //----------------------------------------------------------------------------
 void ctkDefaultApplicationLauncher::shutdown()
 {
-  // this method will aquire and keep the runningLock to prevent
+  // this method will acquire and keep the runningLock to prevent
   // all future application launches.
   if (runningLock.tryAcquire())
   {

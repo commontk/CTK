@@ -170,7 +170,7 @@ public:
   QString substituteVars(const QString& path)
   {
     QString buf;
-    bool varStarted = false; // indicates we are processing a var subtitute
+    bool varStarted = false; // indicates we are processing a var substitute
     QString var; // the current var key
     for (QString::const_iterator iter = path.begin(); iter != path.end(); ++iter)
     {
@@ -449,7 +449,7 @@ QVariant ctkPluginFrameworkLauncher::run(QRunnable* endSplashHandler, const QVar
   if (ctkPluginFrameworkProperties::getProperty(PROP_EXITCODE).isNull())
   {
     ctkPluginFrameworkProperties::setProperty(PROP_EXITCODE, "13");
-    ctkPluginFrameworkProperties::setProperty(PROP_EXITDATA, QString("An error has occured. See the console output and log file for details."));
+    ctkPluginFrameworkProperties::setProperty(PROP_EXITDATA, QString("An error has occurred. See the console output and log file for details."));
   }
   return QVariant();
 }

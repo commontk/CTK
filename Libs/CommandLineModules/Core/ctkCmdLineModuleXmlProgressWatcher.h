@@ -36,7 +36,7 @@ class QProcess;
  * \brief Provides progress updates of a module.
  * \ingroup CommandLineModulesCore_API
  *
- * This class is usually only used by back-end implementators for modules
+ * This class is usually only used by back-end implementers for modules
  * which can report progress and results in the form of XML fragments written
  * to a QIODevice.
  */

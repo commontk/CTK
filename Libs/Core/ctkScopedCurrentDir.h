@@ -33,7 +33,7 @@ class ctkScopedCurrentDirPrivate;
 /// \brief Use this class to change the current application directory in a given scope
 /// and automatically restore it.
 ///
-/// This is particulary useful in case a plugin and its dependent libraries should be loaded from
+/// This is particularly useful in case a plugin and its dependent libraries should be loaded from
 /// a known directory.
 /// Indeed, changing the application PATH, LD_LIBRARY_PATH or DYLD_LIBRARY_PATH within the current
 /// process won't have the desired effect. The loader checks for these variables only once when

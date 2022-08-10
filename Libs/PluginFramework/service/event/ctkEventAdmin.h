@@ -98,7 +98,7 @@ struct ctkEventAdmin
    *        <code>topic</code> will be unpublished.
    * @param topic The event topic under which the given <code>signal</code> was
    *        published. If the <code>topic</code> is empty, the signal is
-   *        unpublished for all topics it was previously pubished under.
+   *        unpublished for all topics it was previously published under.
    *
    * @see publishSlot()
    */
@@ -109,7 +109,7 @@ struct ctkEventAdmin
    * Subsribe for (observe) events. The slot is called whenever an event is sent
    * which matches the topic string and LDAP search expression contained
    * in the properties. Slots are executed either in the event delivery thread of
-   * the Event Admin implemenation or in the subscriber's thread, depending on
+   * the Event Admin implementation or in the subscriber's thread, depending on
    * the <code>type</code> argument.
    *
    * Slots should be registered with a property ctkEventConstants::EVENT_TOPIC.

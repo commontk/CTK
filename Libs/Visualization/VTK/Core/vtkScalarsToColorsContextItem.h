@@ -81,7 +81,7 @@ public:
   void SetVisibleRange(double min, double max);
   double* GetVisibleRange();
 
-  /// Center the color tranfer function around \center
+  /// Center the color transfer function around \center
   void CenterRange(double center);
 
   /// Update charts range to match data and color transfer function ranges

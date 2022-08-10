@@ -24,7 +24,7 @@
 // QT includes
 #include <QMouseEvent>
 
-// QtTesting inlcudes
+// QtTesting includes
 #include <pqWidgetEventTranslator.h>
 
 // CTK includes

@@ -310,7 +310,7 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
   bool overBottom = indexBottom < minBottom;
   bool overTop = indexTop > maxTop;
 
-  // Ensure we don't access nonexistant indices
+  // Ensure we don't access non-existent indices
   if (overLeft)
     {
     indexLeft = minLeft;

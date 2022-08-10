@@ -141,7 +141,7 @@ int ctkCmdLineModuleDefaultPathBuilderTest(int argc, char* argv[])
     {
       if (!loadPaths.contains(path))
       {
-        qDebug() << "Expecte loadPaths to contain path=" << path;
+        qDebug() << "Expected loadPaths to contain path=" << path;
         return EXIT_FAILURE;
       }
     }

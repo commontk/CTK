@@ -154,7 +154,7 @@ public:
    * @return A module reference.
    * @throws ctkInvalidArgumentException if no back-end for the given URL scheme was registered
    *         or the XML description for the module is invalid.
-   * @throws ctkCmdLineModuleTimeoutException if a time-out occured when retrieving the
+   * @throws ctkCmdLineModuleTimeoutException if a time-out occurred when retrieving the
    *         XML description from the module.
    * @throws ctkCmdLineModuleRunException if a general error occurred when running the module.
    */

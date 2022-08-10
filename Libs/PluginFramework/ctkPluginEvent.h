@@ -115,7 +115,7 @@ public:
      * The plugin's
      * \link ctkPluginActivator::start(ctkPluginContext*) ctkPluginActivator start\endlink method
      * is about to be called. This
-     * event is only delivered to synchronuous slots, which have been registered with
+     * event is only delivered to synchronous slots, which have been registered with
      * Qt::DirectConnection or Qt::BlockingQueuedConnection in ctkPluginContext::connectPluginListener().
      *
      * @see ctkPlugin::start()
@@ -128,7 +128,7 @@ public:
      * The plugin's
      * \link ctkPluginActivator::stop(ctkPluginContext*) ctkPluginActivator stop\endlink method
      * is about to be called. This
-     * event is only delivered to synchronuous slots, which have been registered with
+     * event is only delivered to synchronous slots, which have been registered with
      * Qt::DirectConnection or Qt::BlockingQueuedConnection in ctkPluginContext::connectPluginListener().
      *
      * @see ctkPlugin::stop()
@@ -142,7 +142,7 @@ public:
      * and is waiting to be activated. It is now in the
      * \link ctkPlugin::STARTING STARTING\endlink state and has a valid
      * <code>ctkPluginContext</code>. This
-     * event is only delivered to synchronuous slots, which have been registered with
+     * event is only delivered to synchronous slots, which have been registered with
      * Qt::DirectConnection or Qt::BlockingQueuedConnection in ctkPluginContext::connectPluginListener().
      */
     LAZY_ACTIVATION
@@ -184,7 +184,7 @@ public:
   QSharedPointer<ctkPlugin> getPlugin() const;
 
   /**
-   * Returns the type of lifecyle event. The type values are:
+   * Returns the type of lifecycle event. The type values are:
    * <ul>
    * <li>{@link #INSTALLED}
    * <li>{@link #RESOLVED}

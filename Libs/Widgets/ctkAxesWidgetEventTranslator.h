@@ -21,7 +21,7 @@
 #ifndef __ctkAxesWidgetEventTranslator_h
 #define __ctkAxesWidgetEventTranslator_h
 
-// QtTesting inlcudes
+// QtTesting includes
 #include <pqWidgetEventTranslator.h>
 
 // CTK includes

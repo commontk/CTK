@@ -209,7 +209,7 @@ public:
   int row(const QString& path) const;
 
   /// Changes \a oldPath to the new value given by \a newPath. Does nothing if \a oldPath is not
-  /// in the list or \a newPath does not fullfill the current path options (constraints).
+  /// in the list or \a newPath does not fulfill the current path options (constraints).
   /// \param oldPath The path to be edited.
   /// \param newPath The new path replacing \a oldPath.
   /// \return <code>true</code> if the old path was successfully changed, <code>false</code> otherwise.

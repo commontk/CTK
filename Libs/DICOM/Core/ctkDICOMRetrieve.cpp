@@ -50,7 +50,7 @@
 static ctkLogger logger("org.commontk.dicom.DICOMRetrieve");
 
 //------------------------------------------------------------------------------
-// A customized local implemenation of the DcmSCU so that Qt signals can be emitted
+// A customized local implementation of the DcmSCU so that Qt signals can be emitted
 // when retrieve results are obtained
 class ctkDICOMRetrieveSCUPrivate : public DcmSCU
 {
@@ -62,7 +62,7 @@ public:
     };
   ~ctkDICOMRetrieveSCUPrivate() {};
 
-  // called when a move reponse comes in: indicates that the
+  // called when a move response comes in: indicates that the
   // move request is being handled by the remote server.
   virtual OFCondition handleMOVEResponse(const T_ASC_PresentationContextID  presID,
                                          RetrieveResponse *response,

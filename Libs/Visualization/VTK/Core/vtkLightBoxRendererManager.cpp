@@ -64,7 +64,7 @@ public:
   ~RenderWindowItem();
   void SetViewport(double xMin, double yMin, double viewportWidth, double viewportHeight);
 
-  /// Create the actor supporing the image mapper
+  /// Create the actor supporting the image mapper
   void SetupImageMapperActor(double colorWindow, double colorLevel);
 
   /// Create a box around the renderer.
@@ -327,7 +327,7 @@ void vtkLightBoxRendererManager::vtkInternal::setupRendering()
   double viewportWidth  = 1.0 / static_cast<double>(this->RenderWindowColumnCount);
   double viewportHeight = 1.0 / static_cast<double>(this->RenderWindowRowCount);
 
-  // Postion of the Top-Left corner of the RenderWindowItem
+  // Position of the Top-Left corner of the RenderWindowItem
   float xMin, yMin;
 
   // Loop through RenderWindowItem

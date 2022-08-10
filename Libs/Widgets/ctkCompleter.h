@@ -58,7 +58,7 @@ class CTK_WIDGETS_EXPORT ctkCompleter: public QCompleter
   /// FilterContains is the most permissive filter, the completer filters out
   /// only strings that don't contain the characters from \sa completionPrefix
   /// FilterWordStartsWith is useful when strings contain space separated words
-  /// and \sa completionPrefix applies to the beginnig of any of the words in the
+  /// and \sa completionPrefix applies to the beginning of any of the words in the
   /// string.
   Q_PROPERTY(ModelFiltering modelFiltering READ modelFiltering WRITE setModelFiltering)
 

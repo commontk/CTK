@@ -235,7 +235,7 @@ public:
   /// Get the ids of the steps that directly follow the given step.
   QList<QString> forwardBranchIds(ctkWorkflowStep* step)const;
 
-  /// Get the ids of the steps that directly preceed the given step.
+  /// Get the ids of the steps that directly precede the given step.
   QList<QString> backwardBranchIds(ctkWorkflowStep* step)const;
 
   /// Determines whether there exists a path from the origin step (the current step by default) to
@@ -266,7 +266,7 @@ public:
   typedef QMap<ctkWorkflowStep*, forwardAndBackwardSteps*> StepToForwardAndBackwardStepMapType;
   typedef QList<ctkWorkflowStep*>                          StepListType;
 
-  // Register a list of pointers to the steps in the worflow for cleaning purpose
+  // Register a list of pointers to the steps in the workflow for cleaning purpose
   StepListType RegisteredSteps;
 
   // Maintain a map of <state, step> key/value pairs, to find the step

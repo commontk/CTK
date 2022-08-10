@@ -59,7 +59,7 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
   /// Note that the same camera is used with all the renderWindowItem
   vtkCamera* GetActiveCamera();
 
-  /// Set actice camera
+  /// Set active camera
   void SetActiveCamera(vtkCamera* newActiveCamera);
 
   /// Reset cameras associated with all renderWindowItem

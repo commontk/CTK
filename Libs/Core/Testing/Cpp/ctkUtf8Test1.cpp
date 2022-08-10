@@ -77,7 +77,7 @@ int ctkUtf8Test1(int, char*[])
   }
 #endif
 
-  // Check that we can create a file wit utf8 filename using standard file API
+  // Check that we can create a file with utf8 filename using standard file API
   std::string filenameUtf8 = u8"alpha(\u03b1).txt";
   std::ofstream outputFileStream;
   outputFileStream.open(filenameUtf8);

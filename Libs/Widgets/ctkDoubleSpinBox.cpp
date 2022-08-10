@@ -563,7 +563,7 @@ void ctkDoubleSpinBoxPrivate::onValueProxyModified()
   double oldValue = this->InputValue;
   ctkDoubleSpinBox::SetMode oldSetMode = this->Mode;
 
-  // Only the display is changed, not the programatic value, no need to trigger
+  // Only the display is changed, not the programmatic value, no need to trigger
   // signals
   bool wasBlocking = q->blockSignals(true);
   // Enforce a refresh. Signals are blocked so it should not trigger unwanted

@@ -70,7 +70,7 @@ public:
 
   /**
    * @brief Get the error flag.
-   * @return \c true if an error occured during validation, \c false otherwise.
+   * @return \c true if an error occurred during validation, \c false otherwise.
    */
   virtual bool error() const;
 

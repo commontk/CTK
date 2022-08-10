@@ -30,7 +30,7 @@
 //----------------------------------------------------------------------------
 namespace{
   /// \ingroup Core
-  /// Function in charge of instanciating an object of type: ClassType
+  /// Function in charge of instantiating an object of type: ClassType
   template<typename BaseClassType, typename ClassType>
     BaseClassType *instantiateObject()
   {

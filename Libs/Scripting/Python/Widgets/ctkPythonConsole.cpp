@@ -322,7 +322,7 @@ QString ctkPythonConsoleCompleter::searchUsableCharForCompletion(const QString& 
     if (c.isLetterOrNumber() || c == '.' || c == '_' || c == '(' || c == ')'
         || numberOfParenthesisClosed)
       {
-      // Keep adding caractere to the completion if
+      // Keep adding characters to the completion if
       // the number of '(' is always <= to the number of ')'
       // note that we must not count parenthesis if they are between quote...
       if (!betweenSingleQuotes && !betweenDoubleQuotes)

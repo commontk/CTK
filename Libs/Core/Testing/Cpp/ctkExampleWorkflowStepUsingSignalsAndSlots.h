@@ -57,7 +57,7 @@ class ctkExampleWorkflowStepUsingSignalsAndSlotsPrivate;
 /// step->setHasOnEntryCommand(1);
 
 ///
-/// Need two connectins to use this class's onExit() function,
+/// Need two connections to use this class's onExit() function,
 /// and must also set the step's hasOnExitCommand() flag:
 /// QObject::connect(step, SIGNAL(invokeOnExitCommand(const
 /// ctkWorkflowStep*, const

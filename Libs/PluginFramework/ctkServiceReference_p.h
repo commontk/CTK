@@ -56,10 +56,10 @@ public:
    * Unget the service object.
    *
    * @param plugin Plugin who wants remove service.
-   * @param checkRefCounter If true decrement refence counter and remove service
+   * @param checkRefCounter If true decrement reference counter and remove service
    *                        if we reach zero. If false remove service without
-   *                        checking refence counter.
-   * @return True if service was remove or false if only refence counter was
+   *                        checking reference counter.
+   * @return True if service was remove or false if only reference counter was
    *         decremented.
    */
   bool ungetService(QSharedPointer<ctkPlugin> plugin, bool checkRefCounter);

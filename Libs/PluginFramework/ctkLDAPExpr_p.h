@@ -76,7 +76,7 @@ public:
 
   /**
    * Get object class set matched by this LDAP expression. This will not work
-   * with wildcards and NOT expressions. If a set can not be determined return <code>fasle</code>.
+   * with wildcards and NOT expressions. If a set can not be determined return <code>false</code>.
    *
    * \param objClasses The set of matched classes will be added to objClasses.
    * \return If the set cannot be determined, <code>false</code> is returned,

@@ -80,7 +80,7 @@ bool ctkWorkflowPrivate::addStep(ctkWorkflowStep* step)
   if (step->workflow() != q)
     {
     // Check if steps are not already associated with a different workflow
-    QString msg("addStep - step [%1] already associated with a different workfow !");
+    QString msg("addStep - step [%1] already associated with a different workflow !");
     qWarning() << msg.arg(step->id());
     return false;
     }

@@ -166,7 +166,7 @@ void ctkActionsWidget::addAction(QAction* action, const QString& group)
   bool expandGroupItem = (actionGroupItem->rowCount() == 0);
   actionGroupItem->appendRow(actionItems);
   // if the group didn't exist yet or was empty, then open/expand it
-  // automatcally to show its contents. If the group was not empty, then let
+  // automatically to show its contents. If the group was not empty, then let
   // it as is (maybe the user closed/collapsed it for a good reason...
   if (expandGroupItem)
     {

@@ -165,9 +165,9 @@ void ctkPluginStorageSQL::open()
   query.finish();
 
 
-  //Check database structure (tables) and recreate tables if neccessary
+  //Check database structure (tables) and recreate tables if necessary
   //If one of the tables is missing remove all tables and recreate them
-  //This operation is required in order to avoid data coruption
+  //This operation is required in order to avoid data corruption
   if (!checkTables())
   {
     if (dropTables())

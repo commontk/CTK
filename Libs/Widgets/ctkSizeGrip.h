@@ -57,7 +57,7 @@ class CTK_WIDGETS_EXPORT ctkSizeGrip
   Q_PROPERTY(Qt::Orientations orientations READ orientations WRITE setOrientations)
 
   /// This property holds the sizeHint set by the user via the size grip or
-  /// programatically using \a setWidgetSizeHint().
+  /// programmatically using \a setWidgetSizeHint().
   /// If width or/and height is 0, it means the sizeHint has not been touched
   /// and the default widget sizeHint should be used instead.
   /// For example, if \a orientations is solely vertical (not also
@@ -90,7 +90,7 @@ public:
   QWidget* widgetToResize()const;
   void setWidgetToResize(QWidget* target);
 
-  /// Return the sizeHint set by the user or programatically using
+  /// Return the sizeHint set by the user or programmatically using
   /// \a setWidgetSizeHint().
   /// If width or/and height is 0, it means the sizeHint has not been touched
   /// and the original widget sizeHint should be used instead.

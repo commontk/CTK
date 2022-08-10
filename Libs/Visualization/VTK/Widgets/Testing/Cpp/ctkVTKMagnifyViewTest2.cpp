@@ -228,16 +228,16 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
 
   QString imageFilename = dataDirectory + "/" + "computerIcon.png";
 
-  // Instanciate the reader factory
+  // Instantiate the reader factory
   vtkSmartPointer<vtkImageReader2Factory> imageFactory =
       vtkSmartPointer<vtkImageReader2Factory>::New();
 
-  // Instanciate an image reader
+  // Instantiate an image reader
   vtkSmartPointer<vtkImageReader2> imageReader;
   imageReader.TakeReference(imageFactory->CreateImageReader2(imageFilename.toUtf8()));
   if (!imageReader)
     {
-    std::cerr << "Failed to instanciate image reader using: "
+    std::cerr << "Failed to instantiate image reader using: "
               << qPrintable(imageFilename) << std::endl;
     return EXIT_FAILURE;
     }

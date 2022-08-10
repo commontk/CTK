@@ -98,7 +98,7 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
                    << qtMessage0 << qtMessage1 << qtMessage2
                    << stdMessage0 << stdMessage1;
 
-  // Since the order of the messages outputed on the terminal is not deterministic,
+  // Since the order of the messages outputted on the terminal is not deterministic,
   // let's just make sure that all messages have been displayed on the terminal
   // independently of their order.
   if (!checkTerminalOutput(expectedMessages))

@@ -80,8 +80,8 @@ void ctkPlugin::start(const StartOptions& options)
   // Initialize the activation; checks initialization of lazy
   // activation.
 
-  //TODO 1: If activating or deactivating, wait a litle
-  // we don't use mutliple threads to start plugins for now
+  //TODO 1: If activating or deactivating, wait a little
+  // we don't use multiple threads to start plugins for now
   //waitOnActivation(lock, "ctkPlugin::start", false);
 
   //2: start() is idempotent, i.e., nothing to do when already started

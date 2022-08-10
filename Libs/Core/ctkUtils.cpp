@@ -67,7 +67,7 @@ static std::string qStringToSTLString(const QString& qstring)
 void ctk::qListToSTLVector(const QStringList& list,
                                  std::vector<std::string>& vector)
 {
-  // To avoid unnessesary relocations, let's reserve the required amount of space
+  // To avoid unnecessary relocations, let's reserve the required amount of space
   vector.reserve(list.size());
   std::transform(list.begin(),list.end(),std::back_inserter(vector),&qStringToSTLString);
 }

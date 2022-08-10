@@ -124,19 +124,19 @@ int ctkCallbackTest1(int argc, char * argv [] )
 
   if (!Done1)
     {
-    std::cerr << "Line " << __LINE__ << " - Probem with ctkCallback" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with ctkCallback" << std::endl;
     return EXIT_FAILURE;
     }
 
   if (!Done2)
     {
-    std::cerr << "Line " << __LINE__ << " - Probem with ctkCallback::setCallback" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with ctkCallback::setCallback" << std::endl;
     return EXIT_FAILURE;
     }
 
   if (!Done3)
     {
-    std::cerr << "Line " << __LINE__ << " - Probem with ctkCallback::setCallback" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with ctkCallback::setCallback" << std::endl;
     return EXIT_FAILURE;
     }
   return EXIT_SUCCESS;
