@@ -35,7 +35,7 @@
  * <p>
  * A <code>ctkServiceException</code> object is created by the Framework or
  * to denote an exception condition in the service. An enum
- * type is used to identify the exception type for future extendability.
+ * type is used to identify the exception type for future extendibility.
  *
  * <p>
  * This exception conforms to the general purpose exception chaining mechanism.

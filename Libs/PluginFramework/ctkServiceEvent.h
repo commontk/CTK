@@ -46,7 +46,7 @@ class ctkServiceEventData;
  * <code>ctkServiceEvent</code> objects are delivered to
  * slots connected via ctkPluginContext::connectServiceListener() when a
  * change occurs in this service's lifecycle. A type code is used to identify
- * the event type for future extendability.
+ * the event type for future extendibility.
  */
 class CTK_PLUGINFW_EXPORT ctkServiceEvent
 {

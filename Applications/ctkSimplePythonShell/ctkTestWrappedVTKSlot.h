@@ -50,7 +50,7 @@ public Q_SLOTS:
     return this->MyTable;
     }
 
-  /// Example ot slot accepting a VTK object as parameter
+  /// Example of slot accepting a VTK object as parameter
   void setTable(vtkTable * newTable)
     {
     this->MyTable = newTable;

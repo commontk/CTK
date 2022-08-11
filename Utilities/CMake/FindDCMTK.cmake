@@ -239,7 +239,7 @@ if(EXISTS ${DCMTK_DIR}/CMakeCache.txt)
   if(NOT EXISTS ${EXTDCMTK_SOURCE_DIR})
     message(FATAL_ERROR
       "DCMTK build directory references
-nonexistant DCMTK source directory ${EXTDCMTK_SOURCE_DIR}")
+non-existent DCMTK source directory ${EXTDCMTK_SOURCE_DIR}")
   endif()
 endif()
 

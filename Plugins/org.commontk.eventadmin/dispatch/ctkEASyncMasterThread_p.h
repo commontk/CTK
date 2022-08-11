@@ -27,9 +27,9 @@
 
 
 /**
- * Used to execute synchronuous tasks. This is not done
+ * Used to execute synchronous tasks. This is not done
  * in the main thread because we need to be able to
- * interrupt the thread waiting on a synchronuous task
+ * interrupt the thread waiting on a synchronous task
  * (for example on a timeout). ctkEAInterruptibleThread
  * provides this capability.
  */

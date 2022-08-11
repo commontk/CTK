@@ -133,7 +133,7 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   // Due to Qt bug 12152, we cannot listen to the "paused" signal because it is
   // not emitted directly when the QFuture is paused. Instead, it is emitted after
   // resuming the future, after the "resume" signal has been emitted... we use
-  // a polling aproach instead.
+  // a polling approach instead.
   pollPauseTimer.setInterval(300);
   connect(&pollPauseTimer, SIGNAL(timeout()), SLOT(checkModulePaused()));
   connect(&currentFutureWatcher, SIGNAL(resumed()), SLOT(currentModuleResumed()));

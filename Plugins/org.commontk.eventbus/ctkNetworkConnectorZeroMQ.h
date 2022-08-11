@@ -65,7 +65,7 @@ protected:
     //here goes zeromq vars
     
 private:
-    //here ges function for zeromq connection
+    //here goes function for zeromq connection
     
     /// stop and destroy the server instance.
     void stopServer();

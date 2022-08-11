@@ -31,7 +31,7 @@ public:
     virtual ~ctkEventDispatcher();
 
     /// Add the observer to the events.
-    /** Return true if observer has beed added correctly, false otherwise.
+    /** Return true if observer has been added correctly, false otherwise.
     This method check before adding a new observer that it has not already been inserted into the events' Hash with the same id and callback signature.*/
     bool addObserver(ctkBusEvent &props);
 
@@ -45,7 +45,7 @@ public:
     bool removeSignal(const QObject *obj, const QString topic = "", bool qt_disconnect = true);
 
     /// register custom signals use by objects to raise them events.
-    /** Return true if signal has beed added correctly, false otherwise.
+    /** Return true if signal has been added correctly, false otherwise.
     This method check before adding a new signal that it has not already been inserted into the events' Hash with the same id and signal signature.
     WARNING: due to Qt limitation you cannot use the same signal in different Topics.*/
     bool registerSignal(ctkBusEvent &props);
@@ -76,7 +76,7 @@ protected:
     /// Register MAF global events
     virtual void initializeGlobalEvents();
 
-    /// Interanl method used to remove the given event property.
+    /// Internal method used to remove the given event property.
     bool removeEventItem(ctkBusEvent &props);
 
     /// Return the signal item property associated to the given ID.

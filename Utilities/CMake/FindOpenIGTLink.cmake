@@ -17,7 +17,7 @@
 #
 #  USE_OpenIGTLink_FILE - The full path to the UseOpenIGTLink.cmake file.  
 #                 This is provided for backward 
-#                 compatability.  Use OpenIGTLink_USE_FILE
+#                 compatibility.  Use OpenIGTLink_USE_FILE
 #                 instead.
 
 
@@ -77,7 +77,7 @@ if(OpenIGTLink_DIR)
   set(OpenIGTLink_FOUND 1)
   include(${OpenIGTLink_DIR}/OpenIGTLinkConfig.cmake)
 
-  # Set USE_OpenIGTLink_FILE for backward-compatability.
+  # Set USE_OpenIGTLink_FILE for backward-compatibility.
   set(USE_OpenIGTLink_FILE ${OpenIGTLink_USE_FILE})
 else()
   set(OpenIGTLink_FOUND 0)

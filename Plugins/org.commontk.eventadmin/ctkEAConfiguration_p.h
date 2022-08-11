@@ -84,7 +84,7 @@ class ctkEAAbstractAdapter;
  * If a timeout is configured by default all event handlers are called using the timeout.
  * For performance optimization it is possible to configure event handlers where the
  * timeout handling is not used - this reduces the thread usage from the thread pools
- * as the timout handling requires an additional thread to call the event handler.
+ * as the timeout handling requires an additional thread to call the event handler.
  * However, the application should work without this configuration property. It is a
  * pure optimization!
  * The value is a list of strings (separated by comma) which is assumed to define

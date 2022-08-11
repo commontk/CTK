@@ -84,7 +84,7 @@ public:
     catch (const std::exception& e)
     {
       // TODO logging
-      std::cerr << "Exception occured during publishing " << qPrintable(event.getTopic()) << ": " << e.what() << std::endl;
+      std::cerr << "Exception occurred during publishing " << qPrintable(event.getTopic()) << ": " << e.what() << std::endl;
     }
 
   }

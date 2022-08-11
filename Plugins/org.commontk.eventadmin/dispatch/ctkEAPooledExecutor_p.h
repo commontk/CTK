@@ -105,7 +105,7 @@ class ctkEAInterruptibleThread;
  *   Queue sizes and maximum pool sizes can often be traded off for
  *   each other. Using large queues and small pools minimizes CPU
  *   usage, OS resources, and context-switching overhead, but can lead
- *   to artifically low throughput. Especially if tasks frequently
+ *   to artificially low throughput. Especially if tasks frequently
  *   block (for example if they are I/O bound), the underlying
  *   OS may be able to schedule time for more threads than you
  *   otherwise allow. Use of small queues or queueless handoffs
@@ -380,7 +380,7 @@ protected:
   /** The maximum number of threads allowed in pool. **/
   int maximumPoolSize_;
 
-  /** The minumum number of threads to maintain in pool. **/
+  /** The minimum number of threads to maintain in pool. **/
   int minimumPoolSize_;
 
   /**  Current pool size.  **/
@@ -448,7 +448,7 @@ public:
 
   /**
    * Return the minimum number of threads to simultaneously execute.
-   * (Default value is 1).  If fewer than the mininum number are
+   * (Default value is 1).  If fewer than the minimum number are
    * running upon reception of a new request, a new thread is started
    * to handle this request.
    **/
@@ -466,7 +466,7 @@ public:
 
   /**
    * Return the current number of active threads in the pool.  This
-   * number is just a snaphot, and may change immediately upon
+   * number is just a snapshot, and may change immediately upon
    * returning
    **/
   int getPoolSize() const;
