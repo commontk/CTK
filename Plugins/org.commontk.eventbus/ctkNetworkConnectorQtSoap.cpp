@@ -55,7 +55,7 @@ void ctkNetworkConnectorQtSoap::createClient(const QString hostName, const unsig
 
     //registration of the method REMOTE_COMMUNICATION_SOAP at Soap level
     // this method need to reflect the name of the action of the service while QVariant::List are list of
-    // strings, in  which each string represent the correct name of the parameter in the sevice function.
+    // strings, in  which each string represent the correct name of the parameter in the service function.
     registerServerMethod("testArray", parametersForRegisterteredFunction);
 
     //

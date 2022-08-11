@@ -47,7 +47,7 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/${MY_EXPORT_HEADER_PREFIX}Export.h
   )
 
-# Add excutable
+# Add executable
 add_executable(${PROJECT_NAME}
   DGraph.cpp
   ${CTK_SOURCE_DIR}/Libs/Core/ctkDependencyGraph.h

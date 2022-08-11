@@ -32,7 +32,7 @@ macro(ctkMacroInitProject test)
     foreach(FILE_NAME_ABS ${implementation_file_list})
       ## extract the base file name.
       get_filename_component(FILE_NAME ${FILE_NAME_ABS} NAME_WE)
-      ## Exclude the main.cpp file (it doesn't ned to be 'mocced')
+      ## Exclude the main.cpp file (it doesn't need to be 'mocced')
       if(NOT ${FILE_NAME} STREQUAL "main")
         ## Assign the moc custom filename
         set(MOC_FILE "${FILE_NAME}.moc")

@@ -60,7 +60,7 @@ struct ctkEALinkedNode
  * and takes when the queue is not empty.
  * Normally a put and a take can proceed simultaneously.
  * (Although it does not allow multiple concurrent puts or takes.)
- * This class tends to perform more efficently than
+ * This class tends to perform more efficiently than
  * other ctkEAChannel implementations in producer/consumer
  * applications.
  */

@@ -41,7 +41,7 @@ class ctkPluginFrameworkEventData;
  * <code>ctkPluginFrameworkEvent</code> objects are delivered to slots connected
  * via ctkPluginContext::connectFrameworkListener when a general event occurs
  * within the plugin environment.
- * A type code is used to identify the event type for future extendability.
+ * A type code is used to identify the event type for future extendibility.
  *
  * @see ctkPluginContext#connectFrameworkListener
  * @see ctkEventBus

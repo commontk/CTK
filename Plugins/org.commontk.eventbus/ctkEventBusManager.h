@@ -35,7 +35,7 @@ public:
     static ctkEventBusManager *instance();
 
     /// Add a new event property (observer or event) to the event bus hash.
-    /** Return true if observer has beed added correctly, false otherwise.
+    /** Return true if observer has been added correctly, false otherwise.
     This method check before adding a new observer that it has not already been inserted into the events' Hash with the same id and callback signature.*/
     bool addEventProperty(ctkBusEvent &props) const;
 
@@ -63,7 +63,7 @@ public:
     /// Enable/Disable event logging to allow dumping events notification into the selected logging output stream.
     void enableEventLogging(bool enable = true);
 
-    /// When logging is enabled, allows logging events releted to specific id (require a valid topic).
+    /// When logging is enabled, allows logging events related to specific id (require a valid topic).
     void logEventTopic(const QString topic);
 
     /// When enabled, allows logging all events. It reset the value for m_LogEventId to -1 (the default)

@@ -29,7 +29,7 @@ public:
     /// Create and initialize client
     /*virtual*/ void createClient(const QString hostName, const unsigned int port);
 
-    /// Return the string variable initializated and updated from the data pipe.
+    /// Return the string variable initialized and updated from the data pipe.
     /*virtual*/ void createServer(const unsigned int port);
 
     /// Allow to send a network request.
@@ -122,7 +122,7 @@ private Q_SLOTS:
     void ctkNetworkConnectorAllocationTest();
     /// Test the creation of client and server.
     void ctkNetworkConnectorCreateClientAndServerTest();
-    /// test the function that retrive protocol type
+    /// test the function that retrieve protocol type
     void retrieveProtocolTest();
 
 private:

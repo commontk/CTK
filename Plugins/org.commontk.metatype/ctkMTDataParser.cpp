@@ -466,7 +466,7 @@ void ctkMTDataParser::attributeDefinitionHandler(QList<ctkAttributeDefinitionImp
 
   if (ad_cardinality_val == 0)
   {
-    // Attribute DEFAULT has one and only one occurance.
+    // Attribute DEFAULT has one and only one occurrence.
     ad->setDefaultValue(QStringList(ad_defaults_str), false);
   }
   else

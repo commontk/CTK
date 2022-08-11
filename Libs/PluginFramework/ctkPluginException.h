@@ -36,7 +36,7 @@
  * A <code>ctkPluginException</code> object is created by the Framework to denote
  * an exception condition in the lifecycle of a plugin.
  * <code>ctkPluginException</code>s should not be created by plugin developers.
- * An enum type is used to identify the exception type for future extendability.
+ * An enum type is used to identify the exception type for future extendibility.
  *
  * <p>
  * This exception conforms to the general purpose exception chaining mechanism.

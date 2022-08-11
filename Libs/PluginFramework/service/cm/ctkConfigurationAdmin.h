@@ -117,7 +117,7 @@ struct CTK_PLUGINFW_EXPORT ctkConfigurationAdmin
 
   /**
    * Configuration property naming the location of the plugin that is
-   * associated with a a <code>ctkConfiguration</code> object. This property can
+   * associated with a <code>ctkConfiguration</code> object. This property can
    * be searched for but must not appear in the configuration dictionary for
    * security reason. The property's value is of type <code>QString</code>.
    */

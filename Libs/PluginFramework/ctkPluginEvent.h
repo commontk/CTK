@@ -40,7 +40,7 @@ class ctkPluginEventData;
  * <code>ctkPluginEvent</code> objects are delivered to slots connected
  * via ctkPluginContext::connectPluginListener() when a change
  * occurs in a plugins's lifecycle. A type code is used to identify
- * the event type for future extendability.
+ * the event type for future extendibility.
  *
  * @see ctkPluginContext#connectPluginListener
  */

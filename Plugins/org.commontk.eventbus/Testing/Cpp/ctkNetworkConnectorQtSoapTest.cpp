@@ -32,7 +32,7 @@ public:
     /// constructor.
     testObjectCustomForNetworkConnectorSoap();
 
-    /// Return tha var's value.
+    /// Return the var's value.
     int var() {return m_Var;}
 
 public Q_SLOTS:

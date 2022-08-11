@@ -38,7 +38,7 @@ ctkCmdLineModuleExplorerProgressWidget::ctkCmdLineModuleExplorerProgressWidget(Q
   // Due to Qt bug 12152, we cannot listen to the "paused" signal because it is
   // not emitted directly when the QFuture is paused. Instead, it is emitted after
   // resuming the future, after the "resume" signal has been emitted... we use
-  // a polling aproach instead.
+  // a polling approach instead.
   PollPauseTimer.setInterval(300);
   connect(&PollPauseTimer, SIGNAL(timeout()), SLOT(checkModulePaused()));
 

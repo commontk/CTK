@@ -210,7 +210,7 @@ public:
    * @throws ctkEAInterruptedException if this thread was interrupted
    *         during the barrier. If so, <code>broken</code> status is also set.
    * @throws ctkEATimeoutException if this thread timed out waiting for
-   *         the barrier. If the timeout occured while already in the
+   *         the barrier. If the timeout occurred while already in the
    *         barrier, <code>broken</code> status is also set.
    **/
   int attemptBarrier(long msecs);

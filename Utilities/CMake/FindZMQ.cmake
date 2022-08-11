@@ -17,7 +17,7 @@
 #
 #  USE_ZMQ_FILE - The full path to the ZMQ.cmake file.  
 #                 This is provided for backward 
-#                 compatability.  Use ZMQ_USE_FILE
+#                 compatibility.  Use ZMQ_USE_FILE
 #                 instead.
 
 
@@ -77,7 +77,7 @@ if(ZMQ_DIR)
   set(ZMQ_FOUND 1)
   include(${ZMQ_DIR}/ZMQConfig.cmake)
 
-  # Set USE_ZMQ_FILE for backward-compatability.
+  # Set USE_ZMQ_FILE for backward-compatibility.
   set(USE_ZMQ_FILE ${ZMQ_USE_FILE})
 else()
   set(ZMQ_FOUND 0)

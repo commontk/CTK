@@ -210,7 +210,7 @@ QString ctkAttributeDefinitionImpl::validate(const QString& value) const
       return QString();
   }
 
-  // Addtional validation for STRING.
+  // Additional validation for STRING.
   // PASSWORD is treated like STRING.
   if ((_dataType == QVariant::String || _dataType == QVariant::UserType) && _values.size() > 0 && !_values.contains(value))
   {

@@ -44,7 +44,7 @@ public:
   void setPluginLocalization(const ctkPluginLocalization& pl);
 
   /**
-   * Method to get the localized text of inputed String.
+   * Method to get the localized text of inputted String.
    */
   QString getLocalized(const QString& key) const;
 

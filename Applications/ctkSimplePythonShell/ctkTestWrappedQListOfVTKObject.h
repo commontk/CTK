@@ -37,7 +37,7 @@ public:
     {
     }
 
-  /// Example ot slot accepting a VTK object as parameter
+  /// Example of slot accepting a VTK object as parameter
   Q_INVOKABLE int numberOfElementInList(const QList<vtkTable*>& listOfTable)
     {
     return listOfTable.count();

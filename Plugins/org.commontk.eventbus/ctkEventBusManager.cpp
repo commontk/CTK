@@ -34,7 +34,7 @@ ctkEventBusManager::~ctkEventBusManager() {
     }
     m_NetworkConnectorHash.clear();
 
-    //disconnet detachFromEventBus
+    //disconnect detachFromEventBus
     m_SkipDetach = true;
 
     if(m_LocalDispatcher) {
