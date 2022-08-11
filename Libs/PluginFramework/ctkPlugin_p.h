@@ -289,7 +289,7 @@ public:
 
 private:
 
-  /** Rember if plugin was started */
+  /** Remember if plugin was started */
   bool wasStarted;
 
   /**

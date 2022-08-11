@@ -338,7 +338,7 @@
   <xsd:complexType name="enumerationType">
     <xsd:annotation>
       <xsd:documentation>Restricts the valid parameter value to one and only one element out of
-      a specified descrete set of values.</xsd:documentation>
+      a specified discrete set of values.</xsd:documentation>
     </xsd:annotation>
     <xsd:complexContent>
       <xsd:extension base="paramType">

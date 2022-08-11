@@ -150,7 +150,7 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
       // If justified alignment is requested then expand the last item in the row
       // to fill the available space. If the width of items were highly varying then
       // expanding width of all items proportionally could provide visually more
-      // apealing results, but expanding only the last item was much simpler to implement,
+      // appealing results, but expanding only the last item was much simpler to implement,
       // and works very well most of the cases.
       if (!testOnly && q->alignment() == Qt::AlignJustify && previousItem)
         {

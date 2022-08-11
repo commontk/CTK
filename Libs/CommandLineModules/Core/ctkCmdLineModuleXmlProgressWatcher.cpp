@@ -47,14 +47,14 @@ public:
   ctkCmdLineModuleXmlProgressWatcherPrivate(QIODevice* input, ctkCmdLineModuleXmlProgressWatcher* qq)
     : input(input), process(NULL), readPos(0), q(qq), error(false), currentProgress(0)
   {
-    // wrap the content in an artifical root element
+    // wrap the content in an artificial root element
     reader.addData("<module-root>");
   }
 
   ctkCmdLineModuleXmlProgressWatcherPrivate(QProcess* input, ctkCmdLineModuleXmlProgressWatcher* qq)
     : input(input), process(input), readPos(0), q(qq), error(false), currentProgress(0)
   {
-    // wrap the content in an artifical root element
+    // wrap the content in an artificial root element
     reader.addData("<module-root>");
   }
 

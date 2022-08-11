@@ -91,7 +91,7 @@ private:
   const ctkCmdLineModuleFutureInterface& futureInterface() const;
   ctkCmdLineModuleFutureInterface& futureInterface();
 
-  // not imlemented
+  // not implemented
   void setFuture(const QFuture<ctkCmdLineModuleResult>&);
 };
 

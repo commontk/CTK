@@ -73,7 +73,7 @@ int ctkVTKCompositeFunction::count()const
   //qDebug() << "Piecewise: " << d->PiecewiseFunction->GetSize();
   //qDebug() << "Color Transfer: " << d->ColorTransferFunction->GetSize();
 
-  // check if 2 tranfer function have same size
+  // check if 2 transfer function have same size
   Q_ASSERT( d->PiecewiseFunction->GetSize() == d->ColorTransferFunction->GetSize());
 
   return d->PiecewiseFunction->GetSize();

@@ -193,7 +193,7 @@ bool ctkXMLEventSource::restoreApplicationSettings()
   if (!this->Automatic)
     {
     if (QMessageBox::No == QMessageBox::warning(0, tr("Playback ..."),
-                                                tr("The settings are differents from the record Settings.\n"
+                                                tr("The settings are different from the record Settings.\n"
                                                    "Do you want to restore the settings?"),
                                                 QMessageBox::Yes | QMessageBox::No,
                                                 QMessageBox::Yes))

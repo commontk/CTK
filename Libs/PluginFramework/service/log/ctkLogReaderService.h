@@ -74,7 +74,7 @@ struct ctkLogReaderService
    *
    * @param receiver The object to connect to.
    * @param slot The name of the slot to be connected.
-   * @returns <code>true</code> if the connection was successfull;
+   * @returns <code>true</code> if the connection was successful;
    *          <code>false</code> otherwise.
    * @see ctkLogListener
    * @see ctkLogEntry

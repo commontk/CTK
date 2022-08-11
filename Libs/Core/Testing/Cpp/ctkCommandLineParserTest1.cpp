@@ -55,7 +55,7 @@ int ctkCommandLineParserTest1(int, char*[])
     return EXIT_FAILURE;
     }
 
-  // Test2 - Check if addArgument() for a boolean workes as expected
+  // Test2 - Check if addArgument() for a boolean works as expected
   QStringList arguments2;
   arguments2 << "ctkCommandLineParserTest1";
   arguments2 << "--test-bool";

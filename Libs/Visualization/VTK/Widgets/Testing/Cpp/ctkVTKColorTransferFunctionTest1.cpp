@@ -26,7 +26,7 @@ int ctkVTKColorTransferFunctionTest1( int argc, char * argv [])
 
   ctkVTKColorTransferFunction defaultTF;
 
-  //------Test Function Count-wihtout colorTransferFunction-------------
+  //------Test Function Count-without colorTransferFunction-------------
   if (defaultTF.count() != -1
         || defaultTF.minValue() != -1
         || defaultTF.maxValue() != -1)
@@ -78,7 +78,7 @@ int ctkVTKColorTransferFunctionTest1( int argc, char * argv [])
     //return EXIT_FAILURE;
   }
 
-  //------Test Function Count wiht colorTransferFunction-------------
+  //------Test Function Count with colorTransferFunction-------------
   if (defaultTF.count() < 0)
     {
     std::cerr << "Line : " << __LINE__

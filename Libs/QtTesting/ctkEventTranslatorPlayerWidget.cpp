@@ -449,7 +449,7 @@ bool ctkEventTranslatorPlayerWidget::compare(const QImage& actual,
     {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - The 2 Images have "
-        << totaldiff << "% differencies \n" << ctk::endl;
+        << totaldiff << "% differences \n" << ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
     }

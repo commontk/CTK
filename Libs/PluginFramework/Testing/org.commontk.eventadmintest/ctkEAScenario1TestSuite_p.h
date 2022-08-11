@@ -56,16 +56,16 @@ private:
   /** class variable indicating the topics */
   QStringList topicsToConsume;
 
-  /** class variable keeping number of asynchronus messages */
+  /** class variable keeping number of asynchronous messages */
   int numOfasynchMessages;
 
-  /** class variable keeping number of synchronus messages */
+  /** class variable keeping number of synchronous messages */
   int numOfsynchMessages;
 
-  /** class variable holding the old syncronus message nummber */
+  /** class variable holding the old synchronous message number */
   int synchMessageExpectedNumber;
 
-  /** class variable holding the old asyncronus message nummber */
+  /** class variable holding the old asynchronous message number */
   int asynchMessageExpectedNumber;
 
   const int messagesSent;
@@ -143,7 +143,7 @@ Q_SIGNALS:
 };
 
 /**
- * Test sute for testing the requirements specified in the test
+ * Test suite for testing the requirements specified in the test
  * specification for the EventAdmin service. It will ensure that the
  * events arrive in time and order it will even check that the
  * wildcards according to the topics works properly.

@@ -33,7 +33,7 @@ class ctkCheckBoxPrivate;
 /// ctkCheckBox is an advanced QCheckBox that gives more control
 /// over its look and feel.
 /// We can change the indicator check box by a new QIcon, with two mode On/Off.
-/// The indicator icon size can be controled. see setIndicatorIconSize()
+/// The indicator icon size can be controlled. see setIndicatorIconSize()
 
 class CTK_WIDGETS_EXPORT ctkCheckBox : public QCheckBox
 {

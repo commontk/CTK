@@ -46,7 +46,7 @@ class ctkDICOMDisplayedFieldGenerator;
 /// vanishes). If in "memory mode", the objects are not written to disk,
 /// otherwise they are stored in a subdirectory of the SQLITE database file
 /// directory called "dicom". Inside, a folder structure created which contains
-/// a directoy for each study, containing a directory for each series, containing
+/// a directory for each study, containing a directory for each series, containing
 /// a file for each object. The corresponding UIDs are used as filenames.
 /// Thumbnais for each image can be created; if so, they are stored in a directory
 /// parallel to "dicom" directory called "thumbs".

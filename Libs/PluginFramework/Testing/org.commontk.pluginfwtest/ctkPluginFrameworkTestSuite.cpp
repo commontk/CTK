@@ -189,8 +189,8 @@ void ctkPluginFrameworkTestSuite::frame018a()
   try
   {
     QObject* obj = pc->getService(ctkServiceReference());
-    qDebug() << "Got service object =" << obj->metaObject()->className() << ", excpected ctkInvalidArgumentException exception";
-    QFAIL("Got service object, excpected ctkInvalidArgumentException exception");
+    qDebug() << "Got service object =" << obj->metaObject()->className() << ", expected ctkInvalidArgumentException exception";
+    QFAIL("Got service object, expected ctkInvalidArgumentException exception");
   }
   catch (const ctkInvalidArgumentException& )
   {}

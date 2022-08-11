@@ -87,7 +87,7 @@ public:
   int   MaxHeight;
   int   CollapsedHeight;
 
-  /// We change the visibility of the chidren in setChildrenVisibility
+  /// We change the visibility of the children in setChildrenVisibility
   /// and we track when the visibility is changed to force it back to possibly
   /// force the child to be hidden. To prevent infinite loop we need to know
   /// who is changing children's visibility.
@@ -156,7 +156,7 @@ void ctkCollapsibleGroupBoxPrivate::setChildVisibility(QWidget* childWidget)
   this->ForcingVisibility = true;
 
   bool visible= !q->collapsed();
-  // if the widget has been explicity hidden, then hide it.
+  // if the widget has been explicitly hidden, then hide it.
   if (childWidget->property("visibilityToParent").isValid()
       && !childWidget->property("visibilityToParent").toBool())
     {

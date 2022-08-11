@@ -365,7 +365,7 @@ void ctkPushButton::paintEvent(QPaintEvent * _event)
       opt.rect.setLeft(opt.rect.right() - buttonMargin - textWidth);
       }
     }
-  // all the computations have been made infering the text would be left oriented
+  // all the computations have been made inferring the text would be left oriented
   tf &= ~Qt::AlignHCenter & ~Qt::AlignRight;
   tf |= Qt::AlignLeft;
   this->style()->drawItemText(&p, opt.rect, tf, opt.palette, (opt.state & QStyle::State_Enabled),

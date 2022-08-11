@@ -207,7 +207,7 @@ public:
   /// displayed value from the value retrieved by the value property.
   /// For example, the value proxy can allow one to display celsius in the
   /// spinbox while the value retrieved from the value property and signals
-  /// are in farenheit.
+  /// are in fahrenheit.
   /// To remove the proxy, simply install a new empty proxy. The proxy
   /// installation/removal is silent.
   /// \sa setValueProxy(), valueProxy()

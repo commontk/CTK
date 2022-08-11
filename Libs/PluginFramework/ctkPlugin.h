@@ -422,7 +422,7 @@ public:
    * {@link #STOP_TRANSIENT} option was set.
    * </ul>
    *
-   * @param options The options for stoping this bundle. See
+   * @param options The options for stopping this bundle. See
    *        {@link #STOP_TRANSIENT}.
    * @throws ctkPluginException If this plugin's <code>ctkPluginActivator</code>
    *         threw an exception.

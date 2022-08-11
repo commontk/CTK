@@ -109,7 +109,7 @@ public:
 
   /**
    * Get a Qt resource as a byte array from a plugin. The resource
-   * is cached and may be aquired even if the plugin is not active.
+   * is cached and may be acquired even if the plugin is not active.
    *
    * @param component Resource to get the byte array from.
    * @return QByteArray to the entry (empty if it doesn't exist).

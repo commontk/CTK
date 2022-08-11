@@ -39,7 +39,7 @@ class ctkWorkflowWidgetStepPrivate;
 
 /// \ingroup Widgets
 ///
-/// \brief ctkWorkflowWidgetStep is a convienience class to quickly
+/// \brief ctkWorkflowWidgetStep is a convenience class to quickly
 /// construct a ctkWorkflowStep with a user interface.
 ///
 /// It embeds a QWidget* stepArea, onto which step-specific widgets can be placed.

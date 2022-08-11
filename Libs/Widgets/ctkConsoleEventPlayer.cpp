@@ -25,7 +25,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 
-// CTK inlcudes
+// CTK includes
 #include "ctkConsole.h"
 #include "ctkConsoleEventPlayer.h"
 

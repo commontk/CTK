@@ -70,7 +70,7 @@ public Q_SLOTS:
   /// \sa setMaximumUpdateRate
   virtual void scheduleRender();
 
-  /// Force a render even if a render is already ocurring
+  /// Force a render even if a render is already occurring
   /// Be careful when calling forceRender() as it can slow down your
   /// application. It is preferable to use scheduleRender() instead.
   /// \sa scheduleRender

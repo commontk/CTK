@@ -231,7 +231,7 @@ public:
 
   ///
   /// The slider can be handled as a popup for the spinbox. The location where
-  /// the popup appears is controlled by \sa alignement.
+  /// the popup appears is controlled by \sa alignment.
   /// False by default.
   /// Note: some sizing issues in the popup can happen if the ctkSliderWidget
   /// has already parent. You might want to consider setting this property

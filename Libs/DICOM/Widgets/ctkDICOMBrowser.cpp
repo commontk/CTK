@@ -152,7 +152,7 @@ public:
 
   // Return a sanitized version of the string that is safe to be used
   // as a filename component.
-  // All non-ASCII characters are replaced, becase they may be used on an internal hard disk,
+  // All non-ASCII characters are replaced, because they may be used on an internal hard disk,
   // but it may not be possible to use them on file systems of an external drive or network storage.
   QString filenameSafeString(const QString& str)
   {
@@ -867,8 +867,8 @@ void ctkDICOMBrowser::onRepairAction()
       {
         repairMessageBox->setText("The files for the following series are not available on the disk: \nPatient Name: "
           + descriptions["PatientsName"] + "\n" +
-          "Study Desciption: " + descriptions["StudyDescription"] + "\n" +
-          "Series Desciption: " + descriptions["SeriesDescription"] + "\n" +
+          "Study Description: " + descriptions["StudyDescription"] + "\n" +
+          "Series Description: " + descriptions["SeriesDescription"] + "\n" +
           "Do you want to remove the series from the DICOM database? ");
 
         repairMessageBox->setDetailedText(unavailableFileNames);

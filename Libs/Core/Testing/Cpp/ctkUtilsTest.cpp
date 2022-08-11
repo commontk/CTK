@@ -196,9 +196,9 @@ void ctkUtilsTester::testSignificantDecimals_data()
   QTest::newRow("123456.3333334 -> 2") << 123456.3333334 << -1 << 2;
   QTest::newRow("123456.00122 -> 5") << 123456.00122 << -1 << 5;
   QTest::newRow("123456.00123 -> 5") << 123456.00123 << -1 << 5;
-  // internally representated as 123456.001109999997425
+  // internally represented as 123456.001109999997425
   QTest::newRow("123456.00111 -> 5") << 123456.00111 << -1 << 5;
-  // internally representated as 123456.270000000004075
+  // internally represented as 123456.270000000004075
   QTest::newRow("123456.26999999999999996 -> 2")
     << 123456.26999999999999996 << -1 << 2;
   QTest::newRow("123456.863899999999987 -> 4") << 123456.863899999999987 << -1 << 4;
@@ -234,9 +234,9 @@ void ctkUtilsTester::testSignificantDecimals_data()
   QTest::newRow("123456.3333334 -> 2") << 123456.3333334 << 3 << 2;
   QTest::newRow("123456.00122 -> 5") << 123456.00122 << 3 << 5;
   QTest::newRow("123456.00123 -> 5") << 123456.00123 << 3 << 5;
-  // internally representated as 123456.001109999997425
+  // internally represented as 123456.001109999997425
   QTest::newRow("123456.00111 -> 5") << 123456.00111 << 3 << 5;
-  // internally representated as 123456.270000000004075
+  // internally represented as 123456.270000000004075
   QTest::newRow("123456.26999999999999996 -> 2")
     << 123456.26999999999999996 << 3 << 2;
   QTest::newRow("123456.863899999999987 -> 4") << 123456.863899999999987 << 3 << 4;

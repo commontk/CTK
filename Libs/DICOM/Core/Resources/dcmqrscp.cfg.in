@@ -21,7 +21,7 @@ HostTable BEGIN
 # DICOM Application Entities.  A symbolic name can represent a single
 # application entity or it can represent a group of application entities.
 # Each DICOM application entity is defined by a triple consisting of 
-# Application Entitiy Title, host name and TCP/IP port number.
+# Application Entity Title, host name and TCP/IP port number.
 #
 # Entry Format: SymbolicName = ( AETitle, HostName, Portnumber ), ...   |
 #               SymbolicName = SymbolicName, ...

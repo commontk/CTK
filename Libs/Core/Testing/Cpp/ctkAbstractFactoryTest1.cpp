@@ -38,7 +38,7 @@ public:
     return true;
     }
 protected:
-  /// Must be reimplemented in subclasses to instanciate a BaseClassType*
+  /// Must be reimplemented in subclasses to instantiate a BaseClassType*
   virtual BaseClassType* instanciator()
     {
     return new BaseClassType;

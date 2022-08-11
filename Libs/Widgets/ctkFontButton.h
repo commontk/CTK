@@ -89,7 +89,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   /// Fired anytime the current font changed.
-  /// Programatically or by the user via the file dialog that pop up when 
+  /// Programmatically or by the user via the file dialog that pop up when 
   /// clicking on the button.
   void currentFontChanged(const QFont&);
 protected:

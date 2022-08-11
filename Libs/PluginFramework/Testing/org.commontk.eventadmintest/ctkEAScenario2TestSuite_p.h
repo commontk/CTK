@@ -49,10 +49,10 @@ private:
   /** class variable indicating the topics */
   QStringList topicsToConsume;
 
-  /** class variable keeping number of asynchronus message */
+  /** class variable keeping number of asynchronous message */
   int asynchMessages;
 
-  /** class variable keeping number of synchronus message */
+  /** class variable keeping number of synchronous message */
   int synchMessages;
 
   /** class variable indication the number of synchronous messages to be received */

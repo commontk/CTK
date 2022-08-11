@@ -21,7 +21,7 @@
 #ifndef __ctkCheckableHeaderEventTranslator_h
 #define __ctkCheckableHeaderEventTranslator_h
 
-// QtTesting inlcudes
+// QtTesting includes
 #include <pqWidgetEventTranslator.h>
 
 // CTK includes

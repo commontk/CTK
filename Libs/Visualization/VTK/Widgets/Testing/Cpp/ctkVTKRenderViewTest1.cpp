@@ -51,7 +51,7 @@ int ctkVTKRenderViewTest1(int argc, char * argv [] )
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments());
   bool interactive = parsedArgs["-I"].toBool();
 
-  // Instanciate widget
+  // Instantiate widget
   ctkVTKRenderView renderView;
   renderView.setBackgroundColor(QColor(Qt::red));
   renderView.setBackgroundColor2(QColor(Qt::yellow));
@@ -59,7 +59,7 @@ int ctkVTKRenderViewTest1(int argc, char * argv [] )
   renderView.setCornerAnnotationText("CTK Rocks !");
   renderView.show();
 
-  // Instanciate VTK objects
+  // Instantiate VTK objects
   vtkNew<vtkSphereSource> sphere;
   vtkNew<vtkPolyDataMapper> sphereMapper;
   vtkNew<vtkActor> sphereActor;

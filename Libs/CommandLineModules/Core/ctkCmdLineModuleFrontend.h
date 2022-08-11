@@ -104,7 +104,7 @@ public:
 
   /**
    * @brief Returns the GUI representation.
-   * @return A GUI handle that can then be embeded in an application window for instance.
+   * @return A GUI handle that can then be embedded in an application window for instance.
    *
    * The returned object is a handle to the real GUI toolkit specific object representing
    * the user interface. For Qt based front-ends, the returned object is usually a QWidget
@@ -140,7 +140,7 @@ public:
    * provide asynchronous processing and interaction with the running frontend.
    *
    * Note that the future returned by this method will be different after the
-   * frontend was started. Either use isRunning() to check wether this frontend
+   * frontend was started. Either use isRunning() to check whether this frontend
    * is currently running or connect to the started() signal.
    *
    * @see ctkCmdLineModuleFuture

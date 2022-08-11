@@ -68,7 +68,7 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
   virtual QList<QString> schemes() const = 0;
 
   /**
-   * @brief Returns a timestap of the backend, which for example in the
+   * @brief Returns a timestamp of the backend, which for example in the
    * case of the LocalProcess may be the last modified time of the command line
    * application.
    */
@@ -86,7 +86,7 @@ struct CTK_CMDLINEMODULECORE_EXPORT ctkCmdLineModuleBackend
    * return value of timeStamp().
    *
    * Implementations should also throw either a ctkCmdLineModuleTimeoutException
-   * object if a time-out occured when retrieving the XML parameter description
+   * object if a time-out occurred when retrieving the XML parameter description
    * or a ctkCmdLineModuleRunException for any other error during invocation
    * of the module.
    *

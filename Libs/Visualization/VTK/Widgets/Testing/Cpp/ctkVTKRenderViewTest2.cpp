@@ -61,14 +61,14 @@ int ctkVTKRenderViewTest2(int argc, char * argv [] )
   QString data_directory = parsedArgs["-D"].toString();
   Q_UNUSED(data_directory);
 
-  // Instanciate widget
+  // Instantiate widget
   ctkVTKRenderView renderView;
   renderView.resize(300, 300);
   renderView.setBackgroundColor(QColor(Qt::red));
   renderView.setCornerAnnotationText("CTK Rocks !");
   renderView.show();
 
-  // Instanciate VTK objects
+  // Instantiate VTK objects
   vtkNew<vtkSphereSource> sphere;
   vtkNew<vtkPolyDataMapper> sphereMapper;
   vtkNew<vtkActor> sphereActor;

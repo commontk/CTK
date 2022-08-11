@@ -59,7 +59,7 @@ public:
   /**
    * All registered services in the current framework.
    * Mapping of registered service to class names under which
-   * the service is registerd.
+   * the service is registered.
    */
   QHash<ctkServiceRegistration, QStringList> services;
 

@@ -90,9 +90,9 @@ int ctkDICOMDatabaseTest6( int argc, char * argv [] )
   QHash<QString,QString> descriptions (database.descriptionsForFile(filePath));
   std::cout << "\tPatient Name: "
             <<  descriptions["PatientsName"].toStdString()
-            << "\n\tStudy Desciption: "
+            << "\n\tStudy Description: "
             <<  descriptions["StudyDescription"].toStdString()
-            << "\n\tSeries Desciption: "
+            << "\n\tSeries Description: "
             <<  descriptions["SeriesDescription"].toStdString()
             << std::endl;
 

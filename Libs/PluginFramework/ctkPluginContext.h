@@ -603,7 +603,7 @@ public:
    * @param slot The slot to be connected.
    * @param type The Qt connection type. Only Qt::DirectConnection,
    *        Qt::QueuedConnection, or Qt::BlockingQueuedConnection is allowed.
-   * @returns <code>true</code> if the connection was successfull;
+   * @returns <code>true</code> if the connection was successful;
    *          <code>false</code> otherwise.
    * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.
@@ -635,7 +635,7 @@ public:
    * @param receiver The object to connect to.
    * @param slot The slot to be connected.
    * @param type The Qt connection type.
-   * @returns <code>true</code> if the connection was successfull;
+   * @returns <code>true</code> if the connection was successful;
    *          <code>false</code> otherwise.
    * @throws ctkIllegalStateException If this ctkPluginContext is no
    *         longer valid.

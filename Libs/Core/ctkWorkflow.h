@@ -130,7 +130,7 @@ public:
   /// If no step is given, then the workflow's current step will be used.
   Q_INVOKABLE bool canGoForward(ctkWorkflowStep* step=0)const;
 
-  /// Returns whether or not we can go backward: i.e. there exists a step that directly preceeds the
+  /// Returns whether or not we can go backward: i.e. there exists a step that directly precedes the
   /// given step.
   ///
   /// If no step is given, then the workflow's current step will be used.
@@ -153,7 +153,7 @@ public:
   /// If no step is given, then the workflow's current step will be used.
   Q_INVOKABLE QList<ctkWorkflowStep*> forwardSteps(ctkWorkflowStep* step=0)const;
 
-  /// Get the steps that directly preceed the given step.
+  /// Get the steps that directly precede the given step.
   ///
   /// More specifically, the returned list of steps will be the origin steps for which
   /// addTransition() has been called with the given step as the destination step and directionality

@@ -213,7 +213,7 @@ void ctkXnatSessionTestCase::testAuthenticationError()
   try
   {
     session.open();
-    QFAIL("Authenication error exception expected");
+    QFAIL("Authentication error exception expected");
   }
   catch (const ctkXnatAuthenticationException&)
   {}

@@ -56,7 +56,7 @@ int ctkTreeComboBoxTest1(int argc, char * argv [] )
   QApplication::processEvents();
 
   // if the effect UI_AnimateCombo is enabled, the popup doesn't have time
-  // to be visible when hidePopup() is called wich doesn't hide the popup.
+  // to be visible when hidePopup() is called which doesn't hide the popup.
   bool oldEnabled = QApplication::isEffectEnabled(Qt::UI_AnimateCombo);
   QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false);
   combo.showPopup();

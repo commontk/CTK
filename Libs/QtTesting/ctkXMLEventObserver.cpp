@@ -59,7 +59,7 @@ void ctkXMLEventObserver::recordApplicationSettings()
     }
   this->XMLStream->writeStartElement("settings");
 
-  // Informations about the application
+  // Information about the application
   this->recordApplicationSetting("name","qApp", "applicationName",
                                  QCoreApplication::applicationName());
   this->recordApplicationSetting("version" , "qApp", "applicationVersion",

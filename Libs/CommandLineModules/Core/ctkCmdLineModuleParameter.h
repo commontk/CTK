@@ -113,7 +113,7 @@ public:
   QString deprecatedLongFlagAliasesAsString() const;
 
   /**
-   * @return A (possibly empty) list of deprectated long flag aliases.
+   * @return A (possibly empty) list of deprecated long flag aliases.
    */
   QStringList deprecatedLongFlagAliases() const;
 

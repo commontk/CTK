@@ -43,7 +43,7 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
   Q_UNUSED(argv);
 
 //--------------------------------------------------------------
-// Test 1 : test without transfert function
+// Test 1 : test without transfer function
 //--------------------------------------------------------------
 
   //---------Test Constructor----------  
@@ -189,7 +189,7 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
 
   //--------Test MapYToScene------------------
   qreal yPos = 2.;
-  if (representation.mapYToScene(yPos) != 1) //Because la fonction height return 1.
+  if (representation.mapYToScene(yPos) != 1) //Because the function height returns 1.
     {
     std::cerr << "Line " << __LINE__
               << " - Problem with "

@@ -55,7 +55,7 @@
 static ctkLogger logger ( "org.commontk.dicom.DICOMQuery" );
 
 //------------------------------------------------------------------------------
-// A customized implemenation so that Qt signals can be emitted
+// A customized implementation so that Qt signals can be emitted
 // when query results are obtained
 class ctkDICOMQuerySCUPrivate : public DcmSCU
 {
@@ -375,7 +375,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
       logger.debug("modalityInStudySearch " + modalitySearch);
       d->Query->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toLatin1().data() );
       }
-    // Rememer Series Description for later series query if we go through the keys now
+    // Remember Series Description for later series query if we go through the keys now
     else if ( key == QString("Series") && !d->Filters[key].toString().isEmpty())
       {
       // make the filter a wildcard in dicom style
@@ -401,7 +401,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   OFList<QRResponse *> responses;
 
   Uint16 presentationContext = 0;
-  // Check for any accepted presentation context for FIND in study root (dont care about transfer syntax)
+  // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
   presentationContext = d->SCU.findPresentationContextID ( UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if ( presentationContext == 0 )
     {
@@ -425,8 +425,8 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     emit progress(100);
     return false;
     }
-  logger.debug ( "Find succeded");
-  emit progress("Find succeded");
+  logger.debug ( "Find succeeded");
+  emit progress("Find succeeded");
   emit progress(50);
   if (d->Canceled) {return false;}
 
@@ -496,8 +496,8 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
           database.insert ( dataset, false /* do not store */, false /* no thumbnail */ );
           }
         }
-      logger.debug ( "Find succeded on Series level for Study: " + StudyInstanceUID );
-      emit progress(QString("Find succeded on Series level for Study: ") + StudyInstanceUID);
+      logger.debug ( "Find succeeded on Series level for Study: " + StudyInstanceUID );
+      emit progress(QString("Find succeeded on Series level for Study: ") + StudyInstanceUID);
       emit progress(50 + (progressRatio * i++));
       if (d->Canceled) {return false;}
       }

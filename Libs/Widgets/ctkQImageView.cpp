@@ -797,13 +797,13 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
       double deltaWin = ( distX / this->height() );
       if( deltaWin < 0 )  
         {
-        // Heuristic to make shrinking propotional to enlarging
+        // Heuristic to make shrinking proportional to enlarging
         deltaWin *= -deltaWin;
         }
       double deltaLevel = ( distY / this->width() );
       if( deltaLevel < 0 )  
         {
-        // Heuristic to make shrinking propotional to enlarging
+        // Heuristic to make shrinking proportional to enlarging
         deltaLevel *= -deltaLevel;
         }
       double iRange = d->IntensityMax - d->IntensityMin;
@@ -819,7 +819,7 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
       double deltaZ = 2 * (distY / this->height());
       if( deltaZ < 0 )  
         {
-        // Heuristic to make shrinking propotional to enlarging
+        // Heuristic to make shrinking proportional to enlarging
         deltaZ *= -deltaZ;
         }
       double newZoom = d->MouseLastZoom + deltaZ;

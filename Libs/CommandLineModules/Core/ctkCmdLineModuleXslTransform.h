@@ -73,7 +73,7 @@ public:
 
   /**
    * @brief Returns \c true if the XSL output will be formatted.
-   * @return \c true if the ouptut will be formatted, \c false otherwise.
+   * @return \c true if the output will be formatted, \c false otherwise.
    */
   bool formatXmlOutput() const;
 
@@ -144,9 +144,9 @@ public:
   bool validateOutput() const;
 
   /**
-   * @brief Returns true if an error occured.
+   * @brief Returns true if an error occurred.
    *
-   * transform() sets the error flag if an error occured when transforming the
+   * transform() sets the error flag if an error occurred when transforming the
    * XML file into XSL or validating the transformation.
    *
    * @sa errorString
@@ -156,7 +156,7 @@ public:
   /**
    * @brief Returns the error message if any.
    *
-   * transform() sets the error message if an error occured when transforming
+   * transform() sets the error message if an error occurred when transforming
    * the XML file into XSL.
    *
    * @sa error

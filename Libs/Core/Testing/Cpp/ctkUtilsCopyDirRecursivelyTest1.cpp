@@ -167,7 +167,7 @@ int ctkUtilsCopyDirRecursivelyTest1(int argc, char * argv [] )
   }
 
   {
-  // Atempt to copy a directory into itself
+  // Attempt to copy a directory into itself
   QString srcPath(tmp.path());
   QString destPath(tmp.path() + "/dest");
   if (ctk::copyDirRecursively(srcPath, destPath))

@@ -350,7 +350,7 @@ void ctkTreeComboBox::resizePopup()
         listRect.moveLeft(above.x());
 
 #ifndef Q_WS_S60
-        // Position vertically so the curently selected item lines up
+        // Position vertically so the currently selected item lines up
         // with the combo box.
         const QRect currentItemRect = this->view()->visualRect(this->view()->currentIndex());
         const int offset = listRect.top() - currentItemRect.top();
@@ -382,7 +382,7 @@ void ctkTreeComboBox::resizePopup()
 #ifdef Q_WS_S60
         if (screen.width() < screen.height())
           {
-          // in portait, menu should be positioned above softkeys
+          // in portrait, menu should be positioned above softkeys
           listRect.moveBottom(screen.bottom());
           }
         else

@@ -46,7 +46,7 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate;
  * The XML description for a module is extracted from the standard output of the
  * executable when calling it with the \c &ndash;&ndash;xml command line argument.
  *
- * The ctkCmdLineModuleFuture returned by run() allows cancelation by killing the running
+ * The ctkCmdLineModuleFuture returned by run() allows cancellation by killing the running
  * process. On Unix systems, it also allows to pause it.
  */
 class CTK_CMDLINEMODULEBACKENDLP_EXPORT ctkCmdLineModuleBackendLocalProcess : public ctkCmdLineModuleBackend

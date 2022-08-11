@@ -50,7 +50,7 @@ public:
   /// The factory is prepended to the list of factories.
   /// If the factory has no parent, ctkLayoutManager takes ownership.
   /// Otherwise you should make sure the factory is not deleted until the
-  /// factory is unregisted or until the manager is deleted.
+  /// factory is unregistered or until the manager is deleted.
   /// \sa unregisterViewFactory(), registerViewFactories()
   void registerViewFactory(ctkLayoutViewFactory* factory);
   /// Unregister a view factory.

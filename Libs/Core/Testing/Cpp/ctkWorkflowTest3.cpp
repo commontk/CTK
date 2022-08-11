@@ -87,7 +87,7 @@ int ctkWorkflowTest3(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // test that the transitions are occuring properly
+  // test that the transitions are occurring properly
   workflow->start();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();

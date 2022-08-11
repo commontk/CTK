@@ -40,7 +40,7 @@ void CTK_VISUALIZATION_VTK_CORE_EXPORT remapColorScale(
 /// \ingroup Visualization_VTK_Core
 /// Remap color transfer function into the specified range.
 /// \param colorTransferFunction is not modified and the output is copied to
-/// into \param rescaledColorTranferFunction
+/// into \param rescaledColorTransferFunction
 void CTK_VISUALIZATION_VTK_CORE_EXPORT remapColorScale(
   vtkDiscretizableColorTransferFunction* colorTransferFunction,
   vtkDiscretizableColorTransferFunction* rescaledColorTransferFunction,

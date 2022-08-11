@@ -221,7 +221,7 @@ int ctkWorkflowTest2(int argc, char * argv [] )
   // add the fourth step
   if (!workflow->addTransition(step3, step4))
     {
-    std::cerr << "could not add 4rd step" << std::endl;
+    std::cerr << "could not add 4th step" << std::endl;
     return EXIT_FAILURE;
     }
 

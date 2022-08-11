@@ -58,7 +58,7 @@ ctkWorkflowStepPrivate::ctkWorkflowStepPrivate(ctkWorkflowStep& object)
   this->ValidationTransition->setTargetState(this->ValidationState);
   this->ProcessingState->addTransition(this->ValidationTransition);
 
-  // Create 'failed validation' transation
+  // Create 'failed validation' transaction
   this->ValidationFailedTransition = 0;
   this->ValidationFailedTransition =
       new ctkWorkflowIntrastepTransition(ctkWorkflowIntrastepTransition::ValidationFailedTransition);

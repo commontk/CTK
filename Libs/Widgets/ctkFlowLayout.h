@@ -97,7 +97,7 @@ public:
   /// Replace the existing BoxLayout of the widget with a
   /// flow layout.
   /// When using the Designer, it is not possible to use a flow layout.
-  /// Instead, you can use a H/VBoxLayout and replace it programatically
+  /// Instead, you can use a H/VBoxLayout and replace it programmatically
   /// in the setupUi() function with a flow layout. replaceLayout() makes
   /// the operation easier.
   /// \todo replaceLayout should take an existing layout instead of a widget,

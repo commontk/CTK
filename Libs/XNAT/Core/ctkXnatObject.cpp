@@ -128,11 +128,11 @@ QDateTime ctkXnatObject::lastModifiedTimeOnServer()
   if (lastModifiedHeader.isValid())
   {
     QStringList dateformates;
-    // In case http date formate RFC 822 ( "Sun, 06 Nov 1994 08:49:37 GMT" )
+    // In case http date format RFC 822 ( "Sun, 06 Nov 1994 08:49:37 GMT" )
     dateformates<<"ddd, dd MMM yyyy HH:mm:ss";
-    // In case http date formate ANSI ( "Sun Nov  6 08:49:37 1994" )
+    // In case http date format ANSI ( "Sun Nov 6 08:49:37 1994" )
     dateformates<<"ddd MMM  d HH:mm:ss yyyy";
-    // In case http date formate RFC 850 ( "Sunday, 06-Nov-94 08:49:37 GMT" )
+    // In case http date format RFC 850 ( "Sunday, 06-Nov-94 08:49:37 GMT" )
     dateformates<<"dddd, dd-MMM-yy HH:mm:ss";
 
     QString dateText = lastModifiedHeader.toString();

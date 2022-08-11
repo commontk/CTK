@@ -77,7 +77,7 @@ public Q_SLOTS:
   /// \sa setPitchRollYawIncrement setYawDirection
   void yaw();
 
-  /// Enable or Disbled the animated spin of the view
+  /// Enable or Disable the animated spin of the view
   void setSpinEnabled(bool enabled);
 
   /// Set number of degrees in spin increment
@@ -88,7 +88,7 @@ public Q_SLOTS:
   /// \sa setSpinIncrement setRockIncrement
   void setAnimationIntervalMs(int ms);
 
-  /// Enable or Disbled the animated rock of the view
+  /// Enable or Disable the animated rock of the view
   void setRockEnabled(bool enabled);
 
   /// Set length of a complete rock period (in number of animation steps)

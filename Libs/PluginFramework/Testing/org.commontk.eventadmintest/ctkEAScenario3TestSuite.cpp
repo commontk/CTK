@@ -70,8 +70,8 @@ void ctkEAScenario3EventConsumer::cleanup()
     throw exc;
   }
 
-  QCOMPARE(synchMessages, numSyncMessages); // "Not all synch messages recieved"
-  QCOMPARE(asynchMessages, numAsyncMessages); // "Not all asynch messages recieved"
+  QCOMPARE(synchMessages, numSyncMessages); // "Not all synch messages received"
+  QCOMPARE(asynchMessages, numAsyncMessages); // "Not all asynch messages received"
 }
 
 //----------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void ctkEAScenario3EventConsumer::handleEvent(const ctkEvent& event)
 
     if (!message.isNull())
     {
-      /* its an asyncronous message */
+      /* its an asynchronous message */
       synchMessages++;
       qDebug() << "received a Synchronous event with message:" << message;
     }
@@ -95,16 +95,16 @@ void ctkEAScenario3EventConsumer::handleEvent(const ctkEvent& event)
       if (!message.isNull())
       {
         asynchMessages++;
-        qDebug() << "received an Asynchronus event with message:" << message;
+        qDebug() << "received an Asynchronous event with message:" << message;
       }
     }
 
     /* assert that the messages property is not null */
     QVERIFY2(!message.isNull(), "Message should not be null in handleEvent()");
 
-    /* assert that the messages of syncronous type are not too many */
+    /* assert that the messages of synchronous type are not too many */
     QVERIFY2(synchMessages < numSyncMessages + 1, "too many synchronous messages");
-    /* assert that the messsage of the asyncronous type are not too many */
+    /* assert that the message of the asynchronous type are not too many */
     QVERIFY2(asynchMessages < numAsyncMessages + 1, "too many asynchronous messages");
   }
   catch (const ctkRuntimeException& e)
@@ -168,7 +168,7 @@ void ctkEAScenario3EventPublisher::runTest()
   /* Claims the reference of the EventAdmin Service */
   serviceReference = context->getServiceReference<ctkEventAdmin>();
 
-  /* assert that a reference is aquired */
+  /* assert that a reference is acquired */
   QVERIFY2(serviceReference, "Should be able to get reference to ctkEventAdmin service");
 
   eventAdmin = context->getService<ctkEventAdmin>(serviceReference);
