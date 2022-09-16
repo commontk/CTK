@@ -372,9 +372,7 @@ bool ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& dataset, int& db
     insertPatientStatement.bindValue(2, QDate::fromString(patientsBirthDate, "yyyyMMdd"));
     insertPatientStatement.bindValue(3, patientsBirthTime);
     insertPatientStatement.bindValue(4, patientsSex);
-    // TODO: shift patient's age to study,
-    // since this is not a patient level attribute in images
-    // insertPatientStatement.bindValue( 5, patientsAge );
+    insertPatientStatement.bindValue(5, patientsAge);
     insertPatientStatement.bindValue(6, patientComments);
     insertPatientStatement.bindValue(7, QDateTime::currentDateTime());
     loggedExec(insertPatientStatement);
