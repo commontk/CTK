@@ -48,6 +48,10 @@ CTK_WIDGETS_EXPORT QImage grabWidget(QWidget* widget, QRect rectangle = QRect())
 /// The data can be base64 encoded and/or zlib compressed.
 CTK_WIDGETS_EXPORT QImage kwIconToQImage(const unsigned char *data, int width, int height, int pixelSize, unsigned int bufferLength, int options = 0);
 
+///
+/// \ingroup Widgets
+/// Get a colorized version of a SVG image
+CTK_WIDGETS_EXPORT QIcon getColorizedIcon(const QString& hexColor, const QString& resourcePath);
 }
 
 #endif

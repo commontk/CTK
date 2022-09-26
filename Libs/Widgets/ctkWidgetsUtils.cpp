@@ -21,7 +21,9 @@
 // Qt includes
 #include <QBuffer>
 #include <QImage>
+#include <QFile>
 #include <QGLWidget>
+#include <QIcon>
 #include <QPainter>
 #include <QWidget>
 
@@ -112,4 +114,29 @@ QImage ctk::kwIconToQImage(const unsigned char *data, int width, int height, int
     return image.rgbSwapped();
     }
   return image.copy();
+}
+
+//----------------------------------------------------------------------------
+QIcon ctk::getColorizedIcon(const QString& hexColor, const QString& resourcePath)
+{
+  QIcon icon;
+  if (hexColor == "#000000")
+  {
+    // resource icons are already colored black by default
+    icon = QIcon(resourcePath);
+  }
+  else
+  {
+    QFile file(resourcePath);
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
+    QString newHexString = "fill=\"" + hexColor;
+    QByteArray newByteArray = newHexString.toLocal8Bit();
+    const char *newHexChar = newByteArray.data();
+    data.replace("fill=\"#000000", newHexChar);
+    QPixmap pixmap;
+    pixmap.loadFromData(data);
+    icon = QIcon(pixmap);
+  }
+  return icon;
 }
