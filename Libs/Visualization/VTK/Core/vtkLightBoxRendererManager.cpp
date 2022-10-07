@@ -24,7 +24,6 @@
 #include <vtkAlgorithmOutput.h>
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
-#include <vtkConfigure.h>
 #include <vtkCornerAnnotation.h>
 #include <vtkImageData.h>
 #include <vtkImageMapper.h>
