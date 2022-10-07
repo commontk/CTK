@@ -63,6 +63,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkScalarsToColors.h>
 #include <vtkTable.h>
+#include <vtkVersion.h>
 
 //#define DEBUG_RANGE
 

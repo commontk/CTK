@@ -38,6 +38,7 @@
 #include <vtkPlot.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
+#include <vtkVersion.h>
 
 //----------------------------------------------------------------------------
 static ctkLogger logger("org.commontk.visualization.vtk.widgets.ctkVTKChartView");

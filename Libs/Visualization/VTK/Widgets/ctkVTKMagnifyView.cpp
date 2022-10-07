@@ -34,6 +34,7 @@
 #include <vtkMath.h>
 #include <vtkRenderWindow.h>
 #include <vtkUnsignedCharArray.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <cmath>
