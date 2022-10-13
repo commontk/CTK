@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QSortFilterProxyModel>
+#include <QStringList>
 
 // CTK includes
 #include "ctkCoreExport.h"
@@ -46,6 +47,8 @@ class CTK_CORE_EXPORT ctkErrorLogAbstractModel : public QSortFilterProxyModel
   Q_PROPERTY(int numberOfFilesToKeep READ numberOfFilesToKeep WRITE  setNumberOfFilesToKeep)
   Q_PROPERTY(bool fileLoggingEnabled READ fileLoggingEnabled WRITE  setFileLoggingEnabled)
   Q_PROPERTY(QString fileLoggingPattern READ fileLoggingPattern WRITE setFileLoggingPattern)
+  Q_PROPERTY(QStringList msgHandlerNames READ msgHandlerNames)
+
 public:
   typedef QSortFilterProxyModel Superclass;
   typedef ctkErrorLogAbstractModel Self;
@@ -67,9 +70,11 @@ public:
     };
 
   /// Register a message handler.
-  bool registerMsgHandler(ctkErrorLogAbstractMessageHandler * msgHandler);
+  Q_INVOKABLE bool registerMsgHandler(ctkErrorLogAbstractMessageHandler * msgHandler);
 
   QStringList msgHandlerNames()const;
+
+  Q_INVOKABLE ctkErrorLogAbstractMessageHandler* msgHandler(const QString& handlerName)const;
 
   /// Return True if the handler identified by \a handlerName is enabled
   bool msgHandlerEnabled(const QString& handlerName) const;
