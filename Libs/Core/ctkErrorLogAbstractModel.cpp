@@ -558,3 +558,14 @@ int ctkErrorLogAbstractModel::logEntryCount()const
   Q_D(const ctkErrorLogAbstractModel);
   return d->ItemModel->rowCount();
 }
+
+// --------------------------------------------------------------------------
+ctkErrorLogAbstractMessageHandler* ctkErrorLogAbstractModel::msgHandler(const QString& handlerName)const
+{
+  Q_D(const ctkErrorLogAbstractModel);
+  if (!d->RegisteredHandlers.keys().contains(handlerName))
+    {
+    return CTK_NULLPTR;
+    }
+  return d->RegisteredHandlers[handlerName];
+}
