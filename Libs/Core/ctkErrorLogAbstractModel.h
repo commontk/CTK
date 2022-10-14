@@ -142,7 +142,16 @@ public Q_SLOTS:
   /// Remove all log entries from model
   void clear();
 
-  /// \sa logEntryGrouping(), asynchronousLogging()
+  /// Call addEntry method via a connection (the same way as message handlers call it).
+  /// It is recommended to use this method instead of addEntry to ensure messages are logged in correct order.
+  /// Directly calling addEntry would make that log entry processed immedately, getting ahead of entries that
+  /// message handlers add via a queued connection.
+  void postEntry(const QDateTime& currentDateTime, const QString& threadId,
+    ctkErrorLogLevel::LogLevel logLevel, const QString& origin, const ctkErrorLogContext& context, const QString& text);
+
+  /// Add a log entry immediately. In general, it is more appropriate to call postEntry() instead, to ensure
+  /// logging of entries in the correct order.
+  /// \sa postEntry(), logEntryGrouping(), asynchronousLogging()
   void addEntry(const QDateTime& currentDateTime, const QString& threadId,
                 ctkErrorLogLevel::LogLevel logLevel, const QString& origin,
                 const ctkErrorLogContext &context, const QString& text);
@@ -150,8 +159,23 @@ public Q_SLOTS:
 Q_SIGNALS:
   void logLevelFilterChanged();
 
+  /// Called when an entry is added.
+  /// Since an entryAdded() signal with more parameters was added, this signal is somewhat redundant,
+  /// but it is kept for backward compatibility.
   /// \sa addEntry()
   void entryAdded(ctkErrorLogLevel::LogLevel logLevel);
+
+  /// Called when an entry is added.
+  /// \sa addEntry()
+  void entryAdded(const QDateTime& currentDateTime, const QString& threadId,
+    ctkErrorLogLevel::LogLevel logLevel, const QString& origin,
+    const ctkErrorLogContext& context, const QString& text);
+
+  /// For internal use only. It is connected to addEntry via a direct or queued connection
+  /// (depending on asynchronousLogging flag).
+  void entryPosted(const QDateTime& currentDateTime, const QString& threadId,
+    ctkErrorLogLevel::LogLevel logLevel,
+    const QString& origin, const ctkErrorLogContext& context, const QString& text);
 
 protected:
   QScopedPointer<ctkErrorLogAbstractModelPrivate> d_ptr;

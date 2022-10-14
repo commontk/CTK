@@ -114,6 +114,11 @@ void ctkErrorLogAbstractModelPrivate::init(QAbstractItemModel* itemModel)
   q->setFilterKeyColumn(ctkErrorLogAbstractModel::LogLevelColumn);
 
   this->ItemModel = itemModel;
+
+  QObject::connect(q,
+    SIGNAL(entryPosted(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+    q, SLOT(addEntry(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+    this->AsynchronousLogging ? Qt::QueuedConnection : Qt::BlockingQueuedConnection);
 }
 
 // --------------------------------------------------------------------------
@@ -267,6 +272,14 @@ void ctkErrorLogAbstractModel::setTerminalOutputs(
 }
 
 //------------------------------------------------------------------------------
+void ctkErrorLogAbstractModel::postEntry(const QDateTime& currentDateTime, const QString& threadId,
+  ctkErrorLogLevel::LogLevel logLevel,
+  const QString& origin, const ctkErrorLogContext& context, const QString& text)
+{
+  emit entryPosted(currentDateTime, threadId, logLevel, origin, context, text);
+}
+
+//------------------------------------------------------------------------------
 void ctkErrorLogAbstractModel::addEntry(const QDateTime& currentDateTime, const QString& threadId,
                                 ctkErrorLogLevel::LogLevel logLevel,
                                 const QString& origin, const ctkErrorLogContext &context, const QString &text)
@@ -345,6 +358,7 @@ void ctkErrorLogAbstractModel::addEntry(const QDateTime& currentDateTime, const 
   fileLogText.replace("%{msg}", context.Message);
   d->FileLogger.logMessage(fileLogText.trimmed());
 
+  emit this->entryAdded(currentDateTime, threadId, logLevel, origin, context, text);
   emit this->entryAdded(logLevel);
 }
 
@@ -473,6 +487,15 @@ void ctkErrorLogAbstractModel::setAsynchronousLogging(bool value)
     d->setMessageHandlerConnection(
           d->RegisteredHandlers.value(handlerName), value);
     }
+
+  QObject::disconnect(this,
+    SIGNAL(entryPosted(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+    this, SLOT(addEntry(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)));
+
+  QObject::connect(this,
+    SIGNAL(entryPosted(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+    this, SLOT(addEntry(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+    value ? Qt::QueuedConnection : Qt::BlockingQueuedConnection);
 
   d->AsynchronousLogging = value;
 }

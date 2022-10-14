@@ -815,6 +815,10 @@ void ctkConsolePrivate::internalExecuteCommand()
       indent = regExp.cap(1);
       }
     }
+
+  // Give a chance for log messages to appear before displaying the new prompt.
+  qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+
   this->promptForInput(indent);
   this->MessageOutputSize = 0;
 }
