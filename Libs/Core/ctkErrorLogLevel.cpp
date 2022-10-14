@@ -42,3 +42,10 @@ QString ctkErrorLogLevel::logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)
   Q_ASSERT(QString("LogLevel").compare(logLevelEnum.name()) == 0);
   return QLatin1String(logLevelEnum.valueToKey(logLevel));
 }
+
+// --------------------------------------------------------------------------
+ctkErrorLogLevel::LogLevel ctkErrorLogLevel::logLevelFromString(const QString& logLevelStr)
+{
+  QMetaEnum logLevelEnum = ctkErrorLogLevel::staticMetaObject.enumerator(0);
+  return ctkErrorLogLevel::LogLevel(logLevelEnum.keyToValue(logLevelStr.toLocal8Bit()));
+}
