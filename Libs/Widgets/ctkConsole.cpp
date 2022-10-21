@@ -379,6 +379,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     if(selection && !history_area && !message_output_area)
       {
       this->cut();
+      this->updateCommandBuffer();
       }
     e->accept();
     return;
@@ -393,6 +394,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       this->setTextCursor(text_cursor);
       }
     this->paste();
+    this->updateCommandBuffer();
     e->accept();
     return;
     }
@@ -1049,6 +1051,7 @@ void ctkConsolePrivate::pasteText(const QString& text)
   textCursor.setPosition(this->commandEnd(), QTextCursor::KeepAnchor);
   QString endOfCommand = textCursor.selectedText();
   textCursor.removeSelectedText();
+
   if (this->EditorHints & ctkConsole::SplitCopiedTextByLine)
     {
     QStringList lines = text.split(QRegExp("(?:\r\n|\r|\n)"));
@@ -1067,10 +1070,6 @@ void ctkConsolePrivate::pasteText(const QString& text)
 
         this->internalExecuteCommand();
         }
-      else
-        {
-        textCursor.insertText(endOfCommand);
-        }
       }
     }
   else
@@ -1078,6 +1077,13 @@ void ctkConsolePrivate::pasteText(const QString& text)
     this->switchToUserInputTextColor(&textCursor);
     textCursor.insertText(text);
     }
+
+  // add back the rest of the line after the current position
+  int position = textCursor.position();
+  textCursor.insertText(endOfCommand);
+  textCursor.setPosition(position);
+  this->setTextCursor(textCursor);
+
   this->updateCommandBuffer();
 }
 
@@ -1466,6 +1472,8 @@ QString ctkConsole::readInputLine()
   Q_D(ctkConsole);
 
   d->moveCursor(QTextCursor::End);
+  d->InteractivePosition = d->documentEnd();
+  d->MessageOutputSize = 0;
 
   QScopedPointer<InputEventLoop> eventLoop(new InputEventLoop(qApp));
   d->InputEventLoop = QPointer<QEventLoop>(eventLoop.data());
