@@ -334,6 +334,34 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   // Set to true if the cursor overlaps the message output area
   const bool message_output_area = this->isCursorInMessageOutputArea();
 
+  if (e->key() == Qt::Key_Escape)
+    {
+    if (selection)
+      {
+      // if a selection is active then Esc removes it
+      text_cursor.setPosition(text_cursor.position());
+      this->setTextCursor(text_cursor);
+      }
+    else if (history_area || message_output_area)
+      {
+      // if not in the interactive area then Esc moves back to the end of the interactive area
+      text_cursor.setPosition(this->commandEnd());
+      this->setTextCursor(text_cursor);
+      }
+    else
+      {
+      // if in the interactive area and nothing is selected then Esc clears the current command
+      this->replaceCommandBuffer("");
+      // reset command history position (up-arrow will bring back the last command)
+      if (this->CommandHistory.size() > 0)
+        {
+        this->CommandPosition = this->CommandHistory.size() - 1;
+        }
+      }
+    e->accept();
+    return;
+    }
+
   // Allow copying anywhere in the console ...
   if(e == QKeySequence::Copy)
     {
