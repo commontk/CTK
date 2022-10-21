@@ -99,6 +99,7 @@ public Q_SLOTS:
 
 protected:
   virtual void executeCommand(const QString& command);
+  virtual void executeString(const QString& commands);
 
 private:
   Q_DECLARE_PRIVATE(ctkPythonConsole);

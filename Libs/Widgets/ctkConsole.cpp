@@ -1040,10 +1040,32 @@ void ctkConsolePrivate::insertFromMimeData(const QMimeData* source)
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::pasteText(const QString& text)
 {
+  Q_Q(ctkConsole);
+
   if(text.isNull())
     {
     return;
     }
+
+  // Execute multiline commands at once, for more more robust command parsing and execution.
+  //
+  // For example, an empty line in a Python function could not be executed line-by-line, because
+  // then empty line would be interpreted as the end of the function.
+  // In contrast, the empty line would not cause any issue when execuing the whole string at once
+  // (the empty line would be just ignored).
+  //
+  // We cannot execute at once if a command is already being edited (some command has been already typed in the current line)
+  // or a muiltiline statement is being entered).
+  if (!this->MultilineStatement  && this->commandBuffer().trimmed().isEmpty()
+      && text.trimmed().contains("\n"))
+    {
+    // Execute at once
+    q->printMessage("\n" + text.trimmed() + "\n", this->StdinTextColor);
+    q->executeString(text);
+    this->promptForInput();
+    return;
+    }
+
   QTextCursor textCursor = this->textCursor();
 
   // if there is anything else after the cursor position
@@ -1054,6 +1076,7 @@ void ctkConsolePrivate::pasteText(const QString& text)
 
   if (this->EditorHints & ctkConsole::SplitCopiedTextByLine)
     {
+    // Execute line by line
     QStringList lines = text.split(QRegExp("(?:\r\n|\r|\n)"));
     for(int i=0; i < lines.count(); ++i)
       {
@@ -1074,6 +1097,7 @@ void ctkConsolePrivate::pasteText(const QString& text)
     }
   else
     {
+    // Execute all the lines as one string, using the the line-by-line command execution method.
     this->switchToUserInputTextColor(&textCursor);
     textCursor.insertText(text);
     }
@@ -1331,26 +1355,40 @@ void ctkConsole::exec(const QString& command)
 //-----------------------------------------------------------------------------
 void ctkConsole::runFile(const QString& filePath)
 {
+  Q_D(ctkConsole);
   QFile file(filePath);
   if (!file.open(QIODevice::ReadOnly))
     {
     qWarning() << tr( "File '%1' can't be read.").arg(filePath);
     return;
     }
-  for (QTextStream fileStream(&file); !fileStream.atEnd();)
-    {
-    QString line = fileStream.readLine();
-    this->exec(line);
-    }
+
+  // Save the current command, use it later
+  QString savedCommand = d->commandBuffer();
+  d->replaceCommandBuffer("");
+
+  // Read the commands from the file
+  QTextStream fileStream(&file);
+  QString commands = fileStream.readAll();
+
+  // Print the commands on the console and execute them
+  this->printMessage("\n" + commands.trimmed() + "\n", d->StdinTextColor);
+  this->executeString(commands);
+
+  // Display a new command prompt and allow the user to resume typing the command.
+  d->promptForInput();
+  d->replaceCommandBuffer(savedCommand);
 }
 
 //-----------------------------------------------------------------------------
 void ctkConsole::runFile()
 {
+  Q_D(ctkConsole);
   QString filePath =
-    QFileDialog::getOpenFileName(this, tr("Select a script file to run"));
+    QFileDialog::getOpenFileName(this, tr("Select a script file to run"), d->LastRunFile);
   if (!filePath.isEmpty())
     {
+    d->LastRunFile = filePath;
     this->runFile(filePath);
     }
 }
@@ -1368,6 +1406,13 @@ void ctkConsole::executeCommand(const QString& command)
 {
   qWarning() << "ctkConsole::executeCommand not implemented !";
   qWarning() << "command:" << command;
+}
+
+//-----------------------------------------------------------------------------
+void ctkConsole::executeString(const QString& commands)
+{
+  qWarning() << "ctkConsole::executeString not implemented !";
+  qWarning() << "commands:" << commands;
 }
 
 //----------------------------------------------------------------------------

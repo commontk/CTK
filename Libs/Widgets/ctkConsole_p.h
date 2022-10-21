@@ -211,6 +211,9 @@ public:
 
   QPushButton* RunFileButton;
   QAction* RunFileAction;
+
+  /// Store path of last RunFilefile, to make it easier to re-run the same file again.
+  QString LastRunFile;
 };
 
 

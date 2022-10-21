@@ -701,6 +701,13 @@ void ctkPythonConsole::executeCommand(const QString& command)
 }
 
 //----------------------------------------------------------------------------
+void ctkPythonConsole::executeString(const QString& commands)
+{
+  Q_D(ctkPythonConsole);
+  d->PythonManager->executeString(commands);
+}
+
+//----------------------------------------------------------------------------
 void ctkPythonConsole::reset()
 {
   // Set primary and secondary prompt

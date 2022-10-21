@@ -267,7 +267,8 @@ public Q_SLOTS:
   /// \sa openFile(), runFile(QString)
   virtual void exec(const QString&);
 
-  /// Exec line by line the content of a file.
+  /// Execute the content of a file.
+  /// The code is printed on the console and executed at once.
   /// \sa openFile(), exec()
   virtual void runFile(const QString& filePath);
 
@@ -297,6 +298,12 @@ protected:
 
   /// Called whenever the user enters a command
   virtual void executeCommand(const QString& Command);
+
+  /// Execute code that may contain multiple commands, at once.
+  /// If the same command is split to lines and executed one by
+  /// one then parsing might fail, therefore whenever it is possible
+  /// this method is preferable for executing multiple commands.
+  virtual void executeString(const QString& commands);
 
 protected:
   ctkConsole(ctkConsolePrivate * pimpl, QWidget* parentObject);
