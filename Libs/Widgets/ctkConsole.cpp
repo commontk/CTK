@@ -1047,7 +1047,7 @@ void ctkConsolePrivate::pasteText(const QString& text)
     return;
     }
 
-  // Execute multiline commands at once, for more more robust command parsing and execution.
+  // Execute multiline commands at once, for more robust command parsing and execution.
   //
   // For example, an empty line in a Python function could not be executed line-by-line, because
   // then empty line would be interpreted as the end of the function.
