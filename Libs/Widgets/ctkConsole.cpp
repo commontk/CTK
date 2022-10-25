@@ -138,7 +138,7 @@ void ctkConsolePrivate::init()
   this->CommandPosition = 0;
 
   this->RunFileAction = new QAction(q->tr("&Run file"), q);
-  this->RunFileAction->setShortcut(q->tr("Ctrl+r"));
+  this->RunFileAction->setShortcut(q->tr("Ctrl+g"));
   connect(this->RunFileAction, SIGNAL(triggered()), q, SLOT(runFile()));
   q->addAction(this->RunFileAction);
 
