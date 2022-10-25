@@ -25,7 +25,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -105,7 +105,7 @@ public:
   {
     NoRunFileUserInterface = 0x00,
     RunFileButton = 0x01,   /*!< Show a button at the bottom of the console to run a file */
-    RunFileShortcut = 0x02, /*!< Add the shortcut CTRL+r to run a file */
+    RunFileShortcut = 0x02, /*!< Add the shortcut CTRL+G to run a file */
   };
   Q_DECLARE_FLAGS(RunFileOptions, RunFileOption)
 
@@ -115,7 +115,7 @@ public:
 
   /// Returns the current formatting that will be used by printMessage()
   Q_INVOKABLE QTextCharFormat getFormat() const;
-  
+
   /// Sets formatting that will be used by printMessage()
   Q_INVOKABLE void setFormat(const QTextCharFormat& Format);
 
@@ -273,7 +273,7 @@ public Q_SLOTS:
   virtual void runFile(const QString& filePath);
 
   /// Open a file dialog to select a file and run it.
-  /// Shortcut: CTRL+O
+  /// Shortcut: CTRL+G
   /// \sa runFile(QString), exec()
   virtual void runFile();
 
