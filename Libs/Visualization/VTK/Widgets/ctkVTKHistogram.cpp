@@ -116,7 +116,6 @@ void ctkVTKHistogram::setRange(qreal minRange, qreal maxRange)
   Q_D(const ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
     {
-    //Q_ASSERT(d->DataArray.GetPointer());
     logger.warn("no data array. range will be reset when setting array.");
     minRange = 1.; // set incorrect values
     maxRange = 0.;
@@ -124,7 +123,6 @@ void ctkVTKHistogram::setRange(qreal minRange, qreal maxRange)
     }
   if (minRange >= maxRange)
     {
-    //Q_ASSERT(d->DataArray.GetPointer());
     logger.warn("minRange >= maxRange");
     qreal pivot = minRange;
     minRange = maxRange;
@@ -146,7 +144,6 @@ void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
   Q_D(const ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
     {
-    //Q_ASSERT(d->DataArray.GetPointer());
     logger.warn("no dataArray");
     minRange = 1.; // set incorrect values
     maxRange = 0.;
@@ -162,8 +159,7 @@ void ctkVTKHistogram::resetRange()
   Q_D(ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
     {
-    //Q_ASSERT(d->DataArray.GetPointer());
-    logger.warn("no dataArray");
+    // Data array is empty (not an error case, will be displayed as an empty histogram)
     d->Range[0] = 1.; // set incorrect values
     d->Range[1] = 0.;
     return;
