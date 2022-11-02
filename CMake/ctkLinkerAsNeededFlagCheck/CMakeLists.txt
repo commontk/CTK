@@ -1,3 +1,4 @@
+project(ctkLinkerAsNeededFlagCheck)
 add_library(A SHARED A.cpp)
 add_library(B SHARED B.cpp)
 # No need to use ctk_add_executable_utf8 since there are
