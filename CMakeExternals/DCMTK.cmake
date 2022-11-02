@@ -28,7 +28,7 @@ if(DEFINED DCMTK_DIR AND NOT EXISTS ${DCMTK_DIR})
 endif()
 
 if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  set(revision_tag "f2f7b5ee02ee92f57a60e4cffa5ca8634516d2c9") # patched-DCMTK-3.6.6_20210115
+  set(revision_tag "0f9bf4d9e9a778c11fdddafca691b451c2b621bc") # patched-DCMTK-3.6.6_20210115
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
