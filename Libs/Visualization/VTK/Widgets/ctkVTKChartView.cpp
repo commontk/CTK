@@ -189,7 +189,16 @@ void ctkVTKChartViewPrivate::chartBounds(double* bounds)const
 // ----------------------------------------------------------------------------
 // ctkVTKChartView methods
 
-CTK_GET_CPP(ctkVTKChartView, vtkRenderWindow*, renderWindow, RenderWindow);
+// ----------------------------------------------------------------------------
+vtkRenderWindow* ctkVTKChartView::renderWindow()const
+{
+#ifdef CTK_USE_QVTKOPENGLWIDGET
+  Q_D(const ctkVTKChartView);
+  return d->RenderWindow;
+#else
+  return const_cast<ctkVTKChartView*>(this)->GetRenderWindow();
+#endif
+}
 
 // ----------------------------------------------------------------------------
 ctkVTKChartView::ctkVTKChartView(QWidget* parentWidget)
