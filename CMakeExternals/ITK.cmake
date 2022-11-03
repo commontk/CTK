@@ -29,10 +29,15 @@ endif()
 
 if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(revision_tag "v5.1.2")
+  if("${CMAKE_CXX_STANDARD}" STREQUAL "98")
+    set(revision_tag "v4.13.3")
+  else()
+    set(revision_tag "v5.1.2")
+  endif()
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
+  ExternalProject_Message(${proj} "${proj}[revision_tag:${revision_tag}]")
 
   set(location_args )
   if(${proj}_URL)
