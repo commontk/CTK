@@ -24,7 +24,11 @@ endif()
 
 if(NOT DEFINED QtTesting_DIR)
 
-  set(revision_tag b5324a213dc3c4abd7b588575ea926db57aa981e)
+  if("${CMAKE_CXX_STANDARD}" STREQUAL "98")
+    set(revision_tag c44b32fdea827be737e8c2f5608ffbc2e3bd08b2)
+  else()
+    set(revision_tag b5324a213dc3c4abd7b588575ea926db57aa981e)
+  endif()
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
