@@ -49,7 +49,7 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
-  ExternalProject_Message(${proj} "VTK[revision_tag:${revision_tag}]")
+  ExternalProject_Message(${proj} "${proj}[revision_tag:${revision_tag}]")
 
   set(location_args )
   if(${proj}_URL)

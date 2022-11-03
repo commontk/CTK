@@ -32,6 +32,7 @@ if(NOT DEFINED QtTesting_DIR)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
+  ExternalProject_Message(${proj} "${proj}[revision_tag:${revision_tag}]")
 
   set(location_args )
   if(${proj}_URL)
