@@ -349,7 +349,14 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     QString studyUID = currentStudyAndSeriesUIDPair->first;
 
     // Get information which server we want to get the study from and prepare request accordingly
-    ctkDICOMQuery *query = d->QueriesByStudyUID[ studyUID ];
+    QMap<QString, ctkDICOMQuery*>::iterator queryIt = d->QueriesByStudyUID.find(studyUID);
+    ctkDICOMQuery* query = (queryIt == d->QueriesByStudyUID.end() ? nullptr : *queryIt);
+    if (!query)
+      {
+      logger.warn("Retrieve of series " + seriesUID + " failed. No query found for study " + studyUID + ".");
+      continue;
+      }
+
     retrieve->setDatabase( d->RetrieveDatabase );
     retrieve->setCallingAETitle( query->callingAETitle() );
     retrieve->setCalledAETitle( query->calledAETitle() );
@@ -357,7 +364,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     retrieve->setHost( query->host() );
     // TODO: check the model item to see if it is checked
     // for now, assume all studies queried and shown to the user will be retrieved
-    logger.debug("About to retrieve " + seriesUID + " from " + d->QueriesByStudyUID[ studyUID ]->host());
+    logger.debug("About to retrieve " + seriesUID + " from " + query->host());
     logger.info ( "Starting to retrieve" );
 
     if(d->UseProgressDialog)
