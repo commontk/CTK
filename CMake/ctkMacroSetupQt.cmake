@@ -58,7 +58,7 @@ macro(ctkMacroSetupQt)
 
   elseif(CTK_QT_VERSION VERSION_GREATER "4")
     cmake_minimum_required(VERSION 2.8.12)
-    find_package(Qt$${CTK_QT_VERSION} COMPONENTS Core)
+    find_package(Qt${CTK_QT_VERSION} COMPONENTS Core)
     set(CTK_QT5_COMPONENTS Core Xml XmlPatterns Concurrent Sql Test Multimedia)
     if(CTK_ENABLE_Widgets OR CTK_LIB_Widgets OR CTK_LIB_CommandLineModules/Frontend/QtGui OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
       list(APPEND CTK_QT5_COMPONENTS Widgets OpenGL UiTools)

@@ -25,12 +25,9 @@
 #include <QtGlobal>
 #ifndef HAVE_QT5
 #include <QDesignerCustomWidgetCollectionInterface>
-#include <QDesigner>
 #else
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 #endif
-#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
-#include <QDesigner>
 
 // CTK includes
 #include "ctkWidgetsPluginsExport.h"
