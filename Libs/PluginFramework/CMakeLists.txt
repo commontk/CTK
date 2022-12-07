@@ -157,10 +157,8 @@ set(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
-if(CTK_QT_VERSION VERSION_GREATER "5")
-  list(APPEND KIT_target_libraries Qt6::Sql Qt6::Concurrent)
-elseif(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_target_libraries Qt5::Sql Qt5::Concurrent)
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Sql Qt${CTK_QT_VERSION}::Concurrent)
 endif()
 
 # Create a MANIFEST.MF resource for the PluginFramework library,

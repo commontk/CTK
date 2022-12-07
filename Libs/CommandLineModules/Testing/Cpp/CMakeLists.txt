@@ -96,10 +96,8 @@ ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} $
 target_link_libraries(${KIT}CppTests ${_additional_link_libraries})
 add_dependencies(${KIT}CppTests ctkCmdLineTestModules)
 
-if(CTK_QT_VERSION VERSION_GREATER "5")
-  target_link_libraries(${KIT}CppTests Qt6::Gui Qt6::Test)
-elseif(CTK_QT_VERSION VERSION_GREATER "4")
-  target_link_libraries(${KIT}CppTests Qt5::Gui Qt5::Test)
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  target_link_libraries(${KIT}CppTests Qt${CTK_QT_VERSION}::Gui Qt${CTK_QT_VERSION}::Test)
 endif()
 
 if(TARGET CTKCommandLineModulesCoreCppTests)

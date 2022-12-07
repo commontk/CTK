@@ -49,10 +49,8 @@ endif()
 ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_SRCS} ${Tests_MOC_CPP} ${Tests_UI_CPP} ${Tests_RESOURCES_SRCS})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
-if(CTK_QT_VERSION VERSION_GREATER "5")
-  target_link_libraries(${KIT}CppTests Qt6::Test)
-elseif(CTK_QT_VERSION VERSION_GREATER "4")
-  target_link_libraries(${KIT}CppTests Qt5::Test)
+if(CTK_QT_VERSION VERSION_GREATER "4")
+  target_link_libraries(${KIT}CppTests Qt${CTK_QT_VERSION}::Test)
 endif()
 
 #

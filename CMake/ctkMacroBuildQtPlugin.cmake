@@ -192,8 +192,8 @@ endmacro()
 macro(ctkMacroBuildQtDesignerPlugin)
   if(CTK_QT_VERSION VERSION_GREATER "4")
     find_package(Qt${CTK_QT_VERSION} COMPONENTS Designer REQUIRED)
-    add_definitions(${Qt5Designer_DEFINITIONS})
-    include_directories(${Qt5Designer_INCLUDE_DIRS})
+    add_definitions(${Qt${CTK_QT_VERSION}Designer_DEFINITIONS})
+    include_directories(${Qt${CTK_QT_VERSION}Designer_INCLUDE_DIRS})
   endif()
   ctkMacroBuildQtPlugin(
     PLUGIN_DIR designer
@@ -205,12 +205,7 @@ macro(ctkMacroBuildQtDesignerPlugin)
       "SRCS;MOC_SRCS;UI_FORMS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES" # multi value args
       ${ARGN}
       )
-    if(CTK_QT_VERSION VERSION_GREATER "5")
-      target_link_libraries(${MY_NAME} Qt6::Designer)
-    else()
-      target_link_libraries(${MY_NAME} Qt5::Designer)
-    endif()
-
+      target_link_libraries(${MY_NAME} Qt${CTK_QT_VERSION}::Designer)
   endif()
 endmacro()
 
