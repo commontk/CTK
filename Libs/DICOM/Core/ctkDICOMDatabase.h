@@ -363,7 +363,7 @@ public:
   /// Insert lists of tags into the cache as a batch query operation
   Q_INVOKABLE bool cacheTags (const QStringList sopInstanceUIDs, const QStringList tags, const QStringList values);
   /// Remove all tags corresponding to a SOP instance UID
-  void removeCachedTags(const QString sopInstanceUID);
+  Q_INVOKABLE void removeCachedTags(const QString sopInstanceUID);
 
   /// Get displayed name of a given field
   Q_INVOKABLE QString displayedNameForField(QString table, QString field) const;
