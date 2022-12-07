@@ -71,6 +71,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ctkConsole_p.h"
 #include "ctkPimpl.h"
 
+//QT6 compatibility
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#include <QRegularExpression>
+#define QRegExp QRegularExpression
+#endif
 //-----------------------------------------------------------------------------
 // ctkConsoleCompleter methods
 
@@ -152,7 +157,9 @@ void ctkConsolePrivate::init()
   this->RunFileButton->setVisible(false);
 
   QVBoxLayout * layout = new QVBoxLayout(q);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   layout->setMargin(0);
+#endif
   layout->setSpacing(0);
   layout->addWidget(this);
   layout->addWidget(this->RunFileButton);
@@ -323,30 +330,30 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
       }
     }
 
-  QTextCursor textCursor = this->textCursor();
+  QTextCursor text_cursor = this->textCursor();
 
   // Set to true if there's a current selection
-  const bool selection = (textCursor.anchor() != textCursor.position());
+  const bool selection = text_cursor.anchor() != text_cursor.position();
   // Set to true if the cursor overlaps the history area
-  bool history_area = this->isCursorInHistoryArea();
+  const bool history_area = this->isCursorInHistoryArea();
   // The message output area is defined just under the command line
   // and it can display all messages catch during we autocomplete, etc.
   // Set to true if the cursor overlaps the message output area
-  bool message_output_area = this->isCursorInMessageOutputArea();
+  const bool message_output_area = this->isCursorInMessageOutputArea();
 
   if (e->key() == Qt::Key_Escape)
     {
     if (selection)
       {
       // if a selection is active then Esc removes it
-      textCursor.setPosition(textCursor.position());
-      this->setTextCursor(textCursor);
+      text_cursor.setPosition(text_cursor.position());
+      this->setTextCursor(text_cursor);
       }
     else if (history_area || message_output_area)
       {
       // if not in the interactive area then Esc moves back to the end of the interactive area
-      textCursor.setPosition(this->commandEnd());
-      this->setTextCursor(textCursor);
+      text_cursor.setPosition(this->commandEnd());
+      this->setTextCursor(text_cursor);
       }
     else
       {
@@ -390,8 +397,8 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     {
     if(history_area || message_output_area)
       {
-      textCursor.setPosition(this->commandEnd());
-      this->setTextCursor(textCursor);
+      text_cursor.setPosition(this->commandEnd());
+      this->setTextCursor(text_cursor);
       }
     this->paste();
     this->updateCommandBuffer();
@@ -427,10 +434,8 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
        && e->key() != Qt::Key_Alt
        && e->key() != Qt::Key_Shift)
     {
-    textCursor.setPosition(this->commandEnd());
-    this->setTextCursor(textCursor);
-    message_output_area = false;
-    history_area = false;
+    text_cursor.setPosition(this->commandEnd());
+    this->setTextCursor(text_cursor);
     }
 
   // Start of line should be the start of interactive area
@@ -438,15 +443,15 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   QTextCursor::MoveMode moveMode = QTextCursor::MoveAnchor;
   if(isMoveLeftWithinLine(e, moveOperation, moveMode))
     {
-    textCursor.movePosition(moveOperation, moveMode);
-    if (textCursor.position() >= this->InteractivePosition)
+    text_cursor.movePosition(moveOperation, moveMode);
+    if (text_cursor.position() >= this->InteractivePosition)
       {
       this->Superclass::keyPressEvent(e);
       }
     else
       {
-      textCursor.setPosition(this->InteractivePosition, moveMode);
-      this->setTextCursor(textCursor);
+      text_cursor.setPosition(this->InteractivePosition, moveMode);
+      this->setTextCursor(text_cursor);
       e->accept();
       }
     this->updateCompleterIfVisible();
@@ -458,15 +463,15 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   moveMode = QTextCursor::MoveAnchor;
   if(isMoveRighttWithinLine(e, moveOperation, moveMode))
     {
-    textCursor.movePosition(moveOperation, moveMode);
-    if (textCursor.position() <= this->commandEnd())
+    text_cursor.movePosition(moveOperation, moveMode);
+    if (text_cursor.position() <= this->commandEnd())
       {
       this->Superclass::keyPressEvent(e);
       }
     else
       {
-      textCursor.setPosition(this->commandEnd(), moveMode);
-      this->setTextCursor(textCursor);
+      text_cursor.setPosition(this->commandEnd(), moveMode);
+      this->setTextCursor(text_cursor);
       e->accept();
       }
     this->updateCompleterIfVisible();
@@ -479,8 +484,8 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     // Can delete only if we are not at the end of the command line.
     // There is an exception if something (in the interactive area only) is selected,
     // because it will erase the text selected instead.
-    if (textCursor.position() < this->commandEnd()
-        || (textCursor.position() <= this->commandEnd()
+    if (text_cursor.position() < this->commandEnd()
+        || (text_cursor.position() <= this->commandEnd()
              && selection && !message_output_area && !history_area))
       {
       this->Superclass::keyPressEvent(e);
@@ -497,8 +502,8 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     // Can delete with backspace only if the cursor is after the InteractivePosition.
     // There is an exception if something (in the interactive area only) is selected,
     // because it will erase the text selected instead.
-    if (textCursor.position() > this->InteractivePosition
-        || (textCursor.position() >= this->InteractivePosition
+    if (text_cursor.position() > this->InteractivePosition
+        || (text_cursor.position() >= this->InteractivePosition
              && selection  && !message_output_area && !history_area))
       {
       this->Superclass::keyPressEvent(e);
@@ -511,7 +516,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   if (e == QKeySequence::DeleteStartOfWord)
       {
       e->accept();
-      if (textCursor.position() > this->InteractivePosition)
+      if (text_cursor.position() > this->InteractivePosition)
         {
         this->Superclass::keyPressEvent(e);
         this->updateCommandBuffer();
@@ -548,8 +553,8 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
   if (e == QKeySequence::InsertParagraphSeparator)
     {
     e->accept();
-    textCursor.setPosition(this->documentEnd());
-    this->setTextCursor(textCursor);
+    text_cursor.setPosition(this->documentEnd());
+    this->setTextCursor(text_cursor);
     if (this->InputEventLoop.isNull())
       {
       this->internalExecuteCommand();
@@ -561,7 +566,7 @@ void ctkConsolePrivate::keyPressEvent(QKeyEvent* e)
     return;
     }
 
-  if (this->CompleterShortcuts.contains(e->key() + e->modifiers()))
+  if (this->CompleterShortcuts.contains(e->key() + static_cast<int>(e->modifiers())))
     {
     e->accept();
     this->updateCompleter();
@@ -696,14 +701,14 @@ void ctkConsolePrivate::updateCompleter()
     {
     // Get the text between the current cursor position
     // and the start of the line
-    QTextCursor textCursor = this->textCursor();
-    while (!textCursor.selectedText().contains(q_ptr->ps1()))
+    QTextCursor text_cursor = this->textCursor();
+    while (!text_cursor.selectedText().contains(q_ptr->ps1()))
       {
-      textCursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
+      text_cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
       }
 
     // search through the text the multiline statement symbol "... " + 1 char (go to the line char)
-    QString commandText = textCursor.selectedText();
+    QString commandText = text_cursor.selectedText();
     int pos_Ps2 = commandText.indexOf(q_ptr->ps2())-1;
     while (pos_Ps2 > -1)
       {
@@ -730,9 +735,9 @@ void ctkConsolePrivate::updateCompleter()
     int savedCursorPosition = this->textCursor().position();
 
     //move the cursor at the end in case of a message displayed
-    textCursor = this->textCursor();
-    textCursor.setPosition(this->documentEnd());
-    this->setTextCursor(textCursor);
+    QTextCursor tc = this->textCursor();
+    tc.setPosition(this->documentEnd());
+    this->setTextCursor(tc);
     // Save color of displayed message
     QColor savedOutputTextColor = this->OutputTextColor;
     QColor savedErrorTextColor = this->ErrorTextColor;
@@ -749,7 +754,7 @@ void ctkConsolePrivate::updateCompleter()
 
     // Restore positions
     this->InteractivePosition = savedInteractivePosition;
-    textCursor = this->textCursor();
+    QTextCursor textCursor = this->textCursor();
     textCursor.setPosition(savedCursorPosition);
     this->setTextCursor(textCursor);
 
@@ -759,9 +764,9 @@ void ctkConsolePrivate::updateCompleter()
       {
       // Get a QRect for the cursor at the start of the
       // current word and then translate it down 8 pixels.
-      textCursor = this->textCursor();
-      textCursor.movePosition(QTextCursor::StartOfWord);
-      QRect cr = this->cursorRect(textCursor);
+      text_cursor = this->textCursor();
+      text_cursor.movePosition(QTextCursor::StartOfWord);
+      QRect cr = this->cursorRect(text_cursor);
       cr.translate(0,8);
       cr.setWidth(this->Completer->popup()->sizeHintForColumn(0)
         + this->Completer->popup()->verticalScrollBar()->sizeHint().width());
@@ -842,12 +847,22 @@ void ctkConsolePrivate::internalExecuteCommand()
   if (this->EditorHints & ctkConsole::AutomaticIndentation)
     {
     QRegExp regExp("^(\\s+)");
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    if( command.indexOf(regExp) >= 0)
+      {
+      QStringList captured = regExp.namedCaptureGroups();
+      if (captured.size() >= 2)
+        {
+        indent = captured[1];
+        }
+      }
+#else
     if (regExp.indexIn(command) != -1)
       {
       indent = regExp.cap(1);
       }
+#endif
     }
-
   // Give a chance for log messages to appear before displaying the new prompt.
   qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
 
@@ -866,9 +881,9 @@ void ctkConsolePrivate::processInput()
     this->commandBuffer() = command; // Update buffer
     }
 
-  QTextCursor textCursor = this->textCursor();
-  textCursor.movePosition(QTextCursor::End);
-  textCursor.insertText("\n");
+  QTextCursor c(this->document());
+  c.movePosition(QTextCursor::End);
+  c.insertText("\n");
 
   this->InteractivePosition = this->documentEnd();
 
@@ -878,9 +893,8 @@ void ctkConsolePrivate::processInput()
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::printString(const QString& text)
 {
-  QTextCursor textCursor = this->textCursor();
-  textCursor.movePosition(QTextCursor::End);
-  textCursor.insertText(text);
+  this->textCursor().movePosition(QTextCursor::End);
+  this->textCursor().insertText(text);
 }
 
 //-----------------------------------------------------------------------------
@@ -914,14 +928,14 @@ void ctkConsolePrivate::promptForInput(const QString& indent)
 //-----------------------------------------------------------------------------
 void ctkConsolePrivate::prompt(const QString& text)
 {
-  QTextCursor textCursor = this->textCursor();
+  QTextCursor text_cursor = this->textCursor();
 
   // If the cursor is currently on a clean line, do nothing, otherwise we move
   // the cursor to a new line before showing the prompt.
-  textCursor.movePosition(QTextCursor::StartOfLine);
-  int startpos = textCursor.position();
-  textCursor.movePosition(QTextCursor::EndOfLine);
-  int endpos = textCursor.position();
+  text_cursor.movePosition(QTextCursor::StartOfLine);
+  int startpos = text_cursor.position();
+  text_cursor.movePosition(QTextCursor::EndOfLine);
+  int endpos = text_cursor.position();
   if (endpos != startpos)
     {
     this->textCursor().insertText("\n");
@@ -945,53 +959,51 @@ void ctkConsolePrivate::printWelcomeMessage()
 void ctkConsolePrivate::insertCompletion(const QString& completion)
 {
   Q_Q(ctkConsole);
-  QTextCursor textCursor = this->textCursor();
-  textCursor.setPosition(this->commandEnd());
+  QTextCursor tc = this->textCursor();
   // save the initial cursor position
   QTextCursor endOfCompletion = this->textCursor();
-  endOfCompletion.setPosition(this->commandEnd());
+  endOfCompletion.setPosition(tc.position());
   // Select the previous character
-  textCursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
-  QString charBeforeCompletion = textCursor.selectedText();
-  if (charBeforeCompletion == ".")
+  tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
+  if (tc.selectedText()==".")
     {
-    textCursor.insertText(QString(".") + completion);
+    tc.insertText(QString(".") + completion);
     }
   else
     {
     //can't more autocomplete when cursor right after '(' or ')'
-    if (charBeforeCompletion == ")" || charBeforeCompletion == "(")
+    if (tc.selectedText()==")" || tc.selectedText()=="(")
       {
       return;
       }
-    textCursor.clearSelection();
-    textCursor.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
+    tc.clearSelection();
+    tc.movePosition(QTextCursor::StartOfWord, QTextCursor::MoveAnchor);
     if (insertCompletionMethod)
       {
-      textCursor.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
+      tc.movePosition(QTextCursor::EndOfWord, QTextCursor::KeepAnchor);
       }
     else
       {
-      textCursor.setPosition(endOfCompletion.position(), QTextCursor::KeepAnchor);
+      tc.setPosition(endOfCompletion.position(), QTextCursor::KeepAnchor);
       }
-    textCursor.insertText(completion);
-    endOfCompletion.setPosition(textCursor.position());
-    this->setTextCursor(textCursor);
+    tc.insertText(completion);
+    endOfCompletion.setPosition(tc.position());
+    this->setTextCursor(tc);
     }
 
   // Get back the whole command line to apply a cursor offset
   // (moving cursor between parenthsesis if the completion is
   // a callable object with more than the self argument)
   // StartOfBlock don't catch the whole command line if multi-line statement
-  textCursor.movePosition(QTextCursor::StartOfBlock,QTextCursor::KeepAnchor);
-  QString shellLine = textCursor.selectedText();
+  tc.movePosition(QTextCursor::StartOfBlock,QTextCursor::KeepAnchor);
+  QString shellLine = tc.selectedText();
   shellLine.replace(q->ps1(), "");
   shellLine.replace(q->ps2(), "");
-  textCursor.setPosition(endOfCompletion.position());
-  this->setTextCursor(textCursor);
+  tc.setPosition(endOfCompletion.position());
+  this->setTextCursor(tc);
   int cursorOffset = this->Completer->cursorOffset(shellLine);
-  textCursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
-  this->setTextCursor(textCursor);
+  tc.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, cursorOffset);
+  this->setTextCursor(tc);
   this->updateCommandBuffer();
 }
 
@@ -1065,12 +1077,8 @@ void ctkConsolePrivate::pasteText(const QString& text)
       && text.trimmed().contains("\n"))
     {
     // Execute at once
-    q->printMessage("\n" + text.trimmed(), this->StdinTextColor);
+    q->printMessage("\n" + text.trimmed() + "\n", this->StdinTextColor);
     q->executeString(text);
-
-    // Give a chance for log messages to appear before displaying the new prompt.
-    qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-
     this->promptForInput();
     return;
     }
@@ -1173,10 +1181,10 @@ void ctkConsole::setShellFont(const QFont& font)
   int savedPosition = d->textCursor().position();
   d->selectAll();
   d->setCurrentFont(font);
-  QTextCursor textCursor = d->textCursor();
-  textCursor.clearSelection();
-  textCursor.setPosition(savedPosition);
-  d->setTextCursor(textCursor);
+  QTextCursor tc = d->textCursor();
+  tc.clearSelection();
+  tc.setPosition(savedPosition);
+  d->setTextCursor(tc);
 }
 
 //-----------------------------------------------------------------------------
@@ -1266,10 +1274,10 @@ int ctkConsole::cursorColumn() const
 int ctkConsole::cursorLine() const
 {
   Q_D(const ctkConsole);
-  QTextCursor textCursor = d->textCursor();
-  textCursor.movePosition(QTextCursor::StartOfLine);
+  QTextCursor cursor = d->textCursor();
+  cursor.movePosition(QTextCursor::StartOfLine);
   int lines = 1;
-  QTextBlock block = textCursor.block().previous();
+  QTextBlock block = cursor.block().previous();
   while(block.isValid())
     {
     lines += block.lineCount();
@@ -1384,9 +1392,6 @@ void ctkConsole::runFile(const QString& filePath)
   this->printMessage("\n" + commands.trimmed() + "\n", d->StdinTextColor);
   this->executeString(commands);
 
-  // Give a chance for log messages to appear before displaying the new prompt.
-  qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-
   // Display a new command prompt and allow the user to resume typing the command.
   d->promptForInput();
   d->replaceCommandBuffer(savedCommand);
@@ -1432,15 +1437,10 @@ void ctkConsole::printMessage(const QString& message, const QColor& color)
 {
   Q_D(ctkConsole);
 
-  // Jump to the end and print text with the selected color
-
-  QTextCursor textCursor = d->textCursor();
-  textCursor.movePosition(QTextCursor::End);
-
   QTextCharFormat format = this->getFormat();
   format.setForeground(color);
-
-  textCursor.insertText(message, format);
+  this->setFormat(format);
+  d->printString(message);
 }
 
 //----------------------------------------------------------------------------

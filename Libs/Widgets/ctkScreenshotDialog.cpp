@@ -169,7 +169,7 @@ void ctkScreenshotDialogPrivate::lockAspectRatio(bool lock)
       }
     else
       {
-      QString message = QString("Height of widget: ") + curSize.height() +\
+      QString message = QString("Height of widget: ") + QString::number(curSize.height()) +\
         QString(" is invalid. Check widget dimensions. Using default aspect\
           ratio (1.0).");
       QMessageBox::warning(q, "Invalid widget dimensions", message,
@@ -191,7 +191,7 @@ void ctkScreenshotDialogPrivate::onWidthEdited()
       }
     else
       {
-      QString message = QString("Aspect ratio: ") + this->AspectRatio +\
+      QString message = QString("Aspect ratio: ") + QString::number(this->AspectRatio) +\
         QString(" is invalid. Check widget dimensions.");
       QMessageBox::warning(q, "Invalid aspect ratio", message, QMessageBox::Ok);
       }

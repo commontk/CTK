@@ -53,8 +53,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Qt includes
 #include <QDialog>
 #include <QMainWindow>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #include <QDesktopWidget>
-
+#else
+#include <QGuiApplication>
+#include <QScreen>
+#endif
 //-----------------------------------------------------------------------------
 ctkSettings::ctkSettings(const QString& organization,
                          const QString& application,
@@ -134,8 +138,12 @@ void ctkSettings::restoreState(const QString& key, QMainWindow& window)
     QPoint windowTopLeft = this->value("Position").toPoint();
     QRect mwRect(windowTopLeft, window.size());
     
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QDesktopWidget desktop;
     QRect desktopRect = desktop.availableGeometry( desktop.primaryScreen() );
+#else
+    QRect desktopRect = QGuiApplication::primaryScreen()->availableGeometry();
+#endif
     // try moving it to keep size
     if(!desktopRect.contains(mwRect))
       {

@@ -25,6 +25,9 @@
 #include <QPushButton>
 #include <QSettings>
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#define QRegExp QRegularExpression
+#endif
 // CTK includes
 #include "ctkSettingsPanel.h"
 #include "ctkSettingsDialog.h"

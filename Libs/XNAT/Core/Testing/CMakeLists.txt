@@ -22,7 +22,7 @@ ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${KITTests_SRCS} ${KITTests_MOC_
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES})
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  target_link_libraries(${KIT}CppTests Qt5::Test)
+  target_link_libraries(${KIT}CppTests Qt::Test)
 endif()
 
 SIMPLE_TEST(ctkXnatSessionTest)

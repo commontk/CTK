@@ -335,6 +335,9 @@ bool ctkPixmapIconEngine::write(QDataStream &out) const
 
 void ctkPixmapIconEngine::virtual_hook(int id, void *data)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+    return QIconEngine::virtual_hook(id, data);
+#else
   switch (id) {
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     case QIconEngine::AvailableSizesHook: {
@@ -364,4 +367,5 @@ void ctkPixmapIconEngine::virtual_hook(int id, void *data)
       QIconEngineV2::virtual_hook(id, data);
 #endif
     }
+#endif
 }

@@ -21,10 +21,15 @@
 // Qt includes
 #include <QBuffer>
 #include <QImage>
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
 #include <QGLWidget>
+#else
+#include <QOpenGLWidget>
+#define QGLWidget QOpenGLWidget
+#define grabFrameBuffer grabFramebuffer
+#endif
 #include <QPainter>
 #include <QWidget>
-
 // ctkWidgets includes
 #include "ctkWidgetsUtils.h"
 

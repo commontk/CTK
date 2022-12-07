@@ -65,7 +65,11 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
   Q_Q(const ctkComboBox);
   if (sh.isValid())
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    return sh;
+#else      
     return sh.expandedTo(QApplication::globalStrut());
+#endif
     }
 
   bool hasIcon = false;
@@ -151,7 +155,11 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
   QStyleOptionComboBox opt;
   this->initStyleOption(&opt);
   sh = q->style()->sizeFromContents(QStyle::CT_ComboBox, &opt, sh, q);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+  return sh;
+#else
   return sh.expandedTo(QApplication::globalStrut());
+#endif
 }
 
 // -------------------------------------------------------------------------

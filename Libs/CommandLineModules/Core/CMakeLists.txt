@@ -79,8 +79,11 @@ set(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
+if(CTK_QT_VERSION VERSION_EQUAL "5")
+  list(APPEND KIT_target_libraries Qt::XmlPatterns)
+endif()
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_target_libraries Qt5::XmlPatterns Qt5::Widgets Qt5::Concurrent)
+  list(APPEND KIT_target_libraries Qt::Widgets Qt::Concurrent)
 else()
   set(QT_USE_QTXMLPATTERNS 1)
   include(${QT_USE_FILE})

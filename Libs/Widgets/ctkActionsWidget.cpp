@@ -22,6 +22,7 @@
 #include <QAction>
 #include <QDebug>
 #include <QHeaderView>
+#include <QMenu>
 #include <QPainter>
 #include <QSortFilterProxyModel>
 #include <QStandardItem>
@@ -29,6 +30,7 @@
 #include <QTextDocument>
 #include <QTreeView>
 #include <QVBoxLayout>
+
 
 // CTK includes
 #include "ctkActionsWidget.h"

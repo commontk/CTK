@@ -32,8 +32,10 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   ctk_add_executable_utf8(ctkDICOMApplicationTest1 ctkDICOMApplicationTest1.cpp)
   if(CTK_QT_VERSION VERSION_LESS "5")
     target_link_libraries(ctkDICOMApplicationTest1 ${QT_LIBRARIES})
-  else()
+  elsei  if(CTK_QT_VERSION VERSION_LESS "6")
     target_link_libraries(ctkDICOMApplicationTest1 Qt5::Core)
+  else()
+    target_link_libraries(ctkDICOMApplicationTest1 Qt6::Core)
   endif()
 
   ADD_TEST( NAME ctkDICOMApplicationTest1

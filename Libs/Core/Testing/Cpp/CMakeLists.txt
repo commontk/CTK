@@ -105,8 +105,8 @@ set(Tests_Helpers_MOC_CPPS
 
 set(Tests_Helpers_MOC_CPP)
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  qt5_wrap_cpp(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
-  qt5_generate_mocs(${Tests_Helpers_MOC_CPPS})
+  qt_wrap_cpp(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
+  qt_generate_moc(${Tests_Helpers_MOC_CPPS})
 else()
   QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
   QT4_GENERATE_MOCS(${Tests_Helpers_MOC_CPPS})
@@ -127,8 +127,8 @@ ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_He
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  find_package(Qt5 COMPONENTS Test Widgets REQUIRED)
-  target_link_libraries(${KIT}CppTests Qt5::Test Qt5::Widgets)
+  find_package(Qt${CTK_QT_VERSION} COMPONENTS Test Widgets REQUIRED)
+  target_link_libraries(${KIT}CppTests Qt::Test Qt::Widgets)
 endif()
 
 if(UNIX AND NOT APPLE)

@@ -31,6 +31,7 @@
 
 // CTK includes
 #include "ctkCommandLineParser.h"
+#include <QRegExp>
 
 namespace
 {

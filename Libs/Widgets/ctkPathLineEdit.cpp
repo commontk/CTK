@@ -29,7 +29,12 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QRegExp>
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #include <QRegExpValidator>
+#else
+#include <QRegularExpressionValidator>
+#define QRegExpValidator QRegularExpressionValidator
+#endif
 #include <QSettings>
 #include <QStyleOptionComboBox>
 #include <QToolButton>
@@ -462,7 +467,11 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
     sh.rwidth() = frame + textWidth + browseWidth;
     sh.rheight() = height;
   }
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   return sh.expandedTo(QApplication::globalStrut());
+#else
+  return sh;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -471,7 +480,11 @@ void ctkPathLineEditPrivate::updateFilter()
   Q_Q(ctkPathLineEdit);
   this->Completer->setShowFiles(this->Filters & QDir::Files);
   this->Completer->setNameFilters(ctk::nameFiltersToExtensions(this->NameFilters));
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   this->Validator->setRegExp(ctk::nameFiltersToRegExp(this->NameFilters));
+#else
+  this->Validator->setRegularExpression(ctk::nameFiltersToRegExp(this->NameFilters));
+#endif
 }
 
 //-----------------------------------------------------------------------------

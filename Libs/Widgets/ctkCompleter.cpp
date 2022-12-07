@@ -22,7 +22,9 @@
 #include <QDebug>
 #include <QSortFilterProxyModel>
 #include <QStringList>
-
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#define QRegExp QRegularExpression
+#endif
 // CTK includes
 #include "ctkCompleter.h"
 
@@ -87,9 +89,14 @@ QStringList ctkCompleterPrivate::splitPath(const QString& s)
     case ctkCompleter::FilterWordStartsWith:
       {
       this->updateSortFilterProxyModel();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      QRegularExpression regexp = QRegularExpression(QRegularExpression::escape(s), QRegularExpression::PatternOption::CaseInsensitiveOption);
+      this->SortFilterProxyModel->setFilterRegularExpression(regexp);
+#else
       QRegExp regexp = QRegExp(QRegExp::escape(s));
       regexp.setCaseSensitivity(q->caseSensitivity());
       this->SortFilterProxyModel->setFilterRegExp(regexp);
+#endif
       paths = QStringList();
       break;
       }

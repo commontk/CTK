@@ -135,7 +135,9 @@ set(KIT_target_libraries)
 
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
+if(CTK_QT_VERSION VERSION_GREATER "5")
+  list(APPEND KIT_target_libraries Qt::Core Qt::StateMachine Qt::Core5Compat)
+elseif(CTK_QT_VERSION VERSION_GREATER "4")
   list(APPEND KIT_target_libraries Qt5::Core)
 endif()
 
@@ -169,6 +171,13 @@ if(CTK_WRAP_PYTHONQT_LIGHT)
     )
 endif()
 
+if( CTK_QT_VERSION VERSION_GREATER_EQUAL "6")
+set_property(
+    SOURCE moc_ctkWorkflow.cpp
+    PROPERTY COMPILE_DEFINITIONS
+      CTK_COMPILING_FROM_MOC_CPP
+  )
+endif()
 
 # Testing
 if(BUILD_TESTING)

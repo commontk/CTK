@@ -36,7 +36,13 @@ set(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
+if(CTK_QT_VERSION VERSION_GREATER "5")
+  if(TARGET Qt5::WebKitWidgets)
+    list(APPEND KIT_target_libraries Qt6::WebKitWidgets)
+  else()
+    list(APPEND KIT_target_libraries Qt6::WebEngineWidgets)
+  endif()
+elseif(CTK_QT_VERSION VERSION_GREATER "4")
   if(TARGET Qt5::WebKitWidgets)
     list(APPEND KIT_target_libraries Qt5::WebKitWidgets)
   else()

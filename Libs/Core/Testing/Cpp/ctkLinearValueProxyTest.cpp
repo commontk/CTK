@@ -506,4 +506,6 @@ void ctkLinearValueProxyTester::testProxyModified_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkLinearValueProxyTest)
-#include "moc_ctkLinearValueProxyTest.cpp"
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+  #include "moc_ctkLinearValueProxyTest.cpp"
+#endif

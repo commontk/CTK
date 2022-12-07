@@ -157,7 +157,11 @@ QStringList ctkPathListButtonsWidgetPrivate::openAddFilesDialog(bool multiple)
   }
 
   QFileDialog fileDialog(q, caption);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   fileDialog.setReadOnly(true);
+#else
+  fileDialog.setOption(QFileDialog::Option::ReadOnly, true);
+#endif  
 
   if (multiple)
   {

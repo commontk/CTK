@@ -223,9 +223,14 @@ QSize ctkSizeGrip::sizeHint() const
       break;
     };
   QStyleOption opt(0);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   opt.init(this);
-  return (this->style()->sizeFromContents(contents, &opt, minSize, this).
-          expandedTo(QApplication::globalStrut()));
+  return this->style()->sizeFromContents(contents, &opt, minSize, this).expandedTo(QApplication::globalStrut());
+#else
+  opt.initFrom(this);
+  return this->style()->sizeFromContents(contents, &opt, minSize, this);
+#endif
+         
 }
 
 //------------------------------------------------------------------------------
@@ -262,7 +267,11 @@ void ctkSizeGrip::paintEvent(QPaintEvent *event)
     default:
       {
       QStyleOptionSizeGrip opt;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
       opt.init(this);
+#else
+      opt.initFrom(this);
+#endif
       opt.corner = this->isLeftToRight() ? Qt::BottomRightCorner : Qt::BottomLeftCorner;
       style()->drawControl(QStyle::CE_SizeGrip, &opt, &painter, this);
       break;
@@ -356,9 +365,9 @@ void ctkSizeGrip::mouseMoveEvent(QMouseEvent * e)
       widgetSizeHint.rheight() = d->WidgetToResize->heightForWidth(widgetSizeHint.width());
       }
     }
-
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   widgetSizeHint = widgetSizeHint.expandedTo(QApplication::globalStrut());
-
+#endif
   this->setWidgetSizeHint(
     QSize(d->Orientations & Qt::Horizontal ? widgetSizeHint.width() : -1,
           d->Orientations & Qt::Vertical ? widgetSizeHint.height() : -1));

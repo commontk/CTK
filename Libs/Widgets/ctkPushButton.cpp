@@ -59,7 +59,6 @@ QRect ctkPushButtonPrivate::iconRect()const
 
   QSize iconSize = q->iconSize();
   int buttonHeight = opt.rect.height();
-  int buttonWidth = opt.rect.width();
   uint tf = this->ButtonTextAlignment;
   if (q->style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, q))
     {
@@ -150,8 +149,11 @@ QSize ctkPushButtonPrivate::buttonSizeHint(bool computeMinimum)const
     }
   h = qMax(h, sz.height());
   //opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
-  QSize buttonSize = (q->style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), q).
-                      expandedTo(QApplication::globalStrut()));
+  QSize buttonSize = q->style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), q)
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
+                      .expandedTo(QApplication::globalStrut())
+#endif
+                      ;
   return buttonSize;
 }
 
@@ -160,7 +162,11 @@ QStyleOptionButton ctkPushButtonPrivate::drawIcon(QPainter* p)
 {
   Q_Q(ctkPushButton);
   QStyleOptionButton iconOpt;
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
   iconOpt.init(q);
+#else
+  iconOpt.initFrom(q);
+#endif
   iconOpt.rect = this->iconRect();
   if (q->icon().isNull())
     {

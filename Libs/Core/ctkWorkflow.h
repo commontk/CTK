@@ -251,5 +251,10 @@ private:
   Q_DISABLE_COPY(ctkWorkflow);
 };
 
+#if defined(CTK_COMPILING_FROM_MOC_CPP)
+  #include "ctkWorkflowStep.h"
+#endif
+
+
 #endif
 

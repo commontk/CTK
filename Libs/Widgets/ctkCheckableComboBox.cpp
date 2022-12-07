@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <QAbstractItemView>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QItemDelegate>
 #include <QLayout>
 #include <QMouseEvent>

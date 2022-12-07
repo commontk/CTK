@@ -150,7 +150,7 @@ macro(ctkMacroBuildPlugin)
     # Add Qt include dirs and defines
     include(${QT_USE_FILE})
   else()
-    find_package(Qt5 COMPONENTS LinguistTools REQUIRED)
+    find_package(Qt${CTK_QT_VERSION} COMPONENTS LinguistTools REQUIRED)
   endif()
 
   # Add the library directories from the external project
@@ -316,16 +316,16 @@ macro(ctkMacroBuildPlugin)
       endforeach()
     endif()
   else()
-    find_package(Qt5LinguistTools REQUIRED)
+    find_package(Qt${CTK_QT_VERSION}LinguistTools REQUIRED)
   endif()
 
   if(MY_TEST_PLUGIN AND CTK_QT_VERSION VERSION_GREATER "4")
-    find_package(Qt5Test REQUIRED)
-    if(CMAKE_VERSION VERSION_LESS 2.8.12)
-      target_link_libraries(${lib_name} Qt5::Test)
-    else()
-      target_link_libraries(${lib_name} PRIVATE Qt5::Test)
-    endif()
+      find_package(Qt${CTK_QT_VERSION} Test REQUIRED)
+      if(CMAKE_VERSION VERSION_LESS 2.8.12)
+        target_link_libraries(${lib_name} Qt::Test)
+      else()
+        target_link_libraries(${lib_name} PRIVATE Qt::Test)
+      endif()
   endif()
 
   # Set the output directory for the plugin

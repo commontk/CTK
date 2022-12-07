@@ -20,12 +20,18 @@
 
 // Qt includes
 #include <QApplication>
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
 #include <QDesktopWidget>
+#else
+#include <QScreen>
+#include <QWindow>
+#endif
 #include <QEvent>
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QLayout>
 #include <QScrollBar>
+
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 # include <QInputContext>
 #endif
@@ -239,8 +245,12 @@ void ctkTreeComboBox::resizePopup()
   this->initStyleOption(&opt);
   QRect listRect(style->subControlRect(QStyle::CC_ComboBox, &opt,
                                        QStyle::SC_ComboBoxListBoxPopup, this));
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   QRect screen = QApplication::desktop()->availableGeometry(
     QApplication::desktop()->screenNumber(this));
+#else
+  QRect screen = this->windowHandle()->screen()->availableGeometry();
+#endif
   QPoint below = this->mapToGlobal(listRect.bottomLeft());
   int belowHeight = screen.bottom() - below.y();
   QPoint above = this->mapToGlobal(listRect.topLeft());
@@ -291,11 +301,19 @@ void ctkTreeComboBox::resizePopup()
 
       // add the frame of the container
       int marginTop, marginBottom;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
       container->getContentsMargins(0, &marginTop, 0, &marginBottom);
+#else
+      container->layout()->getContentsMargins(0, &marginTop, 0, &marginBottom);
+#endif
       heightMargin += marginTop + marginBottom;
 
       //add the frame of the view
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
       this->view()->getContentsMargins(0, &marginTop, 0, &marginBottom);
+#else
+      this->view()->layout()->getContentsMargins(0, &marginTop, 0, &marginBottom);
+#endif      
       //marginTop += static_cast<QAbstractScrollAreaPrivate *>(QObjectPrivate::get(this->view()))->top;
       //marginBottom += static_cast<QAbstractScrollAreaPrivate *>(QObjectPrivate::get(this->view()))->bottom;
       heightMargin += marginTop + marginBottom;

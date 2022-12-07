@@ -90,12 +90,21 @@ void ctkTransferFunctionView::resizeEvent(QResizeEvent * event)
       }
     }
   */
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   QMatrix zoomMatrix;
   zoomMatrix.scale(event->size().width(), event->size().height());
   bool blocked = this->blockSignals(true);
   this->setMatrix(zoomMatrix);
   this->blockSignals(blocked);
+#else
+  QTransform zoomMatrix;
+  zoomMatrix.scale(event->size().width(), event->size().height());
+  bool blocked = this->blockSignals(true);
+  this->setTransform(zoomMatrix);
+  this->blockSignals(blocked);
+#endif
   this->QGraphicsView::resizeEvent(event);
+
   // Control points are resized by the view transform, we want
   // fixed size control points, lines...
   //this->fitInView(this->scene()->sceneRect());

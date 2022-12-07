@@ -26,12 +26,18 @@
 
 // CTK includes
 #include "ctkWidgetsExport.h"
-
+#if CTK_COMPILING_FROM_MOC_CPP
+#include <QAbstractButton>
+#include <QSettings>
+#include <QTreeWidgetItem>
+#include "ctkSettingsPanel.h"
+#else
 class QAbstractButton;
 class QSettings;
 class QTreeWidgetItem;
-class ctkSettingsDialogPrivate;
 class ctkSettingsPanel;
+#endif
+class ctkSettingsDialogPrivate;
 
 /// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkSettingsDialog : public QDialog

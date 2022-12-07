@@ -305,5 +305,7 @@ Q_DECLARE_METATYPE (QSet<QString>)
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkUtilsTest)
-#include "moc_ctkUtilsTest.cpp"
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+  #include "moc_ctkUtilsTest.cpp"
+#endif
 

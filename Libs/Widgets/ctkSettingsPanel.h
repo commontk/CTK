@@ -27,8 +27,11 @@
 
 // CTK includes
 #include "ctkWidgetsExport.h"
-
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+#include <QSettings>
+#else
 class QSettings;
+#endif
 class ctkSettingsPanelPrivate;
 
 /// \ingroup Widgets

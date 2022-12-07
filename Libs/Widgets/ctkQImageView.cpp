@@ -738,7 +738,11 @@ void ctkQImageView::mousePressEvent( QMouseEvent * event )
         d->MouseLastIntensityLevel = this->intensityLevel();
         break;
         }
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
       case Qt::MidButton:
+#else
+      case Qt::MiddleButton:
+#endif
         {
         d->MouseMiddleDragging = true;
         d->MouseLastX = event->x();

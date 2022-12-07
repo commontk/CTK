@@ -21,7 +21,6 @@
 // Qt includes
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QLayout>
 #include <QMouseEvent>
 #include <QMenu>
@@ -159,7 +158,11 @@ void ctkMenuButton::paintEvent(QPaintEvent * _event)
                    QPoint(downArrowRect.left(), downArrowRect.bottom() - borderSize));
   // Draw arrow
   QStyleOption indicatorOpt;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   indicatorOpt.init(this);
+#else
+  indicatorOpt.initFrom(this);
+#endif
   indicatorOpt.rect = downArrowRect.adjusted(borderSize, borderSize, -borderSize, -borderSize);
   painter.drawPrimitive(QStyle::PE_IndicatorArrowDown, indicatorOpt);
 

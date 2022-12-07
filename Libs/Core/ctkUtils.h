@@ -28,6 +28,10 @@
 #include <QModelIndex>
 #include <QStringList>
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#define QRegExp QRegularExpression
+#endif
+
 // STD includes
 #include <vector>
 

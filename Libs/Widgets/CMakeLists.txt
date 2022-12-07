@@ -353,7 +353,9 @@ set(KIT_resources
 # The following macro will read the target libraries from the file 'target_libraries.cmake'
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
+if(CTK_QT_VERSION VERSION_GREATER "5")
+  list(APPEND KIT_target_libraries Qt6::Widgets Qt6::Xml Qt6::OpenGL Qt6::OpenGLWidgets)
+elseif(CTK_QT_VERSION VERSION_GREATER "4")
   list(APPEND KIT_target_libraries Qt5::Widgets Qt5::Xml Qt5::OpenGL)
 endif()
 
@@ -473,4 +475,12 @@ endif()
 # Testing
 if(BUILD_TESTING)
   add_subdirectory(Testing)
+endif()
+
+if( CTK_QT_VERSION VERSION_GREATER_EQUAL "6")
+set_property(
+    SOURCE moc_ctkSettingsDialog.cpp
+    PROPERTY COMPILE_DEFINITIONS
+      CTK_COMPILING_FROM_MOC_CPP
+  )
 endif()

@@ -398,13 +398,18 @@ double ctkDoubleSpinBoxPrivate
   // could be because of group separators:
   if (!ok && state == QValidator::Acceptable)
     {
-    if (q->locale().groupSeparator().isPrint())
+    #if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+    QChar groupSeparator(q->locale().groupSeparator()[0]);
+    #else
+    QChar groupSeparator(q->locale().groupSeparator());
+    #endif
+    if (groupSeparator.isPrint())
       {
       int start = (dec == -1 ? text.size() : dec)- 1;
       int lastGroupSeparator = start;
       for (int digit = start; digit >= 0; --digit)
         {
-        if (text.at(digit) == q->locale().groupSeparator())
+        if (text.at(digit) == groupSeparator)
           {
           if (digit != lastGroupSeparator - 3)
             {
@@ -1102,7 +1107,10 @@ QSize ctkDoubleSpinBox::sizeHint() const
   opt.rect = this->rect();
   d->CachedSizeHint = this->style()->sizeFromContents(
     QStyle::CT_SpinBox, &opt, newSizeHint, this)
-    .expandedTo(QApplication::globalStrut());
+      #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+        .expandedTo(QApplication::globalStrut())
+      #endif
+      ;
   return d->CachedSizeHint;
 }
 
@@ -1158,7 +1166,10 @@ QSize ctkDoubleSpinBox::minimumSizeHint() const
   opt.rect = this->rect();
   d->CachedMinimumSizeHint = this->style()->sizeFromContents(
     QStyle::CT_SpinBox, &opt, newSizeHint, this)
-    .expandedTo(QApplication::globalStrut());
+      #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+        .expandedTo(QApplication::globalStrut())
+      #endif
+      ;
   return d->CachedMinimumSizeHint;
 }
 

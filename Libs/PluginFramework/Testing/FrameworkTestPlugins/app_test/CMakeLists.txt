@@ -50,7 +50,9 @@ target_link_libraries(${test_executable}
   ${fw_lib}
 )
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
+if(CTK_QT_VERSION VERSION_GREATER "5")
+  target_link_libraries(${test_executable} Qt6::Test)
+elseif(CTK_QT_VERSION VERSION_GREATER "4")
   target_link_libraries(${test_executable} Qt5::Test)
 endif()
 

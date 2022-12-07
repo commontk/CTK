@@ -30,7 +30,9 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QStyleOptionButton>
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #include <QStyleOptionFrameV3>
+#endif
 
 // CTK includes
 #include "ctkCollapsibleButton.h"
@@ -450,8 +452,13 @@ QSize ctkCollapsibleButton::buttonSizeHint()const
     }
   h = qMax(h, sz.height());
   //opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
+  #if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
   QSize buttonSize = (style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), this).
                       expandedTo(QApplication::globalStrut()));
+  #else
+  QSize buttonSize = style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), this);
+  #endif
+
   return buttonSize;
 }
 
@@ -558,7 +565,11 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
   int buttonMargin = this->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, this);
   // Draw Indicator
   QStyleOption indicatorOpt;
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
   indicatorOpt.init(this);
+#else
+  indicatorOpt.initFrom(this);
+#endif
   if (d->IndicatorAlignment & Qt::AlignLeft)
     {
     indicatorOpt.rect = QRect((buttonHeight - indicatorSize.width()) / 2,
@@ -652,7 +663,11 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
 #else
   QStyleOptionFrame fopt;
 #endif
-  fopt.init(this);
+  #if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
+    fopt.init(this);
+  #else
+    fopt.initFrom(this);
+  #endif
   // HACK: on some styles, the frame doesn't exactly touch the button.
   // this is because the button has some kind of extra border.
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)

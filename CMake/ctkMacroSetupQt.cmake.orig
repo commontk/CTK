@@ -23,48 +23,22 @@ macro(ctkMacroSetupQt)
   set(CTK_QT_VERSION "4" CACHE STRING "Expected Qt version")
   mark_as_advanced(CTK_QT_VERSION)
 
-  set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 4 5 6)
+  set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 4 5)
 
-  if(NOT (CTK_QT_VERSION VERSION_EQUAL "4" OR CTK_QT_VERSION VERSION_EQUAL "5" OR CTK_QT_VERSION VERSION_EQUAL "6"))
-    message(FATAL_ERROR "Expected value for CTK_QT_VERSION is either '4' or '5' or '6'")
+  if(NOT (CTK_QT_VERSION VERSION_EQUAL "4" OR CTK_QT_VERSION VERSION_EQUAL "5"))
+    message(FATAL_ERROR "Expected value for CTK_QT_VERSION is either '4' or '5'")
   endif()
 
-  if(CTK_QT_VERSION VERSION_GREATER "5")
+
+  if(CTK_QT_VERSION VERSION_GREATER "4")
     cmake_minimum_required(VERSION 2.8.12)
-    find_package(Qt6 COMPONENTS Core)
-    set(CTK_QT6_COMPONENTS Core Xml Concurrent Sql Test StateMachine Core5Compat)
-    # XmlPatterns
-    if(CTK_ENABLE_Widgets OR CTK_LIB_Widgets OR CTK_LIB_CommandLineModules/Frontend/QtGui OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
-      list(APPEND CTK_QT6_COMPONENTS Widgets OpenGL UiTools)
-    endif()
-    if(CTK_LIB_CommandLineModules/Frontend/QtWebKit OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
-      if(TARGET Qt6::WebKitWidgets)
-        list(APPEND CTK_QT6_COMPONENTS WebKitWidgets)
-      else()
-        list(APPEND CTK_QT6_COMPONENTS WebEngineWidgets)
-      endif()
-    endif()
-    if(CTK_LIB_XNAT/Core OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
-      list(APPEND CTK_QT6_COMPONENTS Script)
-    endif()
-    find_package(Qt6 COMPONENTS ${CTK_QT6_COMPONENTS} REQUIRED)
-
-    mark_as_superbuild(Qt6_DIR) # Qt 6
-
-    # XXX Backward compatible way
-    if(DEFINED CMAKE_PREFIX_PATH)
-      mark_as_superbuild(CMAKE_PREFIX_PATH) # Qt 6
-    endif()
-
-  elseif(CTK_QT_VERSION VERSION_GREATER "4")
-    cmake_minimum_required(VERSION 2.8.12)
-    find_package(Qt$${CTK_QT_VERSION} COMPONENTS Core)
+    find_package(Qt5 COMPONENTS Core)
     set(CTK_QT5_COMPONENTS Core Xml XmlPatterns Concurrent Sql Test Multimedia)
     if(CTK_ENABLE_Widgets OR CTK_LIB_Widgets OR CTK_LIB_CommandLineModules/Frontend/QtGui OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
       list(APPEND CTK_QT5_COMPONENTS Widgets OpenGL UiTools)
     endif()
     if(CTK_LIB_CommandLineModules/Frontend/QtWebKit OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
-      if(TARGET Qt${CTK_QT_VERSION}::WebKitWidgets)
+      if(TARGET Qt5::WebKitWidgets)
         list(APPEND CTK_QT5_COMPONENTS WebKitWidgets)
       else()
         list(APPEND CTK_QT5_COMPONENTS WebEngineWidgets)
@@ -73,7 +47,7 @@ macro(ctkMacroSetupQt)
     if(CTK_LIB_XNAT/Core OR CTK_BUILD_ALL OR CTK_BUILD_ALL_LIBRARIES)
       list(APPEND CTK_QT5_COMPONENTS Script)
     endif()
-    find_package(Qt${CTK_QT_VERSION} COMPONENTS ${CTK_QT5_COMPONENTS} REQUIRED)
+    find_package(Qt5 COMPONENTS ${CTK_QT5_COMPONENTS} REQUIRED)
 
     mark_as_superbuild(Qt5_DIR) # Qt 5
 

@@ -25,9 +25,12 @@
 #include <QtGlobal>
 #ifndef HAVE_QT5
 #include <QDesignerCustomWidgetCollectionInterface>
+#include <QDesigner>
 #else
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 #endif
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+#include <QDesigner>
 
 // CTK includes
 #include "ctkWidgetsPluginsExport.h"
@@ -80,10 +83,10 @@ class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
 #ifdef HAVE_QT5
   Q_PLUGIN_METADATA(IID "org.commontk.Widgets")
 #endif
+  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
