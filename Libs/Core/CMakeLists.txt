@@ -136,7 +136,7 @@ set(KIT_target_libraries)
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 if(CTK_QT_VERSION VERSION_GREATER "5")
-  list(APPEND KIT_target_libraries Qt::Core Qt::StateMachine Qt::Core5Compat)
+  list(APPEND KIT_target_libraries Qt6::Core Qt6::StateMachine Qt6::Core5Compat)
 elseif(CTK_QT_VERSION VERSION_GREATER "4")
   list(APPEND KIT_target_libraries Qt5::Core)
 endif()

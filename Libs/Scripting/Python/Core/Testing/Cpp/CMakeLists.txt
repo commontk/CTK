@@ -22,7 +22,7 @@ if (CTK_QT_VERSION VERSION_GREATER "5")
     )
 elseif (CTK_QT_VERSION VERSION_GREATER "4")
   find_package(Qt${CTK_QT_VERSION}Test REQUIRED)
-  set(CTK_QT_TEST_LIBRARY Qt::Test)
+  set(CTK_QT_TEST_LIBRARY Qt${CTK_QT_VERSION}::Test)
   QT5_GENERATE_MOCS(
     ctkAbstractPythonManagerTest.cpp
     )

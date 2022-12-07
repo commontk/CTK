@@ -48,7 +48,7 @@ set(PLUGIN_resources
 ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_target_libraries Qt::Network Qt::Widgets)
+  list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Network Qt${CTK_QT_VERSION}::Widgets)
 endif()
 
 ctkMacroBuildPlugin(

@@ -128,7 +128,7 @@ target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDu
 
 if(CTK_QT_VERSION VERSION_GREATER "4")
   find_package(Qt${CTK_QT_VERSION} COMPONENTS Test Widgets REQUIRED)
-  target_link_libraries(${KIT}CppTests Qt::Test Qt::Widgets)
+  target_link_libraries(${KIT}CppTests Qt${CTK_QT_VERSION}::Test Qt${CTK_QT_VERSION}::Widgets)
 endif()
 
 if(UNIX AND NOT APPLE)

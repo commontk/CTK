@@ -80,10 +80,10 @@ set(KIT_resources
 ctkFunctionGetTargetLibraries(KIT_target_libraries)
 
 if(CTK_QT_VERSION VERSION_EQUAL "5")
-  list(APPEND KIT_target_libraries Qt::XmlPatterns)
+  list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::XmlPatterns)
 endif()
 if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KIT_target_libraries Qt::Widgets Qt::Concurrent)
+  list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Widgets Qt${CTK_QT_VERSION}::Concurrent)
 else()
   set(QT_USE_QTXMLPATTERNS 1)
   include(${QT_USE_FILE})
