@@ -20,7 +20,7 @@
 
 #! \ingroup CMakeUtilities
 macro(ctkMacroSetupQt)
-  set(CTK_QT_VERSION "4" CACHE STRING "Expected Qt version")
+  set(CTK_QT_VERSION "5" CACHE STRING "Expected Qt version")
   mark_as_advanced(CTK_QT_VERSION)
 
   set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 4 5)
