@@ -99,33 +99,37 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
   int width = imageData->GetDimensions()[0];
   int height = imageData->GetDimensions()[1];
   vtkIdType numberOfScalarComponents = imageData->GetNumberOfScalarComponents();
-  QImage image;
+
+  QImage::Format pixelFormat;
   if (numberOfScalarComponents == 3)
-  {
-    image = QImage(width, height, QImage::Format_RGB888);
-  }
+    {
+    pixelFormat = QImage::Format_RGB888;
+    }
   else if (numberOfScalarComponents == 4)
-  {
-    image = QImage(width, height, QImage::Format_RGBA8888);
-  }
+    {
+    pixelFormat = QImage::Format_RGBA8888;
+    }
 #if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
   else if (numberOfScalarComponents == 1)
-  {
-    image = QImage(width, height, QImage::Format_Grayscale8);
-  }
+    {
+    pixelFormat = QImage::Format_Grayscale8;
+    }
 #endif
   else
-  {
+    {
     // unsupported pixel format
     return QImage();
-  }
+    }
 
-  unsigned char* qtImageBuffer = image.bits();
-  memcpy( qtImageBuffer,
-    imageData->GetPointData()->GetScalars()->GetVoidPointer(0),
-    numberOfScalarComponents * width * height);
+  int bytesPerLine = imageData->GetIncrements()[1]; // line increment
 
-  // Qt image is upside-down compared to VTK, so return mirrored image
+  // Create an image from a buffer. The QImage object does not take ownership of the voxel buffer.
+  QImage image(reinterpret_cast<uchar*>(imageData->GetPointData()->GetScalars()->GetVoidPointer(0)),
+    width, height, bytesPerLine, pixelFormat);
+
+  // Qt image is upside-down compared to VTK, so return mirrored image.
+  // Mirroring also takes care of the pixel buffer ownership, because mirroring deep-copies the pixel buffer
+  // (therefore the returned QImage() owns its own pixel buffer).
   return image.mirrored();
 }
 
