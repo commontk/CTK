@@ -76,6 +76,13 @@ QString nestedLayout(
 " <item><view name=\"tab2\"/></item>"
 " <item><view name=\"tab3\"/></item>"
 "</layout>");
+QString multiViewportLayout = QString(
+"<viewports>"
+"<layout type=\"vertical\"><item><view/></item><item><view/></item></layout>"
+"<layout name=\"secondary\" type=\"tab\">"
+" <item multiple=\"true\"><view name=\"tab1\"/></item>"
+"</layout>"
+"</viewports>");
 
 namespace
 {
@@ -134,6 +141,9 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   QDomDocument nestedLayoutDoc("nestedlayout");
   res = nestedLayoutDoc.setContent(nestedLayout);
   Q_ASSERT(res);
+  QDomDocument multiViewportLayoutDoc("multiViewportLayout");
+  res = multiViewportLayoutDoc.setContent(multiViewportLayout);
+  Q_ASSERT(res);
   Q_UNUSED(res);
 
   layoutManager.setLayout(simpleLayoutDoc);
@@ -187,6 +197,19 @@ int ctkLayoutManagerTest1(int argc, char * argv [] )
   tabToGridLayoutManager.setLayout(tabLayoutDoc);
   tabToGridLayoutManager.setViewport(&tabToGrid);
   tabToGrid.show();
+
+  // MultiViewport
+  QWidget multiViewport;
+  multiViewport.setWindowTitle("Multiple Viewports 1");
+  QWidget multiViewport2;
+  multiViewport2.setWindowTitle("Multiple Viewports 2");
+  ctkLayoutFactory multiViewportLayoutManager;
+  multiViewportLayoutManager.setViewport(&multiViewport);
+  multiViewportLayoutManager.setViewport(&multiViewport2, "secondary");
+  multiViewportLayoutManager.registerViewFactory(pButtonInstanciator);
+  multiViewportLayoutManager.setLayout(multiViewportLayoutDoc);
+  multiViewport.show();
+  multiViewport2.show();
 
   QTimer::singleShot(200, &app, SLOT(quit()));
   app.exec();
