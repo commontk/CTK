@@ -37,7 +37,6 @@
 ctkLayoutManagerPrivate::ctkLayoutManagerPrivate(ctkLayoutManager& object)
   :q_ptr(&object)
 {
-  this->Viewport = 0;
   this->Spacing = 0;
 }
 
@@ -53,6 +52,68 @@ void ctkLayoutManagerPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
+QWidget* ctkLayoutManagerPrivate::viewportForWidget(QWidget* widget)const
+{
+  if (!widget)
+    {
+    return 0;
+    }
+  QString viewportName = this->viewportNameForWidget(widget);
+  return this->viewport(viewportName);
+}
+
+//-----------------------------------------------------------------------------
+QWidget* ctkLayoutManagerPrivate::viewport(const QString& viewportName)const
+{
+  QMap<QString, QWidget*>::const_iterator viewportIt = this->Viewports.find(viewportName);
+  if (viewportIt == this->Viewports.end())
+    {
+    return 0;
+    }
+  return viewportIt.value();
+}
+
+//-----------------------------------------------------------------------------
+QString ctkLayoutManagerPrivate::viewportNameForWidget(QWidget* widget)const
+{
+  if (!widget)
+    {
+    return "";
+    }
+  return widget->property("LayoutManagerViewportName").toString();
+}
+
+//-----------------------------------------------------------------------------
+void ctkLayoutManagerPrivate::setViewportNameForWidget(QWidget* widget, const QString& viewportName)
+{
+  if (!widget)
+    {
+    return;
+    }
+  widget->setProperty("LayoutManagerViewportName", viewportName);
+}
+
+//-----------------------------------------------------------------------------
+bool ctkLayoutManagerPrivate::isViewportUsedInLayout(QWidget* viewport)const
+{
+  if (!viewport)
+    {
+    return false;
+    }
+  return viewport->property("LayoutManagerUsedInLayout").toBool();
+}
+
+//-----------------------------------------------------------------------------
+void ctkLayoutManagerPrivate::setViewportUsedInLayout(QWidget* viewport, bool owned)
+{
+  if (!viewport)
+    {
+    return;
+    }
+  viewport->setProperty("LayoutManagerUsedInLayout", owned);
+}
+
+//-----------------------------------------------------------------------------
 void ctkLayoutManagerPrivate::clearWidget(QWidget* widget, QLayout* parentLayout)
 {
   if (!this->LayoutWidgets.contains(widget))
@@ -62,7 +123,7 @@ void ctkLayoutManagerPrivate::clearWidget(QWidget* widget, QLayout* parentLayout
       {
       parentLayout->removeWidget(widget);
       }
-    widget->setParent(this->Viewport);
+    widget->setParent(this->viewportForWidget(widget));
     }
   else
     {
@@ -168,7 +229,6 @@ ctkLayoutManager::ctkLayoutManager(ctkLayoutManagerPrivate* ptr,
 //-----------------------------------------------------------------------------
 ctkLayoutManager::~ctkLayoutManager()
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -190,45 +250,139 @@ void ctkLayoutManager::setSpacing(int spacing)
 void ctkLayoutManager::refresh()
 {
   Q_D(ctkLayoutManager);
-  if (!d->Viewport)
+  QMap<QWidget*, bool> updatesEnabled;
+  foreach(QWidget* viewport, d->Viewports)
     {
-    return;
+    if (!viewport)
+      {
+      continue;
+      }
+    updatesEnabled[viewport] = viewport->updatesEnabled();
+    viewport->setUpdatesEnabled(false);
     }
   // TODO: post an event on the event queue
-  bool updatesEnabled = d->Viewport->updatesEnabled();
-  d->Viewport->setUpdatesEnabled(false);
   this->clearLayout();
   this->setupLayout();
-  d->Viewport->setUpdatesEnabled(updatesEnabled);
+  foreach(QWidget* viewport, d->Viewports)
+    {
+    QMap<QWidget*, bool>::iterator updatesEnabledIt = updatesEnabled.find(viewport);
+    if (updatesEnabledIt == updatesEnabled.end())
+      {
+      continue;
+      }
+    viewport->setUpdatesEnabled(updatesEnabledIt.value());
+    }
 }
 
 //-----------------------------------------------------------------------------
 void ctkLayoutManager::clearLayout()
 {
   Q_D(ctkLayoutManager);
-  if (!d->Viewport)
+  foreach(QWidget* viewport, d->Viewports)
     {
-    return;
+    if (!viewport)
+      {
+      continue;
+      }
+    // TODO: post an event on the event queue
+    d->clearLayout(viewport->layout());
+    Q_ASSERT(d->LayoutWidgets.size() == 0);
     }
-  // TODO: post an event on the event queue
-  d->clearLayout(d->Viewport->layout());
-  Q_ASSERT(d->LayoutWidgets.size() == 0);
 }
 
 //-----------------------------------------------------------------------------
 void ctkLayoutManager::setupLayout()
 {
   Q_D(ctkLayoutManager);
-  if (!d->Viewport || d->Layout.isNull() ||
+  if (d->Layout.isNull() ||
       d->Layout.documentElement().isNull())
     {
     return;
     }
   d->Views.clear();
   d->LayoutWidgets.clear();
-  Q_ASSERT(!d->Viewport->layout());
-  QLayoutItem* layoutItem = this->processElement(
-    d->Layout.documentElement());
+  QStringList viewportNamesUsedInLayout;
+  if (d->Layout.documentElement().tagName() == "viewports")
+    {
+    for (QDomNode child = d->Layout.documentElement().firstChild();
+      !child.isNull();
+      child = child.nextSibling())
+      {
+      // ignore children that are not QDomElement
+      if (child.toElement().isNull())
+        {
+        continue;
+        }
+      if (child.toElement().tagName() != "layout")
+        {
+        qWarning() << "Expected layout XML element, found " << child.toElement().tagName();
+        continue;
+        }
+      QString viewportName = child.toElement().attribute("name").toUtf8();
+      if (viewportNamesUsedInLayout.contains(viewportName))
+        {
+        qWarning() << "Viewport name" << viewportName << "already used in layout";
+        continue;
+        }
+      viewportNamesUsedInLayout << viewportName;
+      this->setupViewport(child.toElement(), viewportName);
+      }
+    }
+  else if (d->Layout.documentElement().tagName() == "layout")
+    {
+    QString viewportName = d->Layout.documentElement().attribute("name").toUtf8();
+    this->setupViewport(d->Layout.documentElement(), viewportName);
+    viewportNamesUsedInLayout << viewportName;
+    }
+  else
+    {
+    qWarning() << "Expected 'viewports' or 'layout' as XML root element, found" << d->Layout.documentElement().tagName();
+    }
+  foreach (const QString& viewportName, d->Viewports.keys())
+  {
+    bool usedInLayout = viewportNamesUsedInLayout.contains(viewportName);
+    QWidget* viewport = d->viewport(viewportName);
+    if (d->isViewportUsedInLayout(viewport) == usedInLayout)
+      {
+      // no change
+      continue;
+      }
+    d->setViewportUsedInLayout(viewport, usedInLayout);
+    this->onViewportUsageChanged(viewportName);
+  }
+}
+
+//-----------------------------------------------------------------------------
+QWidget* ctkLayoutManager::createViewport(const QDomElement& layoutElement, const QString& viewportName)
+{
+  Q_UNUSED(layoutElement);
+  Q_UNUSED(viewportName);
+  /// Derived classes may implement instantiation of a new QWidget() and
+  /// take ownership of that widget.
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+void ctkLayoutManager::setupViewport(const QDomElement& layoutElement, const QString& viewportName)
+{
+  Q_D(ctkLayoutManager);
+  if (layoutElement.isNull())
+    {
+    return;
+    }
+  QWidget* viewport = d->viewport(viewportName);
+  if (!viewport)
+    {
+    viewport = this->createViewport(layoutElement, viewportName);
+    if (!viewport)
+      {
+      qWarning() << "Failed to create viewport by name" << viewportName;
+      return;
+      }
+    d->Viewports[viewportName] = viewport;
+    }
+  Q_ASSERT(!viewport->layout());
+  QLayoutItem* layoutItem = this->processElement(layoutElement);
   Q_ASSERT(layoutItem);
   QLayout* layout = layoutItem->layout();
   if (!layout)
@@ -238,42 +392,68 @@ void ctkLayoutManager::setupLayout()
     hboxLayout->addItem(layoutItem);
     layout = hboxLayout;
     }
-  d->Viewport->setLayout(layout);
+  viewport->setLayout(layout);
 }
 
 //-----------------------------------------------------------------------------
 void ctkLayoutManager::setViewport(QWidget* viewport)
 {
-  Q_D(ctkLayoutManager);
-  if (viewport == d->Viewport)
-    {
-    return;
-    }
-  this->clearLayout();
-  foreach(QWidget* view, d->Views)
-    {
-    if (view->parent() == d->Viewport)
-      {
-      view->setParent(0);
-      // reparenting looses the visibility attribute and we want them hidden
-      view->setVisible(false);
-      }
-    }
-  d->Viewport = viewport;
-  this->onViewportChanged();
+  this->setViewport(viewport, "");
 }
 
 //-----------------------------------------------------------------------------
 QWidget* ctkLayoutManager::viewport()const
 {
+  return this->viewport("");
+}
+
+//-----------------------------------------------------------------------------
+void ctkLayoutManager::setViewport(QWidget* viewport, const QString& viewportName)
+{
+  Q_D(ctkLayoutManager);
+  QWidget* oldViewport = d->viewport(viewportName);
+  if (viewport == oldViewport)
+    {
+    return;
+    }
+  if (oldViewport)
+    {
+    if (oldViewport->layout())
+      {
+      d->clearLayout(oldViewport->layout());
+      }
+    foreach(QWidget * view, d->Views)
+      {
+      if (view->parent() == oldViewport)
+        {
+        view->setParent(0);
+        // reparenting looses the visibility attribute and we want them hidden
+        view->setVisible(false);
+        }
+      }
+    }
+  d->Viewports[viewportName] = viewport;
+  this->onViewportChanged();
+}
+
+//-----------------------------------------------------------------------------
+QWidget* ctkLayoutManager::viewport(const QString& viewportName)const
+{
   Q_D(const ctkLayoutManager);
-  return d->Viewport;
+  return d->viewport(viewportName);
 }
 
 //-----------------------------------------------------------------------------
 void ctkLayoutManager::onViewportChanged()
 {
   this->refresh();
+}
+
+//-----------------------------------------------------------------------------
+void ctkLayoutManager::onViewportUsageChanged(const QString& viewportName)
+{
+  Q_UNUSED(viewportName);
+  // Derived classes may show/hide viewport widgets here
 }
 
 //-----------------------------------------------------------------------------
@@ -303,12 +483,11 @@ QLayoutItem* ctkLayoutManager::processElement(QDomElement element)
     {
     return this->processLayoutElement(element);
     }
-  else //if (element.tagName() == "view")
+  else
     {
+    // 'view' or other custom element type
     return this->widgetItemFromXML(element);
     }
-  //Q_ASSERT(element.tagName() != "layout" && element.tagName() != "view");
-  return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -521,4 +700,23 @@ QList<QWidget*> ctkLayoutManager::viewsFromXML(QDomElement viewElement)
   QList<QWidget*> res;
   res << this->viewFromXML(viewElement);
   return res;
+}
+
+//-----------------------------------------------------------------------------
+QStringList ctkLayoutManager::viewportNames()const
+{
+  Q_D(const ctkLayoutManager);
+  return d->Viewports.keys();
+}
+
+//-----------------------------------------------------------------------------
+bool ctkLayoutManager::isViewportUsedInLayout(const QString& viewportName)const
+{
+  Q_D(const ctkLayoutManager);
+  QWidget* viewport = d->viewport(viewportName);
+  if (!viewport)
+    {
+    return false;
+    }
+  return d->isViewportUsedInLayout(viewport);
 }
