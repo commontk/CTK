@@ -119,11 +119,11 @@ int ctkVTKMagnifyViewTest1(int argc, char * argv [] )
 #if CTK_USE_QVTKOPENGLWIDGET
       vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow =
           vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-      widget->SetRenderWindow(renderWindow);
+      widget->setRenderWindow(renderWindow);
 #endif
 
     vtkNew<vtkRenderer> renderer;
-    widget->GetRenderWindow()->AddRenderer(renderer.GetPointer());
+    widget->renderWindow()->AddRenderer(renderer.GetPointer());
     double gray = static_cast<double>(i) / (numVTKWidgets-1);
     renderer->SetBackground( gray, gray, gray);
     renderer->SetBackground2( 0., 0., 1.);
