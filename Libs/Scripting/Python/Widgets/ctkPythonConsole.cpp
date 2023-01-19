@@ -78,14 +78,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //----------------------------------------------------------------------------
 // ctkPythonConsoleCompleter
 
-//----------------------------------------------------------------------------
-class ctkPythonConsoleCompleter : public ctkConsoleCompleter
+class ctkPythonConsoleCompleterPrivate
 {
-public:
-  ctkPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager);
+  Q_DECLARE_PUBLIC(ctkPythonConsoleCompleter);
+protected:
+  ctkPythonConsoleCompleter* const q_ptr;
 
-  virtual int cursorOffset(const QString& completion);
-  virtual void updateCompletionModel(const QString& completion);
+public:
+  ctkPythonConsoleCompleterPrivate(ctkPythonConsoleCompleter& o, ctkAbstractPythonManager& pythonManager)
+  : q_ptr(&o)
+  , PythonManager(pythonManager)
+  {
+  }
+
+  virtual ~ctkPythonConsoleCompleterPrivate()
+  {
+  }
+
   static QString searchUsableCharForCompletion(const QString& completion);
 
   /// Sort Python attributes in the following groups (with case insensitive sorting within each group):
@@ -95,11 +104,10 @@ public:
   /// - private attributes (starts with underscore)
   static bool PythonAttributeLessThan(const QString& s1, const QString& s2);
 
-protected:
-  bool isInUserDefinedClass(const QString &pythonFunctionPath);
-  bool isUserDefinedFunction(const QString &pythonFunctionName);
-  bool isBuiltInFunction(const QString &pythonFunctionName);
-  int parameterCountUserDefinedClassFunction(const QString &pythonFunctionName);
+  bool isInUserDefinedClass(const QString& pythonFunctionPath);
+  bool isUserDefinedFunction(const QString& pythonFunctionName);
+  bool isBuiltInFunction(const QString& pythonFunctionName);
+  int parameterCountUserDefinedClassFunction(const QString& pythonFunctionName);
   int parameterCountBuiltInFunction(const QString& pythonFunctionName);
   int parameterCountUserDefinedFunction(const QString& pythonFunctionName);
   int parameterCountFromDocumentation(const QString& pythonFunctionPath);
@@ -109,14 +117,21 @@ protected:
 
 //----------------------------------------------------------------------------
 ctkPythonConsoleCompleter::ctkPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager)
-  : PythonManager(pythonManager)
-  {
+  : d_ptr(new ctkPythonConsoleCompleterPrivate(*this, pythonManager))
+{
   this->setParent(&pythonManager);
-  }
+}
+
+//----------------------------------------------------------------------------
+ctkPythonConsoleCompleter::~ctkPythonConsoleCompleter()
+{
+}
+
 
 //----------------------------------------------------------------------------
 int ctkPythonConsoleCompleter::cursorOffset(const QString& completion)
 {
+  Q_D(ctkPythonConsoleCompleter);
   QString allTextFromShell = completion;
   int parameterCount = 0;
   int cursorOffset = 0;
@@ -145,24 +160,24 @@ int ctkPythonConsoleCompleter::cursorOffset(const QString& completion)
     QString functionName = lineSplit.at(lineSplit.length()-1);
     QStringList builtinFunctionPath = QStringList() << "__main__" << "__builtins__";
     QStringList userDefinedFunctionPath = QStringList() << "__main__";
-    if (this->isBuiltInFunction(functionName))
+    if (d->isBuiltInFunction(functionName))
       {
-      parameterCount = this->parameterCountBuiltInFunction(QStringList(builtinFunctionPath+lineSplit).join("."));
+      parameterCount = d->parameterCountBuiltInFunction(QStringList(builtinFunctionPath+lineSplit).join("."));
       }
-    else if (this->isUserDefinedFunction(functionName))
+    else if (d->isUserDefinedFunction(functionName))
       {
-      parameterCount = this->parameterCountUserDefinedFunction(QStringList(userDefinedFunctionPath+lineSplit).join("."));
+      parameterCount = d->parameterCountUserDefinedFunction(QStringList(userDefinedFunctionPath+lineSplit).join("."));
       }
-    else if (this->isInUserDefinedClass(currentCompletionText))
+    else if (d->isInUserDefinedClass(currentCompletionText))
       {
       // "self" parameter can be ignored
-      parameterCount = this->parameterCountUserDefinedClassFunction(QStringList(userDefinedFunctionPath+lineSplit).join(".")) - 1;
+      parameterCount = d->parameterCountUserDefinedClassFunction(QStringList(userDefinedFunctionPath+lineSplit).join(".")) - 1;
       }
     else
       {
       QStringList variableNameAndFunctionList = userDefinedFunctionPath + lineSplit;
       QString variableNameAndFunction = variableNameAndFunctionList.join(".");
-      parameterCount = this->parameterCountFromDocumentation(variableNameAndFunction);
+      parameterCount = d->parameterCountFromDocumentation(variableNameAndFunction);
       }
     }
   if (parameterCount > 0)
@@ -174,25 +189,25 @@ int ctkPythonConsoleCompleter::cursorOffset(const QString& completion)
 
 
 //---------------------------------------------------------------------------
-bool ctkPythonConsoleCompleter::isInUserDefinedClass(const QString &pythonFunctionPath)
+bool ctkPythonConsoleCompleterPrivate::isInUserDefinedClass(const QString &pythonFunctionPath)
 {
   return this->PythonManager.pythonAttributes(pythonFunctionPath).contains("__func__");
 }
 
 //---------------------------------------------------------------------------
-bool ctkPythonConsoleCompleter::isUserDefinedFunction(const QString &pythonFunctionName)
+bool ctkPythonConsoleCompleterPrivate::isUserDefinedFunction(const QString &pythonFunctionName)
 {
   return this->PythonManager.pythonAttributes(pythonFunctionName).contains("__call__");
 }
 
 //---------------------------------------------------------------------------
-bool ctkPythonConsoleCompleter::isBuiltInFunction(const QString &pythonFunctionName)
+bool ctkPythonConsoleCompleterPrivate::isBuiltInFunction(const QString &pythonFunctionName)
 {
   return this->PythonManager.pythonAttributes(pythonFunctionName, QLatin1String("__main__.__builtins__")).contains("__call__");
 }
 
 //---------------------------------------------------------------------------
-int ctkPythonConsoleCompleter::parameterCountBuiltInFunction(const QString& pythonFunctionName)
+int ctkPythonConsoleCompleterPrivate::parameterCountBuiltInFunction(const QString& pythonFunctionName)
 {
   int parameterCount = 0;
   PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
@@ -220,7 +235,7 @@ int ctkPythonConsoleCompleter::parameterCountBuiltInFunction(const QString& pyth
 }
 
 //----------------------------------------------------------------------------
-int ctkPythonConsoleCompleter::parameterCountUserDefinedFunction(const QString& pythonFunctionName)
+int ctkPythonConsoleCompleterPrivate::parameterCountUserDefinedFunction(const QString& pythonFunctionName)
 {
   int parameterCount = 0;
   PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
@@ -246,7 +261,7 @@ int ctkPythonConsoleCompleter::parameterCountUserDefinedFunction(const QString& 
 }
 
 //----------------------------------------------------------------------------
-int ctkPythonConsoleCompleter::parameterCountUserDefinedClassFunction(const QString& pythonFunctionName)
+int ctkPythonConsoleCompleterPrivate::parameterCountUserDefinedClassFunction(const QString& pythonFunctionName)
 {
   int parameterCount = 0;
   PyObject* pFunction = this->PythonManager.pythonObject(pythonFunctionName);
@@ -272,7 +287,7 @@ int ctkPythonConsoleCompleter::parameterCountUserDefinedClassFunction(const QStr
 }
 
 //----------------------------------------------------------------------------
-int ctkPythonConsoleCompleter::parameterCountFromDocumentation(const QString& pythonFunctionPath)
+int ctkPythonConsoleCompleterPrivate::parameterCountFromDocumentation(const QString& pythonFunctionPath)
 {
   int parameterCount = 0;
   PyObject* pFunction = this->PythonManager.pythonObject(pythonFunctionPath);
@@ -300,7 +315,7 @@ int ctkPythonConsoleCompleter::parameterCountFromDocumentation(const QString& py
 }
 
 //----------------------------------------------------------------------------
-QString ctkPythonConsoleCompleter::searchUsableCharForCompletion(const QString& completion)
+QString ctkPythonConsoleCompleterPrivate::searchUsableCharForCompletion(const QString& completion)
 {
   bool betweenSingleQuotes = false;
   bool betweenDoubleQuotes = false;
@@ -352,7 +367,7 @@ QString ctkPythonConsoleCompleter::searchUsableCharForCompletion(const QString& 
 }
 
 //----------------------------------------------------------------------------
-bool ctkPythonConsoleCompleter::PythonAttributeLessThan(const QString& s1, const QString& s2)
+bool ctkPythonConsoleCompleterPrivate::PythonAttributeLessThan(const QString& s1, const QString& s2)
 {
   if (!s1.isEmpty() || !s2.isEmpty())
     {
@@ -396,6 +411,7 @@ bool ctkPythonConsoleCompleter::PythonAttributeLessThan(const QString& s1, const
 //----------------------------------------------------------------------------
 void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
 {
+  Q_D(ctkPythonConsoleCompleter);
   // Start by clearing the model
   this->setModel(0);
 
@@ -407,7 +423,7 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
 
   bool appendParenthesis = true;
   // Search backward through the string for usable characters
-  QString textToComplete = searchUsableCharForCompletion(completion);
+  QString textToComplete = ctkPythonConsoleCompleterPrivate::searchUsableCharForCompletion(completion);
 
   // Split the string at the last dot, if one exists
   QString lookup;
@@ -424,12 +440,12 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
   if (!lookup.isEmpty() || !compareText.isEmpty())
     {
     QString module = "__main__";
-    attrs = this->PythonManager.pythonAttributes(lookup, module.toLatin1(), appendParenthesis);
+    attrs = d->PythonManager.pythonAttributes(lookup, module.toLatin1(), appendParenthesis);
     module = "__main__.__builtins__";
-    attrs << this->PythonManager.pythonAttributes(lookup, module.toLatin1(),
+    attrs << d->PythonManager.pythonAttributes(lookup, module.toLatin1(),
                                                   appendParenthesis);
     attrs.removeDuplicates();
-    std::sort(attrs.begin(), attrs.end(), ctkPythonConsoleCompleter::PythonAttributeLessThan);
+    std::sort(attrs.begin(), attrs.end(), ctkPythonConsoleCompleterPrivate::PythonAttributeLessThan);
     }
 
   // Initialize the completion model

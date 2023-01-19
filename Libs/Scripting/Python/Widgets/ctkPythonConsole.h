@@ -25,7 +25,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -55,10 +55,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctkConsole.h>
 #include "ctkScriptingPythonWidgetsExport.h"
 
+// Qt includes
+#include <QScopedPointer>
+
 /// \ingroup Scripting_Python_Widgets
 ///
-///  Qt widget that provides an interactive "shell" interface to an embedded Python interpreter.
-///  You can put an instance of ctkPythonConsole in a dialog or a window, and the user will be able
+/// Qt widget that provides an interactive "shell" interface to an embedded Python interpreter.
+/// You can put an instance of ctkPythonConsole in a dialog or a window, and the user will be able
 /// to enter Python commands and see their output, while the UI is still responsive.
 ///
 /// \sa ctkConsole
@@ -69,7 +72,7 @@ class ctkAbstractPythonManager;
 class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonConsole : public ctkConsole
 {
   Q_OBJECT
-  
+
 public:
   typedef ctkConsole Superclass;
   ctkPythonConsole(QWidget* parentObject = 0);
@@ -106,5 +109,34 @@ private:
   Q_DISABLE_COPY(ctkPythonConsole);
 };
 
-#endif
+/// \ingroup Scripting_Python_Widgets
+///
+/// Class that provides list of potential completions for an incomplete input string.
+/// ctkPythonConsole sets up a ctkPythonConsoleCompleter by default but applications
+/// can subclass and customize this completer and set the custom version in the
+/// console.
+///
+/// \sa ctkPythonConsole
 
+class ctkPythonConsoleCompleterPrivate;
+
+class CTK_SCRIPTING_PYTHON_WIDGETS_EXPORT ctkPythonConsoleCompleter : public ctkConsoleCompleter
+{
+  Q_OBJECT
+
+public:
+  ctkPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager);
+  virtual ~ctkPythonConsoleCompleter();
+
+  int cursorOffset(const QString& completion) override;
+  void updateCompletionModel(const QString& completion) override;
+
+protected:
+  QScopedPointer<ctkPythonConsoleCompleterPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(ctkPythonConsoleCompleter);
+  Q_DISABLE_COPY(ctkPythonConsoleCompleter);
+};
+
+#endif
