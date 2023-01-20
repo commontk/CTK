@@ -62,10 +62,7 @@ public:
   virtual QSize sizeHint() const;
 
 private Q_SLOTS:
-  void updateIcon(Qt::LayoutDirection newDirection);
-
-protected:
-  virtual void nextCheckState();
+  void updateIcon();
 
 protected:
   QScopedPointer<ctkExpandButtonPrivate> d_ptr;
