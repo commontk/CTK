@@ -164,7 +164,12 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
     {
       filters |= QDir::Hidden;
     }
-    QDirIterator it(indexingRequest.inputFolderPath, filters, QDirIterator::Subdirectories);
+    QDirIterator::IteratorFlags flags = QDirIterator::Subdirectories;
+    if (indexingRequest.followSymlinks)
+    {
+      flags |= QDirIterator::FollowSymlinks;
+    }
+    QDirIterator it(indexingRequest.inputFolderPath, filters, flags);
     while (it.hasNext())
     {
       indexingRequest.inputFilesPath << it.next();
@@ -284,10 +289,11 @@ ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate(ctkDICOMIndexer& o)
   : q_ptr(&o)
   , Database(nullptr)
   , BackgroundImportEnabled(false)
+  , FollowSymlinks(true)
 {
   ctkDICOMIndexerPrivateWorker* worker = new ctkDICOMIndexerPrivateWorker(&this->RequestQueue);
   worker->moveToThread(&this->WorkerThread);
-  
+
   connect(&this->WorkerThread, &QThread::finished, worker, &QObject::deleteLater);
   connect(this, &ctkDICOMIndexerPrivate::startWorker, worker, &ctkDICOMIndexerPrivateWorker::start);
 
@@ -330,6 +336,10 @@ void ctkDICOMIndexerPrivate::pushIndexingRequest(const DICOMIndexingQueue::Index
 //------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMIndexer, bool, isBackgroundImportEnabled, BackgroundImportEnabled);
 CTK_SET_CPP(ctkDICOMIndexer, bool, setBackgroundImportEnabled, BackgroundImportEnabled);
+
+//------------------------------------------------------------------------------
+CTK_GET_CPP(ctkDICOMIndexer, bool, followSymlinks, FollowSymlinks);
+CTK_SET_CPP(ctkDICOMIndexer, bool, setFollowSymlinks, FollowSymlinks);
 
 //------------------------------------------------------------------------------
 // ctkDICOMIndexer methods
@@ -398,7 +408,7 @@ ctkDICOMDatabase* ctkDICOMIndexer::database()
      d->RequestQueue.setDatabaseFilename(QString());
    }
  }
- 
+
  //------------------------------------------------------------------------------
  void ctkDICOMIndexer::tagsToPrecacheChanged()
  {
@@ -433,7 +443,7 @@ ctkDICOMDatabase* ctkDICOMIndexer::database()
    this->setDatabase(db);
    this->addFile(filePath, copyFile);
  }
- 
+
 //------------------------------------------------------------------------------
 void ctkDICOMIndexer::addFile(const QString filePath, bool copyFile/*=false*/)
 {
@@ -473,6 +483,7 @@ void ctkDICOMIndexer::addDirectory(const QString& directoryName, bool copyFile/*
     request.inputFolderPath = directoryName;
     request.includeHidden = includeHidden;
     request.copyFile = copyFile;
+    request.followSymlinks = d->FollowSymlinks;
     d->pushIndexingRequest(request);
   }
   if (!d->BackgroundImportEnabled)
