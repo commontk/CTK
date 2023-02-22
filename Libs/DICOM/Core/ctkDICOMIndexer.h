@@ -38,6 +38,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMIndexer : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(bool backgroundImportEnabled READ isBackgroundImportEnabled WRITE setBackgroundImportEnabled)
+  Q_PROPERTY(bool followSymlinks READ followSymlinks WRITE setFollowSymlinks)
   Q_PROPERTY(bool importing READ isImporting)
 
 public:
@@ -53,6 +54,12 @@ public:
   /// Disabled by default.
   void setBackgroundImportEnabled(bool);
   bool isBackgroundImportEnabled() const;
+
+  /// If enabled, addDirectory will follow symbolic links
+  /// on systems that support them.
+  /// Enabled by default.
+  void setFollowSymlinks(bool);
+  bool followSymlinks() const;
 
   /// Returns with true if background importing is currently in progress.
   bool isImporting();

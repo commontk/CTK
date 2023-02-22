@@ -43,6 +43,8 @@ public:
     /// Make a copy of the indexed file into the database.
     /// If false then only a link to the existing file is added.
     bool copyFile;
+    /// Follow symlinks on platforms that support it.
+    bool followSymlinks;
   };
 
   DICOMIndexingQueue()
@@ -264,6 +266,7 @@ public:
   QThread WorkerThread;
   ctkDICOMDatabase* Database;
   bool BackgroundImportEnabled;
+  bool FollowSymlinks;
 };
 
 
