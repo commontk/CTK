@@ -36,7 +36,6 @@ public:
   bool                 mirrorOnExpand;
   QPixmap              defaultPixmap;
   Qt::Orientation      orientation;
-  Qt::LayoutDirection  direction;
 };
 
 //-----------------------------------------------------------------------------
@@ -45,7 +44,6 @@ ctkExpandButtonPrivate::ctkExpandButtonPrivate(ctkExpandButton &object)
 {
   this->mirrorOnExpand  = false;
   this->orientation   = Qt::Horizontal;
-  this->direction     = Qt::LeftToRight;
 }
 
 //-----------------------------------------------------------------------------
@@ -56,6 +54,8 @@ void ctkExpandButtonPrivate::init()
   q->setOrientation(Qt::Horizontal);
   q->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
   q->setCheckable(true);
+
+  QObject::connect(q, SIGNAL(toggled(bool)), q, SLOT(updateIcon()));
 }
 
 //-----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ void ctkExpandButton::setMirrorOnExpand(bool newBehavior)
 {
   Q_D(ctkExpandButton);
   d->mirrorOnExpand = newBehavior;
-  this->updateIcon(d->direction);
+  this->updateIcon();
 }
 
 //-----------------------------------------------------------------------------
@@ -115,7 +115,7 @@ void ctkExpandButton::setOrientation(Qt::Orientation newOrientation)
         QStyle::SP_ToolBarVerticalExtensionButton, &opt);
     d->orientation = Qt::Vertical;
     }
-  this->updateIcon(d->direction);
+  this->updateIcon();
 }
 
 //-----------------------------------------------------------------------------
@@ -126,15 +126,14 @@ Qt::Orientation ctkExpandButton::orientation() const
 }
 
 //-----------------------------------------------------------------------------
-void ctkExpandButton::updateIcon(Qt::LayoutDirection newDirection)
+void ctkExpandButton::updateIcon()
 {
   Q_D(ctkExpandButton);
   // If the orientation is vertical, UpToBottom is LeftToRight and
   // BottomToUp is RightToLeft. Rotate 90' clockwise.
-  if(newDirection == Qt::LeftToRight)
+  if(!d->mirrorOnExpand || !this->isChecked())
     {
     this->setIcon(QIcon(d->defaultPixmap));
-    d->direction = Qt::LeftToRight;
     }
   else
     {
@@ -142,20 +141,5 @@ void ctkExpandButton::updateIcon(Qt::LayoutDirection newDirection)
         d->defaultPixmap.toImage().mirrored(d->orientation == Qt::Horizontal,
                                             d->orientation == Qt::Vertical);
     this->setIcon(QIcon(QPixmap::fromImage(mirrorImage)));
-    d->direction = Qt::RightToLeft;
     }
-}
-
-//-----------------------------------------------------------------------------
-void ctkExpandButton::nextCheckState()
-{
-  Q_D(ctkExpandButton);
-  if (d->mirrorOnExpand)
-    {
-    Qt::LayoutDirection newDirection =
-        this->isChecked() ? Qt::LeftToRight : Qt::RightToLeft;
-    this->updateIcon(newDirection);
-    }
-
-  return this->Superclass::nextCheckState();
 }

@@ -26,6 +26,7 @@
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QDialogButtonBox>
 #include <QFile>
 #include <QFileInfo>
@@ -105,6 +106,10 @@ public:
     if (!savedGeometry.isEmpty())
     {
       this->restoreGeometry(savedGeometry);
+      if (this->isMaximized())
+      {
+        this->setGeometry(QApplication::desktop()->availableGeometry(this));
+      }
     }
   }
 

@@ -47,7 +47,13 @@ public:
 
   virtual bool generateThumbnail(DicomImage* dcmImage, const QString& path);
 
+  Q_INVOKABLE bool generateThumbnail(DicomImage *dcmImage, QImage& image);
+  Q_INVOKABLE bool generateThumbnail(const QString dcmImagePath, QImage& image);
   Q_INVOKABLE bool generateThumbnail(const QString dcmImagePath, const QString& thumbnailPath);
+
+  /// Generate a blank thumbnail image (currently a solid gray box of the requested thumbnail size).
+  /// It can be used as a placeholder for invalid images or duringan image is loaded.
+  Q_INVOKABLE void generateBlankThumbnail(QImage& image);
 
   /// Set thumbnail width
   void setWidth(int width);
