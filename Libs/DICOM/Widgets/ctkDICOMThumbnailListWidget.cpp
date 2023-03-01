@@ -163,7 +163,8 @@ void ctkDICOMThumbnailListWidgetPrivate
     {
     QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, i, 0);
 
-    this->addThumbnailWidget(imageIndex, imageIndex, QString("Image %1").arg(i));
+    //: %1 is the image sequence number
+    this->addThumbnailWidget(imageIndex, imageIndex, ctkDICOMThumbnailListWidget::tr("Image %1").arg(i));
     }
 }
 

@@ -145,7 +145,7 @@ void ctkDICOMAppWidgetPrivate::showUpdateSchemaDialog()
     // Set up the Update Schema Progress Dialog
     //
     UpdateSchemaProgress = new QProgressDialog(
-        ctkDICOMAppWidget::tr("DICOM Schema Update"), "Cancel", 0, 100, q,
+        ctkDICOMAppWidget::tr("DICOM Schema Update"), ctkDICOMAppWidget::tr("Cancel"), 0, 100, q,
          Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 
     // We don't want the progress dialog to resize itself, so we bypass the label
@@ -187,7 +187,7 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
     //
     // Set up the Indexer Progress Dialog
     //
-    IndexerProgress = new QProgressDialog( ctkDICOMAppWidget::tr("DICOM Import"), "Cancel", 0, 100, q,
+    IndexerProgress = new QProgressDialog( ctkDICOMAppWidget::tr("DICOM Import"), ctkDICOMAppWidget::tr("Cancel"), 0, 100, q,
          Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 
     // We don't want the progress dialog to resize itself, so we bypass the label
@@ -292,11 +292,11 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   //Initialize import widget
   d->ImportDialog = new ctkFileDialog();
-  QCheckBox* importCheckbox = new QCheckBox("Copy on import", d->ImportDialog);
+  QCheckBox* importCheckbox = new QCheckBox(tr("Copy on import"), d->ImportDialog);
   d->ImportDialog->setBottomWidget(importCheckbox);
   d->ImportDialog->setFileMode(QFileDialog::Directory);
-  d->ImportDialog->setLabelText(QFileDialog::Accept,"Import");
-  d->ImportDialog->setWindowTitle("Import DICOM files from directory ...");
+  d->ImportDialog->setLabelText(QFileDialog::Accept,tr("Import"));
+  d->ImportDialog->setWindowTitle(tr("Import DICOM files from directory ..."));
   d->ImportDialog->setWindowModality(Qt::ApplicationModal);
 
   //connect signal and slots
@@ -667,12 +667,17 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
     // display summary result
     if (d->DisplayImportSummary)
       {
-      QString message = "Directory import completed.\n\n";
-      message += QString("%1 New Patients\n").arg(QString::number(d->PatientsAddedDuringImport));
-      message += QString("%1 New Studies\n").arg(QString::number(d->StudiesAddedDuringImport));
-      message += QString("%1 New Series\n").arg(QString::number(d->SeriesAddedDuringImport));
-      message += QString("%1 New Instances\n").arg(QString::number(d->InstancesAddedDuringImport));
-      QMessageBox::information(this,"DICOM Directory Import", message);
+      //: Arguments represents the number of new patients, studies, series and instances
+      QString message = tr("Directory import completed.\n\n"
+          "%1 New Patients\n"
+          "%2 New Studies\n"
+          "%3 New Series\n"
+          "%4 New Instances\n")
+          .arg(QString::number(d->PatientsAddedDuringImport))
+          .arg(QString::number(d->StudiesAddedDuringImport))
+          .arg(QString::number(d->SeriesAddedDuringImport))
+          .arg(QString::number(d->InstancesAddedDuringImport));
+      QMessageBox::information(this, tr("DICOM Directory Import"), message);
       }
   }
 }
