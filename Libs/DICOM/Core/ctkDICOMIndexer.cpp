@@ -102,7 +102,7 @@ void ctkDICOMIndexerPrivateWorker::start()
 
   do
   {
-    emit progressStep("Parsing DICOM files");
+    emit progressStep(ctkDICOMIndexer::tr("Parsing DICOM files"));
     emit progress(0);
     // Make a local copy to avoid the need of frequent locking
     this->RequestQueue->modifiedTimeForFilepath(this->ModifiedTimeForFilepath);
@@ -128,7 +128,7 @@ void ctkDICOMIndexerPrivateWorker::start()
     timeProbe.start();
 
     // Update displayed fields according to inserted DICOM datasets
-    emit progressStep("Updating database displayed fields");
+    emit progressStep(ctkDICOMIndexer::tr("Updating database displayed fields"));
     emit progress(this->TimePercentageIndexing);
 
     database.updateDisplayedFields();
@@ -149,7 +149,7 @@ void ctkDICOMIndexerPrivateWorker::start()
 
   this->RequestQueue->setIndexing(false);
   emit progress(100);
-  emit progressStep("Indexing complete");
+  emit progressStep(ctkDICOMIndexer::tr("Indexing complete"));
   emit indexingComplete(patientsCountAfter - patientsCountBefore, studiesCountAfter-studiesCountBefore,
     seriesCountAfter-seriesCountBefore, imagesCountAfter - imagesCountBefore);
 }
@@ -217,9 +217,9 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
       int resultsCount = this->RequestQueue->pushIndexingResult(indexingResult);
       if (resultsCount >= REQUEST_RESULTS_CACHE_MAXIMUM_SIZE)
       {
-        emit progressStep("Updating database fields");
+        emit progressStep(ctkDICOMIndexer::tr("Updating database fields"));
         this->writeIndexingResultsToDatabase(database);
-        emit progressStep("Parsing DICOM files");
+        emit progressStep(ctkDICOMIndexer::tr("Parsing DICOM files"));
       }
     }
     else
@@ -235,15 +235,18 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
 
   if (alreadyAddedFileCount > 0)
   {
-    logger.debug(QString("Skipped %1 files that were already in the database: %2...").arg(
-      alreadyAddedFileCount).arg(alreadyAddedFiles.join(", ")));
+    logger.debug(
+      QString("Skipped %1 files that were already in the database: %2...")
+      .arg(alreadyAddedFileCount)
+      .arg(alreadyAddedFiles.join(", "))
+    );
   }
 
   if (this->RequestQueue->isIndexingRequestsEmpty())
   {
-    emit progressStep("Updating database fields");
+    emit progressStep(ctkDICOMIndexer::tr("Updating database fields"));
     this->writeIndexingResultsToDatabase(database);
-    emit progressStep("Parsing DICOM files");
+    emit progressStep(ctkDICOMIndexer::tr("Parsing DICOM files"));
   }
 
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
@@ -560,7 +563,11 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
       logger.debug( "Reading new Patient:" );
       if (patientRecord->findAndGetOFString(DCM_PatientName, patientsName).bad())
       {
-        logger.warn( "DICOMDIR file at "+directoryName+" is invalid: patient name not found. All records belonging to this patient will be ignored.");
+        logger.warn(
+          QString("DICOMDIR file at %1 is invalid: patient name not found. "
+             "All records belonging to this patient will be ignored.")
+          .arg(directoryName)
+        );
         success = false;
         continue;
       }
@@ -570,7 +577,12 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
         logger.debug( "Reading new Study:" );
         if (studyRecord->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID).bad())
         {
-          logger.warn( "DICOMDIR file at "+directoryName+" is invalid: study instance UID not found for patient "+ QString(patientsName.c_str())+". All records belonging to this study will be ignored.");
+          logger.warn(
+            QString("DICOMDIR file at %1 is invalid: study instance UID not found for patient %2. "
+               "All records belonging to this study will be ignored.")
+            .arg(directoryName)
+            .arg(patientsName.c_str())
+          );
           success = false;
           continue;
         }
@@ -581,7 +593,13 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
           logger.debug( "Reading new Series:" );
           if (seriesRecord->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID).bad())
           {
-            logger.warn( "DICOMDIR file at "+directoryName+" is invalid: series instance UID not found for patient "+ QString(patientsName.c_str())+", study "+ QString(studyInstanceUID.c_str())+". All records belonging to this series will be ignored.");
+            logger.warn(
+              QString("DICOMDIR file at %1 is invalid: series instance UID not found for patient %2, study %3. "
+                 "All records belonging to this series will be ignored.")
+              .arg(directoryName)
+              .arg(patientsName.c_str())
+              .arg(studyInstanceUID.c_str())
+            );
             success = false;
             continue;
           }
@@ -592,9 +610,15 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
             if (fileRecord->findAndGetOFStringArray(DCM_ReferencedSOPInstanceUIDInFile, sopInstanceUID).bad()
               || fileRecord->findAndGetOFStringArray(DCM_ReferencedFileID,referencedFileName).bad())
             {
-              logger.warn( "DICOMDIR file at "+directoryName+" is invalid: referenced SOP instance UID or file name is invalid for patient "
-                + QString(patientsName.c_str())+", study "+ QString(studyInstanceUID.c_str())+", series "+ QString(seriesInstanceUID.c_str())+
-                ". This file will be ignored.");
+              logger.warn(
+                QString("DICOMDIR file at %1 is invalid: "
+                   "referenced SOP instance UID or file name is invalid for patient %2, study %3, series %4. "
+                   "This file will be ignored.")
+                .arg(directoryName)
+                .arg(patientsName.c_str())
+                .arg(studyInstanceUID.c_str())
+                .arg(seriesInstanceUID.c_str())
+              );
               success = false;
               continue;
             }

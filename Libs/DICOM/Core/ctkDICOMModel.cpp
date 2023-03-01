@@ -123,23 +123,23 @@ ctkDICOMModelPrivate::~ctkDICOMModelPrivate()
 void ctkDICOMModelPrivate::init()
 {
   QMap<int, QVariant> data;
-  data[Qt::DisplayRole] = QString("Name");
+  data[Qt::DisplayRole] = ctkDICOMModel::tr("Name");
   this->Headers << data;
-  data[Qt::DisplayRole] = QString("Age");
+  data[Qt::DisplayRole] = ctkDICOMModel::tr("Age");
   this->Headers << data;
-  data[Qt::DisplayRole] = QString("Scan");
+  data[Qt::DisplayRole] = ctkDICOMModel::tr("Scan");
   this->Headers << data;
-  data[Qt::DisplayRole] = QString("Date");
+  data[Qt::DisplayRole] = ctkDICOMModel::tr("Date");
   this->Headers << data;
-  data[Qt::DisplayRole] = QString("Subject ID");
+  data[Qt::DisplayRole] = ctkDICOMModel::tr("Subject ID");
   this->Headers << data;
-  data[Qt::DisplayRole] = QString("Number");
+  data[Qt::DisplayRole] = ctkDICOMModel::tr("Number");
   this->Headers << data;
-  data[Qt::DisplayRole] = QString("Institution");
+  data[Qt::DisplayRole] = ctkDICOMModel::tr("Institution");
   this->Headers << data;
-  data[Qt::DisplayRole] = QString("Referrer");
+  data[Qt::DisplayRole] = ctkDICOMModel::tr("Referrer");
   this->Headers << data;
-  data[Qt::DisplayRole] = QString("Performer");
+  data[Qt::DisplayRole] = ctkDICOMModel::tr("Performer");
   this->Headers << data;
 }
 
@@ -507,13 +507,13 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
   QVariant dataValue=d->value(parentIndex, dataIndex.row(), field);
   if (dataValue.isNull())
   {
-    if (columnName.compare("Name")==0)
+    if (columnName.compare(tr("Name"))==0)
     {
-      return QString("No description");
+      return tr("No description");
     }
   }
 
-  if (columnName.compare("Name")==0)
+  if (columnName.compare(tr("Name"))==0)
     {
     OFString dicomName = dataValue.toString().toStdString().c_str();
     OFString formattedName;

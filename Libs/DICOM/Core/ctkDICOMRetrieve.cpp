@@ -70,7 +70,7 @@ public:
     {
       if (this->retrieve)
         {
-        emit this->retrieve->progress("Got move request");
+        emit this->retrieve->progress(ctkDICOMRetrieve::tr("Got move request"));
         emit this->retrieve->progress(0);
         return this->DcmSCU::handleMOVEResponse(
                         presID, response, waitForNextResponse);
@@ -91,7 +91,10 @@ public:
         OFString instanceUID;
         incomingObject->findAndGetOFString(DCM_SOPInstanceUID, instanceUID);
         QString qInstanceUID(instanceUID.c_str());
-        emit this->retrieve->progress("Got STORE request for " + qInstanceUID);
+        emit this->retrieve->progress(
+          //: %1 is an instance UID
+          ctkDICOMRetrieve::tr("Got STORE request for %1").arg(qInstanceUID)
+        );
         emit this->retrieve->progress(0);
         continueCGETSession = !this->retrieve->wasCanceled();
         if (this->retrieve && this->retrieve->database())
@@ -117,7 +120,7 @@ public:
     {
       if (this->retrieve)
         {
-        emit this->retrieve->progress("Got CGET response");
+        emit this->retrieve->progress(ctkDICOMRetrieve::tr("Got CGET response"));
         emit this->retrieve->progress(0);
         continueCGETSession = !this->retrieve->wasCanceled();
         return this->DcmSCU::handleCGETResponse(presID, response, continueCGETSession);
@@ -364,14 +367,16 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
     {
     it++;
     }
-  logger.debug ( "MOVE responses report for study: " + studyInstanceUID +"\n"
-    + QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops))
-        + " images transferred, and\n"
-    + QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops))
-        + " images transferred with warning, and\n"
-    + QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))
-        + " images transfers failed");
-
+  logger.debug (
+    QString("MOVE responses report for study: %1\n"
+      "%2 images transferred, and\n"
+      "%3 images transferred with warning, and\n"
+      "%4 images transfers failed")
+    .arg(studyInstanceUID)
+    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)))
+    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops)))
+    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops)))
+  );
   return true;
 }
 
@@ -391,7 +396,7 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
 
   // Issue request
   logger.debug ( "Sending Get Request" );
-  emit q->progress("Sending Get Request");
+  emit q->progress(ctkDICOMRetrieve::tr("Sending Get Request"));
   emit q->progress(0);
   OFList<RetrieveResponse*> responses;
   T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(
@@ -408,14 +413,14 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     return false;
     }
 
-  emit q->progress("Found Presentation Context");
+  emit q->progress(ctkDICOMRetrieve::tr("Found Presentation Context"));
   emit q->progress(1);
 
   // do the actual move request
   OFCondition status = this->SCU.sendCGETRequest ( 
                           presID, retrieveParameters, &responses );
 
-  emit q->progress("Sent Get Request");
+  emit q->progress(ctkDICOMRetrieve::tr("Sent Get Request"));
   emit q->progress(2);
 
   // Close association if we do not want to explicitly keep it open
@@ -431,11 +436,11 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     {
     logger.error ( "No responses received at all! (at least one empty response always expected)" );
     //throw std::runtime_error( std::string("No responses received from server!") );
-    emit q->progress("No Responses from Server!");
+    emit q->progress(ctkDICOMRetrieve::tr("No Responses from Server!"));
     return false;
     }
 
-  emit q->progress("Got Responses");
+  emit q->progress(ctkDICOMRetrieve::tr("Got Responses"));
   emit q->progress(3);
 
   /* The server is permitted to acknowledge every image that was received, or
@@ -485,15 +490,18 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     {
     it++;
     }
-  logger.debug ( "GET responses report for study: " + studyInstanceUID +"\n"
-    + QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops))
-        + " images transferred, and\n"
-    + QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops))
-        + " images transferred with warning, and\n"
-    + QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops))
-        + " images transfers failed");
+  logger.debug (
+    QString("GET responses report for study: %1\n"
+        "%2 images transferred, and\n"
+        "%3 images transferred with warning, and\n"
+        "%4 images transfers failed")
+    .arg(studyInstanceUID)
+    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfCompletedSubops)))
+    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops)))
+    .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops)))
+  );
 
-  emit q->progress("Finished Get");
+  emit q->progress(ctkDICOMRetrieve::tr("Finished Get"));
   emit q->progress(100);
 
   return true;

@@ -22,6 +22,7 @@
 #define __ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule_h
 
 // Qt includes
+#include <QCoreApplication.h>
 #include <QStringList>
 
 #include "ctkDICOMDisplayedFieldGeneratorAbstractRule.h"
@@ -31,6 +32,8 @@
 /// Special rule for generating series description displayed fields for different RT modalities
 class CTK_DICOM_CORE_EXPORT ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule : public ctkDICOMDisplayedFieldGeneratorAbstractRule
 {
+  Q_DECLARE_TR_FUNCTIONS(ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule)
+
 public:
   /// Constructor
   explicit ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule();

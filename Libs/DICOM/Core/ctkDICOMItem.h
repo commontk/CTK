@@ -27,6 +27,7 @@
 
 #include <dcmtk/dcmdata/dcdatset.h> // DCMTK DcmDataset
 
+#include <QCoreApplication.h>
 #include <QtCore>
 
 class DcmDataDictionary;
@@ -65,7 +66,9 @@ typedef ctkDICOMItem ctkDICOMItem;
 
 class CTK_DICOM_CORE_EXPORT ctkDICOMItem
 {
-public:
+  Q_DECLARE_TR_FUNCTIONS(ctkDICOMItem)
+
+  public:
     typedef QObject Superclass;
     ///
     /// \brief Create an empty object. This has to be initialized by one of
