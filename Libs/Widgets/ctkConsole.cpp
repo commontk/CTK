@@ -137,18 +137,18 @@ void ctkConsolePrivate::init()
   this->CommandHistory.append("");
   this->CommandPosition = 0;
 
-  this->RunFileAction = new QAction(q->tr("&Run file"), q);
-  this->RunFileAction->setShortcut(q->tr("Ctrl+g"));
+  this->RunFileAction = new QAction(ctkConsole::tr("&Run file"), q);
+  this->RunFileAction->setShortcut(ctkConsole::tr("Ctrl+g"));
   connect(this->RunFileAction, SIGNAL(triggered()), q, SLOT(runFile()));
   q->addAction(this->RunFileAction);
 
-  QAction* printHelpAction = new QAction(q->tr("Print &help"),q);
-  printHelpAction->setShortcut(q->tr("Ctrl+h"));
+  QAction* printHelpAction = new QAction(ctkConsole::tr("Print &help"),q);
+  printHelpAction->setShortcut(ctkConsole::tr("Ctrl+h"));
   connect(printHelpAction, SIGNAL(triggered()), q, SLOT(printHelp()));
   q->addAction(printHelpAction);
 
   this->RunFileButton = new QPushButton(q);
-  this->RunFileButton->setText(q->tr("&Run script from file"));
+  this->RunFileButton->setText(ctkConsole::tr("&Run script from file"));
   this->RunFileButton->setVisible(false);
 
   QVBoxLayout * layout = new QVBoxLayout(q);

@@ -37,8 +37,8 @@ ctkFittedTextBrowserPrivate::ctkFittedTextBrowserPrivate(ctkFittedTextBrowser& o
 {
   this->Collapsed = true;
   this->CollapsibleTextSetter = ctkFittedTextBrowserPrivate::Text;
-  this->ShowDetailsText = object.tr("Show details...");
-  this->HideDetailsText = object.tr("Hide details.");
+  this->ShowDetailsText = ctkFittedTextBrowser::tr("Show details...");
+  this->HideDetailsText = ctkFittedTextBrowser::tr("Hide details.");
   QString HideDetailsText;
 }
 

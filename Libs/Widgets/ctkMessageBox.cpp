@@ -75,7 +75,7 @@ void ctkMessageBoxPrivate::init()
   Q_Q(ctkMessageBox);
   this->DontShowAgainCheckBox = new QCheckBox(q);
   this->DontShowAgainCheckBox->setObjectName(QLatin1String("ctk_msgbox_dontshowcheckbox"));
-  this->DontShowAgainCheckBox->setText(q->tr("Don't show this message again"));
+  this->DontShowAgainCheckBox->setText(ctkMessageBox::tr("Don't show this message again"));
   // The height policy being Fixed by default on a checkbox, if the message box icon
   // is bigger than the text+checkbox height, it would be truncated.
   this->DontShowAgainCheckBox->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -217,7 +217,7 @@ void ctkMessageBox::setDontShowAgainVisible(bool visible)
   if (acceptButton && !acceptButton->text().isEmpty())
     {
     QString dontShowAgainText =
-      this->tr("Don't show this message again and always %1").arg(acceptButton->text());
+      tr("Don't show this message again and always %1").arg(acceptButton->text());
 
     d->DontShowAgainCheckBox->setText(dontShowAgainText);
     }

@@ -145,12 +145,12 @@ void ctkDICOMAppWidgetPrivate::showUpdateSchemaDialog()
     // Set up the Update Schema Progress Dialog
     //
     UpdateSchemaProgress = new QProgressDialog(
-        q->tr("DICOM Schema Update"), "Cancel", 0, 100, q,
+        ctkDICOMAppWidget::tr("DICOM Schema Update"), "Cancel", 0, 100, q,
          Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 
     // We don't want the progress dialog to resize itself, so we bypass the label
     // by creating our own
-    QLabel* progressLabel = new QLabel(q->tr("Initialization..."));
+    QLabel* progressLabel = new QLabel(ctkDICOMAppWidget::tr("Initialization..."));
     UpdateSchemaProgress->setLabel(progressLabel);
     UpdateSchemaProgress->setWindowModality(Qt::ApplicationModal);
     UpdateSchemaProgress->setMinimumDuration(0);
@@ -187,12 +187,12 @@ void ctkDICOMAppWidgetPrivate::showIndexerDialog()
     //
     // Set up the Indexer Progress Dialog
     //
-    IndexerProgress = new QProgressDialog( q->tr("DICOM Import"), "Cancel", 0, 100, q,
+    IndexerProgress = new QProgressDialog( ctkDICOMAppWidget::tr("DICOM Import"), "Cancel", 0, 100, q,
          Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 
     // We don't want the progress dialog to resize itself, so we bypass the label
     // by creating our own
-    QLabel* progressLabel = new QLabel(q->tr("Initialization..."));
+    QLabel* progressLabel = new QLabel(ctkDICOMAppWidget::tr("Initialization..."));
     IndexerProgress->setLabel(progressLabel);
     IndexerProgress->setWindowModality(Qt::ApplicationModal);
     IndexerProgress->setMinimumDuration(0);

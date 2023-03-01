@@ -268,10 +268,10 @@ void ctkDICOMBrowserPrivate::showUpdateSchemaDialog()
     // Set up the Update Schema Progress Dialog
     //
     UpdateSchemaProgress = new QProgressDialog(
-      q->tr("DICOM Schema Update"), "Cancel", 0, 100, q, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+      ctkDICOMBrowser::tr("DICOM Schema Update"), "Cancel", 0, 100, q, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 
     // We don't want the progress dialog to resize itself, so we bypass the label by creating our own
-    QLabel* progressLabel = new QLabel(q->tr("Initialization..."));
+    QLabel* progressLabel = new QLabel(ctkDICOMBrowser::tr("Initialization..."));
     UpdateSchemaProgress->setLabel(progressLabel);
     UpdateSchemaProgress->setWindowModality(Qt::ApplicationModal);
     UpdateSchemaProgress->setMinimumDuration(0);
@@ -1391,11 +1391,14 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
     // show progress
     if (d->ExportProgress == 0)
     {
-      d->ExportProgress = new QProgressDialog(this->tr("DICOM Export"), "Close", 0, 100, this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+      d->ExportProgress = new QProgressDialog(tr("DICOM Export"), "Close", 0, 100, this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
       d->ExportProgress->setWindowModality(Qt::ApplicationModal);
       d->ExportProgress->setMinimumDuration(0);
     }
-    QLabel *exportLabel = new QLabel(this->tr("Exporting series ") + seriesNumber);
+    QLabel *exportLabel = new QLabel(
+      //: %1 is the series number
+      tr("Exporting series %1").arg(seriesNumber)
+    );
     d->ExportProgress->setLabel(exportLabel);
     d->ExportProgress->setValue(0);
 
