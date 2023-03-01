@@ -73,7 +73,7 @@ public:
       if (this->query)
         {
         logger.debug ( "FIND RESPONSE" );
-        emit this->query->debug("Got a find response!");
+        emit this->query->debug(/*no tr*/"Got a find response!");
         return this->DcmSCU::handleFINDResponse(presID, response, waitForNextResponse);
         }
       return DIMSE_NULLKEY;
@@ -260,12 +260,12 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   if ( database.database().isOpen() )
     {
     logger.debug ( "DB open in Query" );
-    emit progress("DB open in Query");
+    emit progress(tr("DB open in Query"));
     }
   else
     {
     logger.debug ( "DB not open in Query" );
-    emit progress("DB not open in Query");
+    emit progress(tr("DB not open in Query"));
     }
   emit progress(0);
   if (d->Canceled) {return false;}
@@ -278,7 +278,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   d->SCU.setPeerPort ( this->port() );
 
   logger.error ( "Setting Transfer Syntaxes" );
-  emit progress("Setting Transfer Syntaxes");
+  emit progress(tr("Setting Transfer Syntaxes"));
   emit progress(10);
   if (d->Canceled) {return false;}
 
@@ -292,12 +292,12 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   if ( !d->SCU.initNetwork().good() )
     {
     logger.error( "Error initializing the network" );
-    emit progress("Error initializing the network");
+    emit progress(tr("Error initializing the network"));
     emit progress(100);
     return false;
     }
   logger.debug ( "Negotiating Association" );
-  emit progress("Negotiating Association");
+  emit progress(tr("Negotiating Association"));
   emit progress(20);
   if (d->Canceled) {return false;}
 
@@ -305,7 +305,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   if (result.bad())
     {
     logger.error( "Error negotiating the association: " + QString(result.text()) );
-    emit progress("Error negotiating the association");
+    emit progress(tr("Error negotiating the association"));
     emit progress(100);
     return false;
     }
@@ -406,12 +406,12 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   if ( presentationContext == 0 )
     {
     logger.error ( "Failed to find acceptable presentation context" );
-    emit progress("Failed to find acceptable presentation context");
+    emit progress(tr("Failed to find acceptable presentation context"));
     }
   else
     {
     logger.info ( "Found useful presentation context" );
-    emit progress("Found useful presentation context");
+    emit progress(tr("Found useful presentation context"));
     }
   emit progress(40);
   if (d->Canceled) {return false;}
@@ -420,13 +420,13 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   if ( !status.good() )
     {
     logger.error ( "Find failed" );
-    emit progress("Find failed");
+    emit progress(tr("Find failed"));
     d->SCU.closeAssociation ( DCMSCU_RELEASE_ASSOCIATION );
     emit progress(100);
     return false;
     }
   logger.debug ( "Find succeeded");
-  emit progress("Find succeeded");
+  emit progress(tr("Find succeeded"));
   emit progress(50);
   if (d->Canceled) {return false;}
 
@@ -439,7 +439,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
       OFString StudyInstanceUID;
       dataset->findAndGetOFString ( DCM_StudyInstanceUID, StudyInstanceUID );
       d->addStudyInstanceUIDAndDataset ( StudyInstanceUID.c_str(), dataset );
-      emit progress(QString("Processing: ") + QString(StudyInstanceUID.c_str()));
+      emit progress(tr("Processing Study: ") + QString(StudyInstanceUID.c_str()));
       emit progress(50);
       if (d->Canceled) {return false;}
       }
@@ -472,7 +472,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
     studyDataset->findAndGetElement(DCM_PatientID, patientID);
 
     logger.debug ( "Starting Series C-FIND for Study: " + StudyInstanceUID );
-    emit progress(QString("Starting Series C-FIND for Study: ") + StudyInstanceUID);
+    emit progress(tr("Starting Series C-FIND for Study: ") + StudyInstanceUID);
     emit progress(50 + (progressRatio * i++));
     if (d->Canceled) {return false;}
 
@@ -497,14 +497,14 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
           }
         }
       logger.debug ( "Find succeeded on Series level for Study: " + StudyInstanceUID );
-      emit progress(QString("Find succeeded on Series level for Study: ") + StudyInstanceUID);
+      emit progress(tr("Find succeeded on Series level for Study: ") + StudyInstanceUID);
       emit progress(50 + (progressRatio * i++));
       if (d->Canceled) {return false;}
       }
     else
       {
       logger.error ( "Find on Series level failed for Study: " + StudyInstanceUID );
-      emit progress(QString("Find on Series level failed for Study: ") + StudyInstanceUID);
+      emit progress(tr("Find on Series level failed for Study: ") + StudyInstanceUID);
       }
     emit progress(50 + (progressRatio * i++));
     if (d->Canceled) {return false;}

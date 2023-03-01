@@ -22,9 +22,9 @@
 
 //------------------------------------------------------------------------------
 ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule()
-  : EmptySeriesDescriptionRtPlan("Unnamed RT Plan")
-  , EmptySeriesDescriptionRtStruct("Unnamed RT Structure Set")
-  , EmptySeriesDescriptionRtImage("Unnamed RT Image")
+  : EmptySeriesDescriptionRtPlan(tr("Unnamed RT Plan"))
+  , EmptySeriesDescriptionRtStruct(tr("Unnamed RT Structure Set"))
+  , EmptySeriesDescriptionRtImage(tr("Unnamed RT Image"))
 {
 }
 
