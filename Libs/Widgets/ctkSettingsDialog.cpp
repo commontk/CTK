@@ -75,13 +75,13 @@ void ctkSettingsDialogPrivate::init()
   this->setupUi(q);
 
   this->SettingsButtonBox->button(QDialogButtonBox::Ok)->setToolTip(
-    q->tr("Apply settings and close dialog."));
+    ctkSettingsDialog::tr("Apply settings and close dialog."));
   this->SettingsButtonBox->button(QDialogButtonBox::Cancel)->setToolTip(
-    q->tr("Reject settings changes and close dialog."));
+    ctkSettingsDialog::tr("Reject settings changes and close dialog."));
   this->SettingsButtonBox->button(QDialogButtonBox::Reset)->setToolTip(
-    q->tr("Reset settings to their values when the dialog opened"));
+    ctkSettingsDialog::tr("Reset settings to their values when the dialog opened"));
   this->SettingsButtonBox->button(QDialogButtonBox::RestoreDefaults)->setToolTip(
-    q->tr("Restore settings to their default values."
+    ctkSettingsDialog::tr("Restore settings to their default values."
     "To cancel a \"Restore\", you can \"Reset\" the settings."));
   q->setResetButton(false);
 
@@ -167,11 +167,12 @@ void ctkSettingsDialogPrivate::updateRestartRequiredLabel()
   bool restartRequired = !restartRequiredSettings.isEmpty();
   if (restartRequired)
     {
-    QString header = q->tr(
-      "<b style=\"color:red\">Restart required!</b><br>\n<small>"
-      "The application must be restarted to take into account "
-      "the new values of the following properties:\n");
-    QString footer = q->tr("</small>");
+    QString header = "<b style=\"color:red\">" + ctkSettingsDialog::tr("Restart required!") + "</b><br>\n<small>";
+    header += ctkSettingsDialog::tr(
+      "The application must be restarted to take into account the new values of the following properties:"
+    );
+    header += "\n";
+    QString footer = "</small>";
     restartRequiredSettings.push_front(QString());
     this->RestartRequiredLabel->setText( header + restartRequiredSettings.join("<br>&nbsp;&nbsp;") + footer);
     }

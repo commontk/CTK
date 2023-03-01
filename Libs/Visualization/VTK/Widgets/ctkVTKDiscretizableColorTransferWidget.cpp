@@ -191,7 +191,7 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
 
   this->previousOpacityValue = opacitySlider->value();
 
-  this->scalarsToColorsSelector->addScalarsToColors(CTK_NULLPTR, q->tr("Reset"));
+  this->scalarsToColorsSelector->addScalarsToColors(CTK_NULLPTR, ctkVTKDiscretizableColorTransferWidget::tr("Reset"));
   this->scalarsToColorsSelector->setCurrentIndex(-1);
 
   this->eventLink = vtkSmartPointer<vtkEventQtSlotConnect>::New();
@@ -239,19 +239,19 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
   optionButton->setIcon(q->style()->standardIcon(
     QStyle::SP_FileDialogDetailedView, CTK_NULLPTR, optionButton));
 
-  QLabel* nanLabel = new QLabel(q->tr("NaN values"));
+  QLabel* nanLabel = new QLabel(ctkVTKDiscretizableColorTransferWidget::tr("NaN values"));
   nanButton = new ctkColorPickerButton;
-  nanButton->setToolTip(q->tr("NaN color"));
+  nanButton->setToolTip(ctkVTKDiscretizableColorTransferWidget::tr("NaN color"));
   nanColorLayout->addWidget(nanButton);
   nanColorLayout->addWidget(nanLabel);
 
   discretizeCheckBox = new QCheckBox;
-  discretizeCheckBox->setText(q->tr("Discretize"));
-  discretizeCheckBox->setToolTip(q->tr("Discretize color transfer function"));
+  discretizeCheckBox->setText(ctkVTKDiscretizableColorTransferWidget::tr("Discretize"));
+  discretizeCheckBox->setToolTip(ctkVTKDiscretizableColorTransferWidget::tr("Discretize color transfer function"));
   nbOfDiscreteValuesSpinBox = new QSpinBox;
   nbOfDiscreteValuesSpinBox->setMinimum(1);
   nbOfDiscreteValuesSpinBox->setMaximum(255);
-  nbOfDiscreteValuesSpinBox->setToolTip(q->tr("Number of discrete values"));
+  nbOfDiscreteValuesSpinBox->setToolTip(ctkVTKDiscretizableColorTransferWidget::tr("Number of discrete values"));
   nbOfDiscreteValuesSpinBox->setEnabled(discretizeCheckBox->isChecked());
 
   discretizeLayout->addWidget(discretizeCheckBox);

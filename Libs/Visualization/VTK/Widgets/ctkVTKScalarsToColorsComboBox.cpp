@@ -62,7 +62,7 @@ void ctkVTKScalarsToColorsComboBoxPrivate::init()
   q->setIconSize(QSize(100, 20));
 
   // Add default raw
-  q->setDefaultText(q->tr("Select a color transfer function..."));
+  q->setDefaultText(ctkVTKScalarsToColorsComboBox::tr("Select a color transfer function..."));
   q->forceDefault(true);
 
   // Connect signals and slots
