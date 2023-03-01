@@ -78,11 +78,11 @@ void ctkDICOMObjectModelPrivate::init()
 {
   Q_Q(ctkDICOMObjectModel);
   QStringList horizontalHeaderLabels;
-  horizontalHeaderLabels.append( QString("Tag"));
-  horizontalHeaderLabels.append( QString("Attribute"));
-  horizontalHeaderLabels.append( QString("Value"));
-  horizontalHeaderLabels.append( QString("VR"));
-  horizontalHeaderLabels.append( QString("Length"));
+  horizontalHeaderLabels.append(ctkDICOMObjectModel::tr("Tag"));
+  horizontalHeaderLabels.append(ctkDICOMObjectModel::tr("Attribute"));
+  horizontalHeaderLabels.append(ctkDICOMObjectModel::tr("Value"));
+  horizontalHeaderLabels.append(ctkDICOMObjectModel::tr("VR"));
+  horizontalHeaderLabels.append(ctkDICOMObjectModel::tr("Length"));
   q->setHorizontalHeaderLabels(horizontalHeaderLabels);
 }
 
@@ -97,7 +97,7 @@ void ctkDICOMObjectModelPrivate::itemInsert(ctkDICOMItem* dicomItem, DcmItem *da
     // put in the visit node function
     QString tagValue = "";
     DcmTag tag = dO->getTag();
-	  // std::cout<<tag;
+    //
     QString tagName = tag.getTagName();
     //
     DcmTagKey tagX = tag.getXTag();
@@ -114,7 +114,7 @@ void ctkDICOMObjectModelPrivate::itemInsert(ctkDICOMItem* dicomItem, DcmItem *da
     DcmTag tagKey = tag.getXTag();
     if( tagKey == DCM_SequenceDelimitationItem
         || tagKey == DCM_ItemDelimitationItem
-        || "Item" == tagName)
+        || tagName == /*no tr*/"Item")
       {
       return;
       }

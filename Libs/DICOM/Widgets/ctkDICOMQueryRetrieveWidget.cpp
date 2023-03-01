@@ -203,7 +203,7 @@ void ctkDICOMQueryRetrieveWidget::query()
 
   d->QueriesByStudyUID.clear();
   // for each of the selected server nodes, send the query
-  QProgressDialog progress("Query DICOM servers", "Cancel", 0, 100, this,
+  QProgressDialog progress(tr("Query DICOM servers"), tr("Cancel"), 0, 100, this,
                            Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
   // We don't want the progress dialog to resize itself, so we bypass the label
   // by creating our own
@@ -300,7 +300,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
     return;
     }
 
-  QProgressDialog progress("Retrieve from DICOM servers", "Cancel", 0, 0, this,
+  QProgressDialog progress(tr("Retrieve from DICOM servers"), tr("Cancel"), 0, 0, this,
                            Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
   // We don't want the progress dialog to resize itself, so we bypass the label
   // by creating our own
