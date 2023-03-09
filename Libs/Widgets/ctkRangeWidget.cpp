@@ -372,6 +372,7 @@ void ctkRangeWidget::setRange(double min, double max)
   d->SettingSliderRange = true;
   d->Slider->setRange(d->MaximumSpinBox->minimum(), d->MinimumSpinBox->maximum());
   d->SettingSliderRange = false;
+#ifndef QT_NO_DEBUG
   if (!d->useCustomSpinBoxesLimits())
     {
     if (!(d->equal(d->MinimumSpinBox->minimum(), d->Slider->minimum())) ||
@@ -379,9 +380,14 @@ void ctkRangeWidget::setRange(double min, double max)
         !(d->equal(d->Slider->minimumValue(), d->MinimumSpinBox->value())) ||
         !(d->equal(d->Slider->maximumValue(), d->MaximumSpinBox->value())))
       {
-      qWarning("ctkRangeWidget::setRange : slider and spinbox are not synchronized");
+      qWarning() << "ctkRangeWidget::setRange : slider and spinbox are not synchronized "
+        << d->MinimumSpinBox->minimum() << d->Slider->minimum()
+        << d->MaximumSpinBox->maximum() << d->Slider->maximum()
+        << d->Slider->minimumValue() << d->MinimumSpinBox->value()
+        << d->Slider->maximumValue() << d->MaximumSpinBox->value();
       }
     }
+#endif
   d->updateSpinBoxWidth();
   if (!d->useCustomSpinBoxesLimits())
     {

@@ -66,6 +66,7 @@ public:
   double safeFromInt(int value)const;
   void init();
   void updateOffset(double value);
+  void updateIntegerSliderRange();
 
   ctkSlider*    Slider;
   QString       HandleToolTip;
@@ -167,6 +168,23 @@ void ctkDoubleSliderPrivate::updateOffset(double value)
   this->Offset = (value / this->SingleStep) - this->toInt(value);
 }
 
+// --------------------------------------------------------------------------
+void ctkDoubleSliderPrivate::updateIntegerSliderRange()
+{
+  // Compute the integer slider's range so that the minimum and maximum values can be actually reached
+  int intMin = this->toInt(this->Minimum);
+  if (this->fromInt(intMin) > this->Minimum && intMin > std::numeric_limits<int>::min())
+    {
+    intMin -= 1;
+    }
+  int intMax = this->toInt(this->Maximum);
+  if (this->fromInt(intMax) < this->Maximum && intMax < std::numeric_limits<int>::max())
+    {
+    intMax += 1;
+    }
+  this->Slider->setRange(intMin, intMax);
+}
+
 //-----------------------------------------------------------------------------
 // ctkDoubleSlider
 
@@ -236,7 +254,7 @@ void ctkDoubleSlider::setRange(double newMin, double newMax)
     }
   bool wasSettingRange = d->SettingRange;
   d->SettingRange = true;
-  d->Slider->setRange(d->toInt(newMin), d->toInt(newMax));
+  d->updateIntegerSliderRange();
   d->SettingRange = wasSettingRange;
   if (!wasSettingRange && (d->Minimum != oldMin || d->Maximum != oldMax))
     {
@@ -365,7 +383,7 @@ void ctkDoubleSlider::setSingleStep(double newStep)
   d->updateOffset(d->Value);
   // update the new values of the QSlider
   bool oldBlockSignals = d->Slider->blockSignals(true);
-  d->Slider->setRange(d->toInt(d->Minimum), d->toInt(d->Maximum));
+  d->updateIntegerSliderRange();
   d->Slider->setValue(d->toInt(d->Value));
   d->Slider->setPageStep(d->toInt(d->PageStep));
   d->Slider->blockSignals(oldBlockSignals);
@@ -529,9 +547,9 @@ void ctkDoubleSlider::onValueChanged(int newValue)
   Q_D(ctkDoubleSlider);
   double doubleNewValue = d->safeFromInt(newValue);
 /*
-  qDebug() << "onValueChanged: " << newValue << "->"<< d->fromInt(newValue+d->Offset) 
-           << " old: " << d->Value << "->" << d->toInt(d->Value) 
-           << "offset:" << d->Offset << doubleNewValue;
+  qDebug() << "onValueChanged: " << newValue << " -> " << d->fromInt(newValue)
+           << " (offset: " << d->Offset << ") -> " << doubleNewValue
+           << " old: " << d->toInt(d->Value) << " -> " << d->Value;
 */
   if (d->Value == doubleNewValue)
     {
@@ -556,8 +574,8 @@ void ctkDoubleSlider::onRangeChanged(int newIntMin, int newIntMax)
     {
     return;
     }
-  double newMin = d->fromInt(newIntMin);
-  double newMax = d->fromInt(newIntMax);
+  double newMin = d->safeFromInt(newIntMin);
+  double newMax = d->safeFromInt(newIntMax);
   if (d->Proxy)
     {
     newMin = d->Proxy.data()->valueFromProxyValue(newMin);
