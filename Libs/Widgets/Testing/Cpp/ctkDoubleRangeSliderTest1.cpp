@@ -52,12 +52,38 @@ bool checkSlider(const ctkDoubleRangeSlider& slider,
 bool checkSlider(const ctkDoubleRangeSlider& slider,
                  double min, double minVal, double maxVal, double max, double minPos, double maxPos)
 {
-  return qFuzzyCompare(slider.minimum(), min) &&
-    qFuzzyCompare(slider.minimumValue(), minVal) &&
-    qFuzzyCompare(slider.maximumValue(), maxVal) &&
-    qFuzzyCompare(slider.maximum(), max) &&
-    qFuzzyCompare(slider.minimumPosition(), minPos) &&
-    qFuzzyCompare(slider.maximumPosition(), maxPos);
+  bool success = true;
+  if (!qFuzzyCompare(slider.minimum(), min))
+    {
+    std::cerr << "Slider minimum mismatch: expected " << min << " actual " << slider.minimum() << std::endl;
+    success = false;
+    }
+  if (!qFuzzyCompare(slider.minimumValue(), minVal))
+    {
+    std::cerr << "Slider minimumValue mismatch: expected " << minVal << " actual " << slider.minimumValue() << std::endl;
+    success = false;
+    }
+  if (!qFuzzyCompare(slider.maximumValue(), maxVal))
+    {
+    std::cerr << "Slider maximumValue mismatch: expected " << maxVal << " actual " << slider.maximumValue() << std::endl;
+    success = false;
+    }
+  if (!qFuzzyCompare(slider.maximum(), max))
+    {
+    std::cerr << "Slider maximum mismatch: expected " << max << " actual " << slider.maximum() << std::endl;
+    success = false;
+    }
+  if (!qFuzzyCompare(slider.minimumPosition(), minPos))
+    {
+    std::cerr << "Slider minimumPosition mismatch: expected " << minPos << " actual " << slider.minimumPosition() << std::endl;
+    success = false;
+    }
+  if (!qFuzzyCompare(slider.maximumPosition(), maxPos))
+    {
+    std::cerr << "Slider maximumPosition mismatch: expected " << maxPos << " actual " << slider.maximumPosition() << std::endl;
+    success = false;
+    }
+  return success;
 }
 
 //-----------------------------------------------------------------------------

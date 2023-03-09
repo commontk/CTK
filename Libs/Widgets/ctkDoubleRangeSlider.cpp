@@ -46,6 +46,7 @@ public:
   double maxFromInt(int _value)const;
   double safeMinFromInt(int _value)const;
   double safeMaxFromInt(int _value)const;
+  void updateIntegerSliderRange();
   
   void init();
   void connectSlider();
@@ -157,7 +158,7 @@ int ctkDoubleRangeSliderPrivate::toInt(double doubleValue)const
 // --------------------------------------------------------------------------
 double ctkDoubleRangeSliderPrivate::minFromInt(int intValue)const
 {
-  double doubleValue = this->SingleStep * (this->MinOffset + intValue) ;
+  double doubleValue = this->SingleStep * (this->MinOffset + intValue);
   return doubleValue;
 }
 
@@ -178,6 +179,23 @@ double ctkDoubleRangeSliderPrivate::safeMinFromInt(int intValue)const
 double ctkDoubleRangeSliderPrivate::safeMaxFromInt(int intValue)const
 {
   return qBound(this->Minimum, this->maxFromInt(intValue), this->Maximum);
+}
+
+// --------------------------------------------------------------------------
+void ctkDoubleRangeSliderPrivate::updateIntegerSliderRange()
+{
+  // Compute the integer slider's range so that the minimum and maximum values can be actually reached
+  int intMin = this->toInt(this->Minimum);
+  if (this->minFromInt(intMin) > this->Minimum && intMin > std::numeric_limits<int>::min())
+    {
+    intMin -= 1;
+    }
+  int intMax = this->toInt(this->Maximum);
+  if (this->maxFromInt(intMax) < this->Maximum && intMax < std::numeric_limits<int>::max())
+    {
+    intMax += 1;
+    }
+  this->Slider->setRange(intMin, intMax);
 }
 
 // --------------------------------------------------------------------------
@@ -226,16 +244,16 @@ void ctkDoubleRangeSlider::setMinimum(double newMin)
   double oldMin = d->Minimum;
   d->Minimum = newMin;
   if (d->Minimum >= d->MinValue)
-    {// TBD: use same offset
+    {
     d->updateMinOffset(d->Minimum);
     }
   if (d->Minimum >= d->MaxValue)
-    {// TBD: use same offset
+    {
     d->updateMaxOffset(d->Minimum);
     }
   bool wasSettingRange = d->SettingRange;
   d->SettingRange = true;
-  d->Slider->setMinimum(d->toInt(newMin));
+  d->updateIntegerSliderRange();
   d->SettingRange = wasSettingRange;
   if (!wasSettingRange && d->Minimum != oldMin)
     {
@@ -268,16 +286,16 @@ void ctkDoubleRangeSlider::setMaximum(double newMax)
   double oldMax = d->Maximum;
   d->Maximum = newMax;
   if (d->Maximum <= d->MinValue)
-    {// TBD: use same offset
+    {
     d->updateMinOffset(d->Maximum);
     }
   if (d->Maximum <= d->MaxValue)
-    {// TBD: use same offset ?
+    {
     d->updateMaxOffset(d->Maximum);
     }
   bool wasSettingRange = d->SettingRange;
   d->SettingRange = true;
-  d->Slider->setMaximum(d->toInt(newMax));
+  d->updateIntegerSliderRange();
   d->SettingRange = wasSettingRange;
   if (!wasSettingRange && d->Maximum != oldMax)
     {
@@ -319,24 +337,23 @@ void ctkDoubleRangeSlider::setRange(double newMin, double newMax)
   d->Minimum = newMin;
   d->Maximum = newMax;
   if (d->Minimum >= d->MinValue)
-    {// TBD: use same offset
+    {
     d->updateMinOffset(d->Minimum);
     }
   if (d->Minimum >= d->MaxValue)
-    {// TBD: use same offset
+    {
     d->updateMaxOffset(d->Minimum);
     }
   if (d->Maximum <= d->MinValue)
-    {// TBD: use same offset
+    {
     d->updateMinOffset(d->Maximum);
     }
   if (d->Maximum <= d->MaxValue)
-    {// TBD: use same offset ?
+    {
     d->updateMaxOffset(d->Maximum);
     }
   bool wasSettingRange = d->SettingRange;
-  d->SettingRange = true;
-  d->Slider->setRange(d->toInt(newMin), d->toInt(newMax));
+  d->updateIntegerSliderRange();
   d->SettingRange = wasSettingRange;
   if (!wasSettingRange && (d->Minimum != oldMin || d->Maximum != oldMax))
     {
@@ -787,8 +804,8 @@ void ctkDoubleRangeSlider::onRangeChanged(int newIntMin, int newIntMax)
     {
     return;
     }
-  double newMin = d->minFromInt(newIntMin);
-  double newMax = d->maxFromInt(newIntMax);
+  double newMin = d->safeMinFromInt(newIntMin);
+  double newMax = d->safeMaxFromInt(newIntMax);
   if (d->Proxy)
     {
     newMin = d->Proxy.data()->valueFromProxyValue(newMin);
