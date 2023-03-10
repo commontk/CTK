@@ -66,6 +66,8 @@ public:
   QSettings* settings()const;
   void setSettings(QSettings* settings);
 
+  /// Get the panel based on its title. The title is the string displayed to
+  /// users therefore it is a localized string (translated to different languages).
   ctkSettingsPanel* panel(const QString& panel)const;
   ctkSettingsPanel* currentPanel()const;
 
