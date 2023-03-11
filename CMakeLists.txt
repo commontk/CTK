@@ -65,12 +65,16 @@ endif()
 # Library mode: SHARED (default) or STATIC
 #
 set(CTK_LIBRARY_MODE "SHARED")
+set(MY_LIBRARY_TYPE "SHARED")
+add_definitions(-DCTK_SHARED)
 
 option(CTK_BUILD_SHARED_LIBS "Build CTK libraries as shared module." ON)
 mark_as_advanced(CTK_BUILD_SHARED_LIBS)
 mark_as_superbuild(CTK_BUILD_SHARED_LIBS)
 if(NOT CTK_BUILD_SHARED_LIBS)
   set(CTK_LIBRARY_MODE "STATIC")
+  set(MY_LIBRARY_TYPE "STATIC")
+  remove_definitions(-DCTK_SHARED)
 endif()
 
 #-----------------------------------------------------------------------------
