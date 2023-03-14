@@ -5,11 +5,21 @@ its namespace."""
 
 __kits_to_load = [ @CTK_PYTHON_WRAPPED_LIBRARIES@ ]
 
+import os
+import sys
+_standalone_python = "python" in str.lower(os.path.split(sys.executable)[-1])
+
 # Set to True when debugging
 _CTK_VERBOSE_IMPORT = False
 
 kits = []
 for kit in __kits_to_load:
+  # Since importing a PythonQt-based module outside of a Qt application
+  # leads to a segfault, skip the import if it happens in a standalone
+  # python interpreter.
+  # See https://github.com/commontk/CTK/pull/520
+  if _standalone_python:
+    continue
   try:
     exec("from CTK%sPythonQt import *" % kit)
     kits.append(kit)
@@ -103,6 +113,6 @@ if _lib == 'Widgets':
   decorates_ctkWorkflowWidgetStep_initialize_method()
 
 # Removing things the user shouldn't have to see.
-del __kits_to_load, _lib, _CTK_VERBOSE_IMPORT
+del __kits_to_load, _lib, _standalone_python, _CTK_VERBOSE_IMPORT
 del add_methodclass_to_ctkWorkflowStep_or_ctkWorkflowWidgetStep
 del add_methodclass_to_ctkWorkflowWidgetStep, decorates_ctkWorkflowWidgetStep_initialize_method
