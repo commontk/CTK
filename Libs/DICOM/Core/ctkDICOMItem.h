@@ -27,7 +27,7 @@
 
 #include <dcmtk/dcmdata/dcdatset.h> // DCMTK DcmDataset
 
-#include <QCoreApplication.h>
+#include <QCoreApplication>
 #include <QtCore>
 
 class DcmDataDictionary;

@@ -22,7 +22,7 @@
 #define __ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule_h
 
 // Qt includes
-#include <QCoreApplication.h>
+#include <QCoreApplication>
 #include <QStringList>
 
 #include "ctkDICOMDisplayedFieldGeneratorAbstractRule.h"
