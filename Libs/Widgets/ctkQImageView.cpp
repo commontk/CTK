@@ -638,21 +638,21 @@ void ctkQImageView::keyPressEvent( QKeyEvent * event )
         help->setSizePolicy( QSizePolicy::Preferred,
           QSizePolicy::Preferred );
         help->setReadOnly( true );
-        help->append("<h1>CTK Simple Image Viewer Widget</h1>");
-        help->append("Contributed by: Kitware, Inc.<br>");
-        help->append("<h3>Keyboard commands:</h3>");
-        help->append("  <em>q</em> : quit");
-        help->append("  <em>h</em> : display this help");
-        help->append("  <em>i</em> : invert intensities");
-        help->append("  <em>[ ]</em> : increase / decrease zoom");
-        help->append("  <em>x y</em> : flip along the x / y axis");
-        help->append("  <em>r</em> : reset to initial conditions");
-        help->append("  <em>spacebar</em> : toggle continuous tracking of cursor");
-        help->append("  <em>up-arrow down-arrow</em> : change to next / previous slice");
-        help->append("<h3>Mouse commands:</h3>");
-        help->append("  <em>left-button</em> : window and level");
-        help->append("  <em>middle-button</em> : zoom");
-        help->append("  <em>right-button</em> : center");
+        help->setHtml(tr("<h1>CTK Simple Image Viewer Widget</h1>"
+          "Contributed by: Kitware, Inc.<br>"
+          "<h3>Keyboard commands:</h3>"
+          "  <em>q</em>: quit"
+          "  <em>h</em>: display this help"
+          "  <em>i</em>: invert intensities"
+          "  <em>[ ]</em>: increase / decrease zoom"
+          "  <em>x y</em>: flip along the x / y axis"
+          "  <em>r</em>: reset to initial conditions"
+          "  <em>spacebar</em>: toggle continuous tracking of cursor"
+          "  <em>up-arrow down-arrow</em>: change to next / previous slice"
+          "<h3>Mouse commands:</h3>"
+          "  <em>left-button</em>: window and level"
+          "  <em>middle-button</em>: zoom"
+          "  <em>right-button</em>: center"));
         help->show();
 
         break;
@@ -1049,12 +1049,9 @@ void ctkQImageView::update( bool zoomChanged,
     
           if( img->isGrayscale() )
             {
-            QString intString = "Intensity Range = ";
-            intString.append( QString::number( d->IntensityMin,
-              'f', 3 ) );
-            intString.append( " - " );
-            intString.append( QString::number( d->IntensityMax,
-              'f', 3 ) );
+            QString intString = tr("Intensity Range = %1 .. %2").arg(
+              QString::number( d->IntensityMin, 'f', 3 ),
+              QString::number( d->IntensityMax, 'f', 3 ));
             QRectF intBound = painter.boundingRect( pointRect, textFlags,
               intString );
             QRectF intRect( 
@@ -1064,12 +1061,9 @@ void ctkQImageView::update( bool zoomChanged,
             painter.drawText( intRect, textFlags, intString,
               &intBound );
 
-            QString wlString = "W / L = ";
-            wlString.append( QString::number( this->intensityWindow(),
-              'f', 3 ) );
-            wlString.append( " / " );
-            wlString.append( QString::number( this->intensityLevel(),
-              'f', 3 ) );
+            QString wlString = tr("W / L = %1 / %2")
+              .arg(QString::number(this->intensityWindow(), 'f', 3))
+              .arg(QString::number(this->intensityLevel(), 'f', 3));
             QRectF wlBound = painter.boundingRect( pointRect, textFlags,
               wlString );
             QRectF wlRect( 
@@ -1080,15 +1074,10 @@ void ctkQImageView::update( bool zoomChanged,
               &wlBound );
             }
 
-          QString spacingString = "Spacing = ";
-          spacingString.append( QString::number( this->xSpacing(),
-            'f', 3 ) );
-          spacingString.append( ", " );
-          spacingString.append( QString::number( this->ySpacing(),
-            'f', 3 ) );
-          spacingString.append( ", " );
-          spacingString.append( QString::number( this->sliceThickness(),
-            'f', 3 ) );
+          QString spacingString = tr("Spacing = %1, %2, %3")
+            .arg(QString::number(this->xSpacing()), 'f', 3)
+            .arg(QString::number(this->ySpacing()), 'f', 3)
+            .arg(QString::number(this->sliceThickness()), 'f', 3);
           QRectF spacingBound = painter.boundingRect( pointRect, textFlags,
             spacingString );
           QRectF spacingRect( 
@@ -1098,15 +1087,10 @@ void ctkQImageView::update( bool zoomChanged,
           painter.drawText( spacingRect, textFlags, spacingString,
             &spacingBound );
     
-          QString dimString = "Size = ";
-          dimString.append( 
-            QString::number( d->ImageList[ d->SliceNumber ].width() ) );
-          dimString.append( ", " );
-          dimString.append( 
-            QString::number( d->ImageList[ d->SliceNumber ].height() ) );
-          dimString.append( ", " );
-          dimString.append( 
-            QString::number( d->ImageList.size() ) );
+          QString dimString = tr("Size = %1, %2, %3")
+            .arg(QString::number( d->ImageList[ d->SliceNumber ].width()))
+            .arg(QString::number(d->ImageList[d->SliceNumber].height()))
+            .arg(QString::number(d->ImageList.size()));
           QRectF dimBound = painter.boundingRect( pointRect, textFlags,
             dimString );
           QRectF dimRect( 
@@ -1115,15 +1099,10 @@ void ctkQImageView::update( bool zoomChanged,
             dimBound.width(), dimBound.height() );
           painter.drawText( dimRect, textFlags, dimString, &dimBound );
     
-          QString rasString = "RAS = ";
-          rasString.append( QString::number( 
-            this->xPosition() * this->xSpacing(), 'f', 3 ) );
-          rasString.append( ", " );
-          rasString.append( QString::number( 
-            this->yPosition() * this->ySpacing(), 'f', 3 ) );
-          rasString.append( ", " );
-          rasString.append( QString::number( 
-            this->slicePosition() * this->sliceSpacing(), 'f', 3 ) );
+          QString rasString = tr("RAS = %1, %2, %3")
+            .arg(QString::number(this->xPosition() * this->xSpacing(), 'f', 3))
+            .arg(QString::number(this->yPosition() * this->ySpacing(), 'f', 3))
+            .arg(QString::number(this->slicePosition() * this->sliceSpacing(), 'f', 3));
           QRectF rasBound = painter.boundingRect( pointRect, textFlags,
             rasString );
           QRectF rasRect( 
@@ -1133,12 +1112,10 @@ void ctkQImageView::update( bool zoomChanged,
           painter.drawText( rasRect, textFlags, rasString,
             &rasBound );
     
-          QString ijkString = "IJK = ";
-          ijkString.append( QString::number( this->xPosition() ) );
-          ijkString.append( ", " );
-          ijkString.append( QString::number( this->yPosition() ) );
-          ijkString.append( ", " );
-          ijkString.append( QString::number( this->slicePosition() ) );
+          QString ijkString = tr("IJK = %1, %2, %3")
+            .arg(QString::number( this->xPosition())
+            .arg(QString::number( this->yPosition()))
+            .arg(this->slicePosition()));
           QRectF ijkBound = painter.boundingRect( pointRect, textFlags,
             ijkString );
           QRectF ijkRect( 
@@ -1147,9 +1124,8 @@ void ctkQImageView::update( bool zoomChanged,
             ijkBound.width(), ijkBound.height() );
           painter.drawText( ijkRect, textFlags, ijkString, &ijkBound );
     
-          QString valString = "Value = ";
-          valString.append( QString::number( this->positionValue(),
-            'f', 3 ) );
+          QString valString = tr("Value = %1")
+            .arg(QString::number( this->positionValue(),'f', 3));
           QRectF valBound = painter.boundingRect( pointRect, textFlags,
             valString );
           QRectF valRect( 
@@ -1186,6 +1162,6 @@ void ctkQImageView::update( bool zoomChanged,
     }
   else
     {
-    d->Window->setText( "No Image Loaded." );
+    d->Window->setText(tr("No Image Loaded."));
     }
 }

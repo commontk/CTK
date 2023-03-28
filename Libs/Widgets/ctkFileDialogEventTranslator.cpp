@@ -104,7 +104,8 @@ void ctkFileDialogEventTranslator::onFileSelectionChanged(const QStringList& fil
   foreach(QString file, files)
     {
     QFileInfo info(file);
-    emit recordEvent(this->CurrentObject, "comment", QString("Loading %1 ... ").arg(info.fileName()));
+    //: %1 is the filename
+    emit recordEvent(this->CurrentObject, "comment", tr("Loading %1 ... ").arg(info.fileName()));
     }
 
   QString file = files.join("#");

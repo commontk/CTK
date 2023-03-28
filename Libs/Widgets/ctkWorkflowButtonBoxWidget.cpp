@@ -84,10 +84,10 @@ ctkWorkflowButtonBoxWidgetPrivate::ctkWorkflowButtonBoxWidgetPrivate(ctkWorkflow
   :q_ptr(&object)
 {
   this->BackButton = 0;
-  this->BackButtonFormat = "[<-]{backButtonText|\"Back\"}(back:description)";
+  this->BackButtonFormat = "[<-]{backButtonText|\"" + ctkWorkflowButtonBoxWidget::tr("Back") + "\"}(back:description)";
   this->NextButton = 0;
-  this->NextButtonFormat = "{nextButtonText|\"Next\"}(next:description)[->]";
-  this->GoToButtonsFormat = "[icon]{stepid|\"Finish\"}(description)";
+  this->NextButtonFormat = "{nextButtonText|\"" + ctkWorkflowButtonBoxWidget::tr("Next") + "\"}(next:description)[->]";
+  this->GoToButtonsFormat = "[icon]{stepid|\"" + ctkWorkflowButtonBoxWidget::tr("Finish") + "\"}(description)";
   this->Direction = QBoxLayout::LeftToRight;
   this->ButtonSizePolicy = QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   this->HideGoToButtons = false;

@@ -382,12 +382,12 @@ void ctkCheckableComboBox::paintEvent(QPaintEvent *)
 
   if (this->allChecked())
     {
-    opt.currentText = "All";
+    opt.currentText = tr("All");
     opt.currentIcon = QIcon();
     }
   else if (this->noneChecked())
     {
-    opt.currentText = "None";
+    opt.currentText = tr("None");
     opt.currentIcon = QIcon();
     }
   else

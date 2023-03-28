@@ -64,7 +64,7 @@ void ctkScreenshotDialogPrivate::setupUi(QDialog * widget)
   Q_ASSERT(okButton);
 
   // Update OK button text
-  okButton->setText("Capture");
+  okButton->setText(ctkScreenshotDialog::tr("Capture"));
 
   connect(okButton, SIGNAL(clicked()), q, SLOT(saveScreenshot()));
   connect(this->ImageNameLineEdit, SIGNAL(textChanged(QString)), SLOT(updateFullNameLabel()));
@@ -169,10 +169,10 @@ void ctkScreenshotDialogPrivate::lockAspectRatio(bool lock)
       }
     else
       {
-      QString message = QString("Height of widget: ") + curSize.height() +\
-        QString(" is invalid. Check widget dimensions. Using default aspect\
-          ratio (1.0).");
-      QMessageBox::warning(q, "Invalid widget dimensions", message,
+      QString message = ctkScreenshotDialog::tr("Height of widget: %1 is invalid. "
+        "Check widget dimensions. Using default aspect ratio (1.0).")
+        .arg(curSize.height());
+      QMessageBox::warning(q, ctkScreenshotDialog::tr("Invalid widget dimensions"), message,
         QMessageBox::Ok);
       this->AspectRatio = 1.0;
       }
@@ -191,9 +191,9 @@ void ctkScreenshotDialogPrivate::onWidthEdited()
       }
     else
       {
-      QString message = QString("Aspect ratio: ") + this->AspectRatio +\
-        QString(" is invalid. Check widget dimensions.");
-      QMessageBox::warning(q, "Invalid aspect ratio", message, QMessageBox::Ok);
+      QString message = ctkScreenshotDialog::tr(
+        "Aspect ratio: %1 is invalid. Check widget dimensions.").arg(this->AspectRatio);
+      QMessageBox::warning(q, ctkScreenshotDialog::tr("Invalid aspect ratio"), message, QMessageBox::Ok);
       }
     }
 }
@@ -393,7 +393,7 @@ void ctkScreenshotDialog::instantScreenshot()
   bool overwrite = d->OverwriteCheckBox->isChecked();
   if (QFile::exists(filename) && !overwrite)
     {
-    int answer = QMessageBox::question(this, "Screen Capture",
+    int answer = QMessageBox::question(this, tr("Screen Capture"),
                                        tr("File already exists. Overwrite ?"),
                                        QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No);
     if (answer == QMessageBox::YesToAll)

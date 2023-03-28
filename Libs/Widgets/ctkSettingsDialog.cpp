@@ -297,9 +297,9 @@ void ctkSettingsDialog::accept()
   bool emitRestartRequested = false;
   if (this->isRestartRequired())
     {
-    QMessageBox::StandardButton answer = QMessageBox::question(this,"Restart required",
-      "For settings to be taken into account, the application\n"
-      "must be restarted. Restart the application now ?\n",
+    QMessageBox::StandardButton answer = QMessageBox::question(this, tr("Restart required"),
+      tr("For settings to be taken into account, the application\n"
+         "must be restarted. Restart the application now ?\n"),
       QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel, QMessageBox::No);
     if (answer == QMessageBox::Cancel)
       {
@@ -406,9 +406,9 @@ void ctkSettingsDialog::onDialogButtonClicked(QAbstractButton* button)
       this->resetSettings();
       break;
     case QDialogButtonBox::RestoreDefaults:
-      if (QMessageBox::warning(this,"Restore all settings",
-            "Are you sure you want to reset\n"
-            "all settings to their default values?\n",
+      if (QMessageBox::warning(this,tr("Restore all settings"),
+            tr("Are you sure you want to reset\n"
+               "all settings to their default values?\n"),
             QMessageBox::RestoreDefaults, QMessageBox::Cancel)
           == QMessageBox::RestoreDefaults)
         {

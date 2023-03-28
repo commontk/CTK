@@ -103,10 +103,10 @@ ctkMaterialPropertyWidget::ctkMaterialPropertyWidget(QWidget* _parent)
   connect(d->PresetsListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
           this, SLOT(selectPreset(QListWidgetItem*)));
   // default presets
-  this->addPreset(QColor(),1.,1.,0.,0.,1.,"Full ambient eliminating all directional shading.");
-  this->addPreset(QColor(),1.,0.2,1.,0.,1.,"Dull material properties (no specular lighting).");
-  this->addPreset(QColor(),1.,0.1,0.9,0.2,10.,"Smooth material properties (moderate specular lighting).");
-  this->addPreset(QColor(),1.,0.1,0.6,0.5,40.,"Shiny material properties (high specular lighting).");
+  this->addPreset(QColor(),1.,1.,0.,0.,1.,tr("Full ambient eliminating all directional shading."));
+  this->addPreset(QColor(),1.,0.2,1.,0.,1.,tr("Dull material properties (no specular lighting)."));
+  this->addPreset(QColor(),1.,0.1,0.9,0.2,10.,tr("Smooth material properties (moderate specular lighting)."));
+  this->addPreset(QColor(),1.,0.1,0.6,0.5,40.,tr("Shiny material properties (high specular lighting)."));
   
   d->PresetsListWidget->viewport()->setAutoFillBackground( false);
   d->PresetsListWidget->setAutoFillBackground( false );

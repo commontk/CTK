@@ -650,7 +650,7 @@ void ctkPathLineEdit::browse()
       {
       path = QFileDialog::getOpenFileName(
         this,
-        QString("Open a file"),
+        tr("Open a file"),
         this->currentPath().isEmpty()? ctkPathLineEditPrivate::sCurrentDirectory :
 	                               this->currentPath(),
         d->NameFilters.join(";;"),
@@ -666,7 +666,7 @@ void ctkPathLineEdit::browse()
     {
     path = QFileDialog::getExistingDirectory(
       this,
-      QString("Select a directory..."),
+      tr("Select a directory..."),
       this->currentPath().isEmpty() ? ctkPathLineEditPrivate::sCurrentDirectory :
                                       this->currentPath(),
 #ifdef USE_QFILEDIALOG_OPTIONS

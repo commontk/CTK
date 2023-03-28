@@ -72,7 +72,7 @@ public:
 ctkAddRemoveComboBoxPrivate::ctkAddRemoveComboBoxPrivate(ctkAddRemoveComboBox& object)
   :q_ptr(&object)
 {
-  this->EmptyText = "None";
+  this->EmptyText = ctkAddRemoveComboBox::tr("None");
 
   this->AddingEmptyItem = false;
   this->RemovingEmptyItem = false;
