@@ -102,9 +102,9 @@ bool ctkFileDialogEventPlayer::playEvent(QObject *object,
         {
         foreach(QPushButton* button, buttons)
           {
-          if(button->text().contains("Open") ||
-             button->text().contains("Ok") ||
-             button->text().contains("Choose"))
+          if(button->text().contains(tr("Open")) ||
+             button->text().contains(tr("Ok")) ||
+             button->text().contains(tr("Choose")))
             {
             button->setEnabled(true);
             button->setChecked(true);

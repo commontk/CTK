@@ -85,7 +85,8 @@ void ctkActionsWidgetPrivate::setupHeaders()
 {
   this->ActionsModel->setColumnCount(4);
   QStringList headers;
-  headers << "Action" << "Shortcut(s)" << "Context" << "Details";
+  headers << ctkActionsWidget::tr("Action") << ctkActionsWidget::tr("Shortcut(s)")
+          << ctkActionsWidget::tr("Context") << ctkActionsWidget::tr("Details");
   this->ActionsModel->setHorizontalHeaderLabels(headers);
 }
 
@@ -110,18 +111,18 @@ void ctkActionsWidgetPrivate
     }
   items[ctkActionsWidget::ShortcutColumn]->setText(
     shortcuts.join("; "));
-  // Context
+  // Context (this is written to the recorded file, therefore it must not be translated)
   QString shortcutContext;
   switch (action->shortcutContext())
     {
     case Qt::WidgetShortcut:
     case Qt::WidgetWithChildrenShortcut:
-      shortcutContext = "Widget";
+      shortcutContext = /*no tr*/ "Widget";
       break;
     case Qt::WindowShortcut:
     case Qt::ApplicationShortcut:
     default:
-      shortcutContext = "Application";
+      shortcutContext = /*no tr*/ "Application";
     }
   items[ctkActionsWidget::ContextColumn]->setText(shortcutContext);
   items[ctkActionsWidget::DetailsColumn]->setText(action->toolTip() != actionText
