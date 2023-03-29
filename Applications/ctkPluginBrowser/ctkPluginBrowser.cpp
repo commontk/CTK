@@ -49,16 +49,16 @@
 ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   : framework(framework)
 {
-  pluginEventTypeToString[ctkPluginEvent::INSTALLED] = "Installed";
-  pluginEventTypeToString[ctkPluginEvent::LAZY_ACTIVATION] = "Lazy Activation";
-  pluginEventTypeToString[ctkPluginEvent::RESOLVED] = "Resolved";
-  pluginEventTypeToString[ctkPluginEvent::STARTED] = "Started";
-  pluginEventTypeToString[ctkPluginEvent::STARTING] = "Starting";
-  pluginEventTypeToString[ctkPluginEvent::STOPPED] = "Stopped";
-  pluginEventTypeToString[ctkPluginEvent::STOPPING] = "Stopping";
-  pluginEventTypeToString[ctkPluginEvent::UNINSTALLED] = "Uninstalled";
-  pluginEventTypeToString[ctkPluginEvent::UNRESOLVED] = "Unresolved";
-  pluginEventTypeToString[ctkPluginEvent::UPDATED] = "Updated";
+  pluginEventTypeToString[ctkPluginEvent::INSTALLED] = tr("Installed");
+  pluginEventTypeToString[ctkPluginEvent::LAZY_ACTIVATION] = tr("Lazy Activation");
+  pluginEventTypeToString[ctkPluginEvent::RESOLVED] = tr("Resolved");
+  pluginEventTypeToString[ctkPluginEvent::STARTED] = tr("Started");
+  pluginEventTypeToString[ctkPluginEvent::STARTING] = tr("Starting");
+  pluginEventTypeToString[ctkPluginEvent::STOPPED] = tr("Stopped");
+  pluginEventTypeToString[ctkPluginEvent::STOPPING] = tr("Stopping");
+  pluginEventTypeToString[ctkPluginEvent::UNINSTALLED] = tr("Uninstalled");
+  pluginEventTypeToString[ctkPluginEvent::UNRESOLVED] = tr("Unresolved");
+  pluginEventTypeToString[ctkPluginEvent::UPDATED] = tr("Updated");
 
   framework->getPluginContext()->connectFrameworkListener(this, SLOT(frameworkEvent(ctkPluginFrameworkEvent)));
   framework->getPluginContext()->connectPluginListener(this, SLOT(pluginEvent(ctkPluginEvent)));
@@ -112,9 +112,9 @@ ctkPluginBrowser::ctkPluginBrowser(ctkPluginFramework* framework)
   connect(ui.pluginResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(dbResourceDoubleClicked(QModelIndex)));
   connect(ui.qtResourcesTreeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(qtResourceDoubleClicked(QModelIndex)));
 
-  startPluginNowAction = new QAction(QIcon(":/pluginbrowser/images/run-now.png"), "Start Plugin (ignore activation policy)", this);
-  startPluginAction = new QAction(QIcon(":/pluginbrowser/images/run.png"), "Start Plugin", this);
-  stopPluginAction = new QAction(QIcon(":/pluginbrowser/images/stop.png"), "Stop Plugin", this);
+  startPluginNowAction = new QAction(QIcon(":/pluginbrowser/images/run-now.png"), tr("Start Plugin (ignore activation policy)"), this);
+  startPluginAction = new QAction(QIcon(":/pluginbrowser/images/run.png"), tr("Start Plugin"), this);
+  stopPluginAction = new QAction(QIcon(":/pluginbrowser/images/stop.png"), tr("Stop Plugin"), this);
 
   connect(startPluginNowAction, SIGNAL(triggered()), this, SLOT(startPluginNow()));
   connect(startPluginAction, SIGNAL(triggered()), this, SLOT(startPlugin()));

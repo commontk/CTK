@@ -39,7 +39,7 @@ void ctkEventBusDemoMainWindow::connectEvents() {
 
 void ctkEventBusDemoMainWindow::sendEvent() {
 
-    QString textToDisplay("Me: ");
+    QString textToDisplay = tr("Me: ");
     textToDisplay.append(ui->txtParameter->property("plainText").toString());
     ui->textBrowser->append(textToDisplay);
 

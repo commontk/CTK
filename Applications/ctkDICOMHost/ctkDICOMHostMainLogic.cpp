@@ -61,7 +61,7 @@ void ctkDICOMHostMainLogic::aboutToQuit()
 void ctkDICOMHostMainLogic::configureHostedApp()
 {
   //qDebug() << "load button clicked";
-  AppFileName = QFileDialog::getOpenFileName(PlaceHolderForHostedApp,"Choose hosted application",QApplication::applicationDirPath());
+  AppFileName = QFileDialog::getOpenFileName(PlaceHolderForHostedApp,tr("Choose hosted application"),QApplication::applicationDirPath());
   HostControls->setAppFileName(AppFileName);
   emit SelectionValid(((this->Host) && (this->HostControls->validAppFileName()) && (ValidSelection)));
 }
@@ -123,7 +123,7 @@ void ctkDICOMHostMainLogic::onTreeSelectionChanged(const QItemSelection & select
 
         if(model && (model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType)))
         {
-          QString s = "Series selected: ";
+          QString s = tr("Series selected: ");
           QString seriesUID = model->data(index0,ctkDICOMModel::UIDRole).toString();
           s.append(seriesUID);
           SelectedFiles = DicomAppWidget->database()->filesForSeries(seriesUID);
@@ -133,7 +133,7 @@ void ctkDICOMHostMainLogic::onTreeSelectionChanged(const QItemSelection & select
       }
     }
     if (ValidSelection==false)
-      emit TreeSelectionChanged("no series selected");
+      emit TreeSelectionChanged(tr("no series selected"));
     emit SelectionValid(((this->Host) && (this->HostControls->validAppFileName()) && (ValidSelection)));
 }
 

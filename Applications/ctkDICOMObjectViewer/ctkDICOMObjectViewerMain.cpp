@@ -50,7 +50,7 @@ int main(int argc, char** argv)
   else
     {
     s = QFileDialog::getOpenFileName( 0,
-     "Choose an image file", ".",
+     QFileDialog::tr("Choose an image file"), ".",
      "DCM (*)"
      );
     if( s.size() == 0 )

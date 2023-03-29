@@ -200,9 +200,10 @@ void ctkCLModuleExplorerMainWindow::closeEvent(QCloseEvent *event)
   {
     QMessageBox::StandardButton button =
         QMessageBox::warning(QApplication::activeWindow(),
-                             QString("Closing %1 running modules").arg(runningFrontends.size()),
-                             "Some modules are still running.\n"
-                             "Closing the application will cancel all current computations.",
+                             //: %1 is the number of running modules
+                             tr("Closing %1 running modules").arg(runningFrontends.size()),
+                             tr("Some modules are still running.\n"
+                                "Closing the application will cancel all current computations."),
                              QMessageBox::Ok | QMessageBox::Cancel);
     if (button == QMessageBox::Ok)
     {
