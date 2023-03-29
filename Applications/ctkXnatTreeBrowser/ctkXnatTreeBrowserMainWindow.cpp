@@ -87,8 +87,8 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
     ui->treeView->reset();
     delete m_Session;
     m_Session = 0;
-    ui->loginButton->setText("Login");
-    ui->loginLabel->setText("Disconnected");
+    ui->loginButton->setText(tr("Login"));
+    ui->loginLabel->setText(tr("Disconnected"));
     ui->downloadLabel->hide();
   }
   else
@@ -99,8 +99,8 @@ void ctkXnatTreeBrowserMainWindow::loginButtonPushed()
       m_Session = loginDialog.session();
       if (m_Session)
       {
-        ui->loginButton->setText("Logout");
-        ui->loginLabel->setText(QString("Connected: %1").arg(m_Session->url().toString()));
+        ui->loginButton->setText(tr("Logout"));
+        ui->loginLabel->setText(tr("Connected: %1").arg(m_Session->url().toString()));
         this->connect(m_Session, SIGNAL(timedOut()), this, SLOT(sessionTimedOutMsg()));
         this->connect(m_Session, SIGNAL(aboutToTimeOut()), this, SLOT(sessionAboutToTimeOutMsg()));
 
@@ -192,18 +192,18 @@ void ctkXnatTreeBrowserMainWindow::sessionTimedOutMsg()
   ui->treeView->reset();
   delete m_Session;
   m_Session = 0;
-  ui->loginButton->setText("Login");
-  ui->loginLabel->setText("Disconnected");
+  ui->loginButton->setText(tr("Login"));
+  ui->loginLabel->setText(tr("Disconnected"));
   ui->downloadLabel->hide();
-  QMessageBox::warning(this, "Session Timeout", "The session timed out.");
+  QMessageBox::warning(this, tr("Session Timeout"), tr("The session timed out."));
 }
 
 void ctkXnatTreeBrowserMainWindow::sessionAboutToTimeOutMsg()
 {
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Warning);
-  msgBox.setWindowTitle("Session Timeout Soon");
-  msgBox.setText("The session will time out in 1 minute.\nDo you want to renew the session?");
+  msgBox.setWindowTitle(tr("Session Timeout Soon"));
+  msgBox.setText(tr("The session will time out in 1 minute.\nDo you want to renew the session?"));
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.setDefaultButton(QMessageBox::No);
   msgBox.show();

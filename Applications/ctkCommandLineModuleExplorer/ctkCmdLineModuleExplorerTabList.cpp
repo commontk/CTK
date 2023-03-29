@@ -94,9 +94,11 @@ void ctkCmdLineModuleExplorerTabList::tabCloseRequested(int index)
     {
       QMessageBox::StandardButton button =
           QMessageBox::warning(QApplication::topLevelWidgets().front(),
-                               "Closing a running module",
-                               "The module '" + frontend->moduleReference().description().title() + "' is still running.\n"
-                               "Closing the tab will cancel the current computation.",
+                               tr("Closing a running module"),
+                               //: %1 is the module name
+                               tr("The module '%1' is still running.\n"
+                                  "Closing the tab will cancel the current computation.")
+                                  .arg(frontend->moduleReference().description().title()),
                                QMessageBox::Ok | QMessageBox::Cancel);
       if (button == QMessageBox::Ok)
       {
@@ -107,9 +109,11 @@ void ctkCmdLineModuleExplorerTabList::tabCloseRequested(int index)
     else
     {
       QMessageBox::information(QApplication::topLevelWidgets().front(),
-                               "Closing not possible",
-                               "The module '" + frontend->moduleReference().description().title() + "' is still running "
-                               "and does not support being canceled.");
+                               tr("Closing not possible"),
+                               //: %1 is the module name
+                               tr("The module '%1' is still running "
+                                  "and does not support being canceled.")
+                               .arg(frontend->moduleReference().description().title()));
     }
   }
   else

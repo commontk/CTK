@@ -38,7 +38,7 @@
 #include <QApplication>
 #include <QMessageBox>
 
-QString ctkCmdLineModuleExplorerTreeWidget::CATEGORY_UNKNOWN = "Uncategorized";
+QString ctkCmdLineModuleExplorerTreeWidget::CATEGORY_UNKNOWN = ctkCmdLineModuleExplorerTreeWidget::tr("Uncategorized");
 
 class ctkCmdLineModuleTreeWidgetItem : public QStandardItem
 {
@@ -64,7 +64,9 @@ public:
     if (!ModuleRef.xmlValidationErrorString().isEmpty())
     {
       this->setIcon(QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning));
-      toolTip += "\n\nWarning:\n\n" + ModuleRef.xmlValidationErrorString();
+      toolTip += QString("\n\n%1\n\n%2")
+                .arg(ctkCmdLineModuleExplorerTreeWidget::tr("Warning:"))
+                .arg(ModuleRef.xmlValidationErrorString());
     }
     this->setToolTip(toolTip);
   }
@@ -85,7 +87,7 @@ ctkCmdLineModuleExplorerTreeWidget::ctkCmdLineModuleExplorerTreeWidget(QWidget *
   , DefaultFrontendFactory(NULL)
 {
   this->ContextMenu = new QMenu(this);
-  this->ShowFrontendMenu = this->ContextMenu->addMenu("Create Frontend");
+  this->ShowFrontendMenu = this->ContextMenu->addMenu(tr("Create Frontend"));
 
   this->ShowXmlAction = new ctkCmdLineModuleExplorerShowXmlAction(this);
   this->ContextMenu->addAction(ShowXmlAction);
@@ -268,8 +270,13 @@ ctkCmdLineModuleFrontend* ctkCmdLineModuleExplorerTreeWidget::createFrontend(con
   }
   catch (const ctkException& e)
   {
-    QMessageBox::information(this, "Frontend creation failed", "Creating a " + frontendFactory->name()
-                             + " frontend failed:\n\n" + e.what());
+    //: %1 is the frontend factory name and %2 is the error description
+    QMessageBox::information(this,
+      tr("Frontend creation failed"),
+      tr("Creating a %1 frontend failed:\n\n%2")
+        .arg(frontendFactory->name())
+        .arg(e.what())
+    );
     return NULL;
   }
 }

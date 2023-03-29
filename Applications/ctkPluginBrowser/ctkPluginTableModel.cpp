@@ -66,15 +66,15 @@ QVariant ctkPluginTableModel::headerData(int section, Qt::Orientation orientatio
   {
     if (section == 0)
     {
-      return QVariant("Plugin");
+      return QVariant(/*no tr*/"Plugin");
     }
     else if (section == 1)
     {
-      return QVariant("Version");
+      return QVariant(/*no tr*/"Version");
     }
     else if (section == 2)
     {
-      return QVariant("State");
+      return QVariant(/*no tr*/"State");
     }
   }
 
@@ -97,12 +97,12 @@ int ctkPluginTableModel::rowCount(const QModelIndex& parent) const
 
 QString ctkPluginTableModel::getStringForState(const ctkPlugin::State state) const
 {
-  static const QString uninstalled("UNINSTALLED");
-  static const QString installed("INSTALLED");
-  static const QString resolved("RESOLVED");
-  static const QString starting("STARTING");
-  static const QString stopping("STOPPING");
-  static const QString active("ACTIVE");
+  static const QString uninstalled = tr("UNINSTALLED");
+  static const QString installed = tr("INSTALLED");
+  static const QString resolved = tr("RESOLVED");
+  static const QString starting = tr("STARTING");
+  static const QString stopping = tr("STOPPING");
+  static const QString active = tr("ACTIVE");
 
   switch(state)
   {
@@ -112,7 +112,7 @@ QString ctkPluginTableModel::getStringForState(const ctkPlugin::State state) con
   case ctkPlugin::STARTING: return starting;
   case ctkPlugin::STOPPING: return stopping;
   case ctkPlugin::ACTIVE: return active;
-  default: return QString("unknown");
+  default: return tr("unknown");
   }
 }
 

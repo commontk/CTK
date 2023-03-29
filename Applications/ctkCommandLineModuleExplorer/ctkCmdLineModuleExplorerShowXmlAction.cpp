@@ -36,7 +36,7 @@
 ctkCmdLineModuleExplorerShowXmlAction::ctkCmdLineModuleExplorerShowXmlAction(QObject *parent)
   : QAction(parent)
 {
-  this->setText("Show XML Description");
+  this->setText(tr("Show XML Description"));
 
   connect(this, SIGNAL(triggered()), SLOT(run()));
 }
