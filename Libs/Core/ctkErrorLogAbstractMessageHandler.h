@@ -42,7 +42,7 @@ class CTK_CORE_EXPORT ctkErrorLogAbstractMessageHandler : public QObject
 public:
   typedef QObject Superclass;
   /// Disabled by default.
-  ctkErrorLogAbstractMessageHandler();
+  ctkErrorLogAbstractMessageHandler(QObject* parent = 0);
   virtual ~ctkErrorLogAbstractMessageHandler();
 
   virtual QString handlerName()const = 0;

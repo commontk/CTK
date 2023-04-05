@@ -24,7 +24,8 @@
 #include <QMetaEnum>
 
 // --------------------------------------------------------------------------
-ctkErrorLogLevel::ctkErrorLogLevel()
+ctkErrorLogLevel::ctkErrorLogLevel(QObject* parent)
+  : Superclass(parent)
 {
   qRegisterMetaType<ctkErrorLogLevel::LogLevel>("ctkErrorLogLevel::LogLevel");
 }

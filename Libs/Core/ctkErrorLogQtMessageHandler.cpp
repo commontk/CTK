@@ -44,7 +44,8 @@ QString ctkErrorLogQtMessageHandler::HandlerName = QLatin1String("Qt");
 Q_DECLARE_METATYPE(ctkErrorLogQtMessageHandler*)
 
 // --------------------------------------------------------------------------
-ctkErrorLogQtMessageHandler::ctkErrorLogQtMessageHandler() : Superclass()
+ctkErrorLogQtMessageHandler::ctkErrorLogQtMessageHandler(QObject* parent)
+  : Superclass(parent)
 {
   this->SavedQtMessageHandler = 0;
 
