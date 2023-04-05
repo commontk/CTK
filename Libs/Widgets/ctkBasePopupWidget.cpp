@@ -463,7 +463,6 @@ void ctkBasePopupWidgetPrivate::hideAll()
 // Qt::Toolip is preferred to Qt::Popup as it would close itself at the first
 // click outside the widget (typically a click in the BaseWidget)
 ctkBasePopupWidget::ctkBasePopupWidget(QWidget* parentWidget)
-  //: Superclass(QApplication::desktop()->screen(QApplication::desktop()->screenNumber(parentWidget)),
   : Superclass(parentWidget,
                PopupWindowType | Qt::FramelessWindowHint)
   , d_ptr(new ctkBasePopupWidgetPrivate(*this))
@@ -474,7 +473,6 @@ ctkBasePopupWidget::ctkBasePopupWidget(QWidget* parentWidget)
 
 // -------------------------------------------------------------------------
 ctkBasePopupWidget::ctkBasePopupWidget(ctkBasePopupWidgetPrivate* pimpl, QWidget* parentWidget)
-  //: //Superclass(QApplication::desktop()->screen(QApplication::desktop()->screenNumber(parentWidget)),
   : Superclass(parentWidget,
                PopupWindowType | Qt::FramelessWindowHint)
   , d_ptr(pimpl)
