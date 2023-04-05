@@ -31,6 +31,52 @@
 #include <QSqlQueryModel>
 
 //------------------------------------------------------------------------------
+// List all column names for translation.
+// They are specified in DisplayedName column of ColumnDisplayProperties table,
+// (for example in dicom-schema.sql and dicom-qr-schema.sql) but Qt's lupdate
+// tool cannot parse these files, therefore we need to list them here.
+static const char* DisplayedColumnNames[] =
+{
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Patient name"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Patient ID"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Birth date"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Birth time"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Sex"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Age"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Comments"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Date added"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Patient name"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Studies"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Last study date"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Study ID"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Study date"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Study time"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Study description"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Accession #"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Modalities"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Institution"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Referring physician"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Performing physician"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Date added"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Series"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Series #"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Series date"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Series time"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Series description"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Modality"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Body part"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Acquisition #"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Contrast agent"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Scanning sequence"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Echo #"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Temporal position"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Date added"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Size"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Count"),
+  QT_TRANSLATE_NOOP("ctkDICOMTableView", "Number of frames"),
+};
+
+//------------------------------------------------------------------------------
 class ctkDICOMTableViewPrivate : public Ui_ctkDICOMTableView
 {
   Q_DECLARE_PUBLIC (ctkDICOMTableView)
@@ -195,7 +241,7 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
     }
 
     // Apply displayed name
-    QString displayedName = this->dicomDatabase->displayedNameForField(this->queryTableName, columnName);
+    QString displayedName = ctkDICOMTableView::tr(this->dicomDatabase->displayedNameForField(this->queryTableName, columnName).toUtf8());
     this->dicomSQLModel.setHeaderData(col, Qt::Horizontal, displayedName, Qt::DisplayRole);
 
     // Apply visibility
