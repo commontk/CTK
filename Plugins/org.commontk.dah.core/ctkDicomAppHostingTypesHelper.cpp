@@ -159,7 +159,6 @@ ctkDicomAppHosting::Status ctkDicomSoapStatus::getStatus(const QtSoapType& type)
 
 //----------------------------------------------------------------------------
 ctkDicomSoapUID::ctkDicomSoapUID(const QString& name, const QString& uid)
-  //: QtSoapSimpleType(QtSoapQName(name), uid)
   : QtSoapStruct(QtSoapQName(name))
 {
   this->insert(new QtSoapSimpleType(QtSoapQName("Uid"),uid));
