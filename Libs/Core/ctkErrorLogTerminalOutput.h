@@ -39,7 +39,8 @@ class CTK_CORE_EXPORT ctkErrorLogTerminalOutput : public QObject
   Q_FLAGS(TerminalOutputs)
 
 public:
-  ctkErrorLogTerminalOutput();
+  typedef QObject Superclass;
+  ctkErrorLogTerminalOutput(QObject* parent = 0);
   virtual ~ctkErrorLogTerminalOutput();
 
   enum TerminalOutput

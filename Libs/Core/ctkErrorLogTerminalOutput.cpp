@@ -69,8 +69,8 @@ ctkErrorLogTerminalOutputPrivate::~ctkErrorLogTerminalOutputPrivate()
 // ctkErrorLogTerminalOutput methods
 
 // --------------------------------------------------------------------------
-ctkErrorLogTerminalOutput::ctkErrorLogTerminalOutput()
-  : d_ptr(new ctkErrorLogTerminalOutputPrivate)
+ctkErrorLogTerminalOutput::ctkErrorLogTerminalOutput(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkErrorLogTerminalOutputPrivate)
 {
 }
 

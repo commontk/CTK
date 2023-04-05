@@ -56,8 +56,8 @@ ctkEventTranslatorPlayerWidgetPrivate::~ctkEventTranslatorPlayerWidgetPrivate()
 }
 
 //-----------------------------------------------------------------------------
-ctkEventTranslatorPlayerWidget::ctkEventTranslatorPlayerWidget()
-  :  Superclass()
+ctkEventTranslatorPlayerWidget::ctkEventTranslatorPlayerWidget(QWidget* parent, Qt::WindowFlags flags)
+  : Superclass(parent, flags)
   , d_ptr(new ctkEventTranslatorPlayerWidgetPrivate)
 {
   Q_D(ctkEventTranslatorPlayerWidget);

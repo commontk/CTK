@@ -61,8 +61,8 @@ ctkErrorLogAbstractMessageHandlerPrivate::~ctkErrorLogAbstractMessageHandlerPriv
 // ctkErrorLogAbstractMessageHandlerPrivate methods
 
 // --------------------------------------------------------------------------
-ctkErrorLogAbstractMessageHandler::ctkErrorLogAbstractMessageHandler()
-  : Superclass(), d_ptr(new ctkErrorLogAbstractMessageHandlerPrivate)
+ctkErrorLogAbstractMessageHandler::ctkErrorLogAbstractMessageHandler(QObject* parent)
+  : Superclass(parent), d_ptr(new ctkErrorLogAbstractMessageHandlerPrivate)
 {
 }
 

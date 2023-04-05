@@ -55,7 +55,7 @@ class CTK_QTTESTING_EXPORT ctkEventTranslatorPlayerWidget
   Q_OBJECT
 public:
   typedef QMainWindow Superclass;
-  ctkEventTranslatorPlayerWidget();
+  ctkEventTranslatorPlayerWidget(QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   ~ctkEventTranslatorPlayerWidget();
 
   void addTestCase(QWidget* widget, QString fileName, void(*newCallback)(void* data));
