@@ -170,7 +170,7 @@ bool ctkEventDispatcher::addObserver(ctkBusEvent &props) {
         //bool testRes = this->isLocalSignalPresent(topic);
         itemEventProp = m_SignalsHash.value(topic);
         if(itemEventProp == NULL) {
-            qDebug() << tr("Signal not present for topic %1, create only the entry in CallbacksHash").arg(topic);
+            qDebug() << QString("Signal not present for topic %1, create only the entry in CallbacksHash").arg(topic);
 
             ctkBusEvent *dict = const_cast<ctkBusEvent *>(&props);
             this->m_CallbacksHash.insertMulti(topic, dict);
@@ -180,10 +180,10 @@ bool ctkEventDispatcher::addObserver(ctkBusEvent &props) {
 
         QString observer_sig = CALLBACK_SIGNATURE;
         observer_sig.append(props[SIGNATURE].toString());
-        
+
         QString event_sig = SIGNAL_SIGNATURE;
         event_sig.append((*itemEventProp)[SIGNATURE].toString());
-        
+
         // Add the new observer to the Hash.
         ctkBusEvent *dict = const_cast<ctkBusEvent *>(&props);
         this->m_CallbacksHash.insertMulti(topic, dict);
@@ -191,11 +191,11 @@ bool ctkEventDispatcher::addObserver(ctkBusEvent &props) {
 
         return connect(objSignal, event_sig.toLatin1(), objSlot, observer_sig.toLatin1());
     }
-    
-    qDebug() << tr("Signal not valid for topic: %1").arg(topic);
+
+    qDebug() << QString("Signal not valid for topic: %1").arg(topic);
     QString objValid = objSlot ? "YES":"NO";
-    qDebug() << tr("Object valid Address: %1").arg(objValid);
-    qDebug() << tr("Signature: %1").arg(sig);
+    qDebug() << QString("Object valid Address: %1").arg(objValid);
+    qDebug() << QString("Signature: %1").arg(sig);
     return false;
 }
 
@@ -239,7 +239,7 @@ bool ctkEventDispatcher::removeFromHash(ctkEventsHashType *hash, const QObject *
                     delete i.value();
                     i = hash->erase(i);
                 } else {
-                    qDebug() << tr("Unable to disconnect object %1 on topic %2").arg(obj->objectName(), topic);
+                    qDebug() << QString("Unable to disconnect object %1 on topic %2").arg(obj->objectName(), topic);
                     ++i;
                 }
             } else {
@@ -270,7 +270,7 @@ bool ctkEventDispatcher::removeFromHash(ctkEventsHashType *hash, const QObject *
                     delete i.value();
                     i = hash->erase(i);
                 } else {
-                    qDebug() << tr("Unable to disconnect object %1 from topic %2").arg(obj->objectName(), (*prop)[TOPIC].toString());
+                    qDebug() << QString("Unable to disconnect object %1 from topic %2").arg(obj->objectName(), (*prop)[TOPIC].toString());
                     ++i;
                 }
             } else {
@@ -303,9 +303,9 @@ bool ctkEventDispatcher::registerSignal(ctkBusEvent &props) {
         // Only one signal for a given id can be registered!!
         QObject *obj = props[OBJECT].value<QObject *>();
         if(obj != NULL) {
-            qWarning("%s", tr("Object %1 is trying to register a signal with Topic '%2' that has been already registered!!").arg(obj->metaObject()->className(), topic).toUtf8().data());
+            qWarning("%s", QString("Object %1 is trying to register a signal with Topic '%2' that has been already registered!!").arg(obj->metaObject()->className(), topic).toUtf8().data());
         } else {
-            qWarning("%s", tr("NULL is trying to register a signal with Topic '%2' that has been already registered!!").arg(topic).toUtf8().data());
+            qWarning("%s", QString("NULL is trying to register a signal with Topic '%2' that has been already registered!!").arg(topic).toUtf8().data());
         }
         return false;
     }
@@ -314,7 +314,7 @@ bool ctkEventDispatcher::registerSignal(ctkBusEvent &props) {
     ctkEventItemListType itemEventPropList;
     itemEventPropList = m_CallbacksHash.values(topic);
     if(itemEventPropList.count() == 0) {
-        qDebug() << tr("Callbacks not present for topic %1, create only the entry in SignalsHash").arg(topic);
+        qDebug() << QString("Callbacks not present for topic %1, create only the entry in SignalsHash").arg(topic);
 
         // Add the new signal to the Hash.
         ctkBusEvent *dict = const_cast<ctkBusEvent *>(&props);

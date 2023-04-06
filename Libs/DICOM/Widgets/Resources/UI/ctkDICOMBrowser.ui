@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>ctkDICOMBrowser</string>
+   <string>DICOM Browser</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="leftMargin">
@@ -35,7 +35,7 @@
    <item>
     <widget class="QToolBar" name="ToolBar">
      <property name="windowTitle">
-      <string>toolBar</string>
+      <string>DICOM Browser Toolbar</string>
      </property>
      <property name="floatable">
       <bool>true</bool>
@@ -106,14 +106,14 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="ctkDICOMTableManager" name="dicomTableManager" native="true">
+      <widget class="ctkDICOMTableManager" name="dicomTableManager">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="dynamicTableLayout" stdset="0">
+       <property name="dynamicTableLayout">
         <bool>true</bool>
        </property>
        <property name="m_DynamicLayout" stdset="0">
@@ -211,7 +211,7 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkDirectoryButton" name="DirectoryButton" native="true"/>
+    <widget class="ctkDirectoryButton" name="DirectoryButton"/>
    </item>
   </layout>
   <action name="ActionImport">

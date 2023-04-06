@@ -302,7 +302,7 @@
              <string>Previous study</string>
             </property>
             <property name="text">
-             <string>&lt;&lt;&lt;</string>
+             <string notr="true">&lt;&lt;&lt;</string>
             </property>
            </widget>
           </item>
@@ -324,7 +324,7 @@
              <string>Previous series</string>
             </property>
             <property name="text">
-             <string>&lt;&lt;</string>
+             <string notr="true">&lt;&lt;</string>
             </property>
            </widget>
           </item>
@@ -346,7 +346,7 @@
              <string>Previous image</string>
             </property>
             <property name="text">
-             <string>&lt;</string>
+             <string notr="true">&lt;</string>
             </property>
            </widget>
           </item>
@@ -368,7 +368,7 @@
              <string>Next image</string>
             </property>
             <property name="text">
-             <string>&gt;</string>
+             <string notr="true">&gt;</string>
             </property>
            </widget>
           </item>
@@ -390,7 +390,7 @@
              <string>Next series</string>
             </property>
             <property name="text">
-             <string>&gt;&gt;</string>
+             <string notr="true">&gt;&gt;</string>
             </property>
            </widget>
           </item>
@@ -412,7 +412,7 @@
              <string>Next study</string>
             </property>
             <property name="text">
-             <string>&gt;&gt;&gt;</string>
+             <string notr="true">&gt;&gt;&gt;</string>
             </property>
            </widget>
           </item>
@@ -522,12 +522,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkDICOMQueryWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkDICOMQueryWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ctkDirectoryButton</class>
    <extends>QWidget</extends>
    <header>ctkDirectoryButton.h</header>
@@ -535,6 +529,12 @@
    <slots>
     <signal>directoryChanged(QString)</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>ctkDICOMQueryWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkDICOMQueryWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkDICOMThumbnailListWidget</class>

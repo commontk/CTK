@@ -440,7 +440,7 @@ void ctkCLModuleExplorerMainWindow::checkXMLPressed()
     moduleManager.setValidationMode(previousMode);
     QWidget* widget = QApplication::activeModalWidget();
     if (widget == NULL) widget = QApplication::activeWindow();
-    QMessageBox::critical(widget, QObject::tr("Failed while checking XML:"), except.message());
+    QMessageBox::critical(widget, tr("Failed while checking XML:"), except.message());
   }
 }
 

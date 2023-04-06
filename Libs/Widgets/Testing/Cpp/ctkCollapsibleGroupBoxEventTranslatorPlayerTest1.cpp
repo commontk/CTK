@@ -81,10 +81,10 @@ int ctkCollapsibleGroupBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // Test case 1
   QWidget widget(0);
-  ctkCollapsibleGroupBox* groupBox = new ctkCollapsibleGroupBox(QObject::tr("GroupBox"));
-  QRadioButton *radio1 = new QRadioButton(QObject::tr("&Radio button 1"));
-  QRadioButton *radio2 = new QRadioButton(QObject::tr("R&adio button 2"));
-  QRadioButton *radio3 = new QRadioButton(QObject::tr("Ra&dio button 3"));
+  ctkCollapsibleGroupBox* groupBox = new ctkCollapsibleGroupBox("GroupBox");
+  QRadioButton *radio1 = new QRadioButton("&Radio button 1");
+  QRadioButton *radio2 = new QRadioButton("R&adio button 2");
+  QRadioButton *radio3 = new QRadioButton("Ra&dio button 3");
   ctkCollapsibleGroupBox* hiddenGroupBox = new ctkCollapsibleGroupBox;
   hiddenGroupBox->setTitle("Advanced...");
 
@@ -128,4 +128,3 @@ int ctkCollapsibleGroupBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

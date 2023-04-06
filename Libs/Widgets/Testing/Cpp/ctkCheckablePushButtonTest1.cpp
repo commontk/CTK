@@ -39,22 +39,22 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   QWidget topLevel;
-  ctkCheckablePushButton button1(QObject::tr("My very long text on button"));
-  ctkCheckablePushButton button2(QObject::tr("Button2"));
-  ctkCheckablePushButton button3(QObject::tr("Button3"));
-  ctkCheckablePushButton button4(QObject::tr("Button4"));
-  ctkCheckablePushButton button5(QObject::tr("Button5"));
-  ctkCheckablePushButton button6(QObject::tr("Button6"));
-  ctkCheckablePushButton button7(QObject::tr("Checkable PushButton"));
-  ctkCheckablePushButton button8(QObject::tr("Connected, Not User Checkable"));
-  ctkCheckablePushButton button9(QObject::tr("Connected, Not User Checkable"));
-  ctkCheckablePushButton button10(QObject::tr("Not Connected, User Checkable"));
-  ctkCheckablePushButton button11(QObject::tr("Not Connected, User Checkable"));
-  ctkCheckablePushButton button12(QObject::tr("Checkbox Not User Checkable\nButton Checkable"));
-  ctkCheckablePushButton button13(QObject::tr("Checkbox and Button User Checkable"));
-  ctkCheckablePushButton button14(QObject::tr("Checkable PushButton with menu"));
-  ctkCheckablePushButton button15(QObject::tr("Checkable PushButton with icon"));
-  ctkCheckablePushButton button16(QObject::tr("Check box controls button toggle state"));
+  ctkCheckablePushButton button1("My very long text on button");
+  ctkCheckablePushButton button2("Button2");
+  ctkCheckablePushButton button3("Button3");
+  ctkCheckablePushButton button4("Button4");
+  ctkCheckablePushButton button5("Button5");
+  ctkCheckablePushButton button6("Button6");
+  ctkCheckablePushButton button7("Checkable PushButton");
+  ctkCheckablePushButton button8("Connected, Not User Checkable");
+  ctkCheckablePushButton button9("Connected, Not User Checkable");
+  ctkCheckablePushButton button10("Not Connected, User Checkable");
+  ctkCheckablePushButton button11("Not Connected, User Checkable");
+  ctkCheckablePushButton button12("Checkbox Not User Checkable\nButton Checkable");
+  ctkCheckablePushButton button13("Checkbox and Button User Checkable");
+  ctkCheckablePushButton button14("Checkable PushButton with menu");
+  ctkCheckablePushButton button15("Checkable PushButton with icon");
+  ctkCheckablePushButton button16("Check box controls button toggle state");
 
   QVBoxLayout *layout= new QVBoxLayout;
   layout->addWidget(&button1);

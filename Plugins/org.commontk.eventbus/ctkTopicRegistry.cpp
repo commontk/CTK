@@ -33,7 +33,7 @@ bool ctkTopicRegistry::registerTopic(const QString topic, const QObject *owner) 
         //topic already registered
         const QObject *obj = m_TopicHash.value(topic,NULL);
         QString className(obj->metaObject()->className());
-        qWarning() << QObject::tr("Topic %1 already owned by %2").arg(topic, className);
+        qWarning() << QString("Topic %1 already owned by %2").arg(topic, className);
         return false;
     }
     m_TopicHash.insert(topic,owner);

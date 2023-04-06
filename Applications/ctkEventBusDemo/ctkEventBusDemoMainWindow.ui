@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>EventBus Demo App</string>
+   <string>EventBus Demo</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QWidget" name="layoutWidget">
@@ -47,21 +47,21 @@
        <item>
         <widget class="QLineEdit" name="hostLineEdit">
          <property name="text">
-          <string>127.0.0.1</string>
+          <string notr="true">127.0.0.1</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLineEdit" name="portLineEdit">
          <property name="text">
-          <string>8000</string>
+          <string notr="true">8000</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="connectButton">
          <property name="text">
-          <string>connect</string>
+          <string>Connect</string>
          </property>
         </widget>
        </item>

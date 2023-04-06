@@ -14,7 +14,16 @@
    <string>Color Transfer Function</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="1" column="3">
@@ -86,30 +95,30 @@
     </widget>
    </item>
    <item row="7" column="1" colspan="3">
-    <widget class="ctkRangeWidget" name="rangeSlider" native="true"/>
+    <widget class="ctkRangeWidget" name="rangeSlider"/>
    </item>
    <item row="2" column="1">
     <widget class="QLabel" name="maxOpacityLabel">
      <property name="text">
-      <string>1</string>
+      <string notr="true">1</string>
      </property>
     </widget>
    </item>
    <item row="3" column="1" rowspan="3">
-    <widget class="ctkDoubleSlider" name="opacitySlider" native="true">
-     <property name="value" stdset="0">
+    <widget class="ctkDoubleSlider" name="opacitySlider">
+     <property name="value">
       <double>1.000000000000000</double>
      </property>
-     <property name="singleStep" stdset="0">
+     <property name="singleStep">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep" stdset="0">
+     <property name="pageStep">
       <double>0.200000000000000</double>
      </property>
-     <property name="minimum" stdset="0">
+     <property name="minimum">
       <double>0.000001000000000</double>
      </property>
-     <property name="maximum" stdset="0">
+     <property name="maximum">
       <double>1.000000000000000</double>
      </property>
     </widget>
@@ -120,7 +129,7 @@
    <item row="6" column="1">
     <widget class="QLabel" name="minOpacityLabel">
      <property name="text">
-      <string>0</string>
+      <string notr="true">0</string>
      </property>
     </widget>
    </item>

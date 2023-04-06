@@ -46,6 +46,7 @@ struct ctkCmdLineModuleProcessTaskPrivate;
 class CTK_CMDLINEMODULEBACKENDLP_EXPORT ctkCmdLineModuleProcessTask
     : public ctkCmdLineModuleFutureInterface, public QRunnable
 {
+  Q_DECLARE_TR_FUNCTIONS(ctkCmdLineModuleProcessTask)
 
 public:
 
