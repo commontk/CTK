@@ -106,7 +106,7 @@ int ctkCheckablePushButtonEventTranslatorPlayerTest1(int argc, char * argv [])
 
   // Test case 2
   QWidget widget2(0);
-  ctkCheckablePushButton button1(QObject::tr("Button1"));
+  ctkCheckablePushButton button1("Button1");
 
   button1.setCheckable(true);
 
@@ -120,8 +120,8 @@ int ctkCheckablePushButtonEventTranslatorPlayerTest1(int argc, char * argv [])
 
   // Test case 3
   QWidget widget3(0);
-  ctkCheckablePushButton button2(QObject::tr("Button1"));
-  ctkCheckablePushButton button3(QObject::tr("Button2"));
+  ctkCheckablePushButton button2("Button1");
+  ctkCheckablePushButton button3("Button2");
 
   button2.setCheckable(true);
   button3.setCheckable(true);

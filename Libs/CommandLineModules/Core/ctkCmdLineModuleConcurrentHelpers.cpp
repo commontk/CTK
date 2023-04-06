@@ -70,7 +70,7 @@ ctkCmdLineModuleReferenceResult ctkCmdLineModuleConcurrentRegister::operator()(c
   }
   catch (...)
   {
-    QString errorMessage = QObject::tr("Module %1 failed with an unknown exception.").arg(moduleUrl.toString());
+    QString errorMessage = QString("Module %1 failed with an unknown exception.").arg(moduleUrl.toString());
     if (this->Debug)
     {
       qDebug() << errorMessage;

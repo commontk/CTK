@@ -122,24 +122,25 @@ ctkDICOMModelPrivate::~ctkDICOMModelPrivate()
 //------------------------------------------------------------------------------
 void ctkDICOMModelPrivate::init()
 {
+  // Do not translate these strings (later they are used in the database query)
   QMap<int, QVariant> data;
-  data[Qt::DisplayRole] = ctkDICOMModel::tr("Name");
+  data[Qt::DisplayRole] = "Name";
   this->Headers << data;
-  data[Qt::DisplayRole] = ctkDICOMModel::tr("Age");
+  data[Qt::DisplayRole] = "Age";
   this->Headers << data;
-  data[Qt::DisplayRole] = ctkDICOMModel::tr("Scan");
+  data[Qt::DisplayRole] = "Scan";
   this->Headers << data;
-  data[Qt::DisplayRole] = ctkDICOMModel::tr("Date");
+  data[Qt::DisplayRole] = "Date";
   this->Headers << data;
-  data[Qt::DisplayRole] = ctkDICOMModel::tr("Subject ID");
+  data[Qt::DisplayRole] = "Subject ID";
   this->Headers << data;
-  data[Qt::DisplayRole] = ctkDICOMModel::tr("Number");
+  data[Qt::DisplayRole] = "Number";
   this->Headers << data;
-  data[Qt::DisplayRole] = ctkDICOMModel::tr("Institution");
+  data[Qt::DisplayRole] = "Institution";
   this->Headers << data;
-  data[Qt::DisplayRole] = ctkDICOMModel::tr("Referrer");
+  data[Qt::DisplayRole] = "Referrer";
   this->Headers << data;
-  data[Qt::DisplayRole] = ctkDICOMModel::tr("Performer");
+  data[Qt::DisplayRole] = "Performer";
   this->Headers << data;
 }
 

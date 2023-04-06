@@ -7,14 +7,23 @@
     <x>0</x>
     <y>0</y>
     <width>279</width>
-    <height>159</height>
+    <height>296</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Query</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -135,7 +144,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <widget class="ctkModalityWidget" name="ModalityWidget" native="true">
+          <widget class="ctkModalityWidget" name="ModalityWidget">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
              <horstretch>0</horstretch>
@@ -154,15 +163,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkDateRangeWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkDateRangeWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ctkModalityWidget</class>
    <extends>QWidget</extends>
    <header>ctkModalityWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDateRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkDateRangeWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

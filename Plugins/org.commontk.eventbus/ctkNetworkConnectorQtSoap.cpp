@@ -86,11 +86,11 @@ void ctkNetworkConnectorQtSoap::createClient(const QString hostName, const unsig
     /*request.setMethod("algorithmSIBA");
     request.addMethodArgument("input", "", "input.aim");
     request.addMethodArgument("output", "", "output.aim");
-    
+
     request.addMethodArgument("gaussian", "", "0.42");
     request.addMethodArgument("load", "", "8");
     request.addMethodArgument("iteration", "", "40");
-    
+
     qDebug() << request.toXmlString();
 
     // Submit the request the the web service.
@@ -109,20 +109,20 @@ void ctkNetworkConnectorQtSoap::createClient(const QString hostName, const unsig
 
 
     qDebug("retrieve value...");
-    
+
 }
 
 void ctkNetworkConnectorQtSoap::createServer(const unsigned int port) {
     Q_UNUSED(port);
-    qDebug() << tr("QtSoap doesn't support server side implementation.").toUtf8();
+    qDebug() << "QtSoap doesn't support server side implementation.";
 }
 
 void ctkNetworkConnectorQtSoap::stopServer() {
-    qDebug() << tr("QtSoap doesn't support server side implementation.").toUtf8();
+    qDebug() << "QtSoap doesn't support server side implementation.";
 }
 
 void ctkNetworkConnectorQtSoap::startListen() {
-    qDebug() << tr("QtSoap doesn't support server side implementation.").toUtf8();
+    qDebug() << "QtSoap doesn't support server side implementation.";
 }
 
 QtSoapType *ctkNetworkConnectorQtSoap::marshall(const QString name, const QVariant &parameter) {
@@ -264,7 +264,7 @@ void ctkNetworkConnectorQtSoap::processReturnValue( int requestId, QVariant valu
 
 void ctkNetworkConnectorQtSoap::processFault( int requestId, int errorCode, QString errorString ) {
     // Log the error.
-    qDebug("%s", tr("Process Fault for requestID %1 with error %2 - %3").arg(QString::number(requestId), QString::number(errorCode), errorString).toUtf8().data());
+    qDebug("%s", QString("Process Fault for requestID %1 with error %2 - %3").arg(QString::number(requestId), QString::number(errorCode), errorString).toUtf8().data());
     ctkEventBusManager::instance()->notifyEvent("ctk/local/eventBus/remoteCommunicationFailed", ctkEventTypeLocal);
 }
 
@@ -315,4 +315,3 @@ void ctkNetworkConnectorQtSoap::processRequest( int requestId, QString methodNam
     }
     mafDEL(argList);
 }*/
-

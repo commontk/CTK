@@ -240,22 +240,22 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
     QStyle::SP_FileDialogDetailedView, CTK_NULLPTR, optionButton));
 
   QLabel* nanLabel = new QLabel(ctkVTKDiscretizableColorTransferWidget::tr("NaN values"));
-  nanButton = new ctkColorPickerButton;
-  nanButton->setToolTip(ctkVTKDiscretizableColorTransferWidget::tr("NaN color"));
-  nanColorLayout->addWidget(nanButton);
+  this->nanButton = new ctkColorPickerButton;
+  this->nanButton->setToolTip(ctkVTKDiscretizableColorTransferWidget::tr("NaN color"));
+  nanColorLayout->addWidget(this->nanButton);
   nanColorLayout->addWidget(nanLabel);
 
-  discretizeCheckBox = new QCheckBox;
-  discretizeCheckBox->setText(ctkVTKDiscretizableColorTransferWidget::tr("Discretize"));
-  discretizeCheckBox->setToolTip(ctkVTKDiscretizableColorTransferWidget::tr("Discretize color transfer function"));
-  nbOfDiscreteValuesSpinBox = new QSpinBox;
-  nbOfDiscreteValuesSpinBox->setMinimum(1);
-  nbOfDiscreteValuesSpinBox->setMaximum(255);
-  nbOfDiscreteValuesSpinBox->setToolTip(ctkVTKDiscretizableColorTransferWidget::tr("Number of discrete values"));
-  nbOfDiscreteValuesSpinBox->setEnabled(discretizeCheckBox->isChecked());
+  this->discretizeCheckBox = new QCheckBox;
+  this->discretizeCheckBox->setText(ctkVTKDiscretizableColorTransferWidget::tr("Discretize"));
+  this->discretizeCheckBox->setToolTip(ctkVTKDiscretizableColorTransferWidget::tr("Discretize color transfer function"));
+  this->nbOfDiscreteValuesSpinBox = new QSpinBox;
+  this->nbOfDiscreteValuesSpinBox->setMinimum(1);
+  this->nbOfDiscreteValuesSpinBox->setMaximum(255);
+  this->nbOfDiscreteValuesSpinBox->setToolTip(ctkVTKDiscretizableColorTransferWidget::tr("Number of discrete values"));
+  this->nbOfDiscreteValuesSpinBox->setEnabled(this->discretizeCheckBox->isChecked());
 
-  discretizeLayout->addWidget(discretizeCheckBox);
-  discretizeLayout->addWidget(nbOfDiscreteValuesSpinBox);
+  discretizeLayout->addWidget(this->discretizeCheckBox);
+  discretizeLayout->addWidget(this->nbOfDiscreteValuesSpinBox);
 
   QMenu* optionMenu = new QMenu(optionButton);
   QWidgetAction* nanColorAction = new QWidgetAction(optionButton);
@@ -269,17 +269,17 @@ void ctkVTKDiscretizableColorTransferWidgetPrivate::setupUi(QWidget* widget)
   optionButton->setMenu(optionMenu);
   optionButton->setPopupMode(QToolButton::InstantPopup);
 
-  QObject::connect(nanButton, SIGNAL(clicked()), q, SLOT(setNaNColor()));
+  QObject::connect(this->nanButton, SIGNAL(clicked()), q, SLOT(setNaNColor()));
 
-  QObject::connect(discretizeCheckBox, SIGNAL(toggled(bool)),
+  QObject::connect(this->discretizeCheckBox, SIGNAL(toggled(bool)),
     q, SLOT(setDiscretize(bool)));
 
-  QObject::connect(nbOfDiscreteValuesSpinBox, SIGNAL(valueChanged(int)),
+  QObject::connect(this->nbOfDiscreteValuesSpinBox, SIGNAL(valueChanged(int)),
     q, SLOT(setNumberOfDiscreteValues(int)));
 
   ///Enable nbOfValuesSpinBox only if we use discretize
-  QObject::connect(discretizeCheckBox, SIGNAL(toggled(bool)),
-    nbOfDiscreteValuesSpinBox, SLOT(setEnabled(bool)));
+  QObject::connect(this->discretizeCheckBox, SIGNAL(toggled(bool)),
+    this->nbOfDiscreteValuesSpinBox, SLOT(setEnabled(bool)));
 }
 
 //-----------------------------------------------------------------------------

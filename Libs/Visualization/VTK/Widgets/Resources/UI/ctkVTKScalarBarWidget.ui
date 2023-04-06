@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>vtkScalarBarWidget</string>
+   <string>Scalar bar properties</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="margin">

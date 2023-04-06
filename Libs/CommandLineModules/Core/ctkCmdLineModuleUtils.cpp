@@ -42,22 +42,22 @@ QString ctkCmdLineModuleUtils::errorMessagesFromModuleRegistration(
       const ctkCmdLineModuleReferenceResult& moduleRefResult = listIter.next();
       if (!moduleRefResult.m_Reference)
       {
-        errorMsg += (QObject::tr("Failed to register module:\n%1\n\ndue to:\n%2\n\n").arg(moduleRefResult.m_Url.toString()).arg(moduleRefResult.m_RuntimeError));
+        errorMsg += (ctkCmdLineModuleManager::tr("Failed to register module:\n%1\n\ndue to:\n%2\n\n").arg(moduleRefResult.m_Url.toString()).arg(moduleRefResult.m_RuntimeError));
       }
       else if (!moduleRefResult.m_Reference.xmlValidationErrorString().isEmpty() &&
              validationMode == ctkCmdLineModuleManager::STRICT_VALIDATION)
       {
-        errorMsg += (QObject::tr("Failed to register module:\n%1\n\ndue to xml validation error:\n%2\n\n").arg(moduleRefResult.m_Url.toString()).arg(moduleRefResult.m_Reference.xmlValidationErrorString()));
+        errorMsg += (ctkCmdLineModuleManager::tr("Failed to register module:\n%1\n\ndue to xml validation error:\n%2\n\n").arg(moduleRefResult.m_Url.toString()).arg(moduleRefResult.m_Reference.xmlValidationErrorString()));
       }
     }
     // These exceptions should never happen, as at this point we are iterating over a fixed list of results, and not processing exceptions.
     catch (const ctkCmdLineModuleRunException& e)
     {
-      errorMsg += QObject::tr("Failed to register module:\n") + e.location().toString() + "\n\ndue to:\n" + e.message() + "\n\n";
+      errorMsg += (ctkCmdLineModuleManager::tr("Failed to register module:\n%1\n\ndue to:\n%2\n\n").arg(e.location().toString()).arg(e.message()));
     }
     catch (const std::exception& e)
     {
-      errorMsg += QObject::tr("Failed to register module:\n\n\ndue to:\n") + e.what() + "\n\n";
+      errorMsg += (ctkCmdLineModuleManager::tr("Failed to register module:\n\n\ndue to:\n%1\n\n").arg(e.what()));
     }
   }
   return errorMsg;
@@ -93,7 +93,7 @@ void ctkCmdLineModuleUtils::messageBoxForModuleRegistration(
   {
     QWidget* widget = QApplication::activeModalWidget();
     if (widget == NULL) widget = QApplication::activeWindow();
-    QMessageBox::critical(widget, QObject::tr("Failed to register modules"), errorMsg);
+    QMessageBox::critical(widget, ctkCmdLineModuleManager::tr("Failed to register modules"), errorMsg);
   }
 }
 

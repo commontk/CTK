@@ -50,9 +50,9 @@ int main(int argv, char** argc)
     license.open(QIODevice::ReadOnly);
     QString licenseText = license.readAll();
     bool ok;
-    QString organization = QInputDialog::getText(0, qApp->translate("OrganizationInputDialog", "CTK Plugin Generator"),
-                                                 qApp->translate("OrganizationInputDialog", "Enter the name of your organization:"),
-                                                 QLineEdit::Normal, qApp->translate("OrganizationInputDialog", "<your-organization>"), &ok);
+    QString organization = QInputDialog::getText(0, ctkPluginGenerator::tr("CTK Plugin Generator"),
+      ctkPluginGenerator::tr("Enter the name of your organization:"),
+      QLineEdit::Normal, ctkPluginGenerator::tr("<your-organization>"), &ok);
     if (!ok)
     {
       exit(0);

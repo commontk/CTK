@@ -25,7 +25,7 @@
      <item>
       <widget class="QLabel" name="CountDownLabel">
        <property name="text">
-        <string>0 s</string>
+        <string notr="true">0 s</string>
        </property>
       </widget>
      </item>
@@ -45,7 +45,7 @@
      <item>
       <widget class="QLabel" name="ImageFullNameLabel">
        <property name="text">
-        <string>Untitled_0.png</string>
+        <string notr="true">Untitled_0.png</string>
        </property>
       </widget>
      </item>
@@ -107,7 +107,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="ctkPathLineEdit" name="DirectoryPathLineEdit" native="true">
+       <widget class="ctkPathLineEdit" name="DirectoryPathLineEdit">
         <property name="toolTip">
          <string>Select a directory in which screen captures will be saved.</string>
         </property>
@@ -155,11 +155,11 @@
         <property name="toolTip">
          <string>Select an integer scale factor (between 0.5 and 5) for the image file, e.g. a value of &quot;2&quot; will save an image twice the size.</string>
         </property>
-        <property name="decimalsOption">
-         <enum>ctkDoubleSpinBox::FixedDecimals</enum>
-        </property>
         <property name="decimals">
          <number>1</number>
+        </property>
+        <property name="decimalsOption">
+         <set>ctkDoubleSpinBox::FixedDecimals</set>
         </property>
         <property name="minimum">
          <double>0.500000000000000</double>
@@ -284,14 +284,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkPathLineEdit</class>
-   <extends>QWidget</extends>
-   <header>ctkPathLineEdit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkDoubleSpinBox</class>
    <extends>QWidget</extends>
    <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPathLineEdit</class>
+   <extends>QWidget</extends>
+   <header>ctkPathLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

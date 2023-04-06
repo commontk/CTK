@@ -41,12 +41,12 @@ int ctkCollapsibleButtonTest1(int argc, char * argv [] )
   ctkCollapsibleButton collapsibleButton;
   collapsibleButton.setText("top button");
   QDoubleSpinBox *spinBox = new QDoubleSpinBox;
-  QPushButton * button= new QPushButton(QObject::tr("Button"));
-  ctkCollapsibleButton *collapsibleButton2 = new ctkCollapsibleButton(QObject::tr("Nested Collapsible Button"));
-  ctkCollapsibleButton *collapsibleButton3 = new ctkCollapsibleButton(QObject::tr("CollapsibleButton"));
+  QPushButton * button= new QPushButton("Button");
+  ctkCollapsibleButton *collapsibleButton2 = new ctkCollapsibleButton("Nested Collapsible Button");
+  ctkCollapsibleButton *collapsibleButton3 = new ctkCollapsibleButton("CollapsibleButton");
   // ctkCollapsibleButton::icon is not activated
   collapsibleButton3->setIcon(collapsibleButton3->style()->standardIcon(QStyle::SP_FileDialogDetailedView));
-  QPushButton * button2 = new QPushButton(QObject::tr("Nested PushButton"));
+  QPushButton * button2 = new QPushButton("Nested PushButton");
 
   QVBoxLayout *nestedBox = new QVBoxLayout;
   nestedBox->addWidget(button2);
@@ -89,9 +89,9 @@ int ctkCollapsibleButtonTest1(int argc, char * argv [] )
     std::cerr<< "ctkCollapsibleButton::setChecked failed." << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   collapsibleButton2->setCollapsedHeight(40);
-  
+
   if (collapsibleButton2->collapsedHeight() != 40)
     {
     std::cerr << "ctkCollapsibleButton::setCollapsedHeight failed."
