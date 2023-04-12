@@ -34,6 +34,7 @@ class ctkModalityWidgetPrivate;
 class CTK_WIDGETS_EXPORT ctkModalityWidget : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QStringList modalities READ modalities)
   Q_PROPERTY(QStringList selectedModalities READ selectedModalities WRITE setSelectedModalities)
   Q_PROPERTY(QStringList visibleModalities READ visibleModalities WRITE setVisibleModalities)
 public:
@@ -64,21 +65,22 @@ public:
 
   /// Select a modality (visible or not). Does nothing if \a modality doesn't
   /// exist.
-  void selectModality(const QString& modality, bool select = true);
+  Q_INVOKABLE void selectModality(const QString& modality, bool select = true);
+  Q_INVOKABLE bool isModalitySelected(const QString& modality);
   /// Select a modality. Does nothing if \a modality doesn't exist.
-  void showModality(const QString& modality, bool show = true);
+  Q_INVOKABLE void showModality(const QString& modality, bool show = true);
   
   /// Show all the modalities
-  void showAll();
+  Q_INVOKABLE void showAll();
 
   /// Hide all the modalities
-  void hideAll();
+  Q_INVOKABLE void hideAll();
 
   /// Return true if all the modalities (visible or not) are selected.
-  bool areAllModalitiesSelected() const;
+  Q_INVOKABLE bool areAllModalitiesSelected() const;
 
   /// Return true if all the modalities (checked or not) are visible.
-  bool areAllModalitiesVisible() const;
+  Q_INVOKABLE bool areAllModalitiesVisible() const;
 
   /// Return a list of all the modalities: visible or not, selected or not.
   /// Please note the order of the modalities might be different than in
