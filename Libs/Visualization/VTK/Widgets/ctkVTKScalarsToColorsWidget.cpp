@@ -31,6 +31,7 @@
 
 // VTK includes
 #include <vtkAxis.h>
+#include <vtkChart.h>
 #include <vtkChartXY.h>
 #include <vtkColorTransferControlPointsItem.h>
 #include <vtkColorTransferFunction.h>
@@ -333,14 +334,15 @@ void ctkVTKScalarsToColorsWidget::setCurrentControlPointsItem(vtkControlPointsIt
     }
   this->qvtkReconnect(d->CurrentControlPointsItem, item, vtkCommand::ModifiedEvent,
                       this, SLOT(updateCurrentPoint()));
+  vtkChart* chart = d->View->abstractChart();
   this->qvtkReconnect(d->CurrentControlPointsItem ?
-                      d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(0),
-                      item ? item->GetXAxis() : d->View->chart()->GetAxis(0),
+                      d->CurrentControlPointsItem->GetXAxis() : chart->GetAxis(0),
+                      item ? item->GetXAxis() : chart->GetAxis(0),
                       vtkCommand::ModifiedEvent,
                       this, SLOT(onAxesModified()));
   this->qvtkReconnect(d->CurrentControlPointsItem ?
-                      d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(1),
-                      item ? item->GetYAxis() : d->View->chart()->GetAxis(1),
+                      d->CurrentControlPointsItem->GetYAxis() : chart->GetAxis(1),
+                      item ? item->GetYAxis() : chart->GetAxis(1),
                       vtkCommand::ModifiedEvent,
                       this, SLOT(onAxesModified()));
   d->CurrentControlPointsItem = item;
@@ -420,7 +422,7 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
   d->CurrentControlPointsItem->GetControlPoint(pointId, point);
 
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
+    d->CurrentControlPointsItem->GetXAxis() : d->View->abstractChart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
   if (xAxis && (xAxis->GetMinimumLimit() > point[0] || xAxis->GetMaximumLimit() < point[0]))
     {
@@ -544,7 +546,7 @@ void ctkVTKScalarsToColorsWidget::xRange(double* range)const
 {
   Q_D(const ctkVTKScalarsToColorsWidget);
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
+    d->CurrentControlPointsItem->GetXAxis() : d->View->abstractChart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
   range[0] = xAxis->GetMinimum();
   range[1] = xAxis->GetMaximum();
@@ -555,7 +557,7 @@ void ctkVTKScalarsToColorsWidget::setXRange(double min, double max)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
+    d->CurrentControlPointsItem->GetXAxis() : d->View->abstractChart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
   if (xAxis->GetMinimum() != min || xAxis->GetMaximum() != max)
     {
@@ -570,7 +572,7 @@ void ctkVTKScalarsToColorsWidget::yRange(double* range)const
 {
   Q_D(const ctkVTKScalarsToColorsWidget);
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
+    d->CurrentControlPointsItem->GetYAxis() : d->View->abstractChart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
   range[0] = yAxis->GetMinimum();
   range[1] = yAxis->GetMaximum();
@@ -581,7 +583,7 @@ void ctkVTKScalarsToColorsWidget::setYRange(double min, double max)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
+    d->CurrentControlPointsItem->GetYAxis() : d->View->abstractChart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
   if (yAxis->GetMinimum() != min || yAxis->GetMaximum() != max)
     {
@@ -596,14 +598,14 @@ void ctkVTKScalarsToColorsWidget::resetRange()
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
+    d->CurrentControlPointsItem->GetXAxis() : d->View->abstractChart()->GetAxis(vtkAxis::BOTTOM);
   if (xAxis)
     {
     this->setXRange(xAxis->GetMinimumLimit(), xAxis->GetMaximumLimit());
     }
 
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
+    d->CurrentControlPointsItem->GetYAxis() : d->View->abstractChart()->GetAxis(vtkAxis::LEFT);
   if (yAxis)
     {
     this->setYRange(yAxis->GetMinimumLimit(), yAxis->GetMaximumLimit());
@@ -615,7 +617,7 @@ void ctkVTKScalarsToColorsWidget::onAxesModified()
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
+    d->CurrentControlPointsItem->GetXAxis() : d->View->abstractChart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
 
   bool wasBlocking = d->XRangeSlider->blockSignals(true);
@@ -627,7 +629,7 @@ void ctkVTKScalarsToColorsWidget::onAxesModified()
   d->XRangeSlider->blockSignals(wasBlocking);
 
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
-    d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
+    d->CurrentControlPointsItem->GetYAxis() : d->View->abstractChart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
 
   wasBlocking = d->YRangeSlider->blockSignals(true);
