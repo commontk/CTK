@@ -29,6 +29,7 @@
 // VTK includes
 #include <vtkAxis.h>
 #include <vtkChart.h>
+#include <vtkChartParallelCoordinates.h>
 #include <vtkChartXY.h>
 #include <vtkContext2D.h>
 #include <vtkContextMouseEvent.h>
@@ -91,6 +92,9 @@ void ctkVTKChartViewPrivate::setChartType(int type)
     case ctkVTKChartView::ChartType::XYChart:
       this->Chart = vtkSmartPointer<vtkChartXY>::New();
       break;
+    case ctkVTKChartView::ChartType::ParallelCoordinatesChart:
+      this->Chart = vtkSmartPointer<vtkChartParallelCoordinates>::New();
+      break;
     case ctkVTKChartView::ChartType::UnknownChart:
 #if (QT_VERSION >= QT_VERSION_CHECK(5,8,0))
       Q_FALLTHROUGH();
@@ -119,6 +123,10 @@ int ctkVTKChartView::chartType()const
   if (d->Chart->IsA("vtkChartXY"))
     {
     return ctkVTKChartView::ChartType::XYChart;
+    }
+  else if (d->Chart->IsA("vtkChartParallelCoordinates"))
+    {
+    return ctkVTKChartView::ChartType::ParallelCoordinatesChart;
     }
   else
     {
@@ -305,6 +313,13 @@ vtkChart* ctkVTKChartView::abstractChart()const
 {
   Q_D(const ctkVTKChartView);
   return d->Chart;
+}
+
+// ----------------------------------------------------------------------------
+vtkChartParallelCoordinates* ctkVTKChartView::parallelCoordinatesChart()const
+{
+  Q_D(const ctkVTKChartView);
+  return vtkChartParallelCoordinates::SafeDownCast(d->Chart);
 }
 
 // ----------------------------------------------------------------------------

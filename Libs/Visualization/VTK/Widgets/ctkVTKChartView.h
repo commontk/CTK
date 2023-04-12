@@ -29,6 +29,7 @@ class ctkVTKChartViewPrivate;
 
 // VTK includes
 class vtkChart;
+class vtkChartParallelCoordinates;
 class vtkChartXY;
 class vtkContextScene;
 class vtkPlot;
@@ -60,6 +61,7 @@ public:
   /// Utility function that returns the view chart. It can be used for customizing
   /// the chart display options (axes, legend...)
   Q_INVOKABLE vtkChart* abstractChart()const;
+  Q_INVOKABLE vtkChartParallelCoordinates* parallelCoordinatesChart()const;
   Q_INVOKABLE vtkChartXY* chartXY()const;
   /// \deprecated Use chartXY() instead
   Q_INVOKABLE vtkChartXY* chart()const;
@@ -70,6 +72,7 @@ public:
     {
     UnknownChart,
     XYChart,
+    ParallelCoordinatesChart,
     };
   Q_ENUM(ChartType)
 
