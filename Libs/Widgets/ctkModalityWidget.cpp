@@ -33,7 +33,10 @@
 
 static ctkLogger logger("org.commontk.libs.widgets.ctkModalityWidget");
 
-QStringList sDefaultVisibleModalities;
+namespace
+{
+  QStringList sDefaultVisibleModalities;
+}
 
 //-----------------------------------------------------------------------------
 class ctkModalityWidgetPrivate: public Ui_ctkModalityWidget
@@ -46,9 +49,10 @@ public:
   ctkModalityWidgetPrivate(ctkModalityWidget& object);
   void init();
   void updateAnyCheckBoxState();
-  
-  QStringList SelectedModalities;
-  QStringList VisibleModalities;
+
+  // Determine modality name from checkbox object name by removing "CheckBox" suffix
+  QString modalityFromCheckBox(QCheckBox* modalityBox);
+
   QMap<QString, QCheckBox*> Modalities;
 };
 
@@ -63,23 +67,44 @@ ctkModalityWidgetPrivate::ctkModalityWidgetPrivate(ctkModalityWidget& object)
 }
 
 // --------------------------------------------------------------------------
+QString ctkModalityWidgetPrivate::modalityFromCheckBox(QCheckBox* modalityBox)
+{
+  const QString modalityCheckboxSuffix = "CheckBox";
+  QString modalityName = modalityBox->objectName();  // example: RTImageCheckBox
+  if (!modalityName.endsWith(modalityCheckboxSuffix))
+    {
+    return QString();
+    }
+  // Remove suffix
+  modalityName.chop(modalityCheckboxSuffix.size());
+  return modalityName;
+}
+
+// --------------------------------------------------------------------------
 void ctkModalityWidgetPrivate::init()
 {
   Q_Q(ctkModalityWidget);
   this->setupUi(q);
-  
+
   this->AnyCheckBox->setTristate(true);
   QObject::connect(this->AnyCheckBox, SIGNAL(stateChanged(int)),
                    q, SLOT(onAnyChanged(int)));
 
-  foreach(QCheckBox* box, q->findChildren<QCheckBox*>())
+  foreach(QCheckBox* modalityBox, q->findChildren<QCheckBox*>())
     {
-    if (box == this->AnyCheckBox)
+    if (modalityBox == this->AnyCheckBox)
       {
       continue;
       }
-    this->Modalities[box->text()] = box;
-    QObject::connect(box, SIGNAL(toggled(bool)),
+    QString modalityName = this->modalityFromCheckBox(modalityBox);
+    if (modalityName.isEmpty())
+      {
+      qWarning() << Q_FUNC_INFO << "failed to add checkbox: checkbox name" << modalityBox->objectName() << "is invalid and will be disabled";
+      modalityBox->hide();
+      continue;
+      }
+    this->Modalities[modalityName] = modalityBox;
+    QObject::connect(modalityBox, SIGNAL(toggled(bool)),
                      q, SLOT(onModalityChecked(bool)));
     }
 
@@ -95,7 +120,7 @@ void ctkModalityWidgetPrivate::init()
     }
   delete layout;
   q->setLayout(flowLayout);
-  
+
   q->setVisibleModalities(sDefaultVisibleModalities);
   QSize sizeHint = flowLayout->sizeHint();
   double area = sizeHint.width() * sizeHint.height();
@@ -109,18 +134,63 @@ void ctkModalityWidgetPrivate::init()
 void ctkModalityWidgetPrivate::updateAnyCheckBoxState()
 {
   Q_Q(ctkModalityWidget);
-  if (this->SelectedModalities.isEmpty())
+#if QT_VERSION >= QT_VERSION_CHECK(5,3,0)
+  QSignalBlocker blocker(this->AnyCheckBox);
+#endif
+
+
+  // None selected?
+  bool foundSelectedModality = false;
+  foreach(const QString & modality, this->Modalities.keys())
     {
+    if (this->Modalities[modality]->isChecked())
+      {
+      foundSelectedModality = true;
+      break;
+      }
+    }
+  if (!foundSelectedModality)
+    {
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+    bool wasBlocked = this->AnyCheckBox->blockSignals(true);
+#endif
     this->AnyCheckBox->setCheckState(Qt::Unchecked);
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+    this->AnyCheckBox->blockSignals(wasBlocked);
+#endif
+    return;
     }
-  else if (q->areAllModalitiesSelected())
+
+  // All selected?
+  bool allModalitiesSelected = true;
+  foreach(const QString & modality, this->Modalities.keys())
     {
+    if (!this->Modalities[modality]->isChecked())
+      {
+      allModalitiesSelected = false;
+      break;
+      }
+    }
+  if (allModalitiesSelected)
+    {
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+    bool wasBlocked = this->AnyCheckBox->blockSignals(true);
+#endif
     this->AnyCheckBox->setCheckState(Qt::Checked);
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+    this->AnyCheckBox->blockSignals(wasBlocked);
+#endif
+    return;
     }
-  else
-    {
-    this->AnyCheckBox->setCheckState(Qt::PartiallyChecked);
-    }
+
+  // Some selected
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+  bool wasBlocked = this->AnyCheckBox->blockSignals(true);
+#endif
+  this->AnyCheckBox->setCheckState(Qt::PartiallyChecked);
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+  this->AnyCheckBox->blockSignals(wasBlocked);
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -141,44 +211,78 @@ ctkModalityWidget::~ctkModalityWidget()
 QStringList ctkModalityWidget::selectedModalities()const
 {
   Q_D(const ctkModalityWidget);
-  return d->SelectedModalities;
+  QStringList modalities;
+  foreach(const QString & modality, d->Modalities.keys())
+    {
+    QCheckBox* modalityBox = d->Modalities[modality];
+    if (modalityBox->isChecked())
+      {
+      modalities << modality;
+      }
+    }
+  return modalities;
 }
 
 // --------------------------------------------------------------------------
-void ctkModalityWidget::setSelectedModalities(const QStringList& modalities)
+void ctkModalityWidget::setSelectedModalities(const QStringList& selectedModalities)
 {
-  if (modalities == this->selectedModalities())
+  Q_D(ctkModalityWidget);
+  bool modified = false;
+  foreach(const QString & modality, d->Modalities.keys())
     {
-    return;
+    QCheckBox* modalityBox = d->Modalities[modality];
+    bool selected = selectedModalities.contains(modality);
+    if (modalityBox->isChecked() != selected)
+      {
+#if QT_VERSION >= QT_VERSION_CHECK(5,3,0)
+      QSignalBlocker blocker(modalityBox);
+#else
+      bool wasBlocked = modalityBox->blockSignals(true);
+#endif
+      modalityBox->setChecked(selected);
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+      modalityBox->blockSignals(wasBlocked);
+#endif
+      modified = true;
+      }
     }
-  bool blocked = this->blockSignals(true);
-  this->unselectAll();
-  foreach(QString modality, modalities)
+  if (modified)
     {
-    this->selectModality(modality);
+    d->updateAnyCheckBoxState();
+    emit this->selectedModalitiesChanged(this->selectedModalities());
     }
-  this->blockSignals(blocked);
-  emit this->selectedModalitiesChanged(modalities);
 }
 
 // --------------------------------------------------------------------------
 QStringList ctkModalityWidget::visibleModalities()const
 {
   Q_D(const ctkModalityWidget);
-  return d->VisibleModalities;
+  QStringList modalities;
+  foreach(const QString & modality, d->Modalities.keys())
+    {
+    QCheckBox* modalityBox = d->Modalities[modality];
+    // isHidden() means explicitly hidden (not the same as !isVisible())
+    if (!modalityBox->isHidden())
+      {
+      modalities << modality;
+      }
+    }
+  return modalities;
 }
 
 // --------------------------------------------------------------------------
-void ctkModalityWidget::setVisibleModalities(const QStringList& modalities)
+void ctkModalityWidget::setVisibleModalities(const QStringList& visibleModalities)
 {
-  if (modalities == this->visibleModalities())
+  Q_D(ctkModalityWidget);
+  foreach(const QString & modality, d->Modalities.keys())
     {
-    return;
-    }
-  this->hideAll();
-  foreach(QString modality, modalities)
-    {
-    this->showModality(modality);
+    QCheckBox* modalityBox = d->Modalities[modality];
+    bool visible = visibleModalities.contains(modality);
+    // isHidden() means explicitly hidden (not the same as !isVisible())
+    if (modalityBox->isHidden() == visible)
+      {
+      modalityBox->setVisible(visible);
+      }
     }
 }
 
@@ -186,15 +290,43 @@ void ctkModalityWidget::setVisibleModalities(const QStringList& modalities)
 void ctkModalityWidget::selectModality(const QString& modality, bool select)
 {
   Q_D(ctkModalityWidget);
+  if (!d->Modalities.contains(modality))
+    {
+    qCritical() << Q_FUNC_INFO << "failed: unknown modality:" << modality;
+    return;
+    }
   QCheckBox* modalityBox = d->Modalities[modality];
+  if (select == modalityBox->isChecked())
+    {
+    return;
+    }
+#if QT_VERSION >= QT_VERSION_CHECK(5,3,0)
+  QSignalBlocker blocker(modalityBox);
+#else
+  bool wasBlocked = modalityBox->blockSignals(true);
+#endif
   modalityBox->setChecked(select);
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+  modalityBox->blockSignals(wasBlocked);
+#endif
+  d->updateAnyCheckBoxState();
+  emit this->selectedModalitiesChanged(this->selectedModalities());
 }
 
 // --------------------------------------------------------------------------
 void ctkModalityWidget::showModality(const QString& modality, bool show)
 {
   Q_D(ctkModalityWidget);
+  if (!d->Modalities.contains(modality))
+    {
+    qCritical() << Q_FUNC_INFO << "failed: unknown modality:" << modality;
+    return;
+    }
   QCheckBox* modalityBox = d->Modalities[modality];
+  if (show == this->isModalitySelected(modality))
+    {
+    return;
+    }
   modalityBox->setVisible(show);
 }
 
@@ -202,34 +334,58 @@ void ctkModalityWidget::showModality(const QString& modality, bool show)
 void ctkModalityWidget::selectAll()
 {
   Q_D(ctkModalityWidget);
-  if (this->areAllModalitiesSelected())
+  bool modified = false;
+  foreach(const QString & modality, d->Modalities.keys())
     {
-    return;
+    QCheckBox* modalityBox = d->Modalities[modality];
+    if (!modalityBox->isChecked())
+      {
+#if QT_VERSION >= QT_VERSION_CHECK(5,3,0)
+      QSignalBlocker blocker(modalityBox);
+#else
+      bool wasBlocked = modalityBox->blockSignals(true);
+#endif
+      modalityBox->setChecked(true);
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+      modalityBox->blockSignals(wasBlocked);
+#endif
+      modified = true;
+      }
     }
-  bool blocked = this->blockSignals(true);
-  foreach(const QString& modality, d->Modalities.keys())
+  if (modified)
     {
-    this->selectModality(modality, true);
+    d->updateAnyCheckBoxState();
+    emit this->selectedModalitiesChanged(d->Modalities.keys());
     }
-  this->blockSignals(blocked);
-  emit this->selectedModalitiesChanged(d->SelectedModalities);
 }
 
 // --------------------------------------------------------------------------
 void ctkModalityWidget::unselectAll()
 {
   Q_D(ctkModalityWidget);
-  if (d->SelectedModalities.count() == 0)
+  bool modified = false;
+  foreach(const QString & modality, d->Modalities.keys())
     {
-    return;
+    QCheckBox* modalityBox = d->Modalities[modality];
+    if (modalityBox->isChecked())
+      {
+#if QT_VERSION >= QT_VERSION_CHECK(5,3,0)
+      QSignalBlocker blocker(modalityBox);
+#else
+      bool wasBlocked = modalityBox->blockSignals(true);
+#endif
+      modalityBox->setChecked(false);
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+      modalityBox->blockSignals(wasBlocked);
+#endif
+      modified = true;
+      }
     }
-  bool blocked = this->blockSignals(true);
-  foreach(const QString& modality, d->Modalities.keys())
+  if (modified)
     {
-    this->selectModality(modality, false);
+    d->updateAnyCheckBoxState();
+    emit this->selectedModalitiesChanged(QStringList());
     }
-  this->blockSignals(blocked);
-  emit this->selectedModalitiesChanged(d->SelectedModalities);
 }
 
 // --------------------------------------------------------------------------
@@ -238,7 +394,8 @@ void ctkModalityWidget::showAll()
   Q_D(ctkModalityWidget);
   foreach(const QString& modality, d->Modalities.keys())
     {
-    this->showModality(modality, true);
+    QCheckBox* modalityBox = d->Modalities[modality];
+    modalityBox->setVisible(true);
     }
 }
 
@@ -248,7 +405,8 @@ void ctkModalityWidget::hideAll()
   Q_D(ctkModalityWidget);
   foreach(const QString& modality, d->Modalities.keys())
     {
-    this->showModality(modality, false);
+    QCheckBox* modalityBox = d->Modalities[modality];
+    modalityBox->setVisible(false);
     }
 }
 
@@ -256,14 +414,31 @@ void ctkModalityWidget::hideAll()
 bool ctkModalityWidget::areAllModalitiesSelected()const
 {
   Q_D(const ctkModalityWidget);
-  return d->SelectedModalities.count() == d->Modalities.count();
+  foreach(const QString & modality, d->Modalities.keys())
+    {
+    QCheckBox* modalityBox = d->Modalities[modality];
+    if (!modalityBox->isChecked())
+      {
+      return false;
+      }
+    }
+  return true;
 }
 
 // --------------------------------------------------------------------------
 bool ctkModalityWidget::areAllModalitiesVisible()const
 {
   Q_D(const ctkModalityWidget);
-  return d->VisibleModalities.count() == d->Modalities.count();
+  foreach(const QString & modality, d->Modalities.keys())
+    {
+    QCheckBox* modalityBox = d->Modalities[modality];
+    // isHidden() means explicitly hidden (not the same as !isVisible())
+    if (modalityBox->isHidden())
+      {
+      return false;
+      }
+    }
+  return true;
 }
 
 // --------------------------------------------------------------------------
@@ -276,11 +451,12 @@ QStringList ctkModalityWidget::modalities()const
 // --------------------------------------------------------------------------
 void ctkModalityWidget::onAnyChanged(int state)
 {
+  Q_D(ctkModalityWidget);
   if (state == Qt::Unchecked)
     {
     this->unselectAll();
     }
-  else if (state == Qt::Checked)
+  else // checked or tri-state
     {
     this->selectAll();
     }
@@ -290,16 +466,21 @@ void ctkModalityWidget::onAnyChanged(int state)
 void ctkModalityWidget::onModalityChecked(bool checked)
 {
   Q_D(ctkModalityWidget);
-  QCheckBox* box = qobject_cast<QCheckBox*>(this->sender());
-  QString modality = box->text();
-  if (checked)
+  QCheckBox* modalityBox = qobject_cast<QCheckBox*>(this->sender());
+  QString modality = d->modalityFromCheckBox(modalityBox);
+  d->updateAnyCheckBoxState();
+  emit this->selectedModalitiesChanged(this->selectedModalities());
+}
+
+// --------------------------------------------------------------------------
+bool ctkModalityWidget::isModalitySelected(const QString& modality)
+{
+  Q_D(ctkModalityWidget);
+  if (!d->Modalities.contains(modality))
     {
-    d->SelectedModalities.append(modality);
+    qCritical() << Q_FUNC_INFO << "failed: unknown modality:" << modality;
+    return false;
     }
-  else
-    {
-    d->SelectedModalities.removeAll(modality);
-    }
-  d->updateAnyCheckBoxState();    
-  emit this->selectedModalitiesChanged(d->SelectedModalities);
+  QCheckBox* modalityBox = d->Modalities[modality];
+  return modalityBox->isChecked();
 }
