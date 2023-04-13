@@ -363,7 +363,7 @@ void ctkDICOMItemView::mouseMoveEvent(QMouseEvent* event){
             emit requestPreviousImage();
             d->OldMousePos = event->pos();
         }
-    }else if(event->buttons() == Qt::MidButton){
+    }else if(event->buttons() == Qt::MiddleButton){
         event->accept();
         QPoint nowPos = event->pos();
 

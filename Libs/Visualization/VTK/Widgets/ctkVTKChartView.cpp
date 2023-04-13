@@ -426,7 +426,7 @@ void ctkVTKChartView::chartBoundsToPlotBounds(double bounds[8], double plotBound
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::mouseDoubleClickEvent(QMouseEvent* event)
 {
-  if (event->button() == Qt::MidButton)
+  if (event->button() == Qt::MiddleButton)
     {
     this->setAxesToChartBounds();
     }
