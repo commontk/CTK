@@ -85,7 +85,7 @@ QRect ctkPushButtonPrivate::iconRect()const
     QString text = opt.text;
     if (this->ElideMode != Qt::ElideNone)
       {
-      text = opt.fontMetrics.elidedText(text, this->ElideMode, opt.rect.width() /*  - 2 * buttonMargin */ - iconSize.width() - iconSpacing - buttonMargin);
+      text = opt.fontMetrics.elidedText(text, this->ElideMode, buttonWidth /*  - 2 * buttonMargin */ - iconSize.width() - iconSpacing - buttonMargin);
       }
     int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, text).width();
 
@@ -93,7 +93,7 @@ QRect ctkPushButtonPrivate::iconRect()const
       {
       w += textWidth + iconSpacing;
       }
-    rect = QRect(opt.rect.x() + opt.rect.width() /2 - w / 2,
+    rect = QRect(opt.rect.x() + buttonWidth / 2 - w / 2,
                  (buttonHeight - iconSize.height()) / 2,
                  iconSize.width(), iconSize.height());
     if (this->ButtonTextAlignment & Qt::AlignLeft)

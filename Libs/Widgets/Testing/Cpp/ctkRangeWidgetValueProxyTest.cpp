@@ -68,6 +68,11 @@ public:
     ctkTest::COMPARE(this->MinSpyData[0], min);
     QCOMPARE(this->MaxSpyData.size(), 1);
     ctkTest::COMPARE(this->MaxSpyData[0], max);
+
+    // The following line is required to quiet "-Wunused-function" warnings
+    // related to the "getSpyReport()" function. This function is useful for
+    // debugging and is commented out.
+    Q_UNUSED(::getSpyReport);
     }
 
   QList<double> MinSpyData;

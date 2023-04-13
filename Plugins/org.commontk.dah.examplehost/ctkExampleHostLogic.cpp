@@ -71,6 +71,7 @@ void ctkExampleHostLogic::sendData(ctkDicomAppHosting::AvailableData& data, bool
     if(this->Host->getApplicationState() == ctkDicomAppHosting::IDLE)
     {
       bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
+    qDebug() << "  setState(INPROGRESS) returned: " << reply;
     }
     if(this->Host->getApplicationState() == ctkDicomAppHosting::INPROGRESS)
     {

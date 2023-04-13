@@ -281,5 +281,6 @@ QList<ctkXnatObject*> ctkXnatSubject::fetchSubjectVariablesData()
 //----------------------------------------------------------------------------
 void ctkXnatSubject::downloadImpl(const QString& filename)
 {
+  Q_UNUSED(filename);
   qDebug() << "ctkXnatSubject::downloadImpl(const QString& filename) not yet implemented or not available by REST API";
 }

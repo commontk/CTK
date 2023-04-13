@@ -357,6 +357,7 @@ void ctkEventDispatcherLocalTest::notifyEventWitReturnValueTest() {
     ctkBusEvent *propCallback10 = new ctkBusEvent(topic10, ctkEventTypeLocal, ctkSignatureTypeCallback, m_ObjTest, "setObjectValue10WithReturnValue(int,int,int,int,int,int,int,int,int,int)");
     result = m_EventDispatcherLocal->addObserver(*propCallback10);
 
+    QVERIFY(result);
 
     ctkEventArgumentsList argList;
     int returnValue = -1;

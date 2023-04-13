@@ -465,6 +465,7 @@ void ctkModalityWidget::onAnyChanged(int state)
 // --------------------------------------------------------------------------
 void ctkModalityWidget::onModalityChecked(bool checked)
 {
+  Q_UNUSED(checked);
   Q_D(ctkModalityWidget);
   QCheckBox* modalityBox = qobject_cast<QCheckBox*>(this->sender());
   QString modality = d->modalityFromCheckBox(modalityBox);

@@ -201,9 +201,11 @@ bool ctkDicomObjectLocatorCache::remove(const QString& objectUuid)
 
       bool removed = d->TemporaryObjectLocatorSet.remove(objectUuid);
       Q_ASSERT(removed);
+      Q_UNUSED(removed);
       }
     int removed = d->ObjectLocatorMap.remove(objectUuid);
     Q_ASSERT(removed == 1);
+    Q_UNUSED(removed);
     }
   return true;
 }

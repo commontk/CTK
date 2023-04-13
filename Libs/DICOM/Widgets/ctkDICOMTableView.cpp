@@ -153,6 +153,8 @@ ctkDICOMTableViewPrivate::~ctkDICOMTableViewPrivate()
 //------------------------------------------------------------------------------
 void ctkDICOMTableViewPrivate::init()
 {
+  Q_UNUSED(DisplayedColumnNames);
+
   Q_Q(ctkDICOMTableView);
   this->setupUi(q);
 

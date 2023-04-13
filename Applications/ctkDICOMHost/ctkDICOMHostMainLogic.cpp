@@ -89,6 +89,7 @@ void ctkDICOMHostMainLogic::sendDataToHostedApp()
     if(this->Host->getApplicationState() == ctkDicomAppHosting::IDLE)
     {
       bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
+      qDebug() << "  setState(INPROGRESS) returned: " << reply;
     }
     if(this->Host->getApplicationState() == ctkDicomAppHosting::INPROGRESS)
     {
@@ -112,6 +113,7 @@ void ctkDICOMHostMainLogic::onAppReady()
 
 void ctkDICOMHostMainLogic::onTreeSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
+    Q_UNUSED(deselected);
     ValidSelection=false;
 
     if(selected.indexes().count() > 0)
