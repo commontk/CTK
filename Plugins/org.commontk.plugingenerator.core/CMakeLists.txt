@@ -9,7 +9,7 @@ set(PLUGIN_SRCS
   ctkPluginGeneratorCorePlugin.cpp
   ctkPluginGeneratorCMakeLists.cpp
   ctkPluginGeneratorCodeModel.cpp
-  ctkPluginGeneratorCppPluginActivator
+  ctkPluginGeneratorCppPluginActivator.cpp
   ctkPluginGeneratorCppTemplate.cpp
   ctkPluginGeneratorHeaderTemplate.cpp
   ctkPluginGeneratorTargetLibraries.cpp
