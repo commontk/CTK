@@ -33,8 +33,8 @@
 
 //----------------------------------------------------------------------------
 ctkExampleHostControlWidget::ctkExampleHostControlWidget(ctkExampleDicomHost * host, QWidget *parent) :
-    Host(host),
     QWidget(parent),
+    Host(host),
     ValidAppFileName(false),
     ui(new Ui::ctkExampleHostControlWidget)    
 {
