@@ -24,7 +24,7 @@ endif()
 
 if(NOT DEFINED QtSOAP_DIR)
 
-  set(revision_tag 914c72959412bfcbaaf0ea9836b0f34258145600)
+  set(revision_tag 9c321151f19c87504eb55d53802eaf42e11bb989)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
