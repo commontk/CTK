@@ -22,6 +22,9 @@
 #ifndef __ctkDICOMThumbnailGenerator_h
 #define __ctkDICOMThumbnailGenerator_h
 
+// Qt includes
+class QImage;
+
 // CTK includes
 #include "ctkDICOMWidgetsExport.h"
 #include "ctkDICOMAbstractThumbnailGenerator.h"

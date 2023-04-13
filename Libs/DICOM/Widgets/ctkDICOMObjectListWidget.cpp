@@ -103,7 +103,7 @@ public:
   ctkDICOMObjectModel* dicomObjectModel;
   qRecursiveTreeProxyFilter* filterModel;
   QString filterExpression;
-  bool thumbnailVisible{true};
+  bool thumbnailVisible;
 };
 
 //----------------------------------------------------------------------------
@@ -111,6 +111,7 @@ public:
 
 //----------------------------------------------------------------------------
 ctkDICOMObjectListWidgetPrivate::ctkDICOMObjectListWidgetPrivate()
+  : thumbnailVisible(true)
 {
 #ifdef WIN32
   this->endOfLine = "\r\n";
@@ -437,7 +438,11 @@ void ctkDICOMObjectListWidget::setThumbnailVisible(bool visible)
     }
   d->thumbnailVisible = visible;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,3,0)
   QSignalBlocker blocker(d->showThumbnailButton);
+#else
+  bool wasBlocked = d->showThumbnailButton->blockSignals(true);
+#endif
   d->showThumbnailButton->setChecked(visible);
 
   d->thumbnailLabel->setVisible(visible);
@@ -446,6 +451,9 @@ void ctkDICOMObjectListWidget::setThumbnailVisible(bool visible)
     // Previously the thumbnail was not visible, so it was not updated. Update it now.
     this->updateWidget();
     }
+#if QT_VERSION < QT_VERSION_CHECK(5,3,0)
+  d->showThumbnailButton->blockSignals(wasBlocked);
+#endif
 }
 
 //------------------------------------------------------------------------------
