@@ -12,6 +12,9 @@ set(test_executable ${PROJECT_NAME}CppTests)
 
 set(${test_executable}_DEPENDENCIES ${fw_lib} ${fwtestutil_lib} CTKCore)
 
+# Ensure "ctkCompatibility_p.h" included from the export header is found
+list(APPEND ${test_executable}_DEPENDENCIES CTKCore)
+
 set(my_includes)
 ctkFunctionGetIncludeDirs(my_includes ${test_executable})
 include_directories(${my_includes})
