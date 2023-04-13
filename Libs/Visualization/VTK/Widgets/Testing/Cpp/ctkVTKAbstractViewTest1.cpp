@@ -31,6 +31,7 @@
 #include "ctkVTKWidgetsUtils.h"
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkRenderWindow.h>
 #include <vtkCallbackCommand.h>
 
@@ -112,7 +113,7 @@ int ctkVTKAbstractViewTest1(int argc, char * argv [] )
 
   vtkNew<vtkCallbackCommand> renderEventCallback;
   renderEventCallback->SetCallback(onRenderEvent);
-  sliceView.renderWindow()->AddObserver(vtkCommand::RenderEvent, renderEventCallback);
+  sliceView.renderWindow()->AddObserver(vtkCommand::RenderEvent, renderEventCallback.GetPointer());
   sliceView.setMaximumUpdateRate(VTK_DOUBLE_MAX);
   sliceView.show();
 
