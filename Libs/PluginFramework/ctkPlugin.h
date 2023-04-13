@@ -429,7 +429,7 @@ public:
    * @throws ctkIllegalStateException If this plugin has been uninstalled or this
    *         plugin tries to change its own state.
    */
-  virtual void stop(const StopOptions& options = 0);
+  virtual void stop(const StopOptions& options = StopOptions());
 
   /**
    * Updates this plugin from a <code>QUrl</code>.
