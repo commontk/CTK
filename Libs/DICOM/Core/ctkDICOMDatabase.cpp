@@ -1702,8 +1702,9 @@ bool ctkDICOMDatabase::updateSchema(
       QString databaseFileName = newDatabaseDir + QString("/ctkDICOM.sql");
       this->openDatabase(databaseFileName);
     }
-    catch (std::exception e)
+    catch (const std::exception& e)
     {
+      Q_UNUSED(e);
       std::cerr << "Database error: " << qPrintable(this->lastError()) << "\n";
       this->closeDatabase();
       return false;

@@ -103,8 +103,9 @@ int main(int argc, char** argv)
       return EXIT_FAILURE;
     }
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
+    Q_UNUSED(e);
     std::cerr << "Database error:" << qPrintable(myCTK.lastError());
     myCTK.closeDatabase();
     return EXIT_FAILURE;

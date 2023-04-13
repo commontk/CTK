@@ -96,7 +96,7 @@ int main(int argc, char * argv []) {
     dcmqrscp->start(dcmqrscp_exe, dcmqrscp_args);
     dcmqrscp->waitForStarted();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
     out << "ERROR: could not start server" << e.what();
     return EXIT_FAILURE;
@@ -127,7 +127,7 @@ int main(int argc, char * argv []) {
     out << "Standard Error:\n";
     out << storescu->readAllStandardError();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
     out << "ERROR: could not start client" << e.what();
     return EXIT_FAILURE;
@@ -156,7 +156,7 @@ int main(int argc, char * argv []) {
     out << "Standard Error:\n";
     out << ctkDICOMQuery->readAllStandardError();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
     out << "ERROR: could not start client" << e.what();
     return EXIT_FAILURE;
@@ -190,7 +190,7 @@ int main(int argc, char * argv []) {
     out << "Standard Error:\n";
     out << ctkDICOMRetrieve->readAllStandardError();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
     out << "ERROR: could not start client" << e.what();
     return EXIT_FAILURE;
@@ -210,7 +210,7 @@ int main(int argc, char * argv []) {
     out << "Standard Error:\n";
     out << dcmqrscp->readAllStandardError();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
     out << "ERROR: could not start client" << e.what();
     return EXIT_FAILURE;

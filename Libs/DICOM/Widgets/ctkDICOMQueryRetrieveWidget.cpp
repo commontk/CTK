@@ -186,8 +186,9 @@ void ctkDICOMQueryRetrieveWidget::query()
     {
       d->QueryResultDatabase.openDatabase(":memory:");
     }
-    catch (std::exception e)
+    catch (const std::exception& e)
     {
+      Q_UNUSED(e);
       logger.error("Database error: " + d->QueryResultDatabase.lastError());
       d->QueryResultDatabase.closeDatabase();
       return;
@@ -255,8 +256,9 @@ void ctkDICOMQueryRetrieveWidget::query()
                  this, SLOT(onQueryProgressChanged(int)));
       disconnect(&progress, SIGNAL(canceled()), query, SLOT(cancel()));
       }
-    catch (std::exception e)
+    catch (const std::exception& e)
       {
+      Q_UNUSED(e);
       logger.error ( "Query error: " + parameters["Name"].toString() );
       progress.setLabelText("Query error: " + parameters["Name"].toString());
       delete query;
@@ -387,8 +389,9 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
         retrieve->moveSeries ( studyUID, seriesUID );
         }
       }
-    catch (std::exception e)
+    catch (const std::exception& e)
       {
+      Q_UNUSED(e);
       logger.error ( "Retrieve failed" );
       if(d->UseProgressDialog)
         {

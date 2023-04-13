@@ -602,8 +602,9 @@ void ctkDICOMBrowser::updateDatabase()
   {
     d->DICOMDatabase->openDatabase(databaseFileName);
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
+    Q_UNUSED(e);
     std::cerr << "Database error: " << qPrintable(d->DICOMDatabase->lastError()) << "\n";
     d->DICOMDatabase->closeDatabase();
     return;
@@ -652,8 +653,9 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
       d->DICOMDatabase->openDatabase(databaseFileName);
       databaseOpenSuccess = d->DICOMDatabase->isOpen();
     }
-    catch (std::exception e)
+    catch (const std::exception& e)
     {
+      Q_UNUSED(e);
       databaseOpenSuccess = false;
     }
     if (!databaseOpenSuccess || d->DICOMDatabase->schemaVersionLoaded().isEmpty())

@@ -101,8 +101,9 @@ int main(int argc, char** argv)
     {
     retrieve.moveStudy ( StudyUID );
     }
-  catch (std::exception e)
+  catch (const std::exception& e)
     {
+    Q_UNUSED(e);
     logger.error ( "Retrieve failed" );
     return EXIT_FAILURE;
     }
