@@ -125,7 +125,11 @@ struct ctkCmdLineModuleBackendLocalProcessPrivate
     }
 
     QList<int> indexes = indexedArgs.keys();
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
+    std::sort(indexes.begin(), indexes.end());
+#else
     qSort(indexes.begin(), indexes.end());
+#endif
     foreach(int index, indexes)
     {
       cmdLineArgs << indexedArgs[index];
