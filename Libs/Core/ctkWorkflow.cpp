@@ -129,7 +129,7 @@ bool ctkWorkflowPrivate::hasDuplicateTransition(ctkWorkflowStep* origin, ctkWork
 
   Q_ASSERT(origin);
   Q_ASSERT(destination);
-  Q_ASSERT(directionality == ctkWorkflow::Forward || ctkWorkflow::Backward);
+  Q_ASSERT(directionality == ctkWorkflow::Forward || directionality == ctkWorkflow::Backward);
 
   ctkWorkflowPrivate::StepListType stepList;
   ctkWorkflowStep* targetStep = 0;
@@ -161,7 +161,7 @@ bool ctkWorkflowPrivate::hasTransitionWithSameBranchId(ctkWorkflowStep* origin, 
 {
   Q_ASSERT(origin);
   Q_ASSERT(destination);
-  Q_ASSERT(directionality == ctkWorkflow::Forward || ctkWorkflow::Backward);
+  Q_ASSERT(directionality == ctkWorkflow::Forward || directionality == ctkWorkflow::Backward);
   Q_ASSERT(!branchId.isEmpty());
 
   QList<QString> branchIdList;
