@@ -211,6 +211,31 @@ void LogMessageThread::run()
     this->logMessage(QDateTime::currentDateTime(), this->Id, this->Counter);
     ++this->Counter;
     }
+
+  // The following lines are needed to quiet "-Wunused-function" warnings.
+  //
+  // The warnings are reported because not all the helper functions are
+  // being systematically used in all "ctkErrorLog.+TestN.cpp" where the
+  // helper is included.
+  //
+  // These functions may be relevant when more work will be done
+  // (e.g  SynchronousLogMessageStarterThread commented below)
+  //
+  typedef QString (*CheckTextMessages1)(int, const QStringList&, const QStringList&);
+  typedef QString (*CheckTextMessages2)(int, const ctkErrorLogModel&, const QStringList&);
+
+  Q_UNUSED(checkRowCount);
+  Q_UNUSED(checkSpyCount);
+  Q_UNUSED(reinterpret_cast<void*>(static_cast<CheckTextMessages1>(checkTextMessages)));
+  Q_UNUSED(reinterpret_cast<void*>(static_cast<CheckTextMessages2>(checkTextMessages)));
+  Q_UNUSED(printTextMessages);
+  Q_UNUSED(printErrorMessage);
+  Q_UNUSED(checkInteger);
+  Q_UNUSED(checkBoolean);
+  Q_UNUSED(checkString);
+  Q_UNUSED(processEvents);
+  Q_UNUSED(readFile);
+  Q_UNUSED(appendToFile);
 }
 
 ////-----------------------------------------------------------------------------
