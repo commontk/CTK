@@ -276,10 +276,10 @@ QVariant ctkCmdLineModuleObjectTreeWalker::prefixedProperty(const QString& propN
   QString prefixedName;
   switch(CurrentToken)
   {
-  case ctkCmdLineModuleObjectTreeWalker::Executable: prefixedName = PREFIX_EXECUTABLE + propName;
-  case ctkCmdLineModuleObjectTreeWalker::ParameterGroup: prefixedName = PREFIX_PARAMETER_GROUP + propName;
-  case ctkCmdLineModuleObjectTreeWalker::ParameterContainer: prefixedName = PREFIX_PARAMETER_CONTAINER + propName;
-  case ctkCmdLineModuleObjectTreeWalker::Parameter: prefixedName = PREFIX_PARAMETER + propName;
+  case ctkCmdLineModuleObjectTreeWalker::Executable: prefixedName = PREFIX_EXECUTABLE + propName; break;
+  case ctkCmdLineModuleObjectTreeWalker::ParameterGroup: prefixedName = PREFIX_PARAMETER_GROUP + propName; break;
+  case ctkCmdLineModuleObjectTreeWalker::ParameterContainer: prefixedName = PREFIX_PARAMETER_CONTAINER + propName; break;
+  case ctkCmdLineModuleObjectTreeWalker::Parameter: prefixedName = PREFIX_PARAMETER + propName; break;
   default: ;
   }
 
