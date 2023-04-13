@@ -204,9 +204,9 @@ void ctkSliderWidgetTester::testValueChangedWithNoTracking()
   QPoint currentPoint = slider.slider()->rect().center();
   QPoint nextPoint = QPoint(slider.slider()->rect().left(), currentPoint.y());
 
-  QTest::mousePress(slider.slider()->slider(), Qt::LeftButton, 0, currentPoint);
-  ctkTest::mouseMove(slider.slider()->slider(), Qt::LeftButton, 0, nextPoint);
-  QTest::mouseRelease(slider.slider()->slider(), Qt::LeftButton, 0, nextPoint);
+  QTest::mousePress(slider.slider()->slider(), Qt::LeftButton, Qt::KeyboardModifiers(), currentPoint);
+  ctkTest::mouseMove(slider.slider()->slider(), Qt::LeftButton, Qt::KeyboardModifiers(), nextPoint);
+  QTest::mouseRelease(slider.slider()->slider(), Qt::LeftButton, Qt::KeyboardModifiers(), nextPoint);
 
   QCOMPARE(spy.count(), 1);
 }
