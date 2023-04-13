@@ -42,7 +42,7 @@ class CTK_XNAT_WIDGETS_EXPORT ctkXnatLoginDialog : public QDialog
   Q_OBJECT
 
 public:
-  explicit ctkXnatLoginDialog(QWidget* parent = 0, Qt::WindowFlags flags = 0);
+  explicit ctkXnatLoginDialog(QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   virtual ~ctkXnatLoginDialog();
 
   ctkXnatSettings* settings() const;
