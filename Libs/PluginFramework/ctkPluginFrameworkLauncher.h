@@ -229,7 +229,8 @@ public:
    * \see ctkPlugin::StopOptions
    */
   static bool stop(const QString& symbolicName = QString(),
-                    ctkPlugin::StopOptions options = 0, ctkPluginContext* context = 0);
+                    ctkPlugin::StopOptions options = ctkPlugin::StopOptions(),
+                    ctkPluginContext* context = 0);
 
   /**
    * Resolve the given plug-in.
