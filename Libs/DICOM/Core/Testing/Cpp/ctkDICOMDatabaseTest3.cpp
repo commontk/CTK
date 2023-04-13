@@ -70,7 +70,7 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
 
     myCTK.closeDatabase();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
     {
     std::cerr << "Error when opening the data base file: " << databaseFileName.toStdString()
         << " error: " << e.what();
@@ -102,7 +102,7 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
 
     myCTK.closeDatabase();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
     {
     std::cerr << "Error when re-opening the data base file: " << databaseFileName.toStdString()
         << " error: " << e.what();

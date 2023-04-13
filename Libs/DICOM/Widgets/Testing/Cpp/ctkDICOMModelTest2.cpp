@@ -96,7 +96,7 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
       }
     return app.exec();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
     {
     std::cerr << "Error when opening the data base file: " << argv[1]
         << " error: " << e.what();

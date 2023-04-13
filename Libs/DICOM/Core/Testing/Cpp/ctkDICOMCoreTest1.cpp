@@ -50,7 +50,7 @@ int ctkDICOMCoreTest1(int argc, char * argv []) {
     };
     myCTK.closeDatabase();
     }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
     out << "ERROR: " << e.what();
     return EXIT_FAILURE;

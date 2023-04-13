@@ -110,8 +110,9 @@ int main(int argc, char** argv)
     {
     query.query ( myCTK );
     }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
+    Q_UNUSED(e);
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
