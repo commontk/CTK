@@ -43,6 +43,7 @@
 //
 //
 //  ./CTK-build/bin/ctkDICOMRetrieve 1.2.840.113619.2.135.3596.6358736.5118.1115807980.182  /tmp/hoot CTK_AE 11113 CTK_AE localhost 11112 CTK_CLIENT_AE
+/*
 //
 //  As invoked by ctest:
 //
@@ -56,6 +57,7 @@
 //      ./CTK-build/bin/ctkDICOMRetrieve \
 //      ./CTK-build/Testing/Temporary/ctkDICOMRetrieveStorage
 //
+*/
 
 int main(int argc, char * argv []) {
 
