@@ -281,7 +281,11 @@ void ctkErrorLogWidget::onSelectionChanged(const QItemSelection & selected,
   QModelIndexList selectedRows =
       d->SelectionModel->selectedRows(ctkErrorLogModel::DescriptionColumn);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
   std::sort(selectedRows.begin(), selectedRows.end());
+#else
+  qSort(selectedRows.begin(), selectedRows.end());
+#endif
 
   QStringList descriptions;
 

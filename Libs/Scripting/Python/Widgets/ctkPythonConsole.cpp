@@ -445,7 +445,11 @@ void ctkPythonConsoleCompleter::updateCompletionModel(const QString& completion)
     attrs << d->PythonManager.pythonAttributes(lookup, module.toLatin1(),
                                                   appendParenthesis);
     attrs.removeDuplicates();
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
     std::sort(attrs.begin(), attrs.end(), ctkPythonConsoleCompleterPrivate::PythonAttributeLessThan);
+#else
+    qSort(attrs.begin(), attrs.end(), ctkPythonConsoleCompleterPrivate::PythonAttributeLessThan);
+#endif
     }
 
   // Initialize the completion model

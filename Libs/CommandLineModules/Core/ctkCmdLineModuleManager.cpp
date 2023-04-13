@@ -169,7 +169,12 @@ ctkCmdLineModuleBackend*ctkCmdLineModuleManager::backend(const QString& scheme) 
 QList<ctkCmdLineModuleBackend*> ctkCmdLineModuleManager::backends() const
 {
   QList<ctkCmdLineModuleBackend*> result = d->SchemeToBackend.values();
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
+  std::sort(result.begin(), result.end());
+#else
   qSort(result);
+#endif
   result.erase(std::unique(result.begin(), result.end()), result.end());
   return result;
 }
