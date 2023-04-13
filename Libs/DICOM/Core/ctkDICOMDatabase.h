@@ -33,6 +33,7 @@ class QDateTime;
 class ctkDICOMDatabasePrivate;
 class DcmDataset;
 class ctkDICOMAbstractThumbnailGenerator;
+class ctkDICOMBrowser;
 class ctkDICOMDisplayedFieldGenerator;
 
 /// \ingroup DICOM_Core
@@ -450,6 +451,7 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkDICOMDatabase);
   Q_DISABLE_COPY(ctkDICOMDatabase);
+  friend class ctkDICOMBrowser; // For access to databaseChanged() if building against Qt4
 };
 
 #endif
