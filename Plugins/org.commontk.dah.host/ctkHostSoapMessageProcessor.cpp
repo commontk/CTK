@@ -94,7 +94,7 @@ void ctkHostSoapMessageProcessor::processNotifyStateChanged(
   // query interface
   this->HostInterface->notifyStateChanged(ctkDicomSoapState::getState(inputType));
   // set reply message: nothing to be done
-
+  Q_UNUSED(reply);
   /*bool result = true;
   reply->setMethod("NotifyStateChanged");
   QtSoapType* resultType = new ctkDicomSoapBool("NotifyStateChangedResponse",result);
@@ -111,7 +111,7 @@ void ctkHostSoapMessageProcessor::processNotifyStatus(
   // query interface
   this->HostInterface->notifyStatus(ctkDicomSoapStatus::getStatus(inputType));
   // set reply message: nothing to be done
-	
+  Q_UNUSED(reply);
   /*bool result = true;
   reply->setMethod("NotifyStatus");
   QtSoapType* resultType = new ctkDicomSoapBool("NotifyStatusResponse",result);

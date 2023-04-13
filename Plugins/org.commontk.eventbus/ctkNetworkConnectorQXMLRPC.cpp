@@ -47,12 +47,11 @@ ctkNetworkConnector *ctkNetworkConnectorQXMLRPC::clone() {
 }
 
 void ctkNetworkConnectorQXMLRPC::createClient(const QString hostName, const unsigned int port) {
-    bool result(false);
     if(m_Client == NULL) {
         m_Client = new xmlrpc::Client(NULL);
-        result = connect( m_Client, SIGNAL(done( int, QVariant )),
+        connect( m_Client, SIGNAL(done( int, QVariant )),
                  this, SLOT(processReturnValue( int, QVariant )) );
-        result = connect( m_Client, SIGNAL(failed( int, int, QString )),
+        connect( m_Client, SIGNAL(failed( int, int, QString )),
                  this, SLOT(processFault( int, int, QString )) );
     }
     m_Client->setHost( hostName, port );

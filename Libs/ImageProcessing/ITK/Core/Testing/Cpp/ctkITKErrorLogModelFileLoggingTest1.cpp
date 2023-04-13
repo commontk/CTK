@@ -63,11 +63,13 @@ public:
   void exerciseITKDebugMacro(const QString& text)
   {
     itkDebugMacro( << qPrintable(text));
+    Q_UNUSED(text);
   }
 
   void exerciseITKWarningMacro(const QString& text)
   {
     itkWarningMacro( << qPrintable(text));
+    Q_UNUSED(text);
   }
 };
 
