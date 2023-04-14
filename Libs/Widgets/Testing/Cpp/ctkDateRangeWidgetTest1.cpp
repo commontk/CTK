@@ -35,7 +35,11 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QDateTime today = QDate::currentDate().startOfDay();
+#else
   QDateTime today = QDateTime(QDate::currentDate());
+#endif
   QDateTime tomorrow = today.addDays(1);
   QDateTime yesterday = today.addDays(-1);
   QDateTime lastWeek = today.addDays(-7);
@@ -112,8 +116,13 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  dateRange.setDateTimeRange(QDate(-2, -9,12345678).startOfDay(),
+                             QDate(2010, 15, 32).startOfDay());
+#else
   dateRange.setDateTimeRange(QDateTime(QDate(-2, -9,12345678)),
                              QDateTime(QDate(2010, 15, 32)));
+#endif
   if (!dateRange.isAnyDate() ||
       dateRange.startDateTime() == lastMonth ||
       dateRange.endDateTime() == today)
