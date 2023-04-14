@@ -87,7 +87,7 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
     headerView->checkableModelHelper()->setPropagateDepth(-1);
     headerView->checkableModelHelper()->setForceCheckability(true);
     viewer.setHeader(headerView);
-    model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+    model.setHeaderData(0, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
     qDebug() << "new: " << headerView->isHidden();
     topLevel.show();
     if (argc <= 3 || QString(argv[3]) != "-I")

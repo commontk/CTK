@@ -158,7 +158,7 @@ int ctkCheckableModelHelperTest1(int argc, char * argv [] )
 
   {
     // Header is checked by default
-    model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+    model.setHeaderData(0, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
 
     QScopedPointer<ctkCheckableModelHelper> modelHelper(new ctkCheckableModelHelper(Qt::Horizontal));
     modelHelper->setModel(&model);

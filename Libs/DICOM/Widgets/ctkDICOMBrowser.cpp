@@ -362,8 +362,8 @@ void ctkDICOMBrowserPrivate::init()
   // Initialize directoryMode widget
   QFormLayout *layout = new QFormLayout;
   QComboBox* importDirectoryModeComboBox = new QComboBox();
-  importDirectoryModeComboBox->addItem(ctkDICOMBrowser::tr("Add Link"), ctkDICOMBrowser::ImportDirectoryAddLink);
-  importDirectoryModeComboBox->addItem(ctkDICOMBrowser::tr("Copy"), ctkDICOMBrowser::ImportDirectoryCopy);
+  importDirectoryModeComboBox->addItem(ctkDICOMBrowser::tr("Add Link"), static_cast<int>(ctkDICOMBrowser::ImportDirectoryAddLink));
+  importDirectoryModeComboBox->addItem(ctkDICOMBrowser::tr("Copy"), static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy));
   importDirectoryModeComboBox->setToolTip(
         ctkDICOMBrowser::tr("Indicate if the files should be copied to the local database"
            " directory or if only links should be created ?"));
@@ -374,7 +374,7 @@ void ctkDICOMBrowserPrivate::init()
 
   // Default values
   importDirectoryModeComboBox->setCurrentIndex(
-        importDirectoryModeComboBox->findData(q->importDirectoryMode()));
+      importDirectoryModeComboBox->findData(static_cast<int>(q->importDirectoryMode())));
 
   //Initialize import widget
   this->ImportDialog = new ctkFileDialog();
@@ -1064,7 +1064,7 @@ void ctkDICOMBrowser::setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMod
     return;  // Native dialog does not support modifying or getting widget elements.
   }
   QComboBox* comboBox = d->ImportDialog->bottomWidget()->findChild<QComboBox*>();
-  comboBox->setCurrentIndex(comboBox->findData(mode));
+  comboBox->setCurrentIndex(comboBox->findData(static_cast<int>(mode)));
 }
 
 //----------------------------------------------------------------------------
