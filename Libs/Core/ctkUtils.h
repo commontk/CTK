@@ -26,10 +26,16 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
+#include <QLinkedList>
+#endif
 #include <QModelIndex>
 #include <QStringList>
 
 // STD includes
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+#include <list>
+#endif
 #include <vector>
 
 #include "ctkCoreExport.h"
@@ -81,6 +87,38 @@ CTK_CORE_EXPORT QSet<QString> qStringListToQSet(const QStringList& list);
 /// pre and post Qt 5.14.
 CTK_CORE_EXPORT QStringList qSetToQStringList(const QSet<QString>& set);
 
+///
+/// \ingroup Core
+/// \brief Removes the first occurrences of value in the list. Returns true on success; otherwise returns false.
+///
+/// This method was added so that the same code compiles without deprecation warnings
+/// pre and post Qt 5.15.
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+template <typename T>
+bool removeOne(std::list<T>& list, const T& value);
+#else
+template <typename T>
+bool removeOne(QLinkedList<T>& list, const T& value);
+#endif
+
+///
+/// \ingroup Core
+/// \brief Removes the first item in the list and returns it.
+///
+/// If you don't use the return value, QLinkedList::removeFirst()
+/// or std::list::pop_front() is more efficient.
+///
+/// Calling takeFirst on an empty container is not supported.
+///
+/// This method was added so that the same code compiles without deprecation warnings
+/// pre and post Qt 5.15.
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+template <typename T>
+T takeFirst(std::list<T>& list);
+#else
+template <typename T>
+T takeFirst(QLinkedList<T>& list);
+#endif
 
 ///
 /// \ingroup Core
@@ -239,5 +277,7 @@ CTK_CORE_EXPORT QModelIndex modelChildIndex(QAbstractItemModel* item, const QMod
 CTK_CORE_EXPORT QModelIndex modelChildIndex(const QAbstractItemModel* item, const QModelIndex &parent, int row, int column);
 ///}@
 }
+
+#include "ctkUtils.tpp"
 
 #endif

@@ -77,6 +77,7 @@ set(KIT_SRCS
   ctkSingleton.h
   ctkUtils.cpp
   ctkUtils.h
+  ctkUtils.tpp
   ctkValueProxy.cpp
   ctkValueProxy.h
   ctkWorkflow.h
