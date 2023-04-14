@@ -546,7 +546,7 @@ void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
       const ctkPluginException& pe = dynamic_cast<const ctkPluginException&>(e);
       throw pe;
     }
-    catch (std::bad_cast)
+    catch (const std::bad_cast&)
     {
       throw ctkPluginException(QString("Failed to get update plugin: ") + e.what(),
                                ctkPluginException::UNSPECIFIED);
