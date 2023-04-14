@@ -534,7 +534,7 @@ void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
     {
       try
       {
-        this->q_func().data()->start();
+        this->q_func().toStrongRef()->start();
       }
       catch (const ctkPluginException& pe)
       {
@@ -588,7 +588,7 @@ void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
    {
      try
      {
-       this->q_func().data()->start();
+       this->q_func().toStrongRef()->start();
      }
      catch (const ctkPluginException& pe)
      {
