@@ -71,6 +71,7 @@ void ctkCoreSettingsTester::testSinglePath_data()
   QTest::addColumn<QString>("inputPath");
   QTest::addColumn<QString>("expectedStoredValue");
 
+#ifdef Q_OS_WIN
   QTest::newRow("windows-style relative 1") << "c:/windows/path"
     << "c:/windows/path/internal/dir" << "<APPLICATION_HOME_DIR>/internal/dir";
   QTest::newRow("windows-style relative 2") << "c:\\windows\\path"
@@ -83,7 +84,9 @@ void ctkCoreSettingsTester::testSinglePath_data()
     << "d:/windows/path/internal/dir" << "d:/windows/path/internal/dir";
   QTest::newRow("windows-style absolute 2") << "c:/windows/path"
     << "c:/windows/external/subdir/file.txt" << "c:/windows/external/subdir/file.txt";
+#endif
 
+#ifdef Q_OS_UNIX
   QTest::newRow("linux-style relative 1") << "/linux/path"
     << "/linux/path/internal/dir" << "<APPLICATION_HOME_DIR>/internal/dir";
   QTest::newRow("linux-style relative 2") << "/linux/path/"
@@ -94,6 +97,7 @@ void ctkCoreSettingsTester::testSinglePath_data()
     <<  "/xunil/path/internal/dir" << "/xunil/path/internal/dir";
   QTest::newRow("linux-style absolute 2") << "/linux/path"
     << "/linux/external/subdir/file.txt" << "/linux/external/subdir/file.txt";
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -125,17 +129,33 @@ void ctkCoreSettingsTester::testMultiplePaths_data()
   QTest::addColumn<QStringList>("inputPaths");
   QTest::addColumn<QStringList>("expectedStoredValues");
 
-  QTest::newRow("relative paths multiple items") << "c:/windows/path"
+#ifdef Q_OS_WIN
+  QTest::newRow("windows-style relative paths multiple items") << "c:/windows/path"
     << (QStringList() << "c:/windows/path/internal/dir" << "c:/windows/path/internal/subdir/file.txt")
     << (QStringList() << "<APPLICATION_HOME_DIR>/internal/dir" << "<APPLICATION_HOME_DIR>/internal/subdir/file.txt");
 
-  QTest::newRow("relative paths single item") << "c:/windows/path"
+  QTest::newRow("windows-style relative paths single item") << "c:/windows/path"
     << (QStringList() << "C:/windows/path/internal/dir")
     << (QStringList() << "<APPLICATION_HOME_DIR>/internal/dir");
 
-  QTest::newRow("absolute paths") << "c:/windows/path"
+  QTest::newRow("windows-style absolute paths") << "c:/windows/path"
     << (QStringList() << "d:/windows/path/internal/dir" << "c:/windows/external/subdir/file.txt")
-    << (QStringList() << "d:/windows/path/internal/dir" << "c:/windows/external/subdir/file.txt");
+    << (QStringList() << "<APPLICATION_HOME_DIR>/internal/dir" << "c:/windows/external/subdir/file.txt");
+#endif
+
+#ifdef Q_OS_UNIX
+  QTest::newRow("linux-style relative paths multiple items") << "/linux/path"
+    << (QStringList() << "/linux/path/internal/dir" << "/linux/path/internal/subdir/file.txt")
+    << (QStringList() << "<APPLICATION_HOME_DIR>/internal/dir" << "<APPLICATION_HOME_DIR>/internal/subdir/file.txt");
+
+  QTest::newRow("linux-style relative paths single item") << "/linux/path"
+    << (QStringList() << "/linux/path/internal/dir")
+    << (QStringList() << "<APPLICATION_HOME_DIR>/internal/dir");
+
+  QTest::newRow("linux-style absolute paths") << "/linux/path"
+    << (QStringList() << "/linux/path/internal/dir" << "/linux/external/subdir/file.txt")
+    << (QStringList() << "<APPLICATION_HOME_DIR>/internal/dir" << "/linux/external/subdir/file.txt");
+#endif
 }
 
 // ----------------------------------------------------------------------------
