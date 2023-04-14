@@ -140,7 +140,6 @@ void ctkCoreSettings::setPathValue(const QString& key, const QVariant& value)
 //-----------------------------------------------------------------------------
 QVariant ctkCoreSettings::pathValue(const QString& key, const QVariant& defaultValue/*=QVariant()*/) const
 {
-  Q_D(const ctkCoreSettings);
   QVariant value = this->value(key, defaultValue);
   if (!value.isValid() || value.isNull())
     {
@@ -210,7 +209,6 @@ QString ctkCoreSettings::toApplicationHomeRelativePath(const QString& path) cons
 //-----------------------------------------------------------------------------
 QStringList ctkCoreSettings::toApplicationHomeAbsolutePaths(const QStringList& paths) const
 {
-  Q_D(const ctkCoreSettings);
   QStringList absolutePaths;
   foreach(QString path, paths)
     {
@@ -223,7 +221,6 @@ QStringList ctkCoreSettings::toApplicationHomeAbsolutePaths(const QStringList& p
 //-----------------------------------------------------------------------------
 QStringList ctkCoreSettings::toApplicationHomeRelativePaths(const QStringList& paths) const
 {
-  Q_D(const ctkCoreSettings);
   QStringList relativePaths;
   foreach(QString path, paths)
     {
