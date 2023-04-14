@@ -80,7 +80,7 @@ QList<ctkConfigurationPtr> ctkConfigurationAdminImpl::listConfigurations(const Q
   //{
     configurationAdminFactory->checkConfigurationPermission();
   //}
-  //catch (SecurityException e) {
+  //catch (const SecurityException& e) {
   //  filterString = "(&(" + ConfigurationAdmin.SERVICE_BUNDLELOCATION + "=" + bundle.getLocation() + ")" + filterString + ")";
   //}
   QList<ctkConfigurationImplPtr> configs = configurationStore->listConfigurations(ctkLDAPSearchFilter(filterString));

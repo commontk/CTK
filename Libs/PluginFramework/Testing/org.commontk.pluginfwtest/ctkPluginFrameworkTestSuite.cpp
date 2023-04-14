@@ -211,7 +211,7 @@ void ctkPluginFrameworkTestSuite::frame020a()
   {
     pA = ctkPluginFrameworkTestUtil::installPlugin(pc, "pluginA_test");
   }
-  catch (ctkPluginException& e)
+  catch (const ctkPluginException& e)
   {
     QFAIL(e.what());
   }
@@ -388,7 +388,7 @@ void ctkPluginFrameworkTestSuite::frame040a()
     qDebug() << "Expected exception" << pe;
     exception = true;
   }
-  //      catch (SecurityException secA) {
+  //      catch (const SecurityException& secA) {
   //        QFAIL("framework test plugin " + secA + " :FRAME040A:FAIL");
   //        teststatus = false;
   //        exception = true;
