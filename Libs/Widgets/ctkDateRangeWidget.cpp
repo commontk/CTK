@@ -62,13 +62,6 @@ void ctkDateRangeWidgetPrivate::autoselectRadioButton()
   Q_Q(ctkDateRangeWidget);
   QDate startDate = q->startDateTime().date();
   QDate endDate = q->endDateTime().date();
-  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
-  QDateTime startOfDay = q->startDateTime().date().startOfDay();
-  QDateTime endOfDay = q->endDateTime().date().startOfDay();
-  #else
-  QDateTime startOfDay = QDateTime(q->startDateTime().date());
-  QDateTime endOfDay = QDateTime(q->endDateTime().date());
-  #endif
   if (this->ForceSelectRange)
     {
     this->SelectRangeRadioButton->setChecked(true);
@@ -77,8 +70,13 @@ void ctkDateRangeWidgetPrivate::autoselectRadioButton()
     {
     this->AnyDateRadioButton->setChecked(true);
     }
-  else if (q->startDateTime() != startOfDay ||
-           q->endDateTime() != endOfDay)
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+  else if (q->startDateTime() != q->startDateTime().date().startOfDay() ||
+           q->endDateTime() != q->endDateTime().date().startOfDay())
+#else
+  else if (q->startDateTime() != QDateTime(q->startDateTime().date()) ||
+           q->endDateTime() != QDateTime(q->endDateTime().date()))
+#endif
     {
     this->SelectRangeRadioButton->setChecked(true);
     }
