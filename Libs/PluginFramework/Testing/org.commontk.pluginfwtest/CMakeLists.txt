@@ -63,3 +63,4 @@ add_dependencies(${test_executable} ${PROJECT_NAME})
 
 add_test(${fw_lib}Tests ${CPP_TEST_PATH}/${test_executable})
 set_property(TEST ${fw_lib}Tests PROPERTY LABELS ${fw_lib})
+set_property(TEST ${fw_lib}Tests PROPERTY RESOURCE_LOCK ctkPluginStorage)

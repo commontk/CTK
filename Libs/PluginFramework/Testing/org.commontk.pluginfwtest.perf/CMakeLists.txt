@@ -56,3 +56,4 @@ add_dependencies(${test_executable} ${PROJECT_NAME})
 
 add_test(${fw_lib}Tests.perf ${CPP_TEST_PATH}/${test_executable})
 set_property(TEST ${fw_lib}Tests.perf PROPERTY LABELS ${fw_lib}.perf)
+set_property(TEST ${fw_lib}Tests.perf PROPERTY RESOURCE_LOCK ctkPluginStorage)
