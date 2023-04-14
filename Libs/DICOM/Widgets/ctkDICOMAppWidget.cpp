@@ -405,7 +405,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
     {
     d->DICOMDatabase->openDatabase( databaseFileName );
     }
-  catch (std::exception &)
+  catch (const std::exception &)
     {
     std::cerr << "Database error: " << qPrintable(d->DICOMDatabase->lastError()) << "\n";
     d->DICOMDatabase->closeDatabase();

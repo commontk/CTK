@@ -102,7 +102,7 @@ void ctkConfigurationStore::saveConfiguration(const QString& pid, ctkConfigurati
 //      }
 //    });
 //  }
-//  catch (PrivilegedActionException e)
+//  catch (const PrivilegedActionException& e)
 //  {
 //    throw (IOException) e.getException();
 //  }
