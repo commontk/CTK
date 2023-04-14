@@ -349,6 +349,11 @@ void ctkPluginPrivate::finalizeActivation()
   case ctkPlugin::STARTING:
     if (operation.fetchAndAddOrdered(0) == ACTIVATING) return; // finalization already in progress.
     // Lazy activation; fall through to RESOLVED.
+#if (QT_VERSION >= QT_VERSION_CHECK(5,8,0))
+    Q_FALLTHROUGH();
+#else
+    /* FALLTHRU */
+#endif
   case ctkPlugin::RESOLVED:
   {
     //6:
