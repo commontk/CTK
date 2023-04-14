@@ -382,7 +382,7 @@ bool ctk::copyDirRecursively(const QString &srcPath, const QString &dstPath, boo
     return false;
     }
 
-  QDir::Filter hiddenFilter;
+  QDir::Filter hiddenFilter = QDir::Filter();
   if(includeHiddenFiles)
     {
     hiddenFilter = QDir::Hidden;
