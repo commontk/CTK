@@ -18,6 +18,12 @@
 
 =========================================================================*/
 
+// Qt includes
+#include <QtGlobal>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
+#include <QLinkedList>
+#endif
+
 // CTK includes
 #include "ctkUtils.h"
 #include "ctkTest.h"
@@ -25,6 +31,7 @@
 // STD includes
 #include <iostream>
 #include <limits>
+#include <list>
 
 // ----------------------------------------------------------------------------
 class ctkUtilsTester: public QObject
@@ -47,6 +54,12 @@ private slots:
 
   void testQSetToQStringList();
   void testQSetToQStringList_data();
+
+  void testRemoveOne();
+  void testRemoveOne_data();
+
+  void testTakeFirst();
+  void testTakeFirst_data();
 };
 
 // ----------------------------------------------------------------------------
@@ -296,6 +309,97 @@ void ctkUtilsTester::testQSetToQStringList_data()
   QTest::newRow("0")
       << (QSet<QString>() << "foo" << "bar")
       << (QStringList() << "bar" << "foo");
+}
+
+// ----------------------------------------------------------------------------
+namespace
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+  typedef std::list<QString> CTKUtilsTestListType;
+
+  CTKUtilsTestListType ctkUtilsTestList(QStringList::Iterator first, QStringList::Iterator last)
+  {
+    return CTKUtilsTestListType(first, last);
+  }
+#else
+  typedef QLinkedList<QString> CTKUtilsTestListType;
+  CTKUtilsTestListType ctkUtilsTestList(QStringList::Iterator first, QStringList::Iterator last)
+  {
+    CTKUtilsTestListType list;
+    std::copy(first, last, std::back_inserter(list));
+    return list;
+  }
+#endif
+};
+
+// ----------------------------------------------------------------------------
+void ctkUtilsTester::testRemoveOne()
+{
+  QFETCH(QStringList, inputValues);
+  QFETCH(QString, valueToRemove);
+  QFETCH(bool, removed);
+  QFETCH(QStringList, expectedValues);
+
+  CTKUtilsTestListType input = ctkUtilsTestList(inputValues.begin(), inputValues.end());
+
+  bool result = ctk::removeOne(input, valueToRemove);
+  QCOMPARE(result, removed);
+
+  CTKUtilsTestListType expected = ctkUtilsTestList(expectedValues.begin(), expectedValues.end());
+  QCOMPARE(input, expected);
+}
+
+// ----------------------------------------------------------------------------
+void ctkUtilsTester::testRemoveOne_data()
+{
+  QTest::addColumn< QStringList >("inputValues");
+  QTest::addColumn< QString >("valueToRemove");
+  QTest::addColumn< bool >("removed");
+  QTest::addColumn< QStringList >("expectedValues");
+
+  QTest::newRow("0")
+      << QStringList()
+      << "rainbow" << false
+      << QStringList();
+
+  QTest::newRow("1")
+      << (QStringList() << "sun" << "cloud" << "rain")
+      << "rainbow" << false
+      << (QStringList() << "sun" << "cloud" << "rain");
+
+  QTest::newRow("2")
+      << (QStringList() << "sun" << "cloud" << "sun" << "rain")
+      << "sun" << true
+      << (QStringList() << "cloud" << "sun" << "rain");
+}
+
+// ----------------------------------------------------------------------------
+void ctkUtilsTester::testTakeFirst()
+{
+  QFETCH(QStringList, inputValues);
+  QFETCH(QString, first);
+  QFETCH(QStringList, expectedValues);
+
+  CTKUtilsTestListType input = ctkUtilsTestList(inputValues.begin(), inputValues.end());
+
+  QString result = ctk::takeFirst(input);
+  QCOMPARE(result, first);
+
+  CTKUtilsTestListType expected = ctkUtilsTestList(expectedValues.begin(), expectedValues.end());
+  QCOMPARE(input, expected);
+}
+
+// ----------------------------------------------------------------------------
+void ctkUtilsTester::testTakeFirst_data()
+{
+  QTest::addColumn< QStringList >("inputValues");
+  QTest::addColumn< QString >("first");
+  QTest::addColumn< QStringList >("expectedValues");
+
+  QTest::newRow("0")
+      << (QStringList() << "sun" << "cloud" << "sun" << "rain")
+      << "sun"
+      << (QStringList() << "cloud" << "sun" << "rain");
 }
 
 // ----------------------------------------------------------------------------
