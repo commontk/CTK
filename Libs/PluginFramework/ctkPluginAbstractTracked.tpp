@@ -19,10 +19,11 @@
 
 =============================================================================*/
 
-
 #include "ctkPluginAbstractTracked_p.h"
 
 #include <QDebug>
+
+#include <ctkUtils.h>
 
 //----------------------------------------------------------------------------
 template<class S, class T, class R>
@@ -90,7 +91,7 @@ void ctkPluginAbstractTracked<S,T,R>::trackInitial()
        * move the first item from the initial list to the adding list
        * within this synchronized block.
        */
-      item = initial.takeFirst();
+      item = ctk::takeFirst(initial);
       if (tracked.value(item))
       {
         /* if we are already tracking this item */
@@ -190,7 +191,7 @@ void ctkPluginAbstractTracked<S,T,R>::untrack(S item, R related)
   T object(0);
   {
     QMutexLocker lock(this);
-    if (initial.removeOne(item))
+    if (ctk::removeOne<S>(initial, item))
     { /* if this item is already in the list
        * of initial references to process
        */
