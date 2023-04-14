@@ -27,9 +27,6 @@
 // CTK includes
 #include "ctkDateRangeWidget.h"
 #include "ui_ctkDateRangeWidget.h"
-#include "ctkLogger.h"
-
-static ctkLogger logger("org.commontk.libs.widgets.ctkDateRangeWidget");
 
 //-----------------------------------------------------------------------------
 class ctkDateRangeWidgetPrivate: public Ui_ctkDateRangeWidget
@@ -286,7 +283,6 @@ void ctkDateRangeWidget::setDisplayTime(bool displayTime)
 // -------------------------------------------------------------------------
 bool ctkDateRangeWidget::displayTime()const
 {
-  logger.error("including time in the date range is not supported now");
   Q_D(const ctkDateRangeWidget);
   return d->DisplayTime;
 }
