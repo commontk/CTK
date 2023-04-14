@@ -348,7 +348,7 @@ void ctkMaterialPropertyWidget::addPreset(
   QListWidgetItem* item = d->PresetsListWidget->item(d->PresetsListWidget->count()-1);
   item->setToolTip(label);
   // TODO: implement addPreset for PBR interpolation
-  item->setData(ctkMaterialPropertyWidgetPrivate::InterpolationModeRole, InterpolationGouraud);
+  item->setData(ctkMaterialPropertyWidgetPrivate::InterpolationModeRole, static_cast<int>(InterpolationGouraud));
   if (color.isValid())
     {
     item->setData(ctkMaterialPropertyWidgetPrivate::ColorRole, color);

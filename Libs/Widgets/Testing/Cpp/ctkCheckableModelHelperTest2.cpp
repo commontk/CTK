@@ -61,7 +61,7 @@ int ctkCheckableModelHelperTest2(int argc, char * argv [] )
   QTreeView view;
   view.setModel(&model);
 
-  model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+  model.setHeaderData(0, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
 
   ctkCheckableModelHelper headerView(Qt::Horizontal);
   headerView.setPropagateDepth(-1);

@@ -62,7 +62,7 @@ int ctkCheckableHeaderViewTest2(int argc, char * argv [] )
   QTreeView view;
   view.setModel(&model);
 
-  model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+  model.setHeaderData(0, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
 
   QHeaderView* previousHeaderView = view.header();
 #if (QT_VERSION >= 0x50000)

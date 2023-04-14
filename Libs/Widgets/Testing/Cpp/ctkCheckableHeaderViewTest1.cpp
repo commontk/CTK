@@ -73,7 +73,7 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
   table.setModel(&model);
 
   // Header is checked by default
-  model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+  model.setHeaderData(0, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
 
   QHeaderView* previousHeaderView = table.horizontalHeader();
 #if (QT_VERSION >= 0x50000)
