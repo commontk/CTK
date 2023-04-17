@@ -290,15 +290,12 @@ void ctkTreeComboBox::resizePopup()
       int heightMargin = 0;//2*container->spacing();
 
       // add the frame of the container
-      int marginTop, marginBottom;
-      container->getContentsMargins(0, &marginTop, 0, &marginBottom);
-      heightMargin += marginTop + marginBottom;
+      QMargins cMargins = container->contentsMargins();
+      heightMargin += cMargins.top() + cMargins.bottom();
 
-      //add the frame of the view
-      this->view()->getContentsMargins(0, &marginTop, 0, &marginBottom);
-      //marginTop += static_cast<QAbstractScrollAreaPrivate *>(QObjectPrivate::get(this->view()))->top;
-      //marginBottom += static_cast<QAbstractScrollAreaPrivate *>(QObjectPrivate::get(this->view()))->bottom;
-      heightMargin += marginTop + marginBottom;
+      // add the frame of the view
+      QMargins vMargins = this->view()->contentsMargins();
+      heightMargin += vMargins.top() + vMargins.bottom();
 
       listRect.setHeight(listRect.height() + heightMargin);
       }

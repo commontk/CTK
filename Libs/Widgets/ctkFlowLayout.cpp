@@ -112,15 +112,14 @@ QSize ctkFlowLayoutPrivate::maxSizeHint(int *visibleItemsCount)const
 int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
 {
   Q_Q(const ctkFlowLayout);
-  int left, top, right, bottom;
-  q->getContentsMargins(&left, &top, &right, &bottom);
-  QRect effectiveRect = rect.adjusted(+left, +top, -right, -bottom);
+  QMargins margins = q->contentsMargins();
+  QRect effectiveRect = rect.adjusted(+margins.left(), +margins.top(), -margins.right(), -margins.bottom());
   QPoint pos = QPoint(effectiveRect.x(), effectiveRect.y());
   int length = 0;
   int max = this->Orientation == Qt::Horizontal ?
     effectiveRect.right() + 1 : effectiveRect.bottom() + 1;
-  int maxX = left + right;
-  int maxY = top + bottom;
+  int maxX = margins.left() + margins.right();
+  int maxY = margins.top() + margins.bottom();
   QSize maxItemSize = this->AlignItems ? this->maxSizeHint() : QSize();
 
   int spaceX = q->horizontalSpacing();
@@ -157,7 +156,7 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
         QRect geometry = previousItem->geometry();
         geometry.adjust(0, 0, max + space - pos.x(), 0);
         previousItem->setGeometry(geometry);
-        maxX = qMax(maxX, geometry.right() + right);
+        maxX = qMax(maxX, geometry.right() + margins.right());
         }
       pos = QPoint(effectiveRect.x(), pos.y() + length + space);
       next = pos + QPoint(itemSize.width() + space, 0);
@@ -176,8 +175,8 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
       item->setGeometry(QRect(pos, item->sizeHint()));
       }
 
-    maxX = qMax( maxX , pos.x() + item->sizeHint().width() + right);
-    maxY = qMax( maxY , pos.y() + item->sizeHint().height() + bottom);
+    maxX = qMax( maxX , pos.x() + item->sizeHint().width() + margins.right());
+    maxY = qMax( maxY , pos.y() + item->sizeHint().height() + margins.bottom());
     pos = next;
     length = qMax(length, this->Orientation == Qt::Horizontal ?
       itemSize.height() : itemSize.width());
@@ -415,9 +414,7 @@ QSize ctkFlowLayout::minimumSize() const
       }
     size = size.expandedTo(item->minimumSize());
     }
-  int left, top, right, bottom;
-  this->getContentsMargins(&left, &top, &right, &bottom);
-  size += QSize(left+right, top+bottom);
+  size += this->contentsRect().size();
   return size;
 }
 
@@ -478,9 +475,7 @@ QSize ctkFlowLayout::sizeHint() const
   size += QSize((countX-1) * this->horizontalSpacing(),
                 (countY-1) * this->verticalSpacing());
   // Add margins
-  int left, top, right, bottom;
-  this->getContentsMargins(&left, &top, &right, &bottom);
-  size += QSize(left+right, top+bottom);
+  size += this->contentsRect().size();
   return size;
 }
 
@@ -507,8 +502,6 @@ ctkFlowLayout* ctkFlowLayout::replaceLayout(QWidget* widget)
   flowLayout->setPreferredExpandingDirections(
     isVerticalLayout ? Qt::Vertical : Qt::Horizontal);
   flowLayout->setAlignItems(false);
-  int margins[4];
-  oldLayout->getContentsMargins(&margins[0],&margins[1],&margins[2],&margins[3]);
   QLayoutItem* item = 0;
   while((item = oldLayout->takeAt(0)))
     {
