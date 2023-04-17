@@ -31,7 +31,7 @@ int ctkDICOMHostTest1(int argc, char * argv [])
   QCoreApplication app(argc, argv);
   QString command = QString("ctkDICOMHost");
   QProcess process;
-  process.start(command);
+  process.start(command, /* arguments= */ QStringList());
   bool res = process.waitForStarted();
   if (!res)
     {
