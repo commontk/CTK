@@ -170,7 +170,7 @@ void ctkVTKSurfaceMaterialPropertyWidget::onOpacityChanged(double newOpacity)
 
 // --------------------------------------------------------------------------
 void ctkVTKSurfaceMaterialPropertyWidget::onInterpolationModeChanged(
-  ctkMaterialPropertyWidget::InterpolationMode newInterpolationMode)
+  int newInterpolationMode)
 {
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onInterpolationModeChanged(newInterpolationMode);

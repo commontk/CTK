@@ -56,7 +56,7 @@ protected:
 
   virtual void onColorChanged(const QColor& newColor);
   virtual void onOpacityChanged(double newOpacity);
-  virtual void onInterpolationModeChanged(ctkMaterialPropertyWidget::InterpolationMode newMode);
+  virtual void onInterpolationModeChanged(int newInterpolationMode);
   virtual void onAmbientChanged(double newAmbient);
   virtual void onDiffuseChanged(double newDiffuse);
   virtual void onSpecularChanged(double newSpecular);
