@@ -101,7 +101,11 @@ void ctkCmdLineModuleProcessWatcher::pauseProcess()
   if (processPaused || !futureInterface.isPaused()) return;
 
 #ifdef Q_OS_UNIX
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+  if (::kill(process.processId(), SIGSTOP))
+#else
   if (::kill(process.pid(), SIGSTOP))
+#endif
   {
     // error
     futureInterface.setPaused(false);
@@ -119,7 +123,11 @@ void ctkCmdLineModuleProcessWatcher::resumeProcess()
   if (!processPaused) return;
 
 #ifdef Q_OS_UNIX
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+  if(::kill(process.processId(), SIGCONT))
+#else
   if(::kill(process.pid(), SIGCONT))
+#endif
   {
     // error
     futureInterface.setPaused(true);
