@@ -429,7 +429,7 @@ QString ctkDICOMItem::Decode( const DcmTag& tag, const OFString& raw ) const
       QString asciiString;
       for (size_t i = 0; i < raw.length(); i++)
       {
-        if (32 <= raw[i] && raw[i] < 128)
+        if (32 <= static_cast<unsigned char>(raw[i]) && static_cast<unsigned char>(raw[i]) < 128)
         {
           asciiString += raw[i];
         }
