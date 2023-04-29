@@ -88,22 +88,11 @@ ctkPluginPrivate::ctkPluginPrivate(
     QSharedPointer<ctkPluginArchive> pa)
       : q_ptr(qq), fwCtx(fw), id(pa->getPluginId()),
       location(pa->getPluginLocation().toString()), state(ctkPlugin::INSTALLED),
-      archive(pa), pluginContext(0), pluginActivator(0), pluginLoader(pa->getLibLocation()),
+      archive(pa), pluginContext(0), pluginActivator(0),
       resolveFailException(0), eagerActivation(false), wasStarted(false)
 {
   //TODO
   //checkCertificates(pa);
-
-  // Get library load hints
-  if (fw->props.contains(ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS))
-  {
-    QVariant loadHintsVariant = fw->props[ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS];
-    if (loadHintsVariant.isValid())
-    {
-      QLibrary::LoadHints loadHints = loadHintsVariant.value<QLibrary::LoadHints>();
-      pluginLoader.setLoadHints(loadHints);
-    }
-  }
 
   checkManifestHeaders();
 
@@ -725,6 +714,17 @@ ctkPluginException* ctkPluginPrivate::start0()
 
   ctkPluginException::Type error_type = ctkPluginException::MANIFEST_ERROR;
   try {
+	pluginLoader.setFileName(archive->getLibLocation());
+	// Get library load hints
+	if (fwCtx->props.contains(ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS))
+	{
+		QVariant loadHintsVariant = fwCtx->props[ctkPluginConstants::FRAMEWORK_PLUGIN_LOAD_HINTS];
+		if (loadHintsVariant.isValid())
+		{
+			QLibrary::LoadHints loadHints = loadHintsVariant.value<QLibrary::LoadHints>();
+			pluginLoader.setLoadHints(loadHints);
+		}
+	}
     pluginLoader.load();
     if (!pluginLoader.isLoaded())
     {
