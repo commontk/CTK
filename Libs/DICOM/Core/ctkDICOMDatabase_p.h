@@ -169,6 +169,7 @@ public:
   bool insertPatient(const ctkDICOMItem& dataset, int& databasePatientID);
   bool insertStudy(const ctkDICOMItem& dataset, int dbPatientID);
   bool insertSeries( const ctkDICOMItem& dataset, QString studyInstanceUID);
+  bool updateSeries( const ctkDICOMItem& dataset, QString studyInstanceUID);
 
   /// Facilitate using custom schema with the database without subclassing
   QString SchemaVersion;

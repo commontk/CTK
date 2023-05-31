@@ -528,6 +528,60 @@ bool ctkDICOMDatabasePrivate::insertSeries(const ctkDICOMItem& dataset, QString 
   }
 }
 
+bool ctkDICOMDatabasePrivate::updateSeries(const ctkDICOMItem &dataset, QString studyInstanceUID)
+{
+  QString seriesInstanceUID(dataset.GetElementAsString(DCM_SeriesInstanceUID) );
+
+  QSqlQuery checkSeriesExistsQuery(this->Database);
+  checkSeriesExistsQuery.prepare( "SELECT * FROM Series WHERE SeriesInstanceUID = ?" );
+  checkSeriesExistsQuery.bindValue( 0, seriesInstanceUID );
+
+  if (this->LoggedExecVerbose)
+  {
+    logger.warn( "Statement: " + checkSeriesExistsQuery.lastQuery() );
+  }
+  checkSeriesExistsQuery.exec();
+  if (!checkSeriesExistsQuery.next())
+  {
+    qDebug() << "Cannot update inexisting series" << seriesInstanceUID;
+  }
+
+  QString seriesDate(dataset.GetElementAsString(DCM_SeriesDate) );
+  QString seriesTime(dataset.GetElementAsString(DCM_SeriesTime) );
+  QString seriesDescription(dataset.GetElementAsString(DCM_SeriesDescription) );
+  QString bodyPartExamined(dataset.GetElementAsString(DCM_BodyPartExamined) );
+  long acquisitionNumber(dataset.GetElementAsInteger(DCM_AcquisitionNumber) );
+  long echoNumber(dataset.GetElementAsInteger(DCM_EchoNumbers) );
+  long temporalPosition(dataset.GetElementAsInteger(DCM_TemporalPositionIdentifier) );
+
+  QSqlQuery updateSeriesStatement(this->Database);
+  updateSeriesStatement.prepare("UPDATE Series SET "
+                                "SeriesDate = COALESCE(SeriesDate, :seriesDate), "
+                                "SeriesTime = COALESCE(SeriesTime, :seriesTime), "
+                                "SeriesDescription = COALESCE(SeriesDescription, :seriesDescription), "
+                                "BodyPartExamined = COALESCE(BodyPartExamined, :bodyPartExamined), "
+                                "AcquisitionNumber = COALESCE(AcquisitionNumber, :acquisitionNumber), "
+                                "EchoNumber = COALESCE(EchoNumber, :echoNumber), "
+                                "TemporalPosition = COALESCE(TemporalPosition, :temporalPosition) "
+                                "WHERE SeriesInstanceUID = :seriesInstanceUID");
+  updateSeriesStatement.bindValue(":seriesDate", seriesDate);
+  updateSeriesStatement.bindValue(":seriesTime", seriesTime);
+  updateSeriesStatement.bindValue(":seriesDescription", seriesDescription);
+  updateSeriesStatement.bindValue(":bodyPartExamined", bodyPartExamined);
+  updateSeriesStatement.bindValue(":acquisitionNumber", static_cast<int>(acquisitionNumber) );
+  updateSeriesStatement.bindValue(":echoNumber", static_cast<int>(echoNumber) );
+  updateSeriesStatement.bindValue(":temporalPosition", static_cast<int>(temporalPosition) );
+  updateSeriesStatement.bindValue(":seriesInstanceUID", seriesInstanceUID);
+
+  if ( !updateSeriesStatement.exec() )
+  {
+    logger.error( "Error executing statement: "
+                   + updateSeriesStatement.lastQuery()
+                   + " Error: " + updateSeriesStatement.lastError().text() );
+  }
+  return true;
+}
+
 //------------------------------------------------------------------------------
 bool ctkDICOMDatabasePrivate::openTagCacheDatabase()
 {
@@ -786,16 +840,24 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
   }
 
   QString seriesInstanceUID(dataset.GetElementAsString(DCM_SeriesInstanceUID));
-  if (!seriesInstanceUID.isEmpty() && !this->InsertedSeriesUIDsCache.contains(seriesInstanceUID))
+
+  if (!seriesInstanceUID.isEmpty())
   {
-    if (this->insertSeries(dataset, studyInstanceUID))
+    if (!this->InsertedSeriesUIDsCache.contains(seriesInstanceUID))
     {
-      if (this->LoggedExecVerbose)
+      if (this->insertSeries(dataset, studyInstanceUID))
       {
-        qDebug() << "Series Added";
+        if (this->LoggedExecVerbose)
+        {
+          qDebug() << "Series Added";
+        }
+        databaseWasChanged = true;
+        emit q->seriesAdded(seriesInstanceUID);
       }
-      databaseWasChanged = true;
-      emit q->seriesAdded(seriesInstanceUID);
+    }
+    else
+    {
+      this->updateSeries(dataset, studyInstanceUID);
     }
   }
 
