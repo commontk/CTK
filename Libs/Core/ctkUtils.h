@@ -32,6 +32,10 @@
 #include <QModelIndex>
 #include <QStringList>
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#define QRegExp QRegularExpression
+#endif
+
 // STD includes
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
 #include <list>
