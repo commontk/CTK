@@ -138,7 +138,7 @@ vtkProperty* ctkVTKPropertyWidget::property()const
 ctkVTKPropertyWidget::GroupsState ctkVTKPropertyWidget::groupsState()const
 {
   Q_D(const ctkVTKPropertyWidget);
-  ctkVTKPropertyWidget::GroupsState state = 0;
+  ctkVTKPropertyWidget::GroupsState state;
   ctkVTKPropertyWidget* constThis = const_cast<ctkVTKPropertyWidget*>(this);
   if (d->RepresentationCollapsibleGroupBox->isVisibleTo(constThis) )
     {

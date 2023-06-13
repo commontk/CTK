@@ -361,7 +361,7 @@ QLibrary::LoadHints ctkPluginStorageSQL::getPluginLoadHints() const
       return loadHintsVariant.value<QLibrary::LoadHints>();
     }
   }
-  return QLibrary::LoadHints(0);
+  return QLibrary::LoadHints();
 }
 
 //----------------------------------------------------------------------------
