@@ -304,8 +304,13 @@ void ctkCommandLineModuleAppLogic::onLoadDataClicked()
 
 void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QPixmap pixmap = ui.PlaceHolderForImage->pixmap(Qt::ReturnByValue);
+  if (!pixmap.isNull())
+#else
   const QPixmap* pixmap = ui.PlaceHolderForImage->pixmap();
   if(pixmap!=NULL)
+#endif
   {
     QString templatefilename = QDir(OutputLocation).absolutePath();
     if(templatefilename.isEmpty()==false) templatefilename.append('/');
@@ -325,7 +330,11 @@ void ctkCommandLineModuleAppLogic::onCreateSecondaryCapture()
       outputtmp.close();
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    pixmap.save(inputFileName);
+#else
     pixmap->save(inputFileName);
+#endif
 
     ModuleFrontend->setValue("fileVar", inputFileName);
     ModuleFrontend->setValue("dirVar", outputFileName);

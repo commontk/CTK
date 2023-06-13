@@ -280,8 +280,13 @@ void ctkExampleDicomAppLogic::onLoadDataClicked()
 
 void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QPixmap tmppixmap = ui.PlaceHolderForImage->pixmap(Qt::ReturnByValue);
+  if (!tmppixmap.isNull())
+#else
   const QPixmap* pixmap = ui.PlaceHolderForImage->pixmap();
   if(pixmap!=NULL)
+#endif
   {
     QStringList preferredProtocols;
     preferredProtocols.append("file:");
@@ -296,7 +301,11 @@ void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
       QString filename = QFileInfo(tempfile->fileName()).absoluteFilePath();
       qDebug() << "Created file: " << filename;
       tempfile->close();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+      // tmppixmap is already set
+#else
       QPixmap tmppixmap(*pixmap);
+#endif
       QPainter painter(&tmppixmap);
       painter.setPen(Qt::white);
       painter.setFont(QFont("Arial", 15));
