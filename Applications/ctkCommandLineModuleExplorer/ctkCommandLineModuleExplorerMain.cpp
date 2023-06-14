@@ -143,7 +143,7 @@ int main(int argc, char** argv)
   else if (args.contains("string"))
   {
     QByteArray byteArray;
-    byteArray.append(args["string"].toString());
+    byteArray.append(args["string"].toString().toUtf8());
     QBuffer buffer(&byteArray);
     buffer.open(QIODevice::ReadOnly);
 
