@@ -1625,7 +1625,7 @@ void ctkDICOMBrowser::exportSelectedItems(ctkDICOMModel::IndexType level)
   Q_D(const ctkDICOMBrowser);
   ctkFileDialog* directoryDialog = new ctkFileDialog();
   directoryDialog->setOption(QFileDialog::ShowDirsOnly);
-  directoryDialog->setFileMode(QFileDialog::DirectoryOnly);
+  directoryDialog->setFileMode(QFileDialog::Directory);
   bool res = directoryDialog->exec();
   if (!res)
   {
