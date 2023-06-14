@@ -119,7 +119,7 @@ QImage ctkDICOMImage::frame(int frame) const
     const unsigned long length = width * height + offset;
     /* create output buffer for DicomImage class */
     QByteArray buffer;
-    buffer.append(header);
+    buffer.append(header.toUtf8());
     buffer.resize(length);
 
     /* copy PGM header to buffer */
