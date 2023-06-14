@@ -194,10 +194,17 @@ void ctkWorkflowButtonBoxWidgetPrivate::updateGoToButtons(ctkWorkflowStep* curre
   Q_ASSERT(q->layout());
 
   // Change the buttons only if the set of steps to have goTo buttons is either empty or has changed
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QList<ctkWorkflowStep*> finishSteps = this->Workflow->finishSteps();
+  QSet<ctkWorkflowStep*> goToStepsToHaveButtons(finishSteps.begin(), finishSteps.end());
+  QList<ctkWorkflowStep*> steps = this->GoToButtonToStepMap.values();
+  QSet<ctkWorkflowStep*> goToStepsThatHaveButtons(steps.begin(), steps.end());
+#else
   QSet<ctkWorkflowStep*> goToStepsToHaveButtons =
     QSet<ctkWorkflowStep*>::fromList(this->Workflow->finishSteps());
   QSet<ctkWorkflowStep*> goToStepsThatHaveButtons =
     QSet<ctkWorkflowStep*>::fromList(this->GoToButtonToStepMap.values());
+#endif
 
   // Remove the buttons if the set of steps to have goTo buttons has changed
   if (goToStepsThatHaveButtons != goToStepsToHaveButtons)
