@@ -29,6 +29,7 @@
 #include "ctkPluginFrameworkUtil_p.h"
 #include "ctkPluginFrameworkContext_p.h"
 #include "ctkServiceException.h"
+#include "ctkUtils.h"
 
 #include <QFileInfo>
 #include <QUrl>
@@ -696,7 +697,7 @@ QStringList ctkPluginStorageSQL::findResourcesPath(int archiveKey, const QString
     }
   }
 
-  return paths.toList();
+  return ctk::qSetToQStringList(paths);
 }
 
 //----------------------------------------------------------------------------
