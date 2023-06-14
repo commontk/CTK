@@ -44,7 +44,8 @@ int testSelectionMode(ctkFileDialog* fileDialog)
   CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
 
   fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  fileDialog->setFileMode(QFileDialog::DirectoryOnly);
+  fileDialog->setFileMode(QFileDialog::Directory);
+  fileDialog->setOption(QFileDialog::ShowDirsOnly);
   CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
 
   fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
