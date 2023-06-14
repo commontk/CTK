@@ -74,9 +74,18 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
       if(wheelEvent)
         {
         QSize size = widget->size();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+        double normalized_x = wheelEvent->position().x() / static_cast<double>(size.width() / 2.0);
+        double normalized_y = wheelEvent->position().y() / static_cast<double>(size.height() / 2.0);
+#else
         double normalized_x = wheelEvent->x()/static_cast<double>(size.width()/2.0);
         double normalized_y = wheelEvent->y()/static_cast<double>(size.height()/2.0);
+#endif
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+        int numStep = (wheelEvent->angleDelta().y() > 0 ) ? 1 : 0;
+#else
         int numStep = (wheelEvent->delta() > 0 ) ? 1 : 0;
+#endif
         int buttons = wheelEvent->buttons();
         int modifiers = wheelEvent->modifiers();
         emit emit recordEvent(Object, "mouseWheel", QString("(%1,%2,%3,%4,%5)")
