@@ -346,7 +346,11 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
       {
         if (columnIndicesByVisualIndex[j] > columnIndicesByVisualIndex[j+1])
         {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+          columnIndicesByVisualIndex.swapItemsAt(j, j+1);
+#else
           columnIndicesByVisualIndex.swap(j, j+1);
+#endif
           header->swapSections(j, j+1);
         }
       }
@@ -360,7 +364,11 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
     {
       if (columnWeights[j] > columnWeights[j+1])
       {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+        columnWeights.swapItemsAt(j, j+1);
+#else
         columnWeights.swap(j, j+1);
+#endif
         header->swapSections(j, j+1);
       }
     }
