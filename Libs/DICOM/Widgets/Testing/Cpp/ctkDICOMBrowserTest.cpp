@@ -76,7 +76,7 @@ void ctkDICOMBrowserTester::initTestCase()
   QDir dataDir = QDir(QProcessEnvironment::systemEnvironment().value("CTKData_DIR", ""));
   QVERIFY(dataDir.exists());
 
-  this->DICOMDir = dataDir.filePath("Data/DICOM");
+  this->DICOMDir.setPath(dataDir.filePath("Data/DICOM"));
   QVERIFY(this->DICOMDir.exists());
 
   this->DatabaseDirectoryName = QDir::tempPath() + "/ctkDICOMBrowserTest-Database";
