@@ -245,7 +245,11 @@ void ctkVTKAbstractView::forceRender()
 
   // The timer can be stopped if it hasn't timed out yet.
   d->RequestTimer->stop();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  d->RequestTime.invalidate();
+#else
   d->RequestTime = QTime();
+#endif
 
   //logger.trace(QString("forceRender - RenderEnabled: %1")
   //             .arg(d->RenderEnabled ? "true" : "false"));
