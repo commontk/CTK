@@ -733,13 +733,17 @@ void ctkPluginStorageSQL::executeQuery(QSqlQuery *query, const QString &statemen
       }
 
       ctkPluginDatabaseException::Type errorType;
-      int result = query->lastError().number();
-      if (result == 26 || result == 11) //SQLILTE_NOTADB || SQLITE_CORRUPT
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
+      QString result = query->lastError().nativeErrorCode();
+#else
+      QString result = QString::number(query->lastError().number());
+#endif
+      if (result == "26" || result == "11") //SQLILTE_NOTADB || SQLITE_CORRUPT
       {
         qWarning() << "ctkPluginFramework:- Database file is corrupt or invalid:" << getDatabasePath();
         errorType = ctkPluginDatabaseException::DB_FILE_INVALID;
       }
-      else if (result == 8) //SQLITE_READONLY
+      else if (result == "8") // SQLITE_READONLY
         errorType = ctkPluginDatabaseException::DB_WRITE_ERROR;
       else
         errorType = ctkPluginDatabaseException::DB_SQL_ERROR;
@@ -1009,13 +1013,17 @@ void ctkPluginStorageSQL::beginTransaction(QSqlQuery *query, TransactionType typ
       success = query->exec(QLatin1String("BEGIN IMMEDIATE"));
 
   if (!success) {
-      int result = query->lastError().number();
-      if (result == 26 || result == 11) //SQLITE_NOTADB || SQLITE_CORRUPT
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
+      QString result = query->lastError().nativeErrorCode();
+#else
+      QString result = QString::number(query->lastError().number());
+#endif
+      if (result == "26" || result == "11") // SQLITE_NOTADB || SQLITE_CORRUPT
       {
         throw ctkPluginDatabaseException(QString("ctkPluginFramework: Database file is corrupt or invalid: %1").arg(getDatabasePath()),
                                       ctkPluginDatabaseException::DB_FILE_INVALID);
       }
-      else if (result == 8) //SQLITE_READONLY
+      else if (result == "8") // SQLITE_READONLY
       {
         throw ctkPluginDatabaseException(QString("ctkPluginFramework: Insufficient permissions to write to database: %1").arg(getDatabasePath()),
                                       ctkPluginDatabaseException::DB_WRITE_ERROR);
