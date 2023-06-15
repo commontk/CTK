@@ -124,6 +124,7 @@ int ctkVTKAbstractViewTest1(int argc, char * argv [] )
   CHECK_BOOL(RenderCount == 0, false);
 
   bool sliceViewWasPaused = sliceView.pauseRender();
+  CHECK_BOOL(sliceViewWasPaused, true);
   RenderCount = 0;
   sliceView.scheduleRender();
   sleep_ms(100);
