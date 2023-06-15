@@ -22,6 +22,8 @@
 #include <QDebug>
 #include <QAbstractItemModel>
 #include <QStandardItemModel>
+#include <QAbstractScrollArea>
+#include <QScrollBar>
 
 // CTK includes
 #include "ctkErrorLogWidget.h"
@@ -64,10 +66,14 @@ void ctkErrorLogWidgetPrivate::init()
   Q_Q(ctkErrorLogWidget);
 
   // this->ShowAllEntryButton->setIcon();
+  this->ConsoleModeButton->setIcon(q->style()->standardIcon(QStyle::SP_FileDialogDetailedView));
   this->ShowErrorEntryButton->setIcon(q->style()->standardIcon(QStyle::SP_MessageBoxCritical));
   this->ShowWarningEntryButton->setIcon(q->style()->standardIcon(QStyle::SP_MessageBoxWarning));
   this->ShowInfoEntryButton->setIcon(q->style()->standardIcon(QStyle::SP_MessageBoxInformation));
   this->ClearButton->setIcon(q->style()->standardIcon(QStyle::SP_DialogDiscardButton));
+
+  QObject::connect(this->ConsoleModeButton, SIGNAL(clicked(bool)),
+                   q, SLOT(setConsoleModeEnabled(bool)));
 
   QObject::connect(this->ShowAllEntryButton, SIGNAL(clicked()),
                    q, SLOT(setAllEntriesVisible()));
@@ -83,6 +89,12 @@ void ctkErrorLogWidgetPrivate::init()
 
   QObject::connect(this->ClearButton, SIGNAL(clicked()),
                    q, SLOT(removeEntries()));
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
+  this->ErrorLogDescription->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+#endif
+
+  this->ShowAllEntryButton->setVisible(false);  // minimize the default width of the widget
 }
 
 // --------------------------------------------------------------------------
@@ -187,6 +199,23 @@ void ctkErrorLogWidget::setColumnHidden(int columnId, bool hidden) const
 }
 
 // --------------------------------------------------------------------------
+void ctkErrorLogWidget::setConsoleModeEnabled(bool enabled)
+{
+  Q_D(const ctkErrorLogWidget);
+  d->ErrorLogTableView->setHidden(enabled);
+  if (enabled)
+    {
+    d->ErrorLogTableView->selectAll();
+    d->ErrorLogDescription->verticalScrollBar()->setValue(d->ErrorLogDescription->verticalScrollBar()->maximum());
+    }
+  else
+    {
+    d->ErrorLogTableView->clearSelection();
+    }
+
+}
+
+// --------------------------------------------------------------------------
 void ctkErrorLogWidget::setAllEntriesVisible(bool visibility)
 {
   this->setErrorEntriesVisible(visibility);
@@ -239,6 +268,90 @@ void ctkErrorLogWidget::setUnknownEntriesVisible(bool visibility)
       /* disableFilter= */ !visibility);
 }
 
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setConsoleModeButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ConsoleModeButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isConsoleModeButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ConsoleModeButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setAllEntryButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ShowAllEntryButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isAllEntryButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ShowAllEntryButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setErrorEntryButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ShowErrorEntryButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isErrorEntryButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ShowErrorEntryButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setWarningEntryButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ShowWarningEntryButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isWarningEntryButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ShowWarningEntryButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setInfoEntryButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ShowInfoEntryButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isInfoEntryButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ShowInfoEntryButton->isVisible();
+}
+
+// -------------------------------------------------------------------------
+void ctkErrorLogWidget::setClearButtonVisible(bool visibility)
+{
+  Q_D(ctkErrorLogWidget);
+  d->ClearButton->setVisible(visibility);
+}
+
+// -------------------------------------------------------------------------
+bool ctkErrorLogWidget::isClearButtonVisible()
+{
+  Q_D(ctkErrorLogWidget);
+  return d->ClearButton->isVisible();
+}
+
 // --------------------------------------------------------------------------
 void ctkErrorLogWidget::onRowsInserted(const QModelIndex &/*parent*/, int /*first*/, int /*last*/)
 {
@@ -247,6 +360,11 @@ void ctkErrorLogWidget::onRowsInserted(const QModelIndex &/*parent*/, int /*firs
     {
     // For performance reason, resize first column only when first entry is added
     d->ErrorLogTableView->resizeColumnToContents(ctkErrorLogModel::TimeColumn);
+    }
+  if (d->ConsoleModeButton->isChecked())
+    {
+    d->ErrorLogTableView->selectAll();
+    d->ErrorLogDescription->verticalScrollBar()->setValue(d->ErrorLogDescription->verticalScrollBar()->maximum());
     }
 }
 
@@ -291,10 +409,28 @@ void ctkErrorLogWidget::onSelectionChanged(const QItemSelection & selected,
 
   foreach(const QModelIndex& index, selectedRows)
     {
-    descriptions << index.data(ctkErrorLogModel::DescriptionTextRole).toString();
+    QString logLevelString = index.sibling(index.row(), 2).data().toString();
+    QString color;
+    if (logLevelString == "Error" || logLevelString == "Critical")
+    {
+      QPalette pal = this->palette();
+      color = pal.color(QPalette::BrightText).name();
+    }
+    else if (logLevelString == "Warning")
+    {
+      color = "orange";
+    }
+    QString descriptionString = index.data(ctkErrorLogModel::DescriptionTextRole).toString();
+    descriptionString = descriptionString.replace("&", "&amp;");
+    descriptionString = descriptionString.replace("<", "&lt;");
+    descriptionString = descriptionString.replace(">", "&gt;");
+    descriptionString = descriptionString.replace("\r", "<br />");
+    descriptionString = descriptionString.replace("\n", "<br />");
+    QString htmlString = "<span style=\"color:" + color + ";\">" + descriptionString + "</span>";
+    descriptions << htmlString;
     }
 
-  d->ErrorLogDescription->setText(descriptions.join("\n"));
+  d->ErrorLogDescription->setText(descriptions.join("<br />"));
 
   // fprintf(stdout, "onSelectionChanged: %d\n", start.msecsTo(QTime::currentTime()));
 }
