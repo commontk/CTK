@@ -20,7 +20,11 @@
 
 // Qt includes
 #include <QApplication>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#include <QScreen>
+#else
 #include <QDesktopWidget>
+#endif
 #include <QEvent>
 #include <QHeaderView>
 #include <QKeyEvent>
@@ -239,8 +243,12 @@ void ctkTreeComboBox::resizePopup()
   this->initStyleOption(&opt);
   QRect listRect(style->subControlRect(QStyle::CC_ComboBox, &opt,
                                        QStyle::SC_ComboBoxListBoxPopup, this));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QRect screen = this->screen()->availableGeometry();
+#else
   QRect screen = QApplication::desktop()->availableGeometry(
     QApplication::desktop()->screenNumber(this));
+#endif
   QPoint below = this->mapToGlobal(listRect.bottomLeft());
   int belowHeight = screen.bottom() - below.y();
   QPoint above = this->mapToGlobal(listRect.topLeft());
