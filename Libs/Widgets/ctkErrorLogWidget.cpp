@@ -21,6 +21,8 @@
 // Qt includes
 #include <QDebug>
 #include <QAbstractItemModel>
+#include <QKeyEvent>
+#include <QScrollBar>
 #include <QStandardItemModel>
 
 // CTK includes
@@ -36,6 +38,8 @@ protected:
 public:
   typedef ctkErrorLogWidgetPrivate Self;
   ctkErrorLogWidgetPrivate(ctkErrorLogWidget& object);
+
+  Qt::Orientation LayoutOrientation;
 
   ctkErrorLogLevel::LogLevels ErrorButtonFilter;
   ctkErrorLogLevel::LogLevels WarningButtonFilter;
@@ -53,6 +57,7 @@ public:
 ctkErrorLogWidgetPrivate::ctkErrorLogWidgetPrivate(ctkErrorLogWidget& object)
   : q_ptr(&object)
 {
+  this->LayoutOrientation = Qt::Vertical;
   this->ErrorButtonFilter = ctkErrorLogLevel::Error | ctkErrorLogLevel::Critical | ctkErrorLogLevel::Fatal;
   this->WarningButtonFilter = ctkErrorLogLevel::Warning;
   this->InfoButtonFilter = ctkErrorLogLevel::Info | ctkErrorLogLevel::Debug | ctkErrorLogLevel::Trace | ctkErrorLogLevel::Status;
@@ -63,11 +68,19 @@ void ctkErrorLogWidgetPrivate::init()
 {
   Q_Q(ctkErrorLogWidget);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
+  this->ErrorLogDescription->setPlaceholderText(ctkErrorLogWidget::tr("Select messages in the list to see details here."));
+#endif
+
   // this->ShowAllEntryButton->setIcon();
   this->ShowErrorEntryButton->setIcon(q->style()->standardIcon(QStyle::SP_MessageBoxCritical));
   this->ShowWarningEntryButton->setIcon(q->style()->standardIcon(QStyle::SP_MessageBoxWarning));
   this->ShowInfoEntryButton->setIcon(q->style()->standardIcon(QStyle::SP_MessageBoxInformation));
   this->ClearButton->setIcon(q->style()->standardIcon(QStyle::SP_DialogDiscardButton));
+
+  // Make the iconless "All" button the same height as other buttons that have icons
+  // (they are shown in the same row, so it does not look nice if their height is different)
+  this->ShowAllEntryButton->setFixedHeight(this->ShowErrorEntryButton->sizeHint().height());
 
   QObject::connect(this->ShowAllEntryButton, SIGNAL(clicked()),
                    q, SLOT(setAllEntriesVisible()));
@@ -83,6 +96,12 @@ void ctkErrorLogWidgetPrivate::init()
 
   QObject::connect(this->ClearButton, SIGNAL(clicked()),
                    q, SLOT(removeEntries()));
+
+  QScrollBar* verticalScrollBar = this->ErrorLogTableView->verticalScrollBar();
+  QObject::connect(verticalScrollBar, SIGNAL(valueChanged(int)),
+    q, SIGNAL(userViewed()));
+
+  this->ErrorLogTableView->installEventFilter(q);
 }
 
 // --------------------------------------------------------------------------
@@ -187,6 +206,53 @@ void ctkErrorLogWidget::setColumnHidden(int columnId, bool hidden) const
 }
 
 // --------------------------------------------------------------------------
+void ctkErrorLogWidget::setLayoutOrientation(Qt::Orientation orientation)
+{
+  Q_D(ctkErrorLogWidget);
+  if (d->LayoutOrientation == orientation)
+    {
+    return;
+    }
+
+  d->ctkErrorLogGridLayout->removeWidget(d->ErrorLogDescription);
+
+  int errorLogTableViewIndex = d->ctkErrorLogGridLayout->indexOf(d->ErrorLogTableView);
+  int errorLogTableViewRowIndex = -1;
+  int errorLogTableViewColIndex = -1;
+  int errorLogTableViewRowSpan = -1;
+  int errorLogTableViewColSpan = -1;
+
+  d->ctkErrorLogGridLayout->getItemPosition(errorLogTableViewIndex,
+    &errorLogTableViewRowIndex, &errorLogTableViewColIndex,
+    &errorLogTableViewRowSpan, &errorLogTableViewColSpan);
+
+  if (orientation == Qt::Vertical)
+    {
+    // Description is below message table
+    d->ctkErrorLogGridLayout->addWidget(d->ErrorLogDescription,
+      errorLogTableViewRowIndex + 1, errorLogTableViewColIndex, // row, col
+      1, 1); // rowSpan, colSpan
+    }
+  else
+    {
+    // Description is in a second column, beside the message table.
+    // Specifying rowSpan = -1 ensures the widget fills the entire second column.
+    d->ctkErrorLogGridLayout->addWidget(d->ErrorLogDescription,
+      0, errorLogTableViewColIndex + 1, // row, col
+      -1, 1); // rowSpan, colSpan
+    }
+
+  d->LayoutOrientation = orientation;
+}
+
+// --------------------------------------------------------------------------
+Qt::Orientation ctkErrorLogWidget::layoutOrientation() const
+{
+  Q_D(const ctkErrorLogWidget);
+  return d->LayoutOrientation;
+}
+
+// --------------------------------------------------------------------------
 void ctkErrorLogWidget::setAllEntriesVisible(bool visibility)
 {
   this->setErrorEntriesVisible(visibility);
@@ -259,6 +325,7 @@ void ctkErrorLogWidget::onLogLevelFilterChanged()
   d->ShowErrorEntryButton->setChecked(logLevelFilter & d->ErrorButtonFilter);
   d->ShowWarningEntryButton->setChecked(logLevelFilter & d->WarningButtonFilter);
   d->ShowInfoEntryButton->setChecked(logLevelFilter & d->InfoButtonFilter);
+  emit userViewed();
 }
 
 // --------------------------------------------------------------------------
@@ -266,6 +333,7 @@ void ctkErrorLogWidget::removeEntries()
 {
   Q_ASSERT(this->errorLogModel());
   this->errorLogModel()->clear();
+  emit userViewed();
 }
 
 // --------------------------------------------------------------------------
@@ -296,5 +364,37 @@ void ctkErrorLogWidget::onSelectionChanged(const QItemSelection & selected,
 
   d->ErrorLogDescription->setText(descriptions.join("\n"));
 
+  emit userViewed();
+
   // fprintf(stdout, "onSelectionChanged: %d\n", start.msecsTo(QTime::currentTime()));
+}
+
+//---------------------------------------------------------------------------
+bool ctkErrorLogWidget::eventFilter(QObject* target, QEvent* event)
+{
+  Q_D(ctkErrorLogWidget);
+  if (target == d->ErrorLogTableView && event->type() == QEvent::KeyPress)
+    {
+    // Make Home/End keys jump to first/last message in the list
+    // (without this, the keys would jump to the first/last cell in the current row)
+    QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+    if (keyEvent->key() == Qt::Key_Home)
+      {
+      QModelIndex firstIndex = d->ErrorLogTableView->model()->index(0, 0);
+      QItemSelectionModel* select = d->ErrorLogTableView->selectionModel();
+      select->select(firstIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+      d->ErrorLogTableView->scrollToTop();
+      return true;
+      }
+    else if (keyEvent->key() == Qt::Key_End)
+      {
+      int rowCount = d->ErrorLogTableView->model()->rowCount();
+      QModelIndex lastIndex = d->ErrorLogTableView->model()->index(rowCount - 1, 0);
+      QItemSelectionModel* select = d->ErrorLogTableView->selectionModel();
+      select->select(lastIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+      d->ErrorLogTableView->scrollToBottom();
+      return true;
+      }
+    }
+  return this->Superclass::eventFilter(target, event);
 }
