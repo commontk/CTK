@@ -24,7 +24,7 @@
 
 #include <ctkPluginContext.h>
 
-#include <QtPlugin>
+#include <QtGlobal>
 
 //----------------------------------------------------------------------------
 void ctkTestPluginA2Activator::start(ctkPluginContext* context)
@@ -38,7 +38,3 @@ void ctkTestPluginA2Activator::stop(ctkPluginContext* context)
   Q_UNUSED(context)
   s->unregister();
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-Q_EXPORT_PLUGIN2(pluginA2_test, ctkTestPluginA2Activator)
-#endif

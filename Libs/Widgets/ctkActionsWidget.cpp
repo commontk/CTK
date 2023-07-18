@@ -409,11 +409,7 @@ bool ctkSortFilterActionsProxyModel::filterAcceptsRow(int source_row, const QMod
 void ctkRichTextItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem & option,
                                     const QModelIndex &index) const
 {
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-  QStyleOptionViewItemV4 options = option;
-#else
   QStyleOptionViewItem options = option;
-#endif
   initStyleOption(&options, index);
   if (! Qt::mightBeRichText(options.text))
     {
@@ -442,11 +438,7 @@ void ctkRichTextItemDelegate::paint(QPainter* painter, const QStyleOptionViewIte
 QSize ctkRichTextItemDelegate::sizeHint(const QStyleOptionViewItem & option,
                                         const QModelIndex & index)const
 {
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-  QStyleOptionViewItemV4 options = option;
-#else
   QStyleOptionViewItem options = option;
-#endif
   initStyleOption(&options, index);
   if (! Qt::mightBeRichText(options.text))
     {

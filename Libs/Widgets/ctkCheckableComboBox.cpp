@@ -73,20 +73,10 @@ protected:
         {
         QRect rect = option.rect;
 
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-        if (const QStyleOptionViewItemV3 *v3 = qstyleoption_cast<const QStyleOptionViewItemV3*>(&option))
-          {
-          if (const QAbstractItemView *view = qobject_cast<const QAbstractItemView*>(v3->widget))
-            {
-            rect.setWidth(view->viewport()->width());
-            }
-          }
-#else
         if (const QAbstractItemView *view = qobject_cast<const QAbstractItemView*>(option.widget))
           {
           rect.setWidth(view->viewport()->width());
           }
-#endif
         QStyleOption opt;
         opt.rect = rect;
         this->ComboBox->style()->drawPrimitive(QStyle::PE_IndicatorToolBarSeparator, &opt, painter, this->ComboBox);

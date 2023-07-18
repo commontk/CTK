@@ -28,8 +28,7 @@
 #include <service/cm/ctkConfigurationAdmin.h>
 #include <service/cm/ctkConfigurationListener.h>
 
-#include <QtPlugin>
-
+#include <QtGlobal>
 
 ctkConfigurationAdminActivator::ctkConfigurationAdminActivator()
   : logTracker(0), factory(0), eventAdapter(0)
@@ -78,7 +77,3 @@ void ctkConfigurationAdminActivator::stop(ctkPluginContext* context)
 
   logFileFallback.close();
 }
-
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-Q_EXPORT_PLUGIN2(org_commontk_configadmin, ctkConfigurationAdminActivator)
-#endif

@@ -627,11 +627,7 @@ bool ctkVTKMagnifyView::eventFilter(QObject * obj, QEvent * event)
     {
     QMouseEvent * mouseEvent = static_cast<QMouseEvent *>(event);
     Q_ASSERT(mouseEvent);
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     d->pushUpdatePixmapEvent(mouseEvent->localPos());
-#else
-    d->pushUpdatePixmapEvent(mouseEvent->posF());
-#endif
     }
   // On enter, update the pixmap with the zoomed image (required for zooming when
   // widget is created with mouse already within it), and emit signal of enter event

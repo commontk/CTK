@@ -24,7 +24,7 @@
 #include <ctkPluginContext.h>
 #include <ctkPluginConstants.h>
 
-#include <QtPlugin>
+#include <QtGlobal>
 #include <QStringList>
 
 #include "ctkConfigurationAdminTestSuite_p.h"
@@ -105,7 +105,3 @@ void ctkConfigAdminTestActivator::stop(ctkPluginContext* context)
   configPluginTestSuite = 0;
   configListenerTestSuite = 0;
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-Q_EXPORT_PLUGIN2(org_commontk_configadmintest, ctkConfigAdminTestActivator)
-#endif

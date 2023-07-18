@@ -20,7 +20,7 @@
 =============================================================================*/
 
 // Qt includes
-#include <QtPlugin>
+#include <QtGlobal>
 #include <QStringList>
 #include <QString>
 
@@ -92,7 +92,3 @@ ctkPluginContext* ctkCommandLineModuleAppPlugin::getPluginContext()
 {
   return ctkCommandLineModuleAppPlugin::Context;
 }
-
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-Q_EXPORT_PLUGIN2(org_commontk_dah_cmdlinemoduleapp, ctkCommandLineModuleAppPlugin)
-#endif

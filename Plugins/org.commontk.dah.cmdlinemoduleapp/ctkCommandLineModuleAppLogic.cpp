@@ -20,7 +20,7 @@
 =============================================================================*/
 
 // Qt includes
-#include <QtPlugin>
+#include <QtGlobal>
 #include <QRect>
 #include <QDebug>
 #include <QPushButton>
@@ -45,22 +45,14 @@
 // DCMTK includes
 #include <dcmtk/dcmimgle/dcmimage.h>
 
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-#include <QDesktopServices>
-#else
 #include <QStandardPaths>
-#endif
 
 //----------------------------------------------------------------------------
 ctkCommandLineModuleAppLogic::ctkCommandLineModuleAppLogic(const QString & modulelocation)
   : ctkDicomAbstractApp(ctkCommandLineModuleAppPlugin::getPluginContext()),
     AppWidget(0),
     ModuleLocation(modulelocation),
-    #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-    ModuleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)),
-    #else
     ModuleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QStandardPaths::writableLocation(QStandardPaths::CacheLocation)),
-    #endif
     ModuleFrontend(0)
 {
   connect(this, SIGNAL(startProgress()), this, SLOT(onStartProgress()), Qt::QueuedConnection);

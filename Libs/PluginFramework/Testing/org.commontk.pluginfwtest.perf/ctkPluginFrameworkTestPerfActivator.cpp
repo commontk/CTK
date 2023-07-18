@@ -23,7 +23,7 @@
 
 #include "ctkPluginFrameworkPerfRegistryTestSuite_p.h"
 
-#include <QtPlugin>
+#include <QtGlobal>
 
 
 //----------------------------------------------------------------------------
@@ -54,7 +54,3 @@ void ctkPluginFrameworkTestPerfActivator::stop(ctkPluginContext* context)
   delete perfTestSuite;
   perfTestSuite = 0;
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-Q_EXPORT_PLUGIN2(org_commontk_pluginfwtest_perf, ctkPluginFrameworkTestPerfActivator)
-#endif

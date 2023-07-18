@@ -19,13 +19,12 @@
 
 =============================================================================*/
 
+#include <QtGlobal>
 
 #include "ctkEventAdminActivator_p.h"
 
 #include "util/ctkEALogTracker_p.h"
 #include "ctkEAConfiguration_p.h"
-
-#include <QtPlugin>
 
 ctkEALogTracker* ctkEventAdminActivator::logTracker = 0;
 
@@ -71,7 +70,3 @@ ctkLogService* ctkEventAdminActivator::getLogService()
 {
   return logTracker;
 }
-
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-Q_EXPORT_PLUGIN2(org_commontk_eventadmin, ctkEventAdminActivator)
-#endif

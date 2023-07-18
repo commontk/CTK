@@ -285,11 +285,7 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
       continue;
     }
 
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-    ctkXnatObject* object = reinterpret_cast<ctkXnatObject*>(QMetaType::construct(typeId));
-#else
     ctkXnatObject* object = reinterpret_cast<ctkXnatObject*>(QMetaType(typeId).create());
-#endif
     if (!customSchemaType.isEmpty())
     {
       // We might have created the default ctkXnatObject sub-class, but can still set
@@ -693,11 +689,7 @@ void ctkXnatSession::upload(ctkXnatFile *xnatFile,
   {
     QCryptographicHash hash(QCryptographicHash::Md5);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     hash.addData(&localFile);
-#else
-    hash.addData(localFile.readAll());
-#endif
 
     QString md5ChecksumLocal(hash.result().toHex());
     // Retrieving the md5 checksum on the server and comparing
