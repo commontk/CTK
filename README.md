@@ -85,16 +85,9 @@ CTK supports the following versions of Qt:
     * VTK 9 or newer
     * PythonQt [patched-9](https://github.com/commontk/PythonQt/tree/patched-9) branch
 
-* Qt 4
-  * CMake options:
-    * `CTK_QT_VERSION` set to `4`
-    * `QT_QMAKE_EXECUTABLE` set to `C:\path\to\qt-everywhere-opensource-build-4.8.6\bin\qmake.exe` (or a similar path, depending on your operating system)
-  * Requirements
-    * C++98
-    * VTK 8
-    * ITK v4.13.3 or older
-    * PythonQt [patched-5](https://github.com/commontk/PythonQt/tree/patched-5) branch
-    * QtTesting <= [c44b32fde](https://github.com/commontk/QtTesting/commit/c44b32fdea827be737e8c2f5608ffbc2e3bd08b2) from June 2017.
+Unsupported:
+
+* Qt 4: The last CTK version to support Qt 4, C++98, VTK 8 and ITK v4.13.3 is [CTK 2023.07.13](https://github.com/commontk/CTK/releases/tag/2023.07.13).
 
 
 ## Supported Python versions
@@ -103,8 +96,9 @@ CTK supports the following versions of Python:
 
 * Python 3
 
-* Python 2.7
-  * Removed in VTK >= 9.3
+Unsupported:
+
+* Python 2.7: The last CTK version to support Python 2.7 is [CTK 2023.07.13](https://github.com/commontk/CTK/releases/tag/2023.07.13).
 
 ## Dependency Management
 
