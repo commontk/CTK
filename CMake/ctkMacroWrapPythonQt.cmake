@@ -165,10 +165,10 @@ macro(ctkMacroWrapPythonQt WRAPPING_NAMESPACE TARGET SRCS_LIST_NAME SOURCES IS_W
     COMMENT "PythonQt Wrapping - Generating ${wrapper_init_cpp_filename}"
     VERBATIM
     )
-  if(CTK_QT_VERSION VERSION_GREATER "4")
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     qt5_wrap_cpp(${TARGET}_MOC_CXX ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_h_filename})
   else()
-    QT4_WRAP_CPP(${TARGET}_MOC_CXX ${CMAKE_CURRENT_BINARY_DIR}/${wrapper_h_filename})
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   # The following files are generated

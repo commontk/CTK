@@ -34,7 +34,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   set(qtlibs core gui multimedia network opengl sql svg uitools xml)
 
   # Enable Qt libraries PythonQt wrapping if required
-  if(CTK_QT_VERSION VERSION_GREATER "4")
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     list(APPEND ep_PythonQt_args
       -DQt5_DIR:PATH=${Qt5_DIR}
       )
@@ -48,11 +48,12 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     if(CTK_QT_VERSION VERSION_LESS "5.6.0")
       list(APPEND qtlibs webkit)
     endif()
-  else()
-    list(APPEND ep_PythonQt_args
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+  elseif(CTK_QT_VERSION VERSION_EQUAL "6")
+    list(APPEND ep_cache_args
+      -DQt6_DIR:PATH=${Qt6_DIR}
       )
-    list(APPEND qtlibs webkit)
+  else()
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   # Set desired qt version for PythonQt
@@ -80,11 +81,10 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
   endif()
 
   ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
-
-  if (CTK_QT_VERSION VERSION_GREATER "4")
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     set(revision_tag c4a5a155b2942d4b003862c3317105b4a1ea6755) # patched-9
   else()
-    set(revision_tag 90c08fb0d523622d2de9e7a91f4ef116a66a8801) # patched-5
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   if(${proj}_REVISION_TAG)

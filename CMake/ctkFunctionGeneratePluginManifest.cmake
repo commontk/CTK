@@ -95,13 +95,11 @@ function(ctkFunctionGeneratePluginManifest QRC_SRCS)
 
   configure_file("${CTK_CMAKE_DIR}/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
   configure_file("${CTK_CMAKE_DIR}/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
-
-  if (CTK_QT_VERSION VERSION_GREATER "4")
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     QT5_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
   else()
-    QT4_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
-
   set(${QRC_SRCS} ${${QRC_SRCS}} ${_qrc_src} PARENT_SCOPE)
 
 endfunction()

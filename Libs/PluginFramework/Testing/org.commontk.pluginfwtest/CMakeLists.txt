@@ -49,7 +49,7 @@ set(MOC_SRCS )
 
 set(MY_MOC_CXX )
 
-#QT4_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
+#QT5_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
 
 set(test_executable ${fw_lib}CppTests)
 

@@ -420,11 +420,6 @@ endif()
 #
 ctkMacroSetupQt()
 
-# Update CTK_BASE_LIBRARIES with QT libraries
-if(QT4_FOUND)
-  set(CTK_BASE_LIBRARIES ${CTK_BASE_LIBRARIES} ${QT_LIBRARIES} CACHE INTERNAL "CTK base libraries" FORCE)
-endif()
-
 #-----------------------------------------------------------------------------
 # To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
 # before the SuperBuild script is included
