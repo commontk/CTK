@@ -13,13 +13,11 @@ set(MOC_SRCS )
 
 set(MY_MOC_CXX )
 
-#QT4_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
+#QT5_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
 
 set(lib_name ${fwtestutil_lib})
 
 add_library(${lib_name} SHARED ${SRCS} ${MY_MOC_CXX})
 target_link_libraries(${lib_name} ${fw_lib})
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
-  target_link_libraries(${lib_name} Qt5::Test)
-endif()
+target_link_libraries(${lib_name} Qt${CTK_QT_VERSION}::Test)

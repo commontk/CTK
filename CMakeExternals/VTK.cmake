@@ -30,11 +30,7 @@ endif()
 if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(NOT DEFINED CTK_VTK_VERSION_MAJOR)
-    if(CTK_QT_VERSION VERSION_LESS "5")
-      set(CTK_VTK_VERSION_MAJOR "8")
-    else()
       set(CTK_VTK_VERSION_MAJOR "9")
-    endif()
   endif()
   if(NOT CTK_VTK_VERSION_MAJOR MATCHES "^(8|9)$")
     message(FATAL_ERROR "Expected value for CTK_VTK_VERSION_MAJOR is either '8' or '9'")
@@ -104,16 +100,18 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     endif()
   endif()
 
-  if(CTK_QT_VERSION VERSION_LESS "5")
-    # Qt4
-    list(APPEND additional_vtk_cmakevars
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-      )
-  else()
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     # Qt5
     list(APPEND additional_vtk_cmakevars
       -DQt5_DIR:PATH=${Qt5_DIR}
       )
+  elseif(CTK_QT_VERSION VERSION_EQUAL "6")
+    # Qt6
+    list(APPEND additional_vtk_cmakevars
+      -DQt6_DIR:PATH=${Qt6_DIR}
+      )
+  else()
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   # VTK 8

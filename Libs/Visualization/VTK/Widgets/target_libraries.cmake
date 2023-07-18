@@ -9,6 +9,8 @@ set(target_libraries
   CTKWidgets
   CTKVisualizationVTKCore
   )
-if (CTK_QT_VERSION VERSION_GREATER "4")
+if(CTK_QT_VERSION VERSION_EQUAL "5")
   list(APPEND target_libraries Qt5Network_LIBRARIES Qt5WebKit_LIBRARIES)
+else()
+  message(FATAL_ERROR "Support for this Qt is not implemented")
 endif()

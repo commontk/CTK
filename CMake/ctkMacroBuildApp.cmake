@@ -70,17 +70,12 @@ macro(ctkMacroBuildApp)
     ${my_library_dirs}
     )
 
-  if(CTK_QT_VERSION VERSION_LESS "5")
-    # Add Qt include dirs and defines
-    include(${QT_USE_FILE})
-  endif()
-
   # Make sure variable are cleared
   set(MY_UI_CPP)
   set(MY_MOC_CPP)
   set(MY_QRC_SRCS)
 
-  if (CTK_QT_VERSION VERSION_GREATER "4")
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     # Wrap
     if(MY_MOC_SRCS)
       # this is a workaround for Visual Studio. The relative include paths in the generated
@@ -94,18 +89,7 @@ macro(ctkMacroBuildApp)
       QT5_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
     endif()
   else()
-    # Wrap
-    if(MY_MOC_SRCS)
-      # this is a workaround for Visual Studio. The relative include paths in the generated
-      # moc files can get very long and can't be resolved by the MSVC compiler.
-      foreach(moc_src ${MY_MOC_SRCS})
-        QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
-      endforeach()
-    endif()
-    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
-    if(DEFINED MY_RESOURCES)
-      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
-    endif()
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   source_group("Resources" FILES

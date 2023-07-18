@@ -251,9 +251,7 @@ endif()
 # Prefer QVTKOpenGLWidget to QVTKWidget when using Qt5
 set(_use_qvtkopenglwidget 1)
 if(VTK_VERSION VERSION_LESS "8.90")
-  if(CTK_QT_VERSION VERSION_LESS "5"
-    OR VTK_VERSION VERSION_LESS "8"
-    OR (NOT VTK_RENDERING_BACKEND STREQUAL "OpenGL2"))
+  if(NOT VTK_RENDERING_BACKEND STREQUAL "OpenGL2")
     set(_use_qvtkopenglwidget 0)
   endif()
 endif()

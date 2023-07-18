@@ -6,7 +6,7 @@ set(MOC_SRCS )
 
 set(MY_MOC_CXX )
 
-#QT4_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
+#QT5_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
 
 # Create a test for this EventAdmin implementation
 

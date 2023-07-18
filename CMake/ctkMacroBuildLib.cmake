@@ -74,11 +74,6 @@ macro(ctkMacroBuildLib)
     ${my_includes}
     )
 
-  if(CTK_QT_VERSION VERSION_LESS "5")
-    # Add Qt include dirs and defines
-    include(${QT_USE_FILE})
-  endif()
-
   # Add the library directories from the external project
   ctkFunctionGetLibraryDirs(my_library_dirs ${lib_name})
 
@@ -117,33 +112,32 @@ ${${MY_EXPORT_CUSTOM_CONTENT_FROM_VARIABLE}}
   if(MY_MOC_SRCS)
     # this is a workaround for Visual Studio. The relative include paths in the generated
     # moc files can get very long and can't be resolved by the MSVC compiler.
-    if(CTK_QT_VERSION VERSION_GREATER "4")
+    if(CTK_QT_VERSION VERSION_EQUAL "5")
       foreach(moc_src ${MY_MOC_SRCS})
         qt5_wrap_cpp(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src} OPTIONS -DHAVE_QT5)
       endforeach()
     else()
-      foreach(moc_src ${MY_MOC_SRCS})
-        QT4_WRAP_CPP(MY_MOC_CPP ${moc_src} OPTIONS -f${moc_src})
-      endforeach()
+      message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
     endif()
   endif()
   if(MY_GENERATE_MOC_SRCS)
-    QT4_GENERATE_MOCS(${MY_GENERATE_MOC_SRCS})
+    QT5_GENERATE_MOCS(${MY_GENERATE_MOC_SRCS})
   endif()
-  if(CTK_QT_VERSION VERSION_GREATER "4")
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     if(Qt5Widgets_FOUND)
       qt5_wrap_ui(MY_UI_CPP ${MY_UI_FORMS})
     elseif(MY_UI_FORMS)
       message(WARNING "Argument UI_FORMS ignored because Qt5Widgets module was not specified")
     endif()
   else()
-    QT4_WRAP_UI(MY_UI_CPP ${MY_UI_FORMS})
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
+
   if(DEFINED MY_RESOURCES AND NOT MY_RESOURCES STREQUAL "")
-    if(CTK_QT_VERSION VERSION_GREATER "4")
+    if(CTK_QT_VERSION VERSION_EQUAL "5")
       qt5_add_resources(MY_QRC_SRCS ${MY_RESOURCES})
     else()
-      QT4_ADD_RESOURCES(MY_QRC_SRCS ${MY_RESOURCES})
+      message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
     endif()
   endif()
 
