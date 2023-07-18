@@ -23,7 +23,7 @@
 #include "ctkActivatorSL1_p.h"
 #include "ctkFooService.h"
 
-#include <QtPlugin>
+#include <QtGlobal>
 #include <QStringList>
 
 //----------------------------------------------------------------------------
@@ -94,7 +94,3 @@ void ctkActivatorSL1::removedService(const ctkServiceReference& reference, ctkFo
   _serviceRemoved = true;
   qDebug() << "Removing reference =" << reference;
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-Q_EXPORT_PLUGIN2(pluginSL1_test, ctkActivatorSL1)
-#endif

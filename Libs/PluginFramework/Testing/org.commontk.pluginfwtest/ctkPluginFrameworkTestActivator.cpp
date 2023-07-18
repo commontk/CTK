@@ -28,7 +28,7 @@
 #include <ctkPluginContext.h>
 #include <ctkPluginConstants.h>
 
-#include <QtPlugin>
+#include <QtGlobal>
 #include <QStringList>
 
 //----------------------------------------------------------------------------
@@ -61,7 +61,3 @@ void ctkPluginFrameworkTestActivator::stop(ctkPluginContext* context)
   delete serviceListenerTestSuite;
   delete serviceTrackerTestSuite;
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-Q_EXPORT_PLUGIN2(org_commontk_pluginfwtest, ctkPluginFrameworkTestActivator)
-#endif

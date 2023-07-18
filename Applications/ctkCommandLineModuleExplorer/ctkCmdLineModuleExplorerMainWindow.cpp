@@ -45,11 +45,7 @@
 #include <ctkSettingsDialog.h>
 
 #include <QtConcurrentMap>
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-#include <QDesktopServices>
-#else
 #include <QStandardPaths>
-#endif
 #include <QMessageBox>
 #include <QFutureSynchronizer>
 #include <QCloseEvent>
@@ -61,11 +57,7 @@ ctkCLModuleExplorerMainWindow::ctkCLModuleExplorerMainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::ctkCmdLineModuleExplorerMainWindow),
   defaultModuleFrontendFactory(NULL),
-  #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-  moduleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QDesktopServices::storageLocation(QDesktopServices::CacheLocation)),
-  #else
   moduleManager(ctkCmdLineModuleManager::WEAK_VALIDATION, QStandardPaths::writableLocation(QStandardPaths::CacheLocation)),
-  #endif
   directoryWatcher(&moduleManager),
   settingsDialog(NULL)
 {

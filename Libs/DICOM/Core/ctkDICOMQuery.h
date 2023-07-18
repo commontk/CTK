@@ -44,13 +44,8 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
   Q_PROPERTY(QString host READ host WRITE setHost);
   Q_PROPERTY(int port READ port WRITE setPort);
   Q_PROPERTY(bool preferCGET READ preferCGET WRITE setPreferCGET);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   Q_PROPERTY(QList< QPair<QString,QString> > studyAndSeriesInstanceUIDQueried READ studyAndSeriesInstanceUIDQueried);
   Q_PROPERTY(QMap<QString, QVariant> filters READ filters WRITE setFilters);
-#else
-  Q_PROPERTY(QList studyAndSeriesInstanceUIDQueried READ studyAndSeriesInstanceUIDQueried);
-  Q_PROPERTY(QMap filters READ filters WRITE setFilters);
-#endif
 
 public:
   explicit ctkDICOMQuery(QObject* parent = 0);

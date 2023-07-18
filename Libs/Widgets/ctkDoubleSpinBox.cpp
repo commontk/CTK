@@ -709,13 +709,6 @@ void ctkDoubleSpinBox::setPrefix(const QString &prefix)
     {
     return;
     }
-
-#if QT_VERSION < 0x040800
-  /// Setting the prefix doesn't recompute the sizehint, do it manually here:
-  /// See: http://bugreports.qt.nokia.com/browse/QTBUG-9530
-  d->SpinBox->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
-#endif
-
   d->SpinBox->setPrefix(prefix);
 }
 
@@ -734,13 +727,6 @@ void ctkDoubleSpinBox::setSuffix(const QString &suffix)
     {
     return;
     }
-
-#if QT_VERSION < 0x040800
-  /// Setting the suffix doesn't recompute the sizehint, do it manually here:
-  /// See: http://bugreports.qt.nokia.com/browse/QTBUG-9530
-  d->SpinBox->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
-#endif
-
   d->SpinBox->setSuffix(suffix);
 }
 

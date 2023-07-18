@@ -24,7 +24,7 @@
 
 #include "ctkLogQDebug_p.h"
 
-#include <QtPlugin>
+#include <QtGlobal>
 #include <QStringList>
 
 ctkLogPlugin::ctkLogPlugin()
@@ -48,7 +48,3 @@ void ctkLogPlugin::stop(ctkPluginContext* context)
     logService = 0;
   }
 }
-
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-Q_EXPORT_PLUGIN2(org_commontk_log, ctkLogPlugin)
-#endif

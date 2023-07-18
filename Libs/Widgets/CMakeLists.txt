@@ -105,7 +105,6 @@ set(KIT_SRCS
   ctkHistogram.h
   ctkIconEnginePlugin.cpp
   ctkIconEnginePlugin.h
-  ctkIconEnginePlugin_qt4.h
   ctkIconEnginePlugin_qt5.h
   ctkLanguageComboBox.cpp
   ctkLanguageComboBox.h
@@ -314,10 +313,10 @@ set(KIT_MOC_SRCS
   ctkWorkflowWidgetStep_p.h
   )
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
+if(CTK_QT_VERSION VERSION_EQUAL "5")
   list(APPEND KIT_MOC_SRCS ctkIconEnginePlugin_qt5.h)
 else()
-  list(APPEND KIT_MOC_SRCS ctkIconEnginePlugin_qt4.h)
+  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
 endif()
 
 # Headers that should run through moc without adding

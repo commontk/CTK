@@ -30,9 +30,6 @@
 #include <QKeyEvent>
 #include <QLayout>
 #include <QScrollBar>
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-# include <QInputContext>
-#endif
 #include <QMouseEvent>
 #include <QModelIndex>
 #include <QStack>
@@ -425,12 +422,6 @@ void ctkTreeComboBox::resizePopup()
         listRect.moveBottomLeft(above);
         }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0) && !defined QT_NO_IM
-      if (QInputContext *qic = this->inputContext())
-        {
-        qic->reset();
-        }
-#endif
       QScrollBar *sb = this->view()->horizontalScrollBar();
       Qt::ScrollBarPolicy policy = this->view()->horizontalScrollBarPolicy();
       bool needHorizontalScrollBar =

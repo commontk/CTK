@@ -23,9 +23,7 @@
 #include "ui_ctkDICOMTableView.h"
 
 // Qt includes
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QJsonObject>
-#endif
 #include <QMouseEvent>
 #include <QSortFilterProxyModel>
 #include <QSqlError>
@@ -171,13 +169,8 @@ void ctkDICOMTableViewPrivate::init()
   this->dicomSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
   this->tblDicomDatabaseView->setModel(this->dicomSQLFilterModel);
   this->tblDicomDatabaseView->setSortingEnabled(true);
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-  this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-  this->tblDicomDatabaseView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-#else
   this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   this->tblDicomDatabaseView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-#endif
   this->tblDicomDatabaseView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
 
   QObject::connect(this->tblDicomDatabaseView->selectionModel(),
@@ -260,7 +253,6 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
     QHeaderView::ResizeMode columnResizeMode = QHeaderView::Interactive;
     if (!fieldFormat.isEmpty())
     {
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
       QJsonDocument fieldFormatDoc = QJsonDocument::fromJson(fieldFormat.toUtf8());
       QJsonObject fieldFormatObj;
       if (!fieldFormatDoc.isNull())
@@ -314,17 +306,12 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
 
       }
       else
-#endif
       {
         // format string is specified but failed to be decoded from json
         qWarning() << "Invalid ColumnDisplayProperties Format string for column " << columnName << ": " << fieldFormat;
       }
     }
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(col, columnResizeMode);
-#else
     this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(col, columnResizeMode);
-#endif
 
     if (columnResizeMode == QHeaderView::Stretch && visibility)
     {

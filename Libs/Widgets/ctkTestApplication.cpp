@@ -54,11 +54,7 @@ int ctkTestApplication::Error = 0;
 //-----------------------------------------------------------------------------
 ctkTestApplication::ctkTestApplication(int _argc, char** _argv)
 {
-#if QT_VERSION > QT_VERSION_CHECK(5,0,0)
   qInstallMessageHandler(ctkTestApplication::messageHandler);
-#else
-  qInstallMsgHandler(ctkTestApplication::messageHandler);
-#endif
   // CMake generated driver removes argv[0],
   // so let's put a dummy back in
   this->Argv.append("ctkTestApplication");
@@ -78,11 +74,7 @@ ctkTestApplication::ctkTestApplication(int _argc, char** _argv)
 ctkTestApplication::~ctkTestApplication()
 {
   delete this->App;
-#if QT_VERSION > QT_VERSION_CHECK(5,0,0)
   qInstallMessageHandler(0);
-#else
-  qInstallMsgHandler(0);
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -117,14 +109,8 @@ int ctkTestApplication::exec(bool reportErrorsOnExit)
 }
 
 //-----------------------------------------------------------------------------
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 void ctkTestApplication::messageHandler(QtMsgType type, const QMessageLogContext& /*context*/, const QString& msg)
 {
-#else
-void ctkTestApplication::messageHandler(QtMsgType type, const char *msgAsStr)
-{
-  QString msg(msgAsStr);
-#endif
   switch(type)
   {
   case QtDebugMsg:

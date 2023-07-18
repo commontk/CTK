@@ -396,13 +396,8 @@ void ctkXnatSessionTestCase::testUploadAndDownloadFile()
         QCryptographicHash hashUploaded(QCryptographicHash::Md5);
         QCryptographicHash hashDownloaded(QCryptographicHash::Md5);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
         hashUploaded.addData(&uploadedFile);
         hashDownloaded.addData(&downloadedFile);
-#else
-        hashUploaded.addData(uploadedFile.readAll());
-        hashDownloaded.addData(downloadedFile.readAll());
-#endif
 
         QString md5ChecksumUploaded(hashUploaded.result().toHex());
         QString md5ChecksumDownloaded(hashDownloaded.result().toHex());

@@ -20,9 +20,7 @@
 
 // Qt includes
 #include <QDir>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QTemporaryDir>
-#endif
 #include <QTextStream>
 
 // CTK includes
@@ -39,18 +37,8 @@ int ctkUtilsIsDirEmptyTest1(int argc, char * argv [] )
   Q_UNUSED(argc);
   Q_UNUSED(argv);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
    QTemporaryDir tempDir;
    CHECK_BOOL(tempDir.isValid(), true);
-#else
-   QDir tmp = QDir::temp();
-   QString temporaryDirName =
-       QString("ctkUtilsIsDirEmptyTest1.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
-   tmp.mkdir(temporaryDirName);
-   bool isValid = tmp.cd(temporaryDirName);
-   CHECK_BOOL(isValid, true);
-   QDir tempDir = QDir(tmp.absolutePath());
-#endif
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
    CHECK_BOOL(QFileInfo::exists(tempDir.path()), true);
@@ -72,10 +60,6 @@ int ctkUtilsIsDirEmptyTest1(int argc, char * argv [] )
 
    CHECK_BOOL(ctk::isDirEmpty(QDir(tempDir.path())), false);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   // QTemporaryDir is automatically deleted
-#else
-  ctk::removeDirRecursively(tempDir.path());
-#endif
   return EXIT_SUCCESS;
 }

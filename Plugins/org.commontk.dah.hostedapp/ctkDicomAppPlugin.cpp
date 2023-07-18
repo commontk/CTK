@@ -20,7 +20,7 @@
 =============================================================================*/
 
 // Qt includes
-#include <QtPlugin>
+#include <QtGlobal>
 #include <QStringList>
 
 // CTK includes
@@ -101,7 +101,3 @@ ctkPluginContext* ctkDicomAppPlugin::getPluginContext()
 {
   return ctkDicomAppPlugin::Context;
 }
-
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-Q_EXPORT_PLUGIN2(org_commontk_dah_hostedapp, ctkDicomAppPlugin)
-#endif

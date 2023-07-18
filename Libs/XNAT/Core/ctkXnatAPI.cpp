@@ -29,9 +29,7 @@
 #include <QNetworkReply>
 #include <QRegExp>
 #include <QUrl>
-#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
 #include <QUrlQuery>
-#endif
 
 // --------------------------------------------------------------------------
 // ctkXnatAPI methods
@@ -51,13 +49,9 @@ ctkXnatAPI::~ctkXnatAPI()
 QUuid ctkXnatAPI::get(const QString& resource, const Parameters& parameters, const qRestAPI::RawHeaders& rawHeaders)
 {
   QUrl url = this->createUrl(resource, parameters);
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-  url.addQueryItem("format", "json");
-#else
   QUrlQuery urlQuery(url);
   urlQuery.addQueryItem("format", "json");
   url.setQuery(urlQuery);
-#endif
   QNetworkReply* queryReply = this->sendRequest(QNetworkAccessManager::GetOperation, url, rawHeaders);
   QUuid queryId = queryReply->property("uuid").toString();
   return queryId;

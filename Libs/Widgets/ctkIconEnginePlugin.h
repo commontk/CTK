@@ -27,10 +27,6 @@
 // "#if QT_VERSION >= QT_VERSION_CHECK(...)" in Qt4. As a workaround,
 // we check for the Qt version here (not parsed by MOC) and provide two
 // versions of the actual header file according to the used Qt version.
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 # include <ctkIconEnginePlugin_qt5.h>
-#else
-# include <ctkIconEnginePlugin_qt4.h>
-#endif
 
 #endif
