@@ -22,7 +22,6 @@ cmake_minimum_required(VERSION 3.0)
 
 foreach(p
   CMP0054 # CMake 3.1
-  CMP0020 # CMake 2.8.11
   )
   if(POLICY ${p})
     cmake_policy(SET ${p} NEW)
@@ -256,7 +255,6 @@ foreach(file
   Libs/ctkExport.h.in
   CMake/ctkLinkerAsNeededFlagCheck.cmake
   CMake/ctk_compile_python_scripts.cmake.in
-  CMake/CMakeFindDependencyMacro.cmake
   )
   install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
 endforeach()

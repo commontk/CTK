@@ -75,11 +75,7 @@ include("${CTK_CMAKE_DIR}/ctkFunctionGetPluginDependencies.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroSetupPlugins.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroGenerateMocs.cmake")
 
-if(CMAKE_VERSION VERSION_LESS 3)
-  include("${CTK_CMAKE_DIR}/CMakeFindDependencyMacro.cmake")
-else()
   include(CMakeFindDependencyMacro)
-endif()
 
 # List all libraries
 SET(CTK_LIBRARIES @CTK_LIBRARIES@)
