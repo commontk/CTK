@@ -63,5 +63,3 @@ ctkPluginContext* ctkEventBusPlugin::getPluginContext() const
 {
   return context;
 }
-
-Q_EXPORT_PLUGIN2(org_commontk_eventbus, ctkEventBusPlugin)

@@ -579,7 +579,8 @@ ctk_app_option(ctkExampleHostedApp
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
 
-if(CTK_QT_VERSION VERSION_LESS "5")
+if(FALSE)
+# Since EventBusDemo depends on qmlrpc that is lacking Qt5 support, it is excluded.
 ctk_app_option(ctkEventBusDemo
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
@@ -683,7 +684,8 @@ ctk_plugin_option(org.commontk.dah.examplehost
                   CTK_APP_ctkExampleHost)
 
 # Plug-ins related to the EventBus demo application
-if(CTK_QT_VERSION VERSION_LESS "5")
+if(FALSE)
+# Since EventBusDemo depends on qmlrpc that is lacking Qt5 support, it is excluded.
 ctk_plugin_option(org.commontk.eventbus
                   "Build the org.commontk.eventbus plugin." OFF
                   CTK_APP_ctkEventBusDemo)
