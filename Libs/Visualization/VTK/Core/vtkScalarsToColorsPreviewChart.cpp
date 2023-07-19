@@ -70,7 +70,7 @@ void vtkScalarsToColorsPreviewChart::SetColorTransferFunction(
   compositeVisibleItem->SetInteractive(false);
   compositeVisibleItem->SetOpacity(1);
   compositeVisibleItem->SelectableOff();
-  if (function == CTK_NULLPTR)
+  if (function == nullptr)
   {
     vtkSmartPointer<vtkColorTransferFunction> ctf =
       vtkSmartPointer<vtkColorTransferFunction>::New();

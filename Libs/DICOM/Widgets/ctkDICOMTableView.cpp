@@ -634,7 +634,7 @@ bool ctkDICOMTableView::eventFilter(QObject *obj, QEvent *event)
     {
       QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       QAbstractItemModel* itemModel = d->tblDicomDatabaseView->model();
-      if (keyEvent != CTK_NULLPTR && itemModel->rowCount() > 0)
+      if (keyEvent != nullptr && itemModel->rowCount() > 0)
       {
         if (keyEvent->key() == Qt::Key_Home)
         {

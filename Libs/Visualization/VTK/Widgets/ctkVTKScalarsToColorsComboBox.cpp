@@ -93,9 +93,9 @@ int ctkVTKScalarsToColorsComboBox::addScalarsToColors(
   vtkScalarsToColors* scFunction, const QString& name)
 {
   QImage img;
-  if (scFunction != CTK_NULLPTR)
+  if (scFunction != nullptr)
   {
-    scFunction->Register(CTK_NULLPTR);
+    scFunction->Register(nullptr);
     img = ctk::scalarsToColorsImage(scFunction, this->iconSize());
   }
   else
@@ -116,7 +116,7 @@ vtkScalarsToColors* ctkVTKScalarsToColorsComboBox::getScalarsToColors(
   QVariant data = itemData(index);
   if (!data.isValid())
   {
-    return CTK_NULLPTR;
+    return nullptr;
   }
 
   vtkScalarsToColors* ctf =
@@ -167,7 +167,7 @@ void ctkVTKScalarsToColorsComboBox::onRowsAboutToBeRemoved(
   for (int i = first; i <= last; ++i)
   {
     vtkScalarsToColors* scFunction = this->getScalarsToColors(i);
-    if (scFunction != CTK_NULLPTR)
+    if (scFunction != nullptr)
     {
       scFunction->Delete();
     }

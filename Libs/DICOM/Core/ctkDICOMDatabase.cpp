@@ -78,7 +78,7 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o)
   , LoggedExecVerbose(false)
   , DisplayedFieldsTableAvailable(false)
   , UseShortStoragePath(true)
-  , ThumbnailGenerator(CTK_NULLPTR)
+  , ThumbnailGenerator(nullptr)
   , TagCacheVerified(false)
   , SchemaVersion("0.7.0")
 {

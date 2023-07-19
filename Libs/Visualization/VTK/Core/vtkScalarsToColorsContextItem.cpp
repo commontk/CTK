@@ -127,7 +127,7 @@ void vtkScalarsToColorsContextItem::CopyColorTransferFunction(
 {
   this->ResetColorTransferFunction();
 
-  if (ctf == CTK_NULLPTR)
+  if (ctf == nullptr)
   {
     this->SetVisibleRange(0, 255);
 

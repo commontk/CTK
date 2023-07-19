@@ -375,7 +375,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
 
     // Get information which server we want to get the study from and prepare request accordingly
     QMap<QString, ctkDICOMQuery*>::iterator queryIt = d->QueriesByStudyUID.find(studyUID);
-    ctkDICOMQuery* query = (queryIt == d->QueriesByStudyUID.end() ? CTK_NULLPTR : *queryIt);
+    ctkDICOMQuery* query = (queryIt == d->QueriesByStudyUID.end() ? nullptr : *queryIt);
     if (!query)
       {
       logger.warn("Retrieve of series " + seriesUID + " failed. No query found for study " + studyUID + ".");
