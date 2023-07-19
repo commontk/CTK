@@ -40,7 +40,7 @@ static ctkLogger logger("org.commontk.dicom.DICOMDisplayedFieldGenerator" );
 //------------------------------------------------------------------------------
 ctkDICOMDisplayedFieldGeneratorPrivate::ctkDICOMDisplayedFieldGeneratorPrivate(ctkDICOMDisplayedFieldGenerator& o)
   : q_ptr(&o)
-  , Database(CTK_NULLPTR)
+  , Database(nullptr)
 {
 }
 

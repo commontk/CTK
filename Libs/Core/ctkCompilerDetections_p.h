@@ -32,11 +32,6 @@
 /*
  * C++11 keywords and expressions
  */
-#ifdef Q_NULLPTR
-# define CTK_NULLPTR Q_NULLPTR
-#else
-# define CTK_NULLPTR NULL
-#endif
 
 #if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && _MSC_VER >= 1700 )
 # define CTK_OVERRIDE override

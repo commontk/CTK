@@ -49,7 +49,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKDiscretizableColorTransferWidge
   /// \accessors viewBackgroundColor() setViewBackgroundColor()
   Q_PROPERTY(QColor viewBackgroundColor READ viewBackgroundColor WRITE setViewBackgroundColor)
 public:
-  explicit ctkVTKDiscretizableColorTransferWidget(QWidget* parent_ = CTK_NULLPTR);
+  explicit ctkVTKDiscretizableColorTransferWidget(QWidget* parent_ = nullptr);
   virtual ~ctkVTKDiscretizableColorTransferWidget();
 
   enum ResetVisibleRange
