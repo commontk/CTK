@@ -36,9 +36,9 @@ class ctkFlowLayoutPrivate;
 class CTK_WIDGETS_EXPORT ctkFlowLayout : public QLayout
 {
   Q_OBJECT
-  /// If orientation is Qt::Horizontal, items are layed out from left to right
+  /// If orientation is Qt::Horizontal, items are laid out from left to right
   /// then top to bottom if there is no more horizontal space.
-  /// If orientation is Qt::Vertical, items are layed out from top to bottom
+  /// If orientation is Qt::Vertical, items are laid out from top to bottom
   /// then left to right if there is no more vertical space.
   /// Qt::Horizontal by default
   /// \sa preferredExpandingDirections

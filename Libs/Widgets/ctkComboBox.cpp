@@ -167,7 +167,7 @@ void ctkComboBoxPrivate::initStyleOption(QStyleOptionComboBox* opt)const
     }
   QRect textRect = q->style()->subControlRect(
     QStyle::CC_ComboBox, opt, QStyle::SC_ComboBoxEditField, q);
-  // TODO substract icon size
+  // TODO subtract icon size
   opt->currentText = opt->fontMetrics.elidedText(opt->currentText,
                                                  this->ElideMode,
                                                  textRect.width());

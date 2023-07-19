@@ -123,8 +123,8 @@ bool ctkAbstractPythonManager::initialize()
 //-----------------------------------------------------------------------------
 PythonQtObjectPtr ctkAbstractPythonManager::mainContext()
 {
-  bool initalized = this->initialize();
-  if (initalized)
+  bool initialized = this->initialize();
+  if (initialized)
     {
     return PythonQt::self()->getMainModule();
     }

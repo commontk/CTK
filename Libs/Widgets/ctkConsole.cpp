@@ -1056,7 +1056,7 @@ void ctkConsolePrivate::pasteText(const QString& text)
   //
   // For example, an empty line in a Python function could not be executed line-by-line, because
   // then empty line would be interpreted as the end of the function.
-  // In contrast, the empty line would not cause any issue when execuing the whole string at once
+  // In contrast, the empty line would not cause any issue when executing the whole string at once
   // (the empty line would be just ignored).
   //
   // We cannot execute at once if a command is already being edited (some command has been already typed in the current line)
