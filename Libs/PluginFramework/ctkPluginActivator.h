@@ -47,17 +47,14 @@
  * {
  *   Q_OBJECT
  *   Q_INTERFACES(ctkPluginActivator)
+ *   Q_PLUGIN_METADATA(IID "org_commontk_myplugin")
  *
  * public:
  *   void start(ctkPluginContext* context);
  *   void stop(ctkPluginContext* context);
  * };
  * \endcode
- * And in your implementation file:
- * \code
- * Q_EXPORT_PLUGIN2(mypluginlib, MyPlugin)
- * \endcode
- * where <code>mypluginlib</code> is the basename of your shared plugin library.
+ * where <code>myplugin</code> is the name of your plugin.
  *
  * <p>
  * See the Qt Documentation about <a href="https://doc.qt.io/qt-5/plugins-howto.html">
