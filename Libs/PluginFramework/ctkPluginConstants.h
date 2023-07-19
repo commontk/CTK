@@ -98,7 +98,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
   /**
    * Specifies the hints on how symbols in dynamic shared objects (plug-ins) are
    * resolved. The value of this property must be of type
-   * <a href="http://doc.trolltech.com/4.7/qlibrary.html#LoadHint-enum">QLibrary::LoadHints</a>.
+   * <a href="https://doc.qt.io/qt-5/qlibrary.html#LoadHint-enum">QLibrary::LoadHints</a>.
    *
    * Setting this property to QLibrary::ExportExternalSymbolsHint may
    * be necessary on some platforms (e.g. ELF platforms with gcc < 4.5) to get
