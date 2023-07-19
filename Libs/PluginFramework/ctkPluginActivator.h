@@ -60,7 +60,7 @@
  * where <code>mypluginlib</code> is the basename of your shared plugin library.
  *
  * <p>
- * See the Qt Documentation about <a href="http://doc.trolltech.com/4.6/plugins-howto.html">
+ * See the Qt Documentation about <a href="https://doc.qt.io/qt-5/plugins-howto.html">
  * How to Create Qt Plugins</a> for details.
  *
  * The class implementing the <code>%ctkPluginActivator</code> interface must have a public
