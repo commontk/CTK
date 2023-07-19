@@ -38,17 +38,7 @@
 # one for installation.  The file tells external projects how to use CTK.
 #
 
-message(STATUS "Including CMake built-in module CMakePackageConfigHelpers")
-include(CMakePackageConfigHelpers OPTIONAL)
-if(COMMAND configure_package_config_file)
-  message(STATUS "Including CMake built-in module CMakePackageConfigHelpers - ok")
-else()
-  message(STATUS "Including CMake built-in module CMakePackageConfigHelpers - failed")
-  message(STATUS "Including CTK module CMakePackageConfigHelpers")
-  list(APPEND CMAKE_MODULE_PATH ${CTK_CMAKE_DIR}/configure_package_config_file)
-  include(CMakePackageConfigHelpers)
-  message(STATUS "Including CTK module CMakePackageConfigHelpers - ok")
-endif()
+include(CMakePackageConfigHelpers)
 
 include(ctkFunctionGeneratePluginUseFile)
 
