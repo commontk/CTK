@@ -290,28 +290,28 @@ macro(ctkMacroBuildPlugin)
     ${_plugin_qm_files}
     )
 
-    target_include_directories(${lib_name}
-      PUBLIC "$<BUILD_INTERFACE:${my_includes}>"
-             "$<INSTALL_INTERFACE:${CTK_INSTALL_PLUGIN_INCLUDE_DIR}/${Plugin-SymbolicName}>"
-      )
-    if(CTK_QT_VERSION VERSION_LESS "5")
-      # Add Qt include dirs to the target
-      target_include_directories(${lib_name} PUBLIC ${QT_INCLUDE_DIR})
-      foreach(module QT3SUPPORT QTOPENGL QTASSISTANT QTDESIGNER QTMOTIF QTNSPLUGIN
-               QAXSERVER QAXCONTAINER QTDECLARATIVE QTSCRIPT QTSVG QTUITOOLS QTHELP
-               QTWEBKIT PHONON QTSCRIPTTOOLS QTMULTIMEDIA QTXMLPATTERNS QTGUI QTTEST
-               QTDBUS QTXML QTSQL QTNETWORK QTCORE)
-        if (QT_USE_${module} OR QT_USE_${module}_DEPENDS)
-          if (QT_${module}_FOUND)
-            target_include_directories(${lib_name} PUBLIC ${QT_${module}_INCLUDE_DIR})
-          endif ()
+  target_include_directories(${lib_name}
+    PUBLIC "$<BUILD_INTERFACE:${my_includes}>"
+           "$<INSTALL_INTERFACE:${CTK_INSTALL_PLUGIN_INCLUDE_DIR}/${Plugin-SymbolicName}>"
+    )
+  if(CTK_QT_VERSION VERSION_LESS "5")
+    # Add Qt include dirs to the target
+    target_include_directories(${lib_name} PUBLIC ${QT_INCLUDE_DIR})
+    foreach(module QT3SUPPORT QTOPENGL QTASSISTANT QTDESIGNER QTMOTIF QTNSPLUGIN
+             QAXSERVER QAXCONTAINER QTDECLARATIVE QTSCRIPT QTSVG QTUITOOLS QTHELP
+             QTWEBKIT PHONON QTSCRIPTTOOLS QTMULTIMEDIA QTXMLPATTERNS QTGUI QTTEST
+             QTDBUS QTXML QTSQL QTNETWORK QTCORE)
+      if (QT_USE_${module} OR QT_USE_${module}_DEPENDS)
+        if (QT_${module}_FOUND)
+          target_include_directories(${lib_name} PUBLIC ${QT_${module}_INCLUDE_DIR})
         endif ()
-      endforeach()
-    endif()
+      endif ()
+    endforeach()
+  endif()
 
   if(MY_TEST_PLUGIN AND CTK_QT_VERSION VERSION_GREATER "4")
     find_package(Qt5Test REQUIRED)
-      target_link_libraries(${lib_name} PRIVATE Qt5::Test)
+    target_link_libraries(${lib_name} PRIVATE Qt5::Test)
   endif()
 
   # Set the output directory for the plugin
@@ -373,7 +373,7 @@ macro(ctkMacroBuildPlugin)
     list(APPEND my_libs ssp) # add stack smash protection lib
   endif()
 
-    target_link_libraries(${lib_name} PUBLIC ${my_libs})
+  target_link_libraries(${lib_name} PUBLIC ${my_libs})
 
   if(NOT MY_TEST_PLUGIN)
     set(${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES} ${lib_name} CACHE INTERNAL "CTK plugins" FORCE)
@@ -390,4 +390,3 @@ macro(ctkMacroBuildPlugin)
   endif()
 
 endmacro()
-
