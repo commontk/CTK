@@ -140,12 +140,6 @@ macro(ctkMacroBuildPlugin)
   # and external dependencies
   ctkFunctionGetIncludeDirs(my_includes ${lib_name})
 
-  if(CMAKE_VERSION VERSION_LESS 2.8.12)
-    include_directories(
-      ${my_includes}
-      )
-  endif()
-
   if(CTK_QT_VERSION VERSION_LESS "5")
     # Add Qt include dirs and defines
     include(${QT_USE_FILE})
@@ -296,7 +290,6 @@ macro(ctkMacroBuildPlugin)
     ${_plugin_qm_files}
     )
 
-  if(NOT CMAKE_VERSION VERSION_LESS 2.8.12)
     target_include_directories(${lib_name}
       PUBLIC "$<BUILD_INTERFACE:${my_includes}>"
              "$<INSTALL_INTERFACE:${CTK_INSTALL_PLUGIN_INCLUDE_DIR}/${Plugin-SymbolicName}>"
@@ -315,17 +308,10 @@ macro(ctkMacroBuildPlugin)
         endif ()
       endforeach()
     endif()
-  else()
-    find_package(Qt5LinguistTools REQUIRED)
-  endif()
 
   if(MY_TEST_PLUGIN AND CTK_QT_VERSION VERSION_GREATER "4")
     find_package(Qt5Test REQUIRED)
-    if(CMAKE_VERSION VERSION_LESS 2.8.12)
-      target_link_libraries(${lib_name} Qt5::Test)
-    else()
       target_link_libraries(${lib_name} PRIVATE Qt5::Test)
-    endif()
   endif()
 
   # Set the output directory for the plugin
@@ -387,11 +373,7 @@ macro(ctkMacroBuildPlugin)
     list(APPEND my_libs ssp) # add stack smash protection lib
   endif()
 
-  if(CMAKE_VERSION VERSION_LESS 2.8.12)
-    target_link_libraries(${lib_name} ${my_libs})
-  else()
     target_link_libraries(${lib_name} PUBLIC ${my_libs})
-  endif()
 
   if(NOT MY_TEST_PLUGIN)
     set(${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES} ${lib_name} CACHE INTERNAL "CTK plugins" FORCE)
