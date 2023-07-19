@@ -229,7 +229,7 @@ public:
   void setSizeAdjustPolicy(SizeAdjustPolicy policy);
 
   int minimumContentsLength()const;
-  void setMinimumContentsLength(int lenght);
+  void setMinimumContentsLength(int length);
 
   /// Return the combo box internally used by the path line edit
   Q_INVOKABLE QComboBox* comboBox() const;

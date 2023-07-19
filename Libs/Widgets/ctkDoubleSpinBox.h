@@ -320,7 +320,7 @@ public Q_SLOTS:
   void setReadOnly(bool readOnly);
 
 Q_SIGNALS:
-  /// Emitted everytime the spinbox value is modified
+  /// Emitted every time the spinbox value is modified
   /// \sa QDoubleSpinBox::valueChanged()
   void valueChanged(double);
   void valueChanged(const QString &);

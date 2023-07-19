@@ -33,7 +33,7 @@ class ctkXnatSession;
 /**
  * @ingroup XNAT_Core
  *
- * @brief The ctkXnatDataModel class reprents the root object in a
+ * @brief The ctkXnatDataModel class represents the root object in a
  * XNAT data hierarchy.
  */
 class CTK_XNAT_CORE_EXPORT ctkXnatDataModel : public ctkXnatObject

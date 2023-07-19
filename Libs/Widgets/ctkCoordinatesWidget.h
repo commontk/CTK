@@ -32,7 +32,7 @@ class ctkCoordinatesWidgetPrivate;
 /// \ingroup Widgets
 ///
 /// ctkCoordinatesWidget is a simple container of dimension coordinates.
-/// For each coordinate a double spinbox is associated, everytime a value is
+/// For each coordinate a double spinbox is associated, every time a value is
 /// modified, the signal valueChanged is fired.
 /// TODO: use pimpl
 class CTK_WIDGETS_EXPORT ctkCoordinatesWidget : public QWidget

@@ -116,7 +116,7 @@ public:
   /// Multiple viewports can be specified by adding a "viewports" XML element and adding multiple
   /// child "layout" elements. Viewport name is specified in the "name" attribute of each "layout" element.
   Q_INVOKABLE void setViewport(QWidget* widget, const QString& viewportName);
-  /// Get viewport widget by nam.
+  /// Get viewport widget by name.
   Q_INVOKABLE QWidget* viewport(const QString& viewportName)const;
   /// Get all viewport names.
   QStringList viewportNames()const;

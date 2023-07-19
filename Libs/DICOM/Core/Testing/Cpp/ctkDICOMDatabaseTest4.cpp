@@ -138,7 +138,7 @@ int ctkDICOMDatabaseTest4( int argc, char * argv [] )
 
   if (database.cachedTag(instanceUID, badTag) != QString("__TAG_NOT_IN_INSTANCE__"))
     {
-    std::cerr << "ctkDICOMDatabase: bad tag should have sentinal value in cache" << std::endl;
+    std::cerr << "ctkDICOMDatabase: bad tag should have sentinel value in cache" << std::endl;
     return EXIT_FAILURE;
     }
 
