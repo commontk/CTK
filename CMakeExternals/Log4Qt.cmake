@@ -24,7 +24,7 @@ endif()
 
 if(NOT DEFINED Log4Qt_DIR)
 
-  set(revision_tag 8d3558b0f636cbf8ff83)
+  set(revision_tag e2a65d5d0c626a33f9384f2a9227efee3035dbf9)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -36,7 +36,7 @@ if(NOT DEFINED Log4Qt_DIR)
     set(location_args GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
                       GIT_TAG ${revision_tag})
   else()
-    set(location_args GIT_REPOSITORY "https://github.com/commontk/Log4Qt.git"
+    set(location_args GIT_REPOSITORY "https://github.com/MEONMedical/Log4Qt.git"
                       GIT_TAG ${revision_tag})
   endif()
 
@@ -44,6 +44,7 @@ if(NOT DEFINED Log4Qt_DIR)
 
   if(CTK_QT_VERSION VERSION_EQUAL "5")
     list(APPEND ep_cache_args
+      -DQT_DIR:PATH=${Qt5_DIR}
       -DQt5_DIR:PATH=${Qt5_DIR}
       )
     # XXX Backward compatible way
@@ -54,6 +55,7 @@ if(NOT DEFINED Log4Qt_DIR)
     endif()
   elseif(CTK_QT_VERSION VERSION_EQUAL "6")
     list(APPEND ep_cache_args
+      -DQT_DIR:PATH=${Qt6_DIR}
       -DQt6_DIR:PATH=${Qt6_DIR}
       )
   else()
@@ -66,14 +68,14 @@ if(NOT DEFINED Log4Qt_DIR)
     BINARY_DIR ${proj}-build
     PREFIX ${proj}${ep_suffix}
     ${location_args}
-    INSTALL_COMMAND ""
     CMAKE_CACHE_ARGS
       ${ep_common_cache_args}
       ${ep_cache_args}
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
-  set(Log4Qt_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(Log4Qt_INSTALL_DIR ${ep_install_dir})
+  set(Log4Qt_DIR ${Log4Qt_INSTALL_DIR}/lib/cmake/Log4Qt/)
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
