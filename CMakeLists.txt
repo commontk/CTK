@@ -621,7 +621,7 @@ ctk_app_option(ctkSimplePythonShell
                "Build the DICOM example application" OFF
                CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
 
-if(CTK_USE_QTTESTING AND CTK_QT_VERSION VERSION_LESS "5")
+if(CTK_USE_QTTESTING)
   ctk_app_option(ctkQtTesting
                 "Build the ctkQtTesting example application" OFF
                 CTK_BUILD_EXAMPLES)
