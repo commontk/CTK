@@ -35,9 +35,7 @@ class ctkEventAdminActivator : public QObject,
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)
-#ifdef HAVE_QT5
   Q_PLUGIN_METADATA(IID "org_commontk_eventadmin")
-#endif
 
 public:
 

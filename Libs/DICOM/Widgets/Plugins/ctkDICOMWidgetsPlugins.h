@@ -23,11 +23,7 @@
 
 // Qt includes
 #include <QtGlobal>
-#ifndef HAVE_QT5
-#include <QDesignerCustomWidgetCollectionInterface>
-#else
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
-#endif
 
 // CTK includes
 #include "ctkDICOMWidgetsPluginsExport.h"
@@ -41,9 +37,7 @@ class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMWidgetsPlugins
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
-#ifdef HAVE_QT5
   Q_PLUGIN_METADATA(IID "org.commontk.DICOM")
-#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:

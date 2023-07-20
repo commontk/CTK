@@ -23,11 +23,7 @@
 
 // Qt includes
 #include <QtGlobal>
-#ifndef HAVE_QT5
-#include <QDesignerCustomWidgetCollectionInterface>
-#else
 #include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
-#endif
 
 // CTK includes
 #include "ctkScriptingPythonWidgetsPluginsExport.h"
@@ -39,9 +35,7 @@ class CTK_SCRIPTING_PYTHON_WIDGETS_PLUGINS_EXPORT ctkScriptingPythonWidgetsPlugi
   , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
-#ifdef HAVE_QT5
   Q_PLUGIN_METADATA(IID "org.commontk.Python")
-#endif
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
 
 public:
