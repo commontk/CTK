@@ -266,12 +266,7 @@ void ctkDICOMQueryRetrieveWidget::query()
 
     d->QueriesByServer[d->CurrentServer] = query;
 
-#ifdef HAVE_QT5
     for (const auto & StudyAndSeriesInstanceUIDPair : query->studyAndSeriesInstanceUIDQueried() )
-#else
-    typedef QPair<QString,QString> StudyAndSeriesInstanceUIDPairType;
-    Q_FOREACH(const StudyAndSeriesInstanceUIDPairType & StudyAndSeriesInstanceUIDPair, query->studyAndSeriesInstanceUIDQueried())
-#endif
       {
       d->QueriesByStudyUID[StudyAndSeriesInstanceUIDPair.first] = query;
       d->StudyAndSeriesInstanceUIDPairList.push_back(qMakePair( StudyAndSeriesInstanceUIDPair.first, StudyAndSeriesInstanceUIDPair.second ));
@@ -296,19 +291,6 @@ void ctkDICOMQueryRetrieveWidget::query()
   d->ProgressDialog = 0;
   d->CurrentQuery = 0;
 }
-
-//----------------------------------------------------------------------------
-#ifndef HAVE_QT5
-namespace {
-  struct FindBySeriesUID {
-    QString seriesUID;
-    FindBySeriesUID(const QString& uid) : seriesUID(uid) {}
-    bool operator () (const QPair<QString, QString>& element) const {
-      return element.second == seriesUID;
-    }
-  };
-}
-#endif
 
 //----------------------------------------------------------------------------
 void ctkDICOMQueryRetrieveWidget::retrieve()
@@ -363,14 +345,8 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
       }
 
     // Get the study UID of the current series to be retrieved
-#ifdef HAVE_QT5
     auto currentStudyAndSeriesUIDPair = std::find_if( d->StudyAndSeriesInstanceUIDPairList.begin(), d->StudyAndSeriesInstanceUIDPairList.end(),
         [&seriesUID]( const QPair<QString, QString>& element ) { return element.second == seriesUID; } );
-#else
-    typedef QList< QPair<QString,QString> > StudyAndSeriesInstanceUIDPairList;
-    StudyAndSeriesInstanceUIDPairList::iterator currentStudyAndSeriesUIDPair =
-      std::find_if(d->StudyAndSeriesInstanceUIDPairList.begin(), d->StudyAndSeriesInstanceUIDPairList.end(), FindBySeriesUID(seriesUID));
-#endif
     QString studyUID = currentStudyAndSeriesUIDPair->first;
 
     // Get information which server we want to get the study from and prepare request accordingly
