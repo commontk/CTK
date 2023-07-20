@@ -128,8 +128,8 @@ public:
   ctkPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager);
   virtual ~ctkPythonConsoleCompleter();
 
-  int cursorOffset(const QString& completion) CTK_OVERRIDE;
-  void updateCompletionModel(const QString& completion) CTK_OVERRIDE;
+  int cursorOffset(const QString& completion) override;
+  void updateCompletionModel(const QString& completion) override;
 
 protected:
   QScopedPointer<ctkPythonConsoleCompleterPrivate> d_ptr;
