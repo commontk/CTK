@@ -70,7 +70,7 @@ private:
 
 private:
   ctkDICOMDisplayedFieldGeneratorRuleFactory(QObject* parent=nullptr);
-  ~ctkDICOMDisplayedFieldGeneratorRuleFactory() CTK_OVERRIDE;
+  ~ctkDICOMDisplayedFieldGeneratorRuleFactory() override;
 
   Q_DISABLE_COPY(ctkDICOMDisplayedFieldGeneratorRuleFactory);
   friend class ctkDICOMDisplayedFieldGeneratorRuleFactoryCleanup;
