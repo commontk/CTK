@@ -414,7 +414,12 @@ QSize ctkFlowLayout::minimumSize() const
       }
     size = size.expandedTo(item->minimumSize());
     }
-  size += this->contentsRect().size();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  size = size.grownBy(this->contentsMargins());
+#else
+  QMargins margins = this->contentsMargins();
+  size += QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
+#endif
   return size;
 }
 
@@ -475,7 +480,12 @@ QSize ctkFlowLayout::sizeHint() const
   size += QSize((countX-1) * this->horizontalSpacing(),
                 (countY-1) * this->verticalSpacing());
   // Add margins
-  size += this->contentsRect().size();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  size = size.grownBy(this->contentsMargins());
+#else
+  QMargins margins = this->contentsMargins();
+  size += QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
+#endif
   return size;
 }
 
