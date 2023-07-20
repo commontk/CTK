@@ -297,15 +297,15 @@ ctkDICOMIndexerPrivate::ctkDICOMIndexerPrivate(ctkDICOMIndexer& o)
   ctkDICOMIndexerPrivateWorker* worker = new ctkDICOMIndexerPrivateWorker(&this->RequestQueue);
   worker->moveToThread(&this->WorkerThread);
 
-  connect(&this->WorkerThread, SIGNAL("finished()"), worker, SLOT("deleteLater()"));
-  connect(this, SIGNAL("startWorker()"), worker, SLOT("start()"));
+  connect(&this->WorkerThread, &QThread::finished, worker, &QObject::deleteLater);
+  connect(this, &ctkDICOMIndexerPrivate::startWorker, worker, &ctkDICOMIndexerPrivateWorker::start);
 
   // Progress report
-  connect(worker, SIGNAL("progress(int)"), q_ptr, SLOT("progress(int)"));
-  connect(worker, SIGNAL("progressDetail(QString)"), q_ptr, SLOT("progressDetail(QString)"));
-  connect(worker, SIGNAL("progressStep(QString)"), q_ptr, SLOT("progressStep(QString)"));
-  connect(worker, SIGNAL("updatingDatabase(bool)"), q_ptr, SLOT("updatingDatabase(bool)"));
-  connect(worker, SIGNAL("indexingComplete(int,int,int,int)"), q_ptr, SLOT("indexingComplete(int,int,int,int)"));
+  connect(worker, &ctkDICOMIndexerPrivateWorker::progress, q_ptr, &ctkDICOMIndexer::progress);
+  connect(worker, &ctkDICOMIndexerPrivateWorker::progressDetail, q_ptr, &ctkDICOMIndexer::progressDetail);
+  connect(worker, &ctkDICOMIndexerPrivateWorker::progressStep, q_ptr, &ctkDICOMIndexer::progressStep);
+  connect(worker, &ctkDICOMIndexerPrivateWorker::updatingDatabase, q_ptr, &ctkDICOMIndexer::updatingDatabase);
+  connect(worker, &ctkDICOMIndexerPrivateWorker::indexingComplete, q_ptr, &ctkDICOMIndexer::indexingComplete);
 
   this->WorkerThread.start();
 }
@@ -653,10 +653,10 @@ void ctkDICOMIndexer::waitForImportFinished(int msecTimeout /*=-1*/)
   QTimer timer;
   timer.setSingleShot(true);
   QEventLoop loop;
-  connect(this, SIGNAL("indexingComplete(int,int,int,int)"), &loop, SLOT("quit()"));
+  connect(this, &ctkDICOMIndexer::indexingComplete, &loop, &QEventLoop::quit);
   if (msecTimeout >= 0)
   {
-    connect(&timer, SIGNAL("timeout()"), &loop, SLOT("quit()"));
+    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
     timer.start(msecTimeout);
   }
   if (!this->isImporting())
