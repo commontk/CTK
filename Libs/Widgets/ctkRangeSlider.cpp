@@ -596,7 +596,7 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
 
   // Create default colors based on the transfer function.
   //
-  QColor highlight = this->palette().color(QPalette::Normal, QPalette::Highlight);
+  QColor highlight = this->palette().color(QPalette::Highlight);
   QLinearGradient gradient;
   if (option.orientation == Qt::Horizontal)
     {
@@ -613,6 +613,7 @@ void ctkRangeSlider::paintEvent( QPaintEvent* )
   //QColor l = Qt::darkGray;
   //QColor u = Qt::black;
 
+  // Like Fusion Style to match QSlider
   gradient.setColorAt(0, highlight.darker(120));
   gradient.setColorAt(1, highlight.lighter(160));
 
