@@ -45,12 +45,8 @@ void ctkDoubleRangeSliderTester::testUI()
 {
   ctkDoubleRangeSlider slider;
   slider.show();
-#if (QT_VERSION >= 0x50000)
   bool result = QTest::qWaitForWindowActive(&slider);
   Q_UNUSED(result);
-#else
-  QTest::qWaitForWindowShown(&slider);
-#endif
   // qApp->exec();
 }
 
