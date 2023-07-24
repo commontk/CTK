@@ -98,20 +98,20 @@ void ctkCollapsibleButtonPrivate::init()
   this->ContentsMidLineWidth = 0;
 
   this->CollapsedHeight = 14;
-  this->ExclusiveMouseOver = false;  
+  this->ExclusiveMouseOver = false;
   this->LookOffWhenChecked = true; // set as a prop ?
-  
+
   this->MaximumHeight = q->maximumHeight();
 
   this->TextAlignment = Qt::AlignLeft | Qt::AlignVCenter;
   this->IndicatorAlignment = Qt::AlignLeft | Qt::AlignVCenter;
 
   q->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,
-                               QSizePolicy::Preferred, 
+                               QSizePolicy::Preferred,
                                QSizePolicy::DefaultType));
   q->setContentsMargins(0, q->buttonSizeHint().height(),0 , 0);
   // by default QAbstractButton changed the background role to Button
-  // we want a regular background 
+  // we want a regular background
   q->setBackgroundRole(QPalette::Window);
 
   QObject::connect(q, SIGNAL(toggled(bool)),
@@ -422,7 +422,7 @@ QSize ctkCollapsibleButton::buttonSizeHint()const
 
   QStyleOptionButton opt;
   opt.initFrom(this);
-  
+
   // indicator
   QSize indicatorSize = QSize(style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this),
                               style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this));
@@ -431,8 +431,8 @@ QSize ctkCollapsibleButton::buttonSizeHint()const
   int iw = indicatorSize.width() + indicatorSpacing;
   w += iw;
   h = qMax(h, ih);
-  
-  // text 
+
+  // text
   QString string(this->text());
   bool empty = string.isEmpty();
   if (empty)
@@ -466,7 +466,7 @@ QSize ctkCollapsibleButton::minimumSizeHint()const
     {// no layout, means the button is empty ?
     return buttonSize;
     }
-  QSize s = this->QAbstractButton::minimumSizeHint(); 
+  QSize s = this->QAbstractButton::minimumSizeHint();
   return s.expandedTo(buttonSize);
 }
 
@@ -481,7 +481,7 @@ QSize ctkCollapsibleButton::sizeHint()const
     }
   // open
   // QAbstractButton works well only if a layout is set
-  QSize s = this->QAbstractButton::sizeHint(); 
+  QSize s = this->QAbstractButton::sizeHint();
   return s.expandedTo(buttonSize + QSize(0, d->CollapsedHeight));
 }
 
@@ -505,13 +505,13 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
     QRect buttonRect = opt.rect;
     QList<QWidget*> _children = this->findChildren<QWidget*>();
     QList<QWidget*>::ConstIterator it;
-    for (it = _children.constBegin(); it != _children.constEnd(); ++it ) 
+    for (it = _children.constBegin(); it != _children.constEnd(); ++it )
       {
       if ((*it)->underMouse())
         {
-        // the mouse has been moved from the collapsible button to one 
+        // the mouse has been moved from the collapsible button to one
         // of its children. The paint event rect is the child rect, this
-        // is why we have to request another paint event to redraw the 
+        // is why we have to request another paint event to redraw the
         // button to remove the highlight effect.
         if (!_event->rect().contains(buttonRect))
           {// repaint the button rect.
@@ -524,7 +524,7 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
       }
     if (d->ExclusiveMouseOver && !exclusiveMouseOver)
       {
-      // the mouse is over the widget, but not over the children. As it 
+      // the mouse is over the widget, but not over the children. As it
       // has been de-highlighted in the past, we should refresh the button
       // rect to re-highlight the button.
       if (!_event->rect().contains(buttonRect))
