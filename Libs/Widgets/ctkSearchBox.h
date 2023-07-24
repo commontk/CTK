@@ -47,11 +47,6 @@ class ctkSearchBoxPrivate;
 class CTK_WIDGETS_EXPORT ctkSearchBox : public QLineEdit
 {
   Q_OBJECT
-#if QT_VERSION < 0x040700
-  /// Qt < 4.7 don't have a placeholderText property, as we need it, we define it
-  /// manually.
-  Q_PROPERTY(QString placeholderText READ placeholderText WRITE setPlaceholderText)
-#endif
   /// Show an icon at left side of the line edit, indicating that the text
   /// field is used to search/filter something. The default is <code>false</code>.
   Q_PROPERTY(bool showSearchIcon READ showSearchIcon WRITE setShowSearchIcon)
@@ -70,10 +65,6 @@ public:
   ctkSearchBox(QWidget *parent = 0);
   virtual ~ctkSearchBox();
 
-#if QT_VERSION < 0x040700
-  QString placeholderText()const;
-  void setPlaceholderText(const QString& defaultText);
-#endif
   /// False by default
   void setShowSearchIcon(bool show);
   bool showSearchIcon()const;

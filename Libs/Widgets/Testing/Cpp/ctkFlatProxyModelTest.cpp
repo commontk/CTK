@@ -32,10 +32,6 @@
 #include "ctkModelTester.h"
 #include "ctkTest.h"
 
-#if QT_VERSION < 0x040700
-Q_DECLARE_METATYPE(QVariant)
-#endif
-
 // ----------------------------------------------------------------------------
 class ctkFlatProxyModelTester: public QObject
 {

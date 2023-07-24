@@ -23,10 +23,6 @@
 #include <QApplication>
 #include <QTimer>
 
-#if (QT_VERSION < 0x50000)
-#include <QCleanlooksStyle>
-#endif
-
 // CTK includes
 #include <ctkCheckableComboBox.h>
 
@@ -37,11 +33,6 @@
 //-----------------------------------------------------------------------------
 int ctkCheckableComboBoxTest1(int argc, char * argv [] )
 {
-  // QCleanlooksStyle is the only style that doesn't show the checkboxes by
-  // default. Test it with it
-#if (QT_VERSION < 0x50000)
-  QApplication::setStyle(new QCleanlooksStyle);
-#endif
   QApplication app(argc, argv);
 
   ctkCheckableComboBox comboBox;

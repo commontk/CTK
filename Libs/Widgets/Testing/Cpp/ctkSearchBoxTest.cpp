@@ -41,12 +41,8 @@ void ctkSearchBoxTester::testSignals()
 {
   ctkSearchBox searchBox;
   searchBox.show();
-#if (QT_VERSION >= 0x50000)
   bool result = QTest::qWaitForWindowActive(&searchBox);
   Q_UNUSED(result);
-#else
-  QTest::qWaitForWindowShown(&searchBox);
-#endif
 
   QSignalSpy textEditedSpy(&searchBox, SIGNAL(textEdited(QString)));
   QSignalSpy textChangedSpy(&searchBox, SIGNAL(textChanged(QString)));

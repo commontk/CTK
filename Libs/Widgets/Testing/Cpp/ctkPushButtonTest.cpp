@@ -25,10 +25,6 @@
 #include <QStyle>
 #include <QTimer>
 
-#if (QT_VERSION < 0x50000)
-#include <QCleanlooksStyle>
-#endif
-
 // CTK includes
 #include "ctkPushButton.h"
 #include "ctkTest.h"
@@ -125,22 +121,14 @@ private:
 // ----------------------------------------------------------------------------
 void ctkPushButtonTester::testDefaults()
 {
-#if (QT_VERSION < 0x50000)
-  QApplication::setStyle( new QCleanlooksStyle );
-#endif
-
   ctkPushButton button("This is a long text. Click to to see more alignment modes.");
 
   QCOMPARE(button.buttonTextAlignment(), Qt::AlignHCenter | Qt::AlignVCenter);
   QCOMPARE(button.iconAlignment(), Qt::AlignLeft|Qt::AlignVCenter);
 
   button.show();
-#if (QT_VERSION >= 0x50000)
   bool result = QTest::qWaitForWindowActive(&button);
   Q_UNUSED(result);
-#else
-  QTest::qWaitForWindowShown(&button);
-#endif
 
   button.setElideMode(Qt::ElideMiddle);
 

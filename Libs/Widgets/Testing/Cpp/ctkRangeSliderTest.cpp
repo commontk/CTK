@@ -20,9 +20,6 @@
 
 // Qt includes
 #include <QApplication>
-#if (QT_VERSION < 0x50000)
-#include <QCleanlooksStyle>
-#endif
 #include <QString>
 #include <QStyle>
 #include <QStyleOptionSlider>
@@ -37,7 +34,6 @@ class ctkRangeSliderTester: public QObject
 {
   Q_OBJECT
 private slots:
-  void initTestCase();
   void testGUIEvents();
   void testTooltips();
 
@@ -49,15 +45,6 @@ private slots:
   void testGrooveMouseEvents();
   void testGrooveMouseEvents_data();
 };
-
-// ----------------------------------------------------------------------------
-void ctkRangeSliderTester::initTestCase()
-{
-  // Mouse position on handles does not with with gtk style.
-#if (QT_VERSION < 0x50000)
-  QApplication::setStyle(new QCleanlooksStyle());
-#endif
-}
 
 // ----------------------------------------------------------------------------
 void ctkRangeSliderTester::testGUIEvents()
@@ -163,12 +150,8 @@ void ctkRangeSliderTester::testHandleMouseEvents()
   rangeSlider.resize(100 + sliderHandleSize.width(), 20);
 
   rangeSlider.show();
-#if (QT_VERSION >= 0x50000)
   bool result = QTest::qWaitForWindowActive(&rangeSlider);
   Q_UNUSED(result);
-#else
-  QTest::qWaitForWindowShown(&rangeSlider);
-#endif
 
   QFETCH(bool, minHandle);
   QFETCH(bool, symmetricMoves);

@@ -37,11 +37,7 @@ class ctkFactoryLibraryItem : public ctkAbstractFactoryFileBasedItem<BaseClassTy
 
 public:
 
-#if QT_VERSION < 0x50000
-  typedef void* SymbolAddressType;
-#else
   typedef QFunctionPointer SymbolAddressType;
-#endif
 
 protected:
   typedef typename QHash<QString, SymbolAddressType>::const_iterator ConstIterator;
@@ -49,7 +45,7 @@ protected:
 
 public:
   //explicit ctkFactoryLibraryItem(const QString& path);
- 
+
   virtual bool load();
 
   ///

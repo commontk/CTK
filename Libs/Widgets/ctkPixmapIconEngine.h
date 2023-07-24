@@ -24,11 +24,7 @@
 
 #include <QtGlobal>
 
-#if QT_VERSION >= 0x050000
 # include <QIconEngine>
-#else
-# include <QIconEngineV2>
-#endif
 
 #include <QPixmap>
 #include <QVector>
@@ -53,11 +49,7 @@ struct ctkPixmapIconEngineEntry
 
 /// \ingroup Widgets
 class CTK_WIDGETS_EXPORT ctkPixmapIconEngine
-#if QT_VERSION >= 0x050000
   : public QIconEngine
-#else
-  : public QIconEngineV2
-#endif
 {
 public:
     ctkPixmapIconEngine();
@@ -72,11 +64,7 @@ public:
 
     // v2 functions
     QString key() const;
-#if QT_VERSION >= 0x050000
     QIconEngine *clone() const;
-#else
-    QIconEngineV2 *clone() const;
-#endif
     bool read(QDataStream &in);
     bool write(QDataStream &out) const;
     void virtual_hook(int id, void *data);

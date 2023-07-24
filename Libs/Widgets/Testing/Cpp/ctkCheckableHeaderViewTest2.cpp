@@ -65,20 +65,11 @@ int ctkCheckableHeaderViewTest2(int argc, char * argv [] )
   model.setHeaderData(0, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
 
   QHeaderView* previousHeaderView = view.header();
-#if (QT_VERSION >= 0x50000)
   bool oldClickable = previousHeaderView->sectionsClickable();
-#else
-  bool oldClickable = previousHeaderView->isClickable();
-#endif
 
   ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, &view);
-#if (QT_VERSION >= 0x50000)
   headerView->setSectionsClickable(oldClickable);
   headerView->setSectionsMovable(previousHeaderView->sectionsMovable());
-#else
-  headerView->setClickable(oldClickable);
-  headerView->setMovable(previousHeaderView->isMovable());
-#endif
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   headerView->checkableModelHelper()->setPropagateDepth(-1);
   headerView->checkableModelHelper()->setForceCheckability(true);
