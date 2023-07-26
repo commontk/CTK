@@ -277,7 +277,11 @@ public:
   QString               Label;              //!< used in file dialogs
   QStringList           NameFilters;        //!< Regular expression (in wildcard mode) used to help the user to complete the line
   QDir::Filters         Filters;            //!< Type of path (file, dir...)
+#ifdef USE_QFILEDIALOG_OPTIONS
   QFileDialog::Options DialogOptions;
+#else
+  ctkPathLineEdit::Options DialogOptions;
+#endif
 
   bool                  HasValidInput;      //!< boolean that stores the old state of valid input
   QString               SettingKey;
@@ -607,14 +611,22 @@ ctkPathLineEdit::Filters ctkPathLineEdit::filters()const
 }
 
 //-----------------------------------------------------------------------------
+#ifdef USE_QFILEDIALOG_OPTIONS
 void ctkPathLineEdit::setOptions(const QFileDialog::Options& dialogOptions)
+#else
+void ctkPathLineEdit::setOptions(const Options& dialogOptions)
+#endif
 {
   Q_D(ctkPathLineEdit);
   d->DialogOptions = dialogOptions;
 }
 
 //-----------------------------------------------------------------------------
+#ifdef USE_QFILEDIALOG_OPTIONS
 const QFileDialog::Options& ctkPathLineEdit::options()const
+#else
+const ctkPathLineEdit::Options& ctkPathLineEdit::options()const
+#endif
 {
   Q_D(const ctkPathLineEdit);
   return d->DialogOptions;
@@ -636,7 +648,11 @@ void ctkPathLineEdit::browse()
 	                                this->currentPath(),
 	d->NameFilters.join(";;"),
 	0,
+#ifdef USE_QFILEDIALOG_OPTIONS
       d->DialogOptions);
+#else
+      QFlags<QFileDialog::Option>(int(d->DialogOptions)));
+#endif
       }
     else
       {
@@ -647,7 +663,11 @@ void ctkPathLineEdit::browse()
 	                               this->currentPath(),
         d->NameFilters.join(";;"),
 	0,
+#ifdef USE_QFILEDIALOG_OPTIONS
       d->DialogOptions);
+#else
+      QFlags<QFileDialog::Option>(int(d->DialogOptions)));
+#endif
       }
     }
   else //directory
@@ -657,7 +677,11 @@ void ctkPathLineEdit::browse()
       tr("Select a directory..."),
       this->currentPath().isEmpty() ? ctkPathLineEditPrivate::sCurrentDirectory :
                                       this->currentPath(),
+#ifdef USE_QFILEDIALOG_OPTIONS
       d->DialogOptions);
+#else
+      QFlags<QFileDialog::Option>(int(d->DialogOptions)));
+#endif
     }
   if (path.isEmpty())
     {
