@@ -55,7 +55,7 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
   ctkDirectoryButton button4;
   button4.setElideMode(elideMode);
   button4.setAcceptMode(QFileDialog::AcceptSave);
-  button4.setOptions(button4.options() | QFileDialog::DontUseNativeDialog);
+  button4.setOptions(button4.options() | ctkDirectoryButton::DontUseNativeDialog);
 
 
   QFormLayout* layout = new QFormLayout;
@@ -101,9 +101,17 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+#ifdef USE_QFILEDIALOG_OPTIONS
   button.setOptions(QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
   if (button.options() != (QFileDialog::ShowDirsOnly |
                            QFileDialog::ReadOnly))
+#else
+  button.setOptions(ctkDirectoryButton::ShowDirsOnly |
+                    ctkDirectoryButton::ReadOnly);
+
+  if (button.options() != (ctkDirectoryButton::ShowDirsOnly |
+                           ctkDirectoryButton::ReadOnly))
+#endif
     {
     std::cerr<< "ctkDirectoryButton::setOptions failed" << std::endl;
     return EXIT_FAILURE;
@@ -144,7 +152,7 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
   // If Qt uses the default native dialog, a nested event loop won't
   // be created and app.quit() will have no effect (as it solely quits
   // event loops).
-  button.setOptions(button.options() | QFileDialog::DontUseNativeDialog);
+  button.setOptions(button.options() | ctkDirectoryButton::DontUseNativeDialog);
   QTimer::singleShot(100, &button, SLOT(browse()));
 
   return app.exec();

@@ -113,7 +113,7 @@ int ctkPathLineEditTest1(int argc, char * argv [] )
   QTimer::singleShot(100, &button, SLOT(retrieveHistory()));
   QTimer::singleShot(115, &button2, SLOT(addCurrentPathToHistory()));
   // The open dialog blocks QTimers (to quit the app).
-  button3.setOptions(button3.options() | QFileDialog::DontUseNativeDialog);
+  button3.setOptions(button3.options() | ctkPathLineEdit::DontUseNativeDialog);
   QTimer::singleShot(120, &button3, SLOT(browse()));
 
   return app.exec();

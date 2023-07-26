@@ -47,7 +47,11 @@ public:
   ctkPushButton* PushButton;
   QString      DialogCaption;
   QString      DisplayText;
+#ifdef USE_QFILEDIALOG_OPTIONS
   QFileDialog::Options DialogOptions;
+#else
+  ctkDirectoryButton::Options DialogOptions;
+#endif
   // TODO expose DisplayAbsolutePath into the API
   bool         DisplayAbsolutePath;
   QFileDialog::AcceptMode AcceptMode;
@@ -57,7 +61,11 @@ public:
 ctkDirectoryButtonPrivate::ctkDirectoryButtonPrivate(ctkDirectoryButton& object)
   :q_ptr(&object)
 {
+#if USE_QFILEDIALOG_OPTIONS
   this->DialogOptions = QFileDialog::ShowDirsOnly;
+#else
+  this->DialogOptions = ctkDirectoryButton::ShowDirsOnly;
+#endif
   this->DisplayAbsolutePath = true;
   this->AcceptMode = QFileDialog::AcceptOpen;
 }
@@ -206,14 +214,22 @@ QIcon ctkDirectoryButton::icon()const
 }
 
 //-----------------------------------------------------------------------------
+#ifdef USE_QFILEDIALOG_OPTIONS
 void ctkDirectoryButton::setOptions(const QFileDialog::Options& dialogOptions)
+#else
+void ctkDirectoryButton::setOptions(const Options& dialogOptions)
+#endif
 {
   Q_D(ctkDirectoryButton);
   d->DialogOptions = dialogOptions;
 }
 
 //-----------------------------------------------------------------------------
+#ifdef USE_QFILEDIALOG_OPTIONS
 const QFileDialog::Options& ctkDirectoryButton::options()const
+#else
+const ctkDirectoryButton::Options& ctkDirectoryButton::options()const
+#endif
 {
   Q_D(const ctkDirectoryButton);
   return d->DialogOptions;
@@ -266,7 +282,11 @@ void ctkDirectoryButton::browse()
   QScopedPointer<ctkFileDialog> fileDialog(
     new ctkFileDialog(this, d->DialogCaption.isEmpty() ? this->toolTip() :
                       d->DialogCaption, d->Directory.path()));
+  #ifdef USE_QFILEDIALOG_OPTIONS
     fileDialog->setOptions(d->DialogOptions);
+  #else
+    fileDialog->setOptions(QFlags<QFileDialog::Option>(int(d->DialogOptions)));
+  #endif
     fileDialog->setAcceptMode(d->AcceptMode);
     fileDialog->setFileMode(QFileDialog::Directory);
     fileDialog->setOption(QFileDialog::ShowDirsOnly, true);
