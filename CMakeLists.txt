@@ -416,11 +416,6 @@ if(UNIX AND NOT APPLE)
 endif()
 
 #-----------------------------------------------------------------------------
-# QT
-#
-ctkMacroSetupQt()
-
-#-----------------------------------------------------------------------------
 # To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
 # before the SuperBuild script is included
 #
@@ -958,6 +953,12 @@ if(CTK_USE_CONTRIBUTED_PLUGINS)
   endforeach()
 endif()
 
+#-----------------------------------------------------------------------------
+# QT
+#
+ctkMacroSetupQt()
+
+#-----------------------------------------------------------------------------
 include(CMake/ctkBlockCheckDependencies.cmake)
 
 #-----------------------------------------------------------------------------
