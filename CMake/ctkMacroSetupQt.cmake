@@ -55,6 +55,13 @@ macro(ctkMacroSetupQt)
       mark_as_superbuild(CMAKE_PREFIX_PATH) # Qt 5
     endif()
 
+    set(_major ${Qt5_VERSION_MAJOR})
+    set(_minor ${Qt5_VERSION_MINOR})
+    set(_patch ${Qt5_VERSION_PATCH})
+
+    ctk_list_to_string(", " "${CTK_QT5_COMPONENTS}" comma_separated_module_list)
+    message(STATUS "Configuring CTK with Qt ${_major}.${_minor}.${_patch} (using modules: ${comma_separated_module_list})")
+
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
