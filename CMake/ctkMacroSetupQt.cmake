@@ -44,6 +44,7 @@ macro(ctkMacroSetupQt)
     endif()
 
     if(CTK_APP_ctkCommandLineModuleExplorer
+      OR CTK_LIB_QtTesting
       OR CTK_LIB_CommandLineModules/Core
       OR CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTXMLPATTERNS
       )
