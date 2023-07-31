@@ -525,6 +525,10 @@ function(_sb_get_external_project_arguments proj varname)
         )
     endforeach()
   endif()
+  if(CMAKE_VERSION VERSION_EQUAL "3.24" OR CMAKE_VERSION VERSION_GREATER "3.24")
+    # See https://cmake.org/cmake/help/latest/policy/CMP0135.html
+    list(APPEND _ep_arguments DOWNLOAD_EXTRACT_TIMESTAMP 1)
+  endif()
   set(${varname} ${_ep_arguments} PARENT_SCOPE)
 endfunction()
 
