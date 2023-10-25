@@ -61,7 +61,7 @@ macro(ctkMacroSetupQt)
 
     if(CTK_LIB_DICOM/Core
       OR CTK_LIB_DICOM/Widgets
-      OR Libs/PluginFramework
+      OR CTK_LIB_PluginFramework
       )
       list(APPEND CTK_QT5_COMPONENTS Sql)
     endif()
