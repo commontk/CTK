@@ -63,17 +63,19 @@ include("${CTK_CMAKE_DIR}/ctkMacroTargetLibraries.cmake") # Import multiple macr
 include("${CTK_CMAKE_DIR}/ctkFunctionExtractOptionNameAndValue.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroValidateBuildOptions.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGenerateDGraphInput.cmake")
+include("${CTK_CMAKE_DIR}/ctkFunctionGetIncludeDirs.cmake")
+include("${CTK_CMAKE_DIR}/ctkFunctionGetLibraryDirs.cmake")
+include("${CTK_CMAKE_DIR}/ctkMacroGenerateMocs.cmake")
+
+# PluginFramework
 include("${CTK_CMAKE_DIR}/ctkFunctionGeneratePluginManifest.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGeneratePluginUseFile.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroGeneratePluginResourceFile.cmake")
-include("${CTK_CMAKE_DIR}/ctkFunctionGetIncludeDirs.cmake")
-include("${CTK_CMAKE_DIR}/ctkFunctionGetLibraryDirs.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionExtractPluginTargets.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGetAllPluginTargets.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGetTargetDependencies.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGetPluginDependencies.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroSetupPlugins.cmake")
-include("${CTK_CMAKE_DIR}/ctkMacroGenerateMocs.cmake")
 
 include(CMakeFindDependencyMacro)
 
