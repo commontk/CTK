@@ -121,6 +121,9 @@ public:
   /// Convert an absolute path to an internal path (absolute if outside database folder, relative if inside database folder).
   QString internalPathFromAbsolute(const QString& filename);
 
+  /// If not a URL, convert to abolute path
+  QString absolutePathFromInternalIfFile(const QString& filename);
+
   /// Name of the database file (i.e. for SQLITE the sqlite file)
   QString DatabaseFileName;
 
