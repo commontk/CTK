@@ -20,14 +20,6 @@
 
 #! \ingroup CMakeUtilities
 macro(ctkMacroSetupQt)
-  set(CTK_QT_VERSION "5" CACHE STRING "Expected Qt version")
-  mark_as_advanced(CTK_QT_VERSION)
-
-  set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 5)
-
-  if(NOT CTK_QT_VERSION VERSION_EQUAL "5")
-    message(FATAL_ERROR "Expected value for CTK_QT_VERSION is '5'")
-  endif()
 
   if(CTK_QT_VERSION VERSION_EQUAL "5")
     cmake_minimum_required(VERSION 2.8.12)
@@ -139,6 +131,4 @@ macro(ctkMacroSetupQt)
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
-
-  mark_as_superbuild(CTK_QT_VERSION)
 endmacro()
