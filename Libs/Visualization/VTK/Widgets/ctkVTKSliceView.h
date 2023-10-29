@@ -133,6 +133,7 @@ Q_SIGNALS:
   void resized(const QSize& size);
 
 protected:
+  ctkVTKSliceView(ctkVTKSliceViewPrivate* pimpl, QWidget* parent);
   bool eventFilter(QObject *object, QEvent *event) override;
 
 private:

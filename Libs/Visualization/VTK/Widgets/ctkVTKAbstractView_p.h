@@ -52,6 +52,7 @@ protected:
 
 public:
   ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object);
+  virtual ~ctkVTKAbstractViewPrivate();
 
   /// Convenient setup methods
   virtual void init();

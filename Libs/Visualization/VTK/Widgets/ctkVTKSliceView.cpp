@@ -51,6 +51,18 @@ ctkVTKSliceViewPrivate::ctkVTKSliceViewPrivate(ctkVTKSliceView& object)
 }
 
 // --------------------------------------------------------------------------
+ctkVTKSliceViewPrivate::~ctkVTKSliceViewPrivate() = default;
+
+// --------------------------------------------------------------------------
+void ctkVTKSliceViewPrivate::init()
+{
+  Q_Q(ctkVTKSliceView);
+  this->ctkVTKAbstractViewPrivate::init();
+
+  q->VTKWidget()->installEventFilter(q);
+}
+
+// --------------------------------------------------------------------------
 void ctkVTKSliceViewPrivate::setupCornerAnnotation()
 {
   this->ctkVTKAbstractViewPrivate::setupCornerAnnotation();
@@ -100,7 +112,14 @@ ctkVTKSliceView::ctkVTKSliceView(QWidget* parentWidget)
 {
   Q_D(ctkVTKSliceView);
   d->init();
-  this->VTKWidget()->installEventFilter(this);
+}
+
+// --------------------------------------------------------------------------
+ctkVTKSliceView::ctkVTKSliceView(ctkVTKSliceViewPrivate* pimpl, QWidget* parentWidget)
+  : Superclass(pimpl, parentWidget)
+{
+  // derived classes must call init manually. Calling init() here may results in
+  // actions on a derived public class not yet finished to be created
 }
 
 // --------------------------------------------------------------------------

@@ -186,6 +186,9 @@ public:
   /// Return zoom factor
   double zoomFactor()const;
 
+protected:
+  ctkVTKRenderView(ctkVTKRenderViewPrivate* pimpl, QWidget* parent);
+
 private:
   Q_DECLARE_PRIVATE(ctkVTKRenderView);
   Q_DISABLE_COPY(ctkVTKRenderView);
