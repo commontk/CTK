@@ -61,6 +61,21 @@ ctkVTKRenderViewPrivate::ctkVTKRenderViewPrivate(ctkVTKRenderView& object)
 }
 
 // --------------------------------------------------------------------------
+ctkVTKRenderViewPrivate::~ctkVTKRenderViewPrivate() = default;
+
+// --------------------------------------------------------------------------
+void ctkVTKRenderViewPrivate::init()
+{
+  this->ctkVTKAbstractViewPrivate::init();
+
+  // The interactor in RenderWindow exists after the renderwindow is set to
+  // the QVTKWidet
+  this->Orientation->SetInteractor(this->RenderWindow->GetInteractor());
+  this->Orientation->SetEnabled(1);
+  this->Orientation->InteractiveOff();
+}
+
+// --------------------------------------------------------------------------
 void ctkVTKRenderViewPrivate::setupCornerAnnotation()
 {
   this->ctkVTKAbstractViewPrivate::setupCornerAnnotation();
@@ -204,18 +219,21 @@ ctkVTKRenderView::ctkVTKRenderView(QWidget* parentWidget)
 {
   Q_D(ctkVTKRenderView);
   d->init();
+}
 
-  // The interactor in RenderWindow exists after the renderwindow is set to
-  // the QVTKWidet
-  d->Orientation->SetInteractor(d->RenderWindow->GetInteractor());
-  d->Orientation->SetEnabled(1);
-  d->Orientation->InteractiveOff();
+// --------------------------------------------------------------------------
+ctkVTKRenderView::ctkVTKRenderView(ctkVTKRenderViewPrivate* pimpl, QWidget* parentWidget)
+  : Superclass(pimpl, parentWidget)
+{
+  // derived classes must call init manually. Calling init() here may results in
+  // actions on a derived public class not yet finished to be created
 }
 
 //----------------------------------------------------------------------------
 ctkVTKRenderView::~ctkVTKRenderView()
 {
 }
+
 //----------------------------------------------------------------------------
 void ctkVTKRenderView::setInteractor(vtkRenderWindowInteractor* newInteractor)
 {
