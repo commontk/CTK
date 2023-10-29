@@ -145,7 +145,7 @@ public:
 
   /// Set window interactor
   /// Reimplemented to propagate interaction to Orientation widget
-  virtual void setInteractor(vtkRenderWindowInteractor* interactor);
+  void setInteractor(vtkRenderWindowInteractor* interactor) override;
 
   /// Return pitch, roll or yaw increment (in degree)
   double pitchRollYawIncrement()const;
