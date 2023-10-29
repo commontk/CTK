@@ -52,8 +52,8 @@ public:
   ctkVTKRenderViewPrivate(ctkVTKRenderView& object);
 
   /// Convenient setup methods
-  virtual void setupCornerAnnotation();
-  virtual void setupRendering();
+  void setupCornerAnnotation() override;
+  void setupRendering() override;
 
   void zoom(double zoomFactor);
 

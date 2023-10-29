@@ -48,8 +48,8 @@ public:
   ctkVTKSliceViewPrivate(ctkVTKSliceView&);
 
   /// Convenient setup methods
-  void setupCornerAnnotation();
-  void setupRendering();
+  void setupCornerAnnotation() override;
+  void setupRendering() override;
 
   vtkSmartPointer<vtkLightBoxRendererManager>   LightBoxRendererManager;
   bool                                          RenderPending;
