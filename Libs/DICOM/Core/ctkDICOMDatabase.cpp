@@ -1378,8 +1378,8 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     }
     else
     {
-      logger.error("Failed to find study with StudyInstanceUID=" + currentStudyInstanceUid);
-      return false;
+      logger.error("in applyDisplayedFieldsChanges: Failed to find study with StudyInstanceUID=" + currentStudyInstanceUid);
+      continue;
     }
   } // For each study in displayedFieldsMapStudy
 
@@ -1424,8 +1424,8 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     }
     else
     {
-      logger.error("Failed to find series with SeriesInstanceUID=" + currentSeriesInstanceUid);
-      return false;
+      logger.error("in applyDisplayedFieldsChanges: Failed to find series with SeriesInstanceUID=" + currentSeriesInstanceUid);
+      continue;
     }
   } // For each series in displayedFieldsMapSeries
 
