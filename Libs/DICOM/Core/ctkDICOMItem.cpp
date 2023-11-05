@@ -958,12 +958,14 @@ QString ctkDICOMItem::TranslateDefinedTermModality( const QString& dt )
 
 QString ctkDICOMItem::TagKey( const DcmTag& tag )
 {
-  return QString("(%1,%2)").arg( tag.getGroup(), 4, 16, QLatin1Char('0')).arg( tag.getElement(), 4, 16, QLatin1Char('0') );
+  QString groupElement = QString("(%1,%2)").arg( tag.getGroup(), 4, 16, QLatin1Char('0')).arg( tag.getElement(), 4, 16, QLatin1Char('0') );
+  return groupElement.toUpper();
 }
 
 QString ctkDICOMItem::TagKeyStripped( const DcmTag& tag )
 {
-  return QString("%1,%2").arg( tag.getGroup(), 4, 16, QLatin1Char('0')).arg( tag.getElement(), 4, 16, QLatin1Char('0') );
+  QString groupElement = QString("%1,%2").arg( tag.getGroup(), 4, 16, QLatin1Char('0')).arg( tag.getElement(), 4, 16, QLatin1Char('0') );
+  return groupElement.toUpper();
 }
 
 QString ctkDICOMItem::TagDescription( const DcmTag& tag )
