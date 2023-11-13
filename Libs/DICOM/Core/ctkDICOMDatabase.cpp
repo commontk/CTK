@@ -80,7 +80,7 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o)
   , UseShortStoragePath(true)
   , ThumbnailGenerator(nullptr)
   , TagCacheVerified(false)
-  , SchemaVersion("0.7.0")
+  , SchemaVersion("0.8.0")
 {
   this->resetLastInsertedValues();
   this->DisplayedFieldGenerator = new ctkDICOMDisplayedFieldGenerator(q_ptr);
@@ -965,7 +965,7 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
       }
 
       QSqlQuery insertImageStatement(Database);
-      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ? )");
+      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, NULL, ?, ? )");
       insertImageStatement.addBindValue(sopInstanceUID);
       insertImageStatement.addBindValue(storedFilePathInDatabase);
       insertImageStatement.addBindValue(seriesInstanceUID);
@@ -1112,7 +1112,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
 
       // Insert image files
       QSqlQuery insertImageStatement(d->Database);
-      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ? )");
+      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, NULL, ?, ? )");
       insertImageStatement.addBindValue(sopInstanceUID);
       insertImageStatement.addBindValue(d->internalPathFromAbsolute(storedFilePath));
       insertImageStatement.addBindValue(seriesInstanceUID);
@@ -2126,6 +2126,22 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
 }
 
 //------------------------------------------------------------------------------
+QString ctkDICOMDatabase::urlForInstance(QString sopInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT URL FROM Images WHERE SOPInstanceUID=?");
+  query.addBindValue(sopInstanceUID);
+  query.exec();
+  QString result;
+  if (query.next())
+  {
+    result = query.value(0).toString();
+  }
+  return result;
+}
+
+//------------------------------------------------------------------------------
 QString ctkDICOMDatabase::seriesForFile(QString fileName)
 {
   Q_D(ctkDICOMDatabase);
@@ -2148,6 +2164,22 @@ QString ctkDICOMDatabase::instanceForFile(QString fileName)
   QSqlQuery query(d->Database);
   query.prepare( "SELECT SOPInstanceUID FROM Images WHERE Filename=?");
   query.addBindValue(d->internalPathFromAbsolute(fileName));
+  query.exec();
+  QString result;
+  if (query.next())
+  {
+    result = query.value(0).toString();
+  }
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::instanceForURL(QString url)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare( "SELECT SOPInstanceUID FROM Images WHERE URL=?");
+  query.addBindValue(url);
   query.exec();
   QString result;
   if (query.next())

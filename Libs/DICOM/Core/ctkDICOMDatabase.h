@@ -190,6 +190,8 @@ public:
   QStringList seriesFieldNames() const;
 
   Q_INVOKABLE QString fileForInstance(const QString sopInstanceUID);
+  Q_INVOKABLE QString urlForInstance(const QString sopInstanceUID);
+  Q_INVOKABLE QString instanceForURL(const QString url);
   Q_INVOKABLE QString seriesForFile(QString fileName);
   Q_INVOKABLE QString instanceForFile(const QString fileName);
   Q_INVOKABLE QDateTime insertDateTimeForInstance(const QString fileName);

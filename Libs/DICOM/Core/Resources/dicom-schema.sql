@@ -23,11 +23,12 @@ DROP INDEX IF EXISTS 'SeriesStudyIndex' ;
 DROP INDEX IF EXISTS 'StudiesPatientIndex' ;
 
 CREATE TABLE 'SchemaInfo' ( 'Version' VARCHAR(1024) NOT NULL );
-INSERT INTO 'SchemaInfo' VALUES('0.7.0');
+INSERT INTO 'SchemaInfo' VALUES('0.8.0');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
   'Filename' VARCHAR(1024) NOT NULL ,
+  'URL' VARCHAR(2048) NOT NULL ,
   'SeriesInstanceUID' VARCHAR(64) NOT NULL ,
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
