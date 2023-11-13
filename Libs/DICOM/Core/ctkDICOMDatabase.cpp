@@ -206,7 +206,7 @@ QStringList ctkDICOMDatabasePrivate::allFilesInDatabase()
 
   while (allFilesQuery.next())
   {
-    allFileNames << this->absolutePathFromInternalIfFile(allFilesQuery.value(0).toString());
+    allFileNames << this->absolutePathFromInternal(allFilesQuery.value(0).toString());
   }
   return allFileNames;
 }
@@ -312,7 +312,7 @@ QStringList ctkDICOMDatabasePrivate::filenames(QString table)
 
   while (allFilesQuery.next())
   {
-    allFileNames << this->absolutePathFromInternalIfFile(allFilesQuery.value(0).toString());
+    allFileNames << this->absolutePathFromInternal(allFilesQuery.value(0).toString());
   }
   return allFileNames;
 }
@@ -1448,19 +1448,6 @@ QString ctkDICOMDatabasePrivate::internalPathFromAbsolute(const QString& filenam
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMDatabasePrivate::absolutePathFromInternalIfFile(const QString& filename)
-{
-  Q_Q(ctkDICOMDatabase);
-  QString returnFileName = filename;
-  if (QUrl(filename).scheme().isEmpty()) // local path, not url
-  {
-    returnFileName = this->absolutePathFromInternal(filename);
-  }
-  return returnFileName;
-}
-
-
-//------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMDatabase, bool, isDisplayedFieldsTableAvailable, DisplayedFieldsTableAvailable);
 CTK_GET_CPP(ctkDICOMDatabase, bool, useShortStoragePath, UseShortStoragePath);
 CTK_SET_CPP(ctkDICOMDatabase, bool, setUseShortStoragePath, UseShortStoragePath);
@@ -2111,7 +2098,7 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID, int hits/*=-1*/)
   while (query.next())
   {
     QString fileName = query.value(0).toString();
-    fileName = d->absolutePathFromInternalIfFile(fileName);
+    fileName = d->absolutePathFromInternal(fileName);
     allFileNames << fileName;
     if (hits > 0 && allFileNames.size() >= hits)
     {
@@ -2133,7 +2120,7 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
   QString result;
   if (query.next())
   {
-    result = d->absolutePathFromInternalIfFile(query.value(0).toString());
+    result = d->absolutePathFromInternal(query.value(0).toString());
   }
   return result;
 }
@@ -2579,7 +2566,7 @@ bool ctkDICOMDatabase::allFilesModifiedTimes(QMap<QString, QDateTime>& modifiedT
   bool success = d->loggedExec(allFilesModifiedQuery);
   while (allFilesModifiedQuery.next())
   {
-    QString filename = d->absolutePathFromInternalIfFile(allFilesModifiedQuery.value(0).toString());
+    QString filename = d->absolutePathFromInternal(allFilesModifiedQuery.value(0).toString());
     QDateTime modifiedTime = QDateTime::fromString(allFilesModifiedQuery.value(1).toString(), Qt::ISODate);
     if (modifiedTimeForFilepath.contains(filename) && modifiedTimeForFilepath[filename] <= modifiedTime)
     {
@@ -2668,7 +2655,7 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
     // check that the file is below our internal storage
     if (QFileInfo(dbFilePath).isRelative())
     {
-      QString absPath = d->absolutePathFromInternalIfFile(dbFilePath);
+      QString absPath = d->absolutePathFromInternal(dbFilePath);
       if (QFile(absPath).remove())
       {
         if (d->LoggedExecVerbose)
@@ -2687,7 +2674,7 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
       }
     }
     // Remove thumbnail (if exists)
-    QFile thumbnailFile(d->absolutePathFromInternalIfFile(thumbnailPath));
+    QFile thumbnailFile(d->absolutePathFromInternal(thumbnailPath));
     if (thumbnailFile.exists())
     {
       if (!thumbnailFile.remove())
