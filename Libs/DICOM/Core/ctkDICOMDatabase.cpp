@@ -965,9 +965,10 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
       }
 
       QSqlQuery insertImageStatement(Database);
-      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, NULL, ?, ? )");
+      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ?, ? )");
       insertImageStatement.addBindValue(sopInstanceUID);
       insertImageStatement.addBindValue(storedFilePathInDatabase);
+      insertImageStatement.addBindValue(QString(""));
       insertImageStatement.addBindValue(seriesInstanceUID);
       insertImageStatement.addBindValue(QDateTime::currentDateTime());
       insertImageStatement.exec();
@@ -1112,9 +1113,10 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
 
       // Insert image files
       QSqlQuery insertImageStatement(d->Database);
-      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, NULL, ?, ? )");
+      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ?, ? )");
       insertImageStatement.addBindValue(sopInstanceUID);
       insertImageStatement.addBindValue(d->internalPathFromAbsolute(storedFilePath));
+      insertImageStatement.addBindValue(QString(""));
       insertImageStatement.addBindValue(seriesInstanceUID);
       insertImageStatement.addBindValue(QDateTime::currentDateTime());
       insertImageStatement.exec();
