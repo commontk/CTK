@@ -27,8 +27,8 @@ INSERT INTO 'SchemaInfo' VALUES('0.8.0');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
-  'Filename' VARCHAR(1024) NOT NULL ,
-  'URL' VARCHAR(2048) NOT NULL ,
+  'Filename' VARCHAR(1024),
+  'URL' VARCHAR(2048),
   'SeriesInstanceUID' VARCHAR(64) NOT NULL ,
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
