@@ -27,8 +27,8 @@ INSERT INTO 'SchemaInfo' VALUES('0.8.0');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
-  'Filename' VARCHAR(1024),
-  'URL' VARCHAR(2048),
+  'Filename' VARCHAR(1024) NULL,
+  'URL' VARCHAR(2048) NULL,
   'SeriesInstanceUID' VARCHAR(64) NOT NULL ,
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
@@ -85,7 +85,7 @@ CREATE TABLE 'Series' (
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
   PRIMARY KEY ('SeriesInstanceUID') );
 
-CREATE UNIQUE INDEX IF NOT EXISTS 'ImagesFilenameIndex' ON 'Images' ('Filename');
+CREATE INDEX IF NOT EXISTS 'ImagesFilenameIndex' ON 'Images' ('Filename');
 CREATE INDEX IF NOT EXISTS 'ImagesSeriesIndex' ON 'Images' ('SeriesInstanceUID');
 CREATE INDEX IF NOT EXISTS 'SeriesStudyIndex' ON 'Series' ('StudyInstanceUID');
 CREATE INDEX IF NOT EXISTS 'StudiesPatientIndex' ON 'Studies' ('PatientsUID');

@@ -2112,6 +2112,28 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID, int hits/*=-1*/)
 }
 
 //------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::urlsForSeries(QString seriesUID, int hits/*=-1*/)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT URL FROM Images WHERE SeriesInstanceUID=?");
+  query.addBindValue(seriesUID);
+  query.exec();
+  QStringList allURLs;
+  while (query.next())
+  {
+    QString url = query.value(0).toString();
+    allURLs << url;
+    if (hits > 0 && allURLs.size() >= hits)
+    {
+      // reached the number of requested files
+      break;
+    }
+  }
+  return allURLs;
+}
+
+//------------------------------------------------------------------------------
 QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
 {
   Q_D(ctkDICOMDatabase);
@@ -2345,8 +2367,18 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   Q_D(ctkDICOMDatabase);
 
   // Read from cache, if available
-  tag = tag.toUpper();
+
+  // first, try treating argument as filePath
   QString sopInstanceUID = this->instanceForFile(fileName);
+
+  // second, try treating argument as a url
+  if (sopInstanceUID.isEmpty())
+  {
+    sopInstanceUID = this->instanceForURL(fileName);
+  }
+
+  // third, look for the value
+  tag = tag.toUpper();
   QString value = this->cachedTag(sopInstanceUID, tag);
   if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
   {
@@ -2357,7 +2389,7 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
     return value;
   }
 
-  // Read value from file
+  // Read value from file as a fallback (won't work if fileName is a URL)
   value = d->readValueFromFile(fileName, sopInstanceUID, tag);
   return value;
 }
