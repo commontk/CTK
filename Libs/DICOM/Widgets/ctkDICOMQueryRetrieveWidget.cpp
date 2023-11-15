@@ -54,7 +54,7 @@ class ctkDICOMQueryRetrieveWidgetPrivate: public Ui_ctkDICOMQueryRetrieveWidget
 
 protected:
   ctkDICOMQueryRetrieveWidget* const q_ptr;
-  
+
 public:
   ctkDICOMQueryRetrieveWidgetPrivate(ctkDICOMQueryRetrieveWidget& obj);
   ~ctkDICOMQueryRetrieveWidgetPrivate();
@@ -68,7 +68,7 @@ public:
   QSharedPointer<ctkDICOMDatabase>  RetrieveDatabase;
   ctkDICOMModel                     Model;
   ctkDICOMQuery                     *CurrentQuery;
-  
+
   QProgressDialog*                  ProgressDialog;
   QString                           CurrentServer;
     bool                              UseProgressDialog;
@@ -117,7 +117,7 @@ void ctkDICOMQueryRetrieveWidgetPrivate::init()
 
 //----------------------------------------------------------------------------
 ctkDICOMQueryRetrieveWidget::ctkDICOMQueryRetrieveWidget(QWidget* parentWidget)
-  : Superclass(parentWidget) 
+  : Superclass(parentWidget)
   , d_ptr(new ctkDICOMQueryRetrieveWidgetPrivate(*this))
 {
   Q_D(ctkDICOMQueryRetrieveWidget);
@@ -138,12 +138,26 @@ void ctkDICOMQueryRetrieveWidget::setRetrieveDatabase(QSharedPointer<ctkDICOMDat
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMQueryRetrieveWidget::setRetrieveDatabase(ctkDICOMDatabase* dicomDatabase)
+{
+  Q_D(ctkDICOMQueryRetrieveWidget);
+  if (dicomDatabase == nullptr)
+    {
+    logger.error("Failed to set retrieve database - nullptr given");
+    return;
+    }
+
+  d->RetrieveDatabase = QSharedPointer<ctkDICOMDatabase>(dicomDatabase);;
+}
+
+//----------------------------------------------------------------------------
 QSharedPointer<ctkDICOMDatabase> ctkDICOMQueryRetrieveWidget::retrieveDatabase()const
 {
   Q_D(const ctkDICOMQueryRetrieveWidget);
   return d->RetrieveDatabase;
 }
 
+//----------------------------------------------------------------------------
 void ctkDICOMQueryRetrieveWidget::useProgressDialog(bool enable)
 {
     Q_D(ctkDICOMQueryRetrieveWidget);
@@ -272,11 +286,11 @@ void ctkDICOMQueryRetrieveWidget::query()
       d->StudyAndSeriesInstanceUIDPairList.push_back(qMakePair( StudyAndSeriesInstanceUIDPair.first, StudyAndSeriesInstanceUIDPair.second ));
       }
     }
-  
+
   if (!progress.wasCanceled())
     {
     d->Model.setDatabase(d->QueryResultDatabase.database());
-    
+
     d->dicomTableManager->setDICOMDatabase(&(d->QueryResultDatabase));
     }
   d->RetrieveButton->setEnabled(d->QueriesByStudyUID.keys().size() != 0);
@@ -394,7 +408,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
       logger.error ( "Retrieve failed" );
       if(d->UseProgressDialog)
         {
-        if ( QMessageBox::question ( this, 
+        if ( QMessageBox::question ( this,
               tr("Query Retrieve"), tr("Retrieve failed.  Keep trying?"),
               QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
           {

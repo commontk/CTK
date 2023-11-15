@@ -23,7 +23,7 @@
 
 #include "ctkDICOMWidgetsExport.h"
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 #include <QItemSelection>
 #include <QMap>
@@ -39,8 +39,9 @@ class ctkDICOMQueryRetrieveWidgetPrivate;
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMQueryRetrieveWidget : public QWidget
 {
-Q_OBJECT;
+Q_OBJECT
 Q_PROPERTY(ctkDICOMTableManager* dicomTableManager READ dicomTableManager)
+
 public:
   typedef QWidget Superclass;
   explicit ctkDICOMQueryRetrieveWidget(QWidget* parent=0);
@@ -52,10 +53,11 @@ public:
   QSharedPointer<ctkDICOMDatabase> retrieveDatabase()const;
 
   /// enable or disable ctk progress bars
-  void                   useProgressDialog(bool enable);
+  Q_INVOKABLE void useProgressDialog(bool enable);
 
 public Q_SLOTS:
   void setRetrieveDatabase(QSharedPointer<ctkDICOMDatabase> retrieveDatabase);
+  void setRetrieveDatabase(ctkDICOMDatabase* dicomDatabase);
   void query();
   void retrieve();
   void cancel();
