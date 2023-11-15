@@ -40,8 +40,6 @@ class ctkIconEnginePrivate;
 /// QCoreApplication::addLibraryPath("MyApp-build/plugins");
 /// \endcode
 /// where the plugin must be located in "MyApp-build/plugins/iconengines"
-/// don't forget to declare in the cpp file:
-///   Q_EXPORT_PLUGIN2(yourpluginName, ctkIconEnginePlugin)
 class CTK_WIDGETS_EXPORT ctkIconEnginePlugin
   : public QIconEnginePlugin
 {

@@ -36,6 +36,7 @@
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
 #include <vtkRenderWindow.h>
+#include <vtkVersion.h>
 
 // STD includes
 #include <cstdlib>
@@ -119,11 +120,19 @@ int ctkVTKMagnifyViewTest1(int argc, char * argv [] )
 #if CTK_USE_QVTKOPENGLWIDGET
       vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow =
           vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+# if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
       widget->setRenderWindow(renderWindow);
+# else
+      widget->SetRenderWindow(renderWindow);
+# endif
 #endif
 
     vtkNew<vtkRenderer> renderer;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     widget->renderWindow()->AddRenderer(renderer.GetPointer());
+#else
+    widget->GetRenderWindow()->AddRenderer(renderer.GetPointer());
+#endif
     double gray = static_cast<double>(i) / (numVTKWidgets-1);
     renderer->SetBackground( gray, gray, gray);
     renderer->SetBackground2( 0., 0., 1.);

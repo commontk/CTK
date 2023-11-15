@@ -19,6 +19,11 @@
 ###########################################################################
 
 function(ctk_list_to_string separator input_list output_string_var)
+  if(${CMAKE_VERSION} VERSION_EQUAL "3.12" OR ${CMAKE_VERSION} VERSION_GREATER "3.12")
+    string(JOIN "${separator}" _string ${input_list})
+    set(${output_string_var} ${_string} PARENT_SCOPE)
+    return()
+  endif()
   set(_string "")
   cmake_policy(PUSH)
   cmake_policy(SET CMP0007 OLD)

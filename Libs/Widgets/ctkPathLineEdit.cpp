@@ -110,7 +110,11 @@ public:
   // and the global shared file system models are used. If name filters are set then
   // a custom custom file system is created for the widget.
   void setNameFilters(const QStringList& filters);
-  QStringList nameFilters() const;
+
+  // Since nameFilters() function may be relevant when more work will be done,
+  // it is commented to quiet the "-Wunused-function" warning.
+  //
+  // QStringList nameFilters() const;
 
 protected:
   QFileSystemModel* CustomFileSystemModel;
@@ -209,15 +213,19 @@ void ctkFileCompleter::setNameFilters(const QStringList& filters)
 }
 
 //-----------------------------------------------------------------------------
-QStringList ctkFileCompleter::nameFilters() const
-{
-  QFileSystemModel* fileSystemModel = this->fileSystemModel();
-  if (!fileSystemModel)
-    {
-    return QStringList();
-    }
-  return fileSystemModel->nameFilters();
-}
+// Since nameFilters() function may be relevant when more work will be done,
+// it is commented to quiet the "-Wunused-function" warning.
+//
+//-----------------------------------------------------------------------------
+//QStringList ctkFileCompleter::nameFilters() const
+//{
+//  QFileSystemModel* fileSystemModel = this->fileSystemModel();
+//  if (!fileSystemModel)
+//    {
+//    return QStringList();
+//    }
+//  return fileSystemModel->nameFilters();
+//}
 
 //-----------------------------------------------------------------------------
 QFileSystemModel* ctkFileCompleter::fileSystemModel() const

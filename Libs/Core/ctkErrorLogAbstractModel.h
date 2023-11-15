@@ -144,7 +144,7 @@ public Q_SLOTS:
 
   /// Call addEntry method via a connection (the same way as message handlers call it).
   /// It is recommended to use this method instead of addEntry to ensure messages are logged in correct order.
-  /// Directly calling addEntry would make that log entry processed immedately, getting ahead of entries that
+  /// Directly calling addEntry would make that log entry processed immediately, getting ahead of entries that
   /// message handlers add via a queued connection.
   void postEntry(const QDateTime& currentDateTime, const QString& threadId,
     ctkErrorLogLevel::LogLevel logLevel, const QString& origin, const ctkErrorLogContext& context, const QString& text);

@@ -45,7 +45,9 @@ ctkDICOMDisplayedFieldGeneratorPrivate::ctkDICOMDisplayedFieldGeneratorPrivate(c
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMDisplayedFieldGeneratorPrivate::~ctkDICOMDisplayedFieldGeneratorPrivate() = default;
+ctkDICOMDisplayedFieldGeneratorPrivate::~ctkDICOMDisplayedFieldGeneratorPrivate()
+{
+}
 
 //------------------------------------------------------------------------------
 void ctkDICOMDisplayedFieldGeneratorPrivate::setupEnabledDisplayedFieldGeneratorRules()

@@ -169,13 +169,8 @@ void ctkDICOMTableViewPrivate::init()
   this->dicomSQLFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
   this->tblDicomDatabaseView->setModel(this->dicomSQLFilterModel);
   this->tblDicomDatabaseView->setSortingEnabled(true);
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-  this->tblDicomDatabaseView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-  this->tblDicomDatabaseView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-#else
   this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   this->tblDicomDatabaseView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-#endif
   this->tblDicomDatabaseView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
 
   QObject::connect(this->tblDicomDatabaseView->selectionModel(),
@@ -317,6 +312,7 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
       }
     }
     this->tblDicomDatabaseView->horizontalHeader()->setSectionResizeMode(col, columnResizeMode);
+
     if (columnResizeMode == QHeaderView::Stretch && visibility)
     {
       stretchedColumnFound = true;
@@ -346,7 +342,11 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
       {
         if (columnIndicesByVisualIndex[j] > columnIndicesByVisualIndex[j+1])
         {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+          columnIndicesByVisualIndex.swapItemsAt(j, j+1);
+#else
           columnIndicesByVisualIndex.swap(j, j+1);
+#endif
           header->swapSections(j, j+1);
         }
       }
@@ -360,7 +360,11 @@ void ctkDICOMTableViewPrivate::applyColumnProperties()
     {
       if (columnWeights[j] > columnWeights[j+1])
       {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+        columnWeights.swapItemsAt(j, j+1);
+#else
         columnWeights.swap(j, j+1);
+#endif
         header->swapSections(j, j+1);
       }
     }
@@ -891,8 +895,13 @@ void ctkDICOMTableView::setCurrentSelection(const QStringList& uids)
       continue;
     }
     QItemSelectionModel::QItemSelectionModel::SelectionFlags flags = QFlags<QItemSelectionModel::SelectionFlag>();
+#if QT_VERSION >= QT_VERSION_CHECK(5,7,0)
     flags.setFlag(needToSelect ? QItemSelectionModel::Select : QItemSelectionModel::Deselect);
     flags.setFlag(QItemSelectionModel::Rows);
+#else
+    flags = flags | (needToSelect ? QItemSelectionModel::Select : QItemSelectionModel::Deselect);
+    flags = flags | QItemSelectionModel::Rows;
+#endif
     d->tblDicomDatabaseView->selectionModel()->select(index, flags);
   }
 }

@@ -49,7 +49,7 @@ set(MOC_SRCS )
 
 set(MY_MOC_CXX )
 
-#QT4_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
+#QT5_WRAP_CPP(MY_MOC_CXX ${MOC_SRCS})
 
 set(test_executable ${fw_lib}CppTests)
 
@@ -63,3 +63,4 @@ add_dependencies(${test_executable} ${PROJECT_NAME})
 
 add_test(${fw_lib}Tests ${CPP_TEST_PATH}/${test_executable})
 set_property(TEST ${fw_lib}Tests PROPERTY LABELS ${fw_lib})
+set_property(TEST ${fw_lib}Tests PROPERTY RESOURCE_LOCK ctkPluginStorage)

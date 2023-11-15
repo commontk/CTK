@@ -26,14 +26,13 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 
-set(CTK_QT_TEST_LIBRARY )
+find_package(Qt${CTK_QT_VERSION} COMPONENTS Test REQUIRED)
+set(CTK_QT_TEST_LIBRARY Qt${CTK_QT_VERSION}::Test)
 
-if (CTK_QT_VERSION VERSION_GREATER "4")
-  find_package(Qt5Test REQUIRED)
-  set(CTK_QT_TEST_LIBRARY Qt5::Test)
+if(CTK_QT_VERSION VERSION_EQUAL "5")
   qt5_generate_mocs(${Tests_MOC_CPPS})
 else()
-  qt4_generate_mocs(${Tests_MOC_CPPS})
+  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
 endif()
 
 SET (TestsToRun ${Tests})

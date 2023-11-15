@@ -28,7 +28,7 @@
 #include <service/cm/ctkManagedService.h>
 #include <service/metatype/ctkMetaTypeProvider.h>
 
-#include <QtPlugin>
+#include <QtGlobal>
 
 ctkMTLogTracker* ctkMetaTypeActivator::logTracker = 0;
 
@@ -108,8 +108,3 @@ ctkLogService* ctkMetaTypeActivator::getLogService()
 {
   return logTracker;
 }
-
-
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-Q_EXPORT_PLUGIN2(org_commontk_metatype, ctkMetaTypeActivator)
-#endif

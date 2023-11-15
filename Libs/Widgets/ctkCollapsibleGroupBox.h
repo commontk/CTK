@@ -48,7 +48,7 @@ public:
   ctkCollapsibleGroupBox(QWidget* parent = 0);
   ctkCollapsibleGroupBox(const QString& title, QWidget* parent = 0);
   virtual ~ctkCollapsibleGroupBox();
-  
+
   /// Utility function to collapse the groupbox
   /// Collapse(close) the group box if collapse is true, expand(open)
   /// it otherwise.
@@ -78,12 +78,6 @@ protected:
   QScopedPointer<ctkCollapsibleGroupBoxPrivate> d_ptr;
   /// reimplemented for internal reasons
   virtual void childEvent(QChildEvent*);
-
-#if QT_VERSION < 0x040600
-  virtual void paintEvent(QPaintEvent*);
-  virtual void mousePressEvent(QMouseEvent*);
-  virtual void mouseReleaseEvent(QMouseEvent*);
-#endif
 
 private:
   Q_DECLARE_PRIVATE(ctkCollapsibleGroupBox);

@@ -29,13 +29,4 @@
 // We mean it.
 //
 
-/*
- * C++11 keywords and expressions
- */
-#ifdef Q_NULLPTR
-# define CTK_NULLPTR Q_NULLPTR
-#else
-# define CTK_NULLPTR NULL
-#endif
-
 #endif

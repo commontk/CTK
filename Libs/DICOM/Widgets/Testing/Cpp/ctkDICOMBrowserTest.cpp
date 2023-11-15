@@ -76,7 +76,7 @@ void ctkDICOMBrowserTester::initTestCase()
   QDir dataDir = QDir(QProcessEnvironment::systemEnvironment().value("CTKData_DIR", ""));
   QVERIFY(dataDir.exists());
 
-  this->DICOMDir = dataDir.filePath("Data/DICOM");
+  this->DICOMDir.setPath(dataDir.filePath("Data/DICOM"));
   QVERIFY(this->DICOMDir.exists());
 
   this->DatabaseDirectoryName = QDir::tempPath() + "/ctkDICOMBrowserTest-Database";
@@ -151,10 +151,10 @@ void ctkDICOMBrowserTester::testImportDirectoryMode()
 
   QComboBox* comboBox = browser.importDialog()->bottomWidget()->findChild<QComboBox*>();
 
-  comboBox->setCurrentIndex(comboBox->findData(ctkDICOMBrowser::ImportDirectoryCopy));
+  comboBox->setCurrentIndex(comboBox->findData(static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy)));
   QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryCopy);
 
-  comboBox->setCurrentIndex(comboBox->findData(ctkDICOMBrowser::ImportDirectoryAddLink));
+  comboBox->setCurrentIndex(comboBox->findData(static_cast<int>(ctkDICOMBrowser::ImportDirectoryAddLink)));
   QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryAddLink);
 }
 

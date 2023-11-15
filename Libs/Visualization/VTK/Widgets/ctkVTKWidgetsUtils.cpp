@@ -105,10 +105,12 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
     {
     pixelFormat = QImage::Format_RGB888;
     }
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
   else if (numberOfScalarComponents == 4)
     {
     pixelFormat = QImage::Format_RGBA8888;
     }
+#endif
 #if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
   else if (numberOfScalarComponents == 1)
     {
@@ -155,8 +157,13 @@ bool ctk::qImageToVTKImageData(const QImage& inputQImage, vtkImageData* outputVT
   vtkIdType numberOfScalarComponents = 0;
   if (inputQImage.hasAlphaChannel() || forceAlphaChannel)
   {
+#if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
     normalizedQtImage = inputQImage.convertToFormat(QImage::Format_RGBA8888).mirrored();
     numberOfScalarComponents = 4;
+#else
+    qWarning() << Q_FUNC_INFO << " failed: conversion of 4-component image is not available with Qt < 5.2";
+    return false;
+#endif
   }
   else
   {

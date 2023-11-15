@@ -38,7 +38,7 @@ int ctkDICOMTest1(int argc, char * argv [])
     }
   QString command = app.arguments().at(1);
   QProcess process;
-  process.start(command);
+  process.start(command, /* arguments= */ QStringList());
   bool res = process.waitForStarted();
   if (!res)
     {

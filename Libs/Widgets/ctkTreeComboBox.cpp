@@ -20,15 +20,16 @@
 
 // Qt includes
 #include <QApplication>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#include <QScreen>
+#else
 #include <QDesktopWidget>
+#endif
 #include <QEvent>
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QLayout>
 #include <QScrollBar>
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-# include <QInputContext>
-#endif
 #include <QMouseEvent>
 #include <QModelIndex>
 #include <QStack>
@@ -239,8 +240,12 @@ void ctkTreeComboBox::resizePopup()
   this->initStyleOption(&opt);
   QRect listRect(style->subControlRect(QStyle::CC_ComboBox, &opt,
                                        QStyle::SC_ComboBoxListBoxPopup, this));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QRect screen = this->screen()->availableGeometry();
+#else
   QRect screen = QApplication::desktop()->availableGeometry(
     QApplication::desktop()->screenNumber(this));
+#endif
   QPoint below = this->mapToGlobal(listRect.bottomLeft());
   int belowHeight = screen.bottom() - below.y();
   QPoint above = this->mapToGlobal(listRect.topLeft());
@@ -290,15 +295,12 @@ void ctkTreeComboBox::resizePopup()
       int heightMargin = 0;//2*container->spacing();
 
       // add the frame of the container
-      int marginTop, marginBottom;
-      container->getContentsMargins(0, &marginTop, 0, &marginBottom);
-      heightMargin += marginTop + marginBottom;
+      QMargins cMargins = container->contentsMargins();
+      heightMargin += cMargins.top() + cMargins.bottom();
 
-      //add the frame of the view
-      this->view()->getContentsMargins(0, &marginTop, 0, &marginBottom);
-      //marginTop += static_cast<QAbstractScrollAreaPrivate *>(QObjectPrivate::get(this->view()))->top;
-      //marginBottom += static_cast<QAbstractScrollAreaPrivate *>(QObjectPrivate::get(this->view()))->bottom;
-      heightMargin += marginTop + marginBottom;
+      // add the frame of the view
+      QMargins vMargins = this->view()->contentsMargins();
+      heightMargin += vMargins.top() + vMargins.bottom();
 
       listRect.setHeight(listRect.height() + heightMargin);
       }
@@ -420,12 +422,6 @@ void ctkTreeComboBox::resizePopup()
         listRect.moveBottomLeft(above);
         }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0) && !defined QT_NO_IM
-      if (QInputContext *qic = this->inputContext())
-        {
-        qic->reset();
-        }
-#endif
       QScrollBar *sb = this->view()->horizontalScrollBar();
       Qt::ScrollBarPolicy policy = this->view()->horizontalScrollBarPolicy();
       bool needHorizontalScrollBar =

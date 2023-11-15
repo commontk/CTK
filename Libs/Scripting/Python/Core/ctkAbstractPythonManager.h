@@ -118,7 +118,7 @@ public:
   static QStringList dir_object(PyObject* object,
                                 bool appendParenthesis = false);
 
-  /// Given a python variable name, it returns the string list splited
+  /// Given a python variable name, it returns the string list split
   /// at every dots which will be outside parenthesis
   /// (It also takes care about the possibility that quotes can include parenthesis)
   static QStringList splitByDotOutsideParenthesis(const QString& pythonVariableName);
@@ -143,7 +143,7 @@ public:
   /// \sa pythonInitialized
   bool isPythonInitialized()const;
 
-  /// Returns True if a python error occured.
+  /// Returns True if a python error occurred.
   /// \sa PythonQt::hadError()
   bool pythonErrorOccured()const;
 

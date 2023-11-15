@@ -90,12 +90,8 @@ int ctkColorDialogTest1(int argc, char * argv [] )
   // the following is only in interactive mode
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
-#if (QT_VERSION >= 0x50000)
     bool result = QTest::qWaitForWindowActive(&colorDialog);
     Q_UNUSED(result);
-#else
-    QTest::qWaitForWindowShown(&colorDialog);
-#endif
     colorDialog.accept();
     return EXIT_SUCCESS;
     }

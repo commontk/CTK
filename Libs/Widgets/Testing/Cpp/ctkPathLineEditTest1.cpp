@@ -25,11 +25,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-#include <QDesktopServices>
-#else
 #include <QStandardPaths>
-#endif 
 
 // CTK includes
 #include "ctkPathLineEdit.h"
@@ -54,11 +50,7 @@ int ctkPathLineEditTest1(int argc, char * argv [] )
   ctkPathLineEdit button3("Dirs", QStringList(), ctkPathLineEdit::Dirs);
   button3.setShowHistoryButton(false);
 
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-  QString documentsFolder = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
-#else
   QString documentsFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-#endif 
   button3.setCurrentPath(documentsFolder);
 
   QVBoxLayout* layout = new QVBoxLayout;

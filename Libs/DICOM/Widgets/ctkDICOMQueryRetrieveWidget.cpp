@@ -62,7 +62,7 @@ public:
 
   QMap<QString, ctkDICOMQuery*>     QueriesByServer;
   QMap<QString, ctkDICOMQuery*>     QueriesByStudyUID;
-  std::list<std::pair<QString,QString>>             StudyAndSeriesInstanceUIDPairList;
+  QList< QPair<QString, QString> >  StudyAndSeriesInstanceUIDPairList;
   QMap<QString, ctkDICOMRetrieve*>  RetrievalsByStudyUID;
   ctkDICOMDatabase                  QueryResultDatabase;
   QSharedPointer<ctkDICOMDatabase>  RetrieveDatabase;
@@ -269,7 +269,7 @@ void ctkDICOMQueryRetrieveWidget::query()
     for (const auto & StudyAndSeriesInstanceUIDPair : query->studyAndSeriesInstanceUIDQueried() )
       {
       d->QueriesByStudyUID[StudyAndSeriesInstanceUIDPair.first] = query;
-      d->StudyAndSeriesInstanceUIDPairList.push_back(std::make_pair( StudyAndSeriesInstanceUIDPair.first, StudyAndSeriesInstanceUIDPair.second ));
+      d->StudyAndSeriesInstanceUIDPairList.push_back(qMakePair( StudyAndSeriesInstanceUIDPair.first, StudyAndSeriesInstanceUIDPair.second ));
       }
     }
   
@@ -346,8 +346,7 @@ void ctkDICOMQueryRetrieveWidget::retrieve()
 
     // Get the study UID of the current series to be retrieved
     auto currentStudyAndSeriesUIDPair = std::find_if( d->StudyAndSeriesInstanceUIDPairList.begin(), d->StudyAndSeriesInstanceUIDPairList.end(),
-        [&seriesUID]( const std::pair<QString, QString>& element ) { return element.second == seriesUID; } );
-
+        [&seriesUID]( const QPair<QString, QString>& element ) { return element.second == seriesUID; } );
     QString studyUID = currentStudyAndSeriesUIDPair->first;
 
     // Get information which server we want to get the study from and prepare request accordingly

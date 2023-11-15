@@ -27,9 +27,6 @@
 // CTK includes
 #include "ctkDateRangeWidget.h"
 #include "ui_ctkDateRangeWidget.h"
-#include "ctkLogger.h"
-
-static ctkLogger logger("org.commontk.libs.widgets.ctkDateRangeWidget");
 
 //-----------------------------------------------------------------------------
 class ctkDateRangeWidgetPrivate: public Ui_ctkDateRangeWidget
@@ -65,13 +62,6 @@ void ctkDateRangeWidgetPrivate::autoselectRadioButton()
   Q_Q(ctkDateRangeWidget);
   QDate startDate = q->startDateTime().date();
   QDate endDate = q->endDateTime().date();
-  #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
-  QDateTime startOfDay = q->startDateTime().date().startOfDay();
-  QDateTime endOfDay = q->startDateTime().date().endOfDay();
-  #else
-  QDateTime startOfDay = QDateTime(q->startDateTime().date());
-  QDateTime endOfDay = QDateTime(q->endDateTime().date());
-  #endif
   if (this->ForceSelectRange)
     {
     this->SelectRangeRadioButton->setChecked(true);
@@ -80,8 +70,13 @@ void ctkDateRangeWidgetPrivate::autoselectRadioButton()
     {
     this->AnyDateRadioButton->setChecked(true);
     }
-  else if (q->startDateTime() != startOfDay ||
-           q->endDateTime() != endOfDay)
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
+  else if (q->startDateTime() != q->startDateTime().date().startOfDay() ||
+           q->endDateTime() != q->endDateTime().date().startOfDay())
+#else
+  else if (q->startDateTime() != QDateTime(q->startDateTime().date()) ||
+           q->endDateTime() != QDateTime(q->endDateTime().date()))
+#endif
     {
     this->SelectRangeRadioButton->setChecked(true);
     }
@@ -200,7 +195,7 @@ void ctkDateRangeWidget::setDateTimeRange(QDateTime startDateTime, QDateTime end
 void ctkDateRangeWidget::setDateRange(QDate startDate, QDate endDate)
 {
   #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
-  this->setDateTimeRange(startDate.startOfDay(), endDate.endOfDay());
+  this->setDateTimeRange(startDate.startOfDay(), endDate.startOfDay());
   #else
   this->setDateTimeRange(QDateTime(startDate), QDateTime(endDate));
   #endif
@@ -286,7 +281,6 @@ void ctkDateRangeWidget::setDisplayTime(bool displayTime)
 // -------------------------------------------------------------------------
 bool ctkDateRangeWidget::displayTime()const
 {
-  logger.error("including time in the date range is not supported now");
   Q_D(const ctkDateRangeWidget);
   return d->DisplayTime;
 }

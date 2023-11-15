@@ -372,11 +372,11 @@ bool ctkPythonConsoleCompleterPrivate::PythonAttributeLessThan(const QString& s1
   if (!s1.isEmpty() || !s2.isEmpty())
     {
     // Move Python private attributes to the back (start with underscore)
-    if (s1[0] == "_" && s2[0] != "_")
+    if (s1[0] == QChar('_') && s2[0] != QChar('_'))
       {
       return false;
       }
-    if (s1[0] != "_" && s2[0] == "_")
+    if (s1[0] != QChar('_') && s2[0] == QChar('_'))
       {
       return true;
       }

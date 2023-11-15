@@ -209,7 +209,7 @@ public:
   QStringList fileExtensions() const;
 
   /**
-   * @return The coordinate system (either "lps", "ras", oder "ijk") for the "point" or "region"
+   * @return The coordinate system (either "lps", "ras", or "ijk") for the "point" or "region"
    *         parameter tags.
    */
   QString coordinateSystem() const;

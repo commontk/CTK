@@ -109,7 +109,7 @@ int ctkDICOMServerNodeWidgetTest1( int argc, char * argv [] )
     }
   QMap<QString, QVariant> serverNode;
   serverNode["Name"] = QString("TestName");
-  serverNode["CheckState"] = Qt::Unchecked;
+  serverNode["CheckState"] = static_cast<int>(Qt::Unchecked);
   serverNode["AETitle"] = QString("TestAETitle");
   serverNode["Address"] = QString("TestAddress");
   serverNode["Port"] = 12345;

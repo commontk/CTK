@@ -38,6 +38,7 @@
 
 // VTK includes
 #include "vtkImageData.h"
+#include "vtkNew.h"
 
 // STD includes
 #include <cstdlib>
@@ -72,7 +73,7 @@ int ctkVTKWidgetsUtilsTestImageConversion(int argc, char * argv [] )
   //////////////////////////////////////
 
   // force alpha channel (default) - RGBA input
-  ctk::qImageToVTKImageData(someQImage, someVtkImage);
+  ctk::qImageToVTKImageData(someQImage, someVtkImage.GetPointer());
   if (someVtkImage->GetDimensions()[0] != someQImage.size().width()
     || someVtkImage->GetDimensions()[1] != someQImage.size().height())
   {
@@ -102,7 +103,7 @@ int ctkVTKWidgetsUtilsTestImageConversion(int argc, char * argv [] )
   }
 
   // do not force alpha channel - RGBA input
-  ctk::qImageToVTKImageData(someQImage, someVtkImage, false);
+  ctk::qImageToVTKImageData(someQImage, someVtkImage.GetPointer(), false);
   if (someVtkImage->GetNumberOfScalarComponents() != 4)
   {
     std::cout << "qImageToVTKImageData expected 4 scalar components for RGBA input + alpha not forced, got: "
@@ -111,7 +112,7 @@ int ctkVTKWidgetsUtilsTestImageConversion(int argc, char * argv [] )
   }
 
   // do not force alpha channel - RGB input
-  ctk::qImageToVTKImageData(someQImage.convertToFormat(QImage::Format_RGB888), someVtkImage, false);
+  ctk::qImageToVTKImageData(someQImage.convertToFormat(QImage::Format_RGB888), someVtkImage.GetPointer(), false);
   if (someVtkImage->GetNumberOfScalarComponents() != 3)
   {
     std::cout << "qImageToVTKImageData expected 3 scalar components for RGBA input + alpha not forced, got: "
@@ -120,7 +121,7 @@ int ctkVTKWidgetsUtilsTestImageConversion(int argc, char * argv [] )
   }
 
   // force alpha channel - RGB input
-  ctk::qImageToVTKImageData(someQImage.convertToFormat(QImage::Format_RGB888), someVtkImage, true);
+  ctk::qImageToVTKImageData(someQImage.convertToFormat(QImage::Format_RGB888), someVtkImage.GetPointer(), true);
   if (someVtkImage->GetNumberOfScalarComponents() != 4)
   {
     std::cout << "qImageToVTKImageData expected 4 scalar components for RGBA input + alpha forced, got: "
@@ -132,7 +133,7 @@ int ctkVTKWidgetsUtilsTestImageConversion(int argc, char * argv [] )
   //////////////////////////////////////
 
   // RGBA input
-  QImage convertedQImage = ctk::vtkImageDataToQImage(someVtkImage);
+  QImage convertedQImage = ctk::vtkImageDataToQImage(someVtkImage.GetPointer());
   if (someVtkImage->GetDimensions()[0] != convertedQImage.size().width()
     || someVtkImage->GetDimensions()[1] != convertedQImage.size().height())
   {
@@ -157,8 +158,8 @@ int ctkVTKWidgetsUtilsTestImageConversion(int argc, char * argv [] )
   }
 
   // RGB input
-  ctk::qImageToVTKImageData(someQImage.convertToFormat(QImage::Format_RGB888), someVtkImage, false);
-  convertedQImage = ctk::vtkImageDataToQImage(someVtkImage);
+  ctk::qImageToVTKImageData(someQImage.convertToFormat(QImage::Format_RGB888), someVtkImage.GetPointer(), false);
+  convertedQImage = ctk::vtkImageDataToQImage(someVtkImage.GetPointer());
   if (convertedQImage.hasAlphaChannel())
   {
     std::cout << "vtkImageDataToQImage expected no alpha channel" << std::endl;

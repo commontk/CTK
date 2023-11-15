@@ -136,7 +136,7 @@ void ctkEAScenario1EventConsumer::handleEvent(const ctkEvent& event)
     /* check if message is null */
     if(!message.isNull())
     {
-      /* its a syncronous message */
+      /* its a synchronous message */
       numOfsynchMessages++;
       /* print that a message is received */
       qDebug() << "received a synchronous event with message:" << message;
@@ -144,7 +144,7 @@ void ctkEAScenario1EventConsumer::handleEvent(const ctkEvent& event)
       int aquiredNumber= message.toInt();
       /* assert that the message is the expected one */
       QVERIFY2(synchMessageExpectedNumber == aquiredNumber,
-               qPrintable(QString("Expected syncronous message number: %1 got: %2 - order NOT conserved")
+               qPrintable(QString("Expected synchronous message number: %1 got: %2 - order NOT conserved")
                .arg(synchMessageExpectedNumber).arg(aquiredNumber)));
 
       /* the next messages of this type should be +1 */
@@ -161,7 +161,7 @@ void ctkEAScenario1EventConsumer::handleEvent(const ctkEvent& event)
         int aquiredNumber= message.toInt();
         /* assert that the message is the expected one */
         QVERIFY2(asynchMessageExpectedNumber==aquiredNumber,
-                 qPrintable(QString("Expected asyncronous message number: %1 got: %2 - order NOT conserved")
+                 qPrintable(QString("Expected asynchronous message number: %1 got: %2 - order NOT conserved")
                  .arg(asynchMessageExpectedNumber).arg(aquiredNumber)));
 
         /* the next messages of this type should be +1 */

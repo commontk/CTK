@@ -36,6 +36,7 @@ set(KITTests_SRCS
   ctkLoggerTest1.cpp
   ctkModelTesterTest1.cpp
   ctkModelTesterTest2.cpp
+  ctkUtf8Test1.cpp
   ctkUtilsCopyDirRecursivelyTest1.cpp
   ctkUtilsIsDirEmptyTest1.cpp
   ctkUtilsQtHandleToStringTest1.cpp
@@ -53,11 +54,6 @@ set(KITTests_SRCS
   ctkWorkflowTest2.cpp
   ctkWorkflowTest3.cpp
   )
-if(CTK_QT_VERSION VERSION_GREATER "4")
-  list(APPEND KITTests_SRCS
-    ctkUtf8Test1.cpp
-    )
-endif()
 if(HAVE_BFD)
   list(APPEND KITTests_SRCS
     ctkBinaryFileDescriptorTest1.cpp
@@ -105,12 +101,11 @@ set(Tests_Helpers_MOC_CPPS
   )
 
 set(Tests_Helpers_MOC_CPP)
-if(CTK_QT_VERSION VERSION_GREATER "4")
+if(CTK_QT_VERSION VERSION_EQUAL "5")
   qt5_wrap_cpp(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
   qt5_generate_mocs(${Tests_Helpers_MOC_CPPS})
 else()
-  QT4_WRAP_CPP(Tests_Helpers_MOC_CPP ${Tests_Helpers_MOC_SRCS})
-  QT4_GENERATE_MOCS(${Tests_Helpers_MOC_CPPS})
+  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
 endif()
 
 if(HAVE_BFD)
@@ -127,10 +122,11 @@ endif()
 ctk_add_executable_utf8(${KIT}CppTests ${Tests} ${Tests_Helpers_SRCS} ${Tests_Helpers_MOC_CPP})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME} ${CTK_BASE_LIBRARIES} CTKDummyPlugin)
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
-  find_package(Qt5 COMPONENTS Test Widgets REQUIRED)
-  target_link_libraries(${KIT}CppTests Qt5::Test Qt5::Widgets)
-endif()
+find_package(Qt${CTK_QT_VERSION} COMPONENTS Test Widgets REQUIRED)
+target_link_libraries(${KIT}CppTests
+  Qt${CTK_QT_VERSION}::Test
+  Qt${CTK_QT_VERSION}::Widgets
+  )
 
 if(UNIX AND NOT APPLE)
   target_link_libraries(${KIT}CppTests rt)

@@ -320,7 +320,7 @@ void ctkDICOMItemView::addImage( DicomImage & dcmImage, bool defaultIntensity )
     /* create output buffer for DicomImage class */
     QByteArray buffer;
     /* copy header to output buffer and resize it for pixel data */
-    buffer.append(header);
+    buffer.append(header.toUtf8());
     buffer.resize(length);
 
     /* render pixel data to buffer */

@@ -145,7 +145,7 @@ public:
 
   /// Set window interactor
   /// Reimplemented to propagate interaction to Orientation widget
-  virtual void setInteractor(vtkRenderWindowInteractor* interactor);
+  void setInteractor(vtkRenderWindowInteractor* interactor) override;
 
   /// Return pitch, roll or yaw increment (in degree)
   double pitchRollYawIncrement()const;
@@ -185,6 +185,9 @@ public:
 
   /// Return zoom factor
   double zoomFactor()const;
+
+protected:
+  ctkVTKRenderView(ctkVTKRenderViewPrivate* pimpl, QWidget* parent);
 
 private:
   Q_DECLARE_PRIVATE(ctkVTKRenderView);

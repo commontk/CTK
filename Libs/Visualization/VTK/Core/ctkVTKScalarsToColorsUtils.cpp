@@ -55,7 +55,7 @@ void ctk::remapColorScale(
   }
 
   /// Opacity
-  if (rescaledColorTransferFunction->GetScalarOpacityFunction() != CTK_NULLPTR)
+  if (rescaledColorTransferFunction->GetScalarOpacityFunction() != nullptr)
   {
     rescaledColorTransferFunction->GetScalarOpacityFunction()->
       RemoveAllPoints();
@@ -67,7 +67,7 @@ void ctk::remapColorScale(
     rescaledColorTransferFunction->SetScalarOpacityFunction(opacityFunction);
   }
 
-  if (colorTransferFunction->GetScalarOpacityFunction() == CTK_NULLPTR)
+  if (colorTransferFunction->GetScalarOpacityFunction() == nullptr)
   {
     rescaledColorTransferFunction->Build();
     return;
@@ -101,7 +101,7 @@ void ctk::remapColorScale(
 // ----------------------------------------------------------------------------
 void ctk::reverseColorMap(vtkDiscretizableColorTransferFunction* ctf)
 {
-  if (ctf == CTK_NULLPTR)
+  if (ctf == nullptr)
   {
     return;
   }
@@ -127,7 +127,7 @@ void ctk::reverseColorMap(vtkDiscretizableColorTransferFunction* ctf)
 void ctk::setTransparency(vtkDiscretizableColorTransferFunction* ctf,
   double transparency)
 {
-  if (ctf == CTK_NULLPTR)
+  if (ctf == nullptr)
   {
     return;
   }

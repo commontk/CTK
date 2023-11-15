@@ -102,7 +102,7 @@ void ctkCheckableComboBoxEventTranslator::onDataChanged(const QModelIndex&,const
     {
     QModelIndex startIndex = checkableCombo->model()->index(0,0, checkableCombo->rootModelIndex());
     QModelIndexList uncheckedList = checkableCombo->model()->match(
-      startIndex, Qt::CheckStateRole, Qt::Unchecked, -1, Qt::MatchRecursive);
+      startIndex, Qt::CheckStateRole, static_cast<int>(Qt::Unchecked), -1, Qt::MatchRecursive);
     QStringList uncheckedStringList;
     foreach (QModelIndex index, uncheckedList)
       {

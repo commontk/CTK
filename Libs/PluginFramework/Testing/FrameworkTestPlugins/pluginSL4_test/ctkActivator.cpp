@@ -22,7 +22,7 @@
 
 #include "ctkActivator_p.h"
 
-#include <QtPlugin>
+#include <QtGlobal>
 #include <QDebug>
 #include <QStringList>
 
@@ -46,7 +46,3 @@ void ctkActivator::stop(ctkPluginContext* context)
   Q_UNUSED(context)
   //unregister will be done automagically
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-Q_EXPORT_PLUGIN2(pluginSL4_test, ctkActivator)
-#endif

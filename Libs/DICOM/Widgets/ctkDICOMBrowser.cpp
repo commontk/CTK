@@ -49,6 +49,7 @@
 #include "ctkDirectoryButton.h"
 #include "ctkFileDialog.h"
 #include "ctkMessageBox.h"
+#include "ctkUtils.h" // For ctk::isDirEmpty
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -362,8 +363,8 @@ void ctkDICOMBrowserPrivate::init()
   // Initialize directoryMode widget
   QFormLayout *layout = new QFormLayout;
   QComboBox* importDirectoryModeComboBox = new QComboBox();
-  importDirectoryModeComboBox->addItem(ctkDICOMBrowser::tr("Add Link"), ctkDICOMBrowser::ImportDirectoryAddLink);
-  importDirectoryModeComboBox->addItem(ctkDICOMBrowser::tr("Copy"), ctkDICOMBrowser::ImportDirectoryCopy);
+  importDirectoryModeComboBox->addItem(ctkDICOMBrowser::tr("Add Link"), static_cast<int>(ctkDICOMBrowser::ImportDirectoryAddLink));
+  importDirectoryModeComboBox->addItem(ctkDICOMBrowser::tr("Copy"), static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy));
   importDirectoryModeComboBox->setToolTip(
         ctkDICOMBrowser::tr("Indicate if the files should be copied to the local database"
            " directory or if only links should be created ?"));
@@ -374,7 +375,7 @@ void ctkDICOMBrowserPrivate::init()
 
   // Default values
   importDirectoryModeComboBox->setCurrentIndex(
-        importDirectoryModeComboBox->findData(q->importDirectoryMode()));
+      importDirectoryModeComboBox->findData(static_cast<int>(q->importDirectoryMode())));
 
   //Initialize import widget
   this->ImportDialog = new ctkFileDialog();
@@ -521,7 +522,7 @@ void ctkDICOMBrowser::createNewDatabaseDirectory()
   {
     // only use existing folder name as a basis if it is empty or
     // a valid database
-    if (!QDir(baseFolder).isEmpty())
+    if (!ctk::isDirEmpty(QDir(baseFolder)))
     {
       QString databaseFileName = QDir(baseFolder).filePath("ctkDICOM.sql");
       if (!QFile(databaseFileName).exists())
@@ -568,7 +569,7 @@ void ctkDICOMBrowser::createNewDatabaseDirectory()
         continue;
       }
     }
-    if (!QDir(newFolder).isEmpty())
+    if (!ctk::isDirEmpty(QDir(newFolder)))
     {
       continue;
     }
@@ -631,7 +632,7 @@ void ctkDICOMBrowser::setDatabaseDirectory(const QString& directory)
   bool success = true;
 
   if (!QDir(absDirectory).exists()
-    || (!QDir(absDirectory).isEmpty() && !QFile(databaseFileName).exists()))
+    || (!ctk::isDirEmpty(QDir(absDirectory)) && !QFile(databaseFileName).exists()))
   {
     std::cerr << "Database folder does not contain ctkDICOM.sql file: " << qPrintable(absDirectory) << "\n";
     d->DatabaseDirectoryProblemFrame->show();
@@ -1064,7 +1065,7 @@ void ctkDICOMBrowser::setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMod
     return;  // Native dialog does not support modifying or getting widget elements.
   }
   QComboBox* comboBox = d->ImportDialog->bottomWidget()->findChild<QComboBox*>();
-  comboBox->setCurrentIndex(comboBox->findData(mode));
+  comboBox->setCurrentIndex(comboBox->findData(static_cast<int>(mode)));
 }
 
 //----------------------------------------------------------------------------
@@ -1091,10 +1092,29 @@ bool ctkDICOMBrowser::confirmDeleteSelectedUIDs(QStringList uids)
   ctkMessageBox confirmDeleteDialog;
   QString message = tr("Do you want to delete the following selected items?");
 
+  // calculate maximum number of rows that fit in the browser widget to have a reasonable limit
+  // on the items to show in the dialog
+  int browserHeight = this->geometry().height();
+  int patientsTableRowHeight = d->dicomTableManager->patientsTable()->tableView()->rowHeight(0);
+  int maxNumberOfPatientsToShow = browserHeight / patientsTableRowHeight - 3; // subtract 3 due to the checkbox, buttons, and header
+  if (maxNumberOfPatientsToShow < 3)
+  {
+    // make sure there are a meaningful number of items shown
+    maxNumberOfPatientsToShow = 3;
+  }
+
   // add the information about the selected UIDs
   int numUIDs = uids.size();
   for (int i = 0; i < numUIDs; ++i)
   {
+    if (i >= maxNumberOfPatientsToShow && numUIDs > maxNumberOfPatientsToShow + 1)
+    {
+      // displayed when there are additional DICOM items to delete that do not fit on screen
+      // note: do not show this message if there is only one more to show (the message also takes a line)
+      message += QString("\n") + tr("(and %1 more)").arg(numUIDs - maxNumberOfPatientsToShow);
+      break;
+    }
+
     QString uid = uids.at(i);
 
     // try using the given UID to find a descriptive string
@@ -1625,7 +1645,7 @@ void ctkDICOMBrowser::exportSelectedItems(ctkDICOMModel::IndexType level)
   Q_D(const ctkDICOMBrowser);
   ctkFileDialog* directoryDialog = new ctkFileDialog();
   directoryDialog->setOption(QFileDialog::ShowDirsOnly);
-  directoryDialog->setFileMode(QFileDialog::DirectoryOnly);
+  directoryDialog->setFileMode(QFileDialog::Directory);
   bool res = directoryDialog->exec();
   if (!res)
   {
@@ -1815,7 +1835,7 @@ void ctkDICOMBrowser::setSelectedItems(ctkDICOMModel::IndexType level, QStringLi
     // Select parent patient to make sure the requested studies
     // are listed in the study table
     QStringList patientUids;
-    for (const QString& uid : uids)
+    Q_FOREACH (const QString& uid, uids)
     {
       QString patientUid = d->DICOMDatabase->patientForStudy(uid);
       if (!patientUids.contains(patientUid))
@@ -1832,7 +1852,7 @@ void ctkDICOMBrowser::setSelectedItems(ctkDICOMModel::IndexType level, QStringLi
     // Select parent patients and studies to make sure the requested series
     // are listed in the series table
     QStringList studyUids;
-    for (const QString& uid : uids)
+    Q_FOREACH (const QString& uid, uids)
     {
       QString studyUid = d->DICOMDatabase->studyForSeries(uid);
       if (!studyUids.contains(studyUid))

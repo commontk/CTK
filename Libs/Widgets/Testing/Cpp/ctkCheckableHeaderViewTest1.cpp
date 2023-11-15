@@ -73,24 +73,15 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
   table.setModel(&model);
 
   // Header is checked by default
-  model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+  model.setHeaderData(0, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
 
   QHeaderView* previousHeaderView = table.horizontalHeader();
-#if (QT_VERSION >= 0x50000)
   bool oldClickable = previousHeaderView->sectionsClickable();
-#else
-  bool oldClickable = previousHeaderView->isClickable();
-#endif
 
   ctkCheckableHeaderView* headerView =
     new ctkCheckableHeaderView(Qt::Horizontal, &table);
-#if (QT_VERSION >= 0x50000)
   headerView->setSectionsClickable(oldClickable);
   headerView->setSectionsMovable(previousHeaderView->sectionsMovable());
-#else
-  headerView->setClickable(oldClickable);
-  headerView->setMovable(previousHeaderView->isMovable());
-#endif
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   // propagatetoitems is true by default
   //headerView->setPropagateToItems(true);
@@ -98,21 +89,12 @@ int ctkCheckableHeaderViewTest1(int argc, char * argv [] )
   // sets the model to the headerview
   table.setHorizontalHeader(headerView);
 
-#if (QT_VERSION >= 0x50000)
   if (headerView->sectionsClickable() != oldClickable)
     {
     std::cerr << "ctkCheckableHeaderView::setSectionClickable() failed: "
               << headerView->sectionsClickable() << std::endl;
     return EXIT_FAILURE;
     }
-#else
-  if (headerView->isClickable() != oldClickable)
-    {
-    std::cerr << "ctkCheckableHeaderView::setClickable() failed: "
-              << headerView->isClickable() << std::endl;
-    return EXIT_FAILURE;
-    }
-#endif
   // As propagateToItems is true, once the model is set to the headerview,
   // the checkable header is updated from the check state of all the items
   // all the items are unchecked by default, so the header becomes unchecked

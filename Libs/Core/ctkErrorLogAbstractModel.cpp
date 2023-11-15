@@ -588,7 +588,7 @@ ctkErrorLogAbstractMessageHandler* ctkErrorLogAbstractModel::msgHandler(const QS
   Q_D(const ctkErrorLogAbstractModel);
   if (!d->RegisteredHandlers.keys().contains(handlerName))
     {
-    return CTK_NULLPTR;
+    return nullptr;
     }
   return d->RegisteredHandlers[handlerName];
 }

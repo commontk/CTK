@@ -24,7 +24,7 @@ endif()
 
 if(NOT DEFINED QtSOAP_DIR)
 
-  set(revision_tag 9c321151f19c87504eb55d53802eaf42e11bb989)
+  set(revision_tag 2e967e902c27b4ab76f8dcbffbf6037eac4abd05)
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
@@ -41,11 +41,8 @@ if(NOT DEFINED QtSOAP_DIR)
   endif()
 
   set(ep_cache_args)
-  if(CTK_QT_VERSION VERSION_LESS "5")
-    list(APPEND ep_cache_args
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-      )
-  else()
+
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     list(APPEND ep_cache_args
       -DQt5_DIR:PATH=${Qt5_DIR}
       )
@@ -55,6 +52,12 @@ if(NOT DEFINED QtSOAP_DIR)
         -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
         )
     endif()
+  elseif(CTK_QT_VERSION VERSION_EQUAL "6")
+    list(APPEND ep_cache_args
+      -DQt6_DIR:PATH=${Qt6_DIR}
+      )
+  else()
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   ExternalProject_Add(${proj}

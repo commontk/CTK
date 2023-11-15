@@ -37,12 +37,11 @@ set(MOC_SRCS )
 
 set(MY_MOC_CXX )
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
+if(CTK_QT_VERSION VERSION_EQUAL "5")
   qt5_wrap_cpp(MY_MOC_CXX ${MOC_SRCS})
 else()
-  qt4_wrap_cpp(MY_MOC_CXX ${MOC_SRCS})
+  message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
 endif()
-
 set(test_executable ${fw_lib}AppTests)
 
 ctk_add_executable_utf8(${test_executable} ${SRCS} ${MY_MOC_CXX})
@@ -50,12 +49,11 @@ target_link_libraries(${test_executable}
   ${fw_lib}
 )
 
-if(CTK_QT_VERSION VERSION_GREATER "4")
-  target_link_libraries(${test_executable} Qt5::Test)
-endif()
+target_link_libraries(${test_executable} Qt${CTK_QT_VERSION}::Test)
 
 add_dependencies(${test_executable} ${PROJECT_NAME})
 
 add_test(${fw_lib}AppTests ${CPP_TEST_PATH}/${test_executable})
 set_property(TEST ${fw_lib}AppTests PROPERTY LABELS ${fw_lib})
 set_property(TEST ${fw_lib}AppTests PROPERTY ENVIRONMENT "QT_FATAL_WARNINGS=1")
+set_property(TEST ${fw_lib}AppTests PROPERTY RESOURCE_LOCK ctkPluginStorage)

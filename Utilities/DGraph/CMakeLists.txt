@@ -20,12 +20,6 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-foreach(policy CMP0003)
-  if(POLICY ${policy})
-    cmake_policy(SET ${policy} NEW)
-  endif()
-endforeach()
-
 project(DGraph)
 
 set(CTK_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../)

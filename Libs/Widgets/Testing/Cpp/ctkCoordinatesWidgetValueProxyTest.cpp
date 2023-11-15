@@ -71,12 +71,6 @@ public:
   int AcknowledgedSignals;
 };
 
-// ----------------------------------------------------------------------------
-QString coordinatesFromValue(double val)
-{
-  return QString("%1,%1,%1").arg(val);
-}
-
 } // end namespace
 
 // ----------------------------------------------------------------------------

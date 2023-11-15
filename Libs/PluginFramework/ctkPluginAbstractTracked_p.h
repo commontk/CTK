@@ -26,7 +26,11 @@
 #include <QHash>
 #include <QMutex>
 #include <QWaitCondition>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+#include <list>
+#else
 #include <QLinkedList>
+#endif
 #include <QVariant>
 
 /**
@@ -248,7 +252,11 @@ public:
    *
    * @GuardedBy this
    */
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+  std::list<S>	    initial;
+#else
   QLinkedList<S>	initial;
+#endif
 
   /**
    * Common logic to add an item to the tracker used by track and

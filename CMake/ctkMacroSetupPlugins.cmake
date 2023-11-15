@@ -100,20 +100,10 @@ macro(ctkMacroSetupPlugins )
     # Add the project specific variable name containing plug-in targets to the list
     set_property(GLOBAL APPEND PROPERTY CTK_PLUGIN_LIBRARIES_VARS ${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES)
   endif()
-  
-  # Set up Qt, if not already done
-  #if(NOT QT4_FOUND)
-  #  set(minimum_required_qt_version "4.6")
-  #  find_package(Qt4 REQUIRED)
 
-  #  if("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "${minimum_required_qt_version}")
-  #    message(FATAL_ERROR "error: CTK requires Qt >= ${minimum_required_qt_version} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}.")
-  #  endif()
-  #endif()
-  
   # Set the variable QT_INSTALLED_LIBRARY_DIR that contains all
   # Qt shared libraries
-  if (CTK_QT_VERSION VERSION_GREATER "4")
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     if(WIN32)
       get_target_property(_qt5_moc_executable Qt5::moc LOCATION)
       get_filename_component(QT_INSTALLED_LIBRARY_DIR ${_qt5_moc_executable} PATH)
@@ -122,10 +112,7 @@ macro(ctkMacroSetupPlugins )
       get_filename_component(QT_INSTALLED_LIBRARY_DIR ${_qt5_core_lib} PATH)
     endif()
   else()
-    set(QT_INSTALLED_LIBRARY_DIR ${QT_LIBRARY_DIR})
-    if(WIN32)
-      get_filename_component(QT_INSTALLED_LIBRARY_DIR ${QT_QMAKE_EXECUTABLE} PATH)
-    endif()
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
   set(plugin_symbolic_names )

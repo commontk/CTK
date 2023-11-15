@@ -20,7 +20,7 @@
 =============================================================================*/
 
 // Qt includes
-#include <QtPlugin>
+#include <QtGlobal>
 
 // CTK includes
 #include "ctkDicomHostPlugin_p.h"
@@ -63,7 +63,3 @@ ctkPluginContext* ctkDicomHostPlugin::getPluginContext() const
 {
   return this->Context;
 }
-
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-Q_EXPORT_PLUGIN2(org_commontk_dah_host, ctkDicomHostPlugin)
-#endif

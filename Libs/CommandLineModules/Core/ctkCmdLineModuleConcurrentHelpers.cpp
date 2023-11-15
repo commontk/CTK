@@ -56,11 +56,7 @@ ctkCmdLineModuleReferenceResult ctkCmdLineModuleConcurrentRegister::operator()(c
     }
     return ctkCmdLineModuleReferenceResult(moduleUrl, e.message());
   }
-#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
   catch (const QException& e)
-#else
-  catch (const QtConcurrent::Exception& e)
-#endif
   {
     if (this->Debug)
     {

@@ -5,6 +5,9 @@
 # This file is configured by CTK and used by the UseCTK.cmake module
 # to load CTK's settings for an external project.
 
+if(CMAKE_VERSION VERSION_LESS 3.0.0)
+  message(FATAL_ERROR "CTK requires at least CMake version 3.0.0")
+endif()
 
 @PACKAGE_INIT@
 
@@ -60,23 +63,21 @@ include("${CTK_CMAKE_DIR}/ctkMacroTargetLibraries.cmake") # Import multiple macr
 include("${CTK_CMAKE_DIR}/ctkFunctionExtractOptionNameAndValue.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroValidateBuildOptions.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGenerateDGraphInput.cmake")
+include("${CTK_CMAKE_DIR}/ctkFunctionGetIncludeDirs.cmake")
+include("${CTK_CMAKE_DIR}/ctkFunctionGetLibraryDirs.cmake")
+include("${CTK_CMAKE_DIR}/ctkMacroGenerateMocs.cmake")
+
+# PluginFramework
 include("${CTK_CMAKE_DIR}/ctkFunctionGeneratePluginManifest.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGeneratePluginUseFile.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroGeneratePluginResourceFile.cmake")
-include("${CTK_CMAKE_DIR}/ctkFunctionGetIncludeDirs.cmake")
-include("${CTK_CMAKE_DIR}/ctkFunctionGetLibraryDirs.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionExtractPluginTargets.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGetAllPluginTargets.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGetTargetDependencies.cmake")
 include("${CTK_CMAKE_DIR}/ctkFunctionGetPluginDependencies.cmake")
 include("${CTK_CMAKE_DIR}/ctkMacroSetupPlugins.cmake")
-include("${CTK_CMAKE_DIR}/ctkMacroGenerateMocs.cmake")
 
-if(CMAKE_VERSION VERSION_LESS 3)
-  include("${CTK_CMAKE_DIR}/CMakeFindDependencyMacro.cmake")
-else()
-  include(CMakeFindDependencyMacro)
-endif()
+include(CMakeFindDependencyMacro)
 
 # List all libraries
 SET(CTK_LIBRARIES @CTK_LIBRARIES@)

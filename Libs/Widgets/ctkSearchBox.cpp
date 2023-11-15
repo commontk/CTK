@@ -50,10 +50,6 @@ public:
   bool showSearchIcon;
   bool alwaysShowClearIcon;
   bool hideClearIcon;
-
-#if QT_VERSION < 0x040700
-  QString placeholderText;
-#endif
 };
 
 // --------------------------------------------------
@@ -97,11 +93,7 @@ QRect ctkSearchBoxPrivate::searchRect()const
   // the frame line width
   if (q->hasFrame())
     {
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    QStyleOptionFrameV2 opt;
-#else
     QStyleOptionFrame opt;
-#endif
     q->initStyleOption(&opt);
     sRect.adjust(opt.lineWidth, opt.lineWidth, -opt.lineWidth, -opt.lineWidth);
     }
@@ -126,26 +118,6 @@ ctkSearchBox::ctkSearchBox(QWidget* _parent)
 ctkSearchBox::~ctkSearchBox()
 {
 }
-
-#if QT_VERSION < 0x040700
-// --------------------------------------------------
-QString ctkSearchBox::placeholderText()const
-{
-  Q_D(const ctkSearchBox);
-  return d->placeholderText;
-}
-
-// --------------------------------------------------
-void ctkSearchBox::setPlaceholderText(const QString &defaultText)
-{
-  Q_D(ctkSearchBox);
-  d->placeholderText = defaultText;
-  if (!this->hasFocus())
-    {
-    this->update();
-    }
-}
-#endif
 
 // --------------------------------------------------
 void ctkSearchBox::setShowSearchIcon(bool show)
@@ -225,59 +197,6 @@ void ctkSearchBox::paintEvent(QPaintEvent * event)
 
   QRect cRect = d->clearRect();
   QRect sRect = d->showSearchIcon ? d->searchRect() : QRect();
-
-#if QT_VERSION < 0x040700
-  QRect r = rect();
-  QPalette pal = palette();
-
-  QStyleOptionFrameV2 panel;
-  initStyleOption(&panel);
-  r = this->style()->subElementRect(QStyle::SE_LineEditContents, &panel, this);
-  r.setX(r.x() + this->textMargins().left());
-  r.setY(r.y() + this->textMargins().top());
-  r.setRight(r.right() - this->textMargins().right());
-  r.setBottom(r.bottom() - this->textMargins().bottom());
-  p.setClipRect(r);
-
-  QFontMetrics fm = fontMetrics();
-  Qt::Alignment va = QStyle::visualAlignment(this->layoutDirection(),
-                                             QFlag(this->alignment()));
-  int vscroll = 0;
-  const int verticalMargin = 1;
-  const int horizontalMargin = 2;
-  switch (va & Qt::AlignVertical_Mask) {
-   case Qt::AlignBottom:
-       vscroll = r.y() + r.height() - fm.height() - verticalMargin;
-       break;
-   case Qt::AlignTop:
-       vscroll = r.y() + verticalMargin;
-       break;
-   default:
-       //center
-       vscroll = r.y() + (r.height() - fm.height() + 1) / 2;
-       break;
-  }
-  QRect lineRect(r.x() + horizontalMargin, vscroll,
-                 r.width() - 2*horizontalMargin, fm.height());
-
-  int minLB = qMax(0, -fm.minLeftBearing());
-
-  if (this->text().isEmpty())
-    {
-    if (!this->hasFocus() && !this->placeholderText().isEmpty())
-      {
-      QColor col = pal.text().color();
-      col.setAlpha(128);
-      QPen oldpen = p.pen();
-      p.setPen(col);
-      lineRect.adjust(minLB, 0, 0, 0);
-      QString elidedText = fm.elidedText(this->placeholderText(), Qt::ElideRight, lineRect.width());
-      p.drawText(lineRect, va, elidedText);
-      p.setPen(oldpen);
-      }
-    }
-  p.setClipRect(this->rect());
-#endif
 
   // Draw clearIcon
   if (!d->hideClearIcon)

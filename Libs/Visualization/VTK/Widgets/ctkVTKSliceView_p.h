@@ -41,15 +41,19 @@ class vtkRenderWindowInteractor;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Visualization_VTK_Widgets
-class ctkVTKSliceViewPrivate : public ctkVTKAbstractViewPrivate
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKSliceViewPrivate : public ctkVTKAbstractViewPrivate
 {
   Q_OBJECT
+  Q_DECLARE_PUBLIC(ctkVTKSliceView);
+
 public:
   ctkVTKSliceViewPrivate(ctkVTKSliceView&);
+  virtual ~ctkVTKSliceViewPrivate();
 
   /// Convenient setup methods
-  void setupCornerAnnotation();
-  void setupRendering();
+  void init() override;
+  void setupCornerAnnotation() override;
+  void setupRendering() override;
 
   vtkSmartPointer<vtkLightBoxRendererManager>   LightBoxRendererManager;
   bool                                          RenderPending;

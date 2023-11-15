@@ -30,7 +30,6 @@
 // CTK includes
 #include "ctkCollapsibleGroupBox.h"
 
-#if QT_VERSION >= 0x040600
 #include "ctkProxyStyle.h"
 
 //-----------------------------------------------------------------------------
@@ -68,7 +67,6 @@ public:
     return this->Superclass::pixelMetric(metric, option, widget);
   }
 };
-#endif
 
 //-----------------------------------------------------------------------------
 class ctkCollapsibleGroupBoxPrivate
@@ -97,10 +95,8 @@ public:
   /// setVisible, we track its created state with the variable
   bool     IsStateCreated;
 
-#if QT_VERSION >= 0x040600
   /// Pointer to keep track of the proxy style
   ctkCollapsibleGroupBoxStyle* GroupBoxStyle;
-#endif
 };
 
 //-----------------------------------------------------------------------------
@@ -112,9 +108,7 @@ ctkCollapsibleGroupBoxPrivate::ctkCollapsibleGroupBoxPrivate(
   this->IsStateCreated = false;
   this->MaxHeight = 0;
   this->CollapsedHeight = 14;
-#if QT_VERSION >= 0x040600
   this->GroupBoxStyle = 0;
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -125,19 +119,11 @@ void ctkCollapsibleGroupBoxPrivate::init()
   QObject::connect(q, SIGNAL(toggled(bool)), q, SLOT(expand(bool)));
 
   this->MaxHeight = q->maximumHeight();
-#if QT_VERSION >= 0x040600
   QWidget* parent = q->parentWidget();
   QStyle* parentStyle = (parent) ? parent->style() : qApp->style();
   this->GroupBoxStyle = new ctkCollapsibleGroupBoxStyle(parentStyle, qApp);
   q->setStyle(this->GroupBoxStyle);
   this->GroupBoxStyle->ensureBaseStyle();
-#else
-  this->setStyleSheet(
-    "ctkCollapsibleGroupBox::indicator:checked{"
-    "image: url(:/Icons/expand-up.png);}"
-    "ctkCollapsibleGroupBox::indicator:unchecked{"
-    "image: url(:/Icons/expand-down.png);}");
-#endif
 }
 //-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBoxPrivate::setChildVisibility(QWidget* childWidget)
@@ -238,7 +224,7 @@ void ctkCollapsibleGroupBox::expand(bool _expand)
       d->setChildVisibility(qobject_cast<QWidget*>(childObject));
       }
     }
-  
+
   if (_expand)
     {
     this->setMaximumHeight(d->MaxHeight);
@@ -254,53 +240,6 @@ void ctkCollapsibleGroupBox::expand(bool _expand)
     this->setMaximumHeight(labelRect.height() + d->CollapsedHeight);
     }
 }
-
-#if QT_VERSION < 0x040600
-//-----------------------------------------------------------------------------
-void ctkCollapsibleGroupBox::paintEvent(QPaintEvent* e)
-{
-  this->QGroupBox::paintEvent(e);
-  
-  QStylePainter paint(this);
-  QStyleOptionGroupBox option;
-  initStyleOption(&option);
-  option.activeSubControls &= ~QStyle::SC_GroupBoxCheckBox;
-  paint.drawComplexControl(QStyle::CC_GroupBox, option);
-  
-}
-
-//-----------------------------------------------------------------------------
-void ctkCollapsibleGroupBox::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() != Qt::LeftButton) {
-        event->ignore();
-        return;
-    }
-    // no animation
-}
-
-//-----------------------------------------------------------------------------
-void ctkCollapsibleGroupBox::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (event->button() != Qt::LeftButton) {
-        event->ignore();
-        return;
-    }
-
-    QStyleOptionGroupBox box;
-    initStyleOption(&box);
-    box.activeSubControls &= !QStyle::SC_GroupBoxCheckBox;
-    QStyle::SubControl released = style()->hitTestComplexControl(QStyle::CC_GroupBox, &box,
-                                                                 event->pos(), this);
-    bool toggle = this->isCheckable() && (released == QStyle::SC_GroupBoxLabel
-                                   || released == QStyle::SC_GroupBoxCheckBox);
-    if (toggle)
-      {
-      this->setChecked(!this->isChecked());
-      }
-}
-
-#endif
 
 //-----------------------------------------------------------------------------
 void ctkCollapsibleGroupBox::childEvent(QChildEvent* c)

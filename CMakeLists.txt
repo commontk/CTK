@@ -22,7 +22,6 @@ cmake_minimum_required(VERSION 3.0)
 
 foreach(p
   CMP0054 # CMake 3.1
-  CMP0020 # CMake 2.8.11
   )
   if(POLICY ${p})
     cmake_policy(SET ${p} NEW)
@@ -102,6 +101,14 @@ mark_as_superbuild(
 #
 option(CTK_SUPERBUILD "Build ${PROJECT_NAME} and the projects it depends on." ON)
 mark_as_advanced(CTK_SUPERBUILD)
+
+#-----------------------------------------------------------------------------
+# Qt version
+#
+set(CTK_QT_VERSION "5" CACHE STRING "Expected Qt version")
+mark_as_advanced(CTK_QT_VERSION)
+set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 5)
+mark_as_superbuild(CTK_QT_VERSION)
 
 #-----------------------------------------------------------------------------
 # Output directories.
@@ -256,7 +263,6 @@ foreach(file
   Libs/ctkExport.h.in
   CMake/ctkLinkerAsNeededFlagCheck.cmake
   CMake/ctk_compile_python_scripts.cmake.in
-  CMake/CMakeFindDependencyMacro.cmake
   )
   install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
 endforeach()
@@ -418,16 +424,6 @@ if(UNIX AND NOT APPLE)
 endif()
 
 #-----------------------------------------------------------------------------
-# QT
-#
-ctkMacroSetupQt()
-
-# Update CTK_BASE_LIBRARIES with QT libraries
-if(QT4_FOUND)
-  set(CTK_BASE_LIBRARIES ${CTK_BASE_LIBRARIES} ${QT_LIBRARIES} CACHE INTERNAL "CTK base libraries" FORCE)
-endif()
-
-#-----------------------------------------------------------------------------
 # To make options show up in both CTK-SuperBuild and CTK regular build, let's add them
 # before the SuperBuild script is included
 #
@@ -586,7 +582,8 @@ ctk_app_option(ctkExampleHostedApp
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOMApplicationHosting AND CTK_BUILD_EXAMPLES)
 
-if(CTK_QT_VERSION VERSION_LESS "5")
+if(FALSE)
+# Since EventBusDemo depends on qxmlrpc that is lacking Qt5 support, it is excluded.
 ctk_app_option(ctkEventBusDemo
                "Build the DICOM example application" OFF
                CTK_ENABLE_PluginFramework AND CTK_BUILD_EXAMPLES)
@@ -627,7 +624,7 @@ ctk_app_option(ctkSimplePythonShell
                "Build the DICOM example application" OFF
                CTK_ENABLE_Python_Wrapping AND CTK_BUILD_EXAMPLES)
 
-if(CTK_USE_QTTESTING AND CTK_QT_VERSION VERSION_LESS "5")
+if(CTK_USE_QTTESTING)
   ctk_app_option(ctkQtTesting
                 "Build the ctkQtTesting example application" OFF
                 CTK_BUILD_EXAMPLES)
@@ -656,12 +653,9 @@ set(plugin_list
   org.commontk.configadmin
   org.commontk.eventadmin
   org.commontk.log
+  org.commontk.log4qt
   org.commontk.metatype
   )
-
-if(CTK_QT_VERSION VERSION_LESS "5")
-  list(APPEND plugin_list org.commontk.log4qt)
-endif()
 
 foreach(_plugin ${plugin_list})
   ctk_plugin_option(${_plugin} "Build the ${_plugin} plugin." OFF)
@@ -693,7 +687,8 @@ ctk_plugin_option(org.commontk.dah.examplehost
                   CTK_APP_ctkExampleHost)
 
 # Plug-ins related to the EventBus demo application
-if(CTK_QT_VERSION VERSION_LESS "5")
+if(FALSE)
+# Since EventBusDemo depends on qxmlrpc that is lacking Qt5 support, it is excluded.
 ctk_plugin_option(org.commontk.eventbus
                   "Build the org.commontk.eventbus plugin." OFF
                   CTK_APP_ctkEventBusDemo)
@@ -966,6 +961,12 @@ if(CTK_USE_CONTRIBUTED_PLUGINS)
   endforeach()
 endif()
 
+#-----------------------------------------------------------------------------
+# QT
+#
+ctkMacroSetupQt()
+
+#-----------------------------------------------------------------------------
 include(CMake/ctkBlockCheckDependencies.cmake)
 
 #-----------------------------------------------------------------------------
@@ -1137,6 +1138,23 @@ endif()
 # Documentation
 #
 add_subdirectory( Documentation )
+
+#---------------------------------------------------------------------------
+# Install rules
+#
+foreach(file
+  # PluginFramework
+  CMake/ctkFunctionGeneratePluginManifest.cmake
+  CMake/ctkFunctionGeneratePluginUseFile.cmake
+  CMake/ctkMacroGeneratePluginResourceFile.cmake
+  CMake/ctkFunctionExtractPluginTargets.cmake
+  CMake/ctkFunctionGetAllPluginTargets.cmake
+  CMake/ctkFunctionGetTargetDependencies.cmake
+  CMake/ctkFunctionGetPluginDependencies.cmake
+  CMake/ctkMacroSetupPlugins.cmake
+  )
+  install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
+endforeach()
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as

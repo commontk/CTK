@@ -103,23 +103,14 @@ int ctkCheckableHeaderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   table.setModel(&model);
 
   // Header is checked by default
-  model.setHeaderData(0, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+  model.setHeaderData(0, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
 
   QHeaderView* previousHeaderView = table.horizontalHeader();
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-  bool oldClickable = previousHeaderView->isClickable();
-#else
   bool oldClickable = previousHeaderView->sectionsClickable();
-#endif
   ctkCheckableHeaderView* headerView =
     new ctkCheckableHeaderView(Qt::Horizontal, &table);
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-  headerView->setClickable(oldClickable);
-  headerView->setMovable(previousHeaderView->isMovable());
-#else
   headerView->setSectionsClickable(oldClickable);
   headerView->setSectionsMovable(previousHeaderView->sectionsMovable());
-#endif
   headerView->setHighlightSections(previousHeaderView->highlightSections());
   // propagatetoitems is true by default
   //headerView->setPropagateToItems(true);
@@ -128,7 +119,7 @@ int ctkCheckableHeaderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   table.setHorizontalHeader(headerView);
 
   // Header is checked by default
-  model.setHeaderData(1, Qt::Horizontal, Qt::Checked, Qt::CheckStateRole);
+  model.setHeaderData(1, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
 
   QSignalSpy spy1(headerView, SIGNAL(sectionPressed(int)));
 

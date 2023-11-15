@@ -38,11 +38,10 @@ macro(ctkMacroGeneratePluginResourceFile QRC_SRCS)
 </RCC>
 ")
   configure_file("${CTK_CMAKE_DIR}/plugin_resources_cached.qrc.in" "${_qrc_filepath}" @ONLY)
-
-  if (CTK_QT_VERSION VERSION_GREATER "4")
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     QT5_ADD_RESOURCES(${QRC_SRCS} ${_qrc_filepath})
   else()
-    QT4_ADD_RESOURCES(${QRC_SRCS} ${_qrc_filepath})
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
 
 endmacro()

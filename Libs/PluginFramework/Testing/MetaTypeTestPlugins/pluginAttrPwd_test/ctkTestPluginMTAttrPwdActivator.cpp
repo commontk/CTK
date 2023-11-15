@@ -21,7 +21,8 @@
 
 
 #include "ctkTestPluginMTAttrPwdActivator_p.h"
-#include <QtPlugin>
+
+#include <QtGlobal>
 
 //----------------------------------------------------------------------------
 void ctkTestPluginMTAttrPwdActivator::start(ctkPluginContext* context)
@@ -36,7 +37,3 @@ void ctkTestPluginMTAttrPwdActivator::stop(ctkPluginContext* context)
 {
   Q_UNUSED(context)
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-Q_EXPORT_PLUGIN2(pluginAttrPwd_test, ctkTestPluginMTAttrPwdActivator)
-#endif

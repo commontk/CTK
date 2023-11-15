@@ -27,11 +27,12 @@ if(NOT DEFINED QtTesting_DIR)
   if("${CMAKE_CXX_STANDARD}" STREQUAL "98")
     set(revision_tag c44b32fdea827be737e8c2f5608ffbc2e3bd08b2)
   else()
-    set(revision_tag b5324a213dc3c4abd7b588575ea926db57aa981e)
+    set(revision_tag a86bee55104f553a1cb82b9cf0b109d9f1e95dbf) # ctk-2019-03-14-b5324a2
   endif()
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()
+  ExternalProject_Message(${proj} "${proj}[revision_tag:${revision_tag}]")
 
   set(location_args )
   if(${proj}_URL)
@@ -55,11 +56,7 @@ if(NOT DEFINED QtTesting_DIR)
 
   set(ep_cache_args
     -DQtTesting_QT_VERSION:STRING=${CTK_QT_VERSION})
-  if(CTK_QT_VERSION VERSION_LESS "5")
-    list(APPEND ep_cache_args
-      -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-      )
-  else()
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
     list(APPEND ep_cache_args
       -DQt5_DIR:PATH=${Qt5_DIR}
       )
@@ -69,8 +66,14 @@ if(NOT DEFINED QtTesting_DIR)
         -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
         )
     endif()
+  elseif(CTK_QT_VERSION VERSION_EQUAL "6")
+    list(APPEND ep_cache_args
+      -DQt6_DIR:PATH=${Qt6_DIR}
+      )
+  else()
+    message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
-  message(STATUS "Adding project:${proj}")
+
   ExternalProject_Add(${proj}
     ${${proj}_EXTERNAL_PROJECT_ARGS}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}

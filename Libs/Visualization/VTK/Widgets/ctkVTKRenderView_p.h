@@ -43,17 +43,19 @@ class vtkRenderWindowInteractor;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Visualization_VTK_Widgets
-class ctkVTKRenderViewPrivate : public ctkVTKAbstractViewPrivate
+class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKRenderViewPrivate : public ctkVTKAbstractViewPrivate
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(ctkVTKRenderView);
 
 public:
   ctkVTKRenderViewPrivate(ctkVTKRenderView& object);
+  virtual ~ctkVTKRenderViewPrivate();
 
   /// Convenient setup methods
-  virtual void setupCornerAnnotation();
-  virtual void setupRendering();
+  void init() override;
+  void setupCornerAnnotation() override;
+  void setupRendering() override;
 
   void zoom(double zoomFactor);
 

@@ -22,6 +22,10 @@
 #define __ctkVTKAbstractView_p_h
 
 // Qt includes
+#include <QtGlobal>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#include <QElapsedTimer>
+#endif
 #include <QObject>
 #include <QTime>
 class QTimer;
@@ -48,6 +52,7 @@ protected:
 
 public:
   ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object);
+  virtual ~ctkVTKAbstractViewPrivate();
 
   /// Convenient setup methods
   virtual void init();
@@ -64,7 +69,11 @@ public:
   vtkSmartPointer<vtkRenderWindow>              RenderWindow;
 #endif
   QTimer*                                       RequestTimer;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QElapsedTimer                                 RequestTime;
+#else
   QTime                                         RequestTime;
+#endif
   bool                                          RenderEnabled;
   double                                        MaximumUpdateRate;
   bool                                          FPSVisible;
