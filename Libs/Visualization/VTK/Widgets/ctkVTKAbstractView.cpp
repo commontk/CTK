@@ -65,6 +65,9 @@ ctkVTKAbstractViewPrivate::ctkVTKAbstractViewPrivate(ctkVTKAbstractView& object)
 }
 
 // --------------------------------------------------------------------------
+ctkVTKAbstractViewPrivate::~ctkVTKAbstractViewPrivate() = default;
+
+// --------------------------------------------------------------------------
 void ctkVTKAbstractViewPrivate::init()
 {
   Q_Q(ctkVTKAbstractView);

@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(ctkLinkerAsNeededFlagCheck)
 add_library(A SHARED A.cpp)
 add_library(B SHARED B.cpp)

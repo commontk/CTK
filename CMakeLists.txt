@@ -103,6 +103,14 @@ option(CTK_SUPERBUILD "Build ${PROJECT_NAME} and the projects it depends on." ON
 mark_as_advanced(CTK_SUPERBUILD)
 
 #-----------------------------------------------------------------------------
+# Qt version
+#
+set(CTK_QT_VERSION "5" CACHE STRING "Expected Qt version")
+mark_as_advanced(CTK_QT_VERSION)
+set_property(CACHE CTK_QT_VERSION PROPERTY STRINGS 5)
+mark_as_superbuild(CTK_QT_VERSION)
+
+#-----------------------------------------------------------------------------
 # Output directories.
 #
 foreach(type LIBRARY RUNTIME ARCHIVE)
@@ -1130,6 +1138,23 @@ endif()
 # Documentation
 #
 add_subdirectory( Documentation )
+
+#---------------------------------------------------------------------------
+# Install rules
+#
+foreach(file
+  # PluginFramework
+  CMake/ctkFunctionGeneratePluginManifest.cmake
+  CMake/ctkFunctionGeneratePluginUseFile.cmake
+  CMake/ctkMacroGeneratePluginResourceFile.cmake
+  CMake/ctkFunctionExtractPluginTargets.cmake
+  CMake/ctkFunctionGetAllPluginTargets.cmake
+  CMake/ctkFunctionGetTargetDependencies.cmake
+  CMake/ctkFunctionGetPluginDependencies.cmake
+  CMake/ctkMacroSetupPlugins.cmake
+  )
+  install(FILES ${file} DESTINATION ${CTK_INSTALL_CMAKE_DIR} COMPONENT Development)
+endforeach()
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as

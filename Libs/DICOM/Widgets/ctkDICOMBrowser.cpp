@@ -1092,10 +1092,29 @@ bool ctkDICOMBrowser::confirmDeleteSelectedUIDs(QStringList uids)
   ctkMessageBox confirmDeleteDialog;
   QString message = tr("Do you want to delete the following selected items?");
 
+  // calculate maximum number of rows that fit in the browser widget to have a reasonable limit
+  // on the items to show in the dialog
+  int browserHeight = this->geometry().height();
+  int patientsTableRowHeight = d->dicomTableManager->patientsTable()->tableView()->rowHeight(0);
+  int maxNumberOfPatientsToShow = browserHeight / patientsTableRowHeight - 3; // subtract 3 due to the checkbox, buttons, and header
+  if (maxNumberOfPatientsToShow < 3)
+  {
+    // make sure there are a meaningful number of items shown
+    maxNumberOfPatientsToShow = 3;
+  }
+
   // add the information about the selected UIDs
   int numUIDs = uids.size();
   for (int i = 0; i < numUIDs; ++i)
   {
+    if (i >= maxNumberOfPatientsToShow && numUIDs > maxNumberOfPatientsToShow + 1)
+    {
+      // displayed when there are additional DICOM items to delete that do not fit on screen
+      // note: do not show this message if there is only one more to show (the message also takes a line)
+      message += QString("\n") + tr("(and %1 more)").arg(numUIDs - maxNumberOfPatientsToShow);
+      break;
+    }
+
     QString uid = uids.at(i);
 
     // try using the given UID to find a descriptive string
