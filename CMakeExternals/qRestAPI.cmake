@@ -24,7 +24,7 @@ endif()
 
 if(NOT DEFINED ${proj}_DIR)
 
-  set(revision_tag "ddc0cfcc220d0ccd02b4afdd699d1e780dac3fa3")
+  set(revision_tag "6bcb79d1d1c2df9b3ebb30bf6e27f7b23cdc793c")
   if(${proj}_REVISION_TAG)
     set(revision_tag ${${proj}_REVISION_TAG})
   endif()

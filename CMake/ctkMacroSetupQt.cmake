@@ -103,7 +103,7 @@ macro(ctkMacroSetupQt)
     endif()
 
     if(CTK_LIB_XNAT/Core)
-      list(APPEND CTK_QT_COMPONENTS Script)
+      list(APPEND CTK_QT_COMPONENTS Qml)
     endif()
 
     if(CTK_BUILD_QTDESIGNER_PLUGINS)

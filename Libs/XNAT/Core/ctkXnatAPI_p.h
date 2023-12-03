@@ -25,8 +25,8 @@
 #include "qRestAPI.h"
 
 #include <QList>
-#include <QScriptEngine>
-#include <QScriptValue>
+#include <QJSEngine>
+#include <QJSValue>
 
 /**
  * ctkXnatAPI is a simple interface class to communicate with an XNAT
@@ -56,7 +56,7 @@ private:
 
   QList<QVariantMap> parseJsonResponse(qRestResult* restResult, const QByteArray& response);
 
-  QScriptEngine ScriptEngine;
+  QJSEngine ScriptEngine;
 
   Q_DISABLE_COPY(ctkXnatAPI)
 };
