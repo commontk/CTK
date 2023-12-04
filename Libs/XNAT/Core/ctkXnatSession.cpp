@@ -224,7 +224,11 @@ QDateTime ctkXnatSessionPrivate::updateExpirationDate(qRestResult* restResult)
           unsigned long long startTime = expirationCookie[0].mid(1).toULongLong();
           if (startTime > 0)
           {
+#if (QT_VERSION < QT_VERSION_CHECK(5, 8, 0))
             expirationDate = QDateTime::fromTime_t(startTime / 1000);
+#else
+            expirationDate = QDateTime::fromSecsSinceEpoch(startTime / 1000);
+#endif
           }
           QByteArray timeSpan = expirationCookie[1];
           timeSpan.chop(1);
