@@ -146,7 +146,7 @@ void ctkPluginFrameworkPrivate::shutdown(bool restart)
       {
         const bool wa = wasActive;
         shuttingDown.fetchAndStoreOrdered(1);
-        QtConcurrent::run(this, &ctkPluginFrameworkPrivate::shutdown0, restart, wa);
+        QFuture<void> future = QtConcurrent::run([=]() { shutdown0(restart, wa); });
       }
       catch (const ctkException& e)
       {
