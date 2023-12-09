@@ -73,10 +73,10 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     if(NOT "${VTK_PYTHON_VERSION}" STREQUAL "${PYTHON_VERSION_MAJOR}")
       message(FATAL_ERROR "error: VTK_PYTHON_VERSION [${VTK_PYTHON_VERSION}] is expected to match PYTHON_VERSION_MAJOR [${PYTHON_VERSION_MAJOR}]")
     endif()
-      set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
-      set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
-      set(Python3_LIBRARY ${PYTHON_LIBRARY})
-      find_package(Python3 COMPONENTS Interpreter Development)
+    set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
+    set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+    set(Python3_LIBRARY ${PYTHON_LIBRARY})
+    find_package(Python3 COMPONENTS Interpreter Development)
 
     ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
     list(APPEND additional_vtk_cmakevars
@@ -87,13 +87,13 @@ if(NOT DEFINED VTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       -DPYTHON_DEBUG_LIBRARIES:FILEPATH=${PYTHON_DEBUG_LIBRARIES}
       )
-      # VTK9
-      list(APPEND additional_vtk9_cmakevars
-        # FindPython3
-        -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
-        -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY}
-        -DPython3_EXECUTABLE:FILEPATH=${Python3_EXECUTABLE}
-        )
+    # VTK9
+    list(APPEND additional_vtk9_cmakevars
+      # FindPython3
+      -DPython3_INCLUDE_DIR:PATH=${Python3_INCLUDE_DIR}
+      -DPython3_LIBRARY:FILEPATH=${Python3_LIBRARY}
+      -DPython3_EXECUTABLE:FILEPATH=${Python3_EXECUTABLE}
+      )
   endif()
 
   if(CTK_QT_VERSION VERSION_EQUAL "5")
@@ -196,13 +196,13 @@ mark_as_superbuild(
   LABELS "FIND_PACKAGE"
   )
 
-  # Propagate variables expected when VTK searches for python
-  mark_as_superbuild(
-    VARS
-      Python3_INCLUDE_DIR:PATH
-      Python3_ROOT_DIR:PATH
-      Python3_LIBRARY:FILEPATH
-      Python3_LIBRARY_DEBUG:FILEPATH
-      Python3_LIBRARY_RELEASE:FILEPATH
-      Python3_EXECUTABLE:FILEPATH
-    )
+# Propagate variables expected when VTK searches for python
+mark_as_superbuild(
+  VARS
+    Python3_INCLUDE_DIR:PATH
+    Python3_ROOT_DIR:PATH
+    Python3_LIBRARY:FILEPATH
+    Python3_LIBRARY_DEBUG:FILEPATH
+    Python3_LIBRARY_RELEASE:FILEPATH
+    Python3_EXECUTABLE:FILEPATH
+  )
