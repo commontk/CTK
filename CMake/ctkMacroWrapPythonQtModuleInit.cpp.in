@@ -66,7 +66,7 @@ static struct PyModuleDef moduledef = {
 PyObject* PyInit_@TARGET_CONFIG@PythonQt()
 {
   PyObject *m;
-    m = PyModule_Create(&moduledef);
+  m = PyModule_Create(&moduledef);
   extern void PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET_CONFIG@(PyObject*);
   PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET_CONFIG@(m);
 
