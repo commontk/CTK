@@ -15,17 +15,12 @@ from __future__ import print_function
 #   https://github.com/jonashaag/cpython/blob/ce5e5df0c9d8098da05dee26e12ffe2aa331889e/Lib/compileall.py#L61-111
 #
 
+import importlib
 import os
 import sys
 import py_compile
 import struct
-magic = None
-if sys.version_info.major>= 3:
-    import importlib
-    magic = importlib.util.MAGIC_NUMBER
-else:
-    import imp
-    magic = imp.get_magic()
+
 
 def ctk_compile_file(fullname, ddir=None, force=0, rx=None, quiet=0):
     \"\"\"Byte-compile one file.
@@ -54,7 +49,7 @@ def ctk_compile_file(fullname, ddir=None, force=0, rx=None, quiet=0):
             if not force:
                 try:
                     mtime = int(os.stat(fullname).st_mtime)
-                    expect = struct.pack('<4sl', magic, mtime)
+                    expect = struct.pack('<4sl', importlib.util.MAGIC_NUMBER, mtime)
                     cfile = fullname + (__debug__ and 'c' or 'o')
                     with open(cfile, 'rb') as chandle:
                         actual = chandle.read(8)
