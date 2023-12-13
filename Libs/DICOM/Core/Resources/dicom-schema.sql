@@ -86,6 +86,7 @@ CREATE TABLE 'Series' (
   PRIMARY KEY ('SeriesInstanceUID') );
 
 CREATE INDEX IF NOT EXISTS 'ImagesFilenameIndex' ON 'Images' ('Filename');
+CREATE INDEX IF NOT EXISTS 'ImagesFilenameIndex' ON 'Images' ('URL');
 CREATE INDEX IF NOT EXISTS 'ImagesSeriesIndex' ON 'Images' ('SeriesInstanceUID');
 CREATE INDEX IF NOT EXISTS 'SeriesStudyIndex' ON 'Series' ('StudyInstanceUID');
 CREATE INDEX IF NOT EXISTS 'StudiesPatientIndex' ON 'Studies' ('PatientsUID');
