@@ -80,7 +80,7 @@ ctkDICOMDatabasePrivate::ctkDICOMDatabasePrivate(ctkDICOMDatabase& o)
   , UseShortStoragePath(true)
   , ThumbnailGenerator(nullptr)
   , TagCacheVerified(false)
-  , SchemaVersion("0.7.0")
+  , SchemaVersion("0.8.0")
 {
   this->resetLastInsertedValues();
   this->DisplayedFieldGenerator = new ctkDICOMDisplayedFieldGenerator(q_ptr);
@@ -235,11 +235,12 @@ QString ctkDICOMDatabasePrivate::readValueFromFile(const QString& fileName, cons
     return "";
   }
 
+  QString upperTag = tag.toUpper();
   QString value;
   unsigned short group, element;
-  q->tagToGroupElement(tag, group, element);
+  q->tagToGroupElement(upperTag, group, element);
   DcmTagKey tagKey(group, element);
-  if (this->TagsToExcludeFromStorage.contains(tag))
+  if (this->TagsToExcludeFromStorage.contains(upperTag))
   {
     if (dataset.TagExists(tagKey))
     {
@@ -256,7 +257,7 @@ QString ctkDICOMDatabasePrivate::readValueFromFile(const QString& fileName, cons
   }
 
   // Store result in cache
-  q->cacheTag(sopInstanceUID, tag, value);
+  q->cacheTag(sopInstanceUID, upperTag, value);
 
   return value;
 }
@@ -562,11 +563,12 @@ void ctkDICOMDatabasePrivate::precacheTags(const ctkDICOMItem& dataset, const QS
   QStringList sopInstanceUIDs, tags, values;
   foreach (const QString &tag, this->TagsToPrecache)
     {
+    QString upperTag = tag.toUpper();
     unsigned short group, element;
-    q->tagToGroupElement(tag, group, element);
+    q->tagToGroupElement(upperTag, group, element);
     DcmTagKey tagKey(group, element);
     QString value;
-    if (this->TagsToExcludeFromStorage.contains(tag))
+    if (this->TagsToExcludeFromStorage.contains(upperTag))
     {
       if (dataset.TagExists(tagKey))
       {
@@ -582,7 +584,7 @@ void ctkDICOMDatabasePrivate::precacheTags(const ctkDICOMItem& dataset, const QS
       value = dataset.GetAllElementValuesAsString(tagKey);
     }
     sopInstanceUIDs << sopInstanceUID;
-    tags << tag;
+    tags << upperTag;
     values << value;
     }
 
@@ -963,9 +965,10 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
       }
 
       QSqlQuery insertImageStatement(Database);
-      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ? )");
+      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ?, ? )");
       insertImageStatement.addBindValue(sopInstanceUID);
       insertImageStatement.addBindValue(storedFilePathInDatabase);
+      insertImageStatement.addBindValue(QString(""));
       insertImageStatement.addBindValue(seriesInstanceUID);
       insertImageStatement.addBindValue(QDateTime::currentDateTime());
       insertImageStatement.exec();
@@ -1076,11 +1079,12 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
       insertTags.bindValue(0, sopInstanceUID);
       foreach(const QString & tag, d->TagsToPrecache)
       {
+        QString upperTag = tag.toUpper();
         unsigned short group, element;
-        this->tagToGroupElement(tag, group, element);
+        this->tagToGroupElement(upperTag, group, element);
         DcmTagKey tagKey(group, element);
         QString value;
-        if (d->TagsToExcludeFromStorage.contains(tag))
+        if (d->TagsToExcludeFromStorage.contains(upperTag))
         {
           if (dataset.TagExists(tagKey))
           {
@@ -1095,7 +1099,7 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
         {
           value = dataset.GetAllElementValuesAsString(tagKey);
         }
-        insertTags.bindValue(1, tag);
+        insertTags.bindValue(1, upperTag);
         if (value.isEmpty())
         {
           insertTags.bindValue(2, TagNotInInstance);
@@ -1109,9 +1113,10 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
 
       // Insert image files
       QSqlQuery insertImageStatement(d->Database);
-      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ? )");
+      insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ?, ? )");
       insertImageStatement.addBindValue(sopInstanceUID);
       insertImageStatement.addBindValue(d->internalPathFromAbsolute(storedFilePath));
+      insertImageStatement.addBindValue(QString(""));
       insertImageStatement.addBindValue(seriesInstanceUID);
       insertImageStatement.addBindValue(QDateTime::currentDateTime());
       insertImageStatement.exec();
@@ -1259,7 +1264,7 @@ QString ctkDICOMDatabasePrivate::getDisplaySeriesFieldsKey(QString seriesInstanc
     return seriesInstanceUID;
   }
 
-  logger.error("Failed to find series with SeriesInstanceUID=" + seriesInstanceUID);
+  logger.error("in getDisplaySeriesFieldsKey: Failed to find series with SeriesInstanceUID=" + seriesInstanceUID);
   return QString();
 }
 
@@ -1375,8 +1380,8 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     }
     else
     {
-      logger.error("Failed to find study with StudyInstanceUID=" + currentStudyInstanceUid);
-      return false;
+      logger.error("in applyDisplayedFieldsChanges: Failed to find study with StudyInstanceUID=" + currentStudyInstanceUid);
+      continue;
     }
   } // For each study in displayedFieldsMapStudy
 
@@ -1421,8 +1426,8 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     }
     else
     {
-      logger.error("Failed to find series with SeriesInstanceUID=" + currentSeriesInstanceUid);
-      return false;
+      logger.error("in applyDisplayedFieldsChanges: Failed to find series with SeriesInstanceUID=" + currentSeriesInstanceUid);
+      continue;
     }
   } // For each series in displayedFieldsMapSeries
 
@@ -1459,7 +1464,7 @@ ctkDICOMDatabase::ctkDICOMDatabase(QString databaseFile)
   : d_ptr(new ctkDICOMDatabasePrivate(*this))
 {
   Q_D(ctkDICOMDatabase);
-  d->TagsToExcludeFromStorage << groupElementToTag(0x7fe0,0x0010); // pixel data
+  d->TagsToExcludeFromStorage << groupElementToTag(0x7FE0,0x0010); // pixel data
   d->registerCompressionLibraries();
   d->init(databaseFile);
 }
@@ -1469,7 +1474,7 @@ ctkDICOMDatabase::ctkDICOMDatabase(QObject* parent)
 {
   Q_UNUSED(parent);
   Q_D(ctkDICOMDatabase);
-  d->TagsToExcludeFromStorage << groupElementToTag(0x7fe0, 0x0010); // pixel data
+  d->TagsToExcludeFromStorage << groupElementToTag(0x7FE0, 0x0010); // pixel data
   d->registerCompressionLibraries();
 }
 
@@ -2094,7 +2099,9 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID, int hits/*=-1*/)
   QStringList allFileNames;
   while (query.next())
   {
-    allFileNames << d->absolutePathFromInternal(query.value(0).toString());
+    QString fileName = query.value(0).toString();
+    fileName = d->absolutePathFromInternal(fileName);
+    allFileNames << fileName;
     if (hits > 0 && allFileNames.size() >= hits)
     {
       // reached the number of requested files
@@ -2102,6 +2109,28 @@ QStringList ctkDICOMDatabase::filesForSeries(QString seriesUID, int hits/*=-1*/)
     }
   }
   return allFileNames;
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMDatabase::urlsForSeries(QString seriesUID, int hits/*=-1*/)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT URL FROM Images WHERE SeriesInstanceUID=?");
+  query.addBindValue(seriesUID);
+  query.exec();
+  QStringList allURLs;
+  while (query.next())
+  {
+    QString url = query.value(0).toString();
+    allURLs << url;
+    if (hits > 0 && allURLs.size() >= hits)
+    {
+      // reached the number of requested files
+      break;
+    }
+  }
+  return allURLs;
 }
 
 //------------------------------------------------------------------------------
@@ -2116,6 +2145,22 @@ QString ctkDICOMDatabase::fileForInstance(QString sopInstanceUID)
   if (query.next())
   {
     result = d->absolutePathFromInternal(query.value(0).toString());
+  }
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::urlForInstance(QString sopInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT URL FROM Images WHERE SOPInstanceUID=?");
+  query.addBindValue(sopInstanceUID);
+  query.exec();
+  QString result;
+  if (query.next())
+  {
+    result = query.value(0).toString();
   }
   return result;
 }
@@ -2143,6 +2188,22 @@ QString ctkDICOMDatabase::instanceForFile(QString fileName)
   QSqlQuery query(d->Database);
   query.prepare( "SELECT SOPInstanceUID FROM Images WHERE Filename=?");
   query.addBindValue(d->internalPathFromAbsolute(fileName));
+  query.exec();
+  QString result;
+  if (query.next())
+  {
+    result = query.value(0).toString();
+  }
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabase::instanceForURL(QString url)
+{
+  Q_D(ctkDICOMDatabase);
+  QSqlQuery query(d->Database);
+  query.prepare( "SELECT SOPInstanceUID FROM Images WHERE URL=?");
+  query.addBindValue(url);
   query.exec();
   QString result;
   if (query.next())
@@ -2239,6 +2300,7 @@ void ctkDICOMDatabase::loadFileHeader(QString fileName)
       if (dO)
       {
         QString tag = QString("%1,%2").arg(dO->getGTag(),4,16,QLatin1Char('0')).arg(dO->getETag(),4,16,QLatin1Char('0'));
+        tag = tag.toUpper();
         std::ostringstream s;
         dO->print(s);
         d->LoadedHeader[tag] = QString(s.str().c_str());
@@ -2270,6 +2332,7 @@ QString ctkDICOMDatabase::headerValue (QString key)
 QString ctkDICOMDatabase::instanceValue(QString sopInstanceUID, QString tag)
 {
   Q_D(ctkDICOMDatabase);
+  tag = tag.toUpper();
   // Read from cache, if available
   QString value = this->cachedTag(sopInstanceUID, tag);
   if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
@@ -2304,7 +2367,18 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   Q_D(ctkDICOMDatabase);
 
   // Read from cache, if available
+
+  // first, try treating argument as filePath
   QString sopInstanceUID = this->instanceForFile(fileName);
+
+  // second, try treating argument as a url
+  if (sopInstanceUID.isEmpty())
+  {
+    sopInstanceUID = this->instanceForURL(fileName);
+  }
+
+  // third, look for the value
+  tag = tag.toUpper();
   QString value = this->cachedTag(sopInstanceUID, tag);
   if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
   {
@@ -2315,7 +2389,7 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
     return value;
   }
 
-  // Read value from file
+  // Read value from file as a fallback (won't work if fileName is a URL)
   value = d->readValueFromFile(fileName, sopInstanceUID, tag);
   return value;
 }
@@ -2332,7 +2406,8 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, const unsigned short
 bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const QString tag)
 {
   Q_D(ctkDICOMDatabase);
-  QString value = this->cachedTag(sopInstanceUID, tag);
+  QString upperTag = tag.toUpper();
+  QString value = this->cachedTag(sopInstanceUID, upperTag);
   if (value == TagNotInInstance || value == ValueIsEmptyString)
   {
     return false;
@@ -2348,7 +2423,7 @@ bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const Q
   {
     return false;
   }
-  value = d->readValueFromFile(filePath, sopInstanceUID, tag);
+  value = d->readValueFromFile(filePath, sopInstanceUID, upperTag);
   return (value != TagNotInInstance && value != ValueIsEmptyString);
 }
 
@@ -2363,6 +2438,7 @@ bool ctkDICOMDatabase::instanceValueExists(const QString sopInstanceUID, const u
 bool ctkDICOMDatabase::fileValueExists(const QString fileName, QString tag)
 {
   Q_D(ctkDICOMDatabase);
+  tag = tag.toUpper();
   QString sopInstanceUID = this->instanceForFile(fileName);
   QString value = this->cachedTag(sopInstanceUID, tag);
   if (value == TagNotInInstance || value == ValueIsEmptyString)
@@ -2405,7 +2481,8 @@ bool ctkDICOMDatabase::tagToGroupElement(const QString tag, unsigned short& grou
 //------------------------------------------------------------------------------
 QString ctkDICOMDatabase::groupElementToTag(const unsigned short& group, const unsigned short& element)
 {
-  return QString("%1,%2").arg(group,4,16,QLatin1Char('0')).arg(element,4,16,QLatin1Char('0'));
+  QString groupElement = QString("%1,%2").arg(group,4,16,QLatin1Char('0')).arg(element,4,16,QLatin1Char('0'));
+  return groupElement.toUpper();
 }
 
 //
@@ -2507,11 +2584,16 @@ const QStringList ctkDICOMDatabase::tagsToPrecache()
 void ctkDICOMDatabase::setTagsToExcludeFromStorage(const QStringList tags)
 {
   Q_D(ctkDICOMDatabase);
-  if (d->TagsToExcludeFromStorage == tags)
+  QStringList upperTags;
+  foreach (const QString &tag, tags)
+  {
+    upperTags << tag.toUpper();
+  }
+  if (d->TagsToExcludeFromStorage == upperTags)
   {
     return;
   }
-  d->TagsToExcludeFromStorage = tags;
+  d->TagsToExcludeFromStorage = upperTags;
   emit tagsToExcludeFromStorageChanged();
 }
 
@@ -2839,7 +2921,7 @@ QString ctkDICOMDatabase::cachedTag(const QString sopInstanceUID, const QString 
   QSqlQuery selectValue( d->TagCacheDatabase );
   selectValue.prepare( "SELECT Value FROM TagCache WHERE SOPInstanceUID = :sopInstanceUID AND Tag = :tag" );
   selectValue.bindValue(":sopInstanceUID",sopInstanceUID);
-  selectValue.bindValue(":tag",tag);
+  selectValue.bindValue(":tag",tag.toUpper());
   d->loggedExec(selectValue);
   QString result("");
   if (selectValue.next())
@@ -2874,7 +2956,7 @@ void ctkDICOMDatabase::getCachedTags(const QString sopInstanceUID, QMap<QString,
   QString value;
   while (selectValue.next())
   {
-    tag = selectValue.value(0).toString();
+    tag = selectValue.value(0).toString().toUpper();
     value = selectValue.value(1).toString();
     if (value == TagNotInInstance || value == ValueIsEmptyString || value == ValueIsNotStored)
     {
@@ -2889,7 +2971,7 @@ bool ctkDICOMDatabase::cacheTag(const QString sopInstanceUID, const QString tag,
 {
   QStringList sopInstanceUIDs, tags, values;
   sopInstanceUIDs << sopInstanceUID;
-  tags << tag;
+  tags << tag.toUpper();
   values << value;
   return this->cacheTags(sopInstanceUIDs, tags, values);
 }
@@ -2925,7 +3007,7 @@ bool ctkDICOMDatabase::cacheTags(const QStringList sopInstanceUIDs, const QStrin
   for (int i = 0; i<itemCount; ++i)
   {
     insertTags.bindValue(0, *sopInstanceUIDsIt);
-    insertTags.bindValue(1, *tagsIt);
+    insertTags.bindValue(1, (*tagsIt).toUpper());
     if (valuesIt->isEmpty())
     {
       // replace empty strings with special flag string

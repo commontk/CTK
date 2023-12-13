@@ -175,6 +175,7 @@ public:
   /// This is useful for retrieving first file, for example for getting access to fields within that file
   /// using fileValue() method.
   Q_INVOKABLE QStringList filesForSeries(const QString seriesUID, int hits=-1);
+  Q_INVOKABLE QStringList urlsForSeries(const QString seriesUID, int hits=-1);
 
   Q_INVOKABLE QHash<QString,QString> descriptionsForFile(QString fileName);
   Q_INVOKABLE QString descriptionForSeries(const QString seriesUID);
@@ -190,6 +191,8 @@ public:
   QStringList seriesFieldNames() const;
 
   Q_INVOKABLE QString fileForInstance(const QString sopInstanceUID);
+  Q_INVOKABLE QString urlForInstance(const QString sopInstanceUID);
+  Q_INVOKABLE QString instanceForURL(const QString url);
   Q_INVOKABLE QString seriesForFile(QString fileName);
   Q_INVOKABLE QString instanceForFile(const QString fileName);
   Q_INVOKABLE QDateTime insertDateTimeForInstance(const QString fileName);
@@ -265,7 +268,7 @@ public:
   /// When a DICOM file is stored in the database (insert is called with storeFile=true) then
   /// path is constructed from study, series, and SOP instance UID.
   /// If useShortStoragePath is false then the full UIDs are used as subfolder and file name.
-  /// If useShortStoragePath is true (this is the default) then the path is shortened 
+  /// If useShortStoragePath is true (this is the default) then the path is shortened
   /// to approximately 40 characters, by replacing UIDs with hashes generated from them.
   /// UIDs can be 40-60 characters long each, therefore the the total path (including database folder base path)
   /// can exceed maximum path length on some file systems. It is recommended to enable useShortStoragePath
@@ -318,7 +321,14 @@ public:
   /// \brief Access element values for given instance
   /// @param sopInstanceUID A string with the uid for a given instance
   ///                       (corresponding file will be found via the database)
-  /// @param fileName Full path to a dicom file to load.
+  /// @param fileName Full path to a dicom file to load. Note that this string
+  /// can either be a file path or a URL since the database can have one or
+  /// both of these fields as of schema version 0.8.0.  Since the fileValue
+  /// api is widely used, this overload allows either value to be used to retrieve
+  /// values from the tag cache.  If a value is found for the fileName the
+  /// fileName it is returned; if not, the fileName is used as a URL.  If no
+  /// value is found for the URL, the fileName is used as a path to a dicom file
+  /// where the value is looked up.
   /// @param group The group portion of the tag as an integer
   /// @param element The element portion of the tag as an integer
   /// @Returns empty string if element is missing or excluded from storage.
