@@ -114,11 +114,6 @@ public:
   void setMaximum(double max);
 
   /// 
-  /// Sets the slider's minimum to min and its maximum to max.
-  /// If max is smaller than min, min becomes the only legal value.
-  void setRange(double min, double max);
-
-  /// 
   /// This property holds the slider's current minimum value.
   /// The slider forces the minimum value to be within the legal range: 
   /// minimum <= minvalue <= maxvalue <= maximum.
@@ -235,6 +230,11 @@ Q_SIGNALS:
 
 public Q_SLOTS:
   /// 
+  /// Sets the slider's minimum to min and its maximum to max.
+  /// If max is smaller than min, min becomes the only legal value.
+  void setRange(double min, double max);
+
+  ///
   /// This property holds the slider's current minimum value.
   /// The slider forces the minimum value to be within the legal range: 
   /// minimum <= minvalue <= maxvalue <= maximum.
