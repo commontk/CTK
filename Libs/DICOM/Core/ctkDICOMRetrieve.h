@@ -31,70 +31,130 @@
 
 // CTK Core includes
 #include "ctkDICOMDatabase.h"
+#include "ctkErrorLogLevel.h"
 
 class ctkDICOMRetrievePrivate;
+class ctkDICOMJobResponse;
 
 /// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMRetrieve : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName);
   Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
   Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle);
   Q_PROPERTY(QString host READ host WRITE setHost);
   Q_PROPERTY(int port READ port WRITE setPort);
   Q_PROPERTY(QString moveDestinationAETitle READ moveDestinationAETitle WRITE setMoveDestinationAETitle);
   Q_PROPERTY(bool keepAssociationOpen READ keepAssociationOpen WRITE setKeepAssociationOpen);
-  Q_PROPERTY(bool wasCanceled READ wasCanceled WRITE setWasCanceled);
+  Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
+  Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID);
+  Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID);
+  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
 
 public:
   explicit ctkDICOMRetrieve(QObject* parent = 0);
   virtual ~ctkDICOMRetrieve();
 
   /// Set methods for connectivity
-  /// CTK_AE - the AE string by which the peer host might 
+  /// name identifying the server
+  void setConnectionName(const QString& connectionName);
+  QString connectionName() const;
+  /// CTK_AE - the AE string by which the peer host might
   /// recognize your request
-  Q_INVOKABLE void setCallingAETitle( const QString& callingAETitle );
-  Q_INVOKABLE QString callingAETitle() const;
+  void setCallingAETitle(const QString& callingAETitle);
+  QString callingAETitle() const;
   /// CTK_AE - the AE of the service of peer host that you are calling
   /// which tells the host what you are requesting
-  Q_INVOKABLE void setCalledAETitle( const QString& calledAETitle );
-  Q_INVOKABLE QString calledAETitle() const;
+  void setCalledAETitle(const QString& calledAETitle);
+  QString calledAETitle() const;
   /// peer hostname being connected to
-  Q_INVOKABLE void setHost( const QString& host );
-  Q_INVOKABLE QString host() const;
+  void setHost(const QString& host);
+  QString host() const;
   /// [0, 65365] port on peer host - e.g. 11112
-  Q_INVOKABLE void setPort( int port );
-  Q_INVOKABLE int port() const;
+  void setPort(int port);
+  int port() const;
   /// Typically CTK_STORE or similar - needs to be something that the
   /// peer host knows about and is able to move data into
   /// Only used when calling moveSeries or moveStudy
-  Q_INVOKABLE void setMoveDestinationAETitle( const QString& moveDestinationAETitle );
-  Q_INVOKABLE QString moveDestinationAETitle() const;
+  void setMoveDestinationAETitle(const QString& moveDestinationAETitle);
+  QString moveDestinationAETitle() const;
   /// prefer to keep using the existing association to peer host when doing
   /// multiple requests (default true)
-  Q_INVOKABLE void setKeepAssociationOpen(const bool keepOpen);
-  Q_INVOKABLE bool keepAssociationOpen();
-  /// did someone cancel us during operation?
-  /// (default false)
-  Q_INVOKABLE void setWasCanceled(const bool wasCanceled);
+  void setKeepAssociationOpen(const bool keepOpen);
+  bool keepAssociationOpen() const;
+  /// connection timeout, default 3 sec.
+  void setConnectionTimeout(const int timeout);
+  int connectionTimeout() const;
+
+  /// operation is canceled?
   Q_INVOKABLE bool wasCanceled();
+
+  /// Log level for dcmtk. Default: Error.
+  Q_INVOKABLE void setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level);
+  Q_INVOKABLE ctkErrorLogLevel::LogLevel DCMTKLogLevel() const;
+
   /// where to insert new data sets obtained via get (must be set for
   /// get to succeed)
   Q_INVOKABLE void setDatabase(ctkDICOMDatabase& dicomDatabase);
   void setDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
-  Q_INVOKABLE QSharedPointer<ctkDICOMDatabase> database()const;
+  Q_INVOKABLE ctkDICOMDatabase* dicomDatabase() const;
+  QSharedPointer<ctkDICOMDatabase> dicomDatabaseShared() const;
+
+  /// Access the list of datasets from the last operation.
+  Q_INVOKABLE QList<ctkDICOMJobResponseSet*> jobResponseSets() const;
+  QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSetsShared() const;
+  Q_INVOKABLE void addJobResponseSet(ctkDICOMJobResponseSet& jobResponseSet);
+  void addJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
+  void removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
+  Q_INVOKABLE void setJobUID(const QString& jobUID);
+  Q_INVOKABLE QString jobUID() const;
+
+  /// Patient ID from from the last operation.
+  QString patientID() const;
+  /// Study instance UID from from the last operation.
+  QString studyInstanceUID() const;
+  /// Series instance UID from from the last operation.
+  QString seriesInstanceUID() const;
+  /// SOP instance UID from from the last operation.
+  QString sopInstanceUID() const;
+
+  enum RetrieveType
+    {
+    RetrieveNone,
+    RetrieveSOPInstance,
+    RetrieveSeries,
+    RetrieveStudy
+    };
+
+  /// last retrieve type
+  RetrieveType getLastRetrieveType() const;
 
 public Q_SLOTS:
   /// Use CMOVE to ask peer host to store data to move destination
-  Q_INVOKABLE bool moveSeries( const QString& studyInstanceUID,
-                       const QString& seriesInstanceUID );
+  Q_INVOKABLE bool moveSOPInstance(const QString& studyInstanceUID,
+                                   const QString& seriesInstanceUID,
+                                   const QString& SOPInstanceUID,
+                                   const QString& patientID = "");
   /// Use CMOVE to ask peer host to store data to move destination
-  Q_INVOKABLE bool moveStudy( const QString& studyInstanceUID );
+  Q_INVOKABLE bool moveSeries(const QString& studyInstanceUID,
+                              const QString& seriesInstanceUID,
+                              const QString& patientID = "");
+  /// Use CMOVE to ask peer host to store data to move destination
+  Q_INVOKABLE bool moveStudy(const QString& studyInstanceUID,
+                             const QString& patientID = "");
   /// Use CGET to ask peer host to store data to us
-  Q_INVOKABLE bool getSeries( const QString& studyInstanceUID,
-                       const QString& seriesInstanceUID );
+  Q_INVOKABLE bool getSOPInstance(const QString& studyInstanceUID,
+                                  const QString& seriesInstanceUID,
+                                  const QString& SOPInstanceUID,
+                                  const QString& patientID = "");
   /// Use CGET to ask peer host to store data to us
-  Q_INVOKABLE bool getStudy( const QString& studyInstanceUID );
+  Q_INVOKABLE bool getSeries(const QString& studyInstanceUID,
+                             const QString& seriesInstanceUID,
+                             const QString& patientID = "");
+  /// Use CGET to ask peer host to store data to us
+  Q_INVOKABLE bool getStudy(const QString& studyInstanceUID,
+                            const QString& patientID = "");
   /// Cancel the current operation
   Q_INVOKABLE void cancel();
 
@@ -105,14 +165,16 @@ Q_SIGNALS:
   /// Signal is emitted inside the retrieve() function. It sends the different step
   /// the function is at.
   void progress(const QString& message);
-  /// Signal is emitted inside the retrieve() function. It sends 
+  /// Signal is emitted inside the retrieve() function. It sends
   /// detailed feedback for debugging
   void debug(const QString& message);
   /// Signal is emitted inside the retrieve() function. It send any error messages
   void error(const QString& message);
-  /// Signal is emitted inside the retrieve() function when finished with value 
+  /// Signal is emitted inside the retrieve() function when finished with value
   /// true for success or false for error
   void done(const bool& error);
+  /// Signal is emitted inside the retrieve() function when a frame has been fetched
+  void progressJobDetail(QVariant data);
 
 protected:
   QScopedPointer<ctkDICOMRetrievePrivate> d_ptr;

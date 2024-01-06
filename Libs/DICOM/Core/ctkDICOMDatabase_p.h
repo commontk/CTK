@@ -53,7 +53,6 @@ public:
   bool loggedExec(QSqlQuery& query);
   bool loggedExec(QSqlQuery& query, const QString& queryString);
   bool loggedExecBatch(QSqlQuery& query);
-  bool LoggedExecVerbose;
 
   bool removeImage(const QString& sopInstanceUID);
 
@@ -83,7 +82,7 @@ public:
 
   /// Dataset must be set always
   /// \param filePath It has to be set if this is an import of an actual file
-  void insert ( const ctkDICOMItem& dataset, const QString& filePath, bool storeFile = true, bool generateThumbnail = true);
+  void insert ( const ctkDICOMItem& dataset, QString filePath, bool storeFile = true, bool generateThumbnail = true);
 
   /// Copy the complete list of files to an extra table
   QStringList allFilesInDatabase();
@@ -172,6 +171,9 @@ public:
 
   /// Facilitate using custom schema with the database without subclassing
   QString SchemaVersion;
+
+  QStringList LoadedSeries;
+  QStringList VisibleSeries;
 };
 
 #endif

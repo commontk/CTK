@@ -74,6 +74,7 @@ CREATE TABLE 'Series' (
   'BodyPartExamined' VARCHAR(255) NULL ,
   'FrameOfReferenceUID' VARCHAR(64) NULL ,
   'AcquisitionNumber' INT NULL ,
+
   'ContrastAgent' VARCHAR(255) NULL ,
   'ScanningSequence' VARCHAR(45) NULL ,
   'EchoNumber' INT NULL ,

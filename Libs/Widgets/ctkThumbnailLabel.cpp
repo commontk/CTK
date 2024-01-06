@@ -88,14 +88,43 @@ void ctkThumbnailLabelPrivate::setupUi(QWidget* widget)
   q->layout()->setSizeConstraint(QLayout::SetNoConstraint);
   // no text by default
   q->setText(QString());
+  this->OperationProgressBar->hide();
 }
 
 //----------------------------------------------------------------------------
 void ctkThumbnailLabelPrivate::updateThumbnail()
-{
+{   
+  Q_Q(ctkThumbnailLabel);
+  QSize size = q->size();
+
+  if (this->TextLabel->isVisible())
+    {
+    if (this->TextPosition & Qt::AlignTop)
+      {
+      size.setHeight(size.height() - this->TextLabel->height());
+      }
+    else if (this->TextPosition & Qt::AlignBottom)
+      {
+      size.setHeight(size.height() - this->TextLabel->height());
+      }
+    else if (this->TextPosition & Qt::AlignLeft)
+      {
+      size.setWidth(size.width() - this->TextLabel->width());
+      }
+    else if (this->TextPosition & Qt::AlignRight)
+      {
+      size.setWidth(size.width() - this->TextLabel->width());
+      }
+    }
+
+  if (this->OperationProgressBar->isVisible())
+    {
+    size.setHeight(size.height() - this->OperationProgressBar->height());
+    }
+
   this->PixmapLabel->setPixmap(
     this->OriginalThumbnail.isNull() ? QPixmap() :
-      this->OriginalThumbnail.scaled(this->PixmapLabel->size(),
+      this->OriginalThumbnail.scaled(size,
                                      Qt::KeepAspectRatio,
                                      this->TransformationMode));
 }
@@ -116,6 +145,38 @@ ctkThumbnailLabel::ctkThumbnailLabel(QWidget* parentWidget)
 //----------------------------------------------------------------------------
 ctkThumbnailLabel::~ctkThumbnailLabel()
 {
+}
+
+//----------------------------------------------------------------------------
+QLabel* ctkThumbnailLabel::textLabel()
+{
+  Q_D(ctkThumbnailLabel);
+
+  return d->TextLabel;
+}
+
+//----------------------------------------------------------------------------
+QFrame *ctkThumbnailLabel::pixmapFrame()
+{
+  Q_D(ctkThumbnailLabel);
+
+  return d->PixmapFrame;
+}
+
+//----------------------------------------------------------------------------
+QLabel* ctkThumbnailLabel::pixmapLabel()
+{
+  Q_D(ctkThumbnailLabel);
+
+  return d->PixmapLabel;
+}
+
+//----------------------------------------------------------------------------
+QProgressBar *ctkThumbnailLabel::operationProgressBar()
+{
+  Q_D(ctkThumbnailLabel);
+
+  return d->OperationProgressBar;
 }
 
 //----------------------------------------------------------------------------
@@ -160,7 +221,7 @@ void ctkThumbnailLabel::setTextPosition(const Qt::Alignment& position)
     {
     row = 0;
     }
-  else if (position &Qt::AlignBottom)
+  else if (position & Qt::AlignBottom)
     {
     row = 2;
     }
@@ -212,6 +273,20 @@ const QPixmap* ctkThumbnailLabel::pixmap()const
   Q_D(const ctkThumbnailLabel);
 
   return d->OriginalThumbnail.isNull() ? 0 : &(d->OriginalThumbnail);
+}
+
+//----------------------------------------------------------------------------
+int ctkThumbnailLabel::operationProgress() const
+{
+  Q_D(const ctkThumbnailLabel);
+  return d->OperationProgressBar->value();
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailLabel::setOperationProgress(const int &progress)
+{
+  Q_D(ctkThumbnailLabel);
+  d->OperationProgressBar->setValue(progress);
 }
 
 //----------------------------------------------------------------------------

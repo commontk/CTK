@@ -1,3 +1,4 @@
+
 /*=========================================================================
 
   Library:   CTK
@@ -147,7 +148,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkDICOMIndexer);
   Q_DISABLE_COPY(ctkDICOMIndexer);
-
 };
 
 #endif

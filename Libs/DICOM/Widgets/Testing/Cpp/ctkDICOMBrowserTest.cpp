@@ -27,7 +27,6 @@
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMBrowser.h"
 #include "ctkFileDialog.h"
-#include "ctkScopedCurrentDir.h"
 #include "ctkTest.h"
 #include "ctkUtils.h"
 

@@ -44,9 +44,8 @@ int ctkDICOMQueryTest2( int argc, char * argv [] )
 
   ctkDICOMTester tester;
   tester.startDCMQRSCP();
-  
+
   QStringList arguments = app.arguments();
-  arguments.pop_front(); // remove application name
   arguments.pop_front(); // remove test name
   if (!arguments.count())
     {
@@ -56,6 +55,13 @@ int ctkDICOMQueryTest2( int argc, char * argv [] )
   tester.storeData(arguments);
 
   ctkDICOMDatabase database;
+  QString dbFile = "./ctkDICOM.sql";
+  if (!database.openDatabase(dbFile))
+    {
+    std::cout << "ctkDICOMDatabase::openDatabase() failed" << std::endl;
+    return EXIT_FAILURE;
+    }
+  database.cleanup(true);
 
   ctkDICOMQuery query;
   query.setCallingAETitle("CTK_AE");

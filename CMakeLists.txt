@@ -550,6 +550,10 @@ ctk_app_option(ctkDICOM2
                "Build the new DICOM example application (experimental)" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
 
+ctk_app_option(ctkDICOMVisualBrowser
+               "Build the new DICOM example application (experimental)" OFF
+               CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
+
 ctk_app_option(ctkDICOMIndexer
                "Build the DICOM example application" OFF
                CTK_ENABLE_DICOM AND CTK_BUILD_EXAMPLES)
