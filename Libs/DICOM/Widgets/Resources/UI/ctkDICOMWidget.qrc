@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/accept.svg</file>
+        <file>Icons/cancel.svg</file>
+        <file>Icons/cloud.svg</file>
+        <file>Icons/import.svg</file>
+        <file>Icons/loaded.svg</file>
+        <file>Icons/patient.svg</file>
+        <file>Icons/visible.svg</file>
+        <file>Icons/warning.svg</file>
+        <file>Icons/load.svg</file>
+        <file>Icons/text_document.svg</file>
+        <file>Icons/delete.svg</file>
+        <file>Icons/more_vert.svg</file>
+        <file>Icons/add.svg</file>
+        <file>Icons/dns.svg</file>
+        <file>Icons/save.svg</file>
+        <file>Icons/query.svg</file>
+        <file>Icons/wait.svg</file>
+        <file>Icons/downloading.svg</file>
+    </qresource>
+</RCC>

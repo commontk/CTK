@@ -56,7 +56,7 @@ public:
 
   /// Generate a blank thumbnail image (currently a solid gray box of the requested thumbnail size).
   /// It can be used as a placeholder for invalid images or duringan image is loaded.
-  Q_INVOKABLE void generateBlankThumbnail(QImage& image);
+  Q_INVOKABLE void generateBlankThumbnail(QImage& image, Qt::GlobalColor color = Qt::darkGray);
 
   /// Set thumbnail width
   void setWidth(int width);

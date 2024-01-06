@@ -398,14 +398,14 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
     }
 
   QVariant variant = this->model()->headerData(section, this->orientation(),
-                                          Qt::DecorationRole);
+                                               Qt::DecorationRole);
   option->icon = qvariant_cast<QIcon>(variant);
   if (option->icon.isNull())
     {
     option->icon = qvariant_cast<QPixmap>(variant);
     }
   QVariant foregroundBrush = this->model()->headerData(section, this->orientation(),
-                                                  Qt::ForegroundRole);
+                                                       Qt::ForegroundRole);
   if (foregroundBrush.canConvert<QBrush>())
     {
     option->palette.setBrush(QPalette::ButtonText, qvariant_cast<QBrush>(foregroundBrush));
@@ -413,7 +413,7 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
 
   //QPointF oldBO = painter->brushOrigin();
   QVariant backgroundBrush = this->model()->headerData(section, this->orientation(),
-                                                  Qt::BackgroundRole);
+                                                       Qt::BackgroundRole);
   if (backgroundBrush.canConvert<QBrush>())
     {
     option->palette.setBrush(QPalette::Button, qvariant_cast<QBrush>(backgroundBrush));

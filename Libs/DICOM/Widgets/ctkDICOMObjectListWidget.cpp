@@ -321,10 +321,18 @@ void ctkDICOMObjectListWidget::updateWidget()
     // only update the thumbnail if visible for better update performance
     ctkDICOMThumbnailGenerator thumbnailGenerator;
     QImage thumbnailImage;
-    if (!thumbnailGenerator.generateThumbnail(d->currentFile, thumbnailImage))
+    if (d->currentFile.isEmpty())
     {
       thumbnailGenerator.generateBlankThumbnail(thumbnailImage);
     }
+    else
+    {
+      if (!thumbnailGenerator.generateThumbnail(d->currentFile, thumbnailImage))
+      {
+        thumbnailGenerator.generateBlankThumbnail(thumbnailImage);
+      }
+    }
+
     d->thumbnailLabel->setPixmap(QPixmap::fromImage(thumbnailImage));
   }
 }

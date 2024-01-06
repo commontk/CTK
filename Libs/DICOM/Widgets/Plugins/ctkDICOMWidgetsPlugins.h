@@ -30,6 +30,7 @@
 #include "ctkDICOMQueryRetrieveWidgetPlugin.h"
 #include "ctkDICOMTableManagerPlugin.h"
 #include "ctkDICOMTableViewPlugin.h"
+#include "ctkDICOMVisualBrowserWidgetPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMWidgetsPlugins
@@ -47,6 +48,7 @@ public:
     plugins << new ctkDICOMQueryRetrieveWidgetPlugin;
     plugins << new ctkDICOMTableManagerPlugin;
     plugins << new ctkDICOMTableViewPlugin;
+    plugins << new ctkDICOMVisualBrowserWidgetPlugin;
     return plugins;
     }
 };

@@ -29,6 +29,10 @@
 
 class ctkThumbnailLabelPrivate;
 
+class QFrame;
+class QLabel;
+class QProgressBar;
+
 /// \ingroup Widgets
 /// ctkThumbnailLabel is an advanced label that gives control over
 /// the pixmap size and text location.
@@ -49,6 +53,8 @@ class CTK_WIDGETS_EXPORT ctkThumbnailLabel : public QWidget
   /// Optional pixmap for the label.
   /// No pixmap by default
   Q_PROPERTY(QPixmap pixmap READ pixmap WRITE setPixmap)
+  /// Progress bar status.
+  Q_PROPERTY(int operationProgress READ operationProgress WRITE setOperationProgress)
   /// Controls the quality of the resizing of the pixmap.
   /// Qt::FastTransformation by default
   Q_PROPERTY(Qt::TransformationMode transformationMode READ transformationMode WRITE setTransformationMode)
@@ -64,6 +70,11 @@ public:
   explicit ctkThumbnailLabel(QWidget* parent=0);
   virtual ~ctkThumbnailLabel();
 
+  Q_INVOKABLE QLabel* textLabel();
+  Q_INVOKABLE QFrame* pixmapFrame();
+  Q_INVOKABLE QLabel* pixmapLabel();
+  Q_INVOKABLE QProgressBar* operationProgressBar();
+
   void setText(const QString& text);
   QString text()const;
 
@@ -72,6 +83,9 @@ public:
 
   void setPixmap(const QPixmap& pixmap);
   const QPixmap* pixmap()const;
+
+  void setOperationProgress(const int& progress);
+  int operationProgress()const;
 
   Qt::TransformationMode transformationMode()const;
   void setTransformationMode(Qt::TransformationMode mode);

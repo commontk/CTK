@@ -69,10 +69,10 @@ static int REQUEST_RESULTS_CACHE_MAXIMUM_SIZE = 5000;
 
 //------------------------------------------------------------------------------
 ctkDICOMIndexerPrivateWorker::ctkDICOMIndexerPrivateWorker(DICOMIndexingQueue* queue)
-: RequestQueue(queue)
-, TimePercentageIndexing(95.0)
-, RemainingRequestCount(0)
-, CompletedRequestCount(0)
+  : RequestQueue(queue)
+  , TimePercentageIndexing(95.0)
+  , RemainingRequestCount(0)
+  , CompletedRequestCount(0)
 {
 }
 
@@ -138,10 +138,10 @@ void ctkDICOMIndexerPrivateWorker::start()
     imagesCountAfter = database.imagesCount();
 
     double elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-    qDebug() << QString("DICOM indexer has updated display fields for %1 files [%2s]")
-      .arg(imagesCountAfter-imagesCountBefore).arg(QString::number(elapsedTimeInSeconds, 'f', 2));
+    logger.debug(QString("DICOM indexer has updated display fields for %1 files [%2s]")
+                .arg(imagesCountAfter-imagesCountBefore).arg(QString::number(elapsedTimeInSeconds, 'f', 2)));
 
-  // restart if new requests has been queued during displayed fields update
+    // restart if new requests has been queued during displayed fields update
   } while (!this->RequestQueue->isEmpty());
 
   database.closeDatabase();
@@ -151,7 +151,7 @@ void ctkDICOMIndexerPrivateWorker::start()
   emit progress(100);
   emit progressStep(ctkDICOMIndexer::tr("Indexing complete"));
   emit indexingComplete(patientsCountAfter - patientsCountBefore, studiesCountAfter-studiesCountBefore,
-    seriesCountAfter-seriesCountBefore, imagesCountAfter - imagesCountBefore);
+                        seriesCountAfter-seriesCountBefore, imagesCountAfter - imagesCountBefore);
 }
 
 //------------------------------------------------------------------------------
@@ -189,7 +189,7 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
   foreach(const QString& filePath, indexingRequest.inputFilesPath)
   {
     int percent = int(this->TimePercentageIndexing * (this->CompletedRequestCount + double(currentFileIndex++) / double(indexingRequest.inputFilesPath.size()))
-      / double(this->CompletedRequestCount + this->RemainingRequestCount + 1));
+                      / double(this->CompletedRequestCount + this->RemainingRequestCount + 1));
     emit this->progress(percent);
     emit progressDetail(filePath);
 
@@ -236,10 +236,10 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
   if (alreadyAddedFileCount > 0)
   {
     logger.debug(
-      QString("Skipped %1 files that were already in the database: %2...")
-      .arg(alreadyAddedFileCount)
-      .arg(alreadyAddedFiles.join(", "))
-    );
+        QString("Skipped %1 files that were already in the database: %2...")
+            .arg(alreadyAddedFileCount)
+            .arg(alreadyAddedFiles.join(", "))
+        );
   }
 
   if (this->RequestQueue->isIndexingRequestsEmpty())
@@ -250,8 +250,8 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
   }
 
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-  qDebug() << QString("DICOM indexer has successfully processed %1 files [%2s]")
-    .arg(currentFileIndex).arg(QString::number(elapsedTimeInSeconds, 'f', 2));
+  logger.debug(QString("DICOM indexer has successfully processed %1 files [%2s]")
+              .arg(currentFileIndex).arg(QString::number(elapsedTimeInSeconds, 'f', 2)));
 }
 
 
@@ -279,8 +279,8 @@ void ctkDICOMIndexerPrivateWorker::writeIndexingResultsToDatabase(ctkDICOMDataba
   this->NumberOfInstancesInserted = 0;
 
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-  qDebug() << QString("DICOM indexer has successfully inserted %1 files [%2s]")
-    .arg(indexingResults.count()).arg(QString::number(elapsedTimeInSeconds, 'f', 2));
+  logger.debug(QString("DICOM indexer has successfully inserted %1 files [%2s]")
+              .arg(indexingResults.count()).arg(QString::number(elapsedTimeInSeconds, 'f', 2)));
 
 }
 
@@ -398,54 +398,54 @@ ctkDICOMDatabase* ctkDICOMIndexer::database()
   return d->Database;
 }
 
- //------------------------------------------------------------------------------
- void ctkDICOMIndexer::databaseFilenameChanged()
- {
-   Q_D(ctkDICOMIndexer);
-   if (d->Database)
-   {
-     d->RequestQueue.setDatabaseFilename(d->Database->databaseFilename());
-   }
-   else
-   {
-     d->RequestQueue.setDatabaseFilename(QString());
-   }
- }
+//------------------------------------------------------------------------------
+void ctkDICOMIndexer::databaseFilenameChanged()
+{
+  Q_D(ctkDICOMIndexer);
+  if (d->Database)
+  {
+    d->RequestQueue.setDatabaseFilename(d->Database->databaseFilename());
+  }
+  else
+  {
+    d->RequestQueue.setDatabaseFilename(QString());
+  }
+}
 
- //------------------------------------------------------------------------------
- void ctkDICOMIndexer::tagsToPrecacheChanged()
- {
-   Q_D(ctkDICOMIndexer);
-   if (d->Database)
-   {
-     d->RequestQueue.setTagsToPrecache(d->Database->tagsToPrecache());
-   }
-   else
-   {
-     d->RequestQueue.setTagsToPrecache(QStringList());
-   }
- }
+//------------------------------------------------------------------------------
+void ctkDICOMIndexer::tagsToPrecacheChanged()
+{
+  Q_D(ctkDICOMIndexer);
+  if (d->Database)
+  {
+    d->RequestQueue.setTagsToPrecache(d->Database->tagsToPrecache());
+  }
+  else
+  {
+    d->RequestQueue.setTagsToPrecache(QStringList());
+  }
+}
 
- //------------------------------------------------------------------------------
- void ctkDICOMIndexer::tagsToExcludeFromStorageChanged()
- {
-   Q_D(ctkDICOMIndexer);
-   if (d->Database)
-   {
-     d->RequestQueue.setTagsToExcludeFromStorage(d->Database->tagsToExcludeFromStorage());
-   }
-   else
-   {
-     d->RequestQueue.setTagsToExcludeFromStorage(QStringList());
-   }
- }
+//------------------------------------------------------------------------------
+void ctkDICOMIndexer::tagsToExcludeFromStorageChanged()
+{
+  Q_D(ctkDICOMIndexer);
+  if (d->Database)
+  {
+    d->RequestQueue.setTagsToExcludeFromStorage(d->Database->tagsToExcludeFromStorage());
+  }
+  else
+  {
+    d->RequestQueue.setTagsToExcludeFromStorage(QStringList());
+  }
+}
 
- //------------------------------------------------------------------------------
- void ctkDICOMIndexer::addFile(ctkDICOMDatabase* db, const QString filePath, bool copyFile/*=false*/)
- {
-   this->setDatabase(db);
-   this->addFile(filePath, copyFile);
- }
+//------------------------------------------------------------------------------
+void ctkDICOMIndexer::addFile(ctkDICOMDatabase* db, const QString filePath, bool copyFile/*=false*/)
+{
+  this->setDatabase(db);
+  this->addFile(filePath, copyFile);
+}
 
 //------------------------------------------------------------------------------
 void ctkDICOMIndexer::addFile(const QString filePath, bool copyFile/*=false*/)
@@ -564,10 +564,10 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
       if (patientRecord->findAndGetOFString(DCM_PatientName, patientsName).bad())
       {
         logger.warn(
-          QString("DICOMDIR file at %1 is invalid: patient name not found. "
-             "All records belonging to this patient will be ignored.")
-          .arg(directoryName)
-        );
+            QString("DICOMDIR file at %1 is invalid: patient name not found. "
+                    "All records belonging to this patient will be ignored.")
+                .arg(directoryName)
+            );
         success = false;
         continue;
       }
@@ -578,11 +578,11 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
         if (studyRecord->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID).bad())
         {
           logger.warn(
-            QString("DICOMDIR file at %1 is invalid: study instance UID not found for patient %2. "
-               "All records belonging to this study will be ignored.")
-            .arg(directoryName)
-            .arg(patientsName.c_str())
-          );
+              QString("DICOMDIR file at %1 is invalid: study instance UID not found for patient %2. "
+                      "All records belonging to this study will be ignored.")
+                  .arg(directoryName)
+                  .arg(patientsName.c_str())
+              );
           success = false;
           continue;
         }
@@ -594,12 +594,12 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
           if (seriesRecord->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID).bad())
           {
             logger.warn(
-              QString("DICOMDIR file at %1 is invalid: series instance UID not found for patient %2, study %3. "
-                 "All records belonging to this series will be ignored.")
-              .arg(directoryName)
-              .arg(patientsName.c_str())
-              .arg(studyInstanceUID.c_str())
-            );
+                QString("DICOMDIR file at %1 is invalid: series instance UID not found for patient %2, study %3. "
+                        "All records belonging to this series will be ignored.")
+                    .arg(directoryName)
+                    .arg(patientsName.c_str())
+                    .arg(studyInstanceUID.c_str())
+                );
             success = false;
             continue;
           }
@@ -608,17 +608,17 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
           while ((fileRecord = seriesRecord->nextSub(fileRecord)) != NULL)
           {
             if (fileRecord->findAndGetOFStringArray(DCM_ReferencedSOPInstanceUIDInFile, sopInstanceUID).bad()
-              || fileRecord->findAndGetOFStringArray(DCM_ReferencedFileID,referencedFileName).bad())
+                || fileRecord->findAndGetOFStringArray(DCM_ReferencedFileID,referencedFileName).bad())
             {
               logger.warn(
-                QString("DICOMDIR file at %1 is invalid: "
-                   "referenced SOP instance UID or file name is invalid for patient %2, study %3, series %4. "
-                   "This file will be ignored.")
-                .arg(directoryName)
-                .arg(patientsName.c_str())
-                .arg(studyInstanceUID.c_str())
-                .arg(seriesInstanceUID.c_str())
-              );
+                  QString("DICOMDIR file at %1 is invalid: "
+                          "referenced SOP instance UID or file name is invalid for patient %2, study %3, series %4. "
+                          "This file will be ignored.")
+                      .arg(directoryName)
+                      .arg(patientsName.c_str())
+                      .arg(studyInstanceUID.c_str())
+                      .arg(seriesInstanceUID.c_str())
+                  );
               success = false;
               continue;
             }
@@ -634,10 +634,9 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
       }
     }
     float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-    qDebug()
-        << QString("DICOM indexer has successfully processed DICOMDIR in %1 [%2s]")
-           .arg(directoryName)
-           .arg(QString::number(elapsedTimeInSeconds,'f', 2));
+    logger.debug(QString("DICOM indexer has successfully processed DICOMDIR in %1 [%2s]")
+                .arg(directoryName)
+                .arg(QString::number(elapsedTimeInSeconds,'f', 2)));
     this->addListOfFiles(listOfInstances, copyFile);
   }
   return success;
