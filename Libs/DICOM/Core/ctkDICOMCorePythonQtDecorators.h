@@ -27,6 +27,7 @@
 // CTK includes
 #include <ctkDICOMDisplayedFieldGeneratorRuleFactory.h>
 #include <ctkDICOMUtil.h>
+#include <ctkDICOMJobResponseSet.h>
 
 // NOTE:
 //
@@ -43,9 +44,144 @@ public:
 
   ctkDICOMCorePythonQtDecorators()
     {
+    PythonQt::self()->registerCPPClass("ctkJobDetail", 0, "CTKDICOMCore");
     }
 
 public slots:
+
+  //----------------------------------------------------------------------------
+  // ctkJobDetail
+  //----------------------------------------------------------------------------
+  ctkJobDetail* new_ctkJobDetail()
+    {
+    return new ctkJobDetail();
+    }
+
+  void setTypeOfJob(ctkJobDetail* td, const ctkDICOMJobResponseSet::JobType& jobType)
+    {
+    td->TypeOfJob = jobType;
+    }
+  ctkDICOMJobResponseSet::JobType TypeOfJob(ctkJobDetail* td)
+    {
+    return td->TypeOfJob;
+    }
+
+  void setJobUID(ctkJobDetail* td, const QString& jobUID)
+    {
+    td->JobUID = jobUID;
+    }
+  QString JobUID(ctkJobDetail* td)
+    {
+    return td->JobUID;
+    }
+
+  void setPatientID(ctkJobDetail* td, const QString& patientID)
+    {
+    td->PatientID = patientID;
+    }
+  QString patientID(ctkJobDetail* td)
+    {
+    return td->PatientID;
+    }
+
+  void setStudyInstanceUID(ctkJobDetail* td, const QString& studyInstanceUID)
+    {
+    td->StudyInstanceUID = studyInstanceUID;
+    }
+  QString studyInstanceUID(ctkJobDetail* td)
+    {
+    return td->StudyInstanceUID;
+    }
+
+  void setSeriesInstanceUID(ctkJobDetail* td, const QString& seriesInstanceUID)
+    {
+    td->SeriesInstanceUID = seriesInstanceUID;
+    }
+  QString seriesInstanceUID(ctkJobDetail* td)
+    {
+    return td->SeriesInstanceUID;
+    }
+
+  void setSOPInstanceUID(ctkJobDetail* td, const QString& sopInstanceUID)
+    {
+    td->SOPInstanceUID = sopInstanceUID;
+    }
+  QString sopInstanceUID(ctkJobDetail* td)
+    {
+    return td->SOPInstanceUID;
+    }
+
+  void setConnectionName(ctkJobDetail* td, const QString& connectionName)
+    {
+    td->ConnectionName = connectionName;
+    }
+  QString connectionName(ctkJobDetail* td)
+    {
+    return td->ConnectionName;
+    }
+
+  void setNumberOfDataSets(ctkJobDetail* td, const int& numberOfDataSets)
+    {
+    td->NumberOfDataSets = numberOfDataSets;
+    }
+  int numberOfDataSets(ctkJobDetail* td)
+    {
+    return td->NumberOfDataSets;
+    }
+
+  //----------------------------------------------------------------------------
+  // ctkDICOMJobResponseSet
+  //----------------------------------------------------------------------------
+  void setFilePath(ctkDICOMJobResponseSet* ts, const QString& filePath)
+    {
+    ts->setFilePath(filePath);
+    }
+
+  void setCopyFile(ctkDICOMJobResponseSet* ts, const bool& copyFile)
+    {
+    ts->setCopyFile(copyFile);
+    }
+
+  void setOverwriteExistingDataset(ctkDICOMJobResponseSet* ts, const bool& overwriteExistingDataset)
+    {
+    ts->setOverwriteExistingDataset(overwriteExistingDataset);
+    }
+
+  void setTypeOfJob(ctkDICOMJobResponseSet* ts, const ctkDICOMJobResponseSet::JobType& TypeOfJob)
+    {
+    ts->setTypeOfJob(TypeOfJob);
+    }
+
+  void setJobUID(ctkDICOMJobResponseSet* ts, const QString& jobUID)
+    {
+    ts->setJobUID(jobUID);
+    }
+
+  void setPatientID(ctkDICOMJobResponseSet* ts, const QString& patientID)
+    {
+    ts->setPatientID(patientID);
+    }
+
+  void setStudyInstanceUID(ctkDICOMJobResponseSet* ts, const QString& studyInstanceUID)
+    {
+    ts->setStudyInstanceUID(studyInstanceUID);
+    }
+
+  void setSeriesInstanceUID(ctkDICOMJobResponseSet* ts, const QString& seriesInstanceUID)
+    {
+    ts->setSeriesInstanceUID(seriesInstanceUID);
+    }
+
+  void setSOPInstanceUID(ctkDICOMJobResponseSet* ts, const QString& sopInstanceUID)
+    {
+    ts->setSOPInstanceUID(sopInstanceUID);
+    }
+
+  void setConnectionName(ctkDICOMJobResponseSet* ts, const QString& connectionName)
+    {
+    ts->setConnectionName(connectionName);
+    }
+
 
   //----------------------------------------------------------------------------
   // ctkDICOMDisplayedFieldGeneratorRuleFactory

@@ -16,21 +16,59 @@ set(KIT_SRCS
   ctkDICOMItem.h
   ctkDICOMDisplayedFieldGenerator.cpp
   ctkDICOMDisplayedFieldGenerator.h
+  ctkDICOMEcho.cpp
+  ctkDICOMEcho.h
   ctkDICOMFilterProxyModel.cpp
   ctkDICOMFilterProxyModel.h
   ctkDICOMIndexer.cpp
   ctkDICOMIndexer.h
   ctkDICOMIndexer_p.h
+  ctkDICOMInserter.cpp
+  ctkDICOMInserter.h
+  ctkDICOMInserterJob.cpp
+  ctkDICOMInserterJob.h
+  ctkDICOMInserterWorker.cpp
+  ctkDICOMInserterWorker.h
+  ctkDICOMInserterWorker_p.h
   ctkDICOMItem.cpp
   ctkDICOMItem.h
+  ctkDICOMJob.cpp
+  ctkDICOMJob.h
+  ctkDICOMJobResponseSet.cpp
+  ctkDICOMJobResponseSet.h
   ctkDICOMModel.cpp
   ctkDICOMModel.h
   ctkDICOMPersonName.cpp
   ctkDICOMPersonName.h
   ctkDICOMQuery.cpp
   ctkDICOMQuery.h
+  ctkDICOMQueryJob.cpp
+  ctkDICOMQueryJob.h
+  ctkDICOMQueryJob_p.h
+  ctkDICOMQueryWorker.cpp
+  ctkDICOMQueryWorker.h
+  ctkDICOMQueryWorker_p.h
   ctkDICOMRetrieve.cpp
   ctkDICOMRetrieve.h
+  ctkDICOMRetrieveJob.cpp
+  ctkDICOMRetrieveJob.h
+  ctkDICOMRetrieveJob_p.h
+  ctkDICOMRetrieveWorker.cpp
+  ctkDICOMRetrieveWorker.h
+  ctkDICOMRetrieveWorker_p.h
+  ctkDICOMScheduler.cpp
+  ctkDICOMScheduler.h
+  ctkDICOMScheduler_p.h
+  ctkDICOMServer.cpp
+  ctkDICOMServer.h
+  ctkDICOMStorageListener.cpp
+  ctkDICOMStorageListener.h
+  ctkDICOMStorageListenerJob.cpp
+  ctkDICOMStorageListenerJob.h
+  ctkDICOMStorageListenerJob_p.h
+  ctkDICOMStorageListenerWorker.cpp
+  ctkDICOMStorageListenerWorker.h
+  ctkDICOMStorageListenerWorker_p.h
   ctkDICOMTester.cpp
   ctkDICOMTester.h
   ctkDICOMUtil.cpp
@@ -50,6 +88,8 @@ set(KIT_SRCS
   ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule.cpp
   ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule.h
   ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule.cpp
+  ctkDICOMWorker.cpp
+  ctkDICOMWorker.h
 )
 
 # Abstract class should not be wrapped !
@@ -66,13 +106,37 @@ set(KIT_MOC_SRCS
   ctkDICOMDisplayedFieldGenerator.h
   ctkDICOMDisplayedFieldGenerator_p.h
   ctkDICOMDisplayedFieldGeneratorRuleFactory.h
+  ctkDICOMEcho.h
   ctkDICOMIndexer.h
   ctkDICOMIndexer_p.h
+  ctkDICOMInserter.h
+  ctkDICOMInserterJob.h
+  ctkDICOMInserterWorker.h
+  ctkDICOMInserterWorker_p.h
+  ctkDICOMJob.h
+  ctkDICOMJobResponseSet.h
   ctkDICOMFilterProxyModel.h
   ctkDICOMModel.h
   ctkDICOMQuery.h
+  ctkDICOMQueryJob.h
+  ctkDICOMQueryJob_p.h
+  ctkDICOMQueryWorker.h
+  ctkDICOMQueryWorker_p.h
   ctkDICOMRetrieve.h
+  ctkDICOMRetrieveJob.h
+  ctkDICOMRetrieveJob_p.h
+  ctkDICOMRetrieveWorker.h
+  ctkDICOMRetrieveWorker_p.h
+  ctkDICOMScheduler.h
+  ctkDICOMScheduler_p.h
+  ctkDICOMServer.h
+  ctkDICOMStorageListener.h
+  ctkDICOMStorageListenerJob.h
+  ctkDICOMStorageListenerJob_p.h
+  ctkDICOMStorageListenerWorker.h
+  ctkDICOMStorageListenerWorker_p.h
   ctkDICOMTester.h
+  ctkDICOMWorker.h
   )
 
 # UI files
@@ -93,7 +157,6 @@ list(APPEND KIT_target_libraries Qt${CTK_QT_VERSION}::Sql)
 # create a dcm query/retrieve service config file that points to the build dir
 set (DCMQRSCP_STORE_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing)
 configure_file( Resources/dcmqrscp.cfg.in dcmqrscp.cfg )
-set (DCMQRSCP_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/dcmqrscp.cfg)
 
 ctkMacroBuildLib(
   NAME ${PROJECT_NAME}
@@ -108,7 +171,6 @@ ctkMacroBuildLib(
 
 if(DEFINED DCMTK_HAVE_CONFIG_H_OPTIONAL AND NOT DCMTK_HAVE_CONFIG_H_OPTIONAL)
   # Workaround Debian packaging issue - See FindDCMTK.cmake for more details
-  set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_DEFINITIONS ${DCMTK_DEFINITIONS})
   set_target_properties(${PROJECT_NAME} PROPERTIES INTERFACE_COMPILE_DEFINITIONS ${DCMTK_DEFINITIONS})
 endif()
 

@@ -131,7 +131,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   EI_Status result = dcmImage->getStatus();
   if (result != EIS_Normal)
   {
-    qCritical() << Q_FUNC_INFO << QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result);
+    logger.warn(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
     return false;
   }
   // Select first window defined in image. If none, compute min/max window as best guess.
@@ -214,12 +214,12 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, c
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image)
+void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, Qt::GlobalColor color)
 {
   Q_D(ctkDICOMThumbnailGenerator);
   if (image.width() != d->Width || image.height() != d->Height)
     {
     image = QImage(d->Width, d->Height, QImage::Format_RGB32);
     }
-  image.fill(Qt::darkGray);
+  image.fill(color);
 }

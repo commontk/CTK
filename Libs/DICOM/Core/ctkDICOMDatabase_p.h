@@ -53,7 +53,6 @@ public:
   bool loggedExec(QSqlQuery& query);
   bool loggedExec(QSqlQuery& query, const QString& queryString);
   bool loggedExecBatch(QSqlQuery& query);
-  bool LoggedExecVerbose;
 
   bool removeImage(const QString& sopInstanceUID);
 
@@ -172,6 +171,9 @@ public:
 
   /// Facilitate using custom schema with the database without subclassing
   QString SchemaVersion;
+
+  QStringList LoadedSeries;
+  QStringList VisibleSeries;
 };
 
 #endif

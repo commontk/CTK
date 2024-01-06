@@ -247,6 +247,12 @@ DcmItem& ctkDICOMItem::GetDcmItem() const
   return *d->m_DcmItem;
 }
 
+DcmItem* ctkDICOMItem::GetDcmItemPointer() const
+{
+  const Q_D(ctkDICOMItem);
+  return d->m_DcmItem;
+}
+
 OFCondition ctkDICOMItem::findAndGetElement(const DcmTag& tag, DcmElement*& element, const OFBool searchIntoSub) const
 {
   EnsureDcmDataSetIsInitialized();

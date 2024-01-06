@@ -22,6 +22,8 @@ set(KIT_SRCS
   ctkAbstractFactory.tpp
   ctkAbstractFileBasedFactory.h
   ctkAbstractFileBasedFactory.tpp
+  ctkAbstractJob.cpp
+  ctkAbstractJob.h
   ctkAbstractObjectFactory.h
   ctkAbstractObjectFactory.tpp
   ctkAbstractPluginFactory.h
@@ -30,6 +32,10 @@ set(KIT_SRCS
   ctkAbstractQObjectFactory.tpp
   ctkAbstractLibraryFactory.h
   ctkAbstractLibraryFactory.tpp
+  ctkAbstractScheduler.cpp
+  ctkAbstractScheduler.h
+  ctkAbstractWorker.cpp
+  ctkAbstractWorker.h
   ctkBackTrace.cpp
   ctkBooleanMapper.cpp
   ctkBooleanMapper.h
@@ -100,6 +106,9 @@ endif()
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
+  ctkAbstractJob.h
+  ctkAbstractScheduler.h
+  ctkAbstractWorker.h
   ctkBooleanMapper.h
   ctkCallback.h
   ctkCommandLineParser.h

@@ -91,7 +91,7 @@ int ctkDICOMRetrieveTest1( int argc, char * argv [] )
   QSharedPointer<ctkDICOMDatabase> dicomDatabase(new ctkDICOMDatabase);
   retrieve.setDatabase(dicomDatabase);
 
-  if (retrieve.database() != dicomDatabase)
+  if (retrieve.dicomDatabase() != dicomDatabase)
     {
     std::cerr << __LINE__ << ": ctkDICOMRetrieve::setDatabase() failed."
               << std::endl;
