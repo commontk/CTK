@@ -36,7 +36,7 @@ int ctkDICOMDatabaseTest5( int argc, char * argv [] )
 
   if (argc < 2)
     {
-    std::cerr << "ctkDICOMDatabaseTest2: missing dicom filePath argument";
+    std::cerr << "ctkDICOMDatabaseTest5: missing dicom filePath argument";
     std::cerr << std::endl;
     return EXIT_FAILURE;
     }
