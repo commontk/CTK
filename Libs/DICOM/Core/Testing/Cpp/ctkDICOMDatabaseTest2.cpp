@@ -84,7 +84,7 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
   //
   // Test that the tag interface works to parse ascii
   //
-  QString tag("0008,103e");
+  QString tag("0008,103E");
   unsigned short group, element;
   if ( !database.tagToGroupElement(tag, group, element) )
     {
@@ -92,9 +92,9 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if ( group != 0x8 || element != 0x103e )
+  if ( group != 0x8 || element != 0x103E )
     {
-    std::cerr << "ctkDICOMDatabase: expected: " << "0008,103e" << std::endl;
+    std::cerr << "ctkDICOMDatabase: expected: " << "0008,103E" << std::endl;
     std::cerr << "ctkDICOMDatabase: got: " << group << " " << element << std::endl;
     std::cerr << "ctkDICOMDatabase: parsed tag does not match group/element" << std::endl;
     return EXIT_FAILURE;
