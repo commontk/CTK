@@ -2767,7 +2767,7 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
           insertImageStatement.prepare("INSERT INTO Images ( 'SOPInstanceUID', 'Filename', 'URL', 'SeriesInstanceUID', 'InsertTimestamp' ) VALUES ( ?, ?, ?, ?, ? )");
           insertImageStatement.addBindValue(sopInstanceUID);
           insertImageStatement.addBindValue(storedFilePathInDatabase);
-          insertImageStatement.addBindValue("url");
+          insertImageStatement.addBindValue(url);
           insertImageStatement.addBindValue(seriesInstanceUID);
           insertImageStatement.addBindValue(QDateTime::currentDateTime());
 

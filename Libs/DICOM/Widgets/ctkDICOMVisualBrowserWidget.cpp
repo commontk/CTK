@@ -140,6 +140,7 @@ public:
   void updateModalityCheckableComboBox();
   void createPatients();
   void updateFiltersWarnings();
+  void setBackgroundColorToWidget(Qt::GlobalColor color, QWidget* widget);
   void retrieveSeries();
   bool updateServer(ctkDICOMServer* server);
   void removeAllPatientItemWidgets();
@@ -152,17 +153,11 @@ public:
   QStringList getSeriesUIDsFromWidgets(ctkDICOMModel::IndexType level,
                                        QList<QWidget *> selectedWidgets);
   QStringList filterPatientList(const QStringList& patientList,
-                                const QString& filterName,
-                                const QString& filterValue);
-  QStringList filterStudyList(const QStringList& studyList,
-                              const QString& filterName,
-                              const QString& filterValue);
-  QStringList filterSeriesList(const QStringList& seriesList,
-                               const QString& filterName,
-                               const QString& filterValue);
-  QStringList filterSeriesList(const QStringList& seriesList,
-                               const QString& filterName,
-                               const QStringList& filterValues);
+                                const QMap<QString, QVariant>& filters);
+  QStringList filterStudyList(const QStringList& patientList,
+                              const QMap<QString, QVariant>& filters);
+  QStringList filterSeriesList(const QStringList& patientList,
+                               const QMap<QString, QVariant>& filters);
 
   // Return a sanitized version of the string that is safe to be used
   // as a filename component.
@@ -642,41 +637,31 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
 
   // Loop over all the data in the dicom database and apply the filters.
   // If there are no series, highlight which are the filters that produce no results
-  QString background = "QWidget { background-color: white }";
-  this->FilteringPatientIDSearchBox->setStyleSheet(this->FilteringPatientIDSearchBox->styleSheet() + background);
-  this->FilteringPatientNameSearchBox->setStyleSheet(this->FilteringPatientNameSearchBox->styleSheet() + background);
-  this->FilteringDateComboBox->setStyleSheet(this->FilteringDateComboBox->styleSheet() + background);
-  this->FilteringStudyDescriptionSearchBox->setStyleSheet(this->FilteringStudyDescriptionSearchBox->styleSheet() + background);
-  this->FilteringSeriesDescriptionSearchBox->setStyleSheet(this->FilteringSeriesDescriptionSearchBox->styleSheet() + background);
-  this->FilteringModalityCheckableComboBox->setStyleSheet(this->FilteringModalityCheckableComboBox->styleSheet() + background);
+  Qt::GlobalColor color = Qt::white;
+  this->setBackgroundColorToWidget(color, this->FilteringPatientIDSearchBox);
+  this->setBackgroundColorToWidget(color, this->FilteringPatientNameSearchBox);
+  this->setBackgroundColorToWidget(color, this->FilteringDateComboBox);
+  this->setBackgroundColorToWidget(color, this->FilteringStudyDescriptionSearchBox);
+  this->setBackgroundColorToWidget(color, this->FilteringSeriesDescriptionSearchBox);
+  this->setBackgroundColorToWidget(color, this->FilteringModalityCheckableComboBox);
 
-  background = "QWidget { background-color: yellow }";
+  color = Qt::yellow;
   QStringList patientList = this->DicomDatabase->patients();
   if (patientList.count() == 0)
     {
-    this->FilteringPatientIDSearchBox->setStyleSheet(this->FilteringPatientIDSearchBox->styleSheet() + background);
-    this->FilteringPatientNameSearchBox->setStyleSheet(this->FilteringPatientNameSearchBox->styleSheet() + background);
+    this->setBackgroundColorToWidget(color, this->FilteringPatientIDSearchBox);
+    this->setBackgroundColorToWidget(color, this->FilteringPatientNameSearchBox);
     return;
     }
 
-  QStringList filteredPatientListByName =
-    this->filterPatientList(patientList, "PatientsName", this->FilteringPatientName);
-  QStringList filteredPatientListByID =
-    this->filterPatientList(patientList, "PatientID", this->FilteringPatientID);
-
-  if (filteredPatientListByName.count() == 0)
-    {
-    this->FilteringPatientNameSearchBox->setStyleSheet(this->FilteringPatientNameSearchBox->styleSheet() + background);
-    }
-
-  if (filteredPatientListByID.count() == 0)
-    {
-    this->FilteringPatientIDSearchBox->setStyleSheet(this->FilteringPatientIDSearchBox->styleSheet() + background);
-    }
-
-  QStringList filteredPatientList = filteredPatientListByName + filteredPatientListByID;
+  QMap<QString, QVariant> filters;
+  filters.insert("PatientsName", this->FilteringPatientName);
+  filters.insert("PatientID", this->FilteringPatientID);
+  QStringList filteredPatientList = this->filterPatientList(patientList, filters);
   if (filteredPatientList.count() == 0)
     {
+    this->setBackgroundColorToWidget(color, this->FilteringPatientIDSearchBox);
+    this->setBackgroundColorToWidget(color, this->FilteringPatientNameSearchBox);
     return;
     }
 
@@ -686,25 +671,15 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
     studiesList.append(this->DicomDatabase->studiesForPatient(patientItem));
     }
 
-  QStringList filteredStudyListByDate =
-    this->filterStudyList(studiesList, "StudyDate",
-      QString::number(ctkDICOMPatientItemWidget::getNDaysFromFilteringDate(this->FilteringDate)));
-  QStringList filteredStudyListByDescription =
-    this->filterStudyList(studiesList, "StudyDescription", this->FilteringStudyDescription);
+  filters.clear();
+  filters.insert("StudyDate", QString::number(ctkDICOMPatientItemWidget::getNDaysFromFilteringDate(this->FilteringDate)));
+  filters.insert("StudyDescription", this->FilteringStudyDescription);
 
-  if (filteredStudyListByDate.count() == 0)
-    {
-     this->FilteringDateComboBox->setStyleSheet(this->FilteringDateComboBox->styleSheet() + background);
-    }
-
-  if (filteredStudyListByDescription.count() == 0)
-    {
-    this->FilteringStudyDescriptionSearchBox->setStyleSheet(this->FilteringStudyDescriptionSearchBox->styleSheet() + background);
-    }
-
-  QStringList filteredStudyList = filteredStudyListByDate + filteredStudyListByDescription;
+  QStringList filteredStudyList = this->filterStudyList(studiesList, filters);
   if (filteredStudyList.count() == 0)
     {
+    this->setBackgroundColorToWidget(color, this->FilteringDateComboBox);
+    this->setBackgroundColorToWidget(color, this->FilteringStudyDescriptionSearchBox);
     return;
     }
 
@@ -715,20 +690,38 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
     seriesList.append(this->DicomDatabase->seriesForStudy(studyInstanceUID));
     }
 
-  QStringList filteredSeriesListByModality =
-    this->filterSeriesList(seriesList, "Modality", this->FilteringModalities);
-  QStringList filteredSeriesListByDescription =
-    this->filterSeriesList(seriesList, "SeriesDescription", this->FilteringSeriesDescription);
+  filters.clear();
+  filters.insert("Modality", this->FilteringModalities);
+  filters.insert("SeriesDescription", this->FilteringSeriesDescription);
 
-  if (filteredSeriesListByModality.count() == 0)
+  QStringList filteredSeriesList = this->filterSeriesList(seriesList, filters);
+  if (filteredSeriesList.count() == 0)
     {
-    this->FilteringModalityCheckableComboBox->setStyleSheet(this->FilteringModalityCheckableComboBox->styleSheet() + background);
+    this->setBackgroundColorToWidget(color, this->FilteringSeriesDescriptionSearchBox);
+    this->setBackgroundColorToWidget(color, this->FilteringModalityCheckableComboBox);
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToWidget(Qt::GlobalColor color,
+                                                                    QWidget *widget)
+{
+  if (!widget)
+    {
+    return;
     }
 
-  if (filteredSeriesListByDescription.count() == 0)
+  QPalette pal = widget->palette();
+  QComboBox* comboBox = qobject_cast<QComboBox*>(widget);
+  if (comboBox)
     {
-    this->FilteringSeriesDescriptionSearchBox->setStyleSheet(this->FilteringSeriesDescriptionSearchBox->styleSheet() + background);
+    pal.setColor(QPalette::Button, color);
     }
+  else
+    {
+    pal.setColor(widget->backgroundRole(), color);
+    }
+  widget->setPalette(pal);
 }
 
 //----------------------------------------------------------------------------
@@ -1114,8 +1107,7 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::getSeriesUIDsFromWidgets(ctkDICO
 
 //----------------------------------------------------------------------------
 QStringList ctkDICOMVisualBrowserWidgetPrivate::filterPatientList(const QStringList& patientList,
-                                                                  const QString& filterName,
-                                                                  const QString& filterValue)
+                                                                  const QMap<QString, QVariant>& filters)
 {
   QStringList filteredPatientList;
   if (!this->DicomDatabase)
@@ -1126,8 +1118,19 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterPatientList(const QStringL
 
   foreach (QString patientItem, patientList)
     {
-    QString filter = this->DicomDatabase->fieldForPatient(filterName, patientItem);
-    if (!filter.contains(filterValue, Qt::CaseInsensitive))
+    bool filtered = false;
+    for(QString key : filters.keys())
+      {
+      QString filter = this->DicomDatabase->fieldForPatient(key, patientItem);
+      QString filterValue = filters.value(key).toString();
+      if (!filter.contains(filterValue, Qt::CaseInsensitive))
+        {
+        filtered = true;
+        break;
+        }
+      }
+
+    if (filtered)
       {
       continue;
       }
@@ -1140,8 +1143,7 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterPatientList(const QStringL
 
 //----------------------------------------------------------------------------
 QStringList ctkDICOMVisualBrowserWidgetPrivate::filterStudyList(const QStringList& studyList,
-                                                                const QString &filterName,
-                                                                const QString &filterValue)
+                                                                const QMap<QString, QVariant>& filters)
 {
   QStringList filteredStudyList;
   if (!this->DicomDatabase)
@@ -1152,23 +1154,35 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterStudyList(const QStringLis
 
   foreach (QString studyItem, studyList)
     {
-    QString filter = this->DicomDatabase->fieldForStudy(filterName, studyItem);
-    if (filterName == "StudyDate")
+    bool filtered = false;
+    for(QString key : filters.keys())
       {
-      int nDays = filterValue.toInt();
-      if (nDays != -1)
+      QString filter = this->DicomDatabase->fieldForStudy(key, studyItem);
+      QString filterValue = filters.value(key).toString();
+      if (key == "StudyDate")
         {
-        QDate endDate = QDate::currentDate();
-        QDate startDate = endDate.addDays(-nDays);
-        filter.replace(QString("-"), QString(""));
-        QDate studyDate = QDate::fromString(filter, "yyyyMMdd");
-        if (studyDate < startDate || studyDate > endDate)
+        int nDays = filterValue.toInt();
+        if (nDays != -1)
           {
-          continue;
+          QDate endDate = QDate::currentDate();
+          QDate startDate = endDate.addDays(-nDays);
+          filter.replace(QString("-"), QString(""));
+          QDate studyDate = QDate::fromString(filter, "yyyyMMdd");
+          if (studyDate < startDate || studyDate > endDate)
+            {
+            filtered = true;
+            break;
+            }
           }
         }
+      else if (!filter.contains(filterValue, Qt::CaseInsensitive))
+        {
+        filtered = true;
+        break;
+        }
       }
-    else if (!filter.contains(filterValue))
+
+    if (filtered)
       {
       continue;
       }
@@ -1181,8 +1195,7 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterStudyList(const QStringLis
 
 //----------------------------------------------------------------------------
 QStringList ctkDICOMVisualBrowserWidgetPrivate::filterSeriesList(const QStringList& seriesList,
-                                                                 const QString &filterName,
-                                                                 const QString &filterValue)
+                                                                 const QMap<QString, QVariant>& filters)
 {
   QStringList filteredSeriesList;
   if (!this->DicomDatabase)
@@ -1193,34 +1206,31 @@ QStringList ctkDICOMVisualBrowserWidgetPrivate::filterSeriesList(const QStringLi
 
   foreach (QString seriesItem, seriesList)
     {
-    QString filter = this->DicomDatabase->fieldForSeries(filterName, seriesItem);
-    if (!filter.contains(filterValue))
+    bool filtered = false;
+    for(QString key : filters.keys())
       {
-      continue;
+      QString filter = this->DicomDatabase->fieldForSeries(key, seriesItem);
+      if (key == "Modality")
+        {
+        QStringList filterValues = filters.value(key).toStringList();
+        if (!filterValues.contains("Any") && !filterValues.contains(filter))
+          {
+          filtered = true;
+          break;
+          }
+        }
+      else
+        {
+        QString filterValue = filters.value(key).toString();
+        if (!filter.contains(filterValue, Qt::CaseInsensitive))
+          {
+          filtered = true;
+          break;
+          }
+        }
       }
 
-    filteredSeriesList.append(seriesItem);
-    }
-
-  return filteredSeriesList;
-}
-
-//----------------------------------------------------------------------------
-QStringList ctkDICOMVisualBrowserWidgetPrivate::filterSeriesList(const QStringList &seriesList,
-                                                                 const QString &filterName,
-                                                                 const QStringList &filterValues)
-{
-  QStringList filteredSeriesList;
-  if (!this->DicomDatabase)
-    {
-    logger.error("filterSeriesList failed, no DICOM Database has been set. \n");
-    return filteredSeriesList;
-    }
-
-  foreach (QString seriesItem, seriesList)
-    {
-    QString filter = this->DicomDatabase->fieldForSeries(filterName, seriesItem);
-    if (!filterValues.contains("Any") && !filterValues.contains(filter))
+    if (filtered)
       {
       continue;
       }

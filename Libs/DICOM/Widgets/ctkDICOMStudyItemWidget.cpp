@@ -649,8 +649,8 @@ void ctkDICOMStudyItemWidget::generateSeries(bool toggled)
     }
 
   d->createSeries();
-  QStringList seriesList = d->DicomDatabase->seriesForStudy(d->StudyInstanceUID);
-  if (seriesList.count() == 0 && d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
+
+  if (d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
     {
     d->Scheduler->querySeries(d->PatientID,
                              d->StudyInstanceUID,
