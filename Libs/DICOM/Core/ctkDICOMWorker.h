@@ -28,7 +28,7 @@
 #include <QSharedPointer>
 
 // ctkDICOMCore includes
-#include "ctkCoreExport.h"
+#include "ctkDICOMCoreExport.h"
 #include "ctkAbstractWorker.h"
 
 class ctkDICOMJob;
