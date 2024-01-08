@@ -210,7 +210,7 @@ void ctkDICOMServerNodeWidget::readSettings()
     defaultServerNode["CheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["AETitle"] = QString("ANYAE");
     defaultServerNode["Address"] = QString("dicomserver.co.uk");
-    defaultServerNode["Port"] = QString("11112");
+    defaultServerNode["Port"] = QString("104");
     defaultServerNode["CGET"] = static_cast<int>(Qt::Checked);
     this->addServerNode(defaultServerNode);
 
