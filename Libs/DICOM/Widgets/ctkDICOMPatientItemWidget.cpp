@@ -251,6 +251,11 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
 
   QStringList studiesList = this->DicomDatabase->studiesForPatient(this->PatientItem);
 
+  if (studiesList.count() == 0)
+    {
+    return;
+    }
+
   // Filter with studyDescription and studyDate and sort by Date
   QMap<long long, QString> studiesMap;
   foreach (QString studyItem, studiesList)
@@ -692,8 +697,7 @@ void ctkDICOMPatientItemWidget::generateStudies()
   Q_D(ctkDICOMPatientItemWidget);
 
   d->createStudies();
-  QStringList studiesList = d->DicomDatabase->studiesForPatient(d->PatientItem);
-  if (studiesList.count() && d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
+  if (d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
     {
     d->Scheduler->queryStudies(d->PatientID, QThread::NormalPriority);
     }
