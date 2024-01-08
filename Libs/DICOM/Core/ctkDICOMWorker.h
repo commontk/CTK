@@ -36,7 +36,7 @@ class ctkDICOMScheduler;
 
 //------------------------------------------------------------------------------
 /// \ingroup Core
-class CTK_CORE_EXPORT ctkDICOMWorker : public ctkAbstractWorker
+class CTK_DICOM_CORE_EXPORT ctkDICOMWorker : public ctkAbstractWorker
 {
   Q_OBJECT
 
