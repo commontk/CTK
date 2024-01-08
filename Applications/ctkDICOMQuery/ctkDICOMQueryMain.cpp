@@ -26,7 +26,7 @@
  *
  * ../CTK-build/bin/ctkDICOMQuery test.db FINDSCU MI2B2 mi2b2.slicer.org 11112
  * or this one:
- * ../CTK-build/bin/ctkDICOMQuery test.db FINDSCU DICOMSERVER dicomserver.co.uk 11112
+ * ../CTK-build/bin/ctkDICOMQuery test.db FINDSCU DICOMSERVER dicomserver.co.uk 104
  *
  * you can get a similar
  * functionality with this command line:

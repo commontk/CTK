@@ -1054,7 +1054,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
     defaultServerNode["Calling AETitle"] = QString("CTK");
     defaultServerNode["Called AETitle"] = QString("ANYAE");
     defaultServerNode["Address"] = QString("dicomserver.co.uk");
-    defaultServerNode["Port"] = QString("11112");
+    defaultServerNode["Port"] = QString("104");
     defaultServerNode["Protocol"] = QString("CGET");
     defaultServerNode["Timeout"] = QString("30");
     defaultServerNode["Proxy"] = QString("");

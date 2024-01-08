@@ -30,7 +30,7 @@ int ctkDICOMDemoSCUTest1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
   QString peer("www.dicomserver.co.uk");
-  QString port("11112");
+  QString port("104");
   QString aeTitle("MOVESCP");
   QStringList parameters;
   parameters << peer << port << aeTitle;
