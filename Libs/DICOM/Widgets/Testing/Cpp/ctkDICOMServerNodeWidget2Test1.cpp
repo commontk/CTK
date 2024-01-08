@@ -72,7 +72,7 @@ int ctkDICOMServerNodeWidget2Test1( int argc, char * argv [] )
   CHECK_QSTRING(widget.getServer("MedicalConnections")->callingAETitle(), "CTK");
   CHECK_QSTRING(widget.getServer("MedicalConnections")->calledAETitle(), "ANYAE");
   CHECK_QSTRING(widget.getServer("MedicalConnections")->host(), "dicomserver.co.uk");
-  CHECK_INT(widget.getServer("MedicalConnections")->port(), 11112);
+  CHECK_INT(widget.getServer("MedicalConnections")->port(), 104);
   CHECK_QSTRING(widget.getServer("MedicalConnections")->retrieveProtocolAsString(), "CGET");
   CHECK_INT(widget.getServer("MedicalConnections")->connectionTimeout(), 30);
 

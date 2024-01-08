@@ -56,7 +56,7 @@ ctkDICOMServerNodeWidget::ctkDICOMServerNodeWidget(QWidget* parentWidget)
   , d_ptr(new ctkDICOMServerNodeWidgetPrivate)
 {
   Q_D(ctkDICOMServerNodeWidget);
- 
+
   d->setupUi(this);
 
   // checkable headers.
@@ -122,7 +122,7 @@ int ctkDICOMServerNodeWidget::addServerNode(const QMap<QString, QVariant>& node)
 {
   Q_D(ctkDICOMServerNodeWidget);
   const int row = this->addServerNode();
-  
+
   QTableWidgetItem *newItem;
   newItem = new QTableWidgetItem( node["Name"].toString() );
   newItem->setCheckState( Qt::CheckState(node["CheckState"].toInt()) );
@@ -164,7 +164,7 @@ void ctkDICOMServerNodeWidget::saveSettings()
 
   QSettings settings;
   const int rowCount = d->NodeTable->rowCount();
-  
+
   settings.setValue("ServerNodeCount", rowCount);
   for (int row = 0; row < rowCount; ++row)
     {
@@ -204,13 +204,13 @@ void ctkDICOMServerNodeWidget::readSettings()
     defaultServerNode["CGET"] = static_cast<int>(Qt::Unchecked);
     this->addServerNode(defaultServerNode);
 
-    // the uk example - see http://www.dicomserver.co.uk/ 
+    // the uk example - see http://www.dicomserver.co.uk/
     // and http://www.medicalconnections.co.uk/
     defaultServerNode["Name"] = QString("MedicalConnections");
     defaultServerNode["CheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["AETitle"] = QString("ANYAE");
     defaultServerNode["Address"] = QString("dicomserver.co.uk");
-    defaultServerNode["Port"] = QString("11112");
+    defaultServerNode["Port"] = QString("104");
     defaultServerNode["CGET"] = static_cast<int>(Qt::Checked);
     this->addServerNode(defaultServerNode);
 
