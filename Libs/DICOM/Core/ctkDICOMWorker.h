@@ -27,7 +27,7 @@
 // Qt includes
 #include <QSharedPointer>
 
-// CTK includes
+// ctkDICOMCore includes
 #include "ctkCoreExport.h"
 #include "ctkAbstractWorker.h"
 
