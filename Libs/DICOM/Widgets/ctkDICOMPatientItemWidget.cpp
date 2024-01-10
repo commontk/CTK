@@ -35,7 +35,6 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMSeriesItemWidget.h"
-#include "ctkDICOMStudyItemWidget.h"
 #include "ctkDICOMPatientItemWidget.h"
 #include "ui_ctkDICOMPatientItemWidget.h"
 
@@ -74,8 +73,7 @@ public:
   QSharedPointer<QWidget> VisualDICOMBrowser;
 
   int NumberOfStudiesPerPatient;
-  int NumberOfSeriesPerRow;
-  int MinimumThumbnailSize;
+  ctkDICOMStudyItemWidget::ThumbnailSizeOption ThumbnailSize;
 
   QString PatientItem;
   QString PatientID;
@@ -98,8 +96,7 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
 {
   this->FilteringDate = ctkDICOMPatientItemWidget::DateType::Any;
   this->NumberOfStudiesPerPatient = 2;
-  this->NumberOfSeriesPerRow = 6;
-  this->MinimumThumbnailSize = 300;
+  this->ThumbnailSize = ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium;
   this->PatientItem = "";
   this->PatientID = "";
   this->FilteringStudyDescription = "";
@@ -125,6 +122,7 @@ void ctkDICOMPatientItemWidgetPrivate::init(QWidget* parentWidget)
 
   this->VisualDICOMBrowser = QSharedPointer<QWidget>(parentWidget, skipDelete);
 
+  this->PatientNameValueLabel->setWordWrap(true);
   this->PatientIDValueLabel->setWordWrap(true);
   this->PatientBirthDateValueLabel->setWordWrap(true);
   this->PatientSexValueLabel->setWordWrap(true);
@@ -237,6 +235,7 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
   QLayout *studiesListWidgetLayout = this->StudiesListWidget->layout();
   if (this->PatientItem.isEmpty())
     {
+    this->PatientNameValueLabel->setText("");
     this->PatientIDValueLabel->setText("");
     this->PatientSexValueLabel->setText("");
     this->PatientBirthDateValueLabel->setText("");
@@ -244,6 +243,9 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
     }
   else
     {
+    QString patientName = this->DicomDatabase->fieldForPatient("PatientsName", this->PatientItem);
+    patientName.replace(R"(^)", R"( )");
+    this->PatientNameValueLabel->setText(patientName);
     this->PatientIDValueLabel->setText(this->DicomDatabase->fieldForPatient("PatientID", this->PatientItem));
     this->PatientSexValueLabel->setText(this->DicomDatabase->fieldForPatient("PatientsSex", this->PatientItem));
     this->PatientBirthDateValueLabel->setText(this->formatDate(this->DicomDatabase->fieldForPatient("PatientsBirthDate", this->PatientItem)));
@@ -437,31 +439,17 @@ int ctkDICOMPatientItemWidget::numberOfStudiesPerPatient() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::setNumberOfSeriesPerRow(int numberOfSeriesPerRow)
+void ctkDICOMPatientItemWidget::setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize)
 {
   Q_D(ctkDICOMPatientItemWidget);
-  d->NumberOfSeriesPerRow = numberOfSeriesPerRow;
+  d->ThumbnailSize = thumbnailSize;
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMPatientItemWidget::numberOfSeriesPerRow() const
+ctkDICOMStudyItemWidget::ThumbnailSizeOption ctkDICOMPatientItemWidget::thumbnailSize() const
 {
   Q_D(const ctkDICOMPatientItemWidget);
-  return d->NumberOfSeriesPerRow;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::setMinimumThumbnailSize(int minimumThumbnailSize)
-{
-  Q_D(ctkDICOMPatientItemWidget);
-  d->MinimumThumbnailSize = minimumThumbnailSize;
-}
-
-//----------------------------------------------------------------------------
-int ctkDICOMPatientItemWidget::minimumThumbnailSize() const
-{
-  Q_D(const ctkDICOMPatientItemWidget);
-  return d->MinimumThumbnailSize;
+  return d->ThumbnailSize;
 }
 
 //----------------------------------------------------------------------------
@@ -619,11 +607,7 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString &studyItem)
     }
 
   studyItemWidget->setDescription(studyDescription);
-  studyItemWidget->setNumberOfSeriesPerRow(d->NumberOfSeriesPerRow);
-  if (this->parentWidget())
-    {
-    studyItemWidget->setThumbnailSize(std::max(int(this->parentWidget()->width() / d->NumberOfSeriesPerRow), d->MinimumThumbnailSize) * 0.94);
-    }
+  studyItemWidget->setThumbnailSize(d->ThumbnailSize);
   studyItemWidget->setFilteringSeriesDescription(d->FilteringSeriesDescription);
   studyItemWidget->setFilteringModalities(d->FilteringModalities);
   studyItemWidget->setDicomDatabase(d->DicomDatabase);

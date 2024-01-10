@@ -22,9 +22,6 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -49,16 +46,8 @@
       </property>
       <item>
        <widget class="ctkCollapsibleGroupBox" name="PatientInfoCollapsibleGroupBox">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
         <property name="title">
-         <string>Patient Information</string>
+         <string>Patient Information   </string>
         </property>
         <property name="flat">
          <bool>false</bool>
@@ -103,7 +92,7 @@
          </item>
          <item>
           <layout class="QFormLayout" name="PatientFormLayout">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="PatientIDLabel">
              <property name="minimumSize">
               <size>
@@ -111,49 +100,24 @@
                <height>0</height>
               </size>
              </property>
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="lineWidth">
-              <number>0</number>
-             </property>
-             <property name="midLineWidth">
-              <number>0</number>
-             </property>
              <property name="text">
               <string>ID</string>
-             </property>
-             <property name="scaledContents">
-              <bool>false</bool>
              </property>
              <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
              <property name="margin">
-              <number>10</number>
+              <number>3</number>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="PatientSexLabel">
              <property name="minimumSize">
               <size>
                <width>100</width>
                <height>0</height>
               </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
              </property>
              <property name="text">
               <string>Sex</string>
@@ -162,43 +126,33 @@
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
              <property name="margin">
-              <number>10</number>
+              <number>3</number>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="2" column="1">
             <widget class="QLabel" name="PatientSexValueLabel">
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
              <property name="text">
               <string/>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
              <property name="margin">
-              <number>10</number>
+              <number>3</number>
              </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="3" column="0">
             <widget class="QLabel" name="PatientBirthDateLabel">
              <property name="minimumSize">
               <size>
                <width>100</width>
                <height>0</height>
               </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
              </property>
              <property name="text">
               <string>Birth Date</string>
@@ -207,38 +161,28 @@
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
              <property name="margin">
-              <number>10</number>
+              <number>3</number>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="3" column="1">
             <widget class="QLabel" name="PatientBirthDateValueLabel">
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
              <property name="text">
               <string/>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
              <property name="margin">
-              <number>10</number>
+              <number>3</number>
              </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="1" column="1">
             <widget class="QLabel" name="PatientIDValueLabel">
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
              <property name="frameShape">
               <enum>QFrame::NoFrame</enum>
              </property>
@@ -255,10 +199,39 @@
               <string/>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
              <property name="margin">
-              <number>10</number>
+              <number>3</number>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="PatientNameLabel">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Name</string>
+             </property>
+             <property name="margin">
+              <number>3</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="PatientNameValueLabel">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="margin">
+              <number>3</number>
              </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -294,9 +267,6 @@
           <verstretch>2</verstretch>
          </sizepolicy>
         </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
@@ -318,11 +288,8 @@
            <x>0</x>
            <y>0</y>
            <width>996</width>
-           <height>181</height>
+           <height>191</height>
           </rect>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(255, 255, 255);</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5"/>
         </widget>

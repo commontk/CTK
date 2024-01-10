@@ -24,6 +24,7 @@
 //Qt includes
 #include <QDebug>
 #include <QIcon>
+#include <QGraphicsDropShadowEffect>
 #include <QLabel>
 #include <QPainter>
 #include <QProgressBar>
@@ -32,6 +33,7 @@
 
 // CTK includes
 #include <ctkLogger.h>
+#include <ctkPushButton.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -63,8 +65,10 @@ public:
   void drawModalityThumbnail();
   void drawThumbnail(const QString& file, int numberOfFrames);
   void drawTextWithShadow(QPainter *painter,
-                          const QRect &r,
-                          int flags,
+                          const QFont &font,
+                          const int &x,
+                          const int &y,
+                          const Qt::Alignment &alignment,
                           const QString &text);
   void updateThumbnailProgressBar();
 
@@ -81,9 +85,10 @@ public:
   bool StopJobs;
   bool RaiseJobsPriority;
   bool IsCloud;
+  bool RetrieveFailed;
   bool IsLoaded;
   bool IsVisible;
-  int ThumbnailSize;
+  int ThumbnailSizePixel;
   int NumberOfDownloads;
   QImage ThumbnailImage;
   bool isThumbnailDocument;
@@ -105,12 +110,13 @@ ctkDICOMSeriesItemWidgetPrivate::ctkDICOMSeriesItemWidgetPrivate(ctkDICOMSeriesI
   this->Modality = "";
 
   this->IsCloud = false;
+  this->RetrieveFailed = false;
   this->IsLoaded = false;
   this->IsVisible = false;
   this->StopJobs = false;
   this->RaiseJobsPriority = false;
   this->isThumbnailDocument = false;
-  this->ThumbnailSize = 300;
+  this->ThumbnailSizePixel = 200;
   this->NumberOfDownloads = 0;
 
   this->DicomDatabase = nullptr;
@@ -129,6 +135,7 @@ void ctkDICOMSeriesItemWidgetPrivate::init()
   this->setupUi(q);
 
   this->SeriesThumbnail->setTransformationMode(Qt::TransformationMode::SmoothTransformation);
+  this->SeriesThumbnail->textPushButton()->setElideMode(Qt::ElideRight);
 }
 
 //----------------------------------------------------------------------------
@@ -324,26 +331,30 @@ void ctkDICOMSeriesItemWidgetPrivate::drawModalityThumbnail()
     return;
     }
 
-  int margin = 10;
-  int fontSize = 40;
+  int textSize = floor(this->ThumbnailSizePixel / 7.);
+  QFont font = this->SeriesThumbnail->font();
+  font.setBold(true);
+  font.setPixelSize(textSize);
 
-  QPixmap resultPixmap(this->ThumbnailSize, this->ThumbnailSize);
+  QPixmap resultPixmap(this->ThumbnailSizePixel, this->ThumbnailSizePixel);
   resultPixmap.fill(Qt::transparent);
   ctkDICOMThumbnailGenerator thumbnailGenerator;
-  thumbnailGenerator.setWidth(this->ThumbnailSize);
-  thumbnailGenerator.setHeight(this->ThumbnailSize);
+  thumbnailGenerator.setWidth(this->ThumbnailSizePixel);
+  thumbnailGenerator.setHeight(this->ThumbnailSizePixel);
 
   QImage thumbnailImage;
   QPainter painter;
 
-  thumbnailGenerator.generateBlankThumbnail(thumbnailImage, Qt::white);
+  QColor backgroundColor = this->SeriesThumbnail->palette().color(QPalette::Normal, QPalette::Window);
+  thumbnailGenerator.generateBlankThumbnail(thumbnailImage, backgroundColor);
   resultPixmap = QPixmap::fromImage(thumbnailImage);
   if (painter.begin(&resultPixmap))
     {
     painter.setRenderHint(QPainter::Antialiasing);
     QRect rect = resultPixmap.rect();
-    painter.setFont(QFont("Arial", fontSize, QFont::Bold));
-    this->drawTextWithShadow(&painter, rect.adjusted(margin, margin, margin, margin), Qt::AlignCenter, this->Modality);
+    int x = int(rect.width() * 0.5);
+    int y = int(rect.height() * 0.5);
+    this->drawTextWithShadow(&painter, font, x, y, Qt::AlignCenter, this->Modality);
     painter.end();
     }
 
@@ -359,30 +370,30 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString &file, int num
     return;
     }
 
-  int margin = 10;
-  int fontSize = 12;
-  if (!this->SeriesThumbnail->text().isEmpty())
-    {
-    margin = 5;
-    fontSize = 14;
-    }
+  int margin = floor(this->ThumbnailSizePixel / 60.);
+  int iconSize = floor(this->ThumbnailSizePixel / 6.);
+  int textSize = floor(this->ThumbnailSizePixel / 12.);
+  QFont font = this->SeriesThumbnail->font();
+  font.setBold(true);
+  font.setPixelSize(textSize);
 
-  QPixmap resultPixmap(this->ThumbnailSize, this->ThumbnailSize);
+  QPixmap resultPixmap(this->ThumbnailSizePixel, this->ThumbnailSizePixel);
   resultPixmap.fill(Qt::transparent);
   ctkDICOMThumbnailGenerator thumbnailGenerator;
-  thumbnailGenerator.setWidth(this->ThumbnailSize);
-  thumbnailGenerator.setHeight(this->ThumbnailSize);
+  thumbnailGenerator.setWidth(this->ThumbnailSizePixel);
+  thumbnailGenerator.setHeight(this->ThumbnailSizePixel);
   bool thumbnailGenerated = true;
   bool emptyThumbnailGenerated = false;
   QPainter painter;
-  if (this->ThumbnailImage.width() != this->ThumbnailSize)
+  if (this->ThumbnailImage.width() != this->ThumbnailSizePixel)
     {
     if (!thumbnailGenerator.generateThumbnail(file, this->ThumbnailImage))
       {
       thumbnailGenerated = false;
       emptyThumbnailGenerated = true;
       this->isThumbnailDocument = true;
-      thumbnailGenerator.generateBlankThumbnail(this->ThumbnailImage, Qt::white);
+      QColor backgroundColor = this->SeriesThumbnail->palette().color(QPalette::Normal, QPalette::Window);
+      thumbnailGenerator.generateBlankThumbnail(this->ThumbnailImage, backgroundColor);
       resultPixmap = QPixmap::fromImage(this->ThumbnailImage);
       if (painter.begin(&resultPixmap))
         {
@@ -400,18 +411,18 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString &file, int num
       {
       painter.setRenderHint(QPainter::Antialiasing);
       QRect rect = resultPixmap.rect();
-      painter.setFont(QFont("Arial", fontSize, QFont::Bold));
-      int x = int((rect.width() / 2) - (this->ThumbnailImage.rect().width() / 2));
-      int y = int((rect.height() / 2) - (this->ThumbnailImage.rect().height() / 2));
+      painter.setFont(font);
+      int x = int((rect.width() * 0.5) - (this->ThumbnailImage.rect().width() * 0.5));
+      int y = int((rect.height() * 0.5) - (this->ThumbnailImage.rect().height() * 0.5));
       painter.drawPixmap(x, y, QPixmap::fromImage(this->ThumbnailImage));
-      QString topLeft = ctkDICOMSeriesItemWidget::tr("Series: %1\n%2").arg(this->SeriesNumber).arg(this->Modality);
-      this->drawTextWithShadow(&painter, rect.adjusted(margin, margin, margin, margin), Qt::AlignTop | Qt::AlignLeft, topLeft);
-      QString bottomLeft = ctkDICOMSeriesItemWidget::tr("N.frames: %1").arg(numberOfFrames);
-      this->drawTextWithShadow(&painter, rect.adjusted(margin, -margin, margin, -margin), Qt::AlignBottom | Qt::AlignLeft, bottomLeft);
+
+      QString topLeftString = ctkDICOMSeriesItemWidget::tr("Series: %1\n%2").arg(this->SeriesNumber).arg(this->Modality);
+      this->drawTextWithShadow(&painter, font, margin, margin, Qt::AlignTop | Qt::AlignLeft, topLeftString);
       QString rows = this->DicomDatabase->instanceValue(this->CentralFrameSOPInstanceUID, "0028,0010");
       QString columns = this->DicomDatabase->instanceValue(this->CentralFrameSOPInstanceUID, "0028,0011");
-      QString bottomRight = rows + "x" + columns;
-      this->drawTextWithShadow(&painter, rect.adjusted(-margin, -margin, -margin, -margin), Qt::AlignBottom | Qt::AlignRight, bottomRight);
+      QString bottomLeftString = rows + "x" + columns + "x" + QString::number(numberOfFrames);
+      this->drawTextWithShadow(&painter, font, margin, rect.height() - margin,
+                               Qt::AlignBottom | Qt::AlignLeft, bottomLeftString);
       QSvgRenderer renderer;
 
       if (this->IsCloud)
@@ -435,7 +446,7 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString &file, int num
         }
 
       QPoint topRight = rect.topRight();
-      QRectF bounds(topRight.x() - 48 - margin, topRight.y() + margin, 48, 48);
+      QRectF bounds(topRight.x() - iconSize - margin, topRight.y() + margin, iconSize, iconSize);
       renderer.render(&painter, bounds);
       painter.end();
       }
@@ -449,16 +460,67 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString &file, int num
 
 //----------------------------------------------------------------------------
 void ctkDICOMSeriesItemWidgetPrivate::drawTextWithShadow(QPainter *painter,
-                                                         const QRect &r,
-                                                         int flags, const
-                                                         QString &text)
+                                                         const QFont &font,
+                                                         const int &x,
+                                                         const int &y,
+                                                         const Qt::Alignment &alignment,
+                                                         const QString &text)
 {
-  painter->setPen(Qt::darkGray);
-  painter->drawText(r.adjusted(1, 1, 1, 1), flags, text);
-  painter->setPen(QColor(Qt::gray));
-  painter->drawText(r.adjusted(2, 2, 2, 2), flags, text);
-  painter->setPen(QPen(QColor(41, 121, 255)));
-  painter->drawText(r, flags, text);
+  QColor textColor(60, 164, 255, 225);
+  QGraphicsDropShadowEffect* dropShadowEffect = new QGraphicsDropShadowEffect;
+  dropShadowEffect->setXOffset(1);
+  dropShadowEffect->setYOffset(1);
+  dropShadowEffect->setBlurRadius(1);
+  dropShadowEffect->setColor(Qt::gray);
+  QLabel textLabel;
+  textLabel.setObjectName("ctkDrawTextWithShadowQLabel");
+  QPalette palette = textLabel.palette();
+  palette.setColor(QPalette::WindowText, textColor);
+  textLabel.setPalette(palette);
+  textLabel.setFont(font);
+  textLabel.setGraphicsEffect(dropShadowEffect);
+  textLabel.setText(text);
+  QPixmap textPixMap = textLabel.grab();
+  QRect rect = textPixMap.rect();
+  int textWidth = rect.width();
+  int textHeight = rect.height();
+
+  if (alignment == Qt::AlignCenter)
+    {
+    painter->drawPixmap(x - textWidth * 0.5, y - textHeight * 0.5, textPixMap);
+    }
+  else if (alignment == (Qt::AlignTop | Qt::AlignLeft))
+    {
+    painter->drawPixmap(x, y, textPixMap);
+    }
+  else if (alignment == Qt::AlignTop)
+    {
+    painter->drawPixmap(x - textWidth * 0.5, y, textPixMap);
+    }
+  else if (alignment == (Qt::AlignTop | Qt::AlignRight))
+    {
+    painter->drawPixmap(x - textWidth, y, textPixMap);
+    }
+  else if (alignment == (Qt::AlignHCenter | Qt::AlignLeft))
+    {
+    painter->drawPixmap(x, y - textHeight * 0.5, textPixMap);
+    }
+  else if (alignment == (Qt::AlignHCenter | Qt::AlignRight))
+    {
+    painter->drawPixmap(x - textWidth, y - textHeight * 0.5, textPixMap);
+    }
+  else if (alignment == (Qt::AlignBottom | Qt::AlignLeft))
+    {
+    painter->drawPixmap(x, y - textHeight, textPixMap);
+    }
+  else if (alignment == Qt::AlignBottom)
+    {
+    painter->drawPixmap(x - textWidth * 0.5, y - textHeight, textPixMap);
+    }
+  else if (alignment == (Qt::AlignBottom | Qt::AlignRight))
+    {
+    painter->drawPixmap(x - textWidth, y - textHeight, textPixMap);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -485,7 +547,7 @@ void ctkDICOMSeriesItemWidgetPrivate::updateThumbnailProgressBar()
       {
       this->drawThumbnail(file, numberOfFrames);
       }
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -594,6 +656,7 @@ void ctkDICOMSeriesItemWidget::setSeriesDescription(const QString& seriesDescrip
 {
   Q_D(ctkDICOMSeriesItemWidget);
   d->SeriesThumbnail->setText(seriesDescription);
+  d->SeriesThumbnail->textPushButton()->setToolTip(seriesDescription);
 }
 
 //------------------------------------------------------------------------------
@@ -639,6 +702,20 @@ bool ctkDICOMSeriesItemWidget::isCloud() const
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMSeriesItemWidget::setRetrieveFailed(const bool &retrieveFailed)
+{
+  Q_D(ctkDICOMSeriesItemWidget);
+  d->RetrieveFailed = retrieveFailed;
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMSeriesItemWidget::retrieveFailed() const
+{
+  Q_D(const ctkDICOMSeriesItemWidget);
+  return d->RetrieveFailed;
+}
+
+//----------------------------------------------------------------------------
 bool ctkDICOMSeriesItemWidget::IsLoaded() const
 {
   Q_D(const ctkDICOMSeriesItemWidget);
@@ -652,18 +729,18 @@ bool ctkDICOMSeriesItemWidget::IsVisible() const
   return d->IsVisible;
 }
 
-//----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setThumbnailSize(int thumbnailSize)
+//------------------------------------------------------------------------------
+void ctkDICOMSeriesItemWidget::setThumbnailSizePixel(const int &thumbnailSizePixel)
 {
   Q_D(ctkDICOMSeriesItemWidget);
-  d->ThumbnailSize = thumbnailSize;
+  d->ThumbnailSizePixel = thumbnailSizePixel;
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMSeriesItemWidget::thumbnailSize() const
+int ctkDICOMSeriesItemWidget::thumbnailSizePixel() const
 {
   Q_D(const ctkDICOMSeriesItemWidget);
-  return d->ThumbnailSize;
+  return d->ThumbnailSizePixel;
 }
 
 //----------------------------------------------------------------------------

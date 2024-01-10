@@ -692,8 +692,6 @@ ctkDICOMRetrieve::ctkDICOMRetrieve(QObject* parent)
 
   d->SCU.setVerbosePCMode(false);
   d->SCU.retrieve = this; // give the dcmtk level access to this for emitting signals
-
-  this->setDCMTKLogLevel(logger.logLevel());
 }
 
 //------------------------------------------------------------------------------
@@ -964,46 +962,6 @@ bool ctkDICOMRetrieve::wasCanceled()
 {
   Q_D(const ctkDICOMRetrieve);
   return d->Canceled;
-}
-
-//-----------------------------------------------------------------------------
-void ctkDICOMRetrieve::setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level)
-{
-  OFLogger::LogLevel dcmtkLogLevel = OFLogger::OFF_LOG_LEVEL;
-  if (level == ctkErrorLogLevel::LogLevel::Fatal)
-      {
-      dcmtkLogLevel = OFLogger::FATAL_LOG_LEVEL;
-      }
-  else if (level == ctkErrorLogLevel::LogLevel::Critical ||
-      level == ctkErrorLogLevel::LogLevel::Error)
-    {
-    dcmtkLogLevel = OFLogger::ERROR_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Warning)
-    {
-    dcmtkLogLevel = OFLogger::WARN_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Info)
-    {
-    dcmtkLogLevel = OFLogger::INFO_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Debug)
-    {
-    dcmtkLogLevel = OFLogger::DEBUG_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Trace ||
-           level == ctkErrorLogLevel::LogLevel::Status)
-    {
-    dcmtkLogLevel = OFLogger::TRACE_LOG_LEVEL;
-    }
-
-  OFLog::configure(dcmtkLogLevel);
-}
-
-//-----------------------------------------------------------------------------
-ctkErrorLogLevel::LogLevel ctkDICOMRetrieve::DCMTKLogLevel() const
-{
-  return logger.logLevel();
 }
 
 //------------------------------------------------------------------------------

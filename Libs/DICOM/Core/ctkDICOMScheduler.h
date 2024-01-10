@@ -27,7 +27,6 @@
 // Qt includes
 #include <QObject>
 #include <QMap>
-#include <QVariant>
 
 // ctkCore includes
 #include "ctkAbstractScheduler.h"
@@ -204,6 +203,9 @@ public:
   /// Return threadPool as a shared pointer
   /// (not Python-wrappable).
   QSharedPointer<QThreadPool> threadPoolShared() const;
+
+  /// Utility method to transform/pass informations between threads by qt signals
+  Q_INVOKABLE QVariant jobToDetail(ctkDICOMJob* job);
 
 Q_SIGNALS:
   void queueJobs();

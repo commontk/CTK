@@ -24,6 +24,7 @@
 
 // Qt includes
 class QImage;
+#include <QColor>
 
 // CTK includes
 #include "ctkDICOMWidgetsExport.h"
@@ -56,7 +57,7 @@ public:
 
   /// Generate a blank thumbnail image (currently a solid gray box of the requested thumbnail size).
   /// It can be used as a placeholder for invalid images or duringan image is loaded.
-  Q_INVOKABLE void generateBlankThumbnail(QImage& image, Qt::GlobalColor color = Qt::darkGray);
+  Q_INVOKABLE void generateBlankThumbnail(QImage& image, QColor color = Qt::darkGray);
 
   /// Set thumbnail width
   void setWidth(int width);

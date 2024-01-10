@@ -214,7 +214,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, c
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, Qt::GlobalColor color)
+void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, QColor color)
 {
   Q_D(ctkDICOMThumbnailGenerator);
   if (image.width() != d->Width || image.height() != d->Height)

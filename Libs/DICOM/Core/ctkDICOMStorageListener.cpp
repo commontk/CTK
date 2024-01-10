@@ -242,8 +242,6 @@ ctkDICOMStorageListener::ctkDICOMStorageListener(QObject* parentObject)
 {
   Q_D(ctkDICOMStorageListener);
   d->SCU.listener = this; // give the dcmtk level access to this for emitting signals
-
-  this->setDCMTKLogLevel(logger.logLevel());
 }
 
 //------------------------------------------------------------------------------
@@ -251,46 +249,6 @@ ctkDICOMStorageListener::~ctkDICOMStorageListener()
 {
   Q_D(ctkDICOMStorageListener);
   d->JobResponseSets.clear();
-}
-
-//-----------------------------------------------------------------------------
-void ctkDICOMStorageListener::setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level)
-{
-  OFLogger::LogLevel dcmtkLogLevel = OFLogger::OFF_LOG_LEVEL;
-  if (level == ctkErrorLogLevel::LogLevel::Fatal)
-    {
-    dcmtkLogLevel = OFLogger::FATAL_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Critical ||
-           level == ctkErrorLogLevel::LogLevel::Error)
-    {
-    dcmtkLogLevel = OFLogger::ERROR_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Warning)
-    {
-    dcmtkLogLevel = OFLogger::WARN_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Info)
-    {
-    dcmtkLogLevel = OFLogger::INFO_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Debug)
-    {
-    dcmtkLogLevel = OFLogger::DEBUG_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Trace ||
-           level == ctkErrorLogLevel::LogLevel::Status)
-    {
-    dcmtkLogLevel = OFLogger::TRACE_LOG_LEVEL;
-    }
-
-  OFLog::configure(dcmtkLogLevel);
-}
-
-//-----------------------------------------------------------------------------
-ctkErrorLogLevel::LogLevel ctkDICOMStorageListener::DCMTKLogLevel() const
-{
-  return logger.logLevel();
 }
 
 //------------------------------------------------------------------------------

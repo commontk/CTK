@@ -45,8 +45,9 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
   Q_PROPERTY(QString seriesNumber READ seriesNumber WRITE setSeriesNumber);
   Q_PROPERTY(QString modality READ modality WRITE setModality);
   Q_PROPERTY(QString seriesDescription READ seriesDescription WRITE setSeriesDescription);
-  Q_PROPERTY(QString isCloud READ isCloud);
-  Q_PROPERTY(int thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
+  Q_PROPERTY(bool isCloud READ isCloud);
+  Q_PROPERTY(bool retrieveFailed READ retrieveFailed WRITE setRetrieveFailed);
+  Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel WRITE setThumbnailSizePixel);
   Q_PROPERTY(bool stopJobs READ stopJobs WRITE setStopJobs);
   Q_PROPERTY(bool raiseJobsPriority READ raiseJobsPriority WRITE setRaiseJobsPriority);
 
@@ -94,16 +95,20 @@ public:
   /// Series lives in the server
   bool isCloud() const;
 
+  /// in case the retrieve job failed
+  void setRetrieveFailed(const bool& retrieveFailed);
+  bool retrieveFailed() const;
+
   /// Series has been loaded by the parent widget
   bool IsLoaded() const;
 
   /// Series is visible in the parent widget
   bool IsVisible() const;
 
-  /// Series Thumbnail size
-  /// 300 px by default
-  void setThumbnailSize(int thumbnailSize);
-  int thumbnailSize() const;
+  /// Set the thumbnail size in pixel
+  /// 200 by default
+  void setThumbnailSizePixel(const int &thumbnailSizePixel);
+  int thumbnailSizePixel() const;
 
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;

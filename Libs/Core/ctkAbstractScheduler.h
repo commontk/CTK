@@ -26,6 +26,7 @@
 
 // Qt includes
 #include <QObject>
+#include <QVariant>
 
 // CTK includes
 #include "ctkCoreExport.h"
@@ -40,15 +41,15 @@ public:
   virtual ~ctkAbstractScheduler();
 
 Q_SIGNALS:
-  void jobStarted(QString jobUID, QString jobType);
-  void jobFinished(QString jobUID, QString jobType);
-  void jobCanceled(QString jobUID, QString jobType);
-  void jobFailed(QString jobUID, QString jobType);
+  void jobStarted(QVariant data);
+  void jobFinished(QVariant data);
+  void jobCanceled(QVariant data);
+  void jobFailed(QVariant data);
 
 public Q_SLOTS:
   virtual void onJobStarted() = 0;
   virtual void onJobFinished() = 0;
-  virtual void onJobCanceled() = 0;  
+  virtual void onJobCanceled() = 0;
   virtual void onJobFailed() = 0;
 
 private:

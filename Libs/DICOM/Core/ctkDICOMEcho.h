@@ -72,10 +72,6 @@ public:
   void setConnectionTimeout(const int timeout);
   int connectionTimeout() const;
 
-  /// Log level for dcmtk. Default: Error.
-  Q_INVOKABLE void setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level);
-  Q_INVOKABLE ctkErrorLogLevel::LogLevel DCMTKLogLevel() const;
-
   /// Echo connection.
   bool echo();
 

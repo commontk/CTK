@@ -27,6 +27,7 @@
 
 #include "ctkWidgetsExport.h"
 
+class ctkPushButton;
 class ctkThumbnailLabelPrivate;
 
 class QFrame;
@@ -70,7 +71,7 @@ public:
   explicit ctkThumbnailLabel(QWidget* parent=0);
   virtual ~ctkThumbnailLabel();
 
-  Q_INVOKABLE QLabel* textLabel();
+  Q_INVOKABLE ctkPushButton* textPushButton();
   Q_INVOKABLE QFrame* pixmapFrame();
   Q_INVOKABLE QLabel* pixmapLabel();
   Q_INVOKABLE QProgressBar* operationProgressBar();

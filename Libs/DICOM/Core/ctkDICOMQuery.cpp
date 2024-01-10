@@ -152,53 +152,11 @@ ctkDICOMQuery::ctkDICOMQuery(QObject* parentObject)
 
   d->SCU.setVerbosePCMode(false);
   d->SCU.query = this; // give the dcmtk level access to this for emitting signals
-
-  this->setDCMTKLogLevel(logger.logLevel());
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMQuery::~ctkDICOMQuery()
 {
-}
-
-//-----------------------------------------------------------------------------
-void ctkDICOMQuery::setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level)
-{
-  OFLogger::LogLevel dcmtkLogLevel = OFLogger::OFF_LOG_LEVEL;
-  if (level == ctkErrorLogLevel::LogLevel::Fatal)
-      {
-      dcmtkLogLevel = OFLogger::FATAL_LOG_LEVEL;
-      }
-  else if (level == ctkErrorLogLevel::LogLevel::Critical ||
-      level == ctkErrorLogLevel::LogLevel::Error)
-    {
-    dcmtkLogLevel = OFLogger::ERROR_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Warning)
-    {
-    dcmtkLogLevel = OFLogger::WARN_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Info)
-    {
-    dcmtkLogLevel = OFLogger::INFO_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Debug)
-    {
-    dcmtkLogLevel = OFLogger::DEBUG_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Trace ||
-           level == ctkErrorLogLevel::LogLevel::Status)
-    {
-    dcmtkLogLevel = OFLogger::TRACE_LOG_LEVEL;
-    }
-
-  OFLog::configure(dcmtkLogLevel);
-}
-
-//-----------------------------------------------------------------------------
-ctkErrorLogLevel::LogLevel ctkDICOMQuery::DCMTKLogLevel() const
-{
-  return logger.logLevel();
 }
 
 /// Set methods for connectivity

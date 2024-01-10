@@ -71,10 +71,6 @@ public:
   Q_INVOKABLE void setJobUID(const QString& jobUID);
   Q_INVOKABLE QString jobUID() const;
 
-  /// Log level for dcmtk. Default: Error.
-  Q_INVOKABLE void setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level);
-  Q_INVOKABLE ctkErrorLogLevel::LogLevel DCMTKLogLevel() const;
-
   /// Start listen connection.
   bool listen();
 

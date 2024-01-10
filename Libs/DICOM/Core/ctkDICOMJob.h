@@ -24,7 +24,7 @@
 #ifndef __ctkDICOMJob_h
 #define __ctkDICOMJob_h
 
-// Qt includes 
+// Qt includes
 #include <QObject>
 #include <QSharedPointer>
 #include <QVariant>
@@ -52,7 +52,7 @@ public:
   typedef ctkAbstractJob Superclass;
   explicit ctkDICOMJob();
   virtual ~ctkDICOMJob();
-  
+
   enum DICOMLevels{
     Patients,
     Studies,

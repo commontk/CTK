@@ -90,10 +90,6 @@ public:
   /// operation is canceled?
   Q_INVOKABLE bool wasCanceled();
 
-  /// Log level for dcmtk. Default: Error.
-  Q_INVOKABLE void setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level);
-  Q_INVOKABLE ctkErrorLogLevel::LogLevel DCMTKLogLevel() const;
-
   /// where to insert new data sets obtained via get (must be set for
   /// get to succeed)
   Q_INVOKABLE void setDatabase(ctkDICOMDatabase& dicomDatabase);

@@ -30,10 +30,14 @@
 #include <QWidget>
 #include <QVariant>
 
+// ctkDICOMWidgets includes
+#include "ctkDICOMSeriesItemWidget.h"
+
 class ctkCollapsibleGroupBox;
-class ctkDICOMStudyItemWidgetPrivate;
 class ctkDICOMDatabase;
 class ctkDICOMScheduler;
+class ctkDICOMSeriesItemWidget;
+class ctkDICOMStudyItemWidgetPrivate;
 
 class QTableWidget;
 
@@ -41,14 +45,16 @@ class QTableWidget;
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
 {
   Q_OBJECT;
+  Q_ENUMS(ThumbnailSizeOption)
   Q_PROPERTY(QString studyItem READ studyItem WRITE setStudyItem);
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
   Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
   Q_PROPERTY(QString title READ title WRITE setTitle);
   Q_PROPERTY(QString description READ description WRITE setDescription);
   Q_PROPERTY(bool collapsed READ collapsed WRITE setCollapsed);
-  Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow WRITE setNumberOfSeriesPerRow);
-  Q_PROPERTY(int thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
+  Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow);
+  Q_PROPERTY(ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
+  Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel);
 
 public:
   typedef QWidget Superclass;
@@ -81,14 +87,22 @@ public:
   bool collapsed() const;
 
   /// Number of series displayed per row
-  /// 6 by default
-  void setNumberOfSeriesPerRow(int numberOfSeriesPerRow);
   int numberOfSeriesPerRow() const;
 
-  /// Series Thumbnail size
-  /// 300 px by default
-  void setThumbnailSize(int thumbnailSize);
-  int thumbnailSize() const;
+  enum ThumbnailSizeOption
+    {
+    Small = 0,
+    Medium,
+    Large,
+    };
+
+  /// Set the thumbnail size: small, medium, large
+  /// medium by default
+  void setThumbnailSize(const ThumbnailSizeOption &thumbnailSize);
+  ThumbnailSizeOption thumbnailSize() const;
+
+  /// Thumbnail size in pixel
+  int thumbnailSizePixel() const;
 
   /// Study is selected
   void setSelection(bool selected);
@@ -126,6 +140,9 @@ public:
 
   /// Series list table.
   Q_INVOKABLE QTableWidget* seriesListTableWidget();
+
+  /// Return all the series item widgets for the study
+  Q_INVOKABLE QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList()const;
 
   /// Add/Remove Series item widget
   Q_INVOKABLE void addSeriesItemWidget(const int& tableIndex,

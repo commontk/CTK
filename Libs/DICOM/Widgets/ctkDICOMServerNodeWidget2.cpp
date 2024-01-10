@@ -278,12 +278,12 @@ void ctkDICOMServerNodeWidget2Private::init()
                    q, SLOT(onTestCurrentServerNode()));
   QObject::connect(this->RemoveButton, SIGNAL(clicked()),
                    q, SLOT(onRemoveCurrentServerNode()));
-  this->SaveButton = this->buttonBox->button(QDialogButtonBox::StandardButton::Save);
-  this->SaveButton->setStyleSheet("text-align:left;");
+  this->SaveButton = this->ActionsButtonBox->button(QDialogButtonBox::StandardButton::Save);
   this->SaveButton->setText(QObject::tr("Apply changes"));
-  this->RestoreButton = this->buttonBox->button(QDialogButtonBox::StandardButton::Discard);
-  this->SaveButton->setStyleSheet("text-align:left;");
+  this->SaveButton->setIcon(QIcon(":/Icons/save.svg"));
+  this->RestoreButton = this->ActionsButtonBox->button(QDialogButtonBox::StandardButton::Discard);
   this->RestoreButton->setText(QObject::tr("Discard changes"));
+  this->RestoreButton->setIcon(QIcon(":/Icons/cancel.svg"));
   QObject::connect(this->RestoreButton, SIGNAL(clicked()),
                    q, SLOT(readSettings()));
   QObject::connect(this->SaveButton, SIGNAL(clicked()),
@@ -299,11 +299,11 @@ void ctkDICOMServerNodeWidget2Private::disconnectScheduler()
     return;
     }
 
-  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QString, QString)),
+  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
                                         q, SLOT(updateGUIState()));
-  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QString, QString)),
+  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
                                         q, SLOT(updateGUIState()));
-  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QString, QString)),
+  ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
                                         q, SLOT(updateGUIState()));
 }
 
@@ -316,11 +316,11 @@ void ctkDICOMServerNodeWidget2Private::connectScheduler()
     return;
     }
 
-  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobStarted(QString, QString)),
+  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
                                      q, SLOT(updateGUIState()));
-  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobFinished(QString, QString)),
+  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobFinished(QVariant)),
                                      q, SLOT(updateGUIState()));
-  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobFailed(QString, QString)),
+  ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
                                      q, SLOT(updateGUIState()));
 }
 
