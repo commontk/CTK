@@ -93,27 +93,27 @@ void ctkThumbnailLabelPrivate::setupUi(QWidget* widget)
 
 //----------------------------------------------------------------------------
 void ctkThumbnailLabelPrivate::updateThumbnail()
-{   
+{
   Q_Q(ctkThumbnailLabel);
   QSize size = q->size();
 
-  if (this->TextLabel->isVisible())
+  if (this->TextPushButton->isVisible())
     {
     if (this->TextPosition & Qt::AlignTop)
       {
-      size.setHeight(size.height() - this->TextLabel->height());
+      size.setHeight(size.height() - this->TextPushButton->height());
       }
     else if (this->TextPosition & Qt::AlignBottom)
       {
-      size.setHeight(size.height() - this->TextLabel->height());
+      size.setHeight(size.height() - this->TextPushButton->height());
       }
     else if (this->TextPosition & Qt::AlignLeft)
       {
-      size.setWidth(size.width() - this->TextLabel->width());
+      size.setWidth(size.width() - this->TextPushButton->width());
       }
     else if (this->TextPosition & Qt::AlignRight)
       {
-      size.setWidth(size.width() - this->TextLabel->width());
+      size.setWidth(size.width() - this->TextPushButton->width());
       }
     }
 
@@ -148,18 +148,16 @@ ctkThumbnailLabel::~ctkThumbnailLabel()
 }
 
 //----------------------------------------------------------------------------
-QLabel* ctkThumbnailLabel::textLabel()
+ctkPushButton* ctkThumbnailLabel::textPushButton()
 {
   Q_D(ctkThumbnailLabel);
-
-  return d->TextLabel;
+  return d->TextPushButton;
 }
 
 //----------------------------------------------------------------------------
 QFrame *ctkThumbnailLabel::pixmapFrame()
 {
   Q_D(ctkThumbnailLabel);
-
   return d->PixmapFrame;
 }
 
@@ -167,7 +165,6 @@ QFrame *ctkThumbnailLabel::pixmapFrame()
 QLabel* ctkThumbnailLabel::pixmapLabel()
 {
   Q_D(ctkThumbnailLabel);
-
   return d->PixmapLabel;
 }
 
@@ -175,7 +172,6 @@ QLabel* ctkThumbnailLabel::pixmapLabel()
 QProgressBar *ctkThumbnailLabel::operationProgressBar()
 {
   Q_D(ctkThumbnailLabel);
-
   return d->OperationProgressBar;
 }
 
@@ -184,8 +180,8 @@ void ctkThumbnailLabel::setText(const QString &text)
 {
   Q_D(ctkThumbnailLabel);
 
-  d->TextLabel->setText(text);
-  d->TextLabel->setVisible(!text.isEmpty() &&
+  d->TextPushButton->setText(text);
+  d->TextPushButton->setVisible(!text.isEmpty() &&
     ! (d->TextPosition & Qt::AlignHCenter &&
        d->TextPosition & Qt::AlignVCenter) );
 }
@@ -194,7 +190,7 @@ void ctkThumbnailLabel::setText(const QString &text)
 QString ctkThumbnailLabel::text()const
 {
   Q_D(const ctkThumbnailLabel);
-  return d->TextLabel->text();
+  return d->TextPushButton->text();
 }
 
 //----------------------------------------------------------------------------
@@ -205,7 +201,7 @@ void ctkThumbnailLabel::setTextPosition(const Qt::Alignment& position)
   int textIndex = -1;
   for (textIndex = 0; textIndex < this->layout()->count(); ++textIndex)
     {
-    if (this->layout()->itemAt(textIndex)->widget() == d->TextLabel)
+    if (this->layout()->itemAt(textIndex)->widget() == d->TextPushButton)
       {
       break;
       }
@@ -243,11 +239,11 @@ void ctkThumbnailLabel::setTextPosition(const Qt::Alignment& position)
     }
   if (row == 1 && col == 1)
     {
-    d->TextLabel->setVisible(false);
+    d->TextPushButton->setVisible(false);
     }
   else
     {
-    gridLayout->addWidget(d->TextLabel,row, col);
+    gridLayout->addWidget(d->TextPushButton,row, col);
     }
 }
 
@@ -353,10 +349,10 @@ QColor ctkThumbnailLabel::selectedColor()const
 QSize ctkThumbnailLabel::minimumSizeHint()const
 {
   Q_D(const ctkThumbnailLabel);
-  if (d->TextLabel->isVisibleTo(const_cast<ctkThumbnailLabel*>(this)) &&
-      !d->TextLabel->text().isEmpty())
+  if (d->TextPushButton->isVisibleTo(const_cast<ctkThumbnailLabel*>(this)) &&
+      !d->TextPushButton->text().isEmpty())
     {
-    return d->TextLabel->minimumSizeHint();
+    return d->TextPushButton->minimumSizeHint();
     }
   return QSize();
 }

@@ -37,9 +37,6 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
@@ -63,9 +60,6 @@
        <widget class="ctkThumbnailLabel" name="SeriesThumbnail">
         <property name="font">
          <font/>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
         </property>
         <property name="textPosition">
          <set>Qt::AlignBottom|Qt::AlignHCenter</set>

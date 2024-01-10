@@ -158,5 +158,5 @@ void ctkDICOMJob::copyJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSe
       QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
     jobResponseSetCopy->deepCopy(jobResponseSet.data());
     this->JobResponseSets.append(jobResponseSetCopy);
-    }
+  }
 }

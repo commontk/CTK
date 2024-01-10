@@ -31,9 +31,13 @@
 #include <QVariant>
 
 // CTK includes
-#include <ctkDICOMPatientItemWidget.h>
+#include "ctkDICOMPatientItemWidget.h"
+#include "ctkDICOMStudyItemWidget.h"
 #include "ctkDICOMModel.h"
 #include "ctkErrorLogLevel.h"
+
+// DCMTK includes
+#include <dcmtk/oflog/oflog.h>
 
 class ctkCollapsibleGroupBox;
 class ctkDICOMVisualBrowserWidgetPrivate;
@@ -75,8 +79,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMVisualBrowserWidget : public QWidget
   Q_PROPERTY(QString filteringPatientID READ filteringPatientID WRITE setFilteringPatientID);
   Q_PROPERTY(QString filteringPatientName READ filteringPatientName WRITE setFilteringPatientName);
   Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
-  Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow WRITE setNumberOfSeriesPerRow);
-  Q_PROPERTY(int minimumThumbnailSize READ minimumThumbnailSize WRITE setMinimumThumbnailSize);
+  Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible)
   Q_PROPERTY(bool deleteActionVisible READ isDeleteActionVisible WRITE setDeleteActionVisible)
   Q_PROPERTY(QString storageAETitle READ storageAETitle WRITE setStorageAETitle);
@@ -154,6 +157,10 @@ public:
   Q_INVOKABLE ctkDICOMServerNodeWidget2* serverSettingsWidget();
   Q_INVOKABLE ctkCollapsibleGroupBox* serverSettingsGroupBox();
 
+  /// Log level for dcmtk. Default: Error.
+  Q_INVOKABLE void setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level);
+  Q_INVOKABLE dcmtk::log4cplus::LogLevel DCMTKLogLevel() const;
+
   /// Query Filters
   /// Empty by default
   void setFilteringPatientID(const QString& filteringPatientID);
@@ -183,27 +190,22 @@ public:
 
   /// Number of non collapsed studies per patient
   /// 2 by default
-  void setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient);
+  void setNumberOfStudiesPerPatient(const int &numberOfStudiesPerPatient);
   int numberOfStudiesPerPatient() const;
 
-  /// Number of series displayed per row
-  /// 6 by default
-  void setNumberOfSeriesPerRow(int numberOfSeriesPerRow);
-  int numberOfSeriesPerRow() const;
-
-  /// Minimum thumbnail size in pixel
-  /// 300 by default
-  void setMinimumThumbnailSize(int minimumThumbnailSize);
-  int minimumThumbnailSize() const;
+  /// Set the thumbnail size: small, medium, large
+  /// medium by default
+  void setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize);
+  ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize() const;
 
   /// Set if send action on right click context menu is available
   /// false by default
-  void setSendActionVisible(bool visible);
+  void setSendActionVisible(const bool &visible);
   bool isSendActionVisible() const;
 
   /// Set if cancel action on right click context menu is available
   /// true by default
-  void setDeleteActionVisible(bool visible);
+  void setDeleteActionVisible(const bool &visible);
   bool isDeleteActionVisible() const;
 
   /// Add/Remove Patient item widget
@@ -297,15 +299,26 @@ public Q_SLOTS:
   void onIndexingProgressDetail(const QString&);
   void onIndexingComplete(int patientsAdded, int studiesAdded, int seriesAdded, int imagesAdded);
 
+  /// Show pop-up window for the user to select database directory
+  void selectDatabaseDirectory();
+
+  /// Create new database directory.
+  /// Current database directory used as a basis.
+  void createNewDatabaseDirectory();
+
+  /// Update database in-place to required schema version
+  void updateDatabase();
+
   void onFilteringPatientIDChanged();
   void onFilteringPatientNameChanged();
   void onFilteringStudyDescriptionChanged();
   void onFilteringSeriesDescriptionChanged();
   void onFilteringModalityCheckableComboBoxChanged();
   void onFilteringDateComboBoxChanged(int);
-  void onQueryPatient();
+  void onQueryPatients();
+  void onShowPatients();
   void updateGUIFromScheduler(QVariant);
-  void onTaskFailed(QString, QString);
+  void onTaskFailed(QVariant);
   void onPatientItemChanged(int);
   void onClose();
   void onLoad();

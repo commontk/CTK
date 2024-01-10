@@ -250,7 +250,7 @@ void ctkDirectoryButton::setAcceptMode(QFileDialog::AcceptMode mode)
 }
 
 //-----------------------------------------------------------------------------
-void ctkDirectoryButton::browse()
+QString ctkDirectoryButton::browse()
 {
   // See https://bugreports.qt-project.org/browse/QTBUG-10244
   class ExcludeReadOnlyFilterProxyModel : public QSortFilterProxyModel
@@ -308,9 +308,10 @@ void ctkDirectoryButton::browse()
   // An empty directory means either that the user cancelled the dialog or the selected directory is readonly
   if (dir.isEmpty())
     {
-    return;
+    return "";
     }
   this->setDirectory(dir);
+  return dir;
 }
 
 //-----------------------------------------------------------------------------

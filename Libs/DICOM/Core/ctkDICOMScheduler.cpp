@@ -23,6 +23,7 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMInserterJob.h"
+#include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMQueryJob.h"
 #include "ctkDICOMRetrieveJob.h"
 #include "ctkDICOMScheduler.h"
@@ -1014,6 +1015,34 @@ QSharedPointer<QThreadPool> ctkDICOMScheduler::threadPoolShared() const
 }
 
 //----------------------------------------------------------------------------
+QVariant ctkDICOMScheduler::jobToDetail(ctkDICOMJob* job)
+{
+  ctkJobDetail td;
+  td.JobClass = job->className();
+  td.DICOMLevel = job->dicomLevel();
+  td.JobUID = job->jobUID();
+  td.PatientID = job->patientID();
+  td.StudyInstanceUID = job->studyInstanceUID();
+  td.SeriesInstanceUID = job->seriesInstanceUID();
+  td.SOPInstanceUID = job->sopInstanceUID();
+  ctkDICOMQueryJob* queryJob = qobject_cast<ctkDICOMQueryJob*>(job);
+  if (queryJob && queryJob->server())
+    {
+    td.ConnectionName = queryJob->server()->connectionName();
+    }
+  ctkDICOMRetrieveJob* retrieveJob = qobject_cast<ctkDICOMRetrieveJob*>(job);
+  if (retrieveJob && retrieveJob->server())
+    {
+    td.ConnectionName = retrieveJob->server()->connectionName();
+    }
+
+  QVariant data;
+  data.setValue(td);
+
+  return data;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMScheduler::onJobStarted()
 {
   ctkDICOMJob* job = qobject_cast<ctkDICOMJob*>(this->sender());
@@ -1023,8 +1052,7 @@ void ctkDICOMScheduler::onJobStarted()
     }
 
   logger.debug(job->loggerReport("started"));
-  QString jobType = job->className();
-  emit this->jobStarted(job->jobUID(), jobType);
+  emit this->jobStarted(this->jobToDetail(job));
 }
 
 //----------------------------------------------------------------------------
@@ -1037,8 +1065,7 @@ void ctkDICOMScheduler::onJobCanceled()
     }
 
   logger.debug(job->loggerReport("canceled"));
-  QString jobType = job->className();
-  emit this->jobCanceled(job->jobUID(), jobType);
+  emit this->jobCanceled(this->jobToDetail(job));
 }
 
 //----------------------------------------------------------------------------
@@ -1052,12 +1079,12 @@ void ctkDICOMScheduler::onJobFailed()
 
   logger.debug(job->loggerReport("failed"));
 
+  QVariant data = this->jobToDetail(job);
   QString jobUID = job->jobUID();
-  QString jobType = job->className();
   this->deleteWorker(jobUID);
   this->deleteJob(jobUID);
 
-  emit this->jobFailed(jobUID, jobType);
+  emit this->jobFailed(data);
 }
 
 //----------------------------------------------------------------------------
@@ -1071,12 +1098,12 @@ void ctkDICOMScheduler::onJobFinished()
 
   logger.debug(job->loggerReport("finished"));
 
+  QVariant data = this->jobToDetail(job);
   QString jobUID = job->jobUID();
-  QString jobType = job->className();
   this->deleteWorker(jobUID);
   this->deleteJob(jobUID);
 
-  emit this->jobFinished(jobUID, jobType);
+  emit this->jobFinished(data);
 }
 
 //----------------------------------------------------------------------------

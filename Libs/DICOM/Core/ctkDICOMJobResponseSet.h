@@ -30,6 +30,7 @@
 #include <QMap>
 #include <QVariant>
 
+#include "ctkDICOMJob.h"
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMItem.h"
 
@@ -133,6 +134,8 @@ private:
 struct CTK_DICOM_CORE_EXPORT ctkJobDetail {
   explicit ctkJobDetail():
     TypeOfJob(ctkDICOMJobResponseSet::JobType::None),
+    JobClass(""),
+    DICOMLevel(ctkDICOMJob::DICOMLevels::Patients),
     JobUID(""),
     PatientID(""),
     StudyInstanceUID(""),
@@ -143,6 +146,8 @@ struct CTK_DICOM_CORE_EXPORT ctkJobDetail {
   virtual ~ctkJobDetail(){};
 
   ctkDICOMJobResponseSet::JobType TypeOfJob;
+  QString JobClass;
+  ctkDICOMJob::DICOMLevels DICOMLevel;
   QString JobUID;
   QString PatientID;
   QString StudyInstanceUID;

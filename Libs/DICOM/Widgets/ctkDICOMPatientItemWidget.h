@@ -26,9 +26,12 @@
 
 #include "ctkDICOMWidgetsExport.h"
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 #include <QVariant>
+
+// CTK includes
+#include "ctkDICOMStudyItemWidget.h"
 
 class ctkDICOMPatientItemWidgetPrivate;
 
@@ -44,8 +47,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
   Q_PROPERTY(QString patientItem READ patientItem WRITE setPatientItem);
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
   Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
-  Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow WRITE setNumberOfSeriesPerRow);
-  Q_PROPERTY(int minimumThumbnailSize READ minimumThumbnailSize WRITE setMinimumThumbnailSize);
+  Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
 
 public:
   typedef QWidget Superclass;
@@ -97,15 +99,10 @@ public:
   void setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient);
   int numberOfStudiesPerPatient() const;
 
-  /// Number of series displayed per row
-  /// 6 by default
-  void setNumberOfSeriesPerRow(int numberOfSeriesPerRow);
-  int numberOfSeriesPerRow() const;
-
-  /// Minimum thumbnail size in pixel
-  /// 300 by default
-  void setMinimumThumbnailSize(int minimumThumbnailSize);
-  int minimumThumbnailSize() const;
+  /// Set the thumbnail size: small, medium, large
+  /// medium by default
+  void setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize);
+  ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize() const;
 
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;

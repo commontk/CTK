@@ -104,10 +104,6 @@ public:
   /// operation is canceled?
   Q_INVOKABLE bool wasCanceled();
 
-  /// Log level for dcmtk. Default: Error.
-  Q_INVOKABLE void setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level);
-  Q_INVOKABLE ctkErrorLogLevel::LogLevel DCMTKLogLevel() const;
-
   /// Query a remote DICOM Image Store SCP.
   /// You must at least set the host and port before calling query()
   Q_INVOKABLE bool query(ctkDICOMDatabase& database);

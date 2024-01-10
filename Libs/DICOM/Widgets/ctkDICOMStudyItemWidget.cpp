@@ -24,6 +24,7 @@
 //Qt includes
 #include <QDebug>
 #include <QLabel>
+#include <QScreen>
 #include <QTableWidgetItem>
 
 // CTK includes
@@ -35,7 +36,6 @@
 #include "ctkDICOMJobResponseSet.h"
 
 // ctkDICOMWidgets includes
-#include "ctkDICOMSeriesItemWidget.h"
 #include "ctkDICOMStudyItemWidget.h"
 #include "ui_ctkDICOMStudyItemWidget.h"
 
@@ -66,6 +66,10 @@ public:
   void init(QWidget* parentWidget);
   void updateColumnsWidths();
   void createSeries();
+  int getScreenWidth();
+  int getScreenHeight();
+  int calculateNumerOfSeriesPerRow();
+  int calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize);
   void addEmptySeriesItemWidget(const int& rowIndex,
                                 const int& columnIndex);
   bool isSeriesItemAlreadyAdded(const QString& seriesItem);
@@ -77,7 +81,8 @@ public:
   QSharedPointer<ctkDICOMScheduler> Scheduler;
   QSharedPointer<QWidget> VisualDICOMBrowser;
 
-  int ThumbnailSize;
+  ctkDICOMStudyItemWidget::ThumbnailSizeOption ThumbnailSize;
+  int ThumbnailSizePixel;
   QString PatientID;
   QString StudyInstanceUID;
   QString StudyItem;
@@ -90,7 +95,8 @@ public:
 ctkDICOMStudyItemWidgetPrivate::ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItemWidget& obj)
   : q_ptr(&obj)
 {
-  this->ThumbnailSize = 300;
+  this->ThumbnailSize = ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium;
+  this->ThumbnailSizePixel = 200;
   this->FilteringSeriesDescription = "";
   this->PatientID = "";
   this->StudyInstanceUID = "";
@@ -142,9 +148,9 @@ void ctkDICOMStudyItemWidgetPrivate::init(QWidget* parentWidget)
 //------------------------------------------------------------------------------
 void ctkDICOMStudyItemWidgetPrivate::updateColumnsWidths()
 {
-  for (int i = 0; i < this->SeriesListTableWidget->columnCount(); ++i)
+  for (int columnIndex = 0; columnIndex < this->SeriesListTableWidget->columnCount(); ++columnIndex)
     {
-    this->SeriesListTableWidget->setColumnWidth(i, this->ThumbnailSize);
+    this->SeriesListTableWidget->setColumnWidth(columnIndex, this->ThumbnailSizePixel);
     }
 }
 
@@ -228,13 +234,84 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
       {
       iHeight += this->SeriesListTableWidget->verticalHeader()->sectionSize(rowIndex);
       }
-    if (iHeight < this->ThumbnailSize)
+    if (iHeight < this->ThumbnailSizePixel)
       {
-      iHeight = this->ThumbnailSize;
+      iHeight = this->ThumbnailSizePixel;
       }
     iHeight += 25;
     this->SeriesListTableWidget->setMinimumHeight(iHeight);
+  }
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMStudyItemWidgetPrivate::getScreenWidth()
+{
+  QList<QScreen *> screens = QApplication::screens();
+  int width = 1920;
+  foreach (QScreen* screen, screens)
+    {
+    QRect rec = screen->geometry();
+    if (rec.width() > width)
+      {
+      width = rec.width();
+      }
     }
+
+  return width;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMStudyItemWidgetPrivate::getScreenHeight()
+{
+  QList<QScreen *> screens = QApplication::screens();
+  int height = 1080;
+  foreach (QScreen* screen, screens)
+    {
+    QRect rec = screen->geometry();
+    if (rec.height() > height)
+      {
+      height = rec.height();
+      }
+    }
+
+  return height;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMStudyItemWidgetPrivate::calculateNumerOfSeriesPerRow()
+{
+  int width = this->getScreenWidth();
+  int numberOfSeriesPerRow = 1;
+  numberOfSeriesPerRow = floor(width / this->ThumbnailSizePixel) - 1;
+
+  return numberOfSeriesPerRow;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMStudyItemWidgetPrivate::calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize)
+{
+  int height = this->getScreenHeight();
+  int thumbnailSizeInPixel = 1;
+  switch (thumbnailSize)
+    {
+    case ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small:
+      {
+      thumbnailSizeInPixel = floor(height / 7.);
+      }
+    break;
+    case ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium:
+      {
+      thumbnailSizeInPixel = floor(height / 5.5);
+      }
+    break;
+    case ctkDICOMStudyItemWidget::ThumbnailSizeOption::Large:
+      {
+      thumbnailSizeInPixel = floor(height / 4.);
+      }
+    break;
+    }
+
+  return thumbnailSizeInPixel;
 }
 
 //------------------------------------------------------------------------------
@@ -243,7 +320,7 @@ void ctkDICOMStudyItemWidgetPrivate::addEmptySeriesItemWidget(const int& rowInde
 {
   QTableWidgetItem *tableItem = new QTableWidgetItem;
   tableItem->setFlags(Qt::NoItemFlags);
-  tableItem->setSizeHint(QSize(this->ThumbnailSize, this->ThumbnailSize));
+  tableItem->setSizeHint(QSize(this->ThumbnailSizePixel, this->ThumbnailSizePixel));
 
   this->SeriesListTableWidget->setItem(rowIndex, columnIndex, tableItem);
 }
@@ -388,14 +465,6 @@ bool ctkDICOMStudyItemWidget::collapsed()const
   return d->StudyItemCollapsibleGroupBox->collapsed();
 }
 
-//----------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::setNumberOfSeriesPerRow(int numberOfSeriesPerRow)
-{
-  Q_D(ctkDICOMStudyItemWidget);
-  d->SeriesListTableWidget->setColumnCount(numberOfSeriesPerRow);
-  d->updateColumnsWidths();
-}
-
 //------------------------------------------------------------------------------
 int ctkDICOMStudyItemWidget::numberOfSeriesPerRow() const
 {
@@ -403,19 +472,28 @@ int ctkDICOMStudyItemWidget::numberOfSeriesPerRow() const
   return d->SeriesListTableWidget->columnCount();
 }
 
-//----------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::setThumbnailSize(int thumbnailSize)
+//------------------------------------------------------------------------------
+void ctkDICOMStudyItemWidget::setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize)
 {
   Q_D(ctkDICOMStudyItemWidget);
   d->ThumbnailSize = thumbnailSize;
+  d->ThumbnailSizePixel = d->calculateThumbnailSizeInPixel(d->ThumbnailSize);
+  d->SeriesListTableWidget->setColumnCount(d->calculateNumerOfSeriesPerRow());
   d->updateColumnsWidths();
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMStudyItemWidget::thumbnailSize() const
+ctkDICOMStudyItemWidget::ThumbnailSizeOption ctkDICOMStudyItemWidget::thumbnailSize() const
 {
   Q_D(const ctkDICOMStudyItemWidget);
   return d->ThumbnailSize;
+}
+
+//------------------------------------------------------------------------------
+int ctkDICOMStudyItemWidget::thumbnailSizePixel() const
+{
+  Q_D(const ctkDICOMStudyItemWidget);
+  return d->ThumbnailSizePixel;
 }
 
 //------------------------------------------------------------------------------
@@ -557,6 +635,30 @@ QTableWidget *ctkDICOMStudyItemWidget::seriesListTableWidget()
 }
 
 //------------------------------------------------------------------------------
+QList<ctkDICOMSeriesItemWidget *> ctkDICOMStudyItemWidget::seriesItemWidgetsList() const
+{
+  Q_D(const ctkDICOMStudyItemWidget);
+  QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList;
+
+  for (int row = 0; row < d->SeriesListTableWidget->rowCount(); row++)
+    {
+    for (int column = 0 ; column < d->SeriesListTableWidget->columnCount(); column++)
+      {
+      ctkDICOMSeriesItemWidget* seriesItemWidget =
+        qobject_cast<ctkDICOMSeriesItemWidget*>(d->SeriesListTableWidget->cellWidget(row, column));
+      if (!seriesItemWidget)
+        {
+        continue;
+        }
+
+      seriesItemWidgetsList.append(seriesItemWidget);
+      }
+    }
+
+  return seriesItemWidgetsList;
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMStudyItemWidget::addSeriesItemWidget(const int& tableIndex,
                                                   const QString &seriesItem,
                                                   const QString &seriesInstanceUID,
@@ -579,7 +681,7 @@ void ctkDICOMStudyItemWidget::addSeriesItemWidget(const int& tableIndex,
   seriesItemWidget->setSeriesNumber(seriesNumber);
   seriesItemWidget->setModality(modality);
   seriesItemWidget->setSeriesDescription(seriesDescription);
-  seriesItemWidget->setThumbnailSize(d->ThumbnailSize);
+  seriesItemWidget->setThumbnailSizePixel(d->ThumbnailSizePixel);
   seriesItemWidget->setDicomDatabase(d->DicomDatabase);
   seriesItemWidget->setScheduler(d->Scheduler);
   seriesItemWidget->generateInstances();
@@ -589,14 +691,14 @@ void ctkDICOMStudyItemWidget::addSeriesItemWidget(const int& tableIndex,
                 d->VisualDICOMBrowser.data(), SLOT(showSeriesContextMenu(const QPoint&)));
 
   QTableWidgetItem *tableItem = new QTableWidgetItem;
-  tableItem->setSizeHint(QSize(d->ThumbnailSize, d->ThumbnailSize));
+  tableItem->setSizeHint(QSize(d->ThumbnailSizePixel, d->ThumbnailSizePixel));
 
   int rowIndex = floor(tableIndex / d->SeriesListTableWidget->columnCount());
   int columnIndex = tableIndex % d->SeriesListTableWidget->columnCount();
   if (columnIndex == 0)
     {
     d->SeriesListTableWidget->insertRow(rowIndex);
-    d->SeriesListTableWidget->setRowHeight(rowIndex, d->ThumbnailSize + 30);
+    d->SeriesListTableWidget->setRowHeight(rowIndex, d->ThumbnailSizePixel + 30);
     }
 
   d->SeriesListTableWidget->setItem(rowIndex, columnIndex, tableItem);
@@ -629,7 +731,7 @@ void ctkDICOMStudyItemWidget::removeSeriesItemWidget(const QString& seriesItem)
       d->addEmptySeriesItemWidget(row, column);
       break;
       }
-  }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -683,7 +785,5 @@ void ctkDICOMStudyItemWidget::updateGUIFromScheduler(QVariant data)
 //------------------------------------------------------------------------------
 void ctkDICOMStudyItemWidget::onStudySelectionClicked(bool toggled)
 {
-  Q_D(ctkDICOMStudyItemWidget);
-
   this->setSelection(toggled);
 }

@@ -20,9 +20,6 @@
    <iconset resource="ctkDICOMWidget.qrc">
     <normaloff>:/Icons/patient.svg</normaloff>:/Icons/patient.svg</iconset>
   </property>
-  <property name="styleSheet">
-   <string notr="true"/>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>3</number>
@@ -40,19 +37,57 @@
     <number>2</number>
    </property>
    <item>
+    <widget class="QFrame" name="DatabaseDirectoryProblemFrame">
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);background-color: rgb(245, 245, 170);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="DatabaseDirectoryProblemLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Warning</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="UpdateDatabaseButton">
+        <property name="text">
+         <string>Update database</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="CreateNewDatabaseButton">
+        <property name="text">
+         <string>Create new database</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="SelectDatabaseDirectoryButton">
+        <property name="text">
+         <string>Select database folder</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="topHorizontalLayout">
      <item>
       <widget class="ctkCollapsibleGroupBox" name="SearchPatientsCollapsibleGroupBox">
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
        <property name="title">
-        <string>Patients Search</string>
+        <string>Patients Search   </string>
        </property>
        <property name="collapsed">
         <bool>false</bool>
@@ -95,11 +130,6 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
                 </property>
                 <property name="text">
                  <string>ID</string>
@@ -156,11 +186,6 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
                 <property name="text">
                  <string>Name</string>
                 </property>
@@ -216,11 +241,6 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
                 <property name="text">
                  <string>Study</string>
                 </property>
@@ -275,11 +295,6 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
                 </property>
                 <property name="text">
                  <string>Series</string>
@@ -348,11 +363,6 @@
                   <height>16777215</height>
                  </size>
                 </property>
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
                 <property name="text">
                  <string>Modality</string>
                 </property>
@@ -383,12 +393,6 @@
                 </property>
                 <property name="toolTip">
                  <string>Filter by modality</string>
-                </property>
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
                 </property>
                 <property name="currentText">
                  <string>Any</string>
@@ -492,11 +496,6 @@
                   <width>150</width>
                   <height>16777215</height>
                  </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
                 </property>
                 <property name="text">
                  <string>Date</string>
@@ -642,14 +641,6 @@
      </item>
      <item>
       <widget class="ctkCollapsibleGroupBox" name="ActionsCollapsibleGroupBox">
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
        <property name="title">
         <string>Actions</string>
        </property>
@@ -728,9 +719,6 @@
      <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>
      </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
      <property name="text">
       <string>No filters have been set and no patients have been found in the local database.
 Please set at least one filter to query the servers</string>
@@ -780,9 +768,6 @@ Please set at least one filter to query the servers</string>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
      <property name="tabPosition">
       <enum>QTabWidget::North</enum>
      </property>
@@ -790,12 +775,12 @@ Please set at least one filter to query the servers</string>
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="elideMode">
@@ -892,14 +877,6 @@ Please set at least one filter to query the servers</string>
    </item>
    <item>
     <widget class="ctkCollapsibleGroupBox" name="ServersSettingsCollapsibleGroupBox">
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
      <property name="title">
       <string>Settings</string>
      </property>
