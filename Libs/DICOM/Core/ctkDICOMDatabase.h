@@ -430,6 +430,21 @@ Q_SIGNALS:
   ///  - instanceUID (unique)
   void instanceAdded(QString);
 
+  /// This signal is emitted when a patient is removed from CTK database using removePatient method.
+  /// patientRemoved arguments:
+  ///  - patientID (not unique across institutions)
+  void patientRemoved(QString);
+
+  /// This signal is emitted when a study is removed from CTK database using removeStudy method.
+  /// studyRemoved arguments:
+  ///  - studyInstanceUID (unique)
+  void studyRemoved(QString);
+
+  /// This signal is emitted when a serie is removed from CTK database using removeSeries method.
+  /// seriesRemoved arguments:
+  ///  - seriesInstanceUID (unique)
+  void seriesRemoved(QString);
+
   /// This signal is emitted when the database has been opened.
   void opened();
 

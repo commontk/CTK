@@ -3014,6 +3014,8 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
 
   d->resetLastInsertedValues();
 
+  emit seriesRemoved(seriesInstanceUID);
+
   return true;
 }
 
@@ -3059,6 +3061,12 @@ bool ctkDICOMDatabase::removeStudy(const QString& studyInstanceUID, bool cleanup
     }
   }
   d->resetLastInsertedValues();
+
+  if(result)
+  {
+    emit studyRemoved(studyInstanceUID);
+  }
+
   return result;
 }
 
@@ -3086,6 +3094,12 @@ bool ctkDICOMDatabase::removePatient(const QString& patientID, bool cleanup/*=tr
     }
   }
   d->resetLastInsertedValues();
+
+  if(result)
+  {
+    emit patientRemoved(patientID);
+  }
+
   return result;
 }
 
