@@ -21,6 +21,7 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDir>
+#include <QSignalSpy>
 #include <QTemporaryDir>
 
 // ctkCore includes
@@ -156,6 +157,34 @@ int ctkDICOMDatabaseTest6( int argc, char * argv [] )
               << std::endl;
     return EXIT_FAILURE;
     }
+
+  {
+    QSignalSpy spySeries(&database, SIGNAL(seriesRemoved(QString)));
+    database.removeSeries(seriesUID);
+    CHECK_INT(spySeries.count(), 1);
+    CHECK_QSTRING(spySeries.at(0).value(0).toString(), seriesUID);
+
+    QStringList seriesUIDs = database.seriesForStudy(studyUID);
+    CHECK_INT(seriesUIDs.count(), 0);
+  }
+  {
+    QSignalSpy spyStudy(&database, SIGNAL(studyRemoved(QString)));
+    database.removeStudy(studyUID);
+    CHECK_INT(spyStudy.count(), 1);
+    CHECK_QSTRING(spyStudy.at(0).value(0).toString(), studyUID);
+
+    QStringList studyUIDs = database.studiesForPatient(patientUID);
+    CHECK_INT(studyUIDs.count(), 0);
+  }
+  {
+    QSignalSpy spyPatient(&database, SIGNAL(patientRemoved(QString)));
+    database.removePatient(patientUID);
+    CHECK_INT(spyPatient.count(), 1);
+    CHECK_QSTRING(spyPatient.at(0).value(0).toString(), patientUID);
+
+    QStringList patientIDs = database.patients();
+    CHECK_INT(patientIDs.count(), 0);
+  }
 
   database.closeDatabase();
 

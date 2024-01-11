@@ -29,6 +29,12 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 ctk_add_executable_utf8(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${LIBRARY_NAME})
 
+find_package(Qt${CTK_QT_VERSION} COMPONENTS Test Widgets REQUIRED)
+target_link_libraries(${KIT}CppTests
+  Qt${CTK_QT_VERSION}::Test
+  Qt${CTK_QT_VERSION}::Widgets
+  )
+
 #
 # Add Tests
 #

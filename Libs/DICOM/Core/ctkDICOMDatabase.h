@@ -424,6 +424,27 @@ Q_SIGNALS:
   ///  - instanceUID (unique)
   void instanceAdded(QString);
 
+  /// \brief This signal is emitted after a patient is removed by calling removePatient().
+  ///
+  /// \param patientID (not unique across institutions)
+  ///
+  /// \sa removePatient()
+  void patientRemoved(QString);
+
+  /// \brief This signal is emitted after a study is removed by calling removeStudy().
+  ///
+  /// \param studyInstanceUID (unique)
+  ///
+  /// \sa removeStudy()
+  void studyRemoved(QString);
+
+  /// \brief This signal is emitted after a series is removed by calling removeSeries().
+  ///
+  /// \param seriesInstanceUID (unique)
+  ///
+  /// \sa removeSeries()
+  void seriesRemoved(QString);
+
   /// This signal is emitted when the database has been opened.
   void opened();
 
