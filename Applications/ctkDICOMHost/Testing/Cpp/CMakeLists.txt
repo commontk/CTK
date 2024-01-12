@@ -17,4 +17,4 @@ TARGET_LINK_LIBRARIES(${KIT}CppTests ${KIT_target_libraries} ${QT_LIBRARIES})
 #
 # Add Tests
 #
-SIMPLE_TEST(ctkDICOMHostTest1)
+SIMPLE_TEST( ctkDICOMHostTest1 $<TARGET_FILE:ctkDICOMHost> )

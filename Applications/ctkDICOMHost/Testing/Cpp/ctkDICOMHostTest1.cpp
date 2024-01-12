@@ -21,15 +21,26 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QProcess>
+#include <QStringList>
 
 // STD includes
 #include <cstdlib>
 #include <iostream>
 
+//-----------------------------------------------------------------------------
 int ctkDICOMHostTest1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
-  QString command = QString("ctkDICOMHost");
+
+  QStringList arguments = app.arguments();
+  arguments.pop_front(); // remove "program" name
+  if (!arguments.count())
+    {
+    std::cerr << "Usage: ctkDICOMHostTest1 /path/to/ctkDICOMHost" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QString command = arguments.at(0);
   QProcess process;
   process.start(command, /* arguments= */ QStringList());
   bool res = process.waitForStarted();
