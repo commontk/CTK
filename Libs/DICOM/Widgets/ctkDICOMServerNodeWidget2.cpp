@@ -168,7 +168,7 @@ protected:
       {
       state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
       }
-    return model->setData(index, state, Qt::CheckStateRole);
+    return model->setData(index, static_cast<int>(state), Qt::CheckStateRole);
     }
 };
 
@@ -998,7 +998,7 @@ void ctkDICOMServerNodeWidget2::saveSettings()
       }
     }
 
-  settings.setValue("DICOM/StorageEnabled", QString::number(this->storageListenerEnabled()));
+  settings.setValue("DICOM/StorageEnabled", this->storageListenerEnabled());
   settings.setValue("DICOM/StorageAETitle", this->storageAETitle());
   settings.setValue("DICOM/StoragePort", this->storagePort());
   settings.sync();
