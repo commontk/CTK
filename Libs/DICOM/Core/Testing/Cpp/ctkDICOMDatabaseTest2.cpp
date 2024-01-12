@@ -100,7 +100,7 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if ( database.groupElementToTag(group, element) != tag )
+  if ( database.groupElementToTag(group, element) != tag.toUpper() )
     {
     std::cerr << "ctkDICOMDatabase: could not convert a uints to tag string" << std::endl;
     return EXIT_FAILURE;
