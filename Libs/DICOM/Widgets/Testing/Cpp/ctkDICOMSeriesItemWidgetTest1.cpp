@@ -51,7 +51,7 @@ int ctkDICOMSeriesItemWidgetTest1( int argc, char * argv [] )
   CHECK_BOOL(widget.isCloud(), false);
   CHECK_BOOL(widget.IsLoaded(), false);
   CHECK_BOOL(widget.IsVisible(), false);
-  CHECK_INT(widget.thumbnailSize(), 300);
+  CHECK_INT(widget.thumbnailSizePixel(), 200);
 
   // Test setting and getting
   widget.setSeriesItem("1");
@@ -72,8 +72,8 @@ int ctkDICOMSeriesItemWidgetTest1( int argc, char * argv [] )
   CHECK_BOOL(widget.stopJobs(), true);
   widget.setRaiseJobsPriority(true);
   CHECK_BOOL(widget.raiseJobsPriority(), true);
-  widget.setThumbnailSize(150);
-  CHECK_INT(widget.thumbnailSize(), 150);
+  widget.setThumbnailSizePixel(100);
+  CHECK_INT(widget.thumbnailSizePixel(), 100);
 
   if (argc <= 2 || QString(argv[argc - 1]) != "-I")
     {

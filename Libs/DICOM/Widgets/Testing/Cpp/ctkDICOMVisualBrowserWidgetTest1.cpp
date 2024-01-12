@@ -55,8 +55,7 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   CHECK_QSTRING(browser.filteringModalities()[0], "Any");
   CHECK_INT(browser.filteringDate(), ctkDICOMPatientItemWidget::DateType::Any);
   CHECK_INT(browser.numberOfStudiesPerPatient(), 2);
-  CHECK_INT(browser.numberOfSeriesPerRow(), 6);
-  CHECK_INT(browser.minimumThumbnailSize(), 300);
+  CHECK_INT(browser.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium);
   CHECK_BOOL(browser.isSendActionVisible(), false);
   CHECK_BOOL(browser.isDeleteActionVisible(), true);
 
@@ -133,10 +132,8 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   CHECK_INT(browser.filteringDate(), ctkDICOMPatientItemWidget::DateType::LastYear);
   browser.setNumberOfStudiesPerPatient(6);
   CHECK_INT(browser.numberOfStudiesPerPatient(), 6);
-  browser.setNumberOfSeriesPerRow(12);
-  CHECK_INT(browser.numberOfSeriesPerRow(), 12);
-  browser.setMinimumThumbnailSize(150);
-  CHECK_INT(browser.minimumThumbnailSize(), 150);
+  browser.setThumbnailSize(ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
+  CHECK_INT(browser.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
   browser.setSendActionVisible(true);
   CHECK_BOOL(browser.isSendActionVisible(), true);
   browser.setDeleteActionVisible(false);

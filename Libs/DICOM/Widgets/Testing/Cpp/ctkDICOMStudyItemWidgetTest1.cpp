@@ -47,8 +47,7 @@ int ctkDICOMStudyItemWidgetTest1( int argc, char * argv [] )
   CHECK_QSTRING(widget.filteringSeriesDescription(), "");
   CHECK_BOOL(widget.collapsed(), false)
   CHECK_BOOL(widget.selection(), false)
-  CHECK_INT(widget.numberOfSeriesPerRow(), 6);
-  CHECK_INT(widget.thumbnailSize(), 300);
+  CHECK_INT(widget.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium);
 
   // Test setting and getting
   widget.setStudyItem("1");
@@ -67,10 +66,8 @@ int ctkDICOMStudyItemWidgetTest1( int argc, char * argv [] )
   CHECK_BOOL(widget.collapsed(), true);
   widget.setSelection(true);
   CHECK_BOOL(widget.selection(), true);
-  widget.setNumberOfSeriesPerRow(12);
-  CHECK_INT(widget.numberOfSeriesPerRow(), 12);
-  widget.setThumbnailSize(150);
-  CHECK_INT(widget.thumbnailSize(), 150);
+  widget.setThumbnailSize(ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
+  CHECK_INT(widget.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
 
   if (argc <= 2 || QString(argv[argc - 1]) != "-I")
     {

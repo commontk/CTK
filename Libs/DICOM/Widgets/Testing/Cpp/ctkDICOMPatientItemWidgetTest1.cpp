@@ -45,8 +45,7 @@ int ctkDICOMPatientItemWidgetTest1( int argc, char * argv [] )
   CHECK_QSTRING(widget.filteringSeriesDescription(), "");
   CHECK_INT(widget.filteringDate(), ctkDICOMPatientItemWidget::DateType::Any);
   CHECK_INT(widget.numberOfStudiesPerPatient(), 2);
-  CHECK_INT(widget.numberOfSeriesPerRow(), 6);
-  CHECK_INT(widget.minimumThumbnailSize(), 300);
+  CHECK_INT(widget.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium);
 
   // Test setting and getting
   widget.setPatientItem("1");
@@ -61,10 +60,8 @@ int ctkDICOMPatientItemWidgetTest1( int argc, char * argv [] )
   CHECK_INT(widget.filteringDate(), ctkDICOMPatientItemWidget::DateType::LastYear);
   widget.setNumberOfStudiesPerPatient(6);
   CHECK_INT(widget.numberOfStudiesPerPatient(), 6);
-  widget.setNumberOfSeriesPerRow(12);
-  CHECK_INT(widget.numberOfSeriesPerRow(), 12);
-  widget.setMinimumThumbnailSize(150);
-  CHECK_INT(widget.minimumThumbnailSize(), 150);
+  widget.setThumbnailSize(ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
+  CHECK_INT(widget.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
 
   if (argc <= 2 || QString(argv[argc - 1]) != "-I")
     {
