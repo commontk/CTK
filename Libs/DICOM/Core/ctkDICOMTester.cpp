@@ -134,7 +134,7 @@ QString ctkDICOMTesterPrivate::findFile(const QStringList& nameFilters, const QS
 //------------------------------------------------------------------------------
 QString ctkDICOMTesterPrivate::findDCMQRSCPExecutable()const
 {
-  return this->findFile(QStringList("dcmqrscp*"), "CMakeExternals/Install/bin");  
+  return this->findFile(QStringList("dcmqrscp*"), "../DCMTK-build/bin");
 }
 
 //------------------------------------------------------------------------------
@@ -146,13 +146,13 @@ QString ctkDICOMTesterPrivate::findDCMQRSCPConfigFile()const
 //------------------------------------------------------------------------------
 QString ctkDICOMTesterPrivate::findStoreSCUExecutable()const
 {
-  return this->findFile(QStringList("storescu*"), "CMakeExternals/Install/bin");  
+  return this->findFile(QStringList("storescu*"), "../DCMTK-build/bin");
 }
 
 //------------------------------------------------------------------------------
 QString ctkDICOMTesterPrivate::findStoreSCPExecutable()const
 {
-  return this->findFile(QStringList("storescp*"), "CMakeExternals/Install/bin");  
+  return this->findFile(QStringList("storescp*"), "../DCMTK-build/bin");
 }
 
 //------------------------------------------------------------------------------
