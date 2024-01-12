@@ -787,8 +787,7 @@ void ctkDICOMPatientItemWidget::onSeriesItemClicked()
     return;
     }
 
-  if (QApplication::keyboardModifiers() &&
-      (Qt::ControlModifier || Qt::ShiftModifier))
+  if (QApplication::keyboardModifiers() & (Qt::ControlModifier | Qt::ShiftModifier))
     {
     return;
     }
