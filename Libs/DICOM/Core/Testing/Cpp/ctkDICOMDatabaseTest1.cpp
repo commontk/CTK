@@ -21,7 +21,11 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDir>
+#include <QTemporaryDir>
 #include <QTimer>
+
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -35,8 +39,11 @@ int ctkDICOMDatabaseTest1( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
+  QTemporaryDir tempDirectory;
+  CHECK_BOOL(tempDirectory.isValid(), true);
+
   ctkDICOMDatabase database;
-  QDir databaseDirectory = QDir::temp();
+  QDir databaseDirectory(tempDirectory.path());
   QFileInfo databaseFile(databaseDirectory, QString("database.test"));
   database.openDatabase(databaseFile.absoluteFilePath());
 
