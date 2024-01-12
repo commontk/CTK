@@ -149,13 +149,21 @@ void ctkDICOMBrowserTester::testImportDirectoryMode()
   browser.setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryAddLink);
   QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryAddLink);
 
-  QComboBox* comboBox = browser.importDialog()->bottomWidget()->findChild<QComboBox*>();
+  bool usingNativeDialog = !browser.importDialog()->testOption(QFileDialog::DontUseNativeDialog);
+  if (!usingNativeDialog)
+    {
+    QComboBox* comboBox = browser.importDialog()->bottomWidget()->findChild<QComboBox*>();
 
-  comboBox->setCurrentIndex(comboBox->findData(static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy)));
-  QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryCopy);
+    comboBox->setCurrentIndex(comboBox->findData(static_cast<int>(ctkDICOMBrowser::ImportDirectoryCopy)));
+    QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryCopy);
 
-  comboBox->setCurrentIndex(comboBox->findData(static_cast<int>(ctkDICOMBrowser::ImportDirectoryAddLink)));
-  QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryAddLink);
+    comboBox->setCurrentIndex(comboBox->findData(static_cast<int>(ctkDICOMBrowser::ImportDirectoryAddLink)));
+    QCOMPARE(browser.importDirectoryMode(), ctkDICOMBrowser::ImportDirectoryAddLink);
+    }
+  else
+    {
+    QCOMPARE(browser.importDialog()->bottomWidget(), nullptr);
+    }
 }
 
 // ----------------------------------------------------------------------------
