@@ -1992,7 +1992,7 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectory(const QString &directory)
       d->DicomDatabase->openDatabase(databaseFileName);
       databaseOpenSuccess = d->DicomDatabase->isOpen();
       }
-    catch (std::exception e)
+    catch (const std::exception& e)
       {
       Q_UNUSED(e);
       databaseOpenSuccess = false;
