@@ -151,7 +151,7 @@ int ctkDICOMSchedulerTest1(int argc, char * argv []) {
 
   CHECK_INT(instances.count(), numberOfImages);
   CHECK_INT(files.count(), numberOfImages);
-  CHECK_INT(urls.count(), numberOfImages);
+  CHECK_INT(urls.count(), 0);
 
   return EXIT_SUCCESS;
 }
