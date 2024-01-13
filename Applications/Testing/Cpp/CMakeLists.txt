@@ -34,7 +34,15 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   # Add Tests
   #
   ctk_add_executable_utf8(ctkDICOMApplicationTest1 ctkDICOMApplicationTest1.cpp)
-  target_link_libraries(ctkDICOMApplicationTest1 Qt${CTK_QT_VERSION}::Core)
+  target_link_libraries(ctkDICOMApplicationTest1
+    CTKCore
+    Qt${CTK_QT_VERSION}::Core
+    )
+
+  include_directories(
+    ${CTKCore_SOURCE_DIR}
+    ${CTKCore_BINARY_DIR}
+    )
 
   set(testname ctkDICOMApplicationTest1)
 
