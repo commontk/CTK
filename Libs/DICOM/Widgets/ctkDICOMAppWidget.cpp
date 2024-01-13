@@ -95,6 +95,8 @@ public:
 
   QTimer* AutoPlayTimer;
 
+  bool CopyOnImport{false};
+
   bool IsSearchWidgetPopUpMode;
 
   // local count variables to keep track of the number of items
@@ -292,8 +294,16 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   //Initialize import widget
   d->ImportDialog = new ctkFileDialog();
-  QCheckBox* importCheckbox = new QCheckBox(tr("Copy on import"), d->ImportDialog);
-  d->ImportDialog->setBottomWidget(importCheckbox);
+  bool usingNativeDialog = !d->ImportDialog->testOption(QFileDialog::DontUseNativeDialog);
+  if (!usingNativeDialog)
+    {
+    QCheckBox* importCheckbox = new QCheckBox(tr("Copy on import"), d->ImportDialog);
+    d->ImportDialog->setBottomWidget(importCheckbox);
+
+    QObject::connect(importCheckbox, &QCheckBox::toggled, [=] (bool checked) {
+      d->CopyOnImport = checked;
+    });
+    }
   d->ImportDialog->setFileMode(QFileDialog::Directory);
   d->ImportDialog->setLabelText(QFileDialog::Accept,tr("Import"));
   d->ImportDialog->setWindowTitle(tr("Import DICOM files from directory ..."));
@@ -649,10 +659,6 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
   Q_D(ctkDICOMAppWidget);
   if (QDir(directory).exists())
     {
-    QCheckBox* copyOnImport = qobject_cast<QCheckBox*>(d->ImportDialog->bottomWidget());
-    QString targetDirectory;
-    bool copyFiles = (copyOnImport->checkState() == Qt::Checked);
-
     // reset counts
     d->PatientsAddedDuringImport = 0;
     d->StudiesAddedDuringImport = 0;
@@ -662,7 +668,7 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
     // show progress dialog and perform indexing
     d->showIndexerDialog();
 
-    d->DICOMIndexer->addDirectory(directory, copyFiles);
+    d->DICOMIndexer->addDirectory(directory, d->CopyOnImport);
 
     // display summary result
     if (d->DisplayImportSummary)
