@@ -15,6 +15,9 @@
 #!
 #! The macro also associates a label to the test based on the current value of KIT.
 #!
+#! By default, the name of the test to execute is expected to match <testname>, setting
+#! variable <testname>_TEST allows to change that.
+#!
 #! \sa http://www.cmake.org/cmake/help/cmake-2-8-docs.html#command:add_test
 #! \sa http://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:PROJECT_NAME
 #!
@@ -28,7 +31,11 @@ macro(SIMPLE_TEST testname)
     message(FATAL_ERROR "error: ${KIT}CppTests target does NOT exist !")
   endif()
 
-  add_test(NAME ${testname} COMMAND $<TARGET_FILE:${KIT}CppTests> ${testname} ${ARGN})
+  if(NOT DEFINED ${testname}_TEST)
+    set(${testname}_TEST ${testname})
+  endif()
+
+  add_test(NAME ${testname} COMMAND $<TARGET_FILE:${KIT}CppTests> ${${testname}_TEST} ${ARGN})
   set_property(TEST ${testname} PROPERTY LABELS ${KIT})
 
   set_property(TEST ${testname} PROPERTY ENVIRONMENT_MODIFICATION "${CTK_TEST_LAUNCH_BUILD_ENVIRONMENT_MODIFICATION}")
