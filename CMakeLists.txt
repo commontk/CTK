@@ -1065,10 +1065,12 @@ set(CTK_PATHS_LAUNCHER_BUILD )
 set(CTK_LIBRARY_PATHS_LAUNCHER_BUILD )
 set(CTK_TEST_LAUNCH_BUILD_ENVIRONMENT )
 
-if(${CMAKE_VERSION} VERSION_EQUAL "3.9" OR ${CMAKE_VERSION} VERSION_GREATER "3.9")
+if(${CMAKE_VERSION} VERSION_EQUAL "3.22" OR ${CMAKE_VERSION} VERSION_GREATER "3.22")
 
   # CMake 3.9 introduces support for "$<IF:...>" generator expression
   # and GENERATOR_IS_MULTI_CONFIG property.
+
+  # CMake 3.22 introduces support for ENVIRONMENT_MODIFICATION test property.
 
   # Generate expression evaluating to the current build configuration or "."
   # for single configuration generator
@@ -1106,32 +1108,36 @@ if(${CMAKE_VERSION} VERSION_EQUAL "3.9" OR ${CMAKE_VERSION} VERSION_GREATER "3.9
     list(APPEND CTK_PATHS_LAUNCHER_BUILD ${value})
   endforeach()
 
-  # Set test launch environment specific to the build tree
+  # Set test launch "environment modification" specific to the build tree
+  set(CTK_TEST_LAUNCH_BUILD_ENVIRONMENT_MODIFICATION)
+
   if(WIN32)
-    # On Windows, create semicolon-separated strings for paths and library paths
-    set(separator "$<SEMICOLON>")
-    ctk_list_to_string(${separator} "${CTK_PATHS_LAUNCHER_BUILD};${CTK_LIBRARY_PATHS_LAUNCHER_BUILD}" env_paths)
+    # Paths and Library paths
+    foreach(value IN LISTS CTK_PATHS_LAUNCHER_BUILD CTK_LIBRARY_PATHS_LAUNCHER_BUILD)
+      list(APPEND CTK_TEST_LAUNCH_BUILD_ENVIRONMENT_MODIFICATION
+        "PATH=path_list_prepend:${value}"
+        )
+    endforeach()
 
-    string(REPLACE ";" "${separator}" sanitized_current_path "$ENV{PATH}")
-
-    set(CTK_TEST_LAUNCH_BUILD_ENVIRONMENT
-      "PATH=${env_paths}${separator}${sanitized_current_path}"
-      )
   else()
-    # On UNIX-like systems, create colon-separated strings for paths and library paths
-    set(separator ":")
-    ctk_list_to_string(${separator} "${CTK_PATHS_LAUNCHER_BUILD}" env_paths)
-    ctk_list_to_string(${separator} "${CTK_LIBRARY_PATHS_LAUNCHER_BUILD}" env_library_paths)
+    # Path
+    foreach(value IN LISTS CTK_PATHS_LAUNCHER_BUILD)
+      list(APPEND CTK_TEST_LAUNCH_BUILD_ENVIRONMENT_MODIFICATION
+        "PATH=path_list_prepend:${value}"
+        )
+    endforeach()
 
+    # Library paths
     set(variable_name "LD_LIBRARY_PATH")
     if(APPLE)
       set(variable_name "DYLD_LIBRARY_PATH")
     endif()
 
-    set(CTK_TEST_LAUNCH_BUILD_ENVIRONMENT
-      "PATH=${env_paths}${separator}$ENV{PATH}"
-      "${variable_name}=${env_library_paths}${separator}$ENV{${variable_name}}"
-      )
+    foreach(value IN LISTS CTK_LIBRARY_PATHS_LAUNCHER_BUILD)
+      list(APPEND CTK_TEST_LAUNCH_BUILD_ENVIRONMENT_MODIFICATION
+        "${variable_name}=path_list_prepend:${value}"
+        )
+    endforeach()
   endif()
 endif()
 
