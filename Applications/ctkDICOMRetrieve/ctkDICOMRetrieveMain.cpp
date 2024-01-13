@@ -54,7 +54,7 @@ int main(int argc, char** argv)
   // Set the DCMTK log level to debug
   ctk::setDICOMLogLevel(ctkErrorLogLevel::Debug);
 
-  if (argc < 9)
+  if (argc < 8)
   {
     print_usage();
     return EXIT_FAILURE;
@@ -72,11 +72,11 @@ int main(int argc, char** argv)
   int CalledPort = QString ( argv[6] ).toInt ( &ok );
   if ( !ok )
     {
-    std::cerr << "Could not convert " << argv[7] << " to an integer for the calledPoint" << std::endl;
+    std::cerr << "Could not convert " << argv[6] << " to an integer for the calledPoint" << std::endl;
     print_usage();
     return EXIT_FAILURE;
     }
-  QString MoveDestinationAETitle ( argv[8] );
+  QString MoveDestinationAETitle ( argv[7] );
 
   ctkDICOMRetrieve retrieve;
   retrieve.setCallingAETitle ( CallingAETitle );
