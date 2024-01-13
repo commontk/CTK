@@ -55,7 +55,7 @@ namespace ctkQA {
             ~ctkTestRegistration() {
                 delete m_TestToRegister;
 			}
-		
+
 		private:
             T* m_TestToRegister; ///< Test to be registered into the test suite.
 	};

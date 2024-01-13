@@ -38,7 +38,7 @@ class CTK_WIDGETS_EXPORT ctkAxesWidget : public QWidget
   Q_PROPERTY(Axis currentAxis READ currentAxis WRITE setCurrentAxis NOTIFY currentAxisChanged)
   Q_PROPERTY(bool autoReset READ autoReset WRITE setAutoReset)
   Q_PROPERTY(QStringList axesLabels READ axesLabels WRITE setAxesLabels)
-public : 
+public :
 
   enum Axis
     {
@@ -50,12 +50,12 @@ public :
     Anterior,
     Posterior,
     };
-  
+
   ctkAxesWidget(QWidget *parent = 0);
   virtual ~ctkAxesWidget();
 
   ///
-  /// Current selected axis. None by default. 
+  /// Current selected axis. None by default.
   Axis currentAxis() const;
 
   ///
@@ -71,9 +71,9 @@ public slots :
   ///
   /// Select the current axis and emit the currentAxisChanged signal if it is
   /// a new one. Warning, if autoReset is true, the currentAxis will automatically
-  /// be reset to None. 
+  /// be reset to None.
   void setCurrentAxis(Axis axis);
-  
+
   ///
   /// Utility slot that set the current axis to none
   void setCurrentAxisToNone();
@@ -102,7 +102,7 @@ public slots :
   virtual bool hasHeightForWidth()const;
   virtual int heightForWidth(int width)const;
 
-protected: 
+protected:
   void paintEvent(QPaintEvent *);
   void mousePressEvent(QMouseEvent *mouseEvent);
   void mouseMoveEvent(QMouseEvent *mouseEvent);

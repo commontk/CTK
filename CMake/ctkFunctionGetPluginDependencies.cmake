@@ -15,17 +15,17 @@ function(ctkFunctionGetPluginDependencies var_deps)
   if(NOT var_deps)
     message(FATAL_ERROR "Missing variable name as the first argument for storing the result")
   endif()
-  
+
   if(NOT MY_PLUGINS)
     message(FATAL_ERROR "Missing plug-in names")
   endif()
-  
+
   if(MY_ALL)
     ctkFunctionGetTargetDependencies(_targets TARGETS ${MY_PLUGINS} ALL)
   else()
     ctkFunctionGetTargetDependencies(_targets TARGETS ${MY_PLUGINS})
   endif()
-  
+
   set(_plugins )
   foreach(_target ${_targets})
     if(_target MATCHES _)

@@ -43,7 +43,7 @@ public:
   /// If \li parent is null, ctkTemplateWidget will be a top-level widget
   /// \note The \li parent can be set later using QWidget::setParent()
   explicit ctkTemplateWidget(QWidget* parent = 0);
-  
+
   /// Destructor
   virtual ~ctkTemplateWidget();
 

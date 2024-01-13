@@ -40,7 +40,7 @@ int ctkFlowLayoutTest1(int argc, char * argv [] )
   widget1.setWindowTitle("1) Horizontal");
   ctkFlowLayout* flowLayout1 = new ctkFlowLayout(&widget1);
   flowLayout1->setAlignItems(false);
-  
+
   flowLayout1->addWidget(new QPushButton("1 text text text text"));
   flowLayout1->addWidget(new QPushButton("2 text text text text text text text text"));
   flowLayout1->addWidget(new QPushButton("3 text"));
@@ -51,7 +51,7 @@ int ctkFlowLayoutTest1(int argc, char * argv [] )
   flowLayout1->addWidget(new QPushButton("8 text text text"));
   flowLayout1->addWidget(new QPushButton("9"));
   flowLayout1->addWidget(new QPushButton("10 text text text text text text text text text"));
- 
+
   widget1.setLayout(flowLayout1);
   widget1.show();
 
@@ -78,7 +78,7 @@ int ctkFlowLayoutTest1(int argc, char * argv [] )
   QWidget widget2(0);
   widget2.setWindowTitle("2) Horizontal");
   ctkFlowLayout* flowLayout2 = new ctkFlowLayout;
-  
+
   flowLayout2->addWidget(new QPushButton("one"));
   flowLayout2->addWidget(new QPushButton("two"));
   flowLayout2->addWidget(new QPushButton("three"));
@@ -87,14 +87,14 @@ int ctkFlowLayoutTest1(int argc, char * argv [] )
   flowLayout2->addWidget(new QPushButton("six"));
   flowLayout2->addWidget(new QPushButton("seven"));
   //flowLayout2->setHorizontalSpacing(20);
-  
+
   widget2.setLayout(flowLayout2);
   widget2.show();
-  
+
   QWidget widget3(0);
   widget3.setWindowTitle("3) Vertical");
   ctkFlowLayout* flowLayout3 = new ctkFlowLayout(Qt::Vertical);
-  
+
   flowLayout3->addWidget(new QPushButton("one"));
   flowLayout3->addWidget(new QPushButton("two"));
   flowLayout3->addWidget(new QPushButton("three"));
@@ -105,11 +105,11 @@ int ctkFlowLayoutTest1(int argc, char * argv [] )
   flowLayout3->setHorizontalSpacing(20);
   widget3.setLayout(flowLayout3);
   widget3.show();
-  
+
   QWidget widget4(0);
   widget4.setWindowTitle("4) Horizontal -> Vertical");
   ctkFlowLayout* flowLayout4 = new ctkFlowLayout();
-  
+
   flowLayout4->addWidget(new QPushButton("one"));
   flowLayout4->addWidget(new QPushButton("two"));
   flowLayout4->addWidget(new QPushButton("three"));
@@ -117,7 +117,7 @@ int ctkFlowLayoutTest1(int argc, char * argv [] )
   flowLayout4->addWidget(new QPushButton("five"));
   flowLayout4->addWidget(new QPushButton("six"));
   flowLayout4->addWidget(new QPushButton("seven"));
-  
+
   widget4.setLayout(flowLayout4);
   widget4.show();
   flowLayout4->setOrientation(Qt::Vertical);

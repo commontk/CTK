@@ -200,7 +200,7 @@ QString ctkCoreSettings::toApplicationHomeRelativePath(const QString& path) cons
   if (!cleanPath.startsWith(cleanHomeDir, Qt::CaseInsensitive))
     {
     return path;
-    }  
+    }
   // relative path
   QString relativePath = QDir(cleanHomeDir).relativeFilePath(cleanPath);
   return QDir(d->ApplicationHomePlaceholder).filePath(relativePath);

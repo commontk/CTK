@@ -59,8 +59,8 @@ bool ctkFactoryLibraryItem<BaseClassType>::load()
 //----------------------------------------------------------------------------
 template<typename BaseClassType>
 void ctkFactoryLibraryItem<BaseClassType>::setSymbols(const QStringList& symbols)
-{ 
-  this->Symbols = symbols; 
+{
+  this->Symbols = symbols;
 }
 
 //-----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ bool ctkFactoryLibraryItem<BaseClassType>::resolve()
   foreach(const QString& symbol, this->Symbols)
     {
     // Sanity checks
-    if (symbol.isEmpty()) 
+    if (symbol.isEmpty())
       {
       this->appendLoadErrorString(QLatin1String("Failed to resolve empty symbol !"));
       continue;

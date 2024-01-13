@@ -100,12 +100,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
         slider.maximumPosition() <= slider.maximum()))
     {
     std::cerr << "ctkDoubleRangeSlider:: 1) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 1) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -115,12 +115,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, 10.10, 20.4, 40.1, 3999.99, 20.4, 40.1))
     {
     std::cerr << "ctkDoubleRangeSlider:: 2) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 2) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -128,12 +128,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, 10.1, 20.99, 700.4, 3999.99, 20.99, 700.4))
     {
     std::cerr << "ctkDoubleRangeSlider:: 3) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 3) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -141,12 +141,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, 10.1, 800, 900, 3999.99, 800, 900))
     {
     std::cerr << "ctkDoubleRangeSlider:: 4) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 4) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -154,12 +154,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, 10.1, 3999.99, 3999.99, 3999.99, 3999.99, 3999.99))
     {
     std::cerr << "ctkDoubleRangeSlider:: 5) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 5) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -167,24 +167,24 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, -15.21, 25.49999, 25.49999, 25.49999, 25.49999, 25.49999))
     {
     std::cerr << "ctkDoubleRangeSlider:: 6) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     return EXIT_FAILURE;
     }
-  // nothing happen yet but it would be nice if it moves the 2 values at 
+  // nothing happen yet but it would be nice if it moves the 2 values at
   // the same time.
   slider.triggerAction(QAbstractSlider::SliderSingleStepSub);
   if (!checkSlider(slider, -15.21, 25.49999, 25.49999, 25.49999, 25.49999, 25.49999))
     {
     std::cerr << "ctkDoubleRangeSlider:: 7) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 7) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -192,12 +192,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, -15.21, 10.2, 10.2, 25.49999, 10.2, 10.2))
     {
     std::cerr << "ctkDoubleRangeSlider:: 8) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 8) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -205,12 +205,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, -15.21, 17.7777, 17.7777, 25.49999, 17.7777, 17.7777))
     {
     std::cerr << "ctkDoubleRangeSlider:: 9) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 9) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -218,12 +218,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, -15.21, -15.21, 17.7777, 25.49999, -15.21, 17.7777))
     {
     std::cerr << "ctkDoubleRangeSlider:: 10) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 10) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -231,12 +231,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, -15.21, -15.21, 17.7777, 25.49999, -15.21, 17.7777))
     {
     std::cerr << "ctkDoubleRangeSlider:: 10.5) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 10.5) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -244,12 +244,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, -15.21, -15.21, 17.7777, 25.49999, -15.21, 17.7777))
     {
     std::cerr << "ctkDoubleRangeSlider:: 11) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 11) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -257,12 +257,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, -15.21, -15.205, 17.7777, 25.49999, -15.205, 17.7777))
     {
     std::cerr << "ctkDoubleRangeSlider:: 12) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 12) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -270,12 +270,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, -15.21, -15.205, 17.7777, 25.49999, -15.205, 17.7777))
     {
     std::cerr << "ctkDoubleRangeSlider:: 13) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 13) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -283,12 +283,12 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   if (!checkSlider(slider, -15.21, -15.205, 17.7777, 25.49999, -15.205, 17.7777))
     {
     std::cerr << "ctkDoubleRangeSlider:: 14) "
-              << slider.minimum() << " " 
-              << slider.minimumValue() << " " 
-              << slider.maximumValue() << " " 
+              << slider.minimum() << " "
+              << slider.minimumValue() << " "
+              << slider.maximumValue() << " "
               << slider.maximum() << std::endl;
     std::cerr << "ctkDoubleRangeSlider:: 14) "
-              << slider.minimumPosition() << " " 
+              << slider.minimumPosition() << " "
               << slider.maximumPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -297,31 +297,31 @@ int ctkDoubleRangeSliderTest1(int argc, char * argv [] )
   // if (!checkSlider(slider, -15.21, 0.1, 20.5, 25.49999, 0.1, 20.5))
   //   {
   //   std::cerr << "ctkDoubleRangeSlider:: 15) "
-  //             << slider.minimum() << " " 
-  //             << slider.minimumValue() << " " 
-  //             << slider.maximumValue() << " " 
+  //             << slider.minimum() << " "
+  //             << slider.minimumValue() << " "
+  //             << slider.maximumValue() << " "
   //             << slider.maximum() << std::endl;
   //   std::cerr << "ctkDoubleRangeSlider:: 15) "
-  //             << slider.minimumPosition() << " " 
+  //             << slider.minimumPosition() << " "
   //             << slider.maximumPosition() << std::endl;
   //   return EXIT_FAILURE;
   //   }
-  // slider.setTracking(false); 
+  // slider.setTracking(false);
   // slider.setPositions(0.123456, 20.123465);
   // if (!checkSlider(slider, -15.21, 0.1, 20.5, 25.49999, 0.123456, 20.123456))
   //   {
   //   std::cerr << "ctkDoubleRangeSlider:: 16) "
-  //             << slider.minimum() << " " 
-  //             << slider.minimumValue() << " " 
-  //             << slider.maximumValue() << " " 
+  //             << slider.minimum() << " "
+  //             << slider.minimumValue() << " "
+  //             << slider.maximumValue() << " "
   //             << slider.maximum() << std::endl;
   //   std::cerr << "ctkDoubleRangeSlider:: 16) "
-  //             << slider.minimumPosition() << " " 
+  //             << slider.minimumPosition() << " "
   //             << slider.maximumPosition() << std::endl;
   //   return EXIT_FAILURE;
   //   }
   slider.setSymmetricMoves(true);
-  
+
   if (slider.symmetricMoves() != true)
     {
     std::cerr << "ctkDoubleRangeSlider::setSymmetricMoves failed" << std::endl;

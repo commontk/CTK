@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMDisplayedFieldGeneratorRuleFactory_h_
 #define __ctkDICOMDisplayedFieldGeneratorRuleFactory_h_
 
-#include "ctkDICOMCoreExport.h" 
+#include "ctkDICOMCoreExport.h"
 
 // Qt includes
 #include <QObject>

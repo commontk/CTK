@@ -40,7 +40,7 @@ int ctkColorPickerButtonTest1(int argc, char * argv [] )
   ctkColorPickerButton colorPicker2("Select a color");
   ctkColorPickerButton colorPicker3(Qt::red,"text");
   ctkColorPickerButton colorPicker4(Qt::yellow,"");
-  
+
   QHBoxLayout* subLayout = new QHBoxLayout;
   subLayout->addStretch(1);
   subLayout->addWidget(&colorPicker4);
@@ -66,7 +66,7 @@ int ctkColorPickerButtonTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if (colorPicker1.color() != Qt::black || 
+  if (colorPicker1.color() != Qt::black ||
       colorPicker2.color() != Qt::black ||
       colorPicker3.color() != Qt::red)
     {
@@ -74,10 +74,10 @@ int ctkColorPickerButtonTest1(int argc, char * argv [] )
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   colorPicker3.setDisplayColorName(false);
   colorPicker4.setDisplayColorName(false);
-  
+
   if (colorPicker3.displayColorName() ||
       colorPicker3.text() != "text")
     {
@@ -104,7 +104,7 @@ int ctkColorPickerButtonTest1(int argc, char * argv [] )
     }
 
   topLevel.show();
-  
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(300, &app, SLOT(quit()));

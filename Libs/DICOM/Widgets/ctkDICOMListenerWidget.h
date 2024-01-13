@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMListenerWidget_h
 #define __ctkDICOMListenerWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 
 #include "ctkDICOMWidgetsExport.h"

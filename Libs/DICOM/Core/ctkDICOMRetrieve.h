@@ -51,7 +51,7 @@ public:
   virtual ~ctkDICOMRetrieve();
 
   /// Set methods for connectivity
-  /// CTK_AE - the AE string by which the peer host might 
+  /// CTK_AE - the AE string by which the peer host might
   /// recognize your request
   Q_INVOKABLE void setCallingAETitle( const QString& callingAETitle );
   Q_INVOKABLE QString callingAETitle() const;
@@ -105,12 +105,12 @@ Q_SIGNALS:
   /// Signal is emitted inside the retrieve() function. It sends the different step
   /// the function is at.
   void progress(const QString& message);
-  /// Signal is emitted inside the retrieve() function. It sends 
+  /// Signal is emitted inside the retrieve() function. It sends
   /// detailed feedback for debugging
   void debug(const QString& message);
   /// Signal is emitted inside the retrieve() function. It send any error messages
   void error(const QString& message);
-  /// Signal is emitted inside the retrieve() function when finished with value 
+  /// Signal is emitted inside the retrieve() function when finished with value
   /// true for success or false for error
   void done(const bool& error);
 

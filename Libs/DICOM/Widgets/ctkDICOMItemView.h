@@ -50,7 +50,7 @@ public:
 
   /// Constructor
   ctkDICOMItemView( QWidget * parent = 0 );
-  
+
   /// Destructor
   virtual ~ctkDICOMItemView( void );
 

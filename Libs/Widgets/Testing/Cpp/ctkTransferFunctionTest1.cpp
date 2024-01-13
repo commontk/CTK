@@ -76,7 +76,7 @@ public:
     Q_UNUSED(cp);
     return -1;
   }
-  
+
   virtual int insertControlPoint(qreal pos)
   {
     Q_UNUSED(pos);

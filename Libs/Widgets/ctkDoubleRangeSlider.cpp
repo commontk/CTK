@@ -40,14 +40,14 @@ protected:
   ctkDoubleRangeSlider* const q_ptr;
 public:
   ctkDoubleRangeSliderPrivate(ctkDoubleRangeSlider& object);
-  
+
   int toInt(double _value)const;
   double minFromInt(int _value)const;
   double maxFromInt(int _value)const;
   double safeMinFromInt(int _value)const;
   double safeMaxFromInt(int _value)const;
   void updateIntegerSliderRange();
-  
+
   void init();
   void connectSlider();
   void updateMinOffset(double value);
@@ -88,7 +88,7 @@ ctkDoubleRangeSliderPrivate::ctkDoubleRangeSliderPrivate(ctkDoubleRangeSlider& o
   this->MinValue = 0.;
   this->MaxValue = 99.;
 }
- 
+
 // --------------------------------------------------------------------------
 void ctkDoubleRangeSliderPrivate::init()
 {
@@ -97,7 +97,7 @@ void ctkDoubleRangeSliderPrivate::init()
   QHBoxLayout* l = new QHBoxLayout(q);
   l->addWidget(this->Slider);
   l->setContentsMargins(0,0,0,0);
-  
+
   this->Minimum = this->Slider->minimum();
   this->Maximum = this->Slider->maximum();
   this->MinValue = this->Slider->minimumValue();
@@ -464,7 +464,7 @@ void ctkDoubleRangeSlider::setMinimumValue(double newMinValue)
     {
     double oldValue = d->MinValue;
     d->MinValue = newMinValue;
-    // don't emit a valuechanged signal if the new value is quite 
+    // don't emit a valuechanged signal if the new value is quite
     // similar to the old value.
     if (qAbs(newMinValue - oldValue) > (d->SingleStep * 0.000000001))
       {
@@ -513,7 +513,7 @@ void ctkDoubleRangeSlider::setMaximumValue(double newMaxValue)
     {
     double oldValue = d->MaxValue;
     d->MaxValue = newMaxValue;
-    // don't emit a valuechanged signal if the new value is quite 
+    // don't emit a valuechanged signal if the new value is quite
     // similar to the old value.
     if (qAbs(newMaxValue - oldValue) > (d->SingleStep * 0.000000001))
       {

@@ -39,7 +39,7 @@
 
 // STD includes
 #include <cstdlib>
-  
+
 //----------------------------------------------------------------------------
 int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
 {
@@ -74,7 +74,7 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
   rw->AddRenderer(rr.GetPointer());
   rw->SetInteractor(ri.GetPointer());
-  
+
   // Set Interactor Style
   vtkNew<vtkInteractorStyleImage> iStyle;
   ri->SetInteractorStyle(iStyle.GetPointer());
@@ -174,7 +174,7 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
     std::cerr << "line " << __LINE__ << " - Problem with SetImageDataConnection()" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   double highlightedboxColor[3] = {0.0, 1.0, 0.0};
   lightBoxRendererManager->SetHighlightedBoxColor(highlightedboxColor);
   if (mtime != lightBoxRendererManager->GetMTime())
@@ -218,6 +218,6 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
     rw->GetInteractor()->Initialize();
     rw->GetInteractor()->Start();
     }
-  
+
   return !retval;
 }

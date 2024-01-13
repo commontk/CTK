@@ -55,10 +55,10 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
   button2->setCheckable(true);
   button3->setCheckable(false);
   button4->setCheckable(true);
-  
+
   button2->setChecked(true);
   button4->setChecked(true);
-  
+
   ctkButtonGroup buttonGroup(0);
 
   buttonGroup.addButton(button1);
@@ -69,66 +69,66 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
   if (!button4->isChecked() || button2->isChecked())
     {
     std::cerr << "ctkButtonGroup::addButton failed"
-              << button2->isChecked() << " " << button4->isChecked() 
+              << button2->isChecked() << " " << button4->isChecked()
               << std::endl;
     return EXIT_FAILURE;
     }
 
   // Click #1: check button1
   button1->click();
-  
+
   if (!button1->isChecked() || button4->isChecked())
     {
     std::cerr << "ctkButtonGroup::click1 failed"
-              << button1->isChecked() << " " << button4->isChecked() 
+              << button1->isChecked() << " " << button4->isChecked()
               << std::endl;
     return EXIT_FAILURE;
     }
 
-  // Click #2: uncheck button1 
+  // Click #2: uncheck button1
   button1->click();
 
   if (button1->isChecked() || button4->isChecked())
     {
     std::cerr << "ctkButtonGroup::click2 failed"
-              << button1->isChecked() << " " << button4->isChecked() 
+              << button1->isChecked() << " " << button4->isChecked()
               << std::endl;
     return EXIT_FAILURE;
     }
 
-  // Click #3: check button1 
+  // Click #3: check button1
   button1->click();
 
   if (!button1->isChecked() || button4->isChecked())
     {
     std::cerr << "ctkButtonGroup::click3 failed"
-              << button1->isChecked() << " " << button4->isChecked() 
+              << button1->isChecked() << " " << button4->isChecked()
               << std::endl;
     return EXIT_FAILURE;
     }
 
-  // Click #4: check button2 
+  // Click #4: check button2
   button2->click();
 
   if (!button2->isChecked() || button1->isChecked())
     {
     std::cerr << "ctkButtonGroup::click4 failed"
-              << button2->isChecked() << " " << button1->isChecked() 
+              << button2->isChecked() << " " << button1->isChecked()
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // Click #5: click button3 keep check on button2
   button3->click();
 
   if (!button2->isChecked() || button3->isChecked())
     {
     std::cerr << "ctkButtonGroup::click5 failed"
-              << button2->isChecked() << " " << button3->isChecked() 
+              << button2->isChecked() << " " << button3->isChecked()
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // Click #6: uncheck button2
   button2->click();
 

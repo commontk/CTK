@@ -74,7 +74,7 @@ void ctkDicomAppServer::incomingWSDLMessage(
       *reply = textstream.readAll();
       QString actualURL="http://localhost:";
       //actualURL+=QString::number(Port)+"/ApplicationInterface"; // FIXME: has to be replaced by url provided by host
-	  actualURL+=QString::number(Port)+Path; 
+	  actualURL+=QString::number(Port)+Path;
       reply->replace("REPLACE_WITH_ACTUAL_URL",actualURL);
       reply->replace("ApplicationService-20100825.xsd",actualURL+"?xsd=1");
       //reply->replace("<soap:body use=\"literal\"/>","<soap:body use=\"literal\"></soap:body>");

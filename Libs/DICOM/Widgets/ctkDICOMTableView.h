@@ -122,7 +122,7 @@ public:
    * @brief Add a WHERE condition to the SELECT statement that filters for matching values.
    * @param column Column name that needs to have one of the values in the values list
    * @param values List of values that are accepted for the given column
-   * 
+   *
    * Same as \sa addSqlEqualWhereCondition
    * Combines with the rest of the WHERE conditions (\sa addSqlGreaterWhereCondition, \sa addSqlLessWhereCondition,
    * \sa addSqlGreaterEqualWhereCondition, \sa addSqlLessEqualWhereCondition) using 'and',
@@ -137,10 +137,10 @@ public:
   Q_INVOKABLE bool removeSqlWhereCondition(const QString& column);
 
   /**
-   * @brief Add a WHERE condition to the SELECT statement that filters for matching values. 
+   * @brief Add a WHERE condition to the SELECT statement that filters for matching values.
    * @param column Column name that needs to have one of the values in the values list
    * @param values List of values that are accepted for the given column
-   * 
+   *
    * Same as \sa addSqlWhereCondition
    * Combines with the rest of the WHERE conditions (\sa addSqlGreaterWhereCondition, \sa addSqlLessWhereCondition,
    * \sa addSqlGreaterEqualWhereCondition, \sa addSqlLessEqualWhereCondition) using 'and',
@@ -286,7 +286,7 @@ public Q_SLOTS:
    * Emits customContextMenuRequested with the global point
    */
   void onCustomContextMenuRequested(const QPoint &point);
-  
+
   /**
    * @brief Select all items in the view
    */

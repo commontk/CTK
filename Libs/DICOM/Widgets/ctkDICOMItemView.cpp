@@ -50,7 +50,7 @@
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMItemView");
 
 //--------------------------------------------------------------------------
-class ctkDICOMItemViewPrivate 
+class ctkDICOMItemViewPrivate
 {
 
   Q_DECLARE_PUBLIC( ctkDICOMItemView );
@@ -291,8 +291,8 @@ void ctkDICOMItemView::addImage( DicomImage & dcmImage, bool defaultIntensity )
             dcmImage.getWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
           }
       }
-    } 
-    else 
+    }
+    else
     {
       dcmImage.setWindow(d->DicomIntensityLevel, d->DicomIntensityWindow);
     }
@@ -325,7 +325,7 @@ void ctkDICOMItemView::addImage( DicomImage & dcmImage, bool defaultIntensity )
 
     /* render pixel data to buffer */
     if (dcmImage.getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
-    {  
+    {
       if (!image.loadFromData( buffer ))
         {
             logger.error("QImage couldn't created");

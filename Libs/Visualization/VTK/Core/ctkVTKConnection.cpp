@@ -74,7 +74,7 @@ ctkVTKConnectionPrivate::~ctkVTKConnectionPrivate()
 void ctkVTKConnectionPrivate::connect()
 {
   Q_Q(ctkVTKConnection);
-  
+
   if (this->Connected)
     {
     qDebug() << "ctkVTKConnection already connected.";
@@ -124,10 +124,10 @@ void ctkVTKConnectionPrivate::connect()
 void ctkVTKConnectionPrivate::disconnectSlots()
 {
   Q_Q(ctkVTKConnection);
-  
-  if (!this->Connected) 
-    { 
-    return; 
+
+  if (!this->Connected)
+    {
+    return;
     }
 
   if (this->QtObject)
@@ -268,7 +268,7 @@ QDebug operator<<(QDebug dbg, const ctkVTKConnection& connection)
 QString ctkVTKConnection::shortDescription()
 {
   Q_D(ctkVTKConnection);
-  
+
   return ctkVTKConnection::shortDescription(d->VTKObject, d->VTKEvent, d->QtObject, d->QtSlot.toLatin1());
 }
 
@@ -305,15 +305,15 @@ bool ctkVTKConnection::isValid(vtkObject* vtk_obj, unsigned long vtk_event,
 
 //-----------------------------------------------------------------------------
 void ctkVTKConnection::setup(vtkObject* vtk_obj, unsigned long vtk_event,
-                             const QObject* qt_obj, const char* qt_slot, 
+                             const QObject* qt_obj, const char* qt_slot,
                              float priority,
                              Qt::ConnectionType connectionType)
 {
   Q_D(ctkVTKConnection);
-  
-  if (!ctkVTKConnection::isValid(vtk_obj, vtk_event, qt_obj, qt_slot)) 
-    { 
-    return; 
+
+  if (!ctkVTKConnection::isValid(vtk_obj, vtk_event, qt_obj, qt_slot))
+    {
+    return;
     }
 
   d->VTKObject = vtk_obj;
@@ -353,7 +353,7 @@ bool ctkVTKConnection::isEqual(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot)const
 {
   Q_D(const ctkVTKConnection);
-  
+
   if (vtk_obj && d->VTKObject != vtk_obj)
     {
     return false;
@@ -388,11 +388,11 @@ void ctkVTKConnectionPrivate::execute(vtkObject* vtk_obj, unsigned long vtk_even
   void* client_data, void* call_data)
 {
   Q_Q(ctkVTKConnection);
-  
+
   Q_ASSERT(this->Connected);
-  if (this->Blocked) 
-    { 
-    return; 
+  if (this->Blocked)
+    {
+    return;
     }
 
   QPointer<ctkVTKConnection> connection(q);

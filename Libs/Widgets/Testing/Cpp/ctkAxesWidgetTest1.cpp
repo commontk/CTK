@@ -44,7 +44,7 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
               << static_cast<int>(axes.currentAxis()) << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   QSignalSpy spy(&axes, SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)));
   axes.setCurrentAxis(ctkAxesWidget::Anterior);
 

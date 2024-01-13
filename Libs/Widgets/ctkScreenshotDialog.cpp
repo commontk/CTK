@@ -307,7 +307,7 @@ void ctkScreenshotDialog::setBaseFileName(const QString& newBaseName)
   Q_D(ctkScreenshotDialog);
   d->ImageNameLineEdit->setText(newBaseName);
 }
-  
+
 //-----------------------------------------------------------------------------
 QString ctkScreenshotDialog::baseFileName() const
 {

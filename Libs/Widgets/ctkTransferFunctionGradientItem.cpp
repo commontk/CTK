@@ -64,7 +64,7 @@ ctkTransferFunctionGradientItem::ctkTransferFunctionGradientItem(
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionGradientItem::~ctkTransferFunctionGradientItem()
-{  
+{
 }
 
 //-----------------------------------------------------------------------------

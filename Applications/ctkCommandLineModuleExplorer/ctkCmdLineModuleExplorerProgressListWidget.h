@@ -35,7 +35,7 @@ class ctkCmdLineModuleExplorerProgressListWidget : public QWidget
 
 public:
   explicit ctkCmdLineModuleExplorerProgressListWidget(QWidget *parent = 0);
-  
+
   void addProgressWidget(ctkCmdLineModuleFrontend* frontend, const ctkCmdLineModuleFuture& future);
 
 signals:
@@ -51,7 +51,7 @@ public slots:
   void progressWidgetClicked();
 
   void clearList();
-  
+
 private slots:
 
   void progressWidgetDestroyed(QObject* progressWidget);

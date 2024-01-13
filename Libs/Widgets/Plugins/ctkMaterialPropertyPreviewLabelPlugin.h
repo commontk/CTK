@@ -32,7 +32,7 @@ class CTK_WIDGETS_PLUGINS_EXPORT ctkMaterialPropertyPreviewLabelPlugin :
 
 public:
   ctkMaterialPropertyPreviewLabelPlugin(QObject *_parent = 0);
-  
+
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;
   QIcon    icon() const;

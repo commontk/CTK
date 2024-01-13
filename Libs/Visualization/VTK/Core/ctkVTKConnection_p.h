@@ -61,12 +61,12 @@ public:
 
   bool IsSameQtSlot(const char* qt_slot)const;
 
-  /// 
+  ///
   /// VTK Callback
   static void DoCallback(vtkObject* vtk_obj, unsigned long event,
                          void* client_data, void* call_data);
 
-  /// 
+  ///
   /// Called by 'DoCallback' to emit signal
   void execute(vtkObject* vtk_obj, unsigned long vtk_event, void* client_data, void* call_data);
 

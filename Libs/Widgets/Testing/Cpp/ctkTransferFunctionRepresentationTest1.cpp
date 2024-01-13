@@ -46,13 +46,13 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
 // Test 1 : test without transfer function
 //--------------------------------------------------------------
 
-  //---------Test Constructor----------  
+  //---------Test Constructor----------
   ctkTransferFunctionRepresentation representation;
   if(representation.transferFunction() != 0)
     {
     std::cerr << "Line " << __LINE__
               << " - Problem with ctkTransfertFunctionRepresentation::"
-              << " ctkTransfertFunctionRepresentation - transfertFunction not null." 
+              << " ctkTransfertFunctionRepresentation - transfertFunction not null."
               << std::endl;
     return EXIT_FAILURE;
     }
@@ -83,8 +83,8 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
   qreal expectedPosX = 2.;
   if (representation.posX(expectedPosX) != expectedPosX)
   {
-  std::cerr << "Line " << __LINE__ 
-            << " - Problem with ctkTransfertFunctionRepresentation::posX" 
+  std::cerr << "Line " << __LINE__
+            << " - Problem with ctkTransfertFunctionRepresentation::posX"
             << std::endl;
   return EXIT_FAILURE;
   }
@@ -109,9 +109,9 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
 
   //---------Test PosY--------------------------
   QVariant variant = 2.;
-  if (representation.posY(variant) != 2.)  
+  if (representation.posY(variant) != 2.)
     {
-    std::cerr << "Line " << __LINE__ 
+    std::cerr << "Line " << __LINE__
               << " - Problem with ctkTransfertFunctionRepresentation::posY"
               << " - for the qreal" << std::endl;
     return EXIT_FAILURE;
@@ -125,7 +125,7 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << " - Problem with ctkTransfertFunctionRepresentation::posY"
               << " - for the color: " << representation.posY(variant);
     return EXIT_FAILURE;
-    } 
+    }
 
   if (representation.posY(&cp) != cp.value())
     {
@@ -141,7 +141,7 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << representation.posX(point);
     return EXIT_FAILURE;
     }
- 
+
   //--------Test Color--------------------------
   QColor expectedColor = QColor::fromRgbF(1., 1., 1.);
   variant = expectedColor;
@@ -177,7 +177,7 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
 
   //---------Test MapXToScene------------------
   qreal xPos = 2.;
-  if (representation.mapXToScene(xPos) != 0) 
+  if (representation.mapXToScene(xPos) != 0)
     {
     std::cerr << "Line " << __LINE__
               << " - Problem with "
@@ -197,7 +197,7 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << representation.mapYToScene(yPos)
               << std::endl;
     return EXIT_FAILURE;
-    } 
+    }
 
   //--------Test MapXFromScene----------------
   qreal defaultScenePosX = 2.;
@@ -210,9 +210,9 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << representation.mapXFromScene(defaultScenePosX)
               << std::endl;
     return EXIT_FAILURE;
-    } 
+    }
 
-  //--------Test MapyFromScene----------------  
+  //--------Test MapyFromScene----------------
   qreal defaultScenePosY = 2.;
   qreal mapY = representation.mapYFromScene(defaultScenePosY);
   if (mapY != - std::numeric_limits<qreal>::infinity())
@@ -223,7 +223,7 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << representation.mapYFromScene(defaultScenePosY)
               << std::endl;
     return EXIT_FAILURE;
-    } 
+    }
 
   //--------Test Curve-----------------------
   QPainterPath defaultPath = representation.curve();
@@ -243,10 +243,10 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << " - Problem with "
               << "ctkTransfertFunctionRepresentation::gradient  "
               << std::endl;
-    return EXIT_FAILURE;   
+    return EXIT_FAILURE;
     }
-  
-  //--------Test points---------------------- 
+
+  //--------Test points----------------------
   QList<QPointF> expectedPoints;
   if(representation.points().size() != 0)
     {
@@ -254,9 +254,9 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << " - Problem with "
               << "ctkTransfertFunctionRepresentation::points  "
               << std::endl;
-    return EXIT_FAILURE; 
+    return EXIT_FAILURE;
     }
-  
+
   //--------Test bezierParams----------------
   ctkControlPoint startPoint;
   ctkControlPoint endPoint;
@@ -266,7 +266,7 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << " - Problem with "
               << "ctkTransfertFunctionRepresentation::bezierParams "
               << std::endl;
-    return EXIT_FAILURE; 
+    return EXIT_FAILURE;
     }
 
   //--------Test nonLinearPoints------------- // ? case subpoint ?
@@ -276,13 +276,13 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << " - Problem with "
               << "ctkTransfertFunctionRepresentation::nonLinearPoints "
               << std::endl;
-    return EXIT_FAILURE; 
+    return EXIT_FAILURE;
     }
-  
+
   //-------Test mapPointToScene-With q ctkPoint*----------
   qreal defaultX = 2.;
-  QVariant defaultVariant = 1.;  
-  ctkPoint defaultPoint(defaultX,defaultVariant);  
+  QVariant defaultVariant = 1.;
+  ctkPoint defaultPoint(defaultX,defaultVariant);
   QPointF defaultPointF(0,1);
   if(representation.mapPointToScene(defaultPoint) != defaultPointF)
     {
@@ -293,11 +293,11 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << "   "
               << defaultPointF.y()
               << std::endl;
-    return EXIT_FAILURE; 
+    return EXIT_FAILURE;
     }
-  
-  //-------Test mapPointToScene-With a ctkControlPoint&------------  
-  ctkControlPoint defaultControlPoint;     
+
+  //-------Test mapPointToScene-With a ctkControlPoint&------------
+  ctkControlPoint defaultControlPoint;
   if(representation.mapPointToScene(&defaultControlPoint) != defaultPointF)
     {
     std::cerr << "Line " << __LINE__
@@ -307,9 +307,9 @@ int ctkTransferFunctionRepresentationTest1(int argc, char * argv [])
               << "   "
               << defaultPointF.y()
               << std::endl;
-    return EXIT_FAILURE; 
+    return EXIT_FAILURE;
     }
-  
+
   //-------Test computeCurve----------------
   representation.computeCurve();
 

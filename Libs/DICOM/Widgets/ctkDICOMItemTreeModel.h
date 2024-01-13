@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMItemTreeModel_h
 #define __ctkDICOMItemTreeModel_h
 
-// Qt includes 
+// Qt includes
 #include <QAbstractItemModel>
 #include <QModelIndex>
 
@@ -39,9 +39,9 @@ public:
 
   virtual QModelIndex index(int row, int column,
                             const QModelIndex &parent = QModelIndex()) const;
-                            
+
   virtual QModelIndex parent(const QModelIndex &child) const;
-    
+
   virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;

@@ -40,14 +40,14 @@
 int ctkDICOMModelTest1( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
-  
+
   if (argc <= 2)
     {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
     std::cerr << "Usage: qctkDICOMModelTest1 <scratch.db> <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   try
   {
     ctkDICOMDatabase myCTK( argv[1] );

@@ -144,7 +144,7 @@ void ctkPluginBrowser::pluginSelected(const QModelIndex &index)
   QVariant v = index.data(Qt::UserRole);
 
   QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->getPlugin(v.toLongLong());
-  if (!plugin) return;  
+  if (!plugin) return;
   updatePluginToolbar(plugin);
 
   QAbstractItemModel* oldModel = ui.pluginResourcesTreeView->model();

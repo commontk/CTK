@@ -161,7 +161,7 @@ public:
   /// set horizontal policy to QSizePolicy::Ignored and set elideMode to
   /// Qt::ElideMiddle (or anything else than Qt::ElideNone).
   void setElideMode(Qt::TextElideMode newMode);
-  Qt::TextElideMode elideMode()const; 
+  Qt::TextElideMode elideMode()const;
 
 public Q_SLOTS:
   /// browse() opens a pop up where the user can select a new directory for the

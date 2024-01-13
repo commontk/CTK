@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMQueryResultsTabWidget_h
 #define __ctkDICOMQueryResultsTabWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 #include <QTabWidget>
 

@@ -144,7 +144,7 @@ void ctkTransferFunctionBarsItem::paint(
   Q_UNUSED(option);
   Q_UNUSED(widget);
 
-  // setup colors 
+  // setup colors
   QColor penColor = d->BarColor;
   penColor.setAlphaF(1.);
   QPen pen;
@@ -168,7 +168,7 @@ void ctkTransferFunctionBarsItem::paint(
   Q_ASSERT(tf->representation());
   const QList<QPointF>& points = tf->representation()->points();
 
-  qreal barWidth = d->barWidth(); 
+  qreal barWidth = d->barWidth();
   bool useLog = d->useLog();
 
   QPainterPath bars;
@@ -181,7 +181,7 @@ void ctkTransferFunctionBarsItem::paint(
     {
     bars = d->createBarsPath(tf, points, barWidth, useLog, this->rect());
     }
-  
+
   painter->setPen(pen);
   painter->setBrush(QBrush(d->BarColor));
   painter->drawPath(bars);

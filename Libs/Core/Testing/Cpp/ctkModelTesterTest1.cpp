@@ -50,7 +50,7 @@ int ctkModelTesterTest1(int argc, char * argv [] )
   QCoreApplication app(argc, argv);
 
   QAbstractItemModelHelper * item = new QAbstractItemModelHelper;
-  QObject * object = new QObject; 
+  QObject * object = new QObject;
 
   ctkModelTester ctkTester( item, object );
 

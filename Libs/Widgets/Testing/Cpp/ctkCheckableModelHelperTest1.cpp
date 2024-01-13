@@ -56,7 +56,7 @@ int ctkCheckableModelHelperTest1(int argc, char * argv [] )
   row2[0]->setText("checkable");
   model.appendRow(row2);
 
-  // items are unchecked by default 
+  // items are unchecked by default
   if (row0[0]->checkState() != Qt::Unchecked ||
       row1[0]->checkState() != Qt::Unchecked ||
       row2[0]->checkState() != Qt::Unchecked)

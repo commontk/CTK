@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 
   // Do something
   // do we have enough information (input/output)?
-  if(parser.unparsedArguments().count() >= 2) 
+  if(parser.unparsedArguments().count() >= 2)
   {
     QString input = parser.unparsedArguments().at(0);
     QString output = parser.unparsedArguments().at(1);

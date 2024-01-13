@@ -25,7 +25,7 @@
 
 #! \ingroup CMakeUtilities
 function(ctkFunctionApplyPatches PATCH_EXE SRC_DIR PATCH_FILES)
-  
+
   # Make sure patch executable exists
   if(NOT EXISTS ${PATCH_EXE})
     message(FATAL_ERROR "ERROR: Program [${PATCH_EXE}] doesn't exist !")
@@ -42,5 +42,5 @@ function(ctkFunctionApplyPatches PATCH_EXE SRC_DIR PATCH_FILES)
       message("ERROR: ${result_var}")
     endif()
   endforeach()
-  
+
 endfunction()

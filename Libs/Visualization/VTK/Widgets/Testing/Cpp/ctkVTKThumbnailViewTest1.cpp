@@ -45,10 +45,10 @@ int ctkVTKThumbnailViewTest1(int argc, char * argv [] )
   ctk::vtkSetSurfaceDefaultFormat();
 
   QApplication app(argc, argv);
-  
+
   ctkVTKThumbnailView thumbnailView;
   thumbnailView.setWindowTitle("Thumbnail view");
-  
+
   ctkVTKRenderView renderView;
   renderView.setWindowTitle("Render view");
 

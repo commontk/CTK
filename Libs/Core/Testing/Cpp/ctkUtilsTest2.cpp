@@ -49,7 +49,7 @@ int ctkUtilsTest2(int argc, char * argv [] )
   standardNameFilters << standardNameFilter << simpleStandardNameFilter;
   QStringList standardNameFiltersExtensions;
   standardNameFiltersExtensions << "*.jpg" << "*.png" << "*.txt";
-  
+
   if (ctk::nameFilterToExtensions(invalidNameFilter).count())
     {
     qWarning() << "ctk::nameFilterToExtensions() failed: input "

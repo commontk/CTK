@@ -48,21 +48,21 @@ int ctkDICOMPersonNameTest1( int argc, char * argv [] )
               << qPrintable(personName.firstName()) << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   if (personName.middleName() != "middleName")
     {
     std::cerr << "ctkDICOMPersonName::middleName() failed:"
               << qPrintable(personName.middleName()) << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   if (personName.namePrefix() != "namePrefix")
     {
     std::cerr << "ctkDICOMPersonName::namePrefix() failed:"
               << qPrintable(personName.namePrefix()) << std::endl;
     return EXIT_FAILURE;
     }
-    
+
   if (personName.nameSuffix() != "nameSuffix")
     {
     std::cerr << "ctkDICOMPersonName::nameSuffix() failed:"
@@ -86,7 +86,7 @@ int ctkDICOMPersonNameTest1( int argc, char * argv [] )
     }
 
   // test toStdString()
-  // TODO: make it fail 
+  // TODO: make it fail
   if (personName.toStdString() != std::string("lastName, firstName middleName, nameSuffix"))
     {
     std::cerr << "ctkDICOMPersonName::nameSuffix() failed:"
@@ -95,12 +95,12 @@ int ctkDICOMPersonNameTest1( int argc, char * argv [] )
     }
 
   ctkDICOMPersonName samePersonName(personName);
-  
+
   if (samePersonName.lastName() != personName.lastName() ||
       samePersonName.firstName() != personName.firstName() ||
       samePersonName.middleName() != personName.middleName() ||
       samePersonName.namePrefix() != personName.namePrefix() ||
-      samePersonName.nameSuffix() != personName.nameSuffix() || 
+      samePersonName.nameSuffix() != personName.nameSuffix() ||
       samePersonName.formattedName() != personName.formattedName())
     {
     std::cerr << "ctkDICOMPersonName::ctkDICOMPersonName(ctkDICOMPersonName&) failed:"
@@ -121,12 +121,12 @@ int ctkDICOMPersonNameTest1( int argc, char * argv [] )
     }
 
   otherPerson = samePersonName;
-  
+
   if (otherPerson.lastName() != personName.lastName() ||
       otherPerson.firstName() != personName.firstName() ||
       otherPerson.middleName() != personName.middleName() ||
       otherPerson.namePrefix() != personName.namePrefix() ||
-      otherPerson.nameSuffix() != personName.nameSuffix() || 
+      otherPerson.nameSuffix() != personName.nameSuffix() ||
       otherPerson.formattedName() != personName.formattedName())
     {
     std::cerr << "ctkDICOMPersonName::operator=(const ctkDICOMPersonName&) failed:"

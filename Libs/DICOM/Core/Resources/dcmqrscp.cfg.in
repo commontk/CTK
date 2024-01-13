@@ -20,7 +20,7 @@ HostTable BEGIN
 # The HostTable defines symbolic names for collections of network
 # DICOM Application Entities.  A symbolic name can represent a single
 # application entity or it can represent a group of application entities.
-# Each DICOM application entity is defined by a triple consisting of 
+# Each DICOM application entity is defined by a triple consisting of
 # Application Entity Title, host name and TCP/IP port number.
 #
 # Entry Format: SymbolicName = ( AETitle, HostName, Portnumber ), ...   |
@@ -44,14 +44,14 @@ HostTable END
 VendorTable BEGIN
 #
 # The VendorTable is used by the dcmqrdb and dcmqrti applications.
-# You can give a vendor name (r.h.s. entry below) to the dcmqrti 
+# You can give a vendor name (r.h.s. entry below) to the dcmqrti
 # program and it will talk to all hosts and AEs of the vendor.
 # The dcmqrdb program can use the vendor table to restrict move destination
 # to hosts belonging to a vendor.
 # Also, the dcmqrti and dcmqrdb programs use the name defined on the left hand side
 # as the vendor name to display above images.
 #
-# The format: 
+# The format:
 #       VendorName = SymbolicName
 # The symbolic name should be defined in the HostTable.
 #

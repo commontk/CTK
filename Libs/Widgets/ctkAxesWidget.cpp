@@ -52,10 +52,10 @@ public:
   ctkAxesWidget::Axis CurrentAxis;
   ctkAxesWidget::Axis HighlightAxis;
   bool AutoReset;
-  
+
   QStringList AxesLabels;
   QVector<double> AxesAngles;
-  
+
 };
 
 //-----------------------------------------------------------------------------
@@ -115,22 +115,22 @@ ctkAxesWidget::Axis ctkAxesWidgetPrivate::axisAtPos(QPoint pos)const
                      (blankSize / 2) / 1.6180339887);
 
   QPointF mousePos = pos - center;
-  double distance2 = 
+  double distance2 =
     mousePos.x() * mousePos.x() + mousePos.y() * mousePos.y();
   if (distance2 < sphereRadius.width()*sphereRadius.width())
     {
     return ctkAxesWidget::None;
     }
-  
+
   double mouseAngle = atan2(-mousePos.y(), mousePos.x());
   // mouseAngle is in the interval [-pi,+pi] radians
   // change it to be in [-pi/8,  7/8 * pi]
   double PI_8 = 0.392699082;
   if (mouseAngle < -PI_8)
-    {  
+    {
     mouseAngle += 2. * PI;
     }
-  
+
   for (int i = 0; i < 6; ++i)
     {
     if (mouseAngle >= (this->AxesAngles[i] - PI_8) &&
@@ -220,24 +220,24 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
 
   // init
   QPainter painter(this);
-  
+
   //painter.setRenderHint(QPainter::Antialiasing);
-  
+
   QPoint center = QPoint(this->width(), this->height())  / 2;
   int length = qMin(this->width(), this->height());
   int diameter = length / goldenRatio;
   int radius = diameter / 2;
-  
+
   QList<QPoint> positions = d->extremities(center, radius);
-  
-  
+
+
   QFontMetrics fm = this->fontMetrics();
   QSize letterSize = fm.size(Qt::TextShowMnemonic, "X") + QSize(1,1);
   //QSize halfLetterSize = letterSize / 2;
   int blankSize = (length - diameter) / 2;
   QSize betweenLetterSpace = QSize(blankSize - letterSize.width(), blankSize - letterSize.height()) / 2;
   QList<QRect>  labelRects = d->labelRects(positions, betweenLetterSpace);
-  
+
   for (int i = 0; i < 6; ++i)
     {
     //QRect rect(positions[i] + QPoint(cos(d->AxesAngles[i]) * (betweenLetterSpace.width()+halfLetterSize.width()),
@@ -251,8 +251,8 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
       painter.setFont(font);
       }
     painter.drawText(rect, Qt::AlignCenter, d->AxesLabels[i]);
-    } 
-  
+    }
+
   // Drawing the lines
   for (int i = 0; i < 6; ++i)
     {
@@ -269,7 +269,7 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
       }
     painter.drawLine(center, positions[i]);
     }
-  
+
   QSize sphereRadius((blankSize / 2) / 1.6180339887,
                      (blankSize / 2) / 1.6180339887);
   // Draw the center sphere

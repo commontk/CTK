@@ -22,7 +22,7 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
-class ctkTestPluginD 
+class ctkTestPluginD
 {
   ctkTestPluginD()
   {

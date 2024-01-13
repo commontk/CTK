@@ -39,7 +39,7 @@ class CTK_WIDGETS_EXPORT ctkTransferFunctionNativeItem: public ctkTransferFuncti
 
 public:
   ctkTransferFunctionNativeItem(QGraphicsItem* parent = 0);
-  ctkTransferFunctionNativeItem(ctkTransferFunction* transferFunction, 
+  ctkTransferFunctionNativeItem(ctkTransferFunction* transferFunction,
                                 QGraphicsItem* parent = 0);
   virtual ~ctkTransferFunctionNativeItem();
 

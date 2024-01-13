@@ -64,19 +64,19 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
         print("namespace: %s" % namespace)
         print("output_dir: %s" % output_dir)
         print("input_files: %s" % input_files)
-    
+
     _mkdir_p(output_dir)
-    
+
     includes = []
     pythonqtWrappers = []
     registerclasses = []
     namespace = namespace.replace('.', '_')
-    
+
     for input_file in input_files:
         filename = os.path.basename(input_file)
         if extra_verbose:
             print("Wrapping %s" % filename)
-       
+
         # what is the filename without the extension
         filename_we = os.path.splitext(filename)[0]
 
@@ -91,7 +91,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
         # Read input files
         with open(input_file) as f:
             content = f.read()
-            
+
             # Skip wrapping if file do NOT contain Q_OBJECT
             if 'Q_OBJECT' not in content:
                 if extra_verbose:
@@ -109,7 +109,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
                 if extra_verbose:
                     print("\tskipping - Missing expected constructor signature")
                 continue
-     
+
             # Skip wrapping if object has a virtual pure method
             # "x3b" is the unicode for semicolon
             regex = r"virtual[\w\n\s\*\(\)]+\=[\s\n]*(0|NULL|nullptr)[\s\n]*\x3b"
@@ -123,7 +123,7 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
                 # Does constructor signature is of the form: myclass()
                 regex = r"[^~]%s[\s\n]*\([\s\n]*\)" % className
                 res = re.search(regex, content, re.MULTILINE)
-           
+
                 if res is not None:
                     parentClassName = ""
                     if extra_verbose:
@@ -154,13 +154,13 @@ def ctk_wrap_pythonqt(target, namespace, output_dir, input_files, extra_verbose)
         if parentClassName == "QObject" or parentClassName == "QWidget":
             pythonqtWrappers.append(
                 PYTHONQT_WRAPPER_WITH_PARENT.substitute(className = className, parentClassName = parentClassName))
-            
+
         elif parentClassName == "":
             pythonqtWrappers.append(PYTHONQT_WRAPPER_WITHOUT_PARENT.substitute(className = className))
 
         else: # Case parentClassName is None
             raise Exception("Problem wrapping %s" % input_file)
-        
+
         # Generate code allowing to register the class metaobject and its associated "light" wrapper
         registerclasses.append(
         Template("""
@@ -250,6 +250,6 @@ if __name__ == '__main__':
         options.verbose = True
 
     ctk_wrap_pythonqt(options.target, options.namespace, options.output_dir, args, options.extra_verbose)
-      
+
     if options.verbose:
         print("Wrapped %d files" % len(args))

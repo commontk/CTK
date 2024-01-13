@@ -45,11 +45,11 @@ int ctkDICOMItemViewTest1( int argc, char * argv [] )
     std::cerr << "Usage: ctkDICOMItemViewTest1 dcmimage [-I]" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   DicomImage    img(argv[1]);
   QImage image;
   QImage image2(200, 200, QImage::Format_RGB32);
-  
+
   ctkDICOMItemView datasetView;
   datasetView.addImage(img);
   datasetView.addImage(image);

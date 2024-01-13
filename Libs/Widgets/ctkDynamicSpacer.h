@@ -33,7 +33,7 @@ class ctkDynamicSpacerPrivate;
 /// \ingroup Widgets
 /// Description
 /// A spacer widget that has a dynamic size policy controllable via its slot
-/// activate(bool). It can be usefully when you don't want a rigid layout. 
+/// activate(bool). It can be usefully when you don't want a rigid layout.
 class CTK_WIDGETS_EXPORT ctkDynamicSpacer : public QWidget
 {
   Q_OBJECT
@@ -50,7 +50,7 @@ public:
   void setActiveSizePolicy(QSizePolicy sizePolicy);
   inline void setActiveSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical);
 
-  /// The inactive size policy of the spacer. By default the same as QWidget. 
+  /// The inactive size policy of the spacer. By default the same as QWidget.
   QSizePolicy inactiveSizePolicy() const;
   void setInactiveSizePolicy(QSizePolicy sizePolicy);
   inline void setInactiveSizePolicy(QSizePolicy::Policy horizontal, QSizePolicy::Policy vertical);

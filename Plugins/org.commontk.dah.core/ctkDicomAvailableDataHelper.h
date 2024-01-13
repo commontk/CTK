@@ -44,9 +44,9 @@ class org_commontk_dah_core_EXPORT ctkDicomAvailableDataAccessor : public QObjec
 public:
   ctkDicomAvailableDataAccessor(ctkDicomAppHosting::AvailableData& ad);
   virtual ~ctkDicomAvailableDataAccessor();
-  
+
   /**
-   * Method used to retrieve information about a specific patient, giving a patient struct with the ID field already 
+   * Method used to retrieve information about a specific patient, giving a patient struct with the ID field already
    * defined.
    * \return the struct with patient information if patient is present inside available data, otherwise return NULL.
    */
@@ -64,11 +64,11 @@ public:
    */
   ctkDicomAppHosting::Series* getSeries(const QString& seriesUID) const;
 
-  void find(const ctkDicomAppHosting::Patient& patient, 
-                                         const QString& studyUID, 
+  void find(const ctkDicomAppHosting::Patient& patient,
+                                         const QString& studyUID,
                                          const QString& seriesUID,
-                                         ctkDicomAppHosting::Patient*& patientResult, 
-                                         ctkDicomAppHosting::Study*& studyResult, 
+                                         ctkDicomAppHosting::Patient*& patientResult,
+                                         ctkDicomAppHosting::Study*& studyResult,
                                          ctkDicomAppHosting::Series*& seriesResult) const;
 
 protected:
@@ -79,24 +79,24 @@ private:
 };
 
 //----------------------------------------------------------------------------
-bool org_commontk_dah_core_EXPORT addToAvailableData(ctkDicomAppHosting::AvailableData& data, 
-                        ctkDicomObjectLocatorCache* objectLocatorCache, 
-                        const ctkDICOMItem& dataset, 
-                        long length, 
-                        long offset, 
+bool org_commontk_dah_core_EXPORT addToAvailableData(ctkDicomAppHosting::AvailableData& data,
+                        ctkDicomObjectLocatorCache* objectLocatorCache,
+                        const ctkDICOMItem& dataset,
+                        long length,
+                        long offset,
                         const QString& uri);
 
 //----------------------------------------------------------------------------
-bool org_commontk_dah_core_EXPORT addToAvailableData(ctkDicomAppHosting::AvailableData& data, 
-                        ctkDicomObjectLocatorCache* objectLocatorCache, 
+bool org_commontk_dah_core_EXPORT addToAvailableData(ctkDicomAppHosting::AvailableData& data,
+                        ctkDicomObjectLocatorCache* objectLocatorCache,
                         const QString& filename);
 
 //----------------------------------------------------------------------------
-bool org_commontk_dah_core_EXPORT addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data, 
-                        ctkDicomObjectLocatorCache* objectLocatorCache, 
-                        const ctkDICOMItem& dataset, 
-                        long length, 
-                        long offset, 
+bool org_commontk_dah_core_EXPORT addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data,
+                        ctkDicomObjectLocatorCache* objectLocatorCache,
+                        const ctkDICOMItem& dataset,
+                        long length,
+                        long offset,
                         const QString& uri);
 
 //----------------------------------------------------------------------------

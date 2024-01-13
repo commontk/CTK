@@ -36,7 +36,7 @@ int ctkToolTipTrapperTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   ctkToolTipTrapper trapper;
-  
+
   if (trapper.toolTipsTrapped() != true)
     {
     std::cerr << "ctkToolTipTrapper::toolTipsTrapped default value" << std::endl;
@@ -64,7 +64,7 @@ int ctkToolTipTrapperTest1(int argc, char * argv [] )
     std::cerr << "ctkToolTipTrapper::setToolTipsWordWrapped failed" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   QPushButton trapButton("button");
   trapButton.setToolTip("Button tooltip text");
   trapButton.setCheckable(true);

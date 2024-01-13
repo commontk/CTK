@@ -167,7 +167,7 @@ protected:
     ctkWorkflowInterstepTransitionEvent* workflowEvent = static_cast<ctkWorkflowInterstepTransitionEvent*>(e);
 
     return (this->TransitionType == workflowEvent->EventTransitionType
-            && this->Id == workflowEvent->EventId); 
+            && this->Id == workflowEvent->EventId);
   }
 
   void onTransition(QEvent*){}

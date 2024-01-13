@@ -69,13 +69,13 @@ int ctkCheckableModelHelperTest2(int argc, char * argv [] )
   headerView.setDefaultCheckState(Qt::Checked);
   headerView.setModel(&model);
 
-  
+
   QList<QStandardItem*> subRow2;
   subRow2 << new QStandardItem << new QStandardItem << new QStandardItem;
 //  subRow2[0]->setCheckable(true);
   subRow2[0]->setText("checkable");
   row2[0]->insertRow(0, subRow2);
-  
+
   headers << "4";
   model.setHorizontalHeaderLabels(headers);
   view.show();
@@ -84,6 +84,6 @@ int ctkCheckableModelHelperTest2(int argc, char * argv [] )
     {
     QTimer::singleShot(500, &app, SLOT(quit()));
     }
-  
+
   return app.exec();
 }

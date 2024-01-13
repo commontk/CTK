@@ -40,7 +40,7 @@ class ctkBusEventData;
 class org_commontk_eventbus_EXPORT ctkBusEvent : public ctkEvent
 {
    QSharedDataPointer<ctkBusEventData> d;
-   
+
 public:
 
   /**

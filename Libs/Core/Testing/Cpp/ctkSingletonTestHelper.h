@@ -34,18 +34,18 @@ class ctkSingletonTestHelper
 {
 public:
   static ctkSingletonTestHelper* instance();
-  
+
   // Add singleton method here ...
   void registerNorthFace();
   int northFaceCount()const;
-  
+
 protected:
   ctkSingletonTestHelper();
   virtual ~ctkSingletonTestHelper();
-  
+
   CTK_SINGLETON_DECLARE(ctkSingletonTestHelper);
   QScopedPointer<ctkSingletonTestHelperPrivate> d_ptr;
-  
+
 private:
   Q_DISABLE_COPY(ctkSingletonTestHelper);
   Q_DECLARE_PRIVATE(ctkSingletonTestHelper);

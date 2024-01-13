@@ -243,7 +243,7 @@ void ctkVTKTextPropertyWidget::setFont(const QString& font)
     return;
     }
   d->TextProperty->SetFontFamilyAsString(font.toStdString().data());
-  
+
   emit fontFamilyChanged(font);
 }
 
@@ -263,7 +263,7 @@ void ctkVTKTextPropertyWidget::setBold(bool enable)
     return;
     }
   d->TextProperty->SetBold(enable);
-  
+
   emit boldChanged(enable);
 }
 
@@ -283,7 +283,7 @@ void ctkVTKTextPropertyWidget::setItalic(bool enable)
     return;
     }
   d->TextProperty->SetItalic(enable);
-  
+
   emit italicChanged(enable);
 }
 
@@ -303,7 +303,7 @@ void ctkVTKTextPropertyWidget::setShadow(bool enable)
     return;
     }
   d->TextProperty->SetShadow(enable);
-  
+
   emit shadowChanged(enable);
 }
 

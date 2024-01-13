@@ -60,7 +60,7 @@ Configurable behaviour for testing purposes.
       <label>Error text</label>
     </string>
   </parameters>
-  
+
   <parameters>
     <label>Output parameter</label>
     <description>Output parameters for testing purposes.</description>

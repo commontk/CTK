@@ -15,7 +15,7 @@ function(ctkFunctionGetTargetDependencies var_deps)
   if(NOT var_deps)
     message(FATAL_ERROR "Missing variable name as the first argument for storing the result")
   endif()
-  
+
   if(NOT MY_TARGETS)
     message(FATAL_ERROR "Missing target names")
   endif()
@@ -28,7 +28,7 @@ function(ctkFunctionGetTargetDependencies var_deps)
     # a previous invocation of the ctkMacroValidateBuildOptions macro.
     list(APPEND _targets ${${_target}_DEPENDENCIES})
   endforeach()
-  
+
   if (_targets)
     list(REMOVE_DUPLICATES _targets)
     if(NOT MY_ALL)

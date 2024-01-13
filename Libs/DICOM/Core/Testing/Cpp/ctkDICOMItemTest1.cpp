@@ -138,6 +138,6 @@ int ctkDICOMItemTest1( int argc, char * argv [] )
   ctkDICOMItem::TagKey(DcmTag());
   ctkDICOMItem::TagDescription(DcmTag());
   ctkDICOMItem::TagVR(DcmTag());
-  
+
   return EXIT_SUCCESS;
 }

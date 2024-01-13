@@ -36,7 +36,7 @@ public:
   virtual bool process(
     const QtSoapMessage& message,
     QtSoapMessage* reply) const;
-    
+
 private:
 
   void processGetState(const QtSoapMessage& message,
@@ -45,7 +45,7 @@ private:
                        QtSoapMessage* reply) const;
   void processBringToFront(const QtSoapMessage& message,
                            QtSoapMessage* reply) const;
-               
+
   ctkDicomAppInterface* AppInterface;
 
 };

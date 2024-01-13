@@ -32,7 +32,7 @@ class CTK_WIDGETS_PLUGINS_EXPORT ctkPopupWidgetPlugin
 
 public:
   ctkPopupWidgetPlugin(QObject* pluginParent = 0);
-  
+
   QWidget *createWidget(QWidget* parentWidget);
   QString  domXml() const;
   QIcon    icon() const;

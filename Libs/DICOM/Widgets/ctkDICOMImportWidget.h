@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMImportWidget_h
 #define __ctkDICOMImportWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 
 // CTK includes

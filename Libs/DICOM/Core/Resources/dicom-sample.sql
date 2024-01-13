@@ -1,13 +1,13 @@
---  
--- initialize a small sample database from an empty database. 
+--
+-- initialize a small sample database from an empty database.
 -- For the corresponding DICOM files and more information see
 -- http://www.slicer.org/slicerWiki/index.php/DICOM:Database
--- 
+--
 -- Note: the semicolon at the end is necessary for the simple parser to separate
 --       the statements since the SQlite driver does not handle multiple
 --       commands per QSqlQuery::exec call!
 -- ;
- 
+
 BEGIN TRANSACTION;
 DROP TABLE IF EXISTS 'Images' ;
 DROP TABLE IF EXISTS 'Patients' ;

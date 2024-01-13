@@ -203,7 +203,7 @@ bool ctkLanguageComboBoxPrivate::languageItem(const QString& localeCode,
       // (e.g., instead of "Hungarian (Hungary)" just show "Hungarian").
       text = QLocale::languageToString(locale.language());
     }
-    
+
   }
   data = locale.name();
 

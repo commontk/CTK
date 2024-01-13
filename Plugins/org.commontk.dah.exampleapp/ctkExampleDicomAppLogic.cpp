@@ -121,7 +121,7 @@ void ctkExampleDicomAppLogic::onStartProgress()
   // we need to create the button before we receive data from
   // the host, which happens immediately after calling
   // getHostInterface()->notifyStateChanged
-  do_something(); 
+  do_something();
 
   getHostInterface()->notifyStateChanged(ctkDicomAppHosting::INPROGRESS);
 }
@@ -231,7 +231,7 @@ void ctkExampleDicomAppLogic::onLoadDataClicked()
   }
   else
     return;
-  
+
   QString transfersyntax("1.2.840.10008.1.2.1");
   QList<QString> transfersyntaxlist;
   transfersyntaxlist.append(transfersyntax);
@@ -292,7 +292,7 @@ void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
     preferredProtocols.append("file:");
     QString outputlocation = getHostInterface()->getOutputLocation(preferredProtocols);
     QString templatefilename = QDir(outputlocation).absolutePath();
-    if(templatefilename.isEmpty()==false) templatefilename.append('/'); 
+    if(templatefilename.isEmpty()==false) templatefilename.append('/');
     templatefilename.append("ctkdahscXXXXXX.jpg");
     QTemporaryFile *tempfile = new QTemporaryFile(templatefilename,this->AppWidget);
 
@@ -315,8 +315,8 @@ void ctkExampleDicomAppLogic::onCreateSecondaryCapture()
       qDebug() << "Created Uuid: " << getHostInterface()->generateUID();
 
       ctkDicomAppHosting::AvailableData resultData;
-      ctkDicomAvailableDataHelper::addToAvailableData(resultData, 
-        objectLocatorCache(), 
+      ctkDicomAvailableDataHelper::addToAvailableData(resultData,
+        objectLocatorCache(),
         tempfile->fileName());
 
       bool success = publishData(resultData, true);

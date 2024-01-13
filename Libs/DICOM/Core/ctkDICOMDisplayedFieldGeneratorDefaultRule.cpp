@@ -73,7 +73,7 @@ QStringList ctkDICOMDisplayedFieldGeneratorDefaultRule::getRequiredDICOMTags()
   requiredTags << dicomTagToString(DCM_SeriesNumber);
   requiredTags << dicomTagToString(DCM_AcquisitionNumber);
   requiredTags << dicomTagToString(DCM_EchoNumbers);
-  requiredTags << dicomTagToString(DCM_TemporalPositionIdentifier);   
+  requiredTags << dicomTagToString(DCM_TemporalPositionIdentifier);
   requiredTags << dicomTagToString(DCM_Rows);
   requiredTags << dicomTagToString(DCM_Columns);
 

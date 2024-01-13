@@ -153,9 +153,9 @@ void ctkVTKScalarBarWidget::setScalarBarWidget(vtkScalarBarWidget* scalarBarWidg
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   vtkScalarBarActor* newActor =
     scalarBarWidget ? scalarBarWidget->GetScalarBarActor() : 0;
-  qvtkReconnect(d->ScalarBarWidget, scalarBarWidget, vtkCommand::EnableEvent, 
+  qvtkReconnect(d->ScalarBarWidget, scalarBarWidget, vtkCommand::EnableEvent,
                 this, SLOT(onScalarBarModified()));
-  qvtkReconnect(d->ScalarBarWidget, scalarBarWidget, vtkCommand::DisableEvent, 
+  qvtkReconnect(d->ScalarBarWidget, scalarBarWidget, vtkCommand::DisableEvent,
                 this, SLOT(onScalarBarModified()));
   qvtkReconnect(oldActor, newActor, vtkCommand::ModifiedEvent,
                 this, SLOT(onScalarBarModified()));

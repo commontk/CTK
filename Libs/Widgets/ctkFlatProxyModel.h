@@ -34,7 +34,7 @@ class ctkFlatProxyModelPrivate;
 /// ctkFlatProxyModel intends to flatten contiguous hierarchies within a model.
 /// For now, it only supports the toplevel hierarchy flatten with the 1 degree
 /// children.
-/// The items in the levels being flatten don't appear in the model anymore, 
+/// The items in the levels being flatten don't appear in the model anymore,
 /// however their children will be visible.
 class CTK_WIDGETS_EXPORT ctkFlatProxyModel : public QAbstractProxyModel
 {

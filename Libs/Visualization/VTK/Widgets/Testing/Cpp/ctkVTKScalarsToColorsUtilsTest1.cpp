@@ -48,7 +48,7 @@ int ctkVTKScalarsToColorsUtilsTest1(int argc, char * argv [] )
   ctf->AddRGBPoint(4.8,  68./255, 194./255, 141./255);
   ctf->AddRGBPoint(5.9,  78./255,  68./255, 194./255);
   ctf->AddRGBPoint(7.0, 141./255,  68./255, 194./255);
-  
+
   QImage image = ctk::scalarsToColorsImage(ctf);
 
   QLabel label;
@@ -59,7 +59,7 @@ int ctkVTKScalarsToColorsUtilsTest1(int argc, char * argv [] )
   label2.setText( QString("<img src=\"%1\">: text")
     .arg(ctk::base64HTMLImageTagSrc(image)));
   label2.show();
-  
+
   if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

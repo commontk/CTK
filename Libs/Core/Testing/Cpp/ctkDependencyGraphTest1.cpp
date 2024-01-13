@@ -45,7 +45,7 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
   //
   // 6 - 8
   // |
-  // 7 - 5 - 1 - 2 - 
+  // 7 - 5 - 1 - 2 -
   // |       |     | - 9
   // |       4 - 3 -   |
   // |                 |
@@ -68,10 +68,10 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
   graph.insertEdge(10,7);
 
   int expectedNumberOfEdge = 15;
-  
+
   graph.printAdditionalInfo();
 //  graph.printGraph();  // printAdditionalInfo also prints graph.
-  
+
   int nov = graph.numberOfVertices();
 
   if( nov != numberOfVertices )
@@ -86,7 +86,7 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
     }
 
   bool cfc = graph.checkForCycle();
-  
+
   if( cfc == true )
     {
     return EXIT_FAILURE;
@@ -121,7 +121,7 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
 
   path.clear();
   expectedPath.clear();
-  
+
   graph.findPath( 1, 7, path );
   expectedPath.push_back(1);
   expectedPath.push_back(5);
@@ -137,7 +137,7 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
 
   path.clear();
   expectedPath.clear();
-  
+
   graph.findPath( 3, 7, path );
   expectedPath.push_back(3);
   expectedPath.push_back(4);
@@ -155,7 +155,7 @@ int ctkDependencyGraphTest1(int argc, char * argv [] )
 
   path.clear();
   expectedPath.clear();
-  
+
   graph.findPath( 2, 5, path );
   expectedPath.push_back(2);
   expectedPath.push_back(1);

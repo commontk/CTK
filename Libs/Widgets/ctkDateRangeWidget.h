@@ -52,7 +52,7 @@ public:
   /// \note The \li parent can be set later using QWidget::setParent()
   /// By default, the range is "Any Date"
   explicit ctkDateRangeWidget(QWidget* parent = 0);
-  
+
   /// Destructor
   virtual ~ctkDateRangeWidget();
 
@@ -67,12 +67,12 @@ public:
   /// The returned date is never NULL/empty, but set to
   /// QDateTimeEdit::minimumDateTime
   QDateTime startDateTime() const;
-  
+
   /// Access the start date/times
-  /// The returned date is never NULL/empty, but set to 
+  /// The returned date is never NULL/empty, but set to
   /// QDateTimeEdit::maximumDateTime
   QDateTime endDateTime() const;
-  
+
   /// Utility function that returns true if the range correspond to any date
   /// It can be useful if the time must be handled specially in that case.
   /// Returns true if any of the start or end date is invalid.

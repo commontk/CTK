@@ -68,16 +68,16 @@ public:
 
   /// Return the closed geometry for the popup based on the current geometry
   QRect closedGeometry()const;
-  /// Return the closed geometry for a given open geometry 
+  /// Return the closed geometry for a given open geometry
   QRect closedGeometry(QRect openGeom)const;
-  
+
   /// Return the desired geometry, maybe it won't happen if the size is too
   /// small for the popup.
   QRect desiredOpenGeometry()const;
   QRect desiredOpenGeometry(QRect baseGeometry)const;
   QRect baseGeometry()const;
   QPoint mapToGlobal(const QPoint& baseWidgetPoint)const;
-  
+
   QPropertyAnimation* currentAnimation()const;
 
   //void temporarilyHiddenOn();
@@ -96,7 +96,7 @@ protected:
   bool                ForcedTranslucent;
   QPropertyAnimation* ScrollAnimation;
   QLabel*             PopupPixmapWidget;
-  
+
   // Geometry attributes
   Qt::Alignment    Alignment;
   Qt::Orientations Orientations;

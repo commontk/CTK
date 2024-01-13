@@ -195,7 +195,7 @@ int ctkMatrixWidgetTest2(int argc, char * argv [] )
               << matrixWidget.value(0,2) <<std::endl;
     return EXIT_FAILURE;
     }
- 
+
   matrixWidget.setSingleStep(1.);
   if (matrixWidget.singleStep() != 1.)
     {

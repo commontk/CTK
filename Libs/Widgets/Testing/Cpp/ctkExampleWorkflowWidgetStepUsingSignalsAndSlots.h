@@ -96,7 +96,7 @@ public:
   QLineEdit* lineEdit()const;
   void setLineEdit(QLineEdit* lineEdit);
 
-  /// 
+  ///
   /// Get the values for the counters of the number of times we have
   /// run the onEntry() and onExit() functions
   int numberOfTimesRanOnEntry()const;
@@ -117,7 +117,7 @@ public Q_SLOTS:
 
   /// Adds the label and line edit on this step's user interface to
   /// the given list, which will be used by the superclass's
-  /// showUserInterface() function 
+  /// showUserInterface() function
   virtual void createUserInterface();
 
 Q_SIGNALS:

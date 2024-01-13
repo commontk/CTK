@@ -100,7 +100,7 @@ int ctkDICOMQueryTest1( int argc, char * argv [] )
     }
   ctkDICOMDatabase database;
   query.query(database);
-  
+
   // Queried studies should be empty because we use an empty database.
   if (!query.studyAndSeriesInstanceUIDQueried().isEmpty())
     {

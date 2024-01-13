@@ -31,7 +31,7 @@
 #define CTK_SOAP_LOG_HIGHLEVEL(msg) qDebug() msg;
 //#define CTK_SOAP_LOG_HIGHLEVEL(msg)
 
-//#define CTK_SOAP_LOG_REQUEST(msg) 
+//#define CTK_SOAP_LOG_REQUEST(msg)
 #define CTK_SOAP_LOG_REQUEST(msg) qDebug() msg;
 
 #define CTK_SOAP_LOG_RECEPTION(msg) qDebug() msg;

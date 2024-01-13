@@ -146,12 +146,12 @@ int ctkDicomAppHostingTypesTest1(int argc, char* argv[])
 
   objectLocator2.URI = "";
   CHECK_OP(ObjectLocator, objectLocator1, objectLocator2, /*EQUAL_EXPECTED=*/ true);
-  
+
   //----------------------------------------------------------------------------
   ctkDicomAppHosting::ObjectDescriptor objectDescriptor1;
   ctkDicomAppHosting::ObjectDescriptor objectDescriptor2;
   CHECK_OP(ObjectDescriptor, objectDescriptor1, objectDescriptor2, /*EQUAL_EXPECTED=*/ true);
-  
+
   objectDescriptor2.classUID = "classUID";
   CHECK_OP(ObjectDescriptor, objectDescriptor1, objectDescriptor2, /*EQUAL_EXPECTED=*/ false);
 
@@ -288,6 +288,6 @@ int ctkDicomAppHostingTypesTest1(int argc, char* argv[])
 
   availableData2.patients << p1 << p2;
   CHECK_OP(AvailableData, availableData1, availableData2, /*EQUAL_EXPECTED=*/ true);
-  
+
   return EXIT_SUCCESS;
 }

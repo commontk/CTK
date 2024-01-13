@@ -112,5 +112,5 @@ By utilizing this integrated approach, CTK facilitates the management and custom
 
 ## License
 
-CTK code is licensed under Apache 2.0. This means that users of CTK are allowed to use the code for academic, commercial, or other purposes without paying license fees or being restricted in their ability to redistribute their code or keep it private. 
+CTK code is licensed under Apache 2.0. This means that users of CTK are allowed to use the code for academic, commercial, or other purposes without paying license fees or being restricted in their ability to redistribute their code or keep it private.
 

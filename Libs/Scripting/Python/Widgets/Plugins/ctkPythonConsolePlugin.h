@@ -32,7 +32,7 @@ class CTK_SCRIPTING_PYTHON_WIDGETS_PLUGINS_EXPORT ctkPythonConsolePlugin
 
 public:
   ctkPythonConsolePlugin(QObject *_parent = 0);
-  
+
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;
   QIcon    icon() const;

@@ -179,7 +179,7 @@ Q_SIGNALS:
   ///
   /// valueChanged is fired anytime a coordinate is modified, the returned
   /// value is the point coordinates
-  /// TODO: Don't fire the signal if the new values are not changed 
+  /// TODO: Don't fire the signal if the new values are not changed
   void coordinatesChanged(double* pos);
 
 protected Q_SLOTS:

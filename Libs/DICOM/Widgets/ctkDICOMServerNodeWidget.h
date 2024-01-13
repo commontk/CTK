@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMServerNodeWidget_h
 #define __ctkDICOMServerNodeWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 #include <QString>
 #include <QList>
@@ -53,12 +53,12 @@ public:
 
   /// Return the list of server names
   QStringList            serverNodes()const;
-  /// Return the list of selected(checked) server names 
+  /// Return the list of selected(checked) server names
   QStringList            selectedServerNodes()const;
   /// Return all the information associated to a server defined by its name
   QMap<QString,QVariant> serverNodeParameters(const QString &serverNode)const;
   QMap<QString,QVariant> serverNodeParameters(int row)const;
-  
+
   /// Add a server node with the given parameters
   /// Return the row index added into the table
   int addServerNode(const QMap<QString, QVariant>& parameters);

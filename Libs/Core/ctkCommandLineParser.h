@@ -101,7 +101,7 @@ public:
   ctkCommandLineParser(QSettings* settings, QObject* newParent = 0);
 
   ~ctkCommandLineParser();
-  
+
   /**
    * Parse a given list of command line arguments.
    *
@@ -138,7 +138,7 @@ public:
    * @see parseArguments(const QStringList&, bool*)
    */
   QString errorString() const;
-  
+
   /**
    * This method returns all unparsed arguments, i.e. all arguments
    * for which no long or short name has been registered via a call
@@ -149,7 +149,7 @@ public:
    * @return A list containing unparsed arguments.
    */
   const QStringList& unparsedArguments() const;
-  
+
   /**
    * Checks if the given argument has been added via a call
    * to <code>addArgument()</code>.

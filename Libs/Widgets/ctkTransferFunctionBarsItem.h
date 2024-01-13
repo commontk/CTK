@@ -52,7 +52,7 @@ public:
 
   void setBarColor(const QColor& newBarColor);
   QColor barColor()const;
-  
+
   enum LogMode
   {
     NoLog = 0,

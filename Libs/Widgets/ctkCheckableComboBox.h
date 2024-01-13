@@ -40,14 +40,14 @@ class CTK_WIDGETS_EXPORT ctkCheckableComboBox : public QComboBox
 public:
   ctkCheckableComboBox(QWidget *parent = 0);
   virtual ~ctkCheckableComboBox();
-  
+
   /// Use setCheckableModel instead of setModel()
   Q_INVOKABLE QAbstractItemModel* checkableModel()const;
   Q_INVOKABLE void setCheckableModel(QAbstractItemModel *model);
-  
+
   /// Returns an up-to-date list of all the checked indexes.
   Q_INVOKABLE QModelIndexList checkedIndexes()const;
-  /// Returns true if all the indexes are checked, false otherwise 
+  /// Returns true if all the indexes are checked, false otherwise
   Q_INVOKABLE bool allChecked()const;
   /// Returns true if none of the indexes is checked, false otherwise
   Q_INVOKABLE bool noneChecked()const;
@@ -60,10 +60,10 @@ public:
   /// Returns a pointer to the checkable model helper to give a direct access
   /// to the check manager.
   Q_INVOKABLE ctkCheckableModelHelper* checkableModelHelper()const;
-  
+
   /// Reimplemented for internal reasons
   bool eventFilter(QObject *o, QEvent *e);
-  
+
 Q_SIGNALS:
   void checkedIndexesChanged();
 

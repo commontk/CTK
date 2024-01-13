@@ -50,7 +50,7 @@ public:
   void setThreshold(double min, double max, double opacity);
   void setRange(double min, double max);
   void guessThreshold(double& min, double& max, double& opacity)const;
-  
+
   vtkPiecewiseFunction* PiecewiseFunction;
   bool UserRange;
   bool UseSharpness;
@@ -192,7 +192,7 @@ void ctkVTKThresholdWidgetPrivate::setThreshold(double min, double max, double o
     // 0------1      +----3
     nodeCount = 4;
     }
-  else 
+  else
     {
     //        2------3
     //        |      |
@@ -374,7 +374,7 @@ void ctkVTKThresholdWidget
   this->qvtkReconnect(d->PiecewiseFunction, newFunction, vtkCommand::ModifiedEvent,
                       this, SLOT(updateFromPiecewiseFunction()));
   d->PiecewiseFunction = newFunction;
-  
+
   if (!d->UserRange)
     {
     double range[2] = {0., 1.};
@@ -396,7 +396,7 @@ void ctkVTKThresholdWidget
 void ctkVTKThresholdWidget::updateFromPiecewiseFunction()
 {
   Q_D(ctkVTKThresholdWidget);
-  
+
   if (!d->PiecewiseFunction)
     {
     return;

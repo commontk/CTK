@@ -46,7 +46,7 @@ public:
 
   /// Constructor
   ctkQImageView( QWidget* parent = 0 );
-  
+
   /// Destructor
   virtual ~ctkQImageView( void );
 

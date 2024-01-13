@@ -29,26 +29,26 @@ ctkDICOMWidgetsAbstractPlugin::ctkDICOMWidgetsAbstractPlugin()
 
 //-----------------------------------------------------------------------------
 QString ctkDICOMWidgetsAbstractPlugin::group() const
-{ 
+{
   return "CTK [DICOM Widgets]";
 }
 
 //-----------------------------------------------------------------------------
 QIcon ctkDICOMWidgetsAbstractPlugin::icon() const
 {
-  return QIcon(); 
+  return QIcon();
 }
 
 //-----------------------------------------------------------------------------
 QString ctkDICOMWidgetsAbstractPlugin::toolTip() const
-{ 
-  return QString(); 
+{
+  return QString();
 }
 
 //-----------------------------------------------------------------------------
 QString ctkDICOMWidgetsAbstractPlugin::whatsThis() const
 {
-  return QString(); 
+  return QString();
 }
 
 //-----------------------------------------------------------------------------

@@ -44,7 +44,7 @@ int ctkDICOMQueryTest2( int argc, char * argv [] )
 
   ctkDICOMTester tester;
   tester.startDCMQRSCP();
-  
+
   QStringList arguments = app.arguments();
   arguments.pop_front(); // remove application name
   arguments.pop_front(); // remove test name

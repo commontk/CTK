@@ -34,10 +34,10 @@ class ctkDICOMDatabase;
 /// \ingroup DICOM_Core
 ///
 /// \brief Generates displayable data fields from DICOM tags
-/// 
+///
 /// The \sa updateDisplayedFieldsForInstance function is called from the DICOM database when update of the
 /// displayed fields is needed.
-/// 
+///
 /// Displayed fields are determined by the rules, subclasses of ctkDICOMDisplayedFieldGeneratorAbstractRule.
 /// The rules need to be registered to take part of the generation. When updating the displayed fields,
 /// every rule defines the fields it is responsible for using the cached DICOM tags in the database.

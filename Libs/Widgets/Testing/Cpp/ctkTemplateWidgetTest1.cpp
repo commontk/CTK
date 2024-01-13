@@ -35,7 +35,7 @@ int ctkTemplateWidgetTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   ctkTemplateWidget templateWidget;
-  
+
   QSignalSpy spy(&templateWidget, SIGNAL(propertyChanged()));
   //do something to trigger the signal
   if (spy.count() != 1)

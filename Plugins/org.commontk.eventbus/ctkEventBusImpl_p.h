@@ -56,7 +56,7 @@ public:
   virtual void unsubscribeSlot(qlonglong subscriptionId);
 
   virtual bool updateProperties(qlonglong subsriptionId, const ctkDictionary& properties);
-  
+
   /// Create the server for remote communication according to the given protocol and listen port.
   virtual bool createServer(const QString &communication_protocol, unsigned int listen_port);
 

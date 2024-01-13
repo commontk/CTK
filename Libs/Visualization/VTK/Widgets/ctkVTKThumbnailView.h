@@ -37,7 +37,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKThumbnailView : public ctkVTKRe
 public:
   /// Superclass typedef
   typedef ctkVTKRenderView Superclass;
-  
+
   /// Constructors
   explicit ctkVTKThumbnailView(QWidget* parent = 0);
   virtual ~ctkVTKThumbnailView();

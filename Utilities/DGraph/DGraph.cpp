@@ -122,7 +122,7 @@ int getOrGenerateId(std::map<int, std::string>& vertexIdToLabel,
     {
     vertexId = vertexLabelToId[label];
     }
-  return vertexId; 
+  return vertexId;
 }
 
 //----------------------------------------------------------------------------
@@ -211,7 +211,7 @@ int main(int argc, char** argv)
   stringStream << header;
   stringStream >> numberOfVertices;
   stringStream >> numberOfEdges;
-  
+
   if (numberOfVertices == -1 || numberOfEdges == -1)
     {
     displayError(argv[0], std::string("Error in file '") + filepath + "' - First line should look like: <#Vertices> <#Edges>");
@@ -231,7 +231,7 @@ int main(int argc, char** argv)
   std::map<std::string, int> vertexLabelToId;
 
   // Repeatedly read lines containing labels.
-  
+
   std::string line;
   int lineNumber = 2;
   std::getline(data, line);
@@ -258,7 +258,7 @@ int main(int argc, char** argv)
       stringStream >> message;
       displayError(argv[0], message);
       }
-    
+
     lineNumber++;
 
     int from = -1;
@@ -303,9 +303,9 @@ int main(int argc, char** argv)
     mygraph.printGraph();
     std::cout << "> Check for cycle ..." << std::endl;
     }
-   
+
   mygraph.checkForCycle();
-  
+
   if (mygraph.cycleDetected())
     {
     std::cerr << "Cycle detected !" << std::endl;
@@ -315,7 +315,7 @@ int main(int argc, char** argv)
     unsigned int pathIteratorCounter = 0;
 
     mygraph.findPath(mygraph.cycleOrigin(), mygraph.cycleEnd(), path);
-    
+
     for (pathIterator = path.begin(); pathIterator != path.end(); pathIterator++)
       {
       std::cerr << vertexIdToLabel[*pathIterator];
@@ -326,7 +326,7 @@ int main(int argc, char** argv)
       pathIteratorCounter++;
       }
     std::cerr << std::endl;
-    
+
     path.clear();
     mygraph.findPath(mygraph.cycleEnd(), mygraph.cycleOrigin(), path);
 
@@ -340,7 +340,7 @@ int main(int argc, char** argv)
         }
       }
     std::cerr << std::endl;
-    
+
     return EXIT_FAILURE;
     }
 
@@ -375,7 +375,7 @@ int main(int argc, char** argv)
     mygraph.sourceVertices(sources);
     std::cout << "Source vertices: " << listToString(sources) << std::endl;
     }
-    
+
   if (outputPath)
     {
     // TODO Make sure label is valid

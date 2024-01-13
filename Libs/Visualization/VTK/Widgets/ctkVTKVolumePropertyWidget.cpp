@@ -158,7 +158,7 @@ void ctkVTKVolumePropertyWidgetPrivate::computeIntensityRange(double* range)
   Q_ASSERT(this->VolumeProperty->GetRGBTransferFunction(this->CurrentComponent));
   Q_ASSERT(this->VolumeProperty->GetScalarOpacity(this->CurrentComponent));
   Q_ASSERT(this->VolumeProperty->GetGradientOpacity(this->CurrentComponent));
-  
+
   double colorRange[2] = {0., 1.};
   this->VolumeProperty->GetRGBTransferFunction(this->CurrentComponent)->GetRange(colorRange);
   range[0] = qMin(range[0], colorRange[0]);
@@ -547,7 +547,7 @@ void ctkVTKVolumePropertyWidget::onAxesModified()
   //return;
   ctkVTKScalarsToColorsWidget* senderWidget =
     qobject_cast<ctkVTKScalarsToColorsWidget*>(this->sender());
-  
+
   double xRange[2] = {0.,0.};
   senderWidget->xRange(xRange);
   if (senderWidget != d->ScalarOpacityWidget)

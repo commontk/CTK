@@ -48,7 +48,7 @@ function( ctkFunctionDownloadData)
       message(FATAL_ERROR "${arg} is mandatory")
     endif()
   endforeach()
-    
+
   # Make sure output directory exists
   if(NOT EXISTS "${MY_OUTPUT_DIRECTORY}")
     message(FATAL_ERROR "OUTPUT_DIRECTORY '${MY_OUTPUT_DIRECTORY}' doesn't exist !")
@@ -66,7 +66,7 @@ function( ctkFunctionDownloadData)
     endif()
     message(STATUS "info: downloaded '${dest_file}'")
   endif()
-  
+
 endfunction()
 
 #
@@ -77,7 +77,7 @@ if(FUNCTION_TESTING)
   include(ctkMacroParseArguments.cmake)
 
   message("Testing ctkFunctionDownloadData ...")
-  
+
   #
   # Test1
   #
@@ -98,7 +98,7 @@ if(FUNCTION_TESTING)
   endif()
 
   set(extract_destination_dir ${output_dir}/item_${itemid})
-  
+
   # Create a folder
   message(STATUS "creating directory ... [${extract_destination_dir}]")
   file(MAKE_DIRECTORY ${extract_destination_dir})

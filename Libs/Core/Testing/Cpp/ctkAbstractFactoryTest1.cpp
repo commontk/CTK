@@ -66,7 +66,7 @@ int ctkAbstractFactoryTest1(int argc, char * argv [] )
 
   ctkAbstractFactory<Item> abstractFactory;
   abstractFactory.printAdditionalInfo();
-  
+
   Item* item = abstractFactory.instantiate("unregistered item");
   if (item != 0)
     {
@@ -94,7 +94,7 @@ int ctkAbstractFactoryTest1(int argc, char * argv [] )
 
   Factory<Item> factory;
   factory.printAdditionalInfo();
-  
+
   Item* item1 = factory.instantiate("item1");
   if (item != 0)
     {

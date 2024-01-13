@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMQuery_h
 #define __ctkDICOMQuery_h
 
-// Qt includes 
+// Qt includes
 #include <QObject>
 #include <QMap>
 #include <QString>
@@ -50,7 +50,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMQuery : public QObject
 public:
   explicit ctkDICOMQuery(QObject* parent = 0);
   virtual ~ctkDICOMQuery();
-  
+
   /// Set methods for connectivity
   /// Empty by default
   void setCallingAETitle ( const QString& callingAETitle );
@@ -105,12 +105,12 @@ Q_SIGNALS:
   /// Signal is emitted inside the query() function. It sends the different step
   /// the function is at.
   void progress(const QString& message);
-  /// Signal is emitted inside the query() function. It sends 
+  /// Signal is emitted inside the query() function. It sends
   /// detailed feedback for debugging
   void debug(const QString& message);
   /// Signal is emitted inside the query() function. It send any error messages
   void error(const QString& message);
-  /// Signal is emitted inside the query() function when finished with value 
+  /// Signal is emitted inside the query() function when finished with value
   /// true for success or false for error
   void done(const bool& error);
 
