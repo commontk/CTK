@@ -33,11 +33,11 @@
 //  To recreate the parts, from the CTK-superbuild directory, run:
 //
 //
-//  ./CMakeExternals/Install/bin/dcmqrscp -c ./CTK-build/Testing/Temporary/dcmqrscp.cfg -d -v
+//  ./DCMTK-build/bin/dcmqrscp -c ./CTK-build/Testing/Temporary/dcmqrscp.cfg -d -v
 //
-//  ./CMakeExternals/Install/bin/storescu -aec CTK_AE -aet CTK_AE localhost 11112 ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/*.IMA
+//  ./DCMTK-build/bin/bin/storescu -aec CTK_AE -aet CTK_AE localhost 11112 ./CTKData/Data/DICOM/MRHEAD/*.IMA
 //
-//  ./CMakeExternals/Install/bin/findscu -aet CTK_AE -aec COMMONTK -P -k 0010,0010=\* localhost 11112 patqry.dcm
+//  ./DCMTK-build/bin/bin/findscu -aet CTK_AE -aec COMMONTK -P -k 0010,0010=\* localhost 11112 patqry.dcm
 //
 //  ./CTK-build/bin/ctkDICOMQuery /tmp/test.db CTK_AE CTK_AE localhost 11112
 //
@@ -48,10 +48,10 @@
 //  As invoked by ctest:
 //
 //  % ./CTK-build/bin/CTKApplicationCppTests ctkDICOMApplicationTest1 \
-//      ./CMakeExternals/Install/bin/dcmqrscp ./CTK-build/Testing/Temporary/dcmqrscp.cfg \
-//          ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000055.IMA \
-//          ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000056.IMA \
-//      ./CMakeExternals/Install/bin/storescu \
+//      ./DCMTK-build/bin/bin/dcmqrscp ./CTK-build/Testing/Temporary/dcmqrscp.cfg \
+//          ./CTKData/Data/DICOM/MRHEAD/000055.IMA \
+//          ./CTKData/Data/DICOM/MRHEAD/000056.IMA \
+//      ./DCMTK-build/bin/bin/storescu \
 //      ./CTK-build/bin/ctkDICOMQuery \
 //      ./CTK-build/Testing/Temporary/ctkDICOMApplicationTest1.db \
 //      ./CTK-build/bin/ctkDICOMRetrieve \

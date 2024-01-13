@@ -339,7 +339,7 @@ bool ctkDICOMTester::storeData(const QStringList& data)
 
   QProcess storeSCU(this);
   // usage of storescu:
-  // storescu -aec CTK_AE -aet CTK_AE localhost 11112 ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/*.IMA
+  // storescu -aec CTK_AE -aet CTK_AE localhost 11112 ./CTKData/Data/DICOM/MRHEAD/*.IMA
   QStringList storescuArgs;
   storescuArgs << "-aec" << "CTK_AE";
   storescuArgs << "-aet" << "CTK_AE";
