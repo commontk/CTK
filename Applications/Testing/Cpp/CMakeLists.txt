@@ -17,12 +17,16 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   find_program(DCMTK_DCMQRSCP_EXECUTABLE dcmqrscp
     PATHS
       ${DCMTK_DIR}/bin
+    PATH_SUFFIXES
+      ${CMAKE_CONFIGURATION_TYPES}
     NO_DEFAULT_PATH
     )
 
   find_program(DCMTK_STORESCU_EXECUTABLE storescu
     PATHS
       ${DCMTK_DIR}/bin
+    PATH_SUFFIXES
+      ${CMAKE_CONFIGURATION_TYPES}
     NO_DEFAULT_PATH
     )
 
