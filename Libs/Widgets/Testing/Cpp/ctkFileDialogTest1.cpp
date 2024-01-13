@@ -21,6 +21,7 @@
 // Qt includes
 #include <QApplication>
 #include <QCheckBox>
+#include <QCommandLineParser>
 
 // CTK includes
 #include "ctkCoreTestingMacros.h"
@@ -80,7 +81,22 @@ int ctkFileDialogTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
+  QCommandLineParser parser;
+  parser.addOptions(
+        {
+          {"I", "Run in interactive mode"},
+          {"do-not-use-native-dialogs", "Do not use native dialogs"},
+        });
+  parser.process(app);
+
+  QStringList arguments = app.arguments();
+  arguments.pop_front(); // remove application name
+
+  bool skipNativeDialogs = parser.isSet("do-not-use-native-dialogs");
+  QApplication::setAttribute(Qt::AA_DontUseNativeDialogs, skipNativeDialogs);
+
   ctkFileDialog fileDialog;
+  CHECK_BOOL(fileDialog.testOption(ctkFileDialog::DontUseNativeDialog), skipNativeDialogs);
   fileDialog.setFileMode(QFileDialog::AnyFile);
   fileDialog.setNameFilter("Images (*.png *.xpm *.jpg)");
   fileDialog.setViewMode(QFileDialog::Detail);
@@ -89,14 +105,14 @@ int ctkFileDialogTest1(int argc, char * argv [] )
 
   // A bottom widget can be associated with the file dialog only
   // if using the non-native dialog.
-  bool supportBottomWidget = false;
+  bool supportBottomWidget = skipNativeDialogs;
 
   CHECK_POINTER(fileDialog.bottomWidget(), supportBottomWidget ? checkBox : nullptr);
 
   CHECK_EXIT_SUCCESS(testSelectionMode(&fileDialog, supportBottomWidget));
 
   // the following is only in interactive mode
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (!parser.isSet("I"))
     {
     return EXIT_SUCCESS;
     }
