@@ -96,20 +96,20 @@ public:
   explicit ctkSliderWidget(QWidget* parent = 0);
   virtual ~ctkSliderWidget();
 
-  /// 
+  ///
   /// This property holds the sliders and spinbox minimum value.
   /// FIXME: Test following specs.
-  /// When setting this property, the maximum is adjusted if necessary 
-  /// to ensure that the range remains valid. 
+  /// When setting this property, the maximum is adjusted if necessary
+  /// to ensure that the range remains valid.
   /// Also the slider's current value is adjusted to be within the new range.
   virtual double minimum()const;
   virtual void setMinimum(double minimum);
-  
-  /// 
+
+  ///
   /// This property holds the sliders and spinbox minimum value.
   /// FIXME: Test following specs.
-  /// When setting this property, the maximum is adjusted if necessary 
-  /// to ensure that the range remains valid. 
+  /// When setting this property, the maximum is adjusted if necessary
+  /// to ensure that the range remains valid.
   /// Also the slider's current value is adjusted to be within the new range.
   virtual double maximum()const;
   virtual void setMaximum(double maximum);
@@ -117,27 +117,27 @@ public:
   /// Utility function that set the min/max in once
   virtual void setRange(double min, double max);
 
-  /// 
+  ///
   /// This property holds the current slider position.
   /// If tracking is enabled (the default), this is identical to value.
   //double sliderPosition()const;
   //void setSliderPosition(double position);
 
-  /// 
+  ///
   /// This property holds the slider and spinbox current value.
   /// ctkSliderWidget forces the value to be within the
   /// legal range: minimum <= value <= maximum.
   virtual double value()const;
 
-  /// 
+  ///
   /// This property holds the single step.
-  /// The smaller of two natural steps that the 
-  /// slider provides and typically corresponds to the 
+  /// The smaller of two natural steps that the
+  /// slider provides and typically corresponds to the
   /// user pressing an arrow key.
   virtual double singleStep()const;
   virtual void setSingleStep(double step);
 
-  /// 
+  ///
   /// This property holds the page step.
   /// The larger of two natural steps that an abstract slider provides and
   /// typically corresponds to the user pressing PageUp or PageDown.
@@ -151,50 +151,50 @@ public:
 
   ///
   /// This property holds the spin box's prefix.
-  /// The prefix is prepended to the start of the displayed value. 
+  /// The prefix is prepended to the start of the displayed value.
   /// Typical use is to display a unit of measurement or a currency symbol
   virtual QString prefix()const;
   virtual void setPrefix(const QString& prefix);
 
   ///
   /// This property holds the spin box's suffix.
-  /// The suffix is appended to the end of the displayed value. 
+  /// The suffix is appended to the end of the displayed value.
   /// Typical use is to display a unit of measurement or a currency symbol
   virtual QString suffix()const;
   virtual void setSuffix(const QString& suffix);
 
-  /// 
+  ///
   /// This property holds the interval between tickmarks.
-  /// This is a value interval, not a pixel interval. 
+  /// This is a value interval, not a pixel interval.
   /// If it is 0, the slider will choose between lineStep() and pageStep().
   /// The default value is 0.
   virtual double tickInterval()const;
   virtual void setTickInterval(double tick);
 
-  /// 
+  ///
   /// This property holds the tickmark position for the slider.
   /// The valid values are described by the QSlider::TickPosition enum.
   /// The default value is QSlider::NoTicks.
   virtual void setTickPosition(QSlider::TickPosition position);
   virtual QSlider::TickPosition tickPosition()const;
-  
-  /// 
+
+  ///
   /// This property holds the alignment of the spin box.
   /// Possible Values are Qt::AlignLeft, Qt::AlignRight, and Qt::AlignHCenter.
   /// By default, the alignment is Qt::AlignLeft
   virtual void setSpinBoxAlignment(Qt::Alignment alignment);
   virtual Qt::Alignment spinBoxAlignment()const;
 
-  /// 
+  ///
   /// This property holds whether slider tracking is enabled.
-  /// If tracking is enabled (the default), the widget emits the valueChanged() 
-  /// signal while the slider or spinbox is being dragged. If tracking is 
-  /// disabled, the widget emits the valueChanged() signal only when the user 
+  /// If tracking is enabled (the default), the widget emits the valueChanged()
+  /// signal while the slider or spinbox is being dragged. If tracking is
+  /// disabled, the widget emits the valueChanged() signal only when the user
   /// releases the slider or spinbox.
   virtual void setTracking(bool enable);
   virtual bool hasTracking()const;
 
-  /// 
+  ///
   /// Set/Get the synchronize siblings mode. This helps when having multiple
   /// ctkSliderWidget stacked upon each other.
   /// Default flag is SynchronizeWidth | SynchronizeDecimals.
@@ -266,7 +266,7 @@ public:
   virtual ctkValueProxy* valueProxy() const;
 
 public Q_SLOTS:
-  /// 
+  ///
   /// Reset the slider and spinbox to zero (value and position)
   virtual void reset();
   virtual void setValue(double value);
@@ -305,7 +305,7 @@ protected Q_SLOTS:
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event);
-  
+
 protected:
   QScopedPointer<ctkSliderWidgetPrivate> d_ptr;
 

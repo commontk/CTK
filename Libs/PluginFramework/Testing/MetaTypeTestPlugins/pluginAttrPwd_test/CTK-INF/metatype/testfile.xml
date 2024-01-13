@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<md:MetaData 
-		xmlns:md="http://www.org.osgi/xmlns/metatype/v1.0.0/md" 
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<md:MetaData
+		xmlns:md="http://www.org.osgi/xmlns/metatype/v1.0.0/md"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.org.osgi/xmlns/metatype/v1.0.0/md metatype.xsd"
   localization="CTK-INF/l10n/pluginAttrPwd_test"
   context="ctkTestPluginMTAttrPwdActivator">

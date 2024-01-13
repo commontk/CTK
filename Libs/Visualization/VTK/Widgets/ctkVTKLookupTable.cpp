@@ -44,7 +44,7 @@ ctkVTKLookupTable::ctkVTKLookupTable(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-ctkVTKLookupTable::ctkVTKLookupTable(vtkLookupTable* lookupTable, 
+ctkVTKLookupTable::ctkVTKLookupTable(vtkLookupTable* lookupTable,
                                      QObject* parentObject)
   :ctkTransferFunction(parentObject)
   , d_ptr(new ctkVTKLookupTablePrivate)

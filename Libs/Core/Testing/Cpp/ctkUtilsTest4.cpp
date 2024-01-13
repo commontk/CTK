@@ -69,7 +69,7 @@ int ctkUtilsTest4(int argc, char * argv [] )
   // --------------------------------------------------------------------------
   // Test removeDirRecursively(const QString & dirName);
   // --------------------------------------------------------------------------
-  
+
   QDir tmp = QDir::temp();
   QString temporaryDirName =
       QString("ctkUtilsTest4.%1").arg(QTime::currentTime().toString("hhmmsszzz"));

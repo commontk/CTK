@@ -38,7 +38,7 @@
 #include <ctkDICOMAppWidget.h>
 #include <ctkDICOMBrowser.h>
 
-// Host logic 
+// Host logic
 #include "ctkDICOMHostMainLogic.h"
 
 // ctkDICOMCore includes
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
   QSettings settings;
   QString databaseDirectory;
 
-  // set up the database 
+  // set up the database
   if (argc > 1)
   {
     QString directory(argv[1]);
@@ -143,7 +143,7 @@ int main(int argc, char** argv)
   }
 
   QDir qdir(databaseDirectory);
-  if ( !qdir.exists(databaseDirectory) ) 
+  if ( !qdir.exists(databaseDirectory) )
   {
     if ( !qdir.mkpath(databaseDirectory) )
     {

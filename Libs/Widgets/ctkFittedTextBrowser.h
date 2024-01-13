@@ -32,7 +32,7 @@ class ctkFittedTextBrowserPrivate;
 /// ctkFittedTextBrowser is a QTextBrowser that adapts its height depending
 /// on its contents and the width available. It always tries to show the whole
 /// contents. ctkFittedTextBrowser doesn't resize itself but acts on the
-/// sizeHint, minimumSizeHint and heightForWidth. Here sizeHint() and 
+/// sizeHint, minimumSizeHint and heightForWidth. Here sizeHint() and
 /// minimumSizeHint() are the same as ctkFittedTextBrowser always try to
 /// show the whole contents.
 ///
@@ -89,7 +89,7 @@ public Q_SLOTS:
   /// (for plain text) or <br> tag (for html). The separator is removed when
   /// the text is expanded so that the full text can continue on the same line
   /// as the teaser.
-  /// 
+  ///
   /// The text can be plain text or HTML and the the right format will be guessed.
   /// Use setCollapsedHtml() or setCollapsedPlainText() directly to avoid guessing.
   void setCollapsibleText(const QString &text);

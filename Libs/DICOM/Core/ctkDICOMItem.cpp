@@ -302,7 +302,7 @@ bool ctkDICOMItem::CopyElement( DcmDataset* dataset, const DcmTagKey& tag, int t
   if (!dataset) return false;
   if (dataset == d->m_DcmItem)
   {
-    throw std::logic_error("Trying to copy tag to yourself. Please check application logic!"); 
+    throw std::logic_error("Trying to copy tag to yourself. Please check application logic!");
   }
 
   // type 1 or 1C must exist AND have a value

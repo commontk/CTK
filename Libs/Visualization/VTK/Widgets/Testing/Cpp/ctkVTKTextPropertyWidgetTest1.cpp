@@ -38,16 +38,16 @@ int ctkVTKTextPropertyWidgetTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   ctkVTKTextPropertyWidget textPropertyWidget(0);
-  
+
   if (textPropertyWidget.isEnabled())
     {
     std::cerr << "No vtkTextProperty provided, should be disabled."
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   vtkTextProperty* textProperty = vtkTextProperty::New();
-  
+
   double color[3];
   textProperty->GetColor(color);
   double opacity = textProperty->GetOpacity();
@@ -55,17 +55,17 @@ int ctkVTKTextPropertyWidgetTest1(int argc, char * argv [] )
   bool bold = textProperty->GetBold();
   bool italic = textProperty->GetItalic();
   bool shadow = textProperty->GetShadow();
-  
+
   textPropertyWidget.setTextProperty(textProperty);
   textProperty->Delete();
-  
+
   if (textPropertyWidget.textProperty() != textProperty)
     {
     std::cerr << "ctkVTKTextPropertyWidget::setTextProperty() failed."
               << textPropertyWidget.textProperty() << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   if (textPropertyWidget.color() != QColor::fromRgbF(color[0],color[1],color[2]))
     {
     std::cerr << "Wrong color" << std::endl;
@@ -95,7 +95,7 @@ int ctkVTKTextPropertyWidgetTest1(int argc, char * argv [] )
     std::cerr << "Wrong italic" << textPropertyWidget.isItalic() << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   if (textPropertyWidget.hasShadow() != shadow)
     {
     std::cerr << "Wrong shadow" << textPropertyWidget.hasShadow() << std::endl;
@@ -186,7 +186,7 @@ int ctkVTKTextPropertyWidgetTest1(int argc, char * argv [] )
     std::cerr << "ctkVTKTextPropertyWidget::setItalic() failed" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   textProperty->SetShadow(!shadow);
 
   if (textPropertyWidget.hasShadow() == shadow)

@@ -142,7 +142,7 @@ protected:
 public:
   ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj);
   ~ctkDICOMRetrievePrivate();
-  /// Keep the currently negotiated connection to the 
+  /// Keep the currently negotiated connection to the
   /// peer host open unless the connection parameters change
   bool          WasCanceled;
   bool          KeepAssociationOpen;
@@ -194,14 +194,14 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
   transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
   transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
-  this->SCU.addPresentationContext ( 
+  this->SCU.addPresentationContext (
       UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
-  this->SCU.addPresentationContext ( 
+  this->SCU.addPresentationContext (
       UID_GETStudyRootQueryRetrieveInformationModel, transferSyntaxes );
 
   for (Uint16 i = 0; i < numberOfDcmLongSCUStorageSOPClassUIDs; i++)
     {
-    this->SCU.addPresentationContext(dcmLongSCUStorageSOPClassUIDs[i], 
+    this->SCU.addPresentationContext(dcmLongSCUStorageSOPClassUIDs[i],
         transferSyntaxes, ASC_SC_ROLE_SCP);
     }
 }
@@ -253,16 +253,16 @@ bool ctkDICOMRetrievePrivate::initializeSCU( const QString& studyInstanceUID,
   if ( retrieveType == RetrieveSeries )
     {
     retrieveParameters->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
-    retrieveParameters->putAndInsertString ( DCM_SeriesInstanceUID, 
+    retrieveParameters->putAndInsertString ( DCM_SeriesInstanceUID,
                                                 seriesInstanceUID.toStdString().c_str() );
     // Always required to send all highler level unique keys, so add study here (we are in Study Root)
-    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID, 
+    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID,
                                                 studyInstanceUID.toStdString().c_str() );  //TODO
     }
   else
     {
     retrieveParameters->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
-    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID, 
+    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID,
                                                 studyInstanceUID.toStdString().c_str() );
     }
   return true;
@@ -286,7 +286,7 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
   logger.debug ( "Sending Move Request" );
   OFList<RetrieveResponse*> responses;
   T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(
-                                          UID_MOVEStudyRootQueryRetrieveInformationModel, 
+                                          UID_MOVEStudyRootQueryRetrieveInformationModel,
                                           "" /* don't care about transfer syntax */ );
   if (presID == 0)
     {
@@ -300,8 +300,8 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
     }
 
   // do the actual move request
-  OFCondition status = this->SCU.sendMOVERequest ( 
-                          presID, this->MoveDestinationAETitle.toStdString().c_str(), 
+  OFCondition status = this->SCU.sendMOVERequest (
+                          presID, this->MoveDestinationAETitle.toStdString().c_str(),
                           retrieveParameters, &responses );
 
   // Close association if we do not want to explicitly keep it open
@@ -331,10 +331,10 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
   if ( responses.size() == 1 )
     {
     RetrieveResponse* rsp = *responses.begin();
-    logger.debug ( "MOVE response receveid with status: " + 
+    logger.debug ( "MOVE response receveid with status: " +
                       QString(DU_cmoveStatusString(rsp->m_status)) );
 
-    if ( (rsp->m_status == STATUS_Success) 
+    if ( (rsp->m_status == STATUS_Success)
             || (rsp->m_status == STATUS_MOVE_Warning_SubOperationsCompleteOneOrMoreFailures))
       {
       if (rsp->m_numberOfCompletedSubops == 0)
@@ -400,7 +400,7 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
   emit q->progress(0);
   OFList<RetrieveResponse*> responses;
   T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(
-                                          UID_GETStudyRootQueryRetrieveInformationModel, 
+                                          UID_GETStudyRootQueryRetrieveInformationModel,
                                           "" /* don't care about transfer syntax */ );
   if (presID == 0)
     {
@@ -417,7 +417,7 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
   emit q->progress(1);
 
   // do the actual move request
-  OFCondition status = this->SCU.sendCGETRequest ( 
+  OFCondition status = this->SCU.sendCGETRequest (
                           presID, retrieveParameters, &responses );
 
   emit q->progress(ctkDICOMRetrieve::tr("Sent Get Request"));
@@ -454,10 +454,10 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
   if ( responses.size() == 1 )
     {
     RetrieveResponse* rsp = *responses.begin();
-    logger.debug ( "GET response receveid with status: " + 
+    logger.debug ( "GET response receveid with status: " +
                       QString(DU_cmoveStatusString(rsp->m_status)) );
 
-    if ( (rsp->m_status == STATUS_Success) 
+    if ( (rsp->m_status == STATUS_Success)
             || (rsp->m_status == STATUS_GET_Warning_SubOperationsCompleteOneOrMoreFailures))
       {
       if (rsp->m_numberOfCompletedSubops == 0)

@@ -229,7 +229,7 @@ int ctkCommandLineParserTest1(int, char*[])
   arguments5 << "--string"<< "ctkStop";
   arguments5 << "--int"<< "2";
   arguments5 << "--list"<< "item2" << "item3";
-  
+
   ok = false;
   parser5.parseArguments(arguments5, &ok);
   if (!ok)
@@ -313,16 +313,16 @@ int ctkCommandLineParserTest1(int, char*[])
             << ", parser5.errorString()" << parser5.errorString();
     return EXIT_FAILURE;
     }
-    
+
   // Test6 - Check if the parser handle the case when value of parameter is omitted
   ctkCommandLineParser parser6;
   parser6.addArgument("--string", "", QVariant::String, "This is a string");
   parser6.addArgument("--bool", "", QVariant::Bool, "This is a bool");
-  
-  QStringList arguments6; 
+
+  QStringList arguments6;
   arguments6 << "ctkCommandLineParserTest1"
              << "--string";
-  
+
   // since --string is missing a parameter, parseArgument is expected to fail
   ok = false;
   parser6.parseArguments(arguments6, &ok);

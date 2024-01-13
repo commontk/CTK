@@ -82,7 +82,7 @@ void ctkWorkflowStackedWidget::initClientArea()
 
 // --------------------------------------------------------------------------
 void ctkWorkflowStackedWidget::createNewPage(QWidget* widget)
-{  
+{
   Q_D(ctkWorkflowStackedWidget);
   Q_ASSERT(d->ClientArea);
 

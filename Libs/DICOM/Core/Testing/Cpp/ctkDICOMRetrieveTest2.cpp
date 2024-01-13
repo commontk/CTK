@@ -48,7 +48,7 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   ctkDICOMTester tester;
   std::cerr << "ctkDICOMRetrieveTest2: Starting dcmqrscp\n";
   tester.startDCMQRSCP();
-  
+
   QStringList arguments = app.arguments();
   arguments.pop_front(); // remove application name
   arguments.pop_front(); // remove test name

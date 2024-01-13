@@ -33,14 +33,14 @@ bool ctkHostSoapMessageProcessor::process(
   const QtSoapMessage& message, QtSoapMessage* reply ) const
 {
   // TODO check for NULL hostInterface?
-  
+
   const QtSoapType& method = message.method();
   QString methodName = method.name().name();
 
   qDebug() << "HostMessageProcessor: Received soap method request: " << methodName;
 
   bool foundMethod = false;
-  
+
   if (methodName == "GetAvailableScreen")
     {
     processGetAvailableScreen(message, reply);
@@ -66,7 +66,7 @@ bool ctkHostSoapMessageProcessor::process(
     processGetOutputLocation(message, reply);
     foundMethod = true;
     }
-  
+
   return foundMethod;
 }
 

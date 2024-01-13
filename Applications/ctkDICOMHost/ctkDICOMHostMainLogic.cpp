@@ -16,9 +16,9 @@
 #include "ctkDICOMDatabase.h"
 #include "ctkDicomAvailableDataHelper.h"
 
-ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* placeHolder, ctkDICOMAppWidget* dicomAppWidget, 
-                                             QWidget* placeHolderForControls) : 
-  QObject(placeHolder), 
+ctkDICOMHostMainLogic::ctkDICOMHostMainLogic(ctkHostedAppPlaceholderWidget* placeHolder, ctkDICOMAppWidget* dicomAppWidget,
+                                             QWidget* placeHolderForControls) :
+  QObject(placeHolder),
   PlaceHolderForHostedApp(placeHolder),
   DicomAppWidget(dicomAppWidget),
   PlaceHolderForControls(placeHolderForControls),
@@ -76,11 +76,11 @@ void ctkDICOMHostMainLogic::sendDataToHostedApp()
         continue;
       qDebug() << str;
 
-      ctkDicomAvailableDataHelper::addToAvailableData(*Data, 
-        Host->objectLocatorCache(), 
+      ctkDicomAvailableDataHelper::addToAvailableData(*Data,
+        Host->objectLocatorCache(),
         str);
     }
- 
+
     SendData = true;
     if(this->Host->getApplicationState() == ctkDicomAppHosting::EXIT)
     {

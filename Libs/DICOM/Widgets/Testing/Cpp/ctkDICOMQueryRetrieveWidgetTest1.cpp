@@ -32,7 +32,7 @@
 int ctkDICOMQueryRetrieveWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
- 
+
   QSharedPointer<ctkDICOMDatabase> dicomDatabase;
   ctkDICOMQueryRetrieveWidget widget;
   widget.setRetrieveDatabase(dicomDatabase);

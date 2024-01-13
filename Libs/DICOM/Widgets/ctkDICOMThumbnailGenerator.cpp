@@ -176,7 +176,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
 
   /* render pixel data to buffer */
   if (dcmImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
-  {  
+  {
     if (!image.loadFromData( buffer ))
     {
       qCritical() << Q_FUNC_INFO << "QImage couldn't created";
@@ -203,14 +203,14 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const Q
 bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, QImage& image)
 {
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
-  return this->generateThumbnail(&dcmImage, image); 
+  return this->generateThumbnail(&dcmImage, image);
 }
 
 //------------------------------------------------------------------------------
 bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, const QString& thumbnailPath)
 {
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
-  return this->generateThumbnail(&dcmImage, thumbnailPath); 
+  return this->generateThumbnail(&dcmImage, thumbnailPath);
 }
 
 //------------------------------------------------------------------------------

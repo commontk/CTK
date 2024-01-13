@@ -57,6 +57,6 @@ if(FUNCTION_TESTING)
 
   #message(STATUS "INPUT_FILE [${INPUT_FILE}]")
   #message(STATUS "OUTPUT_FILE [${OUTPUT_FILE}]")
-  
+
   ctkFunctionLFtoCRLF("${INPUT_FILE}" "${OUTPUT_FILE}")
 endif()

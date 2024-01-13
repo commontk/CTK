@@ -69,11 +69,11 @@ int ctkMaterialPropertyWidgetTest2(int argc, char * argv [] )
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   materialWidget.setColorVisible(true);
   materialWidget.setOpacityVisible(true);
   materialWidget.setBackfaceCullingVisible(true);
-  
+
   materialWidget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )

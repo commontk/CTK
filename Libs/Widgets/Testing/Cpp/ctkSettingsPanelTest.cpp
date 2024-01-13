@@ -55,13 +55,13 @@ void ctkSettingsPanelTester::testChangeProperty()
   QFETCH(bool, registerSpecificSettings);
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
   QSettings specificSettings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK-specific");
-  
+
   // Clear settings
   settings.clear();
   settings.sync();
   specificSettings.clear();
   specificSettings.sync();
-  
+
   QSpinBox spinBox;
   ctkSettingsPanel panel;
   panel.setSettings(&settings);
@@ -98,7 +98,7 @@ void ctkSettingsPanelTester::testChangeProperty()
   // make sure it didn't change
   QCOMPARE(panel.settingLabel("property"), label);
   QCOMPARE(panel.settingOptions("property"), options);
-  
+
   QString currentSettingContent;
   {
     settings.sync();
@@ -110,7 +110,7 @@ void ctkSettingsPanelTester::testChangeProperty()
       file.close();
       }
   }
-  
+
   QString currentSpecificSettingsContent;
   {
     specificSettings.sync();
@@ -124,7 +124,7 @@ void ctkSettingsPanelTester::testChangeProperty()
   }
 
   QString expectedSettingsContent = QLatin1String("[General]\nproperty=%1\n");
- 
+
   if (expectedChangedSettings.count() > 0)
     {
     if (registerSpecificSettings)
@@ -191,7 +191,7 @@ void ctkSettingsPanelTester::testChangeProperty_data()
   QTest::newRow("label RequireRestart changed panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 2 << false << false << 1 << QStringList("property");
   QTest::newRow("label RequireRestart unchanged obj") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << true << false << 0 << QStringList();
   QTest::newRow("label RequireRestart unchanged panel") << QString("label") << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionRequireRestart) << 1 << false << false << 0 << QStringList();
-  
+
   // registerSpecificSettings: true
   QTest::newRow("null none changed obj") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << true << true << 1 << QStringList("property");
   QTest::newRow("null none changed panel") << QString() << ctkSettingsPanel::SettingOptions(ctkSettingsPanel::OptionNone) << 2 << false << true << 1 << QStringList("property");

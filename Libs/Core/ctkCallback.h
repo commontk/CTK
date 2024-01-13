@@ -60,18 +60,18 @@ public:
   void (*callback()const)(void*);
   /// Sets a pointer function to call when invoke() is called.
   void setCallback(void (*callback)(void * data));
-  
+
   /// Returns the current callback data.
   /// \note By default ctkCallback itself will be passed as callback data
   /// \sa setCallbackData
   void * callbackData()const;
   /// Set callback data
   void setCallbackData(void * data);
-  
+
 public Q_SLOTS:
   /// Internally calls the pointer function \a callback.
   virtual void invoke();
-  
+
 private:
   void (*Callback)(void * data);
   void * CallbackData;

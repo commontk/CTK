@@ -20,7 +20,7 @@
 
 #! \ingroup CMakeUtilities
 macro(ctkMacroGetOptionName target_directories_with_target_name target_name option_name_var)
-  
+
   foreach(target_info ${target_directories_with_target_name})
     # extract target_dir and option_name
     #message("target_info:${target_info}")
@@ -47,7 +47,7 @@ macro(ctkMacroValidateBuildOptions dir executable target_directories)
 
   set(known_targets)
   set(target_directories_with_target_name)
-  
+
   # Create target_directories_with_target_name
   foreach(target_info ${target_directories})
 
@@ -59,7 +59,7 @@ macro(ctkMacroValidateBuildOptions dir executable target_directories)
     #message(STATUS target_dir:${target_dir})
     #message(STATUS option_name:${option_name})
     #message(STATUS option_name-value:${${option_name}})
-    
+
     # make sure the directory exists
     if(NOT EXISTS ${target_dir}/CMakeLists.txt)
       message(FATAL_ERROR "Target directory ${target_dir}/CMakeLists.txt doesn't exists !")
@@ -107,7 +107,7 @@ macro(ctkMacroValidateBuildOptions dir executable target_directories)
     #message(STATUS target_dir:${target_dir})
     #message(STATUS option_name:${option_name})
     #message(STATUS option_name-value:${${option_name}})
-    
+
     # make sure the directory exists
     if(NOT EXISTS ${target_dir}/CMakeLists.txt)
       message(FATAL_ERROR "Target directory ${target_dir}/CMakeLists.txt doesn't exists !")
@@ -195,7 +195,7 @@ macro(ctkMacroValidateBuildOptions dir executable target_directories)
         endif()
       endforeach()
     endif()
-    
+
   endforeach()
 
   if(EXTERNAL_TARGETS)

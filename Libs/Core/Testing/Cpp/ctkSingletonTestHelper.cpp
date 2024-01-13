@@ -29,7 +29,7 @@ class ctkSingletonTestHelperPrivate
 {
 public:
   ctkSingletonTestHelperPrivate();
-  
+
   int NorthFaceCount;
 };
 

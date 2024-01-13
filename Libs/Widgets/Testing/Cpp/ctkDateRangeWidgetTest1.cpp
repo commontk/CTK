@@ -45,7 +45,7 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
   QDateTime lastWeek = today.addDays(-7);
   QDateTime lastMonth = today.addMonths(-1);
   ctkDateRangeWidget dateRange;
-  
+
   if (dateRange.displayTime())
     {
     std::cerr << "ctkDateRangeWidget::ctkDateRangeWidget(): "
@@ -55,12 +55,12 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
   if (!dateRange.isAnyDate())
     {
     std::cerr << "ctkDateRangeWidget::ctkDateRangeWidget(): "
-              << "default date range failed: " 
+              << "default date range failed: "
               << qPrintable(dateRange.startDateTime().toString()) << " "
               << qPrintable(dateRange.endDateTime().toString()) << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   dateRange.setToday();
   if (dateRange.isAnyDate() ||
       dateRange.startDateTime() != today ||
@@ -155,7 +155,7 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
               << qPrintable(dateRange.endDateTime().toString()) << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   dateRange.setDisplayTime(true);
   if (!dateRange.displayTime())
     {
@@ -168,7 +168,7 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
   QSignalSpy startSpy(&dateRange, SIGNAL(startDateTimeChanged(QDateTime)));
   QSignalSpy endSpy(&dateRange, SIGNAL(endDateTimeChanged(QDateTime)));
 
-  dateRange.setLastWeek();  
+  dateRange.setLastWeek();
   if (startSpy.count() != 1 || endSpy.count() != 1)
     {
     std::cerr << "ctkDateRangeWidget::setLastWeek(): "
@@ -178,14 +178,14 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
   startSpy.clear();
   endSpy.clear();
 
-  dateRange.setLastMonth();  
+  dateRange.setLastMonth();
   if (startSpy.count() != 1 || endSpy.count() != 0)
     {
     std::cerr << "ctkDateRangeWidget::setLastMonth(): "
               << startSpy.count() << " " << endSpy.count() << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   dateRange.show();
   if (argc < 2 || QString(argv[1]) != "-I" )
     {

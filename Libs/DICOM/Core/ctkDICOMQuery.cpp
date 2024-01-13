@@ -461,7 +461,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
   // Now search each within each Study that was identified
   d->Query->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
   float progressRatio = 25. / d->StudyInstanceUIDList.count();
-  int i = 0; 
+  int i = 0;
 
   QListIterator<DcmDataset*> datasetIterator(d->StudyDatasetList);
   Q_FOREACH(const QString & StudyInstanceUID, d->StudyInstanceUIDList )
@@ -492,7 +492,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database )
           // add the patient elements not provided for the series level query
           dataset->insert( patientName, true );
           dataset->insert( patientID, true );
-          // insert series dataset 
+          // insert series dataset
           database.insert ( dataset, false /* do not store */, false /* no thumbnail */ );
           }
         }

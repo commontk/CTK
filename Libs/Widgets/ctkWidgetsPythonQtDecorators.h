@@ -146,7 +146,7 @@ public Q_SLOTS:
 
   // ctkCheckableHeaderView
 
-  ctkCheckableHeaderView *new_ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent = 0) 
+  ctkCheckableHeaderView *new_ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent = 0)
     {
     return new ctkCheckableHeaderView(orient, parent);
     }

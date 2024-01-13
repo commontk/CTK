@@ -82,14 +82,14 @@ ctkTransferFunctionNativeItem::ctkTransferFunctionNativeItem(QGraphicsItem* pare
 //-----------------------------------------------------------------------------
 ctkTransferFunctionNativeItem::ctkTransferFunctionNativeItem(
   ctkTransferFunction* transferFunction, QGraphicsItem* parentItem)
-  :ctkTransferFunctionItem(transferFunction, parentItem), 
+  :ctkTransferFunctionItem(transferFunction, parentItem),
   d_ptr(new ctkTransferFunctionNativeItemPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionNativeItem::~ctkTransferFunctionNativeItem()
-{  
+{
 }
 
 //-----------------------------------------------------------------------------

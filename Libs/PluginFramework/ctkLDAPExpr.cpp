@@ -145,7 +145,7 @@ ctkLDAPExpr::ctkLDAPExpr( const QString &filter )
   {
     ps.error(EOS);
   }
- 
+
   if (!ps.rest().trimmed().isEmpty())
   {
     ps.error(GARBAGE + " '" + ps.rest() + "'");
@@ -190,14 +190,14 @@ bool ctkLDAPExpr::getMatchedObjectClasses(QSet<QString>& objClasses) const
   if (d->m_operator == EQ)
   {
     if (d->m_attrName.compare(ctkPluginConstants::OBJECTCLASS, Qt::CaseInsensitive) == 0 &&
-      d->m_attrValue.indexOf(WILDCARD) < 0) 
+      d->m_attrValue.indexOf(WILDCARD) < 0)
     {
       objClasses.insert( d->m_attrValue );
       return true;
     }
     return false;
   }
-  else if (d->m_operator == AND) 
+  else if (d->m_operator == AND)
   {
     bool result = false;
     for (int i = 0; i < d->m_args.size( ); i++)
@@ -241,7 +241,7 @@ bool ctkLDAPExpr::getMatchedObjectClasses(QSet<QString>& objClasses) const
 }
 
 //----------------------------------------------------------------------------
-bool ctkLDAPExpr::isSimple( 
+bool ctkLDAPExpr::isSimple(
   const QStringList& keywords,
   LocalCache& cache,
   bool matchCase ) const
@@ -330,8 +330,8 @@ bool ctkLDAPExpr::compare( const QVariant &obj, int op, const QString &s ) const
       } else {
         return s.compare("false", Qt::CaseInsensitive);
       }
-    } 
-    else if ( obj.canConvert<Byte>( ) || obj.canConvert<int>( ) ) 
+    }
+    else if ( obj.canConvert<Byte>( ) || obj.canConvert<int>( ) )
     {
       switch(op) {
       case LE:
@@ -368,14 +368,14 @@ bool ctkLDAPExpr::compare( const QVariant &obj, int op, const QString &s ) const
       default: /*APPROX and EQ*/
         return obj.toLongLong() == s.toLongLong( );
       }
-    } 
+    }
     else if (obj.canConvert< QList<QVariant> >()) {
       QList<QVariant> list = obj.toList();
       QList<QVariant>::Iterator it;
       for (it=list.begin(); it != list.end( ); it++)
          if (compare(*it, op, s))
            return true;
-    } 
+    }
   } catch (...) {
     // This might happen if a QString-to-datatype conversion fails
     // Just consider it a false match and ignore the exception
@@ -460,7 +460,7 @@ ctkLDAPExpr ctkLDAPExpr::parseExpr( ParseState &ps )
   if ( c == '&') {
     op = AND;
   }else if ( c == '|' ){
-    op = OR; 
+    op = OR;
   } else if ( c == '!' ) {
     op = NOT;
   } else {

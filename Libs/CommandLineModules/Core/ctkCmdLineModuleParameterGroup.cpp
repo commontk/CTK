@@ -112,7 +112,7 @@ bool ctkCmdLineModuleParameterGroup::hasReturnParameters() const
 
 //----------------------------------------------------------------------------
 QTextStream & operator<<(QTextStream &os, const ctkCmdLineModuleParameterGroup &group)
-{ 
+{
   os << "  Advanced: " << (group.advanced() ? "true" : "false") << '\n';
   os << "  Label: " << group.label() << '\n';
   os << "  Description: " << group.description() << '\n';

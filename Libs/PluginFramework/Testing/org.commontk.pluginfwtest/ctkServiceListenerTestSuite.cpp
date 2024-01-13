@@ -304,11 +304,11 @@ void ctkServiceListenerTestSuite::frameSL25a()
 
 
   QVERIFY2(sListen.teststatus, "Service listener checks");
-  try 
+  try
   {
     //pc->disconnectServiceListener(&sListen, "serviceChanged");
     sListen.clearEvents();
-  } 
+  }
   catch (const ctkIllegalStateException& ise)
   {
     qDebug() << ise.what();

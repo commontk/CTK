@@ -49,7 +49,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   graph.insertEdge(2,1);
 
   int expectedNumberOfEdge = 2;
-  
+
   int nov = graph.numberOfVertices();
 
   if( nov != numberOfVertices )
@@ -66,7 +66,7 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
     }
 
   bool cfc = graph.checkForCycle();
-  
+
   if( cfc == false )
     {
     std::cerr << "Cycle detection failed" << std::endl;

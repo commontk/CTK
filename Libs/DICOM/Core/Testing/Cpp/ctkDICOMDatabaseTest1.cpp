@@ -65,7 +65,7 @@ int ctkDICOMDatabaseTest1( int argc, char * argv [] )
     {
     std::cerr << "ctkDICOMDatabase::openDatabase() failed: "
               << "database should not be in memory" << std::endl;
-    return EXIT_FAILURE;    
+    return EXIT_FAILURE;
     }
 
   if (database.databaseFilename() != databaseFile.absoluteFilePath())
@@ -83,7 +83,7 @@ int ctkDICOMDatabaseTest1( int argc, char * argv [] )
     }
 
   bool res = database.initializeDatabase();
-  
+
   if (!res)
     {
     std::cerr << "ctkDICOMDatabase::initializeDatabase() failed." << std::endl;

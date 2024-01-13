@@ -43,17 +43,17 @@ int ctkMenuButtonTest1(int argc, char * argv [] )
 
   QPushButton button1("QPushButton with no menu");
   QPushButton button2("QPushButton with menu");
-  button2.setMenu(menu);  
+  button2.setMenu(menu);
   ctkMenuButton button3("ctkMenuButton with no menu");
-  ctkMenuButton button4("ctkMenuButton with menu");  
+  ctkMenuButton button4("ctkMenuButton with menu");
   button4.setMenu(menu);
-  
+
   QVBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(&button1);
   layout->addWidget(&button2);
   layout->addWidget(&button3);
   layout->addWidget(&button4);
-  
+
   topLevelWidget.setLayout(layout);
   topLevelWidget.show();
   topLevelWidget.resize(200, 100);

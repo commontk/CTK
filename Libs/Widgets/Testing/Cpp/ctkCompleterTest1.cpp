@@ -31,13 +31,13 @@
 int ctkCompleterTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   QStringList list;
   list << "toto tutu";
   list << "tutu, tata";
   list << "titi, tata";
   list << "tititi";
-  
+
   QStringListModel* model = new QStringListModel(list);
   ctkCompleter* completer = new ctkCompleter(model);
   completer->setCaseSensitivity(Qt::CaseInsensitive);
@@ -48,7 +48,7 @@ int ctkCompleterTest1(int argc, char * argv [] )
   completer->setModelFiltering(ctkCompleter::FilterStartsWith);
   completer->setModelFiltering(ctkCompleter::FilterWordStartsWith);
   completer->setModelFiltering(ctkCompleter::FilterContains);
-  
+
   lineEdit.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )

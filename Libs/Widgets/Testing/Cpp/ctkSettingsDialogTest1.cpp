@@ -38,7 +38,7 @@
 int ctkSettingsDialogTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Common ToolKit", "CTK");
   settings.remove("key 1");
 
@@ -69,7 +69,7 @@ int ctkSettingsDialogTest1(int argc, char * argv [] )
     }
 
   ctkSettingsPanel* panel1 = new ctkSettingsPanel;
-  settingsDialog.addPanel("Panel 1", panel1); 
+  settingsDialog.addPanel("Panel 1", panel1);
   if (panel1->settings() != &settings)
     {
     std::cerr << "ctkSettingsDialog::addPanel settings failed" << panel1->settings() << std::endl;
@@ -84,7 +84,7 @@ int ctkSettingsDialogTest1(int argc, char * argv [] )
   box->setChecked(false); // false by default but we just want to make sure
   panel4->registerProperty("key 1", box, "checked",
                            SIGNAL(toggled(bool)));
-  
+
   QVariant boxVal = settings.value("key 1");
   if (!boxVal.isValid() || boxVal.toBool() != false)
     {
@@ -169,7 +169,7 @@ int ctkSettingsDialogTest1(int argc, char * argv [] )
   settingsDialog.setCurrentPanel("Panel 4");
 
   settingsDialog.show();
-      
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

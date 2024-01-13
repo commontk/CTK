@@ -31,7 +31,7 @@ struct ctkDicomAppInterface : public virtual ctkDicomExchangeInterface
 
   // Application interface methods
   virtual ctkDicomAppHosting::State getState() = 0;
-  
+
   /**
    * Method triggered by the host. Changes the state of the hosted application.
    * \return true if state received and not illegal in the transition diagram from the reference, false if illegal or not recognized.

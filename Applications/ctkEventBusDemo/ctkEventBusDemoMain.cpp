@@ -79,7 +79,7 @@ int main(int argv, char** argc) {
     {
       QString fileLocation = dirIter.next();
       foreach(QString pluginToInstall, pluginsToInstall)
-      {          
+      {
         if (fileLocation.contains(pluginToInstall))
         {
           QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));

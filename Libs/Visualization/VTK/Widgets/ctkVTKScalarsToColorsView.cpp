@@ -460,7 +460,7 @@ void ctkVTKScalarsToColorsView
     {
     plot->SetColorTransferFunction(editable ? colorTF : nullptr);
     }
-  
+
   this->onChartUpdated();
   emit functionChanged();
 }

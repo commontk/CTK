@@ -75,7 +75,7 @@ public Q_SLOTS:
   void setWarningEntriesVisible(bool visibility);
 
   void setInfoEntriesVisible(bool visibility);
-  
+
   void setUnknownEntriesVisible(bool visibility);
 
 protected Q_SLOTS:

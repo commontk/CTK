@@ -82,7 +82,7 @@ void ctkTransferFunctionView::resizeEvent(QResizeEvent * event)
   this->scene()->setSceneRect(sceneRect);
   foreach(QGraphicsItem * item, this->scene()->items())
     {
-    ctkTransferFunctionItem* rectItem = 
+    ctkTransferFunctionItem* rectItem =
       qgraphicsitem_cast<ctkTransferFunctionItem*>(item);
     if (rectItem)
       {

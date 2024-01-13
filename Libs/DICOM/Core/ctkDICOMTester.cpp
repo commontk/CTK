@@ -50,7 +50,7 @@ public:
   QString findStoreSCUExecutable()const;
   QString findStoreSCPExecutable()const;
   void printProcessOutputs(const QString& program, QProcess* process)const;
-  
+
   QProcess*   DCMQRSCPProcess;
   QProcess*   STORESCPProcess;
   QString     DCMQRSCPExecutable;
@@ -84,7 +84,7 @@ ctkDICOMTesterPrivate::ctkDICOMTesterPrivate(ctkDICOMTester& o): q_ptr(&o)
   //  storescp 11113
   QStringList storescpArgs;
   storescpArgs << QString::number(this->STORESCPPort);
-  
+
   this->STORESCPProcess->start(this->StoreSCPExecutable, storescpArgs);
 }
 
@@ -169,13 +169,13 @@ void ctkDICOMTesterPrivate::printProcessOutputs(const QString& program, QProcess
 
   QByteArray standardOutput = process->readAllStandardOutput();
   if (standardOutput.count())
-    {  
+    {
     out << "Standard Output:\n";
     out << standardOutput;
     }
   QByteArray standardError = process->readAllStandardError();
   if (standardError.count())
-    {  
+    {
     out << "Standard Error:\n";
     out << standardError;
     }
@@ -222,7 +222,7 @@ QString ctkDICOMTester::dcmqrscpExecutable()const
   Q_D(const ctkDICOMTester);
   return d->DCMQRSCPExecutable;
 }
-  
+
 //------------------------------------------------------------------------------
 void ctkDICOMTester::setDCMQRSCPConfigFile(const QString& configFile)
 {
@@ -345,7 +345,7 @@ bool ctkDICOMTester::storeData(const QStringList& data)
   storescuArgs << "-aet" << "CTK_AE";
   storescuArgs << "localhost" <<  QString::number(d->DCMQRSCPPort);
   storescuArgs << data;
-  
+
   storeSCU.start(d->StoreSCUExecutable, storescuArgs);
   bool res = storeSCU.waitForFinished(-1);
 

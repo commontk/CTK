@@ -26,7 +26,7 @@
 
 #-----------------------------------------------------------------------------
 # Make sure ${CTK_BINARY_DIR}/CTK-build/bin exists
-# May be used by some external project to install libs 
+# May be used by some external project to install libs
 if(NOT EXISTS ${CTK_BINARY_DIR}/CTK-build/bin)
   file(MAKE_DIRECTORY ${CTK_BINARY_DIR}/CTK-build/bin)
 endif()

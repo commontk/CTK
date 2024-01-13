@@ -94,7 +94,7 @@ function(ctkFunctionGetTargetLibraries varname)
       list(APPEND expanded_target_library_list ${plugin_library})
     endforeach()
   endif()
-  
+
   # Pass the list of target libraries to the caller
   set(${varname} ${expanded_target_library_list} PARENT_SCOPE)
 
@@ -154,7 +154,7 @@ function(ctkFunctionCollectTargetLibraryNames target_dir varname)
   if(target_library_list)
     list(REMOVE_DUPLICATES target_library_list)
   endif()
-  
+
   # Pass the list of target libraries to the caller
   set(${varname} ${target_library_list} PARENT_SCOPE)
 endfunction()
@@ -172,7 +172,7 @@ macro(ctkMacroCollectAllTargetLibraries targets subdir varname)
   else()
     message(FATAL_ERROR "Unknown subdir:${subdir}, expected value are: 'Libs, 'Plugins' or 'Applications'")
   endif()
-  
+
   foreach(target ${targets})
 
     # Make sure the variable is cleared
@@ -189,7 +189,7 @@ macro(ctkMacroCollectAllTargetLibraries targets subdir varname)
     #message(STATUS target_dir:${target_dir})
 
     set(target_libraries)
-    
+
     # Collect target libraries only if option is ON
     if(${option_name})
       ctkFunctionCollectTargetLibraryNames(${target_dir} target_libraries)
@@ -200,7 +200,7 @@ macro(ctkMacroCollectAllTargetLibraries targets subdir varname)
       list(REMOVE_DUPLICATES ${varname})
     endif()
   endforeach()
-  
+
 endmacro()
 
 #!
@@ -242,7 +242,7 @@ macro(ctkMacroShouldAddExternalProject libraries_variable_name resultvar)
   set(${resultvar} FALSE)
   if(DEFINED NON_CTK_DEPENDENCIES)
     list(FIND NON_CTK_DEPENDENCIES ${libraries_variable_name} index)
-  
+
     if(${index} GREATER -1)
       set(${resultvar} TRUE)
     endif()

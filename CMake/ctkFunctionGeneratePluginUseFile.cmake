@@ -49,7 +49,7 @@ set(${plugin}_INCLUDE_DIRS \"${${plugin}_INCLUDE_DIRS}\")")
     set(CTK_PLUGIN_LIBRARY_DIRS_CONFIG "${CTK_PLUGIN_LIBRARY_DIRS_CONFIG}
 set(${plugin}_LIBRARY_DIRS \"${${plugin}_LIBRARY_DIRS}\")")
   endforeach()
-  
+
   set(_ctk_plugin_libraries_variable ${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES)
   set(_ctk_plugin_libraries ${${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES})
 

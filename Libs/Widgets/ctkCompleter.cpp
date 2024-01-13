@@ -37,7 +37,7 @@ public:
   ctkCompleterPrivate(ctkCompleter& object);
   ~ctkCompleterPrivate();
   void init();
-  
+
   QStringList splitPath(const QString& path);
   void updateSortFilterProxyModel();
 

@@ -44,10 +44,10 @@ public:
   /// Constructor
   /// If \li parent is null, ctkModalityWidget will be a top-level widget
   /// \note The \li parent can be set later using QWidget::setParent()
-  /// By default, all the modalities are selected and only the following list 
+  /// By default, all the modalities are selected and only the following list
   /// of modalities is visible: ("CT", "MR", "US", "CR", "XA", "NM", "PT")
   explicit ctkModalityWidget(QWidget* parent = 0);
-  
+
   /// Destructor
   virtual ~ctkModalityWidget();
 
@@ -56,7 +56,7 @@ public:
 
   /// Select a list of modalities, e.g ("XA", "RX", "MG")
   void setSelectedModalities(const QStringList& modalities);
-  
+
   /// Return the current list of visible modalities
   QStringList visibleModalities()const;
 
@@ -69,7 +69,7 @@ public:
   Q_INVOKABLE bool isModalitySelected(const QString& modality);
   /// Select a modality. Does nothing if \a modality doesn't exist.
   Q_INVOKABLE void showModality(const QString& modality, bool show = true);
-  
+
   /// Show all the modalities
   Q_INVOKABLE void showAll();
 

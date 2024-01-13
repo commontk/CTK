@@ -579,7 +579,7 @@ int ctkVTKMagnifyView::numberObserved() const
 bool ctkVTKMagnifyView::hasCursorInObservedWidget()const
 {
   Q_D(const ctkVTKMagnifyView);
-  // checking underMouse is faster than 
+  // checking underMouse is faster than
   // QApplication::widgetAt(QCursor::pos())
   foreach(const ctkVTKOpenGLNativeWidget* widget, d->ObservedQVTKWidgets)
     {

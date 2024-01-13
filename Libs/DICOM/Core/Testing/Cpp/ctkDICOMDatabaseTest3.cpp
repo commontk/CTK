@@ -51,7 +51,7 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
   QDir databaseDirectory(tempDirectory.path());
   QFileInfo databaseFile(databaseDirectory, QString("database.test"));
   QString databaseFileName(databaseFile.absoluteFilePath());
-  
+
   std::cerr << "Populating database " << databaseFileName.toStdString() << "\n";
 
   // first, create a database and initialize it with the old schema
@@ -82,7 +82,7 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // now try opening it and updating the schema 
+  // now try opening it and updating the schema
   try
   {
     ctkDICOMDatabase myCTK( databaseFileName );

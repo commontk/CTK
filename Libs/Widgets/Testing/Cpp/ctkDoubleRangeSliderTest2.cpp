@@ -41,7 +41,7 @@ int ctkDoubleRangeSliderTest2(int argc, char * argv [] )
   QSignalSpy spyRange(&slider, SIGNAL(rangeChanged(double,double)));
 
   slider.setRange(200., 499.01);
-  
+
   if (spyRange.count() != 1 ||
       spyRange.first().at(0).toDouble() != 200. ||
       spyRange.first().at(1).toDouble() != 499.01)
@@ -52,10 +52,10 @@ int ctkDoubleRangeSliderTest2(int argc, char * argv [] )
               << " max: "
               << (spyRange.count() ? spyRange.first().at(1).toDouble() : -1.)
               << std::endl;
-    return EXIT_FAILURE; 
+    return EXIT_FAILURE;
     }
   spyRange.clear();
-  // set again and rangeChanged shouldn't be called 
+  // set again and rangeChanged shouldn't be called
   slider.setRange(200., 499.01);
   slider.setMinimum(200.);
   slider.setMaximum(499.01);
@@ -66,13 +66,13 @@ int ctkDoubleRangeSliderTest2(int argc, char * argv [] )
               << spyRange.count() << " min: "
               << spyRange.first().at(0).toDouble() << " max: "
               << spyRange.first().at(1).toDouble() << std::endl;
-    return EXIT_FAILURE; 
+    return EXIT_FAILURE;
     }
 
   // while it might not change the underline (int) slider, we still need to fire
   // an event
   slider.setMaximum(499.00);
-  
+
   if (spyRange.count() != 1 ||
       spyRange.first().at(0).toDouble() != 200. ||
       spyRange.first().at(1).toDouble() != 499.00)
@@ -83,11 +83,11 @@ int ctkDoubleRangeSliderTest2(int argc, char * argv [] )
               << " max: "
               << (spyRange.count() ? spyRange.first().at(1).toDouble() : -1.)
               << std::endl;
-    return EXIT_FAILURE; 
+    return EXIT_FAILURE;
     }
-  
+
   slider.show();
-  
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

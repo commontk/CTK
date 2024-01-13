@@ -105,7 +105,7 @@ void ctkDoubleSliderPrivate::init()
   QHBoxLayout* l = new QHBoxLayout(q);
   l->addWidget(this->Slider);
   l->setContentsMargins(0,0,0,0);
-  
+
   this->Minimum = this->Slider->minimum();
   this->Maximum = this->Slider->maximum();
   // this->Slider->singleStep is always 1
@@ -123,7 +123,7 @@ void ctkDoubleSliderPrivate::init()
   q->setSizePolicy(this->Slider->sizePolicy());
   q->setAttribute(Qt::WA_WState_OwnSizePolicy, false);
 }
-  
+
 // --------------------------------------------------------------------------
 int ctkDoubleSliderPrivate::toInt(double doubleValue)const
 {
@@ -352,7 +352,7 @@ void ctkDoubleSlider::setValue(double newValue)
     {
     double oldValue = d->Value;
     d->Value = newValue;
-    // don't emit a valuechanged signal if the new value is quite 
+    // don't emit a valuechanged signal if the new value is quite
     // similar to the old value.
     if (qAbs(newValue - oldValue) > (d->SingleStep * 0.000000001))
       {

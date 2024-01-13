@@ -182,14 +182,14 @@ void ctkWorkflowAbstractPagedWidget::updateStepUI(ctkWorkflowStep* currentStep)
     this->setLayout(layout);
     this->initClientArea();
     layout->addWidget(this->clientArea());
-      
+
     if (this->showButtonBoxWidget())
       {
       layout->addWidget(this->buttonBoxWidget());
       }
-      
+
     layout->setContentsMargins(0,0,0,0);
-    
+
     // Use the superclass's groupBox as the first page, since we already have it
     d->IndexToGroupBoxMap[0] = this->workflowGroupBox();
     this->createNewPage(d->IndexToGroupBoxMap[0]);
@@ -202,7 +202,7 @@ void ctkWorkflowAbstractPagedWidget::updateStepUI(ctkWorkflowStep* currentStep)
     }
 
   int index = d->StepToIndexMap[currentStep];
-  
+
   // Create new page(s) if necessary
   // (i.e. if user specifies steps only for indices 3 and 4 with associateStepWithPage, we need to
   // create pages 0,1,2)

@@ -39,7 +39,7 @@ int ctkDICOMTesterTest1(int argc, char * argv [])
   QCoreApplication app(argc, argv);
 
   ctkDICOMTester tester;
-  
+
   if (argc > 1)
     {
     tester.setDCMQRSCPExecutable(argv[1]);

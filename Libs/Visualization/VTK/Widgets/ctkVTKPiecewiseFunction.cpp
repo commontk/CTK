@@ -175,7 +175,7 @@ ctkControlPoint* ctkVTKPiecewiseFunction::controlPoint(int index)const
   if (values[3] == 0.)
     {
     cp->SubPoints << ctkPoint(values[0], values[1]);
-    } 
+    }
   double nextValues[4];
   d->PiecewiseFunction->GetNodeValue(index + 1, nextValues);
 

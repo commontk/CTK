@@ -42,7 +42,7 @@ class ctkCmdLineModuleExplorerProgressWidget;
 class ctkCmdLineModuleExplorerProgressWidget : public QWidget
 {
   Q_OBJECT
-  
+
 public:
 
   ctkCmdLineModuleExplorerProgressWidget(QWidget *parent = 0);
@@ -76,7 +76,7 @@ private Q_SLOTS:
   void moduleProgressRangeChanged(int progressMin, int progressMax);
   void moduleProgressTextChanged(const QString& progressText);
   void moduleProgressValueChanged(int progressValue);
-  
+
 private:
   Ui::ctkCmdLineModuleExplorerProgressWidget *ui;
 

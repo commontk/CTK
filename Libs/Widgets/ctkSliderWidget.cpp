@@ -171,7 +171,7 @@ ctkSliderWidget::ctkSliderWidget(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new ctkSliderWidgetPrivate(*this))
 {
   Q_D(ctkSliderWidget);
-  
+
   d->setupUi(this);
 
   d->Slider->setMaximum(d->SpinBox->maximum());
@@ -248,12 +248,12 @@ void ctkSliderWidget::setMaximum(double max)
 void ctkSliderWidget::setRange(double min, double max)
 {
   Q_D(ctkSliderWidget);
-  
+
   bool wasBlockSetSliderValue = d->BlockSetSliderValue;
   d->BlockSetSliderValue = true;
   d->SpinBox->setRange(min, max);
   d->BlockSetSliderValue = wasBlockSetSliderValue;
-  
+
   // SpinBox can truncate the range (depending on decimals).
   // use Spinbox's range to set Slider's range
   d->Slider->setRange(d->SpinBox->minimum(), d->SpinBox->maximum());
@@ -354,13 +354,13 @@ void ctkSliderWidget::setSliderValue(double spinBoxValue)
 void ctkSliderWidget::setSpinBoxValue(double sliderValue)
 {
   Q_D(ctkSliderWidget);
-  
+
   bool wasBlockSetSliderValue = d->BlockSetSliderValue;
   d->BlockSetSliderValue = true;
   d->SpinBox->setValue(sliderValue);
   d->BlockSetSliderValue = wasBlockSetSliderValue;
   Q_ASSERT(d->equal(d->SpinBox->value(), d->Slider->value()));
-  
+
   if (!d->Tracking)
     {
     emit this->valueIsChanging(sliderValue);
@@ -382,7 +382,7 @@ bool ctkSliderWidget::eventFilter(QObject *obj, QEvent *event)
        this->startChanging();
        }
      }
-   else if (event->type() == QEvent::MouseButtonRelease) 
+   else if (event->type() == QEvent::MouseButtonRelease)
      {
      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
      if (mouseEvent->button() & Qt::LeftButton)
@@ -392,7 +392,7 @@ bool ctkSliderWidget::eventFilter(QObject *obj, QEvent *event)
        // send a valueChanged() after eventFilter() is done.
        this->stopChanging();
        }
-     } 
+     }
    // standard event processing
    return this->Superclass::eventFilter(obj, event);
  }
@@ -505,7 +505,7 @@ double ctkSliderWidget::tickInterval()const
 
 // --------------------------------------------------------------------------
 void ctkSliderWidget::setTickInterval(double ti)
-{ 
+{
   Q_D(ctkSliderWidget);
   d->Slider->setTickInterval(ti);
 }

@@ -55,7 +55,7 @@ public:
               const QString &directory = QString(),
               const QString &filter = QString());
   virtual ~ctkFileDialog();
-  
+
   /// Add an extra widget under the file format combobox. If a label is
   /// given, it will appear in the first column.
   /// The widget is reparented to ctkFileDialog

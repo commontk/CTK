@@ -29,26 +29,26 @@ ctkScriptingPythonWidgetsAbstractPlugin::ctkScriptingPythonWidgetsAbstractPlugin
 
 //-----------------------------------------------------------------------------
 QString ctkScriptingPythonWidgetsAbstractPlugin::group() const
-{ 
+{
   return "CTK [ScriptingPythonWidgets]";
 }
 
 //-----------------------------------------------------------------------------
 QIcon ctkScriptingPythonWidgetsAbstractPlugin::icon() const
 {
-  return QIcon(); 
+  return QIcon();
 }
 
 //-----------------------------------------------------------------------------
 QString ctkScriptingPythonWidgetsAbstractPlugin::toolTip() const
-{ 
-  return QString(); 
+{
+  return QString();
 }
 
 //-----------------------------------------------------------------------------
 QString ctkScriptingPythonWidgetsAbstractPlugin::whatsThis() const
 {
-  return QString(); 
+  return QString();
 }
 
 //-----------------------------------------------------------------------------

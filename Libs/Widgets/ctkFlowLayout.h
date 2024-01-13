@@ -122,7 +122,7 @@ public:
   virtual void setGeometry(const QRect &rect);
   virtual QSize sizeHint() const;
   virtual QLayoutItem *takeAt(int index);
-  
+
 protected:
   QScopedPointer<ctkFlowLayoutPrivate> d_ptr;
 

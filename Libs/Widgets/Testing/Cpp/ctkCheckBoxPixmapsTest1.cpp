@@ -80,7 +80,7 @@ int ctkCheckBoxPixmapsTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   // Same pixmap ?
-  if (&checkBoxPixmaps.pixmap(Qt::Unchecked, false) == 
+  if (&checkBoxPixmaps.pixmap(Qt::Unchecked, false) ==
       &checkBoxPixmaps.pixmap(Qt::Unchecked, true))
     {
     std::cerr << "The returned pixmaps should not be the same" << std::endl;

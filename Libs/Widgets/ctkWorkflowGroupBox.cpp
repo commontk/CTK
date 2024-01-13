@@ -160,7 +160,7 @@ void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
       stepArea->show();
       }
       }
-    
+
 }
 
 // --------------------------------------------------------------------------

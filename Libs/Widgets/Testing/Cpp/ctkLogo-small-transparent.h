@@ -1,4 +1,4 @@
-/* 
+/*
  * Resource generated for file:
  *    ctkLogo-small-transparent.png (zlib, base64) (image file)
  */
@@ -8,7 +8,7 @@ static const unsigned int  image_ctkLogo_small_transparent_pixel_size     = 4;
 static const unsigned long image_ctkLogo_small_transparent_length         = 4444;
 static const unsigned long image_ctkLogo_small_transparent_decoded_length = 12100;
 
-static const unsigned char image_ctkLogo_small_transparent[] = 
+static const unsigned char image_ctkLogo_small_transparent[] =
   "eNrtmudvVGcWxvcPiNJ7IQnpvVelKImUaFcKSlahOYWSxHRM74TeQjHVYMAVXGfssbHBNh"
   "gYF7oBY9NsbGxTTEtQiiLlS3T2+b3j6/WusoqlMNFa4sPRvZ655Tzvec5zznnHZvY3u2pX"
   "7ap1eDt9+rRVVlba/gMHbN++fbZ7927bsWOHlZaVWkfH1tDQYPv377e9e/c6XOXlwlVaal"

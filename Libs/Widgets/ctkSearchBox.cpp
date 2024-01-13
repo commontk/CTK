@@ -230,7 +230,7 @@ void ctkSearchBox::mousePressEvent(QMouseEvent *e)
     this->selectAll();
     return;
     }
-  
+
   this->Superclass::mousePressEvent(e);
 }
 

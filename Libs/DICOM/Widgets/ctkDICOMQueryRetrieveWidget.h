@@ -23,7 +23,7 @@
 
 #include "ctkDICOMWidgetsExport.h"
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 #include <QItemSelection>
 #include <QMap>

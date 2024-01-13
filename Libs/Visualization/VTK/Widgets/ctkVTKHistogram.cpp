@@ -90,7 +90,7 @@ ctkVTKHistogram::ctkVTKHistogram(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-ctkVTKHistogram::ctkVTKHistogram(vtkDataArray* dataArray, 
+ctkVTKHistogram::ctkVTKHistogram(vtkDataArray* dataArray,
                                  QObject* parentObject)
   :ctkHistogram(parentObject)
   , d_ptr(new ctkVTKHistogramPrivate)

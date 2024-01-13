@@ -165,7 +165,7 @@ void ctkXnatExperiment::fetchImpl()
   QUuid scansQueryId = session->httpGet(scansUri);
 
   QList<ctkXnatObject*> scans;
-  
+
   try
   {
     scans = session->httpResults(scansQueryId,
@@ -195,7 +195,7 @@ void ctkXnatExperiment::fetchImpl()
   {
     qWarning() << QString(e.what());
   }
-  
+
   if (!reconstructions.isEmpty())
   {
     ctkXnatReconstructionFolder* reconstructionFolder = new ctkXnatReconstructionFolder();
@@ -204,9 +204,9 @@ void ctkXnatExperiment::fetchImpl()
 
   QString assessorsUri = this->resourceUri() + "/assessors";
   QUuid assessorsQueryId = session->httpGet(assessorsUri);
-  
+
   QList<ctkXnatObject*> assessors;
-  
+
   try
   {
     assessors = session->httpResults(assessorsQueryId,

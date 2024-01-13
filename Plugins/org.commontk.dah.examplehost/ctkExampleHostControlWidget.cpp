@@ -36,7 +36,7 @@ ctkExampleHostControlWidget::ctkExampleHostControlWidget(ctkExampleDicomHost * h
     QWidget(parent),
     Host(host),
     ValidAppFileName(false),
-    ui(new Ui::ctkExampleHostControlWidget)    
+    ui(new Ui::ctkExampleHostControlWidget)
 {
   qDebug() << "setup ui";
   ui->setupUi(this);

@@ -69,7 +69,7 @@ ctkMaterialPropertyWidget::ctkMaterialPropertyWidget(QWidget* _parent)
   , d_ptr(new ctkMaterialPropertyWidgetPrivate(*this))
 {
   Q_D(ctkMaterialPropertyWidget);
-  
+
   d->setupUi(this);
 
   this->setInterpolationMode(ctkMaterialPropertyWidget::InterpolationGouraud);
@@ -82,7 +82,7 @@ ctkMaterialPropertyWidget::ctkMaterialPropertyWidget(QWidget* _parent)
           this, SLOT(onColorChanged(QColor)));
   connect(d->OpacitySliderSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(onOpacityChanged(double)));
-  
+
   connect(d->AmbientSliderSpinBox, SIGNAL(valueChanged(double)),
           this, SLOT(onAmbientChanged(double)));
   connect(d->DiffuseSliderSpinBox, SIGNAL(valueChanged(double)),
@@ -107,7 +107,7 @@ ctkMaterialPropertyWidget::ctkMaterialPropertyWidget(QWidget* _parent)
   this->addPreset(QColor(),1.,0.2,1.,0.,1.,tr("Dull material properties (no specular lighting)."));
   this->addPreset(QColor(),1.,0.1,0.9,0.2,10.,tr("Smooth material properties (moderate specular lighting)."));
   this->addPreset(QColor(),1.,0.1,0.6,0.5,40.,tr("Shiny material properties (high specular lighting)."));
-  
+
   d->PresetsListWidget->viewport()->setAutoFillBackground( false);
   d->PresetsListWidget->setAutoFillBackground( false );
   d->PresetsListWidget->setMinimumWidth(
@@ -392,7 +392,7 @@ void ctkMaterialPropertyWidget::selectPreset(QListWidgetItem* preset)
     d->AmbientSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::AmbientRole).toDouble());
     d->DiffuseSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::DiffuseRole).toDouble());
     d->SpecularSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::SpecularRole).toDouble());
-    d->SpecularPowerSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::SpecularPowerRole).toDouble());    
+    d->SpecularPowerSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::SpecularPowerRole).toDouble());
     }
   d->InterpolationModeComboBox->setCurrentIndex(interpolationMode);
 }
@@ -413,7 +413,7 @@ void ctkMaterialPropertyWidget::resizeEvent(QResizeEvent* resize)
   d->PresetsListWidget->setMaximumHeight(
     d->PresetsListWidget->frameWidth() // top frame height
     + d->MaterialPropertyPreviewLabel->sizeHint().height()
-    + (d->PresetsListWidget->horizontalScrollBar()->isVisibleTo(d->PresetsListWidget) ? 
+    + (d->PresetsListWidget->horizontalScrollBar()->isVisibleTo(d->PresetsListWidget) ?
       d->PresetsListWidget->horizontalScrollBar()->sizeHint().height() : 0)
     + d->PresetsListWidget->frameWidth() ); // bottom frame height
 }

@@ -90,7 +90,7 @@ class CTK_WIDGETS_EXPORT ctkMaterialPropertyWidget : public QWidget
 
   /// Control weither the interpolation mode selector is shown to the user. Hidden by default.
   Q_PROPERTY(bool interpolationModeVisible READ isInterpolationModeVisible WRITE setInterpolationModeVisible);
-  
+
 public:
   /// Superclass typedef
   typedef QWidget Superclass;

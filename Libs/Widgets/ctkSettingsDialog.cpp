@@ -237,7 +237,7 @@ void ctkSettingsDialog
 
 // --------------------------------------------------------------------------
 void ctkSettingsDialog
-::addPanel(const QString& label, ctkSettingsPanel* panel, 
+::addPanel(const QString& label, ctkSettingsPanel* panel,
            ctkSettingsPanel* parentPanel)
 {
   panel->setWindowTitle(label);

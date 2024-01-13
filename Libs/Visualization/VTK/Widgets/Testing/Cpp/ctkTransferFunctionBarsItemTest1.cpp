@@ -41,8 +41,8 @@
 int ctkTransferFunctionBarsItemTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
-  vtkSmartPointer<vtkIntArray> intArray = 
+
+  vtkSmartPointer<vtkIntArray> intArray =
     vtkSmartPointer<vtkIntArray>::New();
   intArray->SetNumberOfComponents(1);
   intArray->SetNumberOfTuples(20000);
@@ -50,20 +50,20 @@ int ctkTransferFunctionBarsItemTest1(int argc, char * argv [] )
     {
     intArray->SetValue(i, rand() % 10);
     }
-  QSharedPointer<ctkVTKHistogram> histogram = 
+  QSharedPointer<ctkVTKHistogram> histogram =
     QSharedPointer<ctkVTKHistogram>(new ctkVTKHistogram(intArray));
   histogram->build();
-  
+
   ctkTransferFunctionView transferFunctionView;
-  
+
   ctkTransferFunctionBarsItem * histogramItem = new ctkTransferFunctionBarsItem;
   histogramItem->setTransferFunction(histogram.data());
   histogramItem->setBarWidth(1.);
   transferFunctionView.scene()->addItem(histogramItem);
-  
+
   // the widget is not really shown here, only when app.exec() is called
   transferFunctionView.show();
-  
+
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
     {

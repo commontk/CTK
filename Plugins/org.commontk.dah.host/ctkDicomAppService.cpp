@@ -57,7 +57,7 @@ bool ctkDicomAppService::bringToFront(const QRect& requestedScreenArea)
 {
   QtSoapType* input = new ctkDicomSoapRectangle("RequestedScreenArea", requestedScreenArea);
   const QtSoapType & result = submitSoapRequest("BringToFront", input);
-  return ctkDicomSoapBool::getBool(result);	
+  return ctkDicomSoapBool::getBool(result);
 }
 
 //----------------------------------------------------------------------------

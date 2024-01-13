@@ -71,35 +71,35 @@ public:
   /// Destructor
   virtual ~ctkDoubleSlider();
 
-  /// 
+  ///
   /// This property holds the sliders's minimum value.
   /// When setting this property, the maximum is adjusted if necessary to
   /// ensure that the range remains valid. Also the slider's current value
-  /// is adjusted to be within the new range. 
+  /// is adjusted to be within the new range.
   void setMinimum(double min);
   double minimum()const;
 
-  /// 
+  ///
   /// This property holds the slider's maximum value.
-  /// When setting this property, the minimum is adjusted if necessary to 
+  /// When setting this property, the minimum is adjusted if necessary to
   /// ensure that the range remains valid. Also the slider's current value
   /// is adjusted to be within the new range.
   void setMaximum(double max);
   double maximum()const;
 
-  /// 
+  ///
   /// Sets the slider's minimum to min and its maximum to max.
   /// If max is smaller than min, min becomes the only legal value.
   void setRange(double min, double max);
 
-  /// 
+  ///
   /// This property holds the slider's current value.
-  /// The slider forces the value to be within the legal range: 
+  /// The slider forces the value to be within the legal range:
   /// minimum <= value <= maximum.
   /// Changing the value also changes the sliderPosition.
   double value()const;
 
-  /// 
+  ///
   /// This property holds the single step.
   /// The smaller of two natural steps that an abstract sliders provides and
   /// typically corresponds to the user pressing an arrow key
@@ -114,7 +114,7 @@ public:
   /// \sa singleStep
   bool isValidStep(double step)const;
 
-  /// 
+  ///
   /// This property holds the page step.
   /// The larger of two natural steps that an abstract slider provides and
   /// typically corresponds to the user pressing PageUp or PageDown.
@@ -122,7 +122,7 @@ public:
   void setPageStep(double step);
   double pageStep()const;
 
-  /// 
+  ///
   /// This property holds the interval between tickmarks.
   /// This is a value interval, not a pixel interval. If it is 0, the slider
   /// will choose between lineStep() and pageStep().
@@ -130,14 +130,14 @@ public:
   void setTickInterval(double ti);
   double tickInterval()const;
 
-  /// 
+  ///
   /// This property holds the tickmark position for this slider.
   /// The valid values are described by the QSlider::TickPosition enum.
   /// The default value is QSlider::NoTicks.
   void setTickPosition(QSlider::TickPosition position);
   QSlider::TickPosition tickPosition()const;
-  
-  /// 
+
+  ///
   /// This property holds the current slider position.
   /// If there is no proxy installed and tracking is enabled (the default),
   /// this is identical to value.
@@ -146,18 +146,18 @@ public:
   double sliderPosition()const;
   void setSliderPosition(double);
 
-  /// 
+  ///
   /// This property holds whether slider tracking is enabled.
   /// If tracking is enabled (the default), the slider emits the valueChanged()
-  /// signal while the slider is being dragged. If tracking is disabled, the 
+  /// signal while the slider is being dragged. If tracking is disabled, the
   /// slider emits the valueChanged() signal only when the user releases the
   /// slider.
   void setTracking(bool enable);
   bool hasTracking()const;
-  
+
   ///
-  /// Triggers a slider action. Possible actions are SliderSingleStepAdd, 
-  /// SliderSingleStepSub, SliderPageStepAdd, SliderPageStepSub, 
+  /// Triggers a slider action. Possible actions are SliderSingleStepAdd,
+  /// SliderSingleStepSub, SliderPageStepAdd, SliderPageStepSub,
   /// SliderToMinimum, SliderToMaximum, and SliderMove.
   void triggerAction(QAbstractSlider::SliderAction action);
 
@@ -215,9 +215,9 @@ public:
   ctkValueProxy* valueProxy() const;
 
 public Q_SLOTS:
-  /// 
+  ///
   /// This property holds the slider's current value.
-  /// The slider forces the value to be within the legal range: 
+  /// The slider forces the value to be within the legal range:
   /// minimum <= value <= maximum.
   /// Changing the value also changes the sliderPosition.
   void setValue(double value);
@@ -234,19 +234,19 @@ Q_SIGNALS:
   void valueChanged(double value);
 
   ///
-  /// This signal is emitted when sliderDown is true and the slider moves. 
+  /// This signal is emitted when sliderDown is true and the slider moves.
   /// This usually happens when the user is dragging the slider. The value
   /// is the new slider position.
   /// This signal is emitted even when tracking is turned off.
   void sliderMoved(double position);
-  
+
   ///
   /// This signal is emitted when the user presses the slider with the mouse,
   /// or programmatically when setSliderDown(true) is called.
   void sliderPressed();
-  
-  /// 
-  /// This signal is emitted when the user releases the slider with the mouse, 
+
+  ///
+  /// This signal is emitted when the user releases the slider with the mouse,
   /// or programmatically when setSliderDown(false) is called.
   void sliderReleased();
 

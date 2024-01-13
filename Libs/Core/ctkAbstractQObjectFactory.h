@@ -41,7 +41,7 @@ public:
   /// \brief Return a name allowing to uniquely identify the QObject
   /// By default, it return \a objectName obtained using staticMetaObject.className()
   virtual QString objectNameToKey(const QString& objectName);
-  
+
   /// \brief Register an object in the factory
   /// The parameter \a key passed by reference will be updated with the
   /// associated object name obtained using objectNameToKey(const QString&)

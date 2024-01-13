@@ -46,23 +46,23 @@ QStringList ctkDICOMDisplayedFieldGeneratorRadiotherapySeriesDescriptionRule::ge
   QStringList requiredTags;
 
   requiredTags << dicomTagToString(DCM_Modality);
-    
+
   requiredTags << dicomTagToString(DCM_RTPlanName);
-  requiredTags << dicomTagToString(DCM_RTPlanLabel);    
+  requiredTags << dicomTagToString(DCM_RTPlanLabel);
   //requiredTags << dicomTagToString(DCM_RTPlanDate);
   //requiredTags << dicomTagToString(DCM_RTPlanTime);
-  //requiredTags << dicomTagToString(DCM_RTPlanDescription);    
-    
+  //requiredTags << dicomTagToString(DCM_RTPlanDescription);
+
   requiredTags << dicomTagToString(DCM_StructureSetName);
   requiredTags << dicomTagToString(DCM_StructureSetLabel);
   //requiredTags << dicomTagToString(DCM_StructureSetDescription);
   //requiredTags << dicomTagToString(DCM_StructureSetDate);
   //requiredTags << dicomTagToString(DCM_StructureSetTime);
-          
+
   requiredTags << dicomTagToString(DCM_RTImageName);
   requiredTags << dicomTagToString(DCM_RTImageLabel);
   requiredTags << dicomTagToString(DCM_RTImageDescription);
-          
+
   return requiredTags;
 }
 

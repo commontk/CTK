@@ -41,7 +41,7 @@ class ctkTransferFunctionControlPointsItemPrivate
 
 protected:
   ctkTransferFunctionControlPointsItem* q_ptr;
-  
+
 public:
   ctkTransferFunctionControlPointsItemPrivate(ctkTransferFunctionControlPointsItem& object);
   void init();
@@ -86,7 +86,7 @@ ctkTransferFunctionControlPointsItem::ctkTransferFunctionControlPointsItem(
 
 //-----------------------------------------------------------------------------
 ctkTransferFunctionControlPointsItem::~ctkTransferFunctionControlPointsItem()
-{  
+{
 }
 
 //-----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ void ctkTransferFunctionControlPointsItem::paint(
   //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   //Q_ASSERT(tfScene);
   ctkTransferFunctionRepresentation* tfRep = this->transferFunction()->representation();
-  
+
   const QPainterPath& curve = tfRep->curve();
   QPen pen(QColor(255, 255, 255, 191), 1);
   pen.setCosmetic(true);
@@ -120,8 +120,8 @@ void ctkTransferFunctionControlPointsItem::paint(
   foreach(const QPointF& point, d->ControlPoints)
     {
     QPointF pos = transform.map(point);
-    painter->drawEllipse(pos.x() - d->PointSize.width() / 2, 
-                         pos.y() - d->PointSize.height() / 2, 
+    painter->drawEllipse(pos.x() - d->PointSize.width() / 2,
+                         pos.y() - d->PointSize.height() / 2,
                          d->PointSize.width(), d->PointSize.width());
     //points.addEllipse(point, d->PointSize.width(), d->PointSize.height());
     }
@@ -153,7 +153,7 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
   //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   //Q_ASSERT(tfScene);
   ctkTransferFunctionRepresentation* tfRep = this->transferFunction()->representation();
-  
+
   // convert coordinates
   QPointF tfPos = tfRep->mapPointFromScene(e->pos());
   // add point to transfer function

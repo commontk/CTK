@@ -69,7 +69,7 @@ public:
   void setDefaultIcon(const QIcon&);
   QIcon defaultIcon()const;
 
-  /// Force the display of the text/icon at all time (not only when the 
+  /// Force the display of the text/icon at all time (not only when the
   /// current index is invalid). False by default.
   void forceDefault(bool forceDefault);
   bool isDefaultForced()const;

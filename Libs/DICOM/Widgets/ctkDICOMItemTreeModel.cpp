@@ -36,7 +36,7 @@ public:
 // ctkDICOMItemTreeModel methods
 
 //----------------------------------------------------------------------------
-ctkDICOMItemTreeModel::ctkDICOMItemTreeModel(QObject* _parent):Superclass(_parent), 
+ctkDICOMItemTreeModel::ctkDICOMItemTreeModel(QObject* _parent):Superclass(_parent),
   d_ptr(new ctkDICOMItemTreeModelPrivate)
 {
   //Q_D(ctkDICOMItemTreeModel);

@@ -49,7 +49,7 @@ int ctkModelTesterTest2(int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
-  QObject * object = new QObject; 
+  QObject * object = new QObject;
 
   ctkModelTester ctkTester( object );
 

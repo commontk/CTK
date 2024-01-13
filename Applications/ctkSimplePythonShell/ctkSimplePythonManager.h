@@ -34,7 +34,7 @@ public:
   typedef ctkAbstractPythonManager Superclass;
   ctkSimplePythonManager(QObject* parent=0);
   ~ctkSimplePythonManager();
-  
+
 protected:
 
   virtual QStringList pythonPaths();

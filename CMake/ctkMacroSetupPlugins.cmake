@@ -88,7 +88,7 @@ macro(ctkMacroSetupPlugins )
   if(NOT MY_BUILD_ALL)
     set(MY_BUILD_ALL 0)
   endif()
-  
+
   # Check if this is the first invocation of this macro
   get_property(_repeated GLOBAL PROPERTY ctkMacroSetupExternalPlugins_called SET)
   if(NOT _repeated)
@@ -96,7 +96,7 @@ macro(ctkMacroSetupPlugins )
     # This variable will be set in ctkMacroBuildPlugin
     set(${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES CACHE INTERNAL "CTK plug-in targets" FORCE)
     set_property(GLOBAL PROPERTY ctkMacroSetupExternalPlugins_called 1)
-    
+
     # Add the project specific variable name containing plug-in targets to the list
     set_property(GLOBAL APPEND PROPERTY CTK_PLUGIN_LIBRARIES_VARS ${CMAKE_PROJECT_NAME}_PLUGIN_LIBRARIES)
   endif()
@@ -122,10 +122,10 @@ macro(ctkMacroSetupPlugins )
     string(REPLACE "/" ";" _tokens ${plugin_dir})
     list(GET _tokens -1 plugin_symbolic_name)
     list(APPEND plugin_symbolic_names ${plugin_symbolic_name})
-    
+
     string(REPLACE "." "_" plugin_target ${plugin_symbolic_name})
     list(APPEND plugin_targets ${plugin_target})
-    
+
     set(${plugin_symbolic_name}_plugin_dir ${plugin_dir})
     set(${plugin_symbolic_name}_plugin_value ${plugin_value})
   endforeach()
@@ -140,7 +140,7 @@ macro(ctkMacroSetupPlugins )
     endforeach()
     message(FATAL_ERROR "The following plug-ins are using invalid symbolic names: ${invalid_plugins}")
   endif()
-  
+
   set(plugin_dirswithoption )
   set(plugin_subdirs )
   foreach(plugin_symbolic_name ${plugin_symbolic_names})
@@ -167,11 +167,11 @@ macro(ctkMacroSetupPlugins )
       list(APPEND plugin_dirswithoption "${CMAKE_CURRENT_SOURCE_DIR}/${${plugin_symbolic_name}_plugin_dir}^^${option_name}")
     endif()
   endforeach()
-  
+
   # Get plugin info from possible previous invocations of this macro for
   # validation purposes below
   get_property(previous_plugin_dirswithoption GLOBAL PROPERTY ctkMacroSetupExternalPlugins_dirswithoption)
-  
+
   # Fill the CTK_EXTERNAL_PLUGIN_LIBRARIES variable with external plug-in target names.
   # It will be used in ctkMacroValidateBuildOptions to be able to validate against plug-ins
   # from external projects.
@@ -194,7 +194,7 @@ macro(ctkMacroSetupPlugins )
     if(${${plugin}_option_name})
       if(IS_ABSOLUTE ${plugin})
         # get last directory component
-        get_filename_component(_dirname ${plugin} NAME) 
+        get_filename_component(_dirname ${plugin} NAME)
         add_subdirectory(${plugin} private_plugins/${_dirname})
       else()
         add_subdirectory(${plugin})

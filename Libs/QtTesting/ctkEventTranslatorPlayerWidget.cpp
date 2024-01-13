@@ -95,7 +95,7 @@ void ctkEventTranslatorPlayerWidget::addTestCase(QWidget *widget,
   infoTestCase->Dialog = false;
 
   d->TestCase.push_back(infoTestCase);
-  
+
   d->stackedWidget->addWidget(widget);
   d->TestCaseComboBox->addItem(QString::number(d->TestCase.count()),
                                QVariant(d->TestCase.count()));

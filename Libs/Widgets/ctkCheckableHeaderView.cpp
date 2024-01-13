@@ -26,7 +26,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -168,7 +168,7 @@ ctkCheckableModelHelper* ctkCheckableHeaderView::checkableModelHelper()const
 //-----------------------------------------------------------------------------
 bool ctkCheckableHeaderView::eventFilter(QObject *, QEvent *e)
 {
-  if(e->type() != QEvent::FocusIn && 
+  if(e->type() != QEvent::FocusIn &&
      e->type() != QEvent::FocusOut)
     {
     return false;
@@ -191,7 +191,7 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
       current, SIGNAL(modelReset()),
       this, SLOT(updateHeaderPixmaps()));
     this->disconnect(
-      current, SIGNAL(columnsInserted(QModelIndex,int,int)), 
+      current, SIGNAL(columnsInserted(QModelIndex,int,int)),
       this, SLOT(onHeaderSectionInserted()));
     this->disconnect(
       current, SIGNAL(rowsInserted(QModelIndex,int,int)),
@@ -287,7 +287,7 @@ void ctkCheckableHeaderView::onHeaderSectionInserted()
 void ctkCheckableHeaderView::mousePressEvent(QMouseEvent *e)
 {
   Q_D(ctkCheckableHeaderView);
-  if (e->button() != Qt::LeftButton || 
+  if (e->button() != Qt::LeftButton ||
       d->Pressed >= 0)
     {
     d->Pressed = -1;
@@ -313,7 +313,7 @@ void ctkCheckableHeaderView::mousePressEvent(QMouseEvent *e)
 void ctkCheckableHeaderView::mouseReleaseEvent(QMouseEvent *e)
 {
   Q_D(ctkCheckableHeaderView);
-  if (e->button() != Qt::LeftButton || 
+  if (e->button() != Qt::LeftButton ||
       d->Pressed < 0)
     {
     d->Pressed = -1;
@@ -323,7 +323,7 @@ void ctkCheckableHeaderView::mouseReleaseEvent(QMouseEvent *e)
   //check if the check box is pressed
   int pos = this->orientation() == Qt::Horizontal ? e->x() : e->y();
   int section = this->logicalIndexAt(pos);
-  if (section == d->Pressed && 
+  if (section == d->Pressed &&
       this->isPointInCheckBox(section, e->pos()))
     {
     d->Pressed = -1;
@@ -335,24 +335,24 @@ void ctkCheckableHeaderView::mouseReleaseEvent(QMouseEvent *e)
 //-----------------------------------------------------------------------------
 bool ctkCheckableHeaderView::isPointInCheckBox(int section, QPoint pos)const
 {
-  QRect sectionRect = this->orientation() == Qt::Horizontal ? 
-    QRect(this->sectionPosition(section), 0, 
+  QRect sectionRect = this->orientation() == Qt::Horizontal ?
+    QRect(this->sectionPosition(section), 0,
           this->sectionSize(section), this->height()):
-    QRect(0, this->sectionPosition(section), 
+    QRect(0, this->sectionPosition(section),
           this->width(), this->sectionSize(section));
   QStyleOptionHeader opt;
   this->initStyleOption(&opt);
   this->initStyleSectionOption(&opt, section, sectionRect);
   QRect headerLabelRect = this->style()->subElementRect(QStyle::SE_HeaderLabel, &opt, this);
   // from qcommonstyle.cpp:1541
-  if (opt.icon.isNull()) 
+  if (opt.icon.isNull())
     {
     return false;
     }
   QPixmap pixmap
-    = opt.icon.pixmap(this->style()->pixelMetric(QStyle::PM_SmallIconSize), 
+    = opt.icon.pixmap(this->style()->pixelMetric(QStyle::PM_SmallIconSize),
                       (opt.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);
-  QRect aligned = this->style()->alignedRect(opt.direction, QFlag(opt.iconAlignment), 
+  QRect aligned = this->style()->alignedRect(opt.direction, QFlag(opt.iconAlignment),
                               pixmap.size(), headerLabelRect);
   QRect inter = aligned.intersected(headerLabelRect);
   return inter.contains(pos);
@@ -371,7 +371,7 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
     {
     state |= QStyle::State_Active;
     }
-  if (this->isSortIndicatorShown() && 
+  if (this->isSortIndicatorShown() &&
       this->sortIndicatorSection() == section)
     {
     option->sortIndicator = (this->sortIndicatorOrder() == Qt::AscendingOrder)
@@ -379,7 +379,7 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
     }
 
   // setup the style option structure
-  QVariant textAlignment = 
+  QVariant textAlignment =
     this->model()->headerData(section, this->orientation(),
                               Qt::TextAlignmentRole);
   option->rect = rect;
@@ -388,7 +388,7 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
   option->textAlignment = Qt::Alignment(textAlignment.isValid()
                                         ? Qt::Alignment(textAlignment.toInt())
                                         : this->defaultAlignment());
-  
+
   option->iconAlignment = Qt::AlignVCenter;
   option->text = this->model()->headerData(section, this->orientation(),
                                   Qt::DisplayRole).toString();
@@ -454,4 +454,4 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
     option->selectedPosition = QStyleOptionHeader::NotAdjacent;
   */
 }
-    
+

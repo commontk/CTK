@@ -92,7 +92,7 @@ protected:
 
 private:
   Q_DECLARE_PRIVATE(ctkCompleter);
-  Q_DISABLE_COPY(ctkCompleter);  
+  Q_DISABLE_COPY(ctkCompleter);
 };
 
 Q_DECLARE_METATYPE(ctkCompleter::ModelFiltering)

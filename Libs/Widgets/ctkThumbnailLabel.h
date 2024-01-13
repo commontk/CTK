@@ -21,7 +21,7 @@
 #ifndef __ctkThumbnailLabel_h
 #define __ctkThumbnailLabel_h
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 #include <QModelIndex>
 

@@ -380,4 +380,4 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="XPathNodeInfoSet" nillable="true" type="tns:XPathNodeInfoSet"/>
-</xs:schema> 
+</xs:schema>

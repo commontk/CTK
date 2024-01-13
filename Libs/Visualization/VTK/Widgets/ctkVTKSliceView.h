@@ -128,7 +128,7 @@ public Q_SLOTS:
   /// \sa lightBoxRendererManager()
   /// \sa vtkLightBoxRendererManager::SetRenderWindowColumnCount
   void setLightBoxRendererManagerColumnCount(int newColumnCount);
-  
+
 Q_SIGNALS:
   void resized(const QSize& size);
 
@@ -139,6 +139,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkVTKSliceView);
   Q_DISABLE_COPY(ctkVTKSliceView);
-}; 
+};
 
 #endif
