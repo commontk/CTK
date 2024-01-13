@@ -1108,13 +1108,14 @@ if(${CMAKE_VERSION} VERSION_EQUAL "3.9" OR ${CMAKE_VERSION} VERSION_GREATER "3.9
 
   # Set test launch environment specific to the build tree
   if(WIN32)
-    # On Windows, concatenate the build and library paths directly since a list in CMake
-    # is a ; separated group of strings.
-    set(separator ";")
-    set(env_paths "${CTK_PATHS_LAUNCHER_BUILD};${CTK_LIBRARY_PATHS_LAUNCHER_BUILD}")
+    # On Windows, create semicolon-separated strings for paths and library paths
+    set(separator "$<SEMICOLON>")
+    ctk_list_to_string(${separator} "${CTK_PATHS_LAUNCHER_BUILD};${CTK_LIBRARY_PATHS_LAUNCHER_BUILD}" env_paths)
+
+    string(REPLACE ";" "${separator}" sanitized_current_path "$ENV{PATH}")
 
     set(CTK_TEST_LAUNCH_BUILD_ENVIRONMENT
-      "PATH=${env_paths}${separator}$ENV{PATH}"
+      "PATH=${env_paths}${separator}${sanitized_current_path}"
       )
   else()
     # On UNIX-like systems, create colon-separated strings for paths and library paths
