@@ -176,7 +176,7 @@ int main(int argc, char * argv []) {
   QStringList ctkDICOMRetrieve_args;
   ctkDICOMRetrieve_args << studyUID;
   ctkDICOMRetrieve_args << ctkDICOMRetrieve_directory;
-  ctkDICOMRetrieve_args << "CTK_AE" << "11113";
+  ctkDICOMRetrieve_args << "CTK_AE";
   ctkDICOMRetrieve_args << "CTK_AE";
   ctkDICOMRetrieve_args << "localhost" << "11112" << "CTK_CLIENT_AE";
 
