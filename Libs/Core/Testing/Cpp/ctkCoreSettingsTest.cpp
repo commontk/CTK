@@ -139,7 +139,7 @@ void ctkCoreSettingsTester::testMultiplePaths_data()
     << (QStringList() << "<APPLICATION_HOME_DIR>/internal/dir");
 
   QTest::newRow("windows-style absolute paths") << "c:/windows/path"
-    << (QStringList() << "d:/windows/path/internal/dir" << "c:/windows/external/subdir/file.txt")
+    << (QStringList() << "c:/windows/path/internal/dir" << "c:/windows/external/subdir/file.txt")
     << (QStringList() << "<APPLICATION_HOME_DIR>/internal/dir" << "c:/windows/external/subdir/file.txt");
 #endif
 
