@@ -36,7 +36,9 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
   ctk_add_executable_utf8(ctkDICOMApplicationTest1 ctkDICOMApplicationTest1.cpp)
   target_link_libraries(ctkDICOMApplicationTest1 Qt${CTK_QT_VERSION}::Core)
 
-  ADD_TEST( NAME ctkDICOMApplicationTest1
+  set(testname ctkDICOMApplicationTest1)
+
+  add_test( NAME ${testname}
             COMMAND
             $<TARGET_FILE:ctkDICOMApplicationTest1>
                ${DCMTK_DCMQRSCP_EXECUTABLE}
@@ -49,4 +51,6 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
                $<TARGET_FILE:ctkDICOMRetrieve>
                ${ctkDICOMRetrieve_STORE_DIR}
                )
+
+  set_property(TEST ${testname} PROPERTY ENVIRONMENT_MODIFICATION "${CTK_TEST_LAUNCH_BUILD_ENVIRONMENT_MODIFICATION}")
 endif()
