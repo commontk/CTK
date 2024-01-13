@@ -228,6 +228,11 @@ void ctkFileDialog::setSelectionMode(QAbstractItemView::SelectionMode mode)
 QAbstractItemView::SelectionMode ctkFileDialog::selectionMode() const
 {
   Q_D(const ctkFileDialog);
+  if (d->UsingNativeDialog)
+    {
+    // Native dialog does not support modifying or getting widget elements.
+    return QAbstractItemView::NoSelection;
+    }
   return d->listView()->selectionMode();
 }
 

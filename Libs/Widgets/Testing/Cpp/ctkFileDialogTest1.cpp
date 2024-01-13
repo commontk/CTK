@@ -31,34 +31,46 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-int testSelectionMode(ctkFileDialog* fileDialog)
+int testSelectionMode(ctkFileDialog* fileDialog, bool supportSelection)
 {
   fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::ExtendedSelection));
+  CHECK_INT(fileDialog->selectionMode(),
+            static_cast<int>(
+              supportSelection ? QAbstractItemView::ExtendedSelection : QAbstractItemView::NoSelection));
 
   // Due to limitation of QFileDialog API, calling setFileMode resets
   // the selection mode.
 
   fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
   fileDialog->setFileMode(QFileDialog::Directory);
-  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
+  CHECK_INT(fileDialog->selectionMode(),
+            static_cast<int>(
+              supportSelection ? QAbstractItemView::SingleSelection : QAbstractItemView::NoSelection));
 
   fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
   fileDialog->setFileMode(QFileDialog::Directory);
   fileDialog->setOption(QFileDialog::ShowDirsOnly);
-  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
+  CHECK_INT(fileDialog->selectionMode(),
+            static_cast<int>(
+              supportSelection ? QAbstractItemView::SingleSelection : QAbstractItemView::NoSelection));
 
   fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
   fileDialog->setFileMode(QFileDialog::ExistingFile);
-  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
+  CHECK_INT(fileDialog->selectionMode(),
+            static_cast<int>(
+              supportSelection ? QAbstractItemView::SingleSelection : QAbstractItemView::NoSelection));
 
   fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
   fileDialog->setFileMode(QFileDialog::ExistingFiles);
-  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::ExtendedSelection));
+  CHECK_INT(fileDialog->selectionMode(),
+            static_cast<int>(
+              supportSelection ? QAbstractItemView::ExtendedSelection : QAbstractItemView::NoSelection));
 
   fileDialog->setSelectionMode(QAbstractItemView::ExtendedSelection);
   fileDialog->setFileMode(QFileDialog::AnyFile);
-  CHECK_INT(fileDialog->selectionMode(), static_cast<int>(QAbstractItemView::SingleSelection));
+  CHECK_INT(fileDialog->selectionMode(),
+            static_cast<int>(
+              supportSelection ? QAbstractItemView::SingleSelection : QAbstractItemView::NoSelection));
 
   return EXIT_SUCCESS;
 }
@@ -74,20 +86,26 @@ int ctkFileDialogTest1(int argc, char * argv [] )
   fileDialog.setViewMode(QFileDialog::Detail);
   QCheckBox* checkBox = new QCheckBox;
   fileDialog.setBottomWidget(checkBox, "Foo Bar:");
-  if (checkBox != fileDialog.bottomWidget())
-    {
-    return EXIT_FAILURE;
-    }
 
-  CHECK_EXIT_SUCCESS(testSelectionMode(&fileDialog));
+  // A bottom widget can be associated with the file dialog only
+  // if using the non-native dialog.
+  bool supportBottomWidget = false;
+
+  CHECK_POINTER(fileDialog.bottomWidget(), supportBottomWidget ? checkBox : nullptr);
+
+  CHECK_EXIT_SUCCESS(testSelectionMode(&fileDialog, supportBottomWidget));
 
   // the following is only in interactive mode
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     return EXIT_SUCCESS;
     }
-  QObject::connect(checkBox, SIGNAL(toggled(bool)),
-                   &fileDialog, SLOT(setAcceptButtonEnable(bool)));
+
+  if (supportBottomWidget)
+    {
+    QObject::connect(fileDialog.bottomWidget(), SIGNAL(toggled(bool)),
+                     &fileDialog, SLOT(setAcceptButtonEnable(bool)));
+    }
   fileDialog.setAcceptButtonEnable(false);
   if (!fileDialog.exec())
     {
