@@ -93,14 +93,15 @@ int main(int argc, char * argv []) {
 
   try
   {
-    out << "starting server" << dcmqrscp_exe << "\n";
+    out << "starting server " << dcmqrscp_exe << "\n";
     out << "with args " << dcmqrscp_args.join(" ") << "\n";
     dcmqrscp->start(dcmqrscp_exe, dcmqrscp_args);
     dcmqrscp->waitForStarted();
+    out << "dcmqrscp Started.\n";
   }
   catch (const std::exception& e)
   {
-    out << "ERROR: could not start server" << e.what();
+    out << "ERROR: could not start server " << e.what();
     return EXIT_FAILURE;
   }
 
@@ -119,8 +120,8 @@ int main(int argc, char * argv []) {
 
   try
   {
-    out << "running client" << storescu_exe << "\n";
-    out << "with args" << storescu_args.join(" ") << "\n";
+    out << "running client " << storescu_exe << "\n";
+    out << "with args " << storescu_args.join(" ") << "\n";
     storescu->start(storescu_exe, storescu_args);
     storescu->waitForFinished();
     out << "storescu Finished.\n";
@@ -131,7 +132,7 @@ int main(int argc, char * argv []) {
   }
   catch (const std::exception& e)
   {
-    out << "ERROR: could not start client" << e.what();
+    out << "ERROR: could not start client " << e.what();
     return EXIT_FAILURE;
   }
 
@@ -148,8 +149,8 @@ int main(int argc, char * argv []) {
 
   try
   {
-    out << "running client" << ctkDICOMQuery_exe << "\n";
-    out << "with args" << ctkDICOMQuery_args.join(" ") << "\n";
+    out << "running client " << ctkDICOMQuery_exe << "\n";
+    out << "with args " << ctkDICOMQuery_args.join(" ") << "\n";
     ctkDICOMQuery->start(ctkDICOMQuery_exe, ctkDICOMQuery_args);
     ctkDICOMQuery->waitForFinished();
     out << "ctkDICOMQuery Finished.\n";
@@ -160,7 +161,7 @@ int main(int argc, char * argv []) {
   }
   catch (const std::exception& e)
   {
-    out << "ERROR: could not start client" << e.what();
+    out << "ERROR: could not start client " << e.what();
     return EXIT_FAILURE;
   }
 
@@ -182,8 +183,8 @@ int main(int argc, char * argv []) {
 
   try
   {
-    out << "running client" << ctkDICOMRetrieve_exe << "\n";
-    out << "with args" << ctkDICOMRetrieve_args.join(" ") << "\n";
+    out << "running client " << ctkDICOMRetrieve_exe << "\n";
+    out << "with args " << ctkDICOMRetrieve_args.join(" ") << "\n";
     ctkDICOMRetrieve->start(ctkDICOMRetrieve_exe, ctkDICOMRetrieve_args);
     ctkDICOMRetrieve->waitForFinished();
     out << "ctkDICOMRetrieve Finished.\n";
@@ -194,7 +195,7 @@ int main(int argc, char * argv []) {
   }
   catch (const std::exception& e)
   {
-    out << "ERROR: could not start client" << e.what();
+    out << "ERROR: could not start client " << e.what();
     return EXIT_FAILURE;
   }
 
@@ -214,7 +215,7 @@ int main(int argc, char * argv []) {
   }
   catch (const std::exception& e)
   {
-    out << "ERROR: could not start client" << e.what();
+    out << "ERROR: could not start client " << e.what();
     return EXIT_FAILURE;
   }
 
