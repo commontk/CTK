@@ -1059,6 +1059,82 @@ if(NOT DEFINED CTK_SUPERBUILD_BINARY_DIR)
 endif()
 
 #-----------------------------------------------------------------------------
+# Configure test launcher environment variables for the build tree
+
+set(CTK_PATHS_LAUNCHER_BUILD )
+set(CTK_LIBRARY_PATHS_LAUNCHER_BUILD )
+set(CTK_TEST_LAUNCH_BUILD_ENVIRONMENT )
+
+if(${CMAKE_VERSION} VERSION_EQUAL "3.9" OR ${CMAKE_VERSION} VERSION_GREATER "3.9")
+
+  # CMake 3.9 introduces support for "$<IF:...>" generator expression
+  # and GENERATOR_IS_MULTI_CONFIG property.
+
+  # Generate expression evaluating to the current build configuration or "."
+  # for single configuration generator
+  get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+  set(_cfg_intdir $<IF:${_isMultiConfig},$<CONFIG>,.>)
+
+  # Collect "library paths" and "paths" defined in external projects.
+  # Values for each are retrieved based on the label associated with the
+  # corresponding `mark_as_superbuild()` call used in each external project.
+
+  # Location of the Qt shared libraries
+  if(WIN32)
+    get_target_property(_qt_moc_executable Qt${CTK_QT_VERSION}::moc LOCATION)
+    get_filename_component(_qt_installed_library_dir ${_qt_moc_executable} PATH)
+  else()
+    get_target_property(_qt_core_lib Qt${CTK_QT_VERSION}::Core LOCATION)
+    get_filename_component(_qt_installed_library_dir ${_qt_core_lib} PATH)
+  endif()
+
+  # Library paths
+  set(CTK_LIBRARY_PATHS_LAUNCHER_BUILD
+    ${_qt_installed_library_dir}
+    )
+  foreach(varname IN LISTS CTK_EP_LABEL_LIBRARY_PATHS_LAUNCHER_BUILD)
+    set(value ${${varname}})
+    list(TRANSFORM value REPLACE "<CMAKE_CFG_INTDIR>" "${_cfg_intdir}")
+    list(APPEND CTK_LIBRARY_PATHS_LAUNCHER_BUILD ${value})
+  endforeach()
+
+  # Paths
+  set(CTK_PATHS_LAUNCHER_BUILD)
+  foreach(varname IN LISTS CTK_EP_LABEL_PATHS_LAUNCHER_BUILD)
+    set(value ${${varname}})
+    list(TRANSFORM value REPLACE "<CMAKE_CFG_INTDIR>" "${_cfg_intdir}")
+    list(APPEND CTK_PATHS_LAUNCHER_BUILD ${value})
+  endforeach()
+
+  # Set test launch environment specific to the build tree
+  if(WIN32)
+    # On Windows, concatenate the build and library paths directly since a list in CMake
+    # is a ; separated group of strings.
+    set(separator ";")
+    set(env_paths "${CTK_PATHS_LAUNCHER_BUILD};${CTK_LIBRARY_PATHS_LAUNCHER_BUILD}")
+
+    set(CTK_TEST_LAUNCH_BUILD_ENVIRONMENT
+      "PATH=${env_paths}${separator}$ENV{PATH}"
+      )
+  else()
+    # On UNIX-like systems, create colon-separated strings for paths and library paths
+    set(separator ":")
+    ctk_list_to_string(${separator} "${CTK_PATHS_LAUNCHER_BUILD}" env_paths)
+    ctk_list_to_string(${separator} "${CTK_LIBRARY_PATHS_LAUNCHER_BUILD}" env_library_paths)
+
+    set(variable_name "LD_LIBRARY_PATH")
+    if(APPLE)
+      set(variable_name "DYLD_LIBRARY_PATH")
+    endif()
+
+    set(CTK_TEST_LAUNCH_BUILD_ENVIRONMENT
+      "PATH=${env_paths}${separator}$ENV{PATH}"
+      "${variable_name}=${env_library_paths}${separator}$ENV{${variable_name}}"
+      )
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
 # Configure files with settings
 #
 configure_file(${CTK_SOURCE_DIR}/CMake/UseCTK.cmake.in

@@ -60,5 +60,7 @@ macro(SIMPLE_TEST_WITH_DATA testname baseline_relative_location)
             ${ARGN}
             )
   set_property(TEST ${testname} PROPERTY LABELS ${KIT})
+
+  set_property(TEST ${testname} PROPERTY ENVIRONMENT "${CTK_TEST_LAUNCH_BUILD_ENVIRONMENT}")
 endmacro()
 
