@@ -19,6 +19,7 @@
 =========================================================================*/
 
 // QT includes
+#include <QGuiApplication>
 #include <QChildEvent>
 #include <QDebug>
 #include <QDialogButtonBox>
@@ -143,6 +144,11 @@ ctkFileDialog::ctkFileDialog(QWidget *parentWidget,
   , d_ptr(new ctkFileDialogPrivate(*this))
 {
   Q_D(ctkFileDialog);
+
+  if (QGuiApplication::testAttribute(Qt::AA_DontUseNativeDialogs))
+    {
+    this->setOptions(QFileDialog::DontUseNativeDialog);
+    }
 
   d->init();
 }
