@@ -32,6 +32,11 @@
 #include <cstdlib>
 #include <iostream>
 
+// Windows includes
+#ifdef Q_OS_WIN
+#include <windows.h> // For SetFileAttributesW
+#endif
+
 namespace
 {
 //-----------------------------------------------------------------------------
@@ -50,6 +55,49 @@ bool createFile(int line, const QDir& dir, const QString& relativePath, const QS
   if (!QFile::exists(filePath))
     {
     std::cerr << "Line " << line << " - Failed to create file" << qPrintable(filePath) << std::endl;
+    return false;
+    }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool hideFile(int line, const QDir& dir, const QString& relativePath)
+{
+  QString filePath = QFileInfo(dir, relativePath).filePath();
+
+  if (!QFile::exists(filePath))
+    {
+    std::cerr << "Line " << line << " - File" << qPrintable(filePath) << "does not exist" <<std::endl;
+    return false;
+    }
+
+#ifdef Q_OS_WIN
+  const wchar_t* filePathW = filePath.toStdWString().c_str();
+  DWORD dwAttrs = GetFileAttributesW(filePathW);
+  if ((dwAttrs & FILE_ATTRIBUTE_HIDDEN) == 0)
+    {
+    SetFileAttributesW(filePathW, dwAttrs | FILE_ATTRIBUTE_HIDDEN);
+    }
+#endif
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool isFileHidden(int line, const QDir& dir, const QString& relativePath)
+{
+  QString filePath = QFileInfo(dir, relativePath).filePath();
+
+  if (!QFile::exists(filePath))
+    {
+    std::cerr << "Line " << line << " - File" << qPrintable(filePath) << "does not exist" <<std::endl;
+    return false;
+    }
+
+  if (!QFileInfo(filePath).isHidden())
+    {
+    std::cerr << "Line " << line << " - File" << qPrintable(filePath) << "is expected to be hidden" << std::endl;
     return false;
     }
 
@@ -112,15 +160,23 @@ int ctkUtilsCopyDirRecursivelyTest1(int argc, char * argv [] )
     {
     return EXIT_FAILURE;
     }
-  if (!createFile(__LINE__, tmp, "foo/zoo", ".hidden.txt"))
+  if (!(createFile(__LINE__, tmp, "foo/zoo", ".hidden.txt")
+        && hideFile(__LINE__, tmp, "foo/zoo/.hidden.txt")
+        && isFileHidden(__LINE__, tmp, "foo/zoo/.hidden.txt")))
     {
     return EXIT_FAILURE;
     }
-  if (!createFile(__LINE__, tmp, "foo/.hidden", "c.txt"))
+  if (!(createFile(__LINE__, tmp, "foo/.hidden", "c.txt")
+        && hideFile(__LINE__, tmp, "foo/.hidden")
+        && isFileHidden(__LINE__, tmp, "foo/.hidden")))
     {
     return EXIT_FAILURE;
     }
-  if (!createFile(__LINE__, tmp, "foo/.hidden", ".hidden.txt"))
+  if (!(createFile(__LINE__, tmp, "foo/.hidden", ".hidden.txt")
+        && hideFile(__LINE__, tmp, "foo/.hidden")
+        && hideFile(__LINE__, tmp, "foo/.hidden/.hidden.txt")
+        && isFileHidden(__LINE__, tmp, "foo/.hidden")
+        && isFileHidden(__LINE__, tmp, "foo/.hidden/.hidden.txt")))
     {
     return EXIT_FAILURE;
     }
