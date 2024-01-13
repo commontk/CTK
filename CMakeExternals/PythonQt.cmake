@@ -121,6 +121,21 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
     )
   set(PYTHONQT_INSTALL_DIR ${ep_install_dir})
 
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  # library paths
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${CMAKE_BINARY_DIR}/${proj}/<CMAKE_CFG_INTDIR>)
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  # NA
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

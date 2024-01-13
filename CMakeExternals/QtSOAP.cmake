@@ -77,6 +77,23 @@ if(NOT DEFINED QtSOAP_DIR)
     )
   set(QtSOAP_DIR "${CMAKE_BINARY_DIR}/${proj}-build")
 
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  set(_lib_subdir bin)
+
+  # library paths
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${QtSOAP_DIR}/${_lib_subdir}/<CMAKE_CFG_INTDIR>)
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  # NA
+
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()

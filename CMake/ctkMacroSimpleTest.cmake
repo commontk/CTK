@@ -30,5 +30,8 @@ macro(SIMPLE_TEST testname)
   
   add_test(NAME ${testname} COMMAND $<TARGET_FILE:${KIT}CppTests> ${testname} ${ARGN})
   set_property(TEST ${testname} PROPERTY LABELS ${KIT})
+
+  set_property(TEST ${testname} PROPERTY ENVIRONMENT_MODIFICATION "${CTK_TEST_LAUNCH_BUILD_ENVIRONMENT_MODIFICATION}")
+
 endmacro()
 
