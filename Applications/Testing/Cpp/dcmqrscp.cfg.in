@@ -36,8 +36,8 @@ HostTable BEGIN
 #united2         = (UNITED2, unitedhost2, 104)
 #unitedMRcompany = united1, united2
 #
-commontk        = (CTK_AE,localhost,11112)
-commontk_client = (CTK_CLIENT_AE, localhost, 11113)
+commontk        = (CTK_AE,@DCMQRSCP_HOSTNAME@,11112)
+commontk_client = (CTK_CLIENT_AE, @DCMQRSCP_HOSTNAME@, 11113)
 #
 HostTable END
 
