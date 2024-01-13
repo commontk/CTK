@@ -134,7 +134,9 @@ QString ctkDICOMTesterPrivate::findFile(const QStringList& nameFilters, const QS
 //------------------------------------------------------------------------------
 QString ctkDICOMTesterPrivate::findDCMQRSCPExecutable()const
 {
-  return this->findFile(QStringList("dcmqrscp*"), "../DCMTK-build/bin");
+  QString executable = this->findFile(QStringList("dcmqrscp*"), "../DCMTK-build/bin");
+  // If not found, assume the executable is in the PATH
+  return executable.isEmpty() ? "dcmqrscp" : executable;
 }
 
 //------------------------------------------------------------------------------
@@ -146,13 +148,17 @@ QString ctkDICOMTesterPrivate::findDCMQRSCPConfigFile()const
 //------------------------------------------------------------------------------
 QString ctkDICOMTesterPrivate::findStoreSCUExecutable()const
 {
-  return this->findFile(QStringList("storescu*"), "../DCMTK-build/bin");
+  QString executable = this->findFile(QStringList("storescu*"), "../DCMTK-build/bin");
+  // If not found, assume the executable is in the PATH
+  return executable.isEmpty() ? "storescu" : executable;
 }
 
 //------------------------------------------------------------------------------
 QString ctkDICOMTesterPrivate::findStoreSCPExecutable()const
 {
-  return this->findFile(QStringList("storescp*"), "../DCMTK-build/bin");
+  QString executable = this->findFile(QStringList("storescp*"), "../DCMTK-build/bin");
+  // If not found, assume the executable is in the PATH
+  return executable.isEmpty() ? "storescp" : executable;
 }
 
 //------------------------------------------------------------------------------
