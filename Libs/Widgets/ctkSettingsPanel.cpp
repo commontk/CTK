@@ -417,8 +417,11 @@ void ctkSettingsPanel::applySettings()
   foreach(const QString& key, d->Properties.keys())
     {
     PropertyType& prop = d->Properties[key];
-    prop.setPreviousValue(prop.value());
-    emit settingChanged(key, prop.value());
+    if (prop.previousValue() != prop.value())
+      {
+      prop.setPreviousValue(prop.value());
+      emit settingChanged(key, prop.value());
+      }
     }
 }
 
