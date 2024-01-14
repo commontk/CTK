@@ -105,7 +105,7 @@ void ctkSettingsPanelTester::testChangeProperty()
     if (QFile::exists(settings.fileName()))
       {
       QFile file(settings.fileName());
-      QVERIFY(file.open(QIODevice::ReadOnly));
+      QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
       currentSettingContent = file.readAll();
       file.close();
       }
@@ -117,7 +117,7 @@ void ctkSettingsPanelTester::testChangeProperty()
     if (QFile::exists(specificSettings.fileName()))
       {
       QFile file(specificSettings.fileName());
-      QVERIFY(file.open(QIODevice::ReadOnly));
+      QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
       currentSpecificSettingsContent = file.readAll();
       file.close();
       }
