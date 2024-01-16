@@ -114,7 +114,7 @@ void ctkDICOMSchedulerPrivate::insertJob(QSharedPointer<ctkDICOMJob> job)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSchedulerPrivate::removeJob(QString jobUID)
+void ctkDICOMSchedulerPrivate::removeJob(const QString& jobUID)
 {
   Q_Q(ctkDICOMScheduler);
 
@@ -722,14 +722,14 @@ void ctkDICOMScheduler::addJob(ctkDICOMJob *job)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::deleteJob(QString jobUID)
+void ctkDICOMScheduler::deleteJob(const QString& jobUID)
 {
   Q_D(ctkDICOMScheduler);
   d->removeJob(jobUID);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::deleteWorker(QString jobUID)
+void ctkDICOMScheduler::deleteWorker(const QString& jobUID)
 {
   Q_D(ctkDICOMScheduler);
 
@@ -743,22 +743,22 @@ void ctkDICOMScheduler::deleteWorker(QString jobUID)
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMJob> ctkDICOMScheduler::getJobSharedByUID(QString JobUID)
+QSharedPointer<ctkDICOMJob> ctkDICOMScheduler::getJobSharedByUID(const QString& jobUID)
 {
   Q_D(ctkDICOMScheduler);
 
   QMutexLocker ml(&d->mMutex);
-  QMap<QString, QSharedPointer<ctkDICOMJob>>::iterator it = d->JobsQueue.find(JobUID);
+  QMap<QString, QSharedPointer<ctkDICOMJob>>::iterator it = d->JobsQueue.find(jobUID);
   if (it == d->JobsQueue.end())
     {
     return nullptr;
     }
 
-  return d->JobsQueue.value(JobUID);
+  return d->JobsQueue.value(jobUID);
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMJob *ctkDICOMScheduler::getJobByUID(QString jobUID)
+ctkDICOMJob *ctkDICOMScheduler::getJobByUID(const QString& jobUID)
 {
   QSharedPointer<ctkDICOMJob> job = this->getJobSharedByUID(jobUID);
   if (!job)

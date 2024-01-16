@@ -52,7 +52,7 @@ public:
 
   int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkDICOMJob> job);
   void insertJob(QSharedPointer<ctkDICOMJob> job);
-  void removeJob(QString jobUID);
+  void removeJob(const QString& jobUID);
   QString generateUniqueJobUID();
   ctkDICOMServer* getServerFromProxyServersByConnectionName(const QString&);
 
