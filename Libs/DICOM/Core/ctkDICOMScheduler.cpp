@@ -47,7 +47,7 @@ static ctkLogger logger ( "org.commontk.dicom.DICOMJobPool" );
 ctkDICOMSchedulerPrivate::ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj)
   : q_ptr(&obj)
 {
-  ctk::setDICOMLogLevel(ctkErrorLogLevel::Info);
+  ctk::setDICOMLogLevel(ctkErrorLogLevel::Warning);
 
   this->DicomDatabase = nullptr;
   this->ThreadPool = QSharedPointer<QThreadPool> (new QThreadPool());
@@ -96,7 +96,7 @@ void ctkDICOMSchedulerPrivate::insertJob(QSharedPointer<ctkDICOMJob> job)
     return;
     }
 
-  logger.debug(QString("ctkDICOMScheduler: creating job object %1 of type %2 in thread %3")
+  logger.debug(QString("ctkDICOMScheduler: creating job object %1 of type %2 in thread %3.\n")
     .arg(job->jobUID())
     .arg(job->className())
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
@@ -118,7 +118,7 @@ void ctkDICOMSchedulerPrivate::removeJob(QString jobUID)
 {
   Q_Q(ctkDICOMScheduler);
 
-  logger.debug(QString("ctkDICOMScheduler: deleting job object %1 in thread %2")
+  logger.debug(QString("ctkDICOMScheduler: deleting job object %1 in thread %2.\n")
     .arg(jobUID)
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
 
@@ -1139,7 +1139,7 @@ void ctkDICOMScheduler::onQueueJobsInThreadPool()
         continue;
         }
 
-      logger.debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2")
+      logger.debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
                        .arg(job->jobUID())
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 

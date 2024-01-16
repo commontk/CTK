@@ -98,8 +98,9 @@ void ctkDICOMInserterWorker::run()
   inserterJob->setStatus(ctkAbstractJob::JobStatus::Running);
   emit inserterJob->started();
 
-  logger.debug("ctkDICOMInserterWorker : running job on thread id " +
-               QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16));
+  logger.debug(QString("ctkDICOMInserterWorker : running job %1 in thread %2.\n")
+                       .arg(inserterJob->jobUID())
+                       .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets = inserterJob->jobResponseSetsShared();
   d->Inserter->addJobResponseSets(jobResponseSets);

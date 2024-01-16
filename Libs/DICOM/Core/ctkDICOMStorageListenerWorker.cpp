@@ -146,8 +146,10 @@ void ctkDICOMStorageListenerWorker::run()
   storageListenerJob->setStatus(ctkAbstractJob::JobStatus::Running);
   emit storageListenerJob->started();
 
-  logger.debug("ctkDICOMStorageListenerWorker : running job on thread id " +
-               QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16));
+  logger.debug(QString("ctkDICOMStorageListenerWorker : running job %1 in thread %2.\n")
+                       .arg(storageListenerJob->jobUID())
+                       .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
+
 
   if (!d->StorageListener->listen())
     {

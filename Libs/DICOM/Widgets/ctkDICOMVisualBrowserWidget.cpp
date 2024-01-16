@@ -1378,7 +1378,6 @@ ctkDICOMVisualBrowserWidget::ctkDICOMVisualBrowserWidget(QWidget* parentWidget)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->init();
-  this->setDCMTKLogLevel(logger.logLevel());
 }
 
 //----------------------------------------------------------------------------
@@ -1598,47 +1597,6 @@ ctkCollapsibleGroupBox *ctkDICOMVisualBrowserWidget::serverSettingsGroupBox()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   return d->ServersSettingsCollapsibleGroupBox;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel &level)
-{
-  OFLogger::LogLevel dcmtkLogLevel = OFLogger::OFF_LOG_LEVEL;
-  if (level == ctkErrorLogLevel::LogLevel::Fatal)
-      {
-      dcmtkLogLevel = OFLogger::FATAL_LOG_LEVEL;
-      }
-  else if (level == ctkErrorLogLevel::LogLevel::Critical ||
-           level == ctkErrorLogLevel::LogLevel::Error)
-    {
-    dcmtkLogLevel = OFLogger::ERROR_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Warning)
-    {
-    dcmtkLogLevel = OFLogger::WARN_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Info)
-    {
-    dcmtkLogLevel = OFLogger::INFO_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Debug)
-    {
-    dcmtkLogLevel = OFLogger::DEBUG_LOG_LEVEL;
-    }
-  else if (level == ctkErrorLogLevel::LogLevel::Trace ||
-           level == ctkErrorLogLevel::LogLevel::Status)
-    {
-    dcmtkLogLevel = OFLogger::TRACE_LOG_LEVEL;
-    }
-
-  OFLog::configure(dcmtkLogLevel);
-}
-
-//------------------------------------------------------------------------------
-dcmtk::log4cplus::LogLevel ctkDICOMVisualBrowserWidget::DCMTKLogLevel() const
-{
-  OFLogger logger = OFLog::getLogger("CTK");
-  return logger.getChainedLogLevel();
 }
 
 //------------------------------------------------------------------------------

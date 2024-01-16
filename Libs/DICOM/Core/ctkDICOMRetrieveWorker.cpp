@@ -159,8 +159,10 @@ void ctkDICOMRetrieveWorker::run()
   retrieveJob->setStatus(ctkAbstractJob::JobStatus::Running);
   emit retrieveJob->started();
 
-  logger.debug("ctkDICOMRetrieveWorker : running job on thread id " +
-               QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16));
+  logger.debug(QString("ctkDICOMRetrieveWorker : running job %1 in thread %2.\n")
+                       .arg(retrieveJob->jobUID())
+                       .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
+
   switch (server->retrieveProtocol())
     {
     case ctkDICOMServer::CGET:

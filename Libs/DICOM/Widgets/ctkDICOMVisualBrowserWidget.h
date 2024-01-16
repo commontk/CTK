@@ -157,10 +157,6 @@ public:
   Q_INVOKABLE ctkDICOMServerNodeWidget2* serverSettingsWidget();
   Q_INVOKABLE ctkCollapsibleGroupBox* serverSettingsGroupBox();
 
-  /// Log level for dcmtk. Default: Error.
-  Q_INVOKABLE void setDCMTKLogLevel(const ctkErrorLogLevel::LogLevel& level);
-  Q_INVOKABLE dcmtk::log4cplus::LogLevel DCMTKLogLevel() const;
-
   /// Query Filters
   /// Empty by default
   void setFilteringPatientID(const QString& filteringPatientID);

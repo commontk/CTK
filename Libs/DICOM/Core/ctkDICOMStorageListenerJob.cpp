@@ -112,7 +112,7 @@ int ctkDICOMStorageListenerJob::connectionTimeout() const
 QString ctkDICOMStorageListenerJob::loggerReport(const QString &status) const
 {
   return QString("ctkDICOMStorageListenerJob: listener job %1.\n"
-                 "JobUID: %2")
+                 "JobUID: %2\n")
                  .arg(status)
                  .arg(this->jobUID());
 }

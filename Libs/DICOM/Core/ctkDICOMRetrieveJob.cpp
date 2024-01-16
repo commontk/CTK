@@ -109,7 +109,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString &status) const
       return QString("ctkDICOMRetrieveJob: retrieve task at patients level %1.\n"
                      "JobUID: %2\n"
                      "Server: %3\n"
-                     "PatientID: %4")
+                     "PatientID: %4\n")
           .arg(status)
           .arg(this->jobUID())
           .arg(this->server()->connectionName())
@@ -119,7 +119,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString &status) const
                      "JobUID: %2\n"
                      "Server: %3\n"
                      "PatientID: %4\n"
-                     "StudyInstanceUID: %5")
+                     "StudyInstanceUID: %5\n")
           .arg(status)
           .arg(this->jobUID())
           .arg(this->server()->connectionName())
@@ -131,7 +131,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString &status) const
                      "Server: %3\n"
                      "PatientID: %4\n"
                      "StudyInstanceUID: %5\n"
-                     "SeriesInstanceUID: %6")
+                     "SeriesInstanceUID: %6\n")
           .arg(status)
           .arg(this->jobUID())
           .arg(this->server()->connectionName())
@@ -145,7 +145,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString &status) const
                      "PatientID: %4\n"
                      "StudyInstanceUID: %5\n"
                      "SeriesInstanceUID: %6\n"
-                     "SOPInstanceUID: %7")
+                     "SOPInstanceUID: %7\n")
           .arg(status)
           .arg(this->jobUID())
           .arg(this->server()->connectionName())

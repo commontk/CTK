@@ -51,7 +51,7 @@ QString ctkDICOMInserterJob::loggerReport(const QString &status) const
     case ctkDICOMJob::DICOMLevels::Patients:
       return QString("ctkDICOMInserterJob: insert job at patients level %1.\n"
                      "JobUID: %2\n"
-                     "PatientID: %3")
+                     "PatientID: %3\n")
           .arg(status)
           .arg(this->jobUID())
           .arg(this->patientID());
@@ -59,7 +59,7 @@ QString ctkDICOMInserterJob::loggerReport(const QString &status) const
       return QString("ctkDICOMInserterJob: insert job at studies level %1.\n"
                      "JobUID: %2\n"
                      "PatientID: %3\n"
-                     "StudyInstanceUID: %4")
+                     "StudyInstanceUID: %4\n")
           .arg(status)
           .arg(this->jobUID())
           .arg(this->patientID())
@@ -69,7 +69,7 @@ QString ctkDICOMInserterJob::loggerReport(const QString &status) const
                      "JobUID: %2\n"
                      "PatientID: %3\n"
                      "StudyInstanceUID: %4\n"
-                     "SeriesInstanceUID: %5")
+                     "SeriesInstanceUID: %5\n")
           .arg(status)
           .arg(this->jobUID())
           .arg(this->patientID())
@@ -81,7 +81,7 @@ QString ctkDICOMInserterJob::loggerReport(const QString &status) const
                      "PatientID: %3\n"
                      "StudyInstanceUID: %4\n"
                      "SeriesInstanceUID: %5 \n"
-                     "SOPInstanceUID: %6.")
+                     "SOPInstanceUID: %6\n")
           .arg(status)
           .arg(this->jobUID())
           .arg(this->patientID())
