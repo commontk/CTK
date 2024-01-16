@@ -51,17 +51,23 @@ public:
   /// Logger report string formatting for specific task
   Q_INVOKABLE QString loggerReport(const QString& status) const;
 
+  ///@{
   /// Database Filename
   void setDatabaseFilename(const QString& databaseFilename);
   QString databaseFilename() const;
+  ///}@
 
+  ///@{
   /// Database TagsToPrecache
   void setTagsToPrecache(const QStringList& tagsToPrecache);
   QStringList tagsToPrecache() const;
+  ///}@
 
+  ///@{
   /// Database TagsToPrecache
   void setTagsToExcludeFromStorage(const QStringList& tagsToExcludeFromStorage);
   QStringList tagsToExcludeFromStorage() const;
+  ///}@
 
   /// Create a copy of the object
   Q_INVOKABLE ctkDICOMJob* generateCopy() const;

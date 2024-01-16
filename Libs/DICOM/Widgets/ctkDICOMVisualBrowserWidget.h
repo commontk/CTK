@@ -356,6 +356,7 @@ protected:
   void exportSeries(QString dirPath, QStringList uids);
 
 protected Q_SLOTS:
+  ///@{
   /// \brief Import directories
   ///
   /// This is used when user selected one or multiple
@@ -364,6 +365,7 @@ protected Q_SLOTS:
   /// \sa importDirectories(QString directory, int mode)
   void onImportDirectoriesSelected(QStringList directories);
   void onImportDirectoryComboBoxCurrentIndexChanged(int index);
+  ///@}
 
   /// Called when a right mouse click is made on a tab of the patient tab widget
   void showPatientContextMenu(const QPoint& point);

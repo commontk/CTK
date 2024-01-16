@@ -47,17 +47,23 @@ public:
   explicit ctkDICOMStorageListenerJob();
   virtual ~ctkDICOMStorageListenerJob();
 
+  ///@{
   /// Port, default: 11112
   void setPort(const int port);
   int port() const;
+  ///@}
 
+  ///@{
   /// AETitle, default: CTKSTORE
   void setAETitle(const QString& AETitle);
   QString AETitle() const;
+  ///@}
 
+  ///@{
   /// Connection timeout, default 1 sec.
   void setConnectionTimeout(const int timeout);
   int connectionTimeout() const;
+  ///@}
 
   /// Logger report string formatting for specific task
   Q_INVOKABLE QString loggerReport(const QString& status) const;

@@ -49,19 +49,28 @@ public:
   explicit ctkDICOMStorageListener(QObject* parent = 0);
   virtual ~ctkDICOMStorageListener();
 
+  ///@{
   /// Storage AE title
   /// "CTKSTORE" by default
   void setAETitle(const QString& AETitle);
   QString AETitle() const;
+  ///@}
+
+  ///@{
   /// Storage port
   /// 11112 by default
   void setPort(int port);
   int port() const;
-  /// connection timeout
+  ///@}
+
+  ///@{
+  /// Connection timeout
   /// 1 sec by default
   void setConnectionTimeout(const int timeout);
   int connectionTimeout();
+  ///@}
 
+  ///@{
   /// Access the list of datasets from the last operation.
   Q_INVOKABLE QList<ctkDICOMJobResponseSet*> jobResponseSets() const;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSetsShared() const;
@@ -70,6 +79,7 @@ public:
   void removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
   Q_INVOKABLE void setJobUID(const QString& jobUID);
   Q_INVOKABLE QString jobUID() const;
+  ///@}
 
   /// Start listen connection.
   bool listen();

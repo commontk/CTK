@@ -50,17 +50,21 @@ public:
   /// Cancel worker
   virtual void cancel() = 0;
 
+  ///@{
   /// Job
   Q_INVOKABLE ctkAbstractJob* job() const;
   QSharedPointer<ctkAbstractJob> jobShared() const;
   Q_INVOKABLE void setJob(ctkAbstractJob& job);
   void setJob(QSharedPointer<ctkAbstractJob> job);
+  ///@}
 
+  ///@{
   /// Scheduler
   Q_INVOKABLE ctkAbstractScheduler* scheduler() const;
   QSharedPointer<ctkAbstractScheduler> schedulerShared() const;
   Q_INVOKABLE void setScheduler(ctkAbstractScheduler& scheduler);
   void setScheduler(QSharedPointer<ctkAbstractScheduler> scheduler);
+  ///@}
 
 protected:
   QSharedPointer<ctkAbstractJob> Job;

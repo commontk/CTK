@@ -48,17 +48,23 @@ public:
   explicit ctkDICOMInserter(QObject* parent = 0);
   virtual ~ctkDICOMInserter();
 
+  ///@{
   /// Database Filename
   void setDatabaseFilename(const QString& databaseFilename);
   QString databaseFilename() const;
+  ///@}
 
+  ///@{
   /// Database TagsToPrecache
   void setTagsToPrecache(const QStringList& tagsToPrecache);
   QStringList tagsToPrecache() const;
+  ///@}
 
+  ///@{
   /// Database TagsToPrecache
   void setTagsToExcludeFromStorage(const QStringList& tagsToExcludeFromStorage);
   QStringList tagsToExcludeFromStorage() const;
+  ///@}
 
   /// operation is canceled?
   Q_INVOKABLE bool wasCanceled();

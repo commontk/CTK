@@ -60,32 +60,44 @@ public:
     Instances
   };
 
+  ///@{
   /// DICOM Level
   void setDICOMLevel(const DICOMLevels& dicomLevel);
   DICOMLevels dicomLevel() const;
+  ///@}
 
+  ///@{
   /// Patient ID
   void setPatientID(const QString& patientID);
   QString patientID() const;
+  ///@}
 
+  ///@{
   /// Study instance UID
   void setStudyInstanceUID(const QString& studyInstanceUID);
   QString studyInstanceUID() const;
+  ///@}
 
+  ///@{
   /// Series instance UID
   void setSeriesInstanceUID(const QString& seriesInstanceUID);
   QString seriesInstanceUID() const;
+  ///@}
 
+  ///@{
   /// SOP instance UID
   void setSOPInstanceUID(const QString& sopInstanceUID);
   QString sopInstanceUID() const;
+  ///@}
 
+  ///@{
   /// Access the list of responses.
   Q_INVOKABLE QList<ctkDICOMJobResponseSet*> jobResponseSets() const;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSetsShared() const;
   Q_INVOKABLE void setJobResponseSets(QList<ctkDICOMJobResponseSet*> jobResponseSets);
   void setJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets);
   void copyJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets);
+  ///@}
 
   /// Logger report string formatting for specific task
   Q_INVOKABLE virtual QString loggerReport(const QString& status) const = 0;

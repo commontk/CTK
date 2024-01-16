@@ -159,7 +159,6 @@ ctkDICOMQuery::~ctkDICOMQuery()
 {
 }
 
-/// Set methods for connectivity
 //------------------------------------------------------------------------------
 void ctkDICOMQuery::setConnectionName(const QString& connectionName)
 {

@@ -56,20 +56,27 @@ public:
   explicit ctkDICOMJobResponseSet(QObject* parent = 0);
   virtual ~ctkDICOMJobResponseSet();
 
+  ///@{
   /// File Path
   void setFilePath(const QString& filePath);
   QString filePath() const;
+  ///@}
 
+  ///@{
   /// Copy File
   /// false as default
   void setCopyFile(const bool& copyFile);
   bool copyFile() const;
+  ///@}
 
+  ///@{
   /// Overwrite existing dataset
   /// false as default
   void setOverwriteExistingDataset(const bool& overwriteExistingDataset);
   bool overwriteExistingDataset() const;
+  ///@}
 
+  ///@{
   /// Job type
   enum JobType {
     None = 0,
@@ -84,31 +91,45 @@ public:
   };
   void setTypeOfJob(const JobType& typeOfJob);
   JobType typeOfJob() const;
+  ///@}
 
+  ///@{
   /// Task UID
   void setJobUID(const QString& jobUID);
   QString jobUID() const;
+  ///@}
 
+  ///@{
   /// Patient ID
   void setPatientID(const QString& patientID);
   QString patientID() const;
+  ///@}
 
+  ///@{
   /// Study instance UID
   void setStudyInstanceUID(const QString& studyInstanceUID);
   QString studyInstanceUID() const;
+  ///@}
 
+  ///@{
   /// Series instance UID
   void setSeriesInstanceUID(const QString& seriesInstanceUID);
   QString seriesInstanceUID() const;
+  ///@}
 
+  ///@{
   /// SOP instance UID
   void setSOPInstanceUID(const QString& sopInstanceUID);
   QString sopInstanceUID() const;
+  ///@}
 
+  ///@{
   /// Connection name
   void setConnectionName(const QString& connectionName);
   QString connectionName() const;
+  ///@}
 
+  ///@{
   /// DCM datasets
   Q_INVOKABLE void setDataset(DcmItem* dcmItem, bool takeOwnership = true);
   Q_INVOKABLE ctkDICOMItem* dataset() const;
@@ -116,6 +137,7 @@ public:
   Q_INVOKABLE void setDatasets(QMap<QString, DcmItem*> dcmItems, bool takeOwnership = true);
   Q_INVOKABLE QMap<QString, ctkDICOMItem*> datasets() const;
   QMap<QString, QSharedPointer<ctkDICOMItem>> datasetsShared() const;
+  ///@}
 
   /// Copy object
   Q_INVOKABLE void deepCopy(ctkDICOMJobResponseSet* node);

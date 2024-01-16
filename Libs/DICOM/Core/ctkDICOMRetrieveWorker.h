@@ -51,13 +51,17 @@ public:
   /// Cancel worker
   void cancel();
 
+  ///@{
   /// Job
   Q_INVOKABLE void setJob(ctkAbstractJob& job);
   void setJob(QSharedPointer<ctkAbstractJob> job);
+  ///@}
 
+  ///@{
   /// Retriever
   QSharedPointer<ctkDICOMRetrieve> retrieverShared() const;
   Q_INVOKABLE ctkDICOMRetrieve* retriever() const;
+  ///@}
 
 protected:
   QScopedPointer<ctkDICOMRetrieveWorkerPrivate> d_ptr;

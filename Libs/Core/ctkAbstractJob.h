@@ -53,13 +53,16 @@ public:
   explicit ctkAbstractJob();
   virtual ~ctkAbstractJob();
 
+  ///@{
   /// Job UID
   QString jobUID() const;
   virtual void setJobUID(const QString& jobUID);
+  ///@}
 
   /// Class name
   QString className() const;
 
+  ///@{
   /// Status
   enum JobStatus {
     Initialized = 0,
@@ -70,34 +73,47 @@ public:
   };
   JobStatus status() const;
   virtual void setStatus(const JobStatus& status);
+  ///@}
 
+  ///@{
   /// Persistent
   bool isPersistent() const;
   void setIsPersistent(const bool& persistent);
+  ///@}
 
+  ///@{
   /// Number of retries: current counter of how many times
   /// the task has been relunched on fails
   int retryCounter() const;
   void setRetryCounter(const int& retryCounter);
+  ///@}
 
+  ///@{
   /// Set the maximum concurrent jobs per job type.
   /// Default value is 20.
   int maximumConcurrentJobsPerType() const;
   void setMaximumConcurrentJobsPerType(const int& maximumConcurrentJobsPerType);
+  ///@}
 
+  ///@{
   /// Maximum number of retries that the Job pool will try on each failed Job
   /// default: 3
   int maximumNumberOfRetry() const;
   void setMaximumNumberOfRetry(const int& maximumNumberOfRetry);
+  ///@}
 
+  ///@{
   /// Retry delay in millisec
   /// default: 100 msec
   int retryDelay() const;
   void setRetryDelay(const int& retryDelay);
+  ///@}
 
+  ///@{
   /// Priority
   QThread::Priority priority() const;
   void setPriority(const QThread::Priority& priority);
+  ///@}
 
   /// Generate worker for job
   Q_INVOKABLE virtual ctkAbstractWorker* createWorker() = 0;

@@ -54,13 +54,17 @@ public:
   /// Cancel worker
   void cancel();
 
+  ///@{
   /// Job
   Q_INVOKABLE void setJob(ctkAbstractJob& job);
   void setJob(QSharedPointer<ctkAbstractJob> job);
+  ///@}
 
+  ///@{
   /// Inserter
   QSharedPointer<ctkDICOMInserter> inserterShared() const;
   Q_INVOKABLE ctkDICOMInserter* inserter() const;
+  ///@}
 
 protected:
   QScopedPointer<ctkDICOMInserterWorkerPrivate> d_ptr;

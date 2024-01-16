@@ -52,13 +52,17 @@ public:
   /// Cancel worker
   void cancel();
 
+  ///@{
   /// Job
   Q_INVOKABLE void setJob(ctkAbstractJob& job);
   void setJob(QSharedPointer<ctkAbstractJob> job);
+  ///@}
 
+  ///@{
   /// Retriever
   QSharedPointer<ctkDICOMStorageListener> storageListenerShared() const;
   Q_INVOKABLE ctkDICOMStorageListener* storageListener() const;
+  ///@}
 
 public slots:
   void onInsertJobDetail();

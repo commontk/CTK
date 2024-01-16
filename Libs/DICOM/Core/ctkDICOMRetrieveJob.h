@@ -45,11 +45,13 @@ public:
   explicit ctkDICOMRetrieveJob();
   virtual ~ctkDICOMRetrieveJob();
 
+  ///@{
   /// Server
   Q_INVOKABLE ctkDICOMServer* server() const;
   QSharedPointer<ctkDICOMServer> serverShared() const;
   Q_INVOKABLE void setServer(ctkDICOMServer& server);
   void setServer(QSharedPointer<ctkDICOMServer> server);
+  ///@}
 
   /// Logger report string formatting for specific task
   Q_INVOKABLE QString loggerReport(const QString& status) const;

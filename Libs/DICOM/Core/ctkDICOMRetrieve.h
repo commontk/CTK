@@ -56,47 +56,72 @@ public:
   explicit ctkDICOMRetrieve(QObject* parent = 0);
   virtual ~ctkDICOMRetrieve();
 
-  /// Set methods for connectivity
-  /// name identifying the server
+  ///@{
+  /// Name identifying the server
   void setConnectionName(const QString& connectionName);
   QString connectionName() const;
+  ///@}
+
+  ///@{
   /// CTK_AE - the AE string by which the peer host might
   /// recognize your request
   void setCallingAETitle(const QString& callingAETitle);
   QString callingAETitle() const;
+  ///@}
+
+  ///@{
   /// CTK_AE - the AE of the service of peer host that you are calling
   /// which tells the host what you are requesting
   void setCalledAETitle(const QString& calledAETitle);
   QString calledAETitle() const;
-  /// peer hostname being connected to
+  ///@}
+
+  ///@{
+  /// Peer hostname being connected to
   void setHost(const QString& host);
   QString host() const;
+  ///@}
+
+  ///@{
   /// [0, 65365] port on peer host - e.g. 11112
   void setPort(int port);
   int port() const;
+  ///@}
+
+  ///@{
   /// Typically CTK_STORE or similar - needs to be something that the
   /// peer host knows about and is able to move data into
   /// Only used when calling moveSeries or moveStudy
   void setMoveDestinationAETitle(const QString& moveDestinationAETitle);
   QString moveDestinationAETitle() const;
+  ///@}
+
+  ///@{
   /// prefer to keep using the existing association to peer host when doing
   /// multiple requests (default true)
   void setKeepAssociationOpen(const bool keepOpen);
   bool keepAssociationOpen() const;
+  ///@}
+
+  ///@{
   /// connection timeout, default 3 sec.
   void setConnectionTimeout(const int timeout);
   int connectionTimeout() const;
+  ///@}
 
   /// operation is canceled?
   Q_INVOKABLE bool wasCanceled();
 
+  ///@{
   /// where to insert new data sets obtained via get (must be set for
   /// get to succeed)
   Q_INVOKABLE void setDatabase(ctkDICOMDatabase& dicomDatabase);
   void setDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
   Q_INVOKABLE ctkDICOMDatabase* dicomDatabase() const;
   QSharedPointer<ctkDICOMDatabase> dicomDatabaseShared() const;
+  ///@}
 
+  ///@{
   /// Access the list of datasets from the last operation.
   Q_INVOKABLE QList<ctkDICOMJobResponseSet*> jobResponseSets() const;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSetsShared() const;
@@ -105,6 +130,7 @@ public:
   void removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
   Q_INVOKABLE void setJobUID(const QString& jobUID);
   Q_INVOKABLE QString jobUID() const;
+  ///@}
 
   /// Patient ID from from the last operation.
   QString patientID() const;

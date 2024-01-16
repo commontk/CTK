@@ -54,18 +54,25 @@ public:
   explicit ctkDICOMPatientItemWidget(QWidget* parent = nullptr);
   virtual ~ctkDICOMPatientItemWidget();
 
+  ///@{
   /// Patient item
   void setPatientItem(const QString& patientItem);
   QString patientItem() const;
+  ///@}
 
+  ///@{
   /// Patient ID
   void setPatientID(const QString& patientID);
   QString patientID() const;
+  ///@}
 
+  ///@{
   /// Query Filters
   /// Empty by default
   void setFilteringStudyDescription(const QString& filteringStudyDescription);
   QString filteringStudyDescription() const;
+  ///@}
+
   /// Date filtering enum
   enum DateType
     {
@@ -77,6 +84,7 @@ public:
     LastYear
     };
 
+  ///@{
   /// Available values:
   /// Any,
   /// Today,
@@ -87,22 +95,33 @@ public:
   /// Any by default.
   void setFilteringDate(const DateType& filteringDate);
   DateType filteringDate() const;
+  ///@}
+
+  ///@{
   /// Empty by default
   void setFilteringSeriesDescription(const QString& filteringSeriesDescription);
   QString filteringSeriesDescription() const;
+  ///@}
+
+  ///@{
   /// ["Any", "CR", "CT", "MR", "NM", "US", "PT", "XA"] by default
   void setFilteringModalities(const QStringList& filteringModalities);
   QStringList filteringModalities() const;
+  ///@}
 
+  ///@{
   /// Number of non collapsed studies per patient
   /// 2 by default
   void setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient);
   int numberOfStudiesPerPatient() const;
+  ///@}
 
+  ///@{
   /// Set the thumbnail size: small, medium, large
   /// medium by default
   void setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize);
   ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize() const;
+  ///@}
 
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;
@@ -132,9 +151,11 @@ public:
   /// Return number of days from filtering date attribute
   Q_INVOKABLE static int getNDaysFromFilteringDate(ctkDICOMPatientItemWidget::DateType filteringDate);
 
+  ///@{
   /// Add/Remove study item widgets
   Q_INVOKABLE void addStudyItemWidget(const QString &studyItem);
   Q_INVOKABLE void removeStudyItemWidget(const QString &studyItem);
+  ///@}
 
   /// Set selection for all studies/series
   Q_INVOKABLE void setSelection(bool selected);

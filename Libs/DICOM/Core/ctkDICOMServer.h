@@ -52,33 +52,54 @@ public:
   explicit ctkDICOMServer(QObject* parent = 0);
   virtual ~ctkDICOMServer();
 
-  /// Set methods for connectivity
+  ///@{
+  /// Name identifying the server
   void setConnectionName(const QString& connectionName);
   QString connectionName() const;
+  ///}@
+
+  ///@{
   /// Query/Retrieve operations
   /// true as default
   void setQueryRetrieveEnabled(bool queryRetrieveEnabled);
   bool queryRetrieveEnabled() const;
+  ///}@
+
+  ///@{
   /// Storage operations
   /// true as default
   void setStorageEnabled(bool storageEnabled);
   bool storageEnabled() const;
+  ///}@
+
+  ///@{
   /// CTK_AE - the AE string by which the peer host might
   /// recognize your request
   void setCallingAETitle(const QString& callingAETitle);
   QString callingAETitle() const;
+  ///}@
+
+  ///@{
   /// CTK_AE - the AE of the service of peer host that you are calling
   /// which tells the host what you are requesting
   void setCalledAETitle(const QString& calledAETitle);
   QString calledAETitle() const;
-  /// peer hostname being connected to
+  ///}@
+
+  ///@{
+  /// Peer hostname being connected to
   void setHost(const QString& host);
   QString host() const;
+  ///}@
+
+  ///@{
   /// [0, 65365] port on peer host
   /// 80 as default
   void setPort(int port);
   int port() const;
+  ///}@
 
+  ///@{
   /// Protocol for retrieval of query results.
   /// CGET by default
   enum RetrieveProtocol
@@ -91,23 +112,36 @@ public:
   RetrieveProtocol retrieveProtocol() const;
   Q_INVOKABLE void setRetrieveProtocolAsString(QString protocolString);
   Q_INVOKABLE QString retrieveProtocolAsString() const;
+  ///}@
+
+  ///@{
   /// Typically CTK_STORE or similar - needs to be something that the
   /// peer host knows about and is able to move data into
   /// Only used when calling moveSeries or moveStudy
   void setMoveDestinationAETitle(const QString& moveDestinationAETitle);
   QString moveDestinationAETitle() const;
+  ///}@
+
+  ///@{
   /// prefer to keep using the existing association to peer host when doing
   /// multiple requests (default true)
   void setKeepAssociationOpen(const bool keepOpen);
   bool keepAssociationOpen();
+  ///}@
+
+  ///@{
   /// connection timeout in seconds, default 10 s.
   void setConnectionTimeout(const int timeout);
   int connectionTimeout();
+  ///}@
+
+  ///@{
   /// proxy server
   Q_INVOKABLE ctkDICOMServer* proxyServer() const;
   QSharedPointer<ctkDICOMServer> proxyServerShared() const;
   Q_INVOKABLE void setProxyServer(ctkDICOMServer& proxyServer);
   void setProxyServer(QSharedPointer<ctkDICOMServer> proxyServer);
+  ///}@
 
 protected:
   QScopedPointer<ctkDICOMServerPrivate> d_ptr;

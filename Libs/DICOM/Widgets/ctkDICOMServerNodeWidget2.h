@@ -50,20 +50,26 @@ public:
   explicit ctkDICOMServerNodeWidget2(QWidget* parent=0);
   virtual ~ctkDICOMServerNodeWidget2();
 
+  ///@{
   /// Storage listener is enabled
   /// false by default
   void setStorageListenerEnabled(const bool enabled);
   bool storageListenerEnabled() const;
+  ///@}
 
+  ///@{
   /// Storage AE title
   /// "CTKSTORE" by default
   void setStorageAETitle(const QString& storageAETitle);
   QString storageAETitle() const;
+  ///@}
 
+  ///@{
   /// Storage port
   /// 11112 by default
   void setStoragePort(const int storagePort);
   int storagePort() const;
+  ///@}
 
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;

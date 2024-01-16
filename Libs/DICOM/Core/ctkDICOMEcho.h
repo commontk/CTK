@@ -50,27 +50,42 @@ public:
   explicit ctkDICOMEcho(QObject* parent = 0);
   virtual ~ctkDICOMEcho();
 
-  /// Set methods for connectivity.
-  /// Empty by default
+  ///@{
+  /// Name identifying the server
   void setConnectionName(const QString& connectionName);
   QString connectionName() const;
+  ///@}
+
+  ///@{
+  /// Set methods for connectivity.
   /// Empty by default
   void setCallingAETitle(const QString& callingAETitle);
   QString callingAETitle()const;
-  /// Empty by default
+
   void setCalledAETitle(const QString& calledAETitle);
   QString calledAETitle() const;
+  ///@}
+
+  ///@{
+  /// Peer hostname being connected to
   /// Empty by default
   void setHost(const QString& host);
   QString host() const;
+  ///@}
+
+  ///@{
   /// Specify a port for the packet headers.
   /// \a port ranges from 0 to 65535.
   /// 80 by default.
   void setPort(int port);
   int port() const;
-  /// connection timeout, default 3 sec.
+  ///@}
+
+  ///@{
+  /// Connection timeout, default 3 sec.
   void setConnectionTimeout(const int timeout);
   int connectionTimeout() const;
+  ///@}
 
   /// Echo connection.
   bool echo();

@@ -61,30 +61,42 @@ public:
   explicit ctkDICOMStudyItemWidget(QWidget* parent = nullptr);
   virtual ~ctkDICOMStudyItemWidget();
 
+  ///@{
   /// Study item
   void setStudyItem(const QString& studyItem);
   QString studyItem() const;
+  ///@}
 
+  ///@{
   /// Patient ID
   void setPatientID(const QString& patientID);
   QString patientID() const;
+  ///@}
 
+  ///@{
   /// Study instance UID
   void setStudyInstanceUID(const QString& studyInstanceUID);
   QString studyInstanceUID() const;
+  ///@}
 
+  ///@{
   /// Study title
   void setTitle(const QString& title);
   QString title() const;
+  ///@}
 
+  ///@{
   /// Study Description
   void setDescription(const QString& description);
   QString description() const;
+  ///@}
 
+  ///@{
   /// Study GroupBox collapsed
   /// False by default
   void setCollapsed(bool collapsed);
   bool collapsed() const;
+  ///@}
 
   /// Number of series displayed per row
   int numberOfSeriesPerRow() const;
@@ -96,25 +108,34 @@ public:
     Large,
     };
 
+  ///@{
   /// Set the thumbnail size: small, medium, large
   /// medium by default
   void setThumbnailSize(const ThumbnailSizeOption &thumbnailSize);
   ThumbnailSizeOption thumbnailSize() const;
+  ///@}
 
   /// Thumbnail size in pixel
   int thumbnailSizePixel() const;
 
+  ///@{
   /// Study is selected
   void setSelection(bool selected);
   bool selection() const;
+  ///@}
 
+  ///@{
   /// Query Filters
   /// Empty by default
   void setFilteringSeriesDescription(const QString& filteringSeriesDescription);
   QString filteringSeriesDescription() const;
+  ///@}
+
+  ///@{
   /// ["Any", "CR", "CT", "MR", "NM", "US", "PT", "XA"] by default
   void setFilteringModalities(const QStringList& filteringModalities);
   QStringList filteringModalities() const;
+  ///@}
 
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;

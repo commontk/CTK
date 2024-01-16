@@ -56,48 +56,68 @@ public:
   explicit ctkDICOMSeriesItemWidget(QWidget* parent = nullptr);
   virtual ~ctkDICOMSeriesItemWidget();
 
+  ///@{
   /// Series Item
   void setSeriesItem(const QString& seriesItem);
   QString seriesItem() const;
+  ///@}
 
+  ///@{
   /// Patient ID
   void setPatientID(const QString& patientID);
   QString patientID() const;
+  ///@}
 
+  ///@{
   /// Study instance UID
   void setStudyInstanceUID(const QString& studyInstanceUID);
   QString studyInstanceUID() const;
+  ///@}
 
+  ///@{
   /// Series instance UID
   void setSeriesInstanceUID(const QString& seriesInstanceUID);
   QString seriesInstanceUID() const;
+  ///@}
 
+  ///@{
   /// Series Number
   void setSeriesNumber(const QString& seriesNumber);
   QString seriesNumber() const;
+  ///@}
 
+  ///@{
   /// Modality
   void setModality(const QString& modality);
   QString modality() const;
+  ///@}
 
+  ///@{
   /// Series Description
   void setSeriesDescription(const QString& seriesDescription);
   QString seriesDescription() const;
+  ///@}
 
+  ///@{
   /// Stop Series widget to run new jobs
   void setStopJobs(const bool& stopJobs);
   bool stopJobs() const;
+  ///@}
 
+  ///@{
   /// Set high priority to all jobs run from the Series widget
   void setRaiseJobsPriority(const bool& raiseJobsPriority);
   bool raiseJobsPriority() const;
+  ///@}
 
   /// Series lives in the server
   bool isCloud() const;
 
+  ///@{
   /// in case the retrieve job failed
   void setRetrieveFailed(const bool& retrieveFailed);
   bool retrieveFailed() const;
+  ///@}
 
   /// Series has been loaded by the parent widget
   bool IsLoaded() const;
@@ -105,10 +125,12 @@ public:
   /// Series is visible in the parent widget
   bool IsVisible() const;
 
+  ///@{
   /// Set the thumbnail size in pixel
   /// 200 by default
   void setThumbnailSizePixel(const int &thumbnailSizePixel);
   int thumbnailSizePixel() const;
+  ///@}
 
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;
