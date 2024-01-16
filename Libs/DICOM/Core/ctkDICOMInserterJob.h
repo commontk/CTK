@@ -49,7 +49,7 @@ public:
   virtual ~ctkDICOMInserterJob();
 
   /// Logger report string formatting for specific task
-  Q_INVOKABLE QString loggerReport(const QString& status) const;
+  Q_INVOKABLE QString loggerReport(const QString& status) const override;
 
   ///@{
   /// Database Filename
@@ -70,10 +70,10 @@ public:
   ///}@
 
   /// Create a copy of the object
-  Q_INVOKABLE ctkDICOMJob* generateCopy() const;
+  Q_INVOKABLE ctkDICOMJob* generateCopy() const override;
 
   /// Generate worker for job
-  Q_INVOKABLE ctkDICOMWorker* createWorker();
+  Q_INVOKABLE ctkDICOMWorker* createWorker() override;
 
 protected:
   QString DatabaseFilename;

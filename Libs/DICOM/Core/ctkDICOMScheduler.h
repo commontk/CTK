@@ -235,10 +235,10 @@ Q_SIGNALS:
   void progressJobDetail(QVariant data);
 
 public Q_SLOTS:
-  void onJobStarted();
-  void onJobCanceled();
-  void onJobFailed();
-  void onJobFinished();
+  void onJobStarted() override;
+  void onJobCanceled() override;
+  void onJobFailed() override;
+  void onJobFinished() override;
   void onQueueJobsInThreadPool();
 
 protected:

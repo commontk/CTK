@@ -54,13 +54,13 @@ public:
   ///@}
 
   /// Logger report string formatting for specific task
-  Q_INVOKABLE QString loggerReport(const QString& status) const;
+  Q_INVOKABLE QString loggerReport(const QString& status) const override;
 
   /// Create a copy of the object
-  Q_INVOKABLE ctkDICOMJob* generateCopy() const;
+  Q_INVOKABLE ctkDICOMJob* generateCopy() const override;
 
   /// Generate worker for job
-  Q_INVOKABLE ctkDICOMWorker* createWorker();
+  Q_INVOKABLE ctkDICOMWorker* createWorker() override;
 
 protected:
   QScopedPointer<ctkDICOMRetrieveJobPrivate> d_ptr;

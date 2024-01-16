@@ -49,10 +49,10 @@ public:
   virtual ~ctkDICOMInserterWorker();
 
   /// Execute worker
-  void run();
+  void run() override;
 
   /// Cancel worker
-  void cancel();
+  void cancel() override;
 
   ///@{
   /// Job
