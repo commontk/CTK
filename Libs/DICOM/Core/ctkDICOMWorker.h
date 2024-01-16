@@ -45,12 +45,6 @@ public:
   explicit ctkDICOMWorker();
   virtual ~ctkDICOMWorker();
 
-  /// Execute worker
-  virtual void run() = 0;
-
-  /// Cancel worker
-  virtual void cancel() = 0;
-
 public slots:
   void startNextJob();
   void onJobCanceled();
