@@ -39,7 +39,7 @@ protected:
 
 public:
   ctkDICOMQueryWorkerPrivate(ctkDICOMQueryWorker* object);
-  ~ctkDICOMQueryWorkerPrivate();
+  virtual ~ctkDICOMQueryWorkerPrivate();
 
   void setQueryParameters();
 

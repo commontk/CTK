@@ -39,7 +39,7 @@ protected:
 
 public:
   ctkDICOMRetrieveWorkerPrivate(ctkDICOMRetrieveWorker* object);
-  ~ctkDICOMRetrieveWorkerPrivate();
+  virtual ~ctkDICOMRetrieveWorkerPrivate();
 
   void setRetrieveParameters();
 

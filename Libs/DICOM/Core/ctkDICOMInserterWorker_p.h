@@ -39,7 +39,7 @@ protected:
 
 public:
   ctkDICOMInserterWorkerPrivate(ctkDICOMInserterWorker* object);
-  ~ctkDICOMInserterWorkerPrivate();
+  virtual ~ctkDICOMInserterWorkerPrivate();
 
   QSharedPointer<ctkDICOMInserter> Inserter;
 };

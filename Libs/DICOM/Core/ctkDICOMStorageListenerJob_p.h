@@ -38,7 +38,7 @@ protected:
 
 public:
   ctkDICOMStorageListenerJobPrivate(ctkDICOMStorageListenerJob* object);
-  ~ctkDICOMStorageListenerJobPrivate();
+  virtual ~ctkDICOMStorageListenerJobPrivate();
 
   QString AETitle;
   int Port;

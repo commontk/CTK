@@ -48,7 +48,7 @@ protected:
 
 public:
   ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj);
-  ~ctkDICOMSchedulerPrivate();
+  virtual ~ctkDICOMSchedulerPrivate();
 
   int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkDICOMJob> job);
   void insertJob(QSharedPointer<ctkDICOMJob> job);

@@ -38,7 +38,7 @@ protected:
 
 public:
   ctkDICOMQueryJobPrivate(ctkDICOMQueryJob* object);
-  ~ctkDICOMQueryJobPrivate();
+  virtual ~ctkDICOMQueryJobPrivate();
 
   QSharedPointer<ctkDICOMServer> Server;
   QMap<QString, QVariant> Filters;

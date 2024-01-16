@@ -39,7 +39,7 @@ protected:
 
 public:
   ctkDICOMStorageListenerWorkerPrivate(ctkDICOMStorageListenerWorker* object);
-  ~ctkDICOMStorageListenerWorkerPrivate();
+  virtual ~ctkDICOMStorageListenerWorkerPrivate();
 
   void init();
   void setStorageListenerParameters();

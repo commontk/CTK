@@ -38,7 +38,7 @@ protected:
 
 public:
   ctkDICOMRetrieveJobPrivate(ctkDICOMRetrieveJob* object);
-  ~ctkDICOMRetrieveJobPrivate();
+  virtual ~ctkDICOMRetrieveJobPrivate();
 
   QSharedPointer<ctkDICOMServer> Server;
 };
