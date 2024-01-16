@@ -327,7 +327,7 @@ int ctkDICOMStorageListener::port()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkDICOMStorageListener::setConnectionTimeout(const int timeout)
+void ctkDICOMStorageListener::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMStorageListener);
   d->SCU.setACSETimeout(timeout);

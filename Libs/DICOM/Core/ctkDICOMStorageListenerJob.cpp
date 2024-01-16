@@ -91,7 +91,7 @@ QString ctkDICOMStorageListenerJob::AETitle() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMStorageListenerJob::setConnectionTimeout(const int timeout)
+void ctkDICOMStorageListenerJob::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMStorageListenerJob);
   d->ConnectionTimeout = timeout;

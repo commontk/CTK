@@ -83,7 +83,7 @@ public:
 
   ///@{
   /// Connection timeout, default 3 sec.
-  void setConnectionTimeout(const int timeout);
+  void setConnectionTimeout(int timeout);
   int connectionTimeout() const;
   ///@}
 

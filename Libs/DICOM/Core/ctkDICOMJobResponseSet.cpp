@@ -125,7 +125,7 @@ QString ctkDICOMJobResponseSet::filePath() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setCopyFile(const bool &copyFile)
+void ctkDICOMJobResponseSet::setCopyFile(bool copyFile)
 {
   Q_D(ctkDICOMJobResponseSet);
   d->CopyFile = copyFile;
@@ -139,7 +139,7 @@ bool ctkDICOMJobResponseSet::copyFile() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setOverwriteExistingDataset(const bool &overwriteExistingDataset)
+void ctkDICOMJobResponseSet::setOverwriteExistingDataset(bool overwriteExistingDataset)
 {
   Q_D(ctkDICOMJobResponseSet);
   d->OverwriteExistingDataset = overwriteExistingDataset;
@@ -153,7 +153,7 @@ bool ctkDICOMJobResponseSet::overwriteExistingDataset() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setTypeOfJob(const ctkDICOMJobResponseSet::JobType &typeOfJob)
+void ctkDICOMJobResponseSet::setTypeOfJob(ctkDICOMJobResponseSet::JobType typeOfJob)
 {
   Q_D(ctkDICOMJobResponseSet);
   d->TypeOfJob = typeOfJob;

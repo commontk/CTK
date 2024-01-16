@@ -65,14 +65,14 @@ public:
   ///@{
   /// Copy File
   /// false as default
-  void setCopyFile(const bool& copyFile);
+  void setCopyFile(bool copyFile);
   bool copyFile() const;
   ///@}
 
   ///@{
   /// Overwrite existing dataset
   /// false as default
-  void setOverwriteExistingDataset(const bool& overwriteExistingDataset);
+  void setOverwriteExistingDataset(bool overwriteExistingDataset);
   bool overwriteExistingDataset() const;
   ///@}
 
@@ -89,7 +89,7 @@ public:
     RetrieveSOPInstance,
     StoreSOPInstance
   };
-  void setTypeOfJob(const JobType& typeOfJob);
+  void setTypeOfJob(JobType typeOfJob);
   JobType typeOfJob() const;
   ///@}
 

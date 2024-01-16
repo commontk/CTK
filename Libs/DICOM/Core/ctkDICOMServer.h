@@ -125,13 +125,13 @@ public:
   ///@{
   /// prefer to keep using the existing association to peer host when doing
   /// multiple requests (default true)
-  void setKeepAssociationOpen(const bool keepOpen);
+  void setKeepAssociationOpen(bool keepOpen);
   bool keepAssociationOpen();
   ///}@
 
   ///@{
   /// connection timeout in seconds, default 10 s.
-  void setConnectionTimeout(const int timeout);
+  void setConnectionTimeout(int timeout);
   int connectionTimeout();
   ///}@
 

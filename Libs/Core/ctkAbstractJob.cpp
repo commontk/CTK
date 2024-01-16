@@ -73,7 +73,7 @@ ctkAbstractJob::JobStatus ctkAbstractJob::status() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setStatus(const JobStatus &status)
+void ctkAbstractJob::setStatus(JobStatus status)
 {
   this->Status = status;
 }
@@ -85,7 +85,7 @@ bool ctkAbstractJob::isPersistent() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setIsPersistent(const bool &persistent)
+void ctkAbstractJob::setIsPersistent(bool persistent)
 {
   this->Persistent = persistent;
 }
@@ -97,7 +97,7 @@ int ctkAbstractJob::retryCounter() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setRetryCounter(const int& retryCounter)
+void ctkAbstractJob::setRetryCounter(int retryCounter)
 {
   this->RetryCounter = retryCounter;
 }
@@ -109,7 +109,7 @@ int ctkAbstractJob::maximumConcurrentJobsPerType() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setMaximumConcurrentJobsPerType(const int &maximumConcurrentJobsPerType)
+void ctkAbstractJob::setMaximumConcurrentJobsPerType(int maximumConcurrentJobsPerType)
 {
   this->MaximumConcurrentJobsPerType = maximumConcurrentJobsPerType;
 }
@@ -121,7 +121,7 @@ int ctkAbstractJob::maximumNumberOfRetry() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setMaximumNumberOfRetry(const int &maximumNumberOfRetry)
+void ctkAbstractJob::setMaximumNumberOfRetry(int maximumNumberOfRetry)
 {
   this->MaximumNumberOfRetry = maximumNumberOfRetry;
 }
@@ -133,7 +133,7 @@ int ctkAbstractJob::retryDelay() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractJob::setRetryDelay(const int &retryDelay)
+void ctkAbstractJob::setRetryDelay(int retryDelay)
 {
   this->RetryDelay = retryDelay;
 }

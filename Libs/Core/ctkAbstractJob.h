@@ -72,41 +72,41 @@ public:
     Finished,
   };
   JobStatus status() const;
-  virtual void setStatus(const JobStatus& status);
+  virtual void setStatus(JobStatus status);
   ///@}
 
   ///@{
   /// Persistent
   bool isPersistent() const;
-  void setIsPersistent(const bool& persistent);
+  void setIsPersistent(bool persistent);
   ///@}
 
   ///@{
   /// Number of retries: current counter of how many times
   /// the task has been relunched on fails
   int retryCounter() const;
-  void setRetryCounter(const int& retryCounter);
+  void setRetryCounter(int retryCounter);
   ///@}
 
   ///@{
   /// Set the maximum concurrent jobs per job type.
   /// Default value is 20.
   int maximumConcurrentJobsPerType() const;
-  void setMaximumConcurrentJobsPerType(const int& maximumConcurrentJobsPerType);
+  void setMaximumConcurrentJobsPerType(int maximumConcurrentJobsPerType);
   ///@}
 
   ///@{
   /// Maximum number of retries that the Job pool will try on each failed Job
   /// default: 3
   int maximumNumberOfRetry() const;
-  void setMaximumNumberOfRetry(const int& maximumNumberOfRetry);
+  void setMaximumNumberOfRetry(int maximumNumberOfRetry);
   ///@}
 
   ///@{
   /// Retry delay in millisec
   /// default: 100 msec
   int retryDelay() const;
-  void setRetryDelay(const int& retryDelay);
+  void setRetryDelay(int retryDelay);
   ///@}
 
   ///@{

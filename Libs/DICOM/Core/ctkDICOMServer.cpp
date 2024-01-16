@@ -262,7 +262,7 @@ QString ctkDICOMServer::moveDestinationAETitle()const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setKeepAssociationOpen(const bool keepOpen)
+void ctkDICOMServer::setKeepAssociationOpen(bool keepOpen)
 {
   Q_D(ctkDICOMServer);
   d->KeepAssociationOpen = keepOpen;
@@ -276,7 +276,7 @@ bool ctkDICOMServer::keepAssociationOpen()
 }
 
 //-----------------------------------------------------------------------------
-void ctkDICOMServer::setConnectionTimeout(const int timeout)
+void ctkDICOMServer::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMServer);
   d->ConnectionTimeout = timeout;

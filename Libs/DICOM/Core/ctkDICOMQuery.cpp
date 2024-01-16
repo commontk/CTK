@@ -230,7 +230,7 @@ int ctkDICOMQuery::port()const
 }
 
 //-----------------------------------------------------------------------------
-void ctkDICOMQuery::setConnectionTimeout(const int timeout)
+void ctkDICOMQuery::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMQuery);
   d->SCU.setACSETimeout(timeout);
@@ -245,7 +245,7 @@ int ctkDICOMQuery::connectionTimeout() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::setMaximumPatientsQuery(const int maximumPatientsQuery)
+void ctkDICOMQuery::setMaximumPatientsQuery(int maximumPatientsQuery)
 {
   Q_D(ctkDICOMQuery);
   d->MaximumPatientsQuery = maximumPatientsQuery;
@@ -266,7 +266,7 @@ bool ctkDICOMQuery::wasCanceled()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::setFilters( const QMap<QString,QVariant>& filters )
+void ctkDICOMQuery::setFilters(const QMap<QString,QVariant>& filters)
 {
   Q_D(ctkDICOMQuery);
   d->Filters = filters;

@@ -160,7 +160,7 @@ int ctkDICOMEcho::port() const
 }
 
 //-----------------------------------------------------------------------------
-void ctkDICOMEcho::setConnectionTimeout(const int timeout)
+void ctkDICOMEcho::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMEcho);
   d->SCU.setACSETimeout(timeout);

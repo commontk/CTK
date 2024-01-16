@@ -57,7 +57,7 @@ public slots:
     return new ctkJobDetail();
     }
 
-  void setTypeOfJob(ctkJobDetail* td, const ctkDICOMJobResponseSet::JobType& jobType)
+  void setTypeOfJob(ctkJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
     {
     td->TypeOfJob = jobType;
     }
@@ -120,7 +120,7 @@ public slots:
     return td->ConnectionName;
     }
 
-  void setNumberOfDataSets(ctkJobDetail* td, const int& numberOfDataSets)
+  void setNumberOfDataSets(ctkJobDetail* td, int numberOfDataSets)
     {
     td->NumberOfDataSets = numberOfDataSets;
     }
@@ -137,17 +137,17 @@ public slots:
     ts->setFilePath(filePath);
     }
 
-  void setCopyFile(ctkDICOMJobResponseSet* ts, const bool& copyFile)
+  void setCopyFile(ctkDICOMJobResponseSet* ts, bool copyFile)
     {
     ts->setCopyFile(copyFile);
     }
 
-  void setOverwriteExistingDataset(ctkDICOMJobResponseSet* ts, const bool& overwriteExistingDataset)
+  void setOverwriteExistingDataset(ctkDICOMJobResponseSet* ts, bool overwriteExistingDataset)
     {
     ts->setOverwriteExistingDataset(overwriteExistingDataset);
     }
 
-  void setTypeOfJob(ctkDICOMJobResponseSet* ts, const ctkDICOMJobResponseSet::JobType& TypeOfJob)
+  void setTypeOfJob(ctkDICOMJobResponseSet* ts, ctkDICOMJobResponseSet::JobType TypeOfJob)
     {
     ts->setTypeOfJob(TypeOfJob);
     }
