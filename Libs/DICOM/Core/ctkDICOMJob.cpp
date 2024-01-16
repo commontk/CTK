@@ -42,9 +42,7 @@ ctkDICOMJob::ctkDICOMJob()
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMJob::~ctkDICOMJob()
-{
-}
+ctkDICOMJob::~ctkDICOMJob() = default;
 
 //------------------------------------------------------------------------------
 void ctkDICOMJob::setDICOMLevel(const DICOMLevels& dicomLevel)

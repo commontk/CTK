@@ -39,9 +39,7 @@ ctkDICOMInserterJob::ctkDICOMInserterJob()
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMInserterJob::~ctkDICOMInserterJob()
-{
-}
+ctkDICOMInserterJob::~ctkDICOMInserterJob() = default;
 
 //------------------------------------------------------------------------------
 QString ctkDICOMInserterJob::loggerReport(const QString &status) const

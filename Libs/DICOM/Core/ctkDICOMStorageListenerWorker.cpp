@@ -44,9 +44,7 @@ ctkDICOMStorageListenerWorkerPrivate::ctkDICOMStorageListenerWorkerPrivate(ctkDI
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMStorageListenerWorkerPrivate::~ctkDICOMStorageListenerWorkerPrivate()
-{
-}
+ctkDICOMStorageListenerWorkerPrivate::~ctkDICOMStorageListenerWorkerPrivate() = default;
 
 //------------------------------------------------------------------------------
 void ctkDICOMStorageListenerWorkerPrivate::setStorageListenerParameters()
@@ -103,9 +101,7 @@ ctkDICOMStorageListenerWorker::ctkDICOMStorageListenerWorker(ctkDICOMStorageList
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMStorageListenerWorker::~ctkDICOMStorageListenerWorker()
-{
-}
+ctkDICOMStorageListenerWorker::~ctkDICOMStorageListenerWorker() = default;
 
 //----------------------------------------------------------------------------
 void ctkDICOMStorageListenerWorker::cancel()

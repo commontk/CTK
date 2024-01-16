@@ -40,7 +40,7 @@ protected:
 
 public:
   ctkDICOMServerPrivate(ctkDICOMServer& obj);
-  ~ctkDICOMServerPrivate();
+  ~ctkDICOMServerPrivate() = default;
 
   QString ConnectionName;
   bool QueryRetrieveEnabled;
@@ -78,11 +78,6 @@ ctkDICOMServerPrivate::ctkDICOMServerPrivate(ctkDICOMServer& obj)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMServerPrivate::~ctkDICOMServerPrivate()
-{
-}
-
-//------------------------------------------------------------------------------
 // ctkDICOMServer methods
 
 //------------------------------------------------------------------------------
@@ -93,9 +88,7 @@ ctkDICOMServer::ctkDICOMServer(QObject* parent)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMServer::~ctkDICOMServer()
-{
-}
+ctkDICOMServer::~ctkDICOMServer() = default;
 
 //------------------------------------------------------------------------------
 void ctkDICOMServer::setConnectionName(const QString& connectionName)

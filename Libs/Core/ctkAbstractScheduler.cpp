@@ -30,6 +30,4 @@ ctkAbstractScheduler::ctkAbstractScheduler(QObject* parent)
 }
 
 // --------------------------------------------------------------------------
-ctkAbstractScheduler::~ctkAbstractScheduler()
-{
-}
+ctkAbstractScheduler::~ctkAbstractScheduler() = default;

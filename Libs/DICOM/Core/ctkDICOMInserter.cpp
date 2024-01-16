@@ -37,7 +37,7 @@ class ctkDICOMInserterPrivate
 {
 public:
   ctkDICOMInserterPrivate();
-  ~ctkDICOMInserterPrivate();
+  ~ctkDICOMInserterPrivate() = default;
 
   bool Canceled;
   QString DatabaseFilename;
@@ -55,11 +55,6 @@ ctkDICOMInserterPrivate::ctkDICOMInserterPrivate()
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMInserterPrivate::~ctkDICOMInserterPrivate()
-{
-}
-
-//------------------------------------------------------------------------------
 // ctkDICOMInserter methods
 
 //------------------------------------------------------------------------------
@@ -70,9 +65,7 @@ ctkDICOMInserter::ctkDICOMInserter(QObject* parentObject)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMInserter::~ctkDICOMInserter()
-{
-}
+ctkDICOMInserter::~ctkDICOMInserter() = default;
 
 //------------------------------------------------------------------------------
 void ctkDICOMInserter::setDatabaseFilename(const QString &databaseFilename)

@@ -34,9 +34,7 @@ ctkAbstractWorker::ctkAbstractWorker()
 }
 
 //----------------------------------------------------------------------------
-ctkAbstractWorker::~ctkAbstractWorker()
-{
-}
+ctkAbstractWorker::~ctkAbstractWorker() = default;
 
 //----------------------------------------------------------------------------
 static void skipDelete(QObject* obj)

@@ -45,7 +45,7 @@ public:
     {
       this->listener = 0;
     };
-    ~ctkDICOMStorageListenerSCUPrivate() {};
+    ~ctkDICOMStorageListenerSCUPrivate() = default;
 
     virtual OFCondition acceptAssociations()
     {
@@ -156,7 +156,7 @@ class ctkDICOMStorageListenerPrivate
 {
 public:
   ctkDICOMStorageListenerPrivate();
-  ~ctkDICOMStorageListenerPrivate();
+  ~ctkDICOMStorageListenerPrivate() = default;
 
   QString findFile(const QStringList& nameFilters, const QString& subDir)const;
   QString defaultConfigFile() const;
@@ -187,11 +187,6 @@ ctkDICOMStorageListenerPrivate::ctkDICOMStorageListenerPrivate()
   this->SCU.setRespondWithCalledAETitle(false);
   this->SCU.setHostLookupEnabled(true);
   this->SCU.setVerbosePCMode(false);
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMStorageListenerPrivate::~ctkDICOMStorageListenerPrivate()
-{
 }
 
 //------------------------------------------------------------------------------

@@ -40,9 +40,7 @@ ctkDICOMRetrieveJobPrivate::ctkDICOMRetrieveJobPrivate(ctkDICOMRetrieveJob* obje
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMRetrieveJobPrivate::~ctkDICOMRetrieveJobPrivate()
-{
-}
+ctkDICOMRetrieveJobPrivate::~ctkDICOMRetrieveJobPrivate() = default;
 
 //------------------------------------------------------------------------------
 // ctkDICOMRetrieveJob methods
@@ -60,9 +58,7 @@ ctkDICOMRetrieveJob::ctkDICOMRetrieveJob(ctkDICOMRetrieveJobPrivate* pimpl)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMRetrieveJob::~ctkDICOMRetrieveJob()
-{
-}
+ctkDICOMRetrieveJob::~ctkDICOMRetrieveJob() = default;
 
 //----------------------------------------------------------------------------
 static void skipDelete(QObject* obj)

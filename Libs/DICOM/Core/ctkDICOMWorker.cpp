@@ -25,15 +25,11 @@
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMWorker.h"
 
-// --------------------------------------------------------------------------
-ctkDICOMWorker::ctkDICOMWorker()
-{
-}
+//------------------------------------------------------------------------------
+ctkDICOMWorker::ctkDICOMWorker() = default;
 
-//----------------------------------------------------------------------------
-ctkDICOMWorker::~ctkDICOMWorker()
-{
-}
+//------------------------------------------------------------------------------
+ctkDICOMWorker::~ctkDICOMWorker() = default;
 
 //----------------------------------------------------------------------------
 void ctkDICOMWorker::startNextJob()

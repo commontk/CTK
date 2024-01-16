@@ -47,7 +47,7 @@ class ctkDICOMEchoPrivate
 {
 public:
   ctkDICOMEchoPrivate();
-  ~ctkDICOMEchoPrivate();
+  ~ctkDICOMEchoPrivate() = default;
 
   QString ConnectionName;
   QString CallingAETitle;
@@ -74,11 +74,6 @@ ctkDICOMEchoPrivate::ctkDICOMEchoPrivate()
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMEchoPrivate::~ctkDICOMEchoPrivate()
-{
-}
-
-//------------------------------------------------------------------------------
 // ctkDICOMEcho methods
 
 //------------------------------------------------------------------------------
@@ -92,11 +87,8 @@ ctkDICOMEcho::ctkDICOMEcho(QObject* parentObject)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMEcho::~ctkDICOMEcho()
-{
-}
+ctkDICOMEcho::~ctkDICOMEcho() = default;
 
-/// Set methods for connectivity
 //------------------------------------------------------------------------------
 void ctkDICOMEcho::setConnectionName(const QString& connectionName)
 {

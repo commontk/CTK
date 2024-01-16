@@ -41,9 +41,7 @@ ctkDICOMQueryWorkerPrivate::ctkDICOMQueryWorkerPrivate(ctkDICOMQueryWorker* obje
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMQueryWorkerPrivate::~ctkDICOMQueryWorkerPrivate()
-{
-}
+ctkDICOMQueryWorkerPrivate::~ctkDICOMQueryWorkerPrivate() = default;
 
 //------------------------------------------------------------------------------
 void ctkDICOMQueryWorkerPrivate::setQueryParameters()
@@ -89,9 +87,7 @@ ctkDICOMQueryWorker::ctkDICOMQueryWorker(ctkDICOMQueryWorkerPrivate* pimpl)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMQueryWorker::~ctkDICOMQueryWorker()
-{
-}
+ctkDICOMQueryWorker::~ctkDICOMQueryWorker() = default;
 
 //----------------------------------------------------------------------------
 void ctkDICOMQueryWorker::cancel()

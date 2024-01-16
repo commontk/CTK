@@ -45,9 +45,7 @@ ctkDICOMInserterWorkerPrivate::ctkDICOMInserterWorkerPrivate(ctkDICOMInserterWor
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMInserterWorkerPrivate::~ctkDICOMInserterWorkerPrivate()
-{
-}
+ctkDICOMInserterWorkerPrivate::~ctkDICOMInserterWorkerPrivate() = default;
 
 //------------------------------------------------------------------------------
 // ctkDICOMInserterWorker methods
@@ -65,9 +63,7 @@ ctkDICOMInserterWorker::ctkDICOMInserterWorker(ctkDICOMInserterWorkerPrivate* pi
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMInserterWorker::~ctkDICOMInserterWorker()
-{
-}
+ctkDICOMInserterWorker::~ctkDICOMInserterWorker() = default;
 
 //----------------------------------------------------------------------------
 void ctkDICOMInserterWorker::cancel()

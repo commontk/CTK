@@ -93,9 +93,7 @@ ctkDICOMJobResponseSet::ctkDICOMJobResponseSet(QObject* parent)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMJobResponseSet::~ctkDICOMJobResponseSet()
-{
-}
+ctkDICOMJobResponseSet::~ctkDICOMJobResponseSet() = default;
 
 //----------------------------------------------------------------------------
 void ctkDICOMJobResponseSet::setFilePath(const QString &filePath)

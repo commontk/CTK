@@ -41,9 +41,7 @@ ctkDICOMStorageListenerJobPrivate::ctkDICOMStorageListenerJobPrivate(ctkDICOMSto
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMStorageListenerJobPrivate::~ctkDICOMStorageListenerJobPrivate()
-{
-}
+ctkDICOMStorageListenerJobPrivate::~ctkDICOMStorageListenerJobPrivate() = default;
 
 //------------------------------------------------------------------------------
 // ctkDICOMStorageListenerJob methods
@@ -62,9 +60,7 @@ ctkDICOMStorageListenerJob::ctkDICOMStorageListenerJob(ctkDICOMStorageListenerJo
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMStorageListenerJob::~ctkDICOMStorageListenerJob()
-{
-}
+ctkDICOMStorageListenerJob::~ctkDICOMStorageListenerJob() = default;
 
 //----------------------------------------------------------------------------
 void ctkDICOMStorageListenerJob::setPort(const int port)

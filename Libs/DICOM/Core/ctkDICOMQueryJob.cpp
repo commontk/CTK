@@ -41,9 +41,7 @@ ctkDICOMQueryJobPrivate::ctkDICOMQueryJobPrivate(ctkDICOMQueryJob* object)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMQueryJobPrivate::~ctkDICOMQueryJobPrivate()
-{
-}
+ctkDICOMQueryJobPrivate::~ctkDICOMQueryJobPrivate() = default;
 
 //------------------------------------------------------------------------------
 // ctkDICOMQueryJob methods
@@ -61,9 +59,7 @@ ctkDICOMQueryJob::ctkDICOMQueryJob(ctkDICOMQueryJobPrivate* pimpl)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMQueryJob::~ctkDICOMQueryJob()
-{
-}
+ctkDICOMQueryJob::~ctkDICOMQueryJob() = default;
 
 //----------------------------------------------------------------------------
 void ctkDICOMQueryJob::setFilters(const QMap<QString, QVariant> &filters)
