@@ -24,6 +24,9 @@
 #ifndef __ctkDICOMQueryJobPrivate_h
 #define __ctkDICOMQueryJobPrivate_h
 
+// ctkCore includes
+#include "ctkAbstractScheduler_p.h"
+
 // ctkDICOMCore includes
 #include "ctkDICOMScheduler.h"
 
@@ -38,34 +41,22 @@ struct ThumbnailUID
 } ;
 
 //------------------------------------------------------------------------------
-class ctkDICOMSchedulerPrivate : public QObject
+class ctkDICOMSchedulerPrivate : public ctkAbstractSchedulerPrivate
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(ctkDICOMScheduler);
-
-protected:
-  ctkDICOMScheduler* const q_ptr;
 
 public:
   ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj);
   virtual ~ctkDICOMSchedulerPrivate();
 
-  int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job);
-  void insertJob(QSharedPointer<ctkAbstractJob> job);
-  void removeJob(const QString& jobUID);
-  QString generateUniqueJobUID();
   ctkDICOMServer* getServerFromProxyServersByConnectionName(const QString&);
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
-  QSharedPointer<QThreadPool> ThreadPool;
   QList<QSharedPointer<ctkDICOMServer>> Servers;
-  QMap<QString, QSharedPointer<ctkAbstractJob>> JobsQueue;
-  QMap<QString, QSharedPointer<ctkAbstractWorker>> Workers;
   QMap<QString, QVariant> Filters;
-  QMutex mMutex;
-  int RetryDelay;
-  int MaximumNumberOfRetry;
-  int MaximumPatientsQuery;
+
+  int MaximumPatientsQuery{25};
 };
 
 #endif

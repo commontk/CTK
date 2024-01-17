@@ -34,6 +34,7 @@ set(KIT_SRCS
   ctkAbstractLibraryFactory.tpp
   ctkAbstractScheduler.cpp
   ctkAbstractScheduler.h
+  ctkAbstractScheduler_p.h
   ctkAbstractWorker.cpp
   ctkAbstractWorker.h
   ctkBackTrace.cpp
@@ -108,6 +109,7 @@ endif()
 set(KIT_MOC_SRCS
   ctkAbstractJob.h
   ctkAbstractScheduler.h
+  ctkAbstractScheduler_p.h
   ctkAbstractWorker.h
   ctkBooleanMapper.h
   ctkCallback.h
@@ -135,6 +137,7 @@ set(KIT_MOC_SRCS
 set_source_files_properties(
   ctkAbstractJob.h
   ctkAbstractScheduler.h
+  ctkAbstractScheduler_p.h
   ctkAbstractWorker.h
   WRAP_EXCLUDE
   )
