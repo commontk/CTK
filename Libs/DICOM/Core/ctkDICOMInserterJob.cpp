@@ -44,51 +44,10 @@ ctkDICOMInserterJob::~ctkDICOMInserterJob() = default;
 //------------------------------------------------------------------------------
 QString ctkDICOMInserterJob::loggerReport(const QString &status) const
 {
-  switch (this->dicomLevel())
-  {
-    case ctkDICOMJob::DICOMLevels::Patients:
-      return QString("ctkDICOMInserterJob: insert job at patients level %1.\n"
-                     "JobUID: %2\n"
-                     "PatientID: %3\n")
-          .arg(status)
-          .arg(this->jobUID())
-          .arg(this->patientID());
-    case ctkDICOMJob::DICOMLevels::Studies:
-      return QString("ctkDICOMInserterJob: insert job at studies level %1.\n"
-                     "JobUID: %2\n"
-                     "PatientID: %3\n"
-                     "StudyInstanceUID: %4\n")
-          .arg(status)
-          .arg(this->jobUID())
-          .arg(this->patientID())
-          .arg(this->studyInstanceUID());
-    case ctkDICOMJob::DICOMLevels::Series:
-      return QString("ctkDICOMInserterJob: insert job at series level %1.\n"
-                     "JobUID: %2\n"
-                     "PatientID: %3\n"
-                     "StudyInstanceUID: %4\n"
-                     "SeriesInstanceUID: %5\n")
-          .arg(status)
-          .arg(this->jobUID())
-          .arg(this->patientID())
-          .arg(this->studyInstanceUID())
-          .arg(this->seriesInstanceUID());
-    case ctkDICOMJob::DICOMLevels::Instances:
-      return QString("ctkDICOMInserterJob: insert job at instances level %1.\n"
-                     "JobUID: %2\n"
-                     "PatientID: %3\n"
-                     "StudyInstanceUID: %4\n"
-                     "SeriesInstanceUID: %5 \n"
-                     "SOPInstanceUID: %6\n")
-          .arg(status)
-          .arg(this->jobUID())
-          .arg(this->patientID())
-          .arg(this->studyInstanceUID())
-          .arg(this->seriesInstanceUID())
-          .arg(this->sopInstanceUID());
-    default:
-      return QString("");
-  }
+  return QString("ctkDICOMInserterJob: insert job %1.\n"
+                 "Number of jobResponseSet to process: %2\n")
+      .arg(status)
+      .arg(this->JobResponseSets.count());
 }
 
 //------------------------------------------------------------------------------
