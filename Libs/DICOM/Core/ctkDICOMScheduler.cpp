@@ -632,8 +632,6 @@ void ctkDICOMScheduler::waitForDone(int msec)
   QCoreApplication::processEvents();
   d->ThreadPool->waitForDone(msec);
 }
-
-Q_INVOKABLE void waitForFinish();
 void ctkDICOMScheduler::waitForFinishByUIDs(const QStringList &patientIDs,
                                             const QStringList &studyInstanceUIDs,
                                             const QStringList &seriesInstanceUIDs,
