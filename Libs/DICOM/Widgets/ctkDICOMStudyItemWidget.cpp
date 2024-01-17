@@ -765,7 +765,7 @@ void ctkDICOMStudyItemWidget::updateGUIFromScheduler(QVariant data)
 {
   Q_D(ctkDICOMStudyItemWidget);
 
-  ctkJobDetail td = data.value<ctkJobDetail>();
+  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
     if (td.JobUID.isEmpty())
     {
     d->createSeries();

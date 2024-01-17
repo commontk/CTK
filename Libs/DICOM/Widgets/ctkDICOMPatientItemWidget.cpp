@@ -692,7 +692,7 @@ void ctkDICOMPatientItemWidget::updateGUIFromScheduler(QVariant data)
 {
   Q_D(ctkDICOMPatientItemWidget);
 
-  ctkJobDetail td = data.value<ctkJobDetail>();
+  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (td.JobUID.isEmpty())
     {
     d->createStudies();

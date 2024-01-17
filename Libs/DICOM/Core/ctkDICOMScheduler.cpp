@@ -1017,7 +1017,7 @@ QSharedPointer<QThreadPool> ctkDICOMScheduler::threadPoolShared() const
 //----------------------------------------------------------------------------
 QVariant ctkDICOMScheduler::jobToDetail(ctkDICOMJob* job)
 {
-  ctkJobDetail td;
+  ctkDICOMJobDetail td;
   td.JobClass = job->className();
   td.DICOMLevel = job->dicomLevel();
   td.JobUID = job->jobUID();

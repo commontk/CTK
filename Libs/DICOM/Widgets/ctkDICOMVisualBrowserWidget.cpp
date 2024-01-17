@@ -2589,7 +2589,7 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QVariant data)
   d->ProgressFrame->hide();
   d->QueryPatientPushButton->setIcon(QIcon(":/Icons/query.svg"));
 
-  ctkJobDetail td = data.value<ctkJobDetail>();
+  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (td.JobUID.isEmpty())
     {
     d->updateFiltersWarnings();
@@ -2620,7 +2620,7 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QVariant data)
 void ctkDICOMVisualBrowserWidget::onTaskFailed(QVariant data)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-  ctkJobDetail td = data.value<ctkJobDetail>();
+  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
 
   if (td.JobClass == "ctkDICOMQueryJob")
     {

@@ -153,8 +153,8 @@ private:
   Q_DISABLE_COPY(ctkDICOMJobResponseSet);
 };
 
-struct CTK_DICOM_CORE_EXPORT ctkJobDetail {
-  explicit ctkJobDetail():
+struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail {
+  explicit ctkDICOMJobDetail():
     JobType(ctkDICOMJobResponseSet::JobType::None),
     JobClass(""),
     DICOMLevel(ctkDICOMJob::DICOMLevels::Patients),
@@ -165,7 +165,7 @@ struct CTK_DICOM_CORE_EXPORT ctkJobDetail {
     SOPInstanceUID(""),
     ConnectionName(""),
     NumberOfDataSets(0){}
-  virtual ~ctkJobDetail(){};
+  virtual ~ctkDICOMJobDetail(){};
 
   ctkDICOMJobResponseSet::JobType JobType;
   QString JobClass;
@@ -177,5 +177,5 @@ struct CTK_DICOM_CORE_EXPORT ctkJobDetail {
   QString SOPInstanceUID;
   QString ConnectionName;
   int NumberOfDataSets;
-}; Q_DECLARE_METATYPE(ctkJobDetail);
+}; Q_DECLARE_METATYPE(ctkDICOMJobDetail);
 #endif

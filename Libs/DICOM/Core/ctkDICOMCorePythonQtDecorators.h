@@ -44,87 +44,87 @@ public:
 
   ctkDICOMCorePythonQtDecorators()
     {
-    PythonQt::self()->registerCPPClass("ctkJobDetail", 0, "CTKDICOMCore");
+    PythonQt::self()->registerCPPClass("ctkDICOMJobDetail", 0, "CTKDICOMCore");
     }
 
 public slots:
 
   //----------------------------------------------------------------------------
-  // ctkJobDetail
+  // ctkDICOMJobDetail
   //----------------------------------------------------------------------------
-  ctkJobDetail* new_ctkJobDetail()
+  ctkDICOMJobDetail* new_ctkDICOMJobDetail()
     {
-    return new ctkJobDetail();
+    return new ctkDICOMJobDetail();
     }
 
-  void setJobType(ctkJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
+  void setJobType(ctkDICOMJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
     {
     td->JobType = jobType;
     }
-  ctkDICOMJobResponseSet::JobType jobType(ctkJobDetail* td)
+  ctkDICOMJobResponseSet::JobType jobType(ctkDICOMJobDetail* td)
     {
     return td->JobType;
     }
 
-  void setJobUID(ctkJobDetail* td, const QString& jobUID)
+  void setJobUID(ctkDICOMJobDetail* td, const QString& jobUID)
     {
     td->JobUID = jobUID;
     }
-  QString JobUID(ctkJobDetail* td)
+  QString JobUID(ctkDICOMJobDetail* td)
     {
     return td->JobUID;
     }
 
-  void setPatientID(ctkJobDetail* td, const QString& patientID)
+  void setPatientID(ctkDICOMJobDetail* td, const QString& patientID)
     {
     td->PatientID = patientID;
     }
-  QString patientID(ctkJobDetail* td)
+  QString patientID(ctkDICOMJobDetail* td)
     {
     return td->PatientID;
     }
 
-  void setStudyInstanceUID(ctkJobDetail* td, const QString& studyInstanceUID)
+  void setStudyInstanceUID(ctkDICOMJobDetail* td, const QString& studyInstanceUID)
     {
     td->StudyInstanceUID = studyInstanceUID;
     }
-  QString studyInstanceUID(ctkJobDetail* td)
+  QString studyInstanceUID(ctkDICOMJobDetail* td)
     {
     return td->StudyInstanceUID;
     }
 
-  void setSeriesInstanceUID(ctkJobDetail* td, const QString& seriesInstanceUID)
+  void setSeriesInstanceUID(ctkDICOMJobDetail* td, const QString& seriesInstanceUID)
     {
     td->SeriesInstanceUID = seriesInstanceUID;
     }
-  QString seriesInstanceUID(ctkJobDetail* td)
+  QString seriesInstanceUID(ctkDICOMJobDetail* td)
     {
     return td->SeriesInstanceUID;
     }
 
-  void setSOPInstanceUID(ctkJobDetail* td, const QString& sopInstanceUID)
+  void setSOPInstanceUID(ctkDICOMJobDetail* td, const QString& sopInstanceUID)
     {
     td->SOPInstanceUID = sopInstanceUID;
     }
-  QString sopInstanceUID(ctkJobDetail* td)
+  QString sopInstanceUID(ctkDICOMJobDetail* td)
     {
     return td->SOPInstanceUID;
     }
 
-  void setConnectionName(ctkJobDetail* td, const QString& connectionName)
+  void setConnectionName(ctkDICOMJobDetail* td, const QString& connectionName)
     {
     td->ConnectionName = connectionName;
     }
-  QString connectionName(ctkJobDetail* td)
+  QString connectionName(ctkDICOMJobDetail* td)
     {
     return td->ConnectionName;
     }
 
-  void setNumberOfDataSets(ctkJobDetail* td, int numberOfDataSets)
+  void setNumberOfDataSets(ctkDICOMJobDetail* td, int numberOfDataSets)
     {
     td->NumberOfDataSets = numberOfDataSets;
     }
-  int numberOfDataSets(ctkJobDetail* td)
+  int numberOfDataSets(ctkDICOMJobDetail* td)
     {
     return td->NumberOfDataSets;
     }

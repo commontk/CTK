@@ -61,7 +61,7 @@ public:
 
   void init();
   QString getDICOMCenterFrameFromInstances(QStringList instancesList);
-  void createThumbnail(ctkJobDetail td);
+  void createThumbnail(ctkDICOMJobDetail td);
   void drawModalityThumbnail();
   void drawThumbnail(const QString& file, int numberOfFrames);
   void drawTextWithShadow(QPainter *painter,
@@ -189,7 +189,7 @@ QString ctkDICOMSeriesItemWidgetPrivate::getDICOMCenterFrameFromInstances(QStrin
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkJobDetail td)
+void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
 {
   if (!this->DicomDatabase)
     {
@@ -849,7 +849,7 @@ void ctkDICOMSeriesItemWidget::generateInstances()
     return;
     }
 
-  ctkJobDetail td;
+  ctkDICOMJobDetail td;
   d->createThumbnail(td);
   QStringList instancesList = d->DicomDatabase->instancesForSeries(d->SeriesInstanceUID);
   if (!d->StopJobs &&
@@ -869,7 +869,7 @@ void ctkDICOMSeriesItemWidget::updateGUIFromScheduler(QVariant data)
 {
   Q_D(ctkDICOMSeriesItemWidget);
 
-  ctkJobDetail td = data.value<ctkJobDetail>();
+  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (td.JobUID.isEmpty() ||
       (td.JobType != ctkDICOMJobResponseSet::JobType::QueryInstances &&
        td.JobType != ctkDICOMJobResponseSet::JobType::RetrieveSeries &&
@@ -889,7 +889,7 @@ void ctkDICOMSeriesItemWidget::updateSeriesProgressBar(QVariant data)
 {
   Q_D(ctkDICOMSeriesItemWidget);
 
-  ctkJobDetail td = data.value<ctkJobDetail>();
+  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (td.JobUID.isEmpty() ||
       (td.JobType != ctkDICOMJobResponseSet::JobType::RetrieveSeries &&
        td.JobType != ctkDICOMJobResponseSet::JobType::StoreSOPInstance) ||
