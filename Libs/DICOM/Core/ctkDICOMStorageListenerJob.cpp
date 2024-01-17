@@ -113,7 +113,7 @@ QString ctkDICOMStorageListenerJob::loggerReport(const QString &status) const
                  .arg(this->jobUID());
 }
 //------------------------------------------------------------------------------
-ctkAbstractJob* ctkDICOMStorageListenerJob::generateCopy() const
+ctkAbstractJob* ctkDICOMStorageListenerJob::clone() const
 {
   ctkDICOMStorageListenerJob* newListenerJob = new ctkDICOMStorageListenerJob;
   newListenerJob->setAETitle(this->AETitle());

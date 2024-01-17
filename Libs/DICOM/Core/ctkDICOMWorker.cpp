@@ -48,7 +48,7 @@ void ctkDICOMWorker::startNextJob()
     return;
     }
 
-  ctkDICOMJob* newJob = job->generateCopy();
+  ctkDICOMJob* newJob = job->clone();
   newJob->setRetryCounter(newJob->retryCounter() + 1);
   scheduler->addJob(newJob);
 }

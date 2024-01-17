@@ -128,7 +128,7 @@ QStringList ctkDICOMInserterJob::tagsToExcludeFromStorage() const
 }
 
 //------------------------------------------------------------------------------
-ctkAbstractJob* ctkDICOMInserterJob::generateCopy() const
+ctkAbstractJob* ctkDICOMInserterJob::clone() const
 {
   ctkDICOMInserterJob* newInserterJob = new ctkDICOMInserterJob;
   newInserterJob->setDICOMLevel(this->dicomLevel());

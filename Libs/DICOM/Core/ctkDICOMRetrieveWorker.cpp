@@ -266,7 +266,7 @@ void ctkDICOMRetrieveWorker::run()
   ctkDICOMServer* proxyServer = server->proxyServer();
   if (proxyServer && proxyServer->queryRetrieveEnabled())
     {
-    ctkDICOMRetrieveJob* newJob = qobject_cast<ctkDICOMRetrieveJob*>(retrieveJob->generateCopy());
+    ctkDICOMRetrieveJob* newJob = qobject_cast<ctkDICOMRetrieveJob*>(retrieveJob->clone());
     newJob->setRetryCounter(0);
     newJob->setServer(*proxyServer);
     scheduler->addJob(newJob);

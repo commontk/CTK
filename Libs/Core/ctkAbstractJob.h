@@ -119,8 +119,8 @@ public:
   /// Generate worker for job
   Q_INVOKABLE virtual ctkAbstractWorker* createWorker() = 0;
 
-  /// Create a copy of this object
-  Q_INVOKABLE virtual ctkAbstractJob* generateCopy() const = 0;
+  /// Create a copy of this job
+  Q_INVOKABLE virtual ctkAbstractJob* clone() const = 0;
 
   /// Logger report string formatting for specific job
   Q_INVOKABLE virtual QString loggerReport(const QString& status) const = 0;

@@ -155,7 +155,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString &status) const
     }
 }
 //------------------------------------------------------------------------------
-ctkAbstractJob* ctkDICOMRetrieveJob::generateCopy() const
+ctkAbstractJob* ctkDICOMRetrieveJob::clone() const
 {
   ctkDICOMRetrieveJob* newRetrieveJob = new ctkDICOMRetrieveJob;
   newRetrieveJob->setServer(this->serverShared());

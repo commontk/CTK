@@ -56,8 +56,8 @@ public:
   /// Logger report string formatting for specific task
   Q_INVOKABLE QString loggerReport(const QString& status) const override;
 
-  /// Create a copy of the object
-  Q_INVOKABLE ctkAbstractJob* generateCopy() const override;
+  /// \see ctkAbstractJob::clone()
+  Q_INVOKABLE ctkAbstractJob* clone() const override;
 
   /// Generate worker for job
   Q_INVOKABLE ctkDICOMWorker* createWorker() override;

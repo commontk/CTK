@@ -176,7 +176,7 @@ QString ctkDICOMQueryJob::loggerReport(const QString &status) const
     }
 }
 //------------------------------------------------------------------------------
-ctkAbstractJob* ctkDICOMQueryJob::generateCopy() const
+ctkAbstractJob* ctkDICOMQueryJob::clone() const
 {
   ctkDICOMQueryJob* newQueryJob = new ctkDICOMQueryJob;
   newQueryJob->setMaximumPatientsQuery(this->maximumConcurrentJobsPerType());
