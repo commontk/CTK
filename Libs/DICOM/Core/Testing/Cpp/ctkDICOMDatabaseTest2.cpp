@@ -91,28 +91,25 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
   //
   // Test that the tag interface works to parse ascii
   //
-  QString tag("0008,103e");
-  unsigned short group, element;
-  if ( !database.tagToGroupElement(tag, group, element) )
-    {
-    std::cerr << "ctkDICOMDatabase: could not parse tag" << std::endl;
-    return EXIT_FAILURE;
-    }
+  {
+    unsigned short group, element;
+    QString tag("0008,103E"); // upper case
+    CHECK_BOOL(database.tagToGroupElement(tag, group, element), true);
+    CHECK_INT(group, 0x8);
+    CHECK_INT(element, 0x103E);
+  }
+  {
+    unsigned short group, element;
+    QString tag("0008,103e"); // lower case
+    CHECK_BOOL(database.tagToGroupElement(tag, group, element), true);
+    CHECK_INT(group, 0x8);
+    CHECK_INT(element, 0x103E);
+  }
 
-  if ( group != 0x8 || element != 0x103e )
-    {
-    std::cerr << "ctkDICOMDatabase: expected: " << "0008,103e" << std::endl;
-    std::cerr << "ctkDICOMDatabase: got: " << group << " " << element << std::endl;
-    std::cerr << "ctkDICOMDatabase: parsed tag does not match group/element" << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  if ( database.groupElementToTag(group, element) != tag.toUpper() )
-    {
-    std::cerr << "ctkDICOMDatabase: could not convert a uints to tag string" << std::endl;
-    return EXIT_FAILURE;
-    }
-
+  //
+  // Test that conversion from uints to tag string works
+  //
+  CHECK_QSTRING(database.groupElementToTag(0x8, 0x103E), "0008,103E");
 
   //
   // Basic test:
@@ -161,7 +158,7 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-
+  QString tag("0008,103E");
   if (database.cachedTag(instanceUID, tag) != QString(""))
     {
     std::cerr << "ctkDICOMDatabase: tag cache should return empty string for unknown instance tag" << std::endl;
