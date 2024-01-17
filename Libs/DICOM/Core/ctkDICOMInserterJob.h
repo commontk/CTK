@@ -69,8 +69,8 @@ public:
   QStringList tagsToExcludeFromStorage() const;
   ///}@
 
-  /// Create a copy of the object
-  Q_INVOKABLE ctkDICOMJob* generateCopy() const override;
+  /// Create a copy of this object
+  Q_INVOKABLE ctkAbstractJob* generateCopy() const override;
 
   /// Generate worker for job
   Q_INVOKABLE ctkDICOMWorker* createWorker() override;

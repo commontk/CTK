@@ -113,10 +113,9 @@ QString ctkDICOMStorageListenerJob::loggerReport(const QString &status) const
                  .arg(this->jobUID());
 }
 //------------------------------------------------------------------------------
-ctkDICOMJob* ctkDICOMStorageListenerJob::generateCopy() const
+ctkAbstractJob* ctkDICOMStorageListenerJob::generateCopy() const
 {
-  ctkDICOMStorageListenerJob* newListenerJob =
-    new ctkDICOMStorageListenerJob;
+  ctkDICOMStorageListenerJob* newListenerJob = new ctkDICOMStorageListenerJob;
   newListenerJob->setAETitle(this->AETitle());
   newListenerJob->setPort(this->port());
   newListenerJob->setConnectionTimeout(this->connectionTimeout());
@@ -126,7 +125,6 @@ ctkDICOMJob* ctkDICOMStorageListenerJob::generateCopy() const
   newListenerJob->setIsPersistent(this->isPersistent());
   newListenerJob->setMaximumConcurrentJobsPerType(this->maximumConcurrentJobsPerType());
   newListenerJob->setPriority(this->priority());
-
 
   return newListenerJob;
 }
