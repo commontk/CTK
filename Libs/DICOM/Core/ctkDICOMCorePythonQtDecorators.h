@@ -57,6 +57,15 @@ public slots:
     return new ctkDICOMJobDetail();
     }
 
+  void setJobClass(ctkDICOMJobDetail* td, const QString& jobClass)
+    {
+    td->JobClass = jobClass;
+    }
+  QString jobClass(ctkDICOMJobDetail* td)
+    {
+    return td->JobClass;
+    }
+
   void setJobType(ctkDICOMJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
     {
     td->JobType = jobType;
@@ -70,7 +79,7 @@ public slots:
     {
     td->JobUID = jobUID;
     }
-  QString JobUID(ctkDICOMJobDetail* td)
+  QString jobUID(ctkDICOMJobDetail* td)
     {
     return td->JobUID;
     }
