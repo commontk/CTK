@@ -30,6 +30,7 @@
 
 // CTK includes
 #include "ctkCoreExport.h"
+class ctkAbstractJob;
 
 //------------------------------------------------------------------------------
 /// \ingroup Core
@@ -39,6 +40,9 @@ class CTK_CORE_EXPORT ctkAbstractScheduler : public QObject
 public:
   explicit ctkAbstractScheduler(QObject* parent = 0);
   virtual ~ctkAbstractScheduler();
+
+  /// Utility method to transform/pass informations between threads by qt signals
+  Q_INVOKABLE virtual QVariant jobToDetail(ctkAbstractJob* job);
 
 Q_SIGNALS:
   void jobStarted(QVariant data);

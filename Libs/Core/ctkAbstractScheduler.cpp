@@ -21,7 +21,12 @@
 
 =========================================================================*/
 
+// CTK includes
+#include "ctkAbstractJob.h"
 #include "ctkAbstractScheduler.h"
+
+//---------------------------------------------------------------------------
+// ctkAbstractScheduler methods
 
 // --------------------------------------------------------------------------
 ctkAbstractScheduler::ctkAbstractScheduler(QObject* parent)
@@ -31,3 +36,17 @@ ctkAbstractScheduler::ctkAbstractScheduler(QObject* parent)
 
 // --------------------------------------------------------------------------
 ctkAbstractScheduler::~ctkAbstractScheduler() = default;
+
+//----------------------------------------------------------------------------
+QVariant ctkAbstractScheduler::jobToDetail(ctkAbstractJob* job)
+{
+  if (!job)
+    {
+    return QVariant();
+    }
+
+  QVariant data;
+  data.setValue(job->jobUID());
+
+  return data;
+}

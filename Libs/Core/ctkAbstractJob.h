@@ -118,6 +118,9 @@ public:
   /// Generate worker for job
   Q_INVOKABLE virtual ctkAbstractWorker* createWorker() = 0;
 
+  /// Logger report string formatting for specific job
+  Q_INVOKABLE virtual QString loggerReport(const QString& status) const = 0;
+
 Q_SIGNALS:
   void started();
   void finished();

@@ -35,6 +35,7 @@
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMDatabase.h"
 
+class ctkAbstractJob;
 class ctkDICOMJob;
 class ctkDICOMIndexer;
 class ctkDICOMSchedulerPrivate;
@@ -165,11 +166,11 @@ public:
   /// Jobs managment
   Q_INVOKABLE int numberOfJobs();
   Q_INVOKABLE int numberOfPersistentJobs();
-  Q_INVOKABLE void addJob(ctkDICOMJob* job);
+  Q_INVOKABLE void addJob(ctkAbstractJob* job);
   Q_INVOKABLE void deleteJob(const QString& jobUID);
   Q_INVOKABLE void deleteWorker(const QString& jobUID);
-  QSharedPointer<ctkDICOMJob> getJobSharedByUID(const QString& jobUID);
-  Q_INVOKABLE ctkDICOMJob* getJobByUID(const QString& jobUID);
+  QSharedPointer<ctkAbstractJob> getJobSharedByUID(const QString& jobUID);
+  Q_INVOKABLE ctkAbstractJob* getJobByUID(const QString& jobUID);
   Q_INVOKABLE void waitForFinish();
   Q_INVOKABLE void waitForDone(int msec);
   Q_INVOKABLE void waitForFinishByUIDs(const QStringList& patientIDs = {},
@@ -227,8 +228,8 @@ public:
   QSharedPointer<QThreadPool> threadPoolShared() const;
   ///@}
 
-  /// Utility method to transform/pass informations between threads by qt signals
-  Q_INVOKABLE QVariant jobToDetail(ctkDICOMJob* job);
+  /// Utility method to transform/pass informations between threads by Qt signals
+  Q_INVOKABLE QVariant jobToDetail(ctkAbstractJob* job) override;
 
 Q_SIGNALS:
   void queueJobs();

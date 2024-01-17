@@ -99,14 +99,8 @@ public:
   void copyJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets);
   ///@}
 
-  /// Logger report string formatting for specific task
-  Q_INVOKABLE virtual QString loggerReport(const QString& status) const = 0;
-
   /// Create a copy of the object
   Q_INVOKABLE virtual ctkDICOMJob* generateCopy() const = 0;
-
-  /// Generate worker for job
-  Q_INVOKABLE virtual ctkDICOMWorker* createWorker() = 0;
 
 Q_SIGNALS:
   void progressJobDetail(QVariant);

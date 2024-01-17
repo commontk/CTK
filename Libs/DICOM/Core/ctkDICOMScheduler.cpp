@@ -31,7 +31,6 @@
 #include "ctkDICOMServer.h"
 #include "ctkDICOMStorageListenerJob.h"
 #include "ctkDICOMUtil.h"
-#include "ctkDICOMWorker.h"
 #include "ctkLogger.h"
 
 // dcmtk includes
@@ -65,10 +64,10 @@ ctkDICOMSchedulerPrivate::~ctkDICOMSchedulerPrivate()
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkDICOMJob> job)
+int ctkDICOMSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job)
 {
   int count = 0;
-  foreach (QSharedPointer<ctkDICOMJob> queuedJob, this->JobsQueue)
+  foreach (QSharedPointer<ctkAbstractJob> queuedJob, this->JobsQueue)
     {
     if (queuedJob->jobUID() == job->jobUID())
       {
@@ -87,7 +86,7 @@ int ctkDICOMSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedP
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSchedulerPrivate::insertJob(QSharedPointer<ctkDICOMJob> job)
+void ctkDICOMSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 {
   Q_Q(ctkDICOMScheduler);
 
@@ -122,7 +121,7 @@ void ctkDICOMSchedulerPrivate::removeJob(const QString& jobUID)
     .arg(jobUID)
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
 
-  QSharedPointer<ctkDICOMJob> job = this->JobsQueue.value(jobUID);
+  QSharedPointer<ctkAbstractJob> job = this->JobsQueue.value(jobUID);
   if (!job)
     {
     return;
@@ -654,7 +653,7 @@ void ctkDICOMScheduler::waitForFinishByUIDs(const QStringList &patientIDs,
     d->ThreadPool->waitForDone(300);
 
     wait = false;
-    foreach (QSharedPointer<ctkDICOMJob> job, d->JobsQueue)
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
       {
       if (!job)
         {
@@ -665,11 +664,16 @@ void ctkDICOMScheduler::waitForFinishByUIDs(const QStringList &patientIDs,
         {
         continue;
         }
+      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+      if (!dicomJob)
+        {
+        continue;
+        }
 
-      if ((!job->patientID().isEmpty() && patientIDs.contains(job->patientID())) ||
-        (!job->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(job->studyInstanceUID())) ||
-        (!job->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(job->seriesInstanceUID())) ||
-        (!job->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(job->sopInstanceUID())))
+      if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+        (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
+        (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
+        (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
         {
         if (job->status() != ctkAbstractJob::JobStatus::Finished)
           {
@@ -695,7 +699,7 @@ int ctkDICOMScheduler::numberOfPersistentJobs()
   Q_D(ctkDICOMScheduler);
   int cont = 0;
   QMutexLocker ml(&d->mMutex);
-  foreach (QSharedPointer<ctkDICOMJob> job, d->JobsQueue)
+  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
     if (job->isPersistent())
       {
@@ -707,11 +711,11 @@ int ctkDICOMScheduler::numberOfPersistentJobs()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::addJob(ctkDICOMJob *job)
+void ctkDICOMScheduler::addJob(ctkAbstractJob *job)
 {
   Q_D(ctkDICOMScheduler);
 
-  QSharedPointer<ctkDICOMJob> jobShared = QSharedPointer<ctkDICOMJob>(job);
+  QSharedPointer<ctkAbstractJob> jobShared = QSharedPointer<ctkAbstractJob>(job);
   d->insertJob(jobShared);
 }
 
@@ -727,7 +731,7 @@ void ctkDICOMScheduler::deleteWorker(const QString& jobUID)
 {
   Q_D(ctkDICOMScheduler);
 
-  QMap<QString, QSharedPointer<ctkDICOMWorker>>::iterator it = d->Workers.find(jobUID);
+  QMap<QString, QSharedPointer<ctkAbstractWorker>>::iterator it = d->Workers.find(jobUID);
   if (it == d->Workers.end())
     {
     return;
@@ -737,12 +741,12 @@ void ctkDICOMScheduler::deleteWorker(const QString& jobUID)
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMJob> ctkDICOMScheduler::getJobSharedByUID(const QString& jobUID)
+QSharedPointer<ctkAbstractJob> ctkDICOMScheduler::getJobSharedByUID(const QString& jobUID)
 {
   Q_D(ctkDICOMScheduler);
 
   QMutexLocker ml(&d->mMutex);
-  QMap<QString, QSharedPointer<ctkDICOMJob>>::iterator it = d->JobsQueue.find(jobUID);
+  QMap<QString, QSharedPointer<ctkAbstractJob>>::iterator it = d->JobsQueue.find(jobUID);
   if (it == d->JobsQueue.end())
     {
     return nullptr;
@@ -752,9 +756,9 @@ QSharedPointer<ctkDICOMJob> ctkDICOMScheduler::getJobSharedByUID(const QString& 
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMJob *ctkDICOMScheduler::getJobByUID(const QString& jobUID)
+ctkAbstractJob *ctkDICOMScheduler::getJobByUID(const QString& jobUID)
 {
-  QSharedPointer<ctkDICOMJob> job = this->getJobSharedByUID(jobUID);
+  QSharedPointer<ctkAbstractJob> job = this->getJobSharedByUID(jobUID);
   if (!job)
     {
     return nullptr;
@@ -771,7 +775,7 @@ void ctkDICOMScheduler::stopAllJobs(bool stopPersistentJobs)
   QMutexLocker ml(&d->mMutex);
 
   // Stops jobs without a worker (in waiting)
-  foreach (QSharedPointer<ctkDICOMJob> job, d->JobsQueue)
+  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
     if (job->isPersistent() && !stopPersistentJobs)
       {
@@ -788,7 +792,7 @@ void ctkDICOMScheduler::stopAllJobs(bool stopPersistentJobs)
     }
 
   // Stops queued and running jobs
-  foreach (QSharedPointer<ctkDICOMWorker> worker, d->Workers)
+  foreach (QSharedPointer<ctkAbstractWorker> worker, d->Workers)
     {
     QSharedPointer<ctkAbstractJob> job = worker->jobShared();
     if (job->isPersistent() && !stopPersistentJobs)
@@ -826,7 +830,7 @@ void ctkDICOMScheduler::stopJobsByUIDs(const QStringList& patientIDs,
   QMutexLocker ml(&d->mMutex);
 
   // Stops jobs without a worker (in waiting)
-  foreach (QSharedPointer<ctkDICOMJob> job, d->JobsQueue)
+  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
     if (!job)
       {
@@ -843,10 +847,17 @@ void ctkDICOMScheduler::stopJobsByUIDs(const QStringList& patientIDs,
       continue;
       }
 
-    if ((!job->patientID().isEmpty() && patientIDs.contains(job->patientID())) ||
-        (!job->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(job->studyInstanceUID())) ||
-        (!job->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(job->seriesInstanceUID())) ||
-        (!job->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(job->sopInstanceUID())))
+    ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+    if (!dicomJob)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+      continue;
+      }
+
+    if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+        (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
+        (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
+        (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
       {
       job->setStatus(ctkAbstractJob::JobStatus::Stopped);
       this->deleteJob(job->jobUID());
@@ -854,10 +865,10 @@ void ctkDICOMScheduler::stopJobsByUIDs(const QStringList& patientIDs,
     }
 
   // Stops queued and running jobs
-  foreach (QSharedPointer<ctkDICOMWorker> worker, d->Workers)
+  foreach (QSharedPointer<ctkAbstractWorker> worker, d->Workers)
     {
-    QSharedPointer<ctkDICOMJob> job =
-      qobject_cast<QSharedPointer<ctkDICOMJob>>(worker->jobShared());
+    QSharedPointer<ctkAbstractJob> job =
+      qobject_cast<QSharedPointer<ctkAbstractJob>>(worker->jobShared());
     if (!job)
       {
       continue;
@@ -868,10 +879,17 @@ void ctkDICOMScheduler::stopJobsByUIDs(const QStringList& patientIDs,
       continue;
       }
 
-    if ((!job->patientID().isEmpty() && patientIDs.contains(job->patientID())) ||
-        (!job->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(job->studyInstanceUID())) ||
-        (!job->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(job->seriesInstanceUID())) ||
-        (!job->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(job->sopInstanceUID())))
+    ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+    if (!dicomJob)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+      continue;
+      }
+
+    if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+        (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
+        (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
+        (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
       {
       job->setStatus(ctkAbstractJob::JobStatus::Stopped);
       worker->cancel();
@@ -891,14 +909,21 @@ void ctkDICOMScheduler::raiseJobsPriorityForSeries(const QStringList& selectedSe
     }
 
   QMutexLocker ml(&d->mMutex);
-  foreach (QSharedPointer<ctkDICOMJob> job, d->JobsQueue)
+  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
     if (job->isPersistent())
       {
       continue;
       }
 
-    if (!selectedSeriesInstanceUIDs.contains(job->seriesInstanceUID()))
+    ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+    if (!dicomJob)
+      {
+      qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+      continue;
+      }
+
+    if (!selectedSeriesInstanceUIDs.contains(dicomJob->seriesInstanceUID()))
       {
       priority = QThread::Priority::LowPriority;
       }
@@ -969,7 +994,7 @@ ctkDICOMStorageListenerJob *ctkDICOMScheduler::listenerJob()
 {
   Q_D(ctkDICOMScheduler);
   QMutexLocker ml(&d->mMutex);
-  foreach(QSharedPointer<ctkDICOMJob> job, d->JobsQueue)
+  foreach(QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
     QSharedPointer<ctkDICOMStorageListenerJob> listenerJob =
       qobject_cast<QSharedPointer<ctkDICOMStorageListenerJob>>(job);
@@ -1009,16 +1034,23 @@ QSharedPointer<QThreadPool> ctkDICOMScheduler::threadPoolShared() const
 }
 
 //----------------------------------------------------------------------------
-QVariant ctkDICOMScheduler::jobToDetail(ctkDICOMJob* job)
+QVariant ctkDICOMScheduler::jobToDetail(ctkAbstractJob* job)
 {
+  ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job);
+  if (!dicomJob)
+    {
+    qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+    return QVariant();
+    }
+
   ctkDICOMJobDetail td;
   td.JobClass = job->className();
-  td.DICOMLevel = job->dicomLevel();
   td.JobUID = job->jobUID();
-  td.PatientID = job->patientID();
-  td.StudyInstanceUID = job->studyInstanceUID();
-  td.SeriesInstanceUID = job->seriesInstanceUID();
-  td.SOPInstanceUID = job->sopInstanceUID();
+  td.DICOMLevel = dicomJob->dicomLevel();
+  td.PatientID = dicomJob->patientID();
+  td.StudyInstanceUID = dicomJob->studyInstanceUID();
+  td.SeriesInstanceUID = dicomJob->seriesInstanceUID();
+  td.SOPInstanceUID = dicomJob->sopInstanceUID();
   ctkDICOMQueryJob* queryJob = qobject_cast<ctkDICOMQueryJob*>(job);
   if (queryJob && queryJob->server())
     {
@@ -1039,7 +1071,7 @@ QVariant ctkDICOMScheduler::jobToDetail(ctkDICOMJob* job)
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::onJobStarted()
 {
-  ctkDICOMJob* job = qobject_cast<ctkDICOMJob*>(this->sender());
+  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
     {
     return;
@@ -1052,12 +1084,11 @@ void ctkDICOMScheduler::onJobStarted()
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::onJobCanceled()
 {
-  ctkDICOMJob* job = qobject_cast<ctkDICOMJob*>(this->sender());
+  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
     {
     return;
     }
-
   logger.debug(job->loggerReport("canceled"));
   emit this->jobCanceled(this->jobToDetail(job));
 }
@@ -1065,7 +1096,7 @@ void ctkDICOMScheduler::onJobCanceled()
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::onJobFailed()
 {
-  ctkDICOMJob* job = qobject_cast<ctkDICOMJob*>(this->sender());
+  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
     {
     return;
@@ -1084,7 +1115,7 @@ void ctkDICOMScheduler::onJobFailed()
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::onJobFinished()
 {
-  ctkDICOMJob* job = qobject_cast<ctkDICOMJob*>(this->sender());
+  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
     {
     return;
@@ -1115,7 +1146,7 @@ void ctkDICOMScheduler::onQueueJobsInThreadPool()
   QMutexLocker ml(&d->mMutex);
   foreach (QThread::Priority priority, threadPriorityEnums)
     {
-    foreach(QSharedPointer<ctkDICOMJob> job, d->JobsQueue)
+    foreach(QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
       {
       if (job->priority() != priority)
         {
@@ -1139,8 +1170,8 @@ void ctkDICOMScheduler::onQueueJobsInThreadPool()
 
       job->setStatus(ctkAbstractJob::JobStatus::Queued);
 
-      QSharedPointer<ctkDICOMWorker> worker =
-        QSharedPointer<ctkDICOMWorker>(job->createWorker());
+      QSharedPointer<ctkAbstractWorker> worker =
+        QSharedPointer<ctkAbstractWorker>(job->createWorker());
       worker->setScheduler(*this);
 
       d->Workers.insert(job->jobUID(), worker);

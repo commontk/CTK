@@ -27,8 +27,8 @@
 // ctkDICOMCore includes
 #include "ctkDICOMScheduler.h"
 
-class ctkDICOMWorker;
-class ctkDICOMJob;
+class ctkAbstractWorker;
+class ctkAbstractJob;
 
 struct ThumbnailUID
 {
@@ -50,8 +50,8 @@ public:
   ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj);
   virtual ~ctkDICOMSchedulerPrivate();
 
-  int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkDICOMJob> job);
-  void insertJob(QSharedPointer<ctkDICOMJob> job);
+  int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job);
+  void insertJob(QSharedPointer<ctkAbstractJob> job);
   void removeJob(const QString& jobUID);
   QString generateUniqueJobUID();
   ctkDICOMServer* getServerFromProxyServersByConnectionName(const QString&);
@@ -59,8 +59,8 @@ public:
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<QThreadPool> ThreadPool;
   QList<QSharedPointer<ctkDICOMServer>> Servers;
-  QMap<QString, QSharedPointer<ctkDICOMJob>> JobsQueue;
-  QMap<QString, QSharedPointer<ctkDICOMWorker>> Workers;
+  QMap<QString, QSharedPointer<ctkAbstractJob>> JobsQueue;
+  QMap<QString, QSharedPointer<ctkAbstractWorker>> Workers;
   QMap<QString, QVariant> Filters;
   QMutex mMutex;
   int RetryDelay;
