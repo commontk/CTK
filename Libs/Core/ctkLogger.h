@@ -27,27 +27,31 @@
 // CTK includes
 #include <ctkPimpl.h>
 #include "ctkCoreExport.h"
+#include "ctkErrorLogLevel.h"
 
 class ctkLoggerPrivate;
 
-/// \deprecated This class was a wrapper around Log4Qt. Since Log4Qt dependency has been
-/// removed, it is advised to use qDebug(), qWarning() and qCritical() instead.
 /// \ingroup Core
 class CTK_CORE_EXPORT ctkLogger : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(ctkErrorLogLevel::LogLevel level READ logLevel WRITE setLogLevel);
 public:
   typedef QObject Superclass;
-  /// Default mode is Off
-  explicit ctkLogger(QString name, QObject* parent = 0);
-  virtual ~ctkLogger ();
 
-  void debug(const QString& s);
-  void info(const QString& s);
-  void trace(const QString& s);
-  void warn(const QString& s);
-  void error(const QString& s);
-  void fatal(const QString& s);
+  /// Default level is ctkErrorLogLevel::LogLevel::Warning
+  explicit ctkLogger(QString name, QObject* parent = 0);
+  virtual ~ctkLogger();
+
+  Q_INVOKABLE void trace(const QString& s);
+  Q_INVOKABLE void debug(const QString& s);
+  Q_INVOKABLE void info(const QString& s);
+  Q_INVOKABLE void warn(const QString& s);
+  Q_INVOKABLE void error(const QString& s);
+  Q_INVOKABLE void fatal(const QString& s);
+
+  void setLogLevel(const ctkErrorLogLevel::LogLevel& level);
+  ctkErrorLogLevel::LogLevel logLevel() const;
 
 protected:
   QScopedPointer<ctkLoggerPrivate> d_ptr;

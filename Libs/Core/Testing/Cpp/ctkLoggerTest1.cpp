@@ -18,11 +18,10 @@
 
 =========================================================================*/
 
-// Qt includes
-#include <QCoreApplication>
-
 // CTK includes
+#include <ctkErrorLogLevel.h>
 #include <ctkLogger.h>
+#include <ctkCoreTestingMacros.h>
 #include <ctkUtils.h>
 
 // STL includes
@@ -34,8 +33,18 @@ int ctkLoggerTest1(int argc, char * argv [] )
   Q_UNUSED(argc);
   Q_UNUSED(argv);
 
-  //--------------------------------------------------------------------
   ctkLogger logger("LoggerTest");
+
+  // Test the default log level
+#ifndef QT_NO_DEBUG
+  CHECK_INT(logger.logLevel(), ctkErrorLogLevel::LogLevel::Debug);
+#else
+  CHECK_INT(logger.logLevel(), ctkErrorLogLevel::LogLevel::Warning);
+#endif
+
+  // Test setting and getting log level
+  logger.setLogLevel(ctkErrorLogLevel::LogLevel::Info);
+  CHECK_INT(logger.logLevel(), ctkErrorLogLevel::LogLevel::Info);
 
   logger.debug("logger.debug");
   logger.info("logger.info");
