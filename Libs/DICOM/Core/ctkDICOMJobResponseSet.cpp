@@ -393,18 +393,5 @@ void ctkDICOMJobResponseSet::deepCopy(ctkDICOMJobResponseSet *node)
 //------------------------------------------------------------------------------
 QVariant ctkDICOMJobResponseSet::toVariant()
 {
-  ctkDICOMJobDetail td;
-  td.JobType = this->jobType();
-  td.JobUID = this->jobUID();
-  td.PatientID = this->patientID();
-  td.StudyInstanceUID = this->studyInstanceUID();
-  td.SeriesInstanceUID = this->seriesInstanceUID();
-  td.SOPInstanceUID = this->sopInstanceUID();
-  td.ConnectionName = this->connectionName();
-  td.NumberOfDataSets = this->datasets().count();
-
-  QVariant data;
-  data.setValue(td);
-
-  return data;
+  return QVariant::fromValue(ctkDICOMJobDetail(*this));
 }

@@ -150,3 +150,8 @@ void ctkAbstractJob::setPriority(const QThread::Priority &priority)
   this->Priority = priority;
 }
 
+//----------------------------------------------------------------------------
+QVariant ctkAbstractJob::toVariant()
+{
+  return QVariant::fromValue(ctkJobDetail(*this));
+}

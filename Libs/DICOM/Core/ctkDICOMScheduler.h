@@ -188,9 +188,6 @@ public:
   Q_INVOKABLE bool isStorageListenerActive();
   ///@}
 
-  /// Utility method to transform/pass informations between threads by Qt signals
-  Q_INVOKABLE QVariant jobToDetail(ctkAbstractJob* job) override;
-
 protected:
   ctkDICOMScheduler(ctkDICOMSchedulerPrivate* pimpl, QObject* parent);
 

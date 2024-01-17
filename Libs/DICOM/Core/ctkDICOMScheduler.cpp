@@ -751,39 +751,3 @@ bool ctkDICOMScheduler::isStorageListenerActive()
     }
   return false;
 }
-
-//----------------------------------------------------------------------------
-QVariant ctkDICOMScheduler::jobToDetail(ctkAbstractJob* job)
-{
-  ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job);
-  if (!dicomJob)
-    {
-    qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
-    return QVariant();
-    }
-
-  ctkDICOMJobDetail td;
-  td.JobClass = job->className();
-  td.JobUID = job->jobUID();
-  td.DICOMLevel = dicomJob->dicomLevel();
-  td.PatientID = dicomJob->patientID();
-  td.StudyInstanceUID = dicomJob->studyInstanceUID();
-  td.SeriesInstanceUID = dicomJob->seriesInstanceUID();
-  td.SOPInstanceUID = dicomJob->sopInstanceUID();
-
-  ctkDICOMQueryJob* queryJob = qobject_cast<ctkDICOMQueryJob*>(job);
-  if (queryJob && queryJob->server())
-    {
-    td.ConnectionName = queryJob->server()->connectionName();
-    }
-  ctkDICOMRetrieveJob* retrieveJob = qobject_cast<ctkDICOMRetrieveJob*>(job);
-  if (retrieveJob && retrieveJob->server())
-    {
-    td.ConnectionName = retrieveJob->server()->connectionName();
-    }
-
-  QVariant data;
-  data.setValue(td);
-
-  return data;
-}

@@ -158,3 +158,9 @@ void ctkDICOMJob::copyJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSe
     this->JobResponseSets.append(jobResponseSetCopy);
   }
 }
+
+//------------------------------------------------------------------------------
+QVariant ctkDICOMJob::toVariant()
+{
+  return QVariant::fromValue(ctkDICOMJobDetail(*this));
+}

@@ -370,24 +370,6 @@ QSharedPointer<QThreadPool> ctkAbstractScheduler::threadPoolShared() const
 }
 
 //----------------------------------------------------------------------------
-QVariant ctkAbstractScheduler::jobToDetail(ctkAbstractJob* job)
-{
-  if (!job)
-    {
-    return QVariant();
-    }
-
-  ctkJobDetail td;
-  td.JobClass = job->className();
-  td.JobUID = job->jobUID();
-
-  QVariant data;
-  data.setValue(td);
-
-  return data;
-}
-
-//----------------------------------------------------------------------------
 void ctkAbstractScheduler::onJobStarted()
 {
   ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
@@ -397,7 +379,7 @@ void ctkAbstractScheduler::onJobStarted()
     }
 
   logger.debug(job->loggerReport("started"));
-  emit this->jobStarted(this->jobToDetail(job));
+  emit this->jobStarted(job->toVariant());
 }
 
 //----------------------------------------------------------------------------
@@ -409,7 +391,7 @@ void ctkAbstractScheduler::onJobCanceled()
     return;
     }
   logger.debug(job->loggerReport("canceled"));
-  emit this->jobCanceled(this->jobToDetail(job));
+  emit this->jobCanceled(job->toVariant());
 }
 
 //----------------------------------------------------------------------------
@@ -423,7 +405,7 @@ void ctkAbstractScheduler::onJobFailed()
 
   logger.debug(job->loggerReport("failed"));
 
-  QVariant data = this->jobToDetail(job);
+  QVariant data = job->toVariant();
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);
   this->deleteJob(jobUID);
@@ -442,7 +424,7 @@ void ctkAbstractScheduler::onJobFinished()
 
   logger.debug(job->loggerReport("finished"));
 
-  QVariant data = this->jobToDetail(job);
+  QVariant data = job->toVariant();
   QString jobUID = job->jobUID();
   this->deleteWorker(jobUID);
   this->deleteJob(jobUID);

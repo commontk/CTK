@@ -22,6 +22,7 @@
 =========================================================================*/
 
 // ctkDICOMCore includes
+#include "ctkDICOMJobResponseSet.h" // For ctkDICOMJobDetail
 #include "ctkDICOMQueryJob_p.h"
 #include "ctkDICOMQueryWorker.h"
 #include "ctkDICOMServer.h"
@@ -203,4 +204,10 @@ ctkDICOMWorker *ctkDICOMQueryJob::createWorker()
     new ctkDICOMQueryWorker;
   worker->setJob(*this);
   return worker;
+}
+
+//------------------------------------------------------------------------------
+QVariant ctkDICOMQueryJob::toVariant()
+{
+  return QVariant::fromValue(ctkDICOMJobDetail(*this, this->server()->connectionName()));
 }

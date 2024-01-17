@@ -102,6 +102,13 @@ public:
   /// Create a copy of the object
   Q_INVOKABLE virtual ctkDICOMJob* generateCopy() const = 0;
 
+  /// Return the QVariant value of this job.
+  ///
+  /// The value is set using the ctkDICOMJobDetail metatype and is used to pass
+  /// information between threads using Qt signals.
+  /// \sa ctkDICOMJobDetail
+  Q_INVOKABLE virtual QVariant toVariant() override;
+
 Q_SIGNALS:
   void progressJobDetail(QVariant);
   void finishedJobDetail(QVariant);

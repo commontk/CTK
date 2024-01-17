@@ -93,6 +93,13 @@ public:
   /// Generate worker for job
   Q_INVOKABLE ctkDICOMWorker* createWorker() override;
 
+  /// Return the QVariant value of this job.
+  ///
+  /// The value is set using the ctkDICOMJobDetail metatype and is used to pass
+  /// information between threads using Qt signals.
+  /// \sa ctkDICOMJobDetail
+  Q_INVOKABLE virtual QVariant toVariant() override;
+
 protected:
   QScopedPointer<ctkDICOMQueryJobPrivate> d_ptr;
 

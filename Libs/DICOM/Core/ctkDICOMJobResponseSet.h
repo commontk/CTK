@@ -157,16 +157,47 @@ private:
 };
 
 struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail {
-  explicit ctkDICOMJobDetail() : ctkJobDetail(){}
+  explicit ctkDICOMJobDetail() = default;
+
+  explicit ctkDICOMJobDetail(const ctkDICOMJob& job) : ctkJobDetail(job)
+  {
+    this->DICOMLevel = job.dicomLevel();
+    this->PatientID = job.patientID();
+    this->StudyInstanceUID = job.studyInstanceUID();
+    this->SeriesInstanceUID = job.seriesInstanceUID();
+    this->SOPInstanceUID = job.sopInstanceUID();
+  }
+
+  explicit ctkDICOMJobDetail(const ctkDICOMJob& job, const QString& connectionName)
+    : ctkDICOMJobDetail(job)
+  {
+    this->ConnectionName = connectionName;
+  }
+
+  explicit ctkDICOMJobDetail(const ctkDICOMJobResponseSet& responseSet)
+  {
+    this->PatientID = responseSet.patientID();
+    this->StudyInstanceUID = responseSet.studyInstanceUID();
+    this->SeriesInstanceUID = responseSet.seriesInstanceUID();
+    this->SOPInstanceUID = responseSet.sopInstanceUID();
+    this->ConnectionName = responseSet.connectionName();
+    this->NumberOfDataSets = responseSet.datasets().count();
+  }
   virtual ~ctkDICOMJobDetail() = default;
 
-  ctkDICOMJobResponseSet::JobType JobType{ctkDICOMJobResponseSet::JobType::None};
-  ctkDICOMJob::DICOMLevels DICOMLevel{ctkDICOMJob::DICOMLevels::Patients};
   QString PatientID;
   QString StudyInstanceUID;
   QString SeriesInstanceUID;
   QString SOPInstanceUID;
+
+  // Common to DICOM Query and Retrieve jobs, and DICOM JobResponseSet
   QString ConnectionName;
+
+  // Specific to DICOM Query and Retrieve jobs
+  ctkDICOMJob::DICOMLevels DICOMLevel{ctkDICOMJob::DICOMLevels::Patients};
+
+  // Specific to DICOM JobResponseSet
+  ctkDICOMJobResponseSet::JobType JobType{ctkDICOMJobResponseSet::JobType::None};
   int NumberOfDataSets{0};
 };
 Q_DECLARE_METATYPE(ctkDICOMJobDetail);

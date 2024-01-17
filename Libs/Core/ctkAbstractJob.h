@@ -27,6 +27,7 @@
 // Qt includes
 #include <QObject>
 #include <QThread>
+#include <QVariant>
 
 // CTK includes
 #include "ctkCoreExport.h"
@@ -121,6 +122,13 @@ public:
   /// Logger report string formatting for specific job
   Q_INVOKABLE virtual QString loggerReport(const QString& status) const = 0;
 
+  /// Return the QVariant value of this job.
+  ///
+  /// The value is set using the ctkJobDetail metatype and is used to pass
+  /// information between threads using Qt signals.
+  /// \sa ctkJobDetail
+  Q_INVOKABLE virtual QVariant toVariant();
+
 Q_SIGNALS:
   void started();
   void finished();
@@ -141,8 +149,15 @@ private:
   Q_DISABLE_COPY(ctkAbstractJob)
 };
 
+//------------------------------------------------------------------------------
+/// \ingroup Core
 struct CTK_CORE_EXPORT ctkJobDetail {
   explicit ctkJobDetail(){}
+  explicit ctkJobDetail(const ctkAbstractJob& job)
+  {
+    this->JobClass = job.className();
+    this->JobUID = job.jobUID();
+  }
   virtual ~ctkJobDetail() = default;
 
   QString JobClass;

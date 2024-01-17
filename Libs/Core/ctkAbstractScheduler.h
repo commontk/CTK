@@ -92,9 +92,6 @@ public:
   /// (not Python-wrappable).
   QSharedPointer<QThreadPool> threadPoolShared() const;
 
-  /// Utility method to transform/pass informations between threads by qt signals
-  Q_INVOKABLE virtual QVariant jobToDetail(ctkAbstractJob* job);
-
 Q_SIGNALS:
   void jobStarted(QVariant data);
   void jobFinished(QVariant data);
