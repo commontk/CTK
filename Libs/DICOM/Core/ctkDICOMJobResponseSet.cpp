@@ -294,7 +294,7 @@ QSharedPointer<ctkDICOMItem> ctkDICOMJobResponseSet::datasetShared() const
 void ctkDICOMJobResponseSet::setDatasets(QMap<QString, DcmItem *> dcmItems, bool takeOwnership)
 {
   Q_D(ctkDICOMJobResponseSet);
-  for(QString key : dcmItems.keys())
+  for(const QString& key : dcmItems.keys())
     {
     DcmItem *dcmItem = dcmItems.value(key);
     if (!dcmItem)
@@ -316,7 +316,7 @@ QMap<QString, ctkDICOMItem*> ctkDICOMJobResponseSet::datasets() const
   Q_D(const ctkDICOMJobResponseSet);
   QMap<QString, ctkDICOMItem*> datasets;
 
-  for(QString key : d->Datasets.keys())
+  for(const QString& key : d->Datasets.keys())
     {
     QSharedPointer<ctkDICOMItem> dcmItem = d->Datasets.value(key);
     if (!dcmItem)
@@ -361,7 +361,7 @@ void ctkDICOMJobResponseSet::deepCopy(ctkDICOMJobResponseSet *node)
   d->Datasets.clear();
 
   QMap<QString, ctkDICOMItem *> nodeDatasets = node->datasets();
-  for(QString key : nodeDatasets.keys())
+  for(const QString& key : nodeDatasets.keys())
     {
     ctkDICOMItem* nodeDataset = nodeDatasets.value(key);
     if (!nodeDataset)
