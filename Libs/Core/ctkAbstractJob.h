@@ -141,5 +141,13 @@ private:
   Q_DISABLE_COPY(ctkAbstractJob)
 };
 
+struct CTK_CORE_EXPORT ctkJobDetail {
+  explicit ctkJobDetail(){}
+  virtual ~ctkJobDetail() = default;
+
+  QString JobClass;
+  QString JobUID;
+};
+Q_DECLARE_METATYPE(ctkJobDetail);
 
 #endif // ctkAbstractJob_h

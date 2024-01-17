@@ -377,8 +377,12 @@ QVariant ctkAbstractScheduler::jobToDetail(ctkAbstractJob* job)
     return QVariant();
     }
 
+  ctkJobDetail td;
+  td.JobClass = job->className();
+  td.JobUID = job->jobUID();
+
   QVariant data;
-  data.setValue(job->jobUID());
+  data.setValue(td);
 
   return data;
 }

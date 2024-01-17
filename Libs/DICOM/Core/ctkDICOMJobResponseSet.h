@@ -153,14 +153,12 @@ private:
   Q_DISABLE_COPY(ctkDICOMJobResponseSet);
 };
 
-struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail {
-  explicit ctkDICOMJobDetail(){}
-  virtual ~ctkDICOMJobDetail(){};
+struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail {
+  explicit ctkDICOMJobDetail() : ctkJobDetail(){}
+  virtual ~ctkDICOMJobDetail() = default;
 
   ctkDICOMJobResponseSet::JobType JobType{ctkDICOMJobResponseSet::JobType::None};
-  QString JobClass;
   ctkDICOMJob::DICOMLevels DICOMLevel{ctkDICOMJob::DICOMLevels::Patients};
-  QString JobUID;
   QString PatientID;
   QString StudyInstanceUID;
   QString SeriesInstanceUID;

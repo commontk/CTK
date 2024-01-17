@@ -45,6 +45,8 @@ public:
   ctkDICOMCorePythonQtDecorators()
     {
     PythonQt::self()->registerCPPClass("ctkDICOMJobDetail", 0, "CTKDICOMCore");
+    PythonQt::self()->addParentClass("ctkDICOMJobDetail", "ctkJobDetail",
+                                     PythonQtUpcastingOffset<ctkDICOMJobDetail,ctkJobDetail>());
     }
 
 public slots:
@@ -57,15 +59,6 @@ public slots:
     return new ctkDICOMJobDetail();
     }
 
-  void setJobClass(ctkDICOMJobDetail* td, const QString& jobClass)
-    {
-    td->JobClass = jobClass;
-    }
-  QString jobClass(ctkDICOMJobDetail* td)
-    {
-    return td->JobClass;
-    }
-
   void setJobType(ctkDICOMJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
     {
     td->JobType = jobType;
@@ -73,15 +66,6 @@ public slots:
   ctkDICOMJobResponseSet::JobType jobType(ctkDICOMJobDetail* td)
     {
     return td->JobType;
-    }
-
-  void setJobUID(ctkDICOMJobDetail* td, const QString& jobUID)
-    {
-    td->JobUID = jobUID;
-    }
-  QString jobUID(ctkDICOMJobDetail* td)
-    {
-    return td->JobUID;
     }
 
   void setPatientID(ctkDICOMJobDetail* td, const QString& patientID)
