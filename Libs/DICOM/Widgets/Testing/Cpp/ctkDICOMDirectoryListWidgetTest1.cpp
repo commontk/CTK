@@ -33,6 +33,12 @@ int ctkDICOMDirectoryListWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+  Q_UNUSED(testName);
+
+  bool interactive = arguments.removeOne("-I");
+
   ctkDICOMDatabase database;
   ctkDICOMDirectoryListWidget listWidget;
   listWidget.setDICOMDatabase(0);
@@ -42,7 +48,7 @@ int ctkDICOMDirectoryListWidgetTest1( int argc, char * argv [] )
 
   listWidget.show();
 
-  if (argc <= 1 || QString(argv[1]) != "-I")
+  if (!interactive)
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

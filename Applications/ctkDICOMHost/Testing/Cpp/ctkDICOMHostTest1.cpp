@@ -33,14 +33,20 @@ int ctkDICOMHostTest1(int argc, char * argv [])
   QCoreApplication app(argc, argv);
 
   QStringList arguments = app.arguments();
-  arguments.pop_front(); // remove "program" name
-  if (!arguments.count())
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 1)
     {
-    std::cerr << "Usage: ctkDICOMHostTest1 /path/to/ctkDICOMHost" << std::endl;
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-ctkDICOMHost-executable>" << std::endl;
     return EXIT_FAILURE;
     }
 
   QString command = arguments.at(0);
+
+  std::cout << "Testing:\n"
+            << qPrintable(command) << std::endl;
+
   QProcess process;
   process.start(command, /* arguments= */ QStringList());
   bool res = process.waitForStarted();

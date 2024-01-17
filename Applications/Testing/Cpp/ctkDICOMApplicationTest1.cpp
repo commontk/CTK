@@ -206,10 +206,19 @@ int main(int argc, char * argv []) {
   QCoreApplication app(argc, argv);
   QTextStream out(stdout);
 
-  if ( argc < 10 )
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 9)
   {
-    out << "ERROR: invalid arguments.  Should be:\n";
-    out << " ctkDICOMApplicationTest1 <dcmqrscp> <configfile> <dicomData1> <dcmData2> <storescu> <ctkDICOMQuery> <ctkDICOMRetrieve> <retrieveDirectory>\n";
+    std::cerr << "ERROR: invalid or missing arguments.\n\n"
+              << "Usage: " << qPrintable(testName)
+              << " <dcmqrscp> <configfile>"
+                 " <dicomData1>"
+                 " <dicomData2>"
+                 " <storescu>"
+                 " <ctkDICOMQuery> <databaseFile>"
+                 " <ctkDICOMRetrieve> <retrieveDirectory>\n";
     return EXIT_FAILURE;
   }
 

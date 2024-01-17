@@ -35,28 +35,26 @@
 // STD includes
 #include <iostream>
 
-void ctkDICOMRetrieveTest2PrintUsage()
-{
-  std::cout << " ctkDICOMRetrieveTest2 images" << std::endl;
-}
 
 // Test on a real local database
 int ctkDICOMRetrieveTest2( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (!arguments.count())
+    {
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-image> [...]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   ctkDICOMTester tester;
   std::cerr << "ctkDICOMRetrieveTest2: Starting dcmqrscp\n";
   tester.startDCMQRSCP();
 
-  QStringList arguments = app.arguments();
-  arguments.pop_front(); // remove application name
-  arguments.pop_front(); // remove test name
-  if (!arguments.count())
-    {
-    ctkDICOMRetrieveTest2PrintUsage();
-    return EXIT_FAILURE;
-    }
   std::cerr << "ctkDICOMRetrieveTest2: Storing data to dcmqrscp\n";
   tester.storeData(arguments);
 

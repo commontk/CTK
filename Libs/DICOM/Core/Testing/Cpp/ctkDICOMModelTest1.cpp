@@ -41,21 +41,28 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
-  if (argc <= 2)
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 2)
     {
-    std::cerr << "Warning, no sql file given. Test stops" << std::endl;
-    std::cerr << "Usage: qctkDICOMModelTest1 <scratch.db> <dumpfile.sql>" << std::endl;
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <scratch.db> <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
     }
 
+  QString databaseFile(arguments.at(0));
+  QString sqlFileName(arguments.at(1));
+
   try
   {
-    ctkDICOMDatabase myCTK( argv[1] );
+    ctkDICOMDatabase myCTK( databaseFile );
 
-    if (!myCTK.initializeDatabase(argv[2]))
+    if (!myCTK.initializeDatabase(sqlFileName.toUtf8()))
     {
-      std::cerr << "Error when initializing the data base: " << argv[2]
-          << " error: " << myCTK.lastError().toStdString();
+      std::cerr << "Error when initializing the data base: " << qPrintable(sqlFileName)
+                << " error: " << qPrintable(myCTK.lastError()) << std::endl;
+      return EXIT_FAILURE;
     }
     /*
   QSqlQuery toto("SELECT PatientsName as 'Name tt' FROM Patients ORDER BY \"Name tt\" ASC", myCTK.database());
@@ -92,8 +99,8 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   }
   catch (const std::exception& e)
   {
-    std::cerr << "Error when opening the data base file: " << argv[1]
-        << " error: " << e.what();
+    std::cerr << "Error when opening the data base file: " << qPrintable(databaseFile)
+              << " error: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
 }

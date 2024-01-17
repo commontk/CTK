@@ -38,12 +38,18 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
-  if (argc <= 1)
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 1)
     {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
-    std::cerr << "Usage: ctkDICOMDatabaseTest3 <olddumpfile.sql>" << std::endl;
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
     }
+
+  QString sqlFileName(arguments.at(0));
 
   QTemporaryDir tempDirectory;
   CHECK_BOOL(tempDirectory.isValid(), true);
@@ -59,9 +65,9 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
   {
     ctkDICOMDatabase myCTK( databaseFileName );
 
-    if (!myCTK.initializeDatabase(argv[1]))
+    if (!myCTK.initializeDatabase(sqlFileName.toUtf8()))
     {
-      std::cerr << "Error when initializing the data base with: " << argv[1]
+      std::cerr << "Error when initializing the data base with: " << qPrintable(sqlFileName)
           << " error: " << myCTK.lastError().toStdString();
       return EXIT_FAILURE;
     }

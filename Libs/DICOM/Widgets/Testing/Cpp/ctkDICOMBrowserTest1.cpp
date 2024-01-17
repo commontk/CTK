@@ -40,11 +40,19 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  qDebug() << "argc = " << argc;
-  for (int i = 0; i < argc; ++i)
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  bool interactive = arguments.removeOne("-I");
+
+  if (arguments.count() != 1)
     {
-    qDebug() << "\t" << argv[i];
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " [-I] <path-to-dicom-directory>" << std::endl;
+    return EXIT_FAILURE;
     }
+
+  QString dicomDirectory(arguments.at(0));
 
   QFileInfo tempFileInfo(QDir::tempPath() + QString("/ctkDICOMBrowserTest1-db"));
   QString dbDir = tempFileInfo.absoluteFilePath();
@@ -64,7 +72,7 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   browser.show();
 
   browser.setDisplayImportSummary(false);
-  qDebug() << "Importing directory " << argv[1];
+  qDebug() << "Importing directory " << dicomDirectory;
 
   // [Deprecated]
   // make sure copy/link dialog doesn't pop up, always copy on import
@@ -77,7 +85,7 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   // [/Deprecated]
 
   // Test import of a few specific files
-  QDirIterator it(argv[1], QStringList() << "*.IMA", QDir::Files, QDirIterator::Subdirectories);
+  QDirIterator it(dicomDirectory, QStringList() << "*.IMA", QDir::Files, QDirIterator::Subdirectories);
   // Skip a few files
   it.next();
   it.next();
@@ -99,7 +107,7 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   CHECK_INT(browser.seriesAddedDuringImport(), 1);
   CHECK_INT(browser.instancesAddedDuringImport(), 3);
 
-  browser.importDirectories(QStringList() << argv[1]);
+  browser.importDirectories(QStringList() << dicomDirectory);
   browser.waitForImportFinished();
 
   qDebug() << "\n\nAdded to database directory: " << files;
@@ -116,7 +124,7 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
 
   qDebug() << "\n\nAdded to database directory: " << dbDir;
 
-  if (argc <= 2 || QString(argv[argc - 1]) != "-I")
+  if (!interactive)
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

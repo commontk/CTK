@@ -87,10 +87,7 @@ int ctkFileDialogTest1(int argc, char * argv [] )
           {"I", "Run in interactive mode"},
           {"do-not-use-native-dialogs", "Do not use native dialogs"},
         });
-  parser.process(app);
-
-  QStringList arguments = app.arguments();
-  arguments.pop_front(); // remove application name
+  parser.process(app); // Automatically exit if there is a parsing error
 
   bool skipNativeDialogs = parser.isSet("do-not-use-native-dialogs");
   QApplication::setAttribute(Qt::AA_DontUseNativeDialogs, skipNativeDialogs);

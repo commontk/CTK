@@ -21,6 +21,10 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QStandardPaths>
+
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMTester.h"
@@ -29,112 +33,68 @@
 #include <iostream>
 #include <cstdlib>
 
-void printUsage()
-{
-  std::cout << " ctkDICOMTesterTest1 [<dcmqrscp>] [<configfile>]" << std::endl;
-}
 
 int ctkDICOMTesterTest1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
 
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+  Q_UNUSED(testName);
+
   ctkDICOMTester tester;
 
-  if (argc > 1)
+  // Usage: ctkDICOMTesterTest1 [<dcmqrscp>] [<configfile>]
+  if (arguments.count() > 0)
     {
-    tester.setDCMQRSCPExecutable(argv[1]);
-    if (tester.dcmqrscpExecutable() != argv[1])
-      {
-       std::cerr << __LINE__
-                 << ": Failed to set dcmqrscp: " << argv[1]
-                 << " value:" << qPrintable(tester.dcmqrscpExecutable())
-                 << std::endl;
-       return EXIT_FAILURE;
-      }
+    QString dcmqrscpExecutable(arguments.at(0));
+    tester.setDCMQRSCPExecutable(dcmqrscpExecutable);
+    CHECK_QSTRING(tester.dcmqrscpExecutable(), dcmqrscpExecutable);
     }
-  if (argc > 2)
+  if (arguments.count() > 1)
     {
+    QString dcmqrscpConfigFile(arguments.at(1));
     tester.setDCMQRSCPConfigFile(argv[2]);
-    if (tester.dcmqrscpConfigFile() != argv[2])
-      {
-       std::cerr << __LINE__
-                 << ": Failed to set dcmqrscp config file: " << argv[2]
-                 << " value:" << qPrintable(tester.dcmqrscpConfigFile())
-                 << std::endl;
-       return EXIT_FAILURE;
-      }
+    CHECK_QSTRING(tester.dcmqrscpConfigFile(), dcmqrscpConfigFile);
     }
 
   QString dcmqrscp(tester.dcmqrscpExecutable());
   QString dcmqrscpConf(tester.dcmqrscpConfigFile());
 
-  if (!QFileInfo(dcmqrscp).exists() ||
-      !QFileInfo(dcmqrscp).isExecutable())
+  if (dcmqrscp == "dcmqrscp")
     {
-    std::cerr << __LINE__
-              << ": Wrong dcmqrscp executable: " << qPrintable(dcmqrscp)
-              << std::endl;
+    // If not found, assume the executable is in the PATH
+    dcmqrscp = QStandardPaths::findExecutable(dcmqrscp);
     }
+  CHECK_BOOL(QFileInfo::exists(dcmqrscp), true);
+  CHECK_BOOL(QFileInfo(dcmqrscp).isExecutable(), true);
 
-  if (!QFileInfo(dcmqrscpConf).exists() ||
-      !QFileInfo(dcmqrscpConf).isReadable())
-    {
-    std::cerr << __LINE__
-              << ": Wrong dcmqrscp executable: " << qPrintable(dcmqrscp)
-              << std::endl;
-    }
+  CHECK_BOOL(QFileInfo::exists(dcmqrscpConf), true);
+  CHECK_BOOL(QFileInfo(dcmqrscpConf).isReadable(), true);
 
   QProcess* process = tester.startDCMQRSCP();
-  if (!process)
-    {
-    std::cerr << __LINE__
-              << ": Failed to start dcmqrscp: " << qPrintable(dcmqrscp)
-              << " with config file:" << qPrintable(dcmqrscpConf) << std::endl;
-    return EXIT_FAILURE;
-    }
-  bool res = tester.stopDCMQRSCP();
-  if (!res)
-    {
-    std::cerr << __LINE__
-              << ": Failed to stop dcmqrscp: " << qPrintable(dcmqrscp)
-              << " with config file:" << qPrintable(dcmqrscpConf) << std::endl;
-    return EXIT_FAILURE;
-    }
 
+  // Check if dcmqrscp started
+  CHECK_NOT_NULL(process);
+
+  // Check if dcmqrscp can be stopped
+  CHECK_BOOL(tester.stopDCMQRSCP(), true);
+
+  // Check if dcmqrscp can be re-started
   process = tester.startDCMQRSCP();
-  if (!process)
-    {
-    std::cerr << __LINE__
-              << ": Failed to start dcmqrscp: " << qPrintable(dcmqrscp)
-              << " with config file:" << qPrintable(dcmqrscpConf)
-              << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_NOT_NULL(process);
+
+  // Check if dcmqrscp is already running (in that
+  // case, it returns null)
   process = tester.startDCMQRSCP();
-  if (process)
-    {
-    std::cerr << __LINE__
-              << ": Failed to start dcmqrscp: " << qPrintable(dcmqrscp)
-              << " with config file:"<< qPrintable(dcmqrscpConf) << std::endl;
-    return EXIT_FAILURE;
-    }
-  res = tester.stopDCMQRSCP();
-  if (!res)
-    {
-    std::cerr << __LINE__
-              << ": Failed to stop dcmqrscp: " << qPrintable(dcmqrscp)
-              << " with config file:" << qPrintable(dcmqrscpConf) << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_NULL(process);
+
+  // Check if dcmqrscp can be stopped
+  CHECK_BOOL(tester.stopDCMQRSCP(), true);
+
   // there should be no process to stop
-  res = tester.stopDCMQRSCP();
-  if (res)
-    {
-    std::cerr << __LINE__
-              << ": Failed to stop dcmqrscp: " << qPrintable(dcmqrscp)
-              << " with config file:" << qPrintable(dcmqrscpConf) << std::endl;
-    return EXIT_FAILURE;
-    }
+  CHECK_BOOL(tester.stopDCMQRSCP(), false);
+
   return EXIT_SUCCESS;
 }
 

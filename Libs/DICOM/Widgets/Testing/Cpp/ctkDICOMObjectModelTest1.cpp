@@ -37,10 +37,33 @@
 int ctkDICOMObjectModelTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
+
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+  Q_UNUSED(testName);
+
+  bool interactive = arguments.removeOne("-I");
+
   QString fileName;
-  //TODO: Add the option for reading the test file from argv
-  fileName = QFileDialog::getOpenFileName( 0,
-    "Choose a DCM File", ".","DCM (*)" );
+
+  if (!interactive && arguments.count() != 1)
+    {
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " [-I] <path-to-dicom-file>" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (arguments.count() == 1)
+    {
+    fileName = arguments.at(0);
+    }
+
+  if (interactive && arguments.count() == 0)
+    {
+    fileName = QFileDialog::getOpenFileName(
+                 0, "Choose a DCM File", ".","DCM (*)" );
+    }
+
   ctkDICOMObjectModel dcmObjModel;
   dcmObjModel.setFile(fileName);
 
@@ -55,6 +78,11 @@ int ctkDICOMObjectModelTest1( int argc, char * argv [] )
   //viewer->header()->setResizeMode( QHeaderView::Stretch);
   viewer->show();
   viewer->raise();
+
+  if (!interactive)
+    {
+    QTimer::singleShot(200, &app, SLOT(quit()));
+    }
 
   return app.exec();
 }
