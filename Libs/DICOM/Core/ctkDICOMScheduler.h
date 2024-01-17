@@ -167,8 +167,8 @@ public:
   Q_INVOKABLE int numberOfJobs();
   Q_INVOKABLE int numberOfPersistentJobs();
   Q_INVOKABLE void addJob(ctkAbstractJob* job);
-  Q_INVOKABLE void deleteJob(const QString& jobUID);
-  Q_INVOKABLE void deleteWorker(const QString& jobUID);
+  Q_INVOKABLE void deleteJob(const QString& jobUID) override;
+  Q_INVOKABLE void deleteWorker(const QString& jobUID) override;
   QSharedPointer<ctkAbstractJob> getJobSharedByUID(const QString& jobUID);
   Q_INVOKABLE ctkAbstractJob* getJobByUID(const QString& jobUID);
   Q_INVOKABLE void waitForFinish();
@@ -236,10 +236,6 @@ Q_SIGNALS:
   void progressJobDetail(QVariant data);
 
 public Q_SLOTS:
-  void onJobStarted() override;
-  void onJobCanceled() override;
-  void onJobFailed() override;
-  void onJobFinished() override;
   void onQueueJobsInThreadPool();
 
 protected:

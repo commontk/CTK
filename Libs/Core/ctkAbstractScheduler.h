@@ -41,6 +41,12 @@ public:
   explicit ctkAbstractScheduler(QObject* parent = 0);
   virtual ~ctkAbstractScheduler();
 
+  ///@{
+  /// Jobs managment
+  Q_INVOKABLE virtual void deleteJob(const QString& jobUID) = 0;
+  Q_INVOKABLE virtual void deleteWorker(const QString& jobUID) = 0;
+  ///@}
+
   /// Utility method to transform/pass informations between threads by qt signals
   Q_INVOKABLE virtual QVariant jobToDetail(ctkAbstractJob* job);
 
@@ -51,10 +57,10 @@ Q_SIGNALS:
   void jobFailed(QVariant data);
 
 public Q_SLOTS:
-  virtual void onJobStarted() = 0;
-  virtual void onJobFinished() = 0;
-  virtual void onJobCanceled() = 0;
-  virtual void onJobFailed() = 0;
+  virtual void onJobStarted();
+  virtual void onJobFinished();
+  virtual void onJobCanceled();
+  virtual void onJobFailed();
 
 private:
   Q_DISABLE_COPY(ctkAbstractScheduler)

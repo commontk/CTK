@@ -24,6 +24,10 @@
 // CTK includes
 #include "ctkAbstractJob.h"
 #include "ctkAbstractScheduler.h"
+#include "ctkLogger.h"
+
+static ctkLogger logger ("org.commontk.core.AbstractScheduler");
+
 
 //---------------------------------------------------------------------------
 // ctkAbstractScheduler methods
@@ -49,4 +53,67 @@ QVariant ctkAbstractScheduler::jobToDetail(ctkAbstractJob* job)
   data.setValue(job->jobUID());
 
   return data;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractScheduler::onJobStarted()
+{
+  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
+  if (!job)
+    {
+    return;
+    }
+
+  logger.debug(job->loggerReport("started"));
+  emit this->jobStarted(this->jobToDetail(job));
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractScheduler::onJobCanceled()
+{
+  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
+  if (!job)
+    {
+    return;
+    }
+  logger.debug(job->loggerReport("canceled"));
+  emit this->jobCanceled(this->jobToDetail(job));
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractScheduler::onJobFailed()
+{
+  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
+  if (!job)
+    {
+    return;
+    }
+
+  logger.debug(job->loggerReport("failed"));
+
+  QVariant data = this->jobToDetail(job);
+  QString jobUID = job->jobUID();
+  this->deleteWorker(jobUID);
+  this->deleteJob(jobUID);
+
+  emit this->jobFailed(data);
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractScheduler::onJobFinished()
+{
+  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
+  if (!job)
+    {
+    return;
+    }
+
+  logger.debug(job->loggerReport("finished"));
+
+  QVariant data = this->jobToDetail(job);
+  QString jobUID = job->jobUID();
+  this->deleteWorker(jobUID);
+  this->deleteJob(jobUID);
+
+  emit this->jobFinished(data);
 }

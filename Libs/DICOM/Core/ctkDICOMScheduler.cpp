@@ -21,6 +21,9 @@
 
 =========================================================================*/
 
+// ctkCore includes
+#include "ctkLogger.h"
+
 // ctkDICOMCore includes
 #include "ctkDICOMInserterJob.h"
 #include "ctkDICOMJobResponseSet.h"
@@ -31,7 +34,6 @@
 #include "ctkDICOMServer.h"
 #include "ctkDICOMStorageListenerJob.h"
 #include "ctkDICOMUtil.h"
-#include "ctkLogger.h"
 
 // dcmtk includes
 #include <dcmtk/dcmdata/dcdeftag.h>
@@ -1066,69 +1068,6 @@ QVariant ctkDICOMScheduler::jobToDetail(ctkAbstractJob* job)
   data.setValue(td);
 
   return data;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMScheduler::onJobStarted()
-{
-  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
-  if (!job)
-    {
-    return;
-    }
-
-  logger.debug(job->loggerReport("started"));
-  emit this->jobStarted(this->jobToDetail(job));
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMScheduler::onJobCanceled()
-{
-  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
-  if (!job)
-    {
-    return;
-    }
-  logger.debug(job->loggerReport("canceled"));
-  emit this->jobCanceled(this->jobToDetail(job));
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMScheduler::onJobFailed()
-{
-  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
-  if (!job)
-    {
-    return;
-    }
-
-  logger.debug(job->loggerReport("failed"));
-
-  QVariant data = this->jobToDetail(job);
-  QString jobUID = job->jobUID();
-  this->deleteWorker(jobUID);
-  this->deleteJob(jobUID);
-
-  emit this->jobFailed(data);
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMScheduler::onJobFinished()
-{
-  ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
-  if (!job)
-    {
-    return;
-    }
-
-  logger.debug(job->loggerReport("finished"));
-
-  QVariant data = this->jobToDetail(job);
-  QString jobUID = job->jobUID();
-  this->deleteWorker(jobUID);
-  this->deleteJob(jobUID);
-
-  emit this->jobFinished(data);
 }
 
 //----------------------------------------------------------------------------
