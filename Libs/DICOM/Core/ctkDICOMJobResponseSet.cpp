@@ -391,7 +391,7 @@ void ctkDICOMJobResponseSet::deepCopy(ctkDICOMJobResponseSet *node)
 }
 
 //------------------------------------------------------------------------------
-QVariant ctkDICOMJobResponseSet::jobResponseSetToDetail()
+QVariant ctkDICOMJobResponseSet::toVariant()
 {
   ctkDICOMJobDetail td;
   td.JobType = this->jobType();

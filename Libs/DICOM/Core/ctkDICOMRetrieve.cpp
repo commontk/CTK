@@ -126,7 +126,7 @@ public:
         // i.e. a slot in ctkDICOMRetrieveWorker with a counter. When the counter > batchLimit -> insert
         if (this->retrieve->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSeries)
           {
-          emit this->retrieve->progressJobDetail(jobResponseSet->jobResponseSetToDetail());
+          emit this->retrieve->progressJobDetail(jobResponseSet->toVariant());
           }
 
         this->retrieve->addJobResponseSet(jobResponseSet);

@@ -122,7 +122,7 @@ public:
 
             this->listener->addJobResponseSet(jobResponseSet);
 
-            emit this->listener->progressJobDetail(jobResponseSet->jobResponseSetToDetail());
+            emit this->listener->progressJobDetail(jobResponseSet->toVariant());
             }
           // send C-STORE response (with DIMSE status code)
           if (status.good())

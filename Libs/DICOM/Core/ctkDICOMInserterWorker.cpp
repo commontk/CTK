@@ -111,7 +111,7 @@ void ctkDICOMInserterWorker::run()
 
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
     {
-    emit inserterJob->progressJobDetail(jobResponseSet->jobResponseSetToDetail());
+    emit inserterJob->progressJobDetail(jobResponseSet->toVariant());
     }
 
   inserterJob->setStatus(ctkAbstractJob::JobStatus::Finished);

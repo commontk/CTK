@@ -142,8 +142,11 @@ public:
   /// Copy object
   Q_INVOKABLE void deepCopy(ctkDICOMJobResponseSet* node);
 
-  /// Utility method to transform/pass informations between threads by qt signals
-  Q_INVOKABLE QVariant jobResponseSetToDetail();
+  /// Return the QVariant value of this JobResponseSet.
+  ///
+  /// The value is set using the ctkDICOMJobDetail metatype and is used to pass
+  /// information between threads using Qt signals.
+  Q_INVOKABLE QVariant toVariant();
 
 protected:
   QScopedPointer<ctkDICOMJobResponseSetPrivate> d_ptr;
