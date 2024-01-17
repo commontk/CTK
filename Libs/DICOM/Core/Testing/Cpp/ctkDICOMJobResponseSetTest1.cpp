@@ -43,7 +43,7 @@ int ctkDICOMJobResponseSetTest1(int argc, char * argv []) {
   CHECK_QSTRING(jobResponseSet.filePath(), "");
   CHECK_BOOL(jobResponseSet.copyFile(), false);
   CHECK_BOOL(jobResponseSet.overwriteExistingDataset(), false);
-  CHECK_INT(jobResponseSet.typeOfJob(), ctkDICOMJobResponseSet::JobType::None);
+  CHECK_INT(jobResponseSet.jobType(), ctkDICOMJobResponseSet::JobType::None);
   CHECK_QSTRING(jobResponseSet.jobUID(), "");
   CHECK_QSTRING(jobResponseSet.patientID(), "");
   CHECK_QSTRING(jobResponseSet.studyInstanceUID(), "");
@@ -58,8 +58,8 @@ int ctkDICOMJobResponseSetTest1(int argc, char * argv []) {
   CHECK_BOOL(jobResponseSet.copyFile(), true);
   jobResponseSet.setOverwriteExistingDataset(true);
   CHECK_BOOL(jobResponseSet.overwriteExistingDataset(), true);
-  jobResponseSet.setTypeOfJob(ctkDICOMJobResponseSet::JobType::RetrieveStudy);
-  CHECK_INT(jobResponseSet.typeOfJob(), ctkDICOMJobResponseSet::JobType::RetrieveStudy);
+  jobResponseSet.setJobType(ctkDICOMJobResponseSet::JobType::RetrieveStudy);
+  CHECK_INT(jobResponseSet.jobType(), ctkDICOMJobResponseSet::JobType::RetrieveStudy);
   jobResponseSet.setJobUID("JobUID");
   CHECK_QSTRING(jobResponseSet.jobUID(), "JobUID");
   jobResponseSet.setPatientID("patientID");

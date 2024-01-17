@@ -197,12 +197,12 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkJobDetail td)
     return;
     }
 
-  ctkDICOMJobResponseSet::JobType typeOfJob = ctkDICOMJobResponseSet::JobType::None;
+  ctkDICOMJobResponseSet::JobType jobType = ctkDICOMJobResponseSet::JobType::None;
   QString jobSopInstanceUID;
   if (!td.JobUID.isEmpty())
     {
     jobSopInstanceUID = td.SOPInstanceUID;
-    typeOfJob = td.TypeOfJob;
+    jobType = td.JobType;
     }
 
   QStringList instancesList = this->DicomDatabase->instancesForSeries(this->SeriesInstanceUID);
@@ -283,8 +283,8 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkJobDetail td)
     // Get file for thumbnail
     if (file.isEmpty() &&
         this->IsCloud &&
-        (typeOfJob == ctkDICOMJobResponseSet::JobType::None ||
-         typeOfJob == ctkDICOMJobResponseSet::JobType::QueryInstances))
+        (jobType == ctkDICOMJobResponseSet::JobType::None ||
+         jobType == ctkDICOMJobResponseSet::JobType::QueryInstances))
       {
       this->Scheduler->retrieveSOPInstance(this->PatientID,
                                            this->StudyInstanceUID,
@@ -299,10 +299,10 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkJobDetail td)
     if (numberOfFrames > 1 &&
         this->IsCloud &&
         ((jobSopInstanceUID == this->CentralFrameSOPInstanceUID &&
-        (typeOfJob == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
-         typeOfJob == ctkDICOMJobResponseSet::JobType::StoreSOPInstance)) ||
-         (typeOfJob == ctkDICOMJobResponseSet::JobType::None ||
-         typeOfJob == ctkDICOMJobResponseSet::JobType::QueryInstances)))
+        (jobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
+         jobType == ctkDICOMJobResponseSet::JobType::StoreSOPInstance)) ||
+         (jobType == ctkDICOMJobResponseSet::JobType::None ||
+         jobType == ctkDICOMJobResponseSet::JobType::QueryInstances)))
       {
       this->Scheduler->retrieveSeries(this->PatientID,
                                       this->StudyInstanceUID,
@@ -314,8 +314,8 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkJobDetail td)
   file = this->DicomDatabase->fileForInstance(this->CentralFrameSOPInstanceUID);
   if ((jobSopInstanceUID.isEmpty() ||
        jobSopInstanceUID == this->CentralFrameSOPInstanceUID ||
-       typeOfJob == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
-       typeOfJob == ctkDICOMJobResponseSet::JobType::StoreSOPInstance) &&
+       jobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
+       jobType == ctkDICOMJobResponseSet::JobType::StoreSOPInstance) &&
       !file.isEmpty())
     {
     this->drawThumbnail(file, numberOfFrames);
@@ -871,10 +871,10 @@ void ctkDICOMSeriesItemWidget::updateGUIFromScheduler(QVariant data)
 
   ctkJobDetail td = data.value<ctkJobDetail>();
   if (td.JobUID.isEmpty() ||
-      (td.TypeOfJob != ctkDICOMJobResponseSet::JobType::QueryInstances &&
-       td.TypeOfJob != ctkDICOMJobResponseSet::JobType::RetrieveSeries &&
-       td.TypeOfJob != ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance&&
-       td.TypeOfJob != ctkDICOMJobResponseSet::JobType::StoreSOPInstance) ||
+      (td.JobType != ctkDICOMJobResponseSet::JobType::QueryInstances &&
+       td.JobType != ctkDICOMJobResponseSet::JobType::RetrieveSeries &&
+       td.JobType != ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance&&
+       td.JobType != ctkDICOMJobResponseSet::JobType::StoreSOPInstance) ||
       td.StudyInstanceUID != d->StudyInstanceUID ||
       td.SeriesInstanceUID != d->SeriesInstanceUID)
     {
@@ -891,8 +891,8 @@ void ctkDICOMSeriesItemWidget::updateSeriesProgressBar(QVariant data)
 
   ctkJobDetail td = data.value<ctkJobDetail>();
   if (td.JobUID.isEmpty() ||
-      (td.TypeOfJob != ctkDICOMJobResponseSet::JobType::RetrieveSeries &&
-       td.TypeOfJob != ctkDICOMJobResponseSet::JobType::StoreSOPInstance) ||
+      (td.JobType != ctkDICOMJobResponseSet::JobType::RetrieveSeries &&
+       td.JobType != ctkDICOMJobResponseSet::JobType::StoreSOPInstance) ||
       td.StudyInstanceUID != d->StudyInstanceUID ||
       td.SeriesInstanceUID != d->SeriesInstanceUID)
     {

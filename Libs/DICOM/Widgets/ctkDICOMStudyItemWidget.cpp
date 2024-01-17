@@ -772,7 +772,7 @@ void ctkDICOMStudyItemWidget::updateGUIFromScheduler(QVariant data)
     }
 
   if (td.JobUID.isEmpty() ||
-      td.TypeOfJob != ctkDICOMJobResponseSet::JobType::QuerySeries ||
+      td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries ||
       td.PatientID != d->PatientID ||
       td.StudyInstanceUID != d->StudyInstanceUID)
     {

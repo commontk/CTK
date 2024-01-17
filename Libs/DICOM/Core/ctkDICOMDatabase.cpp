@@ -2549,7 +2549,7 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
   QDir databaseDirectory(this->databaseDirectory());
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
   {
-    ctkDICOMJobResponseSet::JobType typeOfTask = jobResponseSet->typeOfJob();
+    ctkDICOMJobResponseSet::JobType typeOfTask = jobResponseSet->jobType();
     QString filePath = jobResponseSet->filePath();
     QString url;
     bool generateThumbnail = false; // thumbnail will be generated when needed, don't slow down import with that

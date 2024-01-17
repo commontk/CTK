@@ -102,15 +102,15 @@ public:
           QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
         if (this->retrieve->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSOPInstance)
           {
-          jobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance);
+          jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance);
           }
         else if (this->retrieve->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSeries)
           {
-          jobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::RetrieveSeries);
+          jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveSeries);
           }
         else if (this->retrieve->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveStudy)
           {
-          jobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::RetrieveStudy);
+          jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveStudy);
           }
         jobResponseSet->setPatientID(this->retrieve->patientID());
         jobResponseSet->setStudyInstanceUID(this->retrieve->studyInstanceUID());
@@ -502,15 +502,15 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
     QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
   if (q->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSOPInstance)
     {
-    jobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance);
+    jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance);
     }
   else if (q->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSeries)
     {
-    jobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::RetrieveSeries);
+    jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveSeries);
     }
   else if (q->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveStudy)
     {
-    jobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::RetrieveStudy);
+    jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveStudy);
     }
   jobResponseSet->setStudyInstanceUID(q->studyInstanceUID());
   jobResponseSet->setSeriesInstanceUID(q->seriesInstanceUID());

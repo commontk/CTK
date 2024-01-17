@@ -593,7 +593,7 @@ bool ctkDICOMQuery::queryPatients()
 
   QSharedPointer<ctkDICOMJobResponseSet> JobResponseSet =
     QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
-  JobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::QueryPatients);
+  JobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::QueryPatients);
   JobResponseSet->setConnectionName(d->ConnectionName);
   JobResponseSet->setJobUID(d->JobUID);
 
@@ -723,7 +723,7 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
 
   QSharedPointer<ctkDICOMJobResponseSet> JobResponseSet =
     QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
-  JobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::QueryStudies);
+  JobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::QueryStudies);
   JobResponseSet->setPatientID(patientID.toStdString().c_str());
   JobResponseSet->setConnectionName(d->ConnectionName);
   JobResponseSet->setJobUID(d->JobUID);
@@ -844,7 +844,7 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
 
   QSharedPointer<ctkDICOMJobResponseSet> JobResponseSet =
     QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
-  JobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::QuerySeries);
+  JobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::QuerySeries);
   JobResponseSet->setPatientID(patientID.toStdString().c_str());
   JobResponseSet->setStudyInstanceUID(studyInstanceUID.toStdString().c_str());
   JobResponseSet->setConnectionName(d->ConnectionName);
@@ -964,7 +964,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
 
   QSharedPointer<ctkDICOMJobResponseSet> JobResponseSet =
     QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
-  JobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::QueryInstances);
+  JobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::QueryInstances);
   JobResponseSet->setPatientID(patientID.toStdString().c_str());
   JobResponseSet->setStudyInstanceUID(studyInstanceUID.toStdString().c_str());
   JobResponseSet->setSeriesInstanceUID(seriesInstanceUID.toStdString().c_str());

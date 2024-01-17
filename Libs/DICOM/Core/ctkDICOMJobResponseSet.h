@@ -44,7 +44,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMJobResponseSet : public QObject
   Q_PROPERTY(QString filePath READ filePath WRITE setFilePath);
   Q_PROPERTY(bool copyFile READ copyFile WRITE setCopyFile);
   Q_PROPERTY(bool overwriteExistingDataset READ overwriteExistingDataset WRITE setOverwriteExistingDataset);
-  Q_PROPERTY(JobType typeOfJob READ typeOfJob WRITE setTypeOfJob);
+  Q_PROPERTY(JobType jobType READ jobType WRITE setJobType);
   Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
   Q_PROPERTY(QString studyInstanceUID READ studyInstanceUID WRITE setStudyInstanceUID);
@@ -89,8 +89,8 @@ public:
     RetrieveSOPInstance,
     StoreSOPInstance
   };
-  void setTypeOfJob(JobType typeOfJob);
-  JobType typeOfJob() const;
+  void setJobType(JobType jobType);
+  JobType jobType() const;
   ///@}
 
   ///@{
@@ -155,7 +155,7 @@ private:
 
 struct CTK_DICOM_CORE_EXPORT ctkJobDetail {
   explicit ctkJobDetail():
-    TypeOfJob(ctkDICOMJobResponseSet::JobType::None),
+    JobType(ctkDICOMJobResponseSet::JobType::None),
     JobClass(""),
     DICOMLevel(ctkDICOMJob::DICOMLevels::Patients),
     JobUID(""),
@@ -167,7 +167,7 @@ struct CTK_DICOM_CORE_EXPORT ctkJobDetail {
     NumberOfDataSets(0){}
   virtual ~ctkJobDetail(){};
 
-  ctkDICOMJobResponseSet::JobType TypeOfJob;
+  ctkDICOMJobResponseSet::JobType JobType;
   QString JobClass;
   ctkDICOMJob::DICOMLevels DICOMLevel;
   QString JobUID;

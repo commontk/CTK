@@ -47,7 +47,7 @@ public:
   bool CopyFile;
   bool OverwriteExistingDataset;
 
-  ctkDICOMJobResponseSet::JobType TypeOfJob;
+  ctkDICOMJobResponseSet::JobType JobType;
   QString JobUID;
   QString PatientID;
   QString StudyInstanceUID;
@@ -64,7 +64,7 @@ public:
 ctkDICOMJobResponseSetPrivate::ctkDICOMJobResponseSetPrivate(ctkDICOMJobResponseSet& obj)
   : q_ptr(&obj)
 {
-  this->TypeOfJob = ctkDICOMJobResponseSet::JobType::None;
+  this->JobType = ctkDICOMJobResponseSet::JobType::None;
   this->JobUID = "";
   this->PatientID = "";
   this->StudyInstanceUID = "";
@@ -153,17 +153,17 @@ bool ctkDICOMJobResponseSet::overwriteExistingDataset() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setTypeOfJob(ctkDICOMJobResponseSet::JobType typeOfJob)
+void ctkDICOMJobResponseSet::setJobType(ctkDICOMJobResponseSet::JobType jobType)
 {
   Q_D(ctkDICOMJobResponseSet);
-  d->TypeOfJob = typeOfJob;
+  d->JobType = jobType;
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMJobResponseSet::JobType ctkDICOMJobResponseSet::typeOfJob() const
+ctkDICOMJobResponseSet::JobType ctkDICOMJobResponseSet::jobType() const
 {
   Q_D(const ctkDICOMJobResponseSet);
-  return d->TypeOfJob;
+  return d->JobType;
 }
 
 //------------------------------------------------------------------------------
@@ -350,7 +350,7 @@ void ctkDICOMJobResponseSet::deepCopy(ctkDICOMJobResponseSet *node)
   this->setFilePath(node->filePath());
   this->setCopyFile(node->copyFile());
   this->setOverwriteExistingDataset(node->overwriteExistingDataset());
-  this->setTypeOfJob(node->typeOfJob());
+  this->setJobType(node->jobType());
   this->setJobUID(node->jobUID());
   this->setPatientID(node->patientID());
   this->setStudyInstanceUID(node->studyInstanceUID());
@@ -394,7 +394,7 @@ void ctkDICOMJobResponseSet::deepCopy(ctkDICOMJobResponseSet *node)
 QVariant ctkDICOMJobResponseSet::jobResponseSetToDetail()
 {
   ctkJobDetail td;
-  td.TypeOfJob = this->typeOfJob();
+  td.JobType = this->jobType();
   td.JobUID = this->jobUID();
   td.PatientID = this->patientID();
   td.StudyInstanceUID = this->studyInstanceUID();

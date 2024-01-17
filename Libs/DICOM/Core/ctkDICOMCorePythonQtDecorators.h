@@ -57,13 +57,13 @@ public slots:
     return new ctkJobDetail();
     }
 
-  void setTypeOfJob(ctkJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
+  void setJobType(ctkJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
     {
-    td->TypeOfJob = jobType;
+    td->JobType = jobType;
     }
-  ctkDICOMJobResponseSet::JobType TypeOfJob(ctkJobDetail* td)
+  ctkDICOMJobResponseSet::JobType jobType(ctkJobDetail* td)
     {
-    return td->TypeOfJob;
+    return td->JobType;
     }
 
   void setJobUID(ctkJobDetail* td, const QString& jobUID)
@@ -147,9 +147,9 @@ public slots:
     ts->setOverwriteExistingDataset(overwriteExistingDataset);
     }
 
-  void setTypeOfJob(ctkDICOMJobResponseSet* ts, ctkDICOMJobResponseSet::JobType TypeOfJob)
+  void setJobType(ctkDICOMJobResponseSet* ts, ctkDICOMJobResponseSet::JobType jobType)
     {
-    ts->setTypeOfJob(TypeOfJob);
+    ts->setJobType(jobType);
     }
 
   void setJobUID(ctkDICOMJobResponseSet* ts, const QString& jobUID)

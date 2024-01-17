@@ -2595,13 +2595,13 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QVariant data)
     d->updateFiltersWarnings();
     return;
     }
-  else if (td.TypeOfJob == ctkDICOMJobResponseSet::JobType::QueryStudies ||
-      td.TypeOfJob == ctkDICOMJobResponseSet::JobType::QuerySeries)
+  else if (td.JobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
+      td.JobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
     {
     d->updateFiltersWarnings();
     return;
     }
-  else if (td.TypeOfJob != ctkDICOMJobResponseSet::JobType::QueryPatients)
+  else if (td.JobType != ctkDICOMJobResponseSet::JobType::QueryPatients)
     {
     return;
     }

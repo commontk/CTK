@@ -111,7 +111,7 @@ public:
             {
             QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet =
               QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
-            jobResponseSet->setTypeOfJob(ctkDICOMJobResponseSet::JobType::StoreSOPInstance);
+            jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::StoreSOPInstance);
             jobResponseSet->setStudyInstanceUID(studyUID.c_str());
             jobResponseSet->setSeriesInstanceUID(seriesUID.c_str());
             jobResponseSet->setSOPInstanceUID(instanceUID.c_str());
