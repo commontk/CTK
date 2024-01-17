@@ -131,6 +131,14 @@ set(KIT_MOC_SRCS
   ctkWorkflowTransitions.h
   )
 
+# Abstract class should not be wrapped !
+set_source_files_properties(
+  ctkAbstractJob.h
+  ctkAbstractScheduler.h
+  ctkAbstractWorker.h
+  WRAP_EXCLUDE
+  )
+
 # UI files
 set(KIT_UI_FORMS
 )
