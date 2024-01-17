@@ -154,28 +154,20 @@ private:
 };
 
 struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail {
-  explicit ctkDICOMJobDetail():
-    JobType(ctkDICOMJobResponseSet::JobType::None),
-    JobClass(""),
-    DICOMLevel(ctkDICOMJob::DICOMLevels::Patients),
-    JobUID(""),
-    PatientID(""),
-    StudyInstanceUID(""),
-    SeriesInstanceUID(""),
-    SOPInstanceUID(""),
-    ConnectionName(""),
-    NumberOfDataSets(0){}
+  explicit ctkDICOMJobDetail(){}
   virtual ~ctkDICOMJobDetail(){};
 
-  ctkDICOMJobResponseSet::JobType JobType;
+  ctkDICOMJobResponseSet::JobType JobType{ctkDICOMJobResponseSet::JobType::None};
   QString JobClass;
-  ctkDICOMJob::DICOMLevels DICOMLevel;
+  ctkDICOMJob::DICOMLevels DICOMLevel{ctkDICOMJob::DICOMLevels::Patients};
   QString JobUID;
   QString PatientID;
   QString StudyInstanceUID;
   QString SeriesInstanceUID;
   QString SOPInstanceUID;
   QString ConnectionName;
-  int NumberOfDataSets;
-}; Q_DECLARE_METATYPE(ctkDICOMJobDetail);
+  int NumberOfDataSets{0};
+};
+Q_DECLARE_METATYPE(ctkDICOMJobDetail);
+
 #endif
