@@ -21,6 +21,11 @@
 
 =========================================================================*/
 
+// Qt includes
+#include <QEventLoop>
+#include <QTimer>
+
+// CTK includes
 #include "ctkAbstractJob.h"
 #include "ctkAbstractScheduler.h"
 #include "ctkAbstractWorker.h"
@@ -28,8 +33,6 @@
 // --------------------------------------------------------------------------
 ctkAbstractWorker::ctkAbstractWorker()
 {
-  this->Job = nullptr;
-  this->Scheduler = nullptr;
   this->setAutoDelete(false);
 }
 
@@ -90,4 +93,48 @@ void ctkAbstractWorker::setScheduler(ctkAbstractScheduler &scheduler)
 void ctkAbstractWorker::setScheduler(QSharedPointer<ctkAbstractScheduler> scheduler)
 {
   this->Scheduler = scheduler;
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractWorker::startNextJob()
+{
+  if (!this->Scheduler || !this->Job)
+    {
+    return;
+    }
+
+  ctkAbstractJob* newJob = this->Job->clone();
+  newJob->setRetryCounter(newJob->retryCounter() + 1);
+  this->Scheduler->addJob(newJob);
+}
+
+//----------------------------------------------------------------------------
+void ctkAbstractWorker::onJobCanceled()
+{
+  if (!this->Job)
+    {
+    return;
+    }
+
+  if (this->Job->retryCounter() < this->Job->maximumNumberOfRetry() &&
+      this->Job->status() != ctkAbstractJob::JobStatus::Stopped)
+    {
+    QTimer timer;
+    timer.setSingleShot(true);
+    QEventLoop loop;
+    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+    timer.start(this->Job->retryDelay());
+
+    this->startNextJob();
+
+    emit this->Job->finished();
+    }
+  else if (this->Job->status() != ctkAbstractJob::JobStatus::Stopped)
+    {
+    emit this->Job->failed();
+    }
+  else
+    {
+    emit this->Job->finished();
+    }
 }

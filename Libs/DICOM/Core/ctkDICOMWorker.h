@@ -45,10 +45,6 @@ public:
   explicit ctkDICOMWorker();
   virtual ~ctkDICOMWorker();
 
-public slots:
-  void startNextJob();
-  void onJobCanceled();
-
 private:
   Q_DISABLE_COPY(ctkDICOMWorker)
 };

@@ -21,8 +21,6 @@
 
 =========================================================================*/
 
-#include "ctkDICOMJob.h"
-#include "ctkDICOMScheduler.h"
 #include "ctkDICOMWorker.h"
 
 //------------------------------------------------------------------------------
@@ -30,58 +28,3 @@ ctkDICOMWorker::ctkDICOMWorker() = default;
 
 //------------------------------------------------------------------------------
 ctkDICOMWorker::~ctkDICOMWorker() = default;
-
-//----------------------------------------------------------------------------
-void ctkDICOMWorker::startNextJob()
-{
-  QSharedPointer<ctkDICOMScheduler> scheduler =
-    qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
-  if (!scheduler)
-    {
-    return;
-    }
-
-  QSharedPointer<ctkDICOMJob> job =
-    qobject_cast<QSharedPointer<ctkDICOMJob>>(this->Job);
-  if (!job)
-    {
-    return;
-    }
-
-  ctkDICOMJob* newJob = job->clone();
-  newJob->setRetryCounter(newJob->retryCounter() + 1);
-  scheduler->addJob(newJob);
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMWorker::onJobCanceled()
-{
-  QSharedPointer<ctkDICOMJob> job =
-    qobject_cast<QSharedPointer<ctkDICOMJob>>(this->Job);
-  if (!job)
-    {
-    return;
-    }
-
-  if (job->retryCounter() < job->maximumNumberOfRetry() &&
-      job->status() != ctkAbstractJob::JobStatus::Stopped)
-    {
-    QTimer timer;
-    timer.setSingleShot(true);
-    QEventLoop loop;
-    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-    timer.start(job->retryDelay());
-
-    this->startNextJob();
-
-    emit job->finished();
-    }
-  else if (job->status() != ctkAbstractJob::JobStatus::Stopped)
-    {
-    emit job->failed();
-    }
-  else
-    {
-    emit job->finished();
-    }
-}

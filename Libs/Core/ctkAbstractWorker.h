@@ -66,6 +66,10 @@ public:
   void setScheduler(QSharedPointer<ctkAbstractScheduler> scheduler);
   ///@}
 
+public slots:
+  virtual void startNextJob();
+  virtual void onJobCanceled();
+
 protected:
   QSharedPointer<ctkAbstractJob> Job;
   QSharedPointer<ctkAbstractScheduler> Scheduler;
