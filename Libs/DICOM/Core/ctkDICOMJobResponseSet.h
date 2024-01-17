@@ -176,6 +176,8 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail {
 
   explicit ctkDICOMJobDetail(const ctkDICOMJobResponseSet& responseSet)
   {
+    this->JobUID = responseSet.jobUID();
+    this->JobType = responseSet.jobType();
     this->PatientID = responseSet.patientID();
     this->StudyInstanceUID = responseSet.studyInstanceUID();
     this->SeriesInstanceUID = responseSet.seriesInstanceUID();
