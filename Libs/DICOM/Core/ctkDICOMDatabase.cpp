@@ -2549,7 +2549,7 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
   QDir databaseDirectory(this->databaseDirectory());
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
   {
-    ctkDICOMJobResponseSet::JobType typeOfTask = jobResponseSet->jobType();
+    ctkDICOMJobResponseSet::JobType jobType = jobResponseSet->jobType();
     QString filePath = jobResponseSet->filePath();
     QString url;
     bool generateThumbnail = false; // thumbnail will be generated when needed, don't slow down import with that
@@ -2572,16 +2572,16 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
 
       if (patientID.isEmpty())
       {
-        if (typeOfTask == ctkDICOMJobResponseSet::JobType::QueryPatients)
+        if (jobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
         {
           patientID = key;
         }
-        else if (typeOfTask == ctkDICOMJobResponseSet::JobType::QueryStudies ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::QuerySeries ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::QueryInstances ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveStudy ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
+        else if (jobType == ctkDICOMJobResponseSet::JobType::QueryStudies ||
+                 jobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
+                 jobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveStudy ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
         {
           patientID = jobResponseSet->patientID();
         }
@@ -2591,15 +2591,15 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
 
       if (studyInstanceUID.isEmpty())
       {
-        if (typeOfTask == ctkDICOMJobResponseSet::JobType::QueryStudies)
+        if (jobType == ctkDICOMJobResponseSet::JobType::QueryStudies)
         {
           studyInstanceUID = key;
         }
-        else if (typeOfTask == ctkDICOMJobResponseSet::JobType::QuerySeries ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::QueryInstances ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveStudy ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
+        else if (jobType == ctkDICOMJobResponseSet::JobType::QuerySeries ||
+                 jobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveStudy ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
         {
           studyInstanceUID = jobResponseSet->studyInstanceUID();
         }
@@ -2616,13 +2616,13 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
 
       if (seriesInstanceUID.isEmpty())
       {
-        if (typeOfTask == ctkDICOMJobResponseSet::JobType::QuerySeries)
+        if (jobType == ctkDICOMJobResponseSet::JobType::QuerySeries)
         {
           seriesInstanceUID = key;
         }
-        else if (typeOfTask == ctkDICOMJobResponseSet::JobType::QueryInstances ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
+        else if (jobType == ctkDICOMJobResponseSet::JobType::QueryInstances ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance)
         {
           seriesInstanceUID = jobResponseSet->seriesInstanceUID();
         }
@@ -2632,14 +2632,14 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
 
       if (sopInstanceUID.isEmpty())
       {
-        if (typeOfTask == ctkDICOMJobResponseSet::JobType::QueryInstances)
+        if (jobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
         {
           sopInstanceUID = key;
         }
-        else if (typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveStudy ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
-                 typeOfTask == ctkDICOMJobResponseSet::JobType::StoreSOPInstance)
+        else if (jobType == ctkDICOMJobResponseSet::JobType::RetrieveStudy ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveSeries ||
+                 jobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
+                 jobType == ctkDICOMJobResponseSet::JobType::StoreSOPInstance)
         {
         sopInstanceUID = jobResponseSet->sopInstanceUID();
         }
@@ -2659,13 +2659,13 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
         continue;
       }
 
-      if (studyInstanceUID.isEmpty() && typeOfTask != ctkDICOMJobResponseSet::JobType::QueryPatients)
+      if (studyInstanceUID.isEmpty() && jobType != ctkDICOMJobResponseSet::JobType::QueryPatients)
       {
         logger.error("ctkDICOMDatabase::insert: dataset has no studyInstanceUID");
         continue;
       }
 
-      if (typeOfTask == ctkDICOMJobResponseSet::JobType::QueryInstances)
+      if (jobType == ctkDICOMJobResponseSet::JobType::QueryInstances)
       {
         url = "dimse+ctk://" + jobResponseSet->connectionName();
         if (!studyInstanceUID.isEmpty())
