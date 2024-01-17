@@ -46,22 +46,32 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  if (argc <= 2)
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  bool interactive = arguments.removeOne("-I");
+
+  if (arguments.count() != 2)
     {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
-    std::cerr << "Usage: qctkDICOMModelTest1 <scratch.db> <dumpfile.sql>" << std::endl;
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <scratch.db> <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
     }
 
+  QString databaseFile(arguments.at(0));
+  QString sqlFileName(arguments.at(1));
+
   try
   {
-    ctkDICOMDatabase myCTK( argv[1] );
+    ctkDICOMDatabase myCTK(databaseFile);
 
-    if (!myCTK.initializeDatabase(argv[2]))
-    {
-      std::cerr << "Error when initializing the data base: " << argv[2]
-          << " error: " << myCTK.lastError().toStdString();
-    }
+    if (!myCTK.initializeDatabase(sqlFileName.toUtf8()))
+      {
+      std::cerr << "Error when initializing the data base: " << qPrintable(sqlFileName)
+                << " error: " << qPrintable(myCTK.lastError()) << std::endl;
+      return EXIT_FAILURE;
+      }
 
     ctkDICOMModel model;
     model.setDatabase(myCTK.database());
@@ -85,16 +95,18 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
     model.setHeaderData(0, Qt::Horizontal, static_cast<int>(Qt::Checked), Qt::CheckStateRole);
     qDebug() << "new: " << headerView->isHidden();
     topLevel.show();
-    if (argc <= 3 || QString(argv[3]) != "-I")
+
+    if (!interactive)
       {
       QTimer::singleShot(200, &app, SLOT(quit()));
       }
+
     return app.exec();
   }
   catch (const std::exception& e)
     {
-    std::cerr << "Error when opening the data base file: " << argv[1]
-        << " error: " << e.what();
+    std::cerr << "Error when opening the data base file: " << qPrintable(databaseFile)
+              << " error: " << e.what() << std::endl;
     return EXIT_FAILURE;
     }
 }

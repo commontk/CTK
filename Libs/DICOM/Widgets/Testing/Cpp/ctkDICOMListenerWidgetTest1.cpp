@@ -32,10 +32,16 @@ int ctkDICOMListenerWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+  Q_UNUSED(testName);
+
+  bool interactive = arguments.removeOne("-I");
+
   ctkDICOMListenerWidget listenerWidget;
   listenerWidget.show();
 
-  if (argc <= 1 || QString(argv[1]) != "-I")
+  if (!interactive)
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

@@ -40,13 +40,22 @@
 int ctkDICOMItemViewTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  if (argc < 2)
+
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  bool interactive = arguments.removeOne("-I");
+
+  if (arguments.count() != 1)
     {
-    std::cerr << "Usage: ctkDICOMItemViewTest1 dcmimage [-I]" << std::endl;
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " [-I] <path-to-dicom-file>" << std::endl;
     return EXIT_FAILURE;
     }
 
-  DicomImage    img(argv[1]);
+  QString dicomFilePath(arguments.at(0));
+
+  DicomImage img(QDir::toNativeSeparators(dicomFilePath).toUtf8());
   QImage image;
   QImage image2(200, 200, QImage::Format_RGB32);
 
@@ -60,7 +69,7 @@ int ctkDICOMItemViewTest1( int argc, char * argv [] )
   datasetView.update( true, true);
   datasetView.show();
 
-  if (argc <= 2 || QString(argv[2]) != "-I")
+  if (!interactive)
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

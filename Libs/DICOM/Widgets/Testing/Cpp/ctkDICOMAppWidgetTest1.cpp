@@ -48,7 +48,13 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
   QCommandLineParser parser;
   parser.addOption({"I", "Run in interactive mode"});
   parser.addPositionalArgument("directory", "Directory to import");
-  parser.process(app);
+  parser.process(app); // Automatically exit if there is a parsing error
+
+  if (parser.positionalArguments().count() != 1)
+    {
+    std::cerr << qPrintable(parser.helpText()) << std::endl;
+    return EXIT_FAILURE;
+    }
 
   QString directoryToImport = parser.positionalArguments().at(0);
 

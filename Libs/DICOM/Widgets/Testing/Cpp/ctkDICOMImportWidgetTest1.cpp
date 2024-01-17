@@ -36,13 +36,19 @@ int ctkDICOMImportWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+  Q_UNUSED(testName);
+
+  bool interactive = arguments.removeOne("-I");
+
   ctkDICOMDatabase* database = new ctkDICOMDatabase;
   ctkDICOMImportWidget importWidget;
   importWidget.setDICOMDatabase(QSharedPointer<ctkDICOMDatabase>(database));
   importWidget.setTopDirectory(QDir::tempPath());
   importWidget.show();
 
-  if (argc <= 1 || QString(argv[1]) != "-I")
+  if (!interactive)
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
