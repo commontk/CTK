@@ -526,7 +526,7 @@ ctkDICOMServer* ctkDICOMScheduler::getNthServer(int id)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMServer* ctkDICOMScheduler::getServer(const char *connectionName)
+ctkDICOMServer* ctkDICOMScheduler::getServer(const QString& connectionName)
 {
   Q_D(ctkDICOMScheduler);
   ctkDICOMServer* server = this->getNthServer(this->getServerIndexFromName(connectionName));
@@ -553,7 +553,7 @@ void ctkDICOMScheduler::addServer(QSharedPointer<ctkDICOMServer> server)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::removeServer(const char *connectionName)
+void ctkDICOMScheduler::removeServer(const QString& connectionName)
 {
   this->removeNthServer(this->getServerIndexFromName(connectionName));
 }
@@ -596,13 +596,9 @@ QString ctkDICOMScheduler::getServerNameFromIndex(int id)
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMScheduler::getServerIndexFromName(const char *connectionName)
+int ctkDICOMScheduler::getServerIndexFromName(const QString& connectionName)
 {
   Q_D(ctkDICOMScheduler);
-  if (!connectionName)
-    {
-    return -1;
-    }
   for(int serverIndex = 0; serverIndex < d->Servers.size(); ++serverIndex)
     {
     QSharedPointer<ctkDICOMServer> server = d->Servers.at(serverIndex);
