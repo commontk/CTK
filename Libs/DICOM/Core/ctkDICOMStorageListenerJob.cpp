@@ -132,7 +132,7 @@ ctkAbstractJob* ctkDICOMStorageListenerJob::clone() const
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMWorker *ctkDICOMStorageListenerJob::createWorker()
+ctkAbstractWorker *ctkDICOMStorageListenerJob::createWorker()
 {
   ctkDICOMStorageListenerWorker* worker =
     new ctkDICOMStorageListenerWorker;

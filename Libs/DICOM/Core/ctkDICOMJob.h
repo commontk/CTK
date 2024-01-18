@@ -34,7 +34,6 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
-#include "ctkDICOMWorker.h"
 
 class ctkDICOMServer;
 class ctkDICOMJobResponseSet;

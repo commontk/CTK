@@ -30,6 +30,9 @@
 #include <QVariant>
 #include <QSharedPointer>
 
+// ctkCore includes
+class ctkAbstractWorker;
+
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMJob.h"
@@ -90,7 +93,7 @@ public:
   Q_INVOKABLE ctkAbstractJob* clone() const override;
 
   /// Generate worker for job
-  Q_INVOKABLE ctkDICOMWorker* createWorker() override;
+  Q_INVOKABLE ctkAbstractWorker* createWorker() override;
 
   /// Return the QVariant value of this job.
   ///

@@ -109,7 +109,7 @@ ctkAbstractJob* ctkDICOMInserterJob::clone() const
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMWorker *ctkDICOMInserterJob::createWorker()
+ctkAbstractWorker *ctkDICOMInserterJob::createWorker()
 {
   ctkDICOMInserterWorker* worker =
     new ctkDICOMInserterWorker;

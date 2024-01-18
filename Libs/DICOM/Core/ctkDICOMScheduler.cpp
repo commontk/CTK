@@ -24,6 +24,7 @@
 // ctkCore includes
 #include <ctkLogger.h>
 #include <ctkAbstractScheduler_p.h>
+#include <ctkAbstractWorker.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMInserterJob.h"
@@ -643,8 +644,7 @@ void ctkDICOMScheduler::stopJobsByUIDs(const QStringList& patientIDs,
   // Stops queued and running jobs
   foreach (QSharedPointer<ctkAbstractWorker> worker, d->Workers)
     {
-    QSharedPointer<ctkAbstractJob> job =
-      qobject_cast<QSharedPointer<ctkAbstractJob>>(worker->jobShared());
+    QSharedPointer<ctkAbstractJob> job = worker->jobShared();
     if (!job)
       {
       continue;

@@ -200,7 +200,7 @@ ctkAbstractJob* ctkDICOMQueryJob::clone() const
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMWorker *ctkDICOMQueryJob::createWorker()
+ctkAbstractWorker *ctkDICOMQueryJob::createWorker()
 {
   ctkDICOMQueryWorker* worker =
     new ctkDICOMQueryWorker;
