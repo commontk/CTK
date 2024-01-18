@@ -180,7 +180,7 @@ public:
 
 public Q_SLOTS:
   void generateSeries(bool toggled = true);
-  void updateGUIFromScheduler(QVariant data);
+  void updateGUIFromScheduler(const QVariant& data);
   void onStudySelectionClicked(bool);
 
 protected:

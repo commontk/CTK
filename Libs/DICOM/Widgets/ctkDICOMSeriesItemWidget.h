@@ -158,8 +158,8 @@ public:
 
 public Q_SLOTS:
   void generateInstances();
-  void updateGUIFromScheduler(QVariant data);
-  void updateSeriesProgressBar(QVariant data);
+  void updateGUIFromScheduler(const QVariant& data);
+  void updateSeriesProgressBar(const QVariant& data);
 
 protected:
   QScopedPointer<ctkDICOMSeriesItemWidgetPrivate> d_ptr;

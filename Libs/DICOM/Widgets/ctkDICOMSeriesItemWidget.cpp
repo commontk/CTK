@@ -865,7 +865,7 @@ void ctkDICOMSeriesItemWidget::generateInstances()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::updateGUIFromScheduler(QVariant data)
+void ctkDICOMSeriesItemWidget::updateGUIFromScheduler(const QVariant& data)
 {
   Q_D(ctkDICOMSeriesItemWidget);
 
@@ -885,7 +885,7 @@ void ctkDICOMSeriesItemWidget::updateGUIFromScheduler(QVariant data)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::updateSeriesProgressBar(QVariant data)
+void ctkDICOMSeriesItemWidget::updateSeriesProgressBar(const QVariant& data)
 {
   Q_D(ctkDICOMSeriesItemWidget);
 

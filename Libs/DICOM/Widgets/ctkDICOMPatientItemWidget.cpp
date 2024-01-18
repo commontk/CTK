@@ -688,7 +688,7 @@ void ctkDICOMPatientItemWidget::generateStudies()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::updateGUIFromScheduler(QVariant data)
+void ctkDICOMPatientItemWidget::updateGUIFromScheduler(const QVariant& data)
 {
   Q_D(ctkDICOMPatientItemWidget);
 

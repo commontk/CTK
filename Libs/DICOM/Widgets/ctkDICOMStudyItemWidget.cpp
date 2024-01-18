@@ -759,7 +759,7 @@ void ctkDICOMStudyItemWidget::generateSeries(bool toggled)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::updateGUIFromScheduler(QVariant data)
+void ctkDICOMStudyItemWidget::updateGUIFromScheduler(const QVariant& data)
 {
   Q_D(ctkDICOMStudyItemWidget);
 

@@ -162,7 +162,7 @@ public:
 
 public Q_SLOTS:
   void generateStudies();
-  void updateGUIFromScheduler(QVariant data);
+  void updateGUIFromScheduler(const QVariant& data);
   void onSeriesItemClicked();
   void raiseSelectedSeriesJobsPriority();
 
