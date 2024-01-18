@@ -177,6 +177,7 @@ QString ctkDICOMQueryJob::loggerReport(const QString &status) const
       return QString("");
     }
 }
+
 //------------------------------------------------------------------------------
 ctkAbstractJob* ctkDICOMQueryJob::clone() const
 {

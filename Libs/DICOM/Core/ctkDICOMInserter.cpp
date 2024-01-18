@@ -30,7 +30,7 @@
 #include "ctkDICOMInserter.h"
 #include "ctkDICOMJobResponseSet.h"
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMQuery" );
+static ctkLogger logger ("org.commontk.dicom.DICOMQuery");
 
 //------------------------------------------------------------------------------
 class ctkDICOMInserterPrivate

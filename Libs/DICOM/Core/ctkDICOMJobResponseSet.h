@@ -156,6 +156,7 @@ private:
   Q_DISABLE_COPY(ctkDICOMJobResponseSet);
 };
 
+//------------------------------------------------------------------------------
 struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail {
   explicit ctkDICOMJobDetail() = default;
 

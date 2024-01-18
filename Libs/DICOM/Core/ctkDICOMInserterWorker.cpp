@@ -24,13 +24,13 @@
 // Qt includes
 #include <QThread>
 
+// ctkCore includes
+#include <ctkLogger.h>
+
 // ctkDICOMCore includes
-#include "ctkDICOMDatabase.h"
-#include "ctkDICOMInserterWorker_p.h"
 #include "ctkDICOMInserterJob.h"
+#include "ctkDICOMInserterWorker_p.h"
 #include "ctkDICOMJobResponseSet.h"
-#include "ctkDICOMScheduler.h"
-#include "ctkLogger.h"
 
 static ctkLogger logger ("org.commontk.dicom.ctkDICOMInserterWorker");
 

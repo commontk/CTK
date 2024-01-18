@@ -151,5 +151,4 @@ private:
   Q_DISABLE_COPY(ctkDICOMServer);
 };
 
-
 #endif

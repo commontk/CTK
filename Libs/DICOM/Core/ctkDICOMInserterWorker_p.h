@@ -24,6 +24,10 @@
 #ifndef __ctkDICOMInserterWorkerPrivate_h
 #define __ctkDICOMInserterWorkerPrivate_h
 
+// Qt includes
+#include <QObject>
+#include <QSharedPointer>
+
 // ctkDICOMCore includes
 #include "ctkDICOMInserter.h"
 #include "ctkDICOMInserterWorker.h"

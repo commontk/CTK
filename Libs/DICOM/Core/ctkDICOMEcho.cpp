@@ -29,16 +29,10 @@
 #include "ctkLogger.h"
 
 // DCMTK includes
+#include <dcmtk/dcmdata/dcuid.h>
 #include <dcmtk/dcmnet/scu.h>
-#include <dcmtk/dcmdata/dcfilefo.h>
-#include <dcmtk/dcmdata/dcdeftag.h>
-#include <dcmtk/dcmdata/dcdatset.h>
-#include <dcmtk/oflog/oflog.h>
-#include <dcmtk/ofstd/ofcond.h>
-#include <dcmtk/ofstd/ofstring.h>
-#include <dcmtk/ofstd/oflist.h>
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
-#include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
+#include <dcmtk/ofstd/ofstring.h>
 
 static ctkLogger logger ( "org.commontk.dicom.DICOMEcho" );
 

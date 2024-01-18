@@ -24,6 +24,10 @@
 #ifndef __ctkDICOMRetrieveWorkerPrivate_h
 #define __ctkDICOMRetrieveWorkerPrivate_h
 
+// Qt includes
+#include <QObject>
+#include <QSharedPointer>
+
 // ctkDICOMCore includes
 #include "ctkDICOMRetrieve.h"
 #include "ctkDICOMRetrieveWorker.h"

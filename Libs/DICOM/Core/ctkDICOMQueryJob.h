@@ -25,10 +25,10 @@
 #define __ctkDICOMQueryJob_h
 
 // Qt includes
-#include <QObject>
 #include <QMap>
-#include <QVariant>
+#include <QObject>
 #include <QSharedPointer>
+#include <QVariant>
 
 // ctkCore includes
 class ctkAbstractWorker;

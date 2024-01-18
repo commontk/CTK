@@ -24,6 +24,11 @@
 #ifndef __ctkDICOMQueryJobPrivate_h
 #define __ctkDICOMQueryJobPrivate_h
 
+// Qt includes
+#include <QMap>
+#include <QObject>
+#include <QSharedPointer>
+
 // ctkDICOMCore includes
 #include "ctkDICOMQueryJob.h"
 

@@ -24,6 +24,9 @@
 #ifndef __ctkDICOMQueryWorkerPrivate_h
 #define __ctkDICOMQueryWorkerPrivate_h
 
+// Qt includes
+#include <QSharedPointer>
+
 // ctkDICOMCore includes
 #include "ctkDICOMQuery.h"
 #include "ctkDICOMQueryWorker.h"

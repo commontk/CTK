@@ -25,9 +25,8 @@
 #define __ctkDICOMQueryWorker_h
 
 // Qt includes
-#include <QObject>
 #include <QMap>
-#include <QVariant>
+#include <QObject>
 #include <QSharedPointer>
 
 // ctkDICOMCore includes

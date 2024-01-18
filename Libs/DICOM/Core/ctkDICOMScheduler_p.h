@@ -24,10 +24,19 @@
 #ifndef __ctkDICOMQueryJobPrivate_h
 #define __ctkDICOMQueryJobPrivate_h
 
+// Qt includes
+#include <QList>
+#include <QMap>
+#include <QSharedPointer>
+#include <QString>
+class QVariant;
+
 // ctkCore includes
 #include <ctkJobScheduler_p.h>
 class ctkAbstractJob;
 class ctkAbstractWorker;
+class ctkDICOMDatabase;
+class ctkDICOMServer;
 
 // ctkDICOMCore includes
 #include "ctkDICOMScheduler.h"

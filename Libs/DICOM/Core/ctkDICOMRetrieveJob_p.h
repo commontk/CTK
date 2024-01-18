@@ -24,8 +24,13 @@
 #ifndef __ctkDICOMRetrieveJobPrivate_h
 #define __ctkDICOMRetrieveJobPrivate_h
 
+// Qt includes
+#include <QObject>
+#include <QSharedPointer>
+
 // ctkDICOMCore includes
 #include "ctkDICOMRetrieveJob.h"
+#include "ctkDICOMServer.h"
 
 //------------------------------------------------------------------------------
 class ctkDICOMRetrieveJobPrivate : public QObject

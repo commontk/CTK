@@ -22,8 +22,8 @@
 #define __ctkDICOMEcho_h
 
 // Qt includes
-#include <QObject>
 #include <QMap>
+#include <QObject>
 #include <QString>
 
 // CTK includes
@@ -31,7 +31,6 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
-#include "ctkErrorLogLevel.h"
 
 class ctkDICOMEchoPrivate;
 

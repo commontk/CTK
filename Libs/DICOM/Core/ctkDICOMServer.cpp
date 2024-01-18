@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QSharedPointer>
+#include <QString>
 
 // ctkCore includes
 #include <ctkLogger.h>

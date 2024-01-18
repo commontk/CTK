@@ -27,6 +27,7 @@
 // Qt includes
 #include <QObject>
 #include <QSharedPointer>
+#include <QString>
 
 // ctkCore includes
 class ctkAbstractWorker;
