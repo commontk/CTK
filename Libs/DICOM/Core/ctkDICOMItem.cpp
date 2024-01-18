@@ -133,6 +133,9 @@ ctkDICOMItem* ctkDICOMItem::Clone()
 {
   Q_D(ctkDICOMItem);
   ctkDICOMItem* newItem = new ctkDICOMItem;
+  // Given that we exclusively handle `DcmItem` and `DcmDataset` (where `DcmDataset`
+  // inherits from `DcmItem`), we safely assume that casting from `DcmObject` to
+  // `DcmItem` is always valid.
   DcmItem* dcmItem = dynamic_cast<DcmItem*>(d->m_DcmItem->clone());
   newItem->InitializeFromItem(dcmItem, true);
   return newItem;
