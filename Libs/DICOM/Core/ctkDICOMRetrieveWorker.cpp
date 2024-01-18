@@ -21,13 +21,15 @@
 
 =========================================================================*/
 
+// ctkCore includes
+#include <ctkLogger.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMRetrieveWorker_p.h"
 #include "ctkDICOMRetrieveJob.h"
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
-#include "ctkLogger.h"
 
 static ctkLogger logger ("org.commontk.dicom.ctkDICOMRetrieveWorker");
 
@@ -103,13 +105,10 @@ ctkDICOMRetrieveWorker::ctkDICOMRetrieveWorker()
 ctkDICOMRetrieveWorker::ctkDICOMRetrieveWorker(ctkDICOMRetrieveWorkerPrivate* pimpl)
   : d_ptr(pimpl)
 {
-  Q_D(ctkDICOMRetrieveWorker);
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMRetrieveWorker::~ctkDICOMRetrieveWorker()
-{
-}
+ctkDICOMRetrieveWorker::~ctkDICOMRetrieveWorker() = default;
 
 //----------------------------------------------------------------------------
 void ctkDICOMRetrieveWorker::cancel()

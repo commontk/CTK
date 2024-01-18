@@ -21,12 +21,14 @@
 
 =========================================================================*/
 
+// ctkCore includes
+#include <ctkLogger.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMJobResponseSet.h" // For ctkDICOMJobDetail
 #include "ctkDICOMRetrieveJob_p.h"
 #include "ctkDICOMRetrieveWorker.h"
 #include "ctkDICOMServer.h"
-#include "ctkLogger.h"
 
 static ctkLogger logger ( "org.commontk.dicom.ctkDICOMRetrieveJob" );
 

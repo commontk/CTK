@@ -27,16 +27,16 @@
 #include "ctkDICOMWidgetsExport.h"
 
 // Qt includes
-#include <QWidget>
 #include <QVariant>
+#include <QWidget>
 
-// CTK includes
-#include "ctkDICOMStudyItemWidget.h"
-
-class ctkDICOMPatientItemWidgetPrivate;
-
+// ctkDICOMWidgets includes
 class ctkDICOMDatabase;
 class ctkDICOMScheduler;
+
+// ctkDICOMWidgets includes
+#include "ctkDICOMStudyItemWidget.h"
+class ctkDICOMPatientItemWidgetPrivate;
 class ctkDICOMStudyItemWidget;
 
 /// \ingroup DICOM_Widgets

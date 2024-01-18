@@ -29,11 +29,12 @@
 #include <QSharedPointer>
 #include <QVariant>
 
+// ctkCore includes
+#include <ctkAbstractJob.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMWorker.h"
-
-#include <ctkAbstractJob.h>
 
 class ctkDICOMServer;
 class ctkDICOMJobResponseSet;

@@ -29,13 +29,12 @@
 #include <QMap>
 
 // ctkCore includes
-#include "ctkAbstractScheduler.h"
+#include <ctkAbstractScheduler.h>
+class ctkAbstractJob;
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMDatabase.h"
-
-class ctkAbstractJob;
 class ctkDICOMJob;
 class ctkDICOMIndexer;
 class ctkDICOMSchedulerPrivate;

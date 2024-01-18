@@ -27,9 +27,9 @@
 #include <QDirIterator>
 #include <QTimer>
 
-// ctk includes
-#include "ctkCoreTestingMacros.h"
-#include "ctkUtils.h"
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
+#include <ctkUtils.h>
 
 // ctkDICOMWidget includes
 #include "ctkDICOMVisualBrowserWidget.h"

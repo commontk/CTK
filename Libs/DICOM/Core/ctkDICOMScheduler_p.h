@@ -25,14 +25,14 @@
 #define __ctkDICOMQueryJobPrivate_h
 
 // ctkCore includes
-#include "ctkAbstractScheduler_p.h"
+#include <ctkAbstractScheduler_p.h>
+class ctkAbstractJob;
+class ctkAbstractWorker;
 
 // ctkDICOMCore includes
 #include "ctkDICOMScheduler.h"
 
-class ctkAbstractWorker;
-class ctkAbstractJob;
-
+//------------------------------------------------------------------------------
 struct ThumbnailUID
 {
   QString studyInstanceUID;

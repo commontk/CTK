@@ -27,15 +27,13 @@
 #include <QString>
 #include <QVariant>
 
-// CTK includes
+// ctkCore includes
 #include <ctkPimpl.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
-#include "ctkErrorLogLevel.h"
-
-class ctkDICOMStorageListenerPrivate;
 class ctkDICOMJobResponseSet;
+class ctkDICOMStorageListenerPrivate;
 
 /// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMStorageListener : public QObject

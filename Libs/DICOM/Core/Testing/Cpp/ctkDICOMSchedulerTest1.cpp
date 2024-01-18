@@ -25,11 +25,10 @@
 // Qt includes
 #include <QCoreApplication>
 
-// ctk includes
+// ctkCore includes
 #include "ctkCoreTestingMacros.h"
 
 // ctkDICOMCore includes
-#include "ctkDICOMQuery.h"
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
 #include "ctkDICOMTester.h"

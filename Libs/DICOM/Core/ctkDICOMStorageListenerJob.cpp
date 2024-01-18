@@ -21,10 +21,12 @@
 
 =========================================================================*/
 
+// ctkCore includes
+#include <ctkLogger.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMStorageListenerJob_p.h"
 #include "ctkDICOMStorageListenerWorker.h"
-#include "ctkLogger.h"
 
 static ctkLogger logger ( "org.commontk.dicom.ctkDICOMStorageListenerJob" );
 

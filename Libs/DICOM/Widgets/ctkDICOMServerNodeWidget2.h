@@ -29,14 +29,18 @@
 #include <QString>
 #include <QList>
 #include <QMap>
-
-#include "ctkDICOMWidgetsExport.h"
-
 class QTableWidgetItem;
+
+// ctkCore includes
 class ctkAbstractTask;
-class ctkDICOMServer;
-class ctkDICOMServerNodeWidget2Private;
+
+// ctkDICOMCore includes
 class ctkDICOMScheduler;
+class ctkDICOMServer;
+
+// ctkDICOMWidgets includes
+#include "ctkDICOMWidgetsExport.h"
+class ctkDICOMServerNodeWidget2Private;
 
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMServerNodeWidget2 : public QWidget

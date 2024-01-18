@@ -35,16 +35,16 @@
 #include <QTableWidgetItem>
 #include <QVariant>
 
-// CTK includes
+// ctkCore includes
 #include <ctkCheckableHeaderView.h>
 #include <ctkCheckableModelHelper.h>
 #include <ctkLogger.h>
 #include <ctkMessageBox.h>
 
 // ctkDICOMCore includes
-#include "ctkDICOMEcho.h"
-#include "ctkDICOMServer.h"
-#include "ctkDICOMScheduler.h"
+#include <ctkDICOMEcho.h>
+#include <ctkDICOMScheduler.h>
+#include <ctkDICOMServer.h>
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMServerNodeWidget2.h"

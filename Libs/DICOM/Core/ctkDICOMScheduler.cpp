@@ -22,8 +22,8 @@
 =========================================================================*/
 
 // ctkCore includes
-#include "ctkLogger.h"
-#include "ctkAbstractScheduler_p.h"
+#include <ctkLogger.h>
+#include <ctkAbstractScheduler_p.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMInserterJob.h"

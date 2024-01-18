@@ -25,8 +25,8 @@
 // Qt includes
 #include <QCoreApplication>
 
-// ctk includes
-#include "ctkCoreTestingMacros.h"
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMServer.h"
@@ -36,6 +36,7 @@ int ctkDICOMServerTest1(int argc, char * argv []) {
   QCoreApplication app(argc, argv);
 
   ctkDICOMServer server;
+
   // Test the default values
   CHECK_QSTRING(server.connectionName(), "");
   CHECK_QSTRING(server.callingAETitle(), "");
@@ -75,4 +76,3 @@ int ctkDICOMServerTest1(int argc, char * argv []) {
 
   return EXIT_SUCCESS;
 }
-

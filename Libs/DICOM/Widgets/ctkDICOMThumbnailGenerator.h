@@ -23,20 +23,20 @@
 #define __ctkDICOMThumbnailGenerator_h
 
 // Qt includes
-class QImage;
 #include <QColor>
+class QImage;
 
-// CTK includes
-#include "ctkDICOMWidgetsExport.h"
+// ctkDICOMWidgets includes
 #include "ctkDICOMAbstractThumbnailGenerator.h"
-
+#include "ctkDICOMWidgetsExport.h"
 class ctkDICOMThumbnailGeneratorPrivate;
+
+// DCMTK includes
 class DicomImage;
 
 /// \ingroup DICOM_Widgets
 ///
-/// \brief  thumbnail generator class
-///
+/// \brief Thumbnail generator class
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailGenerator : public ctkDICOMAbstractThumbnailGenerator
 {
   Q_OBJECT

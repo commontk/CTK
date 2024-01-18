@@ -26,14 +26,12 @@
 #include <QMap>
 #include <QString>
 
-// CTK includes
+// ctkCore includes
 #include <ctkPimpl.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMDatabase.h"
-#include "ctkErrorLogLevel.h"
-
 class ctkDICOMQueryPrivate;
 class ctkDICOMJobResponseSet;
 

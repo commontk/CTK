@@ -21,12 +21,14 @@
 
 =========================================================================*/
 
+// ctkCore includes
+#include <ctkLogger.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMQueryWorker_p.h"
 #include "ctkDICOMQueryJob.h"
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
-#include "ctkLogger.h"
 
 static ctkLogger logger ("org.commontk.dicom.ctkDICOMQueryWorker");
 

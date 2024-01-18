@@ -25,8 +25,8 @@
 // Qt includes
 #include <QCoreApplication>
 
-// ctk includes
-#include "ctkCoreTestingMacros.h"
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMInserterJob.h"
@@ -139,4 +139,3 @@ int ctkDICOMJobTest1(int argc, char * argv []) {
 
   return EXIT_SUCCESS;
 }
-

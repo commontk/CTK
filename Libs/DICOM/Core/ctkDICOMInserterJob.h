@@ -30,9 +30,7 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
-
-#include <ctkDICOMJob.h>
-
+#include "ctkDICOMJob.h"
 class ctkDICOMServer;
 
 /// \ingroup DICOM_Core

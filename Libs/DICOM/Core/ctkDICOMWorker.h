@@ -30,7 +30,6 @@
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkAbstractWorker.h"
-
 class ctkDICOMJob;
 class ctkDICOMScheduler;
 

@@ -27,19 +27,21 @@
 #include "ctkDICOMWidgetsExport.h"
 
 // Qt includes
-#include <QWidget>
 #include <QVariant>
+#include <QWidget>
+class QTableWidget;
+
+// ctkWidgets includes
+class ctkCollapsibleGroupBox;
+
+// ctkDICOMCore includes
+class ctkDICOMDatabase;
+class ctkDICOMScheduler;
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMSeriesItemWidget.h"
-
-class ctkCollapsibleGroupBox;
-class ctkDICOMDatabase;
-class ctkDICOMScheduler;
 class ctkDICOMSeriesItemWidget;
 class ctkDICOMStudyItemWidgetPrivate;
-
-class QTableWidget;
 
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget

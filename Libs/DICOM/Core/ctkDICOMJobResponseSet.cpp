@@ -21,10 +21,12 @@
 
 =========================================================================*/
 
+// ctkCore includes
+#include <ctkLogger.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMItem.h"
 #include "ctkDICOMJobResponseSet.h"
-#include "ctkLogger.h"
 
 // DCMTK includes
 #include <dcmtk/dcmdata/dcdeftag.h>

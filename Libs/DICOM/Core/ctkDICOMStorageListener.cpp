@@ -24,13 +24,15 @@
 #include <QString>
 #include <QStringList>
 
+// ctkCore includes
+#include <ctkLogger.h>
+
 // ctkDICOMCore includes
-#include "ctkDICOMStorageListener.h"
 #include "ctkDICOMJobResponseSet.h"
-#include "ctkLogger.h"
+#include "ctkDICOMStorageListener.h"
 
 // DCMTK includes
-#include "dcmtk/dcmnet/dstorscp.h"   /* for DcmStorageSCP */
+#include <dcmtk/dcmnet/dstorscp.h>   /* for DcmStorageSCP */
 
 static ctkLogger logger ( "org.commontk.dicom.ctkDICOMStorageListener" );
 

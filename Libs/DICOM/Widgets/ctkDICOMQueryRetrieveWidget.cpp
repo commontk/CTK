@@ -28,7 +28,7 @@
 #include <QTreeView>
 #include <QTabBar>
 
-/// CTK includes
+// ctkCore includes
 #include <ctkCheckableHeaderView.h>
 #include <ctkDICOMTableManager.h>
 #include <ctkCheckableModelHelper.h>
@@ -42,7 +42,6 @@
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMQueryRetrieveWidget.h"
-#include "ctkDICOMQueryResultsTabWidget.h"
 #include "ui_ctkDICOMQueryRetrieveWidget.h"
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMQueryRetrieveWidget");

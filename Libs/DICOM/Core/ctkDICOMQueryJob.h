@@ -33,7 +33,6 @@
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMJob.h"
-
 class ctkDICOMQueryJobPrivate;
 class ctkDICOMServer;
 

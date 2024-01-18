@@ -21,12 +21,14 @@
 
 =========================================================================*/
 
-// ctkDICOMCore includes
-#include "ctkDICOMServer.h"
-#include "ctkLogger.h"
-
 // Qt includes
 #include <QSharedPointer>
+
+// ctkCore includes
+#include <ctkLogger.h>
+
+// ctkDICOMCore includes
+#include "ctkDICOMServer.h"
 
 static ctkLogger logger("org.commontk.dicom.DICOMServer");
 

@@ -27,7 +27,7 @@
 // Qt includes
 #include <QObject>
 
-// CTK includes
+// ctkCore includes
 #include <ctkPimpl.h>
 
 // ctkDICOMCore includes

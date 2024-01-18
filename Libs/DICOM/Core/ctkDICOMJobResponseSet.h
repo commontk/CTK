@@ -24,14 +24,14 @@
 #ifndef __ctkDICOMJobResponseSet_h
 #define __ctkDICOMJobResponseSet_h
 
-
 // Qt includes
 #include <QObject>
 #include <QMap>
 #include <QVariant>
 
-#include "ctkDICOMJob.h"
+// ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
+#include "ctkDICOMJob.h"
 #include "ctkDICOMItem.h"
 
 class ctkDICOMJobResponseSetPrivate;

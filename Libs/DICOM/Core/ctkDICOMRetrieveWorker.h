@@ -31,7 +31,6 @@
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMWorker.h"
-
 class ctkDICOMRetrieve;
 class ctkDICOMRetrieveWorkerPrivate;
 

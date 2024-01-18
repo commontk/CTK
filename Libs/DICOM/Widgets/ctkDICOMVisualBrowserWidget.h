@@ -24,17 +24,17 @@
 #ifndef __ctkDICOMVisualBrowserWidget_h
 #define __ctkDICOMVisualBrowserWidget_h
 
-#include "ctkDICOMWidgetsExport.h"
-
 // Qt includes
-#include <QWidget>
 #include <QVariant>
+#include <QWidget>
 
-// CTK includes
+// ctkDICOMCore includes
+#include <ctkDICOMModel.h>
+
+// ctkDICOMWidgets includes
 #include "ctkDICOMPatientItemWidget.h"
 #include "ctkDICOMStudyItemWidget.h"
-#include "ctkDICOMModel.h"
-#include "ctkErrorLogLevel.h"
+#include "ctkDICOMWidgetsExport.h"
 
 // DCMTK includes
 #include <dcmtk/oflog/oflog.h>

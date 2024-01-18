@@ -31,7 +31,6 @@
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 #include "ctkDICOMJob.h"
-
 class ctkDICOMStorageListenerJobPrivate;
 
 /// \ingroup DICOM_Core

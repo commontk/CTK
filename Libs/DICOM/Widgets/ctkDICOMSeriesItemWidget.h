@@ -24,15 +24,17 @@
 #ifndef __ctkDICOMSeriesItemWidget_h
 #define __ctkDICOMSeriesItemWidget_h
 
-#include "ctkDICOMWidgetsExport.h"
-
 // Qt includes
-#include <QWidget>
 #include <QVariant>
+#include <QWidget>
 
-class ctkDICOMSeriesItemWidgetPrivate;
+// ctkDICOMCore includes
 class ctkDICOMDatabase;
 class ctkDICOMScheduler;
+
+// ctkDICOMWidgets includes
+#include "ctkDICOMWidgetsExport.h"
+class ctkDICOMSeriesItemWidgetPrivate;
 
 /// \ingroup DICOM_Widgets
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget

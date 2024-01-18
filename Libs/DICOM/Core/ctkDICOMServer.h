@@ -27,8 +27,8 @@
 // Qt includes
 #include <QObject>
 
+// ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
-
 class ctkDICOMServerPrivate;
 
 /// \ingroup DICOM_Core
