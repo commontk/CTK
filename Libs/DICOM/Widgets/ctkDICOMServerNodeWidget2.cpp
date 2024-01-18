@@ -340,7 +340,7 @@ QMap<QString,QVariant> ctkDICOMServerNodeWidget2Private::parameters()const
 QStringList ctkDICOMServerNodeWidget2Private::serverNodes()const
 {
   QStringList nodes;
-  const int count = this->NodeTable->rowCount();
+  int count = this->NodeTable->rowCount();
   for (int row = 0; row < count; ++row)
     {
     QTableWidgetItem* item = this->NodeTable->item(row, ctkDICOMServerNodeWidget2::NameColumn);
@@ -356,7 +356,7 @@ QStringList ctkDICOMServerNodeWidget2Private::serverNodes()const
 QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(const QString &connectionName)const
 {
   QMap<QString, QVariant> parameters;
-  const int count = this->NodeTable->rowCount();
+  int count = this->NodeTable->rowCount();
   for (int row = 0; row < count; ++row)
     {
     if (this->NodeTable->item(row, 0)->text() == connectionName)
@@ -376,7 +376,7 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(i
     {
     return node;
     }
-  const int columnCount = this->NodeTable->columnCount();
+  int columnCount = this->NodeTable->columnCount();
   for (int column = 0; column < columnCount; ++column)
     {
     if (!this->NodeTable->item(row, column))
@@ -421,7 +421,7 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(i
 QStringList ctkDICOMServerNodeWidget2Private::getAllNodesName() const
 {
   QStringList nodesNames;
-  const int count = this->NodeTable->rowCount();
+  int count = this->NodeTable->rowCount();
   for (int row = 0; row < count; ++row)
     {
     nodesNames.append(this->NodeTable->item(row, ctkDICOMServerNodeWidget2::NameColumn)->data(Qt::DisplayRole).toString());
@@ -434,7 +434,7 @@ QStringList ctkDICOMServerNodeWidget2Private::getAllNodesName() const
 int ctkDICOMServerNodeWidget2Private::getServerNodeRowFromConnectionName(const QString &connectionName) const
 {
   QMap<QString, QVariant> parameters;
-  const int count = this->NodeTable->rowCount();
+  int count = this->NodeTable->rowCount();
   for (int row = 0; row < count; ++row)
     {
     if (this->NodeTable->item(row, 0)->text() == connectionName)
@@ -468,7 +468,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
     return -1;
     }
 
-  const int rowCount = this->NodeTable->rowCount();
+  int rowCount = this->NodeTable->rowCount();
   this->NodeTable->setRowCount(rowCount + 1);
 
   QTableWidgetItem *newItem;
@@ -742,7 +742,7 @@ ctkDICOMServerNodeWidget2::~ctkDICOMServerNodeWidget2()
 int ctkDICOMServerNodeWidget2::onAddServerNode()
 {
   Q_D(ctkDICOMServerNodeWidget2);
-  const int rowCount = d->NodeTable->rowCount();
+  int rowCount = d->NodeTable->rowCount();
   d->NodeTable->setRowCount(rowCount + 1);
 
   QString serverName = "server";
@@ -932,7 +932,7 @@ void ctkDICOMServerNodeWidget2::saveSettings()
     }
 
   QSettings settings;
-  const int rowCount = d->NodeTable->rowCount();
+  int rowCount = d->NodeTable->rowCount();
 
   settings.remove("DICOM/ServerNodes");
   this->removeAllServers();
@@ -1070,7 +1070,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
   d->StorageAETitle->setText(settings.value("DICOM/StorageAETitle").toString());
   d->StoragePort->setText(settings.value("DICOM/StoragePort").toString());
 
-  const int count = settings.value("DICOM/ServerNodeCount").toInt();
+  int count = settings.value("DICOM/ServerNodeCount").toInt();
   for (int row = 0; row < count; ++row)
     {
     node = settings.value(QString("DICOM/ServerNodes/%1").arg(row)).toMap();
