@@ -99,7 +99,7 @@ Q_SIGNALS:
     void error(const QString& message);
     /// Signal is emitted inside the listener() function when finished with value
     /// true for success or false for error
-    void done(const bool& error);
+    void done(bool error);
     /// Signal is emitted inside the listener() function when a frame has been fetched
     void progressJobDetail(QVariant);
 
