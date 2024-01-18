@@ -293,7 +293,7 @@ QSharedPointer<ctkDICOMItem> ctkDICOMJobResponseSet::datasetShared() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setDatasets(QMap<QString, DcmItem *> dcmItems, bool takeOwnership)
+void ctkDICOMJobResponseSet::setDatasets(const QMap<QString, DcmItem *>& dcmItems, bool takeOwnership)
 {
   Q_D(ctkDICOMJobResponseSet);
   for(const QString& key : dcmItems.keys())

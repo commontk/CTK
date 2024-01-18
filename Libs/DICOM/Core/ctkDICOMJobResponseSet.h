@@ -134,7 +134,7 @@ public:
   Q_INVOKABLE void setDataset(DcmItem* dcmItem, bool takeOwnership = true);
   Q_INVOKABLE ctkDICOMItem* dataset() const;
   QSharedPointer<ctkDICOMItem> datasetShared() const;
-  Q_INVOKABLE void setDatasets(QMap<QString, DcmItem*> dcmItems, bool takeOwnership = true);
+  Q_INVOKABLE void setDatasets(const QMap<QString, DcmItem*>& dcmItems, bool takeOwnership = true);
   Q_INVOKABLE QMap<QString, ctkDICOMItem*> datasets() const;
   QMap<QString, QSharedPointer<ctkDICOMItem>> datasetsShared() const;
   ///@}
