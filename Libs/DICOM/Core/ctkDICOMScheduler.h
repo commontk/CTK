@@ -105,9 +105,9 @@ public:
 
   ///@{
   /// Insert results from a job
-  void insertJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet,
+  void insertJobResponseSet(const QSharedPointer<ctkDICOMJobResponseSet>& jobResponseSet,
                             QThread::Priority priority = QThread::HighPriority);
-  void insertJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets,
+  void insertJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets,
                              QThread::Priority priority = QThread::HighPriority);
   ///@}
 

@@ -322,7 +322,7 @@ void ctkDICOMScheduler::startListener(const int port,
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::insertJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet,
+void ctkDICOMScheduler::insertJobResponseSet(const QSharedPointer<ctkDICOMJobResponseSet>& jobResponseSet,
                                              QThread::Priority priority)
 {
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets;
@@ -331,7 +331,7 @@ void ctkDICOMScheduler::insertJobResponseSet(QSharedPointer<ctkDICOMJobResponseS
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::insertJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets,
+void ctkDICOMScheduler::insertJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets,
                                               QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
