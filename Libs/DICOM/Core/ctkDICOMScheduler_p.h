@@ -25,7 +25,7 @@
 #define __ctkDICOMQueryJobPrivate_h
 
 // ctkCore includes
-#include <ctkAbstractScheduler_p.h>
+#include <ctkJobScheduler_p.h>
 class ctkAbstractJob;
 class ctkAbstractWorker;
 

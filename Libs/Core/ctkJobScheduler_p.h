@@ -32,7 +32,7 @@ class ctkAbstractJob;
 class ctkAbstractWorker;
 
 // ctkDICOMCore includes
-#include "ctkAbstractScheduler.h"
+#include "ctkJobScheduler.h"
 
 //------------------------------------------------------------------------------
 class CTK_CORE_EXPORT ctkJobSchedulerPrivate : public QObject

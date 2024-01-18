@@ -23,7 +23,7 @@
 
 // ctkCore includes
 #include <ctkLogger.h>
-#include <ctkAbstractScheduler_p.h>
+#include <ctkJobScheduler_p.h>
 #include <ctkAbstractWorker.h>
 
 // ctkDICOMCore includes

@@ -29,7 +29,7 @@
 #include <QMap>
 
 // ctkCore includes
-#include <ctkAbstractScheduler.h>
+#include <ctkJobScheduler.h>
 class ctkAbstractJob;
 
 // ctkDICOMCore includes

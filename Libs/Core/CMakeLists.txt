@@ -32,9 +32,6 @@ set(KIT_SRCS
   ctkAbstractQObjectFactory.tpp
   ctkAbstractLibraryFactory.h
   ctkAbstractLibraryFactory.tpp
-  ctkAbstractScheduler.cpp
-  ctkAbstractScheduler.h
-  ctkAbstractScheduler_p.h
   ctkAbstractWorker.cpp
   ctkAbstractWorker.h
   ctkBackTrace.cpp
@@ -72,6 +69,9 @@ set(KIT_SRCS
   ctkFileLogger.cpp
   ctkFileLogger.h
   ctkHighPrecisionTimer.cpp
+  ctkJobScheduler.cpp
+  ctkJobScheduler.h
+  ctkJobScheduler_p.h
   ctkLinearValueProxy.cpp
   ctkLinearValueProxy.h
   ctkLogger.cpp
@@ -108,8 +108,6 @@ endif()
 # Headers that should run through moc
 set(KIT_MOC_SRCS
   ctkAbstractJob.h
-  ctkAbstractScheduler.h
-  ctkAbstractScheduler_p.h
   ctkAbstractWorker.h
   ctkBooleanMapper.h
   ctkCallback.h
@@ -122,6 +120,8 @@ set(KIT_MOC_SRCS
   ctkErrorLogQtMessageHandler.h
   ctkErrorLogTerminalOutput.h
   ctkFileLogger.h
+  ctkJobScheduler.h
+  ctkJobScheduler_p.h
   ctkLinearValueProxy.h
   ctkLogger.h
   ctkModelTester.h
@@ -136,9 +136,9 @@ set(KIT_MOC_SRCS
 # Abstract class should not be wrapped !
 set_source_files_properties(
   ctkAbstractJob.h
-  ctkAbstractScheduler.h
-  ctkAbstractScheduler_p.h
   ctkAbstractWorker.h
+  ctkJobScheduler.h
+  ctkJobScheduler_p.h
   WRAP_EXCLUDE
   )
 
