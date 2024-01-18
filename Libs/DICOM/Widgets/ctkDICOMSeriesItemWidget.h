@@ -102,13 +102,13 @@ public:
 
   ///@{
   /// Stop Series widget to run new jobs
-  void setStopJobs(const bool& stopJobs);
+  void setStopJobs(bool stopJobs);
   bool stopJobs() const;
   ///@}
 
   ///@{
   /// Set high priority to all jobs run from the Series widget
-  void setRaiseJobsPriority(const bool& raiseJobsPriority);
+  void setRaiseJobsPriority(bool raiseJobsPriority);
   bool raiseJobsPriority() const;
   ///@}
 
@@ -117,7 +117,7 @@ public:
 
   ///@{
   /// in case the retrieve job failed
-  void setRetrieveFailed(const bool& retrieveFailed);
+  void setRetrieveFailed(bool retrieveFailed);
   bool retrieveFailed() const;
   ///@}
 

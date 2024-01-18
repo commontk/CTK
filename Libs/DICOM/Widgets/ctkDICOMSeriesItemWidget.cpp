@@ -667,7 +667,7 @@ QString ctkDICOMSeriesItemWidget::seriesDescription() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setStopJobs(const bool &stopJobs)
+void ctkDICOMSeriesItemWidget::setStopJobs(bool stopJobs)
 {
   Q_D(ctkDICOMSeriesItemWidget);
   d->StopJobs = stopJobs;
@@ -681,7 +681,7 @@ bool ctkDICOMSeriesItemWidget::stopJobs() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setRaiseJobsPriority(const bool &raiseJobsPriority)
+void ctkDICOMSeriesItemWidget::setRaiseJobsPriority(bool raiseJobsPriority)
 {
   Q_D(ctkDICOMSeriesItemWidget);
   d->RaiseJobsPriority = raiseJobsPriority;
@@ -702,7 +702,7 @@ bool ctkDICOMSeriesItemWidget::isCloud() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setRetrieveFailed(const bool &retrieveFailed)
+void ctkDICOMSeriesItemWidget::setRetrieveFailed(bool retrieveFailed)
 {
   Q_D(ctkDICOMSeriesItemWidget);
   d->RetrieveFailed = retrieveFailed;

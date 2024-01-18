@@ -196,12 +196,12 @@ public:
 
   /// Set if send action on right click context menu is available
   /// false by default
-  void setSendActionVisible(const bool &visible);
+  void setSendActionVisible(bool visible);
   bool isSendActionVisible() const;
 
   /// Set if cancel action on right click context menu is available
   /// true by default
-  void setDeleteActionVisible(const bool &visible);
+  void setDeleteActionVisible(bool visible);
   bool isDeleteActionVisible() const;
 
   /// Add/Remove Patient item widget

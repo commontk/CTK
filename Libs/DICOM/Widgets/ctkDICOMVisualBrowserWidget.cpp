@@ -1718,7 +1718,7 @@ ctkDICOMStudyItemWidget::ThumbnailSizeOption ctkDICOMVisualBrowserWidget::thumbn
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setSendActionVisible(const bool &visible)
+void ctkDICOMVisualBrowserWidget::setSendActionVisible(bool visible)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->SendActionVisible = visible;
@@ -1731,9 +1731,8 @@ bool ctkDICOMVisualBrowserWidget::isSendActionVisible() const
   return d->SendActionVisible;
 }
 
-
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setDeleteActionVisible(const bool &visible)
+void ctkDICOMVisualBrowserWidget::setDeleteActionVisible(bool visible)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->DeleteActionVisible = visible;
