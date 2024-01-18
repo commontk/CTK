@@ -62,20 +62,20 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   // Test visual browser import functionality
   QFileInfo tempFileInfo(QDir::tempPath() + QString("/ctkDICOMBrowserTest1-db"));
   QString dbDir = tempFileInfo.absoluteFilePath();
-  qDebug() << "\n\nUsing directory: " << dbDir;
+  qDebug().noquote() << "\n\n" << testName << ": Using directory: " << dbDir;
   if (tempFileInfo.exists())
     {
-    qDebug() << "\n\nRemoving directory: " << dbDir;
+    qDebug().noquote() << "\n\n" << testName << ": Removing directory: " << dbDir;
     ctk::removeDirRecursively(dbDir);
     }
-  qDebug() << "\n\nMaking directory: " << dbDir;
+  qDebug().noquote() << "\n\n" << testName << ": Making directory: " << dbDir;
   QDir dir(dbDir);
   dir.mkdir(dbDir);
 
   browser.setDatabaseDirectory(dbDir);
   browser.show();
 
-  qDebug() << "Importing directory " << argv[1];
+  qDebug().noquote() << testName << ": Importing directory " << argv[1];
 
   // Test import of a few specific files
   QDirIterator it(argv[1], QStringList() << "*.IMA", QDir::Files, QDirIterator::Subdirectories);
@@ -90,7 +90,8 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   browser.importFiles(files);
   browser.waitForImportFinished();
 
-  qDebug() << browser.patientsAddedDuringImport()
+  qDebug().noquote() << testName << ":"
+    << " " << browser.patientsAddedDuringImport()
     << " " << browser.studiesAddedDuringImport()
     << " " << browser.seriesAddedDuringImport()
     << " " << browser.instancesAddedDuringImport();
@@ -103,14 +104,14 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   browser.importDirectories(QStringList() << argv[1]);
   browser.waitForImportFinished();
 
-  qDebug() << "\n\nAdded to database directory: " << files;
+  qDebug().noquote() << "\n\n" << testName << ": Added to database directory: " << files;
 
   CHECK_INT(browser.patientsAddedDuringImport(), 1);
   CHECK_INT(browser.studiesAddedDuringImport(), 1);
   CHECK_INT(browser.seriesAddedDuringImport(), 1);
   CHECK_INT(browser.instancesAddedDuringImport(), 100);
 
-  qDebug() << "\n\nAdded to database directory: " << dbDir;
+  qDebug().noquote() << "\n\n" << testName << ": Added to database directory: " << dbDir;
 
   // Test setting and getting
   browser.setStorageAETitle("storage");

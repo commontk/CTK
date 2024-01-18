@@ -56,13 +56,13 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
 
   QFileInfo tempFileInfo(QDir::tempPath() + QString("/ctkDICOMBrowserTest1-db"));
   QString dbDir = tempFileInfo.absoluteFilePath();
-  qDebug() << "\n\nUsing directory: " << dbDir;
+  qDebug().noquote() << "\n\n" << testName << ": Using directory: " << dbDir;
   if (tempFileInfo.exists())
     {
-    qDebug() << "\n\nRemoving directory: " << dbDir;
+    qDebug().noquote() << "\n\n" << testName << ": Removing directory: " << dbDir;
     ctk::removeDirRecursively(dbDir);
     }
-  qDebug() << "\n\nMaking directory: " << dbDir;
+  qDebug().noquote() << "\n\n" << testName << ": Making directory: " << dbDir;
   QDir dir(dbDir);
   dir.mkdir(dbDir);
 
@@ -72,7 +72,7 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   browser.show();
 
   browser.setDisplayImportSummary(false);
-  qDebug() << "Importing directory " << dicomDirectory;
+  qDebug().noquote() << testName << ": Importing directory " << dicomDirectory;
 
   // [Deprecated]
   // make sure copy/link dialog doesn't pop up, always copy on import
@@ -97,7 +97,8 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   browser.importFiles(files);
   browser.waitForImportFinished();
 
-  qDebug() << browser.patientsAddedDuringImport()
+  qDebug().noquote() << testName << ":"
+    << " " << browser.patientsAddedDuringImport()
     << " " << browser.studiesAddedDuringImport()
     << " " << browser.seriesAddedDuringImport()
     << " " << browser.instancesAddedDuringImport();
@@ -110,7 +111,7 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   browser.importDirectories(QStringList() << dicomDirectory);
   browser.waitForImportFinished();
 
-  qDebug() << "\n\nAdded to database directory: " << files;
+  qDebug().noquote() << "\n\n" << testName << ": Added to database directory: " << files;
 
   // [Deprecated]
   // reset to the original copy/import setting
@@ -122,7 +123,7 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   CHECK_INT(browser.seriesAddedDuringImport(), 1);
   CHECK_INT(browser.instancesAddedDuringImport(), 100);
 
-  qDebug() << "\n\nAdded to database directory: " << dbDir;
+  qDebug().noquote() << "\n\n" << testName << ": Added to database directory: " << dbDir;
 
   if (!interactive)
     {
