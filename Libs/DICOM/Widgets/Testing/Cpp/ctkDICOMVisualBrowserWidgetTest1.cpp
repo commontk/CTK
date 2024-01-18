@@ -38,13 +38,22 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  qDebug() << "argc = " << argc;
-  for (int i = 0; i < argc; ++i)
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  bool interactive = arguments.removeOne("-I");
+
+  if (arguments.count() != 1)
     {
-    qDebug() << "\t" << argv[i];
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " [-I] <path-to-dicom-directory>" << std::endl;
+    return EXIT_FAILURE;
     }
 
+  QString dicomDirectory(arguments.at(0));
+
   ctkDICOMVisualBrowserWidget browser;
+
   // Test the default values
   CHECK_QSTRING(browser.storageAETitle(), "CTKSTORE");
   CHECK_INT(browser.storagePort(), 11112);
@@ -52,7 +61,7 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   CHECK_QSTRING(browser.filteringPatientName(), "");
   CHECK_QSTRING(browser.filteringStudyDescription(), "");
   CHECK_QSTRING(browser.filteringSeriesDescription(), "");
-  CHECK_QSTRING(browser.filteringModalities()[0], "Any");
+  CHECK_QSTRING(browser.filteringModalities().at(0), "Any");
   CHECK_INT(browser.filteringDate(), ctkDICOMPatientItemWidget::DateType::Any);
   CHECK_INT(browser.numberOfStudiesPerPatient(), 2);
   CHECK_INT(browser.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium);
@@ -75,10 +84,10 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   browser.setDatabaseDirectory(dbDir);
   browser.show();
 
-  qDebug().noquote() << testName << ": Importing directory " << argv[1];
+  qDebug().noquote() << testName << ": Importing directory " << dicomDirectory;
 
   // Test import of a few specific files
-  QDirIterator it(argv[1], QStringList() << "*.IMA", QDir::Files, QDirIterator::Subdirectories);
+  QDirIterator it(dicomDirectory, QStringList() << "*.IMA", QDir::Files, QDirIterator::Subdirectories);
   // Skip a few files
   it.next();
   it.next();
@@ -128,7 +137,7 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   CHECK_QSTRING(browser.filteringSeriesDescription(), "SeriesDescription");
   QStringList filteringModalities = {"CT"};
   browser.setFilteringModalities(filteringModalities);
-  CHECK_QSTRING(browser.filteringModalities()[0], "CT");
+  CHECK_QSTRING(browser.filteringModalities().at(0), "CT");
   browser.setFilteringDate(ctkDICOMPatientItemWidget::DateType::LastYear);
   CHECK_INT(browser.filteringDate(), ctkDICOMPatientItemWidget::DateType::LastYear);
   browser.setNumberOfStudiesPerPatient(6);
@@ -140,7 +149,7 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   browser.setDeleteActionVisible(false);
   CHECK_BOOL(browser.isDeleteActionVisible(), false);
 
-  if (argc <= 2 || QString(argv[argc - 1]) != "-I")
+  if (!interactive)
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
