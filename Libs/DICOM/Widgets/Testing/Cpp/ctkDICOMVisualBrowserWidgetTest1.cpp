@@ -69,7 +69,7 @@ int ctkDICOMVisualBrowserWidgetTest1( int argc, char * argv [] )
   CHECK_BOOL(browser.isDeleteActionVisible(), true);
 
   // Test visual browser import functionality
-  QFileInfo tempFileInfo(QDir::tempPath() + QString("/ctkDICOMBrowserTest1-db"));
+  QFileInfo tempFileInfo(QDir::tempPath() + QString("/ctkDICOMVisualBrowserWidgetTest1-db"));
   QString dbDir = tempFileInfo.absoluteFilePath();
   qDebug().noquote() << "\n\n" << testName << ": Using directory: " << dbDir;
   if (tempFileInfo.exists())
