@@ -48,7 +48,7 @@ SIMPLE_TEST(ctkDICOMIndexerTest1 )
 
 # ctkDICOMModel
 SIMPLE_TEST(ctkDICOMModelTest1
-  ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMModelTest1-dicom.db
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
   )
 SIMPLE_TEST(ctkDICOMPersonNameTest1)
@@ -71,7 +71,7 @@ set_property(TEST "ctkDICOMRetrieveTest2" PROPERTY RESOURCE_LOCK "dcmqrscp")
 
 # ctkDICOMCore
 SIMPLE_TEST( ctkDICOMCoreTest1
-  ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMCoreTest1-dicom.db
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
   )
 

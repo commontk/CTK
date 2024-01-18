@@ -51,13 +51,13 @@ SIMPLE_TEST(ctkDICOMDirectoryListWidgetTest1)
 SIMPLE_TEST(ctkDICOMImportWidgetTest1)
 SIMPLE_TEST(ctkDICOMListenerWidgetTest1)
 SIMPLE_TEST(ctkDICOMModelTest2
-  ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMModelTest2-dicom.db
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql
   )
 SIMPLE_TEST(ctkDICOMQueryRetrieveWidgetTest1)
 SIMPLE_TEST(ctkDICOMQueryResultsTabWidgetTest1)
 SIMPLE_TEST(ctkDICOMThumbnailListWidgetTest1
-  ${CMAKE_CURRENT_BINARY_DIR}/dicom.db
+  ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMThumbnailListWidgetTest1-dicom.db
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../Core/Resources/dicom-sample.sql
   )
 
