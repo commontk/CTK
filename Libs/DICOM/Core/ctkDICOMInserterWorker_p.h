@@ -41,6 +41,8 @@ public:
   ctkDICOMInserterWorkerPrivate(ctkDICOMInserterWorker* object);
   virtual ~ctkDICOMInserterWorkerPrivate();
 
+  void setInserterParameters();
+
   QSharedPointer<ctkDICOMInserter> Inserter;
 };
 

@@ -48,6 +48,23 @@ ctkDICOMInserterWorkerPrivate::ctkDICOMInserterWorkerPrivate(ctkDICOMInserterWor
 ctkDICOMInserterWorkerPrivate::~ctkDICOMInserterWorkerPrivate() = default;
 
 //------------------------------------------------------------------------------
+void ctkDICOMInserterWorkerPrivate::setInserterParameters()
+{
+  Q_Q(ctkDICOMInserterWorker);
+
+  QSharedPointer<ctkDICOMInserterJob> inserterJob =
+    qobject_cast<QSharedPointer<ctkDICOMInserterJob>>(q->Job);
+  if (!inserterJob)
+    {
+    return;
+    }
+
+  this->Inserter->setDatabaseFilename(inserterJob->databaseFilename());
+  this->Inserter->setTagsToPrecache(inserterJob->tagsToPrecache());
+  this->Inserter->setTagsToExcludeFromStorage(inserterJob->tagsToExcludeFromStorage());
+}
+
+//------------------------------------------------------------------------------
 // ctkDICOMInserterWorker methods
 
 //------------------------------------------------------------------------------
@@ -121,7 +138,8 @@ void ctkDICOMInserterWorker::run()
 //----------------------------------------------------------------------------
 void ctkDICOMInserterWorker::setJob(QSharedPointer<ctkAbstractJob> job)
 {
-  Q_D(const ctkDICOMInserterWorker);
+  Q_D(ctkDICOMInserterWorker);
+
   QSharedPointer<ctkDICOMInserterJob> inserterJob =
     qobject_cast<QSharedPointer<ctkDICOMInserterJob>>(job);
   if (!inserterJob)
@@ -130,10 +148,7 @@ void ctkDICOMInserterWorker::setJob(QSharedPointer<ctkAbstractJob> job)
     }
 
   this->Superclass::setJob(job);
-
-  d->Inserter->setDatabaseFilename(inserterJob->databaseFilename());
-  d->Inserter->setTagsToPrecache(inserterJob->tagsToPrecache());
-  d->Inserter->setTagsToExcludeFromStorage(inserterJob->tagsToExcludeFromStorage());
+  d->setInserterParameters();
 }
 
 //----------------------------------------------------------------------------
