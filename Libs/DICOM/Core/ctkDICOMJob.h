@@ -94,9 +94,9 @@ public:
   /// Access the list of responses.
   Q_INVOKABLE QList<ctkDICOMJobResponseSet*> jobResponseSets() const;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSetsShared() const;
-  Q_INVOKABLE void setJobResponseSets(QList<ctkDICOMJobResponseSet*> jobResponseSets);
-  void setJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets);
-  void copyJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets);
+  Q_INVOKABLE void setJobResponseSets(const QList<ctkDICOMJobResponseSet*>& jobResponseSets);
+  void setJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets);
+  void copyJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets);
   ///@}
 
   /// Return the QVariant value of this job.

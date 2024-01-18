@@ -133,7 +133,7 @@ QList<QSharedPointer<ctkDICOMJobResponseSet>> ctkDICOMJob::jobResponseSetsShared
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMJob::setJobResponseSets(QList<ctkDICOMJobResponseSet*> jobResponseSets)
+void ctkDICOMJob::setJobResponseSets(const QList<ctkDICOMJobResponseSet*>& jobResponseSets)
 {
   this->JobResponseSets.clear();
   foreach(ctkDICOMJobResponseSet* jobResponseSet, jobResponseSets)
@@ -143,13 +143,13 @@ void ctkDICOMJob::setJobResponseSets(QList<ctkDICOMJobResponseSet*> jobResponseS
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMJob::setJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets)
+void ctkDICOMJob::setJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets)
 {
   this->JobResponseSets = jobResponseSets;
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMJob::copyJobResponseSets(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets)
+void ctkDICOMJob::copyJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets)
 {
   this->JobResponseSets.clear();
   foreach(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
