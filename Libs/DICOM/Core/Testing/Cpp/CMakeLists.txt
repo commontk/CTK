@@ -66,6 +66,7 @@ SIMPLE_TEST(ctkDICOMEchoTest1
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
   )
+set_property(TEST "ctkDICOMEchoTest1" PROPERTY RESOURCE_LOCK "dcmqrscp")
 
 # ctkDICOMModel
 SIMPLE_TEST(ctkDICOMModelTest1
@@ -109,6 +110,7 @@ SIMPLE_TEST(ctkDICOMSchedulerTest1
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000058.IMA
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000059.IMA
   )
+set_property(TEST "ctkDICOMSchedulerTest1" PROPERTY RESOURCE_LOCK "dcmqrscp")
 
 # ctkDICOMTester
 SIMPLE_TEST( ctkDICOMTesterTest1 )
