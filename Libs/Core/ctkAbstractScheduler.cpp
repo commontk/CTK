@@ -30,29 +30,29 @@
 
 // CTK includes
 #include "ctkAbstractJob.h"
-#include "ctkAbstractScheduler.h"
-#include "ctkAbstractScheduler_p.h"
+#include "ctkJobScheduler.h"
+#include "ctkJobScheduler_p.h"
 #include "ctkAbstractWorker.h"
 #include "ctkLogger.h"
 
 static ctkLogger logger ("org.commontk.core.AbstractScheduler");
 
 // --------------------------------------------------------------------------
-// ctkAbstractSchedulerPrivate methods
+// ctkJobSchedulerPrivate methods
 
 // --------------------------------------------------------------------------
-ctkAbstractSchedulerPrivate::ctkAbstractSchedulerPrivate(ctkAbstractScheduler& object)
+ctkJobSchedulerPrivate::ctkJobSchedulerPrivate(ctkJobScheduler& object)
   : q_ptr(&object)
 {
 }
 
 // --------------------------------------------------------------------------
-ctkAbstractSchedulerPrivate::~ctkAbstractSchedulerPrivate() = default;
+ctkJobSchedulerPrivate::~ctkJobSchedulerPrivate() = default;
 
 //---------------------------------------------------------------------------
-void ctkAbstractSchedulerPrivate::init()
+void ctkJobSchedulerPrivate::init()
 {
-  Q_Q(ctkAbstractScheduler);
+    Q_Q(ctkJobScheduler);
 
   QObject::connect(q, SIGNAL(queueJobs()),
                    q, SLOT(onQueueJobsInThreadPool()),
@@ -63,16 +63,16 @@ void ctkAbstractSchedulerPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-void ctkAbstractSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
+void ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 {
-  Q_Q(ctkAbstractScheduler);
+    Q_Q(ctkJobScheduler);
 
   if (!job)
     {
     return;
     }
 
-  logger.debug(QString("ctkAbstractScheduler: creating job object %1 of type %2 in thread %3.\n")
+  logger.debug(QString("ctkJobScheduler: creating job object %1 of type %2 in thread %3.\n")
     .arg(job->jobUID())
     .arg(job->className())
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
@@ -90,11 +90,11 @@ void ctkAbstractSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 }
 
 //------------------------------------------------------------------------------
-void ctkAbstractSchedulerPrivate::removeJob(const QString& jobUID)
+void ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
 {
-  Q_Q(ctkAbstractScheduler);
+    Q_Q(ctkJobScheduler);
 
-  logger.debug(QString("ctkAbstractScheduler: deleting job object %1 in thread %2.\n")
+  logger.debug(QString("ctkJobScheduler: deleting job object %1 in thread %2.\n")
     .arg(jobUID)
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
 
@@ -115,7 +115,7 @@ void ctkAbstractSchedulerPrivate::removeJob(const QString& jobUID)
 }
 
 //------------------------------------------------------------------------------
-int ctkAbstractSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job)
+int ctkJobSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job)
 {
   int count = 0;
   foreach (QSharedPointer<ctkAbstractJob> queuedJob, this->JobsQueue)
@@ -137,25 +137,25 @@ int ctkAbstractSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QShar
 }
 
 //------------------------------------------------------------------------------
-QString ctkAbstractSchedulerPrivate::generateUniqueJobUID()
+QString ctkJobSchedulerPrivate::generateUniqueJobUID()
 {
   return QUuid::createUuid().toString(QUuid::StringFormat::WithoutBraces);
 }
 
 //---------------------------------------------------------------------------
-// ctkAbstractScheduler methods
+// ctkJobScheduler methods
 
 // --------------------------------------------------------------------------
-ctkAbstractScheduler::ctkAbstractScheduler(QObject* parent)
+ctkJobScheduler::ctkJobScheduler(QObject* parent)
   : QObject(parent)
-  , d_ptr(new ctkAbstractSchedulerPrivate(*this))
+  , d_ptr(new ctkJobSchedulerPrivate(*this))
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
   d->init();
 }
 
 // --------------------------------------------------------------------------
-ctkAbstractScheduler::ctkAbstractScheduler(ctkAbstractSchedulerPrivate* pimpl, QObject* parent)
+ctkJobScheduler::ctkJobScheduler(ctkJobSchedulerPrivate* pimpl, QObject* parent)
   : Superclass(parent)
   , d_ptr(pimpl)
 {
@@ -164,20 +164,20 @@ ctkAbstractScheduler::ctkAbstractScheduler(ctkAbstractSchedulerPrivate* pimpl, Q
 }
 
 // --------------------------------------------------------------------------
-ctkAbstractScheduler::~ctkAbstractScheduler() = default;
+ctkJobScheduler::~ctkJobScheduler() = default;
 
 //----------------------------------------------------------------------------
-int ctkAbstractScheduler::numberOfJobs()
+int ctkJobScheduler::numberOfJobs()
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
   QMutexLocker ml(&d->mMutex);
   return d->JobsQueue.count();
 }
 
 //----------------------------------------------------------------------------
-int ctkAbstractScheduler::numberOfPersistentJobs()
+int ctkJobScheduler::numberOfPersistentJobs()
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
   int cont = 0;
   QMutexLocker ml(&d->mMutex);
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
@@ -191,25 +191,25 @@ int ctkAbstractScheduler::numberOfPersistentJobs()
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::addJob(ctkAbstractJob *job)
+void ctkJobScheduler::addJob(ctkAbstractJob *job)
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
 
   QSharedPointer<ctkAbstractJob> jobShared = QSharedPointer<ctkAbstractJob>(job);
   d->insertJob(jobShared);
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::deleteJob(const QString& jobUID)
+void ctkJobScheduler::deleteJob(const QString& jobUID)
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
   d->removeJob(jobUID);
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::deleteWorker(const QString& jobUID)
+void ctkJobScheduler::deleteWorker(const QString& jobUID)
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
 
   QMap<QString, QSharedPointer<ctkAbstractWorker>>::iterator it = d->Workers.find(jobUID);
   if (it == d->Workers.end())
@@ -221,9 +221,9 @@ void ctkAbstractScheduler::deleteWorker(const QString& jobUID)
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkAbstractJob> ctkAbstractScheduler::getJobSharedByUID(const QString& jobUID)
+QSharedPointer<ctkAbstractJob> ctkJobScheduler::getJobSharedByUID(const QString& jobUID)
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
 
   QMutexLocker ml(&d->mMutex);
   QMap<QString, QSharedPointer<ctkAbstractJob>>::iterator it = d->JobsQueue.find(jobUID);
@@ -236,7 +236,7 @@ QSharedPointer<ctkAbstractJob> ctkAbstractScheduler::getJobSharedByUID(const QSt
 }
 
 //----------------------------------------------------------------------------
-ctkAbstractJob *ctkAbstractScheduler::getJobByUID(const QString& jobUID)
+ctkAbstractJob *ctkJobScheduler::getJobByUID(const QString& jobUID)
 {
   QSharedPointer<ctkAbstractJob> job = this->getJobSharedByUID(jobUID);
   if (!job)
@@ -248,9 +248,9 @@ ctkAbstractJob *ctkAbstractScheduler::getJobByUID(const QString& jobUID)
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::waitForFinish()
+void ctkJobScheduler::waitForFinish()
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
 
   int numberOfPersistentJobs = this->numberOfPersistentJobs();
   while(this->numberOfJobs() > numberOfPersistentJobs)
@@ -261,18 +261,18 @@ void ctkAbstractScheduler::waitForFinish()
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::waitForDone(int msec)
+void ctkJobScheduler::waitForDone(int msec)
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
 
   QCoreApplication::processEvents();
   d->ThreadPool->waitForDone(msec);
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::stopAllJobs(bool stopPersistentJobs)
+void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
 
   QMutexLocker ml(&d->mMutex);
 
@@ -314,63 +314,63 @@ void ctkAbstractScheduler::stopAllJobs(bool stopPersistentJobs)
 }
 
 //----------------------------------------------------------------------------
-int ctkAbstractScheduler::maximumThreadCount() const
+int ctkJobScheduler::maximumThreadCount() const
 {
-  Q_D(const ctkAbstractScheduler);
+  Q_D(const ctkJobScheduler);
   return d->ThreadPool->maxThreadCount();
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::setMaximumThreadCount(int maximumThreadCount)
+void ctkJobScheduler::setMaximumThreadCount(int maximumThreadCount)
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
   d->ThreadPool->setMaxThreadCount(maximumThreadCount);
 }
 
 //----------------------------------------------------------------------------
-int ctkAbstractScheduler::maximumNumberOfRetry() const
+int ctkJobScheduler::maximumNumberOfRetry() const
 {
-  Q_D(const ctkAbstractScheduler);
+  Q_D(const ctkJobScheduler);
   return d->MaximumNumberOfRetry;
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::setMaximumNumberOfRetry(int maximumNumberOfRetry)
+void ctkJobScheduler::setMaximumNumberOfRetry(int maximumNumberOfRetry)
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
   d->MaximumNumberOfRetry = maximumNumberOfRetry;
 }
 
 //----------------------------------------------------------------------------
-int ctkAbstractScheduler::retryDelay() const
+int ctkJobScheduler::retryDelay() const
 {
-  Q_D(const ctkAbstractScheduler);
+  Q_D(const ctkJobScheduler);
   return d->RetryDelay;
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::setRetryDelay(int retryDelay)
+void ctkJobScheduler::setRetryDelay(int retryDelay)
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
   d->RetryDelay = retryDelay;
 }
 
 //----------------------------------------------------------------------------
-QThreadPool *ctkAbstractScheduler::threadPool() const
+QThreadPool *ctkJobScheduler::threadPool() const
 {
-  Q_D(const ctkAbstractScheduler);
+  Q_D(const ctkJobScheduler);
   return d->ThreadPool.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<QThreadPool> ctkAbstractScheduler::threadPoolShared() const
+QSharedPointer<QThreadPool> ctkJobScheduler::threadPoolShared() const
 {
-  Q_D(const ctkAbstractScheduler);
+  Q_D(const ctkJobScheduler);
   return d->ThreadPool;
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::onJobStarted()
+void ctkJobScheduler::onJobStarted()
 {
   ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
@@ -383,7 +383,7 @@ void ctkAbstractScheduler::onJobStarted()
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::onJobCanceled()
+void ctkJobScheduler::onJobCanceled()
 {
   ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
@@ -395,7 +395,7 @@ void ctkAbstractScheduler::onJobCanceled()
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::onJobFailed()
+void ctkJobScheduler::onJobFailed()
 {
   ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
@@ -414,7 +414,7 @@ void ctkAbstractScheduler::onJobFailed()
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::onJobFinished()
+void ctkJobScheduler::onJobFinished()
 {
   ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
@@ -433,9 +433,9 @@ void ctkAbstractScheduler::onJobFinished()
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::onQueueJobsInThreadPool()
+void ctkJobScheduler::onQueueJobsInThreadPool()
 {
-  Q_D(ctkAbstractScheduler);
+  Q_D(ctkJobScheduler);
 
   QMutexLocker ml(&d->mMutex);
   foreach (QThread::Priority priority, (QList<QThread::Priority>()

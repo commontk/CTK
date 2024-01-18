@@ -18,8 +18,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkAbstractSchedulerPrivate_h
-#define __ctkAbstractSchedulerPrivate_h
+#ifndef __ctkJobSchedulerPrivate_h
+#define __ctkJobSchedulerPrivate_h
 
 // Qt includes
 #include <QMutex>
@@ -35,17 +35,17 @@ class ctkAbstractWorker;
 #include "ctkAbstractScheduler.h"
 
 //------------------------------------------------------------------------------
-class CTK_CORE_EXPORT ctkAbstractSchedulerPrivate : public QObject
+class CTK_CORE_EXPORT ctkJobSchedulerPrivate : public QObject
 {
   Q_OBJECT
-  Q_DECLARE_PUBLIC(ctkAbstractScheduler)
+    Q_DECLARE_PUBLIC(ctkJobScheduler)
 
 protected:
-  ctkAbstractScheduler* const q_ptr;
+    ctkJobScheduler* const q_ptr;
 
 public:
-  ctkAbstractSchedulerPrivate(ctkAbstractScheduler& object);
-  virtual ~ctkAbstractSchedulerPrivate();
+  ctkJobSchedulerPrivate(ctkJobScheduler& object);
+  virtual ~ctkJobSchedulerPrivate();
 
   /// Convenient setup methods
   virtual void init();

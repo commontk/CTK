@@ -21,8 +21,8 @@
 
 =========================================================================*/
 
-#ifndef __ctkAbstractScheduler_h
-#define __ctkAbstractScheduler_h
+#ifndef __ctkJobScheduler_h
+#define __ctkJobScheduler_h
 
 // Qt includes
 #include <QObject>
@@ -33,17 +33,17 @@ class QThreadPool;
 // CTK includes
 #include "ctkCoreExport.h"
 class ctkAbstractJob;
-class ctkAbstractSchedulerPrivate;
+class ctkJobSchedulerPrivate;
 
 //------------------------------------------------------------------------------
 /// \ingroup Core
-class CTK_CORE_EXPORT ctkAbstractScheduler : public QObject
+class CTK_CORE_EXPORT ctkJobScheduler : public QObject
 {
   Q_OBJECT
 public:
   typedef QObject Superclass;
-  explicit ctkAbstractScheduler(QObject* parent = 0);
-  virtual ~ctkAbstractScheduler();
+  explicit ctkJobScheduler(QObject* parent = 0);
+  virtual ~ctkJobScheduler();
 
   ///@{
   /// Jobs managment
@@ -108,12 +108,12 @@ public Q_SLOTS:
   virtual void onQueueJobsInThreadPool();
 
 protected:
-  QScopedPointer<ctkAbstractSchedulerPrivate> d_ptr;
-  ctkAbstractScheduler(ctkAbstractSchedulerPrivate* pimpl, QObject* parent);
+  QScopedPointer<ctkJobSchedulerPrivate> d_ptr;
+  ctkJobScheduler(ctkJobSchedulerPrivate* pimpl, QObject* parent);
 
 private:
-  Q_DECLARE_PRIVATE(ctkAbstractScheduler);
-  Q_DISABLE_COPY(ctkAbstractScheduler)
+  Q_DECLARE_PRIVATE(ctkJobScheduler);
+  Q_DISABLE_COPY(ctkJobScheduler)
 };
 
-#endif // ctkAbstractScheduler_h
+#endif // ctkJobScheduler_h

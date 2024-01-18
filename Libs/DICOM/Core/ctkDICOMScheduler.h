@@ -42,7 +42,7 @@ class ctkDICOMServer;
 class ctkDICOMStorageListenerJob;
 
 /// \ingroup DICOM_Core
-class CTK_DICOM_CORE_EXPORT ctkDICOMScheduler : public ctkAbstractScheduler
+class CTK_DICOM_CORE_EXPORT ctkDICOMScheduler : public ctkJobScheduler
 {
   Q_OBJECT
   Q_PROPERTY(int maximumThreadCount READ maximumThreadCount WRITE setMaximumThreadCount);
@@ -51,7 +51,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMScheduler : public ctkAbstractScheduler
   Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery);
 
 public:
-  typedef ctkAbstractScheduler Superclass;
+    typedef ctkJobScheduler Superclass;
   explicit ctkDICOMScheduler(QObject* parent = 0);
   virtual ~ctkDICOMScheduler();
 

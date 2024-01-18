@@ -41,7 +41,7 @@ struct ThumbnailUID
 } ;
 
 //------------------------------------------------------------------------------
-class ctkDICOMSchedulerPrivate : public ctkAbstractSchedulerPrivate
+class ctkDICOMSchedulerPrivate : public ctkJobSchedulerPrivate
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(ctkDICOMScheduler);

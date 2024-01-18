@@ -27,7 +27,7 @@
 
 // CTK includes
 #include "ctkAbstractJob.h"
-#include "ctkAbstractScheduler.h"
+#include "ctkJobScheduler.h"
 #include "ctkAbstractWorker.h"
 
 // --------------------------------------------------------------------------
@@ -72,25 +72,25 @@ void ctkAbstractWorker::setJob(QSharedPointer<ctkAbstractJob> job)
 }
 
 //----------------------------------------------------------------------------
-ctkAbstractScheduler *ctkAbstractWorker::scheduler() const
+ctkJobScheduler *ctkAbstractWorker::scheduler() const
 {
   return this->Scheduler.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkAbstractScheduler> ctkAbstractWorker::schedulerShared() const
+QSharedPointer<ctkJobScheduler> ctkAbstractWorker::schedulerShared() const
 {
   return this->Scheduler;
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractWorker::setScheduler(ctkAbstractScheduler &scheduler)
+void ctkAbstractWorker::setScheduler(ctkJobScheduler &scheduler)
 {
-  this->Scheduler = QSharedPointer<ctkAbstractScheduler>(&scheduler, skipDelete);
+    this->Scheduler = QSharedPointer<ctkJobScheduler>(&scheduler, skipDelete);
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractWorker::setScheduler(QSharedPointer<ctkAbstractScheduler> scheduler)
+void ctkAbstractWorker::setScheduler(QSharedPointer<ctkJobScheduler> scheduler)
 {
   this->Scheduler = scheduler;
 }

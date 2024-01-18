@@ -48,7 +48,7 @@ static ctkLogger logger ( "org.commontk.dicom.DICOMJobPool" );
 
 //------------------------------------------------------------------------------
 ctkDICOMSchedulerPrivate::ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj)
-  : ctkAbstractSchedulerPrivate(obj)
+  : ctkJobSchedulerPrivate(obj)
 {
   ctk::setDICOMLogLevel(ctkErrorLogLevel::Warning);
 }

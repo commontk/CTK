@@ -32,7 +32,7 @@
 #include "ctkCoreExport.h"
 
 class ctkAbstractJob;
-class ctkAbstractScheduler;
+class ctkJobScheduler;
 
 //------------------------------------------------------------------------------
 /// \ingroup Core
@@ -60,10 +60,10 @@ public:
 
   ///@{
   /// Scheduler
-  Q_INVOKABLE ctkAbstractScheduler* scheduler() const;
-  QSharedPointer<ctkAbstractScheduler> schedulerShared() const;
-  Q_INVOKABLE void setScheduler(ctkAbstractScheduler& scheduler);
-  void setScheduler(QSharedPointer<ctkAbstractScheduler> scheduler);
+  Q_INVOKABLE ctkJobScheduler* scheduler() const;
+  QSharedPointer<ctkJobScheduler> schedulerShared() const;
+  Q_INVOKABLE void setScheduler(ctkJobScheduler& scheduler);
+  void setScheduler(QSharedPointer<ctkJobScheduler> scheduler);
   ///@}
 
 public slots:
@@ -72,7 +72,7 @@ public slots:
 
 protected:
   QSharedPointer<ctkAbstractJob> Job;
-  QSharedPointer<ctkAbstractScheduler> Scheduler;
+  QSharedPointer<ctkJobScheduler> Scheduler;
 
 private:
   Q_DISABLE_COPY(ctkAbstractWorker)
