@@ -323,9 +323,6 @@ public Q_SLOTS:
   ///  instancesAddedDuringImport() methods.
   void waitForImportFinished();
 
-  /// \deprecated importDirectory() should be used
-  void onImportDirectory(const QString& directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode = ImportDirectoryAddLink);
-
   ///@{
   /// slots to capture status updates from the database during an
   /// import operation

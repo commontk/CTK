@@ -2059,12 +2059,6 @@ void ctkDICOMVisualBrowserWidget::waitForImportFinished()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onImportDirectory(const QString& directory, ImportDirectoryMode mode)
-{
-  this->importDirectory(directory, mode);
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::onIndexingProgress(int percent)
 {
   Q_D(const ctkDICOMVisualBrowserWidget);
