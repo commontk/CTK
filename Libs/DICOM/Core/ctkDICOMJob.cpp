@@ -28,7 +28,7 @@
 #include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
 
-static ctkLogger logger("org.commontk.dicom.ctkDICOMJob");
+static ctkLogger logger ("org.commontk.dicom.DICOMJob");
 
 //------------------------------------------------------------------------------
 // ctkDICOMJob methods

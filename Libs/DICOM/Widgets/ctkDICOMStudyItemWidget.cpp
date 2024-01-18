@@ -41,7 +41,7 @@
 
 #include <math.h>
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMStudyItemWidget");
+static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMStudyItemWidget");
 
 //----------------------------------------------------------------------------
 static void skipDelete(QObject* obj)

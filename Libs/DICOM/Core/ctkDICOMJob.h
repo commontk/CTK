@@ -57,7 +57,7 @@ public:
     Studies,
     Series,
     Instances
-  };
+  }; Q_ENUM(DICOMLevels);
 
   ///@{
   /// DICOM Level

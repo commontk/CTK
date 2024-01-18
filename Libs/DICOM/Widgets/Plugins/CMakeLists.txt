@@ -13,6 +13,9 @@ set(PLUGIN_SRCS
   ctkDICOMWidgetsAbstractPlugin.cpp
   ctkDICOMWidgetsAbstractPlugin.h
 
+  ctkDICOMJobListWidgetPlugin.cpp
+  ctkDICOMJobListWidgetPlugin.h
+
   ctkDICOMQueryRetrieveWidgetPlugin.cpp
   ctkDICOMQueryRetrieveWidgetPlugin.h
 
@@ -28,7 +31,7 @@ set(PLUGIN_SRCS
 # Headers that should run through moc
 set(PLUGIN_MOC_SRCS
   ctkDICOMWidgetsPlugins.h
-
+  ctkDICOMJobListWidgetPlugin.h
   ctkDICOMQueryRetrieveWidgetPlugin.h
   ctkDICOMTableManagerPlugin.h
   ctkDICOMTableViewPlugin.h

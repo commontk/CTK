@@ -26,7 +26,7 @@
 #include "ctkDICOMInserterWorker.h"
 #include "ctkLogger.h"
 
-static ctkLogger logger("org.commontk.dicom.ctkDICOMInserterJob");
+static ctkLogger logger ("org.commontk.dicom.DICOMInserterJob");
 
 //------------------------------------------------------------------------------
 // ctkDICOMInserterJob methods

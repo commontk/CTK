@@ -33,7 +33,7 @@
 #include "ctkDICOMStorageListenerJob.h"
 #include "ctkDICOMStorageListenerWorker_p.h"
 
-static ctkLogger logger("org.commontk.dicom.ctkDICOMStorageListenerWorker");
+static ctkLogger logger ("org.commontk.dicom.DICOMStorageListenerWorker");
 
 //------------------------------------------------------------------------------
 // ctkDICOMStorageListenerWorkerPrivate methods
@@ -128,9 +128,7 @@ void ctkDICOMStorageListenerWorker::run()
   if (!scheduler
       || storageListenerJob->status() == ctkAbstractJob::JobStatus::Stopped)
     {
-    emit storageListenerJob->canceled();
     this->onJobCanceled();
-    storageListenerJob->setStatus(ctkAbstractJob::JobStatus::Finished);
     return;
     }
 
@@ -144,9 +142,7 @@ void ctkDICOMStorageListenerWorker::run()
 
   if (!d->StorageListener->listen())
     {
-    emit storageListenerJob->canceled();
     this->onJobCanceled();
-    storageListenerJob->setStatus(ctkAbstractJob::JobStatus::Finished);
     return;
     }
 
@@ -198,6 +194,11 @@ void ctkDICOMStorageListenerWorker::onInsertJobDetail()
 
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets =
     d->StorageListener->jobResponseSetsShared();
+  if (jobResponseSets.count() == 0)
+    {
+    return;
+    }
+
   scheduler->insertJobResponseSets(jobResponseSets);
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
     {

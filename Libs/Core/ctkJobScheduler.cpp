@@ -248,16 +248,19 @@ ctkAbstractJob* ctkJobScheduler::getJobByUID(const QString& jobUID)
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::waitForFinish()
+void ctkJobScheduler::waitForFinish(bool waitForPersistentJobs)
 {
   Q_D(ctkJobScheduler);
 
   int numberOfPersistentJobs = this->numberOfPersistentJobs();
+  if (waitForPersistentJobs)
+    {
+    numberOfPersistentJobs = 0;
+    }
   while (this->numberOfJobs() > numberOfPersistentJobs)
     {
-    QCoreApplication::processEvents();
     d->ThreadPool->waitForDone(300);
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -391,7 +394,13 @@ void ctkJobScheduler::onJobCanceled()
     return;
     }
   logger.debug(job->loggerReport("canceled"));
-  emit this->jobCanceled(job->toVariant());
+
+  QVariant data = job->toVariant();
+  QString jobUID = job->jobUID();
+  this->deleteWorker(jobUID);
+  this->deleteJob(jobUID);
+
+  emit this->jobCanceled(data);
 }
 
 //----------------------------------------------------------------------------
@@ -468,6 +477,7 @@ void ctkJobScheduler::onQueueJobsInThreadPool()
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
       job->setStatus(ctkAbstractJob::JobStatus::Queued);
+      emit this->jobQueued(job->toVariant());
 
       QSharedPointer<ctkAbstractWorker> worker =
         QSharedPointer<ctkAbstractWorker>(job->createWorker());

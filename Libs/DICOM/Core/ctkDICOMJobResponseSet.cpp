@@ -31,7 +31,7 @@
 // DCMTK includes
 #include <dcmtk/dcmdata/dcdeftag.h>
 
-static ctkLogger logger("org.commontk.dicom.DICOMTaskResults");
+static ctkLogger logger("org.commontk.dicom.DICOMJobResponseSet");
 
 //------------------------------------------------------------------------------
 class ctkDICOMJobResponseSetPrivate : public QObject

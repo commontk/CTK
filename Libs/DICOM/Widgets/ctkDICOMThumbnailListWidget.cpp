@@ -54,7 +54,7 @@
 // DCMTK includes
 #include <dcmtk/dcmimgle/dcmimage.h>
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMThumbnailListWidget");
+static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMThumbnailListWidget");
 
 Q_DECLARE_METATYPE(QPersistentModelIndex);
 

@@ -6,7 +6,6 @@ project(CTKDICOMWidgets)
 
 set(KIT_export_directive "CTK_DICOM_WIDGETS_EXPORT")
 
-
 # Source files
 set(KIT_SRCS
   ctkDICOMAppWidget.cpp
@@ -23,6 +22,8 @@ set(KIT_SRCS
   ctkDICOMImportWidget.h
   ctkDICOMItemView.cpp
   ctkDICOMItemView.h
+  ctkDICOMJobListWidget.cpp
+  ctkDICOMJobListWidget.h
   ctkDICOMListenerWidget.cpp
   ctkDICOMListenerWidget.h
   ctkDICOMQueryResultsTabWidget.cpp
@@ -63,6 +64,7 @@ set(KIT_MOC_SRCS
   ctkDICOMDirectoryListWidget.h
   ctkDICOMImage.h
   ctkDICOMImportWidget.h
+  ctkDICOMJobListWidget.h
   ctkDICOMObjectListWidget.h
   ctkDICOMObjectModel.h
   ctkDICOMQueryRetrieveWidget.h
@@ -85,6 +87,7 @@ set(KIT_UI_FORMS
   Resources/UI/ctkDICOMBrowser.ui
   Resources/UI/ctkDICOMDirectoryListWidget.ui
   Resources/UI/ctkDICOMImportWidget.ui
+  Resources/UI/ctkDICOMJobListWidget.ui
   Resources/UI/ctkDICOMListenerWidget.ui
   Resources/UI/ctkDICOMQueryRetrieveWidget.ui
   Resources/UI/ctkDICOMQueryWidget.ui

@@ -134,6 +134,9 @@ public:
   int thumbnailSizePixel() const;
   ///@}
 
+  /// Reset progress bar
+  Q_INVOKABLE void resetOperationProgressBar();
+
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;
   /// Return the scheduler as a shared pointer

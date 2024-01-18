@@ -199,7 +199,7 @@ bool ctkDICOMEcho::echo()
     return false;
     }
 
-  logger.debug("Seding Echo");
+  logger.info("Seding Echo");
   // Issue ECHO request and let scu find presentation context itself (0)
   OFCondition status = d->SCU.sendECHORequest(0);
   if (!status.good())
@@ -212,4 +212,15 @@ bool ctkDICOMEcho::echo()
   d->SCU.releaseAssociation();
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMEcho::cancel()
+{
+  Q_D(ctkDICOMEcho);
+
+  if (d->SCU.isConnected())
+    {
+    d->SCU.releaseAssociation();
+    }
 }

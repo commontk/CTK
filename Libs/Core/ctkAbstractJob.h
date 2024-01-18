@@ -25,6 +25,7 @@
 #define __ctkAbstractJob_h
 
 // Qt includes
+#include <QDateTime>
 #include <QObject>
 #include <QThread>
 #include <QVariant>
@@ -49,6 +50,9 @@ class CTK_CORE_EXPORT ctkAbstractJob : public QObject
   Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay);
   Q_PROPERTY(bool maximumConcurrentJobsPerType READ maximumConcurrentJobsPerType WRITE setMaximumConcurrentJobsPerType);
   Q_PROPERTY(QThread::Priority priority READ priority WRITE setPriority);
+  Q_PROPERTY(QDateTime creationDateTime READ creationDateTime);
+  Q_PROPERTY(QDateTime startDateTime READ startDateTime);
+  Q_PROPERTY(QDateTime completionDateTime READ completionDateTime);
 
 public:
   explicit ctkAbstractJob();
@@ -116,6 +120,21 @@ public:
   void setPriority(const QThread::Priority& priority);
   ///@}
 
+  ///@{
+  /// CreationDateTime
+  QDateTime creationDateTime() const;
+  ///@}
+
+  ///@{
+  /// StartDateTime
+  QDateTime startDateTime() const;
+  ///@}
+
+  ///@{
+  /// CompletionDateTime
+  QDateTime completionDateTime() const;
+  ///@}
+
   /// Generate worker for job
   Q_INVOKABLE virtual ctkAbstractWorker* createWorker() = 0;
 
@@ -147,6 +166,9 @@ protected:
   int MaximumNumberOfRetry;
   int MaximumConcurrentJobsPerType;
   QThread::Priority Priority;
+  QDateTime CreationDateTime;
+  QDateTime StartDateTime;
+  QDateTime CompletionDateTime;
 
 private:
   Q_DISABLE_COPY(ctkAbstractJob)
@@ -160,11 +182,17 @@ struct CTK_CORE_EXPORT ctkJobDetail {
   {
     this->JobClass = job.className();
     this->JobUID = job.jobUID();
+    this->CreationDateTime = job.creationDateTime().toString("HH:mm:ss.zzz ddd MMM yyyy");
+    this->StartDateTime = job.startDateTime().toString("HH:mm:ss.zzz ddd MMM yyyy");
+    this->CompletionDateTime = job.completionDateTime().toString("HH:mm:ss.zzz ddd MMM yyyy");
   }
   virtual ~ctkJobDetail() = default;
 
   QString JobClass;
   QString JobUID;
+  QString CreationDateTime;
+  QString StartDateTime;
+  QString CompletionDateTime;
 };
 Q_DECLARE_METATYPE(ctkJobDetail);
 

@@ -28,7 +28,7 @@
 #include "ctkDICOMStorageListenerJob_p.h"
 #include "ctkDICOMStorageListenerWorker.h"
 
-static ctkLogger logger("org.commontk.dicom.ctkDICOMStorageListenerJob");
+static ctkLogger logger ( "org.commontk.dicom.DICOMStorageListenerJob" );
 
 //------------------------------------------------------------------------------
 // ctkDICOMStorageListenerJobPrivate methods

@@ -44,6 +44,37 @@ int main(int argc, char** argv)
   app.setOrganizationDomain("commontk.org");
   app.setApplicationName("ctkDICOM");
 
+  QSettings settings;
+  QString databaseDirectory;
+
+  // set up the database
+  if (argc > 1)
+    {
+    QString directory(argv[1]);
+    settings.setValue("DatabaseDirectory", directory);
+    settings.sync();
+    }
+
+  if (settings.value("DatabaseDirectory", "") == "")
+    {
+    databaseDirectory = QString("./ctkDICOM-Database");
+    std::cerr << "No DatabaseDirectory on command line or in settings.  Using \"" << qPrintable(databaseDirectory) << "\".\n";
+    }
+  else
+    {
+    databaseDirectory = settings.value("DatabaseDirectory", "").toString();
+    }
+
+  QDir qdir(databaseDirectory);
+  if (!qdir.exists(databaseDirectory))
+    {
+    if (!qdir.mkpath(databaseDirectory))
+      {
+      std::cerr << "Could not create database directory \"" << qPrintable(databaseDirectory) << "\".\n";
+      return EXIT_FAILURE;
+      }
+    }
+
   // set up Qt resource files
   QResource::registerResource("./Resources/ctkDICOM.qrc");
 
@@ -67,10 +98,8 @@ int main(int argc, char** argv)
   ctkDirectoryButton directoryButton;
   directoryButton.setObjectName(QString::fromUtf8("DirectoryButton"));
   directoryButton.setMinimumSize(QSize(200, 30));
-  if (argc > 1)
-    {
-    directoryButton.setDirectory(argv[1]);
-    }
+  directoryButton.setDirectory(databaseDirectory);
+
   topLayout.addWidget(&directoryButton);
 
   mainLayout.addLayout(&topLayout);
@@ -79,11 +108,7 @@ int main(int argc, char** argv)
   DICOMVisualBrowser.setObjectName(QString::fromUtf8("DICOMVisualBrowser"));
   DICOMVisualBrowser.setDatabaseDirectorySettingsKey("DatabaseDirectory");
   DICOMVisualBrowser.setMinimumSize(QSize(1000, 1000));
-  // set up the database
-  if (argc > 1)
-    {
-    DICOMVisualBrowser.setDatabaseDirectory(argv[1]);
-    }
+  DICOMVisualBrowser.setDatabaseDirectory(databaseDirectory);
 
   DICOMVisualBrowser.serverSettingsGroupBox()->setChecked(true);
   QObject::connect(&directoryButton, SIGNAL(directoryChanged(const QString&)),

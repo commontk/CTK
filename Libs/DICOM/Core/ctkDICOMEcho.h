@@ -87,7 +87,10 @@ public:
   ///@}
 
   /// Echo connection.
-  bool echo();
+  Q_INVOKABLE bool echo();
+
+  /// Cancel the current operation
+  Q_INVOKABLE void cancel();
 
 protected:
   QScopedPointer<ctkDICOMEchoPrivate> d_ptr;

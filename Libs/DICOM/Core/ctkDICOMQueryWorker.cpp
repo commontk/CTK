@@ -30,7 +30,7 @@
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger("org.commontk.dicom.ctkDICOMQueryWorker");
+static ctkLogger logger ("org.commontk.dicom.DICOMQueryWorker");
 
 //------------------------------------------------------------------------------
 // ctkDICOMQueryWorkerPrivate methods
@@ -110,20 +110,11 @@ void ctkDICOMQueryWorker::run()
     }
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
-      qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
-  if (!scheduler)
+      qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
+  if (!scheduler ||
+      queryJob->status() == ctkAbstractJob::JobStatus::Stopped)
     {
-    emit queryJob->canceled();
     this->onJobCanceled();
-    queryJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-    return;
-    }
-
-  if (queryJob->status() == ctkAbstractJob::JobStatus::Stopped)
-    {
-    emit queryJob->canceled();
-    this->onJobCanceled();
-    queryJob->setStatus(ctkAbstractJob::JobStatus::Finished);
     return;
     }
 
@@ -139,18 +130,14 @@ void ctkDICOMQueryWorker::run()
     case ctkDICOMJob::DICOMLevels::Patients:
       if (!d->Query->queryPatients())
         {
-        emit queryJob->canceled();
         this->onJobCanceled();
-        queryJob->setStatus(ctkAbstractJob::JobStatus::Finished);
         return;
         }
       break;
     case ctkDICOMJob::DICOMLevels::Studies:
       if (!d->Query->queryStudies(queryJob->patientID()))
         {
-        emit queryJob->canceled();
         this->onJobCanceled();
-        queryJob->setStatus(ctkAbstractJob::JobStatus::Finished);
         return;
         }
       break;
@@ -158,9 +145,7 @@ void ctkDICOMQueryWorker::run()
       if (!d->Query->querySeries(queryJob->patientID(),
                                  queryJob->studyInstanceUID()))
         {
-        emit queryJob->canceled();
         this->onJobCanceled();
-        queryJob->setStatus(ctkAbstractJob::JobStatus::Finished);
         return;
         }
       break;
@@ -169,9 +154,7 @@ void ctkDICOMQueryWorker::run()
                                     queryJob->studyInstanceUID(),
                                     queryJob->seriesInstanceUID()))
         {
-        emit queryJob->canceled();
         this->onJobCanceled();
-        queryJob->setStatus(ctkAbstractJob::JobStatus::Finished);
         return;
         }
       break;

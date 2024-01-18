@@ -50,7 +50,7 @@
 #include "ctkDICOMServerNodeWidget2.h"
 #include "ui_ctkDICOMServerNodeWidget2.h"
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMServerNodeWidget2");
+static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMServerNodeWidget2");
 
 class QCenteredStyledItemDelegate : public QStyledItemDelegate
 {
@@ -205,7 +205,8 @@ public:
   int addServerNode(const QMap<QString, QVariant>& parameters);
   int addServerNode(ctkDICOMServer* server);
   QSharedPointer<ctkDICOMServer> createServerFromServerNode(const QMap<QString, QVariant>& node);
-  void updateProxyComboBoxes(const QString& connectionName, int rowCount) const;
+  void updateProxyComboBoxes() const;
+  QStringList getAllServerNames();
 
   bool SettingsModified;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
@@ -464,7 +465,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
 
   if (this->getServerNodeRowFromConnectionName(node["Name"].toString()) != -1)
     {
-    logger.debug("addServerNode failed: the server has a duplicate. The connection name has to be unique \n");
+    logger.warn("addServerNode failed: the server has a duplicate. The connection name has to be unique \n");
     return -1;
     }
 
@@ -554,8 +555,6 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::ProxyColumn, newItem);
 
   q->onSettingsModified();
-
-  this->updateProxyComboBoxes(serverName, rowCount);
 
   return rowCount;
 }
@@ -668,8 +667,6 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
   this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::ProxyColumn, proxyComboBox);
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::ProxyColumn, newItem);
 
-  this->updateProxyComboBoxes(server->connectionName(), rowCount);
-
   if (server->proxyServer())
     {
     this->addServerNode(server->proxyServer());
@@ -701,25 +698,25 @@ QSharedPointer<ctkDICOMServer> ctkDICOMServerNodeWidget2Private::createServerFro
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2Private::updateProxyComboBoxes(const QString& connectionName, int rowCount) const
+void ctkDICOMServerNodeWidget2Private::updateProxyComboBoxes() const
 {
+  int rowCount = this->NodeTable->rowCount();
+  QStringList serverNames = this->getAllNodesName();
   for (int row = 0; row < rowCount; ++row)
     {
     QComboBox* proxyComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProxyColumn));
     if (proxyComboBox)
       {
-      QStringListModel* cbModel = qobject_cast<QStringListModel*>(proxyComboBox->model());
-      if (cbModel)
-        {
-        QStringList nodesNames = cbModel->stringList();
-        if (nodesNames.contains(connectionName))
-          {
-          continue;
-          }
-        }
-      proxyComboBox->addItem(connectionName);
+      bool wasBlocking = proxyComboBox->blockSignals(true);
+
+      QString currentServer = proxyComboBox->currentText();
+      proxyComboBox->clear();
+      proxyComboBox->addItem("");
+      proxyComboBox->addItems(serverNames);
+      proxyComboBox->setCurrentText(currentServer);
+      proxyComboBox->blockSignals(wasBlocking);
       }
-  }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -911,6 +908,8 @@ void ctkDICOMServerNodeWidget2::updateGUIState()
     {
     d->StorageStatusValueLabel->setText(QObject::tr("Inactive"));
     }
+
+  d->updateProxyComboBoxes();
 }
 
 //----------------------------------------------------------------------------
