@@ -127,23 +127,30 @@ public:
   /// (not Python-wrappable).
   QSharedPointer<ctkDICOMDatabase> dicomDatabaseShared() const;
 
+  ///@{
   /// See ctkDICOMDatabase for description - these accessors
   /// delegate to the corresponding routines of the internal
   /// instance of the database.
   /// @see ctkDICOMDatabase
   Q_INVOKABLE void setTagsToPrecache(const QStringList& tags);
   Q_INVOKABLE const QStringList tagsToPrecache();
+  ///@}
 
+  ///@{
   /// Storage AE title
   /// "CTKSTORE" by default
   void setStorageAETitle(const QString& storageAETitle);
   QString storageAETitle() const;
+  ///@}
 
+  ///@{
   /// Storage port
   /// 11112 by default
   void setStoragePort(int storagePort);
   int storagePort() const;
+  ///@}
 
+  ///@{
   /// Servers
   Q_INVOKABLE int getNumberOfServers();
   Q_INVOKABLE ctkDICOMServer* getNthServer(int id);
@@ -156,17 +163,28 @@ public:
   Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
   Q_INVOKABLE ctkDICOMServerNodeWidget2* serverSettingsWidget();
   Q_INVOKABLE ctkCollapsibleGroupBox* serverSettingsGroupBox();
+  ///@}
 
+  ///@{
   /// Query Filters
   /// Empty by default
   void setFilteringPatientID(const QString& filteringPatientID);
   QString filteringPatientID() const;
+  ///@}
+
+  ///@{
   /// Empty by default
   void setFilteringPatientName(const QString& filteringPatientName);
   QString filteringPatientName() const;
+  ///@}
+
+  ///@{
   /// Empty by default
   void setFilteringStudyDescription(const QString& filteringStudyDescription);
   QString filteringStudyDescription() const;
+  ///@}
+
+  ///@{
   /// Available values:
   /// Any,
   /// Today,
@@ -175,47 +193,67 @@ public:
   /// LastMonth,
   /// LastYear.
   /// Any by default.
+  /// \sa ctkDICOMPatientItemWidget::DateType
   void setFilteringDate(const ctkDICOMPatientItemWidget::DateType& filteringDate);
   ctkDICOMPatientItemWidget::DateType filteringDate() const;
+  ///@]
+
+  ///@{
   /// Empty by default
   void setFilteringSeriesDescription(const QString& filteringSeriesDescription);
   QString filteringSeriesDescription() const;
+  ///@}
+
+  ///@{
   /// ["Any", "CR", "CT", "MR", "NM", "US", "PT", "XA"] by default
   void setFilteringModalities(const QStringList& filteringModalities);
   QStringList filteringModalities() const;
+  ///@}
 
+  ///@{
   /// Number of non collapsed studies per patient
   /// 2 by default
   void setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient);
   int numberOfStudiesPerPatient() const;
+  ///@}
 
+  ///@{
   /// Set the thumbnail size: small, medium, large
   /// medium by default
   void setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize);
   ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize() const;
+  ///@}
 
+  ///@{
   /// Set if send action on right click context menu is available
   /// false by default
   void setSendActionVisible(bool visible);
   bool isSendActionVisible() const;
+  ///@}
 
+  ///@{
   /// Set if cancel action on right click context menu is available
   /// true by default
   void setDeleteActionVisible(bool visible);
   bool isDeleteActionVisible() const;
+  ///@}
 
+  ///@{
   /// Add/Remove Patient item widget
   Q_INVOKABLE void addPatientItemWidget(const QString& patientItem);
   Q_INVOKABLE void removePatientItemWidget(const QString& patientItem);
+  ///@}
 
   /// Get Patient item widget
   Q_INVOKABLE ctkDICOMPatientItemWidget* getPatientItemWidgetByPatientName(const QString& patientName);
 
+  ///@{
   /// Accessors to status of last directory import operation
   int patientsAddedDuringImport();
   int studiesAddedDuringImport();
   int seriesAddedDuringImport();
   int instancesAddedDuringImport();
+  ///@}
 
   /// Set counters of imported patients, studies, series, instances to zero.
   void resetItemsAddedDuringImportCounters();
@@ -288,12 +326,14 @@ public Q_SLOTS:
   /// \deprecated importDirectory() should be used
   void onImportDirectory(const QString& directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
+  ///@{
   /// slots to capture status updates from the database during an
   /// import operation
   void onIndexingProgress(int);
   void onIndexingProgressStep(const QString&);
   void onIndexingProgressDetail(const QString&);
   void onIndexingComplete(int patientsAdded, int studiesAdded, int seriesAdded, int imagesAdded);
+  ///@}
 
   /// Show pop-up window for the user to select database directory
   void selectDatabaseDirectory();
