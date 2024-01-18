@@ -116,4 +116,3 @@ ctkAbstractWorker *ctkDICOMInserterJob::createWorker()
   worker->setJob(*this);
   return worker;
 }
-

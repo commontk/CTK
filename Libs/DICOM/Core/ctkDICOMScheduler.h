@@ -95,7 +95,7 @@ public:
   Q_INVOKABLE void retrieveSOPInstance(const QString& patientID,
                                        const QString& studyInstanceUID,
                                        const QString& seriesInstanceUID,
-                                       const QString &SOPInstanceUID,
+                                       const QString& SOPInstanceUID,
                                        QThread::Priority priority = QThread::LowPriority);
 
   /// Start a storage listener
