@@ -340,56 +340,36 @@ QMap<QString, QSharedPointer<ctkDICOMItem>> ctkDICOMJobResponseSet::datasetsShar
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::deepCopy(ctkDICOMJobResponseSet *node)
+ctkDICOMJobResponseSet* ctkDICOMJobResponseSet::clone()
 {
-  Q_D(ctkDICOMJobResponseSet);
+  ctkDICOMJobResponseSet* newJobResponseSet = new ctkDICOMJobResponseSet;
 
-  if (!node)
+  newJobResponseSet->setFilePath(this->filePath());
+  newJobResponseSet->setCopyFile(this->copyFile());
+  newJobResponseSet->setOverwriteExistingDataset(this->overwriteExistingDataset());
+  newJobResponseSet->setJobType(this->jobType());
+  newJobResponseSet->setJobUID(this->jobUID());
+  newJobResponseSet->setPatientID(this->patientID());
+  newJobResponseSet->setStudyInstanceUID(this->studyInstanceUID());
+  newJobResponseSet->setSeriesInstanceUID(this->seriesInstanceUID());
+  newJobResponseSet->setSOPInstanceUID(this->sopInstanceUID());
+  newJobResponseSet->setConnectionName(this->connectionName());
+
+  // Clone datasets
+  QMap<QString, ctkDICOMItem *> datasets = this->datasets();
+  for(const QString& key : datasets.keys())
     {
-    return;
-    }
-
-  this->setFilePath(node->filePath());
-  this->setCopyFile(node->copyFile());
-  this->setOverwriteExistingDataset(node->overwriteExistingDataset());
-  this->setJobType(node->jobType());
-  this->setJobUID(node->jobUID());
-  this->setPatientID(node->patientID());
-  this->setStudyInstanceUID(node->studyInstanceUID());
-  this->setSeriesInstanceUID(node->seriesInstanceUID());
-  this->setSOPInstanceUID(node->sopInstanceUID());
-  this->setConnectionName(node->connectionName());
-
-  d->Datasets.clear();
-
-  QMap<QString, ctkDICOMItem *> nodeDatasets = node->datasets();
-  for(const QString& key : nodeDatasets.keys())
-    {
-    ctkDICOMItem* nodeDataset = nodeDatasets.value(key);
-    if (!nodeDataset)
+    ctkDICOMItem* dataset = datasets.value(key);
+    if (!dataset)
       {
       continue;
       }
-
-    DcmItem* nodedcmItem = nodeDataset->GetDcmItemPointer();
-    DcmDataset* nodedcmDataset = dynamic_cast<DcmDataset*>(nodedcmItem);
-    DcmItem* dcmItem = nullptr;
-    if (nodedcmDataset)
-      {
-      dcmItem = new DcmDataset();
-      dcmItem->copyFrom(*nodedcmDataset);
-      }
-    else
-      {
-      dcmItem = new DcmItem();
-      dcmItem->copyFrom(*nodedcmItem);
-      }
-
-    QSharedPointer<ctkDICOMItem> dataset =
-      QSharedPointer<ctkDICOMItem>(new ctkDICOMItem);
-    dataset->InitializeFromItem(dcmItem, true);
-    d->Datasets.insert(key, dataset);
+    QSharedPointer<ctkDICOMItem> newDataset =
+      QSharedPointer<ctkDICOMItem>(dataset->Clone());
+    newJobResponseSet->d_func()->Datasets.insert(key, newDataset);
     }
+
+  return newJobResponseSet;
 }
 
 //------------------------------------------------------------------------------

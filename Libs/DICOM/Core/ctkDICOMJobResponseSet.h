@@ -139,8 +139,8 @@ public:
   QMap<QString, QSharedPointer<ctkDICOMItem>> datasetsShared() const;
   ///@}
 
-  /// Copy object
-  Q_INVOKABLE void deepCopy(ctkDICOMJobResponseSet* node);
+  /// Create a copy of this JobResponseSet.
+  Q_INVOKABLE ctkDICOMJobResponseSet* clone();
 
   /// Return the QVariant value of this JobResponseSet.
   ///

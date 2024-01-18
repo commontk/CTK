@@ -129,6 +129,15 @@ void ctkDICOMItem::InitializeFromFile(const QString& filename,
   InitializeFromItem(dataset, true);
 }
 
+ctkDICOMItem* ctkDICOMItem::Clone()
+{
+  Q_D(ctkDICOMItem);
+  ctkDICOMItem* newItem = new ctkDICOMItem;
+  DcmItem* dcmItem = dynamic_cast<DcmItem*>(d->m_DcmItem->clone());
+  newItem->InitializeFromItem(dcmItem, true);
+  return newItem;
+}
+
 void ctkDICOMItem::Serialize()
 {
   Q_D(ctkDICOMItem);
