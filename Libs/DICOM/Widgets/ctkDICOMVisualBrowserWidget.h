@@ -131,12 +131,12 @@ public:
   /// delegate to the corresponding routines of the internal
   /// instance of the database.
   /// @see ctkDICOMDatabase
-  Q_INVOKABLE void setTagsToPrecache(const QStringList tags);
+  Q_INVOKABLE void setTagsToPrecache(const QStringList& tags);
   Q_INVOKABLE const QStringList tagsToPrecache();
 
   /// Storage AE title
   /// "CTKSTORE" by default
-  void setStorageAETitle(QString storageAETitle);
+  void setStorageAETitle(const QString& storageAETitle);
   QString storageAETitle() const;
 
   /// Storage port

@@ -1469,7 +1469,7 @@ QSharedPointer<ctkDICOMDatabase> ctkDICOMVisualBrowserWidget::dicomDatabaseShare
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setTagsToPrecache(const QStringList tags)
+void ctkDICOMVisualBrowserWidget::setTagsToPrecache(const QStringList& tags)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
@@ -1495,7 +1495,7 @@ const QStringList ctkDICOMVisualBrowserWidget::tagsToPrecache()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setStorageAETitle(QString storageAETitle)
+void ctkDICOMVisualBrowserWidget::setStorageAETitle(const QString& storageAETitle)
 {
   Q_D(const ctkDICOMVisualBrowserWidget);
   d->ServerNodeWidget->setStorageAETitle(storageAETitle);
