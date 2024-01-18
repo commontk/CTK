@@ -125,15 +125,8 @@ void ctkDICOMStorageListenerWorker::run()
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
     qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
-  if (!scheduler)
-    {
-    emit storageListenerJob->canceled();
-    this->onJobCanceled();
-    storageListenerJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-    return;
-    }
-
-  if (storageListenerJob->status() == ctkAbstractJob::JobStatus::Stopped)
+  if (!scheduler
+      || storageListenerJob->status() == ctkAbstractJob::JobStatus::Stopped)
     {
     emit storageListenerJob->canceled();
     this->onJobCanceled();

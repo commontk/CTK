@@ -130,24 +130,10 @@ void ctkDICOMRetrieveWorker::run()
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
       qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
-  if (!scheduler)
-    {
-    emit retrieveJob->canceled();
-    this->onJobCanceled();
-    retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-    return;
-    }
-
   ctkDICOMServer* server = retrieveJob->server();
-  if (!server)
-    {
-    emit retrieveJob->canceled();
-    this->onJobCanceled();
-    retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-    return;
-    }
-
-  if (retrieveJob->status() == ctkAbstractJob::JobStatus::Stopped)
+  if (!scheduler
+      || !server
+      || retrieveJob->status() == ctkAbstractJob::JobStatus::Stopped)
     {
     emit retrieveJob->canceled();
     this->onJobCanceled();
