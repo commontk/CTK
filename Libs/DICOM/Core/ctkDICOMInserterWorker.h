@@ -53,11 +53,9 @@ public:
   /// Cancel worker
   void cancel() override;
 
-  ///@{
   /// Job
-  Q_INVOKABLE void setJob(ctkAbstractJob& job);
-  void setJob(QSharedPointer<ctkAbstractJob> job);
-  ///@}
+  void setJob(QSharedPointer<ctkAbstractJob> job) override;
+  using ctkAbstractWorker::setJob;
 
   ///@{
   /// Inserter

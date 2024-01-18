@@ -119,20 +119,6 @@ void ctkDICOMInserterWorker::run()
 }
 
 //----------------------------------------------------------------------------
-static void skipDelete(QObject* obj)
-{
-  Q_UNUSED(obj);
-  // this deleter does not delete the object from memory
-  // useful if the pointer is not owned by the smart pointer
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMInserterWorker::setJob(ctkAbstractJob &job)
-{
-  this->setJob(QSharedPointer<ctkAbstractJob>(&job, skipDelete));
-}
-
-//----------------------------------------------------------------------------
 void ctkDICOMInserterWorker::setJob(QSharedPointer<ctkAbstractJob> job)
 {
   Q_D(const ctkDICOMInserterWorker);
@@ -143,7 +129,7 @@ void ctkDICOMInserterWorker::setJob(QSharedPointer<ctkAbstractJob> job)
     return;
     }
 
-  Superclass::setJob(job);
+  this->Superclass::setJob(job);
 
   d->Inserter->setDatabaseFilename(inserterJob->databaseFilename());
   d->Inserter->setTagsToPrecache(inserterJob->tagsToPrecache());

@@ -155,20 +155,6 @@ void ctkDICOMStorageListenerWorker::run()
 }
 
 //----------------------------------------------------------------------------
-static void skipDelete(QObject* obj)
-{
-  Q_UNUSED(obj);
-  // this deleter does not delete the object from memory
-  // useful if the pointer is not owned by the smart pointer
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMStorageListenerWorker::setJob(ctkAbstractJob &job)
-{
-  this->setJob(QSharedPointer<ctkAbstractJob>(&job, skipDelete));
-}
-
-//----------------------------------------------------------------------------
 void ctkDICOMStorageListenerWorker::setJob(QSharedPointer<ctkAbstractJob> job)
 {
   Q_D(ctkDICOMStorageListenerWorker);
@@ -180,7 +166,7 @@ void ctkDICOMStorageListenerWorker::setJob(QSharedPointer<ctkAbstractJob> job)
     return;
     }
 
-  Superclass::setJob(job);
+  this->Superclass::setJob(job);
   d->setStorageListenerParameters();
 }
 

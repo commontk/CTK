@@ -99,20 +99,6 @@ void ctkDICOMQueryWorker::cancel()
 }
 
 //----------------------------------------------------------------------------
-static void skipDelete(QObject* obj)
-{
-  Q_UNUSED(obj);
-  // this deleter does not delete the object from memory
-  // useful if the pointer is not owned by the smart pointer
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMQueryWorker::setJob(ctkAbstractJob &job)
-{
-  this->setJob(QSharedPointer<ctkAbstractJob>(&job, skipDelete));
-}
-
-//----------------------------------------------------------------------------
 void ctkDICOMQueryWorker::run()
 {
   Q_D(const ctkDICOMQueryWorker);
@@ -213,7 +199,7 @@ void ctkDICOMQueryWorker::setJob(QSharedPointer<ctkAbstractJob> job)
     return;
     }
 
-  Superclass::setJob(job);
+  this->Superclass::setJob(job);
   d->setQueryParameters();
 }
 

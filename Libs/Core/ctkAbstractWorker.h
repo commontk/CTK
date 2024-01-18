@@ -55,7 +55,7 @@ public:
   Q_INVOKABLE ctkAbstractJob* job() const;
   QSharedPointer<ctkAbstractJob> jobShared() const;
   Q_INVOKABLE void setJob(ctkAbstractJob& job);
-  void setJob(QSharedPointer<ctkAbstractJob> job);
+  virtual void setJob(QSharedPointer<ctkAbstractJob> job);
   ///@}
 
   ///@{
