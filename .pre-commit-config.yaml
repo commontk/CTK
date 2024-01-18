@@ -8,5 +8,6 @@ repos:
   - id: check-merge-conflict
   - id: check-symlinks
   - id: end-of-file-fixer
+  - id: mixed-line-ending
   - id: trailing-whitespace
     exclude: "\\.(svg|vtk|vtp)$"
