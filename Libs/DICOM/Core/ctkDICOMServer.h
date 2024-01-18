@@ -110,7 +110,7 @@ public:
   };
   void setRetrieveProtocol(RetrieveProtocol protocol);
   RetrieveProtocol retrieveProtocol() const;
-  Q_INVOKABLE void setRetrieveProtocolAsString(QString protocolString);
+  Q_INVOKABLE void setRetrieveProtocolAsString(const QString& protocolString);
   Q_INVOKABLE QString retrieveProtocolAsString() const;
   ///}@
 

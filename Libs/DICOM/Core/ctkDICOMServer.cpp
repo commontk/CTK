@@ -205,7 +205,7 @@ ctkDICOMServer::RetrieveProtocol ctkDICOMServer::retrieveProtocol() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setRetrieveProtocolAsString(QString protocolString)
+void ctkDICOMServer::setRetrieveProtocolAsString(const QString& protocolString)
 {
   Q_D(ctkDICOMServer);
 
