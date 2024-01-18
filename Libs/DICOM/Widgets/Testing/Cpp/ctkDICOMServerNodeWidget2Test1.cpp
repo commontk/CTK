@@ -23,11 +23,13 @@
 
 // Qt includes
 #include <QApplication>
+#include <QString>
+#include <QStringList>
 #include <QTimer>
 #include <QVariant>
 
-// ctk includes
-#include "ctkCoreTestingMacros.h"
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMScheduler.h"
@@ -37,6 +39,12 @@
 int ctkDICOMServerNodeWidget2Test1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
+
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+  Q_UNUSED(testName);
+
+  bool interactive = arguments.removeOne("-I");
 
   ctkDICOMServerNodeWidget2 widget;
 
@@ -88,7 +96,7 @@ int ctkDICOMServerNodeWidget2Test1( int argc, char * argv [] )
   CHECK_INT(widget.getNumberOfServers(), 2);
   delete server;
 
-  if (argc <= 1 || QString(argv[1]) != "-I")
+  if (!interactive)
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

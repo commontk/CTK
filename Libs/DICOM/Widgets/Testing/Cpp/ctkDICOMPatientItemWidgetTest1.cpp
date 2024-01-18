@@ -23,11 +23,12 @@
 
 // Qt includes
 #include <QApplication>
+#include <QString>
+#include <QStringList>
 #include <QTimer>
 
-// ctk includes
-#include "ctkCoreTestingMacros.h"
-#include "ctkUtils.h"
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMWidget includes
 #include "ctkDICOMPatientItemWidget.h"
@@ -37,7 +38,14 @@ int ctkDICOMPatientItemWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+  Q_UNUSED(testName);
+
+  bool interactive = arguments.removeOne("-I");
+
   ctkDICOMPatientItemWidget widget;
+
   // Test the default values
   CHECK_QSTRING(widget.patientItem(), "");
   CHECK_QSTRING(widget.patientID(), "");
@@ -63,7 +71,7 @@ int ctkDICOMPatientItemWidgetTest1( int argc, char * argv [] )
   widget.setThumbnailSize(ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
   CHECK_INT(widget.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
 
-  if (argc <= 2 || QString(argv[argc - 1]) != "-I")
+  if (!interactive)
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

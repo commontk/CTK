@@ -38,18 +38,24 @@ int ctkDICOMSchedulerTest1(int argc, char * argv []) {
 
   QCoreApplication app(argc, argv);
 
-  // run tester server
-  ctkDICOMTester tester;
-  std::cerr << "ctkDICOMSchedulerTest1: Starting dcmqrscp\n";
-  tester.startDCMQRSCP();
   QStringList arguments = app.arguments();
-  arguments.pop_front(); // remove application name
-  int numberOfImages = arguments.count();
-  if (!numberOfImages)
+  QString testName = arguments.takeFirst();
+
+  if (!arguments.count())
     {
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
     }
-  std::cerr << "ctkDICOMSchedulerTest1: Storing data to dcmqrscp\n";
+
+  int numberOfImages = arguments.count();
+
+  ctkDICOMTester tester;
+
+  std::cout << qPrintable(testName) << ": Starting dcmqrscp" << std::endl;
+  tester.startDCMQRSCP();
+
+  std::cout << qPrintable(testName) << ": Storing data to dcmqrscp" << std::endl;
   tester.storeData(arguments);
 
   ctkDICOMScheduler scheduler;
@@ -71,7 +77,7 @@ int ctkDICOMSchedulerTest1(int argc, char * argv []) {
   CHECK_INT(scheduler.maximumPatientsQuery(), 30);
 
   // Test scheduler
-  std::cerr << "ctkDICOMSchedulerTest1: Setting up scheduler\n";
+  std::cout << qPrintable(testName) << ": Setting up scheduler" << std::endl;
   ctkDICOMDatabase database;
   QString dbFile = "./ctkDICOM.sql";
   QFile file(dbFile);
@@ -99,18 +105,18 @@ int ctkDICOMSchedulerTest1(int argc, char * argv []) {
   filsers.insert("ID", "Facial");
   scheduler.setFilters(filsers);
 
-  std::cerr << "ctkDICOMSchedulerTest1: Running queryStudies\n";
+  std::cout << qPrintable(testName) << ": Running queryStudies" << std::endl;
   QString patientID = "Facial Expression";
   scheduler.queryStudies(patientID);
   scheduler.waitForFinish();
 
   CHECK_INT(database.patients().count(), 1);
 
-  QString patientItem = database.patients()[0];
+  QString patientItem = database.patients().at(0);
   QStringList studies = database.studiesForPatient(patientItem);
   CHECK_INT(studies.count(), 1);
 
-  std::cerr << "ctkDICOMSchedulerTest1: Running querySeries\n";
+  std::cout << qPrintable(testName) << ": Running querySeries" << std::endl;
   QString studyIstanceUID = studies[0];
   scheduler.querySeries(patientID, studyIstanceUID);
   scheduler.waitForFinish();
@@ -118,7 +124,7 @@ int ctkDICOMSchedulerTest1(int argc, char * argv []) {
   QStringList series = database.seriesForStudy(studyIstanceUID);
   CHECK_INT(series.count(), 1);
 
-  std::cerr << "ctkDICOMSchedulerTest1: Running queryInstances\n";
+  std::cout << qPrintable(testName) << ": Running queryInstances" << std::endl;
   QString seriesIstanceUID = series[0];
   scheduler.queryInstances(patientID, studyIstanceUID, seriesIstanceUID);
   scheduler.waitForFinish();
@@ -133,9 +139,11 @@ int ctkDICOMSchedulerTest1(int argc, char * argv []) {
   CHECK_INT(files.count(), 0);
   CHECK_INT(urls.count(), numberOfImages);
 
-  std::cerr << "ctkDICOMSchedulerTest1: Running multiple retrieveSOPInstance."
-               " This will test " << numberOfImages << " retrieve concorrent jobs\n";
-  foreach (QString sopIstanceUID, instances)
+  std::cout << qPrintable(testName) << ": "
+            << "Running multiple retrieveSOPInstance. "
+            << "This will test " << numberOfImages << " retrieve concorrent jobs" << std::endl;
+
+  foreach (const QString& sopIstanceUID, instances)
     {
     scheduler.retrieveSOPInstance(patientID, studyIstanceUID, seriesIstanceUID, sopIstanceUID);
     }

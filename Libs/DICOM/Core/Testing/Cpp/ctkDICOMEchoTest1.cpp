@@ -24,6 +24,8 @@
 
 // Qt includes
 #include <QCoreApplication>
+#include <QString>
+#include <QStringList>
 
 // ctk includes
 #include "ctkCoreTestingMacros.h"
@@ -39,17 +41,22 @@ int ctkDICOMEchoTest1(int argc, char * argv []) {
 
   QCoreApplication app(argc, argv);
 
-  // run tester server
-  ctkDICOMTester tester;
-  std::cerr << "ctkDICOMEchoTest1: Starting dcmqrscp\n";
-  tester.startDCMQRSCP();
   QStringList arguments = app.arguments();
-  arguments.pop_front(); // remove application name
+  QString testName = arguments.takeFirst();
+
   if (!arguments.count())
     {
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
     }
-  std::cerr << "ctkDICOMEchoTest1: Storing data to dcmqrscp\n";
+
+  ctkDICOMTester tester;
+
+  std::cout << qPrintable(testName) << ": Starting dcmqrscp" << std::endl;
+  tester.startDCMQRSCP();
+
+  std::cout << qPrintable(testName) << ": Storing data to dcmqrscp" << std::endl;
   tester.storeData(arguments);
 
   ctkDICOMEcho echo;
@@ -81,15 +88,14 @@ int ctkDICOMEchoTest1(int argc, char * argv []) {
   CHECK_BOOL(echo.echo(), false);
 
   // this has to be successful
-  std::cerr << "ctkDICOMEchoTest1: Setting up echo\n";
+  std::cout << qPrintable(testName) << ": Setting up echo" << std::endl;
   echo.setCallingAETitle("CTK_AE");
   echo.setCalledAETitle("CTK_AE");
   echo.setHost("localhost");
   echo.setPort(tester.dcmqrscpPort());
 
-  std::cerr << "ctkDICOMEchoTest1: Running echo\n";
+  std::cout << qPrintable(testName) << ": Running echo" << std::endl;
   CHECK_BOOL(echo.echo(), true);
 
   return EXIT_SUCCESS;
 }
-
