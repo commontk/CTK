@@ -66,4 +66,7 @@ if(CTK_APP_ctkDICOMQuery AND CTK_APP_ctkDICOMRetrieve)
                )
 
   set_property(TEST ${testname} PROPERTY ENVIRONMENT_MODIFICATION "${CTK_TEST_LAUNCH_BUILD_ENVIRONMENT_MODIFICATION}")
+
+  set_property(TEST ${testname} PROPERTY RESOURCE_LOCK "dcmqrscp")
+
 endif()
