@@ -434,4 +434,3 @@ void ctkDICOMItemView::displayImage(int imageIndex){
 void ctkDICOMItemView::emitImageDisplayedSignal(int imageID, int count){
   emit imageDisplayed(imageID, count);
 }
-

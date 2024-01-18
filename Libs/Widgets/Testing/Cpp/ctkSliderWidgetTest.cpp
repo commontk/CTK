@@ -202,5 +202,3 @@ void ctkSliderWidgetTester::testValueChangedWithNoTracking()
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkSliderWidgetTest)
 #include "moc_ctkSliderWidgetTest.cpp"
-
-

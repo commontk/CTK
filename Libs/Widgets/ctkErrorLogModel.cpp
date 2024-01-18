@@ -109,4 +109,3 @@ void ctkErrorLogModel::addModelEntry(const QString& currentDateTime, const QStri
   Q_ASSERT(itemModel);
   itemModel->invisibleRootItem()->appendRow(itemList);
 }
-

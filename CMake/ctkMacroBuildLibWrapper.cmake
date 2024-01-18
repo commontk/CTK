@@ -168,5 +168,3 @@ macro(ctkMacroBuildLibWrapper)
   endif()
 
 endmacro()
-
-

@@ -686,4 +686,3 @@ bool ctkCheckableModelHelper::checkState(const QModelIndex& index, Qt::CheckStat
     this->model()->data(index, Qt::CheckStateRole).toInt(&checkable));
   return checkable;
 }
-

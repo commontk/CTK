@@ -680,4 +680,3 @@ void ctkDoubleSlider::onValueProxyModified()
   this->setValue(d->Slider->property("inputValue").toDouble());
   this->blockSignals(wasBlockingSignals);
 }
-

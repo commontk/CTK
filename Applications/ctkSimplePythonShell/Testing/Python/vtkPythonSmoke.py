@@ -50,4 +50,3 @@ except:
   qt.QApplication.exit(1)
 
 qt.QApplication.exit(0)
-

@@ -79,5 +79,3 @@ void ctkPopupWidgetEventTranslator::onPopupOpened(const bool& open)
   QString state = open ? "true" : "false";
   emit recordEvent(this->CurrentObject, "popupOpen", state);
 }
-
-

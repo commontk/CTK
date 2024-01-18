@@ -241,4 +241,3 @@ int ctkVTKMagnifyViewTest1(int argc, char * argv [] )
   return app.exec();
 
 }
-

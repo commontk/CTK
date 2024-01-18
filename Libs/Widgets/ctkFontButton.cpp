@@ -195,4 +195,3 @@ QString ctkFontButton::fontTextFormat()const
   Q_D(const ctkFontButton);
   return d->FontTextFormat;
 }
-

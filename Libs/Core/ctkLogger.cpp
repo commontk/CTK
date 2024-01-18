@@ -122,4 +122,3 @@ ctkErrorLogLevel::LogLevel ctkLogger::logLevel() const
   Q_D(const ctkLogger);
   return d->LogLevel;
 }
-

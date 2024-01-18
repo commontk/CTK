@@ -60,4 +60,3 @@ int ctkSearchBoxTest1(int argc, char* argv[])
 
   return app.exec();
 }
-

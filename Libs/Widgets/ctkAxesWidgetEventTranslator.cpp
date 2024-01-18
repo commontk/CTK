@@ -99,4 +99,3 @@ bool ctkAxesWidgetEventTranslator::translateEvent(QObject *Object,
 
   return handled;
 }
-

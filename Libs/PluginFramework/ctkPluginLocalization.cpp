@@ -104,4 +104,3 @@ QLocale ctkPluginLocalization::getLocale() const
   if (d) return d->locale;
   return QLocale();
 }
-

@@ -76,4 +76,3 @@ int ctkVTKSurfaceMaterialPropertyWidgetEventTranslatorPlayerTest1(int argc, char
   etpWidget.show();
   return app.exec();
 }
-

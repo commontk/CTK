@@ -152,4 +152,3 @@ int ctkFileDialogEventTranslatorPlayerTest1(int argc, char * argv [] )
   return app.exec();
 
 }
-

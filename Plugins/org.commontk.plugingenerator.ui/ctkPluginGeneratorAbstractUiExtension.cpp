@@ -121,4 +121,3 @@ void ctkPluginGeneratorAbstractUiExtension::setIcon(const QIcon& icon)
   d->icon = icon;
   emit iconChanged(icon);
 }
-

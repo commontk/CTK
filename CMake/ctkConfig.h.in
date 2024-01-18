@@ -5,4 +5,3 @@
 #define CTK_SOURCE_DIR "@CTK_SOURCE_DIR@"
 
 #endif
-

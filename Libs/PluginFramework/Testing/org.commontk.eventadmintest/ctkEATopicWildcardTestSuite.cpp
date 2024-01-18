@@ -195,4 +195,3 @@ void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic7()
   QVERIFY2(!handler.lastEvent().isNull(), "Did not receive event published to topic 'a/b/c/d' while listening to 'a/b/c/*'");
   handlerRegistration.unregister();
 }
-

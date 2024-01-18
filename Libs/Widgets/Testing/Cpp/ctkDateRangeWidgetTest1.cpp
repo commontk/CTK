@@ -193,4 +193,3 @@ int ctkDateRangeWidgetTest1(int argc, char * argv [] )
     }
   return app.exec();
 }
-

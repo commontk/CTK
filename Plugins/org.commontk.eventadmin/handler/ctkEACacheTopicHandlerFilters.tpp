@@ -80,4 +80,3 @@ createFilterForTopic(const QString& topic)
 
   return result;
 }
-

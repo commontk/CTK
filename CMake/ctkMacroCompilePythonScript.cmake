@@ -187,4 +187,3 @@ function(ctkFunctionAddCompilePythonScriptTargets target)
   _ctk_add_copy_python_files_target(${target} Resource ${ARGN})
   _ctk_add_compile_python_directories_target(${target})
 endfunction()
-

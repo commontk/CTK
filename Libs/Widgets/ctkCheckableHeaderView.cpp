@@ -454,4 +454,3 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
     option->selectedPosition = QStyleOptionHeader::NotAdjacent;
   */
 }
-

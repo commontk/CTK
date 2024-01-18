@@ -73,4 +73,3 @@ static const unsigned char image_ctkLogo_small_transparent[] =
   "ycas/vhPRrXbp0cVz+q36jZy+1PdfRW7fFxB4AekH9KikJduj/nyEXwTRsWJRFDQ3tbaDt"
   "aMaf3Wv8f8AW0vUQJm9WRvvaakdHNPSvLaZ+/fo7/evVu1eHx8ZMhNb1VD/co0cP69atm9"
   "PyjzXbMKde/X++q3bVrlpHsH8BW3wRDw==";
-

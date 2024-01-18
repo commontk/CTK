@@ -128,4 +128,3 @@ int ctkCrosshairLabelTest1(int argc, char * argv [] )
   return app.exec();
 
 }
-

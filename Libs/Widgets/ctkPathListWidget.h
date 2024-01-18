@@ -320,4 +320,3 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(ctkPathListWidget::PathOptions)
 
 #endif
-

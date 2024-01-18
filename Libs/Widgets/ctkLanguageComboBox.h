@@ -148,4 +148,3 @@ private:
   Q_DISABLE_COPY(ctkLanguageComboBox);
 };
 #endif // __ctkLanguageComboBox_h
-

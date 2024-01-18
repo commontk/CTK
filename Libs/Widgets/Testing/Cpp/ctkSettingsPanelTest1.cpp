@@ -445,4 +445,3 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
 
   return EXIT_SUCCESS;
 }
-

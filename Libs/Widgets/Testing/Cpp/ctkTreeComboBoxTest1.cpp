@@ -78,4 +78,3 @@ int ctkTreeComboBoxTest1(int argc, char * argv [] )
     }
   return app.exec();
 }
-

@@ -50,4 +50,3 @@ bool CheckImagesEqual(const QImage& current, const QImage& expected,
 }
 
 } // namespace ctkWidgetsTestingUtilities
-

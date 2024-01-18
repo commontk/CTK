@@ -62,4 +62,3 @@ int ctkPythonConsoleTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

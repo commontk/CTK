@@ -140,4 +140,3 @@ void ctkFileLogger::logMessage(const QString& msg)
   s << msg << ctk::endl;
   f.close();
 }
-

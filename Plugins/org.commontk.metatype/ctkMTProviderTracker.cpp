@@ -216,4 +216,3 @@ QStringList ctkMTProviderTracker::getStringProperty(const QString& name, const Q
                    .arg(_plugin->getSymbolicName()).arg(_plugin->getPluginId()).arg(name). arg(value.toString());
   return QStringList();
 }
-

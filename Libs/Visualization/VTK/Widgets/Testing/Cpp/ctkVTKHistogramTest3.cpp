@@ -80,4 +80,3 @@ int ctkVTKHistogramTest3( int argc, char * argv [])
 
   return EXIT_SUCCESS;
 }
-

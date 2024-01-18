@@ -489,4 +489,3 @@ bool ctkVTKObjectEventsObserver::containsConnection(vtkObject* vtk_obj, unsigned
   Q_D(const ctkVTKObjectEventsObserver);
   return (d->findConnection(vtk_obj, vtk_event, qt_obj, qt_slot) != 0);
 }
-

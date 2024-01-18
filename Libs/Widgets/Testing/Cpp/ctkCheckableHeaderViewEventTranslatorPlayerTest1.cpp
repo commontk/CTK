@@ -138,4 +138,3 @@ int ctkCheckableHeaderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

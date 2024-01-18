@@ -808,4 +808,3 @@ QStringList ctkPluginFrameworkLauncher::getPluginSymbolicNames(const QString& se
 
   return result;
 }
-

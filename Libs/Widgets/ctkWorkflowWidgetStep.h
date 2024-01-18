@@ -164,4 +164,3 @@ private:
  Q_DECLARE_OPERATORS_FOR_FLAGS(ctkWorkflowWidgetStep::ButtonBoxHints)
 
 #endif
-

@@ -60,4 +60,3 @@
       </connection>
     </xsl:if>
   </xsl:template>
-

@@ -36,7 +36,3 @@ if not _ctkPythonConsoleInstance.isInteractive:
   t.setInterval(250)
   t.connect('timeout()', app(), 'quit()')
   t.start()
-
-
-
-

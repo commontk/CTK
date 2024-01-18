@@ -59,4 +59,3 @@ function(ctkFunctionGetCompilerVisibilityFlags RESULT_VAR)
   endif()
 
 endfunction()
-

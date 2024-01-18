@@ -64,4 +64,3 @@ bool ctkRangeSliderEventPlayer::playEvent(QObject *Object,
   Error = true;
   return true;
 }
-

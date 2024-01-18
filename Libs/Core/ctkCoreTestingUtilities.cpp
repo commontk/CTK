@@ -86,4 +86,3 @@ bool CheckVariant(int line, const QString& description,
 }
 
 } // namespace ctkCoreTestingUtilities
-

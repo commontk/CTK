@@ -41,4 +41,3 @@ public:
 
   virtual void dummyInterface();
 };
-

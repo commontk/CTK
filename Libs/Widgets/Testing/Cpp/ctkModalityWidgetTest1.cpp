@@ -71,4 +71,3 @@ int ctkModalityWidgetTest1(int argc, char * argv [] )
     }
   return app.exec();
 }
-

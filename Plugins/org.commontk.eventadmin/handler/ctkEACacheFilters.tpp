@@ -56,4 +56,3 @@ createFilter(const QString& filter)
   }
   return result;
 }
-

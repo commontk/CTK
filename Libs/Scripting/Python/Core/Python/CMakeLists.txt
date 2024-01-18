@@ -45,4 +45,3 @@ ctkMacroCompilePythonScript(
   DESTINATION_DIR ${CTK_BINARY_DIR}/bin/Python
   INSTALL_DIR ${CTK_INSTALL_BIN_DIR}
   )
-

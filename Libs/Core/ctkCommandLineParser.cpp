@@ -846,4 +846,3 @@ void ctkCommandLineParser::setStrictModeEnabled(bool strictMode)
 {
   this->Internal->StrictMode = strictMode;
 }
-

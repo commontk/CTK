@@ -272,4 +272,3 @@ void ctkSearchBox::updateClearButtonState()
     d->hideClearIcon = this->text().isEmpty() ? true : false;
     }
 }
-

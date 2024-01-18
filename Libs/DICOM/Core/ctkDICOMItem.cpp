@@ -1036,4 +1036,3 @@ bool ctkDICOMItem::SaveToFile(const QString& filePath) const
   delete fileformat;
   return status.good();
 }
-

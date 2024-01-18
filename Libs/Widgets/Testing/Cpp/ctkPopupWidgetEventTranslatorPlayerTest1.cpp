@@ -241,4 +241,3 @@ QWidget* createPanelTest(const QString& title, QList<ctkPopupWidget*>& popups)
   popups << focusPopup << openPopup << togglePopup << pinPopup;
   return topLevel;
 }
-

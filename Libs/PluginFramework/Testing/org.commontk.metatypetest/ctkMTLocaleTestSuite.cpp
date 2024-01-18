@@ -68,4 +68,3 @@ void ctkMTLocaleTestSuite::testLocaleList()
   QCOMPARE(ocd->getName(), QString("Objekt"));
   QCOMPARE(ocd->getDescription(), QString("Meine Objektklassendefinition"));
 }
-
