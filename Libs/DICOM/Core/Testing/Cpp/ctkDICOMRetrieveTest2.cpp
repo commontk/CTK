@@ -24,7 +24,11 @@
 #include <QPair>
 #include <QString>
 #include <QStringList>
+#include <QTemporaryDir>
 #include <QVariant>
+
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -51,6 +55,9 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
+  QTemporaryDir tempDirectory;
+  CHECK_BOOL(tempDirectory.isValid(), true);
+
   ctkDICOMTester tester;
   std::cerr << "ctkDICOMRetrieveTest2: Starting dcmqrscp\n";
   tester.startDCMQRSCP();
@@ -59,12 +66,10 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   tester.storeData(arguments);
 
   ctkDICOMDatabase database;
-  QString dbFile = "./ctkDICOM.sql";
-  if (!database.openDatabase(dbFile))
-    {
-    std::cout << "ctkDICOMDatabase::openDatabase() failed" << std::endl;
-    return EXIT_FAILURE;
-    }
+
+  QDir databaseDirectory(tempDirectory.path());
+  QString dbFile = QFileInfo(databaseDirectory, QString("ctkDICOM.sql")).absoluteFilePath();
+  CHECK_BOOL(database.openDatabase(dbFile), true);
   database.cleanup(true);
 
   std::cerr << "ctkDICOMRetrieveTest2: Setting up query\n";

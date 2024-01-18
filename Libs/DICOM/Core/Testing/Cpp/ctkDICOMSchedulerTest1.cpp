@@ -24,9 +24,10 @@
 
 // Qt includes
 #include <QCoreApplication>
+#include <QTemporaryDir>
 
 // ctkCore includes
-#include "ctkCoreTestingMacros.h"
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMScheduler.h"
@@ -46,6 +47,9 @@ int ctkDICOMSchedulerTest1(int argc, char * argv []) {
               << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
     }
+
+  QTemporaryDir tempDirectory;
+  CHECK_BOOL(tempDirectory.isValid(), true);
 
   int numberOfImages = arguments.count();
 
@@ -78,14 +82,13 @@ int ctkDICOMSchedulerTest1(int argc, char * argv []) {
   // Test scheduler
   std::cout << qPrintable(testName) << ": Setting up scheduler" << std::endl;
   ctkDICOMDatabase database;
-  QString dbFile = "./ctkDICOM.sql";
-  QFile file(dbFile);
-  file.remove();
-  QFile cacheFile("./ctkDICOMTagCache.sql");
-  cacheFile.remove();
+
+  QDir databaseDirectory(tempDirectory.path());
+  QString dbFile = QFileInfo(databaseDirectory, QString("ctkDICOM.sql")).absoluteFilePath();
   CHECK_BOOL(database.openDatabase(dbFile), true);
   CHECK_BOOL(database.isOpen(), true);
   database.cleanup(true);
+
   CHECK_INT(database.patients().count(), 0);
 
   scheduler.setDicomDatabase(database);
