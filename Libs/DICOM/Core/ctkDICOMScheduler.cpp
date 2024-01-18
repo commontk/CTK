@@ -304,9 +304,9 @@ void ctkDICOMScheduler::retrieveSOPInstance(const QString &patientID,
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::startListener(const int port,
-                                     const QString &AETitle,
-                                     QThread::Priority priority)
+void ctkDICOMScheduler::startListener(int port,
+                                      const QString &AETitle,
+                                      QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
 
@@ -709,7 +709,7 @@ void ctkDICOMScheduler::raiseJobsPriorityForSeries(const QStringList& selectedSe
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMScheduler::setMaximumPatientsQuery(const int maximumPatientsQuery)
+void ctkDICOMScheduler::setMaximumPatientsQuery(int maximumPatientsQuery)
 {
   Q_D(ctkDICOMScheduler);
   d->MaximumPatientsQuery = maximumPatientsQuery;

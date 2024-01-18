@@ -99,7 +99,7 @@ public:
                                        QThread::Priority priority = QThread::LowPriority);
 
   /// Start a storage listener
-  Q_INVOKABLE void startListener(const int port,
+  Q_INVOKABLE void startListener(int port,
                                  const QString &AETitle,
                                  QThread::Priority priority = QThread::LowPriority);
 
@@ -177,7 +177,7 @@ public:
   ///@{
   /// maximum number of responses allowed in one query
   /// when query is at Patient level. Default is 25.
-  void setMaximumPatientsQuery(const int maximumPatientsQuery);
+  void setMaximumPatientsQuery(int maximumPatientsQuery);
   int maximumPatientsQuery();
   ///@}
 

@@ -1690,7 +1690,7 @@ QStringList ctkDICOMVisualBrowserWidget::filteringModalities() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setNumberOfStudiesPerPatient(const int &numberOfStudiesPerPatient)
+void ctkDICOMVisualBrowserWidget::setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->NumberOfStudiesPerPatient = numberOfStudiesPerPatient;

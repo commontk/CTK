@@ -71,7 +71,7 @@ public:
   ///@{
   /// Storage port
   /// 11112 by default
-  void setStoragePort(const int storagePort);
+  void setStoragePort(int storagePort);
   int storagePort() const;
   ///@}
 

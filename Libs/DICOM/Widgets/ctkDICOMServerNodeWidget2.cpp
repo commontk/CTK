@@ -1113,7 +1113,7 @@ QString ctkDICOMServerNodeWidget2::storageAETitle()const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2::setStoragePort(const int storagePort)
+void ctkDICOMServerNodeWidget2::setStoragePort(int storagePort)
 {
   Q_D(const ctkDICOMServerNodeWidget2);
   d->StoragePort->setText(QString::number(storagePort));

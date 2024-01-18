@@ -65,7 +65,7 @@ ctkDICOMStorageListenerJob::ctkDICOMStorageListenerJob(ctkDICOMStorageListenerJo
 ctkDICOMStorageListenerJob::~ctkDICOMStorageListenerJob() = default;
 
 //----------------------------------------------------------------------------
-void ctkDICOMStorageListenerJob::setPort(const int port)
+void ctkDICOMStorageListenerJob::setPort(int port)
 {
   Q_D(ctkDICOMStorageListenerJob);
   d->Port = port;

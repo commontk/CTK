@@ -70,8 +70,7 @@ public:
   int getScreenHeight();
   int calculateNumerOfSeriesPerRow();
   int calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize);
-  void addEmptySeriesItemWidget(const int& rowIndex,
-                                const int& columnIndex);
+  void addEmptySeriesItemWidget(int rowIndex, int columnIndex);
   bool isSeriesItemAlreadyAdded(const QString& seriesItem);
 
   QString FilteringSeriesDescription;
@@ -315,8 +314,7 @@ int ctkDICOMStudyItemWidgetPrivate::calculateThumbnailSizeInPixel(const ctkDICOM
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidgetPrivate::addEmptySeriesItemWidget(const int& rowIndex,
-                                                              const int& columnIndex)
+void ctkDICOMStudyItemWidgetPrivate::addEmptySeriesItemWidget(int rowIndex, int columnIndex)
 {
   QTableWidgetItem *tableItem = new QTableWidgetItem;
   tableItem->setFlags(Qt::NoItemFlags);
@@ -659,7 +657,7 @@ QList<ctkDICOMSeriesItemWidget *> ctkDICOMStudyItemWidget::seriesItemWidgetsList
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::addSeriesItemWidget(const int& tableIndex,
+void ctkDICOMStudyItemWidget::addSeriesItemWidget(int tableIndex,
                                                   const QString &seriesItem,
                                                   const QString &seriesInstanceUID,
                                                   const QString &modality,

@@ -79,7 +79,7 @@ QMap<QString, QVariant> ctkDICOMQueryJob::filters() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQueryJob::setMaximumPatientsQuery(const int maximumPatientsQuery)
+void ctkDICOMQueryJob::setMaximumPatientsQuery(int maximumPatientsQuery)
 {
   Q_D(ctkDICOMQueryJob);
   d->MaximumPatientsQuery = maximumPatientsQuery;

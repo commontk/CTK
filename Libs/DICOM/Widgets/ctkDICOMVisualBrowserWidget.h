@@ -186,7 +186,7 @@ public:
 
   /// Number of non collapsed studies per patient
   /// 2 by default
-  void setNumberOfStudiesPerPatient(const int &numberOfStudiesPerPatient);
+  void setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient);
   int numberOfStudiesPerPatient() const;
 
   /// Set the thumbnail size: small, medium, large

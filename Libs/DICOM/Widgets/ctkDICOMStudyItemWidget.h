@@ -168,7 +168,7 @@ public:
   Q_INVOKABLE QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList()const;
 
   /// Add/Remove Series item widget
-  Q_INVOKABLE void addSeriesItemWidget(const int& tableIndex,
+  Q_INVOKABLE void addSeriesItemWidget(int tableIndex,
                                        const QString &seriesItem,
                                        const QString &seriesInstanceUID,
                                        const QString& modality,

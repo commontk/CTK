@@ -942,7 +942,7 @@ bool ctkDICOMRetrieve::keepAssociationOpen() const
 }
 
 //-----------------------------------------------------------------------------
-void ctkDICOMRetrieve::setConnectionTimeout(const int timeout)
+void ctkDICOMRetrieve::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMRetrieve);
   d->SCU.setACSETimeout(timeout);

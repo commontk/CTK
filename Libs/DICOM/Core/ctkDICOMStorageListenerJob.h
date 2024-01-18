@@ -51,7 +51,7 @@ public:
 
   ///@{
   /// Port, default: 11112
-  void setPort(const int port);
+  void setPort(int port);
   int port() const;
   ///@}
 

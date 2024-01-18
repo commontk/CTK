@@ -321,7 +321,7 @@ int ctkAbstractScheduler::maximumThreadCount() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::setMaximumThreadCount(const int &maximumThreadCount)
+void ctkAbstractScheduler::setMaximumThreadCount(int maximumThreadCount)
 {
   Q_D(ctkAbstractScheduler);
   d->ThreadPool->setMaxThreadCount(maximumThreadCount);
@@ -335,7 +335,7 @@ int ctkAbstractScheduler::maximumNumberOfRetry() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::setMaximumNumberOfRetry(const int &maximumNumberOfRetry)
+void ctkAbstractScheduler::setMaximumNumberOfRetry(int maximumNumberOfRetry)
 {
   Q_D(ctkAbstractScheduler);
   d->MaximumNumberOfRetry = maximumNumberOfRetry;
@@ -349,7 +349,7 @@ int ctkAbstractScheduler::retryDelay() const
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractScheduler::setRetryDelay(const int &retryDelay)
+void ctkAbstractScheduler::setRetryDelay(int retryDelay)
 {
   Q_D(ctkAbstractScheduler);
   d->RetryDelay = retryDelay;

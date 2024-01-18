@@ -66,9 +66,9 @@ public:
   void drawThumbnail(const QString& file, int numberOfFrames);
   void drawTextWithShadow(QPainter *painter,
                           const QFont &font,
-                          const int &x,
-                          const int &y,
-                          const Qt::Alignment &alignment,
+                          int x,
+                          int y,
+                          Qt::Alignment alignment,
                           const QString &text);
   void updateThumbnailProgressBar();
 
@@ -461,9 +461,9 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString &file, int num
 //----------------------------------------------------------------------------
 void ctkDICOMSeriesItemWidgetPrivate::drawTextWithShadow(QPainter *painter,
                                                          const QFont &font,
-                                                         const int &x,
-                                                         const int &y,
-                                                         const Qt::Alignment &alignment,
+                                                         int x,
+                                                         int y,
+                                                         Qt::Alignment alignment,
                                                          const QString &text)
 {
   QColor textColor(60, 164, 255, 225);
@@ -730,7 +730,7 @@ bool ctkDICOMSeriesItemWidget::IsVisible() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setThumbnailSizePixel(const int &thumbnailSizePixel)
+void ctkDICOMSeriesItemWidget::setThumbnailSizePixel(int thumbnailSizePixel)
 {
   Q_D(ctkDICOMSeriesItemWidget);
   d->ThumbnailSizePixel = thumbnailSizePixel;

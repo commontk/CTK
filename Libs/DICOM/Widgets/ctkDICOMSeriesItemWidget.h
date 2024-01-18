@@ -130,7 +130,7 @@ public:
   ///@{
   /// Set the thumbnail size in pixel
   /// 200 by default
-  void setThumbnailSizePixel(const int &thumbnailSizePixel);
+  void setThumbnailSizePixel(int thumbnailSizePixel);
   int thumbnailSizePixel() const;
   ///@}
 
