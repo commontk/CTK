@@ -1537,7 +1537,7 @@ ctkDICOMServer* ctkDICOMVisualBrowserWidget::getNthServer(int id)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMServer* ctkDICOMVisualBrowserWidget::getServer(const char *connectionName)
+ctkDICOMServer* ctkDICOMVisualBrowserWidget::getServer(const QString& connectionName)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   return d->ServerNodeWidget->getServer(connectionName);
@@ -1551,7 +1551,7 @@ void ctkDICOMVisualBrowserWidget::addServer(ctkDICOMServer* server)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::removeServer(const char *connectionName)
+void ctkDICOMVisualBrowserWidget::removeServer(const QString& connectionName)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   return d->ServerNodeWidget->removeServer(connectionName);
@@ -1579,7 +1579,7 @@ QString ctkDICOMVisualBrowserWidget::getServerNameFromIndex(int id)
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMVisualBrowserWidget::getServerIndexFromName(const char *connectionName)
+int ctkDICOMVisualBrowserWidget::getServerIndexFromName(const QString& connectionName)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   return d->ServerNodeWidget->getServerIndexFromName(connectionName);

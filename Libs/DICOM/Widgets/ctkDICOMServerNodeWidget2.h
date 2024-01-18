@@ -87,16 +87,18 @@ public:
   void setScheduler(QSharedPointer<ctkDICOMScheduler> scheduler);
 
   /// Servers
+  ///@{
   Q_INVOKABLE int getNumberOfServers();
   Q_INVOKABLE ctkDICOMServer* getNthServer(int id);
-  Q_INVOKABLE ctkDICOMServer* getServer(const char* connectionName);
+  Q_INVOKABLE ctkDICOMServer* getServer(const QString& connectionName);
   Q_INVOKABLE void addServer(ctkDICOMServer* server);
-  Q_INVOKABLE void removeServer(const char* connectionName);
+  Q_INVOKABLE void removeServer(const QString& connectionName);
   Q_INVOKABLE void removeNthServer(int id);
   Q_INVOKABLE void removeAllServers();
   Q_INVOKABLE QString getServerNameFromIndex(int id);
-  Q_INVOKABLE int getServerIndexFromName(const char* connectionName);
+  Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
   Q_INVOKABLE void stopAllJobs();
+  ///@}
 
 public Q_SLOTS:
   /// Add an empty server node and make it current

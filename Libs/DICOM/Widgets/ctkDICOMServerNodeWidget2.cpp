@@ -1199,7 +1199,7 @@ ctkDICOMServer* ctkDICOMServerNodeWidget2::getNthServer(int id)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMServer* ctkDICOMServerNodeWidget2::getServer(const char *connectionName)
+ctkDICOMServer* ctkDICOMServerNodeWidget2::getServer(const QString& connectionName)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
@@ -1226,7 +1226,7 @@ void ctkDICOMServerNodeWidget2::addServer(ctkDICOMServer* server)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2::removeServer(const char *connectionName)
+void ctkDICOMServerNodeWidget2::removeServer(const QString& connectionName)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
@@ -1281,7 +1281,7 @@ QString ctkDICOMServerNodeWidget2::getServerNameFromIndex(int id)
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMServerNodeWidget2::getServerIndexFromName(const char *connectionName)
+int ctkDICOMServerNodeWidget2::getServerIndexFromName(const QString& connectionName)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
