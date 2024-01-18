@@ -59,6 +59,7 @@ SIMPLE_TEST( ctkDICOMQueryTest2
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
   )
+set_property(TEST "ctkDICOMQueryTest2" PROPERTY RESOURCE_LOCK "dcmqrscp")
 
 # ctkDICOMRetrieve
 SIMPLE_TEST( ctkDICOMRetrieveTest1)
@@ -66,6 +67,7 @@ SIMPLE_TEST( ctkDICOMRetrieveTest2
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
   )
+set_property(TEST "ctkDICOMRetrieveTest2" PROPERTY RESOURCE_LOCK "dcmqrscp")
 
 # ctkDICOMCore
 SIMPLE_TEST( ctkDICOMCoreTest1
@@ -75,7 +77,9 @@ SIMPLE_TEST( ctkDICOMCoreTest1
 
 # ctkDICOMTester
 SIMPLE_TEST( ctkDICOMTesterTest1 )
+set_property(TEST "ctkDICOMTesterTest1" PROPERTY RESOURCE_LOCK "dcmqrscp")
 SIMPLE_TEST( ctkDICOMTesterTest2
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
   ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
   )
+set_property(TEST "ctkDICOMTesterTest2" PROPERTY RESOURCE_LOCK "dcmqrscp")
