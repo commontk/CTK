@@ -31,17 +31,17 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
-#include "ctkDICOMWorker.h"
+#include "ctkAbstractWorker.h"
 class ctkDICOMQuery;
 class ctkDICOMQueryWorkerPrivate;
 
 /// \ingroup DICOM_Core
-class CTK_DICOM_CORE_EXPORT ctkDICOMQueryWorker : public ctkDICOMWorker
+class CTK_DICOM_CORE_EXPORT ctkDICOMQueryWorker : public ctkAbstractWorker
 {
   Q_OBJECT
 
 public:
-  typedef ctkDICOMWorker Superclass;
+  typedef ctkAbstractWorker Superclass;
   explicit ctkDICOMQueryWorker();
   virtual ~ctkDICOMQueryWorker();
 

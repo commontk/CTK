@@ -88,8 +88,6 @@ set(KIT_SRCS
   ctkDICOMDisplayedFieldGeneratorStudyNumberOfSeriesRule.cpp
   ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule.h
   ctkDICOMDisplayedFieldGeneratorPatientNumberOfStudiesRule.cpp
-  ctkDICOMWorker.cpp
-  ctkDICOMWorker.h
 )
 
 # Abstract class should not be wrapped !
@@ -136,7 +134,6 @@ set(KIT_MOC_SRCS
   ctkDICOMStorageListenerWorker.h
   ctkDICOMStorageListenerWorker_p.h
   ctkDICOMTester.h
-  ctkDICOMWorker.h
   )
 
 # UI files
