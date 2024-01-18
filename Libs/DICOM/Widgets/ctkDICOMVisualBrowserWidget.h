@@ -263,14 +263,14 @@ public Q_SLOTS:
   /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
   ///
   /// \sa importDirectory(QString directory, int mode)
-  void importDirectories(QStringList directories, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode = ImportDirectoryAddLink);
+  void importDirectories(const QStringList& directories, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
   /// \brief Import a directory
   ///
   /// This can be used to externally trigger an import (i.e. for testing or to support drag-and-drop)
   ///
   /// By default, \a mode is ImportDirectoryMode::ImportDirectoryAddLink is set.
-  void importDirectory(QString directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode = ImportDirectoryAddLink);
+  void importDirectory(const QString& directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
   /// \brief Import a list of files
   ///
@@ -286,7 +286,7 @@ public Q_SLOTS:
   void waitForImportFinished();
 
   /// \deprecated importDirectory() should be used
-  void onImportDirectory(QString directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode = ImportDirectoryAddLink);
+  void onImportDirectory(const QString& directory, ctkDICOMVisualBrowserWidget::ImportDirectoryMode mode = ImportDirectoryAddLink);
 
   /// slots to capture status updates from the database during an
   /// import operation
@@ -313,8 +313,8 @@ public Q_SLOTS:
   void onFilteringDateComboBoxChanged(int);
   void onQueryPatients();
   void onShowPatients();
-  void updateGUIFromScheduler(QVariant);
-  void onTaskFailed(QVariant);
+  void updateGUIFromScheduler(const QVariant&);
+  void onTaskFailed(const QVariant&);
   void onPatientItemChanged(int);
   void onClose();
   void onLoad();
@@ -342,18 +342,18 @@ protected:
   /// empty, uses the UID.
   /// Returns true if the user confirms the delete, false otherwise.
   /// Remembers if the user doesn't want to show the confirmation again.
-  bool confirmDeleteSelectedUIDs(QStringList uids);
+  bool confirmDeleteSelectedUIDs(const QStringList& uids);
 
   /// Get file list for right click selection
-  QStringList fileListForCurrentSelection(ctkDICOMModel::IndexType level, QList<QWidget *> selectedWidget);
+  QStringList fileListForCurrentSelection(ctkDICOMModel::IndexType level, const QList<QWidget *>& selectedWidget);
   /// Show window that displays DICOM fields of all selected items
   void showMetadata(const QStringList& fileList);
   /// Remove items (both database and widget)
-  void removeSelectedItems(ctkDICOMModel::IndexType level, QList<QWidget *> selectedWidgets = QList<QWidget *>());
+  void removeSelectedItems(ctkDICOMModel::IndexType level, const QList<QWidget *>& selectedWidgets = QList<QWidget *>());
   /// Export the items associated with the selected widget
-  void exportSelectedItems(ctkDICOMModel::IndexType level, QList<QWidget *> selectedWidgets);
+  void exportSelectedItems(ctkDICOMModel::IndexType level, const QList<QWidget *>& selectedWidgets);
   /// Export the series associated with the selected UIDs
-  void exportSeries(QString dirPath, QStringList uids);
+  void exportSeries(const QString& dirPath, const QStringList& uids);
 
 protected Q_SLOTS:
   ///@{
@@ -363,7 +363,7 @@ protected Q_SLOTS:
   /// directories from the Import Dialog.
   ///
   /// \sa importDirectories(QString directory, int mode)
-  void onImportDirectoriesSelected(QStringList directories);
+  void onImportDirectoriesSelected(const QStringList& directories);
   void onImportDirectoryComboBoxCurrentIndexChanged(int index);
   ///@}
 

@@ -2024,7 +2024,7 @@ void ctkDICOMVisualBrowserWidget::openImportDialog()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::importDirectories(QStringList directories, ImportDirectoryMode mode)
+void ctkDICOMVisualBrowserWidget::importDirectories(const QStringList& directories, ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   foreach (const QString& directory, directories)
@@ -2034,7 +2034,7 @@ void ctkDICOMVisualBrowserWidget::importDirectories(QStringList directories, Imp
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::importDirectory(QString directory, ImportDirectoryMode mode)
+void ctkDICOMVisualBrowserWidget::importDirectory(const QString& directory, ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->importDirectory(directory, mode);
@@ -2060,7 +2060,7 @@ void ctkDICOMVisualBrowserWidget::waitForImportFinished()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onImportDirectory(QString directory, ImportDirectoryMode mode)
+void ctkDICOMVisualBrowserWidget::onImportDirectory(const QString& directory, ImportDirectoryMode mode)
 {
   this->importDirectory(directory, mode);
 }
@@ -2232,7 +2232,7 @@ void ctkDICOMVisualBrowserWidget::updateDatabase()
 
 //------------------------------------------------------------------------------
 QStringList ctkDICOMVisualBrowserWidget::fileListForCurrentSelection(ctkDICOMModel::IndexType level,
-                                                                     QList<QWidget *> selectedWidgets)
+                                                                     const QList<QWidget *>& selectedWidgets)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
@@ -2261,7 +2261,7 @@ void ctkDICOMVisualBrowserWidget::showMetadata(const QStringList &fileList)
 
 //------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType level,
-                                                      QList<QWidget *> selectedWidgets)
+                                                      const QList<QWidget *>& selectedWidgets)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
@@ -2583,7 +2583,7 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QVariant data)
+void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(const QVariant& data)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->ProgressFrame->hide();
@@ -2617,7 +2617,7 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(QVariant data)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onTaskFailed(QVariant data)
+void ctkDICOMVisualBrowserWidget::onTaskFailed(const QVariant& data)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
@@ -2978,7 +2978,7 @@ void ctkDICOMVisualBrowserWidget::onPatientsTabMenuToolButtonClicked()
 
 //------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::exportSelectedItems(ctkDICOMModel::IndexType level,
-                                                      QList<QWidget *> selectedWidgets)
+                                                      const QList<QWidget *>& selectedWidgets)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
@@ -3007,7 +3007,7 @@ void ctkDICOMVisualBrowserWidget::exportSelectedItems(ctkDICOMModel::IndexType l
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::exportSeries(QString dirPath, QStringList uids)
+void ctkDICOMVisualBrowserWidget::exportSeries(const QString& dirPath, const QStringList& uids)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
@@ -3143,7 +3143,7 @@ void ctkDICOMVisualBrowserWidget::exportSeries(QString dirPath, QStringList uids
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onImportDirectoriesSelected(QStringList directories)
+void ctkDICOMVisualBrowserWidget::onImportDirectoriesSelected(const QStringList& directories)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   this->importDirectories(directories, this->importDirectoryMode());
@@ -3250,7 +3250,7 @@ void ctkDICOMVisualBrowserWidget::closeEvent(QCloseEvent *event)
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMVisualBrowserWidget::confirmDeleteSelectedUIDs(QStringList uids)
+bool ctkDICOMVisualBrowserWidget::confirmDeleteSelectedUIDs(const QStringList& uids)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   if (!d->DicomDatabase)
