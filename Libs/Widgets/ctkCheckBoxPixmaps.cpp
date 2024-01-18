@@ -141,5 +141,3 @@ const QPixmap& ctkCheckBoxPixmaps::pixmap(Qt::CheckState state, bool active) con
 
   return d->Pixmaps[ctkCheckBoxPixmapsPrivate::PixmapCount];
 }
-
-

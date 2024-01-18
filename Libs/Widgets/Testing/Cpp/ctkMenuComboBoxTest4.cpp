@@ -115,4 +115,3 @@ int ctkMenuComboBoxTest4(int argc, char * argv [] )
 
   return app.exec();
 }
-

@@ -145,4 +145,3 @@ bool TestCheckVariant()
     }
   return true;
 }
-

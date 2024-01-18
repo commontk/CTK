@@ -76,4 +76,3 @@ int ctkWorkflowAbstractPagedWidgetEventTranslatorPlayerTest1(int argc, char * ar
   etpWidget.show();
   return app.exec();
 }
-

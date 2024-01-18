@@ -173,4 +173,3 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
     }
   return app.exec();
 }
-

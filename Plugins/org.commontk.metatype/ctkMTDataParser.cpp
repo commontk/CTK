@@ -619,4 +619,3 @@ QVariant ctkMTDataParser::convert(const QString& value, int type)
     return QVariant();
   }
 }
-

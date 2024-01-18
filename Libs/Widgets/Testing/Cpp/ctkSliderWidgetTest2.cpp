@@ -68,4 +68,3 @@ int ctkSliderWidgetTest2(int argc, char * argv [] )
     }
   return app.exec();
 }
-

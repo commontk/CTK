@@ -76,4 +76,3 @@ int ctkTransferFunctionNativeItemEventTranslatorPlayerTest1(int argc, char * arg
   etpWidget.show();
   return app.exec();
 }
-

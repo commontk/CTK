@@ -84,5 +84,3 @@ void ctkFontButtonEventTranslator::onCurrentFontChanged(const QFont& newFont)
 {
   emit recordEvent(this->CurrentObject, "newFont", newFont.toString());
 }
-
-

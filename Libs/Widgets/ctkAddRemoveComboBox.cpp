@@ -558,4 +558,3 @@ QAbstractItemModel* ctkAddRemoveComboBox::model()const
   Q_D(const ctkAddRemoveComboBox);
   return d->ComboBox->model();
 }
-

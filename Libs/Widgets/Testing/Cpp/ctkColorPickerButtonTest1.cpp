@@ -113,4 +113,3 @@ int ctkColorPickerButtonTest1(int argc, char * argv [] )
   QTimer::singleShot(100, &colorPicker2, SLOT(toggle()));
   return app.exec();
 }
-

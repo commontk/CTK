@@ -44,4 +44,3 @@ int ctkAbstractObjectFactoryTest1(int argc, char * argv [] )
 
   return EXIT_SUCCESS;
 }
-

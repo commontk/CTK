@@ -366,4 +366,3 @@ int ctkAxesWidget::heightForWidth(int width)const
   // Tends to be square
   return width;
 }
-

@@ -436,4 +436,3 @@ int ctkVTKMagnifyViewTest2(int argc, char * argv [] )
   return EXIT_SUCCESS;
 
 }
-

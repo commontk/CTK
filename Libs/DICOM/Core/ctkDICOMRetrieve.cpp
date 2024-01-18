@@ -729,4 +729,3 @@ void ctkDICOMRetrieve::cancel()
   Q_D(ctkDICOMRetrieve);
   d->WasCanceled = true;
 }
-

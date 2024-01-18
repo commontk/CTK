@@ -138,4 +138,3 @@ int ctkAbstractLibraryFactoryTest1(int argc, char * argv [])
   libraryFactory.uninstantiate(itemKey);
   return EXIT_SUCCESS;
 }
-

@@ -150,4 +150,3 @@ Last, we run the front-end instance, using the default values for the module par
 
 After the ctkCmdLineModuleManager::run() method returns, we wait for the running module to finish and print out
 some data reported by it.
-

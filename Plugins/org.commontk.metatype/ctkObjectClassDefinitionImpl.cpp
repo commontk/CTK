@@ -173,4 +173,3 @@ QString ctkObjectClassDefinitionImpl::getLocalization() const
 {
   return _locElem.getLocalizationBase();
 }
-

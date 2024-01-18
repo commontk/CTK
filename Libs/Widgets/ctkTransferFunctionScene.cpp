@@ -52,4 +52,3 @@ ctkTransferFunctionScene::ctkTransferFunctionScene(QObject* parentObject)
 ctkTransferFunctionScene::~ctkTransferFunctionScene()
 {
 }
-

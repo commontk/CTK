@@ -76,4 +76,3 @@ int ctkSettingsEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

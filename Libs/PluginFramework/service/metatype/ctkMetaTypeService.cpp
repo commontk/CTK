@@ -22,4 +22,3 @@
 #include "ctkMetaTypeService.h"
 
 const QString ctkMetaTypeService::METATYPE_DOCUMENTS_LOCATION = "CTK-INF/metatype";
-

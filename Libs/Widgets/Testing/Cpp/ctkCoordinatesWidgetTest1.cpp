@@ -179,4 +179,3 @@ int ctkCoordinatesWidgetTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

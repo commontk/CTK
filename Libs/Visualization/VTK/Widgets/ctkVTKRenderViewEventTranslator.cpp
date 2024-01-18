@@ -257,4 +257,3 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
 
   return handled;
 }
-

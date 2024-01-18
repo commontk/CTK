@@ -96,4 +96,3 @@ void ctkTreeComboBoxEventTranslator::onCurrentIndexChanged(const QString& text)
 //{
 //  emit recordEvent(this->CurrentObject, "hidepopup", "");
 //}
-

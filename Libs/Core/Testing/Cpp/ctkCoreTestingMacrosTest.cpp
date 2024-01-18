@@ -384,4 +384,3 @@ int TestCheckQVariantFailure()
   CHECK_QVARIANT(actual, expected);
   return EXIT_SUCCESS;
 }
-

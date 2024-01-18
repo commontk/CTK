@@ -609,4 +609,3 @@ void ctkModelTester::onItemsRemoved(const QModelIndex & vparent, Qt::Orientation
 
   this->testModel();
 }
-

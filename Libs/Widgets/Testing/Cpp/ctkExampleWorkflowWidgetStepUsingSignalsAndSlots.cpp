@@ -211,4 +211,3 @@ void ctkExampleWorkflowWidgetStepUsingSignalsAndSlots::validate(const QString& d
       d->Step->ctkWorkflowStepQObject(), "validationComplete",
       Q_ARG(bool, retVal), Q_ARG(QString, desiredBranchId));
 }
-

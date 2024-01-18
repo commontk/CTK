@@ -50,5 +50,3 @@ ctkDICOMListenerWidget::ctkDICOMListenerWidget(QWidget* parentWidget)
 ctkDICOMListenerWidget::~ctkDICOMListenerWidget()
 {
 }
-
-

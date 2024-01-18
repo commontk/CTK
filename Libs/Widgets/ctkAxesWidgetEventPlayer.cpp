@@ -73,4 +73,3 @@ bool ctkAxesWidgetEventPlayer::playEvent(QObject *Object,
     }
   return false;
 }
-

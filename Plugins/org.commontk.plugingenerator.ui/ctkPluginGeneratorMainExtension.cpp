@@ -208,4 +208,3 @@ void ctkPluginGeneratorMainExtension::updateParameters()
 
   this->validate();
 }
-

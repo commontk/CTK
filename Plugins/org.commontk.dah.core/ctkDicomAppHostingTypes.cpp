@@ -145,4 +145,3 @@ bool operator !=(const ctkDicomAppHosting::AvailableData& left,
 }
 
 }
-

@@ -76,4 +76,3 @@ int ctkMaterialPropertyPreviewLabelEventTranslatorPlayerTest1(int argc, char * a
   etpWidget.show();
   return app.exec();
 }
-

@@ -282,4 +282,3 @@ void ctkVTKSliceView::setLightBoxRendererManagerColumnCount(int newColumnCount)
   Q_D(ctkVTKSliceView);
   d->LightBoxRendererManager->SetRenderWindowColumnCount(newColumnCount);
 }
-

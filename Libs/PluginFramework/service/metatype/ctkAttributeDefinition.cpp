@@ -22,4 +22,3 @@
 #include "ctkAttributeDefinition.h"
 
 const int ctkAttributeDefinition::PASSWORD = qRegisterMetaType<ctkAttributeDefinition::Password>("PASSWORD");
-

@@ -122,4 +122,3 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

@@ -76,5 +76,3 @@ void ctkCallback::invoke()
     }
   (*this->Callback)(this->CallbackData);
 }
-
-

@@ -201,4 +201,3 @@ void ctkEventAdminService::update(HandlerTasksInterface* managers, int timeout,
 {
   impl.update(managers, timeout, ignoreTimeout);
 }
-

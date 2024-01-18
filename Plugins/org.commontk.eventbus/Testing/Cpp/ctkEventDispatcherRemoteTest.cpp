@@ -62,6 +62,3 @@ void ctkEventDispatcherRemoteTest::ctkEventDispatcherRemoteAccessorsTest() {
 
 CTK_REGISTER_TEST(ctkEventDispatcherRemoteTest);
 #include "ctkEventDispatcherRemoteTest.moc"
-
-
-

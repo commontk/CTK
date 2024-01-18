@@ -230,4 +230,3 @@ int ctkVTKTextPropertyWidgetTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

@@ -79,6 +79,3 @@ void ctkBusEventTest::ctkEventAccessorsTest() {
 
 CTK_REGISTER_TEST(ctkBusEventTest);
 #include "ctkBusEventTest.moc"
-
-
-

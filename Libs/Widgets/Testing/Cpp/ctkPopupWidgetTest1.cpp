@@ -213,4 +213,3 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
     }
   return app.exec();
 }
-

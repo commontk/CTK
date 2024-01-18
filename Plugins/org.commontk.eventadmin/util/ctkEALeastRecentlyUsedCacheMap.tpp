@@ -124,4 +124,3 @@ clear()
   cache.clear();
   history.clear();
 }
-

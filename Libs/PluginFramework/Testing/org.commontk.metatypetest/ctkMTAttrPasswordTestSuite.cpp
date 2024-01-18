@@ -159,4 +159,3 @@ void ctkMTAttrPasswordTestSuite::testAttributeTypePassword6()
    }
   }
  }
-

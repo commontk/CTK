@@ -60,4 +60,3 @@ bool ctkSoapMessageProcessorList::process(
   reply->setFaultString( "No processor found to process message." );
   return false;
 }
-

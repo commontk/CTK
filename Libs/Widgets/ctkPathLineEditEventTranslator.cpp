@@ -90,4 +90,3 @@ void ctkPathLineEditEventTranslator::onEditTextChanged(const QString& text)
 {
   emit recordEvent(this->CurrentObject, "set_edit_string", text);
 }
-

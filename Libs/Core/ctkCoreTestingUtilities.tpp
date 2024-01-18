@@ -91,4 +91,3 @@ bool CheckList(int line, const QString& description,
 }
 
 } // namespace ctkCoreTestingUtilities
-

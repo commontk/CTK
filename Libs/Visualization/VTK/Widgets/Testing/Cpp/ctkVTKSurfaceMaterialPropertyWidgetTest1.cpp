@@ -239,4 +239,3 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

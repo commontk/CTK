@@ -50,4 +50,3 @@ ctkLogStream::~ctkLogStream()
     logService->log(level, msg, exc, file, function, line);
   }
 }
-

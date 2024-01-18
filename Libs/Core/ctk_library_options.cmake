@@ -12,4 +12,3 @@ set(ctk_library_options
   WITH_BFD_SHARED:OFF
   WITH_BFD_STATIC:OFF
   )
-

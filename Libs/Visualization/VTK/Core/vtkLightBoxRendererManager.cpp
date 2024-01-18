@@ -921,4 +921,3 @@ void vtkLightBoxRendererManager::SetColorWindowAndLevel(double colorWindow, doub
 
   this->Modified();
 }
-

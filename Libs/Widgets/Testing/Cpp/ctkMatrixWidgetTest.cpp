@@ -71,5 +71,3 @@ void ctkMatrixWidgetTester::testDecimals()
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(ctkMatrixWidgetTest)
 #include "moc_ctkMatrixWidgetTest.cpp"
-
-

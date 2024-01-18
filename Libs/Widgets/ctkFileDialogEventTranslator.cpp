@@ -117,5 +117,3 @@ void ctkFileDialogEventTranslator::onRejected()
 {
   emit recordEvent(this->CurrentObject, "rejected", "");
 }
-
-

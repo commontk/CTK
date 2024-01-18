@@ -102,4 +102,3 @@ void ctkEAAsyncDeliverTasks<SyncDeliverTasks, HandlerTask>::execute(const QList<
     pool->executeTask(executer);
   }
 }
-
