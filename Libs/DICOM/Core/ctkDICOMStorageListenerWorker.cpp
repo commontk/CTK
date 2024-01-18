@@ -54,7 +54,7 @@ void ctkDICOMStorageListenerWorkerPrivate::setStorageListenerParameters()
   Q_Q(ctkDICOMStorageListenerWorker);
 
   QSharedPointer<ctkDICOMStorageListenerJob> storageListenerJob =
-    qobject_cast<QSharedPointer<ctkDICOMStorageListenerJob>>(q->Job);
+    qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(q->Job);
   if (!storageListenerJob)
     {
     return;
@@ -117,14 +117,14 @@ void ctkDICOMStorageListenerWorker::run()
 {
   Q_D(const ctkDICOMStorageListenerWorker);
   QSharedPointer<ctkDICOMStorageListenerJob> storageListenerJob =
-      qobject_cast<QSharedPointer<ctkDICOMStorageListenerJob>>(this->Job);
+      qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(this->Job);
   if (!storageListenerJob)
     {
     return;
     }
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
-    qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
+    qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
   if (!scheduler
       || storageListenerJob->status() == ctkAbstractJob::JobStatus::Stopped)
     {
@@ -160,7 +160,7 @@ void ctkDICOMStorageListenerWorker::setJob(QSharedPointer<ctkAbstractJob> job)
   Q_D(ctkDICOMStorageListenerWorker);
 
   QSharedPointer<ctkDICOMStorageListenerJob> storageListenerJob =
-    qobject_cast<QSharedPointer<ctkDICOMStorageListenerJob>>(job);
+    qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(job);
   if (!storageListenerJob)
     {
     return;
@@ -190,7 +190,7 @@ void ctkDICOMStorageListenerWorker::onInsertJobDetail()
   Q_D(ctkDICOMStorageListenerWorker);
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
-      qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
+      qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
   if (!scheduler)
     {
     return;

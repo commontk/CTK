@@ -53,7 +53,7 @@ void ctkDICOMInserterWorkerPrivate::setInserterParameters()
   Q_Q(ctkDICOMInserterWorker);
 
   QSharedPointer<ctkDICOMInserterJob> inserterJob =
-    qobject_cast<QSharedPointer<ctkDICOMInserterJob>>(q->Job);
+    qSharedPointerObjectCast<ctkDICOMInserterJob>(q->Job);
   if (!inserterJob)
     {
     return;
@@ -94,7 +94,7 @@ void ctkDICOMInserterWorker::run()
 {
   Q_D(const ctkDICOMInserterWorker);
   QSharedPointer<ctkDICOMInserterJob> inserterJob =
-    qobject_cast<QSharedPointer<ctkDICOMInserterJob>>(this->Job);
+    qSharedPointerObjectCast<ctkDICOMInserterJob>(this->Job);
   if (!inserterJob)
     {
     return;
@@ -141,7 +141,7 @@ void ctkDICOMInserterWorker::setJob(QSharedPointer<ctkAbstractJob> job)
   Q_D(ctkDICOMInserterWorker);
 
   QSharedPointer<ctkDICOMInserterJob> inserterJob =
-    qobject_cast<QSharedPointer<ctkDICOMInserterJob>>(job);
+    qSharedPointerObjectCast<ctkDICOMInserterJob>(job);
   if (!inserterJob)
     {
     return;

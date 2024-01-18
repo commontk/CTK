@@ -730,7 +730,7 @@ ctkDICOMStorageListenerJob *ctkDICOMScheduler::listenerJob()
   foreach(QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
     QSharedPointer<ctkDICOMStorageListenerJob> listenerJob =
-      qobject_cast<QSharedPointer<ctkDICOMStorageListenerJob>>(job);
+      qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(job);
     if (listenerJob)
       {
       return listenerJob.data();

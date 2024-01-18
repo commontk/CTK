@@ -51,7 +51,7 @@ void ctkDICOMQueryWorkerPrivate::setQueryParameters()
   Q_Q(ctkDICOMQueryWorker);
 
   QSharedPointer<ctkDICOMQueryJob> queryJob =
-    qobject_cast<QSharedPointer<ctkDICOMQueryJob>>(q->Job);
+    qSharedPointerObjectCast<ctkDICOMQueryJob>(q->Job);
   if (!queryJob)
     {
     return;
@@ -103,14 +103,14 @@ void ctkDICOMQueryWorker::run()
 {
   Q_D(const ctkDICOMQueryWorker);
   QSharedPointer<ctkDICOMQueryJob> queryJob =
-    qobject_cast<QSharedPointer<ctkDICOMQueryJob>>(this->Job);
+    qSharedPointerObjectCast<ctkDICOMQueryJob>(this->Job);
   if (!queryJob)
     {
     return;
     }
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
-      qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
+      qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
   if (!scheduler)
     {
     emit queryJob->canceled();
@@ -193,7 +193,7 @@ void ctkDICOMQueryWorker::setJob(QSharedPointer<ctkAbstractJob> job)
   Q_D(ctkDICOMQueryWorker);
 
   QSharedPointer<ctkDICOMQueryJob> queryJob =
-    qobject_cast<QSharedPointer<ctkDICOMQueryJob>>(job);
+    qSharedPointerObjectCast<ctkDICOMQueryJob>(job);
   if (!queryJob)
     {
     return;

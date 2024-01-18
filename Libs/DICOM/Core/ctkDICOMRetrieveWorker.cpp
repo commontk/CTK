@@ -49,7 +49,7 @@ ctkDICOMRetrieveWorkerPrivate::~ctkDICOMRetrieveWorkerPrivate()
   Q_Q(ctkDICOMRetrieveWorker);
 
   QSharedPointer<ctkDICOMRetrieveJob> retrieveJob =
-    qobject_cast<QSharedPointer<ctkDICOMRetrieveJob>>(q->Job);
+    qSharedPointerObjectCast<ctkDICOMRetrieveJob>(q->Job);
   if (!retrieveJob)
   {
     return;
@@ -65,7 +65,7 @@ void ctkDICOMRetrieveWorkerPrivate::setRetrieveParameters()
   Q_Q(ctkDICOMRetrieveWorker);
 
   QSharedPointer<ctkDICOMRetrieveJob> retrieveJob =
-    qobject_cast<QSharedPointer<ctkDICOMRetrieveJob>>(q->Job);
+    qSharedPointerObjectCast<ctkDICOMRetrieveJob>(q->Job);
   if (!retrieveJob)
     {
     return;
@@ -122,14 +122,14 @@ void ctkDICOMRetrieveWorker::run()
 {
   Q_D(const ctkDICOMRetrieveWorker);
   QSharedPointer<ctkDICOMRetrieveJob> retrieveJob =
-    qobject_cast<QSharedPointer<ctkDICOMRetrieveJob>>(this->Job);
+    qSharedPointerObjectCast<ctkDICOMRetrieveJob>(this->Job);
   if (!retrieveJob)
     {
     return;
     }
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
-      qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
+      qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
   ctkDICOMServer* server = retrieveJob->server();
   if (!scheduler
       || !server
@@ -275,7 +275,7 @@ void ctkDICOMRetrieveWorker::setJob(QSharedPointer<ctkAbstractJob> job)
   Q_D(ctkDICOMRetrieveWorker);
 
   QSharedPointer<ctkDICOMRetrieveJob> retrieveJob =
-    qobject_cast<QSharedPointer<ctkDICOMRetrieveJob>>(job);
+    qSharedPointerObjectCast<ctkDICOMRetrieveJob>(job);
   if (!retrieveJob)
     {
     return;
