@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1679</width>
-    <height>271</height>
+    <width>1202</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -169,105 +169,6 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="2" rowspan="4">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="spacing">
-      <number>3</number>
-     </property>
-     <item>
-      <widget class="ctkPushButton" name="AddButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string> Add host</string>
-       </property>
-       <property name="icon">
-        <iconset resource="ctkDICOMWidget.qrc">
-         <normaloff>:/Icons/add.svg</normaloff>:/Icons/add.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkPushButton" name="TestButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string> Verify host</string>
-       </property>
-       <property name="icon">
-        <iconset resource="ctkDICOMWidget.qrc">
-         <normaloff>:/Icons/dns.svg</normaloff>:/Icons/dns.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkPushButton" name="RemoveButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string> Remove host</string>
-       </property>
-       <property name="icon">
-        <iconset resource="ctkDICOMWidget.qrc">
-         <normaloff>:/Icons/delete.svg</normaloff>:/Icons/delete.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::MinimumExpanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>30</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QDialogButtonBox" name="ActionsButtonBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>70</height>
-        </size>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Discard|QDialogButtonBox::Save</set>
-       </property>
-       <property name="centerButtons">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="2" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="ServersCollapsibleGroupBox">
      <property name="title">
@@ -378,6 +279,105 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="1" column="2" rowspan="4">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>3</number>
+     </property>
+     <item>
+      <widget class="ctkPushButton" name="AddButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string> Add host</string>
+       </property>
+       <property name="icon">
+        <iconset resource="ctkDICOMWidget.qrc">
+         <normaloff>:/Icons/add.svg</normaloff>:/Icons/add.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkPushButton" name="TestButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string> Verify host</string>
+       </property>
+       <property name="icon">
+        <iconset resource="ctkDICOMWidget.qrc">
+         <normaloff>:/Icons/dns.svg</normaloff>:/Icons/dns.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkPushButton" name="RemoveButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string> Remove host</string>
+       </property>
+       <property name="icon">
+        <iconset resource="ctkDICOMWidget.qrc">
+         <normaloff>:/Icons/delete.svg</normaloff>:/Icons/delete.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::MinimumExpanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>30</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="ActionsButtonBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Discard|QDialogButtonBox::Save</set>
+       </property>
+       <property name="centerButtons">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

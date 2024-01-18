@@ -58,7 +58,7 @@
 #include "ctkDICOMVisualBrowserWidget.h"
 #include "ui_ctkDICOMVisualBrowserWidget.h"
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMVisualBrowserWidget");
+static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMVisualBrowserWidget");
 
 class ctkDICOMMetadataDialog : public QDialog
 {
@@ -291,12 +291,9 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
   this->IsGUIUpdating = false;
   this->IsLoading = false;
 
-  this->ServerNodeWidget = new ctkDICOMServerNodeWidget2();
-  this->ServerNodeWidget->setScheduler(this->Scheduler);
-  this->connectScheduler();
-
   this->ExportProgress = nullptr;
   this->UpdateSchemaProgress = nullptr;
+  this->ServerNodeWidget = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -320,6 +317,9 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
                    q, SLOT(updateDatabase()));
 
   this->WarningPushButton->hide();
+  QObject::connect(this->WarningPushButton, SIGNAL(clicked()),
+                   q, SLOT(onWarningPushButtonClicked()));
+
   QObject::connect(this->FilteringPatientIDSearchBox, SIGNAL(textChanged(QString)),
                    q, SLOT(onFilteringPatientIDChanged()));
 
@@ -342,7 +342,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   QObject::connect(this->QueryPatientPushButton, SIGNAL(clicked()),
                    q, SLOT(onQueryPatients()));
 
-  this->ServersSettingsCollapsibleGroupBox->layout()->addWidget(this->ServerNodeWidget);
   this->PatientsTabWidget->clear();
 
   // setup patients menu
@@ -401,6 +400,16 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
              q, SLOT(onImportDirectoryComboBoxCurrentIndexChanged(int)));
 
   this->ProgressFrame->hide();
+
+  this->ServersSettingsCollapsibleGroupBox->setCollapsed(true);
+  this->JobsCollapsibleGroupBox->setCollapsed(true);
+
+  this->ServerNodeWidget = new ctkDICOMServerNodeWidget2(q);
+  this->ServerNodeWidget->setScheduler(this->Scheduler);
+  this->ServersSettingsCollapsibleGroupBox->layout()->addWidget(this->ServerNodeWidget);
+
+  this->JobListWidget->setScheduler(this->Scheduler);
+  this->connectScheduler();
 }
 
 //----------------------------------------------------------------------------
@@ -414,8 +423,8 @@ void ctkDICOMVisualBrowserWidgetPrivate::disconnectScheduler()
 
   ctkDICOMVisualBrowserWidget::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                                           q, SLOT(updateGUIFromScheduler(QVariant)));
-  ctkDICOMVisualBrowserWidget::disconnect(this->Scheduler.data(), SIGNAL(taskFailed(QString, QString)),
-                                          q, SLOT(onTaskFailed(QString, QString)));
+  ctkDICOMVisualBrowserWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
+                                          q, SLOT(onJobFailed(QVariant)));
   ctkDICOMVisualBrowserWidget::disconnect(this->Indexer.data(), SIGNAL(progress(int)), q, SLOT(onIndexingProgress(int)));
   ctkDICOMVisualBrowserWidget::disconnect(this->Indexer.data(), SIGNAL(progressStep(QString)), q, SLOT(onIndexingProgressStep(QString)));
   ctkDICOMVisualBrowserWidget::disconnect(this->Indexer.data(), SIGNAL(progressDetail(QString)), q, SLOT(onIndexingProgressDetail(QString)));
@@ -433,8 +442,10 @@ void ctkDICOMVisualBrowserWidgetPrivate::connectScheduler()
 
   ctkDICOMVisualBrowserWidget::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                                        q, SLOT(updateGUIFromScheduler(QVariant)));
+  ctkDICOMVisualBrowserWidget::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
+                                       q, SLOT(onJobStarted(QVariant)));
   ctkDICOMVisualBrowserWidget::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                                       q, SLOT(onTaskFailed(QVariant)));
+                                       q, SLOT(onJobFailed(QVariant)));
   ctkDICOMVisualBrowserWidget::connect(this->Indexer.data(), SIGNAL(progress(int)), q, SLOT(onIndexingProgress(int)));
   ctkDICOMVisualBrowserWidget::connect(this->Indexer.data(), SIGNAL(progressStep(QString)), q, SLOT(onIndexingProgressStep(QString)));
   ctkDICOMVisualBrowserWidget::connect(this->Indexer.data(), SIGNAL(progressDetail(QString)), q, SLOT(onIndexingProgressDetail(QString)));
@@ -912,9 +923,9 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
       }
     }
 
-  this->Scheduler->stopJobsByUIDs({},
-                                  {},
-                                  seriesInstanceUIDsToStop);
+  this->Scheduler->stopJobsByDICOMUIDs({},
+                                       {},
+                                       seriesInstanceUIDsToStop);
 
   bool wait = true;
   while (wait)
@@ -937,7 +948,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
     }
 
   this->updateFiltersWarnings();
-  this->ProgressFrame->hide();
   this->QueryPatientPushButton->setIcon(QIcon(":/Icons/query.svg"));
 
   foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, seriesWidgetsList)
@@ -1441,6 +1451,7 @@ void ctkDICOMVisualBrowserWidget::setScheduler(ctkDICOMScheduler& Scheduler)
   d->disconnectScheduler();
   d->Scheduler = QSharedPointer<ctkDICOMScheduler>(&Scheduler, skipDelete);
   d->ServerNodeWidget->setScheduler(d->Scheduler);
+  d->JobListWidget->setScheduler(d->Scheduler);
   d->connectScheduler();
 }
 
@@ -1451,6 +1462,7 @@ void ctkDICOMVisualBrowserWidget::setScheduler(QSharedPointer<ctkDICOMScheduler>
   d->disconnectScheduler();
   d->Scheduler = Scheduler;
   d->ServerNodeWidget->setScheduler(d->Scheduler);
+  d->JobListWidget->setScheduler(d->Scheduler);
   d->connectScheduler();
 }
 
@@ -1586,7 +1598,21 @@ int ctkDICOMVisualBrowserWidget::getServerIndexFromName(const QString& connectio
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMServerNodeWidget2* ctkDICOMVisualBrowserWidget::serverSettingsWidget()
+ctkDICOMJobListWidget *ctkDICOMVisualBrowserWidget::jobListWidget()
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  return d->JobListWidget;
+}
+
+//------------------------------------------------------------------------------
+ctkCollapsibleGroupBox *ctkDICOMVisualBrowserWidget::jobListGroupBox()
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  return d->JobsCollapsibleGroupBox;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMServerNodeWidget2 *ctkDICOMVisualBrowserWidget::serverSettingsWidget()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   return d->ServerNodeWidget;
@@ -2224,6 +2250,14 @@ void ctkDICOMVisualBrowserWidget::updateDatabase()
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onWarningPushButtonClicked()
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  d->WarningPushButton->hide();
+  d->JobsCollapsibleGroupBox->setChecked(true);
+}
+
+//------------------------------------------------------------------------------
 QStringList ctkDICOMVisualBrowserWidget::fileListForCurrentSelection(ctkDICOMModel::IndexType level,
                                                                      const QList<QWidget*>& selectedWidgets)
 {
@@ -2382,9 +2416,9 @@ void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType l
     }
 
   // Stop fetching jobs for selected widgets.
-  d->Scheduler->stopJobsByUIDs(selectedPatientUIDs,
-                               selectedStudyUIDs,
-                               selectedSeriesUIDs);
+  d->Scheduler->stopJobsByDICOMUIDs({},
+                                    {},
+                                    selectedSeriesUIDs);
 
   foreach (const QString& uid, selectedSeriesUIDs)
     {
@@ -2570,8 +2604,6 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     d->Scheduler->queryPatients(QThread::NormalPriority);
 
     d->QueryPatientPushButton->setIcon(QIcon(":/Icons/wait.svg"));
-    d->ProgressFrame->show();
-    d->ProgressDetailLineEdit->hide();
     }
 }
 
@@ -2579,7 +2611,6 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
 void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(const QVariant& data)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-  d->ProgressFrame->hide();
   d->QueryPatientPushButton->setIcon(QIcon(":/Icons/query.svg"));
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
@@ -2610,7 +2641,25 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(const QVariant& data)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onTaskFailed(const QVariant& data)
+void ctkDICOMVisualBrowserWidget::onJobStarted(const QVariant &data)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+
+  if (td.JobClass == "ctkDICOMRetrieveJob")
+    {
+    ctkDICOMSeriesItemWidget* seriesItemWidget =
+      d->getCurrentPatientSeriesWidgetByUIDs(td.StudyInstanceUID, td.SeriesInstanceUID);
+    if (seriesItemWidget)
+      {
+      seriesItemWidget->setRetrieveFailed(false);
+      seriesItemWidget->resetOperationProgressBar();
+      }
+    }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::onJobFailed(const QVariant& data)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
@@ -2618,7 +2667,6 @@ void ctkDICOMVisualBrowserWidget::onTaskFailed(const QVariant& data)
   if (td.JobClass == "ctkDICOMQueryJob")
     {
     d->updateFiltersWarnings();
-    d->ProgressFrame->hide();
     d->QueryPatientPushButton->setIcon(QIcon(":/Icons/query.svg"));
     }
 
@@ -2630,11 +2678,12 @@ void ctkDICOMVisualBrowserWidget::onTaskFailed(const QVariant& data)
       {
       seriesItemWidget->setRetrieveFailed(true);
       }
-
-    d->WarningPushButton->setText(tr("%1 job failed to fetch the data."
-                                     "\nFor more information please open the error report console. \n").arg(td.JobUID));
-    d->WarningPushButton->show();
     }
+
+  QString job = td.JobClass.replace("ctkDICOM", "").replace("Job", "");
+  d->WarningPushButton->setText(tr("%1 job failed."
+                                   "\nFor more information open the Jobs section. \n").arg(job));
+  d->WarningPushButton->show();
 }
 
 //------------------------------------------------------------------------------

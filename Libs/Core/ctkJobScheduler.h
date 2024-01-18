@@ -58,7 +58,7 @@ public:
   QSharedPointer<ctkAbstractJob> getJobSharedByUID(const QString& jobUID);
   Q_INVOKABLE ctkAbstractJob* getJobByUID(const QString& jobUID);
 
-  Q_INVOKABLE void waitForFinish();
+  Q_INVOKABLE void waitForFinish(bool waitForPersistentJobs = false);
   Q_INVOKABLE void waitForDone(int msec);
 
   Q_INVOKABLE void stopAllJobs(bool stopPersistentJobs = false);
@@ -93,6 +93,7 @@ public:
   QSharedPointer<QThreadPool> threadPoolShared() const;
 
 Q_SIGNALS:
+  void jobQueued(QVariant data);
   void jobStarted(QVariant data);
   void jobFinished(QVariant data);
   void jobCanceled(QVariant data);

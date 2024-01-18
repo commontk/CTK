@@ -18,5 +18,15 @@
         <file>Icons/query.svg</file>
         <file>Icons/wait.svg</file>
         <file>Icons/downloading.svg</file>
+        <file>Icons/visible_off.svg</file>
+        <file>Icons/visible_on.svg</file>
+        <file>Icons/stop.svg</file>
+        <file>Icons/retry.svg</file>
+        <file>Icons/error.svg</file>
+        <file>Icons/pending.svg</file>
+        <file>Icons/cleaning.svg</file>
+        <file>Icons/reset.svg</file>
+        <file>Icons/error_red.svg</file>
+        <file>Icons/select_all.svg</file>
     </qresource>
 </RCC>

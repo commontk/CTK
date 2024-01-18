@@ -334,7 +334,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
     }
   else
     {
-    logger.debug("DB not open in Query");
+    logger.warn("DB not open in Query");
     emit progress(tr("DB not open in Query"));
     }
   emit progress(0);
@@ -392,7 +392,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
     }
   else
     {
-    logger.info("Found useful presentation context");
+    logger.debug("Found useful presentation context");
     emit progress(tr("Found useful presentation context"));
     }
   emit progress(40);
@@ -1020,6 +1020,13 @@ void ctkDICOMQuery::cancel()
     d->SCU.sendCANCELRequest(d->PresentationContext);
     d->PresentationContext = 0;
     }
+
+  if (d->SCU.isConnected())
+    {
+    d->SCU.releaseAssociation();
+    }
+
+  d->JobResponseSets.clear();
 }
 
 //----------------------------------------------------------------------------

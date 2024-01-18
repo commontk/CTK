@@ -37,6 +37,7 @@ ctkAbstractJob::ctkAbstractJob()
   this->MaximumNumberOfRetry = 3;
   this->MaximumConcurrentJobsPerType = 20;
   this->Priority = QThread::Priority::LowPriority;
+  this->CreationDateTime = QDateTime::currentDateTime();
 }
 
 //----------------------------------------------------------------------------
@@ -76,6 +77,15 @@ ctkAbstractJob::JobStatus ctkAbstractJob::status() const
 void ctkAbstractJob::setStatus(JobStatus status)
 {
   this->Status = status;
+
+  if (this->Status == JobStatus::Running)
+    {
+    this->StartDateTime = QDateTime::currentDateTime();
+    }
+  else if (this->Status > JobStatus::Running)
+    {
+    this->CompletionDateTime = QDateTime::currentDateTime();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -148,6 +158,24 @@ QThread::Priority ctkAbstractJob::priority() const
 void ctkAbstractJob::setPriority(const QThread::Priority &priority)
 {
   this->Priority = priority;
+}
+
+//----------------------------------------------------------------------------
+QDateTime ctkAbstractJob::creationDateTime() const
+{
+  return this->CreationDateTime;
+}
+
+//----------------------------------------------------------------------------
+QDateTime ctkAbstractJob::startDateTime() const
+{
+  return this->StartDateTime;
+}
+
+//----------------------------------------------------------------------------
+QDateTime ctkAbstractJob::completionDateTime() const
+{
+  return this->CompletionDateTime;
 }
 
 //----------------------------------------------------------------------------

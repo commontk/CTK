@@ -34,7 +34,7 @@
 // DCMTK includes
 #include <dcmtk/dcmnet/dstorscp.h> /* for DcmStorageSCP */
 
-static ctkLogger logger("org.commontk.dicom.ctkDICOMStorageListener");
+static ctkLogger logger ( "org.commontk.dicom.DICOMStorageListener" );
 
 //------------------------------------------------------------------------------
 // A customized implementation so that Qt signals can be emitted
@@ -49,20 +49,27 @@ public:
   };
   ~ctkDICOMStorageListenerSCUPrivate() = default;
 
-  virtual OFCondition acceptAssociations()
-  {
-    return DcmSCP::acceptAssociations();
-  }
+  virtual OFCondition acceptAssociations();
 
   virtual OFBool stopAfterCurrentAssociation();
   virtual OFBool stopAfterConnectionTimeout();
 
   virtual OFCondition handleIncomingCommand(T_DIMSE_Message* incomingMsg,
-      const DcmPresentationContextInfo& presInfo);
+    const DcmPresentationContextInfo& presInfo);
 };
 
 //------------------------------------------------------------------------------
 // ctkDICOMStorageListenerSCUPrivate methods
+
+//------------------------------------------------------------------------------
+OFCondition ctkDICOMStorageListenerSCUPrivate::acceptAssociations()
+{
+  if (!this->listener || this->listener->wasCanceled())
+    {
+    return EC_IllegalCall;
+    }
+  return DcmSCP::acceptAssociations();
+}
 
 //------------------------------------------------------------------------------
 OFBool ctkDICOMStorageListenerSCUPrivate::stopAfterCurrentAssociation()

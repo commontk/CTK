@@ -40,6 +40,7 @@ class ctkDICOMIndexer;
 class ctkDICOMSchedulerPrivate;
 class ctkDICOMServer;
 class ctkDICOMStorageListenerJob;
+struct ctkDICOMJobDetail;
 
 /// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMScheduler : public ctkJobScheduler
@@ -162,16 +163,24 @@ public:
 
   ///@{
   /// Jobs managment
-  Q_INVOKABLE void waitForFinishByUIDs(const QStringList& patientIDs = {},
+  /// NOTE: methods ...ByDICOMUIDs accept only one list at the time
+  Q_INVOKABLE void waitForFinishByDICOMUIDs(const QStringList& patientIDs = {},
+                                            const QStringList& studyInstanceUIDs = {},
+                                            const QStringList& seriesInstanceUIDs = {},
+                                            const QStringList& sopInstanceUIDs = {});
+  Q_INVOKABLE void stopJobsByDICOMUIDs(const QStringList& patientIDs = {},
                                        const QStringList& studyInstanceUIDs = {},
                                        const QStringList& seriesInstanceUIDs = {},
                                        const QStringList& sopInstanceUIDs = {});
-  Q_INVOKABLE void stopJobsByUIDs(const QStringList& patientIDs = {},
-                                  const QStringList& studyInstanceUIDs = {},
-                                  const QStringList& seriesInstanceUIDs = {},
-                                  const QStringList& sopInstanceUIDs = {});
+  Q_INVOKABLE QList<QSharedPointer<ctkAbstractJob>> getJobsByDICOMUIDs(const QStringList& patientIDs = {},
+                                                                       const QStringList& studyInstanceUIDs = {},
+                                                                       const QStringList& seriesInstanceUIDs = {},
+                                                                       const QStringList& sopInstanceUIDs = {});
+  Q_INVOKABLE void stopJobsByJobUIDs(const QStringList& jobUIDs);
+  Q_INVOKABLE void runJobs(const QMap<QString, ctkDICOMJobDetail>& jobDetails);
   Q_INVOKABLE void raiseJobsPriorityForSeries(const QStringList& selectedSeriesInstanceUIDs,
                                               QThread::Priority priority = QThread::HighestPriority);
+
   ///@}
 
   ///@{

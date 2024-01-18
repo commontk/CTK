@@ -1074,4 +1074,11 @@ void ctkDICOMRetrieve::cancel()
     d->SCU.sendCANCELRequest(d->PresentationContext);
     d->PresentationContext = 0;
     }
+
+  if (d->SCU.isConnected())
+    {
+    d->SCU.releaseAssociation();
+    }
+
+  d->JobResponseSets.clear();
 }

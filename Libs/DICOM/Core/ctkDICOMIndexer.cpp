@@ -138,7 +138,7 @@ void ctkDICOMIndexerPrivateWorker::start()
     imagesCountAfter = database.imagesCount();
 
     double elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-    logger.debug(QString("DICOM indexer has updated display fields for %1 files [%2s]")
+    logger.info(QString("DICOM indexer has updated display fields for %1 files [%2s]")
                 .arg(imagesCountAfter-imagesCountBefore).arg(QString::number(elapsedTimeInSeconds, 'f', 2)));
 
   // restart if new requests has been queued during displayed fields update
@@ -250,7 +250,7 @@ void ctkDICOMIndexerPrivateWorker::processIndexingRequest(DICOMIndexingQueue::In
   }
 
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-  logger.debug(QString("DICOM indexer has successfully processed %1 files [%2s]")
+  logger.info(QString("DICOM indexer has successfully processed %1 files [%2s]")
               .arg(currentFileIndex).arg(QString::number(elapsedTimeInSeconds, 'f', 2)));
 }
 
@@ -279,7 +279,7 @@ void ctkDICOMIndexerPrivateWorker::writeIndexingResultsToDatabase(ctkDICOMDataba
   this->NumberOfInstancesInserted = 0;
 
   float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-  logger.debug(QString("DICOM indexer has successfully inserted %1 files [%2s]")
+  logger.info(QString("DICOM indexer has successfully inserted %1 files [%2s]")
               .arg(indexingResults.count()).arg(QString::number(elapsedTimeInSeconds, 'f', 2)));
 
 }
@@ -634,7 +634,7 @@ bool ctkDICOMIndexer::addDicomdir(const QString& directoryName, bool copyFile/*=
       }
     }
     float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-    logger.debug(QString("DICOM indexer has successfully processed DICOMDIR in %1 [%2s]")
+    logger.info(QString("DICOM indexer has successfully processed DICOMDIR in %1 [%2s]")
                 .arg(directoryName)
                 .arg(QString::number(elapsedTimeInSeconds,'f', 2)));
     this->addListOfFiles(listOfInstances, copyFile);

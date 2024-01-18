@@ -31,7 +31,7 @@
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger("org.commontk.dicom.ctkDICOMRetrieveWorker");
+static ctkLogger logger ("org.commontk.dicom.DICOMRetrieveWorker");
 
 //------------------------------------------------------------------------------
 // ctkDICOMRetrieveWorkerPrivate methods
@@ -135,9 +135,7 @@ void ctkDICOMRetrieveWorker::run()
       || !server
       || retrieveJob->status() == ctkAbstractJob::JobStatus::Stopped)
     {
-    emit retrieveJob->canceled();
     this->onJobCanceled();
-    retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
     return;
     }
 
@@ -154,18 +152,14 @@ void ctkDICOMRetrieveWorker::run()
       switch(retrieveJob->dicomLevel())
         {
         case ctkDICOMJob::DICOMLevels::Patients:
-          logger.info("ctkDICOMRetrieveTask : get operation for a full patient is not implemented.");
-          emit retrieveJob->canceled();
+          logger.warn("ctkDICOMRetrieveTask : get operation for a full patient is not implemented.");
           this->onJobCanceled();
-          retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
           return;
         case ctkDICOMJob::DICOMLevels::Studies:
           if (!d->Retrieve->getStudy(retrieveJob->studyInstanceUID(),
                                      retrieveJob->patientID()))
             {
-            emit retrieveJob->canceled();
             this->onJobCanceled();
-            retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
             return;
             }
           break;
@@ -174,9 +168,7 @@ void ctkDICOMRetrieveWorker::run()
                                       retrieveJob->seriesInstanceUID(),
                                       retrieveJob->patientID()))
             {
-            emit retrieveJob->canceled();
             this->onJobCanceled();
-            retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
             return;
             }
           break;
@@ -186,9 +178,7 @@ void ctkDICOMRetrieveWorker::run()
                                            retrieveJob->sopInstanceUID(),
                                            retrieveJob->patientID()))
             {
-            emit retrieveJob->canceled();
             this->onJobCanceled();
-            retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
             return;
             }
           break;
@@ -198,7 +188,7 @@ void ctkDICOMRetrieveWorker::run()
       switch(retrieveJob->dicomLevel())
         {
         case ctkDICOMJob::DICOMLevels::Patients:
-          logger.info("ctkDICOMRetrieveTask : move operation for a full patient is not implemented.");
+          logger.warn("ctkDICOMRetrieveTask : move operation for a full patient is not implemented.");
           retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
           emit retrieveJob->failed();
           return;
@@ -206,9 +196,7 @@ void ctkDICOMRetrieveWorker::run()
           if (!d->Retrieve->moveStudy(retrieveJob->studyInstanceUID(),
                                       retrieveJob->patientID()))
             {
-            emit retrieveJob->canceled();
             this->onJobCanceled();
-            retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
             return;
             }
           break;
@@ -217,9 +205,7 @@ void ctkDICOMRetrieveWorker::run()
                                        retrieveJob->seriesInstanceUID(),
                                        retrieveJob->patientID()))
             {
-            emit retrieveJob->canceled();
             this->onJobCanceled();
-            retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
             return;
             }
           break;
@@ -229,9 +215,7 @@ void ctkDICOMRetrieveWorker::run()
                                             retrieveJob->sopInstanceUID(),
                                             retrieveJob->patientID()))
             {
-            emit retrieveJob->canceled();
             this->onJobCanceled();
-            retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
             return;
             }
           break;
@@ -242,9 +226,7 @@ void ctkDICOMRetrieveWorker::run()
 
   if (retrieveJob->status() == ctkAbstractJob::JobStatus::Stopped)
     {
-    emit retrieveJob->canceled();
     this->onJobCanceled();
-    retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
     return;
     }
 

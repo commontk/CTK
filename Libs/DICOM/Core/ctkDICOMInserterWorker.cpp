@@ -32,7 +32,7 @@
 #include "ctkDICOMInserterWorker_p.h"
 #include "ctkDICOMJobResponseSet.h"
 
-static ctkLogger logger("org.commontk.dicom.ctkDICOMInserterWorker");
+static ctkLogger logger ("org.commontk.dicom.DICOMInserterWorker");
 
 //------------------------------------------------------------------------------
 // ctkDICOMInserterWorkerPrivate methods
@@ -102,9 +102,7 @@ void ctkDICOMInserterWorker::run()
 
   if (inserterJob->status() == ctkAbstractJob::JobStatus::Stopped)
     {
-    emit inserterJob->canceled();
     this->onJobCanceled();
-    inserterJob->setStatus(ctkAbstractJob::JobStatus::Finished);
     return;
     }
 
@@ -120,9 +118,7 @@ void ctkDICOMInserterWorker::run()
 
   if (inserterJob->status() == ctkAbstractJob::JobStatus::Stopped)
     {
-    emit inserterJob->canceled();
     this->onJobCanceled();
-    inserterJob->setStatus(ctkAbstractJob::JobStatus::Finished);
     return;
     }
 

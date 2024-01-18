@@ -30,7 +30,7 @@
 #include "ctkDICOMRetrieveWorker.h"
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger("org.commontk.dicom.ctkDICOMRetrieveJob");
+static ctkLogger logger ( "org.commontk.dicom.DICOMRetrieveJob" );
 
 //------------------------------------------------------------------------------
 // ctkDICOMRetrieveJobPrivate methods

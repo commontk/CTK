@@ -42,11 +42,12 @@
 class ctkCollapsibleGroupBox;
 class ctkDICOMVisualBrowserWidgetPrivate;
 class ctkDICOMDatabase;
-class ctkFileDialog;
+class ctkDICOMJobListWidget;
 class ctkDICOMScheduler;
 class ctkDICOMServer;
 class ctkDICOMServerNodeWidget2;
 class ctkDICOMJobResponseSet;
+class ctkFileDialog;
 
 /// \ingroup DICOM_Widgets
 ///
@@ -161,6 +162,8 @@ public:
   Q_INVOKABLE void removeAllServers();
   Q_INVOKABLE QString getServerNameFromIndex(int id);
   Q_INVOKABLE int getServerIndexFromName(const QString& connectionName);
+  Q_INVOKABLE ctkDICOMJobListWidget* jobListWidget();
+  Q_INVOKABLE ctkCollapsibleGroupBox* jobListGroupBox();
   Q_INVOKABLE ctkDICOMServerNodeWidget2* serverSettingsWidget();
   Q_INVOKABLE ctkCollapsibleGroupBox* serverSettingsGroupBox();
   ///@}
@@ -342,6 +345,7 @@ public Q_SLOTS:
   /// Update database in-place to required schema version
   void updateDatabase();
 
+  void onWarningPushButtonClicked();
   void onFilteringPatientIDChanged();
   void onFilteringPatientNameChanged();
   void onFilteringStudyDescriptionChanged();
@@ -351,7 +355,8 @@ public Q_SLOTS:
   void onQueryPatients();
   void onShowPatients();
   void updateGUIFromScheduler(const QVariant&);
-  void onTaskFailed(const QVariant&);
+  void onJobStarted(const QVariant&);
+  void onJobFailed(const QVariant&);
   void onPatientItemChanged(int);
   void onClose();
   void onLoad();

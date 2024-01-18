@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1201</width>
-    <height>678</height>
+    <height>1173</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>3</number>
+    <number>2</number>
    </property>
    <property name="leftMargin">
     <number>2</number>
@@ -94,13 +94,13 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <property name="spacing">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="leftMargin">
          <number>2</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="rightMargin">
          <number>2</number>
@@ -876,25 +876,46 @@ Please set at least one filter to query the servers</string>
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="ServersSettingsCollapsibleGroupBox">
+    <widget class="ctkCollapsibleGroupBox" name="JobsCollapsibleGroupBox">
      <property name="title">
-      <string>Settings</string>
+      <string>Jobs   </string>
      </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <property name="collapsed">
-      <bool>true</bool>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_12">
+     <layout class="QVBoxLayout" name="verticalLayout_9">
       <property name="spacing">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="leftMargin">
        <number>2</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="ctkDICOMJobListWidget" name="JobListWidget"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleGroupBox" name="ServersSettingsCollapsibleGroupBox">
+     <property name="title">
+      <string>Settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_12">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
       </property>
       <property name="rightMargin">
        <number>2</number>
@@ -908,6 +929,11 @@ Please set at least one filter to query the servers</string>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ctkDICOMJobListWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkDICOMJobListWidget.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkCheckableComboBox</class>
    <extends>QComboBox</extends>

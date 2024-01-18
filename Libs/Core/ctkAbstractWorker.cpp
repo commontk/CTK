@@ -127,7 +127,7 @@ void ctkAbstractWorker::onJobCanceled()
 
     this->startNextJob();
 
-    emit this->Job->finished();
+    emit this->Job->canceled();
     }
   else if (this->Job->status() != ctkAbstractJob::JobStatus::Stopped)
     {
@@ -135,6 +135,6 @@ void ctkAbstractWorker::onJobCanceled()
     }
   else
     {
-    emit this->Job->finished();
+    emit this->Job->canceled();
     }
 }

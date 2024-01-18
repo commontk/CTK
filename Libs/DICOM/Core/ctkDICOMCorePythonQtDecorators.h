@@ -123,60 +123,6 @@ public slots:
     }
 
   //----------------------------------------------------------------------------
-  // ctkDICOMJobResponseSet
-  //----------------------------------------------------------------------------
-  void setFilePath(ctkDICOMJobResponseSet* ts, const QString& filePath)
-    {
-    ts->setFilePath(filePath);
-    }
-
-  void setCopyFile(ctkDICOMJobResponseSet* ts, bool copyFile)
-    {
-    ts->setCopyFile(copyFile);
-    }
-
-  void setOverwriteExistingDataset(ctkDICOMJobResponseSet* ts, bool overwriteExistingDataset)
-    {
-    ts->setOverwriteExistingDataset(overwriteExistingDataset);
-    }
-
-  void setJobType(ctkDICOMJobResponseSet* ts, ctkDICOMJobResponseSet::JobType jobType)
-    {
-    ts->setJobType(jobType);
-    }
-
-  void setJobUID(ctkDICOMJobResponseSet* ts, const QString& jobUID)
-    {
-    ts->setJobUID(jobUID);
-    }
-
-  void setPatientID(ctkDICOMJobResponseSet* ts, const QString& patientID)
-    {
-    ts->setPatientID(patientID);
-    }
-
-  void setStudyInstanceUID(ctkDICOMJobResponseSet* ts, const QString& studyInstanceUID)
-    {
-    ts->setStudyInstanceUID(studyInstanceUID);
-    }
-
-  void setSeriesInstanceUID(ctkDICOMJobResponseSet* ts, const QString& seriesInstanceUID)
-    {
-    ts->setSeriesInstanceUID(seriesInstanceUID);
-    }
-
-  void setSOPInstanceUID(ctkDICOMJobResponseSet* ts, const QString& sopInstanceUID)
-    {
-    ts->setSOPInstanceUID(sopInstanceUID);
-    }
-
-  void setConnectionName(ctkDICOMJobResponseSet* ts, const QString& connectionName)
-    {
-    ts->setConnectionName(connectionName);
-    }
-
-
-  //----------------------------------------------------------------------------
   // ctkDICOMDisplayedFieldGeneratorRuleFactory
 
   //----------------------------------------------------------------------------
@@ -193,7 +139,7 @@ public slots:
 
   //----------------------------------------------------------------------------
   bool registerDisplayedFieldGeneratorRule(ctkDICOMDisplayedFieldGeneratorRuleFactory* factory,
-                      PythonQtPassOwnershipToCPP<ctkDICOMDisplayedFieldGeneratorAbstractRule*> plugin)
+                                           PythonQtPassOwnershipToCPP<ctkDICOMDisplayedFieldGeneratorAbstractRule*> plugin)
     {
     return factory->registerDisplayedFieldGeneratorRule(plugin);
     }

@@ -37,15 +37,15 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
-#include "ctkDICOMScheduler.h"
 #include "ctkDICOMJobResponseSet.h"
+#include "ctkDICOMScheduler.h"
 #include "ctkDICOMThumbnailGenerator.h"
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMSeriesItemWidget.h"
 #include "ui_ctkDICOMSeriesItemWidget.h"
 
-static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMSeriesItemWidget");
+static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMSeriesItemWidget");
 
 //----------------------------------------------------------------------------
 class ctkDICOMSeriesItemWidgetPrivate : public Ui_ctkDICOMSeriesItemWidget
@@ -219,6 +219,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
   QStringList urlsList = this->DicomDatabase->urlsForSeries(this->SeriesInstanceUID);
   filesList.removeAll(QString(""));
   int numberOfUrls = urlsList.count();
+  bool renderThumbnail = false;
   if (!this->IsCloud && numberOfFrames > 0 && numberOfUrls > 0 && numberOfFiles < numberOfFrames)
     {
     this->IsCloud = true;
@@ -226,6 +227,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
     }
   else if (this->IsCloud && numberOfFrames > 0 && numberOfFiles == numberOfFrames)
     {
+    renderThumbnail = true;
     this->IsCloud = false;
     this->SeriesThumbnail->operationProgressBar()->hide();
     }
@@ -304,19 +306,33 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
          (jobType == ctkDICOMJobResponseSet::JobType::None ||
          jobType == ctkDICOMJobResponseSet::JobType::QueryInstances)))
       {
-      this->Scheduler->retrieveSeries(this->PatientID,
-                                      this->StudyInstanceUID,
-                                      this->SeriesInstanceUID,
-                                      this->RaiseJobsPriority ? QThread::HighestPriority : QThread::LowPriority);
+      QList<QSharedPointer<ctkAbstractJob>> jobs =
+        this->Scheduler->getJobsByDICOMUIDs({},
+                                            {},
+                                            {this->SeriesInstanceUID});
+      if (jobs.count() == 0)
+        {
+        this->Scheduler->retrieveSeries(this->PatientID,
+                                        this->StudyInstanceUID,
+                                        this->SeriesInstanceUID,
+                                        this->RaiseJobsPriority ? QThread::HighestPriority : QThread::LowPriority);
+        }
       }
     }
 
   file = this->DicomDatabase->fileForInstance(this->CentralFrameSOPInstanceUID);
-  if ((jobSopInstanceUID.isEmpty() ||
-       jobSopInstanceUID == this->CentralFrameSOPInstanceUID ||
-       jobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
-       jobType == ctkDICOMJobResponseSet::JobType::StoreSOPInstance) &&
-      !file.isEmpty())
+  if (file.isEmpty())
+    {
+    return;
+    }
+
+
+
+  if (jobSopInstanceUID.isEmpty() ||
+      ((jobType == ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance ||
+        jobType == ctkDICOMJobResponseSet::JobType::StoreSOPInstance) &&
+       jobSopInstanceUID == this->CentralFrameSOPInstanceUID) ||
+      renderThumbnail)
     {
     this->drawThumbnail(file, numberOfFrames);
     }
@@ -425,7 +441,11 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
                                Qt::AlignBottom | Qt::AlignLeft, bottomLeftString);
       QSvgRenderer renderer;
 
-      if (this->IsCloud)
+      if (this->RetrieveFailed)
+        {
+        renderer.load(QString(":Icons/error_red.svg"));
+        }
+      else if (this->IsCloud)
         {
         if (this->NumberOfDownloads > 0)
           {
@@ -741,6 +761,14 @@ int ctkDICOMSeriesItemWidget::thumbnailSizePixel() const
 {
   Q_D(const ctkDICOMSeriesItemWidget);
   return d->ThumbnailSizePixel;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMSeriesItemWidget::resetOperationProgressBar()
+{
+  Q_D(ctkDICOMSeriesItemWidget);
+  d->NumberOfDownloads = 0;
+  d->SeriesThumbnail->setOperationProgress(0);
 }
 
 //----------------------------------------------------------------------------
