@@ -91,8 +91,10 @@ ctkDICOMTesterPrivate::ctkDICOMTesterPrivate(ctkDICOMTester& o): q_ptr(&o)
 //------------------------------------------------------------------------------
 ctkDICOMTesterPrivate::~ctkDICOMTesterPrivate()
 {
-  this->STORESCPProcess->terminate();
-  if (!this->STORESCPProcess->waitForFinished())
+  // Do not wait for the process to finish.
+  // See https://doc.qt.io/qt-5/qprocess.html#terminate
+  // this->STORESCPProcess->terminate();
+  // if (!this->STORESCPProcess->waitForFinished())
     {
     this->STORESCPProcess->kill();
     }
