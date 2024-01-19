@@ -1,4 +1,4 @@
-/*=========================================================================
+﻿/*=========================================================================
 
   Library:   CTK
 
@@ -24,28 +24,26 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMRetrieve.h"
+#include "ctkErrorLogLevel.h"
 #include "ctkLogger.h"
+#include "ctkDICOMJobResponseSet.h"
 
 // DCMTK includes
-#include "dcmtk/dcmnet/dimse.h"
-#include "dcmtk/dcmnet/diutil.h"
-#include "dcmtk/dcmnet/scu.h"
-
-#include <dcmtk/dcmdata/dcfilefo.h>
+#include <dcmtk/dcmnet/dimse.h>
+#include <dcmtk/dcmnet/diutil.h>
+#include <dcmtk/dcmnet/scu.h>
 #include <dcmtk/dcmdata/dcfilefo.h>
 #include <dcmtk/dcmdata/dcdeftag.h>
 #include <dcmtk/dcmdata/dcdatset.h>
+#include <dcmtk/oflog/oflog.h>
 #include <dcmtk/ofstd/ofcond.h>
 #include <dcmtk/ofstd/ofstring.h>
 #include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
 #include <dcmtk/dcmdata/dcddirif.h>   /* for class DicomDirInterface */
-
 #include <dcmtk/dcmjpeg/djdecode.h>  /* for dcmjpeg decoders */
 #include <dcmtk/dcmjpeg/djencode.h>  /* for dcmjpeg encoders */
 #include <dcmtk/dcmdata/dcrledrg.h>  /* for DcmRLEDecoderRegistration */
 #include <dcmtk/dcmdata/dcrleerg.h>  /* for DcmRLEEncoderRegistration */
-
-#include "dcmtk/oflog/oflog.h"
 
 static ctkLogger logger("org.commontk.dicom.DICOMRetrieve");
 
@@ -68,14 +66,13 @@ public:
                                          RetrieveResponse *response,
                                          OFBool &waitForNextResponse)
     {
-      if (this->retrieve)
+      if (this->retrieve && !this->retrieve->wasCanceled())
         {
         emit this->retrieve->progress(ctkDICOMRetrieve::tr("Got move request"));
         emit this->retrieve->progress(0);
         return this->DcmSCU::handleMOVEResponse(
-                        presID, response, waitForNextResponse);
+          presID, response, waitForNextResponse);
         }
-      //return false;
       return EC_IllegalCall;
     };
 
@@ -86,30 +83,65 @@ public:
                                          OFBool& continueCGETSession,
                                          Uint16& cStoreReturnStatus)
     {
-      if (this->retrieve)
+      if (!this->retrieve || this->retrieve->wasCanceled())
         {
-        OFString instanceUID;
-        incomingObject->findAndGetOFString(DCM_SOPInstanceUID, instanceUID);
-        QString qInstanceUID(instanceUID.c_str());
-        emit this->retrieve->progress(
-          //: %1 is an instance UID
-          ctkDICOMRetrieve::tr("Got STORE request for %1").arg(qInstanceUID)
-        );
-        emit this->retrieve->progress(0);
-        continueCGETSession = !this->retrieve->wasCanceled();
-        if (this->retrieve && this->retrieve->database())
-          {
-          this->retrieve->database()->insert(incomingObject);
-          return EC_Normal;
-          }
-        else
-          {
-          return this->DcmSCU::handleSTORERequest(
-                          presID, incomingObject, continueCGETSession, cStoreReturnStatus);
-          }
+        return EC_IllegalCall;
         }
-      //return false;
-      return EC_IllegalCall;
+
+      OFString instanceUID;
+      incomingObject->findAndGetOFString(DCM_SOPInstanceUID, instanceUID);
+      QString qInstanceUID(instanceUID.c_str());
+      emit this->retrieve->progress(
+        //: %1 is an instance UID
+        ctkDICOMRetrieve::tr("Got STORE request for %1").arg(qInstanceUID)
+      );
+      emit this->retrieve->progress(0);
+      if (!this->retrieve->jobUID().isEmpty())
+        {
+        QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet =
+          QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
+        if (this->retrieve->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSOPInstance)
+          {
+          jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance);
+          }
+        else if (this->retrieve->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSeries)
+          {
+          jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveSeries);
+          }
+        else if (this->retrieve->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveStudy)
+          {
+          jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveStudy);
+          }
+        jobResponseSet->setPatientID(this->retrieve->patientID());
+        jobResponseSet->setStudyInstanceUID(this->retrieve->studyInstanceUID());
+        jobResponseSet->setSeriesInstanceUID(this->retrieve->seriesInstanceUID());
+        jobResponseSet->setSOPInstanceUID(qInstanceUID);
+        jobResponseSet->setConnectionName(this->retrieve->connectionName());
+        jobResponseSet->setDataset(incomingObject);
+        jobResponseSet->setJobUID(this->retrieve->jobUID());
+        jobResponseSet->setCopyFile(true);
+
+        // To Do: this should be emitted for all the RetrieveTypes, but we should change the insert in the
+        // ctkDICOMRetrieveWorker to happen every 10 frames (configurable).
+        // i.e. a slot in ctkDICOMRetrieveWorker with a counter. When the counter > batchLimit -> insert
+        if (this->retrieve->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSeries)
+          {
+          emit this->retrieve->progressJobDetail(jobResponseSet->toVariant());
+          }
+
+        this->retrieve->addJobResponseSet(jobResponseSet);
+        return EC_Normal;
+        }
+      else if (this->retrieve->dicomDatabase())
+        {
+        this->retrieve->dicomDatabase()->insert(incomingObject, true, false);
+        return EC_Normal;
+        }
+      else
+        {
+        return this->DcmSCU::handleSTORERequest(
+          presID, incomingObject, continueCGETSession, cStoreReturnStatus);
+        }
     };
 
   // called when status information from remote server
@@ -118,14 +150,12 @@ public:
                                          RetrieveResponse* response,
                                          OFBool& continueCGETSession)
     {
-      if (this->retrieve)
+      if (this->retrieve && !this->retrieve->wasCanceled())
         {
         emit this->retrieve->progress(ctkDICOMRetrieve::tr("Got CGET response"));
         emit this->retrieve->progress(0);
-        continueCGETSession = !this->retrieve->wasCanceled();
         return this->DcmSCU::handleCGETResponse(presID, response, continueCGETSession);
         }
-      //return false;
       return EC_IllegalCall;
     };
 };
@@ -142,27 +172,43 @@ protected:
 public:
   ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj);
   ~ctkDICOMRetrievePrivate();
+
   /// Keep the currently negotiated connection to the
   /// peer host open unless the connection parameters change
-  bool          WasCanceled;
-  bool          KeepAssociationOpen;
-  bool          ConnectionParamsChanged;
-  bool          LastRetrieveType;
+  bool Canceled;
+  bool KeepAssociationOpen;
+  bool ConnectionParamsChanged;
+  ctkDICOMRetrieve::RetrieveType LastRetrieveType;
+
+  QString PatientID;
+  QString StudyInstanceUID;
+  QString SeriesInstanceUID;
+  QString SOPInstanceUID;
+  QString ConnectionName;
+  QString JobUID;
+
   QSharedPointer<ctkDICOMDatabase> Database;
-  ctkDICOMRetrieveSCUPrivate        SCU;
+  ctkDICOMRetrieveSCUPrivate SCU;
+  T_ASC_PresentationContextID PresentationContext;
   QString MoveDestinationAETitle;
-  // do the retrieve, handling both series and study retrieves
-  enum RetrieveType { RetrieveNone, RetrieveSeries, RetrieveStudy };
-  bool initializeSCU(const QString& studyInstanceUID,
-                  const QString& seriesInstanceUID,
-                  const RetrieveType retrieveType,
-                  DcmDataset *retrieveParameters);
-  bool move ( const QString& studyInstanceUID,
-                  const QString& seriesInstanceUID,
-                  const RetrieveType retrieveType );
-  bool get ( const QString& studyInstanceUID,
-                  const QString& seriesInstanceUID,
-                  const RetrieveType retrieveType );
+  QList<QSharedPointer<ctkDICOMJobResponseSet>> JobResponseSets;
+
+  bool initializeSCU(const QString& patientID,
+                     const QString& studyInstanceUID,
+                     const QString& seriesInstanceUID,
+                     const QString& sopInstanceUID,
+                     const ctkDICOMRetrieve::RetrieveType retrieveType,
+                     DcmDataset *retrieveParameters);
+  bool move(const QString& patientID,
+            const QString& studyInstanceUID,
+            const QString& seriesInstanceUID,
+            const QString& sopInstanceUID,
+            const ctkDICOMRetrieve::RetrieveType retrieveType);
+  bool get(const QString& patientID,
+           const QString& studyInstanceUID,
+           const QString& seriesInstanceUID,
+           const QString& sopInstanceUID,
+           const ctkDICOMRetrieve::RetrieveType retrieveType);
 };
 
 //------------------------------------------------------------------------------
@@ -173,10 +219,16 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
   : q_ptr(&obj)
 {
   this->Database = QSharedPointer<ctkDICOMDatabase> (0);
-  this->WasCanceled = false;
+  this->Canceled = false;
   this->KeepAssociationOpen = true;
   this->ConnectionParamsChanged = false;
-  this->LastRetrieveType = RetrieveNone;
+  this->LastRetrieveType = ctkDICOMRetrieve::RetrieveNone;
+
+  this->PatientID = "";
+  this->StudyInstanceUID = "";
+  this->SeriesInstanceUID = "";
+  this->ConnectionName = "";
+  this->JobUID = "";
 
   // Register the JPEG libraries in case we need them
   // (registration only happens once, so it's okay to call repeatedly)
@@ -189,21 +241,25 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
   // register RLE decompression codec
   DcmRLEDecoderRegistration::registerCodecs();
 
-  logger.info ( "Setting Transfer Syntaxes" );
+  logger.debug("Setting Transfer Syntaxes");
   OFList<OFString> transferSyntaxes;
-  transferSyntaxes.push_back ( UID_LittleEndianExplicitTransferSyntax );
-  transferSyntaxes.push_back ( UID_BigEndianExplicitTransferSyntax );
-  transferSyntaxes.push_back ( UID_LittleEndianImplicitTransferSyntax );
-  this->SCU.addPresentationContext (
-      UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes );
-  this->SCU.addPresentationContext (
-      UID_GETStudyRootQueryRetrieveInformationModel, transferSyntaxes );
+  transferSyntaxes.push_back(UID_LittleEndianExplicitTransferSyntax);
+  transferSyntaxes.push_back(UID_BigEndianExplicitTransferSyntax);
+  transferSyntaxes.push_back(UID_LittleEndianImplicitTransferSyntax);
+  this->SCU.addPresentationContext(
+    UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes);
+  this->SCU.addPresentationContext(
+    UID_GETStudyRootQueryRetrieveInformationModel, transferSyntaxes);
 
-  for (Uint16 i = 0; i < numberOfDcmLongSCUStorageSOPClassUIDs; i++)
+  for (Uint16 index = 0; index < numberOfDcmLongSCUStorageSOPClassUIDs; index++)
     {
-    this->SCU.addPresentationContext(dcmLongSCUStorageSOPClassUIDs[i],
-        transferSyntaxes, ASC_SC_ROLE_SCP);
+    this->SCU.addPresentationContext(dcmLongSCUStorageSOPClassUIDs[index],
+      transferSyntaxes, ASC_SC_ROLE_SCP);
     }
+
+  this->SCU.setACSETimeout(3);
+  this->SCU.setConnectionTimeout(3);
+  this->SCU.setStorageDir(QStandardPaths::writableLocation(QStandardPaths::TempLocation).toStdString().c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -212,21 +268,24 @@ ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
   // At least now be kind to the server and release association
   if (this->SCU.isConnected())
     {
-    this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    this->SCU.releaseAssociation();
     }
+
+  this->JobResponseSets.clear();
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrievePrivate::initializeSCU( const QString& studyInstanceUID,
-                                         const QString& seriesInstanceUID,
-                                         const RetrieveType retrieveType,
-                                         DcmDataset *retrieveParameters)
+bool ctkDICOMRetrievePrivate::initializeSCU(const QString& patientID,
+                                            const QString& studyInstanceUID,
+                                            const QString& seriesInstanceUID,
+                                            const QString& sopInstanceUID,
+                                            const ctkDICOMRetrieve::RetrieveType retrieveType,
+                                            DcmDataset *retrieveParameters)
 {
-
   // If we like to query another server than before, be sure to disconnect first
   if (this->SCU.isConnected() && this->ConnectionParamsChanged)
   {
-    this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    this->SCU.releaseAssociation();
   }
   // Connect to server if not already connected
   if (!this->SCU.isConnected())
@@ -250,64 +309,116 @@ bool ctkDICOMRetrievePrivate::initializeSCU( const QString& studyInstanceUID,
   this->ConnectionParamsChanged = false;
   // Setup query about what to be received from the PACS
   logger.debug ( "Setting Retrieve Parameters" );
-  if ( retrieveType == RetrieveSeries )
+  if (retrieveType == ctkDICOMRetrieve::RetrieveSOPInstance)
     {
-    retrieveParameters->putAndInsertString ( DCM_QueryRetrieveLevel, "SERIES" );
-    retrieveParameters->putAndInsertString ( DCM_SeriesInstanceUID,
-                                                seriesInstanceUID.toStdString().c_str() );
+    retrieveParameters->putAndInsertString(DCM_QueryRetrieveLevel, "IMAGE");
+    retrieveParameters->putAndInsertString(DCM_SOPInstanceUID,
+                                           sopInstanceUID.toStdString().c_str());
+    retrieveParameters->putAndInsertString(DCM_SeriesInstanceUID,
+                                           seriesInstanceUID.toStdString().c_str());
     // Always required to send all highler level unique keys, so add study here (we are in Study Root)
-    retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID,
-                                                studyInstanceUID.toStdString().c_str() );  //TODO
+    retrieveParameters->putAndInsertString(DCM_StudyInstanceUID,
+                                           studyInstanceUID.toStdString().c_str());
+    if (!patientID.isEmpty())
+      {
+      retrieveParameters->putAndInsertString(DCM_PatientID,
+                                             patientID.toStdString().c_str());
+      }
+    }
+  else if (retrieveType == ctkDICOMRetrieve::RetrieveSeries)
+    {
+    retrieveParameters->putAndInsertString(DCM_QueryRetrieveLevel, "SERIES");
+    retrieveParameters->putAndInsertString(DCM_SeriesInstanceUID,
+                                           seriesInstanceUID.toStdString().c_str());
+    // Always required to send all highler level unique keys, so add study here (we are in Study Root)
+    retrieveParameters->putAndInsertString(DCM_StudyInstanceUID,
+                                           studyInstanceUID.toStdString().c_str());
+    if (!patientID.isEmpty())
+      {
+      retrieveParameters->putAndInsertString(DCM_PatientID,
+                                             patientID.toStdString().c_str());
+      }
     }
   else
     {
     retrieveParameters->putAndInsertString ( DCM_QueryRetrieveLevel, "STUDY" );
     retrieveParameters->putAndInsertString ( DCM_StudyInstanceUID,
                                                 studyInstanceUID.toStdString().c_str() );
+    if (!patientID.isEmpty())
+      {
+      retrieveParameters->putAndInsertString(DCM_PatientID,
+                                             patientID.toStdString().c_str());
+      }
     }
+
+  this->LastRetrieveType = retrieveType;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
-                                         const QString& seriesInstanceUID,
-                                         const RetrieveType retrieveType )
+bool ctkDICOMRetrievePrivate::move(const QString& patientID,
+                                   const QString& studyInstanceUID,
+                                   const QString& seriesInstanceUID,
+                                   const QString& sopInstanceUID,
+                                   const ctkDICOMRetrieve::RetrieveType retrieveType)
 {
+  Q_Q(ctkDICOMRetrieve);
 
-  DcmDataset *retrieveParameters = new DcmDataset();
-  if (! this->initializeSCU(studyInstanceUID, seriesInstanceUID, retrieveType, retrieveParameters) )
+  this->JobResponseSets.clear();
+  this->PatientID = patientID;
+  this->StudyInstanceUID = studyInstanceUID;
+  this->SeriesInstanceUID = seriesInstanceUID;
+  this->SOPInstanceUID = sopInstanceUID;
+
+  if (this->Canceled)
     {
-    delete retrieveParameters;
     return false;
     }
 
+  DcmDataset *retrieveParameters = new DcmDataset();
+  if (!this->initializeSCU(patientID,
+                           studyInstanceUID,
+                           seriesInstanceUID,
+                           sopInstanceUID,
+                           retrieveType,
+                           retrieveParameters))
+    {
+    delete retrieveParameters;
+    logger.error("MOVE Request failed: SCU initialization failed");
+    return false;
+    }
 
   // Issue request
   logger.debug ( "Sending Move Request" );
   OFList<RetrieveResponse*> responses;
-  T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(
-                                          UID_MOVEStudyRootQueryRetrieveInformationModel,
-                                          "" /* don't care about transfer syntax */ );
-  if (presID == 0)
+  this->PresentationContext = this->SCU.findPresentationContextID(
+                                UID_MOVEStudyRootQueryRetrieveInformationModel,
+                                "" /* don't care about transfer syntax */);
+  if (this->PresentationContext == 0)
     {
     logger.error ( "MOVE Request failed: No valid Study Root MOVE Presentation Context available" );
     if (!this->KeepAssociationOpen)
       {
-      this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+      this->SCU.releaseAssociation();
       }
     delete retrieveParameters;
     return false;
     }
 
+  if (this->Canceled)
+    {
+    return false;
+    }
+
   // do the actual move request
-  OFCondition status = this->SCU.sendMOVERequest (
-                          presID, this->MoveDestinationAETitle.toStdString().c_str(),
-                          retrieveParameters, &responses );
+  OFCondition status = this->SCU.sendMOVERequest(
+    this->PresentationContext, this->MoveDestinationAETitle.toStdString().c_str(),
+    retrieveParameters, &responses);
 
   // Close association if we do not want to explicitly keep it open
   if (!this->KeepAssociationOpen)
     {
-    this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    this->SCU.releaseAssociation();
     }
   // Free some (little) memory
   delete retrieveParameters;
@@ -317,6 +428,11 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
     {
     logger.error ( "No responses received at all! (at least one empty response always expected)" );
     //throw std::runtime_error( std::string("No responses received from server!") );
+    return false;
+    }
+
+  if (this->Canceled)
+    {
     return false;
     }
 
@@ -340,13 +456,12 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
       if (rsp->m_numberOfCompletedSubops == 0)
         {
         logger.error ( "No images transferred by PACS!" );
-        //throw std::runtime_error( std::string("No images transferred by PACS!") );
         return false;
         }
       }
     else
       {
-      logger.error("MOVE request failed, server does report error");
+      logger.debug("MOVE request failed, server does report error");
       QString statusDetail("No details");
       if (rsp->m_statusDetail != NULL)
         {
@@ -355,8 +470,7 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
         statusDetail = "Status Detail: " + statusDetail.fromStdString(out.str());
         }
       statusDetail.prepend("MOVE request failed: ");
-      logger.error(statusDetail);
-      //throw std::runtime_error( statusDetail.toStdString() );
+      logger.debug(statusDetail);
       return false;
       }
     }
@@ -377,20 +491,71 @@ bool ctkDICOMRetrievePrivate::move ( const QString& studyInstanceUID,
     .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfWarningSubops)))
     .arg(QString::number(static_cast<unsigned int>((*it)->m_numberOfFailedSubops)))
   );
+
+  if (this->Canceled)
+    {
+    return false;
+    }
+
+  // if move was successful, add a taskResults to report it
+  QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet =
+    QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
+  if (q->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSOPInstance)
+    {
+    jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance);
+    }
+  else if (q->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveSeries)
+    {
+    jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveSeries);
+    }
+  else if (q->getLastRetrieveType() == ctkDICOMRetrieve::RetrieveType::RetrieveStudy)
+    {
+    jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::RetrieveStudy);
+    }
+  jobResponseSet->setStudyInstanceUID(q->studyInstanceUID());
+  jobResponseSet->setSeriesInstanceUID(q->seriesInstanceUID());
+  jobResponseSet->setConnectionName(q->connectionName());
+  jobResponseSet->setJobUID(q->jobUID());
+  q->addJobResponseSet(jobResponseSet);
+
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
-                                         const QString& seriesInstanceUID,
-                                         const RetrieveType retrieveType )
+bool ctkDICOMRetrievePrivate::get(const QString& patientID,
+                                  const QString& studyInstanceUID,
+                                  const QString& seriesInstanceUID,
+                                  const QString& sopInstanceUID,
+                                  const ctkDICOMRetrieve::RetrieveType retrieveType)
 {
   Q_Q(ctkDICOMRetrieve);
 
+  this->JobResponseSets.clear();
+  this->PatientID = patientID;
+  this->StudyInstanceUID = studyInstanceUID;
+  this->SeriesInstanceUID = seriesInstanceUID;
+  this->SOPInstanceUID = sopInstanceUID;
+
+  if (this->Canceled)
+    {
+    return false;
+    }
+
   DcmDataset *retrieveParameters = new DcmDataset();
-  if (! this->initializeSCU(studyInstanceUID, seriesInstanceUID, retrieveType, retrieveParameters) )
+  if (!this->initializeSCU(patientID,
+                           studyInstanceUID,
+                           seriesInstanceUID,
+                           sopInstanceUID,
+                           retrieveType,
+                           retrieveParameters))
     {
     delete retrieveParameters;
+    logger.error("MOVE Request failed: SCU initialization failed");
+    return false;
+    }
+
+  if (this->Canceled)
+    {
     return false;
     }
 
@@ -399,17 +564,22 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
   emit q->progress(ctkDICOMRetrieve::tr("Sending Get Request"));
   emit q->progress(0);
   OFList<RetrieveResponse*> responses;
-  T_ASC_PresentationContextID presID = this->SCU.findPresentationContextID(
+  this->PresentationContext = this->SCU.findPresentationContextID(
                                           UID_GETStudyRootQueryRetrieveInformationModel,
                                           "" /* don't care about transfer syntax */ );
-  if (presID == 0)
+  if (this->PresentationContext == 0)
     {
     logger.error ( "GET Request failed: No valid Study Root GET Presentation Context available" );
     if (!this->KeepAssociationOpen)
       {
-      this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+      this->SCU.releaseAssociation();
       }
     delete retrieveParameters;
+    return false;
+    }
+
+  if (this->Canceled)
+    {
     return false;
     }
 
@@ -417,8 +587,7 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
   emit q->progress(1);
 
   // do the actual move request
-  OFCondition status = this->SCU.sendCGETRequest (
-                          presID, retrieveParameters, &responses );
+  OFCondition status = this->SCU.sendCGETRequest(this->PresentationContext, retrieveParameters, &responses);
 
   emit q->progress(ctkDICOMRetrieve::tr("Sent Get Request"));
   emit q->progress(2);
@@ -426,7 +595,7 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
   // Close association if we do not want to explicitly keep it open
   if (!this->KeepAssociationOpen)
     {
-    this->SCU.closeAssociation(DCMSCU_RELEASE_ASSOCIATION);
+    this->SCU.releaseAssociation();
     }
   // Free some (little) memory
   delete retrieveParameters;
@@ -437,6 +606,11 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     logger.error ( "No responses received at all! (at least one empty response always expected)" );
     //throw std::runtime_error( std::string("No responses received from server!") );
     emit q->progress(ctkDICOMRetrieve::tr("No Responses from Server!"));
+    return false;
+    }
+
+  if (this->Canceled)
+    {
     return false;
     }
 
@@ -463,13 +637,12 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
       if (rsp->m_numberOfCompletedSubops == 0)
         {
         logger.error ( "No images transferred by PACS!" );
-        //throw std::runtime_error( std::string("No images transferred by PACS!") );
         return false;
         }
       }
     else
       {
-      logger.error("GET request failed, server does report error");
+      logger.debug("GET request failed, server does report error");
       QString statusDetail("No details");
       if (rsp->m_statusDetail != NULL)
         {
@@ -478,8 +651,7 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
         statusDetail = "Status Detail: " + statusDetail.fromStdString(out.str());
         }
       statusDetail.prepend("GET request failed: ");
-      logger.error(statusDetail);
-      //throw std::runtime_error( statusDetail.toStdString() );
+      logger.debug(statusDetail);
       return false;
       }
     }
@@ -490,6 +662,7 @@ bool ctkDICOMRetrievePrivate::get ( const QString& studyInstanceUID,
     {
     it++;
     }
+
   logger.debug (
     QString("GET responses report for study: %1\n"
         "%2 images transferred, and\n"
@@ -516,6 +689,8 @@ ctkDICOMRetrieve::ctkDICOMRetrieve(QObject* parent)
     d_ptr(new ctkDICOMRetrievePrivate(*this))
 {
   Q_D(ctkDICOMRetrieve);
+
+  d->SCU.setVerbosePCMode(false);
   d->SCU.retrieve = this; // give the dcmtk level access to this for emitting signals
 }
 
@@ -525,8 +700,21 @@ ctkDICOMRetrieve::~ctkDICOMRetrieve()
 }
 
 //------------------------------------------------------------------------------
-/// Set methods for connectivity
-void ctkDICOMRetrieve::setCallingAETitle( const QString& callingAETitle )
+void ctkDICOMRetrieve::setConnectionName(const QString &connectionName)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->ConnectionName = connectionName;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMRetrieve::connectionName() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->ConnectionName;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::setCallingAETitle(const QString& callingAETitle)
 {
   Q_D(ctkDICOMRetrieve);
   if (strcmp(callingAETitle.toStdString().c_str(), d->SCU.getAETitle().c_str()))
@@ -614,6 +802,7 @@ QString ctkDICOMRetrieve::moveDestinationAETitle()const
   return d->MoveDestinationAETitle;
 }
 
+//------------------------------------------------------------------------------
 static void skipDelete(QObject* obj)
 {
   Q_UNUSED(obj);
@@ -636,10 +825,106 @@ void ctkDICOMRetrieve::setDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabas
 }
 
 //------------------------------------------------------------------------------
-QSharedPointer<ctkDICOMDatabase> ctkDICOMRetrieve::database()const
+ctkDICOMDatabase* ctkDICOMRetrieve::dicomDatabase()const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->Database.data();
+}
+
+//------------------------------------------------------------------------------
+QSharedPointer<ctkDICOMDatabase> ctkDICOMRetrieve::dicomDatabaseShared()const
 {
   Q_D(const ctkDICOMRetrieve);
   return d->Database;
+}
+
+//------------------------------------------------------------------------------
+QList<ctkDICOMJobResponseSet *> ctkDICOMRetrieve::jobResponseSets() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  QList<ctkDICOMJobResponseSet *> jobResponseSets;
+  foreach(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, d->JobResponseSets)
+    {
+    jobResponseSets.append(jobResponseSet.data());
+    }
+
+  return jobResponseSets;
+}
+
+//------------------------------------------------------------------------------
+QList<QSharedPointer<ctkDICOMJobResponseSet>> ctkDICOMRetrieve::jobResponseSetsShared() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->JobResponseSets;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::addJobResponseSet(ctkDICOMJobResponseSet &jobResponseSet)
+{
+  this->addJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet>(&jobResponseSet, skipDelete));
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::addJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->JobResponseSets.append(jobResponseSet);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->JobResponseSets.removeOne(jobResponseSet);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::setJobUID(const QString &jobUID)
+{
+  Q_D(ctkDICOMRetrieve);
+  d->JobUID = jobUID;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMRetrieve::jobUID() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->JobUID;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMRetrieve::patientID() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->PatientID;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMRetrieve::studyInstanceUID() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->StudyInstanceUID;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMRetrieve::seriesInstanceUID() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->SeriesInstanceUID;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMRetrieve::sopInstanceUID() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->SOPInstanceUID;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMRetrieve::RetrieveType ctkDICOMRetrieve::getLastRetrieveType() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->LastRetrieveType;
 }
 
 //------------------------------------------------------------------------------
@@ -650,27 +935,37 @@ void ctkDICOMRetrieve::setKeepAssociationOpen(const bool keepOpen)
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrieve::keepAssociationOpen()
+bool ctkDICOMRetrieve::keepAssociationOpen() const
 {
   Q_D(const ctkDICOMRetrieve);
   return d->KeepAssociationOpen;
 }
 
-void ctkDICOMRetrieve::setWasCanceled(const bool wasCanceled)
+//-----------------------------------------------------------------------------
+void ctkDICOMRetrieve::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMRetrieve);
-  d->WasCanceled = wasCanceled;
+  d->SCU.setACSETimeout(timeout);
+  d->SCU.setConnectionTimeout(timeout);
 }
 
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+int ctkDICOMRetrieve::connectionTimeout() const
+{
+  Q_D(const ctkDICOMRetrieve);
+  return d->SCU.getConnectionTimeout();
+}
+
+//-----------------------------------------------------------------------------
 bool ctkDICOMRetrieve::wasCanceled()
 {
   Q_D(const ctkDICOMRetrieve);
-  return d->WasCanceled;
+  return d->Canceled;
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrieve::moveStudy(const QString& studyInstanceUID)
+bool ctkDICOMRetrieve::moveStudy(const QString& studyInstanceUID,
+                                 const QString& patientID)
 {
   if (studyInstanceUID.isEmpty())
     {
@@ -678,54 +973,105 @@ bool ctkDICOMRetrieve::moveStudy(const QString& studyInstanceUID)
     return false;
     }
   Q_D(ctkDICOMRetrieve);
-  logger.info ( "Starting moveStudy" );
-  return d->move ( studyInstanceUID, "", ctkDICOMRetrievePrivate::RetrieveStudy );
+  logger.debug("Starting moveStudy");
+  return d->move(patientID, studyInstanceUID, "", "", ctkDICOMRetrieve::RetrieveStudy);
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMRetrieve::getStudy(const QString& studyInstanceUID)
+bool ctkDICOMRetrieve::getStudy(const QString& studyInstanceUID,
+                                const QString& patientID)
 {
   if (studyInstanceUID.isEmpty())
     {
-    logger.error("Cannot receive series: Study Instance UID empty.");
+    logger.error("Cannot receive study: Study Instance UID empty.");
     return false;
     }
   Q_D(ctkDICOMRetrieve);
-  logger.info ( "Starting getStudy" );
-  return d->get ( studyInstanceUID, "", ctkDICOMRetrievePrivate::RetrieveStudy );
+  logger.debug("Starting getStudy");
+  return d->get(patientID, studyInstanceUID, "", "", ctkDICOMRetrieve::RetrieveStudy);
 }
 
 //------------------------------------------------------------------------------
 bool ctkDICOMRetrieve::moveSeries(const QString& studyInstanceUID,
-                                      const QString& seriesInstanceUID)
+                                  const QString& seriesInstanceUID,
+                                  const QString& patientID)
 {
-  if (studyInstanceUID.isEmpty() || seriesInstanceUID.isEmpty())
+  if (studyInstanceUID.isEmpty() ||
+      seriesInstanceUID.isEmpty())
     {
-    logger.error("Cannot receive series: Either Study or Series Instance UID empty.");
+    logger.error("Cannot receive series: Study or Series Instance UID empty.");
     return false;
     }
   Q_D(ctkDICOMRetrieve);
-  logger.info ( "Starting moveSeries" );
-  return d->move ( studyInstanceUID, seriesInstanceUID, ctkDICOMRetrievePrivate::RetrieveSeries );
+  logger.debug("Starting moveSeries");
+  return d->move(patientID, studyInstanceUID, seriesInstanceUID, "", ctkDICOMRetrieve::RetrieveSeries);
 }
 
 //------------------------------------------------------------------------------
 bool ctkDICOMRetrieve::getSeries(const QString& studyInstanceUID,
-                                      const QString& seriesInstanceUID)
+                                 const QString& seriesInstanceUID,
+                                 const QString& patientID)
 {
-  if (studyInstanceUID.isEmpty() || seriesInstanceUID.isEmpty())
+  if (studyInstanceUID.isEmpty() ||
+      seriesInstanceUID.isEmpty())
     {
-    logger.error("Cannot receive series: Either Study or Series Instance UID empty.");
+    logger.error("Cannot receive series: Study or Series Instance UID empty.");
     return false;
     }
   Q_D(ctkDICOMRetrieve);
-  logger.info ( "Starting getSeries" );
-  return d->get ( studyInstanceUID, seriesInstanceUID, ctkDICOMRetrievePrivate::RetrieveSeries );
+  logger.debug("Starting getSeries");
+  return d->get(patientID, studyInstanceUID, seriesInstanceUID, "", ctkDICOMRetrieve::RetrieveSeries);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrieve::moveSOPInstance(const QString& studyInstanceUID,
+                                       const QString& seriesInstanceUID,
+                                       const QString& SOPInstanceUID,
+                                       const QString& patientID)
+{
+  Q_D(ctkDICOMRetrieve);
+
+  if (studyInstanceUID.isEmpty() ||
+      seriesInstanceUID.isEmpty() ||
+      SOPInstanceUID.isEmpty())
+    {
+    logger.error("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty.");
+    return false;
+    }
+
+  logger.debug("Starting moveSOPInstance");
+  return d->move(patientID, studyInstanceUID, seriesInstanceUID, SOPInstanceUID, ctkDICOMRetrieve::RetrieveSOPInstance);
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMRetrieve::getSOPInstance(const QString& studyInstanceUID,
+                                      const QString& seriesInstanceUID,
+                                      const QString& SOPInstanceUID,
+                                      const QString& patientID)
+{
+  Q_D(ctkDICOMRetrieve);
+
+  if (studyInstanceUID.isEmpty() ||
+      seriesInstanceUID.isEmpty() ||
+      SOPInstanceUID.isEmpty())
+    {
+    logger.error("Cannot receive SOPInstance: Study, Series or SOP Instance UID empty.");
+    return false;
+    }
+
+  logger.debug("Starting getSOPInstance");
+  return d->get(patientID, studyInstanceUID, seriesInstanceUID, SOPInstanceUID, ctkDICOMRetrieve::RetrieveSOPInstance);
 }
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::cancel()
 {
   Q_D(ctkDICOMRetrieve);
-  d->WasCanceled = true;
+  d->Canceled = true;
+
+  if (d->PresentationContext != 0)
+    {
+    d->SCU.sendCANCELRequest(d->PresentationContext);
+    d->PresentationContext = 0;
+    }
 }

@@ -96,7 +96,10 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMItem
                     const Uint32 maxReadLength = DCM_MaxReadLength,
                     const E_FileReadMode readMode = ERM_autoDetect);
 
-
+    /// \brief Clone this object.
+    ///
+    /// \returns deep copy of this object.
+    ctkDICOMItem* Clone();
 
     /// \brief Save dataset to file
     ///
@@ -247,6 +250,16 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMItem
     ///
     static QString TagVR( const DcmTag& tag );
 
+    ///
+    /// \brief return dcm item
+    ///
+    DcmItem& GetDcmItem() const;
+
+    ///
+    /// \brief return dcm item pointer
+    ///
+    DcmItem* GetDcmItemPointer() const;
+
 protected:
 
     ///
@@ -266,8 +279,6 @@ protected:
     virtual void SetStoredSerialization(QString serializedDataset);
 
   QScopedPointer<ctkDICOMItemPrivate> d_ptr;
-
-  DcmItem& GetDcmItem() const;
 
 private:
   Q_DECLARE_PRIVATE(ctkDICOMItem);

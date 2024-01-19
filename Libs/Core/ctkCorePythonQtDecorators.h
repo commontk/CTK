@@ -25,6 +25,7 @@
 #include <PythonQt.h>
 
 // CTK includes
+#include <ctkAbstractJob.h> // For ctkJobDetail
 #include <ctkBooleanMapper.h>
 #include <ctkUtils.h>
 #include <ctkErrorLogContext.h>
@@ -48,6 +49,7 @@ public:
     {
     PythonQt::self()->registerClass(&ctkBooleanMapper::staticMetaObject, "CTKCore");
     PythonQt::self()->registerCPPClass("ctkErrorLogContext", 0, "CTKCore");
+    PythonQt::self()->registerCPPClass("ctkJobDetail", 0, "CTKCore");
     PythonQt::self()->registerCPPClass("ctkWorkflowStep", 0, "CTKCore");
     PythonQt::self()->registerClass(&ctkWorkflowInterstepTransition::staticMetaObject, "CTKCore");
     }
@@ -233,6 +235,31 @@ public Q_SLOTS:
     return context->Message;
     }
 
+  //
+  // ctkJobDetail
+  //
+  ctkJobDetail* new_ctkJobDetail()
+    {
+    return new ctkJobDetail();
+    }
+
+  void setJobClass(ctkJobDetail* td, const QString& jobClass)
+    {
+    td->JobClass = jobClass;
+    }
+  QString jobClass(ctkJobDetail* td)
+    {
+    return td->JobClass;
+    }
+
+  void setJobUID(ctkJobDetail* td, const QString& jobUID)
+    {
+    td->JobUID = jobUID;
+    }
+  QString JobUID(ctkJobDetail* td)
+    {
+    return td->JobUID;
+    }
 };
 
 //-----------------------------------------------------------------------------

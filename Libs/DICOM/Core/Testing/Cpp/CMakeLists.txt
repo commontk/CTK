@@ -9,14 +9,19 @@ create_test_sourcelist(Tests ${KIT}CppTests.cpp
   ctkDICOMDatabaseTest5.cpp
   ctkDICOMDatabaseTest6.cpp
   ctkDICOMDatabaseTest7.cpp
+  ctkDICOMEchoTest1.cpp
   ctkDICOMItemTest1.cpp
   ctkDICOMIndexerTest1.cpp
+  ctkDICOMJobTest1.cpp
+  ctkDICOMJobResponseSetTest1.cpp
   ctkDICOMModelTest1.cpp
   ctkDICOMPersonNameTest1.cpp
   ctkDICOMQueryTest1.cpp
   ctkDICOMQueryTest2.cpp
   ctkDICOMRetrieveTest1.cpp
   ctkDICOMRetrieveTest2.cpp
+  ctkDICOMSchedulerTest1.cpp
+  ctkDICOMServerTest1.cpp
   ctkDICOMTesterTest1.cpp
   ctkDICOMTesterTest2.cpp
   )
@@ -39,6 +44,10 @@ target_link_libraries(${KIT}CppTests
 # Add Tests
 #
 
+SIMPLE_TEST(ctkDICOMJobTest1)
+SIMPLE_TEST(ctkDICOMJobResponseSetTest1)
+SIMPLE_TEST(ctkDICOMServerTest1)
+
 # ctkDICOMDatabase
 SIMPLE_TEST(ctkDICOMDatabaseTest1)
 SIMPLE_TEST(ctkDICOMDatabaseTest2 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
@@ -51,6 +60,13 @@ SIMPLE_TEST(ctkDICOMDatabaseTest6 ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA)
 SIMPLE_TEST(ctkDICOMDatabaseTest7)
 SIMPLE_TEST(ctkDICOMItemTest1)
 SIMPLE_TEST(ctkDICOMIndexerTest1 )
+
+# ctkDICOMEcho
+SIMPLE_TEST(ctkDICOMEchoTest1
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
+  )
+set_property(TEST "ctkDICOMEchoTest1" PROPERTY RESOURCE_LOCK "dcmqrscp")
 
 # ctkDICOMModel
 SIMPLE_TEST(ctkDICOMModelTest1
@@ -80,6 +96,21 @@ SIMPLE_TEST( ctkDICOMCoreTest1
   ${CMAKE_CURRENT_BINARY_DIR}/Testing/Temporary/ctkDICOMCoreTest1-dicom.db
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Resources/dicom-sample.sql
   )
+
+# ctkDICOMScheduler
+SIMPLE_TEST(ctkDICOMSchedulerTest1
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000050.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000051.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000052.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000053.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000054.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000055.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000056.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000057.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000058.IMA
+  ${CTKData_DIR}/Data/DICOM/MRHEAD/000059.IMA
+  )
+set_property(TEST "ctkDICOMSchedulerTest1" PROPERTY RESOURCE_LOCK "dcmqrscp")
 
 # ctkDICOMTester
 SIMPLE_TEST( ctkDICOMTesterTest1 )

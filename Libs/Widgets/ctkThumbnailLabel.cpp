@@ -88,14 +88,43 @@ void ctkThumbnailLabelPrivate::setupUi(QWidget* widget)
   q->layout()->setSizeConstraint(QLayout::SetNoConstraint);
   // no text by default
   q->setText(QString());
+  this->OperationProgressBar->hide();
 }
 
 //----------------------------------------------------------------------------
 void ctkThumbnailLabelPrivate::updateThumbnail()
 {
+  Q_Q(ctkThumbnailLabel);
+  QSize size = q->size();
+
+  if (this->TextPushButton->isVisible())
+    {
+    if (this->TextPosition & Qt::AlignTop)
+      {
+      size.setHeight(size.height() - this->TextPushButton->height());
+      }
+    else if (this->TextPosition & Qt::AlignBottom)
+      {
+      size.setHeight(size.height() - this->TextPushButton->height());
+      }
+    else if (this->TextPosition & Qt::AlignLeft)
+      {
+      size.setWidth(size.width() - this->TextPushButton->width());
+      }
+    else if (this->TextPosition & Qt::AlignRight)
+      {
+      size.setWidth(size.width() - this->TextPushButton->width());
+      }
+    }
+
+  if (this->OperationProgressBar->isVisible())
+    {
+    size.setHeight(size.height() - this->OperationProgressBar->height());
+    }
+
   this->PixmapLabel->setPixmap(
     this->OriginalThumbnail.isNull() ? QPixmap() :
-      this->OriginalThumbnail.scaled(this->PixmapLabel->size(),
+      this->OriginalThumbnail.scaled(size,
                                      Qt::KeepAspectRatio,
                                      this->TransformationMode));
 }
@@ -119,12 +148,40 @@ ctkThumbnailLabel::~ctkThumbnailLabel()
 }
 
 //----------------------------------------------------------------------------
+ctkPushButton* ctkThumbnailLabel::textPushButton()
+{
+  Q_D(ctkThumbnailLabel);
+  return d->TextPushButton;
+}
+
+//----------------------------------------------------------------------------
+QFrame *ctkThumbnailLabel::pixmapFrame()
+{
+  Q_D(ctkThumbnailLabel);
+  return d->PixmapFrame;
+}
+
+//----------------------------------------------------------------------------
+QLabel* ctkThumbnailLabel::pixmapLabel()
+{
+  Q_D(ctkThumbnailLabel);
+  return d->PixmapLabel;
+}
+
+//----------------------------------------------------------------------------
+QProgressBar *ctkThumbnailLabel::operationProgressBar()
+{
+  Q_D(ctkThumbnailLabel);
+  return d->OperationProgressBar;
+}
+
+//----------------------------------------------------------------------------
 void ctkThumbnailLabel::setText(const QString &text)
 {
   Q_D(ctkThumbnailLabel);
 
-  d->TextLabel->setText(text);
-  d->TextLabel->setVisible(!text.isEmpty() &&
+  d->TextPushButton->setText(text);
+  d->TextPushButton->setVisible(!text.isEmpty() &&
     ! (d->TextPosition & Qt::AlignHCenter &&
        d->TextPosition & Qt::AlignVCenter) );
 }
@@ -133,7 +190,7 @@ void ctkThumbnailLabel::setText(const QString &text)
 QString ctkThumbnailLabel::text()const
 {
   Q_D(const ctkThumbnailLabel);
-  return d->TextLabel->text();
+  return d->TextPushButton->text();
 }
 
 //----------------------------------------------------------------------------
@@ -144,7 +201,7 @@ void ctkThumbnailLabel::setTextPosition(const Qt::Alignment& position)
   int textIndex = -1;
   for (textIndex = 0; textIndex < this->layout()->count(); ++textIndex)
     {
-    if (this->layout()->itemAt(textIndex)->widget() == d->TextLabel)
+    if (this->layout()->itemAt(textIndex)->widget() == d->TextPushButton)
       {
       break;
       }
@@ -182,11 +239,11 @@ void ctkThumbnailLabel::setTextPosition(const Qt::Alignment& position)
     }
   if (row == 1 && col == 1)
     {
-    d->TextLabel->setVisible(false);
+    d->TextPushButton->setVisible(false);
     }
   else
     {
-    gridLayout->addWidget(d->TextLabel,row, col);
+    gridLayout->addWidget(d->TextPushButton,row, col);
     }
 }
 
@@ -212,6 +269,20 @@ const QPixmap* ctkThumbnailLabel::pixmap()const
   Q_D(const ctkThumbnailLabel);
 
   return d->OriginalThumbnail.isNull() ? 0 : &(d->OriginalThumbnail);
+}
+
+//----------------------------------------------------------------------------
+int ctkThumbnailLabel::operationProgress() const
+{
+  Q_D(const ctkThumbnailLabel);
+  return d->OperationProgressBar->value();
+}
+
+//----------------------------------------------------------------------------
+void ctkThumbnailLabel::setOperationProgress(const int &progress)
+{
+  Q_D(ctkThumbnailLabel);
+  d->OperationProgressBar->setValue(progress);
 }
 
 //----------------------------------------------------------------------------
@@ -278,10 +349,10 @@ QColor ctkThumbnailLabel::selectedColor()const
 QSize ctkThumbnailLabel::minimumSizeHint()const
 {
   Q_D(const ctkThumbnailLabel);
-  if (d->TextLabel->isVisibleTo(const_cast<ctkThumbnailLabel*>(this)) &&
-      !d->TextLabel->text().isEmpty())
+  if (d->TextPushButton->isVisibleTo(const_cast<ctkThumbnailLabel*>(this)) &&
+      !d->TextPushButton->text().isEmpty())
     {
-    return d->TextLabel->minimumSizeHint();
+    return d->TextPushButton->minimumSizeHint();
     }
   return QSize();
 }

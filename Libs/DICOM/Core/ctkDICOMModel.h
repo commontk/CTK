@@ -27,6 +27,7 @@
 #include <QSqlDatabase>
 #include <QStringList>
 
+// ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 
 class ctkDICOMModelPrivate;
