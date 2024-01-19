@@ -34,7 +34,7 @@
 #include "ctkDICOMSeriesItemWidget.h"
 
 // Test visual browser import functionality
-int ctkDICOMSeriesItemWidgetTest1( int argc, char * argv [] )
+int ctkDICOMSeriesItemWidgetTest1(int argc, char* argv[])
 {
   QApplication app(argc, argv);
 

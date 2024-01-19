@@ -26,7 +26,7 @@
 #include "ctkDICOMInserterWorker.h"
 #include "ctkLogger.h"
 
-static ctkLogger logger ("org.commontk.dicom.ctkDICOMInserterJob");
+static ctkLogger logger("org.commontk.dicom.ctkDICOMInserterJob");
 
 //------------------------------------------------------------------------------
 // ctkDICOMInserterJob methods
@@ -42,7 +42,7 @@ ctkDICOMInserterJob::ctkDICOMInserterJob()
 ctkDICOMInserterJob::~ctkDICOMInserterJob() = default;
 
 //------------------------------------------------------------------------------
-QString ctkDICOMInserterJob::loggerReport(const QString &status) const
+QString ctkDICOMInserterJob::loggerReport(const QString& status) const
 {
   return QString("ctkDICOMInserterJob: insert job %1.\n"
                  "Number of jobResponseSet to process: %2\n")
@@ -51,7 +51,7 @@ QString ctkDICOMInserterJob::loggerReport(const QString &status) const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMInserterJob::setDatabaseFilename(const QString &databaseFilename)
+void ctkDICOMInserterJob::setDatabaseFilename(const QString& databaseFilename)
 {
   this->DatabaseFilename = databaseFilename;
 }
@@ -63,7 +63,7 @@ QString ctkDICOMInserterJob::databaseFilename() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMInserterJob::setTagsToPrecache(const QStringList &tagsToPrecache)
+void ctkDICOMInserterJob::setTagsToPrecache(const QStringList& tagsToPrecache)
 {
   this->TagsToPrecache = tagsToPrecache;
 }
@@ -75,7 +75,7 @@ QStringList ctkDICOMInserterJob::tagsToPrecache() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMInserterJob::setTagsToExcludeFromStorage(const QStringList &tagsToExcludeFromStorage)
+void ctkDICOMInserterJob::setTagsToExcludeFromStorage(const QStringList& tagsToExcludeFromStorage)
 {
   this->TagsToExcludeFromStorage = tagsToExcludeFromStorage;
 }
@@ -109,7 +109,7 @@ ctkAbstractJob* ctkDICOMInserterJob::clone() const
 }
 
 //------------------------------------------------------------------------------
-ctkAbstractWorker *ctkDICOMInserterJob::createWorker()
+ctkAbstractWorker* ctkDICOMInserterJob::createWorker()
 {
   ctkDICOMInserterWorker* worker =
     new ctkDICOMInserterWorker;

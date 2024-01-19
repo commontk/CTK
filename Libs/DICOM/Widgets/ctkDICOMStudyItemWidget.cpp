@@ -21,7 +21,7 @@
 
 =========================================================================*/
 
-//Qt includes
+// Qt includes
 #include <QDebug>
 #include <QLabel>
 #include <QScreen>
@@ -52,7 +52,7 @@ static void skipDelete(QObject* obj)
 }
 
 //----------------------------------------------------------------------------
-class ctkDICOMStudyItemWidgetPrivate: public Ui_ctkDICOMStudyItemWidget
+class ctkDICOMStudyItemWidgetPrivate : public Ui_ctkDICOMStudyItemWidget
 {
   Q_DECLARE_PUBLIC(ctkDICOMStudyItemWidget);
 
@@ -69,7 +69,7 @@ public:
   int getScreenWidth();
   int getScreenHeight();
   int calculateNumerOfSeriesPerRow();
-  int calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize);
+  int calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize);
   void addEmptySeriesItemWidget(int rowIndex, int columnIndex);
   bool isSeriesItemAlreadyAdded(const QString& seriesItem);
 
@@ -113,7 +113,7 @@ ctkDICOMStudyItemWidgetPrivate::~ctkDICOMStudyItemWidgetPrivate()
 
   for (int row = 0; row < this->SeriesListTableWidget->rowCount(); row++)
     {
-    for (int column = 0 ; column < this->SeriesListTableWidget->columnCount(); column++)
+    for (int column = 0; column < this->SeriesListTableWidget->columnCount(); column++)
       {
       ctkDICOMSeriesItemWidget* seriesItemWidget =
         qobject_cast<ctkDICOMSeriesItemWidget*>(this->SeriesListTableWidget->cellWidget(row, column));
@@ -245,7 +245,7 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
 //------------------------------------------------------------------------------
 int ctkDICOMStudyItemWidgetPrivate::getScreenWidth()
 {
-  QList<QScreen *> screens = QApplication::screens();
+  QList<QScreen*> screens = QApplication::screens();
   int width = 1920;
   foreach (QScreen* screen, screens)
     {
@@ -262,7 +262,7 @@ int ctkDICOMStudyItemWidgetPrivate::getScreenWidth()
 //------------------------------------------------------------------------------
 int ctkDICOMStudyItemWidgetPrivate::getScreenHeight()
 {
-  QList<QScreen *> screens = QApplication::screens();
+  QList<QScreen*> screens = QApplication::screens();
   int height = 1080;
   foreach (QScreen* screen, screens)
     {
@@ -287,7 +287,7 @@ int ctkDICOMStudyItemWidgetPrivate::calculateNumerOfSeriesPerRow()
 }
 
 //------------------------------------------------------------------------------
-int ctkDICOMStudyItemWidgetPrivate::calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize)
+int ctkDICOMStudyItemWidgetPrivate::calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize)
 {
   int height = this->getScreenHeight();
   int thumbnailSizeInPixel = 1;
@@ -316,7 +316,7 @@ int ctkDICOMStudyItemWidgetPrivate::calculateThumbnailSizeInPixel(const ctkDICOM
 //------------------------------------------------------------------------------
 void ctkDICOMStudyItemWidgetPrivate::addEmptySeriesItemWidget(int rowIndex, int columnIndex)
 {
-  QTableWidgetItem *tableItem = new QTableWidgetItem;
+  QTableWidgetItem* tableItem = new QTableWidgetItem;
   tableItem->setFlags(Qt::NoItemFlags);
   tableItem->setSizeHint(QSize(this->ThumbnailSizePixel, this->ThumbnailSizePixel));
 
@@ -324,12 +324,12 @@ void ctkDICOMStudyItemWidgetPrivate::addEmptySeriesItemWidget(int rowIndex, int 
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdded(const QString &seriesItem)
+bool ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdded(const QString& seriesItem)
 {
   bool alreadyAdded = false;
   for (int i = 0; i < this->SeriesListTableWidget->rowCount(); i++)
     {
-    for (int j = 0 ; j < this->SeriesListTableWidget->columnCount(); j++)
+    for (int j = 0; j < this->SeriesListTableWidget->columnCount(); j++)
       {
       ctkDICOMSeriesItemWidget* seriesItemWidget =
         qobject_cast<ctkDICOMSeriesItemWidget*>(this->SeriesListTableWidget->cellWidget(i, j));
@@ -372,7 +372,7 @@ ctkDICOMStudyItemWidget::~ctkDICOMStudyItemWidget()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::setStudyItem(const QString &studyItem)
+void ctkDICOMStudyItemWidget::setStudyItem(const QString& studyItem)
 {
   Q_D(ctkDICOMStudyItemWidget);
   d->StudyItem = studyItem;
@@ -386,7 +386,7 @@ QString ctkDICOMStudyItemWidget::studyItem() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::setPatientID(const QString &patientID)
+void ctkDICOMStudyItemWidget::setPatientID(const QString& patientID)
 {
   Q_D(ctkDICOMStudyItemWidget);
   d->PatientID = patientID;
@@ -457,7 +457,7 @@ void ctkDICOMStudyItemWidget::setCollapsed(bool collapsed)
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMStudyItemWidget::collapsed()const
+bool ctkDICOMStudyItemWidget::collapsed() const
 {
   Q_D(const ctkDICOMStudyItemWidget);
   return d->StudyItemCollapsibleGroupBox->collapsed();
@@ -471,7 +471,7 @@ int ctkDICOMStudyItemWidget::numberOfSeriesPerRow() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize)
+void ctkDICOMStudyItemWidget::setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize)
 {
   Q_D(ctkDICOMStudyItemWidget);
   d->ThumbnailSize = thumbnailSize;
@@ -518,14 +518,14 @@ bool ctkDICOMStudyItemWidget::selection() const
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMScheduler* ctkDICOMStudyItemWidget::scheduler()const
+ctkDICOMScheduler* ctkDICOMStudyItemWidget::scheduler() const
 {
   Q_D(const ctkDICOMStudyItemWidget);
   return d->Scheduler.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMScheduler> ctkDICOMStudyItemWidget::schedulerShared()const
+QSharedPointer<ctkDICOMScheduler> ctkDICOMStudyItemWidget::schedulerShared() const
 {
   Q_D(const ctkDICOMStudyItemWidget);
   return d->Scheduler;
@@ -570,14 +570,14 @@ void ctkDICOMStudyItemWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> sch
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMDatabase* ctkDICOMStudyItemWidget::dicomDatabase()const
+ctkDICOMDatabase* ctkDICOMStudyItemWidget::dicomDatabase() const
 {
   Q_D(const ctkDICOMStudyItemWidget);
   return d->DicomDatabase.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMDatabase> ctkDICOMStudyItemWidget::dicomDatabaseShared()const
+QSharedPointer<ctkDICOMDatabase> ctkDICOMStudyItemWidget::dicomDatabaseShared() const
 {
   Q_D(const ctkDICOMStudyItemWidget);
   return d->DicomDatabase;
@@ -612,7 +612,7 @@ QString ctkDICOMStudyItemWidget::filteringSeriesDescription() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::setFilteringModalities(const QStringList &filteringModalities)
+void ctkDICOMStudyItemWidget::setFilteringModalities(const QStringList& filteringModalities)
 {
   Q_D(ctkDICOMStudyItemWidget);
   d->FilteringModalities = filteringModalities;
@@ -626,21 +626,21 @@ QStringList ctkDICOMStudyItemWidget::filteringModalities() const
 }
 
 //------------------------------------------------------------------------------
-QTableWidget *ctkDICOMStudyItemWidget::seriesListTableWidget()
+QTableWidget* ctkDICOMStudyItemWidget::seriesListTableWidget()
 {
   Q_D(ctkDICOMStudyItemWidget);
   return d->SeriesListTableWidget;
 }
 
 //------------------------------------------------------------------------------
-QList<ctkDICOMSeriesItemWidget *> ctkDICOMStudyItemWidget::seriesItemWidgetsList() const
+QList<ctkDICOMSeriesItemWidget*> ctkDICOMStudyItemWidget::seriesItemWidgetsList() const
 {
   Q_D(const ctkDICOMStudyItemWidget);
   QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList;
 
   for (int row = 0; row < d->SeriesListTableWidget->rowCount(); row++)
     {
-    for (int column = 0 ; column < d->SeriesListTableWidget->columnCount(); column++)
+    for (int column = 0; column < d->SeriesListTableWidget->columnCount(); column++)
       {
       ctkDICOMSeriesItemWidget* seriesItemWidget =
         qobject_cast<ctkDICOMSeriesItemWidget*>(d->SeriesListTableWidget->cellWidget(row, column));
@@ -658,10 +658,10 @@ QList<ctkDICOMSeriesItemWidget *> ctkDICOMStudyItemWidget::seriesItemWidgetsList
 
 //------------------------------------------------------------------------------
 void ctkDICOMStudyItemWidget::addSeriesItemWidget(int tableIndex,
-                                                  const QString &seriesItem,
-                                                  const QString &seriesInstanceUID,
-                                                  const QString &modality,
-                                                  const QString &seriesDescription)
+                                                  const QString& seriesItem,
+                                                  const QString& seriesInstanceUID,
+                                                  const QString& modality,
+                                                  const QString& seriesDescription)
 {
   Q_D(ctkDICOMStudyItemWidget);
   if (!d->DicomDatabase)
@@ -688,7 +688,7 @@ void ctkDICOMStudyItemWidget::addSeriesItemWidget(int tableIndex,
   this->connect(seriesItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
                 d->VisualDICOMBrowser.data(), SLOT(showSeriesContextMenu(const QPoint&)));
 
-  QTableWidgetItem *tableItem = new QTableWidgetItem;
+  QTableWidgetItem* tableItem = new QTableWidgetItem;
   tableItem->setSizeHint(QSize(d->ThumbnailSizePixel, d->ThumbnailSizePixel));
 
   int rowIndex = floor(tableIndex / d->SeriesListTableWidget->columnCount());
@@ -710,7 +710,7 @@ void ctkDICOMStudyItemWidget::removeSeriesItemWidget(const QString& seriesItem)
 
   for (int row = 0; row < d->SeriesListTableWidget->rowCount(); row++)
     {
-    for (int column = 0 ; column < d->SeriesListTableWidget->columnCount(); column++)
+    for (int column = 0; column < d->SeriesListTableWidget->columnCount(); column++)
       {
       ctkDICOMSeriesItemWidget* seriesItemWidget =
         qobject_cast<ctkDICOMSeriesItemWidget*>(d->SeriesListTableWidget->cellWidget(row, column));
@@ -723,7 +723,7 @@ void ctkDICOMStudyItemWidget::removeSeriesItemWidget(const QString& seriesItem)
       this->disconnect(seriesItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
                        d->VisualDICOMBrowser.data(), SLOT(showSeriesContextMenu(const QPoint&)));
       delete seriesItemWidget;
-      QTableWidgetItem *tableItem = d->SeriesListTableWidget->item(row, column);
+      QTableWidgetItem* tableItem = d->SeriesListTableWidget->item(row, column);
       delete tableItem;
 
       d->addEmptySeriesItemWidget(row, column);
@@ -733,7 +733,7 @@ void ctkDICOMStudyItemWidget::removeSeriesItemWidget(const QString& seriesItem)
 }
 
 //------------------------------------------------------------------------------
-ctkCollapsibleGroupBox *ctkDICOMStudyItemWidget::collapsibleGroupBox()
+ctkCollapsibleGroupBox* ctkDICOMStudyItemWidget::collapsibleGroupBox()
 {
   Q_D(ctkDICOMStudyItemWidget);
   return d->StudyItemCollapsibleGroupBox;
@@ -764,7 +764,7 @@ void ctkDICOMStudyItemWidget::updateGUIFromScheduler(const QVariant& data)
   Q_D(ctkDICOMStudyItemWidget);
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-    if (td.JobUID.isEmpty())
+  if (td.JobUID.isEmpty())
     {
     d->createSeries();
     }

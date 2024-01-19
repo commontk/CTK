@@ -78,7 +78,8 @@ public:
 
   ///@{
   /// Job type
-  enum JobType {
+  enum JobType
+  {
     None = 0,
     QueryPatients,
     QueryStudies,
@@ -157,7 +158,8 @@ private:
 };
 
 //------------------------------------------------------------------------------
-struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail {
+struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
+{
   explicit ctkDICOMJobDetail() = default;
 
   explicit ctkDICOMJobDetail(const ctkDICOMJob& job) : ctkJobDetail(job)

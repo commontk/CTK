@@ -38,10 +38,10 @@ class ctkAbstractWorker;
 class CTK_CORE_EXPORT ctkJobSchedulerPrivate : public QObject
 {
   Q_OBJECT
-    Q_DECLARE_PUBLIC(ctkJobScheduler)
+  Q_DECLARE_PUBLIC(ctkJobScheduler)
 
 protected:
-    ctkJobScheduler* const q_ptr;
+  ctkJobScheduler* const q_ptr;
 
 public:
   ctkJobSchedulerPrivate(ctkJobScheduler& object);

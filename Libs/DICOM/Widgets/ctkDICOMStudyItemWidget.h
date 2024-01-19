@@ -113,7 +113,7 @@ public:
   ///@{
   /// Set the thumbnail size: small, medium, large
   /// medium by default
-  void setThumbnailSize(const ThumbnailSizeOption &thumbnailSize);
+  void setThumbnailSize(const ThumbnailSizeOption& thumbnailSize);
   ThumbnailSizeOption thumbnailSize() const;
   ///@}
 
@@ -165,12 +165,12 @@ public:
   Q_INVOKABLE QTableWidget* seriesListTableWidget();
 
   /// Return all the series item widgets for the study
-  Q_INVOKABLE QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList()const;
+  Q_INVOKABLE QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList() const;
 
   /// Add/Remove Series item widget
   Q_INVOKABLE void addSeriesItemWidget(int tableIndex,
-                                       const QString &seriesItem,
-                                       const QString &seriesInstanceUID,
+                                       const QString& seriesItem,
+                                       const QString& seriesInstanceUID,
                                        const QString& modality,
                                        const QString& seriesDescription);
   Q_INVOKABLE void removeSeriesItemWidget(const QString& seriesItem);

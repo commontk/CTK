@@ -220,7 +220,7 @@ public:
   ///@{
   /// Set the thumbnail size: small, medium, large
   /// medium by default
-  void setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize);
+  void setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize);
   ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize() const;
   ///@}
 
@@ -267,12 +267,12 @@ public:
   /// \brief Get value of ImportDirectoryMode settings.
   ///
   /// \sa setImportDirectoryMode(ctkDICOMBrowser::ImportDirectoryMode)
-  ImportDirectoryMode importDirectoryMode()const;
+  ImportDirectoryMode importDirectoryMode() const;
 
   /// \brief Return instance of import dialog.
   ///
   /// \internal
-  Q_INVOKABLE ctkFileDialog* importDialog()const;
+  Q_INVOKABLE ctkFileDialog* importDialog() const;
 
 public Q_SLOTS:
   /// \brief Set value of ImportDirectoryMode settings.
@@ -357,7 +357,7 @@ public Q_SLOTS:
   void onLoad();
   void onImport();
   void onStop(bool stopPersistentTasks = false);
-  void setCurrentTabWidget(ctkDICOMPatientItemWidget *patientItemWidget);
+  void setCurrentTabWidget(ctkDICOMPatientItemWidget* patientItemWidget);
 
 Q_SIGNALS:
   /// Emitted when directory is changed
@@ -370,7 +370,7 @@ Q_SIGNALS:
   void directoryImported();
 
 protected:
-  void closeEvent(QCloseEvent *);
+  void closeEvent(QCloseEvent*);
   QScopedPointer<ctkDICOMVisualBrowserWidgetPrivate> d_ptr;
 
   /// Confirm with the user that they wish to delete the selected uids.
@@ -382,13 +382,13 @@ protected:
   bool confirmDeleteSelectedUIDs(const QStringList& uids);
 
   /// Get file list for right click selection
-  QStringList fileListForCurrentSelection(ctkDICOMModel::IndexType level, const QList<QWidget *>& selectedWidget);
+  QStringList fileListForCurrentSelection(ctkDICOMModel::IndexType level, const QList<QWidget*>& selectedWidget);
   /// Show window that displays DICOM fields of all selected items
   void showMetadata(const QStringList& fileList);
   /// Remove items (both database and widget)
-  void removeSelectedItems(ctkDICOMModel::IndexType level, const QList<QWidget *>& selectedWidgets = QList<QWidget *>());
+  void removeSelectedItems(ctkDICOMModel::IndexType level, const QList<QWidget*>& selectedWidgets = QList<QWidget*>());
   /// Export the items associated with the selected widget
-  void exportSelectedItems(ctkDICOMModel::IndexType level, const QList<QWidget *>& selectedWidgets);
+  void exportSelectedItems(ctkDICOMModel::IndexType level, const QList<QWidget*>& selectedWidgets);
   /// Export the series associated with the selected UIDs
   void exportSeries(const QString& dirPath, const QStringList& uids);
 

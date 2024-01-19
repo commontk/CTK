@@ -30,7 +30,7 @@
 #include "ctkDICOMQueryWorker.h"
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger ( "org.commontk.dicom.ctkDICOMQueryJob" );
+static ctkLogger logger("org.commontk.dicom.ctkDICOMQueryJob");
 
 //------------------------------------------------------------------------------
 // ctkDICOMQueryJobPrivate methods
@@ -65,7 +65,7 @@ ctkDICOMQueryJob::ctkDICOMQueryJob(ctkDICOMQueryJobPrivate* pimpl)
 ctkDICOMQueryJob::~ctkDICOMQueryJob() = default;
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryJob::setFilters(const QMap<QString, QVariant> &filters)
+void ctkDICOMQueryJob::setFilters(const QMap<QString, QVariant>& filters)
 {
   Q_D(ctkDICOMQueryJob);
   d->Filters = filters;
@@ -115,7 +115,7 @@ QSharedPointer<ctkDICOMServer> ctkDICOMQueryJob::serverShared() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryJob::setServer(ctkDICOMServer &server)
+void ctkDICOMQueryJob::setServer(ctkDICOMServer& server)
 {
   Q_D(ctkDICOMQueryJob);
   d->Server = QSharedPointer<ctkDICOMServer>(&server, skipDelete);
@@ -129,7 +129,7 @@ void ctkDICOMQueryJob::setServer(QSharedPointer<ctkDICOMServer> server)
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMQueryJob::loggerReport(const QString &status) const
+QString ctkDICOMQueryJob::loggerReport(const QString& status) const
 {
   switch (this->dicomLevel())
     {
@@ -201,7 +201,7 @@ ctkAbstractJob* ctkDICOMQueryJob::clone() const
 }
 
 //------------------------------------------------------------------------------
-ctkAbstractWorker *ctkDICOMQueryJob::createWorker()
+ctkAbstractWorker* ctkDICOMQueryJob::createWorker()
 {
   ctkDICOMQueryWorker* worker =
     new ctkDICOMQueryWorker;

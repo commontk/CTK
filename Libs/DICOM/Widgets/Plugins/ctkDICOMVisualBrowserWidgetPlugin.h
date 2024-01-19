@@ -34,9 +34,9 @@ class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMVisualBrowserWidgetPlugin
   Q_OBJECT
 
 public:
-  ctkDICOMVisualBrowserWidgetPlugin(QObject *_parent = 0);
+  ctkDICOMVisualBrowserWidgetPlugin(QObject* _parent = 0);
 
-  QWidget *createWidget(QWidget *_parent);
+  QWidget* createWidget(QWidget* _parent);
   QString  domXml() const;
   QIcon    icon() const;
   QString  includeFile() const;

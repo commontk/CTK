@@ -37,8 +37,8 @@
 // STD includes
 #include <iostream>
 
-int ctkDICOMEchoTest1(int argc, char * argv []) {
-
+int ctkDICOMEchoTest1(int argc, char* argv[])
+{
   QCoreApplication app(argc, argv);
 
   QStringList arguments = app.arguments();

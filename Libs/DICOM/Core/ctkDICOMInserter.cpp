@@ -30,7 +30,7 @@
 #include "ctkDICOMInserter.h"
 #include "ctkDICOMJobResponseSet.h"
 
-static ctkLogger logger ("org.commontk.dicom.DICOMQuery");
+static ctkLogger logger("org.commontk.dicom.DICOMQuery");
 
 //------------------------------------------------------------------------------
 class ctkDICOMInserterPrivate
@@ -68,7 +68,7 @@ ctkDICOMInserter::ctkDICOMInserter(QObject* parentObject)
 ctkDICOMInserter::~ctkDICOMInserter() = default;
 
 //------------------------------------------------------------------------------
-void ctkDICOMInserter::setDatabaseFilename(const QString &databaseFilename)
+void ctkDICOMInserter::setDatabaseFilename(const QString& databaseFilename)
 {
   Q_D(ctkDICOMInserter);
   d->DatabaseFilename = databaseFilename;
@@ -82,7 +82,7 @@ QString ctkDICOMInserter::databaseFilename() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMInserter::setTagsToPrecache(const QStringList &tagsToPrecache)
+void ctkDICOMInserter::setTagsToPrecache(const QStringList& tagsToPrecache)
 {
   Q_D(ctkDICOMInserter);
   d->TagsToPrecache = tagsToPrecache;
@@ -96,7 +96,7 @@ QStringList ctkDICOMInserter::tagsToPrecache() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMInserter::setTagsToExcludeFromStorage(const QStringList &tagsToExcludeFromStorage)
+void ctkDICOMInserter::setTagsToExcludeFromStorage(const QStringList& tagsToExcludeFromStorage)
 {
   Q_D(ctkDICOMInserter);
   d->TagsToExcludeFromStorage = tagsToExcludeFromStorage;

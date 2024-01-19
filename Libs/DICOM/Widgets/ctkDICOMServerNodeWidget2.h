@@ -51,7 +51,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMServerNodeWidget2 : public QWidget
 
 public:
   typedef QWidget Superclass;
-  explicit ctkDICOMServerNodeWidget2(QWidget* parent=0);
+  explicit ctkDICOMServerNodeWidget2(QWidget* parent = 0);
   virtual ~ctkDICOMServerNodeWidget2();
 
   ///@{
@@ -116,7 +116,8 @@ public Q_SLOTS:
 
 protected:
   QScopedPointer<ctkDICOMServerNodeWidget2Private> d_ptr;
-  enum ServerColumns{
+  enum ServerColumns
+  {
     NameColumn = 0,
     QueryRetrieveColumn,
     StorageColumn,

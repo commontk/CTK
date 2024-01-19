@@ -34,8 +34,8 @@
 #include "ctkDICOMServer.h"
 #include "ctkDICOMTester.h"
 
-int ctkDICOMSchedulerTest1(int argc, char * argv []) {
-
+int ctkDICOMSchedulerTest1(int argc, char* argv[])
+{
   QCoreApplication app(argc, argv);
 
   QStringList arguments = app.arguments();
@@ -137,7 +137,7 @@ int ctkDICOMSchedulerTest1(int argc, char * argv []) {
   QStringList urls = database.urlsForSeries(seriesIstanceUID);
   urls.removeAll(QString(""));
 
-  CHECK_INT(instances.count(),numberOfImages);
+  CHECK_INT(instances.count(), numberOfImages);
   CHECK_INT(files.count(), 0);
   CHECK_INT(urls.count(), numberOfImages);
 

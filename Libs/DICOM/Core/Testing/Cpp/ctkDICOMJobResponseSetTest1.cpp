@@ -31,9 +31,8 @@
 // ctkDICOMCore includes
 #include "ctkDICOMJobResponseSet.h"
 
-
-int ctkDICOMJobResponseSetTest1(int argc, char * argv []) {
-
+int ctkDICOMJobResponseSetTest1(int argc, char* argv[])
+{
   QCoreApplication app(argc, argv);
 
   // Query Job and virtual parents (ctkDICOMJob and ctkAbstractJob)

@@ -30,7 +30,7 @@
 #include "ctkDICOMRetrieveWorker.h"
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger ( "org.commontk.dicom.ctkDICOMRetrieveJob" );
+static ctkLogger logger("org.commontk.dicom.ctkDICOMRetrieveJob");
 
 //------------------------------------------------------------------------------
 // ctkDICOMRetrieveJobPrivate methods
@@ -86,7 +86,7 @@ QSharedPointer<ctkDICOMServer> ctkDICOMRetrieveJob::serverShared() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMRetrieveJob::setServer(ctkDICOMServer &server)
+void ctkDICOMRetrieveJob::setServer(ctkDICOMServer& server)
 {
   Q_D(ctkDICOMRetrieveJob);
   d->Server = QSharedPointer<ctkDICOMServer>(&server, skipDelete);
@@ -100,7 +100,7 @@ void ctkDICOMRetrieveJob::setServer(QSharedPointer<ctkDICOMServer> server)
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMRetrieveJob::loggerReport(const QString &status) const
+QString ctkDICOMRetrieveJob::loggerReport(const QString& status) const
 {
   switch (this->dicomLevel())
     {
@@ -177,7 +177,7 @@ ctkAbstractJob* ctkDICOMRetrieveJob::clone() const
 }
 
 //------------------------------------------------------------------------------
-ctkAbstractWorker *ctkDICOMRetrieveJob::createWorker()
+ctkAbstractWorker* ctkDICOMRetrieveJob::createWorker()
 {
   ctkDICOMRetrieveWorker* worker =
     new ctkDICOMRetrieveWorker;

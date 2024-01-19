@@ -41,7 +41,7 @@
 #include <dcmtk/dcmdata/dcdeftag.h>
 
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMJobPool" );
+static ctkLogger logger("org.commontk.dicom.DICOMJobPool");
 
 //------------------------------------------------------------------------------
 // ctkDICOMSchedulerPrivate methods
@@ -61,7 +61,7 @@ ctkDICOMSchedulerPrivate::~ctkDICOMSchedulerPrivate()
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMServer *ctkDICOMSchedulerPrivate::getServerFromProxyServersByConnectionName(const QString &connectionName)
+ctkDICOMServer* ctkDICOMSchedulerPrivate::getServerFromProxyServersByConnectionName(const QString& connectionName)
 {
   foreach (QSharedPointer<ctkDICOMServer> server, this->Servers)
     {
@@ -105,7 +105,7 @@ void ctkDICOMScheduler::queryPatients(QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
 
-  foreach(QSharedPointer<ctkDICOMServer> server, d->Servers)
+  foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
     {
     if (!server->queryRetrieveEnabled())
       {
@@ -132,7 +132,7 @@ void ctkDICOMScheduler::queryStudies(const QString& patientID,
 {
   Q_D(ctkDICOMScheduler);
 
-  foreach(QSharedPointer<ctkDICOMServer> server, d->Servers)
+  foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
     {
     if (!server->queryRetrieveEnabled())
       {
@@ -160,7 +160,7 @@ void ctkDICOMScheduler::querySeries(const QString& patientID,
 {
   Q_D(ctkDICOMScheduler);
 
-  foreach(QSharedPointer<ctkDICOMServer> server, d->Servers)
+  foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
     {
     if (!server->queryRetrieveEnabled())
       {
@@ -190,7 +190,7 @@ void ctkDICOMScheduler::queryInstances(const QString& patientID,
 {
   Q_D(ctkDICOMScheduler);
 
-  foreach(QSharedPointer<ctkDICOMServer> server, d->Servers)
+  foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
     {
     if (!server->queryRetrieveEnabled())
       {
@@ -214,13 +214,13 @@ void ctkDICOMScheduler::queryInstances(const QString& patientID,
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::retrieveStudy(const QString &patientID,
-                                     const QString &studyInstanceUID,
-                                     QThread::Priority priority)
+void ctkDICOMScheduler::retrieveStudy(const QString& patientID,
+                                      const QString& studyInstanceUID,
+                                      QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
 
-  foreach(QSharedPointer<ctkDICOMServer> server, d->Servers)
+  foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
     {
     if (!server->queryRetrieveEnabled())
       {
@@ -242,14 +242,14 @@ void ctkDICOMScheduler::retrieveStudy(const QString &patientID,
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::retrieveSeries(const QString &patientID,
-                                      const QString &studyInstanceUID,
-                                      const QString &seriesInstanceUID,
-                                      QThread::Priority priority)
+void ctkDICOMScheduler::retrieveSeries(const QString& patientID,
+                                       const QString& studyInstanceUID,
+                                       const QString& seriesInstanceUID,
+                                       QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
 
-  foreach(QSharedPointer<ctkDICOMServer> server, d->Servers)
+  foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
     {
     if (!server->queryRetrieveEnabled())
       {
@@ -272,15 +272,15 @@ void ctkDICOMScheduler::retrieveSeries(const QString &patientID,
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::retrieveSOPInstance(const QString &patientID,
-                                           const QString &studyInstanceUID,
-                                           const QString &seriesInstanceUID,
-                                           const QString &SOPInstanceUID,
-                                           QThread::Priority priority)
+void ctkDICOMScheduler::retrieveSOPInstance(const QString& patientID,
+                                            const QString& studyInstanceUID,
+                                            const QString& seriesInstanceUID,
+                                            const QString& SOPInstanceUID,
+                                            QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
 
-  foreach(QSharedPointer<ctkDICOMServer> server, d->Servers)
+  foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
     {
     if (!server->queryRetrieveEnabled())
       {
@@ -305,7 +305,7 @@ void ctkDICOMScheduler::retrieveSOPInstance(const QString &patientID,
 
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::startListener(int port,
-                                      const QString &AETitle,
+                                      const QString& AETitle,
                                       QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
@@ -358,14 +358,14 @@ static void skipDelete(QObject* obj)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMDatabase* ctkDICOMScheduler::dicomDatabase()const
+ctkDICOMDatabase* ctkDICOMScheduler::dicomDatabase() const
 {
   Q_D(const ctkDICOMScheduler);
   return d->DicomDatabase.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMDatabase> ctkDICOMScheduler::dicomDatabaseShared()const
+QSharedPointer<ctkDICOMDatabase> ctkDICOMScheduler::dicomDatabaseShared() const
 {
   Q_D(const ctkDICOMScheduler);
   return d->DicomDatabase;
@@ -386,7 +386,7 @@ void ctkDICOMScheduler::setDicomDatabase(QSharedPointer<ctkDICOMDatabase> dicomD
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::setFilters(const QMap<QString, QVariant> &filters)
+void ctkDICOMScheduler::setFilters(const QMap<QString, QVariant>& filters)
 {
   Q_D(ctkDICOMScheduler);
   d->Filters = filters;
@@ -521,7 +521,7 @@ QString ctkDICOMScheduler::getServerNameFromIndex(int id)
 int ctkDICOMScheduler::getServerIndexFromName(const QString& connectionName)
 {
   Q_D(ctkDICOMScheduler);
-  for(int serverIndex = 0; serverIndex < d->Servers.size(); ++serverIndex)
+  for (int serverIndex = 0; serverIndex < d->Servers.size(); ++serverIndex)
     {
     QSharedPointer<ctkDICOMServer> server = d->Servers.at(serverIndex);
     if (server && server->connectionName() == connectionName)
@@ -534,10 +534,10 @@ int ctkDICOMScheduler::getServerIndexFromName(const QString& connectionName)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::waitForFinishByUIDs(const QStringList &patientIDs,
-                                            const QStringList &studyInstanceUIDs,
-                                            const QStringList &seriesInstanceUIDs,
-                                            const QStringList &sopInstanceUIDs)
+void ctkDICOMScheduler::waitForFinishByUIDs(const QStringList& patientIDs,
+                                            const QStringList& studyInstanceUIDs,
+                                            const QStringList& seriesInstanceUIDs,
+                                            const QStringList& sopInstanceUIDs)
 {
   Q_D(ctkDICOMScheduler);
 
@@ -550,7 +550,7 @@ void ctkDICOMScheduler::waitForFinishByUIDs(const QStringList &patientIDs,
     }
 
   bool wait = true;
-  while(wait)
+  while (wait)
     {
     QCoreApplication::processEvents();
     d->ThreadPool->waitForDone(300);
@@ -723,11 +723,11 @@ int ctkDICOMScheduler::maximumPatientsQuery()
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMStorageListenerJob *ctkDICOMScheduler::listenerJob()
+ctkDICOMStorageListenerJob* ctkDICOMScheduler::listenerJob()
 {
   Q_D(ctkDICOMScheduler);
   QMutexLocker ml(&d->mMutex);
-  foreach(QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
     QSharedPointer<ctkDICOMStorageListenerJob> listenerJob =
       qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(job);

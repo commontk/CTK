@@ -31,8 +31,8 @@
 // ctkDICOMCore includes
 #include "ctkDICOMServer.h"
 
-int ctkDICOMServerTest1(int argc, char * argv []) {
-
+int ctkDICOMServerTest1(int argc, char* argv[])
+{
   QCoreApplication app(argc, argv);
 
   ctkDICOMServer server;

@@ -51,7 +51,8 @@ public:
   explicit ctkDICOMJob();
   virtual ~ctkDICOMJob();
 
-  enum DICOMLevels{
+  enum DICOMLevels
+  {
     Patients,
     Studies,
     Series,

@@ -28,7 +28,7 @@
 #include "ctkDICOMStorageListenerJob_p.h"
 #include "ctkDICOMStorageListenerWorker.h"
 
-static ctkLogger logger ( "org.commontk.dicom.ctkDICOMStorageListenerJob" );
+static ctkLogger logger("org.commontk.dicom.ctkDICOMStorageListenerJob");
 
 //------------------------------------------------------------------------------
 // ctkDICOMStorageListenerJobPrivate methods
@@ -79,7 +79,7 @@ int ctkDICOMStorageListenerJob::port() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMStorageListenerJob::setAETitle(const QString &AETitle)
+void ctkDICOMStorageListenerJob::setAETitle(const QString& AETitle)
 {
   Q_D(ctkDICOMStorageListenerJob);
   d->AETitle = AETitle;
@@ -107,7 +107,7 @@ int ctkDICOMStorageListenerJob::connectionTimeout() const
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMStorageListenerJob::loggerReport(const QString &status) const
+QString ctkDICOMStorageListenerJob::loggerReport(const QString& status) const
 {
   return QString("ctkDICOMStorageListenerJob: listener job %1.\n"
                  "JobUID: %2\n")
@@ -132,7 +132,7 @@ ctkAbstractJob* ctkDICOMStorageListenerJob::clone() const
 }
 
 //------------------------------------------------------------------------------
-ctkAbstractWorker *ctkDICOMStorageListenerJob::createWorker()
+ctkAbstractWorker* ctkDICOMStorageListenerJob::createWorker()
 {
   ctkDICOMStorageListenerWorker* worker =
     new ctkDICOMStorageListenerWorker;

@@ -119,7 +119,7 @@ public:
   ///@{
   /// Set the thumbnail size: small, medium, large
   /// medium by default
-  void setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize);
+  void setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize);
   ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize() const;
   ///@}
 
@@ -146,15 +146,15 @@ public:
   void setDicomDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
 
   /// Return all the study item widgets for the patient
-  Q_INVOKABLE QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList()const;
+  Q_INVOKABLE QList<ctkDICOMStudyItemWidget*> studyItemWidgetsList() const;
 
   /// Return number of days from filtering date attribute
   Q_INVOKABLE static int getNDaysFromFilteringDate(ctkDICOMPatientItemWidget::DateType filteringDate);
 
   ///@{
   /// Add/Remove study item widgets
-  Q_INVOKABLE void addStudyItemWidget(const QString &studyItem);
-  Q_INVOKABLE void removeStudyItemWidget(const QString &studyItem);
+  Q_INVOKABLE void addStudyItemWidget(const QString& studyItem);
+  Q_INVOKABLE void removeStudyItemWidget(const QString& studyItem);
   ///@}
 
   /// Set selection for all studies/series

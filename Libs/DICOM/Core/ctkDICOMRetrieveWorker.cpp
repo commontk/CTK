@@ -31,7 +31,7 @@
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger ("org.commontk.dicom.ctkDICOMRetrieveWorker");
+static ctkLogger logger("org.commontk.dicom.ctkDICOMRetrieveWorker");
 
 //------------------------------------------------------------------------------
 // ctkDICOMRetrieveWorkerPrivate methods
@@ -286,7 +286,7 @@ void ctkDICOMRetrieveWorker::setJob(QSharedPointer<ctkAbstractJob> job)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMRetrieve *ctkDICOMRetrieveWorker::retriever() const
+ctkDICOMRetrieve* ctkDICOMRetrieveWorker::retriever() const
 {
   Q_D(const ctkDICOMRetrieveWorker);
   return d->Retrieve.data();

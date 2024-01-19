@@ -86,22 +86,22 @@ public:
   Q_INVOKABLE bool wasCanceled();
 
 Q_SIGNALS:
-    /// Signal is emitted inside the listener() function. It ranges from 0 to 100.
-    /// In case of an error, you are assured that the progress value 100 is fired
-    void progress(int progress);
-    /// Signal is emitted inside the listener() function. It sends the different step
-    /// the function is at.
-    void progress(const QString& message);
-    /// Signal is emitted inside the listener() function. It sends
-    /// detailed feedback for debugging
-    void debug(const QString& message);
-    /// Signal is emitted inside the listener() function. It send any error messages
-    void error(const QString& message);
-    /// Signal is emitted inside the listener() function when finished with value
-    /// true for success or false for error
-    void done(bool error);
-    /// Signal is emitted inside the listener() function when a frame has been fetched
-    void progressJobDetail(QVariant);
+  /// Signal is emitted inside the listener() function. It ranges from 0 to 100.
+  /// In case of an error, you are assured that the progress value 100 is fired
+  void progress(int progress);
+  /// Signal is emitted inside the listener() function. It sends the different step
+  /// the function is at.
+  void progress(const QString& message);
+  /// Signal is emitted inside the listener() function. It sends
+  /// detailed feedback for debugging
+  void debug(const QString& message);
+  /// Signal is emitted inside the listener() function. It send any error messages
+  void error(const QString& message);
+  /// Signal is emitted inside the listener() function when finished with value
+  /// true for success or false for error
+  void done(bool error);
+  /// Signal is emitted inside the listener() function when a frame has been fetched
+  void progressJobDetail(QVariant);
 
 public Q_SLOTS:
   void cancel();

@@ -34,7 +34,7 @@
 static ctkLogger logger("org.commontk.dicom.DICOMServer");
 
 //------------------------------------------------------------------------------
-class ctkDICOMServerPrivate: public QObject
+class ctkDICOMServerPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(ctkDICOMServer);
 
@@ -136,7 +136,7 @@ bool ctkDICOMServer::storageEnabled() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setCallingAETitle( const QString& callingAETitle )
+void ctkDICOMServer::setCallingAETitle(const QString& callingAETitle)
 {
   Q_D(ctkDICOMServer);
   d->CallingAETitle = callingAETitle;
@@ -150,14 +150,14 @@ QString ctkDICOMServer::callingAETitle() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setCalledAETitle( const QString& calledAETitle )
+void ctkDICOMServer::setCalledAETitle(const QString& calledAETitle)
 {
   Q_D(ctkDICOMServer);
   d->CalledAETitle = calledAETitle;
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMServer::calledAETitle()const
+QString ctkDICOMServer::calledAETitle() const
 {
   Q_D(const ctkDICOMServer);
   return d->CalledAETitle;
@@ -258,7 +258,7 @@ void ctkDICOMServer::setMoveDestinationAETitle(const QString& moveDestinationAET
   }
 }
 //------------------------------------------------------------------------------
-QString ctkDICOMServer::moveDestinationAETitle()const
+QString ctkDICOMServer::moveDestinationAETitle() const
 {
   Q_D(const ctkDICOMServer);
   return d->MoveDestinationAETitle;
@@ -315,7 +315,7 @@ QSharedPointer<ctkDICOMServer> ctkDICOMServer::proxyServerShared() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServer::setProxyServer(ctkDICOMServer &proxyServer)
+void ctkDICOMServer::setProxyServer(ctkDICOMServer& proxyServer)
 {
   Q_D(ctkDICOMServer);
   d->ProxyServer = QSharedPointer<ctkDICOMServer>(&proxyServer, skipDelete);

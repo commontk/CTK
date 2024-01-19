@@ -51,7 +51,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMScheduler : public ctkJobScheduler
   Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery);
 
 public:
-    typedef ctkJobScheduler Superclass;
+  typedef ctkJobScheduler Superclass;
   explicit ctkDICOMScheduler(QObject* parent = 0);
   virtual ~ctkDICOMScheduler();
 
@@ -140,8 +140,8 @@ public:
   /// StartDate   DCM_StudyDate            QString     20090101
   /// EndDate     DCM_StudyDate            QString     20091231
   /// No filter (empty) by default.
-  Q_INVOKABLE void setFilters(const QMap<QString, QVariant> &filters);
-  Q_INVOKABLE QMap<QString, QVariant> filters()const;
+  Q_INVOKABLE void setFilters(const QMap<QString, QVariant>& filters);
+  Q_INVOKABLE QMap<QString, QVariant> filters() const;
   ///@}
 
   ///@{

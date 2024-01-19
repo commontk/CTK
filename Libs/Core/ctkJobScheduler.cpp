@@ -35,7 +35,7 @@
 #include "ctkAbstractWorker.h"
 #include "ctkLogger.h"
 
-static ctkLogger logger ("org.commontk.core.AbstractScheduler");
+static ctkLogger logger("org.commontk.core.AbstractScheduler");
 
 // --------------------------------------------------------------------------
 // ctkJobSchedulerPrivate methods
@@ -52,20 +52,20 @@ ctkJobSchedulerPrivate::~ctkJobSchedulerPrivate() = default;
 //---------------------------------------------------------------------------
 void ctkJobSchedulerPrivate::init()
 {
-    Q_Q(ctkJobScheduler);
+  Q_Q(ctkJobScheduler);
 
   QObject::connect(q, SIGNAL(queueJobs()),
                    q, SLOT(onQueueJobsInThreadPool()),
                    Qt::QueuedConnection);
 
-  this->ThreadPool = QSharedPointer<QThreadPool> (new QThreadPool());
+  this->ThreadPool = QSharedPointer<QThreadPool>(new QThreadPool());
   this->ThreadPool->setMaxThreadCount(20);
 }
 
 //------------------------------------------------------------------------------
 void ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 {
-    Q_Q(ctkJobScheduler);
+  Q_Q(ctkJobScheduler);
 
   if (!job)
     {
@@ -92,7 +92,7 @@ void ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 //------------------------------------------------------------------------------
 void ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
 {
-    Q_Q(ctkJobScheduler);
+  Q_Q(ctkJobScheduler);
 
   logger.debug(QString("ctkJobScheduler: deleting job object %1 in thread %2.\n")
     .arg(jobUID)
@@ -191,7 +191,7 @@ int ctkJobScheduler::numberOfPersistentJobs()
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::addJob(ctkAbstractJob *job)
+void ctkJobScheduler::addJob(ctkAbstractJob* job)
 {
   Q_D(ctkJobScheduler);
 
@@ -236,7 +236,7 @@ QSharedPointer<ctkAbstractJob> ctkJobScheduler::getJobSharedByUID(const QString&
 }
 
 //----------------------------------------------------------------------------
-ctkAbstractJob *ctkJobScheduler::getJobByUID(const QString& jobUID)
+ctkAbstractJob* ctkJobScheduler::getJobByUID(const QString& jobUID)
 {
   QSharedPointer<ctkAbstractJob> job = this->getJobSharedByUID(jobUID);
   if (!job)
@@ -253,7 +253,7 @@ void ctkJobScheduler::waitForFinish()
   Q_D(ctkJobScheduler);
 
   int numberOfPersistentJobs = this->numberOfPersistentJobs();
-  while(this->numberOfJobs() > numberOfPersistentJobs)
+  while (this->numberOfJobs() > numberOfPersistentJobs)
     {
     QCoreApplication::processEvents();
     d->ThreadPool->waitForDone(300);
@@ -356,7 +356,7 @@ void ctkJobScheduler::setRetryDelay(int retryDelay)
 }
 
 //----------------------------------------------------------------------------
-QThreadPool *ctkJobScheduler::threadPool() const
+QThreadPool* ctkJobScheduler::threadPool() const
 {
   Q_D(const ctkJobScheduler);
   return d->ThreadPool.data();
@@ -445,7 +445,7 @@ void ctkJobScheduler::onQueueJobsInThreadPool()
                                         << QThread::Priority::LowPriority
                                         << QThread::Priority::LowestPriority))
     {
-    foreach(QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
       {
       if (job->priority() != priority)
         {

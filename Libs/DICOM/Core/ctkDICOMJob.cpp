@@ -28,7 +28,7 @@
 #include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
 
-static ctkLogger logger ("org.commontk.dicom.ctkDICOMJob");
+static ctkLogger logger("org.commontk.dicom.ctkDICOMJob");
 
 //------------------------------------------------------------------------------
 // ctkDICOMJob methods
@@ -59,7 +59,7 @@ ctkDICOMJob::DICOMLevels ctkDICOMJob::dicomLevel() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJob::setPatientID(const QString &patientID)
+void ctkDICOMJob::setPatientID(const QString& patientID)
 {
   this->PatientID = patientID;
 }
@@ -115,10 +115,10 @@ static void skipDelete(QObject* obj)
 }
 
 //------------------------------------------------------------------------------
-QList<ctkDICOMJobResponseSet *> ctkDICOMJob::jobResponseSets() const
+QList<ctkDICOMJobResponseSet*> ctkDICOMJob::jobResponseSets() const
 {
-  QList<ctkDICOMJobResponseSet *> jobResponseSets;
-  foreach(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, this->JobResponseSets)
+  QList<ctkDICOMJobResponseSet*> jobResponseSets;
+  foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, this->JobResponseSets)
     {
     jobResponseSets.append(jobResponseSet.data());
     }
@@ -136,7 +136,7 @@ QList<QSharedPointer<ctkDICOMJobResponseSet>> ctkDICOMJob::jobResponseSetsShared
 void ctkDICOMJob::setJobResponseSets(const QList<ctkDICOMJobResponseSet*>& jobResponseSets)
 {
   this->JobResponseSets.clear();
-  foreach(ctkDICOMJobResponseSet* jobResponseSet, jobResponseSets)
+  foreach (ctkDICOMJobResponseSet* jobResponseSet, jobResponseSets)
     {
     this->JobResponseSets.append(QSharedPointer<ctkDICOMJobResponseSet>(jobResponseSet, skipDelete));
     }
@@ -152,7 +152,7 @@ void ctkDICOMJob::setJobResponseSets(const QList<QSharedPointer<ctkDICOMJobRespo
 void ctkDICOMJob::copyJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets)
 {
   this->JobResponseSets.clear();
-  foreach(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
+  foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
     {
     QSharedPointer<ctkDICOMJobResponseSet> jobResponseSetCopy =
       QSharedPointer<ctkDICOMJobResponseSet>(jobResponseSet->clone());

@@ -35,8 +35,8 @@
 #include "ctkDICOMServer.h"
 #include "ctkDICOMStorageListenerJob.h"
 
-int ctkDICOMJobTest1(int argc, char * argv []) {
-
+int ctkDICOMJobTest1(int argc, char* argv[])
+{
   QCoreApplication app(argc, argv);
 
   // Query Job and virtual parents (ctkDICOMJob and ctkAbstractJob)

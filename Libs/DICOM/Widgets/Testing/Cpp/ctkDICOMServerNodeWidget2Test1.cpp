@@ -36,7 +36,7 @@
 #include "ctkDICOMServer.h"
 #include "ctkDICOMServerNodeWidget2.h"
 
-int ctkDICOMServerNodeWidget2Test1( int argc, char * argv [] )
+int ctkDICOMServerNodeWidget2Test1(int argc, char* argv[])
 {
   QApplication app(argc, argv);
 

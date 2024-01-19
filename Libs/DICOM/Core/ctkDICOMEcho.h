@@ -59,7 +59,7 @@ public:
   /// Set methods for connectivity.
   /// Empty by default
   void setCallingAETitle(const QString& callingAETitle);
-  QString callingAETitle()const;
+  QString callingAETitle() const;
 
   void setCalledAETitle(const QString& calledAETitle);
   QString calledAETitle() const;

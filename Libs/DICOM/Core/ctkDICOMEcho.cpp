@@ -31,10 +31,10 @@
 // DCMTK includes
 #include <dcmtk/dcmdata/dcuid.h>
 #include <dcmtk/dcmnet/scu.h>
-#include <dcmtk/ofstd/ofstd.h>        /* for class OFStandard */
+#include <dcmtk/ofstd/ofstd.h> /* for class OFStandard */
 #include <dcmtk/ofstd/ofstring.h>
 
-static ctkLogger logger ( "org.commontk.dicom.DICOMEcho" );
+static ctkLogger logger("org.commontk.dicom.DICOMEcho");
 
 //------------------------------------------------------------------------------
 class ctkDICOMEchoPrivate
@@ -48,7 +48,7 @@ public:
   QString CalledAETitle;
   QString Host;
   int Port;
-  DcmSCU  SCU;
+  DcmSCU SCU;
 };
 
 //------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ void ctkDICOMEcho::setCalledAETitle(const QString& calledAETitle)
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMEcho::calledAETitle()const
+QString ctkDICOMEcho::calledAETitle() const
 {
   Q_D(const ctkDICOMEcho);
   return d->CalledAETitle;

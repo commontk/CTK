@@ -32,7 +32,7 @@
 #include "ctkDICOMInserterWorker_p.h"
 #include "ctkDICOMJobResponseSet.h"
 
-static ctkLogger logger ("org.commontk.dicom.ctkDICOMInserterWorker");
+static ctkLogger logger("org.commontk.dicom.ctkDICOMInserterWorker");
 
 //------------------------------------------------------------------------------
 // ctkDICOMInserterWorkerPrivate methods

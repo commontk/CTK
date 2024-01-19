@@ -30,7 +30,7 @@
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
 
-static ctkLogger logger ("org.commontk.dicom.ctkDICOMQueryWorker");
+static ctkLogger logger("org.commontk.dicom.ctkDICOMQueryWorker");
 
 //------------------------------------------------------------------------------
 // ctkDICOMQueryWorkerPrivate methods
@@ -134,7 +134,7 @@ void ctkDICOMQueryWorker::run()
                        .arg(queryJob->jobUID())
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
-  switch(queryJob->dicomLevel())
+  switch (queryJob->dicomLevel())
     {
     case ctkDICOMJob::DICOMLevels::Patients:
       if (!d->Query->queryPatients())

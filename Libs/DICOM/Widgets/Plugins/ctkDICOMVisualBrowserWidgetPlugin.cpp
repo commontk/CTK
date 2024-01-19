@@ -32,7 +32,7 @@ ctkDICOMVisualBrowserWidgetPlugin::ctkDICOMVisualBrowserWidgetPlugin(QObject* pl
 }
 
 //-----------------------------------------------------------------------------
-QWidget *ctkDICOMVisualBrowserWidgetPlugin::createWidget(QWidget *parentForWidget)
+QWidget* ctkDICOMVisualBrowserWidgetPlugin::createWidget(QWidget* parentForWidget)
 {
   ctkDICOMVisualBrowserWidget* newWidget = new ctkDICOMVisualBrowserWidget(parentForWidget);
   return newWidget;
@@ -43,7 +43,7 @@ QString ctkDICOMVisualBrowserWidgetPlugin::domXml() const
 {
   return "<widget class=\"ctkDICOMVisualBrowserWidget\" \
           name=\"VisualBrowser\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

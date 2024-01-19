@@ -34,7 +34,7 @@
 #include "ctkDICOMPatientItemWidget.h"
 
 // Test visual browser import functionality
-int ctkDICOMPatientItemWidgetTest1( int argc, char * argv [] )
+int ctkDICOMPatientItemWidgetTest1(int argc, char* argv[])
 {
   QApplication app(argc, argv);
 

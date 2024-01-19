@@ -21,7 +21,7 @@
 
 =========================================================================*/
 
-//Qt includes
+// Qt includes
 #include <QDebug>
 #include <QIcon>
 #include <QGraphicsDropShadowEffect>
@@ -48,9 +48,9 @@
 static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMSeriesItemWidget");
 
 //----------------------------------------------------------------------------
-class ctkDICOMSeriesItemWidgetPrivate: public Ui_ctkDICOMSeriesItemWidget
+class ctkDICOMSeriesItemWidgetPrivate : public Ui_ctkDICOMSeriesItemWidget
 {
-  Q_DECLARE_PUBLIC( ctkDICOMSeriesItemWidget );
+  Q_DECLARE_PUBLIC(ctkDICOMSeriesItemWidget);
 
 protected:
   ctkDICOMSeriesItemWidget* const q_ptr;
@@ -232,7 +232,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
 
   if (!this->IsCloud)
     {
-    if(this->DicomDatabase->visibleSeries().contains(this->SeriesInstanceUID))
+    if (this->DicomDatabase->visibleSeries().contains(this->SeriesInstanceUID))
       {
       this->IsVisible = true;
       }
@@ -258,7 +258,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
     // In these cases, we check if a frame has been already fetched and we use the first found one.
     if (file.isEmpty() && numberOfFiles < numberOfFrames)
       {
-      foreach(QString newFile, filesList)
+      foreach (QString newFile, filesList)
         {
         if (file.isEmpty())
           {
@@ -362,7 +362,7 @@ void ctkDICOMSeriesItemWidgetPrivate::drawModalityThumbnail()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString &file, int numberOfFrames)
+void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int numberOfFrames)
 {
   if (!this->DicomDatabase)
     {
@@ -431,7 +431,7 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString &file, int num
           {
           renderer.load(QString(":Icons/downloading.svg"));
           }
-          else
+        else
           {
           renderer.load(QString(":Icons/cloud.svg"));
           }
@@ -568,7 +568,7 @@ ctkDICOMSeriesItemWidget::~ctkDICOMSeriesItemWidget()
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setSeriesItem(const QString &seriesItem)
+void ctkDICOMSeriesItemWidget::setSeriesItem(const QString& seriesItem)
 {
   Q_D(ctkDICOMSeriesItemWidget);
   d->SeriesItem = seriesItem;
@@ -582,7 +582,7 @@ QString ctkDICOMSeriesItemWidget::seriesItem() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setPatientID(const QString &patientID)
+void ctkDICOMSeriesItemWidget::setPatientID(const QString& patientID)
 {
   Q_D(ctkDICOMSeriesItemWidget);
   d->PatientID = patientID;
@@ -752,14 +752,14 @@ static void skipDelete(QObject* obj)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMScheduler* ctkDICOMSeriesItemWidget::scheduler()const
+ctkDICOMScheduler* ctkDICOMSeriesItemWidget::scheduler() const
 {
   Q_D(const ctkDICOMSeriesItemWidget);
   return d->Scheduler.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMScheduler> ctkDICOMSeriesItemWidget::schedulerShared()const
+QSharedPointer<ctkDICOMScheduler> ctkDICOMSeriesItemWidget::schedulerShared() const
 {
   Q_D(const ctkDICOMSeriesItemWidget);
   return d->Scheduler;
@@ -812,14 +812,14 @@ void ctkDICOMSeriesItemWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> sc
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMDatabase* ctkDICOMSeriesItemWidget::dicomDatabase()const
+ctkDICOMDatabase* ctkDICOMSeriesItemWidget::dicomDatabase() const
 {
   Q_D(const ctkDICOMSeriesItemWidget);
   return d->DicomDatabase.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMDatabase> ctkDICOMSeriesItemWidget::dicomDatabaseShared()const
+QSharedPointer<ctkDICOMDatabase> ctkDICOMSeriesItemWidget::dicomDatabaseShared() const
 {
   Q_D(const ctkDICOMSeriesItemWidget);
   return d->DicomDatabase;

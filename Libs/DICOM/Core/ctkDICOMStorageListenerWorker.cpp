@@ -33,7 +33,7 @@
 #include "ctkDICOMStorageListenerJob.h"
 #include "ctkDICOMStorageListenerWorker_p.h"
 
-static ctkLogger logger ("org.commontk.dicom.ctkDICOMStorageListenerWorker");
+static ctkLogger logger("org.commontk.dicom.ctkDICOMStorageListenerWorker");
 
 //------------------------------------------------------------------------------
 // ctkDICOMStorageListenerWorkerPrivate methods
@@ -80,7 +80,7 @@ void ctkDICOMStorageListenerWorkerPrivate::init()
   // i.e. the slot should be connected to progressJobDetail from this->StorageListener.
   // The slot should have a counter. When the counter > batchLimit -> insert
   // NOTE: the memory release should happen as soon as we insert the response.
-  QTimer *timer = new QTimer(this);
+  QTimer* timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), q, SLOT(onInsertJobDetail()));
   timer->start(1000);
 }
@@ -171,7 +171,7 @@ void ctkDICOMStorageListenerWorker::setJob(QSharedPointer<ctkAbstractJob> job)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMStorageListener *ctkDICOMStorageListenerWorker::storageListener() const
+ctkDICOMStorageListener* ctkDICOMStorageListenerWorker::storageListener() const
 {
   Q_D(const ctkDICOMStorageListenerWorker);
   return d->StorageListener.data();

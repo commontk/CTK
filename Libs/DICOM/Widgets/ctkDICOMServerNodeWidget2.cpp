@@ -56,14 +56,14 @@ class QCenteredStyledItemDelegate : public QStyledItemDelegate
 {
 public:
   using QStyledItemDelegate::QStyledItemDelegate;
-  void paint(QPainter *painter,
-             const QStyleOptionViewItem &option,
-             const QModelIndex &index) const override
+  void paint(QPainter* painter,
+             const QStyleOptionViewItem& option,
+             const QModelIndex& index) const override
     {
     QStyleOptionViewItem opt = option;
-    const QWidget *widget = option.widget;
+    const QWidget* widget = option.widget;
     initStyleOption(&opt, index);
-    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
+    QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
     style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, widget);
     if (opt.features & QStyleOptionViewItem::HasCheckIndicator)
       {
@@ -107,10 +107,10 @@ public:
       }
     }
 protected:
-  bool editorEvent(QEvent *event,
-                   QAbstractItemModel *model,
-                   const QStyleOptionViewItem &option,
-                   const QModelIndex &index) override
+  bool editorEvent(QEvent* event,
+                   QAbstractItemModel* model,
+                   const QStyleOptionViewItem& option,
+                   const QModelIndex& index) override
     {
     Q_ASSERT(event);
     Q_ASSERT(model);
@@ -127,8 +127,8 @@ protected:
       {
       return false;
       }
-    const QWidget *widget = option.widget;
-    QStyle *style = option.widget ? widget->style() : QApplication::style();
+    const QWidget* widget = option.widget;
+    QStyle* style = option.widget ? widget->style() : QApplication::style();
     // make sure that we have the right event type
     if ((event->type() == QEvent::MouseButtonRelease) || (event->type() == QEvent::MouseButtonDblClick) ||
         (event->type() == QEvent::MouseButtonPress))
@@ -137,7 +137,7 @@ protected:
       initStyleOption(&viewOpt, index);
       QRect checkRect = style->subElementRect(QStyle::SE_ItemViewItemCheckIndicator, &viewOpt, widget);
       checkRect = QStyle::alignedRect(viewOpt.direction, Qt::AlignCenter, checkRect.size(), viewOpt.rect);
-      QMouseEvent *me = static_cast<QMouseEvent *>(event);
+      QMouseEvent* me = static_cast<QMouseEvent*>(event);
       if (me->button() != Qt::LeftButton || !checkRect.contains(me->pos()))
         {
         return false;
@@ -149,8 +149,8 @@ protected:
       }
     else if (event->type() == QEvent::KeyPress)
       {
-      if (static_cast<QKeyEvent *>(event)->key() != Qt::Key_Space &&
-          static_cast<QKeyEvent *>(event)->key() != Qt::Key_Select)
+      if (static_cast<QKeyEvent*>(event)->key() != Qt::Key_Space &&
+          static_cast<QKeyEvent*>(event)->key() != Qt::Key_Select)
         {
         return false;
         }
@@ -173,7 +173,7 @@ protected:
 };
 
 //----------------------------------------------------------------------------
-class ctkDICOMServerNodeWidget2Private: public Ui_ctkDICOMServerNodeWidget2
+class ctkDICOMServerNodeWidget2Private : public Ui_ctkDICOMServerNodeWidget2
 {
   Q_DECLARE_PUBLIC(ctkDICOMServerNodeWidget2);
 
@@ -189,15 +189,15 @@ public:
   void connectScheduler();
   /// Utility function that returns the storageAETitle and
   /// storagePort in a map
-  QMap<QString,QVariant> parameters()const;
+  QMap<QString, QVariant> parameters() const;
 
   /// Return the list of server names
-  QStringList serverNodes()const;
+  QStringList serverNodes() const;
   /// Return all the information associated to a server defined by its name
-  QMap<QString,QVariant> serverNodeParameters(const QString &connectionName) const;
-  QMap<QString,QVariant> serverNodeParameters(int row) const;
+  QMap<QString, QVariant> serverNodeParameters(const QString& connectionName) const;
+  QMap<QString, QVariant> serverNodeParameters(int row) const;
   QStringList getAllNodesName() const;
-  int getServerNodeRowFromConnectionName(const QString &connectionName) const;
+  int getServerNodeRowFromConnectionName(const QString& connectionName) const;
   QString getServerNodeConnectionNameFromRow(int row) const;
 
   /// Add a server node with the given parameters
@@ -205,12 +205,12 @@ public:
   int addServerNode(const QMap<QString, QVariant>& parameters);
   int addServerNode(ctkDICOMServer* server);
   QSharedPointer<ctkDICOMServer> createServerFromServerNode(const QMap<QString, QVariant>& node);
-  void updateProxyComboBoxes(const QString &connectionName, int rowCount) const;
+  void updateProxyComboBoxes(const QString& connectionName, int rowCount) const;
 
   bool SettingsModified;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
-  QPushButton *SaveButton;
-  QPushButton *RestoreButton;
+  QPushButton* SaveButton;
+  QPushButton* RestoreButton;
 };
 
 //----------------------------------------------------------------------------
@@ -255,7 +255,7 @@ void ctkDICOMServerNodeWidget2Private::init()
   this->NodeTable->setItemDelegateForColumn(ctkDICOMServerNodeWidget2::StorageColumn,
                                             new QCenteredStyledItemDelegate());
 
-  QIntValidator *validator = new QIntValidator(0, INT_MAX);
+  QIntValidator* validator = new QIntValidator(0, INT_MAX);
   this->StoragePort->setValidator(validator);
 
   q->readSettings();
@@ -325,7 +325,7 @@ void ctkDICOMServerNodeWidget2Private::connectScheduler()
 }
 
 //----------------------------------------------------------------------------
-QMap<QString,QVariant> ctkDICOMServerNodeWidget2Private::parameters()const
+QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::parameters() const
 {
   Q_Q(const ctkDICOMServerNodeWidget2);
   QMap<QString, QVariant> parameters;
@@ -337,7 +337,7 @@ QMap<QString,QVariant> ctkDICOMServerNodeWidget2Private::parameters()const
 }
 
 //----------------------------------------------------------------------------
-QStringList ctkDICOMServerNodeWidget2Private::serverNodes()const
+QStringList ctkDICOMServerNodeWidget2Private::serverNodes() const
 {
   QStringList nodes;
   int count = this->NodeTable->rowCount();
@@ -353,7 +353,7 @@ QStringList ctkDICOMServerNodeWidget2Private::serverNodes()const
 }
 
 //----------------------------------------------------------------------------
-QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(const QString &connectionName)const
+QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(const QString& connectionName) const
 {
   QMap<QString, QVariant> parameters;
   int count = this->NodeTable->rowCount();
@@ -393,22 +393,22 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(i
     this->NodeTable->item(row, ctkDICOMServerNodeWidget2::StorageColumn)->checkState() :
     static_cast<int>(Qt::Unchecked);
 
-  QLineEdit *portLineEdit = qobject_cast<QLineEdit*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::PortColumn));
+  QLineEdit* portLineEdit = qobject_cast<QLineEdit*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::PortColumn));
   if (portLineEdit)
     {
     node["Port"] = portLineEdit->text();
     }
-  QSpinBox *timeoutSpinBox = qobject_cast<QSpinBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::TimeoutColumn));
+  QSpinBox* timeoutSpinBox = qobject_cast<QSpinBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::TimeoutColumn));
   if (timeoutSpinBox)
     {
     node["Timeout"] = timeoutSpinBox->value();
     }
-  QComboBox *protocolComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProtocolColumn));
+  QComboBox* protocolComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProtocolColumn));
   if (protocolComboBox)
     {
     node["Protocol"] = protocolComboBox->currentText();
     }
-  QComboBox *proxyComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProxyColumn));
+  QComboBox* proxyComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProxyColumn));
   if (proxyComboBox)
     {
     node["Proxy"] = proxyComboBox->currentText();
@@ -431,7 +431,7 @@ QStringList ctkDICOMServerNodeWidget2Private::getAllNodesName() const
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMServerNodeWidget2Private::getServerNodeRowFromConnectionName(const QString &connectionName) const
+int ctkDICOMServerNodeWidget2Private::getServerNodeRowFromConnectionName(const QString& connectionName) const
 {
   QMap<QString, QVariant> parameters;
   int count = this->NodeTable->rowCount();
@@ -471,7 +471,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   int rowCount = this->NodeTable->rowCount();
   this->NodeTable->setRowCount(rowCount + 1);
 
-  QTableWidgetItem *newItem;
+  QTableWidgetItem* newItem;
   QString serverName = node["Name"].toString();
   newItem = new QTableWidgetItem(serverName);
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::NameColumn, newItem);
@@ -494,8 +494,8 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::AddressColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
-  QLineEdit *portLineEdit = new QLineEdit();
-  QIntValidator *validator = new QIntValidator(0, INT_MAX);
+  QLineEdit* portLineEdit = new QLineEdit();
+  QIntValidator* validator = new QIntValidator(0, INT_MAX);
   portLineEdit->setValidator(validator);
 
   portLineEdit->setObjectName("portLineEdit");
@@ -507,7 +507,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::PortColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
-  QComboBox *protocolComboBox = new QComboBox();
+  QComboBox* protocolComboBox = new QComboBox();
   protocolComboBox->setObjectName("protocolComboBox");
   protocolComboBox->addItem("CGET");
   protocolComboBox->addItem("CMOVE");
@@ -519,7 +519,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::ProtocolColumn, protocolComboBox);
 
   newItem = new QTableWidgetItem(QString(""));
-  QSpinBox *timeoutSpinBox = new QSpinBox();
+  QSpinBox* timeoutSpinBox = new QSpinBox();
   timeoutSpinBox->setObjectName("timeoutSpinBox");
   timeoutSpinBox->setValue(node["Timeout"].toInt());
   timeoutSpinBox->setMinimum(1);
@@ -533,7 +533,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
-  QComboBox *proxyComboBox = new QComboBox();
+  QComboBox* proxyComboBox = new QComboBox();
   proxyComboBox->setObjectName("proxyComboBox");
   QStringListModel* cbModel = new QStringListModel();
   proxyComboBox->setModel(cbModel);
@@ -561,7 +561,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer *server)
+int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
 {
   Q_Q(ctkDICOMServerNodeWidget2);
 
@@ -579,7 +579,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer *server)
   int rowCount = this->NodeTable->rowCount();
   this->NodeTable->setRowCount(rowCount + 1);
 
-  QTableWidgetItem *newItem;
+  QTableWidgetItem* newItem;
   newItem = new QTableWidgetItem(server->connectionName());
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::NameColumn, newItem);
 
@@ -601,8 +601,8 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer *server)
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::AddressColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
-  QLineEdit *portLineEdit = new QLineEdit();
-  QIntValidator *validator = new QIntValidator(0, INT_MAX);
+  QLineEdit* portLineEdit = new QLineEdit();
+  QIntValidator* validator = new QIntValidator(0, INT_MAX);
   portLineEdit->setValidator(validator);
 
   portLineEdit->setObjectName("portLineEdit");
@@ -614,7 +614,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer *server)
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::PortColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
-  QComboBox *protocolComboBox = new QComboBox();
+  QComboBox* protocolComboBox = new QComboBox();
   protocolComboBox->addItem("CGET");
   protocolComboBox->addItem("CMOVE");
   protocolComboBox->setCurrentIndex(protocolComboBox->findText(server->retrieveProtocolAsString()));
@@ -625,7 +625,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer *server)
   this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::ProtocolColumn, protocolComboBox);
 
   newItem = new QTableWidgetItem(QString(""));
-  QSpinBox *timeoutSpinBox = new QSpinBox();
+  QSpinBox* timeoutSpinBox = new QSpinBox();
   timeoutSpinBox->setObjectName("timeoutSpinBox");
   timeoutSpinBox->setValue(server->connectionTimeout());
   timeoutSpinBox->setMinimum(1);
@@ -640,7 +640,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer *server)
 
 
   newItem = new QTableWidgetItem(QString(""));
-  QComboBox *proxyComboBox = new QComboBox();
+  QComboBox* proxyComboBox = new QComboBox();
   QStringListModel* cbModel = new QStringListModel();
   proxyComboBox->setModel(cbModel);
 
@@ -682,7 +682,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer *server)
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMServer> ctkDICOMServerNodeWidget2Private::createServerFromServerNode(const QMap<QString, QVariant> &node)
+QSharedPointer<ctkDICOMServer> ctkDICOMServerNodeWidget2Private::createServerFromServerNode(const QMap<QString, QVariant>& node)
 {
   QSharedPointer<ctkDICOMServer> server =
     QSharedPointer<ctkDICOMServer>(new ctkDICOMServer);
@@ -701,11 +701,11 @@ QSharedPointer<ctkDICOMServer> ctkDICOMServerNodeWidget2Private::createServerFro
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServerNodeWidget2Private::updateProxyComboBoxes(const QString &connectionName, int rowCount) const
+void ctkDICOMServerNodeWidget2Private::updateProxyComboBoxes(const QString& connectionName, int rowCount) const
 {
   for (int row = 0; row < rowCount; ++row)
     {
-    QComboBox *proxyComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProxyColumn));
+    QComboBox* proxyComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProxyColumn));
     if (proxyComboBox)
       {
       QStringListModel* cbModel = qobject_cast<QStringListModel*>(proxyComboBox->model());
@@ -746,7 +746,7 @@ int ctkDICOMServerNodeWidget2::onAddServerNode()
   d->NodeTable->setRowCount(rowCount + 1);
 
   QString serverName = "server";
-  QTableWidgetItem *newItem = new QTableWidgetItem(serverName);
+  QTableWidgetItem* newItem = new QTableWidgetItem(serverName);
   d->NodeTable->setItem(rowCount, NameColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
@@ -767,8 +767,8 @@ int ctkDICOMServerNodeWidget2::onAddServerNode()
   d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::AddressColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
-  QLineEdit *portLineEdit = new QLineEdit();
-  QIntValidator *validator = new QIntValidator(0, INT_MAX);
+  QLineEdit* portLineEdit = new QLineEdit();
+  QIntValidator* validator = new QIntValidator(0, INT_MAX);
   portLineEdit->setValidator(validator);
 
   portLineEdit->setObjectName("portLineEdit");
@@ -780,7 +780,7 @@ int ctkDICOMServerNodeWidget2::onAddServerNode()
   d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::PortColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
-  QComboBox *protocolComboBox = new QComboBox();
+  QComboBox* protocolComboBox = new QComboBox();
   protocolComboBox->setObjectName("protocolComboBox");
   protocolComboBox->addItem("CGET");
   protocolComboBox->addItem("CMOVE");
@@ -792,7 +792,7 @@ int ctkDICOMServerNodeWidget2::onAddServerNode()
   d->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::ProtocolColumn, protocolComboBox);
 
   newItem = new QTableWidgetItem(QString(""));
-  QSpinBox *timeoutSpinBox = new QSpinBox();
+  QSpinBox* timeoutSpinBox = new QSpinBox();
   timeoutSpinBox->setObjectName("timeoutSpinBox");
   timeoutSpinBox->setValue(10);
   timeoutSpinBox->setMinimum(1);
@@ -806,7 +806,7 @@ int ctkDICOMServerNodeWidget2::onAddServerNode()
   d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TimeoutColumn, newItem);
 
   newItem = new QTableWidgetItem(QString(""));
-  QComboBox *proxyComboBox = new QComboBox();
+  QComboBox* proxyComboBox = new QComboBox();
   proxyComboBox->setObjectName("proxyComboBox");
   QStringListModel* cbModel = new QStringListModel();
   proxyComboBox->setModel(cbModel);
@@ -1106,7 +1106,7 @@ void ctkDICOMServerNodeWidget2::setStorageAETitle(const QString& storageAETitle)
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMServerNodeWidget2::storageAETitle()const
+QString ctkDICOMServerNodeWidget2::storageAETitle() const
 {
   Q_D(const ctkDICOMServerNodeWidget2);
   return d->StorageAETitle->text();
@@ -1121,7 +1121,7 @@ void ctkDICOMServerNodeWidget2::setStoragePort(int storagePort)
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMServerNodeWidget2::storagePort()const
+int ctkDICOMServerNodeWidget2::storagePort() const
 {
   Q_D(const ctkDICOMServerNodeWidget2);
   bool ok = false;
@@ -1139,14 +1139,14 @@ static void skipDelete(QObject* obj)
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMScheduler* ctkDICOMServerNodeWidget2::scheduler()const
+ctkDICOMScheduler* ctkDICOMServerNodeWidget2::scheduler() const
 {
   Q_D(const ctkDICOMServerNodeWidget2);
   return d->Scheduler.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMScheduler> ctkDICOMServerNodeWidget2::schedulerShared()const
+QSharedPointer<ctkDICOMScheduler> ctkDICOMServerNodeWidget2::schedulerShared() const
 {
   Q_D(const ctkDICOMServerNodeWidget2);
   return d->Scheduler;

@@ -21,7 +21,7 @@
 
 =========================================================================*/
 
-//Qt includes
+// Qt includes
 #include <QDebug>
 #include <QTableWidget>
 
@@ -49,9 +49,9 @@ static void skipDelete(QObject* obj)
 }
 
 //----------------------------------------------------------------------------
-class ctkDICOMPatientItemWidgetPrivate: public Ui_ctkDICOMPatientItemWidget
+class ctkDICOMPatientItemWidgetPrivate : public Ui_ctkDICOMPatientItemWidget
 {
-  Q_DECLARE_PUBLIC( ctkDICOMPatientItemWidget );
+  Q_DECLARE_PUBLIC(ctkDICOMPatientItemWidget);
 
 protected:
   ctkDICOMPatientItemWidget* const q_ptr;
@@ -110,7 +110,7 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
 //----------------------------------------------------------------------------
 ctkDICOMPatientItemWidgetPrivate::~ctkDICOMPatientItemWidgetPrivate()
 {
-  QLayout *StudiesListWidgetLayout = this->StudiesListWidget->layout();
+  QLayout* StudiesListWidgetLayout = this->StudiesListWidget->layout();
   this->clearLayout(StudiesListWidgetLayout);
 }
 
@@ -159,7 +159,7 @@ QString ctkDICOMPatientItemWidgetPrivate::formatDate(const QString& date)
 }
 
 //----------------------------------------------------------------------------
-bool ctkDICOMPatientItemWidgetPrivate::isStudyItemAlreadyAdded(const QString &studyItem)
+bool ctkDICOMPatientItemWidgetPrivate::isStudyItemAlreadyAdded(const QString& studyItem)
 {
   bool alreadyAdded = false;
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, this->StudyItemWidgetsList)
@@ -180,7 +180,7 @@ bool ctkDICOMPatientItemWidgetPrivate::isStudyItemAlreadyAdded(const QString &st
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMPatientItemWidgetPrivate::clearLayout(QLayout *layout, bool deleteWidgets)
+void ctkDICOMPatientItemWidgetPrivate::clearLayout(QLayout* layout, bool deleteWidgets)
 {
   Q_Q(ctkDICOMPatientItemWidget);
 
@@ -232,7 +232,7 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
     return;
     }
 
-  QLayout *studiesListWidgetLayout = this->StudiesListWidget->layout();
+  QLayout* studiesListWidgetLayout = this->StudiesListWidget->layout();
   if (this->PatientItem.isEmpty())
     {
     this->PatientNameValueLabel->setText("");
@@ -341,7 +341,7 @@ ctkDICOMPatientItemWidget::~ctkDICOMPatientItemWidget()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::setPatientItem(const QString &patientItem)
+void ctkDICOMPatientItemWidget::setPatientItem(const QString& patientItem)
 {
   Q_D(ctkDICOMPatientItemWidget);
   d->PatientItem = patientItem;
@@ -355,7 +355,7 @@ QString ctkDICOMPatientItemWidget::patientItem() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::setPatientID(const QString &patientID)
+void ctkDICOMPatientItemWidget::setPatientID(const QString& patientID)
 {
   Q_D(ctkDICOMPatientItemWidget);
   d->PatientID = patientID;
@@ -383,7 +383,7 @@ QString ctkDICOMPatientItemWidget::filteringStudyDescription() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::setFilteringDate(const ctkDICOMPatientItemWidget::DateType &filteringDate)
+void ctkDICOMPatientItemWidget::setFilteringDate(const ctkDICOMPatientItemWidget::DateType& filteringDate)
 {
   Q_D(ctkDICOMPatientItemWidget);
   d->FilteringDate = filteringDate;
@@ -411,7 +411,7 @@ QString ctkDICOMPatientItemWidget::filteringSeriesDescription() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::setFilteringModalities(const QStringList &filteringModalities)
+void ctkDICOMPatientItemWidget::setFilteringModalities(const QStringList& filteringModalities)
 {
   Q_D(ctkDICOMPatientItemWidget);
   d->FilteringModalities = filteringModalities;
@@ -439,7 +439,7 @@ int ctkDICOMPatientItemWidget::numberOfStudiesPerPatient() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption &thumbnailSize)
+void ctkDICOMPatientItemWidget::setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize)
 {
   Q_D(ctkDICOMPatientItemWidget);
   d->ThumbnailSize = thumbnailSize;
@@ -453,14 +453,14 @@ ctkDICOMStudyItemWidget::ThumbnailSizeOption ctkDICOMPatientItemWidget::thumbnai
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMScheduler* ctkDICOMPatientItemWidget::scheduler()const
+ctkDICOMScheduler* ctkDICOMPatientItemWidget::scheduler() const
 {
   Q_D(const ctkDICOMPatientItemWidget);
   return d->Scheduler.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMScheduler> ctkDICOMPatientItemWidget::schedulerShared()const
+QSharedPointer<ctkDICOMScheduler> ctkDICOMPatientItemWidget::schedulerShared() const
 {
   Q_D(const ctkDICOMPatientItemWidget);
   return d->Scheduler;
@@ -505,14 +505,14 @@ void ctkDICOMPatientItemWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> s
 }
 
 //----------------------------------------------------------------------------
-ctkDICOMDatabase* ctkDICOMPatientItemWidget::dicomDatabase()const
+ctkDICOMDatabase* ctkDICOMPatientItemWidget::dicomDatabase() const
 {
   Q_D(const ctkDICOMPatientItemWidget);
   return d->DicomDatabase.data();
 }
 
 //----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMDatabase> ctkDICOMPatientItemWidget::dicomDatabaseShared()const
+QSharedPointer<ctkDICOMDatabase> ctkDICOMPatientItemWidget::dicomDatabaseShared() const
 {
   Q_D(const ctkDICOMPatientItemWidget);
   return d->DicomDatabase;
@@ -533,7 +533,7 @@ void ctkDICOMPatientItemWidget::setDicomDatabase(QSharedPointer<ctkDICOMDatabase
 }
 
 //------------------------------------------------------------------------------
-QList<ctkDICOMStudyItemWidget *> ctkDICOMPatientItemWidget::studyItemWidgetsList() const
+QList<ctkDICOMStudyItemWidget*> ctkDICOMPatientItemWidget::studyItemWidgetsList() const
 {
   Q_D(const ctkDICOMPatientItemWidget);
   return d->StudyItemWidgetsList;
@@ -569,7 +569,7 @@ int ctkDICOMPatientItemWidget::getNDaysFromFilteringDate(DateType FilteringDate)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString &studyItem)
+void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
 {
   Q_D(ctkDICOMPatientItemWidget);
 
@@ -640,13 +640,13 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString &studyItem)
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::removeStudyItemWidget(const QString &studyItem)
+void ctkDICOMPatientItemWidget::removeStudyItemWidget(const QString& studyItem)
 {
   Q_D(ctkDICOMPatientItemWidget);
 
   for (int studyIndex = 0; studyIndex < d->StudyItemWidgetsList.size(); ++studyIndex)
     {
-    ctkDICOMStudyItemWidget *studyItemWidget =
+    ctkDICOMStudyItemWidget* studyItemWidget =
       qobject_cast<ctkDICOMStudyItemWidget*>(d->StudyItemWidgetsList[studyIndex]);
     if (!studyItemWidget || studyItemWidget->studyItem() != studyItem)
       {
@@ -719,17 +719,17 @@ void ctkDICOMPatientItemWidget::raiseSelectedSeriesJobsPriority()
     return;
     }
 
-  QList<ctkDICOMSeriesItemWidget *> seriesWidgets;
-  QList<ctkDICOMSeriesItemWidget *> selectedSeriesWidgets;
-  foreach (ctkDICOMStudyItemWidget *studyItemWidget, d->StudyItemWidgetsList)
+  QList<ctkDICOMSeriesItemWidget*> seriesWidgets;
+  QList<ctkDICOMSeriesItemWidget*> selectedSeriesWidgets;
+  foreach (ctkDICOMStudyItemWidget* studyItemWidget, d->StudyItemWidgetsList)
     {
     if (!studyItemWidget)
       {
       continue;
       }
 
-    QTableWidget *seriesListTableWidget = studyItemWidget->seriesListTableWidget();
-     for (int row = 0; row < seriesListTableWidget->rowCount(); row++)
+    QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
+    for (int row = 0; row < seriesListTableWidget->rowCount(); row++)
       {
       for (int column = 0; column < seriesListTableWidget->columnCount(); column++)
         {
@@ -740,7 +740,7 @@ void ctkDICOMPatientItemWidget::raiseSelectedSeriesJobsPriority()
       }
 
     QList<QTableWidgetItem*> selectedItems = seriesListTableWidget->selectedItems();
-    foreach (QTableWidgetItem *selectedItem, selectedItems)
+    foreach (QTableWidgetItem* selectedItem, selectedItems)
       {
       if (!selectedItem)
         {
@@ -797,14 +797,14 @@ void ctkDICOMPatientItemWidget::onSeriesItemClicked()
     return;
     }
 
-  foreach (ctkDICOMStudyItemWidget *studyItemWidget, d->StudyItemWidgetsList)
+  foreach (ctkDICOMStudyItemWidget* studyItemWidget, d->StudyItemWidgetsList)
     {
     if (!studyItemWidget)
       {
       continue;
       }
 
-    QTableWidget *studySeriesTable = studyItemWidget->seriesListTableWidget();
+    QTableWidget* studySeriesTable = studyItemWidget->seriesListTableWidget();
     if (studySeriesTable == seriesTable)
       {
       continue;

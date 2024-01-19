@@ -67,8 +67,8 @@ public:
   /// StartDate   DCM_StudyDate            QString     20090101
   /// EndDate     DCM_StudyDate            QString     20091231
   /// No filter (empty) by default.
-  Q_INVOKABLE void setFilters(const QMap<QString, QVariant> &filters);
-  Q_INVOKABLE QMap<QString, QVariant> filters()const;
+  Q_INVOKABLE void setFilters(const QMap<QString, QVariant>& filters);
+  Q_INVOKABLE QMap<QString, QVariant> filters() const;
   ///@}
 
   ///@{

@@ -34,7 +34,7 @@
 static ctkLogger logger("org.commontk.dicom.DICOMTaskResults");
 
 //------------------------------------------------------------------------------
-class ctkDICOMJobResponseSetPrivate: public QObject
+class ctkDICOMJobResponseSetPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(ctkDICOMJobResponseSet);
 
@@ -98,7 +98,7 @@ ctkDICOMJobResponseSet::ctkDICOMJobResponseSet(QObject* parent)
 ctkDICOMJobResponseSet::~ctkDICOMJobResponseSet() = default;
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setFilePath(const QString &filePath)
+void ctkDICOMJobResponseSet::setFilePath(const QString& filePath)
 {
   Q_D(ctkDICOMJobResponseSet);
   d->FilePath = filePath;
@@ -169,7 +169,7 @@ ctkDICOMJobResponseSet::JobType ctkDICOMJobResponseSet::jobType() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setJobUID(const QString &jobUID)
+void ctkDICOMJobResponseSet::setJobUID(const QString& jobUID)
 {
   Q_D(ctkDICOMJobResponseSet);
   d->JobUID = jobUID;
@@ -239,7 +239,7 @@ QString ctkDICOMJobResponseSet::sopInstanceUID() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setConnectionName(const QString &connectionName)
+void ctkDICOMJobResponseSet::setConnectionName(const QString& connectionName)
 {
   Q_D(ctkDICOMJobResponseSet);
   d->ConnectionName = connectionName;
@@ -253,7 +253,7 @@ QString ctkDICOMJobResponseSet::connectionName() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setDataset(DcmItem *dcmItem, bool takeOwnership)
+void ctkDICOMJobResponseSet::setDataset(DcmItem* dcmItem, bool takeOwnership)
 {
   Q_D(ctkDICOMJobResponseSet);
   if (!dcmItem)
@@ -271,7 +271,7 @@ void ctkDICOMJobResponseSet::setDataset(DcmItem *dcmItem, bool takeOwnership)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMItem *ctkDICOMJobResponseSet::dataset() const
+ctkDICOMItem* ctkDICOMJobResponseSet::dataset() const
 {
   Q_D(const ctkDICOMJobResponseSet);
   if (d->Datasets.count() == 0)
@@ -293,12 +293,12 @@ QSharedPointer<ctkDICOMItem> ctkDICOMJobResponseSet::datasetShared() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setDatasets(const QMap<QString, DcmItem *>& dcmItems, bool takeOwnership)
+void ctkDICOMJobResponseSet::setDatasets(const QMap<QString, DcmItem*>& dcmItems, bool takeOwnership)
 {
   Q_D(ctkDICOMJobResponseSet);
-  for(const QString& key : dcmItems.keys())
+  for (const QString& key : dcmItems.keys())
     {
-    DcmItem *dcmItem = dcmItems.value(key);
+    DcmItem* dcmItem = dcmItems.value(key);
     if (!dcmItem)
       {
       continue;
@@ -318,7 +318,7 @@ QMap<QString, ctkDICOMItem*> ctkDICOMJobResponseSet::datasets() const
   Q_D(const ctkDICOMJobResponseSet);
   QMap<QString, ctkDICOMItem*> datasets;
 
-  for(const QString& key : d->Datasets.keys())
+  for (const QString& key : d->Datasets.keys())
     {
     QSharedPointer<ctkDICOMItem> dcmItem = d->Datasets.value(key);
     if (!dcmItem)
@@ -356,8 +356,8 @@ ctkDICOMJobResponseSet* ctkDICOMJobResponseSet::clone()
   newJobResponseSet->setConnectionName(this->connectionName());
 
   // Clone datasets
-  QMap<QString, ctkDICOMItem *> datasets = this->datasets();
-  for(const QString& key : datasets.keys())
+  QMap<QString, ctkDICOMItem*> datasets = this->datasets();
+  for (const QString& key : datasets.keys())
     {
     ctkDICOMItem* dataset = datasets.value(key);
     if (!dataset)
