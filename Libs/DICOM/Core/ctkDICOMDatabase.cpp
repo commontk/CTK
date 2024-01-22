@@ -159,16 +159,15 @@ bool ctkDICOMDatabasePrivate::loggedExec(QSqlQuery& query, const QString& queryS
   {
     success = query.exec();
   }
+
   if (!success)
   {
-    QSqlError sqlError = query.lastError();
-    logger.debug("SQL failed\n Bad SQL: " + query.lastQuery());
-    logger.debug("Error text: " + sqlError.text());
+    QString sqlError = query.lastError().text();
+    QString lastQuery = query.lastQuery();
+    logger.error(QString("SQL failed: \n%1 \nError: \n%2")
+      .arg(lastQuery).arg(sqlError));
   }
-  else
-  {
-    logger.debug("SQL worked!\n SQL: " + query.lastQuery());
-  }
+
   return (success);
 }
 
@@ -179,13 +178,10 @@ bool ctkDICOMDatabasePrivate::loggedExecBatch(QSqlQuery& query)
   success = query.execBatch();
   if (!success)
   {
-    QSqlError sqlError = query.lastError();
-    logger.debug( "SQL failed\n Bad SQL: " + query.lastQuery());
-    logger.debug( "Error text: " + sqlError.text());
-  }
-  else
-  {
-    logger.debug("SQL worked!\n SQL: " + query.lastQuery());
+    QString sqlError = query.lastError().text();
+    QString lastQuery = query.lastQuery();
+    logger.error(QString("SQL failed: \n%1 \nError: \n%2")
+      .arg(lastQuery).arg(sqlError));
   }
   return (success);
 }
@@ -280,7 +276,6 @@ bool ctkDICOMDatabasePrivate::executeScript(const QString script)
   {
     if (! (*it).startsWith("--") )
     {
-      logger.debug(*it + "\n");
       query.exec(*it);
       if (query.lastError().type())
       {
@@ -834,8 +829,6 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
   QString sopInstanceUID(dataset.GetElementAsString(DCM_SOPInstanceUID));
 
   // Check to see if the file has already been loaded
-  logger.debug("inserting filePath: " + filePath);
-
   // Check if the file has been already indexed and skip indexing if it is
   bool datasetInDatabase = false;
   bool datasetUpToDate = false;
@@ -884,7 +877,6 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
   bool databaseWasChanged = this->insertPatientStudySeries(dataset, patientID, patientsName);
   if (!sopInstanceUID.isEmpty() && !seriesInstanceUID.isEmpty() && !storedFilePath.isEmpty())
   {
-    logger.debug("Maybe add Instance");
     bool alreadyInserted = false;
     if (!storeFile)
     {
@@ -933,7 +925,6 @@ void ctkDICOMDatabasePrivate::insert(const ctkDICOMItem& dataset, const QString&
       // let users of this class track when things happen
       emit q->instanceAdded(sopInstanceUID);
 
-      logger.debug("Instance Added");
       databaseWasChanged = true;
     }
     if (generateThumbnail)
@@ -2377,8 +2368,6 @@ void ctkDICOMDatabase::insert( const QString& filePath, bool storeFile, bool gen
     return;
   }
 
-  logger.debug( "Processing " + filePath );
-
   ctkDICOMItem dataset;
 
   dataset.InitializeFromFile(filePath);
@@ -2517,7 +2506,6 @@ void ctkDICOMDatabase::insert(const QList<ctkDICOMDatabase::IndexingResult>& ind
       insertImageStatement.addBindValue(QDateTime::currentDateTime());
       insertImageStatement.exec();
       emit instanceAdded(sopInstanceUID);
-      logger.debug( "Instance Added" );
       databaseWasChanged = true;
 
       if (generateThumbnail)
@@ -2737,7 +2725,6 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
           (!storedFilePath.isEmpty() ||
           !url.isEmpty()))
       {
-        logger.debug( "Maybe add Instance" );
         bool alreadyInserted = false;
         if (!storeFile)
         {
@@ -2785,7 +2772,6 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
 
           // let users of this class track when things happen
           emit instanceAdded(sopInstanceUID);
-          logger.debug( "Instance Added" );
           databaseWasChanged = true;
         }
         if (generateThumbnail)
@@ -2971,7 +2957,6 @@ bool ctkDICOMDatabase::removeSeries(const QString& seriesInstanceUID, bool clear
       {
         if (file.remove())
         {
-          logger.debug("Removed file " + absPath);
           QString fileFolder = QFileInfo(absPath).absoluteDir().path();
           if (foldersToRemove.isEmpty() || foldersToRemove.last() != fileFolder)
           {
