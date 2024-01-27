@@ -60,7 +60,8 @@ def ctk_compile_file(fullname, ddir=None, force=0, rx=None, quiet=0):
             if not quiet:
                 print('Compiling', fullname, '...')
             try:
-                ok = py_compile.compile(fullname, None, dfile, True)
+                cfile = fullname + (__debug__ and 'c' or 'o')
+                ok = py_compile.compile(fullname, cfile, dfile, True)
             except py_compile.PyCompileError as err:
                 if quiet:
                     print('Compiling', fullname, '...')
