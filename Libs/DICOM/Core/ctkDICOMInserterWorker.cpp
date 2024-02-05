@@ -83,7 +83,7 @@ ctkDICOMInserterWorker::ctkDICOMInserterWorker(ctkDICOMInserterWorkerPrivate* pi
 ctkDICOMInserterWorker::~ctkDICOMInserterWorker() = default;
 
 //----------------------------------------------------------------------------
-void ctkDICOMInserterWorker::cancel()
+void ctkDICOMInserterWorker::requestCancel()
 {
   Q_D(const ctkDICOMInserterWorker);
   d->Inserter->cancel();
@@ -100,14 +100,13 @@ void ctkDICOMInserterWorker::run()
     return;
   }
 
-  if (inserterJob->status() == ctkAbstractJob::JobStatus::Stopped)
+  if (d->Inserter->wasCanceled())
   {
-    this->onJobCanceled();
+    this->onJobCanceled(d->Inserter->wasCanceled());
     return;
   }
 
   inserterJob->setStatus(ctkAbstractJob::JobStatus::Running);
-  emit inserterJob->started();
 
   logger.debug(QString("ctkDICOMInserterWorker : running job %1 in thread %2.\n")
                        .arg(inserterJob->jobUID())
@@ -116,9 +115,9 @@ void ctkDICOMInserterWorker::run()
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets = inserterJob->jobResponseSetsShared();
   d->Inserter->addJobResponseSets(jobResponseSets);
 
-  if (inserterJob->status() == ctkAbstractJob::JobStatus::Stopped)
+  if (d->Inserter->wasCanceled())
   {
-    this->onJobCanceled();
+    this->onJobCanceled(d->Inserter->wasCanceled());
     return;
   }
 
@@ -128,7 +127,6 @@ void ctkDICOMInserterWorker::run()
   }
 
   inserterJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-  emit inserterJob->finished();
 }
 
 //----------------------------------------------------------------------------

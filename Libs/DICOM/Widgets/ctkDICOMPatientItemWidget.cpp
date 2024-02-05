@@ -30,8 +30,9 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
-#include "ctkDICOMScheduler.h"
+#include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
+#include "ctkDICOMScheduler.h"
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMSeriesItemWidget.h"
@@ -85,6 +86,7 @@ public:
   QStringList FilteringModalities;
 
   QList<ctkDICOMStudyItemWidget*> StudyItemWidgetsList;
+  bool IsGUIUpdating;
 };
 
 //----------------------------------------------------------------------------
@@ -105,6 +107,8 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
   this->VisualDICOMBrowser = nullptr;
+
+  this->IsGUIUpdating = false;
 }
 
 //----------------------------------------------------------------------------
@@ -225,6 +229,10 @@ void ctkDICOMPatientItemWidgetPrivate::clearLayout(QLayout* layout, bool deleteW
 void ctkDICOMPatientItemWidgetPrivate::createStudies()
 {
   Q_Q(ctkDICOMPatientItemWidget);
+  if (this->IsGUIUpdating)
+  {
+    return;
+  }
 
   if (!this->DicomDatabase)
   {
@@ -252,14 +260,27 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
   }
 
   QStringList studiesList = this->DicomDatabase->studiesForPatient(this->PatientItem);
-
   if (studiesList.count() == 0)
   {
     return;
   }
 
-  // Filter with studyDescription and studyDate and sort by Date
-  QMap<long long, QString> studiesMap;
+  this->IsGUIUpdating = true;
+
+  // Remove study widgets from vertical layout (need sorting)
+  for (int studyIndex = 0; studyIndex < this->StudyItemWidgetsList.size(); ++studyIndex)
+  {
+    ctkDICOMStudyItemWidget* studyItemWidget =
+        qobject_cast<ctkDICOMStudyItemWidget*>(this->StudyItemWidgetsList[studyIndex]);
+    if (!studyItemWidget)
+    {
+      continue;
+    }
+
+    this->StudiesListWidget->layout()->removeWidget(studyItemWidget);
+  }
+
+  // Filter with studyDescription and studyDate
   foreach (QString studyItem, studiesList)
   {
     if (this->isStudyItemAlreadyAdded(studyItem))
@@ -279,11 +300,7 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
 
     if (studyDateString.isEmpty())
     {
-      studyDateString = this->DicomDatabase->fieldForPatient("PatientsBirthDate", this->PatientItem);
-      if (studyDateString.isEmpty())
-      {
-        studyDateString = "19000101";
-      }
+      studyDateString = QDate::currentDate().toString("yyyyMMdd");
     }
 
     if ((!this->FilteringStudyDescription.isEmpty() &&
@@ -303,24 +320,55 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
         continue;
       }
     }
-    long long date = studyDate.toJulianDay();
-    while (studiesMap.contains(date))
-    {
-      date++;
-    }
-    // QMap automatically sort in ascending with the key,
-    // but we want descending (latest study should be in the first row)
-    long long key = LLONG_MAX - date;
-    studiesMap[key] = studyItem;
+
+    q->addStudyItemWidget(studyItem);
   }
 
-  foreach (QString studyItem, studiesMap)
+  // sort by date
+  QMap<long long, ctkDICOMStudyItemWidget*> studiesMap;
+  for (int studyIndex = 0; studyIndex < this->StudyItemWidgetsList.size(); ++studyIndex)
   {
-    q->addStudyItemWidget(studyItem);
+    ctkDICOMStudyItemWidget* studyItemWidget =
+        qobject_cast<ctkDICOMStudyItemWidget*>(this->StudyItemWidgetsList[studyIndex]);
+    if (!studyItemWidget)
+    {
+      continue;
+    }
+
+    QString studyItem = studyItemWidget->studyItem();
+    QString studyDateString = this->DicomDatabase->fieldForStudy("StudyDate", studyItem);
+    studyDateString.replace(QString("-"), QString(""));
+    QDate studyDate = QDate::fromString(studyDateString, "yyyyMMdd");
+    long long julianDate = studyDate.toJulianDay();
+    // Add some significance zeros to the sorting key
+    julianDate *= 100;
+    // QMap automatically sort in ascending with the key,
+    // but we want descending (latest study should be in the first row)
+    long long key = LLONG_MAX - julianDate;
+    // Increase the key if JulianDay is already present
+    while (studiesMap.contains(key))
+    {
+      key++;
+    }
+
+    studiesMap[key] = studyItemWidget;
+  }
+
+  int cont = 0;
+  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studiesMap)
+  {
+    this->StudiesListWidget->layout()->addWidget(studyItemWidget);
+    if (cont < this->NumberOfStudiesPerPatient)
+    {
+      studyItemWidget->setCollapsed(false);
+    }
+    cont++;
   }
 
   QSpacerItem* verticalSpacer = new QSpacerItem(0, 5, QSizePolicy::Fixed, QSizePolicy::Expanding);
   studiesListWidgetLayout->addItem(verticalSpacer);
+
+  this->IsGUIUpdating = false;
 }
 
 //----------------------------------------------------------------------------
@@ -612,18 +660,9 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   studyItemWidget->setFilteringModalities(d->FilteringModalities);
   studyItemWidget->setDicomDatabase(d->DicomDatabase);
   studyItemWidget->setScheduler(d->Scheduler);
-  // Show in default (and start query/retrieve) only for the first 2 studies
-  // NOTE: in the layout for each studyItemWidget there is a QSpacerItem
-  if (d->StudiesListWidget->layout()->count() < d->NumberOfStudiesPerPatient * 2)
-  {
-    studyItemWidget->generateSeries();
-  }
-  else
-  {
-    studyItemWidget->setCollapsed(true);
-    this->connect(studyItemWidget->collapsibleGroupBox(), SIGNAL(toggled(bool)),
-                  studyItemWidget, SLOT(generateSeries(bool)));
-  }
+  studyItemWidget->setCollapsed(true);
+  this->connect(studyItemWidget->collapsibleGroupBox(), SIGNAL(toggled(bool)),
+                studyItemWidget, SLOT(generateSeries(bool)));
   studyItemWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
   this->connect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemDoubleClicked(QTableWidgetItem *)),
@@ -635,7 +674,6 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   this->connect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemSelectionChanged()),
                 this, SLOT(raiseSelectedSeriesJobsPriority()));
 
-  d->StudiesListWidget->layout()->addWidget(studyItemWidget);
   d->StudyItemWidgetsList.append(studyItemWidget);
 }
 
@@ -662,7 +700,7 @@ void ctkDICOMPatientItemWidget::removeStudyItemWidget(const QString& studyItem)
     d->StudyItemWidgetsList.removeOne(studyItemWidget);
     delete studyItemWidget;
     break;
-  }
+    }
 }
 
 //------------------------------------------------------------------------------

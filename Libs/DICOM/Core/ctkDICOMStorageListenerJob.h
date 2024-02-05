@@ -77,6 +77,9 @@ public:
   /// Generate worker for job
   Q_INVOKABLE ctkAbstractWorker* createWorker() override;
 
+  /// Return job type.
+  Q_INVOKABLE virtual ctkDICOMJobResponseSet::JobType getJobType() const override;
+
 protected:
   QScopedPointer<ctkDICOMStorageListenerJobPrivate> d_ptr;
 

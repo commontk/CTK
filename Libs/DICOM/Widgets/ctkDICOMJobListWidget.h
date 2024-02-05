@@ -55,6 +55,7 @@ public:
   void setScheduler(QSharedPointer<ctkDICOMScheduler> scheduler);
 
 public Q_SLOTS:
+  void onJobInitialized(QVariant);
   void onJobQueued(QVariant);
   void onJobStarted(QVariant);
   void onJobCanceled(QVariant);

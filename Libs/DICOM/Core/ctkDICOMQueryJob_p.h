@@ -45,7 +45,7 @@ public:
   ctkDICOMQueryJobPrivate(ctkDICOMQueryJob* object);
   virtual ~ctkDICOMQueryJobPrivate();
 
-  QSharedPointer<ctkDICOMServer> Server;
+  ctkDICOMServer* Server;
   QMap<QString, QVariant> Filters;
   int MaximumPatientsQuery;
 };

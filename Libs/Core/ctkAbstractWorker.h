@@ -25,6 +25,7 @@
 #define __ctkAbstractWorker_h
 
 // Qt includes
+#include <QMutex>
 #include <QRunnable>
 #include <QSharedPointer>
 
@@ -44,14 +45,15 @@ public:
   explicit ctkAbstractWorker();
   virtual ~ctkAbstractWorker();
 
-  /// Execute worker
+  /// Execute worker. This method is run by the QThreadPool and is thread safe
   virtual void run() = 0;
 
-  /// Cancel worker
-  virtual void cancel() = 0;
+  /// Cancel worker. This method is thread safe
+  virtual void requestCancel() = 0;
 
   ///@{
-  /// Job
+  /// Job.
+  /// These methods are not thread safe
   Q_INVOKABLE ctkAbstractJob* job() const;
   QSharedPointer<ctkAbstractJob> jobShared() const;
   Q_INVOKABLE void setJob(ctkAbstractJob& job);
@@ -60,6 +62,7 @@ public:
 
   ///@{
   /// Scheduler
+  /// These methods are not thread safe
   Q_INVOKABLE ctkJobScheduler* scheduler() const;
   QSharedPointer<ctkJobScheduler> schedulerShared() const;
   Q_INVOKABLE void setScheduler(ctkJobScheduler& scheduler);
@@ -67,8 +70,9 @@ public:
   ///@}
 
 public slots:
+  /// These slots are thread safe
   virtual void startNextJob();
-  virtual void onJobCanceled();
+  virtual void onJobCanceled(const bool& wasCanceled);
 
 protected:
   QSharedPointer<ctkAbstractJob> Job;

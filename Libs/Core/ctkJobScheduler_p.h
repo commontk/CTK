@@ -43,6 +43,12 @@ class CTK_CORE_EXPORT ctkJobSchedulerPrivate : public QObject
 protected:
   ctkJobScheduler* const q_ptr;
 
+Q_SIGNALS:
+  void queueJobs();
+
+public Q_SLOTS:
+  virtual void onQueueJobsInThreadPool();
+
 public:
   ctkJobSchedulerPrivate(ctkJobScheduler& object);
   virtual ~ctkJobSchedulerPrivate();
@@ -50,15 +56,17 @@ public:
   /// Convenient setup methods
   virtual void init();
 
-  virtual void insertJob(QSharedPointer<ctkAbstractJob> job);
-  virtual void removeJob(const QString& jobUID);
+  virtual bool insertJob(QSharedPointer<ctkAbstractJob> job);
+  virtual bool removeJob(const QString& jobUID);
+  virtual void removeJobs(const QStringList& jobUIDs);
   int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job);
   QString generateUniqueJobUID();
 
-  QMutex mMutex;
+  QMutex QueueMutex;
 
   int RetryDelay{100};
   int MaximumNumberOfRetry{3};
+  bool FreezeJobsScheduling{false};
 
   QSharedPointer<QThreadPool> ThreadPool;
   QMap<QString, QSharedPointer<ctkAbstractJob>> JobsQueue;

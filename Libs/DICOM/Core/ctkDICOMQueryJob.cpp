@@ -44,7 +44,14 @@ ctkDICOMQueryJobPrivate::ctkDICOMQueryJobPrivate(ctkDICOMQueryJob* object)
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMQueryJobPrivate::~ctkDICOMQueryJobPrivate() = default;
+ctkDICOMQueryJobPrivate::~ctkDICOMQueryJobPrivate()
+{
+  if (this->Server)
+    {
+    delete this->Server;
+    this->Server = nullptr;
+    }
+}
 
 //------------------------------------------------------------------------------
 // ctkDICOMQueryJob methods
@@ -56,13 +63,13 @@ ctkDICOMQueryJob::ctkDICOMQueryJob()
 }
 
 //------------------------------------------------------------------------------
+ctkDICOMQueryJob::~ctkDICOMQueryJob() = default;
+
+//------------------------------------------------------------------------------
 ctkDICOMQueryJob::ctkDICOMQueryJob(ctkDICOMQueryJobPrivate* pimpl)
   : d_ptr(pimpl)
 {
 }
-
-//------------------------------------------------------------------------------
-ctkDICOMQueryJob::~ctkDICOMQueryJob() = default;
 
 //----------------------------------------------------------------------------
 void ctkDICOMQueryJob::setFilters(const QMap<QString, QVariant>& filters)
@@ -93,39 +100,17 @@ int ctkDICOMQueryJob::maximumPatientsQuery()
 }
 
 //----------------------------------------------------------------------------
-static void skipDelete(QObject* obj)
-{
-  Q_UNUSED(obj);
-  // this deleter does not delete the object from memory
-  // useful if the pointer is not owned by the smart pointer
-}
-
-//----------------------------------------------------------------------------
 ctkDICOMServer* ctkDICOMQueryJob::server() const
-{
-  Q_D(const ctkDICOMQueryJob);
-  return d->Server.data();
-}
-
-//----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMServer> ctkDICOMQueryJob::serverShared() const
 {
   Q_D(const ctkDICOMQueryJob);
   return d->Server;
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryJob::setServer(ctkDICOMServer& server)
+void ctkDICOMQueryJob::setServer(const ctkDICOMServer& server)
 {
   Q_D(ctkDICOMQueryJob);
-  d->Server = QSharedPointer<ctkDICOMServer>(&server, skipDelete);
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMQueryJob::setServer(QSharedPointer<ctkDICOMServer> server)
-{
-  Q_D(ctkDICOMQueryJob);
-  d->Server = server;
+  d->Server = server.clone();
 }
 
 //----------------------------------------------------------------------------
@@ -183,7 +168,7 @@ ctkAbstractJob* ctkDICOMQueryJob::clone() const
 {
   ctkDICOMQueryJob* newQueryJob = new ctkDICOMQueryJob;
   newQueryJob->setMaximumPatientsQuery(this->maximumConcurrentJobsPerType());
-  newQueryJob->setServer(this->serverShared());
+  newQueryJob->setServer(*this->server());
   newQueryJob->setFilters(this->filters());
   newQueryJob->setDICOMLevel(this->dicomLevel());
   newQueryJob->setPatientID(this->patientID());
@@ -213,4 +198,29 @@ ctkAbstractWorker* ctkDICOMQueryJob::createWorker()
 QVariant ctkDICOMQueryJob::toVariant()
 {
   return QVariant::fromValue(ctkDICOMJobDetail(*this, this->server()->connectionName()));
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMJobResponseSet::JobType ctkDICOMQueryJob::getJobType() const
+{
+  if (this->DICOMLevel == ctkDICOMJob::DICOMLevels::Patients)
+  {
+    return ctkDICOMJobResponseSet::JobType::QueryPatients;
+  }
+  else if (this->DICOMLevel == ctkDICOMJob::DICOMLevels::Studies)
+  {
+    return ctkDICOMJobResponseSet::JobType::QueryStudies;
+  }
+  else if (this->DICOMLevel == ctkDICOMJob::DICOMLevels::Series)
+  {
+    return ctkDICOMJobResponseSet::JobType::QuerySeries;
+  }
+  else if (this->DICOMLevel == ctkDICOMJob::DICOMLevels::Instances)
+  {
+    return ctkDICOMJobResponseSet::JobType::QueryInstances;
+  }
+  else
+  {
+    return ctkDICOMJobResponseSet::JobType::None;
+  }
 }

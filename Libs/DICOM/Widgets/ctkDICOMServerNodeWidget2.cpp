@@ -575,6 +575,11 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
     return -1;
   }
 
+  if (server->proxyServer())
+    {
+    this->addServerNode(server->proxyServer());
+    }
+
   int rowCount = this->NodeTable->rowCount();
   this->NodeTable->setRowCount(rowCount + 1);
 
@@ -666,12 +671,6 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
                    q, SLOT(onSettingsModified()));
   this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::ProxyColumn, proxyComboBox);
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::ProxyColumn, newItem);
-
-  if (server->proxyServer())
-  {
-    this->addServerNode(server->proxyServer());
-    rowCount++;
-  }
 
   q->onSettingsModified();
 
@@ -934,8 +933,8 @@ void ctkDICOMServerNodeWidget2::saveSettings()
   int rowCount = d->NodeTable->rowCount();
 
   settings.remove("DICOM/ServerNodes");
-  this->removeAllServers();
   this->stopAllJobs();
+  this->removeAllServers();
 
   settings.setValue("DICOM/ServerNodeCount", rowCount);
 
@@ -989,7 +988,7 @@ void ctkDICOMServerNodeWidget2::saveSettings()
         ctkDICOMServer* server = this->getServer(tmpServerName.toStdString().c_str());
         if (server)
         {
-          server->setProxyServer(proxyServer);
+          server->setProxyServer(*proxyServer);
           server->setMoveDestinationAETitle(proxyServer->calledAETitle());
           break;
         }
