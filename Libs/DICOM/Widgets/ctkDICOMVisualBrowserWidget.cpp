@@ -45,9 +45,11 @@
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
 #include "ctkDICOMIndexer.h"
+#include "ctkDICOMJob.h"
+#include "ctkDICOMJobResponseSet.h"
+#include "ctkDICOMScheduler.h"
 #include "ctkDICOMScheduler.h"
 #include "ctkDICOMServer.h"
-#include "ctkDICOMJobResponseSet.h"
 #include "ctkUtils.h"
 
 // ctkDICOMWidgets includes
@@ -149,6 +151,8 @@ public:
   void removeAllPatientItemWidgets();
   bool isPatientTabAlreadyAdded(const QString& patientItem);
   void updateSeriesTablesSelection(ctkDICOMSeriesItemWidget* selectedSeriesItemWidget);
+  QStringList getPatientItemsFromWidgets(ctkDICOMModel::IndexType level,
+                                         QList<QWidget*> selectedWidgets);
   QStringList getPatientUIDsFromWidgets(ctkDICOMModel::IndexType level,
                                         QList<QWidget*> selectedWidgets);
   QStringList getStudyUIDsFromWidgets(ctkDICOMModel::IndexType level,
@@ -442,8 +446,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::connectScheduler()
 
   ctkDICOMVisualBrowserWidget::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                                        q, SLOT(updateGUIFromScheduler(QVariant)));
-  ctkDICOMVisualBrowserWidget::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
-                                       q, SLOT(onJobStarted(QVariant)));
   ctkDICOMVisualBrowserWidget::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
                                        q, SLOT(onJobFailed(QVariant)));
   ctkDICOMVisualBrowserWidget::connect(this->Indexer.data(), SIGNAL(progress(int)), q, SLOT(onIndexingProgress(int)));
@@ -927,6 +929,8 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
                                        {},
                                        seriesInstanceUIDsToStop);
 
+  this->Scheduler->waitForDone(300);
+
   bool wait = true;
   while (wait)
   {
@@ -1060,6 +1064,39 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateSeriesTablesSelection(ctkDICOMSer
       }
     }
   }
+}
+
+//----------------------------------------------------------------------------
+QStringList ctkDICOMVisualBrowserWidgetPrivate::getPatientItemsFromWidgets(ctkDICOMModel::IndexType level,
+                                                                           QList<QWidget *> selectedWidgets)
+{
+  QStringList selectedPatientItems;
+
+  if (!this->DicomDatabase)
+  {
+    return selectedPatientItems;
+  }
+
+  foreach (QWidget* selectedWidget, selectedWidgets)
+  {
+    if (!selectedWidget)
+    {
+      continue;
+    }
+
+    if (level == ctkDICOMModel::PatientType)
+    {
+      ctkDICOMPatientItemWidget* patientItemWidget =
+        qobject_cast<ctkDICOMPatientItemWidget*>(selectedWidget);
+      if (patientItemWidget)
+      {
+        QString patientItem = patientItemWidget->patientItem();
+        selectedPatientItems << patientItem;
+      }
+    }
+  }
+
+  return selectedPatientItems;
 }
 
 //----------------------------------------------------------------------------
@@ -2030,8 +2067,6 @@ void ctkDICOMVisualBrowserWidget::setDatabaseDirectory(const QString& directory)
     settings.sync();
   }
 
-  this->onShowPatients();
-
   // pass DICOM database instance to Import widget
   emit databaseDirectoryChanged(absDirectory);
 }
@@ -2288,6 +2323,40 @@ void ctkDICOMVisualBrowserWidget::showMetadata(const QStringList& fileList)
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::forceSeriesRetrieve(const QList<QWidget *> &selectedWidgets)
+{
+foreach (QWidget* selectedWidget, selectedWidgets)
+  {
+    if (!selectedWidget)
+    {
+      continue;
+    }
+    ctkDICOMSeriesItemWidget* seriesItemWidget =
+      qobject_cast<ctkDICOMSeriesItemWidget*>(selectedWidget);
+    if (seriesItemWidget)
+    {
+      seriesItemWidget->forceRetrieve();
+    }
+
+    ctkDICOMStudyItemWidget* studyItemWidget =
+        qobject_cast<ctkDICOMStudyItemWidget*>(selectedWidget);
+    if (studyItemWidget)
+    {
+      QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList = studyItemWidget->seriesItemWidgetsList();
+      foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, seriesItemWidgetsList)
+      {
+        if (!seriesItemWidget)
+        {
+          continue;
+        }
+
+        seriesItemWidget->forceRetrieve();
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType level,
                                                       const QList<QWidget*>& selectedWidgets)
 {
@@ -2298,6 +2367,7 @@ void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType l
     return;
   }
 
+  QStringList selectedPatientItems;
   QStringList selectedPatientUIDs;
   QStringList selectedStudyUIDs;
   QStringList selectedSeriesUIDs;
@@ -2316,6 +2386,7 @@ void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType l
       QString patientID = patientItemWidget->patientID();
       selectedStudyUIDs << d->DicomDatabase->studiesForPatient(patientItem);
       selectedPatientUIDs << patientID;
+      selectedPatientItems << patientItem;
     }
 
     if (!this->confirmDeleteSelectedUIDs(selectedPatientUIDs))
@@ -2328,6 +2399,7 @@ void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType l
   else if (level == ctkDICOMModel::PatientType)
   {
     selectedPatientUIDs = d->getPatientUIDsFromWidgets(ctkDICOMModel::PatientType, selectedWidgets);
+    selectedPatientItems = d->getPatientItemsFromWidgets(ctkDICOMModel::PatientType, selectedWidgets);
     if (!this->confirmDeleteSelectedUIDs(selectedPatientUIDs))
     {
       return;
@@ -2416,9 +2488,9 @@ void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType l
     }
   }
 
-  // Stop fetching jobs for selected widgets.
-  d->Scheduler->stopJobsByDICOMUIDs({},
-                                    {},
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  d->Scheduler->stopJobsByDICOMUIDs(selectedPatientUIDs,
+                                    selectedStudyUIDs,
                                     selectedSeriesUIDs);
 
   foreach (const QString& uid, selectedSeriesUIDs)
@@ -2429,10 +2501,11 @@ void ctkDICOMVisualBrowserWidget::removeSelectedItems(ctkDICOMModel::IndexType l
   {
     d->DicomDatabase->removeStudy(uid, level == ctkDICOMModel::RootType);
   }
-  foreach (const QString& uid, selectedPatientUIDs)
+  foreach (const QString& uid, selectedPatientItems)
   {
     d->DicomDatabase->removePatient(uid, level == ctkDICOMModel::RootType);
   }
+  QApplication::restoreOverrideCursor();
 }
 
 //------------------------------------------------------------------------------
@@ -2642,24 +2715,6 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(const QVariant& data)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onJobStarted(const QVariant &data)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
-
-  if (td.JobClass == "ctkDICOMRetrieveJob")
-  {
-    ctkDICOMSeriesItemWidget* seriesItemWidget =
-      d->getCurrentPatientSeriesWidgetByUIDs(td.StudyInstanceUID, td.SeriesInstanceUID);
-    if (seriesItemWidget)
-    {
-      seriesItemWidget->setRetrieveFailed(false);
-      seriesItemWidget->resetOperationProgressBar();
-    }
-  }
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::onJobFailed(const QVariant& data)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
@@ -2669,16 +2724,6 @@ void ctkDICOMVisualBrowserWidget::onJobFailed(const QVariant& data)
   {
     d->updateFiltersWarnings();
     d->QueryPatientPushButton->setIcon(QIcon(":/Icons/query.svg"));
-  }
-
-  if (td.JobClass == "ctkDICOMRetrieveJob")
-  {
-    ctkDICOMSeriesItemWidget* seriesItemWidget =
-      d->getCurrentPatientSeriesWidgetByUIDs(td.StudyInstanceUID, td.SeriesInstanceUID);
-    if (seriesItemWidget)
-    {
-      seriesItemWidget->setRetrieveFailed(true);
-    }
   }
 
   QString job = td.JobClass.replace("ctkDICOM", "").replace("Job", "");
@@ -2820,6 +2865,11 @@ void ctkDICOMVisualBrowserWidget::showStudyContextMenu(const QPoint& point)
   QAction* metadataAction = new QAction(metadataString, studyMenu);
   studyMenu->addAction(metadataAction);
 
+  QString forceRetrieveString = numberOfSelectedStudies == 1 ? tr("Force retrieve series") :
+    tr("Force retrieve series for %1 studies").arg(numberOfSelectedStudies);
+  QAction *forceRetrieveAction = new QAction(forceRetrieveString, studyMenu);
+  studyMenu->addAction(forceRetrieveAction);
+
   QString deleteString = numberOfSelectedStudies == 1 ? tr("Delete study from local database") :
     tr("Delete %1 studies from local database").arg(numberOfSelectedStudies);
   QAction* deleteAction = new QAction(deleteString, studyMenu);
@@ -2845,6 +2895,10 @@ void ctkDICOMVisualBrowserWidget::showStudyContextMenu(const QPoint& point)
   else if (selectedAction == metadataAction)
   {
     this->showMetadata(this->fileListForCurrentSelection(ctkDICOMModel::StudyType, selectedWidgets));
+  }
+  else if (selectedAction == forceRetrieveAction)
+  {
+    this->forceSeriesRetrieve(selectedWidgets);
   }
   else if (selectedAction == deleteAction)
   {
@@ -2921,6 +2975,11 @@ void ctkDICOMVisualBrowserWidget::showSeriesContextMenu(const QPoint& point)
   QAction *metadataAction = new QAction(metadataString, seriesMenu);
   seriesMenu->addAction(metadataAction);
 
+  QString forceRetrieveString = numberOfSelectedSeries == 1 ? tr("Force retrieve series") :
+    tr("Force retrieve for %1 series").arg(numberOfSelectedSeries);
+  QAction *forceRetrieveAction = new QAction(forceRetrieveString, seriesMenu);
+  seriesMenu->addAction(forceRetrieveAction);
+
   QString deleteString = numberOfSelectedSeries == 1 ? tr("Delete series from local database") :
     tr("Delete %1 series from local database").arg(numberOfSelectedSeries);
   QAction *deleteAction = new QAction(deleteString, seriesMenu);
@@ -2946,6 +3005,10 @@ void ctkDICOMVisualBrowserWidget::showSeriesContextMenu(const QPoint& point)
   else if (selectedAction == metadataAction)
   {
     this->showMetadata(this->fileListForCurrentSelection(ctkDICOMModel::SeriesType, selectedWidgets));
+  }
+  else if (selectedAction == forceRetrieveAction)
+  {
+    this->forceSeriesRetrieve(selectedWidgets);
   }
   else if (selectedAction == deleteAction)
   {

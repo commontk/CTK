@@ -115,6 +115,10 @@ public:
   /// Series lives in the server
   bool isCloud() const;
 
+  /// Force retrieve for series. If the series was already fetched,
+  /// it will be retrieved again.
+  void forceRetrieve();
+
   ///@{
   /// in case the retrieve job failed
   void setRetrieveFailed(bool retrieveFailed);
@@ -133,9 +137,6 @@ public:
   void setThumbnailSizePixel(int thumbnailSizePixel);
   int thumbnailSizePixel() const;
   ///@}
-
-  /// Reset progress bar
-  Q_INVOKABLE void resetOperationProgressBar();
 
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;
@@ -163,6 +164,10 @@ public Q_SLOTS:
   void generateInstances();
   void updateGUIFromScheduler(const QVariant& data);
   void updateSeriesProgressBar(const QVariant& data);
+  void onJobStarted(const QVariant& data);
+  void onJobCanceled(const QVariant& data);
+  void onJobFailed(const QVariant& data);
+  void onJobFinished(const QVariant& data);
 
 protected:
   QScopedPointer<ctkDICOMSeriesItemWidgetPrivate> d_ptr;

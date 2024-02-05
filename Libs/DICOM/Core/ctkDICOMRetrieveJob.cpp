@@ -43,7 +43,14 @@ ctkDICOMRetrieveJobPrivate::ctkDICOMRetrieveJobPrivate(ctkDICOMRetrieveJob* obje
 }
 
 //------------------------------------------------------------------------------
-ctkDICOMRetrieveJobPrivate::~ctkDICOMRetrieveJobPrivate() = default;
+ctkDICOMRetrieveJobPrivate::~ctkDICOMRetrieveJobPrivate()
+{
+  if (this->Server)
+    {
+    delete this->Server;
+    this->Server = nullptr;
+    }
+}
 
 //------------------------------------------------------------------------------
 // ctkDICOMRetrieveJob methods
@@ -64,39 +71,17 @@ ctkDICOMRetrieveJob::ctkDICOMRetrieveJob(ctkDICOMRetrieveJobPrivate* pimpl)
 ctkDICOMRetrieveJob::~ctkDICOMRetrieveJob() = default;
 
 //----------------------------------------------------------------------------
-static void skipDelete(QObject* obj)
-{
-  Q_UNUSED(obj);
-  // this deleter does not delete the object from memory
-  // useful if the pointer is not owned by the smart pointer
-}
-
-//----------------------------------------------------------------------------
 ctkDICOMServer* ctkDICOMRetrieveJob::server() const
-{
-  Q_D(const ctkDICOMRetrieveJob);
-  return d->Server.data();
-}
-
-//----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMServer> ctkDICOMRetrieveJob::serverShared() const
 {
   Q_D(const ctkDICOMRetrieveJob);
   return d->Server;
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMRetrieveJob::setServer(ctkDICOMServer& server)
+void ctkDICOMRetrieveJob::setServer(const ctkDICOMServer& server)
 {
   Q_D(ctkDICOMRetrieveJob);
-  d->Server = QSharedPointer<ctkDICOMServer>(&server, skipDelete);
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMRetrieveJob::setServer(QSharedPointer<ctkDICOMServer> server)
-{
-  Q_D(ctkDICOMRetrieveJob);
-  d->Server = server;
+  d->Server = server.clone();
 }
 
 //----------------------------------------------------------------------------
@@ -160,7 +145,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString& status) const
 ctkAbstractJob* ctkDICOMRetrieveJob::clone() const
 {
   ctkDICOMRetrieveJob* newRetrieveJob = new ctkDICOMRetrieveJob;
-  newRetrieveJob->setServer(this->serverShared());
+  newRetrieveJob->setServer(*this->server());
   newRetrieveJob->setDICOMLevel(this->dicomLevel());
   newRetrieveJob->setPatientID(this->patientID());
   newRetrieveJob->setStudyInstanceUID(this->studyInstanceUID());
@@ -189,4 +174,25 @@ ctkAbstractWorker* ctkDICOMRetrieveJob::createWorker()
 QVariant ctkDICOMRetrieveJob::toVariant()
 {
   return QVariant::fromValue(ctkDICOMJobDetail(*this, this->server()->connectionName()));
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMJobResponseSet::JobType ctkDICOMRetrieveJob::getJobType() const
+{
+  if (this->DICOMLevel == ctkDICOMJob::DICOMLevels::Studies)
+  {
+    return ctkDICOMJobResponseSet::JobType::RetrieveStudy;
+  }
+  else if (this->DICOMLevel == ctkDICOMJob::DICOMLevels::Series)
+  {
+    return ctkDICOMJobResponseSet::JobType::RetrieveSeries;
+  }
+  else if (this->DICOMLevel == ctkDICOMJob::DICOMLevels::Instances)
+  {
+    return ctkDICOMJobResponseSet::JobType::RetrieveSOPInstance;
+  }
+  else
+  {
+    return ctkDICOMJobResponseSet::JobType::None;
+  }
 }

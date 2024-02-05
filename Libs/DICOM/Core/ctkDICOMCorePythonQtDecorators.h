@@ -27,6 +27,7 @@
 // CTK includes
 #include <ctkDICOMDisplayedFieldGeneratorRuleFactory.h>
 #include <ctkDICOMUtil.h>
+#include <ctkDICOMJob.h>
 #include <ctkDICOMJobResponseSet.h>
 
 // NOTE:
@@ -55,17 +56,53 @@ public slots:
   // ctkDICOMJobDetail
   //----------------------------------------------------------------------------
   ctkDICOMJobDetail* new_ctkDICOMJobDetail()
-{
+  {
     return new ctkDICOMJobDetail();
-}
-
-  void setJobType(ctkDICOMJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
-  {
-    td->JobType = jobType;
   }
-  ctkDICOMJobResponseSet::JobType jobType(ctkDICOMJobDetail* td)
+
+  void setJobClass(ctkDICOMJobDetail* td, QString jobClass)
   {
-    return td->JobType;
+    td->JobClass = jobClass;
+  }
+  QString jobClass(ctkDICOMJobDetail* td)
+  {
+    return td->JobClass;
+  }
+
+  void setJobUID(ctkDICOMJobDetail* td, QString jobUID)
+  {
+    td->JobUID = jobUID;
+  }
+  QString jobUID(ctkDICOMJobDetail* td)
+  {
+    return td->JobUID;
+  }
+
+  void setCreationDateTime(ctkDICOMJobDetail* td, QString creationDateTime)
+  {
+    td->CreationDateTime = creationDateTime;
+  }
+  QString creationDateTime(ctkDICOMJobDetail* td)
+  {
+    return td->CreationDateTime;
+  }
+
+  void setStartDateTime(ctkDICOMJobDetail* td, QString startDateTime)
+  {
+    td->StartDateTime = startDateTime;
+  }
+  QString startDateTime(ctkDICOMJobDetail* td)
+  {
+    return td->StartDateTime;
+  }
+
+  void setCompletionDateTime(ctkDICOMJobDetail* td, QString completionDateTime)
+  {
+    td->CompletionDateTime = completionDateTime;
+  }
+  QString completionDateTime(ctkDICOMJobDetail* td)
+  {
+    return td->CompletionDateTime;
   }
 
   void setPatientID(ctkDICOMJobDetail* td, const QString& patientID)
@@ -104,6 +141,15 @@ public slots:
     return td->SOPInstanceUID;
   }
 
+  void setReferenceInserterJobUID(ctkDICOMJobDetail* td, const QString& referenceInserterJobUID)
+  {
+    td->ReferenceInserterJobUID = referenceInserterJobUID;
+  }
+  QString referenceInserterJobUID(ctkDICOMJobDetail* td)
+  {
+    return td->ReferenceInserterJobUID;
+  }
+
   void setConnectionName(ctkDICOMJobDetail* td, const QString& connectionName)
   {
     td->ConnectionName = connectionName;
@@ -111,6 +157,24 @@ public slots:
   QString connectionName(ctkDICOMJobDetail* td)
   {
     return td->ConnectionName;
+  }
+
+  void setDICOMLevel(ctkDICOMJobDetail* td, ctkDICOMJob::DICOMLevels level)
+  {
+    td->DICOMLevel = level;
+  }
+  ctkDICOMJob::DICOMLevels DICOMLevel(ctkDICOMJobDetail* td)
+  {
+    return td->DICOMLevel;
+  }
+
+  void setJobType(ctkDICOMJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
+  {
+    td->JobType = jobType;
+  }
+  ctkDICOMJobResponseSet::JobType jobType(ctkDICOMJobDetail* td)
+  {
+    return td->JobType;
   }
 
   void setNumberOfDataSets(ctkDICOMJobDetail* td, int numberOfDataSets)

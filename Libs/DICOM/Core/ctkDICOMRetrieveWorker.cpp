@@ -111,7 +111,7 @@ ctkDICOMRetrieveWorker::ctkDICOMRetrieveWorker(ctkDICOMRetrieveWorkerPrivate* pi
 ctkDICOMRetrieveWorker::~ctkDICOMRetrieveWorker() = default;
 
 //----------------------------------------------------------------------------
-void ctkDICOMRetrieveWorker::cancel()
+void ctkDICOMRetrieveWorker::requestCancel()
 {
   Q_D(const ctkDICOMRetrieveWorker);
   d->Retrieve->cancel();
@@ -133,14 +133,13 @@ void ctkDICOMRetrieveWorker::run()
   ctkDICOMServer* server = retrieveJob->server();
   if (!scheduler
       || !server
-      || retrieveJob->status() == ctkAbstractJob::JobStatus::Stopped)
+      || d->Retrieve->wasCanceled())
   {
-    this->onJobCanceled();
+    this->onJobCanceled(d->Retrieve->wasCanceled());
     return;
   }
 
   retrieveJob->setStatus(ctkAbstractJob::JobStatus::Running);
-  emit retrieveJob->started();
 
   logger.debug(QString("ctkDICOMRetrieveWorker : running job %1 in thread %2.\n")
                        .arg(retrieveJob->jobUID())
@@ -153,13 +152,13 @@ void ctkDICOMRetrieveWorker::run()
       {
         case ctkDICOMJob::DICOMLevels::Patients:
           logger.warn("ctkDICOMRetrieveTask : get operation for a full patient is not implemented.");
-          this->onJobCanceled();
+          this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
           return;
         case ctkDICOMJob::DICOMLevels::Studies:
           if (!d->Retrieve->getStudy(retrieveJob->studyInstanceUID(),
                                      retrieveJob->patientID()))
           {
-            this->onJobCanceled();
+            this->onJobCanceled(d->Retrieve->wasCanceled());
             return;
           }
           break;
@@ -168,7 +167,7 @@ void ctkDICOMRetrieveWorker::run()
                                       retrieveJob->seriesInstanceUID(),
                                       retrieveJob->patientID()))
           {
-            this->onJobCanceled();
+            this->onJobCanceled(d->Retrieve->wasCanceled());
             return;
           }
           break;
@@ -178,7 +177,7 @@ void ctkDICOMRetrieveWorker::run()
                                            retrieveJob->sopInstanceUID(),
                                            retrieveJob->patientID()))
           {
-            this->onJobCanceled();
+            this->onJobCanceled(d->Retrieve->wasCanceled());
             return;
           }
           break;
@@ -190,13 +189,12 @@ void ctkDICOMRetrieveWorker::run()
         case ctkDICOMJob::DICOMLevels::Patients:
           logger.warn("ctkDICOMRetrieveTask : move operation for a full patient is not implemented.");
           retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-          emit retrieveJob->failed();
           return;
         case ctkDICOMJob::DICOMLevels::Studies:
           if (!d->Retrieve->moveStudy(retrieveJob->studyInstanceUID(),
                                       retrieveJob->patientID()))
           {
-            this->onJobCanceled();
+            this->onJobCanceled(d->Retrieve->wasCanceled());
             return;
           }
           break;
@@ -205,7 +203,7 @@ void ctkDICOMRetrieveWorker::run()
                                        retrieveJob->seriesInstanceUID(),
                                        retrieveJob->patientID()))
           {
-            this->onJobCanceled();
+            this->onJobCanceled(d->Retrieve->wasCanceled());
             return;
           }
           break;
@@ -215,7 +213,7 @@ void ctkDICOMRetrieveWorker::run()
                                             retrieveJob->sopInstanceUID(),
                                             retrieveJob->patientID()))
           {
-            this->onJobCanceled();
+            this->onJobCanceled(d->Retrieve->wasCanceled());
             return;
           }
           break;
@@ -224,9 +222,9 @@ void ctkDICOMRetrieveWorker::run()
       //case ctkDICOMServer::WADO: // To Do
   }
 
-  if (retrieveJob->status() == ctkAbstractJob::JobStatus::Stopped)
+  if (d->Retrieve->wasCanceled())
   {
-    this->onJobCanceled();
+    this->onJobCanceled(d->Retrieve->wasCanceled());
     return;
   }
 
@@ -238,17 +236,18 @@ void ctkDICOMRetrieveWorker::run()
     newJob->setServer(*proxyServer);
     scheduler->addJob(newJob);
   }
-  else if (d->Retrieve->jobResponseSetsShared().count() > 0)
+  else if (d->Retrieve->jobResponseSetsShared().count() > 0 &&
+    server->retrieveProtocol() == ctkDICOMServer::RetrieveProtocol::CGET)
   {
     // To Do: this insert should happen in batch of 10 frames (configurable),
     // instead of at the end of operation (all frames requested)).
-    // This would avoid memory usage spikes when requesting a series or study with a lot of frames.
-    // NOTE: the memory release should happen as soon as we insert the response.
-    scheduler->insertJobResponseSets(d->Retrieve->jobResponseSetsShared());
+    // This would avoid memory usage spikes when requesting a series with a lot of frames.
+    // NOTE: the memory should be released as soon as the response is inserted.
+    retrieveJob->setReferenceInserterJobUID
+      (scheduler->insertJobResponseSets(d->Retrieve->jobResponseSetsShared()));
   }
 
   retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-  emit retrieveJob->finished();
 }
 
 //----------------------------------------------------------------------------

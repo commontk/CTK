@@ -26,6 +26,7 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMItem.h"
+#include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
 
 // DCMTK includes

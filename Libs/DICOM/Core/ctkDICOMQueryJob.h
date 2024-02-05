@@ -81,9 +81,7 @@ public:
   ///@{
   /// Server
   Q_INVOKABLE ctkDICOMServer* server() const;
-  QSharedPointer<ctkDICOMServer> serverShared() const;
-  Q_INVOKABLE void setServer(ctkDICOMServer& server);
-  void setServer(QSharedPointer<ctkDICOMServer> server);
+  Q_INVOKABLE void setServer(const ctkDICOMServer& server);
   ///@}
 
   /// Logger report string formatting for specific task
@@ -101,6 +99,9 @@ public:
   /// information between threads using Qt signals.
   /// \sa ctkDICOMJobDetail
   Q_INVOKABLE virtual QVariant toVariant() override;
+
+  /// Return job type.
+  Q_INVOKABLE virtual ctkDICOMJobResponseSet::JobType getJobType() const override;
 
 protected:
   QScopedPointer<ctkDICOMQueryJobPrivate> d_ptr;

@@ -92,7 +92,7 @@ ctkDICOMQueryWorker::ctkDICOMQueryWorker(ctkDICOMQueryWorkerPrivate* pimpl)
 ctkDICOMQueryWorker::~ctkDICOMQueryWorker() = default;
 
 //----------------------------------------------------------------------------
-void ctkDICOMQueryWorker::cancel()
+void ctkDICOMQueryWorker::requestCancel()
 {
   Q_D(const ctkDICOMQueryWorker);
   d->Query->cancel();
@@ -110,16 +110,15 @@ void ctkDICOMQueryWorker::run()
   }
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
-      qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
+    qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
   if (!scheduler ||
-      queryJob->status() == ctkAbstractJob::JobStatus::Stopped)
+      d->Query->wasCanceled())
   {
-    this->onJobCanceled();
+    this->onJobCanceled(d->Query->wasCanceled());
     return;
   }
 
   queryJob->setStatus(ctkAbstractJob::JobStatus::Running);
-  emit queryJob->started();
 
   logger.debug(QString("ctkDICOMQueryWorker : running job %1 in thread %2.\n")
                        .arg(queryJob->jobUID())
@@ -130,14 +129,14 @@ void ctkDICOMQueryWorker::run()
     case ctkDICOMJob::DICOMLevels::Patients:
       if (!d->Query->queryPatients())
       {
-        this->onJobCanceled();
+        this->onJobCanceled(d->Query->wasCanceled());
         return;
       }
       break;
     case ctkDICOMJob::DICOMLevels::Studies:
       if (!d->Query->queryStudies(queryJob->patientID()))
       {
-        this->onJobCanceled();
+        this->onJobCanceled(d->Query->wasCanceled());
         return;
       }
       break;
@@ -145,7 +144,7 @@ void ctkDICOMQueryWorker::run()
       if (!d->Query->querySeries(queryJob->patientID(),
                                  queryJob->studyInstanceUID()))
       {
-        this->onJobCanceled();
+        this->onJobCanceled(d->Query->wasCanceled());
         return;
       }
       break;
@@ -154,20 +153,25 @@ void ctkDICOMQueryWorker::run()
                                     queryJob->studyInstanceUID(),
                                     queryJob->seriesInstanceUID()))
       {
-        this->onJobCanceled();
+        this->onJobCanceled(d->Query->wasCanceled());
         return;
       }
       break;
   }
 
-  if (d->Query->jobResponseSetsShared().count() > 0 &&
-      queryJob->status() != ctkAbstractJob::JobStatus::Stopped)
+  if (d->Query->wasCanceled())
   {
-    scheduler->insertJobResponseSets(d->Query->jobResponseSetsShared());
+    this->onJobCanceled(d->Query->wasCanceled());
+    return;
+  }
+
+  if (d->Query->jobResponseSetsShared().count() > 0)
+  {
+    queryJob->setReferenceInserterJobUID
+      (scheduler->insertJobResponseSets(d->Query->jobResponseSetsShared()));
   }
 
   queryJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-  emit queryJob->finished();
 }
 
 //----------------------------------------------------------------------------

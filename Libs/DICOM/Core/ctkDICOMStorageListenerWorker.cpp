@@ -106,7 +106,7 @@ ctkDICOMStorageListenerWorker::ctkDICOMStorageListenerWorker(ctkDICOMStorageList
 ctkDICOMStorageListenerWorker::~ctkDICOMStorageListenerWorker() = default;
 
 //----------------------------------------------------------------------------
-void ctkDICOMStorageListenerWorker::cancel()
+void ctkDICOMStorageListenerWorker::requestCancel()
 {
   Q_D(const ctkDICOMStorageListenerWorker);
   d->StorageListener->cancel();
@@ -126,9 +126,9 @@ void ctkDICOMStorageListenerWorker::run()
   QSharedPointer<ctkDICOMScheduler> scheduler =
     qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
   if (!scheduler
-      || storageListenerJob->status() == ctkAbstractJob::JobStatus::Stopped)
+      || d->StorageListener->wasCanceled())
   {
-    this->onJobCanceled();
+    this->onJobCanceled(d->StorageListener->wasCanceled());
     return;
   }
 
@@ -142,12 +142,17 @@ void ctkDICOMStorageListenerWorker::run()
 
   if (!d->StorageListener->listen())
   {
-    this->onJobCanceled();
+    this->onJobCanceled(d->StorageListener->wasCanceled());
+    return;
+  }
+
+  if (d->StorageListener->wasCanceled())
+  {
+    this->onJobCanceled(d->StorageListener->wasCanceled());
     return;
   }
 
   storageListenerJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-  emit storageListenerJob->finished();
 }
 
 //----------------------------------------------------------------------------

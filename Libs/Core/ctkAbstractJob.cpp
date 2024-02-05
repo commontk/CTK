@@ -86,6 +86,23 @@ void ctkAbstractJob::setStatus(JobStatus status)
   {
     this->CompletionDateTime = QDateTime::currentDateTime();
   }
+
+  if (this->Status == JobStatus::Running)
+  {
+    emit this->started();
+  }
+  else if (this->Status == JobStatus::Stopped)
+  {
+    emit this->canceled();
+  }
+  else if (this->Status == JobStatus::Failed)
+  {
+    emit this->failed();
+  }
+  else if (this->Status == JobStatus::Finished)
+  {
+    emit this->finished();
+  }
 }
 
 //----------------------------------------------------------------------------

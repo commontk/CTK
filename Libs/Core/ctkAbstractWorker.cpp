@@ -109,32 +109,29 @@ void ctkAbstractWorker::startNextJob()
 }
 
 //----------------------------------------------------------------------------
-void ctkAbstractWorker::onJobCanceled()
+void ctkAbstractWorker::onJobCanceled(const bool& wasCanceled)
 {
   if (!this->Job)
   {
     return;
   }
 
-  if (this->Job->retryCounter() < this->Job->maximumNumberOfRetry() &&
-      this->Job->status() != ctkAbstractJob::JobStatus::Stopped)
+  if (!wasCanceled)
   {
-    QTimer timer;
-    timer.setSingleShot(true);
-    QEventLoop loop;
-    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-    timer.start(this->Job->retryDelay());
+    if (this->Job->retryCounter() < this->Job->maximumNumberOfRetry())
+    {
+      QTimer timer;
+      timer.setSingleShot(true);
+      QEventLoop loop;
+      connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+      timer.start(this->Job->retryDelay());
 
-    this->startNextJob();
-
-    emit this->Job->canceled();
-  }
-  else if (this->Job->status() != ctkAbstractJob::JobStatus::Stopped)
-  {
-    emit this->Job->failed();
+      this->startNextJob();
+    }
+    this->Job->setStatus(ctkAbstractJob::JobStatus::Failed);
   }
   else
   {
-    emit this->Job->canceled();
+    this->Job->setStatus(ctkAbstractJob::JobStatus::Stopped);
   }
 }

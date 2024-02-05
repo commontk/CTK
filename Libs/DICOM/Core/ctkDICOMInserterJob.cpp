@@ -116,3 +116,9 @@ ctkAbstractWorker* ctkDICOMInserterJob::createWorker()
   worker->setJob(*this);
   return worker;
 }
+
+//------------------------------------------------------------------------------
+ctkDICOMJobResponseSet::JobType ctkDICOMInserterJob::getJobType() const
+{
+  return ctkDICOMJobResponseSet::JobType::Inserter;
+}

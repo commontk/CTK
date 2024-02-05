@@ -32,8 +32,9 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
-#include "ctkDICOMScheduler.h"
+#include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
+#include "ctkDICOMScheduler.h"
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMStudyItemWidget.h"
@@ -85,6 +86,8 @@ public:
   QString PatientID;
   QString StudyInstanceUID;
   QString StudyItem;
+
+  bool IsGUIUpdating;
 };
 
 //----------------------------------------------------------------------------
@@ -104,6 +107,8 @@ ctkDICOMStudyItemWidgetPrivate::ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItem
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
   this->VisualDICOMBrowser = nullptr;
+
+  this->IsGUIUpdating = false;
 }
 
 //----------------------------------------------------------------------------
@@ -157,6 +162,10 @@ void ctkDICOMStudyItemWidgetPrivate::updateColumnsWidths()
 void ctkDICOMStudyItemWidgetPrivate::createSeries()
 {
   Q_Q(ctkDICOMStudyItemWidget);
+  if (this->IsGUIUpdating)
+    {
+    return;
+    }
 
   if (!this->DicomDatabase)
   {
@@ -169,6 +178,8 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
   {
     return;
   }
+
+  this->IsGUIUpdating = true;
 
   // Sort by SeriesNumber
   QMap<int, QString> seriesMap;
@@ -240,6 +251,8 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
     iHeight += 25;
     this->SeriesListTableWidget->setMinimumHeight(iHeight);
   }
+
+  this->IsGUIUpdating = false;
 }
 
 //------------------------------------------------------------------------------

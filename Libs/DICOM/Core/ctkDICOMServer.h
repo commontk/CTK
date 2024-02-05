@@ -125,23 +125,24 @@ public:
   ///@{
   /// prefer to keep using the existing association to peer host when doing
   /// multiple requests (default true)
-  void setKeepAssociationOpen(bool keepOpen);
-  bool keepAssociationOpen();
+  void setKeepAssociationOpen(const bool& keepOpen);
+  bool keepAssociationOpen() const;
   ///}@
 
   ///@{
   /// connection timeout in seconds, default 10 s.
-  void setConnectionTimeout(int timeout);
-  int connectionTimeout();
+  void setConnectionTimeout(const int& timeout);
+  int connectionTimeout() const;
   ///}@
 
   ///@{
   /// proxy server
   Q_INVOKABLE ctkDICOMServer* proxyServer() const;
-  QSharedPointer<ctkDICOMServer> proxyServerShared() const;
-  Q_INVOKABLE void setProxyServer(ctkDICOMServer& proxyServer);
-  void setProxyServer(QSharedPointer<ctkDICOMServer> proxyServer);
+  Q_INVOKABLE void setProxyServer(const ctkDICOMServer& proxyServer);
   ///}@
+
+  /// Create a copy of this Server.
+  Q_INVOKABLE ctkDICOMServer* clone() const;
 
 protected:
   QScopedPointer<ctkDICOMServerPrivate> d_ptr;

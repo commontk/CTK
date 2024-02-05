@@ -44,18 +44,20 @@ public:
   explicit ctkDICOMRetrieveWorker();
   virtual ~ctkDICOMRetrieveWorker();
 
-  /// Execute worker
+  /// Execute worker. This method is run by the QThreadPool and is thread safe
   void run() override;
 
-  /// Cancel worker
-  void cancel() override;
+  /// Cancel worker. This method is thread safe
+  void requestCancel() override;
 
-  /// Job
+  /// Job.
+  /// These methods are not thread safe
   void setJob(QSharedPointer<ctkAbstractJob> job) override;
   using ctkAbstractWorker::setJob;
 
   ///@{
-  /// Retriever
+  /// Retriever.
+  /// These methods are not thread safe
   QSharedPointer<ctkDICOMRetrieve> retrieverShared() const;
   Q_INVOKABLE ctkDICOMRetrieve* retriever() const;
   ///@}

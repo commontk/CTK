@@ -29,6 +29,7 @@
 #include <ctkLogger.h>
 
 // ctkDICOMCore includes
+#include <ctkDICOMJob.h>
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMScheduler.h"
 
@@ -81,6 +82,7 @@ public:
   using QStandardItemModel::QStandardItemModel;
 
   enum JobStatus{
+    Initialized,
     Queued,
     Running,
     Canceled,
@@ -192,7 +194,7 @@ void QCenteredItemModel::addJob(const ctkDICOMJobDetail &td,
   this->setData(this->index(row, Columns::JobType), jobType, Qt::ToolTipRole);
 
   QIcon statusIcon = QIcon(":/Icons/pending.svg");
-  QString statusText = QObject::tr("queued");
+  QString statusText = QObject::tr("initialized");
   QStandardItem *statusItem = new QStandardItem(QString("statusItem"));
   statusItem->setIcon(statusIcon);
   this->setItem(row, Columns::Status, statusItem);
@@ -272,7 +274,11 @@ void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, const JobS
     int row = list.first()->row();
     QIcon statusIcon;
     QString statusText;
-    if (status == Running)
+    if (status == Queued)
+    {
+      statusText = tr("queued");
+    }
+    else if (status == Running)
     {
       statusIcon = QIcon(":/Icons/pending.svg");
       statusText = tr("in-progress");
@@ -658,6 +664,8 @@ void ctkDICOMJobListWidgetPrivate::disconnectScheduler()
     return;
   }
 
+  ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobInitialized(QVariant)),
+                                    q, SLOT(onJobInitialized(QVariant)));
   ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobQueued(QVariant)),
                                     q, SLOT(onJobQueued(QVariant)));
   ctkDICOMJobListWidget::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
@@ -681,6 +689,8 @@ void ctkDICOMJobListWidgetPrivate::connectScheduler()
     return;
   }
 
+  ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobInitialized(QVariant)),
+                                 q, SLOT(onJobInitialized(QVariant)));
   ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobQueued(QVariant)),
                                  q, SLOT(onJobQueued(QVariant)));
   ctkDICOMJobListWidget::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
@@ -946,7 +956,7 @@ void ctkDICOMJobListWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> sched
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMJobListWidget::onJobQueued(QVariant data)
+void ctkDICOMJobListWidget::onJobInitialized(QVariant data)
 {
   Q_D(ctkDICOMJobListWidget);
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
@@ -957,6 +967,20 @@ void ctkDICOMJobListWidget::onJobQueued(QVariant data)
   }
 
   d->dataModel->addJob(td, d->Scheduler->dicomDatabase());
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMJobListWidget::onJobQueued(QVariant data)
+{
+  Q_D(ctkDICOMJobListWidget);
+  ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
+
+  if(td.JobClass.isEmpty())
+    {
+    return;
+    }
+
+  d->dataModel->updateJobStatus(td, QCenteredItemModel::Queued);
 }
 
 //----------------------------------------------------------------------------
@@ -1079,7 +1103,7 @@ void ctkDICOMJobListWidget::onJobsViewSelectionChanged()
     QString jobClass = d->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobClass).data().toString();
 
-    if ((status == tr("in-progress") || status == tr("queued")) &&
+    if ((status == tr("in-progress") || status == tr("queued") || status == tr("initialized")) &&
         jobClass != "ctkDICOMStorageListenerJob")
     {
       inProgressJobSelected = true;
@@ -1112,13 +1136,15 @@ void ctkDICOMJobListWidget::onStopButtonClicked()
       (row, QCenteredItemModel::Columns::Status).data().toString();
     QString jobUID = d->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobUID).data().toString();
-    if (status == tr("in-progress") || status == tr("queued"))
+    if (status == tr("in-progress") || status == tr("queued") || status == tr("initialized"))
     {
       jobsUIDsToStop.append(jobUID);
     }
   }
 
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   d->Scheduler->stopJobsByJobUIDs(jobsUIDsToStop);
+  QApplication::restoreOverrideCursor();
   d->JobsView->clearSelection();
 }
 
@@ -1142,7 +1168,7 @@ void ctkDICOMJobListWidget::onResetFiltersButtonClicked()
 void ctkDICOMJobListWidget::onShowCompletedButtonToggled(bool toggled)
 {
   Q_D(ctkDICOMJobListWidget);
-  QString text = toggled ? "" : tr("queued|in-progress|canceled|failed");
+  QString text = toggled ? "" : tr("initialized|queued|in-progress|canceled|failed");
   d->showCompletedProxyModel->setFilterRegExp(text);
 }
 
@@ -1157,6 +1183,8 @@ void ctkDICOMJobListWidget::onClearCompletedButtonClicked()
 void ctkDICOMJobListWidget::onClearAllButtonClicked()
 {
   Q_D(ctkDICOMJobListWidget);
-  d->Scheduler->stopAllJobs(true);
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  d->Scheduler->stopAllJobs();
+  QApplication::restoreOverrideCursor();
   d->dataModel->removeRows(0, d->dataModel->rowCount());
 }
