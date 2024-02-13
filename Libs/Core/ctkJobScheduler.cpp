@@ -267,8 +267,6 @@ void ctkJobScheduler::waitForFinish(bool waitForPersistentJobs)
 void ctkJobScheduler::waitForDone(int msec)
 {
   Q_D(ctkJobScheduler);
-
-  QCoreApplication::processEvents();
   d->ThreadPool->waitForDone(msec);
 }
 

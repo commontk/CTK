@@ -930,6 +930,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::retrieveSeries()
   bool wait = true;
   while (wait)
     {
+    QCoreApplication::processEvents();
     this->Scheduler->waitForDone(300);
     wait = false;
     foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, selectedSeriesWidgetsList)
