@@ -743,6 +743,12 @@ ctk_enable_option(Python_Wrapping "Wrap CTK classes using Qt meta-object system 
                   CTK_LIB_Scripting/Python/Core)
 mark_as_superbuild(CTK_ENABLE_Python_Wrapping)
 
+include(CMakeDependentOption)
+cmake_dependent_option(
+  CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY "Disable copy of .py files when using ctkMacroCompilePythonScript()" OFF
+  "CTK_ENABLE_Python_Wrapping" OFF)
+mark_as_superbuild(CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY)
+
 # Build examples
 # Create the logical expression containing the minimum set of required options
 # for the CTK_BUILD_EXAMPLES option to be ON

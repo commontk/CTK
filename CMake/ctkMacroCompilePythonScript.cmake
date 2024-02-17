@@ -21,6 +21,12 @@ include(${CTK_CMAKE_DIR}/ctkMacroParseArguments.cmake)
 
 set(CTK_PYTHON_COMPILE_FILE_SCRIPT_DIR "${CMAKE_BINARY_DIR}/CMakeFiles")
 
+# Setting this option to TRUE disable the copy of ".py" files into the
+# destination directory associated with ctkMacroCompilePythonScript.
+if(NOT DEFINED CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY)
+  set(CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY FALSE)
+endif()
+
 #! \ingroup CMakeAPI
 macro(ctkMacroCompilePythonScript)
   ctkMacroParseArguments(MY
@@ -98,7 +104,11 @@ macro(ctkMacroCompilePythonScript)
     USE_SOURCE_PERMISSIONS)
 
   if(NOT MY_GLOBAL_TARGET)
-    ctkFunctionAddCompilePythonScriptTargets(${target})
+    set(_skip_script_copy_option)
+    if(CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY)
+      set(_skip_script_copy_option SKIP_SCRIPT_COPY)
+    endif()
+    ctkFunctionAddCompilePythonScriptTargets(${target} ${_skip_script_copy_option})
   endif()
 endmacro()
 
@@ -183,7 +193,15 @@ function(_ctk_add_compile_python_directories_target target)
 endfunction()
 
 function(ctkFunctionAddCompilePythonScriptTargets target)
-  _ctk_add_copy_python_files_target(${target} Script ${ARGN})
+  ctkMacroParseArguments(MY
+    ""
+    "SKIP_SCRIPT_COPY"
+    ${ARGN}
+    )
+  # Skip defining the target CopySlicerPythonScriptFiles when the argument skip_script_copy is set to True
+  if(NOT MY_SKIP_SCRIPT_COPY)
+    _ctk_add_copy_python_files_target(${target} Script ${ARGN})
+  endif()
   _ctk_add_copy_python_files_target(${target} Resource ${ARGN})
   _ctk_add_compile_python_directories_target(${target})
 endfunction()
