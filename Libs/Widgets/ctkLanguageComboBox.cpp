@@ -35,7 +35,20 @@ protected:
 public:
   ctkLanguageComboBoxPrivate(ctkLanguageComboBox& object);
   void init();
+
   void updateLanguageItems();
+
+  /// \brief Normalize Locale Code
+  ///
+  /// Converts the input locale code to its long form, handling incomplete or
+  /// extended inputs. For example, "en" -> "en_US", "fr" -> "fr_FR", "fr_" -> "fr_FR",
+  /// "en_U" -> "en_US", "fr_FRRRR" -> "fr_FR". If the input is invalid, it returns
+  /// an empty string.
+  ///
+  /// \note The support for normalizing incomplete or extended inputs aligns with the
+  /// behavior of `qt.QLocale`.
+  QString normalizeLocaleCode(const QString& localeCode);
+
   bool languageItem(const QString& localeCode,
                     QIcon& icon, QString& text,QVariant& data, bool showCountry);
 
@@ -85,6 +98,12 @@ void ctkLanguageComboBoxPrivate::updateLanguageItems()
   if (!this->DefaultLanguage.isEmpty())
   {
     localeCodes.append(this->DefaultLanguage);
+  }
+
+  // If no locale code was selected and a default one was set, select it.
+  if (selectedLocaleCode.isEmpty() && !this->DefaultLanguage.isEmpty())
+  {
+    selectedLocaleCode = this->DefaultLanguage;
   }
 
   // Get locale codes from translation files from all the specified directories
@@ -163,21 +182,30 @@ void ctkLanguageComboBoxPrivate::updateLanguageItems()
 }
 
 // ----------------------------------------------------------------------------
+QString ctkLanguageComboBoxPrivate::normalizeLocaleCode(const QString& localeCode)
+{
+  QLocale normalized(localeCode);
+  return normalized.name() == "C" ? QString() : normalized.name();
+}
+
+// ----------------------------------------------------------------------------
 bool ctkLanguageComboBoxPrivate::languageItem(const QString& localeCode,
                                               QIcon& icon,
                                               QString& text,
                                               QVariant& data,
                                               bool showCountry)
 {
-  QLocale locale(localeCode);
-  if (localeCode.isEmpty() ||
-      locale.name() == "C")
+
+  QString normalizedLocaleCode = this->normalizeLocaleCode(localeCode);
+  if (normalizedLocaleCode.isEmpty())
     {
     icon = QIcon();
     text = QString();
     data = QVariant();
     return false;
     }
+
+  QLocale locale(normalizedLocaleCode);
 
   if (this->CountryFlagsVisible)
   {
@@ -228,7 +256,7 @@ ctkLanguageComboBox::ctkLanguageComboBox(const QString& defaultLanguage,
   , d_ptr(new ctkLanguageComboBoxPrivate(*this))
 {
   Q_D(ctkLanguageComboBox);
-  d->DefaultLanguage = defaultLanguage;
+  d->DefaultLanguage = d->normalizeLocaleCode(defaultLanguage);
   d->init();
 }
 
@@ -248,7 +276,7 @@ QString ctkLanguageComboBox::defaultLanguage() const
 void ctkLanguageComboBox::setDefaultLanguage(const QString& localeCode)
 {
   Q_D(ctkLanguageComboBox);
-  d->DefaultLanguage = localeCode;
+  d->DefaultLanguage = d->normalizeLocaleCode(localeCode);
   d->updateLanguageItems();
 }
 
