@@ -107,11 +107,11 @@ int ctkVTKScalarsToColorsViewTest2(int argc, char * argv [] )
   ctkVTKScalarsToColorsView view(0);
   // add transfer function item
   vtkPlot* ctfPlot = view.addColorTransferFunction(ctf);
-  view.chart()->SetPlotCorner(ctfPlot, 1);
+  view.chartXY()->SetPlotCorner(ctfPlot, 1);
   ctfPlot->SetOpacity(0.7);
   // add histogram item
   view.addPlot(histogramPlot);
-  view.chart()->SetBarWidthFraction(1.);
+  view.chartXY()->SetBarWidthFraction(1.);
   view.setAxesToChartBounds();
   view.show();
 

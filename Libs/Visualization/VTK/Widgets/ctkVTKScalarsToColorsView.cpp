@@ -27,6 +27,7 @@
 
 // VTK includes
 #include <vtkAxis.h>
+#include <vtkChart.h>
 #include <vtkChartXY.h>
 #include <vtkColorTransferControlPointsItem.h>
 #include <vtkColorTransferFunction.h>
@@ -75,9 +76,12 @@ ctkVTKScalarsToColorsViewPrivate::ctkVTKScalarsToColorsViewPrivate(ctkVTKScalars
 void ctkVTKScalarsToColorsViewPrivate::init()
 {
   Q_Q(ctkVTKScalarsToColorsView);
-  vtkChartXY* chart = q->chart();
-  chart->SetAutoAxes(false);
-  chart->SetHiddenAxisBorder(0);
+  vtkChartXY* chart = q->chartXY();
+  if (chart)
+    {
+    chart->SetAutoAxes(false);
+    chart->SetHiddenAxisBorder(0);
+    }
   this->showBorders(true);
   QObject::connect(q, SIGNAL(boundsChanged()), q, SLOT(onBoundsChanged()));
   q->onChartUpdated();
@@ -87,7 +91,7 @@ void ctkVTKScalarsToColorsViewPrivate::init()
 void ctkVTKScalarsToColorsViewPrivate::showBorders(bool visible)
 {
   Q_Q(ctkVTKScalarsToColorsView);
-  vtkChartXY* chart = q->chart();
+  vtkChart* chart = q->abstractChart();
   for (int i = 0; i < 4; ++i)
     {
     chart->GetAxis(i)->SetVisible(true);
@@ -283,10 +287,11 @@ vtkPlot* ctkVTKScalarsToColorsView
 QList<vtkPlot*> ctkVTKScalarsToColorsView::plots()const
 {
   QList<vtkPlot*> res;
-  const vtkIdType count = this->chart()->GetNumberOfPlots();
+  vtkChart* chart = this->abstractChart();
+  const vtkIdType count = chart->GetNumberOfPlots();
   for(vtkIdType i = 0; i < count; ++i)
     {
-    res << this->chart()->GetPlot(i);
+    res << chart->GetPlot(i);
     }
   return res;
 }
@@ -506,7 +511,7 @@ void ctkVTKScalarsToColorsView
 bool ctkVTKScalarsToColorsView
 ::areBordersVisible()const
 {
-  return this->chart()->GetAxis(0)->GetVisible();
+  return this->abstractChart()->GetAxis(0)->GetVisible();
 }
 
 // ----------------------------------------------------------------------------

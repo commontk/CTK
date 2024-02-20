@@ -28,6 +28,8 @@
 class ctkVTKChartViewPrivate;
 
 // VTK includes
+class vtkChart;
+class vtkChartParallelCoordinates;
 class vtkChartXY;
 class vtkContextScene;
 class vtkPlot;
@@ -38,7 +40,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKChartView : public ctkVTKOpenGL
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(QString title READ title WRITE setTitle)
-
+  Q_PROPERTY(int chartType READ chartType WRITE setChartType)
 public:
   typedef ctkVTKOpenGLNativeWidget Superclass;
   ctkVTKChartView(QWidget* parent = 0);
@@ -58,8 +60,27 @@ public:
 
   /// Utility function that returns the view chart. It can be used for customizing
   /// the chart display options (axes, legend...)
+  Q_INVOKABLE vtkChart* abstractChart()const;
+  Q_INVOKABLE vtkChartParallelCoordinates* parallelCoordinatesChart()const;
+  Q_INVOKABLE vtkChartXY* chartXY()const;
+  /// \deprecated Use chartXY() instead
   Q_INVOKABLE vtkChartXY* chart()const;
   Q_INVOKABLE vtkContextScene* scene()const;
+
+  /// Describe the chart associated with the view.
+  enum ChartType
+    {
+    UnknownChart,
+    XYChart,
+    ParallelCoordinatesChart,
+    };
+  Q_ENUM(ChartType)
+
+  ///@{
+  /// Set/Get the type of the chart. Default chart type is XYChart.
+  int chartType() const;
+  void setChartType(int type);
+  ///}@
 
   /// Title that appears inside the view
   QString title()const;
@@ -99,6 +120,9 @@ Q_SIGNALS:
   void boundsChanged();
   /// Fired anytime an axis is modified.
   void extentChanged();
+
+  /// \sa setChartType()
+  void chartTypeChanged(int chartType);
 
 protected:
   QScopedPointer<ctkVTKChartViewPrivate> d_ptr;

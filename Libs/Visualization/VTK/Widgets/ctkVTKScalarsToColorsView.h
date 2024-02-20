@@ -130,10 +130,11 @@ template<class T>
 QList<T*> ctkVTKScalarsToColorsView::plots()const
 {
   QList<T*> res;
-  const vtkIdType count = this->chart()->GetNumberOfPlots();
+  vtkChart* chart = this->abstractChart();
+  const vtkIdType count = chart->GetNumberOfPlots();
   for(vtkIdType i = 0; i < count; ++i)
     {
-    vtkPlot* plot = this->chart()->GetPlot(i);
+    vtkPlot* plot = chart->GetPlot(i);
     if (T::SafeDownCast(plot) != 0)
       {
       res << T::SafeDownCast(plot);

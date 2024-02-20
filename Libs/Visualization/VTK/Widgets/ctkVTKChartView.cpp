@@ -28,6 +28,8 @@
 
 // VTK includes
 #include <vtkAxis.h>
+#include <vtkChart.h>
+#include <vtkChartParallelCoordinates.h>
 #include <vtkChartXY.h>
 #include <vtkContext2D.h>
 #include <vtkContextMouseEvent.h>
@@ -53,12 +55,13 @@ public:
   ctkVTKChartViewPrivate(ctkVTKChartView& object);
   void init();
   void chartBounds(double* bounds)const;
+  void setChartType(int chartType);
 
 #ifdef CTK_USE_QVTKOPENGLWIDGET
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> RenderWindow;
 #endif
   vtkSmartPointer<vtkContextView> ContextView;
-  vtkSmartPointer<vtkChartXY> Chart;
+  vtkSmartPointer<vtkChart> Chart;
   double UserBounds[8];
   mutable double OldBounds[8];
 };
@@ -74,12 +77,73 @@ ctkVTKChartViewPrivate::ctkVTKChartViewPrivate(ctkVTKChartView& object)
 #ifdef CTK_USE_QVTKOPENGLWIDGET
   this->RenderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
 #endif
-  this->Chart = vtkSmartPointer<vtkChartXY>::New();
+  this->setChartType(ctkVTKChartView::ChartType::XYChart);
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartViewPrivate::setChartType(int type)
+{
+  if (this->ContextView->GetScene()->GetNumberOfItems() > 0)
+    {
+    this->ContextView->GetScene()->RemoveItem(this->Chart);
+    }
+  switch (type)
+    {
+    case ctkVTKChartView::ChartType::XYChart:
+      this->Chart = vtkSmartPointer<vtkChartXY>::New();
+      break;
+    case ctkVTKChartView::ChartType::ParallelCoordinatesChart:
+      this->Chart = vtkSmartPointer<vtkChartParallelCoordinates>::New();
+      break;
+    case ctkVTKChartView::ChartType::UnknownChart:
+#if (QT_VERSION >= QT_VERSION_CHECK(5,8,0))
+      Q_FALLTHROUGH();
+#else
+      /* FALLTHRU */
+#endif
+    default:
+      qWarning() << "ctkVTKChartViewPrivate::setChartType - Unknown chart type: " << type;
+      return;
+    }
   this->ContextView->GetScene()->AddItem(this->Chart);
   this->UserBounds[0] = this->UserBounds[2] = this->UserBounds[4] = this->UserBounds[6] = 0.;
   this->UserBounds[1] = this->UserBounds[3] = this->UserBounds[5] = this->UserBounds[7] = -1.;
   this->OldBounds[0] = this->OldBounds[2] = this->OldBounds[4] = this->OldBounds[6] = 0.;
   this->OldBounds[1] = this->OldBounds[3] = this->OldBounds[5] = this->OldBounds[7] = -1.;
+}
+
+// ----------------------------------------------------------------------------
+int ctkVTKChartView::chartType()const
+{
+  Q_D(const ctkVTKChartView);
+  if (d->Chart == nullptr)
+    {
+    return ctkVTKChartView::ChartType::UnknownChart;
+    }
+  if (d->Chart->IsA("vtkChartXY"))
+    {
+    return ctkVTKChartView::ChartType::XYChart;
+    }
+  else if (d->Chart->IsA("vtkChartParallelCoordinates"))
+    {
+    return ctkVTKChartView::ChartType::ParallelCoordinatesChart;
+    }
+  else
+    {
+    return ctkVTKChartView::ChartType::UnknownChart;
+    }
+}
+
+// ----------------------------------------------------------------------------
+void ctkVTKChartView::setChartType(int type)
+{
+  Q_D(ctkVTKChartView);
+  if (type == this->chartType())
+    {
+    return;
+    }
+  d->setChartType(type);
+  emit chartTypeChanged(type);
 }
 
 // ----------------------------------------------------------------------------
@@ -118,9 +182,9 @@ void ctkVTKChartViewPrivate::init()
   this->Chart->SetActionToButton(vtkChart::PAN, vtkContextMouseEvent::MIDDLE_BUTTON);
   this->Chart->SetActionToButton(vtkChart::SELECT, vtkContextMouseEvent::RIGHT_BUTTON);
 
-  q->qvtkConnect(q->chart()->GetAxis(vtkAxis::BOTTOM),vtkCommand::ModifiedEvent,
+  q->qvtkConnect(q->abstractChart()->GetAxis(vtkAxis::BOTTOM),vtkCommand::ModifiedEvent,
                     q, SIGNAL(extentChanged()));
-  q->qvtkConnect(q->chart()->GetAxis(vtkAxis::LEFT),vtkCommand::ModifiedEvent,
+  q->qvtkConnect(q->abstractChart()->GetAxis(vtkAxis::LEFT),vtkCommand::ModifiedEvent,
                     q, SIGNAL(extentChanged()));
 
 }
@@ -135,53 +199,68 @@ void ctkVTKChartViewPrivate::chartBounds(double* bounds)const
   Q_Q(const ctkVTKChartView);
   bounds[0] = bounds[2] = bounds[4] = bounds[6] = VTK_DOUBLE_MAX;
   bounds[1] = bounds[3] = bounds[5] = bounds[7] = VTK_DOUBLE_MIN;
-  vtkChartXY* chart = q->chart();
+  vtkChart* chart = q->abstractChart();
+  vtkChartXY* chartXY = vtkChartXY::SafeDownCast(chart);
   const vtkIdType plotCount = chart->GetNumberOfPlots();
   for (vtkIdType i = 0; i < plotCount; ++i)
     {
     vtkPlot* plot = chart->GetPlot(i);
 
-    int corner = chart->GetPlotCorner(plot);
-    double plotBounds[4];
-    plot->GetBounds(plotBounds);
-    switch (corner)
+    if (chartXY)
       {
-      // bottom left
-      case 0:
+      int corner = chartXY->GetPlotCorner(plot);
+      double plotBounds[4];
+      plot->GetBounds(plotBounds);
+      switch (corner)
+        {
+        // bottom left
+        case 0:
+          // x
+          bounds[2] = bounds[2] > plotBounds[0] ? plotBounds[0] : bounds[2];
+          bounds[3] = bounds[3] < plotBounds[1] ? plotBounds[1] : bounds[3];
+          // y
+          bounds[0] = bounds[0] > plotBounds[2] ? plotBounds[2] : bounds[0];
+          bounds[1] = bounds[1] < plotBounds[3] ? plotBounds[3] : bounds[1];
+          break;
+        // bottom right
+        case 1:
+          // x
+          bounds[2] = bounds[2] > plotBounds[0] ? plotBounds[0] : bounds[2];
+          bounds[3] = bounds[3] < plotBounds[1] ? plotBounds[1] : bounds[3];
+          // y
+          bounds[4] = bounds[4] > plotBounds[2] ? plotBounds[2] : bounds[4];
+          bounds[5] = bounds[5] < plotBounds[3] ? plotBounds[3] : bounds[5];
+          break;
+        // top right
+        case 2:
+          // x
+          bounds[6] = bounds[6] > plotBounds[0] ? plotBounds[0] : bounds[6];
+          bounds[7] = bounds[7] < plotBounds[1] ? plotBounds[1] : bounds[7];
+          // y
+          bounds[4] = bounds[4] > plotBounds[2] ? plotBounds[2] : bounds[4];
+          bounds[5] = bounds[5] < plotBounds[3] ? plotBounds[3] : bounds[5];
+          break;
+        // top left
+        case 3:
+          // x
+          bounds[6] = bounds[6] > plotBounds[0] ? plotBounds[0] : bounds[6];
+          bounds[7] = bounds[7] < plotBounds[1] ? plotBounds[1] : bounds[7];
+          // y
+          bounds[0] = bounds[0] > plotBounds[2] ? plotBounds[2] : bounds[1];
+          bounds[1] = bounds[0] < plotBounds[3] ? plotBounds[3] : bounds[1];
+          break;
+        }
+      }
+    else
+      {
+        double plotBounds[4];
+        plot->GetBounds(plotBounds);
         // x
         bounds[2] = bounds[2] > plotBounds[0] ? plotBounds[0] : bounds[2];
         bounds[3] = bounds[3] < plotBounds[1] ? plotBounds[1] : bounds[3];
         // y
         bounds[0] = bounds[0] > plotBounds[2] ? plotBounds[2] : bounds[0];
         bounds[1] = bounds[1] < plotBounds[3] ? plotBounds[3] : bounds[1];
-        break;
-      // bottom right
-      case 1:
-        // x
-        bounds[2] = bounds[2] > plotBounds[0] ? plotBounds[0] : bounds[2];
-        bounds[3] = bounds[3] < plotBounds[1] ? plotBounds[1] : bounds[3];
-        // y
-        bounds[4] = bounds[4] > plotBounds[2] ? plotBounds[2] : bounds[4];
-        bounds[5] = bounds[5] < plotBounds[3] ? plotBounds[3] : bounds[5];
-        break;
-      // top right
-      case 2:
-        // x
-        bounds[6] = bounds[6] > plotBounds[0] ? plotBounds[0] : bounds[6];
-        bounds[7] = bounds[7] < plotBounds[1] ? plotBounds[1] : bounds[7];
-        // y
-        bounds[4] = bounds[4] > plotBounds[2] ? plotBounds[2] : bounds[4];
-        bounds[5] = bounds[5] < plotBounds[3] ? plotBounds[3] : bounds[5];
-        break;
-      // top left
-      case 3:
-        // x
-        bounds[6] = bounds[6] > plotBounds[0] ? plotBounds[0] : bounds[6];
-        bounds[7] = bounds[7] < plotBounds[1] ? plotBounds[1] : bounds[7];
-        // y
-        bounds[0] = bounds[0] > plotBounds[2] ? plotBounds[2] : bounds[1];
-        bounds[1] = bounds[0] < plotBounds[3] ? plotBounds[3] : bounds[1];
-        break;
       }
     }
 }
@@ -230,10 +309,30 @@ QString ctkVTKChartView::title()const
 }
 
 // ----------------------------------------------------------------------------
-vtkChartXY* ctkVTKChartView::chart()const
+vtkChart* ctkVTKChartView::abstractChart()const
 {
   Q_D(const ctkVTKChartView);
   return d->Chart;
+}
+
+// ----------------------------------------------------------------------------
+vtkChartParallelCoordinates* ctkVTKChartView::parallelCoordinatesChart()const
+{
+  Q_D(const ctkVTKChartView);
+  return vtkChartParallelCoordinates::SafeDownCast(d->Chart);
+}
+
+// ----------------------------------------------------------------------------
+vtkChartXY* ctkVTKChartView::chartXY()const
+{
+  Q_D(const ctkVTKChartView);
+  return vtkChartXY::SafeDownCast(d->Chart);
+}
+
+// ----------------------------------------------------------------------------
+vtkChartXY* ctkVTKChartView::chart()const
+{
+  return this->chartXY();
 }
 
 // ----------------------------------------------------------------------------
@@ -321,7 +420,7 @@ void ctkVTKChartView::chartExtent(double* extent)const
     }
   extent[0] = extent[2] = extent[4] = extent[6] = VTK_DOUBLE_MAX;
   extent[1] = extent[3] = extent[5] = extent[7] = VTK_DOUBLE_MIN;
-  vtkChartXY* chart = this->chart();
+  vtkChart* chart = this->abstractChart();
   vtkAxis* axis = chart->GetAxis(vtkAxis::BOTTOM);
   extent[0] = qMin(axis->GetMinimum(), extent[0]);
   extent[1] = qMax(axis->GetMaximum(), extent[1]);
@@ -344,7 +443,7 @@ void ctkVTKChartView::setChartUserExtent(double* userExtent)
     qCritical() << Q_FUNC_INFO << ": Invalid user extent";
     return;
     }
-  vtkChartXY* chart = this->chart();
+  vtkChart* chart = this->abstractChart();
   vtkAxis* axis = chart->GetAxis(vtkAxis::BOTTOM);
   axis->SetRange(userExtent[0], userExtent[1]);
   axis = chart->GetAxis(vtkAxis::LEFT);
@@ -395,7 +494,7 @@ void ctkVTKChartView::chartUserBounds(double* bounds)const
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::setAxesToChartBounds()
 {
-  vtkChartXY* chart = this->chart();
+  vtkChart* chart = this->abstractChart();
   double bounds[8];
   this->chartBounds(bounds);
   for (int i = 0; i < chart->GetNumberOfAxes(); ++i)
@@ -410,7 +509,7 @@ void ctkVTKChartView::setAxesToChartBounds()
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::boundAxesToChartBounds()
 {
-  vtkChartXY* chart = this->chart();
+  vtkChart* chart = this->abstractChart();
   double bounds[8];
   this->chartBounds(bounds);
   for (int i = 0; i < chart->GetNumberOfAxes(); ++i)
