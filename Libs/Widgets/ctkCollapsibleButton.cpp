@@ -592,11 +592,11 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
     }
   if (d->Collapsed)
     {
-    style()->drawPrimitive(QStyle::PE_IndicatorArrowRight, &indicatorOpt, &p, this);
+    style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &indicatorOpt, &p, this);
     }
   else
     {
-    style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &indicatorOpt, &p, this);
+    style()->drawPrimitive(QStyle::PE_IndicatorArrowUp, &indicatorOpt, &p, this);
     }
 
   // Draw Text
