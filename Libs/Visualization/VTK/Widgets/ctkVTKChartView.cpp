@@ -437,7 +437,7 @@ void ctkVTKChartView::mouseDoubleClickEvent(QMouseEvent* event)
 {
   if (event->button() == Qt::MiddleButton)
     {
-    this->setAxesToChartBounds();
+    this->chart()->RecalculateBounds();
     }
   this->Superclass::mouseDoubleClickEvent(event);
 }
