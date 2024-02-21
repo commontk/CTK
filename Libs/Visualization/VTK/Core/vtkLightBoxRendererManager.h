@@ -64,26 +64,26 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
 
   /// Reset cameras associated with all renderWindowItem
   void ResetCamera();
-  
+
   /// Return number of underlying render window Item
   /// \note In the current implementation
   int GetRenderWindowItemCount();
-  
+
   /// Get a reference to the associated vtkRenderer(s) identified by its \a id
   vtkRenderer* GetRenderer(int id);
-  
+
   /// Get a reference to the associated vtkRenderer(s) given its position in the grid
   /// \sa GetRenderer(int)
   vtkRenderer* GetRenderer(int rowId, int columnId);
-  
+
   /// The layout type determines how the image slices should be displayed
   /// within the different render view items.
   /// \sa SetRenderWindowLayout() GetRenderWindowLayoutType()
   enum RenderWindowLayoutType{LeftRightTopBottom = 0, LeftRightBottomTop};
-  
+
   /// Get current layout type
   int GetRenderWindowLayoutType() const;
-  
+
   /// Set current \a layoutType
   void SetRenderWindowLayoutType(int layoutType);
 
@@ -129,14 +129,14 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
   /// The highlightedBox is set with a width of 3 screen units.
   /// \sa SetHighlightedById SetHighlighted vtkProperty2D::SetLineWidth
   double* GetHighlightedBoxColor()const;
-  
+
   /// Convenient function allowing to compute the renderWindowItemId
   /// given \a rowId and \a columnId.
   /// The following formula is used: ColumnCount * rowId + columnId
   /// \note The \a rowCount and \a columnCount correspond to the one set
   /// using setRenderWindowLayout.
   inline int ComputeRenderWindowItemId(int rowId, int columnId);
-  
+
   /// Set corner annotation \a text
   void SetCornerAnnotationText(const std::string& text);
 
@@ -168,16 +168,16 @@ class CTK_VISUALIZATION_VTK_CORE_EXPORT vtkLightBoxRendererManager : public vtkO
 
   /// Set color Window and color level
   void SetColorWindowAndLevel(double colorWindow, double colorLevel);
-  
+
 protected:
 
   vtkLightBoxRendererManager();
   ~vtkLightBoxRendererManager();
-  
+
 private:
   vtkLightBoxRendererManager(const vtkLightBoxRendererManager&); // Not implemented.
   void operator=(const vtkLightBoxRendererManager&);             // Not implemented.
-  
+
 //BTX
   class vtkInternal;
   vtkInternal* Internal;
@@ -186,4 +186,3 @@ private:
 };
 
 #endif
-

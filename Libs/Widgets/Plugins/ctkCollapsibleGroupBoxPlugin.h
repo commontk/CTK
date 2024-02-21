@@ -32,14 +32,14 @@ class CTK_WIDGETS_PLUGINS_EXPORT ctkCollapsibleGroupBoxPlugin
 
 public:
   ctkCollapsibleGroupBoxPlugin(QObject* parent = 0);
-  
+
   QWidget *createWidget(QWidget* parent);
   QString  domXml() const;
   QIcon    icon() const;
   QString  includeFile() const;
   bool     isContainer() const;
   QString  name() const;
-  
+
 };
 
 #endif

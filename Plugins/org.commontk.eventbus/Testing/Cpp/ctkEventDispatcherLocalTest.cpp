@@ -368,7 +368,7 @@ void ctkEventDispatcherLocalTest::notifyEventWitReturnValueTest() {
     for( ; argCounter <= 10; argCounter++) {
         returnValue = -1;
         int *toAppend = new int(argCounter);
-        if(argCounter != 0) { 
+        if(argCounter != 0) {
             argList.append(ctkEventArgument(int, *toAppend));
         }
         QString topicToNotify = "ctk/local/setObjectValue";

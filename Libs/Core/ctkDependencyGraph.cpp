@@ -45,16 +45,16 @@ public:
 
   ctkDependencyGraphPrivate(ctkDependencyGraph& p);
   ~ctkDependencyGraphPrivate();
-  
+
   /// Compute outdegree
   void computeOutdegrees(std::vector<int>& computedOutdegrees);
-  
+
   /// Traverse tree using Depth-first_search
   void traverseUsingDFS(int v);
-  
+
   /// Called each time an edge is visited
-  void processEdge(int from, int to); 
-  
+  void processEdge(int from, int to);
+
   /// Called each time a vertex is processed
   void processVertex(int v);
 
@@ -63,7 +63,7 @@ public:
 
   /// Recursive function used by findPaths to retrieve the path between two vertices
   void findPathsRec(int from, int to, std::list<int>* path, std::list<std::list<int>* >& paths);
-  
+
   void setEdge(int vertice, int degree, int value);
   int edge(int vertice, int degree)const;
 
@@ -85,19 +85,19 @@ public:
   std::vector<int> InDegree;
   int NVertices;
   int NEdges;
-  
+
   /// Structure used by DFS
   /// See http://en.wikipedia.org/wiki/Depth-first_search
   std::vector<bool> Processed;	// processed vertices
   std::vector<bool> Discovered; // discovered vertices
   std::vector<int>  Parent;	    // relation discovered
-  
+
   bool    Abort;	// Flag indicating if traverse should be aborted
-  bool    Verbose; 
-  bool    CycleDetected; 
-  int     CycleOrigin; 
+  bool    Verbose;
+  bool    CycleDetected;
+  int     CycleOrigin;
   int     CycleEnd;
-  
+
   std::list<int> ListOfEdgeToExclude;
 
 };
@@ -159,8 +159,8 @@ bool listContainsValue(const std::list<T>& list, const T& value)
 ctkDependencyGraphPrivate::ctkDependencyGraphPrivate(ctkDependencyGraph& object)
   :q_ptr(&object)
 {
-  this->NVertices = 0; 
-  this->NEdges = 0; 
+  this->NVertices = 0;
+  this->NEdges = 0;
   this->Abort = false;
   this->Verbose = false;
   this->CycleDetected = false;
@@ -188,7 +188,7 @@ void ctkDependencyGraphPrivate::computeOutdegrees(std::vector<int>& computedOutd
     computedOutdegrees[i] = 0;
 	  }
 
-	for (int i=1; i <= this->NVertices; i++) 
+	for (int i=1; i <= this->NVertices; i++)
 	  {
     for (int j=0; j < this->OutDegree[i]; j++)
 		  {
@@ -219,8 +219,8 @@ void ctkDependencyGraphPrivate::traverseUsingDFS(int v)
 			if (this->Discovered[y] == false)
 			  {
 				this->traverseUsingDFS(y);
-			  } 
-			else 
+			  }
+			else
 			  {
 				if (this->Processed[y] == false)
 				  {
@@ -243,7 +243,7 @@ void ctkDependencyGraphPrivate::processEdge(int from, int to)
   if (this->Discovered[to] == true)
     {
     this->CycleDetected = true;
-    this->CycleOrigin = to; 
+    this->CycleOrigin = to;
     this->CycleEnd = from;
     if (this->Verbose)
       {
@@ -273,7 +273,7 @@ void ctkDependencyGraphPrivate::setEdge(int vertice, int degree, int value)
 {
   assert(vertice <= this->NVertices);
   assert(degree < MAXDEGREE);
-  (*this->Edges[vertice])[degree] = value; 
+  (*this->Edges[vertice])[degree] = value;
 }
 
 //----------------------------------------------------------------------------
@@ -291,7 +291,7 @@ void ctkDependencyGraphPrivate::findPathDFS(int from, int to, std::list<int>& pa
     {
     path.push_back(from);
     }
-  else 
+  else
     {
     this->findPathDFS(from, this->Parent[to], path);
     path.push_back(to);
@@ -306,7 +306,7 @@ void ctkDependencyGraphPrivate::findPathsRec(
     {
     return;
     }
-  
+
   std::list<int> branch;
   branch = *path;
 
@@ -415,7 +415,7 @@ ctkDependencyGraph::ctkDependencyGraph(int nvertices)
   :d_ptr(new ctkDependencyGraphPrivate(*this))
 {
   d_ptr->NVertices = nvertices;
-  
+
   // Resize internal array
   d_ptr->Processed.resize(nvertices + 1);
   d_ptr->Discovered.resize(nvertices + 1);
@@ -429,14 +429,14 @@ ctkDependencyGraph::ctkDependencyGraph(int nvertices)
     d_ptr->OutDegree[i] = 0;
     d_ptr->InDegree[i] = 0;
     }
-    
+
   // initialize Edge adjacency list
   for (int i=0; i <= nvertices; i++)
     {
     d_ptr->Edges[i] = new std::vector<int>();
     d_ptr->Edges[i]->resize(MAXDEGREE);
     }
-    
+
   // initialize search
   for (int i=1; i <= nvertices; i++)
     {
@@ -605,7 +605,7 @@ void ctkDependencyGraph::insertEdge(int from, int to)
 {
   assert(from > 0 && from <= d_ptr->NVertices);
   assert(to > 0 && to <= d_ptr->NVertices);
-  
+
   // resize if needed
   size_t capacity = d_ptr->Edges[from]->capacity();
   if (d_ptr->OutDegree[from] > static_cast<int>(capacity))
@@ -697,9 +697,9 @@ bool ctkDependencyGraph::topologicalSort(std::list<int>& sorted, int rootId)
   outdegree.resize(MAXV);
   std::queue<int> zeroout;	  // vertices of outdegree 0
 	int x, y;			        // current and next vertex
-  
+
   outdegree.resize(d_ptr->NVertices + 1);
-	
+
 	// resize if needed
 	if (d_ptr->NVertices > MAXV)
 	  {
@@ -707,7 +707,7 @@ bool ctkDependencyGraph::topologicalSort(std::list<int>& sorted, int rootId)
 	  }
 
 	d_ptr->computeOutdegrees(outdegree);
-	
+
 	for (int i=1; i <= d_ptr->NVertices; i++)
 	  {
     if (outdegree[i] == 0)
@@ -738,7 +738,7 @@ bool ctkDependencyGraph::topologicalSort(std::list<int>& sorted, int rootId)
 	  {
 		return false;
 		}
-		
+
   return true;
 }
 

@@ -21,7 +21,7 @@
 // STL includes
 #include <stdexcept>
 
-// Qt includes 
+// Qt includes
 #include <QHash>
 #include <QStringList>
 #include <QTextStream>
@@ -238,14 +238,14 @@ public:
   {}
 
   ~ctkInternal() { qDeleteAll(ArgumentDescriptionList); }
-  
+
   CommandLineParserArgumentDescription* argumentDescription(const QString& argument);
-  
+
   QList<CommandLineParserArgumentDescription*>                 ArgumentDescriptionList;
   QHash<QString, CommandLineParserArgumentDescription*>        ArgNameToArgumentDescriptionMap;
   QMap<QString, QList<CommandLineParserArgumentDescription*> > GroupToArgumentDescriptionListMap;
-  
-  QStringList UnparsedArguments; 
+
+  QStringList UnparsedArguments;
   QStringList ProcessedArguments;
   QString     ErrorString;
   bool        Debug;
@@ -436,7 +436,7 @@ QHash<QString, QVariant> ctkCommandLineParser::parseArguments(const QStringList&
           {
           if (i + j >= arguments.size())
             {
-            this->Internal->ErrorString = 
+            this->Internal->ErrorString =
                 missingParameterError.arg(argument).arg(j-1).arg(numberOfParametersToProcess);
             if (this->Internal->Debug) { qDebug() << this->Internal->ErrorString; }
             if (ok) { *ok = false; }
@@ -846,4 +846,3 @@ void ctkCommandLineParser::setStrictModeEnabled(bool strictMode)
 {
   this->Internal->StrictMode = strictMode;
 }
-

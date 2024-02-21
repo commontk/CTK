@@ -78,5 +78,3 @@ void ctkCheckableHeaderViewEventTranslator::onHeaderDataChanged(Qt::Orientation,
     emit recordEvent(this->CurrentObject,"set_section_unchecked", QString::number(first));
     }
 }
-
-

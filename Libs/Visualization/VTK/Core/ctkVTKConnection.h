@@ -55,7 +55,7 @@ public:
   static QString shortDescription(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot = 0);
 
-  /// 
+  ///
   /// Warning the slot must have its signature order:
   /// vtkObject*, vtkObject* : sender, callData
   /// or
@@ -67,24 +67,24 @@ public:
     const QObject* qt_obj, const char* qt_slot, float priority = 0.f,
     Qt::ConnectionType connectionType = Qt::AutoConnection);
 
-  /// 
-  /// Check the validity of the parameters. Parameters must be valid to add 
+  ///
+  /// Check the validity of the parameters. Parameters must be valid to add
   /// a connection
   static bool isValid(vtkObject* vtk_obj, unsigned long vtk_event,
     const QObject* qt_obj, const char* qt_slot);
 
-  /// 
+  ///
   /// Temporarily block any signals/slots. If the event is fired, the slot
   /// won't be called. You can restore the connection by calling SetBlocked
   /// with block = false.
   void setBlocked(bool block);
   bool isBlocked()const;
 
-  /// 
+  ///
   bool isEqual(vtkObject* vtk_obj, unsigned long vtk_event,
                const QObject* qt_obj, const char* qt_slot)const;
 
-  /// 
+  ///
   /// Return a string uniquely identifying the connection within the current process
   QString  id()const;
 
@@ -98,15 +98,15 @@ public:
   /// false by default, it is slower to observe vtk object deletion
   void observeDeletion(bool enable);
   bool deletionObserved()const;
-  
+
 Q_SIGNALS:
-  /// 
+  ///
   /// The qt signal emitted by the VTK Callback
   /// The signal corresponding to the slot will be emitted
   void emitExecute(vtkObject* caller, vtkObject* call_data);
 
   /// Note: even if the signal has a signature with 4 args, you can
-  /// connect it to a slot with less arguments as long as the types of the 
+  /// connect it to a slot with less arguments as long as the types of the
   /// argument are matching:
   /// connect(obj1,SIGNAL(signalFunc(A,B,C,D)),obj2,SLOT(slotFunc(A)));
   void emitExecute(vtkObject* caller, void* call_data, unsigned long vtk_event, void* client_data);

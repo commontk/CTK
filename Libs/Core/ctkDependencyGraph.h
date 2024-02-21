@@ -40,31 +40,31 @@ class CTK_CORE_EXPORT ctkDependencyGraph
 public:
   ctkDependencyGraph(int nvertices);
   virtual ~ctkDependencyGraph();
-  
+
   void printAdditionalInfo()const;
   void printGraph()const;
-  
+
   /// Get the number of vertices associated with current graph
   int numberOfVertices()const;
-  
+
   /// Get the number of edges associated with current graph
   int numberOfEdges()const;
-  
+
   /// Traverse graph and check for cycle
   bool checkForCycle();
-  
+
   /// Return true if there is at least one cycle
   bool cycleDetected()const;
-  
+
   /// If a cycle has been detected, return the origin of the cycle otherwise 0.
   int cycleOrigin()const;
-  
+
   /// If a cycle has been detected, return the end of the cycle otherwise 0.
   int cycleEnd()const;
-  
+
   // The traverse of the tree will print information on standard output
   void setVerbose(bool verbose);
-  
+
   /// Insert edge
   /// (from, to) indicate a relation between two vertices
   /// Note also that vertex id should be >= 1
@@ -73,21 +73,21 @@ public:
   /// Retrieve the paths between two vertices
   /// Caller is responsible to clear paths list
   void findPaths(int from, int to, std::list<std::list<int>* >& paths);
-  
+
   /// Retrieve the path between two vertices
   void findPath(int from, int to, std::list<int>& path);
-  
+
   /// List of edge to exclude
   /// An edge is specified using its extremity
   void setEdgeListToExclude(const std::list<int>& list);
-  
+
   /// The default implementation check if 'edge' is in the list of edge to exclude
   /// See setEdgeListToExclude
   virtual bool shouldExcludeEdge(int edge)const;
-  
+
   /// Called each time an edge is visited
   virtual void processEdge(int /*from*/, int /*to*/){}
-  
+
   /// Perform a topological sort
   /// Return false if the graph contains cycles
   /// If a rootId is given, the subgraph starting at the root id is sorted
@@ -108,4 +108,3 @@ private:
 };
 
 #endif
-

@@ -131,7 +131,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
   EI_Status result = dcmImage->getStatus();
   if (result != EIS_Normal)
   {
-    qCritical() << Q_FUNC_INFO << QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result);
+    logger.warn(QString("Rendering of DICOM image failed for thumbnail failed: ") + DicomImage::getString(result));
     return false;
   }
   // Select first window defined in image. If none, compute min/max window as best guess.
@@ -176,7 +176,7 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, QImage&
 
   /* render pixel data to buffer */
   if (dcmImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
-  {  
+  {
     if (!image.loadFromData( buffer ))
     {
       qCritical() << Q_FUNC_INFO << "QImage couldn't created";
@@ -203,23 +203,23 @@ bool ctkDICOMThumbnailGenerator::generateThumbnail(DicomImage *dcmImage, const Q
 bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, QImage& image)
 {
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
-  return this->generateThumbnail(&dcmImage, image); 
+  return this->generateThumbnail(&dcmImage, image);
 }
 
 //------------------------------------------------------------------------------
 bool ctkDICOMThumbnailGenerator::generateThumbnail(const QString dcmImagePath, const QString& thumbnailPath)
 {
   DicomImage dcmImage(QDir::toNativeSeparators(dcmImagePath).toUtf8());
-  return this->generateThumbnail(&dcmImage, thumbnailPath); 
+  return this->generateThumbnail(&dcmImage, thumbnailPath);
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image)
+void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, QColor color)
 {
   Q_D(ctkDICOMThumbnailGenerator);
   if (image.width() != d->Width || image.height() != d->Height)
     {
     image = QImage(d->Width, d->Height, QImage::Format_RGB32);
     }
-  image.fill(Qt::darkGray);
+  image.fill(color);
 }

@@ -59,4 +59,3 @@ bool ctkFontButtonEventPlayer::playEvent(QObject *Object,
   Error = true;
   return true;
 }
-

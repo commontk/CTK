@@ -80,7 +80,7 @@ int ctkVTKScalarBarWidgetTest1(int argc, char * argv [] )
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // number of labels
   widget.setNumberOfLabels(5);
   if (actor->GetNumberOfLabels() != 5)
@@ -114,7 +114,7 @@ int ctkVTKScalarBarWidgetTest1(int argc, char * argv [] )
               << std::endl;
     return EXIT_FAILURE;
     }
-    
+
   // labels format
   widget.setLabelsFormat("@#$%^&*");
   if (QString(actor->GetLabelFormat()) != "@#$%^&*")
@@ -133,7 +133,7 @@ int ctkVTKScalarBarWidgetTest1(int argc, char * argv [] )
     }
 
   widget.show();
-  
+
   if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

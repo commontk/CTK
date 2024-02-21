@@ -126,6 +126,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(ctkCrosshairLabel)
   Q_DISABLE_COPY(ctkCrosshairLabel)
-}; 
+};
 
 #endif

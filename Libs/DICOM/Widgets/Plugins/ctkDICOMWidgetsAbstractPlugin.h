@@ -39,16 +39,16 @@ class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMWidgetsAbstractPlugin :
 public:
 
   ctkDICOMWidgetsAbstractPlugin();
-  
+
   // Do *NOT* reimplement this method.
   QString group() const;
-  
+
   // You can reimplement these methods
   virtual QIcon icon() const;
   virtual QString toolTip() const;
   virtual QString whatsThis() const;
   virtual void initialize(QDesignerFormEditorInterface *formEditor);
-  
+
 protected:
   bool Initialized;
 };

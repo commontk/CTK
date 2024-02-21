@@ -109,7 +109,7 @@ void ctkProxyStyle::ensureBaseStyle() const
     // avoid infinite loop
     return;
   }
-  d->ensureBaseStyleInProgress = true;  
+  d->ensureBaseStyleInProgress = true;
   d->baseStyle = this->baseStyle();
   // Set the proxy to the entire hierarchy.
   QProxyStyle* proxyStyle = const_cast<QProxyStyle*>(qobject_cast<const QProxyStyle*>(

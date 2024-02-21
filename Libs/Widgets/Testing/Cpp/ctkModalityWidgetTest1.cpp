@@ -35,7 +35,7 @@ int ctkModalityWidgetTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
 
   ctkModalityWidget modalityWidget;
-  
+
   QSignalSpy spy(&modalityWidget, SIGNAL(selectedModalitiesChanged(QStringList)));
   modalityWidget.unselectAll();
 
@@ -71,4 +71,3 @@ int ctkModalityWidgetTest1(int argc, char * argv [] )
     }
   return app.exec();
 }
-

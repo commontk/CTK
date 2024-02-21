@@ -32,11 +32,11 @@ if(MACRO_TESTING)
   #
   set(test1 "john:ON")
   ctkFunctionExtractOptionNameAndValue(${test1} test1_name test1_value)
-  
+
   if(NOT test1_name STREQUAL "john")
     message(FATAL_ERROR "test1_name:${test1_name} - Expected:john")
   endif()
-  
+
   if(NOT test1_value STREQUAL "ON")
     message(FATAL_ERROR "test1_value:${test1_value} - Expected:ON")
   endif()
@@ -46,13 +46,13 @@ if(MACRO_TESTING)
   #
   set(test2 "doe/john:OFF")
   ctkFunctionExtractOptionNameAndValue(${test2} test2_name test2_value)
-  
+
   if(NOT test2_name STREQUAL "doe/john")
     message(FATAL_ERROR "test1_name:${test2_name} - Expected:doe/john")
   endif()
-  
+
   if(NOT test2_value STREQUAL "OFF")
     message(FATAL_ERROR "test2_value:${test2_value} - Expected:OFF")
   endif()
-  
+
 endif()

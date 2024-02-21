@@ -237,7 +237,7 @@ private:
    * @throws ctkPluginDatabaseException
    */
   void restorePluginArchives();
-  
+
   /**
    * Get load hints from the framework for plugins.
    */

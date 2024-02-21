@@ -21,6 +21,10 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDir>
+#include <QTemporaryDir>
+
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -34,19 +38,26 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
-  if (argc <= 1)
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 1)
     {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
-    std::cerr << "Usage: ctkDICOMDatabaseTest3 <olddumpfile.sql>" << std::endl;
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
     }
 
-  QDir databaseDirectory = QDir::temp();
-  databaseDirectory.remove("ctkDICOMDatabase.sql");
+  QString sqlFileName(arguments.at(0));
 
+  QTemporaryDir tempDirectory;
+  CHECK_BOOL(tempDirectory.isValid(), true);
+
+  QDir databaseDirectory(tempDirectory.path());
   QFileInfo databaseFile(databaseDirectory, QString("database.test"));
   QString databaseFileName(databaseFile.absoluteFilePath());
-  
+
   std::cerr << "Populating database " << databaseFileName.toStdString() << "\n";
 
   // first, create a database and initialize it with the old schema
@@ -54,9 +65,9 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
   {
     ctkDICOMDatabase myCTK( databaseFileName );
 
-    if (!myCTK.initializeDatabase(argv[1]))
+    if (!myCTK.initializeDatabase(sqlFileName.toUtf8()))
     {
-      std::cerr << "Error when initializing the data base with: " << argv[1]
+      std::cerr << "Error when initializing the data base with: " << qPrintable(sqlFileName)
           << " error: " << myCTK.lastError().toStdString();
       return EXIT_FAILURE;
     }
@@ -77,7 +88,7 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  // now try opening it and updating the schema 
+  // now try opening it and updating the schema
   try
   {
     ctkDICOMDatabase myCTK( databaseFileName );

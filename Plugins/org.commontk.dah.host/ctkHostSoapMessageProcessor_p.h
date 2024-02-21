@@ -35,7 +35,7 @@ public:
   virtual bool process(
     const QtSoapMessage& message,
     QtSoapMessage* reply) const;
-    
+
 private:
 
   void processGetAvailableScreen(const QtSoapMessage& message,
@@ -48,7 +48,7 @@ private:
                                  QtSoapMessage* reply) const;
   void processGetOutputLocation(const QtSoapMessage& message,
                                  QtSoapMessage* reply) const;
-               
+
   ctkDicomHostInterface* HostInterface;
 
 };

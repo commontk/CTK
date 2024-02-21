@@ -30,7 +30,7 @@ class QStringList;
 
 struct ctkCmdLineModuleParameterPrivate;
 
-/** 
+/**
  * \class ctkCmdLineModuleParameter
  * \brief Single parameter to a module, like a threshold of a filter.
  * \ingroup CommandLineModulesCore_API

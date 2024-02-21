@@ -56,7 +56,7 @@ int main(int argc, char** argv)
   {
     DICOMApp.setDatabaseDirectory(argv[1]);
   }
-  
+
   DICOMApp.show();
 
   return app.exec();

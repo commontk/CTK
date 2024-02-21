@@ -67,7 +67,7 @@ public:
   /// If \li parent is null, ctkRangeWidget will be a top-leve widget
   /// \note The \li parent can be set later using QWidget::setParent()
   explicit ctkRangeWidget(QWidget* parent = 0);
-  
+
   /// Destructor
   virtual ~ctkRangeWidget();
 
@@ -174,7 +174,7 @@ public:
   // ctkRangeWidget siblings.
   virtual bool isAutoSpinBoxWidth()const;
   virtual void setAutoSpinBoxWidth(bool autoWidth);
-  
+
   ///
   /// When symmetricMoves is true, moving a handle will move the other handle
   /// symmetrically, otherwise the handles are independent. False by default

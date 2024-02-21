@@ -100,4 +100,3 @@ private:
   Q_DISABLE_COPY(ctkSearchBox);
 };
 #endif // __ctkSearchBox_h
-

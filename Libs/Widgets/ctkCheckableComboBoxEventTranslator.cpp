@@ -113,4 +113,3 @@ void ctkCheckableComboBoxEventTranslator::onDataChanged(const QModelIndex&,const
     }
   this->OldIndexList = checkableCombo->checkedIndexes();
 }
-

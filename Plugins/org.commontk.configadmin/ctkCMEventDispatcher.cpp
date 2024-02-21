@@ -121,4 +121,3 @@ ctkConfigurationEvent ctkCMEventDispatcher::createConfigurationEvent(ctkConfigur
 
   return ctkConfigurationEvent(configAdminReference, type, factoryPid, pid);
 }
-

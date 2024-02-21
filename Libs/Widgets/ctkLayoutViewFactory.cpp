@@ -155,7 +155,7 @@ QWidget* ctkLayoutViewFactory::viewFromXML(QDomElement layoutElement)
   // The layout element does not match any existing one, however we can just reuse
   // one that was registered for a different layout element.
   if (this->useCachedViews() &&
-      d->NumberOfViewsInCurrentLayout >= 0 && 
+      d->NumberOfViewsInCurrentLayout >= 0 &&
       d->NumberOfViewsInCurrentLayout < d->Views.count())
     {
     QWidget* view = d->Views[d->NumberOfViewsInCurrentLayout].second;
@@ -185,7 +185,7 @@ QList<QWidget*> ctkLayoutViewFactory::viewsFromXML(QDomElement layoutElement)
   // We use cached views (regardless of useCachedViews settings)
   // as this is required for showing all compatible views when multiple="true"
   // attribute is set.
-  if (d->NumberOfViewsInCurrentLayout >= 0 && 
+  if (d->NumberOfViewsInCurrentLayout >= 0 &&
       d->NumberOfViewsInCurrentLayout < d->Views.count())
     {
     for (int i = d->NumberOfViewsInCurrentLayout; i < d->Views.count(); ++i)

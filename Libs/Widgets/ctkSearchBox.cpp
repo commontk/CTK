@@ -230,7 +230,7 @@ void ctkSearchBox::mousePressEvent(QMouseEvent *e)
     this->selectAll();
     return;
     }
-  
+
   this->Superclass::mousePressEvent(e);
 }
 
@@ -272,4 +272,3 @@ void ctkSearchBox::updateClearButtonState()
     d->hideClearIcon = this->text().isEmpty() ? true : false;
     }
 }
-

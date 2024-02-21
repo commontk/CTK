@@ -72,12 +72,12 @@ class CTK_WIDGETS_EXPORT ctkBasePopupWidget : public QFrame
   /// To vertically justify, use Qt::AlignTop | Qt::AlignBottom.
   /// Qt::AlignJustify | Qt::AlignBottom by default
   Q_PROPERTY( Qt::Alignment alignment READ alignment WRITE setAlignment);
-  
+
   /// Direction of the scrolling effect, can be Qt::Vertical, Qt::Horizontal or
   /// both Qt::Vertical|Qt::Horizontal.
   /// Vertical by default
   Q_PROPERTY( Qt::Orientations orientation READ orientation WRITE setOrientation);
-  
+
   /// Control where the popup opens vertically.
   /// TopToBottom by default
   Q_PROPERTY( ctkBasePopupWidget::VerticalDirection verticalDirection READ verticalDirection WRITE setVerticalDirection);
@@ -146,7 +146,7 @@ public:
   /// Set the orientation property value.
   /// \sa orientation
   void setOrientation(Qt::Orientations orientation);
-  
+
   enum VerticalDirection{
     TopToBottom = 1,
     BottomToTop = 2
@@ -167,10 +167,10 @@ public:
   void setHorizontalDirection(Qt::LayoutDirection direction);
 
 public Q_SLOTS:
-  /// Hide the popup if open or opening. It takes around 300ms 
+  /// Hide the popup if open or opening. It takes around 300ms
   /// for the fading effect to hide the popup.
   virtual void hidePopup();
-  /// Open the popup if closed or closing. It takes around 300ms 
+  /// Open the popup if closed or closing. It takes around 300ms
   /// for the fading effect to open the popup.
   virtual void showPopup();
   /// Show/hide the popup. It can be conveniently linked to a QPushButton

@@ -137,4 +137,3 @@ QAction* actionByTitle(const QString& text, const QMenu* parentMenu)
     }
   return 0;
 }
-

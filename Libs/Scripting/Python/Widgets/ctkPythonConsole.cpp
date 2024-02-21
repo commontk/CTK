@@ -25,7 +25,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -241,11 +241,7 @@ int ctkPythonConsoleCompleterPrivate::parameterCountUserDefinedFunction(const QS
   PyObject* pFunction = this->PythonManager.pythonModule(pythonFunctionName);
   if (PyCallable_Check(pFunction))
     {
-#if PY_MAJOR_VERSION >= 3
     PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
-#else
-    PyObject* fc = PyObject_GetAttrString(pFunction, "func_code");
-#endif
     if (fc)
        {
       PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
@@ -267,11 +263,7 @@ int ctkPythonConsoleCompleterPrivate::parameterCountUserDefinedClassFunction(con
   PyObject* pFunction = this->PythonManager.pythonObject(pythonFunctionName);
   if (PyCallable_Check(pFunction))
     {
-#if PY_MAJOR_VERSION >= 3
     PyObject* fc = PyObject_GetAttrString(pFunction, "__code__");
-#else
-    PyObject* fc = PyObject_GetAttrString(pFunction, "func_code");
-#endif
     if (fc)
       {
       PyObject* ac = PyObject_GetAttrString(fc, "co_argcount");
@@ -584,11 +576,7 @@ bool ctkPythonConsolePrivate::push(const QString& code)
   PyObject *res = PyObject_CallMethod(this->InteractiveConsole,
                                       const_cast<char*>("push"),
                                       const_cast<char*>("z"),
-#if PY_MAJOR_VERSION >= 3
                                       buffer.toUtf8().data());
-#else
-                                      buffer.toLatin1().data());
-#endif
   if (res)
     {
     int status = 0;

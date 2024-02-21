@@ -52,7 +52,7 @@ public Q_SLOTS:
 
   // ctkVTKChartView
 #ifdef CTK_USE_CHARTS
-  
+
   QList<double> chartExtent(ctkVTKChartView* view)const
   {
     double _bounds[8];
@@ -76,7 +76,7 @@ public Q_SLOTS:
       }
     return bounds;
   }
-  
+
   void setChartUserBounds(ctkVTKChartView* view, const QList<double>& bounds)
   {
     double _bounds[8];
@@ -86,7 +86,7 @@ public Q_SLOTS:
       }
     view->setChartUserBounds(_bounds);
   }
-  
+
   QList<double> chartUserBounds(ctkVTKChartView* view)const
   {
     double _bounds[8];
@@ -98,9 +98,9 @@ public Q_SLOTS:
       }
     return bounds;
   }
-  
+
   // ctkVTKScalarsToColorsView
-  
+
   QList<double> validBounds(ctkVTKScalarsToColorsView* view)const
   {
     double _bounds[4];

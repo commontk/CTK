@@ -32,7 +32,7 @@ class ctkVTKColorTransferFunctionPrivate;
 
 /// \ingroup Visualization_VTK_Widgets
 ///
-/// Transfer function for a vtkColorTransferFunction. 
+/// Transfer function for a vtkColorTransferFunction.
 /// The value is an RGB QColor (no alpha supported)
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKColorTransferFunction: public ctkTransferFunction
 {
@@ -47,10 +47,10 @@ public:
   /// Please note that ctkVTKColorTransferFunction methods only work only if
   /// colorTransferFunction is set.
   ctkVTKColorTransferFunction(QObject* parent = 0);
-  ctkVTKColorTransferFunction(vtkColorTransferFunction* colorTransferFunction, 
+  ctkVTKColorTransferFunction(vtkColorTransferFunction* colorTransferFunction,
                               QObject* parent = 0);
   virtual ~ctkVTKColorTransferFunction();
-  
+
   /// Please note that controlPoint methods only works if you have at least one
   /// ControlPoint.
   Q_INVOKABLE virtual ctkControlPoint* controlPoint(int index)const;

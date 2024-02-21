@@ -43,7 +43,7 @@ public:
     Qt::Orientation Orientation;
     int Start;
     int End;
-    
+
     int Count;
     QList<QPersistentModelIndex> Items;
   };
@@ -251,13 +251,13 @@ void ctkModelTester::testData(const QModelIndex& index)const
     }
   if (!index.isValid())
     {
-    this->test(!index.data(Qt::DisplayRole).isValid(), 
+    this->test(!index.data(Qt::DisplayRole).isValid(),
                QString("An invalid index can't have valid data: %1")
                .arg(index.data(Qt::DisplayRole).toString()));
     }
   else
     {
-    this->test(index.data(Qt::DisplayRole).isValid(), 
+    this->test(index.data(Qt::DisplayRole).isValid(),
                QString("A valid index can't have invalid data: %1, %2, %3")
                .arg(index.row()).arg(index.column()).arg(ptrdiff_t(index.internalPointer())));
     }
@@ -287,7 +287,7 @@ void ctkModelTester::testParent(const QModelIndex& vparent)const
     {// otherwise there will be an infinite loop
     return;
     }
-  
+
   for (int i = 0 ; i < d->Model->rowCount(vparent); ++i)
     {
     for (int j = 0; j < d->Model->columnCount(vparent); ++j)
@@ -308,10 +308,10 @@ void ctkModelTester::testPersistentModelIndex(const QPersistentModelIndex& index
   Q_D(const ctkModelTester);
   //qDebug() << "Test persistent Index: " << index ;
   this->test(index.isValid(), "Persistent model index can't be invalid");
-  // did you forget to call QAbstractItemModel::changePersistentIndex() between 
+  // did you forget to call QAbstractItemModel::changePersistentIndex() between
   // beginLayoutChanged() and changePersistentIndex() ?
   QModelIndex modelIndex = d->Model->index(index.row(), index.column(), index.parent());
-  this->test(modelIndex == index, 
+  this->test(modelIndex == index,
              QString("Persistent index (%1, %2) can't be invalid").arg(index.row()).arg(index.column()));
 }
 
@@ -511,7 +511,7 @@ void ctkModelTester::onItemsAboutToBeInserted(const QModelIndex &vparent, Qt::Or
   change.Count = (orientation == Qt::Vertical ? d->Model->rowCount(vparent) :d->Model->columnCount(vparent) );
   change.Items = this->persistentModelIndexes(vparent);
   d->AboutToBeInserted.push(change);
-  
+
   this->testModel();
 }
 
@@ -524,11 +524,11 @@ void ctkModelTester::onItemsAboutToBeRemoved(const QModelIndex &vparent, Qt::Ori
   this->test(d->AboutToBeInserted.size() == 0, "While inserting items, you can't remove other items.");
   //Not sure about that
   this->test(d->AboutToBeRemoved.size() == 0, "While removing items, you can't remove other items.");
-  
+
   int count = (orientation == Qt::Vertical ? d->Model->rowCount(vparent) :d->Model->columnCount(vparent) );
   this->test(start < count, "Item to remove can't be invalid");
   this->test(end < count, "Item to remove can't be invalid");
-  
+
   ctkModelTesterPrivate::Change change;
   change.Parent = vparent;
   change.Orientation = orientation;
@@ -580,13 +580,13 @@ void ctkModelTester::onItemsInserted(const QModelIndex & vparent, Qt::Orientatio
     this->testPersistentModelIndex(index);
     }
   change.Items.clear();
-  
+
   this->testModel();
 }
 
 //-----------------------------------------------------------------------------
 void ctkModelTester::onItemsRemoved(const QModelIndex & vparent, Qt::Orientation orientation, int start, int end)
-{ 
+{
   Q_D(ctkModelTester);
   this->test(start <= end, "Start can't be higher end");
   this->test(d->AboutToBeRemoved.size() != 0, "rowsRemoved() has been emitted, but not rowsAboutToBeRemoved.");
@@ -606,7 +606,6 @@ void ctkModelTester::onItemsRemoved(const QModelIndex & vparent, Qt::Orientation
     this->testPersistentModelIndex(index);
     }
   change.Items.clear();
-  
+
   this->testModel();
 }
-

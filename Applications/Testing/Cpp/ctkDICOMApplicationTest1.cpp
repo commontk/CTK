@@ -21,7 +21,11 @@
 // Qt includes
 #include <QTextStream>
 #include <QCoreApplication>
+#include <QFileInfo>
 #include <QProcess>
+
+// CTK includes
+#include "ctkCoreTestingMacros.h"
 
 // STD includes
 #include <iostream>
@@ -33,11 +37,11 @@
 //  To recreate the parts, from the CTK-superbuild directory, run:
 //
 //
-//  ./CMakeExternals/Install/bin/dcmqrscp -c ./CTK-build/Testing/Temporary/dcmqrscp.cfg -d -v
+//  ./DCMTK-build/bin/dcmqrscp -c ./CTK-build/Testing/Temporary/dcmqrscp.cfg -d -v
 //
-//  ./CMakeExternals/Install/bin/storescu -aec CTK_AE -aet CTK_AE localhost 11112 ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/*.IMA
+//  ./DCMTK-build/bin/bin/storescu -aec CTK_AE -aet CTK_AE localhost 11112 ./CTKData/Data/DICOM/MRHEAD/*.IMA
 //
-//  ./CMakeExternals/Install/bin/findscu -aet CTK_AE -aec COMMONTK -P -k 0010,0010=\* localhost 11112 patqry.dcm
+//  ./DCMTK-build/bin/bin/findscu -aet CTK_AE -aec COMMONTK -P -k 0010,0010=\* localhost 11112 patqry.dcm
 //
 //  ./CTK-build/bin/ctkDICOMQuery /tmp/test.db CTK_AE CTK_AE localhost 11112
 //
@@ -48,10 +52,10 @@
 //  As invoked by ctest:
 //
 //  % ./CTK-build/bin/CTKApplicationCppTests ctkDICOMApplicationTest1 \
-//      ./CMakeExternals/Install/bin/dcmqrscp ./CTK-build/Testing/Temporary/dcmqrscp.cfg \
-//          ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000055.IMA \
-//          ./CMakeExternals/Source/CTKData/Data/DICOM/MRHEAD/000056.IMA \
-//      ./CMakeExternals/Install/bin/storescu \
+//      ./DCMTK-build/bin/bin/dcmqrscp ./CTK-build/Testing/Temporary/dcmqrscp.cfg \
+//          ./CTKData/Data/DICOM/MRHEAD/000055.IMA \
+//          ./CTKData/Data/DICOM/MRHEAD/000056.IMA \
+//      ./DCMTK-build/bin/bin/storescu \
 //      ./CTK-build/bin/ctkDICOMQuery \
 //      ./CTK-build/Testing/Temporary/ctkDICOMApplicationTest1.db \
 //      ./CTK-build/bin/ctkDICOMRetrieve \
@@ -59,15 +63,162 @@
 //
 */
 
+namespace
+{
+
+//-----------------------------------------------------------------------------
+enum WaitType
+{
+  WaitForStarted, //!< Blocks until the process has started
+  WaitForFinished, //!< Blocks until the process has finished
+};
+
+//-----------------------------------------------------------------------------
+int wait_for_finished(QTextStream& out, const QString& type, QProcess* process, bool kill=false)
+{
+  try
+    {
+    QString programName = QFileInfo(process->program()).baseName();
+
+    if (kill)
+      {
+      process->kill();
+      }
+
+    process->waitForFinished();
+
+    out << "------------------------------------------------------------------------------\n";
+    out << "------------------------------------------------------------------------------\n";
+    out << "------------------------------------------------------------------------------\n";
+    out << type << " " << programName << " Finished.\n";
+
+    out << "Process Killed: " << (kill ? "yes" : "no") << "\n";
+
+    out << "Process ExitCode: ";
+    if (process->exitCode() == QProcess::NormalExit)
+      {
+      out << "NormalExit (" << static_cast<int>(QProcess::NormalExit) << ")\n";
+      }
+    else
+      {
+      out << "CrashExit (" << static_cast<int>(QProcess::CrashExit) << ")\n";
+      }
+
+    if (process->exitCode() == QProcess::CrashExit)
+      {
+      out << "Process State: ";
+      switch(static_cast<int>(process->error()))
+        {
+
+        #define _QProcessErrorToString(ERROR) \
+          case QProcess::ERROR: \
+            out << #ERROR << " (" << static_cast<int>(QProcess::ERROR) << ")\n"; \
+            break;
+
+        _QProcessErrorToString(FailedToStart);
+        _QProcessErrorToString(Crashed);
+        _QProcessErrorToString(Timedout);
+        _QProcessErrorToString(WriteError);
+        _QProcessErrorToString(ReadError);
+        _QProcessErrorToString(UnknownError);
+
+        #undef _QProcessErrorToString
+        }
+      }
+    out << "Standard Output:\n";
+    out << process->readAllStandardOutput();
+    out << "Standard Error:\n";
+    out << process->readAllStandardError();
+
+    if (kill)
+      {
+      return EXIT_SUCCESS;
+      }
+    else
+      {
+      return process->exitStatus() == QProcess::NormalExit ? process->exitCode() : EXIT_FAILURE;
+      }
+    }
+  catch (const std::exception& e)
+    {
+    out << "ERROR: exception ocurred in wait_for_finished(): " << e.what();
+    return EXIT_FAILURE;
+    }
+}
+
+//-----------------------------------------------------------------------------
+int run_process(
+    QTextStream& out, const QString& type, WaitType wait_type,
+    QProcess* process, const QString& exectuable, const QStringList& arguments)
+{
+  try
+  {
+    QString programName = QFileInfo(exectuable).baseName();
+
+    out << "------------------------------------------------------------------------------\n";
+    if (type == "server")
+      {
+      out << "  ____  _____ ______     _______ ____  " << "\n";
+      out << " / ___|| ____|  _ \\ \\   / / ____|  _ \\ " << "\n";
+      out << " \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |" << "\n";
+      out << "  ___) | |___|  _ < \\ V / | |___|  _ < " << "\n";
+      out << " |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\" << "\n";
+      }
+
+    else if (type == "client")
+      {
+      out << "  ____ _     ___ _____ _   _ _____ " << "\n";
+      out << " / ___| |   |_ _| ____| \\ | |_   _|" << "\n";
+      out << "| |   | |    | ||  _| |  \\| | | |  " << "\n";
+      out << "| |___| |___ | || |___| |\\  | | |  " << "\n";
+      out << " \\____|_____|___|_____|_| \\_| |_|  " << "\n";
+      }
+    out << "------------------------------------------------------------------------------\n";
+    out << "starting " << type << " " << exectuable << "\n";
+    out << "with args " << arguments.join(" ") << "\n";
+    process->start(exectuable, arguments);
+    switch(wait_type)
+      {
+      case WaitForStarted:
+        process->waitForStarted();
+        out << programName << " Started.\n";
+        return process->state() == QProcess::Running ? EXIT_SUCCESS : EXIT_FAILURE;
+
+      case WaitForFinished:
+        return wait_for_finished(out, type, process);
+
+      default:
+        return EXIT_FAILURE;
+      }
+  }
+  catch (const std::exception& e)
+  {
+    out << "ERROR: exception ocurred in run_process(): " << e.what();
+    return EXIT_FAILURE;
+  }
+}
+
+} // end of anonymous namespace
+
+//-----------------------------------------------------------------------------
 int main(int argc, char * argv []) {
 
   QCoreApplication app(argc, argv);
   QTextStream out(stdout);
 
-  if ( argc < 10 )
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 9)
   {
-    out << "ERROR: invalid arguments.  Should be:\n";
-    out << " ctkDICOMApplicationTest1 <dcmqrscp> <configfile> <dicomData1> <dcmData2> <storescu> <ctkDICOMQuery> <ctkDICOMRetrieve> <retrieveDirectory>\n";
+    std::cerr << "ERROR: invalid or missing arguments.\n\n"
+              << "Usage: " << qPrintable(testName)
+              << " <dcmqrscp> <configfile>"
+                 " <dicomData1>"
+                 " <dicomData2>"
+                 " <storescu>"
+                 " <ctkDICOMQuery> <databaseFile>"
+                 " <ctkDICOMRetrieve> <retrieveDirectory>\n";
     return EXIT_FAILURE;
   }
 
@@ -86,22 +237,15 @@ int main(int argc, char * argv []) {
   //
 
   QProcess *dcmqrscp = new QProcess(0);
-  QStringList dcmqrscp_args;
-  dcmqrscp_args << "--config" << dcmqrscp_cfg;
-  dcmqrscp_args << "--debug" << "--verbose";
-  dcmqrscp_args << "11112";
-
-  try
   {
-    out << "starting server" << dcmqrscp_exe << "\n";
-    out << "with args " << dcmqrscp_args.join(" ") << "\n";
-    dcmqrscp->start(dcmqrscp_exe, dcmqrscp_args);
-    dcmqrscp->waitForStarted();
-  }
-  catch (const std::exception& e)
-  {
-    out << "ERROR: could not start server" << e.what();
-    return EXIT_FAILURE;
+    CHECK_EXIT_SUCCESS(
+          run_process(out, "server", WaitForStarted, dcmqrscp, dcmqrscp_exe,
+                      {
+                        "--config", dcmqrscp_cfg,
+                        "--debug",
+                        "--verbose",
+                        "11112"
+                      }));
   }
 
 
@@ -110,30 +254,18 @@ int main(int argc, char * argv []) {
   //
 
   QProcess *storescu = new QProcess(0);
-  QStringList storescu_args;
-  storescu_args << "-aec" << "CTK_AE";
-  storescu_args << "-aet" << "CTK_AE";
-  storescu_args << "localhost" << "11112";
-  storescu_args << dicomData1;
-  storescu_args << dicomData2;
+  {
+    CHECK_EXIT_SUCCESS(
+          run_process(out, "client", WaitForFinished, storescu, storescu_exe,
+                      {
+                        "-aec", "CTK_AE",
+                        "-aet", "CTK_AE",
+                        "localhost", "11112",
+                        dicomData1,
+                        dicomData2,
+                      }));
+  }
 
-  try
-  {
-    out << "running client" << storescu_exe << "\n";
-    out << "with args" << storescu_args.join(" ") << "\n";
-    storescu->start(storescu_exe, storescu_args);
-    storescu->waitForFinished();
-    out << "storescu Finished.\n";
-    out << "Standard Output:\n";
-    out << storescu->readAllStandardOutput();
-    out << "Standard Error:\n";
-    out << storescu->readAllStandardError();
-  }
-  catch (const std::exception& e)
-  {
-    out << "ERROR: could not start client" << e.what();
-    return EXIT_FAILURE;
-  }
 
   //
   // now query the server to see if the data arrived okay
@@ -141,27 +273,19 @@ int main(int argc, char * argv []) {
   //
 
   QProcess *ctkDICOMQuery = new QProcess(0);
-  QStringList ctkDICOMQuery_args;
-  ctkDICOMQuery_args << ctkDICOMQuery_db_file;
-  ctkDICOMQuery_args << "CTK_AE" << "CTK_AE";
-  ctkDICOMQuery_args << "localhost" << "11112";
+  {
+    // Usage:
+    //   ctkDICOMQuery database callingAETitle calledAETitle host port
 
-  try
-  {
-    out << "running client" << ctkDICOMQuery_exe << "\n";
-    out << "with args" << ctkDICOMQuery_args.join(" ") << "\n";
-    ctkDICOMQuery->start(ctkDICOMQuery_exe, ctkDICOMQuery_args);
-    ctkDICOMQuery->waitForFinished();
-    out << "ctkDICOMQuery Finished.\n";
-    out << "Standard Output:\n";
-    out << ctkDICOMQuery->readAllStandardOutput();
-    out << "Standard Error:\n";
-    out << ctkDICOMQuery->readAllStandardError();
-  }
-  catch (const std::exception& e)
-  {
-    out << "ERROR: could not start client" << e.what();
-    return EXIT_FAILURE;
+    CHECK_EXIT_SUCCESS(
+          run_process(out, "client", WaitForFinished, ctkDICOMQuery, ctkDICOMQuery_exe,
+                      {
+                        ctkDICOMQuery_db_file,
+                        "CTK_AE",
+                        "CTK_AE",
+                        "localhost",
+                        "11112"
+                      }));
   }
 
 
@@ -173,51 +297,29 @@ int main(int argc, char * argv []) {
   QString studyUID("1.2.840.113619.2.135.3596.6358736.5118.1115807980.182");
 
   QProcess *ctkDICOMRetrieve = new QProcess(0);
-  QStringList ctkDICOMRetrieve_args;
-  ctkDICOMRetrieve_args << studyUID;
-  ctkDICOMRetrieve_args << ctkDICOMRetrieve_directory;
-  ctkDICOMRetrieve_args << "CTK_AE" << "11113";
-  ctkDICOMRetrieve_args << "CTK_AE";
-  ctkDICOMRetrieve_args << "localhost" << "11112" << "CTK_CLIENT_AE";
+  {
+    // Usage:
+    //   ctkDICOMRetrieve StudyUID OutputDirectory callingAETitle calledAETitle host calledPort moveDestinationAETitle
 
-  try
-  {
-    out << "running client" << ctkDICOMRetrieve_exe << "\n";
-    out << "with args" << ctkDICOMRetrieve_args.join(" ") << "\n";
-    ctkDICOMRetrieve->start(ctkDICOMRetrieve_exe, ctkDICOMRetrieve_args);
-    ctkDICOMRetrieve->waitForFinished();
-    out << "ctkDICOMRetrieve Finished.\n";
-    out << "Standard Output:\n";
-    out << ctkDICOMRetrieve->readAllStandardOutput();
-    out << "Standard Error:\n";
-    out << ctkDICOMRetrieve->readAllStandardError();
-  }
-  catch (const std::exception& e)
-  {
-    out << "ERROR: could not start client" << e.what();
-    return EXIT_FAILURE;
+    CHECK_EXIT_SUCCESS(
+          run_process(out, "client", WaitForFinished, ctkDICOMRetrieve, ctkDICOMRetrieve_exe,
+                      {
+                        studyUID,
+                        ctkDICOMRetrieve_directory,
+                        "CTK_AE",
+                        "CTK_AE",
+                        "localhost",
+                        "11112",
+                        "CTK_CLIENT_AE"
+                      }));
   }
 
 
   //
-  // clients are finished, not kill server and print output
+  // clients are finished, now kill server and print output
   //
-  try
-  {
-    dcmqrscp->kill();
-    dcmqrscp->waitForFinished();
-    out << "dcmqrscp Finished.\n";
-    out << "Standard Output:\n";
-    out << dcmqrscp->readAllStandardOutput();
-    out << "Standard Error:\n";
-    out << dcmqrscp->readAllStandardError();
-  }
-  catch (const std::exception& e)
-  {
-    out << "ERROR: could not start client" << e.what();
-    return EXIT_FAILURE;
-  }
+  CHECK_EXIT_SUCCESS(
+        wait_for_finished(out, "server", dcmqrscp, /*kill=*/true));
 
   return EXIT_SUCCESS;
 }
-

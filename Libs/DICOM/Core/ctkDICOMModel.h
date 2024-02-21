@@ -21,12 +21,13 @@
 #ifndef __ctkDICOMModel_h
 #define __ctkDICOMModel_h
 
-// Qt includes 
+// Qt includes
 #include <QAbstractItemModel>
 #include <QMetaType>
 #include <QSqlDatabase>
 #include <QStringList>
 
+// ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
 
 class ctkDICOMModelPrivate;

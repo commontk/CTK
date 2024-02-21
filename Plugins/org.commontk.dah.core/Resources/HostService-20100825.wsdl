@@ -305,4 +305,4 @@
       <soap:address location="http://localhost/Service"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions> 
+</wsdl:definitions>

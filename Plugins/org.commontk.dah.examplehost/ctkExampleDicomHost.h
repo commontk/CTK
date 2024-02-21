@@ -56,7 +56,7 @@ public:
    * suits the Hosting System's GUI.
    */
   virtual QRect getAvailableScreen(const QRect& preferredScreen);
-  
+
   /**
    * This method returns a URI that a Hosted Application may use to store output that it may provide back to
    * the Hosting System (e.g. in response to a getData() call).

@@ -89,7 +89,7 @@ public Q_SLOTS:
   /// If the pause render count reaches zero when calling resumeRender(), scheduleRender() will be
   /// called if a scheduleRender() was invoked while rendering was paused.
   /// Rendering can still be triggered while the paused with forceRender()
-  /// 
+  ///
   /// This behaviour is different from renderEnabled(), which will prevent all rendering calls
   /// from both scheduleRender() and forceRender(), and will not invoke either when re-enabled.
   /// \sa renderEnabled
@@ -100,7 +100,7 @@ public Q_SLOTS:
   virtual int pauseRender();
 
   /// De-increments the pause render count and calls scheduleRender() if one is currently pending
-  /// \sa setPauseRender  
+  /// \sa setPauseRender
   virtual int resumeRender();
 
   /// Returns true if the current pause render count is greater than 0

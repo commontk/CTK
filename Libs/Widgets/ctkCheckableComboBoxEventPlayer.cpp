@@ -78,4 +78,3 @@ bool ctkCheckableComboBoxEventPlayer::playEvent(QObject *Object,
   Error = true;
   return true;
 }
-

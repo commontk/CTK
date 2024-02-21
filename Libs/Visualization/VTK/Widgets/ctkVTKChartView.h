@@ -87,8 +87,8 @@ public Q_SLOTS:
 
   /// Remove all the plots from the chart
   void removeAllPlots();
-  
-  /// 
+
+  ///
   virtual void setAxesToChartBounds();
   virtual void boundAxesToChartBounds();
 

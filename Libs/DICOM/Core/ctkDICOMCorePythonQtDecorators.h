@@ -27,6 +27,7 @@
 // CTK includes
 #include <ctkDICOMDisplayedFieldGeneratorRuleFactory.h>
 #include <ctkDICOMUtil.h>
+#include <ctkDICOMJobResponseSet.h>
 
 // NOTE:
 //
@@ -43,9 +44,83 @@ public:
 
   ctkDICOMCorePythonQtDecorators()
     {
+    PythonQt::self()->registerCPPClass("ctkDICOMJobDetail", 0, "CTKDICOMCore");
+    PythonQt::self()->addParentClass("ctkDICOMJobDetail", "ctkJobDetail",
+                                     PythonQtUpcastingOffset<ctkDICOMJobDetail,ctkJobDetail>());
     }
 
 public slots:
+
+  //----------------------------------------------------------------------------
+  // ctkDICOMJobDetail
+  //----------------------------------------------------------------------------
+  ctkDICOMJobDetail* new_ctkDICOMJobDetail()
+    {
+    return new ctkDICOMJobDetail();
+    }
+
+  void setJobType(ctkDICOMJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
+    {
+    td->JobType = jobType;
+    }
+  ctkDICOMJobResponseSet::JobType jobType(ctkDICOMJobDetail* td)
+    {
+    return td->JobType;
+    }
+
+  void setPatientID(ctkDICOMJobDetail* td, const QString& patientID)
+    {
+    td->PatientID = patientID;
+    }
+  QString patientID(ctkDICOMJobDetail* td)
+    {
+    return td->PatientID;
+    }
+
+  void setStudyInstanceUID(ctkDICOMJobDetail* td, const QString& studyInstanceUID)
+    {
+    td->StudyInstanceUID = studyInstanceUID;
+    }
+  QString studyInstanceUID(ctkDICOMJobDetail* td)
+    {
+    return td->StudyInstanceUID;
+    }
+
+  void setSeriesInstanceUID(ctkDICOMJobDetail* td, const QString& seriesInstanceUID)
+    {
+    td->SeriesInstanceUID = seriesInstanceUID;
+    }
+  QString seriesInstanceUID(ctkDICOMJobDetail* td)
+    {
+    return td->SeriesInstanceUID;
+    }
+
+  void setSOPInstanceUID(ctkDICOMJobDetail* td, const QString& sopInstanceUID)
+    {
+    td->SOPInstanceUID = sopInstanceUID;
+    }
+  QString sopInstanceUID(ctkDICOMJobDetail* td)
+    {
+    return td->SOPInstanceUID;
+    }
+
+  void setConnectionName(ctkDICOMJobDetail* td, const QString& connectionName)
+    {
+    td->ConnectionName = connectionName;
+    }
+  QString connectionName(ctkDICOMJobDetail* td)
+    {
+    return td->ConnectionName;
+    }
+
+  void setNumberOfDataSets(ctkDICOMJobDetail* td, int numberOfDataSets)
+    {
+    td->NumberOfDataSets = numberOfDataSets;
+    }
+  int numberOfDataSets(ctkDICOMJobDetail* td)
+    {
+    return td->NumberOfDataSets;
+    }
 
   //----------------------------------------------------------------------------
   // ctkDICOMDisplayedFieldGeneratorRuleFactory
@@ -64,7 +139,7 @@ public slots:
 
   //----------------------------------------------------------------------------
   bool registerDisplayedFieldGeneratorRule(ctkDICOMDisplayedFieldGeneratorRuleFactory* factory,
-                      PythonQtPassOwnershipToCPP<ctkDICOMDisplayedFieldGeneratorAbstractRule*> plugin)
+                                           PythonQtPassOwnershipToCPP<ctkDICOMDisplayedFieldGeneratorAbstractRule*> plugin)
     {
     return factory->registerDisplayedFieldGeneratorRule(plugin);
     }

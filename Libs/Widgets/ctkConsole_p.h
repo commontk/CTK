@@ -53,7 +53,7 @@ public:
   virtual void keyPressEvent(QKeyEvent* e);
 
   void switchToUserInputTextColor(QTextCursor* textCursorToUpdate = 0);
-  
+
   /// Returns the end of the document
   int documentEnd() const;
 
@@ -76,18 +76,18 @@ public:
   void setCompleter(ctkConsoleCompleter* completer);
 
   void updateCompleter();
-  
+
   /// Update the contents of the command buffer from the contents of the widget.
   /// If \a commandLength is specified, buffer is updated limiting the content
   /// of the widget.
   void updateCommandBuffer(int commandLength = -1);
-  
+
   /// Replace the contents of the command buffer, updating the display
   void replaceCommandBuffer(const QString& text);
-  
+
   /// References the buffer where the current un-executed command is stored
   QString& commandBuffer();
-  
+
   /// Implements command-execution
   void internalExecuteCommand();
 
@@ -218,4 +218,3 @@ public:
 
 
 #endif
-

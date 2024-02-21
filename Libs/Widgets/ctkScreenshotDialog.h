@@ -29,10 +29,10 @@
 
 class ctkScreenshotDialogPrivate;
 
-/** 
+/**
     \ingroup Widgets
-    
-    ctkScreenshotDialog is simple dialog allowing to grab the content 
+
+    ctkScreenshotDialog is simple dialog allowing to grab the content
     of any widget and save it into a PNG file.
     It can be used as a tool and can take screenshots without being opened nor
     executed.
@@ -61,7 +61,7 @@ public:
   /// TODO: if widgetToGrab -> screenshot the entire application
   void setWidgetToGrab(QWidget* newWidgetToGrab);
   QWidget* widgetToGrab()const;
-  
+
   /// Set screenshot base name used to generate unique file names to save the
   /// screenshot images. The base name doesn't contain the file extension
   /// (automatically set to ".png")

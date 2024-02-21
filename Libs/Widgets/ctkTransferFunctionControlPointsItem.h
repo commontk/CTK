@@ -46,7 +46,7 @@ public:
   };
 
   explicit ctkTransferFunctionControlPointsItem(QGraphicsItem* parent = 0);
-  ctkTransferFunctionControlPointsItem(ctkTransferFunction* transferFunction, 
+  ctkTransferFunctionControlPointsItem(ctkTransferFunction* transferFunction,
                                        QGraphicsItem* parent = 0);
   virtual ~ctkTransferFunctionControlPointsItem();
 

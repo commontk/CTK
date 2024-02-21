@@ -31,8 +31,8 @@ void print_usage()
 {
   std::cerr << "Usage: \n";
   std::cerr << "  ctkDICOMDemoSCU peer port [peerAETitle]\n";
-  std::cerr << "     Issues ECHO request to the given host and given port.\n"; 
-  std::cerr << "     Optional peerAETitle tells what application entity to address.\n"; 
+  std::cerr << "     Issues ECHO request to the given host and given port.\n";
+  std::cerr << "     Optional peerAETitle tells what application entity to address.\n";
   return;
 }
 
@@ -43,8 +43,8 @@ int main(int argc, char** argv)
   {
     print_usage();
     return 2;
-  } 
-  
+  }
+
   OFString host(argv[1]);
   unsigned int port = atoi(argv[2]);
   OFString peerAET;
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
   {
     peerAET = argv[3];
   }
-    
+
   // Setup SCU
   DcmSCU scu;
   scu.setPeerHostName(host);
@@ -60,7 +60,7 @@ int main(int argc, char** argv)
   OFString verificationSOP = UID_VerificationSOPClass;
   OFList<OFString> ts;
   ts.push_back(UID_LittleEndianExplicitTransferSyntax);
-  ts.push_back(UID_BigEndianExplicitTransferSyntax);  
+  ts.push_back(UID_BigEndianExplicitTransferSyntax);
   ts.push_back(UID_LittleEndianImplicitTransferSyntax);
   scu.addPresentationContext(verificationSOP, ts);
   if (peerAET != "")
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
     std::cerr << "Error setting up SCU: " << result.text() << "\n";
     return 2;
   }
-  
+
   // Negotiate association
   result = scu.negotiateAssociation();
   if (result.bad())
@@ -81,15 +81,15 @@ int main(int argc, char** argv)
     std::cerr << "Error negotiating association: " << result.text() << "\n";
     return 2;
   }
-  
+
   // Issue ECHO request and let scu find presentation context itself (0)
   result = scu.sendECHORequest(0);
   if (result.bad())
-  { 
+  {
     std::cerr << "Error issuing ECHO request or received rejecting response: " << result.text() << "\n";
     return 2;
   }
   std::cout << "Successfully sent DICOM Echo to host " << argv[1] << " on port " << argv[2] << "\n";
   return 0;
-  
+
 }

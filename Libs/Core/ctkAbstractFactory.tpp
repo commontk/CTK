@@ -129,7 +129,7 @@ void ctkAbstractFactoryItem<BaseClassType>::clearLoadWarningStrings()
 }
 
 //----------------------------------------------------------------------------
-template<typename BaseClassType>  
+template<typename BaseClassType>
 BaseClassType* ctkAbstractFactoryItem<BaseClassType>::instantiate()
 {
   this->clearInstantiateErrorStrings();
@@ -163,7 +163,7 @@ void ctkAbstractFactoryItem<BaseClassType>::uninstantiate()
   delete this->Instance;
   // Make sure the pointer is set to 0. Doing so, Will prevent attempt to
   // delete unextising object if uninstantiate() methods is called multiple times.
-  this->Instance = 0; 
+  this->Instance = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -348,7 +348,7 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
                                "Already registered in other factory", this->verbose());
     return false;
     }
-  
+
   // Attempt to load it
   if (!_item->load())
     {
@@ -369,7 +369,7 @@ bool ctkAbstractFactory<BaseClassType>::registerItem(const QString& key,
       }
     return false;
     }
-  
+
   // Store item reference using a QSharedPointer
   this->RegisteredItemMap.insert(key, _item);
   this->SharedRegisteredItemMap.data()->insert(key, _item);

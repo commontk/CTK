@@ -48,4 +48,4 @@ function(ctkFunctionExtractPluginTargets my_opts my_filter var_targets)
 
   set(${var_targets} ${plugin_targets} PARENT_SCOPE)
 
-endfunction() 
+endfunction()

@@ -36,7 +36,7 @@ class ctkCmdLineModuleExplorerModulesSettings;
 class ctkCmdLineModuleExplorerModulesSettings : public ctkSettingsPanel
 {
   Q_OBJECT
-  
+
 public:
   explicit ctkCmdLineModuleExplorerModulesSettings(ctkCmdLineModuleManager* moduleManager);
   ~ctkCmdLineModuleExplorerModulesSettings();

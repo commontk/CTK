@@ -25,8 +25,8 @@ macro(ctkMacroAddCtkLibraryOptions lib)
 
   # Add options only if "ctk_library_option.cmake" file exists
   if(EXISTS ${filepath})
-  
-    # Make sure the variable is cleared 
+
+    # Make sure the variable is cleared
     set(ctk_library_options )
 
     include(${filepath})
@@ -38,7 +38,7 @@ macro(ctkMacroAddCtkLibraryOptions lib)
       mark_as_advanced(CTK_LIB_${lib}_${option_name})
       mark_as_superbuild(CTK_LIB_${lib}_${option_name})
     endforeach()
-    
+
   endif()
-  
+
 endmacro()

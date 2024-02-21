@@ -34,11 +34,7 @@
 # Function copied from https://github.com/scikit-build/scikit-build/pull/299
 # XXX Update this CMake module to use function from scikit-build to build the wrapper
 function(_ctk_set_python_extension_symbol_visibility _target)
-  if(PYTHON_VERSION_MAJOR VERSION_GREATER 2)
-    set(_modinit_prefix "PyInit_")
-  else()
-    set(_modinit_prefix "init")
-  endif()
+  set(_modinit_prefix "PyInit_")
   if("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     set_target_properties(${_target} PROPERTIES LINK_FLAGS
         "/EXPORT:${_modinit_prefix}${_target}"
@@ -172,5 +168,3 @@ macro(ctkMacroBuildLibWrapper)
   endif()
 
 endmacro()
-
-

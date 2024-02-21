@@ -146,4 +146,3 @@ void ctkNetworkConnectorQXMLRPCTest::ctkNetworkConnectorQXMLRPCCommunictionTest(
 
 CTK_REGISTER_TEST(ctkNetworkConnectorQXMLRPCTest);
 #include "ctkNetworkConnectorQXMLRPCTest.moc"
-

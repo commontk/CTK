@@ -38,7 +38,7 @@ function(ctkFunctionGenerateDGraphInput dir target_directories)
   set(edges)
   set(vertices)
   set(isolated_vertex_candidates)
-  
+
   foreach(target_info ${target_directories})
 
     # extract target_dir and option_name
@@ -49,7 +49,7 @@ function(ctkFunctionGenerateDGraphInput dir target_directories)
     #message(STATUS target_dir:${target_dir})
     #message(STATUS option_name:${option_name})
     #message(STATUS option_name-value:${${option_name}})
-    
+
     # make sure the directory exists
     if(NOT EXISTS ${target_dir}/CMakeLists.txt)
       message(FATAL_ERROR "Target directory ${target_dir}/CMakeLists.txt doesn't exists !")
@@ -105,7 +105,7 @@ function(ctkFunctionGenerateDGraphInput dir target_directories)
       endforeach()
 
     endif()
-    
+
   endforeach()
 
   foreach(isolated_vertex_candidate ${isolated_vertex_candidates})

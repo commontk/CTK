@@ -26,7 +26,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -64,7 +64,7 @@ class QDialog;
 class QMainWindow;
 
 /// \ingroup Widgets
-/// ctkSettings is a QSettings that additionally can save and restore the 
+/// ctkSettings is a QSettings that additionally can save and restore the
 /// state (position/size) of QMainWindow and QDialogs.
 class CTK_WIDGETS_EXPORT ctkSettings : public ctkCoreSettings
 {
@@ -103,7 +103,7 @@ public:
   /// Restore the position, size and layout of the QMainWindow
   /// for a given key
   Q_INVOKABLE void restoreState(const QString& key, QMainWindow& window);
-  
+
   /// Saves the position, size and layout of the QMainWindow
   /// for a given key
   Q_INVOKABLE void restoreState(const QString& key, QDialog& dialog);

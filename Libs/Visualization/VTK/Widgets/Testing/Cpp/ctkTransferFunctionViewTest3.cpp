@@ -54,11 +54,11 @@ int ctkTransferFunctionViewTest3(int argc, char * argv [] )
   QSharedPointer<ctkTransferFunction> transferFunction =
     QSharedPointer<ctkTransferFunction>(new ctkVTKPiecewiseFunction(pwf));
   ctkTransferFunctionView transferFunctionView(0);
-  ctkTransferFunctionGradientItem* gradient = 
+  ctkTransferFunctionGradientItem* gradient =
     new ctkTransferFunctionGradientItem(transferFunction.data());
-  ctkTransferFunctionControlPointsItem* controlPoints = 
+  ctkTransferFunctionControlPointsItem* controlPoints =
     new ctkTransferFunctionControlPointsItem(transferFunction.data());
-  
+
   transferFunctionView.scene()->addItem(gradient);
   transferFunctionView.scene()->addItem(controlPoints);
   // the widget is not really shown here, only when app.exec() is called

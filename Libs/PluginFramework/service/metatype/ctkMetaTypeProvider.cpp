@@ -23,4 +23,3 @@
 
 const QString ctkMetaTypeProvider::METATYPE_PID = "metatype.pid";
 const QString ctkMetaTypeProvider::METATYPE_FACTORY_PID = "metatype.factory.pid";
-

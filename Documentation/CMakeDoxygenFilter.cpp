@@ -453,14 +453,14 @@ int main(int argc, char** argv)
   assert(argc > 1);
 
   for (int i = 1; i < argc; ++i)
-  { 
+  {
     std::ifstream ifs(argv[i]);
     std::ostream& os = std::cout;
-    
+
     #ifdef USE_NAMESPACE
     os << "namespace " << DOUBLESTRINGIFY(USE_NAMESPACE) << " {\n";
     #endif
-    
+
     CMakeParser parser(ifs, os);
     parser.nextToken();
     while (ifs.good())
@@ -486,7 +486,7 @@ int main(int argc, char** argv)
         break;
       }
     }
-    
+
     #ifdef USE_NAMESPACE
     os << "}\n";
     #endif
@@ -494,4 +494,3 @@ int main(int argc, char** argv)
 
   return EXIT_SUCCESS;
 }
-

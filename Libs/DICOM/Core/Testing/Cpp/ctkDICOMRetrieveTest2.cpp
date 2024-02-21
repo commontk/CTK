@@ -24,7 +24,11 @@
 #include <QPair>
 #include <QString>
 #include <QStringList>
+#include <QTemporaryDir>
 #include <QVariant>
+
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -35,32 +39,38 @@
 // STD includes
 #include <iostream>
 
-void ctkDICOMRetrieveTest2PrintUsage()
-{
-  std::cout << " ctkDICOMRetrieveTest2 images" << std::endl;
-}
 
 // Test on a real local database
 int ctkDICOMRetrieveTest2( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (!arguments.count())
+    {
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-image> [...]" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QTemporaryDir tempDirectory;
+  CHECK_BOOL(tempDirectory.isValid(), true);
+
   ctkDICOMTester tester;
   std::cerr << "ctkDICOMRetrieveTest2: Starting dcmqrscp\n";
   tester.startDCMQRSCP();
-  
-  QStringList arguments = app.arguments();
-  arguments.pop_front(); // remove application name
-  arguments.pop_front(); // remove test name
-  if (!arguments.count())
-    {
-    ctkDICOMRetrieveTest2PrintUsage();
-    return EXIT_FAILURE;
-    }
+
   std::cerr << "ctkDICOMRetrieveTest2: Storing data to dcmqrscp\n";
   tester.storeData(arguments);
 
-  ctkDICOMDatabase queryDatabase;
+  ctkDICOMDatabase database;
+
+  QDir databaseDirectory(tempDirectory.path());
+  QString dbFile = QFileInfo(databaseDirectory, QString("ctkDICOM.sql")).absoluteFilePath();
+  CHECK_BOOL(database.openDatabase(dbFile), true);
+  database.cleanup(true);
 
   std::cerr << "ctkDICOMRetrieveTest2: Setting up query\n";
   ctkDICOMQuery query;
@@ -70,7 +80,7 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   query.setPort(tester.dcmqrscpPort());
 
   std::cerr << "ctkDICOMRetrieveTest2: Running query\n";
-  bool res = query.query(queryDatabase);
+  bool res = query.query(database);
   if (!res)
     {
     std::cout << "ctkDICOMQuery::query() failed" << std::endl;
@@ -83,10 +93,7 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  std::cerr << "ctkDICOMRetrieveTest2: Setting up retrieve database\n";
-  QSharedPointer<ctkDICOMDatabase> retrieveDatabase(new ctkDICOMDatabase);
-  retrieveDatabase->openDatabase( "./ctkDICOM.sql" );
-
+  std::cerr << "ctkDICOMRetrieveTest2: Setting up retrieve \n";
   ctkDICOMRetrieve retrieve;
   retrieve.setCallingAETitle("CTK_AE");
   retrieve.setCalledAETitle("CTK_AE");
@@ -94,7 +101,7 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   retrieve.setHost("localhost");
   retrieve.setMoveDestinationAETitle("CTK_CLIENT_AE");
 
-  retrieve.setDatabase(retrieveDatabase);
+  retrieve.setDatabase(database);
 
   std::cerr << "ctkDICOMRetrieveTest2: Retrieving\n";
   typedef QPair<QString,QString> StudyAndSeriesInstanceUIDPair;

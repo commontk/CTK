@@ -46,7 +46,7 @@ class ctkTestPluginS : public QObject,
 public:
 
   ctkTestPluginS(ctkPluginContext* pc);
-  
+
 public Q_SLOTS:
 
   void controlService(int service, const QString& operation, long ranking);

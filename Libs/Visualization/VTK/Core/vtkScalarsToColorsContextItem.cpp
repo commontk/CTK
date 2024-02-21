@@ -79,7 +79,7 @@ vtkScalarsToColorsContextItem::vtkScalarsToColorsContextItem()
   this->HistogramChart->SetScalarVisibility(true);
   AddItem(this->HistogramChart.GetPointer());
 
-  //Editor 
+  //Editor
   this->EditorChart =
     vtkSmartPointer<vtkDiscretizableColorTransferChart>::New();
   this->EditorChart->SetBackgroundBrush(b);

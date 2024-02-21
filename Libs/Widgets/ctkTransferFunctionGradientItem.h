@@ -41,7 +41,7 @@ class CTK_WIDGETS_EXPORT ctkTransferFunctionGradientItem: public ctkTransferFunc
 
 public:
   ctkTransferFunctionGradientItem(QGraphicsItem* parent = 0);
-  ctkTransferFunctionGradientItem(ctkTransferFunction* transferFunction, 
+  ctkTransferFunctionGradientItem(ctkTransferFunction* transferFunction,
                                   QGraphicsItem* parent = 0);
   virtual ~ctkTransferFunctionGradientItem();
 

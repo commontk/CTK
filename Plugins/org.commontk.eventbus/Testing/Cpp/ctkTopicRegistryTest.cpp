@@ -115,6 +115,3 @@ void ctkTopicRegistryTest::ctkTopicRegistryOwnerTest() {
 
 CTK_REGISTER_TEST(ctkTopicRegistryTest);
 #include "ctkTopicRegistryTest.moc"
-
-
-

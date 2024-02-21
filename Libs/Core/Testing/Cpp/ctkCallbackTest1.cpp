@@ -60,7 +60,7 @@ void doSomething3(void* data)
 int ctkCallbackTest1(int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
-  
+
 
   Done1 = false;
   Done2 = false;
@@ -74,7 +74,7 @@ int ctkCallbackTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
   QTimer::singleShot(0, &callback, SLOT(invoke()));
-  
+
   //-----------------------------------------------------------------------------
   ctkCallback callback1;
   Callback1 = &callback1;
@@ -84,16 +84,16 @@ int ctkCallbackTest1(int argc, char * argv [] )
               << " - ctkCallback::callback() should return 0" << std::endl;
     return EXIT_FAILURE;
     }
-    
+
   callback1.setCallback(doSomething1);
   if (callback1.callback() != doSomething1)
     {
     std::cerr << "Line " << __LINE__ << " - Problem vith ctkCallback::setCallback()" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   QTimer::singleShot(0, &callback1, SLOT(invoke()));
-  
+
   //-----------------------------------------------------------------------------
   ctkCallback callback2(doSomething2);
   callback2.setProperty("foo", QVariant(7));
@@ -103,7 +103,7 @@ int ctkCallbackTest1(int argc, char * argv [] )
     std::cerr << "Line " << __LINE__ << " - Problem vith ctkCallback constructor" << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   QTimer::singleShot(0, &callback2, SLOT(invoke()));
 
   //-----------------------------------------------------------------------------
@@ -112,8 +112,8 @@ int ctkCallbackTest1(int argc, char * argv [] )
   ctkCallback callback3(doSomething3);
   callback3.setCallbackData(&dummyData);
   QTimer::singleShot(0, &callback3, SLOT(invoke()));
-  
-  
+
+
   QTimer::singleShot(0, &app, SLOT(quit()));
 
   int status = app.exec();

@@ -19,7 +19,7 @@
 =========================================================================*/
 /*=========================================================================
 
- Portions (c) Copyright Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See http://www.slicer.org/copyright/copyright.txt for details.

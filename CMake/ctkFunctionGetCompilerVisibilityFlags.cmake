@@ -22,7 +22,7 @@
 #!
 #! \ingroup CMakeUtilities
 function(ctkFunctionGetCompilerVisibilityFlags RESULT_VAR)
-  
+
   # We only support hidden visibility for gcc for now. Clang 3.0 still has troubles with
   # correctly marking template declarations and explicit template instantiations as exported.
   # See http://comments.gmane.org/gmane.comp.compilers.clang.scm/50028
@@ -30,10 +30,10 @@ function(ctkFunctionGetCompilerVisibilityFlags RESULT_VAR)
   set(use_visibility_flags 0)
 
   if(CMAKE_COMPILER_IS_GNUCXX)
-  
+
     set(use_visibility_flags 1)
     ctkFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
-  
+
     # MinGW does not export all symbols automatically, so no need to set flags.
     #
     # With gcc < 4.5, RTTI symbols from classes declared in third-party libraries
@@ -44,19 +44,18 @@ function(ctkFunctionGetCompilerVisibilityFlags RESULT_VAR)
     # directives for the third-party headers between "#pragma visibility push/pop"
     # statements, it is generally safer to just use default visibility with
     # gcc < 4.5.
-    
+
     if(${GCC_VERSION} VERSION_LESS "4.5" OR MINGW)
       set(use_visibility_flags 0)
     endif()
-    
+
   endif()
-  
+
   if(use_visibility_flags)
     set(visibility_flags "")
     ctkFunctionCheckCompilerFlags("-fvisibility=hidden" visibility_flags)
     ctkFunctionCheckCompilerFlags("-fvisibility-inlines-hidden" visibility_flags)
     set(${RESULT_VAR} "${${RESULT_VAR}} ${visibility_flags}" PARENT_SCOPE)
   endif()
-  
-endfunction()
 
+endfunction()

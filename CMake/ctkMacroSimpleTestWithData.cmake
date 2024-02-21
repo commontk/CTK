@@ -6,7 +6,7 @@
 #! SIMPLE_TEST_WITH_DATA(<testname> <baseline_relative_location> [argument1 ...])
 #! \endcode
 #!
-#! This macro add a test using the complete add_test signature specifying target using 
+#! This macro add a test using the complete add_test signature specifying target using
 #! $<TARGET_FILE:...> generator expression. Optional test argument(s) can be passed
 #! after specifying the <testname>.
 #!
@@ -36,15 +36,15 @@ macro(SIMPLE_TEST_WITH_DATA testname baseline_relative_location)
   if("${KIT}" STREQUAL "")
     message(FATAL_ERROR "error: KIT variable is not set !")
   endif()
-  
+
   if(NOT TARGET ${KIT}CppTests)
     message(FATAL_ERROR "error: ${KIT}CppTests target does NOT exist !")
   endif()
-  
+
   if(NOT EXISTS "${CTKData_DIR}/Data")
     message(FATAL_ERROR "error: <CTKData_DIR>/Data corresponds to an non-existing directory. [<CTKData_DIR>/Data: ${CTKData_DIR}/Data]")
   endif()
-  
+
   if(NOT EXISTS "${CTKData_DIR}/Baseline/${baseline_relative_location}")
     message(FATAL_ERROR "error: <CTKData_DIR>/Baseline/<baseline_relative_location> corresponds to an non-existing file or directory. [<CTKData_DIR>/Baseline/<baseline_relative_location>: ${CTKData_DIR}/Baseline/${baseline_relative_location}]")
   endif()
@@ -52,7 +52,7 @@ macro(SIMPLE_TEST_WITH_DATA testname baseline_relative_location)
   if(NOT DEFINED ${testname}_TEST)
     set(${testname}_TEST ${testname})
   endif()
-  
+
   add_test(NAME ${testname} COMMAND $<TARGET_FILE:${KIT}CppTests> ${${testname}_TEST}
             -D "${CTKData_DIR}/Data"
             -V "${CTKData_DIR}/Baseline/${baseline_relative_location}"
@@ -60,5 +60,6 @@ macro(SIMPLE_TEST_WITH_DATA testname baseline_relative_location)
             ${ARGN}
             )
   set_property(TEST ${testname} PROPERTY LABELS ${KIT})
-endmacro()
 
+  set_property(TEST ${testname} PROPERTY ENVIRONMENT_MODIFICATION "${CTK_TEST_LAUNCH_BUILD_ENVIRONMENT_MODIFICATION}")
+endmacro()

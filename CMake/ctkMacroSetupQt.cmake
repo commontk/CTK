@@ -30,6 +30,12 @@ macro(ctkMacroSetupQt)
     # See https://github.com/commontk/CTK/wiki/Maintenance#updates-of-required-qt-components
 
     if(CTK_LIB_Widgets
+      OR CTK_LIB_DICOM/Widgets
+      )
+      list(APPEND CTK_QT5_COMPONENTS Svg)
+    endif()
+
+    if(CTK_LIB_Widgets
       OR CTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTXML
       )
       list(APPEND CTK_QT5_COMPONENTS Xml)

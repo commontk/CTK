@@ -117,4 +117,3 @@ int ctkBinaryFileDescriptorTest1(int argc, char * argv[])
 
   return EXIT_SUCCESS;
 }
-

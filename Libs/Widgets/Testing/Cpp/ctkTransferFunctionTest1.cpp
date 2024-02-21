@@ -76,7 +76,7 @@ public:
     Q_UNUSED(cp);
     return -1;
   }
-  
+
   virtual int insertControlPoint(qreal pos)
   {
     Q_UNUSED(pos);
@@ -195,4 +195,3 @@ int ctkTransferFunctionTest1(int argc, char * argv [])
 
   return EXIT_SUCCESS;
 }
-

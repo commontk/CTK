@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0" 
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+<xsl:stylesheet version="2.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
@@ -9,13 +9,13 @@
   exclude-result-prefixes="xs xdt err fn">
 
   <xsl:output method="xml" indent="yes"/>
-  
+
    <!--
   ===================================================================
     Defaults for XSL parameter bindings
   ===================================================================
   -->
-  
+
   <!--
   ########################################################################
   ****************************   IMPORTANT   *****************************
@@ -26,9 +26,9 @@
   *                                                                      *
   ########################################################################
   -->
-  
+
   <xsl:param name="disableReturnParameter">true</xsl:param>
-  
+
   <xsl:param name="executableWidget">QWidget</xsl:param>
   <xsl:param name="parametersWidget">ctkCollapsibleGroupBox</xsl:param>
   <xsl:param name="booleanWidget">QCheckBox</xsl:param>
@@ -43,7 +43,7 @@
   <xsl:param name="directoryWidget">ctkPathLineEdit</xsl:param>
   <xsl:param name="pointWidget">ctkCoordinatesWidget</xsl:param>
   <xsl:param name="unsupportedWidget">QLabel</xsl:param>
-    
+
   <xsl:param name="booleanValueProperty">checked</xsl:param>
   <xsl:param name="integerValueProperty">value</xsl:param>
   <xsl:param name="floatValueProperty">value</xsl:param>
@@ -67,7 +67,7 @@
   <xsl:param name="imageOutputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Writable</xsl:param>
   <xsl:param name="fileInputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Readable</xsl:param>
   <xsl:param name="fileOutputSetValue">ctkPathLineEdit::Files|ctkPathLineEdit::Writable</xsl:param>
-  
+
   <!--
   ===================================================================
     Utility XSLT 2.0 functions
@@ -91,7 +91,7 @@
        (or be convertible to it). -->
   <xsl:function name="ctk:mapTypeToQtValueProperty">
     <xsl:param name="cliType"/>
-    <xsl:param name="cliChannel"/> 
+    <xsl:param name="cliChannel"/>
     <xsl:choose>
       <xsl:when test="$cliType='boolean'"><xsl:value-of select="$booleanValueProperty"/></xsl:when>
       <xsl:when test="$cliType='integer'"><xsl:value-of select="$integerValueProperty"/></xsl:when>
@@ -106,7 +106,7 @@
       <xsl:when test="$cliType='file' and $cliChannel='output'"><xsl:value-of select="$fileOutputValueProperty"/></xsl:when>
       <xsl:when test="$cliType='directory'"><xsl:value-of select="$directoryValueProperty"/></xsl:when>
       <xsl:when test="$cliType='geometry' and $cliChannel='input'"><xsl:value-of select="$geometryInputValueProperty"/></xsl:when>
-      <xsl:when test="$cliType='geometry' and $cliChannel='output'"><xsl:value-of select="$geometryOutputValueProperty"/></xsl:when>      
+      <xsl:when test="$cliType='geometry' and $cliChannel='output'"><xsl:value-of select="$geometryOutputValueProperty"/></xsl:when>
       <xsl:when test="$cliType='integer-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
       <xsl:when test="$cliType='double-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
       <xsl:when test="$cliType='float-vector'"><xsl:value-of select="$vectorValueProperty"/></xsl:when>
@@ -127,7 +127,7 @@
 
   <!-- suppress text and attribute nodes not covered in subsequent template rule -->
   <xsl:template match="text()|@*"/>
-  
+
   <!-- suppress elements not covered in "connections" mode -->
   <xsl:template match="*" mode="connections"/>
 
@@ -208,7 +208,7 @@
   </xsl:template>
 
   <!-- A named template for adding properties common to all Qt widgets -->
-  <xsl:template name="commonWidgetProperties">  
+  <xsl:template name="commonWidgetProperties">
     <xsl:apply-templates select="description"/> <!-- tooltip -->
     <xsl:if test="@hidden='true'"> <!-- widget visibility -->
       <property  name="visible">
@@ -223,24 +223,24 @@
     </xsl:if>
     <property name="parameter:valueProperty"> <!-- property name containing current value -->
     <xsl:choose>
-      <xsl:when test="channel">      
+      <xsl:when test="channel">
         <xsl:if test="channel/text()='output'">
           <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'output')"/></string>
         </xsl:if>
         <xsl:if test="channel/text()='input'">
           <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'input')"/></string>
         </xsl:if>
-      </xsl:when>      
+      </xsl:when>
       <xsl:otherwise>
         <string><xsl:value-of select="ctk:mapTypeToQtValueProperty(name(),'dummy')"/></string>
-      </xsl:otherwise> 
+      </xsl:otherwise>
     </xsl:choose>
-    </property>       
+    </property>
     <!-- add additional (optional) information as properties -->
     <xsl:apply-templates select="default"/>
     <xsl:apply-templates select="constraints"/>
   </xsl:template>
-  
+
   <!-- A named template for creating a QtDesigner stringlist property -->
   <xsl:template name="createQtDesignerStringListProperty">
     <property name="nameFilters">
@@ -306,9 +306,9 @@
           <xsl:choose>
             <xsl:when test="@advanced = 'true'">
               <bool>false</bool>
-            </xsl:when>      
+            </xsl:when>
             <xsl:otherwise>
-              <bool>true</bool>            
+              <bool>true</bool>
             </xsl:otherwise>
           </xsl:choose>
         </property>
@@ -317,7 +317,7 @@
             <widget class="QWidget" name="paramContainer:{$groupLabel}">
               <layout class="QGridLayout">
                 <xsl:apply-templates select="./description/following-sibling::*"/>
-              </layout>            
+              </layout>
             </widget>
           </item>
         </layout>
@@ -391,7 +391,7 @@
       </widget>
     </item>
   </xsl:template>
-  
+
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     STRING, INTEGER-VECTOR, DOUBLE-VECTOR, FLOAT-VECTOR, STRING-VECTOR parameter (default: QLineEdit)
@@ -406,7 +406,7 @@
       </widget>
     </item>
   </xsl:template>
-  
+
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     INTEGER-ENUMERATION, DOUBLE-ENUMERATION, FLOAT-ENUMERATION, STRING-ENUMERATION parameter (default: QComboBox)
@@ -428,7 +428,7 @@
       </widget>
     </item>
   </xsl:template>
-  
+
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMAGE parameter (default: ctkPathLineEdit)
@@ -518,7 +518,7 @@
       </widget>
     </item>
   </xsl:template>
-  
+
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     POINT, REGION parameter (default: ctkCoordinatesWidget)
@@ -533,13 +533,13 @@
       </widget>
     </item>
   </xsl:template>
-  
+
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NOT IMPLEMENTED YET
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
-  
+
   <xsl:template match="parameters/*" priority="-1">
     <xsl:call-template name="gridItemWithLabel"/>
     <item  row="{position()-1}" column="1">

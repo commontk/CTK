@@ -36,7 +36,7 @@ protected:
 public:
   ctkAddRemoveComboBoxPrivate(ctkAddRemoveComboBox& object);
 
-  /// 
+  ///
   /// Insert 'None' item
   /// Note: Also make sure that no signal is emitted while the item is inserted
   /// That function doesn't prevent from inserting multiple time the 'None' item
@@ -50,7 +50,7 @@ public:
 
   /// Set to true when inserting the 'None' item.
   /// Will prevent the itemAdded signal from being sent
-  bool    AddingEmptyItem; 
+  bool    AddingEmptyItem;
 
   /// Set to true when removing the 'None' item.
   /// Will prevent the itemRemoved signal from being sent
@@ -130,10 +130,10 @@ ctkAddRemoveComboBox::ctkAddRemoveComboBox(QWidget* _parent) : Superclass(_paren
 {
   Q_D(ctkAddRemoveComboBox);
   d->setupUi(this);
-  
+
   // connect
   d->connectComboBox(d->ComboBox);
-    
+
   this->connect(d->AddPushButton, SIGNAL(pressed()), SLOT(onAdd()));
   this->connect(d->RemovePushButton, SIGNAL(pressed()), SLOT(onRemove()));
   this->connect(d->EditPushButton, SIGNAL(pressed()), SLOT(onEdit()));
@@ -170,7 +170,7 @@ void ctkAddRemoveComboBox::setComboBox(QComboBox* comboBox)
     {
     return;
     }
-  
+
   QLayoutItem* oldComboBoxItem = this->layout()->takeAt(0);
   QComboBox* oldComboBox = qobject_cast<QComboBox*>(oldComboBoxItem->widget());
   comboBox->setSizePolicy(oldComboBox->sizePolicy());
@@ -191,7 +191,7 @@ void ctkAddRemoveComboBox::setComboBox(QComboBox* comboBox)
 void ctkAddRemoveComboBox::setEmptyText(const QString& text)
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   if (d->HasEmptyItem)
     {
     Q_ASSERT(d->ComboBox->count() == 1);
@@ -207,12 +207,12 @@ CTK_GET_CPP(ctkAddRemoveComboBox, QString, emptyText, EmptyText);
 void ctkAddRemoveComboBox::onRowsInserted(const QModelIndex & _parent, int start, int end)
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   if (_parent != d->ComboBox->rootModelIndex())
     {// Rows that are to be added in the model are not displayed by the combobox
     return;
     }
-    
+
   if (d->HasEmptyItem && !d->AddingEmptyItem)
     {
     // Remove the Empty item as some real items have been added
@@ -220,7 +220,7 @@ void ctkAddRemoveComboBox::onRowsInserted(const QModelIndex & _parent, int start
     d->RemovingEmptyItem = true;
     d->ComboBox->removeItem(start == 0 ? end + 1 : 0);
     d->RemovingEmptyItem = false;
-    
+
     if (d->RemoveEnabled)
       {
       d->RemovePushButton->setEnabled(true);
@@ -273,7 +273,7 @@ void ctkAddRemoveComboBox::onRowsAboutToBeRemoved(const QModelIndex & _parent, i
 void ctkAddRemoveComboBox::onRowsRemoved(const QModelIndex & _parent, int start, int end)
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   if (_parent != d->ComboBox->rootModelIndex())
     {//rows that are to be added in the model are not displayed by the combobox
     return;
@@ -283,7 +283,7 @@ void ctkAddRemoveComboBox::onRowsRemoved(const QModelIndex & _parent, int start,
     {
     // Add default 'empty item'
     d->insertEmptyItem();
-   
+
     if (d->RemoveEnabled)
       {
       d->RemovePushButton->setEnabled(false);
@@ -322,7 +322,7 @@ bool ctkAddRemoveComboBox::comboBoxEnabled()const
 void ctkAddRemoveComboBox::setAddEnabled(bool enable)
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   d->AddPushButton->setEnabled(enable);
   d->AddEnabled = enable;
 }
@@ -338,7 +338,7 @@ bool ctkAddRemoveComboBox::addEnabled()const
 void ctkAddRemoveComboBox::setRemoveEnabled(bool enable)
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   if (this->count() > 0)
     {
     d->RemovePushButton->setEnabled(enable);
@@ -357,9 +357,9 @@ bool ctkAddRemoveComboBox::removeEnabled()const
 void ctkAddRemoveComboBox::setEditEnabled(bool enable)
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   if (this->count() > 0)
-    { 
+    {
     d->EditPushButton->setEnabled(enable);
     }
   d->EditEnabled = enable;
@@ -425,12 +425,12 @@ void ctkAddRemoveComboBox::insertItems(int index, const QStringList &texts)
   Q_D(ctkAddRemoveComboBox);
   d->ComboBox->insertItems(index, texts);
 }
-  
+
 // --------------------------------------------------------------------------
 int ctkAddRemoveComboBox::findText(const QString & text, Qt::MatchFlags flags)const
 {
   Q_D(const ctkAddRemoveComboBox);
-  
+
   if (d->HasEmptyItem)
     { // if the scene is empty, don't even try to find the text (it could be the
       // one of the EmptyText prop.
@@ -443,9 +443,9 @@ int ctkAddRemoveComboBox::findText(const QString & text, Qt::MatchFlags flags)co
 int ctkAddRemoveComboBox::findData(const QVariant &dataVariable, int role, Qt::MatchFlags flags)const
 {
   Q_D(const ctkAddRemoveComboBox);
-  
+
   if (d->HasEmptyItem)
-    { // if the scene is empty, don't even try to find the dataVariable 
+    { // if the scene is empty, don't even try to find the dataVariable
     return -1;
     }
   return d->ComboBox->findData(dataVariable, role, flags);
@@ -455,19 +455,19 @@ int ctkAddRemoveComboBox::findData(const QVariant &dataVariable, int role, Qt::M
 QString ctkAddRemoveComboBox::itemText(int index) const
 {
   Q_D(const ctkAddRemoveComboBox);
-  
+
   if (d->HasEmptyItem)
     {
     return QString();
     }
   return d->ComboBox->itemText(index);
 }
-  
+
 // --------------------------------------------------------------------------
 QVariant ctkAddRemoveComboBox::itemData(int index, int role) const
 {
   Q_D(const ctkAddRemoveComboBox);
-  
+
   if (d->HasEmptyItem)
     {
     return QVariant();
@@ -479,19 +479,19 @@ QVariant ctkAddRemoveComboBox::itemData(int index, int role) const
 void ctkAddRemoveComboBox::setItemText(int index, const QString& text)
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   if (d->HasEmptyItem)
     {
     return;
     }
   return d->ComboBox->setItemText(index, text);
 }
-  
+
 // --------------------------------------------------------------------------
 void ctkAddRemoveComboBox::setItemData(int index, const QVariant& dataVariable, int role)
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   if (d->HasEmptyItem)
     {
     return;
@@ -503,7 +503,7 @@ void ctkAddRemoveComboBox::setItemData(int index, const QVariant& dataVariable, 
 int ctkAddRemoveComboBox::currentIndex() const
 {
   Q_D(const ctkAddRemoveComboBox);
-  
+
   return d->HasEmptyItem ? -1 : d->ComboBox->currentIndex();
 }
 
@@ -511,10 +511,10 @@ int ctkAddRemoveComboBox::currentIndex() const
 void ctkAddRemoveComboBox::removeItem(int index)
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   if (d->HasEmptyItem)
     {
-    return; 
+    return;
     }
   d->ComboBox->removeItem(index);
 }
@@ -523,7 +523,7 @@ void ctkAddRemoveComboBox::removeItem(int index)
 void ctkAddRemoveComboBox::clear()
 {
   Q_D(ctkAddRemoveComboBox);
-  
+
   if (d->HasEmptyItem)
     {
     return;
@@ -558,4 +558,3 @@ QAbstractItemModel* ctkAddRemoveComboBox::model()const
   Q_D(const ctkAddRemoveComboBox);
   return d->ComboBox->model();
 }
-

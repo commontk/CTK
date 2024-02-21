@@ -19,7 +19,7 @@
 =========================================================================*/
 /*=========================================================================
 
- Portions (c) Copyright Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See http://www.slicer.org/copyright/copyright.txt for details.
@@ -47,7 +47,7 @@ public:
   // Convenient typedefs
   typedef std::pair<asection*, void* > MemorySectionType;
   typedef std::vector<MemorySectionType> MemorySectionContainer;
-  
+
   ctkBinaryFileDescriptorPrivate();
 
   /// Resolves a symbol
@@ -55,7 +55,7 @@ public:
 
   MemorySectionContainer Sections;
   bfd *                  BFD;
-  
+
   QString FileName;
 };
 
@@ -77,21 +77,21 @@ void* ctkBinaryFileDescriptorPrivate::resolve(const char * symbol)
     }
 
   void *addr = 0;
-  
+
   // Get the symbol table
   long storageNeeded = bfd_get_symtab_upper_bound(this->BFD);
   asymbol ** symbolTable = reinterpret_cast<asymbol **>(malloc(storageNeeded));
-  
+
   long numberOfSymbols = bfd_canonicalize_symtab(this->BFD, symbolTable);
-    
+
   // Run through the symbol table, looking for the requested symbol
-  for (int i = 0; i < numberOfSymbols; i++) 
+  for (int i = 0; i < numberOfSymbols; i++)
     {
     if (strcmp(symbol, symbolTable[i]->name) == 0)
-      { 
+      {
       // Found the symbol, get the section pointer
       asection *p = bfd_get_section(symbolTable[i]);
-          
+
       // Do we have this section already?
       MemorySectionContainer::iterator sit;
       for (sit = this->Sections.begin(); sit != this->Sections.end(); ++sit)
@@ -99,9 +99,9 @@ void* ctkBinaryFileDescriptorPrivate::resolve(const char * symbol)
         if ((*sit).first == p)
           {
           break;
-          }  
+          }
         }
-            
+
       PTR mem;
       if (sit == this->Sections.end())
         {
@@ -124,7 +124,7 @@ void* ctkBinaryFileDescriptorPrivate::resolve(const char * symbol)
         // pull the start of the section block from the cache
         mem = const_cast<void*>((*sit).second);
         }
-            
+
       // determine the address of this section
       addr = reinterpret_cast<char *>(mem)
           + (bfd_asymbol_value(symbolTable[i]) - bfd_asymbol_base(symbolTable[i]));
@@ -134,7 +134,7 @@ void* ctkBinaryFileDescriptorPrivate::resolve(const char * symbol)
 
   // cleanup. just delete the outer vector for the symbol table
   free(symbolTable);
-  
+
   return addr;
 }
 
@@ -147,7 +147,7 @@ ctkBinaryFileDescriptor::ctkBinaryFileDescriptor(): d_ptr(new ctkBinaryFileDescr
 }
 
 // --------------------------------------------------------------------------
-ctkBinaryFileDescriptor::ctkBinaryFileDescriptor(const QString& _fileName): 
+ctkBinaryFileDescriptor::ctkBinaryFileDescriptor(const QString& _fileName):
   d_ptr(new ctkBinaryFileDescriptorPrivate)
 {
   Q_D(ctkBinaryFileDescriptor);
@@ -174,21 +174,21 @@ bool ctkBinaryFileDescriptor::isLoaded() const
 bool ctkBinaryFileDescriptor::load()
 {
   Q_D(ctkBinaryFileDescriptor);
-  
+
   bfd_init();
   bfd * abfd = bfd_openr(d->FileName.toUtf8(), NULL);
   if (!abfd)
     {
     return false;
     }
-  
+
   /* make sure it's an object file */
-  if (!bfd_check_format (abfd, bfd_object)) 
+  if (!bfd_check_format (abfd, bfd_object))
     {
     bfd_close(abfd);
     return false;
     }
-  
+
   d->BFD = abfd;
   return true;
 }
@@ -197,11 +197,11 @@ bool ctkBinaryFileDescriptor::load()
 bool ctkBinaryFileDescriptor::unload()
 {
   Q_D(ctkBinaryFileDescriptor);
-  
+
   if (d->BFD)
     {
     bfd_close(d->BFD);
-    d->BFD = 0; 
+    d->BFD = 0;
     }
   return true;
 }

@@ -50,4 +50,3 @@ public Q_SLOTS:
 };
 
 #endif
-

@@ -50,7 +50,7 @@ protected:
 public:
   ctkDICOMObjectModelPrivate(ctkDICOMObjectModel&);
   virtual ~ctkDICOMObjectModelPrivate();
-  
+
   void init();
   void itemInsert(ctkDICOMItem* dicomItem, DcmItem *dataset, QStandardItem *parent);
   void seqInsert(ctkDICOMItem* dicomItem, DcmSequenceOfItems *dataset, QStandardItem *parent);

@@ -29,19 +29,28 @@
 int ctkDICOMDemoSCUTest1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
+
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 1)
+    {
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-ctkDICOMDemoSCU-executable>" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QString command = arguments.at(0);
+
   QString peer("www.dicomserver.co.uk");
-  QString port("11112");
+  QString port("104");
   QString aeTitle("MOVESCP");
   QStringList parameters;
   parameters << peer << port << aeTitle;
 
-  if (argc < 2)
-    {
-    std::cerr << "Must specify path to ctkDICOMDemoSCU on command line\n";
-    return EXIT_FAILURE;
-    }
-  std::cout << "Testing ctkDICOMDemoSCU: " << argv[1] << "\n";
-  QString command = QString(argv[1]);
+  std::cout << "Testing:\n"
+            << qPrintable(command) << " "
+            << qPrintable(parameters.join(" ")) << std::endl;
 
   int res = QProcess::execute(command, parameters);
   if (res != EXIT_SUCCESS)

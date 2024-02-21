@@ -22,7 +22,11 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QStringList>
+#include <QTemporaryDir>
 #include <QVariant>
+
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -32,30 +36,35 @@
 // STD includes
 #include <iostream>
 
-void ctkDICOMQueryTest2PrintUsage()
-{
-  std::cout << " ctkDICOMQueryTest2 images" << std::endl;
-}
 
 // Test on a real local database
 int ctkDICOMQueryTest2( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
-  ctkDICOMTester tester;
-  tester.startDCMQRSCP();
-  
   QStringList arguments = app.arguments();
-  arguments.pop_front(); // remove application name
-  arguments.pop_front(); // remove test name
+  QString testName = arguments.takeFirst();
+
   if (!arguments.count())
     {
-    ctkDICOMQueryTest2PrintUsage();
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
     }
+
+  QTemporaryDir tempDirectory;
+  CHECK_BOOL(tempDirectory.isValid(), true);
+
+  ctkDICOMTester tester;
+  tester.startDCMQRSCP();
   tester.storeData(arguments);
 
   ctkDICOMDatabase database;
+
+  QDir databaseDirectory(tempDirectory.path());
+  QString dbFile = QFileInfo(databaseDirectory, QString("ctkDICOM.sql")).absoluteFilePath();
+  CHECK_BOOL(database.openDatabase(dbFile), true);
+  database.cleanup(true);
 
   ctkDICOMQuery query;
   query.setCallingAETitle("CTK_AE");

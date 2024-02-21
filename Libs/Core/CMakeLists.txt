@@ -22,6 +22,8 @@ set(KIT_SRCS
   ctkAbstractFactory.tpp
   ctkAbstractFileBasedFactory.h
   ctkAbstractFileBasedFactory.tpp
+  ctkAbstractJob.cpp
+  ctkAbstractJob.h
   ctkAbstractObjectFactory.h
   ctkAbstractObjectFactory.tpp
   ctkAbstractPluginFactory.h
@@ -30,6 +32,8 @@ set(KIT_SRCS
   ctkAbstractQObjectFactory.tpp
   ctkAbstractLibraryFactory.h
   ctkAbstractLibraryFactory.tpp
+  ctkAbstractWorker.cpp
+  ctkAbstractWorker.h
   ctkBackTrace.cpp
   ctkBooleanMapper.cpp
   ctkBooleanMapper.h
@@ -65,6 +69,9 @@ set(KIT_SRCS
   ctkFileLogger.cpp
   ctkFileLogger.h
   ctkHighPrecisionTimer.cpp
+  ctkJobScheduler.cpp
+  ctkJobScheduler.h
+  ctkJobScheduler_p.h
   ctkLinearValueProxy.cpp
   ctkLinearValueProxy.h
   ctkLogger.cpp
@@ -100,6 +107,8 @@ endif()
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
+  ctkAbstractJob.h
+  ctkAbstractWorker.h
   ctkBooleanMapper.h
   ctkCallback.h
   ctkCommandLineParser.h
@@ -111,6 +120,8 @@ set(KIT_MOC_SRCS
   ctkErrorLogQtMessageHandler.h
   ctkErrorLogTerminalOutput.h
   ctkFileLogger.h
+  ctkJobScheduler.h
+  ctkJobScheduler_p.h
   ctkLinearValueProxy.h
   ctkLogger.h
   ctkModelTester.h
@@ -120,6 +131,15 @@ set(KIT_MOC_SRCS
   ctkWorkflow_p.h
   ctkWorkflowStep_p.h
   ctkWorkflowTransitions.h
+  )
+
+# Abstract class should not be wrapped !
+set_source_files_properties(
+  ctkAbstractJob.h
+  ctkAbstractWorker.h
+  ctkJobScheduler.h
+  ctkJobScheduler_p.h
+  WRAP_EXCLUDE
   )
 
 # UI files

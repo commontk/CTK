@@ -29,7 +29,7 @@ class ctkSingletonTestHelperPrivate
 {
 public:
   ctkSingletonTestHelperPrivate();
-  
+
   int NorthFaceCount;
 };
 
@@ -77,4 +77,3 @@ int ctkSingletonTestHelper::northFaceCount()const
 
 //-----------------------------------------------------------------------------
 CTK_SINGLETON_DEFINE(ctkSingletonTestHelper)
-

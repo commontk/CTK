@@ -37,27 +37,27 @@
 int ctkDynamicSpacerTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   QWidget topLevel;
   ctkDynamicSpacer* spacer1 = new ctkDynamicSpacer;
   QPushButton* button= new QPushButton;
   button->setCheckable(true);
   ctkDynamicSpacer* spacer2 = new ctkDynamicSpacer;
-  
+
   QVBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(spacer1);
   layout->addWidget(button);
   layout->addWidget(spacer2);
   topLevel.setLayout(layout);
-  
-  if (spacer1->activeSizePolicy() != 
+
+  if (spacer1->activeSizePolicy() !=
       QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred))
     {
     std::cerr << "ctkDynamicSpacer: wrong default values" << std::endl;
     return EXIT_FAILURE;
     }
   spacer1->setActiveSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  if (spacer1->activeSizePolicy() != 
+  if (spacer1->activeSizePolicy() !=
       QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding))
     {
     std::cerr << "ctkDynamicSpacer::setActiveSizePolicy failed" << std::endl;
@@ -65,7 +65,7 @@ int ctkDynamicSpacerTest1(int argc, char * argv [] )
     }
 
   spacer1->setInactiveSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-  if (spacer1->inactiveSizePolicy() != 
+  if (spacer1->inactiveSizePolicy() !=
       QSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum))
     {
     std::cerr << "ctkDynamicSpacer::setInactiveSizePolicy failed" << std::endl;
@@ -74,7 +74,7 @@ int ctkDynamicSpacerTest1(int argc, char * argv [] )
 
   spacer2->setInactiveSizePolicy(spacer1->inactiveSizePolicy());
   spacer2->setActiveSizePolicy(spacer1->activeSizePolicy());
-  
+
   QObject::connect(button, SIGNAL(toggled(bool)), spacer1, SLOT(setActive(bool)));
   QObject::connect(button, SIGNAL(toggled(bool)), spacer2, SLOT(setInactive(bool)));
 
@@ -86,7 +86,7 @@ int ctkDynamicSpacerTest1(int argc, char * argv [] )
   topLevel.resize(50, 300);
   topLevel.show();
   QApplication::processEvents();
-  
+
   // both inactive, they don't grow
   if (spacer1->height() != 0 || spacer2->height() != 0)
     {
@@ -94,7 +94,7 @@ int ctkDynamicSpacerTest1(int argc, char * argv [] )
               << spacer2->height() << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   button->toggle();
   // need to repaint the widgets to query their size
   QApplication::processEvents();
@@ -116,7 +116,7 @@ int ctkDynamicSpacerTest1(int argc, char * argv [] )
               << spacer2->height() << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
@@ -124,4 +124,3 @@ int ctkDynamicSpacerTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

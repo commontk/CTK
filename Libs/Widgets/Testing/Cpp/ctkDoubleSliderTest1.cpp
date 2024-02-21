@@ -68,8 +68,8 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
       !qFuzzyCompare(slider.sliderPosition(), 18.54))
     {
     std::cerr << "ctkDoubleSlider::setSingleStep failed."
-              << "Step:" << slider.singleStep() 
-              << " Val:" << slider.value() 
+              << "Step:" << slider.singleStep()
+              << " Val:" << slider.value()
               << " Pos:" << slider.sliderPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -80,7 +80,7 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
       !qFuzzyCompare(slider.sliderPosition(), 18.54))
     {
     std::cerr << "ctkDoubleSlider::setSingleStep failed."
-              << slider.value() << " " 
+              << slider.value() << " "
               << slider.sliderPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -113,7 +113,7 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
     {
     std::cerr << "ctkDoubleSlider:: setMaximum failed" << slider.value() << std::endl;
     return EXIT_FAILURE;
-    }    
+    }
   std::cout << "Test setValue close to previous value" << std::endl;
   slider.setValue(15.081);
   if (!qFuzzyCompare(slider.value(), 15.081))
@@ -123,7 +123,7 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
     }
   std::cout << "Test setSingleStep" << std::endl;
   slider.setSingleStep(1.);
-  if (!qFuzzyCompare(slider.value(),15.081) || 
+  if (!qFuzzyCompare(slider.value(),15.081) ||
       !qFuzzyCompare(slider.sliderPosition(), 15.081))
     {
     std::cerr << "ctkDoubleSlider:: setSingleStep failed: val" << slider.value() << " pos:" << slider.sliderPosition() << std::endl;
@@ -131,7 +131,7 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
     }
   std::cout << "Test setSingleStep " << std::endl;
   slider.setSingleStep(0.01);
-  if (!qFuzzyCompare(slider.value(),15.081) || 
+  if (!qFuzzyCompare(slider.value(),15.081) ||
       !qFuzzyCompare(slider.sliderPosition(), 15.081))
     {
     std::cerr << "ctkDoubleSlider:: setSingleStep failed: val" << slider.value() << " pos:" << slider.sliderPosition() << std::endl;
@@ -144,7 +144,7 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
       !qFuzzyCompare(slider.value(), 510.333333))
     {
     std::cerr << "ctkDoubleSlider::setValue(1000) failed"
-              << " val:" << slider.value() 
+              << " val:" << slider.value()
               << " pos: " << slider.sliderPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -155,7 +155,7 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
       !qFuzzyCompare(slider.sliderPosition(), 10.21))
     {
     std::cerr << "ctkDoubleSlider::setRange(-400.2, 10.21) failed"
-              << " val:" << slider.value() 
+              << " val:" << slider.value()
               << " pos: " << slider.sliderPosition() << std::endl;
     return EXIT_FAILURE;
     }
@@ -164,17 +164,17 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
       !qFuzzyCompare(slider.sliderPosition(), 10.21))
     {
     std::cerr << "ctkDoubleSlider::setSingleStep(0.15) failed"
-              << " val:" << slider.value() 
+              << " val:" << slider.value()
               << " pos: " << slider.sliderPosition() << std::endl;
     return EXIT_FAILURE;
     }
-  // FIXME 
+  // FIXME
   // slider.setSliderPosition(10.3333);
   // if (!qFuzzyCompare(slider.value(), 10.3333) ||
   //     !qFuzzyCompare(slider.sliderPosition(), 10.3333))
   //   {
   //   std::cerr << "ctkDoubleSlider::setSliderPosition(10.3333) failed"
-  //             << " val:" << slider.value() 
+  //             << " val:" << slider.value()
   //             << " pos: " << slider.sliderPosition() << std::endl;
   //   return EXIT_FAILURE;
   //   }
@@ -184,7 +184,7 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
   //     !qFuzzyCompare(slider.sliderPosition(), 10.123456789))
   //   {
   //   std::cerr << "ctkDoubleSlider::setSliderPosition(10.123456789) failed"
-  //             << " val:" << slider.value() 
+  //             << " val:" << slider.value()
   //             << " pos: " << slider.sliderPosition() << std::endl;
   //   return EXIT_FAILURE;
   //   }
@@ -202,4 +202,3 @@ int ctkDoubleSliderTest1(int argc, char * argv [] )
     }
   return app.exec();
 }
-

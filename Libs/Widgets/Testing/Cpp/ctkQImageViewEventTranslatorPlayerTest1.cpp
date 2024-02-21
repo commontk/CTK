@@ -76,4 +76,3 @@ int ctkQImageViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.show();
   return app.exec();
 }
-

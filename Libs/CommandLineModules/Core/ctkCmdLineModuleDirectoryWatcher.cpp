@@ -479,5 +479,3 @@ void ctkCmdLineModuleDirectoryWatcherPrivate::onDirectoryChanged(const QString &
     if (this->Debug) qDebug() << "ctkCmdLineModuleDirectoryWatcherPrivate::onDirectoryChanged(" << path << "): failed to load modules, as path invalid.";
   }
 }
-
-

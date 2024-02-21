@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMQueryWidget_h
 #define __ctkDICOMQueryWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 
 #include "ctkDICOMWidgetsExport.h"
@@ -36,7 +36,7 @@ public:
   typedef QWidget Superclass;
   explicit ctkDICOMQueryWidget(QWidget* parent=0);
   virtual ~ctkDICOMQueryWidget();
-  
+
   /// return map of field names and values
   QMap<QString,QVariant> parameters();
 

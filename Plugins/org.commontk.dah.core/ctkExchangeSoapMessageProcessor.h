@@ -36,7 +36,7 @@ public:
   virtual bool process(
     const QtSoapMessage& message,
     QtSoapMessage* reply) const;
-    
+
 private:
 
   void processNotifyDataAvailable(const QtSoapMessage& message,
@@ -45,7 +45,7 @@ private:
                        QtSoapMessage* reply) const;
   void processReleaseData(const QtSoapMessage& message,
                            QtSoapMessage* reply) const;
-               
+
   ctkDicomExchangeInterface* exchangeInterface;
 
 };

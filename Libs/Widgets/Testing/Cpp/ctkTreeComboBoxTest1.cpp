@@ -45,7 +45,7 @@ int ctkTreeComboBoxTest1(int argc, char * argv [] )
   model.appendRow(new QStandardItem("Test2"));
   model.appendRow(new QStandardItem("Test3"));
   combo.setModel(&model);
-  
+
   if (combo.treeView() == 0)
     {
     std::cerr << "No tree view" << std::endl;
@@ -71,11 +71,10 @@ int ctkTreeComboBoxTest1(int argc, char * argv [] )
   QApplication::setEffectEnabled(Qt::UI_AnimateCombo, oldEnabled);
 
   combo.showPopup();
-  
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }
   return app.exec();
 }
-

@@ -188,7 +188,7 @@ configure_package_config_file(
 # CTK external projects. We rely on externally set
 # _DIR variables or a proper CMAKE_PREFIX_PATH such
 # that find_dependency/find_package can successfully
-# find the external project. 
+# find the external project.
 set(CTK_SUPERBUILD_EP_VARS_CONFIG)
 foreach(varname ${CTK_EP_LABEL_FIND_PACKAGE})
   string(REPLACE "_DIR" "" package_name "${varname}")

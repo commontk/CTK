@@ -153,7 +153,7 @@ public:
   ctkSettingsPanelPrivate(ctkSettingsPanel& object);
   void init();
 
-  /// Return QSettings associated with a given settingKey or the general \a Settings. 
+  /// Return QSettings associated with a given settingKey or the general \a Settings.
   /// If \a settingKey is not found, it will return 0.
   /// \sa ctkSettingsPanel::registerProperty
   QSettings* settings(const QString& settingKey)const;
@@ -311,7 +311,7 @@ void ctkSettingsPanel::registerProperty(const QString& key,
     {
     prop.Settings = settings;
     }
-  
+
   QSettings* propSettings = settings ? settings : d->Settings;
   if (propSettings && propSettings->contains(key))
     {
@@ -319,7 +319,7 @@ void ctkSettingsPanel::registerProperty(const QString& key,
     prop.setValue(val);
     prop.setPreviousValue(val);
     }
-    
+
   d->Properties[key] = prop;
 
   // Create a signal mapper per property to be able to support
@@ -417,8 +417,11 @@ void ctkSettingsPanel::applySettings()
   foreach(const QString& key, d->Properties.keys())
     {
     PropertyType& prop = d->Properties[key];
-    prop.setPreviousValue(prop.value());
-    emit settingChanged(key, prop.value());
+    if (prop.previousValue() != prop.value())
+      {
+      prop.setPreviousValue(prop.value());
+      emit settingChanged(key, prop.value());
+      }
     }
 }
 

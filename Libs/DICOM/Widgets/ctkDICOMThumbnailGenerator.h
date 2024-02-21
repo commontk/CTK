@@ -23,19 +23,20 @@
 #define __ctkDICOMThumbnailGenerator_h
 
 // Qt includes
+#include <QColor>
 class QImage;
 
-// CTK includes
-#include "ctkDICOMWidgetsExport.h"
+// ctkDICOMWidgets includes
 #include "ctkDICOMAbstractThumbnailGenerator.h"
-
+#include "ctkDICOMWidgetsExport.h"
 class ctkDICOMThumbnailGeneratorPrivate;
+
+// DCMTK includes
 class DicomImage;
 
 /// \ingroup DICOM_Widgets
 ///
-/// \brief  thumbnail generator class
-///
+/// \brief Thumbnail generator class
 class CTK_DICOM_WIDGETS_EXPORT ctkDICOMThumbnailGenerator : public ctkDICOMAbstractThumbnailGenerator
 {
   Q_OBJECT
@@ -56,7 +57,7 @@ public:
 
   /// Generate a blank thumbnail image (currently a solid gray box of the requested thumbnail size).
   /// It can be used as a placeholder for invalid images or duringan image is loaded.
-  Q_INVOKABLE void generateBlankThumbnail(QImage& image);
+  Q_INVOKABLE void generateBlankThumbnail(QImage& image, QColor color = Qt::darkGray);
 
   /// Set thumbnail width
   void setWidth(int width);

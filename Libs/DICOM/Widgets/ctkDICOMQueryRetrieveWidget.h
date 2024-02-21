@@ -21,19 +21,19 @@
 #ifndef __ctkDICOMQueryRetrieveWidget_h
 #define __ctkDICOMQueryRetrieveWidget_h
 
-#include "ctkDICOMWidgetsExport.h"
-
-// Qt includes 
+// Qt includes
 #include <QWidget>
 #include <QItemSelection>
 #include <QMap>
 #include <QVariant>
 #include <QString>
 
-class ctkDICOMTableManager;
-// CTK includes
+// ctkDICOMCore includes
 #include <ctkDICOMDatabase.h>
 
+// ctkDICOMWidgets includes
+#include "ctkDICOMWidgetsExport.h"
+class ctkDICOMTableManager;
 class ctkDICOMQueryRetrieveWidgetPrivate;
 
 /// \ingroup DICOM_Widgets

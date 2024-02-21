@@ -86,4 +86,3 @@ int ctkVTKDiscretizableColorTransferWidgetTest1(int argc, char * argv[])
 
   return app.exec();
 }
-

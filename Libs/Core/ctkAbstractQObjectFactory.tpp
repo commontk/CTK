@@ -46,7 +46,7 @@ ctkAbstractQObjectFactory<BaseClassType>::~ctkAbstractQObjectFactory()
 template<typename BaseClassType>
 QString ctkAbstractQObjectFactory<BaseClassType>::objectNameToKey(const QString& objectName)
 {
-  return objectName; 
+  return objectName;
 }
 
 //----------------------------------------------------------------------------

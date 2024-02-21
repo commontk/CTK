@@ -36,18 +36,18 @@
 int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
- 
+
   ctkVTKSurfaceMaterialPropertyWidget propertyWidget(0);
-  
+
   if (propertyWidget.isEnabled())
     {
     std::cerr << "No vtkProperty provided, should be disabled."
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   vtkProperty* property = vtkProperty::New();
-  
+
   double color[3];
   property->GetColor(color);
   double opacity = property->GetOpacity();
@@ -55,12 +55,12 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
   double diffuse = property->GetDiffuse();
   double specular = property->GetSpecular();
   double specularPower = property->GetSpecularPower();
-  
+
   bool backfaceCulling = property->GetBackfaceCulling();
-  
+
   propertyWidget.setProperty(property);
   property->Delete();
-  
+
   if (propertyWidget.property() != property)
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setProperty() failed."
@@ -79,7 +79,7 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     std::cerr << "Wrong opacity: " << propertyWidget.opacity() << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   if (propertyWidget.ambient() != ambient)
     {
     std::cerr << "Wrong ambient: " << propertyWidget.ambient() << std::endl;
@@ -136,7 +136,7 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     }
 
   propertyWidget.setOpacity(0.999);
-  
+
   if (property->GetOpacity() != 1.00)
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setOpacity() failed: "
@@ -154,7 +154,7 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     }
 
   propertyWidget.setAmbient(0.8);
-  
+
   if (property->GetAmbient() != 0.8)
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setAmbient() failed: "
@@ -171,7 +171,7 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     }
 
   propertyWidget.setDiffuse(0.3);
-  
+
   if (property->GetDiffuse() != 0.3)
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setDiffuse() failed: "
@@ -188,7 +188,7 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     }
 
   propertyWidget.setSpecular(0.01);
-  
+
   if (property->GetSpecular() != 0.01)
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setSpecular() failed: "
@@ -205,7 +205,7 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     }
 
   propertyWidget.setSpecularPower(60);
-  
+
   if (property->GetSpecularPower() != 50)
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setSpecularPower() failed: "
@@ -222,7 +222,7 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
     }
 
   propertyWidget.setBackfaceCulling(true);
-  
+
   if (property->GetBackfaceCulling() != 1)
     {
     std::cerr << "ctkVTKSurfaceMaterialPropertyWidget::setBackfaceCulling() failed: "
@@ -239,4 +239,3 @@ int ctkVTKSurfaceMaterialPropertyWidgetTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

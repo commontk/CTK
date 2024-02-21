@@ -144,4 +144,3 @@ checkNull(void* object, const QString& name)
     throw ctkInvalidArgumentException(qPrintable(name + " may not be null"));
   }
 }
-

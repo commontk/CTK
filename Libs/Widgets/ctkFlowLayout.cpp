@@ -260,7 +260,7 @@ Qt::Orientations ctkFlowLayout::preferredExpandingDirections()const
   Q_D(const ctkFlowLayout);
   return d->PreferredDirections;
 }
-  
+
 // --------------------------------------------------------------------------
 Qt::Orientation ctkFlowLayout::orientation() const
 {

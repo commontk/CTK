@@ -80,7 +80,7 @@ int ctkVTKSliceViewTest2(int argc, char * argv [] )
   imageReader.TakeReference(imageFactory->CreateImageReader2(imageFilename.toUtf8()));
   if (!imageReader)
     {
-    std::cerr << "Failed to instantiate image reader using: " 
+    std::cerr << "Failed to instantiate image reader using: "
               << qPrintable(imageFilename) << std::endl;
     return EXIT_FAILURE;
     }

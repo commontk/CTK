@@ -34,17 +34,17 @@
 int ctkUtilsTest1(int argc, char * argv [] )
 {
   Q_UNUSED(argc);
-  Q_UNUSED(argv);  
+  Q_UNUSED(argv);
 
   // Test qListToSTLVector(const QStringList& list, std::vector<char*>& vector)
-  
+
   QStringList inputStringList;
   inputStringList << "Testing";
   inputStringList << " is ";
   inputStringList << "awesome !";
 
   std::vector<char*> outputCharVector;
-  
+
   ctk::qListToSTLVector(inputStringList, outputCharVector);
 
   if (outputCharVector.size() != 3)
@@ -53,7 +53,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
               << "outputCharVector should contains 3 elements." << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   if ((strcmp(outputCharVector[0], "Testing") != 0) ||
       (strcmp(outputCharVector[1], " is ") != 0) ||
       (strcmp(outputCharVector[2], "awesome !") != 0))
@@ -71,10 +71,10 @@ int ctkUtilsTest1(int argc, char * argv [] )
 
   delete [] outputCharVector[0];
   delete [] outputCharVector[1];
-  delete [] outputCharVector[2]; 
+  delete [] outputCharVector[2];
 
-  
-  
+
+
   // Test qListToSTLVector(const QStringList& list, std::vector<std::string>& vector)
 
   std::vector<std::string> outputStringVector;
@@ -86,7 +86,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
     std::cerr << "Error in qListToSTLVector(const QStringList&, std::vector<std::string>&)" << std::endl
               << "outputStringVector should contains 3 elements." << std::endl;
     return EXIT_FAILURE;
-    }  
+    }
 
   if ((outputStringVector[0].compare("Testing") != 0) ||
       (outputStringVector[1].compare(" is ") != 0) ||
@@ -105,7 +105,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
 
 
   // Test stlVectorToQList(const std::vector<std::string>& vector, QStringList& list)
-  
+
   std::vector<std::string> inputStringVector;
   inputStringVector.push_back("Testing");
   inputStringVector.push_back(" is ");
@@ -121,7 +121,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
               << "ouputStringList should contains 3 elements." << std::endl;
     return EXIT_FAILURE;
     }
-    
+
   if ((ouputStringList[0] != QLatin1String("Testing")) ||
       (ouputStringList[1] != QLatin1String(" is ")) ||
       (ouputStringList[2] != QLatin1String("awesome !")))

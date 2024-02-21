@@ -25,9 +25,9 @@
 
 class ctkFooService
 {
- 
+
 public:
-  
+
   virtual ~ctkFooService() {}
   virtual void foo() = 0;
 

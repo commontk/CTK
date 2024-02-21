@@ -29,20 +29,18 @@
 #include <iostream>
 #include <cstdlib>
 
-void ctkDICOMTesterTest2PrintUsage()
-{
-  std::cout << " ctkDICOMTesterTest2 images" << std::endl;
-}
 
 int ctkDICOMTesterTest2(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
 
   QStringList arguments = app.arguments();
-  arguments.pop_front();
+  QString testName = arguments.takeFirst();
+
   if (!arguments.count())
     {
-    ctkDICOMTesterTest2PrintUsage();
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -59,4 +57,3 @@ int ctkDICOMTesterTest2(int argc, char * argv [])
 
   return EXIT_SUCCESS;
 }
-

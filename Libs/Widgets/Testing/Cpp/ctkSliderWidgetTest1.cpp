@@ -46,7 +46,7 @@ int ctkSliderWidgetTest1(int argc, char * argv [] )
   sliderSpinBox.reset();
   sliderSpinBox.setSpinBoxAlignment(Qt::AlignRight);
 
-  if (sliderSpinBox.spinBoxAlignment() != Qt::AlignRight || 
+  if (sliderSpinBox.spinBoxAlignment() != Qt::AlignRight ||
       !qFuzzyCompare(sliderSpinBox.value(), 80.5678))
     {
     std::cerr << "ctkSliderWidget::setSpinBoxAlignment failed."
@@ -69,7 +69,7 @@ int ctkSliderWidgetTest1(int argc, char * argv [] )
 
   sliderSpinBox.setPrefix("$");
 
-  if (sliderSpinBox.prefix() != "$" || 
+  if (sliderSpinBox.prefix() != "$" ||
       !qFuzzyCompare(sliderSpinBox.value(), 80.5678))
     {
     std::cerr << "ctkSliderWidget::setPrefix failed."
@@ -80,7 +80,7 @@ int ctkSliderWidgetTest1(int argc, char * argv [] )
 
   sliderSpinBox.setSuffix("mm");
 
-  if (sliderSpinBox.suffix() != "mm" || 
+  if (sliderSpinBox.suffix() != "mm" ||
       !qFuzzyCompare(sliderSpinBox.value(), 80.5678))
     {
     std::cerr << "ctkSliderWidget::setSuffix failed."
@@ -104,4 +104,3 @@ int ctkSliderWidgetTest1(int argc, char * argv [] )
     }
   return app.exec();
 }
-

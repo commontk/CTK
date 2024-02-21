@@ -63,7 +63,7 @@ int ctkActionsWidgetTest1(int argc, char* argv[])
   actionsWidget.addAction(new QAction("Action Text5", &widget), "category 4");
   actionsWidget.addAction(new QAction(informationIcon, "Action Text6", qApp), "category 5");
 
-  if (actionsWidget.groupItem("category 1") == 0 || 
+  if (actionsWidget.groupItem("category 1") == 0 ||
       actionsWidget.groupItem("category 1")->rowCount() != 4)
     {
     qDebug() << "Invalid Category 1";
@@ -81,7 +81,7 @@ int ctkActionsWidgetTest1(int argc, char* argv[])
     qDebug() << "Invalid custom action" << (actionItem ? actionItem->text() : "NaN");
     return EXIT_FAILURE;
     }
-  // check update on change 
+  // check update on change
   action->setText("new custom action");
   QStandardItem* changedActionItem = actionsWidget.model()->item(7);
   if (changedActionItem != actionItem ||
@@ -91,7 +91,7 @@ int ctkActionsWidgetTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
   widget.addAction(action);
-  
+
   QList<QAction*> actions;
   actions << new QAction("group action 1",qApp);
   actions << new QAction("group action 2",qApp);
@@ -99,14 +99,14 @@ int ctkActionsWidgetTest1(int argc, char* argv[])
   actions << new QAction("group action 4",qApp);
   actions << new QAction("group action 5",qApp);
   actionsWidget.addActions(actions,"category 6");
-  
+
   QMenu menu;
   actionsWidget.addAction(menu.addAction("&menu action"), "menu category");
   actionsWidget.addAction(menu.addSeparator(), "menu category");
   actionsWidget.addAction(menu.addMenu("submenu action")->menuAction(), "menu category");
 
   actionsWidget.setActionsWithNoShortcutVisible(false);
-  
+
   QModelIndexList actionTextActions = actionsWidget.view()->model()->match(
     QModelIndex(), Qt::DisplayRole, QString("Action Text"), -1,
     Qt::MatchStartsWith | Qt::MatchWrap |Qt::MatchRecursive);
@@ -132,9 +132,9 @@ int ctkActionsWidgetTest1(int argc, char* argv[])
     qDebug() << "ctkActionsWidget search failed" << submenuActions.count();
     return EXIT_FAILURE;
     }
-  
+
   actionsWidget.setMenuActionsVisible(true);
-  
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

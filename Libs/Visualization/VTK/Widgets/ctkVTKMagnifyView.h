@@ -112,6 +112,6 @@ Q_SIGNALS:
 private:
   Q_DECLARE_PRIVATE(ctkVTKMagnifyView)
   Q_DISABLE_COPY(ctkVTKMagnifyView)
-}; 
+};
 
 #endif

@@ -70,7 +70,7 @@ public:
   ctkCollapsibleButton(const QString& text, QWidget *parent = 0);
   virtual ~ctkCollapsibleButton();
 
-  /// 
+  ///
   /// Property that describes if the widget is collapsed or not.
   /// When collapsed, the children are invisible and the widget
   /// has a sized defined by CollapsedHeight
@@ -90,24 +90,24 @@ public:
   /// \sa flat, setFlat()
   bool isFlat()const;
 
-  /// 
+  ///
   /// Set the frame shape of the contents
   /// Hint: StyledPanel is probably the shape you are looking for
   QFrame::Shape contentsFrameShape() const;
   void setContentsFrameShape(QFrame::Shape);
 
-  /// 
+  ///
   /// Set the frame shadow of the contents
   /// Hint: Raised is probably the shadow you are looking for
   QFrame::Shadow contentsFrameShadow() const;
   void setContentsFrameShadow(QFrame::Shadow);
 
-  /// 
+  ///
   /// Set the line width of the frame around the contents
   int contentsLineWidth() const;
   void setContentsLineWidth(int);
 
-  /// 
+  ///
   /// Set the mid line width of the frame around the contents
   int contentsMidLineWidth() const;
   void setContentsMidLineWidth(int);
@@ -124,11 +124,11 @@ public:
   void setIndicatorAlignment(Qt::Alignment indicatorAlignment);
   Qt::Alignment indicatorAlignment()const;
 
-  /// 
+  ///
   /// Reimplemented for internal reasons
   virtual QSize minimumSizeHint()const;
 
-  /// 
+  ///
   /// Reimplemented for internal reasons
   virtual QSize sizeHint()const;
 
@@ -139,19 +139,19 @@ public:
   /// Reimplemented for internal reasons
   /// Catch when a child widget's visibility is externally changed
   virtual bool eventFilter(QObject* child, QEvent* e);
-  
+
   /// Reimplemented for internal reasons
   /// Don't process Show/Hide events of children when it is
   /// ctkCollapsibleButton that generate them.
   virtual void setVisible(bool);
 Q_SIGNALS:
-  /// 
+  ///
   /// Signal emitted when the widget is collapsed or expanded.
   /// See signal toggled(bool) for the opposite.
   void contentsCollapsed(bool);
 
 protected Q_SLOTS:
-  /// 
+  ///
   /// Perform the collapse.
   virtual void collapse(bool c);
   virtual void onToggled(bool clicked = false);
@@ -167,7 +167,7 @@ protected:
   virtual QSize buttonSizeHint() const;
 
   /// Initialize option with the values from this ctkCollapsibleButton.
-  /// This method is useful for subclasses when they need a QStyleOptionButton, 
+  /// This method is useful for subclasses when they need a QStyleOptionButton,
   /// but don't want to fill in all the information themselves.
   virtual void initStyleOption(QStyleOptionButton* option)const;
 

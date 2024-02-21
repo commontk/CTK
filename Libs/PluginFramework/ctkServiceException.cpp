@@ -92,4 +92,3 @@ ctkServiceException::Type ctkServiceException::getType() const
 {
   return type;
 }
-

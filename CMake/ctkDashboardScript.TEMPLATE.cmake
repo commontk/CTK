@@ -161,7 +161,7 @@ function(download_file url dest)
 endfunction()
 
 #
-# Download and include dashboard driver script 
+# Download and include dashboard driver script
 #
 set(url https://raw.githubusercontent.com/commontk/CTK/master/CMake/ctkDashboardDriverScript.cmake)
 set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)

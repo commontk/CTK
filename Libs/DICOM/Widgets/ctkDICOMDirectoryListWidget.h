@@ -21,7 +21,7 @@
 #ifndef __ctkDICOMDirectoryListWidget_h
 #define __ctkDICOMDirectoryListWidget_h
 
-// Qt includes 
+// Qt includes
 #include <QWidget>
 #include <QItemSelection>
 

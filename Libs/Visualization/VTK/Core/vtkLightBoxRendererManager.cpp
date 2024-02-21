@@ -138,7 +138,7 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
 {
   assert(this->Renderer);
   assert(!this->HighlightedBoxActor);
-  
+
   // Create a highlight actor (2D box around viewport)
   vtkNew<vtkPolyData> poly;
   vtkNew<vtkPoints> points;
@@ -174,7 +174,7 @@ void RenderWindowItem::SetupHighlightedBoxActor(const double highlightedBoxColor
   points->InsertNextPoint(1. + shift, 1. + shift, 0); // top-right
   points->InsertNextPoint(0. + shift, 1. + shift, 0); // top-left
   points->InsertNextPoint(0. + shift, 0. + shift - 0.1, 0); // bottom-left to fill the 0,0 pixel.
-  
+
   vtkNew<vtkCellArray> cells;
   cells->InsertNextCell(6);
   cells->InsertCellPoint(0);
@@ -244,10 +244,10 @@ public:
 
   /// Collection of RenderWindowItem
   std::vector<RenderWindowItem* >                  RenderWindowItemList;
-  
+
   /// .. and its associated convenient typedef
   typedef std::vector<RenderWindowItem*>::iterator RenderWindowItemListIt;
-  
+
   /// Reference to the public interface
   vtkLightBoxRendererManager*                         External;
 };
@@ -313,7 +313,7 @@ void vtkLightBoxRendererManager::vtkInternal::SetupCornerAnnotation()
 void vtkLightBoxRendererManager::vtkInternal::setupRendering()
 {
   assert(this->RenderWindow);
-  
+
   // Remove only renderers managed by this light box
   for(RenderWindowItemListIt it = this->RenderWindowItemList.begin();
       it != this->RenderWindowItemList.end();
@@ -632,7 +632,7 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
     }
 
 
-  if (this->Internal->RenderWindowRowCount == rowCount && 
+  if (this->Internal->RenderWindowRowCount == rowCount &&
       this->Internal->RenderWindowColumnCount == columnCount)
     {
     return;
@@ -921,4 +921,3 @@ void vtkLightBoxRendererManager::SetColorWindowAndLevel(double colorWindow, doub
 
   this->Modified();
 }
-

@@ -48,7 +48,7 @@ class CTK_CORE_EXPORT ctkCoreSettings : public QSettings
   /// applicationHomePlaceholder special string). This allows the application to read/write absolute paths
   /// to the settings, yet make all the files within applicationHomeDirectory relocatable.
   ///
-  /// Example: If applicationHomeDirectory is set to /some/path/to/myapp 
+  /// Example: If applicationHomeDirectory is set to /some/path/to/myapp
   /// and applicationHomePlaceholder is left at the default <APPLICATION_HOME_DIR> value then
   /// then /some/path/to/myapp/data will be stored in settings as <APPLICATION_HOME_DIR>/data.
   /// If the application is moved over to /someotherplace/path/to/myapp

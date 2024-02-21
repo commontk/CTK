@@ -227,7 +227,7 @@ ctkRangeWidget::ctkRangeWidget(QWidget* _parent) : Superclass(_parent)
   , d_ptr(new ctkRangeWidgetPrivate(*this))
 {
   Q_D(ctkRangeWidget);
-  
+
   d->setupUi(this);
 
   if (d->useCustomSpinBoxesLimits())
@@ -242,7 +242,7 @@ ctkRangeWidget::ctkRangeWidget(QWidget* _parent) : Superclass(_parent)
     }
   d->MinimumSpinBox->setValue(d->Slider->minimumValue());
   d->MaximumSpinBox->setValue(d->Slider->maximumValue());
-  
+
   d->connectSlider();
 
   d->MinimumSpinBox->installEventFilter(this);
@@ -690,7 +690,7 @@ bool ctkRangeWidget::eventFilter(QObject *obj, QEvent *event)
        this->startChanging();
        }
      }
-   else if (event->type() == QEvent::MouseButtonRelease) 
+   else if (event->type() == QEvent::MouseButtonRelease)
      {
      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
      if (mouseEvent->button() & Qt::LeftButton)
@@ -700,7 +700,7 @@ bool ctkRangeWidget::eventFilter(QObject *obj, QEvent *event)
        // send a valueChanged() after eventFilter() is done.
        this->stopChanging();
        }
-     } 
+     }
    // standard event processing
    return this->Superclass::eventFilter(obj, event);
  }
@@ -749,7 +749,7 @@ void ctkRangeWidget::setDecimals(int newDecimals)
   d->MaximumSpinBox->setDecimals(newDecimals);
   // The number of decimals can change the range values
   // i.e. 50.55 with 2 decimals -> 51 with 0 decimals
-  // As the SpinBox range change doesn't fire signals, 
+  // As the SpinBox range change doesn't fire signals,
   // we have to do the synchronization manually here
   if (!d->useCustomSpinBoxesLimits())
     {
@@ -798,7 +798,7 @@ double ctkRangeWidget::tickInterval()const
 
 // --------------------------------------------------------------------------
 void ctkRangeWidget::setTickInterval(double ti)
-{ 
+{
   Q_D(ctkRangeWidget);
   d->Slider->setTickInterval(ti);
 }

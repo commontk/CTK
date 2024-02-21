@@ -32,7 +32,7 @@ class ctkVTKLookupTablePrivate;
 
 /// \ingroup Visualization_VTK_Widgets
 ///
-/// Transfer function for a vtkColorTransferFunction. 
+/// Transfer function for a vtkColorTransferFunction.
 /// The value is an RGB QColor (no alpha supported)
 class CTK_VISUALIZATION_VTK_WIDGETS_EXPORT ctkVTKLookupTable: public ctkTransferFunction
 {
@@ -42,7 +42,7 @@ public:
   ctkVTKLookupTable(QObject* parent = 0);
   ctkVTKLookupTable(vtkLookupTable* lookupTable, QObject* parent = 0);
   virtual ~ctkVTKLookupTable();
-  
+
   virtual ctkControlPoint* controlPoint(int index)const;
   virtual QVariant value(qreal pos)const;
   virtual int count()const;

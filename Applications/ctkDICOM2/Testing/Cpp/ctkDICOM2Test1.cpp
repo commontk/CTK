@@ -29,14 +29,22 @@
 int ctkDICOM2Test1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
-  if (app.arguments().count() != 2)
+
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 1)
     {
-    std::cerr << "Line " << __LINE__ << " - Failed to run " << argv[0] << "\n"
-              << "Usage:\n"
-              << "  " << argv[0] << " /path/to/ctkDICOM";
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-ctkDICOM-executable>" << std::endl;
     return EXIT_FAILURE;
     }
-  QString command = app.arguments().at(1);
+
+  QString command = arguments.at(0);
+
+  std::cout << "Testing:\n"
+            << qPrintable(command) << std::endl;
+
   QProcess process;
   process.start(command, /* arguments= */ QStringList());
   bool res = process.waitForStarted();

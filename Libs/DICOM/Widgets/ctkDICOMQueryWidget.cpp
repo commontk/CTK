@@ -66,11 +66,11 @@ ctkDICOMQueryWidgetPrivate::~ctkDICOMQueryWidgetPrivate(){
 // ctkDICOMQueryWidget methods
 
 //----------------------------------------------------------------------------
-ctkDICOMQueryWidget::ctkDICOMQueryWidget(QWidget* _parent):Superclass(_parent), 
+ctkDICOMQueryWidget::ctkDICOMQueryWidget(QWidget* _parent):Superclass(_parent),
   d_ptr(new ctkDICOMQueryWidgetPrivate)
 {
   Q_D(ctkDICOMQueryWidget);
-  
+
   d->setupUi(this);
 
   d->NameSearch->setFocus(Qt::PopupFocusReason);

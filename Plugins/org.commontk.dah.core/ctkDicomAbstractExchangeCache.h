@@ -130,13 +130,13 @@ public:
 Q_SIGNALS:
 
   void dataAvailable();
-  
+
 private:
 
  Q_SIGNALS:
 
   void internalDataAvailable();
-  
+
 private:
 
   Q_DECLARE_PRIVATE(ctkDicomAbstractExchangeCache)

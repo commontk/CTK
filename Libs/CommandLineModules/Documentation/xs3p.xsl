@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
   Copyright (C) DSTC Pty Ltd (ACN 052 372 577) 2002
- 
+
   The software contained on this media is the property of the
   DSTC Pty Ltd.  Use of this software is strictly in accordance
   with the license agreement in the accompanying LICENSE file.
@@ -9,64 +9,64 @@
   LICENSE file then you have no rights to use this software
   in any manner and should contact DSTC at the address below
   to determine an appropriate licensing arrangement.
- 
+
       DSTC Pty Ltd
-      Level 7, General Purpose South 
+      Level 7, General Purpose South
       The University of Queensland
-      QLD 4072 Australia 
+      QLD 4072 Australia
       Tel: +61 7 3365 4310
       Fax: +61 7 3365 4311
       Email: titanium_enquiries@dstc.edu.au
- 
+
   This software is being provided "AS IS" without warranty of
   any kind.  In no event shall DSTC Pty Ltd be liable for
   damage of any kind arising out of or in connection with
   the use or performance of this software.
 -->
-<!-- 
+<!--
   File:
      xs3p.xsl
   Description:
-     Stylesheet that generates XHTML documentation, given an XML 
+     Stylesheet that generates XHTML documentation, given an XML
      Schema document
   Assumptions:
-     -Resulting documentation will only be displayed properly with 
-      the latest browsers that support XHTML and CSS. Older 
+     -Resulting documentation will only be displayed properly with
+      the latest browsers that support XHTML and CSS. Older
       browsers are not supported.
      -Assumed that XSD document conforms to the XSD recommendation.
       No validity checking is done.
   Constraints:
-     -Local schema components cannot contain two dashes in 
+     -Local schema components cannot contain two dashes in
       'documentation' elements within their 'annotation' element.
-      This is because the contents of those 'documentation' 
-      elements are displayed in a separate window using Javascript. 
+      This is because the contents of those 'documentation'
+      elements are displayed in a separate window using Javascript.
       This Javascript code is enclosed in comments, which do not
       allow two dashes inside themselves.
   Notes:
-     -Javascript code is placed within comments, even though in 
-      strict XHTML, JavaScript code should be placed within CDATA 
-      sections. This is because current browsers generate a syntax 
-      error if the page contains CDATA sections. Placing Javascript 
-      code within comments means that the code cannot contain two 
+     -Javascript code is placed within comments, even though in
+      strict XHTML, JavaScript code should be placed within CDATA
+      sections. This is because current browsers generate a syntax
+      error if the page contains CDATA sections. Placing Javascript
+      code within comments means that the code cannot contain two
       dashes.
       (See 'PrintJSCode' named template.)
   Stylesheet Sections:
      -Global Parameters
-          Specify parameters that can be set externally to customise 
+          Specify parameters that can be set externally to customise
           stylesheet
      -Constants
           Constants used by the stylesheet
      -Main Document
-          Templates to generate the overall document and the top-level 
+          Templates to generate the overall document and the top-level
           sections within it
      -Hierarchy table
-          Templates for displaying type hierarchy for simple and 
+          Templates for displaying type hierarchy for simple and
           complex types, and substitution group hierarchy for elements
      -Properties table
-          Templates for displaying the properties of top-level schema 
+          Templates for displaying the properties of top-level schema
           components
      -XML Instance Representation table
-          Templates for displaying how an XML instance conforming to 
+          Templates for displaying how an XML instance conforming to
           the schema component would look like
      -Schema Component Representation table
           Templates for displaying the XML representation of the schema
@@ -78,30 +78,30 @@
      -General Utility Templates
           General templates used by other templates in this stylesheet
   To Do List:
-     -It is not clever when printing out element and attribute 
-      wildcards in the XML Instance Representation tables. It prints 
-      out all wildcards, rather than working out the actual wildcard 
+     -It is not clever when printing out element and attribute
+      wildcards in the XML Instance Representation tables. It prints
+      out all wildcards, rather than working out the actual wildcard
       is from multiple wildcard instances.
-     -Same as above for simple type constraints, e.g. it doesn't 
+     -Same as above for simple type constraints, e.g. it doesn't
       summarise multiple pattern constraints.
 -->
-<xsl:stylesheet 
- xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
- xmlns="http://www.w3.org/1999/xhtml" 
- xmlns:html="http://www.w3.org/1999/xhtml" 
- xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
- xmlns:ppp="http://titanium.dstc.edu.au/xml/xs3p" 
+<xsl:stylesheet
+ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:ppp="http://titanium.dstc.edu.au/xml/xs3p"
  xmlns:xs3p="http://titanium.dstc.edu.au/xml/xs3p"
- version="1.0" 
+ version="1.0"
  exclude-result-prefixes="xsd ppp html">
 
-   <xsl:output 
-    method="xml" 
+   <xsl:output
+    method="xml"
     encoding="ISO-8859-1"
     standalone="yes"
     version="1.0"
-    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" 
-    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" 
+    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
     indent="yes"/>
 
    <xsl:key name="type" match="/xsd:schema/xsd:complexType | /xsd:schema/xsd:simpleType | /xsd:schema/xsd:redefine/xsd:complexType | /xsd:schema/xsd:redefine/xsd:simpleType" use="@name" />
@@ -117,8 +117,8 @@
    <!-- Title of XHTML document. -->
    <xsl:param name="title" select="/xsd:schema/xsd:annotation/xsd:appinfo/xs3p:title"></xsl:param>
 
-   <!-- If 'true', sorts the top-level schema components by type, 
-        then name. Otherwise, displays the components by the order that 
+   <!-- If 'true', sorts the top-level schema components by type,
+        then name. Otherwise, displays the components by the order that
         they appear in the schema. -->
    <xsl:param name="sortByComponent">true</xsl:param>
 
@@ -150,23 +150,23 @@
         components in XML Instance Representation tables. -->
    <xsl:param name="printNSPrefixes">true</xsl:param>
 
-   <!-- If 'true', searches 'included' schemas for schema components 
+   <!-- If 'true', searches 'included' schemas for schema components
         when generating links and XML Instance Representation tables. -->
    <xsl:param name="searchIncludedSchemas">false</xsl:param>
 
-   <!-- If 'true', searches 'imported' schemas for schema components 
+   <!-- If 'true', searches 'imported' schemas for schema components
         when generating links and XML Instance Representation tables. -->
    <xsl:param name="searchImportedSchemas">false</xsl:param>
 
-   <!-- File containing the mapping from file locations of external 
-        (e.g. included, imported, refined) schemas to file locations 
+   <!-- File containing the mapping from file locations of external
+        (e.g. included, imported, refined) schemas to file locations
         of their XHTML documentation. -->
    <xsl:param name="linksFile"></xsl:param>
-  
+
    <!-- Set the base URL for resolving links. -->
    <xsl:param name="baseURL"></xsl:param>
-  
-   <!-- Uses an external CSS stylesheet rather than using 
+
+   <!-- Uses an external CSS stylesheet rather than using
         internally-declared CSS properties. -->
    <xsl:param name="externalCSSURL"></xsl:param>
 
@@ -232,7 +232,7 @@
          <xsl:call-template name="HandleError">
             <xsl:with-param name="isTerminating">true</xsl:with-param>
             <xsl:with-param name="errorMsg">
-'linksFile' variable must be provided if either 
+'linksFile' variable must be provided if either
 'searchIncludedSchemas' or 'searchImportedSchemas' is true.
             </xsl:with-param>
          </xsl:call-template>
@@ -261,7 +261,7 @@
             <!-- Set base URL to use in working out relative paths -->
             <xsl:if test="$baseURL != ''">
                <xsl:element name="base">
-                  <xsl:attribute name="href"><xsl:value-of select="$baseURL"/></xsl:attribute> 
+                  <xsl:attribute name="href"><xsl:value-of select="$baseURL"/></xsl:attribute>
                </xsl:element>
             </xsl:if>
 
@@ -661,8 +661,8 @@ if (gc != null) {
       </h3>
    </xsl:template>
 
-   <!-- 
-     Prints out footer for top-level sections. 
+   <!--
+     Prints out footer for top-level sections.
      -->
    <xsl:template name="SectionFooter">
       <!-- Link to top of page-->
@@ -670,7 +670,7 @@ if (gc != null) {
       <hr/>
    </xsl:template>
 
-   <!-- 
+   <!--
      Java Script code required by the entire HTML document.
      -->
    <xsl:template name="DocumentJSCode">
@@ -722,7 +722,7 @@ var windowCount = 0;
 
 /**
  * Returns an element in the current HTML document.
- * 
+ *
  * @param elementID Identifier of HTML element
  * @return               HTML element object
  */
@@ -732,11 +732,11 @@ function getElementObject(elementID) {
         elemObj = document.getElementById(elementID);
     }
     return elemObj;
-}             
+}
 
 /**
  * Closes a collapseable box.
- * 
+ *
  * @param boxObj       Collapseable box
  * @param buttonObj Button controlling box
  */
@@ -747,7 +747,7 @@ function closeBox(boxObj, buttonObj) {
      // Change 'display' CSS property of box
      boxObj.style.display="none";
 
-     // Change text of button 
+     // Change text of button
      if (boxObj.style.display=="none") {
         buttonObj.value=" + ";
      }
@@ -756,7 +756,7 @@ function closeBox(boxObj, buttonObj) {
 
 /**
  * Opens a collapseable box.
- * 
+ *
  * @param boxObj       Collapseable box
  * @param buttonObj Button controlling box
  */
@@ -776,7 +776,7 @@ function openBox(boxObj, buttonObj) {
 
 /**
  * Sets the state of a collapseable box.
- * 
+ *
  * @param boxID Identifier of box
  * @param open If true, box is "opened",
  *             Otherwise, box is "closed".
@@ -800,7 +800,7 @@ function setState(boxID, open) {
 /**
  * Switches the state of a collapseable box, e.g.
  * if it's opened, it'll be closed, and vice versa.
- * 
+ *
  * @param boxID Identifier of box
  */
 function switchState(boxID) {
@@ -819,7 +819,7 @@ function switchState(boxID) {
 
 /**
  * Closes all boxes in a given list.
- * 
+ *
  * @param boxList Array of box IDs
  */
 function collapseAll(boxList) {
@@ -833,7 +833,7 @@ function collapseAll(boxList) {
 
 /**
  * Open all boxes in a given list.
- * 
+ *
  * @param boxList Array of box IDs
  */
 function expandAll(boxList) {
@@ -847,7 +847,7 @@ function expandAll(boxList) {
 
 /**
  * Makes all the control buttons of boxes appear.
- * 
+ *
  * @param boxList Array of box IDs
  */
 function viewControlButtons(boxList) {
@@ -862,7 +862,7 @@ function viewControlButtons(boxList) {
 
 /**
  * Makes all the control buttons of boxes disappear.
- * 
+ *
  * @param boxList Array of box IDs
  */
 function hideControlButtons(boxList) {
@@ -882,7 +882,7 @@ function hideControlButtons(boxList) {
  * In viewing mode, the page is more browsable.
  *
  * @param isPrinterVersion If true, display in
- *                                 printing mode; otherwise, 
+ *                                 printing mode; otherwise,
  *                                 in viewing mode
  */
 function displayMode(isPrinterVersion) {
@@ -960,10 +960,10 @@ function displayMode(isPrinterVersion) {
  * Opens up a window displaying the documentation
  * of a schema component in the XML Instance
  * Representation table.
- * 
- * @param compDesc      Description of schema component 
- * @param compName      Name of schema component 
- * @param docTextArray Array containing the paragraphs 
+ *
+ * @param compDesc      Description of schema component
+ * @param compName      Name of schema component
+ * @param docTextArray Array containing the paragraphs
  *                           of the new document
  */
 function viewDocumentation(compDesc, compName, docTextArray) {
@@ -1309,7 +1309,7 @@ div.sample div.contents a.documentation {
    background-color: #FFD;
    color: #069;
 }
-   /* Invert colors when hovering over link to open up window 
+   /* Invert colors when hovering over link to open up window
       displaying documentation */
 div.sample div.contents a.documentation:hover {
    color: #FFD;
@@ -1788,13 +1788,13 @@ div#legend div.hint {
 
    <!-- ******** Hierarchy table ******** -->
 
-   <!-- 
+   <!--
      Prints out substitution group hierarchy for
      element declarations.
      -->
    <xsl:template match="xsd:element" mode="hierarchy">
       <!--
-        Find out members of substitution group that this element 
+        Find out members of substitution group that this element
         heads.
         -->
       <xsl:variable name="members">
@@ -1842,7 +1842,7 @@ div#legend div.hint {
       </xsl:if>
    </xsl:template>
 
-   <!-- 
+   <!--
      Prints out Hierarchy table for complex type definitions.
      -->
    <xsl:template match="xsd:complexType" mode="hierarchy">
@@ -1893,7 +1893,7 @@ div#legend div.hint {
       </table>
    </xsl:template>
 
-   <!-- 
+   <!--
      Prints out Hierarchy table for simple type definitions.
      -->
    <xsl:template match="xsd:simpleType" mode="hierarchy">
@@ -1949,8 +1949,8 @@ div#legend div.hint {
      -->
    <xsl:template match="*" mode="hierarchy"/>
 
-   <!-- 
-     Prints out members, if any, of the substitution group that a 
+   <!--
+     Prints out members, if any, of the substitution group that a
      given element declaration heads.
      Assumes it will be called within XHTML <ul> tags.
      Param(s):
@@ -2002,10 +2002,10 @@ div#legend div.hint {
                      <xsl:with-param name="name" select="@name"/>
                   </xsl:call-template>
                </li>
-               <!-- Recursively find members of a substitution group that 
-                    current element in list might head, since substitution 
-                    groups are transitive (unless 'substitution' is 
-                    blocked). 
+               <!-- Recursively find members of a substitution group that
+                    current element in list might head, since substitution
+                    groups are transitive (unless 'substitution' is
+                    blocked).
                 -->
                <xsl:if test="not(contains($block, 'substitution'))">
                   <xsl:call-template name="PrintSGroupMembers">
@@ -2024,8 +2024,8 @@ div#legend div.hint {
             type (Node) required
                 Type definition
             isCallingType (boolean) optional
-                If true, 'type' is the type definition that starts 
-                this call. Otherwise, this is a recursive call from 
+                If true, 'type' is the type definition that starts
+                this call. Otherwise, this is a recursive call from
                 'PrintSupertypes' itself.
             typeList (String) optional
                 List of types in this call chain. Name of type starts
@@ -2139,7 +2139,7 @@ div#legend div.hint {
                         <xsl:text> &lt; </xsl:text>
                      </xsl:when>
                      <xsl:otherwise>
-                        <!-- IGNORE: Base type may not be exist probably because 
+                        <!-- IGNORE: Base type may not be exist probably because
                             current type does not be derived from another type.
                         -->
                      </xsl:otherwise>
@@ -2175,7 +2175,7 @@ div#legend div.hint {
                         </xsl:call-template>
                      </xsl:when>
                      <xsl:otherwise>
-                        <!-- IGNORE: Base type may not be exist probably because 
+                        <!-- IGNORE: Base type may not be exist probably because
                              current type does not be derived from another type.
                         -->
                      </xsl:otherwise>
@@ -2198,8 +2198,8 @@ div#legend div.hint {
             type (Node) required
                 Complex type definition
             isCallingType (boolean) optional
-                If true, 'type' is the type definition that starts this 
-                call. Otherwise, this is a recursive call from 
+                If true, 'type' is the type definition that starts this
+                call. Otherwise, this is a recursive call from
                 'PrintComplexSubtypes' itself.
             typeList (String) optional
                 List of types in this call chain. Name of type starts
@@ -2263,8 +2263,8 @@ div#legend div.hint {
             type (Node) required
                 Simple type definition
             isCallingType (boolean) optional
-                If true, 'type' is the type definition that starts this 
-                call. Otherwise, this is a recursive call from 
+                If true, 'type' is the type definition that starts this
+                call. Otherwise, this is a recursive call from
                 'PrintSimpleSubtypes'
             typeList (String) optional
                 List of types in this call chain. Name of type starts
@@ -2905,8 +2905,8 @@ div#legend div.hint {
    <xsl:template match="*" mode="properties"/>
 
    <!--
-     Prints out the rows to display 'annotation' elements of an 
-     component in the Properties table. This template assumes it 
+     Prints out the rows to display 'annotation' elements of an
+     component in the Properties table. This template assumes it
      will be called within an HTML 'table' element.
         Param(s):
             component (Node) required
@@ -3018,7 +3018,7 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out the constraints of simple content derived by 
+     Prints out the constraints of simple content derived by
      restriction, which is to be displayed in a Properties table.
      Param(s):
             restriction (Node) required
@@ -3197,9 +3197,9 @@ div#legend div.hint {
 
    <!-- ******** XML Instance Representation table ******** -->
 
-   <!-- 
-     Prints out the XML Instance Representation table for a top-level 
-     schema component. 
+   <!--
+     Prints out the XML Instance Representation table for a top-level
+     schema component.
      Param(s):
             component (Node) required
               Top-level schema component
@@ -3207,7 +3207,7 @@ div#legend div.hint {
    <xsl:template name="SampleInstanceTable">
       <xsl:param name="component"/>
 
-      <!-- Not applicable for simple type definitions and notation 
+      <!-- Not applicable for simple type definitions and notation
       declarations -->
       <xsl:if test="local-name($component)!='simpleType' and local-name($component)!='notation'">
          <xsl:variable name="componentID">
@@ -3229,7 +3229,7 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out a sample XML instance representation of an 'all' 
+     Prints out a sample XML instance representation of an 'all'
      model group.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -3289,7 +3289,7 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out a sample XML instance representation of an element 
+     Prints out a sample XML instance representation of an element
      content wild card.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -3315,17 +3315,17 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out a sample XML instance representation 
+     Prints out a sample XML instance representation
      of an attribute declaration.
      Param(s):
             subTypeAttrs (String) optional
-                List of attributes in sub-types of the type that 
+                List of attributes in sub-types of the type that
                 contains this attribute
             isInherited (boolean) optional
-                If true, display attribute using 'inherited' CSS 
+                If true, display attribute using 'inherited' CSS
                 class.
             isNewField (boolean) optional
-                If true, display attribute using 'newFields' CSS 
+                If true, display attribute using 'newFields' CSS
                 class.
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
@@ -3352,8 +3352,8 @@ div#legend div.hint {
 
       <xsl:choose>
          <xsl:when test="contains($subTypeAttrs, concat('*', normalize-space($attrNS), '+', normalize-space(@name), '+'))">
-            <!-- IGNORE: Sub type has attribute with same name; 
-                 Sub-type's attribute declaration will override this 
+            <!-- IGNORE: Sub type has attribute with same name;
+                 Sub-type's attribute declaration will override this
                  one. -->
          </xsl:when>
          <xsl:when test="@use and normalize-space(@use)='prohibited'">
@@ -3380,7 +3380,7 @@ div#legend div.hint {
                </xsl:variable>
                <xsl:call-template name="PrintNSPrefix">
                   <xsl:with-param name="prefix" select="$prefix"/>
-                  <xsl:with-param name="schemaLoc" select="$schemaLoc"/> 
+                  <xsl:with-param name="schemaLoc" select="$schemaLoc"/>
                </xsl:call-template>
                <xsl:value-of select="@name"/>
                <xsl:text>="</xsl:text>
@@ -3431,17 +3431,17 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out a sample XML instance representation 
+     Prints out a sample XML instance representation
      of an attribute reference.
      Param(s):
             subTypeAttrs (String) optional
-                List of attribute in sub-types of the type that 
+                List of attribute in sub-types of the type that
                 contains this attribute
             isInherited (boolean) optional
-                If true, display attributes using 'inherited' CSS 
+                If true, display attributes using 'inherited' CSS
                 class.
             isNewField (boolean) optional
-                If true, display attributes using 'newFields' CSS 
+                If true, display attributes using 'newFields' CSS
                 class.
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
@@ -3475,8 +3475,8 @@ div#legend div.hint {
 
       <xsl:choose>
          <xsl:when test="contains($subTypeAttrs, concat('*', normalize-space($attrNS), '+', normalize-space($attrName), '+'))">
-            <!-- IGNORE: Sub type has attribute with same name; 
-                 Sub-type's attribute declaration will override this 
+            <!-- IGNORE: Sub type has attribute with same name;
+                 Sub-type's attribute declaration will override this
                  one. -->
          </xsl:when>
          <xsl:when test="@use and normalize-space(@use)='prohibited'">
@@ -3524,12 +3524,12 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out a sample XML instance representation of an attribute 
+     Prints out a sample XML instance representation of an attribute
      group definition.
      Param(s):
             schemaLoc (String) optional
-                Schema file containing this attribute group 
-                definition; if in current schema, 'schemaLoc' is 
+                Schema file containing this attribute group
+                definition; if in current schema, 'schemaLoc' is
                 set to 'this'.
      -->
    <xsl:template match="xsd:attributeGroup[@name]" mode="sample">
@@ -3555,29 +3555,29 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out a sample XML instance representation of an attribute 
+     Prints out a sample XML instance representation of an attribute
      group reference.
      Param(s):
             subTypeAttrs (String) optional
-                List of attributes in sub-types of the type that 
+                List of attributes in sub-types of the type that
                 contains this attribute group
             isInherited (boolean) optional
-                If true, display attributes using 'inherited' CSS 
+                If true, display attributes using 'inherited' CSS
                 class.
             isNewField (boolean) optional
-                If true, display attributes using 'newFields' CSS 
+                If true, display attributes using 'newFields' CSS
                 class.
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
             parentGroups (String) optional
-                List of parent attribute group definitions that 
-                contain this attribute group. Used to prevent 
-                infinite loops when displaying attribute group 
-                definitions. In such a case, writes out an error 
+                List of parent attribute group definitions that
+                contain this attribute group. Used to prevent
+                infinite loops when displaying attribute group
+                definitions. In such a case, writes out an error
                 message and stops processing.
             schemaLoc (String) optional
-                Schema file containing this attribute group 
-                reference if in current schema, 'schemaLoc' is 
+                Schema file containing this attribute group
+                reference if in current schema, 'schemaLoc' is
                 set to 'this'.
      -->
    <xsl:template match="xsd:attributeGroup[@ref]" mode="sample">
@@ -3662,7 +3662,7 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out a sample XML instance representation of a 'choice' 
+     Prints out a sample XML instance representation of a 'choice'
      model group.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -3672,8 +3672,8 @@ div#legend div.hint {
             isNewField (boolean) optional
                 If true, display elements using 'newFields' CSS class.
             parentGroups (String) optional
-                List of parent model group definitions that contain this 
-                model group. Used to prevent infinite loops when 
+                List of parent model group definitions that contain this
+                model group. Used to prevent infinite loops when
                 displaying model group definitions.
             schemaLoc (String) optional
                 Schema file containing this choice model group;
@@ -3731,7 +3731,7 @@ div#legend div.hint {
      Prints out a sample XML instance from a complex type definition.
      Param(s):
             schemaLoc (String) optional
-                Schema file containing this complex type definition; 
+                Schema file containing this complex type definition;
                 if in current schema, 'schemaLoc' is set to 'this'.
      -->
    <xsl:template match="xsd:complexType" mode="sample">
@@ -3755,7 +3755,7 @@ div#legend div.hint {
             isNewField (boolean) optional
                 If true, display elements using 'newFields' CSS class.
             schemaLoc (String) optional
-                Schema file containing this element declaration; 
+                Schema file containing this element declaration;
                 if in current schema, 'schemaLoc' is set to 'this'.
             typeList (String) optional
                 List of types in this call chain. Name of type starts
@@ -3795,7 +3795,7 @@ div#legend div.hint {
                   </xsl:variable>
 
                   <xsl:choose>
-                     <!-- Complex type was found in current 
+                     <!-- Complex type was found in current
                           schema. -->
                      <xsl:when test="normalize-space($defLoc)='this'">
                         <xsl:variable name="ctype" select="key('complexType', $elemTypeName)"/>
@@ -3883,7 +3883,7 @@ div#legend div.hint {
             isNewField (boolean) optional
                 If true, display elements using 'newFields' CSS class.
             schemaLoc (String) optional
-                Schema file containing this element reference; 
+                Schema file containing this element reference;
                 if in current schema, 'schemaLoc' is set to 'this'.
      -->
    <xsl:template match="xsd:element[@ref]" mode="sample">
@@ -3931,14 +3931,14 @@ div#legend div.hint {
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
             isInherited (boolean) optional
-                If true, display elements using 'inherited' CSS 
+                If true, display elements using 'inherited' CSS
                 class.
             isNewField (boolean) optional
-                If true, display elements using 'newFields' CSS 
+                If true, display elements using 'newFields' CSS
                 class.
             parentGroups (String) optional
-                List of parent model group definitions that contain 
-                this  model group. Used to prevent infinite loops 
+                List of parent model group definitions that contain
+                this  model group. Used to prevent infinite loops
                 when displaying model group definitions.
             schemaLoc (String) optional
                 Schema file containing this model group reference;
@@ -4065,8 +4065,8 @@ div#legend div.hint {
             isNewField (boolean) optional
                 If true, display elements using 'newFields' CSS class.
             parentGroups (String) optional
-                List of parent model group definitions that contain 
-                this model group. Used to prevent infinite loops when 
+                List of parent model group definitions that contain
+                this model group. Used to prevent infinite loops when
                 displaying model group definitions.
             schemaLoc (String) optional
                 Schema file containing this sequence model group;
@@ -4140,12 +4140,12 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out the constraints of a complex type with simple content 
+     Prints out the constraints of a complex type with simple content
      to be displayed within a sample XML instance.
      Param(s):
             schemaLoc (String) optional
-                Schema file containing this simple content 
-                restriction; if in current schema, 'schemaLoc' is 
+                Schema file containing this simple content
+                restriction; if in current schema, 'schemaLoc' is
                 set to 'this'
      -->
    <xsl:template match="xsd:simpleContent[xsd:restriction]" mode="sample">
@@ -4160,11 +4160,11 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out the constraints of a simple type definition to be 
+     Prints out the constraints of a simple type definition to be
      displayed within a sample XML instance.
      Param(s):
             schemaLoc (String) optional
-                Schema file containing this simple type definition; 
+                Schema file containing this simple type definition;
                 if in current schema, 'schemaLoc' is set to 'this'
      -->
    <xsl:template match="xsd:simpleType" mode="sample">
@@ -4179,13 +4179,13 @@ div#legend div.hint {
    </xsl:template>
 
    <!--
-     Prints out the identity constraints of an element to be displayed 
+     Prints out the identity constraints of an element to be displayed
      within a sample XML instance.
      Param(s):
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
             schemaLoc (String) optional
-                Schema file containing this simple type definition; 
+                Schema file containing this simple type definition;
                 if in current schema, 'schemaLoc' is set to 'this'
      -->
    <xsl:template match="xsd:unique | xsd:key | xsd:keyref" mode="sample">
@@ -4267,7 +4267,7 @@ div#legend div.hint {
    <xsl:template match="*" mode="sample"/>
 
    <!--
-     Prints out a link which will open up a window, displaying a 
+     Prints out a link which will open up a window, displaying a
      schema component's documentation.
      Param(s):
             component (Node) required
@@ -4279,13 +4279,13 @@ div#legend div.hint {
       <xsl:if test="normalize-space(translate($useJavaScript,'TRUE','true'))='true' and $component and $component/xsd:annotation/xsd:documentation">
          <xsl:variable name="documentation">
             <xsl:for-each select="$component/xsd:annotation/xsd:documentation">
-               <!-- Check for two dashes, which will break the JavaScript 
+               <!-- Check for two dashes, which will break the JavaScript
                     code -->
                <xsl:if test="contains(., '--') or contains(@source, '--')">
                   <xsl:call-template name="HandleError">
                      <xsl:with-param name="isTerminating">true</xsl:with-param>
                      <xsl:with-param name="errorMsg">
-A local schema component contains two dashes in 
+A local schema component contains two dashes in
 'documentation' elements within its 'annotation' element.
                      </xsl:with-param>
                   </xsl:call-template>
@@ -4370,13 +4370,13 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Helper template for template, match="xsd:group[@ref]" 
-     mode="sample". Basically prints out a group reference, for 
+     Helper template for template, match="xsd:group[@ref]"
+     mode="sample". Basically prints out a group reference, for
      which we are able to look up the group definition that it
      is referring to. This template is a work-around because XSLT
-     doesn't have variables (in the traditional sense of 
+     doesn't have variables (in the traditional sense of
      programming languages) and it doesn't allow you to query
-     result tree fragments. 
+     result tree fragments.
      Param(s):
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
@@ -4385,8 +4385,8 @@ A local schema component contains two dashes in
             isNewField (boolean) optional
                 If true, display elements using 'newFields' CSS class.
             parentGroups (String) optional
-                List of parent model group definitions that contain this 
-                model group. Used to prevent infinite loops when 
+                List of parent model group definitions that contain this
+                model group. Used to prevent infinite loops when
                 displaying model group definitions.
             occursInfo (Result tree fragment) required
                 Pre-formatted occurrence info of group reference
@@ -4474,7 +4474,7 @@ A local schema component contains two dashes in
                 If true, display element using 'newFields' CSS class.
             schemaLoc (String) optional
                 Schema file containing this element declaration
-                or reference; if in current schema, 'schemaLoc' is 
+                or reference; if in current schema, 'schemaLoc' is
                 set to 'this'.
      -->
    <xsl:template name="PrintSampleSimpleElement">
@@ -4599,7 +4599,7 @@ A local schema component contains two dashes in
                 If true, display element using 'newFields' CSS class.
             schemaLoc (String) optional
                 Schema file containing this element declaration
-                or type definition; if in current schema, 'schemaLoc' 
+                or type definition; if in current schema, 'schemaLoc'
                 is set to 'this'.
             typeList (String) optional
                 List of types in this call chain. Name of type starts
@@ -4661,7 +4661,7 @@ A local schema component contains two dashes in
                      <xsl:attribute name="class">inherited</xsl:attribute>
                   </xsl:when>
                </xsl:choose>
-         
+
                <!-- Start Tag -->
                <xsl:text>&lt;</xsl:text>
                <xsl:copy-of select="$tag"/>
@@ -4806,27 +4806,27 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out attributes of a complex type definition, including 
+     Prints out attributes of a complex type definition, including
      those inherited from a base type.
      Param(s):
             type (Node) required
                 Complex type definition
             subTypeAttrs (String) optional
-                List of attributes in sub-types of this current type 
+                List of attributes in sub-types of this current type
                 definition
             isInherited (boolean) optional
                 If true, display attributes using 'inherited' CSS class.
             isNewField (boolean) optional
                 If true, display attributes using 'newFields' CSS class.
             fromTopCType (boolean) optional
-                Set to true if this is being displayed in the XML 
-                Instance Representation table of a top-level complex 
-                type definition, in which case, 'inherited' attributes 
+                Set to true if this is being displayed in the XML
+                Instance Representation table of a top-level complex
+                type definition, in which case, 'inherited' attributes
                 and elements are distinguished.
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
             schemaLoc (String) optional
-                Schema file containing this complex type definition; 
+                Schema file containing this complex type definition;
                 if in current schema, 'schemaLoc' is set to 'this'.
             typeList (String) optional
                 List of types in this call chain. Name of type starts
@@ -4846,8 +4846,8 @@ A local schema component contains two dashes in
       <xsl:choose>
          <!-- Circular type hierarchy -->
          <xsl:when test="$type/@name and contains($typeList, concat('*', $type/@name, '+'))">
-            <!-- Do nothing. 
-                 Error message will be written out by 'PrintSampleTypeContent' template. 
+            <!-- Do nothing.
+                 Error message will be written out by 'PrintSampleTypeContent' template.
             -->
          </xsl:when>
          <!-- Derivation -->
@@ -4926,22 +4926,22 @@ A local schema component contains two dashes in
             derivationElem (Node) required
                 'restriction' or 'extension' element
             subTypeAttrs (String) optional
-                List of attributes in sub-types of 
+                List of attributes in sub-types of
                 this current type definition
             isInherited (boolean) optional
                 If true, display attributes using 'inherited' CSS class.
             isNewField (boolean) optional
                 If true, display attributes using 'newFields' CSS class.
             fromTopCType (boolean) optional
-                Set to true if this is being displayed 
-                in the XML Instance Representation table 
+                Set to true if this is being displayed
+                in the XML Instance Representation table
                 of a top-level complex type definition, in
                 which case, 'inherited' attributes and
                 elements are distinguished.
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
             schemaLoc (String) optional
-                Schema file containing this derivation element; 
+                Schema file containing this derivation element;
                 if in current schema, 'schemaLoc' is set to 'this'.
             typeList (String) optional
                 List of types in this call chain. Name of type starts
@@ -4958,7 +4958,7 @@ A local schema component contains two dashes in
       <xsl:param name="schemaLoc">this</xsl:param>
       <xsl:param name="typeList"/>
 
-      <!-- Get attributes from this type to add to 
+      <!-- Get attributes from this type to add to
             'subTypeAttrs' list for recursive call on base type -->
       <xsl:variable name="thisAttrs">
          <xsl:call-template name="GetAttrList">
@@ -5115,13 +5115,13 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out sample XML instances from a list of attributes and 
+     Prints out sample XML instances from a list of attributes and
      attribute groups.
      Param(s):
             list (Node) required
                 Node containing list of attributes and attribute groups
             subTypeAttrs (String) optional
-                List of attributes in sub-types of 
+                List of attributes in sub-types of
                 the type definition containing this list
             isInherited (boolean) optional
                 If true, display attributes using 'inherited' CSS class.
@@ -5130,7 +5130,7 @@ A local schema component contains two dashes in
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
             schemaLoc (String) optional
-                Schema file containing this attribute list; 
+                Schema file containing this attribute list;
                 if in current schema, 'schemaLoc' is set to 'this'.
      -->
    <xsl:template name="PrintSampleAttrList">
@@ -5164,15 +5164,15 @@ A local schema component contains two dashes in
             isNewField (boolean) optional
                 If true, display elements using 'newFields' CSS class.
             fromTopCType (boolean) optional
-                Set to true if this is being displayed in the XML 
-                Instance Representation table of a top-level complex 
-                type definition, in which case, 'inherited' attributes 
+                Set to true if this is being displayed in the XML
+                Instance Representation table of a top-level complex
+                type definition, in which case, 'inherited' attributes
                 and elements are distinguished.
             addBR (boolean) optional
                 If true, can add <br/> before element content.
                 Applicable only if displaying complex content.
             schemaLoc (String) optional
-                Schema file containing this type definition; 
+                Schema file containing this type definition;
                 if in current schema, 'schemaLoc' is set to 'this'.
             typeList (String) optional
                 List of types in this call chain. Name of type starts
@@ -5411,7 +5411,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out sample XML instances from a list of 
+     Prints out sample XML instances from a list of
      element particle.
      Param(s):
             list (Node) required
@@ -5423,7 +5423,7 @@ A local schema component contains two dashes in
             isNewField (boolean) optional
                 If true, display elements using 'newFields' CSS class.
             schemaLoc (String) optional
-                Schema file containing this particle list; 
+                Schema file containing this particle list;
                 if in current schema, 'schemaLoc' is set to 'this'.
             typeList (String) optional
                 List of types in this call chain. Name of type starts
@@ -5458,7 +5458,7 @@ A local schema component contains two dashes in
             simpleContent (Node) required
                 Node containing with the simple content
             schemaLoc (String) optional
-                Schema file containing these simple constraints; 
+                Schema file containing these simple constraints;
                 if in current schema, 'schemaLoc' is set to 'this'.
      -->
    <xsl:template name="PrintSampleSimpleConstraints">
@@ -5531,13 +5531,13 @@ A local schema component contains two dashes in
 
    <!--
      Prints out the constraints of simple content
-     derived by restriction, which is to be displayed 
+     derived by restriction, which is to be displayed
      within a sample XML instance.
      Param(s):
             restriction (Node) required
                 Node containing with the restriction
             schemaLoc (String) optional
-                Schema file containing this restriction element; 
+                Schema file containing this restriction element;
                 if in current schema, 'schemaLoc' is set to 'this'.
      -->
    <xsl:template name="PrintSampleSimpleRestriction">
@@ -5656,9 +5656,9 @@ A local schema component contains two dashes in
 
    <!-- ******** Schema Component Representation table ******** -->
 
-   <!-- 
-     Prints out the Schema Component Representation table 
-     for a top-level schema component. 
+   <!--
+     Prints out the Schema Component Representation table
+     for a top-level schema component.
      Param(s):
             component (Node) required
               Top-level schema component
@@ -5684,7 +5684,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out schema component representation of 
+     Prints out schema component representation of
      declarations.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -5724,7 +5724,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out schema component representation of 
+     Prints out schema component representation of
      definitions and key/uniqueness constraints.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -5819,7 +5819,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out schema component representation of element 
+     Prints out schema component representation of element
      references.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -5885,7 +5885,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out schema component representation of 
+     Prints out schema component representation of
      'appinfo' and 'documentation' elements.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -5920,7 +5920,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out schema component representation of 
+     Prints out schema component representation of
      key reference constraints.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -5960,7 +5960,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out schema component representation of 
+     Prints out schema component representation of
      derivations by extension and restrictions.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -5995,7 +5995,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out schema component representation of 
+     Prints out schema component representation of
      derivations by list.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -6030,7 +6030,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out schema component representation of 
+     Prints out schema component representation of
      derivations by union.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -6066,7 +6066,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Prints out schema component representation of 
+     Prints out schema component representation of
      the root schema element.
      Param(s):
             margin (nonNegativeInteger) optional
@@ -6145,14 +6145,14 @@ A local schema component contains two dashes in
             margin (nonNegativeInteger) optional
                 Number of 'em' to indent from left
             hasAnyContent (boolean) optional
-                Set to true if schema element can accept 
+                Set to true if schema element can accept
                 child elements from namespaces other than
                 the schema namespace, e.g. 'documentation'
                 and 'appinfo'
             includeFilter (String) optional
                 List of element names, sandwiched between the
                 characters, '*' and '+'. If specified, only the
-                child elements of the component with tags in 
+                child elements of the component with tags in
                 the list will be displayed.
             excludeFilter (String) optional
                 List of element names, sandwiched between the
@@ -6651,7 +6651,7 @@ A local schema component contains two dashes in
             (One of 'name' and 'ref' must be provided.)
             schemaLoc (String) optional
                 Schema file containing this key/uniqueness constraint
-                reference; if in current schema, 'schemaLoc' is set 
+                reference; if in current schema, 'schemaLoc' is set
                 to 'this'
      -->
    <xsl:template name="PrintKeyRef">
@@ -6687,7 +6687,7 @@ A local schema component contains two dashes in
             (One of 'name' and 'ref' must be provided.)
             schemaLoc (String) optional
                 Schema file containing this type reference'
-                if in current schema, 'schemaLoc' is set 
+                if in current schema, 'schemaLoc' is set
                 to 'this'
      -->
    <xsl:template name="PrintTypeRef">
@@ -6721,11 +6721,11 @@ A local schema component contains two dashes in
      Prints out a link to a schema component's section.
      Param(s):
             baseFile (String) optional
-                Documentation file of schema containing this 
+                Documentation file of schema containing this
                 component.
-                If this component belongs to the current schema, 
+                If this component belongs to the current schema,
                 omit this variable.
-                If this component is from an included or imported 
+                If this component is from an included or imported
                 schema, provide this variable.
             name (String) required
                 Name of schema component
@@ -6733,8 +6733,8 @@ A local schema component contains two dashes in
                 Type of schema component
             errMsg (String) optional
                 Sentence fragment.
-                If specified, link will open up an alert box with 
-                an error message. For example, if 'errMsg' was set 
+                If specified, link will open up an alert box with
+                an error message. For example, if 'errMsg' was set
                 to "could not be found", 'name' was "x", and
                 'compType' was "type", the error message would be:
                 "x" type definition could not be found.
@@ -7158,7 +7158,7 @@ A local schema component contains two dashes in
          <xsl:variable name="schemaLoc" select="$schema/xsd:include[position()=$index]/@schemaLocation"/>
 
          <xsl:variable name="thisResult">
-            <!-- Search for the component in the current 
+            <!-- Search for the component in the current
                  included schema. -->
             <xsl:call-template name="FindComponentInSchema">
                <xsl:with-param name="name" select="$name"/>
@@ -7202,7 +7202,7 @@ A local schema component contains two dashes in
          <xsl:variable name="schemaLoc" select="$schema/xsd:redefine[position()=$index]/@schemaLocation"/>
 
          <xsl:variable name="thisResult">
-            <!-- Search for the component in the current 
+            <!-- Search for the component in the current
                  redefined schema. -->
             <xsl:call-template name="FindComponentInSchema">
                <xsl:with-param name="name" select="$name"/>
@@ -7253,7 +7253,7 @@ A local schema component contains two dashes in
                  namespace as the component that we're looking
                  for. -->
             <xsl:if test="normalize-space($compNS)=normalize-space($schemaNS)">
-               <!-- Search for the component in the current 
+               <!-- Search for the component in the current
                     imported schema. -->
                <xsl:call-template name="FindComponentInSchema">
                   <xsl:with-param name="name" select="$name"/>
@@ -7289,7 +7289,7 @@ A local schema component contains two dashes in
 
    <!-- ******** General Utility Templates ******** -->
 
-   <!-- 
+   <!--
      Creates a box that can be opened and closed, such
      that the contents can be hidden away until a button
      is pressed.
@@ -7327,7 +7327,7 @@ A local schema component contains two dashes in
             <xsl:if test="normalize-space(translate($useJavaScript,'TRUE','true'))='true'">
                <input type="button" id="{$buttonID}" class="control" onclick="switchState('{$id}'); return false;" style="display: none"/>
                <!--
-                 Button's 'display' property is set to 'none', 
+                 Button's 'display' property is set to 'none',
                  so that button will only be displayed if
                  box can be successfully opened and closed.
                  -->
@@ -7386,7 +7386,7 @@ A local schema component contains two dashes in
    </xsl:template>
 
    <!--
-     Returns the description that can be used in 
+     Returns the description that can be used in
      headers for a schema component.
      Param(s):
             component (Node) required
@@ -7439,7 +7439,7 @@ Unknown schema component, <xsl:value-of select="local-name($component)"/>.
 
    <!--
      Returns the unique identifier for a top-level schema
-     component. Returns the string "schema" if the 'component' 
+     component. Returns the string "schema" if the 'component'
      is the root schema element.
      Param(s):
             component (Node) required
@@ -7510,7 +7510,7 @@ Unknown schema component, <xsl:value-of select="local-name($component)"/>.
    </xsl:template>
 
    <!--
-     Returns a glossary term reference for the 
+     Returns a glossary term reference for the
      schema component type, if applicable.
      Param(s):
             component (Node) required
@@ -7651,7 +7651,7 @@ Unknown schema component, <xsl:value-of select="local-name($component)"/>.
      Returns the schema documentation file location for a
      given URI for a schema, done by looking up the file
      specified in 'linksFile' variable.
-     It'll throw a fatal error if a value for 'linksFile' was 
+     It'll throw a fatal error if a value for 'linksFile' was
      provided and the documentation file for 'uri' could not be
      found.
      Param(s):
@@ -7842,7 +7842,7 @@ was not specified in the links file, <xsl:value-of select="$linksFile"/>.
 
    <!--
      Translates occurrence of '#all' in 'final' value
-     of element declarations, and 'block' and 'final' values 
+     of element declarations, and 'block' and 'final' values
      in complex type definitions.
      Param(s):
             EBV (String) required
@@ -8426,9 +8426,9 @@ was not specified in the links file, <xsl:value-of select="$linksFile"/>.
    <!--
      Prints out JavaScript code.
      NOTE: Javascript code is placed within comments to make it
-     work with current browsers. In strict XHTML, JavaScript code 
+     work with current browsers. In strict XHTML, JavaScript code
      should be placed within CDATA sections. However, most
-     browsers generate a syntax error if the page contains 
+     browsers generate a syntax error if the page contains
      CDATA sections. Placing Javascript code within comments
      means that the code cannot contain two dashes.
      Param(s):
@@ -8439,24 +8439,24 @@ was not specified in the links file, <xsl:value-of select="$linksFile"/>.
       <xsl:param name="code"/>
 
       <script type="text/javascript">
-         <!-- If browsers start supporting CDATA sections, 
+         <!-- If browsers start supporting CDATA sections,
               uncomment the following piece of code. -->
          <!-- <xsl:text disable-output-escaping="yes">
 &lt;![CDATA[
 </xsl:text> -->
-         <!-- If browsers start supporting CDATA sections, 
+         <!-- If browsers start supporting CDATA sections,
               remove the following piece of code. -->
          <xsl:text disable-output-escaping="yes">
 &lt;!--
 </xsl:text>
 
          <xsl:value-of select="$code" disable-output-escaping="yes"/>
-         <!-- If browsers start supporting CDATA sections, 
+         <!-- If browsers start supporting CDATA sections,
               remove the following piece of code. -->
          <xsl:text disable-output-escaping="yes">
 // --&gt;
 </xsl:text>
-         <!-- If browsers start supporting CDATA sections, 
+         <!-- If browsers start supporting CDATA sections,
               uncomment the following piece of code. -->
          <!-- <xsl:text disable-output-escaping="yes">
 ]]&gt;

@@ -32,11 +32,17 @@ int ctkDICOMQueryResultsTabWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+  Q_UNUSED(testName);
+
+  bool interactive = arguments.removeOne("-I");
+
   ctkDICOMQueryResultsTabWidget widget;
   widget.disableCloseOnTab(0);
   widget.show();
 
-  if (argc <= 1 || QString(argv[1]) != "-I")
+  if (!interactive)
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

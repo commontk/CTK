@@ -32,7 +32,7 @@ ctkLog4QtPlugin::ctkLog4QtPlugin()
 
 ctkLog4QtPlugin::~ctkLog4QtPlugin()
 {
-  
+
 }
 
 void ctkLog4QtPlugin::start(ctkPluginContext* context)

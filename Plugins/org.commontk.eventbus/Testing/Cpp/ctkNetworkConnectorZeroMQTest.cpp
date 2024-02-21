@@ -117,4 +117,3 @@ void ctkNetworkConnectorZeroMQTest::ctkNetworkConnectorZeroMQCommunictionTest() 
 
 CTK_REGISTER_TEST(ctkNetworkConnectorZeroMQTest);
 #include "ctkNetworkConnectorZeroMQTest.moc"
-

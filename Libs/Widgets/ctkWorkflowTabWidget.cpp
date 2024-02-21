@@ -104,4 +104,3 @@ void ctkWorkflowTabWidget::showPage(QWidget* widget, const QString& label)
     d->ClientArea->setTabText(index, label);
     }
 }
-

@@ -21,6 +21,10 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDir>
+#include <QTemporaryDir>
+
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -34,17 +38,23 @@ int ctkDICOMDatabaseTest4( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
-  if (argc < 2)
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 1)
     {
-    std::cerr << "ctkDICOMDatabaseTest2: missing dicom filePath argument";
-    std::cerr << std::endl;
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <path-to-dicom-file>" << std::endl;
     return EXIT_FAILURE;
     }
 
-  QString dicomFilePath(argv[1]);
+  QString dicomFilePath(arguments.at(0));
+
+  QTemporaryDir tempDirectory;
+  CHECK_BOOL(tempDirectory.isValid(), true);
 
   ctkDICOMDatabase database;
-  QDir databaseDirectory = QDir::temp();
+  QDir databaseDirectory(tempDirectory.path());
   databaseDirectory.remove("ctkDICOMDatabase.sql");
   databaseDirectory.remove("ctkDICOMTagCache.sql");
 

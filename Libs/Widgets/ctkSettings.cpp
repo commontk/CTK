@@ -26,7 +26,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -128,12 +128,12 @@ void ctkSettings::saveState(const QDialog& dialog, const QString& key)
 void ctkSettings::restoreState(const QString& key, QMainWindow& window)
 {
   this->beginGroup(key);
-  
+
   if(this->contains("Size"))
     {
     window.resize(this->value("Size").toSize());
     }
-    
+
   if(this->contains("Position"))
     {
     QPoint windowTopLeft = this->value("Position").toPoint();
@@ -163,7 +163,7 @@ void ctkSettings::restoreState(const QString& key, QMainWindow& window)
     {
     window.restoreState(this->value("Layout").toByteArray());
     }
-  
+
   this->endGroup();
 }
 
@@ -171,12 +171,12 @@ void ctkSettings::restoreState(const QString& key, QMainWindow& window)
 void ctkSettings::restoreState(const QString& key, QDialog& dialog)
 {
   this->beginGroup(key);
-  
+
   if(this->contains("Size"))
     {
     dialog.resize(this->value("Size").toSize());
     }
-    
+
   if(this->contains("Position"))
     {
     dialog.move(this->value("Position").toPoint());

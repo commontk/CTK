@@ -131,7 +131,7 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
 
   label3->setVisible(false);
   label8->setVisible(false);
-  
+
   if (label0->isVisible() ||
       label1->isVisible() ||
       label2->isVisible() ||

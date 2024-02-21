@@ -41,7 +41,7 @@ static void classInitialize();                     \
 static void classFinalize();                       \
 friend class NAME##Initialize;                     \
 typedef NAME Self;
-  
+
 //-----------------------------------------------------------------------------
 /// Help macro allowing to declare the utility class to make sure
 /// NAME is initialized before it is used.
@@ -50,7 +50,7 @@ typedef NAME Self;
 //
 /// The instance (NAME##%Initializer) will show up in any translation unit
 /// that uses NAME.  It will make sure NAME is initialized before it is used.
-/// 
+///
 #define CTK_SINGLETON_DECLARE_INITIALIZER(EXPORT_DIRECTIVE,NAME)   \
 class EXPORT_DIRECTIVE NAME##Initialize                            \
 {                                                                  \

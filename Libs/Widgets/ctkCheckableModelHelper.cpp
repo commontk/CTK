@@ -239,7 +239,7 @@ void ctkCheckableModelHelperPrivate
     {
     q->model()->fetchMore(modelIndex);
     }
-  
+
   const int rowCount = q->orientation() == Qt::Horizontal ?
     q->model()->rowCount(modelIndex) : 1;
   const int columnCount = q->orientation() == Qt::Vertical ?
@@ -325,7 +325,7 @@ void ctkCheckableModelHelper::setModel(QAbstractItemModel *newModel)
       current, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
       this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
     this->disconnect(
-      current, SIGNAL(columnsInserted(QModelIndex,int,int)), 
+      current, SIGNAL(columnsInserted(QModelIndex,int,int)),
       this, SLOT(onColumnsInserted(QModelIndex,int,int)));
     this->disconnect(
       current, SIGNAL(rowsInserted(QModelIndex,int,int)),
@@ -481,7 +481,7 @@ void ctkCheckableModelHelper::toggleCheckState(const QModelIndex& modelIndex)
     {
     return;
     }
-  // I've no strong feeling to turn the state checked or unchecked when the 
+  // I've no strong feeling to turn the state checked or unchecked when the
   // state is PartiallyChecked.
   this->setCheckState(modelIndex,
     this->checkState(modelIndex) == Qt::Checked ? Qt::Unchecked : Qt::Checked);
@@ -495,7 +495,7 @@ void ctkCheckableModelHelper::toggleHeaderCheckState(int section)
     {
     return;
     }
-  // I've no strong feeling to turn the state checked or unchecked when the 
+  // I've no strong feeling to turn the state checked or unchecked when the
   // state is PartiallyChecked.
   this->setHeaderCheckState(
     section, this->headerCheckState(section) == Qt::Checked ?
@@ -577,11 +577,11 @@ void ctkCheckableModelHelper::onColumnsInserted(const QModelIndex &parentIndex,
       {
       for (int i = start; i <= end; ++i)
         {
-        QModelIndex index = this->model()->index(0, i, parentIndex); 
+        QModelIndex index = this->model()->index(0, i, parentIndex);
         d->forceCheckability(index);
         }
       }
-    this->onDataChanged(this->model()->index(0, start, parentIndex), 
+    this->onDataChanged(this->model()->index(0, start, parentIndex),
                         this->model()->index(0, end, parentIndex));
     }
 }
@@ -604,11 +604,11 @@ void ctkCheckableModelHelper::onRowsInserted(const QModelIndex &parentIndex,
       {
       for (int i = start; i <= end; ++i)
         {
-        QModelIndex index = this->model()->index(i, 0, parentIndex); 
+        QModelIndex index = this->model()->index(i, 0, parentIndex);
         d->forceCheckability(index);
         }
       }
-    this->onDataChanged(this->model()->index(start, 0, parentIndex), 
+    this->onDataChanged(this->model()->index(start, 0, parentIndex),
                         this->model()->index(end, 0, parentIndex));
     }
 }
@@ -686,4 +686,3 @@ bool ctkCheckableModelHelper::checkState(const QModelIndex& index, Qt::CheckStat
     this->model()->data(index, Qt::CheckStateRole).toInt(&checkable));
   return checkable;
 }
-    

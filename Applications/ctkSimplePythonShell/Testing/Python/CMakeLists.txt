@@ -35,4 +35,3 @@ foreach(script ${SCRIPTS})
     )
   set_property(TEST ctkSimplePythonShell_${scriptname} PROPERTY LABELS ${KIT})
 endforeach()
-

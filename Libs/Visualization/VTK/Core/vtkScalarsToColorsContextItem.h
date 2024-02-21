@@ -87,7 +87,7 @@ public:
   /// Update charts range to match data and color transfer function ranges
   void RecalculateChartsRange();
 
-  /// Weight opacity control points by \opacity 
+  /// Weight opacity control points by \opacity
   void SetGlobalOpacity(double opacity);
 
   /// Reverse the color map of the transfer function. Note that opacity values

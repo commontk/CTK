@@ -412,4 +412,3 @@ void ctkMaterialPropertyPreviewLabel::draw(QImage& image)
       }
     }
 }
-

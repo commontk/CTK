@@ -122,8 +122,8 @@ void ctkExampleDicomHost::onAppReady()
 void ctkExampleDicomHost::onStartProgress()
 {
   ctkDicomAppHosting::AvailableData data;
-  ctkDicomAvailableDataHelper::addToAvailableData(data, 
-    this->objectLocatorCache(), 
+  ctkDicomAvailableDataHelper::addToAvailableData(data,
+    this->objectLocatorCache(),
     "C:/XIP/XIPHost/dicom-dataset-demo/1.3.6.1.4.1.9328.50.1.10698.dcm");
 
   qDebug()<<"send dataDescriptors";
@@ -191,11 +191,11 @@ void ctkExampleDicomHost::exitApplication()
 
 //----------------------------------------------------------------------------
 QString ctkExampleDicomHost::getOutputLocation(const QStringList& preferredProtocols)
-{ 
+{
   if(preferredProtocols.indexOf("file:")>=0)
     return QDir::temp().absolutePath();
 
-  return ""; 
+  return "";
 }
 
 //----------------------------------------------------------------------------

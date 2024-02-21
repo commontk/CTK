@@ -24,4 +24,3 @@
 
 const QString	ctkConfigurationAdmin::SERVICE_FACTORYPID = "service.factoryPid";
 const QString	ctkConfigurationAdmin::SERVICE_PLUGINLOCATION = "service.pluginLocation";
-

@@ -27,7 +27,7 @@ class ctkEventBusImpl;
 
 class ctkEventBusPlugin : public QObject,
                    public ctkPluginActivator
-                   
+
 {
   Q_OBJECT
   Q_INTERFACES(ctkPluginActivator)

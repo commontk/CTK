@@ -23,6 +23,9 @@
 #include <QCoreApplication>
 #include <QTextStream>
 
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
+
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
 
@@ -33,28 +36,36 @@
 int ctkDICOMCoreTest1(int argc, char * argv []) {
 
   QCoreApplication app(argc, argv);
-  QTextStream out(stdout);
-  try
+
+  QStringList arguments = app.arguments();
+  QString testName = arguments.takeFirst();
+
+  if (arguments.count() != 2)
   {
-    ctkDICOMDatabase myCTK( argv[1] );
-    out << "open db success\n";
-    /// make sure it is empty and properly initialized
-    if (! myCTK.initializeDatabase() ) {
-       out << "ERROR: basic DB init failed";
-       return EXIT_FAILURE;
-    };
-    /// insert some sample data
-    if (! myCTK.initializeDatabase(argv[2]) ) {
-       out << "ERROR: sample DB init failed";
-       return EXIT_FAILURE;
-    };
-    myCTK.closeDatabase();
-    }
-  catch (const std::exception& e)
-  {
-    out << "ERROR: " << e.what();
+    std::cerr << "Usage: " << qPrintable(testName)
+              << " <dumpfile1.sql> <dumpfile2.sql>" << std::endl;
     return EXIT_FAILURE;
   }
+
+  QString sqlFileName1(arguments.at(0));
+  QString sqlFileName2(arguments.at(1));
+
+  try
+  {
+    ctkDICOMDatabase myCTK(sqlFileName1);
+    CHECK_BOOL(myCTK.initializeDatabase(), true);
+
+    /// insert some sample data
+    CHECK_BOOL(myCTK.initializeDatabase(sqlFileName2.toUtf8()), true);
+
+    myCTK.closeDatabase();
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << "Error when opening the data base file: " << argv[1]
+              << " error: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+
   return EXIT_SUCCESS;
 }
-

@@ -39,6 +39,5 @@ Q_SIGNALS:
 private:
   QStringList List;
 };
-    
-#endif
 
+#endif

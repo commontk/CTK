@@ -82,7 +82,7 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
 
   ctkFunctionExtractOptimizedLibrary(PYTHON_LIBRARIES PYTHON_LIBRARY)
   if(CTK_QT_VERSION VERSION_EQUAL "5")
-    set(revision_tag c4a5a155b2942d4b003862c3317105b4a1ea6755) # patched-9
+    set(revision_tag db525aff0d8c053bddf13902107b34c93c1e3a44) # patched-9
   else()
     message(FATAL_ERROR "Support for Qt${CTK_QT_VERSION} is not implemented")
   endif()
@@ -120,6 +120,21 @@ if(NOT DEFINED PYTHONQT_INSTALL_DIR)
       ${${proj}_DEPENDENCIES}
     )
   set(PYTHONQT_INSTALL_DIR ${ep_install_dir})
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to build tree
+
+  # library paths
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${CMAKE_BINARY_DIR}/${proj}/<CMAKE_CFG_INTDIR>)
+  mark_as_superbuild(
+    VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
+    LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
+    )
+
+  #-----------------------------------------------------------------------------
+  # Launcher setting specific to install tree
+
+  # NA
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})

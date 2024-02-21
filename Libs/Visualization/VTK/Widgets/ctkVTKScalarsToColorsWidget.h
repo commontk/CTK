@@ -73,10 +73,10 @@ public:
 
   bool isVerticalSliderVisible()const;
   void setVerticalSliderVisible(bool visible);
-  
+
   bool editColors()const;
   void setEditColors(bool edit);
-  
+
   Q_INVOKABLE void xRange(double* range)const;
   Q_INVOKABLE void yRange(double* range)const;
 

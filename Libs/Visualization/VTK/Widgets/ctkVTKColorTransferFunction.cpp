@@ -49,7 +49,7 @@ ctkVTKColorTransferFunction::ctkVTKColorTransferFunction(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-ctkVTKColorTransferFunction::ctkVTKColorTransferFunction(vtkColorTransferFunction* colorTransferFunction, 
+ctkVTKColorTransferFunction::ctkVTKColorTransferFunction(vtkColorTransferFunction* colorTransferFunction,
                                                          QObject* parentObject)
   :ctkTransferFunction(parentObject)
   , d_ptr(new ctkVTKColorTransferFunctionPrivate)
@@ -200,13 +200,13 @@ ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
     rgb = QColor::fromRgbF(nextValues[1], nextValues[2], nextValues[3]);
     cp->SubPoints << ctkPoint(nextValues[0], rgb);
     return cp;
-    } 
+    }
   double subPoints[30];
   d->ColorTransferFunction->GetTable(cp->x(), values[0], 10, subPoints);
   qreal interval = (values[0] - cp->x()) / 9.;
   for(int i = 0; i < 10; ++i)
     {
-    rgb = QColor::fromRgbF(subPoints[3*i], 
+    rgb = QColor::fromRgbF(subPoints[3*i],
                            subPoints[3*i+1],
                            subPoints[3*i+2]);
     cp->SubPoints << ctkPoint(cp->x() + interval*i, rgb);

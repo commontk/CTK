@@ -354,7 +354,7 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item");
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
-  CHECK_INT(spy.count(), 0);
+  CHECK_INT(spy.count(), 1);
 
   // Reset spy
   spy.clear();
@@ -386,7 +386,7 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList() << "first item" << "second item");
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
-  CHECK_INT(spy.count(), 0);
+  CHECK_INT(spy.count(), 1);
 
   // Reset spy
   spy.clear();
@@ -418,7 +418,7 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
   CHECK_QSTRINGLIST(settingsPanel.myDefaultPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.myPropertyValue("key list").toStringList(), QStringList());
   CHECK_QSTRINGLIST(settingsPanel.changedSettings(), QStringList());
-  CHECK_INT(spy.count(), 0);
+  CHECK_INT(spy.count(), 1);
 
   // Reset spy
   spy.clear();
@@ -445,4 +445,3 @@ int TestStringList(ctkSettingsPanelForTest& settingsPanel)
 
   return EXIT_SUCCESS;
 }
-

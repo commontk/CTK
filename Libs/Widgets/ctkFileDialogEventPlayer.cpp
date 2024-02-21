@@ -125,4 +125,3 @@ bool ctkFileDialogEventPlayer::playEvent(QObject *object,
   error = true;
   return true;
 }
-

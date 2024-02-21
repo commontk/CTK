@@ -8,11 +8,7 @@ static PyMethodDef Py@TARGET_CONFIG@PythonQt_ClassMethods[] = {
 {NULL, NULL, 0, NULL}};
 
 //-----------------------------------------------------------------------------
-#if PY_MAJOR_VERSION >= 3
 extern "C" { Q_DECL_EXPORT PyObject* PyInit_@TARGET_CONFIG@PythonQt(); }
-#else
-extern "C" { Q_DECL_EXPORT void init@TARGET_CONFIG@PythonQt(); }
-#endif
 
 #ifdef __GNUC__
 // Disable warnings related to Py_DECREF() macro
@@ -53,7 +49,6 @@ void copyAttributes(PyObject* orig_module, PyObject* dest_module)
 }
 } // end of anonymous namespace
 //-----------------------------------------------------------------------------
-#if PY_MAJOR_VERSION >= 3
 
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
@@ -67,24 +62,11 @@ static struct PyModuleDef moduledef = {
     NULL,                                      /* m_free */
   };
 
-#endif
 //-----------------------------------------------------------------------------
-#if PY_MAJOR_VERSION >= 3
 PyObject* PyInit_@TARGET_CONFIG@PythonQt()
-#else
-void init@TARGET_CONFIG@PythonQt()
-#endif
 {
-  #if PY_MAJOR_VERSION < 3
-  static const char modulename[] = "@TARGET_CONFIG@PythonQt";
-  #endif
-
   PyObject *m;
-  #if PY_MAJOR_VERSION >= 3
-    m = PyModule_Create(&moduledef);
-  #else
-    m = Py_InitModule((char*)modulename, Py@TARGET_CONFIG@PythonQt_ClassMethods);
-  #endif
+  m = PyModule_Create(&moduledef);
   extern void PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET_CONFIG@(PyObject*);
   PythonQt_init_@WRAPPING_NAMESPACE_UNDERSCORE@_@TARGET_CONFIG@(m);
 
@@ -99,14 +81,8 @@ void init@TARGET_CONFIG@PythonQt()
   if(currentModule.isNull())
     {
     PyErr_SetString(PyExc_ImportError, (char*)"Failed to import PythonQt.@TARGET_CONFIG@");
-#if PY_MAJOR_VERSION >= 3
     return NULL;
-#else
-    return;
-#endif
     }
   copyAttributes(currentModule, m);
-#if PY_MAJOR_VERSION >= 3
   return m;
-#endif
 }

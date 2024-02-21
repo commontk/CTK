@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QDebug>
 #include <QDir>
 #include <QTimer>
@@ -43,7 +44,22 @@
 int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
+  QCommandLineParser parser;
+  parser.addOption({"I", "Run in interactive mode"});
+  parser.addPositionalArgument("directory", "Directory to import");
+  parser.process(app); // Automatically exit if there is a parsing error
+
+  if (parser.positionalArguments().count() != 1)
+    {
+    std::cerr << qPrintable(parser.helpText()) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QString directoryToImport = parser.positionalArguments().at(0);
+
+  qDebug() << "Importing directory " << directoryToImport;
+
   ctkDICOMAppWidget appWidget;
 
   QFileInfo tempFileInfo(QDir::tempPath() + QString("/ctkDICOMAppWidgetTest1-db"));
@@ -66,9 +82,9 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
   appWidget.openQueryDialog();
 
   appWidget.openQueryDialog();
-  
+
   appWidget.setDisplayImportSummary(false);
-  appWidget.onImportDirectory(argv[argc -1]);
+  appWidget.onImportDirectory(directoryToImport);
   if ( appWidget.patientsAddedDuringImport() != 1
     || appWidget.studiesAddedDuringImport() != 1
     || appWidget.seriesAddedDuringImport() != 1
@@ -78,7 +94,7 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if (argc <= 2 || QString(argv[1]) != "-I")
+  if (!parser.isSet("I"))
     {
     QTimer::singleShot(200, &app, SLOT(quit()));
     }

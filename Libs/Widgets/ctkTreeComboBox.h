@@ -64,7 +64,7 @@ public:
   virtual bool eventFilter(QObject* object, QEvent* event);
   virtual void showPopup();
   virtual void hidePopup();
-  
+
   /// ctkTreeComboBox uses a QTreeView for its model view. treeView() is a
   /// utility function that cast QComboBox::view() into a QTreeView.
   /// \sa view()
@@ -72,10 +72,10 @@ public:
 
 protected:
   virtual void paintEvent(QPaintEvent*);
-  
+
 protected Q_SLOTS:
   void resizePopup();
-  
+
 signals:
   void popupShow();
   void popupHide();

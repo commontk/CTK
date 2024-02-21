@@ -155,4 +155,3 @@ void ctkNetworkConnectorTest::retrieveProtocolTest() {
 
 CTK_REGISTER_TEST(ctkNetworkConnectorTest);
 #include "ctkNetworkConnectorTest.moc"
-

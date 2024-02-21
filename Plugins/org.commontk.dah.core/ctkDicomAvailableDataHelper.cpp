@@ -35,9 +35,9 @@ class ctkDicomAvailableDataAccessorPrivate
 {
 //  Q_DECLARE_PUBLIC(ctkDicomAvailableDataAccessor);
 protected:
-  
+
 public:
-  ctkDicomAvailableDataAccessorPrivate(ctkDicomAppHosting::AvailableData& availableData) : 
+  ctkDicomAvailableDataAccessorPrivate(ctkDicomAppHosting::AvailableData& availableData) :
       m_AvailableData(availableData) { };
 
   ctkDicomAppHosting::AvailableData& m_AvailableData;
@@ -106,11 +106,11 @@ ctkDicomAppHosting::Series* ctkDicomAvailableDataAccessor::getSeries(const QStri
 }
 
 //----------------------------------------------------------------------------
-void ctkDicomAvailableDataAccessor::find(const ctkDicomAppHosting::Patient& patient, 
-                                         const QString& studyUID, 
+void ctkDicomAvailableDataAccessor::find(const ctkDicomAppHosting::Patient& patient,
+                                         const QString& studyUID,
                                          const QString& seriesUID,
-                                         ctkDicomAppHosting::Patient*& patientResult, 
-                                         ctkDicomAppHosting::Study*& studyResult, 
+                                         ctkDicomAppHosting::Patient*& patientResult,
+                                         ctkDicomAppHosting::Study*& studyResult,
                                          ctkDicomAppHosting::Series*& seriesResult) const
 {
   const Q_D(ctkDicomAvailableDataAccessor);
@@ -148,20 +148,20 @@ void ctkDicomAvailableDataAccessor::find(const ctkDicomAppHosting::Patient& pati
 }
 
 //----------------------------------------------------------------------------
-bool addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data, 
-                        ctkDicomObjectLocatorCache* objectLocatorCache, 
-                        long length, 
-                        long offset, 
+bool addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data,
+                        ctkDicomObjectLocatorCache* objectLocatorCache,
+                        long length,
+                        long offset,
                         const QString& uri)
 {
   if(objectLocatorCache == NULL)
     return false;
-  
+
   ctkDicomAppHosting::ObjectDescriptor objectDescriptor;
   ctkDicomAppHosting::Study study;
   ctkDicomAppHosting::Series series;
   ctkDicomAppHosting::Patient patient;
- 
+
 
   QFileInfo fileinfo(uri);
   QString ext = fileinfo.suffix();
@@ -172,7 +172,7 @@ bool addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data,
   objectDescriptor.classUID = "";
   objectDescriptor.transferSyntaxUID = "";
   objectDescriptor.modality = "";
-  
+
   //the default mime type is set to plain text
   if ( ext.compare("xml") == 0)
 	  objectDescriptor.mimeType = "text/xml";
@@ -204,16 +204,16 @@ bool addNonDICOMToAvailableData(ctkDicomAppHosting::AvailableData& data,
 }
 
 
-bool addToAvailableData(ctkDicomAppHosting::AvailableData& data, 
-                        ctkDicomObjectLocatorCache* objectLocatorCache, 
-                        const ctkDICOMItem& dataset, 
-                        long length, 
-                        long offset, 
+bool addToAvailableData(ctkDicomAppHosting::AvailableData& data,
+                        ctkDicomObjectLocatorCache* objectLocatorCache,
+                        const ctkDICOMItem& dataset,
+                        long length,
+                        long offset,
                         const QString& uri)
 {
   if(objectLocatorCache == NULL)
     return false;
-  
+
   ctkDicomAppHosting::ObjectDescriptor objectDescriptor;
   ctkDicomAppHosting::Study study;
   ctkDicomAppHosting::Series series;
@@ -235,13 +235,13 @@ bool addToAvailableData(ctkDicomAppHosting::AvailableData& data,
   objectDescriptor.classUID = dataset.GetElementAsString(DCM_SOPClassUID);
   objectDescriptor.transferSyntaxUID = dataset.GetElementAsString(DCM_TransferSyntaxUID);
   objectDescriptor.modality = dataset.GetElementAsString(DCM_Modality);
-  
+
 
 
   ctkDicomAppHosting::Patient* ppatient;
   ctkDicomAppHosting::Study* pstudy;
   ctkDicomAppHosting::Series* pseries;
-  
+
   ctkDicomAvailableDataAccessor(data).find(patient, study.studyUID, series.seriesUID,
     ppatient, pstudy, pseries);
 
@@ -285,20 +285,20 @@ bool addToAvailableData(ctkDicomAppHosting::AvailableData& data,
 
 //----------------------------------------------------------------------------
 bool addToAvailableData(ctkDicomAppHosting::AvailableData& data,
-                        ctkDicomObjectLocatorCache* objectLocatorCache, 
+                        ctkDicomObjectLocatorCache* objectLocatorCache,
                         const QString& filename)
 {
   QFileInfo fileinfo(filename);
   qDebug() << filename << " " << fileinfo.exists();
-  
-  
+
+
   QString uri("file:///");
   uri.append(fileinfo.absoluteFilePath());
 
   //first check if its a non-DICOM file, if so add it first.
   QString ext = fileinfo.suffix();
-  if ( (ext.compare("txt") == 0) || (ext.compare("xml") ==0) || (ext.compare("jpg") ==0) || 
-       (ext.compare("bmp") ==0) || (ext.compare("csv") ==0) || (ext.compare("nii") ==0) || 
+  if ( (ext.compare("txt") == 0) || (ext.compare("xml") ==0) || (ext.compare("jpg") ==0) ||
+       (ext.compare("bmp") ==0) || (ext.compare("csv") ==0) || (ext.compare("nii") ==0) ||
        (ext.compare("nrrd") ==0) )
   {
   	  qDebug() << "adding Non DICOM File";

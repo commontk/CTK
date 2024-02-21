@@ -99,7 +99,7 @@ void ctkXnatScanFolder::fetchImpl()
     QString label = scan->property (LABEL);
     label = label.isEmpty() ? series_description : label;
     scan->setProperty (LABEL, label);
-    
+
     this->add(scan);
   }
 }

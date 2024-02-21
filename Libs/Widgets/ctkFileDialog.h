@@ -33,12 +33,20 @@ class ctkFileDialogPrivate;
 
 /// \ingroup Widgets
 /// Customizable QFileDialog.
-/// An extra widget can be added at the bottom of the dialog
-/// under the file format combobox. The Accept button is also controllable
-/// using setAcceptButtonEnable().
+///
+/// This widget allows customization of QFileDialog with the option to add
+/// an extra widget at the bottom, below the file format combobox. The Accept
+/// button's behavior can be controlled using setAcceptButtonEnable()
+///
 /// The behavior of the "return" key is the following:
 ///  - it selects the directory written in the line edit or it
 ///  - it accepts the dialog if the directory is already selected.
+///
+/// \warning The ability to set a bottom widget and selection mode is supported
+/// only if either the application attribute Qt::AA_DontUseNativeDialogs or the
+/// dialog attribute ctkFileDialog::DontUseNativeDialog is set. By default, native
+/// dialogs are used.
+///
 class CTK_WIDGETS_EXPORT ctkFileDialog : public QFileDialog
 {
   Q_OBJECT
@@ -55,7 +63,7 @@ public:
               const QString &directory = QString(),
               const QString &filter = QString());
   virtual ~ctkFileDialog();
-  
+
   /// Add an extra widget under the file format combobox. If a label is
   /// given, it will appear in the first column.
   /// The widget is reparented to ctkFileDialog

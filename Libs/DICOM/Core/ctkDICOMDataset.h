@@ -7,4 +7,3 @@
 #endif
 #include "ctkDICOMItem.h"
 #endif
-

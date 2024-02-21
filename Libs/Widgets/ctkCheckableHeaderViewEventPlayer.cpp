@@ -64,4 +64,3 @@ bool ctkCheckableHeaderViewEventPlayer::playEvent(QObject *Object,
   Error = true;
   return true;
 }
-

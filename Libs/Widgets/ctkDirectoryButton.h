@@ -161,12 +161,12 @@ public:
   /// set horizontal policy to QSizePolicy::Ignored and set elideMode to
   /// Qt::ElideMiddle (or anything else than Qt::ElideNone).
   void setElideMode(Qt::TextElideMode newMode);
-  Qt::TextElideMode elideMode()const; 
+  Qt::TextElideMode elideMode()const;
 
 public Q_SLOTS:
   /// browse() opens a pop up where the user can select a new directory for the
   /// button. browse() is automatically called when the button is clicked.
-  void browse();
+  QString browse();
 
 Q_SIGNALS:
   /// directoryChanged is emitted when the current directory changes.

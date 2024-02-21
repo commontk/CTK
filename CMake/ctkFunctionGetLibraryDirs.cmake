@@ -36,7 +36,7 @@ function(ctkFunctionGetLibraryDirs var_library_dirs)
     set(ext_deps )
 
     ctkMacroGetAllNonProjectTargetLibraries("${${_target}_DEPENDENCIES}" ext_deps)
-    
+
     foreach(dep ${ext_deps})
 
       if(${dep}_LIBRARY_DIRS)

@@ -94,7 +94,7 @@ public:
   double clamp( double x, double xMin, double xMax );
 
   void fitImageRectangle( double x0, double y0, double x1, double y1 );
-  
+
 };
 
 //--------------------------------------------------------------------------
@@ -334,7 +334,7 @@ double ctkQImageView::yCenter( void )
 void ctkQImageView::setSliceNumber( int slicenum )
 {
   Q_D( ctkQImageView );
-  if( slicenum >= 0 && slicenum < d->ImageList.size() 
+  if( slicenum >= 0 && slicenum < d->ImageList.size()
     && slicenum != d->SliceNumber )
     {
     d->SliceNumber = slicenum;
@@ -484,7 +484,7 @@ void ctkQImageView::setCenter( double x, double y )
       {
       tmpYRange = d->ImageList[ d->SliceNumber ].height();
       }
-  
+
     int xMin2 = static_cast<int>(x) - tmpXRange/2.0;
     if( xMin2 < 0 )
       {
@@ -514,7 +514,7 @@ void ctkQImageView::setCenter( double x, double y )
 
     emit this->xCenterChanged( x );
     emit this->yCenterChanged( y );
-  
+
 	  this->update( false, false );
     }
 }
@@ -523,7 +523,7 @@ void ctkQImageView::setCenter( double x, double y )
 void ctkQImageView::setPosition( double x, double y )
 {
   Q_D( ctkQImageView );
-  if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() 
+  if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size()
     && x >= 0 && y >= 0 && x < d->ImageList[ d->SliceNumber ].width()
     && y < d->ImageList[ d->SliceNumber ].height() )
     {
@@ -570,7 +570,7 @@ void ctkQImageView::setZoom( double factor )
     double cy = d->CenterY;
     double x2 = img->width() / factor;
     double y2 = img->height() / factor;
-	  
+
     int xMin2 = static_cast<int>(cx) - x2 / 2.0;
     if( xMin2 < 0 )
       {
@@ -594,7 +594,7 @@ void ctkQImageView::setZoom( double factor )
       yMin2 = yMax2 - y2;
       }
     d->fitImageRectangle( xMin2, xMax2, yMin2, yMax2 );
-  
+
 	  this->update( true, true );
     }
 }
@@ -749,9 +749,9 @@ void ctkQImageView::mousePressEvent( QMouseEvent * event )
       case Qt::RightButton:
         {
         d->MouseRightDragging = true;
-        double relativeX = static_cast<double>( event->x() ) 
+        double relativeX = static_cast<double>( event->x() )
           / this->width();
-        double relativeY = static_cast<double>( event->y() ) 
+        double relativeY = static_cast<double>( event->y() )
           / this->height();
         if( d->FlipXAxis )
           {
@@ -795,13 +795,13 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
       double distX = event->x() - d->MouseLastX;
       double distY = event->y() - d->MouseLastY;
       double deltaWin = ( distX / this->height() );
-      if( deltaWin < 0 )  
+      if( deltaWin < 0 )
         {
         // Heuristic to make shrinking proportional to enlarging
         deltaWin *= -deltaWin;
         }
       double deltaLevel = ( distY / this->width() );
-      if( deltaLevel < 0 )  
+      if( deltaLevel < 0 )
         {
         // Heuristic to make shrinking proportional to enlarging
         deltaLevel *= -deltaLevel;
@@ -817,7 +817,7 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
       {
       double distY = d->MouseLastY - event->y();
       double deltaZ = 2 * (distY / this->height());
-      if( deltaZ < 0 )  
+      if( deltaZ < 0 )
         {
         // Heuristic to make shrinking proportional to enlarging
         deltaZ *= -deltaZ;
@@ -827,9 +827,9 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
       }
     else if( d->MouseRightDragging )
       {
-      double relativeX = static_cast<double>( event->x() ) 
+      double relativeX = static_cast<double>( event->x() )
         / this->width();
-      double relativeY = static_cast<double>( event->y() ) 
+      double relativeY = static_cast<double>( event->y() )
         / this->height();
       if( d->FlipXAxis )
         {
@@ -845,9 +845,9 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
       }
     else
       {
-      double relativeX = static_cast<double>( event->x() ) 
+      double relativeX = static_cast<double>( event->x() )
         / this->width();
-      double relativeY = static_cast<double>( event->y() ) 
+      double relativeY = static_cast<double>( event->y() )
         / this->height();
       if( d->FlipXAxis )
         {
@@ -897,7 +897,7 @@ void ctkQImageView::update( bool zoomChanged,
     const QImage * img = & ( d->ImageList[ d->SliceNumber ] );
     if( zoomChanged || sizeChanged )
       {
-      if( this->width() > 0 &&  this->height() > 0 
+      if( this->width() > 0 &&  this->height() > 0
         && d->TmpXMax > d->TmpXMin && d->TmpYMax > d->TmpYMin)
         {
         int tmpXRange = d->TmpXMax - d->TmpXMin;
@@ -909,7 +909,7 @@ void ctkQImageView::update( bool zoomChanged,
           {
           int extraTmpYAbove = d->TmpYMin;
           int extraTmpYBelow = img->height() - d->TmpYMax;
-          int extraTmpYNeeded = tmpXRange * screenAspectRatio 
+          int extraTmpYNeeded = tmpXRange * screenAspectRatio
             - tmpYRange;
           int minExtra = extraTmpYAbove;
           if( extraTmpYBelow < minExtra )
@@ -942,8 +942,8 @@ void ctkQImageView::update( bool zoomChanged,
             d->TmpYMax = img->height();
             }
           d->TmpImage = QPixmap( this->width(),
-            static_cast<unsigned int>( 
-              static_cast<double>(d->TmpYMax - d->TmpYMin) 
+            static_cast<unsigned int>(
+              static_cast<double>(d->TmpYMax - d->TmpYMin)
               / (d->TmpXMax - d->TmpXMin)
               * this->width() + 0.5 ) );
           }
@@ -951,7 +951,7 @@ void ctkQImageView::update( bool zoomChanged,
           {
           int extraTmpXLeft = d->TmpXMin;
           int extraTmpXRight = img->width() - d->TmpXMax;
-          int extraTmpXNeeded = static_cast<double>(tmpYRange) 
+          int extraTmpXNeeded = static_cast<double>(tmpYRange)
             / screenAspectRatio - tmpXRange;
           int minExtra = extraTmpXLeft;
           if( extraTmpXRight < minExtra )
@@ -984,8 +984,8 @@ void ctkQImageView::update( bool zoomChanged,
             d->TmpXMax = img->width();
             }
           d->TmpImage = QPixmap( static_cast<unsigned int>( this->height()
-            / ( static_cast<double>(d->TmpYMax - d->TmpYMin) 
-            / (d->TmpXMax - d->TmpXMin) ) 
+            / ( static_cast<double>(d->TmpYMax - d->TmpYMin)
+            / (d->TmpXMax - d->TmpXMin) )
             + 0.5 ), this->height() );
           }
         else
@@ -1040,13 +1040,13 @@ void ctkQImageView::update( bool zoomChanged,
           textColor.setNamedColor( "lime" );
           textColor.setAlpha( 128 );
           painter.setPen( textColor );
-    
+
           int textFlags = Qt::AlignLeft | Qt::TextDontClip;
-    
+
           QRectF pointRect( 0, 0, 1, 1 );
           QRectF spaceBound = painter.boundingRect( pointRect, textFlags,
             "X" );
-    
+
           if( img->isGrayscale() )
             {
             QString intString = tr("Intensity Range = %1 .. %2").arg(
@@ -1054,7 +1054,7 @@ void ctkQImageView::update( bool zoomChanged,
               QString::number( d->IntensityMax, 'f', 3 ));
             QRectF intBound = painter.boundingRect( pointRect, textFlags,
               intString );
-            QRectF intRect( 
+            QRectF intRect(
               spaceBound.width()/2,
               spaceBound.height()/8,
               intBound.width(), intBound.height() );
@@ -1066,7 +1066,7 @@ void ctkQImageView::update( bool zoomChanged,
               .arg(QString::number(this->intensityLevel(), 'f', 3));
             QRectF wlBound = painter.boundingRect( pointRect, textFlags,
               wlString );
-            QRectF wlRect( 
+            QRectF wlRect(
               spaceBound.width()/2,
               intRect.y() + intRect.height() + spaceBound.height()/8,
               wlBound.width(), wlBound.height() );
@@ -1080,68 +1080,68 @@ void ctkQImageView::update( bool zoomChanged,
             .arg(QString::number(this->sliceThickness()), 'f', 3);
           QRectF spacingBound = painter.boundingRect( pointRect, textFlags,
             spacingString );
-          QRectF spacingRect( 
+          QRectF spacingRect(
             this->width() - spacingBound.width() - spaceBound.width()/2,
             this->height() - spacingBound.height() - spaceBound.height()/8,
             spacingBound.width(), spacingBound.height() );
           painter.drawText( spacingRect, textFlags, spacingString,
             &spacingBound );
-    
+
           QString dimString = tr("Size = %1, %2, %3")
             .arg(QString::number( d->ImageList[ d->SliceNumber ].width()))
             .arg(QString::number(d->ImageList[d->SliceNumber].height()))
             .arg(QString::number(d->ImageList.size()));
           QRectF dimBound = painter.boundingRect( pointRect, textFlags,
             dimString );
-          QRectF dimRect( 
+          QRectF dimRect(
             this->width() - dimBound.width() - spaceBound.width()/2,
             spacingBound.y() - dimBound.height() - spaceBound.height()/8,
             dimBound.width(), dimBound.height() );
           painter.drawText( dimRect, textFlags, dimString, &dimBound );
-    
+
           QString rasString = tr("RAS = %1, %2, %3")
             .arg(QString::number(this->xPosition() * this->xSpacing(), 'f', 3))
             .arg(QString::number(this->yPosition() * this->ySpacing(), 'f', 3))
             .arg(QString::number(this->slicePosition() * this->sliceSpacing(), 'f', 3));
           QRectF rasBound = painter.boundingRect( pointRect, textFlags,
             rasString );
-          QRectF rasRect( 
+          QRectF rasRect(
             spaceBound.width()/2,
             this->height() - rasBound.height() - spaceBound.height()/8,
             rasBound.width(), rasBound.height() );
           painter.drawText( rasRect, textFlags, rasString,
             &rasBound );
-    
+
           QString ijkString = tr("IJK = %1, %2, %3")
             .arg(QString::number( this->xPosition())
             .arg(QString::number( this->yPosition()))
             .arg(this->slicePosition()));
           QRectF ijkBound = painter.boundingRect( pointRect, textFlags,
             ijkString );
-          QRectF ijkRect( 
+          QRectF ijkRect(
             spaceBound.width()/2,
             rasBound.y() - ijkBound.height() - spaceBound.height()/8,
             ijkBound.width(), ijkBound.height() );
           painter.drawText( ijkRect, textFlags, ijkString, &ijkBound );
-    
+
           QString valString = tr("Value = %1")
             .arg(QString::number( this->positionValue(),'f', 3));
           QRectF valBound = painter.boundingRect( pointRect, textFlags,
             valString );
-          QRectF valRect( 
+          QRectF valRect(
             spaceBound.width()/2,
             ijkBound.y() - valBound.height() - spaceBound.height()/8,
             valBound.width(), valBound.height() );
           painter.drawText( valRect, textFlags, valString, &valBound );
           }
-    
+
         QColor lineColor;
         lineColor.setNamedColor( "red" );
         lineColor.setAlpha( 128 );
         painter.setPen( lineColor );
-        double x = ( this->xPosition() - d->TmpXMin ) 
+        double x = ( this->xPosition() - d->TmpXMin )
           / (d->TmpXMax - d->TmpXMin) * this->width();
-        double y = ( this->yPosition() - d->TmpYMin ) 
+        double y = ( this->yPosition() - d->TmpYMin )
           / (d->TmpYMax - d->TmpYMin) * this->height();
         if( d->FlipXAxis )
           {

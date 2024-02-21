@@ -26,7 +26,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -63,10 +63,10 @@ class ctkCheckableModelHelper;
 
 /// \ingroup Widgets
 ///
-/// ctkCheckableHeaderView is a QHeaderView that can display a checkbox 
+/// ctkCheckableHeaderView is a QHeaderView that can display a checkbox
 /// for any header section.
 /// If propageteToItems, the check state of the header section is set to
-/// all items in the header row/column of the QAbstractItemModel if the 
+/// all items in the header row/column of the QAbstractItemModel if the
 /// items are checkable.
 /// ctkCheckableHeaderView also supports row/column sorting.
 /// TBD: It should probably be a QSortFilterProxyModel that adds a checkability
@@ -97,25 +97,25 @@ public:
   /// \return
   ///   True if the event should be filtered out.
   virtual bool eventFilter(QObject *object, QEvent *e);
-  
-  
+
+
   ///
-  /// Utility function that returns the checkState of the section. 
+  /// Utility function that returns the checkState of the section.
   /// One can access the same value through the model:
   /// model->headerData(orientation, section, Qt::CheckStateRole)
   Q_INVOKABLE Qt::CheckState checkState(int section)const;
 
   ///
-  /// Utility function that returns the checkState of the section. 
+  /// Utility function that returns the checkState of the section.
   /// One can access the same value through the model:
   /// model->headerData(orientation, section, Qt::CheckStateRole)
   Q_INVOKABLE bool checkState(int section,Qt::CheckState& checkState )const;
-  
+
   Q_INVOKABLE ctkCheckableModelHelper* checkableModelHelper()const;
 
 public Q_SLOTS:
   ///
-  /// Warning, setting the check state automatically set the 
+  /// Warning, setting the check state automatically set the
   /// header section checkable
   void setCheckState(int section, Qt::CheckState checkState);
 
@@ -123,7 +123,7 @@ private Q_SLOTS:
   void onHeaderDataChanged(Qt::Orientation orient, int first, int last);
   void onHeaderSectionInserted();
   inline void updateHeaderPixmaps();
-  
+
 protected:
   virtual void updateHeaderPixmaps(int first, int last);
   virtual void initStyleSectionOption(QStyleOptionHeader *option, int section, QRect rect)const;

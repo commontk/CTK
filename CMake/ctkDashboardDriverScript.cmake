@@ -149,9 +149,9 @@ DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIR
 ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
   endif()
-  
+
   if(res GREATER 0 OR force_build)
-  
+
     #-----------------------------------------------------------------------------
     # Update
     #-----------------------------------------------------------------------------
@@ -165,7 +165,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
     ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
     ctest_submit(PARTS Configure)
-      
+
     #-----------------------------------------------------------------------------
     # Build top level
     #-----------------------------------------------------------------------------
@@ -196,7 +196,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
       # HACK Unfortunately ctest_coverage ignores the build argument, try to force it...
       file(READ ${ctk_build_dir}/CMakeFiles/TargetDirectories.txt ctk_build_coverage_dirs)
       file(APPEND "${CTEST_BINARY_DIRECTORY}/CMakeFiles/TargetDirectories.txt" "${ctk_build_coverage_dirs}")
-    
+
       message("----------- [ Coverage ] -----------")
       ctest_coverage(BUILD "${ctk_build_dir}")
       ctest_submit(PARTS Coverage)
@@ -213,7 +213,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
 
     # Note should be at the end
     ctest_submit(PARTS Notes)
-  
+
   endif()
 endmacro()
 

@@ -477,7 +477,7 @@ bool ctkPopupWidget::eventFilter(QObject* obj, QEvent* event)
         // the popup instantly...
         QTimer::singleShot(d->ShowDelay, this, SLOT(updatePopup()));
         }
-      else 
+      else
         {
         // ... except if the popup is closing, we want to reopen it as sooon as
         // possible.

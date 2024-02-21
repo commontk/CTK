@@ -40,11 +40,11 @@ QObject *ctkExtensionFactory::createExtension(QObject *object,
   Q_UNUSED(iid);
   Q_UNUSED(_parent);
   // ctkCollapsibleWidget *widget = qobject_cast<ctkCollapsibleWidget*>(object);
-  // 
+  //
   // if (widget && (iid == Q_TYPEID(QDesignerContainerExtension))) {
   //     return new ctkCollapsibleWidgetContainerExtension(widget, parent);
   // } else {
   //     return 0;
   // }
-  return 0; 
+  return 0;
 }

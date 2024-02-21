@@ -86,7 +86,7 @@ int ctkComboBoxTest1(int argc, char * argv [] )
   comboBox.addItem("Item Item Item Item Item Item Item Item 2");
   comboBox.addItem("Item Item Item Item Item Item Item Item 3");
   // adding items shouldn't change anything to the combobox current text
-  if (comboBox.currentIndex() != 0 || 
+  if (comboBox.currentIndex() != 0 ||
       comboBox.currentText() != "Item Item Item Item Item Item Item Item 1")
     {
     std::cerr << "ctkComboBox::addItem failed:"
@@ -103,4 +103,3 @@ int ctkComboBoxTest1(int argc, char * argv [] )
 
   return app.exec();
 }
-

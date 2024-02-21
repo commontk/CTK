@@ -54,7 +54,7 @@ public:
 
   /// Return saved current path
   QString savedCurrentPath()const;
-  
+
 protected:
   QScopedPointer<ctkScopedCurrentDirPrivate> d_ptr;
 
@@ -64,5 +64,3 @@ private:
 };
 
 #endif
-
-

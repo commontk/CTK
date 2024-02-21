@@ -21,6 +21,10 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QDir>
+#include <QTemporaryDir>
+
+// ctkCore includes
+#include <ctkCoreTestingMacros.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -34,8 +38,11 @@ int ctkDICOMDatabaseTest7( int argc, char * argv [] )
 {
   QCoreApplication app(argc, argv);
 
+  QTemporaryDir tempDirectory;
+  CHECK_BOOL(tempDirectory.isValid(), true);
+
   ctkDICOMDatabase database;
-  QDir databaseDirectory = QDir::temp();
+  QDir databaseDirectory(tempDirectory.path());
   databaseDirectory.remove("ctkDICOMDatabase.sql");
   databaseDirectory.remove("ctkDICOMTagCache.sql");
 

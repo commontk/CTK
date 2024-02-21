@@ -296,7 +296,7 @@ QList<ctkXnatObject*> ctkXnatSessionPrivate::results(qRestResult* restResult, QS
     // Fill in the properties
     QMapIterator<QString, QVariant> it(propertyMap);
     QString description;
-    
+
     while (it.hasNext())
     {
       it.next();
@@ -343,7 +343,7 @@ ctkXnatSession::ctkXnatSession(const ctkXnatLoginProfile& loginProfile)
   qRegisterMetaType<ctkXnatResource>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_RESOURCE));
   qRegisterMetaType<ctkXnatAssessor>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_ASSESSOR));
   qRegisterMetaType<ctkXnatFile>(qPrintable(ctkXnatDefaultSchemaTypes::XSI_FILE));
-  
+
   QString url = d->loginProfile.serverUrl().toString();
   d->xnat->setServerUrl(url);
 

@@ -64,4 +64,3 @@ QSharedPointer<ctkPlugin> ctkPluginFrameworkTestUtil::installPlugin(
     throw ctkPluginException(QString("No plugin %1 in %2").arg(plugin).arg(testPluginDir));
   }
 }
-

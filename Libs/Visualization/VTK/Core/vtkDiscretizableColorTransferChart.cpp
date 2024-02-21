@@ -589,4 +589,3 @@ bool vtkDiscretizableColorTransferChart::IsProcessingColorTransferFunction() con
   }
   return this->ControlPoints->IsProcessing();
 }
-

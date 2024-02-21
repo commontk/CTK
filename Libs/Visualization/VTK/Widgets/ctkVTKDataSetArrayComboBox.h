@@ -69,7 +69,7 @@ public:
   /// the first array automatically if an array becomes available, causing unintended change of the VTK data set
   /// (and often infinite loop of widget/MRML node updates).
   void setNoneEnabled(bool enable);
-  bool noneEnabled()const; 
+  bool noneEnabled()const;
 
   /// Return a pointer to the model used to populate the combobox.
   /// \sa dataSet()

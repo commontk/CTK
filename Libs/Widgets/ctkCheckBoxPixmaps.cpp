@@ -26,7 +26,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See http://www.paraview.org/paraview/project/license.html for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -63,18 +63,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class ctkCheckBoxPixmapsPrivate
 {
 public:
-  
+
   enum PixmapStateIndex
     {
     Checked                 = 0,
     PartiallyChecked        = 1,
     UnChecked               = 2,
-    
+
     // All active states in lower half
     Checked_Active          = 3,
     PartiallyChecked_Active = 4,
     UnChecked_Active        = 5,
-   
+
     PixmapCount             = 6
     };
   QPixmap Pixmaps[7];
@@ -141,5 +141,3 @@ const QPixmap& ctkCheckBoxPixmaps::pixmap(Qt::CheckState state, bool active) con
 
   return d->Pixmaps[ctkCheckBoxPixmapsPrivate::PixmapCount];
 }
-
-

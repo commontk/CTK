@@ -27,9 +27,11 @@
 
 // CTK includes
 #include "ctkDICOMWidgetsPluginsExport.h"
+#include "ctkDICOMJobListWidgetPlugin.h"
 #include "ctkDICOMQueryRetrieveWidgetPlugin.h"
 #include "ctkDICOMTableManagerPlugin.h"
 #include "ctkDICOMTableViewPlugin.h"
+#include "ctkDICOMVisualBrowserWidgetPlugin.h"
 
 /// \class Group the plugins in one library
 class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMWidgetsPlugins
@@ -44,9 +46,11 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
+    plugins << new ctkDICOMJobListWidgetPlugin;
     plugins << new ctkDICOMQueryRetrieveWidgetPlugin;
     plugins << new ctkDICOMTableManagerPlugin;
     plugins << new ctkDICOMTableViewPlugin;
+    plugins << new ctkDICOMVisualBrowserWidgetPlugin;
     return plugins;
     }
 };

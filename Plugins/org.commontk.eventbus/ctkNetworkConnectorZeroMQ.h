@@ -60,17 +60,17 @@ private Q_SLOTS:
 
     //// here goes slots which handle the connection
 
-    
+
 protected:
     //here goes zeromq vars
-    
+
 private:
     //here goes function for zeromq connection
-    
+
     /// stop and destroy the server instance.
     void stopServer();
 
-    
+
 };
 
 } //namespace ctkEventBus

@@ -33,7 +33,7 @@
 QCTK_DECLARE_TEST(ctkAddRemoveComboBoxTest1)
 {
   ctkAddRemoveComboBox ctkObject;
-  
+
   int currentCount = ctkObject.count();
   if (currentCount != 0)
     {
@@ -150,7 +150,7 @@ QCTK_DECLARE_TEST(ctkAddRemoveComboBoxTest1)
     std::cerr << __LINE__ << " - Error in count() - Expected: 0, current:" << currentCount << std::endl;
     QCTK_EXIT_TEST(EXIT_FAILURE);
     }
-    
+
   QCTK_EXIT_TEST(EXIT_SUCCESS);
 }
 

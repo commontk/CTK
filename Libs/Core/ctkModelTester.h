@@ -22,7 +22,7 @@
 #define __ctkModelTester_h
 
 /// Qt includes
-#include <QObject> 
+#include <QObject>
 #include <QModelIndex>
 #include <QPersistentModelIndex>
 #include <QList>
@@ -37,7 +37,7 @@ class ctkModelTesterPrivate;
 /// \ingroup Core
 /// ctkModelTester is a tool that tests any QAbstractItemModel
 /// Most of the signals fired by the model set (ctkModelTester::setModel())
-/// are connected to the tester that check their consistency with the 
+/// are connected to the tester that check their consistency with the
 /// model contents.
 /// ctkModelTester is typically used when developing a new QAbstractItemModel
 /// or during unit tests.
@@ -51,7 +51,7 @@ class CTK_CORE_EXPORT ctkModelTester: public QObject
 public:
   ///
   /// Constructor
-  /// No model is set by default. To be tested, a model must be set using 
+  /// No model is set by default. To be tested, a model must be set using
   /// setModel(...)
   explicit ctkModelTester(QObject *parent = 0);
 
@@ -69,23 +69,23 @@ public:
   virtual ~ctkModelTester();
 
   ///
-  /// Set the model to be tested, the model must remain valid during 
+  /// Set the model to be tested, the model must remain valid during
   /// the life ctkModelTester.
   void setModel(QAbstractItemModel* model);
   QAbstractItemModel* model()const;
 
   ///
   /// Throw an exception when an error is found in the model.
-  /// True by default 
+  /// True by default
   void setThrowOnError(bool throwException);
   bool throwOnError()const;
- 
+
   ///
-  /// nestedInserts controls whether the model is allowed to make 
-  /// nested row/column insertions ( an insertion signal is fired when an 
-  /// insertion a previous insertion was not finished). A row insertion 
+  /// nestedInserts controls whether the model is allowed to make
+  /// nested row/column insertions ( an insertion signal is fired when an
+  /// insertion a previous insertion was not finished). A row insertion
   /// consists of 2  signals: rowsAboutToBeInserted and rowsInserted
-  /// It also applies for row/column suppressions. 
+  /// It also applies for row/column suppressions.
   void setNestedInserts(bool enable);
   bool nestedInserts()const;
 
@@ -115,11 +115,11 @@ public:
   virtual void testModelIndex(const QModelIndex& index)const;
 
   ///
-  /// Check the hierarchy consistency of a QModelIndex 
+  /// Check the hierarchy consistency of a QModelIndex
   /// child/parent/siblings relationships
   virtual void testParent(const QModelIndex& parent)const;
 
-  /// 
+  ///
   /// Test a persistent model index
   virtual void testPersistentModelIndex(const QPersistentModelIndex& index)const;
 
@@ -138,25 +138,25 @@ protected Q_SLOTS:
   void onRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
   void onRowsInserted(const QModelIndex & parent, int start, int end);
   void onRowsRemoved(const QModelIndex & parent, int start, int end);
-  
+
 protected:
-  /// 
-  /// The logic of onColumnsAboutToBeInserted and onRowsAboutToBeInserted is 
+  ///
+  /// The logic of onColumnsAboutToBeInserted and onRowsAboutToBeInserted is
   /// gathered in onItemsAboutToBeInserted
   virtual void onItemsAboutToBeInserted(const QModelIndex& parent, Qt::Orientation, int start, int end);
 
-  /// 
-  /// The logic of onColumnsAboutToBeRemoved and onRowsAboutToBeRemoved is 
+  ///
+  /// The logic of onColumnsAboutToBeRemoved and onRowsAboutToBeRemoved is
   /// gathered in onItemsAboutToBeRemoved
   virtual void onItemsAboutToBeRemoved(const QModelIndex& parent, Qt::Orientation, int start, int end);
 
-  /// 
-  /// The logic of onColumnsInserted and onRowsInserted is gathered in 
+  ///
+  /// The logic of onColumnsInserted and onRowsInserted is gathered in
   /// onItemsInserted
   virtual void onItemsInserted(const QModelIndex& parent, Qt::Orientation, int start, int end);
 
-  /// 
-  /// The logic of onColumnsRemoved and onRowsRemoved is gathered in 
+  ///
+  /// The logic of onColumnsRemoved and onRowsRemoved is gathered in
   /// onItemsRemoved
   virtual void onItemsRemoved(const QModelIndex& parent, Qt::Orientation, int start, int end);
 
@@ -167,7 +167,7 @@ protected:
   ///
   /// Utility function that process the result of a test
   virtual void test(bool result, const QString& errorString)const;
-  
+
 protected:
   QScopedPointer<ctkModelTesterPrivate> d_ptr;
 
