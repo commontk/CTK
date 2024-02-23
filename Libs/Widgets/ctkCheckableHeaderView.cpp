@@ -97,15 +97,15 @@ ctkCheckableHeaderViewPrivate::ctkCheckableHeaderViewPrivate(ctkCheckableHeaderV
 ctkCheckableHeaderViewPrivate::~ctkCheckableHeaderViewPrivate()
 {
   if (this->CheckBoxPixmaps)
-    {
+  {
     delete this->CheckBoxPixmaps;
     this->CheckBoxPixmaps = 0;
-    }
+  }
   if (this->CheckableModelHelper)
-    {
+  {
     delete this->CheckableModelHelper;
     this->CheckableModelHelper = 0;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -126,10 +126,10 @@ ctkCheckableHeaderView::ctkCheckableHeaderView(
   d->init();
   // TODO: doesn't support reparenting here.
   if(widgetParent)
-    {
+  {
     // Listen for focus change events.
     widgetParent->installEventFilter(this);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -170,9 +170,9 @@ bool ctkCheckableHeaderView::eventFilter(QObject *, QEvent *e)
 {
   if(e->type() != QEvent::FocusIn &&
      e->type() != QEvent::FocusOut)
-    {
+  {
     return false;
-    }
+  }
   //this->updateHeaderPixmaps();
   return false;
 }
@@ -183,7 +183,7 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
   Q_D(ctkCheckableHeaderView);
   QAbstractItemModel *current = this->model();
   if (current)
-    {
+  {
     this->disconnect(
       current, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
       this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
@@ -196,11 +196,11 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
     this->disconnect(
       current, SIGNAL(rowsInserted(QModelIndex,int,int)),
       this, SLOT(onHeaderSectionInserted()));
-    }
+  }
   this->QHeaderView::setModel(newModel);
   d->CheckableModelHelper->setModel(newModel);
   if(newModel)
-    {
+  {
     this->connect(
       newModel, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
       this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
@@ -208,18 +208,18 @@ void ctkCheckableHeaderView::setModel(QAbstractItemModel *newModel)
       newModel, SIGNAL(modelReset()),
       this, SLOT(updateHeaderPixmaps()));
     if(this->orientation() == Qt::Horizontal)
-      {
+    {
       this->connect(
         newModel, SIGNAL(columnsInserted(QModelIndex,int,int)),
         this, SLOT(onHeaderSectionInserted()));
-      }
+    }
     else
-      {
+    {
       this->connect(
         newModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
         this, SLOT(onHeaderSectionInserted()));
-      }
     }
+  }
   this->updateHeaderPixmaps();
 }
 
@@ -237,9 +237,9 @@ void ctkCheckableHeaderView::onHeaderDataChanged(Qt::Orientation orient,
                                               int lastSection)
 {
   if(orient != this->orientation())
-    {
+  {
     return;
-    }
+  }
   // update pixmap
   this->updateHeaderPixmaps(firstSection, lastSection);
 }
@@ -250,9 +250,9 @@ void ctkCheckableHeaderView::updateHeaderPixmaps(int firstSection, int lastSecti
   Q_D(ctkCheckableHeaderView);
   QAbstractItemModel *current = this->model();
   if(d->HeaderIsUpdating || !current)
-    {
+  {
     return;
-    }
+  }
   d->HeaderIsUpdating = true;
 
   firstSection = qBound(0, firstSection, this->count() -1);
@@ -260,20 +260,20 @@ void ctkCheckableHeaderView::updateHeaderPixmaps(int firstSection, int lastSecti
 
   bool active = true;
   if(this->parentWidget())
-    {
+  {
     active = this->parentWidget()->hasFocus();
-    }
+  }
   for(int i = firstSection; i <= lastSection; i++)
-    {
+  {
     QVariant decoration;
     Qt::CheckState checkState;
     if (d->CheckableModelHelper->headerCheckState(i, checkState))
-      {
+    {
       decoration = d->CheckBoxPixmaps->pixmap(checkState, active);
-      }
+    }
     current->setHeaderData(i, this->orientation(), decoration,
                            Qt::DecorationRole);
-    }
+  }
   d->HeaderIsUpdating = false;
 }
 
@@ -289,24 +289,24 @@ void ctkCheckableHeaderView::mousePressEvent(QMouseEvent *e)
   Q_D(ctkCheckableHeaderView);
   if (e->button() != Qt::LeftButton ||
       d->Pressed >= 0)
-    {
+  {
     d->Pressed = -1;
     this->QHeaderView::mousePressEvent(e);
     return;
-    }
+  }
   d->Pressed = -1;
   //check if the check box is pressed
   int pos = this->orientation() == Qt::Horizontal ? e->x() : e->y();
   int section = this->logicalIndexAt(pos);
   if (d->CheckableModelHelper->isHeaderCheckable(section) &&
       this->isPointInCheckBox(section, e->pos()))
-    {
+  {
     d->Pressed = section;
-    }
+  }
   else
-    {
+  {
     this->QHeaderView::mousePressEvent(e);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -315,20 +315,20 @@ void ctkCheckableHeaderView::mouseReleaseEvent(QMouseEvent *e)
   Q_D(ctkCheckableHeaderView);
   if (e->button() != Qt::LeftButton ||
       d->Pressed < 0)
-    {
+  {
     d->Pressed = -1;
     this->QHeaderView::mouseReleaseEvent(e);
     return;
-    }
+  }
   //check if the check box is pressed
   int pos = this->orientation() == Qt::Horizontal ? e->x() : e->y();
   int section = this->logicalIndexAt(pos);
   if (section == d->Pressed &&
       this->isPointInCheckBox(section, e->pos()))
-    {
+  {
     d->Pressed = -1;
     d->CheckableModelHelper->toggleHeaderCheckState(section);
-    }
+  }
   this->QHeaderView::mousePressEvent(e);
 }
 
@@ -346,9 +346,9 @@ bool ctkCheckableHeaderView::isPointInCheckBox(int section, QPoint pos)const
   QRect headerLabelRect = this->style()->subElementRect(QStyle::SE_HeaderLabel, &opt, this);
   // from qcommonstyle.cpp:1541
   if (opt.icon.isNull())
-    {
+  {
     return false;
-    }
+  }
   QPixmap pixmap
     = opt.icon.pixmap(this->style()->pixelMetric(QStyle::PM_SmallIconSize),
                       (opt.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);
@@ -364,19 +364,19 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
   // from qheaderview.cpp:paintsection
   QStyle::State state = QStyle::State_None;
   if (this->isEnabled())
-    {
+  {
     state |= QStyle::State_Enabled;
-    }
+  }
   if (this->window()->isActiveWindow())
-    {
+  {
     state |= QStyle::State_Active;
-    }
+  }
   if (this->isSortIndicatorShown() &&
       this->sortIndicatorSection() == section)
-    {
+  {
     option->sortIndicator = (this->sortIndicatorOrder() == Qt::AscendingOrder)
       ? QStyleOptionHeader::SortDown : QStyleOptionHeader::SortUp;
-    }
+  }
 
   // setup the style option structure
   QVariant textAlignment =
@@ -393,53 +393,53 @@ void ctkCheckableHeaderView::initStyleSectionOption(QStyleOptionHeader *option, 
   option->text = this->model()->headerData(section, this->orientation(),
                                   Qt::DisplayRole).toString();
   if (this->textElideMode() != Qt::ElideNone)
-    {
+  {
     option->text = option->fontMetrics.elidedText(option->text, this->textElideMode() , rect.width() - 4);
-    }
+  }
 
   QVariant variant = this->model()->headerData(section, this->orientation(),
                                           Qt::DecorationRole);
   option->icon = qvariant_cast<QIcon>(variant);
   if (option->icon.isNull())
-    {
+  {
     option->icon = qvariant_cast<QPixmap>(variant);
-    }
+  }
   QVariant foregroundBrush = this->model()->headerData(section, this->orientation(),
                                                   Qt::ForegroundRole);
   if (foregroundBrush.canConvert<QBrush>())
-    {
+  {
     option->palette.setBrush(QPalette::ButtonText, qvariant_cast<QBrush>(foregroundBrush));
-    }
+  }
 
   //QPointF oldBO = painter->brushOrigin();
   QVariant backgroundBrush = this->model()->headerData(section, this->orientation(),
                                                   Qt::BackgroundRole);
   if (backgroundBrush.canConvert<QBrush>())
-    {
+  {
     option->palette.setBrush(QPalette::Button, qvariant_cast<QBrush>(backgroundBrush));
     option->palette.setBrush(QPalette::Window, qvariant_cast<QBrush>(backgroundBrush));
     //painter->setBrushOrigin(option->rect.topLeft());
-    }
+  }
 
   // the section position
   int visual = this->visualIndex(section);
   Q_ASSERT(visual != -1);
   if (this->count() == 1)
-    {
+  {
     option->position = QStyleOptionHeader::OnlyOneSection;
-    }
+  }
   else if (visual == 0)
-    {
+  {
     option->position = QStyleOptionHeader::Beginning;
-    }
+  }
   else if (visual == this->count() - 1)
-    {
+  {
     option->position = QStyleOptionHeader::End;
-    }
+  }
   else
-    {
+  {
     option->position = QStyleOptionHeader::Middle;
-    }
+  }
   option->orientation = this->orientation();
   /* the selected position
   bool previousSelected = d->isSectionSelected(this->logicalIndex(visual - 1));

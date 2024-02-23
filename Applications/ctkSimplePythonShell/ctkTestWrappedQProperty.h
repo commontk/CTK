@@ -33,9 +33,9 @@ class ctkTestWrappedQProperty : public QObject
 public:
 
   ctkTestWrappedQProperty(QObject * newParent = 0) : QObject(newParent)
-    {
+  {
     this->Value = 0;
-    }
+  }
 
   /// Example of property declared using Q_PROPERTY
   /// Using Q_PROPERTY is enough to expose them, it's not required to declare them as slot

@@ -118,7 +118,7 @@ void ctkVTKTextPropertyWidget::updateFromTextProperty()
   Q_D(ctkVTKTextPropertyWidget);
   this->setEnabled(d->TextProperty.GetPointer() != 0);
   if (d->TextProperty.GetPointer() == 0)
-    {
+  {
     d->ColorPickerButton->setColor(QColor());
     d->OpacitySlider->setValue(1.);
     d->FontComboBox->setCurrentIndex(-1);
@@ -128,7 +128,7 @@ void ctkVTKTextPropertyWidget::updateFromTextProperty()
     // Default vtkTextProperty font size is 12
     d->SizeSlider->setValue(12);
     return;
-    }
+  }
 
   double* color = d->TextProperty->GetColor();
   d->ColorPickerButton->setColor(
@@ -199,9 +199,9 @@ void ctkVTKTextPropertyWidget::setColor(const QColor& color)
 {
   Q_D(const ctkVTKTextPropertyWidget);
   if (d->TextProperty.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   d->TextProperty->SetColor(color.redF(), color.greenF(), color.blueF());
 
   emit colorChanged(color);
@@ -219,9 +219,9 @@ void ctkVTKTextPropertyWidget::setOpacity(double opacity)
 {
   Q_D(const ctkVTKTextPropertyWidget);
   if (d->TextProperty.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   d->TextProperty->SetOpacity(opacity);
 
   emit opacityChanged(opacity);
@@ -239,9 +239,9 @@ void ctkVTKTextPropertyWidget::setFont(const QString& font)
 {
   Q_D(const ctkVTKTextPropertyWidget);
   if (d->TextProperty.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   d->TextProperty->SetFontFamilyAsString(font.toStdString().data());
 
   emit fontFamilyChanged(font);
@@ -259,9 +259,9 @@ void ctkVTKTextPropertyWidget::setBold(bool enable)
 {
   Q_D(const ctkVTKTextPropertyWidget);
   if (d->TextProperty.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   d->TextProperty->SetBold(enable);
 
   emit boldChanged(enable);
@@ -279,9 +279,9 @@ void ctkVTKTextPropertyWidget::setItalic(bool enable)
 {
   Q_D(const ctkVTKTextPropertyWidget);
   if (d->TextProperty.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   d->TextProperty->SetItalic(enable);
 
   emit italicChanged(enable);
@@ -299,9 +299,9 @@ void ctkVTKTextPropertyWidget::setShadow(bool enable)
 {
   Q_D(const ctkVTKTextPropertyWidget);
   if (d->TextProperty.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   d->TextProperty->SetShadow(enable);
 
   emit shadowChanged(enable);
@@ -319,9 +319,9 @@ void ctkVTKTextPropertyWidget::setSize(double size)
 {
   Q_D(const ctkVTKTextPropertyWidget);
   if (d->TextProperty.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   d->TextProperty->SetFontSize(size);
 
   emit sizeChanged(size);

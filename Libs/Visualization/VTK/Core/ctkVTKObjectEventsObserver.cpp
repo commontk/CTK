@@ -50,10 +50,10 @@ ctkVTKConnectionFactory* ctkVTKConnectionFactory::instance()
 void ctkVTKConnectionFactory::setInstance(ctkVTKConnectionFactory* newInstance)
 {
   if (!newInstance)
-    {
+  {
     qCritical() << "ctkVTKConnectionFactory::setInstance - Failed to set a null instance !";
     return;
-    }
+  }
   delete Self::Instance;
   Self::Instance = newInstance;
 }
@@ -148,12 +148,12 @@ ctkVTKConnection*
 ctkVTKObjectEventsObserverPrivate::findConnection(const QString& id)const
 {
   foreach(ctkVTKConnection* connection, this->connections())
-    {
+  {
     if (connection->id() == id)
-      {
+    {
       return connection;
-      }
     }
+  }
   return 0;
 }
 
@@ -169,35 +169,35 @@ ctkVTKObjectEventsObserverPrivate::findConnection(
 
   if(vtk_obj != NULL && qt_slot != NULL &&
      qt_obj != NULL && vtk_event != vtkCommand::NoEvent)
-    {
+  {
     // All information is specified, so we can use the index to find the connection
     unsigned long hash=generateConnectionIndexHash(vtk_obj, vtk_event, qt_obj);
     ConnectionIndexType::iterator connectionIt = this->ConnectionIndex.find(hash);
     while (connectionIt != this->ConnectionIndex.end() && connectionIt.key() == hash)
-      {
+    {
       ctkVTKConnection* connection=connectionIt.value();
       if (!q->children().contains(connection))
-        {
+      {
         // connection has been deleted, so remove it from the index
         connectionIt=this->ConnectionIndex.erase(connectionIt);
         continue;
-        }
-      if (connection->isEqual(vtk_obj, vtk_event, qt_obj, qt_slot))
-        {
-        return connection;
-        }
-      ++connectionIt;
       }
-    return 0;
+      if (connection->isEqual(vtk_obj, vtk_event, qt_obj, qt_slot))
+      {
+        return connection;
+      }
+      ++connectionIt;
     }
+    return 0;
+  }
 
   foreach (ctkVTKConnection* connection, this->connections())
-    {
+  {
     if (connection->isEqual(vtk_obj, vtk_event, qt_obj, qt_slot))
-      {
+    {
       return connection;
-      }
     }
+  }
 
   return 0;
 }
@@ -212,24 +212,24 @@ ctkVTKObjectEventsObserverPrivate::findConnections(
 
   if(vtk_obj != NULL && qt_slot != NULL &&
      qt_obj != NULL && vtk_event != vtkCommand::NoEvent)
-    {
+  {
     // All information is specified, so we can use the index to find the connection
     ctkVTKConnection* connection=findConnection(vtk_obj, vtk_event, qt_obj, qt_slot);
     if (connection)
-      {
+    {
       foundConnections.append(connection);
-      }
-    return foundConnections;
     }
+    return foundConnections;
+  }
 
   // Loop through all connection
   foreach (ctkVTKConnection* connection, this->connections())
-    {
+  {
     if (connection->isEqual(vtk_obj, vtk_event, qt_obj, qt_slot))
-      {
+    {
       foundConnections.append(connection);
-      }
     }
+  }
 
   return foundConnections;
 }
@@ -261,9 +261,9 @@ void ctkVTKObjectEventsObserver::printAdditionalInfo()
 
   // Loop through all connection
   foreach (const ctkVTKConnection* connection, d->connections())
-    {
+  {
     qDebug() << *connection;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -287,7 +287,7 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObj
 {
   Q_D(ctkVTKObjectEventsObserver);
   if (old_vtk_obj)
-    {
+  {
     // Check that old_object and new_object are the same type
     // If you have a crash when accessing old_vtk_obj->GetClassName(), that means
     // old_vtk_obj has been deleted and you should probably have keep
@@ -309,17 +309,17 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* old_vtk_obj, vtkObj
     // ...
     if (d->StrictTypeCheck && vtk_obj
         && !vtk_obj->IsA(old_vtk_obj->GetClassName()))
-      {
+    {
       qWarning() << "Previous vtkObject (type:" << old_vtk_obj->GetClassName()
                  << ") to disconnect"
                  << "and new vtkObject (type:" << vtk_obj->GetClassName()
                  << ") to connect"
                  << "have a different type.";
       return QString();
-      }
+    }
     // Disconnect old vtkObject
     this->removeConnection(old_vtk_obj, vtk_event, qt_obj, qt_slot);
-    }
+  }
   return this->addConnection(
     vtk_obj, vtk_event, qt_obj, qt_slot, priority, connectionType);
 }
@@ -341,19 +341,19 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
   Q_D(ctkVTKObjectEventsObserver);
   // If no vtk_obj is provided, there is no way we can create a connection.
   if (!vtk_obj)
-    {
+  {
     return QString();
-    }
+  }
   if (!ctkVTKConnection::isValid(vtk_obj, vtk_event, qt_obj, qt_slot))
-    {
+  {
     qDebug() << "ctkVTKObjectEventsObserver::addConnection(...) - Invalid parameters - "
              << ctkVTKConnection::shortDescription(vtk_obj, vtk_event, qt_obj, qt_slot);
     return QString();
-    }
+  }
 
   // Check if such event is already observed
   if (this->containsConnection(vtk_obj, vtk_event, qt_obj, qt_slot))
-    {
+  {
     // if you need to have more than 1 connection, then it's probably time to
     // add the same mechanism than Qt does: Qt::UniqueConnection
     //qWarning() << "ctkVTKObjectEventsObserver::addConnection - [vtkObject:"
@@ -362,7 +362,7 @@ QString ctkVTKObjectEventsObserver::addConnection(vtkObject* vtk_obj, unsigned l
     //           << " is already connected with [qObject:" << qt_obj->objectName()
     //           << ", slot:" << qt_slot << "]";
     return QString();
-    }
+  }
 
   // Instantiate a new connection, set its parameters and add it to the list
   ctkVTKConnection * connection = ctkVTKConnectionFactory::instance()->createConnection(this);
@@ -383,16 +383,16 @@ bool ctkVTKObjectEventsObserver::blockAllConnections(bool block)
   Q_D(ctkVTKObjectEventsObserver);
 
   if (d->AllBlocked == block)
-    {
+  {
     return d->AllBlocked;
-    }
+  }
 
   bool oldAllBlocked = d->AllBlocked;
 
   foreach (ctkVTKConnection* connection, d->connections())
-    {
+  {
     connection->setBlocked(block);
-    }
+  }
   d->AllBlocked = block;
   return oldAllBlocked;
 }
@@ -410,10 +410,10 @@ bool ctkVTKObjectEventsObserver::blockConnection(const QString& id, bool blocked
   Q_D(ctkVTKObjectEventsObserver);
   ctkVTKConnection* connection = d->findConnection(id);
   if (connection == 0)
-    {
+  {
     qWarning() << "no connection for id " << id;
     return false;
-    }
+  }
   bool oldBlocked = connection->isBlocked();
   connection->setBlocked(blocked);
   return oldBlocked;
@@ -425,18 +425,18 @@ int ctkVTKObjectEventsObserver::blockConnection(bool block, vtkObject* vtk_obj,
 {
   Q_D(ctkVTKObjectEventsObserver);
   if (!vtk_obj)
-    {
+  {
     qDebug() << "ctkVTKObjectEventsObserver::blockConnectionRecursive"
              << "- Failed to " << (block?"block":"unblock") <<" connection"
              << "- vtkObject is NULL";
     return 0;
-    }
+  }
   QList<ctkVTKConnection*> connections =
     d->findConnections(vtk_obj, vtk_event, qt_obj, 0);
   foreach (ctkVTKConnection* connection, connections)
-    {
+  {
     connection->setBlocked(block);
-    }
+  }
   return connections.size();
 }
 
@@ -450,9 +450,9 @@ int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lo
     d->findConnections(vtk_obj, vtk_event, qt_obj, qt_slot);
 
   foreach (ctkVTKConnection* connection, connections)
-    {
+  {
     delete connection;
-    }
+  }
 
   // Only remove shadow connections (connections in the index without a corresponding actual connection)
   // from the index if the index size grew too big (shadow elements ratio >50% and minimum 100)
@@ -464,11 +464,11 @@ int ctkVTKObjectEventsObserver::removeConnection(vtkObject* vtk_obj, unsigned lo
     {
       ctkVTKConnection* connection=connectionIt.value();
       if (!children().contains(connection))
-        {
+      {
         // connection has been deleted, so remove it from the index
         connectionIt=d->ConnectionIndex.erase(connectionIt);
         continue;
-        }
+      }
       ++connectionIt;
     }
   }

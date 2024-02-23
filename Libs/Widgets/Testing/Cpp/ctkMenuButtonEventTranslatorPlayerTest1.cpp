@@ -48,17 +48,17 @@ QSignalSpy* Spy2;
 QSignalSpy* Spy3;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkMenuButton* widget = reinterpret_cast<ctkMenuButton*>(data);
   if(!widget)
-    {
+  {
     QApplication::exit(EXIT_FAILURE);
-    }
+  }
 
   CTKCOMPARE(Spy1->count(), 1);
   CTKCOMPARE(Spy2->count(), 1);
   CTKCOMPARE(Spy3->count(), 1);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -100,9 +100,9 @@ int ctkMenuButtonEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

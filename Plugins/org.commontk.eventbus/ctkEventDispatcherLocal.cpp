@@ -94,7 +94,7 @@ void ctkEventDispatcherLocal::notifyEvent(ctkBusEvent &event_dictionary, ctkEven
                         default:
                             qWarning("%s", QString("Number of arguments not supported. Max 10 arguments").toUtf8().data());
                     } //switch
-                 } else { //use return value
+                } else { //use return value
                     switch (argList->count()) {
                         case 0:
                             this->metaObject()->invokeMethod(obj, signal_to_emit.toLatin1(), *returnArg);
@@ -146,7 +146,7 @@ void ctkEventDispatcherLocal::notifyEvent(ctkBusEvent &event_dictionary, ctkEven
                         default:
                             qWarning("%s", QString("Number of arguments not supported. Max 10 arguments").toUtf8().data());
                     } //switch
-                 }
+                }
             } else {
                 if (returnArg == NULL || returnArg->data() == NULL) { //don't use return value
                     this->metaObject()->invokeMethod(obj, signal_to_emit.toLatin1());

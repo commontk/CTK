@@ -70,10 +70,10 @@ bool function2(ctkVTKAbstractView* view)
   view->scheduleRender();
   view->resumeRender();
   if (RenderCount != 0)
-    {
+  {
     std::cerr << "function2: Render count " << RenderCount
               << " does not match expected value of " << 0 << std::endl;
-    }
+  }
   return RenderCount == 0;
 }
 
@@ -85,11 +85,11 @@ bool function1(ctkVTKAbstractView* view)
   bool success = function2(view);
   view->resumeRender();
   if (RenderCount == 0)
-    {
+  {
     std::cerr << "function1: Render count " << RenderCount
               << " should be greater than " << 0 << std::endl;
     success = false;
-    }
+  }
   return success;
 }
 
@@ -143,8 +143,8 @@ int ctkVTKAbstractViewTest1(int argc, char * argv [] )
   CHECK_BOOL(function1(&sliceView), true);
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

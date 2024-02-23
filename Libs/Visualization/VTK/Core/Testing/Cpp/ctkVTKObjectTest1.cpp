@@ -34,8 +34,8 @@ int ctkVTKObjectTest1( int argc, char * argv [] )
 
   ctkVTKObjectTest objectTest;
   if (!objectTest.test())
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

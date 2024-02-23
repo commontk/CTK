@@ -46,39 +46,39 @@ int ctkVTKThresholdWidgetTest1(int argc, char * argv [] )
 
   thresholdWidget.setPiecewiseFunction(function.GetPointer());
   if (thresholdWidget.piecewiseFunction() != function.GetPointer())
-    {
+  {
     std::cerr << "ctkVTKThresholdWidget::setPiecewiseFunction() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   thresholdWidget.setRange(10., 20.);
   double range[2];
   thresholdWidget.range(range);
   if (range[0] != 10. || range[1] != 20.)
-    {
+  {
     std::cerr << "ctkVTKThresholdWidget::setRange() failed: "
               << range[0] << " " << range[1] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   thresholdWidget.setOpacity(1.);
   if (thresholdWidget.opacity() != 1.)
-    {
+  {
     std::cerr << "ctkVTKThresholdWidget::setOpacity() failed: "
               << thresholdWidget.opacity() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   thresholdWidget.setThresholdValues(11., 19.);
   double values[2];
   thresholdWidget.thresholdValues(values);
   if (values[0] != 11. || values[1] != 19.)
-    {
+  {
     std::cerr << "ctkVTKThresholdWidget::setThresholdValues() failed: "
               << values[0] << " " << values[1] << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   thresholdWidget.show();
 
@@ -89,9 +89,9 @@ int ctkVTKThresholdWidgetTest1(int argc, char * argv [] )
 #endif
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

@@ -39,21 +39,21 @@ bool ctkFontButtonEventPlayer::playEvent(QObject *Object,
                                                 bool &Error)
 {
   if (Command != "newFont")
-    {
+  {
     return false;
-    }
+  }
 
   if(ctkFontButton* const object =
        qobject_cast<ctkFontButton*>(Object))
-    {
+  {
     if (Command == "newFont")
-      {
+    {
       QFont font;
       font.fromString(Arguments);
       object->setCurrentFont(font);
       return true;
-      }
     }
+  }
 
   qCritical() << "calling newFont on unhandled type " << Object;
   Error = true;

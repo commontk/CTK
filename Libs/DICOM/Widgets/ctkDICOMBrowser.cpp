@@ -1184,25 +1184,25 @@ void ctkDICOMBrowser::onPatientsRightClicked(const QPoint &point)
 
   QString deleteString = tr("Delete");
   if (numPatients > 1)
-    {
+  {
     deleteString = tr("Delete %1 selected patients").arg(numPatients);
-    }
+  }
   QAction *deleteAction = new QAction(deleteString, patientsMenu);
   patientsMenu->addAction(deleteAction);
 
   QString exportString = tr("Export to file system");
   if (numPatients > 1)
-    {
+  {
     exportString = tr("Export %1 selected patients to file system").arg(numPatients);
-    }
+  }
   QAction *exportAction = new QAction(exportString, patientsMenu);
   patientsMenu->addAction(exportAction);
 
   QString sendString = tr("Send to DICOM server");
   if (numPatients > 1)
-    {
+  {
     sendString = tr("Send %1 selected patients to DICOM server").arg(numPatients);
-    }
+  }
 
   QAction* sendAction = new QAction(sendString, patientsMenu);
   if (this->isSendActionVisible())
@@ -1511,7 +1511,7 @@ void ctkDICOMBrowser::exportSeries(QString dirPath, QStringList uids)
         copyErrorMessageBox.setIcon(QMessageBox::Warning);
         copyErrorMessageBox.exec();
         return;
-        }
+      }
 
       fileNumber++;
       d->ExportProgress->setValue(fileNumber);

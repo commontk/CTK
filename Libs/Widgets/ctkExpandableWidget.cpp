@@ -80,21 +80,21 @@ void ctkExpandableWidgetPrivate::positionSizeGrip()
 {
   Q_Q(ctkExpandableWidget);
   if (!this->SizeGrip)
-    {
+  {
     return;
-    }
+  }
   if (this->SizeGripInside)
-    {
+  {
     q->setContentsMargins(0, 0, 0, 0);
-    }
+  }
   else
-    {
+  {
     int rightMargin = q->orientations() == Qt::Horizontal ?
       this->SizeGrip->sizeHint().width() : 0;
     int bottomMargin = q->orientations() == Qt::Vertical ?
       this->SizeGrip->sizeHint().height() : 0;
     q->setContentsMargins(0, 0, rightMargin, bottomMargin);
-    }
+  }
   int w = q->orientations() == Qt::Vertical ? q->width() : this->SizeGrip->sizeHint().width();
   int h = q->orientations() == Qt::Horizontal ? q->height() : this->SizeGrip->sizeHint().height();
   int x = q->width() - w - this->SizeGripMargins.width();
@@ -107,13 +107,13 @@ QSize ctkExpandableWidgetPrivate::resizeHint(QSize sizeHint)const
 {
   Q_Q(const ctkExpandableWidget);
   if (this->SizeGrip->widgetSizeHint().width() >= 0)
-    {
+  {
     sizeHint.setWidth(this->SizeGrip->widgetSizeHint().width());
-    }
+  }
   if (this->SizeGrip->widgetSizeHint().height() >= 0)
-    {
+  {
     sizeHint.setHeight(this->SizeGrip->widgetSizeHint().height());
-    }
+  }
   QSize minimumSize = this->SizeGrip->sizeHint()
     + this->SizeGripMargins
     + QSize(q->contentsMargins().right(), q->contentsMargins().bottom());
@@ -216,9 +216,9 @@ bool ctkExpandableWidget::event(QEvent* event)
   bool res = this->Superclass::event(event);
   if (event->type() == QEvent::ChildAdded &&
       d->SizeGrip && d->SizeGripInside)
-    {
+  {
     d->SizeGrip->raise();
-    }
+  }
   return res;
 }
 

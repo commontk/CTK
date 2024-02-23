@@ -160,13 +160,13 @@ double ctkQImageViewPrivate::clamp( double x, double xMin,
   double xMax )
 {
   if( x < xMin )
-    {
+  {
     return xMin;
-    }
+  }
   if( x > xMax )
-    {
+  {
     return xMax;
-    }
+  }
   return x;
 }
 
@@ -175,7 +175,7 @@ void ctkQImageViewPrivate::fitImageRectangle( double x0,
   double x1, double y0, double y1 )
 {
   if( this->SliceNumber >= 0 && this->SliceNumber < this->ImageList.size() )
-    {
+  {
     this->TmpXMin = this->clamp( x0, 0,
       this->ImageList[ this->SliceNumber ].width() );
     this->TmpXMax = this->clamp( x1, this->TmpXMin,
@@ -184,7 +184,7 @@ void ctkQImageViewPrivate::fitImageRectangle( double x0,
       this->ImageList[ this->SliceNumber ].height() );
     this->TmpYMax = this->clamp( y1, this->TmpYMin,
       this->ImageList[ this->SliceNumber ].height() );
-    }
+  }
 }
 
 
@@ -224,12 +224,12 @@ void ctkQImageView::addImage( const QImage & image )
   d->TmpYMin = 0;
   d->TmpYMax = image.height();
   if( image.isGrayscale() )
-    {
+  {
     d->IntensityMin = 0;
     d->IntensityMax = image.colorCount();
     this->setIntensityWindowLevel(
       image.colorCount(), image.colorCount()/2 );
-    }
+  }
   this->update( true, false );
   this->setCenter( image.width()/2.0, image.height()/2.0 );
 }
@@ -247,13 +247,13 @@ double ctkQImageView::xSpacing( void )
 {
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     return( 1000.0 / d->ImageList[ d->SliceNumber ].dotsPerMeterX() );
-    }
+  }
   else
-    {
+  {
     return 1;
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -261,13 +261,13 @@ double ctkQImageView::ySpacing( void )
 {
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     return( 1000.0 / d->ImageList[ d->SliceNumber ].dotsPerMeterY() );
-    }
+  }
   else
-    {
+  {
     return 1;
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -308,11 +308,11 @@ double ctkQImageView::positionValue( void )
 {
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     QColor vc( d->ImageList[ d->SliceNumber ].pixel( d->PositionX,
       d->PositionY ) );
     return vc.value();
-    }
+  }
   return 0;
 }
 
@@ -336,7 +336,7 @@ void ctkQImageView::setSliceNumber( int slicenum )
   Q_D( ctkQImageView );
   if( slicenum >= 0 && slicenum < d->ImageList.size()
     && slicenum != d->SliceNumber )
-    {
+  {
     d->SliceNumber = slicenum;
     emit this->sliceNumberChanged( slicenum );
     emit this->xSpacingChanged( this->xSpacing() );
@@ -344,7 +344,7 @@ void ctkQImageView::setSliceNumber( int slicenum )
     emit this->sliceThicknessChanged( this->sliceThickness() );
     emit this->slicePositionChanged( this->slicePosition() );
     this->update( false, false );
-    }
+  }
 }
 //
 // -------------------------------------------------------------------------
@@ -352,13 +352,13 @@ int ctkQImageView::sliceNumber( void ) const
 {
   Q_D( const ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     return d->SliceNumber;
-    }
+  }
   else
-    {
+  {
     return -1;
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -368,13 +368,13 @@ void ctkQImageView::setIntensityWindowLevel( double iwWindow,
   Q_D( ctkQImageView );
   if( iwLevel != d->IntensityLevel ||
     iwWindow != d->IntensityWindow )
-    {
+  {
     d->IntensityLevel = iwLevel;
     d->IntensityWindow = iwWindow;
     emit this->intensityWindowChanged( iwWindow );
     emit this->intensityLevelChanged( iwLevel );
     this->update( false, false );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -396,11 +396,11 @@ void ctkQImageView::setInvertImage( bool invert )
 {
   Q_D( ctkQImageView );
   if( invert != d->InvertImage )
-    {
+  {
     d->InvertImage = invert;
     emit this->invertImageChanged( invert );
     this->update( false, false );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -415,11 +415,11 @@ void ctkQImageView::setFlipXAxis( bool flip )
 {
   Q_D( ctkQImageView );
   if( flip != d->FlipXAxis )
-    {
+  {
     d->FlipXAxis = flip;
     emit this->flipXAxisChanged( flip );
     this->update( false, false );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -434,11 +434,11 @@ void ctkQImageView::setFlipYAxis( bool flip )
 {
   Q_D( ctkQImageView );
   if( flip != d->FlipYAxis )
-    {
+  {
     d->FlipYAxis = flip;
     emit this->flipYAxisChanged( flip );
     this->update( false, false );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -454,11 +454,11 @@ void ctkQImageView::setTransposeXY( bool transpose )
 {
   Q_D( ctkQImageView );
   if( transpose != d->TransposeXY )
-    {
+  {
     d->TransposeXY = transpose;
     emit this->transposeXYChanged( transpose );
     this->update( false, false );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -473,40 +473,40 @@ void ctkQImageView::setCenter( double x, double y )
 {
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
 	  int tmpXRange = d->TmpXMax - d->TmpXMin;
     if( tmpXRange > d->ImageList[ d->SliceNumber ].width() )
-      {
+    {
       tmpXRange = d->ImageList[ d->SliceNumber ].width();
-      }
+    }
     int tmpYRange = d->TmpYMax - d->TmpYMin;
     if( tmpYRange > d->ImageList[ d->SliceNumber ].height() )
-      {
+    {
       tmpYRange = d->ImageList[ d->SliceNumber ].height();
-      }
+    }
 
     int xMin2 = static_cast<int>(x) - tmpXRange/2.0;
     if( xMin2 < 0 )
-      {
+    {
       xMin2 = 0;
-      }
+    }
     int xMax2 = xMin2 + tmpXRange;
     if( xMax2 > d->ImageList[ d->SliceNumber ].width() )
-      {
+    {
       xMax2 = d->ImageList[ d->SliceNumber ].width();
       xMin2 = xMax2 - tmpXRange;
-      }
+    }
     int yMin2 = static_cast<int>(y) - tmpYRange/2.0;
     if( yMin2 < 0 )
-      {
+    {
       yMin2 = 0;
-      }
+    }
     int yMax2 = yMin2 + tmpYRange;
     if( yMax2 > d->ImageList[ d->SliceNumber ].height() )
-      {
+    {
       yMax2 = d->ImageList[ d->SliceNumber ].height();
       yMin2 = yMax2 - tmpYRange;
-      }
+    }
     d->fitImageRectangle( xMin2, xMax2, yMin2, yMax2 );
 
     d->CenterX = x;
@@ -516,7 +516,7 @@ void ctkQImageView::setCenter( double x, double y )
     emit this->yCenterChanged( y );
 
 	  this->update( false, false );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -526,7 +526,7 @@ void ctkQImageView::setPosition( double x, double y )
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size()
     && x >= 0 && y >= 0 && x < d->ImageList[ d->SliceNumber ].width()
     && y < d->ImageList[ d->SliceNumber ].height() )
-    {
+  {
     d->PositionX = x;
     d->PositionY = y;
 
@@ -535,7 +535,7 @@ void ctkQImageView::setPosition( double x, double y )
     emit this->positionValueChanged( this->positionValue() );
 
 	  this->update( false, false );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -543,9 +543,9 @@ double ctkQImageView::zoom( void )
 {
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     return d->Zoom;
-    }
+  }
   return 1;
 }
 
@@ -554,16 +554,16 @@ void ctkQImageView::setZoom( double factor )
 {
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     const QImage * img = & d->ImageList[ d->SliceNumber ];
     if( factor < 2.0 / img->width() )
-      {
+    {
       factor = 2.0 / img->width();
-      }
+    }
     if( factor > img->width()/2.0 )
-      {
+    {
       factor = img->width()/2.0;
-      }
+    }
     d->Zoom = factor;
 
     double cx = d->CenterX;
@@ -573,30 +573,30 @@ void ctkQImageView::setZoom( double factor )
 
     int xMin2 = static_cast<int>(cx) - x2 / 2.0;
     if( xMin2 < 0 )
-      {
+    {
       xMin2 = 0;
-      }
+    }
     int xMax2 = xMin2 + x2;
     if( xMax2 > d->ImageList[ d->SliceNumber ].width() )
-      {
+    {
       xMax2 = d->ImageList[ d->SliceNumber ].width();
       xMin2 = xMax2 - x2;
-      }
+    }
     int yMin2 = static_cast<int>(cy) - y2 / 2.0;
     if( yMin2 < 0 )
-      {
+    {
       yMin2 = 0;
-      }
+    }
     int yMax2 = yMin2 + y2;
     if( yMax2 > d->ImageList[ d->SliceNumber ].height() )
-      {
+    {
       yMax2 = d->ImageList[ d->SliceNumber ].height();
       yMin2 = yMax2 - y2;
-      }
+    }
     d->fitImageRectangle( xMin2, xMax2, yMin2, yMax2 );
 
 	  this->update( true, true );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -605,20 +605,20 @@ void ctkQImageView::reset( )
   Q_D( ctkQImageView );
 
   if( d->ImageList.size() > 0 )
-    {
+  {
     if( d->SliceNumber < 0 )
-      {
+    {
       this->setSliceNumber( 0 );
-      }
     }
+  }
 
   this->setZoom( 1 );
 
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     this->setCenter( d->ImageList[ d->SliceNumber ].width()/2,
       d->ImageList[ d->SliceNumber ].height()/2 );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -627,11 +627,11 @@ void ctkQImageView::keyPressEvent( QKeyEvent * event )
   Q_D( ctkQImageView );
 
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     switch( event->key() )
-      {
+    {
       case Qt::Key_H:
-        {
+      {
         QTextEdit * help = new QTextEdit();
         help->setWindowFlags( Qt::Window );
         help->setMinimumSize( 500, 500 );
@@ -656,69 +656,69 @@ void ctkQImageView::keyPressEvent( QKeyEvent * event )
         help->show();
 
         break;
-        }
+      }
       case Qt::Key_Space:
-        {
+      {
         d->Window->setMouseTracking( ! d->Window->hasMouseTracking() );
         break;
-        }
+      }
       case Qt::Key_X:
-        {
+      {
         this->setFlipXAxis( ! this->flipXAxis() );
         break;
-        }
+      }
       case Qt::Key_Y:
-        {
+      {
         this->setFlipYAxis( ! this->flipYAxis() );
         break;
-        }
+      }
       case Qt::Key_T:
-        {
+      {
         this->setTransposeXY( ! this->transposeXY() );
         break;
-        }
+      }
       case Qt::Key_BracketRight:
-        {
+      {
         this->setZoom( this->zoom() * 1.1 );
         break;
-        }
+      }
       case Qt::Key_BracketLeft:
-        {
+      {
         this->setZoom( this->zoom() * 0.9 );
         break;
-        }
+      }
       case Qt::Key_I:
-        {
+      {
         this->setInvertImage( ! this->invertImage() );
         this->update( false, false );
         break;
-        }
+      }
       case Qt::Key_Q:
-        {
+      {
         exit( EXIT_SUCCESS );
         break;
-        }
+      }
       case Qt::Key_R:
-        {
+      {
         this->reset();
         break;
-        }
+      }
       case Qt::Key_Up:
-        {
+      {
         this->setSliceNumber( d->SliceNumber+1 );
         break;
-        }
+      }
       case Qt::Key_Down:
-        {
+      {
         this->setSliceNumber( d->SliceNumber-1 );
         break;
-        }
+      }
       default:
-        {
+      {
         event->ignore();
-        }
-      };
-    }
+      }
+    };
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -726,52 +726,52 @@ void ctkQImageView::mousePressEvent( QMouseEvent * event )
 {
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     switch( event->button() )
-      {
+    {
       case Qt::LeftButton:
-        {
+      {
         d->MouseLeftDragging = true;
         d->MouseLastX = event->x();
         d->MouseLastY = event->y();
         d->MouseLastIntensityWindow = this->intensityWindow();
         d->MouseLastIntensityLevel = this->intensityLevel();
         break;
-        }
+      }
       case Qt::MiddleButton:
-        {
+      {
         d->MouseMiddleDragging = true;
         d->MouseLastX = event->x();
         d->MouseLastY = event->y();
         d->MouseLastZoom = this->zoom();
         break;
-        }
+      }
       case Qt::RightButton:
-        {
+      {
         d->MouseRightDragging = true;
         double relativeX = static_cast<double>( event->x() )
           / this->width();
         double relativeY = static_cast<double>( event->y() )
           / this->height();
         if( d->FlipXAxis )
-          {
+        {
           relativeX = 1 - relativeX;
-          }
+        }
         if( d->FlipYAxis )
-          {
+        {
           relativeY = 1 - relativeY;
-          }
+        }
         double x = (d->TmpXMax - d->TmpXMin) * relativeX + d->TmpXMin;
         double y = (d->TmpYMax - d->TmpYMin) * relativeY + d->TmpYMin;
         this->setCenter( x, y );
         break;
-        }
+      }
       default:
-        {
+      {
         event->ignore();
-        }
-      };
-    }
+      }
+    };
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -789,79 +789,79 @@ void ctkQImageView::mouseMoveEvent( QMouseEvent * event )
 {
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     if( d->MouseLeftDragging )
-      {
+    {
       double distX = event->x() - d->MouseLastX;
       double distY = event->y() - d->MouseLastY;
       double deltaWin = ( distX / this->height() );
       if( deltaWin < 0 )
-        {
+      {
         // Heuristic to make shrinking proportional to enlarging
         deltaWin *= -deltaWin;
-        }
+      }
       double deltaLevel = ( distY / this->width() );
       if( deltaLevel < 0 )
-        {
+      {
         // Heuristic to make shrinking proportional to enlarging
         deltaLevel *= -deltaLevel;
-        }
+      }
       double iRange = d->IntensityMax - d->IntensityMin;
       deltaWin *= iRange;
       deltaLevel *= iRange;
       double newWin = d->MouseLastIntensityWindow + deltaWin;
       double newLevel = d->MouseLastIntensityLevel + deltaLevel;
       this->setIntensityWindowLevel( newWin, newLevel );
-      }
+    }
     else if( d->MouseMiddleDragging )
-      {
+    {
       double distY = d->MouseLastY - event->y();
       double deltaZ = 2 * (distY / this->height());
       if( deltaZ < 0 )
-        {
+      {
         // Heuristic to make shrinking proportional to enlarging
         deltaZ *= -deltaZ;
-        }
+      }
       double newZoom = d->MouseLastZoom + deltaZ;
       this->setZoom( newZoom );
-      }
+    }
     else if( d->MouseRightDragging )
-      {
+    {
       double relativeX = static_cast<double>( event->x() )
         / this->width();
       double relativeY = static_cast<double>( event->y() )
         / this->height();
       if( d->FlipXAxis )
-        {
+      {
         relativeX = 1 - relativeX;
-        }
+      }
       if( d->FlipYAxis )
-        {
+      {
         relativeY = 1 - relativeY;
-        }
+      }
       double x = (d->TmpXMax - d->TmpXMin) * relativeX + d->TmpXMin;
       double y = (d->TmpYMax - d->TmpYMin) * relativeY + d->TmpYMin;
       this->setCenter( x, y );
-      }
+    }
     else
-      {
+    {
       double relativeX = static_cast<double>( event->x() )
         / this->width();
       double relativeY = static_cast<double>( event->y() )
         / this->height();
       if( d->FlipXAxis )
-        {
+      {
         relativeX = 1 - relativeX;
-        }
+      }
       if( d->FlipYAxis )
-        {
+      {
         relativeY = 1 - relativeY;
-        }
+      }
       double x = (d->TmpXMax - d->TmpXMin) * relativeX + d->TmpXMin;
       double y = (d->TmpYMax - d->TmpYMin) * relativeY + d->TmpYMin;
       this->setPosition( x, y );
-      }
     }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -893,110 +893,110 @@ void ctkQImageView::update( bool zoomChanged,
 {
   Q_D( ctkQImageView );
   if( d->SliceNumber >= 0 && d->SliceNumber < d->ImageList.size() )
-    {
+  {
     const QImage * img = & ( d->ImageList[ d->SliceNumber ] );
     if( zoomChanged || sizeChanged )
-      {
+    {
       if( this->width() > 0 &&  this->height() > 0
         && d->TmpXMax > d->TmpXMin && d->TmpYMax > d->TmpYMin)
-        {
+      {
         int tmpXRange = d->TmpXMax - d->TmpXMin;
         int tmpYRange = d->TmpYMax - d->TmpYMin;
         double tmpAspectRatio = static_cast<double>(tmpYRange) / tmpXRange;
         double screenAspectRatio = static_cast<double>(this->height())
           / this->width();
         if( screenAspectRatio > tmpAspectRatio )
-          {
+        {
           int extraTmpYAbove = d->TmpYMin;
           int extraTmpYBelow = img->height() - d->TmpYMax;
           int extraTmpYNeeded = tmpXRange * screenAspectRatio
             - tmpYRange;
           int minExtra = extraTmpYAbove;
           if( extraTmpYBelow < minExtra )
-            {
+          {
             minExtra = extraTmpYBelow;
-            }
+          }
           if(2 * minExtra >= extraTmpYNeeded)
-            {
+          {
             int minNeeded = extraTmpYNeeded / 2.0;
             int maxNeeded = extraTmpYNeeded - minNeeded;
             d->TmpYMin -= minNeeded;
             d->TmpYMax += maxNeeded;
-            }
+          }
           else if(extraTmpYAbove + extraTmpYBelow >= extraTmpYNeeded)
-            {
+          {
             if(extraTmpYAbove < extraTmpYBelow)
-              {
+            {
               d->TmpYMin = 0;
               d->TmpYMax += extraTmpYNeeded - extraTmpYAbove;
-              }
+            }
             else
-              {
+            {
               d->TmpYMax = img->height();
               d->TmpYMin -= extraTmpYNeeded - extraTmpYBelow;
-              }
             }
+          }
           else
-            {
+          {
             d->TmpYMin = 0;
             d->TmpYMax = img->height();
-            }
+          }
           d->TmpImage = QPixmap( this->width(),
             static_cast<unsigned int>(
               static_cast<double>(d->TmpYMax - d->TmpYMin)
               / (d->TmpXMax - d->TmpXMin)
               * this->width() + 0.5 ) );
-          }
+        }
         else if(screenAspectRatio < tmpAspectRatio)
-          {
+        {
           int extraTmpXLeft = d->TmpXMin;
           int extraTmpXRight = img->width() - d->TmpXMax;
           int extraTmpXNeeded = static_cast<double>(tmpYRange)
             / screenAspectRatio - tmpXRange;
           int minExtra = extraTmpXLeft;
           if( extraTmpXRight < minExtra )
-            {
+          {
             minExtra = extraTmpXRight;
-            }
+          }
           if(2 * minExtra >= extraTmpXNeeded)
-            {
+          {
             int minNeeded = extraTmpXNeeded / 2.0;
             int maxNeeded = extraTmpXNeeded - minNeeded;
             d->TmpXMin -= minNeeded;
             d->TmpXMax += maxNeeded;
-            }
+          }
           else if(extraTmpXLeft + extraTmpXRight >= extraTmpXNeeded)
-            {
+          {
             if(extraTmpXLeft < extraTmpXRight)
-              {
+            {
               d->TmpXMin = 0;
               d->TmpXMax += extraTmpXNeeded - extraTmpXLeft;
-              }
+            }
             else
-              {
+            {
               d->TmpXMax = img->width();
               d->TmpXMin -= extraTmpXNeeded - extraTmpXRight;
-              }
             }
+          }
            else
-            {
+           {
             d->TmpXMin = 0;
             d->TmpXMax = img->width();
-            }
+           }
           d->TmpImage = QPixmap( static_cast<unsigned int>( this->height()
             / ( static_cast<double>(d->TmpYMax - d->TmpYMin)
             / (d->TmpXMax - d->TmpXMin) )
             + 0.5 ), this->height() );
-          }
+        }
         else
-          {
+        {
           d->TmpImage = QPixmap( this->width(),  this->height() );
-          }
         }
       }
+    }
 
     if( d->TmpImage.width() > 0 &&  d->TmpImage.height() > 0)
-      {
+    {
       QRectF target( 0, 0, d->TmpImage.width(), d->TmpImage.height() );
       double sourceX = d->TmpXMin;
       double sourceY = d->TmpYMin;
@@ -1005,34 +1005,34 @@ void ctkQImageView::update( bool zoomChanged,
       QPainter painter( &(d->TmpImage) );
       QImage tmpI = *img;
       if( d->InvertImage )
-        {
+      {
         tmpI.invertPixels();
-        }
+      }
       if( d->FlipXAxis || d->FlipYAxis )
-        {
+      {
         tmpI = tmpI.mirrored( d->FlipXAxis, d->FlipYAxis );
         if( d->FlipXAxis )
-          {
+        {
           sourceX = tmpI.width() - (d->TmpXMax - d->TmpXMin) - d->TmpXMin;
-          }
-        if( d->FlipYAxis )
-          {
-          sourceY = tmpI.height() - (d->TmpYMax - d->TmpYMin) - d->TmpYMin;
-          }
         }
+        if( d->FlipYAxis )
+        {
+          sourceY = tmpI.height() - (d->TmpYMax - d->TmpYMin) - d->TmpYMin;
+        }
+      }
       QRectF source( sourceX, sourceY, sourceW, sourceH );
       painter.drawPixmap( target, QPixmap::fromImage( tmpI ), source );
 
       //if( ! sizeChanged )
-        {
+      {
         int maxNumCharsPerLine = 50;
         int fontPointSize = 12;
         if( fontPointSize * maxNumCharsPerLine > this->width() )
-          {
+        {
           fontPointSize = this->width() / maxNumCharsPerLine;
-          }
+        }
         if( fontPointSize > 7 )
-          {
+        {
           QString fontFamily( "Helvetica" );
           QFont textFont( fontFamily, fontPointSize );
           painter.setFont( textFont );
@@ -1048,7 +1048,7 @@ void ctkQImageView::update( bool zoomChanged,
             "X" );
 
           if( img->isGrayscale() )
-            {
+          {
             QString intString = tr("Intensity Range = %1 .. %2").arg(
               QString::number( d->IntensityMin, 'f', 3 ),
               QString::number( d->IntensityMax, 'f', 3 ));
@@ -1072,7 +1072,7 @@ void ctkQImageView::update( bool zoomChanged,
               wlBound.width(), wlBound.height() );
             painter.drawText( wlRect, textFlags, wlString,
               &wlBound );
-            }
+          }
 
           QString spacingString = tr("Spacing = %1, %2, %3")
             .arg(QString::number(this->xSpacing()), 'f', 3)
@@ -1133,7 +1133,7 @@ void ctkQImageView::update( bool zoomChanged,
             ijkBound.y() - valBound.height() - spaceBound.height()/8,
             valBound.width(), valBound.height() );
           painter.drawText( valRect, textFlags, valString, &valBound );
-          }
+        }
 
         QColor lineColor;
         lineColor.setNamedColor( "red" );
@@ -1144,24 +1144,24 @@ void ctkQImageView::update( bool zoomChanged,
         double y = ( this->yPosition() - d->TmpYMin )
           / (d->TmpYMax - d->TmpYMin) * this->height();
         if( d->FlipXAxis )
-          {
+        {
           x = this->width() - x;
-          }
+        }
         if( d->FlipYAxis )
-          {
+        {
           y = this->height() - y;
-          }
+        }
         QLine lineX( x, 0, x, this->height() );
         painter.drawLine( lineX );
         QLine lineY( 0, y, this->width(), y );
         painter.drawLine( lineY );
-        }
       }
+    }
 
     d->Window->setPixmap( d->TmpImage );
-    }
+  }
   else
-    {
+  {
     d->Window->setText(tr("No Image Loaded."));
-    }
+  }
 }

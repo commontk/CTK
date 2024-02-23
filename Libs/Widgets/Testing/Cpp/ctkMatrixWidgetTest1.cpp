@@ -38,9 +38,9 @@ int ctkMatrixWidgetTest1(int argc, char * argv [] )
   matrixWidget.setRowCount(8);
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

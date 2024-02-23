@@ -60,16 +60,16 @@ int ctkVTKCompositeFunction::count()const
   // count points from piecewise
   // could be from color transfer function
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
     return -1;
-    }
+  }
 
   if (d->ColorTransferFunction.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->ColorTransferFunction.GetPointer());
     return -1;
-    }
+  }
   //qDebug() << "Piecewise: " << d->PiecewiseFunction->GetSize();
   //qDebug() << "Color Transfer: " << d->ColorTransferFunction->GetSize();
 
@@ -96,12 +96,12 @@ void ctkVTKCompositeFunction::range(qreal& minRange, qreal& maxRange)const
 {
   Q_D(const ctkVTKCompositeFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
     minRange = 1.;
     maxRange = 0.;
     return;
-    }
+  }
   double rangeValues[2];
   d->PiecewiseFunction->GetRange(rangeValues);
   minRange = rangeValues[0];
@@ -113,18 +113,18 @@ QVariant ctkVTKCompositeFunction::minValue()const
 {
   Q_D(const ctkVTKCompositeFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
     return -1;
-    }
+  }
   //Initialize to max value
   double minValue = VTK_DOUBLE_MAX;
   for (int i = 0; i < this->count(); ++i)
-    {
+  {
     double value[4];
     d->PiecewiseFunction->GetNodeValue(i, value);
     minValue = qMin(value[1], minValue);
-    }
+  }
   return minValue;
 }
 
@@ -133,18 +133,18 @@ QVariant ctkVTKCompositeFunction::maxValue()const
 {
   Q_D(const ctkVTKCompositeFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
     return -1;
-    }
+  }
   //Initialize to min value
   double maxValue = VTK_DOUBLE_MIN;
   for (int i = 0; i < this->count(); ++i)
-    {
+  {
     double value[4];
     d->PiecewiseFunction->GetNodeValue(i, value);
     maxValue = qMax(maxValue, value[1]);
-    }
+  }
   return maxValue;
 }
 
@@ -185,14 +185,14 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
 #endif
   // if only 2 points -> linear
   if (index + 1 >= this->count())
-    {
+  {
     ctkControlPoint* cp = new ctkControlPoint();
     cp->P.X = valuesPWF[0];
     // update value of QVariant
     cp->P.Value = QColor::fromRgbF(
       valuesCTF[1], valuesCTF[2], valuesCTF[3], valuesPWF[1]);
     return cp;
-    }
+  }
 
   //else
 
@@ -221,13 +221,13 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
 #endif
   // Optimization: don't use subPoints if the ramp is linear (sharpness == 0)
   if (valuesPWF[3] == 0. && valuesCTF[5] == 0.)
-    {
+  {
     cp->SubPoints << ctkPoint(valuesPWF[0], QColor::fromRgbF(
       valuesCTF[1], valuesCTF[2], valuesCTF[3], valuesPWF[1]));
     cp->SubPoints << ctkPoint(nextValuesPWF[0], QColor::fromRgbF(
       nextValuesCTF[1], nextValuesCTF[2], nextValuesCTF[3], nextValuesPWF[1]));
     return cp;
-    }
+  }
 
   double subPointsCTF[300];
   double subPointsPWF[100];
@@ -236,14 +236,14 @@ ctkControlPoint* ctkVTKCompositeFunction::controlPoint(int index)const
   qreal interval = (nextValuesCTF[0] - cp->x()) / 99.;
 
   for(int i = 0; i < 100; ++i)
-    {
+  {
     qreal red =  subPointsCTF[3*i];
     qreal green =  subPointsCTF[3*i+1];
     qreal blue =  subPointsCTF[3*i+2];
     qreal alpha = subPointsPWF[i];
     QColor compositeValue = QColor::fromRgbF(red, green, blue, alpha );
     cp->SubPoints << ctkPoint(cp->x() + interval*i, compositeValue);
-    }
+  }
   return cp;
 }
 
@@ -275,9 +275,9 @@ int ctkVTKCompositeFunction::insertControlPoint(const ctkControlPoint& cp)
   int index = -1;
   // check piecewise
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     return index;
-    }
+  }
   // cp: x
   // value = rgba
   /*
@@ -304,14 +304,14 @@ int ctkVTKCompositeFunction::insertControlPoint(qreal pos)
   int index = -1;
   // check piecewise
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     return index;
-    }
+  }
   //check color tf
   if (d->ColorTransferFunction.GetPointer() == 0)
-    {
+  {
     return index;
-    }
+  }
 
   // Add color to CTF
   double color[3];

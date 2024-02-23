@@ -115,26 +115,26 @@ ctkCoreSettings::ctkCoreSettings(QObject* parentObject)
 void ctkCoreSettings::setPathValue(const QString& key, const QVariant& value)
 {
   if (!value.isValid() || value.isNull())
-    {
+  {
     this->setValue(key, value);
-    }
+  }
   else if (QString(value.typeName()).compare("QStringList") == 0)
-    {
+  {
     // string list
     QStringList relativePaths = this->toApplicationHomeRelativePaths(value.toStringList());
     this->setValue(key, relativePaths);
-    }
+  }
   else if (value.canConvert<QString>())
-    {
+  {
     // single string
     QString relativePath = this->toApplicationHomeRelativePath(value.toString());
     this->setValue(key, relativePath);
-    }
+  }
   else
-    {
+  {
     qWarning() << Q_FUNC_INFO << ": cannot interpret value type " << value.typeName() << " as path";
     this->setValue(key, value);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -142,26 +142,26 @@ QVariant ctkCoreSettings::pathValue(const QString& key, const QVariant& defaultV
 {
   QVariant value = this->value(key, defaultValue);
   if (!value.isValid() || value.isNull())
-    {
+  {
     return value;
-    }
+  }
   else if (QString(value.typeName()).compare("QStringList") == 0)
-    {
+  {
     // string list
     QStringList relativePaths = this->toApplicationHomeAbsolutePaths(value.toStringList());
     return relativePaths;
-    }
+  }
   else if (value.canConvert<QString>())
-    {
+  {
     // single string
     QString relativePath = this->toApplicationHomeAbsolutePath(value.toString());
     return relativePath;
-    }
+  }
   else
-    {
+  {
     qWarning() << Q_FUNC_INFO << ": cannot interpret value type " << value.typeName() << " as path";
     return value;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -169,9 +169,9 @@ QString ctkCoreSettings::toApplicationHomeAbsolutePath(const QString& path) cons
 {
   Q_D(const ctkCoreSettings);
   if (path.isEmpty() || d->ApplicationHomeDirectory.isEmpty())
-    {
+  {
     return path;
-    }
+  }
   QString absolutePath = path;
   absolutePath.replace(d->ApplicationHomePlaceholder, QDir::cleanPath(d->ApplicationHomeDirectory));
   return absolutePath;
@@ -182,14 +182,14 @@ QString ctkCoreSettings::toApplicationHomeRelativePath(const QString& path) cons
 {
   Q_D(const ctkCoreSettings);
   if (path.isEmpty() || d->ApplicationHomeDirectory.isEmpty())
-    {
+  {
     return path;
-    }
+  }
   if (path.contains(d->ApplicationHomePlaceholder))
-    {
+  {
     // already relative path
     return path;
-    }
+  }
   // Check if path is within ApplicationHomeDirectory
   // startsWith(const QString &s, Qt::CaseSensitivity cs = Qt::CaseSensitive) const
   QString cleanHomeDir = QDir::cleanPath(d->ApplicationHomeDirectory);
@@ -198,9 +198,9 @@ QString ctkCoreSettings::toApplicationHomeRelativePath(const QString& path) cons
   // (and the path may not even exist), so we choose case insensitive comparison to
   // make child folder detection more robust.
   if (!cleanPath.startsWith(cleanHomeDir, Qt::CaseInsensitive))
-    {
+  {
     return path;
-    }
+  }
   // relative path
   QString relativePath = QDir(cleanHomeDir).relativeFilePath(cleanPath);
   return QDir(d->ApplicationHomePlaceholder).filePath(relativePath);
@@ -211,9 +211,9 @@ QStringList ctkCoreSettings::toApplicationHomeAbsolutePaths(const QStringList& p
 {
   QStringList absolutePaths;
   foreach(QString path, paths)
-    {
+  {
     absolutePaths << this->toApplicationHomeAbsolutePath(path);
-    }
+  }
   return absolutePaths;
 }
 
@@ -223,8 +223,8 @@ QStringList ctkCoreSettings::toApplicationHomeRelativePaths(const QStringList& p
 {
   QStringList relativePaths;
   foreach(QString path, paths)
-    {
+  {
     relativePaths << this->toApplicationHomeRelativePath(path);
-    }
+  }
   return relativePaths;
 }

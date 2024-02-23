@@ -211,13 +211,13 @@ void ctkDICOMServer::setRetrieveProtocolAsString(const QString& protocolString)
   Q_D(ctkDICOMServer);
 
   if (protocolString == "CGET")
-    {
+  {
     d->RetrieveProtocol = RetrieveProtocol::CGET;
-    }
+  }
   else if (protocolString == "CMOVE")
-    {
+  {
     d->RetrieveProtocol = RetrieveProtocol::CMOVE;
-    }
+  }
   /*else if (protocolString == "WADO") To Do
     {
     d->RetrieveProtocol = RetrieveProtocol::WADO;
@@ -231,7 +231,7 @@ QString ctkDICOMServer::retrieveProtocolAsString() const
 
   QString protocolString = "";
   switch (d->RetrieveProtocol)
-    {
+  {
     case RetrieveProtocol::CGET:
       protocolString = "CGET";
       break;
@@ -243,7 +243,7 @@ QString ctkDICOMServer::retrieveProtocolAsString() const
       break; */
     default:
       break;
-    }
+  }
 
   return protocolString;
 }

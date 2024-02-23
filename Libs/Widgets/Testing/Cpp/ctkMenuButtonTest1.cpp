@@ -59,9 +59,9 @@ int ctkMenuButtonTest1(int argc, char * argv [] )
   topLevelWidget.resize(200, 100);
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

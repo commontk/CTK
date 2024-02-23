@@ -62,10 +62,10 @@ int ctkVTKLookupTable::count()const
 {
   Q_D(const ctkVTKLookupTable);
   if (d->LookupTable.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->LookupTable.GetPointer());
     return -1;
-    }
+  }
   return d->LookupTable->GetNumberOfColors();
 }
 
@@ -86,12 +86,12 @@ void ctkVTKLookupTable::range(qreal& minRange, qreal& maxRange)const
 {
   Q_D(const ctkVTKLookupTable);
   if (d->LookupTable.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->LookupTable.GetPointer());
     minRange = 1.; // set incorrect values
     maxRange = 0.;
     return;
-    }
+  }
   double rangeValues[2];
   d->LookupTable->GetTableRange(rangeValues);
   minRange = rangeValues[0];
@@ -103,10 +103,10 @@ QVariant ctkVTKLookupTable::minValue()const
 {
   Q_D(const ctkVTKLookupTable);
   if (d->LookupTable.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->LookupTable.GetPointer());
     return QColor();
-    }
+  }
   QColor minValue = QColor::fromHsvF(
     d->LookupTable->GetHueRange()[0],
     d->LookupTable->GetSaturationRange()[0],
@@ -120,10 +120,10 @@ QVariant ctkVTKLookupTable::maxValue()const
 {
   Q_D(const ctkVTKLookupTable);
   if (d->LookupTable.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->LookupTable.GetPointer());
     return QColor();
-    }
+  }
   QColor maxValue = QColor::fromHsvF(
     d->LookupTable->GetHueRange()[1],
     d->LookupTable->GetSaturationRange()[1],

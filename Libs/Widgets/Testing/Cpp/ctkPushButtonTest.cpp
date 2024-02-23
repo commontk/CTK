@@ -54,7 +54,7 @@ public:
 public slots:
 
   void nextMode()
-  {
+{
     switch (mode)
     {
     case 0:
@@ -111,7 +111,7 @@ public slots:
       return;
     }
     this->mode++;
-  }
+}
 private:
   ctkPushButton* button;
   int mode;

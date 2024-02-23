@@ -129,23 +129,23 @@ void ctkVTKChartViewPrivate::init()
 void ctkVTKChartViewPrivate::chartBounds(double* bounds)const
 {
   if (!bounds)
-    {
+  {
     return;
-    }
+  }
   Q_Q(const ctkVTKChartView);
   bounds[0] = bounds[2] = bounds[4] = bounds[6] = VTK_DOUBLE_MAX;
   bounds[1] = bounds[3] = bounds[5] = bounds[7] = VTK_DOUBLE_MIN;
   vtkChartXY* chart = q->chart();
   const vtkIdType plotCount = chart->GetNumberOfPlots();
   for (vtkIdType i = 0; i < plotCount; ++i)
-    {
+  {
     vtkPlot* plot = chart->GetPlot(i);
 
     int corner = chart->GetPlotCorner(plot);
     double plotBounds[4];
     plot->GetBounds(plotBounds);
     switch (corner)
-      {
+    {
       // bottom left
       case 0:
         // x
@@ -182,8 +182,8 @@ void ctkVTKChartViewPrivate::chartBounds(double* bounds)const
         bounds[0] = bounds[0] > plotBounds[2] ? plotBounds[2] : bounds[1];
         bounds[1] = bounds[0] < plotBounds[3] ? plotBounds[3] : bounds[1];
         break;
-      }
     }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -258,9 +258,9 @@ void ctkVTKChartView::removePlot(vtkPlot* plot)
   Q_D(ctkVTKChartView);
   vtkIdType index = this->plotIndex(plot);
   if (index == vtkIdType(-1))
-    {
+  {
     return;
-    }
+  }
   d->Chart->RemovePlot(index);
   emit this->plotRemoved(plot);
   this->onChartUpdated();
@@ -271,9 +271,9 @@ void ctkVTKChartView::removeAllPlots()
 {
   Q_D(ctkVTKChartView);
   while(d->Chart->GetNumberOfPlots() > 0)
-    {
+  {
     this->removePlot(d->Chart->GetPlot(0));
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -282,12 +282,12 @@ vtkIdType ctkVTKChartView::plotIndex(vtkPlot* plot)
   Q_D(ctkVTKChartView);
   // GetPlotIndex is missing from vtkChart API
   for (vtkIdType i = 0; i < d->Chart->GetNumberOfPlots(); ++i)
-    {
+  {
     if (plot == d->Chart->GetPlot(i))
-      {
+    {
       return i;
-      }
     }
+  }
   return -1;
 }
 
@@ -307,18 +307,18 @@ void ctkVTKChartView::onChartUpdated()
       oldBounds[5] != newBounds[5] ||
       oldBounds[6] != newBounds[6] ||
       oldBounds[7] != newBounds[7])
-    {
+  {
     emit boundsChanged();
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKChartView::chartExtent(double* extent)const
 {
   if (!extent)
-    {
+  {
     return;
-    }
+  }
   extent[0] = extent[2] = extent[4] = extent[6] = VTK_DOUBLE_MAX;
   extent[1] = extent[3] = extent[5] = extent[7] = VTK_DOUBLE_MIN;
   vtkChartXY* chart = this->chart();
@@ -340,10 +340,10 @@ void ctkVTKChartView::chartExtent(double* extent)const
 void ctkVTKChartView::setChartUserExtent(double* userExtent)
 {
   if (!userExtent)
-    {
+  {
     qCritical() << Q_FUNC_INFO << ": Invalid user extent";
     return;
-    }
+  }
   vtkChartXY* chart = this->chart();
   vtkAxis* axis = chart->GetAxis(vtkAxis::BOTTOM);
   axis->SetRange(userExtent[0], userExtent[1]);
@@ -360,14 +360,14 @@ void ctkVTKChartView::chartBounds(double* bounds)const
 {
   Q_D(const ctkVTKChartView);
   if (d->UserBounds[1] < d->UserBounds[0])
-    {
+  {
     // Invalid user bounds, return the real chart bounds
     d->chartBounds(bounds);
-    }
+  }
   else
-    {
+  {
     this->chartUserBounds(bounds);
-    }
+  }
   memcpy(d->OldBounds, bounds, 8 * sizeof(double));
 }
 
@@ -376,9 +376,9 @@ void ctkVTKChartView::setChartUserBounds(double* userBounds)
 {
   Q_D(ctkVTKChartView);
   for (int i= 0; i < 8; ++i)
-    {
+  {
     d->UserBounds[i] = userBounds[i];
-    }
+  }
   this->onChartUpdated();
 }
 
@@ -387,9 +387,9 @@ void ctkVTKChartView::chartUserBounds(double* bounds)const
 {
   Q_D(const ctkVTKChartView);
   for (int i= 0; i < 8; ++i)
-    {
+  {
     bounds[i] = d->UserBounds[i];
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -399,12 +399,12 @@ void ctkVTKChartView::setAxesToChartBounds()
   double bounds[8];
   this->chartBounds(bounds);
   for (int i = 0; i < chart->GetNumberOfAxes(); ++i)
-    {
+  {
     if (bounds[2*i] != VTK_DOUBLE_MAX)
-      {
+    {
       chart->GetAxis(i)->SetRange(bounds[2*i], bounds[2*i+1]);
-      }
     }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -414,13 +414,13 @@ void ctkVTKChartView::boundAxesToChartBounds()
   double bounds[8];
   this->chartBounds(bounds);
   for (int i = 0; i < chart->GetNumberOfAxes(); ++i)
-    {
+  {
     if (bounds[2*i] != VTK_DOUBLE_MAX)
-      {
+    {
       chart->GetAxis(i)->SetMinimumLimit(bounds[2*i]);
       chart->GetAxis(i)->SetMaximumLimit(bounds[2*i + 1]);
-      }
     }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -436,8 +436,8 @@ void ctkVTKChartView::chartBoundsToPlotBounds(double bounds[8], double plotBound
 void ctkVTKChartView::mouseDoubleClickEvent(QMouseEvent* event)
 {
   if (event->button() == Qt::MiddleButton)
-    {
+  {
     this->setAxesToChartBounds();
-    }
+  }
   this->Superclass::mouseDoubleClickEvent(event);
 }

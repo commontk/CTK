@@ -51,10 +51,10 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
   parser.process(app); // Automatically exit if there is a parsing error
 
   if (parser.positionalArguments().count() != 1)
-    {
+  {
     std::cerr << qPrintable(parser.helpText()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString directoryToImport = parser.positionalArguments().at(0);
 
@@ -66,10 +66,10 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
   QString dbDir = tempFileInfo.absoluteFilePath();
   qDebug() << "\n\nUsing directory: " << dbDir;
   if (tempFileInfo.exists())
-    {
+  {
     qDebug() << "\n\nRemoving directory: " << dbDir;
     ctk::removeDirRecursively(dbDir);
-    }
+  }
   qDebug() << "\n\nMaking directory: " << dbDir;
   QDir dir(dbDir);
   dir.mkdir(dbDir);
@@ -89,15 +89,15 @@ int ctkDICOMAppWidgetTest1( int argc, char * argv [] )
     || appWidget.studiesAddedDuringImport() != 1
     || appWidget.seriesAddedDuringImport() != 1
     || appWidget.instancesAddedDuringImport() != 100)
-    {
+  {
     qDebug() << "\n\nDirectory did not import as expected!\n\n";
     return EXIT_FAILURE;
-    }
+  }
 
   if (!parser.isSet("I"))
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   qDebug() << "\n\nAdded to database directory: " << dbDir;
   return app.exec();
 }

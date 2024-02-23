@@ -209,18 +209,18 @@ QStandardItem* ctkFlatProxyModelTester
 {
   QStandardItem* item = new QStandardItem(name);
   if (children.canConvert<QString>())
-    {
+  {
     QStandardItem* leaf = new QStandardItem(children.toString());
     item->appendRow(leaf);
     return item;
-    }
+  }
   QMap<QString, QVariant> hash = children.toMap();
   QMap<QString, QVariant>::iterator i = hash.begin();
   for ( ; i != hash.end(); ++i)
-    {
+  {
     QStandardItem* childItem = this->createItem(i.key(), i.value());
     item->appendRow(childItem);
-    }
+  }
   return item;
 }
 
@@ -238,10 +238,10 @@ void ctkFlatProxyModelTester::testModel()
   QMap<QString, QVariant> hash = hashModel.toMap();
   QMap<QString, QVariant>::iterator i = hash.begin();
   for ( ; i != hash.end(); ++i)
-    {
+  {
     QStandardItem* childItem = this->createItem(i.key(), i.value());
     model.appendRow(childItem);
-    }
+  }
 
   ctkFlatProxyModel flattenModel;
   flattenModel.setEndFlattenLevel(endFlattenLevel);

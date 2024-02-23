@@ -58,32 +58,32 @@ int ctkProxyStyleTest1(int argc, char * argv [])
   QVBoxLayout* topLevelLayout = new QVBoxLayout(&topLevel);
   topLevel.setLayout(topLevelLayout);
   for (int i = 0; i < 2 ; ++i)
-    {
+  {
     ctkCollapsibleButton* button = new ctkCollapsibleButton;
     QVBoxLayout* buttonLayout = new QVBoxLayout(button);
     button->setLayout(buttonLayout);
     for (int j = 0; j < 2; ++j)
-      {
+    {
       ctkCollapsibleGroupBox* groupBox = new ctkCollapsibleGroupBox;
       QVBoxLayout* groupBoxLayout = new QVBoxLayout(groupBox);
       groupBox->setLayout(groupBoxLayout);
       for (int k = 0; k < 2; ++k)
-        {
+      {
         ctkCheckBox* checkBox = new ctkCheckBox;
         checkBox->setIndicatorIcon(icon);
         groupBoxLayout->addWidget(checkBox);
-        }
-      buttonLayout->addWidget(groupBox);
       }
-    topLevelLayout->addWidget(button);
+      buttonLayout->addWidget(groupBox);
     }
+    topLevelLayout->addWidget(button);
+  }
 
   topLevel.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

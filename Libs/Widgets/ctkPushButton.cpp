@@ -62,55 +62,55 @@ QRect ctkPushButtonPrivate::iconRect()const
   int buttonWidth = opt.rect.width();
   uint tf = this->ButtonTextAlignment;
   if (q->style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, q))
-    {
+  {
     tf |= Qt::TextShowMnemonic;
-    }
+  }
   else
-    {
+  {
     tf |= Qt::TextHideMnemonic;
-    }
+  }
 
   int iconSpacing = this->IconSpacing; // whitespace between icon and text
   int buttonMargin = q->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, q); // whitespace between label and the frame
   if (this->IconAlignment & Qt::AlignLeft)
-    {
+  {
     rect = QRect(opt.rect.x() + buttonMargin,
                  (buttonHeight - iconSize.height()) / 2,
                  iconSize.width(), iconSize.height());
-    }
+  }
   else if (this->IconAlignment & Qt::AlignHCenter)
-    {
+  {
     int w = iconSize.width();
 
     QString text = opt.text;
     if (this->ElideMode != Qt::ElideNone)
-      {
+    {
       text = opt.fontMetrics.elidedText(text, this->ElideMode, buttonWidth /*  - 2 * buttonMargin */ - iconSize.width() - iconSpacing - buttonMargin);
-      }
+    }
     int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, text).width();
 
     if (!text.isEmpty() && (this->ButtonTextAlignment & Qt::AlignHCenter))
-      {
+    {
       w += textWidth + iconSpacing;
-      }
+    }
     rect = QRect(opt.rect.x() + buttonWidth / 2 - w / 2,
                  (buttonHeight - iconSize.height()) / 2,
                  iconSize.width(), iconSize.height());
     if (this->ButtonTextAlignment & Qt::AlignLeft)
-      {
-      rect.moveLeft(opt.rect.x() + buttonMargin + textWidth);
-      }
-    else if (this->ButtonTextAlignment & Qt::AlignRight)
-      {
-      rect.moveRight(opt.rect.right() - buttonMargin - textWidth - iconSpacing);
-      }
-    }
-  else if (this->IconAlignment & Qt::AlignRight)
     {
+      rect.moveLeft(opt.rect.x() + buttonMargin + textWidth);
+    }
+    else if (this->ButtonTextAlignment & Qt::AlignRight)
+    {
+      rect.moveRight(opt.rect.right() - buttonMargin - textWidth - iconSpacing);
+    }
+  }
+  else if (this->IconAlignment & Qt::AlignRight)
+  {
     rect = QRect(opt.rect.right() - iconSize.width() - iconSpacing,
                  (buttonHeight - iconSize.height()) / 2,
                  iconSize.width(), iconSize.height());
-    }
+  }
   return rect;
 }
 
@@ -134,20 +134,20 @@ QSize ctkPushButtonPrivate::buttonSizeHint(bool computeMinimum)const
   QString string(q->text());
   bool empty = string.isEmpty();
   if (computeMinimum && this->ElideMode != Qt::ElideNone)
-    {
+  {
     // String to use for computing minimum size when eliding is enabled
     string = QString::fromLatin1("...");
-    }
+  }
   else if (empty)
-    {
+  {
     string = QString::fromLatin1("XXXX");
-    }
+  }
   QFontMetrics fm = q->fontMetrics();
   QSize sz = fm.size(Qt::TextShowMnemonic, string);
   if(!empty || !w)
-    {
+  {
     w += sz.width();
-    }
+  }
   h = qMax(h, sz.height());
   //opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
   QSize buttonSize = (q->style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), q).
@@ -163,20 +163,20 @@ QStyleOptionButton ctkPushButtonPrivate::drawIcon(QPainter* p)
   iconOpt.init(q);
   iconOpt.rect = this->iconRect();
   if (q->icon().isNull())
-    {
+  {
     iconOpt.rect.setWidth(0);
     return iconOpt;
-    }
+  }
   QIcon::Mode mode = iconOpt.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled;
   if (mode == QIcon::Normal && iconOpt.state & QStyle::State_HasFocus)
-    {
+  {
     mode = QIcon::Active;
-    }
+  }
   QIcon::State state = QIcon::Off;
   if (iconOpt.state & QStyle::State_On)
-    {
+  {
     state = QIcon::On;
-    }
+  }
 
   QPixmap pixmap = q->icon().pixmap(iconOpt.rect.size(), mode, state);
   p->drawPixmap(iconOpt.rect, pixmap);
@@ -305,13 +305,13 @@ void ctkPushButton::paintEvent(QPaintEvent * _event)
   //int buttonHeight = opt.rect.height();
   uint tf = d->ButtonTextAlignment;
   if (this->style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, this))
-    {
+  {
     tf |= Qt::TextShowMnemonic;
-    }
+  }
   else
-    {
+  {
     tf |= Qt::TextHideMnemonic;
-    }
+  }
 
   int buttonMargin = this->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, this);
 
@@ -319,9 +319,9 @@ void ctkPushButton::paintEvent(QPaintEvent * _event)
 
   QString text = opt.text;
   if (d->ElideMode != Qt::ElideNone)
-    {
+  {
     text = opt.fontMetrics.elidedText(text, d->ElideMode, opt.rect.width() /* - 2 * buttonMargin */ - iconSize.width() - iconSpacing - buttonMargin);
-    }
+  }
   int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, text).width();
 
   // Draw Icon
@@ -329,42 +329,42 @@ void ctkPushButton::paintEvent(QPaintEvent * _event)
 
   // Draw Text
   if (d->ButtonTextAlignment & Qt::AlignLeft)
-    {
+  {
     if (d->IconAlignment & Qt::AlignLeft)
-      {
-      opt.rect.setLeft(iconOpt.rect.right() + iconSpacing);
-      }
-    else
-      {
-      opt.rect.setLeft(opt.rect.x() + buttonMargin);
-      }
-    }
-  else if (d->ButtonTextAlignment & Qt::AlignHCenter)
     {
-    if (d->IconAlignment & Qt::AlignHCenter)
-      {
       opt.rect.setLeft(iconOpt.rect.right() + iconSpacing);
-      }
+    }
     else
-      {
+    {
+      opt.rect.setLeft(opt.rect.x() + buttonMargin);
+    }
+  }
+  else if (d->ButtonTextAlignment & Qt::AlignHCenter)
+  {
+    if (d->IconAlignment & Qt::AlignHCenter)
+    {
+      opt.rect.setLeft(iconOpt.rect.right() + iconSpacing);
+    }
+    else
+    {
       opt.rect.setLeft(opt.rect.x() + opt.rect.width() / 2 - textWidth / 2 - buttonMargin - iconSpacing);
       if (d->IconAlignment & Qt::AlignLeft)
-        {
+      {
         opt.rect.setLeft( qMax(iconOpt.rect.right() + iconSpacing, opt.rect.left()) );
-        }
       }
     }
+  }
   else if (d->ButtonTextAlignment & Qt::AlignRight)
-    {
+  {
     if (d->IconAlignment & Qt::AlignRight)
-      {
+    {
       opt.rect.setLeft(iconOpt.rect.left() - iconSpacing - textWidth);
-      }
-    else
-      {
-      opt.rect.setLeft(opt.rect.right() - buttonMargin - textWidth);
-      }
     }
+    else
+    {
+      opt.rect.setLeft(opt.rect.right() - buttonMargin - textWidth);
+    }
+  }
   // all the computations have been made inferring the text would be left oriented
   tf &= ~Qt::AlignHCenter & ~Qt::AlignRight;
   tf |= Qt::AlignLeft;

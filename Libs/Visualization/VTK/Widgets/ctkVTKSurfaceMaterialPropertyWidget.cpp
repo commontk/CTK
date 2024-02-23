@@ -79,9 +79,9 @@ void ctkVTKSurfaceMaterialPropertyWidget::setProperty(vtkProperty* property)
 {
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   if (d->Property.GetPointer() == property)
-    {
+  {
     return;
-    }
+  }
   qvtkReconnect(d->Property, property, vtkCommand::ModifiedEvent,
                 this, SLOT(updateFromProperty()));
   d->Property = property;
@@ -101,28 +101,28 @@ void ctkVTKSurfaceMaterialPropertyWidget::updateFromProperty()
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->setEnabled(d->Property.GetPointer() != 0);
   if (d->Property.GetPointer() == 0 || d->SettingColor)
-    {
+  {
     return;
-    }
+  }
   if (d->IsUpdatingGUI)
-    {
+  {
     // Update is already in progress
     return;
-    }
+  }
   d->IsUpdatingGUI = true;
   double* c = d->Property->GetColor();
   this->setColor(QColor::fromRgbF(qMin(c[0],1.), qMin(c[1], 1.), qMin(c[2],1.)));
   this->setOpacity(d->Property->GetOpacity());
 
   switch (d->Property->GetInterpolation())
-    {
+  {
     case VTK_FLAT: this->setInterpolationMode(InterpolationFlat); break;
     case VTK_GOURAUD: this->setInterpolationMode(InterpolationGouraud); break;
     case VTK_PHONG: this->setInterpolationMode(InterpolationPhong); break;
 #if VTK_MAJOR_VERSION >= 9
     case VTK_PBR: this->setInterpolationMode(InterpolationPBR); break;
 #endif
-    }
+  }
 
   this->setAmbient(d->Property->GetAmbient());
   this->setDiffuse(d->Property->GetDiffuse());
@@ -142,7 +142,7 @@ void ctkVTKSurfaceMaterialPropertyWidget::onColorChanged(const QColor& newColor)
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onColorChanged(newColor);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     const QColor c = this->color();
@@ -157,7 +157,7 @@ void ctkVTKSurfaceMaterialPropertyWidget::onColorChanged(const QColor& newColor)
     // update just in case something connected to the modified event of the
     // vtkProperty modified any attribute
     this->updateFromProperty();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -166,11 +166,11 @@ void ctkVTKSurfaceMaterialPropertyWidget::onOpacityChanged(double newOpacity)
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onOpacityChanged(newOpacity);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetOpacity(this->opacity());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -180,11 +180,11 @@ void ctkVTKSurfaceMaterialPropertyWidget::onInterpolationModeChanged(
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onInterpolationModeChanged(newInterpolationMode);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     switch (this->interpolationMode())
-      {
+    {
       case InterpolationFlat: d->Property->SetInterpolationToFlat(); break;
       case InterpolationGouraud: d->Property->SetInterpolationToGouraud(); break;
       case InterpolationPhong: d->Property->SetInterpolationToPhong(); break;
@@ -193,8 +193,8 @@ void ctkVTKSurfaceMaterialPropertyWidget::onInterpolationModeChanged(
 #else
       case InterpolationPBR: break;
 #endif
-      }
     }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -203,11 +203,11 @@ void ctkVTKSurfaceMaterialPropertyWidget::onAmbientChanged(double newAmbient)
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onAmbientChanged(newAmbient);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetAmbient(this->ambient());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -216,11 +216,11 @@ void ctkVTKSurfaceMaterialPropertyWidget::onDiffuseChanged(double newDiffuse)
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onDiffuseChanged(newDiffuse);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetDiffuse(this->diffuse());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -229,11 +229,11 @@ void ctkVTKSurfaceMaterialPropertyWidget::onSpecularChanged(double newSpecular)
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onSpecularChanged(newSpecular);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetSpecular(this->specular());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -242,11 +242,11 @@ void ctkVTKSurfaceMaterialPropertyWidget::onSpecularPowerChanged(double newSpecu
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onSpecularPowerChanged(newSpecularPower);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetSpecularPower(this->specularPower());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -256,11 +256,11 @@ void ctkVTKSurfaceMaterialPropertyWidget::onMetallicChanged(double newMetallic)
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onMetallicChanged(newMetallic);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetMetallic(this->metallic());
-    }
+  }
 #else
   Q_UNUSED(newMetallic);
   qWarning() << Q_FUNC_INFO << " failed: metallic property is not supported with VTK < 9";
@@ -274,11 +274,11 @@ void ctkVTKSurfaceMaterialPropertyWidget::onRoughnessChanged(double newRoughness
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onRoughnessChanged(newRoughness);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetRoughness(this->roughness());
-    }
+  }
 #else
   Q_UNUSED(newRoughness);
   qWarning() << Q_FUNC_INFO << " failed: roughness property is not supported with VTK < 9";
@@ -291,9 +291,9 @@ void ctkVTKSurfaceMaterialPropertyWidget::onBackfaceCullingChanged(bool newBackf
   Q_D(ctkVTKSurfaceMaterialPropertyWidget);
   this->Superclass::onBackfaceCullingChanged(newBackfaceCulling);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     // the value might have changed since we fired the signal, use the current
     // up-to-date value then.
     d->Property->SetBackfaceCulling(this->backfaceCulling());
-    }
+  }
 }

@@ -44,13 +44,13 @@ bool ctkTreeComboBoxEventPlayer::playEvent(QObject *Object,
   if (Command != "showpopup" &&
       Command != "hidepopup" &&
       Command != "indexChanged")
-    {
+  {
     return false;
-    }
+  }
 
   if(ctkTreeComboBox* const object =
        qobject_cast<ctkTreeComboBox*>(Object))
-    {
+  {
 //    if (Command == "showpopup")
 //      {
 //      object->showPopup();
@@ -80,12 +80,12 @@ bool ctkTreeComboBoxEventPlayer::playEvent(QObject *Object,
 //      return true;
 //      }
       if(Command == "indexChanged")
-        {
+      {
         QModelIndexList indexes = object->model()->match(
             object->model()->index(0, 0), 0, QVariant(Arguments), 1,
             Qt::MatchRecursive | Qt::MatchExactly | Qt::MatchWrap);
         if(indexes.count() > 0)
-          {
+        {
           object->view()->setCurrentIndex(indexes[0]);
           QKeyEvent event(QEvent::ShortcutOverride, Qt::Key_Enter, Qt::NoModifier);
           // here we conditionally send the event, otherwise, nodeActivated would be
@@ -93,10 +93,10 @@ bool ctkTreeComboBoxEventPlayer::playEvent(QObject *Object,
           // Warning: please note that sending a KeyEvent will close the popup menu
           // of the combobox if it is open.
           QApplication::sendEvent(object->view(), &event);
-          }
-        return true;
         }
-    }
+        return true;
+      }
+  }
 
   qCritical() << "calling showpopup/hidepopup on unhandled type " << Object;
   Error = true;

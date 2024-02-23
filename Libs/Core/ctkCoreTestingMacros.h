@@ -53,62 +53,62 @@
   { \
   const void* pointerValue = (pointer); \
   if (!ctkCoreTestingUtilities::CheckNull(__LINE__,#pointer " is not NULL", pointerValue)) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies that pointer is not NULL
 #define CHECK_NOT_NULL(pointer) \
   { \
   if (!ctkCoreTestingUtilities::CheckNotNull(__LINE__,#pointer " is NULL", (pointer))) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 #define CHECK_EXIT_SUCCESS(actual) \
   { \
   if (!ctkCoreTestingUtilities::CheckInt(__LINE__,#actual " != EXIT_SUCCESS", (actual), EXIT_SUCCESS)) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual int value is the same as expected
 #define CHECK_INT(actual, expected) \
   { \
   if (!ctkCoreTestingUtilities::CheckInt(__LINE__,#actual " != " #expected, (actual), (expected))) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual pointer value is the same as expected
 #define CHECK_POINTER(actual, expected) \
   { \
   if (!ctkCoreTestingUtilities::CheckPointer(__LINE__,#actual " != " #expected, (actual), (expected))) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual pointer value is the same as expected
 #define CHECK_POINTER_DIFFERENT(actual, expected) \
   { \
   if (!ctkCoreTestingUtilities::CheckPointer(__LINE__,#actual " == " #expected, (actual), (expected), false)) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual bool value is the same as expected
 #define CHECK_BOOL(actual, expected) \
   { \
   if (!ctkCoreTestingUtilities::CheckInt(__LINE__,#actual " != " #expected, (actual)?1:0, (expected)?1:0)) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual const char* value is the same as expected.
@@ -116,9 +116,9 @@
 #define CHECK_STRING(actual, expected) \
   { \
   if (!ctkCoreTestingUtilities::CheckString(__LINE__,#actual " != " #expected, (actual), (expected))) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual std::string value is the same as expected.
@@ -129,9 +129,9 @@
   std::string a = (actual); \
   std::string e = (expected); \
   if (!ctkCoreTestingUtilities::CheckString(__LINE__,#actual " != " #expected, a.c_str(), e.c_str())) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual QString value is the same as expected.
@@ -142,9 +142,9 @@
   QString a = (actual); \
   QString e = (expected); \
   if (!ctkCoreTestingUtilities::CheckString(__LINE__,#actual " != " #expected, qPrintable(a), qPrintable(e))) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual const char* value is not the same as expected.
@@ -152,9 +152,9 @@
 #define CHECK_STRING_DIFFERENT(actual, expected) \
   { \
   if (!ctkCoreTestingUtilities::CheckString(__LINE__,#actual " != " #expected, (actual), (expected), false)) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual std::string value is not the same as expected.
@@ -165,9 +165,9 @@
   std::string a = (actual); \
   std::string e = (expected); \
   if (!ctkCoreTestingUtilities::CheckString(__LINE__,#actual " != " #expected, a.c_str(), e.c_str(), false)) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual QString value is not the same as expected.
@@ -178,9 +178,9 @@
   QString a = (actual); \
   QString e = (expected); \
   if (!ctkCoreTestingUtilities::CheckString(__LINE__,#actual " != " #expected, qPrintable(a), qPrintable(e), false)) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual QStringList is the same as expected.
@@ -189,9 +189,9 @@
   QStringList a = (actual); \
   QStringList e = (expected); \
   if (!ctkCoreTestingUtilities::CheckStringList(__LINE__,#actual " != " #expected, a, e)) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 /// Verifies if actual QVariant is the same as expected.
@@ -200,9 +200,9 @@
   QVariant a = (actual); \
   QVariant e = (expected); \
   if (!ctkCoreTestingUtilities::CheckVariant(__LINE__,#actual " != " #expected, a, e)) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   }
 
 #endif

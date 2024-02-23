@@ -42,18 +42,18 @@ bool ctkAxesWidgetEventTranslator::translateEvent(QObject *Object,
   Q_UNUSED(Error);
   ctkAxesWidget* widget = qobject_cast<ctkAxesWidget*>(Object);
   if(!widget)
-    {
+  {
     return false;
-    }
+  }
 
   bool handled = false;
   switch(Event->type())
-    {
+  {
     case QEvent::MouseButtonPress:
-        {
+    {
         QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(Event);
         if (mouseEvent)
-          {
+        {
           QSize size = widget->size();
           double normalized_x = mouseEvent->x()/static_cast<double>(size.width());
           double normalized_y = mouseEvent->y()/static_cast<double>(size.height());
@@ -66,15 +66,15 @@ bool ctkAxesWidgetEventTranslator::translateEvent(QObject *Object,
             .arg(button)
             .arg(buttons)
             .arg(modifiers));
-          }
         }
+    }
       handled = true;
       break;
     case QEvent::MouseButtonRelease:
-        {
+    {
         QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(Event);
         if (mouseEvent)
-          {
+        {
             QSize size = widget->size();
 
           double normalized_x = mouseEvent->x()/static_cast<double>(size.width());
@@ -89,13 +89,13 @@ bool ctkAxesWidgetEventTranslator::translateEvent(QObject *Object,
             .arg(button)
             .arg(buttons)
             .arg(modifiers));
-          }
         }
+    }
       handled = true;
       break;
     default:
       break;
-    }
+  }
 
   return handled;
 }

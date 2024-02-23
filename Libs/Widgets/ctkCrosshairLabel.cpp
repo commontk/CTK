@@ -91,9 +91,9 @@ void ctkCrosshairLabelPrivate::drawCrosshair()
 {
   // Abort if we are not to draw the crosshair
   if (!this->ShowCrosshair)
-    {
+  {
     return;
-    }
+  }
 
   // Setup the painter object to paint on the label
   Q_Q(ctkCrosshairLabel);
@@ -102,7 +102,7 @@ void ctkCrosshairLabelPrivate::drawCrosshair()
 
   // Draw crosshair (based on current parameters) onto the label
   switch (this->CrosshairType)
-    {
+  {
     case ctkCrosshairLabel::SimpleCrosshair:
       this->drawSimpleCrosshair(painter);
       break;
@@ -112,7 +112,7 @@ void ctkCrosshairLabelPrivate::drawCrosshair()
     default:
       qCritical() << "Unsupported crosshair type" << static_cast<int>(this->CrosshairType);
       break;
-    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -141,9 +141,9 @@ void ctkCrosshairLabelPrivate::drawBullsEyeCrosshair(QPainter& painter)
   double y = (size.height()-bullsEye) / 2.0;
   double rectWidth = bullsEye;
   if (bullsEye != 1)
-    {
+  {
     rectWidth = rectWidth - lineWidth;
-    }
+  }
   rectWidth = std::max(rectWidth, 0.0);
   painter.drawRect(
       QRectF(x+halfLineWidth, y+halfLineWidth, rectWidth, rectWidth));
@@ -187,9 +187,9 @@ void ctkCrosshairLabel::setShowCrosshair(bool newShow)
 {
   Q_D(ctkCrosshairLabel);
   if (newShow == d->ShowCrosshair)
-    {
+  {
     return;
-    }
+  }
 
   d->ShowCrosshair = newShow;
   this->update();
@@ -203,9 +203,9 @@ void ctkCrosshairLabel::setCrosshairPen(const QPen& newPen)
 {
   Q_D(ctkCrosshairLabel);
   if (newPen == d->CrosshairPen)
-    {
+  {
     return;
-    }
+  }
 
   d->CrosshairPen = newPen;
   this->update();
@@ -223,9 +223,9 @@ void ctkCrosshairLabel::setCrosshairColor(const QColor& newColor)
 {
   Q_D(ctkCrosshairLabel);
   if (d->CrosshairPen.color() == newColor)
-    {
+  {
     return;
-    }
+  }
 
   d->CrosshairPen.setColor(newColor);
   this->update();
@@ -243,9 +243,9 @@ void ctkCrosshairLabel::setLineWidth(int newWidth)
 {
   Q_D(ctkCrosshairLabel);
   if (d->CrosshairPen.width() == newWidth || newWidth < 0)
-    {
+  {
     return;
-    }
+  }
 
   d->CrosshairPen.setWidth(newWidth);
   this->update();
@@ -260,9 +260,9 @@ void ctkCrosshairLabel::setCrosshairType(const CrosshairTypes& newType)
 {
   Q_D(ctkCrosshairLabel);
   if (newType == d->CrosshairType)
-    {
+  {
     return;
-    }
+  }
 
   d->CrosshairType = newType;
   this->update();
@@ -270,27 +270,27 @@ void ctkCrosshairLabel::setCrosshairType(const CrosshairTypes& newType)
 
 // --------------------------------------------------------------------------
 QColor ctkCrosshairLabel::marginColor() const
-  {
+{
   return this->palette().color(QPalette::Window);
-  }
+}
 
 // --------------------------------------------------------------------------
 void ctkCrosshairLabel::setMarginColor(const QColor& newColor)
 {
   if (!newColor.isValid())
-    {
+  {
     return;
-    }
+  }
 
   QPalette palette(this->palette());
   QColor solidColor(newColor.rgb());
   if (solidColor != palette.color(QPalette::Window))
-    {
+  {
     // Ignore alpha channel
     palette.setColor(QPalette::Window, solidColor);
     this->setPalette(palette);
     this->update();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -301,9 +301,9 @@ void ctkCrosshairLabel::setBullsEyeWidth(int newWidth)
 {
   Q_D(ctkCrosshairLabel);
   if (newWidth == d->BullsEyeWidth || newWidth < 0)
-    {
+  {
     return;
-    }
+  }
 
   d->BullsEyeWidth = newWidth;
   this->update();

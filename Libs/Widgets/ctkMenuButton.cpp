@@ -118,16 +118,16 @@ void ctkMenuButton::paintEvent(QPaintEvent * _event)
   // Draw button
   option.features &= ~QStyleOptionButton::HasMenu;
   if (this->menu() && (this->menu()->isVisible() || d->ShowMenu))
-    {
+  {
     option.state &= ~QStyle::State_Sunken;
     option.state |= QStyle::State_Raised;
-    }
+  }
   painter.drawControl(QStyle::CE_PushButtonBevel, option);
   // is PE_PanelButtonCommand better ?
   //painter.drawPrimitive(QStyle::PE_PanelButtonCommand, option);
   QRect downArrowRect = d->indicatorRect();
   if (drawIndicatorBackground)
-    {
+  {
     // if the button is down, draw the part under the indicator up
     QPixmap cache = QPixmap(option.rect.size());
     cache.fill(Qt::transparent);
@@ -140,7 +140,7 @@ void ctkMenuButton::paintEvent(QPaintEvent * _event)
     option.state &= ~QStyle::State_MouseOver;
     this->style()->drawControl(QStyle::CE_PushButtonBevel, &option, &cachePainter, this);
     painter.drawItemPixmap(downArrowRect, Qt::AlignLeft | Qt::AlignTop, cache.copy(downArrowRect));
-    }
+  }
 
   // Separator
   // Freely inspired by the painting of CC_ComboBox in qcleanlooksstyle.cpp
@@ -191,14 +191,14 @@ void ctkMenuButton::mousePressEvent(QMouseEvent *e)
   this->disconnect(this,SIGNAL(pressed()), this, SLOT(_q_popupPressed()));
   this->QPushButton::mousePressEvent(e);
   if (e->isAccepted())
-    {
+  {
     return;
-    }
+  }
   if (d->indicatorRect().contains(e->pos()))
-    {
+  {
     d->ShowMenu = true;
     this->showMenu();
     d->ShowMenu = false;
     e->accept();
-    }
+  }
 }

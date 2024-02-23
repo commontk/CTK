@@ -161,22 +161,22 @@ void ctkScreenshotDialogPrivate::lockAspectRatio(bool lock)
 {
   Q_Q(ctkScreenshotDialog);
   if(lock)
-    {
+  {
     QSize curSize = q->widgetSize();
     if(curSize.height() > 0)
-      {
+    {
       this->AspectRatio = curSize.width()/static_cast<double>(curSize.height());
-      }
+    }
     else
-      {
+    {
       QString message = ctkScreenshotDialog::tr("Height of widget: %1 is invalid. "
         "Check widget dimensions. Using default aspect ratio (1.0).")
         .arg(curSize.height());
       QMessageBox::warning(q, ctkScreenshotDialog::tr("Invalid widget dimensions"), message,
         QMessageBox::Ok);
       this->AspectRatio = 1.0;
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -184,27 +184,27 @@ void ctkScreenshotDialogPrivate::onWidthEdited()
 {
   Q_Q(ctkScreenshotDialog);
   if(this->LockAspectToolButton->isChecked())
-    {
+  {
     if(this->AspectRatio > 0)
-      {
+    {
       this->HeightSpinBox->setValue(static_cast<int>(this->WidthSpinBox->value()/this->AspectRatio));
-      }
+    }
     else
-      {
+    {
       QString message = ctkScreenshotDialog::tr(
         "Aspect ratio: %1 is invalid. Check widget dimensions.").arg(this->AspectRatio);
       QMessageBox::warning(q, ctkScreenshotDialog::tr("Invalid aspect ratio"), message, QMessageBox::Ok);
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void ctkScreenshotDialogPrivate::onHeightEdited()
 {
   if(this->LockAspectToolButton->isChecked())
-    {
+  {
     this->WidthSpinBox->setValue(static_cast<int>(this->HeightSpinBox->value()*this->AspectRatio));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -247,15 +247,15 @@ void ctkScreenshotDialogPrivate::saveScreenshot(int delayInSeconds)
   Q_Q(ctkScreenshotDialog);
 
   if (this->WidgetToGrab.isNull())
-    {
+  {
     return;
-    }
+  }
 
   if (delayInSeconds <= 0)
-    {
+  {
     q->instantScreenshot();
     return;
-    }
+  }
   this->setWaitingForScreenshot(true);
   this->CountDownValue = delayInSeconds;
   this->CountDownTimer.start(1000);
@@ -356,34 +356,34 @@ void ctkScreenshotDialog::instantScreenshot()
   Q_D(ctkScreenshotDialog);
 
   if (d->WidgetToGrab.isNull())
-    {
+  {
     return;
-    }
+  }
 
   QPixmap viewportPixmap = QPixmap::fromImage(
     ctk::grabWidget(d->WidgetToGrab.data()));
 
   if (d->isWaitingForScreenshot() && d->DelaySpinBox->value() != 0)
-    {
+  {
     qApp->beep();
-    }
+  }
   d->setWaitingForScreenshot(false);
   d->resetCountDownValue();
 
   // Rescale based on scale factor or output resolution specified
   QPixmap rescaledViewportPixmap = viewportPixmap;
   if(d->ScaleFactorRadioButton->isChecked())
-    {
+  {
     rescaledViewportPixmap = viewportPixmap.scaled(
       viewportPixmap.size().width() * d->ScaleFactorSpinBox->value(),
       viewportPixmap.size().height() * d->ScaleFactorSpinBox->value());
-    }
+  }
   else if(d->OutputResolutionRadioButton->isChecked())
-    {
+  {
     rescaledViewportPixmap = viewportPixmap.scaled(
       d->WidthSpinBox->value(),
       d->HeightSpinBox->value());
-    }
+  }
 
   QString filename = QString("%1/%2_%3.png").arg(d->DirectoryPathLineEdit->currentPath())
                      .arg(d->ImageNameLineEdit->text())
@@ -392,31 +392,31 @@ void ctkScreenshotDialog::instantScreenshot()
   // Check if file exists
   bool overwrite = d->OverwriteCheckBox->isChecked();
   if (QFile::exists(filename) && !overwrite)
-    {
+  {
     int answer = QMessageBox::question(this, tr("Screen Capture"),
                                        tr("File already exists. Overwrite ?"),
                                        QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No);
     if (answer == QMessageBox::YesToAll)
-      {
+    {
       overwrite = true;
       d->OverwriteCheckBox->setChecked(true);
-      }
-    else if(answer == QMessageBox::Yes)
-      {
-      overwrite = true;
-      }
-    else
-      {
-      return;
-      }
     }
+    else if(answer == QMessageBox::Yes)
+    {
+      overwrite = true;
+    }
+    else
+    {
+      return;
+    }
+  }
 
   QImage img = rescaledViewportPixmap.toImage();
   if( !d->AllowTransparency &&
       img.hasAlphaChannel())
-    {
+  {
     img = img.convertToFormat(QImage::Format_RGB32);
-    }
+  }
   img.save(filename);
 
   d->ImageVersionNumberSpinBox->setValue(d->ImageVersionNumberSpinBox->value() + 1);

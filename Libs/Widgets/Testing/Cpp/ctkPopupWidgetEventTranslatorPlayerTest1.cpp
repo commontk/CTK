@@ -59,26 +59,26 @@ QSignalSpy *Spy4;
 
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   QWidget* parentWidget = reinterpret_cast<QWidget*>(data);
   QList<ctkPopupWidget*> widget = parentWidget->findChildren<ctkPopupWidget*>();
   QList<QComboBox*> widget2 = parentWidget->findChildren<QComboBox*>();
   if(widget.count())
-    {
+  {
     CTKCOMPARE(Spy1->count(), 1);
     CTKCOMPARE(Spy2->count(), 1);
     CTKCOMPARE(Spy3->count(), 1);
     CTKCOMPARE(Spy4->count(), 1);
-    }
-  else if(widget2.count())
-    {
-    CTKCOMPARE(widget2[0]->currentIndex(), 2);
-    }
-  else
-    {
-    QApplication::exit(EXIT_FAILURE);
-    }
   }
+  else if(widget2.count())
+  {
+    CTKCOMPARE(widget2[0]->currentIndex(), 2);
+  }
+  else
+  {
+    QApplication::exit(EXIT_FAILURE);
+  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -99,9 +99,9 @@ int ctkPopupWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   QList<ctkPopupWidget*> popups;
   QWidget* widget = createPanelTest("Window opacity", popups);
   foreach(ctkPopupWidget* popup, popups)
-    {
+  {
     popup->setAnimationEffect(ctkPopupWidget::WindowOpacityFadeEffect);
-    }
+  }
 
   QSignalSpy spy1(popups[0], SIGNAL(popupOpened(bool)));
   QSignalSpy spy2(popups[1], SIGNAL(popupOpened(bool)));
@@ -119,9 +119,9 @@ int ctkPopupWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

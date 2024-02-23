@@ -61,16 +61,16 @@ protected:
     NoEvent = 0,
     UpdatePixmapEvent,
     RemovePixmapEvent
-    };
+  };
 
   struct EventHandlerStruct
-    {
+  {
     PendingEventType EventType;
     QPointer<ctkVTKOpenGLNativeWidget> Widget;
     QPointF Position;
     int UpdateInterval;
     int TimerId;
-    };
+  };
 
 public Q_SLOTS:
   void pushUpdatePixmapEvent();

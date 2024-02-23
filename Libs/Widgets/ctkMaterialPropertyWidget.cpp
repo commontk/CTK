@@ -350,9 +350,9 @@ void ctkMaterialPropertyWidget::addPreset(
   // TODO: implement addPreset for PBR interpolation
   item->setData(ctkMaterialPropertyWidgetPrivate::InterpolationModeRole, static_cast<int>(InterpolationGouraud));
   if (color.isValid())
-    {
+  {
     item->setData(ctkMaterialPropertyWidgetPrivate::ColorRole, color);
-    }
+  }
   item->setData(ctkMaterialPropertyWidgetPrivate::OpacityRole, opacity);
   item->setData(ctkMaterialPropertyWidgetPrivate::AmbientRole, ambient);
   item->setData(ctkMaterialPropertyWidgetPrivate::DiffuseRole, diffuse);
@@ -361,11 +361,11 @@ void ctkMaterialPropertyWidget::addPreset(
   ctkMaterialPropertyPreviewLabel* preset =
     new ctkMaterialPropertyPreviewLabel(color, opacity, ambient, diffuse, specular, power);
   if (!color.isValid())
-    {
+  {
     connect(this, SIGNAL(colorChanged(QColor)),
             preset, SLOT(setColor(QColor)));
     preset->setColor(this->color());
-    }
+  }
   preset->setGridOpacity(d->MaterialPropertyPreviewLabel->gridOpacity());
   item->setSizeHint(preset->sizeHint());
   d->PresetsListWidget->setItemWidget(item, preset);
@@ -376,24 +376,24 @@ void ctkMaterialPropertyWidget::selectPreset(QListWidgetItem* preset)
 {
   Q_D(ctkMaterialPropertyWidget);
   if (preset->data(ctkMaterialPropertyWidgetPrivate::ColorRole).isValid())
-    {
+  {
     d->ColorPickerButton->setColor(preset->data(ctkMaterialPropertyWidgetPrivate::ColorRole).value<QColor>());
-    }
+  }
   d->OpacitySliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::OpacityRole).toDouble());
 
   int interpolationMode = preset->data(ctkMaterialPropertyWidgetPrivate::InterpolationModeRole).toInt();
   if (interpolationMode == InterpolationPBR)
-    {
+  {
     d->MetallicSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::MetallicRole).toDouble());
     d->RoughnessSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::RoughnessRole).toDouble());
-    }
+  }
   else
-    {
+  {
     d->AmbientSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::AmbientRole).toDouble());
     d->DiffuseSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::DiffuseRole).toDouble());
     d->SpecularSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::SpecularRole).toDouble());
     d->SpecularPowerSliderSpinBox->setValue(preset->data(ctkMaterialPropertyWidgetPrivate::SpecularPowerRole).toDouble());
-    }
+  }
   d->InterpolationModeComboBox->setCurrentIndex(interpolationMode);
 }
 
@@ -403,9 +403,9 @@ void ctkMaterialPropertyWidget::resizeEvent(QResizeEvent* resize)
   Q_D(ctkMaterialPropertyWidget);
   this->QWidget::resizeEvent(resize);
   if (!d->PresetsListWidget)
-    {
+  {
     return;
-    }
+  }
   d->PresetsListWidget->setMaximumWidth(
     d->PresetsListWidget->frameWidth() // left frame width
     + d->PresetsListWidget->count() * d->MaterialPropertyPreviewLabel->sizeHint().width()

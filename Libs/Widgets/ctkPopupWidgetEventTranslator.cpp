@@ -42,19 +42,19 @@ bool ctkPopupWidgetEventTranslator::translateEvent(QObject *Object,
   ctkPopupWidget* const object = qobject_cast<ctkPopupWidget*>(Object);
 
   if(!object)
-    {
+  {
     return false;
-    }
+  }
 
 
   if(Event->type() == QEvent::ShowToParent )
-    {
+  {
     if(this->CurrentObject != Object)
-      {
+    {
       if(this->CurrentObject)
-        {
+      {
         disconnect(this->CurrentObject, 0, this, 0);
-        }
+      }
       this->CurrentObject = Object;
 
       // connect
@@ -62,8 +62,8 @@ bool ctkPopupWidgetEventTranslator::translateEvent(QObject *Object,
               this, SLOT(onDestroyed()));
       connect(object, SIGNAL(popupOpened(const bool&)),
               this, SLOT(onPopupOpened(const bool&)));
-      }
     }
+  }
   return false;
 }
 

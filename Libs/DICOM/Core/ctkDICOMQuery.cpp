@@ -58,23 +58,23 @@ class ctkDICOMQuerySCUPrivate : public DcmSCU
 public:
   ctkDICOMQuery *query;
   ctkDICOMQuerySCUPrivate()
-    {
+  {
     this->query = 0;
-    };
+  };
   ~ctkDICOMQuerySCUPrivate() {};
   virtual OFCondition handleFINDResponse(const T_ASC_PresentationContextID  presID,
                                          QRResponse *response,
                                          OFBool &waitForNextResponse)
-    {
+  {
     if (!this->query || this->query->wasCanceled())
-      {
+    {
       return EC_IllegalCall;
-      }
+    }
 
     logger.debug ( "FIND RESPONSE" );
     emit this->query->debug(/*no tr*/"Got a find response!");
     return this->DcmSCU::handleFINDResponse(presID, response, waitForNextResponse);
-    };
+  };
 };
 
 //------------------------------------------------------------------------------
@@ -292,9 +292,9 @@ QList<ctkDICOMJobResponseSet *> ctkDICOMQuery::jobResponseSets() const
   Q_D(const ctkDICOMQuery);
   QList<ctkDICOMJobResponseSet *> jobResponseSets;
   foreach(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, d->JobResponseSets)
-    {
+  {
     jobResponseSets.append(jobResponseSet.data());
-    }
+  }
 
   return jobResponseSets;
 }
@@ -328,29 +328,29 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
   // is in case the connected object doesn't refresh its ui when the progress
   // message is updated but only if the progress value is (e.g. QProgressDialog)
   if (database.database().isOpen())
-    {
+  {
     logger.debug("DB open in Query");
     emit progress(tr("DB open in Query"));
-    }
+  }
   else
-    {
+  {
     logger.warn("DB not open in Query");
     emit progress(tr("DB not open in Query"));
-    }
+  }
   emit progress(0);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->StudyAndSeriesInstanceUIDPairList.clear();
   d->StudyDatasets.clear();
 
   // initSCU
   if (!this->initializeSCU())
-    {
+  {
     return false;
-    }
+  }
 
   // Clear the query
   d->QueryDcmDataset->clear();
@@ -376,9 +376,9 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
 
   QString seriesDescription = this->applyFilters();
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   OFList<QRResponse *> responses;
 
@@ -386,43 +386,43 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
   presentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
-    {
+  {
     logger.error("Failed to find acceptable presentation context");
     emit progress(tr("Failed to find acceptable presentation context"));
-    }
+  }
   else
-    {
+  {
     logger.debug("Found useful presentation context");
     emit progress(tr("Found useful presentation context"));
-    }
+  }
   emit progress(40);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   OFCondition status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (!status.good())
-    {
+  {
     logger.error("Find failed");
     emit progress(tr("Find failed"));
     d->SCU.releaseAssociation();
     emit progress(100);
     return false;
-    }
+  }
   logger.debug("Find succeeded");
   emit progress(tr("Find succeeded"));
   emit progress(50);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
-    {
+  {
     DcmDataset *dataset = (*it)->m_dataset;
     if (dataset != NULL) // the last response is always empty
-      {
+    {
       database.insert(dataset, false /* do not store to disk*/, false /* no thumbnail*/);
       OFString StudyInstanceUID;
       dataset->findAndGetOFString(DCM_StudyInstanceUID, StudyInstanceUID);
@@ -430,11 +430,11 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
       emit progress(tr("Processing: ") + QString(StudyInstanceUID.c_str()));
       emit progress(50);
       if (d->Canceled)
-        {
+      {
         return false;
-        }
       }
     }
+  }
 
   /* Only ask for series attributes now. This requires kicking out the rest of former query. */
   d->QueryDcmDataset->clear();
@@ -457,7 +457,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
   int i = 0;
 
   foreach(QString studyInstanceUID, d->StudyDatasets.keys())
-    {
+  {
     DcmDataset *studyDataset = d->StudyDatasets.value(studyInstanceUID);
     DcmElement *patientName, *patientID;
     studyDataset->findAndGetElement(DCM_PatientName, patientName);
@@ -475,12 +475,12 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
     OFList<QRResponse *> responses;
     status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
     if (status.good())
-      {
+    {
       for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
-        {
+      {
         DcmDataset *dataset = (*it)->m_dataset;
         if (dataset != NULL)
-          {
+        {
           OFString seriesInstanceUID;
           dataset->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID);
           d->addStudyAndSeriesInstanceUID(studyInstanceUID.toStdString().c_str(), seriesInstanceUID.c_str());
@@ -489,27 +489,27 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
           dataset->insert(patientID, true);
           // insert series dataset
           database.insert(dataset, false /* do not store */, false /* no thumbnail */);
-          }
         }
+      }
       logger.debug ("Find succeeded on Series level for Study: " + studyInstanceUID);
       emit progress(tr("Find succeeded on Series level for Study: ") + studyInstanceUID);
       emit progress(50 + (progressRatio * i++));
       if (d->Canceled)
-    {
-    return false;
-    }
-      }
-    else
       {
+    return false;
+      }
+    }
+    else
+    {
       logger.error ("Find on Series level failed for Study: " + studyInstanceUID);
       emit progress(tr("Find on Series level failed for Study: ") + studyInstanceUID);
-      }
+    }
     emit progress(50 + (progressRatio * i++));
     if (d->Canceled)
     {
     return false;
     }
-    }
+  }
   d->SCU.releaseAssociation();
   emit progress(100);
   return true;
@@ -525,17 +525,17 @@ bool ctkDICOMQuery::queryPatients()
   // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->JobResponseSets.clear();
 
   // initSCU
   if (!this->initializeSCU())
-    {
+  {
     return false;
-    }
+  }
 
   // Clear the query
   d->QueryDcmDataset->clear();
@@ -560,36 +560,36 @@ bool ctkDICOMQuery::queryPatients()
 
   QString seriesDescription = this->applyFilters();
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   Uint16 presentationContext = 0;
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
   presentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
-    {
+  {
     logger.error("Failed to find acceptable presentation context");
     emit progress(tr("Failed to find acceptable presentation context"));
-    }
+  }
   else
-    {
+  {
     logger.debug("Found useful presentation context");
     emit progress(tr("Found useful presentation context"));
-    }
+  }
   emit progress(40);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   logger.debug("Starting Patients C-FIND");
   emit progress(tr("Starting Patients C-FIND"));
   emit progress(50);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   QSharedPointer<ctkDICOMJobResponseSet> JobResponseSet =
     QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
@@ -601,44 +601,44 @@ bool ctkDICOMQuery::queryPatients()
   OFList<QRResponse *> responses;
   OFCondition status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
-    {
+  {
     int contResponses = 0;
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
-      {
+    {
       contResponses++;
       if (contResponses > d->MaximumPatientsQuery)
-        {
+      {
         logger.warn(QString("ctkDICOMQuery: the number of responses of the query task at patients level "
                             "surpassed the maximum value of permitted results (i.e. %1).").arg(d->MaximumPatientsQuery));
 
         break;
-        }
+      }
       DcmDataset *dataset = (*it)->m_dataset;
       if ( dataset != NULL )
-        {
+      {
         OFString patientID;
         dataset->findAndGetOFString(DCM_PatientID, patientID);
         datasetsMap.insert(patientID.c_str(), dataset);
-        }
       }
+    }
 
       JobResponseSet->setDatasets(datasetsMap);
       d->JobResponseSets.append(JobResponseSet);
 
       logger.debug("Find succeeded on Patient level");
       emit progress(tr("Find succeeded on Patient level"));
-      }
+  }
   else
-    {
+  {
     logger.error("Find on Patient level failed");
     emit progress(tr("Find on Patient level failed"));
-    }
+  }
 
   emit progress(100);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->SCU.releaseAssociation();
   return true;
@@ -653,17 +653,17 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
   // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->JobResponseSets.clear();
 
   // initSCU
   if (!this->initializeSCU())
-    {
+  {
     return false;
-    }
+  }
 
   // Clear the query
   d->QueryDcmDataset->clear();
@@ -688,36 +688,36 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
 
   QString seriesDescription = this->applyFilters();
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   Uint16 presentationContext = 0;
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
   presentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
-    {
+  {
     logger.error("Failed to find acceptable presentation context");
     emit progress(tr("Failed to find acceptable presentation context"));
-    }
+  }
   else
-    {
+  {
     logger.debug("Found useful presentation context");
     emit progress(tr("Found useful presentation context"));
-    }
+  }
   emit progress(40);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   logger.debug("Starting Studies C-FIND for Patient: " + patientID);
   emit progress(tr("Starting Studies C-FIND for Patient: ") + patientID);
   emit progress(50);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->QueryDcmDataset->putAndInsertString(DCM_PatientID, patientID.toStdString().c_str());
 
@@ -733,35 +733,35 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
   OFList<QRResponse *> responses;
   OFCondition status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
-    {
+  {
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
-      {
+    {
       DcmDataset *dataset = (*it)->m_dataset;
       if ( dataset != NULL )
-        {
+      {
         OFString studyInstanceUID;
         dataset->findAndGetOFString(DCM_StudyInstanceUID, studyInstanceUID);
         datasetsMap.insert(studyInstanceUID.c_str(), dataset);
-        }
       }
+    }
 
     JobResponseSet->setDatasets(datasetsMap);
     d->JobResponseSets.append(JobResponseSet);
 
     logger.debug("Find succeeded on Study level for Patient: " + patientID);
     emit progress(tr("Find succeeded on Study level for Patient: ") + patientID);
-    }
+  }
   else
-    {
+  {
     logger.error("Find on Study level failed for Patient: " + patientID);
     emit progress(tr("Find on Study level failed for Patient: ") + patientID);
-    }
+  }
 
   emit progress(100);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->SCU.releaseAssociation();
   return true;
@@ -778,17 +778,17 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->JobResponseSets.clear();
 
   // initSCU
   if (!this->initializeSCU())
-    {
+  {
     return false;
-    }
+  }
 
   // Insert all keys that we like to receive values for
   d->QueryDcmDataset->clear();
@@ -802,9 +802,9 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
 
   QString seriesDescription = this->applyFilters();
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   /* Add user-defined filters */
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SeriesDescription, seriesDescription.toLatin1().data());
@@ -816,28 +816,28 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
   presentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
-    {
+  {
     logger.error("Failed to find acceptable presentation context");
     emit progress(tr("Failed to find acceptable presentation context"));
-    }
+  }
   else
-    {
+  {
     logger.debug("Found useful presentation context");
     emit progress(tr("Found useful presentation context"));
-    }
+  }
   emit progress(40);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   logger.debug("Starting Series C-FIND for Study: " + studyInstanceUID);
   emit progress(tr("Starting Series C-FIND for Study: ") + studyInstanceUID);
   emit progress(50);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->QueryDcmDataset->putAndInsertString(DCM_PatientID, patientID.toStdString().c_str());
   d->QueryDcmDataset->putAndInsertString(DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str());
@@ -855,35 +855,35 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   OFList<QRResponse *> responses;
   OFCondition status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
-    {
+  {
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
-      {
+    {
       DcmDataset *dataset = (*it)->m_dataset;
       if ( dataset != NULL )
-        {
+      {
         OFString seriesInstanceUID;
         dataset->findAndGetOFString(DCM_SeriesInstanceUID, seriesInstanceUID);
         datasetsMap.insert(seriesInstanceUID.c_str(), dataset);
-        }
       }
+    }
 
     JobResponseSet->setDatasets(datasetsMap);
     d->JobResponseSets.append(JobResponseSet);
 
     logger.debug("Find succeeded on Series level for Study: " + studyInstanceUID);
     emit progress(tr("Find succeeded on Series level for Study: ") + studyInstanceUID);
-    }
+  }
   else
-    {
+  {
     logger.error("Find on Series level failed for Study: " + studyInstanceUID);
     emit progress(tr("Find on Series level failed for Study: ") + studyInstanceUID);
-    }
+  }
 
   emit progress(100);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->SCU.releaseAssociation();
   return true;
@@ -901,17 +901,17 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   // message is updated but only if the progress value is (e.g. QProgressDialog)
   emit progress(0);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->JobResponseSets.clear();
 
   // initSCU
   if (!this->initializeSCU())
-    {
+  {
     return false;
-    }
+  }
 
   // Insert all keys that we like to receive values for
   d->QueryDcmDataset->clear();
@@ -922,9 +922,9 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
 
   QString seriesDescription = this->applyFilters();
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   /* Add user-defined filters */
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SeriesDescription, seriesDescription.toLatin1().data());
@@ -935,28 +935,28 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
   d->PresentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (d->PresentationContext == 0)
-    {
+  {
     logger.error("Failed to find acceptable presentation context");
     emit progress(tr("Failed to find acceptable presentation context"));
-    }
+  }
   else
-    {
+  {
     logger.debug("Found useful presentation context");
     emit progress(tr("Found useful presentation context"));
-    }
+  }
   emit progress(40);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   logger.debug("Starting Instances C-FIND for Series: " + seriesInstanceUID);
   emit progress(tr("Starting Instances C-FIND for Series: ") + seriesInstanceUID);
   emit progress(50);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->QueryDcmDataset->putAndInsertString(DCM_PatientID, patientID.toStdString().c_str());
   d->QueryDcmDataset->putAndInsertString(DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str());
@@ -976,34 +976,34 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   OFList<QRResponse *> responses;
   OFCondition status = d->SCU.sendFINDRequest(d->PresentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
-    {
+  {
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
-      {
+    {
       DcmItem *dataset = (*it)->m_dataset;
       if (dataset != NULL)
-        {
+      {
         OFString SOPInstanceUID;
         dataset->findAndGetOFString(DCM_SOPInstanceUID, SOPInstanceUID);
         datasetsMap.insert(SOPInstanceUID.c_str(), dataset);
-        }
       }
+    }
     logger.debug("Find succeeded on Series level for Series: " + seriesInstanceUID);
     emit progress(tr("Find succeeded on Series level for Series: ") + seriesInstanceUID);
-    }
+  }
   else
-    {
+  {
     logger.error("Find on Series level failed for Series: " + seriesInstanceUID);
     emit progress(tr("Find on Series level failed for Series: ") + seriesInstanceUID);
-    }
+  }
 
   JobResponseSet->setDatasets(datasetsMap);
   d->JobResponseSets.append(JobResponseSet);
 
   emit progress(100);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   d->SCU.releaseAssociation();
   return true;
@@ -1016,15 +1016,15 @@ void ctkDICOMQuery::cancel()
   d->Canceled = true;
 
   if (d->PresentationContext != 0)
-    {
+  {
     d->SCU.sendCANCELRequest(d->PresentationContext);
     d->PresentationContext = 0;
-    }
+  }
 
   if (d->SCU.isConnected())
-    {
+  {
     d->SCU.releaseAssociation();
-    }
+  }
 
   d->JobResponseSets.clear();
 }
@@ -1043,9 +1043,9 @@ bool ctkDICOMQuery::initializeSCU()
   emit progress(tr("Setting Transfer Syntaxes"));
   emit progress(10);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   OFList<OFString> transferSyntaxes;
   transferSyntaxes.push_back(UID_LittleEndianExplicitTransferSyntax);
@@ -1054,28 +1054,28 @@ bool ctkDICOMQuery::initializeSCU()
 
   d->SCU.addPresentationContext(UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes);
   if (!d->SCU.initNetwork().good())
-    {
+  {
     logger.error("Error initializing the network");
     emit progress(tr("Error initializing the network"));
     emit progress(100);
     return false;
-    }
+  }
   logger.debug("Negotiating Association");
   emit progress(tr("Negotiating Association"));
   emit progress(20);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   OFCondition result = d->SCU.negotiateAssociation();
   if (result.bad())
-    {
+  {
     logger.error("Error negotiating the association: " + QString(result.text()));
     emit progress(tr("Error negotiating the association"));
     emit progress(100);
     return false;
-    }
+  }
 
   return true;
 }
@@ -1091,63 +1091,63 @@ QString ctkDICOMQuery::applyFilters()
    */
   QString seriesDescription;
   foreach(QString key, d->Filters.keys())
-    {
+  {
     if ( key == QString("Name") && !d->Filters[key].toString().isEmpty())
-      {
+    {
       // make the filter a wildcard in dicom style
       d->QueryDcmDataset->putAndInsertString( DCM_PatientName,
         (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
-      }
+    }
     else if ( key == QString("Study") && !d->Filters[key].toString().isEmpty())
-      {
+    {
       // make the filter a wildcard in dicom style
       d->QueryDcmDataset->putAndInsertString( DCM_StudyDescription,
         (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
-      }
+    }
     else if ( key == QString("ID") && !d->Filters[key].toString().isEmpty())
-      {
+    {
       // make the filter a wildcard in dicom style
       d->QueryDcmDataset->putAndInsertString( DCM_PatientID,
         (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
-      }
+    }
     else if (key == QString("AccessionNumber") && !d->Filters[key].toString().isEmpty())
-      {
+    {
         // make the filter a wildcard in dicom style
         d->QueryDcmDataset->putAndInsertString(DCM_AccessionNumber,
             (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
-      }
+    }
     else if ( key == QString("Modalities") && !d->Filters[key].toString().isEmpty())
-      {
+    {
       // make the filter be an "OR" of modalities using backslash (dicom-style)
       QString modalitySearch("");
       foreach (const QString& modality, d->Filters[key].toStringList())
-        {
+      {
         modalitySearch += modality + QString("\\");
-        }
+      }
       modalitySearch.chop(1); // remove final backslash
       logger.debug("modalityInStudySearch " + modalitySearch);
       d->QueryDcmDataset->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toLatin1().data() );
-      }
+    }
     // Remember Series Description for later series query if we go through the keys now
     else if ( key == QString("Series") && !d->Filters[key].toString().isEmpty())
-      {
+    {
       // make the filter a wildcard in dicom style
       seriesDescription = "*" + d->Filters[key].toString() + "*";
-      }
-    else
-      {
-      logger.debug("Ignoring unknown search key: " + key);
-      }
     }
+    else
+    {
+      logger.debug("Ignoring unknown search key: " + key);
+    }
+  }
 
   if ( d->Filters.keys().contains("StartDate") && d->Filters.keys().contains("EndDate") )
-    {
+  {
     QString dateRange = d->Filters["StartDate"].toString() +
                         QString("-") +
                         d->Filters["EndDate"].toString();
     d->QueryDcmDataset->putAndInsertString ( DCM_StudyDate, dateRange.toLatin1().data() );
     logger.debug("Query on study date " + dateRange);
-    }
+  }
 
   emit progress(30);
 

@@ -69,10 +69,10 @@ void ctkCheckBoxStyle::drawPrimitive(QStyle::PrimitiveElement pe,
                                      QPainter * p, const QWidget * widget) const
 {
   if (pe == QStyle::PE_IndicatorCheckBox)
-    {
+  {
     const ctkCheckBox* checkBox= qobject_cast<const ctkCheckBox*>(widget);
     if (checkBox && !this->IndicatorIcon.isNull())
-      {
+    {
       QIcon::Mode mode =
           (opt->state & QStyle::State_MouseOver) == QStyle::State_MouseOver
             ? QIcon::Active : QIcon::Normal;
@@ -92,8 +92,8 @@ void ctkCheckBoxStyle::drawPrimitive(QStyle::PrimitiveElement pe,
                              mode,
                              state));
       return;
-      }
     }
+  }
   this->Superclass::drawPrimitive(pe, opt, p, widget);
 }
 
@@ -104,16 +104,16 @@ int ctkCheckBoxStyle::pixelMetric(QStyle::PixelMetric metric,
 {
   const ctkCheckBox* checkBox= qobject_cast<const ctkCheckBox*>(widget);
   if (checkBox && !this->IndicatorIcon.isNull())
-    {
+  {
     if(metric == QStyle::PM_IndicatorHeight && !this->IndicatorSize.isEmpty())
-      {
+    {
       return this->IndicatorIcon.actualSize(this->IndicatorSize).height();
-      }
-    if(metric == QStyle::PM_IndicatorWidth && !this->IndicatorSize.isEmpty())
-      {
-      return this->IndicatorIcon.actualSize(this->IndicatorSize).width();
-      }
     }
+    if(metric == QStyle::PM_IndicatorWidth && !this->IndicatorSize.isEmpty())
+    {
+      return this->IndicatorIcon.actualSize(this->IndicatorSize).width();
+    }
+  }
   return this->Superclass::pixelMetric(metric, option, widget);
 }
 

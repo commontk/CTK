@@ -79,20 +79,20 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button1.setButtonTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
   if (button1.buttonTextAlignment() != (Qt::AlignRight | Qt::AlignVCenter))
-    {
+  {
     std::cerr << "ctkCheckablePushButton::setButtonTextAlignment failed."
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   button2.setIndicatorAlignment(Qt::AlignRight);
 
   if (button2.indicatorAlignment() != Qt::AlignRight)
-    {
+  {
     std::cerr << "ctkCheckablePushButton::setIndicatorAlignment failed."
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   button3.setButtonTextAlignment(Qt::AlignCenter);
   button3.setIndicatorAlignment(Qt::AlignCenter);
@@ -141,9 +141,9 @@ int ctkCheckablePushButtonTest1(int argc, char * argv [] )
   button15.setIcon(button15.style()->standardIcon(QStyle::SP_ComputerIcon));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

@@ -218,8 +218,8 @@ void ctkDICOMThumbnailGenerator::generateBlankThumbnail(QImage& image, QColor co
 {
   Q_D(ctkDICOMThumbnailGenerator);
   if (image.width() != d->Width || image.height() != d->Height)
-    {
+  {
     image = QImage(d->Width, d->Height, QImage::Format_RGB32);
-    }
+  }
   image.fill(color);
 }

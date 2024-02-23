@@ -81,13 +81,13 @@ int main(int argc, char** argv)
   myCTK.openDatabase ( argv[1] );
   logger.debug ( "Last error: " + myCTK.lastError() );
   if ( myCTK.database().isOpen() )
-    {
+  {
     logger.debug ( "Database is open" );
-    }
+  }
   else
-    {
+  {
     logger.debug ( "Database is not open" );
-    }
+  }
 
 
 
@@ -99,17 +99,17 @@ int main(int argc, char** argv)
   bool ok;
   port = QString ( argv[5] ).toInt ( &ok );
   if ( !ok )
-    {
+  {
     std::cerr << "Could not convert " << argv[5] << " to an integer" << std::endl;
     print_usage();
     return EXIT_FAILURE;
-    }
+  }
   query.setPort ( port );
 
   try
-    {
+  {
     query.query ( myCTK );
-    }
+  }
   catch (const std::exception& e)
   {
     Q_UNUSED(e);

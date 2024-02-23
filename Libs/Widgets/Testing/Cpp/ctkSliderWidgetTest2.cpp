@@ -45,26 +45,26 @@ int ctkSliderWidgetTest2(int argc, char * argv [] )
   sliderSpinBox.setMinimum(150);
 
   if (spy.count() != 1)
-    {
+  {
     std::cout << "ctkSliderWidget::valueChanged not fired: " << spy.count();
     return EXIT_FAILURE;
-    }
+  }
   spy.clear();
   sliderSpinBox.setMaximum(1500);
 
   if (spy.count() != 0)
-    {
+  {
     std::cout << "ctkSliderWidget::valueChanged was fired: " << spy.count();
     return EXIT_FAILURE;
-    }
+  }
 
   sliderSpinBox.setPopupSlider(true);
   sliderSpinBox.setPopupSlider(false);
 
   sliderSpinBox.show();
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(100, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

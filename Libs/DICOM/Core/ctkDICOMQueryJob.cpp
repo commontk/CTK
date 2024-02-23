@@ -132,7 +132,7 @@ void ctkDICOMQueryJob::setServer(QSharedPointer<ctkDICOMServer> server)
 QString ctkDICOMQueryJob::loggerReport(const QString& status) const
 {
   switch (this->dicomLevel())
-    {
+  {
     case ctkDICOMJob::DICOMLevels::Patients:
       return QString("ctkDICOMQueryJob: query job at patients level %1.\n"
                      "JobUID: %2\n"
@@ -175,7 +175,7 @@ QString ctkDICOMQueryJob::loggerReport(const QString& status) const
           .arg(this->seriesInstanceUID());
     default:
       return QString("");
-    }
+  }
 }
 
 //------------------------------------------------------------------------------

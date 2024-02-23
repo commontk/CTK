@@ -175,7 +175,7 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
   createPanel("Hidden", popups); //create a panel that is hidden (never shown)
   QWidget* scrollPanel = createPanel("Scroll", popups);
   foreach(ctkPopupWidget* popup, popups)
-    {
+  {
     popup->setVerticalDirection(ctkPopupWidget::TopToBottom);
     popup->setHorizontalDirection(Qt::LeftToRight);
     popup->setAlignment( Qt::AlignBottom | Qt::AlignJustify);
@@ -184,13 +184,13 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
     p.setColor(QPalette::Window, QColor(255, 0, 0, 128));
     popup->setPalette(p);
     popup->setAttribute(Qt::WA_TranslucentBackground);
-    }
+  }
   popups.clear();
   QWidget* fadePanel = createPanel("Window opacity", popups);
   foreach(ctkPopupWidget* popup, popups)
-    {
+  {
     popup->setAnimationEffect(ctkPopupWidget::WindowOpacityFadeEffect);
-    }
+  }
 
   scrollPanel->show();
   fadePanel->show();
@@ -208,8 +208,8 @@ int ctkPopupWidgetTest1(int argc, char * argv [] )
   QTimer::singleShot(200, &screenPopup, SLOT(showPopup()));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

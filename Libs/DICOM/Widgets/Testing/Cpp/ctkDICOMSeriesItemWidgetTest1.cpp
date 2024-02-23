@@ -84,9 +84,9 @@ int ctkDICOMSeriesItemWidgetTest1(int argc, char* argv[])
   CHECK_INT(widget.thumbnailSizePixel(), 100);
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

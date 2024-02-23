@@ -41,17 +41,17 @@ bool ctkRangeSliderEventTranslator::translateEvent(QObject *Object,
   Q_UNUSED(Error);
   ctkRangeSlider* const object = qobject_cast<ctkRangeSlider*>(Object);
   if(!object)
-    {
+  {
     return false;
-    }
+  }
   // Since ctkDoubleRangeSlider internally aggregates a ctkRangeSlider
   if(qobject_cast<ctkDoubleRangeSlider*>(object->parent()))
-    {
+  {
     return false;
-    }
+  }
 
   switch(Event->type())
-    {
+  {
     case QEvent::Enter:
       this->CurrentObject = object;
       connect(object, SIGNAL(maximumPositionChanged(int)),
@@ -65,7 +65,7 @@ bool ctkRangeSliderEventTranslator::translateEvent(QObject *Object,
       break;
     default:
       break;
-    }
+  }
 
   return true;
 }

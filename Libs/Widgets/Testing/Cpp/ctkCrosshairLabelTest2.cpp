@@ -61,11 +61,11 @@ bool runBaselineTest(ctkCrosshairLabel& crosshair,
 {
   QApplication::processEvents();
   if (!imageCompare(crosshair, baselineDirectory, baselineFilename))
-    {
+  {
     std::cerr << "ctkCrosshairLabel baseline comparison failed when "
               << qPrintable(errorMessage) << "." << std::endl;
     return false;
-    }
+  }
   return true;
 }
 
@@ -82,32 +82,32 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
   bool ok = false;
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments(), &ok);
   if (!ok)
-    {
+  {
     std::cerr << qPrintable(parser.errorString()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   QString dataDirectory = parsedArgs["-D"].toString();
   QString baselineDirectory = parsedArgs["-V"].toString();
   bool interactive = parsedArgs["-I"].toBool();
 
   // The remainder is interactive, so abort now if command line args specify otherwise
   if (interactive)
-    {
+  {
     return EXIT_SUCCESS;
-    }
+  }
 
   QPixmap pixmap(dataDirectory + "/" + "computerIcon.png");
 
   // Basesize is always odd
   QSize baseSize = pixmap.size();
   if (pixmap.width() % 2 == 0)
-    {
+  {
     baseSize.setWidth(baseSize.width()+1);
-    }
+  }
   if (pixmap.height() % 2 == 0)
-    {
+  {
     baseSize.setHeight(baseSize.height()+1);
-    }
+  }
 
   QPen crosshairPen(Qt::yellow);
   crosshairPen.setJoinStyle(Qt::MiterJoin);
@@ -133,9 +133,9 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                 "ctkCrosshairLabelTest2a.png",
                 "using bulls-eye crosshair (odd size, bullsEye 15, width 1)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     ///
     crosshairPen.setWidth(5);
@@ -143,9 +143,9 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                 "ctkCrosshairLabelTest2b.png",
                 "using bulls-eye crosshair (odd size, bullsEye 15, width 5)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     ///
     crosshair.setBullsEyeWidth(14);
@@ -154,9 +154,9 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                 "ctkCrosshairLabelTest2c.png",
                 "using bulls-eye crosshair (odd size, bullsEye 14, width 1)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     ///
     crosshairPen.setWidth(4);
@@ -164,9 +164,9 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                 "ctkCrosshairLabelTest2d.png",
                 "using bulls-eye crosshair (odd size, bullsEye 14, width 4)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     // Crosshair not shown
     crosshair.resize(baseSize);
@@ -175,9 +175,9 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                          "ctkCrosshairLabelTest2i.png",
                          "show crosshair false"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     // Crosshair crosshair
     crosshair.setShowCrosshair(true);
@@ -187,9 +187,9 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                          "ctkCrosshairLabelTest2j.png",
                          "using cross-hair crosshair (odd size)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
   }
 
   {
@@ -210,9 +210,9 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                          "ctkCrosshairLabelTest2e.png",
                          "using bulls-eye crosshair (even size, bullsEye 14, width 1)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     ///
     crosshairPen.setWidth(4);
@@ -220,9 +220,9 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                          "ctkCrosshairLabelTest2f.png",
                          "using bulls-eye crosshair (even size, bullsEye 14, width 4)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     ///
     crosshair.setBullsEyeWidth(15);
@@ -231,9 +231,9 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                          "ctkCrosshairLabelTest2g.png",
                          "using bulls-eye crosshair (even size, bullsEye 15, width 1)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     ///
     crosshairPen.setWidth(5);
@@ -241,18 +241,18 @@ int ctkCrosshairLabelTest2(int argc, char * argv [] )
     if (!runBaselineTest(crosshair, baselineDirectory,
                          "ctkCrosshairLabelTest2h.png",
                          "using bulls-eye crosshair (even size, bullsEye 15, width 5)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
 
     crosshairPen.setWidth(1);
     crosshair.setCrosshairPen(crosshairPen);
     if (!runBaselineTest(crosshair, baselineDirectory,
                          "ctkCrosshairLabelTest2k.png",
                          "using cross-hair crosshair (even size)"))
-      {
+    {
       return EXIT_FAILURE;
-      }
+    }
   }
 
   // We already tested for interactive mode

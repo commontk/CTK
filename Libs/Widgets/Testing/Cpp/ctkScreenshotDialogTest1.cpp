@@ -44,56 +44,56 @@ int ctkScreenshotDialogTest1(int argc, char * argv [] )
       screenshotDialog.baseFileName() != "Untitled" ||
       !screenshotDialog.directory().isEmpty() ||
       screenshotDialog.delay() != 0)
-    {
+  {
     std::cerr << "ctkScreenshotDialog, bad default values: "
                 << screenshotDialog.widgetToGrab() << " "
                 << qPrintable(screenshotDialog.baseFileName()) << " "
                 << qPrintable(screenshotDialog.directory()) << " "
                 <<  screenshotDialog.delay() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   screenshotDialog.setWidgetToGrab(&topLevel);
   if (screenshotDialog.widgetToGrab() != &topLevel)
-    {
+  {
     std::cerr << "ctkScreenshotDialog::setWidgetToGrab failed: "
               << screenshotDialog.widgetToGrab() << " instead of  "
               << &topLevel << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   screenshotDialog.setBaseFileName("screenshot");
   if (screenshotDialog.baseFileName() != "screenshot")
-    {
+  {
     std::cerr << "ctkScreenshotDialog::setBaseFileName failed: "
               << qPrintable(screenshotDialog.baseFileName()) << " instead of "
               << "\"screenshot\"." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   screenshotDialog.setDirectory("..");
   if (screenshotDialog.directory() != "..")
-    {
+  {
     std::cerr << "ctkScreenshotDialog::setDirectory failed: "
               << qPrintable(screenshotDialog.directory()) << " instead of "
               << ".." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   screenshotDialog.setDelay(1);
   if (screenshotDialog.delay() != 1)
-    {
+  {
     std::cerr << "ctkScreenshotDialog::setDelay failed: "
               << screenshotDialog.delay() << " instead of 2." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   topLevel.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(1400, &app, SLOT(quit()));
-    }
+  }
 
   screenshotDialog.saveScreenshot(); // 1000msecs should be enough
   return screenshotDialog.exec();

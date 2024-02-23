@@ -49,28 +49,28 @@ class CustomSpy : public QObject
   Q_OBJECT
 public:
   CustomSpy()
-    {
+  {
     this->AcknowledgedSignals = 0;
-    }
+  }
 
 public slots:
   void onValuesChanged(double min, double max)
-    {
+{
     ++this->AcknowledgedSignals;
     this->MinSpyData.append(min);
     this->MaxSpyData.append(max);
-    }
+}
 
 public:
   void getSpyReport(double min, double max)
-    {
+  {
     QCOMPARE(this->AcknowledgedSignals, 1);
 
     QCOMPARE(this->MinSpyData.size(), 1);
     ctkTest::COMPARE(this->MinSpyData[0], min);
     QCOMPARE(this->MaxSpyData.size(), 1);
     ctkTest::COMPARE(this->MaxSpyData[0], max);
-    }
+  }
 
   QList<double> MinSpyData;
   QList<double> MaxSpyData;

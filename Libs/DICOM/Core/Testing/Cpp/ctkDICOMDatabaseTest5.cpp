@@ -42,11 +42,11 @@ int ctkDICOMDatabaseTest5( int argc, char * argv [] )
   QString testName = arguments.takeFirst();
 
   if (arguments.count() != 1)
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-dicom-file>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString dicomFilePath(arguments.at(0));
 
@@ -64,10 +64,10 @@ int ctkDICOMDatabaseTest5( int argc, char * argv [] )
   bool res = database.initializeDatabase();
 
   if (!res)
-    {
+  {
     std::cerr << "ctkDICOMDatabase::initializeDatabase() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::cerr << "Database is in " << databaseDirectory.path().toStdString() << std::endl;
 
 
@@ -104,11 +104,11 @@ int ctkDICOMDatabaseTest5( int argc, char * argv [] )
   QString filePathInDatabase = database.fileForInstance(instanceUID);
 
   if (filePathInDatabase != secondDestination)
-    {
+  {
     std::cerr << "ctkDICOMDatabase thinks instance is in " << filePathInDatabase.toStdString() << std::endl;
     std::cerr << "But we just inserted it from " << secondDestination.toStdString() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //
   // Close and clean up

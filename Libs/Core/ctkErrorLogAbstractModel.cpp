@@ -92,13 +92,13 @@ ctkErrorLogAbstractModelPrivate::ctkErrorLogAbstractModelPrivate(ctkErrorLogAbst
 ctkErrorLogAbstractModelPrivate::~ctkErrorLogAbstractModelPrivate()
 {
   foreach(const QString& handlerName, this->RegisteredHandlers.keys())
-    {
+  {
     ctkErrorLogAbstractMessageHandler * msgHandler =
         this->RegisteredHandlers.value(handlerName);
     Q_ASSERT(msgHandler);
     msgHandler->setEnabled(false);
     delete msgHandler;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -158,13 +158,13 @@ bool ctkErrorLogAbstractModel::registerMsgHandler(ctkErrorLogAbstractMessageHand
 {
   Q_D(ctkErrorLogAbstractModel);
   if (!msgHandler)
-    {
+  {
     return false;
-    }
+  }
   if (d->RegisteredHandlers.keys().contains(msgHandler->handlerName()))
-    {
+  {
     return false;
-    }
+  }
 
   d->setMessageHandlerConnection(msgHandler, d->AsynchronousLogging);
 
@@ -187,9 +187,9 @@ bool ctkErrorLogAbstractModel::msgHandlerEnabled(const QString& handlerName) con
 {
   Q_D(const ctkErrorLogAbstractModel);
   if (!d->RegisteredHandlers.keys().contains(handlerName))
-    {
+  {
     return false;
-    }
+  }
   return d->RegisteredHandlers.value(handlerName)->enabled();
 }
 
@@ -198,11 +198,11 @@ void ctkErrorLogAbstractModel::setMsgHandlerEnabled(const QString& handlerName, 
 {
   Q_D(ctkErrorLogAbstractModel);
   if (!d->RegisteredHandlers.keys().contains(handlerName))
-    {
+  {
 //    qCritical() << "Failed to enable/disable message handler " << handlerName
 //                << "-  Handler not registered !";
     return;
-    }
+  }
   d->RegisteredHandlers.value(handlerName)->setEnabled(enabled);
 }
 
@@ -212,12 +212,12 @@ QStringList ctkErrorLogAbstractModel::msgHandlerEnabled() const
   Q_D(const ctkErrorLogAbstractModel);
   QStringList msgHandlers;
   foreach(const QString& handlerName, d->RegisteredHandlers.keys())
-    {
+  {
     if (d->RegisteredHandlers.value(handlerName)->enabled())
-      {
+    {
       msgHandlers << handlerName;
-      }
     }
+  }
   return msgHandlers;
 }
 
@@ -225,9 +225,9 @@ QStringList ctkErrorLogAbstractModel::msgHandlerEnabled() const
 void ctkErrorLogAbstractModel::setMsgHandlerEnabled(const QStringList& handlerNames)
 {
   foreach(const QString& handlerName, handlerNames)
-    {
+  {
     this->setMsgHandlerEnabled(handlerName, true);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -247,9 +247,9 @@ void ctkErrorLogAbstractModel::setAllMsgHandlerEnabled(bool enabled)
 {
   Q_D(ctkErrorLogAbstractModel);
   foreach(const QString& msgHandlerName, d->RegisteredHandlers.keys())
-    {
+  {
     this->setMsgHandlerEnabled(msgHandlerName, enabled);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -287,9 +287,9 @@ void ctkErrorLogAbstractModel::addEntry(const QDateTime& currentDateTime, const 
   Q_D(ctkErrorLogAbstractModel);
 
   if (d->AddingEntry)
-    {
+  {
     return;
-    }
+  }
 
   d->AddingEntry = true;
 
@@ -297,7 +297,7 @@ void ctkErrorLogAbstractModel::addEntry(const QDateTime& currentDateTime, const 
 
   bool groupEntry = false;
   if (d->LogEntryGrouping)
-    {
+  {
     int lastRowIndex = d->ItemModel->rowCount() - 1;
 
     QString lastRowThreadId = this->logEntryData(lastRowIndex, Self::ThreadIdColumn).toString();
@@ -315,15 +315,15 @@ void ctkErrorLogAbstractModel::addEntry(const QDateTime& currentDateTime, const 
     bool withinGroupingInterval = lastRowDateTime.time().msecsTo(currentDateTime.time()) <= groupingIntervalInMsecs;
 
     groupEntry = threadIdMatched && logLevelMatched && originMatched && withinGroupingInterval;
-    }
+  }
 
   if (!groupEntry)
-    {
+  {
     this->addModelEntry(
       currentDateTime.toString(timeFormat), threadId, d->ErrorLogLevel(logLevel), origin, text);
-    }
+  }
   else
-    {
+  {
     // Retrieve description associated with last row
     QModelIndex lastRowDescriptionIndex =
         d->ItemModel->index(d->ItemModel->rowCount() - 1, ctkErrorLogAbstractModel::DescriptionColumn);
@@ -338,10 +338,10 @@ void ctkErrorLogAbstractModel::addEntry(const QDateTime& currentDateTime, const 
     // Append '...' to displayText if needed
     QString displayText = lastRowDescriptionIndex.data().toString();
     if (!displayText.endsWith("..."))
-      {
+    {
       d->ItemModel->setData(lastRowDescriptionIndex, displayText.append("..."), Qt::DisplayRole);
-      }
     }
+  }
 
   d->AddingEntry = false;
 
@@ -377,9 +377,9 @@ void ctkErrorLogAbstractModel::filterEntry(const ctkErrorLogLevel::LogLevels& lo
 
   QStringList patterns;
   if (!this->filterRegExp().pattern().isEmpty())
-    {
+  {
     patterns << this->filterRegExp().pattern().split("|");
-    }
+  }
   patterns.removeAll(d->ErrorLogLevel(ctkErrorLogLevel::None));
 
 //  foreach(QString s, patterns)
@@ -393,48 +393,48 @@ void ctkErrorLogAbstractModel::filterEntry(const ctkErrorLogLevel::LogLevels& lo
   // Loop over enum values and append associated name to 'patterns' if
   // it has been specified within 'logLevel'
   for (int i = 1; i < logLevelEnum.keyCount(); ++i)
-    {
+  {
     int aLogLevel = logLevelEnum.value(i);
     if (logLevel & aLogLevel)
-      {
+    {
       QString logLevelAsString = d->ErrorLogLevel(static_cast<ctkErrorLogLevel::LogLevel>(aLogLevel));
       if (!disableFilter)
-        {
+      {
         patterns << logLevelAsString;
         d->CurrentLogLevelFilter |= static_cast<ctkErrorLogLevel::LogLevels>(aLogLevel);
-        }
+      }
       else
-        {
+      {
         patterns.removeAll(logLevelAsString);
         d->CurrentLogLevelFilter ^= static_cast<ctkErrorLogLevel::LogLevels>(aLogLevel);
-        }
       }
     }
+  }
 
   if (patterns.isEmpty())
-    {
+  {
     // If there are no patterns, let's filter with the None level so that
     // all entries are filtered out.
     patterns << d->ErrorLogLevel(ctkErrorLogLevel::None);
-    }
+  }
 
   bool filterChanged = true;
   QStringList currentPatterns = this->filterRegExp().pattern().split("|");
   if (currentPatterns.count() == patterns.count())
-    {
+  {
     foreach(const QString& p, patterns)
-      {
+    {
       currentPatterns.removeAll(p);
-      }
-    filterChanged = currentPatterns.count() > 0;
     }
+    filterChanged = currentPatterns.count() > 0;
+  }
 
   this->setFilterRegExp(patterns.join("|"));
 
   if (filterChanged)
-    {
+  {
     emit this->logLevelFilterChanged();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -446,9 +446,9 @@ ctkErrorLogLevel::LogLevels ctkErrorLogAbstractModel::logLevelFilter()const
 
   ctkErrorLogLevel::LogLevels filter = ctkErrorLogLevel::Unknown;
   foreach(const QString& filterAsString, this->filterRegExp().pattern().split("|"))
-    {
+  {
     filter |= static_cast<ctkErrorLogLevel::LogLevels>(logLevelEnum.keyToValue(filterAsString.toLatin1()));
-    }
+  }
   return filter;
 }
 
@@ -478,15 +478,15 @@ void ctkErrorLogAbstractModel::setAsynchronousLogging(bool value)
 {
   Q_D(ctkErrorLogAbstractModel);
   if (d->AsynchronousLogging == value)
-    {
+  {
     return;
-    }
+  }
 
   foreach(const QString& handlerName, d->RegisteredHandlers.keys())
-    {
+  {
     d->setMessageHandlerConnection(
           d->RegisteredHandlers.value(handlerName), value);
-    }
+  }
 
   QObject::disconnect(this,
     SIGNAL(entryPosted(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
@@ -562,9 +562,9 @@ QVariant ctkErrorLogAbstractModel::logEntryData(int row, int column, int role) c
   Q_D(const ctkErrorLogAbstractModel);
   if (column < 0 || column > Self::MaxColumn
       || row < 0 || row > this->logEntryCount())
-    {
+  {
     return QVariant();
-    }
+  }
   QModelIndex rowDescriptionIndex = d->ItemModel->index(row, column);
   return rowDescriptionIndex.data(role);
 }
@@ -587,8 +587,8 @@ ctkErrorLogAbstractMessageHandler* ctkErrorLogAbstractModel::msgHandler(const QS
 {
   Q_D(const ctkErrorLogAbstractModel);
   if (!d->RegisteredHandlers.keys().contains(handlerName))
-    {
+  {
     return nullptr;
-    }
+  }
   return d->RegisteredHandlers[handlerName];
 }

@@ -35,27 +35,27 @@ bool verifyOperator(const STRUCT& left, const STRUCT& right, bool equalExpected)
   bool different = (left != right);
 
   if (equalExpected)
-    {
+  {
     if (!equal)
-      {
-      return false;
-      }
-    if (different)
-      {
-      return false;
-      }
-    }
-  else
     {
-    if (equal)
-      {
       return false;
-      }
-    if (!different)
-      {
-      return false;
-      }
     }
+    if (different)
+    {
+      return false;
+    }
+  }
+  else
+  {
+    if (equal)
+    {
+      return false;
+    }
+    if (!different)
+    {
+      return false;
+    }
+  }
   return true;
 }
 }
@@ -64,12 +64,12 @@ bool verifyOperator(const STRUCT& left, const STRUCT& right, bool equalExpected)
 #define CHECK_OP(TYPE, LEFT, RIGHT, EQUAL_EXPECTED)        \
   if (!verifyOperator<ctkDicomAppHosting::TYPE>(           \
         LEFT, RIGHT, /*equalExpected=*/ EQUAL_EXPECTED))   \
-    {                                                      \
+  {                                                        \
     std::cerr << "Line "                                   \
               << __LINE__ << " - Problem with " << #TYPE   \
               << " comparison operator" << std::endl;      \
     return EXIT_FAILURE;                                   \
-    }
+  }
 
 //----------------------------------------------------------------------------
 int ctkDicomAppHostingTypesTest1(int argc, char* argv[])

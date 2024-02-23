@@ -68,9 +68,9 @@ int ctkVTKScalarsToColorsViewTest2(int argc, char * argv [] )
   image->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
   unsigned char * ptr = static_cast<unsigned char *>(image->GetScalarPointer());
   for (int i=0; i<256*256*1; ++i)
-    {
+  {
     *(ptr++)= rand() % 256;
-    }
+  }
 
   // Histogram
   vtkSmartPointer<vtkImageAccumulate> histogram =
@@ -90,9 +90,9 @@ int ctkVTKScalarsToColorsViewTest2(int argc, char * argv [] )
   intArray->SetNumberOfTuples(256);
   intArray->SetName("intensities");
   for (int i = 0; i < 256; ++i)
-    {
+  {
     intArray->SetValue(i, i);
-    }
+  }
   bins->SetName("Histogram");
   table->AddColumn(intArray);
   table->AddColumn(histogram->GetOutput()->GetPointData()->GetScalars());
@@ -116,8 +116,8 @@ int ctkVTKScalarsToColorsViewTest2(int argc, char * argv [] )
   view.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

@@ -57,26 +57,26 @@ int ctkRangeWidgetTest1(int argc, char * argv [] )
 
   if (!qFuzzyCompare(sliderSpinBox.tickInterval(), 0.1) ||
       !checkSlider(sliderSpinBox, 80.5678, 80.5678, 80.5678, 2050.9876))
-    {
+  {
     std::cerr << "ctkRangeWidget:: 6) setTickInterval"
               << sliderSpinBox.minimum() << " "
               << sliderSpinBox.minimumValue() << " "
               << sliderSpinBox.maximumValue() << " "
               << sliderSpinBox.maximum() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
     std::cout << "5" << std::endl;
 
   if (!qFuzzyCompare(sliderSpinBox.tickInterval(), 0.1) |
       !checkSlider(sliderSpinBox, 80.5678, 80.5678, 80.5678, 2050.9876))
-    {
+  {
     std::cerr << "ctkRangeWidget:: 6) setMinimum"
               << sliderSpinBox.minimum() << " "
               << sliderSpinBox.minimumValue() << " "
               << sliderSpinBox.maximumValue() << " "
               << sliderSpinBox.maximum() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::cout << "6" << std::endl;
   //sliderSpinBox.reset();
@@ -84,71 +84,71 @@ int ctkRangeWidgetTest1(int argc, char * argv [] )
 
   if (sliderSpinBox.spinBoxAlignment() != Qt::AlignRight ||
       !checkSlider(sliderSpinBox, 80.5678, 80.5678, 80.5678, 2050.9876))
-    {
+  {
     std::cerr << "ctkRangeWidget:: 7) setSpinBoxAlignment"
               << sliderSpinBox.minimum() << " "
               << sliderSpinBox.minimumValue() << " "
               << sliderSpinBox.maximumValue() << " "
               << sliderSpinBox.maximum() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::cout << "7" << std::endl;
   sliderSpinBox.setAutoSpinBoxWidth(false);
 
   if (sliderSpinBox.isAutoSpinBoxWidth() != false ||
       !checkSlider(sliderSpinBox, 80.5678, 80.5678, 80.5678, 2050.9876))
-    {
+  {
     std::cerr << "ctkRangeWidget:: 8) setAutoSpinBoxWidth"
               << sliderSpinBox.minimum() << " "
               << sliderSpinBox.minimumValue() << " "
               << sliderSpinBox.maximumValue() << " "
               << sliderSpinBox.maximum() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::cout << "8" << std::endl;
   sliderSpinBox.setPrefix("$");
 
   if (sliderSpinBox.prefix() != "$" ||
       !checkSlider(sliderSpinBox, 80.5678, 80.5678, 80.5678, 2050.9876))
-    {
+  {
     std::cerr << "ctkRangeWidget:: 8) setPrefix"
               << sliderSpinBox.minimum() << " "
               << sliderSpinBox.minimumValue() << " "
               << sliderSpinBox.maximumValue() << " "
               << sliderSpinBox.maximum() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::cout << "9" << std::endl;
   sliderSpinBox.setSuffix("mm");
 
   if (sliderSpinBox.suffix() != "mm" ||
       !checkSlider(sliderSpinBox, 80.5678, 80.5678, 80.5678, 2050.9876))
-    {
+  {
     std::cerr << "ctkRangeWidget:: 9) setSuffix"
               << sliderSpinBox.minimum() << " "
               << sliderSpinBox.minimumValue() << " "
               << sliderSpinBox.maximumValue() << " "
               << sliderSpinBox.maximum() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   sliderSpinBox.setSymmetricMoves(true);
 
   if (sliderSpinBox.symmetricMoves() != true)
-    {
+  {
     std::cerr << "ctkRangeWidget::setSymmetricMoves failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // FIXME check that the correct signals are sent.
 
   sliderSpinBox.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 

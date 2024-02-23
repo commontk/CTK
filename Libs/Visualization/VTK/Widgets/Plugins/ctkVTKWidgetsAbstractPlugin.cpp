@@ -56,8 +56,8 @@ void ctkVTKWidgetsAbstractPlugin::initialize(QDesignerFormEditorInterface *formE
 {
   Q_UNUSED(formEditor);
   if (this->Initialized)
-    {
+  {
     return;
-    }
+  }
   this->Initialized = true;
 }

@@ -49,9 +49,9 @@ int ctkDICOMDirectoryListWidgetTest1( int argc, char * argv [] )
   listWidget.show();
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   // if Qt uses the native dialog, then there is no way to force
   // the getExistingDirectory dialog to close. so we can't test it.

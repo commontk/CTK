@@ -45,7 +45,7 @@ int ctkCrosshairLabelTest1(int argc, char * argv [] )
       crosshair.crosshairType() != ctkCrosshairLabel::SimpleCrosshair ||
       crosshair.marginColor() != crosshair.palette().color(QPalette::Window) ||
       crosshair.bullsEyeWidth() != 15)
-    {
+  {
     std::cerr << "ctkCrosshairLabel: Wrong default values. " << std::endl
               << " " << crosshair.showCrosshair()
               << " " << qPrintable(crosshair.crosshairPen().color().name())
@@ -55,16 +55,16 @@ int ctkCrosshairLabelTest1(int argc, char * argv [] )
               << " " << qPrintable(crosshair.marginColor().name())
               << " " << crosshair.bullsEyeWidth() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Show crosshair
   crosshair.setShowCrosshair(false);
   if (crosshair.showCrosshair())
-    {
+  {
     std::cerr << "ctkCrosshairLabel:setShowCrosshair failed. "
               << crosshair.showCrosshair() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   crosshair.setShowCrosshair(true);
 
   // Crosshair pen
@@ -72,20 +72,20 @@ int ctkCrosshairLabelTest1(int argc, char * argv [] )
   crosshairPen.setJoinStyle(Qt::MiterJoin);
   crosshair.setCrosshairPen(crosshairPen);
   if (crosshair.crosshairPen() != crosshairPen)
-    {
+  {
     std::cerr << "ctkCrosshairLabel:setCrosshairPen failed. "
               << qPrintable(crosshair.crosshairPen().color().name()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Crosshair type
   crosshair.setCrosshairType(ctkCrosshairLabel::BullsEyeCrosshair);
   if (crosshair.crosshairType() != ctkCrosshairLabel::BullsEyeCrosshair)
-    {
+  {
     std::cerr << "ctkCrosshairLabel:setCrosshairType failed. "
               << crosshair.crosshairType() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Margin color - invalid input
   QColor transparentBlue(Qt::blue);
@@ -93,37 +93,37 @@ int ctkCrosshairLabelTest1(int argc, char * argv [] )
   QColor origColor = crosshair.marginColor();
   crosshair.setMarginColor(QColor());
   if (crosshair.marginColor() != origColor)
-    {
+  {
     std::cerr << "ctkCrosshairLabel:setMarginColor failed - invalid input. "
               << qPrintable(crosshair.marginColor().name()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Margin color - should ignore alpha channel
   crosshair.setMarginColor(transparentBlue);
   if (crosshair.marginColor() != Qt::blue)
+  {
     {
-      {
       std::cerr << "ctkCrosshairLabel:setMarginColor failed - valid input. "
                 << qPrintable(crosshair.marginColor().name()) << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // Bulls eye width
   crosshair.setBullsEyeWidth(0);
   if (crosshair.bullsEyeWidth() != 0)
-    {
+  {
     std::cerr << "ctkCrosshairLabel:setBullsEyeWidth failed. "
               << crosshair.bullsEyeWidth() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   crosshair.show();
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 

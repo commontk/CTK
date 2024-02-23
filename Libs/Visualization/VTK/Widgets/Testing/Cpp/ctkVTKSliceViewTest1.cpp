@@ -50,8 +50,8 @@ int ctkVTKSliceViewTest1(int argc, char * argv [] )
   sliceView.show();
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

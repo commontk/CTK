@@ -39,53 +39,53 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
 
   ctkAxesWidget axes(0);
   if (axes.currentAxis() != ctkAxesWidget::None)
-    {
+  {
     std::cerr << "ctkAxesWidget default axis is wrong: "
               << static_cast<int>(axes.currentAxis()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QSignalSpy spy(&axes, SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)));
   axes.setCurrentAxis(ctkAxesWidget::Anterior);
 
   if (axes.currentAxis() != ctkAxesWidget::Anterior ||
       spy.count() != 1)
-    {
+  {
     std::cerr << "ctkAxesWidget default axis is wrong: "
               << static_cast<int>(axes.currentAxis()) << " " << spy.count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if ( qvariant_cast<ctkAxesWidget::Axis>(spy.takeFirst().at(0)) != ctkAxesWidget::Anterior)
-    {
+  {
     std::cerr << "ctkAxesWidget fired the wrong current axis : "
               << spy.takeFirst().at(0).toInt() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   axes.setAutoReset(true);
   if ((axes.autoReset() != true) ||
       (axes.currentAxis() != ctkAxesWidget::None))
-    {
+  {
     std::cerr << "ctkAxesWidget::setAutoReset failed: "
               << static_cast<int>(axes.currentAxis()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   spy.clear();
   axes.setCurrentAxis(ctkAxesWidget::Right);
   if (axes.currentAxis() != ctkAxesWidget::None ||
       spy.count() != 2)
-    {
+  {
     std::cerr << "ctkAxesWidget::setCurrentAxis() with autoReset ON failed: "
               << static_cast<int>(axes.currentAxis()) << " " << spy.count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (qvariant_cast<ctkAxesWidget::Axis>(spy[0].at(0)) != ctkAxesWidget::Right ||
       qvariant_cast<ctkAxesWidget::Axis>(spy[1].at(0)) != ctkAxesWidget::None)
-    {
+  {
     std::cerr << "ctkAxesWidget::setCurrentAxis() with autoReset ON failed: "
             << spy[0].at(0).toInt() << " " << spy[1].at(0).toInt() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 
   // Test axesLabels/setAxesLabels
@@ -116,9 +116,9 @@ int ctkAxesWidgetTest1(int argc, char * argv [] )
   axes2.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

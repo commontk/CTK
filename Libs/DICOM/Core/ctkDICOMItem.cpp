@@ -90,7 +90,7 @@ void ctkDICOMItem::InitializeFromItem(DcmItem *dataset, bool takeOwnership)
       {
         d->m_SpecificCharacterSet = encoding.c_str();
       }
-      }
+    }
       if (d->m_SpecificCharacterSet.isEmpty())
       {
         ///
@@ -103,8 +103,8 @@ void ctkDICOMItem::InitializeFromItem(DcmItem *dataset, bool takeOwnership)
         ///
         SetElementAsString( DCM_SpecificCharacterSet, "ISO_IR 100" );
       }
-    }
   }
+}
 
 
 void ctkDICOMItem::InitializeFromFile(const QString& filename,

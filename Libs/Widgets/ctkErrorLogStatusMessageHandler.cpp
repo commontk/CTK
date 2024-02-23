@@ -51,40 +51,40 @@ QString ctkErrorLogStatusMessageHandler::handlerName()const
 void ctkErrorLogStatusMessageHandler::setEnabledInternal(bool value)
 {
   if (value)
-    {
+  {
     if (this->MainWindow.isNull())
-      {
+    {
       qCritical() << "ctkErrorLogStatusMessageHandler - "
                      " Failed to enable ctkErrorLogStatusMessageHandler - "
                      "QMainWindow passed to the constructor is Null !";
       return;
-      }
+    }
     if (!this->MainWindow->statusBar())
-      {
+    {
       qCritical() << "ctkErrorLogStatusMessageHandler - Failed to enable the message handler: "
                      "There is no StatusBar associated with QMainWindow" << this->MainWindow;
       return;
-      }
+    }
     connect(this->MainWindow->statusBar(), SIGNAL(messageChanged(QString)),
             this, SLOT(statusBarMessageChanged(QString)));
-    }
+  }
   else
-    {
+  {
     if (!this->MainWindow.isNull())
-      {
+    {
       disconnect(this->MainWindow->statusBar(), SIGNAL(messageChanged(QString)),
                  this, SLOT(statusBarMessageChanged(QString)));
-      }
     }
+  }
 }
 
 //------------------------------------------------------------------------------
 void ctkErrorLogStatusMessageHandler::statusBarMessageChanged(const QString& text)
 {
   if (text.isEmpty())
-    {
+  {
     return;
-    }
+  }
   this->handleMessage(
         ctk::qtHandleToString(QThread::currentThreadId()),
         ctkErrorLogLevel::Status, this->handlerPrettyName(), ctkErrorLogContext(text), text);

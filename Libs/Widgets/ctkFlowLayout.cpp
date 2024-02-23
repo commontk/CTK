@@ -76,9 +76,9 @@ void ctkFlowLayoutPrivate::deleteAll()
 {
   Q_Q(ctkFlowLayout);
   foreach(QLayoutItem* item, this->ItemList)
-    {
+  {
     delete item;
-    }
+  }
   this->ItemList.clear();
   q->invalidate();
 }
@@ -87,24 +87,24 @@ void ctkFlowLayoutPrivate::deleteAll()
 QSize ctkFlowLayoutPrivate::maxSizeHint(int *visibleItemsCount)const
 {
   if (visibleItemsCount)
-    {
+  {
     *visibleItemsCount = 0;
-    }
+  }
   QSize maxItemSize;
   foreach (QLayoutItem* item, this->ItemList)
-    {
+  {
     QWidget *wid = item->widget();
     if (wid && !wid->isVisibleTo(wid->parentWidget()))
-      {// don't take into account hidden items
+    {// don't take into account hidden items
       continue;
-      }
+    }
     maxItemSize.rwidth() = qMax(item->sizeHint().width(), maxItemSize.width());
     maxItemSize.rheight() = qMax(item->sizeHint().height(), maxItemSize.height());
     if (visibleItemsCount)
-      {
+    {
       ++*visibleItemsCount;
-      }
     }
+  }
   return maxItemSize;
 }
 
@@ -127,53 +127,53 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
   int space = this->Orientation == Qt::Horizontal ? spaceX : spaceY;
   QLayoutItem* previousItem = NULL;
   foreach (QLayoutItem* item, this->ItemList)
-    {
+  {
     QWidget *wid = item->widget();
     if (wid && wid->isHidden())
-      {
+    {
       continue;
-      }
+    }
     QPoint next = pos;
     QSize itemSize = this->AlignItems ? maxItemSize : item->sizeHint();
     if (this->Orientation == Qt::Horizontal)
-      {
+    {
       next += QPoint(itemSize.width() + spaceX, 0);
-      }
+    }
     else
-      {
+    {
       next += QPoint(0, itemSize.height() + spaceY);
-      }
+    }
     if (this->Orientation == Qt::Horizontal &&
         (next.x() - space > max) && length > 0)
-      {
+    {
       // If justified alignment is requested then expand the last item in the row
       // to fill the available space. If the width of items were highly varying then
       // expanding width of all items proportionally could provide visually more
       // appealing results, but expanding only the last item was much simpler to implement,
       // and works very well most of the cases.
       if (!testOnly && q->alignment() == Qt::AlignJustify && previousItem)
-        {
+      {
         QRect geometry = previousItem->geometry();
         geometry.adjust(0, 0, max + space - pos.x(), 0);
         previousItem->setGeometry(geometry);
         maxX = qMax(maxX, geometry.right() + margins.right());
-        }
+      }
       pos = QPoint(effectiveRect.x(), pos.y() + length + space);
       next = pos + QPoint(itemSize.width() + space, 0);
       length = 0;
-      }
+    }
     else if (this->Orientation == Qt::Vertical &&
           (next.y() - space > max) && length > 0)
-      {
+    {
       pos = QPoint( pos.x() + length + space, effectiveRect.y());
       next = pos + QPoint(0, itemSize.height() + space);
       length = 0;
-      }
+    }
 
     if (!testOnly)
-      {
+    {
       item->setGeometry(QRect(pos, item->sizeHint()));
-      }
+    }
 
     maxX = qMax( maxX , pos.x() + item->sizeHint().width() + margins.right());
     maxY = qMax( maxY , pos.y() + item->sizeHint().height() + margins.bottom());
@@ -181,7 +181,7 @@ int ctkFlowLayoutPrivate::doLayout(const QRect& rect, bool testOnly)const
     length = qMax(length, this->Orientation == Qt::Horizontal ?
       itemSize.height() : itemSize.width());
     previousItem = item;
-    }
+  }
   return this->Orientation == Qt::Horizontal ? maxY : maxX;
 }
 
@@ -191,18 +191,18 @@ int ctkFlowLayoutPrivate::smartSpacing(QStyle::PixelMetric pm) const
   Q_Q(const ctkFlowLayout);
   QObject* parentObject = q->parent();
   if (!parentObject)
-    {
+  {
     return -1;
-    }
+  }
   else if (parentObject->isWidgetType())
-    {
+  {
     QWidget* parentWidget = qobject_cast<QWidget *>(parentObject);
     return parentWidget->style()->pixelMetric(pm, 0, parentWidget);
-    }
+  }
   else
-    {
+  {
     return static_cast<QLayout *>(parentObject)->spacing();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -281,9 +281,9 @@ int ctkFlowLayout::horizontalSpacing() const
 {
   Q_D(const ctkFlowLayout);
   if (d->HorizontalSpacing < 0)
-    {
+  {
     return d->smartSpacing(QStyle::PM_LayoutHorizontalSpacing);
-    }
+  }
   return d->HorizontalSpacing;
 }
 
@@ -300,9 +300,9 @@ int ctkFlowLayout::verticalSpacing() const
 {
   Q_D(const ctkFlowLayout);
   if (d->VerticalSpacing < 0)
-    {
+  {
     return d->smartSpacing(QStyle::PM_LayoutVerticalSpacing);
-    }
+  }
   return d->VerticalSpacing;
 }
 
@@ -366,7 +366,7 @@ int ctkFlowLayout::heightForWidth(int width) const
   /// here we see the limitations of the vertical layout, it should be
   /// widthForHeight in this case.
   if (d->AlignItems && d->Orientation == Qt::Vertical)
-    {
+  {
     int itemCount;
     QSize itemSize = d->maxSizeHint(&itemCount);
     QMargins margins = this->contentsMargins();
@@ -377,7 +377,7 @@ int ctkFlowLayout::heightForWidth(int width) const
     rect.setHeight(rowCount * itemSize.height() +
                    (rowCount -1) * this->verticalSpacing() +
                    margins.top() + margins.bottom());
-    }
+  }
   int height = d->doLayout(rect, true);
   return height;
 }
@@ -394,9 +394,9 @@ QLayoutItem *ctkFlowLayout::itemAt(int index) const
 {
   Q_D(const ctkFlowLayout);
   if (index < 0 || index >= this->count())
-    {
+  {
     return 0;
-    }
+  }
   return d->ItemList[index];
 }
 
@@ -406,14 +406,14 @@ QSize ctkFlowLayout::minimumSize() const
   Q_D(const ctkFlowLayout);
   QSize size;
   foreach(QLayoutItem* item, d->ItemList)
-    {
+  {
     QWidget* widget = item->widget();
     if (widget && !widget->isVisibleTo(widget->parentWidget()))
-      {
+    {
       continue;
-      }
-    size = size.expandedTo(item->minimumSize());
     }
+    size = size.expandedTo(item->minimumSize());
+  }
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   size = size.grownBy(this->contentsMargins());
 #else
@@ -441,41 +441,41 @@ QSize ctkFlowLayout::sizeHint() const
   QSize maxSizeHint = d->AlignItems ? d->maxSizeHint() : QSize();
   // Add items
   foreach (QLayoutItem* item, d->ItemList)
-    {
+  {
     QWidget* widget = item->widget();
     if (widget && !widget->isVisibleTo(widget->parentWidget()))
-      {
+    {
       continue;
-      }
+    }
     QSize itemSize = d->AlignItems ? maxSizeHint : item->sizeHint();
     Qt::Orientation grow;
     if (d->PreferredDirections & Qt::Horizontal &&
         !(d->PreferredDirections & Qt::Vertical))
-      {
+    {
       grow = Qt::Horizontal;
-      }
+    }
     else if (d->PreferredDirections & Qt::Vertical &&
              !(d->PreferredDirections & Qt::Horizontal))
-      {
+    {
       grow = Qt::Vertical;
-      }
+    }
     else
-      {
+    {
       grow = countY >= countX ? Qt::Horizontal : Qt::Vertical;
-      }
+    }
     if (grow == Qt::Horizontal)
-      {
+    {
       size.rwidth() += itemSize.width();
       size.rheight() = qMax(itemSize.height(), size.height());
       ++countX;
-      }
+    }
     else
-      {
+    {
       size.rwidth() = qMax(itemSize.width(), size.width());
       size.rheight() += itemSize.height();
       ++countY;
-      }
     }
+  }
   // Add spacing
   size += QSize((countX-1) * this->horizontalSpacing(),
                 (countY-1) * this->verticalSpacing());
@@ -494,9 +494,9 @@ QLayoutItem *ctkFlowLayout::takeAt(int index)
 {
   Q_D(ctkFlowLayout);
   if (index < 0 || index >= this->count())
-    {
+  {
     return 0;
-    }
+  }
   QLayoutItem* item = d->ItemList.takeAt(index);
   this->invalidate();
   return item;
@@ -514,12 +514,12 @@ ctkFlowLayout* ctkFlowLayout::replaceLayout(QWidget* widget)
   flowLayout->setAlignItems(false);
   QLayoutItem* item = 0;
   while((item = oldLayout->takeAt(0)))
-    {
+  {
     if (item->widget())
-      {
+    {
       flowLayout->addWidget(item->widget());
-      }
     }
+  }
   // setLayout() will take care or reparenting layouts and widgets
   delete oldLayout;
   flowLayout->setContentsMargins(0,0,0,0);

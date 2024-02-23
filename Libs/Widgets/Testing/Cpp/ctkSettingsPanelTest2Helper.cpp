@@ -30,8 +30,8 @@ QStringList ctkSettingsPanelTest2Helper::list()const
 void ctkSettingsPanelTest2Helper::setList(const QStringList& alist)
 {
   if (alist != this->List)
-    {
+  {
     this->List = alist;
     emit this->listChanged();
-    }
+  }
 }

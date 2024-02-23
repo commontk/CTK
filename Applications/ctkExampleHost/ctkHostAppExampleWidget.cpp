@@ -83,8 +83,8 @@ void ctkHostAppExampleWidget::placeholderResized()
 void ctkHostAppExampleWidget::appProcessError(QProcess::ProcessError error)
 {
   if (error == QProcess::Crashed)
-    {
+  {
     qDebug() << "crash detected";
     ui->crashLabel->setVisible(true);
-    }
+  }
 }

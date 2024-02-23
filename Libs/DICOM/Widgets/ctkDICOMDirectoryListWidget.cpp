@@ -77,9 +77,9 @@ void ctkDICOMDirectoryListWidget::addDirectory()
   QString newDir = QFileDialog::getExistingDirectory(this, tr("Open Directory"));
 
   if ( !newDir.isEmpty() )
-    {
+  {
     this->addDirectory(newDir);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -92,9 +92,9 @@ void ctkDICOMDirectoryListWidget::addDirectory(const QString& newDir)
   /*bool success = */d->directoryListModel->insertRecord(-1,newDirRecord);
   bool success2 = d->directoryListModel->submitAll();
   if ( !success2 )
-    {
+  {
     qDebug() << d->directoryListModel->lastError();
-    }
+  }
   //addDirectoryQuery.prepare("insert into Directories VALUES ( :dirname )");
   //addDirectoryQuery.bindValue(":dirname",newDir);
   //addDirectoryQuery.exec();

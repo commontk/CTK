@@ -117,9 +117,9 @@ void ctkVTKPropertyWidget::setProperty(vtkProperty* property)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() == property)
-    {
+  {
     return;
-    }
+  }
   qvtkReconnect(d->Property, property, vtkCommand::ModifiedEvent,
                 this, SLOT(updateWidgetFromProperty()));
   d->Property = property;
@@ -141,37 +141,37 @@ ctkVTKPropertyWidget::GroupsState ctkVTKPropertyWidget::groupsState()const
   ctkVTKPropertyWidget::GroupsState state;
   ctkVTKPropertyWidget* constThis = const_cast<ctkVTKPropertyWidget*>(this);
   if (d->RepresentationCollapsibleGroupBox->isVisibleTo(constThis) )
-    {
+  {
     state |= ctkVTKPropertyWidget::RepresentationVisible;
-    }
+  }
   if (d->RepresentationCollapsibleGroupBox->collapsed())
-    {
+  {
     state |= ctkVTKPropertyWidget::RepresentationCollapsed;
-    }
+  }
   if (d->ColorCollapsibleGroupBox->isVisibleTo(constThis) )
-    {
+  {
     state |= ctkVTKPropertyWidget::ColorVisible;
-    }
+  }
   if (d->ColorCollapsibleGroupBox->collapsed())
-    {
+  {
     state |= ctkVTKPropertyWidget::ColorCollapsed;
-    }
+  }
   if (d->LightingCollapsibleGroupBox->isVisibleTo(constThis) )
-    {
+  {
     state |= ctkVTKPropertyWidget::LightingVisible;
-    }
+  }
   if (d->LightingCollapsibleGroupBox->collapsed())
-    {
+  {
     state |= ctkVTKPropertyWidget::LightingCollapsed;
-    }
+  }
   if (d->MaterialCollapsibleGroupBox->isVisibleTo(constThis) )
-    {
+  {
     state |= ctkVTKPropertyWidget::MaterialVisible;
-    }
+  }
   if (d->MaterialCollapsibleGroupBox->collapsed())
-    {
+  {
     state |= ctkVTKPropertyWidget::MaterialCollapsed;
-    }
+  }
   return state;
 }
 
@@ -220,9 +220,9 @@ void ctkVTKPropertyWidget::updateWidgetFromProperty()
   Q_D(ctkVTKPropertyWidget);
   this->setEnabled(d->Property.GetPointer() != 0);
   if (d->Property.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   // Warning: Valid as long as the representation matches the combobox indexes.
   d->RepresentationComboBox->setCurrentIndex( d->Property->GetRepresentation() );
   d->PointSizeSliderWidget->setValue( d->Property->GetPointSize() );
@@ -331,9 +331,9 @@ void ctkVTKPropertyWidget::setRepresentation(int newRepresentation)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetRepresentation(newRepresentation);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -341,9 +341,9 @@ void ctkVTKPropertyWidget::setPointSize(double newPointSize)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetPointSize(newPointSize);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -351,9 +351,9 @@ void ctkVTKPropertyWidget::setLineWidth(double newLineWidth)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetLineWidth(newLineWidth);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -361,9 +361,9 @@ void ctkVTKPropertyWidget::setFrontfaceCulling(bool newFrontfaceCulling)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetFrontfaceCulling(newFrontfaceCulling);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -371,9 +371,9 @@ void ctkVTKPropertyWidget::setBackfaceCulling(bool newBackfaceCulling)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetBackfaceCulling(newBackfaceCulling);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -388,9 +388,9 @@ void ctkVTKPropertyWidget::setOpacity(double newOpacity)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetOpacity(newOpacity);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -398,9 +398,9 @@ void ctkVTKPropertyWidget::setEdgeVisibility(bool newEdgeVisibility)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetEdgeVisibility(newEdgeVisibility);
-    }
+  }
 }
 
 
@@ -409,10 +409,10 @@ void ctkVTKPropertyWidget::setEdgeColor(const QColor& newColor)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetEdgeColor(
       newColor.redF(), newColor.greenF(), newColor.blueF());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -420,9 +420,9 @@ void ctkVTKPropertyWidget::setLighting(bool newLighting)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetLighting(newLighting);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -430,9 +430,9 @@ void ctkVTKPropertyWidget::setInterpolation(int newInterpolation)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetInterpolation(newInterpolation);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -440,7 +440,7 @@ void ctkVTKPropertyWidget::setShading(bool newShading)
 {
   Q_D(ctkVTKPropertyWidget);
   if (d->Property.GetPointer() != 0)
-    {
+  {
     d->Property->SetShading(newShading);
-    }
+  }
 }

@@ -64,11 +64,11 @@ int ctkCheckBoxTest1(int argc, char * argv [])
 //  checkBoxWithoutIcon->setIndicatorIconSize(QSize(15,15));
   checkBoxWithIcon->setIndicatorIcon(icon);
   if (checkBoxWithIcon->indicatorIcon().isNull())
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with "
         << "the function indicatorIcon()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   icon.addPixmap(QApplication::style()->standardPixmap(QStyle::SP_FileLinkIcon),
                  QIcon::Active,
@@ -100,21 +100,21 @@ int ctkCheckBoxTest1(int argc, char * argv [])
   // Style check
   ctkProxyStyle* checkBoxStyle = qobject_cast<ctkProxyStyle*>(checkBoxWithoutIcon->style());
   if (!checkBoxStyle)
-    {
+  {
     std::cerr << "Not a ctkProxyStyle" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   checkBoxStyle->ensureBaseStyle();
   if (checkBoxStyle->baseStyle()->proxy() != checkBoxStyle)
-    {
+  {
     std::cerr << "Wrong proxy: " << checkBoxStyle->baseStyle()->proxy() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

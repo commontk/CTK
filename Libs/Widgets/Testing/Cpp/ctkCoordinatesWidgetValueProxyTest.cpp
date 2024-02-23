@@ -35,36 +35,36 @@ class Spy : public QObject
 
 public:
   explicit Spy()
-    {
+  {
     AcknowledgedSignals = 0;
-    }
+  }
 
   void getSpyReport(QString coordinatesString)
-    {
+  {
     QCOMPARE(AcknowledgedSignals, 1);
     AcknowledgedSignals = 0;
 
     QStringList coordinatesList = coordinatesString.split(',');
     QCOMPARE(coordinatesList.count(), this->Coordinates.size());
     for (int i = 0; i < this->Coordinates.size(); ++i)
-      {
+    {
       QCOMPARE(this->Coordinates[i], coordinatesList[i].toDouble());
-      }
+    }
     this->Coordinates.clear();
-    };
+  };
 
 public slots:
   void onCoordinatesChanged(double* coordinates)
-    {
+{
     ctkCoordinatesWidget* coordWidget =
       qobject_cast<ctkCoordinatesWidget*>(this->sender());
     QVERIFY(coordWidget != 0);
     for (int i = 0; i < coordWidget->dimension(); ++i)
-      {
+    {
       this->Coordinates.append(coordinates[i]);
-      }
-    ++AcknowledgedSignals;
     }
+    ++AcknowledgedSignals;
+}
 
 public:
   QList<double> Coordinates;

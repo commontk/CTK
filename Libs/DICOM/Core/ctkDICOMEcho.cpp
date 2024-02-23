@@ -186,28 +186,28 @@ bool ctkDICOMEcho::echo()
 
   d->SCU.addPresentationContext(UID_VerificationSOPClass, transferSyntaxes);
   if (!d->SCU.initNetwork().good())
-    {
+  {
     logger.error("Error initializing the network");
     return false;
-    }
+  }
   logger.debug("Negotiating Association");
 
   OFCondition result = d->SCU.negotiateAssociation();
   if (result.bad())
-    {
+  {
     logger.error("Error negotiating the association: " + QString(result.text()));
     return false;
-    }
+  }
 
   logger.info("Seding Echo");
   // Issue ECHO request and let scu find presentation context itself (0)
   OFCondition status = d->SCU.sendECHORequest(0);
   if (!status.good())
-    {
+  {
     logger.error("Echo failed");
     d->SCU.releaseAssociation();
     return false;
-    }
+  }
 
   d->SCU.releaseAssociation();
 
@@ -220,7 +220,7 @@ void ctkDICOMEcho::cancel()
   Q_D(ctkDICOMEcho);
 
   if (d->SCU.isConnected())
-    {
+  {
     d->SCU.releaseAssociation();
-    }
+  }
 }

@@ -86,9 +86,9 @@ void ctkVTKSliceViewPrivate::setupRendering()
   // when they are near the edge of the window.
   vtkCamera* camera = this->OverlayRenderer->GetActiveCamera();
   if (camera)
-    {
+  {
     camera->ParallelProjectionOn();
-    }
+  }
 
   // Create cornerAnnotation and set its default property
   this->OverlayCornerAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
@@ -253,20 +253,20 @@ void ctkVTKSliceView::setColorWindow(double newColorWindow)
 bool ctkVTKSliceView::eventFilter(QObject *object, QEvent *event)
 {
   if (object == this->VTKWidget())
-    {
+  {
     if (event->type() == QEvent::Resize)
-      {
+    {
       QResizeEvent * resizeEvent = dynamic_cast<QResizeEvent*>(event);
       object->event(event);
       emit this->resized(resizeEvent->size());
       return true;
-      }
+    }
     return false;
-    }
+  }
   else
-    {
+  {
     return this->Superclass::eventFilter(object, event);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

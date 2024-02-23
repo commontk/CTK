@@ -44,7 +44,7 @@ int ctkDICOMQueryTest1( int argc, char * argv [] )
       query.port() != 0 ||
       !query.filters().isEmpty() ||
       !query.studyAndSeriesInstanceUIDQueried().isEmpty())
-    {
+  {
     std::cerr << "ctkDICOMQuery::ctkDICOMQuery() failed: "
               << qPrintable(query.callingAETitle()) << " "
               << qPrintable(query.calledAETitle()) << " "
@@ -52,39 +52,39 @@ int ctkDICOMQueryTest1( int argc, char * argv [] )
               << query.port() << " "
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   query.setCallingAETitle("CallingAETitle");
   if (query.callingAETitle() != "CallingAETitle")
-    {
+  {
     std::cerr << "ctkDICOMQuery::setCallingAETitle() failed: "
               << qPrintable(query.callingAETitle()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   query.setCalledAETitle("CalledAETitle");
   if (query.calledAETitle() != "CalledAETitle")
-    {
+  {
     std::cerr << "ctkDICOMQuery::setCalledAETitle() failed: "
               << qPrintable(query.calledAETitle()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   query.setHost("host");
   if (query.host() != "host")
-    {
+  {
     std::cerr << "ctkDICOMQuery::setHost() failed: "
               << qPrintable(query.host()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   query.setPort(80);
   if (query.port() != 80)
-    {
+  {
     std::cerr << "ctkDICOMQuery::setPort() failed: "
               << query.port() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QMap<QString,QVariant> filters;
   filters["Name"] = QString("JohnDoe");
@@ -93,20 +93,20 @@ int ctkDICOMQueryTest1( int argc, char * argv [] )
 
   query.setFilters(filters);
   if (query.filters() != filters)
-    {
+  {
     std::cerr << "ctkDICOMDatabase::setFilters() failed: "
               << query.filters().count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   ctkDICOMDatabase database;
   query.query(database);
 
   // Queried studies should be empty because we use an empty database.
   if (!query.studyAndSeriesInstanceUIDQueried().isEmpty())
-    {
+  {
     std::cerr << "ctkDICOMDatabase::query() failed: "
               << query.studyAndSeriesInstanceUIDQueried().count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

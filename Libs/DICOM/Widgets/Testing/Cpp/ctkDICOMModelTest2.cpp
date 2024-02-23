@@ -52,12 +52,12 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
   bool interactive = arguments.removeOne("-I");
 
   if (arguments.count() != 2)
-    {
+  {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
     std::cerr << "Usage: " << qPrintable(testName)
               << " <scratch.db> <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString databaseFile(arguments.at(0));
   QString sqlFileName(arguments.at(1));
@@ -67,11 +67,11 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
     ctkDICOMDatabase myCTK(databaseFile);
 
     if (!myCTK.initializeDatabase(sqlFileName.toUtf8()))
-      {
+    {
       std::cerr << "Error when initializing the data base: " << qPrintable(sqlFileName)
                 << " error: " << qPrintable(myCTK.lastError()) << std::endl;
       return EXIT_FAILURE;
-      }
+    }
 
     ctkDICOMModel model;
     model.setDatabase(myCTK.database());
@@ -97,16 +97,16 @@ int ctkDICOMModelTest2( int argc, char * argv [] )
     topLevel.show();
 
     if (!interactive)
-      {
+    {
       QTimer::singleShot(200, &app, SLOT(quit()));
-      }
+    }
 
     return app.exec();
   }
   catch (const std::exception& e)
-    {
+  {
     std::cerr << "Error when opening the data base file: " << qPrintable(databaseFile)
               << " error: " << e.what() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 }

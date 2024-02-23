@@ -43,14 +43,14 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkVTKTextPropertyWidget* widget = reinterpret_cast<ctkVTKTextPropertyWidget*>(data);
 
   CTKCOMPARE(widget->isBold(), true);
   CTKCOMPARE(widget->isItalic(), true);
   CTKCOMPARE(widget->hasShadow(), false);
   CTKCOMPARE(widget->text(), "Test");
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -74,9 +74,9 @@ int ctkVTKTextPropertyWidgetEventTranslatorPlayerTest1(int argc, char * argv [] 
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

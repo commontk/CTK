@@ -99,9 +99,9 @@ void ctkAbstractWorker::setScheduler(QSharedPointer<ctkJobScheduler> scheduler)
 void ctkAbstractWorker::startNextJob()
 {
   if (!this->Scheduler || !this->Job)
-    {
+  {
     return;
-    }
+  }
 
   ctkAbstractJob* newJob = this->Job->clone();
   newJob->setRetryCounter(newJob->retryCounter() + 1);
@@ -112,13 +112,13 @@ void ctkAbstractWorker::startNextJob()
 void ctkAbstractWorker::onJobCanceled()
 {
   if (!this->Job)
-    {
+  {
     return;
-    }
+  }
 
   if (this->Job->retryCounter() < this->Job->maximumNumberOfRetry() &&
       this->Job->status() != ctkAbstractJob::JobStatus::Stopped)
-    {
+  {
     QTimer timer;
     timer.setSingleShot(true);
     QEventLoop loop;
@@ -128,13 +128,13 @@ void ctkAbstractWorker::onJobCanceled()
     this->startNextJob();
 
     emit this->Job->canceled();
-    }
+  }
   else if (this->Job->status() != ctkAbstractJob::JobStatus::Stopped)
-    {
+  {
     emit this->Job->failed();
-    }
+  }
   else
-    {
+  {
     emit this->Job->canceled();
-    }
+  }
 }

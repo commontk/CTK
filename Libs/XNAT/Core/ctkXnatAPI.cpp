@@ -65,42 +65,42 @@ void ctkXnatAPI::parseResponse(qRestResult* restResult, const QByteArray& respon
   QList<QVariantMap> result;
 
   if (response.isEmpty())
-    {
+  {
     // Some operations do not return result. E.g. creating a project.
-    }
+  }
   else if (response.startsWith("<html>"))
-    {
+  {
     // Some operations return an XML description of an object.
     // E.g. GET query for a specific subject.
     restResult->setError(QString("Bad data: ") + response, qRestAPI::ResponseParseError);
-    }
+  }
   else if (response.startsWith("<?xml "))
-    {
+  {
     // Some operations return an XML description of an object.
     // E.g. GET query for a specific subject.
     result = this->parseXmlResponse(restResult, response);
-    }
+  }
   else if (response[0] == '{')
-    {
+  {
     // Other operations return a json description of an object.
     // E.g. GET query of the list of subjects
     result = this->parseJsonResponse(restResult, response);
-    }
+  }
   else if (identifierPattern.exactMatch(response))
-    {
+  {
     // Some operations return the identifier of the newly created object.
     // E.g. creating a subject.
     QVariantMap map;
     map["ID"] = response;
     map["content"] = response;
     result.push_back(map);
-    }
+  }
   else
-    {
+  {
     QVariantMap map;
     map["content"] = response;
     result.push_back(map);
-    }
+  }
 
   restResult->setResult(result);
 }
@@ -130,24 +130,24 @@ QList<QVariantMap> ctkXnatAPI::parseJsonResponse(qRestResult* restResult, const 
   QScriptValue resultSet = scriptValue.property("ResultSet");
   QScriptValue data = resultSet.property("Result");
   if (!data.isObject())
-    {
+  {
     if (!data.toString().isEmpty())
-      {
-      restResult->setError(QString("Bad data: ") + data.toString(), qRestAPI::ResponseParseError);
-      }
-    }
-  if (data.isArray())
     {
+      restResult->setError(QString("Bad data: ") + data.toString(), qRestAPI::ResponseParseError);
+    }
+  }
+  if (data.isArray())
+  {
     quint32 length = data.property("length").toUInt32();
     for(quint32 i = 0; i < length; ++i)
-      {
-      qRestAPI::appendScriptValueToVariantMapList(result, data.property(i));
-      }
-    }
-  else
     {
-    qRestAPI::appendScriptValueToVariantMapList(result, data);
+      qRestAPI::appendScriptValueToVariantMapList(result, data.property(i));
     }
+  }
+  else
+  {
+    qRestAPI::appendScriptValueToVariantMapList(result, data);
+  }
 
   return result;
 }

@@ -82,11 +82,11 @@ public:
   /// Default is SynchronizeWidth.
   /// \sa SynchronizeSiblings(), setSynchronizeSiblings(), decimalsChanged()
   enum SynchronizeSibling
-    {
+  {
     NoSynchronize = 0x000,
     SynchronizeWidth = 0x001,
     SynchronizeDecimals = 0x002,
-    };
+  };
   Q_DECLARE_FLAGS(SynchronizeSiblings, SynchronizeSibling)
 
   /// Superclass typedef

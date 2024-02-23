@@ -45,8 +45,8 @@ class ctkVisualizationVTKWidgetsPythonQtDecorators : public QObject
 public:
 
   ctkVisualizationVTKWidgetsPythonQtDecorators()
-    {
-    }
+  {
+  }
 
 public Q_SLOTS:
 
@@ -54,16 +54,16 @@ public Q_SLOTS:
 #ifdef CTK_USE_CHARTS
 
   QList<double> chartExtent(ctkVTKChartView* view)const
-  {
+{
     double _bounds[8];
     view->chartExtent(_bounds);
     QList<double> bounds;
     for(int idx = 0; idx < 8; ++idx)
-      {
+    {
       bounds << _bounds[idx];
-      }
+    }
     return bounds;
-  }
+}
 
   QList<double> chartBounds(ctkVTKChartView* view)const
   {
@@ -71,9 +71,9 @@ public Q_SLOTS:
     view->chartBounds(_bounds);
     QList<double> bounds;
     for(int idx = 0; idx < 8; ++idx)
-      {
+    {
       bounds << _bounds[idx];
-      }
+    }
     return bounds;
   }
 
@@ -81,9 +81,9 @@ public Q_SLOTS:
   {
     double _bounds[8];
     for(int idx = 0; idx < bounds.length() && idx < 8; ++idx)
-      {
+    {
       _bounds[idx] = bounds[idx];
-      }
+    }
     view->setChartUserBounds(_bounds);
   }
 
@@ -93,9 +93,9 @@ public Q_SLOTS:
     view->chartUserBounds(_bounds);
     QList<double> bounds;
     for(int idx = 0; idx < 8; ++idx)
-      {
+    {
       bounds << _bounds[idx];
-      }
+    }
     return bounds;
   }
 
@@ -107,9 +107,9 @@ public Q_SLOTS:
     view->validBounds(_bounds);
     QList<double> bounds;
     for(int idx = 0; idx < 4; ++idx)
-      {
+    {
       bounds << _bounds[idx];
-      }
+    }
     return bounds;
   }
 
@@ -117,9 +117,9 @@ public Q_SLOTS:
   {
     double _bounds[4];
     for(int idx = 0; idx < bounds.length() && idx < 4; ++idx)
-      {
+    {
       _bounds[idx] = bounds[idx];
-      }
+    }
     view->setValidBounds(_bounds);
   }
 #endif

@@ -97,19 +97,19 @@ void ctkExampleDicomAppLogic::do_something()
   connect(ui.LoadDataButton, SIGNAL(clicked()), this, SLOT(onLoadDataClicked()));
   connect(ui.CreateSecondaryCaptureButton, SIGNAL(clicked()), this, SLOT(onCreateSecondaryCapture()));
   try
-    {
+  {
     QRect preferred(50,50,100,100);
     qDebug() << "  Asking:getAvailableScreen";
     QRect rect = getHostInterface()->getAvailableScreen(preferred);
     qDebug() << "  got sth:" << rect.top();
     this->AppWidget->move(rect.topLeft());
     this->AppWidget->resize(rect.size());
-    }
+  }
   catch (const ctkRuntimeException& e)
-    {
+  {
     qCritical() << e.what();
     return;
-    }
+  }
   this->AppWidget->show();
 }
 
@@ -187,13 +187,13 @@ void ctkExampleDicomAppLogic::onDataAvailable()
   QString s;
   const ctkDicomAppHosting::AvailableData& data = getIncomingAvailableData();
   if(this->AppWidget == 0)
-    {
+  {
     qCritical() << "Button is null!";
     return;
-    }
+  }
   s = "Received notifyDataAvailable with patients.count()= " + QString().setNum(data.patients.count());
   if(data.patients.count()>0)
-    {
+  {
     s=s+" name:"+data.patients.begin()->name+" studies.count(): "+QString().setNum(data.patients.begin()->studies.count());
     if(data.patients.begin()->studies.count()>0)
     {

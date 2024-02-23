@@ -26,6 +26,6 @@ int ctkTestRegistry::runTests(int argc, char* argv[]) {
 	int result = 0;
     foreach(QObject* test, m_TestSuite) {
 		result |= QTest::qExec(test, argc, argv);
-	}
+    }
 	return result;
 }

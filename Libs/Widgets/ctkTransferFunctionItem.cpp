@@ -87,10 +87,10 @@ void ctkTransferFunctionItem::setTransferFunction(ctkTransferFunction* transferF
   Q_D(ctkTransferFunctionItem);
   d->TransferFunction = transferFunction;
   if (this->scene())
-    {
+  {
     connect(d->TransferFunction,SIGNAL(changed()),
             this->scene(), SLOT(update()),Qt::UniqueConnection);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -105,9 +105,9 @@ void ctkTransferFunctionItem::setRect(const QRectF& newRect)
 {
   Q_D(ctkTransferFunctionItem);
   if (d->Rect == newRect)
-    {
+  {
     return;
-    }
+  }
   d->Rect = newRect;
   this->update();
 }
@@ -324,9 +324,9 @@ QVariant ctkTransferFunctionItem::itemChange(QGraphicsItem::GraphicsItemChange c
 {
   QVariant res = this->QGraphicsObject::itemChange(change, value);
   if (change == QGraphicsItem::ItemSceneHasChanged && this->scene())
-    {
+  {
     connect(this->transferFunction(),SIGNAL(changed()),
             this->scene(), SLOT(update()),Qt::UniqueConnection);
-    }
+  }
   return res;
 }

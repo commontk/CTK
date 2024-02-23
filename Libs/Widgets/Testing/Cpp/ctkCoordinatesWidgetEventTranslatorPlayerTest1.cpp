@@ -43,13 +43,13 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkCoordinatesWidget* widget = reinterpret_cast<ctkCoordinatesWidget*>(data);
 
   CTKCOMPARE(widget->coordinates()[0],6.00);
   CTKCOMPARE(widget->coordinates()[1],15.00);
   CTKCOMPARE(widget->coordinates()[2],3.00);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -72,9 +72,9 @@ int ctkCoordinatesWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

@@ -30,29 +30,29 @@ int ctkDICOMVisualBrowserTest1(int argc, char * argv [])
 {
   QCoreApplication app(argc, argv);
   if (app.arguments().count() != 2)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Failed to run " << argv[0] << "\n"
               << "Usage:\n"
               << "  " << argv[0] << " /path/to/ctkDICOM";
     return EXIT_FAILURE;
-    }
+  }
   QString command = app.arguments().at(1);
   QProcess process;
   process.start(command, /* arguments= */ QStringList());
   bool res = process.waitForStarted();
   if (!res)
-    {
+  {
     std::cerr << '\"' << qPrintable(command) << '\"'
               << " didn't start correctly" << std::endl;
     return res ? EXIT_SUCCESS : EXIT_FAILURE;
-    }
+  }
   process.kill();
   res = process.waitForFinished();
   if (!res)
-    {
+  {
     std::cerr << '\"' << qPrintable(command) << '\"'
               << " failed to terminate" << std::endl;
     return res ? EXIT_SUCCESS : EXIT_FAILURE;
-    }
+  }
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }

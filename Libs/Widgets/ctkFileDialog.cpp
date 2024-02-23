@@ -146,9 +146,9 @@ ctkFileDialog::ctkFileDialog(QWidget *parentWidget,
   Q_D(ctkFileDialog);
 
   if (QGuiApplication::testAttribute(Qt::AA_DontUseNativeDialogs))
-    {
+  {
     this->setOptions(QFileDialog::DontUseNativeDialog);
-    }
+  }
 
   d->init();
 }
@@ -170,27 +170,27 @@ void ctkFileDialog::setBottomWidget(QWidget* widget, const QString& label)
   QWidget* oldBottomWidget = this->bottomWidget();
   // remove the old widget from the layout if any
   if (oldBottomWidget)
-    {
+  {
     if (oldBottomWidget == widget)
-      {
+    {
       return;
-      }
+    }
     gridLayout->removeWidget(oldBottomWidget);
     delete oldBottomWidget;
-    }
+  }
   if (widget == 0)
-    {
+  {
     return;
-    }
+  }
   if (!label.isEmpty())
-    {
+  {
     gridLayout->addWidget(new QLabel(label), 4, 0);
     gridLayout->addWidget(widget,4, 1,1, 1);
-    }
+  }
   else
-    {
+  {
     gridLayout->addWidget(widget,4, 0,1, 2);
-    }
+  }
   // The dialog button box is no longer spanned on 2 rows but on 3 rows if
   // there is a "bottom widget"
   QDialogButtonBox* buttonBox = this->findChild<QDialogButtonBox*>();
@@ -219,9 +219,9 @@ void ctkFileDialog::setSelectionMode(QAbstractItemView::SelectionMode mode)
           << d->listView()
           << d->treeView()
           )
-    {
+  {
     view->setSelectionMode(mode);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -229,10 +229,10 @@ QAbstractItemView::SelectionMode ctkFileDialog::selectionMode() const
 {
   Q_D(const ctkFileDialog);
   if (d->UsingNativeDialog)
-    {
+  {
     // Native dialog does not support modifying or getting widget elements.
     return QAbstractItemView::NoSelection;
-    }
+  }
   return d->listView()->selectionMode();
 }
 
@@ -248,9 +248,9 @@ void ctkFileDialog::clearSelection()
           << d->listView()
           << d->treeView()
           )
-    {
+  {
     view->clearSelection();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -279,22 +279,22 @@ bool ctkFileDialog::eventFilter(QObject *obj, QEvent *event)
   QDialogButtonBox* dialogButtonBox = qobject_cast<QDialogButtonBox*>(obj);
   if (obj == button && event->type() == QEvent::EnabledChange &&
       !d->IgnoreEvent)
-    {
+  {
     d->IgnoreEvent = true;
     d->AcceptButtonState = button->isEnabledTo(qobject_cast<QWidget*>(button->parent()));
     button->setEnabled(d->AcceptButtonEnable && d->AcceptButtonState);
     d->IgnoreEvent = false;
-    }
+  }
   else if (obj == button && event->type() == QEvent::Destroy)
-    {
+  {
     // The accept button is deleted probably because setAcceptMode() is being called.
     // observe the parent to check when the accept button is added back
     obj->parent()->installEventFilter(this);
-    }
+  }
   else if (dialogButtonBox && event->type() == QEvent::ChildAdded)
-    {
+  {
     dynamic_cast<QChildEvent*>(event)->child()->installEventFilter(this);
-    }
+  }
   return QFileDialog::eventFilter(obj, event);
 }
 
@@ -309,26 +309,26 @@ void ctkFileDialog::accept()
 {
   QLineEdit* fileNameEdit = qobject_cast<QLineEdit*>(this->sender());
   if (fileNameEdit)
-    {
+  {
     QFileInfo info(fileNameEdit->text());
     if (info.isDir())
-      {
+    {
       setDirectory(info.absoluteFilePath());
       return;
-      }
     }
+  }
   // Don't accept read-only directories if we are in AcceptSave mode.
   if ((this->fileMode() == Directory) &&
       this->acceptMode() == AcceptSave)
-    {
+  {
     QStringList files = this->selectedFiles();
     QString fn = files.first();
     QFileInfo info(fn);
     if (info.isDir() && !info.isWritable())
-      {
+    {
       this->setDirectory(info.absoluteFilePath());
       return;
-      }
     }
+  }
   this->Superclass::accept();
 }

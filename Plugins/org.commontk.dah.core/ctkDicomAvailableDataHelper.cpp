@@ -58,10 +58,10 @@ ctkDicomAppHosting::Patient* ctkDicomAvailableDataAccessor::getPatient(const ctk
   ctkDicomAppHosting::AvailableData & ad(d->m_AvailableData);
   for (QList<ctkDicomAppHosting::Patient>::Iterator pit = ad.patients.begin();
     pit < ad.patients.end(); pit++)
-    {
+  {
       if(pit->id==patient.id)
         return &(*pit);
-    }
+  }
   return NULL;
 }
 
@@ -72,14 +72,14 @@ ctkDicomAppHosting::Study* ctkDicomAvailableDataAccessor::getStudy(const QString
   ctkDicomAppHosting::AvailableData & ad(d->m_AvailableData);
   for (QList<ctkDicomAppHosting::Patient>::Iterator pit = ad.patients.begin();
     pit < ad.patients.end(); pit++)
-    {
+  {
     for (QList<ctkDicomAppHosting::Study>::Iterator sit = pit->studies.begin();
       sit < pit->studies.end(); sit++)
-      {
+    {
           if(sit->studyUID==studyUID)
             return &(*sit);
-      }
     }
+  }
   return NULL;
 }
 
@@ -90,18 +90,18 @@ ctkDicomAppHosting::Series* ctkDicomAvailableDataAccessor::getSeries(const QStri
   ctkDicomAppHosting::AvailableData & ad(d->m_AvailableData);
   for (QList<ctkDicomAppHosting::Patient>::Iterator pit = ad.patients.begin();
     pit < ad.patients.end(); pit++)
-    {
+  {
     for (QList<ctkDicomAppHosting::Study>::Iterator sit = pit->studies.begin();
       sit < pit->studies.end(); sit++)
-      {
+    {
       for (QList<ctkDicomAppHosting::Series>::Iterator seit = sit->series.begin();
         seit < sit->series.end(); seit++)
-        {
+      {
           if(seit->seriesUID==seriesUID)
             return &(*seit);
-        }
       }
     }
+  }
   return NULL;
 }
 
@@ -120,31 +120,31 @@ void ctkDicomAvailableDataAccessor::find(const ctkDicomAppHosting::Patient& pati
   seriesResult=NULL;
   for (QList<ctkDicomAppHosting::Patient>::Iterator pit = ad.patients.begin();
     pit < ad.patients.end(); pit++)
-    {
+  {
     if(pit->id==patient.id)
-      {
+    {
       patientResult = &(*pit);
       for (QList<ctkDicomAppHosting::Study>::Iterator sit = pit->studies.begin();
         sit < pit->studies.end(); sit++)
-        {
+      {
         if(sit->studyUID==studyUID)
-          {
+        {
           studyResult = &(*sit);
           for (QList<ctkDicomAppHosting::Series>::Iterator seit = sit->series.begin();
             seit < sit->series.end(); seit++)
-            {
+          {
             if(seit->seriesUID==seriesUID)
-              {
+            {
               seriesResult=&(*seit);
               return;
-              }
             }
-            return;
           }
+            return;
         }
-      return;
       }
+      return;
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -326,28 +326,28 @@ void appendAllUuids(const ctkDicomAppHosting::Patient& patient, QList<QUuid> & u
 {
   // Loop over patient level object descriptors
   foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, patient.objectDescriptors)
-    {
+  {
     uuidlist.append(objectDescriptor.descriptorUUID);
-    }
+  }
 
   // Loop over studies
   foreach(const ctkDicomAppHosting::Study& study, patient.studies)
-    {
+  {
     // Loop over study level object descriptors
     foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, study.objectDescriptors)
-      {
+    {
       uuidlist.append(objectDescriptor.descriptorUUID);
-      }
+    }
     // Loop over series
     foreach(const ctkDicomAppHosting::Series& series, study.series)
-      {
+    {
       // Loop over series level object descriptors
       foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, series.objectDescriptors)
-        {
+      {
         uuidlist.append(objectDescriptor.descriptorUUID);
-        }
       }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -365,15 +365,15 @@ QList<QUuid> getAllUuids(const ctkDicomAppHosting::AvailableData& availableData)
 
   // Loop over top level object descriptors
   foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, availableData.objectDescriptors)
-    {
+  {
     uuidlist.append(objectDescriptor.descriptorUUID);
-    }
+  }
 
    // Loop over patients
   foreach(const ctkDicomAppHosting::Patient& patient, availableData.patients)
-    {
+  {
     appendAllUuids(patient, uuidlist);
-    }
+  }
   return uuidlist;
 }
 

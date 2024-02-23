@@ -101,12 +101,12 @@ void ctkDICOMThumbnailListWidgetPrivate
     qobject_cast<const ctkDICOMModel*>(index.model()));
 
   if(model)
-    {
+  {
     model->fetchMore(patientIndex);
     const int studyCount = model->rowCount(patientIndex);
 
     for(int i=0; i<studyCount; i++)
-      {
+    {
       QModelIndex studyIndex = ctk::modelChildIndex(model, patientIndex, i, 0);
       QModelIndex seriesIndex = ctk::modelChildIndex(model, studyIndex, 0, 0);
       model->fetchMore(seriesIndex);
@@ -114,8 +114,8 @@ void ctkDICOMThumbnailListWidgetPrivate
       QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, imageCount/2, 0);
       QString study = model->data(studyIndex, Qt::DisplayRole).toString();
       this->addThumbnailWidget(imageIndex, studyIndex, study);
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -127,20 +127,20 @@ void ctkDICOMThumbnailListWidgetPrivate
   ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
   if (!model)
-    {
+  {
     return;
-    }
+  }
   model->fetchMore(studyIndex);
   const int seriesCount = model->rowCount(studyIndex);
 
   for(int i=0; i<seriesCount; i++)
-    {
+  {
     QModelIndex seriesIndex = ctk::modelChildIndex(model, studyIndex, i, 0);
     model->fetchMore(seriesIndex);
     int imageCount = model->rowCount(seriesIndex);
     QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, imageCount/2, 0);
     this->addThumbnailWidget(imageIndex, seriesIndex, model->data(seriesIndex, Qt::DisplayRole).toString());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -152,20 +152,20 @@ void ctkDICOMThumbnailListWidgetPrivate
   ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
   if (!model)
-    {
+  {
     return;
-    }
+  }
   model->fetchMore(seriesIndex);
 
   const int imageCount = model->rowCount(seriesIndex);
   logger.debug(QString("Thumbs: %1").arg(imageCount));
   for (int i = 0 ; i < imageCount ; i++ )
-    {
+  {
     QModelIndex imageIndex = ctk::modelChildIndex(model, seriesIndex, i, 0);
 
     //: %1 is the image sequence number
     this->addThumbnailWidget(imageIndex, imageIndex, ctkDICOMThumbnailListWidget::tr("Image %1").arg(i));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -177,9 +177,9 @@ void ctkDICOMThumbnailListWidgetPrivate
     qobject_cast<const ctkDICOMModel*>(imageIndex.model()));
 
   if(!model)
-    {
+  {
     return;
-    }
+  }
   QModelIndex seriesIndex = imageIndex.parent();
   QModelIndex studyIndex = seriesIndex.parent();
 
@@ -188,9 +188,9 @@ void ctkDICOMThumbnailListWidgetPrivate
                           model->data(seriesIndex ,ctkDICOMModel::UIDRole).toString() + "/" +
                           model->data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
   if(!QFileInfo(thumbnailPath).exists())
-    {
+  {
     return;
-    }
+  }
   ctkThumbnailLabel* widget = new ctkThumbnailLabel(this->ScrollAreaContentWidget);
 
   QString widgetLabel = text;
@@ -198,9 +198,9 @@ void ctkDICOMThumbnailListWidgetPrivate
   QPixmap pix(thumbnailPath);
   logger.debug("Setting pixmap to " + thumbnailPath);
   if(this->ThumbnailSize.isValid())
-    {
+  {
     widget->setFixedSize(this->ThumbnailSize);
-    }
+  }
   widget->setPixmap(pix);
 
   QVariant var;
@@ -238,34 +238,34 @@ void ctkDICOMThumbnailListWidget::selectThumbnailFromIndex(const QModelIndex &in
   Q_D(ctkDICOMThumbnailListWidget);
 
   if(!d->CurrentSelectedModel.isValid())
-    {
+  {
     return;
-    }
+  }
   if(index.parent() != d->CurrentSelectedModel)
-    {
+  {
     return;
-    }
+  }
 
   ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
   if(model)
-    {
+  {
     int count = d->ScrollAreaContentWidget->layout()->count();
 
     for(int i=0; i<count; i++)
-      {
+    {
       ctkThumbnailLabel* thumbnailWidget = qobject_cast<ctkThumbnailLabel*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
       if(thumbnailWidget->property("sourceIndex").value<QPersistentModelIndex>() == index)
-        {
+      {
         thumbnailWidget->setSelected(true);
         d->ScrollArea->ensureWidgetVisible(thumbnailWidget);
-        }
+      }
       else
-        {
+      {
         thumbnailWidget->setSelected(false);
-        }
       }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -278,24 +278,24 @@ void ctkDICOMThumbnailListWidget::addThumbnails(const QModelIndex &index)
   ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(index.model()));
 
   if(model)
-    {
+  {
     QModelIndex index0 = index.sibling(index.row(), 0);
 
     d->CurrentSelectedModel = index0;
 
     if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::PatientType) )
-      {
+    {
       d->addPatientThumbnails(index0);
-      }
-    else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType) )
-      {
-      d->addStudyThumbnails(index0);
-      }
-    else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType) )
-      {
-      d->addSeriesThumbnails(index0);
-      }
     }
+    else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::StudyType) )
+    {
+      d->addStudyThumbnails(index0);
+    }
+    else if ( model->data(index0,ctkDICOMModel::TypeRole) == static_cast<int>(ctkDICOMModel::SeriesType) )
+    {
+      d->addSeriesThumbnails(index0);
+    }
+  }
 
   this->setCurrentThumbnail(0);
 }

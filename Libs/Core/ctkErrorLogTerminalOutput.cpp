@@ -118,9 +118,9 @@ void ctkErrorLogTerminalOutput::output(const QString& text)
   {
     QMutexLocker locker(&d->EnableMutex);
     if (!d->Enabled)
-      {
+    {
       return;
-      }
+    }
   }
 
   {
@@ -132,8 +132,8 @@ void ctkErrorLogTerminalOutput::output(const QString& text)
     ssize_t res = write(d->FD, qPrintable(textWithNewLine), textWithNewLine.size());
 #endif
     if (res == -1)
-      {
+    {
       return;
-      }
+    }
   }
 }

@@ -50,93 +50,93 @@ int ctkVTKScalarBarWidgetTest1(int argc, char * argv [] )
   // display
   widget.setDisplay(false);
   if (scalarBar->GetEnabled() != false)
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setDisplay() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // it will fail as there is no interactor set to the widget
   scalarBar->SetEnabled(true);
   if (widget.display() != static_cast<bool>(scalarBar->GetEnabled()))
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setDisplay() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // max number of colors
   widget.setMaxNumberOfColors(20);
   if (actor->GetMaximumNumberOfColors() != 20)
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setMaxNumberOfColors() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   actor->SetMaximumNumberOfColors(30);
   if (widget.maxNumberOfColors() != 30)
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setMaxNumberOfColors() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // number of labels
   widget.setNumberOfLabels(5);
   if (actor->GetNumberOfLabels() != 5)
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setNumberOfLabels() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   actor->SetNumberOfLabels(10);
   if (widget.numberOfLabels() != 10)
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setNumberOfLabels() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // title
   widget.setTitle("title");
   if (QString(actor->GetTitle()) != "title")
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setTitle() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   actor->SetTitle("title 2");
   if (widget.title() != "title 2")
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setTitle() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // labels format
   widget.setLabelsFormat("@#$%^&*");
   if (QString(actor->GetLabelFormat()) != "@#$%^&*")
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setLabelsFormat() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   actor->SetLabelFormat("@#$%^&*@#$%^&*");
   if (widget.labelsFormat() != "@#$%^&*@#$%^&*")
-    {
+  {
     std::cerr << "ctkVTKScalarBarWidget::setLabelsFormat() failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   widget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

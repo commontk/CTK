@@ -49,9 +49,9 @@ public:
   bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
   {
     if (filterRegExp().isEmpty())
-      {
+    {
       return true;
-      }
+    }
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
     return filterAcceptsIndex(index);
   }
@@ -66,22 +66,22 @@ private:
       index.parent()), Qt::DisplayRole).toString().contains(filterRegExp()))
       || (sourceModel()->data(sourceModel()->index(index.row(), ctkDICOMObjectModel::ValueColumn,
       index.parent()), Qt::DisplayRole).toString().contains(filterRegExp())))
-      {
+    {
       return true;
-      }
+    }
     // Accept item if any child matches
     for (int row = 0; row < sourceModel()->rowCount(index); row++)
-      {
+    {
       QModelIndex childIndex = sourceModel()->index(row, 0, index);
       if (!childIndex.isValid())
-        {
+      {
         break;
-        }
-      if (filterAcceptsIndex(childIndex))
-        {
-        return true;
-        }
       }
+      if (filterAcceptsIndex(childIndex))
+      {
+        return true;
+      }
+    }
     return false;
   }
 };
@@ -132,15 +132,15 @@ void ctkDICOMObjectListWidgetPrivate::setFilterExpressionInModel(qRecursiveTreeP
 {
   const QString regexpPrefix("regexp:");
   if (expr.startsWith(regexpPrefix))
-    {
+  {
     filterModel->setFilterCaseSensitivity(Qt::CaseSensitive);
     filterModel->setFilterRegExp(expr.right(expr.length() - regexpPrefix.length()));
-    }
+  }
   else
-    {
+  {
     filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
     filterModel->setFilterWildcard(expr);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -164,33 +164,33 @@ QString ctkDICOMObjectListWidgetPrivate::dicomObjectModelAsString(QAbstractItemM
   QString dump;
   QString indentString(indent, '\t'); // add tab characters, (indent) number of times
   for (int r = 0; r < aDicomObjectModel->rowCount(parent); ++r)
-    {
+  {
     for (int c = 0; c < aDicomObjectModel->columnCount(); ++c)
-      {
+    {
       QModelIndex index = aDicomObjectModel->index(r, c, parent);
       QString name = aDicomObjectModel->data(index).toString();
       if (c == 0)
-        {
+      {
         // Replace round brackets by square brackets.
         // If the text is copied into Excel, Excel would recognize tag (0008,0012)
         // as a negative number (-80,012). Instead, [0008,0012] is displayed fine.
         name.replace('(', '[');
         name.replace(')', ']');
         dump += rowPrefix + indentString + name;
-        }
-      else
-        {
-        dump += "\t" + name;
-        }
       }
+      else
+      {
+        dump += "\t" + name;
+      }
+    }
     dump += endOfLine;
     // Print children
     QModelIndex index0 = aDicomObjectModel->index(r, 0, parent);
     if (aDicomObjectModel->hasChildren(index0))
-      {
+    {
       dump += dicomObjectModelAsString(aDicomObjectModel, index0, indent + 1, rowPrefix);
-      }
     }
+  }
   return dump;
 }
 
@@ -257,21 +257,21 @@ void ctkDICOMObjectListWidget::setFileList(const QStringList& fileList)
   Q_D(ctkDICOMObjectListWidget);
   d->fileList = fileList;
   if (d->fileList.size() > 0)
-    {
+  {
     d->currentFile = d->fileList[0];
     d->fileSliderWidget->setMaximum(fileList.size());
     d->fileSliderWidget->setSuffix(QString(" / %1").arg(fileList.size()));
     this->updateWidget();
     for (int columnIndex = 0; columnIndex < d->dicomObjectModel->columnCount(); ++columnIndex)
-      {
-      d->dcmObjectTreeView->resizeColumnToContents(columnIndex);
-      }
-    }
-  else
     {
+      d->dcmObjectTreeView->resizeColumnToContents(columnIndex);
+    }
+  }
+  else
+  {
     d->currentFile.clear();
     d->dicomObjectModel->clear();
-    }
+  }
 
   d->setPathLabel(d->currentFile);
   d->fileSliderWidget->setVisible(d->fileList.size() > 1);
@@ -351,9 +351,9 @@ QString ctkDICOMObjectListWidget::metadataAsText(bool allFiles /*=false*/)
   Q_D(ctkDICOMObjectListWidget);
   QString metadata;
   if (allFiles)
-    {
+  {
     foreach(QString fileName, d->fileList)
-      {
+    {
       // copy metadata of all files
 
       ctkDICOMObjectModel* aDicomObjectModel = new ctkDICOMObjectModel();
@@ -366,23 +366,23 @@ QString ctkDICOMObjectListWidget::metadataAsText(bool allFiles /*=false*/)
       QString thisFileMetadata = d->dicomObjectModelAsString(afilterModel, QModelIndex(), 0, fileName + "\t");
 
       if (!thisFileMetadata.isEmpty())
-        {
+      {
         metadata += thisFileMetadata;
-        }
+      }
       else
-        {
+      {
         metadata += fileName + "\t(none)" + d->endOfLine;
-        }
+      }
 
       delete afilterModel;
       delete aDicomObjectModel;
-      }
     }
+  }
   else
-    {
+  {
     // single file
     metadata = d->dicomObjectModelAsString(d->filterModel);
-    }
+  }
   return metadata;
 }
 
@@ -413,10 +413,10 @@ void ctkDICOMObjectListWidget::onFilterChanged()
     d->dicomObjectModel->rowCount() != 0);
   QPalette palette;
   if (showWarning)
-    {
+  {
     palette.setColor(QPalette::Base, Qt::yellow);
     palette.setColor(QPalette::Text, Qt::black);
-    }
+  }
   d->metadataSearchBox->setPalette(palette);
 }
 
@@ -440,10 +440,10 @@ void ctkDICOMObjectListWidget::setThumbnailVisible(bool visible)
 {
   Q_D(ctkDICOMObjectListWidget);
   if (visible == d->thumbnailVisible)
-    {
+  {
     // no change
     return;
-    }
+  }
   d->thumbnailVisible = visible;
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,3,0)
@@ -455,10 +455,10 @@ void ctkDICOMObjectListWidget::setThumbnailVisible(bool visible)
 
   d->thumbnailLabel->setVisible(visible);
   if (visible)
-    {
+  {
     // Previously the thumbnail was not visible, so it was not updated. Update it now.
     this->updateWidget();
-    }
+  }
 #if QT_VERSION < QT_VERSION_CHECK(5,3,0)
   d->showThumbnailButton->blockSignals(wasBlocked);
 #endif

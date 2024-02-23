@@ -70,22 +70,22 @@ int ctkWorkflowTest3(int argc, char * argv [] )
 
   // test error handling for branching workflows:
   if (workflow->addTransition(s6, s7))
-    {
+  {
     std::cout << "should not be able to add duplicates of the same transition" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (workflow->addTransition(s6, s6))
-    {
+  {
     std::cout << "currently do not support transitions from a step to itself" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (workflow->addTransition(s2, s5, "simple"))
-    {
+  {
     std::cout << "should not be able to add multiple transitions with same id" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // test that the transitions are occurring properly
   workflow->start();
@@ -97,20 +97,20 @@ int ctkWorkflowTest3(int argc, char * argv [] )
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s1)
-    {
+  {
     std::cerr << "error transitioning s0->s1" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition to s2
   workflow->goForward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s2)
-    {
+  {
     std::cerr << "error transitioning s1->s2" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition to s3
   s2->setBranchId("simple");
@@ -118,80 +118,80 @@ int ctkWorkflowTest3(int argc, char * argv [] )
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s3)
-    {
+  {
     std::cerr << "*** branch *** error transitioning s2->s3" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition to s4
   workflow->goForward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s4)
-    {
+  {
     std::cerr << "error transitioning s3->s4" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition to s7
   workflow->goForward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s7)
-    {
+  {
     std::cerr << "error transitioning s4->s7" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition to s8
   workflow->goForward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s8)
-    {
+  {
     std::cerr << "error transitioning s7->s8" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition back to s7
   workflow->goBackward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s7)
-    {
+  {
     std::cerr << "error transitioning s8->s7" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition back to s4
   workflow->goBackward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s4)
-    {
+  {
     std::cerr << "*** reverse branch *** error transitioning s7->s4" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition back to s3
   workflow->goBackward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s3)
-    {
+  {
     std::cerr << "error transitioning s4->s3" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition back to s2
   workflow->goBackward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s2)
-    {
+  {
     std::cerr << "error transitioning s3->s2" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition to s5
   s2->setBranchId("advanced");
@@ -199,100 +199,100 @@ int ctkWorkflowTest3(int argc, char * argv [] )
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s5)
-    {
+  {
     std::cerr << "*** branch *** error transitioning s2->s5" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition to s6
   workflow->goForward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s6)
-    {
+  {
     std::cerr << "error transitioning s5->s6" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition to s7
   workflow->goForward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s7)
-    {
+  {
     std::cerr << "error transitioning s6->s7" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition to s8
   workflow->goForward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s8)
-    {
+  {
     std::cerr << "error transitioning s7->s8" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition back to s7
   workflow->goBackward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s7)
-    {
+  {
     std::cerr << "error transitioning s8->s7" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition back to s6
   workflow->goBackward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s6)
-    {
+  {
     std::cerr << "error transitioning s7->s6" << std::endl;
     std::cerr << qPrintable(workflow->currentStep()->id());
     return EXIT_FAILURE;
-    }
+  }
 
   // transition back to s5
   workflow->goBackward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s5)
-    {
+  {
     std::cerr << "error transitioning s6->s5" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition back to s2
   workflow->goBackward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s2)
-    {
+  {
     std::cerr << "error transitioning s5->s2" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // transition back to s1
   workflow->goBackward();
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();
   if (workflow->currentStep() != s1)
-    {
+  {
     std::cerr << "error transitioning s2->s1" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   workflow->stop();
 
   int d = workflow->backwardDistanceToStep(s7);
   if (d != 5)
-    {
+  {
     std::cerr << "error distance between s7->s0, got"<< d << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QTimer::singleShot(defaultTime, &app, SLOT(quit()));
   app.exec();

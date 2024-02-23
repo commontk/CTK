@@ -142,12 +142,12 @@ public:
   QString sopInstanceUID() const;
 
   enum RetrieveType
-    {
+  {
     RetrieveNone,
     RetrieveSOPInstance,
     RetrieveSeries,
     RetrieveStudy
-    };
+  };
 
   /// last retrieve type
   RetrieveType getLastRetrieveType() const;

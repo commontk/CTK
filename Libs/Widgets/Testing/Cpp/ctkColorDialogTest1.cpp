@@ -47,20 +47,20 @@ int ctkColorDialogTest1(int argc, char * argv [] )
   if (index != 1 ||
       extraPanel != colorDialog.widget(index) ||
       colorDialog.widget(-1) != 0)
-    {
+  {
     std::cerr << "ctkColorDialog::addTab failed:" << index << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // fake removeTab
   colorDialog.removeTab(-1);
   index = colorDialog.indexOf(extraPanel);
   if (index != 1 ||
       colorDialog.widget(1) != extraPanel)
-    {
+  {
     std::cerr << "ctkColorDialog::removeTab failed:" << index << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // true removeTab
   colorDialog.removeTab(index);
@@ -70,31 +70,31 @@ int ctkColorDialogTest1(int argc, char * argv [] )
       colorDialog.widget(0) == 0 ||
       // extra panel doesn't exist anymore
       colorDialog.widget(1) != 0)
-    {
+  {
     std::cerr << "ctkColorDialog::removeTab failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Add the panel back
   colorDialog.addTab(extraPanel, "Extra chooser");
   extraPanel->setColor(Qt::darkBlue);
 
   if (colorDialog.currentColor() != Qt::darkBlue)
-    {
+  {
     std::cerr << "ctkColorDialog::setColor failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   colorDialog.open();
 
   // the following is only in interactive mode
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     bool result = QTest::qWaitForWindowActive(&colorDialog);
     Q_UNUSED(result);
     colorDialog.accept();
     return EXIT_SUCCESS;
-    }
+  }
 
   return app.exec();
 }

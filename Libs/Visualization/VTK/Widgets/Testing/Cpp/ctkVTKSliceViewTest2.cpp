@@ -61,10 +61,10 @@ int ctkVTKSliceViewTest2(int argc, char * argv [] )
   bool ok = false;
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments(), &ok);
   if (!ok)
-    {
+  {
     std::cerr << qPrintable(parser.errorString()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool interactive = parsedArgs["-I"].toBool();
   QString data_directory = parsedArgs["-D"].toString();
@@ -79,11 +79,11 @@ int ctkVTKSliceViewTest2(int argc, char * argv [] )
   vtkSmartPointer<vtkImageReader2> imageReader;
   imageReader.TakeReference(imageFactory->CreateImageReader2(imageFilename.toUtf8()));
   if (!imageReader)
-    {
+  {
     std::cerr << "Failed to instantiate image reader using: "
               << qPrintable(imageFilename) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Read image
   imageReader->SetFileName(imageFilename.toUtf8());
@@ -144,8 +144,8 @@ int ctkVTKSliceViewTest2(int argc, char * argv [] )
   // TODO Add image regression test
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(1000, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

@@ -30,9 +30,9 @@
 int ctkDependencyGraphTest2(int argc, char * argv [] )
 {
   if (argc > 1)
-    {
+  {
     std::cerr << argv[0] << " expects zero arguments" << std::endl;
-    }
+  }
 
   // check that cycle detection works
   {
@@ -53,48 +53,48 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   int nov = graph.numberOfVertices();
 
   if( nov != numberOfVertices )
-    {
+  {
     std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
-    {
+  {
     std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cfc = graph.checkForCycle();
 
   if( cfc == false )
-    {
+  {
     std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cdtd = graph.cycleDetected();
 
   if( cdtd == false )
-    {
+  {
     std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int co = graph.cycleOrigin();
   int ce = graph.cycleEnd();
 
   if (co != 2)
-    {
+  {
     std::cerr << "Wrong cycle origin (expected" << 2 << " got " << co << " )" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (ce != 1)
-    {
+  {
     std::cerr << "Wrong cycle end (expected" << 1 << " got " << ce << " )" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   }
 
@@ -119,48 +119,48 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   int nov = graph.numberOfVertices();
 
   if( nov != numberOfVertices )
-    {
+  {
     std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
-    {
+  {
     std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cfc = graph.checkForCycle();
 
   if( cfc == false )
-    {
+  {
     std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cdtd = graph.cycleDetected();
 
   if( cdtd == false )
-    {
+  {
     std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int co = graph.cycleOrigin();
   int ce = graph.cycleEnd();
 
   if (co != 2)
-    {
+  {
     std::cerr << "Wrong cycle origin (expected" << 2 << " got " << co << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (ce != 4)
-    {
+  {
     std::cerr << "Wrong cycle end (expected" << 4 << " got " << ce << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   }
 
@@ -193,33 +193,33 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   int nov = graph.numberOfVertices();
 
   if( nov != numberOfVertices )
-    {
+  {
     std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
-    {
+  {
     std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cfc = graph.checkForCycle();
 
   if( cfc == false )
-    {
+  {
     std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cdtd = graph.cycleDetected();
 
   if( cdtd == false )
-    {
+  {
     std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   }
 
@@ -257,33 +257,33 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   int nov = graph.numberOfVertices();
 
   if( nov != numberOfVertices )
-    {
+  {
     std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
-    {
+  {
     std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cfc = graph.checkForCycle();
 
   if( cfc == true )
-    {
+  {
     std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cdtd = graph.cycleDetected();
 
   if( cdtd == true )
-    {
+  {
     std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::list<int> sources;
   graph.sourceVertices(sources);
@@ -294,12 +294,12 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   expectedSources.push_back(10);
 
   if (sources != expectedSources)
-    {
+  {
     std::cerr << "Problem with sourceVertices()" << std::endl;
     printIntegerList("sources:", sources);
     printIntegerList("expectedSources:", expectedSources);
     return EXIT_FAILURE;
-    }
+  }
 
   std::list<int> globalSort;
   graph.topologicalSort(globalSort);
@@ -381,33 +381,33 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   int nov = graph.numberOfVertices();
 
   if( nov != numberOfVertices )
-    {
+  {
     std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
-    {
+  {
     std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cfc = graph.checkForCycle();
 
   if( cfc == true )
-    {
+  {
     std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cdtd = graph.cycleDetected();
 
   if( cdtd == true )
-    {
+  {
     std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::list<int> sources;
   graph.sourceVertices(sources);
@@ -420,12 +420,12 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   expectedSources.push_back(13);
 
   if (sources != expectedSources)
-    {
+  {
     std::cerr << "Problem with sourceVertices(sources)" << std::endl;
     printIntegerList("sources:", sources);
     printIntegerList("expectedSources:", expectedSources);
     return EXIT_FAILURE;
-    }
+  }
 
   std::list<int> globalSort;
   graph.topologicalSort(globalSort);
@@ -502,33 +502,33 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   int nov = graph.numberOfVertices();
 
   if( nov != numberOfVertices )
-    {
+  {
     std::cerr << "Number of vertices does not match (expected" << numberOfVertices << " got " << nov << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   int noe = graph.numberOfEdges();
   if( noe != expectedNumberOfEdge )
-    {
+  {
     std::cerr << "Number of edges does not match (expected" << expectedNumberOfEdge << " got " << noe << ")" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cfc = graph.checkForCycle();
 
   if( cfc == true )
-    {
+  {
     std::cerr << "Cycle detection failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool cdtd = graph.cycleDetected();
 
   if( cdtd == true )
-    {
+  {
     std::cerr << "Cycle detected flag wrong" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::list<int> sources;
   graph.sourceVertices(sources);
@@ -539,12 +539,12 @@ int ctkDependencyGraphTest2(int argc, char * argv [] )
   expectedSources.push_back(3);
 
   if (sources != expectedSources)
-    {
+  {
     std::cerr << "Problem with sourceVertices(sources)" << std::endl;
     printIntegerList("sources:", sources);
     printIntegerList("expectedSources:", expectedSources);
     return EXIT_FAILURE;
-    }
+  }
 
   std::list<int> globalSort;
   graph.topologicalSort(globalSort);

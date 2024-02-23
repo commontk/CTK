@@ -46,26 +46,26 @@ int ctkDICOMTesterTest1(int argc, char * argv [])
 
   // Usage: ctkDICOMTesterTest1 [<dcmqrscp>] [<configfile>]
   if (arguments.count() > 0)
-    {
+  {
     QString dcmqrscpExecutable(arguments.at(0));
     tester.setDCMQRSCPExecutable(dcmqrscpExecutable);
     CHECK_QSTRING(tester.dcmqrscpExecutable(), dcmqrscpExecutable);
-    }
+  }
   if (arguments.count() > 1)
-    {
+  {
     QString dcmqrscpConfigFile(arguments.at(1));
     tester.setDCMQRSCPConfigFile(argv[2]);
     CHECK_QSTRING(tester.dcmqrscpConfigFile(), dcmqrscpConfigFile);
-    }
+  }
 
   QString dcmqrscp(tester.dcmqrscpExecutable());
   QString dcmqrscpConf(tester.dcmqrscpConfigFile());
 
   if (dcmqrscp == "dcmqrscp")
-    {
+  {
     // If not found, assume the executable is in the PATH
     dcmqrscp = QStandardPaths::findExecutable(dcmqrscp);
-    }
+  }
   CHECK_BOOL(QFileInfo::exists(dcmqrscp), true);
   CHECK_BOOL(QFileInfo(dcmqrscp).isExecutable(), true);
 

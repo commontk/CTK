@@ -56,9 +56,9 @@ void ctkDICOMStorageListenerWorkerPrivate::setStorageListenerParameters()
   QSharedPointer<ctkDICOMStorageListenerJob> storageListenerJob =
     qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(q->Job);
   if (!storageListenerJob)
-    {
+  {
     return;
-    }
+  }
 
   this->StorageListener->setAETitle(storageListenerJob->AETitle());
   this->StorageListener->setPort(storageListenerJob->port());
@@ -119,18 +119,18 @@ void ctkDICOMStorageListenerWorker::run()
   QSharedPointer<ctkDICOMStorageListenerJob> storageListenerJob =
       qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(this->Job);
   if (!storageListenerJob)
-    {
+  {
     return;
-    }
+  }
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
     qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
   if (!scheduler
       || storageListenerJob->status() == ctkAbstractJob::JobStatus::Stopped)
-    {
+  {
     this->onJobCanceled();
     return;
-    }
+  }
 
   storageListenerJob->setStatus(ctkAbstractJob::JobStatus::Running);
   emit storageListenerJob->started();
@@ -141,10 +141,10 @@ void ctkDICOMStorageListenerWorker::run()
 
 
   if (!d->StorageListener->listen())
-    {
+  {
     this->onJobCanceled();
     return;
-    }
+  }
 
   storageListenerJob->setStatus(ctkAbstractJob::JobStatus::Finished);
   emit storageListenerJob->finished();
@@ -158,9 +158,9 @@ void ctkDICOMStorageListenerWorker::setJob(QSharedPointer<ctkAbstractJob> job)
   QSharedPointer<ctkDICOMStorageListenerJob> storageListenerJob =
     qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(job);
   if (!storageListenerJob)
-    {
+  {
     return;
-    }
+  }
 
   this->Superclass::setJob(job);
   d->setStorageListenerParameters();
@@ -188,20 +188,20 @@ void ctkDICOMStorageListenerWorker::onInsertJobDetail()
   QSharedPointer<ctkDICOMScheduler> scheduler =
       qSharedPointerObjectCast<ctkDICOMScheduler>(this->Scheduler);
   if (!scheduler)
-    {
+  {
     return;
-    }
+  }
 
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets =
     d->StorageListener->jobResponseSetsShared();
   if (jobResponseSets.count() == 0)
-    {
+  {
     return;
-    }
+  }
 
   scheduler->insertJobResponseSets(jobResponseSets);
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
-    {
+  {
     d->StorageListener->removeJobResponseSet(jobResponseSet);
-    }
+  }
 }

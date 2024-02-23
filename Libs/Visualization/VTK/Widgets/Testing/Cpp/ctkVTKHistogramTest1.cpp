@@ -30,25 +30,25 @@ int ctkVTKHistogramTest1( int argc, char * argv [])
       || defaultHistogram.minValue() != 0
       || defaultHistogram.maxValue() != 0
       || defaultHistogram.component() != 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKHistogram::ctkVTKHistogram "
               << defaultHistogram.count()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //-----Test setComponent---------------------------
   int newComponent = 1;
   defaultHistogram.setComponent(newComponent);
   if (defaultHistogram.component() != newComponent)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKHistogram::setComponent "
               << defaultHistogram.component()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // All the following data array have only 1 component.
   defaultHistogram.setComponent(0);
   //------Test build--------------------------------
@@ -69,12 +69,12 @@ int ctkVTKHistogramTest1( int argc, char * argv [])
   newDataArray.TakeReference(vtkDataArray::CreateDataArray(dataType));
   defaultHistogram.setDataArray(newDataArray);
   if (defaultHistogram.dataArray() != newDataArray)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKHistogram::setDataArray "
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //------Test build---------------------------------
   defaultHistogram.build();
@@ -88,12 +88,12 @@ int ctkVTKHistogramTest1( int argc, char * argv [])
   newDataArray->InsertNextTuple1(210);
   defaultHistogram.setDataArray(newDataArray);
   if (defaultHistogram.dataArray() != newDataArray)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKHistogram::setDataArray "
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //------Test build---------------------------------
   defaultHistogram.build();
@@ -102,12 +102,12 @@ int ctkVTKHistogramTest1( int argc, char * argv [])
   newDataArray.TakeReference(vtkDataArray::CreateDataArray(dataType));
   defaultHistogram.setDataArray(newDataArray);
   if (defaultHistogram.dataArray() != newDataArray)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKHistogram::setDataArray "
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //------Test setNumberOfBins-----------------------
   defaultHistogram.setNumberOfBins(5);

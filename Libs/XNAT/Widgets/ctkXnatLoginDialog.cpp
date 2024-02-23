@@ -67,7 +67,7 @@ ctkXnatLoginDialog::ctkXnatLoginDialog(QWidget* parent, Qt::WindowFlags flags)
   d->Dirty = false;
 
   if (!ui)
-    {
+  {
     // Create UI
     ui = new Ui::ctkXnatLoginDialog();
     ui->setupUi(this);
@@ -82,7 +82,7 @@ ctkXnatLoginDialog::ctkXnatLoginDialog(QWidget* parent, Qt::WindowFlags flags)
 
     // Create connections after setting defaults, so you don't trigger stuff when setting defaults.
     this->createConnections();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -91,14 +91,14 @@ ctkXnatLoginDialog::~ctkXnatLoginDialog()
   Q_D(ctkXnatLoginDialog);
 
   foreach (ctkXnatLoginProfile* profile, d->Profiles)
-    {
+  {
     delete profile;
-    }
+  }
 
   if (ui)
-    {
+  {
     delete ui;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -140,15 +140,15 @@ void ctkXnatLoginDialog::setSettings(ctkXnatSettings* settings)
   ctkXnatLoginProfile* defaultProfile = d->Settings->defaultLoginProfile();
 
   if (defaultProfile)
-    {
+  {
     int profileNumber = d->ProfileNames.indexOf(defaultProfile->name());
     QModelIndex index = d->Model.index(profileNumber);
     if (index.isValid())
-      {
+    {
       ui->lstProfiles->setCurrentIndex(index);
-      }
-    ui->edtPassword->setFocus();
     }
+    ui->edtPassword->setFocus();
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -165,37 +165,37 @@ void ctkXnatLoginDialog::accept()
 
   QString url = ui->edtServerUri->text();
   if ( url.isEmpty() )
-    {
+  {
     QMessageBox::warning(this, tr("Missing XNAT server URI"), tr("Please enter XNAT server URI."));
     ui->edtServerUri->selectAll();
     ui->edtServerUri->setFocus();
     return;
-    }
+  }
 
   QString userName = ui->edtUserName->text();
   if ( userName.isEmpty() )
-    {
+  {
     QMessageBox::warning(this, tr("Missing user name"), tr("Please enter user name."));
     ui->edtUserName->selectAll();
     ui->edtUserName->setFocus();
     return;
-    }
+  }
 
   if (d->Dirty)
-    {
+  {
     const QString& profileName = ui->edtProfileName->text();
     if (this->askToSaveProfile(profileName))
-      {
+    {
       this->saveProfile(profileName);
-      }
     }
+  }
 
   QString password = ui->edtPassword->text();
 
   // create XNAT connection
   QScopedPointer<ctkXnatSession> session;
   try
-    {
+  {
     ctkXnatLoginProfile loginProfile;
     loginProfile.setName(ui->edtProfileName->text());
     loginProfile.setServerUrl(url);
@@ -203,14 +203,14 @@ void ctkXnatLoginDialog::accept()
     loginProfile.setPassword(password);
     session.reset(new ctkXnatSession(loginProfile));
     session->open();
-    }
+  }
   catch (const ctkException& e)
-    {
+  {
     QMessageBox::warning(this, tr("Invalid Login Error"), tr(e.what()));
     ui->edtServerUri->selectAll();
     ui->edtServerUri->setFocus();
     return;
-    }
+  }
   d->Session = session.take();
   d->Session->setDefaultDownloadDir(ui->edtDownloadDir->text());
 
@@ -223,10 +223,10 @@ void ctkXnatLoginDialog::onCurrentProfileChanged(const QModelIndex& currentIndex
   Q_D(ctkXnatLoginDialog);
 
   if (!currentIndex.isValid())
-    {
+  {
     this->loadProfile();
     return;
-    }
+  }
 
   int originalIndexRow = currentIndex.row();
   QString newProfileName = d->ProfileNames[currentIndex.row()];
@@ -234,14 +234,14 @@ void ctkXnatLoginDialog::onCurrentProfileChanged(const QModelIndex& currentIndex
 
   bool newProfileSaved = false;
   if (d->Dirty)
-    {
+  {
     QString profileName = ui->edtProfileName->text();
     if (this->askToSaveProfile(profileName))
-      {
+    {
       this->saveProfile(profileName);
       newProfileSaved = true;
-      }
     }
+  }
 
   this->loadProfile(*profile);
 
@@ -254,9 +254,9 @@ void ctkXnatLoginDialog::onCurrentProfileChanged(const QModelIndex& currentIndex
   // both the original index and the new index are selected. (Even if single selection
   // is set.)
   if (newProfileSaved && originalIndexRow != currentIndex.row())
-    {
+  {
     QTimer::singleShot(0, this, SLOT(resetLstProfilesCurrentIndex()));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -286,7 +286,7 @@ void ctkXnatLoginDialog::saveProfile(const QString& profileName)
   ctkXnatLoginProfile* profile = d->Profiles[profileName];
   bool oldProfileWasDefault = profile && profile->isDefault();
   if (!profile)
-    {
+  {
     profile = new ctkXnatLoginProfile();
     d->Profiles[profileName] = profile;
     int profileNumber = d->ProfileNames.size();
@@ -294,38 +294,38 @@ void ctkXnatLoginDialog::saveProfile(const QString& profileName)
     // Insertion into the profile name list and the listView (ascending order)
     int idx = 0;
     while (idx < profileNumber && QString::localeAwareCompare(profileName, d->ProfileNames[idx]) > 0)
-      {
+    {
       ++idx;
-      }
+    }
     d->ProfileNames.insert(idx, profileName);
     d->Model.insertRow(idx);
     d->Model.setData(d->Model.index(idx), profileName);
-    }
+  }
 
   this->storeProfile(*profile);
 
   // If the profile is to be default then remove the default flag from the other profiles.
   // This code assumes that the newly created profiles are not default.
   if (profile->isDefault() && !oldProfileWasDefault)
-    {
+  {
     foreach (ctkXnatLoginProfile* otherProfile, d->Profiles.values())
-      {
+    {
       const QString& otherProfileName = otherProfile->name();
       if (otherProfileName != profileName && otherProfile->isDefault())
-        {
+      {
         otherProfile->setDefault(false);
         if (d->Settings)
-          {
+        {
           d->Settings->setLoginProfile(otherProfileName, otherProfile);
-          }
         }
       }
     }
+  }
 
   if (d->Settings)
-    {
+  {
     d->Settings->setLoginProfile(profileName, profile);
-    }
+  }
   d->Dirty = false;
   ui->btnSave->setEnabled(false);
 }
@@ -340,22 +340,22 @@ void ctkXnatLoginDialog::on_btnSave_clicked()
 
   QModelIndex currentIndex = ui->lstProfiles->currentIndex();
   if (currentIndex.isValid())
-    {
+  {
     QString selectedProfileName = d->ProfileNames[currentIndex.row()];
     if (editedProfileName == selectedProfileName)
-      {
+    {
       selectSavedProfile = false;
-      }
     }
+  }
 
   this->saveProfile(editedProfileName);
 
   if (selectSavedProfile)
-    {
+  {
     int editedProfileNumber = d->ProfileNames.indexOf(editedProfileName);
     QModelIndex editedProfileIndex = d->Model.index(editedProfileNumber, 0);
     ui->lstProfiles->setCurrentIndex(editedProfileIndex);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -405,15 +405,15 @@ void ctkXnatLoginDialog::on_btnDelete_clicked()
   delete d->Profiles.take(profileName);
 
   if (d->Profiles.empty())
-    {
+  {
     ui->btnDelete->setEnabled(false);
     ui->edtProfileName->setFocus();
-    }
+  }
 
   if (d->Settings)
-    {
+  {
     d->Settings->removeLoginProfile(profileName);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

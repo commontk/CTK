@@ -38,7 +38,7 @@ public:
   ctkErrorLogLevel(QObject* parent = 0);
 
   enum LogLevel
-    {
+  {
     Unknown = 0,
     Status,
     Trace,
@@ -49,7 +49,7 @@ public:
     Critical,
     Fatal,
     None,
-    };
+  };
   Q_DECLARE_FLAGS(LogLevels, LogLevel)
 
   QString operator ()(LogLevel logLevel);

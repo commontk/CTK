@@ -52,13 +52,13 @@ int ctkThumbnailListWidgetTest1( int argc, char * argv [] )
 
   widget.setThumbnailSize(QSize(128, 128));
   if(widget.thumbnailSize() != QSize(128, 128))
-    {
+  {
       std::cerr << "ctkThumbnailListWidget::setThumbnailWidth failed."
         << " size: " << widget.thumbnailSize().width()
         << "," << widget.thumbnailSize().height()
         << " expected: 128" << std::endl;
       return EXIT_FAILURE;
-    }
+  }
 
   pixList.append(pix1);
   pixList.append(pix2);
@@ -70,9 +70,9 @@ int ctkThumbnailListWidgetTest1( int argc, char * argv [] )
   widget.show();
 
   if (argc <= 1 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

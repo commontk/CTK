@@ -49,9 +49,9 @@ int ctkDICOMImportWidgetTest1( int argc, char * argv [] )
   importWidget.show();
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

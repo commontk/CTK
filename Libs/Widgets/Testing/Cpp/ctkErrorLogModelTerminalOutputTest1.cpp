@@ -49,19 +49,19 @@ bool checkTerminalOutput(const QStringList& expectedMessages)
   bool ok = false;
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(QCoreApplication::arguments(), &ok);
   if(!ok)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Failed to parse arguments !" << std::endl;
     return false;
-    }
+  }
   if (parsedArgs.contains("test-launcher"))
-    {
+  {
     QString testLauncher = parsedArgs.value("test-launcher").toString();
     if (!QFile::exists(testLauncher))
-      {
+    {
       std::cerr << "Line " << __LINE__ << " - Couldn't find test launcher !\n"
                 << "\ttest-launcher:" << qPrintable(testLauncher) << std::endl;
       return false;
-      }
+    }
     QProcess process;
     process.setProcessChannelMode(QProcess::MergedChannels);
     process.start(testLauncher, QStringList() << QCoreApplication::arguments().at(0));
@@ -69,12 +69,12 @@ bool checkTerminalOutput(const QStringList& expectedMessages)
     QString output = process.readAll();
     QString errorMsg = checkTextMessages(__LINE__, output.split("\n"), expectedMessages);
     if (!errorMsg.isEmpty())
-      {
+    {
       printErrorMessage(errorMsg);
       return false;
-      }
-    process.waitForFinished(1000);
     }
+    process.waitForFinished(1000);
+  }
   return true;
 }
 }
@@ -102,9 +102,9 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
   // let's just make sure that all messages have been displayed on the terminal
   // independently of their order.
   if (!checkTerminalOutput(expectedMessages))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   QString errorMsg;
 
@@ -113,12 +113,12 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
   errorMsg = checkInteger(__LINE__, "TerminalOutput",
                           currentTerminalOutput, ctkErrorLogTerminalOutput::None);
   if (!errorMsg.isEmpty())
-    {
+  {
     model.disableAllMsgHandler();
     printErrorMessage(errorMsg);
     printTextMessages(model);
     return EXIT_FAILURE;
-    }
+  }
 
   model.setTerminalOutputs(ctkErrorLogTerminalOutput::All);
 
@@ -126,18 +126,18 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
   errorMsg = checkInteger(__LINE__, "TerminalOutput",
                           currentTerminalOutput, ctkErrorLogTerminalOutput::All);
   if (!errorMsg.isEmpty())
-    {
+  {
     model.disableAllMsgHandler();
     printErrorMessage(errorMsg);
     printTextMessages(model);
     return EXIT_FAILURE;
-    }
+  }
 
   ctkModelTester modelTester;
   modelTester.setVerbose(false);
 
   try
-    {
+  {
     modelTester.setModel(&model);
 
     // Monitor Qt messages
@@ -173,29 +173,29 @@ int ctkErrorLogModelTerminalOutputTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedMessages.count());
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
+    }
 
     errorMsg = checkTextMessages(__LINE__, model, expectedMessages);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
-
     }
+
+  }
   catch (const char* error)
-    {
+  {
     model.disableAllMsgHandler();
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

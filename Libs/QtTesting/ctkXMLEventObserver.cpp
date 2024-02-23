@@ -54,9 +54,9 @@ void ctkXMLEventObserver::recordApplicationSettings()
 {
   Q_ASSERT(this->TestUtility);
   if (!this->XMLStream)
-    {
+  {
     return;
-    }
+  }
   this->XMLStream->writeStartElement("settings");
 
   // Information about the application
@@ -68,34 +68,34 @@ void ctkXMLEventObserver::recordApplicationSettings()
   // save Geometry and State of the application
   QMainWindow* window = NULL;
   foreach(QWidget * widget, QApplication::topLevelWidgets())
-    {
+  {
     window = qobject_cast<QMainWindow*>(widget);
     if (window)
-      {
+    {
       this->recordApplicationSetting("geometry" , "MainWindow", "mainWindowGeometry",
                                      QString(window->saveGeometry().toHex()));
 
       this->recordApplicationSetting("state" , "MainWindow", "mainWindowState",
                                      QString(window->saveState().toHex()));
       break;
-      }
     }
+  }
 
   // Save extra properties from the application
   QMap<QObject*, QStringList> states = this->TestUtility->objectStateProperty();
   QMap<QObject*, QStringList>::iterator iter;
   for(iter = states.begin() ; iter!=states.end() ; ++iter)
-    {
+  {
     foreach(QString property, iter.value())
-      {
+    {
       this->recordApplicationSetting(
         QString("appsetting"),
         iter.key()->metaObject()->className(),
         property,
         iter.key()->property(property.toLatin1()).toString()
       );
-      }
     }
+  }
 
   this->XMLStream->writeEndElement();
 }
@@ -117,28 +117,28 @@ void ctkXMLEventObserver::recordApplicationSetting(const QString &startElement,
 void ctkXMLEventObserver::setStream(QTextStream* stream)
 {
   if (this->XMLStream)
-    {
+  {
     this->XMLStream->writeEndElement();
     this->XMLStream->writeEndElement();
     this->XMLStream->writeEndDocument();
     delete this->XMLStream;
     this->XMLStream = NULL;
-    }
+  }
   if (this->Stream)
-    {
+  {
     *this->Stream << this->XMLString;
-    }
+  }
   this->XMLString = QString();
   pqEventObserver::setStream(stream);
   if (this->Stream)
-    {
+  {
     this->XMLStream = new QXmlStreamWriter(&this->XMLString);
     this->XMLStream->setAutoFormatting(true);
     this->XMLStream->writeStartDocument();
     this->XMLStream->writeStartElement("QtTesting");
     this->recordApplicationSettings();
     this->XMLStream->writeStartElement("events");
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -148,7 +148,7 @@ void ctkXMLEventObserver::onRecordEvent(const QString& widget,
                                         const int& eventType)
 {
   if(this->XMLStream)
-    {
+  {
     this->XMLStream->writeStartElement("event");
     this->XMLStream->writeAttribute("widget", widget);
     this->XMLStream->writeAttribute("command", command);
@@ -156,10 +156,10 @@ void ctkXMLEventObserver::onRecordEvent(const QString& widget,
     this->XMLStream->writeAttribute("type", ctkQtTestingUtility::eventTypeToString(eventType));
     this->XMLStream->writeEndElement();
     if (this->Stream)
-      {
+    {
       *this->Stream << this->XMLString;
-      }
+    }
     this->XMLString = QString();
     emit this->eventRecorded(widget, command, arguments, eventType);
-    }
+  }
 }

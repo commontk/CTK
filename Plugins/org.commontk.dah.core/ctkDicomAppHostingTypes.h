@@ -166,5 +166,5 @@ bool org_commontk_dah_core_EXPORT operator ==(const ctkDicomAppHosting::Availabl
 bool org_commontk_dah_core_EXPORT operator !=(const ctkDicomAppHosting::AvailableData& left,
                                               const ctkDicomAppHosting::AvailableData& right);
 
-}
+ }
 #endif // CTKDICOMAPPHOSTINGTYPES

@@ -63,9 +63,9 @@ QStringList ctkIconEnginePlugin::keys()const
   // with "ctkIconEngine".
   supportedKeys << "ctkIconEngine";
   foreach(QByteArray byteArray, QImageReader::supportedImageFormats())
-    {
+  {
     supportedKeys << QString(byteArray);
-    }
+  }
   return supportedKeys;
 }
 
@@ -109,26 +109,26 @@ void ctkIconEngine::addFile(const QString& fileName, const QSize& size,
   this->Superclass::addFile(fileName, size, mode, state);
   QString sizeDirectory;
   foreach(QString directory, d->SizeDirectories)
-    {
+  {
     if (fileName.contains(directory))
-      {
+    {
       sizeDirectory = directory;
       break;
-      }
     }
+  }
   if (sizeDirectory.isEmpty())
-    {
+  {
     return;
-    }
+  }
   foreach(QString directory, d->SizeDirectories)
-    {
+  {
     QString otherFileName = fileName;
     otherFileName.replace(sizeDirectory, directory);
     if (otherFileName != fileName)
-      {
+    {
       this->Superclass::addFile(otherFileName, QSize(), mode, state);
-      }
     }
+  }
   /*
   QFileInfo file(fileName);
   QDir dir = file.dir();

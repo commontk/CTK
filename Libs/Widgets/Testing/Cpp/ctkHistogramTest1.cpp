@@ -92,58 +92,58 @@ int ctkHistogramTest1(int argc, char * argv [] )
   ctkDummyHistogram dummyHistogram;
 
   if (!dummyHistogram.isDiscrete())
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkHistogram::isDiscrete"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (dummyHistogram.isEditable())
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkHistogram::isEditable"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   qreal defaultIndex = 0.;
   if (dummyHistogram.controlPoint(defaultIndex) != 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkHistogram::controlPoint"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (dummyHistogram.count() != 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkHistogram::count"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
   qreal defaultPos = 0.;
   if (dummyHistogram.value(defaultPos) != 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkHistogram::value"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (dummyHistogram.minValue() != 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkHistogram::minValue"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (dummyHistogram.maxValue() != 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkHistogram::maxValue"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (dummyHistogram.insertControlPoint(defaultPos) != -1)
   {
     std::cerr << "Line : " << __LINE__

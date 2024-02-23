@@ -50,19 +50,19 @@ ctkButtonGroup::ctkButtonGroup(QObject* _parent)
 void ctkButtonGroup::setChecked(QAbstractButton* button, bool checked)
 {
   if (!button)
-    {
+  {
     return;
-    }
+  }
   bool wasExclusive = this->exclusive();
   if (!checked)
-    {
+  {
     this->setExclusive(false);
-    }
+  }
   button->setChecked(checked);
   if (!checked)
-    {
+  {
     this->setExclusive(wasExclusive);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -77,9 +77,9 @@ void ctkButtonGroup::onButtonClicked(int buttonId)
   QAbstractButton* clickedButton = this->button(buttonId);
   Q_ASSERT(clickedButton);
   if (!this->exclusive() || !d->IsLastButtonPressedChecked)
-    {
+  {
     return;
-    }
+  }
   // here the button is clicked and we click it again... so we want to
   // uncheck, a behavior not supported by QButtonGroup.
   // The only way to uncheck the button is to remove it from the group, and put it back

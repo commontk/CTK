@@ -228,10 +228,10 @@ void ctkRangeWidgetTester::testSetRange()
     && expectedMinimum != -std::numeric_limits<double>::infinity());
 
   if (testRangeMinMax)
-    {
+  {
     ctkTest::COMPARE(rangeWidget.minimum(), expectedMinimum);
     ctkTest::COMPARE(rangeWidget.maximum(), expectedMaximum);
-    }
+  }
   const bool minimumChanged = expectedMinimum != 0.;
   const bool maximumChanged = expectedMaximum != 99.;
   QCOMPARE(rangeChangedSpy.count(),(minimumChanged || maximumChanged) ? 1 : 0);
@@ -239,10 +239,10 @@ void ctkRangeWidgetTester::testSetRange()
   QFETCH(double, expectedLowerValue);
   QFETCH(double, expectedUpperValue);
   if (testRangeMinMax)
-    {
+  {
     ctkTest::COMPARE(rangeWidget.minimumValue(), expectedLowerValue);
     ctkTest::COMPARE(rangeWidget.maximumValue(), expectedUpperValue);
-    }
+  }
 
   const bool lowerValueChanged = expectedLowerValue != 25.;
   const bool upperValueChanged = expectedUpperValue != 75.;

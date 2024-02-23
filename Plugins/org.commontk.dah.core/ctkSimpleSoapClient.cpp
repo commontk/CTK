@@ -74,9 +74,9 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
 {
   QList<QtSoapType*> list;
   if(soapType != NULL)
-    {
+  {
     list.append(soapType);
-    }
+  }
     return submitSoapRequest(methodName,list);
 }
 
@@ -102,15 +102,15 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
   //request.setMethod(QtSoapQName(methodName,"http://wg23.dicom.nema.org/"));
   request.setMethod(QtSoapQName(methodName,"http://dicom.nema.org/PS3.19" + d->Path ));
   if(!soapTypes.isEmpty())
-    {
+  {
     for (QList<QtSoapType*>::ConstIterator it = soapTypes.begin();
          it < soapTypes.constEnd(); it++)
-      {
+    {
       request.addMethodArgument(*it);
       CTK_SOAP_LOG( << "  Argument type added " << (*it)->typeName() << ". "
                     << " Argument name is " << (*it)->name().name() );
-      }
     }
+  }
   CTK_SOAP_LOG_LOWLEVEL( << "Submitting request " << methodName);
   CTK_SOAP_LOG_LOWLEVEL( << request.toXmlString());
 
@@ -131,13 +131,13 @@ const QtSoapType & ctkSimpleSoapClient::submitSoapRequest(const QString& methodN
   CTK_SOAP_LOG( << "Got Response." );
 
   if (response.isFault())
-    {
+  {
     qCritical() << "ctkSimpleSoapClient: server error (response.IsFault())";
     CTK_SOAP_LOG_LOWLEVEL( << qPrintable(response.faultString().toString()) << ctk::endl );
     CTK_SOAP_LOG_LOWLEVEL( << response.toXmlString() );
     return response.returnValue();
     //    throw ctkRuntimeException("ctkSimpleSoapClient: server error (response.IsFault())");
-    }
+  }
 
   CTK_SOAP_LOG_LOWLEVEL( << "Response: " << response.toXmlString() );
 

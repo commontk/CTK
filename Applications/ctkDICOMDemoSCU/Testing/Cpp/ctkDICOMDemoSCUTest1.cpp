@@ -34,11 +34,11 @@ int ctkDICOMDemoSCUTest1(int argc, char * argv [])
   QString testName = arguments.takeFirst();
 
   if (arguments.count() != 1)
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-ctkDICOMDemoSCU-executable>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString command = arguments.at(0);
 
@@ -54,10 +54,10 @@ int ctkDICOMDemoSCUTest1(int argc, char * argv [])
 
   int res = QProcess::execute(command, parameters);
   if (res != EXIT_SUCCESS)
-    {
+  {
     std::cerr << '\"' << qPrintable(command) << '\"'
               << " returned " << res << std::endl;
     return res;
-    }
+  }
   return res;
 }

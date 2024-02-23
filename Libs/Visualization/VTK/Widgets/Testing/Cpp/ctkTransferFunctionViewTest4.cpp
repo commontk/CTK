@@ -76,9 +76,9 @@ int ctkTransferFunctionViewTest4(int argc, char * argv [] )
 
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(1000);
-    }
+  }
   return app.exec();
 }

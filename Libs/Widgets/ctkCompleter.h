@@ -69,11 +69,11 @@ public:
   virtual ~ctkCompleter();
 
   enum ModelFiltering
-    {
+  {
     FilterStartsWith=0,
     FilterContains,
     FilterWordStartsWith
-    };
+  };
 
   ModelFiltering modelFiltering()const;
   void setModelFiltering(ModelFiltering filter);

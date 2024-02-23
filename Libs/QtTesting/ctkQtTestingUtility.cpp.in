@@ -30,11 +30,11 @@ void ctkQtTestingUtility::addDefaultCTKWidgetEventTranslatorsToTranslator(pqTest
   pqWidgetEventTranslator* translator = this->eventTranslator()->getWidgetEventTranslator(
     QLatin1String("pqNativeFileDialogEventTranslator"));
   if (translator)
-    {
+  {
     this->eventTranslator()->removeWidgetEventTranslator(
       QLatin1String("pqNativeFileDialogEventTranslator"));
     delete translator;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -45,59 +45,59 @@ void ctkQtTestingUtility::addDefaultCTKWidgetEventPlayersToPlayer(pqTestUtility*
   pqWidgetEventPlayer* player = this->eventPlayer()->getWidgetEventPlayer(
     QLatin1String("pqNativeFileDialogEventPlayer"));
   if (player)
-    {
+  {
     this->eventPlayer()->removeWidgetEventPlayer(
       QLatin1String("pqNativeFileDialogEventPlayer"));
     delete player;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void ctkQtTestingUtility::addTranslator(pqWidgetEventTranslator* translator)
 {
   if(translator)
-    {
+  {
     this->eventTranslator()->addWidgetEventTranslator(translator);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void ctkQtTestingUtility::addPlayer(pqWidgetEventPlayer* player)
 {
   if(player)
-    {
+  {
     this->eventPlayer()->addWidgetEventPlayer(player);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 QString ctkQtTestingUtility::eventTypeToString(int eventType)
 {
   switch (eventType)
-    {
+  {
     case pqEventTypes::ACTION_EVENT:
       return QString("action");
     case pqEventTypes::CHECK_EVENT:
       return QString("check");
     default:
       return QString("unknown");
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 int ctkQtTestingUtility::eventTypeFromString(const QString& eventTypeStr)
 {
   if (!eventTypeStr.compare("action", Qt::CaseInsensitive))
-    {
+  {
     return pqEventTypes::ACTION_EVENT;
-    }
+  }
   else if (!eventTypeStr.compare("check", Qt::CaseInsensitive))
-    {
+  {
     return pqEventTypes::CHECK_EVENT;
-    }
+  }
   else
-    {
+  {
     // unknown event type name
     return -1;
-    }
+  }
 }

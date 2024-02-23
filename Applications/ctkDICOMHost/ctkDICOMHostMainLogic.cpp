@@ -69,7 +69,7 @@ void ctkDICOMHostMainLogic::configureHostedApp()
 void ctkDICOMHostMainLogic::sendDataToHostedApp()
 {
  if ((this->Host) && (this->HostControls->validAppFileName()) && (ValidSelection))
-  {
+ {
     *Data = ctkDicomAppHosting::AvailableData(); // empty AvailableData structure (at least not with the same id...)
     foreach (const QString &str, SelectedFiles) {
       if (str.isEmpty())
@@ -95,7 +95,7 @@ void ctkDICOMHostMainLogic::sendDataToHostedApp()
     {
       publishSelectedData();
     }
-  }
+ }
 }
 
 void ctkDICOMHostMainLogic::onAppReady()

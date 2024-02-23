@@ -112,20 +112,20 @@ ctkDICOMStudyItemWidgetPrivate::~ctkDICOMStudyItemWidgetPrivate()
   Q_Q(ctkDICOMStudyItemWidget);
 
   for (int row = 0; row < this->SeriesListTableWidget->rowCount(); row++)
-    {
+  {
     for (int column = 0; column < this->SeriesListTableWidget->columnCount(); column++)
-      {
+    {
       ctkDICOMSeriesItemWidget* seriesItemWidget =
         qobject_cast<ctkDICOMSeriesItemWidget*>(this->SeriesListTableWidget->cellWidget(row, column));
       if (!seriesItemWidget)
-        {
+      {
         continue;
-        }
+      }
 
       q->disconnect(seriesItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
                     this->VisualDICOMBrowser.data(), SLOT(showSeriesContextMenu(const QPoint&)));
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -148,9 +148,9 @@ void ctkDICOMStudyItemWidgetPrivate::init(QWidget* parentWidget)
 void ctkDICOMStudyItemWidgetPrivate::updateColumnsWidths()
 {
   for (int columnIndex = 0; columnIndex < this->SeriesListTableWidget->columnCount(); ++columnIndex)
-    {
+  {
     this->SeriesListTableWidget->setColumnWidth(columnIndex, this->ThumbnailSizePixel);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -159,25 +159,25 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
   Q_Q(ctkDICOMStudyItemWidget);
 
   if (!this->DicomDatabase)
-    {
+  {
     logger.error("createSeries failed, no DICOM Database has been set. \n");
     return;
-    }
+  }
 
   QStringList seriesList = this->DicomDatabase->seriesForStudy(this->StudyInstanceUID);
   if (seriesList.count() == 0)
-    {
+  {
     return;
-    }
+  }
 
   // Sort by SeriesNumber
   QMap<int, QString> seriesMap;
   foreach (QString seriesItem, seriesList)
-    {
+  {
     if (this->isSeriesItemAlreadyAdded(seriesItem))
-      {
+    {
       continue;
-      }
+    }
 
     QString modality = this->DicomDatabase->fieldForSeries("Modality", seriesItem);
     QString seriesDescription = this->DicomDatabase->fieldForSeries("SeriesDescription", seriesItem);
@@ -185,28 +185,28 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
     if ((this->FilteringSeriesDescription.isEmpty() ||
          seriesDescription.contains(this->FilteringSeriesDescription, Qt::CaseInsensitive)) &&
         (this->FilteringModalities.contains("Any") || this->FilteringModalities.contains(modality)))
-      {
+    {
       int seriesNumber = this->DicomDatabase->fieldForSeries("SeriesNumber", seriesItem).toInt();
       while (seriesMap.contains(seriesNumber))
-        {
+      {
         seriesNumber++;
-        }
+      }
       // QMap automatically sort in ascending with the key
       seriesMap[seriesNumber] = seriesItem;
-      }
     }
+  }
 
   int tableIndex = 0;
   int seriesIndex = 0;
   int numberOfSeries = seriesMap.count();
   foreach (QString seriesItem, seriesMap)
-    {
+  {
     QString seriesInstanceUID = this->DicomDatabase->fieldForSeries("SeriesInstanceUID", seriesItem);
     if (seriesInstanceUID.isEmpty())
-      {
+    {
       numberOfSeries--;
       continue;
-      }
+    }
     seriesIndex++;
 
     QString modality = this->DicomDatabase->fieldForSeries("Modality", seriesItem);
@@ -216,27 +216,27 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries()
     tableIndex++;
 
     if (seriesIndex == numberOfSeries)
-      {
+    {
       int emptyIndex = tableIndex;
       int columnIndex = emptyIndex % this->SeriesListTableWidget->columnCount();
       while (columnIndex != 0)
-        {
+      {
         int rowIndex = floor(emptyIndex / this->SeriesListTableWidget->columnCount());
         columnIndex = emptyIndex % this->SeriesListTableWidget->columnCount();
         this->addEmptySeriesItemWidget(rowIndex, columnIndex);
         emptyIndex++;
-        }
       }
+    }
 
     int iHeight = 0;
     for (int rowIndex = 0; rowIndex < this->SeriesListTableWidget->rowCount(); ++rowIndex)
-      {
+    {
       iHeight += this->SeriesListTableWidget->verticalHeader()->sectionSize(rowIndex);
-      }
+    }
     if (iHeight < this->ThumbnailSizePixel)
-      {
+    {
       iHeight = this->ThumbnailSizePixel;
-      }
+    }
     iHeight += 25;
     this->SeriesListTableWidget->setMinimumHeight(iHeight);
   }
@@ -248,13 +248,13 @@ int ctkDICOMStudyItemWidgetPrivate::getScreenWidth()
   QList<QScreen*> screens = QApplication::screens();
   int width = 1920;
   foreach (QScreen* screen, screens)
-    {
+  {
     QRect rec = screen->geometry();
     if (rec.width() > width)
-      {
+    {
       width = rec.width();
-      }
     }
+  }
 
   return width;
 }
@@ -265,13 +265,13 @@ int ctkDICOMStudyItemWidgetPrivate::getScreenHeight()
   QList<QScreen*> screens = QApplication::screens();
   int height = 1080;
   foreach (QScreen* screen, screens)
-    {
+  {
     QRect rec = screen->geometry();
     if (rec.height() > height)
-      {
+    {
       height = rec.height();
-      }
     }
+  }
 
   return height;
 }
@@ -292,23 +292,23 @@ int ctkDICOMStudyItemWidgetPrivate::calculateThumbnailSizeInPixel(const ctkDICOM
   int height = this->getScreenHeight();
   int thumbnailSizeInPixel = 1;
   switch (thumbnailSize)
-    {
+  {
     case ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small:
-      {
+    {
       thumbnailSizeInPixel = floor(height / 7.);
-      }
+    }
     break;
     case ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium:
-      {
+    {
       thumbnailSizeInPixel = floor(height / 5.5);
-      }
+    }
     break;
     case ctkDICOMStudyItemWidget::ThumbnailSizeOption::Large:
-      {
+    {
       thumbnailSizeInPixel = floor(height / 4.);
-      }
-    break;
     }
+    break;
+  }
 
   return thumbnailSizeInPixel;
 }
@@ -328,28 +328,28 @@ bool ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdded(const QString& ser
 {
   bool alreadyAdded = false;
   for (int i = 0; i < this->SeriesListTableWidget->rowCount(); i++)
-    {
+  {
     for (int j = 0; j < this->SeriesListTableWidget->columnCount(); j++)
-      {
+    {
       ctkDICOMSeriesItemWidget* seriesItemWidget =
         qobject_cast<ctkDICOMSeriesItemWidget*>(this->SeriesListTableWidget->cellWidget(i, j));
       if (!seriesItemWidget)
-        {
+      {
         continue;
-        }
+      }
 
       if (seriesItemWidget->seriesItem() == seriesItem)
-        {
+      {
         alreadyAdded = true;
         break;
-        }
-      }
-
-    if (alreadyAdded)
-      {
-      break;
       }
     }
+
+    if (alreadyAdded)
+    {
+      break;
+    }
+  }
 
   return alreadyAdded;
 }
@@ -432,14 +432,14 @@ void ctkDICOMStudyItemWidget::setDescription(const QString& description)
 {
   Q_D(ctkDICOMStudyItemWidget);
   if (description.isEmpty())
-    {
+  {
     d->StudyDescriptionTextBrowser->hide();
-    }
+  }
   else
-    {
+  {
     d->StudyDescriptionTextBrowser->setText(description);
     d->StudyDescriptionTextBrowser->show();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -499,13 +499,13 @@ void ctkDICOMStudyItemWidget::setSelection(bool selected)
 {
   Q_D(const ctkDICOMStudyItemWidget);
   if (selected)
-    {
+  {
     d->SeriesListTableWidget->selectAll();
-    }
+  }
   else
-    {
+  {
     d->SeriesListTableWidget->clearSelection();
-    }
+  }
 
   d->StudySelectionCheckBox->setChecked(selected);
 }
@@ -536,18 +536,18 @@ void ctkDICOMStudyItemWidget::setScheduler(ctkDICOMScheduler& scheduler)
 {
   Q_D(ctkDICOMStudyItemWidget);
   if (d->Scheduler)
-    {
+  {
     QObject::disconnect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                        this, SLOT(updateGUIFromScheduler(QVariant)));
-    }
+  }
 
   d->Scheduler = QSharedPointer<ctkDICOMScheduler>(&scheduler, skipDelete);
 
   if (d->Scheduler)
-    {
+  {
     QObject::connect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                      this, SLOT(updateGUIFromScheduler(QVariant)));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -555,18 +555,18 @@ void ctkDICOMStudyItemWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> sch
 {
   Q_D(ctkDICOMStudyItemWidget);
   if (d->Scheduler)
-    {
+  {
     QObject::disconnect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                        this, SLOT(updateGUIFromScheduler(QVariant)));
-    }
+  }
 
   d->Scheduler = scheduler;
 
   if (d->Scheduler)
-    {
+  {
     QObject::connect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                      this, SLOT(updateGUIFromScheduler(QVariant)));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -639,19 +639,19 @@ QList<ctkDICOMSeriesItemWidget*> ctkDICOMStudyItemWidget::seriesItemWidgetsList(
   QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList;
 
   for (int row = 0; row < d->SeriesListTableWidget->rowCount(); row++)
-    {
+  {
     for (int column = 0; column < d->SeriesListTableWidget->columnCount(); column++)
-      {
+    {
       ctkDICOMSeriesItemWidget* seriesItemWidget =
         qobject_cast<ctkDICOMSeriesItemWidget*>(d->SeriesListTableWidget->cellWidget(row, column));
       if (!seriesItemWidget)
-        {
+      {
         continue;
-        }
+      }
 
       seriesItemWidgetsList.append(seriesItemWidget);
-      }
     }
+  }
 
   return seriesItemWidgetsList;
 }
@@ -665,10 +665,10 @@ void ctkDICOMStudyItemWidget::addSeriesItemWidget(int tableIndex,
 {
   Q_D(ctkDICOMStudyItemWidget);
   if (!d->DicomDatabase)
-    {
+  {
     logger.error("addSeriesItemWidget failed, no DICOM Database has been set. \n");
     return;
-    }
+  }
 
   QString seriesNumber = d->DicomDatabase->fieldForSeries("SeriesNumber", seriesItem);
   ctkDICOMSeriesItemWidget* seriesItemWidget = new ctkDICOMSeriesItemWidget;
@@ -694,10 +694,10 @@ void ctkDICOMStudyItemWidget::addSeriesItemWidget(int tableIndex,
   int rowIndex = floor(tableIndex / d->SeriesListTableWidget->columnCount());
   int columnIndex = tableIndex % d->SeriesListTableWidget->columnCount();
   if (columnIndex == 0)
-    {
+  {
     d->SeriesListTableWidget->insertRow(rowIndex);
     d->SeriesListTableWidget->setRowHeight(rowIndex, d->ThumbnailSizePixel + 30);
-    }
+  }
 
   d->SeriesListTableWidget->setItem(rowIndex, columnIndex, tableItem);
   d->SeriesListTableWidget->setCellWidget(rowIndex, columnIndex, seriesItemWidget);
@@ -709,15 +709,15 @@ void ctkDICOMStudyItemWidget::removeSeriesItemWidget(const QString& seriesItem)
   Q_D(ctkDICOMStudyItemWidget);
 
   for (int row = 0; row < d->SeriesListTableWidget->rowCount(); row++)
-    {
+  {
     for (int column = 0; column < d->SeriesListTableWidget->columnCount(); column++)
-      {
+    {
       ctkDICOMSeriesItemWidget* seriesItemWidget =
         qobject_cast<ctkDICOMSeriesItemWidget*>(d->SeriesListTableWidget->cellWidget(row, column));
       if (!seriesItemWidget || seriesItemWidget->seriesItem() != seriesItem)
-        {
+      {
         continue;
-        }
+      }
 
       d->SeriesListTableWidget->removeCellWidget(row, column);
       this->disconnect(seriesItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -728,8 +728,8 @@ void ctkDICOMStudyItemWidget::removeSeriesItemWidget(const QString& seriesItem)
 
       d->addEmptySeriesItemWidget(row, column);
       break;
-      }
     }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -744,18 +744,18 @@ void ctkDICOMStudyItemWidget::generateSeries(bool toggled)
 {
   Q_D(ctkDICOMStudyItemWidget);
   if (!toggled)
-    {
+  {
     return;
-    }
+  }
 
   d->createSeries();
 
   if (d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
-    {
+  {
     d->Scheduler->querySeries(d->PatientID,
                              d->StudyInstanceUID,
                              QThread::NormalPriority);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -765,17 +765,17 @@ void ctkDICOMStudyItemWidget::updateGUIFromScheduler(const QVariant& data)
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (td.JobUID.isEmpty())
-    {
+  {
     d->createSeries();
-    }
+  }
 
   if (td.JobUID.isEmpty() ||
       td.JobType != ctkDICOMJobResponseSet::JobType::QuerySeries ||
       td.PatientID != d->PatientID ||
       td.StudyInstanceUID != d->StudyInstanceUID)
-    {
+  {
     return;
-    }
+  }
 
   d->createSeries();
 }

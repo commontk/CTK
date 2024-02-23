@@ -69,10 +69,10 @@ static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButt
                        Qt::KeyboardModifiers stateKey, QPoint pos, int delay=-1)
 {
   if (action != QTest::MouseMove)
-    {
+  {
     QTest::mouseEvent(action, widget, button, stateKey, pos, delay);
     return;
-    }
+  }
   QTEST_ASSERT(widget);
   //extern int Q_TESTLIB_EXPORT defaultMouseDelay();
   //if (delay == -1 || delay < defaultMouseDelay())
@@ -93,12 +93,12 @@ static void mouseEvent(QTest::MouseAction action, QWidget *widget, Qt::MouseButt
   me = QMouseEvent(QEvent::MouseMove, pos, widget->mapToGlobal(pos), button, button, stateKey);
   QSpontaneKeyEvent::setSpontaneous(&me);
   if (!qApp->notify(widget, &me))
-    {
+  {
     static const char *mouseActionNames[] =
         { "MousePress", "MouseRelease", "MouseClick", "MouseDClick", "MouseMove" };
     QString warning = QString::fromLatin1("Mouse event \"%1\" not accepted by receiving widget");
     QTest::qWarn(qPrintable(warning.arg(mouseActionNames[static_cast<int>(action)])));
-    }
+  }
 }
 
 #endif
@@ -117,24 +117,24 @@ inline void COMPARE(double v1, double v2)
 {
   // QCOMPARE fails to compare NaN numbers
   if (v2 != v2)
-    {
+  {
     QVERIFY(v1 != v1);
-    }
+  }
   // QCOMPARE fails to compare - infinity
   else if (v2 == -std::numeric_limits<double>::infinity())
-    {
+  {
     QVERIFY(v1 == -std::numeric_limits<double>::infinity());
-    }
+  }
   // QCOMPARE fails to compare infinity
   else if (v2 == std::numeric_limits<double>::infinity())
-    {
+  {
     QVERIFY(v1 == std::numeric_limits<double>::infinity());
-    }
+  }
   // QCOMPARE doesn't like to compare zeroes
   else
-    {
+  {
     QCOMPARE(v1, v2);
-    }
+  }
 }
 
 } // end ctkTest namespace

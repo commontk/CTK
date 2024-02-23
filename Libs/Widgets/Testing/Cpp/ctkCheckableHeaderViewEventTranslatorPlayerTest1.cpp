@@ -48,21 +48,21 @@ namespace
 QSignalSpy* Spy1;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   QWidget* parentWidget = reinterpret_cast<QWidget*>(data);
   QList<ctkCheckableHeaderView*> widget = parentWidget->findChildren<ctkCheckableHeaderView*>();
 
   if( widget.count() > 0)
-    {
+  {
     CTKCOMPARE(widget[0]->checkState(0), Qt::PartiallyChecked);
     CTKCOMPARE(widget[0]->checkState(1), Qt::Unchecked);
     CTKCOMPARE(Spy1->count(), 8);
-    }
-  else
-    {
-    QApplication::exit(EXIT_FAILURE);
-    }
   }
+  else
+  {
+    QApplication::exit(EXIT_FAILURE);
+  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -131,9 +131,9 @@ int ctkCheckableHeaderViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

@@ -103,7 +103,7 @@ void ctkDICOMRetrieveJob::setServer(QSharedPointer<ctkDICOMServer> server)
 QString ctkDICOMRetrieveJob::loggerReport(const QString& status) const
 {
   switch (this->dicomLevel())
-    {
+  {
     case ctkDICOMJob::DICOMLevels::Patients:
       return QString("ctkDICOMRetrieveJob: retrieve task at patients level %1.\n"
                      "JobUID: %2\n"
@@ -154,7 +154,7 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString& status) const
           .arg(this->sopInstanceUID());
     default:
       return QString("");
-    }
+  }
 }
 //------------------------------------------------------------------------------
 ctkAbstractJob* ctkDICOMRetrieveJob::clone() const

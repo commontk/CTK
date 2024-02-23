@@ -88,9 +88,9 @@ unsigned long ctkDICOMImage::frameCount() const
 {
   Q_D(const ctkDICOMImage);
   if (d->DicomImage)
-    {
+  {
     return d->DicomImage->getFrameCount();
-    }
+  }
   return 0;
 }
 
@@ -110,7 +110,7 @@ QImage ctkDICOMImage::frame(int frame) const
   // the DCMTK forum, posted by Joerg Riesmayer, see http://forum.dcmtk.org/viewtopic.php?t=120
   QImage image;
   if ((d->DicomImage != NULL) && (d->DicomImage->getStatus() == EIS_Normal))
-    {
+  {
     /* get image extension */
     const unsigned long width = d->DicomImage->getWidth();
     const unsigned long height = d->DicomImage->getHeight();
@@ -125,13 +125,13 @@ QImage ctkDICOMImage::frame(int frame) const
     /* copy PGM header to buffer */
 
     if (d->DicomImage->getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, frame))
-      {
+    {
 
       if (!image.loadFromData( buffer ))
-        {
+      {
         logger.error("QImage couldn't created");
-        }
       }
     }
+  }
   return image;
 }

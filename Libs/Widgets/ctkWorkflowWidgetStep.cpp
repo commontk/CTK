@@ -177,30 +177,30 @@ void ctkWorkflowWidgetStep::showUserInterface()
 
   // use the user's showUserInterfaceCommand if given
   if (d->hasShowUserInterfaceCommand)
-    {
+  {
     this->invokeShowUserInterfaceCommand();
     return;
-    }
+  }
 
   // otherwise we provide an implementation here
   if (this->workflow()->verbose())
-    {
+  {
     qDebug() << QString("showUserInterface - showing %1").arg(this->name());
-    }
+  }
 
   // create the user interface if this is the first time we're showing this step
   if (!d->created)
-    {
+  {
     if (d->hasCreateUserInterfaceCommand)
-      {
+    {
       this->invokeCreateUserInterfaceCommand();
-      }
-    else
-      {
-      this->createUserInterface();
-      }
-    d->created = true;
     }
+    else
+    {
+      this->createUserInterface();
+    }
+    d->created = true;
+  }
 
   emit showUserInterfaceComplete();
 }

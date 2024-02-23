@@ -88,7 +88,7 @@ void ctkMTAttrPasswordTestSuite::testAttributeTypePassword2()
       QVERIFY2(ads[i]->validate("1234abcd").isNull(), "Validation should not be present when min and max are not specified and there are no enumerated constraints");
     }
   }
- }
+}
 
 //----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::testAttributeTypePassword3()
@@ -121,9 +121,9 @@ void ctkMTAttrPasswordTestSuite::testAttributeTypePassword4()
       QVERIFY2(0 == ads[i]->validate("12345678").size(), "Value '12345678' should have been valid");
       QVERIFY2(0 == ads[i]->validate("123456789").size(), "Value '123456789' should have been valid");
       QVERIFY2(ads[i]->validate("1234567").size() > 0, "Value '1234567' should not have been valid");
-   }
+    }
   }
- }
+}
 
 //----------------------------------------------------------------------------
 void ctkMTAttrPasswordTestSuite::testAttributeTypePassword5()
@@ -156,6 +156,6 @@ void ctkMTAttrPasswordTestSuite::testAttributeTypePassword6()
       QVERIFY2(ads[i]->validate("12").size() > 0, "Value '12' should not have been valid");
       QVERIFY2(0 == ads[i]->validate("123456").size(), "Value '123456' should have been valid");
       QVERIFY2(ads[i]->validate("1234567").size() > 0, "Value '1234567' should not have been valid");
-   }
+    }
   }
- }
+}

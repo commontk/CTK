@@ -65,17 +65,17 @@ int ctkSettingsTest1(int argc, char * argv [] )
   settings.restoreState("", mainWindow);
   if (mainWindow.pos() != origin ||
       mainWindow.size() != QSize(640, 470))
-    {
+  {
     std::cerr << "ctkSettings::restoreState failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   settings.restoreState("key", mainWindow);
   if (mainWindow.pos() != (origin + QPoint(30, 20)) ||
       mainWindow.size() != QSize(300, 200))
-    {
+  {
     std::cerr << "ctkSettings::restoreState failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QDialog dialog(0);
   dialog.show();
@@ -90,22 +90,22 @@ int ctkSettingsTest1(int argc, char * argv [] )
   settings.restoreState("key2", dialog);
   if (dialog.pos() != QPoint(456,456) ||
       dialog.size() != QSize(320, 222))
-    {
+  {
     std::cerr << "ctkSettings::restoreState failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   settings.restoreState("key3", dialog);
   if (dialog.pos() != QPoint(50,50) ||
       dialog.size() != QSize(432, 743))
-    {
+  {
     std::cerr << "ctkSettings::restoreState failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

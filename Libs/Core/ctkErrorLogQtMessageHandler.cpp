@@ -72,47 +72,47 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const QMessageLogContext& c
 #else
   if (ctkErrorLogQtMessageHandler_CurrentRecursionDepth.load() > 10)
 #endif
-    {
+  {
     ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
     return;
-    }
+  }
 
   //TODO: use context in the log message
   Q_UNUSED(context)
   // Warning: To avoid infinite loop, do not use Q_ASSERT in this function.
   if (msg.isEmpty())
-    {
+  {
     ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
     return;
-    }
+  }
   ctkErrorLogLevel::LogLevel level = ctkErrorLogLevel::Unknown;
   if (type == QtDebugMsg)
-    {
+  {
     level = ctkErrorLogLevel::Debug;
-    }
+  }
 #if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
   else if (type == QtInfoMsg)
-    {
+  {
     level = ctkErrorLogLevel::Info;
-    }
+  }
 #endif
   else if (type == QtWarningMsg)
-    {
+  {
     level = ctkErrorLogLevel::Warning;
-    }
+  }
   else if (type == QtCriticalMsg)
-    {
+  {
     level = ctkErrorLogLevel::Critical;
-    }
+  }
   else if (type == QtFatalMsg)
-    {
+  {
     level = ctkErrorLogLevel::Fatal;
-    }
+  }
 
   QCoreApplication * coreApp = QCoreApplication::instance();
   QList<QVariant> handlers = coreApp->property("ctkErrorLogQtMessageHandlers").toList();
   foreach(QVariant v, handlers)
-    {
+  {
     ctkErrorLogQtMessageHandler* handler = v.value<ctkErrorLogQtMessageHandler*>();
     Q_ASSERT(handler);
 //    //QPointer<ctkErrorLogQtMessageHandler> handler = v.value<QPointer<ctkErrorLogQtMessageHandler> >();
@@ -123,7 +123,7 @@ void ctkErrorLogModelQtMessageOutput(QtMsgType type, const QMessageLogContext& c
     handler->handleMessage(
           ctk::qtHandleToString(QThread::currentThreadId()),
           level, handler->handlerPrettyName(), ctkErrorLogContext(msg), msg);
-    }
+  }
   ctkErrorLogQtMessageHandler_CurrentRecursionDepth.deref();
 }
 }
@@ -138,11 +138,11 @@ QString ctkErrorLogQtMessageHandler::handlerName()const
 void ctkErrorLogQtMessageHandler::setEnabledInternal(bool value)
 {
   if (value)
-    {
+  {
     this->SavedQtMessageHandler = qInstallMessageHandler(ctkErrorLogModelQtMessageOutput);
-    }
+  }
   else
-    {
+  {
     qInstallMessageHandler(this->SavedQtMessageHandler);
-    }
+  }
 }

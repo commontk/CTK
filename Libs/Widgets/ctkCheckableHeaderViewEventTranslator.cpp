@@ -41,12 +41,12 @@ bool ctkCheckableHeaderViewEventTranslator::translateEvent(QObject *Object,
   Q_UNUSED(Error);
   ctkCheckableHeaderView* object = qobject_cast<ctkCheckableHeaderView*>(Object);
   if(!object)
-    {
+  {
     return false;
-    }
+  }
 
   switch(Event->type())
-    {
+  {
     case QEvent::Enter :
       this->CurrentObject = object;
       connect(object->model(), SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
@@ -59,7 +59,7 @@ bool ctkCheckableHeaderViewEventTranslator::translateEvent(QObject *Object,
     default:
       return false;
       break;
-    }
+  }
 
   return true;
 }
@@ -70,11 +70,11 @@ void ctkCheckableHeaderViewEventTranslator::onHeaderDataChanged(Qt::Orientation,
   ctkCheckableHeaderView* checkableHeader = qobject_cast<ctkCheckableHeaderView*>(this->CurrentObject);
 
   if(checkableHeader->checkState(first) == Qt::Checked)
-    {
+  {
     emit recordEvent(this->CurrentObject,"set_section_checked", QString::number(first));
-    }
+  }
   else
-    {
+  {
     emit recordEvent(this->CurrentObject,"set_section_unchecked", QString::number(first));
-    }
+  }
 }

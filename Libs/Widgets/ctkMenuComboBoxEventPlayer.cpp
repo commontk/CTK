@@ -50,27 +50,27 @@ bool ctkMenuComboBoxEventPlayer::playEvent(QObject *Object,
       Command != "show_popup" &&
       Command != "triggered" &&
       Command != "edit_finish")
-    {
+  {
     return false;
-    }
+  }
 
   if(ctkMenuComboBox* const object =
        qobject_cast<ctkMenuComboBox*>(Object))
-    {
+  {
     if (Command == "show_popup")
-      {
+    {
       if (Arguments == "true")
-        {
-        object->menuComboBoxInternal()->showPopup();
-        }
-      else
-        {
-        object->menu()->hide();
-        }
-      return true;
-      }
-    if (Command == "set_edit_string_menu")
       {
+        object->menuComboBoxInternal()->showPopup();
+      }
+      else
+      {
+        object->menu()->hide();
+      }
+      return true;
+    }
+    if (Command == "set_edit_string_menu")
+    {
       object->menuComboBoxInternal()->setEditText(Arguments);
 //      object->menuComboBoxInternal()->completer()->popup()->show();
 //      qDebug() << "count" <<  qApp->topLevelWidgets().count();
@@ -93,20 +93,20 @@ bool ctkMenuComboBoxEventPlayer::playEvent(QObject *Object,
 //        qDebug() << "o" << o;
 //        }
       return true;
-      }
+    }
     if (Command == "set_edit")
-      {
+    {
       const bool state = Arguments == "true" ? true : false;
       object->toolButtonInternal()->setChecked(state);
       return true;
-      }
+    }
     if (Command == "triggered")
-      {
+    {
       QAction* action = actionByTitle(Arguments, object->menu());
       action->trigger();
       return true;
-      }
     }
+  }
 
   qCritical() << "calling set_edit_string_menu/set_edit on unhandled type " << Object;
   Error = true;
@@ -117,23 +117,23 @@ bool ctkMenuComboBoxEventPlayer::playEvent(QObject *Object,
 QAction* actionByTitle(const QString& text, const QMenu* parentMenu)
 {
   if (parentMenu->title() == text)
-    {
+  {
     return 0;
-    }
+  }
   foreach(QAction* action, parentMenu->actions())
-    {
+  {
     if (!action->menu() && action->text().toLower() == text.toLower())
-      {
+    {
       return action;
-      }
+    }
     if (action->menu())
-      {
+    {
       QAction* subAction = actionByTitle(text, action->menu());
       if(subAction)
-        {
+      {
         return subAction;
-        }
       }
     }
+  }
   return 0;
 }

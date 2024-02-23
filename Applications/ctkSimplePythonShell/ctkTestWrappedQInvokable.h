@@ -30,9 +30,9 @@ class ctkTestWrappedQInvokable : public QObject
 public:
 
   ctkTestWrappedQInvokable(QObject * newParent = 0) : QObject(newParent)
-    {
+  {
     this->Value = 0;
-    }
+  }
 
   /// Example of method wrapped using Q_INVOKABLE
   Q_INVOKABLE int value() const { return this->Value; }

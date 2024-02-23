@@ -83,10 +83,10 @@ int ctkFileDialogTest1(int argc, char * argv [] )
 
   QCommandLineParser parser;
   parser.addOptions(
-        {
+  {
           {"I", "Run in interactive mode"},
           {"do-not-use-native-dialogs", "Do not use native dialogs"},
-        });
+  });
   parser.process(app); // Automatically exit if there is a parsing error
 
   bool skipNativeDialogs = parser.isSet("do-not-use-native-dialogs");
@@ -110,20 +110,20 @@ int ctkFileDialogTest1(int argc, char * argv [] )
 
   // the following is only in interactive mode
   if (!parser.isSet("I"))
-    {
+  {
     return EXIT_SUCCESS;
-    }
+  }
 
   if (supportBottomWidget)
-    {
+  {
     QObject::connect(fileDialog.bottomWidget(), SIGNAL(toggled(bool)),
                      &fileDialog, SLOT(setAcceptButtonEnable(bool)));
-    }
+  }
   fileDialog.setAcceptButtonEnable(false);
   if (!fileDialog.exec())
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 

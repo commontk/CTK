@@ -66,9 +66,9 @@ ctkVTKMagnifyViewPrivate::ctkVTKMagnifyViewPrivate(ctkVTKMagnifyView& object)
 ctkVTKMagnifyViewPrivate::~ctkVTKMagnifyViewPrivate()
 {
   if (this->EventHandler.TimerId != 0)
-    {
+  {
     this->killTimer(this->EventHandler.TimerId);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -87,22 +87,22 @@ void ctkVTKMagnifyViewPrivate::restartTimer()
 {
   // Kill any old timers
   if (this->EventHandler.TimerId != 0)
-    {
+  {
     this->killTimer(this->EventHandler.TimerId);
     this->EventHandler.TimerId = 0;
-    }
+  }
 
   // Start timer if appropriate
   if (this->EventHandler.UpdateInterval != 0)
-    {
+  {
     this->EventHandler.TimerId = this->startTimer(this->EventHandler.UpdateInterval);
     Q_ASSERT(this->EventHandler.TimerId);
-    }
+  }
   // Not using any timers, process events as they come
   else
-    {
+  {
     this->EventHandler.TimerId = 0;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -118,22 +118,22 @@ void ctkVTKMagnifyViewPrivate::timerEvent(QTimerEvent * event)
   Q_ASSERT(event->timerId() == this->EventHandler.TimerId);
 
   if (this->EventHandler.EventType == UpdatePixmapEvent)
-    {
+  {
     this->updatePixmap();
-    }
+  }
   else if (this->EventHandler.EventType == RemovePixmapEvent)
-    {
+  {
     this->removePixmap();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyViewPrivate::pushUpdatePixmapEvent()
 {
   if (this->EventHandler.Widget.isNull())
-    {
+  {
     return;
-    }
+  }
   this->pushUpdatePixmapEvent(
         this->EventHandler.Widget.data()->mapFromGlobal(QCursor::pos()));
 }
@@ -142,18 +142,18 @@ void ctkVTKMagnifyViewPrivate::pushUpdatePixmapEvent()
 void ctkVTKMagnifyViewPrivate::pushUpdatePixmapEvent(QPointF pos)
 {
   if (this->EventHandler.Widget.isNull())
-    {
+  {
     return;
-    }
+  }
   // Add this event to the queue
   this->EventHandler.EventType = UpdatePixmapEvent;
   this->EventHandler.Position = pos;
 
   // Process the event if we handle all events
   if (this->EventHandler.UpdateInterval == 0)
-    {
+  {
     this->updatePixmap();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -164,9 +164,9 @@ void ctkVTKMagnifyViewPrivate::pushRemovePixmapEvent()
 
   // Process the event if we handle all events
   if (this->EventHandler.UpdateInterval == 0)
-    {
+  {
     this->removePixmap();
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -181,10 +181,10 @@ void ctkVTKMagnifyViewPrivate::connectRenderWindow(ctkVTKOpenGLNativeWidget * wi
   vtkRenderWindow * renderWindow = widget->GetRenderWindow();
 #endif
   if (renderWindow)
-    {
+  {
     this->qvtkConnect(renderWindow, vtkCommand::EndEvent,
                       this, SLOT(pushUpdatePixmapEvent()));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -198,10 +198,10 @@ void ctkVTKMagnifyViewPrivate::disconnectRenderWindow(ctkVTKOpenGLNativeWidget *
   vtkRenderWindow * renderWindow = widget->GetRenderWindow();
 #endif
   if (renderWindow)
-    {
+  {
     this->qvtkDisconnect(renderWindow, vtkCommand::EndEvent,
                          this, SLOT(pushUpdatePixmapEvent()));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -212,15 +212,15 @@ void ctkVTKMagnifyViewPrivate::observe(ctkVTKOpenGLNativeWidget * widget)
   // If we are not already observing the widget, add it to the list and install
   // the public implementation as the event filter to handle mousing
   if (!this->ObservedQVTKWidgets.contains(widget))
-    {
+  {
     this->ObservedQVTKWidgets.append(widget);
     Q_Q(ctkVTKMagnifyView);
     widget->installEventFilter(q);
     if (this->ObserveRenderWindowEvents)
-      {
+    {
       this->connectRenderWindow(widget);
-      }
     }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -231,16 +231,16 @@ void ctkVTKMagnifyViewPrivate::remove(ctkVTKOpenGLNativeWidget * widget)
   // If we are observing the widget, remove it from the list and remove the
   // public implementations event filtering
   if (this->ObservedQVTKWidgets.contains(widget))
-    {
+  {
     Q_ASSERT(this->ObservedQVTKWidgets.count(widget) == 1);
     this->ObservedQVTKWidgets.removeOne(widget);
     Q_Q(ctkVTKMagnifyView);
     widget->removeEventFilter(q);
     if (this->ObserveRenderWindowEvents)
-      {
+    {
       this->disconnectRenderWindow(widget);
-      }
     }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -268,9 +268,9 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
   vtkRenderWindow * renderWindow = this->EventHandler.Widget.data()->GetRenderWindow();
 #endif
   if (!renderWindow)
-    {
+  {
     return;
-    }
+  }
 
   // Get the window size and mouse position, and do error checking
   QPointF pos = this->EventHandler.Position;
@@ -278,9 +278,9 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
   QPointF mouseWindowPos(pos.x(), static_cast<double>(windowSize[1]-1)-pos.y());
   if (mouseWindowPos.x() < 0 || mouseWindowPos.x() >= windowSize[0] ||
       mouseWindowPos.y() < 0 || mouseWindowPos.y() >= windowSize[1])
-    {
+  {
     return;
-    }
+  }
 
   // Compute indices into the render window's data array
   // Given a magnification and the label's widget size, compute the number of
@@ -313,58 +313,58 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
 
   // Ensure we don't access non-existent indices
   if (overLeft)
-    {
+  {
     indexLeft = minLeft;
     posLeft = minLeft;
-    }
+  }
   if (overRight)
-    {
+  {
     indexRight = maxRight;
     posRight = maxRight;
-    }
+  }
   if (overBottom)
-    {
+  {
     indexBottom = minBottom;
     posBottom = minBottom;
-    }
+  }
   if (overTop)
-    {
+  {
     indexTop = maxTop;
     posTop = maxTop;
-    }
+  }
 
   // Error case
   if (indexLeft > indexRight || indexBottom > indexTop)
-    {
+  {
     return;
-    }
+  }
 
   // Setup the pixelmap's position in the label
   Qt::Alignment alignment;
   if (overLeft && !overRight)
-    {
+  {
     alignment = Qt::AlignRight;
-    }
+  }
   else if (overRight && !overLeft)
-    {
+  {
     alignment = Qt::AlignLeft;
-    }
+  }
   else
-    {
+  {
     alignment = Qt::AlignLeft;
-    }
+  }
   if (overBottom && !overTop)
-    {
+  {
     alignment = alignment | Qt::AlignTop;
-    }
+  }
   else if (overTop && !overBottom)
-    {
+  {
     alignment = alignment | Qt::AlignBottom;
-    }
+  }
   else
-    {
+  {
     alignment = alignment | Qt::AlignTop;
-    }
+  }
   q->setAlignment(alignment);
 
   // Retrieve the pixel data into a QImage (flip vertically to move from render
@@ -377,9 +377,9 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
   int success = renderWindow->GetRGBACharPixelData(
       indexLeft, indexBottom, indexRight, indexTop, front, pixelData);
   if (!success)
-    {
+  {
     return;
-    }
+  }
   pixelData->Delete();
   image = image.rgbSwapped();
   image = image.mirrored();
@@ -417,28 +417,28 @@ void ctkVTKMagnifyViewPrivate::updatePixmap()
   int diffHeight = requiredHeight - actualHeight;
   // Too wide
   if (diffWidth < 0 && cropIndexRight != imageSize.width()-1)
-    {
+  {
     Q_ASSERT(actualWidth - requiredWidth <= 1);
     cropIndexRight += diffWidth;
-    }
+  }
   // Too narrow
   else if (diffWidth > 0 && cropIndexLeft != 0)
-    {
+  {
     Q_ASSERT(requiredWidth - actualWidth <= 1);
     cropIndexLeft -= diffWidth;
-    }
+  }
   // Too tall
   if (diffHeight < 0 && cropIndexBottom != imageSize.height()-1)
-    {
+  {
     Q_ASSERT(actualHeight - requiredHeight <= 1);
     cropIndexBottom += diffHeight;
-    }
+  }
   // Too short
   else if (diffHeight > 0 && cropIndexTop != 0)
-    {
+  {
     Q_ASSERT(requiredHeight - actualHeight <= 1);
     cropIndexTop -= diffHeight;
-    }
+  }
 
   // Finally crop the QImage for display
   QRect cropRect(QPoint(cropIndexLeft, cropIndexTop),
@@ -477,9 +477,9 @@ void ctkVTKMagnifyView::setMagnification(double newMagnification)
 {
   Q_D(ctkVTKMagnifyView);
   if (newMagnification == d->Magnification || newMagnification <= 0)
-    {
+  {
     return;
-    }
+  }
 
   d->Magnification = newMagnification;
   this->update();
@@ -494,9 +494,9 @@ void ctkVTKMagnifyView::setObserveRenderWindowEvents(bool newObserve)
 {
   Q_D(ctkVTKMagnifyView);
   if (newObserve == d->ObserveRenderWindowEvents)
-    {
+  {
     return;
-    }
+  }
 
   d->ObserveRenderWindowEvents = newObserve;
 
@@ -505,34 +505,34 @@ void ctkVTKMagnifyView::setObserveRenderWindowEvents(bool newObserve)
   // observing to not-observing
   QList<ctkVTKOpenGLNativeWidget *>::iterator it = d->ObservedQVTKWidgets.begin();
   while (it != d->ObservedQVTKWidgets.end())
-    {
+  {
     if (newObserve)
-      {
+    {
       d->connectRenderWindow(*it);
-      }
-    else
-      {
-      d->disconnectRenderWindow(*it);
-      }
-    ++it;
     }
+    else
+    {
+      d->disconnectRenderWindow(*it);
+    }
+    ++it;
+  }
 }
 
 // --------------------------------------------------------------------------
 int ctkVTKMagnifyView::updateInterval() const
-  {
+{
   Q_D(const ctkVTKMagnifyView);
   return d->EventHandler.UpdateInterval;
-  }
+}
 
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyView::setUpdateInterval(int newInterval)
 {
   Q_D(ctkVTKMagnifyView);
   if (newInterval == d->EventHandler.UpdateInterval || newInterval < 0)
-    {
+  {
     return;
-    }
+  }
 
   d->EventHandler.UpdateInterval = newInterval;
   d->restartTimer();
@@ -543,27 +543,27 @@ void ctkVTKMagnifyView::observe(ctkVTKOpenGLNativeWidget * widget)
 {
   Q_D(ctkVTKMagnifyView);
   if (widget)
-    {
+  {
     d->observe(widget);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyView::observe(QList<ctkVTKOpenGLNativeWidget *> widgets)
 {
   foreach(ctkVTKOpenGLNativeWidget * widget, widgets)
-    {
+  {
     this->observe(widget);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 bool ctkVTKMagnifyView::isObserved(ctkVTKOpenGLNativeWidget * widget) const
 {
   if (!widget)
-    {
+  {
     return false;
-    }
+  }
   Q_D(const ctkVTKMagnifyView);
   return d->ObservedQVTKWidgets.contains(widget);
 }
@@ -582,12 +582,12 @@ bool ctkVTKMagnifyView::hasCursorInObservedWidget()const
   // checking underMouse is faster than
   // QApplication::widgetAt(QCursor::pos())
   foreach(const ctkVTKOpenGLNativeWidget* widget, d->ObservedQVTKWidgets)
-    {
+  {
     if (widget->underMouse())
-      {
+    {
       return true;
-      }
     }
+  }
   return false;
 }
 
@@ -596,18 +596,18 @@ void ctkVTKMagnifyView::remove(ctkVTKOpenGLNativeWidget * widget)
 {
   Q_D(ctkVTKMagnifyView);
   if (widget)
-    {
+  {
     d->remove(widget);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 void ctkVTKMagnifyView::remove(QList<ctkVTKOpenGLNativeWidget *> widgets)
 {
   foreach(ctkVTKOpenGLNativeWidget * widget, widgets)
-    {
+  {
     this->remove(widget);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -624,23 +624,23 @@ bool ctkVTKMagnifyView::eventFilter(QObject * obj, QEvent * event)
 
   // On mouse move, update the pixmap with the zoomed image
   if (eventType == QEvent::MouseMove)
-    {
+  {
     QMouseEvent * mouseEvent = static_cast<QMouseEvent *>(event);
     Q_ASSERT(mouseEvent);
     d->pushUpdatePixmapEvent(mouseEvent->localPos());
-    }
+  }
   // On enter, update the pixmap with the zoomed image (required for zooming when
   // widget is created with mouse already within it), and emit signal of enter event
   else if (eventType == QEvent::Enter)
-    {
+  {
     d->pushUpdatePixmapEvent();
     emit enteredObservedWidget(widget);
-    }
+  }
   // On leave, fill the pixmap with a solid color and emit signal of leave event
   else if (eventType == QEvent::Leave)
-    {
+  {
     d->pushRemovePixmapEvent();
     emit leftObservedWidget(widget);
-    }
+  }
   return this->Superclass::eventFilter(obj, event);
 }

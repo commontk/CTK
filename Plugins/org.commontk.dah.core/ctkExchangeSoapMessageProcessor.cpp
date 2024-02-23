@@ -46,20 +46,20 @@ bool ctkExchangeSoapMessageProcessor::process(
   bool foundMethod = false;
 
   if (methodName == "NotifyDataAvailable")
-    {
+  {
     processNotifyDataAvailable(message, reply);
     foundMethod = true;
-    }
+  }
   else if (methodName == "GetData")
-    {
+  {
     processGetData(message, reply);
     foundMethod = true;
-    }
+  }
   else if (methodName == "ReleaseData")
-    {
+  {
     processReleaseData(message, reply);
     foundMethod = true;
-    }
+  }
 
   return foundMethod;
 }
@@ -71,9 +71,9 @@ void ctkExchangeSoapMessageProcessor::processNotifyDataAvailable(
   // extract arguments from input message
   const QtSoapType& inputType = message.method()[0];//"availableData"];
   if(inputType.isValid()==false)
-    {
+  {
     qCritical() << "  NotifyDataAvailable: availableData not valid. " << inputType.errorString();
-    }
+  }
   CTK_SOAP_LOG( << inputType.toString());
   const ctkDicomAppHosting::AvailableData data = ctkDicomSoapAvailableData::getAvailableData(inputType);
   const QtSoapType& inputType2 = message.method()["lastData"];

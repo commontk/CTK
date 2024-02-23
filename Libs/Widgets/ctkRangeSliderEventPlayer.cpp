@@ -39,26 +39,26 @@ bool ctkRangeSliderEventPlayer::playEvent(QObject *Object,
                                                 bool &Error)
 {
   if (Command != "set_max_int" && Command != "set_min_int")
-    {
+  {
     return false;
-    }
+  }
 
   const int value = Arguments.toInt();
 
   if(ctkRangeSlider* const object =
        qobject_cast<ctkRangeSlider*>(Object))
-    {
+  {
     if (Command == "set_min_int")
-      {
+    {
       object->setMinimumValue(value);
       return true;
-      }
+    }
     if (Command == "set_max_int")
-      {
+    {
       object->setMaximumValue(value);
       return true;
-      }
     }
+  }
 
   qCritical() << "calling set_min/max_int on unhandled type " << Object;
   Error = true;

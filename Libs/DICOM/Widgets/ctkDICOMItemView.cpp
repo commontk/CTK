@@ -327,9 +327,9 @@ void ctkDICOMItemView::addImage( DicomImage & dcmImage, bool defaultIntensity )
     if (dcmImage.getOutputData(static_cast<void *>(buffer.data() + offset), length - offset, 8, 0))
     {
       if (!image.loadFromData( buffer ))
-        {
+      {
             logger.error("QImage couldn't created");
-        }
+      }
     }
     this->addImage(image);
 }
@@ -412,22 +412,22 @@ void ctkDICOMItemView::displayImage(int imageIndex){
   Q_D(ctkDICOMItemView);
 
   if(d->CurrentImageIndex.isValid())
-    {
+  {
       QModelIndex seriesIndex = d->CurrentImageIndex.parent();
       ctkDICOMModel* model = const_cast<ctkDICOMModel*>(qobject_cast<const ctkDICOMModel*>(seriesIndex.model()));
 
       if(model)
-        {
+      {
           if(imageIndex >= 0 && imageIndex < model->rowCount(seriesIndex))
-            {
+          {
             this->onModelSelected(model->index(imageIndex, 0, seriesIndex));
-            }
+          }
           else
-            {
+          {
             logger.debug("out of index");
-            }
-        }
-    }
+          }
+      }
+  }
 }
 
 // -------------------------------------------------------------------------

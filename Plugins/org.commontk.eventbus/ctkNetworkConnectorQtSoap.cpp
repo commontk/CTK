@@ -162,7 +162,7 @@ QtSoapType *ctkNetworkConnectorQtSoap::marshall(const QString name, const QVaria
                 foreach( QVariant item, parameter.toList() ) {
                     arr->insert(index, marshall(QString("Elem_").append(QString::number(index)), item ));
                     index++;
-                    }
+                }
                 returnValue = arr;
                 break;
         }

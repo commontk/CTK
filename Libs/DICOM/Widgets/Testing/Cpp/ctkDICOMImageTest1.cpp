@@ -45,7 +45,7 @@ int ctkDICOMImageTest1( int argc, char * argv [] )
   bool interactive = arguments.removeOne("-I");
 
   if (arguments.count() != 1)
-    {
+  {
     std::cerr << "Warning, no dicom file given. Test stops" << std::endl;
     std::cerr << "Usage: " << qPrintable(testName)
               << " [-I] <path-to-dicom-file>" << std::endl;
@@ -60,16 +60,16 @@ int ctkDICOMImageTest1( int argc, char * argv [] )
   QLabel qtImage;
   QPixmap pixmap = QPixmap::fromImage(ctkImage.frame(0),Qt::AvoidDither);
   if (pixmap.isNull())
-    {
+  {
     std::cerr << "Failed to convert QImage to QPixmap" ;
     return EXIT_FAILURE;
-    }
+  }
   qtImage.setPixmap(pixmap);
   qtImage.show();
 
   if (interactive)
-    {
+  {
     return app.exec();
-    }
+  }
   return EXIT_SUCCESS;
 }

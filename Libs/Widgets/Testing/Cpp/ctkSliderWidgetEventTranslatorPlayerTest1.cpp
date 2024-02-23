@@ -43,11 +43,11 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkSliderWidget* widget = reinterpret_cast<ctkSliderWidget*>(data);
 
   CTKCOMPARE(widget->value(), 30.00);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -71,9 +71,9 @@ int ctkSliderWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();
