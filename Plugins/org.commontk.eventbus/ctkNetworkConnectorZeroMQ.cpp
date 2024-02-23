@@ -27,7 +27,7 @@ void ctkNetworkConnectorZeroMQ::initializeForEventBus() {
 }
 
 ctkNetworkConnectorZeroMQ::~ctkNetworkConnectorZeroMQ() {
-    }
+}
 
 //retrieve an instance of the object
 ctkNetworkConnector *ctkNetworkConnectorZeroMQ::clone() {

@@ -61,9 +61,9 @@ public:
   {
     Q_UNUSED(context);
     if (!Self::current())
-      {
+    {
       return;
-      }
+    }
     Self::current()->Messages.append(QPair<QtMsgType, QString>(type, msg));
   }
 

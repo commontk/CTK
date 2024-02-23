@@ -75,9 +75,9 @@ void ctkWorkflowStackedWidget::initClientArea()
 {
   Q_D(ctkWorkflowStackedWidget);
   if (!d->ClientArea)
-    {
+  {
     d->ClientArea = new QStackedWidget(this);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -87,9 +87,9 @@ void ctkWorkflowStackedWidget::createNewPage(QWidget* widget)
   Q_ASSERT(d->ClientArea);
 
   if (widget)
-    {
+  {
     d->ClientArea->layout()->addWidget(widget);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -101,7 +101,7 @@ void ctkWorkflowStackedWidget::showPage(QWidget* widget, const QString& label)
   Q_ASSERT(d->ClientArea);
 
   if (widget)
-    {
+  {
     d->ClientArea->setCurrentWidget(widget);
-    }
+  }
 }

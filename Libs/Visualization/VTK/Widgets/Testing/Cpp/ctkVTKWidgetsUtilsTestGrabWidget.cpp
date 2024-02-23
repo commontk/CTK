@@ -68,19 +68,19 @@ int ctkVTKWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
     ctk::grabVTKWidget(&parentWidget);
 
   if (QColor(screenshot.pixel(100, 100)) != QColor(Qt::black))
-    {
+  {
     std::cout << "Failed to grab ctkVTKOpenGLNativeWidget, pixel at (100,100)="
               << screenshot.pixel(100, 100) << " " << QColor(Qt::black).rgb() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QLabel screenshotLabel;
   screenshotLabel.setPixmap(QPixmap::fromImage(screenshot));
   screenshotLabel.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

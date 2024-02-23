@@ -172,8 +172,8 @@ int ctkVTKWidgetsUtilsTestImageConversion(int argc, char * argv [] )
   screenshotLabel.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

@@ -31,9 +31,9 @@ class ctkTestWrappedSlot : public QObject
 public:
 
   ctkTestWrappedSlot(QObject * newParent = 0) : QObject(newParent)
-    {
+  {
     this->Value = 0;
-    }
+  }
 
 public Q_SLOTS:
 

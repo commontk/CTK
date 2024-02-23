@@ -286,9 +286,9 @@ vtkLightBoxRendererManager::vtkInternal::~vtkInternal()
   for(RenderWindowItemListIt it = this->RenderWindowItemList.begin();
       it != this->RenderWindowItemList.end();
       ++it)
-    {
+  {
     delete *it;
-    }
+  }
   this->RenderWindowItemList.clear();
 }
 
@@ -298,12 +298,12 @@ void vtkLightBoxRendererManager::vtkInternal::SetupCornerAnnotation()
   for(RenderWindowItemListIt it = this->RenderWindowItemList.begin();
       it != this->RenderWindowItemList.end();
       ++it)
-    {
+  {
     if (!(*it)->Renderer->HasViewProp(this->CornerAnnotation))
-      {
+    {
       (*it)->Renderer->AddViewProp(this->CornerAnnotation);
-      }
     }
+  }
 
   this->CornerAnnotation->ClearAllTexts();
   this->CornerAnnotation->SetText(2, this->CornerAnnotationText.c_str());
@@ -318,9 +318,9 @@ void vtkLightBoxRendererManager::vtkInternal::setupRendering()
   for(RenderWindowItemListIt it = this->RenderWindowItemList.begin();
       it != this->RenderWindowItemList.end();
       ++it)
-    {
+  {
     this->RenderWindow->GetRenderers()->RemoveItem((*it)->Renderer);
-    }
+  }
 
   // Compute the width and height of each RenderWindowItem
   double viewportWidth  = 1.0 / static_cast<double>(this->RenderWindowColumnCount);
@@ -331,12 +331,12 @@ void vtkLightBoxRendererManager::vtkInternal::setupRendering()
 
   // Loop through RenderWindowItem
   for ( int rowId = 0; rowId < this->RenderWindowRowCount; ++rowId )
-    {
+  {
     yMin = (this->RenderWindowRowCount - 1 - rowId) * viewportHeight;
     xMin = 0.0;
 
     for ( int columnId = 0; columnId < this->RenderWindowColumnCount; ++columnId )
-      {
+    {
       // Get reference to the renderWindowItem
       RenderWindowItem * item  =
           this->RenderWindowItemList.at(
@@ -352,22 +352,22 @@ void vtkLightBoxRendererManager::vtkInternal::setupRendering()
       // when they are near the edge of the window.
       vtkCamera* camera = item->Renderer->GetActiveCamera();
       if (camera)
-        {
+      {
         camera->ParallelProjectionOn();
-        }
+      }
 
       xMin += viewportWidth;
-      }
     }
+  }
 }
 
 // --------------------------------------------------------------------------
 void vtkLightBoxRendererManager::vtkInternal::updateRenderWindowItemsZIndex(int layoutType)
 {
   for (int rowId = 0; rowId < this->RenderWindowRowCount; ++rowId)
-    {
+  {
     for (int columnId = 0; columnId < this->RenderWindowColumnCount; ++columnId)
-      {
+    {
       int itemId = this->External->ComputeRenderWindowItemId(rowId, columnId);
       assert(itemId <= static_cast<int>(this->RenderWindowItemList.size()));
 
@@ -378,14 +378,14 @@ void vtkLightBoxRendererManager::vtkInternal::updateRenderWindowItemsZIndex(int 
       int zSliceIndex = rowId * this->RenderWindowColumnCount + columnId;
 
       if (layoutType == vtkLightBoxRendererManager::LeftRightBottomTop)
-        {
+      {
         zSliceIndex = (this->RenderWindowRowCount - rowId - 1) *
                       this->RenderWindowColumnCount + columnId;
-        }
+      }
 
       item->ImageMapper->SetZSlice(zSliceIndex);
-      }
     }
+  }
 }
 
 
@@ -396,12 +396,12 @@ void vtkLightBoxRendererManager::vtkInternal
   item->ImageMapper->SetInputConnection(this->ImageDataConnection);
   bool hasViewProp = item->Renderer->HasViewProp(item->ImageActor);
   if (!hasViewProp)
-    {
+  {
     item->ImageActor->SetVisibility(false);
     item->HighlightedBoxActor->SetVisibility(false);
     item->Renderer->AddActor2D(item->ImageActor);
     item->Renderer->AddActor2D(item->HighlightedBoxActor);
-    }
+  }
   item->ImageActor->SetVisibility(this->ImageDataConnection != NULL);
 }
 
@@ -430,15 +430,15 @@ void vtkLightBoxRendererManager::PrintSelf(ostream& os, vtkIndent indent)
 void vtkLightBoxRendererManager::SetRendererLayer(int newLayer)
 {
   if (this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "SetRendererLayer failed - vtkLightBoxRendererManager is initialized");
     return;
-    }
+  }
 
   if (newLayer == this->Internal->RendererLayer)
-    {
+  {
     return;
-    }
+  }
 
   this->Internal->RendererLayer = newLayer;
 
@@ -455,15 +455,15 @@ vtkRenderWindow* vtkLightBoxRendererManager::GetRenderWindow()
 void vtkLightBoxRendererManager::Initialize(vtkRenderWindow* renderWindow)
 {
   if (this->Internal->RenderWindow)
-    {
+  {
     vtkWarningMacro( << "vtkLightBoxRendererManager has already been initialized");
     return;
-    }
+  }
   if (!renderWindow)
-    {
+  {
     vtkErrorMacro("Failed to initialize vtkLightBoxRendererManager with a NULL renderWindow");
     return;
-    }
+  }
   this->Internal->RenderWindow = renderWindow;
 
   // Set default Layout
@@ -480,10 +480,10 @@ bool vtkLightBoxRendererManager::IsInitialized()
 void vtkLightBoxRendererManager::SetImageDataConnection(vtkAlgorithmOutput* newImageDataConnection)
 {
   if (!this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "SetImageDataConnection failed - vtkLightBoxRendererManager is NOT initialized");
     return;
-    }
+  }
 
   this->Internal->ImageDataConnection = newImageDataConnection;
 
@@ -491,14 +491,14 @@ void vtkLightBoxRendererManager::SetImageDataConnection(vtkAlgorithmOutput* newI
   for(it = this->Internal->RenderWindowItemList.begin();
       it != this->Internal->RenderWindowItemList.end();
       ++it)
-    {
+  {
     this->Internal->SetItemInput(*it);
-    }
+  }
 
   if (newImageDataConnection)
-    {
+  {
     this->Internal->updateRenderWindowItemsZIndex(this->Internal->RenderWindowLayoutType);
-    }
+  }
 
   this->Modified();
 }
@@ -507,20 +507,20 @@ void vtkLightBoxRendererManager::SetImageDataConnection(vtkAlgorithmOutput* newI
 vtkCamera* vtkLightBoxRendererManager::GetActiveCamera()
 {
   if (this->Internal->RenderWindowItemList.size() == 0)
-    {
+  {
     return 0;
-    }
+  }
 
   // Obtain reference of the first renderer
   vtkRenderer * firstRenderer = this->Internal->RenderWindowItemList.at(0)->Renderer;
   if (firstRenderer->IsActiveCameraCreated())
-    {
+  {
     return firstRenderer->GetActiveCamera();
-    }
+  }
   else
-    {
+  {
     return 0;
-    }
+  }
   return 0;
 }
 
@@ -528,14 +528,14 @@ vtkCamera* vtkLightBoxRendererManager::GetActiveCamera()
 void vtkLightBoxRendererManager::SetActiveCamera(vtkCamera* newActiveCamera)
 {
   if (!this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "SetActiveCamera failed - vtkLightBoxRendererManager is NOT initialized");
     return;
-    }
+  }
   if (newActiveCamera == this->GetActiveCamera())
-    {
+  {
     return;
-    }
+  }
 
   newActiveCamera->ParallelProjectionOn();
 
@@ -543,9 +543,9 @@ void vtkLightBoxRendererManager::SetActiveCamera(vtkCamera* newActiveCamera)
   for(it = this->Internal->RenderWindowItemList.begin();
       it != this->Internal->RenderWindowItemList.end();
       ++it)
-    {
+  {
     (*it)->Renderer->SetActiveCamera(newActiveCamera);
-    }
+  }
 
   this->Modified();
 }
@@ -554,17 +554,17 @@ void vtkLightBoxRendererManager::SetActiveCamera(vtkCamera* newActiveCamera)
 void vtkLightBoxRendererManager::ResetCamera()
 {
   if (!this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "ResetCamera failed - vtkLightBoxRendererManager is NOT initialized");
     return;
-    }
+  }
   vtkInternal::RenderWindowItemListIt it;
   for(it = this->Internal->RenderWindowItemList.begin();
       it != this->Internal->RenderWindowItemList.end();
       ++it)
-    {
+  {
     (*it)->Renderer->ResetCamera();
-    }
+  }
   this->Modified();
 }
 
@@ -578,9 +578,9 @@ int vtkLightBoxRendererManager::GetRenderWindowItemCount()
 vtkRenderer* vtkLightBoxRendererManager::GetRenderer(int id)
 {
   if (id < 0 || id >= static_cast<int>(this->Internal->RenderWindowItemList.size()))
-    {
+  {
     return 0;
-    }
+  }
   return this->Internal->RenderWindowItemList.at(id)->Renderer;
 }
 
@@ -594,14 +594,14 @@ vtkRenderer* vtkLightBoxRendererManager::GetRenderer(int rowId, int columnId)
 void vtkLightBoxRendererManager::SetRenderWindowLayoutType(int layoutType)
 {
   if (this->Internal->RenderWindowLayoutType == layoutType)
-    {
+  {
     return;
-    }
+  }
 
   if (this->Internal->ImageDataConnection)
-    {
+  {
     this->Internal->updateRenderWindowItemsZIndex(layoutType);
-    }
+  }
 
   this->Internal->RenderWindowLayoutType = layoutType;
 
@@ -618,33 +618,33 @@ int vtkLightBoxRendererManager::GetRenderWindowLayoutType() const
 void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnCount)
 {
   if (!this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "SetRenderWindowLayout failed - "
                   "vtkLightBoxRendererManager is NOT initialized");
     return;
-    }
+  }
 
   // Sanity checks
   assert(rowCount >= 0 && columnCount >= 0);
   if(!(rowCount >= 0 && columnCount >= 0))
-    {
+  {
     return;
-    }
+  }
 
 
   if (this->Internal->RenderWindowRowCount == rowCount &&
       this->Internal->RenderWindowColumnCount == columnCount)
-    {
+  {
     return;
-    }
+  }
 
   int extraItem = (rowCount * columnCount)
     - static_cast<int>(this->Internal->RenderWindowItemList.size());
   if (extraItem > 0)
-    {
+  {
     // Create extra RenderWindowItem(s)
     while(extraItem > 0)
-      {
+    {
       RenderWindowItem * item =
           new RenderWindowItem(this->Internal->RendererBackgroundColor,
                                this->Internal->HighlightedBoxColor,
@@ -653,19 +653,19 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
       this->Internal->SetItemInput(item);
       this->Internal->RenderWindowItemList.push_back(item);
       --extraItem;
-      }
     }
+  }
   else
-    {
+  {
     // Remove extra RenderWindowItem(s)
     extraItem = extraItem >= 0 ? extraItem : -extraItem; // Compute Abs
     while(extraItem > 0)
-      {
+    {
       delete this->Internal->RenderWindowItemList.back();
       this->Internal->RenderWindowItemList.pop_back();
       --extraItem;
-      }
     }
+  }
 
   this->Internal->RenderWindowRowCount = rowCount;
   this->Internal->RenderWindowColumnCount = columnCount;
@@ -674,9 +674,9 @@ void vtkLightBoxRendererManager::SetRenderWindowLayout(int rowCount, int columnC
   this->Internal->SetupCornerAnnotation();
 
   if (this->Internal->ImageDataConnection)
-    {
+  {
     this->Internal->updateRenderWindowItemsZIndex(this->Internal->RenderWindowLayoutType);
-    }
+  }
   this->Modified();
 }
 
@@ -708,14 +708,14 @@ void vtkLightBoxRendererManager::SetRenderWindowColumnCount(int newColumnCount)
 bool vtkLightBoxRendererManager::GetHighlightedById(int id)
 {
   if (!this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "SetHighlightedById failed - vtkLightBoxRendererManager is NOT initialized");
     return false;
-    }
+  }
   if (id < 0 || id >= static_cast<int>(this->Internal->RenderWindowItemList.size()))
-    {
+  {
     return false;
-    }
+  }
   return this->Internal->RenderWindowItemList.at(id)->HighlightedBoxActor->GetVisibility();
 }
 
@@ -729,14 +729,14 @@ bool vtkLightBoxRendererManager::GetHighlighted(int rowId, int columnId)
 void vtkLightBoxRendererManager::SetHighlightedById(int id, bool highlighted)
 {
   if (!this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "SetHighlightedById failed - vtkLightBoxRendererManager is NOT initialized");
     return;
-    }
+  }
   if (id < 0 || id >= static_cast<int>(this->Internal->RenderWindowItemList.size()))
-    {
+  {
     return;
-    }
+  }
   this->Internal->RenderWindowItemList.at(id)->HighlightedBoxActor->SetVisibility(highlighted);
 
   this->Modified();
@@ -752,17 +752,17 @@ void vtkLightBoxRendererManager::SetHighlighted(int rowId, int columnId, bool hi
 void vtkLightBoxRendererManager::SetHighlightedBoxColor(double newHighlightedBoxColor[3])
 {
   if (!this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "SetHighlightedById failed - vtkLightBoxRendererManager is NOT initialized");
     return;
-    }
+  }
 
   if (this->Internal->HighlightedBoxColor[0] == newHighlightedBoxColor[0] &&
       this->Internal->HighlightedBoxColor[1] == newHighlightedBoxColor[1] &&
       this->Internal->HighlightedBoxColor[2] == newHighlightedBoxColor[2])
-    {
+  {
     return;
-    }
+  }
 
   this->Internal->HighlightedBoxColor[0] = newHighlightedBoxColor[0];
   this->Internal->HighlightedBoxColor[1] = newHighlightedBoxColor[1];
@@ -772,9 +772,9 @@ void vtkLightBoxRendererManager::SetHighlightedBoxColor(double newHighlightedBox
   for(it = this->Internal->RenderWindowItemList.begin();
       it != this->Internal->RenderWindowItemList.end();
       ++it)
-    {
+  {
     (*it)->SetHighlightedBoxColor(newHighlightedBoxColor);
-    }
+  }
 
   this->Modified();
 }
@@ -795,15 +795,15 @@ int vtkLightBoxRendererManager::ComputeRenderWindowItemId(int rowId, int columnI
 void vtkLightBoxRendererManager::SetCornerAnnotationText(const std::string& text)
 {
   if (!this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "SetCornerAnnotationText failed - "
                   "vtkLightBoxRendererManager is NOT initialized");
     return;
-    }
+  }
   if (text.compare(this->Internal->CornerAnnotationText) == 0)
-    {
+  {
     return;
-    }
+  }
 
   this->Internal->CornerAnnotation->ClearAllTexts();
   this->Internal->CornerAnnotation->SetText(2, text.c_str());
@@ -834,12 +834,12 @@ void vtkLightBoxRendererManager::SetCornerAnnotation(vtkCornerAnnotation* annota
   for(it = this->Internal->RenderWindowItemList.begin();
       it != this->Internal->RenderWindowItemList.end();
       ++it)
-    {
+  {
     if (!(*it)->Renderer->HasViewProp(this->Internal->CornerAnnotation))
-      {
+    {
       (*it)->Renderer->RemoveViewProp(this->Internal->CornerAnnotation);
-      }
     }
+  }
   this->Internal->CornerAnnotation = annotation;
 }
 
@@ -847,19 +847,19 @@ void vtkLightBoxRendererManager::SetCornerAnnotation(vtkCornerAnnotation* annota
 void vtkLightBoxRendererManager::SetBackgroundColor(const double newBackgroundColor[3])
 {
   if (!this->IsInitialized())
-    {
+  {
     vtkErrorMacro(<< "SetBackgroundColor failed - vtkLightBoxRendererManager is NOT initialized");
     return;
-    }
+  }
   vtkInternal::RenderWindowItemListIt it;
   for(it = this->Internal->RenderWindowItemList.begin();
       it != this->Internal->RenderWindowItemList.end();
       ++it)
-    {
+  {
     (*it)->Renderer->SetBackground(newBackgroundColor[0],
                                    newBackgroundColor[1],
                                    newBackgroundColor[2]);
-    }
+  }
 
   this->Internal->RendererBackgroundColor[0] = newBackgroundColor[0];
   this->Internal->RendererBackgroundColor[1] = newBackgroundColor[1];
@@ -903,18 +903,18 @@ void vtkLightBoxRendererManager::SetColorWindowAndLevel(double colorWindow, doub
 {
   if (this->Internal->ColorWindow == colorWindow &&
       this->Internal->ColorLevel == colorLevel)
-    {
+  {
     return;
-    }
+  }
 
   vtkInternal::RenderWindowItemListIt it;
   for(it = this->Internal->RenderWindowItemList.begin();
       it != this->Internal->RenderWindowItemList.end();
       ++it)
-    {
+  {
     (*it)->ImageMapper->SetColorWindow(colorWindow);
     (*it)->ImageMapper->SetColorLevel(colorLevel);
-    }
+  }
 
   this->Internal->ColorWindow = colorWindow;
   this->Internal->ColorLevel = colorLevel;

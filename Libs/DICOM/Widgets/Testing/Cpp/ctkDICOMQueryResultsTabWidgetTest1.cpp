@@ -43,9 +43,9 @@ int ctkDICOMQueryResultsTabWidgetTest1( int argc, char * argv [] )
   widget.show();
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

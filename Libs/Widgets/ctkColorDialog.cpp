@@ -147,43 +147,43 @@ QColor ctkColorDialog::getColor(const QColor &initial, QWidget *parent, const QS
 {
   ctkColorDialog dlg(parent);
   if (!title.isEmpty())
-    {
+  {
     dlg.setWindowTitle(title);
-    }
+  }
   dlg.setOptions(options | QColorDialog::DontUseNativeDialog);
   dlg.setCurrentColor(initial);
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
-    {
+  {
     dlg.insertTab(tab->property("tabIndex").toInt(), tab, tab->windowTitle());
     if (!tab->property("colorSignal").isNull())
-      {
+    {
       QObject::connect(tab, tab->property("colorSignal").toString().toLatin1(),
                        &dlg, SLOT(setColor(QColor)));
-      }
+    }
     if (!tab->property("nameSignal").isNull())
-      {
+    {
       QObject::connect(tab, tab->property("nameSignal").toString().toLatin1(),
                        &dlg, SLOT(setColorName(QString)));
-      }
     }
+  }
   dlg.setCurrentTab(ctkColorDialog::DefaultTab);
   dlg.exec();
   foreach(QWidget* tab, ctkColorDialog::DefaultTabs)
-    {
+  {
     dlg.removeTab(dlg.indexOf(tab));
     if (!tab->property("colorSignal").isNull())
-      {
+    {
       QObject::disconnect(tab, tab->property("colorSignal").toString().toLatin1(),
                           &dlg, SLOT(setColor(QColor)));
-      }
+    }
     if (!tab->property("nameSignal").isNull())
-      {
+    {
       QObject::disconnect(tab, tab->property("nameSignal").toString().toLatin1(),
                           &dlg, SLOT(setColorName(QString)));
-      }
+    }
     tab->setParent(0);
     tab->hide();
-    }
+  }
   ctkColorDialog::LastColorName = dlg.colorName();
   return dlg.selectedColor();
 }
@@ -226,9 +226,9 @@ void ctkColorDialog::setColorName(const QString& name)
 {
   Q_D(ctkColorDialog);
   if (d->ColorName == name)
-    {
+  {
     return;
-    }
+  }
   d->ColorName = name;
   emit currentColorNameChanged(d->ColorName);
 }

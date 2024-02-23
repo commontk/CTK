@@ -55,10 +55,10 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   vtkSmartPointer<vtkImageReader2> imageReader;
   imageReader.TakeReference(imageFactory->CreateImageReader2(imageFilename));
   if (!imageReader)
-    {
+  {
     std::cerr << "Failed to instantiate image reader using: " << imageFilename << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Read image
   imageReader->SetFileName(imageFilename);
@@ -85,103 +85,103 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   // Check if non initialized case is handled properly / Check default value
   //----------------------------------------------------------------------------
   if (lightBoxRendererManager->IsInitialized() != 0)
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with IsInitialized()" << std::endl;
     std::cerr << "  expected: 0" << std::endl;
     std::cerr << "  current:" << lightBoxRendererManager->IsInitialized() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (lightBoxRendererManager->GetRenderWindow() != 0)
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with GetRenderWindow()" << std::endl;
     std::cerr << "  expected: 0" << std::endl;
     std::cerr << "  current:" << lightBoxRendererManager->GetRenderWindow() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (lightBoxRendererManager->GetActiveCamera() != 0)
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with GetActiveCamera()" << std::endl;
     std::cerr << "  expected: 0" << std::endl;
     std::cerr << "  current:" << lightBoxRendererManager->GetActiveCamera() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (lightBoxRendererManager->GetRenderWindowItemCount() != 0)
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with GetRenderWindowItemCount()" << std::endl;
     std::cerr << "  expected: 0" << std::endl;
     std::cerr << "  current:" << lightBoxRendererManager->GetRenderWindowItemCount() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (lightBoxRendererManager->GetRenderer(4) != 0)
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with GetRenderer()" << std::endl;
     std::cerr << "  expected: 0" << std::endl;
     std::cerr << "  current:" << lightBoxRendererManager->GetRenderer(4) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (lightBoxRendererManager->GetRenderer(1,1) != 0)
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with GetRenderer()" << std::endl;
     std::cerr << "  expected: 0" << std::endl;
     std::cerr << "  current:" << lightBoxRendererManager->GetRenderer(1,1) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (lightBoxRendererManager->GetCornerAnnotationText().compare("") != 0)
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with GetCornerAnnotationText()" << std::endl;
     std::cerr << "  expected: Empty" << std::endl;
     std::cerr << "  current:" << lightBoxRendererManager->GetCornerAnnotationText() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (lightBoxRendererManager->GetRenderWindowLayoutType() !=
       vtkLightBoxRendererManager::LeftRightTopBottom)
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with GetRenderWindowLayoutType()" << std::endl;
     std::cerr << "  expected: " <<
         static_cast<int>(vtkLightBoxRendererManager::LeftRightTopBottom) << std::endl;
     std::cerr << "  current:" <<
         static_cast<int>(lightBoxRendererManager->GetRenderWindowLayoutType()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   unsigned long mtime = lightBoxRendererManager->GetMTime();
 
   lightBoxRendererManager->ResetCamera();
   if (mtime != lightBoxRendererManager->GetMTime())
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with ResetCamera()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   lightBoxRendererManager->SetActiveCamera(0);
   if (mtime != lightBoxRendererManager->GetMTime())
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with SetActiveCamera()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   lightBoxRendererManager->SetImageDataConnection(imagePort);
 
   if (mtime != lightBoxRendererManager->GetMTime())
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with SetImageDataConnection()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   double highlightedboxColor[3] = {0.0, 1.0, 0.0};
   lightBoxRendererManager->SetHighlightedBoxColor(highlightedboxColor);
   if (mtime != lightBoxRendererManager->GetMTime())
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with SetHighlightedBoxColor()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //----------------------------------------------------------------------------
   // Initialize
@@ -190,18 +190,18 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
   lightBoxRendererManager->Initialize(rw.GetPointer());
 
   if (lightBoxRendererManager->IsInitialized() != 1)
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with IsInitialized()" << std::endl;
     std::cerr << "  expected: 1" << std::endl;
     std::cerr << "  current:" << lightBoxRendererManager->IsInitialized() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (mtime == lightBoxRendererManager->GetMTime())
-    {
+  {
     std::cerr << "line " << __LINE__ << " - Problem with IsInitialized()" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   lightBoxRendererManager->SetImageDataConnection(imagePort);
   lightBoxRendererManager->SetRenderWindowLayout(4, 5);
@@ -214,10 +214,10 @@ int vtkLightBoxRendererManagerTest1(int argc, char* argv[])
 
   int retval = vtkRegressionTestImage(rw.GetPointer());
   if (retval == vtkRegressionTester::DO_INTERACTOR)
-    {
+  {
     rw->GetInteractor()->Initialize();
     rw->GetInteractor()->Start();
-    }
+  }
 
   return !retval;
 }

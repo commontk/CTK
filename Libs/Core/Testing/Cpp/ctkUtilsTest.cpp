@@ -113,22 +113,22 @@ void ctkUtilsTester::testClosestPowerOfTen()
   QFETCH(int, compareMode);
   const double closestValue = ctk::closestPowerOfTen(value);
   switch (compareMode)
-    {
+  {
     default:
     case 0:
       QVERIFY(closestValue == expectedValue);
       break;
     case 1:
-      {
+    {
       const double epsilon = std::numeric_limits<double>::epsilon();
       QVERIFY( closestValue > expectedValue - epsilon );
       QVERIFY( closestValue < expectedValue + epsilon );
       break;
-      }
+    }
     case 2:
       QVERIFY( closestValue != closestValue );
       break;
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------

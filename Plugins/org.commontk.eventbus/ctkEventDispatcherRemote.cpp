@@ -52,8 +52,8 @@ void ctkEventDispatcherRemote::setNetworkConnectorServer(ctkNetworkConnector *co
             delete m_NetworkConnectorServer; //if there will be multiprotocol , here there will be a problem for thread app
             m_NetworkConnectorServer = connector->clone();
             m_NetworkConnectorServer->initializeForEventBus();
-       }
-   }
+        }
+    }
 }
 
 void ctkEventDispatcherRemote::setNetworkConnectorClient(ctkNetworkConnector *connector) {
@@ -65,8 +65,8 @@ void ctkEventDispatcherRemote::setNetworkConnectorClient(ctkNetworkConnector *co
              delete m_NetworkConnectorClient; //if there will be multiprotocol , here there will be a problem for thread app
              m_NetworkConnectorClient = connector->clone();
              m_NetworkConnectorClient->initializeForEventBus();
-        }
-    }
+         }
+     }
 }
 
 void ctkEventDispatcherRemote::notifyEvent(ctkBusEvent &event_dictionary, ctkEventArgumentsList *argList, ctkGenericReturnArgument *returnArg) const {

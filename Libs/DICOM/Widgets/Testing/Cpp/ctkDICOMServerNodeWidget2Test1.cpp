@@ -97,9 +97,9 @@ int ctkDICOMServerNodeWidget2Test1(int argc, char* argv[])
   delete server;
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

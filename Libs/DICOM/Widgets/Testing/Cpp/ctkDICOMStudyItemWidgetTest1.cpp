@@ -78,9 +78,9 @@ int ctkDICOMStudyItemWidgetTest1(int argc, char* argv[])
   CHECK_INT(widget.thumbnailSize(), ctkDICOMStudyItemWidget::ThumbnailSizeOption::Small);
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

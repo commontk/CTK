@@ -53,10 +53,10 @@ public:
   bool equal(double spinBoxValue, double sliderValue)const
   {
     if (this->Proxy)
-      {
+    {
       spinBoxValue = this->Proxy.data()->proxyValueFromValue(spinBoxValue);
       sliderValue = this->Proxy.data()->proxyValueFromValue(sliderValue);
-      }
+    }
     return qAbs(sliderValue - spinBoxValue) < std::pow(10., -this->SpinBox->decimals());
   }
 
@@ -93,13 +93,13 @@ void ctkSliderWidgetPrivate::updateSpinBoxWidth()
 {
   int spinBoxWidth = this->synchronizedSpinBoxWidth();
   if (this->SynchronizeMode.testFlag(ctkSliderWidget::SynchronizeWidth))
-    {
+  {
     this->SpinBox->setMinimumWidth(spinBoxWidth);
-    }
+  }
   else
-    {
+  {
     this->SpinBox->setMinimumWidth(0);
-    }
+  }
 
   this->synchronizeSiblingWidth(spinBoxWidth);
 }
@@ -108,9 +108,9 @@ void ctkSliderWidgetPrivate::updateSpinBoxWidth()
 void ctkSliderWidgetPrivate::updateSpinBoxDecimals()
 {
   if (this->SynchronizeMode.testFlag(ctkSliderWidget::SynchronizeDecimals))
-    {
+  {
     this->synchronizeSiblingDecimals(this->SpinBox->decimals());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -119,15 +119,15 @@ int ctkSliderWidgetPrivate::synchronizedSpinBoxWidth()const
   Q_Q(const ctkSliderWidget);
   int maxWidth = this->SpinBox->sizeHint().width();
   if (!q->parent())
-    {
+  {
     return maxWidth;
-    }
+  }
   QList<ctkSliderWidget*> siblings =
     q->parent()->findChildren<ctkSliderWidget*>();
   foreach(ctkSliderWidget* sibling, siblings)
-    {
+  {
     maxWidth = qMax(maxWidth, sibling->d_func()->SpinBox->sizeHint().width());
-    }
+  }
   return maxWidth;
 }
 
@@ -139,14 +139,14 @@ void ctkSliderWidgetPrivate::synchronizeSiblingWidth(int width)
   QList<ctkSliderWidget*> siblings =
     q->parent()->findChildren<ctkSliderWidget*>();
   foreach(ctkSliderWidget* sibling, siblings)
-    {
+  {
     if (sibling != q
       && sibling->synchronizeSiblings().testFlag(ctkSliderWidget::SynchronizeWidth))
-      {
+    {
       sibling->d_func()->SpinBox->setMinimumWidth(
         this->SpinBox->minimumWidth());
-      }
     }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -157,13 +157,13 @@ void ctkSliderWidgetPrivate::synchronizeSiblingDecimals(int decimals)
   QList<ctkSliderWidget*> siblings =
     q->parent()->findChildren<ctkSliderWidget*>();
   foreach(ctkSliderWidget* sibling, siblings)
-    {
+  {
     if (sibling != q
       && sibling->synchronizeSiblings().testFlag(ctkSliderWidget::SynchronizeDecimals))
-      {
+    {
       sibling->d_func()->SpinBox->setDecimals(this->SpinBox->decimals());
-      }
     }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -317,9 +317,9 @@ void ctkSliderWidget::startChanging()
 {
   Q_D(ctkSliderWidget);
   if (d->Tracking)
-    {
+  {
     return;
-    }
+  }
   d->ValueBeforeChange = this->value();
   d->Changing = true;
 }
@@ -329,14 +329,14 @@ void ctkSliderWidget::stopChanging()
 {
   Q_D(ctkSliderWidget);
   if (d->Tracking)
-    {
+  {
     return;
-    }
+  }
   d->Changing = false;
   if (qAbs(this->value() - d->ValueBeforeChange) > (this->singleStep() * 0.000000001))
-    {
+  {
     emit this->valueChanged(this->value());
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -344,9 +344,9 @@ void ctkSliderWidget::setSliderValue(double spinBoxValue)
 {
   Q_D(ctkSliderWidget);
   if (d->BlockSetSliderValue)
-    {
+  {
     return;
-    }
+  }
   d->Slider->setValue(spinBoxValue);
 }
 
@@ -362,40 +362,40 @@ void ctkSliderWidget::setSpinBoxValue(double sliderValue)
   Q_ASSERT(d->equal(d->SpinBox->value(), d->Slider->value()));
 
   if (!d->Tracking)
-    {
+  {
     emit this->valueIsChanging(sliderValue);
-    }
+  }
   if (!d->Changing)
-    {
+  {
     emit this->valueChanged(sliderValue);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
 bool ctkSliderWidget::eventFilter(QObject *obj, QEvent *event)
- {
+{
    if (event->type() == QEvent::MouseButtonPress)
-     {
+   {
      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
      if (mouseEvent->button() & Qt::LeftButton)
-       {
+     {
        this->startChanging();
-       }
      }
+   }
    else if (event->type() == QEvent::MouseButtonRelease)
-     {
+   {
      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
      if (mouseEvent->button() & Qt::LeftButton)
-       {
+     {
        // here we might prevent ctkSliderWidget::stopChanging
        // from sending a valueChanged() event as the spinbox might
        // send a valueChanged() after eventFilter() is done.
        this->stopChanging();
-       }
      }
+   }
    // standard event processing
    return this->Superclass::eventFilter(obj, event);
- }
+}
 
 // --------------------------------------------------------------------------
 double ctkSliderWidget::singleStep()const
@@ -410,11 +410,11 @@ void ctkSliderWidget::setSingleStep(double newStep)
 {
   Q_D(ctkSliderWidget);
   if (!d->Slider->isValidStep(newStep))
-    {
+  {
     qWarning() << "ctkSliderWidget::setSingleStep() " << newStep << "is out of bounds." <<
       this->minimum() << this->maximum() <<this->value();
     return;
-    }
+  }
   d->SpinBox->setSingleStep(newStep);
   d->Slider->setSingleStep(d->SpinBox->singleStep());
   Q_ASSERT(d->equal(d->SpinBox->minimum(),d->Slider->minimum()));
@@ -631,11 +631,11 @@ void ctkSliderWidget::setPopupSlider(bool popup)
 {
   Q_D(ctkSliderWidget);
   if (this->hasPopupSlider() == popup)
-    {
+  {
     return;
-    }
+  }
   if (popup)
-    {
+  {
     d->SliderPopup = new ctkPopupWidget(this);
     d->SliderPopup->setObjectName("DoubleSliderPopup");
 
@@ -648,13 +648,13 @@ void ctkSliderWidget::setPopupSlider(bool popup)
     d->SliderPopup->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     d->SliderPopup->setOrientation(Qt::Horizontal);
     d->SliderPopup->setHorizontalDirection(Qt::RightToLeft);
-    }
+  }
   else
-    {
+  {
     qobject_cast<QHBoxLayout*>(this->layout())->insertWidget(0,d->Slider);
     d->SliderPopup->deleteLater();
     d->SliderPopup = 0;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -683,35 +683,35 @@ void ctkSliderWidget::setValueProxy(ctkValueProxy* proxy)
 {
   Q_D(ctkSliderWidget);
   if (d->Proxy.data() == proxy)
-    {
+  {
     return;
-    }
+  }
 
   this->onValueProxyAboutToBeModified();
 
   if (d->Proxy)
-    {
+  {
     disconnect(d->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
                this, SLOT(onValueProxyAboutToBeModified()));
     disconnect(d->Proxy.data(), SIGNAL(proxyModified()),
                this, SLOT(onValueProxyModified()));
-    }
+  }
 
   d->Proxy = proxy;
 
   if (d->Proxy)
-    {
+  {
     connect(d->Proxy.data(), SIGNAL(proxyAboutToBeModified()),
             this, SLOT(onValueProxyAboutToBeModified()));
-    }
+  }
   this->slider()->setValueProxy(proxy);
   this->spinBox()->setValueProxy(proxy);
 
   if (d->Proxy)
-    {
+  {
     connect(d->Proxy.data(), SIGNAL(proxyModified()),
             this, SLOT(onValueProxyModified()));
-    }
+  }
   this->onValueProxyModified();
 }
 

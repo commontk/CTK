@@ -44,26 +44,26 @@ public:
   virtual void drawPrimitive(PrimitiveElement pe, const QStyleOption * opt, QPainter * p, const QWidget * widget = 0) const
   {
     if (pe == QStyle::PE_IndicatorCheckBox)
-      {
+    {
       const ctkCollapsibleGroupBox* groupBox= qobject_cast<const ctkCollapsibleGroupBox*>(widget);
       if (groupBox)
-        {
+      {
         this->Superclass::drawPrimitive(groupBox->isChecked() ? QStyle::PE_IndicatorArrowDown : QStyle::PE_IndicatorArrowRight, opt, p, widget);
         return;
-        }
       }
+    }
     this->Superclass::drawPrimitive(pe, opt, p, widget);
   }
   virtual int pixelMetric(PixelMetric metric, const QStyleOption * option, const QWidget * widget) const
   {
     if (metric == QStyle::PM_IndicatorHeight)
-      {
+    {
       const ctkCollapsibleGroupBox* groupBox= qobject_cast<const ctkCollapsibleGroupBox*>(widget);
       if (groupBox)
-        {
+      {
         return groupBox->fontMetrics().height();
-        }
       }
+    }
     return this->Superclass::pixelMetric(metric, option, widget);
   }
 };
@@ -136,35 +136,35 @@ void ctkCollapsibleGroupBoxPrivate::setChildVisibility(QWidget* childWidget)
   // be a no (because they are already hidden and ExplicitShowHide is set).
   // So we don't hide/show the children until the widget is created.
   if (!q->testAttribute(Qt::WA_WState_Created))
-    {
+  {
     return;
-    }
+  }
   this->ForcingVisibility = true;
 
   bool visible= !q->collapsed();
   // if the widget has been explicitly hidden, then hide it.
   if (childWidget->property("visibilityToParent").isValid()
       && !childWidget->property("visibilityToParent").toBool())
-    {
+  {
     visible = false;
-    }
+  }
 
   // Setting Qt::WA_WState_Visible to true during child construction can have
   // undesirable side effects.
   if (childWidget->testAttribute(Qt::WA_WState_Created) ||
       !visible)
-    {
+  {
     childWidget->setVisible(visible);
-    }
+  }
 
   // setVisible() has set the ExplicitShowHide flag, restore it as we don't want
   // to make it like it was an explicit visible set because we want
   // to allow any children to be explicitly hidden by the user.
   if ((!childWidget->property("visibilityToParent").isValid() ||
       childWidget->property("visibilityToParent").toBool()))
-    {
+  {
     childWidget->setAttribute(Qt::WA_WState_ExplicitShowHide, false);
-    }
+  }
   this->ForcingVisibility = false;
 }
 
@@ -211,34 +211,34 @@ void ctkCollapsibleGroupBox::expand(bool _expand)
 {
   Q_D(ctkCollapsibleGroupBox);
   if (!_expand)
-    {
+  {
     d->OldSize = this->size();
-    }
+  }
 
   // Update the visibility of all the children
   // We can't use findChildren as it would return the grandchildren
   foreach(QObject* childObject, this->children())
-    {
+  {
     if (childObject->isWidgetType())
-      {
+    {
       d->setChildVisibility(qobject_cast<QWidget*>(childObject));
-      }
     }
+  }
 
   if (_expand)
-    {
+  {
     this->setMaximumHeight(d->MaxHeight);
     this->resize(d->OldSize);
-    }
+  }
   else
-    {
+  {
     d->MaxHeight = this->maximumHeight();
     QStyleOptionGroupBox option;
     this->initStyleOption(&option);
     QRect labelRect = this->style()->subControlRect(
       QStyle::CC_GroupBox, &option, QStyle::SC_GroupBoxLabel, this);
     this->setMaximumHeight(labelRect.height() + d->CollapsedHeight);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -248,22 +248,22 @@ void ctkCollapsibleGroupBox::childEvent(QChildEvent* c)
   QObject* child = c->child();
   if (c && c->type() == QEvent::ChildAdded &&
       child && child->isWidgetType())
-    {
+  {
     QWidget *childWidget = qobject_cast<QWidget*>(c->child());
     // Handle the case where the child has already it's visibility set before
     // being added to the widget
     if (childWidget->testAttribute(Qt::WA_WState_ExplicitShowHide) &&
         childWidget->testAttribute(Qt::WA_WState_Hidden))
-      {
+    {
       // if the widget has explicitly set to hidden, then mark it as such
       childWidget->setProperty("visibilityToParent", false);
-      }
+    }
     // We want to catch all the child's Show/Hide events.
     child->installEventFilter(this);
     // If the child is added while ctkCollapsibleButton is collapsed, then we
     // need to hide the child.
     d->setChildVisibility(childWidget);
-    }
+  }
   this->QGroupBox::childEvent(c);
 }
 
@@ -283,17 +283,17 @@ void ctkCollapsibleGroupBox::setVisible(bool show)
   // are correctly shown/hidden depending on their explicit visibility and
   // the collapsed property of the button.
   if (!d->IsStateCreated && this->testAttribute(Qt::WA_WState_Created))
-    {
+  {
     d->IsStateCreated = true;
     foreach(QObject* child, this->children())
-      {
+    {
       QWidget* childWidget = qobject_cast<QWidget*>(child);
       if (childWidget)
-        {
+      {
         d->setChildVisibility(childWidget);
-        }
       }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -304,9 +304,9 @@ bool ctkCollapsibleGroupBox::eventFilter(QObject* child, QEvent* e)
   // Make sure the Show/QHide events are not generated by one of our
   // ctkCollapsibleButton function.
   if (d->ForcingVisibility)
-    {
+  {
     return false;
-    }
+  }
   // When we are here, it's because somewhere (not in ctkCollapsibleButton),
   // someone explicitly called setVisible() on a child widget.
   // If the collapsible button is collapsed/closed, then even if someone
@@ -317,16 +317,16 @@ bool ctkCollapsibleGroupBox::eventFilter(QObject* child, QEvent* e)
   // is collapsed/closed, then we want to keep it hidden next time the
   // collapsible button is expanded/opened.
   if (e->type() == QEvent::ShowToParent)
-    {
+  {
     child->setProperty("visibilityToParent", true);
     Q_ASSERT(qobject_cast<QWidget*>(child));
     // force the widget to be hidden if the button is collapsed.
     d->setChildVisibility(qobject_cast<QWidget*>(child));
-    }
+  }
   else if(e->type() == QEvent::HideToParent)
-    {
+  {
     // we don't need to force the widget to be visible here.
     child->setProperty("visibilityToParent", false);
-    }
+  }
   return this->QGroupBox::eventFilter(child, e);
 }

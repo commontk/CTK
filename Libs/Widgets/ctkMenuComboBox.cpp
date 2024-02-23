@@ -49,9 +49,9 @@ void ctkMenuComboBoxInternal::showPopup()
 {
   QMenu* menu = this->Menu;
   if (!menu)
-    {
+  {
     return;
-    }
+  }
   menu->popup(this->mapToGlobal(this->rect().bottomLeft()));
   static int minWidth = menu->sizeHint().width();
   menu->setFixedWidth(qMax(this->width(), minWidth));
@@ -129,24 +129,24 @@ void ctkMenuComboBoxPrivate::init()
 QAction* ctkMenuComboBoxPrivate::actionByTitle(const QString& text, const QMenu* parentMenu)
 {
   if (!parentMenu || parentMenu->title() == text)
-    {
+  {
     return 0;
-    }
+  }
   foreach(QAction* action, parentMenu->actions())
-    {
+  {
     if (!action->menu() && action->text().toLower() == text.toLower())
-      {
+    {
       return action;
-      }
+    }
     if (action->menu())
-      {
+    {
       QAction* subAction = this->actionByTitle(text, action->menu());
       if(subAction)
-        {
+      {
         return subAction;
-        }
       }
     }
+  }
   return 0;
 }
 
@@ -154,10 +154,10 @@ QAction* ctkMenuComboBoxPrivate::actionByTitle(const QString& text, const QMenu*
 void ctkMenuComboBoxPrivate::setCurrentText(const QString& newCurrentText)
 {
   if (this->MenuComboBox->lineEdit())
-    {
+  {
     static_cast<ctkSearchBox*>(this->MenuComboBox->lineEdit())
       ->setPlaceholderText(newCurrentText);
-    }
+  }
 
   this->MenuComboBox->setItemText(this->MenuComboBox->currentIndex(),
                                   newCurrentText);
@@ -187,21 +187,21 @@ void ctkMenuComboBoxPrivate::setComboBoxEditable(bool edit)
 {
   Q_Q(ctkMenuComboBox);
   if(edit)
-    {
+  {
     if (!this->MenuComboBox->lineEdit())
-      {
+    {
       ctkSearchBox* line = new ctkSearchBox();
       this->MenuComboBox->setLineEdit(line);
       if (q->isSearchIconVisible())
-        {
+      {
         this->MenuComboBox->lineEdit()->selectAll();
         this->MenuComboBox->setFocus();
-        }
+      }
       q->connect(line, SIGNAL(editingFinished()),
                  q,SLOT(onEditingFinished()));
-      }
-    this->MenuComboBox->setCompleter(this->SearchCompleter);
     }
+    this->MenuComboBox->setCompleter(this->SearchCompleter);
+  }
 
   this->MenuComboBox->setEditable(edit);
 }
@@ -218,9 +218,9 @@ void ctkMenuComboBoxPrivate::onCompletion(const QString& text)
 
   // Set text to the completed string
   if (this->MenuComboBox->lineEdit())
-    {
+  {
     this->MenuComboBox->lineEdit()->setText(text);
-    }
+  }
 
   q->onEditingFinished();
 }
@@ -229,26 +229,26 @@ void ctkMenuComboBoxPrivate::onCompletion(const QString& text)
 void ctkMenuComboBoxPrivate::addAction(QAction *action)
 {
   if (action->menu())
-    {
+  {
     this->addMenuToCompleter(action->menu());
-    }
+  }
   else
-    {
+  {
     this->addActionToCompleter(action);
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
 void ctkMenuComboBoxPrivate::removeAction(QAction *action)
 {
   if (action->menu())
-    {
+  {
     this->removeMenuFromCompleter(action->menu());
-    }
+  }
   else
-    {
+  {
     this->removeActionFromCompleter(action);
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -264,15 +264,15 @@ void ctkMenuComboBoxPrivate::addMenuToCompleter(QMenu* menu)
   // signal is not propagated. So we listened this submenu to fix the bug.
   QObject* emptyObject = 0;
   if(menu->parent() == emptyObject)
-    {
+  {
     q->connect(menu, SIGNAL(triggered(QAction*)),
                q, SLOT(onActionSelected(QAction*)), Qt::UniqueConnection);
-    }
+  }
 
   foreach (QAction* action, menu->actions())
-    {
+  {
     this->addAction(action);
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -283,9 +283,9 @@ void ctkMenuComboBoxPrivate::removeMenuFromCompleter(QMenu* menu)
   menu->removeEventFilter(q);
 
   foreach (QAction* action, menu->actions())
-    {
+  {
     this->removeAction(action);
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -297,9 +297,9 @@ void ctkMenuComboBoxPrivate::addActionToCompleter(QAction *action)
   QModelIndex start = model->index(0,0);
   QModelIndexList indexList = model->match(start, 0, action->text(), 1, Qt::MatchFixedString|Qt::MatchWrap);
   if (indexList.count())
-    {
+  {
     return;
-    }
+  }
 
   int actionCount = model->rowCount();
   model->insertRow(actionCount);
@@ -314,18 +314,18 @@ void ctkMenuComboBoxPrivate::removeActionFromCompleter(QAction *action)
     this->SearchCompleter->sourceModel());
   Q_ASSERT(model);
   if (!model->stringList().contains(action->text()) )
-    {
+  {
     return;
-    }
+  }
 
   QModelIndex start = model->index(0,0);
   QModelIndexList indexList = model->match(start, 0, action->text());
   Q_ASSERT(indexList.count() == 1);
   foreach (QModelIndex index, indexList)
-    {
+  {
     // Search completer model is a flat list
     model->removeRow(index.row());
-    }
+  }
 }
 
 //  ------------------------------------------------------------------------
@@ -347,9 +347,9 @@ void ctkMenuComboBox::setMenu(QMenu* menu)
 {
   Q_D(ctkMenuComboBox);
   if (d->MenuComboBox->Menu == menu)
-    {
+  {
     return;
-    }
+  }
   d->MenuComboBox->Menu = menu;
   this->setCompleterMenu(menu);
 }
@@ -367,27 +367,27 @@ void ctkMenuComboBox::setCompleterMenu(QMenu* menu)
   Q_D(ctkMenuComboBox);
 
   if (d->CompleterMenu == menu)
-    {
+  {
     return;
-    }
+  }
 
   if (d->CompleterMenu)
-    {
+  {
     QObject::disconnect(d->CompleterMenu,SIGNAL(triggered(QAction*)),
                         this,SLOT(onActionSelected(QAction*)));
     this->removeAction(d->CompleterMenu->menuAction());
     d->removeMenuFromCompleter(d->CompleterMenu);
-    }
+  }
 
   d->CompleterMenu = menu;
 
   if (d->CompleterMenu)
-    {
+  {
     d->addMenuToCompleter(d->CompleterMenu);
     this->addAction(d->CompleterMenu->menuAction());
     QObject::connect(d->CompleterMenu,SIGNAL(triggered(QAction*)),
                      this,SLOT(onActionSelected(QAction*)), Qt::UniqueConnection);
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -403,9 +403,9 @@ void ctkMenuComboBox::setDefaultText(const QString& newDefaultText)
   Q_D(ctkMenuComboBox);
   d->DefaultText = newDefaultText;
   if (d->IsDefaultTextCurrent)
-    {
+  {
     d->setCurrentText(d->DefaultText);
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -421,9 +421,9 @@ void ctkMenuComboBox::setDefaultIcon(const QIcon& newIcon)
   Q_D(ctkMenuComboBox);
   d->DefaultIcon = newIcon;
   if (d->IsDefaultIconCurrent)
-    {
+  {
     d->setCurrentIcon(d->DefaultIcon);
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -541,19 +541,19 @@ void ctkMenuComboBox::onActionSelected(QAction* action)
   d->IsDefaultTextCurrent = true;
   QString newText = d->DefaultText;
   if (action && !action->text().isEmpty())
-    {
+  {
     newText = action->text();
     d->IsDefaultTextCurrent = false;
-    }
+  }
   d->setCurrentText(newText);
 
   d->IsDefaultIconCurrent = true;
   QIcon newIcon = d->DefaultIcon;
   if (action && !action->icon().isNull())
-    {
+  {
     d->IsDefaultIconCurrent = false;
     newIcon = action->icon();
-    }
+  }
   d->setCurrentIcon(newIcon);
 
   d->MenuComboBox->clearFocus();
@@ -572,18 +572,18 @@ void ctkMenuComboBox::onEditingFinished()
 {
   Q_D(ctkMenuComboBox);
   if (!d->MenuComboBox->lineEdit())
-    {
+  {
     return;
-    }
+  }
   QAction* action = d->actionByTitle(d->MenuComboBox->lineEdit()->text(), d->CompleterMenu);
   if (!action)
-    {
+  {
     return;
-    }
+  }
   if (this->isSearchIconVisible())
-    {
+  {
     d->SearchButton->setChecked(false);
-    }
+  }
 
   action->trigger();
 }
@@ -594,39 +594,39 @@ bool ctkMenuComboBox::eventFilter(QObject* target, QEvent* event)
   Q_D(ctkMenuComboBox);
 
   if (target == d->MenuComboBox)
-    {
+  {
     if (event->type() == QEvent::Resize)
-      {
+    {
       this->layout()->invalidate();
-      }
+    }
     if (event->type() == QEvent::FocusIn &&
         d->EditBehavior == ctkMenuComboBox::EditableOnFocus)
-      {
+    {
       d->setComboBoxEditable(true);
-      }
+    }
     if (event->type() == QEvent::FocusOut &&
         (d->EditBehavior == ctkMenuComboBox::EditableOnFocus ||
          d->EditBehavior == ctkMenuComboBox::EditableOnPopup))
-      {
-      d->setComboBoxEditable(false);
-      }
-    }
-  else if (event->type() == QEvent::ActionAdded)
     {
+      d->setComboBoxEditable(false);
+    }
+  }
+  else if (event->type() == QEvent::ActionAdded)
+  {
     QActionEvent* actionEvent = static_cast<QActionEvent *>(event);
     d->addAction(actionEvent->action());
-    }
+  }
   else if (event->type() == QEvent::ActionRemoved)
-    {
+  {
     QActionEvent* actionEvent = static_cast<QActionEvent *>(event);
     QAction* action = actionEvent->action();
     // Maybe the action is present multiple times in different submenus
     // Don't remove its entry from the completer model if there are still some action instances
     // in the menus.
     if (!d->actionByTitle(action->text(), this->menu()))
-      {
+    {
       d->removeActionFromCompleter(action);
-      }
     }
+  }
   return this->Superclass::eventFilter(target, event);
 }

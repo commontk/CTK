@@ -47,109 +47,109 @@ class ctkWidgetsPythonQtDecorators : public QObject
 public:
 
   ctkWidgetsPythonQtDecorators()
-    {
+  {
     PythonQt::self()->addParentClass("ctkWorkflowWidgetStep", "ctkWorkflowStep",
                                      PythonQtUpcastingOffset<ctkWorkflowWidgetStep,ctkWorkflowStep>());
-    }
+  }
 
 public Q_SLOTS:
 
   // ctkWorkflowWidgetStep
 
   bool hasCreateUserInterfaceCommand(ctkWorkflowWidgetStep* step)const
-    {
+{
     return step->hasCreateUserInterfaceCommand();
-    }
+}
 
   void setHasCreateUserInterfaceCommand(
     ctkWorkflowWidgetStep* step, bool newHasCreateUserInterfaceCommand)
-    {
+  {
     step->setHasCreateUserInterfaceCommand(newHasCreateUserInterfaceCommand);
-    }
+  }
 
   bool hasShowUserInterfaceCommand(ctkWorkflowWidgetStep* step)const
-    {
+  {
     return step->hasShowUserInterfaceCommand();
-    }
+  }
 
   void setHasShowUserInterfaceCommand(
     ctkWorkflowWidgetStep* step, bool newHasShowUserInterfaceCommand)
-    {
+  {
     step->setHasShowUserInterfaceCommand(newHasShowUserInterfaceCommand);
-    }
+  }
 
   // ctkErrorLogLevel
 
   QString static_ctkErrorLogLevel_logLevelAsString(ctkErrorLogLevel::LogLevel logLevel)
-    {
+  {
     return ctkErrorLogLevel::logLevelAsString(logLevel);
-    }
+  }
 
   // ctkTransferFunctionBarsItem
 
   ctkTransferFunctionBarsItem* new_ctkTransferFunctionBarsItem(QGraphicsItem* parent = 0)
-    {
+  {
     return new ctkTransferFunctionBarsItem(parent);
-    }
+  }
 
   ctkTransferFunctionBarsItem* new_ctkTransferFunctionBarsItem(
       ctkTransferFunction* transferFunc,
       QGraphicsItem* parent = 0)
-    {
+  {
     return new ctkTransferFunctionBarsItem(transferFunc, parent);
-    }
+  }
 
   void delete_ctkTransferFunctionBarsItem(ctkTransferFunctionBarsItem* obj)
-    {
+  {
     delete obj;
-    }
+  }
 
   // ctkTransferFunctionControlPointsItem
 
   ctkTransferFunctionControlPointsItem* new_ctkTransferFunctionControlPointsItem(
       QGraphicsItem* parent = 0)
-    {
+  {
     return new ctkTransferFunctionControlPointsItem(parent);
-    }
+  }
 
   ctkTransferFunctionControlPointsItem* new_ctkTransferFunctionControlPointsItem(
       ctkTransferFunction* transferFunc,
       QGraphicsItem* parent = 0)
-    {
+  {
     return new ctkTransferFunctionControlPointsItem(transferFunc, parent);
-    }
+  }
 
   void delete_ctkTransferFunctionControlPointsItem(ctkTransferFunctionControlPointsItem* obj)
-    {
+  {
     delete obj;
-    }
+  }
 
   // ctkTransferFunctionGradientItem
 
   ctkTransferFunctionGradientItem* new_ctkTransferFunctionGradientItem(
       QGraphicsItem* parent = 0)
-    {
+  {
     return new ctkTransferFunctionGradientItem(parent);
-    }
+  }
 
   ctkTransferFunctionGradientItem* new_ctkTransferFunctionGradientItem(
       ctkTransferFunction* transferFunc,
       QGraphicsItem* parent = 0)
-    {
+  {
     return new ctkTransferFunctionGradientItem(transferFunc, parent);
-    }
+  }
 
   void delete_ctkTransferFunctionGradientItem(ctkTransferFunctionGradientItem* obj)
-    {
+  {
     delete obj;
-    }
+  }
 
   // ctkCheckableHeaderView
 
   ctkCheckableHeaderView *new_ctkCheckableHeaderView(Qt::Orientation orient, QWidget *parent = 0)
-    {
+  {
     return new ctkCheckableHeaderView(orient, parent);
-    }
+  }
 
 };
 
@@ -160,9 +160,9 @@ class PythonQtWrapper_CTKWidgets : public QObject
 
 public Q_SLOTS:
   QImage static_ctkWidgetsUtils_grabWidget(QWidget* widget, QRect rectangle = QRect())
-    {
+  {
       return ctk::grabWidget(widget, rectangle);
-    }
+  }
 };
 
 //-----------------------------------------------------------------------------

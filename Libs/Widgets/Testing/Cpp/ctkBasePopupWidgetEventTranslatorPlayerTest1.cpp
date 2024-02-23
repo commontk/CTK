@@ -43,11 +43,11 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkBasePopupWidget* widget = reinterpret_cast<ctkBasePopupWidget*>(data);
 
   Q_UNUSED(widget);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -70,9 +70,9 @@ int ctkBasePopupWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

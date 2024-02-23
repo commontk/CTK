@@ -42,24 +42,24 @@ bool ctkFileDialogEventTranslator::translateEvent(QObject *Object,
   Q_UNUSED(Error);
   ctkFileDialog* fileDialog = NULL;
   for(QObject* test = Object; fileDialog == NULL && test != NULL; test = test->parent())
-    {
+  {
     fileDialog = qobject_cast<ctkFileDialog*>(test);
-    }
+  }
 
   if(!fileDialog)
-    {
+  {
     return this->Superclass::translateEvent(Object, Event, Error);
-    }
+  }
 
   if((Event->type() == QEvent::Enter || Event->type() == QEvent::ShowToParent) &&
      Object == fileDialog)
-    {
+  {
     if(this->CurrentObject != Object)
-      {
+    {
       if(this->CurrentObject)
-        {
+      {
         disconnect(this->CurrentObject, 0, this, 0);
-        }
+      }
       this->CurrentObject = Object;
 
       connect(fileDialog, SIGNAL(filesSelected(const QStringList&)),
@@ -67,8 +67,8 @@ bool ctkFileDialogEventTranslator::translateEvent(QObject *Object,
       connect(fileDialog, SIGNAL(rejected()), this, SLOT(onRejected()));
       connect(fileDialog, SIGNAL(destroyed(QObject*)),
               this, SLOT(onDestroyed(QObject*)));
-      }
     }
+  }
 
   // All events performed in the dialog widgets are swallowed (e.g. scrollbar
   // events)...
@@ -76,18 +76,18 @@ bool ctkFileDialogEventTranslator::translateEvent(QObject *Object,
   // ...except for the events on the bottom widget (if any).
   QWidget* bottomWidget = fileDialog->bottomWidget();
   if (bottomWidget)
-    {
+  {
     for(QObject* eventAncestor = Object; eventAncestor != NULL; eventAncestor = eventAncestor->parent())
-      {
+    {
       if (bottomWidget == eventAncestor)
-        {
+      {
         // The event originated from a widget of the bottom widget, let the
         // other translators record it.
         acceptEvent = false;
         break;
-        }
       }
     }
+  }
 
   return acceptEvent;
 }
@@ -102,11 +102,11 @@ void ctkFileDialogEventTranslator::onDestroyed(QObject*)
 void ctkFileDialogEventTranslator::onFileSelectionChanged(const QStringList& files)
 {
   foreach(QString file, files)
-    {
+  {
     QFileInfo info(file);
     //: %1 is the filename
     emit recordEvent(this->CurrentObject, "comment", tr("Loading %1 ... ").arg(info.fileName()));
-    }
+  }
 
   QString file = files.join("#");
   emit recordEvent(this->CurrentObject, "newFile", file);

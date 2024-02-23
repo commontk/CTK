@@ -81,9 +81,9 @@ int ctkCheckableModelHelperTest2(int argc, char * argv [] )
   view.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(500, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

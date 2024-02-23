@@ -77,13 +77,13 @@ enum WaitType
 int wait_for_finished(QTextStream& out, const QString& type, QProcess* process, bool kill=false)
 {
   try
-    {
+  {
     QString programName = QFileInfo(process->program()).baseName();
 
     if (kill)
-      {
+    {
       process->kill();
-      }
+    }
 
     process->waitForFinished();
 
@@ -96,19 +96,19 @@ int wait_for_finished(QTextStream& out, const QString& type, QProcess* process, 
 
     out << "Process ExitCode: ";
     if (process->exitCode() == QProcess::NormalExit)
-      {
+    {
       out << "NormalExit (" << static_cast<int>(QProcess::NormalExit) << ")\n";
-      }
+    }
     else
-      {
+    {
       out << "CrashExit (" << static_cast<int>(QProcess::CrashExit) << ")\n";
-      }
+    }
 
     if (process->exitCode() == QProcess::CrashExit)
-      {
+    {
       out << "Process State: ";
       switch(static_cast<int>(process->error()))
-        {
+      {
 
         #define _QProcessErrorToString(ERROR) \
           case QProcess::ERROR: \
@@ -123,27 +123,27 @@ int wait_for_finished(QTextStream& out, const QString& type, QProcess* process, 
         _QProcessErrorToString(UnknownError);
 
         #undef _QProcessErrorToString
-        }
       }
+    }
     out << "Standard Output:\n";
     out << process->readAllStandardOutput();
     out << "Standard Error:\n";
     out << process->readAllStandardError();
 
     if (kill)
-      {
-      return EXIT_SUCCESS;
-      }
-    else
-      {
-      return process->exitStatus() == QProcess::NormalExit ? process->exitCode() : EXIT_FAILURE;
-      }
-    }
-  catch (const std::exception& e)
     {
+      return EXIT_SUCCESS;
+    }
+    else
+    {
+      return process->exitStatus() == QProcess::NormalExit ? process->exitCode() : EXIT_FAILURE;
+    }
+  }
+  catch (const std::exception& e)
+  {
     out << "ERROR: exception ocurred in wait_for_finished(): " << e.what();
     return EXIT_FAILURE;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -157,28 +157,28 @@ int run_process(
 
     out << "------------------------------------------------------------------------------\n";
     if (type == "server")
-      {
+    {
       out << "  ____  _____ ______     _______ ____  " << "\n";
       out << " / ___|| ____|  _ \\ \\   / / ____|  _ \\ " << "\n";
       out << " \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |" << "\n";
       out << "  ___) | |___|  _ < \\ V / | |___|  _ < " << "\n";
       out << " |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\" << "\n";
-      }
+    }
 
     else if (type == "client")
-      {
+    {
       out << "  ____ _     ___ _____ _   _ _____ " << "\n";
       out << " / ___| |   |_ _| ____| \\ | |_   _|" << "\n";
       out << "| |   | |    | ||  _| |  \\| | | |  " << "\n";
       out << "| |___| |___ | || |___| |\\  | | |  " << "\n";
       out << " \\____|_____|___|_____|_| \\_| |_|  " << "\n";
-      }
+    }
     out << "------------------------------------------------------------------------------\n";
     out << "starting " << type << " " << exectuable << "\n";
     out << "with args " << arguments.join(" ") << "\n";
     process->start(exectuable, arguments);
     switch(wait_type)
-      {
+    {
       case WaitForStarted:
         process->waitForStarted();
         out << programName << " Started.\n";
@@ -189,7 +189,7 @@ int run_process(
 
       default:
         return EXIT_FAILURE;
-      }
+    }
   }
   catch (const std::exception& e)
   {
@@ -240,12 +240,12 @@ int main(int argc, char * argv []) {
   {
     CHECK_EXIT_SUCCESS(
           run_process(out, "server", WaitForStarted, dcmqrscp, dcmqrscp_exe,
-                      {
+    {
                         "--config", dcmqrscp_cfg,
                         "--debug",
                         "--verbose",
                         "11112"
-                      }));
+    }));
   }
 
 
@@ -257,13 +257,13 @@ int main(int argc, char * argv []) {
   {
     CHECK_EXIT_SUCCESS(
           run_process(out, "client", WaitForFinished, storescu, storescu_exe,
-                      {
+    {
                         "-aec", "CTK_AE",
                         "-aet", "CTK_AE",
                         "localhost", "11112",
                         dicomData1,
                         dicomData2,
-                      }));
+    }));
   }
 
 
@@ -279,13 +279,13 @@ int main(int argc, char * argv []) {
 
     CHECK_EXIT_SUCCESS(
           run_process(out, "client", WaitForFinished, ctkDICOMQuery, ctkDICOMQuery_exe,
-                      {
+    {
                         ctkDICOMQuery_db_file,
                         "CTK_AE",
                         "CTK_AE",
                         "localhost",
                         "11112"
-                      }));
+    }));
   }
 
 
@@ -303,7 +303,7 @@ int main(int argc, char * argv []) {
 
     CHECK_EXIT_SUCCESS(
           run_process(out, "client", WaitForFinished, ctkDICOMRetrieve, ctkDICOMRetrieve_exe,
-                      {
+    {
                         studyUID,
                         ctkDICOMRetrieve_directory,
                         "CTK_AE",
@@ -311,7 +311,7 @@ int main(int argc, char * argv []) {
                         "localhost",
                         "11112",
                         "CTK_CLIENT_AE"
-                      }));
+    }));
   }
 
 

@@ -12,8 +12,8 @@ int main(int /*argc*/, char * /*argv*/[])
   bfd_init();
   abfd = bfd_openr("/path/to/library", 0);
   if (!abfd)
-    {
+  {
     return false;
-    }
+  }
   return EXIT_SUCCESS;
 }

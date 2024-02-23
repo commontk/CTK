@@ -42,24 +42,24 @@ bool ctkFontButtonEventTranslator::translateEvent(QObject *Object,
   Q_UNUSED(Error);
   ctkFontButton* object = NULL;
   for(QObject* test = Object; object == NULL && test != NULL; test = test->parent())
-    {
+  {
     object = qobject_cast<ctkFontButton*>(test);
-    }
+  }
 
   if(!object)
-    {
+  {
     return false;
-    }
+  }
 
 
   if(Event->type() == QEvent::Enter && Object == object)
-    {
+  {
     if(this->CurrentObject != Object)
-      {
+    {
       if(this->CurrentObject)
-        {
+      {
         disconnect(this->CurrentObject, 0, this, 0);
-        }
+      }
       this->CurrentObject = Object;
 
       // connect
@@ -67,8 +67,8 @@ bool ctkFontButtonEventTranslator::translateEvent(QObject *Object,
               this, SLOT(onCurrentFontChanged(const QFont&)));
       connect(object, SIGNAL(destroyed(QObject*)),
               this, SLOT(onDestroyed(QObject*)));
-      }
     }
+  }
 
   return true;
 }

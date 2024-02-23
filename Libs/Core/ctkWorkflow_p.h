@@ -77,52 +77,52 @@ struct forwardAndBackwardSteps
   QString firstForwardBranchId()
   {
     if (this->ForwardBranchIds.isEmpty())
-      {
+    {
       return QString();
-      }
+    }
     else
-      {
+    {
     return this->ForwardBranchIds.first();
-      }
+    }
   }
 
   ctkWorkflowStep* forwardStep(QString branchId)
   {
     int index = this->ForwardBranchIds.indexOf(branchId);
     if (index != -1)
-      {
+    {
       return ForwardSteps.at(index);
-      }
+    }
     else
-      {
+    {
       return 0;
-      }
+    }
   }
 
   QString backwardBranchId(ctkWorkflowStep* step)
   {
     int index = this->BackwardSteps.indexOf(step);
     if (index != -1)
-      {
+    {
       return BackwardBranchIds.at(index);
-      }
+    }
     else
-      {
+    {
       return QString();
-      }
+    }
   }
 
   QString forwardBranchId(ctkWorkflowStep* step)
   {
     int index = this->ForwardSteps.indexOf(step);
     if (index != -1)
-      {
+    {
       return ForwardBranchIds.at(index);
-      }
+    }
     else
-      {
+    {
       return QString();
-      }
+    }
   }
 
 private:

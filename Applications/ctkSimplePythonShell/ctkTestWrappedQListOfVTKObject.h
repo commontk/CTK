@@ -34,14 +34,14 @@ class ctkTestWrappedQListOfVTKObject : public QObject
 public:
 
   ctkTestWrappedQListOfVTKObject(QObject * newParent = 0) : QObject(newParent)
-    {
-    }
+  {
+  }
 
   /// Example of slot accepting a VTK object as parameter
   Q_INVOKABLE int numberOfElementInList(const QList<vtkTable*>& listOfTable)
-    {
+  {
     return listOfTable.count();
-    }
+  }
 };
 
 #endif

@@ -119,12 +119,12 @@ int ctkITKErrorLogModelFileLoggingTest1(int argc, char * argv [])
   int entryIndex = 0;
   QRegExp regexp(expectedLogEntryPatternTemplate.arg("WARNING").arg(70).arg("This is a ITK warning message"));
   if (!regexp.exactMatch(logLines.at(entryIndex)))
-    {
+  {
     printErrorMessage(
           QString("Line %1 - Log entry %2 does NOT math expected regular expression.\n\tLogEntry: %3\n\tRegExp: %4").
               arg(__LINE__).arg(entryIndex).arg(logLines.at(entryIndex)).arg(regexp.pattern()));
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

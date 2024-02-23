@@ -92,7 +92,7 @@ void ctkDICOMObjectModelPrivate::itemInsert(ctkDICOMItem* dicomItem, DcmItem *da
   DcmStack stack;
   dataset->nextObject( stack, OFTrue);
   for( ; stack.top(); dataset->nextObject( stack, OFFalse))
-    {
+  {
     DcmObject *dO =  stack.top();
     // put in the visit node function
     QString tagValue = "";
@@ -115,9 +115,9 @@ void ctkDICOMObjectModelPrivate::itemInsert(ctkDICOMItem* dicomItem, DcmItem *da
     if( tagKey == DCM_SequenceDelimitationItem
         || tagKey == DCM_ItemDelimitationItem
         || tagName == /*no tr*/"Item")
-      {
+    {
       return;
-      }
+    }
 
     DcmElement *dcmElem = dynamic_cast<DcmElement *> (dO);
     tagValue = getTagValue(dicomItem, dcmElem);
@@ -127,10 +127,10 @@ void ctkDICOMObjectModelPrivate::itemInsert(ctkDICOMItem* dicomItem, DcmItem *da
 
     // Check if the DICOM object is a SQ Data element and extract the nested DICOM objects
     if( dcmElem && !dcmElem->isLeaf())
-      {
+    {
       // now dcmElem points to a sequence of items
       ctkDICOMObjectModelPrivate::seqInsert(dicomItem, dynamic_cast<DcmSequenceOfItems*> (dcmElem), tagItem);
-      }
+    }
   }
 }
 
@@ -140,16 +140,16 @@ void ctkDICOMObjectModelPrivate::seqInsert(ctkDICOMItem* dicomItem, DcmSequenceO
   DcmObject *dO = dataset->nextInContainer(NULL);
 
   for( ; dO; dO = dataset->nextInContainer(dO))
-    {
+  {
     DcmElement *dcmElem = dynamic_cast<DcmElement *> (dO);
     QString tagValue = "";
     DcmTag tag = dO->getTag();
     DcmTag tagKey = tag.getXTag();
     if( tagKey == DCM_SequenceDelimitationItem
         || tagKey == DCM_ItemDelimitationItem)
-      {
+    {
       return;
-      }
+    }
 
     QString tagName = tag.getTagName();
     DcmTagKey tagX = tag.getXTag();
@@ -163,21 +163,21 @@ void ctkDICOMObjectModelPrivate::seqInsert(ctkDICOMItem* dicomItem, DcmSequenceO
     QString elementLengthQString = QString::number(elementLength);
 
     if( dcmElem)
-      {
+    {
       tagValue = getTagValue(dicomItem, dcmElem);
-      }
+    }
 
     QStandardItem *tagItem = populateModelRow(tagName,tagHexName,tagValue,VRName,elementLengthQString,parent);
 
    if( dcmElem && !dcmElem->isLeaf())
-      {
+   {
       ctkDICOMObjectModelPrivate::seqInsert(dicomItem, dynamic_cast<DcmSequenceOfItems*> (dcmElem), tagItem);
-      }
-    else if( tag.getXTag() == DCM_Item)
-      {
-      itemInsert(dicomItem, dynamic_cast<DcmItem*> (dO), tagItem);
-      }
    }
+    else if( tag.getXTag() == DCM_Item)
+    {
+      itemInsert(dicomItem, dynamic_cast<DcmItem*> (dO), tagItem);
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -190,24 +190,24 @@ QString ctkDICOMObjectModelPrivate::getTagValue(ctkDICOMItem* dicomItem, DcmElem
   int pos;
 
   if( mult>1)
-    {
+  {
     value << "[" << mult << "] ";
-    }
+  }
 
   for( pos=0; pos < mult; pos++)
-    {
+  {
     value << sep;
     OFCondition status = dcmElem->getOFString( part, pos);
     if( status.good())
-      {
+    {
       value << part.c_str();
       sep = ", ";
-      }
     }
+  }
     if( pos < mult-1)
-      {
+    {
       value << " ...";
-      }
+    }
 
   QString tagValue = dicomItem->Decode(dcmElem->getTag(), value.str().c_str());
   return tagValue;
@@ -265,9 +265,9 @@ void ctkDICOMObjectModel::setFile(const QString &fileName)
 
   OFCondition status = d->fileFormat.loadFile( fileName.toUtf8().data());
   if( !status.good() )
-    {
+  {
     // TODO: Through an error message.
-    }
+  }
 
   DcmDataset *dataset = d->fileFormat.getDataset();
 
@@ -277,9 +277,9 @@ void ctkDICOMObjectModel::setFile(const QString &fileName)
   d->rootItem = this->invisibleRootItem();
 
   if(d->rootItem->hasChildren())
-    {
+  {
     d->rootItem->removeRows(0, d->rootItem->rowCount());
-    }
+  }
 
   d->itemInsert(dicomItem, dataset, d->rootItem);
 

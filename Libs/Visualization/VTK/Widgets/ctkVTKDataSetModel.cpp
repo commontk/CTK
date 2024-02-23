@@ -105,19 +105,19 @@ QList<vtkAbstractArray*> ctkVTKDataSetModelPrivate::attributeArrayToInsert(
 {
   QList<vtkAbstractArray*> attributeArraysToInsert;
   for (int p = 0; p < dataSetAttributes->GetNumberOfArrays(); ++p)
-    {
+  {
     vtkAbstractArray * array = dataSetAttributes->GetAbstractArray(p);
 
     bool isAttributeArray = false;
     vtkAbstractArray* attributeArrays[vtkDataSetAttributes::NUM_ATTRIBUTES];
     for(int attributeId = 0; attributeId < vtkDataSetAttributes::NUM_ATTRIBUTES; ++attributeId)
-      {
+    {
       attributeArrays[attributeId] = dataSetAttributes->GetAbstractAttribute(attributeId);
       if (!isAttributeArray && attributeArrays[attributeId] == array)
-        {
+      {
         isAttributeArray = true;
-        }
       }
+    }
 
     if ((attributeType & ctkVTKDataSetModel::ScalarsAttribute && (array == attributeArrays[vtkDataSetAttributes::SCALARS]))
         || (attributeType & ctkVTKDataSetModel::VectorsAttribute && (array == attributeArrays[vtkDataSetAttributes::VECTORS]))
@@ -129,10 +129,10 @@ QList<vtkAbstractArray*> ctkVTKDataSetModelPrivate::attributeArrayToInsert(
         || (attributeType & ctkVTKDataSetModel::EdgeFlagAttribute && (array == attributeArrays[vtkDataSetAttributes::EDGEFLAG]))
         || (attributeType & ctkVTKDataSetModel::NoAttribute && !isAttributeArray)
         )
-      {
+    {
       attributeArraysToInsert << dataSetAttributes->GetAbstractArray(p);
-      }
     }
+  }
   return attributeArraysToInsert;
 }
 
@@ -168,9 +168,9 @@ void ctkVTKDataSetModel::setDataSet(vtkDataSet* dataSet)
 {
   Q_D(ctkVTKDataSetModel);
   if (dataSet == d->DataSet.GetPointer())
-    {
+  {
     return;
-    }
+  }
   this->qvtkReconnect(d->DataSet, dataSet, vtkCommand::ModifiedEvent,
                       this, SLOT(onDataSetModified(vtkObject*)) );
   d->DataSet = dataSet;
@@ -196,9 +196,9 @@ void ctkVTKDataSetModel::setAttributeTypes(const AttributeTypes& attributeTypes)
 {
   Q_D(ctkVTKDataSetModel);
   if (d->AttributeType == attributeTypes)
-    {
+  {
     return;
-    }
+  }
   d->AttributeType = attributeTypes;
   this->updateDataSet();
 }
@@ -215,18 +215,18 @@ void ctkVTKDataSetModel::setIncludeNullItem(bool includeNullItem)
 {
   Q_D(ctkVTKDataSetModel);
   if (d->IncludeNullItem == includeNullItem)
-    {
+  {
     // no change
     return;
-    }
+  }
   if (includeNullItem)
-    {
+  {
     this->insertNullItem();
-    }
+  }
   else
-    {
+  {
     this->removeNullItem();
-    }
+  }
   d->IncludeNullItem = includeNullItem;
 }
 
@@ -234,19 +234,19 @@ void ctkVTKDataSetModel::setIncludeNullItem(bool includeNullItem)
 vtkAbstractArray* ctkVTKDataSetModel::arrayFromItem(QStandardItem* arrayItem)const
 {
   if (arrayItem == 0 || arrayItem == this->invisibleRootItem())
-    {
+  {
     return 0;
-    }
+  }
   QVariant arrayPointer = arrayItem->data(ctkVTK::PointerRole);
   Q_ASSERT(arrayPointer.isValid());
   vtkAbstractArray* array = static_cast<vtkAbstractArray*>(
     reinterpret_cast<void *>(arrayPointer.toLongLong()));
   if (arrayItem->data(ctkVTK::LocationRole).toInt() == this->NullItemLocation)
-    {
+  {
     // null item
     Q_ASSERT(array==0);
     return 0;
-    }
+  }
 
   Q_ASSERT(array);
   return array;
@@ -256,9 +256,9 @@ vtkAbstractArray* ctkVTKDataSetModel::arrayFromItem(QStandardItem* arrayItem)con
 int ctkVTKDataSetModel::locationFromItem(QStandardItem* arrayItem)const
 {
   if (arrayItem == 0 || arrayItem == this->invisibleRootItem())
-    {
+  {
     return -1;
-    }
+  }
   return arrayItem->data(ctkVTK::LocationRole).toInt();
 }
 
@@ -266,22 +266,22 @@ int ctkVTKDataSetModel::locationFromItem(QStandardItem* arrayItem)const
 QStandardItem* ctkVTKDataSetModel::itemFromArray(vtkAbstractArray* array, int column)const
 {
   if (array == 0)
-    {
+  {
     return 0;
-    }
+  }
   QModelIndexList indexes = this->match(this->index(-1,-1), ctkVTK::PointerRole,
                                       reinterpret_cast<long long>(array), 1,
                                       Qt::MatchExactly | Qt::MatchRecursive);
   while (indexes.size())
-    {
+  {
     if (indexes[0].column() == column)
-      {
+    {
       return this->itemFromIndex(indexes[0]);
-      }
+    }
     indexes = this->match(indexes[0], ctkVTK::PointerRole,
                           reinterpret_cast<long long>(array), 1,
                           Qt::MatchExactly | Qt::MatchRecursive);
-    }
+  }
   return 0;
 }
 
@@ -320,25 +320,25 @@ void ctkVTKDataSetModel::updateDataSet()
 
   // Remove all items (except the first one, if there is a NULL item)
   if (d->IncludeNullItem)
-    {
+  {
     if (this->rowCount()<1)
-      {
-      this->insertNullItem();
-      }
-    else
-      {
-      this->setRowCount(1);
-      }
-    }
-  else
     {
-    this->setRowCount(0);
+      this->insertNullItem();
     }
+    else
+    {
+      this->setRowCount(1);
+    }
+  }
+  else
+  {
+    this->setRowCount(0);
+  }
 
   if (d->DataSet.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
 
   // Populate scene with nodes
   this->populateDataSet();
@@ -352,15 +352,15 @@ void ctkVTKDataSetModel::populateDataSet()
 
   foreach(vtkAbstractArray* attributeArray,
     ctkVTKDataSetModelPrivate::attributeArrayToInsert(d->AttributeType, d->DataSet->GetPointData()))
-    {
+  {
     this->insertArray(attributeArray, vtkAssignAttribute::POINT_DATA);
-    }
+  }
 
   foreach(vtkAbstractArray* attributeArray,
     ctkVTKDataSetModelPrivate::attributeArrayToInsert(d->AttributeType, d->DataSet->GetCellData()))
-    {
+  {
     this->insertArray(attributeArray, vtkAssignAttribute::CELL_DATA);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -375,25 +375,25 @@ void ctkVTKDataSetModel
 {
   Q_D(ctkVTKDataSetModel);
   if (vtkAbstractArray::SafeDownCast(array)==0)
-    {
+  {
     // it is normal, it happens when arrays are pre-allocated for a data set
     return;
-    }
+  }
 
   QList<QStandardItem*> items;
   for (int i= 0; i < this->columnCount(); ++i)
-    {
+  {
     QStandardItem* newArrayItem = new QStandardItem();
     this->updateItemFromArray(newArrayItem, array, location, i);
     items.append(newArrayItem);
-    }
+  }
   this->insertRow(row,items);
   // TODO: don't listen to nodes that are hidden from editors ?
   if (d->ListenAbstractArrayModifiedEvent)
-    {
+  {
     qvtkConnect(array, vtkCommand::ModifiedEvent,
                 this, SLOT(onArrayModified(vtkObject*)));
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -405,14 +405,14 @@ void ctkVTKDataSetModel::updateItemFromArray(QStandardItem* item,
   item->setData(QVariant::fromValue(reinterpret_cast<long long>(array)), ctkVTK::PointerRole);
   item->setData(location, ctkVTK::LocationRole);
   switch (column)
-    {
+  {
     case 0:
       item->setText(QString(array->GetName()));
       break;
     default:
       Q_ASSERT(column == 0);
       break;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -452,9 +452,9 @@ void ctkVTKDataSetModel::updateItemFromCellsArray(QStandardItem* item, vtkAbstra
 void ctkVTKDataSetModel::updateArrayFromItem(vtkAbstractArray* array, QStandardItem* item)
 {
   if (item->column() == 0)
-    {
+  {
     array->SetName(item->text().toUtf8());
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -502,11 +502,11 @@ void ctkVTKDataSetModel::onArrayModified(vtkObject* modifiedArray)
   QModelIndexList arrayIndexes = this->indexes(array);
 
   foreach (QModelIndex index, arrayIndexes)
-    {
+  {
     QStandardItem* item = this->itemFromIndex(index);
     this->updateItemFromArray(
       item, array, item->data(ctkVTK::LocationRole).toInt(), item->column());
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -531,23 +531,23 @@ void ctkVTKDataSetModel::insertNullItem()
 void ctkVTKDataSetModel::removeNullItem()
 {
   if (this->rowCount() <= 0)
-    {
+  {
     return;
-    }
+  }
   // NULL item must be the first one
   QStandardItem* nullItem = this->item(0);
   Q_ASSERT(nullItem);
   if (nullItem == 0)
-    {
+  {
     return;
-    }
+  }
   // NULL item has a special location value
   int nullItemLocation = nullItem->data(ctkVTK::LocationRole).toInt();
   Q_ASSERT(nullItemLocation == this->NullItemLocation);
   if (nullItemLocation != this->NullItemLocation)
-    {
+  {
     return;
-    }
+  }
   // the first item is indeed the NULL item, so we remove it now
   this->removeRow(0);
 }

@@ -49,11 +49,11 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   QString testName = arguments.takeFirst();
 
   if (!arguments.count())
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QTemporaryDir tempDirectory;
   CHECK_BOOL(tempDirectory.isValid(), true);
@@ -82,16 +82,16 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   std::cerr << "ctkDICOMRetrieveTest2: Running query\n";
   bool res = query.query(database);
   if (!res)
-    {
+  {
     std::cout << "ctkDICOMQuery::query() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (query.studyAndSeriesInstanceUIDQueried().count() == 0)
-    {
+  {
     std::cout << "ctkDICOMQuery::query() failed."
               << "No study instance retrieved" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   std::cerr << "ctkDICOMRetrieveTest2: Setting up retrieve \n";
   ctkDICOMRetrieve retrieve;
@@ -106,17 +106,17 @@ int ctkDICOMRetrieveTest2( int argc, char * argv [] )
   std::cerr << "ctkDICOMRetrieveTest2: Retrieving\n";
   typedef QPair<QString,QString> StudyAndSeriesInstanceUIDPair;
   Q_FOREACH(const StudyAndSeriesInstanceUIDPair& studyAndSeriesInstanceUID, query.studyAndSeriesInstanceUIDQueried())
-    {
+  {
     std::cerr << "ctkDICOMRetrieveTest2: Retrieving " << studyAndSeriesInstanceUID.first.toStdString() << "\n";
     bool res = retrieve.moveStudy(studyAndSeriesInstanceUID.first);
     if (!res)
-      {
+    {
       std::cout << "ctkDICOMRetrieve::retrieveStudy() failed. "
                 << "Study " << qPrintable(studyAndSeriesInstanceUID.first) << " can't be retrieved"
                 << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   std::cerr << "ctkDICOMRetrieveTest2: Exit success\n";
 

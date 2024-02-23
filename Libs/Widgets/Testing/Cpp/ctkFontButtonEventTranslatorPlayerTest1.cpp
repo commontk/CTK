@@ -45,7 +45,7 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkFontButton* widget = reinterpret_cast<ctkFontButton*>(data);
 
   CTKCOMPARE(widget->font().style(), QFont::StyleOblique);
@@ -53,10 +53,10 @@ void checkFinalWidgetState(void* data)
   CTKCOMPARE(widget->font().underline(), true);
   CTKCOMPARE(widget->font().strikeOut(), false);
   CTKCOMPARE(widget->font().family(), QString("Lohit Bengali"));
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   ctkFontButton* widget = reinterpret_cast<ctkFontButton*>(data);
 
   CTKCOMPARE(widget->font().style(), QFont::StyleItalic);
@@ -64,7 +64,7 @@ void checkFinalWidgetState2(void* data)
   CTKCOMPARE(widget->font().underline(), true);
   CTKCOMPARE(widget->font().strikeOut(), true);
   CTKCOMPARE(widget->font().family(), QString("Ubuntu"));
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -95,9 +95,9 @@ int ctkFontButtonEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

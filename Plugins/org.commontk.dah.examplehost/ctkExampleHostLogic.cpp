@@ -59,7 +59,7 @@ void ctkExampleHostLogic::configureHostedApp()
 void ctkExampleHostLogic::sendData(ctkDicomAppHosting::AvailableData& data, bool lastData)
 {
  if ((this->Host) && (this->HostControls->validAppFileName()) /*&& (ValidSelection)*/)
-  {
+ {
     *Data = data;
     LastData = lastData;
 
@@ -77,7 +77,7 @@ void ctkExampleHostLogic::sendData(ctkDicomAppHosting::AvailableData& data, bool
     {
       publishSelectedData();
     }
-  }
+ }
 }
 
 void ctkExampleHostLogic::onAppReady()

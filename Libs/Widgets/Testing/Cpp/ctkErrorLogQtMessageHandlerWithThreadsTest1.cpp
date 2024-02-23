@@ -65,7 +65,7 @@ int ctkErrorLogQtMessageHandlerWithThreadsTest1(int argc, char * argv [])
   modelTester.setVerbose(false);
 
   try
-    {
+  {
     modelTester.setModel(&model);
 
     // --------------------------------------------------------------------------
@@ -86,19 +86,19 @@ int ctkErrorLogQtMessageHandlerWithThreadsTest1(int argc, char * argv [])
     int expectedMessageCount = threadCount * maxIteration * messagesPerIteration;
     QString errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedMessageCount);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
     }
+  }
   catch (const char* error)
-    {
+  {
     model.disableAllMsgHandler();
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

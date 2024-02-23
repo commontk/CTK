@@ -50,19 +50,19 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
   int currentEnabledMessageHandlersCount = enabledMessageHandlers.count();
   errorMsg = checkInteger(__LINE__, "EnabledMessageHandlersCount", currentEnabledMessageHandlersCount, 0);
   if (!errorMsg.isEmpty())
-    {
+  {
     model.disableAllMsgHandler();
     printErrorMessage(errorMsg);
     return EXIT_FAILURE;
-    }
+  }
 
   try
-    {
+  {
     modelTester.setModel(&model);
 
     // --------------------------------------------------------------------------
     // Monitor Qt messages
-      {
+    {
       model.registerMsgHandler(new ctkErrorLogQtMessageHandler);
       model.setMsgHandlerEnabled(ctkErrorLogQtMessageHandler::HandlerName, true);
 
@@ -70,21 +70,21 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       errorMsg = checkRowCount(__LINE__, model.logEntryCount(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkSpyCount(__LINE__, entryAddedSpy.count(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       QString qtMessage0("This is a qDebug message");
       qDebug().nospace() << qUtf8Printable(qtMessage0);
@@ -103,49 +103,49 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       errorMsg = checkRowCount(__LINE__, model.logEntryCount(), /* expected = */ expectedQtMessages.count());
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkSpyCount(__LINE__, entryAddedSpy.count(), /* expected = */ expectedQtMessages.count());
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkTextMessages(__LINE__, model, expectedQtMessages);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       // Check if msgHandlerEnabled() works as expected
       enabledMessageHandlers = model.msgHandlerEnabled();
       currentEnabledMessageHandlersCount = enabledMessageHandlers.count();
       errorMsg = checkInteger(__LINE__, "EnabledMessageHandlersCount", currentEnabledMessageHandlersCount, 1);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       // Check if handler can be enabled / disabled multiple times in a row
       for (int idx = 0; idx < 3; ++idx)
-        {
+      {
         model.setMsgHandlerEnabled(ctkErrorLogQtMessageHandler::HandlerName, false);
         model.setMsgHandlerEnabled(ctkErrorLogQtMessageHandler::HandlerName, true);
-        }
+      }
 
       // Clear
       model.clear();
@@ -160,26 +160,26 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       errorMsg = checkRowCount(__LINE__, model.logEntryCount(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkSpyCount(__LINE__, entryAddedSpy.count(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
       }
+    }
 
     // --------------------------------------------------------------------------
     // Monitor Stream messages
-      {
+    {
       model.registerMsgHandler(new ctkErrorLogStreamMessageHandler);
       model.setMsgHandlerEnabled(ctkErrorLogStreamMessageHandler::HandlerName, true);
 
@@ -187,31 +187,31 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       // Make sure Qt message handler is still disabled
       if (model.msgHandlerEnabled(ctkErrorLogQtMessageHandler::HandlerName))
-        {
+      {
         model.disableAllMsgHandler();
         errorMsg = QLatin1String("Line %1 - Qt message handler should be disabled");
         printErrorMessage(errorMsg.arg(__LINE__));
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkRowCount(__LINE__, model.logEntryCount(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkSpyCount(__LINE__, entryAddedSpy.count(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       QString streamMessage0("This is a Cout message");
       std::cout << qPrintable(streamMessage0) << std::endl;
@@ -227,37 +227,37 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       errorMsg = checkRowCount(__LINE__, model.logEntryCount(), /* expected = */ expectedStreamMessages.count());
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkSpyCount(__LINE__, entryAddedSpy.count(), /* expected = */ expectedStreamMessages.count());
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkTextMessages(__LINE__, model, expectedStreamMessages);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       // Check if handler can be enabled / disabled multiple times in a row
       for (int idx = 0; idx < 3; ++idx)
-        {
+      {
         model.setMsgHandlerEnabled(ctkErrorLogStreamMessageHandler::HandlerName, false);
         model.setMsgHandlerEnabled(ctkErrorLogStreamMessageHandler::HandlerName, true);
-        }
+      }
 
       // Clear
       model.clear();
@@ -271,26 +271,26 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       errorMsg = checkRowCount(__LINE__, model.logEntryCount(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkSpyCount(__LINE__, entryAddedSpy.count(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
       }
+    }
 
     // --------------------------------------------------------------------------
     // Monitor FD messages
-      {
+    {
       model.registerMsgHandler(new ctkErrorLogFDMessageHandler);
       model.setMsgHandlerEnabled(ctkErrorLogFDMessageHandler::HandlerName, true);
 
@@ -298,21 +298,21 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       errorMsg = checkRowCount(__LINE__, model.logEntryCount(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkSpyCount(__LINE__, entryAddedSpy.count(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       QString fdMessage0("This is a stdout");
       fprintf(stdout, "%s", qPrintable(fdMessage0));
@@ -346,37 +346,37 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       errorMsg = checkRowCount(__LINE__, model.logEntryCount(), /* expected = */ expectedFDMessages.count());
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkSpyCount(__LINE__, entryAddedSpy.count(), /* expected = */ expectedFDMessages.count());
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkTextMessages(__LINE__, model, expectedFDMessages);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       // Check if handler can be enabled / disabled multiple times in a row
       for (int idx = 0; idx < 3; ++idx)
-        {
+      {
         model.setMsgHandlerEnabled(ctkErrorLogFDMessageHandler::HandlerName, false);
         model.setMsgHandlerEnabled(ctkErrorLogFDMessageHandler::HandlerName, true);
-        }
+      }
 
       // Clear
       model.clear();
@@ -391,30 +391,30 @@ int ctkErrorLogModelTest1(int argc, char * argv [])
 
       errorMsg = checkRowCount(__LINE__, model.logEntryCount(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
+      }
 
       errorMsg = checkSpyCount(__LINE__, entryAddedSpy.count(), /* expected = */ 0);
       if (!errorMsg.isEmpty())
-        {
+      {
         model.disableAllMsgHandler();
         printErrorMessage(errorMsg);
         printTextMessages(model);
         return EXIT_FAILURE;
-        }
       }
-
     }
+
+  }
   catch (const char* error)
-    {
+  {
     model.disableAllMsgHandler();
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

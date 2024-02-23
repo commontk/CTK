@@ -50,20 +50,20 @@ int ctkVTKObjectEventsObserverTest1( int argc, char * argv [] )
 
   ctkVTKObjectEventsObserver* observer = new ctkVTKObjectEventsObserver(topObject);
   for (int i = 0; i < objects; ++i)
-    {
+  {
     QTimer*    slotObject = new QTimer(topObject);
     observer->addConnection(obj, vtkCommand::ModifiedEvent,
       slotObject, SLOT(stop()));
-    }
+  }
 
   vtkSmartPointer<vtkTimerLog> timerLog =
     vtkSmartPointer<vtkTimerLog>::New();
 
   timerLog->StartTimer();
   for (int i = 0; i < events; ++i)
-    {
+  {
     obj->Modified();
-    }
+  }
   timerLog->StopTimer();
 
   double t1 = timerLog->GetElapsedTime();

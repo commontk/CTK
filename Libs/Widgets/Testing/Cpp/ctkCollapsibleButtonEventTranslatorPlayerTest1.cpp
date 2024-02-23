@@ -46,14 +46,14 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkCollapsibleButton* widget = reinterpret_cast<ctkCollapsibleButton*>(data);
 
   CTKCOMPARE(widget->collapsed(), true);
   CTKCOMPARE(widget->collapsedHeight(), 10);
 
   QApplication::exit(EXIT_SUCCESS);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -93,9 +93,9 @@ int ctkCollapsibleButtonEventTranslatorPlayerTest1(int argc, char * argv [])
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

@@ -30,12 +30,12 @@ int ctkVTKColorTransferFunctionTest1( int argc, char * argv [])
   if (defaultTF.count() != -1
         || defaultTF.minValue() != -1
         || defaultTF.maxValue() != -1)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction::count"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //------Test Function range-------------------
   qreal defaultMinRange = 0.;
@@ -45,24 +45,24 @@ int ctkVTKColorTransferFunctionTest1( int argc, char * argv [])
   //------Test Function colorTransferFunction---
   vtkColorTransferFunction* defaultVTKColorTransferFunction = defaultTF.colorTransferFunction();
   if (defaultVTKColorTransferFunction != 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction::colorTransfertFunction  "
               //<< defaultVTKColorTransferFunction->GetSize()
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //-----Test Function vtkColorTransferFunction::New()---------
   vtkColorTransferFunction*  colorTransferFunction = vtkColorTransferFunction::New();
   if (colorTransferFunction->GetSize() > 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction::vtkColorTransferFunction::New() "
               //<< defaultVTKColorTransferFunction->GetSize()
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //------Test Function setColorTransfertFunction------
   defaultTF.setColorTransferFunction(colorTransferFunction);
@@ -80,12 +80,12 @@ int ctkVTKColorTransferFunctionTest1( int argc, char * argv [])
 
   //------Test Function Count with colorTransferFunction-------------
   if (defaultTF.count() < 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction::count"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //------Test Function isDiscrete--------------
   if(defaultTF.isDiscrete())
@@ -115,71 +115,71 @@ int ctkVTKColorTransferFunctionTest1( int argc, char * argv [])
   QVariant defaultMinValue;
   defaultMinValue = defaultTF.minValue();
   if (defaultMinValue == -1)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction::minValue"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //-----Test Function maxValue----------------
   QVariant defaultMaxValue;
   defaultMaxValue = defaultTF.maxValue();
   if (defaultMaxValue == -1)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction::minValue"
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
   //-----Test Function insertControlPoint with qreal------
   defaultPos = 1.;
   defaultTF.insertControlPoint(defaultPos);
   if (defaultTF.count() != 1)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction"
               << "::insertControlPoint(qreal) "
               << defaultTF.count()
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //------Test Function removeControlpoint--------
   qreal fakeDefaultPos = 2.;
   defaultTF.removeControlPoint(fakeDefaultPos);
   if (defaultTF.count() != 1)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction"
               << "::insertControlPoint(qreal) "
               << defaultTF.count()
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
   defaultTF.removeControlPoint(defaultPos);
   if (defaultTF.count() != 0)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction"
               << "::insertControlPoint(qreal) "
               << defaultTF.count()
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //------Test Function insertControlPoint with ctkControlPoint-------
   ctkControlPoint cp;
   int index1 = defaultTF.insertControlPoint(cp);
   if (defaultTF.count() != 1)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Problem with ctkVTKColorTransferFunction"
               << "::insertControlPoint(qreal) "
               << defaultTF.count()
               <<std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //------Test Function setControlPointPos---------
   qreal newPos = 5.;

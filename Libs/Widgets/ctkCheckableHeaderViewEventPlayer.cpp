@@ -40,25 +40,25 @@ bool ctkCheckableHeaderViewEventPlayer::playEvent(QObject *Object,
 {
   if(Command != "set_section_checked" &&
      Command != "set_section_unchecked")
-    {
+  {
     return false;
-    }
+  }
 
   const int value = Arguments.toInt();
 
   if(ctkCheckableHeaderView* const object =
      qobject_cast<ctkCheckableHeaderView*>(Object))
-    {
+  {
     if(Command == "set_section_checked")
-      {
+    {
       object->setCheckState(value, Qt::Checked);
-      }
-    if(Command == "set_section_unchecked")
-      {
-      object->setCheckState(value, Qt::Unchecked);
-      }
-      return true;
     }
+    if(Command == "set_section_unchecked")
+    {
+      object->setCheckState(value, Qt::Unchecked);
+    }
+      return true;
+  }
 
   qCritical() << "calling set_checkable/set_unchecked_all on unhandled type " << Object;
   Error = true;

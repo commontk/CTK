@@ -129,35 +129,35 @@ void ctkCollapsibleButtonPrivate::setChildVisibility(QWidget* childWidget)
   // be a no (because they are already hidden and ExplicitShowHide is set).
   // So we don't hide/show the children until the widget is created.
   if (!q->testAttribute(Qt::WA_WState_Created))
-    {
+  {
     return;
-    }
+  }
   this->ForcingVisibility = true;
 
   bool visible= !this->Collapsed;
   // if the widget has been explicitly hidden, then hide it.
   if (childWidget->property("visibilityToParent").isValid()
       && !childWidget->property("visibilityToParent").toBool())
-    {
+  {
     visible = false;
-    }
+  }
 
   // Setting Qt::WA_WState_Visible to true during child construction can have
   // undesirable side effects.
   if (childWidget->testAttribute(Qt::WA_WState_Created) ||
       !visible)
-    {
+  {
     childWidget->setVisible(visible);
-    }
+  }
 
   // setVisible() has set the ExplicitShowHide flag, restore it as we don't want
   // to make it like it was an explicit visible set because we want
   // to allow the children to be explicitly hidden by the user.
   if ((!childWidget->property("visibilityToParent").isValid() ||
       childWidget->property("visibilityToParent").toBool()))
-    {
+  {
     childWidget->setAttribute(Qt::WA_WState_ExplicitShowHide, false);
-    }
+  }
   this->ForcingVisibility = false;
 }
 
@@ -166,27 +166,27 @@ void ctkCollapsibleButton::initStyleOption(QStyleOptionButton* option)const
 {
   Q_D(const ctkCollapsibleButton);
   if (option == 0)
-    {
+  {
     return;
-    }
+  }
   option->initFrom(this);
 
   if (this->isDown() )
-    {
+  {
     option->state |= QStyle::State_Sunken;
-    }
+  }
   if (this->isChecked() && !d->LookOffWhenChecked)
-    {
+  {
     option->state |= QStyle::State_On;
-    }
+  }
   if (!this->isDown())
-    {
+  {
     option->state |= QStyle::State_Raised;
-    }
+  }
   if (d->Flat)
-    {
+  {
     option->features |= QStyleOptionButton::Flat;
-    }
+  }
 
   option->text = this->text();
   option->icon = this->icon();
@@ -224,11 +224,11 @@ ctkCollapsibleButton::~ctkCollapsibleButton()
 void ctkCollapsibleButton::setCollapsed(bool c)
 {
   if (!this->isCheckable())
-    {
+  {
     // not sure if one should handle this case...
     this->collapse(c);
     return;
-    }
+  }
   this->setChecked(!c);
 }
 
@@ -273,9 +273,9 @@ bool ctkCollapsibleButton::isFlat()const
 void ctkCollapsibleButton::onToggled(bool checked)
 {
   if (this->isCheckable())
-    {
+  {
     this->collapse(!checked);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -283,47 +283,47 @@ void ctkCollapsibleButton::collapse(bool collapsed)
 {
   Q_D(ctkCollapsibleButton);
   if (collapsed == d->Collapsed)
-    {
+  {
     return;
-    }
+  }
 
   d->Collapsed = collapsed;
 
   // we do that here as setVisible calls will correctly refresh the widget
   if (collapsed)
-    {
+  {
     d->MaximumHeight = this->maximumHeight();
     this->setMaximumHeight(this->sizeHint().height());
     //this->updateGeometry();
-    }
+  }
   else
-    {
+  {
     // restore maximumheight
     this->setMaximumHeight(d->MaximumHeight);
     this->updateGeometry();
-    }
+  }
 
   // Update the visibility of all the children
   // We can't use findChildren as it would return the grandchildren
   foreach(QObject* child, this->children())
-    {
+  {
     QWidget* childWidget = qobject_cast<QWidget*>(child);
     if (childWidget)
-      {
+    {
       d->setChildVisibility(childWidget);
-      }
     }
+  }
 
   // this might be too many updates...
   QWidget* _parent = this->parentWidget();
   if (!d->Collapsed && (!_parent || !_parent->layout()))
-    {
+  {
     this->resize(this->sizeHint());
-    }
+  }
   else
-    {
+  {
     this->updateGeometry();
-    }
+  }
   //this->update(QRect(QPoint(0,0), this->sizeHint()));
   //this->repaint(QRect(QPoint(0,0), this->sizeHint()));
   emit contentsCollapsed(collapsed);
@@ -436,15 +436,15 @@ QSize ctkCollapsibleButton::buttonSizeHint()const
   QString string(this->text());
   bool empty = string.isEmpty();
   if (empty)
-    {
+  {
     string = QString::fromLatin1("XXXX");
-    }
+  }
   QFontMetrics fm = this->fontMetrics();
   QSize sz = fm.size(Qt::TextShowMnemonic, string);
   if(!empty || !w)
-    {
+  {
     w += sz.width();
-    }
+  }
   h = qMax(h, sz.height());
   //opt.rect.setSize(QSize(w, h)); // PM_MenuButtonIndicator depends on the height
   QSize buttonSize = (style()->sizeFromContents(QStyle::CT_PushButton, &opt, QSize(w, h), this).
@@ -458,14 +458,14 @@ QSize ctkCollapsibleButton::minimumSizeHint()const
   Q_D(const ctkCollapsibleButton);
   QSize buttonSize = this->buttonSizeHint();
   if (d->Collapsed)
-    {
+  {
     return buttonSize + QSize(0,d->CollapsedHeight);
-    }
+  }
   // open
   if (this->layout() == 0)
-    {// no layout, means the button is empty ?
+  {// no layout, means the button is empty ?
     return buttonSize;
-    }
+  }
   QSize s = this->QAbstractButton::minimumSizeHint();
   return s.expandedTo(buttonSize);
 }
@@ -476,9 +476,9 @@ QSize ctkCollapsibleButton::sizeHint()const
   Q_D(const ctkCollapsibleButton);
   QSize buttonSize = this->buttonSizeHint();
   if (d->Collapsed)
-    {
+  {
     return buttonSize + QSize(0,d->CollapsedHeight);
-    }
+  }
   // open
   // QAbstractButton works well only if a layout is set
   QSize s = this->QAbstractButton::sizeHint();
@@ -501,38 +501,38 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
   // same as this->underMouse()
   bool exclusiveMouseOver = false;
   if (opt.state & QStyle::State_MouseOver)
-    {
+  {
     QRect buttonRect = opt.rect;
     QList<QWidget*> _children = this->findChildren<QWidget*>();
     QList<QWidget*>::ConstIterator it;
     for (it = _children.constBegin(); it != _children.constEnd(); ++it )
-      {
+    {
       if ((*it)->underMouse())
-        {
+      {
         // the mouse has been moved from the collapsible button to one
         // of its children. The paint event rect is the child rect, this
         // is why we have to request another paint event to redraw the
         // button to remove the highlight effect.
         if (!_event->rect().contains(buttonRect))
-          {// repaint the button rect.
+        {// repaint the button rect.
           this->update(buttonRect);
-          }
+        }
         opt.state &= ~QStyle::State_MouseOver;
         exclusiveMouseOver = true;
         break;
-        }
       }
+    }
     if (d->ExclusiveMouseOver && !exclusiveMouseOver)
-      {
+    {
       // the mouse is over the widget, but not over the children. As it
       // has been de-highlighted in the past, we should refresh the button
       // rect to re-highlight the button.
       if (!_event->rect().contains(buttonRect))
-        {// repaint the button rect.
+      {// repaint the button rect.
         this->update(buttonRect);
-        }
       }
     }
+  }
   d->ExclusiveMouseOver = exclusiveMouseOver;
   QSize indicatorSize = QSize(style()->pixelMetric(QStyle::PM_IndicatorWidth, &opt, this),
                               style()->pixelMetric(QStyle::PM_IndicatorHeight, &opt, this));
@@ -543,13 +543,13 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
   int buttonHeight = opt.rect.height();
   uint tf = d->TextAlignment;
   if (this->style()->styleHint(QStyle::SH_UnderlineShortcut, &opt, this))
-    {
+  {
     tf |= Qt::TextShowMnemonic;
-    }
+  }
   else
-    {
+  {
     tf |= Qt::TextHideMnemonic;
-    }
+  }
   int textWidth = opt.fontMetrics.boundingRect(opt.rect, tf, opt.text).width();
   int indicatorSpacing = this->style()->pixelMetric(QStyle::PM_CheckBoxLabelSpacing, &opt, this);
   int buttonMargin = this->style()->pixelMetric(QStyle::PM_ButtonMargin, &opt, this);
@@ -557,86 +557,86 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
   QStyleOption indicatorOpt;
   indicatorOpt.init(this);
   if (d->IndicatorAlignment & Qt::AlignLeft)
-    {
+  {
     indicatorOpt.rect = QRect((buttonHeight - indicatorSize.width()) / 2,
                               (buttonHeight - indicatorSize.height()) / 2,
                               indicatorSize.width(), indicatorSize.height());
-    }
+  }
   else if (d->IndicatorAlignment & Qt::AlignHCenter)
-    {
+  {
     int w = indicatorSize.width();
     if (!opt.text.isEmpty() && (d->TextAlignment & Qt::AlignHCenter))
-      {
+    {
       w += textWidth + indicatorSpacing;
-      }
+    }
     indicatorOpt.rect = QRect(opt.rect.x()+ opt.rect.width() /2 - w / 2,
                               (buttonHeight - indicatorSize.height()) / 2,
                               indicatorSize.width(), indicatorSize.height());
     if (d->TextAlignment & Qt::AlignLeft &&
         indicatorOpt.rect.left() < opt.rect.x() + buttonMargin + textWidth)
-      {
+    {
       indicatorOpt.rect.moveLeft(opt.rect.x() + buttonMargin + textWidth);
-      }
+    }
     else if (d->TextAlignment & Qt::AlignRight &&
              indicatorOpt.rect.right() > opt.rect.right() - buttonMargin - textWidth)
-      {
-      indicatorOpt.rect.moveRight(opt.rect.right() - buttonMargin - textWidth);
-      }
-    }
-  else if (d->IndicatorAlignment & Qt::AlignRight)
     {
+      indicatorOpt.rect.moveRight(opt.rect.right() - buttonMargin - textWidth);
+    }
+  }
+  else if (d->IndicatorAlignment & Qt::AlignRight)
+  {
     indicatorOpt.rect = QRect(opt.rect.width() - (buttonHeight - indicatorSize.width()) / 2
                                 - indicatorSize.width(),
                               (buttonHeight - indicatorSize.height()) / 2,
                               indicatorSize.width(), indicatorSize.height());
-    }
+  }
   if (d->Collapsed)
-    {
+  {
     style()->drawPrimitive(QStyle::PE_IndicatorArrowRight, &indicatorOpt, &p, this);
-    }
+  }
   else
-    {
+  {
     style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &indicatorOpt, &p, this);
-    }
+  }
 
   // Draw Text
   if (d->TextAlignment & Qt::AlignLeft)
-    {
+  {
     if (d->IndicatorAlignment & Qt::AlignLeft)
-      {
-      opt.rect.setLeft(indicatorOpt.rect.right() + indicatorSpacing);
-      }
-    else
-      {
-      opt.rect.setLeft(opt.rect.x() + buttonMargin);
-      }
-    }
-  else if (d->TextAlignment & Qt::AlignHCenter)
     {
-    if (d->IndicatorAlignment & Qt::AlignHCenter)
-      {
       opt.rect.setLeft(indicatorOpt.rect.right() + indicatorSpacing);
-      }
+    }
     else
-      {
+    {
+      opt.rect.setLeft(opt.rect.x() + buttonMargin);
+    }
+  }
+  else if (d->TextAlignment & Qt::AlignHCenter)
+  {
+    if (d->IndicatorAlignment & Qt::AlignHCenter)
+    {
+      opt.rect.setLeft(indicatorOpt.rect.right() + indicatorSpacing);
+    }
+    else
+    {
       opt.rect.setLeft(opt.rect.x() + opt.rect.width() / 2 - textWidth / 2);
       if (d->IndicatorAlignment & Qt::AlignLeft)
-        {
+      {
         opt.rect.setLeft( qMax(indicatorOpt.rect.right() + indicatorSpacing, opt.rect.left()) );
-        }
       }
     }
+  }
   else if (d->TextAlignment & Qt::AlignRight)
-    {
+  {
     if (d->IndicatorAlignment & Qt::AlignRight)
-      {
+    {
       opt.rect.setLeft(indicatorOpt.rect.left() - indicatorSpacing - textWidth);
-      }
-    else
-      {
-      opt.rect.setLeft(opt.rect.right() - buttonMargin - textWidth);
-      }
     }
+    else
+    {
+      opt.rect.setLeft(opt.rect.right() - buttonMargin - textWidth);
+    }
+  }
   // all the computations have been made inferring the text would be left oriented
   tf &= ~Qt::AlignHCenter & ~Qt::AlignRight;
   tf |= Qt::AlignLeft;
@@ -648,12 +648,12 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
   fopt.init(this);
   // HACK: on some styles, the frame doesn't exactly touch the button.
   // this is because the button has some kind of extra border.
-    {
+  {
     fopt.rect.setTop(buttonHeight);
-    }
+  }
   fopt.frameShape = d->ContentsFrameShape;
   switch (d->ContentsFrameShadow)
-    {
+  {
     case QFrame::Sunken:
       fopt.state |= QStyle::State_Sunken;
       break;
@@ -663,7 +663,7 @@ void ctkCollapsibleButton::paintEvent(QPaintEvent * _event)
     default:
     case QFrame::Plain:
       break;
-    }
+  }
   fopt.lineWidth = d->ContentsLineWidth;
   fopt.midLineWidth = d->ContentsMidLineWidth;
   style()->drawControl(QStyle::CE_ShapedFrame, &fopt, &p, this);
@@ -684,22 +684,22 @@ void ctkCollapsibleButton::childEvent(QChildEvent* c)
   QObject* child = c->child();
   if (c && c->type() == QEvent::ChildAdded &&
       child && child->isWidgetType())
-    {
+  {
     QWidget *childWidget = qobject_cast<QWidget*>(c->child());
     // Handle the case where the child has already it's visibility set before
     // being added to the widget
     if (childWidget->testAttribute(Qt::WA_WState_ExplicitShowHide) &&
         childWidget->testAttribute(Qt::WA_WState_Hidden))
-      {
+    {
       // if the widget has explicitly set to hidden, then mark it as such
       childWidget->setProperty("visibilityToParent", false);
-      }
+    }
     // We want to catch all the child's Show/Hide events.
     child->installEventFilter(this);
     // If the child is added while ctkCollapsibleButton is collapsed, then we
     // need to hide the child.
     d->setChildVisibility(childWidget);
-    }
+  }
   this->QAbstractButton::childEvent(c);
 }
 
@@ -719,17 +719,17 @@ void ctkCollapsibleButton::setVisible(bool show)
   // are correctly shown/hidden depending on their explicit visibility and
   // the collapsed property of the button.
   if (!d->IsStateCreated && this->testAttribute(Qt::WA_WState_Created))
-    {
+  {
     d->IsStateCreated = true;
     foreach(QObject* child, this->children())
-      {
+    {
       QWidget* childWidget = qobject_cast<QWidget*>(child);
       if (childWidget)
-        {
+      {
         d->setChildVisibility(childWidget);
-        }
       }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -740,9 +740,9 @@ bool ctkCollapsibleButton::eventFilter(QObject* child, QEvent* e)
   // Make sure the Show/QHide events are not generated by one of our
   // ctkCollapsibleButton function.
   if (d->ForcingVisibility)
-    {
+  {
     return false;
-    }
+  }
   // When we are here, it's because somewhere (not in ctkCollapsibleButton),
   // someone explicitly called setVisible() on a child widget.
   // If the collapsible button is collapsed/closed, then even if someone
@@ -753,17 +753,17 @@ bool ctkCollapsibleButton::eventFilter(QObject* child, QEvent* e)
   // is collapsed/closed, then we want to keep it hidden next time the
   // collapsible button is expanded/opened.
   if (e->type() == QEvent::ShowToParent)
-    {
+  {
     child->setProperty("visibilityToParent", true);
     Q_ASSERT(qobject_cast<QWidget*>(child));
     // force the widget to be hidden if the button is collapsed.
     d->setChildVisibility(qobject_cast<QWidget*>(child));
-    }
+  }
   else if(e->type() == QEvent::HideToParent)
-    {
+  {
     // we don't need to force the widget to be visible here.
     child->setProperty("visibilityToParent", false);
-    }
+  }
   return this->QWidget::eventFilter(child, e);
 }
 
@@ -776,12 +776,12 @@ bool ctkCollapsibleButton::event(QEvent *event)
       || event->type() == QEvent::MacSizeChange
 #endif
       )
-    {
+  {
     this->setContentsMargins(0, this->buttonSizeHint().height(),0 , 0);
     if (this->collapsed())
-      {
+    {
       this->setMaximumHeight(this->sizeHint().height());
-      }
     }
+  }
   return QAbstractButton::event(event);
 }

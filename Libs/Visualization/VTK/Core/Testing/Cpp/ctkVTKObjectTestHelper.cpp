@@ -71,17 +71,17 @@ bool ctkVTKObjectTest::test()
   qDebug() << "Connect:";
   QString connection = this->qvtkConnect(0, static_cast<unsigned long>(-1), this, SLOT(onVTKObjectModifiedPublic()));
   if (!connection.isEmpty())
-    {
+  {
     qDebug() << "ctkVTKObject::qvtkConnect() failed: "<< connection;
     return false;
-    }
+  }
   qDebug() << "Reconnect:";
   connection = this->qvtkReconnect(0, 0, static_cast<unsigned long>(-1), this, SLOT(onVTKObjectModifiedPublic()));
   if (!connection.isEmpty())
-    {
+  {
     qDebug() << "ctkVTKObject::qvtkReconnect() failed: "<< connection;
     return false;
-    }
+  }
   qDebug() << "End of possible error messages.";
 
   vtkObject* object = vtkObject::New();
@@ -93,9 +93,9 @@ bool ctkVTKObjectTest::test()
   vtkSmartPointer<vtkTimerLog> timerLog = vtkSmartPointer<vtkTimerLog>::New();
   timerLog->StartTimer();
   for (int i = 1; i <= numberOfConnections; ++i)
-    {
+  {
     this->qvtkConnect(object, i, this, SLOT(onVTKObjectModifiedPublic()));
-    }
+  }
   timerLog->StopTimer();
   double t1 = timerLog->GetElapsedTime();
   qDebug() << "  elapsed time: " << t1 << "seconds";
@@ -103,9 +103,9 @@ bool ctkVTKObjectTest::test()
   qDebug() << "Remove "<<numberOfConnections<<" connections...";
   timerLog->StartTimer();
   for (int i = numberOfConnections; i>=1 ; --i)
-    {
+  {
     this->qvtkDisconnect(object, i, this, SLOT(onVTKObjectModifiedPublic()));
-    }
+  }
   timerLog->StopTimer();
   t1 = timerLog->GetElapsedTime();
   qDebug() << "  elapsed time: " << t1 << "seconds";
@@ -113,36 +113,36 @@ bool ctkVTKObjectTest::test()
   connection = this->qvtkConnect(object, vtkCommand::ModifiedEvent,
                                  this, SLOT(onVTKObjectModifiedPublic()));
   if (connection.isEmpty() || object->GetReferenceCount() != 1)
-    {
+  {
     qDebug() << "ctkVTKObject::qvtkConnect() failed: "<< connection;
     return false;
-    }
+  }
 
   object->Modified();
 
   if (d->PublicSlotCalled != 1)
-    {
+  {
     qDebug() << "qvtkConnect failed";
     return false;
-    }
+  }
 
   this->resetSlotCalls();
   // should do nothing...
   connection = this->qvtkConnect(object, vtkCommand::ModifiedEvent,
                                  this, SLOT(onVTKObjectModifiedPublic()));
   if (!connection.isEmpty())
-    {
+  {
     qDebug() << __LINE__ << "ctkVTKObject::qvtkConnect() failed: "<< connection;
     return false;
-    }
+  }
 
   object->Modified();
 
   if (d->PublicSlotCalled != 1)
-    {
+  {
     qDebug() << __LINE__ << "qvtkConnect failed";
     return false;
-    }
+  }
 
   this->resetSlotCalls();
 
@@ -151,10 +151,10 @@ bool ctkVTKObjectTest::test()
   object->Modified();
 
   if (d->PublicSlotCalled != 1)
-    {
+  {
     qDebug() << __LINE__ << "qvtkDisconnect failed" << d->PublicSlotCalled;
     return false;
-    }
+  }
   this->resetSlotCalls();
 
   this->qvtkDisconnect(object, vtkCommand::ModifiedEvent,
@@ -163,28 +163,28 @@ bool ctkVTKObjectTest::test()
   object->Modified();
 
   if (d->PublicSlotCalled != 0)
-    {
+  {
     qDebug() << __LINE__ << "qvtkDisconnect failed" << d->PublicSlotCalled;
     return false;
-    }
+  }
   this->resetSlotCalls();
 
   // Set a new connection (protected)
   connection = this->qvtkConnect(object, vtkCommand::ModifiedEvent,
                                  this, SLOT(onVTKObjectModifiedProtected()));
   if (connection.isEmpty())
-    {
+  {
     qDebug() << __LINE__ << "ctkVTKObject::qvtkConnect() failed: "<< connection;
     return false;
-    }
+  }
 
   object->Modified();
 
   if (d->ProtectedSlotCalled != 1)
-    {
+  {
     qDebug() << __LINE__ << "ctkVTKObject::qvtkConnect failed" << d->ProtectedSlotCalled;
     return false;
-    }
+  }
   this->resetSlotCalls();
 
   // remove the connection using flags, 0 means any event, qt object or slot
@@ -192,10 +192,10 @@ bool ctkVTKObjectTest::test()
   object->Modified();
 
   if (d->ProtectedSlotCalled != 0)
-    {
+  {
     qDebug() << __LINE__ << "qvtkDisconnect failed" << d->ProtectedSlotCalled;
     return false;
-    }
+  }
   this->resetSlotCalls();
 
   // Set new connections
@@ -206,24 +206,24 @@ bool ctkVTKObjectTest::test()
   object->Modified();
   if (d->ProtectedSlotCalled != 1 ||
       d->PrivateSlotCalled != 1)
-    {
+  {
     qDebug() << __LINE__ << "qvtkConnect failed"
              << d->ProtectedSlotCalled
              << d->PrivateSlotCalled;
     return false;
-    }
+  }
   this->resetSlotCalls();
 
   // remove the connection using flags, 0 means any event, qt object or slot
   this->qvtkDisconnect(object, vtkCommand::ModifiedEvent, this, 0);
   object->Modified();
   if (d->ProtectedSlotCalled != 0 || d->PrivateSlotCalled != 0)
-    {
+  {
     qDebug() << __LINE__ << "qvtkDisconnect failed"
              << d->ProtectedSlotCalled
              << d->PrivateSlotCalled;
     return false;
-    }
+  }
   this->resetSlotCalls();
 
   // Set new connections
@@ -234,28 +234,28 @@ bool ctkVTKObjectTest::test()
   int disconnected = this->qvtkDisconnect(object, vtkCommand::NoEvent,
                                           this, SLOT(onVTKObjectModifiedPublic()));
   if (disconnected != 2)
-    {
+  {
     qDebug() << __LINE__ << "qvtkDisconnect failed" << disconnected;
     return false;
-    }
+  }
 
   object->InvokeEvent(vtkCommand::ModifiedEvent, 0);
   object->InvokeEvent(vtkCommand::WarningEvent, 0);
 
   if (d->PublicSlotCalled != 0)
-    {
+  {
     qDebug() << __LINE__ << "qvtkConnect failed"
              << d->PublicSlotCalled;
     return false;
-    }
+  }
   this->resetSlotCalls();
 
   disconnected = this->qvtkDisconnectAll();
   if (disconnected != 0)
-    {
+  {
     qDebug() << __LINE__ << "qvtkDisconnectAll failed" << disconnected;
     return false;
-    }
+  }
   this->qvtkConnect(object, vtkCommand::ModifiedEvent,
                     this, SLOT(deleteConnection()));
   object->InvokeEvent(vtkCommand::ModifiedEvent, 0);

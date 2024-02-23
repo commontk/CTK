@@ -94,17 +94,17 @@ QString ctkColorPickerButtonPrivate::text()const
 {
   Q_Q(const ctkColorPickerButton);
   if (!this->DisplayColorName)
-    {
+  {
     return q->text();
-    }
+  }
   if (this->ColorName.isEmpty())
-    {
+  {
     return this->Color.name();
-    }
+  }
   else
-    {
+  {
     return this->ColorName;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -156,29 +156,29 @@ void ctkColorPickerButton::changeColor()
   options |= QColorDialog::ColorDialogOption(
     static_cast<int>(d->DialogOptions & DontUseNativeDialog));
   if (d->DialogOptions & UseCTKColorDialog)
-    {
+  {
     newColor = ctkColorDialog::getColor(d->Color, this, QString(""),options);
     newColorName = ctkColorDialog::getColorName();
-    }
+  }
   else
-    {
+  {
     newColor = QColorDialog::getColor(d->Color, this, QString(""), options);
-    }
+  }
   if (newColor.isValid())
-    {
+  {
     this->setColor(newColor);
     this->setColorName(newColorName);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void ctkColorPickerButton::onToggled(bool change)
 {
   if (change)
-    {
+  {
     this->changeColor();
     this->setChecked(false);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -217,9 +217,9 @@ void ctkColorPickerButton::setColor(const QColor& newColor)
 {
   Q_D(ctkColorPickerButton);
   if (newColor == d->Color)
-    {
+  {
     return;
-    }
+  }
 
   d->Color = newColor;
   d->computeIcon();
@@ -240,9 +240,9 @@ void ctkColorPickerButton::setColorName(const QString& newColorName)
 {
   Q_D(ctkColorPickerButton);
   if (newColorName == d->ColorName)
-    {
+  {
     return;
-    }
+  }
 
   d->ColorName = newColorName;
   d->CachedSizeHint = QSize();
@@ -275,13 +275,13 @@ QSize ctkColorPickerButton::sizeHint()const
 {
   Q_D(const ctkColorPickerButton);
   if (!d->DisplayColorName && !this->text().isEmpty())
-    {
+  {
     return this->QPushButton::sizeHint();
-    }
+  }
   if (d->CachedSizeHint.isValid())
-    {
+  {
     return d->CachedSizeHint;
-    }
+  }
 
   // If no text, the sizehint is a QToolButton sizeHint
   QStyleOptionButton pushButtonOpt;
@@ -289,7 +289,7 @@ QSize ctkColorPickerButton::sizeHint()const
   pushButtonOpt.text = d->text();
   int iconSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
   if (pushButtonOpt.text == QString())
-    {
+  {
     QStyleOptionToolButton opt;
     (&opt)->QStyleOption::operator=(pushButtonOpt);
     opt.arrowType = Qt::NoArrow;
@@ -299,15 +299,15 @@ QSize ctkColorPickerButton::sizeHint()const
     d->CachedSizeHint = this->style()->sizeFromContents(
       QStyle::CT_ToolButton, &opt, opt.iconSize, this).
       expandedTo(QApplication::globalStrut());
-    }
+  }
   else
-    {
+  {
     pushButtonOpt.icon = d->Icon;
     pushButtonOpt.iconSize = QSize(iconSize, iconSize);
     pushButtonOpt.rect.setSize(pushButtonOpt.iconSize); // PM_MenuButtonIndicator depends on the height
     d->CachedSizeHint = (style()->sizeFromContents(
                            QStyle::CT_PushButton, &pushButtonOpt, pushButtonOpt.iconSize, this).
                          expandedTo(QApplication::globalStrut()));
-    }
+  }
   return d->CachedSizeHint;
 }

@@ -43,10 +43,10 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkTransferFunctionItem* widget = reinterpret_cast<ctkTransferFunctionItem*>(data);
 
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -69,9 +69,9 @@ int ctkTransferFunctionItemEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

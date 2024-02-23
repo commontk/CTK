@@ -41,7 +41,7 @@ public Q_SLOTS:
       return;
     this->Checked = check;
     emit toggled(this->Checked);
-  }
+}
 Q_SIGNALS:
   void toggled(bool);
 private:

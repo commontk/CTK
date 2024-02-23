@@ -51,10 +51,10 @@ bool buttonClickTestSignalSlot(QApplication& app, int defaultTime, ctkWorkflowWi
 
   // // ensure we are in the correct step
   if (workflow->currentStep() != currentStep)
-    {
+  {
     std::cerr << "In incorrect step" << std::endl;
     return false;
-    }
+  }
 
   // ensure that the widgets of the current step are visible
   if ((currentStep && (!shownStepArea || !shownStepArea->isVisible()))
@@ -64,82 +64,82 @@ bool buttonClickTestSignalSlot(QApplication& app, int defaultTime, ctkWorkflowWi
       || !nextButton->isVisible()
       || (finishButton1 && !finishButton1->isVisible())
       || (finishButton2 && !finishButton2->isVisible()))
-    {
+  {
     std::cerr << "Incorrect widget visibility - the current step's widgets are invisible" << std::endl;
     return false;
-    }
+  }
 
   // ensure that buttons are appropriately enabled
   // TODO finish buttons
   if ((workflow->canGoBackward() != backButton->isEnabled()) || (workflow->canGoForward() != nextButton->isEnabled()) || (shownLineEdit && !shownLineEdit->isEnabled()))
-    {
+  {
     std::cerr << "Incorrect widget visibility - the buttons are incorrectly enabled" << std::endl;
     return false;
-    }
+  }
 
   // ensure that the currentStep step's name and description are shown in
   // the widget
   ctkWorkflowGroupBox* groupBox;
   if (ctkWorkflowAbstractPagedWidget* pagedWidget = qobject_cast<ctkWorkflowAbstractPagedWidget*>(workflowWidget))
-    {
+  {
     groupBox = pagedWidget->workflowGroupBox(currentStep);
-    }
+  }
   else
-    {
+  {
     groupBox = workflowWidget->workflowGroupBox();
-    }
+  }
   Q_ASSERT(groupBox);
 
   if (currentStep->name() != groupBox->title() || currentStep->description() != groupBox->subTitle())
-    {
+  {
     std::cerr << "Incorrect widget title/subtitle" << std::endl;
     return false;
-    }
+  }
 
   // ensure that the finish button has an icon
   if ((finishButton1 && finishButton1->icon().isNull()) || (finishButton2 && finishButton2->icon().isNull()))
-    {
+  {
     std::cerr << "Incorrect finish icon visibility" << std::endl;
     return false;
-    }
+  }
 
   // ensure that widgets of the other step are either invisible, or
   // visible but disabled
   if (hiddenStepArea)
-    {
+  {
     if (hiddenStepArea->isVisible() && groupBox->hideWidgetsOfNonCurrentSteps())
-      {
+    {
       std::cerr << "Incorrect widget visibility - the other step's stepArea is showing" << std::endl;
       return false;
-      }
+    }
     else if (hiddenStepArea->isVisible() && hiddenStepArea->isEnabled())
-      {
+    {
       std::cerr << "Incorrect widget visibility - the other step's stepArea is enabled" << std::endl;
       return false;
-      }
     }
+  }
   if (hiddenLabel)
-    {
+  {
     if (hiddenLabel->isVisible() && groupBox->hideWidgetsOfNonCurrentSteps())
-      {
+    {
       std::cerr << "Incorrect widget visibility - the other step's label is showing" << std::endl;
       return false;
-      }
     }
+  }
 
   if (hiddenLineEdit)
-    {
+  {
     if (hiddenLineEdit->isVisible() && groupBox->hideWidgetsOfNonCurrentSteps())
-      {
+    {
       std::cerr << "Incorrect widget visibility - the other step's lineEdit is showing" << std::endl;
       return false;
-      }
+    }
     else if (hiddenLineEdit->isVisible() && hiddenLineEdit->isEnabled())
-      {
+    {
       std::cerr << "Incorrect widget visibility - the other step's lineEdit is enabled" << std::endl;
       return false;
-      }
     }
+  }
 
   return true;
 }
@@ -169,22 +169,22 @@ struct signalSlotTestData
   bool runTest(QApplication& app, int defaultTime, ctkWorkflow* workflow, ctkWorkflowWidget* workflowWidget, QPushButton* backButton, QPushButton* nextButton, QPushButton* finishButton1=0, QPushButton* finishButton2=0)
   {
     if (this->qObjectToChangeLineEdit)
-      {
+    {
       this->qObjectToChangeLineEdit->lineEdit()->setText(lineEditText);
-      }
+    }
     if (this->buttonToClick)
-      {
+    {
       this->buttonToClick->click();
-      }
+    }
 
     if (this->currentStep)
-      {
+    {
       return buttonClickTestSignalSlot(app, defaultTime, this->currentStep, this->currentStep->stepArea(), this->currentQObject->lineEdit(), this->currentQObject->label(), this->hiddenStep->stepArea(), this->hiddenQObject->lineEdit(), this->hiddenQObject->label(), workflow, workflowWidget, backButton, nextButton, finishButton1, finishButton2);
-      }
+    }
     else
-      {
+    {
       return buttonClickTestSignalSlot(app, defaultTime, this->currentStep, 0, 0, 0, this->hiddenStep->stepArea(), this->hiddenQObject->lineEdit(), this->hiddenQObject->label(), workflow, workflowWidget, backButton, nextButton, finishButton1, finishButton2);
-      }
+    }
   }
 };
 
@@ -234,12 +234,12 @@ int userInteractionSimulator1(QApplication& app, ctkWorkflowWidgetStep* step1, c
         << new signalSlotTestData(nextButton, step2, qObject2, step1, qObject1, qObject1, "100");
 
   foreach (signalSlotTestData* test, tests)
-    {
+  {
     if (!test->runTest(app, defaultTime, workflow, workflowWidget, backButton, nextButton))
-      {
+    {
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // TODO
   // // after adding the steps, then the widget's client area should have
@@ -265,26 +265,26 @@ int userInteractionSimulator2(QApplication& app, ctkWorkflowWidgetStep* step1, c
 {
   // ensure we can get the pages/layouts we may want
   if (ctkWorkflowAbstractPagedWidget* pagedWidget = qobject_cast<ctkWorkflowAbstractPagedWidget*>(workflowWidget))
-    {
+  {
     if (!pagedWidget->workflowGroupBox(step1))
-      {
+    {
       std::cerr << "could not access widget for page 1" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
     if (!pagedWidget->workflowGroupBox(step1)->clientAreaLayout())
-      {
+    {
       std::cerr << "could not access client area layout for page 1" << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
   else
-    {
+  {
     if (!workflowWidget->workflowGroupBox()->clientAreaLayout())
-      {
+    {
       std::cerr << "could not access client area layout" << std::endl;
       return EXIT_FAILURE;
-      }
     }
+  }
 
   QPushButton* backButton = workflowWidget->buttonBoxWidget()->backButton();
   QPushButton* nextButton = workflowWidget->buttonBoxWidget()->nextButton();
@@ -381,12 +381,12 @@ int userInteractionSimulator2(QApplication& app, ctkWorkflowWidgetStep* step1, c
         << new signalSlotTestData(finishButton, step1, qObject1, step3, qObject3, qObject3, "0");
 
   foreach (signalSlotTestData* test, tests)
-    {
+  {
     if (!test->runTest(app, defaultTime, workflow, workflowWidget, backButton, nextButton, finishButton))
-      {
+    {
       return EXIT_FAILURE;
-      }
     }
+  }
 
 
   // TODO
@@ -564,9 +564,9 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
   step1->setName("Step 1");
   step1->setDescription("I am in step 1");
   if (ctkWorkflowTabWidget* tabWidget = qobject_cast<ctkWorkflowTabWidget*>(workflowWidget))
-    {
+  {
     tabWidget->associateStepWithLabel(step1, "tab1");
-    }
+  }
 
   // step1 is the initial step
   workflow->setInitialStep(step1);
@@ -577,9 +577,9 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
   step2->setName("Step 2");
   step2->setDescription("I am in step 2");
   if (ctkWorkflowTabWidget* tabWidget = qobject_cast<ctkWorkflowTabWidget*>(workflowWidget))
-    {
+  {
     tabWidget->associateStepWithLabel(step2, "tab2");
-    }
+  }
 
   // add the steps to the workflow
   workflow->addTransition(step1, step2);
@@ -645,9 +645,9 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 
   // first user interaction test
   if (userInteractionSimulator1(app, step1, qObject1, step2, qObject2, workflow, workflowWidget, defaultTime) == EXIT_FAILURE)
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   // stop the workflow
   workflow->stop();
@@ -660,13 +660,13 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
   step3->setName("Step 3");
   step3->setDescription("I am in step 3");
   if (ctkWorkflowStackedWidget* stackedWidget = qobject_cast<ctkWorkflowStackedWidget*>(workflowWidget))
-    {
+  {
     stackedWidget->associateStepWithPage(step3, 1);
-    }
+  }
   else if (ctkWorkflowTabWidget* tabWidget = qobject_cast<ctkWorkflowTabWidget*>(workflowWidget))
-    {
+  {
     tabWidget->associateStepWithPage(step3, 1, "tab2");
-    }
+  }
 
   // icon test - add an icon to step3, should show up as a icon on the finish button
   step3->setIcon(step3->stepArea()->style()->standardIcon(QStyle::SP_ArrowUp));
@@ -707,9 +707,9 @@ int ctkWorkflowWidgetTest2(int argc, char * argv [] )
 
   // second user interaction test
   if (userInteractionSimulator2(app, step1, qObject1, step2, qObject2, step3, qObject3, workflow, workflowWidget, defaultTime) == EXIT_FAILURE)
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   // stop the workflow
   workflow->stop();

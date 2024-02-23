@@ -69,15 +69,15 @@ int ctkWidgetsUtilsTestGrabWidget(int argc, char * argv [] )
     ctk::grabWidget(&parentWidget);
 
   if (QColor(screenshot.pixel(100, 100)) != QColor(Qt::black))
-    {
+  {
     std::cout << "Failed to grab QGLWidget, pixel at (100,100)="
               << std::hex << screenshot.pixel(100, 100) << " " << QColor(Qt::black).rgb() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(100, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

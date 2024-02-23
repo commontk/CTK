@@ -54,7 +54,7 @@ class CTK_VISUALIZATION_VTK_WIDGETS_PLUGINS_EXPORT ctkVTKWidgetsPlugins
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkVTKDataSetArrayComboBoxPlugin;
     plugins << new ctkVTKMagnifyViewPlugin;
@@ -72,7 +72,7 @@ public:
     plugins << new ctkVTKTextPropertyWidgetPlugin;
     plugins << new ctkVTKThresholdWidgetPlugin;
     return plugins;
-    }
+  }
 };
 
 #endif

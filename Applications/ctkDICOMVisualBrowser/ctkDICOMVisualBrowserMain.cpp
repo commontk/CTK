@@ -49,31 +49,31 @@ int main(int argc, char** argv)
 
   // set up the database
   if (argc > 1)
-    {
+  {
     QString directory(argv[1]);
     settings.setValue("DatabaseDirectory", directory);
     settings.sync();
-    }
+  }
 
   if (settings.value("DatabaseDirectory", "") == "")
-    {
+  {
     databaseDirectory = QString("./ctkDICOM-Database");
     std::cerr << "No DatabaseDirectory on command line or in settings.  Using \"" << qPrintable(databaseDirectory) << "\".\n";
-    }
+  }
   else
-    {
+  {
     databaseDirectory = settings.value("DatabaseDirectory", "").toString();
-    }
+  }
 
   QDir qdir(databaseDirectory);
   if (!qdir.exists(databaseDirectory))
-    {
+  {
     if (!qdir.mkpath(databaseDirectory))
-      {
+    {
       std::cerr << "Could not create database directory \"" << qPrintable(databaseDirectory) << "\".\n";
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // set up Qt resource files
   QResource::registerResource("./Resources/ctkDICOM.qrc");

@@ -200,10 +200,10 @@ int ctkFittedTextBrowser::heightForWidth(int _width) const
 QSize ctkFittedTextBrowser::minimumSizeHint() const {
   QSize s(this->size().width(), 0);
   if (s.width() == 0)
-    {
+  {
     //s.setWidth(400); // arbitrary value
     return QTextBrowser::minimumSizeHint();
-    }
+  }
   s.setHeight(this->heightForWidth(s.width()));
   return s;
 }
@@ -218,9 +218,9 @@ void ctkFittedTextBrowser::resizeEvent(QResizeEvent* e)
 {
   this->QTextBrowser::resizeEvent(e);
   if (e->size().height() != this->heightForWidth(e->size().width()))
-    {
+  {
     this->heightForWidthMayHaveChanged();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

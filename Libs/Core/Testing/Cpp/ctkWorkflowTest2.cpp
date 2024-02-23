@@ -35,36 +35,36 @@
 int numberOfTimesEntryExitTest(ctkExampleWorkflowStepUsingSignalsAndSlots* step1=0, int step1Entry=0, int step1Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step2=0, int step2Entry=0, int step2Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step4=0, int step4Entry=0, int step4Exit=0)
 {
   if (step1)
-    {
+  {
     if (step1->numberOfTimesRanOnEntry() != step1Entry || step1->numberOfTimesRanOnExit() != step1Exit)
-      {
+    {
       return 0;
-      }
     }
+  }
 
   if (step2)
-    {
+  {
     if (step2->numberOfTimesRanOnEntry() != step2Entry || step2->numberOfTimesRanOnExit() != step2Exit)
-      {
+    {
       return 0;
-      }
     }
+  }
 
   if (step3)
-    {
+  {
     if (step3->numberOfTimesRanOnEntry() != step3Entry || step3->numberOfTimesRanOnExit() != step3Exit)
-      {
+    {
       return 0;
-      }
     }
+  }
 
   if (step4)
-    {
+  {
     if (step4->numberOfTimesRanOnEntry() != step4Entry || step4->numberOfTimesRanOnExit() != step4Exit)
-      {
+    {
       return 0;
-      }
     }
+  }
 
   return 1;
 }
@@ -73,12 +73,12 @@ int numberOfTimesEntryExitTest(ctkExampleWorkflowStepUsingSignalsAndSlots* step1
 int currentStepAndNumberOfTimesEntryExitTest(ctkWorkflow* workflow, ctkWorkflowStep* expectedStep, ctkExampleWorkflowStepUsingSignalsAndSlots* step1, int step1Entry, int step1Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step2, int step2Entry, int step2Exit, ctkExampleWorkflowStepUsingSignalsAndSlots* step3=0, int step3Entry=0, int step3Exit=0, ctkExampleWorkflowStepUsingSignalsAndSlots* step4=0, int step4Entry=0, int step4Exit=0)
 {
   if (expectedStep)
-    {
+  {
     if (workflow->currentStep() != expectedStep)
-      {
+    {
       return 0;
-      }
     }
+  }
   return numberOfTimesEntryExitTest(step1, step1Entry, step1Exit, step2, step2Entry, step2Exit, step3, step3Entry, step3Exit, step4, step4Entry, step4Exit);
 }
 
@@ -97,9 +97,9 @@ int testStartWorkflow(ctkWorkflow* workflow, int defaultTime, bool shouldRun, ct
   QTimer::singleShot(defaultTime, qApp, SLOT(quit()));
   qApp->exec();
   if (workflow->isRunning() != shouldRun)
-    {
+  {
     return 0;
-    }
+  }
   return currentStepAndNumberOfTimesEntryExitTest(workflow, expectedStep, step1, step1Entry, step1Exit, step2, step2Entry, step2Exit, step3, step3Entry, step3Exit, step4, step4Entry, step4Exit);
 }
 
@@ -110,9 +110,9 @@ int testStopWorkflow(ctkWorkflow* workflow, int defaultTime, ctkExampleWorkflowS
   QTimer::singleShot(defaultTime, qApp, SLOT(quit()));
   qApp->exec();
   if (workflow->isRunning())
-    {
+  {
     return 0;
-    }
+  }
   return numberOfTimesEntryExitTest(step1, step1Entry, step1Exit, step2, step2Entry, step2Exit, step3, step3Entry, step3Exit, step4, step4Entry, step4Exit);
 }
 
@@ -206,62 +206,62 @@ int ctkWorkflowTest2(int argc, char * argv [] )
 
   // add the first and second steps
   if (!workflow->addTransition(step1, step2))
-    {
+  {
     std::cerr << "could not add 1st and 2nd step" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // add the third step
   if (!workflow->addTransition(step2, step3))
-    {
+  {
     std::cerr << "could not add 3rd step" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // add the fourth step
   if (!workflow->addTransition(step3, step4))
-    {
+  {
     std::cerr << "could not add 4th step" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // start the workflow
   if (!testStartWorkflow(workflow, defaultTime, 1, step1, qObject1, true, 0, qObject2, 0, 0, qObject3, 0, 0, qObject4, 0, 0))
-    {
+  {
     std::cerr << "error starting workflow";
     return EXIT_FAILURE;
-    }
+  }
 
   // trigger transition to the next step
   workflow->goForward();
   if (!transitionTest(workflow, defaultTime, step2, qObject1, 1, 1, qObject2, 1, 0, qObject3, 0, 0, qObject4, 0, 0))
-    {
+  {
     std::cerr << "error transitioning to step 2";
     return EXIT_FAILURE;
-    }
+  }
 
   // trigger transition to the next step
   workflow->goForward();
   if (!transitionTest(workflow, defaultTime, step3, qObject1, 1, 1, qObject2, 1, 1, qObject3, 1, 0, qObject4, 0, 0))
-    {
+  {
     std::cerr << "error transitioning to step 3";
     return EXIT_FAILURE;
-    }
+  }
 
   // trigger transition to the next state (this should fail!)
   workflow->goForward();
   if (!transitionTest(workflow, defaultTime, step3, qObject1, 1, 1, qObject2, 1, 1, qObject3, 1, 0, qObject4, 0, 0))
-    {
+  {
     std::cerr << "error after transition failure at step 3";
     return EXIT_FAILURE;
-    }
+  }
 
   // make sure the workflow stops properly
   if (!testStopWorkflow(workflow, defaultTime, qObject1, 1, 1, qObject2, 1, 1, qObject3, 1, 1, qObject4, 0, 0))
-    {
+  {
     std::cerr << "error after stopping workflow";
     return EXIT_FAILURE;
-    }
+  }
 
   // handles deletions of the workflow, steps, states and transitions
   delete workflow;

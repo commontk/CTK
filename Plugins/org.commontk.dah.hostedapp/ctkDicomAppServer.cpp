@@ -49,9 +49,9 @@ ctkDicomAppServer::ctkDicomAppServer(int port, QString path)
           this, SLOT(incomingWSDLMessage(QString,QString*)));
 
   if (!this->Server.listen(QHostAddress::LocalHost, this->Port))
-    {
+  {
     qCritical() << "Listening to 127.0.0.1:" << port << " failed.";
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -69,7 +69,7 @@ void ctkDicomAppServer::incomingWSDLMessage(
     QFile wsdlfile(":/dah/ApplicationService-20100825.wsdl");
     wsdlfile.open(QFile::ReadOnly | QFile::Text);
     if(wsdlfile.isOpen())
-      {
+    {
       QTextStream textstream(&wsdlfile);
       *reply = textstream.readAll();
       QString actualURL="http://localhost:";
@@ -78,17 +78,17 @@ void ctkDicomAppServer::incomingWSDLMessage(
       reply->replace("REPLACE_WITH_ACTUAL_URL",actualURL);
       reply->replace("ApplicationService-20100825.xsd",actualURL+"?xsd=1");
       //reply->replace("<soap:body use=\"literal\"/>","<soap:body use=\"literal\"></soap:body>");
-      }
+    }
   }
   else if (message == "?xsd=1")
   {
     QFile wsdlfile(":/dah/HostService-20100825.xsd");
     wsdlfile.open(QFile::ReadOnly | QFile::Text);
     if(wsdlfile.isOpen())
-      {
+    {
       QTextStream textstream(&wsdlfile);
       *reply = textstream.readAll();
-      }
+    }
   }
 }
 
@@ -108,11 +108,11 @@ ctkDicomAppInterface* ctkDicomAppServer::addingService(const ctkServiceReference
   QMutexLocker lock(&this->Mutex);
 
   if (this->AppInterfaceRegistered)
-    {
+  {
     //TODO maybe use ctkLogService
     qWarning() << "A ctkDicomAppInterface service has already been added";
     return 0;
-    }
+  }
   this->AppInterfaceRegistered = true;
   ctkDicomAppInterface* appInterface = ctkDicomAppPlugin::getPluginContext()->getService<ctkDicomAppInterface>(reference);
   this->Processors.push_back(new ctkAppSoapMessageProcessor(appInterface));

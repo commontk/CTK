@@ -45,10 +45,10 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkConsole* widget = reinterpret_cast<ctkConsole*>(data);
   Q_UNUSED(widget);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -73,9 +73,9 @@ int ctkConsoleEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

@@ -47,7 +47,7 @@ struct ctkEACacheMap
   const V value(const K& key, const V& defaultValue) const
   {
     return static_cast<const Impl*>(this)->value(key, defaultValue);
-    }
+  }
 
   /**
    * Add a value for the key to this cache.

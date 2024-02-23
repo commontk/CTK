@@ -36,70 +36,70 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
   QCoreApplication app(argc, argv);
 
   if (argc <= 1)
-    {
+  {
     std::cerr << "Missing argument" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   QString filePath(argv[1]);
   QFileInfo file(filePath);
   while (filePath.contains("$(OutDir)"))
-    {
+  {
     QString debugFilePath = filePath;
     debugFilePath.replace("$(OutDir)","Debug");
     if (QFile::exists(QString(debugFilePath)))
-      {
+    {
       file = QFileInfo(debugFilePath);
       break;
-      }
+    }
     QString releaseFilePath = filePath;
     releaseFilePath.replace("$(OutDir)","Release");
     if (QFile::exists(QString(releaseFilePath)))
-      {
+    {
       file = QFileInfo(releaseFilePath);
       break;
-      }
-    return EXIT_FAILURE;
     }
+    return EXIT_FAILURE;
+  }
   ctkAbstractPluginFactory< ctkDummyPlugin > pluginFactory;
   pluginFactory.setVerbose(true);
 
   QString itemKey = pluginFactory.registerFileItem(QFileInfo("foo/bar.txt"));
   if (!itemKey.isEmpty())
-    {
+  {
     std::cerr << "ctkAbstractPluginFactory::registerLibrary() registered bad file"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   itemKey = pluginFactory.registerFileItem(file);
   if (itemKey.isEmpty() || pluginFactory.itemKeys().count() != 1)
-    {
+  {
     std::cerr << __LINE__ << ": ctkAbstractPluginFactory::registerLibrary() failed: "
               << pluginFactory.itemKeys().count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // register twice must return false
   itemKey = pluginFactory.registerFileItem(file);
   if (itemKey.isEmpty() || pluginFactory.itemKeys().count() != 1)
-    {
+  {
     std::cerr << __LINE__ << ": ctkAbstractPluginFactory::registerLibrary() failed: "
               << qPrintable(itemKey) << " count: "
               << pluginFactory.itemKeys().count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (QFileInfo(pluginFactory.path(itemKey)) != file)
-    {
+  {
     std::cerr << __LINE__ << ": ctkAbstractPluginFactory::registerLibrary() failed: "
               << pluginFactory.path(itemKey).toStdString() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDummyPlugin* plugin = pluginFactory.instantiate(itemKey);
   if (plugin == 0)
-    {
+  {
     std::cerr << __LINE__ << ": ctkAbstractPluginFactory::instantiate() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   pluginFactory.uninstantiate(itemKey);
 
@@ -109,15 +109,15 @@ int ctkAbstractPluginFactoryTest1(int argc, char * argv [])
   // it should register but fail while instantiating
   itemKey = buttonPluginFactory.registerFileItem(file);
   if (itemKey.isEmpty() || buttonPluginFactory.itemKeys().count() != 1)
-    {
+  {
     std::cerr << __LINE__ << ": ctkAbstractPluginFactory::registerLibrary() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   QTimer* timer = buttonPluginFactory.instantiate("foo");
   if (timer != 0)
-    {
+  {
     std::cerr << __LINE__ << ": ctkAbstractPluginFactory::instantiate() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

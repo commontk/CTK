@@ -166,27 +166,27 @@ void ctkEventTranslatorPlayerWidget::record(int currentTestCase)
   Q_D(ctkEventTranslatorPlayerWidget);
   if(d->TestCase.count() == 0 ||
      currentTestCase > d->TestCase.count() - 1)
-    {
+  {
     qWarning() << "Problem with the test case. Please verify that you added a test case.";
     return;
-    }
+  }
 
   // We load the xml and check if it is different form the other test case
   QFile* filexml = new QFile(d->TestCase[currentTestCase]->FileName);
   if (!filexml->open(QIODevice::ReadWrite))
-    {
+  {
     qWarning() << "The file .xml was not created";
     return;
-    }
+  }
   for(int i = 0 ; i < currentTestCase && i != currentTestCase; i++)
-    {
+  {
     if (d->TestCase[i]->FileName ==
           d->TestCase[currentTestCase]->FileName)
-      {
+    {
       qWarning() << "This xml file should already recorded\n";
       return;
-      }
     }
+  }
 
   d->TestUtility->recordTests(filexml->fileName());
 }
@@ -196,27 +196,27 @@ bool ctkEventTranslatorPlayerWidget::play(int currentTestCase)
 {
   Q_D(ctkEventTranslatorPlayerWidget);
   if(d->TestCase.count() == 0)
-    {
+  {
     qWarning() << "No test case had been added. Please add a test case.";
     return false;
-    }
+  }
 
   // Connect the slot player done to the the good callback
   QObject::connect(this, SIGNAL(playerDone(QWidget*)),
                    d->TestCase[currentTestCase]->Callback, SLOT(invoke()));
 
   if (!QFile::exists(d->TestCase[currentTestCase]->FileName))
-    {
+  {
     qWarning() << "No .xml file for this test case";
     return false;
-    }
+  }
 
   if (!d->TestUtility->playTests(QStringList(d->TestCase[currentTestCase]->FileName)))
-    {
+  {
     qWarning() << "The Test case " << currentTestCase
                << " playback has failed !";
     return false;
-    }
+  }
   emit this->playerDone(d->TestCase[currentTestCase]->Widget);
 
   QObject::disconnect(d->TestCase[currentTestCase]->Callback);
@@ -229,10 +229,10 @@ void ctkEventTranslatorPlayerWidget::play()
   Q_D(ctkEventTranslatorPlayerWidget);
   bool success = true;
   for(int i = 0 ; i < d->TestCase.count() ; i++ )
-    {
+  {
     d->TestCaseComboBox->setCurrentIndex(i);
     success &= this->play(i);
-    }
+  }
   QApplication::exit(success ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
@@ -281,14 +281,14 @@ bool ctkEventTranslatorPlayerWidget::compare(const double &actual,
                                              const char * function, int line)
 {
   if (actual != expected)
-    {
+  {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected << ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
-    }
+  }
   return true;
 }
 
@@ -300,14 +300,14 @@ bool ctkEventTranslatorPlayerWidget::compare(const int &actual,
                                              const char * function, int line)
 {
   if (actual != expected)
-    {
+  {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected << ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
-    }
+  }
 //  enumValueToKey(widget, "Axis", currentCurrentAxis)
   return true;
 }
@@ -320,14 +320,14 @@ bool ctkEventTranslatorPlayerWidget::compare(const QString& actual,
                                              const char * function, int line)
 {
   if (actual != expected)
-    {
+  {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected << ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
-    }
+  }
 //  enumValueToKey(widget, "Axis", currentCurrentAxis)
   return true;
 }
@@ -340,14 +340,14 @@ bool ctkEventTranslatorPlayerWidget::compare(const QStringList& actual,
                                              const char * function, int line)
 {
   if (actual != expected)
-    {
+  {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual.join(" ") << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected.join(" ") << ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
-    }
+  }
 //  enumValueToKey(widget, "Axis", currentCurrentAxis)
   return true;
 }
@@ -360,14 +360,14 @@ bool ctkEventTranslatorPlayerWidget::compare(const QDateTime& actual,
                                              const char * function, int line)
 {
   if (actual != expected)
-    {
+  {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = " << actual.date().toString() << " \n"
         << "\tExpected value : '" << expectedName << "' = " << expected.date().toString() << ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
-    }
+  }
 //  enumValueToKey(widget, "Axis", currentCurrentAxis)
   return true;
 }
@@ -380,14 +380,14 @@ bool ctkEventTranslatorPlayerWidget::compare(const QColor& actual,
                                              const char * function, int line)
 {
   if (actual != expected)
-    {
+  {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - Problem with function " << function << "\n"
         << "\tActual value : '" << actualName << "' = R:" << actual.red() << " G:"<< actual.green() << " B:" << actual.blue() << "\n"
         << "\tExpected value : '" << expectedName << "' = R:" << expected.red() << " G:"<< expected.green() << " B:" << expected.blue()<< ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
-    }
+  }
 //  enumValueToKey(widget, "Axis", currentCurrentAxis)
   return true;
 }
@@ -403,55 +403,55 @@ bool ctkEventTranslatorPlayerWidget::compare(const QImage& actual,
 
   // images are considered the same if both contain a null image
   if (actual.isNull() && expected.isNull())
-    {
+  {
     return true;
-    }
+  }
   // images are not the same if one images contains a null image
   if (actual.isNull() || expected.isNull())
-    {
+  {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - 1 image is Null " << function << "\n" << ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
-    }
+  }
   // images do not have the same size
   if (actual.size() != expected.size())
-    {
+  {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - The 2 Images don't have the same size " << function << "\n"
         << "\tActual value : '" << actualName << "' = W:" << actual.width() << " H:"<< actual.height() << "\n"
         << "\tExpected value : '" << expectedName << "' = W:" << expected.width() << " H:"<< expected.height() << ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
-    }
+  }
 
   QImage a = actual.convertToFormat(QImage::Format_ARGB32);
   QImage e = expected.convertToFormat(QImage::Format_ARGB32);
 
   for ( int y=0; y<a.height(); y++ )
-    {
+  {
     for ( int x=0; x<a.width(); x++ )
-      {
+    {
       QRgb actPix = a.pixel(x, y);
       QRgb expPix = e.pixel(x, y);
       if (qAlpha(actPix) == 0 && qAlpha(expPix) == 0)
-        {
+      {
         continue;
-        }
+      }
       if (actPix != expPix)
-        {
+      {
         totaldiff ++;
-        }
       }
     }
+  }
   totaldiff = (totaldiff * 100)  / (a.width() * a.height());
   if (totaldiff >= 0.01)
-    {
+  {
     QTextStream(stderr, QIODevice::WriteOnly)
         << "Line " << line << " - The 2 Images have "
         << totaldiff << "% differences \n" << ctk::endl;
     QApplication::exit(EXIT_FAILURE);
     return false;
-    }
+  }
   return true;
 }

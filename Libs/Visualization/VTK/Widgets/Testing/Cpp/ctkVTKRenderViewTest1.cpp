@@ -81,8 +81,8 @@ int ctkVTKRenderViewTest1(int argc, char * argv [] )
   renderView.lookFromAxis(ctkAxesWidget::None);
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

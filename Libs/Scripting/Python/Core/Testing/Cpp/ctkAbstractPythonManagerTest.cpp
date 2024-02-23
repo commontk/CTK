@@ -141,9 +141,9 @@ void ctkAbstractPythonManagerTester::testPythonErrorOccured()
   QCOMPARE(this->PythonManager.pythonErrorOccured(), errorOccured);
 
   if(errorOccured)
-    {
+  {
     this->PythonManager.resetErrorFlag();
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -185,10 +185,10 @@ void ctkAbstractPythonManagerTester::testExecuteString()
 
   QCOMPARE(this->PythonManager.pythonErrorOccured(), errorOccured);
   if (errorOccured)
-    {
+  {
     this->PythonManager.resetErrorFlag();
     return;
-    }
+  }
   QCOMPARE(returnValue, expectedReturnValue);
   QCOMPARE(this->PythonManager.getVariable(expectedVariableName), expectedVariableValue);
 }
@@ -287,9 +287,9 @@ void ctkAbstractPythonManagerTester::testPythonAttributes()
   QStringList AttributeList = this->PythonManager.pythonAttributes(pythonVariableName, QString("__main__").toLatin1(), false);
 
   foreach (const QString& expectedAttribute, expectedAttributeList)
-    {
+  {
     QVERIFY(AttributeList.contains(expectedAttribute));
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -418,13 +418,13 @@ void ctkAbstractPythonManagerTester::testPythonModule()
   PyObject* returnedPyObject = this->PythonManager.pythonModule(inputModuleList);
   PyObject* returnedPyString;
   if(returnedPyObject)
-    {
+  {
     returnedPyString = PyObject_GetAttrString(returnedPyObject, "__name__");
-    }
+  }
   else
-    {
+  {
     returnedPyString = PyString_FromString("");
-    }
+  }
   QString returnedString = PyString_AsString(returnedPyString);
   QCOMPARE(returnedString, expectedReturnedString);
 }
@@ -464,13 +464,13 @@ void ctkAbstractPythonManagerTester::testPythonObject()
   PyObject* returnedPyObject = this->PythonManager.pythonObject(inputPythonVariableNameAndFunction);
   PyObject* returnedPyObjectString;
   if (returnedPyObject)
-    {
+  {
     returnedPyObjectString = PyObject_GetAttrString(returnedPyObject, "__name__");
-    }
+  }
   else
-    {
+  {
     returnedPyObjectString = PyString_FromString("");
-    }
+  }
   QString returnedString = PyString_AsString(returnedPyObjectString);
   QCOMPARE(returnedString, expectedReturnedString);
 }

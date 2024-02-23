@@ -46,80 +46,80 @@ bool ctkFileDialogEventPlayer::playEvent(QObject *object,
 {
   if (command == "FileOpen" || command == "DirOpen" ||
       command == "FileSave" || command == "FilesOpen")
-    {
+  {
     return this->Superclass::playEvent(object, command, arguments, error);
-    }
+  }
 
   if (command != "newFile" &&
       command != "rejected" &&
       command != "fileSave")
-    {
+  {
     return false;
-    }
+  }
 
   if(ctkFileDialog* const fileDialog = qobject_cast<ctkFileDialog*>(object))
-    {
+  {
     if (command == "newFile")
-      {
+    {
       // set the directory
       QStringList files;
 	  foreach(const QString& file, arguments.split("#"))
-	  {
+   {
         files.append(mUtil->convertFromDataDirectory(file));
-	  }
+   }
       QFileInfo infoFile(files.at(0));
       if(!infoFile.exists())
-        {
+      {
         qWarning() << "File does not exist or can't be found.";
         return false;
-        }
+      }
 	  fileDialog->setDirectory(infoFile.absoluteDir().absolutePath());
 	  if (fileDialog->directory() != infoFile.absoluteDir())
-        {
+   {
         qWarning() << "The Directory wasn't selected.";
-        }
+   }
       // select the file
       QList<QLineEdit*> line = object->findChildren<QLineEdit*>();
       if (line.count() > 0)
-        {
+      {
         QStringList text;
         foreach (QString file, files)
-          {
+        {
           QFileInfo info(file);
           text << info.fileName();
-          }
+        }
         QString lineText = "\"" + text.join("\" \"") + "\"";
         line[0]->setText(lineText);
 //        qDebug() << lineText;
-        }
+      }
       else
-        {
+      {
         qWarning() << "Files wasn't set in the line edit";
-        }
+      }
 
       QList<QPushButton*> buttons = object->findChildren<QPushButton*>();
       if(buttons.count() > 0)
-        {
+      {
         foreach(QPushButton* button, buttons)
-          {
+        {
           if(button->text().contains(tr("Open")) ||
              button->text().contains(tr("Ok")) ||
              button->text().contains(tr("Choose")))
-            {
+          {
             button->setEnabled(true);
             button->setChecked(true);
             button->click();
-            }
           }
         }
-      return true;
       }
+      return true;
+    }
     if (command == "rejected")
-      {
+    {
       fileDialog->close();
       return true;
-      }
     }
+  }
 
   qCritical() << "calling newFile/rejected on unhandled type " << object;
   error = true;

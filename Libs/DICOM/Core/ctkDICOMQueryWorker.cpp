@@ -53,15 +53,15 @@ void ctkDICOMQueryWorkerPrivate::setQueryParameters()
   QSharedPointer<ctkDICOMQueryJob> queryJob =
     qSharedPointerObjectCast<ctkDICOMQueryJob>(q->Job);
   if (!queryJob)
-    {
+  {
     return;
-    }
+  }
 
   ctkDICOMServer* server = queryJob->server();
   if (!server)
-    {
+  {
     return;
-    }
+  }
 
   this->Query->setConnectionName(server->connectionName());
   this->Query->setCallingAETitle(server->callingAETitle());
@@ -105,18 +105,18 @@ void ctkDICOMQueryWorker::run()
   QSharedPointer<ctkDICOMQueryJob> queryJob =
     qSharedPointerObjectCast<ctkDICOMQueryJob>(this->Job);
   if (!queryJob)
-    {
+  {
     return;
-    }
+  }
 
   QSharedPointer<ctkDICOMScheduler> scheduler =
       qobject_cast<QSharedPointer<ctkDICOMScheduler>>(this->Scheduler);
   if (!scheduler ||
       queryJob->status() == ctkAbstractJob::JobStatus::Stopped)
-    {
+  {
     this->onJobCanceled();
     return;
-    }
+  }
 
   queryJob->setStatus(ctkAbstractJob::JobStatus::Running);
   emit queryJob->started();
@@ -126,45 +126,45 @@ void ctkDICOMQueryWorker::run()
                        .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
 
   switch (queryJob->dicomLevel())
-    {
+  {
     case ctkDICOMJob::DICOMLevels::Patients:
       if (!d->Query->queryPatients())
-        {
+      {
         this->onJobCanceled();
         return;
-        }
+      }
       break;
     case ctkDICOMJob::DICOMLevels::Studies:
       if (!d->Query->queryStudies(queryJob->patientID()))
-        {
+      {
         this->onJobCanceled();
         return;
-        }
+      }
       break;
     case ctkDICOMJob::DICOMLevels::Series:
       if (!d->Query->querySeries(queryJob->patientID(),
                                  queryJob->studyInstanceUID()))
-        {
+      {
         this->onJobCanceled();
         return;
-        }
+      }
       break;
     case ctkDICOMJob::DICOMLevels::Instances:
       if (!d->Query->queryInstances(queryJob->patientID(),
                                     queryJob->studyInstanceUID(),
                                     queryJob->seriesInstanceUID()))
-        {
+      {
         this->onJobCanceled();
         return;
-        }
+      }
       break;
-    }
+  }
 
   if (d->Query->jobResponseSetsShared().count() > 0 &&
       queryJob->status() != ctkAbstractJob::JobStatus::Stopped)
-    {
+  {
     scheduler->insertJobResponseSets(d->Query->jobResponseSetsShared());
-    }
+  }
 
   queryJob->setStatus(ctkAbstractJob::JobStatus::Finished);
   emit queryJob->finished();
@@ -178,9 +178,9 @@ void ctkDICOMQueryWorker::setJob(QSharedPointer<ctkAbstractJob> job)
   QSharedPointer<ctkDICOMQueryJob> queryJob =
     qSharedPointerObjectCast<ctkDICOMQueryJob>(job);
   if (!queryJob)
-    {
+  {
     return;
-    }
+  }
 
   this->Superclass::setJob(job);
   d->setQueryParameters();

@@ -111,9 +111,9 @@ std::string listToString(const std::list<T>& list)
 
   typename std::list<T>::const_iterator iter;
   for (iter = list.begin(); iter != list.end(); iter++)
-    {
+  {
     outputString << *iter << " ";
-    }
+  }
 
   return outputString.str();
 }
@@ -126,9 +126,9 @@ bool mapContainsKey(const std::map<T1, T2>& map, const T1& key)
   bool result = false;
 
   if (map.find(key) != map.end())
-    {
+  {
     result = true;
-    }
+  }
 
   return result;
 }
@@ -142,13 +142,13 @@ bool listContainsValue(const std::list<T>& list, const T& value)
 
   typename std::list<T>::const_iterator iter;
   for (iter = list.begin(); iter != list.end(); iter++)
-    {
+  {
     if ((*iter) == value)
-      {
+    {
       result = true;
       break;
-      }
     }
+  }
   return result;
 }
 
@@ -172,29 +172,29 @@ ctkDependencyGraphPrivate::~ctkDependencyGraphPrivate()
 {
   std::vector<std::vector<int>* >::iterator edgesIterator;
   for (edgesIterator = this->Edges.begin(); edgesIterator != this->Edges.end(); edgesIterator++)
-    {
+  {
     if (*edgesIterator != NULL)
-      {
+    {
       delete *edgesIterator;
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
 void ctkDependencyGraphPrivate::computeOutdegrees(std::vector<int>& computedOutdegrees)
 {
 	for (int i=1; i <= this->NVertices; i++)
-	  {
+ {
     computedOutdegrees[i] = 0;
-	  }
+ }
 
 	for (int i=1; i <= this->NVertices; i++)
-	  {
+ {
     for (int j=0; j < this->OutDegree[i]; j++)
-		  {
+    {
       computedOutdegrees[ this->edge(i,j) ] ++;
-		  }
-		}
+    }
+ }
 }
 
 //----------------------------------------------------------------------------
@@ -202,37 +202,37 @@ void ctkDependencyGraphPrivate::traverseUsingDFS(int v)
 {
   // allow for search termination
 	if (this->Abort)
-	  {
+ {
 	  return;
-	  }
+ }
 
 	this->Discovered[v] = true;
 	this->processVertex(v);
 
   int y; // successor vertex
   for (int i=0; i<this->OutDegree[v]; i++)
-	  {
+  {
 		y = this->edge(v, i);
 		if (q_ptr->shouldExcludeEdge(this->edge(v, i)) == false)
-		  {
+  {
       this->Parent[y] = v;
 			if (this->Discovered[y] == false)
-			  {
+   {
 				this->traverseUsingDFS(y);
-			  }
+   }
 			else
-			  {
+   {
 				if (this->Processed[y] == false)
-				  {
+    {
 					this->processEdge(v,y);
-					}
-			  }
-		  }
+    }
+   }
+  }
 		if (this->Abort)
-		  {
+  {
 		  return;
-		  }
-	}
+  }
+  }
 
 	this->Processed[v] = true;
 }
@@ -241,12 +241,12 @@ void ctkDependencyGraphPrivate::traverseUsingDFS(int v)
 void ctkDependencyGraphPrivate::processEdge(int from, int to)
 {
   if (this->Discovered[to] == true)
-    {
+  {
     this->CycleDetected = true;
     this->CycleOrigin = to;
     this->CycleEnd = from;
     if (this->Verbose)
-      {
+    {
       std::list<int> path;
       this->findPathDFS(from, to, path);
       std::cerr << "ERROR: Cycle detected from " << to << " to " << from << std::endl;
@@ -254,18 +254,18 @@ void ctkDependencyGraphPrivate::processEdge(int from, int to)
       path.clear();
       this->findPathDFS(to, from, path);
       std::cerr << " " << listToString<int>(path) << std::endl;
-      }
-    this->Abort = true;
     }
+    this->Abort = true;
+  }
 }
 
 //----------------------------------------------------------------------------
 void ctkDependencyGraphPrivate::processVertex(int v)
 {
 	if (this->Verbose)
-	  {
+ {
 	  std::cout << "processed vertex " << v << std::endl;
-	  }
+ }
 }
 
 //----------------------------------------------------------------------------
@@ -288,14 +288,14 @@ int ctkDependencyGraphPrivate::edge(int vertice, int degree)const
 void ctkDependencyGraphPrivate::findPathDFS(int from, int to, std::list<int>& path)
 {
   if ((from == to) || (to == -1))
-    {
+  {
     path.push_back(from);
-    }
+  }
   else
-    {
+  {
     this->findPathDFS(from, this->Parent[to], path);
     path.push_back(to);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -303,24 +303,24 @@ void ctkDependencyGraphPrivate::findPathsRec(
   int from, int to, std::list<int>* path, std::list<std::list<int>* >& paths)
 {
   if (from == to)
-    {
+  {
     return;
-    }
+  }
 
   std::list<int> branch;
   branch = *path;
 
   int child = from;
   for (int j=0; j < this->OutDegree[child]; j++)
-    {
+  {
     if (j == 0)
-      {
+    {
       int parent = this->edge(child, j);
       (*path).push_back(parent);
       this->findPathsRec(parent, to, path, paths);
-      }
+    }
     else
-      {
+    {
       int parent = this->edge(child, j);
       // Copy path and add it to the list
       std::list<int>* pathCopy = new std::list<int>();
@@ -328,8 +328,8 @@ void ctkDependencyGraphPrivate::findPathsRec(
       paths.push_back(pathCopy);
       (*pathCopy).push_back(parent);
       this->findPathsRec(parent, to, pathCopy, paths);
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -338,12 +338,12 @@ void ctkDependencyGraphPrivate::verticesWithIndegree(int indegree, std::list<int
   assert(indegree >= 0);
 
   for (int i=1; i <= this->NVertices; i++)
-    {
+  {
     if (this->InDegree[i] == indegree)
-      {
+    {
       list.push_back(i);
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -352,11 +352,11 @@ void ctkDependencyGraphPrivate::subgraphSizeRec(int rootId, std::set<int>& uniqu
   assert(rootId > 0);
 
   for (int i = 0; i < this->OutDegree[rootId]; ++i)
-    {
+  {
     int child = this->edge(rootId, i);
     uniqueVertices.insert(child);
     subgraphSizeRec(child, uniqueVertices);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -395,15 +395,15 @@ int ctkDependencyGraphPrivate::getOrGenerateSubgraphId(
   // If needed, generate vertex id
   int subgraphId = -1;
   if (!mapContainsKey<int, int>(globalIdToSubgraph,globalId))
-    {
+  {
     subgraphId = static_cast<int>(globalIdToSubgraph.size()) + 1;
     globalIdToSubgraph[globalId] = subgraphId;
     subgraphIdToGlobal[subgraphId] = globalId;
-    }
+  }
   else
-    {
+  {
     subgraphId = globalIdToSubgraph[globalId];
-    }
+  }
   return subgraphId;
 }
 
@@ -425,34 +425,34 @@ ctkDependencyGraph::ctkDependencyGraph(int nvertices)
   d_ptr->InDegree.resize(nvertices + 1);
 
   for (int i=1; i <= nvertices; i++)
-    {
+  {
     d_ptr->OutDegree[i] = 0;
     d_ptr->InDegree[i] = 0;
-    }
+  }
 
   // initialize Edge adjacency list
   for (int i=0; i <= nvertices; i++)
-    {
+  {
     d_ptr->Edges[i] = new std::vector<int>();
     d_ptr->Edges[i]->resize(MAXDEGREE);
-    }
+  }
 
   // initialize search
   for (int i=1; i <= nvertices; i++)
-    {
+  {
     d_ptr->Processed[i] = false;
     d_ptr->Discovered[i] = false;
     d_ptr->Parent[i] = -1;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 ctkDependencyGraph::~ctkDependencyGraph()
 {
   if (d_ptr != NULL)
-    {
+  {
     delete d_ptr;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -465,19 +465,19 @@ void ctkDependencyGraph::printAdditionalInfo()const
 
   std::cout << " [Processed]" << std::endl;
   for(unsigned int i=1; i < d_ptr->Processed.size(); i++)
-    {
+  {
     std::cout << i << "->" << d_ptr->Processed[i] << std::endl;
-    }
+  }
   std::cout << " [Discovered]" << std::endl;
   for(unsigned int i=1; i < d_ptr->Discovered.size(); i++)
-    {
+  {
     std::cout << i << "->" << d_ptr->Discovered[i] << std::endl;
-    }
+  }
   std::cout << " [Parent]" << std::endl;
   for(unsigned int i=1; i < d_ptr->Parent.size(); i++)
-    {
+  {
     std::cout << i << "->" << d_ptr->Parent[i] << std::endl;
-    }
+  }
   std::cout << " [Graph]" << std::endl;
   this->printGraph();
 }
@@ -486,14 +486,14 @@ void ctkDependencyGraph::printAdditionalInfo()const
 void ctkDependencyGraph::printGraph()const
 {
   for(int i=1; i <= d_ptr->NVertices; i++)
-    {
+  {
     std::cout << i << ":";
     for (int j=0; j < d_ptr->OutDegree[i]; j++)
-      {
+    {
       std::cout << " " << d_ptr->edge(i, j);
-      }
-    std::cout << std::endl;
     }
+    std::cout << std::endl;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -530,55 +530,55 @@ bool ctkDependencyGraph::shouldExcludeEdge(int edge)const
 bool ctkDependencyGraph::checkForCycle()
 {
   if (d_ptr->NEdges > 0)
-    {
+  {
     // Store unprocessed vertex ids
     std::list<int> uncheckedVertices;
     for (int i = 1; i <= d_ptr->NVertices; ++i)
-      {
+    {
         uncheckedVertices.push_back(i);
-      }
+    }
 
     // Start the cycle detection on the source vertices
     std::list<int> sources;
     this->sourceVertices(sources);
     std::list<int>::const_iterator sourcesIterator;
     for (sourcesIterator = sources.begin(); sourcesIterator != sources.end(); sourcesIterator++)
-      {
+    {
       d_ptr->traverseUsingDFS(*sourcesIterator);
       if (this->cycleDetected()) return true;
 
       for (unsigned int i=0; i < d_ptr->Processed.size(); i++)
-        {
+      {
           if (d_ptr->Processed[i] == true)
-            {
+          {
             uncheckedVertices.remove(i);
-            }
+          }
 
           d_ptr->Discovered[i] = false;
           d_ptr->Processed[i] = false;
-        }
       }
+    }
 
     // If a component does not have a source vertex,
     // i.e. it is a cycle a -> b -> a, check all non
     // processed vertices.
     while (!uncheckedVertices.empty())
-      {
+    {
       d_ptr->traverseUsingDFS((*uncheckedVertices.rbegin()));
       if (this->cycleDetected()) return true;
 
       for (unsigned int i=0; i < d_ptr->Processed.size(); i++)
-        {
+      {
           if (d_ptr->Processed[i] == true)
-            {
+          {
             uncheckedVertices.remove(i);
-            }
+          }
 
           d_ptr->Discovered[i] = false;
           d_ptr->Processed[i] = false;
-        }
       }
     }
+  }
   return this->cycleDetected();
 }
 
@@ -609,9 +609,9 @@ void ctkDependencyGraph::insertEdge(int from, int to)
   // resize if needed
   size_t capacity = d_ptr->Edges[from]->capacity();
   if (d_ptr->OutDegree[from] > static_cast<int>(capacity))
-    {
+  {
     d_ptr->Edges[from]->resize(capacity + capacity * 0.3);
-    }
+  }
 
   d_ptr->setEdge(from, d_ptr->OutDegree[from], to);
   d_ptr->OutDegree[from]++;
@@ -633,19 +633,19 @@ void ctkDependencyGraph::findPaths(int from, int to, std::list<std::list<int>* >
   pathsIterator = paths.begin();
 
   while (paths.size() > 0 && pathsIterator != paths.end())
-    {
+  {
     std::list<int>* pathToCheck = (*pathsIterator);
     assert(pathToCheck);
 
     if (*(pathToCheck->rbegin()) != to)
-      {
+    {
       pathsIterator = paths.erase(pathsIterator);
-      }
-    else
-      {
-      pathsIterator++;
-      }
     }
+    else
+    {
+      pathsIterator++;
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -655,13 +655,13 @@ void ctkDependencyGraph::findPath(int from, int to, std::list<int>& path)
   this->findPaths(from, to, paths);
 
   if (!paths.empty())
-    {
+  {
     std::list<int>::iterator pathIterator;
     for (pathIterator = (*(paths.begin()))->begin(); pathIterator != (*(paths.begin()))->end(); pathIterator++)
-      {
+    {
       path.push_back(*pathIterator);
-      }
     }
+  }
 
   std::list<std::list<int>* >::iterator pathsIterator;
   for(pathsIterator = paths.begin(); pathsIterator != paths.end(); pathsIterator++)
@@ -677,7 +677,7 @@ void ctkDependencyGraph::findPath(int from, int to, std::list<int>& path)
 bool ctkDependencyGraph::topologicalSort(std::list<int>& sorted, int rootId)
 {
   if (rootId > 0)
-    {
+  {
     ctkDependencyGraph subgraph(d_ptr->subgraphSize(rootId));
     std::map<int,int> subgraphIdToGlobal;
     std::map<int,int> globalIdToSubgraph;
@@ -687,11 +687,11 @@ bool ctkDependencyGraph::topologicalSort(std::list<int>& sorted, int rootId)
     bool result = subgraph.topologicalSort(subgraphSorted);
     std::list<int>::const_iterator subgraphSortedIterator;
     for (subgraphSortedIterator = subgraphSorted.begin(); subgraphSortedIterator != subgraphSorted.end(); subgraphSortedIterator++)
-      {
+    {
       sorted.push_back(subgraphIdToGlobal[*subgraphSortedIterator]);
-      }
-    return result;
     }
+    return result;
+  }
 
   std::vector<int> outdegree; // outdegree of each vertex
   outdegree.resize(MAXV);
@@ -702,42 +702,42 @@ bool ctkDependencyGraph::topologicalSort(std::list<int>& sorted, int rootId)
 
 	// resize if needed
 	if (d_ptr->NVertices > MAXV)
-	  {
+ {
     outdegree.resize(d_ptr->NVertices);
-	  }
+ }
 
 	d_ptr->computeOutdegrees(outdegree);
 
 	for (int i=1; i <= d_ptr->NVertices; i++)
-	  {
+ {
     if (outdegree[i] == 0)
-		  {
+    {
       zeroout.push(i);
-		  }
-		}
+    }
+ }
 
 	int j=0;
   while (zeroout.empty() == false)
-	  {
+  {
 		j = j+1;
     x = zeroout.front();
     zeroout.pop();
 		sorted.push_back(x);
     for (int i=0; i < d_ptr->OutDegree[x]; i++)
-		  {
+    {
 			y = d_ptr->edge(x, i);
       outdegree[y] --;
       if (outdegree[y] == 0)
-			  {
+      {
         zeroout.push(y);
-			  }
-		  }
-	  }
+      }
+    }
+  }
 
 	if (j != d_ptr->NVertices)
-	  {
+ {
 		return false;
-		}
+ }
 
   return true;
 }

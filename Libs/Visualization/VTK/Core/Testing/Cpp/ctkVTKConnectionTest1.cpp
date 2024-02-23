@@ -86,20 +86,20 @@ bool computeConnectionTiming(const char* name,
   vtkNew<vtkTimerLog> timerLog;
   timerLog->StartTimer();
   for (int i = 0; i < eventCount; ++i)
-    {
+  {
     obj->Modified();
-    }
+  }
   timerLog->StopTimer();
 
   int expected_total_event_count = eventCount * objectCount;
   if (total_event_count != expected_total_event_count)
-    {
+  {
     std::cerr << "Problem with " << name << "\n"
               << "\tcurrent total_event_count:" << total_event_count << "\n"
               << "\texpected total_event_count:" << expected_total_event_count
               << std::endl;
     return false;
-    }
+  }
 
   elapsedTime = timerLog->GetElapsedTime();
 
@@ -127,9 +127,9 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
 
   int testCase = -1;
   if (argc > 1)
-    {
+  {
     testCase = app.arguments().at(1).toInt();
-    }
+  }
 
   total_event_count = 0;
   int objects = 1000;
@@ -151,7 +151,7 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
   ctkCallback*    slotObject = new ctkCallback(spy, topObject);
 
   for (int i = 0; i < objects; ++i)
-    {
+  {
     // connection1: regular callback
     vtkCallbackCommand* callback = vtkCallbackCommand::New();
     callback->SetClientData(slotObject);
@@ -182,58 +182,58 @@ int ctkVTKConnectionTest1( int argc, char * argv [] )
     connection5->observeDeletion(connection5_observeDeletion);
     connection5->setup(obj5, vtkCommand::ModifiedEvent,
                       new ctkCallback(spy, topObject), SLOT(invoke()));
-    }
+  }
 
   // Compute timing for connection1: Callback only
   double time_connection1 = 0;
   if (testCase == -1 || testCase == 1)
-    {
+  {
     if (!computeConnectionTiming("connection1", events , objects, obj1, time_connection1))
-      {
+    {
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // Compute timing for connection2
   // observeDeletion = 0
   double time_connection2 = 0;
   if (testCase == -1 || testCase == 2)
-    {
+  {
     if (!computeConnectionTiming("connection2", events , objects, obj2, time_connection2))
-      {
+    {
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // Compute timing for connection3
   // observeDeletion = 1
   if (testCase == -1 || testCase == 3)
-    {
+  {
     if (!computeConnectionTiming("connection3", events , objects, obj3))
-      {
+    {
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // Compute timing for connection4 - 1-1
   // observeDeletion = 0
   if (testCase == -1 || testCase == 4)
-    {
+  {
     if (!computeConnectionTiming("connection4", events , objects, obj4))
-      {
+    {
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // Compute timing for connection5 - 1-1
   // observeDeletion = 1
   if (testCase == -1 || testCase == 5)
-    {
+  {
     if (!computeConnectionTiming("connection5", events , objects, obj4))
-      {
+    {
       return EXIT_FAILURE;
-      }
     }
+  }
 
   obj1->Delete();
   obj2->Delete();

@@ -42,20 +42,20 @@ bool ctkAppSoapMessageProcessor::process(
   bool foundMethod = false;
 
   if (methodName == "GetState")
-    {
+  {
     processGetState(message, reply);
     foundMethod = true;
-    }
+  }
   else if (methodName == "SetState")
-    {
+  {
     processSetState(message, reply);
     foundMethod = true;
-    }
+  }
   else if (methodName == "BringToFront")
-    {
+  {
     processBringToFront(message, reply);
     foundMethod = true;
-    }
+  }
 
   return foundMethod;
 }

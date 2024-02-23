@@ -54,9 +54,9 @@ ctkBooleanMapper::ctkBooleanMapper(
   Q_D(ctkBooleanMapper);
   d->PropertyName = property;
   if (!signal.isEmpty())
-    {
+  {
     connect(targetObject, signal, this, SLOT(emitValueChanged()));
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -96,9 +96,9 @@ void ctkBooleanMapper::setTrueValue(const QVariant& trueValue)
 {
   Q_D(ctkBooleanMapper);
   if (d->TrueValue == trueValue)
-    {
+  {
     return;
-    }
+  }
   d->TrueValue = trueValue;
   this->emitValueAsChanged();
 }
@@ -108,9 +108,9 @@ void ctkBooleanMapper::setFalseValue(const QVariant& falseValue)
 {
   Q_D(ctkBooleanMapper);
   if (d->FalseValue == falseValue)
-    {
+  {
     return;
-    }
+  }
   d->FalseValue = falseValue;
   this->emitValueAsChanged();
 }

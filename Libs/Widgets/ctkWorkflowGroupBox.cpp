@@ -115,7 +115,7 @@ void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
   ctkWorkflowWidgetStep* currentWidgetStep = dynamic_cast<ctkWorkflowWidgetStep*>(currentStep);
 
   if (currentWidgetStep)
-    {
+  {
     ctkWorkflowWidget::formatButton(d->CollapsibleButton, d->TitleFormat, currentWidgetStep);
     QString subTitleText = ctkWorkflowWidget::formatText(d->SubTitleFormat, currentWidgetStep);
     this->setSubTitle(subTitleText);
@@ -127,39 +127,39 @@ void ctkWorkflowGroupBox::updateGroupBox(ctkWorkflowStep* currentStep)
     d->PreTextBrowser->setVisible(!this->preText().isEmpty());
     d->PostTextBrowser->setVisible(!this->postText().isEmpty());
     d->ErrorTextBrowser->setVisible(!this->errorText().isEmpty() && d->ErrorTextEnabled);
-    }
+  }
 
   // disable/hide the previously shown step
   if (ctkWorkflowWidgetStep* prevStep = dynamic_cast<ctkWorkflowWidgetStep*>(d->StepShownPreviously))
-    {
+  {
     //qDebug() << QString("updateClientArea - hiding %1").arg(prevStep->name());
     if (QWidget* stepArea = prevStep->stepArea())
-      {
+    {
       stepArea->setEnabled(false);
       if (d->HideWidgetsOfNonCurrentSteps)
-        {
+      {
         stepArea->hide();
-        }
       }
     }
+  }
 
   // show/enable the current step
   if (currentWidgetStep)
-    {
+  {
     currentWidgetStep->showUserInterface();
 
     if (QWidget* stepArea = currentWidgetStep->stepArea())
-      {
+    {
       // add the step's client area to the widget if we haven't before
       if (!this->isAncestorOf(stepArea))
-        {
+      {
         d->ClientAreaLayout->addWidget(stepArea);
-        }
+      }
 
       stepArea->setEnabled(true);
       stepArea->show();
-      }
-      }
+    }
+  }
 
 }
 

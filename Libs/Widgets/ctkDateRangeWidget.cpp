@@ -63,13 +63,13 @@ void ctkDateRangeWidgetPrivate::autoselectRadioButton()
   QDate startDate = q->startDateTime().date();
   QDate endDate = q->endDateTime().date();
   if (this->ForceSelectRange)
-    {
+  {
     this->SelectRangeRadioButton->setChecked(true);
-    }
+  }
   else if (q->isAnyDate())
-    {
+  {
     this->AnyDateRadioButton->setChecked(true);
-    }
+  }
 #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
   else if (q->startDateTime() != q->startDateTime().date().startOfDay() ||
            q->endDateTime() != q->endDateTime().date().startOfDay())
@@ -77,33 +77,33 @@ void ctkDateRangeWidgetPrivate::autoselectRadioButton()
   else if (q->startDateTime() != QDateTime(q->startDateTime().date()) ||
            q->endDateTime() != QDateTime(q->endDateTime().date()))
 #endif
-    {
+  {
     this->SelectRangeRadioButton->setChecked(true);
-    }
+  }
   else if (startDate.addDays(1) == endDate &&
            startDate == QDate::currentDate())
-    {
+  {
     this->TodayRadioButton->setChecked(true);
-    }
+  }
   else if (startDate.addDays(1) == endDate &&
            endDate == QDate::currentDate())
-    {
+  {
     this->YesterdayRadioButton->setChecked(true);
-    }
+  }
   else if (startDate.addDays(7) == endDate &&
            endDate == QDate::currentDate())
-    {
+  {
     this->LastWeekRadioButton->setChecked(true);
-    }
+  }
   else if (startDate.addDays(31) == endDate &&
            endDate == QDate::currentDate())
-    {
+  {
     this->LastMonthRadioButton->setChecked(true);
-    }
+  }
   else
-    {
+  {
     this->SelectRangeRadioButton->setChecked(true);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -267,15 +267,15 @@ void ctkDateRangeWidget::setDisplayTime(bool displayTime)
   Q_D(ctkDateRangeWidget);
   d->DisplayTime = displayTime;
   if ( displayTime )
-    {
+  {
     d->StartDate->setDisplayFormat( QString( "MMM dd, yyyy HH:mm:ss") );
     d->EndDate->setDisplayFormat( QString( "MMM dd, yyyy HH:mm:ss") );
-    }
+  }
   else
-    {
+  {
     d->StartDate->setDisplayFormat( QString( "MMM dd, yyyy") );
     d->EndDate->setDisplayFormat( QString( "MMM dd, yyyy") );
-    }
+  }
 }
 
 // -------------------------------------------------------------------------

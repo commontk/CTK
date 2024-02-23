@@ -65,10 +65,10 @@ int ctkActionsWidgetTest1(int argc, char* argv[])
 
   if (actionsWidget.groupItem("category 1") == 0 ||
       actionsWidget.groupItem("category 1")->rowCount() != 4)
-    {
+  {
     qDebug() << "Invalid Category 1";
     return EXIT_FAILURE;
-    }
+  }
 
   // check shortcut
   QAction* action = new QAction("custom action", 0);
@@ -77,19 +77,19 @@ int ctkActionsWidgetTest1(int argc, char* argv[])
   actionsWidget.addAction(action);
   QStandardItem* actionItem = actionsWidget.model()->item(7);
   if (!actionItem || actionItem->text() != "custom action")
-    {
+  {
     qDebug() << "Invalid custom action" << (actionItem ? actionItem->text() : "NaN");
     return EXIT_FAILURE;
-    }
+  }
   // check update on change
   action->setText("new custom action");
   QStandardItem* changedActionItem = actionsWidget.model()->item(7);
   if (changedActionItem != actionItem ||
       changedActionItem->text() != "new custom action")
-    {
+  {
     qDebug() << "Invalid action update" << changedActionItem->text();
     return EXIT_FAILURE;
-    }
+  }
   widget.addAction(action);
 
   QList<QAction*> actions;
@@ -113,10 +113,10 @@ int ctkActionsWidgetTest1(int argc, char* argv[])
 
   if (actionsWidget.areActionsWithNoShortcutVisible() != false ||
       actionTextActions.count() != 0)
-    {
+  {
     qDebug() << "ctkActionsWidget::setActionsWithNoShortcutVisible failed: actionTextActions.count()";
     return EXIT_FAILURE;
-    }
+  }
 
   actionsWidget.setActionsWithNoShortcutVisible(true);
 
@@ -128,17 +128,17 @@ int ctkActionsWidgetTest1(int argc, char* argv[])
     Qt::MatchExactly | Qt::MatchWrap |Qt::MatchRecursive);
   if (actionsWidget.areMenuActionsVisible() != false ||
       submenuActions.count() != 0)
-    {
+  {
     qDebug() << "ctkActionsWidget search failed" << submenuActions.count();
     return EXIT_FAILURE;
-    }
+  }
 
   actionsWidget.setMenuActionsVisible(true);
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

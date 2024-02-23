@@ -46,12 +46,12 @@ bool ctkAxesWidgetEventPlayer::playEvent(QObject *Object,
   Q_UNUSED(Error);
   ctkAxesWidget* widget = qobject_cast<ctkAxesWidget*>(Object);
   if(widget)
-    {
+  {
     if (Command == "mousePress" || Command == "mouseRelease")
-      {
+    {
       QRegExp mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
       if (mouseRegExp.indexIn(Arguments)!= -1)
-        {
+      {
         QVariant v = mouseRegExp.cap(1);
         int x = static_cast<int>(v.toDouble() * widget->size().width());
         v = mouseRegExp.cap(2);
@@ -67,9 +67,9 @@ bool ctkAxesWidgetEventPlayer::playEvent(QObject *Object,
                             QEvent::MouseButtonPress : QEvent::MouseButtonRelease;
         QMouseEvent e(type, QPoint(x,y), button, buttons, keym);
         QCoreApplication::sendEvent(Object, &e);
-        }
-      return true;
       }
+      return true;
     }
+  }
   return false;
 }

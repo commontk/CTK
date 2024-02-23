@@ -68,13 +68,13 @@ void checkFinalWidgetState2(void* data)
   QString expected = CTK_SOURCE_DIR"/ctkLogo.png";
 
   if( actual.count() == 1)
-    {
+  {
     CTKCOMPARE(actual[0], expected);
-    }
+  }
   else
-    {
+  {
     QApplication::exit(EXIT_FAILURE);
-    }
+  }
 }
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState3(void* data)
@@ -144,9 +144,9 @@ int ctkFileDialogEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

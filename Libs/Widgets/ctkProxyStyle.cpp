@@ -52,9 +52,9 @@ ctkProxyStylePrivate::ctkProxyStylePrivate(ctkProxyStyle& object)
 void ctkProxyStylePrivate::setProxyStyle(QProxyStyle* proxy, QStyle *style)const
 {
   if (style->proxy() == proxy)
-    {
+  {
     return;
-    }
+  }
   this->setBaseStyle(proxy, style);
 }
 // ----------------------------------------------------------------------------
@@ -62,22 +62,22 @@ void ctkProxyStylePrivate::setBaseStyle(QProxyStyle* proxy, QStyle *style)const
 {
   if (proxy->baseStyle() == style &&
       style->proxy() == proxy)
-    {
+  {
     return;
-    }
+  }
   QObject* parent = style->parent();
   QStyle* oldStyle = proxy->baseStyle();
   QObject* oldParent = oldStyle ? oldStyle->parent() : 0;
   if (oldParent == proxy)
-    {
+  {
     oldStyle->setParent(0);// make sure setBaseStyle doesn't delete baseStyle
-    }
+  }
   proxy->setBaseStyle(style);
   style->setParent(parent);
   if (oldParent == proxy)
-    {
+  {
     oldStyle->setParent(oldParent);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -95,9 +95,9 @@ ctkProxyStyle::~ctkProxyStyle()
 {
   Q_D(ctkProxyStyle);
   if (!QApplication::closingDown() && d->baseStyle == QApplication::style())
-    {
+  {
     d->baseStyle->setParent(qApp); // don't delete the application style.
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -117,11 +117,11 @@ void ctkProxyStyle::ensureBaseStyle() const
   QStyle* proxyBaseStyle = proxyStyle->baseStyle(); // calls ensureBaseStyle
   QStyle* baseStyle = proxyBaseStyle;
   while (baseStyle)
-    {
+  {
     d->setProxyStyle(proxyStyle, baseStyle);// set proxy on itself to all children
     QProxyStyle* proxy = qobject_cast<QProxyStyle*>(baseStyle);
     baseStyle = proxy ? proxy->baseStyle() : 0;
-    }
+  }
   d->setBaseStyle(proxyStyle, proxyBaseStyle);
   d->ensureBaseStyleInProgress = false;
 }
@@ -302,9 +302,9 @@ bool ctkProxyStyle::event(QEvent *e)
     if (e->type() != QEvent::ParentChange &&
         e->type() != QEvent::ChildRemoved &&
         e->type() != QEvent::ChildAdded)
-      {
+    {
       this->ensureBaseStyle();
-      }
+    }
     return !d->baseStyle.isNull() ? d->baseStyle->event(e) : false;
 }
 

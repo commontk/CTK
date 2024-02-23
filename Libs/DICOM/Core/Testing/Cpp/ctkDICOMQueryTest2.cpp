@@ -46,11 +46,11 @@ int ctkDICOMQueryTest2( int argc, char * argv [] )
   QString testName = arguments.takeFirst();
 
   if (!arguments.count())
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QTemporaryDir tempDirectory;
   CHECK_BOOL(tempDirectory.isValid(), true);
@@ -74,15 +74,15 @@ int ctkDICOMQueryTest2( int argc, char * argv [] )
 
   bool res = query.query(database);
   if (!res)
-    {
+  {
     std::cout << "ctkDICOMQuery::query() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (query.studyAndSeriesInstanceUIDQueried().count() == 0)
-    {
+  {
     std::cout << "ctkDICOMQuery::query() failed."
               << "No study instance retrieved" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

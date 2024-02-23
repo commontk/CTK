@@ -37,30 +37,30 @@ int ctkThumbnailLabelTest1( int argc, char * argv [] )
 
   widget.setText("Test");
   if (widget.text() != "Test")
-    {
+  {
     std::cerr << "ctkThumbnailLabel::setText failed."
               << " text: " << qPrintable(widget.text())
               << " expected: Test" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   widget.setPixmap(QPixmap());
   if (widget.pixmap() != 0)
-    {
+  {
     std::cerr << "ctkThumbnailLabel::setPixmap failed:"
               << widget.pixmap() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QPixmap standardPixmap = widget.style()->standardPixmap(QStyle::SP_DriveNetIcon);
 
   widget.setPixmap(standardPixmap);
   if (widget.pixmap() == 0)
-    {
+  {
     std::cerr << "ctkThumbnailLabel::setPixmap failed:"
               << widget.pixmap() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   widget.setTextPosition(Qt::AlignRight);
   widget.setTextPosition(Qt::AlignBottom);
 
@@ -69,9 +69,9 @@ int ctkThumbnailLabelTest1( int argc, char * argv [] )
   widget.show();
 
   if (argc <= 1 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

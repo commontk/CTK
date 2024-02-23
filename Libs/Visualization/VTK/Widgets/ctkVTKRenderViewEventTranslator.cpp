@@ -63,16 +63,16 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
 
   bool handled = false;
   switch(Event->type())
-    {
+  {
     case QEvent::ContextMenu:
       handled=true;
       break;
 
     case QEvent::Wheel:
-      {
+    {
       QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(Event);
       if(wheelEvent)
-        {
+      {
         QSize size = widget->size();
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         double normalized_x = wheelEvent->position().x() / static_cast<double>(size.width() / 2.0);
@@ -94,16 +94,16 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
                               .arg(numStep)
                               .arg(buttons)
                               .arg(modifiers));
-        }
       }
+    }
       handled = true;
       break;
 
     case QEvent::MouseButtonPress:
-        {
+    {
         QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(Event);
         if (mouseEvent)
-          {
+        {
           QSize size = widget->size();
           int x = mouseEvent->x();
           int y = mouseEvent->y();
@@ -127,7 +127,7 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
             .arg(button)
             .arg(buttons)
             .arg(modifiers));
-          }
+        }
 
         // reset lastMoveEvent
         QMouseEvent e(QEvent::MouseButtonPress, QPoint(), Qt::MouseButton(),
@@ -135,7 +135,7 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
 
         lastMoveEvent = e;
         lastMouseEvent = e;
-        }
+    }
       handled = true;
       break;
 
@@ -143,7 +143,7 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
       {
           QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(Event);
           if (mouseEvent)
-            {
+          {
             QMouseEvent e(QEvent::MouseMove, QPoint(mouseEvent->x(), mouseEvent->y()),
                           mouseEvent->button(), mouseEvent->buttons(),
                           mouseEvent->modifiers());
@@ -153,7 +153,7 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
             QSize size = widget->size();
 
             if(lastMouseEvent.type() == QEvent::MouseButtonPress )
-              {
+            {
               int x = mouseEvent->x();
               int y = mouseEvent->y();
               double x_center = static_cast<double>(size.width())/2.0;
@@ -171,22 +171,22 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
                 .arg(button)
                 .arg(buttons)
                 .arg(modifiers));
-              }
-        }
+            }
+          }
       }
       handled = true;
       break;
 
     case QEvent::MouseButtonRelease:
-        {
+    {
         QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(Event);
         if (mouseEvent)
-          {
+        {
           QSize size = widget->size();
 
           // record last move event if it is valid
           if(lastMoveEvent.type() == QEvent::MouseMove)
-            {
+          {
             int x = mouseEvent->x();
             int y = mouseEvent->y();
             double x_center = static_cast<double>(size.width())/2.0;
@@ -205,7 +205,7 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
               .arg(button)
               .arg(buttons)
               .arg(modifiers));
-            }
+          }
 
           int x = mouseEvent->x();
           int y = mouseEvent->y();
@@ -225,20 +225,20 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
             .arg(button)
             .arg(buttons)
             .arg(modifiers));
-          }
+        }
         // reset lastMoveEvent
         QMouseEvent e(QEvent::MouseButtonRelease, QPoint(), Qt::MouseButton(),
                       Qt::MouseButtons(), Qt::KeyboardModifiers());
 
         lastMouseEvent = e;
-        }
+    }
 
       handled = true;
       break;
 
     case QEvent::KeyPress:
     case QEvent::KeyRelease:
-      {
+    {
       QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
       QString data =QString("%1:%2:%3:%4:%5:%6")
         .arg(static_cast<int>(ke->type()))
@@ -248,12 +248,12 @@ bool ctkVTKRenderViewEventTranslator::translateEvent(QObject *Object,
         .arg(static_cast<int>(ke->isAutoRepeat()))
         .arg(ke->count());
       emit recordEvent(Object, "keyEvent", data);
-      }
+    }
       break;
 
     default:
       break;
-    }
+  }
 
   return handled;
 }

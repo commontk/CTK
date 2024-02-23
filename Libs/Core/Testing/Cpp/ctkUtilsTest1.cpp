@@ -48,16 +48,16 @@ int ctkUtilsTest1(int argc, char * argv [] )
   ctk::qListToSTLVector(inputStringList, outputCharVector);
 
   if (outputCharVector.size() != 3)
-    {
+  {
     std::cerr << "Error in qListToSTLVector(const QStringList&, std::vector<char*>&)" << std::endl
               << "outputCharVector should contains 3 elements." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if ((strcmp(outputCharVector[0], "Testing") != 0) ||
       (strcmp(outputCharVector[1], " is ") != 0) ||
       (strcmp(outputCharVector[2], "awesome !") != 0))
-    {
+  {
     std::cerr << "Error in qListToSTLVector(const QStringList&, std::vector<char*>&)" << std::endl
               << "Content of outputCharVector is incorrect" << std::endl
               << "inputStringList[0] => [" << qPrintable(inputStringList[0]) << "]" << std::endl
@@ -67,7 +67,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
               << "outputCharVector[1] => [" << outputCharVector[1] << "]" << std::endl
               << "outputCharVector[2] => [" << outputCharVector[2] << "]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   delete [] outputCharVector[0];
   delete [] outputCharVector[1];
@@ -82,16 +82,16 @@ int ctkUtilsTest1(int argc, char * argv [] )
   ctk::qListToSTLVector(inputStringList, outputStringVector);
 
   if (outputStringVector.size() != 3)
-    {
+  {
     std::cerr << "Error in qListToSTLVector(const QStringList&, std::vector<std::string>&)" << std::endl
               << "outputStringVector should contains 3 elements." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if ((outputStringVector[0].compare("Testing") != 0) ||
       (outputStringVector[1].compare(" is ") != 0) ||
       (outputStringVector[2].compare("awesome !") != 0))
-    {
+  {
     std::cerr << "Error in qListToSTLVector(const QStringList&, std::vector<std::string>&)" << std::endl
               << "Content of outputStringVector is incorrect" << std::endl
               << "inputStringList[0] => [" << qPrintable(inputStringList[0]) << "]" << std::endl
@@ -101,7 +101,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
               << "outputStringVector[1] => [" << outputStringVector[1] << "]" << std::endl
               << "outputStringVector[2] => [" << outputStringVector[2] << "]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 
   // Test stlVectorToQList(const std::vector<std::string>& vector, QStringList& list)
@@ -116,16 +116,16 @@ int ctkUtilsTest1(int argc, char * argv [] )
   ctk::stlVectorToQList(inputStringVector, ouputStringList);
 
   if (ouputStringList.size() != 3)
-    {
+  {
     std::cerr << "Error in stlVectorToQList(const std::vector<std::string>&, QStringList&)" << std::endl
               << "ouputStringList should contains 3 elements." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if ((ouputStringList[0] != QLatin1String("Testing")) ||
       (ouputStringList[1] != QLatin1String(" is ")) ||
       (ouputStringList[2] != QLatin1String("awesome !")))
-    {
+  {
     std::cerr << "Error in stlVectorToQList(const std::vector<std::string>&, QStringList&)" << std::endl
               << "Content of ouputStringList is incorrect" << std::endl
               << "inputStringVector[0] => [" << inputStringVector[0] << "]" << std::endl
@@ -135,7 +135,7 @@ int ctkUtilsTest1(int argc, char * argv [] )
               << "ouputStringList[1] => [" << qPrintable(ouputStringList[1]) << "]" << std::endl
               << "ouputStringList[2] => [" << qPrintable(ouputStringList[2]) << "]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

@@ -91,22 +91,22 @@ void ctkPluginGeneratorAbstractTemplate::addContent(const QString &marker, const
   switch (pos)
   {
   case PREPEND:
-    {
+  {
       d->contentMap[marker].prepend(content);
       break;
-    }
+  }
   case APPEND:
-    {
+  {
       d->contentMap[marker].append(content);
       break;
-    }
+  }
   case REPLACE:
-    {
+  {
       QStringList& v = d->contentMap[marker];
       v.clear();
       v.append(content);
       break;
-    }
+  }
   }
 }
 

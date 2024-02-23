@@ -45,7 +45,7 @@ ctkRequirePlugin::ctkRequirePlugin(ctkPluginPrivate* requestor,
                    + ctkPluginConstants::RESOLUTION_MANDATORY + "' or '"
                    + ctkPluginConstants::RESOLUTION_OPTIONAL  + "'.";
     throw ctkInvalidArgumentException(what);
-    }
+  }
 
 
 }

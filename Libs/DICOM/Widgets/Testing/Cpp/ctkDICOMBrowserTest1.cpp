@@ -46,11 +46,11 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   bool interactive = arguments.removeOne("-I");
 
   if (arguments.count() != 1)
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " [-I] <path-to-dicom-directory>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString dicomDirectory(arguments.at(0));
 
@@ -58,10 +58,10 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   QString dbDir = tempFileInfo.absoluteFilePath();
   qDebug().noquote() << "\n\n" << testName << ": Using directory: " << dbDir;
   if (tempFileInfo.exists())
-    {
+  {
     qDebug().noquote() << "\n\n" << testName << ": Removing directory: " << dbDir;
     ctk::removeDirRecursively(dbDir);
-    }
+  }
   qDebug().noquote() << "\n\n" << testName << ": Making directory: " << dbDir;
   QDir dir(dbDir);
   dir.mkdir(dbDir);
@@ -126,9 +126,9 @@ int ctkDICOMBrowserTest1( int argc, char * argv [] )
   qDebug().noquote() << "\n\n" << testName << ": Added to database directory: " << dbDir;
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

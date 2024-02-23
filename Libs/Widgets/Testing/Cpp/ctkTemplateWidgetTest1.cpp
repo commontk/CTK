@@ -39,17 +39,17 @@ int ctkTemplateWidgetTest1(int argc, char * argv [] )
   QSignalSpy spy(&templateWidget, SIGNAL(propertyChanged()));
   //do something to trigger the signal
   if (spy.count() != 1)
-    {
+  {
     std::cerr << "ctkTemplateWidget::setProperty(): "
               << spy.count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   spy.clear();
 
   templateWidget.show();
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

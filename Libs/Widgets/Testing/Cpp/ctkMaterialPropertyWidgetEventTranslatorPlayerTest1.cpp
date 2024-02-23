@@ -44,7 +44,7 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkMaterialPropertyWidget* widget = reinterpret_cast<ctkMaterialPropertyWidget*>(data);
 
   CTKCOMPARE(widget->opacity(), 1.00);
@@ -53,9 +53,9 @@ void checkFinalWidgetState(void* data)
   CTKCOMPARE(widget->specular(), 0.50);
   CTKCOMPARE(widget->backfaceCulling(), false);
   CTKCOMPARE(widget->color(), QColor(0,255,255));
-  }
+}
 void checkFinalWidgetState2(void* data)
-  {
+{
   ctkMaterialPropertyWidget* widget = reinterpret_cast<ctkMaterialPropertyWidget*>(data);
 
   CTKCOMPARE(widget->opacity(), 1.00);
@@ -64,7 +64,7 @@ void checkFinalWidgetState2(void* data)
   CTKCOMPARE(widget->specular(), 0.50);
   CTKCOMPARE(widget->backfaceCulling(), false);
   CTKCOMPARE(widget->color(), QColor(255,255,255));
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -93,9 +93,9 @@ int ctkMaterialPropertyWidgetEventTranslatorPlayerTest1(int argc, char * argv []
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

@@ -19,11 +19,11 @@ using namespace ctkQA;
 #if !defined(EXCLUDE_SINGLETONS)
 	#define CTK_TESTSUITE_MAIN() \
 	int main(int argc, char *argv[]) \
-	{ \
+ { \
 		QCoreApplication app(argc, argv); \
 		int result= ctkTestRegistry::instance()->runTests(argc, argv); \
 		return result; \
-	}
+ }
     #define CTK_GUI_TESTSUITE_MAIN() \
     int main(int argc, char *argv[]) \
     { \
@@ -34,11 +34,11 @@ using namespace ctkQA;
 #else
 	#define CTK_TESTSUITE_MAIN() \
 	int main(int argc, char *argv[]) \
-	{ \
+ { \
 		QCoreApplication app(argc, argv); \
 		int result= ctkTestRegistry::instance()->runTests(argc, argv); \
 		return result; \
-	}
+ }
     #define CTK_GUI_TESTSUITE_MAIN() \
     int main(int argc, char *argv[]) \
     { \

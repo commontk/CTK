@@ -117,9 +117,9 @@ void ctkCoreSettingsTester::testMultiplePaths()
   QStringList retrievedPaths = settings.pathValue(key).toStringList();
   QCOMPARE(inputPaths.size(), retrievedPaths.size());
   for (int index=0; index < inputPaths.size(); index++)
-    {
+  {
     QCOMPARE(retrievedPaths[index].toLower(), QDir::cleanPath(inputPaths[index]).toLower());
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------

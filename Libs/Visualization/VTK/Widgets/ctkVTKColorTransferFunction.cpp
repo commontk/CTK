@@ -67,9 +67,9 @@ int ctkVTKColorTransferFunction::count()const
 {
   Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
-    {
+  {
     return -1;
-    }
+  }
   return d->ColorTransferFunction->GetSize();
 }
 
@@ -90,13 +90,13 @@ void ctkVTKColorTransferFunction::range(qreal& minRange, qreal& maxRange)const
 {
   Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
-    {
+  {
     //Q_ASSERT(d->ColorTransferFunction.GetPointer());
     logger.warn("no ColorTransferFunction");
     minRange = 1.;
     maxRange = 0.;
     return;
-    }
+  }
   double rangeValues[2];
   d->ColorTransferFunction->GetRange(rangeValues);
   minRange = rangeValues[0];
@@ -108,15 +108,15 @@ QVariant ctkVTKColorTransferFunction::minValue()const
 {
   Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
-    {
+  {
     //Q_ASSERT(d->ColorTransferFunction.GetPointer());
     logger.warn("no ColorTransferFunction");
     return -1;
-    }
+  }
   double rgb[3];
   QColor minValue = QColor::fromRgbF(1.,1.,1.);
   for (int i = 0; i < this->count(); ++i)
-    {
+  {
     d->ColorTransferFunction->GetColor(i, rgb);
     Q_ASSERT(rgb[0] >= 0. && rgb[0] <= 1. &&
              rgb[1] >= 0. && rgb[1] <= 1. &&
@@ -124,10 +124,10 @@ QVariant ctkVTKColorTransferFunction::minValue()const
     QColor color = QColor::fromRgbF(rgb[0], rgb[1], rgb[2]);
     if ( qGray(color.red(), color.green(), color.blue()) <
          qGray(minValue.red(), minValue.green(), minValue.blue()))
-      {
+    {
       minValue = color;
-      }
     }
+  }
   return minValue;
 }
 
@@ -136,15 +136,15 @@ QVariant ctkVTKColorTransferFunction::maxValue()const
 {
   Q_D(const ctkVTKColorTransferFunction);
   if (d->ColorTransferFunction.GetPointer() == 0)
-    {
+  {
     //Q_ASSERT(d->ColorTransferFunction.GetPointer());
     logger.warn("no ColorTransferFunction");
     return -1;
-    }
+  }
   double rgb[3];
   QColor minValue = QColor::fromRgbF(0.,0.,0.);
   for (int i = 0; i < this->count(); ++i)
-    {
+  {
     d->ColorTransferFunction->GetColor(i, rgb);
     Q_ASSERT(rgb[0] >= 0. && rgb[0] <= 1. &&
              rgb[1] >= 0. && rgb[1] <= 1. &&
@@ -152,10 +152,10 @@ QVariant ctkVTKColorTransferFunction::maxValue()const
     QColor color = QColor::fromRgbF(rgb[0], rgb[1], rgb[2]);
     if ( qGray(color.red(), color.green(), color.blue()) >
          qGray(minValue.red(), minValue.green(), minValue.blue()))
-      {
+    {
       minValue = color;
-      }
     }
+  }
   return minValue;
 }
 
@@ -175,12 +175,12 @@ ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
            values[5] >= 0. && values[5] <= 1.);   // Sharpness
   QColor rgb = QColor::fromRgbF(values[1], values[2], values[3]);
   if (index + 1 >= this->count())
-    {
+  {
     ctkControlPoint* cp = new ctkControlPoint();
     cp->P.X = values[0];
     cp->P.Value = rgb;
     return cp;
-    }
+  }
   ctkNonLinearControlPoint* cp = new ctkNonLinearControlPoint();
   cp->P.X = values[0];
   cp->P.Value = rgb;
@@ -195,22 +195,22 @@ ctkControlPoint* ctkVTKColorTransferFunction::controlPoint(int index)const
            nextValues[5] >= 0. && nextValues[5] <= 1.);   // Sharpness
   // Optimization: don't use SubPoints when the sharpness is 0.
   if (values[5] == 0.)
-    {
+  {
     cp->SubPoints << ctkPoint(values[0], rgb);
     rgb = QColor::fromRgbF(nextValues[1], nextValues[2], nextValues[3]);
     cp->SubPoints << ctkPoint(nextValues[0], rgb);
     return cp;
-    }
+  }
   double subPoints[30];
   d->ColorTransferFunction->GetTable(cp->x(), values[0], 10, subPoints);
   qreal interval = (values[0] - cp->x()) / 9.;
   for(int i = 0; i < 10; ++i)
-    {
+  {
     rgb = QColor::fromRgbF(subPoints[3*i],
                            subPoints[3*i+1],
                            subPoints[3*i+2]);
     cp->SubPoints << ctkPoint(cp->x() + interval*i, rgb);
-    }
+  }
   return cp;
 }
 
@@ -231,22 +231,22 @@ int ctkVTKColorTransferFunction::insertControlPoint(const ctkControlPoint& cp)
   Q_D(ctkVTKColorTransferFunction);
   int index = -1;
   if (d->ColorTransferFunction.GetPointer() == 0)
-    {
+  {
     return index;
-    }
+  }
   QColor rgb = cp.value().value<QColor>();
   const ctkNonLinearControlPoint* nonLinearCp = dynamic_cast<const ctkNonLinearControlPoint*>(&cp);
   if (nonLinearCp)
-    {
+  {
     // TODO retrieve midpoint & sharpness
     index = d->ColorTransferFunction->AddRGBPoint(
       cp.x(), rgb.redF(), rgb.greenF(), rgb.blueF());
-    }
+  }
   else
-    {
+  {
     index = d->ColorTransferFunction->AddRGBPoint(
       cp.x(), rgb.redF(), rgb.greenF(), rgb.blueF());
-    }
+  }
   return index;
 }
 //-----------------------------------------------------------------------------
@@ -255,9 +255,9 @@ int ctkVTKColorTransferFunction::insertControlPoint(qreal pos)
   Q_D(ctkVTKColorTransferFunction);
   int index = -1;
   if (d->ColorTransferFunction.GetPointer() == 0)
-    {
+  {
     return index;
-    }
+  }
 
   // Get color at the given position
   double* rgb = d->ColorTransferFunction->GetColor( pos );

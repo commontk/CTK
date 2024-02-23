@@ -215,11 +215,11 @@ void ctkCmdLineModuleQtXslTransformTester::testTransform()
   QFETCH(bool, expectedSuccess);
   bool success = transformer.transform();
   if (!success)
-    {
+  {
     qDebug() << transformer.errorString();
     QCOMPARE(transformer.error(), true);
     QVERIFY(!transformer.errorString().isEmpty());
-    }
+  }
   QCOMPARE(success, expectedSuccess);
 
   QFETCH(QString, expectedOutput);

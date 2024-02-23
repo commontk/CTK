@@ -75,9 +75,9 @@ void ctkTransferFunctionGradientItem::paint(
   Q_UNUSED(widget);
 
   if (this->transferFunction()->count() <= 0)
-    {
+  {
     return;
-    }
+  }
   //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   //Q_ASSERT(tfScene);
   ctkTransferFunctionRepresentation* tfRep = this->transferFunction()->representation();
@@ -85,7 +85,7 @@ void ctkTransferFunctionGradientItem::paint(
   const QGradient& gradient = tfRep->gradient();
 
   if ( this->mask() )
-    {
+  {
     QPainterPath closedPath = tfRep->curve();
     QRectF position = this->rect();
     // link to last point
@@ -98,11 +98,11 @@ void ctkTransferFunctionGradientItem::paint(
     painter->setPen(pen);
     painter->setBrush(gradient);
     painter->drawPath(closedPath);
-    }
+  }
   else
-    {
+  {
     painter->fillRect(this->rect(), gradient);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

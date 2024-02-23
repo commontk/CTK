@@ -43,13 +43,13 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkModalityWidget* widget = reinterpret_cast<ctkModalityWidget*>(data);
 
   QStringList expected;
   expected << "MR" << "US";
   CTKCOMPARE(widget->selectedModalities(), expected);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -72,9 +72,9 @@ int ctkModalityWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

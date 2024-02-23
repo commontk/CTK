@@ -124,25 +124,25 @@ void ctkExampleDerivedWorkflowWidgetStep::createUserInterface()
 
   // create widgets the first time through
   if (!this->layout())
-    {
+  {
     QVBoxLayout* layout = new QVBoxLayout();
     this->setLayout(layout);
-    }
+  }
 
   if (!d->label)
-    {
+  {
     d->label = new QLabel();
     d->label->setText(this->name() + ": enter a number greater than or equal to 10");
     this->layout()->addWidget(d->label);
-    }
+  }
 
   if (!d->lineEdit)
-    {
+  {
     d->lineEdit = new QLineEdit();
     d->lineEdit->setInputMask("000");
     d->lineEdit->setText(QString::number(d->defaultLineEditValue));
     this->layout()->addWidget(d->lineEdit);
-    }
+  }
 
   // signals that we are finished
   this->createUserInterfaceComplete();
@@ -157,32 +157,32 @@ void ctkExampleDerivedWorkflowWidgetStep::validate(const QString& desiredBranchI
   int val = 0;
   bool ok = false;
   if (d->lineEdit)
-    {
+  {
     QString text = d->lineEdit->text();
     val = text.toInt(&ok);
-    }
+  }
   // used when going to a finish step
   else
-    {
+  {
     val = d->defaultLineEditValue;
     ok = true;
-    }
+  }
 
   if (!ok)
-    {
+  {
     this->setStatusText("invalid (not an integer or empty)");
     retVal = false;
-    }
+  }
   else if (val < 10)
-    {
+  {
     this->setStatusText("invalid (invalid number)");
     retVal = false;
-    }
+  }
   else
-    {
+  {
     this->setStatusText("");
     retVal = true;
-    }
+  }
 
   // return the validation results
   this->validationComplete(retVal, desiredBranchId);

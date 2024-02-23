@@ -43,10 +43,10 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkConfirmExitDialog* widget = reinterpret_cast<ctkConfirmExitDialog*>(data);
   Q_UNUSED(widget);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -69,9 +69,9 @@ int ctkConfirmExitDialogEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

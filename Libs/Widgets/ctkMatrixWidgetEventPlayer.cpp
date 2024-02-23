@@ -38,24 +38,24 @@ bool ctkMatrixWidgetEventPlayer::playEvent(QObject *Object,
                                            bool &Error)
 {
   if (Command != "set_values")
-    {
+  {
     return false;
-    }
+  }
 
   if(ctkMatrixWidget* const object =
        qobject_cast<ctkMatrixWidget*>(Object))
-    {
+  {
     if (Command == "set_values")
-      {
+    {
       QVector<double> values;
       foreach(QString value, Arguments.split(" "))
-        {
+      {
         values.push_back(value.toDouble());
-        }
+      }
       object->setValues(values);
       return true;
-      }
     }
+  }
 
   qCritical() << "calling set_values on unhandled type " << Object;
   Error = true;

@@ -44,17 +44,17 @@ class ctkSettingsPanelForTest : public ctkSettingsPanel
 {
 public:
   QVariant myDefaultPropertyValue(const QString& key) const
-    {
+  {
     return this->defaultPropertyValue(key);
-    }
+  }
   QVariant myPreviousPropertyValue(const QString& key) const
-    {
+  {
     return this->previousPropertyValue(key);
-    }
+  }
   QVariant myPropertyValue(const QString& key) const
-    {
+  {
     return this->propertyValue(key);
-    }
+  }
 };
 
 } // end of anonymous namespace
@@ -86,9 +86,9 @@ int ctkSettingsPanelTest1(int argc, char * argv [] )
   settingsPanel.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

@@ -71,8 +71,8 @@ int ctkVTKScalarsToColorsWidgetTest1(int argc, char * argv [] )
   CHECK_NOT_NULL(widget.currentControlPointsItem())
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

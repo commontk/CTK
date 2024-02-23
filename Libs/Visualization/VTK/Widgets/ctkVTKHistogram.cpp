@@ -70,14 +70,14 @@ ctkVTKHistogramPrivate::ctkVTKHistogramPrivate()
 int ctkVTKHistogramPrivate::computeNumberOfBins()const
 {
   if (this->DataArray.GetPointer() == 0)
-    {
+  {
     return -1;
-    }
+  }
 
   if (this->UserNumberOfBins > 0)
-    {
+  {
     return this->UserNumberOfBins;
-    }
+  }
 
   return static_cast<int>(this->Range[1] - this->Range[0]) + 1;
 }
@@ -115,27 +115,27 @@ void ctkVTKHistogram::setRange(qreal minRange, qreal maxRange)
 {
   Q_D(const ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
-    {
+  {
     logger.warn("no data array. range will be reset when setting array.");
     minRange = 1.; // set incorrect values
     maxRange = 0.;
     return;
-    }
+  }
   if (minRange >= maxRange)
-    {
+  {
     logger.warn("minRange >= maxRange");
     qreal pivot = minRange;
     minRange = maxRange;
     maxRange = pivot;
-    }
+  }
 
   int numberOfBinsBefore = d->computeNumberOfBins();
   d->Range[0] = minRange;
   d->Range[1] = maxRange;
   if (d->computeNumberOfBins() != numberOfBinsBefore)
-    {
+  {
     this->build();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -143,12 +143,12 @@ void ctkVTKHistogram::range(qreal& minRange, qreal& maxRange)const
 {
   Q_D(const ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
-    {
+  {
     logger.warn("no dataArray");
     minRange = 1.; // set incorrect values
     maxRange = 0.;
     return;
-    }
+  }
   minRange = d->Range[0];
   maxRange = d->Range[1];
 }
@@ -158,33 +158,33 @@ void ctkVTKHistogram::resetRange()
 {
   Q_D(ctkVTKHistogram);
   if (d->DataArray.GetPointer() == 0)
-    {
+  {
     // Data array is empty (not an error case, will be displayed as an empty histogram)
     d->Range[0] = 1.; // set incorrect values
     d->Range[1] = 0.;
     return;
-    }
+  }
 
   if (d->DataArray->GetDataType() == VTK_CHAR ||
       d->DataArray->GetDataType() == VTK_SIGNED_CHAR ||
       d->DataArray->GetDataType() == VTK_UNSIGNED_CHAR)
-    {
+  {
     d->Range[0] = d->DataArray->GetDataTypeMin();
     d->Range[1] = d->DataArray->GetDataTypeMax();
-    }
+  }
   else
-    {
+  {
     d->DataArray->GetRange(d->Range, d->Component);
     if (d->DataArray->GetDataType() == VTK_FLOAT ||
         d->DataArray->GetDataType() == VTK_DOUBLE)
-      {
+    {
       d->Range[1] += 0.01;
-      }
+    }
     //else
     //  {
     //  this->Range[1] += 1;
     //  }
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -239,9 +239,9 @@ void ctkVTKHistogram::setDataArray(vtkDataArray* newDataArray)
 {
   Q_D(ctkVTKHistogram);
   if (newDataArray == d->DataArray)
-    {
+  {
     return;
-    }
+  }
 
   d->DataArray = newDataArray;
   this->resetRange();
@@ -309,16 +309,16 @@ void populateBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
   ptr += component;
   vtkIdType histogramSize = bins->GetNumberOfTuples();
   for (; ptr < endPtr; ptr += componentNumber)
-    {
+  {
     int index = static_cast<int>(*ptr - offset);
     if (index < 0 || index >= histogramSize)
-      {
+    {
       // This happens when scalar range is not computed correctly
       // (scalar range may be read from file, so VTK does not have full control over it)
       continue;
-      }
-    binsPtr[index]++;
     }
+    binsPtr[index]++;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -341,30 +341,30 @@ void populateIrregularBins(vtkIntArray* bins, const ctkVTKHistogram* histogram)
 
   double binWidth = 1.;
   if (range[1] != range[0])
-    {
+  {
     binWidth = static_cast<double>(bins->GetNumberOfTuples()-1) / (range[1] - range[0]);
-    }
+  }
 
   T* ptr = static_cast<T*>(scalars->WriteVoidPointer(0, tupleNumber));
   T* endPtr = ptr + tupleNumber * componentNumber;
   ptr += component;
   vtkIdType histogramSize = bins->GetNumberOfTuples();
   for (; ptr < endPtr; ptr += componentNumber)
-    {
+  {
     if ((std::numeric_limits<T>::has_quiet_NaN &&
       vtkMath::IsNan(*ptr)) || vtkMath::IsInf(*ptr))
-      {
+    {
       continue;
-      }
+    }
     int index = vtkMath::Floor((static_cast<double>(*ptr) - offset) * binWidth);
     if (index < 0 || index >= histogramSize)
-      {
+    {
       // This happens when scalar range is not computed correctly
       // (scalar range may be read from file, so VTK does not have full control over it)
       continue;
-      }
-    binsPtr[index]++;
     }
+    binsPtr[index]++;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -373,12 +373,12 @@ void ctkVTKHistogram::build()
   Q_D(ctkVTKHistogram);
 
   if (d->DataArray.GetPointer() == 0)
-    {
+  {
     d->MinBin = 0;
     d->MaxBin = 0;
     d->Bins->SetNumberOfTuples(0);
     return;
-    }
+  }
 
   const int binCount = d->computeNumberOfBins();
 
@@ -386,37 +386,37 @@ void ctkVTKHistogram::build()
   d->Bins->SetNumberOfTuples(binCount);
 
   if (binCount <= 0)
-    {
+  {
     d->MinBin = 0;
     d->MaxBin = 0;
     return;
-    }
+  }
 
   // What is the type of the array, discrete or reals
   if (static_cast<double>(binCount) != (d->Range[1] - d->Range[0] + 1))
-    {
+  {
     switch(d->DataArray->GetDataType())
-      {
+    {
       vtkTemplateMacro(populateIrregularBins<VTK_TT>(d->Bins, this));
-      }
     }
+  }
   else
-    {
+  {
     switch(d->DataArray->GetDataType())
-      {
+    {
       vtkTemplateMacro(populateBins<VTK_TT>(d->Bins, this));
-      }
     }
+  }
   // update Min/Max values
   int* binPtr = d->Bins->GetPointer(0);
   int* endPtr = d->Bins->GetPointer(binCount-1);
   d->MinBin = *endPtr;
   d->MaxBin = *endPtr;
   for (;binPtr < endPtr; ++binPtr)
-    {
+  {
     d->MinBin = qMin(*binPtr, d->MinBin);
     d->MaxBin = qMax(*binPtr, d->MaxBin);
-    }
+  }
   emit changed();
 }
 

@@ -60,10 +60,10 @@ int ctkVTKPiecewiseFunction::count()const
 {
   Q_D(const ctkVTKPiecewiseFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
     return -1;
-    }
+  }
   return d->PiecewiseFunction->GetSize();
 }
 
@@ -84,12 +84,12 @@ void ctkVTKPiecewiseFunction::range(qreal& minRange, qreal& maxRange)const
 {
   Q_D(const ctkVTKPiecewiseFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
     minRange = 1.;
     maxRange = 0.;
     return;
-    }
+  }
   double rangeValues[2];
   d->PiecewiseFunction->GetRange(rangeValues);
   minRange = rangeValues[0];
@@ -101,19 +101,19 @@ QVariant ctkVTKPiecewiseFunction::minValue()const
 {
   Q_D(const ctkVTKPiecewiseFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
     return -1;
-    }
+  }
   //Initialize to max value
   /// TODO initialize with max value
   double minValue = VTK_DOUBLE_MAX;
   for (int i = 0; i < this->count(); ++i)
-    {
+  {
     double value[4];
     d->PiecewiseFunction->GetNodeValue(i, value);
     minValue = qMin(value[1], minValue);
-    }
+  }
   return minValue;
 }
 
@@ -122,19 +122,19 @@ QVariant ctkVTKPiecewiseFunction::maxValue()const
 {
   Q_D(const ctkVTKPiecewiseFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     Q_ASSERT(d->PiecewiseFunction.GetPointer());
     return -1;
-    }
+  }
   //Initialize to max value
   /// TODO initialize with max value
   qreal maxValue = VTK_DOUBLE_MIN;
   for (int i = 0; i < this->count(); ++i)
-    {
+  {
     double value[4];
     d->PiecewiseFunction->GetNodeValue(i, value);
     maxValue = qMax(maxValue, value[1]);
-    }
+  }
   return maxValue;
 }
 
@@ -162,20 +162,20 @@ ctkControlPoint* ctkVTKPiecewiseFunction::controlPoint(int index)const
            values[3] >= 0. && values[3] <= 1. );                // Sharpness
 #endif
   if (index + 1 >= this->count())
-    {
+  {
     ctkControlPoint* cp = new ctkControlPoint();
     cp->P.X = values[0];
     cp->P.Value = values[1];
     return cp;
-    }
+  }
   ctkNonLinearControlPoint* cp = new ctkNonLinearControlPoint();
   cp->P.X = values[0];
   cp->P.Value = values[1];
   // Optimization: don't use Subpoints if sharpness == 0
   if (values[3] == 0.)
-    {
+  {
     cp->SubPoints << ctkPoint(values[0], values[1]);
-    }
+  }
   double nextValues[4];
   d->PiecewiseFunction->GetNodeValue(index + 1, nextValues);
 
@@ -187,19 +187,19 @@ ctkControlPoint* ctkVTKPiecewiseFunction::controlPoint(int index)const
 #endif
   // Optimization: Don't use Subpoints if sharpness == 0
   if (values[3] == 0.)
-    {
+  {
     cp->SubPoints << ctkPoint(nextValues[0], nextValues[1]);
     return cp;
-    }
+  }
   double subPoints[100];
   d->PiecewiseFunction->GetTable(cp->x(), nextValues[0], 100, subPoints);
   qreal interval = (nextValues[0] - cp->x()) / 99.;
 
   // subPoints[i] since value varies (not like in color transfer function widget)
   for(int i = 0; i < 100; ++i)
-    {
+  {
     cp->SubPoints << ctkPoint(cp->x() + interval*i, subPoints[i]);
-    }
+  }
   return cp;
 }
 
@@ -220,22 +220,22 @@ int ctkVTKPiecewiseFunction::insertControlPoint(const ctkControlPoint& cp)
   Q_D(ctkVTKPiecewiseFunction);
   int index = -1;
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     return index;
-    }
+  }
   qreal value = cp.value().value<qreal>();
   const ctkNonLinearControlPoint* nonLinearCp = dynamic_cast<const ctkNonLinearControlPoint*>(&cp);
   if (nonLinearCp)
-    {
+  {
     // TODO retrieve midpoint & sharpness
     index = d->PiecewiseFunction->AddPoint(
       cp.x(), value);
-    }
+  }
   else
-    {
+  {
     index = d->PiecewiseFunction->AddPoint(
       cp.x(), value);
-    }
+  }
   return index;
 }
 //-----------------------------------------------------------------------------
@@ -245,9 +245,9 @@ int ctkVTKPiecewiseFunction::insertControlPoint(qreal pos)
   Q_D(ctkVTKPiecewiseFunction);
   int index = -1;
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     return index;
-    }
+  }
   index = d->PiecewiseFunction->AddPoint( pos, 0);
   qDebug() << "index of new point: " << index;
   return index;
@@ -300,8 +300,8 @@ void ctkVTKPiecewiseFunction::removeControlPoint( qreal pos )
 {
   Q_D(ctkVTKPiecewiseFunction);
   if (d->PiecewiseFunction.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   d->PiecewiseFunction->RemovePoint( pos );
 }

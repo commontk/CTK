@@ -41,7 +41,7 @@ class CTK_WIDGETS_EXPORT ctkAxesWidget : public QWidget
 public :
 
   enum Axis
-    {
+  {
     None=0,
     Right,
     Left,
@@ -49,7 +49,7 @@ public :
     Inferior,
     Anterior,
     Posterior,
-    };
+  };
 
   ctkAxesWidget(QWidget *parent = 0);
   virtual ~ctkAxesWidget();

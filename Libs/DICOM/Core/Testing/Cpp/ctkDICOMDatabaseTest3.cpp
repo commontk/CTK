@@ -42,12 +42,12 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
   QString testName = arguments.takeFirst();
 
   if (arguments.count() != 1)
-    {
+  {
     std::cerr << "Warning, no sql file given. Test stops" << std::endl;
     std::cerr << "Usage: " << qPrintable(testName)
               << " <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString sqlFileName(arguments.at(0));
 
@@ -82,11 +82,11 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
     myCTK.closeDatabase();
   }
   catch (const std::exception& e)
-    {
+  {
     std::cerr << "Error when opening the data base file: " << databaseFileName.toStdString()
         << " error: " << e.what();
     return EXIT_FAILURE;
-    }
+  }
 
   // now try opening it and updating the schema
   try
@@ -114,11 +114,11 @@ int ctkDICOMDatabaseTest3( int argc, char * argv [] )
     myCTK.closeDatabase();
   }
   catch (const std::exception& e)
-    {
+  {
     std::cerr << "Error when re-opening the data base file: " << databaseFileName.toStdString()
         << " error: " << e.what();
     return EXIT_FAILURE;
-    }
+  }
 
 
   return EXIT_SUCCESS;

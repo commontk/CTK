@@ -32,7 +32,7 @@ void ctk::setDICOMLogLevel(ctkErrorLogLevel::LogLevel level)
 {
   dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();
   switch (level)
-    {
+  {
     case ctkErrorLogLevel::Trace: log.setLogLevel(OFLogger::TRACE_LOG_LEVEL); break;
     case ctkErrorLogLevel::Debug: log.setLogLevel(OFLogger::DEBUG_LOG_LEVEL); break;
     case ctkErrorLogLevel::Info: log.setLogLevel(OFLogger::INFO_LOG_LEVEL); break;
@@ -43,7 +43,7 @@ void ctk::setDICOMLogLevel(ctkErrorLogLevel::LogLevel level)
       qWarning() << "Failed to set DICOM log level - Supported levels are Trace, Debug, "
                     "Info, Warning, Error and Fatal !";
       break;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ ctkErrorLogLevel::LogLevel ctk::dicomLogLevel()
 {
   dcmtk::log4cplus::Logger log = dcmtk::log4cplus::Logger::getRoot();
   switch (log.getLogLevel())
-    {
+  {
     case OFLogger::TRACE_LOG_LEVEL: return ctkErrorLogLevel::Trace;
     case OFLogger::DEBUG_LOG_LEVEL: return ctkErrorLogLevel::Debug;
     case OFLogger::INFO_LOG_LEVEL: return ctkErrorLogLevel::Info;
@@ -59,7 +59,7 @@ ctkErrorLogLevel::LogLevel ctk::dicomLogLevel()
     case OFLogger::ERROR_LOG_LEVEL: return ctkErrorLogLevel::Error;
     case OFLogger::FATAL_LOG_LEVEL: return ctkErrorLogLevel::Fatal;
     default: return ctkErrorLogLevel::None;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------

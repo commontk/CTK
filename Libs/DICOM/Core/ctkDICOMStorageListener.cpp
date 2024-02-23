@@ -65,9 +65,9 @@ public:
 OFCondition ctkDICOMStorageListenerSCUPrivate::acceptAssociations()
 {
   if (!this->listener || this->listener->wasCanceled())
-    {
+  {
     return EC_IllegalCall;
-    }
+  }
   return DcmSCP::acceptAssociations();
 }
 
@@ -75,9 +75,9 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::acceptAssociations()
 OFBool ctkDICOMStorageListenerSCUPrivate::stopAfterCurrentAssociation()
 {
   if (!this->listener || this->listener->wasCanceled())
-    {
+  {
     return OFTrue;
-    }
+  }
   return OFFalse;
 }
 
@@ -85,9 +85,9 @@ OFBool ctkDICOMStorageListenerSCUPrivate::stopAfterCurrentAssociation()
 OFBool ctkDICOMStorageListenerSCUPrivate::stopAfterConnectionTimeout()
 {
   if (!this->listener || this->listener->wasCanceled())
-    {
+  {
     return OFTrue;
-    }
+  }
   return OFFalse;
 }
 
@@ -97,15 +97,15 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::handleIncomingCommand(T_DIMSE_Mes
 {
   OFCondition status = EC_IllegalParameter;
   if (incomingMsg != NULL && !this->listener->wasCanceled())
-    {
+  {
     // check whether we've received a supported command
     if (incomingMsg->CommandField == DIMSE_C_ECHO_RQ)
-      {
+    {
       // handle incoming C-ECHO request
       status = handleECHORequest(incomingMsg->msg.CEchoRQ, presInfo.presentationContextID);
-      }
+    }
     else if (incomingMsg->CommandField == DIMSE_C_STORE_RQ)
-      {
+    {
       // handle incoming C-STORE request
       T_DIMSE_C_StoreRQ& storeReq = incomingMsg->msg.CStoreRQ;
       Uint16 rspStatusCode = STATUS_STORE_Error_CannotUnderstand;
@@ -113,9 +113,9 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::handleIncomingCommand(T_DIMSE_Mes
       // receive dataset in memory
       status = receiveSTORERequest(storeReq, presInfo.presentationContextID, reqDataset);
       if (status.good())
-        {
+      {
         rspStatusCode = STATUS_Success;
-        }
+      }
 
       OFString instanceUID;
       reqDataset->findAndGetOFString(DCM_SOPInstanceUID, instanceUID);
@@ -127,7 +127,7 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::handleIncomingCommand(T_DIMSE_Mes
           ctkDICOMStorageListener::tr("Got STORE request for %1").arg(instanceUID.c_str()));
       emit this->listener->progress(0);
       if (!this->listener->jobUID().isEmpty() && !this->listener->wasCanceled())
-        {
+      {
         QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet =
             QSharedPointer<ctkDICOMJobResponseSet>(new ctkDICOMJobResponseSet);
         jobResponseSet->setJobType(ctkDICOMJobResponseSet::JobType::StoreSOPInstance);
@@ -142,20 +142,20 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::handleIncomingCommand(T_DIMSE_Mes
         this->listener->addJobResponseSet(jobResponseSet);
 
         emit this->listener->progressJobDetail(jobResponseSet->toVariant());
-        }
+      }
       // send C-STORE response (with DIMSE status code)
       if (status.good())
-        {
+      {
         status = sendSTOREResponse(presInfo.presentationContextID, storeReq, rspStatusCode);
-        }
+      }
       else if (status == DIMSE_OUTOFRESOURCES)
-        {
+      {
         // do not overwrite the previous error status
         sendSTOREResponse(presInfo.presentationContextID, storeReq, STATUS_STORE_Refused_OutOfResources);
-        }
       }
+    }
     else
-      {
+    {
       // unsupported command
       OFString tempStr;
       DCMNET_ERROR("cannot handle this kind of DIMSE command (0x"
@@ -164,8 +164,8 @@ OFCondition ctkDICOMStorageListenerSCUPrivate::handleIncomingCommand(T_DIMSE_Mes
           << "), we are a Storage SCP only");
       DCMNET_DEBUG(DIMSE_dumpMessage(tempStr, *incomingMsg, DIMSE_INCOMING));
       status = DIMSE_BADCOMMANDTYPE;
-      }
     }
+  }
   return status;
 }
 
@@ -218,14 +218,14 @@ QString ctkDICOMStorageListenerPrivate::defaultConfigFile() const
 
   QFile readFile(fileName);
   if (readFile.open(QIODevice::ReadOnly))
-    {
+  {
     data = readFile.readAll();
-    }
+  }
   else
-    {
+  {
     logger.error("Failed to find listener configuration file");
     return "";
-    }
+  }
 
   readFile.close();
 
@@ -234,15 +234,15 @@ QString ctkDICOMStorageListenerPrivate::defaultConfigFile() const
   QFile writeFile(configFile);
 
   if (writeFile.open(QFile::WriteOnly | QFile::Text))
-    {
+  {
     QTextStream stream(&writeFile);
     stream << data;
-    }
+  }
   else
-    {
+  {
     logger.error("Failed to find listener configuration file");
     return "";
-    }
+  }
   writeFile.close();
 
   return configFile;
@@ -272,18 +272,18 @@ bool ctkDICOMStorageListener::listen()
 {
   Q_D(ctkDICOMStorageListener);
   if (!this->initializeSCU())
-    {
+  {
     return false;
-    }
+  }
 
   OFCondition status = d->SCU.listen();
   if (status.bad() || d->Canceled)
-    {
+  {
     logger.error(QString("SCP stopped, it was listening on port %1 : %2 ")
                      .arg(QString::number(d->Port))
                      .arg(status.text()));
     return false;
-    }
+  }
   return true;
 }
 
@@ -312,10 +312,10 @@ bool ctkDICOMStorageListener::initializeSCU()
   OFCondition status = d->SCU.loadAssociationConfiguration(
       OFString(d->defaultConfigFile().toStdString().c_str()), "alldicom");
   if (status.bad())
-    {
+  {
     logger.error(QString("Cannot load association configuration: %1").arg(status.text()));
     return false;
-    }
+  }
 
   return true;
 }
@@ -369,9 +369,9 @@ QList<ctkDICOMJobResponseSet*> ctkDICOMStorageListener::jobResponseSets() const
   Q_D(const ctkDICOMStorageListener);
   QList<ctkDICOMJobResponseSet*> jobResponseSets;
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, d->JobResponseSets)
-    {
+  {
     jobResponseSets.append(jobResponseSet.data());
-    }
+  }
 
   return jobResponseSets;
 }

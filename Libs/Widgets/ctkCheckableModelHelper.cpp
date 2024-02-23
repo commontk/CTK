@@ -97,10 +97,10 @@ Qt::CheckState ctkCheckableModelHelperPrivate::checkState(
 {
   Q_Q(const ctkCheckableModelHelper);
   if (!q->model())
-    {
+  {
     qWarning() << "Model has not been set.";
     return q->defaultCheckState();
-    }
+  }
   QVariant indexCheckState = index != q->rootIndex() ?
     q->model()->data(index, Qt::CheckStateRole):
     q->model()->headerData(0, q->orientation(), Qt::CheckStateRole);
@@ -113,20 +113,20 @@ void ctkCheckableModelHelperPrivate::setCheckState(
 {
   Q_Q(ctkCheckableModelHelper);
   if (!q->model())
-    {
+  {
     qWarning() << "Model has not been set.";
     return;
-    }
+  }
   else if (modelIndex != q->rootIndex())
-    {
+  {
     q->model()->setData(modelIndex, static_cast<int>(newCheckState),
                         Qt::CheckStateRole);
-    }
+  }
   else
-    {
+  {
     q->model()->setHeaderData(0, q->orientation(), static_cast<int>(newCheckState),
                               Qt::CheckStateRole);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -136,10 +136,10 @@ void ctkCheckableModelHelperPrivate::setIndexCheckState(
   bool checkable = false;
   this->checkState(index, &checkable);
   if (!checkable && !this->ForceCheckability)
-    {
+  {
     // The index is not checkable and we don't want to force checkability
     return;
-    }
+  }
   this->setCheckState(index, checkState);
   this->propagateCheckStateToChildren(index);
 }
@@ -150,10 +150,10 @@ int ctkCheckableModelHelperPrivate::indexDepth(const QModelIndex& modelIndex)con
   int depth = -1;
   QModelIndex parentIndex = modelIndex;
   while (parentIndex.isValid())
-    {
+  {
     ++depth;
     parentIndex = parentIndex.parent();
-    }
+  }
   return depth;
 }
 
@@ -165,9 +165,9 @@ void ctkCheckableModelHelperPrivate
   bool checkable = false;
   int oldCheckState = this->checkState(modelIndex, &checkable);
   if (!checkable)
-    {
+  {
     return;
-    }
+  }
 
   Qt::CheckState newCheckState = Qt::PartiallyChecked;
   bool firstCheckableChild = true;
@@ -176,44 +176,44 @@ void ctkCheckableModelHelperPrivate
   const int columnCount = q->orientation() == Qt::Vertical ?
     q->model()->columnCount(modelIndex) : 1;
   for (int r = 0; r < rowCount; ++r)
-    {
+  {
     for (int c = 0; c < columnCount; ++c)
-      {
+    {
       QModelIndex child = q->model()->index(r, c, modelIndex);
       QVariant childCheckState = q->model()->data(child, Qt::CheckStateRole);
       int childState = childCheckState.toInt(&checkable);
       if (!checkable)
-        {
+      {
         continue;
-        }
+      }
       if (firstCheckableChild)
-        {
+      {
         newCheckState = static_cast<Qt::CheckState>(childState);
         firstCheckableChild = false;
-        }
+      }
       if (newCheckState != childState)
-        {
-        newCheckState = Qt::PartiallyChecked;
-        }
-      if (newCheckState == Qt::PartiallyChecked)
-        {
-        break;
-        }
-      }
-    if (!firstCheckableChild && newCheckState == Qt::PartiallyChecked)
       {
-      break;
+        newCheckState = Qt::PartiallyChecked;
+      }
+      if (newCheckState == Qt::PartiallyChecked)
+      {
+        break;
       }
     }
-  if (oldCheckState == newCheckState)
+    if (!firstCheckableChild && newCheckState == Qt::PartiallyChecked)
     {
-    return;
+      break;
     }
+  }
+  if (oldCheckState == newCheckState)
+  {
+    return;
+  }
   this->setCheckState(modelIndex, newCheckState);
   if (modelIndex != q->rootIndex())
-    {
+  {
     this->updateCheckState(modelIndex.parent());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -224,34 +224,34 @@ void ctkCheckableModelHelperPrivate
   int indexDepth = this->indexDepth(modelIndex);
   if (this->PropagateDepth == 0 ||
       !(indexDepth < this->PropagateDepth || this->PropagateDepth == -1))
-    {
+  {
     return;
-    }
+  }
 
   bool checkable = false;
   Qt::CheckState checkState = this->checkState(modelIndex, &checkable);
   if (!checkable || checkState == Qt::PartiallyChecked)
-    {
+  {
     return;
-    }
+  }
 
   while (this->ForceCheckability && q->model()->canFetchMore(modelIndex))
-    {
+  {
     q->model()->fetchMore(modelIndex);
-    }
+  }
 
   const int rowCount = q->orientation() == Qt::Horizontal ?
     q->model()->rowCount(modelIndex) : 1;
   const int columnCount = q->orientation() == Qt::Vertical ?
     q->model()->columnCount(modelIndex) : 1;
   for (int r = 0; r < rowCount; ++r)
-    {
+  {
     for (int c = 0; c < columnCount; ++c)
-      {
+    {
       QModelIndex child = q->model()->index(r, c, modelIndex);
       this->setIndexCheckState(child, checkState);
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -260,21 +260,21 @@ void ctkCheckableModelHelperPrivate
 {
   Q_Q(ctkCheckableModelHelper);
   if (!this->ForceCheckability)
-    {
+  {
     return;
-    }
+  }
   this->setCheckState(modelIndex, this->DefaultCheckState);
   // Apparently (not sure) some views require the User-checkable
   // flag to be set to be able to show the checkboxes
   if (qobject_cast<QStandardItemModel*>(q->model()))
-    {
+  {
     QStandardItem* item = modelIndex != q->rootIndex() ?
       qobject_cast<QStandardItemModel*>(q->model())->itemFromIndex(modelIndex) :
       (q->orientation() == Qt::Horizontal ?
          qobject_cast<QStandardItemModel*>(q->model())->horizontalHeaderItem(0) :
          qobject_cast<QStandardItemModel*>(q->model())->verticalHeaderItem(0));
     item->setCheckable(true);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -313,11 +313,11 @@ void ctkCheckableModelHelper::setModel(QAbstractItemModel *newModel)
   Q_D(ctkCheckableModelHelper);
   QAbstractItemModel *current = this->model();
   if (current == newModel)
-    {
+  {
     return;
-    }
+  }
   if(current)
-    {
+  {
     this->disconnect(
       current, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
       this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
@@ -330,19 +330,19 @@ void ctkCheckableModelHelper::setModel(QAbstractItemModel *newModel)
     this->disconnect(
       current, SIGNAL(rowsInserted(QModelIndex,int,int)),
       this, SLOT(onRowsInserted(QModelIndex,int,int)));
-    }
+  }
   d->Model = newModel;
   if(newModel)
-    {
+  {
     this->connect(
       newModel, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
       this, SLOT(onHeaderDataChanged(Qt::Orientation,int,int)));
     if (d->PropagateDepth != 0)
-      {
+    {
       this->connect(
         newModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
         this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
-      }
+    }
     this->connect(
       newModel, SIGNAL(columnsInserted(QModelIndex,int,int)),
       this, SLOT(onColumnsInserted(QModelIndex,int,int)));
@@ -351,15 +351,15 @@ void ctkCheckableModelHelper::setModel(QAbstractItemModel *newModel)
       this, SLOT(onRowsInserted(QModelIndex,int,int)));
 
     if (d->ForceCheckability)
-      {
+    {
       foreach(QModelIndex index, newModel->match(newModel->index(0,0), Qt::CheckStateRole, QVariant(), -1,Qt::MatchRecursive))
-        {
+      {
         d->forceCheckability(index);
-        }
-      d->forceCheckability(this->rootIndex());
       }
-    this->updateHeadersFromItems();
+      d->forceCheckability(this->rootIndex());
     }
+    this->updateHeadersFromItems();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -375,9 +375,9 @@ void ctkCheckableModelHelper::setRootIndex(const QModelIndex &index)
   Q_D(ctkCheckableModelHelper);
   d->RootIndex = index;
   if (d->PropagateDepth != 0)
-    {
+  {
     this->updateHeadersFromItems();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -385,27 +385,27 @@ void ctkCheckableModelHelper::setPropagateDepth(int depth)
 {
   Q_D(ctkCheckableModelHelper);
   if (d->PropagateDepth == depth)
-    {
+  {
     return;
-    }
+  }
   d->PropagateDepth = depth;
   if (!this->model())
-    {
+  {
     return;
-    }
+  }
   if (depth != 0)
-    {
+  {
     this->connect(
       this->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
       this, SLOT(onDataChanged(QModelIndex,QModelIndex)), Qt::UniqueConnection);
     this->updateHeadersFromItems();
-    }
+  }
   else
-    {
+  {
     this->disconnect(
       this->model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
       this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -420,14 +420,14 @@ void ctkCheckableModelHelper::setForceCheckability(bool force)
 {
   Q_D(ctkCheckableModelHelper);
   if (d->ForceCheckability == force)
-    {
+  {
     return;
-    }
+  }
   d->ForceCheckability = force;
   if (this->model())
-    {
+  {
     d->propagateCheckStateToChildren(this->rootIndex());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -456,9 +456,9 @@ void ctkCheckableModelHelper::setHeaderCheckState(int section, Qt::CheckState ch
 {
   QAbstractItemModel *current = this->model();
   if(current == 0)
-    {
+  {
     return;
-    }
+  }
   current->setHeaderData(section, this->orientation(),
                          static_cast<int>(checkState), Qt::CheckStateRole);
 }
@@ -468,9 +468,9 @@ void ctkCheckableModelHelper::setCheckState(const QModelIndex& index, Qt::CheckS
 {
   QAbstractItemModel *current = this->model();
   if(current == 0)
-    {
+  {
     return;
-    }
+  }
   current->setData(index, static_cast<int>(checkState), Qt::CheckStateRole);
 }
 //-----------------------------------------------------------------------------
@@ -478,9 +478,9 @@ void ctkCheckableModelHelper::toggleCheckState(const QModelIndex& modelIndex)
 {
   // If the section is checkable, toggle the check state.
   if(!this->isCheckable(modelIndex))
-    {
+  {
     return;
-    }
+  }
   // I've no strong feeling to turn the state checked or unchecked when the
   // state is PartiallyChecked.
   this->setCheckState(modelIndex,
@@ -492,9 +492,9 @@ void ctkCheckableModelHelper::toggleHeaderCheckState(int section)
 {
   // If the section is checkable, toggle the check state.
   if(!this->isHeaderCheckable(section))
-    {
+  {
     return;
-    }
+  }
   // I've no strong feeling to turn the state checked or unchecked when the
   // state is PartiallyChecked.
   this->setHeaderCheckState(
@@ -511,15 +511,15 @@ void ctkCheckableModelHelper::onHeaderDataChanged(Qt::Orientation orient,
   Q_UNUSED(firstSection);
   Q_UNUSED(lastSection);
   if(orient != this->orientation())
-    {
+  {
     return;
-    }
+  }
   bool oldItemsAreUpdating = d->ItemsAreUpdating;
   if (!d->ItemsAreUpdating)
-    {
+  {
     d->ItemsAreUpdating = true;
     d->propagateCheckStateToChildren(this->rootIndex());
-    }
+  }
   d->ItemsAreUpdating = oldItemsAreUpdating;
 }
 
@@ -529,9 +529,9 @@ void ctkCheckableModelHelper::updateHeadersFromItems()
   Q_D(ctkCheckableModelHelper);
   QAbstractItemModel *currentModel = this->model();
   if (!currentModel)
-    {
+  {
     return;
-    }
+  }
   d->updateCheckState(QModelIndex());
 }
 
@@ -542,15 +542,15 @@ void ctkCheckableModelHelper::onDataChanged(const QModelIndex & topLeft,
   Q_UNUSED(bottomRight);
   Q_D(ctkCheckableModelHelper);
   if(d->ItemsAreUpdating || d->PropagateDepth == 0)
-    {
+  {
     return;
-    }
+  }
   bool checkable = false;
   d->checkState(topLeft, &checkable);
   if (!checkable)
-    {
+  {
     return;
-    }
+  }
   d->ItemsAreUpdating = true;
   // TODO: handle topLeft "TO bottomRight"
   d->propagateCheckStateToChildren(topLeft);
@@ -565,25 +565,25 @@ void ctkCheckableModelHelper::onColumnsInserted(const QModelIndex &parentIndex,
 {
   Q_D(ctkCheckableModelHelper);
   if (this->orientation() == Qt::Horizontal)
-    {
+  {
     if (start == 0)
-      {
-      this->updateHeadersFromItems();
-      }
-    }
-  else
     {
+      this->updateHeadersFromItems();
+    }
+  }
+  else
+  {
     if (d->ForceCheckability)
-      {
+    {
       for (int i = start; i <= end; ++i)
-        {
+      {
         QModelIndex index = this->model()->index(0, i, parentIndex);
         d->forceCheckability(index);
-        }
       }
+    }
     this->onDataChanged(this->model()->index(0, start, parentIndex),
                         this->model()->index(0, end, parentIndex));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -592,35 +592,35 @@ void ctkCheckableModelHelper::onRowsInserted(const QModelIndex &parentIndex,
 {
   Q_D(ctkCheckableModelHelper);
   if (this->orientation() == Qt::Vertical)
-    {
+  {
     if (start == 0)
-      {
-      this->updateHeadersFromItems();
-      }
-    }
-  else
     {
+      this->updateHeadersFromItems();
+    }
+  }
+  else
+  {
     if (d->ForceCheckability)
-      {
+    {
       for (int i = start; i <= end; ++i)
-        {
+      {
         QModelIndex index = this->model()->index(i, 0, parentIndex);
         d->forceCheckability(index);
-        }
       }
+    }
     this->onDataChanged(this->model()->index(start, 0, parentIndex),
                         this->model()->index(end, 0, parentIndex));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 bool ctkCheckableModelHelper::isHeaderCheckable(int section)const
 {
   if (!this->model())
-    {
+  {
     qWarning() << "ctkCheckableModelHelper::isHeaderCheckable : Model has not been set";
     return (this->forceCheckability() && section == 0);
-    }
+  }
   return !this->model()->headerData(section, this->orientation(), Qt::CheckStateRole).isNull();
 }
 
@@ -628,10 +628,10 @@ bool ctkCheckableModelHelper::isHeaderCheckable(int section)const
 bool ctkCheckableModelHelper::isCheckable(const QModelIndex& index)const
 {
   if (!this->model())
-    {
+  {
     qWarning() << "ctkCheckableModelHelper::isCheckable : Model has not been set";
     return (this->forceCheckability() && index.column() == 0);
-    }
+  }
   return !this->model()->data(index, Qt::CheckStateRole).isNull();
 }
 
@@ -639,10 +639,10 @@ bool ctkCheckableModelHelper::isCheckable(const QModelIndex& index)const
 Qt::CheckState ctkCheckableModelHelper::headerCheckState(int section)const
 {
   if (!this->model())
-    {
+  {
     qWarning() << "ctkCheckableModelHelper::headerCheckState : Model has not been set";
     return this->defaultCheckState();
-    }
+  }
   return static_cast<Qt::CheckState>(
     this->model()->headerData(section, this->orientation(), Qt::CheckStateRole).toInt());
 }
@@ -651,10 +651,10 @@ Qt::CheckState ctkCheckableModelHelper::headerCheckState(int section)const
 Qt::CheckState ctkCheckableModelHelper::checkState(const QModelIndex& index)const
 {
   if (!this->model())
-    {
+  {
     qWarning() << "ctkCheckableModelHelper::checkState : Model has not been set";
     return this->defaultCheckState();
-    }
+  }
   return static_cast<Qt::CheckState>(
     this->model()->data(index, Qt::CheckStateRole).toInt());
 }
@@ -664,10 +664,10 @@ bool ctkCheckableModelHelper::headerCheckState(int section, Qt::CheckState& chec
 {
   bool checkable = false;
   if (!this->model())
-    {
+  {
     qWarning() << "ctkCheckableModelHelper::headerCheckState : Model has not been set";
     return (this->forceCheckability() && section == 0);
-    }
+  }
   checkState = static_cast<Qt::CheckState>(
     this->model()->headerData(section, this->orientation(), Qt::CheckStateRole).toInt(&checkable));
   return checkable;
@@ -678,10 +678,10 @@ bool ctkCheckableModelHelper::checkState(const QModelIndex& index, Qt::CheckStat
 {
   bool checkable = false;
   if (!this->model())
-    {
+  {
     qWarning() << "ctkCheckableModelHelper::checkState : Model has not been set";
     return (this->forceCheckability() && index.column() == 0);
-    }
+  }
   checkState = static_cast<Qt::CheckState>(
     this->model()->data(index, Qt::CheckStateRole).toInt(&checkable));
   return checkable;

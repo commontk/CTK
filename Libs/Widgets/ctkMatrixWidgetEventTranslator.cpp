@@ -41,29 +41,29 @@ bool ctkMatrixWidgetEventTranslator::translateEvent(QObject *Object,
   Q_UNUSED(Error);
   ctkMatrixWidget* matrix = NULL;
   for(QObject* test = Object; matrix == NULL && test != NULL; test = test->parent())
-    {
+  {
     matrix = qobject_cast<ctkMatrixWidget*>(test);
-    }
+  }
 
   if(!matrix)
-    {
+  {
     return false;
-    }
+  }
 
   if(Event->type() == QEvent::Enter && Object == matrix)
-    {
+  {
     if(this->CurrentObject != Object)
-      {
+    {
       if(this->CurrentObject)
-        {
+      {
         disconnect(this->CurrentObject, 0, this, 0);
-        }
+      }
       this->CurrentObject = Object;
 
       connect(matrix, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed()));
       connect(matrix, SIGNAL(matrixChanged()), this, SLOT(onMatrixChanged()));
-      }
     }
+  }
 
   return true;
 }
@@ -81,8 +81,8 @@ void ctkMatrixWidgetEventTranslator::onMatrixChanged()
   QVector<double> value = object->values();
   QStringList list;
   foreach(double val, value)
-    {
+  {
     list << QString::number(val);
-    }
+  }
   emit recordEvent(this->CurrentObject, "set_values", list.join(" "));
 }

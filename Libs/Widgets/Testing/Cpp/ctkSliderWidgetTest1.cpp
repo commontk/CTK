@@ -48,59 +48,59 @@ int ctkSliderWidgetTest1(int argc, char * argv [] )
 
   if (sliderSpinBox.spinBoxAlignment() != Qt::AlignRight ||
       !qFuzzyCompare(sliderSpinBox.value(), 80.5678))
-    {
+  {
     std::cerr << "ctkSliderWidget::setSpinBoxAlignment failed."
               << sliderSpinBox.spinBoxAlignment() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   sliderSpinBox.setSynchronizeSiblings(ctkSliderWidget::NoSynchronize);
 
   if (sliderSpinBox.synchronizeSiblings().testFlag(
       ctkSliderWidget::SynchronizeWidth) != false ||
       !qFuzzyCompare(sliderSpinBox.value(), 80.5678))
-    {
+  {
     std::cerr << "ctkSliderWidget::setAutoSpinBoxWidth failed."
               << sliderSpinBox.synchronizeSiblings() << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   sliderSpinBox.setPrefix("$");
 
   if (sliderSpinBox.prefix() != "$" ||
       !qFuzzyCompare(sliderSpinBox.value(), 80.5678))
-    {
+  {
     std::cerr << "ctkSliderWidget::setPrefix failed."
               << qPrintable(sliderSpinBox.prefix()) << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   sliderSpinBox.setSuffix("mm");
 
   if (sliderSpinBox.suffix() != "mm" ||
       !qFuzzyCompare(sliderSpinBox.value(), 80.5678))
-    {
+  {
     std::cerr << "ctkSliderWidget::setSuffix failed."
               << qPrintable(sliderSpinBox.suffix()) << " "
               << sliderSpinBox.value() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   sliderSpinBox.setPageStep(1.);
   if (sliderSpinBox.pageStep() != 1.)
-    {
+  {
     std::cerr << "ctkSliderWidget::setPageStep(1.) failed"
               << " val: " << sliderSpinBox.pageStep() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   sliderSpinBox.show();
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(100, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

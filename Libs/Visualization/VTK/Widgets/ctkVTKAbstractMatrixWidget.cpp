@@ -75,18 +75,18 @@ void ctkVTKAbstractMatrixWidgetPrivate::updateMatrix()
   q->setEnabled(this->Matrix.GetPointer() != 0);
 
   if (this->Matrix.GetPointer() == 0)
-    {
+  {
     q->identity();
     return;
-    }
+  }
   QVector<double> vector;
   for (int i=0; i < 4; i++)
-    {
+  {
     for (int j=0; j < 4; j++)
-      {
+    {
       vector.append(this->Matrix->GetElement(i,j));
-      }
     }
+  }
   q->setValues( vector );
 }
 
@@ -95,18 +95,18 @@ void ctkVTKAbstractMatrixWidgetPrivate::updateVTKMatrix()
 {
   Q_Q(ctkVTKAbstractMatrixWidget);
   if (this->Matrix.GetPointer() == 0)
-    {
+  {
     return;
-    }
+  }
   double elements[16];
   int n = 0;
   for (int i=0; i < 4; i++)
-    {
+  {
     for (int j=0; j < 4; j++)
-      {
+    {
       elements[n++] = q->value(i,j);
-      }
     }
+  }
   bool blocked = this->qvtkBlockAll(true);
   this->Matrix->DeepCopy(elements);
   this->qvtkBlockAll(blocked);

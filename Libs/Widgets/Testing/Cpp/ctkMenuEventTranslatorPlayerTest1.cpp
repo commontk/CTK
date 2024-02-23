@@ -58,7 +58,7 @@ QSignalSpy* Spy10;
 
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   QMenuBar* widget = reinterpret_cast<QMenuBar*>(data);
 
   Q_UNUSED(widget);
@@ -72,7 +72,7 @@ void checkFinalWidgetState(void* data)
   CTKCOMPARE(Spy8->count(), 1);
   CTKCOMPARE(Spy9->count(), 1);
   CTKCOMPARE(Spy10->count(), 1);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -156,9 +156,9 @@ int ctkMenuEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

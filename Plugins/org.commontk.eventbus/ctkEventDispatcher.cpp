@@ -342,7 +342,7 @@ bool ctkEventDispatcher::registerSignal(ctkBusEvent &props) {
          }
          ctkBusEvent *dict = const_cast<ctkBusEvent *>(&props);
          this->m_SignalsHash.insert(topic, dict);
-    }
+     }
 
     return cumulativeConnect;
 }

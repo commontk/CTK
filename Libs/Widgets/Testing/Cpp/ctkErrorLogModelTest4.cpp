@@ -41,7 +41,7 @@ int ctkErrorLogModelTest4(int argc, char * argv [])
   modelTester.setVerbose(false);
 
   try
-    {
+  {
     model.enableAllMsgHandler();
     model.msgHandlerNames();
     model.filterEntry();
@@ -49,13 +49,13 @@ int ctkErrorLogModelTest4(int argc, char * argv [])
 
     model.logLevelFilter();
     model.logEntryGrouping();
-    }
+  }
   catch (const char* error)
-    {
+  {
     model.disableAllMsgHandler();
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

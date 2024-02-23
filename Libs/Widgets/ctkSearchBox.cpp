@@ -92,11 +92,11 @@ QRect ctkSearchBoxPrivate::searchRect()const
   // If the QLineEdit has a frame, the icon must be shifted from
   // the frame line width
   if (q->hasFrame())
-    {
+  {
     QStyleOptionFrame opt;
     q->initStyleOption(&opt);
     sRect.adjust(opt.lineWidth, opt.lineWidth, -opt.lineWidth, -opt.lineWidth);
-    }
+  }
   // Hardcoded: shrink by 1 pixel because some styles have a focus frame inside
   // the line edit frame.
   sRect.adjust(1, 1, -1, -1);
@@ -140,9 +140,9 @@ void ctkSearchBox::setAlwaysShowClearIcon(bool show)
   Q_D(ctkSearchBox);
   d->alwaysShowClearIcon = show;
   if (show == true)
-    {
+  {
     d->hideClearIcon = false;
-    }
+  }
   this->update();
 }
 
@@ -200,17 +200,17 @@ void ctkSearchBox::paintEvent(QPaintEvent * event)
 
   // Draw clearIcon
   if (!d->hideClearIcon)
-    {
+  {
     QPixmap closePixmap = d->clearIcon.pixmap(cRect.size(),this->isEnabled() ? QIcon::Normal : QIcon::Disabled);
     this->style()->drawItemPixmap(&p, cRect, Qt::AlignCenter, closePixmap);
-    }
+  }
 
   // Draw searchIcon
   if (d->showSearchIcon)
-    {
+  {
     QPixmap searchPixmap = d->searchIcon.pixmap(sRect.size(), this->isEnabled() ? QIcon::Normal : QIcon::Disabled);
     this->style()->drawItemPixmap(&p, sRect, Qt::AlignCenter, searchPixmap);
-    }
+  }
 }
 
 // --------------------------------------------------
@@ -219,17 +219,17 @@ void ctkSearchBox::mousePressEvent(QMouseEvent *e)
   Q_D(ctkSearchBox);
 
   if(d->clearRect().contains(e->pos()))
-    {
+  {
     this->clear();
     emit this->textEdited(this->text());
     return;
-    }
+  }
 
   if(d->showSearchIcon && d->searchRect().contains(e->pos()))
-    {
+  {
     this->selectAll();
     return;
-    }
+  }
 
   this->Superclass::mousePressEvent(e);
 }
@@ -241,13 +241,13 @@ void ctkSearchBox::mouseMoveEvent(QMouseEvent *e)
 
   if(d->clearRect().contains(e->pos()) ||
      (d->showSearchIcon && d->searchRect().contains(e->pos())))
-    {
+  {
     this->setCursor(Qt::PointingHandCursor);
-    }
+  }
   else
-    {
+  {
     this->setCursor(this->isReadOnly() ? Qt::ArrowCursor : Qt::IBeamCursor);
-    }
+  }
   this->Superclass::mouseMoveEvent(e);
 }
 
@@ -268,7 +268,7 @@ void ctkSearchBox::updateClearButtonState()
 {
   Q_D(ctkSearchBox);
   if (!d->alwaysShowClearIcon)
-    {
+  {
     d->hideClearIcon = this->text().isEmpty() ? true : false;
-    }
+  }
 }

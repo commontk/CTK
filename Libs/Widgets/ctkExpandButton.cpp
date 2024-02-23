@@ -104,17 +104,17 @@ void ctkExpandButton::setOrientation(Qt::Orientation newOrientation)
   QStyleOption opt;
   opt.init(this);
   if(newOrientation == Qt::Horizontal)
-    {
+  {
     d->defaultPixmap = this->style()->standardPixmap(
         QStyle::SP_ToolBarHorizontalExtensionButton, &opt);
     d->orientation = Qt::Horizontal;
-    }
+  }
   else
-    {
+  {
     d->defaultPixmap = this->style()->standardPixmap(
         QStyle::SP_ToolBarVerticalExtensionButton, &opt);
     d->orientation = Qt::Vertical;
-    }
+  }
   this->updateIcon();
 }
 
@@ -132,14 +132,14 @@ void ctkExpandButton::updateIcon()
   // If the orientation is vertical, UpToBottom is LeftToRight and
   // BottomToUp is RightToLeft. Rotate 90' clockwise.
   if(!d->mirrorOnExpand || !this->isChecked())
-    {
+  {
     this->setIcon(QIcon(d->defaultPixmap));
-    }
+  }
   else
-    {
+  {
     QImage mirrorImage =
         d->defaultPixmap.toImage().mirrored(d->orientation == Qt::Horizontal,
                                             d->orientation == Qt::Vertical);
     this->setIcon(QIcon(QPixmap::fromImage(mirrorImage)));
-    }
+  }
 }

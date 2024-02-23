@@ -34,11 +34,11 @@ int ctkDICOMTest1(int argc, char * argv [])
   QString testName = arguments.takeFirst();
 
   if (arguments.count() != 1)
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-ctkDICOM-executable>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString command = arguments.at(0);
 
@@ -49,18 +49,18 @@ int ctkDICOMTest1(int argc, char * argv [])
   process.start(command, /* arguments= */ QStringList());
   bool res = process.waitForStarted();
   if (!res)
-    {
+  {
     std::cerr << '\"' << qPrintable(command) << '\"'
               << " didn't start correctly" << std::endl;
     return res ? EXIT_SUCCESS : EXIT_FAILURE;
-    }
+  }
   process.kill();
   res = process.waitForFinished();
   if (!res)
-    {
+  {
     std::cerr << '\"' << qPrintable(command) << '\"'
               << " failed to terminate" << std::endl;
     return res ? EXIT_SUCCESS : EXIT_FAILURE;
-    }
+  }
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }

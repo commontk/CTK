@@ -51,60 +51,60 @@ int ctkUtilsTest2(int argc, char * argv [] )
   standardNameFiltersExtensions << "*.jpg" << "*.png" << "*.txt";
 
   if (ctk::nameFilterToExtensions(invalidNameFilter).count())
-    {
+  {
     qWarning() << "ctk::nameFilterToExtensions() failed: input "
                << invalidNameFilter << "output:"
                << ctk::nameFilterToExtensions(invalidNameFilter);
     return EXIT_FAILURE;
-    }
+  }
 
   if (ctk::nameFilterToExtensions(invalidNameFilter2).count())
-    {
+  {
     qWarning() << "ctk::nameFilterToExtensions() failed: input "
                << invalidNameFilter2 << "output:"
                << ctk::nameFilterToExtensions(invalidNameFilter2);
     return EXIT_FAILURE;
-    }
+  }
 
   if (ctk::nameFilterToExtensions(invalidNameFilter3).count())
-    {
+  {
     qWarning() << "ctk::nameFilterToExtensions() failed: input "
                << invalidNameFilter3 << "output:"
                << ctk::nameFilterToExtensions(invalidNameFilter3);
     return EXIT_FAILURE;
-    }
+  }
 
   if (ctk::nameFilterToExtensions(simpleNameFilter) != QStringList(simpleNameFilter))
-    {
+  {
     qWarning() << "ctk::nameFilterToExtensions() failed: input "
                << simpleNameFilter << "output:"
                << ctk::nameFilterToExtensions(simpleNameFilter);
     return EXIT_FAILURE;
-    }
+  }
 
   if (ctk::nameFilterToExtensions(standardNameFilter) != standardNameFilterExtensions)
-    {
+  {
     qWarning() << "ctk::nameFilterToExtensions() failed: input "
                << standardNameFilter << "output:"
                << ctk::nameFilterToExtensions(standardNameFilter);
     return EXIT_FAILURE;
-    }
+  }
 
   if (ctk::nameFilterToExtensions(simpleStandardNameFilter) != simpleStandardNameFilterExtensions)
-    {
+  {
     qWarning() << "ctk::nameFilterToExtensions() failed: input "
                << simpleStandardNameFilter << "output:"
                << ctk::nameFilterToExtensions(simpleStandardNameFilter);
     return EXIT_FAILURE;
-    }
+  }
 
   if (ctk::nameFiltersToExtensions(standardNameFilters) != standardNameFiltersExtensions)
-    {
+  {
     qWarning() << "ctk::nameFilterToExtensions() failed: input "
                << standardNameFilters << "output:"
                << ctk::nameFiltersToExtensions(standardNameFilters);
     return EXIT_FAILURE;
-    }
+  }
   //QString extensionToRegExp(const QString& extension);
   //QRegExp nameFiltersToRegExp(const QStringList& nameFilters);
   return EXIT_SUCCESS;

@@ -44,12 +44,12 @@ protected:
     // fails before returning the module. See QScopedPointer::take()
     QScopedPointer<ctkDummyLibrary> module(new ctkDummyLibrary());
     foreach(QString symbol, this->Symbols)
-      {
+    {
       SymbolAddressType res = this->symbolAddress(symbol);
       if (!res)
-        {
-        }
+      {
       }
+    }
     return module.take();
   }
 };
@@ -71,69 +71,69 @@ int ctkAbstractLibraryFactoryTest1(int argc, char * argv [])
   QCoreApplication app(argc, argv);
 
   if (argc <= 1)
-    {
+  {
     std::cerr << "Missing argument" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   QString filePath(argv[1]);
   QFileInfo file(filePath);
   while (filePath.contains("$(OutDir)"))
-    {
+  {
     QString debugFilePath = filePath;
     debugFilePath.replace("$(OutDir)","Debug");
     if (QFile::exists(QString(debugFilePath)))
-      {
+    {
       file = QFileInfo(debugFilePath);
       break;
-      }
+    }
     QString releaseFilePath = filePath;
     releaseFilePath.replace("$(OutDir)","Release");
     if (QFile::exists(QString(releaseFilePath)))
-      {
+    {
       file = QFileInfo(releaseFilePath);
       break;
-      }
-    return EXIT_FAILURE;
     }
+    return EXIT_FAILURE;
+  }
   ctkDummyLibraryFactoryItem libraryFactory;
   libraryFactory.setVerbose(true);
 
   QString itemKey  = libraryFactory.registerFileItem(QFileInfo("foo/bar.txt"));
   if (!itemKey.isEmpty())
-    {
+  {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() registered bad file"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   itemKey = libraryFactory.registerFileItem(file);
   if (itemKey.isEmpty() || libraryFactory.itemKeys().count() != 1)
-    {
+  {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
               << libraryFactory.itemKeys().count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // register twice must be a no-op
   itemKey = libraryFactory.registerFileItem(file);
   if (itemKey.isEmpty() || libraryFactory.itemKeys().count() != 1)
-    {
+  {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
               << libraryFactory.itemKeys().count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (QFileInfo(libraryFactory.path(itemKey)) != file)
-    {
+  {
     std::cerr << "ctkAbstractLibraryFactory::registerLibrary() failed"
               << libraryFactory.path(itemKey).toStdString() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDummyLibrary* library = libraryFactory.instantiate(itemKey);
   if (library == 0)
-    {
+  {
     std::cerr << "ctkAbstractLibraryFactory::instantiate() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   libraryFactory.uninstantiate(itemKey);
   return EXIT_SUCCESS;

@@ -48,7 +48,7 @@ int ctkVTKErrorLogModelTest1(int argc, char * argv [])
   QString errorMsg;
 
   try
-    {
+  {
     modelTester.setModel(&model);
 
     // --------------------------------------------------------------------------
@@ -59,12 +59,12 @@ int ctkVTKErrorLogModelTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ 0);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
+    }
 
     QString vtkMessage0("This is a VTK debug message");
     vtkOutputWindowDisplayDebugText(qPrintable(vtkMessage0));
@@ -83,26 +83,26 @@ int ctkVTKErrorLogModelTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedVTKMessages.count());
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       return EXIT_FAILURE;
-      }
+    }
 
     errorMsg = checkTextMessages(__LINE__, model, expectedVTKMessages);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       return EXIT_FAILURE;
-      }
+    }
 
     // Check if handler can be enabled / disabled multiple times in a row
     for (int idx = 0; idx < 3; ++idx)
-      {
+    {
       model.setMsgHandlerEnabled(ctkVTKErrorLogMessageHandler::HandlerName, false);
       model.setMsgHandlerEnabled(ctkVTKErrorLogMessageHandler::HandlerName, true);
-      }
+    }
 
     // Clear
     model.clear();
@@ -116,19 +116,19 @@ int ctkVTKErrorLogModelTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ 0);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
     }
+  }
   catch (const char* error)
-    {
+  {
     model.disableAllMsgHandler();
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

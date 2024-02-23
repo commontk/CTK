@@ -54,12 +54,12 @@ namespace
 QSignalSpy *Spy1;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkVTKDataSetArrayComboBox* widget = reinterpret_cast<ctkVTKDataSetArrayComboBox*>(data);
 
   CTKCOMPARE(Spy1->count(), 3);
   CTKCOMPARE(widget->currentText(), "Floats");
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -98,9 +98,9 @@ int ctkVTKDataSetArrayComboBoxEventTranslatorPlayerTest1(int argc, char * argv [
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

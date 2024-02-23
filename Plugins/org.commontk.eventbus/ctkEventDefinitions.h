@@ -44,7 +44,7 @@ class ctkBusEvent;
         if(!ok) {\
             qWarning("%s", QString("Some problem occourred during the signal registration with ID '%1'.").arg(topic).toUtf8().data());\
             if(properties) {delete properties; properties = NULL;} \
-            }\
+        }\
     }
 
 #define ctkRegisterRemoteSignal(topic, sender, signature) \

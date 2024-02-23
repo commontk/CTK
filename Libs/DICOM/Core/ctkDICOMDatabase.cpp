@@ -530,7 +530,7 @@ void ctkDICOMDatabasePrivate::precacheTags(const ctkDICOMItem& dataset, const QS
 
   QStringList sopInstanceUIDs, tags, values;
   foreach (const QString &tag, this->TagsToPrecache)
-    {
+  {
     QString upperTag = tag.toUpper();
     unsigned short group, element;
     q->tagToGroupElement(upperTag, group, element);
@@ -555,7 +555,7 @@ void ctkDICOMDatabasePrivate::precacheTags(const ctkDICOMItem& dataset, const QS
     sopInstanceUIDs << sopInstanceUID;
     tags << upperTag;
     values << value;
-    }
+  }
 
   q->cacheTags(sopInstanceUIDs, tags, values);
 }
@@ -1107,9 +1107,9 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
       QSqlQuery updateDisplayPatientStatement(this->Database);
       updateDisplayPatientStatement.prepare( QString("UPDATE Patients SET %1 WHERE UID = ? ;").arg(displayPatientsFieldUpdateString) );
       foreach (QString boundValue, boundValues)
-        {
+      {
         updateDisplayPatientStatement.addBindValue(boundValue);
-        }
+      }
       updateDisplayPatientStatement.addBindValue(patientUID);
       this->loggedExec(updateDisplayPatientStatement);
 
@@ -1166,9 +1166,9 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
       QSqlQuery updateDisplayStudyStatement(this->Database);
       updateDisplayStudyStatement.prepare( QString("UPDATE Studies SET %1 WHERE StudyInstanceUID = ? ;").arg(displayStudiesFieldUpdateString) );
       foreach (QString boundValue, boundValues)
-        {
+      {
         updateDisplayStudyStatement.addBindValue(boundValue);
-        }
+      }
       updateDisplayStudyStatement.addBindValue(currentStudy["StudyInstanceUID"]);
       this->loggedExec(updateDisplayStudyStatement);
 
@@ -1216,9 +1216,9 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
       QSqlQuery updateDisplaySeriesStatement(this->Database);
       updateDisplaySeriesStatement.prepare( QString("UPDATE Series SET %1 WHERE SeriesInstanceUID = ? ;").arg(displaySeriesFieldUpdateString) );
       foreach (QString boundValue, boundValues)
-        {
+      {
         updateDisplaySeriesStatement.addBindValue(boundValue);
-        }
+      }
       updateDisplaySeriesStatement.addBindValue(currentSeries["SeriesInstanceUID"]);
       this->loggedExec(updateDisplaySeriesStatement);
 
@@ -2196,9 +2196,9 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   }
 
   if (sopInstanceUID.isEmpty())
-    {
+  {
     return "";
-    }
+  }
 
   // third, look for the value
   tag = tag.toUpper();
@@ -2213,9 +2213,9 @@ QString ctkDICOMDatabase::fileValue(const QString fileName, QString tag)
   }
 
   if (isUrl)
-    {
+  {
     return "";
-    }
+  }
 
   // Read value from file as a fallback
   value = d->readValueFromFile(fileName, sopInstanceUID, tag);
@@ -3235,12 +3235,12 @@ bool ctkDICOMDatabase::cacheTags(const QStringList sopInstanceUIDs, const QStrin
   }
 
   if ( !this->tagCacheExists() )
-    {
+  {
     if ( !this->initializeTagCache() )
-      {
+    {
       return false;
-      }
     }
+  }
 
   d->TagCacheDatabase.transaction();
 

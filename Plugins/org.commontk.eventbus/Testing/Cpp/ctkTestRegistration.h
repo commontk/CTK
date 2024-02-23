@@ -49,16 +49,16 @@ namespace ctkQA {
             ctkTestRegistration() {
                 m_TestToRegister = new T();
                 ctkTestRegistry::instance()->registerTest(m_TestToRegister);
-			}
+            }
 
             ///!brief Registration class destructor
             ~ctkTestRegistration() {
                 delete m_TestToRegister;
-			}
+            }
 
 		private:
             T* m_TestToRegister; ///< Test to be registered into the test suite.
-	};
+    };
 
 }
 

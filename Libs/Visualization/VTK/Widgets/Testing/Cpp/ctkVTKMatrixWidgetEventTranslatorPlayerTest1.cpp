@@ -48,13 +48,13 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkVTKMatrixWidget* widget = reinterpret_cast<ctkVTKMatrixWidget*>(data);
 
   CTKCOMPARE(widget->value(1,0),2.00);
   CTKCOMPARE(widget->value(2,0),-0.14);
   CTKCOMPARE(widget->value(0,3),5.00);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -83,9 +83,9 @@ int ctkVTKMatrixWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

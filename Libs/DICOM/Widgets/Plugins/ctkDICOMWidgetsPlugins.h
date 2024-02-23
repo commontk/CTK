@@ -44,7 +44,7 @@ class CTK_DICOM_WIDGETS_PLUGINS_EXPORT ctkDICOMWidgetsPlugins
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkDICOMJobListWidgetPlugin;
     plugins << new ctkDICOMQueryRetrieveWidgetPlugin;
@@ -52,7 +52,7 @@ public:
     plugins << new ctkDICOMTableViewPlugin;
     plugins << new ctkDICOMVisualBrowserWidgetPlugin;
     return plugins;
-    }
+  }
 };
 
 #endif

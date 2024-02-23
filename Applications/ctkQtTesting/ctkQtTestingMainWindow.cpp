@@ -80,34 +80,34 @@ ctkQtTestingMainWindow::ctkQtTestingMainWindow()
 ctkQtTestingMainWindow::~ctkQtTestingMainWindow()
 {
   if(TestUtility)
-    {
+  {
     delete this->TestUtility;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void ctkQtTestingMainWindow::record(bool start)
 {
   if (start)
-    {
+  {
     QString filename = QFileDialog::getSaveFileName (this, "Test File Name",
                                                      QString(), "XML Files (*.xml)");
     if (!filename.isEmpty())
-      {
+    {
       qDebug() << "Start recording";
       QFileInfo fileInfo(filename);
       if (fileInfo.suffix() != "xml")
-        {
+      {
         filename += ".xml";
-        }
-      this->TestUtility->recordTests(filename);
       }
+      this->TestUtility->recordTests(filename);
     }
+  }
   else
-    {
+  {
     qDebug() << "Stop recording";
     this->TestUtility->stopRecords(1);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -117,8 +117,8 @@ void ctkQtTestingMainWindow::play()
   QString filename = QFileDialog::getOpenFileName (this, "Test File Name",
     QString(), "XML Files (*.xml)");
   if (!filename.isEmpty())
-    {
+  {
     this->TestUtility->playTests(filename);
-    }
+  }
   qDebug() << "End Playback";
 }

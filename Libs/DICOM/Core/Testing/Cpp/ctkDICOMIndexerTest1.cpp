@@ -37,10 +37,10 @@ int ctkDICOMIndexerTest1( int argc, char * argv [] )
   QDir dataDir = QDir(QProcessEnvironment::systemEnvironment().value("CTKData_DIR", ""));
   QString dicomDir = dataDir.filePath("Data/DICOM");
   if (!QDir(dicomDir).exists())
-    {
+  {
     std::cerr << "Directory does not exist: " << qPrintable(dicomDir) << std::endl;
     std::cerr << "Make sure CTKData_DIR environment variable is set correctly" << std::endl;
-    }
+  }
 
   ctkDICOMDatabase database;
   database.openDatabase(":memory:");

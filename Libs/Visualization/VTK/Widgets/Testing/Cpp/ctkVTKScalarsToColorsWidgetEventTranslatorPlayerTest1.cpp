@@ -43,10 +43,10 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkVTKScalarsToColorsWidget* widget = reinterpret_cast<ctkVTKScalarsToColorsWidget*>(data);
   Q_UNUSED(widget);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -69,9 +69,9 @@ int ctkVTKScalarsToColorsWidgetEventTranslatorPlayerTest1(int argc, char * argv 
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

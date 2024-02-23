@@ -71,11 +71,11 @@ int main(int argc, char** argv)
   QString Host ( argv[5] );
   int CalledPort = QString ( argv[6] ).toInt ( &ok );
   if ( !ok )
-    {
+  {
     std::cerr << "Could not convert " << argv[6] << " to an integer for the calledPoint" << std::endl;
     print_usage();
     return EXIT_FAILURE;
-    }
+  }
   QString MoveDestinationAETitle ( argv[7] );
 
   ctkDICOMRetrieve retrieve;
@@ -98,15 +98,15 @@ int main(int argc, char** argv)
 
   logger.info ( "Starting to retrieve" );
   try
-    {
+  {
     retrieve.moveStudy ( StudyUID );
-    }
+  }
   catch (const std::exception& e)
-    {
+  {
     Q_UNUSED(e);
     logger.error ( "Retrieve failed" );
     return EXIT_FAILURE;
-    }
+  }
   logger.info ( "Retrieve success" );
   return EXIT_SUCCESS;
 }

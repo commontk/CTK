@@ -38,11 +38,11 @@ int ctkDICOMTesterTest2(int argc, char * argv [])
   QString testName = arguments.takeFirst();
 
   if (!arguments.count())
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDICOMTester tester;
   tester.startDCMQRSCP();
@@ -50,10 +50,10 @@ int ctkDICOMTesterTest2(int argc, char * argv [])
   bool res = tester.storeData(arguments);
 
   if (!res)
-    {
+  {
     std::cout << "Can't store data" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

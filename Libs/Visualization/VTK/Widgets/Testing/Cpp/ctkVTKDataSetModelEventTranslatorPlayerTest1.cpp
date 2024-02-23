@@ -55,12 +55,12 @@ namespace
 QSignalSpy* Spy1;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   QComboBox* widget = reinterpret_cast<QComboBox*>(data);
 
   CTKCOMPARE(Spy1->count(), 3);
   CTKCOMPARE(widget->currentText(), "Floats");
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -101,9 +101,9 @@ int ctkVTKDataSetModelEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

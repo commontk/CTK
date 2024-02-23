@@ -66,12 +66,12 @@ void ctkExampleHostControlWidget::StartApplication(QString appFileName)
   if(appFileName.isEmpty()==false)
     this->setAppFileName(appFileName);
   if ((this->Host) && (validAppFileName()))
-    {
+  {
     qDebug() << "Starting app";
     this->Host->StartApplication(this->AppFileName);
     //forward output to textedit
     connect(&this->Host->getAppProcess(),SIGNAL(readyReadStandardOutput()),this,SLOT(outputMessage()));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -79,10 +79,10 @@ void ctkExampleHostControlWidget::runButtonClicked()
 {
   qDebug() << "run button clicked";
   if (this->Host)
-    {
+  {
     bool reply = this->Host->getDicomAppService()->setState(ctkDicomAppHosting::INPROGRESS);
     qDebug() << "  setState(INPROGRESS) returned: " << reply;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -98,26 +98,26 @@ void ctkExampleHostControlWidget::setAppFileName(QString name)
 {
   this->AppFileName = name;
   if (QFile(this->AppFileName).permissions() & QFile::ExeUser )
-    {
+  {
     this->ui->applicationPathLabel->setText(this->AppFileName);
     ValidAppFileName = true;
-    }
+  }
   else
-    {
+  {
     ValidAppFileName = false;
     this->ui->applicationPathLabel->setText(
         QString("<font color='red'>Not executable:</font>").append(this->AppFileName));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void ctkExampleHostControlWidget::appProcessError(QProcess::ProcessError error)
 {
   if (error == QProcess::Crashed)
-    {
+  {
     qDebug() << "crash detected";
 //    ui->crashLabel->setVisible(true);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -125,7 +125,7 @@ void ctkExampleHostControlWidget::appProcessStateChanged(QProcess::ProcessState 
 {
   QString labelText;
   switch (state)
-    {
+  {
     case QProcess::Running:
       ui->processStateLabel->setText("Running");
       break;
@@ -146,7 +146,7 @@ void ctkExampleHostControlWidget::appProcessStateChanged(QProcess::ProcessState 
       break;
     default:
       ;
-    }
+  }
 }
 
 

@@ -59,16 +59,16 @@ public:
   void paint(QPainter* painter,
              const QStyleOptionViewItem& option,
              const QModelIndex& index) const override
-    {
+  {
     QStyleOptionViewItem opt = option;
     const QWidget* widget = option.widget;
     initStyleOption(&opt, index);
     QStyle* style = opt.widget ? opt.widget->style() : QApplication::style();
     style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, widget);
     if (opt.features & QStyleOptionViewItem::HasCheckIndicator)
-      {
+    {
       switch (opt.checkState)
-        {
+      {
         case Qt::Unchecked:
           opt.state |= QStyle::State_Off;
           break;
@@ -78,98 +78,98 @@ public:
         case Qt::Checked:
           opt.state |= QStyle::State_On;
           break;
-        }
+      }
       auto rect = style->subElementRect(QStyle::SE_ItemViewItemCheckIndicator, &opt, widget);
       opt.rect = QStyle::alignedRect(opt.direction, Qt::AlignCenter, rect.size(), opt.rect);
       opt.state = opt.state & ~QStyle::State_HasFocus;
       style->drawPrimitive(QStyle::PE_IndicatorItemViewItemCheck, &opt, painter, widget);
-      }
+    }
     else if (!opt.icon.isNull())
-      {
+    {
       // draw the icon
       QRect iconRect = style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, widget);
       iconRect = QStyle::alignedRect(opt.direction, Qt::AlignCenter, iconRect.size(), opt.rect);
       QIcon::Mode mode = QIcon::Normal;
       if (!(opt.state & QStyle::State_Enabled))
-        {
+      {
         mode = QIcon::Disabled;
-        }
+      }
       else if (opt.state & QStyle::State_Selected)
-        {
+      {
         mode = QIcon::Selected;
-        }
+      }
       QIcon::State state = opt.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
       opt.icon.paint(painter, iconRect, opt.decorationAlignment, mode, state);
-      }
-    else
-      {
-      QStyledItemDelegate::paint(painter, option, index);
-      }
     }
+    else
+    {
+      QStyledItemDelegate::paint(painter, option, index);
+    }
+  }
 protected:
   bool editorEvent(QEvent* event,
                    QAbstractItemModel* model,
                    const QStyleOptionViewItem& option,
                    const QModelIndex& index) override
-    {
+  {
     Q_ASSERT(event);
     Q_ASSERT(model);
     // make sure that the item is checkable
     Qt::ItemFlags flags = model->flags(index);
     if (!(flags & Qt::ItemIsUserCheckable) || !(option.state & QStyle::State_Enabled) ||
         !(flags & Qt::ItemIsEnabled))
-      {
+    {
       return false;
-      }
+    }
     // make sure that we have a check state
     QVariant value = index.data(Qt::CheckStateRole);
     if (!value.isValid())
-      {
+    {
       return false;
-      }
+    }
     const QWidget* widget = option.widget;
     QStyle* style = option.widget ? widget->style() : QApplication::style();
     // make sure that we have the right event type
     if ((event->type() == QEvent::MouseButtonRelease) || (event->type() == QEvent::MouseButtonDblClick) ||
         (event->type() == QEvent::MouseButtonPress))
-      {
+    {
       QStyleOptionViewItem viewOpt(option);
       initStyleOption(&viewOpt, index);
       QRect checkRect = style->subElementRect(QStyle::SE_ItemViewItemCheckIndicator, &viewOpt, widget);
       checkRect = QStyle::alignedRect(viewOpt.direction, Qt::AlignCenter, checkRect.size(), viewOpt.rect);
       QMouseEvent* me = static_cast<QMouseEvent*>(event);
       if (me->button() != Qt::LeftButton || !checkRect.contains(me->pos()))
-        {
-        return false;
-        }
-      if ((event->type() == QEvent::MouseButtonPress) || (event->type() == QEvent::MouseButtonDblClick))
-        {
-        return true;
-        }
-      }
-    else if (event->type() == QEvent::KeyPress)
       {
+        return false;
+      }
+      if ((event->type() == QEvent::MouseButtonPress) || (event->type() == QEvent::MouseButtonDblClick))
+      {
+        return true;
+      }
+    }
+    else if (event->type() == QEvent::KeyPress)
+    {
       if (static_cast<QKeyEvent*>(event)->key() != Qt::Key_Space &&
           static_cast<QKeyEvent*>(event)->key() != Qt::Key_Select)
-        {
-        return false;
-        }
-      }
-    else
       {
-      return false;
+        return false;
       }
+    }
+    else
+    {
+      return false;
+    }
     Qt::CheckState state = static_cast<Qt::CheckState>(value.toInt());
     if (flags & Qt::ItemIsUserTristate)
-      {
+    {
       state = (static_cast<Qt::CheckState>((state + 1) % 3));
-      }
-    else
-      {
-      state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
-      }
-    return model->setData(index, static_cast<int>(state), Qt::CheckStateRole);
     }
+    else
+    {
+      state = (state == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
+    }
+    return model->setData(index, static_cast<int>(state), Qt::CheckStateRole);
+  }
 };
 
 //----------------------------------------------------------------------------
@@ -296,9 +296,9 @@ void ctkDICOMServerNodeWidget2Private::disconnectScheduler()
 {
   Q_Q(ctkDICOMServerNodeWidget2);
   if (!this->Scheduler)
-    {
+  {
     return;
-    }
+  }
 
   ctkDICOMServerNodeWidget2::disconnect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
                                         q, SLOT(updateGUIState()));
@@ -313,9 +313,9 @@ void ctkDICOMServerNodeWidget2Private::connectScheduler()
 {
   Q_Q(ctkDICOMServerNodeWidget2);
   if (!this->Scheduler)
-    {
+  {
     return;
-    }
+  }
 
   ctkDICOMServerNodeWidget2::connect(this->Scheduler.data(), SIGNAL(jobStarted(QVariant)),
                                      q, SLOT(updateGUIState()));
@@ -343,10 +343,10 @@ QStringList ctkDICOMServerNodeWidget2Private::serverNodes() const
   QStringList nodes;
   int count = this->NodeTable->rowCount();
   for (int row = 0; row < count; ++row)
-    {
+  {
     QTableWidgetItem* item = this->NodeTable->item(row, ctkDICOMServerNodeWidget2::NameColumn);
     nodes << (item ? item->text() : QString(""));
-    }
+  }
   // If there are duplicates, serverNodeParameters(QString) will behave
   // strangely
   Q_ASSERT(nodes.removeDuplicates() == 0);
@@ -359,12 +359,12 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(c
   QMap<QString, QVariant> parameters;
   int count = this->NodeTable->rowCount();
   for (int row = 0; row < count; ++row)
-    {
+  {
     if (this->NodeTable->item(row, 0)->text() == connectionName)
-      {
+    {
       return this->serverNodeParameters(row);
-      }
     }
+  }
 
   return parameters;
 }
@@ -374,19 +374,19 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(i
 {
   QMap<QString, QVariant> node;
   if (row < 0 || row >= this->NodeTable->rowCount())
-    {
+  {
     return node;
-    }
+  }
   int columnCount = this->NodeTable->columnCount();
   for (int column = 0; column < columnCount; ++column)
-    {
+  {
     if (!this->NodeTable->item(row, column))
-      {
+    {
       continue;
-      }
+    }
     QString label = this->NodeTable->horizontalHeaderItem(column)->text();
     node[label] = this->NodeTable->item(row, column)->data(Qt::DisplayRole);
-    }
+  }
   node["QueryRetrieveCheckState"] = this->NodeTable->item(row, ctkDICOMServerNodeWidget2::QueryRetrieveColumn) ?
     this->NodeTable->item(row, ctkDICOMServerNodeWidget2::QueryRetrieveColumn)->checkState() :
     static_cast<int>(Qt::Unchecked);
@@ -396,24 +396,24 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(i
 
   QLineEdit* portLineEdit = qobject_cast<QLineEdit*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::PortColumn));
   if (portLineEdit)
-    {
+  {
     node["Port"] = portLineEdit->text();
-    }
+  }
   QSpinBox* timeoutSpinBox = qobject_cast<QSpinBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::TimeoutColumn));
   if (timeoutSpinBox)
-    {
+  {
     node["Timeout"] = timeoutSpinBox->value();
-    }
+  }
   QComboBox* protocolComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProtocolColumn));
   if (protocolComboBox)
-    {
+  {
     node["Protocol"] = protocolComboBox->currentText();
-    }
+  }
   QComboBox* proxyComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProxyColumn));
   if (proxyComboBox)
-    {
+  {
     node["Proxy"] = proxyComboBox->currentText();
-    }
+  }
 
   return node;
 }
@@ -424,9 +424,9 @@ QStringList ctkDICOMServerNodeWidget2Private::getAllNodesName() const
   QStringList nodesNames;
   int count = this->NodeTable->rowCount();
   for (int row = 0; row < count; ++row)
-    {
+  {
     nodesNames.append(this->NodeTable->item(row, ctkDICOMServerNodeWidget2::NameColumn)->data(Qt::DisplayRole).toString());
-    }
+  }
 
   return nodesNames;
 }
@@ -437,12 +437,12 @@ int ctkDICOMServerNodeWidget2Private::getServerNodeRowFromConnectionName(const Q
   QMap<QString, QVariant> parameters;
   int count = this->NodeTable->rowCount();
   for (int row = 0; row < count; ++row)
-    {
+  {
     if (this->NodeTable->item(row, 0)->text() == connectionName)
-      {
+    {
       return row;
-      }
     }
+  }
 
   return -1;
 }
@@ -451,9 +451,9 @@ int ctkDICOMServerNodeWidget2Private::getServerNodeRowFromConnectionName(const Q
 QString ctkDICOMServerNodeWidget2Private::getServerNodeConnectionNameFromRow(int row) const
 {
   if (row < 0 || row >= this->NodeTable->rowCount())
-    {
+  {
     return "";
-    }
+  }
 
   return this->NodeTable->item(row, 0)->text();
 }
@@ -464,10 +464,10 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   Q_Q(ctkDICOMServerNodeWidget2);
 
   if (this->getServerNodeRowFromConnectionName(node["Name"].toString()) != -1)
-    {
+  {
     logger.warn("addServerNode failed: the server has a duplicate. The connection name has to be unique \n");
     return -1;
-    }
+  }
 
   int rowCount = this->NodeTable->rowCount();
   this->NodeTable->setRowCount(rowCount + 1);
@@ -544,9 +544,9 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   nodesNames.removeOne(serverName);
   QString proxyName = node["Proxy"].toString();
   if (!nodesNames.contains(proxyName) && !proxyName.isEmpty())
-    {
+  {
     nodesNames.append(proxyName);
-    }
+  }
   proxyComboBox->addItems(nodesNames);
   proxyComboBox->setCurrentIndex(proxyComboBox->findText(node["Proxy"].toString()));
   QObject::connect(proxyComboBox, SIGNAL(currentIndexChanged(int)),
@@ -565,15 +565,15 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
   Q_Q(ctkDICOMServerNodeWidget2);
 
   if (!server)
-    {
+  {
     return -1;
-    }
+  }
 
   if (this->getServerNodeRowFromConnectionName(server->connectionName()) != -1)
-    {
+  {
     logger.debug("addServerNode failed: the server has a duplicate. The connection name has to be unique \n");
     return -1;
-    }
+  }
 
   int rowCount = this->NodeTable->rowCount();
   this->NodeTable->setRowCount(rowCount + 1);
@@ -648,19 +648,19 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
   nodesNames.removeOne(server->connectionName());
 
   if (server->proxyServer())
-    {
+  {
     QString proxyName = server->proxyServer()->connectionName();
     if (!nodesNames.contains(proxyName))
-      {
+    {
       nodesNames.append(proxyName);
-      }
     }
+  }
   proxyComboBox->addItems(nodesNames);
   if (server->proxyServer())
-    {
+  {
     QString proxyName = server->proxyServer()->connectionName();
     proxyComboBox->setCurrentIndex(proxyComboBox->findText(proxyName));
-    }
+  }
 
   QObject::connect(proxyComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onSettingsModified()));
@@ -668,10 +668,10 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::ProxyColumn, newItem);
 
   if (server->proxyServer())
-    {
+  {
     this->addServerNode(server->proxyServer());
     rowCount++;
-    }
+  }
 
   q->onSettingsModified();
 
@@ -703,10 +703,10 @@ void ctkDICOMServerNodeWidget2Private::updateProxyComboBoxes() const
   int rowCount = this->NodeTable->rowCount();
   QStringList serverNames = this->getAllNodesName();
   for (int row = 0; row < rowCount; ++row)
-    {
+  {
     QComboBox* proxyComboBox = qobject_cast<QComboBox*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::ProxyColumn));
     if (proxyComboBox)
-      {
+    {
       bool wasBlocking = proxyComboBox->blockSignals(true);
 
       QString currentServer = proxyComboBox->currentText();
@@ -715,8 +715,8 @@ void ctkDICOMServerNodeWidget2Private::updateProxyComboBoxes() const
       proxyComboBox->addItems(serverNames);
       proxyComboBox->setCurrentText(currentServer);
       proxyComboBox->blockSignals(wasBlocking);
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -832,9 +832,9 @@ void ctkDICOMServerNodeWidget2::onRemoveCurrentServerNode()
 
   QModelIndexList selection = d->NodeTable->selectionModel()->selectedRows();
   if (selection.count() == 0)
-    {
+  {
     return;
-    }
+  }
 
   QModelIndex index = selection.at(0);
   int row = index.row();
@@ -849,17 +849,17 @@ void ctkDICOMServerNodeWidget2::onTestCurrentServerNode()
 
   QModelIndexList selection = d->NodeTable->selectionModel()->selectedRows();
   if (selection.count() == 0)
-    {
+  {
     return;
-    }
+  }
 
   QModelIndex index = selection.at(0);
   QString serverName = d->getServerNodeConnectionNameFromRow(index.row());
   ctkDICOMServer* server = this->getServer(serverName.toStdString().c_str());
   if (!server)
-    {
+  {
     return;
-    }
+  }
 
   ctkDICOMEcho echo;
   echo.setConnectionName(server->connectionName());
@@ -872,15 +872,15 @@ void ctkDICOMServerNodeWidget2::onTestCurrentServerNode()
   ctkMessageBox echoMessageBox(this);
   QString messageString;
   if (echo.echo())
-    {
+  {
     messageString = tr("Node response was positive.");
     echoMessageBox.setIcon(QMessageBox::Information);
-    }
+  }
   else
-    {
+  {
     messageString = tr("Node response was negative.");
     echoMessageBox.setIcon(QMessageBox::Warning);
-    }
+  }
 
   echoMessageBox.setText(messageString);
   echoMessageBox.exec();
@@ -895,19 +895,19 @@ void ctkDICOMServerNodeWidget2::updateGUIState()
   d->TestButton->setEnabled(selectedItems.count() > 0);
 
   if (d->RestoreButton && d->SaveButton)
-    {
+  {
     d->RestoreButton->setEnabled(d->SettingsModified);
     d->SaveButton->setEnabled(d->SettingsModified);
-    }
+  }
 
   if (d->Scheduler && d->Scheduler->isStorageListenerActive())
-    {
+  {
     d->StorageStatusValueLabel->setText(QObject::tr("Active"));
-    }
+  }
   else
-    {
+  {
     d->StorageStatusValueLabel->setText(QObject::tr("Inactive"));
-    }
+  }
 
   d->updateProxyComboBoxes();
 }
@@ -926,9 +926,9 @@ void ctkDICOMServerNodeWidget2::saveSettings()
   Q_D(ctkDICOMServerNodeWidget2);
 
   if (!d->Scheduler)
-    {
+  {
     return;
-    }
+  }
 
   QSettings settings;
   int rowCount = d->NodeTable->rowCount();
@@ -941,61 +941,61 @@ void ctkDICOMServerNodeWidget2::saveSettings()
 
   QStringList proxyServers;
   for (int row = 0; row < rowCount; ++row)
-    {
+  {
     QMap<QString, QVariant> node = d->serverNodeParameters(row);
     QString proxyName = node["Proxy"].toString();
     if (!proxyName.isEmpty() && node["QueryRetrieveCheckState"].toInt() > 0)
-      {
+    {
       proxyServers.append(proxyName);
-      }
-
-    settings.setValue(QString("DICOM/ServerNodes/%1").arg(row), QVariant(node));
     }
 
+    settings.setValue(QString("DICOM/ServerNodes/%1").arg(row), QVariant(node));
+  }
+
   for (int row = 0; row < rowCount; ++row)
-    {
+  {
     QMap<QString, QVariant> node = d->serverNodeParameters(row);
     QString serverName = node["Name"].toString();
     if (proxyServers.contains(serverName))
-      {
+    {
       continue;
-      }
+    }
 
     QSharedPointer<ctkDICOMServer> server = d->createServerFromServerNode(node);
     d->Scheduler->addServer(server);
-    }
+  }
 
   for (int ii = 0; ii < rowCount; ++ii)
-    {
+  {
     QMap<QString, QVariant> node = d->serverNodeParameters(ii);
     QString serverName = node["Name"].toString();
     if (!proxyServers.contains(serverName))
-      {
+    {
       continue;
-      }
+    }
 
     QSharedPointer<ctkDICOMServer> proxyServer = d->createServerFromServerNode(node);
     for (int jj = 0; jj < rowCount; ++jj)
-      {
+    {
       QMap<QString, QVariant> tmpNode = d->serverNodeParameters(jj);
       QString tmpServerName = tmpNode["Name"].toString();
       if (serverName == tmpServerName)
-        {
+      {
         continue;
-        }
+      }
       QString tmpProxyName = tmpNode["Proxy"].toString();
       if (serverName == tmpProxyName)
-        {
+      {
         ctkDICOMServer* server = this->getServer(tmpServerName.toStdString().c_str());
         if (server)
-          {
+        {
           server->setProxyServer(proxyServer);
           server->setMoveDestinationAETitle(proxyServer->calledAETitle());
           break;
-          }
         }
       }
     }
+  }
 
   settings.setValue("DICOM/StorageEnabled", this->storageListenerEnabled());
   settings.setValue("DICOM/StorageAETitle", this->storageAETitle());
@@ -1005,11 +1005,11 @@ void ctkDICOMServerNodeWidget2::saveSettings()
   d->SettingsModified = false;
 
   if (d->StorageEnabledCheckBox->isChecked() && !d->Scheduler->isStorageListenerActive())
-    {
+  {
     d->Scheduler->startListener(this->storagePort(),
                                 this->storageAETitle(),
                                 QThread::Priority::NormalPriority);
-    }
+  }
 
   this->updateGUIState();
 }
@@ -1026,7 +1026,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
   QMap<QString, QVariant> node;
   if (settings.status() == QSettings::AccessError ||
       settings.value("DICOM/ServerNodeCount").toInt() == 0)
-    {
+  {
     d->StorageAETitle->setText("CTKSTORE");
     d->StoragePort->setText("11112");
     d->StorageEnabledCheckBox->setChecked(false);
@@ -1063,7 +1063,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
     d->NodeTable->clearSelection();
     this->updateGUIState();
     return;
-    }
+  }
 
   d->StorageEnabledCheckBox->setChecked(settings.value("DICOM/StorageEnabled").toBool());
   d->StorageAETitle->setText(settings.value("DICOM/StorageAETitle").toString());
@@ -1071,10 +1071,10 @@ void ctkDICOMServerNodeWidget2::readSettings()
 
   int count = settings.value("DICOM/ServerNodeCount").toInt();
   for (int row = 0; row < count; ++row)
-    {
+  {
     node = settings.value(QString("DICOM/ServerNodes/%1").arg(row)).toMap();
     d->addServerNode(node);
-    }
+  }
 
   d->SettingsModified = false;
   d->NodeTable->clearSelection();
@@ -1176,10 +1176,10 @@ int ctkDICOMServerNodeWidget2::getNumberOfServers()
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
-    {
+  {
     logger.error("getNumberOfServers failed, no task pool has been set. \n");
     return -1;
-    }
+  }
 
   return d->Scheduler->getNumberOfServers();
 }
@@ -1189,10 +1189,10 @@ ctkDICOMServer* ctkDICOMServerNodeWidget2::getNthServer(int id)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
-    {
+  {
     logger.error("getNthServer failed, no task pool has been set. \n");
     return nullptr;
-    }
+  }
 
   return d->Scheduler->getNthServer(id);
 }
@@ -1202,10 +1202,10 @@ ctkDICOMServer* ctkDICOMServerNodeWidget2::getServer(const QString& connectionNa
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
-    {
+  {
     logger.error("getServer failed, no task pool has been set. \n");
     return nullptr;
-    }
+  }
 
   return d->Scheduler->getServer(connectionName);
 }
@@ -1215,10 +1215,10 @@ void ctkDICOMServerNodeWidget2::addServer(ctkDICOMServer* server)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
-    {
+  {
     logger.error("addServer failed, no task pool has been set. \n");
     return;
-    }
+  }
 
   d->addServerNode(server);
   this->saveSettings();
@@ -1229,10 +1229,10 @@ void ctkDICOMServerNodeWidget2::removeServer(const QString& connectionName)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
-    {
+  {
     logger.error("removeServer failed, no task pool has been set. \n");
     return;
-    }
+  }
 
   this->removeNthServer(this->getServerIndexFromName(connectionName));
 }
@@ -1242,10 +1242,10 @@ void ctkDICOMServerNodeWidget2::removeNthServer(int id)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
-    {
+  {
     logger.error("removeNthServer failed, no task pool has been set. \n");
     return;
-    }
+  }
 
   QString connectionName = this->getServerNameFromIndex(id);
   int row = d->getServerNodeRowFromConnectionName(connectionName);
@@ -1271,10 +1271,10 @@ QString ctkDICOMServerNodeWidget2::getServerNameFromIndex(int id)
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
-    {
+  {
     logger.error("getServerNameFromIndex failed, no task pool has been set. \n");
     return "";
-    }
+  }
 
   return d->Scheduler->getServerNameFromIndex(id);
 }
@@ -1284,10 +1284,10 @@ int ctkDICOMServerNodeWidget2::getServerIndexFromName(const QString& connectionN
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
-    {
+  {
     logger.error("getServerIndexFromName failed, no task pool has been set. \n");
     return -1;
-    }
+  }
 
   return d->Scheduler->getServerIndexFromName(connectionName);
 }
@@ -1297,9 +1297,9 @@ void ctkDICOMServerNodeWidget2::stopAllJobs()
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
-    {
+  {
     return;
-    }
+  }
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   d->Scheduler->stopAllJobs(true);

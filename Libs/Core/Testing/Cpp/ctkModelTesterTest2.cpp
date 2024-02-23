@@ -59,11 +59,11 @@ int ctkModelTesterTest2(int argc, char * argv [] )
       ||  ctkTester.nestedInserts() != false
       ||  ctkTester.testDataEnabled() != true
       ||  ctkTester.verbose() != true)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Error in ctkModelTester::ctkModelTester" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkTester.setThrowOnError(false);
   ctkTester.setNestedInserts(true);
@@ -74,11 +74,11 @@ int ctkModelTesterTest2(int argc, char * argv [] )
       ||  ctkTester.nestedInserts() != true
       ||  ctkTester.testDataEnabled() != false
       ||  ctkTester.verbose() != false)
-    {
+  {
     std::cerr << "Line : " << __LINE__
               << " - Error " << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QModelIndex defaultModelIndex;
   ctkTester.testModelIndex(defaultModelIndex);
@@ -94,18 +94,18 @@ int ctkModelTesterTest2(int argc, char * argv [] )
   ctkTester.setModel(&helper);
   bool errorThrown = false;
   try
-    {
+  {
     helper.emitInvalidHeaderDataChanged();
-    }
+  }
   catch (...)
-    {
+  {
     errorThrown = true;
-    }
+  }
   if (!errorThrown)
-    {
+  {
     std::cerr << "ThrowOnError failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QStandardItemModel model;
   ctkTester.setModel(&model);

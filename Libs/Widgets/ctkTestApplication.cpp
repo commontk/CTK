@@ -59,13 +59,13 @@ ctkTestApplication::ctkTestApplication(int _argc, char** _argv)
   // so let's put a dummy back in
   this->Argv.append("ctkTestApplication");
   for(int i=0; i<_argc; i++)
-    {
+  {
     this->Argv.append(_argv[i]);
-    }
+  }
   for(int j=0; j<this->Argv.size(); j++)
-    {
+  {
     this->Argvp.append(this->Argv[j].data());
-    }
+  }
   this->Argc = this->Argvp.size();
   this->App = new QApplication(this->Argc, this->Argvp.data());
 }
@@ -92,20 +92,20 @@ void ctkTestApplication::runTest()
 int ctkTestApplication::exec(bool reportErrorsOnExit)
 {
   if(QCoreApplication::arguments().contains("--exit"))
-    {
+  {
     QTimer::singleShot(100, QApplication::instance(),
                        SLOT(quit()));
-    }
+  }
 
   int ret = QApplication::exec();
   if (reportErrorsOnExit)
-    {
+  {
     return Error + ret;
-    }
+  }
   else
-    {
+  {
     return ret;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -164,14 +164,14 @@ void ctkTestApplication::keyUp(QWidget* w, Qt::Key key, Qt::KeyboardModifiers mo
   if(mod & Qt::ShiftModifier)
     off = 'A';
   if(key >= Qt::Key_A && key <= Qt::Key_Z)
-    {
+  {
     text.append(QChar::fromLatin1(key - Qt::Key_A + off));
-    }
+  }
   QKeyEvent e(QEvent::KeyRelease, key, mod, text);
   if(!simulateEvent(w, &e))
-    {
+  {
     qWarning("keyUp not handled\n");
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -185,14 +185,14 @@ void ctkTestApplication::keyDown(QWidget* w, Qt::Key key, Qt::KeyboardModifiers 
   if(mod & Qt::ShiftModifier)
     off = 'A';
   if(key >= Qt::Key_A && key <= Qt::Key_Z)
-    {
+  {
     text.append(QChar::fromLatin1(key - Qt::Key_A + off));
-    }
+  }
   QKeyEvent e(QEvent::KeyPress, key, mod, text);
   if(!simulateEvent(w, &e))
-    {
+  {
     qWarning("keyDown not handled\n");
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -210,9 +210,9 @@ void ctkTestApplication::mouseDown(QWidget* w, QPoint pos, Qt::MouseButton btn,
   delay(ms);
   QMouseEvent e(QEvent::MouseButtonPress, pos, btn, btn, mod);
   if(!simulateEvent(w, &e))
-    {
+  {
     qWarning("mouseDown not handled\n");
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -222,9 +222,9 @@ void ctkTestApplication::mouseUp(QWidget* w, QPoint pos, Qt::MouseButton btn,
   delay(ms);
   QMouseEvent e(QEvent::MouseButtonRelease, pos, btn, btn, mod);
   if(!simulateEvent(w, &e))
-    {
+  {
     qWarning("mouseUp not handled\n");
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -234,9 +234,9 @@ void ctkTestApplication::mouseMove(QWidget* w, QPoint pos, Qt::MouseButton btn,
   delay(ms);
   QMouseEvent e(QEvent::MouseMove, pos, btn, btn, mod);
   if(!simulateEvent(w, &e))
-    {
+  {
     qWarning("mouseMove not handled\n");
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -255,7 +255,7 @@ void ctkTestApplication::mouseDClick(QWidget* w, QPoint pos, Qt::MouseButton btn
   delay(ms);
   QMouseEvent e(QEvent::MouseButtonDblClick, pos, btn, btn, mod);
   if(!simulateEvent(w, &e))
-    {
+  {
     qWarning("mouseMove not handled\n");
-    }
+  }
 }

@@ -49,22 +49,22 @@ QSignalSpy* Spy2;
 QSignalSpy* Spy3;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   QWidget* parentWidget = reinterpret_cast<QWidget*>(data);
   QList<ctkButtonGroup*> widget = parentWidget->findChildren<ctkButtonGroup*>();
 
   if(widget.count())
-    {
+  {
     CTKCOMPARE(widget[0]->checkedButton()->text(), QString("button 1"));
     CTKCOMPARE(Spy1->count(), 3);
     CTKCOMPARE(Spy2->count(), 2);
     CTKCOMPARE(Spy3->count(), 4);
-    }
-  else
-    {
-    QApplication::exit(EXIT_FAILURE);
-    }
   }
+  else
+  {
+    QApplication::exit(EXIT_FAILURE);
+  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -117,9 +117,9 @@ int ctkButtonGroupEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

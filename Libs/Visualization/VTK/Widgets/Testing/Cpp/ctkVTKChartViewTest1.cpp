@@ -73,12 +73,12 @@ int ctkVTKChartViewTest1(int argc, char * argv [] )
 
   table->SetNumberOfRows(12);
   for (int i = 0; i < 12; i++)
-    {
+  {
     table->SetValue(i,0,i+1);
     table->SetValue(i,1,data_2008[i]);
     table->SetValue(i,2,data_2009[i]);
     table->SetValue(i,3,data_2010[i]);
-    }
+  }
 
   // Add multiple line plots, setting the colors etc
   vtkPlotBar* bar = vtkPlotBar::New();
@@ -103,9 +103,9 @@ int ctkVTKChartViewTest1(int argc, char * argv [] )
 
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(1000);
-    }
+  }
   return app.exec();
 }

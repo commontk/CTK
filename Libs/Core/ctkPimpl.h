@@ -146,8 +146,8 @@ double ctkFooObject::property()const
  */
 #define CTK_CONSTRUCTOR_NO_ARG_CPP(PUB)  \
   PUB::PUB(): d_ptr(new PUB##Private)    \
-    {                                    \
-    }
+  {                                      \
+  }
 
 /*!
  * Define a public class constructor with one argument
@@ -159,8 +159,8 @@ double ctkFooObject::property()const
   PUB::PUB(_ARG1 _parent)                       \
     : Superclass( _parent )                     \
     , d_ptr(new PUB##Private)                   \
-    {                                           \
-    }
+  {                                             \
+  }
 
 /*!
  * Define the setter in the public class.

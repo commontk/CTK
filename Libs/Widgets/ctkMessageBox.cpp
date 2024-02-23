@@ -95,13 +95,13 @@ int ctkMessageBoxPrivate::dontShowAgainButtonOrRole()
 {
   int buttonOrRole = QMessageBox::InvalidRole;
   if (this->DontShowAgainCheckBox->isChecked())
-    {
+  {
     buttonOrRole = this->buttonFromSettings();
     if (buttonOrRole == QMessageBox::InvalidRole)
-      {
+    {
       buttonOrRole = QMessageBox::AcceptRole;
-      }
     }
+  }
   return buttonOrRole;
 }
 
@@ -115,24 +115,24 @@ QAbstractButton* ctkMessageBoxPrivate::button(int buttonOrRole)
   // button automatically.
   if (q->buttons().size() == 0 &&
       buttonOrRole != QMessageBox::InvalidRole)
-    {
+  {
     q->addButton(QMessageBox::Ok);
-    }
+  }
   if ( q->standardButtons() & buttonOrRole)
-    {
+  {
     autoAcceptButton = q->button(static_cast<QMessageBox::StandardButton>(buttonOrRole));
-    }
+  }
   else
-    {
+  {
     foreach(QAbstractButton* button, q->buttons())
-      {
+    {
       if (q->buttonRole(button) == buttonOrRole)
-        {
+      {
         autoAcceptButton = button;
         break;
-        }
       }
     }
+  }
   return autoAcceptButton;
 }
 
@@ -149,9 +149,9 @@ int ctkMessageBoxPrivate::buttonFromSettings()
 void ctkMessageBoxPrivate::readSettings()
 {
   if (this->DontShowAgainSettingsKey.isEmpty())
-    {
+  {
     return;
-    }
+  }
   int button = this->buttonFromSettings();
   this->DontShowAgainCheckBox->setChecked(button != QMessageBox::InvalidRole);
 }
@@ -160,9 +160,9 @@ void ctkMessageBoxPrivate::readSettings()
 void ctkMessageBoxPrivate::writeSettings(int button)
 {
   if (this->DontShowAgainSettingsKey.isEmpty())
-    {
+  {
     return;
-    }
+  }
   QSettings settings;
   settings.setValue(this->DontShowAgainSettingsKey,
                     QVariant(this->DontShowAgainCheckBox->isChecked() ?
@@ -204,23 +204,23 @@ void ctkMessageBox::setDontShowAgainVisible(bool visible)
 {
   Q_D(ctkMessageBox);
   if (!visible)
-    {
+  {
 #if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
     this->layout()->removeWidget(d->DontShowAgainCheckBox);
 #endif
     d->DontShowAgainCheckBox->hide();
     return;
-    }
+  }
   d->DontShowAgainCheckBox->setVisible(true);
   // update the text from the button with the accept role
   QAbstractButton *acceptButton = d->button(QMessageBox::AcceptRole);
   if (acceptButton && !acceptButton->text().isEmpty())
-    {
+  {
     QString dontShowAgainText =
       tr("Don't show this message again and always %1").arg(acceptButton->text());
 
     d->DontShowAgainCheckBox->setText(dontShowAgainText);
-    }
+  }
 #if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
   QGridLayout *grid = static_cast<QGridLayout *>(this->layout());
   grid->addWidget(d->DontShowAgainCheckBox, 1, 1, 1, 1);
@@ -241,9 +241,9 @@ void ctkMessageBox::setDontShowAgainSettingsKey(const QString& key)
 {
   Q_D(ctkMessageBox);
   if (key == d->DontShowAgainSettingsKey)
-    {
+  {
     return;
-    }
+  }
   d->DontShowAgainSettingsKey = key;
   d->readSettings();
   this->setDontShowAgainVisible(!key.isEmpty());
@@ -297,9 +297,9 @@ void ctkMessageBox::onFinished(int resultCode)
   Q_D(ctkMessageBox);
   // Don't save if the button is not an accepting button
   if (d->DontShowAgainButtonRoles.contains(this->buttonRole( this->clickedButton())))
-    {
+  {
     d->writeSettings(resultCode);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -307,18 +307,18 @@ void ctkMessageBox::setVisible(bool visible)
 {
   Q_D(ctkMessageBox);
   if (visible)
-    {
+  {
     int dontShowAgainButtonOrRole = d->dontShowAgainButtonOrRole();
     QAbstractButton* autoAcceptButton = d->button(dontShowAgainButtonOrRole);
     if (autoAcceptButton)
-      {
+    {
       // Don't call click now, it would destroy the message box. The calling
       // function might expect the message box to be still valid after
       // setVisible() return.
       QTimer::singleShot(0, autoAcceptButton, SLOT(click()));
       return;
-      }
     }
+  }
   this->Superclass::setVisible(visible);
 }
 

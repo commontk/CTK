@@ -121,9 +121,9 @@ bool ctkDICOMInserter::addJobResponseSets(QList<QSharedPointer<ctkDICOMJobRespon
 {
   Q_D(const ctkDICOMInserter);
   if (d->Canceled)
-    {
+  {
     return false;
-    }
+  }
 
   emit updatingDatabase(true);
 

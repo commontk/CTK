@@ -43,34 +43,34 @@ bool ctkConsoleEventTranslator::translateEvent(QObject *Object,
   // We don't want to save the actions in the completer.
   ctkConsole* console = NULL;
   for (QObject* test = Object ; console == NULL && test != NULL ; test = test->parent())
-    {
+  {
     console = qobject_cast<ctkConsole*>(test);
-    }
+  }
   // We don't want to save the actions in the completer.
   if (this->CurrentCompleter && Object == this->CurrentCompleter)
-    {
+  {
     return true;
-    }
+  }
   if (this->CurrentPopup &&
       this->CurrentPopup == qobject_cast<QAbstractItemView*>(Object))
-    {
+  {
     return true;
-    }
+  }
   if (!console)
-    {
+  {
     return false;
-    }
+  }
 
 
   if (Event->type() == QEvent::Enter && Object == console)
-    {
+  {
     if (this->CurrentObject != Object)
-      {
+    {
       if (this->CurrentObject)
-        {
+      {
         qDebug() << "Disconnect ...";
         QObject::disconnect(this->CurrentObject, 0 , this, 0);
-        }
+      }
       this->CurrentObject = Object;
       this->CurrentCompleter = qobject_cast<QObject*>(console->completer());
       this->CurrentPopup = console->completer()->popup();
@@ -78,8 +78,8 @@ bool ctkConsoleEventTranslator::translateEvent(QObject *Object,
                        this, SLOT(onDestroyed(QObject*)));
       QObject::connect(console, SIGNAL(aboutToExecute(QString)),
                        this, SLOT(onAboutToExecute(QString)));
-      }
     }
+  }
 
   return true;
 }

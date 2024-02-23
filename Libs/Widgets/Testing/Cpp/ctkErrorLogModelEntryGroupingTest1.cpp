@@ -44,7 +44,7 @@ int ctkErrorLogModelEntryGroupingTest1(int argc, char * argv [])
   QString errorMsg;
 
   try
-    {
+  {
     modelTester.setModel(&model);
 
     // --------------------------------------------------------------------------
@@ -82,29 +82,29 @@ int ctkErrorLogModelEntryGroupingTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedQtMessages.count());
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
+    }
 
     errorMsg = checkTextMessages(__LINE__, model, expectedQtMessages);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
-
     }
+
+  }
   catch (const char* error)
-    {
+  {
     model.disableAllMsgHandler();
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

@@ -46,11 +46,11 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkSettingsDialog* widget = reinterpret_cast<ctkSettingsDialog*>(data);
 
   CTKCOMPARE(widget->currentPanel()->windowTitle(), "Panel 4");
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -93,9 +93,9 @@ int ctkSettingsDialogEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

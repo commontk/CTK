@@ -85,13 +85,13 @@ public:
 struct Node
 {
   ~Node()
-    {
+  {
     foreach(Node* node, this->Children)
-      {
+    {
       delete node;
-      }
-    this->Children.clear();
     }
+    this->Children.clear();
+  }
   ctkDICOMModel::IndexType Type;
   Node*                           Parent;
   QVector<Node*>                  Children;
@@ -226,7 +226,7 @@ Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)c
   Node* node = new Node;
   Node* nodeParent = 0;
   if (row == -1)
-    {// root node
+  {// root node
     node->Type = ctkDICOMModel::RootType;
     node->Parent = 0;
 #if CHECKABLE_COLUMNS
@@ -234,23 +234,23 @@ Node* ctkDICOMModelPrivate::createNode(int row, const QModelIndex& parentValue)c
     // parts of the ctkDICOM infrastructure so they are misleading to the user
     node->Data[Qt::CheckStateRole] = Qt::Unchecked;
 #endif
-    }
+  }
   else
-    {
+  {
     nodeParent = this->nodeFromIndex(parentValue);
     nodeParent->Children.push_back(node);
     node->Parent = nodeParent;
     node->Type = ctkDICOMModel::IndexType(nodeParent->Type + 1);
-    }
+  }
   node->Row = row;
   if (node->Type != ctkDICOMModel::RootType)
-    {
+  {
     int field = 0;//nodeParent->Query.record().indexOf("UID");
     node->UID = this->value(parentValue, row, field).toString();
 #if CHECKABLE_COLUMNS
     node->Data[Qt::CheckStateRole] = node->Parent->Data[Qt::CheckStateRole];
 #endif
-    }
+  }
 
   node->RowCount = 0;
   node->AtEnd = false;
@@ -266,9 +266,9 @@ QVariant ctkDICOMModelPrivate::value(const QModelIndex& parentValue, int row, in
 {
   Node* node = this->nodeFromIndex(parentValue);
   if (row >= node->RowCount)
-    {
+  {
     const_cast<ctkDICOMModelPrivate *>(this)->fetch(parentValue, row + 256);
-    }
+  }
   return this->value(node, row, column);
 }
 
@@ -276,16 +276,16 @@ QVariant ctkDICOMModelPrivate::value(const QModelIndex& parentValue, int row, in
 QVariant ctkDICOMModelPrivate::value(Node* parentNode, int row, int column) const
 {
   if (row < 0 || column < 0 || !parentNode || row >= parentNode->RowCount)
-    {
+  {
     return QVariant();
-    }
+  }
 
   if (!parentNode->Query.seek(row))
-    {
+  {
     qDebug() << parentNode->Query.lastError();
     Q_ASSERT(parentNode->Query.seek(row));
     return QVariant();
-    }
+  }
   QVariant res = parentNode->Query.value(column);
   Q_ASSERT(res.isValid());
   return res;
@@ -296,13 +296,13 @@ QString ctkDICOMModelPrivate::generateQuery(const QString& fields, const QString
 {
   QString res = QString("SELECT ") + fields + QString(" FROM ") + table;
   if (!conditions.isEmpty())
-    {
+  {
     res += QString(" WHERE ") + conditions;
-    }
+  }
   if (!this->Sort.isEmpty())
-    {
+  {
     res += QString(" ORDER BY ") + this->Sort;
-    }
+  }
   logger.debug ( "ctkDICOMModelPrivate::generateQuery: query is: " + res );
   return res;
 }
@@ -314,7 +314,7 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
   QString query;
   QString condition;
   switch(node->Type)
-    {
+  {
     default:
       Q_ASSERT(node->Type == ctkDICOMModel::RootType);
       break;
@@ -329,48 +329,48 @@ void ctkDICOMModelPrivate::updateQueries(Node* node)const
     case ctkDICOMModel::PatientType:
       //query = QString("SELECT  FROM Studies WHERE PatientsUID='%1'").arg(node->UID);
       if(this->SearchParameters["Study"].toString() != "")
-        {
+      {
         condition.append("StudyDescription LIKE \"%" + this->SearchParameters["Study"].toString() + "%\"" + " AND ");
-        }
+      }
       if(this->SearchParameters["Modalities"].value<QStringList>().count() > 0)
-        {
+      {
         condition.append("ModalitiesInStudy IN (\"" + this->SearchParameters["Modalities"].value<QStringList>().join("\",\"") + "\") AND ");
-        }
+      }
       if(this->SearchParameters["StartDate"].toString() != "" &&
          this->SearchParameters["EndDate"].toString() != "")
-        {
+      {
           condition.append(" ( StudyDate BETWEEN \'" + QDate::fromString(this->SearchParameters["StartDate"].toString(), "yyyyMMdd").toString("yyyy-MM-dd")
                            + "\' AND \'" + QDate::fromString(this->SearchParameters["EndDate"].toString(), "yyyyMMdd").toString("yyyy-MM-dd") + "\' ) AND ");
-        }
+      }
       query = this->generateQuery("StudyInstanceUID as UID, StudyDescription as Name, ModalitiesInStudy as Scan, StudyDate as Date, AccessionNumber as Number, InstitutionName as Institution, ReferringPhysician as Referrer, PerformingPhysiciansName as Performer", "Studies", condition + QString("PatientsUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Patient: query is: " + query );
       break;
     case ctkDICOMModel::StudyType:
       //query = QString("SELECT SeriesInstanceUID as UID, SeriesDescription as Name, BodyPartExamined as Scan, SeriesDate as Date, AcquisitionNumber as Number FROM Series WHERE StudyInstanceUID='%1'").arg(node->UID);
       if(this->SearchParameters["Series"].toString() != "")
-        {
+      {
         condition.append("SeriesDescription LIKE \"%" + this->SearchParameters["Series"].toString() + "%\"" + " AND ");
-        }
+      }
       query = this->generateQuery("SeriesInstanceUID as UID, SeriesDescription as Name, Modality as Age, SeriesNumber as Scan, BodyPartExamined as \"Subject ID\", SeriesDate as Date, AcquisitionNumber as Number","Series",condition + QString("StudyInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Study: query is: " + query );
       break;
     case ctkDICOMModel::SeriesType:
       if(this->SearchParameters["ID"].toString() != "")
-        {
+      {
         condition.append("SOPInstanceUID LIKE \"%" + this->SearchParameters["ID"].toString() + "%\"" + " AND ");
-        }
+      }
       //query = QString("SELECT Filename as UID, Filename as Name, SeriesInstanceUID as Date FROM Images WHERE SeriesInstanceUID='%1'").arg(node->UID);
       query = this->generateQuery("SOPInstanceUID as UID, Filename as Name, SeriesInstanceUID as Date", "Images", condition + QString("SeriesInstanceUID='%1'").arg(node->UID));
       logger.debug ( "ctkDICOMModelPrivate::updateQueries for Series: query is: " + query );
       break;
     case ctkDICOMModel::ImageType:
       break;
-    }
+  }
   node->Query = QSqlQuery(query, this->DataBase);
   foreach(Node* child, node->Children)
-    {
+  {
     this->updateQueries(child);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -379,9 +379,9 @@ void ctkDICOMModelPrivate::fetch(const QModelIndex& indexValue, int limit)
   Q_Q(ctkDICOMModel);
   Node* node = this->nodeFromIndex(indexValue);
   if (node->AtEnd || limit <= node->RowCount || node->Fetching/*|| bottom.column() == -1*/)
-    {
+  {
     return;
-    }
+  }
   node->Fetching = true;
 
   int newRowCount;
@@ -389,38 +389,38 @@ void ctkDICOMModelPrivate::fetch(const QModelIndex& indexValue, int limit)
 
   // try to seek directly
   if (node->Query.seek(limit - 1))
-    {
+  {
     newRowCount = limit;
-    }
+  }
   else
-    {
+  {
     newRowCount = qMax(oldRowCount, 1);
     if (node->Query.seek(newRowCount - 1))
-      {
+    {
       while (node->Query.next())
-        {
-        ++newRowCount;
-        }
-      }
-    else
       {
+        ++newRowCount;
+      }
+    }
+    else
+    {
       // empty or invalid query
       newRowCount = 0;
-      }
-    node->AtEnd = true; // this is the end.
     }
+    node->AtEnd = true; // this is the end.
+  }
   if (newRowCount > 0 && newRowCount > node->RowCount)
-    {
+  {
     q->beginInsertRows(indexValue, node->RowCount, newRowCount - 1);
     node->RowCount = newRowCount;
     node->Fetching = false;
     q->endInsertRows();
-    }
+  }
   else
-    {
+  {
     node->RowCount = newRowCount;
     node->Fetching = false;
-    }
+  }
 }
 
 
@@ -460,50 +460,50 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
 {
   Q_D(const ctkDICOMModel);
   if ( role == UIDRole )
-    {
+  {
     Node* node = d->nodeFromIndex(dataIndex);
     return node ? node->UID : QString() ;
-    }
+  }
   else if ( role == TypeRole )
-    {
+  {
     Node* node = d->nodeFromIndex(dataIndex);
     return node ? node->Type : 0;
-    }
+  }
   else if ( dataIndex.column() == 0 && role == Qt::CheckStateRole)
-    {
+  {
     Node* node = d->nodeFromIndex(dataIndex);
     return node ? node->Data[Qt::CheckStateRole] : 0;
-    }
+  }
 
 
   if (role != Qt::DisplayRole && role != Qt::EditRole)
-    {
+  {
     if (dataIndex.column() != 0)
-      {
+    {
       return QVariant();
-      }
+    }
     Node* node = d->nodeFromIndex(dataIndex);
     if (!node)
-      {
+    {
       return QVariant();
-      }
-    return node->Data[role];
     }
+    return node->Data[role];
+  }
   QModelIndex parentIndex = this->parent(dataIndex);
   Node* parentNode = d->nodeFromIndex(parentIndex);
   if (dataIndex.row() >= parentNode->RowCount)
-    {
+  {
     const_cast<ctkDICOMModelPrivate *>(d)->fetch(dataIndex, dataIndex.row());
-    }
+  }
   QString columnName = d->Headers[dataIndex.column()][Qt::DisplayRole].toString();
   int field = parentNode->Query.record().indexOf(columnName);
   if (field < 0)
-    {
+  {
     // Not all the columns are in the record, it's ok to have no field here.
     // Return an empty string in that case (not a QVariant() that means it's
     // invalid).
     return QString();
-    }
+  }
 
   QVariant dataValue=d->value(parentIndex, dataIndex.row(), field);
   if (dataValue.isNull())
@@ -515,50 +515,50 @@ QVariant ctkDICOMModel::data ( const QModelIndex & dataIndex, int role ) const
   }
 
   if (columnName.compare(tr("Name"))==0)
-    {
+  {
     OFString dicomName = dataValue.toString().toStdString().c_str();
     OFString formattedName;
     OFString lastName, firstName, middleName, namePrefix, nameSuffix;
     OFCondition l_error = DcmPersonName::getNameComponentsFromString(dicomName,
                                           lastName, firstName, middleName, namePrefix, nameSuffix);
     if (l_error.good())
-      {
+    {
       formattedName.clear();
       /* concatenate name components per this convention
        * Last, First Middle, Suffix (Prefix)
        * */
       if (!lastName.empty())
-        {
+      {
         formattedName += lastName;
         if ( !(firstName.empty() && middleName.empty()) )
-          {
-          formattedName += ",";
-          }
-        }
-      if (!firstName.empty())
         {
+          formattedName += ",";
+        }
+      }
+      if (!firstName.empty())
+      {
         formattedName += " ";
         formattedName += firstName;
-        }
+      }
       if (!middleName.empty())
-        {
+      {
         formattedName += " ";
         formattedName += middleName;
-        }
+      }
       if (!nameSuffix.empty())
-        {
+      {
         formattedName += ", ";
         formattedName += nameSuffix;
-        }
+      }
       if (!namePrefix.empty())
-        {
+      {
         formattedName += " (";
         formattedName += namePrefix;
         formattedName += ")";
-        }
       }
-      return QString(formattedName.c_str());
     }
+      return QString(formattedName.c_str());
+  }
 
   return dataValue;
 }
@@ -577,14 +577,14 @@ Qt::ItemFlags ctkDICOMModel::flags ( const QModelIndex & modelIndex ) const
   Q_D(const ctkDICOMModel);
   Qt::ItemFlags indexFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
   if (modelIndex.column() != 0)
-    {
+  {
     return indexFlags;
-    }
+  }
   Node* node = d->nodeFromIndex(modelIndex);
   if (!node)
-    {
+  {
     return indexFlags;
-    }
+  }
   bool checkable = true;
   node->Data[Qt::CheckStateRole].toInt(&checkable);
   indexFlags = indexFlags | (checkable ? Qt::ItemIsUserCheckable : Qt::NoItemFlags);
@@ -598,14 +598,14 @@ bool ctkDICOMModel::hasChildren ( const QModelIndex & parentIndex ) const
   // only items in the first columns have index, shortcut the following for
   // speed issues.
   if (parentIndex.column() > 0)
-    {
+  {
     return false;
-    }
+  }
   Node* node = d->nodeFromIndex(parentIndex);
   if (!node)
-    {
+  {
     return false;
-    }
+  }
 
   // We want to show only until EndLevel
   if(node->Type >= d->EndLevel)return false;
@@ -613,18 +613,18 @@ bool ctkDICOMModel::hasChildren ( const QModelIndex & parentIndex ) const
   // It's not because we don't have row that we don't have children, maybe it
   // just means that the children haven't been fetched yet
   if (node->RowCount == 0 && !node->AtEnd)
-    {
+  {
     // We don't want to fetch the data because we don't want to add children
     // to the index yet (it would be a mess to add rows inside a hasChildren)
     //const_cast<qCTKDCMTKModelPrivate*>(d)->fetch(parentIndex, 1);
     bool res = node->Query.seek(0);
     if (!res)
-      {
+    {
       // now we know there is no children to the node, don't try next time.
       node->AtEnd = true;
-      }
-    return res;
     }
+    return res;
+  }
   return node->RowCount > 0;
 }
 
@@ -633,17 +633,17 @@ QVariant ctkDICOMModel::headerData(int section, Qt::Orientation orientation, int
 {
   Q_D(const ctkDICOMModel);
   if (orientation == Qt::Vertical)
-    {
+  {
     if (role != Qt::DisplayRole)
-      {
-      return QVariant();
-      }
-    return section;
-    }
-  if (section < 0 || section >= d->Headers.size())
     {
-    return QVariant();
+      return QVariant();
     }
+    return section;
+  }
+  if (section < 0 || section >= d->Headers.size())
+  {
+    return QVariant();
+  }
   return d->Headers[section][role];
 }
 
@@ -653,27 +653,27 @@ QModelIndex ctkDICOMModel::index ( int row, int column, const QModelIndex & pare
   Q_D(const ctkDICOMModel);
   // only the first column has children
   if (d->RootNode == 0 || parentIndex.column() > 0)
-    {
+  {
     return QModelIndex();
-    }
+  }
   Node* parentNode = d->nodeFromIndex(parentIndex);
   int field = 0;// always 0//parentNode->Query.record().indexOf("UID");
   QString uid = d->value(parentIndex, row, field).toString();
   Node* node = 0;
   foreach(Node* tmpNode, parentNode->Children)
-    {
+  {
     if (tmpNode->UID == uid)
-      {
+    {
       node = tmpNode;
       break;
-      }
     }
+  }
   // TODO: Here it is assumed that ctkDICOMModel::index is called with valid
   // arguments, we should probably be a bit more careful.
   if (node == 0)
-    {
+  {
     node = d->createNode(row, parentIndex);
-    }
+  }
   return this->createIndex(row, column, node);
 }
 
@@ -682,16 +682,16 @@ QModelIndex ctkDICOMModel::parent ( const QModelIndex & indexValue ) const
 {
   Q_D(const ctkDICOMModel);
   if (!indexValue.isValid())
-    {
+  {
     return QModelIndex();
-    }
+  }
   Node* node = d->nodeFromIndex(indexValue);
   Q_ASSERT(node);
   Node* parentNode = node->Parent;
   if (parentNode == 0)
-    {// node is root
+  {// node is root
     return QModelIndex();
-    }
+  }
   return parentNode == d->RootNode ? QModelIndex() : this->createIndex(parentNode->Row, 0, parentNode);
   /* need to recalculate the parent row
   Node* greatParentNode = parentNode->Parent;
@@ -719,9 +719,9 @@ int ctkDICOMModel::rowCount ( const QModelIndex & parentValue ) const
 {
   Q_D(const ctkDICOMModel);
   if (d->RootNode == 0 || parentValue.column() > 0)
-    {
+  {
     return 0;
-    }
+  }
   Node* node = d->nodeFromIndex(parentValue);
   Q_ASSERT(node);
   // Returns the amount of rows currently cached on the client.
@@ -733,26 +733,26 @@ bool ctkDICOMModel::setData(const QModelIndex &index, const QVariant &value, int
 {
   Q_D(const ctkDICOMModel);
   if (role != Qt::CheckStateRole)
-    {
+  {
     return false;
-    }
+  }
   Node* node = d->nodeFromIndex(index);
   if (!node || node->Data[role] == value)
-    {
+  {
     return false;
-    }
+  }
   node->Data[role] = value;
   emit dataChanged(index, index);
 
   for(int i=0; i<node->Children.count(); i++)
-    {
+  {
     this->setChildData(ctk::modelChildIndex(this, index, i, 0), value, role);
-    }
+  }
 
   if(index.parent().isValid())
-    {
+  {
     this->setParentData(index.parent(), value, role);
-    }
+  }
 
   return true;
 }
@@ -762,21 +762,21 @@ bool ctkDICOMModel::setChildData(const QModelIndex &index, const QVariant &value
 {
   Q_D(const ctkDICOMModel);
   if (role != Qt::CheckStateRole)
-    {
+  {
     return false;
-    }
+  }
   Node* node = d->nodeFromIndex(index);
   if (!node || node->Data[role] == value)
-    {
+  {
     return false;
-    }
+  }
   node->Data[role] = value;
   emit dataChanged(index, index);
 
   for(int i=0; i<node->Children.count(); i++)
-    {
+  {
     this->setData(ctk::modelChildIndex(this, index, i, 0), value, role);
-    }
+  }
 
   return true;
 }
@@ -793,56 +793,56 @@ bool ctkDICOMModel::setParentData(const QModelIndex &index, const QVariant &valu
   }
 
   if (role != Qt::CheckStateRole)
-    {
+  {
     return false;
-    }
+  }
   else
-    {
+  {
 #ifdef CHECKABLE_COLUMNS
     bool checkedExist = false;
     bool partiallyCheckedExist = false;
     bool uncheckedExist = false;
 
     for(int i=0; i<index.model()->rowCount(index); i++)
-      {
+    {
       QModelIndex childIndex = ctk::modelChildIndex(this, index, i, 0);
       Node* childNode = d->nodeFromIndex(childIndex);
       if(childNode->Data[Qt::CheckStateRole].toUInt() == Qt::Checked)
-        {
+      {
         checkedExist = true;
-        }
-      else if(childNode->Data[Qt::CheckStateRole].toUInt() ==  Qt::PartiallyChecked)
-        {
-        partiallyCheckedExist = true;
-        }
-      else if(childNode->Data[Qt::CheckStateRole].toUInt() ==  Qt::Unchecked)
-        {
-        uncheckedExist = true;
-        }
       }
+      else if(childNode->Data[Qt::CheckStateRole].toUInt() ==  Qt::PartiallyChecked)
+      {
+        partiallyCheckedExist = true;
+      }
+      else if(childNode->Data[Qt::CheckStateRole].toUInt() ==  Qt::Unchecked)
+      {
+        uncheckedExist = true;
+      }
+    }
 
     if(partiallyCheckedExist || (checkedExist && uncheckedExist))
-      {
+    {
       node->Data[Qt::CheckStateRole].toUInt() = Qt::PartiallyChecked;
-      }
+    }
     else if(checkedExist)
-      {
+    {
       node->Data[Qt::CheckStateRole].toUInt() = Qt::Checked;
-      }
+    }
     else if(uncheckedExist)
-      {
+    {
       node->Data[Qt::CheckStateRole].toUInt() = Qt::Unchecked;
-      }
+    }
     else
-      {
+    {
       node->Data[Qt::CheckStateRole].toUInt() = Qt::Unchecked;
-      }
+    }
 #endif
 
     emit dataChanged(index, index);
 
     this->setParentData(index.parent(), value, role);
-    }
+  }
   return true;
 }
 
@@ -858,11 +858,11 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db)
   d->RootNode = 0;
 
   if (d->DataBase.tables().empty())
-    {
+  {
     //Q_ASSERT(d->DataBase.isOpen());
     this->endResetModel();
     return;
-    }
+  }
 
   d->RootNode = d->createNode(-1, QModelIndex());
 
@@ -871,13 +871,13 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db)
   // TODO, use hasQuerySize everywhere, not only in setDataBase()
   bool hasQuerySize = d->RootNode->Query.driver()->hasFeature(QSqlDriver::QuerySize);
   if (hasQuerySize && d->RootNode->Query.size() > 0)
-    {
+  {
     int newRowCount= d->RootNode->Query.size();
     beginInsertRows(QModelIndex(), 0, qMax(0, newRowCount - 1));
     d->RootNode->RowCount = newRowCount;
     d->RootNode->AtEnd = true;
     endInsertRows();
-    }
+  }
   d->fetch(QModelIndex(), 256);
 }
 
@@ -894,11 +894,11 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db,const QMap<QString, QVari
   d->RootNode = 0;
 
   if (d->DataBase.tables().empty())
-    {
+  {
     //Q_ASSERT(d->DataBase.isOpen());
     this->endResetModel();
     return;
-    }
+  }
 
   d->RootNode = d->createNode(-1, QModelIndex());
 
@@ -907,13 +907,13 @@ void ctkDICOMModel::setDatabase(const QSqlDatabase &db,const QMap<QString, QVari
   // TODO, use hasQuerySize everywhere, not only in setDataBase()
   bool hasQuerySize = d->RootNode->Query.driver()->hasFeature(QSqlDriver::QuerySize);
   if (hasQuerySize && d->RootNode->Query.size() > 0)
-    {
+  {
     int newRowCount= d->RootNode->Query.size();
     beginInsertRows(QModelIndex(), 0, qMax(0, newRowCount - 1));
     d->RootNode->RowCount = newRowCount;
     d->RootNode->AtEnd = true;
     endInsertRows();
-    }
+  }
   d->fetch(QModelIndex(), 256);
 }
 
@@ -974,14 +974,14 @@ bool ctkDICOMModel::setHeaderData ( int section, Qt::Orientation orientation, co
 {
   Q_D(ctkDICOMModel);
   if (orientation == Qt::Vertical)
-    {
+  {
     return false;
-    }
+  }
   if (section < 0 || section >= d->Headers.size() ||
       d->Headers[section][role] == value)
-    {
+  {
     return false;
-    }
+  }
   d->Headers[section][role] = value;
   emit this->headerDataChanged(orientation, section, section);
   return true;

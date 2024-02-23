@@ -42,30 +42,30 @@ bool ctkHostSoapMessageProcessor::process(
   bool foundMethod = false;
 
   if (methodName == "GetAvailableScreen")
-    {
+  {
     processGetAvailableScreen(message, reply);
     foundMethod = true;
-    }
+  }
   else if (methodName == "NotifyStateChanged")
-    {
+  {
     processNotifyStateChanged(message, reply);
     foundMethod = true;
-    }
+  }
   else if (methodName == "NotifyStatus")
-    {
+  {
     processNotifyStatus(message, reply);
     foundMethod = true;
-    }
+  }
   else if (methodName == "GenerateUID")
-    {
+  {
     processGenerateUID(message, reply);
     foundMethod = true;
-    }
+  }
   else if (methodName == "GetOutputLocation")
-    {
+  {
     processGetOutputLocation(message, reply);
     foundMethod = true;
-    }
+  }
 
   return foundMethod;
 }

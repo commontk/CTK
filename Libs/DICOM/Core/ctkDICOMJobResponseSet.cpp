@@ -104,9 +104,9 @@ void ctkDICOMJobResponseSet::setFilePath(const QString& filePath)
   d->FilePath = filePath;
 
   if (d->FilePath.isEmpty())
-    {
+  {
     return;
-    }
+  }
 
   QSharedPointer<ctkDICOMItem> dataset =
     QSharedPointer<ctkDICOMItem>(new ctkDICOMItem);
@@ -257,9 +257,9 @@ void ctkDICOMJobResponseSet::setDataset(DcmItem* dcmItem, bool takeOwnership)
 {
   Q_D(ctkDICOMJobResponseSet);
   if (!dcmItem)
-    {
+  {
     return;
-    }
+  }
 
   QSharedPointer<ctkDICOMItem> dataset =
     QSharedPointer<ctkDICOMItem>(new ctkDICOMItem);
@@ -275,9 +275,9 @@ ctkDICOMItem* ctkDICOMJobResponseSet::dataset() const
 {
   Q_D(const ctkDICOMJobResponseSet);
   if (d->Datasets.count() == 0)
-    {
+  {
     return nullptr;
-    }
+  }
   return d->Datasets.first().data();
 }
 
@@ -286,9 +286,9 @@ QSharedPointer<ctkDICOMItem> ctkDICOMJobResponseSet::datasetShared() const
 {
   Q_D(const ctkDICOMJobResponseSet);
   if (d->Datasets.count() == 0)
-    {
+  {
     return nullptr;
-    }
+  }
   return d->Datasets.first();
 }
 
@@ -297,19 +297,19 @@ void ctkDICOMJobResponseSet::setDatasets(const QMap<QString, DcmItem*>& dcmItems
 {
   Q_D(ctkDICOMJobResponseSet);
   for (const QString& key : dcmItems.keys())
-    {
+  {
     DcmItem* dcmItem = dcmItems.value(key);
     if (!dcmItem)
-      {
+    {
       continue;
-      }
+    }
 
     QSharedPointer<ctkDICOMItem> dataset =
       QSharedPointer<ctkDICOMItem>(new ctkDICOMItem);
     dataset->InitializeFromItem(dcmItem, takeOwnership);
 
     d->Datasets.insert(key, dataset);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -319,15 +319,15 @@ QMap<QString, ctkDICOMItem*> ctkDICOMJobResponseSet::datasets() const
   QMap<QString, ctkDICOMItem*> datasets;
 
   for (const QString& key : d->Datasets.keys())
-    {
+  {
     QSharedPointer<ctkDICOMItem> dcmItem = d->Datasets.value(key);
     if (!dcmItem)
-      {
+    {
       continue;
-      }
+    }
 
     datasets.insert(key, dcmItem.data());
-    }
+  }
 
   return datasets;
 }
@@ -358,16 +358,16 @@ ctkDICOMJobResponseSet* ctkDICOMJobResponseSet::clone()
   // Clone datasets
   QMap<QString, ctkDICOMItem*> datasets = this->datasets();
   for (const QString& key : datasets.keys())
-    {
+  {
     ctkDICOMItem* dataset = datasets.value(key);
     if (!dataset)
-      {
+    {
       continue;
-      }
+    }
     QSharedPointer<ctkDICOMItem> newDataset =
       QSharedPointer<ctkDICOMItem>(dataset->Clone());
     newJobResponseSet->d_func()->Datasets.insert(key, newDataset);
-    }
+  }
 
   return newJobResponseSet;
 }

@@ -45,11 +45,11 @@ int ctkDICOMModelTest1( int argc, char * argv [] )
   QString testName = arguments.takeFirst();
 
   if (arguments.count() != 2)
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <scratch.db> <dumpfile.sql>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString databaseFile(arguments.at(0));
   QString sqlFileName(arguments.at(1));
