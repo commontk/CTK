@@ -79,7 +79,7 @@ public:
 
   ///@{
   /// Maximum number of concurrent QThreads spawned by the threadPool in the Job pool
-  /// default: 10
+  /// default: 20
   int maximumThreadCount() const;
   void setMaximumThreadCount(int maximumThreadCount);
   ///@}

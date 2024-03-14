@@ -56,7 +56,7 @@ void ctkJobSchedulerPrivate::init()
                    this, SLOT(onQueueJobsInThreadPool()));
 
   this->ThreadPool = QSharedPointer<QThreadPool>(new QThreadPool());
-  this->ThreadPool->setMaxThreadCount(10);
+  this->ThreadPool->setMaxThreadCount(20);
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ void ctkJobSchedulerPrivate::onQueueJobsInThreadPool()
     return;
     }
 
-  this->QueueMutex.tryLock();
+  this->QueueMutex.lock();
   foreach (QThread::Priority priority, (QList<QThread::Priority>()
                                         << QThread::Priority::HighestPriority
                                         << QThread::Priority::HighPriority
@@ -135,7 +135,7 @@ bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
   QObject::connect(job.data(), SIGNAL(progressJobDetail(QVariant)),
                    q, SIGNAL(progressJobDetail(QVariant)));
 
-  this->QueueMutex.tryLock();
+  this->QueueMutex.lock();
   this->JobsQueue.insert(job->jobUID(), job);
   this->QueueMutex.unlock();
 
@@ -165,7 +165,7 @@ bool ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
     .arg(jobUID)
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
 
-  this->QueueMutex.tryLock();
+  this->QueueMutex.lock();
   QSharedPointer<ctkAbstractJob> job = this->JobsQueue.value(jobUID);
   if (!job)
   {
@@ -192,7 +192,7 @@ void ctkJobSchedulerPrivate::removeJobs(const QStringList &jobUIDs)
   Q_Q(ctkJobScheduler);
 
   QList<QVariant> datas;
-  this->QueueMutex.tryLock();
+  this->QueueMutex.lock();
   foreach (QString jobUID, jobUIDs)
   {
     QSharedPointer<ctkAbstractJob> job = this->JobsQueue.value(jobUID);
@@ -285,7 +285,7 @@ ctkJobScheduler::~ctkJobScheduler()
 int ctkJobScheduler::numberOfJobs()
 {
   Q_D(ctkJobScheduler);
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   int numberOfJobs = d->JobsQueue.count();
   d->QueueMutex.unlock();
   return numberOfJobs;
@@ -296,7 +296,7 @@ int ctkJobScheduler::numberOfPersistentJobs()
 {
   Q_D(ctkJobScheduler);
   int numberOfPersistentJobs = 0;
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
     if (job->isPersistent())
@@ -344,7 +344,7 @@ QSharedPointer<ctkAbstractJob> ctkJobScheduler::getJobSharedByUID(const QString&
 {
   Q_D(ctkJobScheduler);
 
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   QMap<QString, QSharedPointer<ctkAbstractJob>>::iterator it = d->JobsQueue.find(jobUID);
   if (it == d->JobsQueue.end())
   {
@@ -397,7 +397,7 @@ void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
   Q_D(ctkJobScheduler);
 
   QStringList initializedStoppedJobsUIDs;
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   // Stops jobs without a worker (in waiting, still in main thread).
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
@@ -470,7 +470,7 @@ void ctkJobScheduler::stopJobsByJobUIDs(const QStringList &jobUIDs)
   }
 
   QStringList initializedStoppedJobsUIDs;
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   // Stops jobs without a worker (in waiting, still in main thread)
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
