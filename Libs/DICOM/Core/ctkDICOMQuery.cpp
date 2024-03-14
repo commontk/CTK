@@ -95,7 +95,7 @@ public:
   QString Host;
   int Port;
   QMap<QString,QVariant> Filters;
-  ctkDICOMQuerySCUPrivate SCU;
+  ctkDICOMQuerySCUPrivate *SCU;
   Uint16 PresentationContext;
   QSharedPointer<DcmDataset> QueryDcmDataset;
   QList<QPair<QString,QString>> StudyAndSeriesInstanceUIDPairList;
@@ -118,13 +118,26 @@ ctkDICOMQueryPrivate::ctkDICOMQueryPrivate()
   this->Canceled = false;
   this->MaximumPatientsQuery = 25;
 
-  this->SCU.setACSETimeout(10);
-  this->SCU.setConnectionTimeout(10);
+  this->SCU = new ctkDICOMQuerySCUPrivate();
+  this->SCU->setACSETimeout(10);
+  this->SCU->setConnectionTimeout(10);
 }
 
 //------------------------------------------------------------------------------
 ctkDICOMQueryPrivate::~ctkDICOMQueryPrivate()
 {
+  if (this->SCU && this->SCU->isConnected())
+  {
+    // Warning: releaseAssociation is not a thread safe method.
+    // If called concurrently from different threads DCMTK can crash.
+    this->SCU->releaseAssociation();
+  }
+
+  if (this->SCU)
+  {
+    delete this->SCU;
+  }
+
   this->JobResponseSets.clear();
 }
 
@@ -150,8 +163,8 @@ ctkDICOMQuery::ctkDICOMQuery(QObject* parentObject)
 {
   Q_D(ctkDICOMQuery);
 
-  d->SCU.setVerbosePCMode(false);
-  d->SCU.query = this; // give the dcmtk level access to this for emitting signals
+  d->SCU->setVerbosePCMode(false);
+  d->SCU->query = this; // give the dcmtk level access to this for emitting signals
 }
 
 //------------------------------------------------------------------------------
@@ -233,15 +246,15 @@ int ctkDICOMQuery::port()const
 void ctkDICOMQuery::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMQuery);
-  d->SCU.setACSETimeout(timeout);
-  d->SCU.setConnectionTimeout(timeout);
+  d->SCU->setACSETimeout(timeout);
+  d->SCU->setConnectionTimeout(timeout);
 }
 
 //-----------------------------------------------------------------------------
 int ctkDICOMQuery::connectionTimeout() const
 {
   Q_D(const ctkDICOMQuery);
-  return d->SCU.getConnectionTimeout();
+  return d->SCU->getConnectionTimeout();
 }
 
 //------------------------------------------------------------------------------
@@ -384,7 +397,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
 
   Uint16 presentationContext = 0;
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
-  presentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
+  presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
     logger.error("Failed to find acceptable presentation context");
@@ -401,12 +414,12 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
     return false;
   }
 
-  OFCondition status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
+  OFCondition status = d->SCU->sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (!status.good())
   {
     logger.error("Find failed");
     emit progress(tr("Find failed"));
-    d->SCU.releaseAssociation();
+    d->SCU->releaseAssociation();
     emit progress(100);
     return false;
   }
@@ -473,7 +486,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
 
     d->QueryDcmDataset->putAndInsertString (DCM_StudyInstanceUID, studyInstanceUID.toStdString().c_str());
     OFList<QRResponse *> responses;
-    status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
+    status = d->SCU->sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
     if (status.good())
     {
       for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
@@ -510,7 +523,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
     return false;
     }
   }
-  d->SCU.releaseAssociation();
+  d->SCU->releaseAssociation();
   emit progress(100);
   return true;
 }
@@ -566,7 +579,7 @@ bool ctkDICOMQuery::queryPatients()
 
   Uint16 presentationContext = 0;
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
-  presentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
+  presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
     logger.error("Failed to find acceptable presentation context");
@@ -599,7 +612,7 @@ bool ctkDICOMQuery::queryPatients()
 
   QMap<QString, DcmItem*> datasetsMap;
   OFList<QRResponse *> responses;
-  OFCondition status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
+  OFCondition status = d->SCU->sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
   {
     int contResponses = 0;
@@ -640,7 +653,7 @@ bool ctkDICOMQuery::queryPatients()
     return false;
   }
 
-  d->SCU.releaseAssociation();
+  d->SCU->releaseAssociation();
   return true;
 }
 
@@ -694,7 +707,7 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
 
   Uint16 presentationContext = 0;
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
-  presentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
+  presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
     logger.error("Failed to find acceptable presentation context");
@@ -731,7 +744,7 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
   QMap<QString, DcmItem*> datasetsMap;
 
   OFList<QRResponse *> responses;
-  OFCondition status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
+  OFCondition status = d->SCU->sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
   {
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
@@ -763,7 +776,7 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
     return false;
   }
 
-  d->SCU.releaseAssociation();
+  d->SCU->releaseAssociation();
   return true;
 }
 
@@ -814,7 +827,7 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
 
   Uint16 presentationContext = 0;
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
-  presentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
+  presentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (presentationContext == 0)
   {
     logger.error("Failed to find acceptable presentation context");
@@ -853,7 +866,7 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   QMap<QString, DcmItem*> datasetsMap;
 
   OFList<QRResponse *> responses;
-  OFCondition status = d->SCU.sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
+  OFCondition status = d->SCU->sendFINDRequest(presentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
   {
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
@@ -885,7 +898,7 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
     return false;
   }
 
-  d->SCU.releaseAssociation();
+  d->SCU->releaseAssociation();
   return true;
 }
 
@@ -933,7 +946,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   d->QueryDcmDataset->putAndInsertString(DCM_QueryRetrieveLevel, "IMAGE");
 
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
-  d->PresentationContext = d->SCU.findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
+  d->PresentationContext = d->SCU->findPresentationContextID(UID_FINDStudyRootQueryRetrieveInformationModel, "");
   if (d->PresentationContext == 0)
   {
     logger.error("Failed to find acceptable presentation context");
@@ -974,7 +987,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   QMap<QString, DcmItem*> datasetsMap;
 
   OFList<QRResponse *> responses;
-  OFCondition status = d->SCU.sendFINDRequest(d->PresentationContext, d->QueryDcmDataset.data(), &responses);
+  OFCondition status = d->SCU->sendFINDRequest(d->PresentationContext, d->QueryDcmDataset.data(), &responses);
   if (status.good())
   {
     for (OFListIterator(QRResponse*) it = responses.begin(); it != responses.end(); it++)
@@ -1005,7 +1018,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
     return false;
   }
 
-  d->SCU.releaseAssociation();
+  d->SCU->releaseAssociation();
   return true;
 }
 
@@ -1017,16 +1030,9 @@ void ctkDICOMQuery::cancel()
 
   if (d->PresentationContext != 0)
   {
-    d->SCU.sendCANCELRequest(d->PresentationContext);
+    d->SCU->sendCANCELRequest(d->PresentationContext);
     d->PresentationContext = 0;
   }
-
-  if (d->SCU.isConnected())
-  {
-    d->SCU.releaseAssociation();
-  }
-
-  d->JobResponseSets.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -1034,10 +1040,10 @@ bool ctkDICOMQuery::initializeSCU()
 {
   Q_D(ctkDICOMQuery);
 
-  d->SCU.setAETitle(OFString(this->callingAETitle().toStdString().c_str()));
-  d->SCU.setPeerAETitle(OFString(this->calledAETitle().toStdString().c_str()));
-  d->SCU.setPeerHostName(OFString(this->host().toStdString().c_str()));
-  d->SCU.setPeerPort(this->port());
+  d->SCU->setAETitle(OFString(this->callingAETitle().toStdString().c_str()));
+  d->SCU->setPeerAETitle(OFString(this->calledAETitle().toStdString().c_str()));
+  d->SCU->setPeerHostName(OFString(this->host().toStdString().c_str()));
+  d->SCU->setPeerPort(this->port());
 
   logger.debug("Setting Transfer Syntaxes");
   emit progress(tr("Setting Transfer Syntaxes"));
@@ -1052,8 +1058,8 @@ bool ctkDICOMQuery::initializeSCU()
   transferSyntaxes.push_back(UID_BigEndianExplicitTransferSyntax);
   transferSyntaxes.push_back(UID_LittleEndianImplicitTransferSyntax);
 
-  d->SCU.addPresentationContext(UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes);
-  if (!d->SCU.initNetwork().good())
+  d->SCU->addPresentationContext(UID_FINDStudyRootQueryRetrieveInformationModel, transferSyntaxes);
+  if (!d->SCU->initNetwork().good())
   {
     logger.error("Error initializing the network");
     emit progress(tr("Error initializing the network"));
@@ -1068,7 +1074,7 @@ bool ctkDICOMQuery::initializeSCU()
     return false;
   }
 
-  OFCondition result = d->SCU.negotiateAssociation();
+  OFCondition result = d->SCU->negotiateAssociation();
   if (result.bad())
   {
     logger.error("Error negotiating the association: " + QString(result.text()));

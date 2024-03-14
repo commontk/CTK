@@ -7,6 +7,8 @@
 
 # Exclude QtCreator files ...
 CMakeLists.txt.user*
+CMakeCache.txt
+CMakeFiles/cmake.check_cache
 
 # ignore ctags file
 tags

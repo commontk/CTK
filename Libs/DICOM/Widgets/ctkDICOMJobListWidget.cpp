@@ -276,6 +276,7 @@ void QCenteredItemModel::updateJobStatus(const ctkDICOMJobDetail &td, const JobS
     QString statusText;
     if (status == Queued)
     {
+      statusIcon = QIcon(":/Icons/pending.svg");
       statusText = tr("queued");
     }
     else if (status == Running)

@@ -561,7 +561,7 @@ void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
     return;
   }
 
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   bool wait = true;
   while (wait)
   {
@@ -633,7 +633,7 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
     return jobs;
   }
 
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
     if (!job)
@@ -691,7 +691,7 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
   }
 
   QStringList jobsUIDs;
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   // Stops jobs without a worker (in waiting, still in main thread)
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
@@ -790,7 +790,7 @@ void ctkDICOMScheduler::raiseJobsPriorityForSeries(const QStringList& selectedSe
     return;
   }
 
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
     if (job->isPersistent())
@@ -834,7 +834,7 @@ ctkDICOMStorageListenerJob* ctkDICOMScheduler::listenerJob()
 {
   Q_D(ctkDICOMScheduler);
   ctkDICOMStorageListenerJob* listenerJobRaw = nullptr;
-  d->QueueMutex.tryLock();
+  d->QueueMutex.lock();
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
     QSharedPointer<ctkDICOMStorageListenerJob> listenerJob =
