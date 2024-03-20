@@ -745,9 +745,9 @@ mark_as_superbuild(CTK_ENABLE_Python_Wrapping)
 
 include(CMakeDependentOption)
 cmake_dependent_option(
-  CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY "Disable copy of .py files when using ctkMacroCompilePythonScript()" OFF
+  CTK_COMPILE_PYTHON_SCRIPT_KEEP_ONLY_PYC "Remove .py scripts from destination directory after compiling to .pyc" OFF
   "CTK_ENABLE_Python_Wrapping" OFF)
-mark_as_superbuild(CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY)
+mark_as_superbuild(CTK_COMPILE_PYTHON_SCRIPT_KEEP_ONLY_PYC)
 
 # Build examples
 # Create the logical expression containing the minimum set of required options

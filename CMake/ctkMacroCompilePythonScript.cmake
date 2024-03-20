@@ -18,13 +18,16 @@
 #
 
 include(${CTK_CMAKE_DIR}/ctkMacroParseArguments.cmake)
+if(${CMAKE_VERSION} VERSION_LESS "3.5")
+  include(CMakeParseArguments)
+endif()
 
 set(CTK_PYTHON_COMPILE_FILE_SCRIPT_DIR "${CMAKE_BINARY_DIR}/CMakeFiles")
 
-# Setting this option to TRUE disable the copy of ".py" files into the
-# destination directory associated with ctkMacroCompilePythonScript.
-if(NOT DEFINED CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY)
-  set(CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY FALSE)
+# Setting this option to TRUE remove the relevant ".py" files from the
+# destination directory after they have been byte-compiled in ctkMacroCompilePythonScript.
+if(NOT DEFINED CTK_COMPILE_PYTHON_SCRIPT_KEEP_ONLY_PYC)
+  set(CTK_COMPILE_PYTHON_SCRIPT_KEEP_ONLY_PYC FALSE)
 endif()
 
 #! \ingroup CMakeAPI
@@ -104,11 +107,11 @@ macro(ctkMacroCompilePythonScript)
     USE_SOURCE_PERMISSIONS)
 
   if(NOT MY_GLOBAL_TARGET)
-    set(_skip_script_copy_option)
-    if(CTK_COMPILE_PYTHON_SCRIPT_SKIP_SCRIPT_COPY)
-      set(_skip_script_copy_option SKIP_SCRIPT_COPY)
+    set(_keep_only_pyc_option)
+    if(CTK_COMPILE_PYTHON_SCRIPT_KEEP_ONLY_PYC)
+      set(_keep_only_pyc_option KEEP_ONLY_PYC)
     endif()
-    ctkFunctionAddCompilePythonScriptTargets(${target} ${_skip_script_copy_option})
+    ctkFunctionAddCompilePythonScriptTargets(${target} ${_keep_only_pyc_option})
   endif()
 endmacro()
 
@@ -141,7 +144,7 @@ function(_ctk_add_copy_python_files_target target type)
 endfunction()
 
 
-function(_ctk_add_compile_python_directories_target target)
+function(_ctk_add_compile_python_directories_target target keep_only_pyc)
   set(target_name Compile${target}PythonFiles)
   if(NOT TARGET ${target_name})
     # Byte compile the Python files.
@@ -155,7 +158,10 @@ function(_ctk_add_compile_python_directories_target target)
       list(GET tuple 1 tgt_file)
       list(GET tuple 2 dest_dir)
       set(tgt ${dest_dir}/${tgt_file})
-      set(_compileall_code "${_compileall_code}\nctk_compile_file('${tgt}', force=1)")
+      set(_compileall_code "${_compileall_code}\nsuccess = ctk_compile_file('${tgt}', force=1)")
+      if(keep_only_pyc)
+        set(_compileall_code "${_compileall_code}\nif success: Path('${tgt}').unlink()")
+      endif()
     endforeach()
 
     if(NOT PYTHONINTERP_FOUND)
@@ -193,15 +199,16 @@ function(_ctk_add_compile_python_directories_target target)
 endfunction()
 
 function(ctkFunctionAddCompilePythonScriptTargets target)
-  ctkMacroParseArguments(MY
-    ""
-    "SKIP_SCRIPT_COPY"
-    ${ARGN}
+  set(options
+    KEEP_ONLY_PYC
     )
-  # Skip defining the target CopySlicerPythonScriptFiles when the argument skip_script_copy is set to True
-  if(NOT MY_SKIP_SCRIPT_COPY)
-    _ctk_add_copy_python_files_target(${target} Script ${ARGN})
-  endif()
-  _ctk_add_copy_python_files_target(${target} Resource ${ARGN})
-  _ctk_add_compile_python_directories_target(${target})
+  set(oneValueArgs
+    )
+  set(multiValueArgs
+    )
+  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  _ctk_add_copy_python_files_target(${target} Script ${MY_UNPARSED_ARGUMENTS})
+  _ctk_add_copy_python_files_target(${target} Resource ${MY_UNPARSED_ARGUMENTS})
+  _ctk_add_compile_python_directories_target(${target} ${MY_KEEP_ONLY_PYC})
 endfunction()
