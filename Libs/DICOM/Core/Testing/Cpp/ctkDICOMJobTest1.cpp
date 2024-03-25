@@ -50,7 +50,7 @@ int ctkDICOMJobTest1(int argc, char* argv[])
   CHECK_INT(queryJob.maximumNumberOfRetry(), 3);
   CHECK_INT(queryJob.maximumConcurrentJobsPerType(), 20);
   CHECK_INT(queryJob.priority(), QThread::Priority::LowPriority);
-  CHECK_INT(queryJob.dicomLevel(), ctkDICOMJob::DICOMLevels::Patients);
+  CHECK_INT(queryJob.dicomLevel(), ctkDICOMJob::DICOMLevels::None);
   CHECK_QSTRING(queryJob.patientID(), "");
   CHECK_QSTRING(queryJob.studyInstanceUID(), "");
   CHECK_QSTRING(queryJob.seriesInstanceUID(), "");

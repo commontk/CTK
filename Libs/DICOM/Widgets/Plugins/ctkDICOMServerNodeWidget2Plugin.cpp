@@ -22,50 +22,50 @@
 =========================================================================*/
 
 // CTK includes
-#include "ctkDICOMVisualBrowserWidgetPlugin.h"
-#include "ctkDICOMVisualBrowserWidget.h"
+#include "ctkDICOMServerNodeWidget2Plugin.h"
+#include "ctkDICOMServerNodeWidget2.h"
 
 //-----------------------------------------------------------------------------
-ctkDICOMVisualBrowserWidgetPlugin::ctkDICOMVisualBrowserWidgetPlugin(QObject* pluginParent)
+ctkDICOMServerNodeWidget2Plugin::ctkDICOMServerNodeWidget2Plugin(QObject* pluginParent)
   : QObject(pluginParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget* ctkDICOMVisualBrowserWidgetPlugin::createWidget(QWidget* parentForWidget)
+QWidget *ctkDICOMServerNodeWidget2Plugin::createWidget(QWidget *parentForWidget)
 {
-  ctkDICOMVisualBrowserWidget* newWidget = new ctkDICOMVisualBrowserWidget(parentForWidget);
+  ctkDICOMServerNodeWidget2* newWidget = new ctkDICOMServerNodeWidget2(parentForWidget);
   return newWidget;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidgetPlugin::domXml() const
+QString ctkDICOMServerNodeWidget2Plugin::domXml() const
 {
-  return "<widget class=\"ctkDICOMVisualBrowserWidget\" \
-          name=\"VisualBrowser\">\n"
-         "</widget>\n";
+  return "<widget class=\"ctkDICOMServerNodeWidget2\" \
+          name=\"ServerNode\">\n"
+          "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
-QIcon ctkDICOMVisualBrowserWidgetPlugin::icon() const
+QIcon ctkDICOMServerNodeWidget2Plugin::icon() const
 {
   return QIcon(":/Icons/widget.png");
 }
 
 //-----------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidgetPlugin::includeFile() const
+QString ctkDICOMServerNodeWidget2Plugin::includeFile() const
 {
-  return "ctkDICOMVisualBrowserWidget.h";
+  return "ctkDICOMServerNodeWidget2.h";
 }
 
 //-----------------------------------------------------------------------------
-bool ctkDICOMVisualBrowserWidgetPlugin::isContainer() const
+bool ctkDICOMServerNodeWidget2Plugin::isContainer() const
 {
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidgetPlugin::name() const
+QString ctkDICOMServerNodeWidget2Plugin::name() const
 {
-  return "ctkDICOMVisualBrowserWidget";
+  return "ctkDICOMServerNodeWidget2";
 }

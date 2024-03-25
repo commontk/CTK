@@ -110,15 +110,13 @@ int main(int argc, char** argv)
   DICOMVisualBrowser.setMinimumSize(QSize(1000, 1000));
   DICOMVisualBrowser.setDatabaseDirectory(databaseDirectory);
 
-  DICOMVisualBrowser.serverSettingsGroupBox()->setChecked(true);
   QObject::connect(&directoryButton, SIGNAL(directoryChanged(const QString&)),
                    &DICOMVisualBrowser, SLOT(setDatabaseDirectory(const QString&)));
 
   mainLayout.addWidget(&DICOMVisualBrowser);
-
   mainWidget.setLayout(&mainLayout);
-
   mainWidget.show();
+  DICOMVisualBrowser.onShowPatients();
 
   return app.exec();
 }

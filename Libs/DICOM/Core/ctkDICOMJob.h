@@ -54,6 +54,7 @@ public:
 
   enum DICOMLevels
   {
+    None,
     Patients,
     Studies,
     Series,
@@ -178,7 +179,7 @@ struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
   QString ConnectionName;
 
   // Specific to DICOM Query and Retrieve jobs
-  ctkDICOMJob::DICOMLevels DICOMLevel{ctkDICOMJob::DICOMLevels::Patients};
+  ctkDICOMJob::DICOMLevels DICOMLevel{ctkDICOMJob::DICOMLevels::None};
 
   // Specific to DICOM JobResponseSet
   ctkDICOMJobResponseSet::JobType JobType{ctkDICOMJobResponseSet::JobType::None};

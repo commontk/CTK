@@ -140,6 +140,9 @@ QString QCenteredItemModel::getJobTypeAsString(QString jobClass, ctkDICOMJob::DI
   {
     switch (dicomLevel)
     {
+      case ctkDICOMJob::DICOMLevels::None:
+        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        return "";
       case ctkDICOMJob::DICOMLevels::Patients:
         return QObject::tr("Query patients");
       case ctkDICOMJob::DICOMLevels::Studies:
@@ -154,6 +157,9 @@ QString QCenteredItemModel::getJobTypeAsString(QString jobClass, ctkDICOMJob::DI
   {
     switch (dicomLevel)
     {
+      case ctkDICOMJob::DICOMLevels::None:
+        logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        return "";
       case ctkDICOMJob::DICOMLevels::Patients:
         return QObject::tr("Retrieve patients");
       case ctkDICOMJob::DICOMLevels::Studies:
@@ -167,6 +173,10 @@ QString QCenteredItemModel::getJobTypeAsString(QString jobClass, ctkDICOMJob::DI
   else if (jobClass == "ctkDICOMStorageListenerJob")
   {
     return QObject::tr("Storage listener");
+  }
+  else if (jobClass == "ctkDICOMEchoJob")
+  {
+    return QObject::tr("Echo server");
   }
 
   return QObject::tr("");
@@ -767,38 +777,83 @@ void ctkDICOMJobListWidgetPrivate::updateJobsDetailsWidget()
     QString jobClass = this->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::JobClass).data().toString();
 
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobType));
-    detailsText.append(QString(" : ") + jobType + QString(" \n"));
+    if (!jobType.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobType));
+      detailsText.append(QString(" : ") + jobType + QString(" \n"));
+    }
+    if (!jobUID.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobUID));
+      detailsText.append(QString(" : ") + jobUID + QString(" \n"));
+    }
+    if (!jobClass.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobClass));
+      detailsText.append(QString(" : ") + jobClass + QString(" \n"));
+    }
+    if (!connection.isEmpty())
+    {
+      detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Connection));
+      detailsText.append(QString(" : ") + connection + QString(" \n"));
+    }
+    if (!status.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Status));
     detailsText.append(QString(" : ") + status + QString(" \n"));
+    }
+    if (!creationDateTime.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CreationDateTime));
     detailsText.append(QString(" : ") + creationDateTime + QString(" \n"));
+    }
+    if (!startDateTime.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StartDateTime));
     detailsText.append(QString(" : ") + startDateTime + QString(" \n"));
+    }
+    if (!completionDateTime.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::CompletionDateTime));
     detailsText.append(QString(" : ") + completionDateTime + QString(" \n"));
+    }
+    if (!dicomLevel.isEmpty() && dicomLevel != "None")
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::DICOMLevel));
     detailsText.append(QString(" : ") + dicomLevel + QString(" \n"));
+    }
+    if (!patientID.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientID));
     detailsText.append(QString(" : ") + patientID + QString(" \n"));
+    }
+    if (!patientName.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientName));
     detailsText.append(QString(" : ") + patientName + QString(" \n"));
+    }
+    if (!patientBirthDate.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::PatientBirthDate));
     detailsText.append(QString(" : ") + patientBirthDate + QString(" \n"));
+    }
+    if (!studyInstanceUID.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::StudyInstanceUID));
     detailsText.append(QString(" : ") + studyInstanceUID + QString(" \n"));
+    }
+    if (!seriesInstanceUID.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SeriesInstanceUID));
     detailsText.append(QString(" : ") + seriesInstanceUID + QString(" \n"));
+    }
+    if (!sopInstanceUID.isEmpty())
+    {
     detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::SOPInstanceUID));
     detailsText.append(QString(" : ") + sopInstanceUID + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::Connection));
-    detailsText.append(QString(" : ") + connection + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobUID));
-    detailsText.append(QString(" : ") + jobUID + QString(" \n"));
-    detailsText.append(QCenteredItemModel::getColumnStringFromIndex(QCenteredItemModel::Columns::JobClass));
-    detailsText.append(QString(" : ") + jobClass + QString(" \n"));
+    }
 
-    detailsText.append(QString("Logger : ") + QString(" \n"));
+    //detailsText.append(QString("Logger : ") + QString(" \n"));
     // To Do: get DCMTK logging stream per job
   }
 
@@ -836,8 +891,12 @@ void ctkDICOMJobListWidgetPrivate::retryJobs()
 
     QString DICOMLevelString = this->showCompletedProxyModel->index
       (row, QCenteredItemModel::Columns::DICOMLevel).data().toString();
-    ctkDICOMJob::DICOMLevels DICOMLevel = ctkDICOMJob::DICOMLevels::Patients;
-    if (DICOMLevelString == "Studies")
+    ctkDICOMJob::DICOMLevels DICOMLevel = ctkDICOMJob::DICOMLevels::None;
+    if (DICOMLevelString == "Patients")
+    {
+      DICOMLevel = ctkDICOMJob::DICOMLevels::Patients;
+    }
+    else if (DICOMLevelString == "Studies")
     {
       DICOMLevel = ctkDICOMJob::DICOMLevels::Studies;
     }

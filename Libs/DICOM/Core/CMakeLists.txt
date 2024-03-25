@@ -18,6 +18,12 @@ set(KIT_SRCS
   ctkDICOMDisplayedFieldGenerator.h
   ctkDICOMEcho.cpp
   ctkDICOMEcho.h
+  ctkDICOMEchoJob.cpp
+  ctkDICOMEchoJob.h
+  ctkDICOMEchoJob_p.h
+  ctkDICOMEchoWorker.cpp
+  ctkDICOMEchoWorker.h
+  ctkDICOMEchoWorker_p.h
   ctkDICOMFilterProxyModel.cpp
   ctkDICOMFilterProxyModel.h
   ctkDICOMIndexer.cpp
@@ -105,6 +111,10 @@ set(KIT_MOC_SRCS
   ctkDICOMDisplayedFieldGenerator_p.h
   ctkDICOMDisplayedFieldGeneratorRuleFactory.h
   ctkDICOMEcho.h
+  ctkDICOMEchoJob.h
+  ctkDICOMEchoJob_p.h
+  ctkDICOMEchoWorker.h
+  ctkDICOMEchoWorker_p.h
   ctkDICOMIndexer.h
   ctkDICOMIndexer_p.h
   ctkDICOMInserter.h

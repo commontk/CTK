@@ -128,8 +128,8 @@ public:
   Q_INVOKABLE void addJobResponseSet(ctkDICOMJobResponseSet& jobResponseSet);
   void addJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
   void removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
-  Q_INVOKABLE void setJobUID(const QString& jobUID);
-  Q_INVOKABLE QString jobUID() const;
+  void setJobUID(const QString& jobUID);
+  QString jobUID() const;
   ///@}
 
   /// Patient ID from from the last operation.

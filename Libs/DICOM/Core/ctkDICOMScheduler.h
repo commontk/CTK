@@ -101,6 +101,12 @@ public:
                                  const QString &AETitle,
                                  QThread::Priority priority = QThread::LowPriority);
 
+  /// Echo a server
+  Q_INVOKABLE void echo(const QString& connectionName,
+                        QThread::Priority priority = QThread::LowPriority);
+  Q_INVOKABLE void echo(ctkDICOMServer& server,
+                        QThread::Priority priority = QThread::LowPriority);
+
   ///@{
   /// Insert results from a job
   QString insertJobResponseSet(const QSharedPointer<ctkDICOMJobResponseSet>& jobResponseSet,

@@ -27,6 +27,7 @@
 #include <ctkAbstractWorker.h>
 
 // ctkDICOMCore includes
+#include "ctkDICOMEchoJob.h"
 #include "ctkDICOMInserterJob.h"
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMQueryJob.h"
@@ -313,6 +314,46 @@ void ctkDICOMScheduler::startListener(int port,
   job->setAETitle(AETitle);
   job->setMaximumNumberOfRetry(d->MaximumNumberOfRetry);
   job->setRetryDelay(d->RetryDelay);
+  job->setPriority(priority);
+
+  d->insertJob(job);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::echo(const QString &connectionName,
+                             QThread::Priority priority)
+{
+  Q_D(ctkDICOMScheduler);
+
+  foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
+  {
+    if (server->connectionName() != connectionName)
+    {
+      continue;
+    }
+
+    QSharedPointer<ctkDICOMEchoJob> job =
+      QSharedPointer<ctkDICOMEchoJob>(new ctkDICOMEchoJob);
+
+    job->setServer(*server);
+    job->setMaximumNumberOfRetry(0);
+    job->setPriority(priority);
+
+    d->insertJob(job);
+    break;
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMScheduler::echo(ctkDICOMServer &server, QThread::Priority priority)
+{
+  Q_D(ctkDICOMScheduler);
+
+  QSharedPointer<ctkDICOMEchoJob> job =
+    QSharedPointer<ctkDICOMEchoJob>(new ctkDICOMEchoJob);
+
+  job->setServer(server);
+  job->setMaximumNumberOfRetry(0);
   job->setPriority(priority);
 
   d->insertJob(job);
@@ -735,6 +776,9 @@ void ctkDICOMScheduler::runJobs(const QMap<QString, ctkDICOMJobDetail> &jobDetai
     {
       switch (jd.DICOMLevel)
       {
+        case ctkDICOMJob::DICOMLevels::None:
+          logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+        break;
         case ctkDICOMJob::DICOMLevels::Patients:
           this->queryPatients();
         break;
@@ -756,6 +800,9 @@ void ctkDICOMScheduler::runJobs(const QMap<QString, ctkDICOMJobDetail> &jobDetai
     {
       switch (jd.DICOMLevel)
       {
+        case ctkDICOMJob::DICOMLevels::None:
+          logger.warn("ctkDICOMScheduler : DICOMLevels was not set.");
+          break;
         case ctkDICOMJob::DICOMLevels::Patients:
           logger.warn("Retrieve Patient is not implemented");
         break;

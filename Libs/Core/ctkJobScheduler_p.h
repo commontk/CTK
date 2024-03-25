@@ -59,6 +59,7 @@ public:
   virtual bool insertJob(QSharedPointer<ctkAbstractJob> job);
   virtual bool removeJob(const QString& jobUID);
   virtual void removeJobs(const QStringList& jobUIDs);
+  virtual void removeAllJobs();
   int getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job);
   QString generateUniqueJobUID();
 

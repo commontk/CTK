@@ -54,6 +54,7 @@ public:
   /// Jobs managment
   Q_INVOKABLE int numberOfJobs();
   Q_INVOKABLE int numberOfPersistentJobs();
+  Q_INVOKABLE int numberOfRunningJobs();
 
   Q_INVOKABLE void addJob(ctkAbstractJob* job);
 
