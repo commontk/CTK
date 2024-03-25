@@ -89,6 +89,9 @@ QString ctkDICOMRetrieveJob::loggerReport(const QString& status) const
 {
   switch (this->dicomLevel())
   {
+    case ctkDICOMJob::DICOMLevels::None:
+      logger.debug(QString("ctkDICOMQueryWorker : DICOMLevels was not set\n"));
+      return "";
     case ctkDICOMJob::DICOMLevels::Patients:
       return QString("ctkDICOMRetrieveJob: retrieve task at patients level %1.\n"
                      "JobUID: %2\n"

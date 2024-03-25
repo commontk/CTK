@@ -44,6 +44,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMEcho : public QObject
   Q_PROPERTY(QString host READ host WRITE setHost);
   Q_PROPERTY(int port READ port WRITE setPort);
   Q_PROPERTY(int connectionTimeout READ connectionTimeout WRITE setConnectionTimeout);
+  Q_PROPERTY(QString jobUID READ jobUID WRITE setJobUID);
 
 public:
   explicit ctkDICOMEcho(QObject* parent = 0);
@@ -86,8 +87,20 @@ public:
   int connectionTimeout() const;
   ///@}
 
+  /// operation is canceled?
+  Q_INVOKABLE bool wasCanceled();
+
   /// Echo connection.
   Q_INVOKABLE bool echo();
+
+  ///@{
+  /// Access the list of datasets from the last operation.
+  void setJobUID(const QString& jobUID);
+  QString jobUID() const;
+  ///@}
+
+public Q_SLOTS:
+  void cancel();
 
 protected:
   QScopedPointer<ctkDICOMEchoPrivate> d_ptr;

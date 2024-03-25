@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1201</width>
-    <height>1173</height>
+    <height>1192</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,21 +21,6 @@
     <normaloff>:/Icons/patient.svg</normaloff>:/Icons/patient.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>2</number>
-   </property>
-   <property name="leftMargin">
-    <number>2</number>
-   </property>
-   <property name="topMargin">
-    <number>2</number>
-   </property>
-   <property name="rightMargin">
-    <number>2</number>
-   </property>
-   <property name="bottomMargin">
-    <number>2</number>
-   </property>
    <item>
     <widget class="QFrame" name="DatabaseDirectoryProblemFrame">
      <property name="styleSheet">
@@ -758,60 +743,138 @@ Please set at least one filter to query the servers</string>
     </spacer>
    </item>
    <item>
-    <widget class="QTabWidget" name="PatientsTabWidget">
+    <widget class="QSplitter" name="splitter">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
+       <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="tabPosition">
-      <enum>QTabWidget::North</enum>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="tabShape">
-      <enum>QTabWidget::Rounded</enum>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-     <property name="elideMode">
-      <enum>Qt::ElideNone</enum>
-     </property>
-     <property name="usesScrollButtons">
+     <property name="opaqueResize">
       <bool>true</bool>
      </property>
-     <property name="tabsClosable">
-      <bool>false</bool>
-     </property>
-     <property name="movable">
-      <bool>true</bool>
-     </property>
-     <property name="tabBarAutoHide">
-      <bool>false</bool>
-     </property>
-     <widget class="QWidget" name="Patient1">
-      <attribute name="icon">
-       <iconset resource="ctkDICOMWidget.qrc">
-        <normaloff>:/Icons/patient.svg</normaloff>:/Icons/patient.svg</iconset>
-      </attribute>
-      <attribute name="title">
-       <string>Patient 1</string>
-      </attribute>
+     <widget class="QTabWidget" name="PatientsTabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="tabPosition">
+       <enum>QTabWidget::North</enum>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="elideMode">
+       <enum>Qt::ElideNone</enum>
+      </property>
+      <property name="usesScrollButtons">
+       <bool>true</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>false</bool>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="Patient1">
+       <attribute name="icon">
+        <iconset resource="ctkDICOMWidget.qrc">
+         <normaloff>:/Icons/patient.svg</normaloff>:/Icons/patient.svg</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Patient 1</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="Patient2">
+       <attribute name="icon">
+        <iconset resource="ctkDICOMWidget.qrc">
+         <normaloff>:/Icons/patient.svg</normaloff>:/Icons/patient.svg</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>Patient 2</string>
+       </attribute>
+      </widget>
      </widget>
-     <widget class="QWidget" name="Patient2">
-      <attribute name="icon">
-       <iconset resource="ctkDICOMWidget.qrc">
-        <normaloff>:/Icons/patient.svg</normaloff>:/Icons/patient.svg</iconset>
-      </attribute>
-      <attribute name="title">
-       <string>Patient 2</string>
-      </attribute>
+     <widget class="ctkCollapsibleGroupBox" name="AdvancedCollapsibleGroupBox">
+      <property name="title">
+       <string>Advanced</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_13">
+       <item>
+        <widget class="ctkCollapsibleGroupBox" name="JobsCollapsibleGroupBox">
+         <property name="title">
+          <string>Jobs   </string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="ctkDICOMJobListWidget" name="JobListWidget"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="ctkCollapsibleGroupBox" name="ServersSettingsCollapsibleGroupBox">
+         <property name="title">
+          <string>Settings</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="ctkDICOMServerNodeWidget2" name="ServerNodeWidget"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -872,57 +935,6 @@ Please set at least one filter to query the servers</string>
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="ctkCollapsibleGroupBox" name="JobsCollapsibleGroupBox">
-     <property name="title">
-      <string>Jobs   </string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_9">
-      <property name="spacing">
-       <number>2</number>
-      </property>
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
-       <number>2</number>
-      </property>
-      <item>
-       <widget class="ctkDICOMJobListWidget" name="JobListWidget"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="ctkCollapsibleGroupBox" name="ServersSettingsCollapsibleGroupBox">
-     <property name="title">
-      <string>Settings</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_12">
-      <property name="spacing">
-       <number>2</number>
-      </property>
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
-       <number>2</number>
-      </property>
-     </layout>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -930,6 +942,11 @@ Please set at least one filter to query the servers</string>
    <class>ctkDICOMJobListWidget</class>
    <extends>QWidget</extends>
    <header>ctkDICOMJobListWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkDICOMServerNodeWidget2</class>
+   <extends>QWidget</extends>
+   <header>ctkDICOMServerNodeWidget2.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCheckableComboBox</class>

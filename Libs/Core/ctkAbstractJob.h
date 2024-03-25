@@ -190,9 +190,9 @@ struct CTK_CORE_EXPORT ctkJobDetail {
   {
     this->JobClass = job.className();
     this->JobUID = job.jobUID();
-    this->CreationDateTime = job.creationDateTime().toString("HH:mm:ss.zzz ddd MMM yyyy");
-    this->StartDateTime = job.startDateTime().toString("HH:mm:ss.zzz ddd MMM yyyy");
-    this->CompletionDateTime = job.completionDateTime().toString("HH:mm:ss.zzz ddd MMM yyyy");
+    this->CreationDateTime = job.creationDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
+    this->StartDateTime = job.startDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
+    this->CompletionDateTime = job.completionDateTime().toString("HH:mm:ss.zzz ddd dd MMM yyyy");
   }
   virtual ~ctkJobDetail() = default;
 

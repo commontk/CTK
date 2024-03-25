@@ -220,6 +220,25 @@ void ctkJobSchedulerPrivate::removeJobs(const QStringList &jobUIDs)
 }
 
 //------------------------------------------------------------------------------
+void ctkJobSchedulerPrivate::removeAllJobs()
+{
+  Q_Q(ctkJobScheduler);
+
+  this->QueueMutex.lock();
+  foreach (QSharedPointer<ctkAbstractJob> job, this->JobsQueue)
+  {
+    QObject::disconnect(job.data(), SIGNAL(started()), q, SLOT(onJobStarted()));
+    QObject::disconnect(job.data(), SIGNAL(canceled()), q, SLOT(onJobCanceled()));
+    QObject::disconnect(job.data(), SIGNAL(failed()), q, SLOT(onJobFailed()));
+    QObject::disconnect(job.data(), SIGNAL(finished()), q, SLOT(onJobFinished()));
+    QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)), q, SIGNAL(progressJobDetail(QVariant)));
+
+    this->JobsQueue.remove(job->jobUID());
+  }
+  this->QueueMutex.unlock();
+}
+
+//------------------------------------------------------------------------------
 int ctkJobSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPointer<ctkAbstractJob> job)
 {
   int count = 0;
@@ -271,14 +290,18 @@ ctkJobScheduler::ctkJobScheduler(ctkJobSchedulerPrivate* pimpl, QObject* parent)
 // --------------------------------------------------------------------------
 ctkJobScheduler::~ctkJobScheduler()
 {
+  Q_D(ctkJobScheduler);
   this->setFreezeJobsScheduling(true);
   this->stopAllJobs(true);
   // stopAllJobs is not main thread blocking. Therefore we need actually
   // to wait the jobs to end (either finished or stopped) before closing the application.
   // Issue: waiting time for the jobs to stop vs waiting the application to close.
   // We should avoid the application crash at exiting.
-  // Is 10 sec enough or too long?
-  this->waitForDone(10000);
+  // The job scheduler currently waits all the jobs to be properly stopped.
+  this->waitForFinish(true);
+  this->waitForDone(500);
+  d->removeAllJobs();
+  d->Workers.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -307,6 +330,25 @@ int ctkJobScheduler::numberOfPersistentJobs()
   d->QueueMutex.unlock();
 
   return numberOfPersistentJobs;
+}
+
+//----------------------------------------------------------------------------
+int ctkJobScheduler::numberOfRunningJobs()
+{
+  Q_D(ctkJobScheduler);
+
+  d->QueueMutex.lock();
+  int numberOfRunningJobs = 0;
+  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+  {
+    if (job->status() < ctkAbstractJob::JobStatus::Stopped)
+    {
+      numberOfRunningJobs++;
+    }
+  }
+  d->QueueMutex.unlock();
+
+  return numberOfRunningJobs;
 }
 
 //----------------------------------------------------------------------------
@@ -378,9 +420,9 @@ void ctkJobScheduler::waitForFinish(bool waitForPersistentJobs)
   {
     numberOfPersistentJobs = 0;
   }
-  while (this->numberOfJobs() > numberOfPersistentJobs)
+  while (this->numberOfRunningJobs() > numberOfPersistentJobs)
   {
-    d->ThreadPool->waitForDone(300);
+    this->waitForDone(500);
   }
 }
 

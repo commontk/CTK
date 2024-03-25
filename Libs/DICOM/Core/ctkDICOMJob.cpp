@@ -36,7 +36,7 @@ static ctkLogger logger ("org.commontk.dicom.DICOMJob");
 //------------------------------------------------------------------------------
 ctkDICOMJob::ctkDICOMJob()
 {
-  this->DICOMLevel = DICOMLevels::Patients;
+  this->DICOMLevel = DICOMLevels::None;
   this->PatientID = "";
   this->StudyInstanceUID = "";
   this->SeriesInstanceUID = "";

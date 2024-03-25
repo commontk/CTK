@@ -150,8 +150,12 @@ void ctkDICOMRetrieveWorker::run()
     case ctkDICOMServer::CGET:
       switch(retrieveJob->dicomLevel())
       {
+        case ctkDICOMJob::DICOMLevels::None:
+          logger.warn("ctkDICOMRetrieveWorker : DICOMLevels was not set.");
+          this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
+          return;
         case ctkDICOMJob::DICOMLevels::Patients:
-          logger.warn("ctkDICOMRetrieveTask : get operation for a full patient is not implemented.");
+          logger.warn("ctkDICOMRetrieveWorker : get operation for a full patient is not implemented.");
           this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
           return;
         case ctkDICOMJob::DICOMLevels::Studies:
@@ -186,6 +190,10 @@ void ctkDICOMRetrieveWorker::run()
     case ctkDICOMServer::CMOVE:
       switch(retrieveJob->dicomLevel())
       {
+        case ctkDICOMJob::DICOMLevels::None:
+          logger.warn("ctkDICOMRetrieveWorker : DICOMLevels was not set.");
+          this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
+          return;
         case ctkDICOMJob::DICOMLevels::Patients:
           logger.warn("ctkDICOMRetrieveTask : move operation for a full patient is not implemented.");
           retrieveJob->setStatus(ctkAbstractJob::JobStatus::Finished);

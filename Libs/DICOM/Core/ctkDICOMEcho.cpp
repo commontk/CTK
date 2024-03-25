@@ -47,8 +47,10 @@ public:
   QString CallingAETitle;
   QString CalledAETitle;
   QString Host;
+  QString JobUID;
   int Port;
   DcmSCU *SCU;
+  bool Canceled;
 };
 
 //------------------------------------------------------------------------------
@@ -61,11 +63,14 @@ ctkDICOMEchoPrivate::ctkDICOMEchoPrivate()
   this->CallingAETitle = "";
   this->CalledAETitle = "";
   this->Host = "";
+  this->JobUID = "";
   this->Port = 80;
 
   this->SCU = new DcmSCU();
   this->SCU->setACSETimeout(3);
   this->SCU->setConnectionTimeout(3);
+
+  this->Canceled = false;
 }
 
 //------------------------------------------------------------------------------
@@ -170,6 +175,13 @@ int ctkDICOMEcho::connectionTimeout() const
 }
 
 //------------------------------------------------------------------------------
+bool ctkDICOMEcho::wasCanceled()
+{
+  Q_D(const ctkDICOMEcho);
+  return d->Canceled;
+}
+
+//------------------------------------------------------------------------------
 bool ctkDICOMEcho::echo()
 {
   Q_D(ctkDICOMEcho);
@@ -213,4 +225,25 @@ bool ctkDICOMEcho::echo()
   d->SCU->releaseAssociation();
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMEcho::setJobUID(const QString &jobUID)
+{
+  Q_D(ctkDICOMEcho);
+  d->JobUID = jobUID;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMEcho::jobUID() const
+{
+  Q_D(const ctkDICOMEcho);
+  return d->JobUID;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMEcho::cancel()
+{
+  Q_D(ctkDICOMEcho);
+  d->Canceled = true;
 }

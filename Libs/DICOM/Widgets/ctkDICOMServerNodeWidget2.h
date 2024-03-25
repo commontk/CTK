@@ -29,6 +29,7 @@
 #include <QString>
 #include <QList>
 #include <QMap>
+#include <QVariant>
 class QTableWidgetItem;
 
 // ctkCore includes
@@ -104,21 +105,30 @@ public Q_SLOTS:
   /// Add an empty server node and make it current
   /// Return the row index added into the table
   int onAddServerNode();
-  /// Remove the current row (different from the checked rows)
+  /// Remove the current selected row (different from the checked rows)
   void onRemoveCurrentServerNode();
-  /// Test the current row (different from the checked rows)
-  void onTestCurrentServerNode();
+  /// Verify the current selected row (different from the checked rows)
+  void onVerifyCurrentServerNode();
+
+  void onJobStarted(QVariant);
+  void onJobCanceled(QVariant);
+  void onJobFailed(QVariant);
+  void onJobFinished(QVariant);
 
   void readSettings();
   void saveSettings();
+  void onRestoreDefaultServers();
   void updateGUIState();
+  void onItemSelectionChanged();
   void onSettingsModified();
+  void onCellSettingsModified(int row, int column);
 
 protected:
   QScopedPointer<ctkDICOMServerNodeWidget2Private> d_ptr;
   enum ServerColumns
   {
     NameColumn = 0,
+    VerificationColumn,
     QueryRetrieveColumn,
     StorageColumn,
     CallingAETitleColumn,

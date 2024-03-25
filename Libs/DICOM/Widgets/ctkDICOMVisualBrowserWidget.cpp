@@ -61,6 +61,8 @@
 #include "ui_ctkDICOMVisualBrowserWidget.h"
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMVisualBrowserWidget");
+Qt::GlobalColor warningColor = Qt::yellow;
+QColor warningColorDarkMode = QColor(60, 164, 255);
 
 class ctkDICOMMetadataDialog : public QDialog
 {
@@ -234,7 +236,6 @@ public:
   bool IsGUIUpdating;
   bool IsLoading;
 
-  ctkDICOMServerNodeWidget2* ServerNodeWidget;
   QProgressDialog* UpdateSchemaProgress;
   QProgressDialog* ExportProgress;
 };
@@ -297,7 +298,6 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
 
   this->ExportProgress = nullptr;
   this->UpdateSchemaProgress = nullptr;
-  this->ServerNodeWidget = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -407,11 +407,9 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
 
   this->ServersSettingsCollapsibleGroupBox->setCollapsed(true);
   this->JobsCollapsibleGroupBox->setCollapsed(true);
+  this->AdvancedCollapsibleGroupBox->setCollapsed(true);
 
-  this->ServerNodeWidget = new ctkDICOMServerNodeWidget2(q);
   this->ServerNodeWidget->setScheduler(this->Scheduler);
-  this->ServersSettingsCollapsibleGroupBox->layout()->addWidget(this->ServerNodeWidget);
-
   this->JobListWidget->setScheduler(this->Scheduler);
   this->connectScheduler();
 }
@@ -691,10 +689,10 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
   this->setBackgroundColorToFilterWidgets();
 
   QColor visualDICOMBrowserColor = q->palette().color(QPalette::Normal, q->backgroundRole());
-  QColor color = Qt::yellow;
+  QColor color = warningColor;
   if (visualDICOMBrowserColor.lightnessF() < 0.5)
   {
-    color.setRgb(60, 164, 255);
+    color = warningColorDarkMode;
   }
 
   QStringList patientList = this->DicomDatabase->patients();
@@ -2291,6 +2289,7 @@ void ctkDICOMVisualBrowserWidget::onWarningPushButtonClicked()
   Q_D(ctkDICOMVisualBrowserWidget);
   d->WarningPushButton->hide();
   d->JobsCollapsibleGroupBox->setChecked(true);
+  d->AdvancedCollapsibleGroupBox->setChecked(true);
 }
 
 //------------------------------------------------------------------------------
@@ -3252,6 +3251,7 @@ void ctkDICOMVisualBrowserWidget::exportSeries(const QString& dirPath, const QSt
 void ctkDICOMVisualBrowserWidget::onImportDirectoriesSelected(const QStringList& directories)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  d->ImportDialog->hide();
   this->importDirectories(directories, this->importDirectoryMode());
   d->updateFiltersWarnings();
 

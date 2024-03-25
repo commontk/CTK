@@ -88,7 +88,8 @@ public:
     RetrieveSeries,
     RetrieveSOPInstance,
     StoreSOPInstance,
-    Inserter
+    Inserter,
+    Echo
   };
   void setJobType(JobType jobType);
   JobType jobType() const;

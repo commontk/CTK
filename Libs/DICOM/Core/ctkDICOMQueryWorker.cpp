@@ -126,6 +126,10 @@ void ctkDICOMQueryWorker::run()
 
   switch (queryJob->dicomLevel())
   {
+    case ctkDICOMJob::DICOMLevels::None:
+      logger.warn("ctkDICOMQueryWorker : DICOMLevels was not set.");
+      this->Job->setStatus(ctkAbstractJob::JobStatus::Finished);
+      return;
     case ctkDICOMJob::DICOMLevels::Patients:
       if (!d->Query->queryPatients())
       {
