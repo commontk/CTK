@@ -43,13 +43,13 @@
 QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
 {
   if (!widget)
-    {
+  {
     return QImage();
-    }
+  }
   if (!rectangle.isValid())
-    {
+  {
     rectangle = QRect(0,0,widget->width(),widget->height());
-    }
+  }
   QImage widgetImage = ctk::grabWidget(widget, rectangle);
   QPainter painter;
   painter.begin(&widgetImage);
@@ -62,16 +62,16 @@ QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
 #else
   foreach(QVTKWidget* vtkWidget, widget->findChildren<QVTKWidget*>())
 #endif
-    {
+  {
     if (!vtkWidget->isVisible())
-      {
+    {
       continue;
-      }
+    }
     QRect subWidgetRect = QRect(vtkWidget->mapTo(widget, QPoint(0,0)), vtkWidget->size());
     if (!rectangle.intersects(subWidgetRect))
-      {
+    {
       continue;
-      }
+    }
 #if CTK_USE_QVTKOPENGLWIDGET
     QImage subImage = vtkWidget->grabFramebuffer();
 #else
@@ -80,7 +80,7 @@ QImage ctk::grabVTKWidget(QWidget* widget, QRect rectangle)
     QImage subImage = ctk::vtkImageDataToQImage(imageData);
 #endif
     painter.drawImage(subWidgetRect, subImage);
-    }
+  }
   painter.end();
   return widgetImage;
 }
@@ -102,26 +102,26 @@ QImage ctk::vtkImageDataToQImage(vtkImageData* imageData)
 
   QImage::Format pixelFormat;
   if (numberOfScalarComponents == 3)
-    {
+  {
     pixelFormat = QImage::Format_RGB888;
-    }
+  }
 #if QT_VERSION >= QT_VERSION_CHECK(5,2,0)
   else if (numberOfScalarComponents == 4)
-    {
+  {
     pixelFormat = QImage::Format_RGBA8888;
-    }
+  }
 #endif
 #if QT_VERSION >= QT_VERSION_CHECK(5,5,0)
   else if (numberOfScalarComponents == 1)
-    {
+  {
     pixelFormat = QImage::Format_Grayscale8;
-    }
+  }
 #endif
   else
-    {
+  {
     // unsupported pixel format
     return QImage();
-    }
+  }
 
   int bytesPerLine = imageData->GetIncrements()[1]; // line increment
 

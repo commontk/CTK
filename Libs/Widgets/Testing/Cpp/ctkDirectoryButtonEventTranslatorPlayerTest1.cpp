@@ -43,11 +43,11 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkDirectoryButton* widget = reinterpret_cast<ctkDirectoryButton*>(data);
 
   CTKCOMPARE(widget->directory(), QString("/home/benjaminlong"));
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -70,9 +70,9 @@ int ctkDirectoryButtonEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

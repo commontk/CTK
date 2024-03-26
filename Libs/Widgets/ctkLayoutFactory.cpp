@@ -71,13 +71,13 @@ void ctkLayoutFactory::registerViewFactory(ctkLayoutViewFactory* factory)
 {
   Q_D(ctkLayoutFactory);
   if (!factory)
-    {
+  {
     return;
-    }
+  }
   if (factory->parent() == 0)
-    {
+  {
     factory->setParent(this);
-    }
+  }
   d->ViewFactories.push_front(factory);
 }
 
@@ -87,9 +87,9 @@ void ctkLayoutFactory::unregisterViewFactory(ctkLayoutViewFactory* factory)
   Q_D(ctkLayoutFactory);
   bool removed = d->ViewFactories.removeOne(factory);
   if (removed && factory->parent() == this)
-    {
+  {
     factory->deleteLater();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -104,14 +104,14 @@ void ctkLayoutFactory::setupLayout()
 {
   Q_D(ctkLayoutFactory);
   foreach(ctkLayoutViewFactory* factory, d->ViewFactories)
-    {
+  {
     factory->beginSetupLayout();
-    }
+  }
   this->ctkLayoutManager::setupLayout();
   foreach(ctkLayoutViewFactory* factory, d->ViewFactories)
-    {
+  {
     factory->endSetupLayout();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -121,14 +121,14 @@ QWidget* ctkLayoutFactory::viewFromXML(QDomElement viewElement)
   QWidget* res = 0;
   QList<ctkLayoutViewFactory*> factories = this->viewFactories(viewElement);
   foreach(ctkLayoutViewFactory* factory, factories)
-    {
+  {
     res = factory->viewFromXML(viewElement);
     if (res)
-      {
+    {
       d->ViewFactory[res] = factory;
       break;
-      }
     }
+  }
   return res;
 }
 
@@ -138,17 +138,17 @@ QList<QWidget*> ctkLayoutFactory::viewsFromXML(QDomElement viewElement)
   QWidgetList res;
   QList<ctkLayoutViewFactory*> factories = this->viewFactories(viewElement);
   foreach(ctkLayoutViewFactory* factory, factories)
-    {
+  {
     res = factory->viewsFromXML(viewElement);
     if (!res.isEmpty())
-      {
-      break;
-      }
-    }
-  if (res.isEmpty())
     {
-    res = this->ctkLayoutManager::viewsFromXML(viewElement);
+      break;
     }
+  }
+  if (res.isEmpty())
+  {
+    res = this->ctkLayoutManager::viewsFromXML(viewElement);
+  }
   return res;
 }
 
@@ -158,14 +158,14 @@ void ctkLayoutFactory::setupView(QDomElement viewElement, QWidget* view)
   Q_D(ctkLayoutFactory);
   ctkLayoutViewFactory* factory = d->ViewFactory[view];
   if (factory)
-    {
+  {
     factory->setupView(viewElement, view);
     d->Views.insert(view);
-    }
+  }
   else
-    {
+  {
     this->ctkLayoutManager::setupView(viewElement, view);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -174,11 +174,11 @@ QList<ctkLayoutViewFactory*> ctkLayoutFactory::viewFactories(QDomElement viewEle
   Q_D(const ctkLayoutFactory);
   QList<ctkLayoutViewFactory*> res;
   foreach(ctkLayoutViewFactory* factory, d->ViewFactories)
-    {
+  {
     if (factory->isElementSupported(viewElement))
-      {
+    {
       res << factory;
-      }
     }
+  }
   return res;
 }

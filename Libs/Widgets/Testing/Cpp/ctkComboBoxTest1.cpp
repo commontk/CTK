@@ -36,70 +36,70 @@ int ctkComboBoxTest1(int argc, char * argv [] )
 
   ctkComboBox comboBox(0);
   if (!comboBox.defaultText().isEmpty())
-    {
+  {
     std::cerr << "non empty default defaultText" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   comboBox.setDefaultText("Select...");
   if (comboBox.defaultText() != "Select...")
-    {
+  {
     std::cerr << "ctkComboBox::setDefaultText() failed"
               << comboBox.defaultText().toStdString() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (comboBox.currentText() == "Select...")
-    {
+  {
     std::cerr << "ctkComboBox::setDefaultText() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   QIcon icon = comboBox.style()->standardIcon(QStyle::SP_MessageBoxQuestion);
   comboBox.setDefaultIcon(icon);
   if (comboBox.defaultIcon().pixmap(20).toImage() !=
       icon.pixmap(20).toImage())
-    {
+  {
     std::cerr << "ctkComboBox::setDefaultIcon() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (comboBox.isDefaultForced())
-    {
+  {
     std::cerr << "default of ctkComboBox::isDefaultForced() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   comboBox.forceDefault(true);
   if (!comboBox.isDefaultForced())
-    {
+  {
     std::cerr << "ctkComboBox::setDefaultForced() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   if (comboBox.elideMode() != Qt::ElideNone)
-    {
+  {
     std::cerr << "Wrong default elide mode" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   comboBox.setElideMode(Qt::ElideRight);
   if (comboBox.elideMode() != Qt::ElideRight)
-    {
+  {
     std::cerr << "ctkComboBox::setElideMode() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   comboBox.addItem("Item Item Item Item Item Item Item Item 1");
   comboBox.addItem("Item Item Item Item Item Item Item Item 2");
   comboBox.addItem("Item Item Item Item Item Item Item Item 3");
   // adding items shouldn't change anything to the combobox current text
   if (comboBox.currentIndex() != 0 ||
       comboBox.currentText() != "Item Item Item Item Item Item Item Item 1")
-    {
+  {
     std::cerr << "ctkComboBox::addItem failed:"
               << comboBox.currentIndex() << " "
               << comboBox.currentText().toStdString() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   comboBox.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

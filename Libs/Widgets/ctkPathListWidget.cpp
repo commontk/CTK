@@ -522,13 +522,13 @@ QStringList ctkPathListWidget::paths(bool absolutePath)const
   QStringList pathList;
   int role = Qt::DisplayRole;
   if (absolutePath)
-    {
+  {
     role = ctkPathListWidget::AbsolutePathRole;
-    }
+  }
   for(int i = 0; i < d->PathListModel.rowCount(); ++i)
-    {
+  {
     pathList << d->PathListModel.data(d->PathListModel.index(i, 0), role).toString();
-    }
+  }
   return pathList;
 }
 
@@ -539,14 +539,14 @@ QStringList ctkPathListWidget::selectedPaths(bool absolutePath)const
   QStringList pathList;
   int role = Qt::DisplayRole;
   if (absolutePath)
-    {
+  {
     role = ctkPathListWidget::AbsolutePathRole;
-    }
+  }
   QModelIndexList selectedIndexes = this->selectionModel()->selectedRows();
   foreach(const QModelIndex& index, selectedIndexes)
-    {
+  {
     pathList << d->PathListModel.data(index, role).toString();
-    }
+  }
   return pathList;
 }
 

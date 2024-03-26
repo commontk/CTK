@@ -34,28 +34,28 @@ class ctkTestWrappedVTKQInvokable : public QObject
 public:
 
   ctkTestWrappedVTKQInvokable(QObject * newParent = 0) : QObject(newParent)
-    {
+  {
     this->MyTable = vtkSmartPointer<vtkTable>::New();
-    }
+  }
 
   virtual ~ctkTestWrappedVTKQInvokable()
-    {
-    }
+  {
+  }
 
   /// Example of 'invokable' returning a VTK object
   /// Declaring a method as invokable allows to add it to the MetaObject system
   /// \note When a method returns a value, we tend to use Q_INVOKABLE
   /// instead of declaring a slot.
   Q_INVOKABLE vtkTable * getTable() const
-    {
+  {
     return this->MyTable;
-    }
+  }
 
   /// Example of 'invokable' accepting a VTK object as parameter
   Q_INVOKABLE void setTable(vtkTable * newTable)
-    {
+  {
     this->MyTable = newTable;
-    }
+  }
 
 private:
   vtkSmartPointer<vtkTable> MyTable;

@@ -81,9 +81,9 @@ void ctkDynamicSpacer::setActiveSizePolicy(QSizePolicy newActiveSizePolicy)
   Q_D(ctkDynamicSpacer);
   d->ActiveSizePolicy = newActiveSizePolicy;
   if (d->Enable)
-    {
+  {
     this->setSizePolicy(d->ActiveSizePolicy);
-    }
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -99,9 +99,9 @@ void ctkDynamicSpacer::setInactiveSizePolicy(QSizePolicy newInactiveSizePolicy)
   Q_D(ctkDynamicSpacer);
   d->InactiveSizePolicy = newInactiveSizePolicy;
   if (!d->Enable)
-    {
+  {
     this->setSizePolicy(d->InactiveSizePolicy);
-    }
+  }
 }
 
 // -----------------------------------------------------------------------------

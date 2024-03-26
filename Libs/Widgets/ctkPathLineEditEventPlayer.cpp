@@ -44,25 +44,25 @@ bool ctkPathLineEditEventPlayer::playEvent(QObject *Object,
 {
   if (Command != "set_path_string" &&
       Command != "set_edit_string")
-    {
+  {
     return false;
-    }
+  }
 
   if (ctkPathLineEdit* const object = qobject_cast<ctkPathLineEdit*>(Object))
-    {
+  {
     if (Command == "set_path_string")
-      {
+    {
       object->setCurrentPath(Arguments);
       return true;
-      }
+    }
     if (Command == "set_edit_string")
-      {
+    {
       object->comboBox()->setEditText(Arguments);
       object->comboBox()->lineEdit()->completer()->popup()->show();
       object->update();
       return true;
-      }
     }
+  }
 
   qCritical() << "calling set_edit/path_string on unhandled type " << Object;
   Error = true;

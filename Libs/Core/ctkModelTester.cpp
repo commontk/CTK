@@ -94,15 +94,15 @@ void ctkModelTester::setModel(QAbstractItemModel *_model)
 {
   Q_D(ctkModelTester);
   if (d->Model)
-    {
+  {
     // disconnect
     d->Model->disconnect(this);
     d->AboutToBeInserted.clear();
     d->AboutToBeRemoved.clear();
     d->LayoutAboutToBeChanged.clear();
-    }
+  }
   if (_model)
-    {
+  {
     connect(_model, SIGNAL(columnsAboutToBeInserted(QModelIndex,int,int)),
             this, SLOT(onColumnsAboutToBeInserted(QModelIndex,int,int)));
     connect(_model, SIGNAL(columnsAboutToBeRemoved(QModelIndex,int,int)),
@@ -127,7 +127,7 @@ void ctkModelTester::setModel(QAbstractItemModel *_model)
             this, SLOT(onRowsInserted(QModelIndex,int,int)));
     connect(_model, SIGNAL(rowsRemoved(QModelIndex,int,int)),
             this, SLOT(onRowsRemoved(QModelIndex,int,int)));
-    }
+  }
   d->Model = _model;
   this->testModel();
 }
@@ -201,17 +201,17 @@ void  ctkModelTester::test(bool result, const QString& errorString)const
 {
   Q_D(const ctkModelTester);
   if (result)
-    {
+  {
     return;
-    }
+  }
   if (d->Verbose)
-    {
+  {
     qDebug() << errorString;
-    }
+  }
   if (this->throwOnError())
-    {
+  {
     throw errorString;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -219,24 +219,24 @@ void ctkModelTester::testModelIndex(const QModelIndex& index)const
 {
   Q_D(const ctkModelTester);
   if (!index.isValid())
-    {// invalid index
+  {// invalid index
     this->test(index.model() == 0, "An invalid index can't have a valid model.");
     this->test(index.column() == -1, "An invalid index can't have a valid column.");
     this->test(index.row() == -1, "An invalid index can't have a valid row.");
     this->test(index.parent().isValid() == false, "An invalid index can't have a valid parent.");
     this->test(index.row() == -1, "An invalid index can't have a valid row.");
     for(int i = 0; i < 100; ++i)
-      {
+    {
       this->test(index.sibling(i % 10, i / 10).isValid() == false, "An invalid index can't have valid sibling.");
-      }
     }
+  }
   else
-    {// valid index
+  {// valid index
     this->test(index.model() == d->Model, "A valid index must have a valid model.");
     this->test(index.column() >= 0, "An valid index can't have an invalid column.");
     this->test(index.row() >= 0, "An valid index can't have an invalid row.");
     this->test(index == index.sibling(index.row(), index.column()), "Index's row and/or column is wrong.");
-    }
+  }
   this->testData(index);
   this->testParent(index);
 }
@@ -246,21 +246,21 @@ void ctkModelTester::testData(const QModelIndex& index)const
 {
   Q_D(const ctkModelTester);
   if (!d->TestDataEnabled)
-    {
+  {
     return;
-    }
+  }
   if (!index.isValid())
-    {
+  {
     this->test(!index.data(Qt::DisplayRole).isValid(),
                QString("An invalid index can't have valid data: %1")
                .arg(index.data(Qt::DisplayRole).toString()));
-    }
+  }
   else
-    {
+  {
     this->test(index.data(Qt::DisplayRole).isValid(),
                QString("A valid index can't have invalid data: %1, %2, %3")
                .arg(index.row()).arg(index.column()).arg(ptrdiff_t(index.internalPointer())));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -268,30 +268,30 @@ void ctkModelTester::testParent(const QModelIndex& vparent)const
 {
   Q_D(const ctkModelTester);
   if (!d->Model)
-    {
+  {
     return;
-    }
+  }
   if (!d->Model->hasChildren(vparent))
-    {
+  {
     // it's asking a lot :-)
     //this->test(d->Model->columnCount(vparent) <= 0, "A parent with no children can't have a columnCount > 0.");
     this->test(d->Model->rowCount(vparent) <= 0, "A parent with no children can't have a rowCount > 0.");
-    }
+  }
   else
-    {
+  {
     this->test(d->Model->columnCount(vparent) > 0, "A parent with children can't have a columnCount <= 0.");
     this->test(d->Model->rowCount(vparent) > 0 || d->Model->canFetchMore(vparent), "A parent with children can't have a rowCount <= 0. or if it does, canFetchMore should return true");
-    }
+  }
 
   if (!vparent.isValid())
-    {// otherwise there will be an infinite loop
+  {// otherwise there will be an infinite loop
     return;
-    }
+  }
 
   for (int i = 0 ; i < d->Model->rowCount(vparent); ++i)
-    {
+  {
     for (int j = 0; j < d->Model->columnCount(vparent); ++j)
-      {
+    {
       this->test(d->Model->hasIndex(i, j, vparent), "hasIndex should return true for int range {0->rowCount(), 0->columnCount()}");
       QModelIndex child = ctk::modelChildIndex(d->Model, vparent, i, j);
       this->test(child.row() == i, "A child's row must be the same as given");
@@ -299,8 +299,8 @@ void ctkModelTester::testParent(const QModelIndex& vparent)const
       QModelIndex childParent = child.parent();
       this->test(childParent == vparent, "A child's parent can't be different from its parent");
       this->testModelIndex(child);
-      }
     }
+  }
 }
 //-----------------------------------------------------------------------------
 void ctkModelTester::testPersistentModelIndex(const QPersistentModelIndex& index)const
@@ -320,21 +320,21 @@ void ctkModelTester::testModel()const
 {
   Q_D(const ctkModelTester);
   if (d->Model == 0)
-    {
+  {
     return;
-    }
+  }
   for (int i = 0 ; i < d->Model->rowCount(); ++i)
-    {
+  {
     for (int j = 0; j < d->Model->columnCount(); ++j)
-      {
+    {
       this->test(d->Model->hasIndex(i, j), "hasIndex should return true for int range {0->rowCount(), 0->columnCount()}");
       QModelIndex child = d->Model->index(i, j);
       this->test(child.row() == i, "Row should be consistent");
       this->test(child.column() == j, "Column should be consistent");
       this->test(!child.parent().isValid(), "A child's parent can't be different from its parent");
       this->testModelIndex(child);
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -372,14 +372,14 @@ void ctkModelTester::onDataChanged(const QModelIndex & topLeft, const QModelInde
   this->test(topLeft.row() >= bottomRight.row(), "topLeft can't have a row lower than bottomRight");
   this->test(bottomRight.column() >= topLeft.column(), "topLeft can't have a column lower than bottomRight");
   for (int i = topLeft.row(); i <= bottomRight.row(); ++i)
-    {
+  {
     for (int j = topLeft.column(); j <= bottomRight.column(); ++j)
-      {
+    {
       this->test(topLeft.sibling(i,j).isValid(), "Changed data must be valid");
       // do the test on the indexes here, it's easier to debug than in testModel();
       this->testModelIndex(topLeft.sibling(i,j));
-      }
     }
+  }
   this->testModel();
 }
 
@@ -389,14 +389,14 @@ void ctkModelTester::onHeaderDataChanged(Qt::Orientation orientation, int first,
   Q_D(ctkModelTester);
   this->test(first <= last, "Changed headers have wrong indexes");
   switch (orientation)
-    {
+  {
     case Qt::Horizontal:
       this->test(d->Model->columnCount() > last, "There is no more horizontal headers than columns.");
       break;
     case Qt::Vertical:
       this->test(d->Model->rowCount() > last, "There is no more vertical headers than rows.");
       break;
-    }
+  }
   this->testModel();
 }
 
@@ -406,14 +406,14 @@ QList<QPersistentModelIndex> ctkModelTester::persistentModelIndexes(const QModel
   Q_D(const ctkModelTester);
   QList<QPersistentModelIndex> list;
   for (int i = 0; i < d->Model->rowCount(index); ++i)
-    {
+  {
     for (int j = 0; j < d->Model->columnCount(index); ++j)
-      {
+    {
       QPersistentModelIndex child = d->Model->index(i, j, index);
       list.append(child);
       list += this->ctkModelTester::persistentModelIndexes(child);
-      }
     }
+  }
   return list;
 }
 
@@ -431,9 +431,9 @@ void ctkModelTester::onLayoutChanged()
 {
   Q_D(ctkModelTester);
   foreach (const QPersistentModelIndex& index, d->LayoutAboutToBeChanged)
-    {
+  {
     this->testPersistentModelIndex(index);
-    }
+  }
   d->LayoutAboutToBeChanged.clear();
   this->testModel();
 }
@@ -497,9 +497,9 @@ void ctkModelTester::onItemsAboutToBeInserted(const QModelIndex &vparent, Qt::Or
   this->test(start <= end, "Start can't be higher than end");
   //Not sure about that
   if (!d->NestedInserts)
-    {
+  {
     this->test(d->AboutToBeInserted.size() == 0, "While inserting items, you can't insert other items.");
-    }
+  }
   //Not sure about that
   this->test(d->AboutToBeRemoved.size() == 0, "While removing items, you can't insert other items.");
 
@@ -536,19 +536,19 @@ void ctkModelTester::onItemsAboutToBeRemoved(const QModelIndex &vparent, Qt::Ori
   change.End = end;
   change.Count = count;
   for (int i = 0 ; i < count; ++i)
-    {
+  {
     QPersistentModelIndex index;
     index = (orientation == Qt::Vertical ? d->Model->index(i, 0, vparent) : d->Model->index(0, i, vparent));
     this->test(index.isValid(), "Index invalid");
     if (orientation == Qt::Vertical && (index.row() < start || index.row() > end))
-      {
+    {
       change.Items.append(index);
-      }
-    if (orientation == Qt::Horizontal && (index.column() < start || index.column() > end))
-      {
-      change.Items.append(index);
-      }
     }
+    if (orientation == Qt::Horizontal && (index.column() < start || index.column() > end))
+    {
+      change.Items.append(index);
+    }
+  }
   d->AboutToBeRemoved.push(change);
 
   this->testModel();
@@ -576,9 +576,9 @@ void ctkModelTester::onItemsInserted(const QModelIndex & vparent, Qt::Orientatio
   this->test(change.Count < count, "The new count number can't be lower");
   this->test(count - change.Count == (end - start + 1) , "The new count number can't be lower");
   foreach(const QPersistentModelIndex& index, change.Items)
-    {
+  {
     this->testPersistentModelIndex(index);
-    }
+  }
   change.Items.clear();
 
   this->testModel();
@@ -602,9 +602,9 @@ void ctkModelTester::onItemsRemoved(const QModelIndex & vparent, Qt::Orientation
   this->test(change.Count > count, "The new count number can't be higher");
   this->test(change.Count - count == (end - start + 1) , "The new count number can't be higher");
   foreach(const QPersistentModelIndex& index, change.Items)
-    {
+  {
     this->testPersistentModelIndex(index);
-    }
+  }
   change.Items.clear();
 
   this->testModel();

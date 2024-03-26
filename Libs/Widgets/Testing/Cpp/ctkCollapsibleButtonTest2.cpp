@@ -81,7 +81,7 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       label6->isVisible() ||
       label7->isVisible() ||
       label8->isVisible())
-    {
+  {
     std::cout <<  __LINE__ << "Wrong child visibility: "
       << label0->isVisible()  << " "
       << label1->isVisible()  << " "
@@ -93,16 +93,16 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       << label7->isVisible() << " "
       << label8->isVisible() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   label2->setVisible(false);
 
   if (label2->isVisible())
-    {
+  {
     std::cout <<  __LINE__ << "Wrong child visibility: "
       << label2->isVisible() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   collapsibleButton.setCollapsed(false);
 
@@ -115,7 +115,7 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       !label6->isVisible() ||
       !label7->isVisible() ||
       !label8->isVisible())
-    {
+  {
     std::cout <<  __LINE__ << "Wrong child visibility: "
       << label0->isVisible()  << " "
       << label1->isVisible()  << " "
@@ -127,7 +127,7 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       << label7->isVisible() << " "
       << label8->isVisible() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   label3->setVisible(false);
   label8->setVisible(false);
@@ -141,7 +141,7 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       !label6->isVisible() ||
       !label7->isVisible() ||
       label8->isVisible())
-    {
+  {
     std::cout <<  __LINE__ << "Wrong child visibility: "
       << label0->isVisible()  << " "
       << label1->isVisible()  << " "
@@ -153,7 +153,7 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       << label7->isVisible() << " "
       << label8->isVisible() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   collapsibleButton.setCollapsed(true);
 
@@ -166,7 +166,7 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       label6->isVisible() ||
       label7->isVisible() ||
       label8->isVisible())
-    {
+  {
     std::cout <<  __LINE__ << "Wrong child visibility: "
       << label0->isVisible()  << " "
       << label1->isVisible()  << " "
@@ -178,19 +178,19 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       << label7->isVisible() << " "
       << label8->isVisible() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   label4->setVisible(false);
   label8->setVisible(true);
 
   if (label4->isVisible() ||
       label8->isVisible())
-    {
+  {
     std::cout <<  __LINE__ << "Wrong child visibility: "
       << label4->isVisible() << " "
       << label8->isVisible() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   collapsibleButton.setCollapsed(false);
 
@@ -203,7 +203,7 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       !label6->isVisible() ||
       !label7->isVisible() ||
       !label8->isVisible())
-    {
+  {
     std::cout << __LINE__ << "Wrong child visibility: "
       << label0->isVisible()  << " "
       << label1->isVisible()  << " "
@@ -215,21 +215,21 @@ int ctkCollapsibleButtonTest2(int argc, char * argv [] )
       << label7->isVisible() << " "
       << label8->isVisible() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   label4->setVisible(true);
 
   if (!label4->isVisible())
-    {
+  {
     std::cout << "Wrong child visibility: "
       << label4->isVisible() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

@@ -40,10 +40,10 @@ namespace
 QString checkRowCount(int line, int currentRowCount, int expectedRowCount)
 {
   if (currentRowCount != expectedRowCount)
-    {
+  {
     QString errorMsg("Line %1 - Expected rowCount: %2 - Current rowCount: %3\n");
     return errorMsg.arg(line).arg(expectedRowCount).arg(currentRowCount);
-    }
+  }
   return QString();
 }
 
@@ -51,10 +51,10 @@ QString checkRowCount(int line, int currentRowCount, int expectedRowCount)
 QString checkSpyCount(int line, int currentSpyCount, int expectedSpyCount)
 {
   if (currentSpyCount != expectedSpyCount)
-    {
+  {
     QString errorMsg("Line %1 - Expected spyCount: %2 - Current spyCount: %3\n");
     return errorMsg.arg(line).arg(expectedSpyCount).arg(currentSpyCount);
-    }
+  }
   return QString();
 }
 
@@ -62,14 +62,14 @@ QString checkSpyCount(int line, int currentSpyCount, int expectedSpyCount)
 QString checkTextMessages(int line, const QStringList& currentMessages, const QStringList& expectedMessages)
 {
   for(int i = 0; i < expectedMessages.count(); ++i)
-    {
+  {
     if (!expectedMessages.contains(currentMessages.at(i)))
-      {
+    {
       QString errorMsg("Line %1 - Problem with logged messages !\n"
                        "\tMessage [%2] hasn't been logged !\n");
       return errorMsg.arg(line).arg(expectedMessages.value(i));
-      }
     }
+  }
   return QString();
 }
 
@@ -78,10 +78,10 @@ QString checkTextMessages(int line, const ctkErrorLogModel& model, const QString
 {
   QStringList currentMessages;
   for(int i = 0; i < expectedMessages.count(); ++i)
-    {
+  {
     QModelIndex descriptionIndex = model.index(i, ctkErrorLogModel::DescriptionColumn);
     currentMessages << descriptionIndex.data(ctkErrorLogModel::DescriptionTextRole).toString();
-    }
+  }
   return checkTextMessages(line, currentMessages, expectedMessages);
 }
 
@@ -91,11 +91,11 @@ void printTextMessages(const ctkErrorLogModel& model)
   fprintf(stdout, "%s", "ErrorLogModel rows:\n");
   QString text("\trow %1 => [%2]\n");
   for (int i=0; i < model.rowCount(); ++i)
-    {
+  {
     QString description =
         model.index(i, ctkErrorLogModel::DescriptionColumn).data().toString();
     fprintf(stdout, "%s", qPrintable(text.arg(i).arg(description)));
-    }
+  }
   fflush(stdout);
 }
 
@@ -110,11 +110,11 @@ void printErrorMessage(const QString& errorMessage)
 QString checkInteger(int line, const char* valueName, int current, int expected)
 {
   if (current != expected)
-    {
+  {
     QString errorMsg("Line %1 - Expected %2: %3 - Current %4: %5\n");
     return errorMsg.arg(line).arg(valueName).
         arg(expected).arg(valueName).arg(current);
-    }
+  }
   return QString();
 }
 
@@ -122,11 +122,11 @@ QString checkInteger(int line, const char* valueName, int current, int expected)
 QString checkBoolean(int line, const char* valueName, bool current, bool expected)
 {
   if (current != expected)
-    {
+  {
     QString errorMsg("Line %1 - Expected %2: %3 - Current %4: %5\n");
     return errorMsg.arg(line).arg(valueName).
         arg(static_cast<int>(expected)).arg(valueName).arg(static_cast<int>(current));
-    }
+  }
   return QString();
 }
 
@@ -134,11 +134,11 @@ QString checkBoolean(int line, const char* valueName, bool current, bool expecte
 QString checkString(int line, const char* valueName, QString current, QString expected)
 {
   if (current != expected)
-    {
+  {
     QString errorMsg("Line %1 - Expected %2: %3 - Current %4: %5\n");
     return errorMsg.arg(line).arg(valueName).
         arg(static_cast<QString>(expected)).arg(valueName).arg(static_cast<QString>(current));
-    }
+  }
   return QString();
 }
 
@@ -149,9 +149,9 @@ void processEvents(int durationInMSecs)
   timer.setSingleShot(true);
   timer.start(durationInMSecs);
   while(timer.isActive())
-    {
+  {
     QCoreApplication::processEvents();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -174,14 +174,14 @@ QStringList readFile(const QString& filePath)
   QStringList lines;
   QFile file(filePath);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+  {
     return lines;
-    }
+  }
    QTextStream in(&file);
    while(!in.atEnd())
-     {
+   {
      lines << in.readLine();
-     }
+   }
    file.close();
    return lines;
 }
@@ -207,10 +207,10 @@ private:
 void LogMessageThread::run()
 {
   while(this->Counter < this->MaxIteration)
-    {
+  {
     this->logMessage(QDateTime::currentDateTime(), this->Id, this->Counter);
     ++this->Counter;
-    }
+  }
 
   // The following lines are needed to quiet "-Wunused-function" warnings.
   //
@@ -293,10 +293,10 @@ template<class LogMessageThreadType>
 void startLogMessageThreads(int threadCount, int maxIteration)
 {
   for(int i = 0; i < threadCount; ++i)
-    {
+  {
     ThreadList << QSharedPointer<LogMessageThread>(new LogMessageThreadType(i, maxIteration));
     ThreadList.back()->start();
-    }
+  }
 }
 
 } // end namespace

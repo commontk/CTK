@@ -47,10 +47,10 @@ int ctkTreeComboBoxTest1(int argc, char * argv [] )
   combo.setModel(&model);
 
   if (combo.treeView() == 0)
-    {
+  {
     std::cerr << "No tree view" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   combo.show();
   QApplication::processEvents();
@@ -73,8 +73,8 @@ int ctkTreeComboBoxTest1(int argc, char * argv [] )
   combo.showPopup();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

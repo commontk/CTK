@@ -40,8 +40,8 @@ class ctkDICOMWidgetsPythonQtDecorators : public QObject
 public:
 
   ctkDICOMWidgetsPythonQtDecorators()
-    {
-    }
+  {
+  }
 
 public Q_SLOTS:
 

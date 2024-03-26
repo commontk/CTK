@@ -116,12 +116,12 @@ bool ctkTreeComboBox::eventFilter(QObject* object, QEvent* _event)
   bool res = false;
   d->SendCurrentItem = false;
   switch (_event->type())
-    {
+  {
     default:
       break;
     case QEvent::ShortcutOverride:
       switch (static_cast<QKeyEvent*>(_event)->key())
-        {
+      {
         case Qt::Key_Enter:
         case Qt::Key_Return:
         case Qt::Key_Select:
@@ -129,7 +129,7 @@ bool ctkTreeComboBox::eventFilter(QObject* object, QEvent* _event)
           break;
         default:
           break;
-        }
+      }
       break;
     case QEvent::MouseButtonRelease:
       QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(_event);
@@ -138,13 +138,13 @@ bool ctkTreeComboBox::eventFilter(QObject* object, QEvent* _event)
       if (this->view()->model()->hasChildren(index) &&
           (index.flags() & Qt::ItemIsSelectable) &&
           !this->view()->visualRect(index).contains(mouseEvent->pos()))
-        {//qDebug() << "Set skip on";
+      {//qDebug() << "Set skip on";
         // if the branch is clicked, then we don't want to close the
         // popup. (we don't want to select the item, just expand it.)
         // of course, all that doesn't apply with unselectable items, as
         // they won't close the popup.
         d->SkipNextHide = true;
-        }
+      }
 
       // we want to get rid of an odd behavior.
       // If the user highlight a selectable item and then
@@ -154,17 +154,17 @@ bool ctkTreeComboBox::eventFilter(QObject* object, QEvent* _event)
       if ( this->view()->model()->hasChildren(index) &&
            !(index.flags() & Qt::ItemIsSelectable) &&
            !this->view()->visualRect(index).contains(mouseEvent->pos()))
-        {//qDebug() << "eat";
+      {//qDebug() << "eat";
         // eat the event, don't go to the QComboBox event filters.
         res = true;
-        }
+      }
 
       d->SendCurrentItem = this->view()->rect().contains(mouseEvent->pos()) &&
         this->view()->currentIndex().isValid() &&
         (this->view()->currentIndex().flags() & Qt::ItemIsEnabled) &&
         (this->view()->currentIndex().flags() & Qt::ItemIsSelectable);
       break;
-    }
+  }
   return res;
 }
 
@@ -174,10 +174,10 @@ void ctkTreeComboBox::showPopup()
   Q_D(ctkTreeComboBox);
   QHeaderView* header = qobject_cast<QTreeView*>(this->view())->header();
   for (int i = 0; i < header->count(); ++i)
-    {
+  {
     header->setSectionHidden(i, d->VisibleModelColumn != -1 &&
                                 i != d->VisibleModelColumn);
-    }
+  }
   this->QComboBox::showPopup();
   emit this->popupShow();
 }
@@ -188,14 +188,14 @@ void ctkTreeComboBox::hidePopup()
   Q_D(ctkTreeComboBox);
 
   if (d->SkipNextHide)
-    {// don't hide the popup if the selected item is a parent.
+  {// don't hide the popup if the selected item is a parent.
     d->SkipNextHide = false;
     //this->setCurrentIndex(-1);
     //qDebug() << "skip";
     //this->QComboBox::showPopup();
-    }
+  }
   else
-    {
+  {
     //QModelIndex _currentIndex = this->view()->currentIndex();
     //qDebug() << "ctkTreeComboBox::hidePopup() " << _currentIndex << " " << _currentIndex.row();
     //qDebug() << "before: " << this->currentIndex() << this->view()->currentIndex();
@@ -204,14 +204,14 @@ void ctkTreeComboBox::hidePopup()
     //this->setRootModelIndex(_currentIndex.parent());
     //this->setCurrentIndex(_currentIndex.row());
     if (d->SendCurrentItem)
-      {
+    {
       d->SendCurrentItem = false;
       QKeyEvent event(QEvent::ShortcutOverride, Qt::Key_Enter, Qt::NoModifier);
       QApplication::sendEvent(this->view(), &event);
-      }
+    }
     emit this->popupHide();
     //qDebug() << "after2: " << this->currentIndex() << this->view()->currentIndex();
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -253,7 +253,7 @@ void ctkTreeComboBox::resizePopup()
   bool boundToScreen = !this->window()->testAttribute(Qt::WA_DontShowOnScreen);
 
   const bool usePopup = style->styleHint(QStyle::SH_ComboBox_Popup, &opt, this);
-    {
+  {
     int listHeight = 0;
     int count = 0;
     QStack<QModelIndex> toCheck;
@@ -264,33 +264,33 @@ void ctkTreeComboBox::resizePopup()
       listHeight += treeView->header()->height();
 #endif
     while (!toCheck.isEmpty())
-      {
+    {
       QModelIndex parent = toCheck.pop();
       for (int i = 0; i < this->model()->rowCount(parent); ++i)
-        {
+      {
         QModelIndex idx = this->model()->index(i, this->modelColumn(), parent);
         if (!idx.isValid())
-          {
+        {
           continue;
-          }
+        }
         listHeight += this->view()->visualRect(idx).height(); /* + container->spacing() */;
 #ifndef QT_NO_TREEVIEW
         if (this->model()->hasChildren(idx) && treeView && treeView->isExpanded(idx))
-          {
+        {
           toCheck.push(idx);
-          }
+        }
 #endif
         ++count;
         if (!usePopup && count > this->maxVisibleItems())
-          {
+        {
           toCheck.clear();
           break;
-          }
         }
       }
-    listRect.setHeight(listHeight);
     }
-      {
+    listRect.setHeight(listHeight);
+  }
+  {
       // add the spacing for the grid on the top and the bottom;
       int heightMargin = 0;//2*container->spacing();
 
@@ -303,23 +303,23 @@ void ctkTreeComboBox::resizePopup()
       heightMargin += vMargins.top() + vMargins.bottom();
 
       listRect.setHeight(listRect.height() + heightMargin);
-      }
+  }
 
       // Add space for margin at top and bottom if the style wants it.
       if (usePopup)
-        {
+      {
         listRect.setHeight(listRect.height() + style->pixelMetric(QStyle::PM_MenuVMargin, &opt, this) * 2);
-        }
+      }
 
       // Make sure the popup is wide enough to display its contents.
       if (usePopup)
-        {
+      {
         const int diff = d->computeWidthHint() - this->width();
         if (diff > 0)
-          {
+        {
           listRect.setWidth(listRect.width() + diff);
-          }
         }
+      }
 
       //we need to activate the layout to make sure the min/maximum size are set when the widget was not yet show
       container->layout()->activate();
@@ -329,25 +329,25 @@ void ctkTreeComboBox::resizePopup()
 
       // make sure the widget fits on screen
       if (boundToScreen)
-        {
+      {
         if (listRect.width() > screen.width() )
-          {
+        {
           listRect.setWidth(screen.width());
-          }
+        }
         if (this->mapToGlobal(listRect.bottomRight()).x() > screen.right())
-          {
+        {
           below.setX(screen.x() + screen.width() - listRect.width());
           above.setX(screen.x() + screen.width() - listRect.width());
-          }
+        }
         if (this->mapToGlobal(listRect.topLeft()).x() < screen.x() )
-          {
+        {
           below.setX(screen.x());
           above.setX(screen.x());
-          }
         }
+      }
 
       if (usePopup)
-        {
+      {
         // Position horizontally.
         listRect.moveLeft(above.x());
 
@@ -371,56 +371,56 @@ void ctkTreeComboBox::resizePopup()
 #endif
 
         if (boundToScreen)
-          {
+        {
           if (listRect.top() < screen.top())
-            {
+          {
             listRect.moveTop(screen.top());
-            }
-          if (listRect.bottom() > screen.bottom())
-            {
-            listRect.moveBottom(screen.bottom());
-            }
           }
+          if (listRect.bottom() > screen.bottom())
+          {
+            listRect.moveBottom(screen.bottom());
+          }
+        }
 #ifdef Q_WS_S60
         if (screen.width() < screen.height())
-          {
+        {
           // in portrait, menu should be positioned above softkeys
           listRect.moveBottom(screen.bottom());
-          }
+        }
         else
-          {
+        {
           TRect staConTopRect = TRect();
           AknLayoutUtils::LayoutMetricsRect(AknLayoutUtils::EStaconTop, staConTopRect);
           listRect.setWidth(listRect.height());
           //by default popup is centered on screen in landscape
           listRect.moveCenter(screen.center());
           if (staConTopRect.IsEmpty())
-            {
+          {
             // landscape without stacon, menu should be at the right
             (opt.direction == Qt::LeftToRight) ? listRect.setRight(screen.right()) :
               listRect.setLeft(screen.left());
-            }
           }
+        }
 #endif
-        }
+      }
       else if (!boundToScreen || listRect.height() <= belowHeight)
-        {
+      {
         listRect.moveTopLeft(below);
-        }
+      }
       else if (listRect.height() <= aboveHeight)
-        {
+      {
         listRect.moveBottomLeft(above);
-        }
+      }
       else if (belowHeight >= aboveHeight)
-        {
+      {
         listRect.setHeight(belowHeight);
         listRect.moveTopLeft(below);
-        }
+      }
       else
-        {
+      {
         listRect.setHeight(aboveHeight);
         listRect.moveBottomLeft(above);
-        }
+      }
 
       QScrollBar *sb = this->view()->horizontalScrollBar();
       Qt::ScrollBarPolicy policy = this->view()->horizontalScrollBarPolicy();
@@ -428,8 +428,8 @@ void ctkTreeComboBox::resizePopup()
         (policy == Qt::ScrollBarAsNeeded || policy == Qt::ScrollBarAlwaysOn)
         && sb->minimum() < sb->maximum();
       if (needHorizontalScrollBar)
-        {
+      {
         listRect.adjust(0, 0, 0, sb->height());
-        }
+      }
       container->setGeometry(listRect);
 }

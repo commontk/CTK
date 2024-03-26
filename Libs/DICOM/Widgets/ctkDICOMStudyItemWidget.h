@@ -104,11 +104,11 @@ public:
   int numberOfSeriesPerRow() const;
 
   enum ThumbnailSizeOption
-    {
+  {
     Small = 0,
     Medium,
     Large,
-    };
+  };
 
   ///@{
   /// Set the thumbnail size: small, medium, large

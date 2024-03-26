@@ -41,6 +41,7 @@ ctkDICOMJob::ctkDICOMJob()
   this->StudyInstanceUID = "";
   this->SeriesInstanceUID = "";
   this->SOPInstanceUID = "";
+  this->ReferenceInserterJobUID = "";
 }
 
 //------------------------------------------------------------------------------
@@ -107,6 +108,18 @@ QString ctkDICOMJob::sopInstanceUID() const
 }
 
 //----------------------------------------------------------------------------
+void ctkDICOMJob::setReferenceInserterJobUID(const QString &referenceInserterJobUID)
+{
+  this->ReferenceInserterJobUID = referenceInserterJobUID;
+}
+
+//----------------------------------------------------------------------------
+QString ctkDICOMJob::referenceInserterJobUID() const
+{
+  return this->ReferenceInserterJobUID;
+}
+
+//----------------------------------------------------------------------------
 static void skipDelete(QObject* obj)
 {
   Q_UNUSED(obj);
@@ -119,9 +132,9 @@ QList<ctkDICOMJobResponseSet*> ctkDICOMJob::jobResponseSets() const
 {
   QList<ctkDICOMJobResponseSet*> jobResponseSets;
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, this->JobResponseSets)
-    {
+  {
     jobResponseSets.append(jobResponseSet.data());
-    }
+  }
 
   return jobResponseSets;
 }
@@ -137,9 +150,9 @@ void ctkDICOMJob::setJobResponseSets(const QList<ctkDICOMJobResponseSet*>& jobRe
 {
   this->JobResponseSets.clear();
   foreach (ctkDICOMJobResponseSet* jobResponseSet, jobResponseSets)
-    {
+  {
     this->JobResponseSets.append(QSharedPointer<ctkDICOMJobResponseSet>(jobResponseSet, skipDelete));
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -153,11 +166,17 @@ void ctkDICOMJob::copyJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResp
 {
   this->JobResponseSets.clear();
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
-    {
+  {
     QSharedPointer<ctkDICOMJobResponseSet> jobResponseSetCopy =
       QSharedPointer<ctkDICOMJobResponseSet>(jobResponseSet->clone());
     this->JobResponseSets.append(jobResponseSetCopy);
   }
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMJobResponseSet::JobType ctkDICOMJob::getJobType() const
+{
+  return ctkDICOMJobResponseSet::JobType::None;
 }
 
 //------------------------------------------------------------------------------

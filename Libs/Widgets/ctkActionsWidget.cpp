@@ -98,23 +98,23 @@ void ctkActionsWidgetPrivate
   // Name
   QString actionText = action->text();
   if (actionText.indexOf('&') != -1)
-    {
+  {
     actionText = actionText.remove(actionText.indexOf('&'),1);  // remove mnemonic
-    }
+  }
   items[ctkActionsWidget::NameColumn]->setText(actionText);
   items[ctkActionsWidget::NameColumn]->setIcon(action->icon());
   // Shortcut
   QStringList shortcuts;
   foreach(const QKeySequence& keySequence, action->shortcuts())
-    {
+  {
     shortcuts << keySequence.toString(QKeySequence::NativeText);
-    }
+  }
   items[ctkActionsWidget::ShortcutColumn]->setText(
     shortcuts.join("; "));
   // Context (this is written to the recorded file, therefore it must not be translated)
   QString shortcutContext;
   switch (action->shortcutContext())
-    {
+  {
     case Qt::WidgetShortcut:
     case Qt::WidgetWithChildrenShortcut:
       shortcutContext = /*no tr*/ "Widget";
@@ -123,7 +123,7 @@ void ctkActionsWidgetPrivate
     case Qt::ApplicationShortcut:
     default:
       shortcutContext = /*no tr*/ "Application";
-    }
+  }
   items[ctkActionsWidget::ContextColumn]->setText(shortcutContext);
   items[ctkActionsWidget::DetailsColumn]->setText(action->toolTip() != actionText
     ? action->toolTip() : QString(""));
@@ -151,7 +151,7 @@ void ctkActionsWidget::addAction(QAction* action, const QString& group)
   Q_ASSERT(actionGroupItem);
   QList<QStandardItem*> actionItems;
   for (int i = 0; i < 4; ++i)
-    {
+  {
     QStandardItem* item = new QStandardItem;
     #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
     item->setData(QVariant::fromValue(qobject_cast<QObject*>(action)));
@@ -160,7 +160,7 @@ void ctkActionsWidget::addAction(QAction* action, const QString& group)
     #endif
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     actionItems << item;
-    }
+  }
 
   d->updateItems(actionItems, action);
 
@@ -170,10 +170,10 @@ void ctkActionsWidget::addAction(QAction* action, const QString& group)
   // automatically to show its contents. If the group was not empty, then let
   // it as is (maybe the user closed/collapsed it for a good reason...
   if (expandGroupItem)
-    {
+  {
     d->ActionsTreeView->expand(
       d->SortFilterActionsProxyModel->mapFromSource(d->ActionsModel->indexFromItem(actionGroupItem)));
-    }
+  }
   d->ActionsTreeView->resizeColumnToContents(ctkActionsWidget::NameColumn);
   d->ActionsTreeView->resizeColumnToContents(ctkActionsWidget::DetailsColumn);
   connect(action, SIGNAL(changed()), this, SLOT(updateAction()));
@@ -186,9 +186,9 @@ void ctkActionsWidget::addActions(QList<QAction*> actions, const QString& group)
   bool wasSortinEnabled = d->ActionsTreeView->isSortingEnabled();
   d->ActionsTreeView->setSortingEnabled(false);
   foreach(QAction* action, actions)
-    {
+  {
     this->addAction(action, group);
-    }
+  }
   d->ActionsTreeView->setSortingEnabled(wasSortinEnabled);
 }
 
@@ -205,16 +205,16 @@ QStandardItem* ctkActionsWidget::groupItem(const QString& group)
 {
   Q_D(ctkActionsWidget);
   if (group.isEmpty())
-    {
+  {
     return d->ActionsModel->invisibleRootItem();
-    }
+  }
   // check if the group already exists
   QList<QStandardItem *> foundGroup =
     d->ActionsModel->findItems(group);
   if (foundGroup.size() > 0)
-    {
+  {
     return foundGroup[0];
-    }
+  }
   QStandardItem* groupItem = new QStandardItem(group);
   groupItem->setFlags(Qt::ItemIsEnabled);
   d->ActionsModel->appendRow(groupItem);
@@ -289,7 +289,7 @@ void ctkActionsWidget::updateAction()
     -1, Qt::MatchExactly | Qt::MatchRecursive);
   Q_ASSERT(foundActions.size());
   foreach (QModelIndex actionIndex, foundActions)
-    {
+  {
     QModelIndex parentIndex = actionIndex.parent();
     QStandardItem* parent = parentIndex.isValid()
       ? d->ActionsModel->itemFromIndex(parentIndex)
@@ -298,11 +298,11 @@ void ctkActionsWidget::updateAction()
     Q_ASSERT(actionRow >= 0);
     QList<QStandardItem*> actionItems;
     for(int i = 0; i < 4; ++i)
-      {
+    {
       actionItems << parent->child(actionRow, i);
-      }
-    d->updateItems(actionItems, action);
     }
+    d->updateItems(actionItems, action);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -383,25 +383,25 @@ bool ctkSortFilterActionsProxyModel::filterAcceptsRow(int source_row, const QMod
   QAction* action = shortcutItem ?
     qobject_cast<QAction*>(shortcutItem->data().value<QObject*>()) : 0;
   if (!action)
-    {
+  {
     return true;
-    }
+  }
   if (action->isSeparator())
-    {
+  {
     return false;
-    }
+  }
   if (action->text().isEmpty())
-    {// not sure what the empty text actions are
+  {// not sure what the empty text actions are
     return false;
-    }
+  }
   if (!d->ActionsWithNoShortcutVisible && shortcutItem->text().isEmpty())
-    {
+  {
     return false;
-    }
+  }
   if (!d->MenuActionsVisible && action->menu())
-    {
+  {
     return false;
-    }
+  }
   return true;
 }
 
@@ -412,10 +412,10 @@ void ctkRichTextItemDelegate::paint(QPainter* painter, const QStyleOptionViewIte
   QStyleOptionViewItem options = option;
   initStyleOption(&options, index);
   if (! Qt::mightBeRichText(options.text))
-    {
+  {
     this->QStyledItemDelegate::paint(painter, option, index);
     return;
-    }
+  }
 
   painter->save();
 
@@ -441,9 +441,9 @@ QSize ctkRichTextItemDelegate::sizeHint(const QStyleOptionViewItem & option,
   QStyleOptionViewItem options = option;
   initStyleOption(&options, index);
   if (! Qt::mightBeRichText(options.text))
-    {
+  {
     return this->QStyledItemDelegate::sizeHint(option, index);;
-    }
+  }
 
   QTextDocument doc;
   doc.setHtml(options.text);

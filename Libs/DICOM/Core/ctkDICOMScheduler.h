@@ -46,9 +46,6 @@ struct ctkDICOMJobDetail;
 class CTK_DICOM_CORE_EXPORT ctkDICOMScheduler : public ctkJobScheduler
 {
   Q_OBJECT
-  Q_PROPERTY(int maximumThreadCount READ maximumThreadCount WRITE setMaximumThreadCount);
-  Q_PROPERTY(int maximumNumberOfRetry READ maximumNumberOfRetry WRITE setMaximumNumberOfRetry);
-  Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay);
   Q_PROPERTY(int maximumPatientsQuery READ maximumPatientsQuery WRITE setMaximumPatientsQuery);
 
 public:
@@ -106,10 +103,10 @@ public:
 
   ///@{
   /// Insert results from a job
-  void insertJobResponseSet(const QSharedPointer<ctkDICOMJobResponseSet>& jobResponseSet,
-                            QThread::Priority priority = QThread::HighPriority);
-  void insertJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets,
-                             QThread::Priority priority = QThread::HighPriority);
+  QString insertJobResponseSet(const QSharedPointer<ctkDICOMJobResponseSet>& jobResponseSet,
+                               QThread::Priority priority = QThread::HighPriority);
+  QString insertJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets,
+                                QThread::Priority priority = QThread::HighPriority);
   ///@}
 
   /// Return the Dicom Database.
@@ -163,7 +160,6 @@ public:
 
   ///@{
   /// Jobs managment
-  /// NOTE: methods ...ByDICOMUIDs accept only one list at the time
   Q_INVOKABLE void waitForFinishByDICOMUIDs(const QStringList& patientIDs = {},
                                             const QStringList& studyInstanceUIDs = {},
                                             const QStringList& seriesInstanceUIDs = {},
@@ -176,7 +172,7 @@ public:
                                                                        const QStringList& studyInstanceUIDs = {},
                                                                        const QStringList& seriesInstanceUIDs = {},
                                                                        const QStringList& sopInstanceUIDs = {});
-  Q_INVOKABLE void stopJobsByJobUIDs(const QStringList& jobUIDs);
+
   Q_INVOKABLE void runJobs(const QMap<QString, ctkDICOMJobDetail>& jobDetails);
   Q_INVOKABLE void raiseJobsPriorityForSeries(const QStringList& selectedSeriesInstanceUIDs,
                                               QThread::Priority priority = QThread::HighestPriority);

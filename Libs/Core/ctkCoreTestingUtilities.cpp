@@ -16,12 +16,12 @@ bool CheckNotNull(int line, const QString& description,
                   const void* pointer)
 {
   if(!pointer)
-    {
+  {
     qWarning() << "\nLine " << line << " - " << description
                << " : CheckNotNull failed"
                << "\n\tpointer:" << pointer;
     return false;
-    }
+  }
   return true;
 }
 
@@ -29,12 +29,12 @@ bool CheckNotNull(int line, const QString& description,
 bool CheckNull(int line, const QString& description, const void* pointer)
 {
   if(pointer)
-    {
+  {
     qWarning() << "\nLine " << line << " - " << description
                << " : CheckNull failed"
                << "\n\tpointer:" << pointer;
     return false;
-    }
+  }
   return true;
 }
 
@@ -53,21 +53,21 @@ bool CheckString(int line, const QString& description,
 
   bool different = true;
   if (current == 0 || expected == 0)
-    {
+  {
     different = !(current == 0 && expected == 0);
-    }
+  }
   else if(strcmp(current, expected) == 0)
-    {
+  {
     different = false;
-    }
+  }
   if(different == errorIfDifferent)
-    {
+  {
     qWarning() << "\nLine " << line << " - " << description
                << " : " << testName << "  failed"
                << "\n\tcurrent :" << (current ? current : "<null>")
                << "\n\texpected:" << (expected ? expected : "<null>");
     return false;
-    }
+  }
   return true;
 }
 

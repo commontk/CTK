@@ -47,14 +47,14 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkVTKScalarBarWidget* widget = reinterpret_cast<ctkVTKScalarBarWidget*>(data);
 
   CTKCOMPARE(widget->title(), "Test QtTesting");
   CTKCOMPARE(widget->labelsFormat(), "%-#6.3g..ghtkd");
   CTKCOMPARE(widget->maxNumberOfColors(), 25);
   CTKCOMPARE(widget->numberOfLabels(), 2);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -84,9 +84,9 @@ int ctkVTKScalarBarWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

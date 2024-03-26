@@ -42,11 +42,11 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
   QString testName = arguments.takeFirst();
 
   if (!arguments.count())
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QTemporaryDir tempDirectory;
   CHECK_BOOL(tempDirectory.isValid(), true);
@@ -146,9 +146,9 @@ int ctkDICOMSchedulerTest1(int argc, char* argv[])
             << "This will test " << numberOfImages << " retrieve concorrent jobs" << std::endl;
 
   foreach (const QString& sopIstanceUID, instances)
-    {
+  {
     scheduler.retrieveSOPInstance(patientID, studyIstanceUID, seriesIstanceUID, sopIstanceUID);
-    }
+  }
 
   CHECK_INT(scheduler.numberOfJobs(), numberOfImages);
   scheduler.waitForFinish();

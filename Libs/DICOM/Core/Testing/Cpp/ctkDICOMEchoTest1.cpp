@@ -45,11 +45,11 @@ int ctkDICOMEchoTest1(int argc, char* argv[])
   QString testName = arguments.takeFirst();
 
   if (!arguments.count())
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-image> [...]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDICOMTester tester;
 

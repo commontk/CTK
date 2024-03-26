@@ -75,14 +75,14 @@ public:
 
   /// Date filtering enum
   enum DateType
-    {
+  {
     Any = 0,
     Today,
     Yesterday,
     LastWeek,
     LastMonth,
     LastYear
-    };
+  };
 
   ///@{
   /// Available values:

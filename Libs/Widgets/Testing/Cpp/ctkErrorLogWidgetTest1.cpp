@@ -56,7 +56,7 @@ int ctkErrorLogWidgetTest1(int argc, char * argv [])
 
   // --------------------------------------------------------------------------
   // Monitor application StatusBar messages
-    {
+  {
     model.registerMsgHandler(new ctkErrorLogStatusMessageHandler(&mainWindow));
     model.setMsgHandlerEnabled(ctkErrorLogStatusMessageHandler::HandlerName, true);
 
@@ -71,21 +71,21 @@ int ctkErrorLogWidgetTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedStatusMessages.count());
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
+    }
 
     errorMsg = checkTextMessages(__LINE__, model, expectedStatusMessages);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
+    }
 
     // Clear
     model.clear();
@@ -98,39 +98,39 @@ int ctkErrorLogWidgetTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ 0);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
     }
+  }
 
   // --------------------------------------------------------------------------
   // Monitor Stream messages
-    {
+  {
     model.registerMsgHandler(new ctkErrorLogStreamMessageHandler);
     model.setMsgHandlerEnabled(ctkErrorLogStreamMessageHandler::HandlerName, true);
 
     std::cout << "This is a Cout message" << std::endl;
     std::cerr << "This is a Cerr message" << std::endl;
-    }
+  }
 
   // --------------------------------------------------------------------------
   // Monitor Qt messages
-    {
+  {
     model.registerMsgHandler(new ctkErrorLogQtMessageHandler);
     model.setMsgHandlerEnabled(ctkErrorLogQtMessageHandler::HandlerName, true);
 
     qDebug() << "This is a Qt Debug message";
     qWarning() << "This is a Qt Warning message";
     qCritical() << "This is a Qt Critical message";
-    }
+  }
 
   QTime start = QTime::currentTime();
 
   for (int i = 0; i < 500; ++i)
-    {
+  {
     qDebug() << "This is a Qt Debug message - id:0 - group:" << i;
     std::cout << "This is a Cout message - id:1 - group:" << i << std::endl;
     qWarning() << "This is a Qt Warning message - id:2 - group:" << i;
@@ -141,7 +141,7 @@ int ctkErrorLogWidgetTest1(int argc, char * argv [])
     qWarning() << "This is a Qt Warning message - id:7 - group:" << i;
     std::cerr << "This is a Cerr message - id:8 - group:" << i << std::endl;
     qCritical() << "This is a Qt Critical message - id:9 - group:" << i;
-    }
+  }
 
   fprintf(stdout, "Msg handling time: %d\n", start.msecsTo(QTime::currentTime()));
   fflush(stdout);
@@ -151,12 +151,12 @@ int ctkErrorLogWidgetTest1(int argc, char * argv [])
   start = QTime::currentTime();
 
   for (int i = 0; i < 1000; ++i)
-    {
+  {
     std::cout << "This is a Cout message - id:1 - group:" << i << std::endl;
     std::cout << "This is a Cout message - id:2 - group:" << i << std::endl;
     std::cout << "This is a Cout message - id:3 - group:" << i << std::endl;
     std::cout << "This is a Cout message - id:4 - group:" << i << std::endl;
-    }
+  }
 
   fprintf(stdout, "Msg handling time: %d\n", start.msecsTo(QTime::currentTime()));
   fflush(stdout);
@@ -168,9 +168,9 @@ int ctkErrorLogWidgetTest1(int argc, char * argv [])
   widget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(1000, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

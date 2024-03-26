@@ -144,12 +144,12 @@ QString ctkITKOutputWindow::parseText(const QString& text, ctkErrorLogContext& c
 
   QRegExp contextRegExp("[a-zA-Z\\s]+: In (.+), line ([\\d]+)\\n(.+\\(0x[a-fA-F0-9]+\\))\\:\\s(.*)");
   if (contextRegExp.exactMatch(text))
-    {
+  {
     context.File = contextRegExp.cap(1);
     context.Category = contextRegExp.cap(3);
     context.Line = contextRegExp.cap(2).toInt();
     context.Message = contextRegExp.cap(4);
-    }
+  }
   return context.Message;
 }
 
@@ -221,14 +221,14 @@ void ctkITKErrorLogMessageHandler::setEnabledInternal(bool value)
 {
   Q_D(ctkITKErrorLogMessageHandler);
   if (value)
-    {
+  {
     d->SavedITKOutputWindow = itk::OutputWindow::GetInstance();
     itk::OutputWindow::SetInstance(d->CTKITKOutputWindow);
-    }
+  }
   else
-    {
+  {
     Q_ASSERT(d->SavedITKOutputWindow.IsNotNull());
     itk::OutputWindow::SetInstance(d->SavedITKOutputWindow);
     d->SavedITKOutputWindow = 0;
-    }
+  }
 }

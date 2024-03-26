@@ -39,19 +39,19 @@ int ctkColorDialogTest2(int argc, char * argv [] )
   ctkColorDialog::addDefaultTab(&extraPanel, "Extra", SIGNAL(colorChanged(QColor)));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     // quit the opened dialog, which doesn't quit the application
     // as app.exec() is not executed yet
     QTimer::singleShot(200, &app, SLOT(quit()));
     QTimer::singleShot(300, &app, SLOT(quit()));
-    }
+  }
 
   QColor color = ctkColorDialog::getColor(Qt::black,0 , "", QColorDialog::DontUseNativeDialog);
   if (color.isValid())
-    {
+  {
     std::cout << "The color dialog should have been quit without a valid color."
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

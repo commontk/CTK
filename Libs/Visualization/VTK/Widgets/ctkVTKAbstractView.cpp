@@ -117,9 +117,9 @@ void ctkVTKAbstractViewPrivate::setupRendering()
   this->RenderWindow->SetAlphaBitPlanes(1);
   int nSamples = ctkVTKAbstractView::multiSamples();
   if (nSamples < 0)
-    {
+  {
     nSamples = vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples();
-    }
+  }
   this->RenderWindow->SetMultiSamples(nSamples);
   this->RenderWindow->StereoCapableWindowOn();
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
@@ -139,9 +139,9 @@ QList<vtkRenderer*> ctkVTKAbstractViewPrivate::renderers()const
   rendererCollection->InitTraversal(rendererIterator);
   vtkRenderer *renderer;
   while ( (renderer= rendererCollection->GetNextRenderer(rendererIterator)) )
-    {
+  {
     rendererList << renderer;
-    }
+  }
   return rendererList;
 }
 
@@ -188,36 +188,36 @@ void ctkVTKAbstractView::scheduleRender()
   //             .arg(d->RequestTime.elapsed()));
 
   if (!d->RenderEnabled)
-    {
+  {
     return;
-    }
+  }
 
   double msecsBeforeRender = 0;
   // If the MaximumUpdateRate is set to 0 then it indicates that rendering is done next time
   // the application is idle.
   if (d->MaximumUpdateRate > 0.0)
-    {
+  {
     msecsBeforeRender = 1000. / d->MaximumUpdateRate;
-    }
+  }
   if(d->VTKWidget->testAttribute(Qt::WA_WState_InPaintEvent))
-    {
+  {
     // If the request comes from the system (widget exposed, resized...), the
     // render must be done immediately.
     this->requestRender();
-    }
+  }
   else if (!d->RequestTime.isValid())
-    {
+  {
     d->RequestTime.start();
     d->RequestTimer->start(static_cast<int>(msecsBeforeRender));
-    }
+  }
   else if (d->RequestTime.elapsed() > msecsBeforeRender)
-    {
+  {
     // The rendering hasn't still be done, but msecsBeforeRender milliseconds
     // have already been elapsed, it is likely that RequestTimer has already
     // timed out, but the event queue hasn't been processed yet, rendering is
     // done now to ensure the desired framerate is respected.
     this->requestRender();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -226,9 +226,9 @@ void ctkVTKAbstractView::requestRender()
   Q_D(const ctkVTKAbstractView);
 
   if (this->isRenderPaused())
-    {
+  {
     return;
-    }
+  }
   this->forceRender();
 }
 
@@ -239,12 +239,12 @@ void ctkVTKAbstractView::forceRender()
 
   if (this->sender() == d->RequestTimer  &&
       !d->RequestTime.isValid())
-    {
+  {
     // The slot associated to the timeout signal is now called, however the
     // render has already been executed meanwhile. There is no need to do it
     // again.
     return;
-    }
+  }
 
   // The timer can be stopped if it hasn't timed out yet.
   d->RequestTimer->stop();
@@ -258,9 +258,9 @@ void ctkVTKAbstractView::forceRender()
   //             .arg(d->RenderEnabled ? "true" : "false"));
 
   if (!d->RenderEnabled || !this->isVisible())
-    {
+  {
     return;
-    }
+  }
   d->RenderWindow->Render();
 }
 
@@ -284,19 +284,19 @@ int ctkVTKAbstractView::resumeRender()
 {
   Q_D(ctkVTKAbstractView);
   if (d->PauseRenderCount > 0)
-    {
+  {
     --d->PauseRenderCount;
-    }
+  }
   else
-    {
+  {
     qWarning() << Q_FUNC_INFO << "Cannot resume rendering, pause render count is already 0!";
-    }
+  }
 
   // If the rendering is not paused and has been scheduled, call scheduleRender
   if (!this->isRenderPaused() && d->RequestTimer && d->RequestTime.isValid())
-    {
+  {
     this->scheduleRender();
-    }
+  }
   return d->PauseRenderCount;
 }
 
@@ -306,13 +306,13 @@ int ctkVTKAbstractView::setRenderPaused(bool pause)
   Q_D(const ctkVTKAbstractView);
 
   if (pause)
-    {
+  {
     this->pauseRender();
-    }
+  }
   else
-    {
+  {
     this->resumeRender();
-    }
+  }
   return d->PauseRenderCount;
 }
 
@@ -416,9 +416,9 @@ void ctkVTKAbstractView::setBackgroundColor(const QColor& newBackgroundColor)
   color[1] = newBackgroundColor.greenF();
   color[2] = newBackgroundColor.blueF();
   foreach(vtkRenderer* renderer, d->renderers())
-    {
+  {
     renderer->SetBackground(color);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -441,9 +441,9 @@ void ctkVTKAbstractView::setBackgroundColor2(const QColor& newBackgroundColor)
   color[1] = newBackgroundColor.greenF();
   color[2] = newBackgroundColor.blueF();
   foreach(vtkRenderer* renderer, d->renderers())
-    {
+  {
     renderer->SetBackground2(color);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -462,9 +462,9 @@ void ctkVTKAbstractView::setGradientBackground(bool enable)
 {
   Q_D(ctkVTKAbstractView);
   foreach(vtkRenderer* renderer, d->renderers())
-    {
+  {
     renderer->SetGradientBackground(enable);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -480,24 +480,24 @@ void ctkVTKAbstractView::setFPSVisible(bool show)
 {
   Q_D(ctkVTKAbstractView);
   if (d->FPSVisible == show)
-    {
+  {
     return;
-    }
+  }
   d->FPSVisible = show;
   vtkRenderer* renderer = d->firstRenderer();
   if (d->FPSVisible)
-    {
+  {
     d->FPSTimer->start();
     qvtkConnect(renderer,
                 vtkCommand::EndEvent, this, SLOT(onRender()));
-    }
+  }
   else
-    {
+  {
     d->FPSTimer->stop();
     qvtkDisconnect(renderer,
                    vtkCommand::EndEvent, this, SLOT(onRender()));
     d->CornerAnnotation->SetText(1, "");
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -539,15 +539,15 @@ void ctkVTKAbstractView::setUseDepthPeeling(bool useDepthPeeling)
   Q_D(ctkVTKAbstractView);
   vtkRenderer* renderer = d->firstRenderer();
   if (!renderer)
-    {
+  {
     return;
-    }
+  }
   this->renderWindow()->SetAlphaBitPlanes( useDepthPeeling ? 1 : 0);
   int nSamples = ctkVTKAbstractView::multiSamples();
   if (nSamples < 0)
-    {
+  {
     nSamples = vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples();
-    }
+  }
   this->renderWindow()->SetMultiSamples(useDepthPeeling ? 0 : nSamples);
   renderer->SetUseDepthPeeling(useDepthPeeling ? 1 : 0);
 #ifdef CTK_USE_QVTKOPENGLWIDGET

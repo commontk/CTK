@@ -34,15 +34,15 @@ class FactoryItem : public ctkAbstractFactoryItem<BaseClassType>
 {
 public:
   virtual bool load()
-    {
+  {
     return true;
-    }
+  }
 protected:
   /// Must be reimplemented in subclasses to instantiate a BaseClassType*
   virtual BaseClassType* instanciator()
-    {
+  {
     return new BaseClassType;
-    }
+  }
 };
 
 template<class BaseClassType>
@@ -69,58 +69,58 @@ int ctkAbstractFactoryTest1(int argc, char * argv [] )
 
   Item* item = abstractFactory.instantiate("unregistered item");
   if (item != 0)
-    {
+  {
     std::cerr << "ctkAbstractFactory::instantiate() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   abstractFactory.uninstantiate("uninstanced item");
   if (!abstractFactory.path("wrong key").isEmpty())
-    {
+  {
     std::cerr<< "ctkAbstractFactory::path() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   abstractFactory.registerItems();
   if (abstractFactory.itemKeys().count() != 0)
-    {
+  {
     std::cerr<< "ctkAbstractFactory::keys() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   abstractFactory.setVerbose(true);
   if (abstractFactory.verbose() != true)
-    {
+  {
     std::cerr<< "ctkAbstractFactory::setVerbose() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   Factory<Item> factory;
   factory.printAdditionalInfo();
 
   Item* item1 = factory.instantiate("item1");
   if (item != 0)
-    {
+  {
     std::cerr << "ctkAbstractFactory::instantiate() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   factory.uninstantiate("item1");
   if (!factory.path("wrong key").isEmpty())
-    {
+  {
     std::cerr<< "ctkAbstractFactory::path() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   factory.registerItems();
   if (factory.itemKeys().count() != 2 ||
       !factory.itemKeys().contains("item1") ||
       !factory.itemKeys().contains("item2"))
-    {
+  {
     std::cerr<< "ctkAbstractFactory::itemKeys() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   item1 = factory.instantiate("item1");
   if (item1 == 0)
-    {
+  {
     std::cerr << "ctkAbstractFactory::instantiate() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   factory.uninstantiate("item1");
 
   return EXIT_SUCCESS;

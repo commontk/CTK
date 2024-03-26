@@ -98,9 +98,9 @@ void ctkTransferFunctionControlPointsItem::paint(
   Q_D(ctkTransferFunctionControlPointsItem);
   int count = this->transferFunction() ? this->transferFunction()->count() : 0;
   if (count <= 0)
-    {
+  {
     return;
-    }
+  }
 
   //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   //Q_ASSERT(tfScene);
@@ -118,13 +118,13 @@ void ctkTransferFunctionControlPointsItem::paint(
   QTransform transform = painter->transform();
   painter->setTransform(QTransform());
   foreach(const QPointF& point, d->ControlPoints)
-    {
+  {
     QPointF pos = transform.map(point);
     painter->drawEllipse(pos.x() - d->PointSize.width() / 2,
                          pos.y() - d->PointSize.height() / 2,
                          d->PointSize.width(), d->PointSize.width());
     //points.addEllipse(point, d->PointSize.width(), d->PointSize.height());
-    }
+  }
   painter->restore();
 }
 
@@ -139,17 +139,17 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
   QPolygonF pointItemArea = this->mapFromScene(view->mapToScene(pointViewArea));
   d->SelectedPoint = -1;
   for(int i = 0; i < d->ControlPoints.count(); ++i)
-    {
+  {
     if (pointItemArea.translated(d->ControlPoints[i]).containsPoint(e->pos(), Qt::OddEvenFill))
-      {
+    {
       d->SelectedPoint = i;
       break;
-      }
     }
+  }
   if (d->SelectedPoint >= 0)
-    {
+  {
     return;
-    }
+  }
   //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   //Q_ASSERT(tfScene);
   ctkTransferFunctionRepresentation* tfRep = this->transferFunction()->representation();
@@ -163,9 +163,9 @@ void ctkTransferFunctionControlPointsItem::mousePressEvent(QGraphicsSceneMouseEv
   //NOT WORKING IN COMPOSITE
   // update value of the point
   if (!QSharedPointer<ctkControlPoint>(this->transferFunction()->controlPoint(index))->value().canConvert<QColor>())
-    {
+  {
     this->transferFunction()->setControlPointValue( index, tfPos.y());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -173,10 +173,10 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
 {
   Q_D(ctkTransferFunctionControlPointsItem);
   if (d->SelectedPoint < 0)
-    {
+  {
     e->ignore();
     return;
-    }
+  }
 
   //ctkTransferFunctionScene* tfScene = dynamic_cast<ctkTransferFunctionScene*>(this->scene());
   //Q_ASSERT(tfScene);
@@ -186,7 +186,7 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
 
   // Deal with borders
   if(d->SelectedPoint == 0 || d->SelectedPoint == this->transferFunction()->count() )
-    {
+  {
     // BEHAVIOR TO BE IMPLEMENTED
     // int borderBehavior = tfScene->borderBehavior();
     // LockBorder
@@ -195,9 +195,9 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
     // Create new point on border on bottom
     qDebug() << "border" ;
     return;
-    }
+  }
   else
-    {
+  {
     // TO BE IMPLEMENTED
     //int movePointsBehavior = tfScene->movePointsBehavior();
     // initialize to BLOCK_MOVE for now
@@ -218,8 +218,8 @@ void ctkTransferFunctionControlPointsItem::mouseMoveEvent(QGraphicsSceneMouseEve
         break;
       default:
         break;
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -229,9 +229,9 @@ void ctkTransferFunctionControlPointsItem::stopPoints( QPointF iPointF )
 
   if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > iPointF.x() ||
       this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() < iPointF.x())
-    {
+  {
     return;
-    }
+  }
 
   updatePointPosition(iPointF);
 }
@@ -244,18 +244,18 @@ void ctkTransferFunctionControlPointsItem::switchPoints( QPointF iPointF )
   // Increment or decrement selected point?
   // Don't need to check borders since it is done just before calling this method...
   if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > iPointF.x() )
-    {
+  {
     // NOT WORKING IF COMPOSITE TRANSFER FUNCTION
     double value = this->transferFunction()->value(d->SelectedPoint-1 ).toDouble();
     d->SelectedPoint -= 1;
     this->transferFunction()->setControlPointValue(d->SelectedPoint+1, value);
-    }
+  }
   else if ( this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() < iPointF.x() )
-    {
+  {
     double value = this->transferFunction()->value(d->SelectedPoint + 1 ).toDouble();
     d->SelectedPoint += 1;
     this->transferFunction()->setControlPointValue(d->SelectedPoint-1, value);
-    }
+  }
 
   updatePointPosition(iPointF);
 }
@@ -267,14 +267,14 @@ void ctkTransferFunctionControlPointsItem::drawPoints( QPointF iPointF )
 
   // Increment or decrement selected point
   if( this->transferFunction()->controlPoint(d->SelectedPoint - 1)->x() > iPointF.x() )
-    {
+  {
     //change the selected point
     d->SelectedPoint = d->SelectedPoint -1;
-    }
+  }
   else if ( this->transferFunction()->controlPoint(d->SelectedPoint + 1)->x() < iPointF.x() )
-    {
+  {
     d->SelectedPoint = d->SelectedPoint +1;
-    }
+  }
 
   updatePointPosition(iPointF);
 }
@@ -306,10 +306,10 @@ void ctkTransferFunctionControlPointsItem::mouseReleaseEvent(QGraphicsSceneMouse
 {
   Q_D(ctkTransferFunctionControlPointsItem);
   if (d->SelectedPoint < 0)
-    {
+  {
     e->ignore();
     return;
-    }
+  }
   d->SelectedPoint = -1;
 }
 
@@ -320,14 +320,14 @@ void ctkTransferFunctionControlPointsItem::keyPressEvent ( QKeyEvent * keyEvent 
 
     // if a point is selected, "d" and "D" = delete the point
     if (d->SelectedPoint >= 0)
-      {
+    {
       if ( ! QString::compare(keyEvent->text(), "d") || ! QString::compare(keyEvent->text(), "D") )
-        {
+      {
         // Get value of selected point
         qreal xValue = this->transferFunction()->controlPoint( d->SelectedPoint )->x();
         // remove point using value ( can't use point ID because it could engender
         // problems when multiple points selection implemented)
         this->transferFunction()->removeControlPoint( xValue );
-        }
       }
+    }
 }

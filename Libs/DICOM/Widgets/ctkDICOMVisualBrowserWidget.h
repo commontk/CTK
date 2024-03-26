@@ -355,7 +355,6 @@ public Q_SLOTS:
   void onQueryPatients();
   void onShowPatients();
   void updateGUIFromScheduler(const QVariant&);
-  void onJobStarted(const QVariant&);
   void onJobFailed(const QVariant&);
   void onPatientItemChanged(int);
   void onClose();
@@ -390,6 +389,8 @@ protected:
   QStringList fileListForCurrentSelection(ctkDICOMModel::IndexType level, const QList<QWidget*>& selectedWidget);
   /// Show window that displays DICOM fields of all selected items
   void showMetadata(const QStringList& fileList);
+  /// Force redownload of selected series widgets
+  void forceSeriesRetrieve(const QList<QWidget*>& selectedWidgets = QList<QWidget*>());
   /// Remove items (both database and widget)
   void removeSelectedItems(ctkDICOMModel::IndexType level, const QList<QWidget*>& selectedWidgets = QList<QWidget*>());
   /// Export the items associated with the selected widget

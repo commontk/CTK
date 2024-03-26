@@ -41,8 +41,8 @@ bool ctkSoapMessageProcessor::process(
 bool ctkSoapMessageProcessor::operator==(const ctkSoapMessageProcessor& rhs)
 {
   if( this == &rhs )
-    {
+  {
     return true;
-    }
+  }
   return false;
 }

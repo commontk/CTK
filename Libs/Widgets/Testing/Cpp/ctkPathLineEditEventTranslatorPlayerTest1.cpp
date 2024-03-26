@@ -46,16 +46,16 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkPathLineEdit* widget = reinterpret_cast<ctkPathLineEdit*>(data);
   Q_UNUSED(widget);
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   ctkPathLineEdit* widget = reinterpret_cast<ctkPathLineEdit*>(data);
   Q_UNUSED(widget);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -94,9 +94,9 @@ int ctkPathLineEditEventTranslatorPlayerTest1(int argc, char * argv [] )
                         &checkFinalWidgetState2);
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

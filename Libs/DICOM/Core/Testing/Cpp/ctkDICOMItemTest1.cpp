@@ -32,35 +32,35 @@ int ctkDICOMItemTest1( int argc, char * argv [] )
   dataset.InitializeFromItem(0);
   dataset.InitializeFromFile(QString());
   try
-    {
+  {
     dataset.Serialize();
-    }
+  }
   catch(...)
-    {
+  {
     std::cout << "ctkDICOMItem::Serialize() throws exceptions" << std::endl;
     //return EXIT_FAILURE;
-    }
+  }
   try
-    {
+  {
     dataset.Deserialize();
-    }
+  }
   catch(...)
-    {
+  {
     std::cout << "ctkDICOMItem::Deserialize() throws exceptions"
               << std::endl;
     //return EXIT_FAILURE;
-    }
+  }
   dataset.MarkForInitialization();
   try
-    {
+  {
     dataset.EnsureDcmDataSetIsInitialized();
-    }
+  }
   catch(...)
-    {
+  {
     std::cout << "ctkDICOMItem::EnsureDcmDataSetIsInitialized() throws"
               << " exceptions" << std::endl;
     //return EXIT_FAILURE;
-    }
+  }
 
   // deactivating the lower part since it (correctly) causes
   // exceptions since it calls methods on an uninitialized object
@@ -69,28 +69,28 @@ int ctkDICOMItemTest1( int argc, char * argv [] )
   dataset.CopyElement(0, DcmTagKey(), 0);
   QString decode = dataset.Decode(DcmTag(),OFString());
   if (!decode.isEmpty())
-    {
+  {
     std::cerr << "ctkDICOMItem::Decode() failed: "
               << qPrintable(decode) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   OFString encode = dataset.Encode(DcmTag(), decode);
   DcmElement* element = 0;
   OFCondition condition = dataset.findAndGetElement(DcmTag(), element);
   if (ctkDICOMItem::CheckCondition(condition))
-    {
+  {
     std::cerr << "ctkDICOMItem::findAndGetElement() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   OFString string;
   condition = dataset.findAndGetOFString(DcmTag(), string);
   if (ctkDICOMItem::CheckCondition(condition))
-    {
+  {
     std::cerr << "ctkDICOMItem::findAndGetOFString() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
    try
-    {
+   {
     QString string = dataset.GetAllElementValuesAsString(DcmTag());
     QString string2 = dataset.GetElementAsString(DcmTag());
     QStringList list = dataset.GetElementAsStringList(DcmTag());
@@ -126,13 +126,13 @@ int ctkDICOMItemTest1( int argc, char * argv [] )
     dataset.SetElementAsInteger( DcmTag(), 0 ); // type IS
     dataset.SetElementAsSignedShort( DcmTag(), 0 ); // type SS
     dataset.SetElementAsUnsignedShort( DcmTag(), 0 ); // type US
-    }
+   }
   catch(...)
-    {
+  {
     std::cout << "ctkDICOMItem::GetElementValueAsXXX() throws exceptions"
               << std::endl;
     //return EXIT_FAILURE;
-    }
+  }
   ctkDICOMItem::TranslateDefinedTermPatientPosition(QString());
   ctkDICOMItem::TranslateDefinedTermModality(QString());
   ctkDICOMItem::TagKey(DcmTag());

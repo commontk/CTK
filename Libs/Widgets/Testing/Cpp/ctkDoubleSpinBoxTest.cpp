@@ -468,26 +468,26 @@ void ctkDoubleSpinBoxTester::testDecimalsByKey_data()
     << options.last() << 4 << int(Qt::Key_Backspace) << "1.2" << 1.2 << 1;
 
   foreach(int option, options)
-    {
+  {
     // bad keys are always rejected
     for (int i = 0; i < 5; ++i)
-      {
+    {
       QTest::newRow(QString("%1 %2:'a' -> 1.23").arg(option).arg(i).toLatin1())
         << option << i << int(Qt::Key_A) << "1.23" << 1.23 << 2;
-      }
+    }
     // sign keys are only for the first digit
     QTest::newRow(QString("%1 0:'+' -> 1.23").arg(option).toLatin1())
       << option << 0 << int(Qt::Key_Plus) << "+1.23" << 1.23 << 2;
     QTest::newRow(QString("%1 0:'-' -> -1.23").arg(option).toLatin1())
       << option << 0 << int(Qt::Key_Minus) << "-1.23" << -1.23 << 2;
     for (int i = 1; i < 5; ++i)
-      {
+    {
       QTest::newRow(QString("%1 %2:'+' -> 1.23").arg(option).arg(i).toLatin1())
         << option << i << int(Qt::Key_Plus) << "1.23" << 1.23 << 2;
       QTest::newRow(QString("%1 %2:'-' -> 1.23").arg(option).arg(i).toLatin1())
         << option << i << int(Qt::Key_Minus) << "1.23" << 1.23 << 2;
-      }
     }
+  }
 }
 // ----------------------------------------------------------------------------
 void ctkDoubleSpinBoxTester::testPrefix()

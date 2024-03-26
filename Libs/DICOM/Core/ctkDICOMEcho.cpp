@@ -48,7 +48,7 @@ public:
   QString CalledAETitle;
   QString Host;
   int Port;
-  DcmSCU SCU;
+  DcmSCU *SCU;
 };
 
 //------------------------------------------------------------------------------
@@ -63,8 +63,9 @@ ctkDICOMEchoPrivate::ctkDICOMEchoPrivate()
   this->Host = "";
   this->Port = 80;
 
-  this->SCU.setACSETimeout(3);
-  this->SCU.setConnectionTimeout(3);
+  this->SCU = new DcmSCU();
+  this->SCU->setACSETimeout(3);
+  this->SCU->setConnectionTimeout(3);
 }
 
 //------------------------------------------------------------------------------
@@ -77,7 +78,7 @@ ctkDICOMEcho::ctkDICOMEcho(QObject* parentObject)
 {
   Q_D(ctkDICOMEcho);
 
-  d->SCU.setVerbosePCMode(false);
+  d->SCU->setVerbosePCMode(false);
 }
 
 //------------------------------------------------------------------------------
@@ -157,15 +158,15 @@ int ctkDICOMEcho::port() const
 void ctkDICOMEcho::setConnectionTimeout(int timeout)
 {
   Q_D(ctkDICOMEcho);
-  d->SCU.setACSETimeout(timeout);
-  d->SCU.setConnectionTimeout(timeout);
+  d->SCU->setACSETimeout(timeout);
+  d->SCU->setConnectionTimeout(timeout);
 }
 
 //-----------------------------------------------------------------------------
 int ctkDICOMEcho::connectionTimeout() const
 {
   Q_D(const ctkDICOMEcho);
-  return d->SCU.getConnectionTimeout();
+  return d->SCU->getConnectionTimeout();
 }
 
 //------------------------------------------------------------------------------
@@ -173,9 +174,9 @@ bool ctkDICOMEcho::echo()
 {
   Q_D(ctkDICOMEcho);
 
-  d->SCU.setPeerAETitle(OFString(this->calledAETitle().toStdString().c_str()));
-  d->SCU.setPeerHostName(OFString(this->host().toStdString().c_str()));
-  d->SCU.setPeerPort(this->port());
+  d->SCU->setPeerAETitle(OFString(this->calledAETitle().toStdString().c_str()));
+  d->SCU->setPeerHostName(OFString(this->host().toStdString().c_str()));
+  d->SCU->setPeerPort(this->port());
 
   logger.debug("Setting Transfer Syntaxes");
 
@@ -184,43 +185,32 @@ bool ctkDICOMEcho::echo()
   transferSyntaxes.push_back(UID_BigEndianExplicitTransferSyntax);
   transferSyntaxes.push_back(UID_LittleEndianImplicitTransferSyntax);
 
-  d->SCU.addPresentationContext(UID_VerificationSOPClass, transferSyntaxes);
-  if (!d->SCU.initNetwork().good())
-    {
+  d->SCU->addPresentationContext(UID_VerificationSOPClass, transferSyntaxes);
+  if (!d->SCU->initNetwork().good())
+  {
     logger.error("Error initializing the network");
     return false;
-    }
+  }
   logger.debug("Negotiating Association");
 
-  OFCondition result = d->SCU.negotiateAssociation();
+  OFCondition result = d->SCU->negotiateAssociation();
   if (result.bad())
-    {
+  {
     logger.error("Error negotiating the association: " + QString(result.text()));
     return false;
-    }
+  }
 
   logger.info("Seding Echo");
   // Issue ECHO request and let scu find presentation context itself (0)
-  OFCondition status = d->SCU.sendECHORequest(0);
+  OFCondition status = d->SCU->sendECHORequest(0);
   if (!status.good())
-    {
+  {
     logger.error("Echo failed");
-    d->SCU.releaseAssociation();
+    d->SCU->releaseAssociation();
     return false;
-    }
+  }
 
-  d->SCU.releaseAssociation();
+  d->SCU->releaseAssociation();
 
   return true;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMEcho::cancel()
-{
-  Q_D(ctkDICOMEcho);
-
-  if (d->SCU.isConnected())
-    {
-    d->SCU.releaseAssociation();
-    }
 }

@@ -161,13 +161,13 @@ void ctkRangeSliderTester::testHandleMouseEvents()
 
   QPoint currentCursorPos = rangeSlider.rect().center();
   if (minHandle)
-    {
+  {
     currentCursorPos = QPoint(10, 10);
-    }
+  }
   else
-    {
+  {
     currentCursorPos = QPoint(80, 10);
-    }
+  }
   rangeSlider.setSymmetricMoves(symmetricMoves);
 
   QTest::mouseMove(&rangeSlider, currentCursorPos);

@@ -72,7 +72,7 @@ public:
   virtual ~ctkVTKDataSetModel();
 
   enum AttributeType
-    {
+  {
     NoAttribute = 0x1,
     ScalarsAttribute = 0x2,
     VectorsAttribute = 0x4,
@@ -83,7 +83,7 @@ public:
     PedigreeIDsAttribute = 0x80,
     EdgeFlagAttribute = 0x100,
     AllAttribute = NoAttribute | ScalarsAttribute | VectorsAttribute | NormalsAttribute | TCoordsAttribute | TensorsAttribute | GlobalIDsAttribute | PedigreeIDsAttribute | EdgeFlagAttribute
-    };
+  };
   Q_DECLARE_FLAGS(AttributeTypes, AttributeType)
 
   virtual void setDataSet(vtkDataSet* dataSet);

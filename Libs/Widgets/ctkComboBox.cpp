@@ -64,9 +64,9 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
 {
   Q_Q(const ctkComboBox);
   if (sh.isValid())
-    {
+  {
     return sh.expandedTo(QApplication::globalStrut());
-    }
+  }
 
   bool hasIcon = false;
   int count = q->count();
@@ -75,13 +75,13 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
 
   // text width
   if (&sh == &this->SizeHint || q->minimumContentsLength() == 0)
-    {
+  {
     switch (q->sizeAdjustPolicy())
-      {
+    {
       case QComboBox::AdjustToContents:
       case QComboBox::AdjustToContentsOnFirstShow:
         if (count == 0 || this->ForceDefault)
-          {
+        {
           #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
           int character_pixel_width = fm.horizontalAdvance(QLatin1Char('x'));
           #else
@@ -91,45 +91,45 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
             7 * character_pixel_width :
             fm.boundingRect(this->DefaultText).width();
           if (!this->DefaultIcon.isNull())
-            {
+          {
             hasIcon = true;
             sh.rwidth() += iconSize.width() + 4;
-            }
           }
+        }
         for (int i = 0; i < count; ++i)
-          {
+        {
           if (!q->itemIcon(i).isNull())
-            {
+          {
             hasIcon = true;
             sh.setWidth(qMax(sh.width(), fm.boundingRect(q->itemText(i)).width() + iconSize.width() + 4));
-            }
-          else
-            {
-            sh.setWidth(qMax(sh.width(), fm.boundingRect(q->itemText(i)).width()));
-            }
           }
+          else
+          {
+            sh.setWidth(qMax(sh.width(), fm.boundingRect(q->itemText(i)).width()));
+          }
+        }
         break;
       case QComboBox::AdjustToMinimumContentsLengthWithIcon:
         hasIcon = true;
         break;
       default:
         break;
-      }
     }
+  }
   else // minimumsizehint is computing and minimumcontentslength is > 0
-    {
+  {
     if ((count == 0 || this->ForceDefault) && !this->DefaultIcon.isNull())
-      {
+    {
       hasIcon = true;
-      }
+    }
 
     for (int i = 0; i < count && !hasIcon; ++i)
-      {
-      hasIcon = !q->itemIcon(i).isNull();
-      }
-    }
-  if (q->minimumContentsLength() > 0)
     {
+      hasIcon = !q->itemIcon(i).isNull();
+    }
+  }
+  if (q->minimumContentsLength() > 0)
+  {
     #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
     int character_pixel_width = fm.horizontalAdvance(QLatin1Char('x'));
     #else
@@ -138,14 +138,14 @@ QSize ctkComboBoxPrivate::recomputeSizeHint(QSize &sh) const
     sh.setWidth(qMax(sh.width(),
                      q->minimumContentsLength() * character_pixel_width
                      + (hasIcon ? iconSize.width() + 4 : 0)));
-    }
+  }
 
   // height
   sh.setHeight(qMax(fm.height(), 14) + 2);
   if (hasIcon)
-    {
+  {
     sh.setHeight(qMax(sh.height(), iconSize.height() + 2));
-    }
+  }
 
   // add style and strut values
   QStyleOptionComboBox opt;
@@ -161,10 +161,10 @@ void ctkComboBoxPrivate::initStyleOption(QStyleOptionComboBox* opt)const
   q->initStyleOption(opt);
   if (q->currentIndex() == -1 ||
       this->ForceDefault)
-    {
+  {
     opt->currentText = this->DefaultText;
     opt->currentIcon = this->DefaultIcon;
-    }
+  }
   QRect textRect = q->style()->subControlRect(
     QStyle::CC_ComboBox, opt, QStyle::SC_ComboBoxEditField, q);
   // TODO subtract icon size
@@ -223,9 +223,9 @@ void ctkComboBox::forceDefault(bool newForceDefault)
 {
   Q_D(ctkComboBox);
   if (newForceDefault == d->ForceDefault)
-    {
+  {
     return;
-    }
+  }
   d->ForceDefault = newForceDefault;
   d->SizeHint = QSize();
   this->updateGeometry();
@@ -310,7 +310,7 @@ void ctkComboBox::changeEvent(QEvent *e)
 {
   Q_D(const ctkComboBox);
   switch (e->type())
-    {
+  {
     case QEvent::StyleChange:
     case QEvent::MacSizeChange:
     case QEvent::FontChange:
@@ -319,7 +319,7 @@ void ctkComboBox::changeEvent(QEvent *e)
       break;
     default:
       break;
-    }
+  }
 
   this->QComboBox::changeEvent(e);
 }
@@ -330,7 +330,7 @@ void ctkComboBox::wheelEvent(QWheelEvent* event)
   Q_D(ctkComboBox);
   bool scroll = false;
   switch (d->ScrollWheelEffect)
-    {
+  {
     case AlwaysScroll:
       scroll = true;
       break;
@@ -341,30 +341,30 @@ void ctkComboBox::wheelEvent(QWheelEvent* event)
       scroll = true;
       for (QWidget* ancestor = this->parentWidget();
            ancestor; ancestor = ancestor->parentWidget())
-        {
+      {
         if (QAbstractScrollArea* scrollArea =
             qobject_cast<QAbstractScrollArea*>(ancestor))
-          {
+        {
           scroll = !scrollArea->verticalScrollBar()->isVisible();
           if (!scroll)
-            {
+          {
             break;
-            }
           }
         }
+      }
       break;
     default:
     case NeverScroll:
       break;
-    }
+  }
   if (scroll)
-    {
+  {
     this->QComboBox::wheelEvent(event);
-    }
+  }
   else
-    {
+  {
     event->ignore();
-    }
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -377,14 +377,14 @@ QString ctkComboBox::currentUserDataAsString()const
 void ctkComboBox::setCurrentUserDataAsString(QString userData)
 {
   for (int index=0; index<this->count(); ++index)
-    {
+  {
     QString currentItemUserData = this->itemData(index).toString();
     if (!userData.compare(currentItemUserData))
-      {
+    {
       this->setCurrentIndex(index);
       return;
-      }
     }
+  }
 
   qWarning() << Q_FUNC_INFO << ": No item found with user data string " << userData;
 }

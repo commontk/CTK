@@ -58,14 +58,14 @@ int main(int argc, char** argv)
   QSharedPointer<ctkPluginFramework> framework = fwFactory.getFramework();
 
   try
-    {
+  {
     framework->init();
-    }
+  }
   catch (const ctkPluginException& exc)
-    {
+  {
     qCritical() << "Failed to initialize the plug-in framework:" << exc;
     return EXIT_FAILURE;
-    }
+  }
 
 #ifdef CMAKE_INTDIR
   QString pluginPath = CTK_PLUGIN_DIR CMAKE_INTDIR "/";
@@ -85,40 +85,40 @@ int main(int argc, char** argv)
 
   QList<QSharedPointer<ctkPlugin> > installedPlugins;
   while(dirIter.hasNext())
-    {
+  {
     try
-      {
+    {
       QString fileLocation = dirIter.next();
       foreach(QString pluginToInstall, pluginsToInstall)
-        {
+      {
         if (fileLocation.contains(pluginToInstall))
-          {
+        {
           QSharedPointer<ctkPlugin> plugin = framework->getPluginContext()->installPlugin(QUrl::fromLocalFile(fileLocation));
           installedPlugins << plugin;
           break;
-          }
         }
       }
-    catch (const ctkPluginException& e)
-      {
-      qCritical() << e.what();
-      }
     }
+    catch (const ctkPluginException& e)
+    {
+      qCritical() << e.what();
+    }
+  }
 
   framework->start();
 
   foreach(QSharedPointer<ctkPlugin> plugin, installedPlugins)
-    {
+  {
     plugin->start();
-    }
+  }
 
   QMainWindow mainWindow;
   Ui::MainWindow ui;
   ui.setupUi(&mainWindow);
   if ( argc > 1 )
-    {
+  {
     ui.controlWidget->setAppFileName(argv[1]);
-    }
+  }
 
 //  mainWindow.addDockWidget(static_cast<Qt::DockWidgetArea>(4),new ctkHostAppExampleWidget());
 

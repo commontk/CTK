@@ -34,21 +34,21 @@ class ctkTestWrappedVTKObserver : public QObject
 public:
 
   ctkTestWrappedVTKObserver(QObject * newParent = 0) : QObject(newParent)
-    {
+  {
     this->MyTable = vtkSmartPointer<vtkTable>::New();
-    }
+  }
 
   virtual ~ctkTestWrappedVTKObserver()
-    {
-    }
+  {
+  }
 
 public Q_SLOTS:
 
   /// Example of slot returning a VTK object
   vtkTable* getTable() const
-    {
+{
     return this->MyTable;
-    }
+}
 
 private:
   vtkSmartPointer<vtkTable> MyTable;

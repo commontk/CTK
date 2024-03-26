@@ -71,8 +71,8 @@ void ctkCallback::setCallbackData(void * data)
 void ctkCallback::invoke()
 {
   if (!this->Callback)
-    {
+  {
     return;
-    }
+  }
   (*this->Callback)(this->CallbackData);
 }

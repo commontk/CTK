@@ -44,12 +44,12 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkDateRangeWidget* widget = reinterpret_cast<ctkDateRangeWidget*>(data);
 
   CTKCOMPARE(widget->startDateTime(), QDateTime(QDate(2005, 11, 22)));
   CTKCOMPARE(widget->endDateTime(), QDateTime(QDate(2010, 11, 22)));
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -72,9 +72,9 @@ int ctkDateRangeWidgetEventTranslatorPlayerTest1(int argc, char * argv [])
 
   // ------------------------
   if (!app.arguments().contains("-I"))
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

@@ -56,18 +56,18 @@ public:
   virtual ~ctkErrorLogAbstractModel();
 
   enum ColumnsIds
-    {
+  {
     TimeColumn = 0,
     ThreadIdColumn,
     LogLevelColumn,
     OriginColumn,
     DescriptionColumn,
     MaxColumn = DescriptionColumn
-    };
+  };
 
   enum ItemDataRole{
     DescriptionTextRole = Qt::UserRole + 1
-    };
+  };
 
   /// Register a message handler.
   Q_INVOKABLE bool registerMsgHandler(ctkErrorLogAbstractMessageHandler * msgHandler);

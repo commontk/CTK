@@ -57,7 +57,7 @@ int ctkModelTesterTest1(int argc, char * argv [] )
   delete item;
 
   try
-    {
+  {
     // as we can infer that QStandardItemModel is correct,
     // ctkModelTester shall not fail for any of the actions on the model.
     // Please note here that takeRow() doesn't delete the items so we end up
@@ -71,15 +71,15 @@ int ctkModelTesterTest1(int argc, char * argv [] )
     model.appendRow(items);
     QList<QStandardItem*> items2  = model.takeRow(0);
     if (items2 != items)
-      {
+    {
       std::cerr << "Line : " << __LINE__ << "Error" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
     model.appendRow(items);
     for (int i = 0; i < 10; ++i)
-      {
+    {
       model.appendRow(QList<QStandardItem*>() << new QStandardItem("col1") << new QStandardItem("col2"));
-      }
+    }
     model.takeRow(0);
     model.setHeaderData(0, Qt::Vertical, QString("ID"));
     model.takeRow(model.rowCount() / 2 );
@@ -102,15 +102,15 @@ int ctkModelTesterTest1(int argc, char * argv [] )
     model2.appendColumn(itemsCol);
     QList<QStandardItem*> itemsCol2  = model2.takeColumn(0);
     if (itemsCol2 != itemsCol)
-      {
+    {
       std::cerr << "Line : " << __LINE__ << "Error" << std::endl;
       return EXIT_FAILURE;
-      }
+    }
     model2.appendColumn(itemsCol);
     for (int i = 0; i < 10; ++i)
-      {
+    {
       model2.appendColumn(QList<QStandardItem*>() << new QStandardItem("row1") << new QStandardItem("row2"));
-      }
+    }
     model2.takeColumn(0);
     model2.takeColumn(model2.columnCount() / 2 );
     model2.takeColumn(model2.columnCount() - 1);
@@ -124,19 +124,19 @@ int ctkModelTesterTest1(int argc, char * argv [] )
 
     //------ Test setDataHeader ----------
     for (int i = 0; i < 10; ++i)
-      {
+    {
       QList<QStandardItem*> columns;
       columns << new QStandardItem("row1") << new QStandardItem("row2");
       model2.appendColumn(columns);
       model2.setHorizontalHeaderItem(i,new QStandardItem(QString("Column %1").arg(i)));
-      }
-    model2.setHeaderData(0, Qt::Horizontal, QString("ID"));
     }
+    model2.setHeaderData(0, Qt::Horizontal, QString("ID"));
+  }
   catch (const char* error)
-    {
+  {
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

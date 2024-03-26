@@ -55,9 +55,9 @@ void ctkDICOMInserterWorkerPrivate::setInserterParameters()
   QSharedPointer<ctkDICOMInserterJob> inserterJob =
     qSharedPointerObjectCast<ctkDICOMInserterJob>(q->Job);
   if (!inserterJob)
-    {
+  {
     return;
-    }
+  }
 
   this->Inserter->setDatabaseFilename(inserterJob->databaseFilename());
   this->Inserter->setTagsToPrecache(inserterJob->tagsToPrecache());
@@ -83,7 +83,7 @@ ctkDICOMInserterWorker::ctkDICOMInserterWorker(ctkDICOMInserterWorkerPrivate* pi
 ctkDICOMInserterWorker::~ctkDICOMInserterWorker() = default;
 
 //----------------------------------------------------------------------------
-void ctkDICOMInserterWorker::cancel()
+void ctkDICOMInserterWorker::requestCancel()
 {
   Q_D(const ctkDICOMInserterWorker);
   d->Inserter->cancel();
@@ -96,18 +96,17 @@ void ctkDICOMInserterWorker::run()
   QSharedPointer<ctkDICOMInserterJob> inserterJob =
     qSharedPointerObjectCast<ctkDICOMInserterJob>(this->Job);
   if (!inserterJob)
-    {
+  {
     return;
-    }
+  }
 
-  if (inserterJob->status() == ctkAbstractJob::JobStatus::Stopped)
-    {
-    this->onJobCanceled();
+  if (d->Inserter->wasCanceled())
+  {
+    this->onJobCanceled(d->Inserter->wasCanceled());
     return;
-    }
+  }
 
   inserterJob->setStatus(ctkAbstractJob::JobStatus::Running);
-  emit inserterJob->started();
 
   logger.debug(QString("ctkDICOMInserterWorker : running job %1 in thread %2.\n")
                        .arg(inserterJob->jobUID())
@@ -116,19 +115,18 @@ void ctkDICOMInserterWorker::run()
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSets = inserterJob->jobResponseSetsShared();
   d->Inserter->addJobResponseSets(jobResponseSets);
 
-  if (inserterJob->status() == ctkAbstractJob::JobStatus::Stopped)
-    {
-    this->onJobCanceled();
+  if (d->Inserter->wasCanceled())
+  {
+    this->onJobCanceled(d->Inserter->wasCanceled());
     return;
-    }
+  }
 
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
-    {
+  {
     emit inserterJob->progressJobDetail(jobResponseSet->toVariant());
-    }
+  }
 
   inserterJob->setStatus(ctkAbstractJob::JobStatus::Finished);
-  emit inserterJob->finished();
 }
 
 //----------------------------------------------------------------------------
@@ -139,9 +137,9 @@ void ctkDICOMInserterWorker::setJob(QSharedPointer<ctkAbstractJob> job)
   QSharedPointer<ctkDICOMInserterJob> inserterJob =
     qSharedPointerObjectCast<ctkDICOMInserterJob>(job);
   if (!inserterJob)
-    {
+  {
     return;
-    }
+  }
 
   this->Superclass::setJob(job);
   d->setInserterParameters();

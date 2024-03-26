@@ -78,9 +78,9 @@ int ctkExpandButtonTest1(int argc, char* argv[])
                    pushButton4, SLOT(setVisible(bool)));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(500, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

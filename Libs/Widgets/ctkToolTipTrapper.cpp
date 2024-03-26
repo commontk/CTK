@@ -66,32 +66,32 @@ public:
   ctkToolTipTrapperPrivate(ctkToolTipTrapper& object);
 
   enum EventFilterToDo
-    {
+  {
     EVENT_FILTER_DO_NOTHING,
     EVENT_FILTER_INSTALL,
     EVENT_FILTER_REMOVE
-    };
+  };
 
   static EventFilterToDo getEventFilterToDo(bool beforeToolTipsTrapped,
                                             bool beforeToolTipsWordWrapped,
                                             bool afterToolTipsTrapped,
                                             bool afterToolTipsWordWrapped)
-    {
+  {
     bool eventFilterWasInstalled = beforeToolTipsTrapped || beforeToolTipsWordWrapped;
     bool eventFilterShouldBeInstalled = afterToolTipsTrapped || afterToolTipsWordWrapped;
     if (eventFilterWasInstalled == eventFilterShouldBeInstalled)
-      {
+    {
       return EVENT_FILTER_DO_NOTHING;
-      }
+    }
     else if (eventFilterShouldBeInstalled)
-      {
+    {
       return EVENT_FILTER_INSTALL;
-      }
+    }
     else
-      {
+    {
       return EVENT_FILTER_REMOVE;
-      }
-    };
+    }
+  };
 
   bool ToolTipsTrapped;
   bool ToolTipsWordWrapped;
@@ -148,9 +148,9 @@ void ctkToolTipTrapper::setToolTipsTrapped(bool toolTipsTrapped)
 {
   Q_D(ctkToolTipTrapper);
   if (toolTipsTrapped == d->ToolTipsTrapped)
-    {
+  {
     return;
-    }
+  }
   ctkToolTipTrapperPrivate::EventFilterToDo todo =
       ctkToolTipTrapperPrivate::getEventFilterToDo(d->ToolTipsTrapped,
                                                    d->ToolTipsWordWrapped,
@@ -158,13 +158,13 @@ void ctkToolTipTrapper::setToolTipsTrapped(bool toolTipsTrapped)
                                                    d->ToolTipsWordWrapped);
   d->ToolTipsTrapped = toolTipsTrapped;
   if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_INSTALL)
-    {
+  {
     QCoreApplication::instance()->installEventFilter(this);
-    }
+  }
   else if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_REMOVE)
-    {
+  {
     QCoreApplication::instance()->removeEventFilter(this);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -172,9 +172,9 @@ void ctkToolTipTrapper::setToolTipsWordWrapped(bool toolTipsWordWrapped)
 {
   Q_D(ctkToolTipTrapper);
   if (toolTipsWordWrapped == d->ToolTipsWordWrapped)
-    {
+  {
     return;
-    }
+  }
   ctkToolTipTrapperPrivate::EventFilterToDo todo =
       ctkToolTipTrapperPrivate::getEventFilterToDo(d->ToolTipsTrapped,
                                                    d->ToolTipsWordWrapped,
@@ -182,13 +182,13 @@ void ctkToolTipTrapper::setToolTipsWordWrapped(bool toolTipsWordWrapped)
                                                    toolTipsWordWrapped);
   d->ToolTipsWordWrapped = toolTipsWordWrapped;
   if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_INSTALL)
-    {
+  {
     QCoreApplication::instance()->installEventFilter(this);
-    }
+  }
   else if (todo == ctkToolTipTrapperPrivate::EVENT_FILTER_REMOVE)
-    {
+  {
     QCoreApplication::instance()->removeEventFilter(this);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -197,28 +197,28 @@ bool ctkToolTipTrapper::eventFilter(QObject* watched, QEvent* input_event)
   Q_UNUSED(watched);
   if(input_event->type() == QEvent::ToolTip
      || input_event->type() == QEvent::ToolTipChange)
-    {
+  {
     Q_D(ctkToolTipTrapper);
     // Trap tooltips so that they are not shown.
     if (d->ToolTipsTrapped)
-      {
+    {
       return true;
-      }
+    }
     // Convert plain text to rich text to word wrap tooltips, and trigger new
     // event to show the rich tooltip.
     // If tooltip is already rich text or empty, let the regular mechanism
     // handle it.
     if (d->ToolTipsWordWrapped)
-      {
+    {
       QWidget* widget = qobject_cast<QWidget *>(watched);
       if (widget && !widget->toolTip().isEmpty()
           && !Qt::mightBeRichText(widget->toolTip()))
-        {
+      {
         QString richToolTip = Qt::convertFromPlainText(widget->toolTip(), Qt::WhiteSpaceNormal);
         widget->setToolTip(richToolTip);
         return true;
-        }
       }
     }
+  }
   return false;
 }

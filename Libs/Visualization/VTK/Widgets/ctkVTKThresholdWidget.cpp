@@ -96,40 +96,40 @@ void ctkVTKThresholdWidgetPrivate::guessThreshold(double& min, double& max, doub
   max = this->ThresholdSliderWidget->maximum();
   opacity = 1.;
   if (!this->PiecewiseFunction || this->PiecewiseFunction->GetSize() == 0)
-    {
+  {
     return;
-    }
+  }
   int minIndex;
   // The min index is the point before the opacity is >0
   for (minIndex=0; minIndex < this->PiecewiseFunction->GetSize(); ++minIndex)
-    {
+  {
     double node[4];
     this->PiecewiseFunction->GetNodeValue(minIndex, node);
     if (node[1] > 0.)
-      {
+    {
       opacity = node[1];
       max = node[0];
       break;
-      }
+    }
     min = node[0];
-    }
+  }
   if (minIndex == this->PiecewiseFunction->GetSize())
-    {
+  {
     return;
-    }
+  }
   int maxIndex = minIndex + 1;
   for (;maxIndex < this->PiecewiseFunction->GetSize(); ++maxIndex)
-    {
+  {
     double node[4];
     this->PiecewiseFunction->GetNodeValue(maxIndex, node);
     // use the max opacity
     opacity = std::max(opacity, node[1]);
     if (node[1] < opacity)
-      {
+    {
       break;
-      }
-    max = node[0];
     }
+    max = node[0];
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -150,7 +150,7 @@ double ctkVTKThresholdWidgetPrivate::nextHigher(double value)
   typedef union {
       long long i64;
       double d64;
-    } dbl_64;
+  } dbl_64;
   dbl_64 d;
   d.d64 = value;
   d.i64 += (value >= 0) ? 1 : -1;
@@ -161,13 +161,13 @@ double ctkVTKThresholdWidgetPrivate::nextHigher(double value)
 double ctkVTKThresholdWidgetPrivate::safeX(double value, double& previous)const
 {
   if (value < previous)
-    {
+  {
     value = previous;
-    }
+  }
   if (value == previous && !this->PiecewiseFunction->GetAllowDuplicateScalars())
-    {
+  {
     value = this->nextHigher(value);
-    }
+  }
   previous = value;
   return value;
 }
@@ -177,28 +177,28 @@ void ctkVTKThresholdWidgetPrivate::setThreshold(double min, double max, double o
 {
   Q_Q(ctkVTKThresholdWidget);
   if (!this->PiecewiseFunction)
-    {
+  {
     return;
-    }
+  }
 
   double range[2];
   this->ThresholdSliderWidget->range(range);
 
   int nodeCount = 0;
   if (this->UseSharpness)
-    {
+  {
     //        +------2
     //        |      |
     // 0------1      +----3
     nodeCount = 4;
-    }
+  }
   else
-    {
+  {
     //        2------3
     //        |      |
     // 0------1      4----5
     nodeCount = 6;
-    }
+  }
   double (*nodes)[4] = new double[nodeCount][4];
 
   double previous = VTK_DOUBLE_MIN;
@@ -219,13 +219,13 @@ void ctkVTKThresholdWidgetPrivate::setThreshold(double min, double max, double o
   ++index;
 
   if (!this->UseSharpness)
-    {
+  {
     nodes[index][0] = this->safeX(min, previous);
     nodes[index][1] = opacity;
     nodes[index][2] = 0.5;
     nodes[index][3] = 0.;
     ++index;
-    }
+  }
 
   // Ending threshold point with a sharp slope that jumps back to a 0 opacity
   nodes[index][0] = this->safeX(max, previous);;
@@ -235,13 +235,13 @@ void ctkVTKThresholdWidgetPrivate::setThreshold(double min, double max, double o
   ++index;
 
   if (!this->UseSharpness)
-    {
+  {
     nodes[index][0] = this->safeX(max, previous);
     nodes[index][1] = 0.;
     nodes[index][2] = 0.5;
     nodes[index][3] = 0.;
     ++index;
-    }
+  }
 
   // End of the curve, always y = 0
   nodes[index][0] = this->safeX(range[1], previous);
@@ -262,34 +262,34 @@ void ctkVTKThresholdWidgetPrivate
 ::setNodes(double nodeValues[][4], const int nodeCount)
 {
   for(int i = 0; i < nodeCount; ++i)
-    {
+  {
     int index = i;
     double node[4];
     // Search the index where to write the node
     for (int j = 0; j < i; ++j)
-      {
+    {
       this->PiecewiseFunction->GetNodeValue(j, node);
       bool different = node[0] != nodeValues[j][0] ||
                        node[1] != nodeValues[j][1] ||
                        node[2] != nodeValues[j][2] ||
                        node[3] != nodeValues[j][3];
       if (different)
-        {
+      {
         index = j;
         break;
-        }
       }
+    }
     if (index >= this->PiecewiseFunction->GetSize())
-      {
+    {
       node[0] = VTK_DOUBLE_MAX;
-      }
+    }
     else if (index == i)
-      {
+    {
       this->PiecewiseFunction->GetNodeValue(index, node);
-      }
+    }
     // else we already have node correctly set
     if (!this->UseSharpness)
-      {
+    {
       // be smart in order to reduce "jumps"
       // Here is the intermediate steps we try to avoid:
       // Start
@@ -306,24 +306,24 @@ void ctkVTKThresholdWidgetPrivate
       // 0-----1  4--5
       if ((i == 1 && node[0] < nodeValues[i][0]) ||
           (i == 3 && node[0] < nodeValues[i][0]))
-        {
+      {
         this->setNodeValue(index + 1, nodeValues[i+1]);
-        }
       }
-    this->setNodeValue(index, nodeValues[i]);
     }
+    this->setNodeValue(index, nodeValues[i]);
+  }
 }
 
 // ----------------------------------------------------------------------------
 void ctkVTKThresholdWidgetPrivate::setNodeValue(int index, double* nodeValues)
 {
   if (index >= this->PiecewiseFunction->GetSize())
-    {
+  {
     this->PiecewiseFunction->AddPoint(
       nodeValues[0], nodeValues[1], nodeValues[2], nodeValues[3]);
-    }
+  }
   else
-    {
+  {
     double values[4];
     this->PiecewiseFunction->GetNodeValue(index, values);
     // Updating the node will fire a modified event which can be costly
@@ -332,10 +332,10 @@ void ctkVTKThresholdWidgetPrivate::setNodeValue(int index, double* nodeValues)
         values[1] != nodeValues[1] ||
         values[2] != nodeValues[2] ||
         values[3] != nodeValues[3])
-      {
+    {
       this->PiecewiseFunction->SetNodeValue(index, nodeValues);
-      }
     }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -368,28 +368,28 @@ void ctkVTKThresholdWidget
 {
   Q_D(ctkVTKThresholdWidget);
   if (d->PiecewiseFunction == newFunction)
-    {
+  {
     return;
-    }
+  }
   this->qvtkReconnect(d->PiecewiseFunction, newFunction, vtkCommand::ModifiedEvent,
                       this, SLOT(updateFromPiecewiseFunction()));
   d->PiecewiseFunction = newFunction;
 
   if (!d->UserRange)
-    {
+  {
     double range[2] = {0., 1.};
     if (d->PiecewiseFunction)
-      {
-      d->PiecewiseFunction->GetRange(range);
-      }
-    d->setRange(range[0], range[1]);
-    }
-  if (d->PiecewiseFunction)
     {
+      d->PiecewiseFunction->GetRange(range);
+    }
+    d->setRange(range[0], range[1]);
+  }
+  if (d->PiecewiseFunction)
+  {
     double min, max, value;
     d->guessThreshold(min, max, value);
     d->setThreshold(min, max, value);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -398,9 +398,9 @@ void ctkVTKThresholdWidget::updateFromPiecewiseFunction()
   Q_D(ctkVTKThresholdWidget);
 
   if (!d->PiecewiseFunction)
-    {
+  {
     return;
-    }
+  }
   double range[2];
   d->ThresholdSliderWidget->range(range);
   double minThreshold = range[0];
@@ -409,21 +409,21 @@ void ctkVTKThresholdWidget::updateFromPiecewiseFunction()
   double node[4];
   int minIndex = 1;
   if (d->PiecewiseFunction->GetSize() > minIndex)
-    {
+  {
     d->PiecewiseFunction->GetNodeValue(minIndex, node);
     minThreshold = node[0];
-    }
+  }
   int maxIndex = d->UseSharpness ? 2 : 3;
   if (d->PiecewiseFunction->GetSize() > maxIndex)
-    {
+  {
     d->PiecewiseFunction->GetNodeValue(maxIndex, node);
     maxThreshold = node[0];
     opacity = node[1];
-    }
+  }
   if (d->PiecewiseFunction->GetSize() > 3)
-    {
+  {
     d->PiecewiseFunction->GetNodeValue(3, node);
-    }
+  }
   bool wasBlocking = d->ThresholdSliderWidget->blockSignals(true);
   d->ThresholdSliderWidget->setValues(minThreshold, maxThreshold);
   d->ThresholdSliderWidget->blockSignals(wasBlocking);
@@ -489,9 +489,9 @@ void ctkVTKThresholdWidget::setUseSharpness(bool use)
 {
   Q_D(ctkVTKThresholdWidget);
   if (use == d->UseSharpness)
-    {
+  {
     return;
-    }
+  }
   d->UseSharpness = use;
 
   double min, max, value;

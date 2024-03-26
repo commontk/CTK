@@ -43,9 +43,9 @@ class pqWidgetEventTranslator;
 do \
 {\
     if (!ctkEventTranslatorPlayerWidget::compare(actual, expected, #actual, #expected, __FILE__, __LINE__))\
-      { \
+    { \
       return;\
-      } \
+    } \
 } while (0)
 
 //-----------------------------------------------------------------------------

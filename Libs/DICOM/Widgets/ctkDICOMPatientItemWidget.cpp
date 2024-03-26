@@ -30,8 +30,9 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
-#include "ctkDICOMScheduler.h"
+#include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
+#include "ctkDICOMScheduler.h"
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMSeriesItemWidget.h"
@@ -85,6 +86,7 @@ public:
   QStringList FilteringModalities;
 
   QList<ctkDICOMStudyItemWidget*> StudyItemWidgetsList;
+  bool IsGUIUpdating;
 };
 
 //----------------------------------------------------------------------------
@@ -105,6 +107,8 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
   this->VisualDICOMBrowser = nullptr;
+
+  this->IsGUIUpdating = false;
 }
 
 //----------------------------------------------------------------------------
@@ -132,20 +136,20 @@ void ctkDICOMPatientItemWidgetPrivate::init(QWidget* parentWidget)
 QString ctkDICOMPatientItemWidgetPrivate::getPatientItemFromPatientID(const QString& patientID)
 {
   if (!this->DicomDatabase)
-    {
+  {
     return "";
-    }
+  }
 
   QStringList patientList = this->DicomDatabase->patients();
   foreach (QString patientItem, patientList)
-    {
+  {
     QString patientItemID = this->DicomDatabase->fieldForPatient("PatientID", patientItem);
 
     if (patientID == patientItemID)
-      {
+    {
       return patientItem;
-      }
     }
+  }
 
   return "";
 }
@@ -163,18 +167,18 @@ bool ctkDICOMPatientItemWidgetPrivate::isStudyItemAlreadyAdded(const QString& st
 {
   bool alreadyAdded = false;
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, this->StudyItemWidgetsList)
-    {
+  {
     if (!studyItemWidget)
-      {
+    {
       continue;
-      }
+    }
 
     if (studyItemWidget->studyItem() == studyItem)
-      {
+    {
       alreadyAdded = true;
       break;
-      }
     }
+  }
 
   return alreadyAdded;
 }
@@ -185,142 +189,186 @@ void ctkDICOMPatientItemWidgetPrivate::clearLayout(QLayout* layout, bool deleteW
   Q_Q(ctkDICOMPatientItemWidget);
 
   if (!layout)
-    {
+  {
     return;
-    }
+  }
 
   this->StudyItemWidgetsList.clear();
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, this->StudyItemWidgetsList)
-    {
+  {
     if (!studyItemWidget)
-      {
+    {
       continue;
-      }
+    }
 
     q->disconnect(studyItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
                   this->VisualDICOMBrowser.data(), SLOT(showStudyContextMenu(const QPoint&)));
 
-    }
+  }
 
   while (QLayoutItem* item = layout->takeAt(0))
-    {
+  {
     if (deleteWidgets)
-      {
+    {
       if (QWidget* widget = item->widget())
-        {
+      {
         widget->deleteLater();
-        }
       }
+    }
 
     if (QLayout* childLayout = item->layout())
-      {
+    {
       clearLayout(childLayout, deleteWidgets);
-      }
+    }
 
     delete item;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void ctkDICOMPatientItemWidgetPrivate::createStudies()
 {
   Q_Q(ctkDICOMPatientItemWidget);
+  if (this->IsGUIUpdating)
+  {
+    return;
+  }
 
   if (!this->DicomDatabase)
-    {
+  {
     logger.error("createStudies failed, no DICOM Database has been set. \n");
     return;
-    }
+  }
 
   QLayout* studiesListWidgetLayout = this->StudiesListWidget->layout();
   if (this->PatientItem.isEmpty())
-    {
+  {
     this->PatientNameValueLabel->setText("");
     this->PatientIDValueLabel->setText("");
     this->PatientSexValueLabel->setText("");
     this->PatientBirthDateValueLabel->setText("");
     return;
-    }
+  }
   else
-    {
+  {
     QString patientName = this->DicomDatabase->fieldForPatient("PatientsName", this->PatientItem);
     patientName.replace(R"(^)", R"( )");
     this->PatientNameValueLabel->setText(patientName);
     this->PatientIDValueLabel->setText(this->DicomDatabase->fieldForPatient("PatientID", this->PatientItem));
     this->PatientSexValueLabel->setText(this->DicomDatabase->fieldForPatient("PatientsSex", this->PatientItem));
     this->PatientBirthDateValueLabel->setText(this->formatDate(this->DicomDatabase->fieldForPatient("PatientsBirthDate", this->PatientItem)));
-    }
+  }
 
   QStringList studiesList = this->DicomDatabase->studiesForPatient(this->PatientItem);
-
   if (studiesList.count() == 0)
-    {
+  {
     return;
+  }
+
+  this->IsGUIUpdating = true;
+
+  // Remove study widgets from vertical layout (need sorting)
+  for (int studyIndex = 0; studyIndex < this->StudyItemWidgetsList.size(); ++studyIndex)
+  {
+    ctkDICOMStudyItemWidget* studyItemWidget =
+        qobject_cast<ctkDICOMStudyItemWidget*>(this->StudyItemWidgetsList[studyIndex]);
+    if (!studyItemWidget)
+    {
+      continue;
     }
 
-  // Filter with studyDescription and studyDate and sort by Date
-  QMap<long long, QString> studiesMap;
+    this->StudiesListWidget->layout()->removeWidget(studyItemWidget);
+  }
+
+  // Filter with studyDescription and studyDate
   foreach (QString studyItem, studiesList)
-    {
+  {
     if (this->isStudyItemAlreadyAdded(studyItem))
-      {
+    {
       continue;
-      }
+    }
 
     QString studyInstanceUID = this->DicomDatabase->fieldForStudy("StudyInstanceUID", studyItem);
     if (studyInstanceUID.isEmpty())
-      {
+    {
       continue;
-      }
+    }
 
     QString studyDateString = this->DicomDatabase->fieldForStudy("StudyDate", studyItem);
     studyDateString.replace(QString("-"), QString(""));
     QString studyDescription = this->DicomDatabase->fieldForStudy("StudyDescription", studyItem);
 
     if (studyDateString.isEmpty())
-      {
-      studyDateString = this->DicomDatabase->fieldForPatient("PatientsBirthDate", this->PatientItem);
-      if (studyDateString.isEmpty())
-        {
-        studyDateString = "19000101";
-        }
-      }
+    {
+      studyDateString = QDate::currentDate().toString("yyyyMMdd");
+    }
 
     if ((!this->FilteringStudyDescription.isEmpty() &&
          !studyDescription.contains(this->FilteringStudyDescription, Qt::CaseInsensitive)))
-      {
+    {
       continue;
-      }
+    }
 
     int nDays = ctkDICOMPatientItemWidget::getNDaysFromFilteringDate(this->FilteringDate);
     QDate studyDate = QDate::fromString(studyDateString, "yyyyMMdd");
     if (nDays != -1)
-      {
+    {
       QDate endDate = QDate::currentDate();
       QDate startDate = endDate.addDays(-nDays);
       if (studyDate < startDate || studyDate > endDate)
-        {
-        continue;
-        }
-      }
-    long long date = studyDate.toJulianDay();
-    while (studiesMap.contains(date))
       {
-      date++;
+        continue;
       }
-    // QMap automatically sort in ascending with the key,
-    // but we want descending (latest study should be in the first row)
-    long long key = LLONG_MAX - date;
-    studiesMap[key] = studyItem;
     }
 
-  foreach (QString studyItem, studiesMap)
-    {
     q->addStudyItemWidget(studyItem);
+  }
+
+  // sort by date
+  QMap<long long, ctkDICOMStudyItemWidget*> studiesMap;
+  for (int studyIndex = 0; studyIndex < this->StudyItemWidgetsList.size(); ++studyIndex)
+  {
+    ctkDICOMStudyItemWidget* studyItemWidget =
+        qobject_cast<ctkDICOMStudyItemWidget*>(this->StudyItemWidgetsList[studyIndex]);
+    if (!studyItemWidget)
+    {
+      continue;
     }
+
+    QString studyItem = studyItemWidget->studyItem();
+    QString studyDateString = this->DicomDatabase->fieldForStudy("StudyDate", studyItem);
+    studyDateString.replace(QString("-"), QString(""));
+    QDate studyDate = QDate::fromString(studyDateString, "yyyyMMdd");
+    long long julianDate = studyDate.toJulianDay();
+    // Add some significance zeros to the sorting key
+    julianDate *= 100;
+    // QMap automatically sort in ascending with the key,
+    // but we want descending (latest study should be in the first row)
+    long long key = LLONG_MAX - julianDate;
+    // Increase the key if JulianDay is already present
+    while (studiesMap.contains(key))
+    {
+      key++;
+    }
+
+    studiesMap[key] = studyItemWidget;
+  }
+
+  int cont = 0;
+  foreach (ctkDICOMStudyItemWidget* studyItemWidget, studiesMap)
+  {
+    this->StudiesListWidget->layout()->addWidget(studyItemWidget);
+    if (cont < this->NumberOfStudiesPerPatient)
+    {
+      studyItemWidget->setCollapsed(false);
+    }
+    cont++;
+  }
 
   QSpacerItem* verticalSpacer = new QSpacerItem(0, 5, QSizePolicy::Fixed, QSizePolicy::Expanding);
   studiesListWidgetLayout->addItem(verticalSpacer);
+
+  this->IsGUIUpdating = false;
 }
 
 //----------------------------------------------------------------------------
@@ -471,18 +519,18 @@ void ctkDICOMPatientItemWidget::setScheduler(ctkDICOMScheduler& scheduler)
 {
   Q_D(ctkDICOMPatientItemWidget);
   if (d->Scheduler)
-    {
+  {
     QObject::disconnect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                         this, SLOT(updateGUIFromScheduler(QVariant)));
-    }
+  }
 
   d->Scheduler = QSharedPointer<ctkDICOMScheduler>(&scheduler, skipDelete);
 
   if (d->Scheduler)
-    {
+  {
     QObject::connect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                      this, SLOT(updateGUIFromScheduler(QVariant)));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -490,18 +538,18 @@ void ctkDICOMPatientItemWidget::setScheduler(QSharedPointer<ctkDICOMScheduler> s
 {
   Q_D(ctkDICOMPatientItemWidget);
   if (d->Scheduler)
-    {
+  {
     QObject::disconnect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                         this, SLOT(updateGUIFromScheduler(QVariant)));
-    }
+  }
 
   d->Scheduler = scheduler;
 
   if (d->Scheduler)
-    {
+  {
     QObject::connect(d->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
                      this, SLOT(updateGUIFromScheduler(QVariant)));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -544,7 +592,7 @@ int ctkDICOMPatientItemWidget::getNDaysFromFilteringDate(DateType FilteringDate)
 {
   int nDays = 0;
   switch (FilteringDate)
-    {
+  {
     case ctkDICOMPatientItemWidget::DateType::Any:
       nDays = -1;
       break;
@@ -563,7 +611,7 @@ int ctkDICOMPatientItemWidget::getNDaysFromFilteringDate(DateType FilteringDate)
     case ctkDICOMPatientItemWidget::DateType::LastYear:
       nDays = 365;
       break;
-    }
+  }
 
   return nDays;
 }
@@ -574,10 +622,10 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   Q_D(ctkDICOMPatientItemWidget);
 
   if (!d->DicomDatabase)
-    {
+  {
     logger.error("addStudyItemWidget failed, no DICOM Database has been set. \n");
     return;
-    }
+  }
 
   QString studyInstanceUID = d->DicomDatabase->fieldForStudy("StudyInstanceUID", studyItem);
   QString studyID = d->DicomDatabase->fieldForStudy("StudyID", studyItem);
@@ -590,21 +638,21 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   studyItemWidget->setPatientID(d->PatientID);
   studyItemWidget->setStudyInstanceUID(studyInstanceUID);
   if (formattedStudyDate.isEmpty() && studyID.isEmpty())
-    {
+  {
     studyItemWidget->setTitle(tr("Study"));
-    }
+  }
   else if (formattedStudyDate.isEmpty())
-    {
+  {
     studyItemWidget->setTitle(tr("Study ID %1").arg(studyID));
-    }
+  }
   else if (studyID.isEmpty())
-    {
+  {
     studyItemWidget->setTitle(tr("Study --- %1").arg(formattedStudyDate));
-    }
+  }
   else
-    {
+  {
     studyItemWidget->setTitle(tr("Study ID  %1  ---  %2").arg(studyID).arg(formattedStudyDate));
-    }
+  }
 
   studyItemWidget->setDescription(studyDescription);
   studyItemWidget->setThumbnailSize(d->ThumbnailSize);
@@ -612,18 +660,9 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   studyItemWidget->setFilteringModalities(d->FilteringModalities);
   studyItemWidget->setDicomDatabase(d->DicomDatabase);
   studyItemWidget->setScheduler(d->Scheduler);
-  // Show in default (and start query/retrieve) only for the first 2 studies
-  // NOTE: in the layout for each studyItemWidget there is a QSpacerItem
-  if (d->StudiesListWidget->layout()->count() < d->NumberOfStudiesPerPatient * 2)
-    {
-    studyItemWidget->generateSeries();
-    }
-  else
-    {
-    studyItemWidget->setCollapsed(true);
-    this->connect(studyItemWidget->collapsibleGroupBox(), SIGNAL(toggled(bool)),
-                  studyItemWidget, SLOT(generateSeries(bool)));
-    }
+  studyItemWidget->setCollapsed(true);
+  this->connect(studyItemWidget->collapsibleGroupBox(), SIGNAL(toggled(bool)),
+                studyItemWidget, SLOT(generateSeries(bool)));
   studyItemWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
   this->connect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemDoubleClicked(QTableWidgetItem *)),
@@ -635,7 +674,6 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   this->connect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemSelectionChanged()),
                 this, SLOT(raiseSelectedSeriesJobsPriority()));
 
-  d->StudiesListWidget->layout()->addWidget(studyItemWidget);
   d->StudyItemWidgetsList.append(studyItemWidget);
 }
 
@@ -645,13 +683,13 @@ void ctkDICOMPatientItemWidget::removeStudyItemWidget(const QString& studyItem)
   Q_D(ctkDICOMPatientItemWidget);
 
   for (int studyIndex = 0; studyIndex < d->StudyItemWidgetsList.size(); ++studyIndex)
-    {
+  {
     ctkDICOMStudyItemWidget* studyItemWidget =
       qobject_cast<ctkDICOMStudyItemWidget*>(d->StudyItemWidgetsList[studyIndex]);
     if (!studyItemWidget || studyItemWidget->studyItem() != studyItem)
-      {
+    {
       continue;
-      }
+    }
 
     this->disconnect(studyItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
                      d->VisualDICOMBrowser.data(), SLOT(showStudyContextMenu(const QPoint&)));
@@ -662,7 +700,7 @@ void ctkDICOMPatientItemWidget::removeStudyItemWidget(const QString& studyItem)
     d->StudyItemWidgetsList.removeOne(studyItemWidget);
     delete studyItemWidget;
     break;
-  }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -670,9 +708,9 @@ void ctkDICOMPatientItemWidget::setSelection(bool selected)
 {
   Q_D(ctkDICOMPatientItemWidget);
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, d->StudyItemWidgetsList)
-    {
+  {
     studyItemWidget->setSelection(selected);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -682,9 +720,9 @@ void ctkDICOMPatientItemWidget::generateStudies()
 
   d->createStudies();
   if (d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
-    {
+  {
     d->Scheduler->queryStudies(d->PatientID, QThread::NormalPriority);
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -694,16 +732,16 @@ void ctkDICOMPatientItemWidget::updateGUIFromScheduler(const QVariant& data)
 
   ctkDICOMJobDetail td = data.value<ctkDICOMJobDetail>();
   if (td.JobUID.isEmpty())
-    {
+  {
     d->createStudies();
-    }
+  }
 
   if (td.JobUID.isEmpty() ||
       td.JobType != ctkDICOMJobResponseSet::JobType::QueryStudies ||
       td.PatientID != d->PatientID)
-    {
+  {
     return;
-    }
+  }
 
   d->createStudies();
 }
@@ -714,38 +752,38 @@ void ctkDICOMPatientItemWidget::raiseSelectedSeriesJobsPriority()
   Q_D(ctkDICOMPatientItemWidget);
 
   if (!d->Scheduler || d->Scheduler->getNumberOfQueryRetrieveServers() == 0)
-    {
+  {
     logger.error("raiseSelectedSeriesJobsPriority failed, no task pool has been set. \n");
     return;
-    }
+  }
 
   QList<ctkDICOMSeriesItemWidget*> seriesWidgets;
   QList<ctkDICOMSeriesItemWidget*> selectedSeriesWidgets;
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, d->StudyItemWidgetsList)
-    {
+  {
     if (!studyItemWidget)
-      {
+    {
       continue;
-      }
+    }
 
     QTableWidget* seriesListTableWidget = studyItemWidget->seriesListTableWidget();
     for (int row = 0; row < seriesListTableWidget->rowCount(); row++)
-      {
+    {
       for (int column = 0; column < seriesListTableWidget->columnCount(); column++)
-        {
+      {
         ctkDICOMSeriesItemWidget* seriesItemWidget =
           qobject_cast<ctkDICOMSeriesItemWidget*>(seriesListTableWidget->cellWidget(row, column));
         seriesWidgets.append(seriesItemWidget);
-        }
       }
+    }
 
     QList<QTableWidgetItem*> selectedItems = seriesListTableWidget->selectedItems();
     foreach (QTableWidgetItem* selectedItem, selectedItems)
-      {
+    {
       if (!selectedItem)
-        {
+      {
         continue;
-        }
+      }
 
       int row = selectedItem->row();
       int column = selectedItem->column();
@@ -753,25 +791,25 @@ void ctkDICOMPatientItemWidget::raiseSelectedSeriesJobsPriority()
         qobject_cast<ctkDICOMSeriesItemWidget*>(seriesListTableWidget->cellWidget(row, column));
 
       selectedSeriesWidgets.append(seriesItemWidget);
-      }
     }
+  }
 
   QStringList selectedSeriesInstanceUIDs;
   foreach (ctkDICOMSeriesItemWidget* seriesWidget, seriesWidgets)
-    {
+  {
     if (!seriesWidget)
-      {
+    {
       continue;
-      }
+    }
 
     bool widgetIsSelected = selectedSeriesWidgets.contains(seriesWidget);
     if (widgetIsSelected)
-      {
+    {
       selectedSeriesInstanceUIDs.append(seriesWidget->seriesInstanceUID());
-      }
+    }
 
     seriesWidget->setRaiseJobsPriority(widgetIsSelected);
-    }
+  }
 
   d->Scheduler->raiseJobsPriorityForSeries(selectedSeriesInstanceUIDs);
 }
@@ -783,33 +821,33 @@ void ctkDICOMPatientItemWidget::onSeriesItemClicked()
 
   QTableWidget* seriesTable = qobject_cast<QTableWidget*>(sender());
   if (!seriesTable)
-    {
+  {
     return;
-    }
+  }
 
   if (QApplication::keyboardModifiers() & (Qt::ControlModifier | Qt::ShiftModifier))
-    {
+  {
     return;
-    }
+  }
 
   if (seriesTable->selectedItems().count() != 1)
-    {
+  {
     return;
-    }
+  }
 
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, d->StudyItemWidgetsList)
-    {
+  {
     if (!studyItemWidget)
-      {
+    {
       continue;
-      }
+    }
 
     QTableWidget* studySeriesTable = studyItemWidget->seriesListTableWidget();
     if (studySeriesTable == seriesTable)
-      {
+    {
       continue;
-      }
+    }
 
     studySeriesTable->clearSelection();
-    }
+  }
 }

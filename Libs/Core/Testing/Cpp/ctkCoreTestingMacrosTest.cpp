@@ -69,13 +69,13 @@ int TestCheckQVariantFailure();
 //----------------------------------------------------------------------------
 #define TestMacro(MACRO_NAME) \
   if (Test##MACRO_NAME##Success() != EXIT_SUCCESS) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    } \
+  } \
   if (Test##MACRO_NAME##Failure() != EXIT_FAILURE) \
-    { \
+  { \
     return EXIT_FAILURE; \
-    }
+  }
 
 //----------------------------------------------------------------------------
 int ctkCoreTestingMacrosTest(int , char * [])

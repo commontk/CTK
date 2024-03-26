@@ -43,7 +43,7 @@ protected:
 
 public:
   ctkDICOMServerPrivate(ctkDICOMServer& obj);
-  ~ctkDICOMServerPrivate() = default;
+  ~ctkDICOMServerPrivate();
 
   QString ConnectionName;
   bool QueryRetrieveEnabled;
@@ -56,7 +56,7 @@ public:
   bool KeepAssociationOpen;
   QString MoveDestinationAETitle;
   int ConnectionTimeout;
-  QSharedPointer<ctkDICOMServer> ProxyServer;
+  ctkDICOMServer* ProxyServer;
 };
 
 //------------------------------------------------------------------------------
@@ -78,6 +78,16 @@ ctkDICOMServerPrivate::ctkDICOMServerPrivate(ctkDICOMServer& obj)
   this->Port = 80;
   this->RetrieveProtocol = ctkDICOMServer::RetrieveProtocol::CGET;
   this->ProxyServer = nullptr;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMServerPrivate::~ctkDICOMServerPrivate()
+{
+  if (this->ProxyServer)
+    {
+    delete this->ProxyServer;
+    this->ProxyServer = nullptr;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -211,13 +221,13 @@ void ctkDICOMServer::setRetrieveProtocolAsString(const QString& protocolString)
   Q_D(ctkDICOMServer);
 
   if (protocolString == "CGET")
-    {
+  {
     d->RetrieveProtocol = RetrieveProtocol::CGET;
-    }
+  }
   else if (protocolString == "CMOVE")
-    {
+  {
     d->RetrieveProtocol = RetrieveProtocol::CMOVE;
-    }
+  }
   /*else if (protocolString == "WADO") To Do
     {
     d->RetrieveProtocol = RetrieveProtocol::WADO;
@@ -231,7 +241,7 @@ QString ctkDICOMServer::retrieveProtocolAsString() const
 
   QString protocolString = "";
   switch (d->RetrieveProtocol)
-    {
+  {
     case RetrieveProtocol::CGET:
       protocolString = "CGET";
       break;
@@ -243,7 +253,7 @@ QString ctkDICOMServer::retrieveProtocolAsString() const
       break; */
     default:
       break;
-    }
+  }
 
   return protocolString;
 }
@@ -265,65 +275,66 @@ QString ctkDICOMServer::moveDestinationAETitle() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMServer::setKeepAssociationOpen(bool keepOpen)
+void ctkDICOMServer::setKeepAssociationOpen(const bool& keepOpen)
 {
   Q_D(ctkDICOMServer);
   d->KeepAssociationOpen = keepOpen;
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMServer::keepAssociationOpen()
+bool ctkDICOMServer::keepAssociationOpen() const
 {
   Q_D(const ctkDICOMServer);
   return d->KeepAssociationOpen;
 }
 
 //-----------------------------------------------------------------------------
-void ctkDICOMServer::setConnectionTimeout(int timeout)
+void ctkDICOMServer::setConnectionTimeout(const int& timeout)
 {
   Q_D(ctkDICOMServer);
   d->ConnectionTimeout = timeout;
 }
 
 //-----------------------------------------------------------------------------
-int ctkDICOMServer::connectionTimeout()
+int ctkDICOMServer::connectionTimeout() const
 {
   Q_D(const ctkDICOMServer);
   return d->ConnectionTimeout;
 }
 
 //----------------------------------------------------------------------------
-static void skipDelete(QObject* obj)
-{
-  Q_UNUSED(obj);
-  // this deleter does not delete the object from memory
-  // useful if the pointer is not owned by the smart pointer
-}
-
-//----------------------------------------------------------------------------
 ctkDICOMServer* ctkDICOMServer::proxyServer() const
-{
-  Q_D(const ctkDICOMServer);
-  return d->ProxyServer.data();
-}
-
-//----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMServer> ctkDICOMServer::proxyServerShared() const
 {
   Q_D(const ctkDICOMServer);
   return d->ProxyServer;
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServer::setProxyServer(ctkDICOMServer& proxyServer)
+void ctkDICOMServer::setProxyServer(const ctkDICOMServer& proxyServer)
 {
   Q_D(ctkDICOMServer);
-  d->ProxyServer = QSharedPointer<ctkDICOMServer>(&proxyServer, skipDelete);
+  d->ProxyServer = proxyServer.clone();
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMServer::setProxyServer(QSharedPointer<ctkDICOMServer> proxyServer)
+ctkDICOMServer *ctkDICOMServer::clone() const
 {
-  Q_D(ctkDICOMServer);
-  d->ProxyServer = proxyServer;
+  ctkDICOMServer* newServer = new ctkDICOMServer;
+  newServer->setConnectionName(this->connectionName());
+  newServer->setQueryRetrieveEnabled(this->queryRetrieveEnabled());
+  newServer->setStorageEnabled(this->storageEnabled());
+  newServer->setCallingAETitle(this->callingAETitle());
+  newServer->setCalledAETitle(this->calledAETitle());
+  newServer->setHost(this->host());
+  newServer->setPort(this->port());
+  newServer->setRetrieveProtocol(this->retrieveProtocol());
+  newServer->setMoveDestinationAETitle(this->moveDestinationAETitle());
+  newServer->setKeepAssociationOpen(this->keepAssociationOpen());
+  newServer->setConnectionTimeout(this->connectionTimeout());
+  if (this->proxyServer())
+    {
+    newServer->setProxyServer(*this->proxyServer());
+    }
+
+  return newServer;
 }

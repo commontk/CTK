@@ -141,12 +141,12 @@ void ctkErrorLogWidget::setErrorLogModel(ctkErrorLogAbstractModel * newErrorLogM
   Q_D(ctkErrorLogWidget);
 
   if (newErrorLogModel == this->errorLogModel())
-    {
+  {
     return;
-    }
+  }
 
   if (this->errorLogModel())
-    {
+  {
     disconnect(this->errorLogModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
                this, SLOT(onRowsInserted(QModelIndex,int,int)));
 
@@ -157,12 +157,12 @@ void ctkErrorLogWidget::setErrorLogModel(ctkErrorLogAbstractModel * newErrorLogM
                this, SLOT(onSelectionChanged(QItemSelection,QItemSelection)));
 
     d->SelectionModel.clear();
-    }
+  }
 
   d->ErrorLogTableView->setModel(newErrorLogModel);
 
   if (newErrorLogModel)
-    {
+  {
     connect(this->errorLogModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
             this, SLOT(onRowsInserted(QModelIndex,int,int)));
 
@@ -186,14 +186,14 @@ void ctkErrorLogWidget::setErrorLogModel(ctkErrorLogAbstractModel * newErrorLogM
 
     // Resize time column only if there are rows
     if (this->errorLogModel()->rowCount() > 0)
-      {
-      d->ErrorLogTableView->resizeColumnToContents(ctkErrorLogModel::TimeColumn);
-      }
-    }
-  else
     {
-    this->setAllEntriesVisible(0);
+      d->ErrorLogTableView->resizeColumnToContents(ctkErrorLogModel::TimeColumn);
     }
+  }
+  else
+  {
+    this->setAllEntriesVisible(0);
+  }
 
   d->ErrorLogTableView->setColumnHidden(ctkErrorLogModel::ThreadIdColumn, true);
 }
@@ -210,9 +210,9 @@ void ctkErrorLogWidget::setLayoutOrientation(Qt::Orientation orientation)
 {
   Q_D(ctkErrorLogWidget);
   if (d->LayoutOrientation == orientation)
-    {
+  {
     return;
-    }
+  }
 
   d->ctkErrorLogGridLayout->removeWidget(d->ErrorLogDescription);
 
@@ -227,20 +227,20 @@ void ctkErrorLogWidget::setLayoutOrientation(Qt::Orientation orientation)
     &errorLogTableViewRowSpan, &errorLogTableViewColSpan);
 
   if (orientation == Qt::Vertical)
-    {
+  {
     // Description is below message table
     d->ctkErrorLogGridLayout->addWidget(d->ErrorLogDescription,
       errorLogTableViewRowIndex + 1, errorLogTableViewColIndex, // row, col
       1, 1); // rowSpan, colSpan
-    }
+  }
   else
-    {
+  {
     // Description is in a second column, beside the message table.
     // Specifying rowSpan = -1 ensures the widget fills the entire second column.
     d->ctkErrorLogGridLayout->addWidget(d->ErrorLogDescription,
       0, errorLogTableViewColIndex + 1, // row, col
       -1, 1); // rowSpan, colSpan
-    }
+  }
 
   d->LayoutOrientation = orientation;
 }
@@ -266,9 +266,9 @@ void ctkErrorLogWidget::setErrorEntriesVisible(bool visibility)
 {
   Q_D(ctkErrorLogWidget);
   if (!this->errorLogModel())
-    {
+  {
     return;
-    }
+  }
   this->errorLogModel()->filterEntry(d->ErrorButtonFilter, /* disableFilter= */ !visibility);
 }
 
@@ -277,9 +277,9 @@ void ctkErrorLogWidget::setWarningEntriesVisible(bool visibility)
 {
   Q_D(ctkErrorLogWidget);
   if (!this->errorLogModel())
-    {
+  {
     return;
-    }
+  }
   this->errorLogModel()->filterEntry(d->WarningButtonFilter, /* disableFilter= */ !visibility);
 }
 
@@ -288,9 +288,9 @@ void ctkErrorLogWidget::setInfoEntriesVisible(bool visibility)
 {
   Q_D(ctkErrorLogWidget);
   if (!this->errorLogModel())
-    {
+  {
     return;
-    }
+  }
   this->errorLogModel()->filterEntry(d->InfoButtonFilter, /* disableFilter= */ !visibility);
 }
 
@@ -298,9 +298,9 @@ void ctkErrorLogWidget::setInfoEntriesVisible(bool visibility)
 void ctkErrorLogWidget::setUnknownEntriesVisible(bool visibility)
 {
   if (!this->errorLogModel())
-    {
+  {
     return;
-    }
+  }
   this->errorLogModel()->filterEntry(ctkErrorLogLevel::Unknown,
       /* disableFilter= */ !visibility);
 }
@@ -310,10 +310,10 @@ void ctkErrorLogWidget::onRowsInserted(const QModelIndex &/*parent*/, int /*firs
 {
   Q_D(ctkErrorLogWidget);
   if (d->ErrorLogTableView->model()->rowCount() == 1)
-    {
+  {
     // For performance reason, resize first column only when first entry is added
     d->ErrorLogTableView->resizeColumnToContents(ctkErrorLogModel::TimeColumn);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -358,9 +358,9 @@ void ctkErrorLogWidget::onSelectionChanged(const QItemSelection & selected,
   QStringList descriptions;
 
   foreach(const QModelIndex& index, selectedRows)
-    {
+  {
     descriptions << index.data(ctkErrorLogModel::DescriptionTextRole).toString();
-    }
+  }
 
   d->ErrorLogDescription->setText(descriptions.join("\n"));
 
@@ -374,27 +374,27 @@ bool ctkErrorLogWidget::eventFilter(QObject* target, QEvent* event)
 {
   Q_D(ctkErrorLogWidget);
   if (target == d->ErrorLogTableView && event->type() == QEvent::KeyPress)
-    {
+  {
     // Make Home/End keys jump to first/last message in the list
     // (without this, the keys would jump to the first/last cell in the current row)
     QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
     if (keyEvent->key() == Qt::Key_Home)
-      {
+    {
       QModelIndex firstIndex = d->ErrorLogTableView->model()->index(0, 0);
       QItemSelectionModel* select = d->ErrorLogTableView->selectionModel();
       select->select(firstIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
       d->ErrorLogTableView->scrollToTop();
       return true;
-      }
+    }
     else if (keyEvent->key() == Qt::Key_End)
-      {
+    {
       int rowCount = d->ErrorLogTableView->model()->rowCount();
       QModelIndex lastIndex = d->ErrorLogTableView->model()->index(rowCount - 1, 0);
       QItemSelectionModel* select = d->ErrorLogTableView->selectionModel();
       select->select(lastIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
       d->ErrorLogTableView->scrollToBottom();
       return true;
-      }
     }
+  }
   return this->Superclass::eventFilter(target, event);
 }

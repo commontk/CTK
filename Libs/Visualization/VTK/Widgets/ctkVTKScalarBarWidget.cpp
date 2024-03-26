@@ -102,9 +102,9 @@ void ctkVTKScalarBarWidgetPrivate::updateFromScalarBarWidget()
     this->ScalarBarWidget ? this->ScalarBarWidget->GetScalarBarActor() : 0;
   q->setEnabled(actor != 0);
   if (actor == 0)
-    {
+  {
     return;
-    }
+  }
   this->DisplayScalarBarCheckBox->setChecked(this->ScalarBarWidget->GetEnabled() != 0);
   this->MaxNumberOfColorsSpinBox->setValue(actor->GetMaximumNumberOfColors());
   this->NumberOfLabelsSpinBox->setValue(actor->GetNumberOfLabels());
@@ -146,9 +146,9 @@ void ctkVTKScalarBarWidget::setScalarBarWidget(vtkScalarBarWidget* scalarBarWidg
 {
   Q_D(ctkVTKScalarBarWidget);
   if (scalarBarWidget == d->ScalarBarWidget)
-    {
+  {
     return;
-    }
+  }
   vtkScalarBarActor* oldActor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   vtkScalarBarActor* newActor =
@@ -183,9 +183,9 @@ void ctkVTKScalarBarWidget::setDisplay(bool visible)
 {
   Q_D(ctkVTKScalarBarWidget);
   if (d->ScalarBarWidget == 0)
-    {
+  {
     return;
-    }
+  }
   d->ScalarBarWidget->SetEnabled(visible);
   // calling SetEnabled might fail, make sure the checkbox is up-to-date
   d->DisplayScalarBarCheckBox->setChecked(d->ScalarBarWidget->GetEnabled());
@@ -205,9 +205,9 @@ void ctkVTKScalarBarWidget::setMaxNumberOfColors(int colorCount)
   vtkScalarBarActor* actor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   if (actor == 0)
-    {
+  {
     return;
-    }
+  }
   actor->SetMaximumNumberOfColors(colorCount);
 }
 
@@ -225,9 +225,9 @@ void ctkVTKScalarBarWidget::setNumberOfLabels(int labelCount)
   vtkScalarBarActor* actor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   if (actor == 0)
-    {
+  {
     return;
-    }
+  }
   actor->SetNumberOfLabels(labelCount);
 }
 
@@ -245,9 +245,9 @@ void ctkVTKScalarBarWidget::setTitle(const QString& title)
   vtkScalarBarActor* actor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   if (actor == 0)
-    {
+  {
     return;
-    }
+  }
   actor->SetTitle(title.toUtf8());
 }
 
@@ -265,9 +265,9 @@ void ctkVTKScalarBarWidget::setLabelsFormat(const QString& format)
   vtkScalarBarActor* actor =
     d->ScalarBarWidget ? d->ScalarBarWidget->GetScalarBarActor() : 0;
   if (actor == 0)
-    {
+  {
     return;
-    }
+  }
   actor->SetLabelFormat(format.toUtf8());
 }
 

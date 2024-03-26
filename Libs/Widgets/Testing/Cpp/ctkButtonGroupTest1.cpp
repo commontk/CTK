@@ -67,109 +67,109 @@ int ctkButtonGroupTest1(int argc, char * argv [] )
   buttonGroup.addButton(button4);
 
   if (!button4->isChecked() || button2->isChecked())
-    {
+  {
     std::cerr << "ctkButtonGroup::addButton failed"
               << button2->isChecked() << " " << button4->isChecked()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Click #1: check button1
   button1->click();
 
   if (!button1->isChecked() || button4->isChecked())
-    {
+  {
     std::cerr << "ctkButtonGroup::click1 failed"
               << button1->isChecked() << " " << button4->isChecked()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Click #2: uncheck button1
   button1->click();
 
   if (button1->isChecked() || button4->isChecked())
-    {
+  {
     std::cerr << "ctkButtonGroup::click2 failed"
               << button1->isChecked() << " " << button4->isChecked()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Click #3: check button1
   button1->click();
 
   if (!button1->isChecked() || button4->isChecked())
-    {
+  {
     std::cerr << "ctkButtonGroup::click3 failed"
               << button1->isChecked() << " " << button4->isChecked()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Click #4: check button2
   button2->click();
 
   if (!button2->isChecked() || button1->isChecked())
-    {
+  {
     std::cerr << "ctkButtonGroup::click4 failed"
               << button2->isChecked() << " " << button1->isChecked()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Click #5: click button3 keep check on button2
   button3->click();
 
   if (!button2->isChecked() || button3->isChecked())
-    {
+  {
     std::cerr << "ctkButtonGroup::click5 failed"
               << button2->isChecked() << " " << button3->isChecked()
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Click #6: uncheck button2
   button2->click();
 
   if (button2->isChecked())
-    {
+  {
     std::cerr << "ctkButtonGroup::click6 failed"
               << button2->isChecked() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   qRegisterMetaType<QAbstractButton*>("QAbstractButton*");
   QSignalSpy spy(&buttonGroup, SIGNAL(buttonClicked(QAbstractButton*)));
   QSignalSpy spyInt(&buttonGroup, SIGNAL(buttonClicked(int)));
   button1->click();
   if (spy.count() != 1 || spyInt.count() != 1)
-    {
+  {
     std::cerr << "ctkButtonGroup::click7 failed"
               << button1->isChecked() << ", "
               << spy.count() << "clicks" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   button4->click();
   if (spy.count() != 2 || spyInt.count() != 2)
-    {
+  {
     std::cerr << "ctkButtonGroup::click8 failed"
               << button4->isChecked() << ", "
               << spy.count() << "clicks" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   button4->click();
   if (spy.count() != 3 || spyInt.count() != 3)
-    {
+  {
     std::cerr << "ctkButtonGroup::click9 failed"
               << button4->isChecked() << ", "
               << spy.count() << "clicks" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   QTimer autoExit;
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QObject::connect(&autoExit, SIGNAL(timeout()), &app, SLOT(quit()));
     autoExit.start(500);
-    }
+  }
   return app.exec();
 }

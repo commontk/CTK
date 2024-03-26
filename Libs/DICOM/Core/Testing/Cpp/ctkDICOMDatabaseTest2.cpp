@@ -43,11 +43,11 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
   QString testName = arguments.takeFirst();
 
   if (arguments.count() != 1)
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-dicom-file>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString dicomFilePath(arguments.at(0));
 
@@ -63,33 +63,33 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
   database.openDatabase(databaseFile.absoluteFilePath());
 
   if (!database.lastError().isEmpty())
-    {
+  {
     std::cerr << "ctkDICOMDatabase::openDatabase() failed: "
               << qPrintable(database.lastError()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (!database.database().isValid())
-    {
+  {
     std::cerr << "ctkDICOMDatabase::openDatabase() failed: "
               << "invalid sql database" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (database.isInMemory())
-    {
+  {
     std::cerr << "ctkDICOMDatabase::openDatabase() failed: "
               << "database should not be in memory" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool res = database.initializeDatabase();
 
   if (!res)
-    {
+  {
     std::cerr << "ctkDICOMDatabase::initializeDatabase() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //
   // Test that the tag interface works to parse ascii
@@ -125,18 +125,18 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
   QString foundFile = database.fileForInstance(instanceUID);
 
   if (foundFile != dicomFilePath)
-    {
+  {
     std::cerr << "ctkDICOMDatabase: didn't get back the original file path" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString foundInstance = database.instanceForFile(dicomFilePath);
 
   if (foundInstance != instanceUID)
-    {
+  {
     std::cerr << "ctkDICOMDatabase: didn't get back the original instance uid" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 
   //
@@ -144,52 +144,52 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
   //
 
   if (!database.tagCacheExists())
-    {
+  {
     std::cerr << "ctkDICOMDatabase: tag cache should be configured when database opens" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (!database.initializeTagCache())
-    {
+  {
     std::cerr << "ctkDICOMDatabase: could not initialize tag cache" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (!database.tagCacheExists())
-    {
+  {
     std::cerr << "ctkDICOMDatabase: tag cache should exist but is not detected" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString tag("0008,103E");
   if (database.cachedTag(instanceUID, tag) != QString(""))
-    {
+  {
     std::cerr << "ctkDICOMDatabase: tag cache should return empty string for unknown instance tag" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString knownSeriesDescription("3D Cor T1 FAST IR-prepped GRE");
 
   if (!database.cacheTag(instanceUID, tag, knownSeriesDescription))
-    {
+  {
     std::cerr << "ctkDICOMDatabase: could not insert instance tag" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (database.cachedTag(instanceUID, tag) != knownSeriesDescription)
-    {
+  {
     std::cerr << "ctkDICOMDatabase: could not retrieve cached tag" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 
   QString foundSeriesDescription = database.instanceValue(instanceUID, tag);
 
   if (foundSeriesDescription != knownSeriesDescription)
-    {
+  {
     std::cerr << "ctkDICOMDatabase: invalid element value returned" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // now update the database
   database.updateSchema();
@@ -198,18 +198,18 @@ int ctkDICOMDatabaseTest2( int argc, char * argv [] )
   foundFile = database.fileForInstance(instanceUID);
 
   if (foundFile != dicomFilePath)
-    {
+  {
     std::cerr << "ctkDICOMDatabase: didn't get back the original file path" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   foundSeriesDescription = database.instanceValue(instanceUID, tag);
 
   if (foundSeriesDescription != knownSeriesDescription)
-    {
+  {
     std::cerr << "ctkDICOMDatabase: invalid element value returned" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   database.closeDatabase();
   database.initializeDatabase();

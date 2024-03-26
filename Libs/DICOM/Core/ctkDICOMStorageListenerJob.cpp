@@ -139,3 +139,9 @@ ctkAbstractWorker* ctkDICOMStorageListenerJob::createWorker()
   worker->setJob(*this);
   return worker;
 }
+
+//------------------------------------------------------------------------------
+ctkDICOMJobResponseSet::JobType ctkDICOMStorageListenerJob::getJobType() const
+{
+  return ctkDICOMJobResponseSet::JobType::StoreSOPInstance;
+}

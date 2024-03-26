@@ -56,7 +56,7 @@ int ctkITKErrorLogModelTest1(int argc, char * argv [])
   QString errorMsg;
 
   try
-    {
+  {
     modelTester.setModel(&model);
 
     // --------------------------------------------------------------------------
@@ -67,11 +67,11 @@ int ctkITKErrorLogModelTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ 0);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       return EXIT_FAILURE;
-      }
+    }
 
     QString itkMessage0("This is a ITK debug message");
     itk::OutputWindowDisplayDebugText(qPrintable(itkMessage0));
@@ -90,28 +90,28 @@ int ctkITKErrorLogModelTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ expectedITKMessages.count());
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
+    }
 
     errorMsg = checkTextMessages(__LINE__, model, expectedITKMessages);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
+    }
 
     // Check if handler can be enabled / disabled multiple times in a row
     for (int idx = 0; idx < 3; ++idx)
-      {
+    {
       model.setMsgHandlerEnabled(ctkITKErrorLogMessageHandler::HandlerName, false);
       model.setMsgHandlerEnabled(ctkITKErrorLogMessageHandler::HandlerName, true);
-      }
+    }
 
     // Clear
     model.clear();
@@ -125,19 +125,19 @@ int ctkITKErrorLogModelTest1(int argc, char * argv [])
 
     errorMsg = checkRowCount(__LINE__, model.rowCount(), /* expected = */ 0);
     if (!errorMsg.isEmpty())
-      {
+    {
       model.disableAllMsgHandler();
       printErrorMessage(errorMsg);
       printTextMessages(model);
       return EXIT_FAILURE;
-      }
     }
+  }
   catch (const char* error)
-    {
+  {
     model.disableAllMsgHandler();
     std::cerr << error << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

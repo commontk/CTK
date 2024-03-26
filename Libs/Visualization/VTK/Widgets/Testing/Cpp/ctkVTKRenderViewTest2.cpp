@@ -52,10 +52,10 @@ int ctkVTKRenderViewTest2(int argc, char * argv [] )
   bool ok = false;
   QHash<QString, QVariant> parsedArgs = parser.parseArguments(app.arguments(), &ok);
   if (!ok)
-    {
+  {
     std::cerr << qPrintable(parser.errorString()) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   bool interactive = parsedArgs["-I"].toBool();
   QString data_directory = parsedArgs["-D"].toString();
@@ -90,8 +90,8 @@ int ctkVTKRenderViewTest2(int argc, char * argv [] )
   renderView.lookFromAxis(ctkAxesWidget::None);
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(1000, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

@@ -57,14 +57,14 @@ static QFileSystemModel* globalFileSystemModelForFiles()
 {
   static QFileSystemModel* m = NULL;
   if (!m)
-    {
+  {
     m = new QFileSystemModel();
 #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
     // Prevent slow browsing of network drives
     m->setOption(QFileSystemModel::DontUseCustomDirectoryIcons);
 #endif
     m->setRootPath("");
-    }
+  }
   return m;
 }
 
@@ -73,7 +73,7 @@ static QFileSystemModel* globalFileSystemModelForDirectories()
 {
   static QFileSystemModel* m = NULL;
   if (!m)
-    {
+  {
     m = new QFileSystemModel();
 #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
     // Prevent slow browsing of network drives
@@ -81,7 +81,7 @@ static QFileSystemModel* globalFileSystemModelForDirectories()
 #endif
     m->setFilter(QDir::AllDirs | QDir::Drives | QDir::NoDotAndDotDot);
     m->setRootPath("");
-    }
+  }
   return m;
 }
 
@@ -138,21 +138,21 @@ QString ctkFileCompleter::pathFromIndex(const QModelIndex& idx) const
 void ctkFileCompleter::setShowFiles(bool showFiles)
 {
   if (this->CustomFileSystemModel)
-    {
+  {
     if (showFiles)
-      {
-      this->CustomFileSystemModel->setFilter(globalFileSystemModelForFiles()->filter());
-      }
-    else
-      {
-      this->CustomFileSystemModel->setFilter(globalFileSystemModelForDirectories()->filter());
-      }
-    }
-  else
     {
+      this->CustomFileSystemModel->setFilter(globalFileSystemModelForFiles()->filter());
+    }
+    else
+    {
+      this->CustomFileSystemModel->setFilter(globalFileSystemModelForDirectories()->filter());
+    }
+  }
+  else
+  {
     QFileSystemModel* m = showFiles ? globalFileSystemModelForFiles() : globalFileSystemModelForDirectories();
     this->setModel(m);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -160,9 +160,9 @@ bool ctkFileCompleter::showFiles()
 {
   QFileSystemModel* fileSystemModel = this->fileSystemModel();
   if (!fileSystemModel)
-    {
+  {
     return false;
-    }
+  }
   return fileSystemModel->filter().testFlag(QDir::Files);
 }
 
@@ -170,22 +170,22 @@ bool ctkFileCompleter::showFiles()
 void ctkFileCompleter::setNameFilters(const QStringList& filters)
 {
   if (filters.empty())
-    {
+  {
     // no name filter set use the global file system models
     bool showFiles = this->showFiles();
     QFileSystemModel* m = showFiles ? globalFileSystemModelForFiles() : globalFileSystemModelForDirectories();
     this->setModel(m);
     if (this->CustomFileSystemModel)
-      {
+    {
       this->CustomFileSystemModel->setParent(NULL);
       this->CustomFileSystemModel->deleteLater();
-      }
     }
+  }
   else
-    {
+  {
     // name filter is set, we need to use a custom model
     if (!this->CustomFileSystemModel)
-      {
+    {
       this->CustomFileSystemModel = new QFileSystemModel(this);
 #if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
       // Prevent slow browsing of network drives
@@ -195,21 +195,21 @@ void ctkFileCompleter::setNameFilters(const QStringList& filters)
       this->CustomFileSystemModel->setNameFilters(filters);
       bool showFiles = this->showFiles();
       if (showFiles)
-        {
+      {
         this->CustomFileSystemModel->setFilter(globalFileSystemModelForFiles()->filter());
-        }
+      }
       else
-        {
+      {
         this->CustomFileSystemModel->setFilter(globalFileSystemModelForDirectories()->filter());
-        }
+      }
       this->CustomFileSystemModel->setRootPath("");
       this->setModel(this->CustomFileSystemModel);
-      }
-    else
-      {
-      this->CustomFileSystemModel->setNameFilters(filters);
-      }
     }
+    else
+    {
+      this->CustomFileSystemModel->setNameFilters(filters);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -239,9 +239,9 @@ void ctkFileCompleter::addPathToIndex(const QString& path)
 {
   QFileSystemModel* fileSystemModel = this->fileSystemModel();
   if (fileSystemModel)
-    {
+  {
     fileSystemModel->index(path);
-    }
+  }
 }
 
 } // end of anonymous namespace
@@ -355,17 +355,17 @@ void ctkPathLineEditPrivate::createPathLineEditWidget(bool useComboBox)
   QString path = q->currentPath();
 
   if (useComboBox)
-    {
+  {
     this->ComboBox = new QComboBox(q);
     this->ComboBox->setEditable(true);
     this->ComboBox->setInsertPolicy(QComboBox::NoInsert);
     this->LineEdit = this->ComboBox->lineEdit();
-    }
+  }
   else
-    {
+  {
     this->ComboBox = 0;
     this->LineEdit = new QLineEdit(q);
-    }
+  }
 
   this->LineEdit->setCompleter(this->Completer);
   QObject::connect(this->LineEdit->completer()->completionModel(), SIGNAL(layoutChanged()),
@@ -373,9 +373,9 @@ void ctkPathLineEditPrivate::createPathLineEditWidget(bool useComboBox)
   this->LineEdit->setValidator(this->Validator);
 
   if (q->layout() && q->layout()->itemAt(0))
-    {
+  {
     delete q->layout()->itemAt(0)->widget();
-    }
+  }
   qobject_cast<QHBoxLayout*>(q->layout())->insertWidget(
     0,
     this->ComboBox ? qobject_cast<QWidget*>(this->ComboBox) :
@@ -397,10 +397,10 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
 {
   Q_Q(const ctkPathLineEdit);
   if (!sh.isValid())
-    {
+  {
     int frame = 0;
     if (this->ComboBox)
-      {
+    {
       QStyleOptionComboBox option;
       int arrowWidth = this->ComboBox->style()->subControlRect(
             QStyle::CC_ComboBox, &option, QStyle::SC_ComboBoxArrow, this->ComboBox).width()
@@ -408,9 +408,9 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
       frame = 2 * (this->ComboBox->hasFrame() ? 3 : 0)
           + arrowWidth
           + 1; // for mac style, not sure why
-      }
+    }
     else
-      {
+    {
       QStyleOptionFrame option;
       int frameWidth = this->LineEdit->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, &option, q);
       int horizontalMargin = 2; // QLineEditPrivate::horizontalMargin
@@ -421,49 +421,49 @@ QSize ctkPathLineEditPrivate::recomputeSizeHint(QSize& sh)const
           + this->LineEdit->contentsMargins().left()
           + this->LineEdit->contentsMargins().right()
           + 2 * horizontalMargin;
-      }
+    }
     int browseWidth = 0;
     if (q->showBrowseButton())
-      {
+    {
       browseWidth = this->BrowseButton->minimumSizeHint().width();
-      }
+    }
 
     // text width
     int textWidth = 0;
     if (&sh == &this->SizeHint || this->MinimumContentsLength == 0)
-      {
+    {
       switch (SizeAdjustPolicy)
-        {
+      {
         case ctkPathLineEdit::AdjustToContents:
         case ctkPathLineEdit::AdjustToContentsOnFirstShow:
           if (this->LineEdit->text().isEmpty())
-            {
+          {
             #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
             int character_pixel_width = this->LineEdit->fontMetrics().horizontalAdvance(QLatin1Char('x'));
             #else
             int character_pixel_width = this->LineEdit->fontMetrics().width(QLatin1Char('x'));
             #endif
             textWidth = 7 * character_pixel_width;
-            }
+          }
           else
-            {
+          {
             textWidth = this->LineEdit->fontMetrics().boundingRect(this->LineEdit->text()).width() + 8;
-            }
+          }
           break;
         default:
           ;
-        }
       }
+    }
 
     if (this->MinimumContentsLength > 0)
-      {
+    {
       #if (QT_VERSION >= QT_VERSION_CHECK(5,11,0))
       int character_pixel_width = this->LineEdit->fontMetrics().horizontalAdvance(QLatin1Char('X'));
       #else
       int character_pixel_width = this->LineEdit->fontMetrics().width(QLatin1Char('X'));
       #endif
       textWidth = qMax(textWidth, this->MinimumContentsLength * character_pixel_width);
-      }
+    }
 
     int height = (this->ComboBox ? this->ComboBox->minimumSizeHint() :
                                    this->LineEdit->minimumSizeHint()).height();
@@ -487,11 +487,11 @@ void ctkPathLineEditPrivate::adjustPathLineEditSize()
 {
   Q_Q(ctkPathLineEdit);
   if (q->sizeAdjustPolicy() == ctkPathLineEdit::AdjustToContents)
-    {
+  {
     q->updateGeometry();
     q->adjustSize();
     q->update();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -513,14 +513,14 @@ void ctkPathLineEditPrivate::_q_recomputeCompleterPopupSize()
 
   QAbstractItemModel* model = this->LineEdit->completer()->completionModel();
   for (int i = 0; i < model->rowCount(); ++i)
-    {
+  {
     QVariant icon = model->data(model->index(i, 0), Qt::DecorationRole);
     if (icon.isValid() && icon.canConvert<QIcon>())
-      {
+    {
       iconWidth = qMax(iconWidth, icon.value<QIcon>().availableSizes().front().width() + 4);
-      }
-    textWidth = qMax(textWidth, fm.boundingRect(model->data(model->index(i, 0)).toString()).width());
     }
+    textWidth = qMax(textWidth, fm.boundingRect(model->data(model->index(i, 0)).toString()).width());
+  }
 
   view->setMinimumWidth(qMax(frame + iconWidth + textWidth, lineEditSize.width()));
 }
@@ -638,9 +638,9 @@ void ctkPathLineEdit::browse()
   Q_D(ctkPathLineEdit);
   QString path = "";
   if ( d->Filters & QDir::Files ) //file
-    {
+  {
     if ( d->Filters & QDir::Writable) // load or save
-      {
+    {
       path = QFileDialog::getSaveFileName(
 	this,
         tr("Select a file to save "),
@@ -653,9 +653,9 @@ void ctkPathLineEdit::browse()
 #else
       QFlags<QFileDialog::Option>(int(d->DialogOptions)));
 #endif
-      }
+    }
     else
-      {
+    {
       path = QFileDialog::getOpenFileName(
         this,
         tr("Open a file"),
@@ -668,10 +668,10 @@ void ctkPathLineEdit::browse()
 #else
       QFlags<QFileDialog::Option>(int(d->DialogOptions)));
 #endif
-      }
     }
+  }
   else //directory
-    {
+  {
     path = QFileDialog::getExistingDirectory(
       this,
       tr("Select a directory..."),
@@ -682,11 +682,11 @@ void ctkPathLineEdit::browse()
 #else
       QFlags<QFileDialog::Option>(int(d->DialogOptions)));
 #endif
-    }
+  }
   if (path.isEmpty())
-    {
+  {
     return;
-    }
+  }
   this->setCurrentPath(path);
 }
 
@@ -695,9 +695,9 @@ void ctkPathLineEdit::retrieveHistory()
 {
   Q_D(ctkPathLineEdit);
   if (d->ComboBox == 0)
-    {
+  {
     return;
-    }
+  }
   QString path = this->currentPath();
   bool wasBlocking = this->blockSignals(true);
   d->ComboBox->clear();
@@ -706,24 +706,24 @@ void ctkPathLineEdit::retrieveHistory()
   QString key = d->settingKey();
   const QStringList history = settings.value(key).toStringList();
   foreach(const QString& path, history)
-    {
+  {
     d->ComboBox->addItem(path);
     if (d->ComboBox->count() >= ctkPathLineEditPrivate::sMaxHistory)
-      {
+    {
       break;
-      }
     }
+  }
   // Restore path or select the most recent file location if none set.
   if (path.isEmpty())
-    {
+  {
     this->blockSignals(wasBlocking);
     d->ComboBox->setCurrentIndex(0);
-    }
+  }
   else
-    {
+  {
     this->setCurrentPath(path);
     this->blockSignals(wasBlocking);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -732,9 +732,9 @@ void ctkPathLineEdit::addCurrentPathToHistory()
   Q_D(ctkPathLineEdit);
   if (d->ComboBox == 0 ||
       this->currentPath().isEmpty())
-    {
+  {
     return;
-    }
+  }
   QSettings settings;
   //keep the same values, add the current value
   //if more than m_MaxHistory entrees, drop the oldest.
@@ -742,22 +742,22 @@ void ctkPathLineEdit::addCurrentPathToHistory()
   QStringList history = settings.value(key).toStringList();
   QString pathToAdd = this->currentPath();
   if (history.contains(pathToAdd))
-    {
+  {
     history.removeAll(pathToAdd);
-    }
+  }
   history.push_front(pathToAdd);
   settings.setValue(key, history);
   // don't fire intermediate events.
   bool wasBlocking = d->ComboBox->blockSignals(false);
   int index = d->ComboBox->findText(this->currentPath());
   if (index >= 0)
-    {
+  {
     d->ComboBox->removeItem(index);
-    }
+  }
   while (d->ComboBox->count() >= ctkPathLineEditPrivate::sMaxHistory)
-    {
+  {
     d->ComboBox->removeItem(d->ComboBox->count() - 1);
-    }
+  }
   d->ComboBox->insertItem(0, pathToAdd);
   d->ComboBox->setCurrentIndex(0);
   d->ComboBox->blockSignals(wasBlocking);
@@ -770,13 +770,13 @@ void ctkPathLineEdit::setCurrentFileExtension(const QString& extension)
   QFileInfo fileInfo(filename);
 
   if (!fileInfo.suffix().isEmpty())
-    {
+  {
     filename.replace(fileInfo.suffix(), extension);
-    }
+  }
   else
-    {
+  {
     filename.append(QString(".") + extension);
-    }
+  }
   this->setCurrentPath(filename);
 }
 
@@ -800,13 +800,13 @@ void ctkPathLineEdit::setCurrentPath(const QString& path)
   Q_D(ctkPathLineEdit);
   d->LineEdit->setText(path);
   if (d->LineEdit->hasAcceptableInput())
-    {
+  {
     QFileInfo fileInfo(path);
     if (fileInfo.exists())
-      {
+    {
       d->Completer->addPathToIndex(path);
-      }
     }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -823,27 +823,27 @@ void ctkPathLineEdit::updateHasValidInput()
   bool oldHasValidInput = d->HasValidInput;
   d->HasValidInput = d->LineEdit->hasAcceptableInput();
   if (d->HasValidInput)
-    {
+  {
     QFileInfo fileInfo(this->currentPath());
     if (fileInfo.exists())
-      {
+    {
       d->Completer->addPathToIndex(this->currentPath());
-      }
+    }
     ctkPathLineEditPrivate::sCurrentDirectory =
       fileInfo.isFile() ? fileInfo.absolutePath() : fileInfo.absoluteFilePath();
     emit currentPathChanged(this->currentPath());
-    }
+  }
   if (d->HasValidInput != oldHasValidInput)
-    {
+  {
     emit validInputChanged(d->HasValidInput);
-    }
+  }
 
   if (d->SizeAdjustPolicy == AdjustToContents)
-    {
+  {
     d->SizeHint = QSize();
     d->adjustPathLineEditSize();
     this->updateGeometry();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -926,11 +926,11 @@ void ctkPathLineEdit::setMinimumContentsLength(int length)
 
   if (d->SizeAdjustPolicy == AdjustToContents ||
       d->SizeAdjustPolicy == AdjustToMinimumContentsLength)
-    {
+  {
     d->SizeHint = QSize();
     d->adjustPathLineEditSize();
     this->updateGeometry();
-    }
+  }
 }
 
 //------------------------------------------------------------------------------

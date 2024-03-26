@@ -40,34 +40,34 @@ int ctkModalityWidgetTest1(int argc, char * argv [] )
   modalityWidget.unselectAll();
 
   if (spy.count() != 1)
-    {
+  {
     std::cerr << "ctkModalityWidget::setProperty(): "
               << spy.count() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   spy.clear();
 
   modalityWidget.selectAll();
   if (!modalityWidget.areAllModalitiesSelected())
-    {
+  {
     std::cerr << "ctkModalityWidget::selectAll() failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   modalityWidget.selectModality("CR", false);
   if (modalityWidget.areAllModalitiesSelected())
-    {
+  {
     std::cerr << "ctkModalityWidget::selectModality() failed "
               << " when unselect \"CR\"" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   modalityWidget.showAll();
 
   modalityWidget.show();
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

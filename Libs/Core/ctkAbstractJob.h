@@ -26,6 +26,7 @@
 
 // Qt includes
 #include <QDateTime>
+#include <QMetaEnum>
 #include <QObject>
 #include <QThread>
 #include <QVariant>
@@ -69,11 +70,18 @@ public:
 
   ///@{
   /// Status
+  /// Initialized: the object has been created and inserted in the JobsQueue map in the ctkJobScheduler
+  /// Queued: a worker is associated to the job and the worker has been inserted in the queue list of the QThreadPool (object owned by the ctkJobScheduler) with a priority
+  /// Running: the job is running in another thread by the associated worker.
+  /// Stopped: the job has been stopped externally (a cancel request from the worker)
+  /// Failed: the job failed internally (logic returns false).
+  /// Finished: the job has been run successfully (logic returns true).
   enum JobStatus {
     Initialized = 0,
     Queued,
     Running,
     Stopped,
+    Failed,
     Finished,
   };
   JobStatus status() const;
@@ -153,9 +161,9 @@ public:
 
 Q_SIGNALS:
   void started();
-  void finished();
   void canceled();
   void failed();
+  void finished();
 
 protected:
   QString JobUID;

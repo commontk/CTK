@@ -34,7 +34,7 @@
 
 // ctkDICOMCore includes
 #include "ctkDICOMCoreExport.h"
-class ctkDICOMJobResponseSet;
+#include "ctkDICOMJobResponseSet.h"
 
 /// \ingroup DICOM_Core
 class CTK_DICOM_CORE_EXPORT ctkDICOMJob : public ctkAbstractJob
@@ -45,6 +45,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMJob : public ctkAbstractJob
   Q_PROPERTY(QString seriesInstanceUID READ seriesInstanceUID WRITE setSeriesInstanceUID);
   Q_PROPERTY(QString sopInstanceUID READ sopInstanceUID WRITE setSOPInstanceUID);
   Q_PROPERTY(DICOMLevels dicomLevel READ dicomLevel WRITE setDICOMLevel);
+  Q_PROPERTY(QString referenceInserterJobUID READ referenceInserterJobUID WRITE setReferenceInserterJobUID);
 
 public:
   typedef ctkAbstractJob Superclass;
@@ -90,6 +91,12 @@ public:
   ///@}
 
   ///@{
+  /// job UID of the inserter for this job
+  void setReferenceInserterJobUID(const QString& referenceInserterJobUID);
+  QString referenceInserterJobUID() const;
+  ///@}
+
+  ///@{
   /// Access the list of responses.
   Q_INVOKABLE QList<ctkDICOMJobResponseSet*> jobResponseSets() const;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSetsShared() const;
@@ -97,6 +104,9 @@ public:
   void setJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets);
   void copyJobResponseSets(const QList<QSharedPointer<ctkDICOMJobResponseSet>>& jobResponseSets);
   ///@}
+
+  /// Return job type.
+  Q_INVOKABLE virtual ctkDICOMJobResponseSet::JobType getJobType() const;
 
   /// Return the QVariant value of this job.
   ///
@@ -114,11 +124,66 @@ protected:
   QString StudyInstanceUID;
   QString SeriesInstanceUID;
   QString SOPInstanceUID;
+  QString ReferenceInserterJobUID;
   ctkDICOMJob::DICOMLevels DICOMLevel;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> JobResponseSets;
 
 private:
   Q_DISABLE_COPY(ctkDICOMJob);
 };
+
+//------------------------------------------------------------------------------
+struct CTK_DICOM_CORE_EXPORT ctkDICOMJobDetail : ctkJobDetail
+{
+  explicit ctkDICOMJobDetail() = default;
+
+  explicit ctkDICOMJobDetail(const ctkDICOMJob& job) : ctkJobDetail(job)
+  {
+
+    this->DICOMLevel = job.dicomLevel();
+    this->JobType = job.getJobType();
+    this->PatientID = job.patientID();
+    this->StudyInstanceUID = job.studyInstanceUID();
+    this->SeriesInstanceUID = job.seriesInstanceUID();
+    this->SOPInstanceUID = job.sopInstanceUID();
+    this->ReferenceInserterJobUID = job.referenceInserterJobUID();
+  }
+
+  explicit ctkDICOMJobDetail(const ctkDICOMJob& job, const QString& connectionName)
+    : ctkDICOMJobDetail(job)
+  {
+    this->ConnectionName = connectionName;
+  }
+
+  explicit ctkDICOMJobDetail(const ctkDICOMJobResponseSet& responseSet)
+  {
+    this->JobUID = responseSet.jobUID();
+    this->JobType = responseSet.jobType();
+    this->PatientID = responseSet.patientID();
+    this->StudyInstanceUID = responseSet.studyInstanceUID();
+    this->SeriesInstanceUID = responseSet.seriesInstanceUID();
+    this->SOPInstanceUID = responseSet.sopInstanceUID();
+    this->ConnectionName = responseSet.connectionName();
+    this->NumberOfDataSets = responseSet.datasets().count();
+  }
+  virtual ~ctkDICOMJobDetail() = default;
+
+  QString PatientID;
+  QString StudyInstanceUID;
+  QString SeriesInstanceUID;
+  QString SOPInstanceUID;
+  QString ReferenceInserterJobUID;
+
+  // Common to DICOM Query and Retrieve jobs, and DICOM JobResponseSet
+  QString ConnectionName;
+
+  // Specific to DICOM Query and Retrieve jobs
+  ctkDICOMJob::DICOMLevels DICOMLevel{ctkDICOMJob::DICOMLevels::Patients};
+
+  // Specific to DICOM JobResponseSet
+  ctkDICOMJobResponseSet::JobType JobType{ctkDICOMJobResponseSet::JobType::None};
+  int NumberOfDataSets{0};
+};
+Q_DECLARE_METATYPE(ctkDICOMJobDetail);
 
 #endif

@@ -32,13 +32,13 @@ void printIntegerList(const char* msg, const std::list<int>& list, bool endl = t
   std::cerr << msg;
   std::list<int>::const_iterator iter;
   for (iter = list.begin(); iter != list.end(); iter++)
-    {
+  {
     std::cerr << *iter << " ";
-    }
+  }
   if (endl)
-    {
+  {
     std::cerr << std::endl;
-    }
+  }
 }
 
 }

@@ -147,11 +147,11 @@ void ctkVTKVolumePropertyWidgetPrivate::setupUi(QWidget* widget)
 void ctkVTKVolumePropertyWidgetPrivate::computeIntensityRange(double* range)
 {
   if (!this->VolumeProperty)
-    {
+  {
     range[0] = 0.;
     range[1] = 1.;
     return;
-    }
+  }
   range[0] = VTK_DOUBLE_MAX;
   range[1] = VTK_DOUBLE_MIN;
 
@@ -200,9 +200,9 @@ void ctkVTKVolumePropertyWidget
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (d->VolumeProperty == newVolumeProperty)
-    {
+  {
     return;
-    }
+  }
   this->qvtkReconnect(d->VolumeProperty, newVolumeProperty,
                       vtkCommand::ModifiedEvent,
                       this, SLOT(updateFromVolumeProperty()));
@@ -220,7 +220,7 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
   vtkPiecewiseFunction* gradientFunction = 0;
   bool scalarColorMapping = true;
   if (d->VolumeProperty)
-    {
+  {
     colorTransferFunction =
       d->VolumeProperty->GetRGBTransferFunction()->GetSize() ?
       d->VolumeProperty->GetRGBTransferFunction() : 0;
@@ -231,7 +231,7 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
       d->VolumeProperty->GetGradientOpacity()->GetSize() ?
       d->VolumeProperty->GetGradientOpacity() : 0;
     scalarColorMapping = d->VolumeProperty->GetIndependentComponents();
-    }
+  }
 
   d->ScalarOpacityThresholdWidget->setPiecewiseFunction(
     this->isThresholdEnabled() ? opacityFunction : 0);
@@ -261,7 +261,7 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
   d->ScalarColorGroupBox->setVisible(scalarColorMapping);
 
   if (d->VolumeProperty)
-    {
+  {
     d->InterpolationComboBox->setCurrentIndex(
       d->VolumeProperty->GetInterpolationType() == VTK_NEAREST_INTERPOLATION ? 0 : 1);
     d->ShadeCheckBox->setChecked(d->VolumeProperty->GetShade(d->CurrentComponent));
@@ -269,7 +269,7 @@ void ctkVTKVolumePropertyWidget::updateFromVolumeProperty()
     d->MaterialPropertyWidget->setDiffuse(d->VolumeProperty->GetDiffuse(d->CurrentComponent));
     d->MaterialPropertyWidget->setSpecular(d->VolumeProperty->GetSpecular(d->CurrentComponent));
     d->MaterialPropertyWidget->setSpecularPower(d->VolumeProperty->GetSpecularPower(d->CurrentComponent));
-    }
+  }
   this->updateRange();
 }
 
@@ -441,9 +441,9 @@ void ctkVTKVolumePropertyWidget::setInterpolationMode(int mode)
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (!d->VolumeProperty)
-    {
+  {
     return;
-    }
+  }
   d->VolumeProperty->SetInterpolationType(mode);
 }
 
@@ -452,9 +452,9 @@ void ctkVTKVolumePropertyWidget::setShade(bool enable)
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (!d->VolumeProperty)
-    {
+  {
     return;
-    }
+  }
   d->VolumeProperty->SetShade(d->CurrentComponent, enable);
 }
 
@@ -463,9 +463,9 @@ void ctkVTKVolumePropertyWidget::setAmbient(double value)
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (!d->VolumeProperty)
-    {
+  {
     return;
-    }
+  }
   d->VolumeProperty->SetAmbient(d->CurrentComponent, value);
 }
 
@@ -474,9 +474,9 @@ void ctkVTKVolumePropertyWidget::setDiffuse(double value)
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (!d->VolumeProperty)
-    {
+  {
     return;
-    }
+  }
   d->VolumeProperty->SetDiffuse(d->CurrentComponent, value);
 }
 
@@ -485,9 +485,9 @@ void ctkVTKVolumePropertyWidget::setSpecular(double value)
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (!d->VolumeProperty)
-    {
+  {
     return;
-    }
+  }
   d->VolumeProperty->SetSpecular(d->CurrentComponent, value);
 }
 
@@ -496,9 +496,9 @@ void ctkVTKVolumePropertyWidget::setSpecularPower(double value)
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (!d->VolumeProperty)
-    {
+  {
     return;
-    }
+  }
   d->VolumeProperty->SetSpecularPower(d->CurrentComponent, value);
 }
 
@@ -551,23 +551,23 @@ void ctkVTKVolumePropertyWidget::onAxesModified()
   double xRange[2] = {0.,0.};
   senderWidget->xRange(xRange);
   if (senderWidget != d->ScalarOpacityWidget)
-    {
+  {
     bool wasBlocking = d->ScalarOpacityWidget->blockSignals(true);
     d->ScalarOpacityWidget->setXRange(xRange[0], xRange[1]);
     d->ScalarOpacityWidget->blockSignals(wasBlocking);
-    }
+  }
   if (senderWidget != d->ScalarColorWidget)
-    {
+  {
     bool wasBlocking = d->ScalarColorWidget->blockSignals(true);
     d->ScalarColorWidget->setXRange(xRange[0], xRange[1]);
     d->ScalarColorWidget->blockSignals(wasBlocking);
-    }
+  }
   if (senderWidget != d->GradientWidget)
-    {
+  {
     bool wasBlocking = d->GradientWidget->blockSignals(true);
     d->GradientWidget->setXRange(xRange[0], xRange[1]);
     d->GradientWidget->blockSignals(wasBlocking);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -576,17 +576,17 @@ void ctkVTKVolumePropertyWidget::moveAllPoints(double xOffset, double yOffset,
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (d->VolumeProperty)
-    {
+  {
     d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
-    }
+  }
   d->ScalarOpacityWidget->view()
     ->moveAllPoints(xOffset, yOffset, dontMoveFirstAndLast);
   d->ScalarColorWidget->view()
     ->moveAllPoints(xOffset, yOffset, dontMoveFirstAndLast);
   if (d->VolumeProperty)
-    {
+  {
     d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -595,15 +595,15 @@ void ctkVTKVolumePropertyWidget::moveAllGradientPoints(double xOffset, double yO
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (d->VolumeProperty)
-    {
+  {
     d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
-    }
+  }
   d->GradientWidget->view()
     ->moveAllPoints(xOffset, yOffset, dontMoveFirstAndLast);
   if (d->VolumeProperty)
-    {
+  {
     d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -612,17 +612,17 @@ void ctkVTKVolumePropertyWidget::spreadAllPoints(double factor,
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (d->VolumeProperty)
-    {
+  {
     d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
-    }
+  }
   d->ScalarOpacityWidget->view()
     ->spreadAllPoints(factor, dontSpreadFirstAndLast);
   d->ScalarColorWidget->view()
     ->spreadAllPoints(factor, dontSpreadFirstAndLast);
   if (d->VolumeProperty)
-    {
+  {
     d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -631,13 +631,13 @@ void ctkVTKVolumePropertyWidget::spreadAllGradientPoints(double factor,
 {
   Q_D(ctkVTKVolumePropertyWidget);
   if (d->VolumeProperty)
-    {
+  {
     d->VolumeProperty->InvokeEvent(vtkCommand::StartEvent);
-    }
+  }
   d->GradientWidget->view()
     ->spreadAllPoints(factor, dontSpreadFirstAndLast);
   if (d->VolumeProperty)
-    {
+  {
     d->VolumeProperty->InvokeEvent(vtkCommand::EndEvent);
-    }
+  }
 }

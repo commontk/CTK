@@ -42,18 +42,18 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkAxesWidget* widget = reinterpret_cast<ctkAxesWidget*>(data);
 
   CTKCOMPARE(widget->currentAxis(), ctkAxesWidget::Left);
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   ctkAxesWidget* widget = reinterpret_cast<ctkAxesWidget*>(data);
 
   CTKCOMPARE(widget->currentAxis(), ctkAxesWidget::None);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -85,9 +85,9 @@ int ctkAxesWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

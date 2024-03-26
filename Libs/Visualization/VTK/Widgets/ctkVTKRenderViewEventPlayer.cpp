@@ -45,12 +45,12 @@ bool ctkVTKRenderViewEventPlayer::playEvent(QObject* Object,
   Q_UNUSED(Error);
   QWidget* widget = qobject_cast<QWidget*>(Object);
   if(widget && Object->inherits(mClassType.data()))
-    {
+  {
     if (Command == "3DViewSize")
-      {
+    {
       QRegExp mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
       if (mouseRegExp.indexIn(Arguments)!= -1)
-        {
+      {
         QVariant v = mouseRegExp.cap(1);
         int w = v.toInt();
         v = mouseRegExp.cap(2);
@@ -63,7 +63,7 @@ bool ctkVTKRenderViewEventPlayer::playEvent(QObject* Object,
         bool rescale = v.toBool();
 
         if ( (w != widget->width() || h != widget->height()) && rescale == true)
-          {
+        {
           QMessageBox::StandardButton answer = QMessageBox::warning(0, tr("Size issue ..."),
                                                  tr("The Render view size is: width : %1 \t height : %2 \n"
                                                  "But the size was         width : %3 \t height : %4 \n"
@@ -76,24 +76,24 @@ bool ctkVTKRenderViewEventPlayer::playEvent(QObject* Object,
                                                  QMessageBox::Yes | QMessageBox::No ,
                                                  QMessageBox::Yes);
           if (answer == QMessageBox::Yes )
-            {
+          {
             qDebug() << "Foo ****";
 //            widget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
             widget->setMinimumSize(QSize(w,h));
             widget->setMaximumSize(QSize(w,h));
             widget->updateGeometry();
             widget->topLevelWidget()->topLevelWidget()->updateGeometry();
-            }
           }
         }
-      return true;
       }
+      return true;
+    }
     if (Command == "mousePress" || Command == "mouseRelease" ||
         Command == "mouseMove" || Command == "mouseWheel")
-      {
+    {
       QRegExp mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
       if (mouseRegExp.indexIn(Arguments)!= -1)
-        {
+      {
         double x_center = widget->size().width() / 2.0;
         double y_center = widget->size().height() / 2.0;
 
@@ -113,21 +113,21 @@ bool ctkVTKRenderViewEventPlayer::playEvent(QObject* Object,
 
         v = mouseRegExp.cap(3);
         if (Command == "mouseWheel")
-          {
+        {
 //           QEvent::Type type = QEvent::Wheel;
            int delta = ( v.toInt() == 0 ) ? -1 : 1;
            QWheelEvent we(QPoint(x,y), delta, buttons, keym);
            QCoreApplication::sendEvent(Object, &we);
            return true;
-          }
+        }
         Qt::MouseButton button = static_cast<Qt::MouseButton>(v.toInt());
         QEvent::Type type = (Command == "mousePress")? QEvent::MouseButtonPress :
           ((Command=="mouseMove")?  QEvent::MouseMove : QEvent::MouseButtonRelease);
         QMouseEvent e(type, QPoint(x,y), button, buttons, keym);
         QCoreApplication::sendEvent(Object, &e);
-        }
-      return true;
       }
+      return true;
     }
+  }
   return false;
 }

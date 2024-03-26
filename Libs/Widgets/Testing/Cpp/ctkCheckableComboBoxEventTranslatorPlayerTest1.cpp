@@ -48,31 +48,31 @@ namespace
 QSignalSpy *Spy1;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkCheckableComboBox* widget = reinterpret_cast<ctkCheckableComboBox*>(data);
 
   CTKCOMPARE(Spy1->count(), 15);
   CTKCOMPARE(widget->checkedIndexes().count(), 3);
   CTKCOMPARE(widget->noneChecked(), false);
 //  CTKCOMPARE(widget->currentText(), "toto, titi, tutu");
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   QWidget* parentWidget = reinterpret_cast<QWidget*>(data);
   QList<ctkCheckableComboBox*> widget = parentWidget->findChildren<ctkCheckableComboBox*>();
 
   if(widget.count())
-    {
+  {
     CTKCOMPARE(widget[0]->checkedIndexes().count(), 2);
     CTKCOMPARE(widget[0]->noneChecked(), false);
 //    CTKCOMPARE(widget[0]->currentText(), "tata,titi");
-    }
-  else
-    {
-    QApplication::exit(EXIT_FAILURE);
-    }
   }
+  else
+  {
+    QApplication::exit(EXIT_FAILURE);
+  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -117,9 +117,9 @@ int ctkCheckableComboBoxEventTranslatorPlayerTest1(int argc, char * argv [])
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

@@ -52,10 +52,10 @@ int ctkDICOMDatabaseTest7( int argc, char * argv [] )
   bool res = database.initializeDatabase();
 
   if (!res)
-    {
+  {
     std::cerr << "ctkDICOMDatabase::initializeDatabase() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::cerr << "Database is in " << databaseDirectory.path().toStdString() << std::endl;
 
   // try to call fileValue with bogus data: invalid filename and arbitrary tag
@@ -66,10 +66,10 @@ int ctkDICOMDatabaseTest7( int argc, char * argv [] )
 
   QString result = database.fileValue("/tmp/file-that-does-not-exist", "00ff,eeee");
   if (result != "")
-    {
+  {
     std::cerr << "ctkDICOMDatabase::fileValue() failed for file that doesn't exist." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //
   // Close and clean up

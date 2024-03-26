@@ -56,8 +56,8 @@ void ctkScriptingPythonWidgetsAbstractPlugin::initialize(QDesignerFormEditorInte
 {
   Q_UNUSED(formEditor);
   if (this->Initialized)
-    {
+  {
     return;
-    }
+  }
   this->Initialized = true;
 }

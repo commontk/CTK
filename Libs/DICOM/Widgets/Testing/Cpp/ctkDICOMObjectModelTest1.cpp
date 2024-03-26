@@ -47,22 +47,22 @@ int ctkDICOMObjectModelTest1( int argc, char * argv [] )
   QString fileName;
 
   if (!interactive && arguments.count() != 1)
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " [-I] <path-to-dicom-file>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (arguments.count() == 1)
-    {
+  {
     fileName = arguments.at(0);
-    }
+  }
 
   if (interactive && arguments.count() == 0)
-    {
+  {
     fileName = QFileDialog::getOpenFileName(
                  0, "Choose a DCM File", ".","DCM (*)" );
-    }
+  }
 
   ctkDICOMObjectModel dcmObjModel;
   dcmObjModel.setFile(fileName);
@@ -80,9 +80,9 @@ int ctkDICOMObjectModelTest1( int argc, char * argv [] )
   viewer->raise();
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

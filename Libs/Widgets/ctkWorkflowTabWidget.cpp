@@ -76,9 +76,9 @@ void ctkWorkflowTabWidget::initClientArea()
 {
   Q_D(ctkWorkflowTabWidget);
   if (!d->ClientArea)
-    {
+  {
     d->ClientArea = new QTabWidget(this);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -87,9 +87,9 @@ void ctkWorkflowTabWidget::createNewPage(QWidget* widget)
   Q_D(ctkWorkflowTabWidget);
   Q_ASSERT(d->ClientArea);
   if (widget)
-    {
+  {
     d->ClientArea->addTab(widget, "");
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -98,9 +98,9 @@ void ctkWorkflowTabWidget::showPage(QWidget* widget, const QString& label)
   Q_D(ctkWorkflowTabWidget);
   Q_ASSERT(d->ClientArea);
   if (widget)
-    {
+  {
     d->ClientArea->setCurrentWidget(widget);
     int index = d->ClientArea->indexOf(widget);
     d->ClientArea->setTabText(index, label);
-    }
+  }
 }

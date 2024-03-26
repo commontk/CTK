@@ -27,6 +27,7 @@
 // CTK includes
 #include <ctkDICOMDisplayedFieldGeneratorRuleFactory.h>
 #include <ctkDICOMUtil.h>
+#include <ctkDICOMJob.h>
 #include <ctkDICOMJobResponseSet.h>
 
 // NOTE:
@@ -43,11 +44,11 @@ class ctkDICOMCorePythonQtDecorators : public QObject
 public:
 
   ctkDICOMCorePythonQtDecorators()
-    {
+  {
     PythonQt::self()->registerCPPClass("ctkDICOMJobDetail", 0, "CTKDICOMCore");
     PythonQt::self()->addParentClass("ctkDICOMJobDetail", "ctkJobDetail",
                                      PythonQtUpcastingOffset<ctkDICOMJobDetail,ctkJobDetail>());
-    }
+  }
 
 public slots:
 
@@ -55,72 +56,135 @@ public slots:
   // ctkDICOMJobDetail
   //----------------------------------------------------------------------------
   ctkDICOMJobDetail* new_ctkDICOMJobDetail()
-    {
+  {
     return new ctkDICOMJobDetail();
-    }
+  }
 
-  void setJobType(ctkDICOMJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
-    {
-    td->JobType = jobType;
-    }
-  ctkDICOMJobResponseSet::JobType jobType(ctkDICOMJobDetail* td)
-    {
-    return td->JobType;
-    }
+  void setJobClass(ctkDICOMJobDetail* td, QString jobClass)
+  {
+    td->JobClass = jobClass;
+  }
+  QString jobClass(ctkDICOMJobDetail* td)
+  {
+    return td->JobClass;
+  }
+
+  void setJobUID(ctkDICOMJobDetail* td, QString jobUID)
+  {
+    td->JobUID = jobUID;
+  }
+  QString jobUID(ctkDICOMJobDetail* td)
+  {
+    return td->JobUID;
+  }
+
+  void setCreationDateTime(ctkDICOMJobDetail* td, QString creationDateTime)
+  {
+    td->CreationDateTime = creationDateTime;
+  }
+  QString creationDateTime(ctkDICOMJobDetail* td)
+  {
+    return td->CreationDateTime;
+  }
+
+  void setStartDateTime(ctkDICOMJobDetail* td, QString startDateTime)
+  {
+    td->StartDateTime = startDateTime;
+  }
+  QString startDateTime(ctkDICOMJobDetail* td)
+  {
+    return td->StartDateTime;
+  }
+
+  void setCompletionDateTime(ctkDICOMJobDetail* td, QString completionDateTime)
+  {
+    td->CompletionDateTime = completionDateTime;
+  }
+  QString completionDateTime(ctkDICOMJobDetail* td)
+  {
+    return td->CompletionDateTime;
+  }
 
   void setPatientID(ctkDICOMJobDetail* td, const QString& patientID)
-    {
+  {
     td->PatientID = patientID;
-    }
+  }
   QString patientID(ctkDICOMJobDetail* td)
-    {
+  {
     return td->PatientID;
-    }
+  }
 
   void setStudyInstanceUID(ctkDICOMJobDetail* td, const QString& studyInstanceUID)
-    {
+  {
     td->StudyInstanceUID = studyInstanceUID;
-    }
+  }
   QString studyInstanceUID(ctkDICOMJobDetail* td)
-    {
+  {
     return td->StudyInstanceUID;
-    }
+  }
 
   void setSeriesInstanceUID(ctkDICOMJobDetail* td, const QString& seriesInstanceUID)
-    {
+  {
     td->SeriesInstanceUID = seriesInstanceUID;
-    }
+  }
   QString seriesInstanceUID(ctkDICOMJobDetail* td)
-    {
+  {
     return td->SeriesInstanceUID;
-    }
+  }
 
   void setSOPInstanceUID(ctkDICOMJobDetail* td, const QString& sopInstanceUID)
-    {
+  {
     td->SOPInstanceUID = sopInstanceUID;
-    }
+  }
   QString sopInstanceUID(ctkDICOMJobDetail* td)
-    {
+  {
     return td->SOPInstanceUID;
-    }
+  }
+
+  void setReferenceInserterJobUID(ctkDICOMJobDetail* td, const QString& referenceInserterJobUID)
+  {
+    td->ReferenceInserterJobUID = referenceInserterJobUID;
+  }
+  QString referenceInserterJobUID(ctkDICOMJobDetail* td)
+  {
+    return td->ReferenceInserterJobUID;
+  }
 
   void setConnectionName(ctkDICOMJobDetail* td, const QString& connectionName)
-    {
+  {
     td->ConnectionName = connectionName;
-    }
+  }
   QString connectionName(ctkDICOMJobDetail* td)
-    {
+  {
     return td->ConnectionName;
-    }
+  }
+
+  void setDICOMLevel(ctkDICOMJobDetail* td, ctkDICOMJob::DICOMLevels level)
+  {
+    td->DICOMLevel = level;
+  }
+  ctkDICOMJob::DICOMLevels DICOMLevel(ctkDICOMJobDetail* td)
+  {
+    return td->DICOMLevel;
+  }
+
+  void setJobType(ctkDICOMJobDetail* td, ctkDICOMJobResponseSet::JobType jobType)
+  {
+    td->JobType = jobType;
+  }
+  ctkDICOMJobResponseSet::JobType jobType(ctkDICOMJobDetail* td)
+  {
+    return td->JobType;
+  }
 
   void setNumberOfDataSets(ctkDICOMJobDetail* td, int numberOfDataSets)
-    {
+  {
     td->NumberOfDataSets = numberOfDataSets;
-    }
+  }
   int numberOfDataSets(ctkDICOMJobDetail* td)
-    {
+  {
     return td->NumberOfDataSets;
-    }
+  }
 
   //----------------------------------------------------------------------------
   // ctkDICOMDisplayedFieldGeneratorRuleFactory
@@ -130,9 +194,9 @@ public slots:
 
   //----------------------------------------------------------------------------
   ctkDICOMDisplayedFieldGeneratorRuleFactory* static_ctkDICOMDisplayedFieldGeneratorRuleFactory_instance()
-    {
+  {
     return ctkDICOMDisplayedFieldGeneratorRuleFactory::instance();
-    }
+  }
 
   //----------------------------------------------------------------------------
   // instance methods
@@ -140,9 +204,9 @@ public slots:
   //----------------------------------------------------------------------------
   bool registerDisplayedFieldGeneratorRule(ctkDICOMDisplayedFieldGeneratorRuleFactory* factory,
                                            PythonQtPassOwnershipToCPP<ctkDICOMDisplayedFieldGeneratorAbstractRule*> plugin)
-    {
+  {
     return factory->registerDisplayedFieldGeneratorRule(plugin);
-    }
+  }
 };
 
 //-----------------------------------------------------------------------------
@@ -152,19 +216,19 @@ class PythonQtWrapper_CTKDICOMCore : public QObject
 
 public slots:
   ctkErrorLogLevel::LogLevel static_ctk_dicomLogLevel()
-    {
+  {
     return ctk::dicomLogLevel();
-    }
+  }
 
   void static_ctk_setDICOMLogLevel(ctkErrorLogLevel::LogLevel level)
-    {
+  {
     ctk::setDICOMLogLevel(level);
-    }
+  }
 
   QString static_ctk_dicomLogLevelAsString()
-    {
+  {
     return ctk::dicomLogLevelAsString();
-    }
+  }
 };
 
 //-----------------------------------------------------------------------------

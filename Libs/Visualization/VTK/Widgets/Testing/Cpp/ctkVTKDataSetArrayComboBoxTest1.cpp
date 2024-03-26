@@ -59,38 +59,38 @@ int ctkVTKDataSetArrayComboBoxTest1(int argc, char * argv [] )
   comboBox.setDataSet(dataSet.GetPointer());
 
   if (comboBox.count()!=2)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Expected 2 items in the combobox\n"
                   "\tCurrent count: " << comboBox.count() << "\n";
     return EXIT_FAILURE;
-    }
+  }
 
   comboBox.setNoneEnabled(true);
   if (comboBox.count()!=3)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Expected 3 items in the combobox\n"
                   "\tCurrent count: " << comboBox.count() << "\n";
     return EXIT_FAILURE;
-    }
+  }
   if (!comboBox.itemText(0).isEmpty())
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - First combo box item text is expected to be empty\n";
     return EXIT_FAILURE;
-    }
+  }
 
   comboBox.setNoneEnabled(false);
   if (comboBox.count()!=2)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Expected 2 items in the combobox\n"
                   "\tCurrent count: " << comboBox.count() << "\n";
     return EXIT_FAILURE;
-    }
+  }
 
   comboBox.show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(1000, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

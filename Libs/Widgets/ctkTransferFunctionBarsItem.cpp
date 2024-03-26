@@ -94,9 +94,9 @@ void ctkTransferFunctionBarsItem::setBarWidth(qreal newBarWidthRatio)
   Q_D(ctkTransferFunctionBarsItem);
   newBarWidthRatio = qBound(static_cast<qreal>(0.), newBarWidthRatio, static_cast<qreal>(1.));
   if (d->BarWidthRatio == newBarWidthRatio)
-    {
+  {
     return;
-    }
+  }
   d->BarWidthRatio = newBarWidthRatio;
   this->update();
 }
@@ -149,21 +149,21 @@ void ctkTransferFunctionBarsItem::paint(
   penColor.setAlphaF(1.);
   QPen pen;
   if (penColor == QApplication::palette().color(QPalette::Normal, QPalette::Highlight))
-    {
+  {
     pen = QPen(penColor, 1);
-    }
+  }
   else
-    {
+  {
     pen = QPen(QColor(255, 255, 255, 191), 1);
-    }
+  }
   pen.setCosmetic(true);
 
   // setup drawing
   ctkTransferFunction* tf = this->transferFunction();
   if (tf == 0 || tf->count() < 1)
-    {
+  {
     return;
-    }
+  }
 
   Q_ASSERT(tf->representation());
   const QList<QPointF>& points = tf->representation()->points();
@@ -173,14 +173,14 @@ void ctkTransferFunctionBarsItem::paint(
 
   QPainterPath bars;
   if (qFuzzyCompare(d->BarWidthRatio, 1.))
-    {
+  {
     bars = d->createAreaPath(tf, points, barWidth, useLog, this->rect());
     pen.setWidth(2);
-    }
+  }
   else
-    {
+  {
     bars = d->createBarsPath(tf, points, barWidth, useLog, this->rect());
-    }
+  }
 
   painter->setPen(pen);
   painter->setBrush(QBrush(d->BarColor));
@@ -205,7 +205,7 @@ bool ctkTransferFunctionBarsItemPrivate::useLog()const
 
   bool useLog = false;
   switch (this->LogMode)
-    {
+  {
     case ctkTransferFunctionBarsItem::AutoLog:
       useLog = tf->maxValue().toReal() - tf->minValue().toReal() > 1000.;
       break;
@@ -215,7 +215,7 @@ bool ctkTransferFunctionBarsItemPrivate::useLog()const
     default:
     case ctkTransferFunctionBarsItem::NoLog:
       useLog = false;
-    }
+  }
   return useLog;
 }
 
@@ -227,15 +227,15 @@ QPainterPath ctkTransferFunctionBarsItemPrivate::createBarsPath(ctkTransferFunct
 
   QPainterPath bars;
   foreach(const QPointF& point, points)
-    {
+  {
     qreal barHeight = point.y();
     if (useLog && barHeight != 1.)
-      {
+    {
       barHeight = rect.height() - log( tfRep->mapYFromScene(barHeight) )/log(tf->maxValue().toReal());
-      }
+    }
     bars.addRect(point.x() - barWidth/2, rect.height(),
                  barWidth, barHeight - rect.height() );
-    }
+  }
   return bars;
 }
 
@@ -249,15 +249,15 @@ QPainterPath ctkTransferFunctionBarsItemPrivate::createAreaPath(ctkTransferFunct
   // 0.001 is here to ensure the outer border is not displayed on the screen
   bars.moveTo(-barWidth/2, rect.height() + 0.1);
   foreach(const QPointF& point, points)
-    {
+  {
     qreal barHeight = point.y();
     if (useLog && barHeight != 1.)
-      {
+    {
       barHeight = rect.height() - log( tfRep->mapYFromScene(barHeight) )/log(tf->maxValue().toReal());
-      }
+    }
     bars.lineTo(point.x() - barWidth/2, barHeight);
     bars.lineTo(point.x() + barWidth/2, barHeight);
-    }
+  }
   // close the path ?
   bars.lineTo(rect.width() + barWidth/2, rect.height() + 0.1);
   bars.lineTo(-barWidth/2, rect.height()  + 0.1);

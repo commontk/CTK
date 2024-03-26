@@ -215,9 +215,9 @@ void ctkSliderWidgetValueProxyTester::testDecimalsOption()
   // test if it does not trigger asserts
   sliderWidget.setRange(-10000., 10000.);
   if (decimalsOption & ctkDoubleSpinBox::DecimalsByValue)
-    {
+  {
     QCOMPARE(sliderWidget.spinBox()->value(), 6.924);
-    }
+  }
 
   proxy.setCoefficient(1.);
 }
@@ -229,12 +229,12 @@ void ctkSliderWidgetValueProxyTester::testDecimalsOption_data()
   QTest::addColumn<double>("coefficient");
 
   for (double coef = 1.; coef < 10000000.; coef *= 10.)
-    {
+  {
     QTest::newRow("coef by value") << static_cast<int>(ctkDoubleSpinBox::DecimalsByValue) << coef;
     QTest::newRow("coef by value") << static_cast<int>(ctkDoubleSpinBox::FixedDecimals) << coef;
     QTest::newRow("1./coef by value") << static_cast<int>(ctkDoubleSpinBox::DecimalsByValue) << 1. / coef;
     QTest::newRow("1./coef") << static_cast<int>(ctkDoubleSpinBox::FixedDecimals) << 1./ coef;
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------

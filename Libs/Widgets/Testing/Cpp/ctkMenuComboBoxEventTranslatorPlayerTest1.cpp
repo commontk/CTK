@@ -55,7 +55,7 @@ QSignalSpy* Spy7;
 QSignalSpy* Spy8;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkMenuComboBox* widget = reinterpret_cast<ctkMenuComboBox*>(data);
   Q_UNUSED(widget);
 
@@ -63,10 +63,10 @@ void checkFinalWidgetState(void* data)
   CTKCOMPARE(Spy2->count(), 2);
   CTKCOMPARE(Spy3->count(), 2);
   CTKCOMPARE(Spy4->count(), 2);
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   ctkMenuComboBox* widget = reinterpret_cast<ctkMenuComboBox*>(data);
   Q_UNUSED(widget);
 
@@ -74,7 +74,7 @@ void checkFinalWidgetState2(void* data)
   CTKCOMPARE(Spy6->count(), 1);
   CTKCOMPARE(Spy7->count(), 1);
   CTKCOMPARE(Spy8->count(), 1);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -166,9 +166,9 @@ int ctkMenuComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

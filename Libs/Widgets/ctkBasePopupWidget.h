@@ -213,13 +213,13 @@ Q_DECLARE_METATYPE(ctkBasePopupWidget::VerticalDirection)
 void ctkBasePopupWidget::showPopup(bool show)
 {
   if (show)
-    {
+  {
     this->showPopup();
-    }
+  }
   else
-    {
+  {
     this->hidePopup();
-    }
+  }
 }
 
 #endif

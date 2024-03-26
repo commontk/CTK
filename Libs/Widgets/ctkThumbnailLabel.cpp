@@ -98,29 +98,29 @@ void ctkThumbnailLabelPrivate::updateThumbnail()
   QSize size = q->size();
 
   if (this->TextPushButton->isVisible())
-    {
+  {
     if (this->TextPosition & Qt::AlignTop)
-      {
+    {
       size.setHeight(size.height() - this->TextPushButton->height());
-      }
-    else if (this->TextPosition & Qt::AlignBottom)
-      {
-      size.setHeight(size.height() - this->TextPushButton->height());
-      }
-    else if (this->TextPosition & Qt::AlignLeft)
-      {
-      size.setWidth(size.width() - this->TextPushButton->width());
-      }
-    else if (this->TextPosition & Qt::AlignRight)
-      {
-      size.setWidth(size.width() - this->TextPushButton->width());
-      }
     }
+    else if (this->TextPosition & Qt::AlignBottom)
+    {
+      size.setHeight(size.height() - this->TextPushButton->height());
+    }
+    else if (this->TextPosition & Qt::AlignLeft)
+    {
+      size.setWidth(size.width() - this->TextPushButton->width());
+    }
+    else if (this->TextPosition & Qt::AlignRight)
+    {
+      size.setWidth(size.width() - this->TextPushButton->width());
+    }
+  }
 
   if (this->OperationProgressBar->isVisible())
-    {
+  {
     size.setHeight(size.height() - this->OperationProgressBar->height());
-    }
+  }
 
   this->PixmapLabel->setPixmap(
     this->OriginalThumbnail.isNull() ? QPixmap() :
@@ -200,51 +200,51 @@ void ctkThumbnailLabel::setTextPosition(const Qt::Alignment& position)
   d->TextPosition = position;
   int textIndex = -1;
   for (textIndex = 0; textIndex < this->layout()->count(); ++textIndex)
-    {
+  {
     if (this->layout()->itemAt(textIndex)->widget() == d->TextPushButton)
-      {
-      break;
-      }
-    }
-  if (textIndex > -1 && textIndex < this->layout()->count())
     {
-    this->layout()->takeAt(textIndex);
+      break;
     }
+  }
+  if (textIndex > -1 && textIndex < this->layout()->count())
+  {
+    this->layout()->takeAt(textIndex);
+  }
   int row = 1;
   int col = 1;
   QGridLayout* gridLayout = qobject_cast<QGridLayout*>(this->layout());
   if (position & Qt::AlignTop)
-    {
+  {
     row = 0;
-    }
+  }
   else if (position &Qt::AlignBottom)
-    {
+  {
     row = 2;
-    }
+  }
   else
-    {
+  {
     row = 1;
-    }
+  }
   if (position & Qt::AlignLeft)
-    {
+  {
     col = 0;
-    }
+  }
   else if (position & Qt::AlignRight)
-    {
+  {
     col = 2;
-    }
+  }
   else
-    {
+  {
     col = 1;
-    }
+  }
   if (row == 1 && col == 1)
-    {
+  {
     d->TextPushButton->setVisible(false);
-    }
+  }
   else
-    {
+  {
     gridLayout->addWidget(d->TextPushButton,row, col);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -306,13 +306,13 @@ void ctkThumbnailLabel::paintEvent(QPaintEvent* event)
   Q_D(ctkThumbnailLabel);
   this->Superclass::paintEvent(event);
   if (d->SelectedFlag && d->SelectedColor.isValid())
-    {
+  {
     QPainter p(this);
     QPen pen(d->SelectedColor);
     pen.setWidth(7);
     p.setPen(pen);
     p.drawRect(QRect(0,0, this->width() -1, this->height() -1));
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -351,9 +351,9 @@ QSize ctkThumbnailLabel::minimumSizeHint()const
   Q_D(const ctkThumbnailLabel);
   if (d->TextPushButton->isVisibleTo(const_cast<ctkThumbnailLabel*>(this)) &&
       !d->TextPushButton->text().isEmpty())
-    {
+  {
     return d->TextPushButton->minimumSizeHint();
-    }
+  }
   return QSize();
 }
 
@@ -372,9 +372,9 @@ int ctkThumbnailLabel::heightForWidth(int width)const
   Q_D(const ctkThumbnailLabel);
   if (d->OriginalThumbnail.isNull() ||
       d->OriginalThumbnail.width() == 0)
-    {
+  {
     return this->Superclass::heightForWidth(width);
-    }
+  }
   double ratio = static_cast<double>(d->OriginalThumbnail.height()) /
     static_cast<double>(d->OriginalThumbnail.width());
   return static_cast<int>(ratio * width + 0.5);

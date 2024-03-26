@@ -36,11 +36,11 @@ int ctkDICOMIndexerAppTest1(int argc, char * argv [])
   QString database("test.db");
 
   if (arguments.count() != 1)
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " <path-to-ctkDICOMIndexer-executable>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString command = arguments.at(0);
 
@@ -53,28 +53,28 @@ int ctkDICOMIndexerAppTest1(int argc, char * argv [])
 
   int res = QProcess::execute(command, parameters);
   if (res != EXIT_SUCCESS)
-    {
+  {
     std::cerr << '\"' << qPrintable(command + " " + parameters.join(" ")) << '\"'
               << " returned " << res << std::endl;
     return res;
-    }
+  }
   parameters.clear();
   parameters << "--add" << database << ".";
   res = QProcess::execute(command, parameters);
   if (res != EXIT_SUCCESS)
-    {
+  {
     std::cerr << '\"' << qPrintable(command + " " + parameters.join(" ")) << '\"'
               << " returned " << res << std::endl;
     return res;
-    }
+  }
   parameters.clear();
   parameters << "--cleanup" << database;
   res = QProcess::execute(command, parameters);
   if (res != EXIT_SUCCESS)
-    {
+  {
     std::cerr << '\"' << qPrintable(command + " " + parameters.join(" ")) << '\"'
               << " returned " << res << std::endl;
     return res;
-    }
+  }
   return res;
 }

@@ -41,9 +41,9 @@ class ctkSimplePythonQtDecorators : public QObject
 public:
 
   ctkSimplePythonQtDecorators(ctkAbstractPythonManager* pythonManager)
-    {
+  {
     Q_UNUSED(pythonManager);
-    }
+  }
 
 public Q_SLOTS:
 

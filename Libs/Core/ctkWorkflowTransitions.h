@@ -84,9 +84,9 @@ protected:
   {
     // check the event type
     if (e->type() != ctkWorkflowIntrastepTransitionEvent::getWorkflowIntrastepTransitionEventType())
-      {
+    {
       return false;
-      }
+    }
 
     // check the event value (i.e. the TransitionType)
     ctkWorkflowIntrastepTransitionEvent* workflowEvent = static_cast<ctkWorkflowIntrastepTransitionEvent*>(e);
@@ -159,9 +159,9 @@ protected:
   {
     // check the event type
     if (e->type() != ctkWorkflowInterstepTransitionEvent::getWorkflowInterstepTransitionEventType())
-      {
+    {
       return false;
-      }
+    }
 
     // check the event value (i.e. the TransitionType)
     ctkWorkflowInterstepTransitionEvent* workflowEvent = static_cast<ctkWorkflowInterstepTransitionEvent*>(e);

@@ -116,9 +116,9 @@ void ctkCoordinatesWidgetTester
   QList<QDoubleSpinBox*> spinBoxes =
     coordinatesWidget->findChildren<QDoubleSpinBox*>();
   foreach(QDoubleSpinBox* spinBox, spinBoxes)
-    {
+  {
     QCOMPARE(spinBox->decimals(), decimals);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -130,9 +130,9 @@ void ctkCoordinatesWidgetTester
   QList<QDoubleSpinBox*> spinBoxes =
     coordinatesWidget->findChildren<QDoubleSpinBox*>();
   foreach(QDoubleSpinBox* spinBox, spinBoxes)
-    {
+  {
     displayedText << spinBox->text();
-    }
+  }
   QCOMPARE(displayedText.join(", "), expectedDisplayedText);
 }
 
@@ -190,12 +190,12 @@ void ctkCoordinatesWidgetTester::testDecimalsByKey()
     spinBoxes[0]->findChildren<QLineEdit*>();
   QString text = lineEdits[0]->text();
   switch (decimalsOffset)
-    {
+  {
     case 1:
       if (!text.contains('.'))
-        {
+      {
         text += '.';
-        }
+      }
       text += '7';
       lineEdits[0]->setText(text);
       break;
@@ -215,7 +215,7 @@ void ctkCoordinatesWidgetTester::testDecimalsByKey()
       break;
     default:
       break;
-    }
+  }
 
   QFETCH(QVector3D, finalDecimals);
   QCOMPARE(spinBoxes[0]->decimals(), static_cast<int>(finalDecimals.x()));
@@ -328,9 +328,9 @@ void ctkCoordinatesWidgetTester::testDecimalsByShortcuts()
   QFETCH(int, key);
   QFETCH(int, repeat);
   for (int i = 0; i < repeat; ++i)
-    {
+  {
     QTest::keyClick(spinBoxes[0], key, Qt::ControlModifier);
-    }
+  }
   QFETCH(int, expectedDecimals);
   QFETCH(QString, expectedDisplayedText);
   testDecimals(&coordinatesWidget, expectedDecimals);

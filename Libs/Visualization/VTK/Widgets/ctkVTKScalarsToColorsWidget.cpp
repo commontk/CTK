@@ -149,36 +149,36 @@ bool ctkVTKScalarsToColorsWidgetPrivate::checkXRange(double x, int pointId)
   wrongPalette.setColor(QPalette::Highlight, Qt::red);
   if (pointId < 0 ||
       pointId >= this->PointIdSpinBox->maximum())
-    {
+  {
     QTimer::singleShot(2000, q, SLOT(restorePalette()));
     return false;
-    }
+  }
   if (pointId > 0)
-    {
+  {
     double previous[4];
     this->CurrentControlPointsItem->GetControlPoint(pointId - 1, previous);
     if (x < previous[0])
-      {
+    {
       this->XSpinBox->setPalette(wrongPalette);
       this->XSpinBox->selectAll();
       QTimer::singleShot(2000, q, SLOT(restorePalette()));
       this->XSpinBox->setValue(previous[0]);
       return false;
-      }
     }
+  }
   if (pointId < this->PointIdSpinBox->maximum() - 1)
-    {
+  {
     double next[4];
     this->CurrentControlPointsItem->GetControlPoint(pointId + 1, next);
     if (x > next[0])
-      {
+    {
       this->XSpinBox->setPalette(wrongPalette);
       this->XSpinBox->selectAll();
       QTimer::singleShot(2000, q, SLOT(restorePalette()));
       this->XSpinBox->setValue(next[0]);
       return false;
-      }
     }
+  }
   return true;
 }
 
@@ -278,11 +278,11 @@ void ctkVTKScalarsToColorsWidget::onPlotAdded(vtkPlot* plot)
 {
   vtkControlPointsItem* controlPoints = vtkControlPointsItem::SafeDownCast(plot);
   if (controlPoints)
-    {
+  {
     this->setCurrentControlPointsItem(controlPoints);
     this->qvtkConnect(plot, vtkControlPointsItem::CurrentPointChangedEvent,
                       this, SLOT(setCurrentPoint(vtkObject*,void*)));
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -298,20 +298,20 @@ void ctkVTKScalarsToColorsWidget::setCurrentPoint(vtkObject* caller, void* callD
   vtkControlPointsItem* controlPoints = reinterpret_cast<vtkControlPointsItem*>(caller);
   long newPoint = reinterpret_cast<long>(callData);
   if (!controlPoints || newPoint < -1)
-    {
+  {
     return;
-    }
+  }
   if (d->CurrentControlPointsItem != controlPoints)
-    {
+  {
     this->setCurrentControlPointsItem(controlPoints);
-    }
+  }
   else
-    {
+  {
     // When a new point is added, the modified event is fired later.
     // however we need to update the max of the current spin box before
     // setting the new value.
     this->updateNumberOfPoints();
-    }
+  }
   this->setCurrentPoint(newPoint);
 }
 
@@ -328,9 +328,9 @@ void ctkVTKScalarsToColorsWidget::setCurrentControlPointsItem(vtkControlPointsIt
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   if (d->CurrentControlPointsItem == item)
-    {
+  {
     return;
-    }
+  }
   this->qvtkReconnect(d->CurrentControlPointsItem, item, vtkCommand::ModifiedEvent,
                       this, SLOT(updateCurrentPoint()));
   this->qvtkReconnect(d->CurrentControlPointsItem ?
@@ -345,7 +345,7 @@ void ctkVTKScalarsToColorsWidget::setCurrentControlPointsItem(vtkControlPointsIt
                       this, SLOT(onAxesModified()));
   d->CurrentControlPointsItem = item;
   if (item)
-    {
+  {
     d->ColorPickerButton->setVisible( d->EditColors && d->TopWidgetsVisible &&
       (vtkColorTransferControlPointsItem::SafeDownCast(item) != 0 ||
        vtkCompositeControlPointsItem::SafeDownCast(item) != 0));
@@ -358,7 +358,7 @@ void ctkVTKScalarsToColorsWidget::setCurrentControlPointsItem(vtkControlPointsIt
       (vtkPiecewiseControlPointsItem::SafeDownCast(item) != 0 ||
        vtkCompositeControlPointsItem::SafeDownCast(item) != 0));
     this->onAxesModified();
-    }
+  }
   d->PointIdSpinBox->setEnabled(item != 0);
   d->PointIdSpinBox->setMaximum((item ? item->GetNumberOfPoints() : 0) - 1);
   d->PointIdSpinBox->setValue(item ? item->GetCurrentPoint() : -1);
@@ -377,9 +377,9 @@ void ctkVTKScalarsToColorsWidget::onCurrentPointChanged(int currentPoint)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   if (d->CurrentControlPointsItem)
-    {
+  {
     d->CurrentControlPointsItem->SetCurrentPoint(currentPoint);
-    }
+  }
 
   d->ColorPickerButton->setEnabled(currentPoint != -1);
   d->XSpinBox->setEnabled(currentPoint != -1);
@@ -388,9 +388,9 @@ void ctkVTKScalarsToColorsWidget::onCurrentPointChanged(int currentPoint)
   d->SharpnessSpinBox->setEnabled(currentPoint != -1);
 
   if (d->CurrentControlPointsItem)
-    {
+  {
     this->updateCurrentPoint();
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -412,9 +412,9 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
 
   int pointId = d->PointIdSpinBox->value();
   if (pointId == -1)
-    {
+  {
     return;
-    }
+  }
 
   double point[4] = {0.0};
   d->CurrentControlPointsItem->GetControlPoint(pointId, point);
@@ -423,12 +423,12 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
     d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
   if (xAxis && (xAxis->GetMinimumLimit() > point[0] || xAxis->GetMaximumLimit() < point[0]))
-    {
+  {
     xAxis->SetMinimumLimit(qMin(xAxis->GetMinimumLimit(), point[0]));
     xAxis->SetMaximumLimit(qMax(xAxis->GetMaximumLimit(), point[0]));
     d->View->boundAxesToChartBounds();
     this->onAxesModified();
-    }
+  }
 
   bool oldBlock = d->blockSignals(true);
   d->XSpinBox->setValue(point[0]);
@@ -444,14 +444,14 @@ void ctkVTKScalarsToColorsWidget::updateCurrentPoint()
       (!compositeControlPoints ||
         compositeControlPoints->GetPointsFunction() == vtkCompositeControlPointsItem::ColorPointsFunction ||
         compositeControlPoints->GetPointsFunction() == vtkCompositeControlPointsItem::ColorAndOpacityPointsFunction))
-    {
+  {
     vtkColorTransferFunction* colorTF =
       colorControlPoints->GetColorTransferFunction();
     double xrgbms[6];
     colorTF->GetNodeValue(d->PointIdSpinBox->value(), xrgbms);
     QColor color = QColor::fromRgbF(xrgbms[1], xrgbms[2], xrgbms[3]);
     d->ColorPickerButton->setColor(color);
-    }
+  }
   d->blockSignals(oldBlock);
 }
 
@@ -460,9 +460,9 @@ void ctkVTKScalarsToColorsWidget::onColorChanged(const QColor& color)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   if (!color.isValid())
-    {
+  {
     return;
-    }
+  }
   Q_ASSERT(d->CurrentControlPointsItem);
   Q_ASSERT(d->PointIdSpinBox->value() != -1);
   Q_ASSERT(d->PointIdSpinBox->value() == d->CurrentControlPointsItem->GetCurrentPoint());
@@ -470,7 +470,7 @@ void ctkVTKScalarsToColorsWidget::onColorChanged(const QColor& color)
   vtkColorTransferControlPointsItem* colorControlPoints =
     vtkColorTransferControlPointsItem::SafeDownCast(d->CurrentControlPointsItem);
   if (colorControlPoints)
-    {
+  {
     vtkColorTransferFunction* colorTF =
       colorControlPoints->GetColorTransferFunction();
     double point[6];
@@ -479,7 +479,7 @@ void ctkVTKScalarsToColorsWidget::onColorChanged(const QColor& color)
     point[2] = color.greenF();
     point[3] = color.blueF();
     colorTF->SetNodeValue(d->PointIdSpinBox->value(), point);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -487,15 +487,15 @@ void ctkVTKScalarsToColorsWidget::onXChanged(double x)
 {
   Q_D(ctkVTKScalarsToColorsWidget);
   if (!d->CurrentControlPointsItem)
-    {
+  {
     return;
-    }
+  }
 
   bool validRange = d->checkXRange(x, d->PointIdSpinBox->value());
   if (!validRange)
-    {
+  {
     return;
-    }
+  }
   double point[4];
   d->CurrentControlPointsItem->GetControlPoint(d->PointIdSpinBox->value(), point);
   point[0] = x;
@@ -558,11 +558,11 @@ void ctkVTKScalarsToColorsWidget::setXRange(double min, double max)
     d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   Q_ASSERT(xAxis);
   if (xAxis->GetMinimum() != min || xAxis->GetMaximum() != max)
-    {
+  {
     xAxis->SetRange(min, max);
     // Repaint the scene
     d->View->scene()->SetDirty(true);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -584,11 +584,11 @@ void ctkVTKScalarsToColorsWidget::setYRange(double min, double max)
     d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
   Q_ASSERT(yAxis);
   if (yAxis->GetMinimum() != min || yAxis->GetMaximum() != max)
-    {
+  {
     yAxis->SetRange(min, max);
     // Repaint the scene
     d->View->scene()->SetDirty(true);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -598,16 +598,16 @@ void ctkVTKScalarsToColorsWidget::resetRange()
   vtkAxis* xAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetXAxis() : d->View->chart()->GetAxis(vtkAxis::BOTTOM);
   if (xAxis)
-    {
+  {
     this->setXRange(xAxis->GetMinimumLimit(), xAxis->GetMaximumLimit());
-    }
+  }
 
   vtkAxis* yAxis = d->CurrentControlPointsItem ?
     d->CurrentControlPointsItem->GetYAxis() : d->View->chart()->GetAxis(vtkAxis::LEFT);
   if (yAxis)
-    {
+  {
     this->setYRange(yAxis->GetMinimumLimit(), yAxis->GetMaximumLimit());
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -659,14 +659,14 @@ QWidgetList ctkVTKScalarsToColorsWidget::extraWidgets()const
   Q_D(const ctkVTKScalarsToColorsWidget);
   QWidgetList widgets;
   for (int i = 0; i < d->TopLayout->count(); ++i)
-    {
+  {
     QLayoutItem* topLeftItem = d->TopLayout->itemAt(i);
     if (topLeftItem->spacerItem())
-      {
+    {
       break;
-      }
-    widgets << topLeftItem->widget();
     }
+    widgets << topLeftItem->widget();
+  }
   return widgets;
 }
 
@@ -676,7 +676,7 @@ void ctkVTKScalarsToColorsWidget::addExtraWidget(QWidget* extraWidget)
   Q_D(const ctkVTKScalarsToColorsWidget);
   d->TopLayout->insertWidget(this->extraWidgets().count(), extraWidget);
   if (!d->TopWidgetsVisible)
-    {
+  {
     extraWidget->setVisible(d->TopWidgetsVisible);
-    }
+  }
 }

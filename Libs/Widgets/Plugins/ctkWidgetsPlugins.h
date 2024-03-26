@@ -80,7 +80,7 @@ class CTK_WIDGETS_PLUGINS_EXPORT ctkWidgetsPlugins
   Q_PLUGIN_METADATA(IID "org.commontk.Widgets")
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkActionsWidgetPlugin
             << new ctkAxesWidgetPlugin
@@ -125,7 +125,7 @@ public:
             << new ctkWorkflowButtonBoxWidgetPlugin
             << new ctkWorkflowWidgetStepPlugin;
     return plugins;
-    }
+  }
 };
 
 #endif

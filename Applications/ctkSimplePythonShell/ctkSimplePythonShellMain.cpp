@@ -53,13 +53,13 @@ void executeScripts(void * data)
   ctkSimplePythonManager * pythonManager = reinterpret_cast<ctkSimplePythonManager*>(data);
   QStringList scripts = pythonManager->property("scripts").toStringList();
   foreach(const QString& script, scripts)
-    {
+  {
     pythonManager->executeFile(script);
     if (pythonManager->pythonErrorOccured())
-      {
+    {
       QApplication::exit(EXIT_FAILURE);
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------

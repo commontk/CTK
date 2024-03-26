@@ -79,7 +79,7 @@ QString ctkFontButtonPrivate::fullNameWeight()const
     }
   */
   switch (this->Font.weight())
-    {
+  {
     case QFont::Light:
       return QString("Light");
     case QFont::Normal:
@@ -92,7 +92,7 @@ QString ctkFontButtonPrivate::fullNameWeight()const
       return QString("Black");
     default:
       return QString();
-    }
+  }
   return QString();
 }
 
@@ -150,9 +150,9 @@ void ctkFontButton::setCurrentFont(const QFont& newFont)
   Q_D(ctkFontButton);
 
   if (d->Font == newFont)
-    {
+  {
     return;
-    }
+  }
 
   d->Font = newFont;
 
@@ -176,9 +176,9 @@ void ctkFontButton::browseFont()
   bool ok = false;
   QFont newFont = QFontDialog::getFont(&ok, d->Font, this);
   if (ok)
-    {
+  {
     this->setCurrentFont(newFont);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -39,26 +39,26 @@ bool ctkDoubleRangeSliderEventPlayer::playEvent(QObject *Object,
                                                 bool &Error)
 {
   if (Command != "set_max_double" && Command != "set_min_double")
-    {
+  {
     return false;
-    }
+  }
 
   const double value = Arguments.toDouble();
 
   if(ctkDoubleRangeSlider* const object =
        qobject_cast<ctkDoubleRangeSlider*>(Object))
-    {
+  {
     if (Command == "set_min_double")
-      {
+    {
       object->setMinimumValue(value);
       return true;
-      }
+    }
     if (Command == "set_max_double")
-      {
+    {
       object->setMaximumValue(value);
       return true;
-      }
     }
+  }
 
   qCritical() << "calling set_min/max_double on unhandled type " << Object;
   Error = true;

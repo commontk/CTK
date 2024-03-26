@@ -42,28 +42,28 @@ bool ctkPopupWidgetEventPlayer::playEvent(QObject *Object,
                                                 bool &Error)
 {
   if (Command != "popupOpen")
-    {
+  {
     return false;
-    }
+  }
 
   if(ctkPopupWidget* const object =
        qobject_cast<ctkPopupWidget*>(Object))
-    {
+  {
     if (Command == "popupOpen")
-      {
+    {
       if (Arguments == "true")
-        {
+      {
         object->showPopup();
         pqEventDispatcher::processEventsAndWait(500);
-        }
+      }
       else
-        {
+      {
         object->hidePopup();
         pqEventDispatcher::processEventsAndWait(500);
-        }
-      return true;
       }
+      return true;
     }
+  }
 
   qCritical() << "calling popupOpen on unhandled type " << Object;
   Error = true;

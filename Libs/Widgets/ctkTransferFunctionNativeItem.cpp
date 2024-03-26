@@ -58,9 +58,9 @@ void ctkTransferFunctionNativeItemPrivate::initTexture()
 
   glBindTexture(GL_TEXTURE_2D, this->Texture[0]);
   if (!glIsTexture(this->Texture[0]))
-    {
+  {
     qDebug() << "pb texture";
-    }
+  }
   float transferFunction[12] = {0.,0.,0.,1.,0.,0.,0.,1.,0.,0.,0.,1.};
   glTexImage2D(GL_TEXTURE_2D, 0, 3, 4, 1, 0, GL_RGB, GL_FLOAT, transferFunction);
   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -100,9 +100,9 @@ void ctkTransferFunctionNativeItem::paint(
   painter->beginNativePainting();
 
   if (d->Texture[0] == GL_INVALID_VALUE)
-    {
+  {
     d->initTexture();
-    }
+  }
 
   glEnable(GL_TEXTURE_2D);
   //glDisable(GL_DEPTH_TEST);

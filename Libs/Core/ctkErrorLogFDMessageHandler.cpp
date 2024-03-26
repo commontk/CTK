@@ -70,10 +70,10 @@ void ctkFDHandler::setupPipe()
   int status = pipe(this->Pipe);
 #endif
   if (status != 0)
-    {
+  {
     qCritical().nospace() << "ctkFDHandler - Failed to create pipe !";
     return;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -86,12 +86,12 @@ FILE* ctkFDHandler::terminalOutputFile()
 void ctkFDHandler::setEnabled(bool value)
 {
   if (this->Enabled == value)
-    {
+  {
     return;
-    }
+  }
 
   if (value)
-    {
+  {
     this->setupPipe();
 
     // Flush (stdout|stderr) so that any buffered messages are delivered
@@ -112,9 +112,9 @@ void ctkFDHandler::setEnabled(bool value)
     // Start polling thread
     this->Enabled = true;
     this->start();
-    }
+  }
   else
-    {
+  {
     // Print one character to "unblock" the read function associated with the polling thread
 #ifdef Q_OS_WIN32
     int unused = _write(_fileno(this->terminalOutputFile()), "\n", 1);
@@ -162,14 +162,14 @@ void ctkFDHandler::setEnabled(bool value)
 #endif
 
     this->SavedFDNumber = 0;
-    }
+  }
 
   ctkErrorLogTerminalOutput * terminalOutput =
       this->MessageHandler->terminalOutput(this->TerminalOutput);
   if(terminalOutput)
-    {
+  {
     terminalOutput->setFileDescriptor(this->SavedFDNumber);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -183,30 +183,30 @@ bool ctkFDHandler::enabled()const
 void ctkFDHandler::run()
 {
   while(true)
-    {
+  {
     char c = '\0';
     QString line;
     while(c != '\n')
-      {
+    {
 #ifdef Q_OS_WIN32
       int res = _read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
 #else
       ssize_t res = read(this->Pipe[0], &c, 1); // When used with pipe, read() is blocking
 #endif
       if (res == -1)
-        {
+      {
         break;
-        }
-      if (c != '\n')
-        {
-        line += c;
-        }
       }
+      if (c != '\n')
+      {
+        line += c;
+      }
+    }
 
     if (!this->enabled())
-      {
+    {
       break;
-      }
+    }
 
     Q_ASSERT(this->MessageHandler);
     this->MessageHandler->handleMessage(
@@ -215,7 +215,7 @@ void ctkFDHandler::run()
       this->MessageHandler->handlerPrettyName(),
       ctkErrorLogContext(line),
       line);
-    }
+  }
 }
 
 // --------------------------------------------------------------------------

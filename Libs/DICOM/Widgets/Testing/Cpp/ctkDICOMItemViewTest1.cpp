@@ -47,11 +47,11 @@ int ctkDICOMItemViewTest1( int argc, char * argv [] )
   bool interactive = arguments.removeOne("-I");
 
   if (arguments.count() != 1)
-    {
+  {
     std::cerr << "Usage: " << qPrintable(testName)
               << " [-I] <path-to-dicom-file>" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString dicomFilePath(arguments.at(0));
 
@@ -70,8 +70,8 @@ int ctkDICOMItemViewTest1( int argc, char * argv [] )
   datasetView.show();
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
   return app.exec();
 }

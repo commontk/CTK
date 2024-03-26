@@ -40,11 +40,11 @@ class CTK_SCRIPTING_PYTHON_WIDGETS_PLUGINS_EXPORT ctkScriptingPythonWidgetsPlugi
 
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
-    {
+  {
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new ctkPythonConsolePlugin;
     return plugins;
-    }
+  }
 };
 
 #endif

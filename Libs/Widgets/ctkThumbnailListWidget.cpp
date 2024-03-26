@@ -82,16 +82,16 @@ void ctkThumbnailListWidgetPrivate::clearAllThumbnails()
   // Remove previous displayed thumbnails
   QLayoutItem* item;
   while((item = this->ScrollAreaContentWidget->layout()->takeAt(0)))
-    {
+  {
     ctkThumbnailLabel* thumbnailWidget = qobject_cast<ctkThumbnailLabel*>(item->widget());
     if(thumbnailWidget)
-      {
+    {
       q->disconnect(thumbnailWidget, SIGNAL(selected(ctkThumbnailLabel)), q, SLOT(onThumbnailSelected(ctkThumbnailLabel)));
       q->disconnect(thumbnailWidget, SIGNAL(selected(ctkThumbnailLabel)), q, SIGNAL(selected(ctkThumbnailLabel)));
       q->disconnect(thumbnailWidget, SIGNAL(doubleClicked(ctkThumbnailLabel)), q, SIGNAL(doubleClicked(ctkThumbnailLabel)));
-      }
-    item->widget()->deleteLater();
     }
+    item->widget()->deleteLater();
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -121,29 +121,29 @@ void ctkThumbnailListWidgetPrivate::updateScrollAreaContentWidgetSize(QSize size
     this->ScrollAreaContentWidget->layout());
   newViewportSize = newViewportSize.expandedTo(flowLayout->minimumSize());
   if (flowLayout->hasHeightForWidth())
-    {
+  {
     int newViewPortHeight = newViewportSize.height();
     newViewportSize.rheight() = flowLayout->heightForWidth( newViewportSize.width() );
     if (newViewportSize.height() > newViewPortHeight)
-      {
+    {
       // The new width is too narrow, to fit everything, a vertical scrollbar
       // is needed. Recompute with the scrollbar width.
       newViewportSize.rwidth() -= this->ScrollArea->verticalScrollBar()->sizeHint().width();
       newViewportSize.rheight() = flowLayout->heightForWidth( newViewportSize.width() );
-      }
     }
+  }
   else if (flowLayout->hasWidthForHeight())
-    {
+  {
     int newViewPortWidth = newViewportSize.width();
     newViewportSize.rwidth() = flowLayout->widthForHeight( newViewportSize.height() );
     if (newViewportSize.width() > newViewPortWidth)
-      {
+    {
       // The new height is too narrow, to fit everything, an horizontal scrollbar
       // is needed. Recompute with the scrollbar height.
       newViewportSize.rheight() -= this->ScrollArea->horizontalScrollBar()->sizeHint().height();
       newViewportSize.rwidth() = flowLayout->widthForHeight( newViewportSize.height() );
-      }
     }
+  }
   this->ScrollAreaContentWidget->resize(newViewportSize);
 }
 
@@ -183,9 +183,9 @@ ctkThumbnailListWidget::~ctkThumbnailListWidget()
 void ctkThumbnailListWidget::addThumbnails(const QList<QPixmap>& thumbnails)
 {
   for(int i=0; i<thumbnails.count(); i++)
-    {
+  {
     this->addThumbnail(thumbnails[i]);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -195,9 +195,9 @@ void ctkThumbnailListWidget::addThumbnail(const QPixmap& pixmap, const QString& 
   ctkThumbnailLabel* widget = new ctkThumbnailLabel(d->ScrollAreaContentWidget);
   widget->setText(label);
   if(d->ThumbnailSize.isValid())
-    {
+  {
     widget->setFixedSize(d->ThumbnailSize);
-    }
+  }
   widget->setPixmap(pixmap);
   d->addThumbnail(widget);
 }
@@ -214,18 +214,18 @@ void ctkThumbnailListWidget::setCurrentThumbnail(int index)
   if(index >= count)return;
 
   for(int i=0; i<count; i++)
-    {
+  {
     ctkThumbnailLabel* thumbnailWidget = qobject_cast<ctkThumbnailLabel*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
     if(i == index)
-      {
+    {
       thumbnailWidget->setSelected(true);
       d->ScrollArea->ensureWidgetVisible(thumbnailWidget);
-      }
-    else
-      {
-      thumbnailWidget->setSelected(false);
-      }
     }
+    else
+    {
+      thumbnailWidget->setSelected(false);
+    }
+  }
 
   d->CurrentThumbnail = index;
 }
@@ -243,13 +243,13 @@ void ctkThumbnailListWidget::onThumbnailSelected(const ctkThumbnailLabel &widget
 {
   Q_D(ctkThumbnailListWidget);
   for(int i=0; i<d->ScrollAreaContentWidget->layout()->count(); i++)
-    {
+  {
     ctkThumbnailLabel* thumbnailWidget = qobject_cast<ctkThumbnailLabel*>(d->ScrollAreaContentWidget->layout()->itemAt(i)->widget());
     if(thumbnailWidget && (&widget != thumbnailWidget))
-      {
+    {
       thumbnailWidget->setSelected(false);
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -275,13 +275,13 @@ void ctkThumbnailListWidget::setThumbnailSize(QSize size)
 {
   Q_D(ctkThumbnailListWidget);
   if (size.isValid())
-    {
+  {
     foreach( ctkThumbnailLabel* thumbnail,
              this->findChildren<ctkThumbnailLabel*>())
-      {
+    {
       thumbnail->setFixedSize(size);
-      }
     }
+  }
   d->ThumbnailSize = size;
 }
 
@@ -313,11 +313,11 @@ bool ctkThumbnailListWidget::eventFilter(QObject* watched, QEvent* event)
   if (d->RequestRelayout &&
       qobject_cast<ctkThumbnailLabel*>(watched) &&
       event->type() == QEvent::Show)
-    {
+  {
     d->RequestRelayout = false;
     watched->removeEventFilter(this);
     QTimer::singleShot(0, this, SLOT(updateLayout()));
-    }
+  }
   return this->Superclass::eventFilter(watched, event);
 }
 

@@ -39,10 +39,10 @@ int ctkDicomObjectLocatorCacheTest1(int argc, char* argv[])
 
   //----------------------------------------------------------------------------
   if (cache.remove(""))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with remove() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //----------------------------------------------------------------------------
   QString objectUuid = QUuid::createUuid().toString();
@@ -52,33 +52,33 @@ int ctkDicomObjectLocatorCacheTest1(int argc, char* argv[])
 
   ctkDicomAppHosting::ObjectLocator objectLocatorFound;
   if (cache.find(objectUuid, objectLocatorFound))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with find() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   cache.insert(objectUuid, objectLocator);
 
   //----------------------------------------------------------------------------
   if (!cache.find(objectUuid, objectLocatorFound))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with find() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (objectLocator != objectLocatorFound)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with find() method"
               << " - objectLocator != objectLocatorFound" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //----------------------------------------------------------------------------
   if (!cache.remove(objectUuid))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with remove() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //----------------------------------------------------------------------------
   cache.insert(objectUuid, objectLocator);
@@ -90,85 +90,85 @@ int ctkDicomObjectLocatorCacheTest1(int argc, char* argv[])
 
   // First call to "remove()"
   if (!cache.remove(objectUuid))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with remove() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDicomAppHosting::ObjectLocator objectLocatorFound2;
   if (!cache.find(objectUuid, objectLocatorFound2))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with find() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (objectLocator != objectLocatorFound2)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with find() method"
               << " - objectLocator != objectLocatorFound" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Second call to "remove()"
   if (!cache.remove(objectUuid))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with remove() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDicomAppHosting::ObjectLocator objectLocatorFound3;
   if (!cache.find(objectUuid, objectLocatorFound3))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with find() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (objectLocator != objectLocatorFound3)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with find() method"
               << " - objectLocator != objectLocatorFound" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Third call to "remove()"
   if (!cache.remove(objectUuid))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with remove() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDicomAppHosting::ObjectLocator objectLocatorFound4;
   if (cache.find(objectUuid, objectLocatorFound4))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with find() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Fourth call to "remove()"
   if (cache.remove(objectUuid))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with remove() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   //----------------------------------------------------------------------------
 
   ctkDicomAppHosting::AvailableData availableData;
 
   if (cache.isCached(availableData))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with isCached() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDicomAppHosting::Patient patient;
   availableData.patients << patient;
 
   if (cache.isCached(availableData))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with isCached() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   ctkDicomAppHosting::ObjectDescriptor objectDescriptor;
   objectDescriptor.descriptorUUID = objectUuid;
@@ -176,18 +176,18 @@ int ctkDicomObjectLocatorCacheTest1(int argc, char* argv[])
   availableData.objectDescriptors << objectDescriptor;
 
   if (cache.isCached(availableData))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with isCached() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   cache.insert(objectUuid, objectLocator);
 
   if (!cache.isCached(availableData))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with isCached() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QString objectUuid2 = QUuid::createUuid().toString();
   ctkDicomAppHosting::ObjectDescriptor objectDescriptor2;
@@ -199,18 +199,18 @@ int ctkDicomObjectLocatorCacheTest1(int argc, char* argv[])
   availableData.objectDescriptors << objectDescriptor2;
 
   if (cache.isCached(availableData))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with isCached() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   cache.insert(objectUuid2, objectLocator2);
 
   if (!cache.isCached(availableData))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with isCached() method" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

@@ -81,9 +81,9 @@ void ctkValueProxy::setValue(double newValue)
 {
   Q_D(ctkValueProxy);
   if (d->Value == newValue)
-    {
+  {
     return;
-    }
+  }
 
   d->Value = newValue;
   emit this->valueChanged(d->Value);
@@ -102,9 +102,9 @@ void ctkValueProxy::setProxyValue(double newProxyValue)
 {
   Q_D(ctkValueProxy);
   if (d->ProxyValue == newProxyValue)
-    {
+  {
     return;
-    }
+  }
 
   d->ProxyValue = newProxyValue;
   emit this->proxyValueChanged(d->ProxyValue);
@@ -117,9 +117,9 @@ void ctkValueProxy::updateProxyValue()
   Q_D(ctkValueProxy);
   double newProxyValue = this->proxyValueFromValue(d->Value);
   if (newProxyValue == d->ProxyValue)
-    {
+  {
     return;
-    }
+  }
 
   d->ProxyValue = newProxyValue;
   emit this->proxyValueChanged(d->ProxyValue);
@@ -131,9 +131,9 @@ void ctkValueProxy::updateValue()
   Q_D(ctkValueProxy);
   double newValue = this->valueFromProxyValue(d->ProxyValue);
   if (newValue == d->Value)
-    {
+  {
     return;
-    }
+  }
 
   d->Value = newValue;
   emit this->valueChanged(d->Value);

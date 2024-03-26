@@ -42,23 +42,23 @@ bool ctkPathLineEditEventTranslator::translateEvent(QObject *Object,
   Q_UNUSED(Error);
   ctkPathLineEdit* pathLineEdit = NULL;
   for(QObject* test = Object; pathLineEdit == NULL && test != NULL; test = test->parent())
-    {
+  {
     pathLineEdit = qobject_cast<ctkPathLineEdit*>(test);
-    }
+  }
 
   if(!pathLineEdit)
-    {
+  {
     return false;
-    }
+  }
 
   if(Event->type() == QEvent::Enter && Object == pathLineEdit)
-    {
+  {
     if(this->CurrentObject != Object)
-      {
+    {
       if(this->CurrentObject)
-        {
+      {
         disconnect(this->CurrentObject, 0, this, 0);
-        }
+      }
       this->CurrentObject = Object;
 
       connect(pathLineEdit, SIGNAL(destroyed(QObject*)),
@@ -67,8 +67,8 @@ bool ctkPathLineEditEventTranslator::translateEvent(QObject *Object,
               this, SLOT(onEditTextChanged(const QString&)));
       connect(pathLineEdit, SIGNAL(currentPathChanged(const QString&)),
               this, SLOT(onCurrentPathChanged(const QString&)));
-      }
     }
+  }
 
   return true;
 }

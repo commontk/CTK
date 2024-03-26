@@ -129,13 +129,13 @@ void ctkLayoutViewFactory::setupView(QDomElement viewElement, QWidget* view)
   int verticalStretch = viewElement.attribute("verticalStretch", QString::number(-1)).toInt();
   QSizePolicy sizePolicy = view->sizePolicy();
   if (horizontalStretch >= 0)
-    {
+  {
     sizePolicy.setHorizontalStretch(horizontalStretch);
-    }
+  }
   if (verticalStretch >= 0)
-    {
+  {
     sizePolicy.setVerticalStretch(verticalStretch);
-    }
+  }
   view->setSizePolicy(sizePolicy);
 
   this->registerView(viewElement, view);
@@ -149,18 +149,18 @@ QWidget* ctkLayoutViewFactory::viewFromXML(QDomElement layoutElement)
   // The same XML element has already been processed, reuse the view associated
   // to it.
   if (views.count())
-    {
+  {
     return views[0];
-    }
+  }
   // The layout element does not match any existing one, however we can just reuse
   // one that was registered for a different layout element.
   if (this->useCachedViews() &&
       d->NumberOfViewsInCurrentLayout >= 0 &&
       d->NumberOfViewsInCurrentLayout < d->Views.count())
-    {
+  {
     QWidget* view = d->Views[d->NumberOfViewsInCurrentLayout].second;
     return view;
-    }
+  }
   return this->createViewFromXML(layoutElement);
 }
 
@@ -177,9 +177,9 @@ QList<QWidget*> ctkLayoutViewFactory::viewsFromXML(QDomElement layoutElement)
   Q_D(ctkLayoutViewFactory);
   QWidgetList views = this->registeredViews(layoutElement);
   if (views.count())
-    {
+  {
     return views;
-    }
+  }
   // The layout element does not match any existing one, however we can just reuse
   // one that was registered for a different layout element.
   // We use cached views (regardless of useCachedViews settings)
@@ -187,13 +187,13 @@ QList<QWidget*> ctkLayoutViewFactory::viewsFromXML(QDomElement layoutElement)
   // attribute is set.
   if (d->NumberOfViewsInCurrentLayout >= 0 &&
       d->NumberOfViewsInCurrentLayout < d->Views.count())
-    {
+  {
     for (int i = d->NumberOfViewsInCurrentLayout; i < d->Views.count(); ++i)
-      {
+    {
       views << d->Views[i].second;
-      }
-    return views;
     }
+    return views;
+  }
   return this->createViewsFromXML(layoutElement);
 }
 
@@ -203,9 +203,9 @@ QList<QWidget*> ctkLayoutViewFactory::createViewsFromXML(QDomElement layoutEleme
   QWidgetList views;
   QWidget* view = this->createViewFromXML(layoutElement);
   if (view)
-    {
+  {
     views << view;
-    }
+  }
   return views;
 }
 
@@ -215,9 +215,9 @@ QList<QWidget*> ctkLayoutViewFactory::registeredViews()const
   Q_D(const ctkLayoutViewFactory);
   QWidgetList res;
   foreach(ctkLayoutViewFactoryPrivate::ViewFactory p, d->Views)
-    {
+  {
     res << p.second;
-    }
+  }
   return res;
 }
 
@@ -228,12 +228,12 @@ QList<QWidget*> ctkLayoutViewFactory
   Q_D(const ctkLayoutViewFactory);
   QWidgetList res;
   foreach(ctkLayoutViewFactoryPrivate::ViewFactory p, d->Views)
-    {
+  {
     if (p.first == layoutElement)
-      {
+    {
       res << p.second;
-      }
     }
+  }
   return res;
 }
 
@@ -243,16 +243,16 @@ void ctkLayoutViewFactory::registerView(QDomElement layoutElement, QWidget* view
   Q_D(ctkLayoutViewFactory);
   QDomElement viewElement = this->layoutElement(view);
   if (!viewElement.isNull())
-    { // replace the current view element with the new layout element.
+  { // replace the current view element with the new layout element.
     ctkLayoutViewFactoryPrivate::ViewFactory item(viewElement, view);
     int index = d->Views.indexOf(item);
     Q_ASSERT(index >= 0);
     d->Views[index].first = layoutElement;
-    }
+  }
   else
-    {
+  {
     d->Views.push_back(ctkLayoutViewFactoryPrivate::ViewFactory(layoutElement, view));
-    }
+  }
   ++d->NumberOfViewsInCurrentLayout;
 }
 
@@ -263,9 +263,9 @@ void ctkLayoutViewFactory::unregisterView(QDomElement layoutElement, QWidget* vi
   ctkLayoutViewFactoryPrivate::ViewFactory itemToRemove(layoutElement, view);
   for (int index = d->Views.indexOf(itemToRemove) ; index >= 0 ;
        index = d->Views.indexOf(itemToRemove))
-    {
+  {
     d->Views.remove(index);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -274,9 +274,9 @@ void ctkLayoutViewFactory::unregisterView(QWidget* view)
   for (QDomElement viewElement = this->layoutElement(view);
        !viewElement.isNull();
        viewElement = this->layoutElement(view))
-    {
+  {
     this->unregisterView(viewElement, view);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -284,11 +284,11 @@ QDomElement ctkLayoutViewFactory::layoutElement(QWidget* view)const
 {
   Q_D(const ctkLayoutViewFactory);
   for (int index = 0 ; index < d->Views.count(); ++index)
-    {
+  {
     if (d->Views[index].second == view)
-      {
+    {
       return d->Views[index].first;
-      }
     }
+  }
   return QDomElement();
 }

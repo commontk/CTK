@@ -67,10 +67,10 @@ int ctkFlatProxyModelPrivate::indexLevel(const QModelIndex& index)const
   int level = -1;
   QModelIndex parent = index;
   while (parent.isValid())
-    {
+  {
     parent = parent.parent();
     ++level;
-    }
+  }
   return level;
 }
 
@@ -81,14 +81,14 @@ int ctkFlatProxyModelPrivate::levelRowCount(const QModelIndex& sourceIndex)const
   if (!sourceIndex.isValid()
       || this->StartFlattenLevel > this->indexLevel(sourceIndex)
       || this->EndFlattenLevel < this->indexLevel(sourceIndex))
-    {
+  {
     return 0;
-    }
+  }
   int previousRows = 0;
   for (int row = 0; row != sourceIndex.row() ; ++row)
-    {
+  {
     previousRows += q->sourceModel()->rowCount(sourceIndex.sibling(row, sourceIndex.column()));
-    }
+  }
   return previousRows + this->levelRowCount(sourceIndex.parent());
 }
 
@@ -99,16 +99,16 @@ int ctkFlatProxyModelPrivate::nextLevelRowCount(const QModelIndex& sourceIndex)c
   if (!sourceIndex.isValid()
       || this->StartFlattenLevel > this->indexLevel(sourceIndex)
       || this->EndFlattenLevel < this->indexLevel(sourceIndex))
-    {
+  {
     return q->sourceModel()->rowCount(sourceIndex);
-    }
+  }
   int rowCount = 0;
   QModelIndex sibling = sourceIndex.sibling(0, sourceIndex.column());
   for (int row = 0; sibling.isValid() ; ++row)
-    {
+  {
     sibling = sourceIndex.sibling(row, sourceIndex.column());
     rowCount += q->sourceModel()->rowCount(sibling);
-    }
+  }
   return rowCount;
 }
 
@@ -118,18 +118,18 @@ int ctkFlatProxyModelPrivate::rowCount(const QModelIndex& sourceIndex, int depth
   Q_Q(const ctkFlatProxyModel);
   int rows = 0;
   if (depth < 0)
-    {
+  {
     rows = 1;
-    }
+  }
   else
-    {
+  {
     --depth;
     for (int row = 0; row < q->sourceModel()->rowCount(sourceIndex); ++row)
-      {
+    {
       QModelIndex child = q->sourceModel()->index(row, 0, sourceIndex);
       rows += this->rowCount(child, depth);
-      }
     }
+  }
   return rows;
 }
 
@@ -142,22 +142,22 @@ QModelIndex ctkFlatProxyModelPrivate
   sourceIndexes << QModelIndex();
   QMap<int, int> rowCountsPerLevel;
   while (!sourceIndexes.isEmpty())
-    {
+  {
     QModelIndex sourceIndex = sourceIndexes.takeFirst();
     const int rowCount = q->sourceModel()->rowCount(sourceIndex);
     for (int row = 0; row < rowCount; ++row)
-      {
+    {
       QModelIndex child = q->sourceModel()->index(row, 0, sourceIndex);
       if (child.internalPointer() == index.internalPointer())
-        {
+      {
         return sourceIndex;
-        }
+      }
       else
-        {
+      {
         sourceIndexes << child;
-        }
       }
     }
+  }
   Q_ASSERT(false);
   return QModelIndex();
 }
@@ -170,30 +170,30 @@ QModelIndex ctkFlatProxyModelPrivate
   const int rowCount = q->sourceModel()->rowCount(parent);
 
   if (depth > 0)
-    {
+  {
     for (int i = 0; i < rowCount; ++i)
-      {
+    {
       QModelIndex child = q->sourceModel()->index(i, 0, parent);
       QModelIndex found = this->grandChild(child, row, depth - 1);
       if (found.isValid())
-        {
+      {
         return found;
-        }
       }
     }
+  }
   else
-    {
+  {
     if (row < rowCount)
-      {
+    {
       QModelIndex sourceIndex = q->sourceModel()->index(
         row, 0, parent);
       return sourceIndex;
-      }
-    else
-      {
-      row -= rowCount;
-      }
     }
+    else
+    {
+      row -= rowCount;
+    }
+  }
   return QModelIndex();
 }
 
@@ -263,25 +263,25 @@ QModelIndex ctkFlatProxyModel::mapFromSource( const QModelIndex& sourceIndex ) c
 {
   Q_D(const ctkFlatProxyModel);
   if (!sourceIndex.isValid())
-    {
+  {
     return QModelIndex();
-    }
+  }
   int level = d->indexLevel(sourceIndex);
   if (d->HideLevel != -1
       && level >= d->HideLevel)
-    {
+  {
     return QModelIndex();
-    }
+  }
   if (d->EndFlattenLevel != -1
       && level <= d->EndFlattenLevel)
-    {
+  {
     return QModelIndex();
-    }
+  }
   int row = sourceIndex.row();
   if (d->EndFlattenLevel != -1)
-    {
+  {
     row += d->levelRowCount(sourceIndex.parent());
-    }
+  }
   return this->createIndex(row, sourceIndex.column(),
                            sourceIndex.internalPointer());
 }
@@ -291,18 +291,18 @@ QModelIndex ctkFlatProxyModel::mapToSource( const QModelIndex& proxyIndex ) cons
 {
   Q_D(const ctkFlatProxyModel);
   if (!proxyIndex.isValid())
-    {
+  {
     return QModelIndex();
-    }
+  }
   QModelIndex sourceParent = d->sourceParent(proxyIndex);
   int level = d->indexLevel(sourceParent);
   int levelRowCount = 0;
   if ((d->StartFlattenLevel != -1 || d->EndFlattenLevel != -1) &&
       (d->StartFlattenLevel != -1 || level >= d->StartFlattenLevel) &&
       (d->EndFlattenLevel != -1 || level <= d->EndFlattenLevel))
-    {
+  {
     levelRowCount = d->levelRowCount(sourceParent);
-    }
+  }
   QModelIndex sourceIndex = this->sourceModel()->index(
     proxyIndex.row() - levelRowCount, proxyIndex.column(), sourceParent);
   Q_ASSERT(sourceIndex.isValid());
@@ -314,9 +314,9 @@ QModelIndex ctkFlatProxyModel::index(int row, int column, const QModelIndex &par
 {
   Q_D(const ctkFlatProxyModel);
   if (row < 0 || column < 0)
-    {
+  {
     return QModelIndex();
-    }
+  }
 
   QModelIndex sourceParent = this->mapToSource(parent); // parent is already mapped at this point
   int sourceRow = row;
@@ -329,9 +329,9 @@ QModelIndex ctkFlatProxyModel::index(int row, int column, const QModelIndex &par
 QModelIndex ctkFlatProxyModel::parent(const QModelIndex &child) const
 {
   if (!child.isValid())
-    {
+  {
     return QModelIndex();
-    }
+  }
   QModelIndex sourceChild = this->mapToSource(child);
   QModelIndex sourceParent = sourceChild.parent();
   QModelIndex proxyParent = this->mapFromSource(sourceParent);
@@ -347,9 +347,9 @@ int ctkFlatProxyModel::rowCount(const QModelIndex &parent) const
   int depth = 0;
   if (sourceParentLevel >= d->StartFlattenLevel &&
       sourceParentLevel <= d->EndFlattenLevel)
-    {
+  {
     depth = d->EndFlattenLevel - d->StartFlattenLevel;
-    }
+  }
   return d->rowCount(sourceParent, depth);
 }
 
@@ -358,9 +358,9 @@ int ctkFlatProxyModel::columnCount(const QModelIndex &parent) const
 {
   QModelIndex proxyChild = this->index(0, 0, parent);
   if (parent.isValid() && !proxyChild.internalPointer())
-    {
+  {
     Q_ASSERT(!parent.isValid() || proxyChild.internalPointer());
-    }
+  }
   QModelIndex sourceChild = this->mapToSource(proxyChild);
   QModelIndex sourceParent = sourceChild.parent();
   return this->sourceModel()->columnCount(sourceParent);

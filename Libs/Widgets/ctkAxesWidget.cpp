@@ -76,10 +76,10 @@ QList<QPoint> ctkAxesWidgetPrivate::extremities(QPoint center, int radius)const
 {
   QList<QPoint> pos;
   for (int i = 0; i < 6 ; ++i)
-    {
+  {
     pos << center + QPoint(radius * cos(this->AxesAngles[i]),
                            -radius * sin(this->AxesAngles[i]));
-    }
+  }
   return pos;
 }
 
@@ -92,13 +92,13 @@ QList<QRect> ctkAxesWidgetPrivate::labelRects(const QList<QPoint>& extremities, 
   QSize halfLetterSize = letterSize / 2;
   QList<QRect> rects;
   for (int i = 0; i < 6; ++i)
-    {
+  {
     rects << QRect(extremities[i]
                    + QPoint(cos(this->AxesAngles[i]) * (offset.width()+halfLetterSize.width()),
                             -sin(this->AxesAngles[i]) * (offset.height()+halfLetterSize.height()))
                    - QPoint(halfLetterSize.width(), halfLetterSize.height()),
                    letterSize);
-    }
+  }
   return rects;
 }
 
@@ -118,28 +118,28 @@ ctkAxesWidget::Axis ctkAxesWidgetPrivate::axisAtPos(QPoint pos)const
   double distance2 =
     mousePos.x() * mousePos.x() + mousePos.y() * mousePos.y();
   if (distance2 < sphereRadius.width()*sphereRadius.width())
-    {
+  {
     return ctkAxesWidget::None;
-    }
+  }
 
   double mouseAngle = atan2(-mousePos.y(), mousePos.x());
   // mouseAngle is in the interval [-pi,+pi] radians
   // change it to be in [-pi/8,  7/8 * pi]
   double PI_8 = 0.392699082;
   if (mouseAngle < -PI_8)
-    {
+  {
     mouseAngle += 2. * PI;
-    }
+  }
 
   for (int i = 0; i < 6; ++i)
-    {
+  {
     if (mouseAngle >= (this->AxesAngles[i] - PI_8) &&
         mouseAngle <= (this->AxesAngles[i] + PI_8))
-      {
+    {
       // the mouse is over the axis
       return static_cast<ctkAxesWidget::Axis>(i+1);
-      }
     }
+  }
   return ctkAxesWidget::None;
 }
 
@@ -170,9 +170,9 @@ void ctkAxesWidget::setCurrentAxis(ctkAxesWidget::Axis newAxis)
   Q_D(ctkAxesWidget);
   d->HighlightAxis = newAxis;
   if (newAxis == d->CurrentAxis)
-    {
+  {
     return;
-    }
+  }
   d->CurrentAxis = newAxis;
   this->repaint();
   emit currentAxisChanged(d->CurrentAxis);
@@ -196,21 +196,21 @@ void ctkAxesWidget::setAutoReset(bool newAutoReset)
 {
   Q_D(ctkAxesWidget);
   if (d->AutoReset == newAutoReset)
-    {
+  {
     return;
-    }
+  }
   d->AutoReset = newAutoReset;
   if (d->AutoReset)
-    {
+  {
     connect(this, SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
             this, SLOT(setCurrentAxisToNone()));
     setCurrentAxisToNone();
-    }
+  }
   else
-    {
+  {
     disconnect(this, SIGNAL(currentAxisChanged(ctkAxesWidget::Axis)),
                this, SLOT(setCurrentAxisToNone()));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -239,36 +239,36 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
   QList<QRect>  labelRects = d->labelRects(positions, betweenLetterSpace);
 
   for (int i = 0; i < 6; ++i)
-    {
+  {
     //QRect rect(positions[i] + QPoint(cos(d->AxesAngles[i]) * (betweenLetterSpace.width()+halfLetterSize.width()),
     //                                 -sin(d->AxesAngles[i]) * (betweenLetterSpace.height()+halfLetterSize.height()))
     //                                - QPoint(halfLetterSize.width(), halfLetterSize.height()), letterSize);
     QRect rect = labelRects[i];
     //if (d->HighlightAxes)
-      {
+    {
       QFont font = painter.font();
       font.setBold(d->HighlightAxis == (i + 1));
       painter.setFont(font);
-      }
-    painter.drawText(rect, Qt::AlignCenter, d->AxesLabels[i]);
     }
+    painter.drawText(rect, Qt::AlignCenter, d->AxesLabels[i]);
+  }
 
   // Drawing the lines
   for (int i = 0; i < 6; ++i)
-    {
+  {
     //if (d->HighlightAxes)
-      {
+    {
       QPen pen;
       if (d->HighlightAxis == (i + 1)) // axes start at 1
-        {
+      {
         pen.setWidth(3);
         //pen.setColor(QColor(64, 64, 72)); // Payne's grey
         pen.setColor(this->palette().color(QPalette::Active, QPalette::Highlight));
-        }
-      painter.setPen(pen);
       }
-    painter.drawLine(center, positions[i]);
+      painter.setPen(pen);
     }
+    painter.drawLine(center, positions[i]);
+  }
 
   QSize sphereRadius((blankSize / 2) / 1.6180339887,
                      (blankSize / 2) / 1.6180339887);
@@ -277,13 +277,13 @@ void ctkAxesWidget::paintEvent(QPaintEvent *)
   rg.setCoordinateMode(QGradient::ObjectBoundingMode);
   if (//d->HighlightAxes &&
       d->HighlightAxis == ctkAxesWidget::None)
-    {
+  {
     rg.setColorAt(0., this->palette().color(QPalette::Active, QPalette::Highlight));
-    }
+  }
   else
-    {
+  {
     rg.setColorAt(0., this->palette().color(QPalette::Active, QPalette::Light));
-    }
+  }
   rg.setColorAt(1., QColor(64, 64, 72));
   painter.setBrush(QBrush(rg));
   painter.setPen(QPen(Qt::NoPen));
@@ -295,15 +295,15 @@ bool ctkAxesWidget::setAxesLabels(const QStringList& labels)
 {
   Q_D(ctkAxesWidget);
   if (labels.size() < 6)
-    {
+  {
     qWarning("ctkAxesWidget::setAxesLabels() failed: At least 6 labels are expected.");
     return false;
-    }
+  }
 
   if (labels == d->AxesLabels)
-    {
+  {
     return true;
-    }
+  }
 
   d->AxesLabels = labels.mid(0, 6);
   this->repaint();

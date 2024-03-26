@@ -40,39 +40,39 @@ bool ctkCheckableComboBoxEventPlayer::playEvent(QObject *Object,
 {
   if(Command != "check_indexes" &&
      Command != "uncheck_indexes")
-    {
+  {
     return false;
-    }
+  }
 
 //  const int value = Arguments.toInt();
   if(ctkCheckableComboBox* const object =
      qobject_cast<ctkCheckableComboBox*>(Object))
-    {
+  {
     if(Command == "check_indexes")
-      {
+    {
       QStringList Args = Arguments.split(" ");
       foreach (QString Arg, Args)
-        {
+      {
         const int value = Arg.toInt();
         QModelIndex index = object->checkableModel()->index(value, 0);
         object->setCheckState(index, Qt::Checked);
         object->update();
-        }
-      return true;
       }
+      return true;
+    }
     if(Command == "uncheck_indexes")
-      {
+    {
       QStringList Args = Arguments.split(" ");
       foreach (QString Arg, Args)
-        {
+      {
         const int value = Arg.toInt();
         QModelIndex index = object->checkableModel()->index(value, 0);
         object->setCheckState(index, Qt::Unchecked);
         object->update();
-        }
-      return true;
       }
+      return true;
     }
+  }
 
   qCritical() << "calling set_checkable/set_unchecked_all on unhandled type " << Object;
   Error = true;

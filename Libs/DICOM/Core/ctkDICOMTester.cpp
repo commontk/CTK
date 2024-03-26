@@ -95,16 +95,16 @@ ctkDICOMTesterPrivate::~ctkDICOMTesterPrivate()
   // See https://doc.qt.io/qt-5/qprocess.html#terminate
   // this->STORESCPProcess->terminate();
   // if (!this->STORESCPProcess->waitForFinished())
-    {
+  {
     this->STORESCPProcess->kill();
-    }
+  }
   this->STORESCPProcess = 0;
 
   delete this->STORESCPProcess;
   if (this->DCMQRSCPProcess)
-    {
+  {
     delete this->DCMQRSCPProcess;
-    }
+  }
   this->DCMQRSCPProcess = 0;
 }
 
@@ -114,19 +114,19 @@ QString ctkDICOMTesterPrivate::findFile(const QStringList& nameFilters, const QS
   // Search in the build tree first
   QDir searchDir = QDir::current();
   do
-    {
+  {
     QFileInfo dcmExecutables(searchDir, subDir);
     if (dcmExecutables.isDir() &&
         dcmExecutables.exists())
-      {
+    {
       QDir bin(dcmExecutables.absoluteFilePath());
       QFileInfoList found = bin.entryInfoList(nameFilters, QDir::Files);
       if (found.count() > 0)
-        {
+      {
         return found[0].absoluteFilePath();
-        }
       }
     }
+  }
   while (searchDir.cdUp())
     ;
   // TODO: take care of the installed case
@@ -171,16 +171,16 @@ void ctkDICOMTesterPrivate::printProcessOutputs(const QString& program, QProcess
 
   QByteArray standardOutput = process->readAllStandardOutput();
   if (standardOutput.count())
-    {
+  {
     out << "Standard Output:\n";
     out << standardOutput;
-    }
+  }
   QByteArray standardError = process->readAllStandardError();
   if (standardError.count())
-    {
+  {
     out << "Standard Error:\n";
     out << standardError;
-    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -285,16 +285,16 @@ QProcess* ctkDICOMTester::startDCMQRSCP()
 {
   Q_D(ctkDICOMTester);
   if (d->DCMQRSCPProcess)
-    {
+  {
     return 0;
-    }
+  }
   d->DCMQRSCPProcess = new QProcess(this);
 
   QStringList dcmqrscpArgs;
   if (!d->DCMQRSCPConfigFile.isEmpty())
-    {
+  {
     dcmqrscpArgs << "--config" << d->DCMQRSCPConfigFile;
-    }
+  }
   //dcmqrscp_args << "--debug" << "--verbose";
   dcmqrscpArgs << QString::number(d->DCMQRSCPPort);
 
@@ -309,9 +309,9 @@ bool ctkDICOMTester::stopDCMQRSCP()
 {
   Q_D(ctkDICOMTester);
   if (!d->DCMQRSCPProcess)
-    {
+  {
     return false;
-    }
+  }
 
   d->DCMQRSCPProcess->kill();
   bool res = d->DCMQRSCPProcess->waitForFinished(-1);
@@ -329,15 +329,15 @@ bool ctkDICOMTester::storeData(const QStringList& data)
   Q_D(ctkDICOMTester);
 
   if (data.count() == 0)
-    {
+  {
     return true;
-    }
+  }
 
   // There is no point of calling storescu if no-one is listening
   if (!d->DCMQRSCPProcess)
-    {
+  {
     return false;
-    }
+  }
 
   QProcess storeSCU(this);
   // usage of storescu:

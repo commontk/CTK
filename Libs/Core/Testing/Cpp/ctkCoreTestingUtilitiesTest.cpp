@@ -51,10 +51,10 @@ bool TestCheckInt()
 {
   if (!CheckInt(__LINE__, "TestCheckInt", 1, 1)
       || CheckInt(__LINE__, "TestCheckInt Expected Failure", 1, -1))
-    {
+  {
     qWarning() << "Line " << __LINE__ << " - TestCheckInt failed";
     return false;
-    }
+  }
   return true;
 }
 
@@ -64,10 +64,10 @@ bool TestCheckNotNull()
   int foo = 1;
   if (!CheckNotNull(__LINE__, "TestCheckNotNull", &foo)
       || CheckNotNull(__LINE__, "TestCheckNotNull Expected Failure", 0))
-    {
+  {
     qWarning() << "Line " << __LINE__ << " - TestCheckNotNull failed";
     return false;
-    }
+  }
   return true;
 }
 
@@ -77,10 +77,10 @@ bool TestCheckNull()
   int foo = 1;
   if (!CheckNull(__LINE__, "TestCheckNull", 0)
       || CheckNull(__LINE__, "TestCheckNull Expected Failure", &foo))
-    {
+  {
     qWarning() << "Line " << __LINE__ << " - TestCheckNull failed";
     return false;
-    }
+  }
   return true;
 }
 
@@ -91,10 +91,10 @@ bool TestCheckPointer()
   int bar = 1;
   if (!CheckPointer(__LINE__, "TestCheckPointer", &foo, &foo)
       || CheckPointer(__LINE__, "TestCheckPointer Expected Failure", &foo, &bar))
-    {
+  {
     qWarning() << "Line " << __LINE__ << " - TestCheckPointer failed";
     return false;
-    }
+  }
   return true;
 }
 
@@ -107,10 +107,10 @@ bool TestCheckString()
       ||!CheckString(__LINE__, "TestCheckString", foo, foo)
       || CheckString(__LINE__, "TestCheckString Expected Failure", foo, bar)
       || CheckString(__LINE__, "TestCheckString Expected Failure", foo, 0))
-    {
+  {
     qWarning() << "Line " << __LINE__ << " - TestCheckString failed";
     return false;
-    }
+  }
   return true;
 }
 
@@ -124,10 +124,10 @@ bool TestCheckStringList()
       ||!CheckStringList(__LINE__, "TestCheckStringList", abc, abc)
       || CheckStringList(__LINE__, "TestCheckStringList Expected Failure", abc, axc)
       || CheckStringList(__LINE__, "TestCheckStringList Expected Failure", abc, abcd))
-    {
+  {
     qWarning() << "Line " << __LINE__ << " - TestCheckString failed";
     return false;
-    }
+  }
   return true;
 }
 
@@ -139,9 +139,9 @@ bool TestCheckVariant()
   if (!CheckVariant(__LINE__, "TestCheckVariant", QVariant(), QVariant())
       ||!CheckVariant(__LINE__, "TestCheckVariant", foo, foo)
       || CheckVariant(__LINE__, "TestCheckVariant Expected Failure", foo, bar))
-    {
+  {
     qWarning() << "Line " << __LINE__ << " - TestCheckVariant failed";
     return false;
-    }
+  }
   return true;
 }

@@ -41,10 +41,10 @@ int ctkScopedCurrentDirTest1(int argc, char * argv [])
   foo.setAutoRemove(false);
   bool opened = foo.open();
   if(!opened)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Failed to create temporary file !" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   {
   ctkScopedCurrentDir scopedCurrentDir(QDir::tempPath());
@@ -52,38 +52,38 @@ int ctkScopedCurrentDirTest1(int argc, char * argv [])
   QString currentPath = scopedCurrentDir.currentPath();
   QString expectedCurrentPath = QDir::tempPath();
   if (currentPath != expectedCurrentPath)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with ctkScopedCurrentDir\n"
               << "\tcurrentPath:" << qPrintable(currentPath) << "\n"
               << "\texpectedCurrentPath:" << qPrintable(expectedCurrentPath) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (scopedCurrentDir.savedCurrentPath() != savedCurrentPath)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with ctkScopedCurrentDir\n"
               << "\tsavedCurrentPath:" << qPrintable(scopedCurrentDir.savedCurrentPath()) << "\n"
               << "\texpectedSavedCurrentPath:" << qPrintable(savedCurrentPath) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (!QFile::exists(foo.fileName()))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with ctkScopedCurrentDir\n"
               << "\tfile [" << qPrintable(foo.fileName()) <<"] doesn't exist "
               << "in directory [" << qPrintable(QDir::currentPath()) << "]!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   }
 
   QString currentPath = QDir::currentPath();
   if (savedCurrentPath != currentPath)
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with ctkScopedCurrentDir\n"
               << "\tsavedCurrentPath [" << qPrintable(savedCurrentPath) << "]\n"
               << "\tcurrentPath [" << qPrintable(currentPath) << "]" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   return EXIT_SUCCESS;
 }

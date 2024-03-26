@@ -42,9 +42,9 @@ int ctkDICOMListenerWidgetTest1( int argc, char * argv [] )
   listenerWidget.show();
 
   if (!interactive)
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

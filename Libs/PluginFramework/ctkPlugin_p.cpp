@@ -584,7 +584,7 @@ void ctkPluginPrivate::update0(const QUrl& updateLocation, bool wasActive)
        fwCtx->listeners.frameworkError(this->q_func(), pe);
      }
    }
- }
+}
 
 //----------------------------------------------------------------------------
 int ctkPluginPrivate::getStartLevel()

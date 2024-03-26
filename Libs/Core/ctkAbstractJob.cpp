@@ -55,9 +55,9 @@ void ctkAbstractJob::setJobUID(const QString &jobUID)
 QString ctkAbstractJob::className() const
 {
   if (!this->metaObject())
-    {
+  {
     return "";
-    }
+  }
   return this->metaObject()->className();
 }
 
@@ -79,13 +79,30 @@ void ctkAbstractJob::setStatus(JobStatus status)
   this->Status = status;
 
   if (this->Status == JobStatus::Running)
-    {
+  {
     this->StartDateTime = QDateTime::currentDateTime();
-    }
+  }
   else if (this->Status > JobStatus::Running)
-    {
+  {
     this->CompletionDateTime = QDateTime::currentDateTime();
-    }
+  }
+
+  if (this->Status == JobStatus::Running)
+  {
+    emit this->started();
+  }
+  else if (this->Status == JobStatus::Stopped)
+  {
+    emit this->canceled();
+  }
+  else if (this->Status == JobStatus::Failed)
+  {
+    emit this->failed();
+  }
+  else if (this->Status == JobStatus::Finished)
+  {
+    emit this->finished();
+  }
 }
 
 //----------------------------------------------------------------------------

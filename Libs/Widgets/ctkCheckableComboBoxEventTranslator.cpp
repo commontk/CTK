@@ -41,31 +41,31 @@ bool ctkCheckableComboBoxEventTranslator::translateEvent(QObject *Object,
   Q_UNUSED(Error);
   ctkCheckableComboBox* checkableCombo = NULL;
   for(QObject* test = Object; checkableCombo == NULL && test != NULL; test = test->parent())
-    {
+  {
     checkableCombo = qobject_cast<ctkCheckableComboBox*>(test);
-    }
+  }
 
   if(!checkableCombo)
-    {
+  {
     // not for me
     return false;
-    }
+  }
 
   if(Event->type() == QEvent::Enter && Object == checkableCombo)
-    {
+  {
     if(this->CurrentObject != Object)
-      {
+    {
       if(this->CurrentObject)
-        {
+      {
         disconnect(this->CurrentObject, 0, this, 0);
-        }
+      }
       this->CurrentObject = Object;
       connect(checkableCombo, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
       connect(checkableCombo, SIGNAL(activated(const QString&)), this, SLOT(onStateChanged(const QString&)));
       connect(checkableCombo, SIGNAL(editTextChanged(const QString&)), this, SLOT(onStateChanged(const QString&)));
       connect(checkableCombo->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
-      }
     }
+  }
 
   return true;
 }
@@ -88,28 +88,28 @@ void ctkCheckableComboBoxEventTranslator::onDataChanged(const QModelIndex&,const
   ctkCheckableComboBox* checkableCombo = qobject_cast<ctkCheckableComboBox*>(this->CurrentObject);
 
   if (checkableCombo->checkedIndexes().count() > this->OldIndexList.count())
-    {
+  {
     QModelIndexList checkList = checkableCombo->checkedIndexes();
     QStringList checkStringList;
     foreach(QModelIndex index, checkList)
-      {
+    {
       checkStringList << QString::number(index.row());
-      }
+    }
 
     emit recordEvent(this->CurrentObject,"check_indexes", checkStringList.join(" "));
-    }
+  }
   else
-    {
+  {
     QModelIndex startIndex = checkableCombo->model()->index(0,0, checkableCombo->rootModelIndex());
     QModelIndexList uncheckedList = checkableCombo->model()->match(
       startIndex, Qt::CheckStateRole, static_cast<int>(Qt::Unchecked), -1, Qt::MatchRecursive);
     QStringList uncheckedStringList;
     foreach (QModelIndex index, uncheckedList)
-      {
+    {
       uncheckedStringList << QString::number(index.row());
-      }
+    }
 
     emit recordEvent(this->CurrentObject,"uncheck_indexes", uncheckedStringList.join(" "));
-    }
+  }
   this->OldIndexList = checkableCombo->checkedIndexes();
 }

@@ -282,7 +282,7 @@ void ctkEventBusManagerTest::eventBusRegistrationNotificationTest() {
     QVERIFY(status == ObjTestSender->var());
     delete ObjTestSender;
     ctkEventBusManager::instance()->removeSignal(ObjTestSender, setValueID);
-}
+ }
 
 void ctkEventBusManagerTest::eventBusWithReturnArgumentTest() {
     testObjectCustom *ObjTestSender = new testObjectCustom();

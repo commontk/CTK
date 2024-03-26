@@ -44,42 +44,42 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkColorPickerButton* widget = reinterpret_cast<ctkColorPickerButton*>(data);
 
   CTKCOMPARE(widget->color(), QColor(98,127,80));
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   QWidget* parentWidget = reinterpret_cast<QWidget*>(data);
   QList<ctkColorPickerButton*> widget = parentWidget->findChildren<ctkColorPickerButton*>();
 
   if(widget.count())
-    {
+  {
     CTKCOMPARE(widget[0]->color(), QColor(255,85,0));
-    }
-  else
-    {
-    QApplication::exit(EXIT_FAILURE);
-    }
   }
+  else
+  {
+    QApplication::exit(EXIT_FAILURE);
+  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState3(void* data)
-  {
+{
   QWidget* parentWidget = reinterpret_cast<QWidget*>(data);
   QList<ctkColorPickerButton*> widget = parentWidget->findChildren<ctkColorPickerButton*>();
 
   if(widget.count())
-    {
+  {
     CTKCOMPARE(widget[0]->color(), QColor(191,191,191));
     CTKCOMPARE(widget[1]->color(), QColor(0,0,0));
-    }
-  else
-    {
-    QApplication::exit(EXIT_FAILURE);
-    }
   }
+  else
+  {
+    QApplication::exit(EXIT_FAILURE);
+  }
+}
 }
 
 
@@ -130,9 +130,9 @@ int ctkColorPickerButtonEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

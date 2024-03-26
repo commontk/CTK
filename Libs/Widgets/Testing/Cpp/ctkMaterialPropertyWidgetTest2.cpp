@@ -37,11 +37,11 @@ int ctkMaterialPropertyWidgetTest2(int argc, char * argv [] )
   if (!materialWidget.isColorVisible() ||
       !materialWidget.isOpacityVisible() ||
       !materialWidget.isBackfaceCullingVisible())
-    {
+  {
     std::cout << "ctkMaterialPropertyWidget::ctkMaterialPropertyWidget(), "
               << "wrong default values" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // here for code coverage
   materialWidget.setColorVisible(true);
@@ -50,25 +50,25 @@ int ctkMaterialPropertyWidgetTest2(int argc, char * argv [] )
 
   materialWidget.setColorVisible(false);
   if (materialWidget.isColorVisible())
-    {
+  {
     std::cout << "ctkMaterialPropertyWidget::setColorVisible failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   materialWidget.setOpacityVisible(false);
   if (materialWidget.isOpacityVisible())
-    {
+  {
     std::cout << "ctkMaterialPropertyWidget::setColorVisible failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   materialWidget.setBackfaceCullingVisible(false);
   if (materialWidget.isBackfaceCullingVisible())
-    {
+  {
     std::cout << "ctkMaterialPropertyWidget::setColorVisible failed"
               << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   materialWidget.setColorVisible(true);
   materialWidget.setOpacityVisible(true);
@@ -77,9 +77,9 @@ int ctkMaterialPropertyWidgetTest2(int argc, char * argv [] )
   materialWidget.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

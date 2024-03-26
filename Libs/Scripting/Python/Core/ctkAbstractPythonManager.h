@@ -91,11 +91,12 @@ public:
   /// \see http://docs.python.org/c-api/veryhigh.html#Py_file_input
   /// \see http://docs.python.org/c-api/veryhigh.html#Py_single_input
   enum ExecuteStringMode
-    {
+  {
     EvalInput = 0,
     FileInput,
     SingleInput
-    };
+  };
+  Q_ENUMS(ExecuteStringMode);
 
   /// Execute a python of python code (can be multiple lines separated with newline)
   /// and return the result as a QVariant.

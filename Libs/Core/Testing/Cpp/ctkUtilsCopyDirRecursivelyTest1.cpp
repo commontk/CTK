@@ -53,10 +53,10 @@ bool createFile(int line, const QDir& dir, const QString& relativePath, const QS
   file.close();
 
   if (!QFile::exists(filePath))
-    {
+  {
     std::cerr << "Line " << line << " - Failed to create file" << qPrintable(filePath) << std::endl;
     return false;
-    }
+  }
 
   return true;
 }
@@ -67,18 +67,18 @@ bool hideFile(int line, const QDir& dir, const QString& relativePath)
   QString filePath = QFileInfo(dir, relativePath).filePath();
 
   if (!QFile::exists(filePath))
-    {
+  {
     std::cerr << "Line " << line << " - File" << qPrintable(filePath) << "does not exist" <<std::endl;
     return false;
-    }
+  }
 
 #ifdef Q_OS_WIN
   const wchar_t* filePathW = filePath.toStdWString().c_str();
   DWORD dwAttrs = GetFileAttributesW(filePathW);
   if ((dwAttrs & FILE_ATTRIBUTE_HIDDEN) == 0)
-    {
+  {
     SetFileAttributesW(filePathW, dwAttrs | FILE_ATTRIBUTE_HIDDEN);
-    }
+  }
 #endif
 
   return true;
@@ -90,16 +90,16 @@ bool isFileHidden(int line, const QDir& dir, const QString& relativePath)
   QString filePath = QFileInfo(dir, relativePath).filePath();
 
   if (!QFile::exists(filePath))
-    {
+  {
     std::cerr << "Line " << line << " - File" << qPrintable(filePath) << "does not exist" <<std::endl;
     return false;
-    }
+  }
 
   if (!QFileInfo(filePath).isHidden())
-    {
+  {
     std::cerr << "Line " << line << " - File" << qPrintable(filePath) << "is expected to be hidden" << std::endl;
     return false;
-    }
+  }
 
   return true;
 }
@@ -125,72 +125,72 @@ int ctkUtilsCopyDirRecursivelyTest1(int argc, char * argv [] )
   // Attempt to copy nonexistent relative directory
   QString nonexistentRelativeDirPath = temporaryDirName;
   if (ctk::copyDirRecursively(nonexistentRelativeDirPath, tmp.absolutePath()))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with ctk::copyDirRecursively() !"
               << " - It should fail to copy nonexistent directory: " <<
               qPrintable(nonexistentRelativeDirPath)<< std::endl;
     return EXIT_FAILURE;
-    }
+  }
   }
 
   {
   // Attempt to copy nonexistent absolute directory
   QString nonexistentAbsoluteDirPath = tmp.absolutePath() + "/" + temporaryDirName;
   if (ctk::copyDirRecursively(nonexistentAbsoluteDirPath, tmp.absolutePath()))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with ctk::copyDirRecursively() !"
               << " - It should fail to delete nonexistent directory: " <<
               qPrintable(nonexistentAbsoluteDirPath)<< std::endl;
     return EXIT_FAILURE;
-    }
+  }
   }
 
   // Create a directory structure
   tmp.mkdir(temporaryDirName);
   tmp.cd(temporaryDirName);
   if (!createFile(__LINE__, tmp, "foo", "a.txt"))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!createFile(__LINE__, tmp, "foo/bar", "b.txt"))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!createFile(__LINE__, tmp, "foo/zoo", "c.txt"))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!(createFile(__LINE__, tmp, "foo/zoo", ".hidden.txt")
         && hideFile(__LINE__, tmp, "foo/zoo/.hidden.txt")
         && isFileHidden(__LINE__, tmp, "foo/zoo/.hidden.txt")))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!(createFile(__LINE__, tmp, "foo/.hidden", "c.txt")
         && hideFile(__LINE__, tmp, "foo/.hidden")
         && isFileHidden(__LINE__, tmp, "foo/.hidden")))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
   if (!(createFile(__LINE__, tmp, "foo/.hidden", ".hidden.txt")
         && hideFile(__LINE__, tmp, "foo/.hidden")
         && hideFile(__LINE__, tmp, "foo/.hidden/.hidden.txt")
         && isFileHidden(__LINE__, tmp, "foo/.hidden")
         && isFileHidden(__LINE__, tmp, "foo/.hidden/.hidden.txt")))
-    {
+  {
     return EXIT_FAILURE;
-    }
+  }
 
   {
   QString srcPath(tmp.path() + "/foo");
   QString destPath(tmp.path() + "/dest");
   if (!ctk::copyDirRecursively(srcPath, destPath))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with ctk::copyDirRecursively()"
               << " - Failed to copy directory: " << qPrintable(srcPath)
               << "into" << qPrintable(destPath) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Check content of destination directory
   CHECK_BOOL(QDir(destPath).exists("a.txt"), true);
@@ -206,12 +206,12 @@ int ctkUtilsCopyDirRecursivelyTest1(int argc, char * argv [] )
   QString srcPath(tmp.path() + "/foo");
   QString destPath(tmp.path() + "/dest-without-hidden");
   if (!ctk::copyDirRecursively(srcPath, destPath, /* includeHiddenFiles= */ false))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with ctk::copyDirRecursively()"
               << " - Failed to copy directory: " << qPrintable(srcPath)
               << "into" << qPrintable(destPath) << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   // Check content of destination directory
   CHECK_BOOL(QDir(destPath).exists("a.txt"), true);
@@ -227,13 +227,13 @@ int ctkUtilsCopyDirRecursivelyTest1(int argc, char * argv [] )
   QString srcPath(tmp.path());
   QString destPath(tmp.path() + "/dest");
   if (ctk::copyDirRecursively(srcPath, destPath))
-    {
+  {
     std::cerr << "Line " << __LINE__ << " - Problem with ctk::copyDirRecursively()"
               << " - Copy of directory: " << qPrintable(srcPath)
               << "into itself " << qPrintable(destPath)
               << " should fail !" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   }
 
   return EXIT_SUCCESS;

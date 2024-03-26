@@ -42,14 +42,14 @@ bool ctkConsoleEventPlayer::playEvent(QObject *Object,
                                       bool &Error)
 {
   if (Command != "command")
-    {
+  {
     return false;
-    }
+  }
 
   if (ctkConsole* console = qobject_cast<ctkConsole*>(Object))
-    {
+  {
     if (Command == "command")
-      {
+    {
 //      console->printMessage(Arguments, console->commandTextColor());
       console->exec(Arguments);
 //      QKeyEvent kd(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier,
@@ -59,8 +59,8 @@ bool ctkConsoleEventPlayer::playEvent(QObject *Object,
 //      QApplication::sendEvent(Object, &kd);
 //      QApplication::sendEvent(Object, &ku);
       return true;
-      }
     }
+  }
 
   qCritical() << "calling command on unhandled type " << Object;
   Error = true;

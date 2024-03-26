@@ -182,7 +182,7 @@ public:
   virtual QWidget* createViewFromXML(QDomElement layoutElement){
     Q_UNUSED(layoutElement);
     return new T;
-    }
+  }
 };
 
 #endif

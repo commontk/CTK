@@ -45,11 +45,11 @@ protected:
   ctkVTKConnection* const q_ptr;
 public:
   enum
-    {
+  {
     ARG_UNKNOWN = 0,
     ARG_VTKOBJECT_AND_VTKOBJECT,
     ARG_VTKOBJECT_VOID_ULONG_VOID
-    };
+  };
 
   typedef ctkVTKConnectionPrivate Self;
   ctkVTKConnectionPrivate(ctkVTKConnection& object);

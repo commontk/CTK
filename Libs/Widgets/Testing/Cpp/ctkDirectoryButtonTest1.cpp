@@ -67,39 +67,39 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
 
   button.setCaption("Select a directory");
   if (button.caption() != "Select a directory")
-    {
+  {
     std::cerr << "ctkDirectoryButton::setCaption() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   button.setText("Click here");
   if (button.text() != "Click here")
-    {
+  {
     std::cerr << "ctkDirectoryButton::setText() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   // Restore text to directory path
   button.setText(QString());
   if (button.text() != QString())
-    {
+  {
     std::cerr << "ctkDirectoryButton::setText() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (button.icon().pixmap(20).toImage() !=
       defaultIcon.pixmap(20).toImage())
-    {
+  {
     std::cerr << "ctkDirectoryButton::icon() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   button3.setIcon(icon2);
   if (button3.icon().pixmap(20).toImage() !=
       icon2.pixmap(20).toImage())
-    {
+  {
     std::cerr << "ctkDirectoryButton::setIcon() failed." << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
 #ifdef USE_QFILEDIALOG_OPTIONS
   button.setOptions(QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
@@ -112,10 +112,10 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
   if (button.options() != (ctkDirectoryButton::ShowDirsOnly |
                            ctkDirectoryButton::ReadOnly))
 #endif
-    {
+  {
     std::cerr<< "ctkDirectoryButton::setOptions failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   QSignalSpy spyDirectoryChanged(&button, SIGNAL(directoryChanged(QString)));
   QSignalSpy spyDirectorySelected(&button, SIGNAL(directorySelected(QString)));
@@ -124,10 +124,10 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
   if ( QDir(button.directory()) != QDir::home() ||
        spyDirectoryChanged.count() != 1 ||
        spyDirectorySelected.count() != 1)
-    {
+  {
     std::cerr<< "ctkDirectoryButton::setDirectory failed" << button.directory().toStdString() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   spyDirectoryChanged.clear();
   spyDirectorySelected.clear();
@@ -137,17 +137,17 @@ int ctkDirectoryButtonTest1(int argc, char * argv [] )
   if ( QDir(button.directory()) != QDir::home() ||
        spyDirectoryChanged.count() != 0 ||
        spyDirectorySelected.count() != 1)
-    {
+  {
     std::cerr<< "ctkDirectoryButton::setDirectory failed" << button.directory().toStdString() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   topLevel.show();
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(400, &app, SLOT(quit()));
-    }
+  }
 
   // If Qt uses the default native dialog, a nested event loop won't
   // be created and app.quit() will have no effect (as it solely quits

@@ -44,20 +44,20 @@ int main(int argc, char** argv)
 
   QString s;
   if( argc > 1 )
-    {
+  {
     s = argv[1];
-    }
+  }
   else
-    {
+  {
     s = QFileDialog::getOpenFileName( 0,
      "Choose an image file", ".",
      "DCM (*)"
      );
     if( s.size() == 0 )
-      {
+    {
       return EXIT_SUCCESS;
-      }
     }
+  }
 
   DicomImage dcmImage( s.toStdString().c_str() );
 

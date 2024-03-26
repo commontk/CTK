@@ -46,20 +46,20 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkRangeSlider* widget = reinterpret_cast<ctkRangeSlider*>(data);
 
   CTKCOMPARE(widget->maximumValue(), 100);
   CTKCOMPARE(widget->minimumValue(), -261);
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   ctkRangeSlider* widget = reinterpret_cast<ctkRangeSlider*>(data);
 
   CTKCOMPARE(widget->maximumValue(), 77);
   CTKCOMPARE(widget->minimumValue(), 14);
-  }
+}
 
 }
 //-----------------------------------------------------------------------------
@@ -93,9 +93,9 @@ int ctkRangeSliderEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

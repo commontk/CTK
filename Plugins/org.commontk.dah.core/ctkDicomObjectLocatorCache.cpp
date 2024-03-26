@@ -62,9 +62,9 @@ bool ctkDicomObjectLocatorCachePrivate::find(const QString& objectUuid,
                                              ObjectLocatorCacheItem& objectLocatorCacheItem)const
 {
   if (!this->ObjectLocatorMap.contains(objectUuid))
-    {
+  {
     return false;
-    }
+  }
   objectLocatorCacheItem = this->ObjectLocatorMap[objectUuid];
   return true;
 }
@@ -90,52 +90,52 @@ bool ctkDicomObjectLocatorCache::isCached(const ctkDicomAppHosting::AvailableDat
   QList<QString> uuids = d->ObjectLocatorMap.keys();
   // Loop over top level object descriptors
   foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, availableData.objectDescriptors)
-    {
+  {
     hasCachedData = true;
     if (!uuids.contains(objectDescriptor.descriptorUUID))
-      {
+    {
       return false;
-      }
     }
+  }
   // Loop over patients
   foreach(const ctkDicomAppHosting::Patient& patient, availableData.patients)
-    {
+  {
     // Loop over patient level object descriptors
     foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, patient.objectDescriptors)
-      {
+    {
       hasCachedData = true;
       if (!uuids.contains(objectDescriptor.descriptorUUID))
-        {
+      {
         return false;
-        }
       }
+    }
     // Loop over studies
     foreach(const ctkDicomAppHosting::Study& study, patient.studies)
     {
       // Loop over study level object descriptors
       foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, study.objectDescriptors)
-        {
+      {
         hasCachedData = true;
         if (!uuids.contains(objectDescriptor.descriptorUUID))
-          {
+        {
           return false;
-          }
+        }
       }
       // Loop over series
       foreach(const ctkDicomAppHosting::Series& series, study.series)
       {
         // Loop over series level object descriptors
         foreach(const ctkDicomAppHosting::ObjectDescriptor& objectDescriptor, series.objectDescriptors)
-          {
+        {
           hasCachedData = true;
           if (!uuids.contains(objectDescriptor.descriptorUUID))
-            {
+          {
             return false;
-            }
           }
         }
       }
     }
+  }
   return hasCachedData;
 }
 
@@ -148,9 +148,9 @@ bool ctkDicomObjectLocatorCache::find(const QString& objectUuid,
   ObjectLocatorCacheItem item;
   bool found = d->find(objectUuid, item);
   if (!found)
-    {
+  {
     return false;
-    }
+  }
   objectLocator = item.ObjectLocator;
   return true;
 }
@@ -164,19 +164,19 @@ void ctkDicomObjectLocatorCache::insert(const QString& objectUuid,
   ObjectLocatorCacheItem item;
   d->find(objectUuid, item);
   if(d->ObjectLocatorMap.contains(objectUuid))
-    {
+  {
     Q_ASSERT(objectLocator == item.ObjectLocator); // ObjectLocator are expected to match
     item.RefCount++;
     d->ObjectLocatorMap.insert(objectUuid, item);
     return;
-    }
+  }
   item.ObjectLocator = objectLocator;
   d->ObjectLocatorMap.insert(objectUuid, item);
 
   if (temporary)
-    {
+  {
     d->TemporaryObjectLocatorSet.insert(objectUuid);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -186,27 +186,27 @@ bool ctkDicomObjectLocatorCache::remove(const QString& objectUuid)
   ObjectLocatorCacheItem item;
   bool found = d->find(objectUuid, item);
   if (!found)
-    {
+  {
     return false;
-    }
+  }
   Q_ASSERT(item.RefCount > 0);
   item.RefCount--;
   d->ObjectLocatorMap.insert(objectUuid, item);
   if (item.RefCount == 0)
-    {
+  {
     if (d->TemporaryObjectLocatorSet.contains(objectUuid))
-      {
+    {
       // Not implemented - Delete the object
       qDebug() << "ctkDicomObjectLocatorCache::remove - RefCount [1] - Temporary [True] - Not implemented";
 
       bool removed = d->TemporaryObjectLocatorSet.remove(objectUuid);
       Q_ASSERT(removed);
       Q_UNUSED(removed);
-      }
+    }
     int removed = d->ObjectLocatorMap.remove(objectUuid);
     Q_ASSERT(removed == 1);
     Q_UNUSED(removed);
-    }
+  }
   return true;
 }
 
@@ -215,15 +215,15 @@ QList<ctkDicomAppHosting::ObjectLocator> ctkDicomObjectLocatorCache::getData(con
 {
   QList<ctkDicomAppHosting::ObjectLocator> objectLocators;
   foreach(const QUuid& uuid, objectUUIDs)
-    {
+  {
     ctkDicomAppHosting::ObjectLocator objectLocator;
     bool found = this->find(uuid.toString(), objectLocator);
     if (!found)
-      {
+    {
       // Use the empty objectLocator
       // TODO Source should be set to NULL
-      }
-    objectLocators << objectLocator;
     }
+    objectLocators << objectLocator;
+  }
   return objectLocators;
 }

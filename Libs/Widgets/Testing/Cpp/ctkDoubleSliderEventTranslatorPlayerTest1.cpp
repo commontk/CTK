@@ -40,17 +40,17 @@ namespace
 {
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkDoubleSlider* widget = reinterpret_cast<ctkDoubleSlider*>(data);
 
   CTKCOMPARE(widget->value(), 60.00);
-  }
+}
 void checkFinalWidgetState3(void* data)
-  {
+{
   ctkDoubleSlider* widget = reinterpret_cast<ctkDoubleSlider*>(data);
 
   CTKCOMPARE(widget->value(), -27.82);
-  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -90,9 +90,9 @@ int ctkDoubleSliderEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

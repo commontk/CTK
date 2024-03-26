@@ -25,27 +25,27 @@ void copyAttributes(PyObject* orig_module, PyObject* dest_module)
 {
   PyObject* keys = PyObject_Dir(orig_module);
   if (keys)
-    {
+  {
     PyObject* key;
     PyObject* value;
     int nKeys = PyList_Size(keys);
     for (int i = 0; i < nKeys; ++i)
-      {
+    {
       key = PyList_GetItem(keys, i);
       value = PyObject_GetAttr(orig_module, key);
       if (!value)
-        {
+      {
         continue;
-        }
+      }
       //printf("%s\n", PyString_AsString(key));
       if (!PyObject_HasAttr(dest_module, key))
-        {
+      {
         PyObject_SetAttr(dest_module, key, value);
-        }
-      Py_DECREF((void*)value);
       }
-    Py_DECREF(keys);
+      Py_DECREF((void*)value);
     }
+    Py_DECREF(keys);
+  }
 }
 } // end of anonymous namespace
 //-----------------------------------------------------------------------------
@@ -79,10 +79,10 @@ PyObject* PyInit_@TARGET_CONFIG@PythonQt()
   // the module "PythonQt.@TARGET_CONFIG@". Let's copy its content into the current module.
   PythonQtObjectPtr currentModule = PyImport_ImportModule((char*)"PythonQt.@TARGET_CONFIG@");
   if(currentModule.isNull())
-    {
+  {
     PyErr_SetString(PyExc_ImportError, (char*)"Failed to import PythonQt.@TARGET_CONFIG@");
     return NULL;
-    }
+  }
   copyAttributes(currentModule, m);
   return m;
 }

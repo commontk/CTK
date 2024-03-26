@@ -104,9 +104,9 @@ void ctkLinearValueProxy::setCoefficient(double newCoeff)
 {
   Q_D(ctkLinearValueProxy);
   if (d->Coefficient == newCoeff)
-    {
+  {
     return;
-    }
+  }
   emit proxyAboutToBeModified();
   d->Coefficient = newCoeff;
   this->updateProxyValue();
@@ -118,9 +118,9 @@ void ctkLinearValueProxy::setOffset(double newOffset)
 {
   Q_D(ctkLinearValueProxy);
   if (d->Offset == newOffset)
-    {
+  {
     return;
-    }
+  }
   emit proxyAboutToBeModified();
   d->Offset = newOffset;
   this->updateProxyValue();

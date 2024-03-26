@@ -117,20 +117,20 @@ void ctkWorkflowAbstractPagedWidget::associateStepWithPage(ctkWorkflowStep* step
   Q_D(ctkWorkflowAbstractPagedWidget);
 
   if (index < 0)
-    {
+  {
     qWarning() << "Cannot associate step with a page of index -1";
     return;
-    }
+  }
 
   if (step)
-    {
+  {
     d->StepToIndexMap[step] = index;
 
     if (!d->IndexToGroupBoxMap.contains(index))
-      {
+    {
       d->IndexToGroupBoxMap[index] = 0;
-      }
     }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -139,9 +139,9 @@ void ctkWorkflowAbstractPagedWidget::associateStepWithLabel(ctkWorkflowStep* ste
   Q_D(ctkWorkflowAbstractPagedWidget);
 
   if (step)
-    {
+  {
     d->StepToLabelMap[step] = label;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -157,15 +157,15 @@ ctkWorkflowGroupBox* ctkWorkflowAbstractPagedWidget::workflowGroupBox(ctkWorkflo
   Q_D(const ctkWorkflowAbstractPagedWidget);
 
   if (d->StepToIndexMap.contains(step))
-    {
+  {
     int index = d->StepToIndexMap[step];
     Q_ASSERT(d->IndexToGroupBoxMap.contains(index));
     return d->IndexToGroupBoxMap[index];
-    }
+  }
   else
-    {
+  {
     return 0;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -177,29 +177,29 @@ void ctkWorkflowAbstractPagedWidget::updateStepUI(ctkWorkflowStep* currentStep)
 
   // Create layout and client area if this is our first time here
   if (!this->clientArea())
-    {
+  {
     QVBoxLayout* layout = new QVBoxLayout();
     this->setLayout(layout);
     this->initClientArea();
     layout->addWidget(this->clientArea());
 
     if (this->showButtonBoxWidget())
-      {
+    {
       layout->addWidget(this->buttonBoxWidget());
-      }
+    }
 
     layout->setContentsMargins(0,0,0,0);
 
     // Use the superclass's groupBox as the first page, since we already have it
     d->IndexToGroupBoxMap[0] = this->workflowGroupBox();
     this->createNewPage(d->IndexToGroupBoxMap[0]);
-    }
+  }
 
   // If the user hasn't previously associated the step with a page, then add a new page
   if (!d->StepToIndexMap.contains(currentStep))
-    {
+  {
     this->associateStepWithPage(currentStep, d->NumPages++);
-    }
+  }
 
   int index = d->StepToIndexMap[currentStep];
 
@@ -207,21 +207,21 @@ void ctkWorkflowAbstractPagedWidget::updateStepUI(ctkWorkflowStep* currentStep)
   // (i.e. if user specifies steps only for indices 3 and 4 with associateStepWithPage, we need to
   // create pages 0,1,2)
   if (!d->IndexToGroupBoxMap[index])
-    {
+  {
     for (int i = 0; i <= index; i++)
-      {
+    {
       if (!d->IndexToGroupBoxMap[i])
-        {
+      {
         d->createNewWorkflowGroupBox(i);
-        }
       }
     }
+  }
 
   // If the user hasn't previously associated the step with a label, then add a blank label
   if (!d->StepToLabelMap.contains(currentStep))
-    {
+  {
     this->associateStepWithLabel(currentStep, "");
-    }
+  }
   QString label = d->StepToLabelMap[currentStep];
 
   ctkWorkflowGroupBox* groupBox = d->IndexToGroupBoxMap[index];
@@ -231,9 +231,9 @@ void ctkWorkflowAbstractPagedWidget::updateStepUI(ctkWorkflowStep* currentStep)
   d->GroupBoxShownCurrently = groupBox;
 
   if (d->GroupBoxShownPreviously)
-    {
+  {
     d->GroupBoxShownPreviously->updateGroupBox(0);
-    }
+  }
 
   groupBox->updateGroupBox(currentStep);
 

@@ -103,16 +103,16 @@ public:
   /// with the current number of decimals (see round()).
   /// \sa setMode(), setSetMode(), round()
   enum SetMode
-    {
+  {
     SetAlways,
     SetIfDifferent,
-    };
+  };
 
   /// DecimalsOption enums the input style of the spinbox decimals.
   /// Default option is DecimalsByShortcuts.
   /// \sa decimals(), currentDecimals()
   enum DecimalsOption
-    {
+  {
     /// Behaves just like a QDoubleSpinBox. The maximum number of decimals
     /// allowed is given by decimals().
     FixedDecimals = 0x000,
@@ -149,14 +149,14 @@ public:
     /// (e.g. "0." )
     /// \sa decimals
     DecimalPointAlwaysVisible = 0x080
-    };
+  };
   Q_DECLARE_FLAGS(DecimalsOptions, DecimalsOption)
 
   enum SizeHintPolicy
-    {
+  {
     SizeHintByMinMax,
     SizeHintByValue
-    };
+  };
 
   typedef QWidget Superclass;
 

@@ -52,25 +52,76 @@ ctkJobSchedulerPrivate::~ctkJobSchedulerPrivate() = default;
 //---------------------------------------------------------------------------
 void ctkJobSchedulerPrivate::init()
 {
-  Q_Q(ctkJobScheduler);
-
-  QObject::connect(q, SIGNAL(queueJobs()),
-                   q, SLOT(onQueueJobsInThreadPool()),
-                   Qt::QueuedConnection);
+  QObject::connect(this, SIGNAL(queueJobs()),
+                   this, SLOT(onQueueJobsInThreadPool()));
 
   this->ThreadPool = QSharedPointer<QThreadPool>(new QThreadPool());
   this->ThreadPool->setMaxThreadCount(20);
 }
 
 //------------------------------------------------------------------------------
-void ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
+void ctkJobSchedulerPrivate::onQueueJobsInThreadPool()
+{
+  Q_Q(ctkJobScheduler);
+
+  if (this->FreezeJobsScheduling)
+    {
+    return;
+    }
+
+  this->QueueMutex.lock();
+  foreach (QThread::Priority priority, (QList<QThread::Priority>()
+                                        << QThread::Priority::HighestPriority
+                                        << QThread::Priority::HighPriority
+                                        << QThread::Priority::NormalPriority
+                                        << QThread::Priority::LowPriority
+                                        << QThread::Priority::LowestPriority))
+  {
+    foreach (QSharedPointer<ctkAbstractJob> job, this->JobsQueue)
+    {
+      if (job->priority() != priority)
+      {
+        continue;
+      }
+
+      if (job->status() != ctkAbstractJob::JobStatus::Initialized)
+      {
+        continue;
+      }
+
+      int numberOfRunningJobsWithSameType = this->getSameTypeJobsInThreadPoolQueueOrRunning(job);
+      if (numberOfRunningJobsWithSameType >= job->maximumConcurrentJobsPerType())
+      {
+        continue;
+      }
+
+      logger.debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
+                       .arg(job->jobUID())
+                       .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
+
+      job->setStatus(ctkAbstractJob::JobStatus::Queued);
+      emit q->jobQueued(job->toVariant());
+
+      QSharedPointer<ctkAbstractWorker> worker =
+        QSharedPointer<ctkAbstractWorker>(job->createWorker());
+      worker->setScheduler(*q);
+
+      this->Workers.insert(job->jobUID(), worker);
+      this->ThreadPool->start(worker.data(), job->priority());
+    }
+  }
+  this->QueueMutex.unlock();
+}
+
+//------------------------------------------------------------------------------
+bool ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
 {
   Q_Q(ctkJobScheduler);
 
   if (!job)
-    {
-    return;
-    }
+  {
+    return false;
+  }
 
   logger.debug(QString("ctkJobScheduler: creating job object %1 of type %2 in thread %3.\n")
     .arg(job->jobUID())
@@ -84,13 +135,29 @@ void ctkJobSchedulerPrivate::insertJob(QSharedPointer<ctkAbstractJob> job)
   QObject::connect(job.data(), SIGNAL(progressJobDetail(QVariant)),
                    q, SIGNAL(progressJobDetail(QVariant)));
 
-  QMutexLocker ml(&this->mMutex);
+  this->QueueMutex.lock();
   this->JobsQueue.insert(job->jobUID(), job);
-  emit q->queueJobs();
+  this->QueueMutex.unlock();
+
+  emit q->jobInitialized(job->toVariant());
+
+  if (this->FreezeJobsScheduling)
+    {
+    logger.debug(QString("ctkJobScheduler: job object %1 of type %2 in thread %3 "
+                         "not added to the list since jobs are being stopped.\n")
+      .arg(job->jobUID())
+      .arg(job->className())
+      .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
+    return false;
+    }
+
+  emit this->queueJobs();
+
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
+bool ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
 {
   Q_Q(ctkJobScheduler);
 
@@ -98,11 +165,12 @@ void ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
     .arg(jobUID)
     .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId()), 16)));
 
+  this->QueueMutex.lock();
   QSharedPointer<ctkAbstractJob> job = this->JobsQueue.value(jobUID);
   if (!job)
-    {
-    return;
-    }
+  {
+    return false;
+  }
 
   QObject::disconnect(job.data(), SIGNAL(started()), q, SLOT(onJobStarted()));
   QObject::disconnect(job.data(), SIGNAL(canceled()), q, SLOT(onJobCanceled()));
@@ -111,7 +179,44 @@ void ctkJobSchedulerPrivate::removeJob(const QString& jobUID)
   QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)), q, SIGNAL(progressJobDetail(QVariant)));
 
   this->JobsQueue.remove(jobUID);
-  emit q->queueJobs();
+  this->QueueMutex.unlock();
+
+  emit this->queueJobs();
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
+void ctkJobSchedulerPrivate::removeJobs(const QStringList &jobUIDs)
+{
+  Q_Q(ctkJobScheduler);
+
+  QList<QVariant> datas;
+  this->QueueMutex.lock();
+  foreach (QString jobUID, jobUIDs)
+  {
+    QSharedPointer<ctkAbstractJob> job = this->JobsQueue.value(jobUID);
+    if (!job)
+    {
+      continue;
+    }
+
+    datas.append(job->toVariant());
+
+    QObject::disconnect(job.data(), SIGNAL(started()), q, SLOT(onJobStarted()));
+    QObject::disconnect(job.data(), SIGNAL(canceled()), q, SLOT(onJobCanceled()));
+    QObject::disconnect(job.data(), SIGNAL(failed()), q, SLOT(onJobFailed()));
+    QObject::disconnect(job.data(), SIGNAL(finished()), q, SLOT(onJobFinished()));
+    QObject::disconnect(job.data(), SIGNAL(progressJobDetail(QVariant)), q, SIGNAL(progressJobDetail(QVariant)));
+
+    this->JobsQueue.remove(jobUID);
+  }
+  this->QueueMutex.unlock();
+
+  foreach (QVariant data, datas)
+  {
+    emit q->jobCanceled(data);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -119,19 +224,19 @@ int ctkJobSchedulerPrivate::getSameTypeJobsInThreadPoolQueueOrRunning(QSharedPoi
 {
   int count = 0;
   foreach (QSharedPointer<ctkAbstractJob> queuedJob, this->JobsQueue)
-    {
+  {
     if (queuedJob->jobUID() == job->jobUID())
-      {
+    {
       continue;
-      }
+    }
 
     if ((queuedJob->status() == ctkAbstractJob::JobStatus::Queued ||
          queuedJob->status() == ctkAbstractJob::JobStatus::Running) &&
         queuedJob->className() == job->className())
-      {
+    {
       count++;
-      }
     }
+  }
 
   return count;
 }
@@ -164,30 +269,44 @@ ctkJobScheduler::ctkJobScheduler(ctkJobSchedulerPrivate* pimpl, QObject* parent)
 }
 
 // --------------------------------------------------------------------------
-ctkJobScheduler::~ctkJobScheduler() = default;
+ctkJobScheduler::~ctkJobScheduler()
+{
+  this->setFreezeJobsScheduling(true);
+  this->stopAllJobs(true);
+  // stopAllJobs is not main thread blocking. Therefore we need actually
+  // to wait the jobs to end (either finished or stopped) before closing the application.
+  // Issue: waiting time for the jobs to stop vs waiting the application to close.
+  // We should avoid the application crash at exiting.
+  // Is 10 sec enough or too long?
+  this->waitForDone(10000);
+}
 
 //----------------------------------------------------------------------------
 int ctkJobScheduler::numberOfJobs()
 {
   Q_D(ctkJobScheduler);
-  QMutexLocker ml(&d->mMutex);
-  return d->JobsQueue.count();
+  d->QueueMutex.lock();
+  int numberOfJobs = d->JobsQueue.count();
+  d->QueueMutex.unlock();
+  return numberOfJobs;
 }
 
 //----------------------------------------------------------------------------
 int ctkJobScheduler::numberOfPersistentJobs()
 {
   Q_D(ctkJobScheduler);
-  int cont = 0;
-  QMutexLocker ml(&d->mMutex);
+  int numberOfPersistentJobs = 0;
+  d->QueueMutex.lock();
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
-    {
+  {
     if (job->isPersistent())
-      {
-      cont++;
-      }
+    {
+      numberOfPersistentJobs++;
     }
-  return cont;
+  }
+  d->QueueMutex.unlock();
+
+  return numberOfPersistentJobs;
 }
 
 //----------------------------------------------------------------------------
@@ -213,9 +332,9 @@ void ctkJobScheduler::deleteWorker(const QString& jobUID)
 
   QMap<QString, QSharedPointer<ctkAbstractWorker>>::iterator it = d->Workers.find(jobUID);
   if (it == d->Workers.end())
-    {
+  {
     return;
-    }
+  }
 
   d->Workers.remove(jobUID);
 }
@@ -225,14 +344,16 @@ QSharedPointer<ctkAbstractJob> ctkJobScheduler::getJobSharedByUID(const QString&
 {
   Q_D(ctkJobScheduler);
 
-  QMutexLocker ml(&d->mMutex);
+  d->QueueMutex.lock();
   QMap<QString, QSharedPointer<ctkAbstractJob>>::iterator it = d->JobsQueue.find(jobUID);
   if (it == d->JobsQueue.end())
-    {
+  {
+    d->QueueMutex.unlock();
     return nullptr;
-    }
-
-  return d->JobsQueue.value(jobUID);
+  }
+  QSharedPointer<ctkAbstractJob> job =  d->JobsQueue.value(jobUID);
+  d->QueueMutex.unlock();
+  return job;
 }
 
 //----------------------------------------------------------------------------
@@ -240,9 +361,9 @@ ctkAbstractJob* ctkJobScheduler::getJobByUID(const QString& jobUID)
 {
   QSharedPointer<ctkAbstractJob> job = this->getJobSharedByUID(jobUID);
   if (!job)
-    {
+  {
     return nullptr;
-    }
+  }
 
   return job.data();
 }
@@ -254,13 +375,13 @@ void ctkJobScheduler::waitForFinish(bool waitForPersistentJobs)
 
   int numberOfPersistentJobs = this->numberOfPersistentJobs();
   if (waitForPersistentJobs)
-    {
+  {
     numberOfPersistentJobs = 0;
-    }
+  }
   while (this->numberOfJobs() > numberOfPersistentJobs)
-    {
+  {
     d->ThreadPool->waitForDone(300);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -275,43 +396,163 @@ void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
 {
   Q_D(ctkJobScheduler);
 
-  QMutexLocker ml(&d->mMutex);
-
-  // Stops jobs without a worker (in waiting)
+  QStringList initializedStoppedJobsUIDs;
+  d->QueueMutex.lock();
+  // Stops jobs without a worker (in waiting, still in main thread).
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
-    {
+  {
     if (job->isPersistent() && !stopPersistentJobs)
-      {
+    {
       continue;
-      }
+    }
 
     if (job->status() != ctkAbstractJob::JobStatus::Initialized)
-      {
+    {
       continue;
-      }
-
-    job->setStatus(ctkAbstractJob::JobStatus::Stopped);
-    this->deleteJob(job->jobUID());
     }
+
+    // For this job, a worker has not beed started yet and the job is still in the main thread.
+    // There is no worry that it will be started in meanwhile,
+    // because only jobs with status Initialized will be started by the scheduler.
+    // Therefore we set the status as stopped, because effettivelty the job has been stopped.
+    // In addition, to speedup the cleaning of jobs, we remove them with one call removeJobs,
+    // instead of using the signal canceled -> onJobCanceled
+    QObject::disconnect(job.data(), SIGNAL(canceled()), this, SLOT(onJobCanceled()));
+    job->setStatus(ctkAbstractJob::JobStatus::Stopped);
+    initializedStoppedJobsUIDs.append(job->jobUID());
+  }
+
+  // Try to stop jobs with a worker, but still not running.
+  // (in queue in the QThreadPool, still in the main thread)
+  foreach (QSharedPointer<ctkAbstractWorker> worker, d->Workers)
+  {
+    QSharedPointer<ctkAbstractJob> job = worker->jobShared();
+    if (!job)
+    {
+      continue;
+    }
+
+    // trytake stops workers not already running
+    // these corresponds to jobs with status Queued
+    if (d->ThreadPool->tryTake(worker.data()))
+    {
+      this->deleteWorker(job->jobUID());
+      QObject::disconnect(job.data(), SIGNAL(canceled()), this, SLOT(onJobCanceled()));
+      job->setStatus(ctkAbstractJob::JobStatus::Stopped);
+      initializedStoppedJobsUIDs.append(job->jobUID());
+    }
+  }
+
+  d->QueueMutex.unlock();
+  d->removeJobs(initializedStoppedJobsUIDs);
 
   // Stops queued and running jobs
   foreach (QSharedPointer<ctkAbstractWorker> worker, d->Workers)
-    {
+  {
     QSharedPointer<ctkAbstractJob> job = worker->jobShared();
     if (job->isPersistent() && !stopPersistentJobs)
-      {
+    {
       continue;
-      }
-
-    if (job->status() != ctkAbstractJob::JobStatus::Running &&
-        job->status() != ctkAbstractJob::JobStatus::Queued)
-      {
-      continue;
-      }
-
-    job->setStatus(ctkAbstractJob::JobStatus::Stopped);
-    worker->cancel();
     }
+
+    worker->requestCancel();
+  }
+}
+
+//----------------------------------------------------------------------------
+void ctkJobScheduler::stopJobsByJobUIDs(const QStringList &jobUIDs)
+{
+  Q_D(ctkJobScheduler);
+
+  if (jobUIDs.count() == 0)
+  {
+    return;
+  }
+
+  QStringList initializedStoppedJobsUIDs;
+  d->QueueMutex.lock();
+  // Stops jobs without a worker (in waiting, still in main thread)
+  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+  {
+    if (!job)
+    {
+      continue;
+    }
+
+    if (job->status() != ctkAbstractJob::JobStatus::Initialized)
+    {
+      continue;
+    }
+
+    if ((!job->jobUID().isEmpty() && jobUIDs.contains(job->jobUID())))
+    {
+      // For this job, a worker has not beed started yet and the job is still in the main thread.
+      // There is no worry that it will be started in meanwhile,
+      // because only jobs with status Initialized will be started by the scheduler.
+      // Therefore we set the status as stopped, because effettivelty the job has been stopped.
+      // In addition, to speedup the cleaning of jobs, we remove them with one call removeJobs,
+      // instead of using the signal canceled -> onJobCanceled
+      QObject::disconnect(job.data(), SIGNAL(canceled()), this, SLOT(onJobCanceled()));
+      job->setStatus(ctkAbstractJob::JobStatus::Stopped);
+      initializedStoppedJobsUIDs.append(job->jobUID());
+    }
+  }
+
+  // Try to stop jobs with a worker, but still not running.
+  // (in queue in the QThreadPool, still in the main thread)
+  foreach (QSharedPointer<ctkAbstractWorker> worker, d->Workers)
+  {
+    QSharedPointer<ctkAbstractJob> job = worker->jobShared();
+    if (!job)
+    {
+      continue;
+    }
+
+    if ((!job->jobUID().isEmpty() && jobUIDs.contains(job->jobUID())))
+    {
+      // trytake stops workers not already running,
+      // these corresponds to jobs with status Queued
+      if (d->ThreadPool->tryTake(worker.data()))
+      {
+        this->deleteWorker(job->jobUID());
+        QObject::disconnect(job.data(), SIGNAL(canceled()), this, SLOT(onJobCanceled()));
+        job->setStatus(ctkAbstractJob::JobStatus::Stopped);
+        initializedStoppedJobsUIDs.append(job->jobUID());
+      }
+    }
+  }
+
+  d->QueueMutex.unlock();
+  d->removeJobs(initializedStoppedJobsUIDs);
+
+  // Stops running jobs
+  foreach (QSharedPointer<ctkAbstractWorker> worker, d->Workers)
+  {
+    QSharedPointer<ctkAbstractJob> job = worker->jobShared();
+    if (!job)
+    {
+      continue;
+    }
+
+    if ((!job->jobUID().isEmpty() && jobUIDs.contains(job->jobUID())))
+    {
+      worker->requestCancel();
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+bool ctkJobScheduler::freezeJobsScheduling() const
+{
+  Q_D(const ctkJobScheduler);
+  return d->FreezeJobsScheduling;
+}
+
+//----------------------------------------------------------------------------
+void ctkJobScheduler::setFreezeJobsScheduling(bool freezeJobsScheduling)
+{
+  Q_D(ctkJobScheduler);
+  d->FreezeJobsScheduling = freezeJobsScheduling;
 }
 
 //----------------------------------------------------------------------------
@@ -375,9 +616,9 @@ void ctkJobScheduler::onJobStarted()
 {
   ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
-    {
+  {
     return;
-    }
+  }
 
   logger.debug(job->loggerReport("started"));
   emit this->jobStarted(job->toVariant());
@@ -388,9 +629,9 @@ void ctkJobScheduler::onJobCanceled()
 {
   ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
-    {
+  {
     return;
-    }
+  }
   logger.debug(job->loggerReport("canceled"));
 
   QVariant data = job->toVariant();
@@ -406,9 +647,9 @@ void ctkJobScheduler::onJobFailed()
 {
   ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
-    {
+  {
     return;
-    }
+  }
 
   logger.debug(job->loggerReport("failed"));
 
@@ -425,9 +666,9 @@ void ctkJobScheduler::onJobFinished()
 {
   ctkAbstractJob* job = qobject_cast<ctkAbstractJob*>(this->sender());
   if (!job)
-    {
+  {
     return;
-    }
+  }
 
   logger.debug(job->loggerReport("finished"));
 
@@ -437,52 +678,4 @@ void ctkJobScheduler::onJobFinished()
   this->deleteJob(jobUID);
 
   emit this->jobFinished(data);
-}
-
-//----------------------------------------------------------------------------
-void ctkJobScheduler::onQueueJobsInThreadPool()
-{
-  Q_D(ctkJobScheduler);
-
-  QMutexLocker ml(&d->mMutex);
-  foreach (QThread::Priority priority, (QList<QThread::Priority>()
-                                        << QThread::Priority::HighestPriority
-                                        << QThread::Priority::HighPriority
-                                        << QThread::Priority::NormalPriority
-                                        << QThread::Priority::LowPriority
-                                        << QThread::Priority::LowestPriority))
-    {
-    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
-      {
-      if (job->priority() != priority)
-        {
-        continue;
-        }
-
-      if (job->status() != ctkAbstractJob::JobStatus::Initialized)
-        {
-        continue;
-        }
-
-      int numberOfRunningJobsWithSameType = d->getSameTypeJobsInThreadPoolQueueOrRunning(job);
-      if (numberOfRunningJobsWithSameType >= job->maximumConcurrentJobsPerType())
-        {
-        continue;
-        }
-
-      logger.debug(QString("ctkDICOMScheduler: creating worker for job %1 in thread %2.\n")
-                       .arg(job->jobUID())
-                       .arg(QString::number(reinterpret_cast<quint64>(QThread::currentThreadId())), 16));
-
-      job->setStatus(ctkAbstractJob::JobStatus::Queued);
-      emit this->jobQueued(job->toVariant());
-
-      QSharedPointer<ctkAbstractWorker> worker =
-        QSharedPointer<ctkAbstractWorker>(job->createWorker());
-      worker->setScheduler(*this);
-
-      d->Workers.insert(job->jobUID(), worker);
-      d->ThreadPool->start(worker.data(), job->priority());
-      }
-    }
 }

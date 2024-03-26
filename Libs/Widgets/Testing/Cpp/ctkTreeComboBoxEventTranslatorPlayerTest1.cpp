@@ -49,28 +49,28 @@ QSignalSpy* Spy1;
 QSignalSpy* Spy2;
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
-  {
+{
   ctkTreeComboBox* widget = reinterpret_cast<ctkTreeComboBox*>(data);
 
   CTKCOMPARE(Spy1->count(), 1);
   CTKCOMPARE(widget->currentText(), "Test1.2");
-  }
+}
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState2(void* data)
-  {
+{
   QWidget* parentWidget = reinterpret_cast<QWidget*>(data);
   QList<ctkTreeComboBox*> widget = parentWidget->findChildren<ctkTreeComboBox*>();
 
   if(widget.count())
-    {
+  {
     CTKCOMPARE(widget[0]->currentText(), "Test1.2");
     CTKCOMPARE(Spy2->count(), 3);
-    }
-  else
-    {
-    QApplication::exit(EXIT_FAILURE);
-    }
   }
+  else
+  {
+    QApplication::exit(EXIT_FAILURE);
+  }
+}
 }
 
 //-----------------------------------------------------------------------------
@@ -131,9 +131,9 @@ int ctkTreeComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   // ------------------------
   if (argc < 2 || QString(argv[1]) != "-I")
-    {
+  {
     QTimer::singleShot(0, &etpWidget, SLOT(play()));
-    }
+  }
 
   etpWidget.show();
   return app.exec();

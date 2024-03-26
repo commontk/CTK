@@ -49,28 +49,28 @@ bool ctkMenuComboBoxEventTranslator::translateEvent(QObject *Object,
   ctkMenuComboBox* menuCombo = NULL;
   if (this->CurrentView &&
       qobject_cast<QAbstractItemView*>(Object) == this->CurrentView)
-    {
+  {
     return true;
-    }
+  }
 
   for(QObject* test = Object; menuCombo == NULL && test != NULL; test = test->parent())
-    {
+  {
     menuCombo = qobject_cast<ctkMenuComboBox*>(test);
-    }
+  }
 
   if(!menuCombo)
-    {
+  {
     return false;
-    }
+  }
 
   if(Event->type() == QEvent::Enter && Object == menuCombo)
-    {
+  {
     if(this->CurrentObject != Object)
-      {
+    {
       if(this->CurrentObject)
-        {
+      {
         disconnect(this->CurrentObject, 0, this, 0);
-        }
+      }
       this->CurrentObject = Object;
       this->CurrentView = menuCombo->searchCompleter()->popup();
 
@@ -93,8 +93,8 @@ bool ctkMenuComboBoxEventTranslator::translateEvent(QObject *Object,
 
       //connect for the QMenu
 
-      }
     }
+  }
 
   return true;
 }
@@ -143,10 +143,10 @@ void ctkMenuComboBoxEventTranslator::connectAllMenu(QMenu* menu)
           this, SLOT(onActionTriggered(QAction*)));
 
   foreach (QAction* action, menu->actions())
-    {
+  {
     if (action->menu())
-      {
+    {
       this->connectAllMenu(action->menu());
-      }
     }
+  }
 }

@@ -52,25 +52,25 @@ int ctkDynamicSpacerTest1(int argc, char * argv [] )
 
   if (spacer1->activeSizePolicy() !=
       QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred))
-    {
+  {
     std::cerr << "ctkDynamicSpacer: wrong default values" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   spacer1->setActiveSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   if (spacer1->activeSizePolicy() !=
       QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding))
-    {
+  {
     std::cerr << "ctkDynamicSpacer::setActiveSizePolicy failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   spacer1->setInactiveSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
   if (spacer1->inactiveSizePolicy() !=
       QSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum))
-    {
+  {
     std::cerr << "ctkDynamicSpacer::setInactiveSizePolicy failed" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   spacer2->setInactiveSizePolicy(spacer1->inactiveSizePolicy());
   spacer2->setActiveSizePolicy(spacer1->activeSizePolicy());
@@ -89,38 +89,38 @@ int ctkDynamicSpacerTest1(int argc, char * argv [] )
 
   // both inactive, they don't grow
   if (spacer1->height() != 0 || spacer2->height() != 0)
-    {
+  {
     std::cerr << "ctkDynamicSpacer failed 1: " << spacer1->height() << " "
               << spacer2->height() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   button->toggle();
   // need to repaint the widgets to query their size
   QApplication::processEvents();
 
   if (spacer1->height() <= 0 || spacer2->height() != 0)
-    {
+  {
     std::cerr << "ctkDynamicSpacer failed 2: " << spacer1->height() << " "
               << spacer2->height() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   button->toggle();
   // need to repaint the widgets to query their size
   QApplication::processEvents();
 
   if (spacer1->height() != 0 || spacer2->height() <= 0)
-    {
+  {
     std::cerr << "ctkDynamicSpacer failed 3: " << spacer1->height() << " "
               << spacer2->height() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

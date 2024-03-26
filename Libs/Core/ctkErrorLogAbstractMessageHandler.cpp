@@ -76,13 +76,13 @@ QString ctkErrorLogAbstractMessageHandler::handlerPrettyName()const
 {
   Q_D(const ctkErrorLogAbstractMessageHandler);
   if (d->HandlerPrettyName.isEmpty())
-    {
+  {
     return this->handlerName();
-    }
+  }
   else
-    {
+  {
     return d->HandlerPrettyName;
-    }
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -104,9 +104,9 @@ void ctkErrorLogAbstractMessageHandler::setEnabled(bool value)
 {
   Q_D(ctkErrorLogAbstractMessageHandler);
   if (value == d->Enabled)
-    {
+  {
     return;
-    }
+  }
   this->setEnabledInternal(value);
   d->Enabled = value;
 }
@@ -120,19 +120,19 @@ void ctkErrorLogAbstractMessageHandler::handleMessage(const QString& threadId,
 {
   Q_D(ctkErrorLogAbstractMessageHandler);
   if (logLevel <= ctkErrorLogLevel::Info)
-    {
+  {
     if(d->TerminalOutputs.contains(ctkErrorLogTerminalOutput::StandardOutput))
-      {
-      d->TerminalOutputs.value(ctkErrorLogTerminalOutput::StandardOutput)->output(text);
-      }
-    }
-  else
     {
-    if(d->TerminalOutputs.contains(ctkErrorLogTerminalOutput::StandardError))
-      {
-      d->TerminalOutputs.value(ctkErrorLogTerminalOutput::StandardError)->output(text);
-      }
+      d->TerminalOutputs.value(ctkErrorLogTerminalOutput::StandardOutput)->output(text);
     }
+  }
+  else
+  {
+    if(d->TerminalOutputs.contains(ctkErrorLogTerminalOutput::StandardError))
+    {
+      d->TerminalOutputs.value(ctkErrorLogTerminalOutput::StandardError)->output(text);
+    }
+  }
   emit this->messageHandled(QDateTime::currentDateTime(), threadId, logLevel, origin, logContext, text);
 }
 
@@ -142,9 +142,9 @@ ctkErrorLogTerminalOutput* ctkErrorLogAbstractMessageHandler::terminalOutput(
 {
   Q_D(const ctkErrorLogAbstractMessageHandler);
   if(d->TerminalOutputs.contains(terminalOutputType))
-    {
+  {
     return d->TerminalOutputs.value(terminalOutputType);
-    }
+  }
   return 0;
 }
 

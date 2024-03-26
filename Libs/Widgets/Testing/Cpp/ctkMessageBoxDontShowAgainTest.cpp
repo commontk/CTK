@@ -142,33 +142,33 @@ void ctkMessageBoxDontShowAgainTester::testExecMessageBox(ctkMessageBox& message
 {
   QFETCH(int, buttonOrRole);
   if (buttonOrRole != QMessageBox::InvalidRole)
-    {
+  {
     if (messageBox.standardButtons() == QMessageBox::NoButton &&
         messageBox.buttons().size() == 0)
-      {
+    {
       messageBox.addButton(QMessageBox::Ok);
-      }
+    }
     if (messageBox.standardButtons() & buttonOrRole)
-      {
+    {
       QAbstractButton* button = messageBox.button(
         static_cast<QMessageBox::StandardButton>(buttonOrRole));
       QVERIFY(button);
       QTimer::singleShot(0, button, SLOT(click()));
-      }
+    }
     else
-      {
+    {
       const char* slot = 0;
       if (buttonOrRole == QMessageBox::AcceptRole)
-        {
+      {
         slot = SLOT(accept());
-        }
-      else if (buttonOrRole == QMessageBox::RejectRole)
-        {
-        slot = SLOT(reject());
-        }
-      QTimer::singleShot(0, &messageBox, slot);
       }
+      else if (buttonOrRole == QMessageBox::RejectRole)
+      {
+        slot = SLOT(reject());
+      }
+      QTimer::singleShot(0, &messageBox, slot);
     }
+  }
   // shouldn't hang
   int execResult = messageBox.exec();
   QFETCH(int, result);
@@ -261,18 +261,18 @@ void ctkMessageBoxDontShowAgainTester::testDontShowAgainCustomText()
   QString dontShowAgainText = checkBox->text();
 
   if (visible)
-    {
+  {
     // the custom text was set from the Ok box as it has the accept role
     QString expectedString = QString("Don't show this message again and always ")
       + okButton->text();
     QCOMPARE(dontShowAgainText, expectedString);
-    }
+  }
   else
-    {
+  {
     // the custom text was not added to the end of the standard message
     QString expectedString = QString("Don't show this message again");
     QCOMPARE(dontShowAgainText, expectedString);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------

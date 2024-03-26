@@ -64,15 +64,15 @@ int ctkDynamicSpacerTest2(int argc, char * argv [] )
   topLevel.show();
 
   if (spacer->height() != 0)
-    {
+  {
     std::cerr << "ctkDynamicSpacer failed: " << spacer->height() << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   if (argc < 2 || QString(argv[1]) != "-I" )
-    {
+  {
     QTimer::singleShot(200, &app, SLOT(quit()));
-    }
+  }
 
   return app.exec();
 }

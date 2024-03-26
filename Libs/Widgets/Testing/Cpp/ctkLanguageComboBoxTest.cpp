@@ -64,12 +64,12 @@ void ctkLanguageComboBoxTester::testSetDefaultLanguage()
   QFETCH(QString, expectedDefaultLanguage);
   QCOMPARE(languageComboBox.defaultLanguage(), expectedDefaultLanguage);
   if (!expectedDefaultLanguage.isEmpty())
-    {
+  {
     QCOMPARE(languageComboBox.count(), 1);
     QCOMPARE(languageComboBox.itemData(0).toString(), expectedDefaultLanguage);
     QCOMPARE(languageComboBox.itemText(0),
              QLocale::languageToString(QLocale(expectedDefaultLanguage).language()));
-    }
+  }
 
   // Current language
   QFETCH(QString, expectedCurrentLanguage);

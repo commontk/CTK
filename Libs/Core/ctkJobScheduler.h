@@ -40,6 +40,11 @@ class ctkJobSchedulerPrivate;
 class CTK_CORE_EXPORT ctkJobScheduler : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(int freezeJobsScheduling READ freezeJobsScheduling WRITE setFreezeJobsScheduling);
+  Q_PROPERTY(int maximumThreadCount READ maximumThreadCount WRITE setMaximumThreadCount);
+  Q_PROPERTY(int maximumNumberOfRetry READ maximumNumberOfRetry WRITE setMaximumNumberOfRetry);
+  Q_PROPERTY(int retryDelay READ retryDelay WRITE setRetryDelay);
+
 public:
   typedef QObject Superclass;
   explicit ctkJobScheduler(QObject* parent = 0);
@@ -59,9 +64,17 @@ public:
   Q_INVOKABLE ctkAbstractJob* getJobByUID(const QString& jobUID);
 
   Q_INVOKABLE void waitForFinish(bool waitForPersistentJobs = false);
-  Q_INVOKABLE void waitForDone(int msec);
+  Q_INVOKABLE void waitForDone(int msec = -1);
 
   Q_INVOKABLE void stopAllJobs(bool stopPersistentJobs = false);
+  Q_INVOKABLE void stopJobsByJobUIDs(const QStringList& jobUIDs);
+  ///@}
+
+  ///@{
+  /// if set to true, new jobs will not be queued
+  /// default: false
+  bool freezeJobsScheduling() const;
+  void setFreezeJobsScheduling(bool freezeJobsScheduling);
   ///@}
 
   ///@{
@@ -93,12 +106,12 @@ public:
   QSharedPointer<QThreadPool> threadPoolShared() const;
 
 Q_SIGNALS:
+  void jobInitialized(QVariant data);
   void jobQueued(QVariant data);
   void jobStarted(QVariant data);
   void jobFinished(QVariant data);
   void jobCanceled(QVariant data);
   void jobFailed(QVariant data);
-  void queueJobs();
   void progressJobDetail(QVariant data);
 
 public Q_SLOTS:
@@ -106,7 +119,6 @@ public Q_SLOTS:
   virtual void onJobFinished();
   virtual void onJobCanceled();
   virtual void onJobFailed();
-  virtual void onQueueJobsInThreadPool();
 
 protected:
   QScopedPointer<ctkJobSchedulerPrivate> d_ptr;
