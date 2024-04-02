@@ -243,7 +243,7 @@ public:
 
   ///@{
   /// Add/Remove Patient item widget
-  Q_INVOKABLE void addPatientItemWidget(const QString& patientItem);
+  Q_INVOKABLE int addPatientItemWidget(const QString& patientItem);
   Q_INVOKABLE void removePatientItemWidget(const QString& patientItem);
   ///@}
 

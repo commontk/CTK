@@ -78,6 +78,7 @@ public:
 
   QString PatientItem;
   QString PatientID;
+  QString PatientName;
 
   QString FilteringStudyDescription;
   ctkDICOMPatientItemWidget::DateType FilteringDate;
@@ -101,6 +102,7 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
   this->ThumbnailSize = ctkDICOMStudyItemWidget::ThumbnailSizeOption::Medium;
   this->PatientItem = "";
   this->PatientID = "";
+  this->PatientName = "";
   this->FilteringStudyDescription = "";
   this->FilteringSeriesDescription = "";
 
@@ -414,6 +416,20 @@ QString ctkDICOMPatientItemWidget::patientID() const
 {
   Q_D(const ctkDICOMPatientItemWidget);
   return d->PatientID;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientItemWidget::setPatientName(const QString& patientName)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  d->PatientName = patientName;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMPatientItemWidget::patientName() const
+{
+  Q_D(const ctkDICOMPatientItemWidget);
+  return d->PatientName;
 }
 
 //------------------------------------------------------------------------------
