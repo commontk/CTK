@@ -3427,6 +3427,35 @@ void ctkDICOMVisualBrowserWidget::closeEvent(QCloseEvent* event)
 }
 
 //------------------------------------------------------------------------------
+void ctkDICOMVisualBrowserWidget::keyPressEvent(QKeyEvent *event)
+{
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  if (event->key() == Qt::Key_Tab || event->key() == Qt::Key_Backtab)
+  {
+    int currentIndex = d->PatientsTabWidget->currentIndex();
+    if (event->modifiers() & Qt::ControlModifier &&
+      !(event->modifiers() & Qt::ShiftModifier))
+    {
+    d->PatientsTabWidget->setCurrentIndex(currentIndex + 1);
+    }
+    else if ((event->modifiers() & Qt::ControlModifier) &&
+      (event->modifiers() & Qt::ShiftModifier))
+    {
+    d->PatientsTabWidget->setCurrentIndex(currentIndex - 1);
+    }
+    else
+    {
+      QWidget::keyPressEvent(event);
+    }
+  }
+  else
+  {
+    QWidget::keyPressEvent(event);
+  }
+}
+
+//------------------------------------------------------------------------------
 bool ctkDICOMVisualBrowserWidget::confirmDeleteSelectedUIDs(const QStringList& uids)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
