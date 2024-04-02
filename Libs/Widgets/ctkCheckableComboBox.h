@@ -73,6 +73,10 @@ protected Q_SLOTS:
 protected:
   /// Reimplemented for internal reasons
   virtual void paintEvent(QPaintEvent*);
+  virtual void keyReleaseEvent(QKeyEvent* event);
+
+Q_SIGNALS:
+  void returnRelease();
 
 protected:
   QScopedPointer<ctkCheckableComboBoxPrivate> d_ptr;

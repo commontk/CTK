@@ -405,3 +405,13 @@ void ctkCheckableComboBox::paintEvent(QPaintEvent *)
   // draw the icon and text
   painter.drawControl(QStyle::CE_ComboBoxLabel, opt);
 }
+
+//-----------------------------------------------------------------------------
+void ctkCheckableComboBox::keyReleaseEvent(QKeyEvent *event)
+{
+  QComboBox::keyReleaseEvent(event);
+  if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
+  {
+    emit this->returnRelease();
+  }
+}

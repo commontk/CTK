@@ -117,6 +117,10 @@ protected:
   virtual void paintEvent(QPaintEvent* event);
   virtual void changeEvent(QEvent* event);
   virtual void wheelEvent(QWheelEvent* event);
+  virtual void keyReleaseEvent(QKeyEvent* event);
+
+Q_SIGNALS:
+  void returnRelease();
 
 protected:
   QScopedPointer<ctkComboBoxPrivate> d_ptr;

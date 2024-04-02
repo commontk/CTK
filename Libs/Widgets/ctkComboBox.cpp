@@ -368,6 +368,16 @@ void ctkComboBox::wheelEvent(QWheelEvent* event)
 }
 
 // -------------------------------------------------------------------------
+void ctkComboBox::keyReleaseEvent(QKeyEvent *event)
+{
+  QComboBox::keyReleaseEvent(event);
+  if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
+  {
+    emit this->returnRelease();
+  }
+}
+
+// -------------------------------------------------------------------------
 QString ctkComboBox::currentUserDataAsString()const
 {
   return this->itemData(this->currentIndex()).toString();
