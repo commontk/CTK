@@ -44,11 +44,10 @@ public:
   ctkDICOMEchoPrivate();
   ~ctkDICOMEchoPrivate();
 
-  /// Warning: abort/releaseAssociation is not a thread safe method.
+  /// Warning: releaseAssociation is not a thread safe method.
   /// If called concurrently from different threads DCMTK can crash.
-  /// Therefore use this method instead of calling directly SCU->abort/releaseAssociation()
+  /// Therefore use this method instead of calling directly SCU->releaseAssociation()
   OFCondition releaseAssociation();
-  OFCondition abortAssociation();
 
   QString ConnectionName;
   QString CallingAETitle;
@@ -56,6 +55,7 @@ public:
   QString Host;
   QString JobUID;
   int Port;
+  T_ASC_PresentationContextID PresentationContext;
   DcmSCU *SCU;
   bool Canceled;
   bool AssociationClosing;
@@ -75,9 +75,18 @@ ctkDICOMEchoPrivate::ctkDICOMEchoPrivate()
   this->JobUID = "";
   this->Port = 80;
 
+  logger.debug("Setting Transfer Syntaxes");
+  OFList<OFString> transferSyntaxes;
+  transferSyntaxes.push_back(UID_LittleEndianExplicitTransferSyntax);
+  transferSyntaxes.push_back(UID_BigEndianExplicitTransferSyntax);
+  transferSyntaxes.push_back(UID_LittleEndianImplicitTransferSyntax);
+
+  this->PresentationContext = 0;
   this->SCU = new DcmSCU();
   this->SCU->setACSETimeout(3);
   this->SCU->setConnectionTimeout(3);
+  this->SCU->addPresentationContext(
+    UID_VerificationSOPClass, transferSyntaxes);
 
   this->Canceled = false;
   this->AssociationClosing = false;
@@ -115,30 +124,6 @@ OFCondition ctkDICOMEchoPrivate::releaseAssociation()
 
   this->AssociationClosing = true;
   status = this->SCU->releaseAssociation();
-  this->AssociationClosing = false;
-  this->AssociationMutex.unlock();
-
-  return status;
-}
-
-//------------------------------------------------------------------------------
-OFCondition ctkDICOMEchoPrivate::abortAssociation()
-{
-  OFCondition status = EC_IllegalCall;
-  if (!this->SCU)
-    {
-    return status;
-    }
-
-  this->AssociationMutex.lock();
-  if (this->AssociationClosing)
-  {
-    this->AssociationMutex.unlock();
-    return status;
-  }
-
-  this->AssociationClosing = true;
-  status = this->SCU->abortAssociation();
   this->AssociationClosing = false;
   this->AssociationMutex.unlock();
 
@@ -262,14 +247,6 @@ bool ctkDICOMEcho::echo()
   d->SCU->setPeerHostName(OFString(this->host().toStdString().c_str()));
   d->SCU->setPeerPort(this->port());
 
-  logger.debug("Setting Transfer Syntaxes");
-
-  OFList<OFString> transferSyntaxes;
-  transferSyntaxes.push_back(UID_LittleEndianExplicitTransferSyntax);
-  transferSyntaxes.push_back(UID_BigEndianExplicitTransferSyntax);
-  transferSyntaxes.push_back(UID_LittleEndianImplicitTransferSyntax);
-
-  d->SCU->addPresentationContext(UID_VerificationSOPClass, transferSyntaxes);
   if (!d->SCU->initNetwork().good())
   {
     logger.error("Error initializing the network");
@@ -284,9 +261,19 @@ bool ctkDICOMEcho::echo()
     return false;
   }
 
+  d->PresentationContext = d->SCU->findPresentationContextID(
+    UID_VerificationSOPClass,
+    "" /* don't care about transfer syntax */);
+  if (d->PresentationContext == 0)
+  {
+    logger.error ( "ECHO Request failed: No valid verification Presentation Context available" );
+    d->releaseAssociation();
+    return false;
+  }
+
   logger.info("Seding Echo");
   // Issue ECHO request and let scu find presentation context itself (0)
-  OFCondition status = d->SCU->sendECHORequest(0);
+  OFCondition status = d->SCU->sendECHORequest(d->PresentationContext);
   if (!status.good())
   {
     logger.error("Echo failed");

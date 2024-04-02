@@ -90,11 +90,10 @@ public:
   /// Add StudyInstanceUID and SeriesInstanceUID that may be further retrieved
   void addStudyAndSeriesInstanceUID( const QString& studyInstanceUID, const QString& seriesInstanceUID );
 
-  /// Warning: abort/releaseAssociation is not a thread safe method.
+  /// Warning: releaseAssociation is not a thread safe method.
   /// If called concurrently from different threads DCMTK can crash.
-  /// Therefore use this method instead of calling directly SCU->abort/releaseAssociation()
+  /// Therefore use this method instead of calling directly SCU->releaseAssociation()
   OFCondition releaseAssociation();
-  OFCondition abortAssociation();
 
   QString ConnectionName;
   QString CallingAETitle;
@@ -122,12 +121,12 @@ public:
 ctkDICOMQueryPrivate::ctkDICOMQueryPrivate()
 {
   this->QueryDcmDataset = QSharedPointer<DcmDataset>(new DcmDataset);
-  this->PresentationContext = 0;
   this->Port = 0;
   this->Canceled = false;
   this->AssociationClosing = false;
   this->MaximumPatientsQuery = 25;
 
+  this->PresentationContext = 0;
   this->SCU = new ctkDICOMQuerySCUPrivate();
   this->SCU->setACSETimeout(10);
   this->SCU->setConnectionTimeout(10);
@@ -179,30 +178,6 @@ OFCondition ctkDICOMQueryPrivate::releaseAssociation()
 
   this->AssociationClosing = true;
   status = this->SCU->releaseAssociation();
-  this->AssociationClosing = false;
-  this->AssociationMutex.unlock();
-
-  return status;
-}
-
-//------------------------------------------------------------------------------
-OFCondition ctkDICOMQueryPrivate::abortAssociation()
-{
-  OFCondition status = EC_IllegalCall;
-  if (!this->SCU)
-    {
-    return status;
-    }
-
-  this->AssociationMutex.lock();
-  if (this->AssociationClosing)
-  {
-    this->AssociationMutex.unlock();
-    return status;
-  }
-
-  this->AssociationClosing = true;
-  status = this->SCU->abortAssociation();
   this->AssociationClosing = false;
   this->AssociationMutex.unlock();
 

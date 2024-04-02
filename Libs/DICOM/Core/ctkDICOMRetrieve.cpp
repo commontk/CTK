@@ -174,11 +174,10 @@ public:
   ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj);
   ~ctkDICOMRetrievePrivate();
 
-  /// Warning: abort/releaseAssociation is not a thread safe method.
+  /// Warning: releaseAssociation is not a thread safe method.
   /// If called concurrently from different threads DCMTK can crash.
-  /// Therefore use this method instead of calling directly SCU->abort/releaseAssociation()
+  /// Therefore use this method instead of calling directly SCU->releaseAssociation()
   OFCondition releaseAssociation();
-  OFCondition abortAssociation();
 
   bool Canceled;
   bool KeepAssociationOpen;
@@ -255,6 +254,7 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
   transferSyntaxes.push_back(UID_BigEndianExplicitTransferSyntax);
   transferSyntaxes.push_back(UID_LittleEndianImplicitTransferSyntax);
 
+  this->PresentationContext = 0;
   this->SCU = new ctkDICOMRetrieveSCUPrivate();
   this->SCU->addPresentationContext(
     UID_MOVEStudyRootQueryRetrieveInformationModel, transferSyntaxes);
@@ -306,30 +306,6 @@ OFCondition ctkDICOMRetrievePrivate::releaseAssociation()
 
   this->AssociationClosing = true;
   status = this->SCU->releaseAssociation();
-  this->AssociationClosing = false;
-  this->AssociationMutex.unlock();
-
-  return status;
-}
-
-//------------------------------------------------------------------------------
-OFCondition ctkDICOMRetrievePrivate::abortAssociation()
-{
-  OFCondition status = EC_IllegalCall;
-  if (!this->SCU)
-    {
-    return status;
-    }
-
-  this->AssociationMutex.lock();
-  if (this->AssociationClosing)
-  {
-    this->AssociationMutex.unlock();
-    return status;
-  }
-
-  this->AssociationClosing = true;
-  status = this->SCU->abortAssociation();
   this->AssociationClosing = false;
   this->AssociationMutex.unlock();
 
@@ -454,8 +430,8 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
   logger.debug ( "Sending Move Request" );
   OFList<RetrieveResponse*> responses;
   this->PresentationContext = this->SCU->findPresentationContextID(
-                                UID_MOVEStudyRootQueryRetrieveInformationModel,
-                                "" /* don't care about transfer syntax */);
+    UID_MOVEStudyRootQueryRetrieveInformationModel,
+    "" /* don't care about transfer syntax */);
   if (this->PresentationContext == 0)
   {
     logger.error ( "MOVE Request failed: No valid Study Root MOVE Presentation Context available" );
@@ -628,8 +604,8 @@ bool ctkDICOMRetrievePrivate::get(const QString& patientID,
   emit q->progress(0);
   OFList<RetrieveResponse*> responses;
   this->PresentationContext = this->SCU->findPresentationContextID(
-                                          UID_GETStudyRootQueryRetrieveInformationModel,
-                                          "" /* don't care about transfer syntax */ );
+    UID_GETStudyRootQueryRetrieveInformationModel,
+    "" /* don't care about transfer syntax */ );
   if (this->PresentationContext == 0)
   {
     logger.error ( "GET Request failed: No valid Study Root GET Presentation Context available" );

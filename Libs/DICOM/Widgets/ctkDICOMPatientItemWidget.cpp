@@ -769,7 +769,6 @@ void ctkDICOMPatientItemWidget::raiseSelectedSeriesJobsPriority()
 
   if (!d->Scheduler || d->Scheduler->getNumberOfQueryRetrieveServers() == 0)
   {
-    logger.error("raiseSelectedSeriesJobsPriority failed, no task pool has been set. \n");
     return;
   }
 
