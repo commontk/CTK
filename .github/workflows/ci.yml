@@ -16,7 +16,11 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: ["ubuntu-latest", "ubuntu-20.04"]
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
 
@@ -31,12 +35,6 @@ jobs:
 
       - name: Retrieve new lists of APT packages
         run: sudo apt-get update
-
-      - name: Install DCMTK
-        run: |
-          sudo apt-get install -y \
-            dcmtk \
-            libdcmtk-dev
 
       - name: Install Qt
         run: |
@@ -53,6 +51,7 @@ jobs:
             libxt-dev
 
       - name: Install VTK
+        if: matrix.runs-on == 'ubuntu-latest'
         run: |
           sudo apt-get install -y \
             libvtk9-dev \
@@ -63,15 +62,14 @@ jobs:
           cmake \
             -DCTK_QT_VERSION:STRING=5 \
             -DCTK_ENABLE_Widgets:BOOL=ON \
-            -DCTK_USE_SYSTEM_VTK:BOOL=ON \
-            -DCTK_LIB_Visualization/VTK/Widgets:BOOL=ON \
-            -DCTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS:BOOL=ON \
-            -DCTK_USE_SYSTEM_DCMTK:BOOL=ON \
+            -DCTK_USE_SYSTEM_VTK:BOOL=$CTK_USE_VTK \
+            -DCTK_LIB_Visualization/VTK/Widgets:BOOL=$CTK_USE_VTK \
+            -DCTK_LIB_Visualization/VTK/Widgets_USE_TRANSFER_FUNCTION_CHARTS:BOOL=$CTK_USE_VTK \
             -DCTK_APP_ctkDICOM:BOOL=ON \
             -DCTK_LIB_DICOM/Core:BOOL=ON \
             -DCTK_LIB_DICOM/Widgets:BOOL=ON \
             -DCTK_LIB_Scripting/Python/Core:BOOL=ON \
-            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK:BOOL=ON \
+            -DCTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK:BOOL=$CTK_USE_VTK \
             -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTCORE:BOOL=ON \
             -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTGUI:BOOL=ON \
             -DCTK_LIB_Scripting/Python/Core_PYTHONQT_WRAP_QTUITOOLS:BOOL=ON \
@@ -82,6 +80,8 @@ jobs:
             -DCTK_ENABLE_Python_Wrapping:BOOL=ON \
             -B CTK-build \
             -S .
+        env:
+          CTK_USE_VTK: "${{ matrix.runs-on == 'ubuntu-latest' && 'ON' || 'OFF' }}"
 
       - name: Display Qt5_DIR
         run: |
