@@ -402,7 +402,12 @@ void QCenteredItemModel::setProgressBar(int row, const ctkDICOMJobDetail &td, ct
 //----------------------------------------------------------------------------
 void QCenteredItemModel::clearCompletedJobs()
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
   QList<QStandardItem*> list = this->findItems(tr("completed"), Qt::MatchRegularExpression, Columns::Status);
+#else
+  QList<QStandardItem*> list = this->findItems(tr("completed"), Qt::MatchRegExp, Columns::Status);
+#endif
+
   foreach (QStandardItem* item, list)
   {
     this->removeRow(item->row());
