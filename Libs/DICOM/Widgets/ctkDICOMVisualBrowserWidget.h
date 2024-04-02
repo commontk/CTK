@@ -374,8 +374,11 @@ Q_SIGNALS:
   void directoryImported();
 
 protected:
-  void closeEvent(QCloseEvent*);
   QScopedPointer<ctkDICOMVisualBrowserWidgetPrivate> d_ptr;
+
+  /// Reimplemented for internal reasons
+  virtual void closeEvent(QCloseEvent*);
+  virtual void keyPressEvent(QKeyEvent* event);
 
   /// Confirm with the user that they wish to delete the selected uids.
   /// Add information about the selected UIDs to a message box, checks
