@@ -202,8 +202,7 @@ public:
   int SeriesAddedDuringImport;
   int InstancesAddedDuringImport;
   ctkFileDialog* ImportDialog;
-
-  QSharedPointer<ctkDICOMMetadataDialog> MetadataDialog;
+  ctkDICOMMetadataDialog* MetadataDialog;
 
   // Settings key that stores database directory
   QString DatabaseDirectorySettingsKey;
@@ -257,8 +256,9 @@ ctkDICOMVisualBrowserWidgetPrivate::ctkDICOMVisualBrowserWidgetPrivate(ctkDICOMV
 
   this->Indexer = QSharedPointer<ctkDICOMIndexer>(new ctkDICOMIndexer);
   this->Indexer->setDatabase(this->DicomDatabase.data());
+  this->Indexer->setBackgroundImportEnabled(true);
 
-  this->MetadataDialog = QSharedPointer<ctkDICOMMetadataDialog>(new ctkDICOMMetadataDialog());
+  this->MetadataDialog = new ctkDICOMMetadataDialog();
   this->MetadataDialog->setObjectName("DICOMMetadata");
   this->MetadataDialog->setWindowTitle(ctkDICOMVisualBrowserWidget::tr("DICOM File Metadata"));
 
@@ -386,7 +386,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
                    q, SLOT(onClose()));
 
   QObject::connect(this->ImportPushButton, SIGNAL(clicked()),
-                   q, SLOT(onImport()));
+                   q, SLOT(openImportDialog()));
 
   // Initialize directoryMode widget
   QFormLayout* layout = new QFormLayout;
@@ -430,6 +430,12 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   this->ServerNodeWidget->setScheduler(this->Scheduler);
   this->JobListWidget->setScheduler(this->Scheduler);
   this->connectScheduler();
+
+  q->connect(this->ProgressCancelButton, SIGNAL(clicked()), this->Indexer.data(), SLOT(cancel()));
+  q->connect(this->Indexer.data(), SIGNAL(progress(int)), q, SLOT(onIndexingProgress(int)));
+  q->connect(this->Indexer.data(), SIGNAL(progressStep(QString)), q, SLOT(onIndexingProgressStep(QString)));
+  q->connect(this->Indexer.data(), SIGNAL(progressDetail(QString)), q, SLOT(onIndexingProgressDetail(QString)));
+  q->connect(this->Indexer.data(), SIGNAL(indexingComplete(int, int, int, int)), q, SLOT(onIndexingComplete(int, int, int, int)));
 }
 
 //----------------------------------------------------------------------------
@@ -441,14 +447,10 @@ void ctkDICOMVisualBrowserWidgetPrivate::disconnectScheduler()
     return;
   }
 
-  ctkDICOMVisualBrowserWidget::disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                                          q, SLOT(updateGUIFromScheduler(QVariant)));
-  ctkDICOMVisualBrowserWidget::disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                                          q, SLOT(onJobFailed(QVariant)));
-  ctkDICOMVisualBrowserWidget::disconnect(this->Indexer.data(), SIGNAL(progress(int)), q, SLOT(onIndexingProgress(int)));
-  ctkDICOMVisualBrowserWidget::disconnect(this->Indexer.data(), SIGNAL(progressStep(QString)), q, SLOT(onIndexingProgressStep(QString)));
-  ctkDICOMVisualBrowserWidget::disconnect(this->Indexer.data(), SIGNAL(progressDetail(QString)), q, SLOT(onIndexingProgressDetail(QString)));
-  ctkDICOMVisualBrowserWidget::disconnect(this->Indexer.data(), SIGNAL(indexingComplete(int, int, int, int)), q, SLOT(onIndexingComplete(int, int, int, int)));
+  q->disconnect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
+                q, SLOT(updateGUIFromScheduler(QVariant)));
+  q->disconnect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
+                q, SLOT(onJobFailed(QVariant)));
 }
 
 //----------------------------------------------------------------------------
@@ -460,14 +462,10 @@ void ctkDICOMVisualBrowserWidgetPrivate::connectScheduler()
     return;
   }
 
-  ctkDICOMVisualBrowserWidget::connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
-                                       q, SLOT(updateGUIFromScheduler(QVariant)));
-  ctkDICOMVisualBrowserWidget::connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
-                                       q, SLOT(onJobFailed(QVariant)));
-  ctkDICOMVisualBrowserWidget::connect(this->Indexer.data(), SIGNAL(progress(int)), q, SLOT(onIndexingProgress(int)));
-  ctkDICOMVisualBrowserWidget::connect(this->Indexer.data(), SIGNAL(progressStep(QString)), q, SLOT(onIndexingProgressStep(QString)));
-  ctkDICOMVisualBrowserWidget::connect(this->Indexer.data(), SIGNAL(progressDetail(QString)), q, SLOT(onIndexingProgressDetail(QString)));
-  ctkDICOMVisualBrowserWidget::connect(this->Indexer.data(), SIGNAL(indexingComplete(int, int, int, int)), q, SLOT(onIndexingComplete(int, int, int, int)));
+  q->connect(this->Scheduler.data(), SIGNAL(progressJobDetail(QVariant)),
+             q, SLOT(updateGUIFromScheduler(QVariant)));
+  q->connect(this->Scheduler.data(), SIGNAL(jobFailed(QVariant)),
+             q, SLOT(onJobFailed(QVariant)));
 }
 
 //----------------------------------------------------------------------------
@@ -1475,6 +1473,10 @@ ctkDICOMVisualBrowserWidget::ctkDICOMVisualBrowserWidget(QWidget* parentWidget)
 //----------------------------------------------------------------------------
 ctkDICOMVisualBrowserWidget::~ctkDICOMVisualBrowserWidget()
 {
+  Q_D(ctkDICOMVisualBrowserWidget);
+
+  d->ImportDialog->deleteLater();
+  d->MetadataDialog->deleteLater();
 }
 
 //----------------------------------------------------------------------------
@@ -1989,7 +1991,7 @@ ctkDICOMVisualBrowserWidget::ImportDirectoryMode ctkDICOMVisualBrowserWidget::im
   mutable_d->importOldSettings();
   QSettings settings;
   return static_cast<ctkDICOMVisualBrowserWidget::ImportDirectoryMode>(settings.value(
-    "DICOM/ImportDirectoryMode", static_cast<int>(ctkDICOMVisualBrowserWidget::ImportDirectoryAddLink)).toInt() );
+    "DICOM/ImportDirectoryMode", static_cast<int>(ctkDICOMVisualBrowserWidget::ImportDirectoryAddLink)).toInt());
 }
 
 //------------------------------------------------------------------------------
@@ -2135,6 +2137,8 @@ void ctkDICOMVisualBrowserWidget::openImportDialog()
 void ctkDICOMVisualBrowserWidget::importDirectories(const QStringList& directories, ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  this->resetItemsAddedDuringImportCounters();
+  d->ProgressFrame->show();
   foreach (const QString& directory, directories)
   {
     d->importDirectory(directory, mode);
@@ -2145,6 +2149,8 @@ void ctkDICOMVisualBrowserWidget::importDirectories(const QStringList& directori
 void ctkDICOMVisualBrowserWidget::importDirectory(const QString& directory, ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  this->resetItemsAddedDuringImportCounters();
+  d->ProgressFrame->show();
   d->importDirectory(directory, mode);
 }
 
@@ -2152,6 +2158,8 @@ void ctkDICOMVisualBrowserWidget::importDirectory(const QString& directory, Impo
 void ctkDICOMVisualBrowserWidget::importFiles(const QStringList& files, ImportDirectoryMode mode)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
+  this->resetItemsAddedDuringImportCounters();
+  d->ProgressFrame->show();
   d->importFiles(files, mode);
 }
 
@@ -2207,6 +2215,7 @@ void ctkDICOMVisualBrowserWidget::onIndexingComplete(int patientsAdded, int stud
   d->InstancesAddedDuringImport += imagesAdded;
 
   d->ProgressFrame->hide();
+  d->ProgressDetailLineEdit->hide();
   d->QueryPatientPushButton->setIcon(QIcon(":/Icons/query.svg"));
 
   // allow users of this widget to know that the process has finished
@@ -2672,6 +2681,12 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     return;
   }
 
+  if (!d->Scheduler)
+  {
+    logger.error("onQueryPatient failed, no scheduler has been set. \n");
+    return;
+  }
+
   // Stop any fetching task.
   this->onStop();
 
@@ -2698,12 +2713,14 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     d->FilteringModalities.contains("Any");
 
   if (d->DicomDatabase->patients().count() == 0 &&
-      filtersEmpty)
+      (filtersEmpty || d->Scheduler->getNumberOfQueryRetrieveServers() == 0))
   {
     d->setBackgroundColorToFilterWidgets(true);
 
-    d->WarningPushButton->setText(tr("No filters have been set and no patients have been found in the local database."
-                                     "\nPlease set at least one filter to query the servers"));
+    d->WarningPushButton->setText(tr("No filters or query/retrieve servers have been set and"
+                                     " no patients have been found in the local database."
+                                     "\nPlease set at least one filter to query the servers and "
+                                     "check that at least one server has the Query/Retrieve property toggled."));
     d->WarningPushButton->show();
     d->patientsTabMenuToolButton->hide();
     return;
@@ -2715,11 +2732,11 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
 
   d->createPatients(patientID, patientName);
 
-  if (filtersEmpty || (d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() == 0))
+  if (filtersEmpty || (d->Scheduler->getNumberOfQueryRetrieveServers() == 0))
   {
     d->updateFiltersWarnings();
   }
-  else if (d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
+  else if (d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
   {
     QMap<QString, QVariant> parameters;
     parameters["Name"] = d->FilteringPatientName;
@@ -3371,31 +3388,6 @@ void ctkDICOMVisualBrowserWidget::onLoad()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::onImport()
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  if (d->IsGUIUpdating)
-  {
-    return;
-  }
-
-  if (d->Scheduler &&
-      d->Scheduler->numberOfJobs() > d->Scheduler->numberOfPersistentJobs())
-  {
-    QString warningString = tr("The browser is already fetching/importing data."
-        "\n\n The queued tasks will be deleted. The running tasks will be stopped.");
-    ctkMessageBox warningMessageBox(this);
-    warningMessageBox.setText(warningString);
-    warningMessageBox.setIcon(QMessageBox::Warning);
-    warningMessageBox.exec();
-
-    this->onStop();
-  }
-
-  this->openImportDialog();
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::onStop(bool stopPersistentTasks)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
@@ -3410,13 +3402,6 @@ void ctkDICOMVisualBrowserWidget::onStop(bool stopPersistentTasks)
   d->ProgressFrame->hide();
   d->QueryPatientPushButton->setIcon(QIcon(":/Icons/query.svg"));
   QApplication::restoreOverrideCursor();
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setCurrentTabWidget(ctkDICOMPatientItemWidget* patientItemWidget)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  d->PatientsTabWidget->setCurrentWidget(patientItemWidget);
 }
 
 //------------------------------------------------------------------------------

@@ -81,6 +81,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMVisualBrowserWidget : public QWidget
   Q_PROPERTY(QString filteringPatientName READ filteringPatientName WRITE setFilteringPatientName);
   Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
+  Q_PROPERTY(ctkDICOMVisualBrowserWidget::ImportDirectoryMode ImportDirectoryMode READ importDirectoryMode WRITE setImportDirectoryMode)
   Q_PROPERTY(bool sendActionVisible READ isSendActionVisible WRITE setSendActionVisible)
   Q_PROPERTY(bool deleteActionVisible READ isDeleteActionVisible WRITE setDeleteActionVisible)
   Q_PROPERTY(QString storageAETitle READ storageAETitle WRITE setStorageAETitle);
@@ -345,23 +346,39 @@ public Q_SLOTS:
   /// Update database in-place to required schema version
   void updateDatabase();
 
-  void onWarningPushButtonClicked();
+  ///@{
+  /// slots to capture change in the filtering parameters for the query
   void onFilteringPatientIDChanged();
   void onFilteringPatientNameChanged();
   void onFilteringStudyDescriptionChanged();
   void onFilteringSeriesDescriptionChanged();
   void onFilteringModalityCheckableComboBoxChanged();
   void onFilteringDateComboBoxChanged(int);
+  ///@}
+
+  /// start query/retrieve and show patients
   void onQueryPatients();
+  /// show patients
   void onShowPatients();
+
+  ///@{
+  /// update GUI after query/retrieve operations
   void updateGUIFromScheduler(const QVariant&);
   void onJobFailed(const QVariant&);
-  void onPatientItemChanged(int);
+  ///@}
+
+  /// stops all the operations
+  void onStop(bool stopPersistentTasks = false);
+
+  ///@{
+  /// high level UI slots: close, load, warning
   void onClose();
   void onLoad();
-  void onImport();
-  void onStop(bool stopPersistentTasks = false);
-  void setCurrentTabWidget(ctkDICOMPatientItemWidget* patientItemWidget);
+  void onWarningPushButtonClicked();
+  ///@}
+
+  /// user change patient selection
+  void onPatientItemChanged(int);
 
 Q_SIGNALS:
   /// Emitted when directory is changed
