@@ -165,7 +165,7 @@ public:
 
   // Return true if a new item is inserted
   bool insertPatientStudySeries(const ctkDICOMItem& dataset, const QString& patientID, const QString& patientsName);
-  bool insertPatient(const ctkDICOMItem& dataset, int& databasePatientID);
+  bool insertPatient(const ctkDICOMItem& dataset, const QString& patientID, const QString& patientsName, int& databasePatientID);
   bool insertStudy(const ctkDICOMItem& dataset, int dbPatientID);
   bool insertSeries( const ctkDICOMItem& dataset, QString studyInstanceUID);
 
