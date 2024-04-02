@@ -304,24 +304,28 @@ QStringList ctkDICOMDatabasePrivate::filenames(QString table)
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& dataset, int& dbPatientID)
+bool ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& dataset,
+  const QString& patientID, const QString& patientsName, int& dbPatientID)
 {
-  dbPatientID = -1;
-
   // Check if patient is already present in the db
-
-  QString patientsName, patientID, patientsBirthDate;
-  patientsName = dataset.GetElementAsString(DCM_PatientName);
-  patientID = dataset.GetElementAsString(DCM_PatientID);
+  QString tempPatientID(patientID), tempPatientsName(patientsName), patientsBirthDate;
+  if (tempPatientID.isEmpty())
+  {
+    tempPatientID = dataset.GetElementAsString(DCM_PatientID);
+  }
+  if (tempPatientsName.isEmpty())
+  {
+    tempPatientsName = dataset.GetElementAsString(DCM_PatientName);
+  }
   patientsBirthDate = dataset.GetElementAsString(DCM_PatientBirthDate);
 
   QSqlQuery checkPatientExistsQuery(this->Database);
   checkPatientExistsQuery.prepare("SELECT * FROM Patients WHERE PatientID = ? AND PatientsName = ?");
-  checkPatientExistsQuery.bindValue(0, patientID);
-  checkPatientExistsQuery.bindValue(1, patientsName);
+  checkPatientExistsQuery.bindValue(0, tempPatientID);
+  checkPatientExistsQuery.bindValue(1, tempPatientsName);
   loggedExec(checkPatientExistsQuery);
 
-  QString compositeID = ctkDICOMDatabase::compositePatientID(patientID, patientsName, patientsBirthDate);
+  QString compositeID = ctkDICOMDatabase::compositePatientID(tempPatientID, tempPatientsName, patientsBirthDate);
   if (checkPatientExistsQuery.next())
   {
     // we found him
@@ -348,8 +352,8 @@ bool ctkDICOMDatabasePrivate::insertPatient(const ctkDICOMItem& dataset, int& db
       "( 'UID', 'PatientsName', 'PatientID', 'PatientsBirthDate', 'PatientsBirthTime', 'PatientsSex', 'PatientsAge', 'PatientsComments', "
       "'InsertTimestamp', 'DisplayedPatientsName', 'DisplayedNumberOfStudies', 'DisplayedFieldsUpdatedTimestamp' ) "
       "VALUES ( NULL, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL )");
-    insertPatientStatement.bindValue(0, patientsName);
-    insertPatientStatement.bindValue(1, patientID);
+    insertPatientStatement.bindValue(0, tempPatientsName);
+    insertPatientStatement.bindValue(1, tempPatientID);
     insertPatientStatement.bindValue(2, QDate::fromString(patientsBirthDate, "yyyyMMdd"));
     insertPatientStatement.bindValue(3, patientsBirthTime);
     insertPatientStatement.bindValue(4, patientsSex);
@@ -716,7 +720,7 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
   else
   {
     logger.debug("Insert new patient if not already in database: " + patientID + " " + patientsName);
-    if (this->insertPatient(dataset, dbPatientID))
+    if (this->insertPatient(dataset, patientID, patientsName, dbPatientID))
     {
       databaseWasChanged = true;
       emit q->patientAdded(dbPatientID, patientID, patientsName, patientsBirthDate);
@@ -1074,7 +1078,17 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
 
   foreach (QString compositeID, displayedFieldsMapPatient.keys())
   {
+    if (compositeID.isEmpty())
+    {
+      continue;
+    }
+
     QMap<QString, QString> currentPatient = displayedFieldsMapPatient[compositeID];
+    if (currentPatient["PatientID"].isEmpty() || currentPatient["PatientsName"].isEmpty())
+    {
+      continue;
+    }
+
     QSqlQuery displayPatientsQuery(this->Database);
     displayPatientsQuery.prepare( "SELECT * FROM Patients WHERE PatientID=:patientID AND PatientsName=:patientsName ;" );
     displayPatientsQuery.bindValue(":patientID", currentPatient["PatientID"]);
@@ -1123,7 +1137,7 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     else
     {
       logger.error("Failed to find patient with PatientsName=" + currentPatient["PatientsName"] + " and PatientID=" + currentPatient["PatientID"]);
-      return false;
+      continue;
     }
   } // For each patient in displayedFieldsVectorPatient
 
@@ -2533,7 +2547,6 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
 
   d->TagCacheDatabase.transaction();
   d->Database.transaction();
-
   QDir databaseDirectory(this->databaseDirectory());
   foreach (QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet, jobResponseSets)
   {
@@ -2557,7 +2570,6 @@ void ctkDICOMDatabase::insert(QList<QSharedPointer<ctkDICOMJobResponseSet>> jobR
       studyInstanceUID = dataset->GetElementAsString(DCM_StudyInstanceUID);
       seriesInstanceUID = dataset->GetElementAsString(DCM_SeriesInstanceUID);
       sopInstanceUID = dataset->GetElementAsString(DCM_SOPInstanceUID);
-
       if (patientID.isEmpty())
       {
         if (jobType == ctkDICOMJobResponseSet::JobType::QueryPatients)
@@ -3335,6 +3347,7 @@ void ctkDICOMDatabase::updateDisplayedFields()
       // UIDs not valid, message is already logged
       continue;
     }
+
     QString patientsBirthDate = cachedTags[ctkDICOMItem::TagKeyStripped(DCM_PatientBirthDate)];
 
     QString compositeId = d->getDisplayPatientFieldsKey(patientID, patientsName, patientsBirthDate, displayedFieldsMapPatient);
