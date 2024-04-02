@@ -21,6 +21,7 @@
 #include <stdexcept>
 
 // Qt includes
+#include <QMutex>
 
 // ctkDICOMCore includes
 #include "ctkDICOMRetrieve.h"
@@ -173,11 +174,17 @@ public:
   ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj);
   ~ctkDICOMRetrievePrivate();
 
-  /// Keep the currently negotiated connection to the
-  /// peer host open unless the connection parameters change
+  /// Warning: abort/releaseAssociation is not a thread safe method.
+  /// If called concurrently from different threads DCMTK can crash.
+  /// Therefore use this method instead of calling directly SCU->abort/releaseAssociation()
+  OFCondition releaseAssociation();
+  OFCondition abortAssociation();
+
   bool Canceled;
   bool KeepAssociationOpen;
   bool ConnectionParamsChanged;
+  bool AssociationClosing;
+  QMutex AssociationMutex;
   ctkDICOMRetrieve::RetrieveType LastRetrieveType;
 
   QString PatientID;
@@ -222,6 +229,7 @@ ctkDICOMRetrievePrivate::ctkDICOMRetrievePrivate(ctkDICOMRetrieve& obj)
   this->Canceled = false;
   this->KeepAssociationOpen = true;
   this->ConnectionParamsChanged = false;
+  this->AssociationClosing = false;
   this->LastRetrieveType = ctkDICOMRetrieve::RetrieveNone;
 
   this->PatientID = "";
@@ -269,9 +277,7 @@ ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
 {
   if (this->SCU && this->SCU->isConnected())
   {
-    // Warning: releaseAssociation is not a thread safe method.
-    // If called concurrently from different threads DCMTK can crash.
-    this->SCU->releaseAssociation();
+    this->releaseAssociation();
   }
 
   if (this->SCU)
@@ -280,6 +286,54 @@ ctkDICOMRetrievePrivate::~ctkDICOMRetrievePrivate()
   }
 
   this->JobResponseSets.clear();
+}
+
+//------------------------------------------------------------------------------
+OFCondition ctkDICOMRetrievePrivate::releaseAssociation()
+{
+  OFCondition status = EC_IllegalCall;
+  if (!this->SCU)
+    {
+    return status;
+    }
+
+  this->AssociationMutex.lock();
+  if (this->AssociationClosing)
+  {
+    this->AssociationMutex.unlock();
+    return status;
+  }
+
+  this->AssociationClosing = true;
+  status = this->SCU->releaseAssociation();
+  this->AssociationClosing = false;
+  this->AssociationMutex.unlock();
+
+  return status;
+}
+
+//------------------------------------------------------------------------------
+OFCondition ctkDICOMRetrievePrivate::abortAssociation()
+{
+  OFCondition status = EC_IllegalCall;
+  if (!this->SCU)
+    {
+    return status;
+    }
+
+  this->AssociationMutex.lock();
+  if (this->AssociationClosing)
+  {
+    this->AssociationMutex.unlock();
+    return status;
+  }
+
+  this->AssociationClosing = true;
+  status = this->SCU->abortAssociation();
+  this->AssociationClosing = false;
+  this->AssociationMutex.unlock();
+
+  return status;
 }
 
 //------------------------------------------------------------------------------
@@ -293,7 +347,7 @@ bool ctkDICOMRetrievePrivate::initializeSCU(const QString& patientID,
   // If we like to query another server than before, be sure to disconnect first
   if (this->SCU->isConnected() && this->ConnectionParamsChanged)
   {
-    this->SCU->releaseAssociation();
+    this->releaseAssociation();
   }
   // Connect to server if not already connected
   if (!this->SCU->isConnected())
@@ -407,7 +461,7 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
     logger.error ( "MOVE Request failed: No valid Study Root MOVE Presentation Context available" );
     if (!this->KeepAssociationOpen)
     {
-      this->SCU->releaseAssociation();
+      this->releaseAssociation();
     }
     delete retrieveParameters;
     return false;
@@ -426,7 +480,7 @@ bool ctkDICOMRetrievePrivate::move(const QString& patientID,
   // Close association if we do not want to explicitly keep it open
   if (!this->KeepAssociationOpen)
   {
-    this->SCU->releaseAssociation();
+    this->releaseAssociation();
   }
   // Free some (little) memory
   delete retrieveParameters;
@@ -581,7 +635,7 @@ bool ctkDICOMRetrievePrivate::get(const QString& patientID,
     logger.error ( "GET Request failed: No valid Study Root GET Presentation Context available" );
     if (!this->KeepAssociationOpen)
     {
-      this->SCU->releaseAssociation();
+      this->releaseAssociation();
     }
     delete retrieveParameters;
     return false;
@@ -604,7 +658,7 @@ bool ctkDICOMRetrievePrivate::get(const QString& patientID,
   // Close association if we do not want to explicitly keep it open
   if (!this->KeepAssociationOpen)
   {
-    this->SCU->releaseAssociation();
+    this->releaseAssociation();
   }
   // Free some (little) memory
   delete retrieveParameters;

@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QMutex>
 #include <QSettings>
 #include <QString>
 #include <QStringList>
@@ -41,7 +42,13 @@ class ctkDICOMEchoPrivate
 {
 public:
   ctkDICOMEchoPrivate();
-  ~ctkDICOMEchoPrivate() = default;
+  ~ctkDICOMEchoPrivate();
+
+  /// Warning: abort/releaseAssociation is not a thread safe method.
+  /// If called concurrently from different threads DCMTK can crash.
+  /// Therefore use this method instead of calling directly SCU->abort/releaseAssociation()
+  OFCondition releaseAssociation();
+  OFCondition abortAssociation();
 
   QString ConnectionName;
   QString CallingAETitle;
@@ -51,6 +58,8 @@ public:
   int Port;
   DcmSCU *SCU;
   bool Canceled;
+  bool AssociationClosing;
+  QMutex AssociationMutex;
 };
 
 //------------------------------------------------------------------------------
@@ -71,6 +80,69 @@ ctkDICOMEchoPrivate::ctkDICOMEchoPrivate()
   this->SCU->setConnectionTimeout(3);
 
   this->Canceled = false;
+  this->AssociationClosing = false;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMEchoPrivate::~ctkDICOMEchoPrivate()
+{
+  if (this->SCU && this->SCU->isConnected())
+    {
+      this->releaseAssociation();
+    }
+
+    if (this->SCU)
+    {
+      delete this->SCU;
+    }
+}
+
+//------------------------------------------------------------------------------
+OFCondition ctkDICOMEchoPrivate::releaseAssociation()
+{
+  OFCondition status = EC_IllegalCall;
+  if (!this->SCU)
+    {
+    return status;
+    }
+
+  this->AssociationMutex.lock();
+  if (this->AssociationClosing)
+  {
+    this->AssociationMutex.unlock();
+    return status;
+  }
+
+  this->AssociationClosing = true;
+  status = this->SCU->releaseAssociation();
+  this->AssociationClosing = false;
+  this->AssociationMutex.unlock();
+
+  return status;
+}
+
+//------------------------------------------------------------------------------
+OFCondition ctkDICOMEchoPrivate::abortAssociation()
+{
+  OFCondition status = EC_IllegalCall;
+  if (!this->SCU)
+    {
+    return status;
+    }
+
+  this->AssociationMutex.lock();
+  if (this->AssociationClosing)
+  {
+    this->AssociationMutex.unlock();
+    return status;
+  }
+
+  this->AssociationClosing = true;
+  status = this->SCU->abortAssociation();
+  this->AssociationClosing = false;
+  this->AssociationMutex.unlock();
+
+  return status;
 }
 
 //------------------------------------------------------------------------------
@@ -218,11 +290,11 @@ bool ctkDICOMEcho::echo()
   if (!status.good())
   {
     logger.error("Echo failed");
-    d->SCU->releaseAssociation();
+    d->releaseAssociation();
     return false;
   }
 
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
 
   return true;
 }

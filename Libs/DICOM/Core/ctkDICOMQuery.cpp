@@ -24,6 +24,7 @@
 #include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
+#include <QMutex>
 #include <QPair>
 #include <QSet>
 #include <QSqlQuery>
@@ -89,6 +90,12 @@ public:
   /// Add StudyInstanceUID and SeriesInstanceUID that may be further retrieved
   void addStudyAndSeriesInstanceUID( const QString& studyInstanceUID, const QString& seriesInstanceUID );
 
+  /// Warning: abort/releaseAssociation is not a thread safe method.
+  /// If called concurrently from different threads DCMTK can crash.
+  /// Therefore use this method instead of calling directly SCU->abort/releaseAssociation()
+  OFCondition releaseAssociation();
+  OFCondition abortAssociation();
+
   QString ConnectionName;
   QString CallingAETitle;
   QString CalledAETitle;
@@ -101,6 +108,8 @@ public:
   QList<QPair<QString,QString>> StudyAndSeriesInstanceUIDPairList;
   QMap<QString, DcmDataset*> StudyDatasets;
   bool Canceled;
+  bool AssociationClosing;
+  QMutex AssociationMutex;
   int MaximumPatientsQuery;
   QString JobUID;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> JobResponseSets;
@@ -116,6 +125,7 @@ ctkDICOMQueryPrivate::ctkDICOMQueryPrivate()
   this->PresentationContext = 0;
   this->Port = 0;
   this->Canceled = false;
+  this->AssociationClosing = false;
   this->MaximumPatientsQuery = 25;
 
   this->SCU = new ctkDICOMQuerySCUPrivate();
@@ -128,9 +138,7 @@ ctkDICOMQueryPrivate::~ctkDICOMQueryPrivate()
 {
   if (this->SCU && this->SCU->isConnected())
   {
-    // Warning: releaseAssociation is not a thread safe method.
-    // If called concurrently from different threads DCMTK can crash.
-    this->SCU->releaseAssociation();
+    this->releaseAssociation();
   }
 
   if (this->SCU)
@@ -151,6 +159,54 @@ void ctkDICOMQueryPrivate::addStudyAndSeriesInstanceUID( const QString& studyIns
 void ctkDICOMQueryPrivate::addStudyInstanceUIDAndDataset( const QString& studyInstanceUID, DcmDataset* dataset )
 {
   this->StudyDatasets[studyInstanceUID] = dataset;
+}
+
+//------------------------------------------------------------------------------
+OFCondition ctkDICOMQueryPrivate::releaseAssociation()
+{
+  OFCondition status = EC_IllegalCall;
+  if (!this->SCU)
+    {
+    return status;
+    }
+
+  this->AssociationMutex.lock();
+  if (this->AssociationClosing)
+  {
+    this->AssociationMutex.unlock();
+    return status;
+  }
+
+  this->AssociationClosing = true;
+  status = this->SCU->releaseAssociation();
+  this->AssociationClosing = false;
+  this->AssociationMutex.unlock();
+
+  return status;
+}
+
+//------------------------------------------------------------------------------
+OFCondition ctkDICOMQueryPrivate::abortAssociation()
+{
+  OFCondition status = EC_IllegalCall;
+  if (!this->SCU)
+    {
+    return status;
+    }
+
+  this->AssociationMutex.lock();
+  if (this->AssociationClosing)
+  {
+    this->AssociationMutex.unlock();
+    return status;
+  }
+
+  this->AssociationClosing = true;
+  status = this->SCU->abortAssociation();
+  this->AssociationClosing = false;
+  this->AssociationMutex.unlock();
+
+  return status;
 }
 
 //------------------------------------------------------------------------------
@@ -419,7 +475,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
   {
     logger.error("Find failed");
     emit progress(tr("Find failed"));
-    d->SCU->releaseAssociation();
+    d->releaseAssociation();
     emit progress(100);
     return false;
   }
@@ -523,7 +579,7 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
     return false;
     }
   }
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
   emit progress(100);
   return true;
 }
@@ -653,7 +709,7 @@ bool ctkDICOMQuery::queryPatients()
     return false;
   }
 
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
   return true;
 }
 
@@ -776,7 +832,7 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
     return false;
   }
 
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
   return true;
 }
 
@@ -898,7 +954,7 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
     return false;
   }
 
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
   return true;
 }
 
@@ -1018,7 +1074,7 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
     return false;
   }
 
-  d->SCU->releaseAssociation();
+  d->releaseAssociation();
   return true;
 }
 
