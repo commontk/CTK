@@ -46,6 +46,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
   Q_ENUMS(DateType)
   Q_PROPERTY(QString patientItem READ patientItem WRITE setPatientItem);
   Q_PROPERTY(QString patientID READ patientID WRITE setPatientID);
+  Q_PROPERTY(QString patientName READ patientName WRITE setPatientName);
   Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
 
@@ -64,6 +65,12 @@ public:
   /// Patient ID
   void setPatientID(const QString& patientID);
   QString patientID() const;
+  ///@}
+
+  ///@{
+  /// Patient Name
+  void setPatientName(const QString& patientName);
+  QString patientName() const;
   ///@}
 
   ///@{
