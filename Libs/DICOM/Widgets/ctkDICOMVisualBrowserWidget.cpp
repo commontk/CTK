@@ -327,21 +327,39 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   QObject::connect(this->FilteringPatientIDSearchBox, SIGNAL(textChanged(QString)),
                    q, SLOT(onFilteringPatientIDChanged()));
 
+  QObject::connect(this->FilteringPatientIDSearchBox, SIGNAL(returnPressed()),
+                   q, SLOT(onQueryPatients()));
+
   QObject::connect(this->FilteringPatientNameSearchBox, SIGNAL(textChanged(QString)),
                    q, SLOT(onFilteringPatientNameChanged()));
+
+  QObject::connect(this->FilteringPatientNameSearchBox, SIGNAL(returnPressed()),
+                   q, SLOT(onQueryPatients()));
 
   QObject::connect(this->FilteringStudyDescriptionSearchBox, SIGNAL(textChanged(QString)),
                    q, SLOT(onFilteringStudyDescriptionChanged()));
 
+  QObject::connect(this->FilteringStudyDescriptionSearchBox, SIGNAL(returnPressed()),
+                   q, SLOT(onQueryPatients()));
+
   QObject::connect(this->FilteringSeriesDescriptionSearchBox, SIGNAL(textChanged(QString)),
                    q, SLOT(onFilteringSeriesDescriptionChanged()));
+
+  QObject::connect(this->FilteringSeriesDescriptionSearchBox, SIGNAL(returnPressed()),
+                   q, SLOT(onQueryPatients()));
 
   QObject::connect(this->FilteringModalityCheckableComboBox, SIGNAL(checkedIndexesChanged()),
                    q, SLOT(onFilteringModalityCheckableComboBoxChanged()));
   this->updateModalityCheckableComboBox();
 
+  QObject::connect(this->FilteringModalityCheckableComboBox, SIGNAL(returnRelease()),
+                   q, SLOT(onQueryPatients()));
+
   QObject::connect(this->FilteringDateComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onFilteringDateComboBoxChanged(int)));
+
+  QObject::connect(this->FilteringDateComboBox, SIGNAL(returnRelease()),
+                   q, SLOT(onQueryPatients()));
 
   QObject::connect(this->QueryPatientPushButton, SIGNAL(clicked()),
                    q, SLOT(onQueryPatients()));
