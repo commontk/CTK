@@ -1086,6 +1086,8 @@ bool ctkDICOMDatabasePrivate::applyDisplayedFieldsChanges( QMap<QString, QMap<QS
     QMap<QString, QString> currentPatient = displayedFieldsMapPatient[compositeID];
     if (currentPatient["PatientID"].isEmpty() || currentPatient["PatientsName"].isEmpty())
     {
+      logger.error("Failed to find patient since PatientsName and/or PatientID are empty."
+       "If this error repeats, please remove manually from the database tha patient with the missing PatientsName/PatientID." );
       continue;
     }
 
