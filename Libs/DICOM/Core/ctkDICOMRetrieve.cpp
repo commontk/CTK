@@ -67,14 +67,23 @@ public:
                                          RetrieveResponse *response,
                                          OFBool &waitForNextResponse)
   {
-    if (this->retrieve && !this->retrieve->wasCanceled())
+    if (!this->retrieve)
     {
-      emit this->retrieve->progress(ctkDICOMRetrieve::tr("Got move request"));
-      emit this->retrieve->progress(0);
-      return this->DcmSCU::handleMOVEResponse(
-        presID, response, waitForNextResponse);
+      return EC_IllegalCall;
     }
-    return EC_IllegalCall;
+
+    if (this->retrieve->wasCanceled())
+    {
+      // send cancel can fail and be ignored (but DCMTK will report still good == true).
+      // Therefore, we need to force the release of the association to cancel the worker
+      this->retrieve->releaseAssociation();
+      return EC_IllegalCall;
+    }
+
+    emit this->retrieve->progress(ctkDICOMRetrieve::tr("Got move request"));
+    emit this->retrieve->progress(0);
+    return this->DcmSCU::handleMOVEResponse(
+      presID, response, waitForNextResponse);
   };
 
   // called when a data set is coming in from a server in
@@ -84,8 +93,16 @@ public:
                                          OFBool& continueCGETSession,
                                          Uint16& cStoreReturnStatus)
   {
-    if (!this->retrieve || this->retrieve->wasCanceled())
+    if (!this->retrieve)
     {
+      return EC_IllegalCall;
+    }
+
+    if (this->retrieve->wasCanceled())
+    {
+      // send cancel can fail and be ignored (but DCMTK will report still good == true).
+      // Therefore, we need to force the release of the association to cancel the worker
+      this->retrieve->releaseAssociation();
       return EC_IllegalCall;
     }
 
@@ -151,13 +168,22 @@ public:
                                          RetrieveResponse* response,
                                          OFBool& continueCGETSession)
   {
-    if (this->retrieve && !this->retrieve->wasCanceled())
+    if (!this->retrieve)
     {
-      emit this->retrieve->progress(ctkDICOMRetrieve::tr("Got CGET response"));
-      emit this->retrieve->progress(0);
-      return this->DcmSCU::handleCGETResponse(presID, response, continueCGETSession);
+      return EC_IllegalCall;
     }
-    return EC_IllegalCall;
+
+    if (this->retrieve->wasCanceled())
+    {
+      // send cancel can fail and be ignored (but DCMTK will report still good == true).
+      // Therefore, we need to force the release of the association to cancel the worker
+      this->retrieve->releaseAssociation();
+      return EC_IllegalCall;
+    }
+
+    emit this->retrieve->progress(ctkDICOMRetrieve::tr("Got CGET response"));
+    emit this->retrieve->progress(0);
+    return this->DcmSCU::handleCGETResponse(presID, response, continueCGETSession);
   };
 };
 
@@ -1113,4 +1139,11 @@ void ctkDICOMRetrieve::cancel()
     d->SCU->sendCANCELRequest(d->PresentationContext);
     d->PresentationContext = 0;
   }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMRetrieve::releaseAssociation()
+{
+  Q_D(ctkDICOMRetrieve);
+  d->releaseAssociation();
 }

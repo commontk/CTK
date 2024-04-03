@@ -179,7 +179,9 @@ Q_SIGNALS:
   void done(const bool& error);
 
 public Q_SLOTS:
-  void cancel();
+  /// Cancel the current operation
+  Q_INVOKABLE void cancel();
+  Q_INVOKABLE void releaseAssociation();
 
 protected:
   QString applyFilters();

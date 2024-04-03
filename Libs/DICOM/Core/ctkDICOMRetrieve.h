@@ -179,6 +179,7 @@ public Q_SLOTS:
                             const QString& patientID = "");
   /// Cancel the current operation
   Q_INVOKABLE void cancel();
+  Q_INVOKABLE void releaseAssociation();
 
 Q_SIGNALS:
   /// Signal is emitted inside the retrieve() function. It ranges from 0 to 100.
