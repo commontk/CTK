@@ -27,6 +27,7 @@
 #include <QSharedPointer>
 #include <QThreadPool>
 #include <QUuid>
+#include <QDebug>
 
 // CTK includes
 #include "ctkAbstractJob.h"
@@ -299,9 +300,6 @@ ctkJobScheduler::~ctkJobScheduler()
   // We should avoid the application crash at exiting.
   // The job scheduler currently waits all the jobs to be properly stopped.
   this->waitForFinish(true);
-  this->waitForDone(500);
-  d->removeAllJobs();
-  d->Workers.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -341,7 +339,7 @@ int ctkJobScheduler::numberOfRunningJobs()
   int numberOfRunningJobs = 0;
   foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
-    if (job->status() < ctkAbstractJob::JobStatus::Stopped)
+    if (job->status() == ctkAbstractJob::JobStatus::Running)
     {
       numberOfRunningJobs++;
     }

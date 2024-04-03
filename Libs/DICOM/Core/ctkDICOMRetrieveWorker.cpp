@@ -41,6 +41,7 @@ ctkDICOMRetrieveWorkerPrivate::ctkDICOMRetrieveWorkerPrivate(ctkDICOMRetrieveWor
  : q_ptr(object)
 {
   this->Retrieve = QSharedPointer<ctkDICOMRetrieve>(new ctkDICOMRetrieve);
+  this->Retrieve->setKeepAssociationOpen(false);
 }
 
 //------------------------------------------------------------------------------

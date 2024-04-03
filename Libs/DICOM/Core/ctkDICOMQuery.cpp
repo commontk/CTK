@@ -67,8 +67,16 @@ public:
                                          QRResponse *response,
                                          OFBool &waitForNextResponse)
   {
-    if (!this->query || this->query->wasCanceled())
+    if (!this->query)
     {
+      return EC_IllegalCall;
+    }
+
+    if (this->query->wasCanceled())
+    {
+      // send cancel can fail and be ignored (but DCMTK will report still good == true).
+      // Therefore, we need to force the release of the association to cancel the worker
+      this->query->releaseAssociation();
       return EC_IllegalCall;
     }
 
@@ -1064,6 +1072,13 @@ void ctkDICOMQuery::cancel()
     d->SCU->sendCANCELRequest(d->PresentationContext);
     d->PresentationContext = 0;
   }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMQuery::releaseAssociation()
+{
+  Q_D(ctkDICOMQuery);
+  d->releaseAssociation();
 }
 
 //----------------------------------------------------------------------------
