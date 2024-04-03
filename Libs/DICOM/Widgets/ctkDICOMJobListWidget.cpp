@@ -53,6 +53,7 @@ public:
     }
 
     int progress = ceil(float(data.at(0).toInt()) / data.at(1).toInt() * 100);
+    progress = progress < 0 ? 0 : progress;
     progress = progress > 100 ? 100 : progress;
 
     QStyleOptionProgressBar progressBarOption;
