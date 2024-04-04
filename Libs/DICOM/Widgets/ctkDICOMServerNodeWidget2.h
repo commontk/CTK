@@ -123,6 +123,10 @@ public Q_SLOTS:
   void onSettingsModified();
   void onCellSettingsModified(int row, int column);
 
+Q_SIGNALS:
+  /// Emitted when server settings are changed
+  void serversSettingsChanged();
+
 protected:
   QScopedPointer<ctkDICOMServerNodeWidget2Private> d_ptr;
   enum ServerColumns

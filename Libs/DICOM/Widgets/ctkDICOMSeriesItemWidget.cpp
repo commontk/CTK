@@ -62,7 +62,7 @@ public:
 
   void init();
   QString getDICOMCenterFrameFromInstances(QStringList instancesList);
-  void createThumbnail(ctkDICOMJobDetail td);
+  void createThumbnail(ctkDICOMJobDetail td, bool queryRetrieve = true);
   void drawModalityThumbnail();
   void drawThumbnail(const QString& file, int numberOfFrames);
   void drawTextWithShadow(QPainter *painter,
@@ -81,6 +81,7 @@ public:
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
+  QStringList EnabledServers;
 
   QString PatientID;
   QString SeriesItem;
@@ -127,6 +128,8 @@ ctkDICOMSeriesItemWidgetPrivate::ctkDICOMSeriesItemWidgetPrivate(ctkDICOMSeriesI
   this->isThumbnailDocument = false;
   this->ThumbnailSizePixel = 200;
   this->NumberOfDownloads = 0;
+
+  this->EnabledServers = QStringList("All");
 
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
@@ -198,7 +201,7 @@ QString ctkDICOMSeriesItemWidgetPrivate::getDICOMCenterFrameFromInstances(QStrin
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
+void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td, bool queryRetrieve)
 {
   if (!this->DicomDatabase)
   {
@@ -302,12 +305,15 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
         (jobType == ctkDICOMJobResponseSet::JobType::None ||
          jobType == ctkDICOMJobResponseSet::JobType::QueryInstances))
     {
-      this->Scheduler->retrieveSOPInstance(this->PatientID,
-                                           this->StudyInstanceUID,
-                                           this->SeriesInstanceUID,
-                                           this->CentralFrameSOPInstanceUID,
-                                           this->RaiseJobsPriority ? QThread::HighestPriority : QThread::HighPriority);
-
+      if (queryRetrieve)
+      {
+        this->Scheduler->retrieveSOPInstance(this->PatientID,
+                                             this->StudyInstanceUID,
+                                             this->SeriesInstanceUID,
+                                             this->CentralFrameSOPInstanceUID,
+                                             this->RaiseJobsPriority ? QThread::HighestPriority : QThread::HighPriority,
+                                             this->EnabledServers);
+      }
       return;
     }
 
@@ -324,12 +330,13 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td)
         this->Scheduler->getJobsByDICOMUIDs({},
                                             {},
                                             {this->SeriesInstanceUID});
-      if (jobs.count() == 0)
+      if (jobs.count() == 0 && queryRetrieve)
       {
         this->Scheduler->retrieveSeries(this->PatientID,
                                         this->StudyInstanceUID,
                                         this->SeriesInstanceUID,
-                                        this->RaiseJobsPriority ? QThread::HighestPriority : QThread::LowPriority);
+                                        this->RaiseJobsPriority ? QThread::HighestPriority : QThread::LowPriority,
+                                        this->EnabledServers);
       }
     }
   }
@@ -887,6 +894,20 @@ int ctkDICOMSeriesItemWidget::thumbnailSizePixel() const
   return d->ThumbnailSizePixel;
 }
 
+//------------------------------------------------------------------------------
+void ctkDICOMSeriesItemWidget::setEnabledServers(const QStringList& enabledServers)
+{
+  Q_D(ctkDICOMSeriesItemWidget);
+  d->EnabledServers = enabledServers;
+}
+
+//------------------------------------------------------------------------------
+QStringList ctkDICOMSeriesItemWidget::enabledServers() const
+{
+  Q_D(const ctkDICOMSeriesItemWidget);
+  return d->EnabledServers;
+}
+
 //----------------------------------------------------------------------------
 static void skipDelete(QObject* obj)
 {
@@ -972,7 +993,7 @@ void ctkDICOMSeriesItemWidget::setDicomDatabase(QSharedPointer<ctkDICOMDatabase>
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::generateInstances()
+void ctkDICOMSeriesItemWidget::generateInstances(bool queryRetrieve)
 {
   Q_D(ctkDICOMSeriesItemWidget);
   if (!d->DicomDatabase)
@@ -982,9 +1003,9 @@ void ctkDICOMSeriesItemWidget::generateInstances()
   }
 
   ctkDICOMJobDetail td;
-  d->createThumbnail(td);
+  d->createThumbnail(td, queryRetrieve);
   QStringList instancesList = d->DicomDatabase->instancesForSeries(d->SeriesInstanceUID);
-  if (!d->StopJobs &&
+  if (queryRetrieve && !d->StopJobs &&
       instancesList.count() == 0 &&
       d->Scheduler &&
       d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
@@ -992,7 +1013,8 @@ void ctkDICOMSeriesItemWidget::generateInstances()
     d->Scheduler->queryInstances(d->PatientID,
                                  d->StudyInstanceUID,
                                  d->SeriesInstanceUID,
-                                 d->RaiseJobsPriority ? QThread::HighestPriority : QThread::NormalPriority);
+                                 d->RaiseJobsPriority ? QThread::HighestPriority : QThread::NormalPriority,
+                                 d->EnabledServers);
   }
 }
 

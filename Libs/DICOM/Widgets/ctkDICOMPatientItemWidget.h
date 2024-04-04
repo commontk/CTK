@@ -49,6 +49,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
   Q_PROPERTY(QString patientName READ patientName WRITE setPatientName);
   Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
+  Q_PROPERTY(QMap<QString, Qt::CheckState> serversStatus READ serversStatus WRITE setServersStatus);
 
 public:
   typedef QWidget Superclass;
@@ -162,16 +163,27 @@ public:
   /// Add/Remove study item widgets
   Q_INVOKABLE void addStudyItemWidget(const QString& studyItem);
   Q_INVOKABLE void removeStudyItemWidget(const QString& studyItem);
+  Q_INVOKABLE ctkDICOMStudyItemWidget* geStudyItemWidgetByStudyItem(const QString& studyItem);
   ///@}
 
   /// Set selection for all studies/series
   Q_INVOKABLE void setSelection(bool selected);
 
+  ///@{
+  /// Enabled Servers
+  void setServersStatus(const QMap<QString, Qt::CheckState>& serversStatus);
+  QMap<QString, Qt::CheckState> serversStatus() const;
+  Q_INVOKABLE void updateEnabledServersUIFromDB();
+  Q_INVOKABLE bool askUserActionForServerSecurity();
+  ///@}
+
 public Q_SLOTS:
-  void generateStudies();
+  void generateStudies(bool queryRetrieve = true);
+  void generateSeriesAtToggle(bool toggled = true, const QString& studyItem = "");
   void updateGUIFromScheduler(const QVariant& data);
   void onSeriesItemClicked();
   void raiseSelectedSeriesJobsPriority();
+  void onPatientServersCheckableComboBoxChanged();
 
 protected:
   QScopedPointer<ctkDICOMPatientItemWidgetPrivate> d_ptr;

@@ -43,7 +43,6 @@
 #include <ctkCheckableHeaderView.h>
 #include <ctkCheckableModelHelper.h>
 #include <ctkLogger.h>
-#include <ctkMessageBox.h>
 
 // ctkDICOMCore includes
 #include <ctkDICOMEcho.h>
@@ -1364,6 +1363,8 @@ void ctkDICOMServerNodeWidget2::saveSettings()
   d->SettingsModified = false;
   this->updateGUIState();
   d->restoreFocus(selectedIndexes, horizontalScrollBarValue, verticalScrollBarValue, false);
+
+  emit serversSettingsChanged();
 }
 
 //----------------------------------------------------------------------------

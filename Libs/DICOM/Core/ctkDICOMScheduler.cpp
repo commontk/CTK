@@ -62,6 +62,33 @@ ctkDICOMSchedulerPrivate::~ctkDICOMSchedulerPrivate()
 }
 
 //------------------------------------------------------------------------------
+bool ctkDICOMSchedulerPrivate::isServerEnabled(ctkDICOMServer *server,
+                                               const QStringList& enabledSevers)
+{
+  if (!server)
+  {
+    return false;
+  }
+
+  if (!server->queryRetrieveEnabled())
+  {
+    return false;
+  }
+  else if (enabledSevers.contains("All") && enabledSevers.count() == 1)
+  {
+    return true;
+  }
+  else if (enabledSevers.contains(server->connectionName()))
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+//------------------------------------------------------------------------------
 ctkDICOMServer* ctkDICOMSchedulerPrivate::getServerFromProxyServersByConnectionName(const QString& connectionName)
 {
   foreach (QSharedPointer<ctkDICOMServer> server, this->Servers)
@@ -99,13 +126,14 @@ ctkDICOMScheduler::ctkDICOMScheduler(ctkDICOMSchedulerPrivate* pimpl, QObject* p
 ctkDICOMScheduler::~ctkDICOMScheduler() = default;
 
 //----------------------------------------------------------------------------
-void ctkDICOMScheduler::queryPatients(QThread::Priority priority)
+void ctkDICOMScheduler::queryPatients(QThread::Priority priority,
+                                      const QStringList& enabledSevers)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerEnabled(server.data(), enabledSevers))
     {
       continue;
     }
@@ -126,13 +154,14 @@ void ctkDICOMScheduler::queryPatients(QThread::Priority priority)
 
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::queryStudies(const QString& patientID,
-                                     QThread::Priority priority)
+                                     QThread::Priority priority,
+                                     const QStringList& enabledSevers)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerEnabled(server.data(), enabledSevers))
     {
       continue;
     }
@@ -154,13 +183,14 @@ void ctkDICOMScheduler::queryStudies(const QString& patientID,
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::querySeries(const QString& patientID,
                                     const QString& studyInstanceUID,
-                                    QThread::Priority priority)
+                                    QThread::Priority priority,
+                                    const QStringList& enabledSevers)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerEnabled(server.data(), enabledSevers))
     {
       continue;
     }
@@ -184,13 +214,14 @@ void ctkDICOMScheduler::querySeries(const QString& patientID,
 void ctkDICOMScheduler::queryInstances(const QString& patientID,
                                        const QString& studyInstanceUID,
                                        const QString& seriesInstanceUID,
-                                       QThread::Priority priority)
+                                       QThread::Priority priority,
+                                       const QStringList& enabledSevers)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerEnabled(server.data(), enabledSevers))
     {
       continue;
     }
@@ -214,13 +245,14 @@ void ctkDICOMScheduler::queryInstances(const QString& patientID,
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::retrieveStudy(const QString& patientID,
                                       const QString& studyInstanceUID,
-                                      QThread::Priority priority)
+                                      QThread::Priority priority,
+                                      const QStringList& enabledSevers)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerEnabled(server.data(), enabledSevers))
     {
       continue;
     }
@@ -243,13 +275,14 @@ void ctkDICOMScheduler::retrieveStudy(const QString& patientID,
 void ctkDICOMScheduler::retrieveSeries(const QString& patientID,
                                        const QString& studyInstanceUID,
                                        const QString& seriesInstanceUID,
-                                       QThread::Priority priority)
+                                       QThread::Priority priority,
+                                       const QStringList& enabledSevers)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerEnabled(server.data(), enabledSevers))
     {
       continue;
     }
@@ -274,13 +307,14 @@ void ctkDICOMScheduler::retrieveSOPInstance(const QString& patientID,
                                             const QString& studyInstanceUID,
                                             const QString& seriesInstanceUID,
                                             const QString& SOPInstanceUID,
-                                            QThread::Priority priority)
+                                            QThread::Priority priority,
+                                            const QStringList& enabledSevers)
 {
   Q_D(ctkDICOMScheduler);
 
   foreach (QSharedPointer<ctkDICOMServer> server, d->Servers)
   {
-    if (!server->queryRetrieveEnabled())
+    if (!d->isServerEnabled(server.data(), enabledSevers))
     {
       continue;
     }
@@ -574,6 +608,46 @@ int ctkDICOMScheduler::getServerIndexFromName(const QString& connectionName)
 }
 
 //----------------------------------------------------------------------------
+QStringList ctkDICOMScheduler::getAllServersConnectionNames()
+{
+  Q_D(ctkDICOMScheduler);
+
+  QStringList connectionNames;
+  for (int serverIndex = 0; serverIndex < d->Servers.size(); ++serverIndex)
+  {
+    QSharedPointer<ctkDICOMServer> server = d->Servers.at(serverIndex);
+    if (!server)
+    {
+      continue;
+    }
+
+    connectionNames.append(server->connectionName());
+  }
+
+  return connectionNames;
+}
+
+//----------------------------------------------------------------------------
+QStringList ctkDICOMScheduler::getConnectionNamesForActiveServers()
+{
+Q_D(ctkDICOMScheduler);
+
+  QStringList connectionNames;
+  for (int serverIndex = 0; serverIndex < d->Servers.size(); ++serverIndex)
+  {
+    QSharedPointer<ctkDICOMServer> server = d->Servers.at(serverIndex);
+    if (!server || (!server->queryRetrieveEnabled() && !server->storageEnabled()))
+    {
+      continue;
+    }
+
+    connectionNames.append(server->connectionName());
+  }
+
+  return connectionNames;
+}
+
+//----------------------------------------------------------------------------
 void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
                                                  const QStringList& studyInstanceUIDs,
                                                  const QStringList& seriesInstanceUIDs,
@@ -783,16 +857,22 @@ void ctkDICOMScheduler::runJobs(const QMap<QString, ctkDICOMJobDetail> &jobDetai
           this->queryPatients();
         break;
         case ctkDICOMJob::DICOMLevels::Studies:
-          this->queryStudies(jd.PatientID);
+          this->queryStudies(jd.PatientID,
+                             QThread::NormalPriority,
+                             QStringList(jd.ConnectionName));
         break;
         case ctkDICOMJob::DICOMLevels::Series:
           this->querySeries(jd.PatientID,
-                            jd.StudyInstanceUID);
+                            jd.StudyInstanceUID,
+                            QThread::NormalPriority,
+                            QStringList(jd.ConnectionName));
         break;
         case ctkDICOMJob::DICOMLevels::Instances:
           this->queryInstances(jd.PatientID,
                                jd.StudyInstanceUID,
-                               jd.SeriesInstanceUID);
+                               jd.SeriesInstanceUID,
+                               QThread::NormalPriority,
+                               QStringList(jd.ConnectionName));
         break;
       }
     }
@@ -808,18 +888,24 @@ void ctkDICOMScheduler::runJobs(const QMap<QString, ctkDICOMJobDetail> &jobDetai
         break;
         case ctkDICOMJob::DICOMLevels::Studies:
           this->retrieveStudy(jd.PatientID,
-                              jd.StudyInstanceUID);
+                              jd.StudyInstanceUID,
+                              QThread::NormalPriority,
+                              QStringList(jd.ConnectionName));
         break;
         case ctkDICOMJob::DICOMLevels::Series:
           this->retrieveSeries(jd.PatientID,
                                jd.StudyInstanceUID,
-                               jd.SeriesInstanceUID);
+                               jd.SeriesInstanceUID,
+                               QThread::NormalPriority,
+                               QStringList(jd.ConnectionName));
         break;
         case ctkDICOMJob::DICOMLevels::Instances:
           this->retrieveSOPInstance(jd.PatientID,
                                     jd.StudyInstanceUID,
                                     jd.SeriesInstanceUID,
-                                    jd.SOPInstanceUID);
+                                    jd.SOPInstanceUID,
+                                    QThread::NormalPriority,
+                                    QStringList(jd.ConnectionName));
         break;
       }
     }
