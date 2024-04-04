@@ -57,6 +57,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
   Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow);
   Q_PROPERTY(ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel);
+  Q_PROPERTY(QStringList enabledServers READ enabledServers WRITE setEnabledServers);
 
 public:
   typedef QWidget Superclass;
@@ -139,6 +140,13 @@ public:
   QStringList filteringModalities() const;
   ///@}
 
+  ///@{
+  /// Enabled servers
+  /// ["All"] by default
+  void setEnabledServers(const QStringList& enabledServers);
+  QStringList enabledServers() const;
+  ///@}
+
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;
   /// Return the scheduler as a shared pointer
@@ -168,18 +176,18 @@ public:
   Q_INVOKABLE QList<ctkDICOMSeriesItemWidget*> seriesItemWidgetsList() const;
 
   /// Add/Remove Series item widget
-  Q_INVOKABLE void addSeriesItemWidget(int tableIndex,
-                                       const QString& seriesItem,
-                                       const QString& seriesInstanceUID,
-                                       const QString& modality,
-                                       const QString& seriesDescription);
+  Q_INVOKABLE ctkDICOMSeriesItemWidget* addSeriesItemWidget(int tableIndex,
+                                                            const QString& seriesItem,
+                                                            const QString& seriesInstanceUID,
+                                                            const QString& modality,
+                                                            const QString& seriesDescription);
   Q_INVOKABLE void removeSeriesItemWidget(const QString& seriesItem);
 
   /// Collapsible group box.
   Q_INVOKABLE ctkCollapsibleGroupBox* collapsibleGroupBox();
 
 public Q_SLOTS:
-  void generateSeries(bool toggled = true);
+  void generateSeries(bool queryRetrieve = true);
   void updateGUIFromScheduler(const QVariant& data);
   void onStudySelectionClicked(bool);
 

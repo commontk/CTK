@@ -52,6 +52,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
   Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel WRITE setThumbnailSizePixel);
   Q_PROPERTY(bool stopJobs READ stopJobs WRITE setStopJobs);
   Q_PROPERTY(bool raiseJobsPriority READ raiseJobsPriority WRITE setRaiseJobsPriority);
+  Q_PROPERTY(QStringList enabledServers READ enabledServers WRITE setEnabledServers);
 
 public:
   typedef QWidget Superclass;
@@ -138,6 +139,13 @@ public:
   int thumbnailSizePixel() const;
   ///@}
 
+  ///@{
+  /// Enabled servers
+  /// ["All"] by default
+  void setEnabledServers(const QStringList& enabledServers);
+  QStringList enabledServers() const;
+  ///@}
+
   /// Return the scheduler.
   Q_INVOKABLE ctkDICOMScheduler* scheduler() const;
   /// Return the scheduler as a shared pointer
@@ -161,7 +169,7 @@ public:
   void setDicomDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
 
 public Q_SLOTS:
-  void generateInstances();
+  void generateInstances(bool queryRetrieve = true);
   void updateGUIFromScheduler(const QVariant& data);
   void updateSeriesProgressBar(const QVariant& data);
   void onJobStarted(const QVariant& data);

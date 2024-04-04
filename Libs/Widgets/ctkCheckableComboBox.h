@@ -49,6 +49,8 @@ public:
   Q_INVOKABLE QModelIndexList checkedIndexes()const;
   /// Returns true if all the indexes are checked, false otherwise
   Q_INVOKABLE bool allChecked()const;
+  /// Returns true if all the indexes are partially checked, false otherwise
+  Q_INVOKABLE bool allPatiallyChecked()const;
   /// Returns true if none of the indexes is checked, false otherwise
   Q_INVOKABLE bool noneChecked()const;
 

@@ -214,6 +214,9 @@ public:
   QStringList filteringModalities() const;
   ///@}
 
+  /// reset all the filters
+  Q_INVOKABLE void resetFilters();
+
   ///@{
   /// Number of non collapsed studies per patient
   /// 2 by default
@@ -260,7 +263,7 @@ public:
   ///@}
 
   /// Set counters of imported patients, studies, series, instances to zero.
-  void resetItemsAddedDuringImportCounters();
+  Q_INVOKABLE void resetItemsAddedDuringImportCounters();
 
   enum ImportDirectoryMode
   {
@@ -358,6 +361,8 @@ public Q_SLOTS:
 
   /// start query/retrieve and show patients
   void onQueryPatients();
+  /// toggle query/retrieve option on search button
+  void onQueryRetrieveOptionToggled(bool);
   /// show patients
   void onShowPatients();
 
@@ -379,6 +384,9 @@ public Q_SLOTS:
 
   /// user change patient selection
   void onPatientItemChanged(int);
+
+  /// server settings have been changed
+  void onServersSettingsChanged();
 
 Q_SIGNALS:
   /// Emitted when directory is changed

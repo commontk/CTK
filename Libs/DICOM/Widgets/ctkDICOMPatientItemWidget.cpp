@@ -23,10 +23,12 @@
 
 // Qt includes
 #include <QDebug>
+#include <QPushButton>
 #include <QTableWidget>
 
 // CTK includes
 #include <ctkLogger.h>
+#include <ctkMessageBox.h>
 
 // ctkDICOMCore includes
 #include "ctkDICOMDatabase.h"
@@ -67,7 +69,14 @@ public:
   QString formatDate(const QString&);
   bool isStudyItemAlreadyAdded(const QString& studyItem);
   void clearLayout(QLayout* layout, bool deleteWidgets = true);
-  void createStudies();
+  void createStudies(bool queryRetrieve = true);
+  void updateEnabledServersUIFromDB();
+  void updateEnabledServersUIFromServerStatusMap();
+  bool areAllActiveServersSecure();
+  void setAllInsecureServerEnabledStatus(bool enabled);
+  bool askUserActionForServerSecurity();
+  void saveEnabledServersStringListFromUI();
+  void passEnabledServersStringListToChildren(const QStringList& enabledServers);
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
@@ -87,6 +96,12 @@ public:
   QStringList FilteringModalities;
 
   QList<ctkDICOMStudyItemWidget*> StudyItemWidgetsList;
+  QMap<QString, QMetaObject::Connection> StudyItemWidgetsConnectionMap;
+  QSpacerItem* StudiesListVerticalSpacer;
+
+  QStringList EnabledServers = QStringList("All");
+  QMap<QString, Qt::CheckState> ServersStatus = QMap<QString, Qt::CheckState>();
+
   bool IsGUIUpdating;
 };
 
@@ -110,6 +125,8 @@ ctkDICOMPatientItemWidgetPrivate::ctkDICOMPatientItemWidgetPrivate(ctkDICOMPatie
   this->Scheduler = nullptr;
   this->VisualDICOMBrowser = nullptr;
 
+  this->StudiesListVerticalSpacer = new QSpacerItem(0, 5, QSizePolicy::Fixed, QSizePolicy::Expanding);
+
   this->IsGUIUpdating = false;
 }
 
@@ -132,6 +149,9 @@ void ctkDICOMPatientItemWidgetPrivate::init(QWidget* parentWidget)
   this->PatientIDValueLabel->setWordWrap(true);
   this->PatientBirthDateValueLabel->setWordWrap(true);
   this->PatientSexValueLabel->setWordWrap(true);
+
+  q->connect(this->PatientServersCheckableComboBox, SIGNAL(checkedIndexesChanged()),
+             q, SLOT(onPatientServersCheckableComboBoxChanged()));
 }
 
 //----------------------------------------------------------------------------
@@ -188,25 +208,13 @@ bool ctkDICOMPatientItemWidgetPrivate::isStudyItemAlreadyAdded(const QString& st
 //----------------------------------------------------------------------------
 void ctkDICOMPatientItemWidgetPrivate::clearLayout(QLayout* layout, bool deleteWidgets)
 {
-  Q_Q(ctkDICOMPatientItemWidget);
-
   if (!layout)
   {
     return;
   }
 
   this->StudyItemWidgetsList.clear();
-  foreach (ctkDICOMStudyItemWidget* studyItemWidget, this->StudyItemWidgetsList)
-  {
-    if (!studyItemWidget)
-    {
-      continue;
-    }
-
-    q->disconnect(studyItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
-                  this->VisualDICOMBrowser.data(), SLOT(showStudyContextMenu(const QPoint&)));
-
-  }
+  this->StudyItemWidgetsConnectionMap.clear();
 
   while (QLayoutItem* item = layout->takeAt(0))
   {
@@ -228,7 +236,7 @@ void ctkDICOMPatientItemWidgetPrivate::clearLayout(QLayout* layout, bool deleteW
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMPatientItemWidgetPrivate::createStudies()
+void ctkDICOMPatientItemWidgetPrivate::createStudies(bool queryRetrieve)
 {
   Q_Q(ctkDICOMPatientItemWidget);
   if (this->IsGUIUpdating)
@@ -269,6 +277,7 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
 
   this->IsGUIUpdating = true;
 
+  studiesListWidgetLayout->removeItem(this->StudiesListVerticalSpacer);
   // Remove study widgets from vertical layout (need sorting)
   for (int studyIndex = 0; studyIndex < this->StudyItemWidgetsList.size(); ++studyIndex)
   {
@@ -359,18 +368,270 @@ void ctkDICOMPatientItemWidgetPrivate::createStudies()
   int cont = 0;
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, studiesMap)
   {
-    this->StudiesListWidget->layout()->addWidget(studyItemWidget);
+    studiesListWidgetLayout->addWidget(studyItemWidget);
     if (cont < this->NumberOfStudiesPerPatient)
     {
       studyItemWidget->setCollapsed(false);
+      studyItemWidget->generateSeries(queryRetrieve);
     }
     cont++;
+
+    QString studyItem = studyItemWidget->studyItem();
+    if (!this->StudyItemWidgetsConnectionMap.contains(studyItem))
+    {
+      auto toggleHandler = [q, studyItem](bool toggled) {
+        q->generateSeriesAtToggle(toggled, studyItem);
+      };
+      QMetaObject::Connection m_connection;
+      m_connection = q->connect(studyItemWidget->collapsibleGroupBox(), &QGroupBox::toggled, q, toggleHandler);
+      this->StudyItemWidgetsConnectionMap.insert(studyItem, m_connection);
+    }
   }
 
-  QSpacerItem* verticalSpacer = new QSpacerItem(0, 5, QSizePolicy::Fixed, QSizePolicy::Expanding);
-  studiesListWidgetLayout->addItem(verticalSpacer);
+  studiesListWidgetLayout->addItem(this->StudiesListVerticalSpacer);
 
   this->IsGUIUpdating = false;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMPatientItemWidgetPrivate::updateEnabledServersUIFromDB()
+{
+  if (!this->DicomDatabase)
+  {
+    logger.error("updateEnabledServersUIFromDB, no DICOM Database has been set. \n");
+    return;
+  }
+
+  if (this->PatientItem.isEmpty())
+  {
+    logger.error("updateEnabledServersUIFromDB, PatientItem has not been set. \n");
+    return;
+  }
+
+  if (!this->Scheduler)
+  {
+    logger.error("updateEnabledServersUIFromDB, no scheduler has been set. \n");
+    return;
+  }
+
+  // All active servers (either query/retrieve or storage is toggled).
+  // We assume that the security by default is unknown (patially checked in the UI).
+  // before running any query/retrieve/storage operation the UI needs to ask to the user permissions
+  QStringList allActiveConnectionNames = this->Scheduler->getConnectionNamesForActiveServers();
+  if (allActiveConnectionNames.count() == 0)
+  {
+    this->PatientServersCheckableComboBox->clear();
+    return;
+  }
+
+  // connectionNamesFromDB contains connection names from where the patient has been fetched.
+  // We assume that such server is secure by default
+  QStringList connectionNamesFromDB = this->DicomDatabase->connectionsNamesForPatient(this->PatientItem);
+  QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
+  int wasBlocking = this->PatientServersCheckableComboBox->blockSignals(true);
+
+  this->ServersStatus.clear();
+  this->PatientServersCheckableComboBox->clear();
+  this->PatientServersCheckableComboBox->addItems(allActiveConnectionNames);
+
+  for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
+  {
+    QString connectionName = this->PatientServersCheckableComboBox->itemText(filterIndex);
+    QModelIndex modelIndex = model->index(filterIndex, 0);
+
+    Qt::CheckState checkState = Qt::CheckState::PartiallyChecked;
+    if (connectionNamesFromDB.contains(connectionName))
+    {
+    checkState = Qt::CheckState::Checked;
+    }
+    this->ServersStatus.insert(connectionName, checkState);
+    this->PatientServersCheckableComboBox->setCheckState(modelIndex, checkState);
+  }
+  this->PatientServersCheckableComboBox->blockSignals(wasBlocking);
+  this->EnabledServers = QStringList("All");
+  this->passEnabledServersStringListToChildren(this->EnabledServers);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMPatientItemWidgetPrivate::updateEnabledServersUIFromServerStatusMap()
+{
+  if (!this->Scheduler)
+  {
+    logger.error("updateEnabledServersUIFromServerStatusMap, no scheduler has been set. \n");
+    return;
+  }
+
+  // All active servers (either query/retrieve or storage is toggled).
+  // We assume that the security by default is unknown (patially checked in the UI).
+  // before running any query/retrieve/storage operation the UI needs to ask to the user permissions
+  QStringList allActiveConnectionNames = this->Scheduler->getConnectionNamesForActiveServers();
+  if (allActiveConnectionNames.count() == 0)
+  {
+    this->PatientServersCheckableComboBox->clear();
+    return;
+  }
+
+  QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
+  int wasBlocking = this->PatientServersCheckableComboBox->blockSignals(true);
+
+  this->PatientServersCheckableComboBox->clear();
+  this->PatientServersCheckableComboBox->addItems(allActiveConnectionNames);
+
+  for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
+  {
+    QString connectionName = this->PatientServersCheckableComboBox->itemText(filterIndex);
+    QModelIndex modelIndex = model->index(filterIndex, 0);
+    if (!this->ServersStatus.contains(connectionName))
+    {
+      continue;
+    }
+    Qt::CheckState checkState = this->ServersStatus[connectionName];
+    this->PatientServersCheckableComboBox->setCheckState(modelIndex, checkState);
+  }
+  this->PatientServersCheckableComboBox->blockSignals(wasBlocking);
+  this->saveEnabledServersStringListFromUI();
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMPatientItemWidgetPrivate::areAllActiveServersSecure()
+{
+  QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
+  for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
+  {
+    QModelIndex modelIndex = model->index(filterIndex, 0);
+    Qt::CheckState checkState = this->PatientServersCheckableComboBox->checkState(modelIndex);
+    if (checkState == Qt::CheckState::PartiallyChecked)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMPatientItemWidgetPrivate::setAllInsecureServerEnabledStatus(bool enabled)
+{
+  bool wasModifying = this->PatientServersCheckableComboBox->blockSignals(true);
+  QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
+  for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
+  {
+    QModelIndex modelIndex = model->index(filterIndex, 0);
+    Qt::CheckState checkState = this->PatientServersCheckableComboBox->checkState(modelIndex);
+    if (checkState != Qt::CheckState::PartiallyChecked)
+    {
+      continue;
+    }
+
+    checkState = enabled ? Qt::CheckState::Checked : Qt::CheckState::Unchecked;
+    this->PatientServersCheckableComboBox->setCheckState(modelIndex, checkState);
+  }
+  this->PatientServersCheckableComboBox->blockSignals(wasModifying);
+  this->saveEnabledServersStringListFromUI();
+}
+
+//----------------------------------------------------------------------------
+bool ctkDICOMPatientItemWidgetPrivate::askUserActionForServerSecurity()
+{
+  Q_Q(ctkDICOMPatientItemWidget);
+
+  bool secure = this->areAllActiveServersSecure();
+  if (!secure)
+  {
+    QString warningString = q->tr("One or more active servers have been marked with an unrecognized security level. \n"
+                                  "A server is considered insecure if it deviates from the cached source of patient data "
+                                  "server stored in the local DICOM database.");
+    ctkMessageBox serversMessageBox;
+    serversMessageBox.setText(warningString);
+    serversMessageBox.setIcon(QMessageBox::Warning);
+    serversMessageBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::YesAll | QMessageBox::NoAll | QMessageBox::Ok);
+    serversMessageBox.setDefaultButton(QMessageBox::No);
+    QPushButton *cancelAllButton = qobject_cast<QPushButton *>(serversMessageBox.button(QMessageBox::Cancel));
+    QPushButton *yesAllButton = qobject_cast<QPushButton *>(serversMessageBox.button(QMessageBox::YesAll));
+    QPushButton *noAllButton = qobject_cast<QPushButton *>(serversMessageBox.button(QMessageBox::NoAll));
+    QPushButton *okButton = qobject_cast<QPushButton *>(serversMessageBox.button(QMessageBox::Ok));
+    if (cancelAllButton)
+      {
+      cancelAllButton->setToolTip(q->tr("Cancel the operation"));
+      }
+    if (yesAllButton)
+      {
+      yesAllButton->setToolTip(q->tr("The visual DICOM browser will enable all insecure servers associated with this patient."));
+      }
+    if (noAllButton)
+      {
+      noAllButton->setToolTip(q->tr("The visual DICOM browser will disable all insecure servers associated with this patient."));
+      }
+    if (okButton)
+      {
+      okButton->setToolTip(q->tr("The visual DICOM browser will query/retrieve data from all active servers, "
+                                 "including the insecure ones, without altering the current settings."));
+      }
+
+    int response = serversMessageBox.exec();
+    if (response == QMessageBox::Cancel)
+      {
+      return false;
+      }
+    else if (response == QMessageBox::YesAll)
+      {
+      this->setAllInsecureServerEnabledStatus(true);
+      }
+    else if (response == QMessageBox::NoAll)
+      {
+      this->setAllInsecureServerEnabledStatus(false);
+      }
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMPatientItemWidgetPrivate::saveEnabledServersStringListFromUI()
+{
+  QStringList enabledServers;
+  this->ServersStatus.clear();
+  QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
+  for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
+  {
+    QModelIndex modelIndex = model->index(filterIndex, 0);
+    Qt::CheckState checkState = this->PatientServersCheckableComboBox->checkState(modelIndex);
+    QString connectionName = this->PatientServersCheckableComboBox->itemText(filterIndex);
+    this->ServersStatus.insert(connectionName, checkState);
+    if (checkState == Qt::CheckState::Unchecked)
+    {
+      continue;
+    }
+
+    enabledServers.append(connectionName);
+  }
+
+  this->EnabledServers = enabledServers;
+  this->passEnabledServersStringListToChildren(this->EnabledServers);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMPatientItemWidgetPrivate::passEnabledServersStringListToChildren(const QStringList& enabledServers)
+{
+  foreach (ctkDICOMStudyItemWidget* studyItemWidget, this->StudyItemWidgetsList)
+  {
+    if (!studyItemWidget)
+    {
+      continue;
+    }
+
+    studyItemWidget->setEnabledServers(enabledServers);
+
+    foreach (ctkDICOMSeriesItemWidget* seriesItemWidget, studyItemWidget->seriesItemWidgetsList())
+    {
+      if (!seriesItemWidget)
+      {
+        continue;
+      }
+
+      seriesItemWidget->setEnabledServers(enabledServers);
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -395,6 +656,7 @@ void ctkDICOMPatientItemWidget::setPatientItem(const QString& patientItem)
 {
   Q_D(ctkDICOMPatientItemWidget);
   d->PatientItem = patientItem;
+  d->updateEnabledServersUIFromDB();
 }
 
 //------------------------------------------------------------------------------
@@ -486,6 +748,21 @@ QStringList ctkDICOMPatientItemWidget::filteringModalities() const
 {
   Q_D(const ctkDICOMPatientItemWidget);
   return d->FilteringModalities;
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientItemWidget::setServersStatus(const QMap<QString, Qt::CheckState>& serversStatus)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  d->ServersStatus = serversStatus;
+  d->updateEnabledServersUIFromServerStatusMap();
+}
+
+//------------------------------------------------------------------------------
+QMap<QString, Qt::CheckState> ctkDICOMPatientItemWidget::serversStatus() const
+{
+  Q_D(const ctkDICOMPatientItemWidget);
+  return d->ServersStatus;
 }
 
 //------------------------------------------------------------------------------
@@ -676,9 +953,8 @@ void ctkDICOMPatientItemWidget::addStudyItemWidget(const QString& studyItem)
   studyItemWidget->setFilteringModalities(d->FilteringModalities);
   studyItemWidget->setDicomDatabase(d->DicomDatabase);
   studyItemWidget->setScheduler(d->Scheduler);
+  studyItemWidget->setEnabledServers(d->EnabledServers);
   studyItemWidget->setCollapsed(true);
-  this->connect(studyItemWidget->collapsibleGroupBox(), SIGNAL(toggled(bool)),
-                studyItemWidget, SLOT(generateSeries(bool)));
   studyItemWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
   this->connect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemDoubleClicked(QTableWidgetItem *)),
@@ -698,6 +974,33 @@ void ctkDICOMPatientItemWidget::removeStudyItemWidget(const QString& studyItem)
 {
   Q_D(ctkDICOMPatientItemWidget);
 
+  ctkDICOMStudyItemWidget* studyItemWidget = this->geStudyItemWidgetByStudyItem(studyItem);
+  if (!studyItemWidget)
+  {
+    return;
+  }
+
+  if (d->StudyItemWidgetsConnectionMap.contains(studyItem))
+    {
+    this->disconnect(d->StudyItemWidgetsConnectionMap[studyItem]);
+    }
+  this->disconnect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemDoubleClicked(QTableWidgetItem *)),
+                   d->VisualDICOMBrowser.data(), SLOT(onLoad()));
+  this->disconnect(studyItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
+                   d->VisualDICOMBrowser.data(), SLOT(showStudyContextMenu(const QPoint&)));
+  this->disconnect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemClicked(QTableWidgetItem *)),
+                   this, SLOT(onSeriesItemClicked()));
+  this->disconnect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemSelectionChanged()),
+                   this, SLOT(raiseSelectedSeriesJobsPriority()));
+  d->StudyItemWidgetsList.removeOne(studyItemWidget);
+  delete studyItemWidget;
+}
+
+//------------------------------------------------------------------------------
+ctkDICOMStudyItemWidget* ctkDICOMPatientItemWidget::geStudyItemWidgetByStudyItem(const QString &studyItem)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+
   for (int studyIndex = 0; studyIndex < d->StudyItemWidgetsList.size(); ++studyIndex)
   {
     ctkDICOMStudyItemWidget* studyItemWidget =
@@ -707,16 +1010,10 @@ void ctkDICOMPatientItemWidget::removeStudyItemWidget(const QString& studyItem)
       continue;
     }
 
-    this->disconnect(studyItemWidget, SIGNAL(customContextMenuRequested(const QPoint&)),
-                     d->VisualDICOMBrowser.data(), SLOT(showStudyContextMenu(const QPoint&)));
-    this->disconnect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemClicked(QTableWidgetItem *)),
-                     this, SLOT(onSeriesItemClicked()));
-    this->disconnect(studyItemWidget->seriesListTableWidget(), SIGNAL(itemSelectionChanged()),
-                     this, SLOT(raiseSelectedSeriesJobsPriority()));
-    d->StudyItemWidgetsList.removeOne(studyItemWidget);
-    delete studyItemWidget;
-    break;
-    }
+    return studyItemWidget;
+  }
+
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -730,17 +1027,62 @@ void ctkDICOMPatientItemWidget::setSelection(bool selected)
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::generateStudies()
+void ctkDICOMPatientItemWidget::updateEnabledServersUIFromDB()
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  d->updateEnabledServersUIFromDB();
+}
+
+//------------------------------------------------------------------------------
+bool ctkDICOMPatientItemWidget::askUserActionForServerSecurity()
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  return d->askUserActionForServerSecurity();
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientItemWidget::generateStudies(bool queryRetrieve)
 {
   Q_D(ctkDICOMPatientItemWidget);
 
-  QStringList connectionNames = d->DicomDatabase->connectionsNamesForPatient(d->PatientItem);
-  qDebug() << "bellaaaaaaaaaaa : " << connectionNames;
-  d->createStudies();
-  if (d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
+  if (queryRetrieve)
   {
-    d->Scheduler->queryStudies(d->PatientID, QThread::NormalPriority);
+    if (!d->askUserActionForServerSecurity())
+    {
+      return;
+    }
   }
+
+  d->createStudies(queryRetrieve);
+  if (queryRetrieve && d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
+  {
+    d->Scheduler->queryStudies(d->PatientID,
+                               QThread::NormalPriority,
+                               d->EnabledServers);
+  }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientItemWidget::generateSeriesAtToggle(bool toggled, const QString& studyItem)
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  if (!toggled || studyItem.isEmpty())
+  {
+    return;
+  }
+
+  if (!d->askUserActionForServerSecurity())
+    {
+      return;
+    }
+
+  ctkDICOMStudyItemWidget* studyItemWidget = this->geStudyItemWidgetByStudyItem(studyItem);
+  if (!studyItemWidget)
+  {
+    return;
+  }
+
+  studyItemWidget->generateSeries();
 }
 
 //------------------------------------------------------------------------------
@@ -829,6 +1171,13 @@ void ctkDICOMPatientItemWidget::raiseSelectedSeriesJobsPriority()
   }
 
   d->Scheduler->raiseJobsPriorityForSeries(selectedSeriesInstanceUIDs);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMPatientItemWidget::onPatientServersCheckableComboBoxChanged()
+{
+  Q_D(ctkDICOMPatientItemWidget);
+  d->saveEnabledServersStringListFromUI();
 }
 
 //------------------------------------------------------------------------------
