@@ -23,7 +23,7 @@ DROP INDEX IF EXISTS 'SeriesStudyIndex' ;
 DROP INDEX IF EXISTS 'StudiesPatientIndex' ;
 
 CREATE TABLE 'SchemaInfo' ( 'Version' VARCHAR(1024) NOT NULL );
-INSERT INTO 'SchemaInfo' VALUES('0.8.0');
+INSERT INTO 'SchemaInfo' VALUES('0.8.1');
 
 CREATE TABLE 'Images' (
   'SOPInstanceUID' VARCHAR(64) NOT NULL,
@@ -32,7 +32,9 @@ CREATE TABLE 'Images' (
   'SeriesInstanceUID' VARCHAR(64) NOT NULL ,
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
-  PRIMARY KEY ('SOPInstanceUID') );
+  PRIMARY KEY ('SOPInstanceUID')
+);
+
 CREATE TABLE 'Patients' (
   'UID' INTEGER PRIMARY KEY AUTOINCREMENT,
   'PatientsName' VARCHAR(255) NULL ,
@@ -46,7 +48,16 @@ CREATE TABLE 'Patients' (
   'DisplayedPatientsName' VARCHAR(255) NULL ,
   'DisplayedNumberOfStudies' INT NULL ,
   'DisplayedLastStudyDate' DATE NULL ,
-  'DisplayedFieldsUpdatedTimestamp' DATETIME NULL );
+  'DisplayedFieldsUpdatedTimestamp' DATETIME NULL
+);
+
+CREATE TABLE 'ConnectionNames' (
+  'ConnectionID' INTEGER PRIMARY KEY AUTOINCREMENT,
+  'ConnectionName' VARCHAR(255) NOT NULL,
+  'PatientUID' INTEGER,
+  FOREIGN KEY('PatientUID') REFERENCES Patients('UID')
+);
+
 CREATE TABLE 'Studies' (
   'StudyInstanceUID' VARCHAR(64) NOT NULL ,
   'PatientsUID' INT NOT NULL ,
@@ -62,7 +73,9 @@ CREATE TABLE 'Studies' (
   'InsertTimestamp' VARCHAR(20) NOT NULL ,
   'DisplayedNumberOfSeries' INT NULL ,
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
-  PRIMARY KEY ('StudyInstanceUID') );
+  PRIMARY KEY ('StudyInstanceUID')
+);
+
 CREATE TABLE 'Series' (
   'SeriesInstanceUID' VARCHAR(64) NOT NULL ,
   'StudyInstanceUID' VARCHAR(64) NOT NULL ,
@@ -83,7 +96,8 @@ CREATE TABLE 'Series' (
   'DisplayedSize' VARCHAR(20) NULL ,
   'DisplayedNumberOfFrames' INT NULL ,
   'DisplayedFieldsUpdatedTimestamp' DATETIME NULL ,
-  PRIMARY KEY ('SeriesInstanceUID') );
+  PRIMARY KEY ('SeriesInstanceUID')
+);
 
 CREATE INDEX IF NOT EXISTS 'ImagesFilenameIndex' ON 'Images' ('Filename');
 CREATE INDEX IF NOT EXISTS 'ImagesFilenameIndex' ON 'Images' ('URL');
@@ -93,7 +107,8 @@ CREATE INDEX IF NOT EXISTS 'StudiesPatientIndex' ON 'Studies' ('PatientsUID');
 
 CREATE TABLE 'Directories' (
   'Dirname' VARCHAR(1024) ,
-  PRIMARY KEY ('Dirname') );
+  PRIMARY KEY ('Dirname')
+);
 
 CREATE TABLE 'ColumnDisplayProperties' (
   'TableName' VARCHAR(64) NOT NULL,
@@ -102,7 +117,8 @@ CREATE TABLE 'ColumnDisplayProperties' (
   'Visibility' INT NULL DEFAULT 1 ,
   'Weight' INT NULL ,
   'Format' VARCHAR(255) NULL ,
-  PRIMARY KEY ('TableName', 'FieldName') );
+  PRIMARY KEY ('TableName', 'FieldName')
+);
 
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'UID',                             '',                     0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'PatientsName',                    'Patient name',         0, 0, '');
@@ -157,4 +173,5 @@ CREATE TABLE 'DisplayedFieldGeneratorRules' (
   'Name' VARCHAR(64) NOT NULL,
   'Enabled' INT NULL DEFAULT 1 ,
   'Options' VARCHAR(255) NULL ,
-  PRIMARY KEY ('Name') );
+  PRIMARY KEY ('Name')
+);

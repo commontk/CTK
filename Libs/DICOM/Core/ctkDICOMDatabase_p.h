@@ -144,7 +144,28 @@ public:
   /// It would be very expensive to check in the database
   /// presence of all these records on each slice insertion,
   /// therefore we cache recently added entries in memory.
-  QMap<QString, int> InsertedPatientsCompositeIDCache; // map from composite patient ID to database ID
+
+  /// map from composite patient ID to database ID
+  QMap<QString, int> InsertedPatientsCompositeIDCache;
+
+  /// map from patient database ID and connection name to database ID
+  struct patientConnectionName{
+    int dbPatientID;
+    QString connectionName;
+
+    // Define comparison function for sorting
+    bool operator < (const patientConnectionName& other) const
+    {
+      if (dbPatientID != other.dbPatientID)
+      {
+        return dbPatientID < other.dbPatientID;
+      }
+      return connectionName < other.connectionName;
+    }
+  };
+  QMap<patientConnectionName, int> InsertedConnectionNamesIDCache;
+
+  /// map studies and series UIDs
   QSet<QString> InsertedStudyUIDsCache;
   QSet<QString> InsertedSeriesUIDsCache;
 
@@ -164,10 +185,19 @@ public:
   void precacheTags(const ctkDICOMItem& dataset, const QString sopInstanceUID);
 
   // Return true if a new item is inserted
-  bool insertPatientStudySeries(const ctkDICOMItem& dataset, const QString& patientID, const QString& patientsName);
-  bool insertPatient(const ctkDICOMItem& dataset, const QString& patientID, const QString& patientsName, int& databasePatientID);
+  bool insertPatientStudySeries(const ctkDICOMItem& dataset,
+    const QString& patientID,
+    const QString& patientsName,
+    const QString& connectionName = "");
+  bool insertPatient(const ctkDICOMItem& dataset,
+    const QString& patientID,
+    const QString& patientsName,
+    int& databasePatientID);
+  bool insertConnectionName(int& databaseConnectionNameID,
+    int databasePatientID,
+    const QString& connectionName);
   bool insertStudy(const ctkDICOMItem& dataset, int dbPatientID);
-  bool insertSeries( const ctkDICOMItem& dataset, QString studyInstanceUID);
+  bool insertSeries(const ctkDICOMItem& dataset, QString studyInstanceUID);
 
   /// Facilitate using custom schema with the database without subclassing
   QString SchemaVersion;

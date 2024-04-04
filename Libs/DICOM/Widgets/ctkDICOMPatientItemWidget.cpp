@@ -734,6 +734,8 @@ void ctkDICOMPatientItemWidget::generateStudies()
 {
   Q_D(ctkDICOMPatientItemWidget);
 
+  QStringList connectionNames = d->DicomDatabase->connectionsNamesForPatient(d->PatientItem);
+  qDebug() << "bellaaaaaaaaaaa : " << connectionNames;
   d->createStudies();
   if (d->Scheduler && d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
   {
