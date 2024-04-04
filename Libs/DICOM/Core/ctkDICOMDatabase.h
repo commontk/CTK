@@ -183,6 +183,7 @@ public:
   Q_INVOKABLE QString descriptionForSeries(const QString seriesUID);
   Q_INVOKABLE QString descriptionForStudy(const QString studyUID);
   Q_INVOKABLE QString nameForPatient(const QString patientUID);
+  Q_INVOKABLE QStringList connectionsNamesForPatient(const QString patientUID);
   Q_INVOKABLE QString displayedNameForPatient(const QString patientUID);
   Q_INVOKABLE QString fieldForPatient(const QString field, const QString patientUID);
   Q_INVOKABLE QString fieldForStudy(const QString field, const QString studyInstanceUID);
@@ -420,6 +421,11 @@ Q_SIGNALS:
   ///  - QString: patient Name (not unique)
   ///  - QString: patient Birth Date (not unique)
   void patientAdded(int, QString, QString, QString);
+  /// connectionNameAdded arguments:
+  ///  - int: database index of connectionName (unique) within CTK database
+  ///  - int: database index of patient (unique) within CTK database
+  ///  - QString: connection name
+  void connectionNameAdded(int, int, QString);
   /// studyAdded arguments:
   ///  - studyUID (unique)
   void studyAdded(QString);

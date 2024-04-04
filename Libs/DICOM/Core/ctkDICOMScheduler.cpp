@@ -126,7 +126,7 @@ void ctkDICOMScheduler::queryPatients(QThread::Priority priority)
 
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::queryStudies(const QString& patientID,
-                                    QThread::Priority priority)
+                                     QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
 
@@ -153,8 +153,8 @@ void ctkDICOMScheduler::queryStudies(const QString& patientID,
 
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::querySeries(const QString& patientID,
-                                   const QString& studyInstanceUID,
-                                   QThread::Priority priority)
+                                    const QString& studyInstanceUID,
+                                    QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
 
@@ -182,9 +182,9 @@ void ctkDICOMScheduler::querySeries(const QString& patientID,
 
 //----------------------------------------------------------------------------
 void ctkDICOMScheduler::queryInstances(const QString& patientID,
-                                      const QString& studyInstanceUID,
-                                      const QString& seriesInstanceUID,
-                                      QThread::Priority priority)
+                                       const QString& studyInstanceUID,
+                                       const QString& seriesInstanceUID,
+                                       QThread::Priority priority)
 {
   Q_D(ctkDICOMScheduler);
 
