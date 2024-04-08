@@ -410,9 +410,9 @@ bool ctkDICOMDatabasePrivate::insertConnectionName(int& dbConnectionNameID,
     logger.debug("New connection name inserted: database item ID = " + QString().setNum(dbConnectionNameID));
   }
 
-  patientConnectionName dbpConnectionName;
-  dbpConnectionName.connectionName = connectionName;
-  dbpConnectionName.dbPatientID = dbPatientID;
+  PatientConnectionName dbpConnectionName;
+  dbpConnectionName.ConnectionName = connectionName;
+  dbpConnectionName.DBPatientID = dbPatientID;
   this->InsertedConnectionNamesIDCache[dbpConnectionName] = dbConnectionNameID;
   return connectionNameFound;
 }
@@ -777,10 +777,10 @@ bool ctkDICOMDatabasePrivate::insertPatientStudySeries(const ctkDICOMItem& datas
     }
   }
 
-  patientConnectionName dbpConnectionName;
-  dbpConnectionName.connectionName = connectionName;
-  dbpConnectionName.dbPatientID = dbPatientID;
-  QMap<patientConnectionName, int>::iterator connectionNameIDit =
+  PatientConnectionName dbpConnectionName;
+  dbpConnectionName.ConnectionName = connectionName;
+  dbpConnectionName.DBPatientID = dbPatientID;
+  QMap<PatientConnectionName, int>::iterator connectionNameIDit =
     this->InsertedConnectionNamesIDCache.find(dbpConnectionName);
   if (connectionNameIDit == this->InsertedConnectionNamesIDCache.end())
   {

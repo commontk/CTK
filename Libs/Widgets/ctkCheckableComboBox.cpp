@@ -388,14 +388,12 @@ void ctkCheckableComboBox::paintEvent(QPaintEvent *)
   QStyleOptionComboBox opt;
   this->initStyleOption(&opt);
 
-  if (this->count() == 0 ||
-    this->noneChecked())
+  if (this->count() == 0 || this->noneChecked())
   {
     opt.currentText = tr("None");
     opt.currentIcon = QIcon();
   }
-  else if (this->allChecked() ||
-    this->allPatiallyChecked())
+  else if (d->checkedIndexes().count() + d->paritiallyCheckedIndexes().count() == this->count())
   {
     opt.currentText = tr("All");
     opt.currentIcon = QIcon();

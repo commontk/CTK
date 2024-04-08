@@ -118,7 +118,7 @@ public:
   Q_INVOKABLE QMap<QString,QVariant> filters()const;
   ///@}
 
-  /// operation is canceled?
+  /// Return true if the operation was canceled.
   Q_INVOKABLE bool wasCanceled();
 
   /// Query a remote DICOM Image Store SCP.
@@ -153,11 +153,15 @@ public:
                                   const QString& studyInstanceUID,
                                   const QString& seriesInstanceUID);
 
-  ///@{
+
   /// Access the list of datasets from the last queryPatients, queryStudies,
   /// querySeries and queryInstances methods.
   Q_INVOKABLE QList<ctkDICOMJobResponseSet*> jobResponseSets() const;
   QList<QSharedPointer<ctkDICOMJobResponseSet>> jobResponseSetsShared() const;
+  ///@}
+
+  ///@{
+  /// Reference job uid.
   void setJobUID(const QString& jobUID);
   QString jobUID() const;
   ///@}

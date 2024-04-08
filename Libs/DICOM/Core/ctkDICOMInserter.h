@@ -63,7 +63,7 @@ public:
   QStringList tagsToExcludeFromStorage() const;
   ///@}
 
-  /// operation is canceled?
+  /// Return true if the operation was canceled.
   Q_INVOKABLE bool wasCanceled();
 
   /// add JobResponseSets from queries and retrieves

@@ -96,7 +96,7 @@ public:
   ///@}
 
   ///@{
-  /// Task UID
+  /// Job UID
   void setJobUID(const QString& jobUID);
   QString jobUID() const;
   ///@}
