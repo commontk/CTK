@@ -183,7 +183,11 @@ public:
   Q_INVOKABLE QString descriptionForSeries(const QString seriesUID);
   Q_INVOKABLE QString descriptionForStudy(const QString studyUID);
   Q_INVOKABLE QString nameForPatient(const QString patientUID);
-  Q_INVOKABLE QStringList connectionsNamesForPatient(const QString patientUID);
+  Q_INVOKABLE QStringList enabledConnectionsForPatient(const QString patientUID);
+  Q_INVOKABLE QStringList disabledConnectionsForPatient(const QString patientUID);
+  Q_INVOKABLE bool updateConnectionsForPatient(const QString patientUID,
+                                               const QStringList allowList,
+                                               const QStringList denyList);
   Q_INVOKABLE QString displayedNameForPatient(const QString patientUID);
   Q_INVOKABLE QString fieldForPatient(const QString field, const QString patientUID);
   Q_INVOKABLE QString fieldForStudy(const QString field, const QString studyInstanceUID);
@@ -422,10 +426,12 @@ Q_SIGNALS:
   ///  - QString: patient Birth Date (not unique)
   void patientAdded(int, QString, QString, QString);
   /// connectionNameAdded arguments:
-  ///  - int: database index of connectionName (unique) within CTK database
   ///  - int: database index of patient (unique) within CTK database
+  ///  - QString: patient ID (not unique across institutions)
+  ///  - QString: patient Name (not unique)
+  ///  - QString: patient Birth Date (not unique)
   ///  - QString: connection name
-  void connectionNameAdded(int, int, QString);
+  void connectionNameAdded(int, QString, QString, QString, QString);
   /// studyAdded arguments:
   ///  - studyUID (unique)
   void studyAdded(QString);

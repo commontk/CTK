@@ -148,22 +148,8 @@ public:
   /// map from composite patient ID to database ID
   QMap<QString, int> InsertedPatientsCompositeIDCache;
 
-  /// map from patient database ID and connection name to database ID
-  struct PatientConnectionName{
-    int DBPatientID;
-    QString ConnectionName;
-
-    // Define comparison function for sorting
-    bool operator < (const PatientConnectionName& other) const
-    {
-      if (DBPatientID != other.DBPatientID)
-      {
-        return DBPatientID < other.DBPatientID;
-      }
-      return ConnectionName < other.ConnectionName;
-    }
-  };
-  QMap<PatientConnectionName, int> InsertedConnectionNamesIDCache;
+  /// map for patient database ID and inserted enabled connection
+  QMap<int, QStringList> InsertedConnectionsIDCache;
 
   /// map studies and series UIDs
   QSet<QString> InsertedStudyUIDsCache;
@@ -193,11 +179,15 @@ public:
     const QString& patientID,
     const QString& patientsName,
     int& databasePatientID);
-  bool insertConnectionName(int& databaseConnectionNameID,
-    int databasePatientID,
+  bool insertConnectionName(const int& dbPatientID,
     const QString& connectionName);
-  bool insertStudy(const ctkDICOMItem& dataset, int dbPatientID);
-  bool insertSeries(const ctkDICOMItem& dataset, QString studyInstanceUID);
+  bool updateConnections(const QString& dbPatientID,
+    const QStringList& allowList,
+    const QStringList& denyList);
+  bool insertStudy(const ctkDICOMItem& dataset,
+    const int& dbPatientID);
+  bool insertSeries(const ctkDICOMItem& dataset,
+    const QString& studyInstanceUID);
 
   /// Facilitate using custom schema with the database without subclassing
   QString SchemaVersion;

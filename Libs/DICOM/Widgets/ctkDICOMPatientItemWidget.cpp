@@ -71,12 +71,11 @@ public:
   void clearLayout(QLayout* layout, bool deleteWidgets = true);
   void createStudies(bool queryRetrieve = true);
   void updateEnabledServersUIFromDB();
-  void updateEnabledServersUIFromServerStatusMap();
   bool areAllActiveServersSecure();
   void setAllInsecureServerEnabledStatus(bool enabled);
   bool askUserActionForServerSecurity();
   void saveEnabledServersStringListFromUI();
-  void passEnabledServersStringListToChildren(const QStringList& enabledServers);
+  void saveEnabledServersStringListToChildren(const QStringList& enabledServers);
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
@@ -100,7 +99,6 @@ public:
   QSpacerItem* StudiesListVerticalSpacer;
 
   QStringList EnabledServers = QStringList("All");
-  QMap<QString, Qt::CheckState> ServersStatus = QMap<QString, Qt::CheckState>();
 
   bool IsGUIUpdating;
 };
@@ -426,70 +424,39 @@ void ctkDICOMPatientItemWidgetPrivate::updateEnabledServersUIFromDB()
 
   // connectionNamesFromDB contains connection names from where the patient has been fetched.
   // We assume that such server is secure by default
-  QStringList connectionNamesFromDB = this->DicomDatabase->connectionsNamesForPatient(this->PatientItem);
+  QStringList allowList = this->DicomDatabase->enabledConnectionsForPatient(this->PatientItem);
+  QStringList denyList = this->DicomDatabase->disabledConnectionsForPatient(this->PatientItem);
   QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
   int wasBlocking = this->PatientServersCheckableComboBox->blockSignals(true);
 
-  this->ServersStatus.clear();
   this->PatientServersCheckableComboBox->clear();
   this->PatientServersCheckableComboBox->addItems(allActiveConnectionNames);
-
+  this->EnabledServers.clear();
   for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
   {
     QString connectionName = this->PatientServersCheckableComboBox->itemText(filterIndex);
     QModelIndex modelIndex = model->index(filterIndex, 0);
 
     Qt::CheckState checkState = Qt::CheckState::PartiallyChecked;
-    if (connectionNamesFromDB.contains(connectionName))
+    if (allowList.contains(connectionName))
     {
-    checkState = Qt::CheckState::Checked;
+      checkState = Qt::CheckState::Checked;
     }
-    this->ServersStatus.insert(connectionName, checkState);
+    else if (denyList.contains(connectionName))
+    {
+      checkState = Qt::CheckState::Unchecked;
+    }
+
     this->PatientServersCheckableComboBox->setCheckState(modelIndex, checkState);
+
+    if (checkState != Qt::CheckState::Unchecked)
+    {
+      this->EnabledServers.append(connectionName);
+    }
   }
   this->PatientServersCheckableComboBox->blockSignals(wasBlocking);
-  this->EnabledServers = QStringList("All");
-  this->passEnabledServersStringListToChildren(this->EnabledServers);
-}
 
-//----------------------------------------------------------------------------
-void ctkDICOMPatientItemWidgetPrivate::updateEnabledServersUIFromServerStatusMap()
-{
-  if (!this->Scheduler)
-  {
-    logger.error("updateEnabledServersUIFromServerStatusMap, no scheduler has been set. \n");
-    return;
-  }
-
-  // All active servers (either query/retrieve or storage is toggled).
-  // We assume that the security by default is unknown (patially checked in the UI).
-  // before running any query/retrieve/storage operation the UI needs to ask to the user permissions
-  QStringList allActiveConnectionNames = this->Scheduler->getConnectionNamesForActiveServers();
-  if (allActiveConnectionNames.count() == 0)
-  {
-    this->PatientServersCheckableComboBox->clear();
-    return;
-  }
-
-  QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
-  int wasBlocking = this->PatientServersCheckableComboBox->blockSignals(true);
-
-  this->PatientServersCheckableComboBox->clear();
-  this->PatientServersCheckableComboBox->addItems(allActiveConnectionNames);
-
-  for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
-  {
-    QString connectionName = this->PatientServersCheckableComboBox->itemText(filterIndex);
-    QModelIndex modelIndex = model->index(filterIndex, 0);
-    if (!this->ServersStatus.contains(connectionName))
-    {
-      continue;
-    }
-    Qt::CheckState checkState = this->ServersStatus[connectionName];
-    this->PatientServersCheckableComboBox->setCheckState(modelIndex, checkState);
-  }
-  this->PatientServersCheckableComboBox->blockSignals(wasBlocking);
-  this->saveEnabledServersStringListFromUI();
+  this->saveEnabledServersStringListToChildren(this->EnabledServers);
 }
 
 //----------------------------------------------------------------------------
@@ -590,28 +557,36 @@ bool ctkDICOMPatientItemWidgetPrivate::askUserActionForServerSecurity()
 void ctkDICOMPatientItemWidgetPrivate::saveEnabledServersStringListFromUI()
 {
   QStringList enabledServers;
-  this->ServersStatus.clear();
+  QStringList allowList;
+  QStringList denyList;
   QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
   for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
   {
     QModelIndex modelIndex = model->index(filterIndex, 0);
     Qt::CheckState checkState = this->PatientServersCheckableComboBox->checkState(modelIndex);
     QString connectionName = this->PatientServersCheckableComboBox->itemText(filterIndex);
-    this->ServersStatus.insert(connectionName, checkState);
     if (checkState == Qt::CheckState::Unchecked)
     {
-      continue;
+      denyList.append(connectionName);
+    }
+    else if (checkState == Qt::CheckState::Checked)
+    {
+      allowList.append(connectionName);
     }
 
-    enabledServers.append(connectionName);
+    if (checkState != Qt::CheckState::Unchecked)
+    {
+      enabledServers.append(connectionName);
+    }
   }
 
+  this->DicomDatabase->updateConnectionsForPatient(this->PatientItem, allowList, denyList);
   this->EnabledServers = enabledServers;
-  this->passEnabledServersStringListToChildren(this->EnabledServers);
+  this->saveEnabledServersStringListToChildren(this->EnabledServers);
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMPatientItemWidgetPrivate::passEnabledServersStringListToChildren(const QStringList& enabledServers)
+void ctkDICOMPatientItemWidgetPrivate::saveEnabledServersStringListToChildren(const QStringList& enabledServers)
 {
   foreach (ctkDICOMStudyItemWidget* studyItemWidget, this->StudyItemWidgetsList)
   {
@@ -751,18 +726,17 @@ QStringList ctkDICOMPatientItemWidget::filteringModalities() const
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMPatientItemWidget::setServersStatus(const QMap<QString, Qt::CheckState>& serversStatus)
+void ctkDICOMPatientItemWidget::setEnabledServers(const QStringList& enabledServers)
 {
   Q_D(ctkDICOMPatientItemWidget);
-  d->ServersStatus = serversStatus;
-  d->updateEnabledServersUIFromServerStatusMap();
+  d->EnabledServers = enabledServers;
 }
 
 //------------------------------------------------------------------------------
-QMap<QString, Qt::CheckState> ctkDICOMPatientItemWidget::serversStatus() const
+QStringList ctkDICOMPatientItemWidget::enabledServers() const
 {
   Q_D(const ctkDICOMPatientItemWidget);
-  return d->ServersStatus;
+  return d->EnabledServers;
 }
 
 //------------------------------------------------------------------------------
