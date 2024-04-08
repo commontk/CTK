@@ -87,14 +87,14 @@ public:
   int connectionTimeout() const;
   ///@}
 
-  /// operation is canceled?
+  /// Return true if the operation was canceled.
   Q_INVOKABLE bool wasCanceled();
 
   /// Echo connection.
   Q_INVOKABLE bool echo();
 
   ///@{
-  /// Access the list of datasets from the last operation.
+  /// Reference job uid.
   void setJobUID(const QString& jobUID);
   QString jobUID() const;
   ///@}

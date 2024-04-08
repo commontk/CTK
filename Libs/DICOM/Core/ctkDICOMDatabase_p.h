@@ -149,21 +149,21 @@ public:
   QMap<QString, int> InsertedPatientsCompositeIDCache;
 
   /// map from patient database ID and connection name to database ID
-  struct patientConnectionName{
-    int dbPatientID;
-    QString connectionName;
+  struct PatientConnectionName{
+    int DBPatientID;
+    QString ConnectionName;
 
     // Define comparison function for sorting
-    bool operator < (const patientConnectionName& other) const
+    bool operator < (const PatientConnectionName& other) const
     {
-      if (dbPatientID != other.dbPatientID)
+      if (DBPatientID != other.DBPatientID)
       {
-        return dbPatientID < other.dbPatientID;
+        return DBPatientID < other.DBPatientID;
       }
-      return connectionName < other.connectionName;
+      return ConnectionName < other.ConnectionName;
     }
   };
-  QMap<patientConnectionName, int> InsertedConnectionNamesIDCache;
+  QMap<PatientConnectionName, int> InsertedConnectionNamesIDCache;
 
   /// map studies and series UIDs
   QSet<QString> InsertedStudyUIDsCache;

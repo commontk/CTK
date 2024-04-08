@@ -676,45 +676,46 @@ void ctkDICOMScheduler::waitForFinishByDICOMUIDs(const QStringList& patientIDs,
     return;
   }
 
-  d->QueueMutex.lock();
-  bool wait = true;
-  while (wait)
   {
-    QCoreApplication::processEvents();
-    d->ThreadPool->waitForDone(300);
-
-    wait = false;
-    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+    QMutexLocker locker(&d->QueueMutex);
+    bool wait = true;
+    while (wait)
     {
-      if (!job)
-      {
-        continue;
-      }
+      QCoreApplication::processEvents();
+      d->ThreadPool->waitForDone(300);
 
-      if (job->isPersistent())
+      wait = false;
+      foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
       {
-        continue;
-      }
-      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
-      if (!dicomJob)
-      {
-        continue;
-      }
-
-      if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
-        (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
-        (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
-        (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
-      {
-        if (job->status() != ctkAbstractJob::JobStatus::Finished)
+        if (!job)
         {
-          wait = true;
-          break;
+          continue;
+        }
+
+        if (job->isPersistent())
+        {
+          continue;
+        }
+        ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+        if (!dicomJob)
+        {
+          continue;
+        }
+
+        if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+          (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
+          (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
+          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
+        {
+          if (job->status() != ctkAbstractJob::JobStatus::Finished)
+          {
+            wait = true;
+            break;
+          }
         }
       }
     }
   }
-  d->QueueMutex.unlock();
 }
 
 //----------------------------------------------------------------------------
@@ -748,30 +749,31 @@ QList<QSharedPointer<ctkAbstractJob>> ctkDICOMScheduler::getJobsByDICOMUIDs(cons
     return jobs;
   }
 
-  d->QueueMutex.lock();
-  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
-    if (!job)
+    QMutexLocker locker(&d->QueueMutex);
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
-      continue;
-    }
+      if (!job)
+      {
+        continue;
+      }
 
-    ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
-    if (!dicomJob)
-    {
-      qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
-      continue;
-    }
+      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+      if (!dicomJob)
+      {
+        qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+        continue;
+      }
 
-    if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
-        (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
-        (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
-        (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
-    {
-      jobs.push_back(job);
+      if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+          (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
+          (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
+          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
+      {
+        jobs.push_back(job);
+      }
     }
   }
-  d->QueueMutex.unlock();
 
   return jobs;
 }
@@ -806,37 +808,38 @@ void ctkDICOMScheduler::stopJobsByDICOMUIDs(const QStringList& patientIDs,
   }
 
   QStringList jobsUIDs;
-  d->QueueMutex.lock();
-  // Stops jobs without a worker (in waiting, still in main thread)
-  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
-    if (!job)
+    QMutexLocker locker(&d->QueueMutex);
+    // Stops jobs without a worker (in waiting, still in main thread)
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
-      continue;
-    }
+      if (!job)
+      {
+        continue;
+      }
 
-    ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
-    if (!dicomJob)
-    {
-      qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
-      continue;
-    }
+      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+      if (!dicomJob)
+      {
+        qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+        continue;
+      }
 
-    ctkDICOMInserterJob* inserterJob = qobject_cast<ctkDICOMInserterJob*>(job.data());
-    if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
-        (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
-        (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
-        (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
-    {
-      jobsUIDs.append(dicomJob->jobUID());
-    }
-    else if (inserterJob)
-    {
-      jobsUIDs.append(dicomJob->jobUID());
+      ctkDICOMInserterJob* inserterJob = qobject_cast<ctkDICOMInserterJob*>(job.data());
+      if ((!dicomJob->patientID().isEmpty() && patientIDs.contains(dicomJob->patientID())) ||
+          (!dicomJob->studyInstanceUID().isEmpty() && studyInstanceUIDs.contains(dicomJob->studyInstanceUID())) ||
+          (!dicomJob->seriesInstanceUID().isEmpty() && seriesInstanceUIDs.contains(dicomJob->seriesInstanceUID())) ||
+          (!dicomJob->sopInstanceUID().isEmpty() && sopInstanceUIDs.contains(dicomJob->sopInstanceUID())))
+      {
+        jobsUIDs.append(dicomJob->jobUID());
+      }
+      else if (inserterJob)
+      {
+        jobsUIDs.append(dicomJob->jobUID());
+      }
     }
   }
 
-  d->QueueMutex.unlock();
   this->stopJobsByJobUIDs(jobsUIDs);
 }
 
@@ -923,29 +926,30 @@ void ctkDICOMScheduler::raiseJobsPriorityForSeries(const QStringList& selectedSe
     return;
   }
 
-  d->QueueMutex.lock();
-  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
   {
-    if (job->isPersistent())
+    QMutexLocker locker(&d->QueueMutex);
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
-      continue;
-    }
+      if (job->isPersistent())
+      {
+        continue;
+      }
 
-    ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
-    if (!dicomJob)
-    {
-      qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
-      continue;
-    }
+      ctkDICOMJob* dicomJob = qobject_cast<ctkDICOMJob*>(job.data());
+      if (!dicomJob)
+      {
+        qCritical() << Q_FUNC_INFO << " failed: unexpected type of job";
+        continue;
+      }
 
-    if (!selectedSeriesInstanceUIDs.contains(dicomJob->seriesInstanceUID()))
-    {
-      priority = QThread::Priority::LowPriority;
-    }
+      if (!selectedSeriesInstanceUIDs.contains(dicomJob->seriesInstanceUID()))
+      {
+        priority = QThread::Priority::LowPriority;
+      }
 
-    job->setPriority(priority);
+      job->setPriority(priority);
+    }
   }
-  d->QueueMutex.unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -967,18 +971,20 @@ ctkDICOMStorageListenerJob* ctkDICOMScheduler::listenerJob()
 {
   Q_D(ctkDICOMScheduler);
   ctkDICOMStorageListenerJob* listenerJobRaw = nullptr;
-  d->QueueMutex.lock();
-  foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
+
   {
-    QSharedPointer<ctkDICOMStorageListenerJob> listenerJob =
-      qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(job);
-    if (listenerJob)
+    QMutexLocker locker(&d->QueueMutex);
+    foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
-      listenerJobRaw = listenerJob.data();
-      break;
+      QSharedPointer<ctkDICOMStorageListenerJob> listenerJob =
+        qSharedPointerObjectCast<ctkDICOMStorageListenerJob>(job);
+      if (listenerJob)
+      {
+        listenerJobRaw = listenerJob.data();
+        break;
+      }
     }
   }
-  d->QueueMutex.unlock();
 
   return listenerJobRaw;
 }

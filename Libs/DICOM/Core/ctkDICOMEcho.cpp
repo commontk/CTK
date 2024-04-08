@@ -44,7 +44,7 @@ public:
   ctkDICOMEchoPrivate();
   ~ctkDICOMEchoPrivate();
 
-  /// Warning: releaseAssociation is not a thread safe method.
+  /// \warning: releaseAssociation is not a thread safe method.
   /// If called concurrently from different threads DCMTK can crash.
   /// Therefore use this method instead of calling directly SCU->releaseAssociation()
   OFCondition releaseAssociation();
@@ -96,14 +96,14 @@ ctkDICOMEchoPrivate::ctkDICOMEchoPrivate()
 ctkDICOMEchoPrivate::~ctkDICOMEchoPrivate()
 {
   if (this->SCU && this->SCU->isConnected())
-    {
-      this->releaseAssociation();
-    }
+  {
+    this->releaseAssociation();
+  }
 
-    if (this->SCU)
-    {
-      delete this->SCU;
-    }
+  if (this->SCU)
+  {
+    delete this->SCU;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -115,17 +115,15 @@ OFCondition ctkDICOMEchoPrivate::releaseAssociation()
     return status;
     }
 
-  this->AssociationMutex.lock();
+  QMutexLocker locker(&this->AssociationMutex);
   if (this->AssociationClosing)
   {
-    this->AssociationMutex.unlock();
     return status;
   }
 
   this->AssociationClosing = true;
   status = this->SCU->releaseAssociation();
   this->AssociationClosing = false;
-  this->AssociationMutex.unlock();
 
   return status;
 }

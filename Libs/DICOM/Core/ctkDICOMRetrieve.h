@@ -109,7 +109,7 @@ public:
   int connectionTimeout() const;
   ///@}
 
-  /// operation is canceled?
+  /// Return true if the operation was canceled.
   Q_INVOKABLE bool wasCanceled();
 
   ///@{
@@ -128,6 +128,10 @@ public:
   Q_INVOKABLE void addJobResponseSet(ctkDICOMJobResponseSet& jobResponseSet);
   void addJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
   void removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSet> jobResponseSet);
+  ///@}
+
+  ///@{
+  /// Reference job uid.
   void setJobUID(const QString& jobUID);
   QString jobUID() const;
   ///@}
