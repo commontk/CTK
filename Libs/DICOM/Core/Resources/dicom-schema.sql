@@ -6,6 +6,8 @@
 --       commands per QSqlQuery::exec call!
 -- Note: be sure to update ctkDICOMDatabase and SchemaInfo Version
 --       whenever you make a change to this schema
+-- Note: in the Patients table, the Connections value has a json format, e.g.:
+--       {"allow":["pacs1","pacs2"],"deny":["pacs5"]}
 -- ;
 
 DROP TABLE IF EXISTS 'SchemaInfo' ;
@@ -48,14 +50,8 @@ CREATE TABLE 'Patients' (
   'DisplayedPatientsName' VARCHAR(255) NULL ,
   'DisplayedNumberOfStudies' INT NULL ,
   'DisplayedLastStudyDate' DATE NULL ,
-  'DisplayedFieldsUpdatedTimestamp' DATETIME NULL
-);
-
-CREATE TABLE 'ConnectionNames' (
-  'ConnectionID' INTEGER PRIMARY KEY AUTOINCREMENT,
-  'ConnectionName' VARCHAR(255) NOT NULL,
-  'PatientUID' INTEGER,
-  FOREIGN KEY('PatientUID') REFERENCES Patients('UID')
+  'DisplayedFieldsUpdatedTimestamp' DATETIME NULL,
+  'Connections' VARCHAR(2048) NULL
 );
 
 CREATE TABLE 'Studies' (
@@ -133,6 +129,7 @@ INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedPatientsName'
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedNumberOfStudies',        'Studies',              1, 5, '{"resizeMode":"resizeToContents"}');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedLastStudyDate',          'Last study date',      1, 6, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'DisplayedFieldsUpdatedTimestamp', '',                     0, 0, '');
+INSERT INTO 'ColumnDisplayProperties' VALUES('Patients', 'Connections',                     '',                     0, 0, '');
 
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'StudyInstanceUID',                '',                     0, 0, '');
 INSERT INTO 'ColumnDisplayProperties' VALUES('Studies',  'PatientsUID',                     '',                     0, 0, '');

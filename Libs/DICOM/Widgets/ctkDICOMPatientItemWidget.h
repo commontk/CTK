@@ -49,7 +49,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMPatientItemWidget : public QWidget
   Q_PROPERTY(QString patientName READ patientName WRITE setPatientName);
   Q_PROPERTY(int numberOfStudiesPerPatient READ numberOfStudiesPerPatient WRITE setNumberOfStudiesPerPatient);
   Q_PROPERTY(ctkDICOMStudyItemWidget::ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
-  Q_PROPERTY(QMap<QString, Qt::CheckState> serversStatus READ serversStatus WRITE setServersStatus);
+  Q_PROPERTY(QStringList enabledServers READ enabledServers WRITE setEnabledServers);
 
 public:
   typedef QWidget Superclass;
@@ -171,8 +171,9 @@ public:
 
   ///@{
   /// Enabled Servers
-  void setServersStatus(const QMap<QString, Qt::CheckState>& serversStatus);
-  QMap<QString, Qt::CheckState> serversStatus() const;
+  /// ["All"] by default
+  void setEnabledServers(const QStringList& enabledServers);
+  QStringList enabledServers() const;
   Q_INVOKABLE void updateEnabledServersUIFromDB();
   Q_INVOKABLE bool askUserActionForServerSecurity();
   ///@}

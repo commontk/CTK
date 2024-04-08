@@ -146,7 +146,6 @@ public:
   void updateModalityCheckableComboBox();
   void createPatients(QString patientID = "",
                       QString patientName = "",
-                      const QMap<QString, Qt::CheckState>& serversStatus = QMap<QString, Qt::CheckState>(),
                       bool queryRetrieve = true);
   void resetFilters();
   void updateFiltersWarnings();
@@ -667,7 +666,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateModalityCheckableComboBox()
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::createPatients(QString selectedPatientID,
                                                         QString selectedPatientName,
-                                                        const QMap<QString, Qt::CheckState>& serversStatus,
                                                         bool queryRetrieve)
 {
   Q_Q(ctkDICOMVisualBrowserWidget);
@@ -746,10 +744,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::createPatients(QString selectedPatientI
     qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->currentWidget());
   if (currentPatientItemWidget)
   {
-    if (selectedIndex != -1 && serversStatus.count() != 0)
-    {
-      currentPatientItemWidget->setServersStatus(serversStatus);
-    }
     currentPatientItemWidget->generateStudies(queryRetrieve);
   }
 
@@ -2297,7 +2291,7 @@ void ctkDICOMVisualBrowserWidget::onIndexingComplete(int patientsAdded, int stud
   // allow users of this widget to know that the process has finished
   emit directoryImported();
 
-  d->createPatients("", "", QMap<QString, Qt::CheckState>(), false);
+  d->createPatients("", "", false);
   d->setBackgroundColorToFilterWidgets();
 }
 
@@ -2726,14 +2720,12 @@ void ctkDICOMVisualBrowserWidget::onShowPatients()
   // Save current patient selection
   QString patientID;
   QString patientName;
-  QMap<QString, Qt::CheckState> serversStatus = QMap<QString, Qt::CheckState>();
   ctkDICOMPatientItemWidget* currentPatientItemWidget =
     qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
   if (currentPatientItemWidget)
   {
     patientID = currentPatientItemWidget->patientID();
     patientName = currentPatientItemWidget->patientName();
-    serversStatus = currentPatientItemWidget->serversStatus();
   }
 
   // Clear the UI.
@@ -2753,7 +2745,7 @@ void ctkDICOMVisualBrowserWidget::onShowPatients()
     d->WarningPushButton->hide();
   }
 
-  d->createPatients(patientID, patientName, serversStatus, false);
+  d->createPatients(patientID, patientName, false);
   d->updateFiltersWarnings();
 }
 
@@ -2792,14 +2784,12 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
   // Save current patient selection
   QString patientID;
   QString patientName;
-  QMap<QString, Qt::CheckState> serversStatus = QMap<QString, Qt::CheckState>();
   ctkDICOMPatientItemWidget* currentPatientItemWidget =
     qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
   if (currentPatientItemWidget)
   {
     patientID = currentPatientItemWidget->patientID();
     patientName = currentPatientItemWidget->patientName();
-    serversStatus = currentPatientItemWidget->serversStatus();
   }
 
   // Clear the UI.
@@ -2831,7 +2821,7 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     d->WarningPushButton->hide();
   }
 
-  d->createPatients(patientID, patientName, serversStatus, true);
+  d->createPatients(patientID, patientName, true);
 
   if (filtersEmpty || (d->Scheduler->getNumberOfQueryRetrieveServers() == 0))
   {
