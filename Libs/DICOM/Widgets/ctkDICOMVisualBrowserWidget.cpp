@@ -2205,7 +2205,6 @@ void ctkDICOMVisualBrowserWidget::importDirectories(const QStringList& directori
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   this->resetItemsAddedDuringImportCounters();
-  this->resetFilters();
   d->ProgressFrame->show();
   foreach (const QString& directory, directories)
   {
@@ -2218,7 +2217,6 @@ void ctkDICOMVisualBrowserWidget::importDirectory(const QString& directory, Impo
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   this->resetItemsAddedDuringImportCounters();
-  this->resetFilters();
   d->ProgressFrame->show();
   d->importDirectory(directory, mode);
 }
@@ -2228,7 +2226,6 @@ void ctkDICOMVisualBrowserWidget::importFiles(const QStringList& files, ImportDi
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   this->resetItemsAddedDuringImportCounters();
-  this->resetFilters();
   d->ProgressFrame->show();
   d->importFiles(files, mode);
 }
