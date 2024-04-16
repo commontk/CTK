@@ -188,7 +188,7 @@ public Q_SLOTS:
   Q_INVOKABLE void releaseAssociation();
 
 protected:
-  QString applyFilters();
+  QString applyFilters(QMap<QString,QVariant>);
   bool initializeSCU();
 
   QScopedPointer<ctkDICOMQueryPrivate> d_ptr;

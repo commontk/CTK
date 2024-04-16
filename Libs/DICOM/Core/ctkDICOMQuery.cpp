@@ -339,10 +339,9 @@ bool ctkDICOMQuery::query(ctkDICOMDatabase& database)
 
   // Make clear we define our search values in ISO Latin 1 (default would be ASCII)
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SpecificCharacterSet, "ISO_IR 100");
-
   d->QueryDcmDataset->putAndInsertString (DCM_QueryRetrieveLevel, "STUDY");
 
-  QString seriesDescription = this->applyFilters();
+  QString seriesDescription = this->applyFilters(d->Filters);
   if (d->Canceled)
   {
     return false;
@@ -512,21 +511,15 @@ bool ctkDICOMQuery::queryPatients()
   d->QueryDcmDataset->insertEmptyElement(DCM_PatientID);
   d->QueryDcmDataset->insertEmptyElement(DCM_PatientName);
   d->QueryDcmDataset->insertEmptyElement(DCM_PatientBirthDate);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyID);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyInstanceUID);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyDescription);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyDate);
-  d->QueryDcmDataset->insertEmptyElement(DCM_StudyTime);
-  d->QueryDcmDataset->insertEmptyElement(DCM_ModalitiesInStudy);
-  d->QueryDcmDataset->insertEmptyElement(DCM_AccessionNumber);
-  d->QueryDcmDataset->insertEmptyElement(DCM_NumberOfStudyRelatedSeries); // Number of series in the study
 
   // Make clear we define our search values in ISO Latin 1 (default would be ASCII)
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SpecificCharacterSet, "ISO_IR 100");
-
   d->QueryDcmDataset->putAndInsertString(DCM_QueryRetrieveLevel, "PATIENT");
 
-  QString seriesDescription = this->applyFilters();
+  QMap<QString,QVariant> filters;
+  filters["Name"] = d->Filters["Name"];
+  filters["ID"] = d->Filters["ID"];
+  this->applyFilters(filters);
   if (d->Canceled)
   {
     return false;
@@ -651,10 +644,17 @@ bool ctkDICOMQuery::queryStudies(const QString& patientID)
 
   // Make clear we define our search values in ISO Latin 1 (default would be ASCII)
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SpecificCharacterSet, "ISO_IR 100");
-
   d->QueryDcmDataset->putAndInsertString(DCM_QueryRetrieveLevel, "STUDY");
 
-  QString seriesDescription = this->applyFilters();
+  QMap<QString,QVariant> filters;
+  filters["Name"] = d->Filters["Name"];
+  filters["ID"] = d->Filters["ID"];
+  filters["Study"] = d->Filters["Study"];
+  filters["AccessionNumber"] = d->Filters["AccessionNumber"];
+  filters["Modalities"] = d->Filters["Modalities"];
+  filters["StartDate"] = d->Filters["StartDate"];
+  filters["EndDate"] = d->Filters["EndDate"];
+  this->applyFilters(filters);
   if (d->Canceled)
   {
     return false;
@@ -768,7 +768,15 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
   d->QueryDcmDataset->insertEmptyElement(DCM_Modality);
   d->QueryDcmDataset->insertEmptyElement(DCM_NumberOfSeriesRelatedInstances); // Number of images in the series
 
-  QString seriesDescription = this->applyFilters();
+  QMap<QString,QVariant> filters;
+  filters["Name"] = d->Filters["Name"];
+  filters["ID"] = d->Filters["ID"];
+  filters["Study"] = d->Filters["Study"];
+  filters["AccessionNumber"] = d->Filters["AccessionNumber"];
+  filters["StartDate"] = d->Filters["StartDate"];
+  filters["EndDate"] = d->Filters["EndDate"];
+  filters["Series"] = d->Filters["Series"];
+  QString seriesDescription = this->applyFilters(filters);
   if (d->Canceled)
   {
     return false;
@@ -776,8 +784,6 @@ bool ctkDICOMQuery::querySeries(const QString& patientID,
 
   /* Add user-defined filters */
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SeriesDescription, seriesDescription.toLatin1().data());
-
-  // Now search each within each Study that was identified
   d->QueryDcmDataset->putAndInsertString(DCM_QueryRetrieveLevel, "SERIES");
 
   Uint16 presentationContext = 0;
@@ -888,7 +894,15 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
   d->QueryDcmDataset->insertEmptyElement(DCM_Rows);
   d->QueryDcmDataset->insertEmptyElement(DCM_Columns);
 
-  QString seriesDescription = this->applyFilters();
+  QMap<QString,QVariant> filters;
+  filters["Name"] = d->Filters["Name"];
+  filters["ID"] = d->Filters["ID"];
+  filters["Study"] = d->Filters["Study"];
+  filters["AccessionNumber"] = d->Filters["AccessionNumber"];
+  filters["StartDate"] = d->Filters["StartDate"];
+  filters["EndDate"] = d->Filters["EndDate"];
+  filters["Series"] = d->Filters["Series"];
+  QString seriesDescription = this->applyFilters(filters);
   if (d->Canceled)
   {
     return false;
@@ -896,8 +910,6 @@ bool ctkDICOMQuery::queryInstances(const QString& patientID,
 
   /* Add user-defined filters */
   d->QueryDcmDataset->putAndInsertOFStringArray(DCM_SeriesDescription, seriesDescription.toLatin1().data());
-
-  // Now search each within each Study that was identified
   d->QueryDcmDataset->putAndInsertString(DCM_QueryRetrieveLevel, "IMAGE");
 
   // Check for any accepted presentation context for FIND in study root (don't care about transfer syntax)
@@ -1049,7 +1061,7 @@ bool ctkDICOMQuery::initializeSCU()
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMQuery::applyFilters()
+QString ctkDICOMQuery::applyFilters(QMap<QString,QVariant> filters)
 {
   Q_D(ctkDICOMQuery);
 
@@ -1058,49 +1070,49 @@ QString ctkDICOMQuery::applyFilters()
    * Study Description, Modalities in Study, and Study Date are used.
    */
   QString seriesDescription;
-  foreach(QString key, d->Filters.keys())
+  foreach(QString key, filters.keys())
   {
-    if ( key == QString("Name") && !d->Filters[key].toString().isEmpty())
+    if (key == QString("Name") && !filters[key].toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
-      d->QueryDcmDataset->putAndInsertString( DCM_PatientName,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
+      d->QueryDcmDataset->putAndInsertString(DCM_PatientName,
+        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
     }
-    else if ( key == QString("Study") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("ID") && !filters[key].toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
-      d->QueryDcmDataset->putAndInsertString( DCM_StudyDescription,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
+      d->QueryDcmDataset->putAndInsertString(DCM_PatientID,
+        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
     }
-    else if ( key == QString("ID") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("Study") && !filters[key].toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
-      d->QueryDcmDataset->putAndInsertString( DCM_PatientID,
-        (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
+      d->QueryDcmDataset->putAndInsertString(DCM_StudyDescription,
+        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
     }
-    else if (key == QString("AccessionNumber") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("AccessionNumber") && !filters[key].toString().isEmpty())
     {
-        // make the filter a wildcard in dicom style
-        d->QueryDcmDataset->putAndInsertString(DCM_AccessionNumber,
-            (QString("*") + d->Filters[key].toString() + QString("*")).toLatin1().data());
+      // make the filter a wildcard in dicom style
+      d->QueryDcmDataset->putAndInsertString(DCM_AccessionNumber,
+        (QString("*") + filters[key].toString() + QString("*")).toLatin1().data());
     }
-    else if ( key == QString("Modalities") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("Modalities") && filters[key].toStringList().count() != 0)
     {
       // make the filter be an "OR" of modalities using backslash (dicom-style)
       QString modalitySearch("");
-      foreach (const QString& modality, d->Filters[key].toStringList())
+      foreach (const QString& modality, filters[key].toStringList())
       {
         modalitySearch += modality + QString("\\");
       }
       modalitySearch.chop(1); // remove final backslash
       logger.debug("modalityInStudySearch " + modalitySearch);
-      d->QueryDcmDataset->putAndInsertString( DCM_ModalitiesInStudy, modalitySearch.toLatin1().data() );
+      d->QueryDcmDataset->putAndInsertString(DCM_ModalitiesInStudy, modalitySearch.toLatin1().data());
     }
     // Remember Series Description for later series query if we go through the keys now
-    else if ( key == QString("Series") && !d->Filters[key].toString().isEmpty())
+    else if (key == QString("Series") && !filters[key].toString().isEmpty())
     {
       // make the filter a wildcard in dicom style
-      seriesDescription = "*" + d->Filters[key].toString() + "*";
+      seriesDescription = "*" + filters[key].toString() + "*";
     }
     else
     {
@@ -1108,12 +1120,12 @@ QString ctkDICOMQuery::applyFilters()
     }
   }
 
-  if ( d->Filters.keys().contains("StartDate") && d->Filters.keys().contains("EndDate") )
+  if (filters.keys().contains("StartDate") && filters.keys().contains("EndDate"))
   {
-    QString dateRange = d->Filters["StartDate"].toString() +
+    QString dateRange = filters["StartDate"].toString() +
                         QString("-") +
-                        d->Filters["EndDate"].toString();
-    d->QueryDcmDataset->putAndInsertString ( DCM_StudyDate, dateRange.toLatin1().data() );
+                        filters["EndDate"].toString();
+    d->QueryDcmDataset->putAndInsertString (DCM_StudyDate, dateRange.toLatin1().data());
     logger.debug("Query on study date " + dateRange);
   }
 
