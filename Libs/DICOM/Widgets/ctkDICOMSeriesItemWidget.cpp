@@ -159,7 +159,8 @@ QString ctkDICOMSeriesItemWidgetPrivate::getDICOMCenterFrameFromInstances(QStrin
     return "";
   }
 
-  if (instancesList.count() == 0)
+  int numberOfInstances = instancesList.count();
+  if (numberOfInstances == 0)
   {
     return "";
   }
@@ -167,7 +168,7 @@ QString ctkDICOMSeriesItemWidgetPrivate::getDICOMCenterFrameFromInstances(QStrin
   // NOTE: we sort by the instance number.
   // We could sort for 3D spatial values (ImagePatientPosition and ImagePatientOrientation),
   // plus time information (for 4D datasets). However, this would require additional metadata fetching and logic, which can slow down.
-  QMap<int, QString> DICOMInstances;
+  QMap<int, QString> sortedInstancesMap;
   foreach (QString instanceItem, instancesList)
   {
     int instanceNumber = 0;
@@ -178,26 +179,20 @@ QString ctkDICOMSeriesItemWidgetPrivate::getDICOMCenterFrameFromInstances(QStrin
       instanceNumber = instanceNumberString.toInt();
     }
 
-    DICOMInstances[instanceNumber] = instanceItem;
+    sortedInstancesMap[instanceNumber] = instanceItem;
   }
 
-  if (DICOMInstances.count() == 1)
+  if (sortedInstancesMap.count() < 2)
   {
-    return instancesList[0];
+    return instancesList[floor(numberOfInstances / 2)];
   }
 
-  QList<int> keys = DICOMInstances.keys();
+  QList<int> keys = sortedInstancesMap.keys();
   std::sort(keys.begin(), keys.end());
 
-  int centerFrameIndex = floor(keys.count() / 2);
-  if (keys.count() <= centerFrameIndex)
-  {
-    return instancesList[0];
-  }
-
-  int centerInstanceNumber = keys[centerFrameIndex];
-
-  return DICOMInstances[centerInstanceNumber];
+  int centerInstanceIndex = floor(keys.count() / 2);
+  int centerInstanceNumber = keys[centerInstanceIndex];
+  return sortedInstancesMap[centerInstanceNumber];
 }
 
 //----------------------------------------------------------------------------
