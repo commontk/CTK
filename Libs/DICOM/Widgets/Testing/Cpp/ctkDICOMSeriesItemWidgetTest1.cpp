@@ -57,8 +57,8 @@ int ctkDICOMSeriesItemWidgetTest1(int argc, char* argv[])
   CHECK_BOOL(widget.stopJobs(), false);
   CHECK_BOOL(widget.raiseJobsPriority(), false);
   CHECK_BOOL(widget.isCloud(), false);
-  CHECK_BOOL(widget.IsLoaded(), false);
-  CHECK_BOOL(widget.IsVisible(), false);
+  CHECK_BOOL(widget.isLoaded(), false);
+  CHECK_BOOL(widget.isVisible(), false);
   CHECK_INT(widget.thumbnailSizePixel(), 200);
 
   // Test setting and getting

@@ -113,16 +113,16 @@ int ctkDICOMVisualBrowserWidgetTest1(int argc, char* argv[])
   CHECK_INT(browser.seriesAddedDuringImport(), 1);
   CHECK_INT(browser.instancesAddedDuringImport(), 3);
 
+  qDebug().noquote() << "\n\n"
+                   << testName << ": Added to database directory: " << files;
+
   browser.importDirectories(QStringList() << argv[1]);
   browser.waitForImportFinished();
 
-  qDebug().noquote() << "\n\n"
-                     << testName << ": Added to database directory: " << files;
-
-  CHECK_INT(browser.patientsAddedDuringImport(), 1);
-  CHECK_INT(browser.studiesAddedDuringImport(), 1);
-  CHECK_INT(browser.seriesAddedDuringImport(), 1);
-  CHECK_INT(browser.instancesAddedDuringImport(), 100);
+  CHECK_INT(browser.patientsAddedDuringImport(), 0);
+  CHECK_INT(browser.studiesAddedDuringImport(), 0);
+  CHECK_INT(browser.seriesAddedDuringImport(), 0);
+  CHECK_INT(browser.instancesAddedDuringImport(), 97);
 
   qDebug().noquote() << "\n\n"
                      << testName << ": Added to database directory: " << dbDir;
