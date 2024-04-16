@@ -338,6 +338,8 @@ void ctkDICOMServerNodeWidget2Private::init()
                                             new QCheckStateStyledItemDelegate());
   this->NodeTable->setItemDelegateForColumn(ctkDICOMServerNodeWidget2::StorageColumn,
                                             new QCheckStateStyledItemDelegate());
+  this->NodeTable->setItemDelegateForColumn(ctkDICOMServerNodeWidget2::TrustedColumn,
+                                            new QCheckStateStyledItemDelegate());
   this->NodeTable->setItemDelegateForColumn(ctkDICOMServerNodeWidget2::CallingAETitleColumn,
                                             new QSelectionColorStyledItemDelegate());
   this->NodeTable->setItemDelegateForColumn(ctkDICOMServerNodeWidget2::CalledAETitleColumn,
@@ -491,6 +493,9 @@ QMap<QString, QVariant> ctkDICOMServerNodeWidget2Private::serverNodeParameters(i
   node["StorageCheckState"] = this->NodeTable->item(row, ctkDICOMServerNodeWidget2::StorageColumn) ?
     this->NodeTable->item(row, ctkDICOMServerNodeWidget2::StorageColumn)->checkState() :
     static_cast<int>(Qt::Unchecked);
+  node["TrustedCheckState"] = this->NodeTable->item(row, ctkDICOMServerNodeWidget2::TrustedColumn) ?
+    this->NodeTable->item(row, ctkDICOMServerNodeWidget2::TrustedColumn)->checkState() :
+    static_cast<int>(Qt::Unchecked);
 
   QLineEdit* portLineEdit = qobject_cast<QLineEdit*>(this->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::PortColumn));
   if (portLineEdit)
@@ -592,6 +597,10 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   newItem = new QTableWidgetItem(QString(""));
   newItem->setCheckState(Qt::CheckState(node["StorageCheckState"].toInt()));
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::StorageColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  newItem->setCheckState(Qt::CheckState(node["TrustedCheckState"].toInt()));
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TrustedColumn, newItem);
 
   newItem = new QTableWidgetItem(node["Calling AETitle"].toString());
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::CallingAETitleColumn, newItem);
@@ -712,6 +721,10 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
   newItem->setCheckState(server->storageEnabled() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::StorageColumn, newItem);
 
+  newItem = new QTableWidgetItem(QString(""));
+  newItem->setCheckState(server->storageEnabled() ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
+  this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::TrustedColumn, newItem);
+
   newItem = new QTableWidgetItem(server->callingAETitle());
   this->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::CallingAETitleColumn, newItem);
 
@@ -802,6 +815,7 @@ QSharedPointer<ctkDICOMServer> ctkDICOMServerNodeWidget2Private::createServerFro
   server->setConnectionName(node["Name"].toString());
   server->setQueryRetrieveEnabled(node["QueryRetrieveCheckState"].toInt() == 0 ? false : true);
   server->setStorageEnabled(node["StorageCheckState"].toInt() == 0 ? false : true);
+  server->setTrustedEnabled(node["TrustedCheckState"].toInt() == 0 ? false : true);
   server->setCallingAETitle(node["Calling AETitle"].toString());
   server->setCalledAETitle(node["Called AETitle"].toString());
   server->setHost(node["Address"].toString());
@@ -1019,6 +1033,10 @@ int ctkDICOMServerNodeWidget2::onAddServerNode()
   newItem = new QTableWidgetItem(QString(""));
   newItem->setCheckState(Qt::Unchecked);
   d->NodeTable->setItem(rowCount, StorageColumn, newItem);
+
+  newItem = new QTableWidgetItem(QString(""));
+  newItem->setCheckState(Qt::Unchecked);
+  d->NodeTable->setItem(rowCount, TrustedColumn, newItem);
 
   newItem = new QTableWidgetItem();
   d->NodeTable->setItem(rowCount, ctkDICOMServerNodeWidget2::CallingAETitleColumn, newItem);
@@ -1395,6 +1413,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
     defaultServerNode["Verification"] = tr("unknown");
     defaultServerNode["QueryRetrieveCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["StorageCheckState"] = static_cast<int>(Qt::Unchecked);
+    defaultServerNode["TrustedCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["Calling AETitle"] = QString("CTK");
     defaultServerNode["Called AETitle"] = QString("AETITLE");
     defaultServerNode["Address"] = QString("dicom.example.com");
@@ -1410,6 +1429,7 @@ void ctkDICOMServerNodeWidget2::readSettings()
     defaultServerNode["Verification"] = tr("unknown");
     defaultServerNode["QueryRetrieveCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["StorageCheckState"] = static_cast<int>(Qt::Unchecked);
+    defaultServerNode["TrustedCheckState"] = static_cast<int>(Qt::Unchecked);
     defaultServerNode["Calling AETitle"] = QString("CTK");
     defaultServerNode["Called AETitle"] = QString("ANYAE");
     defaultServerNode["Address"] = QString("dicomserver.co.uk");

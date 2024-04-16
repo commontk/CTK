@@ -35,6 +35,7 @@
 #include "ctkDICOMJob.h"
 #include "ctkDICOMJobResponseSet.h"
 #include "ctkDICOMScheduler.h"
+#include "ctkDICOMServer.h"
 
 // ctkDICOMWidgets includes
 #include "ctkDICOMSeriesItemWidget.h"
@@ -468,7 +469,14 @@ bool ctkDICOMPatientItemWidgetPrivate::areAllActiveServersAllowed()
   {
     QModelIndex modelIndex = model->index(filterIndex, 0);
     Qt::CheckState checkState = this->PatientServersCheckableComboBox->checkState(modelIndex);
-    if (checkState == Qt::CheckState::PartiallyChecked)
+    QString connectionName = this->PatientServersCheckableComboBox->itemText(filterIndex);
+    ctkDICOMServer* server = this->Scheduler->getServer(connectionName);
+    bool serverTrusted = false;
+    if (server)
+    {
+      serverTrusted = server->trustedEnabled();
+    }
+    if (checkState == Qt::CheckState::PartiallyChecked && !serverTrusted)
     {
       return false;
     }
