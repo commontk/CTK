@@ -135,6 +135,7 @@ protected:
     VerificationColumn,
     QueryRetrieveColumn,
     StorageColumn,
+    TrustedColumn,
     CallingAETitleColumn,
     CalledAETitleColumn,
     AddressColumn,

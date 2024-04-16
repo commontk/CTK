@@ -48,6 +48,7 @@ public:
   QString ConnectionName;
   bool QueryRetrieveEnabled;
   bool StorageEnabled;
+  bool TrustedEnabled;
   QString CallingAETitle;
   QString CalledAETitle;
   QString Host;
@@ -73,6 +74,7 @@ ctkDICOMServerPrivate::ctkDICOMServerPrivate(ctkDICOMServer& obj)
   this->MoveDestinationAETitle = "";
   this->QueryRetrieveEnabled = true;
   this->StorageEnabled = true;
+  this->TrustedEnabled = true;
   this->KeepAssociationOpen = false;
   this->ConnectionTimeout = 10;
   this->Port = 80;
@@ -110,6 +112,8 @@ CTK_SET_CPP(ctkDICOMServer, const bool&, setQueryRetrieveEnabled, QueryRetrieveE
 CTK_GET_CPP(ctkDICOMServer, bool, queryRetrieveEnabled, QueryRetrieveEnabled)
 CTK_SET_CPP(ctkDICOMServer, const bool&, setStorageEnabled, StorageEnabled);
 CTK_GET_CPP(ctkDICOMServer, bool, storageEnabled, StorageEnabled)
+CTK_SET_CPP(ctkDICOMServer, const bool&, setTrustedEnabled, TrustedEnabled);
+CTK_GET_CPP(ctkDICOMServer, bool, trustedEnabled, TrustedEnabled)
 CTK_SET_CPP(ctkDICOMServer, const QString&, setCallingAETitle, CallingAETitle);
 CTK_GET_CPP(ctkDICOMServer, QString, callingAETitle, CallingAETitle)
 CTK_SET_CPP(ctkDICOMServer, const QString&, setCalledAETitle, CalledAETitle);
@@ -191,6 +195,7 @@ ctkDICOMServer *ctkDICOMServer::clone() const
   newServer->setConnectionName(this->connectionName());
   newServer->setQueryRetrieveEnabled(this->queryRetrieveEnabled());
   newServer->setStorageEnabled(this->storageEnabled());
+  newServer->setTrustedEnabled(this->trustedEnabled());
   newServer->setCallingAETitle(this->callingAETitle());
   newServer->setCalledAETitle(this->calledAETitle());
   newServer->setHost(this->host());

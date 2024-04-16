@@ -39,6 +39,7 @@ class CTK_DICOM_CORE_EXPORT ctkDICOMServer : public QObject
   Q_PROPERTY(QString connectionName READ connectionName WRITE setConnectionName);
   Q_PROPERTY(bool queryRetrieveEnabled READ queryRetrieveEnabled WRITE setQueryRetrieveEnabled);
   Q_PROPERTY(bool storageEnabled READ storageEnabled WRITE setStorageEnabled);
+  Q_PROPERTY(bool trustedEnabled READ trustedEnabled WRITE setTrustedEnabled);
   Q_PROPERTY(QString callingAETitle READ callingAETitle WRITE setCallingAETitle);
   Q_PROPERTY(QString calledAETitle READ calledAETitle WRITE setCalledAETitle);
   Q_PROPERTY(QString host READ host WRITE setHost);
@@ -70,6 +71,13 @@ public:
   /// true as default
   void setStorageEnabled(const bool& storageEnabled);
   bool storageEnabled() const;
+  ///}@
+
+  ///@{
+  /// Trusted server
+  /// true as default
+  void setTrustedEnabled(const bool& trustedEnabled);
+  bool trustedEnabled() const;
   ///}@
 
   ///@{
