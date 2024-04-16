@@ -58,15 +58,15 @@ public:
   ///@{
   /// Storage port
   /// 11112 by default
-  void setPort(int port);
+  void setPort(const int& port);
   int port() const;
   ///@}
 
   ///@{
   /// Connection timeout
   /// 1 sec by default
-  void setConnectionTimeout(int timeout);
-  int connectionTimeout();
+  void setConnectionTimeout(const int& timeout);
+  int connectionTimeout() const;
   ///@}
 
   ///@{

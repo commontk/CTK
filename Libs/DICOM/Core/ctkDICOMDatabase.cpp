@@ -71,47 +71,6 @@ static QString ValueIsNotStored("__VALUE_IS_NOT_STORED__");
 static QString TableFieldSeparator(":");
 
 //------------------------------------------------------------------------------
-// Convert QJsonArray to QStringList
-QStringList jsonArrayToStringList(const QJsonArray& jsonArray)
-{
-  QStringList stringList;
-  for (const QJsonValue& jsonValue : jsonArray)
-  {
-    if (jsonValue.isString())
-    {
-      stringList << jsonValue.toString();
-    }
-  }
-  return stringList;
-}
-
-//------------------------------------------------------------------------------
-// Convert QStringList to QJsonArray
-QJsonArray stringListToJsonArray(const QStringList& stringList)
-{
-  QJsonArray jsonArray;
-  for (const QString& str : stringList)
-  {
-    jsonArray.append(str);
-  }
-  return jsonArray;
-}
-
-//------------------------------------------------------------------------------
-// Convert allowList and denyList to a JSON string
-QString convertListsToJson(const QStringList& allowList, const QStringList& denyList)
-{
-  // Create a JSON object
-  QJsonObject jsonObject;
-  jsonObject["allow"] = stringListToJsonArray(allowList);
-  jsonObject["deny"] = stringListToJsonArray(denyList);
-
-  // Serialize the JSON object to a string
-  QJsonDocument jsonDoc(jsonObject);
-  return jsonDoc.toJson(QJsonDocument::Compact);
-}
-
-//------------------------------------------------------------------------------
 // ctkDICOMDatabasePrivate methods
 
 //------------------------------------------------------------------------------
@@ -421,8 +380,9 @@ bool ctkDICOMDatabasePrivate::insertConnectionName(const int& dbPatientID,
   Q_Q(ctkDICOMDatabase);
 
   // check if connection name is already stored
-  QStringList allowList = q->enabledConnectionsForPatient(QString::number(dbPatientID));
-  QStringList denyList = q->disabledConnectionsForPatient(QString::number(dbPatientID));
+  QMap<QString, QStringList> connectionsInformation = q->connectionsInformationForPatient(QString::number(dbPatientID));
+  QStringList allowList = connectionsInformation["allow"];
+  QStringList denyList = connectionsInformation["deny"];
 
   bool connectionNameFound = allowList.contains(connectionName);
   if (connectionNameFound)
@@ -431,10 +391,10 @@ bool ctkDICOMDatabasePrivate::insertConnectionName(const int& dbPatientID,
     logger.debug("Found connection name in the patient database as UID: " + QString::number(dbPatientID));
     logger.debug("New connection name ID cache item: " + QString::number(dbPatientID) + "->" + connectionName);
   }
-  else
+  else if (!denyList.contains(connectionName))
   {
     allowList.append(connectionName);
-    QString connectionsData = convertListsToJson(allowList, denyList);
+    QString connectionsData = this->convertConnectionInfoToJson(allowList, denyList);
 
     // insert connection name
     QSqlQuery updateConnectionsStatement(this->Database);
@@ -469,7 +429,7 @@ bool ctkDICOMDatabasePrivate::updateConnections(const QString& dbPatientID,
                                                 const QStringList& allowList,
                                                 const QStringList& denyList)
 {
-  QString connectionsData = convertListsToJson(allowList, denyList);
+  QString connectionsData = this->convertConnectionInfoToJson(allowList, denyList);
 
   QSqlQuery updateConnectionsStatement(this->Database);
   updateConnectionsStatement.prepare("UPDATE Patients SET Connections = :connectionsData WHERE UID = :uid");
@@ -1413,10 +1373,48 @@ QString ctkDICOMDatabasePrivate::internalPathFromAbsolute(const QString& filenam
 }
 
 //------------------------------------------------------------------------------
+QStringList ctkDICOMDatabasePrivate::jsonArrayToStringList(const QJsonArray& jsonArray)
+{
+  QStringList stringList;
+  for (const QJsonValue& jsonValue : jsonArray)
+  {
+    if (jsonValue.isString())
+    {
+      stringList << jsonValue.toString();
+    }
+  }
+  return stringList;
+}
+
+//------------------------------------------------------------------------------
+QJsonArray ctkDICOMDatabasePrivate::stringListToJsonArray(const QStringList& stringList)
+{
+  QJsonArray jsonArray;
+  for (const QString& str : stringList)
+  {
+    jsonArray.append(str);
+  }
+  return jsonArray;
+}
+
+//------------------------------------------------------------------------------
+QString ctkDICOMDatabasePrivate::convertConnectionInfoToJson(const QStringList& allowList,
+                                                             const QStringList& denyList)
+{
+  // Create a JSON object
+  QJsonObject jsonObject;
+  jsonObject["allow"] = this->stringListToJsonArray(allowList);
+  jsonObject["deny"] = this->stringListToJsonArray(denyList);
+
+  // Serialize the JSON object to a string
+  QJsonDocument jsonDoc(jsonObject);
+  return jsonDoc.toJson(QJsonDocument::Compact);
+}
+
+//------------------------------------------------------------------------------
 CTK_GET_CPP(ctkDICOMDatabase, bool, isDisplayedFieldsTableAvailable, DisplayedFieldsTableAvailable);
 CTK_GET_CPP(ctkDICOMDatabase, bool, useShortStoragePath, UseShortStoragePath);
 CTK_SET_CPP(ctkDICOMDatabase, bool, setUseShortStoragePath, UseShortStoragePath);
-
 
 //------------------------------------------------------------------------------
 // ctkDICOMDatabase methods
@@ -1916,19 +1914,19 @@ QString ctkDICOMDatabase::nameForPatient(const QString patientUID)
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::enabledConnectionsForPatient(const QString patientUID)
+QMap<QString, QStringList> ctkDICOMDatabase::connectionsInformationForPatient(const QString patientUID)
 {
   Q_D(ctkDICOMDatabase);
 
   QString result;
-  QStringList allowList;
+  QMap<QString, QStringList> connectionsInformation;
 
   QSqlQuery query(d->Database);
   query.prepare("SELECT Connections FROM Patients WHERE UID= ?");
   query.addBindValue(patientUID);
   if (!d->loggedExec(query))
   {
-    return allowList;
+    return connectionsInformation;
   }
   if (query.next())
   {
@@ -1940,41 +1938,11 @@ QStringList ctkDICOMDatabase::enabledConnectionsForPatient(const QString patient
   if (!jsonDoc.isNull() && jsonDoc.isObject())
   {
     QJsonObject jsonObject = jsonDoc.object();
-    allowList = jsonArrayToStringList(jsonObject["allow"].toArray());
+    connectionsInformation["allow"] = d->jsonArrayToStringList(jsonObject["allow"].toArray());
+    connectionsInformation["deny"] = d->jsonArrayToStringList(jsonObject["deny"].toArray());
   }
 
-  return allowList;
-}
-
-//------------------------------------------------------------------------------
-QStringList ctkDICOMDatabase::disabledConnectionsForPatient(const QString patientUID)
-{
-  Q_D(ctkDICOMDatabase);
-
-  QString result;
-  QStringList denyList;
-
-  QSqlQuery query(d->Database);
-  query.prepare("SELECT Connections FROM Patients WHERE UID= ?");
-  query.addBindValue(patientUID);
-  if (!d->loggedExec(query))
-  {
-    return denyList;
-  }
-  if (query.next())
-  {
-    result.append(query.value(0).toString());
-  }
-
-  // Parse the JSON string
-  QJsonDocument jsonDoc = QJsonDocument::fromJson(result.toUtf8());
-  if (!jsonDoc.isNull() && jsonDoc.isObject())
-  {
-    QJsonObject jsonObject = jsonDoc.object();
-    denyList = jsonArrayToStringList(jsonObject["deny"].toArray());
-  }
-
-  return denyList;
+  return connectionsInformation;
 }
 
 //------------------------------------------------------------------------------

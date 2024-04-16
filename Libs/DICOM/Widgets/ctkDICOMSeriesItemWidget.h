@@ -52,7 +52,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMSeriesItemWidget : public QWidget
   Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel WRITE setThumbnailSizePixel);
   Q_PROPERTY(bool stopJobs READ stopJobs WRITE setStopJobs);
   Q_PROPERTY(bool raiseJobsPriority READ raiseJobsPriority WRITE setRaiseJobsPriority);
-  Q_PROPERTY(QStringList enabledServers READ enabledServers WRITE setEnabledServers);
+  Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
 
 public:
   typedef QWidget Superclass;
@@ -127,10 +127,10 @@ public:
   ///@}
 
   /// Series has been loaded by the parent widget
-  bool IsLoaded() const;
+  bool isLoaded() const;
 
   /// Series is visible in the parent widget
-  bool IsVisible() const;
+  bool isVisible() const;
 
   ///@{
   /// Set the thumbnail size in pixel
@@ -140,10 +140,10 @@ public:
   ///@}
 
   ///@{
-  /// Enabled servers
-  /// ["All"] by default
-  void setEnabledServers(const QStringList& enabledServers);
-  QStringList enabledServers() const;
+  /// Allowed Servers
+  /// Empty by default
+  void setAllowedServers(const QStringList& allowedServers);
+  QStringList allowedServers() const;
   ///@}
 
   /// Return the scheduler.

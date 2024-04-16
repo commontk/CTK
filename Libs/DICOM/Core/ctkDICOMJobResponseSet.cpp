@@ -98,6 +98,27 @@ ctkDICOMJobResponseSet::ctkDICOMJobResponseSet(QObject* parent)
 //------------------------------------------------------------------------------
 ctkDICOMJobResponseSet::~ctkDICOMJobResponseSet() = default;
 
+//------------------------------------------------------------------------------
+CTK_GET_CPP(ctkDICOMJobResponseSet, QString, filePath, FilePath);
+CTK_SET_CPP(ctkDICOMJobResponseSet, bool, setCopyFile, CopyFile);
+CTK_GET_CPP(ctkDICOMJobResponseSet, bool, copyFile, CopyFile);
+CTK_SET_CPP(ctkDICOMJobResponseSet, bool, setOverwriteExistingDataset, OverwriteExistingDataset);
+CTK_GET_CPP(ctkDICOMJobResponseSet, bool, overwriteExistingDataset, OverwriteExistingDataset);
+CTK_SET_CPP(ctkDICOMJobResponseSet, ctkDICOMJobResponseSet::JobType, setJobType, JobType);
+CTK_GET_CPP(ctkDICOMJobResponseSet, ctkDICOMJobResponseSet::JobType, jobType, JobType);
+CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setJobUID, JobUID);
+CTK_GET_CPP(ctkDICOMJobResponseSet, QString, jobUID, JobUID);
+CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setPatientID, PatientID);
+CTK_GET_CPP(ctkDICOMJobResponseSet, QString, patientID, PatientID);
+CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setStudyInstanceUID, StudyInstanceUID);
+CTK_GET_CPP(ctkDICOMJobResponseSet, QString, studyInstanceUID, StudyInstanceUID);
+CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setSeriesInstanceUID, SeriesInstanceUID);
+CTK_GET_CPP(ctkDICOMJobResponseSet, QString, seriesInstanceUID, SeriesInstanceUID);
+CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setSOPInstanceUID, SOPInstanceUID);
+CTK_GET_CPP(ctkDICOMJobResponseSet, QString, sopInstanceUID, SOPInstanceUID);
+CTK_SET_CPP(ctkDICOMJobResponseSet, const QString&, setConnectionName, ConnectionName);
+CTK_GET_CPP(ctkDICOMJobResponseSet, QString, connectionName, ConnectionName);
+
 //----------------------------------------------------------------------------
 void ctkDICOMJobResponseSet::setFilePath(const QString& filePath)
 {
@@ -118,139 +139,6 @@ void ctkDICOMJobResponseSet::setFilePath(const QString& filePath)
   dcmItem.findAndGetOFString(DCM_SOPInstanceUID, SOPInstanceUID);
 
   d->Datasets.insert(QString(SOPInstanceUID.c_str()), dataset);
-}
-
-//----------------------------------------------------------------------------
-QString ctkDICOMJobResponseSet::filePath() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->FilePath;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setCopyFile(bool copyFile)
-{
-  Q_D(ctkDICOMJobResponseSet);
-  d->CopyFile = copyFile;
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMJobResponseSet::copyFile() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->CopyFile;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setOverwriteExistingDataset(bool overwriteExistingDataset)
-{
-  Q_D(ctkDICOMJobResponseSet);
-  d->OverwriteExistingDataset = overwriteExistingDataset;
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMJobResponseSet::overwriteExistingDataset() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->OverwriteExistingDataset;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setJobType(ctkDICOMJobResponseSet::JobType jobType)
-{
-  Q_D(ctkDICOMJobResponseSet);
-  d->JobType = jobType;
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMJobResponseSet::JobType ctkDICOMJobResponseSet::jobType() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->JobType;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setJobUID(const QString& jobUID)
-{
-  Q_D(ctkDICOMJobResponseSet);
-  d->JobUID = jobUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMJobResponseSet::jobUID() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->JobUID;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setPatientID(const QString& patientID)
-{
-  Q_D(ctkDICOMJobResponseSet);
-  d->PatientID = patientID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMJobResponseSet::patientID() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->PatientID;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setStudyInstanceUID(const QString& studyInstanceUID)
-{
-  Q_D(ctkDICOMJobResponseSet);
-  d->StudyInstanceUID = studyInstanceUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMJobResponseSet::studyInstanceUID() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->StudyInstanceUID;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setSeriesInstanceUID(const QString& seriesInstanceUID)
-{
-  Q_D(ctkDICOMJobResponseSet);
-  d->SeriesInstanceUID = seriesInstanceUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMJobResponseSet::seriesInstanceUID() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->SeriesInstanceUID;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setSOPInstanceUID(const QString& sopInstanceUID)
-{
-  Q_D(ctkDICOMJobResponseSet);
-  d->SOPInstanceUID = sopInstanceUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMJobResponseSet::sopInstanceUID() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->SOPInstanceUID;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMJobResponseSet::setConnectionName(const QString& connectionName)
-{
-  Q_D(ctkDICOMJobResponseSet);
-  d->ConnectionName = connectionName;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMJobResponseSet::connectionName() const
-{
-  Q_D(const ctkDICOMJobResponseSet);
-  return d->ConnectionName;
 }
 
 //------------------------------------------------------------------------------

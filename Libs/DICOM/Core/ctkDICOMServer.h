@@ -61,14 +61,14 @@ public:
   ///@{
   /// Query/Retrieve operations
   /// true as default
-  void setQueryRetrieveEnabled(bool queryRetrieveEnabled);
+  void setQueryRetrieveEnabled(const bool& queryRetrieveEnabled);
   bool queryRetrieveEnabled() const;
   ///}@
 
   ///@{
   /// Storage operations
   /// true as default
-  void setStorageEnabled(bool storageEnabled);
+  void setStorageEnabled(const bool& storageEnabled);
   bool storageEnabled() const;
   ///}@
 
@@ -95,7 +95,7 @@ public:
   ///@{
   /// [0, 65365] port on peer host
   /// 80 as default
-  void setPort(int port);
+  void setPort(const int& port);
   int port() const;
   ///}@
 

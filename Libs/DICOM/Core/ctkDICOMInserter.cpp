@@ -68,46 +68,12 @@ ctkDICOMInserter::ctkDICOMInserter(QObject* parentObject)
 ctkDICOMInserter::~ctkDICOMInserter() = default;
 
 //------------------------------------------------------------------------------
-void ctkDICOMInserter::setDatabaseFilename(const QString& databaseFilename)
-{
-  Q_D(ctkDICOMInserter);
-  d->DatabaseFilename = databaseFilename;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMInserter::databaseFilename() const
-{
-  Q_D(const ctkDICOMInserter);
-  return d->DatabaseFilename;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMInserter::setTagsToPrecache(const QStringList& tagsToPrecache)
-{
-  Q_D(ctkDICOMInserter);
-  d->TagsToPrecache = tagsToPrecache;
-}
-
-//------------------------------------------------------------------------------
-QStringList ctkDICOMInserter::tagsToPrecache() const
-{
-  Q_D(const ctkDICOMInserter);
-  return d->TagsToPrecache;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMInserter::setTagsToExcludeFromStorage(const QStringList& tagsToExcludeFromStorage)
-{
-  Q_D(ctkDICOMInserter);
-  d->TagsToExcludeFromStorage = tagsToExcludeFromStorage;
-}
-
-//------------------------------------------------------------------------------
-QStringList ctkDICOMInserter::tagsToExcludeFromStorage() const
-{
-  Q_D(const ctkDICOMInserter);
-  return d->TagsToExcludeFromStorage;
-}
+CTK_SET_CPP(ctkDICOMInserter, const QString&, setDatabaseFilename, DatabaseFilename);
+CTK_GET_CPP(ctkDICOMInserter, QString, databaseFilename, DatabaseFilename)
+CTK_SET_CPP(ctkDICOMInserter, const QStringList&, setTagsToPrecache, TagsToPrecache);
+CTK_GET_CPP(ctkDICOMInserter, QStringList, tagsToPrecache, TagsToPrecache)
+CTK_SET_CPP(ctkDICOMInserter, const QStringList&, setTagsToExcludeFromStorage, TagsToExcludeFromStorage);
+CTK_GET_CPP(ctkDICOMInserter, QStringList, tagsToExcludeFromStorage, TagsToExcludeFromStorage)
 
 //------------------------------------------------------------------------------
 bool ctkDICOMInserter::wasCanceled()

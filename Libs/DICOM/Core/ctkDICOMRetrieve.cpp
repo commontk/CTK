@@ -763,18 +763,17 @@ ctkDICOMRetrieve::~ctkDICOMRetrieve()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMRetrieve::setConnectionName(const QString &connectionName)
-{
-  Q_D(ctkDICOMRetrieve);
-  d->ConnectionName = connectionName;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMRetrieve::connectionName() const
-{
-  Q_D(const ctkDICOMRetrieve);
-  return d->ConnectionName;
-}
+CTK_SET_CPP(ctkDICOMRetrieve, const QString&, setConnectionName, ConnectionName);
+CTK_GET_CPP(ctkDICOMRetrieve, QString, connectionName, ConnectionName)
+CTK_GET_CPP(ctkDICOMRetrieve, QString, moveDestinationAETitle, MoveDestinationAETitle)
+CTK_SET_CPP(ctkDICOMRetrieve, const QString&, setJobUID, JobUID);
+CTK_GET_CPP(ctkDICOMRetrieve, QString, jobUID, JobUID)
+CTK_GET_CPP(ctkDICOMRetrieve, QString, patientID, PatientID)
+CTK_GET_CPP(ctkDICOMRetrieve, QString, studyInstanceUID, StudyInstanceUID)
+CTK_GET_CPP(ctkDICOMRetrieve, QString, seriesInstanceUID, SeriesInstanceUID)
+CTK_GET_CPP(ctkDICOMRetrieve, QString, sopInstanceUID, SOPInstanceUID)
+CTK_SET_CPP(ctkDICOMRetrieve, const bool, setKeepAssociationOpen, KeepAssociationOpen);
+CTK_GET_CPP(ctkDICOMRetrieve, bool, keepAssociationOpen, KeepAssociationOpen)
 
 //------------------------------------------------------------------------------
 void ctkDICOMRetrieve::setCallingAETitle(const QString& callingAETitle)
@@ -858,12 +857,6 @@ void ctkDICOMRetrieve::setMoveDestinationAETitle( const QString& moveDestination
     d->ConnectionParamsChanged = true;
   }
 }
-//------------------------------------------------------------------------------
-QString ctkDICOMRetrieve::moveDestinationAETitle()const
-{
-  Q_D(const ctkDICOMRetrieve);
-  return d->MoveDestinationAETitle;
-}
 
 //------------------------------------------------------------------------------
 static void skipDelete(QObject* obj)
@@ -942,66 +935,10 @@ void ctkDICOMRetrieve::removeJobResponseSet(QSharedPointer<ctkDICOMJobResponseSe
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMRetrieve::setJobUID(const QString &jobUID)
-{
-  Q_D(ctkDICOMRetrieve);
-  d->JobUID = jobUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMRetrieve::jobUID() const
-{
-  Q_D(const ctkDICOMRetrieve);
-  return d->JobUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMRetrieve::patientID() const
-{
-  Q_D(const ctkDICOMRetrieve);
-  return d->PatientID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMRetrieve::studyInstanceUID() const
-{
-  Q_D(const ctkDICOMRetrieve);
-  return d->StudyInstanceUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMRetrieve::seriesInstanceUID() const
-{
-  Q_D(const ctkDICOMRetrieve);
-  return d->SeriesInstanceUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMRetrieve::sopInstanceUID() const
-{
-  Q_D(const ctkDICOMRetrieve);
-  return d->SOPInstanceUID;
-}
-
-//------------------------------------------------------------------------------
 ctkDICOMRetrieve::RetrieveType ctkDICOMRetrieve::getLastRetrieveType() const
 {
   Q_D(const ctkDICOMRetrieve);
   return d->LastRetrieveType;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMRetrieve::setKeepAssociationOpen(const bool keepOpen)
-{
-  Q_D(ctkDICOMRetrieve);
-  d->KeepAssociationOpen = keepOpen;
-}
-
-//------------------------------------------------------------------------------
-bool ctkDICOMRetrieve::keepAssociationOpen() const
-{
-  Q_D(const ctkDICOMRetrieve);
-  return d->KeepAssociationOpen;
 }
 
 //-----------------------------------------------------------------------------

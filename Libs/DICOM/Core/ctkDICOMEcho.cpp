@@ -145,77 +145,21 @@ ctkDICOMEcho::ctkDICOMEcho(QObject* parentObject)
 ctkDICOMEcho::~ctkDICOMEcho() = default;
 
 //------------------------------------------------------------------------------
-void ctkDICOMEcho::setConnectionName(const QString& connectionName)
-{
-  Q_D(ctkDICOMEcho);
-  d->ConnectionName = connectionName;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMEcho::connectionName() const
-{
-  Q_D(const ctkDICOMEcho);
-  return d->ConnectionName;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMEcho::setCallingAETitle(const QString& callingAETitle)
-{
-  Q_D(ctkDICOMEcho);
-  d->CallingAETitle = callingAETitle;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMEcho::callingAETitle() const
-{
-  Q_D(const ctkDICOMEcho);
-  return d->CallingAETitle;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMEcho::setCalledAETitle(const QString& calledAETitle)
-{
-  Q_D(ctkDICOMEcho);
-  d->CalledAETitle = calledAETitle;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMEcho::calledAETitle() const
-{
-  Q_D(const ctkDICOMEcho);
-  return d->CalledAETitle;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMEcho::setHost(const QString& host)
-{
-  Q_D(ctkDICOMEcho);
-  d->Host = host;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMEcho::host() const
-{
-  Q_D(const ctkDICOMEcho);
-  return d->Host;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMEcho::setPort(int port)
-{
-  Q_D(ctkDICOMEcho);
-  d->Port = port;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMEcho::port() const
-{
-  Q_D(const ctkDICOMEcho);
-  return d->Port;
-}
+CTK_SET_CPP(ctkDICOMEcho, const QString&, setConnectionName, ConnectionName);
+CTK_GET_CPP(ctkDICOMEcho, QString, connectionName, ConnectionName)
+CTK_SET_CPP(ctkDICOMEcho, const QString&, setCallingAETitle, CallingAETitle);
+CTK_GET_CPP(ctkDICOMEcho, QString, callingAETitle, CallingAETitle)
+CTK_SET_CPP(ctkDICOMEcho, const QString&, setCalledAETitle, CalledAETitle);
+CTK_GET_CPP(ctkDICOMEcho, QString, calledAETitle, CalledAETitle)
+CTK_SET_CPP(ctkDICOMEcho, const QString&, setHost, Host);
+CTK_GET_CPP(ctkDICOMEcho, QString, host, Host)
+CTK_SET_CPP(ctkDICOMEcho, const int&, setPort, Port);
+CTK_GET_CPP(ctkDICOMEcho, int, port, Port)
+CTK_SET_CPP(ctkDICOMEcho, const QString&, setJobUID, JobUID);
+CTK_GET_CPP(ctkDICOMEcho, QString, jobUID, JobUID)
 
 //-----------------------------------------------------------------------------
-void ctkDICOMEcho::setConnectionTimeout(int timeout)
+void ctkDICOMEcho::setConnectionTimeout(const int& timeout)
 {
   Q_D(ctkDICOMEcho);
   d->SCU->setACSETimeout(timeout);
@@ -282,20 +226,6 @@ bool ctkDICOMEcho::echo()
   d->releaseAssociation();
 
   return true;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMEcho::setJobUID(const QString &jobUID)
-{
-  Q_D(ctkDICOMEcho);
-  d->JobUID = jobUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMEcho::jobUID() const
-{
-  Q_D(const ctkDICOMEcho);
-  return d->JobUID;
 }
 
 //------------------------------------------------------------------------------

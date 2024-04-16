@@ -210,77 +210,23 @@ ctkDICOMQuery::~ctkDICOMQuery()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMQuery::setConnectionName(const QString& connectionName)
-{
-  Q_D(ctkDICOMQuery);
-  d->ConnectionName = connectionName;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::connectionName() const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->ConnectionName;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setCallingAETitle(const QString& callingAETitle)
-{
-  Q_D(ctkDICOMQuery);
-  d->CallingAETitle = callingAETitle;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::callingAETitle() const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->CallingAETitle;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setCalledAETitle(const QString& calledAETitle)
-{
-  Q_D(ctkDICOMQuery);
-  d->CalledAETitle = calledAETitle;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::calledAETitle()const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->CalledAETitle;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setHost(const QString& host)
-{
-  Q_D(ctkDICOMQuery);
-  d->Host = host;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::host() const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->Host;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setPort(int port)
-{
-  Q_D(ctkDICOMQuery);
-  d->Port = port;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMQuery::port()const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->Port;
-}
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setConnectionName, ConnectionName);
+CTK_GET_CPP(ctkDICOMQuery, QString, connectionName, ConnectionName)
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setCallingAETitle, CallingAETitle);
+CTK_GET_CPP(ctkDICOMQuery, QString, callingAETitle, CallingAETitle)
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setCalledAETitle, CalledAETitle);
+CTK_GET_CPP(ctkDICOMQuery, QString, calledAETitle, CalledAETitle)
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setHost, Host);
+CTK_GET_CPP(ctkDICOMQuery, QString, host, Host)
+CTK_SET_CPP(ctkDICOMQuery, const int&, setPort, Port);
+CTK_GET_CPP(ctkDICOMQuery, int, port, Port)
+CTK_SET_CPP(ctkDICOMQuery, const int&, setMaximumPatientsQuery, MaximumPatientsQuery);
+CTK_GET_CPP(ctkDICOMQuery, int, maximumPatientsQuery, MaximumPatientsQuery);
+CTK_SET_CPP(ctkDICOMQuery, const QString&, setJobUID, JobUID);
+CTK_GET_CPP(ctkDICOMQuery, QString, jobUID, JobUID)
 
 //-----------------------------------------------------------------------------
-void ctkDICOMQuery::setConnectionTimeout(int timeout)
+void ctkDICOMQuery::setConnectionTimeout(const int& timeout)
 {
   Q_D(ctkDICOMQuery);
   d->SCU->setACSETimeout(timeout);
@@ -292,20 +238,6 @@ int ctkDICOMQuery::connectionTimeout() const
 {
   Q_D(const ctkDICOMQuery);
   return d->SCU->getConnectionTimeout();
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setMaximumPatientsQuery(int maximumPatientsQuery)
-{
-  Q_D(ctkDICOMQuery);
-  d->MaximumPatientsQuery = maximumPatientsQuery;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMQuery::maximumPatientsQuery()
-{
-  Q_D(const ctkDICOMQuery);
-  return d->MaximumPatientsQuery;
 }
 
 //------------------------------------------------------------------------------
@@ -354,20 +286,6 @@ QList<QSharedPointer<ctkDICOMJobResponseSet>> ctkDICOMQuery::jobResponseSetsShar
 {
   Q_D(const ctkDICOMQuery);
   return d->JobResponseSets;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQuery::setJobUID(const QString &jobUID)
-{
-  Q_D(ctkDICOMQuery);
-  d->JobUID = jobUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMQuery::jobUID() const
-{
-  Q_D(const ctkDICOMQuery);
-  return d->JobUID;
 }
 
 //------------------------------------------------------------------------------

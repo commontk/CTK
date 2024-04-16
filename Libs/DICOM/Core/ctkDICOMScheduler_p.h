@@ -59,7 +59,7 @@ public:
   ctkDICOMSchedulerPrivate(ctkDICOMScheduler& obj);
   virtual ~ctkDICOMSchedulerPrivate();
 
-  bool isServerEnabled(ctkDICOMServer* server, const QStringList& enabledSevers);
+  bool isServerAllowed(ctkDICOMServer* server, const QStringList& allowedSeversForPatient);
   ctkDICOMServer* getServerFromProxyServersByConnectionName(const QString&);
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;

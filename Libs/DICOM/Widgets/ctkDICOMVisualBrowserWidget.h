@@ -154,7 +154,7 @@ public:
 
   ///@{
   /// Servers
-  Q_INVOKABLE int getNumberOfServers();
+  Q_INVOKABLE int serversCount();
   Q_INVOKABLE ctkDICOMServer* getNthServer(int id);
   Q_INVOKABLE ctkDICOMServer* getServer(const QString& connectionName);
   Q_INVOKABLE void addServer(ctkDICOMServer* server);
