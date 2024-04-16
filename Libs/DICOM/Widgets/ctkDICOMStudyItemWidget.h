@@ -57,7 +57,7 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
   Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow);
   Q_PROPERTY(ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel);
-  Q_PROPERTY(QStringList enabledServers READ enabledServers WRITE setEnabledServers);
+  Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
 
 public:
   typedef QWidget Superclass;
@@ -141,10 +141,10 @@ public:
   ///@}
 
   ///@{
-  /// Enabled servers
-  /// ["All"] by default
-  void setEnabledServers(const QStringList& enabledServers);
-  QStringList enabledServers() const;
+  /// Allowed Servers
+  /// Empty by default
+  void setAllowedServers(const QStringList& allowedServers);
+  QStringList allowedServers() const;
   ///@}
 
   /// Return the scheduler.

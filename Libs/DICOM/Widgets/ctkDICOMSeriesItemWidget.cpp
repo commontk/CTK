@@ -81,7 +81,7 @@ public:
 
   QSharedPointer<ctkDICOMDatabase> DicomDatabase;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
-  QStringList EnabledServers;
+  QStringList AllowedServers;
 
   QString PatientID;
   QString SeriesItem;
@@ -129,7 +129,7 @@ ctkDICOMSeriesItemWidgetPrivate::ctkDICOMSeriesItemWidgetPrivate(ctkDICOMSeriesI
   this->ThumbnailSizePixel = 200;
   this->NumberOfDownloads = 0;
 
-  this->EnabledServers = QStringList("All");
+  this->AllowedServers = QStringList();
 
   this->DicomDatabase = nullptr;
   this->Scheduler = nullptr;
@@ -297,7 +297,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td, bool
 
   if (!this->StopJobs &&
       this->Scheduler &&
-      this->Scheduler->getNumberOfQueryRetrieveServers() > 0)
+      this->Scheduler->queryRetrieveServersCount() > 0)
   {
     // Get file for thumbnail
     if (file.isEmpty() &&
@@ -312,7 +312,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td, bool
                                              this->SeriesInstanceUID,
                                              this->CentralFrameSOPInstanceUID,
                                              this->RaiseJobsPriority ? QThread::HighestPriority : QThread::HighPriority,
-                                             this->EnabledServers);
+                                             this->AllowedServers);
       }
       return;
     }
@@ -336,7 +336,7 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td, bool
                                         this->StudyInstanceUID,
                                         this->SeriesInstanceUID,
                                         this->RaiseJobsPriority ? QThread::HighestPriority : QThread::LowPriority,
-                                        this->EnabledServers);
+                                        this->AllowedServers);
       }
     }
   }
@@ -706,89 +706,32 @@ ctkDICOMSeriesItemWidget::~ctkDICOMSeriesItemWidget()
 {
 }
 
-//----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setSeriesItem(const QString& seriesItem)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->SeriesItem = seriesItem;
-}
-
-//----------------------------------------------------------------------------
-QString ctkDICOMSeriesItemWidget::seriesItem() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->SeriesItem;
-}
-
 //------------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setPatientID(const QString& patientID)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->PatientID = patientID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMSeriesItemWidget::patientID() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->PatientID;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setStudyInstanceUID(const QString& studyInstanceUID)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->StudyInstanceUID = studyInstanceUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMSeriesItemWidget::studyInstanceUID() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->StudyInstanceUID;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setSeriesInstanceUID(const QString& seriesInstanceUID)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->SeriesInstanceUID = seriesInstanceUID;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMSeriesItemWidget::seriesInstanceUID() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->SeriesInstanceUID;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setSeriesNumber(const QString& seriesNumber)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->SeriesNumber = seriesNumber;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMSeriesItemWidget::seriesNumber() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->SeriesNumber;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setModality(const QString& modality)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->Modality = modality;
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMSeriesItemWidget::modality() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->Modality;
-}
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QStringList&, setAllowedServers, AllowedServers);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, QStringList, allowedServers, AllowedServers);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setSeriesItem, SeriesItem);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, seriesItem, SeriesItem);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setPatientID, PatientID);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, patientID, PatientID);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setStudyInstanceUID, StudyInstanceUID);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, studyInstanceUID, StudyInstanceUID);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setSeriesInstanceUID, SeriesInstanceUID);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, seriesInstanceUID, SeriesInstanceUID);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setSeriesNumber, SeriesNumber);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, seriesNumber, SeriesNumber);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, const QString&, setModality, Modality);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, QString, modality, Modality);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, bool, setStopJobs, StopJobs);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, stopJobs, StopJobs);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, bool, setRaiseJobsPriority, RaiseJobsPriority);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, raiseJobsPriority, RaiseJobsPriority);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, isCloud, IsCloud);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, isLoaded, IsLoaded);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, isVisible, IsVisible);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, bool, setRetrieveFailed, RetrieveFailed);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, bool, retrieveFailed, RetrieveFailed);
+CTK_SET_CPP(ctkDICOMSeriesItemWidget, int, setThumbnailSizePixel, ThumbnailSizePixel);
+CTK_GET_CPP(ctkDICOMSeriesItemWidget, int, thumbnailSizePixel, ThumbnailSizePixel);
 
 //----------------------------------------------------------------------------
 void ctkDICOMSeriesItemWidget::setSeriesDescription(const QString& seriesDescription)
@@ -806,41 +749,6 @@ QString ctkDICOMSeriesItemWidget::seriesDescription() const
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setStopJobs(bool stopJobs)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->StopJobs = stopJobs;
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMSeriesItemWidget::stopJobs() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->StopJobs;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setRaiseJobsPriority(bool raiseJobsPriority)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->RaiseJobsPriority = raiseJobsPriority;
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMSeriesItemWidget::raiseJobsPriority() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->RaiseJobsPriority;
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMSeriesItemWidget::isCloud() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->IsCloud;
-}
-
-//----------------------------------------------------------------------------
 void ctkDICOMSeriesItemWidget::forceRetrieve()
 {
   Q_D(ctkDICOMSeriesItemWidget);
@@ -850,62 +758,6 @@ void ctkDICOMSeriesItemWidget::forceRetrieve()
   d->StopJobs = false;
   ctkDICOMJobDetail td;
   d->createThumbnail(td);
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setRetrieveFailed(bool retrieveFailed)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->RetrieveFailed = retrieveFailed;
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMSeriesItemWidget::retrieveFailed() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->RetrieveFailed;
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMSeriesItemWidget::IsLoaded() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->IsLoaded;
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMSeriesItemWidget::IsVisible() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->IsVisible;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setThumbnailSizePixel(int thumbnailSizePixel)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->ThumbnailSizePixel = thumbnailSizePixel;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMSeriesItemWidget::thumbnailSizePixel() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->ThumbnailSizePixel;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMSeriesItemWidget::setEnabledServers(const QStringList& enabledServers)
-{
-  Q_D(ctkDICOMSeriesItemWidget);
-  d->EnabledServers = enabledServers;
-}
-
-//------------------------------------------------------------------------------
-QStringList ctkDICOMSeriesItemWidget::enabledServers() const
-{
-  Q_D(const ctkDICOMSeriesItemWidget);
-  return d->EnabledServers;
 }
 
 //----------------------------------------------------------------------------
@@ -1008,13 +860,13 @@ void ctkDICOMSeriesItemWidget::generateInstances(bool queryRetrieve)
   if (queryRetrieve && !d->StopJobs &&
       instancesList.count() == 0 &&
       d->Scheduler &&
-      d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
+      d->Scheduler->queryRetrieveServersCount() > 0)
   {
     d->Scheduler->queryInstances(d->PatientID,
                                  d->StudyInstanceUID,
                                  d->SeriesInstanceUID,
                                  d->RaiseJobsPriority ? QThread::HighestPriority : QThread::NormalPriority,
-                                 d->EnabledServers);
+                                 d->AllowedServers);
   }
 }
 

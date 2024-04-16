@@ -52,7 +52,7 @@ public:
 
   ///@{
   /// Port, default: 11112
-  void setPort(int port);
+  void setPort(const int& port);
   int port() const;
   ///@}
 
@@ -64,7 +64,7 @@ public:
 
   ///@{
   /// Connection timeout, default 1 sec.
-  void setConnectionTimeout(int timeout);
+  void setConnectionTimeout(const int& timeout);
   int connectionTimeout() const;
   ///@}
 

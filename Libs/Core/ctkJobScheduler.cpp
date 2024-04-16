@@ -197,6 +197,8 @@ void ctkJobSchedulerPrivate::removeJobs(const QStringList &jobUIDs)
 
   QList<QVariant> datas;
   {
+    // The QMutexLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QMutexLockers within the scheduler's methods.
     QMutexLocker locker(&this->QueueMutex);
 
     foreach (QString jobUID, jobUIDs)
@@ -231,6 +233,8 @@ void ctkJobSchedulerPrivate::removeAllJobs()
   Q_Q(ctkJobScheduler);
 
   {
+    // The QMutexLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QMutexLockers within the scheduler's methods.
     QMutexLocker locker(&this->QueueMutex);
     foreach (QSharedPointer<ctkAbstractJob> job, this->JobsQueue)
     {
@@ -308,12 +312,22 @@ ctkJobScheduler::~ctkJobScheduler()
   this->waitForFinish(true);
 }
 
+//------------------------------------------------------------------------------
+CTK_SET_CPP(ctkJobScheduler, const bool&, setFreezeJobsScheduling, FreezeJobsScheduling);
+CTK_GET_CPP(ctkJobScheduler, bool, freezeJobsScheduling, FreezeJobsScheduling)
+CTK_SET_CPP(ctkJobScheduler, const int&, setMaximumNumberOfRetry, MaximumNumberOfRetry);
+CTK_GET_CPP(ctkJobScheduler, int, maximumNumberOfRetry, MaximumNumberOfRetry)
+CTK_SET_CPP(ctkJobScheduler, const int&, setRetryDelay, RetryDelay);
+CTK_GET_CPP(ctkJobScheduler, int, retryDelay, RetryDelay)
+
 //----------------------------------------------------------------------------
 int ctkJobScheduler::numberOfJobs()
 {
   Q_D(ctkJobScheduler);
   int numberOfJobs = 0;
   {
+    // The QMutexLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QMutexLockers within the scheduler's methods.
     QMutexLocker locker(&d->QueueMutex);
     numberOfJobs = d->JobsQueue.count();
   }
@@ -326,6 +340,8 @@ int ctkJobScheduler::numberOfPersistentJobs()
   Q_D(ctkJobScheduler);
   int numberOfPersistentJobs = 0;
   {
+    // The QMutexLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QMutexLockers within the scheduler's methods.
     QMutexLocker locker(&d->QueueMutex);
     foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
@@ -346,6 +362,8 @@ int ctkJobScheduler::numberOfRunningJobs()
 
   int numberOfRunningJobs = 0;
   {
+    // The QMutexLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QMutexLockers within the scheduler's methods.
     QMutexLocker locker(&d->QueueMutex);
     foreach (QSharedPointer<ctkAbstractJob> job, d->JobsQueue)
     {
@@ -396,6 +414,8 @@ QSharedPointer<ctkAbstractJob> ctkJobScheduler::getJobSharedByUID(const QString&
 
   QSharedPointer<ctkAbstractJob> job = nullptr;
   {
+    // The QMutexLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QMutexLockers within the scheduler's methods.
     QMutexLocker locker(&d->QueueMutex);
     QMap<QString, QSharedPointer<ctkAbstractJob>>::iterator it = d->JobsQueue.find(jobUID);
     if (it == d->JobsQueue.end())
@@ -449,6 +469,8 @@ void ctkJobScheduler::stopAllJobs(bool stopPersistentJobs)
 
   QStringList initializedStoppedJobsUIDs;
   {
+    // The QMutexLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QMutexLockers within the scheduler's methods.
     QMutexLocker locker(&d->QueueMutex);
 
     // Stops jobs without a worker (in waiting, still in main thread).
@@ -524,6 +546,8 @@ void ctkJobScheduler::stopJobsByJobUIDs(const QStringList &jobUIDs)
 
   QStringList initializedStoppedJobsUIDs;
   {
+    // The QMutexLocker is enclosed within brackets to restrict its scope and
+    // prevent conflicts with other QMutexLockers within the scheduler's methods.
     QMutexLocker locker(&d->QueueMutex);
 
     // Stops jobs without a worker (in waiting, still in main thread)
@@ -596,19 +620,6 @@ void ctkJobScheduler::stopJobsByJobUIDs(const QStringList &jobUIDs)
   }
 }
 
-//----------------------------------------------------------------------------
-bool ctkJobScheduler::freezeJobsScheduling() const
-{
-  Q_D(const ctkJobScheduler);
-  return d->FreezeJobsScheduling;
-}
-
-//----------------------------------------------------------------------------
-void ctkJobScheduler::setFreezeJobsScheduling(bool freezeJobsScheduling)
-{
-  Q_D(ctkJobScheduler);
-  d->FreezeJobsScheduling = freezeJobsScheduling;
-}
 
 //----------------------------------------------------------------------------
 int ctkJobScheduler::maximumThreadCount() const
@@ -618,38 +629,10 @@ int ctkJobScheduler::maximumThreadCount() const
 }
 
 //----------------------------------------------------------------------------
-void ctkJobScheduler::setMaximumThreadCount(int maximumThreadCount)
+void ctkJobScheduler::setMaximumThreadCount(const int& maximumThreadCount)
 {
   Q_D(ctkJobScheduler);
   d->ThreadPool->setMaxThreadCount(maximumThreadCount);
-}
-
-//----------------------------------------------------------------------------
-int ctkJobScheduler::maximumNumberOfRetry() const
-{
-  Q_D(const ctkJobScheduler);
-  return d->MaximumNumberOfRetry;
-}
-
-//----------------------------------------------------------------------------
-void ctkJobScheduler::setMaximumNumberOfRetry(int maximumNumberOfRetry)
-{
-  Q_D(ctkJobScheduler);
-  d->MaximumNumberOfRetry = maximumNumberOfRetry;
-}
-
-//----------------------------------------------------------------------------
-int ctkJobScheduler::retryDelay() const
-{
-  Q_D(const ctkJobScheduler);
-  return d->RetryDelay;
-}
-
-//----------------------------------------------------------------------------
-void ctkJobScheduler::setRetryDelay(int retryDelay)
-{
-  Q_D(ctkJobScheduler);
-  d->RetryDelay = retryDelay;
 }
 
 //----------------------------------------------------------------------------

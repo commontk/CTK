@@ -120,6 +120,14 @@ public:
   /// Convert an absolute path to an internal path (absolute if outside database folder, relative if inside database folder).
   QString internalPathFromAbsolute(const QString& filename);
 
+  /// Convert allowList and denyList to a JSON string
+  QString convertConnectionInfoToJson(const QStringList &allowList,
+                                      const QStringList &denyList);
+  /// Convert QStringList to QJsonArray
+  QJsonArray stringListToJsonArray(const QStringList &stringList);
+  /// Convert QJsonArray to QStringList
+  QStringList jsonArrayToStringList(const QJsonArray &jsonArray);
+
   /// Name of the database file (i.e. for SQLITE the sqlite file)
   QString DatabaseFileName;
 

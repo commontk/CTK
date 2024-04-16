@@ -368,13 +368,13 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
                    q, SLOT(onQueryPatients()));
 
   // Add query/retrieve options menu to SearchMenuButton button
-  QMenu *queryRetrieveButtonMenu = new QMenu(q->tr("Show options"), this->SearchMenuButton);
+  QMenu *queryRetrieveButtonMenu = new QMenu(ctkDICOMVisualBrowserWidget::tr("Show options"), this->SearchMenuButton);
   queryRetrieveButtonMenu->setToolTipsVisible(true);
   this->SearchMenuButton->setMenu(queryRetrieveButtonMenu);
   this->SearchMenuButton->setFixedWidth(this->SearchMenuButton->width());
 
-  QAction *toggleQueryRetrieveAction = new QAction(q->tr("Query/Retrieve"), queryRetrieveButtonMenu);
-  toggleQueryRetrieveAction->setToolTip(q->tr("If enabled, the widget will also conduct queries and retrieve the data."));
+  QAction *toggleQueryRetrieveAction = new QAction(ctkDICOMVisualBrowserWidget::tr("Query/Retrieve"), queryRetrieveButtonMenu);
+  toggleQueryRetrieveAction->setToolTip(ctkDICOMVisualBrowserWidget::tr("If enabled, the widget will also conduct queries and retrieve the data."));
   toggleQueryRetrieveAction->setCheckable(true);
   QSettings settings;
   if (settings.value("DICOM/QueryRetrieveEnabled", "") == "")
@@ -1110,17 +1110,17 @@ void ctkDICOMVisualBrowserWidgetPrivate::removeAllPatientItemWidgets()
 //----------------------------------------------------------------------------
 int ctkDICOMVisualBrowserWidgetPrivate::isPatientTabAlreadyAdded(const QString& patientItem)
 {
-  int patinetIndex = -1;
+  int patientIndex = -1;
   for (int index = 0; index < this->PatientsTabWidget->count(); ++index)
   {
     if (patientItem == this->PatientsTabWidget->tabWhatsThis(index))
     {
-      patinetIndex = index;
+      patientIndex = index;
       break;
     }
   }
 
-  return patinetIndex;
+  return patientIndex;
 }
 
 //----------------------------------------------------------------------------
@@ -1540,20 +1540,22 @@ ctkDICOMVisualBrowserWidget::~ctkDICOMVisualBrowserWidget()
 }
 
 //----------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidget::databaseDirectory() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-
-  // If override settings is specified then try to get database directory from there first
-  return d->DatabaseDirectory;
-}
-
-//----------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidget::databaseDirectorySettingsKey() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->DatabaseDirectorySettingsKey;
-}
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, databaseDirectory, DatabaseDirectory);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, databaseDirectorySettingsKey, DatabaseDirectorySettingsKey);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringPatientID, FilteringPatientID);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringPatientName, FilteringPatientName);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringStudyDescription, FilteringStudyDescription);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, ctkDICOMPatientItemWidget::DateType, filteringDate, FilteringDate);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QString, filteringSeriesDescription, FilteringSeriesDescription);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, QStringList, filteringModalities, FilteringModalities);
+CTK_SET_CPP(ctkDICOMVisualBrowserWidget, int, setNumberOfStudiesPerPatient, NumberOfStudiesPerPatient);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, int, numberOfStudiesPerPatient, NumberOfStudiesPerPatient);
+CTK_SET_CPP(ctkDICOMVisualBrowserWidget, const ctkDICOMStudyItemWidget::ThumbnailSizeOption&, setThumbnailSize, ThumbnailSize);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, ctkDICOMStudyItemWidget::ThumbnailSizeOption, thumbnailSize, ThumbnailSize);
+CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setSendActionVisible, SendActionVisible);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isSendActionVisible, SendActionVisible);
+CTK_SET_CPP(ctkDICOMVisualBrowserWidget, bool, setDeleteActionVisible, DeleteActionVisible);
+CTK_GET_CPP(ctkDICOMVisualBrowserWidget, bool, isDeleteActionVisible, DeleteActionVisible);
 
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::setDatabaseDirectorySettingsKey(const QString& key)
@@ -1679,10 +1681,10 @@ int ctkDICOMVisualBrowserWidget::storagePort() const
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMVisualBrowserWidget::getNumberOfServers()
+int ctkDICOMVisualBrowserWidget::serversCount()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
-  return d->ServerNodeWidget->getNumberOfServers();
+  return d->ServerNodeWidget->serversCount();
 }
 
 //----------------------------------------------------------------------------
@@ -1778,25 +1780,11 @@ void ctkDICOMVisualBrowserWidget::setFilteringPatientID(const QString& filtering
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidget::filteringPatientID() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->FilteringPatientID;
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::setFilteringPatientName(const QString& filteringPatientName)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringPatientName = filteringPatientName;
   d->FilteringPatientNameSearchBox->setText(d->FilteringPatientName);
-}
-
-//------------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidget::filteringPatientName() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->FilteringPatientName;
 }
 
 //------------------------------------------------------------------------------
@@ -1808,25 +1796,11 @@ void ctkDICOMVisualBrowserWidget::setFilteringStudyDescription(const QString& fi
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidget::filteringStudyDescription() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->FilteringStudyDescription;
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::setFilteringDate(const ctkDICOMPatientItemWidget::DateType& filteringDate)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->FilteringDate = filteringDate;
   d->FilteringDateComboBox->setCurrentIndex(d->FilteringDate);
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMPatientItemWidget::DateType ctkDICOMVisualBrowserWidget::filteringDate() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->FilteringDate;
 }
 
 //------------------------------------------------------------------------------
@@ -1838,13 +1812,6 @@ void ctkDICOMVisualBrowserWidget::setFilteringSeriesDescription(const QString& f
 }
 
 //------------------------------------------------------------------------------
-QString ctkDICOMVisualBrowserWidget::filteringSeriesDescription() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->FilteringSeriesDescription;
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::setFilteringModalities(const QStringList& filteringModalities)
 {
   Q_D(ctkDICOMVisualBrowserWidget);
@@ -1853,73 +1820,10 @@ void ctkDICOMVisualBrowserWidget::setFilteringModalities(const QStringList& filt
 }
 
 //------------------------------------------------------------------------------
-QStringList ctkDICOMVisualBrowserWidget::filteringModalities() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->FilteringModalities;
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::resetFilters()
 {
   Q_D(ctkDICOMVisualBrowserWidget);
   d->resetFilters();
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setNumberOfStudiesPerPatient(int numberOfStudiesPerPatient)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  d->NumberOfStudiesPerPatient = numberOfStudiesPerPatient;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMVisualBrowserWidget::numberOfStudiesPerPatient() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->NumberOfStudiesPerPatient;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setThumbnailSize(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  d->ThumbnailSize = thumbnailSize;
-}
-
-//------------------------------------------------------------------------------
-ctkDICOMStudyItemWidget::ThumbnailSizeOption ctkDICOMVisualBrowserWidget::thumbnailSize() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->ThumbnailSize;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setSendActionVisible(bool visible)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  d->SendActionVisible = visible;
-}
-
-//------------------------------------------------------------------------------
-bool ctkDICOMVisualBrowserWidget::isSendActionVisible() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->SendActionVisible;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMVisualBrowserWidget::setDeleteActionVisible(bool visible)
-{
-  Q_D(ctkDICOMVisualBrowserWidget);
-  d->DeleteActionVisible = visible;
-}
-
-//------------------------------------------------------------------------------
-bool ctkDICOMVisualBrowserWidget::isDeleteActionVisible() const
-{
-  Q_D(const ctkDICOMVisualBrowserWidget);
-  return d->DeleteActionVisible;
 }
 
 //----------------------------------------------------------------------------
@@ -2456,7 +2360,7 @@ void ctkDICOMVisualBrowserWidget::forceSeriesRetrieve(const QList<QWidget *> &se
     qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
   if (patientItemWidget)
   {
-    if (!patientItemWidget->askUserActionForServerSecurity())
+    if (!patientItemWidget->askUserActionForServerAccess())
     {
       return;
     }
@@ -2801,7 +2705,7 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
     d->FilteringModalities.contains("Any");
 
   if (d->DicomDatabase->patients().count() == 0 &&
-      (filtersEmpty || d->Scheduler->getNumberOfQueryRetrieveServers() == 0))
+      (filtersEmpty || d->Scheduler->queryRetrieveServersCount() == 0))
   {
     d->setBackgroundColorToFilterWidgets(true);
 
@@ -2820,11 +2724,11 @@ void ctkDICOMVisualBrowserWidget::onQueryPatients()
 
   d->createPatients(patientID, patientName, true);
 
-  if (filtersEmpty || (d->Scheduler->getNumberOfQueryRetrieveServers() == 0))
+  if (filtersEmpty || (d->Scheduler->queryRetrieveServersCount() == 0))
   {
     d->updateFiltersWarnings();
   }
-  else if (d->Scheduler->getNumberOfQueryRetrieveServers() > 0)
+  else if (d->Scheduler->queryRetrieveServersCount() > 0)
   {
     QMap<QString, QVariant> parameters;
     parameters["Name"] = d->FilteringPatientName;
@@ -2942,7 +2846,7 @@ void ctkDICOMVisualBrowserWidget::onServersSettingsChanged()
       continue;
     }
 
-    patientItemWidget->updateEnabledServersUIFromDB();
+    patientItemWidget->updateAllowedServersUIFromDB();
   }
 }
 

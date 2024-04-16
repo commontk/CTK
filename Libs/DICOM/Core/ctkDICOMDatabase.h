@@ -183,15 +183,17 @@ public:
   Q_INVOKABLE QString descriptionForSeries(const QString seriesUID);
   Q_INVOKABLE QString descriptionForStudy(const QString studyUID);
   Q_INVOKABLE QString nameForPatient(const QString patientUID);
-  Q_INVOKABLE QStringList enabledConnectionsForPatient(const QString patientUID);
-  Q_INVOKABLE QStringList disabledConnectionsForPatient(const QString patientUID);
-  Q_INVOKABLE bool updateConnectionsForPatient(const QString patientUID,
-                                               const QStringList allowList,
-                                               const QStringList denyList);
   Q_INVOKABLE QString displayedNameForPatient(const QString patientUID);
   Q_INVOKABLE QString fieldForPatient(const QString field, const QString patientUID);
   Q_INVOKABLE QString fieldForStudy(const QString field, const QString studyInstanceUID);
   Q_INVOKABLE QString fieldForSeries(const QString field, const QString seriesInstanceUID);
+
+  /// Provide lists of allow and deny servers associated with the patient.
+  Q_INVOKABLE QMap<QString, QStringList> connectionsInformationForPatient(const QString patientUID);
+  /// Set the allow and deny servers for the patient
+  Q_INVOKABLE bool updateConnectionsForPatient(const QString patientUID,
+                                               const QStringList allowList,
+                                               const QStringList denyList);
 
   QStringList patientFieldNames() const;
   QStringList studyFieldNames() const;

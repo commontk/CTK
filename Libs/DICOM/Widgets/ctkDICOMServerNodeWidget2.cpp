@@ -371,10 +371,10 @@ void ctkDICOMServerNodeWidget2Private::init()
   QObject::connect(this->RestoreDefaultPushButton, SIGNAL(clicked()),
                    q, SLOT(onRestoreDefaultServers()));
   this->SaveButton = this->ActionsButtonBox->button(QDialogButtonBox::StandardButton::Save);
-  this->SaveButton->setText(QObject::tr("Apply changes"));
+  this->SaveButton->setText(ctkDICOMServerNodeWidget2::tr("Apply changes"));
   this->SaveButton->setIcon(QIcon(":/Icons/save.svg"));
   this->CancelButton = this->ActionsButtonBox->button(QDialogButtonBox::StandardButton::Discard);
-  this->CancelButton->setText(QObject::tr("Discard changes"));
+  this->CancelButton->setText(ctkDICOMServerNodeWidget2::tr("Discard changes"));
   this->CancelButton->setIcon(QIcon(":/Icons/cancel.svg"));
   QObject::connect(this->CancelButton, SIGNAL(clicked()),
                    q, SLOT(readSettings()));
@@ -579,7 +579,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(const QMap<QString, QVariant
   newItem = new QTableWidgetItem(QString(""));
   QLineEdit* verificationLineEdit = new QLineEdit();
   verificationLineEdit->setObjectName("verificationLineEdit");
-  verificationLineEdit->setText(QObject::tr("unknown"));
+  verificationLineEdit->setText(ctkDICOMServerNodeWidget2::tr("unknown"));
   verificationLineEdit->setReadOnly(true);
   verificationLineEdit->setAlignment(Qt::AlignLeft);
   this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::VerificationColumn, verificationLineEdit);
@@ -698,7 +698,7 @@ int ctkDICOMServerNodeWidget2Private::addServerNode(ctkDICOMServer* server)
   newItem = new QTableWidgetItem(QString(""));
   QLineEdit* verificationLineEdit = new QLineEdit();
   verificationLineEdit->setObjectName("verificationLineEdit");
-  verificationLineEdit->setText(QObject::tr("unknown"));
+  verificationLineEdit->setText(ctkDICOMServerNodeWidget2::tr("unknown"));
   verificationLineEdit->setReadOnly(true);
   verificationLineEdit->setAlignment(Qt::AlignLeft);
   this->NodeTable->setCellWidget(rowCount, ctkDICOMServerNodeWidget2::VerificationColumn, verificationLineEdit);
@@ -824,11 +824,13 @@ void ctkDICOMServerNodeWidget2Private::updateProxyComboBoxes() const
     if (proxyComboBox)
     {
       bool wasBlocking = proxyComboBox->blockSignals(true);
-
+      QStringList rowServerNames(serverNames);
+      QString serverName = this->NodeTable->item(row, ctkDICOMServerNodeWidget2::NameColumn)->data(Qt::DisplayRole).toString();
+      rowServerNames.removeOne(serverName);
       QString currentServer = proxyComboBox->currentText();
       proxyComboBox->clear();
       proxyComboBox->addItem("");
-      proxyComboBox->addItems(serverNames);
+      proxyComboBox->addItems(rowServerNames);
       proxyComboBox->setCurrentText(currentServer);
       proxyComboBox->blockSignals(wasBlocking);
     }
@@ -880,11 +882,11 @@ void ctkDICOMServerNodeWidget2Private::updateServerVerification(const ctkDICOMJo
   lineEdit->setReadOnly(true);
 
   QPalette palette;
-  if (status == QObject::tr("success"))
+  if (status == ctkDICOMServerNodeWidget2::tr("success"))
   {
     palette = this->ServerSuccesPalette;
   }
-  else if (status == QObject::tr("in progress"))
+  else if (status == ctkDICOMServerNodeWidget2::tr("in progress"))
   {
     palette = this->ServerProgresPalette;
   }
@@ -926,7 +928,7 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
     if (resetServerStatus)
     {
       lineEdit->setReadOnly(false);
-      lineEdit->setText(QObject::tr("unknown"));
+      lineEdit->setText(ctkDICOMServerNodeWidget2::tr("unknown"));
       lineEdit->setReadOnly(true);
     }
 
@@ -1201,11 +1203,11 @@ void ctkDICOMServerNodeWidget2::updateGUIState()
 
   if (d->Scheduler && d->Scheduler->isStorageListenerActive())
   {
-    d->StorageStatusValueLabel->setText(QObject::tr("Active"));
+    d->StorageStatusValueLabel->setText(ctkDICOMServerNodeWidget2::tr("Active"));
   }
   else
   {
-    d->StorageStatusValueLabel->setText(QObject::tr("Inactive"));
+    d->StorageStatusValueLabel->setText(ctkDICOMServerNodeWidget2::tr("Inactive"));
   }
 
   d->updateProxyComboBoxes();
@@ -1248,7 +1250,7 @@ void ctkDICOMServerNodeWidget2::onCellSettingsModified(int row, int column)
   if (lineEdit)
   {
     lineEdit->setReadOnly(false);
-    lineEdit->setText(QObject::tr("unknown"));
+    lineEdit->setText(ctkDICOMServerNodeWidget2::tr("unknown"));
     lineEdit->setReadOnly(true);
     lineEdit->setPalette(d->DefaultPalette);
   }
@@ -1546,16 +1548,16 @@ void ctkDICOMServerNodeWidget2::setScheduler(QSharedPointer<ctkDICOMScheduler> s
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMServerNodeWidget2::getNumberOfServers()
+int ctkDICOMServerNodeWidget2::serversCount()
 {
   Q_D(ctkDICOMServerNodeWidget2);
   if (!d->Scheduler)
   {
-    logger.error("getNumberOfServers failed, no task pool has been set. \n");
+    logger.error("serversCount failed, no task pool has been set. \n");
     return -1;
   }
 
-  return d->Scheduler->getNumberOfServers();
+  return d->Scheduler->serversCount();
 }
 
 //----------------------------------------------------------------------------

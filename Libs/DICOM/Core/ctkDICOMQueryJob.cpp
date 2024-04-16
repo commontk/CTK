@@ -71,6 +71,10 @@ ctkDICOMQueryJob::ctkDICOMQueryJob(ctkDICOMQueryJobPrivate* pimpl)
 {
 }
 
+//------------------------------------------------------------------------------
+CTK_SET_CPP(ctkDICOMQueryJob, const int&, setMaximumPatientsQuery, MaximumPatientsQuery);
+CTK_GET_CPP(ctkDICOMQueryJob, int, maximumPatientsQuery, MaximumPatientsQuery)
+
 //----------------------------------------------------------------------------
 void ctkDICOMQueryJob::setFilters(const QMap<QString, QVariant>& filters)
 {
@@ -83,20 +87,6 @@ QMap<QString, QVariant> ctkDICOMQueryJob::filters() const
 {
   Q_D(const ctkDICOMQueryJob);
   return d->Filters;
-}
-
-//------------------------------------------------------------------------------
-void ctkDICOMQueryJob::setMaximumPatientsQuery(int maximumPatientsQuery)
-{
-  Q_D(ctkDICOMQueryJob);
-  d->MaximumPatientsQuery = maximumPatientsQuery;
-}
-
-//------------------------------------------------------------------------------
-int ctkDICOMQueryJob::maximumPatientsQuery()
-{
-  Q_D(const ctkDICOMQueryJob);
-  return d->MaximumPatientsQuery;
 }
 
 //----------------------------------------------------------------------------

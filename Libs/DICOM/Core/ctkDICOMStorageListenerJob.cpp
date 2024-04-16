@@ -64,47 +64,13 @@ ctkDICOMStorageListenerJob::ctkDICOMStorageListenerJob(ctkDICOMStorageListenerJo
 //------------------------------------------------------------------------------
 ctkDICOMStorageListenerJob::~ctkDICOMStorageListenerJob() = default;
 
-//----------------------------------------------------------------------------
-void ctkDICOMStorageListenerJob::setPort(int port)
-{
-  Q_D(ctkDICOMStorageListenerJob);
-  d->Port = port;
-}
-
-//----------------------------------------------------------------------------
-int ctkDICOMStorageListenerJob::port() const
-{
-  Q_D(const ctkDICOMStorageListenerJob);
-  return d->Port;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMStorageListenerJob::setAETitle(const QString& AETitle)
-{
-  Q_D(ctkDICOMStorageListenerJob);
-  d->AETitle = AETitle;
-}
-
-//----------------------------------------------------------------------------
-QString ctkDICOMStorageListenerJob::AETitle() const
-{
-  Q_D(const ctkDICOMStorageListenerJob);
-  return d->AETitle;
-}
-
-//----------------------------------------------------------------------------
-void ctkDICOMStorageListenerJob::setConnectionTimeout(int timeout)
-{
-  Q_D(ctkDICOMStorageListenerJob);
-  d->ConnectionTimeout = timeout;
-}
-
-//----------------------------------------------------------------------------
-int ctkDICOMStorageListenerJob::connectionTimeout() const
-{
-  Q_D(const ctkDICOMStorageListenerJob);
-  return d->ConnectionTimeout;
-}
+//------------------------------------------------------------------------------
+CTK_SET_CPP(ctkDICOMStorageListenerJob, const int&, setPort, Port);
+CTK_GET_CPP(ctkDICOMStorageListenerJob, int, port, Port)
+CTK_SET_CPP(ctkDICOMStorageListenerJob, const int&, setConnectionTimeout, ConnectionTimeout);
+CTK_GET_CPP(ctkDICOMStorageListenerJob, int, connectionTimeout, ConnectionTimeout)
+CTK_SET_CPP(ctkDICOMStorageListenerJob, const QString&, setAETitle, AETitle);
+CTK_GET_CPP(ctkDICOMStorageListenerJob, QString, AETitle, AETitle)
 
 //----------------------------------------------------------------------------
 QString ctkDICOMStorageListenerJob::loggerReport(const QString& status) const
