@@ -88,12 +88,12 @@ int ctkDICOMServerNodeWidget2Test1(int argc, char* argv[])
   ctkDICOMServer* server = new ctkDICOMServer();
   server->setConnectionName("server");
   widget.addServer(server);
-  CHECK_INT(widget.getNumberOfServers(), 3);
+  CHECK_INT(widget.serversCount(), 3);
   CHECK_INT(widget.getServerIndexFromName("server"), 2);
   CHECK_QSTRING(widget.getServerNameFromIndex(2), "server");
   CHECK_QSTRING(widget.getServer("server")->connectionName(), server->connectionName());
   widget.removeServer("server");
-  CHECK_INT(widget.getNumberOfServers(), 2);
+  CHECK_INT(widget.serversCount(), 2);
   delete server;
 
   if (!interactive)
