@@ -72,9 +72,7 @@ public:
   void clearLayout(QLayout* layout, bool deleteWidgets = true);
   void createStudies(bool queryRetrieve = true);
   void updateAllowedServersUIFromDB();
-  bool areAllActiveServersAllowed();
   void setAllDeniedServerEnabledStatus(bool enabled);
-  bool askUserActionForServerAccess();
   void saveAllowedServersStringListFromUI();
   void saveAllowedServersStringListToChildren(const QStringList& allowedServers);
 
@@ -443,46 +441,26 @@ void ctkDICOMPatientItemWidgetPrivate::updateAllowedServersUIFromDB()
     if (allowList.contains(connectionName))
     {
       checkState = Qt::CheckState::Checked;
+      this->AllowedServers.append(connectionName);
     }
     else if (denyList.contains(connectionName))
     {
       checkState = Qt::CheckState::Unchecked;
     }
+    else
+    {
+      ctkDICOMServer* server = this->Scheduler->getServer(connectionName);
+      if (server && server->trustedEnabled())
+      {
+      this->AllowedServers.append(connectionName);
+      }
+    }
 
     this->PatientServersCheckableComboBox->setCheckState(modelIndex, checkState);
-
-    if (checkState != Qt::CheckState::Unchecked)
-    {
-      this->AllowedServers.append(connectionName);
-    }
   }
   this->PatientServersCheckableComboBox->blockSignals(wasBlocking);
 
   this->saveAllowedServersStringListToChildren(this->AllowedServers);
-}
-
-//----------------------------------------------------------------------------
-bool ctkDICOMPatientItemWidgetPrivate::areAllActiveServersAllowed()
-{
-  QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
-  for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
-  {
-    QModelIndex modelIndex = model->index(filterIndex, 0);
-    Qt::CheckState checkState = this->PatientServersCheckableComboBox->checkState(modelIndex);
-    QString connectionName = this->PatientServersCheckableComboBox->itemText(filterIndex);
-    ctkDICOMServer* server = this->Scheduler->getServer(connectionName);
-    bool serverTrusted = false;
-    if (server)
-    {
-      serverTrusted = server->trustedEnabled();
-    }
-    if (checkState == Qt::CheckState::PartiallyChecked && !serverTrusted)
-    {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -507,68 +485,11 @@ void ctkDICOMPatientItemWidgetPrivate::setAllDeniedServerEnabledStatus(bool enab
 }
 
 //----------------------------------------------------------------------------
-bool ctkDICOMPatientItemWidgetPrivate::askUserActionForServerAccess()
-{
-  bool allowed = this->areAllActiveServersAllowed();
-  if (!allowed)
-  {
-    QString warningString = ctkDICOMPatientItemWidget::tr("One or more active servers have been marked with an unrecognized access level. \n"
-                                                          "A server is marked as such if it deviates from the cached source of patient data "
-                                                          "server stored in the local DICOM database.");
-    ctkMessageBox serversMessageBox;
-    serversMessageBox.setText(warningString);
-    serversMessageBox.setIcon(QMessageBox::Warning);
-    serversMessageBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::YesAll | QMessageBox::NoAll | QMessageBox::Ok);
-    serversMessageBox.setDefaultButton(QMessageBox::No);
-    QPushButton *cancelAllButton = qobject_cast<QPushButton *>(serversMessageBox.button(QMessageBox::Cancel));
-    QPushButton *yesAllButton = qobject_cast<QPushButton *>(serversMessageBox.button(QMessageBox::YesAll));
-    QPushButton *noAllButton = qobject_cast<QPushButton *>(serversMessageBox.button(QMessageBox::NoAll));
-    QPushButton *okButton = qobject_cast<QPushButton *>(serversMessageBox.button(QMessageBox::Ok));
-    if (cancelAllButton)
-      {
-      cancelAllButton->setToolTip(ctkDICOMPatientItemWidget::tr("Cancel the operation"));
-      }
-    if (yesAllButton)
-      {
-      yesAllButton->setToolTip(ctkDICOMPatientItemWidget::tr("The visual DICOM browser will enable all servers "
-                                                             "with unrecognized access level associated with this patient."));
-      }
-    if (noAllButton)
-      {
-      noAllButton->setToolTip(ctkDICOMPatientItemWidget::tr("The visual DICOM browser will disable all servers "
-                                                            "with unrecognized access level associated with this patient."));
-      }
-    if (okButton)
-      {
-      okButton->setToolTip(ctkDICOMPatientItemWidget::tr("The visual DICOM browser will query/retrieve data from all active servers, "
-                                                         "including the ones with unrecognized access level, "
-                                                         "without altering the current settings."));
-      }
-
-    int response = serversMessageBox.exec();
-    if (response == QMessageBox::Cancel)
-      {
-      return false;
-      }
-    else if (response == QMessageBox::YesAll)
-      {
-      this->setAllDeniedServerEnabledStatus(true);
-      }
-    else if (response == QMessageBox::NoAll)
-      {
-      this->setAllDeniedServerEnabledStatus(false);
-      }
-  }
-
-  return true;
-}
-
-//----------------------------------------------------------------------------
 void ctkDICOMPatientItemWidgetPrivate::saveAllowedServersStringListFromUI()
 {
-  QStringList allowedServers;
-  QStringList allowList;
-  QStringList denyList;
+  this->AllowedServers.clear();
+  QStringList databaseAllowList;
+  QStringList databaseDenyList;
   QAbstractItemModel* model = this->PatientServersCheckableComboBox->checkableModel();
   for (int filterIndex = 0; filterIndex < this->PatientServersCheckableComboBox->count(); ++filterIndex)
   {
@@ -577,21 +498,24 @@ void ctkDICOMPatientItemWidgetPrivate::saveAllowedServersStringListFromUI()
     QString connectionName = this->PatientServersCheckableComboBox->itemText(filterIndex);
     if (checkState == Qt::CheckState::Unchecked)
     {
-      denyList.append(connectionName);
+      databaseDenyList.append(connectionName);
     }
     else if (checkState == Qt::CheckState::Checked)
     {
-      allowList.append(connectionName);
+      databaseAllowList.append(connectionName);
+      this->AllowedServers.append(connectionName);
     }
-
-    if (checkState != Qt::CheckState::Unchecked)
+    else if (checkState == Qt::CheckState::PartiallyChecked)
     {
-      allowedServers.append(connectionName);
+      ctkDICOMServer* server = this->Scheduler->getServer(connectionName);
+      if (server && server->trustedEnabled())
+      {
+      this->AllowedServers.append(connectionName);
+      }
     }
   }
 
-  this->DicomDatabase->updateConnectionsForPatient(this->PatientItem, allowList, denyList);
-  this->AllowedServers = allowedServers;
+  this->DicomDatabase->updateConnectionsForPatient(this->PatientItem, databaseAllowList, databaseDenyList);
   this->saveAllowedServersStringListToChildren(this->AllowedServers);
 }
 
@@ -906,24 +830,9 @@ void ctkDICOMPatientItemWidget::updateAllowedServersUIFromDB()
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMPatientItemWidget::askUserActionForServerAccess()
-{
-  Q_D(ctkDICOMPatientItemWidget);
-  return d->askUserActionForServerAccess();
-}
-
-//------------------------------------------------------------------------------
 void ctkDICOMPatientItemWidget::generateStudies(bool queryRetrieve)
 {
   Q_D(ctkDICOMPatientItemWidget);
-
-  if (queryRetrieve)
-  {
-    if (!d->askUserActionForServerAccess())
-    {
-      return;
-    }
-  }
 
   d->createStudies(queryRetrieve);
   if (queryRetrieve && d->Scheduler && d->Scheduler->queryRetrieveServersCount() > 0)
@@ -942,11 +851,6 @@ void ctkDICOMPatientItemWidget::generateSeriesAtToggle(bool toggled, const QStri
   {
     return;
   }
-
-  if (!d->askUserActionForServerAccess())
-    {
-      return;
-    }
 
   ctkDICOMStudyItemWidget* studyItemWidget = this->studyItemWidgetByStudyItem(studyItem);
   if (!studyItemWidget)

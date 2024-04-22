@@ -175,7 +175,6 @@ public:
   void setAllowedServers(const QStringList& allowedServers);
   QStringList allowedServers() const;
   Q_INVOKABLE void updateAllowedServersUIFromDB();
-  Q_INVOKABLE bool askUserActionForServerAccess();
   ///@}
 
 public Q_SLOTS:
