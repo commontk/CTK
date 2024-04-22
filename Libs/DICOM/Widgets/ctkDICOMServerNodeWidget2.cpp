@@ -55,11 +55,12 @@
 #include "ui_ctkDICOMServerNodeWidget2.h"
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMServerNodeWidget2");
-Qt::GlobalColor defaultColor = Qt::white;
-Qt::GlobalColor modifiedColor = Qt::darkYellow;
-Qt::GlobalColor serverSuccesColor = Qt::darkGreen;
-Qt::GlobalColor serverProgressColor = Qt::darkCyan;
-Qt::GlobalColor serverFailedColor = Qt::darkRed;
+QColor ctkDICOMServerNodeWidget2DefaultColor(Qt::white);
+QColor ctkDICOMServerNodeWidget2DarkModeDefaultColor(50, 50, 50);
+QColor ctkDICOMServerNodeWidget2ModifiedColor(Qt::darkYellow);
+QColor ctkDICOMServerNodeWidget2ServerSuccesColor(Qt::darkGreen);
+QColor ctkDICOMServerNodeWidget2ServerProgressColor(Qt::darkCyan);
+QColor ctkDICOMServerNodeWidget2ServerFailedColor(Qt::darkRed);
 
 class QSelectionColorStyledItemDelegate : public QStyledItemDelegate
 {
@@ -77,7 +78,7 @@ public:
     }
 
     QTableWidgetItem* item = table->item(index.row(), index.column());
-    if (!item || item->background() == defaultColor)
+    if (!item || item->background() == ctkDICOMServerNodeWidget2DefaultColor || item->background() == ctkDICOMServerNodeWidget2DarkModeDefaultColor)
     {
       return;
     }
@@ -103,7 +104,7 @@ public:
     }
 
     QTableWidgetItem* item = table->item(index.row(), index.column());
-    if (!item || item->background() == defaultColor)
+    if (!item || item->background() == ctkDICOMServerNodeWidget2DefaultColor || item->background() == ctkDICOMServerNodeWidget2DarkModeDefaultColor)
     {
       return;
     }
@@ -293,16 +294,16 @@ ctkDICOMServerNodeWidget2Private::ctkDICOMServerNodeWidget2Private(ctkDICOMServe
   this->Scheduler = nullptr;
   this->CancelButton = nullptr;
   this->SaveButton = nullptr;
-  this->DefaultPalette.setColor(QPalette::Button, defaultColor);
-  this->DefaultPalette.setColor(QPalette::Base, defaultColor);
-  this->ModifiedPalette.setColor(QPalette::Button, modifiedColor);
-  this->ModifiedPalette.setColor(QPalette::Base, modifiedColor);
-  this->ServerSuccesPalette.setColor(QPalette::Button, serverSuccesColor);
-  this->ServerSuccesPalette.setColor(QPalette::Base, serverSuccesColor);
-  this->ServerProgresPalette.setColor(QPalette::Button, serverProgressColor);
-  this->ServerProgresPalette.setColor(QPalette::Base, serverProgressColor);
-  this->ServerFailedPalette.setColor(QPalette::Button, serverFailedColor);
-  this->ServerFailedPalette.setColor(QPalette::Base, serverFailedColor);
+  this->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DefaultColor);
+  this->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DefaultColor);
+  this->ModifiedPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ModifiedColor);
+  this->ModifiedPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ModifiedColor);
+  this->ServerSuccesPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ServerSuccesColor);
+  this->ServerSuccesPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ServerSuccesColor);
+  this->ServerProgresPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ServerProgressColor);
+  this->ServerProgresPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ServerProgressColor);
+  this->ServerFailedPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2ServerFailedColor);
+  this->ServerFailedPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2ServerFailedColor);
 }
 
 //----------------------------------------------------------------------------
@@ -927,6 +928,8 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
                                                     int verticalScrollBarValue,
                                                     bool resetServerStatus)
 {
+  Q_Q(ctkDICOMServerNodeWidget2);
+
   bool wasBlocked = this->NodeTable->blockSignals(true);
   int rowCount = this->NodeTable->rowCount();
   int columnCount = this->NodeTable->columnCount();
@@ -950,6 +953,18 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
     lineEdit->clearFocus();
   }
 
+  QColor serverNodeWidgetColor = q->palette().color(QPalette::Normal, q->backgroundRole());
+  if (serverNodeWidgetColor.lightnessF() < 0.5)
+  {
+    this->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DarkModeDefaultColor);
+    this->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DarkModeDefaultColor);
+  }
+  else
+  {
+    this->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DefaultColor);
+    this->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DefaultColor);
+  }
+
   for (int row = 0; row < rowCount; ++row)
   {
     for (int column = 0; column < columnCount; ++column)
@@ -957,7 +972,14 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
       QTableWidgetItem *item = this->NodeTable->item(row, column);
       if (item)
       {
-        item->setBackground(defaultColor);
+        if (serverNodeWidgetColor.lightnessF() < 0.5)
+        {
+          item->setBackground(ctkDICOMServerNodeWidget2DarkModeDefaultColor);
+        }
+        else
+        {
+          item->setBackground(ctkDICOMServerNodeWidget2DefaultColor);
+        }
       }
 
       if (column == ctkDICOMServerNodeWidget2::VerificationColumn && !resetServerStatus)
@@ -1261,7 +1283,7 @@ void ctkDICOMServerNodeWidget2::onCellSettingsModified(int row, int column)
   QTableWidgetItem *item = d->NodeTable->item(row, column);
   if (item)
   {
-    item->setBackground(modifiedColor);
+    item->setBackground(ctkDICOMServerNodeWidget2ModifiedColor);
   }
 
   QLineEdit* lineEdit = qobject_cast<QLineEdit*>(d->NodeTable->cellWidget(row, ctkDICOMServerNodeWidget2::VerificationColumn));
@@ -1270,6 +1292,19 @@ void ctkDICOMServerNodeWidget2::onCellSettingsModified(int row, int column)
     lineEdit->setReadOnly(false);
     lineEdit->setText(ctkDICOMServerNodeWidget2::tr("unknown"));
     lineEdit->setReadOnly(true);
+
+    QColor serverNodeWidgetColor = this->palette().color(QPalette::Normal, this->backgroundRole());
+    if (serverNodeWidgetColor.lightnessF() < 0.5)
+    {
+      d->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DarkModeDefaultColor);
+      d->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DarkModeDefaultColor);
+    }
+    else
+    {
+      d->DefaultPalette.setColor(QPalette::Button, ctkDICOMServerNodeWidget2DefaultColor);
+      d->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DefaultColor);
+    }
+
     lineEdit->setPalette(d->DefaultPalette);
   }
 

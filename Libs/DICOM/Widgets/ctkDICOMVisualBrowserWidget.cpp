@@ -61,8 +61,10 @@
 #include "ui_ctkDICOMVisualBrowserWidget.h"
 
 static ctkLogger logger("org.commontk.DICOM.Widgets.DICOMVisualBrowserWidget");
-Qt::GlobalColor warningColor = Qt::yellow;
-QColor warningColorDarkMode = QColor(60, 164, 255);
+
+QColor ctkDICOMVisualBrowserWidgetDefaultColor(Qt::white);
+QColor ctkDICOMVisualBrowserWidgetDarkModeDefaultColor(50, 50, 50);
+QColor ctkDICOMVisualBrowserWidgetWarningColor(Qt::darkYellow);
 
 class ctkDICOMMetadataDialog : public QDialog
 {
@@ -373,7 +375,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::init()
   this->SearchMenuButton->setMenu(queryRetrieveButtonMenu);
   this->SearchMenuButton->setFixedWidth(this->SearchMenuButton->width());
 
-  QAction *toggleQueryRetrieveAction = new QAction(ctkDICOMVisualBrowserWidget::tr("Query/Retrieve"), queryRetrieveButtonMenu);
+  QAction *toggleQueryRetrieveAction = new QAction(ctkDICOMVisualBrowserWidget::tr("Query/Retrieve from servers"), queryRetrieveButtonMenu);
   toggleQueryRetrieveAction->setToolTip(ctkDICOMVisualBrowserWidget::tr("If enabled, the widget will also conduct queries and retrieve the data."));
   toggleQueryRetrieveAction->setCheckable(true);
   QSettings settings;
@@ -781,7 +783,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::resetFilters()
 //----------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
 {
-  Q_Q(ctkDICOMVisualBrowserWidget);
   if (!this->DicomDatabase)
   {
     logger.error("updateFiltersWarnings failed, no DICOM database has been set. \n");
@@ -792,13 +793,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
   // If there are no series, highlight which are the filters that produce no results
   this->setBackgroundColorToFilterWidgets();
 
-  QColor visualDICOMBrowserColor = q->palette().color(QPalette::Normal, q->backgroundRole());
-  QColor color = warningColor;
-  if (visualDICOMBrowserColor.lightnessF() < 0.5)
-  {
-    color = warningColorDarkMode;
-  }
-
+  QColor color = ctkDICOMVisualBrowserWidgetWarningColor;
   QStringList patientList = this->DicomDatabase->patients();
   if (patientList.count() == 0)
   {
@@ -859,13 +854,22 @@ void ctkDICOMVisualBrowserWidgetPrivate::updateFiltersWarnings()
 void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToFilterWidgets(bool warning)
 {
   Q_Q(ctkDICOMVisualBrowserWidget);
-  QColor visualDICOMBrowserColor = q->palette().color(QPalette::Normal, q->backgroundRole());
   if (warning)
   {
-    QColor color = Qt::yellow;
+    this->setBackgroundColorToWidget(ctkDICOMVisualBrowserWidgetWarningColor, this->FilteringPatientIDSearchBox);
+    this->setBackgroundColorToWidget(ctkDICOMVisualBrowserWidgetWarningColor, this->FilteringPatientNameSearchBox);
+    this->setBackgroundColorToWidget(ctkDICOMVisualBrowserWidgetWarningColor, this->FilteringDateComboBox);
+    this->setBackgroundColorToWidget(ctkDICOMVisualBrowserWidgetWarningColor, this->FilteringStudyDescriptionSearchBox);
+    this->setBackgroundColorToWidget(ctkDICOMVisualBrowserWidgetWarningColor, this->FilteringSeriesDescriptionSearchBox);
+    this->setBackgroundColorToWidget(ctkDICOMVisualBrowserWidgetWarningColor, this->FilteringModalityCheckableComboBox);
+  }
+  else
+  {
+    QColor color(ctkDICOMVisualBrowserWidgetDefaultColor);
+    QColor visualDICOMBrowserColor = q->palette().color(QPalette::Normal, q->backgroundRole());
     if (visualDICOMBrowserColor.lightnessF() < 0.5)
     {
-      color.setRgb(60, 164, 255);
+      color = ctkDICOMVisualBrowserWidgetDarkModeDefaultColor;
     }
     this->setBackgroundColorToWidget(color, this->FilteringPatientIDSearchBox);
     this->setBackgroundColorToWidget(color, this->FilteringPatientNameSearchBox);
@@ -873,27 +877,6 @@ void ctkDICOMVisualBrowserWidgetPrivate::setBackgroundColorToFilterWidgets(bool 
     this->setBackgroundColorToWidget(color, this->FilteringStudyDescriptionSearchBox);
     this->setBackgroundColorToWidget(color, this->FilteringSeriesDescriptionSearchBox);
     this->setBackgroundColorToWidget(color, this->FilteringModalityCheckableComboBox);
-  }
-  else
-  {
-    QColor colorSearchBox(255, 255, 255);
-    QColor colorButton(239, 239, 239);
-    if (visualDICOMBrowserColor.lightnessF() < 0.5)
-    {
-      colorSearchBox.setRgb(30, 30, 30);
-      colorButton.setRgb(50, 50, 50);
-    }
-    else if (visualDICOMBrowserColor.lightnessF() > 0.95)
-    {
-      colorSearchBox.setRgb(255, 255, 255);
-      colorButton.setRgb(255, 255, 255);
-    }
-    this->setBackgroundColorToWidget(colorSearchBox, this->FilteringPatientIDSearchBox);
-    this->setBackgroundColorToWidget(colorSearchBox, this->FilteringPatientNameSearchBox);
-    this->setBackgroundColorToWidget(colorButton, this->FilteringDateComboBox);
-    this->setBackgroundColorToWidget(colorSearchBox, this->FilteringStudyDescriptionSearchBox);
-    this->setBackgroundColorToWidget(colorSearchBox, this->FilteringSeriesDescriptionSearchBox);
-    this->setBackgroundColorToWidget(colorButton, this->FilteringModalityCheckableComboBox);
   }
 }
 
@@ -2354,18 +2337,6 @@ void ctkDICOMVisualBrowserWidget::showMetadata(const QStringList& fileList)
 //------------------------------------------------------------------------------
 void ctkDICOMVisualBrowserWidget::forceSeriesRetrieve(const QList<QWidget *> &selectedWidgets)
 {
-  Q_D(const ctkDICOMVisualBrowserWidget);
-
-  ctkDICOMPatientItemWidget* patientItemWidget =
-    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
-  if (patientItemWidget)
-  {
-    if (!patientItemWidget->askUserActionForServerAccess())
-    {
-      return;
-    }
-  }
-
   foreach (QWidget* selectedWidget, selectedWidgets)
   {
     if (!selectedWidget)
