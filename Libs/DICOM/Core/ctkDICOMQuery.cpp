@@ -1120,7 +1120,8 @@ QString ctkDICOMQuery::applyFilters(QMap<QString,QVariant> filters)
     }
   }
 
-  if (filters.keys().contains("StartDate") && filters.keys().contains("EndDate"))
+  if (filters.keys().contains("StartDate") && filters.keys().contains("EndDate") &&
+    !filters["StartDate"].toString().isEmpty() && !filters["EndDate"].toString().isEmpty())
   {
     QString dateRange = filters["StartDate"].toString() +
                         QString("-") +
