@@ -274,6 +274,7 @@ public:
                     int horizontalScrollBarValue,
                     int verticalScrollBarValue,
                     bool resetServerStatus = true);
+  void setDynamicPaletteColorToWidget(QPalette* palette, QWidget* widget);
 
   bool SettingsModified;
   QSharedPointer<ctkDICOMScheduler> Scheduler;
@@ -910,7 +911,7 @@ void ctkDICOMServerNodeWidget2Private::updateServerVerification(const ctkDICOMJo
     palette = this->ServerFailedPalette;
   }
 
-  lineEdit->setPalette(palette);
+  this->setDynamicPaletteColorToWidget(&palette, lineEdit);
 }
 
 //----------------------------------------------------------------------------
@@ -988,16 +989,13 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
       }
 
       QWidget *widget = this->NodeTable->cellWidget(row, column);
-      if (widget)
-      {
-        widget->setPalette(this->DefaultPalette);
-      }
+      this->setDynamicPaletteColorToWidget(&this->DefaultPalette, widget);
     }
   }
 
-  this->StorageEnabledCheckBox->setPalette(this->DefaultPalette);
-  this->StorageAETitle->setPalette(this->DefaultPalette);
-  this->StoragePort->setPalette(this->DefaultPalette);
+  this->setDynamicPaletteColorToWidget(&this->DefaultPalette, this->StorageEnabledCheckBox);
+  this->setDynamicPaletteColorToWidget(&this->DefaultPalette, this->StorageAETitle);
+  this->setDynamicPaletteColorToWidget(&this->DefaultPalette, this->StoragePort);
 
   this->NodeTable->horizontalScrollBar()->setValue(horizontalScrollBarValue);
   this->NodeTable->verticalScrollBar()->setValue(verticalScrollBarValue);
@@ -1010,6 +1008,20 @@ void ctkDICOMServerNodeWidget2Private::restoreFocus(QModelIndexList selectedInde
 
   QModelIndex index = selectedIndexes.at(0);
   this->NodeTable->selectRow(index.row());
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMServerNodeWidget2Private::setDynamicPaletteColorToWidget(QPalette *palette, QWidget *widget)
+{
+  if (!palette || !widget)
+  {
+    return;
+  }
+
+  QPalette widgetPalette = widget->palette();
+  widgetPalette.setColor(QPalette::Base, palette->color(QPalette::Base));
+  widgetPalette.setColor(QPalette::Button, palette->color(QPalette::Button));
+  widget->setPalette(widgetPalette);
 }
 
 //----------------------------------------------------------------------------
@@ -1267,10 +1279,7 @@ void ctkDICOMServerNodeWidget2::onSettingsModified()
   if (senderObj)
   {
     QWidget *widget = qobject_cast<QWidget*>(senderObj);
-    if (widget)
-    {
-      widget->setPalette(d->ModifiedPalette);
-    }
+    d->setDynamicPaletteColorToWidget(&d->ModifiedPalette, widget);
   }
 
   d->settingsModified();
@@ -1305,7 +1314,7 @@ void ctkDICOMServerNodeWidget2::onCellSettingsModified(int row, int column)
       d->DefaultPalette.setColor(QPalette::Base, ctkDICOMServerNodeWidget2DefaultColor);
     }
 
-    lineEdit->setPalette(d->DefaultPalette);
+    d->setDynamicPaletteColorToWidget(&d->DefaultPalette, lineEdit);
   }
 
   d->SettingsModified = true;
