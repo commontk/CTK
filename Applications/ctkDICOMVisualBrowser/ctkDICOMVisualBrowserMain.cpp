@@ -118,5 +118,50 @@ int main(int argc, char** argv)
   mainWidget.show();
   DICOMVisualBrowser.onShowPatients();
 
+  // CTK should define these styles in files like ctkLightStyle.qss
+  QString barebonesLightStyleExample =
+    R""""(
+      ctkSearchBox[warning=true]
+      {
+        background-color: #9c9c27;
+      }
+
+      ctkCheckableComboBox[warning=true]
+      {
+        background-color: #9c9c27;
+      }
+
+      ctkComboBox[warning=true]
+      {
+        background-color: #9c9c27;
+      }
+    )"""";
+
+  QString barebonesDarkStyleExample =
+    R""""(
+      QWidget
+      {
+        background-color: #333333;
+        color: #ffffff;
+      }
+
+      ctkSearchBox[warning=true]
+      {
+        background-color: #9c9c27;
+      }
+
+      ctkCheckableComboBox[warning=true]
+      {
+        background-color: #9c9c27;
+      }
+
+      ctkComboBox[warning=true]
+      {
+        background-color: #9c9c27;
+      }
+    )"""";
+
+  app.setStyleSheet(barebonesLightStyleExample);
+
   return app.exec();
 }
