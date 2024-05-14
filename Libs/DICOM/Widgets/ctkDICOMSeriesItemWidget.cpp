@@ -443,6 +443,11 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
         painter.end();
       }
     }
+    else
+    {
+    QColor firstPixelColor = this->ThumbnailImage.pixelColor(0, 0);
+    resultPixmap.fill(firstPixelColor);
+    }
   }
 
   if (thumbnailGenerated && !this->isThumbnailDocument)
