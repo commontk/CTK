@@ -184,6 +184,9 @@ public:
   Q_INVOKABLE QString descriptionForStudy(const QString studyUID);
   Q_INVOKABLE QString nameForPatient(const QString patientUID);
   Q_INVOKABLE QString displayedNameForPatient(const QString patientUID);
+  Q_INVOKABLE QDateTime insertDateTimeForPatient(const QString patientUID);
+  Q_INVOKABLE QDateTime insertDateTimeForStudy(const QString studyInstanceUID);
+  Q_INVOKABLE QDateTime insertDateTimeForSeries(const QString seriesInstanceUID);
   Q_INVOKABLE QString fieldForPatient(const QString field, const QString patientUID);
   Q_INVOKABLE QString fieldForStudy(const QString field, const QString studyInstanceUID);
   Q_INVOKABLE QString fieldForSeries(const QString field, const QString seriesInstanceUID);

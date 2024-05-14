@@ -156,7 +156,7 @@ public:
   void retrieveSeries();
   bool updateServer(ctkDICOMServer* server);
   void removeAllPatientItemWidgets();
-  int isPatientTabAlreadyAdded(const QString& patientItem);
+  int findPatientTabIndexFromPatientItem(const QString& patientItem);
   void updateSeriesTablesSelection(ctkDICOMSeriesItemWidget* selectedSeriesItemWidget);
   QStringList getPatientItemsFromWidgets(ctkDICOMModel::IndexType level,
                                          QList<QWidget*> selectedWidgets);
@@ -689,29 +689,17 @@ void ctkDICOMVisualBrowserWidgetPrivate::createPatients(QString selectedPatientI
     return;
   }
 
-  // Save current patient selection
-  if (selectedPatientID.isEmpty() && selectedPatientName.isEmpty() &&
-    this->PatientsTabWidget->count() != 0)
-  {
-    ctkDICOMPatientItemWidget* currentPatientItemWidget =
-      qobject_cast<ctkDICOMPatientItemWidget*>(this->PatientsTabWidget->currentWidget());
-    if (currentPatientItemWidget)
-    {
-      selectedPatientID = currentPatientItemWidget->patientID();
-      selectedPatientName = currentPatientItemWidget->patientName();
-    }
-  }
-
   this->patientsTabMenuToolButton->show();
   this->IsGUIUpdating = true;
   int wasBlocking = this->PatientsTabWidget->blockSignals(true);
   int selectedIndex = -1;
+  QMap<QString, QDateTime> patientsInsertDateTimeList;
   foreach (QString patientItem, patientList)
   {
     QString patientID = this->DicomDatabase->fieldForPatient("PatientID", patientItem);
     QString patientName = this->DicomDatabase->fieldForPatient("PatientsName", patientItem);
     patientName.replace(R"(^)", R"( )");
-    int index = this->isPatientTabAlreadyAdded(patientItem);
+    int index = this->findPatientTabIndexFromPatientItem(patientItem);
     if (index != -1)
     {
       if (selectedPatientID == patientID &&
@@ -737,9 +725,29 @@ void ctkDICOMVisualBrowserWidgetPrivate::createPatients(QString selectedPatientI
     {
       selectedIndex = index;
     }
+
+    QDateTime patientInsertDateTime = this->DicomDatabase->insertDateTimeForPatient(patientItem);
+    patientsInsertDateTimeList[patientItem] = patientInsertDateTime;
   }
 
-  this->PatientsTabWidget->setCurrentIndex(selectedIndex != -1 ? selectedIndex : 0);
+  if (selectedIndex == -1 && patientsInsertDateTimeList.count() > 0)
+  {
+    QList<QPair<QString, QDateTime>> list;
+    for (QMap<QString, QDateTime>::const_iterator it = patientsInsertDateTimeList.cbegin();
+      it != patientsInsertDateTimeList.cend(); ++it)
+    {
+      list.append(qMakePair(it.key(), it.value()));
+    }
+
+    std::sort(list.begin(), list.end(), [](const QPair<QString, QDateTime>& a, const QPair<QString, QDateTime>& b)
+    {
+      return a.second < b.second;
+    });
+
+    QString mostRecentPatientItem = list.last().first;
+    selectedIndex = this->findPatientTabIndexFromPatientItem(mostRecentPatientItem);
+  }
+  this->PatientsTabWidget->setCurrentIndex(selectedIndex);
   this->PatientsTabWidget->blockSignals(wasBlocking);
 
   ctkDICOMPatientItemWidget* currentPatientItemWidget =
@@ -1091,7 +1099,7 @@ void ctkDICOMVisualBrowserWidgetPrivate::removeAllPatientItemWidgets()
 }
 
 //----------------------------------------------------------------------------
-int ctkDICOMVisualBrowserWidgetPrivate::isPatientTabAlreadyAdded(const QString& patientItem)
+int ctkDICOMVisualBrowserWidgetPrivate::findPatientTabIndexFromPatientItem(const QString& patientItem)
 {
   int patientIndex = -1;
   for (int index = 0; index < this->PatientsTabWidget->count(); ++index)
@@ -2768,7 +2776,18 @@ void ctkDICOMVisualBrowserWidget::updateGUIFromScheduler(const QVariant& data)
     d->WarningPushButton->show();
   }
 
-  d->createPatients();
+  // Save current patient selection
+  QString patientID;
+  QString patientName;
+  ctkDICOMPatientItemWidget* currentPatientItemWidget =
+    qobject_cast<ctkDICOMPatientItemWidget*>(d->PatientsTabWidget->currentWidget());
+  if (currentPatientItemWidget)
+  {
+    patientID = currentPatientItemWidget->patientID();
+    patientName = currentPatientItemWidget->patientName();
+  }
+
+  d->createPatients(patientID, patientName);
 }
 
 //------------------------------------------------------------------------------
