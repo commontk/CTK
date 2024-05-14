@@ -1977,6 +1977,63 @@ QString ctkDICOMDatabase::displayedNameForPatient(const QString patientUID)
 }
 
 //------------------------------------------------------------------------------
+QDateTime ctkDICOMDatabase::insertDateTimeForPatient(const QString patientUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QDateTime result;
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT InsertTimestamp FROM Patients WHERE UID=?");
+  query.addBindValue(patientUID);
+  if (!d->loggedExec(query))
+  {
+    return result;
+  }
+  if (query.next())
+  {
+    result = QDateTime::fromString(query.value(0).toString(), Qt::ISODate);
+  }
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QDateTime ctkDICOMDatabase::insertDateTimeForStudy(const QString studyInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QDateTime result;
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT InsertTimestamp FROM Studies WHERE StudyInstanceUID=?");
+  query.addBindValue(studyInstanceUID);
+  if (!d->loggedExec(query))
+  {
+    return result;
+  }
+  if (query.next())
+  {
+    result = QDateTime::fromString(query.value(0).toString(), Qt::ISODate);
+  }
+  return result;
+}
+
+//------------------------------------------------------------------------------
+QDateTime ctkDICOMDatabase::insertDateTimeForSeries(const QString seriesInstanceUID)
+{
+  Q_D(ctkDICOMDatabase);
+  QDateTime result;
+  QSqlQuery query(d->Database);
+  query.prepare("SELECT InsertTimestamp FROM Series WHERE SeriesInstanceUID=?");
+  query.addBindValue(seriesInstanceUID);
+  if (!d->loggedExec(query))
+  {
+    return result;
+  }
+  if (query.next())
+  {
+    result = QDateTime::fromString(query.value(0).toString(), Qt::ISODate);
+  }
+  return result;
+}
+
+//------------------------------------------------------------------------------
 QString ctkDICOMDatabase::fieldForPatient(const QString field, const QString patientUID)
 {
   Q_D(ctkDICOMDatabase);
