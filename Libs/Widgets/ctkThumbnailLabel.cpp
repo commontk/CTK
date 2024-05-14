@@ -122,11 +122,17 @@ void ctkThumbnailLabelPrivate::updateThumbnail()
     size.setHeight(size.height() - this->OperationProgressBar->height());
   }
 
-  this->PixmapLabel->setPixmap(
-    this->OriginalThumbnail.isNull() ? QPixmap() :
-      this->OriginalThumbnail.scaled(size,
-                                     Qt::KeepAspectRatio,
-                                     this->TransformationMode));
+  if (this->OriginalThumbnail.isNull())
+  {
+    this->PixmapLabel->setPixmap(QPixmap());
+  }
+  else
+  {
+    QPixmap scaledThumbnail = this->OriginalThumbnail.scaled(size * q->devicePixelRatioF(),
+                                                             Qt::KeepAspectRatio,
+                                                             this->TransformationMode);
+    this->PixmapLabel->setPixmap(scaledThumbnail);
+  }
 }
 
 //----------------------------------------------------------------------------

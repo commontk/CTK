@@ -355,22 +355,26 @@ void ctkDICOMSeriesItemWidgetPrivate::createThumbnail(ctkDICOMJobDetail td, bool
 //----------------------------------------------------------------------------
 void ctkDICOMSeriesItemWidgetPrivate::drawModalityThumbnail()
 {
+  Q_Q(ctkDICOMSeriesItemWidget);
+
   if (!this->DicomDatabase)
   {
     logger.error("drawThumbnail failed, no DICOM Database has been set. \n");
     return;
   }
 
-  int textSize = floor(this->ThumbnailSizePixel / 7.);
+  qreal scalingFactor = q->devicePixelRatioF();
+  int scaledThumbnailSizePixel = this->ThumbnailSizePixel * scalingFactor;
+  int textSize = floor(scaledThumbnailSizePixel / 7.);
   QFont font = this->SeriesThumbnail->font();
   font.setBold(true);
   font.setPixelSize(textSize);
 
-  QPixmap resultPixmap(this->ThumbnailSizePixel, this->ThumbnailSizePixel);
+  QPixmap resultPixmap(scaledThumbnailSizePixel, scaledThumbnailSizePixel);
   resultPixmap.fill(Qt::transparent);
   ctkDICOMThumbnailGenerator thumbnailGenerator;
-  thumbnailGenerator.setWidth(this->ThumbnailSizePixel);
-  thumbnailGenerator.setHeight(this->ThumbnailSizePixel);
+  thumbnailGenerator.setWidth(scaledThumbnailSizePixel);
+  thumbnailGenerator.setHeight(scaledThumbnailSizePixel);
 
   QImage thumbnailImage;
   QPainter painter;
@@ -394,28 +398,33 @@ void ctkDICOMSeriesItemWidgetPrivate::drawModalityThumbnail()
 //----------------------------------------------------------------------------
 void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int numberOfFrames)
 {
+  Q_Q(ctkDICOMSeriesItemWidget);
+
   if (!this->DicomDatabase)
   {
     logger.error("drawThumbnail failed, no DICOM Database has been set. \n");
     return;
   }
 
-  int margin = floor(this->ThumbnailSizePixel / 60.);
-  int iconSize = floor(this->ThumbnailSizePixel / 6.);
-  int textSize = floor(this->ThumbnailSizePixel / 12.);
+  qreal scalingFactor = q->devicePixelRatioF();
+  int scaledThumbnailSizePixel = this->ThumbnailSizePixel * scalingFactor;
+  int margin = floor(scaledThumbnailSizePixel / 50.);
+  int iconSize = floor(scaledThumbnailSizePixel / 6.);
+  int textSize = floor(scaledThumbnailSizePixel / 12.);
   QFont font = this->SeriesThumbnail->font();
   font.setBold(true);
   font.setPixelSize(textSize);
 
-  QPixmap resultPixmap(this->ThumbnailSizePixel, this->ThumbnailSizePixel);
+  QPixmap resultPixmap(scaledThumbnailSizePixel, scaledThumbnailSizePixel);
   resultPixmap.fill(Qt::transparent);
+
   ctkDICOMThumbnailGenerator thumbnailGenerator;
-  thumbnailGenerator.setWidth(this->ThumbnailSizePixel);
-  thumbnailGenerator.setHeight(this->ThumbnailSizePixel);
+  thumbnailGenerator.setWidth(scaledThumbnailSizePixel);
+  thumbnailGenerator.setHeight(scaledThumbnailSizePixel);
   bool thumbnailGenerated = true;
   bool emptyThumbnailGenerated = false;
   QPainter painter;
-  if (this->ThumbnailImage.width() != this->ThumbnailSizePixel)
+  if (this->ThumbnailImage.width() != scaledThumbnailSizePixel)
   {
     if (!thumbnailGenerator.generateThumbnail(file, this->ThumbnailImage))
     {
@@ -439,19 +448,24 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
   {
     if (painter.begin(&resultPixmap))
     {
-      painter.setRenderHint(QPainter::Antialiasing);
-      QRect rect = resultPixmap.rect();
+      painter.setRenderHint(QPainter::Antialiasing, true);
+      painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+      painter.setRenderHint(QPainter::LosslessImageRendering, true);
       painter.setFont(font);
+
+      QRectF rect = resultPixmap.rect();
       int x = int((rect.width() * 0.5) - (this->ThumbnailImage.rect().width() * 0.5));
       int y = int((rect.height() * 0.5) - (this->ThumbnailImage.rect().height() * 0.5));
-      painter.drawPixmap(x, y, QPixmap::fromImage(this->ThumbnailImage));
+
+      QPixmap thumbnailPixmap = QPixmap::fromImage(this->ThumbnailImage);
+      painter.drawPixmap(x, y, thumbnailPixmap);
 
       QString topLeftString = ctkDICOMSeriesItemWidget::tr("Series: %1\n%2").arg(this->SeriesNumber).arg(this->Modality);
       this->drawTextWithShadow(&painter, font, margin, margin, Qt::AlignTop | Qt::AlignLeft, topLeftString);
       QString rows = this->DicomDatabase->instanceValue(this->CentralFrameSOPInstanceUID, "0028,0010");
       QString columns = this->DicomDatabase->instanceValue(this->CentralFrameSOPInstanceUID, "0028,0011");
       QString bottomLeftString = rows + "x" + columns + "x" + QString::number(numberOfFrames);
-      this->drawTextWithShadow(&painter, font, margin, rect.height() - margin,
+      this->drawTextWithShadow(&painter, font, margin, rect.height() - margin * 2,
                                Qt::AlignBottom | Qt::AlignLeft, bottomLeftString);
       QSvgRenderer renderer;
 
@@ -479,7 +493,7 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
         renderer.load(QString(":Icons/loaded.svg"));
       }
 
-      QPoint topRight = rect.topRight();
+      QPointF topRight = rect.topRight();
       QRectF bounds(topRight.x() - iconSize - margin, topRight.y() + margin, iconSize, iconSize);
       renderer.render(&painter, bounds);
       painter.end();
@@ -488,6 +502,7 @@ void ctkDICOMSeriesItemWidgetPrivate::drawThumbnail(const QString& file, int num
 
   if ((thumbnailGenerated && !this->isThumbnailDocument) || emptyThumbnailGenerated)
   {
+    resultPixmap.setDevicePixelRatio(scalingFactor);
     this->SeriesThumbnail->setPixmap(resultPixmap);
   }
 }
@@ -516,8 +531,9 @@ void ctkDICOMSeriesItemWidgetPrivate::drawTextWithShadow(QPainter *painter,
   textLabel.setText(text);
   QPixmap textPixMap = textLabel.grab();
   QRect rect = textPixMap.rect();
-  int textWidth = rect.width();
-  int textHeight = rect.height();
+  qreal scalingFactor = textLabel.devicePixelRatioF();
+  int textWidth = rect.width() / scalingFactor;
+  int textHeight = rect.height() / scalingFactor;
 
   if (alignment == Qt::AlignCenter)
   {
