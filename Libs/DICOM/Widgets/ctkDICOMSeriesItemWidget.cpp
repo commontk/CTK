@@ -148,6 +148,7 @@ void ctkDICOMSeriesItemWidgetPrivate::init()
 
   this->SeriesThumbnail->setTransformationMode(Qt::TransformationMode::SmoothTransformation);
   this->SeriesThumbnail->textPushButton()->setElideMode(Qt::ElideRight);
+  this->SeriesThumbnail->setSelectedColor(QColor::Invalid);
 }
 
 //----------------------------------------------------------------------------
