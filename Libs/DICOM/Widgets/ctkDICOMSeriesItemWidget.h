@@ -169,7 +169,7 @@ public:
   void setDicomDatabase(QSharedPointer<ctkDICOMDatabase> dicomDatabase);
 
 public Q_SLOTS:
-  void generateInstances(bool queryRetrieve = true);
+  void generateInstances(bool query = true, bool retrieve = true);
   void updateGUIFromScheduler(const QVariant& data);
   void updateSeriesProgressBar(const QVariant& data);
   void onJobStarted(const QVariant& data);

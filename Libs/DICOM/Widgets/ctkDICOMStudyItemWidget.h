@@ -57,6 +57,10 @@ class CTK_DICOM_WIDGETS_EXPORT ctkDICOMStudyItemWidget : public QWidget
   Q_PROPERTY(int numberOfSeriesPerRow READ numberOfSeriesPerRow);
   Q_PROPERTY(ThumbnailSizeOption thumbnailSize READ thumbnailSize WRITE setThumbnailSize);
   Q_PROPERTY(int thumbnailSizePixel READ thumbnailSizePixel);
+  Q_PROPERTY(int selection READ selection WRITE setSelection);
+  Q_PROPERTY(QString filteringSeriesDescription READ filteringSeriesDescription WRITE setFilteringSeriesDescription);
+  Q_PROPERTY(QStringList filteringModalities READ filteringModalities WRITE setFilteringModalities);
+  Q_PROPERTY(int filteredSeriesCount READ filteredSeriesCount);
   Q_PROPERTY(QStringList allowedServers READ allowedServers WRITE setAllowedServers);
 
 public:
@@ -140,6 +144,9 @@ public:
   QStringList filteringModalities() const;
   ///@}
 
+  /// Filtered series count
+  int filteredSeriesCount() const;
+
   ///@{
   /// Allowed Servers
   /// Empty by default
@@ -187,9 +194,13 @@ public:
   Q_INVOKABLE ctkCollapsibleGroupBox* collapsibleGroupBox();
 
 public Q_SLOTS:
-  void generateSeries(bool queryRetrieve = true);
+  void generateSeries(bool query = true, bool retrieve = true);
   void updateGUIFromScheduler(const QVariant& data);
   void onStudySelectionClicked(bool);
+
+Q_SIGNALS:
+  /// Emitted when the GUI finished to update after a series query.
+  void updateGUIFinished();
 
 protected:
   QScopedPointer<ctkDICOMStudyItemWidgetPrivate> d_ptr;

@@ -178,12 +178,16 @@ public:
   ///@}
 
 public Q_SLOTS:
-  void generateStudies(bool queryRetrieve = true);
+  void generateStudies(bool query = true, bool retrieve = true);
   void generateSeriesAtToggle(bool toggled = true, const QString& studyItem = "");
   void updateGUIFromScheduler(const QVariant& data);
   void onSeriesItemClicked();
   void raiseSelectedSeriesJobsPriority();
   void onPatientServersCheckableComboBoxChanged();
+
+Q_SIGNALS:
+  /// Emitted when the GUI finished to update after a studies query.
+  void updateGUIFinished();
 
 protected:
   QScopedPointer<ctkDICOMPatientItemWidgetPrivate> d_ptr;

@@ -66,13 +66,13 @@ public:
 
   void init(QWidget* parentWidget);
   void updateColumnsWidths();
-  void createSeries(bool queryRetrieve = true);
+  void createSeries();
   int getScreenWidth();
   int getScreenHeight();
   int calculateNumerOfSeriesPerRow();
   int calculateThumbnailSizeInPixel(const ctkDICOMStudyItemWidget::ThumbnailSizeOption& thumbnailSize);
   void addEmptySeriesItemWidget(int rowIndex, int columnIndex);
-  bool isSeriesItemAlreadyAdded(const QString& seriesItem);
+  ctkDICOMSeriesItemWidget* isSeriesItemAlreadyAdded(const QString& seriesItem);
 
   QString FilteringSeriesDescription;
   QStringList FilteringModalities;
@@ -89,6 +89,9 @@ public:
   QString StudyItem;
 
   bool IsGUIUpdating;
+  bool QueryOn;
+  bool RetrieveOn;
+  int FilteredSeriesCount;
 };
 
 //----------------------------------------------------------------------------
@@ -112,6 +115,9 @@ ctkDICOMStudyItemWidgetPrivate::ctkDICOMStudyItemWidgetPrivate(ctkDICOMStudyItem
   this->VisualDICOMBrowser = nullptr;
 
   this->IsGUIUpdating = false;
+  this->QueryOn = true;
+  this->RetrieveOn = true;
+  this->FilteredSeriesCount = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -148,8 +154,8 @@ void ctkDICOMStudyItemWidgetPrivate::init(QWidget* parentWidget)
   this->StudyDescriptionTextBrowser->setReadOnly(true);
   this->StudyItemCollapsibleGroupBox->setCollapsed(false);
 
-   q->connect(this->StudySelectionCheckBox, SIGNAL(clicked(bool)),
-              q, SLOT(onStudySelectionClicked(bool)));
+  q->connect(this->StudySelectionCheckBox, SIGNAL(clicked(bool)),
+             q, SLOT(onStudySelectionClicked(bool)));
 }
 
 //------------------------------------------------------------------------------
@@ -162,7 +168,7 @@ void ctkDICOMStudyItemWidgetPrivate::updateColumnsWidths()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidgetPrivate::createSeries(bool queryRetrieve)
+void ctkDICOMStudyItemWidgetPrivate::createSeries()
 {
   Q_Q(ctkDICOMStudyItemWidget);
   if (this->IsGUIUpdating)
@@ -179,6 +185,8 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries(bool queryRetrieve)
   QStringList seriesList = this->DicomDatabase->seriesForStudy(this->StudyInstanceUID);
   if (seriesList.count() == 0)
   {
+    q->setVisible(false);
+    q->emit updateGUIFinished();
     return;
   }
 
@@ -186,10 +194,16 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries(bool queryRetrieve)
 
   // Sort by SeriesNumber
   QMap<int, QString> seriesMap;
+  this->FilteredSeriesCount = 0;
+  int seriesIndex = 0;
   foreach (QString seriesItem, seriesList)
   {
-    if (this->isSeriesItemAlreadyAdded(seriesItem))
+    ctkDICOMSeriesItemWidget* seriesItemWidget = this->isSeriesItemAlreadyAdded(seriesItem);
+    if (seriesItemWidget)
     {
+      this->FilteredSeriesCount++;
+      seriesIndex++;
+      seriesItemWidget->generateInstances(this->QueryOn, this->RetrieveOn);
       continue;
     }
 
@@ -207,12 +221,11 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries(bool queryRetrieve)
       }
       // QMap automatically sort in ascending with the key
       seriesMap[seriesNumber] = seriesItem;
+      this->FilteredSeriesCount++;
     }
   }
 
-  int tableIndex = 0;
-  int seriesIndex = 0;
-  int numberOfSeries = seriesMap.count();
+  int numberOfSeries = seriesMap.count() + seriesIndex;
   foreach (QString seriesItem, seriesMap)
   {
     QString seriesInstanceUID = this->DicomDatabase->fieldForSeries("SeriesInstanceUID", seriesItem);
@@ -221,23 +234,21 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries(bool queryRetrieve)
       numberOfSeries--;
       continue;
     }
-    seriesIndex++;
 
     QString modality = this->DicomDatabase->fieldForSeries("Modality", seriesItem);
     QString seriesDescription = this->DicomDatabase->fieldForSeries("SeriesDescription", seriesItem);
 
     ctkDICOMSeriesItemWidget* seriesItemWidget =
-      q->addSeriesItemWidget(tableIndex, seriesItem, seriesInstanceUID, modality, seriesDescription);
+      q->addSeriesItemWidget(seriesIndex, seriesItem, seriesInstanceUID, modality, seriesDescription);
     if (seriesItemWidget)
     {
-      seriesItemWidget->generateInstances(queryRetrieve);
+      seriesItemWidget->generateInstances(this->QueryOn, this->RetrieveOn);
     }
-
-    tableIndex++;
+    seriesIndex++;
 
     if (seriesIndex == numberOfSeries)
     {
-      int emptyIndex = tableIndex;
+      int emptyIndex = seriesIndex;
       int columnIndex = emptyIndex % this->SeriesListTableWidget->columnCount();
       while (columnIndex != 0)
       {
@@ -262,6 +273,8 @@ void ctkDICOMStudyItemWidgetPrivate::createSeries(bool queryRetrieve)
   }
 
   this->IsGUIUpdating = false;
+  q->setVisible(this->FilteredSeriesCount != 0);
+  q->emit updateGUIFinished();
 }
 
 //------------------------------------------------------------------------------
@@ -346,9 +359,9 @@ void ctkDICOMStudyItemWidgetPrivate::addEmptySeriesItemWidget(int rowIndex, int 
 }
 
 //------------------------------------------------------------------------------
-bool ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdded(const QString& seriesItem)
+ctkDICOMSeriesItemWidget* ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdded(const QString& seriesItem)
 {
-  bool alreadyAdded = false;
+  ctkDICOMSeriesItemWidget* seriesItemWidgetFound = nullptr;
   for (int rowIndex = 0; rowIndex < this->SeriesListTableWidget->rowCount(); rowIndex++)
   {
     for (int columnIndex = 0; columnIndex < this->SeriesListTableWidget->columnCount(); columnIndex++)
@@ -362,18 +375,18 @@ bool ctkDICOMStudyItemWidgetPrivate::isSeriesItemAlreadyAdded(const QString& ser
 
       if (seriesItemWidget->seriesItem() == seriesItem)
       {
-        alreadyAdded = true;
+        seriesItemWidgetFound = seriesItemWidget;
         break;
       }
     }
 
-    if (alreadyAdded)
+    if (seriesItemWidgetFound)
     {
       break;
     }
   }
 
-  return alreadyAdded;
+  return seriesItemWidgetFound;
 }
 
 //----------------------------------------------------------------------------
@@ -408,6 +421,7 @@ CTK_SET_CPP(ctkDICOMStudyItemWidget, const QString&, setFilteringSeriesDescripti
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QString, filteringSeriesDescription, FilteringSeriesDescription);
 CTK_SET_CPP(ctkDICOMStudyItemWidget, const QStringList&, setFilteringModalities, FilteringModalities);
 CTK_GET_CPP(ctkDICOMStudyItemWidget, QStringList, filteringModalities, FilteringModalities);
+CTK_GET_CPP(ctkDICOMStudyItemWidget, int, filteredSeriesCount, FilteredSeriesCount);
 
 
 //----------------------------------------------------------------------------
@@ -697,12 +711,14 @@ ctkCollapsibleGroupBox* ctkDICOMStudyItemWidget::collapsibleGroupBox()
 }
 
 //------------------------------------------------------------------------------
-void ctkDICOMStudyItemWidget::generateSeries(bool queryRetrieve)
+void ctkDICOMStudyItemWidget::generateSeries(bool query, bool retrieve)
 {
   Q_D(ctkDICOMStudyItemWidget);
 
-  d->createSeries(queryRetrieve);
-  if (queryRetrieve && d->Scheduler && d->Scheduler->queryRetrieveServersCount() > 0)
+  d->QueryOn = query;
+  d->RetrieveOn = retrieve;
+  d->createSeries();
+  if (query && d->Scheduler && d->Scheduler->queryRetrieveServersCount() > 0)
   {
     d->Scheduler->querySeries(d->PatientID,
                              d->StudyInstanceUID,
